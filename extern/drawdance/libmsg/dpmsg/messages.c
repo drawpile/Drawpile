@@ -73,6 +73,7 @@ bool DP_message_type_client_meta(DP_MessageType type)
     case DP_MSG_EXTENSION:
     case DP_MSG_UNDO_DEPTH:
     case DP_MSG_DATA:
+    case DP_MSG_LOCAL_CHANGE:
         return true;
     default:
         return false;
@@ -171,6 +172,8 @@ const char *DP_message_type_name(DP_MessageType type)
         return "undodepth";
     case DP_MSG_DATA:
         return "data";
+    case DP_MSG_LOCAL_CHANGE:
+        return "localchange";
     case DP_MSG_UNDO_POINT:
         return "undopoint";
     case DP_MSG_CANVAS_RESIZE:
@@ -293,6 +296,8 @@ const char *DP_message_type_enum_name(DP_MessageType type)
         return "DP_MSG_UNDO_DEPTH";
     case DP_MSG_DATA:
         return "DP_MSG_DATA";
+    case DP_MSG_LOCAL_CHANGE:
+        return "DP_MSG_LOCAL_CHANGE";
     case DP_MSG_UNDO_POINT:
         return "DP_MSG_UNDO_POINT";
     case DP_MSG_CANVAS_RESIZE:
@@ -436,6 +441,9 @@ DP_MessageType DP_message_type_from_name(const char *type_name,
     }
     else if (DP_str_equal(type_name, "data")) {
         return DP_MSG_DATA;
+    }
+    else if (DP_str_equal(type_name, "localchange")) {
+        return DP_MSG_LOCAL_CHANGE;
     }
     else if (DP_str_equal(type_name, "undopoint")) {
         return DP_MSG_UNDO_POINT;
@@ -607,6 +615,8 @@ DP_Message *DP_message_deserialize_body(int type, unsigned int context_id,
         return DP_msg_undo_depth_deserialize(context_id, buf, length);
     case DP_MSG_DATA:
         return DP_msg_data_deserialize(context_id, buf, length);
+    case DP_MSG_LOCAL_CHANGE:
+        return DP_msg_local_change_deserialize(context_id, buf, length);
     case DP_MSG_UNDO_POINT:
         return DP_msg_undo_point_deserialize(context_id, buf, length);
     case DP_MSG_CANVAS_RESIZE:
@@ -739,6 +749,8 @@ DP_Message *DP_message_parse_body(DP_MessageType type, unsigned int context_id,
         return DP_msg_undo_depth_parse(context_id, reader);
     case DP_MSG_DATA:
         return DP_msg_data_parse(context_id, reader);
+    case DP_MSG_LOCAL_CHANGE:
+        return DP_msg_local_change_parse(context_id, reader);
     case DP_MSG_UNDO_POINT:
         return DP_msg_undo_point_parse(context_id, reader);
     case DP_MSG_CANVAS_RESIZE:
@@ -3217,6 +3229,142 @@ const unsigned char *DP_msg_data_body(const DP_MsgData *md, size_t *out_size)
 size_t DP_msg_data_body_size(const DP_MsgData *md)
 {
     return md->body_size;
+}
+
+
+/* DP_MSG_LOCAL_CHANGE */
+
+const char *DP_msg_local_change_type_variant_name(unsigned int value)
+{
+    switch (value) {
+    case DP_MSG_LOCAL_CHANGE_TYPE_LAYER_VISIBILITY:
+        return "LayerVisibility";
+    case DP_MSG_LOCAL_CHANGE_TYPE_BACKGROUND_TILE:
+        return "BackgroundTile";
+    default:
+        return NULL;
+    }
+}
+
+struct DP_MsgLocalChange {
+    uint8_t type;
+    uint16_t body_size;
+    unsigned char body[];
+};
+
+static size_t msg_local_change_payload_length(DP_Message *msg)
+{
+    DP_MsgLocalChange *mlc = DP_message_internal(msg);
+    return ((size_t)1) + mlc->body_size;
+}
+
+static size_t msg_local_change_serialize_payload(DP_Message *msg,
+                                                 unsigned char *data)
+{
+    DP_MsgLocalChange *mlc = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint8(mlc->type, data + written);
+    written += write_bytes(mlc->body, mlc->body_size, data + written);
+    DP_ASSERT(written == msg_local_change_payload_length(msg));
+    return written;
+}
+
+static bool msg_local_change_write_payload_text(DP_Message *msg,
+                                                DP_TextWriter *writer)
+{
+    DP_MsgLocalChange *mlc = DP_message_internal(msg);
+    return DP_text_writer_write_base64(writer, "body", mlc->body,
+                                       mlc->body_size)
+        && DP_text_writer_write_uint(writer, "type", mlc->type, false);
+}
+
+static bool msg_local_change_equals(DP_Message *DP_RESTRICT msg,
+                                    DP_Message *DP_RESTRICT other)
+{
+    DP_MsgLocalChange *a = DP_message_internal(msg);
+    DP_MsgLocalChange *b = DP_message_internal(other);
+    return a->type == b->type && a->body_size == b->body_size
+        && memcmp(a->body, b->body, DP_uint16_to_size(a->body_size)) == 0;
+}
+
+static const DP_MessageMethods msg_local_change_methods = {
+    msg_local_change_payload_length,
+    msg_local_change_serialize_payload,
+    msg_local_change_write_payload_text,
+    msg_local_change_equals,
+};
+
+DP_Message *DP_msg_local_change_new(unsigned int context_id, uint8_t type,
+                                    void (*set_body)(size_t, unsigned char *,
+                                                     void *),
+                                    size_t body_size, void *body_user)
+{
+    DP_Message *msg = DP_message_new(
+        DP_MSG_LOCAL_CHANGE, context_id, &msg_local_change_methods,
+        DP_FLEX_SIZEOF(DP_MsgLocalChange, body, body_size));
+    DP_MsgLocalChange *mlc = DP_message_internal(msg);
+    mlc->type = type;
+    mlc->body_size = DP_size_to_uint16(body_size);
+    if (set_body) {
+        set_body(mlc->body_size, mlc->body, body_user);
+    }
+    return msg;
+}
+
+DP_Message *DP_msg_local_change_deserialize(unsigned int context_id,
+                                            const unsigned char *buffer,
+                                            size_t length)
+{
+    if (length < 1 || length > 65535) {
+        DP_error_set("Wrong length for localchange message; "
+                     "expected between 1 and 65535, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint8_t type = read_uint8(buffer + read, &read);
+    size_t body_bytes = length - read;
+    uint16_t body_size = DP_size_to_uint16(body_bytes);
+    void *body_user = (void *)(buffer + read);
+    return DP_msg_local_change_new(context_id, type, read_bytes, body_size,
+                                   body_user);
+}
+
+DP_Message *DP_msg_local_change_parse(unsigned int context_id,
+                                      DP_TextReader *reader)
+{
+    uint8_t type = (uint8_t)DP_text_reader_get_ulong(reader, "type", UINT8_MAX);
+    size_t body_size;
+    DP_TextReaderParseParams body_params =
+        DP_text_reader_get_base64_string(reader, "body", &body_size);
+    return DP_msg_local_change_new(
+        context_id, type, DP_text_reader_parse_base64, body_size, &body_params);
+}
+
+DP_MsgLocalChange *DP_msg_local_change_cast(DP_Message *msg)
+{
+    return DP_message_cast(msg, DP_MSG_LOCAL_CHANGE);
+}
+
+uint8_t DP_msg_local_change_type(const DP_MsgLocalChange *mlc)
+{
+    DP_ASSERT(mlc);
+    return mlc->type;
+}
+
+const unsigned char *DP_msg_local_change_body(const DP_MsgLocalChange *mlc,
+                                              size_t *out_size)
+{
+    DP_ASSERT(mlc);
+    if (out_size) {
+        *out_size = mlc->body_size;
+    }
+    return mlc->body;
+}
+
+size_t DP_msg_local_change_body_size(const DP_MsgLocalChange *mlc)
+{
+    return mlc->body_size;
 }
 
 

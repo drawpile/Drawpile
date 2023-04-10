@@ -35,6 +35,7 @@
 #include "layer_props_list.h"
 #include "limits.h"
 #include "load.h"
+#include "local_state.h"
 #include "tile.h"
 #include "timeline.h"
 #include <dpcommon/binary.h>
@@ -707,6 +708,7 @@ typedef struct DP_BuildIndexMaps {
 typedef struct DP_BuildIndexEntryContext {
     DP_Output *output;
     DP_AclState *acls;
+    DP_LocalState *local_state;
     DP_CanvasHistory *ch;
     DP_CanvasState *cs;
     DP_DrawContext *dc;
@@ -730,6 +732,7 @@ typedef struct DP_BuildIndexContext {
     DP_Player *player;
     DP_Output *output;
     DP_AclState *acls;
+    DP_LocalState *local_state;
     DP_CanvasHistory *ch;
     DP_DrawContext *dc;
     long long message_count;
@@ -811,7 +814,7 @@ static bool write_undo_depth_history_message(DP_BuildIndexEntryContext *e,
     return ok;
 }
 
-static bool write_acl_state(void *user, DP_Message *msg)
+static bool write_reset_image_message(void *user, DP_Message *msg)
 {
     DP_BuildIndexEntryContext *e = user;
     bool ok = write_index_history_message(e, msg);
@@ -883,8 +886,14 @@ static bool write_index_history(DP_BuildIndexEntryContext *e,
         }
     }
     DP_message_decref(undo_msg);
-    // Finally, the state of the permissions at this point.
-    if (!DP_acl_state_reset_image_build(e->acls, 0, true, write_acl_state, e)) {
+    // The state of the permissions at this point.
+    if (!DP_acl_state_reset_image_build(e->acls, 0, true,
+                                        write_reset_image_message, e)) {
+        return false;
+    }
+    // Local changes (hidden layers, local canvas background).
+    if (!DP_local_state_reset_image_build(e->local_state, e->dc,
+                                          write_reset_image_message, e)) {
         return false;
     }
 
@@ -1525,11 +1534,17 @@ static void dispose_index_maps(DP_BuildIndexMaps *maps)
 static bool make_index_entry(DP_BuildIndexContext *c, long long message_index,
                              size_t message_offset)
 {
-    DP_BuildIndexEntryContext e = {
-        c->output, c->acls, c->ch,
-        NULL,      c->dc,   {NULL, NULL, NULL, {NULL, 0}, {NULL, 0}},
-        &c->last,  0,       {0, 0, 0, 0, 0},
-        {NULL, 0}};
+    DP_BuildIndexEntryContext e = {c->output,
+                                   c->acls,
+                                   c->local_state,
+                                   c->ch,
+                                   NULL,
+                                   c->dc,
+                                   {NULL, NULL, NULL, {NULL, 0}, {NULL, 0}},
+                                   &c->last,
+                                   0,
+                                   {0, 0, 0, 0, 0},
+                                   {NULL, 0}};
     bool ok = write_index_snapshot(&e) && write_index_thumbnail(&e);
     if (!ok) {
         dispose_index_maps(&e.current);
@@ -1550,6 +1565,9 @@ static bool write_index_messages(DP_BuildIndexContext *c)
 {
     DP_Player *player = c->player;
     DP_AclState *acls = c->acls;
+    DP_LocalState *ls = c->local_state;
+    DP_CanvasHistory *ch = c->ch;
+    DP_DrawContext *dc = c->dc;
     int last_percent = 0;
     long long last_written_message_index = 0;
 
@@ -1566,17 +1584,22 @@ static bool write_index_messages(DP_BuildIndexContext *c)
                     DP_message_type_enum_name_unprefixed(DP_message_type(msg)),
                     DP_message_context_id(msg));
             }
-            else if (DP_message_type_command(DP_message_type(msg))) {
-                if (!DP_canvas_history_handle(c->ch, c->dc, msg)) {
-                    DP_warn("Error handling message in index: %s", DP_error());
-                }
-
-                long long message_index = c->message_count++;
-                if (c->should_snapshot_fn(c->user)) {
-                    if (!make_index_entry(c, message_index, message_offset)) {
-                        return false;
+            else {
+                DP_local_state_handle(ls, dc, msg);
+                if (DP_message_type_command(DP_message_type(msg))) {
+                    if (!DP_canvas_history_handle(ch, dc, msg)) {
+                        DP_warn("Error handling message in index: %s",
+                                DP_error());
                     }
-                    last_written_message_index = message_index;
+
+                    long long message_index = c->message_count++;
+                    if (c->should_snapshot_fn(c->user)) {
+                        if (!make_index_entry(c, message_index,
+                                              message_offset)) {
+                            return false;
+                        }
+                        last_written_message_index = message_index;
+                    }
                 }
             }
             DP_message_decref(msg);
@@ -1690,10 +1713,12 @@ bool DP_player_index_build(DP_Player *player, DP_DrawContext *dc,
 
     DP_PERF_BEGIN_DETAIL(fn, "index_build", "path=%s", path);
     DP_AclState *acls = DP_acl_state_new();
+    DP_LocalState *ls = DP_local_state_new(NULL, NULL, NULL, NULL);
     DP_CanvasHistory *ch = DP_canvas_history_new(NULL, NULL, false, NULL);
     DP_BuildIndexContext c = {index_player,
                               output,
                               acls,
+                              ls,
                               ch,
                               dc,
                               0,
@@ -1707,6 +1732,7 @@ bool DP_player_index_build(DP_Player *player, DP_DrawContext *dc,
     dispose_index_maps(&c.last);
     DP_vector_dispose(&c.entries);
     DP_canvas_history_free(ch);
+    DP_local_state_free(ls);
     DP_acl_state_free(acls);
     DP_output_free(output);
     DP_player_free(index_player);

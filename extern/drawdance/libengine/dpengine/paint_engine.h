@@ -121,13 +121,7 @@ void DP_paint_engine_reveal_censored_set(DP_PaintEngine *pe,
 void DP_paint_engine_inspect_context_id_set(DP_PaintEngine *pe,
                                             unsigned int context_id);
 
-void DP_paint_engine_layer_visibility_set(DP_PaintEngine *pe, int layer_id,
-                                          bool hidden);
-
 DP_Tile *DP_paint_engine_local_background_tile_noinc(DP_PaintEngine *pe);
-
-void DP_paint_engine_local_background_tile_set_noinc(DP_PaintEngine *pe,
-                                                     DP_Tile *tile_or_null);
 
 // Takes ownership of the header, path is copied.
 bool DP_paint_engine_recorder_start(DP_PaintEngine *pe, DP_RecorderType type,

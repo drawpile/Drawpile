@@ -1,12 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 extern "C" {
+#include <dpengine/local_state.h>
 #include <dpmsg/msg_internal.h>
 }
 
 #include "libclient/drawdance/message.h"
 
 #include "libclient/canvas/blendmodes.h"
+#include "libclient/drawdance/global.h"
+#include "libclient/drawdance/tile.h"
 #include "libshared/util/qtcompat.h"
 
 #include <QByteArray>
@@ -316,6 +319,25 @@ void Message::makePutImages(MessageList &msgs, uint8_t contextId, uint16_t layer
             makePutImagesRecursive(msgs, contextId, layer, mode, x, y, converted, converted.rect());
         }
     }
+}
+
+
+Message Message::makeLocalChangeLayerVisibility(int layerId, bool hidden)
+{
+    return Message{DP_local_state_msg_layer_visibility_new(layerId, hidden)};
+}
+
+Message Message::makeLocalChangeBackgroundColor(const QColor &color)
+{
+    DrawContext drawContext = DrawContextPool::acquire();
+    Tile tile = Tile::fromColor(color);
+    return Message{
+        DP_local_state_msg_background_tile_new(drawContext.get(), tile.get())};
+}
+
+Message Message::makeLocalChangeBackgroundClear()
+{
+    return Message{DP_local_state_msg_background_tile_new(nullptr, nullptr)};
 }
 
 

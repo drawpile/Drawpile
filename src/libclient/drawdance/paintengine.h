@@ -73,10 +73,7 @@ public:
 
 	void setInspectContextId(unsigned int contextId);
 
-	void setLayerVisibility(int layerId, bool hidden);
-
 	Tile localBackgroundTile() const;
-	void setLocalBackgroundTile(const Tile &tile);
 
 	static RecordStartResult makeRecorderParameters(
 		const QString &path, const QString &writer, const QString &writerVersion,

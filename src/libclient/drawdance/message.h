@@ -78,6 +78,10 @@ public:
     // multiple messages if it doesn't fit into a single one.
     static void makePutImages(MessageList &msgs, uint8_t contextId, uint16_t layer, uint8_t mode, int x, int y, const QImage &image);
 
+    static Message makeLocalChangeLayerVisibility(int layerId, bool hidden);
+    static Message makeLocalChangeBackgroundColor(const QColor &color);
+    static Message makeLocalChangeBackgroundClear();
+
     Message();
     Message(const Message &other);
     Message(Message &&other);

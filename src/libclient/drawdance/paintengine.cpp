@@ -109,20 +109,9 @@ void PaintEngine::setInspectContextId(unsigned int contextId)
 	DP_paint_engine_inspect_context_id_set(m_data, contextId);
 }
 
-void PaintEngine::setLayerVisibility(int layerId, bool hidden)
-{
-	DP_paint_engine_layer_visibility_set(m_data, layerId, hidden);
-}
-
 Tile PaintEngine::localBackgroundTile() const
 {
 	return Tile::inc(DP_paint_engine_local_background_tile_noinc(m_data));
-}
-
-void PaintEngine::setLocalBackgroundTile(const Tile &tile)
-{
-	DP_paint_engine_local_background_tile_set_noinc(
-		m_data, DP_tile_incref_nullable(tile.get()));
 }
 
 RecordStartResult PaintEngine::makeRecorderParameters(

@@ -199,12 +199,20 @@ bool PaintEngine::localBackgroundColor(QColor &outColor) const
 
 void PaintEngine::setLocalBackgroundColor(const QColor &color)
 {
-	m_paintEngine.setLocalBackgroundTile(drawdance::Tile::fromColor(color));
+	drawdance::Message msg =
+		drawdance::Message::makeLocalChangeBackgroundColor(color);
+	if(msg.isNull()) {
+		qWarning("Error setting local background color: %s", DP_error());
+	} else {
+		receiveMessages(false, 1, &msg);
+	}
 }
 
 void PaintEngine::clearLocalBackgroundColor()
 {
-	m_paintEngine.setLocalBackgroundTile(drawdance::Tile::null());
+	drawdance::Message msg =
+		drawdance::Message::makeLocalChangeBackgroundClear();
+	receiveMessages(false, 1, &msg);
 }
 
 uint16_t PaintEngine::findAvailableAnnotationId(uint8_t forUser) const
@@ -271,7 +279,9 @@ void PaintEngine::setLocalDrawingInProgress(bool localDrawingInProgress)
 
 void PaintEngine::setLayerVisibility(int layerId, bool hidden)
 {
-	m_paintEngine.setLayerVisibility(layerId, hidden);
+	drawdance::Message msg =
+		drawdance::Message::makeLocalChangeLayerVisibility(layerId, hidden);
+	receiveMessages(false, 1, &msg);
 }
 
 void PaintEngine::setViewMode(

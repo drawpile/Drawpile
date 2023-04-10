@@ -304,6 +304,20 @@ Data:
         - recipient u8
         - body bytes
 
+LocalChange:
+    id: 76
+    comment: |
+             A local-only modification, such as toggling layer visibility or
+             setting a local canvas background. Shouldn't be sent over the
+             network, but will be recorded.
+    fields:
+        - type enum:
+          name:
+          variants:
+              - LayerVisibility
+              - BackgroundTile
+        - body bytes
+
 # Command messages (opaque)
 UndoPoint:
     id: 128
@@ -430,7 +444,10 @@ LayerDelete:
 
 LayerVisibility:
     id: 135
-    comment: Toggle layer local visibility (this is used internally only and never sent over the network)
+    comment: |
+             Removed in version 2.2, but still included for compatibility with
+             2.1 sessions that might send it, the client ignores them though.
+             Effectively replaced by LocalChange.
     fields:
       - id u16
       - visible bool

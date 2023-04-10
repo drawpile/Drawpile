@@ -26,6 +26,7 @@ dp_target_sources(dpengine
     dpengine/layer_props.c
     dpengine/layer_props_list.c
     dpengine/layer_routes.c
+    dpengine/local_state.c
     dpengine/model_changes.c
     dpengine/ops.c
     dpengine/paint.c
@@ -63,6 +64,7 @@ dp_target_sources(dpengine
     dpengine/layer_props.h
     dpengine/layer_props_list.h
     dpengine/layer_routes.h
+    dpengine/local_state.h
     dpengine/model_changes.h
     dpengine/ops.h
     dpengine/paint.h

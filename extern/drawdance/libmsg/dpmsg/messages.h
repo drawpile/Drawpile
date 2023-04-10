@@ -65,6 +65,7 @@ typedef enum DP_MessageType {
     DP_MSG_EXTENSION = 73,
     DP_MSG_UNDO_DEPTH = 74,
     DP_MSG_DATA = 75,
+    DP_MSG_LOCAL_CHANGE = 76,
     DP_MSG_UNDO_POINT = 128,
     DP_MSG_CANVAS_RESIZE = 129,
     DP_MSG_LAYER_CREATE = 130,
@@ -861,6 +862,45 @@ size_t DP_msg_data_body_size(const DP_MsgData *md);
 
 
 /*
+ * DP_MSG_LOCAL_CHANGE
+ *
+ * A local-only modification, such as toggling layer visibility or
+ * setting a local canvas background. Shouldn't be sent over the
+ * network, but will be recorded.
+ */
+
+#define DP_MSG_LOCAL_CHANGE_STATIC_LENGTH 1
+
+#define DP_MSG_LOCAL_CHANGE_TYPE_LAYER_VISIBILITY 0
+#define DP_MSG_LOCAL_CHANGE_TYPE_BACKGROUND_TILE  1
+
+const char *DP_msg_local_change_type_variant_name(unsigned int value);
+
+typedef struct DP_MsgLocalChange DP_MsgLocalChange;
+
+DP_Message *DP_msg_local_change_new(unsigned int context_id, uint8_t type,
+                                    void (*set_body)(size_t, unsigned char *,
+                                                     void *),
+                                    size_t body_size, void *body_user);
+
+DP_Message *DP_msg_local_change_deserialize(unsigned int context_id,
+                                            const unsigned char *buffer,
+                                            size_t length);
+
+DP_Message *DP_msg_local_change_parse(unsigned int context_id,
+                                      DP_TextReader *reader);
+
+DP_MsgLocalChange *DP_msg_local_change_cast(DP_Message *msg);
+
+uint8_t DP_msg_local_change_type(const DP_MsgLocalChange *mlc);
+
+const unsigned char *DP_msg_local_change_body(const DP_MsgLocalChange *mlc,
+                                              size_t *out_size);
+
+size_t DP_msg_local_change_body_size(const DP_MsgLocalChange *mlc);
+
+
+/*
  * DP_MSG_UNDO_POINT
  *
  * Undo demarcation point
@@ -1144,8 +1184,9 @@ bool DP_msg_layer_delete_merge(const DP_MsgLayerDelete *mld);
 /*
  * DP_MSG_LAYER_VISIBILITY
  *
- * Toggle layer local visibility (this is used internally only and never sent
- * over the network)
+ * Removed in version 2.2, but still included for compatibility with
+ * 2.1 sessions that might send it, the client ignores them though.
+ * Effectively replaced by LocalChange.
  */
 
 #define DP_MSG_LAYER_VISIBILITY_STATIC_LENGTH 3

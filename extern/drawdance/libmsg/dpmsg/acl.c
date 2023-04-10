@@ -960,8 +960,8 @@ static bool handle_command_message(DP_AclState *acls, DP_Message *msg,
     case DP_MSG_LAYER_TREE_DELETE: {
         DP_MsgLayerTreeDelete *mltd = DP_msg_layer_tree_delete_cast(msg);
         return handle_layer_delete(acls, DP_msg_layer_tree_delete_id(mltd),
-                                   DP_msg_layer_tree_delete_merge_to(mltd), user_id,
-                                   override);
+                                   DP_msg_layer_tree_delete_merge_to(mltd),
+                                   user_id, override);
     }
     case DP_MSG_TRANSFORM_REGION:
         return handle_transform_region(acls, msg, user_id, override);
@@ -1010,6 +1010,8 @@ uint8_t DP_acl_state_handle(DP_AclState *acls, DP_Message *msg, bool override)
         case DP_MSG_UNDO_DEPTH:
             return filter_unless(
                 override || DP_acl_state_is_op(acls, message_user_id(msg)));
+        case DP_MSG_LOCAL_CHANGE:
+            return filter_unless(override || message_user_id(msg) == 0);
         default:
             return 0;
         }

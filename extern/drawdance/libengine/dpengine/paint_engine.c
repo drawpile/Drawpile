@@ -31,6 +31,7 @@
 #include "layer_props.h"
 #include "layer_props_list.h"
 #include "layer_routes.h"
+#include "local_state.h"
 #include "paint.h"
 #include "player.h"
 #include "recorder.h"
@@ -158,6 +159,7 @@ struct DP_PaintEngine {
     DP_Tile *checker;
     DP_CanvasState *history_cs;
     DP_CanvasState *view_cs;
+    DP_LocalState *local_state;
     struct {
         int active_layer_id;
         int active_frame_index;
@@ -165,12 +167,9 @@ struct DP_PaintEngine {
         const DP_OnionSkins *onion_skins;
         bool reveal_censored;
         unsigned int inspect_context_id;
-        DP_Vector hidden_layers;
         DP_LayerPropsList *prev_lpl;
         DP_Timeline *prev_tl;
         DP_LayerPropsList *lpl;
-        DP_Tile *background_tile;
-        bool background_opaque;
         bool layers_can_decrease_opacity;
     } local_view;
     DP_DrawContext *paint_dc;
@@ -697,21 +696,38 @@ static void render_job(void *user, int thread_index)
     DP_SEMAPHORE_MUST_POST(pe->render.tiles_done_sem);
 }
 
-static void apply_hidden_layers_recursive(DP_Vector *hidden_layers,
-                                          DP_LayerPropsList *lpl)
+static void invalidate_local_view(DP_PaintEngine *pe, bool check_all)
 {
-    int count = DP_layer_props_list_count(lpl);
-    for (int i = 0; i < count; ++i) {
-        DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, i);
-        if (DP_layer_props_hidden(lp)) {
-            int layer_id = DP_layer_props_id(lp);
-            DP_VECTOR_PUSH_TYPE(hidden_layers, int, layer_id);
+    DP_layer_props_list_decref_nullable(pe->local_view.prev_lpl);
+    pe->local_view.prev_lpl = NULL;
+    if (check_all) {
+        DP_canvas_diff_check_all(pe->diff);
+    }
+}
+
+static void local_layer_visibility_changed(void *user, int layer_id)
+{
+    DP_PaintEngine *pe = user;
+    DP_CanvasState *cs = pe->view_cs;
+    DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
+    DP_LayerRoutesEntry *lre = DP_layer_routes_search(lr, layer_id);
+    if (lre) {
+        if (DP_layer_routes_entry_is_group(lre)) {
+            DP_LayerGroup *lg = DP_layer_routes_entry_group(lre, cs);
+            DP_layer_group_diff_mark(lg, pe->diff);
         }
-        DP_LayerPropsList *child_lpl = DP_layer_props_children_noinc(lp);
-        if (child_lpl) {
-            apply_hidden_layers_recursive(hidden_layers, child_lpl);
+        else {
+            DP_LayerContent *lc = DP_layer_routes_entry_content(lre, cs);
+            DP_layer_content_diff_mark(lc, pe->diff);
         }
     }
+    invalidate_local_view(pe, false);
+}
+
+static void local_background_tile_changed(void *user)
+{
+    DP_PaintEngine *pe = user;
+    invalidate_local_view(pe, false);
 }
 
 DP_PaintEngine *DP_paint_engine_new_inc(
@@ -736,18 +752,18 @@ DP_PaintEngine *DP_paint_engine_new_inc(
         (DP_Pixel15){DP_BIT15, DP_BIT15, DP_BIT15, DP_BIT15});
     pe->history_cs = DP_canvas_state_new();
     pe->view_cs = DP_canvas_state_incref(pe->history_cs);
+    pe->local_state =
+        DP_local_state_new(cs_or_null, local_layer_visibility_changed,
+                           local_background_tile_changed, pe);
     pe->local_view.active_layer_id = 0;
     pe->local_view.active_frame_index = 0;
     pe->local_view.view_mode = DP_VIEW_MODE_NORMAL;
     pe->local_view.onion_skins = NULL;
     pe->local_view.reveal_censored = false;
     pe->local_view.inspect_context_id = 0;
-    DP_VECTOR_INIT_TYPE(&pe->local_view.hidden_layers, int, 8);
     pe->local_view.prev_lpl = NULL;
     pe->local_view.prev_tl = NULL;
     pe->local_view.lpl = NULL;
-    pe->local_view.background_tile = NULL;
-    pe->local_view.background_opaque = false;
     pe->local_view.layers_can_decrease_opacity = true;
     pe->paint_dc = paint_dc;
     for (int i = 0; i < DP_PAINT_ENGINE_PREVIEW_COUNT; ++i) {
@@ -787,13 +803,6 @@ DP_PaintEngine *DP_paint_engine_new_inc(
     pe->render.tiles_waiting = 0;
     pe->render.buffers = DP_malloc_simd(sizeof(DP_PaintEngineRenderBuffer)
                                         * DP_int_to_size(render_thread_count));
-    // If there's hidden layers in the canvas state, add them to our
-    // local view so that they actually appear hidden to start with.
-    if (cs_or_null) {
-        DP_Vector *hidden_layers = &pe->local_view.hidden_layers;
-        DP_LayerPropsList *lpl = DP_canvas_state_layer_props_noinc(cs_or_null);
-        apply_hidden_layers_recursive(hidden_layers, lpl);
-    }
     return pe;
 }
 
@@ -842,11 +851,10 @@ void DP_paint_engine_free_join(DP_PaintEngine *pe)
             free_preview(DP_atomic_ptr_xch(&pe->next_previews[i], NULL));
             free_preview(pe->previews[i]);
         }
-        DP_tile_decref_nullable(pe->local_view.background_tile);
         DP_layer_props_list_decref_nullable(pe->local_view.lpl);
         DP_timeline_decref_nullable(pe->local_view.prev_tl);
         DP_layer_props_list_decref_nullable(pe->local_view.prev_lpl);
-        DP_vector_dispose(&pe->local_view.hidden_layers);
+        DP_local_state_free(pe->local_state);
         DP_canvas_state_decref_nullable(pe->history_cs);
         DP_canvas_state_decref_nullable(pe->view_cs);
         DP_tile_decref(pe->checker);
@@ -891,15 +899,6 @@ void DP_paint_engine_want_canvas_history_dump_set(DP_PaintEngine *pe,
     DP_canvas_history_want_dump_set(pe->ch, want_canvas_history_dump);
 }
 
-
-static void invalidate_local_view(DP_PaintEngine *pe, bool check_all)
-{
-    DP_layer_props_list_decref_nullable(pe->local_view.prev_lpl);
-    pe->local_view.prev_lpl = NULL;
-    if (check_all) {
-        DP_canvas_diff_check_all(pe->diff);
-    }
-}
 
 void DP_paint_engine_active_layer_id_set(DP_PaintEngine *pe, int layer_id)
 {
@@ -968,65 +967,10 @@ void DP_paint_engine_inspect_context_id_set(DP_PaintEngine *pe,
 }
 
 
-static bool is_hidden_layer_id(void *element, void *user)
-{
-    return *(int *)element == *(int *)user;
-}
-
-static void check_layer_id(DP_PaintEngine *pe, int layer_id)
-{
-    DP_CanvasState *cs = pe->view_cs;
-    DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
-    DP_LayerRoutesEntry *lre = DP_layer_routes_search(lr, layer_id);
-    if (lre) {
-        if (DP_layer_routes_entry_is_group(lre)) {
-            DP_LayerGroup *lg = DP_layer_routes_entry_group(lre, cs);
-            DP_layer_group_diff_mark(lg, pe->diff);
-        }
-        else {
-            DP_LayerContent *lc = DP_layer_routes_entry_content(lre, cs);
-            DP_layer_content_diff_mark(lc, pe->diff);
-        }
-    }
-}
-
-void DP_paint_engine_layer_visibility_set(DP_PaintEngine *pe, int layer_id,
-                                          bool hidden)
-{
-    DP_ASSERT(pe);
-    DP_Vector *hidden_layers = &pe->local_view.hidden_layers;
-    int index = DP_vector_search_index(hidden_layers, sizeof(int),
-                                       is_hidden_layer_id, &layer_id);
-    if (hidden && index == -1) {
-        DP_VECTOR_PUSH_TYPE(hidden_layers, int, layer_id);
-        invalidate_local_view(pe, false);
-        check_layer_id(pe, layer_id);
-    }
-    else if (!hidden && index != -1) {
-        DP_VECTOR_REMOVE_TYPE(hidden_layers, int, index);
-        invalidate_local_view(pe, false);
-        check_layer_id(pe, layer_id);
-    }
-}
-
-
 DP_Tile *DP_paint_engine_local_background_tile_noinc(DP_PaintEngine *pe)
 {
     DP_ASSERT(pe);
-    return pe->local_view.background_tile;
-}
-
-void DP_paint_engine_local_background_tile_set_noinc(DP_PaintEngine *pe,
-                                                     DP_Tile *tile_or_null)
-{
-    DP_ASSERT(pe);
-    DP_Tile *prev = pe->local_view.background_tile;
-    if (prev != tile_or_null) {
-        pe->local_view.background_tile = tile_or_null;
-        pe->local_view.background_opaque = DP_tile_opaque(tile_or_null);
-        DP_tile_decref_nullable(prev);
-        invalidate_local_view(pe, false);
-    }
+    return DP_local_state_background_tile_noinc(pe->local_state);
 }
 
 
@@ -1792,6 +1736,7 @@ static bool should_push_message_remote(DP_PaintEngine *pe, DP_Message *msg,
                  DP_message_context_id(msg));
     }
     else {
+        DP_local_state_handle(pe->local_state, pe->preview_dc, msg);
         if (is_pushable_type(type) || type == DP_MSG_UNDO_DEPTH) {
             return true;
         }
@@ -2058,23 +2003,17 @@ static void set_local_layer_props_recursive(DP_TransientCanvasState *tcs,
 static void set_hidden_layer_props(DP_PaintEngine *pe,
                                    DP_TransientCanvasState *tcs)
 {
-    DP_Vector *hidden_layers = &pe->local_view.hidden_layers;
+    int count;
+    int *hidden_layer_ids =
+        DP_local_state_hidden_layer_ids(pe->local_state, &count);
     DP_LayerRoutes *lr = DP_transient_canvas_state_layer_routes_noinc(tcs);
-    // Using a while loop since we might purge elements along the way.
-    size_t i = 0;
-    size_t used = hidden_layers->used;
-    while (i < used) {
-        int layer_id = DP_VECTOR_AT_TYPE(hidden_layers, int, i);
-        DP_LayerRoutesEntry *lre = DP_layer_routes_search(lr, layer_id);
+    for (int i = 0; i < count; ++i) {
+        DP_LayerRoutesEntry *lre =
+            DP_layer_routes_search(lr, hidden_layer_ids[i]);
         if (lre) {
             DP_TransientLayerProps *tlp =
                 DP_layer_routes_entry_transient_props(lre, tcs);
             DP_transient_layer_props_hidden_set(tlp, true);
-            ++i;
-        }
-        else {
-            DP_VECTOR_REMOVE_TYPE(hidden_layers, int, i);
-            --used;
         }
     }
 }
@@ -2118,9 +2057,9 @@ static DP_CanvasState *apply_local_layer_props(DP_PaintEngine *pe,
     if (lpl == prev_lpl && tl == prev_tl) {
         // If our local view doesn't have anything to change about the canvas
         // state, we don't need to replace anything in the target state either.
-        bool keep_layer_props = vm == DP_VIEW_MODE_NORMAL
-                             && !pe->local_view.reveal_censored
-                             && pe->local_view.hidden_layers.used == 0;
+        bool keep_layer_props =
+            vm == DP_VIEW_MODE_NORMAL && !pe->local_view.reveal_censored
+            && DP_local_state_hidden_layer_id_count(pe->local_state) == 0;
         if (keep_layer_props) {
             return cs;
         }
@@ -2155,11 +2094,12 @@ static DP_CanvasState *apply_local_layer_props(DP_PaintEngine *pe,
 static DP_CanvasState *apply_local_background_tile(DP_PaintEngine *pe,
                                                    DP_CanvasState *cs)
 {
-    DP_Tile *t = pe->local_view.background_tile;
+    DP_LocalState *ls = pe->local_state;
+    DP_Tile *t = DP_local_state_background_tile_noinc(ls);
     if (t) {
         DP_TransientCanvasState *tcs = get_or_make_transient_canvas_state(cs);
         DP_transient_canvas_state_background_tile_set_noinc(
-            tcs, DP_tile_incref(t), pe->local_view.background_opaque);
+            tcs, DP_tile_incref(t), DP_local_state_background_opaque(ls));
         return (DP_CanvasState *)tcs;
     }
     else {
