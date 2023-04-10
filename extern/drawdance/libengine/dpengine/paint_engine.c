@@ -1013,7 +1013,7 @@ void DP_paint_engine_local_background_tile_set_noinc(DP_PaintEngine *pe,
 
 
 static bool start_recording(DP_PaintEngine *pe, DP_RecorderType type,
-                            char *path, bool with_history)
+                            JSON_Value *header, char *path, bool with_history)
 {
     DP_Output *output = DP_file_output_new_from_path(path);
     if (!output) {
@@ -1042,14 +1042,14 @@ static bool start_recording(DP_PaintEngine *pe, DP_RecorderType type,
         // lose undo history and might contain state from local messages. So
         // instead, we grab the oldest reachable state and then record the
         // entire history since then.
-        r = DP_canvas_history_recorder_new(pe->ch, type,
+        r = DP_canvas_history_recorder_new(pe->ch, type, header,
                                            pe->record.get_time_ms_fn,
                                            pe->record.get_time_ms_user, output);
     }
     else {
         // This is a continuation recording after a reset. That means there's no
         // history to worry about, just create a fresh recorder.
-        r = DP_recorder_new_inc(type, NULL, pe->record.get_time_ms_fn,
+        r = DP_recorder_new_inc(type, header, NULL, pe->record.get_time_ms_fn,
                                 pe->record.get_time_ms_user, output);
     }
 
@@ -1076,9 +1076,9 @@ static bool start_recording(DP_PaintEngine *pe, DP_RecorderType type,
 }
 
 bool DP_paint_engine_recorder_start(DP_PaintEngine *pe, DP_RecorderType type,
-                                    const char *path)
+                                    JSON_Value *header, const char *path)
 {
-    return start_recording(pe, type, DP_strdup(path), true);
+    return start_recording(pe, type, header, DP_strdup(path), true);
 }
 
 bool DP_paint_engine_recorder_stop(DP_PaintEngine *pe)
@@ -1542,11 +1542,22 @@ static void restart_recording(DP_PaintEngine *pe)
     if (!path) {
         DP_warn("Can't restart recording: no available file name after %s",
                 pe->record.path);
+        DP_paint_engine_recorder_stop(pe);
+        return;
+    }
+
+    JSON_Value *header =
+        DP_recorder_header_clone(DP_recorder_header(pe->record.recorder));
+    if (!header) {
+        DP_warn("Can't restart recording:%s", DP_error());
+        DP_free(path);
+        DP_paint_engine_recorder_stop(pe);
+        return;
     }
 
     DP_RecorderType type = DP_recorder_type(pe->record.recorder);
     DP_paint_engine_recorder_stop(pe);
-    if (path && !start_recording(pe, type, path, false)) {
+    if (path && !start_recording(pe, type, header, path, false)) {
         DP_warn("Can't restart recording: %s", DP_error());
     }
 }

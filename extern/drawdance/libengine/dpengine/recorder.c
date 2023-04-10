@@ -31,6 +31,7 @@
 #include <dpmsg/message.h>
 #include <dpmsg/message_queue.h>
 #include <dpmsg/text_writer.h>
+#include <parson.h>
 
 #define MIN_INTERVAL 500
 #define MAX_INTERVAL UINT16_MAX
@@ -45,6 +46,7 @@ struct DP_Recorder {
         DP_BinaryWriter *binary_writer;
         DP_TextWriter *text_writer;
     };
+    JSON_Value *header;
     long long last_timestamp;
     DP_Queue queue;
     DP_Atomic running;
@@ -59,58 +61,82 @@ struct DP_RecorderThreadArgs {
 };
 
 
+static bool set_header_pair(JSON_Object *obj, const char *key,
+                            const char *value)
+{
+    if (key && value
+        && json_object_set_string(obj, key, value) == JSONSuccess) {
+        return true;
+    }
+    else {
+        DP_error_set("Error setting recording header %s = %s",
+                     key ? key : "NULL", value ? value : "NULL");
+        return false;
+    }
+}
+
+JSON_Value *DP_recorder_header_new(const char *first, ...)
+{
+    JSON_Value *header = json_value_init_object();
+    if (header) {
+        JSON_Object *obj = json_value_get_object(header);
+        bool ok = set_header_pair(obj, "version", DP_PROTOCOL_VERSION);
+        if (ok && first) {
+            va_list ap;
+            va_start(ap, first);
+            const char *key = first;
+            ok = set_header_pair(obj, key, va_arg(ap, const char *));
+            while (ok && (key = va_arg(ap, const char *))) {
+                ok = set_header_pair(obj, key, va_arg(ap, const char *));
+            }
+            va_end(ap);
+        }
+
+        if (!ok) {
+            json_value_free(header);
+            header = NULL;
+        }
+    }
+    else {
+        DP_error_set("Error creating recording header object");
+    }
+    return header;
+}
+
+JSON_Value *DP_recorder_header_clone(JSON_Value *header)
+{
+    JSON_Value *copy = header ? json_value_deep_copy(header) : NULL;
+    if (copy) {
+        return copy;
+    }
+    else {
+        DP_error_set("Error cloning recording header");
+        return NULL;
+    }
+}
+
+
 static long long get_timestamp(DP_Recorder *r)
 {
     DP_RecorderGetTimeMsFn fn = r->get_time.fn;
     return fn ? fn(r->get_time.user) : 0;
 }
 
-static JSON_Value *make_header(void)
-{
-    JSON_Value *value = json_value_init_object();
-    if (value) {
-        JSON_Object *header = json_value_get_object(value);
-        bool ok = json_object_set_string(header, "version", DP_PROTOCOL_VERSION)
-                   == JSONSuccess
-               && json_object_set_string(header, "writerversion", DP_VERSION)
-                      == JSONSuccess
-               && json_object_set_string(header, "writer", "drawdance")
-                      == JSONSuccess;
-        if (ok) {
-            return value;
-        }
-        else {
-            json_value_free(value);
-            return NULL;
-        }
-    }
-    else {
-        return NULL;
-    }
-}
-
 static bool write_header(DP_Recorder *r)
 {
-    JSON_Value *value = make_header();
-    if (value) {
-        JSON_Object *header = json_value_get_object(value);
-        bool ok;
-        switch (r->type) {
-        case DP_RECORDER_TYPE_BINARY:
-            ok = DP_binary_writer_write_header(r->binary_writer, header);
-            break;
-        case DP_RECORDER_TYPE_TEXT:
-            ok = DP_text_writer_write_header(r->text_writer, header);
-            break;
-        default:
-            DP_UNREACHABLE();
-        }
-        json_value_free(value);
-        return ok;
+    JSON_Object *header = json_value_get_object(r->header);
+    bool ok;
+    switch (r->type) {
+    case DP_RECORDER_TYPE_BINARY:
+        ok = DP_binary_writer_write_header(r->binary_writer, header);
+        break;
+    case DP_RECORDER_TYPE_TEXT:
+        ok = DP_text_writer_write_header(r->text_writer, header);
+        break;
+    default:
+        DP_UNREACHABLE();
     }
-    else {
-        return false;
-    }
+    return ok;
 }
 
 static bool write_message_dec(DP_Recorder *r, DP_Message *msg)
@@ -193,17 +219,23 @@ static void run_recorder(void *user)
 }
 
 
-DP_Recorder *DP_recorder_new_inc(DP_RecorderType type,
+DP_Recorder *DP_recorder_new_inc(DP_RecorderType type, JSON_Value *header,
                                  DP_CanvasState *cs_or_null,
                                  DP_RecorderGetTimeMsFn get_time_fn,
                                  void *get_time_user, DP_Output *output)
 {
+    DP_ASSERT(header);
     DP_ASSERT(output);
     DP_Recorder *r = DP_malloc(sizeof(*r));
-    *r = (DP_Recorder){type,          {get_time_fn, get_time_user},
-                       {NULL},        0,
-                       DP_QUEUE_NULL, DP_ATOMIC_INIT(1),
-                       NULL,          NULL,
+    *r = (DP_Recorder){type,
+                       {get_time_fn, get_time_user},
+                       {NULL},
+                       header,
+                       0,
+                       DP_QUEUE_NULL,
+                       DP_ATOMIC_INIT(1),
+                       NULL,
+                       NULL,
                        NULL};
 
     switch (type) {
@@ -257,6 +289,7 @@ void DP_recorder_free_join(DP_Recorder *r)
         DP_semaphore_free(r->sem);
         DP_mutex_free(r->mutex);
         DP_message_queue_dispose(&r->queue);
+        json_value_free(r->header);
         switch (r->type) {
         case DP_RECORDER_TYPE_BINARY:
             DP_binary_writer_free(r->binary_writer);
@@ -275,6 +308,12 @@ DP_RecorderType DP_recorder_type(DP_Recorder *r)
 {
     DP_ASSERT(r);
     return r->type;
+}
+
+JSON_Value *DP_recorder_header(DP_Recorder *r)
+{
+    DP_ASSERT(r);
+    return r->header;
 }
 
 void DP_recorder_message_push_initial_inc(DP_Recorder *r, int count,

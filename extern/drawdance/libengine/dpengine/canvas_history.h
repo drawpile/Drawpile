@@ -28,6 +28,7 @@
 
 typedef struct DP_DrawContext DP_DrawContext;
 typedef struct DP_Message DP_Message;
+typedef struct json_value_t JSON_Value;
 
 
 #define DP_CANVAS_HISTORY_UNDO_DEPTH_MIN 3
@@ -136,13 +137,11 @@ void DP_canvas_history_handle_local_multidab_dec(DP_CanvasHistory *ch,
                                                  DP_DrawContext *dc, int count,
                                                  DP_Message **msgs);
 
-// May return NULL if something goes wrong. Takes ownership of the output, so no
-// matter the return value, the caller must not free it.
-DP_Recorder *DP_canvas_history_recorder_new(DP_CanvasHistory *ch,
-                                            DP_RecorderType type,
-                                            DP_RecorderGetTimeMsFn get_time_fn,
-                                            void *get_time_user,
-                                            DP_Output *output);
+// May return NULL if something goes wrong. Takes ownership of the output and
+// header, so no matter the return value, the caller must not free it.
+DP_Recorder *DP_canvas_history_recorder_new(
+    DP_CanvasHistory *ch, DP_RecorderType type, JSON_Value *header,
+    DP_RecorderGetTimeMsFn get_time_fn, void *get_time_user, DP_Output *output);
 
 
 DP_CanvasHistorySnapshot *DP_canvas_history_snapshot_new(DP_CanvasHistory *ch);

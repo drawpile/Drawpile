@@ -26,6 +26,7 @@
 typedef struct DP_CanvasState DP_CanvasState;
 typedef struct DP_Message DP_Message;
 typedef struct DP_Output DP_Output;
+typedef struct json_value_t JSON_Value;
 
 
 typedef struct DP_Recorder DP_Recorder;
@@ -38,7 +39,12 @@ typedef enum DP_RecorderType {
 typedef long long (*DP_RecorderGetTimeMsFn)(void *user);
 
 
-DP_Recorder *DP_recorder_new_inc(DP_RecorderType type,
+JSON_Value *DP_recorder_header_new(const char *first, ...);
+JSON_Value *DP_recorder_header_clone(JSON_Value *header);
+
+
+// Takes ownership of the given header, always frees it, even on failure.
+DP_Recorder *DP_recorder_new_inc(DP_RecorderType type, JSON_Value *header,
                                  DP_CanvasState *cs_or_null,
                                  DP_RecorderGetTimeMsFn get_time_fn,
                                  void *get_time_user, DP_Output *output);
@@ -46,6 +52,8 @@ DP_Recorder *DP_recorder_new_inc(DP_RecorderType type,
 void DP_recorder_free_join(DP_Recorder *r);
 
 DP_RecorderType DP_recorder_type(DP_Recorder *r);
+
+JSON_Value *DP_recorder_header(DP_Recorder *r);
 
 void DP_recorder_message_push_initial_inc(DP_Recorder *r, int count,
                                           DP_Message *(*get)(void *, int),

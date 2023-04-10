@@ -1529,13 +1529,12 @@ static DP_Message *get_recorder_message(void *user, int i)
     return entries[i].msg;
 }
 
-DP_Recorder *DP_canvas_history_recorder_new(DP_CanvasHistory *ch,
-                                            DP_RecorderType type,
-                                            DP_RecorderGetTimeMsFn get_time_fn,
-                                            void *get_time_user,
-                                            DP_Output *output)
+DP_Recorder *DP_canvas_history_recorder_new(
+    DP_CanvasHistory *ch, DP_RecorderType type, JSON_Value *header,
+    DP_RecorderGetTimeMsFn get_time_fn, void *get_time_user, DP_Output *output)
 {
     DP_ASSERT(ch);
+    DP_ASSERT(header);
     DP_ASSERT(output);
 
     int used = ch->used;
@@ -1545,8 +1544,8 @@ DP_Recorder *DP_canvas_history_recorder_new(DP_CanvasHistory *ch,
         DP_CanvasHistoryEntry *entry = &ch->entries[i];
         DP_CanvasState *cs = entry->state;
         if (cs) {
-            r = DP_recorder_new_inc(type, cs, get_time_fn, get_time_user,
-                                    output);
+            r = DP_recorder_new_inc(type, header, cs, get_time_fn,
+                                    get_time_user, output);
             if (r) {
                 if (!is_undo_point_entry(entry)) {
                     ++i; // This is a command entry, don't duplicate it.

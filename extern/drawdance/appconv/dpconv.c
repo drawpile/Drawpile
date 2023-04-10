@@ -356,8 +356,20 @@ static int convert_recording(DP_ConvContext *c, DP_RecorderType recorder_type)
         return 1;
     }
 
+    JSON_Value *header = DP_recorder_header_new(
+        "writer", "dpconv", "writerversion", DP_VERSION, NULL);
+    if (!header) {
+        warn("Can't create recording header: %s", DP_error());
+        return 1;
+    }
+
     DP_Recorder *recorder =
-        DP_recorder_new_inc(recorder_type, NULL, NULL, NULL, output);
+        DP_recorder_new_inc(recorder_type, header, NULL, NULL, NULL, output);
+    if (!recorder) {
+        warn("Can't create recorder: %s", DP_error());
+        return 1;
+    }
+
     bool ok = true;
 
     while (ok) {
