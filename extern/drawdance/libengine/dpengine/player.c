@@ -26,7 +26,6 @@
 #include "document_metadata.h"
 #include "draw_context.h"
 #include "dump_reader.h"
-#include "frame.h"
 #include "image.h"
 #include "layer_content.h"
 #include "layer_group.h"
@@ -957,8 +956,8 @@ static void move_tile_offsets(DP_BuildIndexEntryContext *e, DP_LayerContent *lc)
 static unsigned char *get_compression_buffer(size_t size, void *user)
 {
     size_t required_capacity = sizeof(uint16_t) + size;
-    return DP_draw_context_pool_require(user, required_capacity)
-         + sizeof(uint16_t);
+    unsigned char *pool = DP_draw_context_pool_require(user, required_capacity);
+    return pool + sizeof(uint16_t);
 }
 
 static size_t write_index_tile(DP_BuildIndexEntryContext *e, DP_Tile *t)
@@ -1356,27 +1355,12 @@ static bool write_index_timeline(DP_BuildIndexEntryContext *e)
         return false;
     }
 
-    int frame_count = DP_timeline_frame_count(tl);
+    int frame_count = 0; // FIXME
     if (!DP_OUTPUT_WRITE_LITTLEENDIAN(output, DP_OUTPUT_UINT16(frame_count))) {
         return false;
     }
 
-    for (int i = 0; i < frame_count; ++i) {
-        DP_Frame *f = DP_timeline_frame_at_noinc(tl, i);
-        int layer_id_count = DP_frame_layer_id_count(f);
-        if (!DP_OUTPUT_WRITE_LITTLEENDIAN(output,
-                                          DP_OUTPUT_UINT16(layer_id_count))) {
-            return false;
-        }
-
-        for (int j = 0; j < layer_id_count; ++j) {
-            int layer_id = j < layer_id_count ? DP_frame_layer_id_at(f, j) : 0;
-            if (!DP_OUTPUT_WRITE_LITTLEENDIAN(output,
-                                              DP_OUTPUT_UINT16(layer_id))) {
-                return false;
-            }
-        }
-    }
+    // FIXME
 
     e->current.timeline.tl = DP_timeline_incref(tl);
     e->current.timeline.offset = offset;
@@ -1731,7 +1715,7 @@ bool DP_player_index_build(DP_Player *player, DP_DrawContext *dc,
 
     DP_PERF_BEGIN_DETAIL(fn, "index_build", "path=%s", path);
     DP_AclState *acls = DP_acl_state_new();
-    DP_LocalState *ls = DP_local_state_new(NULL, NULL, NULL, NULL);
+    DP_LocalState *ls = DP_local_state_new(NULL, NULL, NULL, NULL, NULL);
     DP_CanvasHistory *ch = DP_canvas_history_new(NULL, NULL, false, NULL);
     DP_BuildIndexContext c = {index_player,
                               output,
@@ -2112,26 +2096,6 @@ static bool read_index_background_tile(DP_ReadSnapshotContext *c, size_t offset)
     }
 }
 
-static DP_TransientFrame *read_index_frame(DP_ReadSnapshotContext *c)
-{
-    DP_BufferedInput *input = c->input;
-    int layer_id_count;
-    bool ok = READ_INDEX(input, uint16, layer_id_count)
-           && read_index_input(input, sizeof(uint16_t)
-                                          * DP_int_to_size(layer_id_count));
-    if (!ok) {
-        return NULL;
-    }
-
-    DP_TransientFrame *tf = DP_transient_frame_new_init(layer_id_count);
-    for (int j = 0; j < layer_id_count; ++j) {
-        int layer_id = DP_read_littleendian_uint16(
-            input->buffer + sizeof(uint16_t) * DP_int_to_size(j));
-        DP_transient_frame_layer_id_set_at(tf, layer_id, j);
-    }
-    return tf;
-}
-
 static bool read_index_timeline(DP_ReadSnapshotContext *c, size_t offset)
 {
     DP_debug("Read timeline at offset %zu", offset);
@@ -2147,11 +2111,7 @@ static bool read_index_timeline(DP_ReadSnapshotContext *c, size_t offset)
         DP_transient_canvas_state_transient_timeline(c->tcs, frame_count);
     DP_debug("Read %d timeline frame(s)", frame_count);
     for (int i = 0; i < frame_count; ++i) {
-        DP_TransientFrame *tf = read_index_frame(c);
-        if (!tf) {
-            return false;
-        }
-        DP_transient_timeline_insert_transient_noinc(ttl, tf, i);
+        (void)ttl; // FIXME
     }
     return true;
 }

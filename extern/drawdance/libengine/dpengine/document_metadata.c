@@ -32,6 +32,7 @@ struct DP_DocumentMetadata {
     const int dpix;
     const int dpiy;
     const int framerate;
+    const int frame_count;
     const bool use_timeline;
 };
 
@@ -41,6 +42,7 @@ struct DP_TransientDocumentMetadata {
     int dpix;
     int dpiy;
     int framerate;
+    int frame_count;
     bool use_timeline;
 };
 
@@ -52,6 +54,7 @@ struct DP_DocumentMetadata {
     int dpix;
     int dpiy;
     int framerate;
+    int frame_count;
     bool use_timeline;
 };
 
@@ -60,11 +63,12 @@ struct DP_DocumentMetadata {
 
 static DP_TransientDocumentMetadata *
 allocate_document_metadata(bool transient, int dpix, int dpiy, int framerate,
-                           int use_timeline)
+                           int frame_count, int use_timeline)
 {
     DP_TransientDocumentMetadata *tdm = DP_malloc(sizeof(*tdm));
     *tdm = (DP_TransientDocumentMetadata){
-        DP_ATOMIC_INIT(1), transient, dpix, dpiy, framerate, use_timeline};
+        DP_ATOMIC_INIT(1), transient,   dpix,        dpiy,
+        framerate,         frame_count, use_timeline};
     return tdm;
 }
 
@@ -74,7 +78,8 @@ DP_DocumentMetadata *DP_document_metadata_new(void)
     return (DP_DocumentMetadata *)allocate_document_metadata(
         false, DP_DOCUMENT_METADATA_DPIX_DEFAULT,
         DP_DOCUMENT_METADATA_DPIY_DEFAULT,
-        DP_DOCUMENT_METADATA_FRAMERATE_DEFAULT, false);
+        DP_DOCUMENT_METADATA_FRAMERATE_DEFAULT,
+        DP_DOCUMENT_METADATA_FRAME_COUNT_DEFAULT, false);
 }
 
 DP_DocumentMetadata *DP_document_metadata_incref(DP_DocumentMetadata *dm)
@@ -149,6 +154,13 @@ bool DP_document_metadata_use_timeline(DP_DocumentMetadata *dm)
     return dm->use_timeline;
 }
 
+int DP_document_metadata_frame_count(DP_DocumentMetadata *dm)
+{
+    DP_ASSERT(dm);
+    DP_ASSERT(DP_atomic_get(&dm->refcount) > 0);
+    return dm->frame_count;
+}
+
 
 DP_TransientDocumentMetadata *
 DP_transient_document_metadata_new(DP_DocumentMetadata *dm)
@@ -156,7 +168,7 @@ DP_transient_document_metadata_new(DP_DocumentMetadata *dm)
     DP_ASSERT(dm);
     DP_ASSERT(DP_atomic_get(&dm->refcount) > 0);
     return allocate_document_metadata(true, dm->dpix, dm->dpiy, dm->framerate,
-                                      dm->use_timeline);
+                                      dm->frame_count, dm->use_timeline);
 }
 
 DP_TransientDocumentMetadata *
@@ -201,6 +213,12 @@ int DP_transient_document_metadata_framerate(DP_TransientDocumentMetadata *tdm)
     return DP_document_metadata_framerate((DP_DocumentMetadata *)tdm);
 }
 
+int DP_transient_document_metadata_frame_count(
+    DP_TransientDocumentMetadata *tdm)
+{
+    return DP_document_metadata_frame_count((DP_DocumentMetadata *)tdm);
+}
+
 bool DP_transient_document_metadata_use_timeline(
     DP_TransientDocumentMetadata *tdm)
 {
@@ -232,6 +250,15 @@ void DP_transient_document_metadata_framerate_set(
     DP_ASSERT(DP_atomic_get(&tdm->refcount) > 0);
     DP_ASSERT(tdm->transient);
     tdm->framerate = framerate;
+}
+
+void DP_transient_document_metadata_frame_count_set(
+    DP_TransientDocumentMetadata *tdm, int frame_count)
+{
+    DP_ASSERT(tdm);
+    DP_ASSERT(DP_atomic_get(&tdm->refcount) > 0);
+    DP_ASSERT(tdm->transient);
+    tdm->frame_count = DP_clamp_int(frame_count, 1, INT32_MAX);
 }
 
 void DP_transient_document_metadata_use_timeline_set(

@@ -6,6 +6,7 @@
 
 #include <QApplication>
 #include <QtGlobal>
+#include <QDropEvent>
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QStyle>
@@ -150,6 +151,11 @@ inline auto touchLastPos(const QEventPoint &event) {
 inline auto touchPos(const QEventPoint &event) {
 	return event.position();
 }
+
+inline auto dropPos(const QDropEvent &event)
+{
+	return event.position().toPoint();
+}
 #else
 using DeviceType = QTabletEvent::TabletDevice;
 using EnterEvent = QEvent;
@@ -212,6 +218,11 @@ inline auto touchLastPos(const QTouchEvent::TouchPoint &event) {
 }
 
 inline auto touchPos(const QTouchEvent::TouchPoint &event) {
+	return event.pos();
+}
+
+inline auto dropPos(const QDropEvent &event)
+{
 	return event.pos();
 }
 #endif

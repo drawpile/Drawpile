@@ -46,6 +46,10 @@ public:
     static Message makeInternalCleanup(uint8_t contextId);
     static Message makeInternalReset(uint8_t contextId);
     static Message makeInternalSnapshot(uint8_t contextId);
+    static Message makeKeyFrameSet(uint8_t contextId, uint16_t trackId, uint16_t frameIndex, uint16_t sourceId, uint16_t sourceIndex, uint8_t source);
+    static Message makeKeyFrameLayerAttributes(uint8_t contextId, uint16_t trackId, uint16_t frameIndex, const QVector<uint16_t> &layers);
+    static Message makeKeyFrameRetitle(uint8_t contextId, uint16_t trackId, uint16_t frameIndex, const QString &title);
+    static Message makeKeyFrameDelete(uint8_t contextId, uint16_t trackId, uint16_t frameIndex, uint16_t moveTrackId, uint16_t moveFrameIndex);
     static Message makeLaserTrail(uint8_t contextId, uint32_t color, uint8_t persistence);
     static Message makeLayerAttributes(uint8_t contextId, uint16_t id, uint8_t sublayer, uint8_t flags, uint8_t opacity, uint8_t blend);
     static Message makeLayerAcl(uint8_t contextId, uint16_t id, uint8_t flags, const QVector<uint8_t> &exclusive);
@@ -64,8 +68,10 @@ public:
     static Message makeServerCommand(uint8_t contextId, const QJsonDocument &msg);
     static Message makeSessionOwner(uint8_t contextId, const QVector<uint8_t> &users);
     static Message makeSetMetadataInt(uint8_t contextId, uint8_t field, int32_t value);
-    static Message makeSetTimelineFrame(uint8_t contextId, uint16_t frame, bool insert, const QVector<uint16_t> &layerIds);
-    static Message makeRemoveTimelineFrame(uint8_t contextId, uint16_t frame);
+    static Message makeTrackCreate(uint8_t contextId, uint16_t id, uint16_t insertId, uint16_t sourceId, const QString &title);
+    static Message makeTrackDelete(uint8_t contextId, uint16_t id);
+    static Message makeTrackOrder(uint8_t contextId, const QVector<uint16_t> &tracks);
+    static Message makeTrackRetitle(uint8_t contextId, uint16_t id, const QString &title);
     static Message makeTrustedUsers(uint8_t contextId, const QVector<uint8_t> &users);
     static Message makeUndo(uint8_t contextId, uint8_t overrideUser, bool redo);
     static Message makeUndoDepth(uint8_t contextId, uint8_t depth);
@@ -81,6 +87,8 @@ public:
     static Message makeLocalChangeLayerVisibility(int layerId, bool hidden);
     static Message makeLocalChangeBackgroundColor(const QColor &color);
     static Message makeLocalChangeBackgroundClear();
+    static Message makeLocalChangeTrackVisibility(int trackId, bool hidden);
+    static Message makeLocalChangeTrackOnionSkin(int trackId, bool onionSkin);
 
     Message();
     Message(const Message &other);

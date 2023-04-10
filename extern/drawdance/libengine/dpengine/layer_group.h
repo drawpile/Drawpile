@@ -24,7 +24,7 @@
 #include <dpcommon/common.h>
 
 typedef struct DP_CanvasDiff DP_CanvasDiff;
-typedef struct DP_ViewModeFilter DP_ViewModeFilter;
+typedef struct DP_ViewModeContext DP_ViewModeContext;
 typedef union DP_Pixel8 DP_Pixel8;
 
 #ifdef DP_NO_STRICT_ALIASING
@@ -94,7 +94,7 @@ DP_TransientTile *
 DP_layer_group_flatten_tile_to(DP_LayerGroup *lg, DP_LayerProps *lp,
                                int tile_index, DP_TransientTile *tt_or_null,
                                uint16_t parent_opacity, bool include_sublayers,
-                               const DP_ViewModeFilter *vmf);
+                               const DP_ViewModeContext *vmc);
 
 
 DP_TransientLayerGroup *DP_transient_layer_group_new(DP_LayerGroup *lg);

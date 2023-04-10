@@ -90,6 +90,8 @@ target_sources(drawpile PRIVATE
 	dialogs/hostdialog.h
 	dialogs/joindialog.cpp
 	dialogs/joindialog.h
+	dialogs/keyframepropertiesdialog.cpp
+	dialogs/keyframepropertiesdialog.h
 	dialogs/layerproperties.cpp
 	dialogs/layerproperties.h
 	dialogs/layoutsdialog.cpp

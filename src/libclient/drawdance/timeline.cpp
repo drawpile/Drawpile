@@ -8,64 +8,69 @@ extern "C" {
 
 namespace drawdance {
 
+Timeline Timeline::null()
+{
+	return Timeline{};
+}
+
 Timeline Timeline::inc(DP_Timeline *tl)
 {
-    return Timeline{DP_timeline_incref_nullable(tl)};
+	return Timeline{DP_timeline_incref_nullable(tl)};
 }
 
 Timeline Timeline::noinc(DP_Timeline *tl)
 {
-    return Timeline{tl};
+	return Timeline{tl};
 }
 
 Timeline::Timeline(const Timeline &other)
-    : Timeline{DP_timeline_incref_nullable(other.m_data)}
+	: Timeline{DP_timeline_incref_nullable(other.m_data)}
 {
 }
 
 Timeline::Timeline(Timeline &&other)
-    : Timeline{other.m_data}
+	: Timeline{other.m_data}
 {
-    other.m_data = nullptr;
+	other.m_data = nullptr;
 }
 
 Timeline &Timeline::operator=(const Timeline &other)
 {
-    DP_timeline_decref_nullable(m_data);
-    m_data = DP_timeline_incref_nullable(other.m_data);
-    return *this;
+	DP_timeline_decref_nullable(m_data);
+	m_data = DP_timeline_incref_nullable(other.m_data);
+	return *this;
 }
 
 Timeline &Timeline::operator=(Timeline &&other)
 {
-    DP_timeline_decref_nullable(m_data);
-    m_data = other.m_data;
-    other.m_data = nullptr;
-    return *this;
+	DP_timeline_decref_nullable(m_data);
+	m_data = other.m_data;
+	other.m_data = nullptr;
+	return *this;
 }
 
 Timeline::~Timeline()
 {
-    DP_timeline_decref_nullable(m_data);
+	DP_timeline_decref_nullable(m_data);
 }
 
 bool Timeline::isNull() const
 {
-    return !m_data;
+	return !m_data;
 }
 
-int Timeline::frameCount() const
+int Timeline::trackCount() const
 {
-    return DP_timeline_frame_count(m_data);
+	return DP_timeline_count(m_data);
 }
 
-drawdance::Frame Timeline::frameAt(int i) const
+Track Timeline::trackAt(int index) const
 {
-    return drawdance::Frame::inc(DP_timeline_frame_at_noinc(m_data, i));
+	return Track::inc(DP_timeline_at_noinc(m_data, index));
 }
 
 Timeline::Timeline(DP_Timeline *tl)
-    : m_data{tl}
+	: m_data{tl}
 {
 }
 

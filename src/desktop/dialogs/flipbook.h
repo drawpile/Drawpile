@@ -3,6 +3,8 @@
 #ifndef FLIPBOOK_H
 #define FLIPBOOK_H
 
+#include "libclient/drawdance/canvasstate.h"
+#include "libclient/drawdance/viewmode.h"
 #include <QDialog>
 #include <QList>
 #include <QPixmap>
@@ -13,16 +15,15 @@ class QEvent;
 class QTimer;
 
 namespace canvas {
-	class PaintEngine;
+class PaintEngine;
 }
 
 namespace dialogs {
 
-class Flipbook final : public QDialog
-{
+class Flipbook final : public QDialog {
 	Q_OBJECT
 public:
-	explicit Flipbook(QWidget *parent=nullptr);
+	explicit Flipbook(QWidget *parent = nullptr);
 	~Flipbook() override;
 
 	void setPaintEngine(canvas::PaintEngine *pe);
@@ -40,10 +41,12 @@ private slots:
 
 private:
 	void resetFrameCache();
+	bool searchIdenticalFrame(int f, QPixmap &outFrame);
 
 	Ui_Flipbook *m_ui;
-
 	canvas::PaintEngine *m_paintengine;
+	drawdance::CanvasState m_canvasState;
+	drawdance::ViewModeBuffer m_vmb;
 	QList<QPixmap> m_frames;
 	QTimer *m_timer;
 	QRect m_crop;

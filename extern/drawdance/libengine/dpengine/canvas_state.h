@@ -43,8 +43,6 @@ typedef struct DP_ViewModeFilter DP_ViewModeFilter;
 #define DP_FLAT_IMAGE_INCLUDE_SUBLAYERS  (1 << 1)
 #define DP_FLAT_IMAGE_RENDER_FLAGS \
     (DP_FLAT_IMAGE_INCLUDE_BACKGROUND | DP_FLAT_IMAGE_INCLUDE_SUBLAYERS)
-#define DP_FLAT_IMAGE_RENDER_ONION_SKIN_FLAGS \
-    (DP_FLAT_IMAGE_RENDER_FLAGS & ~DP_FLAT_IMAGE_INCLUDE_BACKGROUND)
 
 typedef struct DP_CanvasState DP_CanvasState;
 
@@ -134,6 +132,9 @@ bool DP_canvas_state_use_timeline(DP_CanvasState *cs);
 
 int DP_canvas_state_frame_count(DP_CanvasState *cs);
 
+bool DP_canvas_state_same_frame(DP_CanvasState *cs, int frame_index_a,
+                                int frame_index_b);
+
 DP_CanvasStateChange
 DP_canvas_state_handle(DP_CanvasState *cs, DP_DrawContext *dc, DP_Message *msg);
 
@@ -157,6 +158,12 @@ DP_TransientLayerContent *DP_canvas_state_to_flat_layer(DP_CanvasState *cs,
 DP_Image *DP_canvas_state_to_flat_image(DP_CanvasState *cs, unsigned int flags,
                                         const DP_Rect *area_or_null,
                                         const DP_ViewModeFilter *vmf_or_null);
+
+DP_TransientTile *DP_canvas_state_flatten_tile_to(DP_CanvasState *cs,
+                                                  int tile_index,
+                                                  DP_TransientTile *tt_or_null,
+                                                  bool include_sublayers,
+                                                  const DP_ViewModeFilter *vmf);
 
 DP_TransientTile *
 DP_canvas_state_flatten_tile(DP_CanvasState *cs, int tile_index,
@@ -185,6 +192,10 @@ DP_TransientCanvasState *DP_transient_canvas_state_new(DP_CanvasState *cs);
 DP_TransientCanvasState *DP_transient_canvas_state_new_with_layers_noinc(
     DP_CanvasState *cs, DP_TransientLayerList *tll,
     DP_TransientLayerPropsList *tlpl);
+
+DP_TransientCanvasState *
+DP_transient_canvas_state_new_with_timeline_noinc(DP_CanvasState *cs,
+                                                  DP_TransientTimeline *ttl);
 
 DP_TransientCanvasState *
 DP_transient_canvas_state_incref(DP_TransientCanvasState *cs);
@@ -231,6 +242,9 @@ DP_transient_canvas_state_layer_props_noinc(DP_TransientCanvasState *tcs);
 DP_LayerRoutes *
 DP_transient_canvas_state_layer_routes_noinc(DP_TransientCanvasState *tcs);
 
+DP_DocumentMetadata *
+DP_transient_canvas_state_metadata_noinc(DP_TransientCanvasState *tcs);
+
 void DP_transient_canvas_state_layers_set_inc(DP_TransientCanvasState *tcs,
                                               DP_LayerList *ll);
 
@@ -255,6 +269,9 @@ DP_transient_canvas_state_transient_annotations(DP_TransientCanvasState *tcs,
 DP_TransientTimeline *
 DP_transient_canvas_state_transient_timeline(DP_TransientCanvasState *tcs,
                                              int reserve);
+
+void DP_transient_canvas_state_timeline_set_inc(DP_TransientCanvasState *tcs,
+                                                DP_Timeline *tl);
 
 DP_TransientDocumentMetadata *
 DP_transient_canvas_state_transient_metadata(DP_TransientCanvasState *tcs);

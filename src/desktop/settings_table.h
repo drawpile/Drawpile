@@ -32,7 +32,6 @@ SETTING(filterClosed              , FilterClosed              , "history/filterc
 SETTING(filterLocked              , FilterLocked              , "history/filterlocked"                  , false)
 SETTING(filterNsfm                , FilterNsfm                , "history/filternsfw"                    , false)
 SETTING(flipbookCrop              , FlipbookCrop              , "flipbook/crop"                         , QRect())
-SETTING(flipbookFrameRate         , FlipbookFrameRate         , "flipbook/fps"                          , 15)
 SETTING(flipbookWindow            , FlipbookWindow            , "flipbook/window"                       , QRect())
 SETTING(globalPressureCurve       , GlobalPressureCurve       , "settings/input/globalcurve"            , QString("0,0;1,1;"))
 SETTING(ignoreCarrierGradeNat     , IgnoreCarrierGradeNat     , "history/cgnalert"                      , false)

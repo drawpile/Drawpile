@@ -316,6 +316,8 @@ LocalChange:
           variants:
               - LayerVisibility
               - BackgroundTile
+              - TrackVisibility
+              - TrackOnionSkin
         - body bytes
 
 # Command messages (opaque)
@@ -748,6 +750,7 @@ SetMetadataInt:
               - Dpiy
               - Framerate
               - UseTimeline
+              - FrameCount
         - value i32
 
 LayerTreeCreate:
@@ -871,23 +874,106 @@ TransformRegion:
               - Bilinear
         - mask bytes
 
-SetTimelineFrame:
+TrackCreate:
     id: 166
     comment: |
-             Set the layers included in the given animation frame
-             The frame number must be between zero and last frame number + 1.
-             If the `insert` flag is true, the frame will be inserted at the given
-             position rather than replacing the existing frame.
+             Create a timeline track.
+
+             The track id must be prefixed by the user's context id, like layer
+             and annotation ids. Operators are exempt from this restriction.
     fields:
-        - frame u16
-        - insert bool
+        - id u16: hex
+        - insert_id u16: hex
+        - source_id u16: hex
+        - title utf8
+
+TrackRetitle:
+    id: 167
+    comment: Rename a timeline track.
+    fields:
+        - id u16: hex
+        - title utf8
+
+TrackDelete:
+    id: 168
+    comment: Delete a timeline track.
+    fields:
+        - id u16: hex
+
+TrackOrder:
+    id: 169
+    comment: |
+             Reorder timeline tracks.
+
+             Works like the LayerOrder command, just for tracks: duplicates are
+             ignored and missing tracks are appended to the end.
+    fields:
+        - tracks vec_u16: hex
+
+KeyFrameSet:
+    id: 170
+    comment: |
+             Create or modify a key frame.
+
+             If there's no key frame at the given frame index, it will be
+             created, otherwise it will be clobbered. The layer must exist and
+             the frame index must be within the document's frame count.
+
+             If the source is `Layer`, a new key frame will be created with
+             `source_id` as the layer id, `source_index` will be ignored. If the
+             source is `KeyFrame`, the key frame is copied from the key frame at
+             track with id `source_id` and frame index `source_index`.
+    fields:
+        - track_id u16: hex
+        - frame_index u16
+        - source_id u16: hex
+        - source_index u16
+        - source enum:
+          name: Source
+          variants:
+              - Layer
+              - KeyFrame
+
+KeyFrameRetitle:
+    id: 171
+    comment: Rename a key frame.
+    fields:
+        - track_id u16: hex
+        - frame_index u16
+        - title utf8
+
+KeyFrameLayerAttributes:
+    id: 172
+    comment: |
+             Set (clobber) flags for layers inside of a key frame.
+
+             This takes a list of (layer id, flags) pairs. If a layer appears
+             multiple times, only the first occurrence will apply. If a layer
+             doesn't exist or the flags value is 0, it will be ignored. Unknown
+             flags will be retained for forward-compatibility.
+
+             Used flags are:
+
+             * `0x1` hidden: hides a layer in the key frame. Children can
+               override being hidden by setting the revealed flag on them.
+
+             * `0x2` revealed: overrides the hidden state given by a parent
+               group, making it visible again. Putting both hidden and revealed
+               on the same layer cancels each other out and will act like
+               neither is set.
+    fields:
+        - track_id u16: hex
+        - frame_index u16
         - layers vec_u16: hex
 
-RemoveTimelineFrame:
-  id: 167
-  comment: Remove a frame from the timeline
-  fields:
-    - frame u16
+KeyFrameDelete:
+    id: 173
+    comment: Delete a key frame, possibly moving it somewhere else.
+    fields:
+        - track_id u16: hex
+        - frame_index u16
+        - move_track_id u16: hex
+        - move_frame_index u16
 
 Undo:
     id: 255

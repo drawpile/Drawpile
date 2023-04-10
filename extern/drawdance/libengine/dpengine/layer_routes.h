@@ -28,6 +28,7 @@ typedef struct DP_DrawContext DP_DrawContext;
 typedef struct DP_LayerContent DP_LayerContent;
 typedef struct DP_LayerGroup DP_LayerGroup;
 typedef struct DP_LayerList DP_LayerList;
+typedef struct DP_LayerListEntry DP_LayerListEntry;
 typedef struct DP_LayerProps DP_LayerProps;
 typedef struct DP_LayerPropsList DP_LayerPropsList;
 typedef struct DP_Message DP_Message;
@@ -87,6 +88,9 @@ int DP_layer_routes_entry_index_count(DP_LayerRoutesEntry *lre);
 int DP_layer_routes_entry_index_at(DP_LayerRoutesEntry *lre, int index);
 
 int DP_layer_routes_entry_index_last(DP_LayerRoutesEntry *lre);
+
+DP_LayerListEntry *DP_layer_routes_entry_layer(DP_LayerRoutesEntry *lre,
+                                               DP_CanvasState *cs);
 
 DP_LayerContent *DP_layer_routes_entry_content(DP_LayerRoutesEntry *lre,
                                                DP_CanvasState *cs);

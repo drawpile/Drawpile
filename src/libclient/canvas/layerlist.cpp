@@ -367,6 +367,70 @@ void LayerListModel::setDefaultLayer(uint16_t id)
 	}
 }
 
+KeyFrameLayerModel *LayerListModel::toKeyFrameLayerModel(
+	int rootLayerId, const QHash<int, bool> &layerVisibility) const
+{
+	int rootIndex = -1;
+	int count = m_items.size();
+	for(int i = 0; i < count; ++i) {
+		if(m_items[i].id == rootLayerId) {
+			rootIndex = i;
+			break;
+		}
+	}
+
+	if(rootIndex == -1) {
+		return nullptr;
+	} else {
+		QVector<KeyFrameLayerItem> items;
+		int index = 0;
+		int layerIndex = rootIndex;
+		flattenKeyFrameLayer(items, index, layerIndex, 0, layerVisibility);
+		return new KeyFrameLayerModel{items};
+	}
+}
+
+void LayerListModel::flattenKeyFrameLayer(
+	QVector<KeyFrameLayerItem> &items, int &index, int &layerIndex,
+	int relIndex, const QHash<int, bool> &layerVisibility) const
+{
+	const LayerListItem &layer = m_items[layerIndex];
+	++layerIndex;
+
+	KeyFrameLayerItem::Visibility visibility;
+	if(layerVisibility.contains(layer.id)) {
+		if(layerVisibility.value(layer.id)) {
+			visibility = KeyFrameLayerItem::Visibility::Revealed;
+		} else {
+			visibility = KeyFrameLayerItem::Visibility::Hidden;
+		}
+	} else {
+		visibility = KeyFrameLayerItem::Visibility::Default;
+	}
+
+	int itemIndex = items.count();
+	items.append({
+		layer.id,
+		layer.title,
+		visibility,
+		layer.group,
+		layer.children,
+		relIndex,
+		index,
+		index + 1,
+	});
+	++index;
+
+	if(layer.group) {
+		for(int i = 0; i < layer.children; ++i) {
+			flattenKeyFrameLayer(items, index, layerIndex, i, layerVisibility);
+		}
+		items[itemIndex].right = index;
+	}
+
+	++index;
+}
+
 QStringList LayerMimeData::formats() const
 {
 	return QStringList() << "application/x-qt-image";

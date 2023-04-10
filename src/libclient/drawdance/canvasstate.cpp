@@ -141,6 +141,11 @@ int CanvasState::frameCount() const
     return DP_canvas_state_frame_count(m_data);
 }
 
+bool CanvasState::sameFrame(int frameIndexA, int frameIndexB)
+{
+    return DP_canvas_state_same_frame(m_data, frameIndexA, frameIndexB);
+}
+
 QImage CanvasState::toFlatImage(
     bool includeBackground, bool includeSublayers,
     const QRect *rect, const DP_ViewModeFilter *vmf) const

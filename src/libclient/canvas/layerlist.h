@@ -8,6 +8,7 @@ extern "C" {
 }
 
 #include "libclient/canvas/acl.h"
+#include "libclient/utils/keyframelayermodel.h"
 #include "libshared/util/qtcompat.h"
 
 #include <QAbstractItemModel>
@@ -149,6 +150,9 @@ public:
 	 */
 	int findNearestLayer(int layerId) const;
 
+	KeyFrameLayerModel *toKeyFrameLayerModel(
+		int rootLayerId, const QHash<int, bool> &layerVisibility) const;
+
 public slots:
 	void setLayers(const drawdance::LayerPropsList &lpl);
 	void setLayersVisibleInFrame(const QVector<int> &layers, bool frameMode);
@@ -161,6 +165,10 @@ signals:
 	void moveRequested(int sourceId, int targetId, bool intoGroup, bool below);
 
 private:
+	void flattenKeyFrameLayer(
+		QVector<KeyFrameLayerItem> &items, int &index, int &layerIndex,
+		int relIndex, const QHash<int, bool> &layerVisibiltiy) const;
+
 	QVector<LayerListItem> m_items;
 	QVector<int> m_frameLayers;
 	GetLayerFunction m_getlayerfn;

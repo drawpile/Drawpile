@@ -218,3 +218,12 @@ int DP_vector_search_index(DP_Vector *vector, size_t element_size,
     }
     return -1;
 }
+
+void DP_vector_sort(DP_Vector *vector, size_t element_size,
+                    int (*compare)(const void *, const void *))
+{
+    DP_ASSERT(vector);
+    DP_ASSERT(element_size > 0);
+    DP_ASSERT(compare);
+    qsort(vector->elements, vector->used, element_size, compare);
+}

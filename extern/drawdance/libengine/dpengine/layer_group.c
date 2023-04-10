@@ -314,7 +314,7 @@ DP_TransientTile *
 DP_layer_group_flatten_tile_to(DP_LayerGroup *lg, DP_LayerProps *lp,
                                int tile_index, DP_TransientTile *tt_or_null,
                                uint16_t parent_opacity, bool include_sublayers,
-                               const DP_ViewModeFilter *vmf)
+                               const DP_ViewModeContext *vmc)
 {
     DP_ASSERT(lg);
     DP_ASSERT(DP_atomic_get(&lg->refcount) > 0);
@@ -322,14 +322,14 @@ DP_layer_group_flatten_tile_to(DP_LayerGroup *lg, DP_LayerProps *lp,
     DP_ASSERT(tile_index >= 0);
     DP_ASSERT(tile_index < DP_tile_total_round(lg->width, lg->height));
     DP_ASSERT(parent_opacity <= DP_BIT15);
-    DP_ASSERT(vmf);
+    DP_ASSERT(vmc);
 
     if (parent_opacity == 0 || !DP_layer_props_visible(lp)) {
         return tt_or_null;
     }
 
-    DP_ViewModeFilterResult vmfr = DP_view_mode_filter_apply(vmf, lp);
-    if (vmfr.hidden_by_view_mode) {
+    DP_ViewModeResult vmr = DP_view_mode_context_apply(vmc, lp);
+    if (vmr.hidden_by_view_mode) {
         return tt_or_null;
     }
 
@@ -340,7 +340,7 @@ DP_layer_group_flatten_tile_to(DP_LayerGroup *lg, DP_LayerProps *lp,
         // merge the result with the group's blend mode and opacity.
         DP_TransientTile *gtt = DP_layer_list_flatten_tile_to(
             lg->children, lpl, tile_index, NULL, DP_BIT15, include_sublayers,
-            &vmfr.child_vmf);
+            &vmr.child_vmc);
         if (gtt) {
             DP_TransientTile *tt = DP_transient_tile_merge_nullable(
                 tt_or_null, (DP_Tile *)gtt, opacity,
@@ -355,9 +355,9 @@ DP_layer_group_flatten_tile_to(DP_LayerGroup *lg, DP_LayerProps *lp,
     else {
         // Flatten the containing layers one by one, disregarding the blend
         // mode, but taking the opacity into account individually.
-        return DP_layer_list_flatten_tile_to(
-            lg->children, lpl, tile_index, tt_or_null, opacity,
-            include_sublayers, &vmfr.child_vmf);
+        return DP_layer_list_flatten_tile_to(lg->children, lpl, tile_index,
+                                             tt_or_null, opacity,
+                                             include_sublayers, &vmr.child_vmc);
     }
 }
 

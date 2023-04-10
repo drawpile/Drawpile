@@ -20,7 +20,7 @@
 #include "canvas_history.h"
 #include "canvas_state.h"
 #include "document_metadata.h"
-#include "frame.h"
+#include "key_frame.h"
 #include "layer_content.h"
 #include "layer_group.h"
 #include "layer_list.h"
@@ -29,6 +29,7 @@
 #include "pixels.h"
 #include "tile.h"
 #include "timeline.h"
+#include "track.h"
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
 #include <dpcommon/queue.h>
@@ -446,6 +447,10 @@ static void document_metadata_to_reset_image(struct DP_ResetImageContext *c,
         c, DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE,
         DP_document_metadata_framerate(dm),
         DP_DOCUMENT_METADATA_FRAMERATE_DEFAULT);
+    set_document_metadata_int_field_if_not_default(
+        c, DP_MSG_SET_METADATA_INT_FIELD_FRAME_COUNT,
+        DP_document_metadata_frame_count(dm),
+        DP_DOCUMENT_METADATA_FRAME_COUNT_DEFAULT);
     if (DP_document_metadata_use_timeline(dm)) {
         reset_image_push(c, DP_msg_set_metadata_int_new(
                                 c->context_id,
@@ -453,25 +458,64 @@ static void document_metadata_to_reset_image(struct DP_ResetImageContext *c,
     }
 }
 
-void set_timeline_layers(int count, uint16_t *out, void *user)
+static void set_key_frame_layers(int count, uint16_t *out, void *user)
 {
-    DP_Frame *f = user;
-    DP_ASSERT(count == DP_frame_layer_id_count(f));
-    for (int i = 0; i < count; ++i) {
-        out[i] = DP_int_to_uint16(DP_frame_layer_id_at(f, i));
+    int layer_count = count / 2;
+    const DP_KeyFrameLayer *kfls = user;
+    for (int i = 0; i < layer_count; ++i) {
+        out[i * 2] = DP_int_to_uint16(kfls[i].layer_id);
+        out[i * 2 + 1] = DP_uint_to_uint16(kfls[i].flags);
+    }
+}
+
+static void key_frame_to_reset_image(struct DP_ResetImageContext *c,
+                                     uint16_t track_id, uint16_t frame_index,
+                                     DP_KeyFrame *kf)
+{
+    reset_image_push(
+        c, DP_msg_key_frame_set_new(c->context_id, track_id, frame_index,
+                                    DP_int_to_uint16(DP_key_frame_layer_id(kf)),
+                                    0, DP_MSG_KEY_FRAME_SET_SOURCE_LAYER));
+
+    size_t title_length;
+    const char *title = DP_key_frame_title(kf, &title_length);
+    if (title_length != 0) {
+        reset_image_push(c, DP_msg_key_frame_retitle_new(c->context_id,
+                                                         track_id, frame_index,
+                                                         title, title_length));
+    }
+
+    int layer_count;
+    const DP_KeyFrameLayer *kfls = DP_key_frame_layers(kf, &layer_count);
+    if (layer_count != 0) {
+        reset_image_push(c, DP_msg_key_frame_layer_attributes_new(
+                                c->context_id, track_id, frame_index,
+                                set_key_frame_layers, layer_count * 2,
+                                (void *)kfls));
+    }
+}
+
+static void track_to_reset_image(struct DP_ResetImageContext *c, DP_Track *t)
+{
+    uint16_t track_id = DP_int_to_uint16(DP_track_id(t));
+    size_t title_length;
+    const char *title = DP_track_title(t, &title_length);
+    reset_image_push(c, DP_msg_track_create_new(c->context_id, track_id, 0, 0,
+                                                title, title_length));
+    int key_frame_count = DP_track_key_frame_count(t);
+    for (int i = 0; i < key_frame_count; ++i) {
+        key_frame_to_reset_image(
+            c, track_id, DP_int_to_uint16(DP_track_frame_index_at_noinc(t, i)),
+            DP_track_key_frame_at_noinc(t, i));
     }
 }
 
 static void timeline_to_reset_image(struct DP_ResetImageContext *c,
                                     DP_Timeline *tl)
 {
-    int frame_count = DP_timeline_frame_count(tl);
-    for (int i = 0; i < frame_count; ++i) {
-        DP_Frame *f = DP_timeline_frame_at_noinc(tl, i);
-        reset_image_push(
-            c, DP_msg_set_timeline_frame_new(c->context_id, DP_int_to_uint16(i),
-                                             true, set_timeline_layers,
-                                             DP_frame_layer_id_count(f), f));
+    int track_count = DP_timeline_count(tl);
+    for (int i = track_count - 1; i >= 0; --i) {
+        track_to_reset_image(c, DP_timeline_at_noinc(tl, i));
     }
 }
 

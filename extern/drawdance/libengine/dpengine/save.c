@@ -25,9 +25,9 @@
 #include "canvas_state.h"
 #include "document_metadata.h"
 #include "draw_context.h"
-#include "frame.h"
 #include "image.h"
 #include "image_png.h"
+#include "key_frame.h"
 #include "layer_content.h"
 #include "layer_group.h"
 #include "layer_list.h"
@@ -35,6 +35,7 @@
 #include "layer_props_list.h"
 #include "tile.h"
 #include "timeline.h"
+#include "track.h"
 #include "view_mode.h"
 #include "zip_archive.h"
 #include <dpcommon/atomic.h>
@@ -101,7 +102,13 @@ static int save_ora_context_index_get(DP_SaveOraContext *c, int layer_id)
 {
     DP_SaveOraLayer *sol;
     HASH_FIND_INT(c->layers, &layer_id, sol);
-    return sol ? sol->index : -1;
+    if (sol) {
+        return sol->index;
+    }
+    else {
+        DP_warn("Layer id %d not found in save index", layer_id);
+        return -1;
+    }
 }
 
 static void save_ora_context_offsets_get(DP_SaveOraContext *c, int layer_id,
@@ -325,6 +332,14 @@ static bool ora_store_merged(DP_SaveOraContext *c, DP_CanvasState *cs,
         DP_OUTPUT_PRINT_LITERAL(_output, "\"");                         \
     } while (0)
 
+static void ora_write_name_attr(DP_SaveOraContext *c, DP_Output *output,
+                                const char *value)
+{
+    if (value && value[0] != '\0') {
+        ORA_APPEND_ATTR(c, output, "name", "%s", value);
+    }
+}
+
 static void ora_write_layer_props_xml(DP_SaveOraContext *c, DP_Output *output,
                                       DP_LayerProps *lp)
 {
@@ -332,10 +347,7 @@ static void ora_write_layer_props_xml(DP_SaveOraContext *c, DP_Output *output,
         DP_uint16_to_double(DP_layer_props_opacity(lp)) / (double)DP_BIT15;
     ORA_APPEND_ATTR(c, output, "opacity", "%.4f", opacity);
 
-    const char *title = DP_layer_props_title(lp, NULL);
-    if (title[0] != '\0') {
-        ORA_APPEND_ATTR(c, output, "name", "%s", title);
-    }
+    ora_write_name_attr(c, output, DP_layer_props_title(lp, NULL));
 
     if (DP_layer_props_hidden(lp)) {
         DP_OUTPUT_PRINT_LITERAL(output, " visibility=\"hidden\"");
@@ -442,44 +454,85 @@ static void ora_write_annotations_xml(DP_SaveOraContext *c, DP_Output *output,
     }
 }
 
-static void ora_write_frame_xml(DP_SaveOraContext *c, DP_Output *output,
-                                DP_Frame *f)
+static void ora_write_key_frame_layer_xml(DP_SaveOraContext *c,
+                                          DP_Output *output,
+                                          const DP_KeyFrameLayer *kfl)
 {
-    bool have_index = false;
-    int layer_id_count = DP_frame_layer_id_count(f);
-    for (int i = 0; i < layer_id_count; ++i) {
-        int layer_id = DP_frame_layer_id_at(f, i);
-        int index = save_ora_context_index_get(c, layer_id);
-        if (index != -1) {
-            if (have_index) {
-                DP_output_format(output, " %d", index);
-            }
-            else {
-                have_index = true;
-                DP_output_format(output, "<frame>%d", index);
-            }
+    int index = save_ora_context_index_get(c, kfl->layer_id);
+    if (index != -1) {
+        DP_OUTPUT_PRINT_LITERAL(output, "<drawpile:keyframelayer");
+        ORA_APPEND_ATTR(c, output, "layer", "%d", index);
+        if (DP_key_frame_layer_hidden(kfl)) {
+            ORA_APPEND_ATTR(c, output, "hidden", "true");
         }
+        if (DP_key_frame_layer_revealed(kfl)) {
+            ORA_APPEND_ATTR(c, output, "revealed", "true");
+        }
+        DP_OUTPUT_PRINT_LITERAL(output, "/>");
     }
-    if (have_index) {
-        DP_OUTPUT_PRINT_LITERAL(output, "</frame>");
+}
+
+static void ora_write_key_frame_xml(DP_SaveOraContext *c, DP_Output *output,
+                                    int frame, DP_KeyFrame *kf)
+{
+    DP_OUTPUT_PRINT_LITERAL(output, "<drawpile:keyframe");
+    ORA_APPEND_ATTR(c, output, "frame", "%d", frame);
+    int layer_id = DP_key_frame_layer_id(kf);
+    int index = layer_id == 0 ? -1 : save_ora_context_index_get(c, layer_id);
+    if (index != -1) {
+        ORA_APPEND_ATTR(c, output, "layer", "%d", index);
+    }
+    ora_write_name_attr(c, output, DP_key_frame_title(kf, NULL));
+
+    int layer_count;
+    const DP_KeyFrameLayer *kfls = DP_key_frame_layers(kf, &layer_count);
+    if (layer_count > 0) {
+        DP_OUTPUT_PRINT_LITERAL(output, ">");
+        for (int i = 0; i < layer_count; ++i) {
+            ora_write_key_frame_layer_xml(c, output, &kfls[i]);
+        }
+        DP_OUTPUT_PRINT_LITERAL(output, "</drawpile:keyframe>");
     }
     else {
-        DP_OUTPUT_PRINT_LITERAL(output, "<frame/>");
+        DP_OUTPUT_PRINT_LITERAL(output, "/>");
+    }
+}
+
+static void ora_write_track_xml(DP_SaveOraContext *c, DP_Output *output,
+                                DP_Track *t)
+{
+    DP_OUTPUT_PRINT_LITERAL(output, "<drawpile:track");
+    ora_write_name_attr(c, output, DP_track_title(t, NULL));
+    int key_frame_count = DP_track_key_frame_count(t);
+    if (key_frame_count > 0) {
+        DP_OUTPUT_PRINT_LITERAL(output, ">");
+        for (int i = 0; i < key_frame_count; ++i) {
+            ora_write_key_frame_xml(c, output,
+                                    DP_track_frame_index_at_noinc(t, i),
+                                    DP_track_key_frame_at_noinc(t, i));
+        }
+        DP_OUTPUT_PRINT_LITERAL(output, "</drawpile:track>");
+    }
+    else {
+        DP_OUTPUT_PRINT_LITERAL(output, "/>");
     }
 }
 
 static void ora_write_timeline_xml(DP_SaveOraContext *c, DP_Output *output,
                                    DP_CanvasState *cs, bool use_timeline)
 {
+    DP_DocumentMetadata *dm = DP_canvas_state_metadata_noinc(cs);
+    int frame_count = DP_document_metadata_frame_count(dm);
     DP_Timeline *tl = DP_canvas_state_timeline_noinc(cs);
-    int frame_count = DP_timeline_frame_count(tl);
-    if (frame_count != 0) {
+    int track_count = DP_timeline_count(tl);
+    if (frame_count > 0 && track_count > 0) {
         DP_OUTPUT_PRINT_LITERAL(output, "<drawpile:timeline");
         ORA_APPEND_ATTR(c, output, "enabled", "%s",
                         use_timeline ? "true" : "false");
+        ORA_APPEND_ATTR(c, output, "frames", "%d", frame_count);
         DP_OUTPUT_PRINT_LITERAL(output, ">");
-        for (int i = 0; i < frame_count; ++i) {
-            ora_write_frame_xml(c, output, DP_timeline_frame_at_noinc(tl, i));
+        for (int i = 0; i < track_count; ++i) {
+            ora_write_track_xml(c, output, DP_timeline_at_noinc(tl, i));
         }
         DP_OUTPUT_PRINT_LITERAL(output, "</drawpile:timeline>");
     }
@@ -714,6 +767,7 @@ static const char *get_path_separator(const char *path)
 
 struct DP_SaveFrameContext {
     DP_CanvasState *cs;
+    DP_ViewModeBuffer *vmb;
     int frame_count;
     const char *path;
     const char *separator;
@@ -744,7 +798,8 @@ static void save_frame(struct DP_SaveFrameContext *c, int frame_index)
     char *path =
         DP_format("%s%sframe-%03d.png", c->path, c->separator, frame_index + 1);
     DP_SaveResult result = save_flat_image(
-        cs, path, save_png, DP_view_mode_filter_make_frame(cs, frame_index));
+        cs, path, save_png,
+        DP_view_mode_filter_make_frame(c->vmb, cs, frame_index, NULL));
     set_error_result(c, result);
     DP_free(path);
 }
@@ -776,9 +831,9 @@ static void save_frame_job(void *element, DP_UNUSED int thread_index)
 }
 
 static DP_SaveResult
-save_animation_frames(DP_CanvasState *cs, const char *path,
-                      DP_SaveAnimationProgressFn progress_fn, void *user,
-                      int frame_count)
+save_animation_frames(DP_CanvasState *cs, DP_ViewModeBuffer *vmb,
+                      const char *path, DP_SaveAnimationProgressFn progress_fn,
+                      void *user, int frame_count)
 {
     if (frame_count == 0) {
         return DP_SAVE_RESULT_SUCCESS;
@@ -805,6 +860,7 @@ save_animation_frames(DP_CanvasState *cs, const char *path,
 
     struct DP_SaveFrameContext c = {
         cs,
+        vmb,
         frame_count,
         path,
         get_path_separator(path),
@@ -815,6 +871,7 @@ save_animation_frames(DP_CanvasState *cs, const char *path,
         0,
     };
 
+    // TODO: re-use identical frames
     for (int i = 0; i < frame_count; ++i) {
         struct DP_SaveFrameJobParams params = {&c, i};
         DP_worker_push(worker, &params);
@@ -825,16 +882,17 @@ save_animation_frames(DP_CanvasState *cs, const char *path,
     return (DP_SaveResult)DP_atomic_get(&c.result);
 }
 
-DP_SaveResult DP_save_animation_frames(DP_CanvasState *cs, const char *path,
+DP_SaveResult DP_save_animation_frames(DP_CanvasState *cs,
+                                       DP_ViewModeBuffer *vmb, const char *path,
                                        DP_SaveAnimationProgressFn progress_fn,
                                        void *user)
 {
-    if (cs && path) {
+    if (cs && vmb && path) {
         int frame_count = DP_canvas_state_frame_count(cs);
         DP_PERF_BEGIN_DETAIL(fn, "animation_frames", "frame_count=%d,path=%s",
                              frame_count, path);
-        DP_SaveResult result =
-            save_animation_frames(cs, path, progress_fn, user, frame_count);
+        DP_SaveResult result = save_animation_frames(cs, vmb, path, progress_fn,
+                                                     user, frame_count);
         DP_PERF_END(fn);
         return result;
     }
@@ -866,7 +924,9 @@ static bool report_gif_progress(DP_SaveAnimationProgressFn progress_fn,
     return !progress_fn || progress_fn(user, part / total);
 }
 
-static DP_SaveResult save_animation_gif(DP_CanvasState *cs, const char *path,
+static DP_SaveResult save_animation_gif(DP_CanvasState *cs,
+                                        DP_ViewModeBuffer *vmb,
+                                        const char *path,
                                         DP_SaveAnimationProgressFn progress_fn,
                                         void *user, int frame_count)
 {
@@ -897,7 +957,9 @@ static DP_SaveResult save_animation_gif(DP_CanvasState *cs, const char *path,
     double centiseconds_per_frame = get_gif_centiseconds_per_frame(cs);
     double delay_frac = 0.0;
     for (int i = 0; i < frame_count; ++i) {
-        DP_ViewModeFilter vmf = DP_view_mode_filter_make_frame(cs, i);
+        // TODO: re-use identical frames
+        DP_ViewModeFilter vmf =
+            DP_view_mode_filter_make_frame(vmb, cs, i, NULL);
         DP_Image *img = DP_canvas_state_to_flat_image(
             cs, DP_FLAT_IMAGE_RENDER_FLAGS, NULL, &vmf);
         double delay_floored = floor(centiseconds_per_frame + delay_frac);
@@ -928,16 +990,17 @@ static DP_SaveResult save_animation_gif(DP_CanvasState *cs, const char *path,
     return DP_SAVE_RESULT_SUCCESS;
 }
 
-DP_SaveResult DP_save_animation_gif(DP_CanvasState *cs, const char *path,
+DP_SaveResult DP_save_animation_gif(DP_CanvasState *cs, DP_ViewModeBuffer *vmb,
+                                    const char *path,
                                     DP_SaveAnimationProgressFn progress_fn,
                                     void *user)
 {
-    if (cs && path) {
+    if (cs && vmb && path) {
         int frame_count = DP_canvas_state_frame_count(cs);
         DP_PERF_BEGIN_DETAIL(fn, "animation_gif", "frame_count=%d,path=%s",
                              frame_count, path);
         DP_SaveResult result =
-            save_animation_gif(cs, path, progress_fn, user, frame_count);
+            save_animation_gif(cs, vmb, path, progress_fn, user, frame_count);
         DP_PERF_END(fn);
         return result;
     }

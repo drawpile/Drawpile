@@ -146,7 +146,7 @@ static void addLayerButton(
 	layout->addWidget(button);
 }
 
-void LayerList::setLayerEditActions(QAction *addLayer, QAction *addGroup, QAction *duplicate, QAction *merge, QAction *properties, QAction *del)
+void LayerList::setLayerEditActions(QAction *addLayer, QAction *addGroup, QAction *duplicate, QAction *merge, QAction *properties, QAction *del, QAction *keyFrameSetLayer)
 {
 	Q_ASSERT(addLayer);
 	Q_ASSERT(addGroup);
@@ -183,8 +183,9 @@ void LayerList::setLayerEditActions(QAction *addLayer, QAction *addGroup, QActio
 	m_contextMenu->addAction(m_duplicateLayerAction);
 	m_contextMenu->addAction(m_mergeLayerAction);
 	m_contextMenu->addAction(m_deleteLayerAction);
-	m_contextMenu->addSeparator();
 	m_contextMenu->addAction(m_propertiesAction);
+	m_contextMenu->addSeparator();
+	m_contextMenu->addAction(keyFrameSetLayer);
 
 	// Action functionality
 	connect(m_addLayerAction, &QAction::triggered, this, &LayerList::addLayer);

@@ -24,8 +24,8 @@
 #include "canvas_state.h"
 #include "document_metadata.h"
 #include "draw_context.h"
-#include "frame.h"
 #include "image.h"
+#include "key_frame.h"
 #include "layer_content.h"
 #include "layer_group.h"
 #include "layer_list.h"
@@ -33,8 +33,10 @@
 #include "layer_props_list.h"
 #include "ops.h"
 #include "player.h"
+#include "text.h"
 #include "tile.h"
 #include "timeline.h"
+#include "track.h"
 #include "xml_stream.h"
 #include "zip_archive.h"
 #include <dpcommon/common.h>
@@ -43,6 +45,7 @@
 #include <dpcommon/perf.h>
 #include <dpcommon/queue.h>
 #include <dpcommon/threading.h>
+#include <dpcommon/vector.h>
 #include <dpcommon/worker.h>
 #include <dpmsg/binary_reader.h>
 #include <dpmsg/blend_mode.h>
@@ -53,6 +56,7 @@
 
 #define DRAWPILE_NAMESPACE "http://drawpile.net/"
 #define MYPAINT_NAMESPACE  "http://mypaint.org/ns/openraster"
+#define START_ID           0x100
 
 
 const DP_LoadFormat *DP_load_supported_formats(void)
@@ -86,8 +90,11 @@ typedef enum DP_ReadOraExpect {
     DP_READ_ORA_EXPECT_IMAGE_END,
     DP_READ_ORA_EXPECT_ANNOTATION,
     DP_READ_ORA_EXPECT_ANNOTATION_CONTENT,
-    DP_READ_ORA_EXPECT_FRAME,
-    DP_READ_ORA_EXPECT_FRAME_CONTENT,
+    DP_READ_ORA_EXPECT_TRACK,
+    DP_READ_ORA_EXPECT_KEY_FRAME,
+    DP_READ_ORA_EXPECT_KEY_FRAME_END,
+    DP_READ_ORA_EXPECT_KEY_FRAME_LAYER,
+    DP_READ_ORA_EXPECT_KEY_FRAME_LAYER_END,
     DP_READ_ORA_EXPECT_END,
 } DP_ReadOraExpect;
 
@@ -111,6 +118,24 @@ typedef struct DP_ReadOraChildren {
     DP_TransientLayerProps *tlp;
 } DP_ReadOraChildren;
 
+typedef struct DP_ReadOraKeyFrameLayer {
+    int layer_index;
+    unsigned int flags;
+} DP_ReadOraKeyFrameLayer;
+
+typedef struct DP_ReadOraKeyFrame {
+    int frame;
+    int layer_index;
+    DP_Text *title;
+    DP_Vector layers;
+} DP_ReadOraKeyFrame;
+
+typedef struct DP_ReadOraTrack {
+    int id;
+    DP_Text *title;
+    DP_Vector key_frames;
+} DP_ReadOraTrack;
+
 typedef struct DP_ReadOraContext {
     DP_DrawContext *dc;
     DP_ZipReader *zr;
@@ -132,8 +157,7 @@ typedef struct DP_ReadOraContext {
             DP_Queue annotations;
         };
     };
-    int frame_count;
-    DP_Queue frames;
+    DP_Vector tracks;
     size_t text_capacity;
     size_t text_len;
     char *text;
@@ -156,6 +180,21 @@ static void dispose_annotation(void *element, DP_UNUSED void *user)
 {
     DP_Annotation *a = element;
     DP_annotation_decref(a);
+}
+
+static void dispose_key_frame(void *element)
+{
+    DP_ReadOraKeyFrame *rokf = element;
+    DP_vector_dispose(&rokf->layers);
+    DP_text_decref_nullable(rokf->title);
+}
+
+static void dispose_track(void *element)
+{
+    DP_ReadOraTrack *rot = element;
+    DP_VECTOR_CLEAR_DISPOSE_TYPE(&rot->key_frames, DP_ReadOraKeyFrame,
+                                 dispose_key_frame);
+    DP_text_decref_nullable(rot->title);
 }
 
 static void read_ora_context_buffer_dispose(DP_ReadOraContext *c)
@@ -636,90 +675,170 @@ static void ora_handle_annotations_end(DP_ReadOraContext *c)
 
 static void ora_handle_timeline(DP_ReadOraContext *c, DP_XmlElement *element)
 {
+    DP_TransientDocumentMetadata *tdm =
+        DP_transient_canvas_state_transient_metadata(c->tcs);
+
     const char *enabled = DP_xml_element_attribute(element, NULL, "enabled");
     if (enabled && DP_str_equal(enabled, "true")) {
-        DP_TransientDocumentMetadata *tdm =
-            DP_transient_canvas_state_transient_metadata(c->tcs);
         DP_transient_document_metadata_use_timeline_set(tdm, true);
     }
-    DP_queue_init(&c->frames, 8, sizeof(int));
-    c->expect = DP_READ_ORA_EXPECT_FRAME;
-}
 
-static void push_frame(DP_ReadOraContext *c, int i)
-{
-    *(int *)DP_queue_push(&c->frames, sizeof(int)) = i;
-}
-
-static bool is_nul_or_space(char c)
-{
-    return c == '\0' || isspace(c);
-}
-
-static void ora_handle_frame_end(DP_ReadOraContext *c)
-{
-    size_t count_index = c->frames.used;
-    push_frame(c, 0);
-    ++c->frame_count;
-
-    if (c->text_len != 0) {
-        int count = 0;
-        char *text = c->text;
-        while (*text != '\0') {
-            if (isspace(*text)) {
-                ++text;
-            }
-            else {
-                char *end;
-                long value = strtol(text, &end, 10);
-                if (is_nul_or_space(*end)) {
-                    if (value >= 0 && value <= UINT16_MAX) {
-                        push_frame(c, DP_long_to_int(value));
-                        ++count;
-                    }
-                    else {
-                        DP_warn("Read ORA: frame index %ld out of bounds",
-                                value);
-                    }
-                }
-                else {
-                    DP_warn("Read ORA: error parsing frame number '%.*s'",
-                            (int)(end - text), text);
-                    while (!is_nul_or_space(*end)) {
-                        ++end;
-                    }
-                }
-                text = end;
-            }
-        }
-        *(int *)DP_queue_at(&c->frames, sizeof(int), count_index) = count;
+    int frame_count;
+    if (ora_read_int_attribute(element, NULL, "frames", 0, INT32_MAX,
+                               &frame_count)) {
+        DP_transient_document_metadata_frame_count_set(tdm, frame_count);
     }
 
-    c->expect = DP_READ_ORA_EXPECT_FRAME;
+    DP_VECTOR_INIT_TYPE(&c->tracks, DP_ReadOraTrack, 8);
+    c->expect = DP_READ_ORA_EXPECT_TRACK;
 }
 
-static int frame_at(DP_ReadOraContext *c, size_t i)
+static void ora_handle_track(DP_ReadOraContext *c, DP_XmlElement *element)
 {
-    return *(int *)DP_queue_at(&c->frames, sizeof(int), i);
+    DP_ReadOraTrack rot = {
+        ora_get_next_id(c),
+        DP_text_new_nolen(DP_xml_element_attribute(element, NULL, "name")),
+        DP_VECTOR_NULL,
+    };
+    DP_VECTOR_INIT_TYPE(&rot.key_frames, DP_ReadOraKeyFrame, 8);
+    DP_VECTOR_PUSH_TYPE(&c->tracks, DP_ReadOraTrack, rot);
+    c->expect = DP_READ_ORA_EXPECT_KEY_FRAME;
+}
+
+static void ora_handle_key_frame(DP_ReadOraContext *c, DP_XmlElement *element)
+{
+    DP_DocumentMetadata *dm = DP_transient_canvas_state_metadata_noinc(c->tcs);
+    int frame_count = DP_document_metadata_frame_count(dm);
+
+    DP_ReadOraKeyFrame rokf;
+    if (!ora_read_int_attribute(element, NULL, "frame", 0, frame_count - 1,
+                                &rokf.frame)) {
+        DP_warn("Invalid key frame index");
+        c->expect = DP_READ_ORA_EXPECT_KEY_FRAME_END;
+        return;
+    }
+
+    DP_ReadOraTrack *rot = &DP_VECTOR_LAST_TYPE(&c->tracks, DP_ReadOraTrack);
+    size_t used = rot->key_frames.used;
+    for (size_t i = 0; i < used; ++i) {
+        DP_ReadOraKeyFrame existing =
+            DP_VECTOR_AT_TYPE(&rot->key_frames, DP_ReadOraKeyFrame, i);
+        if (existing.frame == rokf.frame) {
+            DP_warn("Duplicate key frame index %d", rokf.frame);
+            c->expect = DP_READ_ORA_EXPECT_KEY_FRAME_END;
+            return;
+        }
+    }
+
+    if (!ora_read_int_attribute(element, NULL, "layer", 0, UINT16_MAX,
+                                &rokf.layer_index)) {
+        rokf.layer_index = -1;
+    }
+
+    rokf.title =
+        DP_text_new_nolen(DP_xml_element_attribute(element, NULL, "name"));
+    DP_VECTOR_INIT_TYPE(&rokf.layers, DP_ReadOraKeyFrameLayer, 8);
+    DP_VECTOR_PUSH_TYPE(&rot->key_frames, DP_ReadOraKeyFrame, rokf);
+    c->expect = DP_READ_ORA_EXPECT_KEY_FRAME_LAYER;
+}
+
+static void ora_handle_key_frame_layer(DP_ReadOraContext *c,
+                                       DP_XmlElement *element)
+{
+    c->expect = DP_READ_ORA_EXPECT_KEY_FRAME_LAYER_END;
+
+    DP_ReadOraKeyFrameLayer rokfl = {0, 0};
+    if (!ora_read_int_attribute(element, NULL, "layer", 0, UINT16_MAX,
+                                &rokfl.layer_index)) {
+        DP_warn("Invalid key frame layer index");
+        return;
+    }
+
+    const char *hidden = DP_xml_element_attribute(element, NULL, "hidden");
+    if (DP_str_equal_lowercase(hidden, "true")) {
+        rokfl.flags |= DP_KEY_FRAME_LAYER_HIDDEN;
+    }
+
+    const char *revealed = DP_xml_element_attribute(element, NULL, "revealed");
+    if (DP_str_equal_lowercase(revealed, "true")) {
+        rokfl.flags |= DP_KEY_FRAME_LAYER_REVEALED;
+    }
+
+    if (rokfl.flags == 0) {
+        DP_warn("Key frame %d has no flags", rokfl.layer_index);
+        return;
+    }
+
+    DP_ReadOraTrack *rot = &DP_VECTOR_LAST_TYPE(&c->tracks, DP_ReadOraTrack);
+    DP_ReadOraKeyFrame *rokf =
+        &DP_VECTOR_LAST_TYPE(&rot->key_frames, DP_ReadOraKeyFrame);
+    size_t used = rokf->layers.used;
+    for (size_t i = 0; i < used; ++i) {
+        DP_ReadOraKeyFrameLayer existing =
+            DP_VECTOR_AT_TYPE(&rokf->layers, DP_ReadOraKeyFrameLayer, i);
+        if (existing.layer_index == rokfl.layer_index) {
+            DP_warn("Duplicate key frame layer index %d", rokf->layer_index);
+            return;
+        }
+    }
+
+    DP_VECTOR_PUSH_TYPE(&rokf->layers, DP_ReadOraKeyFrameLayer, rokfl);
+}
+
+static int cmp_key_frames(const void *a, const void *b)
+{
+    int fa = ((const DP_ReadOraKeyFrame *)a)->frame;
+    int fb = ((const DP_ReadOraKeyFrame *)b)->frame;
+    return fa < fb ? -1 : fa > fb ? 1 : 0;
+}
+
+static DP_TransientKeyFrame *ora_fill_key_frame(DP_ReadOraKeyFrame *rokf)
+{
+    int layer_count = DP_size_to_int(rokf->layers.used);
+    int layer_index = rokf->layer_index;
+    DP_TransientKeyFrame *tkf = DP_transient_key_frame_new_init(
+        layer_index == -1 ? 0 : layer_index + START_ID, layer_count);
+    size_t title_length;
+    const char *title = DP_text_string(rokf->title, &title_length);
+    DP_transient_key_frame_title_set(tkf, title, title_length);
+    for (int i = 0; i < layer_count; ++i) {
+        DP_ReadOraKeyFrameLayer *rokfl =
+            &DP_VECTOR_AT_TYPE(&rokf->layers, DP_ReadOraKeyFrameLayer, i);
+        DP_KeyFrameLayer kfl = {rokfl->layer_index + START_ID, rokfl->flags};
+        DP_transient_key_frame_layer_set(tkf, kfl, i);
+    }
+    return tkf;
+}
+
+static DP_TransientTrack *ora_fill_track(DP_ReadOraTrack *rot)
+{
+    DP_VECTOR_SORT_TYPE(&rot->key_frames, DP_ReadOraKeyFrame, cmp_key_frames);
+    int key_frame_count = DP_size_to_int(rot->key_frames.used);
+    DP_TransientTrack *tt = DP_transient_track_new_init(key_frame_count);
+    DP_transient_track_id_set(tt, rot->id);
+    size_t title_length;
+    const char *title = DP_text_string(rot->title, &title_length);
+    DP_transient_track_title_set(tt, title, title_length);
+    for (int i = 0; i < key_frame_count; ++i) {
+        DP_ReadOraKeyFrame *rokf =
+            &DP_VECTOR_AT_TYPE(&rot->key_frames, DP_ReadOraKeyFrame, i);
+        DP_TransientKeyFrame *tkf = ora_fill_key_frame(rokf);
+        DP_transient_track_set_transient_noinc(tt, rokf->frame, tkf, i);
+    }
+    return tt;
 }
 
 static void ora_fill_timeline(DP_ReadOraContext *c)
 {
+    int track_count = DP_size_to_int(c->tracks.used);
     DP_TransientTimeline *ttl =
-        DP_transient_canvas_state_transient_timeline(c->tcs, c->frame_count);
-    size_t i = 0;
-    size_t count = c->frames.used;
-    int frame_index = 0;
-    while (i < count) {
-        int layer_id_count = frame_at(c, i++);
-        DP_TransientFrame *tf = DP_transient_frame_new_init(layer_id_count);
-        for (int j = 0; j < layer_id_count; ++j) {
-            int layer_id = frame_at(c, i++) + 1;
-            DP_transient_frame_layer_id_set_at(tf, layer_id, j);
-        }
-        DP_transient_timeline_insert_transient_noinc(ttl, tf, frame_index++);
+        DP_transient_canvas_state_transient_timeline(c->tcs, track_count);
+    for (int i = 0; i < track_count; ++i) {
+        DP_ReadOraTrack *rot =
+            &DP_VECTOR_AT_TYPE(&c->tracks, DP_ReadOraTrack, i);
+        DP_TransientTrack *tt = ora_fill_track(rot);
+        DP_transient_timeline_set_transient_noinc(ttl, tt, i);
     }
-    // The timeline might have had invalid or duplicate entries, clean it up.
     DP_transient_canvas_state_timeline_cleanup(c->tcs);
 }
 
@@ -751,7 +870,7 @@ static bool ora_xml_start_element(void *user, DP_XmlElement *element)
             if (c->want_layers) {
                 c->want_layers = false;
                 c->expect = DP_READ_ORA_EXPECT_STACK_OR_LAYER;
-                c->next_id = 0x100;
+                c->next_id = START_ID;
             }
             else {
                 DP_warn("Duplicate root <stack>");
@@ -763,7 +882,7 @@ static bool ora_xml_start_element(void *user, DP_XmlElement *element)
             if (c->want_annotations) {
                 c->want_annotations = false;
                 c->expect = DP_READ_ORA_EXPECT_ANNOTATION;
-                c->next_id = 0x100;
+                c->next_id = START_ID;
                 read_ora_context_init_annotations(c);
             }
             else {
@@ -775,6 +894,7 @@ static bool ora_xml_start_element(void *user, DP_XmlElement *element)
                                             "timeline")) {
             if (c->want_timeline) {
                 c->want_timeline = false;
+                c->next_id = START_ID;
                 ora_handle_timeline(c, element);
             }
             else {
@@ -832,20 +952,49 @@ static bool ora_xml_start_element(void *user, DP_XmlElement *element)
                  DP_xml_element_name(element));
         ++c->garbage_depth;
         break;
-    case DP_READ_ORA_EXPECT_FRAME:
-        if (DP_xml_element_name_equals(element, NULL, "frame")) {
-            c->text_len = 0;
-            c->expect = DP_READ_ORA_EXPECT_FRAME_CONTENT;
+    case DP_READ_ORA_EXPECT_TRACK:
+        if (DP_xml_element_name_equals(element, DRAWPILE_NAMESPACE, "track")) {
+            ora_handle_track(c, element);
         }
         else {
-            DP_debug("Expected <frame> got <%s:%s>",
+            DP_debug("Expected <drawpile:track> got <%s:%s>",
                      DP_xml_element_namespace(element),
                      DP_xml_element_name(element));
             ++c->garbage_depth;
         }
         break;
-    case DP_READ_ORA_EXPECT_FRAME_CONTENT:
-        DP_debug("Expected text or </frame>, got <%s:%s>",
+    case DP_READ_ORA_EXPECT_KEY_FRAME:
+        if (DP_xml_element_name_equals(element, DRAWPILE_NAMESPACE,
+                                       "keyframe")) {
+            ora_handle_key_frame(c, element);
+        }
+        else {
+            DP_debug("Expected <drawpile:keyframe> got <%s:%s>",
+                     DP_xml_element_namespace(element),
+                     DP_xml_element_name(element));
+            ++c->garbage_depth;
+        }
+        break;
+    case DP_READ_ORA_EXPECT_KEY_FRAME_END:
+        DP_debug("Expected </drawpile:keyframe> got <%s:%s>",
+                 DP_xml_element_namespace(element),
+                 DP_xml_element_name(element));
+        ++c->garbage_depth;
+        break;
+    case DP_READ_ORA_EXPECT_KEY_FRAME_LAYER:
+        if (DP_xml_element_name_equals(element, DRAWPILE_NAMESPACE,
+                                       "keyframelayer")) {
+            ora_handle_key_frame_layer(c, element);
+        }
+        else {
+            DP_debug("Expected <drawpile:keyframelayer> got <%s:%s>",
+                     DP_xml_element_namespace(element),
+                     DP_xml_element_name(element));
+            ++c->garbage_depth;
+        }
+        break;
+    case DP_READ_ORA_EXPECT_KEY_FRAME_LAYER_END:
+        DP_debug("Expected </drawpile:keyframelayer> got <%s:%s>",
                  DP_xml_element_namespace(element),
                  DP_xml_element_name(element));
         ++c->garbage_depth;
@@ -863,8 +1012,7 @@ static bool ora_xml_text_content(void *user, size_t len, const char *text)
 {
     DP_ReadOraContext *c = user;
     switch (c->expect) {
-    case DP_READ_ORA_EXPECT_ANNOTATION_CONTENT:
-    case DP_READ_ORA_EXPECT_FRAME_CONTENT: {
+    case DP_READ_ORA_EXPECT_ANNOTATION_CONTENT: {
         size_t current_len = c->text_len;
         size_t new_len = current_len + len;
         size_t capacity_required = new_len + 1;
@@ -911,11 +1059,18 @@ static bool ora_xml_end_element(void *user)
     case DP_READ_ORA_EXPECT_ANNOTATION_CONTENT:
         ora_handle_annotation_end(c);
         break;
-    case DP_READ_ORA_EXPECT_FRAME:
+    case DP_READ_ORA_EXPECT_TRACK:
         c->expect = DP_READ_ORA_EXPECT_ROOT_STACK_OR_ANNOTATIONS_OR_TIMELINE;
         break;
-    case DP_READ_ORA_EXPECT_FRAME_CONTENT:
-        ora_handle_frame_end(c);
+    case DP_READ_ORA_EXPECT_KEY_FRAME:
+        c->expect = DP_READ_ORA_EXPECT_TRACK;
+        break;
+    case DP_READ_ORA_EXPECT_KEY_FRAME_LAYER:
+    case DP_READ_ORA_EXPECT_KEY_FRAME_END:
+        c->expect = DP_READ_ORA_EXPECT_KEY_FRAME;
+        break;
+    case DP_READ_ORA_EXPECT_KEY_FRAME_LAYER_END:
+        c->expect = DP_READ_ORA_EXPECT_KEY_FRAME_LAYER;
         break;
     case DP_READ_ORA_EXPECT_IMAGE:
     case DP_READ_ORA_EXPECT_END:
@@ -989,15 +1144,14 @@ static DP_CanvasState *load_ora(DP_DrawContext *dc, const char *path,
         0,
         DP_READ_ORA_BUFFER_STATE_NONE,
         {{DP_QUEUE_NULL, DP_QUEUE_NULL}},
-        0,
-        DP_QUEUE_NULL,
+        DP_VECTOR_NULL,
         0,
         0,
         NULL,
     };
     DP_CanvasState *cs = ora_read_stack_xml(&c);
     read_ora_context_buffer_dispose(&c);
-    DP_queue_dispose(&c.frames);
+    DP_VECTOR_CLEAR_DISPOSE_TYPE(&c.tracks, DP_ReadOraTrack, dispose_track);
     DP_free(c.text);
     DP_zip_reader_free(zr);
     if (cs) {
@@ -1044,7 +1198,7 @@ DP_CanvasState *load_flat_image(DP_DrawContext *dc, DP_Input *input,
     DP_transient_layer_list_insert_transient_content_noinc(tll, tlc, 0);
 
     DP_TransientLayerProps *tlp =
-        DP_transient_layer_props_new_init(0x100, false);
+        DP_transient_layer_props_new_init(START_ID, false);
     const char *title =
         flat_image_layer_title ? flat_image_layer_title : "Layer 1";
     DP_transient_layer_props_title_set(tlp, title, strlen(title));

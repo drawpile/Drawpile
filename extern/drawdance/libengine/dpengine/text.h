@@ -9,6 +9,7 @@ typedef struct DP_Text DP_Text;
 
 // Returns NULL for an empty/null input string, all functions handle null input.
 DP_Text *DP_text_new(const char *string_or_null, size_t length);
+DP_Text *DP_text_new_nolen(const char *string_or_null);
 
 DP_Text *DP_text_incref_nullable(DP_Text *text_or_null);
 

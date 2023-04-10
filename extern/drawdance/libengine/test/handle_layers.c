@@ -28,26 +28,6 @@
 #include <dpmsg/blend_mode.h>
 
 
-static void write_indent(DP_Output *output, int indent)
-{
-    static const char *space = "    ";
-    for (int i = 0; i < indent; ++i) {
-        DP_output_write(output, space, strlen(space));
-    }
-}
-
-static void format_indent(DP_Output *output, int indent, const char *fmt, ...)
-    DP_FORMAT(3, 4);
-
-static void format_indent(DP_Output *output, int indent, const char *fmt, ...)
-{
-    write_indent(output, indent);
-    va_list ap;
-    va_start(ap, fmt);
-    DP_output_vformat(output, fmt, ap);
-    va_end(ap);
-}
-
 static void dump_layer_list(DP_Output *output, DP_LayerList *ll,
                             DP_LayerPropsList *lpl, int indent,
                             const char *prefix);

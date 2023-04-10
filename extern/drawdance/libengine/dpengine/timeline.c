@@ -1,26 +1,6 @@
-/*
- * Copyright (C) 2022 askmeaboufoom
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * --------------------------------------------------------------------
- *
- * This code is based on Drawpile, using it under the GNU General Public
- * License, version 3. See 3rdparty/licenses/drawpile/COPYING for details.
- */
+// SPDX-License-Identifier: MIT
 #include "timeline.h"
-#include "frame.h"
+#include "track.h"
 #include <dpcommon/atomic.h>
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
@@ -33,7 +13,7 @@ struct DP_Timeline {
     const bool transient;
     const int count;
     struct {
-        DP_Frame *const frame;
+        DP_Track *const track;
     } elements[];
 };
 
@@ -42,8 +22,8 @@ struct DP_TransientTimeline {
     bool transient;
     int count;
     union {
-        DP_Frame *frame;
-        DP_TransientFrame *transient_frame;
+        DP_Track *track;
+        DP_TransientTrack *transient_track;
     } elements[];
 };
 
@@ -54,8 +34,8 @@ struct DP_Timeline {
     bool transient;
     int count;
     union {
-        DP_Frame *frame;
-        DP_TransientFrame *transient_frame;
+        DP_Track *track;
+        DP_TransientTrack *transient_track;
     } elements[];
 };
 
@@ -102,7 +82,7 @@ void DP_timeline_decref(DP_Timeline *tl)
     if (DP_atomic_dec(&tl->refcount)) {
         int count = tl->count;
         for (int i = 0; i < count; ++i) {
-            DP_frame_decref_nullable(tl->elements[i].frame);
+            DP_track_decref_nullable(tl->elements[i].track);
         }
         DP_free(tl);
     }
@@ -129,20 +109,51 @@ bool DP_timeline_transient(DP_Timeline *tl)
     return tl->transient;
 }
 
-int DP_timeline_frame_count(DP_Timeline *tl)
+int DP_timeline_count(DP_Timeline *tl)
 {
     DP_ASSERT(tl);
     DP_ASSERT(DP_atomic_get(&tl->refcount) > 0);
     return tl->count;
 }
 
-DP_Frame *DP_timeline_frame_at_noinc(DP_Timeline *tl, int index)
+DP_Track *DP_timeline_at_noinc(DP_Timeline *tl, int index)
 {
     DP_ASSERT(tl);
     DP_ASSERT(DP_atomic_get(&tl->refcount) > 0);
     DP_ASSERT(index >= 0);
     DP_ASSERT(index < tl->count);
-    return tl->elements[index].frame;
+    return tl->elements[index].track;
+}
+
+int DP_timeline_index_by_id(DP_Timeline *tl, int track_id)
+{
+    DP_ASSERT(tl);
+    DP_ASSERT(DP_atomic_get(&tl->refcount) > 0);
+    int count = tl->count;
+    for (int i = 0; i < count; ++i) {
+        DP_Track *t = tl->elements[i].track;
+        if (t && DP_track_id(t) == track_id) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+bool DP_timeline_same_frame(DP_Timeline *tl, int frame_index_a,
+                            int frame_index_b)
+{
+    DP_ASSERT(tl);
+    DP_ASSERT(DP_atomic_get(&tl->refcount) > 0);
+    if (frame_index_a != frame_index_b) {
+        int track_count = tl->count;
+        for (int i = 0; i < track_count; ++i) {
+            DP_Track *t = tl->elements[i].track;
+            if (!DP_track_same_frame(t, frame_index_a, frame_index_b)) {
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 
@@ -155,10 +166,20 @@ DP_TransientTimeline *DP_transient_timeline_new(DP_Timeline *tl, int reserve)
     int count = tl->count;
     DP_TransientTimeline *ttl = allocate_timeline(true, count + reserve);
     for (int i = 0; i < count; ++i) {
-        ttl->elements[i].frame = DP_frame_incref(tl->elements[i].frame);
+        ttl->elements[i].track = DP_track_incref(tl->elements[i].track);
     }
     for (int i = 0; i < reserve; ++i) {
-        ttl->elements[count + i].frame = NULL;
+        ttl->elements[count + i].track = NULL;
+    }
+    return ttl;
+}
+
+DP_TransientTimeline *DP_transient_timeline_new_init(int reserve)
+{
+    DP_ASSERT(reserve >= 0);
+    DP_TransientTimeline *ttl = allocate_timeline(true, reserve);
+    for (int i = 0; i < reserve; ++i) {
+        ttl->elements[i].track = NULL;
     }
     return ttl;
 }
@@ -177,7 +198,7 @@ DP_TransientTimeline *DP_transient_timeline_reserve(DP_TransientTimeline *ttl,
         ttl = DP_realloc(ttl, timeline_size(new_count));
         ttl->count = new_count;
         for (int i = old_count; i < new_count; ++i) {
-            ttl->elements[i].frame = NULL;
+            ttl->elements[i].track = NULL;
         }
     }
     return ttl;
@@ -206,53 +227,92 @@ DP_Timeline *DP_transient_timeline_persist(DP_TransientTimeline *ttl)
     ttl->transient = false;
     int count = ttl->count;
     for (int i = 0; i < count; ++i) {
-        DP_ASSERT(ttl->elements[i].frame);
-        if (DP_frame_transient(ttl->elements[i].frame)) {
-            DP_transient_frame_persist(ttl->elements[i].transient_frame);
+        DP_ASSERT(ttl->elements[i].track);
+        if (DP_track_transient(ttl->elements[i].track)) {
+            DP_transient_track_persist(ttl->elements[i].transient_track);
         }
     }
     return (DP_Timeline *)ttl;
 }
 
-int DP_transient_timeline_frame_count(DP_TransientTimeline *ttl)
+DP_Track *DP_transient_timeline_at_noinc(DP_TransientTimeline *ttl, int index)
 {
-    return DP_timeline_frame_count((DP_Timeline *)ttl);
+    DP_ASSERT(ttl);
+    DP_ASSERT(DP_atomic_get(&ttl->refcount) > 0);
+    DP_ASSERT(ttl->transient);
+    return DP_timeline_at_noinc((DP_Timeline *)ttl, index);
 }
 
-DP_Frame *DP_transient_timeline_frame_at(DP_TransientTimeline *ttl, int index)
+DP_TransientTrack *
+DP_transient_timeline_transient_at_noinc(DP_TransientTimeline *ttl, int index,
+                                         int reserve)
 {
-    return DP_timeline_frame_at_noinc((DP_Timeline *)ttl, index);
+    DP_ASSERT(ttl);
+    DP_ASSERT(DP_atomic_get(&ttl->refcount) > 0);
+    DP_ASSERT(ttl->transient);
+    DP_ASSERT(index >= 0);
+    DP_ASSERT(index < ttl->count);
+    DP_Track *t = ttl->elements[index].track;
+    DP_TransientTrack *tt;
+    if (DP_track_transient(t)) {
+        tt = ttl->elements[index].transient_track;
+        DP_transient_track_reserve(tt, reserve);
+    }
+    else {
+        tt = DP_transient_track_new(t, reserve);
+        ttl->elements[index].transient_track = tt;
+        DP_track_decref(t);
+    }
+    return tt;
+}
+
+int DP_transient_timeline_index_by_id(DP_TransientTimeline *ttl, int track_id)
+{
+    DP_ASSERT(ttl);
+    DP_ASSERT(DP_atomic_get(&ttl->refcount) > 0);
+    DP_ASSERT(ttl->transient);
+    return DP_timeline_index_by_id((DP_Timeline *)ttl, track_id);
+}
+
+void DP_transient_timeline_set_noinc(DP_TransientTimeline *ttl, DP_Track *t,
+                                     int index)
+{
+    DP_ASSERT(ttl);
+    DP_ASSERT(DP_atomic_get(&ttl->refcount) > 0);
+    DP_ASSERT(ttl->transient);
+    DP_ASSERT(t);
+    DP_ASSERT(index >= 0);
+    DP_ASSERT(index < ttl->count);
+    DP_ASSERT(!ttl->elements[index].track);
+    ttl->elements[index].track = t;
+}
+
+void DP_transient_timeline_set_inc(DP_TransientTimeline *ttl, DP_Track *t,
+                                   int index)
+{
+    DP_transient_timeline_set_noinc(ttl, DP_track_incref(t), index);
+}
+
+void DP_transient_timeline_set_transient_noinc(DP_TransientTimeline *ttl,
+                                               DP_TransientTrack *tt, int index)
+{
+    DP_transient_timeline_set_noinc(ttl, (DP_Track *)tt, index);
 }
 
 void DP_transient_timeline_insert_transient_noinc(DP_TransientTimeline *ttl,
-                                                  DP_TransientFrame *tf,
+                                                  DP_TransientTrack *tt,
                                                   int index)
 {
     DP_ASSERT(ttl);
     DP_ASSERT(DP_atomic_get(&ttl->refcount) > 0);
     DP_ASSERT(ttl->transient);
-    DP_ASSERT(!ttl->elements[ttl->count - 1].frame);
-    DP_ASSERT(tf);
+    DP_ASSERT(!ttl->elements[ttl->count - 1].track);
+    DP_ASSERT(tt);
     DP_ASSERT(index >= 0);
     DP_ASSERT(index < ttl->count);
     memmove(&ttl->elements[index + 1], &ttl->elements[index],
             sizeof(*ttl->elements) * DP_int_to_size(ttl->count - index - 1));
-    ttl->elements[index].transient_frame = tf;
-}
-
-void DP_transient_timeline_replace_transient_noinc(DP_TransientTimeline *ttl,
-                                                   DP_TransientFrame *tf,
-                                                   int index)
-{
-    DP_ASSERT(ttl);
-    DP_ASSERT(DP_atomic_get(&ttl->refcount) > 0);
-    DP_ASSERT(ttl->transient);
-    DP_ASSERT(ttl->elements[index].frame);
-    DP_ASSERT(tf);
-    DP_ASSERT(index >= 0);
-    DP_ASSERT(index < ttl->count);
-    DP_frame_decref(ttl->elements[index].frame);
-    ttl->elements[index].transient_frame = tf;
+    ttl->elements[index].transient_track = tt;
 }
 
 void DP_transient_timeline_delete_at(DP_TransientTimeline *ttl, int index)
@@ -262,8 +322,9 @@ void DP_transient_timeline_delete_at(DP_TransientTimeline *ttl, int index)
     DP_ASSERT(ttl->transient);
     DP_ASSERT(index >= 0);
     DP_ASSERT(index < ttl->count);
-    DP_frame_decref(ttl->elements[index].frame);
+    DP_ASSERT(ttl->elements[index].track);
     int new_count = --ttl->count;
+    DP_track_decref(ttl->elements[index].track);
     memmove(&ttl->elements[index], &ttl->elements[index + 1],
             DP_int_to_size(new_count - index) * sizeof(ttl->elements[0]));
 }

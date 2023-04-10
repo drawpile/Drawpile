@@ -25,6 +25,12 @@ DP_Text *DP_text_new(const char *string_or_null, size_t length)
     }
 }
 
+DP_Text *DP_text_new_nolen(const char *string_or_null)
+{
+    return DP_text_new(string_or_null,
+                       string_or_null ? strlen(string_or_null) : 0);
+}
+
 DP_Text *DP_text_incref_nullable(DP_Text *text_or_null)
 {
     if (text_or_null) {

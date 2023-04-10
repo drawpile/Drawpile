@@ -94,3 +94,25 @@ DP_UNUSED static void add_redo(DP_Output *output, DP_CanvasHistory *ch,
 {
     add_message(output, ch, dc, DP_msg_undo_new(1, 0, true));
 }
+
+
+DP_UNUSED static void write_indent(DP_Output *output, int indent)
+{
+    static const char *space = "    ";
+    for (int i = 0; i < indent; ++i) {
+        DP_output_write(output, space, strlen(space));
+    }
+}
+
+static void format_indent(DP_Output *output, int indent, const char *fmt, ...)
+    DP_FORMAT(3, 4);
+
+DP_UNUSED static void format_indent(DP_Output *output, int indent,
+                                    const char *fmt, ...)
+{
+    write_indent(output, indent);
+    va_list ap;
+    va_start(ap, fmt);
+    DP_output_vformat(output, fmt, ap);
+    va_end(ap);
+}

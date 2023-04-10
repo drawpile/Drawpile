@@ -671,15 +671,15 @@ static DP_Tile *flatten_tile(DP_LayerContent *lc, int tile_index,
     }
     else if (t) {
         DP_TransientTile *tt = DP_transient_tile_new(t, 0);
-        DP_ViewModeFilter vmf = DP_view_mode_filter_make_default();
+        DP_ViewModeContext vmc = DP_view_mode_context_make_default();
         DP_layer_list_flatten_tile_to(ll, lc->sub.props, tile_index, tt,
-                                      DP_BIT15, false, &vmf);
+                                      DP_BIT15, false, &vmc);
         return DP_transient_tile_persist(tt);
     }
     else {
-        DP_ViewModeFilter vmf = DP_view_mode_filter_make_default();
+        DP_ViewModeContext vmc = DP_view_mode_context_make_default();
         DP_TransientTile *tt_or_null = DP_layer_list_flatten_tile_to(
-            ll, lc->sub.props, tile_index, NULL, DP_BIT15, false, &vmf);
+            ll, lc->sub.props, tile_index, NULL, DP_BIT15, false, &vmc);
         return tt_or_null ? DP_transient_tile_persist(tt_or_null) : NULL;
     }
 }

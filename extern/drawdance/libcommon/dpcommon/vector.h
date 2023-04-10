@@ -80,6 +80,12 @@
         DP_vector_shift((VECTOR), sizeof(TYPE)); \
     } while (0)
 
+#define DP_VECTOR_SORT_TYPE(VECTOR, TYPE, COMPARE)         \
+    do {                                                   \
+        DP_vector_sort((VECTOR), sizeof(TYPE), (COMPARE)); \
+    } while (0)
+
+
 typedef struct DP_Vector {
     size_t capacity;
     size_t used;
@@ -119,5 +125,7 @@ int DP_vector_search_index(DP_Vector *vector, size_t element_size,
                            bool (*predicate)(void *element, void *user),
                            void *user);
 
+void DP_vector_sort(DP_Vector *vector, size_t element_size,
+                    int (*compare)(const void *, const void *));
 
 #endif

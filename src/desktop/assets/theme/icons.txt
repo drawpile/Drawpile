@@ -1,3 +1,5 @@
 These icons are from the Breeze icon theme, licensed under the GPLv3.
 https://github.com/KDE/breeze-icons
 
+The onion-on and onion-off icons are from Krita, also licensed under the GPLv3.
+https://krita.org/
