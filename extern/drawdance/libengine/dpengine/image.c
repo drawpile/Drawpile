@@ -249,9 +249,19 @@ DP_Image *DP_image_transform(DP_Image *img, DP_DrawContext *dc,
         return NULL;
     }
 
-    DP_Image *dst_img =
-        DP_image_new(DP_rect_width(dst_bounds), DP_rect_height(dst_bounds));
-    if (!DP_image_transform_draw(img, dc, dst_img, mtf.tf, interpolation)) {
+    int dst_width = DP_rect_width(dst_bounds);
+    int dst_height = DP_rect_height(dst_bounds);
+    // Weird distortions can cause the transform to be way oversized. It's not
+    // going to fit into a message anyway, so we refuse to work with it.
+    long long max_area = 35000000LL; // A bit larger than 8K, that's plenty.
+    if (DP_int_to_llong(dst_width) * DP_int_to_llong(dst_height) > max_area) {
+        DP_error_set("Image transform size out of bounds");
+        return NULL;
+    }
+
+    DP_Image *dst_img = DP_image_new(dst_width, dst_height);
+    if (!DP_image_transform_draw(src_width, src_height, src_pixels, dc, dst_img,
+                                 mtf.tf, interpolation)) {
         DP_image_free(dst_img);
         return NULL;
     }
