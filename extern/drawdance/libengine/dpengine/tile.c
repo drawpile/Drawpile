@@ -563,6 +563,7 @@ DP_Pixel15 *DP_transient_tile_pixels(DP_TransientTile *tt)
     DP_ASSERT(tt);
     DP_ASSERT(DP_atomic_get(&tt->refcount) > 0);
     DP_ASSERT(tt->transient);
+    tt->maybe_blank = true;
     return tt->pixels;
 }
 
