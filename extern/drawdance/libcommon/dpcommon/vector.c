@@ -174,7 +174,7 @@ void DP_vector_remove(DP_Vector *vector, size_t element_size, size_t index)
         else {
             void *element = DP_vector_at(vector, element_size, index);
             memmove(element, (unsigned char *)element + element_size,
-                    element_size * (used - index));
+                    element_size * (used - index - 1));
             vector->used = used - 1;
         }
     }
