@@ -478,10 +478,13 @@ static void timeline_to_reset_image(struct DP_ResetImageContext *c,
 static void canvas_state_to_reset_image(struct DP_ResetImageContext *c,
                                         DP_CanvasState *cs)
 {
-    reset_image_push(c, DP_msg_canvas_resize_new(
-                            c->context_id, 0,
-                            DP_int_to_int32(DP_canvas_state_width(cs)),
-                            DP_int_to_int32(DP_canvas_state_height(cs)), 0));
+    int width = DP_canvas_state_width(cs);
+    int height = DP_canvas_state_height(cs);
+    if (width > 0 && height > 0) {
+        reset_image_push(c, DP_msg_canvas_resize_new(
+                                c->context_id, 0, DP_int_to_int32(width),
+                                DP_int_to_int32(height), 0));
+    }
 
     size_t size = reset_image_maybe_compress_tile(
         c, DP_canvas_state_background_tile_noinc(cs));
