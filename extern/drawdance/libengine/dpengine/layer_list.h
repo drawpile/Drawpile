@@ -26,6 +26,7 @@
 
 typedef struct DP_CanvasDiff DP_CanvasDiff;
 typedef struct DP_LayerListEntry DP_LayerListEntry;
+typedef struct DP_LayerProps DP_LayerProps;
 typedef struct DP_ViewModeFilter DP_ViewModeFilter;
 
 #ifdef DP_NO_STRICT_ALIASING
@@ -165,6 +166,9 @@ void DP_transient_layer_list_insert_transient_group_noinc(
     DP_TransientLayerList *tll, DP_TransientLayerGroup *tlg, int index);
 
 void DP_transient_layer_list_delete_at(DP_TransientLayerList *tll, int index);
+
+void DP_transient_layer_list_merge_at(DP_TransientLayerList *tll,
+                                      DP_LayerProps *lp, int index);
 
 
 #endif

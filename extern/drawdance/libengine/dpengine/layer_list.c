@@ -703,3 +703,20 @@ void DP_transient_layer_list_delete_at(DP_TransientLayerList *tll, int index)
     memmove(&tll->elements[index], &tll->elements[index + 1],
             DP_int_to_size(new_count - index) * sizeof(tll->elements[0]));
 }
+
+void DP_transient_layer_list_merge_at(DP_TransientLayerList *tll,
+                                      DP_LayerProps *lp, int index)
+{
+    DP_ASSERT(tll);
+    DP_ASSERT(DP_atomic_get(&tll->refcount) > 0);
+    DP_ASSERT(tll->transient);
+    DP_ASSERT(lp);
+    DP_ASSERT(index >= 0);
+    DP_ASSERT(index < tll->count);
+    DP_ASSERT(tll->elements[index].is_group);
+    DP_LayerGroup *lg = tll->elements[index].group;
+    DP_TransientLayerContent *tlc = DP_layer_group_merge(lg, lp);
+    DP_layer_group_decref(lg);
+    tll->elements[index] =
+        (DP_LayerListEntry){.is_group = false, .transient_content = tlc};
+}

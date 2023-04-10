@@ -1121,7 +1121,8 @@ int DP_msg_layer_order_layers_count(const DP_MsgLayerOrder *mlo);
  * Delete a layer
  *
  * If the merge attribute is nonzero, the contents of the layer is merged
- * to the layer with the given ID.
+ * to the layer with the given ID. If the id and merge id both refer to
+ * the same layer group, that group is collapsed into a layer.
  *
  * If the current layer or layer controls in general are locked, this command
  * requires session operator privileges.

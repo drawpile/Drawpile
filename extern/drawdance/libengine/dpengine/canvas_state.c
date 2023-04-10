@@ -428,14 +428,8 @@ static DP_CanvasState *handle_layer_delete(DP_CanvasState *cs,
         return NULL;
     }
 
-    int merge_layer_id = DP_msg_layer_delete_merge_to(mld);
-    if (layer_id == merge_layer_id) {
-        DP_error_set("Layer delete: invalid merge of layer %d into itself",
-                     layer_id);
-        return NULL;
-    }
-
-    return DP_ops_layer_delete(cs, dc, context_id, layer_id, merge_layer_id);
+    return DP_ops_layer_delete(cs, dc, context_id, layer_id,
+                               DP_msg_layer_delete_merge_to(mld));
 }
 
 static DP_CanvasState *handle_layer_visibility(DP_CanvasState *cs,

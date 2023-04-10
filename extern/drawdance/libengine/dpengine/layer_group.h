@@ -82,6 +82,9 @@ DP_TransientLayerGroup *DP_layer_group_resize(DP_LayerGroup *lg,
 DP_Pixel8 *DP_layer_group_to_pixels8(DP_LayerGroup *lg, DP_LayerProps *lp,
                                      int x, int y, int width, int height);
 
+DP_TransientLayerContent *DP_layer_group_merge(DP_LayerGroup *lg,
+                                               DP_LayerProps *lp);
+
 void DP_layer_group_merge_to_flat_image(DP_LayerGroup *lg, DP_LayerProps *lp,
                                         DP_TransientLayerContent *tlc,
                                         uint16_t parent_opacity,

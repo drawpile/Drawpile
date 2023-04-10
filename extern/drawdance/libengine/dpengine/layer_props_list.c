@@ -396,3 +396,17 @@ void DP_transient_layer_props_list_delete_at(DP_TransientLayerPropsList *tlpl,
     memmove(&tlpl->elements[index], &tlpl->elements[index + 1],
             DP_int_to_size(new_count - index) * sizeof(tlpl->elements[0]));
 }
+
+void DP_transient_layer_props_list_merge_at(DP_TransientLayerPropsList *tlpl,
+                                            int index)
+{
+    DP_ASSERT(tlpl);
+    DP_ASSERT(DP_atomic_get(&tlpl->refcount) > 0);
+    DP_ASSERT(tlpl->transient);
+    DP_ASSERT(index >= 0);
+    DP_ASSERT(index < tlpl->count);
+    DP_LayerProps *lp = tlpl->elements[index].layer_props;
+    DP_TransientLayerProps *tlp = DP_transient_layer_props_new_merge(lp);
+    tlpl->elements[index].transient_layer_props = tlp;
+    DP_layer_props_decref(lp);
+}

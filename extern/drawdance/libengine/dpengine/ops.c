@@ -722,35 +722,23 @@ DP_CanvasState *DP_ops_layer_retitle(DP_CanvasState *cs, int layer_id,
 }
 
 
-DP_CanvasState *DP_ops_layer_delete(DP_CanvasState *cs, DP_DrawContext *dc,
-                                    unsigned int context_id, int layer_id,
-                                    int merge_layer_id)
+static void merge_group(DP_TransientCanvasState *tcs, DP_LayerRoutesEntry *lre)
 {
-    DP_ASSERT(layer_id != 0);
-    DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
+    DP_TransientLayerList *tll;
+    DP_TransientLayerPropsList *tlpl;
+    DP_layer_routes_entry_transient_children(lre, tcs, -1, 0, &tll, &tlpl);
 
-    DP_LayerRoutesEntry *delete_lre = DP_layer_routes_search(lr, layer_id);
-    if (!delete_lre) {
-        DP_error_set("Layer delete: id %d not found", layer_id);
-        return NULL;
-    }
+    int last_index = DP_layer_routes_entry_index_last(lre);
+    DP_LayerProps *lp =
+        DP_transient_layer_props_list_at_noinc(tlpl, last_index);
+    DP_transient_layer_list_merge_at(tll, lp, last_index);
+    DP_transient_layer_props_list_merge_at(tlpl, last_index);
+}
 
-    DP_LayerRoutesEntry *merge_lre;
-    if (merge_layer_id != 0) {
-        merge_lre = DP_layer_routes_search(lr, merge_layer_id);
-        if (!merge_lre) {
-            DP_error_set("Layer delete: merge id %d not found", merge_layer_id);
-            return NULL;
-        }
-        else if (DP_layer_routes_entry_is_group(merge_lre)) {
-            DP_error_set("Layer delete: merge target %d is a group",
-                         merge_layer_id);
-            return NULL;
-        }
-    }
-
-    DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
-
+static void delete_layer(DP_TransientCanvasState *tcs, unsigned int context_id,
+                         DP_LayerRoutesEntry *delete_lre,
+                         DP_LayerRoutesEntry *merge_lre)
+{
     DP_TransientLayerList *delete_tll;
     DP_TransientLayerPropsList *delete_tlpl;
     DP_layer_routes_entry_transient_children(delete_lre, tcs, -1, 0,
@@ -760,7 +748,7 @@ DP_CanvasState *DP_ops_layer_delete(DP_CanvasState *cs, DP_DrawContext *dc,
     DP_LayerProps *delete_lp =
         DP_transient_layer_props_list_at_noinc(delete_tlpl, delete_last_index);
 
-    if (merge_layer_id != 0) {
+    if (merge_lre) {
         DP_TransientLayerContent *merge_tlc =
             DP_layer_routes_entry_transient_content(merge_lre, tcs);
 
@@ -784,8 +772,54 @@ DP_CanvasState *DP_ops_layer_delete(DP_CanvasState *cs, DP_DrawContext *dc,
 
     DP_transient_layer_list_delete_at(delete_tll, delete_last_index);
     DP_transient_layer_props_list_delete_at(delete_tlpl, delete_last_index);
-    DP_transient_canvas_state_layer_routes_reindex(tcs, dc);
+}
 
+DP_CanvasState *DP_ops_layer_delete(DP_CanvasState *cs, DP_DrawContext *dc,
+                                    unsigned int context_id, int layer_id,
+                                    int merge_layer_id)
+{
+    DP_ASSERT(layer_id != 0);
+    DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
+
+    DP_LayerRoutesEntry *delete_lre = DP_layer_routes_search(lr, layer_id);
+    if (!delete_lre) {
+        DP_error_set("Layer delete: id %d not found", layer_id);
+        return NULL;
+    }
+
+    DP_LayerRoutesEntry *merge_lre;
+    if (merge_layer_id != 0) {
+        merge_lre = DP_layer_routes_search(lr, merge_layer_id);
+        if (!merge_lre) {
+            DP_error_set("Layer delete: merge id %d not found", merge_layer_id);
+            return NULL;
+        }
+        else if (DP_layer_routes_entry_is_group(merge_lre)) {
+            // Merging a group into itself means collapsing the group.
+            if (layer_id != merge_layer_id) {
+                DP_error_set("Layer delete: merge target %d is a group",
+                             merge_layer_id);
+                return NULL;
+            }
+        }
+        else if (layer_id == merge_layer_id) {
+            DP_error_set("Layer delete: invalid merge of layer %d into itself",
+                         layer_id);
+            return NULL;
+        }
+    }
+
+    DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
+
+    if (layer_id == merge_layer_id) {
+        merge_group(tcs, delete_lre);
+    }
+    else {
+        delete_layer(tcs, context_id, delete_lre,
+                     merge_layer_id == 0 ? NULL : merge_lre);
+    }
+
+    DP_transient_canvas_state_layer_routes_reindex(tcs, dc);
     return DP_transient_canvas_state_persist(tcs);
 }
 

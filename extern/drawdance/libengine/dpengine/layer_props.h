@@ -76,6 +76,8 @@ DP_TransientLayerProps *DP_transient_layer_props_new(DP_LayerProps *lp);
 DP_TransientLayerProps *DP_transient_layer_props_new_with_children_noinc(
     DP_LayerProps *lp, DP_TransientLayerPropsList *tlpl);
 
+DP_TransientLayerProps *DP_transient_layer_props_new_merge(DP_LayerProps *lp);
+
 DP_TransientLayerProps *DP_transient_layer_props_new_init(int layer_id,
                                                           bool group);
 

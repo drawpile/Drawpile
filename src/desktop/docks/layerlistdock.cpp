@@ -374,12 +374,18 @@ void LayerList::duplicateLayer()
 bool LayerList::canMergeCurrent() const
 {
 	const QModelIndex index = currentSelection();
-	const QModelIndex below = index.sibling(index.row()+1, 0);
+	if(!index.isValid()) {
+		return false;
+	}
 
-	return index.isValid() && below.isValid() &&
+	if(index.data(canvas::LayerListModel::IsGroupRole).toBool()) {
+		return true;
+	} else {
+		const QModelIndex below = index.sibling(index.row()+1, 0);
+		return below.isValid() &&
 			!below.data(canvas::LayerListModel::IsGroupRole).toBool() &&
-			!m_canvas->aclState()->isLayerLocked(below.data(canvas::LayerListModel::IdRole).toInt())
-			;
+			!m_canvas->aclState()->isLayerLocked(below.data(canvas::LayerListModel::IdRole).toInt());
+	}
 }
 
 void LayerList::deleteSelected()
@@ -413,19 +419,26 @@ void LayerList::deleteSelected()
 void LayerList::mergeSelected()
 {
 	QModelIndex index = currentSelection();
-	if(!index.isValid())
+	if(!index.isValid()) {
 		return;
+	}
 
-	QModelIndex below = index.sibling(index.row()+1, 0);
-	if(!below.isValid())
-		return;
+	int layerId = index.data(canvas::LayerListModel::IdRole).toInt();
+	int mergeId;
+	if(index.data(canvas::LayerListModel::IsGroupRole).toBool()) {
+		mergeId = layerId;
+	} else {
+		QModelIndex below = index.sibling(index.row()+1, 0);
+		if(!below.isValid()) {
+			return;
+		}
+		mergeId = below.data(canvas::LayerListModel::IdRole).toInt();
+	}
 
 	uint8_t contextId = m_canvas->localUserId();
 	drawdance::Message messages[] = {
 		drawdance::Message::makeUndoPoint(contextId),
-		drawdance::Message::makeLayerDelete(contextId,
-			index.data(canvas::LayerListModel::IdRole).value<uint16_t>(),
-			below.data(canvas::LayerListModel::IdRole).value<uint16_t>()),
+		drawdance::Message::makeLayerDelete(contextId, layerId, mergeId),
 	};
 	emit layerCommands(DP_ARRAY_LENGTH(messages), messages);
 }

@@ -308,6 +308,17 @@ DP_TransientLayerProps *DP_transient_layer_props_new_with_children_noinc(
     return tlp;
 }
 
+DP_TransientLayerProps *DP_transient_layer_props_new_merge(DP_LayerProps *lp)
+{
+    DP_ASSERT(lp);
+    DP_ASSERT(DP_atomic_get(&lp->refcount) > 0);
+    DP_ASSERT(!lp->transient);
+    DP_ASSERT(lp->children);
+    DP_TransientLayerProps *tlp = alloc_transient_layer_props(lp);
+    tlp->isolated = false;
+    return tlp;
+}
+
 DP_TransientLayerProps *DP_transient_layer_props_new_init(int layer_id,
                                                           bool group)
 {
