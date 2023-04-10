@@ -123,7 +123,7 @@ bool DP_tile_transient(DP_Tile *tile);
 
 unsigned int DP_tile_context_id(DP_Tile *tile);
 
-DP_Pixel15 *DP_tile_pixels(DP_Tile *tile);
+const DP_Pixel15 *DP_tile_pixels(DP_Tile *tile);
 
 DP_Pixel15 DP_tile_pixel_at(DP_Tile *tile, int x, int y);
 

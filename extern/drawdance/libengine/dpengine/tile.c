@@ -310,7 +310,7 @@ unsigned int DP_tile_context_id(DP_Tile *tile)
     return tile->context_id;
 }
 
-DP_Pixel15 *DP_tile_pixels(DP_Tile *tile)
+const DP_Pixel15 *DP_tile_pixels(DP_Tile *tile)
 {
     DP_ASSERT(tile);
     DP_ASSERT(DP_atomic_get(&tile->refcount) > 0);
@@ -337,7 +337,7 @@ bool DP_tile_blank(DP_Tile *tile)
 bool DP_tile_opaque(DP_Tile *tile_or_null)
 {
     if (tile_or_null) {
-        DP_Pixel15 *pixels = DP_tile_pixels(tile_or_null);
+        DP_Pixel15 *pixels = tile_or_null->pixels;
         for (int i = 1; i < DP_TILE_LENGTH; ++i) {
             if (pixels[i].a < DP_BIT15) {
                 return false;
@@ -354,7 +354,7 @@ bool DP_tile_same_pixel(DP_Tile *tile_or_null, DP_Pixel15 *out_pixel)
 {
     DP_Pixel15 pixel;
     if (tile_or_null) {
-        DP_Pixel15 *pixels = DP_tile_pixels(tile_or_null);
+        DP_Pixel15 *pixels = tile_or_null->pixels;
         pixel = pixels[0];
         for (int i = 1; i < DP_TILE_LENGTH; ++i) {
             DP_Pixel15 q = pixels[i];
