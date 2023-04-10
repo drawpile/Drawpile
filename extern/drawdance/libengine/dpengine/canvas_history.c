@@ -703,6 +703,8 @@ void DP_canvas_history_reset(DP_CanvasHistory *ch)
     // like git squash.
     HISTORY_DEBUG("Hard reset");
     dump_internal(ch, DP_DUMP_RESET);
+    // Create a snapshot here, since there may be a reset to a desynced state.
+    call_save_point_fn(ch, ch->current_state, true);
     reset_to_state_noinc(ch, DP_canvas_state_new());
     ch->undo_depth_limit = DP_UNDO_DEPTH_DEFAULT;
     dump_init(ch);
