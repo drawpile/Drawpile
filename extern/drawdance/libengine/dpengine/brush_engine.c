@@ -108,6 +108,9 @@ struct DP_BrushEngine {
             bool lock_alpha;
             bool erase;
             uint8_t dab_lock_alpha;
+            uint8_t dab_colorize;
+            uint8_t dab_posterize;
+            uint8_t dab_posterize_num;
             int32_t dab_x;
             int32_t dab_y;
             uint32_t dab_color;
@@ -293,6 +296,41 @@ static uint8_t get_mypaint_dab_lock_alpha(DP_BrushEngine *be, float lock_alpha)
     }
 }
 
+static uint8_t get_mypaint_dab_colorize(DP_BrushEngine *be, float colorize)
+{
+    if (be->mypaint.erase || be->mypaint.lock_alpha) {
+        return 0;
+    }
+    else {
+        return DP_float_to_uint8(colorize * 255.0f + 0.5f);
+    }
+}
+
+static uint8_t get_mypaint_dab_posterize(DP_BrushEngine *be, float posterize)
+{
+    if (be->mypaint.erase || be->mypaint.lock_alpha) {
+        return 0;
+    }
+    else {
+        return DP_float_to_uint8(posterize * 255.0f + 0.5f);
+    }
+}
+
+static uint8_t get_mypaint_dab_posterize_num(uint8_t dab_posterize,
+                                             float posterize_num)
+{
+    if (dab_posterize == 0) {
+        return 0;
+    }
+    else {
+        // MyPaint clamps the number of colors to posterize between 1 and 128,
+        // so we do too. We subtract 1 so that our value fits in a nibble,
+        // leaving another nibble free for something else in the future.
+        float value = posterize_num * 100.0f + 0.5f;
+        return DP_float_to_uint8(CLAMP(value, 1.0f, 128.0f)) - (uint8_t)1;
+    }
+}
+
 static uint16_t get_mypaint_dab_size(float radius)
 {
     float value = radius * 512.0f + 0.5f;
@@ -314,13 +352,13 @@ static uint8_t get_mypaint_dab_aspect_ratio(float aspect_ratio)
     return DP_float_to_uint8(CLAMP(value, 0, UINT8_MAX));
 }
 
-static int
-add_dab_mypaint_pigment(MyPaintSurface2 *self, float x, float y, float radius,
-                        float color_r, float color_g, float color_b,
-                        float opaque, float hardness, float alpha_eraser,
-                        float aspect_ratio, float angle, float lock_alpha,
-                        DP_UNUSED float colorize, DP_UNUSED float posterize,
-                        DP_UNUSED float posterize_num, DP_UNUSED float paint)
+static int add_dab_mypaint_pigment(MyPaintSurface2 *self, float x, float y,
+                                   float radius, float color_r, float color_g,
+                                   float color_b, float opaque, float hardness,
+                                   float alpha_eraser, float aspect_ratio,
+                                   float angle, float lock_alpha,
+                                   float colorize, float posterize,
+                                   float posterize_num, DP_UNUSED float paint)
 {
     // A radius less than 0.1 pixels is infinitesimally small. A hardness or
     // opacity of zero means the mask is completely blank. Disregard the dab
@@ -332,12 +370,19 @@ add_dab_mypaint_pigment(MyPaintSurface2 *self, float x, float y, float radius,
         uint32_t dab_color =
             get_mypaint_dab_color(be, color_r, color_g, color_b, alpha_eraser);
         uint8_t dab_lock_alpha = get_mypaint_dab_lock_alpha(be, lock_alpha);
+        uint8_t dab_colorize = get_mypaint_dab_colorize(be, colorize);
+        uint8_t dab_posterize = get_mypaint_dab_posterize(be, posterize);
+        uint8_t dab_posterize_num =
+            get_mypaint_dab_posterize_num(dab_posterize, posterize_num);
 
         int used = be->dabs.used;
         int8_t dx, dy;
         bool can_append = used != 0 && used < DP_MSG_DRAW_DABS_MYPAINT_DABS_MAX
                        && be->mypaint.dab_color == dab_color
                        && be->mypaint.dab_lock_alpha == dab_lock_alpha
+                       && be->mypaint.dab_colorize == dab_colorize
+                       && be->mypaint.dab_posterize == dab_posterize
+                       && be->mypaint.dab_posterize_num == dab_posterize_num
                        && delta_xy(be, dab_x, dab_y, &dx, &dy);
         be->dabs.last_x = dab_x;
         be->dabs.last_y = dab_y;
@@ -348,6 +393,9 @@ add_dab_mypaint_pigment(MyPaintSurface2 *self, float x, float y, float radius,
             be->mypaint.dab_y = dab_y;
             be->mypaint.dab_color = dab_color;
             be->mypaint.dab_lock_alpha = dab_lock_alpha;
+            be->mypaint.dab_colorize = dab_colorize;
+            be->mypaint.dab_posterize = dab_posterize;
+            be->mypaint.dab_posterize_num = dab_posterize_num;
             dx = 0;
             dy = 0;
         }
@@ -612,7 +660,9 @@ static void flush_mypaint_dabs(DP_BrushEngine *be, int used)
                          be->context_id, DP_int_to_uint16(be->layer_id),
                          be->mypaint.dab_x, be->mypaint.dab_y,
                          be->mypaint.dab_color, be->mypaint.dab_lock_alpha,
-                         set_mypaint_dabs, used, be->dabs.buffer));
+                         be->mypaint.dab_colorize, be->mypaint.dab_posterize,
+                         be->mypaint.dab_posterize_num, set_mypaint_dabs, used,
+                         be->dabs.buffer));
 }
 
 void DP_brush_engine_dabs_flush(DP_BrushEngine *be)

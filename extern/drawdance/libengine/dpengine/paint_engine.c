@@ -2376,7 +2376,11 @@ static DP_CanvasState *dabs_preview_render(DP_PaintEnginePreview *preview,
                 DP_msg_draw_dabs_mypaint_dabs(mddmp, &params.dab_count);
             params.mypaint.lock_alpha =
                 DP_msg_draw_dabs_mypaint_lock_alpha(mddmp);
-            // TODO colorize and posterize when implemented into the protocol
+            params.mypaint.colorize = DP_msg_draw_dabs_mypaint_colorize(mddmp);
+            params.mypaint.posterize =
+                DP_msg_draw_dabs_mypaint_posterize(mddmp);
+            params.mypaint.posterize_num =
+                DP_msg_draw_dabs_mypaint_posterize_num(mddmp);
             break;
         }
         default:

@@ -683,6 +683,9 @@ DrawDabsMyPaint:
         - y i32: div4
         - color argb32
         - lock_alpha u8
+        - colorize u8
+        - posterize u8
+        - posterize_num u8
         - dabs struct:
           name: MyPaintDab
           fields:

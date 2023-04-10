@@ -737,9 +737,9 @@ get_draw_dabs_mypaint_params(unsigned int context_id,
         false,
         dab_count,
         {.mypaint = {dabs, DP_msg_draw_dabs_mypaint_lock_alpha(mddmp),
-                     // TODO: Fill in colorize, posterize and posterize_num
-                     // when they're implemented into the protocol.
-                     0, 0, 0}}};
+                     DP_msg_draw_dabs_mypaint_colorize(mddmp),
+                     DP_msg_draw_dabs_mypaint_posterize(mddmp),
+                     DP_msg_draw_dabs_mypaint_posterize_num(mddmp)}}};
 }
 
 static bool next_dab(void *user, DP_PaintDrawDabsParams *out_params)

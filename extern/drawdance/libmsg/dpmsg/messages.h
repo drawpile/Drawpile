@@ -1630,7 +1630,7 @@ DP_MsgDrawDabsPixel *DP_msg_draw_dabs_pixel_square_cast(DP_Message *msg);
  * Draw MyPaint brush dabs
  */
 
-#define DP_MSG_DRAW_DABS_MYPAINT_DABS_MAX 8190
+#define DP_MSG_DRAW_DABS_MYPAINT_DABS_MAX 8189
 
 typedef struct DP_MyPaintDab DP_MyPaintDab;
 
@@ -1657,11 +1657,11 @@ const DP_MyPaintDab *DP_mypaint_dab_at(const DP_MyPaintDab *mpd, int i);
 
 typedef struct DP_MsgDrawDabsMyPaint DP_MsgDrawDabsMyPaint;
 
-DP_Message *
-DP_msg_draw_dabs_mypaint_new(unsigned int context_id, uint16_t layer, int32_t x,
-                             int32_t y, uint32_t color, uint8_t lock_alpha,
-                             void (*set_dabs)(int, DP_MyPaintDab *, void *),
-                             int dabs_count, void *dabs_user);
+DP_Message *DP_msg_draw_dabs_mypaint_new(
+    unsigned int context_id, uint16_t layer, int32_t x, int32_t y,
+    uint32_t color, uint8_t lock_alpha, uint8_t colorize, uint8_t posterize,
+    uint8_t posterize_num, void (*set_dabs)(int, DP_MyPaintDab *, void *),
+    int dabs_count, void *dabs_user);
 
 DP_Message *DP_msg_draw_dabs_mypaint_deserialize(unsigned int context_id,
                                                  const unsigned char *buffer,
@@ -1681,6 +1681,13 @@ int32_t DP_msg_draw_dabs_mypaint_y(const DP_MsgDrawDabsMyPaint *mddmp);
 uint32_t DP_msg_draw_dabs_mypaint_color(const DP_MsgDrawDabsMyPaint *mddmp);
 
 uint8_t DP_msg_draw_dabs_mypaint_lock_alpha(const DP_MsgDrawDabsMyPaint *mddmp);
+
+uint8_t DP_msg_draw_dabs_mypaint_colorize(const DP_MsgDrawDabsMyPaint *mddmp);
+
+uint8_t DP_msg_draw_dabs_mypaint_posterize(const DP_MsgDrawDabsMyPaint *mddmp);
+
+uint8_t
+DP_msg_draw_dabs_mypaint_posterize_num(const DP_MsgDrawDabsMyPaint *mddmp);
 
 const DP_MyPaintDab *
 DP_msg_draw_dabs_mypaint_dabs(const DP_MsgDrawDabsMyPaint *mddmp,
