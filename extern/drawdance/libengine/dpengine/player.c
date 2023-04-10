@@ -44,6 +44,7 @@
 #include <dpcommon/output.h>
 #include <dpcommon/perf.h>
 #include <dpcommon/vector.h>
+#include <dpmsg/acl.h>
 #include <dpmsg/binary_reader.h>
 #include <dpmsg/blend_mode.h>
 #include <dpmsg/text_reader.h>
@@ -704,11 +705,13 @@ typedef struct DP_BuildIndexMaps {
 
 typedef struct DP_BuildIndexEntryContext {
     DP_Output *output;
+    DP_AclState *acls;
     DP_CanvasHistory *ch;
     DP_CanvasState *cs;
     DP_DrawContext *dc;
     DP_BuildIndexMaps current;
     DP_BuildIndexMaps *last;
+    int message_count;
     struct {
         size_t history;
         size_t layers;
@@ -725,6 +728,7 @@ typedef struct DP_BuildIndexEntryContext {
 typedef struct DP_BuildIndexContext {
     DP_Player *player;
     DP_Output *output;
+    DP_AclState *acls;
     DP_CanvasHistory *ch;
     DP_DrawContext *dc;
     long long message_count;
@@ -764,13 +768,12 @@ unsigned char *get_message_buffer(void *user, size_t length)
 }
 
 static bool write_index_history_message(DP_BuildIndexEntryContext *e,
-                                        DP_Message *msg,
-                                        int *in_out_message_count)
+                                        DP_Message *msg)
 {
     size_t length = DP_message_serialize(msg, false, get_message_buffer, e->dc);
     if (length == 0) {
         DP_error_set("Error serializing history message %d",
-                     *in_out_message_count + 1);
+                     e->message_count + 1);
         return true; // Not a fatal error.
     }
     else {
@@ -778,7 +781,7 @@ static bool write_index_history_message(DP_BuildIndexEntryContext *e,
         bool ok = DP_OUTPUT_WRITE_LITTLEENDIAN(output, DP_OUTPUT_UINT16(length))
                && DP_output_write(output, DP_draw_context_pool(e->dc), length);
         if (ok) {
-            ++*in_out_message_count;
+            ++e->message_count;
             return true;
         }
         else {
@@ -787,22 +790,36 @@ static bool write_index_history_message(DP_BuildIndexEntryContext *e,
     }
 }
 
+static bool write_acl_init_history_message(DP_BuildIndexEntryContext *e)
+{
+    DP_Message *msg = DP_acl_state_msg_feature_access_all_new(0);
+    bool ok = write_index_history_message(e, msg);
+    DP_message_decref(msg);
+    return ok;
+}
+
 static bool write_undo_depth_history_message(DP_BuildIndexEntryContext *e,
-                                             DP_CanvasHistorySnapshot *chs,
-                                             int *in_out_message_count)
+                                             DP_CanvasHistorySnapshot *chs)
 {
     int undo_depth_limit =
         DP_canvas_history_snapshot_history_undo_depth_limit(chs);
     DP_Message *msg =
         DP_msg_undo_depth_new(0, DP_int_to_uint8(undo_depth_limit));
-    bool ok = write_index_history_message(e, msg, in_out_message_count);
+    bool ok = write_index_history_message(e, msg);
+    DP_message_decref(msg);
+    return ok;
+}
+
+static bool write_acl_state(void *user, DP_Message *msg)
+{
+    DP_BuildIndexEntryContext *e = user;
+    bool ok = write_index_history_message(e, msg);
     DP_message_decref(msg);
     return ok;
 }
 
 static bool write_index_history(DP_BuildIndexEntryContext *e,
-                                DP_CanvasHistorySnapshot *chs,
-                                int *out_message_count)
+                                DP_CanvasHistorySnapshot *chs)
 {
     // Find the oldest canvas state in the history, since that's the one still
     // potentially reachable by undos that will follow.
@@ -832,8 +849,8 @@ static bool write_index_history(DP_BuildIndexEntryContext *e,
         return false;
     }
 
-    int message_count = 0;
-    if (!write_undo_depth_history_message(e, chs, &message_count)) {
+    if (!write_acl_init_history_message(e)
+        || !write_undo_depth_history_message(e, chs)) {
         return false;
     }
     // Write all done and undone messages, leave out gone ones.
@@ -842,7 +859,7 @@ static bool write_index_history(DP_BuildIndexEntryContext *e,
             DP_canvas_history_snapshot_history_entry_at(chs, i);
         DP_Undo undo = entry->undo;
         if (undo == DP_UNDO_DONE || undo == DP_UNDO_UNDONE) {
-            if (!write_index_history_message(e, entry->msg, &message_count)) {
+            if (!write_index_history_message(e, entry->msg)) {
                 return false;
             }
         }
@@ -858,16 +875,19 @@ static bool write_index_history(DP_BuildIndexEntryContext *e,
                                  && DP_message_type(msg) == DP_MSG_UNDO_POINT;
         if (is_undone_undo_point) {
             DP_message_context_id_set(undo_msg, DP_message_context_id(msg));
-            if (!write_index_history_message(e, undo_msg, &message_count)) {
+            if (!write_index_history_message(e, undo_msg)) {
                 DP_message_decref(undo_msg);
                 return false;
             }
         }
     }
     DP_message_decref(undo_msg);
+    // Finally, the state of the permissions at this point.
+    if (!DP_acl_state_reset_image_build(e->acls, 0, true, write_acl_state, e)) {
+        return false;
+    }
 
     e->offset.history = offset;
-    *out_message_count = message_count;
     return true;
 }
 
@@ -1361,8 +1381,7 @@ static bool write_index_metadata(DP_BuildIndexEntryContext *e)
     return true;
 }
 
-static bool write_index_canvas_state(DP_BuildIndexEntryContext *e,
-                                     int message_count)
+static bool write_index_canvas_state(DP_BuildIndexEntryContext *e)
 {
     DP_Output *output = e->output;
     bool error;
@@ -1376,7 +1395,7 @@ static bool write_index_canvas_state(DP_BuildIndexEntryContext *e,
     if (!DP_OUTPUT_WRITE_LITTLEENDIAN(
             output, DP_OUTPUT_UINT32(DP_canvas_state_width(cs)),
             DP_OUTPUT_UINT32(DP_canvas_state_height(cs)),
-            DP_OUTPUT_UINT16(message_count),
+            DP_OUTPUT_UINT16(e->message_count),
             DP_OUTPUT_UINT64(e->offset.history),
             DP_OUTPUT_UINT64(e->offset.background_tile),
             DP_OUTPUT_UINT64(e->current.timeline.offset),
@@ -1396,12 +1415,10 @@ static bool write_index_canvas_state(DP_BuildIndexEntryContext *e,
 static bool write_index_snapshot(DP_BuildIndexEntryContext *e)
 {
     DP_CanvasHistorySnapshot *chs = DP_canvas_history_snapshot_new(e->ch);
-    int message_count;
-    bool ok = write_index_history(e, chs, &message_count)
-           && write_index_layers(e) && write_index_annotations(e)
-           && write_index_background_tile(e) && write_index_timeline(e)
-           && write_index_metadata(e)
-           && write_index_canvas_state(e, message_count);
+    bool ok = write_index_history(e, chs) && write_index_layers(e)
+           && write_index_annotations(e) && write_index_background_tile(e)
+           && write_index_timeline(e) && write_index_metadata(e)
+           && write_index_canvas_state(e);
 
     DP_free(e->annotation.buffer);
     DP_canvas_history_snapshot_decref(chs);
@@ -1507,14 +1524,11 @@ static void dispose_index_maps(DP_BuildIndexMaps *maps)
 static bool make_index_entry(DP_BuildIndexContext *c, long long message_index,
                              size_t message_offset)
 {
-    DP_BuildIndexEntryContext e = {c->output,
-                                   c->ch,
-                                   NULL,
-                                   c->dc,
-                                   {NULL, NULL, NULL, {NULL, 0}, {NULL, 0}},
-                                   &c->last,
-                                   {0, 0, 0, 0, 0},
-                                   {NULL, 0}};
+    DP_BuildIndexEntryContext e = {
+        c->output, c->acls, c->ch,
+        NULL,      c->dc,   {NULL, NULL, NULL, {NULL, 0}, {NULL, 0}},
+        &c->last,  0,       {0, 0, 0, 0, 0},
+        {NULL, 0}};
     bool ok = write_index_snapshot(&e) && write_index_thumbnail(&e);
     if (!ok) {
         dispose_index_maps(&e.current);
@@ -1534,6 +1548,7 @@ static bool make_index_entry(DP_BuildIndexContext *c, long long message_index,
 static bool write_index_messages(DP_BuildIndexContext *c)
 {
     DP_Player *player = c->player;
+    DP_AclState *acls = c->acls;
     int last_percent = 0;
     long long last_written_message_index = 0;
 
@@ -1542,7 +1557,15 @@ static bool write_index_messages(DP_BuildIndexContext *c)
         DP_Message *msg;
         DP_PlayerResult result = DP_player_step(player, &msg);
         if (result == DP_PLAYER_SUCCESS) {
-            if (DP_message_type_command(DP_message_type(msg))) {
+            bool filtered = DP_acl_state_handle(acls, msg, false)
+                          & DP_ACL_STATE_FILTERED_BIT;
+            if (filtered) {
+                DP_debug(
+                    "ACL filtered recorded %s message from user %u",
+                    DP_message_type_enum_name_unprefixed(DP_message_type(msg)),
+                    DP_message_context_id(msg));
+            }
+            else if (DP_message_type_command(DP_message_type(msg))) {
                 if (!DP_canvas_history_handle(c->ch, c->dc, msg)) {
                     DP_warn("Error handling message in index: %s", DP_error());
                 }
@@ -1665,9 +1688,11 @@ bool DP_player_index_build(DP_Player *player, DP_DrawContext *dc,
     }
 
     DP_PERF_BEGIN_DETAIL(fn, "index_build", "path=%s", path);
+    DP_AclState *acls = DP_acl_state_new();
     DP_CanvasHistory *ch = DP_canvas_history_new(NULL, NULL, false, NULL);
     DP_BuildIndexContext c = {index_player,
                               output,
+                              acls,
                               ch,
                               dc,
                               0,
@@ -1681,6 +1706,7 @@ bool DP_player_index_build(DP_Player *player, DP_DrawContext *dc,
     dispose_index_maps(&c.last);
     DP_vector_dispose(&c.entries);
     DP_canvas_history_free(ch);
+    DP_acl_state_free(acls);
     DP_output_free(output);
     DP_player_free(index_player);
     DP_PERF_END(fn);
