@@ -177,6 +177,10 @@ DP_paint_engine_playback_dump_jump(DP_PaintEngine *pe, long long position,
                                    DP_PaintEnginePushMessageFn push_message,
                                    void *user);
 
+bool DP_paint_engine_playback_flush(DP_PaintEngine *pe,
+                                    DP_PaintEnginePushMessageFn push_message,
+                                    void *user);
+
 bool DP_paint_engine_playback_close(DP_PaintEngine *pe);
 
 // Returns the number of drawing commands actually pushed to the paint engine.

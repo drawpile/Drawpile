@@ -1510,6 +1510,41 @@ DP_paint_engine_playback_dump_jump(DP_PaintEngine *pe, long long position,
     return result;
 }
 
+bool DP_paint_engine_playback_flush(DP_PaintEngine *pe,
+                                    DP_PaintEnginePushMessageFn push_message,
+                                    void *user)
+{
+    DP_ASSERT(pe);
+    DP_Player *player = pe->playback.player;
+    if (player) {
+        while (true) {
+            DP_Message *msg;
+            DP_PlayerResult result = DP_player_step(player, &msg);
+            if (result == DP_PLAYER_SUCCESS) {
+                DP_MessageType type = DP_message_type(msg);
+                if (type == DP_MSG_INTERVAL) {
+                    DP_message_decref(msg);
+                }
+                else {
+                    push_message(user, msg);
+                }
+            }
+            else if (result == DP_PLAYER_ERROR_PARSE) {
+                DP_warn("Can't play back message: %s", DP_error());
+            }
+            else if (result == DP_PLAYER_RECORDING_END) {
+                return true;
+            }
+            else {
+                return false; // Some kind of input error.
+            }
+        }
+    }
+    else {
+        return false;
+    }
+}
+
 bool DP_paint_engine_playback_close(DP_PaintEngine *pe)
 {
     DP_ASSERT(pe);
