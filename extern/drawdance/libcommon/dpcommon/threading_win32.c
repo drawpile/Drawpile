@@ -205,7 +205,8 @@ static void free_error_state(void)
 DP_ErrorState DP_thread_error_state_get(void)
 {
     if (error_state_buffer == NULL) {
-        error_state_buffer = DP_malloc(DP_ERROR_STATE_INITIAL_BUFFER_SIZE);
+        error_state_buffer =
+            DP_malloc_zeroed(DP_ERROR_STATE_INITIAL_BUFFER_SIZE);
         error_state_buffer_size = DP_ERROR_STATE_INITIAL_BUFFER_SIZE;
     }
 

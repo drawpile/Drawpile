@@ -320,7 +320,7 @@ static DP_PthreadErrorState *get_pthread_error_state(void)
         state = DP_malloc(sizeof(*state));
         *state = (DP_PthreadErrorState){
             0, DP_ERROR_STATE_INITIAL_BUFFER_SIZE,
-            DP_malloc(DP_ERROR_STATE_INITIAL_BUFFER_SIZE)};
+            DP_malloc_zeroed(DP_ERROR_STATE_INITIAL_BUFFER_SIZE)};
 
         int error = pthread_setspecific(key, state);
         if (error != 0) {
