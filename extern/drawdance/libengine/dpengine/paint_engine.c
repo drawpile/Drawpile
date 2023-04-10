@@ -255,6 +255,12 @@ static void drop_message(DP_UNUSED void *user, DP_Message *msg)
     DP_message_decref(msg);
 }
 
+static void update_undo_depth_limit(DP_PaintEngine *pe)
+{
+    DP_atomic_xch(&pe->undo_depth_limit,
+                  DP_canvas_history_undo_depth_limit(pe->ch));
+}
+
 static void handle_dump_command(DP_PaintEngine *pe, DP_MsgInternal *mi)
 {
     DP_CanvasHistory *ch = pe->ch;
@@ -299,6 +305,7 @@ static void handle_dump_command(DP_PaintEngine *pe, DP_MsgInternal *mi)
     case DP_DUMP_RESET:
         decref_messages(count, msgs);
         DP_canvas_history_reset(ch);
+        update_undo_depth_limit(pe);
         break;
     case DP_DUMP_SOFT_RESET:
         decref_messages(count, msgs);
@@ -312,6 +319,7 @@ static void handle_dump_command(DP_PaintEngine *pe, DP_MsgInternal *mi)
         DP_ASSERT(count == 1);
         DP_canvas_history_undo_depth_limit_set(
             ch, DP_msg_undo_depth_depth(DP_message_internal(msgs[0])));
+        update_undo_depth_limit(pe);
         decref_messages(count, msgs);
         break;
     default:
@@ -328,6 +336,7 @@ static void handle_internal(DP_PaintEngine *pe, DP_DrawContext *dc,
     switch (type) {
     case DP_MSG_INTERNAL_TYPE_RESET:
         DP_canvas_history_reset(pe->ch);
+        update_undo_depth_limit(pe);
         break;
     case DP_MSG_INTERNAL_TYPE_SOFT_RESET:
         DP_canvas_history_soft_reset(pe->ch);
@@ -335,6 +344,7 @@ static void handle_internal(DP_PaintEngine *pe, DP_DrawContext *dc,
     case DP_MSG_INTERNAL_TYPE_RESET_TO_STATE:
         DP_canvas_history_reset_to_state_noinc(
             pe->ch, DP_msg_internal_reset_to_state_data(mi));
+        update_undo_depth_limit(pe);
         break;
     case DP_MSG_INTERNAL_TYPE_SNAPSHOT:
         if (!DP_canvas_history_snapshot(pe->ch)) {
@@ -535,7 +545,8 @@ static void handle_single_message(DP_PaintEngine *pe, DP_DrawContext *dc,
         DP_MsgUndoDepth *mud = DP_message_internal(msg);
         int undo_depth_limit = DP_msg_undo_depth_depth(mud);
         DP_canvas_history_undo_depth_limit_set(pe->ch, undo_depth_limit);
-        DP_atomic_xch(&pe->undo_depth_limit, undo_depth_limit);
+        DP_atomic_xch(&pe->undo_depth_limit,
+                      DP_canvas_history_undo_depth_limit(pe->ch));
     }
     else if (local) {
         if (!DP_canvas_history_handle_local(pe->ch, dc, msg)) {
