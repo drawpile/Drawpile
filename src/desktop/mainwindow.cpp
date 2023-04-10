@@ -35,7 +35,6 @@ static constexpr auto CTRL_KEY = Qt::META;
 static constexpr auto CTRL_KEY = Qt::CTRL;
 #endif
 
-#include "config.h"
 #include "desktop/mainwindow.h"
 #include "libclient/document.h"
 #include "desktop/main.h"
@@ -51,6 +50,7 @@ static constexpr auto CTRL_KEY = Qt::CTRL;
 
 #include "desktop/utils/recentfiles.h"
 #include "libshared/util/whatismyip.h"
+#include "cmake-config/config.h"
 #include "libclient/utils/icon.h"
 #include "libclient/utils/images.h"
 #include "libshared/util/networkaccess.h"
@@ -1328,7 +1328,7 @@ void MainWindow::toggleTabletEventLog()
 		QString path = FileWrangler{this}.getSaveTabletEventLogPath();
 		if(!path.isEmpty()) {
 			if(drawdance::EventLog::open(path)) {
-				DP_event_log_write_meta("Drawpile: %s", DRAWPILE_VERSION);
+				DP_event_log_write_meta("Drawpile: %s", cmake_config::version());
 				DP_event_log_write_meta("Qt: %s", QT_VERSION_STR);
 				DP_event_log_write_meta("OS: %s", qUtf8Printable(QSysInfo::prettyProductName()));
 				DP_event_log_write_meta("Input: %s", qUtf8Printable(tabletinput::current()));
@@ -2387,13 +2387,8 @@ void MainWindow::openDebugDump()
 
 void MainWindow::about()
 {
-#ifdef BUILD_LABEL
-	const QString version = DRAWPILE_VERSION " (" BUILD_LABEL ")";
-#else
-	const QString version = DRAWPILE_VERSION;
-#endif
 	QMessageBox::about(nullptr, tr("About Drawpile"),
-			QStringLiteral("<p><b>Drawpile %1</b><br>").arg(version) +
+			QStringLiteral("<p><b>Drawpile %1</b><br>").arg(cmake_config::version()) +
 			tr("A collaborative drawing program.") + QStringLiteral("</p>"
 
 			"<p>Copyright © Calle Laakkonen and Drawpile contributors</p>"
@@ -2421,7 +2416,7 @@ void MainWindow::about()
 
 void MainWindow::homepage()
 {
-	QDesktopServices::openUrl(QUrl(WEBSITE));
+	QDesktopServices::openUrl(QUrl(cmake_config::website()));
 }
 
 /**
@@ -3145,7 +3140,7 @@ void MainWindow::setupActions()
 	//
 	// Help menu
 	//
-	QAction *homepage = makeAction("dphomepage", tr("&Homepage")).statusTip(WEBSITE);
+	QAction *homepage = makeAction("dphomepage", tr("&Homepage")).statusTip(cmake_config::website());
 	QAction *tablettester = makeAction("tablettester", tr("Tablet Tester"));
 	QAction *showlogfile = makeAction("showlogfile", tr("Log File"));
 	QAction *about = makeAction("dpabout", tr("&About Drawpile")).menuRole(QAction::AboutRole);

@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "config.h"
 #include "libshared/record/header.h"
 #include "libshared/net/protover.h"
 #include "libshared/net/message.h"
 #include "libshared/util/qtcompat.h"
+#include "cmake-config/config.h"
 
 #include <QIODevice>
 #include <QJsonDocument>
@@ -61,7 +61,7 @@ static QJsonObject withDefaults(const QJsonObject metadata)
 		header["version"] = protocol::ProtocolVersion::current().asString();
 
 	if(!header.contains("writerversion"))
-		header["writerversion"] = DRAWPILE_VERSION;
+		header["writerversion"] = cmake_config::version();
 
 	return header;
 }

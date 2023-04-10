@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "config.h"
 #include "libclient/net/tcpserver.h"
 #include "libclient/net/login.h"
 #include "libclient/net/messagequeue.h"
 #include "libclient/net/servercmd.h"
 #include "libshared/util/qtcompat.h"
+#include "cmake-config/config.h"
 
 #include <QDebug>
 #include <QSslSocket>
@@ -49,7 +49,7 @@ void TcpServer::login(LoginHandler *login)
 	m_loginstate = login;
 	m_loginstate->setParent(this);
 	m_loginstate->setServer(this);
-	m_socket->connectToHost(login->url().host(), login->url().port(DRAWPILE_PROTO_DEFAULT_PORT));
+	m_socket->connectToHost(login->url().host(), login->url().port(cmake_config::proto::port()));
 }
 
 void TcpServer::logout()

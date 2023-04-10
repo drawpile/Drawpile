@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "config.h"
 #include "libclient/utils/images.h"
+#include "cmake-config/config.h"
 
 extern "C" {
 #include <dpengine/load.h>
@@ -93,7 +93,7 @@ QStringList fileFormatFilterList(FileFormatOptions formats)
 					readImages += "*." + format + " ";
 				}
 			} else {
-				readImages = DRAWPILE_FILE_GROUP_IMAGE;
+				readImages = cmake_config::file_group::image();
 			}
 
 			filter << QGuiApplication::tr("Images (%1)").arg(readImages);
@@ -114,7 +114,7 @@ QStringList fileFormatFilterList(FileFormatOptions formats)
 
 		} else {
 			// A single Recordings filter for loading
-			recordings = DRAWPILE_FILE_GROUP_RECORDING;
+			recordings = cmake_config::file_group::recording();
 			filter
 				<< QGuiApplication::tr("Recordings (%1)").arg(recordings)
 				;

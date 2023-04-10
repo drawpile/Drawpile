@@ -3,7 +3,7 @@
 #include "libshared/listings/announcementapi.h"
 #include "libshared/listings/listserverfinder.h"
 #include "libshared/util/networkaccess.h"
-#include "config.h" // for DRAWPILE_VERSION
+#include "cmake-config/config.h"
 
 #include <QNetworkRequest>
 #include <QNetworkReply>
@@ -15,7 +15,10 @@
 
 namespace sessionlisting {
 
-static const char *USER_AGENT = "DrawpileListingClient/" DRAWPILE_VERSION;
+static const QString &user_agent() {
+	static const QString USER_AGENT = QStringLiteral("DrawpileListingClient/%1").arg(cmake_config::version());
+	return USER_AGENT;
+}
 
 static QString slashcat(QString s, const QString &s2)
 {
@@ -153,7 +156,7 @@ AnnouncementApiResponse *getApiInfo(const QUrl &apiUrl)
 	AnnouncementApiResponse *res = new AnnouncementApiResponse(apiUrl);
 
 	QNetworkRequest req(apiUrl);
-	req.setHeader(QNetworkRequest::UserAgentHeader, USER_AGENT);
+	req.setHeader(QNetworkRequest::UserAgentHeader, user_agent());
 
 	QNetworkReply *reply = networkaccess::getInstance()->get(req);
 	reply->connect(reply, &QNetworkReply::finished, res, [reply, res]() {
@@ -172,7 +175,7 @@ AnnouncementApiResponse *getApiInfo(const QUrl &apiUrl)
 
 			} else {
 				QNetworkRequest req2(reply->url().resolved(realApiUrl));
-				req2.setHeader(QNetworkRequest::UserAgentHeader, USER_AGENT);
+				req2.setHeader(QNetworkRequest::UserAgentHeader, user_agent());
 
 				QNetworkReply *reply2 = networkaccess::getInstance()->get(req2);
 				reply2->connect(reply2, &QNetworkReply::finished, res, [reply2, res]() {
@@ -207,7 +210,7 @@ AnnouncementApiResponse *getSessionList(const QUrl &apiUrl, const QString &proto
 	url.setQuery(query);
 
 	QNetworkRequest req(url);
-	req.setHeader(QNetworkRequest::UserAgentHeader, USER_AGENT);
+	req.setHeader(QNetworkRequest::UserAgentHeader, user_agent());
 
 	QNetworkReply *reply = networkaccess::getInstance()->get(req);
 	reply->connect(reply, &QNetworkReply::finished, res, [reply, res]() {
@@ -286,7 +289,7 @@ AnnouncementApiResponse *announceSession(const QUrl &apiUrl, const Session &sess
 	url.setPath(slashcat(url.path(), "sessions/"));
 	QNetworkRequest req(url);
 	req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-	req.setHeader(QNetworkRequest::UserAgentHeader, USER_AGENT);
+	req.setHeader(QNetworkRequest::UserAgentHeader, user_agent());
 
 	AnnouncementApiResponse *res = new AnnouncementApiResponse(apiUrl);
 
@@ -337,7 +340,7 @@ AnnouncementApiResponse *refreshSession(const Announcement &a, const Session &se
 
 	QNetworkRequest req(url);
 	req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-	req.setHeader(QNetworkRequest::UserAgentHeader, USER_AGENT);
+	req.setHeader(QNetworkRequest::UserAgentHeader, user_agent());
 	req.setRawHeader("X-Update-Key", a.updateKey.toUtf8());
 
 	AnnouncementApiResponse *res = new AnnouncementApiResponse(a.apiUrl);
@@ -393,7 +396,7 @@ AnnouncementApiResponse *refreshSessions(const QVector<QPair<Announcement, Sessi
 
 	QNetworkRequest req(url);
 	req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-	req.setHeader(QNetworkRequest::UserAgentHeader, USER_AGENT);
+	req.setHeader(QNetworkRequest::UserAgentHeader, user_agent());
 
 	AnnouncementApiResponse *res = new AnnouncementApiResponse(apiUrl);
 
@@ -424,7 +427,7 @@ AnnouncementApiResponse *unlistSession(const Announcement &a)
 	url.setPath(slashcat(url.path(), QStringLiteral("sessions/%1").arg(a.listingId)));
 
 	QNetworkRequest req(url);
-	req.setHeader(QNetworkRequest::UserAgentHeader, USER_AGENT);
+	req.setHeader(QNetworkRequest::UserAgentHeader, user_agent());
 	req.setRawHeader("X-Update-Key", a.updateKey.toUtf8());
 
 	AnnouncementApiResponse *res = new AnnouncementApiResponse(a.apiUrl);
@@ -444,7 +447,7 @@ AnnouncementApiResponse *queryRoomcode(const QUrl &apiUrl, const QString &roomco
 	url.setPath(slashcat(url.path(), QStringLiteral("join/") + roomcode));
 
 	QNetworkRequest req(url);
-	req.setHeader(QNetworkRequest::UserAgentHeader, USER_AGENT);
+	req.setHeader(QNetworkRequest::UserAgentHeader, user_agent());
 
 	AnnouncementApiResponse *res = new AnnouncementApiResponse(apiUrl);
 

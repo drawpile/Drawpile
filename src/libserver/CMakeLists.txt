@@ -42,10 +42,13 @@ target_sources(dpserver PRIVATE
 	thinsession.h
 )
 
-target_link_libraries(dpserver PUBLIC
-	dpshared
-	${QT_PACKAGE_NAME}::Core
-	${QT_PACKAGE_NAME}::Network
+target_link_libraries(dpserver
+	PRIVATE
+		cmake-config
+	PUBLIC
+		dpshared
+		${QT_PACKAGE_NAME}::Core
+		${QT_PACKAGE_NAME}::Network
 )
 
 if(TESTS)

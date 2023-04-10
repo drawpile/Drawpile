@@ -1,7 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "config.h"
-
 #include "thinsrv/multiserver.h"
 #include "thinsrv/initsys.h"
 #include "thinsrv/database.h"
@@ -9,6 +7,7 @@
 #include "libserver/inmemoryconfig.h"
 #include "thinsrv/headless/configfile.h"
 #include "libshared/util/paths.h"
+#include "cmake-config/config.h"
 
 #ifdef HAVE_WEBADMIN
 #include "thinsrv/webadmin/webadmin.h"
@@ -29,8 +28,8 @@ namespace headless {
 
 void printVersion()
 {
-	printf("drawpile-srv " DRAWPILE_VERSION "\n");
-	printf("Protocol version: %d.%d\n", DRAWPILE_PROTO_MAJOR_VERSION, DRAWPILE_PROTO_MINOR_VERSION);
+	printf("drawpile-srv %s\n", cmake_config::version());
+	printf("Protocol version: %d.%d\n", cmake_config::proto::major(), cmake_config::proto::minor());
 	printf("Qt version: %s (compiled against %s)\n", qVersion(), QT_VERSION_STR);
 	printf("SSL library version: %s (%lu)\n", QSslSocket::sslLibraryVersionString().toLocal8Bit().constData(), QSslSocket::sslLibraryVersionNumber());
 #ifdef HAVE_WEBADMIN
@@ -58,7 +57,7 @@ bool start() {
 #endif
 
 	// --port, -p <port>
-	QCommandLineOption portOption(QStringList() << "port" << "p", "Listening port", "port", QString::number(DRAWPILE_PROTO_DEFAULT_PORT));
+	QCommandLineOption portOption(QStringList() << "port" << "p", "Listening port", "port", QString::number(cmake_config::proto::port()));
 	parser.addOption(portOption);
 
 	// --listen, -l <address>

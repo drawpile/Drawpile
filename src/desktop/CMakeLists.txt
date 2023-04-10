@@ -270,6 +270,7 @@ target_sources(drawpile PRIVATE
 )
 
 target_link_libraries(drawpile PRIVATE
+	cmake-config
 	dpshared
 	dpclient
 	Drawdance::dpengine
@@ -472,7 +473,7 @@ elseif(APPLE)
 		RUNTIME_OUTPUT_NAME Drawpile
 		MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/Info.plist.in"
 		MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME}
-		MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_GIT_REVISION}
+		MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
 		MACOSX_BUNDLE_COPYRIGHT "Copyright © Drawpile contributors"
 		MACOSX_BUNDLE_GUI_IDENTIFIER net.drawpile.DrawpileClient
 		MACOSX_BUNDLE_ICON_FILE drawpile.icns

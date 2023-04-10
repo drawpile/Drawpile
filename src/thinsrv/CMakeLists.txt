@@ -34,6 +34,7 @@ if(UNIX)
 endif()
 
 target_link_libraries(${srvlib} PUBLIC
+	cmake-config
 	dpshared
 	dpserver
 	${QT_PACKAGE_NAME}::Core

@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "config.h"
-
 #include "libserver/jsonapi.h" // for datatype registration
 
 #include "thinsrv/initsys.h"
 #include "thinsrv/headless/headless.h"
+#include "cmake-config/config.h"
 
 #ifdef HAVE_SERVERGUI
 #include "thinsrv/gui/gui.h"
@@ -64,7 +63,7 @@ int main(int argc, char *argv[]) {
 	QCoreApplication::setOrganizationName("drawpile");
 	QCoreApplication::setOrganizationDomain("drawpile.net");
 	QCoreApplication::setApplicationName("drawpile-srv");
-	QCoreApplication::setApplicationVersion(DRAWPILE_VERSION);
+	QCoreApplication::setApplicationVersion(cmake_config::version());
 
 	// Start the server
 	if(useGui) {

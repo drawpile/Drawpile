@@ -5,8 +5,6 @@
 #include "libshared/net/recording.h"
 #include "libshared/net/textmode.h"
 
-#include "config.h"
-
 #include <QtEndian>
 #include <QVarLengthArray>
 #include <QFile>

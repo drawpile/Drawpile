@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "config.h" // for default port
 #include "desktop/main.h"
 #include "desktop/dialogs/settingsdialog.h"
 #include "desktop/dialogs/canvasshortcutsdialog.h"
@@ -23,6 +22,7 @@
 #include "libclient/canvas/paintengine.h"
 #include "desktop/notifications.h"
 #include "libshared/util/qtcompat.h"
+#include "cmake-config/config.h"
 
 #include "ui_settings.h"
 
@@ -379,7 +379,7 @@ void SettingsDialog::restoreSettings()
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/server");
-	m_ui->serverport->setValue(cfg.value("port",DRAWPILE_PROTO_DEFAULT_PORT).toInt());
+	m_ui->serverport->setValue(cfg.value("port", cmake_config::proto::port()).toInt());
 	m_ui->lowspaceAutoreset->setChecked(cfg.value("autoreset", true).toBool());
 	m_ui->connTimeout->setValue(cfg.value("timeout", 60).toInt());
 #ifdef HAVE_DNSSD
@@ -517,7 +517,7 @@ void SettingsDialog::rememberSettings()
 
 	// Remember server settings
 	cfg.beginGroup("settings/server");
-	if(m_ui->serverport->value() == DRAWPILE_PROTO_DEFAULT_PORT)
+	if(m_ui->serverport->value() == cmake_config::proto::port())
 		cfg.remove("port");
 	else
 		cfg.setValue("port", m_ui->serverport->value());

@@ -10,8 +10,6 @@
 #include "libshared/util/networkaccess.h"
 #include "libshared/util/paths.h"
 
-#include "config.h"
-
 #include <QDebug>
 #include <QStringList>
 #include <QRegularExpression>

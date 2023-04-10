@@ -193,15 +193,18 @@ else()
 	)
 endif()
 
-target_link_libraries(dpclient PUBLIC
-	dpshared
-	${QT_PACKAGE_NAME}::Core
-	${QT_PACKAGE_NAME}::Network
-	${QT_PACKAGE_NAME}::Gui
-	${QT_PACKAGE_NAME}::Sql
-	Drawdance::dpcommon
-	Drawdance::dpengine
-	Drawdance::dpmsg
+target_link_libraries(dpclient
+	PRIVATE
+		cmake-config
+	PUBLIC
+		dpshared
+		${QT_PACKAGE_NAME}::Core
+		${QT_PACKAGE_NAME}::Network
+		${QT_PACKAGE_NAME}::Gui
+		${QT_PACKAGE_NAME}::Sql
+		Drawdance::dpcommon
+		Drawdance::dpengine
+		Drawdance::dpmsg
 )
 
 if(${QT_PACKAGE_NAME}LinguistTools_FOUND)

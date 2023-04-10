@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "libclient/utils/logging.h"
-#include "config.h"
 #include "libshared/util/paths.h"
+#include "cmake-config/config.h"
 
 #include <QMessageLogContext>
 #include <QDateTime>
@@ -45,7 +45,9 @@ QByteArray logFilePath()
 	return utils::paths::writablePath(
 				QStandardPaths::AppLocalDataLocation,
 				"logs/",
-				("drawpile-" DRAWPILE_VERSION "-") + QDateTime::currentDateTime().toString("yyyy-MM-dd") + ".log"
+				QStringLiteral("drawpile-%1-%2.log")
+					.arg(cmake_config::version())
+					.arg(QDateTime::currentDateTime().toString("yyyy-MM-dd"))
 			).toLocal8Bit();
 }
 

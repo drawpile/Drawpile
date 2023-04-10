@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "libshared/net/protover.h"
-#include "config.h"
+#include "cmake-config/config.h"
 
 #include <QRegularExpression>
 
@@ -9,7 +9,7 @@ namespace protocol {
 
 ProtocolVersion::ProtocolVersion(int major, int minor)
 	: m_namespace(QStringLiteral("dp")),
-	  m_server(DRAWPILE_PROTO_SERVER_VERSION),
+	  m_server(cmake_config::proto::server()),
 	  m_major(major),
 	  m_minor(minor)
 {
@@ -40,18 +40,18 @@ ProtocolVersion ProtocolVersion::current()
 {
 	return ProtocolVersion(
 			QStringLiteral("dp"),
-			DRAWPILE_PROTO_SERVER_VERSION,
-			DRAWPILE_PROTO_MAJOR_VERSION,
-			DRAWPILE_PROTO_MINOR_VERSION
+			cmake_config::proto::server(),
+			cmake_config::proto::major(),
+			cmake_config::proto::minor()
 			);
 }
 
 bool ProtocolVersion::isCurrent() const
 {
 	return m_namespace == QStringLiteral("dp") &&
-			m_server == DRAWPILE_PROTO_SERVER_VERSION &&
-			m_major == DRAWPILE_PROTO_MAJOR_VERSION &&
-			m_minor == DRAWPILE_PROTO_MINOR_VERSION;
+			m_server == cmake_config::proto::server() &&
+			m_major == cmake_config::proto::major() &&
+			m_minor == cmake_config::proto::minor();
 }
 
 bool ProtocolVersion::isFuture() const

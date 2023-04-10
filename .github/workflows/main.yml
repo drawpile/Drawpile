@@ -72,7 +72,7 @@ jobs:
             # This causes the AppImage to be generated, instead of just creating
             # the portable tree, because there seems to be no way to separate
             # these steps with linuxdeploy
-            packager: VERSION=$(git describe --tags) cmake --install build --config Release
+            packager: VERSION=$(git describe) cmake --install build --config Release
 
           # Android common
           - os: ubuntu-latest

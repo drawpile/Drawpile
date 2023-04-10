@@ -58,9 +58,12 @@ target_sources(dpshared PRIVATE
 	util/whatismyip.h
 )
 
-target_link_libraries(dpshared PUBLIC
-	${QT_PACKAGE_NAME}::Core
-	${QT_PACKAGE_NAME}::Network
+target_link_libraries(dpshared
+	PRIVATE
+		cmake-config
+	PUBLIC
+		${QT_PACKAGE_NAME}::Core
+		${QT_PACKAGE_NAME}::Network
 )
 
 if(ANDROID)

@@ -1,0 +1,9 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+#include "cmake-config/config.h"
+
+namespace cmake_config {
+
+const char *version() { return "@GIT_VERSION@"; }
+
+} // namespace config

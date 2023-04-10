@@ -2,7 +2,7 @@
 
 #include "libclient/net/sessionlistingmodel.h"
 #include "libclient/utils/icon.h"
-#include "config.h"
+#include "cmake-config/config.h"
 
 #include <QGuiApplication>
 #include <QUrl>
@@ -79,7 +79,7 @@ static QUrl sessionUrl(const Session &s)
 	QUrl url;
 	url.setScheme("drawpile");
 	url.setHost(s.host);
-	if(s.port != DRAWPILE_PROTO_DEFAULT_PORT)
+	if(s.port != cmake_config::proto::port())
 		url.setPort(s.port);
 	url.setPath("/" + s.id);
 	return url;

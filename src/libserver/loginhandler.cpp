@@ -11,8 +11,7 @@
 #include "libshared/util/authtoken.h"
 #include "libshared/util/networkaccess.h"
 #include "libshared/util/validators.h"
-
-#include "config.h"
+#include "cmake-config/config.h"
 
 #include <QStringList>
 #include <QRegularExpression>
@@ -37,8 +36,8 @@ void LoginHandler::startLoginProcess()
 
 	protocol::ServerReply greeting;
 	greeting.type = protocol::ServerReply::LOGIN;
-	greeting.message = "Drawpile server " DRAWPILE_VERSION;
-	greeting.reply["version"] = DRAWPILE_PROTO_SERVER_VERSION;
+	greeting.message = QStringLiteral("Drawpile server %1").arg(cmake_config::version());
+	greeting.reply["version"] = cmake_config::proto::server();
 
 	QJsonArray flags;
 

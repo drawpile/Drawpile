@@ -1,7 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "config.h"
-
 #include "desktop/dialogs/videoexportdialog.h"
 #include "libclient/export/imageseriesexporter.h"
 #include "libclient/export/ffmpegexporter.h"

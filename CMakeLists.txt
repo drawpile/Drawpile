@@ -57,11 +57,13 @@ endif()
 # the split version number is useful for other places, so just pretend like it
 # does semver and maybe it will someday
 set(PROJECT_VERSION "${PROJECT_VERSION}${PROJECT_VERSION_LABEL}")
+if(BUILD_LABEL)
+	set(PROJECT_VERSION "${PROJECT_VERSION}+${BUILD_LABEL}")
+endif()
 
 # All of this information should be known by this point
 message(STATUS "Project version: ${PROJECT_VERSION}")
 message(STATUS "Protocol version: ${DRAWPILE_PROTO_SERVER_VERSION}.${DRAWPILE_PROTO_MAJOR_VERSION}.${DRAWPILE_PROTO_MINOR_VERSION}")
-message(STATUS "Git revision: ${PROJECT_GIT_REVISION}")
 
 # https://doc.qt.io/qt-6/cmake-qt5-and-qt6-compatibility.html
 find_package(QT ${DP_MIN_QT_VERSION} NAMES Qt6 Qt5 REQUIRED)
@@ -119,6 +121,8 @@ endif()
 # source directory to not go insane figuring out what is included from where
 include_directories(${CMAKE_CURRENT_LIST_DIR}/src)
 
+add_subdirectory(src/cmake-config)
+
 if(CLIENT OR SERVER)
 	# Everything needs these dependencies so just do it in one place
 	find_package(${QT_PACKAGE_NAME} QUIET COMPONENTS LinguistTools)
@@ -146,13 +150,6 @@ if(CLIENT OR SERVER)
 		endif()
 	endif()
 	add_feature_info("Zeroconf support" "TARGET KF5::DNSSD" "")
-
-	message(STATUS "Generating config.h")
-	include(DrawpileFileExtensions)
-	get_qt_extensions(RECORDING DRAWPILE_FILE_GROUP_RECORDING)
-	get_qt_extensions(IMAGE DRAWPILE_FILE_GROUP_IMAGE)
-	configure_file(src/config.h.in config/config.h)
-	include_directories(${CMAKE_CURRENT_BINARY_DIR}/config)
 
 	message(STATUS "Adding libshared")
 	add_subdirectory(src/libshared)

@@ -3,7 +3,7 @@
 #include "libclient/utils/newversion.h"
 #include "libshared/util/networkaccess.h"
 #include "libshared/net/protover.h"
-#include "config.h"
+#include "cmake-config/config.h"
 
 #include <QXmlStreamReader>
 #include <QRegularExpression>
@@ -20,7 +20,7 @@ NewVersionCheck::NewVersionCheck(QObject *parent)
 	: QObject(parent),
 	m_showBetas(false)
 {
-	auto m = VERSION_RE.match(DRAWPILE_VERSION);
+	auto m = VERSION_RE.match(cmake_config::version());
 	Q_ASSERT(m.hasMatch());
 
 	m_server = m.captured(1).toInt();

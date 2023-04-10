@@ -1,0 +1,28 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+#ifndef CMAKE_CONFIG_CONFIG_H
+#define CMAKE_CONFIG_CONFIG_H
+
+namespace cmake_config {
+
+// The version number goes to a separate TU because it will change after every
+// commit, and so if it were in this header that would a bunch of other TUs to
+// invalidate on every new commit which would be bad for build speed
+const char *version();
+constexpr const char *website() { return "@PROJECT_HOMEPAGE_URL@"; }
+
+namespace file_group {
+	constexpr const char *image() { return "@DRAWPILE_FILE_GROUP_IMAGE@"; }
+	constexpr const char *recording() { return "@DRAWPILE_FILE_GROUP_RECORDING@"; }
+} // namespace file_group
+
+namespace proto {
+constexpr int server() { return @DRAWPILE_PROTO_SERVER_VERSION@; }
+constexpr int major() { return @DRAWPILE_PROTO_MAJOR_VERSION@; }
+constexpr int minor() { return @DRAWPILE_PROTO_MINOR_VERSION@; }
+constexpr int port() { return @DRAWPILE_PROTO_DEFAULT_PORT@; }
+} // namespace proto
+
+} // namespace config
+
+#endif

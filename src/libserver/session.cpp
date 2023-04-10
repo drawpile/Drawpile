@@ -14,8 +14,6 @@
 #include "libshared/util/passwordhash.h"
 #include "libshared/util/networkaccess.h"
 
-#include "config.h"
-
 #include <QTimer>
 #include <QNetworkRequest>
 #include <QNetworkReply>
