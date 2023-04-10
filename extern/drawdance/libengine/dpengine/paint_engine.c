@@ -123,37 +123,26 @@ typedef struct DP_PaintEngineDabsPreview {
     DP_Message *messages[];
 } DP_PaintEngineDabsPreview;
 
-typedef struct DP_PaintEngineLaserBuffer {
-    uint8_t persistence;
-    uint8_t b, g, r, a;
-} DP_PaintEngineLaserBuffer;
+typedef struct DP_PaintEngineRenderBuffer {
+    DP_ALIGNAS_SIMD DP_Pixel8 pixels[DP_TILE_LENGTH];
+} DP_PaintEngineRenderBuffer;
 
-typedef struct DP_PaintEngineLaserChanges {
-    uint8_t count;
-    uint8_t users[256];
-    bool active[256];
-    DP_PaintEngineLaserBuffer buffers[256];
-} DP_PaintEngineLaserChanges;
-
-typedef struct DP_PaintEngineCursorPosition {
-    int32_t x, y;
-} DP_PaintEngineCursorPosition;
-
-typedef struct DP_PaintEngineCursorChanges {
-    uint8_t count;
-    uint8_t users[256];
-    bool active[256];
-    DP_PaintEngineCursorPosition positions[256];
-} DP_PaintEngineCursorChanges;
-
-typedef struct DP_PaintEngineMetaBuffer {
-    uint8_t acl_change_flags;
-    DP_PaintEngineLaserChanges laser_changes;
-    DP_PaintEngineCursorChanges cursor_changes;
-} DP_PaintEngineMetaBuffer;
+typedef struct DP_PaintEngineCursorChange {
+    DP_MessageType type;
+    unsigned int context_id;
+    union {
+        struct {
+            int persistence;
+            uint32_t color;
+        } laser;
+        struct {
+            int x;
+            int y;
+        } move;
+    };
+} DP_PaintEngineCursorChange;
 
 struct DP_PaintEngine {
-    unsigned char *buffers;
     DP_AclState *acls;
     DP_CanvasHistory *ch;
     DP_CanvasDiff *diff;
@@ -190,6 +179,11 @@ struct DP_PaintEngine {
     DP_Atomic undo_depth_limit;
     DP_Thread *paint_thread;
     struct {
+        uint8_t acl_change_flags;
+        DP_Vector cursor_changes;
+        DP_UserCursorBuffer ucb;
+    } meta;
+    struct {
         char *path;
         DP_Recorder *recorder;
         DP_Semaphore *start_sem;
@@ -208,6 +202,7 @@ struct DP_PaintEngine {
         DP_Worker *worker;
         DP_Semaphore *tiles_done_sem;
         int tiles_waiting;
+        DP_PaintEngineRenderBuffer *buffers;
     } render;
 };
 
@@ -332,6 +327,8 @@ static void handle_internal(DP_PaintEngine *pe, DP_DrawContext *dc,
     case DP_MSG_INTERNAL_TYPE_RESET_TO_STATE:
         DP_canvas_history_reset_to_state_noinc(
             pe->ch, DP_msg_internal_reset_to_state_data(mi));
+        DP_canvas_history_undo_depth_limit_set(
+            pe->ch, DP_msg_internal_reset_to_state_undo_depth_limit(mi));
         break;
     case DP_MSG_INTERNAL_TYPE_SNAPSHOT:
         if (!DP_canvas_history_snapshot(pe->ch)) {
@@ -674,8 +671,7 @@ static void render_job(void *user, int thread_index)
     DP_TransientTile *tt =
         flatten_tile(pe, render_params->needs_checkers, tile_index);
 
-    DP_Pixel8 *pixel_buffer =
-        ((DP_Pixel8 *)pe->buffers) + DP_TILE_LENGTH * thread_index;
+    DP_Pixel8 *pixel_buffer = pe->render.buffers[thread_index].pixels;
     DP_pixels15_to_8_tile(pixel_buffer, DP_transient_tile_pixels(tt));
 
     render_params->render_tile(render_params->user, x, y, pixel_buffer,
@@ -712,12 +708,6 @@ DP_PaintEngine *DP_paint_engine_new_inc(
 {
     DP_PaintEngine *pe = DP_malloc(sizeof(*pe));
 
-    int render_thread_count = DP_thread_cpu_count();
-    size_t buffers_size =
-        DP_max_size(sizeof(DP_PaintEngineLaserBuffer),
-                    sizeof(DP_Pixel8[DP_TILE_LENGTH])
-                        * DP_int_to_size(render_thread_count));
-    pe->buffers = DP_malloc_simd(buffers_size);
     pe->acls = acls;
     pe->ch = DP_canvas_history_new_inc(
         cs_or_null, save_point_fn, save_point_user, want_canvas_history_dump,
@@ -759,6 +749,9 @@ DP_PaintEngine *DP_paint_engine_new_inc(
     DP_atomic_set(&pe->undo_depth_limit,
                   DP_canvas_history_undo_depth_limit(pe->ch));
     pe->paint_thread = DP_thread_new(run_paint_engine, pe);
+    pe->meta.acl_change_flags = 0;
+    DP_VECTOR_INIT_TYPE(&pe->meta.cursor_changes, DP_PaintEngineCursorChange,
+                        8);
     pe->record.path = NULL;
     pe->record.recorder = NULL;
     pe->record.start_sem = DP_semaphore_new(0);
@@ -770,11 +763,14 @@ DP_PaintEngine *DP_paint_engine_new_inc(
     pe->playback.fn = playback_fn;
     pe->playback.dump_fn = dump_playback_fn;
     pe->playback.user = playback_user;
+    int render_thread_count = DP_thread_cpu_count();
     pe->render.worker =
         DP_worker_new(1024, sizeof(struct DP_PaintEngineRenderJobParams),
                       render_thread_count, render_job);
     pe->render.tiles_done_sem = DP_semaphore_new(0);
     pe->render.tiles_waiting = 0;
+    pe->render.buffers = DP_malloc_simd(sizeof(DP_PaintEngineRenderBuffer)
+                                        * DP_int_to_size(render_thread_count));
     // If there's hidden layers in the canvas state, add them to our
     // local view so that they actually appear hidden to start with.
     if (cs_or_null) {
@@ -791,11 +787,13 @@ void DP_paint_engine_free_join(DP_PaintEngine *pe)
         DP_paint_engine_recorder_stop(pe);
         DP_atomic_set(&pe->running, false);
         DP_semaphore_free(pe->render.tiles_done_sem);
+        DP_free_simd(pe->render.buffers);
         DP_worker_free_join(pe->render.worker);
         DP_SEMAPHORE_MUST_POST(pe->queue_sem);
         DP_thread_free_join(pe->paint_thread);
         DP_player_free(pe->playback.player);
         DP_semaphore_free(pe->record.start_sem);
+        DP_vector_dispose(&pe->meta.cursor_changes);
         DP_mutex_free(pe->queue_mutex);
         DP_semaphore_free(pe->queue_sem);
         DP_message_queue_dispose(&pe->remote_queue);
@@ -839,7 +837,6 @@ void DP_paint_engine_free_join(DP_PaintEngine *pe)
         DP_transient_layer_content_decref(pe->tlc);
         DP_canvas_diff_free(pe->diff);
         DP_canvas_history_free(pe->ch);
-        DP_free_simd(pe->buffers);
         DP_free(pe);
     }
 }
@@ -1131,6 +1128,7 @@ static long long guess_message_msecs(DP_MessageType type)
     case DP_MSG_PUT_IMAGE:
     case DP_MSG_MOVE_REGION:
     case DP_MSG_MOVE_RECT:
+    case DP_MSG_MOVE_POINTER:
         return 10;
     case DP_MSG_LAYER_CREATE:
     case DP_MSG_LAYER_ATTRIBUTES:
@@ -1648,11 +1646,6 @@ static bool is_pushable_type(DP_MessageType type)
         || type == DP_MSG_DEFAULT_LAYER;
 }
 
-static DP_PaintEngineMetaBuffer *get_meta_buffer(DP_PaintEngine *pe)
-{
-    return (DP_PaintEngineMetaBuffer *)pe->buffers;
-}
-
 static void restart_recording(DP_PaintEngine *pe)
 {
     char *path = DP_file_path_unique_nonexistent(pe->record.path, 99);
@@ -1699,63 +1692,38 @@ static void record_message(DP_PaintEngine *pe, DP_Message *msg,
 
 static void handle_laser_trail(DP_PaintEngine *pe, DP_Message *msg)
 {
-    uint8_t context_id = DP_uint_to_uint8(DP_message_context_id(msg));
-    DP_PaintEngineLaserChanges *laser = &get_meta_buffer(pe)->laser_changes;
-
-    int laser_count = laser->count;
-    if (laser_count == 0) {
-        memset(laser->active, 0, sizeof(laser->active));
-        laser->users[0] = context_id;
-        laser->count = 1;
-    }
-    else if (!laser->active[context_id]) {
-        laser->active[context_id] = true;
-        laser->users[laser_count] = context_id;
-        ++laser->count;
-    }
-
-    DP_MsgLaserTrail *mlt = DP_msg_laser_trail_cast(msg);
-    DP_UPixel8 pixel = {DP_msg_laser_trail_color(mlt)};
-    laser->buffers[context_id] =
-        (DP_PaintEngineLaserBuffer){DP_msg_laser_trail_persistence(mlt),
-                                    pixel.b, pixel.g, pixel.r, pixel.a};
+    DP_MsgLaserTrail *mlt = DP_message_internal(msg);
+    DP_PaintEngineCursorChange change = {
+        DP_MSG_LASER_TRAIL, DP_message_context_id(msg),
+        .laser = {DP_msg_laser_trail_persistence(mlt),
+                  DP_msg_laser_trail_color(mlt)}};
+    DP_VECTOR_PUSH_TYPE(&pe->meta.cursor_changes, DP_PaintEngineCursorChange,
+                        change);
 }
 
 static void handle_move_pointer(DP_PaintEngine *pe, DP_Message *msg)
 {
-    uint8_t context_id = DP_uint_to_uint8(DP_message_context_id(msg));
-    DP_PaintEngineCursorChanges *cursor = &get_meta_buffer(pe)->cursor_changes;
-
-    int cursor_count = cursor->count;
-    if (cursor_count == 0) {
-        memset(cursor->active, 0, sizeof(cursor->active));
-        cursor->users[0] = context_id;
-        cursor->count = 1;
-    }
-    else if (!cursor->active[context_id]) {
-        cursor->active[context_id] = true;
-        cursor->users[cursor_count] = context_id;
-        ++cursor->count;
-    }
-
-    DP_MsgMovePointer *mmp = DP_msg_move_pointer_cast(msg);
-    cursor->positions[context_id] = (DP_PaintEngineCursorPosition){
-        DP_msg_move_pointer_x(mmp), DP_msg_move_pointer_y(mmp)};
+    DP_MsgMovePointer *mmp = DP_message_internal(msg);
+    DP_PaintEngineCursorChange change = {
+        DP_MSG_MOVE_POINTER, DP_message_context_id(msg),
+        .move = {DP_msg_move_pointer_x(mmp), DP_msg_move_pointer_y(mmp)}};
+    DP_VECTOR_PUSH_TYPE(&pe->meta.cursor_changes, DP_PaintEngineCursorChange,
+                        change);
 }
 
 static bool should_push_message_remote(DP_PaintEngine *pe, DP_Message *msg,
                                        bool override_acls)
 {
+    DP_MessageType type = DP_message_type(msg);
+    record_message(pe, msg, type);
     uint8_t result = DP_acl_state_handle(pe->acls, msg, override_acls);
-    get_meta_buffer(pe)->acl_change_flags |= result;
+    pe->meta.acl_change_flags |= result;
     if (result & DP_ACL_STATE_FILTERED_BIT) {
         DP_debug("ACL filtered %s message from user %u",
                  DP_message_type_enum_name_unprefixed(DP_message_type(msg)),
                  DP_message_context_id(msg));
     }
     else {
-        DP_MessageType type = DP_message_type(msg);
-        record_message(pe, msg, type);
         if (is_pushable_type(type) || type == DP_MSG_UNDO_DEPTH) {
             return true;
         }
@@ -1813,10 +1781,9 @@ int DP_paint_engine_handle_inc(DP_PaintEngine *pe, bool local,
     bool (*should_push)(DP_PaintEngine *, DP_Message *, bool) =
         local ? should_push_message_local : should_push_message_remote;
 
-    DP_PaintEngineMetaBuffer *meta_buffer = get_meta_buffer(pe);
-    meta_buffer->acl_change_flags = 0;
-    meta_buffer->laser_changes.count = 0;
-    meta_buffer->cursor_changes.count = 0;
+    pe->meta.acl_change_flags = 0;
+    DP_Vector *cursor_changes = &pe->meta.cursor_changes;
+    cursor_changes->used = 0;
 
     // Don't lock anything until we actually find a message to push.
     int pushed = 0;
@@ -1831,28 +1798,26 @@ int DP_paint_engine_handle_inc(DP_PaintEngine *pe, bool local,
         }
     }
 
-    int acl_change_flags =
-        meta_buffer->acl_change_flags & DP_ACL_STATE_CHANGE_MASK;
+    int acl_change_flags = pe->meta.acl_change_flags & DP_ACL_STATE_CHANGE_MASK;
     if (acl_change_flags != 0) {
         acls_changed(user, acl_change_flags);
     }
 
-    DP_PaintEngineLaserChanges *laser = &meta_buffer->laser_changes;
-    int laser_count = laser->count;
-    for (int i = 0; i < laser_count; ++i) {
-        uint8_t context_id = laser->users[i];
-        DP_PaintEngineLaserBuffer *lb = &laser->buffers[context_id];
-        DP_UPixel8 pixel = {.b = lb->b, .g = lb->g, .r = lb->r, .a = lb->a};
-        laser_trail(user, context_id, lb->persistence, pixel.color);
-    }
-
-    DP_PaintEngineCursorChanges *cursor = &meta_buffer->cursor_changes;
-    int cursor_count = cursor->count;
-    for (int i = 0; i < cursor_count; ++i) {
-        uint8_t context_id = cursor->users[i];
-        DP_PaintEngineCursorPosition *cp = &cursor->positions[context_id];
-        move_pointer(user, context_id, DP_int32_to_int(cp->x),
-                     DP_int32_to_int(cp->y));
+    size_t cursor_change_count = cursor_changes->used;
+    for (size_t i = 0; i < cursor_change_count; ++i) {
+        DP_PaintEngineCursorChange change =
+            DP_VECTOR_AT_TYPE(cursor_changes, DP_PaintEngineCursorChange, i);
+        switch (change.type) {
+        case DP_MSG_LASER_TRAIL:
+            laser_trail(user, change.context_id, change.laser.persistence,
+                        change.laser.color);
+            break;
+        case DP_MSG_MOVE_POINTER:
+            move_pointer(user, change.context_id, change.move.x, change.move.y);
+            break;
+        default:
+            DP_UNREACHABLE();
+        }
     }
 
     DP_PERF_END(fn);
@@ -2223,7 +2188,7 @@ void DP_paint_engine_tick(
     }
 
     DP_CanvasState *prev_history_cs = pe->history_cs;
-    DP_UserCursorBuffer *ucb = (DP_UserCursorBuffer *)pe->buffers;
+    DP_UserCursorBuffer *ucb = &pe->meta.ucb;
     DP_CanvasState *next_history_cs =
         DP_canvas_history_compare_and_get(pe->ch, prev_history_cs, ucb);
     if (next_history_cs) {
