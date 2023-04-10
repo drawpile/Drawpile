@@ -1682,7 +1682,7 @@ bool DP_player_index_build(DP_Player *player, DP_DrawContext *dc,
     }
 
     const char *path = index_player->index_path;
-    DP_Output *output = DP_file_output_new_from_path(path);
+    DP_Output *output = DP_file_output_save_new_from_path(path);
     if (!output) {
         DP_player_free(index_player);
         return false;
