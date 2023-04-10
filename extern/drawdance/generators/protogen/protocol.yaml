@@ -300,6 +300,22 @@ UndoDepth:
     fields:
         - depth u8
 
+Data:
+    id: 75
+    comment: |
+             Send and receive structured information. Intended for stuff like
+             sending and receiving user troubleshooting information, sharing
+             brushes etc. Should probably be a server meta message so that it
+             can be directed at the appropriate user, but that's something for
+             Drawpile 3.0.
+    fields:
+        - type enum:
+          name:
+          variants:
+              - UserInfo
+        - recipient u8
+        - body bytes
+
 # Command messages (opaque)
 UndoPoint:
     id: 128

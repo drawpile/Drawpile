@@ -72,6 +72,7 @@ bool DP_message_type_client_meta(DP_MessageType type)
     case DP_MSG_FILTERED:
     case DP_MSG_EXTENSION:
     case DP_MSG_UNDO_DEPTH:
+    case DP_MSG_DATA:
         return true;
     default:
         return false;
@@ -164,6 +165,8 @@ const char *DP_message_type_name(DP_MessageType type)
         return "extension";
     case DP_MSG_UNDO_DEPTH:
         return "undodepth";
+    case DP_MSG_DATA:
+        return "data";
     case DP_MSG_UNDO_POINT:
         return "undopoint";
     case DP_MSG_CANVAS_RESIZE:
@@ -276,6 +279,8 @@ const char *DP_message_type_enum_name(DP_MessageType type)
         return "DP_MSG_EXTENSION";
     case DP_MSG_UNDO_DEPTH:
         return "DP_MSG_UNDO_DEPTH";
+    case DP_MSG_DATA:
+        return "DP_MSG_DATA";
     case DP_MSG_UNDO_POINT:
         return "DP_MSG_UNDO_POINT";
     case DP_MSG_CANVAS_RESIZE:
@@ -408,6 +413,9 @@ DP_MessageType DP_message_type_from_name(const char *type_name,
     }
     else if (DP_str_equal(type_name, "undodepth")) {
         return DP_MSG_UNDO_DEPTH;
+    }
+    else if (DP_str_equal(type_name, "data")) {
+        return DP_MSG_DATA;
     }
     else if (DP_str_equal(type_name, "undopoint")) {
         return DP_MSG_UNDO_POINT;
@@ -565,6 +573,8 @@ DP_Message *DP_message_deserialize_body(int type, unsigned int context_id,
         return NULL;
     case DP_MSG_UNDO_DEPTH:
         return DP_msg_undo_depth_deserialize(context_id, buf, length);
+    case DP_MSG_DATA:
+        return DP_msg_data_deserialize(context_id, buf, length);
     case DP_MSG_UNDO_POINT:
         return DP_msg_undo_point_deserialize(context_id, buf, length);
     case DP_MSG_CANVAS_RESIZE:
@@ -687,6 +697,8 @@ DP_Message *DP_message_parse_body(DP_MessageType type, unsigned int context_id,
         return NULL;
     case DP_MSG_UNDO_DEPTH:
         return DP_msg_undo_depth_parse(context_id, reader);
+    case DP_MSG_DATA:
+        return DP_msg_data_parse(context_id, reader);
     case DP_MSG_UNDO_POINT:
         return DP_msg_undo_point_parse(context_id, reader);
     case DP_MSG_CANVAS_RESIZE:
@@ -3014,6 +3026,149 @@ uint8_t DP_msg_undo_depth_depth(const DP_MsgUndoDepth *mud)
 {
     DP_ASSERT(mud);
     return mud->depth;
+}
+
+
+/* DP_MSG_DATA */
+
+const char *DP_msg_data_type_variant_name(unsigned int value)
+{
+    switch (value) {
+    case DP_MSG_DATA_TYPE_USER_INFO:
+        return "UserInfo";
+    default:
+        return NULL;
+    }
+}
+
+struct DP_MsgData {
+    uint8_t type;
+    uint8_t recipient;
+    uint16_t body_size;
+    unsigned char body[];
+};
+
+static size_t msg_data_payload_length(DP_Message *msg)
+{
+    DP_MsgData *md = DP_message_internal(msg);
+    return ((size_t)2) + md->body_size;
+}
+
+static size_t msg_data_serialize_payload(DP_Message *msg, unsigned char *data)
+{
+    DP_MsgData *md = DP_message_internal(msg);
+    size_t written = 0;
+    written += DP_write_bigendian_uint8(md->type, data + written);
+    written += DP_write_bigendian_uint8(md->recipient, data + written);
+    written += write_bytes(md->body, md->body_size, data + written);
+    DP_ASSERT(written == msg_data_payload_length(msg));
+    return written;
+}
+
+static bool msg_data_write_payload_text(DP_Message *msg, DP_TextWriter *writer)
+{
+    DP_MsgData *md = DP_message_internal(msg);
+    return DP_text_writer_write_base64(writer, "body", md->body, md->body_size)
+        && DP_text_writer_write_uint(writer, "recipient", md->recipient, false)
+        && DP_text_writer_write_uint(writer, "type", md->type, false);
+}
+
+static bool msg_data_equals(DP_Message *DP_RESTRICT msg,
+                            DP_Message *DP_RESTRICT other)
+{
+    DP_MsgData *a = DP_message_internal(msg);
+    DP_MsgData *b = DP_message_internal(other);
+    return a->type == b->type && a->recipient == b->recipient
+        && a->body_size == b->body_size
+        && memcmp(a->body, b->body, DP_uint16_to_size(a->body_size)) == 0;
+}
+
+static const DP_MessageMethods msg_data_methods = {
+    msg_data_payload_length,
+    msg_data_serialize_payload,
+    msg_data_write_payload_text,
+    msg_data_equals,
+};
+
+DP_Message *DP_msg_data_new(unsigned int context_id, uint8_t type,
+                            uint8_t recipient,
+                            void (*set_body)(size_t, unsigned char *, void *),
+                            size_t body_size, void *body_user)
+{
+    DP_Message *msg =
+        DP_message_new(DP_MSG_DATA, context_id, &msg_data_methods,
+                       DP_FLEX_SIZEOF(DP_MsgData, body, body_size));
+    DP_MsgData *md = DP_message_internal(msg);
+    md->type = type;
+    md->recipient = recipient;
+    md->body_size = DP_size_to_uint16(body_size);
+    if (set_body) {
+        set_body(md->body_size, md->body, body_user);
+    }
+    return msg;
+}
+
+DP_Message *DP_msg_data_deserialize(unsigned int context_id,
+                                    const unsigned char *buffer, size_t length)
+{
+    if (length < 2 || length > 65535) {
+        DP_error_set("Wrong length for data message; "
+                     "expected between 2 and 65535, got %zu",
+                     length);
+        return NULL;
+    }
+    size_t read = 0;
+    uint8_t type = read_uint8(buffer + read, &read);
+    uint8_t recipient = read_uint8(buffer + read, &read);
+    size_t body_bytes = length - read;
+    uint16_t body_size = DP_size_to_uint16(body_bytes);
+    void *body_user = (void *)(buffer + read);
+    return DP_msg_data_new(context_id, type, recipient, read_bytes, body_size,
+                           body_user);
+}
+
+DP_Message *DP_msg_data_parse(unsigned int context_id, DP_TextReader *reader)
+{
+    uint8_t type = (uint8_t)DP_text_reader_get_ulong(reader, "type", UINT8_MAX);
+    uint8_t recipient =
+        (uint8_t)DP_text_reader_get_ulong(reader, "recipient", UINT8_MAX);
+    size_t body_size;
+    DP_TextReaderParseParams body_params =
+        DP_text_reader_get_base64_string(reader, "body", &body_size);
+    return DP_msg_data_new(context_id, type, recipient,
+                           DP_text_reader_parse_base64, body_size,
+                           &body_params);
+}
+
+DP_MsgData *DP_msg_data_cast(DP_Message *msg)
+{
+    return DP_message_cast(msg, DP_MSG_DATA);
+}
+
+uint8_t DP_msg_data_type(const DP_MsgData *md)
+{
+    DP_ASSERT(md);
+    return md->type;
+}
+
+uint8_t DP_msg_data_recipient(const DP_MsgData *md)
+{
+    DP_ASSERT(md);
+    return md->recipient;
+}
+
+const unsigned char *DP_msg_data_body(const DP_MsgData *md, size_t *out_size)
+{
+    DP_ASSERT(md);
+    if (out_size) {
+        *out_size = md->body_size;
+    }
+    return md->body;
+}
+
+size_t DP_msg_data_body_size(const DP_MsgData *md)
+{
+    return md->body_size;
 }
 
 
