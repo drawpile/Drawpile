@@ -20,6 +20,7 @@
  * License, version 3. See 3rdparty/licenses/drawpile/COPYING for details.
  */
 #include "annotation.h"
+#include "text.h"
 #include <dpcommon/atomic.h>
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
@@ -44,7 +45,7 @@ struct DP_Annotation {
     const uint32_t background_color;
     const bool protect;
     const int valign;
-    DP_AnnotationText *const text;
+    DP_Text *const text;
 };
 
 struct DP_TransientAnnotation {
@@ -58,7 +59,7 @@ struct DP_TransientAnnotation {
     uint32_t background_color;
     bool protect;
     int valign;
-    DP_AnnotationText *text;
+    DP_Text *text;
 };
 
 #else
@@ -74,61 +75,10 @@ struct DP_Annotation {
     uint32_t background_color;
     bool protect;
     int valign;
-    DP_AnnotationText *text;
+    DP_Text *text;
 };
 
 #endif
-
-
-static DP_AnnotationText *annotation_text_new(const char *text, size_t length)
-{
-    DP_ASSERT(text);
-    DP_ASSERT(length > 0);
-    DP_AnnotationText *at =
-        DP_malloc(DP_FLEX_SIZEOF(DP_AnnotationText, text, length + 1));
-    DP_atomic_set(&at->refcount, 1);
-    at->length = length;
-    memcpy(at->text, text, length);
-    at->text[length] = '\0';
-    return at;
-}
-
-static DP_AnnotationText *annotation_text_incref(DP_AnnotationText *at)
-{
-    DP_ASSERT(at);
-    DP_ASSERT(DP_atomic_get(&at->refcount) > 0);
-    DP_atomic_inc(&at->refcount);
-    return at;
-}
-
-static DP_AnnotationText *
-annotation_text_incref_nullable(DP_AnnotationText *at_or_null)
-{
-    return at_or_null ? annotation_text_incref(at_or_null) : NULL;
-}
-
-static void annotation_text_decref(DP_AnnotationText *at)
-{
-    DP_ASSERT(at);
-    DP_ASSERT(DP_atomic_get(&at->refcount) > 0);
-    if (DP_atomic_dec(&at->refcount)) {
-        DP_free(at);
-    }
-}
-
-static void annotation_text_decref_nullable(DP_AnnotationText *at_or_null)
-{
-    if (at_or_null) {
-        annotation_text_decref(at_or_null);
-    }
-}
-
-static bool annotation_text_equal(DP_AnnotationText *a, DP_AnnotationText *b)
-{
-    return a == b
-        || (a && b && a->length == b->length
-            && memcmp(a->text, b->text, a->length) == 0);
-}
 
 
 static DP_TransientAnnotation *
@@ -163,7 +113,7 @@ void DP_annotation_decref(DP_Annotation *a)
     DP_ASSERT(a);
     DP_ASSERT(DP_atomic_get(&a->refcount) > 0);
     if (DP_atomic_dec(&a->refcount)) {
-        annotation_text_decref_nullable(a->text);
+        DP_text_decref_nullable(a->text);
         DP_free(a);
     }
 }
@@ -249,23 +199,7 @@ const char *DP_annotation_text(DP_Annotation *a, size_t *out_length)
 {
     DP_ASSERT(a);
     DP_ASSERT(DP_atomic_get(&a->refcount) > 0);
-
-    DP_AnnotationText *at = a->text;
-    const char *text;
-    size_t length;
-    if (at) {
-        text = at->text;
-        length = at->length;
-    }
-    else {
-        text = "";
-        length = 0;
-    }
-
-    if (out_length) {
-        *out_length = length;
-    }
-    return text;
+    return DP_text_string(a->text, out_length);
 }
 
 int DP_annotation_user_id(DP_Annotation *a)
@@ -280,7 +214,7 @@ bool DP_annotation_equal(DP_Annotation *a, DP_Annotation *b)
             && a->width == b->width && a->height == b->height
             && a->background_color == b->background_color
             && a->protect == b->protect && a->valign == b->valign
-            && annotation_text_equal(a->text, b->text));
+            && DP_text_equal(a->text, b->text));
 }
 
 
@@ -299,7 +233,7 @@ DP_TransientAnnotation *DP_transient_annotation_new(DP_Annotation *a)
                                    a->background_color,
                                    a->protect,
                                    a->valign,
-                                   annotation_text_incref_nullable(a->text)};
+                                   DP_text_incref_nullable(a->text)};
     return ta;
 }
 
@@ -474,11 +408,6 @@ void DP_transient_annotation_text_set(DP_TransientAnnotation *ta,
     DP_ASSERT(ta);
     DP_ASSERT(DP_atomic_get(&ta->refcount) > 0);
     DP_ASSERT(ta->transient);
-    annotation_text_decref_nullable(ta->text);
-    if (length > 0) {
-        ta->text = annotation_text_new(text, length);
-    }
-    else {
-        ta->text = NULL;
-    }
+    DP_text_decref_nullable(ta->text);
+    ta->text = DP_text_new(text, length);
 }

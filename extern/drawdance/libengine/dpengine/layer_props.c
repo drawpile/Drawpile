@@ -22,16 +22,11 @@
 #include "layer_props.h"
 #include "layer_props_list.h"
 #include "pixels.h"
+#include "text.h"
 #include <dpcommon/atomic.h>
 #include <dpcommon/common.h>
 #include <dpmsg/blend_mode.h>
 
-
-typedef struct DP_LayerTitle {
-    DP_Atomic refcount;
-    size_t length;
-    char title[];
-} DP_LayerTitle;
 
 #ifdef DP_NO_STRICT_ALIASING
 
@@ -44,7 +39,7 @@ struct DP_LayerProps {
     const bool hidden;
     const bool censored;
     const bool isolated;
-    DP_LayerTitle *const title;
+    DP_Text *const title;
     struct {
         DP_LayerPropsList *const children;
     };
@@ -59,7 +54,7 @@ struct DP_TransientLayerProps {
     bool hidden;
     bool censored;
     bool isolated;
-    DP_LayerTitle *title;
+    DP_Text *title;
     union {
         DP_LayerPropsList *children;
         DP_TransientLayerPropsList *transient_children;
@@ -77,7 +72,7 @@ struct DP_LayerProps {
     bool hidden;
     bool censored;
     bool isolated;
-    DP_LayerTitle *title;
+    DP_Text *title;
     union {
         DP_LayerPropsList *children;
         DP_TransientLayerPropsList *transient_children;
@@ -85,50 +80,6 @@ struct DP_LayerProps {
 };
 
 #endif
-
-
-static DP_LayerTitle *layer_title_new(const char *title, size_t length)
-{
-    DP_ASSERT(length < SIZE_MAX);
-    DP_LayerTitle *lt = DP_malloc(sizeof(*lt) + length + 1);
-    DP_atomic_set(&lt->refcount, 1);
-    if (length > 0) {
-        DP_ASSERT(title);
-        memcpy(lt->title, title, length);
-    }
-    lt->title[length] = '\0';
-    lt->length = length;
-    return lt;
-}
-
-static DP_LayerTitle *layer_title_incref(DP_LayerTitle *lt)
-{
-    DP_ASSERT(lt);
-    DP_ASSERT(DP_atomic_get(&lt->refcount) > 0);
-    DP_atomic_inc(&lt->refcount);
-    return lt;
-}
-
-static DP_LayerTitle *layer_title_incref_nullable(DP_LayerTitle *lt)
-{
-    return lt ? layer_title_incref(lt) : NULL;
-}
-
-static void layer_title_decref(DP_LayerTitle *lt)
-{
-    DP_ASSERT(lt);
-    DP_ASSERT(DP_atomic_get(&lt->refcount) > 0);
-    if (DP_atomic_dec(&lt->refcount)) {
-        DP_free(lt);
-    }
-}
-
-static void layer_title_decref_nullable(DP_LayerTitle *lt)
-{
-    if (lt) {
-        layer_title_decref(lt);
-    }
-}
 
 
 DP_LayerProps *DP_layer_props_incref(DP_LayerProps *lp)
@@ -150,7 +101,7 @@ void DP_layer_props_decref(DP_LayerProps *lp)
     DP_ASSERT(DP_atomic_get(&lp->refcount) > 0);
     if (DP_atomic_dec(&lp->refcount)) {
         DP_layer_props_list_decref_nullable(lp->children);
-        layer_title_decref_nullable(lp->title);
+        DP_text_decref_nullable(lp->title);
         DP_free(lp);
     }
 }
@@ -229,24 +180,7 @@ const char *DP_layer_props_title(DP_LayerProps *lp, size_t *out_length)
 {
     DP_ASSERT(lp);
     DP_ASSERT(DP_atomic_get(&lp->refcount) > 0);
-
-    DP_LayerTitle *lt = lp->title;
-    const char *title;
-    size_t length;
-    if (lt) {
-        DP_ASSERT(DP_atomic_get(&lt->refcount) > 0);
-        title = lt->title;
-        length = lt->length;
-    }
-    else {
-        title = "";
-        length = 0;
-    }
-
-    if (out_length) {
-        *out_length = length;
-    }
-    return title;
+    return DP_text_string(lp->title, out_length);
 }
 
 DP_LayerPropsList *DP_layer_props_children_noinc(DP_LayerProps *lp)
@@ -279,7 +213,7 @@ static DP_TransientLayerProps *alloc_transient_layer_props(DP_LayerProps *lp)
         lp->hidden,
         lp->censored,
         lp->isolated,
-        layer_title_incref_nullable(lp->title),
+        DP_text_incref_nullable(lp->title),
         {NULL},
     };
     return tlp;
@@ -539,6 +473,6 @@ void DP_transient_layer_props_title_set(DP_TransientLayerProps *tlp,
     DP_ASSERT(tlp);
     DP_ASSERT(DP_atomic_get(&tlp->refcount) > 0);
     DP_ASSERT(tlp->transient);
-    layer_title_decref_nullable(tlp->title);
-    tlp->title = layer_title_new(title, length);
+    DP_text_decref_nullable(tlp->title);
+    tlp->title = DP_text_new(title, length);
 }
