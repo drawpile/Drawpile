@@ -2578,8 +2578,8 @@ get_transform_preview_content(DP_PaintEngineTransformPreview *petp,
 
         int left = petp->x + offset_x;
         int top = petp->y + offset_y;
-        DP_transient_layer_content_put_image(tlc, 0, DP_BLEND_MODE_NORMAL, left,
-                                             top, petp->img);
+        DP_transient_layer_content_put_image(tlc, 0, DP_BLEND_MODE_REPLACE,
+                                             left, top, petp->img);
 
         return petp->lc = DP_transient_layer_content_persist(tlc);
     }
