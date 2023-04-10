@@ -59,7 +59,6 @@ private:
 
 	static void setComboBoxIndexByData(QComboBox *combo, int data);
 	static bool shouldIncludeMyPaintSetting(int setting);
-	static bool shouldIncludeMyPaintInput(int input);
 
 	static QString getMyPaintInputTitle(int input);
 	static QString getMyPaintInputDescription(int input);

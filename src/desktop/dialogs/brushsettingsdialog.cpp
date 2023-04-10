@@ -643,10 +643,7 @@ QWidget *BrushSettingsDialog::buildMyPaintPageUi(int setting)
 		layout->addWidget(constantLabel);
 	} else {
 		for(int input = 0; input < MYPAINT_BRUSH_INPUTS_COUNT; ++input) {
-			if(shouldIncludeMyPaintInput(input)) {
-				layout->addWidget(
-					buildMyPaintInputUi(setting, input, settingInfo));
-			}
+			layout->addWidget(buildMyPaintInputUi(setting, input, settingInfo));
 		}
 	}
 
@@ -828,16 +825,13 @@ void BrushSettingsDialog::updateMyPaintSettingPage(int setting)
 		mypaint_brush_setting_info(MyPaintBrushSetting(setting));
 	if(!settingInfo->constant) {
 		for(int input = 0; input < MYPAINT_BRUSH_INPUTS_COUNT; ++input) {
-			if(shouldIncludeMyPaintInput(input)) {
-				widgets::MyPaintInput *inputWidget = page.inputs[input];
-				brushes::MyPaintCurve curve = mypaint.getCurve(setting, input);
-				if(curve.isValid()) {
-					inputWidget->setMyPaintCurve(curve);
-				} else {
-					inputWidget->setControlPoints(mapping.inputs[input]);
-					mypaint.setCurve(
-						setting, input, inputWidget->myPaintCurve());
-				}
+			widgets::MyPaintInput *inputWidget = page.inputs[input];
+			brushes::MyPaintCurve curve = mypaint.getCurve(setting, input);
+			if(curve.isValid()) {
+				inputWidget->setMyPaintCurve(curve);
+			} else {
+				inputWidget->setControlPoints(mapping.inputs[input]);
+				mypaint.setCurve(setting, input, inputWidget->myPaintCurve());
 			}
 		}
 	}
@@ -872,14 +866,6 @@ bool BrushSettingsDialog::shouldIncludeMyPaintSetting(int setting)
 	// This is a stabilizer, but Drawpile has its own one.
 	case MYPAINT_BRUSH_SETTING_SLOW_TRACKING:
 		return false;
-	default:
-		return true;
-	}
-}
-
-bool BrushSettingsDialog::shouldIncludeMyPaintInput(int input)
-{
-	switch(input) {
 	default:
 		return true;
 	}
