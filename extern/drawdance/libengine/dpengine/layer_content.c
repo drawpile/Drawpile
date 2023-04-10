@@ -171,6 +171,8 @@ static void layer_content_diff_mark_both(DP_LayerContent *lc,
     DP_ASSERT(lc->width == prev_lc->width);   // Different sizes could be
     DP_ASSERT(lc->height == prev_lc->height); // supported, but aren't yet.
     DP_canvas_diff_check(diff, mark_both, (DP_LayerContent *[]){lc, prev_lc});
+    DP_layer_list_diff_mark(lc->sub.contents, diff);
+    DP_layer_list_diff_mark(prev_lc->sub.contents, diff);
 }
 
 static bool diff_tile(void *data, int tile_index)
@@ -211,10 +213,14 @@ static void layer_content_diff(DP_LayerContent *lc, bool censored,
     if (!censored && !prev_censored) {
         DP_canvas_diff_check(diff, diff_tile,
                              (DP_LayerContent *[]){lc, prev_lc});
+        DP_layer_list_diff(lc->sub.contents, lc->sub.props,
+                           prev_lc->sub.contents, prev_lc->sub.props, diff);
     }
     else if (censored && prev_censored) {
         DP_canvas_diff_check(diff, diff_tile_both_censored,
                              (DP_LayerContent *[]){lc, prev_lc});
+        DP_layer_list_diff(lc->sub.contents, lc->sub.props,
+                           prev_lc->sub.contents, prev_lc->sub.props, diff);
     }
     else {
         layer_content_diff_mark_both(lc, prev_lc, diff);
@@ -241,8 +247,6 @@ void DP_layer_content_diff(DP_LayerContent *lc, DP_LayerProps *lp,
                 layer_content_diff(lc, DP_layer_props_censored(lp), prev_lc,
                                    DP_layer_props_censored(prev_lp), diff);
             }
-            DP_layer_list_diff(lc->sub.contents, lc->sub.props,
-                               prev_lc->sub.contents, prev_lc->sub.props, diff);
         }
         else {
             DP_layer_content_diff_mark(lc, diff);
