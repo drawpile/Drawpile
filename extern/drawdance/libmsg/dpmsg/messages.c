@@ -4820,8 +4820,21 @@ uint16_t DP_msg_annotation_delete_id(const DP_MsgAnnotationDelete *mad)
 
 /* DP_MSG_MOVE_REGION */
 
+const char *DP_msg_move_region_mode_variant_name(unsigned int value)
+{
+    switch (value) {
+    case DP_MSG_MOVE_REGION_MODE_NEAREST:
+        return "Nearest";
+    case DP_MSG_MOVE_REGION_MODE_BILINEAR:
+        return "Bilinear";
+    default:
+        return NULL;
+    }
+}
+
 struct DP_MsgMoveRegion {
     uint16_t layer;
+    uint16_t source;
     int32_t bx;
     int32_t by;
     int32_t bw;
@@ -4834,6 +4847,7 @@ struct DP_MsgMoveRegion {
     int32_t y3;
     int32_t x4;
     int32_t y4;
+    uint8_t mode;
     uint16_t mask_size;
     unsigned char mask[];
 };
@@ -4841,7 +4855,7 @@ struct DP_MsgMoveRegion {
 static size_t msg_move_region_payload_length(DP_Message *msg)
 {
     DP_MsgMoveRegion *mmr = DP_message_internal(msg);
-    return ((size_t)50) + mmr->mask_size;
+    return ((size_t)53) + mmr->mask_size;
 }
 
 static size_t msg_move_region_serialize_payload(DP_Message *msg,
@@ -4850,6 +4864,7 @@ static size_t msg_move_region_serialize_payload(DP_Message *msg,
     DP_MsgMoveRegion *mmr = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bigendian_uint16(mmr->layer, data + written);
+    written += DP_write_bigendian_uint16(mmr->source, data + written);
     written += DP_write_bigendian_int32(mmr->bx, data + written);
     written += DP_write_bigendian_int32(mmr->by, data + written);
     written += DP_write_bigendian_int32(mmr->bw, data + written);
@@ -4862,6 +4877,7 @@ static size_t msg_move_region_serialize_payload(DP_Message *msg,
     written += DP_write_bigendian_int32(mmr->y3, data + written);
     written += DP_write_bigendian_int32(mmr->x4, data + written);
     written += DP_write_bigendian_int32(mmr->y4, data + written);
+    written += DP_write_bigendian_uint8(mmr->mode, data + written);
     written += write_bytes(mmr->mask, mmr->mask_size, data + written);
     DP_ASSERT(written == msg_move_region_payload_length(msg));
     return written;
@@ -4878,6 +4894,8 @@ static bool msg_move_region_write_payload_text(DP_Message *msg,
         && DP_text_writer_write_uint(writer, "layer", mmr->layer, true)
         && DP_text_writer_write_base64(writer, "mask", mmr->mask,
                                        mmr->mask_size)
+        && DP_text_writer_write_uint(writer, "mode", mmr->mode, false)
+        && DP_text_writer_write_uint(writer, "source", mmr->source, true)
         && DP_text_writer_write_int(writer, "x1", mmr->x1)
         && DP_text_writer_write_int(writer, "x2", mmr->x2)
         && DP_text_writer_write_int(writer, "x3", mmr->x3)
@@ -4893,10 +4911,11 @@ static bool msg_move_region_equals(DP_Message *DP_RESTRICT msg,
 {
     DP_MsgMoveRegion *a = DP_message_internal(msg);
     DP_MsgMoveRegion *b = DP_message_internal(other);
-    return a->layer == b->layer && a->bx == b->bx && a->by == b->by
-        && a->bw == b->bw && a->bh == b->bh && a->x1 == b->x1 && a->y1 == b->y1
-        && a->x2 == b->x2 && a->y2 == b->y2 && a->x3 == b->x3 && a->y3 == b->y3
-        && a->x4 == b->x4 && a->y4 == b->y4 && a->mask_size == b->mask_size
+    return a->layer == b->layer && a->source == b->source && a->bx == b->bx
+        && a->by == b->by && a->bw == b->bw && a->bh == b->bh && a->x1 == b->x1
+        && a->y1 == b->y1 && a->x2 == b->x2 && a->y2 == b->y2 && a->x3 == b->x3
+        && a->y3 == b->y3 && a->x4 == b->x4 && a->y4 == b->y4
+        && a->mode == b->mode && a->mask_size == b->mask_size
         && memcmp(a->mask, b->mask, DP_uint16_to_size(a->mask_size)) == 0;
 }
 
@@ -4907,19 +4926,19 @@ static const DP_MessageMethods msg_move_region_methods = {
     msg_move_region_equals,
 };
 
-DP_Message *
-DP_msg_move_region_new(unsigned int context_id, uint16_t layer, int32_t bx,
-                       int32_t by, int32_t bw, int32_t bh, int32_t x1,
-                       int32_t y1, int32_t x2, int32_t y2, int32_t x3,
-                       int32_t y3, int32_t x4, int32_t y4,
-                       void (*set_mask)(size_t, unsigned char *, void *),
-                       size_t mask_size, void *mask_user)
+DP_Message *DP_msg_move_region_new(
+    unsigned int context_id, uint16_t layer, uint16_t source, int32_t bx,
+    int32_t by, int32_t bw, int32_t bh, int32_t x1, int32_t y1, int32_t x2,
+    int32_t y2, int32_t x3, int32_t y3, int32_t x4, int32_t y4, uint8_t mode,
+    void (*set_mask)(size_t, unsigned char *, void *), size_t mask_size,
+    void *mask_user)
 {
     DP_Message *msg =
         DP_message_new(DP_MSG_MOVE_REGION, context_id, &msg_move_region_methods,
                        DP_FLEX_SIZEOF(DP_MsgMoveRegion, mask, mask_size));
     DP_MsgMoveRegion *mmr = DP_message_internal(msg);
     mmr->layer = layer;
+    mmr->source = source;
     mmr->bx = bx;
     mmr->by = by;
     mmr->bw = bw;
@@ -4932,6 +4951,7 @@ DP_msg_move_region_new(unsigned int context_id, uint16_t layer, int32_t bx,
     mmr->y3 = y3;
     mmr->x4 = x4;
     mmr->y4 = y4;
+    mmr->mode = mode;
     mmr->mask_size = DP_size_to_uint16(mask_size);
     if (set_mask) {
         set_mask(mmr->mask_size, mmr->mask, mask_user);
@@ -4943,14 +4963,15 @@ DP_Message *DP_msg_move_region_deserialize(unsigned int context_id,
                                            const unsigned char *buffer,
                                            size_t length)
 {
-    if (length < 50 || length > 65535) {
+    if (length < 53 || length > 65535) {
         DP_error_set("Wrong length for moveregion message; "
-                     "expected between 50 and 65535, got %zu",
+                     "expected between 53 and 65535, got %zu",
                      length);
         return NULL;
     }
     size_t read = 0;
     uint16_t layer = read_uint16(buffer + read, &read);
+    uint16_t source = read_uint16(buffer + read, &read);
     int32_t bx = read_int32(buffer + read, &read);
     int32_t by = read_int32(buffer + read, &read);
     int32_t bw = read_int32(buffer + read, &read);
@@ -4963,12 +4984,13 @@ DP_Message *DP_msg_move_region_deserialize(unsigned int context_id,
     int32_t y3 = read_int32(buffer + read, &read);
     int32_t x4 = read_int32(buffer + read, &read);
     int32_t y4 = read_int32(buffer + read, &read);
+    uint8_t mode = read_uint8(buffer + read, &read);
     size_t mask_bytes = length - read;
     uint16_t mask_size = DP_size_to_uint16(mask_bytes);
     void *mask_user = (void *)(buffer + read);
-    return DP_msg_move_region_new(context_id, layer, bx, by, bw, bh, x1, y1, x2,
-                                  y2, x3, y3, x4, y4, read_bytes, mask_size,
-                                  mask_user);
+    return DP_msg_move_region_new(context_id, layer, source, bx, by, bw, bh, x1,
+                                  y1, x2, y2, x3, y3, x4, y4, mode, read_bytes,
+                                  mask_size, mask_user);
 }
 
 DP_Message *DP_msg_move_region_parse(unsigned int context_id,
@@ -4976,6 +4998,8 @@ DP_Message *DP_msg_move_region_parse(unsigned int context_id,
 {
     uint16_t layer =
         (uint16_t)DP_text_reader_get_ulong_hex(reader, "layer", UINT16_MAX);
+    uint16_t source =
+        (uint16_t)DP_text_reader_get_ulong_hex(reader, "source", UINT16_MAX);
     int32_t bx =
         (int32_t)DP_text_reader_get_long(reader, "bx", INT32_MIN, INT32_MAX);
     int32_t by =
@@ -5000,12 +5024,13 @@ DP_Message *DP_msg_move_region_parse(unsigned int context_id,
         (int32_t)DP_text_reader_get_long(reader, "x4", INT32_MIN, INT32_MAX);
     int32_t y4 =
         (int32_t)DP_text_reader_get_long(reader, "y4", INT32_MIN, INT32_MAX);
+    uint8_t mode = (uint8_t)DP_text_reader_get_ulong(reader, "mode", UINT8_MAX);
     size_t mask_size;
     DP_TextReaderParseParams mask_params =
         DP_text_reader_get_base64_string(reader, "mask", &mask_size);
     return DP_msg_move_region_new(
-        context_id, layer, bx, by, bw, bh, x1, y1, x2, y2, x3, y3, x4, y4,
-        DP_text_reader_parse_base64, mask_size, &mask_params);
+        context_id, layer, source, bx, by, bw, bh, x1, y1, x2, y2, x3, y3, x4,
+        y4, mode, DP_text_reader_parse_base64, mask_size, &mask_params);
 }
 
 DP_MsgMoveRegion *DP_msg_move_region_cast(DP_Message *msg)
@@ -5017,6 +5042,12 @@ uint16_t DP_msg_move_region_layer(const DP_MsgMoveRegion *mmr)
 {
     DP_ASSERT(mmr);
     return mmr->layer;
+}
+
+uint16_t DP_msg_move_region_source(const DP_MsgMoveRegion *mmr)
+{
+    DP_ASSERT(mmr);
+    return mmr->source;
 }
 
 int32_t DP_msg_move_region_bx(const DP_MsgMoveRegion *mmr)
@@ -5089,6 +5120,12 @@ int32_t DP_msg_move_region_y4(const DP_MsgMoveRegion *mmr)
 {
     DP_ASSERT(mmr);
     return mmr->y4;
+}
+
+uint8_t DP_msg_move_region_mode(const DP_MsgMoveRegion *mmr)
+{
+    DP_ASSERT(mmr);
+    return mmr->mode;
 }
 
 const unsigned char *DP_msg_move_region_mask(const DP_MsgMoveRegion *mmr,
@@ -6575,6 +6612,7 @@ int DP_msg_draw_dabs_mypaint_dabs_count(const DP_MsgDrawDabsMyPaint *mddmp)
 
 struct DP_MsgMoveRect {
     uint16_t layer;
+    uint16_t source;
     int32_t sx;
     int32_t sy;
     int32_t tx;
@@ -6588,7 +6626,7 @@ struct DP_MsgMoveRect {
 static size_t msg_move_rect_payload_length(DP_Message *msg)
 {
     DP_MsgMoveRect *mmr = DP_message_internal(msg);
-    return ((size_t)26) + mmr->mask_size;
+    return ((size_t)28) + mmr->mask_size;
 }
 
 static size_t msg_move_rect_serialize_payload(DP_Message *msg,
@@ -6597,6 +6635,7 @@ static size_t msg_move_rect_serialize_payload(DP_Message *msg,
     DP_MsgMoveRect *mmr = DP_message_internal(msg);
     size_t written = 0;
     written += DP_write_bigendian_uint16(mmr->layer, data + written);
+    written += DP_write_bigendian_uint16(mmr->source, data + written);
     written += DP_write_bigendian_int32(mmr->sx, data + written);
     written += DP_write_bigendian_int32(mmr->sy, data + written);
     written += DP_write_bigendian_int32(mmr->tx, data + written);
@@ -6616,6 +6655,7 @@ static bool msg_move_rect_write_payload_text(DP_Message *msg,
         && DP_text_writer_write_uint(writer, "layer", mmr->layer, true)
         && DP_text_writer_write_base64(writer, "mask", mmr->mask,
                                        mmr->mask_size)
+        && DP_text_writer_write_uint(writer, "source", mmr->source, true)
         && DP_text_writer_write_int(writer, "sx", mmr->sx)
         && DP_text_writer_write_int(writer, "sy", mmr->sy)
         && DP_text_writer_write_int(writer, "tx", mmr->tx)
@@ -6628,9 +6668,9 @@ static bool msg_move_rect_equals(DP_Message *DP_RESTRICT msg,
 {
     DP_MsgMoveRect *a = DP_message_internal(msg);
     DP_MsgMoveRect *b = DP_message_internal(other);
-    return a->layer == b->layer && a->sx == b->sx && a->sy == b->sy
-        && a->tx == b->tx && a->ty == b->ty && a->w == b->w && a->h == b->h
-        && a->mask_size == b->mask_size
+    return a->layer == b->layer && a->source == b->source && a->sx == b->sx
+        && a->sy == b->sy && a->tx == b->tx && a->ty == b->ty && a->w == b->w
+        && a->h == b->h && a->mask_size == b->mask_size
         && memcmp(a->mask, b->mask, DP_uint16_to_size(a->mask_size)) == 0;
 }
 
@@ -6641,17 +6681,19 @@ static const DP_MessageMethods msg_move_rect_methods = {
     msg_move_rect_equals,
 };
 
-DP_Message *
-DP_msg_move_rect_new(unsigned int context_id, uint16_t layer, int32_t sx,
-                     int32_t sy, int32_t tx, int32_t ty, int32_t w, int32_t h,
-                     void (*set_mask)(size_t, unsigned char *, void *),
-                     size_t mask_size, void *mask_user)
+DP_Message *DP_msg_move_rect_new(unsigned int context_id, uint16_t layer,
+                                 uint16_t source, int32_t sx, int32_t sy,
+                                 int32_t tx, int32_t ty, int32_t w, int32_t h,
+                                 void (*set_mask)(size_t, unsigned char *,
+                                                  void *),
+                                 size_t mask_size, void *mask_user)
 {
     DP_Message *msg =
         DP_message_new(DP_MSG_MOVE_RECT, context_id, &msg_move_rect_methods,
                        DP_FLEX_SIZEOF(DP_MsgMoveRect, mask, mask_size));
     DP_MsgMoveRect *mmr = DP_message_internal(msg);
     mmr->layer = layer;
+    mmr->source = source;
     mmr->sx = sx;
     mmr->sy = sy;
     mmr->tx = tx;
@@ -6669,14 +6711,15 @@ DP_Message *DP_msg_move_rect_deserialize(unsigned int context_id,
                                          const unsigned char *buffer,
                                          size_t length)
 {
-    if (length < 26 || length > 65535) {
+    if (length < 28 || length > 65535) {
         DP_error_set("Wrong length for moverect message; "
-                     "expected between 26 and 65535, got %zu",
+                     "expected between 28 and 65535, got %zu",
                      length);
         return NULL;
     }
     size_t read = 0;
     uint16_t layer = read_uint16(buffer + read, &read);
+    uint16_t source = read_uint16(buffer + read, &read);
     int32_t sx = read_int32(buffer + read, &read);
     int32_t sy = read_int32(buffer + read, &read);
     int32_t tx = read_int32(buffer + read, &read);
@@ -6686,7 +6729,7 @@ DP_Message *DP_msg_move_rect_deserialize(unsigned int context_id,
     size_t mask_bytes = length - read;
     uint16_t mask_size = DP_size_to_uint16(mask_bytes);
     void *mask_user = (void *)(buffer + read);
-    return DP_msg_move_rect_new(context_id, layer, sx, sy, tx, ty, w, h,
+    return DP_msg_move_rect_new(context_id, layer, source, sx, sy, tx, ty, w, h,
                                 read_bytes, mask_size, mask_user);
 }
 
@@ -6695,6 +6738,8 @@ DP_Message *DP_msg_move_rect_parse(unsigned int context_id,
 {
     uint16_t layer =
         (uint16_t)DP_text_reader_get_ulong_hex(reader, "layer", UINT16_MAX);
+    uint16_t source =
+        (uint16_t)DP_text_reader_get_ulong_hex(reader, "source", UINT16_MAX);
     int32_t sx =
         (int32_t)DP_text_reader_get_long(reader, "sx", INT32_MIN, INT32_MAX);
     int32_t sy =
@@ -6710,7 +6755,7 @@ DP_Message *DP_msg_move_rect_parse(unsigned int context_id,
     size_t mask_size;
     DP_TextReaderParseParams mask_params =
         DP_text_reader_get_base64_string(reader, "mask", &mask_size);
-    return DP_msg_move_rect_new(context_id, layer, sx, sy, tx, ty, w, h,
+    return DP_msg_move_rect_new(context_id, layer, source, sx, sy, tx, ty, w, h,
                                 DP_text_reader_parse_base64, mask_size,
                                 &mask_params);
 }
@@ -6724,6 +6769,12 @@ uint16_t DP_msg_move_rect_layer(const DP_MsgMoveRect *mmr)
 {
     DP_ASSERT(mmr);
     return mmr->layer;
+}
+
+uint16_t DP_msg_move_rect_source(const DP_MsgMoveRect *mmr)
+{
+    DP_ASSERT(mmr);
+    return mmr->source;
 }
 
 int32_t DP_msg_move_rect_sx(const DP_MsgMoveRect *mmr)

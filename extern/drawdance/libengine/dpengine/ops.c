@@ -851,29 +851,32 @@ static bool looks_like_translation_only(DP_Rect src_rect, DP_Quad dst_quad)
         && dst_quad.x1 < dst_quad.x2;
 }
 
-static DP_CanvasState *move_image(DP_CanvasState *cs, DP_LayerRoutesEntry *lre,
-                                  unsigned int context_id,
-                                  const DP_Rect *src_rect, DP_Image *mask,
-                                  DP_Image *src_img, int offset_x, int offset_y,
-                                  DP_Image *dst_img)
+static DP_CanvasState *
+move_image(DP_CanvasState *cs, DP_LayerRoutesEntry *src_lre,
+           DP_LayerRoutesEntry *dst_lre, unsigned int context_id,
+           const DP_Rect *src_rect, DP_Image *mask, DP_Image *src_img,
+           int offset_x, int offset_y, DP_Image *dst_img)
 {
     DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
-    DP_TransientLayerContent *tlc =
-        DP_layer_routes_entry_transient_content(lre, tcs);
+    DP_TransientLayerContent *src_tlc =
+        DP_layer_routes_entry_transient_content(src_lre, tcs);
+    DP_TransientLayerContent *dst_tlc =
+        DP_layer_routes_entry_transient_content(dst_lre, tcs);
 
     if (mask) {
         DP_transient_layer_content_put_image(
-            tlc, context_id, DP_BLEND_MODE_ERASE, DP_rect_x(*src_rect),
+            src_tlc, context_id, DP_BLEND_MODE_ERASE, DP_rect_x(*src_rect),
             DP_rect_y(*src_rect), mask);
     }
     else {
         DP_transient_layer_content_fill_rect(
-            tlc, context_id, DP_BLEND_MODE_REPLACE, src_rect->x1, src_rect->y1,
-            src_rect->x2 + 1, src_rect->y2 + 1, DP_upixel15_zero());
+            src_tlc, context_id, DP_BLEND_MODE_REPLACE, src_rect->x1,
+            src_rect->y1, src_rect->x2 + 1, src_rect->y2 + 1,
+            DP_upixel15_zero());
     }
 
-    DP_transient_layer_content_put_image(tlc, context_id, DP_BLEND_MODE_NORMAL,
-                                         offset_x, offset_y, dst_img);
+    DP_transient_layer_content_put_image(
+        dst_tlc, context_id, DP_BLEND_MODE_NORMAL, offset_x, offset_y, dst_img);
 
     if (dst_img != src_img) {
         DP_image_free(dst_img);
@@ -884,23 +887,41 @@ static DP_CanvasState *move_image(DP_CanvasState *cs, DP_LayerRoutesEntry *lre,
 }
 
 DP_CanvasStateChange DP_ops_move_region(DP_CanvasState *cs, DP_DrawContext *dc,
-                                        unsigned int context_id, int layer_id,
+                                        unsigned int context_id,
+                                        int src_layer_id, int dst_layer_id,
                                         const DP_Rect *src_rect,
-                                        const DP_Quad *dst_quad, DP_Image *mask)
+                                        const DP_Quad *dst_quad,
+                                        int interpolation, DP_Image *mask)
 {
     DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
-    DP_LayerRoutesEntry *lre = DP_layer_routes_search(lr, layer_id);
-    if (!lre) {
-        DP_error_set("Move region: id %d not found", layer_id);
+    DP_LayerRoutesEntry *src_lre = DP_layer_routes_search(lr, src_layer_id);
+    if (!src_lre) {
+        DP_error_set("Move region: source id %d not found", src_layer_id);
         return DP_canvas_state_change_null();
     }
-    else if (DP_layer_routes_entry_is_group(lre)) {
-        DP_error_set("Move region: id %d is a group", layer_id);
+    else if (DP_layer_routes_entry_is_group(src_lre)) {
+        DP_error_set("Move region: source id %d is a group", src_layer_id);
         return DP_canvas_state_change_null();
     }
 
+    DP_LayerRoutesEntry *dst_lre;
+    if (dst_layer_id == src_layer_id) {
+        dst_lre = src_lre;
+    }
+    else {
+        dst_lre = DP_layer_routes_search(lr, dst_layer_id);
+        if (!dst_lre) {
+            DP_error_set("Move region: target id %d not found", dst_layer_id);
+            return DP_canvas_state_change_null();
+        }
+        else if (DP_layer_routes_entry_is_group(dst_lre)) {
+            DP_error_set("Move region: target id %d is a group", dst_layer_id);
+            return DP_canvas_state_change_null();
+        }
+    }
+
     DP_Image *src_img = DP_layer_content_select(
-        DP_layer_routes_entry_content(lre, cs), src_rect, mask);
+        DP_layer_routes_entry_content(src_lre, cs), src_rect, mask);
 
     int offset_x, offset_y;
     DP_Image *dst_img;
@@ -910,8 +931,8 @@ DP_CanvasStateChange DP_ops_move_region(DP_CanvasState *cs, DP_DrawContext *dc,
         dst_img = src_img;
     }
     else {
-        dst_img =
-            DP_image_transform(src_img, dc, dst_quad, &offset_x, &offset_y);
+        dst_img = DP_image_transform(src_img, dc, dst_quad, interpolation,
+                                     &offset_x, &offset_y);
         if (!dst_img) {
             DP_free(src_img);
             return DP_canvas_state_change_null();
@@ -920,36 +941,52 @@ DP_CanvasStateChange DP_ops_move_region(DP_CanvasState *cs, DP_DrawContext *dc,
 
     DP_Rect dst_bounds = DP_quad_bounds(*dst_quad);
     return (DP_CanvasStateChange){
-        move_image(cs, lre, context_id, src_rect, mask, src_img, offset_x,
-                   offset_y, dst_img),
-        {context_id, layer_id,
+        move_image(cs, src_lre, dst_lre, context_id, src_rect, mask, src_img,
+                   offset_x, offset_y, dst_img),
+        {context_id, dst_layer_id,
          DP_rect_x(dst_bounds) + DP_rect_width(dst_bounds) / 2,
          DP_rect_y(dst_bounds) + DP_rect_height(dst_bounds) / 2}};
 }
 
 DP_CanvasStateChange DP_ops_move_rect(DP_CanvasState *cs,
-                                      unsigned int context_id, int layer_id,
-                                      const DP_Rect *src_rect, int dst_x,
-                                      int dst_y, DP_Image *mask)
+                                      unsigned int context_id, int src_layer_id,
+                                      int dst_layer_id, const DP_Rect *src_rect,
+                                      int dst_x, int dst_y, DP_Image *mask)
 {
     DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
-    DP_LayerRoutesEntry *lre = DP_layer_routes_search(lr, layer_id);
-    if (!lre) {
-        DP_error_set("Move rect: id %d not found", layer_id);
+    DP_LayerRoutesEntry *src_lre = DP_layer_routes_search(lr, src_layer_id);
+    if (!src_lre) {
+        DP_error_set("Move rect: source id %d not found", src_layer_id);
         return DP_canvas_state_change_null();
     }
-    else if (DP_layer_routes_entry_is_group(lre)) {
-        DP_error_set("Move rect: id %d is a group", layer_id);
+    else if (DP_layer_routes_entry_is_group(src_lre)) {
+        DP_error_set("Move rect: source id %d is a group", src_layer_id);
         return DP_canvas_state_change_null();
+    }
+
+    DP_LayerRoutesEntry *dst_lre;
+    if (dst_layer_id == src_layer_id) {
+        dst_lre = src_lre;
+    }
+    else {
+        dst_lre = DP_layer_routes_search(lr, dst_layer_id);
+        if (!dst_lre) {
+            DP_error_set("Move rect: target id %d not found", dst_layer_id);
+            return DP_canvas_state_change_null();
+        }
+        else if (DP_layer_routes_entry_is_group(dst_lre)) {
+            DP_error_set("Move rect: target id %d is a group", dst_layer_id);
+            return DP_canvas_state_change_null();
+        }
     }
 
     DP_Image *src_img = DP_layer_content_select(
-        DP_layer_routes_entry_content(lre, cs), src_rect, mask);
+        DP_layer_routes_entry_content(src_lre, cs), src_rect, mask);
 
     return (DP_CanvasStateChange){
-        move_image(cs, lre, context_id, src_rect, mask, src_img, dst_x, dst_y,
-                   src_img),
-        {context_id, layer_id, dst_x + DP_rect_width(*src_rect) / 2,
+        move_image(cs, src_lre, dst_lre, context_id, src_rect, mask, src_img,
+                   dst_x, dst_y, src_img),
+        {context_id, dst_layer_id, dst_x + DP_rect_width(*src_rect) / 2,
          dst_y + DP_rect_height(*src_rect) / 2}};
 }
 

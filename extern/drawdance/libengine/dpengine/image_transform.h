@@ -30,7 +30,8 @@ typedef struct DP_Image DP_Image;
 
 
 bool DP_image_transform_draw(DP_Image *img, DP_DrawContext *dc,
-                             DP_Image *dst_img, DP_Transform tf) DP_MUST_CHECK;
+                             DP_Image *dst_img, DP_Transform tf,
+                             int interpolation) DP_MUST_CHECK;
 
 
 #endif

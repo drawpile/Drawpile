@@ -139,6 +139,8 @@ DP_Message *DP_message_parse_body(DP_MessageType type, unsigned int context_id,
  * - sending administration commands (e.g. kick user)
  */
 
+#define DP_MSG_SERVER_COMMAND_STATIC_LENGTH 0
+
 typedef struct DP_MsgServerCommand DP_MsgServerCommand;
 
 DP_Message *DP_msg_server_command_new(unsigned int context_id,
@@ -167,6 +169,8 @@ size_t DP_msg_server_command_msg_len(const DP_MsgServerCommand *msc);
  * This message is used when closing the connection gracefully. The message
  * queue will automatically close the socket after sending this message.
  */
+
+#define DP_MSG_DISCONNECT_STATIC_LENGTH 1
 
 #define DP_MSG_DISCONNECT_REASON_ERROR    0
 #define DP_MSG_DISCONNECT_REASON_KICK     1
@@ -209,6 +213,8 @@ size_t DP_msg_disconnect_message_len(const DP_MsgDisconnect *md);
  * The server should return a Ping with the is_pong flag set
  */
 
+#define DP_MSG_PING_STATIC_LENGTH 1
+
 typedef struct DP_MsgPing DP_MsgPing;
 
 DP_Message *DP_msg_ping_new(unsigned int context_id, bool is_pong);
@@ -238,6 +244,8 @@ bool DP_msg_ping_is_pong(const DP_MsgPing *mp);
  * This message is sent only be the server. It associates a username
  * with a context ID.
  */
+
+#define DP_MSG_JOIN_STATIC_LENGTH 2
 
 #define DP_MSG_JOIN_FLAGS_AUTH 0x1
 #define DP_MSG_JOIN_FLAGS_MOD  0x2
@@ -280,6 +288,8 @@ size_t DP_msg_join_avatar_size(const DP_MsgJoin *mj);
  * is also allowed to release resources associated with this context ID.
  */
 
+#define DP_MSG_LEAVE_STATIC_LENGTH 0
+
 DP_Message *DP_msg_leave_new(unsigned int context_id);
 
 DP_Message *DP_msg_leave_deserialize(unsigned int context_id,
@@ -304,6 +314,8 @@ DP_Message *DP_msg_leave_parse(unsigned int context_id, DP_TextReader *reader);
  * it does not contain any duplicates or non-existing users and can be trusted
  * without checking the access control list.
  */
+
+#define DP_MSG_SESSION_OWNER_STATIC_LENGTH 0
 
 typedef struct DP_MsgSessionOwner DP_MsgSessionOwner;
 
@@ -336,6 +348,8 @@ int DP_msg_session_owner_users_count(const DP_MsgSessionOwner *mso);
  * message is used for those messages that must be stored in the session
  * history.)
  */
+
+#define DP_MSG_CHAT_STATIC_LENGTH 2
 
 #define DP_MSG_CHAT_TFLAGS_BYPASS 0x1
 
@@ -387,6 +401,8 @@ size_t DP_msg_chat_message_len(const DP_MsgChat *mc);
  * without checking the access control list.
  */
 
+#define DP_MSG_TRUSTED_USERS_STATIC_LENGTH 0
+
 typedef struct DP_MsgTrustedUsers DP_MsgTrustedUsers;
 
 DP_Message *DP_msg_trusted_users_new(unsigned int context_id,
@@ -420,6 +436,8 @@ int DP_msg_trusted_users_users_count(const DP_MsgTrustedUsers *mtu);
  * message, since undos cannot cross the reset boundary.
  */
 
+#define DP_MSG_SOFT_RESET_STATIC_LENGTH 0
+
 DP_Message *DP_msg_soft_reset_new(unsigned int context_id);
 
 DP_Message *DP_msg_soft_reset_deserialize(unsigned int context_id,
@@ -442,6 +460,8 @@ DP_Message *DP_msg_soft_reset_parse(unsigned int context_id,
  *
  * Private messages always bypass the session history.
  */
+
+#define DP_MSG_PRIVATE_CHAT_STATIC_LENGTH 2
 
 typedef struct DP_MsgPrivateChat DP_MsgPrivateChat;
 
@@ -480,6 +500,8 @@ size_t DP_msg_private_chat_message_len(const DP_MsgPrivateChat *mpc);
  * should be enough.
  */
 
+#define DP_MSG_INTERVAL_STATIC_LENGTH 2
+
 typedef struct DP_MsgInterval DP_MsgInterval;
 
 DP_Message *DP_msg_interval_new(unsigned int context_id, uint16_t msecs);
@@ -506,6 +528,8 @@ uint16_t DP_msg_interval_msecs(const DP_MsgInterval *mi);
  *
  * A nonzero persistence indicates the start of the trail and zero the end.
  */
+
+#define DP_MSG_LASER_TRAIL_STATIC_LENGTH 5
 
 typedef struct DP_MsgLaserTrail DP_MsgLaserTrail;
 
@@ -539,6 +563,8 @@ uint8_t DP_msg_laser_trail_persistence(const DP_MsgLaserTrail *mlt);
  * The pointer position is given in integer coordinates.
  */
 
+#define DP_MSG_MOVE_POINTER_STATIC_LENGTH 8
+
 typedef struct DP_MsgMovePointer DP_MsgMovePointer;
 
 DP_Message *DP_msg_move_pointer_new(unsigned int context_id, int32_t x,
@@ -567,6 +593,8 @@ int32_t DP_msg_move_pointer_y(const DP_MsgMovePointer *mmp);
  * back a recording
  */
 
+#define DP_MSG_MARKER_STATIC_LENGTH 0
+
 typedef struct DP_MsgMarker DP_MsgMarker;
 
 DP_Message *DP_msg_marker_new(unsigned int context_id, const char *text_value,
@@ -593,6 +621,8 @@ size_t DP_msg_marker_text_len(const DP_MsgMarker *mm);
  * This is an opaque meta command that contains a list of users to be locked.
  * It can only be sent by session operators.
  */
+
+#define DP_MSG_USER_ACL_STATIC_LENGTH 0
 
 typedef struct DP_MsgUserAcl DP_MsgUserAcl;
 
@@ -633,6 +663,8 @@ int DP_msg_user_acl_users_count(const DP_MsgUserAcl *mua);
  * level.
  */
 
+#define DP_MSG_LAYER_ACL_STATIC_LENGTH 3
+
 typedef struct DP_MsgLayerAcl DP_MsgLayerAcl;
 
 DP_Message *DP_msg_layer_acl_new(unsigned int context_id, uint16_t id,
@@ -669,6 +701,8 @@ int DP_msg_layer_acl_exclusive_count(const DP_MsgLayerAcl *mla);
  * unknown features will be ignored by the client.
  */
 
+#define DP_MSG_FEATURE_ACCESS_LEVELS_STATIC_LENGTH 0
+
 typedef struct DP_MsgFeatureAccessLevels DP_MsgFeatureAccessLevels;
 
 DP_Message *DP_msg_feature_access_levels_new(
@@ -699,6 +733,8 @@ int DP_msg_feature_access_levels_feature_tiers_count(
  * If no default layer is set, the newest layer will be selected by default.
  */
 
+#define DP_MSG_DEFAULT_LAYER_STATIC_LENGTH 2
+
 typedef struct DP_MsgDefaultLayer DP_MsgDefaultLayer;
 
 DP_Message *DP_msg_default_layer_new(unsigned int context_id, uint16_t id);
@@ -723,6 +759,8 @@ uint16_t DP_msg_default_layer_id(const DP_MsgDefaultLayer *mdl);
  * This is only used in recordings for mainly debugging purposes.
  * This message should never be sent over the network.
  */
+
+#define DP_MSG_FILTERED_STATIC_LENGTH 0
 
 typedef struct DP_MsgFiltered DP_MsgFiltered;
 
@@ -762,6 +800,8 @@ size_t DP_msg_filtered_message_size(const DP_MsgFiltered *mf);
  * sequence.
  */
 
+#define DP_MSG_UNDO_POINT_STATIC_LENGTH 0
+
 DP_Message *DP_msg_undo_point_new(unsigned int context_id);
 
 DP_Message *DP_msg_undo_point_deserialize(unsigned int context_id,
@@ -785,6 +825,8 @@ DP_Message *DP_msg_undo_point_parse(unsigned int context_id,
  * parameters extend or retract their respective borders.
  * Initial canvas resize should be (0, w, h, 0).
  */
+
+#define DP_MSG_CANVAS_RESIZE_STATIC_LENGTH 16
 
 typedef struct DP_MsgCanvasResize DP_MsgCanvasResize;
 
@@ -841,6 +883,8 @@ int32_t DP_msg_canvas_resize_left(const DP_MsgCanvasResize *mcr);
  * privileges.
  */
 
+#define DP_MSG_LAYER_CREATE_STATIC_LENGTH 11
+
 #define DP_MSG_LAYER_CREATE_FLAGS_GROUP 0x1
 #define DP_MSG_LAYER_CREATE_FLAGS_INTO  0x2
 
@@ -893,6 +937,8 @@ size_t DP_msg_layer_create_name_len(const DP_MsgLayerCreate *mlc);
  * replaced by the custom timeline feature.
  */
 
+#define DP_MSG_LAYER_ATTRIBUTES_STATIC_LENGTH 6
+
 #define DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR   0x1
 #define DP_MSG_LAYER_ATTRIBUTES_FLAGS_FIXED    0x2
 #define DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED 0x4
@@ -930,6 +976,8 @@ uint8_t DP_msg_layer_attributes_blend(const DP_MsgLayerAttributes *mla);
  *
  * Change a layer's title
  */
+
+#define DP_MSG_LAYER_RETITLE_STATIC_LENGTH 2
 
 typedef struct DP_MsgLayerRetitle DP_MsgLayerRetitle;
 
@@ -977,6 +1025,8 @@ size_t DP_msg_layer_retitle_title_len(const DP_MsgLayerRetitle *mlr);
  *  or the command will be rejected.
  */
 
+#define DP_MSG_LAYER_ORDER_STATIC_LENGTH 2
+
 typedef struct DP_MsgLayerOrder DP_MsgLayerOrder;
 
 DP_Message *DP_msg_layer_order_new(unsigned int context_id, uint16_t root,
@@ -1012,6 +1062,8 @@ int DP_msg_layer_order_layers_count(const DP_MsgLayerOrder *mlo);
  * requires session operator privileges.
  */
 
+#define DP_MSG_LAYER_DELETE_STATIC_LENGTH 4
+
 typedef struct DP_MsgLayerDelete DP_MsgLayerDelete;
 
 DP_Message *DP_msg_layer_delete_new(unsigned int context_id, uint16_t id,
@@ -1037,6 +1089,8 @@ uint16_t DP_msg_layer_delete_merge_to(const DP_MsgLayerDelete *mld);
  * Toggle layer local visibility (this is used internally only and never sent
  * over the network)
  */
+
+#define DP_MSG_LAYER_VISIBILITY_STATIC_LENGTH 3
 
 typedef struct DP_MsgLayerVisibility DP_MsgLayerVisibility;
 
@@ -1075,6 +1129,8 @@ bool DP_msg_layer_visibility_visible(const DP_MsgLayerVisibility *mlv);
  * large image may have to be divided into multiple PutImage
  * commands.
  */
+
+#define DP_MSG_PUT_IMAGE_STATIC_LENGTH 19
 
 typedef struct DP_MsgPutImage DP_MsgPutImage;
 
@@ -1116,6 +1172,8 @@ size_t DP_msg_put_image_image_size(const DP_MsgPutImage *mpi);
  *
  * Fill a rectangle with solid color
  */
+
+#define DP_MSG_FILL_RECT_STATIC_LENGTH 23
 
 typedef struct DP_MsgFillRect DP_MsgFillRect;
 
@@ -1170,6 +1228,8 @@ uint32_t DP_msg_fill_rect_color(const DP_MsgFillRect *mfr);
  * causes indirect dabs (by this user) to be merged to their parent layers.
  */
 
+#define DP_MSG_PEN_UP_STATIC_LENGTH 0
+
 DP_Message *DP_msg_pen_up_new(unsigned int context_id);
 
 DP_Message *DP_msg_pen_up_deserialize(unsigned int context_id,
@@ -1190,6 +1250,8 @@ DP_Message *DP_msg_pen_up_parse(unsigned int context_id, DP_TextReader *reader);
  * The new annotation created with this command is initally empy with a
  * transparent background
  */
+
+#define DP_MSG_ANNOTATION_CREATE_STATIC_LENGTH 14
 
 typedef struct DP_MsgAnnotationCreate DP_MsgAnnotationCreate;
 
@@ -1222,6 +1284,8 @@ uint16_t DP_msg_annotation_create_h(const DP_MsgAnnotationCreate *mac);
  *
  * Change the position and size of an annotation
  */
+
+#define DP_MSG_ANNOTATION_RESHAPE_STATIC_LENGTH 14
 
 typedef struct DP_MsgAnnotationReshape DP_MsgAnnotationReshape;
 
@@ -1259,6 +1323,8 @@ uint16_t DP_msg_annotation_reshape_h(const DP_MsgAnnotationReshape *mar);
  * If an annotation is flagged as protected, it cannot be modified by users
  * other than the one who created it, or session operators.
  */
+
+#define DP_MSG_ANNOTATION_EDIT_STATIC_LENGTH 8
 
 #define DP_MSG_ANNOTATION_EDIT_FLAGS_PROTECT       0x1
 #define DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_CENTER 0x2
@@ -1307,6 +1373,8 @@ size_t DP_msg_annotation_edit_text_len(const DP_MsgAnnotationEdit *mae);
  * identical rendering on all clients.
  */
 
+#define DP_MSG_ANNOTATION_DELETE_STATIC_LENGTH 2
+
 typedef struct DP_MsgAnnotationDelete DP_MsgAnnotationDelete;
 
 DP_Message *DP_msg_annotation_delete_new(unsigned int context_id, uint16_t id);
@@ -1346,15 +1414,21 @@ uint16_t DP_msg_annotation_delete_id(const DP_MsgAnnotationDelete *mad);
  * For axis aligned rectangle selections, no bitmap is necessary.
  */
 
+#define DP_MSG_MOVE_REGION_STATIC_LENGTH 53
+
+#define DP_MSG_MOVE_REGION_MODE_NEAREST  0
+#define DP_MSG_MOVE_REGION_MODE_BILINEAR 1
+
+const char *DP_msg_move_region_mode_variant_name(unsigned int value);
+
 typedef struct DP_MsgMoveRegion DP_MsgMoveRegion;
 
-DP_Message *
-DP_msg_move_region_new(unsigned int context_id, uint16_t layer, int32_t bx,
-                       int32_t by, int32_t bw, int32_t bh, int32_t x1,
-                       int32_t y1, int32_t x2, int32_t y2, int32_t x3,
-                       int32_t y3, int32_t x4, int32_t y4,
-                       void (*set_mask)(size_t, unsigned char *, void *),
-                       size_t mask_size, void *mask_user);
+DP_Message *DP_msg_move_region_new(
+    unsigned int context_id, uint16_t layer, uint16_t source, int32_t bx,
+    int32_t by, int32_t bw, int32_t bh, int32_t x1, int32_t y1, int32_t x2,
+    int32_t y2, int32_t x3, int32_t y3, int32_t x4, int32_t y4, uint8_t mode,
+    void (*set_mask)(size_t, unsigned char *, void *), size_t mask_size,
+    void *mask_user);
 
 DP_Message *DP_msg_move_region_deserialize(unsigned int context_id,
                                            const unsigned char *buffer,
@@ -1366,6 +1440,8 @@ DP_Message *DP_msg_move_region_parse(unsigned int context_id,
 DP_MsgMoveRegion *DP_msg_move_region_cast(DP_Message *msg);
 
 uint16_t DP_msg_move_region_layer(const DP_MsgMoveRegion *mmr);
+
+uint16_t DP_msg_move_region_source(const DP_MsgMoveRegion *mmr);
 
 int32_t DP_msg_move_region_bx(const DP_MsgMoveRegion *mmr);
 
@@ -1391,6 +1467,8 @@ int32_t DP_msg_move_region_x4(const DP_MsgMoveRegion *mmr);
 
 int32_t DP_msg_move_region_y4(const DP_MsgMoveRegion *mmr);
 
+uint8_t DP_msg_move_region_mode(const DP_MsgMoveRegion *mmr);
+
 const unsigned char *DP_msg_move_region_mask(const DP_MsgMoveRegion *mmr,
                                              size_t *out_size);
 
@@ -1410,6 +1488,8 @@ size_t DP_msg_move_region_mask_size(const DP_MsgMoveRegion *mmr);
  * image with incomplete indirect strokes. Sending a PenUp command will merge
  * the sublayer.
  */
+
+#define DP_MSG_PUT_TILE_STATIC_LENGTH 10
 
 typedef struct DP_MsgPutTile DP_MsgPutTile;
 
@@ -1456,6 +1536,8 @@ size_t DP_msg_put_tile_image_size(const DP_MsgPutTile *mpt);
  * background color. Otherwise, it is the DEFLATED tile bitmap
  */
 
+#define DP_MSG_CANVAS_BACKGROUND_STATIC_LENGTH 0
+
 typedef struct DP_MsgCanvasBackground DP_MsgCanvasBackground;
 
 DP_Message *
@@ -1489,6 +1571,8 @@ size_t DP_msg_canvas_background_image_size(const DP_MsgCanvasBackground *mcb);
  * The coordinate system has 1/4 pixel resolution. Divide by 4.0 before use.
  * The size field is the brush diameter multiplied by 256.
  */
+
+#define DP_MSG_DRAW_DABS_CLASSIC_STATIC_LENGTH 15
 
 #define DP_MSG_DRAW_DABS_CLASSIC_DABS_MAX 10920
 
@@ -1553,6 +1637,8 @@ int DP_msg_draw_dabs_classic_dabs_count(const DP_MsgDrawDabsClassic *mddc);
  * but the fields all have integer precision.
  */
 
+#define DP_MSG_DRAW_DABS_PIXEL_STATIC_LENGTH 15
+
 #define DP_MSG_DRAW_DABS_PIXEL_DABS_MAX 16380
 
 typedef struct DP_PixelDab DP_PixelDab;
@@ -1610,6 +1696,8 @@ int DP_msg_draw_dabs_pixel_dabs_count(const DP_MsgDrawDabsPixel *mddp);
  * Draw square pixel brush dabs
  */
 
+#define DP_MSG_DRAW_DABS_PIXEL_SQUARE_STATIC_LENGTH 0
+
 DP_Message *DP_msg_draw_dabs_pixel_square_new(
     unsigned int context_id, uint16_t layer, int32_t x, int32_t y,
     uint32_t color, uint8_t mode, void (*set_dabs)(int, DP_PixelDab *, void *),
@@ -1629,6 +1717,8 @@ DP_MsgDrawDabsPixel *DP_msg_draw_dabs_pixel_square_cast(DP_Message *msg);
  *
  * Draw MyPaint brush dabs
  */
+
+#define DP_MSG_DRAW_DABS_MYPAINT_STATIC_LENGTH 18
 
 #define DP_MSG_DRAW_DABS_MYPAINT_DABS_MAX 8189
 
@@ -1705,21 +1795,18 @@ int DP_msg_draw_dabs_mypaint_dabs_count(const DP_MsgDrawDabsMyPaint *mddmp);
  * to support non-rectangular selections.
  *
  * Source and target rects may be (partially) outside the canvas.
- *
- * Note: The MoveRegion command that can also transform the
- * selection is currently not implemented. The same effect can be
- * achieved by performing the transformation clientside then
- * sending the results as PutImages, including one to erase the
- * source.
  */
+
+#define DP_MSG_MOVE_RECT_STATIC_LENGTH 28
 
 typedef struct DP_MsgMoveRect DP_MsgMoveRect;
 
-DP_Message *
-DP_msg_move_rect_new(unsigned int context_id, uint16_t layer, int32_t sx,
-                     int32_t sy, int32_t tx, int32_t ty, int32_t w, int32_t h,
-                     void (*set_mask)(size_t, unsigned char *, void *),
-                     size_t mask_size, void *mask_user);
+DP_Message *DP_msg_move_rect_new(unsigned int context_id, uint16_t layer,
+                                 uint16_t source, int32_t sx, int32_t sy,
+                                 int32_t tx, int32_t ty, int32_t w, int32_t h,
+                                 void (*set_mask)(size_t, unsigned char *,
+                                                  void *),
+                                 size_t mask_size, void *mask_user);
 
 DP_Message *DP_msg_move_rect_deserialize(unsigned int context_id,
                                          const unsigned char *buffer,
@@ -1731,6 +1818,8 @@ DP_Message *DP_msg_move_rect_parse(unsigned int context_id,
 DP_MsgMoveRect *DP_msg_move_rect_cast(DP_Message *msg);
 
 uint16_t DP_msg_move_rect_layer(const DP_MsgMoveRect *mmr);
+
+uint16_t DP_msg_move_rect_source(const DP_MsgMoveRect *mmr);
 
 int32_t DP_msg_move_rect_sx(const DP_MsgMoveRect *mmr);
 
@@ -1759,6 +1848,8 @@ size_t DP_msg_move_rect_mask_size(const DP_MsgMoveRect *mmr);
  * but these fields are part of the document, like the pixel content
  * or the annotations.
  */
+
+#define DP_MSG_SET_METADATA_INT_STATIC_LENGTH 5
 
 #define DP_MSG_SET_METADATA_INT_FIELD_DPIX         0
 #define DP_MSG_SET_METADATA_INT_FIELD_DPIY         1
@@ -1791,6 +1882,8 @@ int32_t DP_msg_set_metadata_int_value(const DP_MsgSetMetadataInt *msmi);
  *
  * Set a document metadata field (string type)
  */
+
+#define DP_MSG_SET_METADATA_STR_STATIC_LENGTH 1
 
 typedef struct DP_MsgSetMetadataStr DP_MsgSetMetadataStr;
 
@@ -1826,6 +1919,8 @@ size_t DP_msg_set_metadata_str_value_len(const DP_MsgSetMetadataStr *msms);
  * position rather than replacing the existing frame.
  */
 
+#define DP_MSG_SET_TIMELINE_FRAME_STATIC_LENGTH 3
+
 typedef struct DP_MsgSetTimelineFrame DP_MsgSetTimelineFrame;
 
 DP_Message *DP_msg_set_timeline_frame_new(unsigned int context_id,
@@ -1860,6 +1955,8 @@ int DP_msg_set_timeline_frame_layers_count(const DP_MsgSetTimelineFrame *mstf);
  * Remove a frame from the timeline
  */
 
+#define DP_MSG_REMOVE_TIMELINE_FRAME_STATIC_LENGTH 2
+
 typedef struct DP_MsgRemoveTimelineFrame DP_MsgRemoveTimelineFrame;
 
 DP_Message *DP_msg_remove_timeline_frame_new(unsigned int context_id,
@@ -1882,6 +1979,8 @@ DP_msg_remove_timeline_frame_frame(const DP_MsgRemoveTimelineFrame *mrtf);
  *
  * Undo or redo actions
  */
+
+#define DP_MSG_UNDO_STATIC_LENGTH 2
 
 typedef struct DP_MsgUndo DP_MsgUndo;
 

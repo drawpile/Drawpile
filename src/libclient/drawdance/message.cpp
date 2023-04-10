@@ -140,10 +140,24 @@ Message Message::makeLayerRetitle(uint8_t contextId, uint16_t id, const QString 
     return Message{DP_msg_layer_retitle_new(contextId, id, bytes.constData(), bytes.length())};
 }
 
-Message Message::makeMoveRect(uint8_t contextId, uint16_t layer, int32_t sx, int32_t sy, int32_t tx, int32_t ty, int32_t w, int32_t h, const QImage &mask)
+Message Message::makeMoveRect(uint8_t contextId, uint16_t layer, uint16_t source, int32_t sx, int32_t sy, int32_t tx, int32_t ty, int32_t w, int32_t h, const QImage &mask)
 {
-    QByteArray compressed = mask.isNull() ? QByteArray{} : qCompress(mask.constBits(), mask.sizeInBytes());
-    return Message{DP_msg_move_rect_new(contextId, layer, sx, sy, tx, ty, w, h, &Message::setUchars, compressed.size(), compressed.data())};
+    QByteArray compressed = mask.isNull() ? QByteArray{} : compressAlphaMask(mask);
+    if(compressed.size() <= DP_MESSAGE_MAX_PAYLOAD_LENGTH - DP_MSG_MOVE_RECT_STATIC_LENGTH) {
+        return Message{DP_msg_move_rect_new(contextId, layer, source, sx, sy, tx, ty, w, h, &Message::setUchars, compressed.size(), compressed.data())};
+    } else {
+        return Message::null();
+    }
+}
+
+Message Message::makeMoveRegion(uint8_t contextId, uint16_t layer, uint16_t source, int32_t bx, int32_t by, int32_t bw, int32_t bh, int32_t x1, int32_t y1, int32_t x2, int32_t y2, int32_t x3, int32_t y3, int32_t x4, int32_t y4, uint8_t mode, const QImage &mask)
+{
+    QByteArray compressed = mask.isNull() ? QByteArray{} : compressAlphaMask(mask);
+    if(compressed.size() <= DP_MESSAGE_MAX_PAYLOAD_LENGTH - DP_MSG_MOVE_REGION_STATIC_LENGTH) {
+        return Message{DP_msg_move_region_new(contextId, layer, source, bx, by, bw, bh, x1, y1, x2, y2, x3, y3, x4, y4, mode, &Message::setUchars, compressed.size(), compressed.data())};
+    } else {
+        return Message::null();
+    }
 }
 
 Message Message::makePrivateChat(uint8_t contextId, uint8_t target, uint8_t oflags, const QString &message)
@@ -294,6 +308,22 @@ bool Message::serialize(QByteArray &buffer) const
 Message::Message(DP_Message *msg)
     : m_data{msg}
 {
+}
+
+QByteArray Message::compressAlphaMask(const QImage &mask)
+{
+    Q_ASSERT(mask.format() == QImage::Format_ARGB32_Premultiplied);
+    int width = mask.width();
+    int height = mask.height();
+    QByteArray alphaMask;
+    alphaMask.reserve(width * height);
+    for(int y = 0; y < height; ++y) {
+        const uchar *scanLine = mask.scanLine(y);
+        for(int x = 0; x < width; ++x) {
+            alphaMask.append(scanLine[x * 4 + 3]);
+        }
+    }
+    return qCompress(alphaMask);
 }
 
 void Message::makePutImagesRecursive(MessageList &msgs, uint8_t contextId, uint16_t layer, uint8_t mode, int x, int y, const QImage &image, const QRect &bounds, int estimatedSize)

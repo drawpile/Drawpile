@@ -30,6 +30,7 @@
 #include <dpcommon/geom.h>
 #include <dpcommon/input.h>
 #include <dpcommon/output.h>
+#include <dpmsg/messages.h>
 
 
 static void assign_type(DP_ImageFileType *out_type, DP_ImageFileType type)
@@ -106,6 +107,7 @@ DP_Image *DP_image_new_from_file(DP_Input *input, DP_ImageFileType type,
 
 struct DP_ImageInflateArgs {
     int width, height;
+    size_t element_size;
     DP_Image *img;
 };
 
@@ -115,7 +117,7 @@ static unsigned char *get_output_buffer(size_t out_size, void *user)
     int width = args->width;
     int height = args->height;
     size_t expected_size =
-        DP_int_to_size(width) * DP_int_to_size(height) * sizeof(uint32_t);
+        DP_int_to_size(width) * DP_int_to_size(height) * args->element_size;
     if (out_size == expected_size) {
         DP_Image *img = DP_image_new(width, height);
         args->img = img;
@@ -131,13 +133,13 @@ static unsigned char *get_output_buffer(size_t out_size, void *user)
 DP_Image *DP_image_new_from_compressed(int width, int height,
                                        const unsigned char *in, size_t in_size)
 {
-    struct DP_ImageInflateArgs args = {width, height, NULL};
+    struct DP_ImageInflateArgs args = {width, height, 4, NULL};
     if (DP_compress_inflate(in, in_size, get_output_buffer, &args)) {
 #if defined(DP_BYTE_ORDER_LITTLE_ENDIAN)
         // Nothing else to do here.
 #elif defined(DP_BYTE_ORDER_BIG_ENDIAN)
         // Gotta byte-swap the pixels.
-        DP_Pixel8 *pixels = args.img->pixels;
+        DP_Pixel8 *pixels = DP_image_pixels(args.img);
         for (int i = 0; i < width * height; ++i) {
             pixels[i].color = DP_swap_uint32(pixels[i].color);
         }
@@ -152,64 +154,27 @@ DP_Image *DP_image_new_from_compressed(int width, int height,
     }
 }
 
-
-// Monochrome MSB format: 1 bit per pixel, bytes packed with the most
-// significant bit first, lines padded to 32 bit boundaries.
-
-struct DP_MonochromeInflateArgs {
-    int line_width;
-    int line_count;
-    uint8_t *buffer;
-};
-
-static unsigned char *get_monochrome_buffer(size_t out_size, void *user)
-{
-    struct DP_MonochromeInflateArgs *args = user;
-    size_t expected_size =
-        DP_int_to_size(args->line_width) * DP_int_to_size(args->line_count);
-    if (out_size == expected_size) {
-        uint8_t *buffer = DP_malloc(out_size);
-        args->buffer = buffer;
-        return buffer;
-    }
-    else {
-        DP_error_set("Monochrome decompression needs size %zu, but got %zu",
-                     expected_size, out_size);
-        return NULL;
-    }
-}
-
-static DP_Image *extract_monochrome(int width, int height, int line_width,
-                                    const unsigned char *buffer)
-{
-    DP_Image *img = DP_image_new(width, height);
-    for (int y = 0; y < height; ++y) {
-        for (int x = 0; x < width; ++x) {
-            int byte_index = y * line_width + x / 8;
-            int bit_mask = 1 << (7 - (x % 8)); // most significant bit first
-            bool white = buffer[byte_index] & bit_mask;
-            DP_Pixel8 pixel = {white ? 0xffffffff : 0x00000000};
-            DP_image_pixel_at_set(img, x, y, pixel);
-        }
-    }
-    return img;
-}
-
-DP_Image *DP_image_new_from_compressed_monochrome(int width, int height,
+DP_Image *DP_image_new_from_compressed_alpha_mask(int width, int height,
                                                   const unsigned char *in,
                                                   size_t in_size)
 {
-    int line_width = (width + 31) / 32 * 4;
-    struct DP_MonochromeInflateArgs args = {line_width, height, NULL};
-    DP_Image *img;
-    if (DP_compress_inflate(in, in_size, get_monochrome_buffer, &args)) {
-        img = extract_monochrome(width, height, line_width, args.buffer);
+    struct DP_ImageInflateArgs args = {width, height, 1, NULL};
+    if (DP_compress_inflate(in, in_size, get_output_buffer, &args)) {
+        DP_Pixel8 *pixels = DP_image_pixels(args.img);
+        for (int i = width * height - 1; i >= 0; --i) {
+            pixels[i] = (DP_Pixel8){
+                .b = 0,
+                .g = 0,
+                .r = 0,
+                .a = ((unsigned char *)pixels)[i],
+            };
+        }
+        return args.img;
     }
     else {
-        img = NULL;
+        DP_image_free(args.img);
+        return NULL;
     }
-    DP_free(args.buffer);
-    return img;
 }
 
 
@@ -260,8 +225,8 @@ DP_Image *DP_image_new_subimage(DP_Image *img, int x, int y, int width,
 
 
 DP_Image *DP_image_transform(DP_Image *img, DP_DrawContext *dc,
-                             const DP_Quad *dst_quad, int *out_offset_x,
-                             int *out_offset_y)
+                             const DP_Quad *dst_quad, int interpolation,
+                             int *out_offset_x, int *out_offset_y)
 {
     DP_ASSERT(img);
     DP_ASSERT(dst_quad);
@@ -286,7 +251,7 @@ DP_Image *DP_image_transform(DP_Image *img, DP_DrawContext *dc,
 
     DP_Image *dst_img =
         DP_image_new(DP_rect_width(dst_bounds), DP_rect_height(dst_bounds));
-    if (!DP_image_transform_draw(img, dc, dst_img, mtf.tf)) {
+    if (!DP_image_transform_draw(img, dc, dst_img, mtf.tf, interpolation)) {
         DP_image_free(dst_img);
         return NULL;
     }
@@ -335,7 +300,8 @@ bool DP_image_thumbnail(DP_Image *img, DP_DrawContext *dc, int max_width,
             DP_int_to_double(thumb_width) / DP_int_to_double(width),
             DP_int_to_double(thumb_height) / DP_int_to_double(height));
 
-        if (DP_image_transform_draw(img, dc, thumb, tf)) {
+        if (DP_image_transform_draw(img, dc, thumb, tf,
+                                    DP_MSG_MOVE_REGION_MODE_BILINEAR)) {
             *out_thumb = thumb;
             return true;
         }

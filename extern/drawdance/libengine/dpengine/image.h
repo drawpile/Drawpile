@@ -47,7 +47,7 @@ DP_Image *DP_image_new_from_file(DP_Input *input, DP_ImageFileType type,
 DP_Image *DP_image_new_from_compressed(int width, int height,
                                        const unsigned char *in, size_t in_size);
 
-DP_Image *DP_image_new_from_compressed_monochrome(int width, int height,
+DP_Image *DP_image_new_from_compressed_alpha_mask(int width, int height,
                                                   const unsigned char *in,
                                                   size_t in_size);
 
@@ -69,8 +69,8 @@ void DP_image_pixel_at_set(DP_Image *img, int x, int y, DP_Pixel8 pixel);
 
 
 DP_Image *DP_image_transform(DP_Image *img, DP_DrawContext *dc,
-                             const DP_Quad *dst_quad, int *out_offset_x,
-                             int *out_offset_y);
+                             const DP_Quad *dst_quad, int interpolation,
+                             int *out_offset_x, int *out_offset_y);
 
 // Creates a scaled-down thumbnail of the given `img` if it doesn't fit into the
 // given maximum dimensions. Return value and the value filled into `out_thumb`

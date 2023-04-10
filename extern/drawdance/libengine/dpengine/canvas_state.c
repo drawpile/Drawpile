@@ -550,7 +550,7 @@ static DP_CanvasStateChange handle_move_region(DP_CanvasState *cs,
     const unsigned char *in_mask = DP_msg_move_region_mask(mmr, &in_mask_size);
     DP_Image *mask;
     if (in_mask_size > 0) {
-        mask = DP_image_new_from_compressed_monochrome(src_width, src_height,
+        mask = DP_image_new_from_compressed_alpha_mask(src_width, src_height,
                                                        in_mask, in_mask_size);
         if (!mask) {
             return DP_canvas_state_change_null();
@@ -561,8 +561,9 @@ static DP_CanvasStateChange handle_move_region(DP_CanvasState *cs,
     }
 
     DP_CanvasStateChange change =
-        DP_ops_move_region(cs, dc, context_id, DP_msg_move_region_layer(mmr),
-                           &src_rect, &dst_quad, mask);
+        DP_ops_move_region(cs, dc, context_id, DP_msg_move_region_source(mmr),
+                           DP_msg_move_region_layer(mmr), &src_rect, &dst_quad,
+                           DP_msg_move_region_mode(mmr), mask);
     DP_free(mask);
     return change;
 }
@@ -823,10 +824,8 @@ static DP_CanvasStateChange handle_move_rect(DP_CanvasState *cs,
     const unsigned char *in_mask = DP_msg_move_rect_mask(mmr, &in_mask_size);
     DP_Image *mask;
     if (in_mask_size > 0) {
-        // TODO: this could be monochrome, but the move rect message sends
-        // 32 bit masks instead. Could probably make that more efficient.
-        mask =
-            DP_image_new_from_compressed(width, height, in_mask, in_mask_size);
+        mask = DP_image_new_from_compressed_alpha_mask(width, height, in_mask,
+                                                       in_mask_size);
         if (!mask) {
             return DP_canvas_state_change_null();
         }
@@ -835,9 +834,9 @@ static DP_CanvasStateChange handle_move_rect(DP_CanvasState *cs,
         mask = NULL;
     }
 
-    DP_CanvasStateChange change =
-        DP_ops_move_rect(cs, context_id, DP_msg_move_rect_layer(mmr), &src_rect,
-                         dst_x, dst_y, mask);
+    DP_CanvasStateChange change = DP_ops_move_rect(
+        cs, context_id, DP_msg_move_rect_source(mmr),
+        DP_msg_move_rect_layer(mmr), &src_rect, dst_x, dst_y, mask);
     DP_free(mask);
     return change;
 }

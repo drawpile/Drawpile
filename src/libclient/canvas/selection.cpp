@@ -540,8 +540,6 @@ bool Selection::pasteOrMoveToCanvas(drawdance::MessageList &buffer, uint8_t cont
 
 	// Merge image
 
-	buffer.append(drawdance::Message::makeUndoPoint(contextId));
-
 	if(!m_moveRegion.isEmpty()) {
 		// Get source pixel mask
 		QRect moveBounds;
@@ -554,40 +552,41 @@ bool Selection::pasteOrMoveToCanvas(drawdance::MessageList &buffer, uint8_t cont
 			moveBounds = m_moveRegion.boundingRect().toRect();
 		}
 
-		// Send move command
+		// If we've only moved the selection without scaling, rotating or
+		// distorting it, we can use the faster MoveRect, otherwise MoveRegion.
 		if(isOnlyTranslated()) {
-			// If we've only moved the selection without scaling, rotating or distorting it,
-			// we can use the fast MoveRect command.
-			buffer.append(drawdance::Message::makeMoveRect(
-				contextId, layer, moveBounds.x(), moveBounds.y(),
+			drawdance::Message msg = drawdance::Message::makeMoveRect(
+				contextId, layer, m_sourceLayerId, moveBounds.x(), moveBounds.y(),
 				m_shape.at(0).x(), m_shape.at(0).y(), moveBounds.width(),
-				moveBounds.height(), mask));
-		} else {
-			// Version 2.1 MoveRegion is presently not implemented in the Rustpile
-			// engine, so a transformed selection must be processed clientside and sent
-			// as an image. It's implemented in Drawdance though, so if that becomes
-			// the paint engine, the command can return again.
-
-			QPoint offset;
-			const QImage image = tools::SelectionTool::transformSelectionImage(m_pasteImage, m_shape.toPolygon(), &offset);
-
-			if(mask.isNull()) {
-				buffer.append(drawdance::Message::makeFillRect(
-					contextId, layer, DP_BLEND_MODE_ERASE, moveBounds.x(),
-					moveBounds.y(), moveBounds.width(), moveBounds.height(),
-					Qt::white));
+				moveBounds.height(), mask);
+			if(msg.isNull()) {
+				qWarning("Translate: mask too large");
+				return false;
 			} else {
-				appendPutImage(buffer, contextId, layer, moveBounds.x(), moveBounds.y(), mask, DP_BLEND_MODE_ERASE);
+				buffer.append(drawdance::Message::makeUndoPoint(contextId));
+				buffer.append(msg);
 			}
-
-			appendPutImage(buffer, contextId, layer, offset.x(), offset.y(), image, DP_BLEND_MODE_NORMAL);
+		} else {
+			QPolygon s = m_shape.toPolygon();
+			drawdance::Message msg = drawdance::Message::makeMoveRegion(
+				contextId, layer, m_sourceLayerId, moveBounds.x(), moveBounds.y(),
+				moveBounds.width(), moveBounds.height(), s[0].x(), s[0].y(),
+				s[1].x(), s[1].y(), s[2].x(), s[2].y(), s[3].x(), s[3].y(),
+				DP_MSG_MOVE_REGION_MODE_BILINEAR, mask);
+			if(msg.isNull()) {
+				qWarning("Transform: mask too large");
+				return false;
+			} else {
+				buffer.append(drawdance::Message::makeUndoPoint(contextId));
+				buffer.append(msg);
+			}
 		}
 
 	} else {
 		// A pasted image
 		QPoint offset;
-		const QImage image = tools::SelectionTool::transformSelectionImage(m_pasteImage, m_shape.toPolygon(), &offset);
-
+		QImage image = tools::SelectionTool::transformSelectionImage(m_pasteImage, m_shape.toPolygon(), &offset);
+		buffer.append(drawdance::Message::makeUndoPoint(contextId));
 		appendPutImage(buffer, contextId, layer, offset.x(), offset.y(), image, DP_BLEND_MODE_NORMAL);
 	}
 

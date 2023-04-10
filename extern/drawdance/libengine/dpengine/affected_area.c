@@ -372,14 +372,23 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
     case DP_MSG_ANNOTATION_DELETE:
         return make_annotations(
             DP_msg_annotation_delete_id(DP_msg_annotation_delete_cast(msg)));
+    // Move region and move rect messages can take stuff from one layer and move
+    // it to another, affecting two different layers. Since we can't represent
+    // that, we punt to affecting all layers in that case. Switching layers
+    // during a transform is pretty uncommon, so that's okay.
     case DP_MSG_MOVE_REGION: {
         DP_MsgMoveRegion *mmr = DP_msg_move_region_cast(msg);
-        return make_pixels(DP_msg_move_region_layer(mmr),
+        uint16_t source_id = DP_msg_move_region_source(mmr);
+        uint16_t target_id = DP_msg_move_region_layer(mmr);
+        return make_pixels(source_id == target_id ? source_id : ALL_IDS,
                            move_region_bounds(mmr));
     }
     case DP_MSG_MOVE_RECT: {
         DP_MsgMoveRect *mmr = DP_msg_move_rect_cast(msg);
-        return make_pixels(DP_msg_move_rect_layer(mmr), move_rect_bounds(mmr));
+        uint16_t source_id = DP_msg_move_rect_source(mmr);
+        uint16_t target_id = DP_msg_move_rect_layer(mmr);
+        return make_pixels(source_id == target_id ? source_id : ALL_IDS,
+                           move_rect_bounds(mmr));
     }
     case DP_MSG_UNDO_POINT:
         return make_user_attrs();

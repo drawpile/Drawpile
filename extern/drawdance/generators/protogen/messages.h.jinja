@@ -81,6 +81,8 @@ DP_Message *DP_message_parse_body(DP_MessageType type, unsigned int context_id, 
 {{ message.comment }}
  */
     {% if not message.reserved %}
+
+        #define {{ message.enum_name }}_STATIC_LENGTH {{ message.static_payload_length }}
         {% for f in message.fields %}
             {% if f.flags %}
 

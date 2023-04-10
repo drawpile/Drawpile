@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 askmeaboutloom
+ * Copyright (C) 2022-2023 askmeaboutloom
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,9 @@
 #include <dpcommon/common.h>
 #include <dpcommon/geom.h>
 #include <dpmsg/blend_mode.h>
+#include <dpmsg/messages.h>
 #include <qgrayraster_inc.h>
+#include <helpers.h> // CLAMP
 
 
 struct DP_RenderSpansData {
@@ -43,9 +45,19 @@ struct DP_RenderSpansData {
     int dst_width, dst_height;
     DP_Pixel8 *dst_pixels;
     DP_Transform tf;
+    int interpolation;
     DP_Pixel8 *buffer;
 };
 
+
+static uint32_t fetch_transformed_pixel_nearest(int width, int height,
+                                                DP_Pixel8 *pixels, double px,
+                                                double py)
+{
+    int x = CLAMP(DP_double_to_int(px + 0.5), 0, width - 1);
+    int y = CLAMP(DP_double_to_int(py + 0.5), 0, height - 1);
+    return pixels[y * width + x].color;
+}
 
 static void fetch_transformed_bilinear_pixel_bounds(int l1, int l2, int v1,
                                                     int *out_v1, int *out_v2)
@@ -76,9 +88,9 @@ static uint32_t interpolate_pixel(uint32_t x, uint32_t a, uint32_t y,
     return x;
 }
 
-static inline uint32_t interpolate_4_pixels(uint32_t tl, uint32_t tr,
-                                            uint32_t bl, uint32_t br,
-                                            uint32_t distx, uint32_t disty)
+static uint32_t interpolate_4_pixels(uint32_t tl, uint32_t tr, uint32_t bl,
+                                     uint32_t br, uint32_t distx,
+                                     uint32_t disty)
 {
     uint32_t idistx = 256 - distx;
     uint32_t idisty = 256 - disty;
@@ -87,10 +99,42 @@ static inline uint32_t interpolate_4_pixels(uint32_t tl, uint32_t tr,
     return interpolate_pixel(xtop, idisty, xbot, disty);
 }
 
-static DP_Pixel8 *fetch_transformed_bilinear(int width, int height,
-                                             DP_Pixel8 *pixels, DP_Transform tf,
-                                             int x, int y, int length,
-                                             DP_Pixel8 *out_buffer)
+static uint32_t fetch_transformed_pixel_bilinear(int width, int height,
+                                                 DP_Pixel8 *pixels, double px,
+                                                 double py)
+{
+    int x1 = DP_double_to_int(px) - (px < 0 ? 1 : 0);
+    int y1 = DP_double_to_int(py) - (py < 0 ? 1 : 0);
+
+    uint32_t distx = DP_double_to_uint32((px - DP_int_to_double(x1)) * 256.0);
+    uint32_t disty = DP_double_to_uint32((py - DP_int_to_double(y1)) * 256.0);
+
+    int x2, y2;
+    fetch_transformed_bilinear_pixel_bounds(0, width - 1, x1, &x1, &x2);
+    fetch_transformed_bilinear_pixel_bounds(0, height - 1, y1, &y1, &y2);
+
+    DP_Pixel8 *s1 = pixels + y1 * width;
+    DP_Pixel8 *s2 = pixels + y2 * width;
+    return interpolate_4_pixels(s1[x1].color, s1[x2].color, s2[x1].color,
+                                s2[x2].color, distx, disty);
+}
+
+static uint32_t fetch_transformed_pixel(int interpolation, int width,
+                                        int height, DP_Pixel8 *pixels,
+                                        double px, double py)
+{
+    switch (interpolation) {
+    case DP_MSG_MOVE_REGION_MODE_NEAREST:
+        return fetch_transformed_pixel_nearest(width, height, pixels, px, py);
+    default:
+        return fetch_transformed_pixel_bilinear(width, height, pixels, px, py);
+    }
+}
+
+static DP_Pixel8 *fetch_transformed_pixels(int width, int height,
+                                           DP_Pixel8 *pixels, DP_Transform tf,
+                                           int interpolation, int x, int y,
+                                           int length, DP_Pixel8 *out_buffer)
 {
     double *m = tf.matrix;
     double fdx = m[0];
@@ -108,24 +152,8 @@ static DP_Pixel8 *fetch_transformed_bilinear(int width, int height,
         double iw = fw == 0.0 ? 1.0 : 1.0 / fw;
         double px = fx * iw - 0.5;
         double py = fy * iw - 0.5;
-
-        int x1 = DP_double_to_int(px) - (px < 0 ? 1 : 0);
-        int y1 = DP_double_to_int(py) - (py < 0 ? 1 : 0);
-
-        uint32_t distx =
-            DP_double_to_uint32((px - DP_int_to_double(x1)) * 256.0);
-        uint32_t disty =
-            DP_double_to_uint32((py - DP_int_to_double(y1)) * 256.0);
-
-        int x2, y2;
-        fetch_transformed_bilinear_pixel_bounds(0, width - 1, x1, &x1, &x2);
-        fetch_transformed_bilinear_pixel_bounds(0, height - 1, y1, &y1, &y2);
-
-        DP_Pixel8 *s1 = pixels + y1 * width;
-        DP_Pixel8 *s2 = pixels + y2 * width;
-        b->color =
-            interpolate_4_pixels(s1[x1].color, s1[x2].color, s2[x1].color,
-                                 s2[x2].color, distx, disty);
+        b->color = fetch_transformed_pixel(interpolation, width, height, pixels,
+                                           px, py);
 
         fx += fdx;
         fy += fdy;
@@ -140,6 +168,16 @@ static DP_Pixel8 *fetch_transformed_bilinear(int width, int height,
     return out_buffer;
 }
 
+unsigned int get_span_opacity(int interpolation, int coverage)
+{
+    switch (interpolation) {
+    case DP_MSG_MOVE_REGION_MODE_NEAREST:
+        return coverage < 128 ? 0u : 255u;
+    default:
+        return DP_int_to_uint(CLAMP(coverage, 0, 255));
+    }
+}
+
 // Multiplying two bytes as if they were floats between 0 and 1.
 // Adapted from Krita, see license above.
 static uint8_t mul(unsigned int a, unsigned int b)
@@ -149,10 +187,9 @@ static uint8_t mul(unsigned int a, unsigned int b)
 }
 
 // Normal blending with 8 bit pixels.
-static void process_span(int len, int coverage, DP_Pixel8 *DP_RESTRICT src,
-                         DP_Pixel8 *DP_RESTRICT dst)
+static void process_span(int len, unsigned int opacity,
+                         DP_Pixel8 *DP_RESTRICT src, DP_Pixel8 *DP_RESTRICT dst)
 {
-    unsigned int opacity = DP_uint8_to_uint(DP_int_to_uint8(coverage));
     for (int i = 0; i < len; ++i) {
         DP_Pixel8 s = src[i];
         DP_Pixel8 d = dst[i];
@@ -176,6 +213,8 @@ static void render_spans(int count, const DP_FT_Span *spans, void *user)
     DP_Pixel8 *src_pixels = rsd->src_pixels;
     int dst_width = rsd->dst_width;
     DP_Pixel8 *dst_pixels = rsd->dst_pixels;
+    DP_Transform tf = rsd->tf;
+    int interpolation = rsd->interpolation;
     DP_Pixel8 *buffer = rsd->buffer;
 
     int coverage = 0;
@@ -201,8 +240,9 @@ static void render_spans(int count, const DP_FT_Span *spans, void *user)
             length -= l;
 
             DP_Pixel8 *dst = dst_pixels + y * dst_width + x;
-            DP_Pixel8 *src = fetch_transformed_bilinear(
-                src_width, src_height, src_pixels, rsd->tf, x, y, l, buffer);
+            DP_Pixel8 *src =
+                fetch_transformed_pixels(src_width, src_height, src_pixels, tf,
+                                         interpolation, x, y, l, buffer);
             int offset = 0;
             while (l > 0) {
                 if (x == spans->x) { // new span?
@@ -211,7 +251,8 @@ static void render_spans(int count, const DP_FT_Span *spans, void *user)
 
                 int pr = spans->x + spans->len;
                 int pl = DP_min_int(l, pr - x);
-                process_span(pl, coverage, src + offset, dst + offset);
+                process_span(pl, get_span_opacity(interpolation, coverage),
+                             src + offset, dst + offset);
 
                 l -= pl;
                 x += pl;
@@ -235,7 +276,8 @@ static DP_FT_Vector transform_outline_point(DP_Transform tf, double x, double y)
 }
 
 bool DP_image_transform_draw(DP_Image *img, DP_DrawContext *dc,
-                             DP_Image *dst_img, DP_Transform tf)
+                             DP_Image *dst_img, DP_Transform tf,
+                             int interpolation)
 {
     DP_Transform delta = DP_transform_make(1.0, 0.0, 0.0, 0.0, 1.0, 0.0,
                                            1.0 / 65536.0, 1.0 / 65536.0, 1.0);
@@ -262,6 +304,7 @@ bool DP_image_transform_draw(DP_Image *img, DP_DrawContext *dc,
                                      dst_height,
                                      DP_image_pixels(dst_img),
                                      DP_transform_transpose(mtf.tf),
+                                     interpolation,
                                      DP_draw_context_transform_buffer(dc)};
 
     DP_FT_Vector points[5];

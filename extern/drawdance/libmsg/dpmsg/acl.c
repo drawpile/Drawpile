@@ -789,20 +789,35 @@ static bool handle_annotation_delete(DP_AclState *acls, DP_Message *msg,
     }
 }
 
-static bool handle_move_rect(DP_AclState *acls, DP_Message *msg,
-                             uint8_t user_id, bool override)
+static bool handle_move(DP_AclState *acls, uint8_t user_id, bool override,
+                        int source_id, int target_id)
 {
     if (override) {
         return true;
     }
     if (DP_acl_state_can_use_feature(acls, DP_FEATURE_REGION_MOVE, user_id)) {
-        DP_MsgMoveRect *mmr = DP_msg_move_rect_cast(msg);
-        int layer_id = DP_msg_move_rect_layer(mmr);
-        return !DP_acl_state_layer_locked_for(acls, user_id, layer_id);
+        return !DP_acl_state_layer_locked_for(acls, user_id, source_id)
+            && !DP_acl_state_layer_locked_for(acls, user_id, target_id);
     }
     else {
         return false;
     }
+}
+
+static bool handle_move_region(DP_AclState *acls, DP_Message *msg,
+                               uint8_t user_id, bool override)
+{
+    DP_MsgMoveRegion *mmr = DP_message_internal(msg);
+    return handle_move(acls, user_id, override, DP_msg_move_region_source(mmr),
+                       DP_msg_move_region_layer(mmr));
+}
+
+static bool handle_move_rect(DP_AclState *acls, DP_Message *msg,
+                             uint8_t user_id, bool override)
+{
+    DP_MsgMoveRect *mmr = DP_message_internal(msg);
+    return handle_move(acls, user_id, override, DP_msg_move_rect_source(mmr),
+                       DP_msg_move_rect_layer(mmr));
 }
 
 static bool handle_set_metadata_int(DP_AclState *acls, DP_Message *msg,
@@ -876,6 +891,8 @@ static bool handle_command_message(DP_AclState *acls, DP_Message *msg,
         return handle_annotation_edit(acls, msg, user_id, override);
     case DP_MSG_ANNOTATION_DELETE:
         return handle_annotation_delete(acls, msg, user_id, override);
+    case DP_MSG_MOVE_REGION:
+        return handle_move_region(acls, msg, user_id, override);
     case DP_MSG_PUT_TILE:
         return override || DP_acl_state_is_op(acls, user_id);
     case DP_MSG_CANVAS_BACKGROUND:

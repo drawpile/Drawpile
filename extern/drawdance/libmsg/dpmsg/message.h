@@ -27,8 +27,9 @@
 typedef struct DP_TextWriter DP_TextWriter;
 
 
-#define DP_MESSAGE_MAX           255
-#define DP_MESSAGE_HEADER_LENGTH 4
+#define DP_MESSAGE_MAX                255
+#define DP_MESSAGE_HEADER_LENGTH      4
+#define DP_MESSAGE_MAX_PAYLOAD_LENGTH 65535
 
 typedef struct DP_Message DP_Message;
 
