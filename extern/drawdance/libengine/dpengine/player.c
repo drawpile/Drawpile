@@ -2323,7 +2323,7 @@ static bool read_index_history(DP_ReadSnapshotContext *c, size_t offset,
         bool ok = READ_INDEX(input, uint16, length)
                && read_index_input(input, length);
         if (!ok) {
-            return NULL;
+            return false;
         }
 
         DP_Message *msg = DP_message_deserialize_length(
