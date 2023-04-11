@@ -118,7 +118,7 @@ int DP_canvas_history_undo_depth_limit(DP_CanvasHistory *ch);
 void DP_canvas_history_undo_depth_limit_set(DP_CanvasHistory *ch,
                                             int undo_depth_limit);
 
-bool DP_canvas_history_snapshot(DP_CanvasHistory *ch);
+bool DP_canvas_history_save_point_make(DP_CanvasHistory *ch);
 
 // Cleans up after disconnecting from a remote session: the local fork is merged
 // into the mainline history and all sublayers are merged into their parents.

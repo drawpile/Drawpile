@@ -347,7 +347,7 @@ static void handle_internal(DP_PaintEngine *pe, DP_DrawContext *dc,
         update_undo_depth_limit(pe);
         break;
     case DP_MSG_INTERNAL_TYPE_SNAPSHOT:
-        if (!DP_canvas_history_snapshot(pe->ch)) {
+        if (!DP_canvas_history_save_point_make(pe->ch)) {
             DP_warn("Error requesting snapshot: %s", DP_error());
         }
         break;

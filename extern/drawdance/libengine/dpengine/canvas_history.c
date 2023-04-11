@@ -793,7 +793,7 @@ static void make_save_point(DP_CanvasHistory *ch, int index,
     }
 }
 
-bool DP_canvas_history_snapshot(DP_CanvasHistory *ch)
+bool DP_canvas_history_save_point_make(DP_CanvasHistory *ch)
 {
     if (!have_local_fork(ch)) {
         make_save_point(ch, find_save_point_index(ch), true);
@@ -816,7 +816,7 @@ static bool handle_internal(DP_CanvasHistory *ch, DP_MsgInternal *mi)
         DP_canvas_history_soft_reset(ch);
         return true;
     case DP_MSG_INTERNAL_TYPE_SNAPSHOT:
-        return DP_canvas_history_snapshot(ch);
+        return DP_canvas_history_save_point_make(ch);
     default:
         DP_error_set("Unhandled internal message type: %d", (int)internal_type);
         return false;
