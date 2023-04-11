@@ -551,12 +551,12 @@ static DP_PlayerResult step_message(DP_Player *player, DP_Message **out_msg)
     return result;
 }
 
-static bool should_emit_message(DP_MessageType type)
+static bool emit_message(DP_Message *msg, DP_Message **out_msg)
 {
     // When playing back a recording, we are a single user in offline mode, so
     // don't allow anything to escape that would mess up the real ACL state,
     // relates to other users in some way or is a control message of some sort.
-    switch (type) {
+    switch (DP_message_type(msg)) {
     case DP_MSG_SERVER_COMMAND:
     case DP_MSG_DISCONNECT:
     case DP_MSG_PING:
@@ -569,12 +569,22 @@ static bool should_emit_message(DP_MessageType type)
     case DP_MSG_PRIVATE_CHAT:
     case DP_MSG_MARKER:
     case DP_MSG_USER_ACL:
-    case DP_MSG_LAYER_ACL:
     case DP_MSG_FEATURE_ACCESS_LEVELS:
     case DP_MSG_UNDO_DEPTH:
     case DP_MSG_DATA:
         return false;
+    // Layer ACL messages have a tier, which we want to retain, and a user
+    // component, which we do not. So extract the former and leave the latter.
+    case DP_MSG_LAYER_ACL: {
+        DP_MsgLayerAcl *mla = DP_message_internal(msg);
+        *out_msg = DP_msg_layer_acl_new(
+            DP_message_context_id(msg), DP_msg_layer_acl_id(mla),
+            DP_msg_layer_acl_flags(mla), NULL, 0, NULL);
+        DP_message_decref(msg);
+        return true;
+    }
     default:
+        *out_msg = msg;
         return true;
     }
 }
@@ -594,8 +604,7 @@ static DP_PlayerResult step_valid_message(DP_Player *player,
                     DP_message_type_enum_name_unprefixed(DP_message_type(msg)),
                     DP_message_context_id(msg));
             }
-            else if (should_emit_message(DP_message_type(msg))) {
-                *out_msg = msg;
+            else if (emit_message(msg, out_msg)) {
                 return result;
             }
             DP_message_decref(msg);
