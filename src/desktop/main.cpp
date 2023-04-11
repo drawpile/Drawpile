@@ -111,7 +111,7 @@ bool DrawpileApp::event(QEvent *e) {
 
 void DrawpileApp::notifySettingsChanged()
 {
-	tabletinput::update(QSettings{});
+	tabletinput::update(this, QSettings{});
 	emit settingsChanged();
 }
 
@@ -447,7 +447,7 @@ static QStringList initApp(DrawpileApp &app)
 	});
 #endif
 
-	tabletinput::init(&app, settings);
+	tabletinput::update(&app, settings);
 
 	// Set override locale from settings, or use system locale if no override is set
 	QLocale locale = QLocale::c();

@@ -6,6 +6,7 @@
 #include "libclient/drawdance/eventlog.h"
 #include "libshared/util/qtcompat.h"
 
+#include "desktop/tabletinput.h"
 #include "desktop/widgets/notifbar.h"
 #include "desktop/utils/qtguicompat.h"
 
@@ -21,20 +22,6 @@
 #include <QtMath>
 #include <QLineF>
 #include <QDateTime>
-
-// When KIS_TABLET isn't enabled (and maybe when the Qt version is new enough
-// too, so I'm putting this into a separate #define), Qt will only generate
-// mouse events when a tablet input goes unaccepted. We need those mouse events
-// though, since it e.g. causes the cursor to update when the cursor enters the
-// canvas or unfocuses the chat when you start drawing or panning with a tablet
-// pen. So in that case, we don't accept those tablet events and instead add a
-// check in our mouse event handlers to disregard synthetically generated mouse
-// events, meaning we don't double up on them and the view acts properly.
-#ifdef HAVE_KIS_TABLET
-#	undef PASS_PEN_EVENTS
-#else
-#	define PASS_PEN_EVENTS
-#endif
 
 namespace widgets {
 
@@ -594,11 +581,11 @@ void CanvasView::penPressEvent(long long timeMsec, const QPointF &pos, qreal pre
 
 static bool isSynthetic(QMouseEvent *event)
 {
-#ifdef PASS_PEN_EVENTS
-	return event->source() & Qt::MouseEventSynthesizedByQt;
-#else
-	return false;
-#endif
+	if(tabletinput::passPenEvents()) {
+		return event->source() & Qt::MouseEventSynthesizedByQt;
+	} else {
+		return false;
+	}
 }
 
 //! Handle mouse press events
@@ -1188,8 +1175,8 @@ bool CanvasView::viewportEvent(QEvent *event)
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
 		const auto tabPos = compat::tabPosF(*tabev);
 		DP_EVENT_LOG(
-			"tablet_press x=%f y=%f pressure=%f xtilt=%d ytilt=%d rotation=%f buttons=0x%x modifiers=0x%x pendown=%d touching=%d",
-			tabPos.x(), tabPos.y(), tabev->pressure(), compat::cast_6<int>(tabev->xTilt()), compat::cast_6<int>(tabev->yTilt()),
+			"tablet_press spontaneous=%d x=%f y=%f pressure=%f xtilt=%d ytilt=%d rotation=%f buttons=0x%x modifiers=0x%x pendown=%d touching=%d",
+			tabev->spontaneous(), tabPos.x(), tabPos.y(), tabev->pressure(), compat::cast_6<int>(tabev->xTilt()), compat::cast_6<int>(tabev->yTilt()),
 			qDegreesToRadians(tabev->rotation()), unsigned(tabev->buttons()), unsigned(tabev->modifiers()),
 			m_pendown, m_touching);
 
@@ -1199,9 +1186,9 @@ bool CanvasView::viewportEvent(QEvent *event)
 		// we don't actually do anything yet in the penDown handler other than remember
 		// the initial point and we'll let a TabletEvent override the mouse event.
 		// When KIS_TABLET isn't enabled we ignore synthetic mouse events though.
-#ifndef PASS_PEN_EVENTS
-		tabev->accept();
-#endif
+		if(!tabletinput::passPenEvents()) {
+			tabev->accept();
+		}
 
 		penPressEvent(
 			QDateTime::currentMSecsSinceEpoch(),
@@ -1219,14 +1206,14 @@ bool CanvasView::viewportEvent(QEvent *event)
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
 		const auto tabPos = compat::tabPosF(*tabev);
 		DP_EVENT_LOG(
-			"tablet_move x=%f y=%f pressure=%f xtilt=%d ytilt=%d rotation=%f buttons=0x%x modifiers=0x%x pendown=%d touching=%d",
-			tabPos.x(), tabPos.y(), tabev->pressure(), compat::cast_6<int>(tabev->xTilt()), compat::cast_6<int>(tabev->yTilt()),
+			"tablet_move spontaneous=%d x=%f y=%f pressure=%f xtilt=%d ytilt=%d rotation=%f buttons=0x%x modifiers=0x%x pendown=%d touching=%d",
+			tabev->spontaneous(), tabPos.x(), tabPos.y(), tabev->pressure(), compat::cast_6<int>(tabev->xTilt()), compat::cast_6<int>(tabev->yTilt()),
 			qDegreesToRadians(tabev->rotation()), unsigned(tabev->buttons()), unsigned(tabev->modifiers()),
 			m_pendown, m_touching);
 
-#ifndef PASS_PEN_EVENTS
-		tabev->accept();
-#endif
+		if(!tabletinput::passPenEvents()) {
+			tabev->accept();
+		}
 
 		penMoveEvent(
 			QDateTime::currentMSecsSinceEpoch(),
@@ -1243,12 +1230,12 @@ bool CanvasView::viewportEvent(QEvent *event)
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
 		const auto tabPos = compat::tabPosF(*tabev);
 		DP_EVENT_LOG(
-			"tablet_release x=%f y=%f buttons=0x%x pendown=%d touching=%d",
-			tabPos.x(), tabPos.y(), unsigned(tabev->buttons()),
+			"tablet_release spontaneous=%d x=%f y=%f buttons=0x%x pendown=%d touching=%d",
+			tabev->spontaneous(), tabPos.x(), tabPos.y(), unsigned(tabev->buttons()),
 			m_pendown, m_touching);
-#ifndef PASS_PEN_EVENTS
-		tabev->accept();
-#endif
+		if(!tabletinput::passPenEvents()) {
+			tabev->accept();
+		}
 		// TODO check if tablet event modifiers() is still broken in Qt 5.12
 		penReleaseEvent(QDateTime::currentMSecsSinceEpoch(), tabPos, tabev->button(), QApplication::queryKeyboardModifiers());
 	}

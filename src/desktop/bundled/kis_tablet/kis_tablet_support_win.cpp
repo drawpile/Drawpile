@@ -141,21 +141,35 @@ static inline bool isMouseEventType(QEvent::Type t)
 
 QWindowsWinTab32DLL QWindowsTabletSupport::m_winTab32DLL;
 
-void KisTabletSupportWin::init()
+static QMetaObject::Connection conn;
+
+bool KisTabletSupportWin::init()
 {
     if (!QWindowsTabletSupport::m_winTab32DLL.init()) {
         qWarning() << "Failed to initialize Wintab";
-        return;
+        return false;
     }
 
+    quit();
     QTAB = QWindowsTabletSupport::create();
+    if(!QTAB) {
+        return false;
+    }
 
     // Refresh tablet context after tablet rotated, screen added, etc.
-    QObject::connect(qApp->primaryScreen(), &QScreen::geometryChanged,
+    conn = QObject::connect(qApp->primaryScreen(), &QScreen::geometryChanged,
                      [=](const QRect & ){
                          delete QTAB;
                          QTAB = QWindowsTabletSupport::create();
                      });
+}
+
+void KisTabletSupportWin::quit()
+{
+    QObject::disconnect(conn);
+    conn = QMetaObject::Connection{};
+    delete QTAB;
+    QTAB = nullptr;
 }
 
 void KisTabletSupportWin::enableRelativePenModeHack(bool enable)
