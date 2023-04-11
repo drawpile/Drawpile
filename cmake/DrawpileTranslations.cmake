@@ -140,21 +140,53 @@ function(bundle_translations out_files)
 endfunction()
 
 function(_get_qt_translation_file out_file module lang)
-	get_filename_component(qm_location "${DP_QT_DIR}/../../../translations" ABSOLUTE)
-	set(_qm_file "${qm_location}/${module}_${lang}.qm")
-	if(NOT EXISTS "${_qm_file}")
-		string(SUBSTRING ${lang} 0 2 lang_code)
-		set(_qm_file "${qm_location}/${module}_${lang_code}.qm")
-	endif()
-	if(NOT EXISTS "${_qm_file}")
-		# There is no Vietnamese translation in Qt, but there is in Drawpile;
-		# any other missing translation probably means that the Qt directory
-		# is screwed up, so warning about that so parts of the UI are left
-		# confusingly untranslated
-		if(NOT lang_code STREQUAL "vi")
-			message(WARNING "Could not find Qt translation ${_qm_file}")
+	_get_qt_translation_dir(qm_location)
+	if(qm_location)
+		set(_qm_file "${qm_location}/${module}_${lang}.qm")
+		if(NOT EXISTS "${_qm_file}")
+			string(SUBSTRING ${lang} 0 2 lang_code)
+			set(_qm_file "${qm_location}/${module}_${lang_code}.qm")
 		endif()
+		if(NOT EXISTS "${_qm_file}")
+			# There is no Vietnamese translation in Qt, but there is in Drawpile;
+			# any other missing translation probably means that the Qt directory
+			# is screwed up, so warning about that because parts of the UI are
+			# left confusingly untranslated
+			if(NOT lang_code STREQUAL "vi")
+				message(WARNING "Could not find Qt translation ${_qm_file}")
+			endif()
+			set(_qm_file "")
+		endif()
+	else()
 		set(_qm_file "")
 	endif()
 	set(${out_file} "${_qm_file}" PARENT_SCOPE)
+endfunction()
+
+function(_get_qt_translation_dir out_path)
+	# We only want to attempt to find the translation directory once per run and
+	# then print one warning if that's not found, so cache it in a property.
+	get_property(have_qm_location GLOBAL PROPERTY dp_qm_location SET)
+	if(have_qm_location)
+		get_property(qm_location GLOBAL PROPERTY dp_qm_location)
+	else()
+		if(QT_VERSION_MAJOR VERSION_EQUAL 6)
+			# Qt6 defines its install locations in variables.
+			get_filename_component(qm_location
+				"${QT6_INSTALL_PREFIX}/${QT6_INSTALL_TRANSLATIONS}" ABSOLUTE)
+		else()
+			# Qt5 requires us to run qmake to query the translations directory.
+			get_target_property(qmake_exe Qt5::qmake IMPORTED_LOCATION)
+			execute_process(
+				COMMAND "${qmake_exe}" -query QT_INSTALL_TRANSLATIONS
+				OUTPUT_VARIABLE qm_location OUTPUT_STRIP_TRAILING_WHITESPACE)
+		endif()
+
+		if(NOT EXISTS "${qm_location}")
+			message(WARNING "Qt translations directory '${qm_location}' not found")
+			set(qm_location "")
+		endif()
+		set_property(GLOBAL PROPERTY dp_qm_location "${qm_location}")
+	endif()
+	set(${out_path} "${qm_location}" PARENT_SCOPE)
 endfunction()
