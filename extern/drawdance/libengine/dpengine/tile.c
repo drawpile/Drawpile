@@ -330,7 +330,7 @@ DP_Pixel15 DP_tile_pixel_at(DP_Tile *tile, int x, int y)
 
 bool DP_tile_blank(DP_Tile *tile)
 {
-    static const DP_Pixel15 blank_pixels[DP_TILE_LENGTH];
+    static const DP_Pixel15 blank_pixels[DP_TILE_LENGTH] = {0};
     return memcmp(tile->pixels, blank_pixels, DP_TILE_BYTES) == 0;
 }
 

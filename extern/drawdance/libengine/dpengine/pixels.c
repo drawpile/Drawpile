@@ -507,7 +507,7 @@ static void pixels15_to_8_avx2(DP_Pixel8 *dst, const DP_Pixel15 *src)
 
         // Shuffle the first of every 32bit spot to form an 4x8bit RGBA.
         // Every register shuffles to a empty spot so they can be ORed together.
-        char bit8 = (char)0x80;
+        char bit8 = (char)-0x80;
         p1 = _mm256_shuffle_epi8(
             p1, _mm256_setr_epi8(0, bit8, 4, bit8, bit8, bit8, bit8, bit8, 8,
                                  bit8, 12, bit8, bit8, bit8, bit8, bit8, 0,
