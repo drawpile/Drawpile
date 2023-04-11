@@ -45,10 +45,10 @@ void AclState::eachLayerAcl(AclState::EachLayerFn fn) const
 }
 
 void AclState::toResetImage(
-    MessageList &msgs, uint8_t userId, bool includeUsers) const
+    MessageList &msgs, uint8_t userId, unsigned int includeFlags) const
 {
     DP_acl_state_reset_image_build(
-        m_data, userId, includeUsers, pushMessage, &msgs);
+        m_data, userId, includeFlags, pushMessage, &msgs);
 }
 
 void AclState::onLayerAcl(void *user, int layerId, const DP_LayerAcl *layerAcl)

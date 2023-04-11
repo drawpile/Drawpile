@@ -40,6 +40,24 @@ typedef struct DP_Message DP_Message;
     (DP_ACL_STATE_CHANGE_USERS_BIT | DP_ACL_STATE_CHANGE_LAYERS_BIT \
      | DP_ACL_STATE_CHANGE_FEATURE_TIERS_BIT)
 
+#define DP_ACL_STATE_RESET_IMAGE_INCLUDE_SESSION_OWNER       (1 << 0)
+#define DP_ACL_STATE_RESET_IMAGE_INCLUDE_TRUSTED_USERS       (1 << 1)
+#define DP_ACL_STATE_RESET_IMAGE_INCLUDE_USER_ACL            (1 << 2)
+#define DP_ACL_STATE_RESET_IMAGE_INCLUDE_LAYER_ACL_EXCLUSIVE (1 << 3)
+// Session resets include user and layer locks, but the operator and trusted
+// states are retained server-side.
+#define DP_ACL_STATE_RESET_IMAGE_SESSION_RESET_FLAGS \
+    (DP_ACL_STATE_RESET_IMAGE_INCLUDE_USER_ACL       \
+     | DP_ACL_STATE_RESET_IMAGE_INCLUDE_LAYER_ACL_EXCLUSIVE)
+// Recordings include all user permissions.
+#define DP_ACL_STATE_RESET_IMAGE_RECORDING_FLAGS      \
+    (DP_ACL_STATE_RESET_IMAGE_INCLUDE_SESSION_OWNER   \
+     | DP_ACL_STATE_RESET_IMAGE_INCLUDE_TRUSTED_USERS \
+     | DP_ACL_STATE_RESET_IMAGE_INCLUDE_USER_ACL      \
+     | DP_ACL_STATE_RESET_IMAGE_INCLUDE_LAYER_ACL_EXCLUSIVE)
+// Session templates don't include any user-related state.
+#define DP_ACL_STATE_RESET_IMAGE_TEMPLATE_FLAGS 0
+
 typedef enum DP_AccessTier {
     DP_ACCESS_TIER_OPERATOR = 0,
     DP_ACCESS_TIER_TRUSTED = 1,
@@ -155,7 +173,7 @@ uint8_t DP_acl_state_handle(DP_AclState *acls, DP_Message *msg,
 DP_Message *DP_acl_state_msg_feature_access_all_new(unsigned int context_id);
 
 bool DP_acl_state_reset_image_build(DP_AclState *acls, unsigned int context_id,
-                                    bool include_users,
+                                    unsigned int include_flags,
                                     bool (*push_message)(void *, DP_Message *),
                                     void *user);
 

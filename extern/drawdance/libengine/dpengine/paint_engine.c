@@ -1016,8 +1016,9 @@ static bool start_recording(DP_PaintEngine *pe, DP_RecorderType type,
 
     // After initializing the state, we can set up permissions.
     if (r) {
-        if (!DP_acl_state_reset_image_build(pe->acls, 0, true,
-                                            record_acl_message, r)) {
+        if (!DP_acl_state_reset_image_build(
+                pe->acls, 0, DP_ACL_STATE_RESET_IMAGE_RECORDING_FLAGS,
+                record_acl_message, r)) {
             DP_warn("Error build recorder reset image");
             DP_recorder_free_join(r);
             r = NULL;

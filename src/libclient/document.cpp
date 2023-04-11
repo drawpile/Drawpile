@@ -595,7 +595,8 @@ void Document::saveCanvasState(const drawdance::CanvasState &canvasState, bool i
 
 void Document::exportTemplate(const QString &path)
 {
-	drawdance::MessageList snapshot = m_canvas->generateSnapshot(false);
+	drawdance::MessageList snapshot = m_canvas->generateSnapshot(
+		false, DP_ACL_STATE_RESET_IMAGE_TEMPLATE_FLAGS);
 	drawdance::RecordStartResult result = m_canvas->paintEngine()->exportTemplate(path, snapshot);
 	QString errorMessage;
 	switch(result) {
@@ -783,7 +784,8 @@ void Document::snapshotNeeded()
 void Document::generateJustInTimeSnapshot()
 {
 	qInfo("Generating a just-in-time snapshot for session reset...");
-	m_resetstate = m_canvas->generateSnapshot();
+	m_resetstate = m_canvas->generateSnapshot(
+		true, DP_ACL_STATE_RESET_IMAGE_SESSION_RESET_FLAGS);
 	if(m_resetstate.isEmpty()) {
 		qWarning("Just-in-time snapshot has zero size!");
 		m_client->sendMessage(net::ServerCommand::make("init-cancel"));

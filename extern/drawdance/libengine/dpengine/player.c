@@ -822,8 +822,9 @@ static bool write_index_history(DP_BuildIndexEntryContext *e)
     }
 
     // The state of the permissions at this point.
-    if (!DP_acl_state_reset_image_build(e->acls, 0, true,
-                                        write_reset_image_message, e)) {
+    if (!DP_acl_state_reset_image_build(
+            e->acls, 0, DP_ACL_STATE_RESET_IMAGE_RECORDING_FLAGS,
+            write_reset_image_message, e)) {
         return false;
     }
     // Local changes (hidden layers, local canvas background).

@@ -52,9 +52,12 @@ public:
 	Selection *selection() const { return m_selection; }
 	void setSelection(Selection *selection);
 
-	drawdance::MessageList generateSnapshot(bool includeOnlineInfo = true) const;
+	drawdance::MessageList generateSnapshot(
+		bool includePinnedMessage, unsigned int aclIncludeFlags) const;
+
 	void amendSnapshotMetadata(
-		drawdance::MessageList &snapshot, bool includeOnlineInfo = true) const;
+		drawdance::MessageList &snapshot, bool includePinnedMessage,
+		unsigned int aclIncludeFlags) const;
 
 	uint8_t localUserId() const { return m_localUserId; }
 

@@ -1549,7 +1549,8 @@ void MainWindow::hostSession(dialogs::HostDialog *dlg)
 	login->setTitle(dlg->getTitle());
 	login->setAnnounceUrl(dlg->getAnnouncementUrl(), dlg->getAnnouncmentPrivate());
 	if(useremote) {
-		login->setInitialState(m_doc->canvas()->generateSnapshot());
+		login->setInitialState(m_doc->canvas()->generateSnapshot(
+			true, DP_ACL_STATE_RESET_IMAGE_SESSION_RESET_FLAGS));
 	}
 
 	utils::showWindow(new dialogs::LoginDialog(login, this));
@@ -1668,7 +1669,8 @@ void MainWindow::resetSession()
 			canvas::CanvasModel *canvas = m_doc->canvas();
 			if(canvas->aclState()->amOperator()) {
 				drawdance::MessageList snapshot = dlg->getResetImage();
-				canvas->amendSnapshotMetadata(snapshot);
+				canvas->amendSnapshotMetadata(
+					snapshot, true, DP_ACL_STATE_RESET_IMAGE_SESSION_RESET_FLAGS);
 				m_doc->sendResetSession(snapshot);
 			}
 			dlg->deleteLater();
