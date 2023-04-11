@@ -384,7 +384,7 @@ DP_PlayerResult PaintEngine::stepPlayback(long long steps)
 {
 	drawdance::MessageList msgs;
 	DP_PlayerResult result = m_paintEngine.stepPlayback(steps, msgs);
-	receiveMessages(false, msgs.count(), msgs.constData());
+	receiveMessages(false, msgs.count(), msgs.constData(), true);
 	return result;
 }
 
@@ -393,7 +393,7 @@ DP_PlayerResult PaintEngine::skipPlaybackBy(long long steps, bool bySnapshots)
 	drawdance::MessageList msgs;
 	DP_PlayerResult result =
 		m_paintEngine.skipPlaybackBy(steps, bySnapshots, msgs);
-	receiveMessages(false, msgs.count(), msgs.constData());
+	receiveMessages(false, msgs.count(), msgs.constData(), true);
 	return result;
 }
 
@@ -401,7 +401,7 @@ DP_PlayerResult PaintEngine::jumpPlaybackTo(long long position)
 {
 	drawdance::MessageList msgs;
 	DP_PlayerResult result = m_paintEngine.jumpPlaybackTo(position, msgs);
-	receiveMessages(false, msgs.count(), msgs.constData());
+	receiveMessages(false, msgs.count(), msgs.constData(), true);
 	return result;
 }
 
@@ -414,7 +414,7 @@ DP_PlayerResult PaintEngine::playPlayback(long long msecs)
 {
 	drawdance::MessageList msgs;
 	DP_PlayerResult result = m_paintEngine.playPlayback(msecs, msgs);
-	receiveMessages(false, msgs.count(), msgs.constData());
+	receiveMessages(false, msgs.count(), msgs.constData(), true);
 	return result;
 }
 

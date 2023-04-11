@@ -86,6 +86,7 @@ struct DP_Player {
     char *index_path;
     DP_PlayerType type;
     DP_PlayerReader reader;
+    DP_AclState *acls;
     JSON_Value *text_reader_header_value;
     long long position;
     bool compatible;
@@ -249,11 +250,17 @@ static DP_Player *make_player(DP_PlayerType type, char *recording_path,
     bool compatible = is_version_compatible(version);
     DP_free(version);
     DP_Player *player = DP_malloc(sizeof(*player));
-    *player = (DP_Player){recording_path, index_path,
-                          type,           reader,
-                          header_value,   0,
-                          compatible,     false,
-                          false,          {DP_BUFFERD_INPUT_NULL, 0, NULL, 0}};
+    *player = (DP_Player){recording_path,
+                          index_path,
+                          type,
+                          reader,
+                          DP_acl_state_new(),
+                          header_value,
+                          0,
+                          compatible,
+                          false,
+                          false,
+                          {DP_BUFFERD_INPUT_NULL, 0, NULL, 0}};
     return player;
 }
 
@@ -329,6 +336,7 @@ static DP_Player *new_debug_dump_player(DP_Input *input)
                           DP_PLAYER_TYPE_DEBUG_DUMP,
                           {.dump = DP_dump_reader_new(input)},
                           NULL,
+                          NULL,
                           0,
                           true,
                           false,
@@ -401,6 +409,7 @@ void DP_player_free(DP_Player *player)
 {
     if (player) {
         player_index_dispose(&player->index);
+        DP_acl_state_free(player->acls);
         switch (player->type) {
         case DP_PLAYER_TYPE_BINARY:
             DP_binary_reader_free(player->reader.binary);
@@ -520,6 +529,86 @@ static DP_PlayerResult step_text(DP_Player *player, DP_Message **out_msg)
     }
 }
 
+static DP_PlayerResult step_message(DP_Player *player, DP_Message **out_msg)
+{
+    DP_PlayerResult result;
+    switch (player->type) {
+    case DP_PLAYER_TYPE_BINARY:
+        result = step_binary(player, out_msg);
+        break;
+    case DP_PLAYER_TYPE_TEXT:
+        result = step_text(player, out_msg);
+        break;
+    case DP_PLAYER_TYPE_DEBUG_DUMP:
+        DP_error_set("Can't step debug dump like a recording");
+        return DP_PLAYER_ERROR_OPERATION;
+    default:
+        DP_UNREACHABLE();
+    }
+    if (result == DP_PLAYER_SUCCESS || result == DP_PLAYER_ERROR_PARSE) {
+        ++player->position;
+    }
+    return result;
+}
+
+static bool should_emit_message(DP_MessageType type)
+{
+    // When playing back a recording, we are a single user in offline mode, so
+    // don't allow anything to escape that would mess up the real ACL state,
+    // relates to other users in some way or is a control message of some sort.
+    switch (type) {
+    case DP_MSG_SERVER_COMMAND:
+    case DP_MSG_DISCONNECT:
+    case DP_MSG_PING:
+    case DP_MSG_INTERNAL:
+    case DP_MSG_JOIN:
+    case DP_MSG_LEAVE:
+    case DP_MSG_SESSION_OWNER:
+    case DP_MSG_CHAT:
+    case DP_MSG_TRUSTED_USERS:
+    case DP_MSG_PRIVATE_CHAT:
+    case DP_MSG_MARKER:
+    case DP_MSG_USER_ACL:
+    case DP_MSG_LAYER_ACL:
+    case DP_MSG_FEATURE_ACCESS_LEVELS:
+    case DP_MSG_UNDO_DEPTH:
+    case DP_MSG_DATA:
+        return false;
+    default:
+        return true;
+    }
+}
+
+static DP_PlayerResult step_valid_message(DP_Player *player,
+                                          DP_Message **out_msg)
+{
+    while (true) {
+        DP_Message *msg;
+        DP_PlayerResult result = step_message(player, &msg);
+        if (result == DP_PLAYER_SUCCESS) {
+            bool filtered = DP_acl_state_handle(player->acls, msg, false)
+                          & DP_ACL_STATE_FILTERED_BIT;
+            if (filtered) {
+                DP_debug(
+                    "ACL filtered recorded %s message from user %u",
+                    DP_message_type_enum_name_unprefixed(DP_message_type(msg)),
+                    DP_message_context_id(msg));
+            }
+            else if (should_emit_message(DP_message_type(msg))) {
+                *out_msg = msg;
+                return result;
+            }
+            DP_message_decref(msg);
+        }
+        else if (result == DP_PLAYER_ERROR_PARSE) {
+            DP_warn("Error parsing recording message: %s", DP_error());
+        }
+        else {
+            return result; // Input error or reached the end.
+        }
+    }
+}
+
 DP_PlayerResult DP_player_step(DP_Player *player, DP_Message **out_msg)
 {
     DP_ASSERT(player);
@@ -532,24 +621,7 @@ DP_PlayerResult DP_player_step(DP_Player *player, DP_Message **out_msg)
         return DP_PLAYER_RECORDING_END;
     }
     else {
-        DP_PlayerResult result;
-        switch (player->type) {
-        case DP_PLAYER_TYPE_BINARY:
-            result = step_binary(player, out_msg);
-            break;
-        case DP_PLAYER_TYPE_TEXT:
-            result = step_text(player, out_msg);
-            break;
-        case DP_PLAYER_TYPE_DEBUG_DUMP:
-            DP_error_set("Can't step debug dump like a recording");
-            return DP_PLAYER_ERROR_OPERATION;
-        default:
-            DP_UNREACHABLE();
-        }
-        if (result == DP_PLAYER_SUCCESS || result == DP_PLAYER_ERROR_PARSE) {
-            ++player->position;
-        }
-        return result;
+        return step_valid_message(player, out_msg);
     }
 }
 
@@ -611,6 +683,10 @@ bool DP_player_seek(DP_Player *player, long long position, size_t offset)
     }
 
     if (seek_ok) {
+        DP_AclState *acls = player->acls;
+        if (acls) {
+            DP_acl_state_reset(acls, 0);
+        }
         player->position = position;
         player->input_error = false;
         player->end = false;
