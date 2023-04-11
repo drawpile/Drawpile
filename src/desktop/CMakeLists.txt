@@ -370,6 +370,7 @@ if(KIS_TABLET)
 	)
 	target_disable_all_warnings(drawpile-kis_tablet)
 
+	target_compile_definitions(drawpile PRIVATE HAVE_KIS_TABLET)
 	target_link_libraries(drawpile PRIVATE drawpile-kis_tablet)
 endif()
 

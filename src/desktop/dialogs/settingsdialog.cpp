@@ -24,6 +24,10 @@
 #include "libshared/util/qtcompat.h"
 #include "cmake-config/config.h"
 
+#ifdef Q_OS_WIN
+#	include "desktop/tabletinput.h"
+#endif
+
 #include "ui_settings.h"
 
 #include <QIcon>
@@ -41,31 +45,6 @@
 #include <QStandardItemModel>
 
 #include <QDebug>
-
-// On Windows, there's different tablet input settings depending on our build:
-// Qt5 without KIS_TABLET: no input settings, Qt always uses Windows Ink.
-// Qt5 with KIS_TABLET: input settings exist and there's three options: Windows
-// Ink, Wintab and Wintab with Relative Pen Mode Hack. Restart required.
-// Qt6: input settings exist and there's two options: Windows Ink and Wintab.
-// Restart not required to apply these settings.
-#undef HAVE_INPUT_SETTINGS
-#undef HAVE_RELATIVE_PEN_MODE_HACK
-#undef INPUT_NO_RESTART_REQUIRED
-#if defined(Q_OS_WIN)
-#	if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-#		define HAVE_INPUT_SETTINGS
-#		define INPUT_NO_RESTART_REQUIRED
-#	elif defined(HAVE_KIS_TABLET)
-#		define HAVE_INPUT_SETTINGS
-#		define HAVE_RELATIVE_PEN_MODE_HACK
-#	endif
-#endif
-
-#ifdef HAVE_INPUT_SETTINGS
-static constexpr int INPUT_WINDOWS_INK = 0;
-static constexpr int INPUT_WINTAB = 1;
-static constexpr int INPUT_WINTAB_RELATIVE_PEN_MODE_HACK = 2;
-#endif
 
 using color_widgets::ColorWheel;
 
@@ -123,13 +102,23 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 		static_cast<DrawpileApp *>(qApp)->setTheme(theme);
 	});
 
-#if defined(HAVE_INPUT_SETTINGS)
-#	if !defined(HAVE_RELATIVE_PEN_MODE_HACK)
-	m_ui->tabletInputCombo->removeItem(INPUT_WINTAB_RELATIVE_PEN_MODE_HACK);
-	m_ui->tabletInputRelativePenModeHackDescription->hide();
+#ifdef Q_OS_WIN
+#	ifdef HAVE_KIS_TABLET
+	m_ui->tabletInputCombo->addItem(
+		tr("KisTablet Windows Ink"), int(tabletinput::Mode::KisTabletWinink));
+	m_ui->tabletInputCombo->addItem(
+		tr("KisTablet Wintab"), int(tabletinput::Mode::KisTabletWintab));
+	m_ui->tabletInputCombo->addItem(
+		tr("KisTablet Wintab with Relative Pen Mode Hack"),
+		int(tabletinput::Mode::KisTabletWintabRelativePenHack));
 #	endif
-#	if defined(INPUT_NO_RESTART_REQUIRED)
-	m_ui->tabletInputRequiresRestartLabel->hide();
+#	if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+	m_ui->tabletInputCombo->addItem(
+		tr("Qt6 Windows Ink"), int(tabletinput::Mode::Qt6Winink));
+	m_ui->tabletInputCombo->addItem(
+		tr("Qt6 Wintab"), int(tabletinput::Mode::Qt6Wintab));
+#	else
+	m_ui->tabletInputCombo->addItem(tr("Qt5"), int(tabletinput::Mode::Qt5));
 #	endif
 #else
 	m_ui->tabletInputWrapper->hide();
@@ -343,20 +332,21 @@ void SettingsDialog::restoreSettings()
 
 	cfg.endGroup();
 
-	cfg.beginGroup("settings/input");
-#ifdef HAVE_INPUT_SETTINGS
-	if(cfg.value("windowsink", true).toBool()) {
-		m_ui->tabletInputCombo->setCurrentIndex(INPUT_WINDOWS_INK);
-#ifdef HAVE_RELATIVE_PEN_MODE_HACK
-	} else if(cfg.value("relativepenhack", false).toBool()) {
-		m_ui->tabletInputCombo->setCurrentIndex(INPUT_WINTAB_RELATIVE_PEN_MODE_HACK);
-#endif
-	} else {
-		m_ui->tabletInputCombo->setCurrentIndex(INPUT_WINTAB);
+#ifdef Q_OS_WIN
+	int tabletInputMode = int(tabletinput::extractMode(cfg));
+	int tabletInputCount = m_ui->tabletInputCombo->count();
+	for(int i = 0; i < tabletInputCount; ++i)  {
+		if(m_ui->tabletInputCombo->itemData(i).toInt() == tabletInputMode) {
+			m_ui->tabletInputCombo->setCurrentIndex(i);
+			break;
+		}
 	}
 #endif
+
+	cfg.beginGroup("settings/input");
 	m_ui->tabletSupport->setChecked(cfg.value("tabletevents", true).toBool());
 	m_ui->tabletEraser->setChecked(cfg.value("tableteraser", true).toBool());
+
 #ifdef Q_OS_MACOS
 	// Gesture scrolling is always enabled on Macs
 	m_ui->oneFingerTouchCombo->setCurrentIndex(1);
@@ -483,30 +473,11 @@ void SettingsDialog::rememberSettings()
 	cfg.setValue("settings/insecurepasswordstorage", m_ui->insecurePasswordStorage->isChecked());
 
 	cfg.beginGroup("settings/input");
-#ifdef HAVE_INPUT_SETTINGS
-	switch(m_ui->tabletInputCombo->currentIndex()) {
-	case INPUT_WINDOWS_INK:
-		cfg.setValue("windowsink", true);
-		break;
-	case INPUT_WINTAB:
-		cfg.setValue("windowsink", false);
-#ifdef HAVE_RELATIVE_PEN_MODE_HACK
-		cfg.setValue("relativepenhack", false);
-#endif
-		break;
-#ifdef HAVE_RELATIVE_PEN_MODE_HACK
-	case INPUT_WINTAB_RELATIVE_PEN_MODE_HACK:
-		cfg.setValue("windowsink", false);
-		cfg.setValue("relativepenhack", true);
-		break;
-#endif
-	default:
-		qWarning("Unknown tablet input option");
-		break;
-	}
-#endif
 	cfg.setValue("tabletevents", m_ui->tabletSupport->isChecked());
 	cfg.setValue("tableteraser", m_ui->tabletEraser->isChecked());
+#ifdef Q_OS_WIN
+	cfg.setValue("tabletinputmode", m_ui->tabletInputCombo->currentData().toInt());
+#endif
 	cfg.setValue("touchdraw", m_ui->oneFingerTouchCombo->currentIndex() == 2);
 	cfg.setValue("touchscroll", m_ui->oneFingerTouchCombo->currentIndex() == 1);
 	cfg.setValue("touchpinch", m_ui->twoFingerPinchCombo->currentIndex() == 1);

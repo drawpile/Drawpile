@@ -24,7 +24,8 @@
 class KisTabletSupportWin
 {
 public:
-    static void init();
+    static bool init();
+    static void quit();
 	static void enableRelativePenModeHack(bool enable);
 };
 
