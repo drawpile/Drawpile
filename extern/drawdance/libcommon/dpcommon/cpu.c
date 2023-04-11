@@ -143,9 +143,10 @@ void DP_cpu_support_init(void)
     init_called = true;
 #endif
 
-    DP_debug("DP_cpu_support=%d", (int)DP_cpu_support);
-    if (DP_cpu_support != DP_cpu_support_value) {
+    DP_CpuSupport actual_cpu_support = DP_cpu_support;
+    DP_debug("DP_cpu_support=%d", (int)actual_cpu_support);
+    if (actual_cpu_support != DP_cpu_support_value) {
         DP_warn("CPU support %d compiled in, ignoring detected value %d",
-                (int)DP_cpu_support, (int)DP_cpu_support_value);
+                (int)actual_cpu_support, (int)DP_cpu_support_value);
     }
 }
