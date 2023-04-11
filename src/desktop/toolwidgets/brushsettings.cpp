@@ -407,6 +407,30 @@ void BrushSettings::selectBlendMode(int modeIndex)
 	updateUi();
 }
 
+static void setSliderFromMyPaintSetting(
+	KisSliderSpinBox *slider, const DP_MyPaintSettings &myPaintSettings,
+	MyPaintBrushSetting setting, bool adjustMinToZero = false)
+{
+	qreal value = myPaintSettings.mappings[setting].base_value;
+	// The radius setting starts at -2, but we don't want to present it that way
+	// to the user and confuse them horribly. So we offset by the minimum.
+	if(adjustMinToZero) {
+		value -= mypaint_brush_setting_info(setting)->min;
+	}
+	slider->setValue(qRound(value * 100.0));
+}
+
+static void setMyPaintSettingFromSlider(
+	const KisSliderSpinBox *slider, DP_MyPaintSettings &myPaintSettings,
+	MyPaintBrushSetting setting, bool adjustMinToZero = false)
+{
+	float value = slider->value() / 100.0f;
+	if(adjustMinToZero) {
+		value += mypaint_brush_setting_info(setting)->min;
+	}
+	myPaintSettings.mappings[setting].base_value = value;
+}
+
 void BrushSettings::updateUi()
 {
 	// Update the UI to match the currently selected brush
@@ -462,10 +486,10 @@ void BrushSettings::updateUi()
 	d->ui.brushsizeBox->setValue(classic.size.max);
 	d->ui.pressureSize->setChecked(classic.size_pressure);
 	d->ui.pressureOpacity->setChecked(classic.opacity_pressure);
-	d->ui.smudgingBox->setValue(classic.smudge.max * 100.0 + 0.5);
+	d->ui.smudgingBox->setValue(qRound(classic.smudge.max * 100.0));
 	d->ui.pressureSmudging->setChecked(classic.smudge_pressure);
 	d->ui.colorpickupBox->setValue(classic.resmudge);
-	d->ui.brushspacingBox->setValue(classic.spacing * 100.0 + 0.5);
+	d->ui.brushspacingBox->setValue(qRound(classic.spacing * 100.0));
 	d->ui.modeIncremental->setChecked(classic.incremental);
 	d->ui.modeColorpick->setChecked(classic.colorpick);
 	if(softmode) {
@@ -473,23 +497,23 @@ void BrushSettings::updateUi()
 	}
 
 	const DP_MyPaintSettings &myPaintSettings = myPaint.constSettings();
-	d->ui.radiusLogarithmicBox->setValue(
-		(myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC].base_value + 2.0) * 100.0 + 0.5);
-	d->ui.gainBox->setValue(qRound(
-		myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_PRESSURE_GAIN_LOG].base_value * 100.0 + 0.5));
+	setSliderFromMyPaintSetting(d->ui.radiusLogarithmicBox, myPaintSettings,
+		MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC, true);
+	setSliderFromMyPaintSetting(d->ui.gainBox, myPaintSettings,
+		MYPAINT_BRUSH_SETTING_PRESSURE_GAIN_LOG);
 	d->ui.modeLockAlpha->setChecked(myPaint.constBrush().lock_alpha);
 
 	if(mypaintmode) {
-		d->ui.opacityBox->setValue(qRound(
-			myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_OPAQUE].base_value * 100.0 + 0.5));
-		d->ui.hardnessBox->setValue(qRound(
-			myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_HARDNESS].base_value * 100.0 + 0.5));
+		setSliderFromMyPaintSetting(d->ui.opacityBox, myPaintSettings,
+			MYPAINT_BRUSH_SETTING_OPAQUE);
+		setSliderFromMyPaintSetting(d->ui.hardnessBox, myPaintSettings,
+			MYPAINT_BRUSH_SETTING_HARDNESS);
 		if(d->useBrushSampleCount) {
 			d->ui.stabilizerBox->setValue(myPaint.stabilizerSampleCount());
 		}
 	} else {
-		d->ui.opacityBox->setValue(classic.opacity.max * 100.0 + 0.5);
-		d->ui.hardnessBox->setValue(classic.hardness.max * 100.0 + 0.5);
+		d->ui.opacityBox->setValue(qRound(classic.opacity.max * 100.0));
+		d->ui.hardnessBox->setValue(qRound(classic.hardness.max * 100.0));
 		if(d->useBrushSampleCount) {
 			d->ui.stabilizerBox->setValue(classic.stabilizerSampleCount);
 		}
@@ -554,10 +578,10 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 	}
 
 	DP_MyPaintSettings &myPaintSettings = myPaint.settings();
-	myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC].base_value =
-		d->ui.radiusLogarithmicBox->value() / 100.0 - 2.0;
-	myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_PRESSURE_GAIN_LOG].base_value =
-		d->ui.gainBox->value() / 100.0;
+	setMyPaintSettingFromSlider(d->ui.radiusLogarithmicBox, myPaintSettings,
+		MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC, true);
+	setMyPaintSettingFromSlider(d->ui.gainBox, myPaintSettings,
+		MYPAINT_BRUSH_SETTING_PRESSURE_GAIN_LOG);
 	myPaint.brush().lock_alpha = d->ui.modeLockAlpha->isChecked();
 
 	// We want to keep MyPaint and classic brush opacity and hardness separate,
@@ -565,10 +589,10 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 	// when switching types as to not overwrite the values with each other.
 	if(updateShared) {
 		if(mypaintmode) {
-			myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_OPAQUE].base_value =
-				d->ui.opacityBox->value() / 100.0;
-			myPaintSettings.mappings[MYPAINT_BRUSH_SETTING_HARDNESS].base_value =
-				d->ui.hardnessBox->value() / 100.0;
+			setMyPaintSettingFromSlider(d->ui.opacityBox, myPaintSettings,
+				MYPAINT_BRUSH_SETTING_OPAQUE);
+			setMyPaintSettingFromSlider(d->ui.hardnessBox, myPaintSettings,
+				MYPAINT_BRUSH_SETTING_HARDNESS);
 			if(d->useBrushSampleCount) {
 				myPaint.setStabilizerSampleCount(d->ui.stabilizerBox->value());
 			}
