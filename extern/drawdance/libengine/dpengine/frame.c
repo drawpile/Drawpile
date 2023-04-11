@@ -94,7 +94,7 @@ int DP_frame_refcount(DP_Frame *f)
 {
     DP_ASSERT(f);
     DP_ASSERT(DP_atomic_get(&f->refcount) > 0);
-    return f->refcount;
+    return DP_atomic_get(&f->refcount);
 }
 
 bool DP_frame_transient(DP_Frame *f)
