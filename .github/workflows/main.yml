@@ -262,7 +262,7 @@ jobs:
         uses: actions/upload-artifact@v3
         if: matrix.packager && startsWith(github.ref, 'refs/tags/') != 'true'
         with:
-          name: ${{ matrix.cross_os || runner.os }} binaries
+          name: Drawpile-${{ matrix.cross_os || runner.os }}-Qt${{ matrix.qt }}
           path: |
             Drawpile-*.AppImage
             Drawpile-*.apk
