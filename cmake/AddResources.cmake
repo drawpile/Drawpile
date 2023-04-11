@@ -19,7 +19,7 @@ function(add_resources target)
 		endif()
 	endif()
 
-	foreach(dir IN ITEMS palettes sounds theme)
+	foreach(dir IN LISTS ARG_DIRS)
 		file(GLOB_RECURSE resources
 			RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/assets"
 			LIST_DIRECTORIES FALSE
@@ -52,7 +52,13 @@ function(add_resources target)
 
 	foreach(file IN LISTS ARG_FILES)
 		target_sources(${target} PRIVATE "assets/${file}")
-		set_property(TARGET ${target} APPEND PROPERTY RESOURCE "assets/${file}")
+		get_filename_component(file_dir "${file}" DIRECTORY)
+		if(NOT "${file_dir}" STREQUAL "")
+			set(file_dir "/$file_dir")
+		endif()
+		set_source_files_properties("assets/${file}"
+			PROPERTIES MACOSX_PACKAGE_LOCATION "Resources${file_dir}"
+		)
 
 		# As of Qt 6.4, its Android support ignores RESOURCE type files
 		if(ANDROID)
@@ -60,6 +66,11 @@ function(add_resources target)
 				"${CMAKE_CURRENT_SOURCE_DIR}/assets/${file}"
 				"${android_dir}/assets/${file}"
 				SYMBOLIC
+			)
+		# Assets will already be installed by MACOSX_PACKAGE_LOCATION on macOS
+		elseif(NOT APPLE)
+			install(FILES "assets/${file}"
+				DESTINATION "${INSTALL_APPDATADIR}${file_dir}"
 			)
 		endif()
 	endforeach()
