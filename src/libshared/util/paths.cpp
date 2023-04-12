@@ -75,8 +75,16 @@ QString writablePath(QStandardPaths::StandardLocation location, const QString &d
 	// Setting both dirOrFilename and filename means dirOrFilename is treated
 	// as a directory name and must be created and filename is the name of the actual file
 	// Both can be ".", in which case the writableLocation is returned as is, but the path is still created.
-	if(!filename.isEmpty())
-		QDir(path).mkpath(dirOrFileName);
+	if(filename.isEmpty()) {
+		if(!QDir().mkpath(path)) {
+			qWarning("Error creating directory %s", qUtf8Printable(path));
+		}
+	} else {
+		if(!QDir(path).mkpath(dirOrFileName)) {
+			qWarning("Error creating directory %s/%s",
+				qUtf8Printable(path), qUtf8Printable(dirOrFileName));
+		}
+	}
 
 	if(!dirOrFileName.isEmpty() && dirOrFileName != ".") {
 		if(!path.endsWith('/'))

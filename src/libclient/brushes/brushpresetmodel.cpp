@@ -372,34 +372,52 @@ private:
 		return true;
 	}
 
-	static QString createDb()
+
+	static void createDbFile(const QString &databasePath)
 	{
-		QString databasePath = utils::paths::writablePath("brushes.db");
 		QFileInfo fileInfo(databasePath);
-
-		QString dirName = fileInfo.canonicalPath();
-		if(!QDir().mkpath(dirName)) {
-			qWarning("Failed to create brush preset database parent directory '%s'",
-				qPrintable(dirName));
-		}
-
-		if(!fileInfo.exists()) {
+		if(fileInfo.exists()) {
+			qDebug("Database file '%s' already exists", qUtf8Printable(databasePath));
+		} else {
 			QString initialPath = utils::paths::locateDataFile("initialbrushpresets.db");
 			if(initialPath.isEmpty()) {
 				qWarning("No initial brush preset database found");
-			} else if(QFile::copy(initialPath, databasePath)) {
-				qDebug("Created brush database '%s' from '%s'",
-					qPrintable(databasePath), qPrintable(initialPath));
-				if(QFile::setPermissions(databasePath, QFileDevice::ReadUser | QFileDevice::WriteUser)) {
-					qDebug("Set permissions of '%s' to read-write", qPrintable(databasePath));
-				} else {
-					qWarning("Could not set permissions of '%s' to read-write", qPrintable(databasePath));
-				}
 			} else {
-				qWarning("Could not create brush database '%s' from '%s'",
-					qPrintable(databasePath), qPrintable(initialPath));
+				QFile initialFile{initialPath};
+				if(initialFile.copy(databasePath)) {
+					qDebug("Created brush database '%s' from '%s'",
+						qUtf8Printable(databasePath), qUtf8Printable(initialPath));
+				} else {
+					qWarning("Could not create brush database '%s' from '%s': %s",
+						qUtf8Printable(databasePath), qUtf8Printable(initialPath),
+						qUtf8Printable(initialFile.errorString()));
+				}
 			}
 		}
+	}
+
+	static void setDbFilePermissions(const QString &databasePath)
+	{
+		QFile databaseFile{databasePath};
+		QFlags<QFileDevice::Permission> readWritePermissions =
+			QFileDevice::ReadUser | QFileDevice::WriteUser;
+		if((databaseFile.permissions() & readWritePermissions) == readWritePermissions) {
+			qDebug("Permissions of '%s' are already read-write", qUtf8Printable(databasePath));
+		} else {
+			if(databaseFile.setPermissions(readWritePermissions)) {
+				qDebug("Set permissions of '%s' to read-write", qUtf8Printable(databasePath));
+			} else {
+				qWarning("Could not set permissions of '%s' to read-write: %s",
+					qUtf8Printable(databasePath), qUtf8Printable(databaseFile.errorString()));
+			}
+		}
+	}
+
+	static QString createDb()
+	{
+		QString databasePath = utils::paths::writablePath("brushes.db");
+		createDbFile(databasePath);
+		setDbFilePermissions(databasePath);
 		return databasePath;
 	}
 
