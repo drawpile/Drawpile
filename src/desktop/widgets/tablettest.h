@@ -3,6 +3,8 @@
 #ifndef TABLETTEST_WIDGET_H
 #define TABLETTEST_WIDGET_H
 
+#include "libclient/canvas/point.h"
+#include <QVector>
 #include <QWidget>
 
 #ifdef DESIGNER_PLUGIN
@@ -32,8 +34,8 @@ protected:
 	void tabletEvent(QTabletEvent *e) override;
 
 private:
-	QPolygon m_mousePath;
-	QPolygon m_tabletPath;
+	QVector<QPointF> m_mousePath;
+	QVector<canvas::Point> m_tabletPath;
 
 	bool m_mouseDown;
 	bool m_tabletDown;
