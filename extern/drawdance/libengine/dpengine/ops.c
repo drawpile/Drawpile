@@ -130,8 +130,9 @@ clone_layer_props_list(DP_DrawContext *dc, int masked_id,
         int base_id = DP_draw_context_id_generator_next(dc);
         DP_TransientLayerProps *tlp;
         if (base_id != -1
-            && (tlp = clone_layer_props(
-                    dc, masked_id, DP_layer_props_list_at_noinc(lpl, i)))) {
+            && (tlp = clone_layer_props(dc, masked_id,
+                                        DP_layer_props_list_at_noinc(lpl, i)))
+                   != NULL) {
             DP_transient_layer_props_id_set(tlp, base_id | masked_id);
             DP_transient_layer_props_list_set_noinc(tlpl, (DP_LayerProps *)tlp,
                                                     i);

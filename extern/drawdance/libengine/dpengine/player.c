@@ -946,7 +946,7 @@ static void move_tile_offsets(DP_BuildIndexEntryContext *e, DP_LayerContent *lc)
             DP_Tile *t = DP_layer_content_tile_at_noinc(lc, x, y);
             DP_BuildIndexTileMap *entry;
             bool should_move = t && !search_tile(e->current.tiles, t)
-                            && (entry = search_tile(e->last->tiles, t));
+                            && (entry = search_tile(e->last->tiles, t)) != NULL;
             if (should_move) {
                 move_tile_offset(e, entry);
             }
@@ -989,10 +989,10 @@ static bool maybe_write_index_tile(DP_BuildIndexEntryContext *e, DP_Tile *t,
 {
     if (t) {
         DP_BuildIndexTileMap *entry;
-        if ((entry = search_tile(e->current.tiles, t))) {
+        if ((entry = search_tile(e->current.tiles, t)) != NULL) {
             *out_offset = entry->offset;
         }
-        else if ((entry = search_tile(e->last->tiles, t))) {
+        else if ((entry = search_tile(e->last->tiles, t)) != NULL) {
             move_tile_offset(e, entry);
             *out_offset = entry->offset;
         }

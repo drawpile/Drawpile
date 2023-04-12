@@ -496,7 +496,7 @@ static int shift_more_draw_dabs_messages(DP_PaintEngine *pe, bool local,
 
     DP_Message *msg;
     while (count < MAX_MULTIDAB_MESSAGES
-           && (msg = DP_message_queue_peek(queue))) {
+           && (msg = DP_message_queue_peek(queue)) != NULL) {
         total_dabs_area =
             get_dabs_area(msg, DP_message_type(msg), total_dabs_area);
         if (total_dabs_area <= MAX_MULTIDAB_AREA) {
@@ -825,7 +825,7 @@ void DP_paint_engine_free_join(DP_PaintEngine *pe)
         DP_semaphore_free(pe->queue_sem);
         DP_message_queue_dispose(&pe->remote_queue);
         DP_Message *msg;
-        while ((msg = DP_message_queue_shift(&pe->local_queue))) {
+        while ((msg = DP_message_queue_shift(&pe->local_queue)) != NULL) {
             if (DP_message_type(msg) == DP_MSG_INTERNAL) {
                 DP_MsgInternal *mi = DP_msg_internal_cast(msg);
                 switch (DP_msg_internal_type(mi)) {

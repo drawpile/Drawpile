@@ -45,7 +45,7 @@ void DP_queue_clear(DP_Queue *queue, size_t element_size,
     DP_ASSERT(queue);
     DP_ASSERT(dispose_element);
     void *element;
-    while ((element = DP_queue_peek(queue, element_size))) {
+    while ((element = DP_queue_peek(queue, element_size)) != NULL) {
         dispose_element(element);
         DP_queue_shift(queue);
     }

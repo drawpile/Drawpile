@@ -87,7 +87,7 @@ JSON_Value *DP_recorder_header_new(const char *first, ...)
             va_start(ap, first);
             const char *key = first;
             ok = set_header_pair(obj, key, va_arg(ap, const char *));
-            while (ok && (key = va_arg(ap, const char *))) {
+            while (ok && (key = va_arg(ap, const char *)) != NULL) {
                 ok = set_header_pair(obj, key, va_arg(ap, const char *));
             }
             va_end(ap);
