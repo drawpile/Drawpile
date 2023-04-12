@@ -35,14 +35,18 @@ void TabletTester::paintEvent(QPaintEvent *e)
 	for(int i=h/8;i<h;i+=h/8)
 		p.drawLine(0, i, w, i);
 
-	// Draw paths
-	if(!m_mousePath.isEmpty()) {
-		p.setPen(QPen(Qt::red, 3));
-		p.drawPolyline(m_mousePath);
+	p.setPen(Qt::NoPen);
+	p.setBrush(Qt::red);
+	for(const QPointF &point : m_mousePath) {
+		p.drawEllipse(point, 3.0, 3.0);
 	}
-	if(!m_tabletPath.isEmpty()) {
-		p.setPen(QPen(Qt::blue, 2));
-		p.drawPolyline(m_tabletPath);
+
+	for(const canvas::Point &point : m_tabletPath) {
+		// Timestamp is 1 for a spontaneous (system) event and 0 for a
+		// non-spontaneous (application-induced, probably by KisTablet) event.
+		p.setBrush(point.timeMsec() == 0 ? Qt::blue : Qt::darkGreen);
+		qreal radius = point.pressure() * 5.0;
+		p.drawEllipse(point, radius, radius);
 	}
 }
 
@@ -105,17 +109,19 @@ void TabletTester::tabletEvent(QTabletEvent *e)
 	}
 
 	const auto posF = compat::tabPosF(*e);
-	msg += QString(" X=%1 Y=%2 B=%3 P=%4%")
+	msg += QString(" X=%1 Y=%2 B=%3 P=%4% %5")
 		.arg(posF.x(), 0, 'f', 2)
 		.arg(posF.y(), 0, 'f', 2)
 		.arg(e->buttons())
 		.arg(e->pressure()*100, 0, 'f', 1)
-		;
+		.arg(e->spontaneous() ? "SYS" : "APP");
 
 	if(e->type() == QEvent::TabletMove) {
 		if(m_tabletDown) {
 			msg += " (DRAW)";
-			m_tabletPath << compat::tabPosF(*e).toPoint();
+			m_tabletPath << canvas::Point(
+				e->spontaneous() ? 1 : 0, compat::tabPosF(*e), e->pressure(),
+				e->xTilt(), e->yTilt(), e->rotation());
 			update();
 		} else {
 			msg += " (HOVER)";
