@@ -894,13 +894,18 @@ void MainWindow::requestUserInfo(int userId)
 
 void MainWindow::sendUserInfo(int userId)
 {
-	net::Client *client = m_doc->client();
+	// Android reports "linux" as the kernel type, which is not helpful.
+#if defined(Q_OS_ANDROID)
+	QString os = QSysInfo::productType();
+#else
+	QString os = QSysInfo::kernelType();
+#endif
 	QJsonObject info{
 		{"type", "user_info"},
 		{"app_version", cmake_config::version()},
 		{"protocol_version", DP_PROTOCOL_VERSION},
-		{"qt_version", QT_VERSION_STR},
-		{"os", QSysInfo::prettyProductName()},
+		{"qt_version", QString::number(QT_VERSION_MAJOR)},
+		{"os", os},
 		{"tablet_input", tabletinput::current()},
 		{"tablet_mode", m_view->isTabletEnabled() ? "pressure" : "none"},
 		{"touch_mode", m_view->isTouchDrawEnabled() ? "draw"
@@ -908,6 +913,7 @@ void MainWindow::sendUserInfo(int userId)
 		{"smoothing", m_doc->toolCtrl()->smoothing()},
 		{"pressure_curve", m_view->pressureCurve().toString()},
 	};
+	net::Client *client = m_doc->client();
 	client->sendMessage(drawdance::Message::makeUserInfo(
 		client->myId(), userId, QJsonDocument{info}));
 }
