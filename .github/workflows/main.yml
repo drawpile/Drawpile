@@ -120,7 +120,7 @@ jobs:
           # macOS Qt 5 (release)
           - os: macos-latest
             qt: 5.15.8
-            packager: cpack --config build/CPackConfig.cmake -C Release
+            packager: cpack --verbose --config build/CPackConfig.cmake -C Release
 
           # Windows common
           - os: windows-latest
