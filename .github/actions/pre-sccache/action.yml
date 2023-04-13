@@ -26,7 +26,7 @@ outputs:
     value: ${{ github.workspace }}/${{ inputs.path }}
   cache-hit:
     description: Whether or not sccache was restored from cache
-    value: ${{ steps.cache.cache-hit }}
+    value: ${{ steps.cache.outputs.cache-hit }}
   cache_key:
     description: Cache key fragment used by sccache
     value: ${{ inputs.cache_key }}
