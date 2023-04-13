@@ -34,11 +34,19 @@ elseif(WIN32)
 	foreach(path IN LISTS CMAKE_PREFIX_PATH)
 		list(APPEND lib_paths "${path}/bin")
 	endforeach()
-	set(extra_env "PATH=${lib_paths}$ENV{PATH}")
+	set(extra_env "PATH=${lib_paths};$ENV{PATH}")
 	# Prevent CMake string parsing errors treating backslashes as
 	# escape sequences when transferring variables into the install
 	# script
 	string(REPLACE "\\" "/" extra_env "${extra_env}")
+
+	include(GetSharedLibs)
+	get_shared_libs(extra_libs drawpile)
+	if(SERVER)
+		get_shared_libs(server_libs drawpile-srv)
+		list(APPEND extra_libs ${server_libs})
+	endif()
+	install(FILES ${extra_libs} DESTINATION ${CMAKE_INSTALL_BINDIR})
 else()
 	set(helper_name linuxdeploy-x86_64.AppImage)
 	set(helper_flags "--plugin;qt;--output;appimage")

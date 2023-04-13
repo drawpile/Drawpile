@@ -140,10 +140,13 @@ jobs:
               New-Item -Path C:\ProgramData\Chocolatey\bin\flex.exe -ItemType SymbolicLink -Value C:\ProgramData\Chocolatey\bin\win_flex.exe &&
               New-Item -Path C:\ProgramData\Chocolatey\bin\bison.exe -ItemType SymbolicLink -Value C:\ProgramData\Chocolatey\bin\win_bison.exe
             # Copying files is a disgusting hack because windeployqt does not
-            # search PATH to find DLLs
+            # search PATH to find DLLs and it gets confused by QtKeychain having
+            # a Qt prefix and thinks it is part of Qt and tries to process it
+            # and fails if it is not in the Qt bin directory with the rest of
+            # them
             packager: >
-              cp .github/deps/other/bin/*.dll .github/deps/qt/bin &&
-              cpack --config build/CPackConfig.cmake -C Release
+              cp .github/deps/other/bin/qt*.dll .github/deps/qt/bin &&
+              cpack --verbose --config build/CPackConfig.cmake -C Release
     steps:
       - name: Check out code
         uses: actions/checkout@v3
