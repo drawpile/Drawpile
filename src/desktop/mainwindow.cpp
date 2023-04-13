@@ -597,7 +597,7 @@ void MainWindow::updateTitle()
 
 	} else {
 		const QFileInfo info(m_doc->currentFilename());
-		name = info.baseName();
+		name = info.completeBaseName();
 	}
 
 	if(m_doc->sessionTitle().isEmpty())
@@ -1076,7 +1076,7 @@ void MainWindow::open(const QUrl& url)
 			if(result == DP_LOAD_RESULT_SUCCESS && !isTemplate) {
 				QFileInfo fileinfo(file);
 				m_playbackDialog = new dialogs::PlaybackDialog(m_doc->canvas(), this);
-				m_playbackDialog->setWindowTitle(fileinfo.baseName() + " - " + m_playbackDialog->windowTitle());
+				m_playbackDialog->setWindowTitle(fileinfo.completeBaseName() + " - " + m_playbackDialog->windowTitle());
 				m_playbackDialog->setAttribute(Qt::WA_DeleteOnClose);
 				m_playbackDialog->show();
 				m_playbackDialog->centerOnParent();
@@ -1088,7 +1088,7 @@ void MainWindow::open(const QUrl& url)
 				QFileInfo fileinfo{file};
 				m_dumpPlaybackDialog = new dialogs::DumpPlaybackDialog{m_doc->canvas(), this};
 				m_dumpPlaybackDialog->setWindowTitle(QStringLiteral("%1 - %2")
-					.arg(fileinfo.baseName()).arg(m_dumpPlaybackDialog->windowTitle()));
+					.arg(fileinfo.completeBaseName()).arg(m_dumpPlaybackDialog->windowTitle()));
 				m_dumpPlaybackDialog->setAttribute(Qt::WA_DeleteOnClose);
 				m_dumpPlaybackDialog->show();
 			}
