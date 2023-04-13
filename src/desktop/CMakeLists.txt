@@ -493,89 +493,6 @@ elseif(APPLE)
 	target_sources(drawpile PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/drawpile.icns")
 	set_property(TARGET drawpile APPEND PROPERTY RESOURCE "${CMAKE_CURRENT_BINARY_DIR}/drawpile.icns")
 elseif(ANDROID)
-	function(get_target_shared_lib out_var target)
-		get_target_property(type ${target} TYPE)
-		if(NOT type STREQUAL "SHARED_LIBRARY" AND NOT type STREQUAL "UNKNOWN_LIBRARY")
-			return()
-		endif()
-
-		get_target_property(location ${target} LOCATION)
-
-		# Qt really, really wants us to add the custom suffixed OpenSSL library,
-		# not a bare libssl.so or versioned symlink
-		while(IS_SYMLINK "${location}")
-			file(READ_SYMLINK "${location}" dest)
-			if(NOT IS_ABSOLUTE "${dest}")
-				get_filename_component(dir "${location}" DIRECTORY)
-				set(location "${dir}/${dest}")
-			else()
-				set(location "${dest}")
-			endif()
-		endwhile()
-
-		string(FIND "${location}" "${CMAKE_SYSROOT}" sysroot_pos)
-		if(sysroot_pos EQUAL 0)
-			return()
-		endif()
-
-		set(${out_var} "${location}" PARENT_SCOPE)
-	endfunction()
-
-	function(get_shared_libs out_var)
-		foreach(target IN LISTS ARGN)
-			get_target_shared_lib(lib ${target})
-			if(lib)
-				list(APPEND libs ${lib})
-			endif()
-			get_target_property(links ${target} LINK_LIBRARIES)
-			get_target_property(iface ${target} INTERFACE_LINK_LIBRARIES)
-			list(APPEND links ${iface})
-			string(GENEX_STRIP "${links}" links)
-			foreach(link IN LISTS links)
-				# Some targets may not be visible from this directory if they
-				# were found in a sibling directory, so try to find them as
-				# packages so they become visible here too
-				if(link AND NOT TARGET ${link} AND NOT link MATCHES "^-")
-					string(FIND ${link} "::" sep)
-					if(sep EQUAL -1)
-						find_package(${link} QUIET)
-					else()
-						string(SUBSTRING "${link}" 0 ${sep} package)
-						math(EXPR sep "${sep} + 2")
-						string(SUBSTRING "${link}" ${sep} -1 component)
-						# At least libzip is broken and will fail if COMPONENTS
-						# is given, so try with no COMPONENTS first and then if
-						# the component target still does not exist, try again
-						# with more COMPONENTS
-						find_package(${package} QUIET)
-						if(NOT TARGET ${link})
-							find_package(${package} COMPONENTS ${component} QUIET)
-						endif()
-					endif()
-				endif()
-
-				if(TARGET ${link} AND NOT link MATCHES "^${QT_PACKAGE_NAME}::")
-					get_target_shared_lib(lib ${link})
-					if(lib)
-						list(APPEND libs ${lib})
-					endif()
-					get_shared_libs(link_libs ${link})
-					list(APPEND libs ${link_libs})
-				endif()
-			endforeach()
-		endforeach()
-
-		list(REMOVE_DUPLICATES libs)
-		set(${out_var} ${libs} PARENT_SCOPE)
-	endfunction()
-
-	function(get_android_shared_libs out_var target)
-		# Qt dlopens OpenSSL libraries so they must be found too
-		find_package(OpenSSL COMPONENTS Crypto SSL QUIET)
-		get_shared_libs(libs ${target} OpenSSL::Crypto OpenSSL::SSL)
-		set(${out_var} ${libs} PARENT_SCOPE)
-	endfunction()
-
 	set_target_properties(drawpile PROPERTIES
 		# Qt5 requires the output name to match the project name; Qt6 does not
 		# but might as well be consistent
@@ -586,7 +503,8 @@ elseif(ANDROID)
 	)
 
 	set(output_apk "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<TARGET_PROPERTY:drawpile,OUTPUT_NAME>-${PROJECT_VERSION}.apk")
-	get_android_shared_libs(android_extra_libs drawpile)
+	include(GetSharedLibs)
+	get_shared_libs(android_extra_libs drawpile)
 
 	if(QT_VERSION VERSION_GREATER_EQUAL 6)
 		set_property(TARGET drawpile APPEND PROPERTY
