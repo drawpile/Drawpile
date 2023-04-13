@@ -31,6 +31,7 @@ elseif(WIN32)
 
 	include(DrawpileFileExtensions)
 	get_wix_extensions("${PROJECT_NAME}" "drawpile.exe" WIX_DRAWPILE_PROGIDS)
+	math(EXPR WIX_DRAWPILE_TOOLSET_VERSION_MAJOR "${MSVC_TOOLSET_VERSION} / 10")
 	configure_file(pkg/installer.wix.in pkg/installer.wix)
 	set(CPACK_WIX_PATCH_FILE "${CMAKE_CURRENT_BINARY_DIR}/pkg/installer.wix")
 else()
