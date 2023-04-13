@@ -134,7 +134,6 @@ jobs:
               vswhere -latest -requires Microsoft.Component.MSBuild
               -find MSBuild\\**\\Bin\\amd64\\MSBuild.exe | select-object -first 1
               )"
-            build_flags: -G Ninja -DKIS_TABLET=on
 
           # Windows Qt 5 (release)
           - os: windows-latest
@@ -143,6 +142,7 @@ jobs:
               choco install gperf jom winflexbison3 &&
               New-Item -Path C:\ProgramData\Chocolatey\bin\flex.exe -ItemType SymbolicLink -Value C:\ProgramData\Chocolatey\bin\win_flex.exe &&
               New-Item -Path C:\ProgramData\Chocolatey\bin\bison.exe -ItemType SymbolicLink -Value C:\ProgramData\Chocolatey\bin\win_bison.exe
+            build_flags: -G Ninja -DKIS_TABLET=on
             # Copying files is a disgusting hack because windeployqt does not
             # search PATH to find DLLs and it gets confused by QtKeychain having
             # a Qt prefix and thinks it is part of Qt and tries to process it
@@ -151,6 +151,15 @@ jobs:
             packager: >
               cp .github/deps/other/bin/qt*.dll .github/deps/qt/bin &&
               cpack --verbose --config build/CPackConfig.cmake -C Release
+
+          # Windows Qt 6
+          - os: windows-latest
+            qt: 6.4.2
+            # KisTablet crashes on Qt6. Unlike Qt5, it does allow for switching
+            # between Windows Ink and Wintab though, so it being missing isn't
+            # too debilitating, but we should look into the issue at some point.
+            build_flags: -G Ninja -DKIS_TABLET=off
+
     steps:
       - name: Check out code
         uses: actions/checkout@v3
