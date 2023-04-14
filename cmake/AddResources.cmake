@@ -45,7 +45,6 @@ function(add_resources target)
 			# of the directory
 			install(DIRECTORY "assets/${dir}"
 				DESTINATION "${INSTALL_APPDATADIR}"
-				COMPONENT "${target}"
 			)
 		endif()
 	endforeach()
