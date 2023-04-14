@@ -9,8 +9,6 @@
 #include <QVector>
 #include <algorithm>
 
-Q_DECLARE_METATYPE(dialogs::LayoutsDialog::Layout *)
-
 namespace dialogs {
 
 struct LayoutsDialog::Layout {
@@ -521,3 +519,5 @@ void LayoutsDialog::Private::createDefaultLayouts()
 }
 
 }
+
+Q_DECLARE_METATYPE(dialogs::LayoutsDialog::Layout *)
