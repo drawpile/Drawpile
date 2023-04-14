@@ -137,7 +137,6 @@ if(TARGET PkgConfig::libsystemd)
 		"${CMAKE_CURRENT_BINARY_DIR}/${srvname}.service"
 		"${CMAKE_CURRENT_BINARY_DIR}/${srvname}.socket"
 		DESTINATION "${CMAKE_INSTALL_LIBDIR}/systemd/system/"
-		COMPONENT ${srvname}
 	)
 else()
 	target_sources(${srvlib} PRIVATE
@@ -159,7 +158,6 @@ add_feature_info("Server web-admin support" "TARGET libmicrohttpd::libmicrohttpd
 
 install(
 	TARGETS ${srvname}
-	COMPONENT ${srvname}
 )
 
 # No trailing slash on DIRECTORY is required or else it will strip the last path
@@ -167,7 +165,6 @@ install(
 install(
 	DIRECTORY contrib
 	DESTINATION ${INSTALL_APPDATADIR}
-	COMPONENT ${srvname}
 )
 
 function(add_man_section name condition out_last_modified)
@@ -191,19 +188,16 @@ if(INSTALL_DOC AND UNIX)
 	install(FILES
 		"${CMAKE_CURRENT_BINARY_DIR}/${srvname}.1"
 		DESTINATION "${CMAKE_INSTALL_MANDIR}"
-		COMPONENT ${srvname}
 	)
 	install(FILES
 		"${PROJECT_SOURCE_DIR}/LICENSE.txt"
 		"${PROJECT_SOURCE_DIR}/ChangeLog"
 		"${PROJECT_SOURCE_DIR}/README.md"
 		DESTINATION "${CMAKE_INSTALL_DOCDIR}"
-		COMPONENT ${srvname}
 	)
 	# Trailing slash is required or else it will install into `doc` subdirectory
 	install(DIRECTORY "${PROJECT_SOURCE_DIR}/doc/"
 		DESTINATION "${CMAKE_INSTALL_DOCDIR}"
-		COMPONENT ${srvname}
 	)
 endif()
 

@@ -83,7 +83,6 @@ if(qt_conf_path)
 	install(
 		FILES "${CMAKE_CURRENT_BINARY_DIR}/qt.conf"
 		DESTINATION "${qt_conf_path}"
-		COMPONENT fixup
 	)
 endif()
 
@@ -105,7 +104,7 @@ install(CODE "
 	set(path_flags \"${path_flags}\")
 	set(extra_env \"${extra_env}\")
 	set(INSTALL_APPBUNDLEDIR \"${INSTALL_APPBUNDLEDIR}\")
-" COMPONENT fixup)
+")
 install(CODE [[
 	message(STATUS "Running ${helper_name}...")
 	if(APPLE)
@@ -124,4 +123,4 @@ install(CODE [[
 	if(NOT result EQUAL 0)
 		message(FATAL_ERROR "Deployment tool failed")
 	endif()
-]] COMPONENT fixup)
+]])

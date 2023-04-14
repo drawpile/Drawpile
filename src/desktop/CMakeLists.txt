@@ -477,7 +477,6 @@ add_feature_info("External QtColorWidgets" "TARGET QtColorWidgets::QtColorWidget
 if(NOT ANDROID)
 	install(TARGETS drawpile
 		BUNDLE DESTINATION "${INSTALL_BUNDLEDIR}"
-		COMPONENT drawpile
 	)
 endif()
 
@@ -589,7 +588,6 @@ elseif(UNIX)
 		install(
 			FILES ${files}
 			DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/${destination}"
-			COMPONENT ${target}
 			${ARGN}
 		)
 	endfunction()
@@ -610,7 +608,6 @@ elseif(UNIX)
 	install(
 		DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/mime"
 		DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}"
-		COMPONENT drawpile
 	)
 	install_datarootdir(drawpile icons/drawpile.png
 		icons/hicolor/256x256/mimetypes
