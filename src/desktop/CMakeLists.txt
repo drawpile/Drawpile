@@ -477,7 +477,6 @@ add_feature_info("External QtColorWidgets" "TARGET QtColorWidgets::QtColorWidget
 if(NOT ANDROID)
 	install(TARGETS drawpile
 		BUNDLE DESTINATION "${INSTALL_BUNDLEDIR}"
-		RESOURCE DESTINATION "${INSTALL_APPDATADIR}"
 		COMPONENT drawpile
 	)
 endif()
