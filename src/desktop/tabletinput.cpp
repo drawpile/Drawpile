@@ -12,7 +12,6 @@
 #	if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 // 		See qtbase tests/manual/qtabletevent/regular_widgets/main.cpp
 #		include <QtGui/private/qguiapplication_p.h>
-#		include <QtGui/qpa/qplatformintegration.h>
 #	endif
 #endif
 
@@ -176,12 +175,11 @@ static void enableKisTabletWintab(QApplication *app, bool relativePenModeHack)
 #	endif
 
 #	if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-static void enableQt6TabletInput(bool wintab)
+static void enableQt6TabletInput(QApplication *app, bool wintab)
 {
 	// See by qtbase tests/manual/qtabletevent/regular_widgets/main.cpp
 	using QWindowsApplication = QNativeInterface::Private::QWindowsApplication;
-	QWindowsApplication *wa = dynamic_cast<QWindowsApplication *>(
-		QGuiApplicationPrivate::platformIntegration());
+	QWindowsApplication *wa = app->nativeInterface<QWindowsApplication>();
 	if(wa) {
 		wa->setWinTabEnabled(wintab);
 		if(wa->isWinTabEnabled()) {
@@ -225,10 +223,10 @@ void update(QApplication *app, const QSettings &cfg)
 #	endif
 #	if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 		case Mode::Qt6Winink:
-			enableQt6TabletInput(false);
+			enableQt6TabletInput(app, false);
 			break;
 		case Mode::Qt6Wintab:
-			enableQt6TabletInput(true);
+			enableQt6TabletInput(app, true);
 			break;
 #	else
 		case Mode::Qt5:
