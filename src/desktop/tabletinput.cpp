@@ -4,11 +4,9 @@
 #include <QSettings>
 #include <memory>
 
-#if defined(Q_OS_WIN)
-#	if defined(HAVE_KIS_TABLET)
-#		include "bundled/kis_tablet/kis_tablet_support_win.h"
-#		include "bundled/kis_tablet/kis_tablet_support_win8.h"
-#	endif
+#ifdef Q_OS_WIN
+#	include "bundled/kis_tablet/kis_tablet_support_win.h"
+#	include "bundled/kis_tablet/kis_tablet_support_win8.h"
 #	if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 // 		See qtbase tests/manual/qtabletevent/regular_widgets/main.cpp
 #		include <QtGui/private/qguiapplication_p.h>
@@ -22,8 +20,6 @@ static const char *inputMode = "Qt tablet input";
 #ifdef Q_OS_WIN
 
 static Mode currentMode = Mode::Uninitialized;
-
-#	ifdef HAVE_KIS_TABLET
 
 class SpontaneousTabletEventFilter final : public QObject {
 public:
@@ -57,8 +53,6 @@ protected:
 static std::unique_ptr<KisTabletSupportWin8> kisTabletSupportWin8;
 static std::unique_ptr<SpontaneousTabletEventFilter>
 	spontaneousTabletEventFilter;
-
-#	endif
 
 static Mode getModeFromSettings(const QSettings &cfg)
 {
@@ -94,26 +88,14 @@ Mode extractMode(const QSettings &cfg)
 	constexpr Mode qt6Wintab = Mode::Qt5;
 #	endif
 
-#	ifdef HAVE_KIS_TABLET
-	constexpr Mode kisTabletWinink = Mode::KisTabletWinink;
-	constexpr Mode kisTabletWintab = Mode::KisTabletWintab;
-	constexpr Mode kisTabletWintabRelativePenHack =
-		Mode::KisTabletWintabRelativePenHack;
-#	else
-	constexpr Mode kisTabletWinink = qt6Winink;
-	constexpr Mode kisTabletWintab = qt6Wintab;
-	constexpr Mode kisTabletWintabRelativePenHack = qt6Wintab;
-#	endif
-
-	switch(getModeFromSettings(cfg)) {
+	Mode mode = getModeFromSettings(cfg);
+	switch(mode) {
 	case Mode::Uninitialized:
 		Q_UNREACHABLE();
 	case Mode::KisTabletWinink:
-		return kisTabletWinink;
 	case Mode::KisTabletWintab:
-		return kisTabletWintab;
 	case Mode::KisTabletWintabRelativePenHack:
-		return kisTabletWintabRelativePenHack;
+		return mode;
 	case Mode::Qt5:
 		return qt5;
 	case Mode::Qt6Winink:
@@ -124,7 +106,6 @@ Mode extractMode(const QSettings &cfg)
 	Q_UNREACHABLE();
 }
 
-#	ifdef HAVE_KIS_TABLET
 static void resetKisTablet(QApplication *app)
 {
 	if(spontaneousTabletEventFilter) {
@@ -172,7 +153,6 @@ static void enableKisTabletWintab(QApplication *app, bool relativePenModeHack)
 		qWarning("Failed to initialize KisTablet Wintab input");
 	}
 }
-#	endif
 
 #	if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 static void enableQt6TabletInput(QApplication *app, bool wintab)
@@ -212,20 +192,13 @@ static void resetQtInput(QApplication *app)
 void update(QApplication *app, const QSettings &cfg)
 {
 #ifdef Q_OS_WIN
-#	if !defined(HAVE_KIS_TABLET) && QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-	Q_UNUSED(app);
-#	endif
-
 	Mode mode = extractMode(cfg);
 	if(mode != currentMode) {
-#	ifdef HAVE_KIS_TABLET
 		resetKisTablet(app);
-#	endif
 		resetQtInput(app);
 		currentMode = Mode::Uninitialized;
 		inputMode = "Invalid";
 		switch(mode) {
-#	ifdef HAVE_KIS_TABLET
 		case Mode::KisTabletWinink:
 			enableKisTabletWinink(app);
 			break;
@@ -235,7 +208,6 @@ void update(QApplication *app, const QSettings &cfg)
 		case Mode::KisTabletWintabRelativePenHack:
 			enableKisTabletWintab(app, true);
 			break;
-#	endif
 #	if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 		case Mode::Qt6Winink:
 			enableQt6TabletInput(app, false);
@@ -265,7 +237,7 @@ QString current()
 	return QString::fromUtf8(inputMode);
 }
 
-#if defined(Q_OS_WIN) && defined(HAVE_KIS_TABLET)
+#ifdef Q_OS_WIN
 bool passPenEvents()
 {
 	// The spontaneous event filter is installed if and only if a KisTablet

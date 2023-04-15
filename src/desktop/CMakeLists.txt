@@ -299,6 +299,28 @@ endif()
 
 if(WIN32)
 	target_sources(drawpile PRIVATE icons/drawpile.ico)
+	add_library(drawpile-kis_tablet OBJECT)
+	target_sources(drawpile-kis_tablet PRIVATE
+		bundled/kis_tablet/debug.h
+		bundled/kis_tablet/kis_tablet_support_win_p.h
+		bundled/kis_tablet/kis_tablet_support_win.cpp
+		bundled/kis_tablet/kis_tablet_support_win.h
+		bundled/kis_tablet/kis_tablet_support_win8.cpp
+		bundled/kis_tablet/kis_tablet_support_win8.h
+		bundled/kis_tablet/pktdef.h
+		bundled/kis_tablet/wintab.h
+	)
+	target_link_libraries(drawpile-kis_tablet PUBLIC
+		${QT_PACKAGE_NAME}::Core
+		${QT_PACKAGE_NAME}::Gui
+		${QT_PACKAGE_NAME}::Network
+		${QT_PACKAGE_NAME}::Widgets
+	)
+	set_target_properties(drawpile-kis_tablet
+		PROPERTIES DP_AUTO_SOURCE_TREE_BASE bundled/kis_tablet
+	)
+	target_disable_all_warnings(drawpile-kis_tablet)
+	target_link_libraries(drawpile PRIVATE drawpile-kis_tablet)
 # https://gitlab.kitware.com/cmake/cmake/-/issues/19813
 elseif(APPLE)
 	target_sources(drawpile PRIVATE
@@ -345,33 +367,6 @@ else()
 		dialogs/videoexportdialog.h
 		ui/videoexport.ui
 	)
-endif()
-
-if(KIS_TABLET)
-	add_library(drawpile-kis_tablet OBJECT)
-	target_sources(drawpile-kis_tablet PRIVATE
-		bundled/kis_tablet/debug.h
-		bundled/kis_tablet/kis_tablet_support_win_p.h
-		bundled/kis_tablet/kis_tablet_support_win.cpp
-		bundled/kis_tablet/kis_tablet_support_win.h
-		bundled/kis_tablet/kis_tablet_support_win8.cpp
-		bundled/kis_tablet/kis_tablet_support_win8.h
-		bundled/kis_tablet/pktdef.h
-		bundled/kis_tablet/wintab.h
-	)
-	target_link_libraries(drawpile-kis_tablet PUBLIC
-		${QT_PACKAGE_NAME}::Core
-		${QT_PACKAGE_NAME}::Gui
-		${QT_PACKAGE_NAME}::Network
-		${QT_PACKAGE_NAME}::Widgets
-	)
-	set_target_properties(drawpile-kis_tablet
-		PROPERTIES DP_AUTO_SOURCE_TREE_BASE bundled/kis_tablet
-	)
-	target_disable_all_warnings(drawpile-kis_tablet)
-
-	target_compile_definitions(drawpile PRIVATE HAVE_KIS_TABLET)
-	target_link_libraries(drawpile PRIVATE drawpile-kis_tablet)
 endif()
 
 if(${QT_PACKAGE_NAME}Keychain_FOUND)

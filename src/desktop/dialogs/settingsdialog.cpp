@@ -103,7 +103,6 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	});
 
 #ifdef Q_OS_WIN
-#	ifdef HAVE_KIS_TABLET
 	m_ui->tabletInputCombo->addItem(
 		tr("KisTablet Windows Ink"), int(tabletinput::Mode::KisTabletWinink));
 	m_ui->tabletInputCombo->addItem(
@@ -111,7 +110,6 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	m_ui->tabletInputCombo->addItem(
 		tr("KisTablet Wintab with Relative Pen Mode Hack"),
 		int(tabletinput::Mode::KisTabletWintabRelativePenHack));
-#	endif
 #	if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 	m_ui->tabletInputCombo->addItem(
 		tr("Qt6 Windows Ink"), int(tabletinput::Mode::Qt6Winink));

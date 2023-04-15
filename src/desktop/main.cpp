@@ -19,7 +19,7 @@
 #include "desktop/utils/macui.h"
 #include "desktop/widgets/macmenu.h"
 #include <QTimer>
-#elif defined(Q_OS_WIN) && defined(KIS_TABLET)
+#elif defined(Q_OS_WIN)
 #include "desktop/bundled/kis_tablet/kis_tablet_support_win8.h"
 #include "desktop/bundled/kis_tablet/kis_tablet_support_win.h"
 #endif

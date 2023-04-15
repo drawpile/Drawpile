@@ -39,7 +39,7 @@ QString current();
 // that case, we don't accept those tablet events and instead add a check in our
 // mouse event handlers to disregard synthetically generated mouse events,
 // meaning we don't double up on them and the view acts properly.
-#if defined(Q_OS_WIN) && defined(HAVE_KIS_TABLET)
+#ifdef Q_OS_WIN
 bool passPenEvents();
 #else
 constexpr bool passPenEvents()
