@@ -11,14 +11,6 @@ set(BUILD_LABEL "" CACHE STRING "A custom label to add to the version")
 option(UPDATE_TRANSLATIONS "Update translation files from source")
 add_feature_info(".ts regeneration (slow!) (UPDATE_TRANSLATIONS)" UPDATE_TRANSLATIONS "")
 
-if(WIN32)
-	cmake_dependent_option(KIS_TABLET "Enable custom tablet support code" OFF "CLIENT" OFF)
-	add_feature_info("Custom tablet support code (KIS_TABLET)" KIS_TABLET "")
-else()
-	# CMake allows unexposed options to be enabled
-	set(KIS_TABLET OFF CACHE BOOL "" FORCE)
-endif()
-
 if(NOT ANDROID)
 	option(SERVER "Compile dedicated server" OFF)
 	add_feature_info("Drawpile server (SERVER)" SERVER "")

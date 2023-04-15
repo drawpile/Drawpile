@@ -123,7 +123,7 @@ static constexpr auto CTRL_KEY = Qt::CTRL;
 #include "desktop/dialogs/versioncheckdialog.h"
 #endif
 
-#if defined(Q_OS_WIN) && defined(KIS_TABLET)
+#ifdef Q_OS_WIN
 #include "desktop/bundled/kis_tablet/kis_tablet_support_win.h"
 #endif
 
