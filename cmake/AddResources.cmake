@@ -52,9 +52,6 @@ function(add_resources target)
 	foreach(file IN LISTS ARG_FILES)
 		target_sources(${target} PRIVATE "assets/${file}")
 		get_filename_component(file_dir "${file}" DIRECTORY)
-		if(NOT "${file_dir}" STREQUAL "")
-			set(file_dir "/$file_dir")
-		endif()
 		set_source_files_properties("assets/${file}"
 			PROPERTIES MACOSX_PACKAGE_LOCATION "Resources${file_dir}"
 		)
