@@ -195,18 +195,33 @@ static void enableQt6TabletInput(QApplication *app, bool wintab)
 }
 #	endif
 
+static void resetQtInput(QApplication *app)
+{
+#	if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+	// At the time of writing, enabling Wintab mode in Qt6 causes menus to react
+	// to pen presses only very sporadically. Enabling KisTablet Wintab mode
+	// while Qt6 is in Windows Ink mode works fine though, so we reset to that.
+	enableQt6TabletInput(app, false);
+#	else
+	Q_UNUSED(app);
+#	endif
+}
+
 #endif
 
 void update(QApplication *app, const QSettings &cfg)
 {
 #ifdef Q_OS_WIN
+#	if !defined(HAVE_KIS_TABLET) && QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+	Q_UNUSED(app);
+#	endif
+
 	Mode mode = extractMode(cfg);
 	if(mode != currentMode) {
 #	ifdef HAVE_KIS_TABLET
 		resetKisTablet(app);
-#	else
-		Q_UNUSED(app);
 #	endif
+		resetQtInput(app);
 		currentMode = Mode::Uninitialized;
 		inputMode = "Invalid";
 		switch(mode) {
