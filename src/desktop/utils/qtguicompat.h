@@ -104,8 +104,11 @@ inline auto makeTabletEvent(
 		}
 	}
 
+	// Happens with KisTablet. Falling back to the primary device seems to work
+	// fine without any negative repercussions, leaving it null causes a crash.
 	if(!sysDevice) {
-		qWarning("Could not find device matching event ID %lld", uniqueID);
+		qDebug("Could not find device matching event ID %lld", uniqueID);
+		sysDevice = QPointingDevice::primaryPointingDevice();
 	}
 
 	return ::QTabletEvent(type, sysDevice, pos, globalPos, pressure, xTilt, yTilt, tangentialPressure, rotation, z, keyState, button, buttons);
