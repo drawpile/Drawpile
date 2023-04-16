@@ -3,16 +3,9 @@ from configparser import ConfigParser
 import re
 import sys
 
-if len(sys.argv) != 3:
+if len(sys.argv) != 2:
     prog = __file__ if len(sys.argv) == 0 else sys.argv[0]
-    raise ValueError(f"Usage: {prog} light|dark KRITA_COLOR_FILE >DRAWPILE_COLOR_FILE")
-
-if sys.argv[2] == "light":
-    dark = False
-elif sys.argv[2] == "dark":
-    dark = True
-else:
-    raise ValueError(f"Expected dark or light, got '{sys.argv[2]}'")
+    raise ValueError(f"Usage: {prog} KRITA_COLOR_FILE >DRAWPILE_COLOR_FILE")
 
 src = ConfigParser()
 src.read(sys.argv[1])
@@ -42,10 +35,10 @@ print_transformed("Colors:View", "BackgroundNormal", "Base")
 print_transformed("Colors:View", "ForegroundLink", "BrightText")
 print_transformed("Colors:Button", "BackgroundNormal", "Button")
 print_transformed("Colors:Button", "ForegroundNormal", "ButtonText")
-print_transformed("Colors:Button", "BackgroundNormal" if dark else "ForegroundNormal", "Dark")
+print_transformed("Colors:Button", "ForegroundNormal", "Dark")
 print_transformed("Colors:Selection", "BackgroundNormal", "Highlight")
 print_transformed("Colors:Selection", "ForegroundNormal", "HighlightedText")
-print_transformed("Colors:Button", "ForegroundNormal" if dark else "BackgroundNormal", "Light")
+print_transformed("Colors:Button", "BackgroundNormal", "Light")
 print_transformed("Colors:View", "ForegroundLink", "Link")
 print_transformed("Colors:View", "ForegroundLink", "LinkVisited")
 print_transformed("WM", "inactiveForeground", "PlaceholderText")
@@ -80,10 +73,10 @@ print_transformed("Colors:View", "BackgroundNormal", "Base")
 print_transformed("Colors:View", "ForegroundLink", "BrightText")
 print_transformed("Colors:Button", "BackgroundNormal", "Button")
 print_transformed("Colors:Button", "ForegroundNormal", "ButtonText")
-print_transformed("Colors:Button", "BackgroundNormal" if dark else "ForegroundNormal", "Dark")
+print_transformed("Colors:Button", "ForegroundNormal", "Dark")
 print_transformed("Colors:Selection", "BackgroundNormal", "Highlight")
 print_transformed("Colors:Selection", "ForegroundNormal", "HighlightedText")
-print_transformed("Colors:Button", "ForegroundNormal" if dark else "BackgroundNormal", "Light")
+print_transformed("Colors:Button", "BackgroundNormal", "Light")
 print_transformed("Colors:View", "ForegroundLink", "Link")
 print_transformed("Colors:View", "ForegroundLink", "LinkVisited")
 print_transformed("WM", "inactiveForeground", "PlaceholderText")
