@@ -94,7 +94,7 @@ public:
 	{
 		QString sql = QStringLiteral(
 			"select n - 1 from (\n"
-			"	select row_number() over(order by id) as n, id from tag)\n"
+			"	select row_number() over(order by LOWER(name)) as n, id from tag)\n"
 			"where id = ?");
 		return readInt(sql, {id}, -1);
 	}
