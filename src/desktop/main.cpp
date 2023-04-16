@@ -136,6 +136,9 @@ void DrawpileApp::setTheme(int theme)
 		setStyle(QStringLiteral(""));
 #endif
 		break;
+	case THEME_HOTDOG_STAND:
+		setStyle(QStringLiteral("Windows"));
+		break;
 	default:
 		setStyle(QStringLiteral("Fusion"));
 		break;
@@ -169,6 +172,9 @@ void DrawpileApp::setTheme(int theme)
 		break;
 	case THEME_KRITA_DARKER:
 		setPalette(loadPalette(QStringLiteral("kritadarker.colors")));
+		break;
+	case THEME_HOTDOG_STAND:
+		setPalette(loadPalette(QStringLiteral("hotdogstand.colors")));
 		break;
 	default:
 #ifdef Q_OS_MACOS
