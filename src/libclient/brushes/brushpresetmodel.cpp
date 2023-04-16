@@ -77,7 +77,7 @@ public:
 	{
 		QSqlQuery query(m_db);
 		QString sql = QStringLiteral(
-			"select id, name from tag order by id limit 1 offset ?");
+			"select id, name from tag order by LOWER(name) limit 1 offset ?");
 		if(exec(query, sql, {index}) && query.next()) {
 			return Tag{query.value(0).toInt(), query.value(1).toString(), true};
 		} else {
