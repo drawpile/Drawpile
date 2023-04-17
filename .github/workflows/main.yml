@@ -3,6 +3,12 @@ name: Build and Test
 on:
   pull_request:
   push:
+    branches:
+      - '**'
+    tags-ignore:
+      # This tag is (re)created when a build on main succeeds, it'd be
+      # pointless to trigger yet another build in response to it.
+      - continuous
   schedule:
     - cron: '18 11 * * *'
 
