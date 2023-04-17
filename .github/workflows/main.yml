@@ -72,7 +72,11 @@ jobs:
             # This causes the AppImage to be generated, instead of just creating
             # the portable tree, because there seems to be no way to separate
             # these steps with linuxdeploy
-            packager: VERSION=$(git describe) cmake --install build --config Release
+            # Even though the svg component is linked explicitly,
+            # linuxdeploy-plugin-qt does not seem to notice and so does not
+            # export the iconengine if it is not told that we really, really
+            # want svg plugins please
+            packager: EXTRA_QT_PLUGINS="svg;" VERSION=$(git describe) cmake --install build --config Release
 
           # Android common
           - os: ubuntu-latest
