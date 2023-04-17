@@ -9,6 +9,7 @@ on:
       # This tag is (re)created when a build on main succeeds, it'd be
       # pointless to trigger yet another build in response to it.
       - continuous
+      - continuoustest
   schedule:
     - cron: '18 11 * * *'
 
@@ -330,3 +331,33 @@ jobs:
         run: sccache --show-stats
         if: success() || failure()
         continue-on-error: true
+
+  continuousrelease:
+    needs: test
+    runs-on: ubuntu-latest
+    if: success() && github.ref == format('refs/heads/{0}', 'feature/continuous-release')
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+
+      - name: Dump directory contents
+        run: ls -alFR
+
+      - name: Create continuous release
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_GITHUB_TOKEN }}
+          TARGET_COMMIT: ${{ github.sha }}
+          RELEASE_NAME: continuoustest
+          RELEASE_DESCRIPTION: >
+            Automatic, continuous development release. This is for testing
+            purposes and may be unstable! For downloads, look at the Assets
+            below. This is a test of the release script itself.
+        run: |
+          wget -q https://raw.githubusercontent.com/drawpile/Drawpile/feature/continuous-release/pkg/make-github-release.sh
+          chmod +x make-github-release.sh
+          ./make-github-release.sh \
+            'Drawpile-Android-Qt5.15.8.zip;Drawpile-*.apk;Android APK' \
+            'Drawpile-Linux-Qt5.15.8.zip;Drawpile-*.AppImage;Linux AppImage' \
+            'Drawpile-macOS-Qt5.15.8.zip;Drawpile-*.dmg;macOS Disk Image' \
+            'Drawpile-Windows-Qt5.15.8.zip;Drawpile-*.msi;Windows Installer' \
+            'Drawpile-Windows-Qt5.15.8.zip;Drawpile-*.zip;Windows Portable ZIP'
