@@ -15,12 +15,14 @@ extern "C" {
 #include "libshared/net/undo.h"
 #include <QDateTime>
 
+using std::placeholders::_1;
+
 namespace tools {
 
 Freehand::Freehand(ToolController &owner, bool isEraser)
 	: Tool(owner, isEraser ? ERASER : FREEHAND, Qt::CrossCursor, true, true, false)
 	, m_pollTimer{}
-	, m_brushEngine{std::bind(&Freehand::poll, this)}
+	, m_brushEngine{std::bind(&Freehand::pollControl, this, _1)}
 	, m_drawing(false)
 {
 	m_pollTimer.setSingleShot(false);
