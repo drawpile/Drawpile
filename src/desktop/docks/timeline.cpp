@@ -58,13 +58,6 @@ void Timeline::setFrameCount(int frameCount)
 	m_widget->model()->setFrameCount(frameCount);
 }
 
-void Timeline::setManualMode(bool manualMode)
-{
-	m_widget->model()->setManualMode(manualMode);
-	updateControlsEnabled(
-		m_featureAccessEnabled, isCompatibilityMode(), manualMode);
-}
-
 void Timeline::setCurrentLayer(int layerId)
 {
 	m_widget->setCurrentLayer(layerId);
@@ -78,13 +71,12 @@ int Timeline::currentFrame() const
 void Timeline::setFeatureAccess(bool access)
 {
 	m_featureAccessEnabled = access;
-	updateControlsEnabled(access, isCompatibilityMode(), isManualMode());
+	updateControlsEnabled(access, isCompatibilityMode());
 }
 
 void Timeline::setCompatibilityMode(bool compatibilityMode)
 {
-	updateControlsEnabled(
-		m_featureAccessEnabled, compatibilityMode, isManualMode());
+	updateControlsEnabled(m_featureAccessEnabled, compatibilityMode);
 }
 
 bool Timeline::isCompatibilityMode() const
@@ -93,16 +85,9 @@ bool Timeline::isCompatibilityMode() const
 	return model && model->canvas()->isCompatibilityMode();
 }
 
-bool Timeline::isManualMode() const
+void Timeline::updateControlsEnabled(bool access, bool compatibilityMode)
 {
-	canvas::TimelineModel *model = m_widget->model();
-	return model && model->isManualMode();
-}
-
-void Timeline::updateControlsEnabled(
-	bool access, bool compatibilityMode, bool manualMode)
-{
-	m_widget->updateControlsEnabled(access, compatibilityMode, manualMode);
+	m_widget->updateControlsEnabled(access, compatibilityMode);
 }
 
 }

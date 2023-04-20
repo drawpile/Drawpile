@@ -678,11 +678,6 @@ static void ora_handle_timeline(DP_ReadOraContext *c, DP_XmlElement *element)
     DP_TransientDocumentMetadata *tdm =
         DP_transient_canvas_state_transient_metadata(c->tcs);
 
-    const char *enabled = DP_xml_element_attribute(element, NULL, "enabled");
-    if (enabled && DP_str_equal(enabled, "true")) {
-        DP_transient_document_metadata_use_timeline_set(tdm, true);
-    }
-
     int frame_count;
     if (ora_read_int_attribute(element, NULL, "frames", 0, INT32_MAX,
                                &frame_count)) {

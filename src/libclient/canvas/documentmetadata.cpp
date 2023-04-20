@@ -7,7 +7,7 @@
 namespace canvas {
 
 DocumentMetadata::DocumentMetadata(PaintEngine *engine, QObject *parent)
-    : QObject{parent}, m_engine(engine), m_framerate(15), m_useTimeline(false)
+    : QObject{parent}, m_engine(engine), m_framerate(0), m_frameCount(0)
 {
 	Q_ASSERT(engine);
 	refreshMetadata(m_engine->historyCanvasState().documentMetadata());
@@ -23,12 +23,6 @@ void DocumentMetadata::refreshMetadata(const drawdance::DocumentMetadata &dm)
 	if(framerate != m_framerate) {
 		m_framerate = framerate;
 		emit framerateChanged(framerate);
-	}
-
-	const bool useTimeline = dm.useTimeline();
-	if(useTimeline != m_useTimeline) {
-		m_useTimeline = useTimeline;
-		emit useTimelineChanged(useTimeline);
 	}
 
 	const int frameCount = dm.frameCount();

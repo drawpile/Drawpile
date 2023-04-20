@@ -832,7 +832,6 @@ static bool handle_set_metadata_int(DP_AclState *acls, DP_Message *msg,
     DP_Feature feature;
     switch (DP_msg_set_metadata_int_field(msmi)) {
     case DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE:
-    case DP_MSG_SET_METADATA_INT_FIELD_USE_TIMELINE:
     case DP_MSG_SET_METADATA_INT_FIELD_FRAME_COUNT:
         feature = DP_FEATURE_TIMELINE;
         break;

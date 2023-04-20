@@ -519,7 +519,7 @@ static void ora_write_track_xml(DP_SaveOraContext *c, DP_Output *output,
 }
 
 static void ora_write_timeline_xml(DP_SaveOraContext *c, DP_Output *output,
-                                   DP_CanvasState *cs, bool use_timeline)
+                                   DP_CanvasState *cs)
 {
     DP_DocumentMetadata *dm = DP_canvas_state_metadata_noinc(cs);
     int frame_count = DP_document_metadata_frame_count(dm);
@@ -527,8 +527,6 @@ static void ora_write_timeline_xml(DP_SaveOraContext *c, DP_Output *output,
     int track_count = DP_timeline_count(tl);
     if (frame_count > 0 && track_count > 0) {
         DP_OUTPUT_PRINT_LITERAL(output, "<drawpile:timeline");
-        ORA_APPEND_ATTR(c, output, "enabled", "%s",
-                        use_timeline ? "true" : "false");
         ORA_APPEND_ATTR(c, output, "frames", "%d", frame_count);
         DP_OUTPUT_PRINT_LITERAL(output, ">");
         for (int i = 0; i < track_count; ++i) {
@@ -566,8 +564,7 @@ static char *ora_write_xml(DP_SaveOraContext *c, DP_CanvasState *cs,
     DP_OUTPUT_PRINT_LITERAL(output, "</stack>");
 
     ora_write_annotations_xml(c, output, DP_canvas_state_annotations_noinc(cs));
-    ora_write_timeline_xml(c, output, cs,
-                           DP_document_metadata_use_timeline(dm));
+    ora_write_timeline_xml(c, output, cs);
 
     DP_OUTPUT_PRINT_LITERAL(output, "</image>");
 

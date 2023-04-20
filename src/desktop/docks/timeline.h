@@ -35,7 +35,6 @@ public:
 	void setActions(const widgets::TimelineWidget::Actions &actions);
 
 	void setFrameCount(int frameCount);
-	void setManualMode(bool manualMode);
 	void setCurrentLayer(int layerId);
 
 	int currentFrame() const;
@@ -54,10 +53,8 @@ private slots:
 
 private:
 	bool isCompatibilityMode() const;
-	bool isManualMode() const;
 
-	void
-	updateControlsEnabled(bool access, bool compatibilityMode, bool manualMode);
+	void updateControlsEnabled(bool access, bool compatibilityMode);
 
 	widgets::TimelineWidget *m_widget;
 	bool m_featureAccessEnabled;

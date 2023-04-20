@@ -69,11 +69,6 @@ int DocumentMetadata::framerate() const
     return DP_document_metadata_framerate(m_data);
 }
 
-bool DocumentMetadata::useTimeline() const
-{
-    return DP_document_metadata_use_timeline(m_data);
-}
-
 int DocumentMetadata::frameCount() const
 {
     return DP_document_metadata_frame_count(m_data);

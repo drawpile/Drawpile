@@ -504,9 +504,7 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	m_dockTimeline->setTimeline(canvas->timeline());
 
 	m_dockTimeline->setFrameCount(canvas->metadata()->frameCount());
-	m_dockTimeline->setManualMode(canvas->metadata()->useTimeline());
 	connect(canvas->metadata(), &canvas::DocumentMetadata::frameCountChanged, m_dockTimeline, &docks::Timeline::setFrameCount);
-	connect(canvas->metadata(), &canvas::DocumentMetadata::useTimelineChanged, m_dockTimeline, &docks::Timeline::setManualMode);
 
 	connect(m_dockTimeline, &docks::Timeline::frameSelected, canvas->paintEngine(), &canvas::PaintEngine::setViewFrame);
 	connect(m_dockTimeline, &docks::Timeline::trackHidden, canvas->paintEngine(), &canvas::PaintEngine::setTrackVisibility);
@@ -3118,7 +3116,6 @@ void MainWindow::setupActions()
 	// Animation menu
 	//
 	QAction *showFlipbook = makeAction("showflipbook", tr("Flipbook")).statusTip(tr("Show animation preview window")).shortcut("Ctrl+F");
-	QAction *manualModeSet = makeAction("manual-mode-set", tr("Enable Timeline")).checkable();
 	QAction *frameCountSet = makeAction("frame-count-set", tr("Change Frame Count..."));
 	QAction *framerateSet = makeAction("framerate-set", tr("Change Frame Rate (FPS)..."));
 	QAction *keyFrameSetLayer = makeAction("key-frame-set-layer", QString{}).icon("keyframe-add").shortcut("Ctrl+Shift+F");
@@ -3138,13 +3135,12 @@ void MainWindow::setupActions()
 
 	m_currentdoctools->addAction(showFlipbook);
 	m_dockLayers->setLayerEditActions(layerAdd, groupAdd, layerDupe, layerMerge, layerProperties, layerDelete, keyFrameSetLayer);
-	m_dockTimeline->setActions({keyFrameSetLayer, keyFrameSetEmpty, keyFrameProperties, keyFrameDelete, trackAdd, trackVisible, trackOnionSkin, trackDuplicate, trackRetitle, trackDelete, manualModeSet, frameCountSet, framerateSet, frameNext, framePrev, trackAbove, trackBelow});
+	m_dockTimeline->setActions({keyFrameSetLayer, keyFrameSetEmpty, keyFrameProperties, keyFrameDelete, trackAdd, trackVisible, trackOnionSkin, trackDuplicate, trackRetitle, trackDelete, frameCountSet, framerateSet, frameNext, framePrev, trackAbove, trackBelow});
 
 	connect(showFlipbook, &QAction::triggered, this, &MainWindow::showFlipbook);
 
 	QMenu *animationMenu = menuBar()->addMenu(tr("&Animation"));
 	animationMenu->addAction(showFlipbook);
-	animationMenu->addAction(manualModeSet);
 	animationMenu->addAction(frameCountSet);
 	animationMenu->addAction(framerateSet);
 	animationMenu->addSeparator();

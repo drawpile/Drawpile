@@ -140,13 +140,8 @@ void Flipbook::setPaintEngine(canvas::PaintEngine *pe)
 		m_canvasState.documentMetadata();
 	m_realFps = documentMetadata.framerate();
 
-	QString timelineMode;
-	if(documentMetadata.useTimeline()) {
-		timelineMode = tr("Manual Timeline, %1 FPS");
-	} else {
-		timelineMode = tr("Automatic Timeline, %1 FPS");
-	}
-	m_ui->timelineModeLabel->setText(timelineMode.arg(m_realFps));
+	m_ui->timelineModeLabel->setText(tr("Actual FPS: %1").arg(m_realFps));
+	m_ui->fps->setValue(m_realFps);
 
 	updateFps(m_ui->fps->value());
 	resetFrameCache();

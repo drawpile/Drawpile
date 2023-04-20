@@ -33,11 +33,10 @@
 #include <dpcommon/vector.h>
 
 
-#define TYPE_NORMAL          0
-#define TYPE_NOTHING         1
-#define TYPE_LAYER           2
-#define TYPE_FRAME_MANUAL    3
-#define TYPE_FRAME_AUTOMATIC 4
+#define TYPE_NORMAL       0
+#define TYPE_NOTHING      1
+#define TYPE_LAYER        2
+#define TYPE_FRAME_MANUAL 3
 
 
 typedef struct DP_ViewModeTrack {
@@ -111,11 +110,6 @@ static DP_ViewModeContext make_normal_context(void)
     return (DP_ViewModeContext){TYPE_NORMAL, {0}};
 }
 
-static DP_ViewModeFilter make_nothing_filter(void)
-{
-    return (DP_ViewModeFilter){TYPE_NOTHING, {0}};
-}
-
 static DP_ViewModeContext make_nothing_context(void)
 {
     return (DP_ViewModeContext){TYPE_NOTHING, {0}};
@@ -143,11 +137,11 @@ static DP_ViewModeContext make_manual_frame_context(int track_index,
                                 {.frame = {track_index, vmb}}};
 }
 
-static DP_ViewModeFilter make_automatic_frame_filter(int layer_id)
-{
-    return (DP_ViewModeFilter){TYPE_FRAME_AUTOMATIC, {.layer_id = layer_id}};
-}
 
+DP_ViewModeFilter DP_view_mode_filter_make_default(void)
+{
+    return make_normal_filter();
+}
 
 static DP_KeyFrameLayer get_key_frame_layer(int layer_id, int count,
                                             const DP_KeyFrameLayer *kfls)
@@ -284,9 +278,10 @@ static void build_track(DP_ViewModeBuffer *vmb, DP_CanvasState *cs, DP_Track *t,
     }
 }
 
-static DP_ViewModeFilter build_frame_manual(DP_ViewModeBuffer *vmb,
-                                            DP_CanvasState *cs, int frame_index,
-                                            const DP_OnionSkins *oss)
+DP_ViewModeFilter DP_view_mode_filter_make_frame(DP_ViewModeBuffer *vmb,
+                                                 DP_CanvasState *cs,
+                                                 int frame_index,
+                                                 const DP_OnionSkins *oss)
 {
     DP_Timeline *tl = DP_canvas_state_timeline_noinc(cs);
     int track_count = DP_timeline_count(tl);
@@ -298,36 +293,6 @@ static DP_ViewModeFilter build_frame_manual(DP_ViewModeBuffer *vmb,
         }
     }
     return make_manual_frame_filter(vmb);
-}
-
-static DP_ViewModeFilter build_frame_automatic(DP_CanvasState *cs,
-                                               int frame_index)
-{
-    DP_LayerPropsList *lpl = DP_canvas_state_layer_props_noinc(cs);
-    int layer_count = DP_layer_props_list_count(lpl);
-    if (frame_index >= 0 && frame_index < layer_count) {
-        DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, frame_index);
-        return make_automatic_frame_filter(DP_layer_props_id(lp));
-    }
-    else {
-        return make_nothing_filter();
-    }
-}
-
-DP_ViewModeFilter DP_view_mode_filter_make_default(void)
-{
-    return make_normal_filter();
-}
-
-DP_ViewModeFilter DP_view_mode_filter_make_frame(DP_ViewModeBuffer *vmb,
-                                                 DP_CanvasState *cs,
-                                                 int frame_index,
-                                                 const DP_OnionSkins *oss)
-{
-    DP_ASSERT(cs);
-    return DP_canvas_state_use_timeline(cs)
-             ? build_frame_manual(vmb, cs, frame_index, oss)
-             : build_frame_automatic(cs, frame_index);
 }
 
 DP_ViewModeFilter DP_view_mode_filter_make(DP_ViewModeBuffer *vmb,
@@ -400,16 +365,6 @@ apply_frame_manual(int track_index, DP_ViewModeBuffer *vmb, DP_LayerProps *lp)
     }
     else {
         return make_result(false, make_manual_frame_context(track_index, vmb));
-    }
-}
-
-static DP_ViewModeResult apply_frame_automatic(int layer_id, DP_LayerProps *lp)
-{
-    if (DP_layer_props_id(lp) == layer_id) {
-        return make_result(false, make_normal_context());
-    }
-    else {
-        return make_result(true, make_nothing_context());
     }
 }
 
@@ -495,8 +450,6 @@ DP_ViewModeResult DP_view_mode_context_apply(const DP_ViewModeContext *vmc,
         return apply_layer(vmc->layer_id, lp);
     case TYPE_FRAME_MANUAL:
         return apply_frame_manual(vmc->frame.track_index, vmc->frame.vmb, lp);
-    case TYPE_FRAME_AUTOMATIC:
-        return apply_frame_automatic(vmc->layer_id, lp);
     default:
         DP_UNREACHABLE();
     }

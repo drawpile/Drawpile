@@ -30,7 +30,6 @@ public:
 		QAction *trackDuplicate = nullptr;
 		QAction *trackRetitle = nullptr;
 		QAction *trackDelete = nullptr;
-		QAction *manualModeSet = nullptr;
 		QAction *frameCountSet = nullptr;
 		QAction *framerateSet = nullptr;
 		QAction *frameNext = nullptr;
@@ -49,8 +48,7 @@ public:
 	void setCurrentFrame(int frame);
 	void setCurrentLayer(int layerId);
 
-	void
-	updateControlsEnabled(bool access, bool compatibilityMode, bool manualMode);
+	void updateControlsEnabled(bool access, bool compatibilityMode);
 
 	canvas::TimelineModel *model() const;
 
@@ -93,7 +91,6 @@ private slots:
 	void duplicateTrack();
 	void retitleTrack();
 	void deleteTrack();
-	void toggleManualMode(bool manualMode);
 	void setFrameCount();
 	void setFramerate();
 	void nextFrame();
