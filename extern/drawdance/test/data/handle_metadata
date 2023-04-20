@@ -4,7 +4,7 @@ begin testing
 dpix: 72
 dpiy: 72
 framerate: 24
-use_timeline: false
+frame_count: 24
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_SET_METADATA_INT ok - 0 error(s)
@@ -13,7 +13,7 @@ use_timeline: false
 dpix: 1024
 dpiy: 72
 framerate: 24
-use_timeline: false
+frame_count: 24
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_SET_METADATA_INT ok - 0 error(s)
@@ -22,7 +22,7 @@ use_timeline: false
 dpix: 1024
 dpiy: 99999
 framerate: 24
-use_timeline: false
+frame_count: 24
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_SET_METADATA_INT ok - 0 error(s)
@@ -31,16 +31,16 @@ use_timeline: false
 dpix: 1024
 dpiy: 99999
 framerate: 60
-use_timeline: false
+frame_count: 24
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_SET_METADATA_INT ok - 0 error(s)
 
--- enable timeline
+-- set frame count of 99
 dpix: 1024
 dpiy: 99999
 framerate: 60
-use_timeline: true
+frame_count: 99
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_SET_METADATA_INT ok - 0 error(s)
@@ -52,7 +52,7 @@ use_timeline: true
 dpix: 96
 dpiy: 96
 framerate: 120
-use_timeline: false
+frame_count: 1
 
 -> DP_MSG_UNDO ok - 0 error(s)
 
@@ -60,7 +60,7 @@ use_timeline: false
 dpix: 1024
 dpiy: 99999
 framerate: 60
-use_timeline: true
+frame_count: 99
 
 -> DP_MSG_UNDO ok - 0 error(s)
 
@@ -68,7 +68,7 @@ use_timeline: true
 dpix: 96
 dpiy: 96
 framerate: 120
-use_timeline: false
+frame_count: 1
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
 -> DP_MSG_SET_METADATA_INT fail - 1 error(s): Set metadata int: unknown field 255
@@ -77,6 +77,6 @@ use_timeline: false
 dpix: 96
 dpiy: 96
 framerate: 120
-use_timeline: false
+frame_count: 1
 
 done testing

@@ -451,11 +451,6 @@ static void document_metadata_to_reset_image(struct DP_ResetImageContext *c,
         c, DP_MSG_SET_METADATA_INT_FIELD_FRAME_COUNT,
         DP_document_metadata_frame_count(dm),
         DP_DOCUMENT_METADATA_FRAME_COUNT_DEFAULT);
-    if (DP_document_metadata_use_timeline(dm)) {
-        reset_image_push(c, DP_msg_set_metadata_int_new(
-                                c->context_id,
-                                DP_MSG_SET_METADATA_INT_FIELD_USE_TIMELINE, 1));
-    }
 }
 
 static void set_key_frame_layers(int count, uint16_t *out, void *user)

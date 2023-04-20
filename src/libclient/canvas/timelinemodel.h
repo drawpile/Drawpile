@@ -43,9 +43,6 @@ public:
 	int frameCount() const { return m_frameCount; }
 	void setFrameCount(int frameCount);
 
-	bool isManualMode() { return m_manualMode; }
-	void setManualMode(bool manualMode) { m_manualMode = manualMode; }
-
 	uint8_t localUserId() const;
 
 	int getAvailableTrackId() const;
@@ -65,7 +62,6 @@ private:
 	static TimelineKeyFrame
 	keyFrameToModel(const drawdance::KeyFrame &kf, int frameIndex);
 
-	bool m_manualMode;
 	CanvasModel *m_canvas;
 	QVector<TimelineTrack> m_tracks;
 	int m_frameCount;

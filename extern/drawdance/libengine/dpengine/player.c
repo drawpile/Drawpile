@@ -1387,7 +1387,7 @@ static bool write_index_metadata(DP_BuildIndexEntryContext *e)
             output, DP_OUTPUT_INT32(DP_document_metadata_dpix(dm)),
             DP_OUTPUT_INT32(DP_document_metadata_dpiy(dm)),
             DP_OUTPUT_INT32(DP_document_metadata_framerate(dm)),
-            DP_OUTPUT_UINT8(DP_document_metadata_use_timeline(dm)))) {
+            DP_OUTPUT_INT32(DP_document_metadata_frame_count(dm)))) {
         return false;
     }
 
@@ -2120,20 +2120,18 @@ static bool read_index_metadata(DP_ReadSnapshotContext *c, size_t offset)
 {
     DP_debug("Read document metadata at offset %zu", offset);
     DP_BufferedInput *input = c->input;
-    int dpix, dpiy, framerate;
-    uint8_t use_timeline;
+    int dpix, dpiy, framerate, frame_count;
     bool ok = DP_buffered_input_seek(input, offset)
            && READ_INDEX(input, int32, dpix) && READ_INDEX(input, int32, dpiy)
            && READ_INDEX(input, int32, framerate)
-           && READ_INDEX(input, uint8, use_timeline);
+           && READ_INDEX(input, int32, frame_count);
     if (ok) {
         DP_TransientDocumentMetadata *tdm =
             DP_transient_canvas_state_transient_metadata(c->tcs);
         DP_transient_document_metadata_dpix_set(tdm, dpix);
         DP_transient_document_metadata_dpiy_set(tdm, dpiy);
         DP_transient_document_metadata_framerate_set(tdm, framerate);
-        DP_transient_document_metadata_use_timeline_set(
-            tdm, use_timeline == 0 ? false : true);
+        DP_transient_document_metadata_frame_count_set(tdm, frame_count);
         return true;
     }
     else {

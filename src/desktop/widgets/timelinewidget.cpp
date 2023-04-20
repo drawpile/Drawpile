@@ -56,7 +56,6 @@ struct TimelineWidget::Private {
 	int nextTrackId = 0;
 	Target hoverTarget = {-1, 0, -1, nullptr};
 	bool editable = false;
-	bool modeEditable = false;
 	Drag drag = Drag::None;
 	Drag dragHover = Drag::None;
 	Qt::DropAction dropAction;
@@ -252,7 +251,6 @@ void TimelineWidget::setActions(const Actions &actions)
 		menu->addAction(actions.trackVisible);
 		menu->addAction(actions.trackOnionSkin);
 		menu->addSeparator();
-		menu->addAction(actions.manualModeSet);
 		menu->addAction(actions.frameCountSet);
 		menu->addAction(actions.framerateSet);
 		menu->addSeparator();
@@ -292,9 +290,6 @@ void TimelineWidget::setActions(const Actions &actions)
 		actions.trackDelete, &QAction::triggered, this,
 		&TimelineWidget::deleteTrack);
 	connect(
-		actions.manualModeSet, &QAction::triggered, this,
-		&TimelineWidget::toggleManualMode);
-	connect(
 		actions.frameCountSet, &QAction::triggered, this,
 		&TimelineWidget::setFrameCount);
 	connect(
@@ -332,11 +327,9 @@ void TimelineWidget::setCurrentLayer(int layerId)
 	updateActions();
 }
 
-void TimelineWidget::updateControlsEnabled(
-	bool access, bool compatibilityMode, bool manualMode)
+void TimelineWidget::updateControlsEnabled(bool access, bool compatibilityMode)
 {
-	d->editable = access && !compatibilityMode && manualMode;
-	d->modeEditable = access && !compatibilityMode;
+	d->editable = access && !compatibilityMode;
 	updateActions();
 	update();
 }
@@ -1016,15 +1009,6 @@ void TimelineWidget::deleteTrack()
 	});
 }
 
-void TimelineWidget::toggleManualMode(bool manualMode)
-{
-	emitCommand([&](uint8_t contextId) {
-		return drawdance::Message::makeSetMetadataInt(
-			contextId, DP_MSG_SET_METADATA_INT_FIELD_USE_TIMELINE,
-			manualMode ? 1 : 0);
-	});
-}
-
 void TimelineWidget::setFrameCount()
 {
 	bool ok;
@@ -1163,9 +1147,6 @@ void TimelineWidget::updateActions()
 	if(!d->haveActions || !d->model) {
 		return;
 	}
-
-	setCheckedSignalBlocked(d->actions.manualModeSet, d->model->isManualMode());
-	d->actions.manualModeSet->setEnabled(d->modeEditable);
 
 	bool timelineEditable = d->editable;
 	d->actions.frameCountSet->setEnabled(timelineEditable);

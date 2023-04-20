@@ -749,7 +749,6 @@ SetMetadataInt:
               - Dpix
               - Dpiy
               - Framerate
-              - UseTimeline
               - FrameCount
         - value i32
 

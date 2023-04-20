@@ -303,25 +303,19 @@ DP_DocumentMetadata *DP_canvas_state_metadata_noinc(DP_CanvasState *cs)
     return cs->metadata;
 }
 
-bool DP_canvas_state_use_timeline(DP_CanvasState *cs)
+int DP_canvas_state_frame_count(DP_CanvasState *cs)
 {
     DP_ASSERT(cs);
     DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
-    return DP_document_metadata_use_timeline(cs->metadata);
-}
-
-int DP_canvas_state_frame_count(DP_CanvasState *cs)
-{
-    return DP_canvas_state_use_timeline(cs)
-             ? DP_document_metadata_frame_count(cs->metadata)
-             : DP_layer_list_count(cs->layers);
+    return DP_document_metadata_frame_count(cs->metadata);
 }
 
 bool DP_canvas_state_same_frame(DP_CanvasState *cs, int frame_index_a,
                                 int frame_index_b)
 {
-    return DP_canvas_state_use_timeline(cs)
-        && DP_timeline_same_frame(DP_canvas_state_timeline_noinc(cs),
+    DP_ASSERT(cs);
+    DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
+    return DP_timeline_same_frame(DP_canvas_state_timeline_noinc(cs),
                                   frame_index_a, frame_index_b);
 }
 
@@ -882,9 +876,6 @@ static DP_CanvasState *handle_set_metadata_int(DP_CanvasState *cs,
         break;
     case DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE:
         set_field = DP_transient_document_metadata_framerate_set;
-        break;
-    case DP_MSG_SET_METADATA_INT_FIELD_USE_TIMELINE:
-        set_field = DP_transient_document_metadata_use_timeline_set;
         break;
     case DP_MSG_SET_METADATA_INT_FIELD_FRAME_COUNT:
         set_field = DP_transient_document_metadata_frame_count_set;

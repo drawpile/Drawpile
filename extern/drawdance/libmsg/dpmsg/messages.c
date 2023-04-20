@@ -7274,8 +7274,6 @@ const char *DP_msg_set_metadata_int_field_variant_name(unsigned int value)
         return "Dpiy";
     case DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE:
         return "Framerate";
-    case DP_MSG_SET_METADATA_INT_FIELD_USE_TIMELINE:
-        return "UseTimeline";
     case DP_MSG_SET_METADATA_INT_FIELD_FRAME_COUNT:
         return "FrameCount";
     default:

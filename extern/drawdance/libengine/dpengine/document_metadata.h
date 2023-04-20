@@ -61,8 +61,6 @@ int DP_document_metadata_framerate(DP_DocumentMetadata *dm);
 
 int DP_document_metadata_frame_count(DP_DocumentMetadata *dm);
 
-bool DP_document_metadata_use_timeline(DP_DocumentMetadata *dm);
-
 
 DP_TransientDocumentMetadata *
 DP_transient_document_metadata_new(DP_DocumentMetadata *dm);
@@ -83,9 +81,7 @@ int DP_transient_document_metadata_dpiy(DP_TransientDocumentMetadata *tdm);
 
 int DP_transient_document_metadata_framerate(DP_TransientDocumentMetadata *tdm);
 
-int DP_transient_document_metadata_frame_count(DP_TransientDocumentMetadata *dm);
-
-bool DP_transient_document_metadata_use_timeline(
+int DP_transient_document_metadata_frame_count(
     DP_TransientDocumentMetadata *tdm);
 
 void DP_transient_document_metadata_dpix_set(DP_TransientDocumentMetadata *tdm,

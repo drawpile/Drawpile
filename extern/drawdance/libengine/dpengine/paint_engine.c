@@ -1963,12 +1963,10 @@ static DP_CanvasState *apply_inspect(DP_PaintEngine *pe, DP_CanvasState *cs)
 }
 
 
-// Only grab the timeline if we're in a view mode where that's relevant and
-// we're not dealing with an automatic timeline, where the layers act as frames.
+// Only grab the timeline if we're in a view mode where that's relevant.
 static DP_Timeline *maybe_get_timeline(DP_CanvasState *cs, DP_ViewMode vm)
 {
-    bool want_timeline =
-        vm == DP_VIEW_MODE_FRAME && DP_canvas_state_use_timeline(cs);
+    bool want_timeline = vm == DP_VIEW_MODE_FRAME;
     return want_timeline ? DP_canvas_state_timeline_noinc(cs) : NULL;
 }
 

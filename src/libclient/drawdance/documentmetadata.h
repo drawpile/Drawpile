@@ -25,7 +25,6 @@ public:
     int dpix() const;
     int dpiy() const;
     int framerate() const;
-    bool useTimeline() const;
     int frameCount() const;
 
 private:

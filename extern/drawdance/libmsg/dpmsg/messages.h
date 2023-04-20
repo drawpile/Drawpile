@@ -1948,11 +1948,10 @@ size_t DP_msg_move_rect_mask_size(const DP_MsgMoveRect *mmr);
 
 #define DP_MSG_SET_METADATA_INT_STATIC_LENGTH 5
 
-#define DP_MSG_SET_METADATA_INT_FIELD_DPIX         0
-#define DP_MSG_SET_METADATA_INT_FIELD_DPIY         1
-#define DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE    2
-#define DP_MSG_SET_METADATA_INT_FIELD_USE_TIMELINE 3
-#define DP_MSG_SET_METADATA_INT_FIELD_FRAME_COUNT  4
+#define DP_MSG_SET_METADATA_INT_FIELD_DPIX        0
+#define DP_MSG_SET_METADATA_INT_FIELD_DPIY        1
+#define DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE   2
+#define DP_MSG_SET_METADATA_INT_FIELD_FRAME_COUNT 3
 
 const char *DP_msg_set_metadata_int_field_variant_name(unsigned int value);
 

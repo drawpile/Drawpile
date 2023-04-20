@@ -34,8 +34,8 @@ static void dump_metadata(DP_Output *output, DP_CanvasHistory *ch,
     DP_output_format(output, "dpiy: %d\n", DP_document_metadata_dpiy(dm));
     DP_output_format(output, "framerate: %d\n",
                      DP_document_metadata_framerate(dm));
-    DP_output_format(output, "use_timeline: %s\n",
-                     DP_document_metadata_use_timeline(dm) ? "true" : "false");
+    DP_output_format(output, "frame_count: %d\n",
+                     DP_document_metadata_frame_count(dm));
     DP_output_write(output, "\n", 1);
 
     DP_output_flush(output);
@@ -73,8 +73,8 @@ static void handle_metadata(DP_Output *output, DP_CanvasHistory *ch,
 
     add_undo_point(output, ch, dc);
     add_handle_metadata_int(output, ch, dc,
-                            DP_MSG_SET_METADATA_INT_FIELD_USE_TIMELINE, 1);
-    dump_metadata(output, ch, "enable timeline");
+                            DP_MSG_SET_METADATA_INT_FIELD_FRAME_COUNT, 99);
+    dump_metadata(output, ch, "set frame count of 99");
 
     add_undo_point(output, ch, dc);
     add_handle_metadata_int(output, ch, dc, DP_MSG_SET_METADATA_INT_FIELD_DPIX,
@@ -84,7 +84,7 @@ static void handle_metadata(DP_Output *output, DP_CanvasHistory *ch,
     add_handle_metadata_int(output, ch, dc,
                             DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE, 120);
     add_handle_metadata_int(output, ch, dc,
-                            DP_MSG_SET_METADATA_INT_FIELD_USE_TIMELINE, 0);
+                            DP_MSG_SET_METADATA_INT_FIELD_FRAME_COUNT, 1);
     dump_metadata(output, ch, "set all metadata at once");
 
     add_undo(output, ch, dc);
