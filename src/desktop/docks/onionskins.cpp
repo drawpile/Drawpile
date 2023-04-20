@@ -121,18 +121,17 @@ OnionSkinsDock::OnionSkinsDock(const QString &title, QWidget *parent)
 	setTitleBarWidget(titlebar);
 
 	titlebar->addStretch();
-	QLabel *belowLabel = new QLabel{titlebar};
-	belowLabel->setText(tr("Tint Below: "));
-	titlebar->addCustomWidget(belowLabel);
 	d->belowPreview = new ColorPreview{titlebar};
 	d->belowPreview->setDisplayMode(ColorPreview::DisplayMode::AllAlpha);
+	d->belowPreview->setMinimumWidth(24);
+	d->belowPreview->setToolTip(tr("Tint Below"));
 	titlebar->addCustomWidget(d->belowPreview);
 	connect(d->belowPreview, &ColorPreview::clicked, [this]() {
 		showColorPicker(d->belowPreview->color(), [this](QColor color) {
 			d->belowPreview->setColor(color);
 		});
 	});
-	titlebar->addSpace(24);
+	titlebar->addStretch();
 
 	QLabel *frameCountLabel = new QLabel{titlebar};
 	frameCountLabel->setText(tr("Frames: "));
@@ -141,12 +140,11 @@ OnionSkinsDock::OnionSkinsDock(const QString &title, QWidget *parent)
 	d->frameCountSpinner->setRange(FRAME_COUNT_MIN, FRAME_COUNT_MAX);
 	titlebar->addCustomWidget(d->frameCountSpinner);
 
-	titlebar->addSpace(24);
-	QLabel *aboveLabel = new QLabel{titlebar};
-	aboveLabel->setText(tr("Tint Above: "));
-	titlebar->addCustomWidget(aboveLabel);
+	titlebar->addStretch();
 	d->abovePreview = new ColorPreview{titlebar};
 	d->abovePreview->setDisplayMode(ColorPreview::DisplayMode::AllAlpha);
+	d->abovePreview->setMinimumWidth(24);
+	d->abovePreview->setToolTip(tr("Tint Above"));
 	titlebar->addCustomWidget(d->abovePreview);
 	connect(d->abovePreview, &ColorPreview::clicked, [this]() {
 		showColorPicker(d->abovePreview->color(), [this](QColor color) {
