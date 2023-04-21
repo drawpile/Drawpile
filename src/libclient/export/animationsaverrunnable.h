@@ -7,7 +7,6 @@ extern "C" {
 #include <dpengine/save.h>
 }
 
-#include "libclient/drawdance/viewmode.h"
 #include <QObject>
 #include <QRunnable>
 
@@ -21,7 +20,7 @@ class AnimationSaverRunnable final : public QObject, public QRunnable
 	Q_OBJECT
 public:
 	using SaveFn = DP_SaveResult (*)(
-		DP_CanvasState *, DP_ViewModeBuffer *, const char *, DP_SaveAnimationProgressFn, void *);
+		DP_CanvasState *, const char *, DP_SaveAnimationProgressFn, void *);
 
 	AnimationSaverRunnable(const canvas::PaintEngine *pe, SaveFn saveFn, const QString &filename, QObject *parent = nullptr);
 
@@ -36,7 +35,6 @@ signals:
 
 private:
 	const canvas::PaintEngine *m_pe;
-	drawdance::ViewModeBuffer m_vmb;
 	QString m_filename;
 	SaveFn m_saveFn;
 	bool m_cancelled;

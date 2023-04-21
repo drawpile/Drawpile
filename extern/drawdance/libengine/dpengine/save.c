@@ -41,6 +41,7 @@
 #include <dpcommon/atomic.h>
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
+#include <dpcommon/file.h>
 #include <dpcommon/output.h>
 #include <dpcommon/perf.h>
 #include <dpcommon/threading.h>
@@ -764,7 +765,7 @@ static const char *get_path_separator(const char *path)
 
 struct DP_SaveFrameContext {
     DP_CanvasState *cs;
-    DP_ViewModeBuffer *vmb;
+    DP_ViewModeBuffer **vmbs;
     int frame_count;
     const char *path;
     const char *separator;
@@ -777,8 +778,18 @@ struct DP_SaveFrameContext {
 
 struct DP_SaveFrameJobParams {
     struct DP_SaveFrameContext *c;
-    int frame_index;
+    int count;
+    int frames[];
 };
+
+static DP_ViewModeBuffer *
+get_frame_view_mode_buffer(struct DP_SaveFrameContext *c, int thread_index)
+{
+    if (!c->vmbs[thread_index]) {
+        c->vmbs[thread_index] = DP_view_mode_buffer_new();
+    }
+    return c->vmbs[thread_index];
+}
 
 static void set_error_result(struct DP_SaveFrameContext *c,
                              DP_SaveResult result)
@@ -789,16 +800,34 @@ static void set_error_result(struct DP_SaveFrameContext *c,
     }
 }
 
-static void save_frame(struct DP_SaveFrameContext *c, int frame_index)
+static char *format_frame_path(struct DP_SaveFrameContext *c, int frame_index)
+{
+    return DP_format("%s%sframe-%03d.png", c->path, c->separator,
+                     frame_index + 1);
+}
+
+static char *save_frame(struct DP_SaveFrameContext *c, DP_ViewModeBuffer *vmb,
+                        int frame_index)
 {
     DP_CanvasState *cs = c->cs;
-    char *path =
-        DP_format("%s%sframe-%03d.png", c->path, c->separator, frame_index + 1);
+    char *path = format_frame_path(c, frame_index);
     DP_SaveResult result = save_flat_image(
         cs, path, save_png,
-        DP_view_mode_filter_make_frame(c->vmb, cs, frame_index, NULL));
+        DP_view_mode_filter_make_frame(vmb, cs, frame_index, NULL));
     set_error_result(c, result);
-    DP_free(path);
+    return path;
+}
+
+static void copy_frame(struct DP_SaveFrameContext *c, char *source_path,
+                       int frame_index)
+{
+    char *target_path = format_frame_path(c, frame_index);
+    if (!DP_file_copy(source_path, target_path)) {
+        DP_warn("Error copying frame from '%s' to '%s': %s", source_path,
+                target_path, DP_error());
+        set_error_result(c, DP_SAVE_RESULT_WRITE_ERROR);
+    }
+    DP_free(target_path);
 }
 
 static void report_progress(struct DP_SaveFrameContext *c)
@@ -817,20 +846,34 @@ static void report_progress(struct DP_SaveFrameContext *c)
     }
 }
 
-static void save_frame_job(void *element, DP_UNUSED int thread_index)
+static void save_frame_job(void *element, int thread_index)
 {
-    struct DP_SaveFrameJobParams *params = element;
+    struct DP_SaveFrameJobParams *params =
+        *(struct DP_SaveFrameJobParams **)element;
     struct DP_SaveFrameContext *c = params->c;
     if (DP_atomic_get(&c->result) == DP_SAVE_RESULT_SUCCESS) {
-        save_frame(c, params->frame_index);
+        DP_ViewModeBuffer *vmb = get_frame_view_mode_buffer(c, thread_index);
+        // Render and save the first frame given.
+        int first_frame = params->frames[0];
+        char *path = save_frame(c, vmb, first_frame);
         report_progress(c);
+        // Subsequent frames are the same, so just copy the files.
+        int count = params->count;
+        for (int i = 1; i < count; ++i) {
+            if (DP_atomic_get(&c->result) == DP_SAVE_RESULT_SUCCESS) {
+                copy_frame(c, path, params->frames[i]);
+                report_progress(c);
+            }
+        }
+        DP_free(path);
     }
+    DP_free(params);
 }
 
 static DP_SaveResult
-save_animation_frames(DP_CanvasState *cs, DP_ViewModeBuffer *vmb,
-                      const char *path, DP_SaveAnimationProgressFn progress_fn,
-                      void *user, int frame_count)
+save_animation_frames(DP_CanvasState *cs, const char *path,
+                      DP_SaveAnimationProgressFn progress_fn, void *user,
+                      int frame_count)
 {
     if (frame_count == 0) {
         return DP_SAVE_RESULT_SUCCESS;
@@ -848,16 +891,17 @@ save_animation_frames(DP_CanvasState *cs, DP_ViewModeBuffer *vmb,
     }
 
     DP_Worker *worker = DP_worker_new(DP_int_to_size(frame_count),
-                                      sizeof(struct DP_SaveFrameJobParams),
+                                      sizeof(struct DP_SaveFrameJobParams *),
                                       DP_thread_cpu_count(), save_frame_job);
     if (!worker) {
         DP_mutex_free(progress_mutex);
         return DP_SAVE_RESULT_INTERNAL_ERROR;
     }
 
+    int thread_count = DP_worker_thread_count(worker);
     struct DP_SaveFrameContext c = {
         cs,
-        vmb,
+        DP_malloc_zeroed(sizeof(*c.vmbs) * DP_int_to_size(thread_count)),
         frame_count,
         path,
         get_path_separator(path),
@@ -868,28 +912,61 @@ save_animation_frames(DP_CanvasState *cs, DP_ViewModeBuffer *vmb,
         0,
     };
 
-    // TODO: re-use identical frames
+    int *frames = DP_malloc(sizeof(*frames) * DP_int_to_size(frame_count));
     for (int i = 0; i < frame_count; ++i) {
-        struct DP_SaveFrameJobParams params = {&c, i};
-        DP_worker_push(worker, &params);
+        frames[i] = i;
     }
 
+    int frames_left = frame_count;
+    while (frames_left != 0) {
+        // Collect same frames into a single job by swapping them to the front.
+        int first_frame = frames[0];
+        int count = 1;
+        for (int i = 1; i < frames_left; ++i) {
+            int frame = frames[i];
+            if (DP_canvas_state_same_frame(cs, first_frame, frame)) {
+                frames[i] = frames[count];
+                frames[count] = frame;
+                ++count;
+            }
+        }
+
+        size_t scount = DP_int_to_size(count);
+        size_t size = scount * sizeof(*frames);
+        struct DP_SaveFrameJobParams *params = DP_malloc(
+            DP_FLEX_SIZEOF(struct DP_SaveFrameJobParams, frames, scount));
+        params->c = &c;
+        params->count = count;
+        memcpy(params->frames, frames, size);
+        DP_worker_push(worker, &params);
+
+        frames_left -= count;
+        memmove(frames, frames + count,
+                DP_int_to_size(frames_left) * sizeof(*frames));
+    }
+
+    DP_free(frames);
     DP_worker_free_join(worker);
     DP_mutex_free(progress_mutex);
+
+    for (int i = 0; i < thread_count; ++i) {
+        DP_view_mode_buffer_free(c.vmbs[i]);
+    }
+    DP_free(c.vmbs);
+
     return (DP_SaveResult)DP_atomic_get(&c.result);
 }
 
-DP_SaveResult DP_save_animation_frames(DP_CanvasState *cs,
-                                       DP_ViewModeBuffer *vmb, const char *path,
+DP_SaveResult DP_save_animation_frames(DP_CanvasState *cs, const char *path,
                                        DP_SaveAnimationProgressFn progress_fn,
                                        void *user)
 {
-    if (cs && vmb && path) {
+    if (cs && path) {
         int frame_count = DP_canvas_state_frame_count(cs);
         DP_PERF_BEGIN_DETAIL(fn, "animation_frames", "frame_count=%d,path=%s",
                              frame_count, path);
-        DP_SaveResult result = save_animation_frames(cs, vmb, path, progress_fn,
-                                                     user, frame_count);
+        DP_SaveResult result =
+            save_animation_frames(cs, path, progress_fn, user, frame_count);
         DP_PERF_END(fn);
         return result;
     }
@@ -921,9 +998,7 @@ static bool report_gif_progress(DP_SaveAnimationProgressFn progress_fn,
     return !progress_fn || progress_fn(user, part / total);
 }
 
-static DP_SaveResult save_animation_gif(DP_CanvasState *cs,
-                                        DP_ViewModeBuffer *vmb,
-                                        const char *path,
+static DP_SaveResult save_animation_gif(DP_CanvasState *cs, const char *path,
                                         DP_SaveAnimationProgressFn progress_fn,
                                         void *user, int frame_count)
 {
@@ -951,6 +1026,7 @@ static DP_SaveResult save_animation_gif(DP_CanvasState *cs,
         return DP_SAVE_RESULT_CANCEL;
     }
 
+    DP_ViewModeBuffer *vmb = DP_view_mode_buffer_new();
     double centiseconds_per_frame = get_gif_centiseconds_per_frame(cs);
     double delay_frac = 0.0;
     for (int i = 0; i < frame_count; ++i) {
@@ -975,15 +1051,18 @@ static DP_SaveResult save_animation_gif(DP_CanvasState *cs,
         if (!frame_ok) {
             jo_gifx_abort(gif);
             DP_output_free(output);
+            DP_view_mode_buffer_free(vmb);
             return DP_SAVE_RESULT_WRITE_ERROR;
         }
 
         if (!report_gif_progress(progress_fn, user, i + 1, frame_count)) {
             jo_gifx_abort(gif);
             DP_output_free(output);
+            DP_view_mode_buffer_free(vmb);
             return DP_SAVE_RESULT_CANCEL;
         }
     }
+    DP_view_mode_buffer_free(vmb);
 
     if (!jo_gifx_end(write_gif, output, gif) || !DP_output_flush(output)) {
         DP_output_free(output);
@@ -994,17 +1073,16 @@ static DP_SaveResult save_animation_gif(DP_CanvasState *cs,
     return DP_SAVE_RESULT_SUCCESS;
 }
 
-DP_SaveResult DP_save_animation_gif(DP_CanvasState *cs, DP_ViewModeBuffer *vmb,
-                                    const char *path,
+DP_SaveResult DP_save_animation_gif(DP_CanvasState *cs, const char *path,
                                     DP_SaveAnimationProgressFn progress_fn,
                                     void *user)
 {
-    if (cs && vmb && path) {
+    if (cs && path) {
         int frame_count = DP_canvas_state_frame_count(cs);
         DP_PERF_BEGIN_DETAIL(fn, "animation_gif", "frame_count=%d,path=%s",
                              frame_count, path);
         DP_SaveResult result =
-            save_animation_gif(cs, vmb, path, progress_fn, user, frame_count);
+            save_animation_gif(cs, path, progress_fn, user, frame_count);
         DP_PERF_END(fn);
         return result;
     }

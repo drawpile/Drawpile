@@ -31,6 +31,8 @@ void *DP_file_slurp(const char *path, size_t *out_length);
 
 bool DP_file_exists(const char *path);
 
+bool DP_file_copy(const char *source_path, const char *target_path);
+
 char *DP_file_path_unique(const char *path, int max,
                           DP_FilePathUniqueAcceptFn accept, void *user);
 
