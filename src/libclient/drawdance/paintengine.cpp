@@ -38,12 +38,14 @@ DP_PaintEngine *PaintEngine::get()
 	return m_data;
 }
 
-void PaintEngine::reset(
+MessageList PaintEngine::reset(
 	AclState &acls, SnapshotQueue &sq, uint8_t localUserId,
 	DP_PaintEnginePlaybackFn playbackFn,
 	DP_PaintEngineDumpPlaybackFn dumpPlaybackFn, void *playbackUser,
 	const CanvasState &canvasState, DP_Player *player)
 {
+	MessageList localResetImage;
+	DP_paint_engine_local_state_reset_image_build(m_data, pushResetMessage, &localResetImage);
 	bool wantCanvasHistoryDump = DP_paint_engine_want_canvas_history_dump(m_data);
 	DP_paint_engine_free_join(m_data);
 	acls.reset(localUserId);
@@ -52,6 +54,7 @@ void PaintEngine::reset(
 		wantCanvasHistoryDump, getDumpDir().toUtf8().constData(),
 		&PaintEngine::getTimeMs, nullptr, player, playbackFn, dumpPlaybackFn,
 		playbackUser);
+	return localResetImage;
 }
 
 int PaintEngine::renderThreadCount() const
@@ -79,34 +82,14 @@ int PaintEngine::activeLayerId()
 	return DP_paint_engine_active_layer_id(m_data);
 }
 
-void PaintEngine::setActiveLayerId(int layerId)
-{
-	DP_paint_engine_active_layer_id_set(m_data, layerId);
-}
-
 int PaintEngine::activeFrameIndex()
 {
 	return DP_paint_engine_active_frame_index(m_data);
 }
 
-void PaintEngine::setActiveFrameIndex(int frameIndex)
-{
-	DP_paint_engine_active_frame_index_set(m_data, frameIndex);
-}
-
 DP_ViewMode PaintEngine::viewMode()
 {
 	return DP_paint_engine_view_mode(m_data);
-}
-
-void PaintEngine::setViewMode(DP_ViewMode vm)
-{
-	DP_paint_engine_view_mode_set(m_data, vm);
-}
-
-void PaintEngine::setOnionSkins(const DP_OnionSkins *oss)
-{
-	DP_paint_engine_onion_skins_set(m_data, oss);
 }
 
 bool PaintEngine::revealCensored() const
@@ -399,6 +382,12 @@ void PaintEngine::pushMessage(void *user, DP_Message *msg)
 {
 	MessageList *outMsgs = static_cast<MessageList *>(user);
 	outMsgs->append(drawdance::Message::noinc(msg));
+}
+
+bool PaintEngine::pushResetMessage(void *user, DP_Message *msg)
+{
+	pushMessage(user, msg);
+	return true;
 }
 
 bool PaintEngine::shouldSnapshot(void *user)

@@ -373,6 +373,27 @@ Message Message::makeLocalChangeBackgroundClear()
     return Message{DP_local_state_msg_background_tile_new(nullptr, nullptr)};
 }
 
+
+Message Message::makeLocalChangeViewMode(DP_ViewMode viewMode)
+{
+    return Message{DP_local_state_msg_view_mode_new(viewMode)};
+}
+
+Message Message::makeLocalChangeActiveLayer(int layerId)
+{
+    return Message{DP_local_state_msg_active_layer_new(layerId)};
+}
+
+Message Message::makeLocalChangeActiveFrame(int frameIndex)
+{
+    return Message{DP_local_state_msg_active_frame_new(frameIndex)};
+}
+
+Message Message::makeLocalChangeOnionSkins(const DP_OnionSkins *oss)
+{
+    return Message{DP_local_state_msg_onion_skins_new(oss)};
+}
+
 Message Message::makeLocalChangeTrackVisibility(int trackId, bool hidden)
 {
     return Message{DP_local_state_msg_track_visibility_new(trackId, hidden)};

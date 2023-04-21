@@ -163,10 +163,6 @@ struct DP_PaintEngine {
     DP_CanvasState *view_cs;
     DP_LocalState *local_state;
     struct {
-        int active_layer_id;
-        int active_frame_index;
-        DP_ViewMode view_mode;
-        const DP_OnionSkins *onion_skins;
         bool reveal_censored;
         unsigned int inspect_context_id;
         struct {
@@ -626,9 +622,8 @@ static DP_TransientTile *flatten_tile(DP_PaintEngine *pe,
     DP_CanvasState *cs = pe->view_cs;
     DP_TransientTile *tt = DP_transient_tile_new_nullable(
         DP_canvas_state_background_tile_noinc(cs), 0);
-    DP_ViewModeFilter vmf = DP_view_mode_filter_make(
-        vmb, pe->local_view.view_mode, cs, pe->local_view.active_layer_id,
-        pe->local_view.active_frame_index, pe->local_view.onion_skins);
+    DP_ViewModeFilter vmf =
+        DP_local_state_view_mode_filter_make(pe->local_state, vmb, cs);
     DP_canvas_state_flatten_tile_to(cs, tile_index, tt, true, &vmf);
 
     if (needs_checkers) {
@@ -674,35 +669,25 @@ static void invalidate_local_view(DP_PaintEngine *pe, bool check_all)
     }
 }
 
-static void local_layer_visibility_changed(void *user, int layer_id)
+static void local_view_invalidated(void *user, bool check_all, int layer_id)
 {
     DP_PaintEngine *pe = user;
-    DP_CanvasState *cs = pe->view_cs;
-    DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
-    DP_LayerRoutesEntry *lre = DP_layer_routes_search(lr, layer_id);
-    if (lre) {
-        if (DP_layer_routes_entry_is_group(lre)) {
-            DP_LayerGroup *lg = DP_layer_routes_entry_group(lre, cs);
-            DP_layer_group_diff_mark(lg, pe->diff);
-        }
-        else {
-            DP_LayerContent *lc = DP_layer_routes_entry_content(lre, cs);
-            DP_layer_content_diff_mark(lc, pe->diff);
+    if (layer_id != 0) {
+        DP_CanvasState *cs = pe->view_cs;
+        DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
+        DP_LayerRoutesEntry *lre = DP_layer_routes_search(lr, layer_id);
+        if (lre) {
+            if (DP_layer_routes_entry_is_group(lre)) {
+                DP_LayerGroup *lg = DP_layer_routes_entry_group(lre, cs);
+                DP_layer_group_diff_mark(lg, pe->diff);
+            }
+            else {
+                DP_LayerContent *lc = DP_layer_routes_entry_content(lre, cs);
+                DP_layer_content_diff_mark(lc, pe->diff);
+            }
         }
     }
-    invalidate_local_view(pe, false);
-}
-
-static void local_background_tile_changed(void *user)
-{
-    DP_PaintEngine *pe = user;
-    invalidate_local_view(pe, false);
-}
-
-static void local_track_state_changed(void *user, DP_UNUSED int track_id)
-{
-    DP_PaintEngine *pe = user;
-    invalidate_local_view(pe, pe->local_view.view_mode == DP_VIEW_MODE_FRAME);
+    invalidate_local_view(pe, check_all);
 }
 
 DP_PaintEngine *DP_paint_engine_new_inc(
@@ -727,13 +712,8 @@ DP_PaintEngine *DP_paint_engine_new_inc(
         (DP_Pixel15){DP_BIT15, DP_BIT15, DP_BIT15, DP_BIT15});
     pe->history_cs = DP_canvas_state_new();
     pe->view_cs = DP_canvas_state_incref(pe->history_cs);
-    pe->local_state = DP_local_state_new(
-        cs_or_null, local_layer_visibility_changed,
-        local_background_tile_changed, local_track_state_changed, pe);
-    pe->local_view.active_layer_id = 0;
-    pe->local_view.active_frame_index = 0;
-    pe->local_view.view_mode = DP_VIEW_MODE_NORMAL;
-    pe->local_view.onion_skins = NULL;
+    pe->local_state =
+        DP_local_state_new(cs_or_null, local_view_invalidated, pe);
     pe->local_view.reveal_censored = false;
     pe->local_view.inspect_context_id = 0;
     pe->local_view.layers.prev_lpl = NULL;
@@ -887,63 +867,30 @@ void DP_paint_engine_want_canvas_history_dump_set(DP_PaintEngine *pe,
 }
 
 
+bool DP_paint_engine_local_state_reset_image_build(
+    DP_PaintEngine *pe, DP_LocalStateAcceptResetMessageFn fn, void *user)
+{
+    DP_ASSERT(pe);
+    return DP_local_state_reset_image_build(pe->local_state, pe->preview_dc, fn,
+                                            user);
+}
+
 int DP_paint_engine_active_layer_id(DP_PaintEngine *pe)
 {
     DP_ASSERT(pe);
-    return pe->local_view.active_layer_id;
-}
-
-void DP_paint_engine_active_layer_id_set(DP_PaintEngine *pe, int layer_id)
-{
-    DP_ASSERT(pe);
-    if (pe->local_view.active_layer_id != layer_id) {
-        pe->local_view.active_layer_id = layer_id;
-        if (pe->local_view.view_mode != DP_VIEW_MODE_NORMAL) {
-            invalidate_local_view(pe, true);
-        }
-    }
+    return DP_local_state_active_layer_id(pe->local_state);
 }
 
 int DP_paint_engine_active_frame_index(DP_PaintEngine *pe)
 {
     DP_ASSERT(pe);
-    return pe->local_view.active_frame_index;
-}
-
-void DP_paint_engine_active_frame_index_set(DP_PaintEngine *pe, int frame_index)
-{
-    DP_ASSERT(pe);
-    if (pe->local_view.active_frame_index != frame_index) {
-        pe->local_view.active_frame_index = frame_index;
-        if (pe->local_view.view_mode == DP_VIEW_MODE_FRAME) {
-            invalidate_local_view(pe, true);
-        }
-    }
+    return DP_local_state_active_frame_index(pe->local_state);
 }
 
 DP_ViewMode DP_paint_engine_view_mode(DP_PaintEngine *pe)
 {
     DP_ASSERT(pe);
-    return pe->local_view.view_mode;
-}
-
-void DP_paint_engine_view_mode_set(DP_PaintEngine *pe, DP_ViewMode vm)
-{
-    DP_ASSERT(pe);
-    if (pe->local_view.view_mode != vm) {
-        pe->local_view.view_mode = vm;
-        invalidate_local_view(pe, true);
-    }
-}
-
-void DP_paint_engine_onion_skins_set(DP_PaintEngine *pe,
-                                     const DP_OnionSkins *oss_or_null)
-{
-    DP_ASSERT(pe);
-    if (pe->local_view.onion_skins != oss_or_null) {
-        pe->local_view.onion_skins = oss_or_null;
-        invalidate_local_view(pe, true);
-    }
+    return DP_local_state_view_mode(pe->local_state);
 }
 
 bool DP_paint_engine_reveal_censored(DP_PaintEngine *pe)
@@ -2074,7 +2021,7 @@ static DP_CanvasState *set_local_layer_props(DP_PaintEngine *pe,
 static DP_CanvasState *apply_local_layer_props(DP_PaintEngine *pe,
                                                DP_CanvasState *cs)
 {
-    DP_ViewMode vm = pe->local_view.view_mode;
+    DP_ViewMode vm = DP_local_state_view_mode(pe->local_state);
     DP_LayerPropsList *lpl = DP_canvas_state_layer_props_noinc(cs);
     DP_Timeline *tl = maybe_get_timeline(cs, vm);
     // This function here may replace the layer props entirely, so there can't

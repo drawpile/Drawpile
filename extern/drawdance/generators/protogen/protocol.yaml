@@ -316,6 +316,10 @@ LocalChange:
           variants:
               - LayerVisibility
               - BackgroundTile
+              - ViewMode
+              - ActiveLayer
+              - ActiveFrame
+              - OnionSkins
               - TrackVisibility
               - TrackOnionSkin
         - body bytes

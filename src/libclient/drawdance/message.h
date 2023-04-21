@@ -5,11 +5,13 @@
 
 extern "C" {
 #include <dpmsg/message.h>
+#include <dpengine/view_mode.h>
 }
 
 #include <QRect>
 #include <QVector>
 
+struct DP_OnionSkins;
 struct DP_Message;
 
 class QByteArray;
@@ -87,6 +89,10 @@ public:
     static Message makeLocalChangeLayerVisibility(int layerId, bool hidden);
     static Message makeLocalChangeBackgroundColor(const QColor &color);
     static Message makeLocalChangeBackgroundClear();
+    static Message makeLocalChangeViewMode(DP_ViewMode viewMode);
+    static Message makeLocalChangeActiveLayer(int layerId);
+    static Message makeLocalChangeActiveFrame(int frameIndex);
+    static Message makeLocalChangeOnionSkins(const DP_OnionSkins *oss);
     static Message makeLocalChangeTrackVisibility(int trackId, bool hidden);
     static Message makeLocalChangeTrackOnionSkin(int trackId, bool onionSkin);
 
