@@ -154,10 +154,10 @@ static DP_KeyFrameLayer get_key_frame_layer(int layer_id, int count,
     return (DP_KeyFrameLayer){layer_id, 0};
 }
 
-static bool build_frame_hidden_layer_ids(DP_Vector *hidden_layer_ids,
-                                         DP_LayerProps *lp, int count,
+static bool build_frame_layer_visibility(DP_LayerProps *lp, int count,
                                          const DP_KeyFrameLayer *kfls,
-                                         bool parent_hidden)
+                                         bool parent_hidden,
+                                         AddVisibleLayerFn fn, void *user)
 {
     int layer_id = DP_layer_props_id(lp);
     DP_KeyFrameLayer kfl = get_key_frame_layer(layer_id, count, kfls);
@@ -171,20 +171,24 @@ static bool build_frame_hidden_layer_ids(DP_Vector *hidden_layer_ids,
         for (int i = 0; i < child_count; ++i) {
             DP_LayerProps *child_lp =
                 DP_layer_props_list_at_noinc(child_lpl, i);
-            bool child_hidden = build_frame_hidden_layer_ids(
-                hidden_layer_ids, child_lp, count, kfls, hidden);
-            if (!child_hidden) {
+            bool child_visible = build_frame_layer_visibility(
+                child_lp, count, kfls, hidden, fn, user);
+            if (child_visible) {
                 all_children_hidden = false;
             }
         }
     }
 
-    if (hidden && all_children_hidden) {
+    bool visible = !hidden || !all_children_hidden;
+    fn(user, layer_id, visible);
+    return visible;
+}
+
+static void add_hidden_layer_id(void *user, int layer_id, bool visible)
+{
+    DP_Vector *hidden_layer_ids = user;
+    if (!visible) {
         DP_VECTOR_PUSH_TYPE(hidden_layer_ids, int, layer_id);
-        return true;
-    }
-    else {
-        return false;
     }
 }
 
@@ -202,9 +206,9 @@ static bool build_view_frame(DP_ViewModeTrack *vmt, const DP_OnionSkin *os,
         if (!hidden_layer_ids->elements) {
             DP_VECTOR_INIT_TYPE(hidden_layer_ids, int, 8);
         }
-        bool all_hidden = build_frame_hidden_layer_ids(hidden_layer_ids, lp,
-                                                       count, kfls, false);
-        if (all_hidden) {
+        bool any_visible = build_frame_layer_visibility(
+            lp, count, kfls, false, add_hidden_layer_id, hidden_layer_ids);
+        if (!any_visible) {
             return false; // Don't need this frame after all.
         }
     }
@@ -464,69 +468,36 @@ bool DP_view_mode_context_should_flatten(const DP_ViewModeContext *vmc,
 }
 
 
-static void check_visible_in_frame(DP_KeyFrame *kf, int layer_id,
-                                   bool *in_out_hidden)
+static void get_track_layers_visible_in_frame(DP_CanvasState *cs, DP_Track *t,
+                                              int frame_index,
+                                              AddVisibleLayerFn fn, void *user)
 {
-    int layer_count;
-    const DP_KeyFrameLayer *layers = DP_key_frame_layers(kf, &layer_count);
-    for (int i = 0; i < layer_count; ++i) {
-        const DP_KeyFrameLayer *kfl = &layers[i];
-        if (kfl->layer_id == layer_id) {
-            if (DP_key_frame_layer_hidden(kfl)) {
-                *in_out_hidden = true;
-            }
-            else if (DP_key_frame_layer_revealed(kfl)) {
-                *in_out_hidden = false;
-            }
-            break;
+    int kf_index = DP_track_key_frame_search_at_or_before(t, frame_index);
+    if (kf_index != -1) {
+        DP_KeyFrame *kf = DP_track_key_frame_at_noinc(t, kf_index);
+        int layer_id = DP_key_frame_layer_id(kf);
+        DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
+        DP_LayerRoutesEntry *lre =
+            layer_id == 0 ? NULL : DP_layer_routes_search(lr, layer_id);
+        if (lre) {
+            DP_LayerProps *lp = DP_layer_routes_entry_props(lre, cs);
+            int kfl_count;
+            const DP_KeyFrameLayer *kfls = DP_key_frame_layers(kf, &kfl_count);
+            build_frame_layer_visibility(lp, kfl_count, kfls, false, fn, user);
         }
     }
 }
 
-bool DP_view_mode_layer_visible_in_frame(DP_CanvasState *cs, int track_id,
-                                         int frame_index, int layer_id)
+void DP_view_mode_get_layers_visible_in_frame(DP_CanvasState *cs,
+                                              int frame_index,
+                                              AddVisibleLayerFn fn, void *user)
 {
     DP_Timeline *tl = DP_canvas_state_timeline_noinc(cs);
-    int t_index = DP_timeline_index_by_id(tl, track_id);
-    if (t_index == -1) {
-        return false;
+    int track_count = DP_timeline_count(tl);
+    for (int i = 0; i < track_count; ++i) {
+        DP_Track *t = DP_timeline_at_noinc(tl, i);
+        get_track_layers_visible_in_frame(cs, t, frame_index, fn, user);
     }
-
-    DP_Track *t = DP_timeline_at_noinc(tl, t_index);
-    int kf_index = DP_track_key_frame_search_at_or_before(t, frame_index);
-    if (kf_index == -1) {
-        return false;
-    }
-
-    DP_KeyFrame *kf = DP_track_key_frame_at_noinc(t, kf_index);
-    int kf_layer_id = DP_key_frame_layer_id(kf);
-    if (kf_layer_id == 0) {
-        return false;
-    }
-
-    DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
-    DP_LayerRoutesEntry *lre = DP_layer_routes_search(lr, layer_id);
-    if (!lre) {
-        return false;
-    }
-
-    int count = DP_layer_routes_entry_index_count(lre);
-    DP_LayerPropsList *lpl = DP_canvas_state_layer_props_noinc(cs);
-    bool hidden = false;
-    bool in_frame = false;
-    for (int i = 0; i < count; ++i) {
-        DP_LayerProps *lp = DP_layer_props_list_at_noinc(
-            lpl, DP_layer_routes_entry_index_at(lre, i));
-
-        int candidate_layer_id = DP_layer_props_id(lp);
-        check_visible_in_frame(kf, candidate_layer_id, &hidden);
-        if (candidate_layer_id == kf_layer_id) {
-            in_frame = true;
-        }
-
-        lpl = DP_layer_props_children_noinc(lp);
-    }
-    return !hidden && in_frame;
 }
 
 

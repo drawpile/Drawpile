@@ -102,11 +102,14 @@ bool DP_paint_engine_want_canvas_history_dump(DP_PaintEngine *pe);
 void DP_paint_engine_want_canvas_history_dump_set(
     DP_PaintEngine *pe, bool want_canvas_history_dump);
 
+int DP_paint_engine_active_layer_id(DP_PaintEngine *pe);
 void DP_paint_engine_active_layer_id_set(DP_PaintEngine *pe, int layer_id);
 
+int DP_paint_engine_active_frame_index(DP_PaintEngine *pe);
 void DP_paint_engine_active_frame_index_set(DP_PaintEngine *pe,
                                             int frame_index);
 
+DP_ViewMode DP_paint_engine_view_mode(DP_PaintEngine *pe);
 void DP_paint_engine_view_mode_set(DP_PaintEngine *pe, DP_ViewMode vm);
 
 // Only keeps a reference to the given onion skins, pointer must remain valid.

@@ -17,6 +17,7 @@ extern "C" {
 #include "libclient/drawdance/timeline.h"
 #include <QImage>
 #include <QMetaType>
+#include <QSet>
 #include <QSize>
 
 struct DP_CanvasState;
@@ -57,9 +58,9 @@ public:
 
     int frameCount() const;
 
-    bool sameFrame(int frameIndexA, int frameIndexB);
+    bool sameFrame(int frameIndexA, int frameIndexB) const;
 
-    bool isLayerVisibleInFrame(int trackId, int frameIndex, int layerId);
+    QSet<int> getLayersVisibleInFrame(int frameIndex) const;
 
     QImage toFlatImage(
         bool includeBackground = true, bool includeSublayers = true,
@@ -92,6 +93,8 @@ private:
     explicit CanvasState(DP_CanvasState *cs);
 
     static void pushMessage(void *user, DP_Message *msg);
+
+    static void addLayerVisibleInFrame(void *user, int layerId, bool visible);
 
     DP_CanvasState *m_data;
 };

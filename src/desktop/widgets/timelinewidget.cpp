@@ -11,7 +11,6 @@ extern "C" {
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/documentmetadata.h"
 #include "libclient/canvas/layerlist.h"
-#include "libclient/canvas/paintengine.h"
 #include "libclient/canvas/timelinemodel.h"
 #include "libclient/drawdance/message.h"
 
@@ -168,11 +167,8 @@ struct TimelineWidget::Private {
 
 	bool isLayerCurrentlyVisible(int layerId)
 	{
-		return model && model->canvas()
-							->paintEngine()
-							->viewCanvasState()
-							.isLayerVisibleInFrame(
-								currentTrackId, currentFrame, layerId);
+		return model &&
+			   model->canvas()->layerlist()->isLayerVisibleInFrame(layerId);
 	}
 
 	void setSelectedLayerId(int layerId)

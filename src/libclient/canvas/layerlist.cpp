@@ -35,7 +35,7 @@ QVariant LayerListModel::data(const QModelIndex &index, int role) const
 	case Qt::EditRole: return item.title;
 	case IdRole: return item.id;
 	case IsDefaultRole: return item.id == m_defaultLayer;
-	case IsLockedRole: return (m_frameMode && !m_frameLayers.contains(item.frameId)) || (m_aclstate && m_aclstate->isLayerLocked(item.id));
+	case IsLockedRole: return (m_frameMode && !m_frameLayers.contains(item.id)) || (m_aclstate && m_aclstate->isLayerLocked(item.id));
 	case IsGroupRole: return item.group;
 	}
 
@@ -233,21 +233,20 @@ QModelIndex LayerListModel::index(int row, int column, const QModelIndex &parent
 }
 
 static LayerListItem makeItem(
-	const drawdance::LayerProps &lp, int frameId, bool isGroup,
+	const drawdance::LayerProps &lp, bool isGroup,
 	const drawdance::LayerPropsList &children, int relIndex, int left,
 	int right)
 {
 	return LayerListItem{
-		uint16_t(lp.id()), uint16_t(frameId), lp.title(),
-		float(lp.opacity()) / float(DP_BIT15), DP_BlendMode(lp.blendMode()),
-		lp.hidden(), lp.censored(), lp.isolated(), isGroup,
-		uint16_t(isGroup ? children.count() : 0), uint16_t(relIndex),
+		uint16_t(lp.id()), lp.title(), float(lp.opacity()) / float(DP_BIT15),
+		DP_BlendMode(lp.blendMode()), lp.hidden(), lp.censored(), lp.isolated(),
+		isGroup, uint16_t(isGroup ? children.count() : 0), uint16_t(relIndex),
 		left, right};
 }
 
 static void flattenLayerList(
 	QVector<LayerListItem> &newItems, int &index,
-	const drawdance::LayerPropsList lpl, int frameId)
+	const drawdance::LayerPropsList lpl)
 {
 	int count = lpl.count();
 	for(int i = 0; i < count; ++i) {
@@ -255,17 +254,15 @@ static void flattenLayerList(
 		drawdance::LayerProps lp = lpl.at(count - i - 1);
 		drawdance::LayerPropsList children;
 		if(lp.isGroup(&children)) {
-			int nextFrameId = frameId == 0 && lp.isolated() ? lp.id() : frameId;
 			int pos = newItems.count();
 			newItems.append(makeItem(
-				lp, nextFrameId, true, children, i, index, -1));
+				lp, true, children, i, index, -1));
 			++index;
-			flattenLayerList(newItems, index, children, nextFrameId);
+			flattenLayerList(newItems, index, children);
 			newItems[pos].right = index;
 			++index;
 		} else {
-			newItems.append(makeItem(
-				lp, frameId, false, children, i, index, index + 1));
+			newItems.append(makeItem(lp, false, children, i, index, index + 1));
 			index += 2;
 		}
 	}
@@ -321,7 +318,7 @@ void LayerListModel::setLayers(const drawdance::LayerPropsList &lpl)
 {
 	QVector<LayerListItem> newItems;
 	int index = 0;
-	flattenLayerList(newItems, index, lpl, 0);
+	flattenLayerList(newItems, index, lpl);
 
 	const uint8_t localUser = m_aclstate ? m_aclstate->localUserId() : 0;
 	int autoselect = getAutoselect(
@@ -337,12 +334,32 @@ void LayerListModel::setLayers(const drawdance::LayerPropsList &lpl)
 	}
 }
 
-void LayerListModel::setLayersVisibleInFrame(const QVector<int> &layers, bool frameMode)
+void LayerListModel::setLayersVisibleInFrame(const QSet<int> &layers, bool frameMode)
 {
-	beginResetModel(); //FIXME don't reset the whole model
+	QSet<int> changedFrameLayers;
+	if(frameMode) {
+		changedFrameLayers.unite(layers);
+	}
+	if (m_frameMode) {
+		changedFrameLayers.unite(m_frameLayers);
+	}
+	if(frameMode && m_frameMode) {
+		changedFrameLayers.subtract(layers & m_frameLayers);
+	}
+
 	m_frameLayers = layers;
 	m_frameMode = frameMode;
-	endResetModel();
+
+	if(!changedFrameLayers.isEmpty()) {
+		int count = m_items.size();
+		for(int i = 0; i < count; ++i) {
+			const LayerListItem &item = m_items[i];
+			if(changedFrameLayers.contains(item.id)) {
+				QModelIndex idx = createIndex(m_items.at(i).relIndex, 0, i);
+				emit dataChanged(idx, idx);
+			}
+		}
+	}
 }
 
 void LayerListModel::setDefaultLayer(uint16_t id)

@@ -74,14 +74,29 @@ void PaintEngine::setWantCanvasHistoryDump(bool wantCanvasHistoryDump)
 	DP_paint_engine_want_canvas_history_dump_set(m_data, wantCanvasHistoryDump);
 }
 
+int PaintEngine::activeLayerId()
+{
+	return DP_paint_engine_active_layer_id(m_data);
+}
+
 void PaintEngine::setActiveLayerId(int layerId)
 {
 	DP_paint_engine_active_layer_id_set(m_data, layerId);
 }
 
+int PaintEngine::activeFrameIndex()
+{
+	return DP_paint_engine_active_frame_index(m_data);
+}
+
 void PaintEngine::setActiveFrameIndex(int frameIndex)
 {
 	DP_paint_engine_active_frame_index_set(m_data, frameIndex);
+}
+
+DP_ViewMode PaintEngine::viewMode()
+{
+	return DP_paint_engine_view_mode(m_data);
 }
 
 void PaintEngine::setViewMode(DP_ViewMode vm)
