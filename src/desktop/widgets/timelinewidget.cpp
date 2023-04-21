@@ -439,7 +439,11 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 	int yScroll = d->yScroll;
 
 	QPainter painter{this};
-	const QPalette &pal = this->palette();
+	QPalette pal = palette();
+	if(!d->editable) {
+		pal.setCurrentColorGroup(QPalette::Disabled);
+	}
+
 	QColor textColor = pal.windowText().color();
 	QColor highlightedTextColor = pal.highlightedText().color();
 	QColor outlineColor = pal.window().color().lightness() < 128
@@ -626,6 +630,7 @@ void TimelineWidget::mouseMoveEvent(QMouseEvent *event)
 
 	Drag dragType = d->drag;
 	bool shouldDrag =
+		d->editable &&
 		((dragType == Drag::Track && d->currentTrack()) ||
 		 (dragType == Drag::KeyFrame && d->currentKeyFrame())) &&
 		(compat::mousePos(*event) - d->dragOrigin).manhattanLength() <
@@ -862,6 +867,9 @@ void TimelineWidget::dropEvent(QDropEvent *event)
 
 void TimelineWidget::setKeyFrameLayer()
 {
+	if(!d->editable) {
+		return;
+	}
 	if(d->selectedLayerId > 0) {
 		setKeyFrame(d->selectedLayerId);
 	}
@@ -869,11 +877,18 @@ void TimelineWidget::setKeyFrameLayer()
 
 void TimelineWidget::setKeyFrameEmpty()
 {
+	if(!d->editable) {
+		return;
+	}
 	setKeyFrame(0);
 }
 
 void TimelineWidget::showKeyFrameProperties()
 {
+	if(!d->editable) {
+		return;
+	}
+
 	const canvas::TimelineKeyFrame *keyFrame = d->currentKeyFrame();
 	if(!keyFrame) {
 		return;
@@ -912,6 +927,10 @@ void TimelineWidget::keyFramePropertiesChanged(
 	int trackId, int frame, const QString &title,
 	const QHash<int, bool> &layerVisibility)
 {
+	if(!d->editable) {
+		return;
+	}
+
 	const canvas::TimelineKeyFrame *keyFrame = d->keyFrameBy(trackId, frame);
 	bool titleChanged = keyFrame && keyFrame->title != title;
 	bool layersChanged =
@@ -946,6 +965,10 @@ void TimelineWidget::keyFramePropertiesChanged(
 
 void TimelineWidget::deleteKeyFrame()
 {
+	if(!d->editable) {
+		return;
+	}
+
 	const canvas::TimelineKeyFrame *keyFrame = d->currentKeyFrame();
 	if(keyFrame) {
 		emitCommand([&](uint8_t contextId) {
@@ -957,6 +980,10 @@ void TimelineWidget::deleteKeyFrame()
 
 void TimelineWidget::addTrack()
 {
+	if(!d->editable) {
+		return;
+	}
+
 	int trackId = d->model->getAvailableTrackId();
 	if(trackId == 0) {
 		qWarning("Couldn't find a free ID for a new track");
@@ -987,6 +1014,10 @@ void TimelineWidget::toggleTrackOnionSkin(bool onionSkin)
 
 void TimelineWidget::duplicateTrack()
 {
+	if(!d->editable) {
+		return;
+	}
+
 	const canvas::TimelineTrack *source = d->currentTrack();
 	if(!source) {
 		return;
@@ -1008,6 +1039,10 @@ void TimelineWidget::duplicateTrack()
 
 void TimelineWidget::retitleTrack()
 {
+	if(!d->editable) {
+		return;
+	}
+
 	const canvas::TimelineTrack *source = d->currentTrack();
 	if(!source) {
 		return;
@@ -1045,6 +1080,10 @@ void TimelineWidget::deleteTrack()
 
 void TimelineWidget::setFrameCount()
 {
+	if(!d->editable) {
+		return;
+	}
+
 	bool ok;
 	int frameCount = QInputDialog::getInt(
 		this, tr("Change Frame Count"),
@@ -1061,6 +1100,10 @@ void TimelineWidget::setFrameCount()
 
 void TimelineWidget::setFramerate()
 {
+	if(!d->editable) {
+		return;
+	}
+
 	bool ok;
 	int framerate = QInputDialog::getInt(
 		this, tr("Change Framerate"), tr("Frames Per Second (FPS)"),
@@ -1216,9 +1259,9 @@ void TimelineWidget::updateActions()
 	const canvas::TimelineTrack *track = d->currentTrack();
 	bool trackEditable = timelineEditable && track;
 	d->actions.trackAdd->setEnabled(timelineEditable);
-	d->actions.trackVisible->setEnabled(trackEditable);
+	d->actions.trackVisible->setEnabled(track);
 	setCheckedSignalBlocked(d->actions.trackVisible, track && !track->hidden);
-	d->actions.trackOnionSkin->setEnabled(trackEditable);
+	d->actions.trackOnionSkin->setEnabled(track);
 	setCheckedSignalBlocked(
 		d->actions.trackOnionSkin, track && track->onionSkin);
 	d->actions.trackDuplicate->setEnabled(trackEditable);
@@ -1332,12 +1375,14 @@ void TimelineWidget::applyMouseTarget(QMouseEvent *event, const Target &target)
 void TimelineWidget::emitCommand(
 	std::function<drawdance::Message(uint8_t)> getMessage)
 {
-	uint8_t contextId = d->model->localUserId();
-	drawdance::Message messages[] = {
-		drawdance::Message::makeUndoPoint(contextId),
-		getMessage(contextId),
-	};
-	emit timelineEditCommands(DP_ARRAY_LENGTH(messages), messages);
+	if(d->editable) {
+		uint8_t contextId = d->model->localUserId();
+		drawdance::Message messages[] = {
+			drawdance::Message::makeUndoPoint(contextId),
+			getMessage(contextId),
+		};
+		emit timelineEditCommands(DP_ARRAY_LENGTH(messages), messages);
+	}
 }
 
 void TimelineWidget::setCheckedSignalBlocked(QAction *action, bool checked)
