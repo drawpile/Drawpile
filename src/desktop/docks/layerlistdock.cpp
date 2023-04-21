@@ -628,9 +628,8 @@ bool LayerList::isCurrentLayerLocked() const
 		const canvas::LayerListItem &item = idx.data().value<canvas::LayerListItem>();
 		return item.hidden
 			|| item.group // group layers have no pixel content to edit
-			|| m_canvas->aclState()->isLayerLocked(item.id)
-			|| (item.censored && m_canvas->paintEngine()->isCensored())
-			;
+			|| idx.data(canvas::LayerListModel::IsLockedRole).toBool()
+			|| (item.censored && m_canvas->paintEngine()->isCensored());
 	}
 	return false;
 }
