@@ -22,6 +22,7 @@
 #include "file.h"
 #include "common.h"
 #include "conversions.h"
+#include "input.h"
 #include "output.h"
 #include <ctype.h>
 #include <errno.h>
@@ -93,6 +94,41 @@ bool DP_file_exists(const char *path)
 #else
     return access(path, F_OK) == 0;
 #endif
+}
+
+
+bool DP_file_copy(const char *source_path, const char *target_path)
+{
+    DP_Input *input = DP_file_input_new_from_path(source_path);
+    if (!input) {
+        return false;
+    }
+
+    DP_Output *output = DP_file_output_new_from_path(target_path);
+    if (!output) {
+        DP_input_free(input);
+        return false;
+    }
+
+    bool error = false;
+    unsigned char *buffer = DP_malloc(BUFSIZ);
+    while (true) {
+        size_t read = DP_input_read(input, buffer, BUFSIZ, &error);
+        if (error || read == 0) {
+            break;
+        }
+        else if (!DP_output_write(output, buffer, read)) {
+            error = true;
+            break;
+        }
+    }
+    DP_free(buffer);
+
+    if (!DP_output_free(output)) {
+        error = true;
+    }
+    DP_input_free(input);
+    return !error;
 }
 
 
