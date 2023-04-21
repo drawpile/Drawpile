@@ -142,16 +142,17 @@ int CanvasState::frameCount() const
     return DP_canvas_state_frame_count(m_data);
 }
 
-bool CanvasState::sameFrame(int frameIndexA, int frameIndexB)
+bool CanvasState::sameFrame(int frameIndexA, int frameIndexB) const
 {
     return DP_canvas_state_same_frame(m_data, frameIndexA, frameIndexB);
 }
 
-bool CanvasState::isLayerVisibleInFrame(
-    int trackId, int frameIndex, int layerId)
+QSet<int> CanvasState::getLayersVisibleInFrame(int frameIndex) const
 {
-    return DP_view_mode_layer_visible_in_frame(
-        m_data, trackId, frameIndex, layerId);
+    QSet<int> layersVisibleInFrame;
+    DP_view_mode_get_layers_visible_in_frame(
+        m_data, frameIndex, addLayerVisibleInFrame, &layersVisibleInFrame);
+    return layersVisibleInFrame;
 }
 
 QImage CanvasState::toFlatImage(
@@ -286,6 +287,14 @@ CanvasState::CanvasState(DP_CanvasState *cs)
 void CanvasState::pushMessage(void *user, DP_Message *msg)
 {
     static_cast<MessageList *>(user)->append(drawdance::Message::noinc(msg));
+}
+
+void CanvasState::addLayerVisibleInFrame(void *user, int layerId, bool visible)
+{
+    if(visible) {
+        QSet<int> *layersVisibleInFrame = static_cast<QSet<int> *>(user);
+        layersVisibleInFrame->insert(layerId);
+    }
 }
 
 }

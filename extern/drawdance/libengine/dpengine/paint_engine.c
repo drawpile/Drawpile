@@ -887,8 +887,15 @@ void DP_paint_engine_want_canvas_history_dump_set(DP_PaintEngine *pe,
 }
 
 
+int DP_paint_engine_active_layer_id(DP_PaintEngine *pe)
+{
+    DP_ASSERT(pe);
+    return pe->local_view.active_layer_id;
+}
+
 void DP_paint_engine_active_layer_id_set(DP_PaintEngine *pe, int layer_id)
 {
+    DP_ASSERT(pe);
     if (pe->local_view.active_layer_id != layer_id) {
         pe->local_view.active_layer_id = layer_id;
         if (pe->local_view.view_mode != DP_VIEW_MODE_NORMAL) {
@@ -897,14 +904,27 @@ void DP_paint_engine_active_layer_id_set(DP_PaintEngine *pe, int layer_id)
     }
 }
 
+int DP_paint_engine_active_frame_index(DP_PaintEngine *pe)
+{
+    DP_ASSERT(pe);
+    return pe->local_view.active_frame_index;
+}
+
 void DP_paint_engine_active_frame_index_set(DP_PaintEngine *pe, int frame_index)
 {
+    DP_ASSERT(pe);
     if (pe->local_view.active_frame_index != frame_index) {
         pe->local_view.active_frame_index = frame_index;
         if (pe->local_view.view_mode == DP_VIEW_MODE_FRAME) {
             invalidate_local_view(pe, true);
         }
     }
+}
+
+DP_ViewMode DP_paint_engine_view_mode(DP_PaintEngine *pe)
+{
+    DP_ASSERT(pe);
+    return pe->local_view.view_mode;
 }
 
 void DP_paint_engine_view_mode_set(DP_PaintEngine *pe, DP_ViewMode vm)

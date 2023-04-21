@@ -225,7 +225,7 @@ signals:
 	void recorderStateChanged(bool started);
 	void documentMetadataChanged(const drawdance::DocumentMetadata &dm);
 	void timelineChanged(const drawdance::Timeline &tl);
-	void frameVisibilityChanged(const QVector<int> layers, bool frameMode);
+	void frameVisibilityChanged(const QSet<int> layers, bool frameMode);
 	void aclsChanged(
 		const drawdance::AclState &acls, int aclChangeFlags, bool reset);
 	void laserTrail(uint8_t userId, int persistence, uint32_t color);
@@ -264,7 +264,7 @@ private:
 	void renderTileBounds(const QRect &tileBounds);
 	void renderEverything();
 
-	void deletePainters();
+	void updateLayersVisibleInFrame();
 
 	drawdance::AclState m_acls;
 	drawdance::SnapshotQueue m_snapshotQueue;
@@ -281,6 +281,7 @@ private:
 	int m_sampleColorLastDiameter;
 	DP_OnionSkins *m_onionSkins;
 	int m_undoDepthLimit;
+	bool m_updateLayersVisibleInFrame;
 };
 
 }

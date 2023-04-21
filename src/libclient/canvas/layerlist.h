@@ -30,9 +30,6 @@ struct LayerListItem {
 	// shown in the layer list.
 	uint16_t id;
 
-	//! ID of the frame layer this layer belongs to
-	uint16_t frameId;
-
 	//! Layer title
 	QString title;
 
@@ -150,12 +147,14 @@ public:
 	 */
 	int findNearestLayer(int layerId) const;
 
+	bool isLayerVisibleInFrame(int layerId) const { return m_frameLayers.contains(layerId); }
+
 	KeyFrameLayerModel *toKeyFrameLayerModel(
 		int rootLayerId, const QHash<int, bool> &layerVisibility) const;
 
 public slots:
 	void setLayers(const drawdance::LayerPropsList &lpl);
-	void setLayersVisibleInFrame(const QVector<int> &layers, bool frameMode);
+	void setLayersVisibleInFrame(const QSet<int> &layers, bool frameMode);
 
 signals:
 	//! A new layer was created that should be automatically selected
@@ -170,7 +169,7 @@ private:
 		int relIndex, const QHash<int, bool> &layerVisibiltiy) const;
 
 	QVector<LayerListItem> m_items;
-	QVector<int> m_frameLayers;
+	QSet<int> m_frameLayers;
 	GetLayerFunction m_getlayerfn;
 	AclState *m_aclstate;
 	int m_rootLayerCount;

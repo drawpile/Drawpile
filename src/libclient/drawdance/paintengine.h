@@ -60,10 +60,13 @@ public:
 
 	void setWantCanvasHistoryDump(bool wantCanvasHistoryDump);
 
+	int activeLayerId();
 	void setActiveLayerId(int layerId);
 
+	int activeFrameIndex();
 	void setActiveFrameIndex(int frameIndex);
 
+	DP_ViewMode viewMode();
 	void setViewMode(DP_ViewMode vm);
 
 	void setOnionSkins(const DP_OnionSkins *oss);

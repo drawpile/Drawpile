@@ -44,6 +44,7 @@ PaintEngine::PaintEngine(
 	, m_sampleColorLastDiameter(-1)
 	, m_onionSkins{nullptr}
 	, m_undoDepthLimit{DP_UNDO_DEPTH_DEFAULT}
+	, m_updateLayersVisibleInFrame{false}
 {
 	m_painterMutex = DP_mutex_new();
 	start();
@@ -117,6 +118,10 @@ void PaintEngine::timerEvent(QTimerEvent *)
 		&PaintEngine::onTimelineChanged, &PaintEngine::onCursorMoved,
 		&PaintEngine::onDefaultLayer, &PaintEngine::onUndoDepthLimitSet, this);
 
+	if(m_updateLayersVisibleInFrame) {
+		updateLayersVisibleInFrame();
+	}
+
 	if(m_changedTileBounds.isValid()) {
 		QRect changedArea{
 			m_changedTileBounds.x() * DP_TILE_SIZE,
@@ -125,6 +130,16 @@ void PaintEngine::timerEvent(QTimerEvent *)
 			m_changedTileBounds.height() * DP_TILE_SIZE};
 		emit areaChanged(changedArea);
 	}
+}
+
+void PaintEngine::updateLayersVisibleInFrame()
+{
+	m_updateLayersVisibleInFrame = false;
+	int frameIndex = m_paintEngine.activeFrameIndex();
+	QSet<int> layersVisibleInFrame =
+		viewCanvasState().getLayersVisibleInFrame(frameIndex);
+	bool frameMode = m_paintEngine.viewMode() == DP_VIEW_MODE_FRAME;
+	emit frameVisibilityChanged(layersVisibleInFrame, frameMode);
 }
 
 int PaintEngine::receiveMessages(
@@ -303,6 +318,7 @@ void PaintEngine::setViewMode(DP_ViewMode vm, bool censor)
 {
 	m_paintEngine.setViewMode(vm);
 	m_paintEngine.setRevealCensored(!censor);
+	updateLayersVisibleInFrame();
 }
 
 bool PaintEngine::isCensored() const
@@ -346,6 +362,7 @@ void PaintEngine::setViewLayer(int id)
 void PaintEngine::setViewFrame(int frame)
 {
 	m_paintEngine.setActiveFrameIndex(frame);
+	updateLayersVisibleInFrame();
 }
 
 void PaintEngine::setInspectContextId(unsigned int contextId)
@@ -701,6 +718,7 @@ void PaintEngine::onTileChanged(void *user, int x, int y)
 void PaintEngine::onLayerPropsChanged(void *user, DP_LayerPropsList *lpl)
 {
 	PaintEngine *pe = static_cast<PaintEngine *>(user);
+	pe->m_updateLayersVisibleInFrame = true;
 	emit pe->layersChanged(drawdance::LayerPropsList::inc(lpl));
 }
 
@@ -713,12 +731,14 @@ void PaintEngine::onAnnotationsChanged(void *user, DP_AnnotationList *al)
 void PaintEngine::onDocumentMetadataChanged(void *user, DP_DocumentMetadata *dm)
 {
 	PaintEngine *pe = static_cast<PaintEngine *>(user);
+	pe->m_updateLayersVisibleInFrame = true;
 	emit pe->documentMetadataChanged(drawdance::DocumentMetadata::inc(dm));
 }
 
 void PaintEngine::onTimelineChanged(void *user, DP_Timeline *tl)
 {
 	PaintEngine *pe = static_cast<PaintEngine *>(user);
+	pe->m_updateLayersVisibleInFrame = true;
 	emit pe->timelineChanged(drawdance::Timeline::inc(tl));
 }
 

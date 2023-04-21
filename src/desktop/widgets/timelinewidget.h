@@ -110,7 +110,8 @@ private:
 
 	enum class Drag { None, Track, KeyFrame };
 
-	void setCurrent(int trackId, int frame, bool triggerUpdate);
+	void
+	setCurrent(int trackId, int frame, bool triggerUpdate, bool selectLayer);
 
 	void setKeyFrame(int layerId);
 	void updateActions();
