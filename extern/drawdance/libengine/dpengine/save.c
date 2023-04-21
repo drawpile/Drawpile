@@ -954,13 +954,20 @@ static DP_SaveResult save_animation_gif(DP_CanvasState *cs,
     double centiseconds_per_frame = get_gif_centiseconds_per_frame(cs);
     double delay_frac = 0.0;
     for (int i = 0; i < frame_count; ++i) {
-        // TODO: re-use identical frames
+        int instances = 1;
+        while (i < frame_count - 1
+               && DP_canvas_state_same_frame(cs, i, i + 1)) {
+            ++i;
+            ++instances;
+        }
+
         DP_ViewModeFilter vmf =
             DP_view_mode_filter_make_frame(vmb, cs, i, NULL);
         DP_Image *img = DP_canvas_state_to_flat_image(
             cs, DP_FLAT_IMAGE_RENDER_FLAGS, NULL, &vmf);
-        double delay_floored = floor(centiseconds_per_frame + delay_frac);
-        delay_frac = centiseconds_per_frame - delay_floored;
+        double delay = centiseconds_per_frame * DP_int_to_double(instances);
+        double delay_floored = floor(delay + delay_frac);
+        delay_frac = delay - delay_floored;
         bool frame_ok = jo_gifx_frame(write_gif, output, gif,
                                       (uint32_t *)DP_image_pixels(img),
                                       DP_double_to_uint16(delay_floored));
