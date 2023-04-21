@@ -1065,9 +1065,10 @@ void TimelineWidget::addTrack()
 	}
 
 	d->nextTrackId = trackId;
+	const canvas::TimelineTrack *track = d->currentTrack();
 	emitCommand([&](uint8_t contextId) {
 		return drawdance::Message::makeTrackCreate(
-			contextId, trackId, d->currentTrackId, 0,
+			contextId, trackId, track ? track->id : 0, 0,
 			d->model->getAvailableTrackName(tr("Track")));
 	});
 }
