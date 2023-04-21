@@ -27,6 +27,7 @@
 #include "draw_context.h"
 #include "dump_reader.h"
 #include "image.h"
+#include "key_frame.h"
 #include "layer_content.h"
 #include "layer_group.h"
 #include "layer_list.h"
@@ -37,6 +38,7 @@
 #include "local_state.h"
 #include "tile.h"
 #include "timeline.h"
+#include "track.h"
 #include <dpcommon/binary.h>
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
@@ -1339,6 +1341,62 @@ static bool write_index_background_tile(DP_BuildIndexEntryContext *e)
     }
 }
 
+static bool write_index_key_frame(DP_Output *output, int frame_index,
+                                  DP_KeyFrame *kf)
+{
+    size_t title_length;
+    const char *title = DP_key_frame_title(kf, &title_length);
+    int layers_count;
+    const DP_KeyFrameLayer *layers = DP_key_frame_layers(kf, &layers_count);
+
+    bool ok = DP_OUTPUT_WRITE_LITTLEENDIAN(
+                  output, DP_OUTPUT_UINT16(layers_count),
+                  DP_OUTPUT_UINT16(frame_index),
+                  DP_OUTPUT_UINT16(DP_key_frame_layer_id(kf)),
+                  DP_OUTPUT_UINT16(title_length))
+           && DP_output_write(output, title, title_length);
+    if (!ok) {
+        return false;
+    }
+
+    for (int i = 0; i < layers_count; ++i) {
+        const DP_KeyFrameLayer *kfl = &layers[i];
+        if (!DP_OUTPUT_WRITE_LITTLEENDIAN(output,
+                                          DP_OUTPUT_UINT16(kfl->layer_id),
+                                          DP_OUTPUT_UINT16(kfl->flags))) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+static bool write_index_track(DP_Output *output, DP_Track *t)
+{
+    size_t title_length;
+    const char *title = DP_track_title(t, &title_length);
+    int key_frame_count = DP_track_key_frame_count(t);
+
+    bool ok =
+        DP_OUTPUT_WRITE_LITTLEENDIAN(output, DP_OUTPUT_UINT16(key_frame_count),
+                                     DP_OUTPUT_UINT16(DP_track_id(t)),
+                                     DP_OUTPUT_UINT16(title_length))
+        && DP_output_write(output, title, title_length);
+    if (!ok) {
+        return false;
+    }
+
+    for (int i = 0; i < key_frame_count; ++i) {
+        int frame_index = DP_track_frame_index_at_noinc(t, i);
+        DP_KeyFrame *kf = DP_track_key_frame_at_noinc(t, i);
+        if (!write_index_key_frame(output, frame_index, kf)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 static bool write_index_timeline(DP_BuildIndexEntryContext *e)
 {
     DP_Timeline *tl = DP_canvas_state_timeline_noinc(e->cs);
@@ -1355,12 +1413,17 @@ static bool write_index_timeline(DP_BuildIndexEntryContext *e)
         return false;
     }
 
-    int frame_count = 0; // FIXME
-    if (!DP_OUTPUT_WRITE_LITTLEENDIAN(output, DP_OUTPUT_UINT16(frame_count))) {
+    int track_count = DP_timeline_count(tl);
+    if (!DP_OUTPUT_WRITE_LITTLEENDIAN(output, DP_OUTPUT_UINT16(track_count))) {
         return false;
     }
 
-    // FIXME
+    for (int i = 0; i < track_count; ++i) {
+        DP_Track *t = DP_timeline_at_noinc(tl, i);
+        if (!write_index_track(output, t)) {
+            return false;
+        }
+    }
 
     e->current.timeline.tl = DP_timeline_incref(tl);
     e->current.timeline.offset = offset;
@@ -2096,22 +2159,88 @@ static bool read_index_background_tile(DP_ReadSnapshotContext *c, size_t offset)
     }
 }
 
+static DP_TransientKeyFrame *read_index_key_frame(DP_ReadSnapshotContext *c,
+                                                  int *out_frame_index)
+{
+    DP_BufferedInput *input = c->input;
+    int layers_count, layer_id;
+    size_t title_length;
+    bool ok = READ_INDEX(input, uint16, layers_count)
+           && READ_INDEX(input, uint16, *out_frame_index)
+           && READ_INDEX(input, uint16, layer_id)
+           && READ_INDEX(input, uint16, title_length)
+           && read_index_input(input, title_length);
+    if (!ok) {
+        return false;
+    }
+
+    DP_TransientKeyFrame *tkf =
+        DP_transient_key_frame_new_init(layer_id, layers_count);
+    DP_transient_key_frame_title_set(tkf, (const char *)input->buffer,
+                                     title_length);
+    for (int i = 0; i < layers_count; ++i) {
+        DP_KeyFrameLayer kfl;
+        ok = READ_INDEX(input, uint16, kfl.layer_id)
+          && READ_INDEX(input, uint16, kfl.flags);
+        if (!ok) {
+            DP_transient_key_frame_decref(tkf);
+            return false;
+        }
+        DP_transient_key_frame_layer_set(tkf, kfl, i);
+    }
+
+    return tkf;
+}
+
+static DP_TransientTrack *read_index_track(DP_ReadSnapshotContext *c)
+{
+    DP_BufferedInput *input = c->input;
+    int key_frame_count, track_id;
+    size_t title_length;
+    bool ok = READ_INDEX(input, uint16, key_frame_count)
+           && READ_INDEX(input, uint16, track_id)
+           && READ_INDEX(input, uint16, title_length)
+           && read_index_input(input, title_length);
+    if (!ok) {
+        return false;
+    }
+
+    DP_TransientTrack *tt = DP_transient_track_new_init(key_frame_count);
+    DP_transient_track_id_set(tt, track_id);
+    DP_transient_track_title_set(tt, (const char *)input->buffer, title_length);
+    for (int i = 0; i < key_frame_count; ++i) {
+        int frame_index;
+        DP_TransientKeyFrame *tkf = read_index_key_frame(c, &frame_index);
+        if (!tkf) {
+            DP_transient_track_decref(tt);
+            return false;
+        }
+        DP_transient_track_set_transient_noinc(tt, frame_index, tkf, i);
+    }
+
+    return tt;
+}
+
 static bool read_index_timeline(DP_ReadSnapshotContext *c, size_t offset)
 {
     DP_debug("Read timeline at offset %zu", offset);
     DP_BufferedInput *input = c->input;
-    int frame_count;
+    int track_count;
     bool ok = DP_buffered_input_seek(input, offset)
-           && READ_INDEX(input, uint16, frame_count);
+           && READ_INDEX(input, uint16, track_count);
     if (!ok) {
         return false;
     }
 
     DP_TransientTimeline *ttl =
-        DP_transient_canvas_state_transient_timeline(c->tcs, frame_count);
-    DP_debug("Read %d timeline frame(s)", frame_count);
-    for (int i = 0; i < frame_count; ++i) {
-        (void)ttl; // FIXME
+        DP_transient_canvas_state_transient_timeline(c->tcs, track_count);
+    DP_debug("Read %d timeline track(s)", track_count);
+    for (int i = 0; i < track_count; ++i) {
+        DP_TransientTrack *tt = read_index_track(c);
+        if (!tt) {
+            return false;
+        }
+        DP_transient_timeline_set_transient_noinc(ttl, tt, i);
     }
     return true;
 }
