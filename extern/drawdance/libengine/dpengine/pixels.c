@@ -374,6 +374,16 @@ DP_UPixel15 DP_upixel8_to_15(DP_UPixel8 pixel)
     };
 }
 
+DP_UPixel8 DP_upixel15_to_8(DP_UPixel15 pixel)
+{
+    return (DP_UPixel8){
+        .b = DP_channel15_to_8(pixel.b),
+        .g = DP_channel15_to_8(pixel.g),
+        .r = DP_channel15_to_8(pixel.r),
+        .a = DP_channel15_to_8(pixel.a),
+    };
+}
+
 DP_UPixelFloat DP_upixel8_to_float(DP_UPixel8 pixel)
 {
     return (DP_UPixelFloat){

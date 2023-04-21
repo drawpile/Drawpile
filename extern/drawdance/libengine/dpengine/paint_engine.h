@@ -23,6 +23,7 @@
 #define DPENGINE_PAINT_ENGINE
 #include "canvas_diff.h"
 #include "canvas_history.h"
+#include "local_state.h"
 #include "player.h"
 #include "recorder.h"
 #include "view_mode.h"
@@ -102,19 +103,14 @@ bool DP_paint_engine_want_canvas_history_dump(DP_PaintEngine *pe);
 void DP_paint_engine_want_canvas_history_dump_set(
     DP_PaintEngine *pe, bool want_canvas_history_dump);
 
+bool DP_paint_engine_local_state_reset_image_build(
+    DP_PaintEngine *pe, DP_LocalStateAcceptResetMessageFn fn, void *user);
+
 int DP_paint_engine_active_layer_id(DP_PaintEngine *pe);
-void DP_paint_engine_active_layer_id_set(DP_PaintEngine *pe, int layer_id);
 
 int DP_paint_engine_active_frame_index(DP_PaintEngine *pe);
-void DP_paint_engine_active_frame_index_set(DP_PaintEngine *pe,
-                                            int frame_index);
 
 DP_ViewMode DP_paint_engine_view_mode(DP_PaintEngine *pe);
-void DP_paint_engine_view_mode_set(DP_PaintEngine *pe, DP_ViewMode vm);
-
-// Only keeps a reference to the given onion skins, pointer must remain valid.
-void DP_paint_engine_onion_skins_set(DP_PaintEngine *pe,
-                                     const DP_OnionSkins *oss_or_null);
 
 bool DP_paint_engine_reveal_censored(DP_PaintEngine *pe);
 

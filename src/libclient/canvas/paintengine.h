@@ -279,7 +279,6 @@ private:
 	DP_Mutex *m_painterMutex;
 	uint16_t m_sampleColorStampBuffer[DP_DRAW_CONTEXT_STAMP_BUFFER_SIZE];
 	int m_sampleColorLastDiameter;
-	DP_OnionSkins *m_onionSkins;
 	int m_undoDepthLimit;
 	bool m_updateLayersVisibleInFrame;
 };

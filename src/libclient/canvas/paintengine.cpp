@@ -42,7 +42,6 @@ PaintEngine::PaintEngine(
 	, m_painter{}
 	, m_painterMutex{nullptr}
 	, m_sampleColorLastDiameter(-1)
-	, m_onionSkins{nullptr}
 	, m_undoDepthLimit{DP_UNDO_DEPTH_DEFAULT}
 	, m_updateLayersVisibleInFrame{false}
 {
@@ -52,7 +51,6 @@ PaintEngine::PaintEngine(
 
 PaintEngine::~PaintEngine()
 {
-	DP_onion_skins_free(m_onionSkins);
 	DP_mutex_free(m_painterMutex);
 }
 
@@ -92,10 +90,9 @@ void PaintEngine::reset(
 	uint8_t localUserId, const drawdance::CanvasState &canvasState,
 	DP_Player *player)
 {
-	m_paintEngine.reset(
+	drawdance::MessageList localResetImage = m_paintEngine.reset(
 		m_acls, m_snapshotQueue, localUserId, PaintEngine::onPlayback,
 		PaintEngine::onDumpPlayback, this, canvasState, player);
-	m_paintEngine.setOnionSkins(m_onionSkins);
 	m_cache = QPixmap{};
 	m_lastRefreshAreaTileBounds = QRect{};
 	m_lastRefreshAreaTileBoundsTouched = false;
@@ -103,6 +100,8 @@ void PaintEngine::reset(
 	start();
 	emit aclsChanged(m_acls, DP_ACL_STATE_CHANGE_MASK, true);
 	emit defaultLayer(0);
+	receiveMessages(
+		false, localResetImage.size(), localResetImage.constData(), false);
 }
 
 void PaintEngine::timerEvent(QTimerEvent *)
@@ -316,7 +315,8 @@ void PaintEngine::setTrackOnionSkin(int trackId, bool onionSkin)
 
 void PaintEngine::setViewMode(DP_ViewMode vm, bool censor)
 {
-	m_paintEngine.setViewMode(vm);
+	drawdance::Message msg = drawdance::Message::makeLocalChangeViewMode(vm);
+	receiveMessages(false, 1, &msg);
 	m_paintEngine.setRevealCensored(!censor);
 	updateLayersVisibleInFrame();
 }
@@ -348,20 +348,22 @@ void PaintEngine::setOnionSkins(
 			DP_upixel15_from_color(skin.second.rgba()));
 	}
 
-	DP_OnionSkins *prev_oss = m_onionSkins;
-	m_onionSkins = oss;
-	m_paintEngine.setOnionSkins(m_onionSkins);
-	DP_onion_skins_free(prev_oss);
+	drawdance::Message msg = drawdance::Message::makeLocalChangeOnionSkins(oss);
+	receiveMessages(false, 1, &msg);
+	DP_onion_skins_free(oss);
 }
 
 void PaintEngine::setViewLayer(int id)
 {
-	m_paintEngine.setActiveLayerId(id);
+	drawdance::Message msg = drawdance::Message::makeLocalChangeActiveLayer(id);
+	receiveMessages(false, 1, &msg);
 }
 
 void PaintEngine::setViewFrame(int frame)
 {
-	m_paintEngine.setActiveFrameIndex(frame);
+	drawdance::Message msg =
+		drawdance::Message::makeLocalChangeActiveFrame(frame);
+	receiveMessages(false, 1, &msg);
 	updateLayersVisibleInFrame();
 }
 

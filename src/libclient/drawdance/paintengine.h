@@ -46,7 +46,7 @@ public:
 
 	DP_PaintEngine *get();
 
-	void reset(AclState &acls, SnapshotQueue &sq, uint8_t localUserId,
+	MessageList reset(AclState &acls, SnapshotQueue &sq, uint8_t localUserId,
 		DP_PaintEnginePlaybackFn playbackFn,
 		DP_PaintEngineDumpPlaybackFn dumpPlaybackFn, void *playbackUser,
 		const CanvasState &canvasState = CanvasState::null(),
@@ -61,15 +61,10 @@ public:
 	void setWantCanvasHistoryDump(bool wantCanvasHistoryDump);
 
 	int activeLayerId();
-	void setActiveLayerId(int layerId);
 
 	int activeFrameIndex();
-	void setActiveFrameIndex(int frameIndex);
 
 	DP_ViewMode viewMode();
-	void setViewMode(DP_ViewMode vm);
-
-	void setOnionSkins(const DP_OnionSkins *oss);
 
 	bool revealCensored() const;
 	void setRevealCensored(bool revealCensored);
@@ -131,6 +126,7 @@ private:
 	static QString getDumpDir();
 	static long long getTimeMs(void *);
 	static void pushMessage(void *user, DP_Message *msg);
+	static bool pushResetMessage(void *user, DP_Message *msg);
 	static bool shouldSnapshot(void *user);
 	static void indexProgress(void *user, int percent);
 

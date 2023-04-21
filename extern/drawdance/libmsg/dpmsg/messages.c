@@ -3301,6 +3301,14 @@ const char *DP_msg_local_change_type_variant_name(unsigned int value)
         return "LayerVisibility";
     case DP_MSG_LOCAL_CHANGE_TYPE_BACKGROUND_TILE:
         return "BackgroundTile";
+    case DP_MSG_LOCAL_CHANGE_TYPE_VIEW_MODE:
+        return "ViewMode";
+    case DP_MSG_LOCAL_CHANGE_TYPE_ACTIVE_LAYER:
+        return "ActiveLayer";
+    case DP_MSG_LOCAL_CHANGE_TYPE_ACTIVE_FRAME:
+        return "ActiveFrame";
+    case DP_MSG_LOCAL_CHANGE_TYPE_ONION_SKINS:
+        return "OnionSkins";
     case DP_MSG_LOCAL_CHANGE_TYPE_TRACK_VISIBILITY:
         return "TrackVisibility";
     case DP_MSG_LOCAL_CHANGE_TYPE_TRACK_ONION_SKIN:
