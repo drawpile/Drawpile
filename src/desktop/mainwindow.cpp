@@ -3121,6 +3121,9 @@ void MainWindow::setupActions()
 	QAction *framerateSet = makeAction("framerate-set", tr("Change Frame Rate (FPS)..."));
 	QAction *keyFrameSetLayer = makeAction("key-frame-set-layer", QString{}).icon("keyframe-add").shortcut("Ctrl+Shift+F");
 	QAction *keyFrameSetEmpty = makeAction("key-frame-set-empty", tr("Set Blank Key Frame")).icon("keyframe-disable").shortcut("Ctrl+Shift+B");
+	QAction *keyFrameCut = makeAction("key-frame-cut", tr("Cut Key Frame")).icon("edit-cut");
+	QAction *keyFrameCopy = makeAction("key-frame-copy", tr("Copy Key Frame")).icon("edit-copy");
+	QAction *keyFramePaste = makeAction("key-frame-paste", tr("Paste Key Frame")).icon("edit-paste");
 	QAction *keyFrameProperties = makeAction("key-frame-properties", tr("Key Frame Properties...")).icon("configure").shortcut("Ctrl+Shift+P");
 	QAction *keyFrameDelete = makeAction("key-frame-delete", tr("Delete Key Frame")).icon("keyframe-remove").shortcut("Ctrl+Shift+G");
 	QAction *trackAdd = makeAction("track-add", tr("New Track")).icon("list-add");
@@ -3136,7 +3139,7 @@ void MainWindow::setupActions()
 
 	m_currentdoctools->addAction(showFlipbook);
 	m_dockLayers->setLayerEditActions(layerAdd, groupAdd, layerDupe, layerMerge, layerProperties, layerDelete, keyFrameSetLayer);
-	m_dockTimeline->setActions({keyFrameSetLayer, keyFrameSetEmpty, keyFrameProperties, keyFrameDelete, trackAdd, trackVisible, trackOnionSkin, trackDuplicate, trackRetitle, trackDelete, frameCountSet, framerateSet, frameNext, framePrev, trackAbove, trackBelow});
+	m_dockTimeline->setActions({keyFrameSetLayer, keyFrameSetEmpty, keyFrameCut, keyFrameCopy, keyFramePaste, keyFrameProperties, keyFrameDelete, trackAdd, trackVisible, trackOnionSkin, trackDuplicate, trackRetitle, trackDelete, frameCountSet, framerateSet, frameNext, framePrev, trackAbove, trackBelow});
 
 	connect(showFlipbook, &QAction::triggered, this, &MainWindow::showFlipbook);
 
@@ -3147,6 +3150,9 @@ void MainWindow::setupActions()
 	animationMenu->addSeparator();
 	animationMenu->addAction(keyFrameSetLayer);
 	animationMenu->addAction(keyFrameSetEmpty);
+	animationMenu->addAction(keyFrameCut);
+	animationMenu->addAction(keyFrameCopy);
+	animationMenu->addAction(keyFramePaste);
 	animationMenu->addAction(keyFrameProperties);
 	animationMenu->addAction(keyFrameDelete);
 	animationMenu->addSeparator();

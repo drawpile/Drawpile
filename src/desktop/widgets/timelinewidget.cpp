@@ -15,10 +15,14 @@ extern "C" {
 #include "libclient/drawdance/message.h"
 
 #include <QApplication>
+#include <QClipboard>
 #include <QDrag>
 #include <QHash>
 #include <QIcon>
 #include <QInputDialog>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QMenu>
 #include <QMouseEvent>
 #include <QPainter>
@@ -238,6 +242,9 @@ TimelineWidget::TimelineWidget(QWidget *parent)
 	d->verticalScroll = new QScrollBar(Qt::Vertical, this);
 	d->horizontalScroll = new QScrollBar(Qt::Horizontal, this);
 	connect(
+		QApplication::clipboard(), &QClipboard::dataChanged, this,
+		&TimelineWidget::updatePasteAction);
+	connect(
 		d->horizontalScroll, &QScrollBar::valueChanged, this,
 		&TimelineWidget::setHorizontalScroll);
 	connect(
@@ -274,6 +281,9 @@ void TimelineWidget::setActions(const Actions &actions)
 	d->frameMenu = new QMenu{this};
 	d->frameMenu->addAction(actions.keyFrameSetLayer);
 	d->frameMenu->addAction(actions.keyFrameSetEmpty);
+	d->frameMenu->addAction(actions.keyFrameCut);
+	d->frameMenu->addAction(actions.keyFrameCopy);
+	d->frameMenu->addAction(actions.keyFramePaste);
 	d->frameMenu->addAction(actions.keyFrameProperties);
 	d->frameMenu->addAction(actions.keyFrameDelete);
 	d->frameMenu->addSeparator();
@@ -300,6 +310,15 @@ void TimelineWidget::setActions(const Actions &actions)
 	connect(
 		actions.keyFrameSetEmpty, &QAction::triggered, this,
 		&TimelineWidget::setKeyFrameEmpty);
+	connect(
+		actions.keyFrameCut, &QAction::triggered, this,
+		&TimelineWidget::cutKeyFrame);
+	connect(
+		actions.keyFrameCopy, &QAction::triggered, this,
+		&TimelineWidget::copyKeyFrame);
+	connect(
+		actions.keyFramePaste, &QAction::triggered, this,
+		&TimelineWidget::pasteKeyFrame);
 	connect(
 		actions.keyFrameProperties, &QAction::triggered, this,
 		&TimelineWidget::showKeyFrameProperties);
@@ -883,6 +902,83 @@ void TimelineWidget::setKeyFrameEmpty()
 	setKeyFrame(0);
 }
 
+void TimelineWidget::cutKeyFrame()
+{
+	copyKeyFrame();
+	deleteKeyFrame();
+}
+
+void TimelineWidget::copyKeyFrame()
+{
+	if(!d->editable) {
+		return;
+	}
+
+	const canvas::TimelineKeyFrame *keyFrame = d->currentKeyFrame();
+	if(!keyFrame) {
+		return;
+	}
+
+	QJsonArray layerVisibilityJson;
+	using LayersIt = QHash<int, bool>::const_iterator;
+	const LayersIt end = keyFrame->layerVisibility.constEnd();
+	for(LayersIt it = keyFrame->layerVisibility.constBegin(); it != end; ++it) {
+		layerVisibilityJson.append(QJsonObject{
+			{"layerId", it.key()},
+			{"visible", it.value()},
+		});
+	}
+
+	QJsonDocument doc{QJsonObject{
+		{"layerId", keyFrame->layerId},
+		{"title", keyFrame->title},
+		{"layerVisibility", layerVisibilityJson},
+	}};
+
+	QMimeData *mimeData = new QMimeData;
+	mimeData->setData(KEY_FRAME_MIME_TYPE, doc.toJson(QJsonDocument::Compact));
+	QApplication::clipboard()->setMimeData(mimeData);
+}
+
+void TimelineWidget::pasteKeyFrame()
+{
+	if(!d->editable) {
+		return;
+	}
+
+	int trackId = d->currentTrackId;
+	int frame = d->currentFrame;
+	if(trackId == 0 || frame == -1) {
+		return;
+	}
+
+	const QMimeData *mimeData = QApplication::clipboard()->mimeData();
+	if(!mimeData->hasFormat(KEY_FRAME_MIME_TYPE)) {
+		return;
+	}
+
+	QJsonParseError err;
+	QJsonDocument doc =
+		QJsonDocument::fromJson(mimeData->data(KEY_FRAME_MIME_TYPE), &err);
+	if(!doc.isObject()) {
+		qWarning(
+			"Error parsing key frame on clipboard: %s",
+			qUtf8Printable(err.errorString()));
+		return;
+	}
+
+	QJsonObject keyFrameJson = doc.object();
+	setKeyFrame(keyFrameJson["layerId"].toInt());
+
+	QString title = keyFrameJson["title"].toString();
+	QHash<int, bool> layerVisibility;
+	for(const QJsonValue &value : keyFrameJson["layerVisibility"].toArray()) {
+		QJsonObject obj = value.toObject();
+		layerVisibility.insert(obj["layerId"].toInt(), obj["visible"].toBool());
+	}
+	setKeyFrameProperties(trackId, frame, {}, {}, title, layerVisibility);
+}
+
 void TimelineWidget::showKeyFrameProperties()
 {
 	if(!d->editable) {
@@ -932,35 +1028,13 @@ void TimelineWidget::keyFramePropertiesChanged(
 	}
 
 	const canvas::TimelineKeyFrame *keyFrame = d->keyFrameBy(trackId, frame);
-	bool titleChanged = keyFrame && keyFrame->title != title;
-	bool layersChanged =
-		keyFrame && keyFrame->layerVisibility != layerVisibility;
-
-	if(titleChanged || layersChanged) {
-		uint8_t contextId = d->model->localUserId();
-		drawdance::Message messages[3];
-		int fill = 0;
-		messages[fill++] = drawdance::Message::makeUndoPoint(contextId);
-		if(titleChanged) {
-			messages[fill++] = drawdance::Message::makeKeyFrameRetitle(
-				contextId, trackId, frame, title);
-		}
-		if(layersChanged) {
-			QVector<uint16_t> layers;
-			layers.reserve(layerVisibility.size() * 2);
-			using LayersIt = QHash<int, bool>::const_iterator;
-			const LayersIt end = layerVisibility.constEnd();
-			for(LayersIt it = layerVisibility.constBegin(); it != end; ++it) {
-				layers.append(it.key());
-				layers.append(
-					it.value() ? DP_KEY_FRAME_LAYER_REVEALED
-							   : DP_KEY_FRAME_LAYER_HIDDEN);
-			}
-			messages[fill++] = drawdance::Message::makeKeyFrameLayerAttributes(
-				contextId, trackId, frame, layers);
-		}
-		emit timelineEditCommands(fill, messages);
+	if(!keyFrame) {
+		return;
 	}
+
+	setKeyFrameProperties(
+		trackId, frame, keyFrame->title, keyFrame->layerVisibility, title,
+		layerVisibility);
 }
 
 void TimelineWidget::deleteKeyFrame()
@@ -1207,6 +1281,17 @@ void TimelineWidget::setVerticalScroll(int pos)
 	update();
 }
 
+void TimelineWidget::updatePasteAction()
+{
+	if(d->model && d->haveActions) {
+		const QMimeData *mimeData = QApplication::clipboard()->mimeData();
+		d->actions.keyFramePaste->setEnabled(
+			d->editable && d->frameCount() > 0 && d->currentTrack() &&
+			d->currentFrame != -1 && mimeData &&
+			mimeData->hasFormat(KEY_FRAME_MIME_TYPE));
+	}
+}
+
 void TimelineWidget::setCurrent(
 	int trackId, int frame, bool triggerUpdate, bool selectLayer)
 {
@@ -1244,6 +1329,41 @@ void TimelineWidget::setKeyFrame(int layerId)
 			contextId, d->currentTrackId, d->currentFrame, layerId, 0,
 			DP_MSG_KEY_FRAME_SET_SOURCE_LAYER);
 	});
+}
+
+void TimelineWidget::setKeyFrameProperties(
+	int trackId, int frame, const QString &prevTitle,
+	const QHash<int, bool> prevLayerVisibility, const QString &title,
+	const QHash<int, bool> layerVisibility)
+{
+	bool titleChanged = prevTitle != title;
+	bool layersChanged = prevLayerVisibility != layerVisibility;
+
+	if(titleChanged || layersChanged) {
+		uint8_t contextId = d->model->localUserId();
+		drawdance::Message messages[3];
+		int fill = 0;
+		messages[fill++] = drawdance::Message::makeUndoPoint(contextId);
+		if(titleChanged) {
+			messages[fill++] = drawdance::Message::makeKeyFrameRetitle(
+				contextId, trackId, frame, title);
+		}
+		if(layersChanged) {
+			QVector<uint16_t> layers;
+			layers.reserve(layerVisibility.size() * 2);
+			using LayersIt = QHash<int, bool>::const_iterator;
+			const LayersIt end = layerVisibility.constEnd();
+			for(LayersIt it = layerVisibility.constBegin(); it != end; ++it) {
+				layers.append(it.key());
+				layers.append(
+					it.value() ? DP_KEY_FRAME_LAYER_REVEALED
+							   : DP_KEY_FRAME_LAYER_HIDDEN);
+			}
+			messages[fill++] = drawdance::Message::makeKeyFrameLayerAttributes(
+				contextId, trackId, frame, layers);
+		}
+		emit timelineEditCommands(fill, messages);
+	}
 }
 
 void TimelineWidget::updateActions()
@@ -1309,8 +1429,13 @@ void TimelineWidget::updateActions()
 			tr("Set Key Frame to Current Layer"));
 	}
 
-	d->actions.keyFrameProperties->setEnabled(currentKeyFrame != nullptr);
-	d->actions.keyFrameDelete->setEnabled(currentKeyFrame != nullptr);
+	bool keyFrameEditable = keyFrameSettable && currentKeyFrame;
+	d->actions.keyFrameCut->setEnabled(keyFrameEditable);
+	d->actions.keyFrameCopy->setEnabled(keyFrameEditable);
+	d->actions.keyFrameProperties->setEnabled(keyFrameEditable);
+	d->actions.keyFrameDelete->setEnabled(keyFrameEditable);
+
+	updatePasteAction();
 }
 
 void TimelineWidget::updateScrollbars()

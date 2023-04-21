@@ -22,6 +22,9 @@ public:
 	struct Actions {
 		QAction *keyFrameSetLayer = nullptr;
 		QAction *keyFrameSetEmpty = nullptr;
+		QAction *keyFrameCut = nullptr;
+		QAction *keyFrameCopy = nullptr;
+		QAction *keyFramePaste = nullptr;
 		QAction *keyFrameProperties = nullptr;
 		QAction *keyFrameDelete = nullptr;
 		QAction *trackAdd = nullptr;
@@ -82,6 +85,9 @@ protected:
 private slots:
 	void setKeyFrameLayer();
 	void setKeyFrameEmpty();
+	void cutKeyFrame();
+	void copyKeyFrame();
+	void pasteKeyFrame();
 	void showKeyFrameProperties();
 	void keyFramePropertiesChanged(
 		int trackId, int frame, const QString &title,
@@ -103,8 +109,10 @@ private slots:
 	void updateFrameCount();
 	void setHorizontalScroll(int pos);
 	void setVerticalScroll(int pos);
+	void updatePasteAction();
 
 private:
+	static constexpr char KEY_FRAME_MIME_TYPE[] = "x-drawpile/keyframe";
 	static constexpr int TRACK_PADDING = 4;
 	static constexpr int ICON_SIZE = 16;
 
@@ -114,6 +122,10 @@ private:
 	setCurrent(int trackId, int frame, bool triggerUpdate, bool selectLayer);
 
 	void setKeyFrame(int layerId);
+	void setKeyFrameProperties(
+		int trackId, int frame, const QString &prevTitle,
+		const QHash<int, bool> prevLayerVisibility, const QString &title,
+		const QHash<int, bool> layerVisibility);
 	void updateActions();
 	void updateScrollbars();
 
