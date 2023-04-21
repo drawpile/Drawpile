@@ -10,6 +10,7 @@ extern "C" {
 #include <dpengine/layer_props_list.h>
 #include <dpengine/layer_routes.h>
 #include <dpengine/snapshots.h>
+#include <dpengine/view_mode.h>
 }
 
 #include "libclient/canvas/blendmodes.h"
@@ -144,6 +145,13 @@ int CanvasState::frameCount() const
 bool CanvasState::sameFrame(int frameIndexA, int frameIndexB)
 {
     return DP_canvas_state_same_frame(m_data, frameIndexA, frameIndexB);
+}
+
+bool CanvasState::isLayerVisibleInFrame(
+    int trackId, int frameIndex, int layerId)
+{
+    return DP_view_mode_layer_visible_in_frame(
+        m_data, trackId, frameIndex, layerId);
 }
 
 QImage CanvasState::toFlatImage(

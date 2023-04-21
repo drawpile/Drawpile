@@ -59,6 +59,8 @@ public:
 
     bool sameFrame(int frameIndexA, int frameIndexB);
 
+    bool isLayerVisibleInFrame(int trackId, int frameIndex, int layerId);
+
     QImage toFlatImage(
         bool includeBackground = true, bool includeSublayers = true,
         const QRect *rect = nullptr, const DP_ViewModeFilter *vmf = nullptr) const;

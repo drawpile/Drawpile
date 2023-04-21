@@ -45,6 +45,7 @@ public slots:
 signals:
 	void timelineEditCommands(int count, const drawdance::Message *msgs);
 	void frameSelected(int frame);
+	void layerSelected(int layerId);
 	void trackHidden(int trackId, bool hidden);
 	void trackOnionSkinEnabled(int trackId, bool onionSkin);
 

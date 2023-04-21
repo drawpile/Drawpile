@@ -46,6 +46,7 @@ public:
 	void setActions(const Actions &actions);
 
 	void setCurrentFrame(int frame);
+	void setCurrentTrack(int trackId);
 	void setCurrentLayer(int layerId);
 
 	void updateControlsEnabled(bool access, bool compatibilityMode);
@@ -60,6 +61,7 @@ signals:
 	void timelineEditCommands(int count, const drawdance::Message *msgs);
 	void trackSelected(int trackId);
 	void frameSelected(int frame);
+	void layerSelected(int layerId);
 	void trackHidden(int trackId, bool hidden);
 	void trackOnionSkinEnabled(int trackId, bool onionSkin);
 
@@ -98,7 +100,7 @@ private slots:
 	void trackAbove();
 	void trackBelow();
 	void updateTracks();
-	void updateFrameCount(int frameCount);
+	void updateFrameCount();
 	void setHorizontalScroll(int pos);
 	void setVerticalScroll(int pos);
 
@@ -107,6 +109,8 @@ private:
 	static constexpr int ICON_SIZE = 16;
 
 	enum class Drag { None, Track, KeyFrame };
+
+	void setCurrent(int trackId, int frame, bool triggerUpdate);
 
 	void setKeyFrame(int layerId);
 	void updateActions();
