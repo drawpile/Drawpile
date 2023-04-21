@@ -11,11 +11,13 @@ extern "C" {
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/documentmetadata.h"
 #include "libclient/canvas/layerlist.h"
+#include "libclient/canvas/paintengine.h"
 #include "libclient/canvas/timelinemodel.h"
 #include "libclient/drawdance/message.h"
 
 #include <QApplication>
 #include <QDrag>
+#include <QHash>
 #include <QIcon>
 #include <QInputDialog>
 #include <QMenu>
@@ -52,7 +54,6 @@ struct TimelineWidget::Private {
 	int yScroll = 0;
 	int currentTrackId = 0;
 	int currentFrame = 0;
-	int selectedLayerId = 0;
 	int nextTrackId = 0;
 	Target hoverTarget = {-1, 0, -1, nullptr};
 	bool editable = false;
@@ -61,6 +62,9 @@ struct TimelineWidget::Private {
 	Qt::DropAction dropAction;
 	QPoint dragOrigin;
 	QPoint dragPos;
+
+	int selectedLayerId = 0;
+	QHash<QPair<int, int>, int> layerIdByKeyFrame;
 
 	QScrollBar *verticalScroll;
 	QScrollBar *horizontalScroll;
@@ -162,6 +166,40 @@ struct TimelineWidget::Private {
 		return QString{};
 	}
 
+	bool isLayerCurrentlyVisible(int layerId)
+	{
+		return model && model->canvas()
+							->paintEngine()
+							->viewCanvasState()
+							.isLayerVisibleInFrame(
+								currentTrackId, currentFrame, layerId);
+	}
+
+	void setSelectedLayerId(int layerId)
+	{
+		selectedLayerId = layerId;
+		if(isLayerCurrentlyVisible(layerId)) {
+			layerIdByKeyFrame.insert({currentTrackId, currentFrame}, layerId);
+		}
+	}
+
+	int guessLayerIdToSelect()
+	{
+		QPair<int, int> key = {currentTrackId, currentFrame};
+		if(isLayerCurrentlyVisible(selectedLayerId)) {
+			layerIdByKeyFrame.insert(key, selectedLayerId);
+			return 0;
+		}
+
+		int lastLayerId = layerIdByKeyFrame.value(key, 0);
+		if(lastLayerId != 0 && isLayerCurrentlyVisible(lastLayerId)) {
+			return lastLayerId;
+		}
+
+		const canvas::TimelineKeyFrame *keyFrame = currentKeyFrame();
+		return keyFrame ? keyFrame->layerId : 0;
+	}
+
 	int bodyWidth() const { return columnWidth * frameCount() - xScroll; }
 	int bodyHeight() const { return rowHeight * trackCount() - yScroll; }
 
@@ -227,7 +265,7 @@ void TimelineWidget::setModel(canvas::TimelineModel *model)
 		model, &canvas::TimelineModel::frameCountChanged, this,
 		&TimelineWidget::updateFrameCount);
 	updateTracks();
-	updateFrameCount(model->frameCount());
+	updateFrameCount();
 }
 
 void TimelineWidget::setActions(const Actions &actions)
@@ -313,17 +351,17 @@ void TimelineWidget::setActions(const Actions &actions)
 
 void TimelineWidget::setCurrentFrame(int frame)
 {
-	int actualFrame = qBound(0, frame, d->frameCount());
-	if(actualFrame != d->currentFrame) {
-		d->currentFrame = actualFrame;
-		updateActions();
-		update();
-	}
+	setCurrent(d->currentTrackId, frame, true, true);
+}
+
+void TimelineWidget::setCurrentTrack(int trackId)
+{
+	setCurrent(trackId, d->currentFrame, true, true);
 }
 
 void TimelineWidget::setCurrentLayer(int layerId)
 {
-	d->selectedLayerId = layerId;
+	d->setSelectedLayerId(layerId);
 	updateActions();
 }
 
@@ -1054,19 +1092,15 @@ void TimelineWidget::prevFrame()
 void TimelineWidget::trackAbove()
 {
 	int targetTrack = d->trackIndexById(d->currentTrackId) + 1;
-	d->currentTrackId =
-		d->trackIdByIndex(targetTrack < d->trackCount() ? targetTrack : 0);
-	updateActions();
-	update();
+	setCurrentTrack(
+		d->trackIdByIndex(targetTrack < d->trackCount() ? targetTrack : 0));
 }
 
 void TimelineWidget::trackBelow()
 {
 	int targetTrack = d->trackIndexById(d->currentTrackId) - 1;
-	d->currentTrackId =
-		d->trackIdByIndex(targetTrack >= 0 ? targetTrack : d->trackCount() - 1);
-	updateActions();
-	update();
+	setCurrentTrack(d->trackIdByIndex(
+		targetTrack >= 0 ? targetTrack : d->trackCount() - 1));
 }
 
 void TimelineWidget::updateTracks()
@@ -1105,17 +1139,18 @@ void TimelineWidget::updateTracks()
 		}
 	}
 	d->headerWidth = maxTrackAdvance + TRACK_PADDING * 4 + ICON_SIZE * 2;
-	d->currentTrackId = nextTrackId != 0	  ? nextTrackId
-						: currentTrackId != 0 ? currentTrackId
-											  : anyTrackId;
+	int effectiveTrackId = nextTrackId != 0		 ? nextTrackId
+						   : currentTrackId != 0 ? currentTrackId
+												 : anyTrackId;
+	setCurrent(effectiveTrackId, d->currentFrame, false, false);
 	updateActions();
 	updateScrollbars();
 	update();
 }
 
-void TimelineWidget::updateFrameCount(int frameCount)
+void TimelineWidget::updateFrameCount()
 {
-	d->currentFrame = qBound(0, d->currentFrame, frameCount);
+	setCurrent(d->currentTrackId, d->currentFrame, false, false);
 	updateActions();
 	updateScrollbars();
 	update();
@@ -1131,6 +1166,36 @@ void TimelineWidget::setVerticalScroll(int pos)
 {
 	d->yScroll = pos;
 	update();
+}
+
+void TimelineWidget::setCurrent(
+	int trackId, int frame, bool triggerUpdate, bool selectLayer)
+{
+	bool needsUpdate = false;
+
+	if(d->trackIndexById(trackId) != -1) {
+		d->currentTrackId = trackId;
+		emit trackSelected(trackId);
+		needsUpdate = true;
+	}
+
+	int actualFrame = qBound(0, frame, qMax(0, d->frameCount() - 1));
+	if(actualFrame != d->currentFrame) {
+		d->currentFrame = actualFrame;
+		emit frameSelected(frame);
+		needsUpdate = true;
+	}
+
+	if(needsUpdate && triggerUpdate) {
+		if(selectLayer) {
+			int layerIdToSelect = d->guessLayerIdToSelect();
+			if(layerIdToSelect != 0) {
+				emit layerSelected(layerIdToSelect);
+			}
+		}
+		updateActions();
+		update();
+	}
 }
 
 void TimelineWidget::setKeyFrame(int layerId)
@@ -1262,24 +1327,10 @@ void TimelineWidget::applyMouseTarget(QMouseEvent *event, const Target &target)
 		event->accept();
 	}
 
-	bool needsUpdate = false;
-
-	if(target.trackId != 0 && target.trackId != d->currentTrackId) {
-		d->currentTrackId = target.trackId;
-		emit trackSelected(d->currentTrackId);
-		needsUpdate = true;
-	}
-
-	if(target.frameIndex != -1 && target.frameIndex != d->currentFrame) {
-		d->currentFrame = target.frameIndex;
-		emit frameSelected(target.frameIndex);
-		needsUpdate = true;
-	}
-
-	if(needsUpdate) {
-		updateActions();
-		update();
-	}
+	int trackId = target.trackId == 0 ? d->currentTrackId : target.trackId;
+	int frame = target.frameIndex == -1 ? d->currentFrame : target.frameIndex;
+	setCurrent(
+		trackId, frame, true, event && event->button() != Qt::RightButton);
 }
 
 void TimelineWidget::emitCommand(

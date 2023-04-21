@@ -464,6 +464,72 @@ bool DP_view_mode_context_should_flatten(const DP_ViewModeContext *vmc,
 }
 
 
+static void check_visible_in_frame(DP_KeyFrame *kf, int layer_id,
+                                   bool *in_out_hidden)
+{
+    int layer_count;
+    const DP_KeyFrameLayer *layers = DP_key_frame_layers(kf, &layer_count);
+    for (int i = 0; i < layer_count; ++i) {
+        const DP_KeyFrameLayer *kfl = &layers[i];
+        if (kfl->layer_id == layer_id) {
+            if (DP_key_frame_layer_hidden(kfl)) {
+                *in_out_hidden = true;
+            }
+            else if (DP_key_frame_layer_revealed(kfl)) {
+                *in_out_hidden = false;
+            }
+            break;
+        }
+    }
+}
+
+bool DP_view_mode_layer_visible_in_frame(DP_CanvasState *cs, int track_id,
+                                         int frame_index, int layer_id)
+{
+    DP_Timeline *tl = DP_canvas_state_timeline_noinc(cs);
+    int t_index = DP_timeline_index_by_id(tl, track_id);
+    if (t_index == -1) {
+        return false;
+    }
+
+    DP_Track *t = DP_timeline_at_noinc(tl, t_index);
+    int kf_index = DP_track_key_frame_search_at_or_before(t, frame_index);
+    if (kf_index == -1) {
+        return false;
+    }
+
+    DP_KeyFrame *kf = DP_track_key_frame_at_noinc(t, kf_index);
+    int kf_layer_id = DP_key_frame_layer_id(kf);
+    if (kf_layer_id == 0) {
+        return false;
+    }
+
+    DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
+    DP_LayerRoutesEntry *lre = DP_layer_routes_search(lr, layer_id);
+    if (!lre) {
+        return false;
+    }
+
+    int count = DP_layer_routes_entry_index_count(lre);
+    DP_LayerPropsList *lpl = DP_canvas_state_layer_props_noinc(cs);
+    bool hidden = false;
+    bool in_frame = false;
+    for (int i = 0; i < count; ++i) {
+        DP_LayerProps *lp = DP_layer_props_list_at_noinc(
+            lpl, DP_layer_routes_entry_index_at(lre, i));
+
+        int candidate_layer_id = DP_layer_props_id(lp);
+        check_visible_in_frame(kf, candidate_layer_id, &hidden);
+        if (candidate_layer_id == kf_layer_id) {
+            in_frame = true;
+        }
+
+        lpl = DP_layer_props_children_noinc(lp);
+    }
+    return !hidden && in_frame;
+}
+
+
 DP_OnionSkins *DP_onion_skins_new(int count_below, int count_above)
 {
     DP_ASSERT(count_below >= 0);

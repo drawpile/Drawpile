@@ -383,6 +383,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	connect(m_dockLayers, &docks::LayerList::layerSelected, m_doc->toolCtrl(), &tools::ToolController::setActiveLayer);
 	connect(m_dockLayers, &docks::LayerList::layerSelected, m_dockTimeline, &docks::Timeline::setCurrentLayer);
+	connect(m_dockTimeline, &docks::Timeline::layerSelected, m_dockLayers, &docks::LayerList::selectLayer);
 	connect(m_doc->toolCtrl(), &tools::ToolController::activeAnnotationChanged,
 			m_dockToolSettings->annotationSettings(), &tools::AnnotationSettings::setSelectionId);
 
