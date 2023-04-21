@@ -32,7 +32,7 @@ void LayerListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 	if(index.data(canvas::LayerListModel::IsLockedRole).toBool())
 		opt.state &= ~QStyle::State_Enabled;
 
-	drawBackground(painter, option, index);
+	drawBackground(painter, opt, index);
 
 	QRect textrect = opt.rect;
 
