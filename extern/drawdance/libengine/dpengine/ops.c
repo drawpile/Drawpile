@@ -179,9 +179,6 @@ DP_CanvasState *DP_ops_layer_tree_create(DP_CanvasState *cs, DP_DrawContext *dc,
     }
     else {
         target_lre = DP_layer_routes_search(lr, target_id);
-        // TODO: Have a wrong target id actually be an error, don't just throw
-        // the layer at the top. For that we need to fix Drawpile to not pass
-        // nonsense in the target id field though, which the 2.2 beta does.
         if (into) {
             if (!target_lre) {
                 DP_error_set("Create layer: target id %d not found", target_id);
@@ -196,6 +193,7 @@ DP_CanvasState *DP_ops_layer_tree_create(DP_CanvasState *cs, DP_DrawContext *dc,
         }
         else if (!target_lre) {
             DP_warn("Create layer: target id %d not found", target_id);
+            return NULL;
         }
     }
 
