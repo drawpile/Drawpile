@@ -48,11 +48,11 @@ CanvasModel::CanvasModel(uint8_t localUserId, int fps, int snapshotMaxCount,
 
 	m_layerlist->setAclState(m_aclstate);
 	m_layerlist->setLayerGetter([this](int id)->QImage { return m_paintengine->getLayerImage(id); });
+	m_timeline->setAclState(m_aclstate);
 
 	connect(m_layerlist, &LayerListModel::autoSelectRequest, this, &CanvasModel::layerAutoselectRequest);
 	connect(m_paintengine, &PaintEngine::resized, this, &CanvasModel::onCanvasResize);
 	connect(m_paintengine, &PaintEngine::layersChanged, m_layerlist, &LayerListModel::setLayers);
-	connect(m_paintengine, &PaintEngine::layersChanged, m_timeline, &TimelineModel::setLayers);
 	connect(m_paintengine, &PaintEngine::timelineChanged, m_timeline, &TimelineModel::setTimeline);
 	connect(m_paintengine, &PaintEngine::frameVisibilityChanged, m_layerlist, &LayerListModel::setLayersVisibleInFrame);
 }

@@ -161,6 +161,8 @@ target_sources(dpclient PRIVATE
 	utils/colorscheme.h
 	utils/customshortcutmodel.cpp
 	utils/customshortcutmodel.h
+	utils/debouncetimer.cpp
+	utils/debouncetimer.h
 	utils/funstuff.cpp
 	utils/funstuff.h
 	utils/html.cpp

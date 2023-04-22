@@ -7,7 +7,7 @@
 #include <functional>
 
 namespace canvas {
-class TimelineModel;
+class CanvasModel;
 }
 
 namespace drawdance {
@@ -44,7 +44,7 @@ public:
 	explicit TimelineWidget(QWidget *parent = nullptr);
 	~TimelineWidget() override;
 
-	void setModel(canvas::TimelineModel *model);
+	void setCanvas(canvas::CanvasModel *canvas);
 
 	void setActions(const Actions &actions);
 
@@ -54,11 +54,15 @@ public:
 
 	void updateControlsEnabled(bool access, bool compatibilityMode);
 
-	canvas::TimelineModel *model() const;
+	canvas::CanvasModel *canvas() const;
 
 	int frameCount() const;
 	int currentTrackId() const;
 	int currentFrame() const;
+
+public slots:
+	void changeFramerate(int framerate);
+	void changeFrameCount(int frameCount);
 
 signals:
 	void timelineEditCommands(int count, const drawdance::Message *msgs);

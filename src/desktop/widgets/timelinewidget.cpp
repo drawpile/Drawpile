@@ -39,7 +39,7 @@ struct TimelineWidget::Target {
 };
 
 struct TimelineWidget::Private {
-	canvas::TimelineModel *model = nullptr;
+	canvas::CanvasModel *canvas = nullptr;
 
 	bool haveActions = false;
 	Actions actions;
@@ -72,30 +72,44 @@ struct TimelineWidget::Private {
 	QScrollBar *verticalScroll;
 	QScrollBar *horizontalScroll;
 
-	int trackCount() const { return model ? model->tracks().size() : 0; }
-	int frameCount() const { return model ? model->frameCount() : 0; }
+	const QVector<canvas::TimelineTrack> &getTracks() const
+	{
+		if(canvas) {
+			return canvas->timeline()->tracks();
+		} else {
+			static const QVector<canvas::TimelineTrack> emptyTracks;
+			return emptyTracks;
+		}
+	}
+
+	int trackCount() const { return getTracks().size(); }
+
+	int frameCount() const
+	{
+		return canvas ? canvas->metadata()->frameCount() : 0;
+	}
 
 	int framerate() const
 	{
-		return model ? model->canvas()->metadata()->framerate() : 0;
+		return canvas ? canvas->metadata()->framerate() : 0;
 	}
 
 	int trackIdByIndex(int index) const
 	{
-		const QVector<canvas::TimelineTrack> &tracks = model->tracks();
+		const QVector<canvas::TimelineTrack> &tracks = getTracks();
 		return index >= 0 && index < tracks.size() ? tracks[index].id : 0;
 	}
 
 	int trackIdByUiIndex(int index) const
 	{
-		const QVector<canvas::TimelineTrack> &tracks = model->tracks();
+		const QVector<canvas::TimelineTrack> &tracks = getTracks();
 		int count = tracks.size();
 		return index >= 0 && index < count ? tracks[count - index - 1].id : 0;
 	}
 
 	int trackIndexById(int trackId) const
 	{
-		const QVector<canvas::TimelineTrack> &tracks = model->tracks();
+		const QVector<canvas::TimelineTrack> &tracks = getTracks();
 		int trackCount = tracks.size();
 		for(int i = 0; i < trackCount; ++i) {
 			if(tracks[i].id == trackId) {
@@ -108,7 +122,7 @@ struct TimelineWidget::Private {
 	const canvas::TimelineTrack *trackById(int trackId) const
 	{
 		int i = trackIndexById(trackId);
-		return i == -1 ? nullptr : &model->tracks()[i];
+		return i == -1 ? nullptr : &getTracks()[i];
 	}
 
 	const canvas::TimelineTrack *currentTrack() const
@@ -150,8 +164,8 @@ struct TimelineWidget::Private {
 
 	QModelIndex layerIndexById(int layerId) const
 	{
-		if(model) {
-			canvas::LayerListModel *layers = model->canvas()->layerlist();
+		if(canvas) {
+			canvas::LayerListModel *layers = canvas->layerlist();
 			return layers->layerIndex(layerId);
 		}
 		return QModelIndex{};
@@ -159,7 +173,7 @@ struct TimelineWidget::Private {
 
 	QString layerTitleById(int layerId) const
 	{
-		if(model) {
+		if(canvas) {
 			QModelIndex layerIndex = layerIndexById(layerId);
 			if(layerIndex.isValid()) {
 				return layerIndex.data(canvas::LayerListModel::TitleRole)
@@ -171,8 +185,7 @@ struct TimelineWidget::Private {
 
 	bool isLayerCurrentlyVisible(int layerId)
 	{
-		return model &&
-			   model->canvas()->layerlist()->isLayerVisibleInFrame(layerId);
+		return canvas && canvas->layerlist()->isLayerVisibleInFrame(layerId);
 	}
 
 	void setSelectedLayerId(int layerId)
@@ -258,14 +271,14 @@ TimelineWidget::~TimelineWidget()
 	delete d;
 }
 
-void TimelineWidget::setModel(canvas::TimelineModel *model)
+void TimelineWidget::setCanvas(canvas::CanvasModel *canvas)
 {
-	d->model = model;
+	d->canvas = canvas;
 	connect(
-		model, &canvas::TimelineModel::tracksChanged, this,
+		canvas->timeline(), &canvas::TimelineModel::tracksChanged, this,
 		&TimelineWidget::updateTracks);
 	connect(
-		model, &canvas::TimelineModel::frameCountChanged, this,
+		canvas->metadata(), &canvas::DocumentMetadata::frameCountChanged, this,
 		&TimelineWidget::updateFrameCount);
 	updateTracks();
 	updateFrameCount();
@@ -387,9 +400,9 @@ void TimelineWidget::updateControlsEnabled(bool access, bool compatibilityMode)
 	update();
 }
 
-canvas::TimelineModel *TimelineWidget::model() const
+canvas::CanvasModel *TimelineWidget::canvas() const
 {
-	return d->model;
+	return d->canvas;
 }
 
 int TimelineWidget::frameCount() const
@@ -405,6 +418,22 @@ int TimelineWidget::currentTrackId() const
 int TimelineWidget::currentFrame() const
 {
 	return d->currentFrame;
+}
+
+void TimelineWidget::changeFramerate(int framerate)
+{
+	emitCommand([&](uint8_t contextId) {
+		return drawdance::Message::makeSetMetadataInt(
+			contextId, DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE, framerate);
+	});
+}
+
+void TimelineWidget::changeFrameCount(int frameCount)
+{
+	emitCommand([&](uint8_t contextId) {
+		return drawdance::Message::makeSetMetadataInt(
+			contextId, DP_MSG_SET_METADATA_INT_FIELD_FRAME_COUNT, frameCount);
+	});
 }
 
 bool TimelineWidget::event(QEvent *event)
@@ -439,13 +468,13 @@ bool TimelineWidget::event(QEvent *event)
 
 void TimelineWidget::paintEvent(QPaintEvent *)
 {
-	if(!d->model) {
+	if(!d->canvas) {
 		return;
 	}
 
-	const QVector<canvas::TimelineTrack> tracks = d->model->tracks();
+	const QVector<canvas::TimelineTrack> tracks = d->getTracks();
 	int trackCount = tracks.size();
-	int frameCount = d->model->frameCount();
+	int frameCount = d->frameCount();
 	int currentTrackIndex = d->trackIndexById(d->currentTrackId);
 	int currentFrame = d->currentFrame;
 
@@ -842,7 +871,7 @@ void TimelineWidget::dropEvent(QDropEvent *event)
 		QPoint pos = compat::dropPos(*event);
 		int target = d->trackCount() - d->trackDropIndex(pos.y()) - 1;
 		QVector<uint16_t> trackIds;
-		for(const canvas::TimelineTrack &track : d->model->tracks()) {
+		for(const canvas::TimelineTrack &track : d->getTracks()) {
 			trackIds.append(track.id);
 		}
 
@@ -1010,9 +1039,8 @@ void TimelineWidget::showKeyFrameProperties()
 	}
 
 	dlg->setKeyFrameTitle(keyFrame->title);
-	dlg->setKeyFrameLayers(
-		d->model->canvas()->layerlist()->toKeyFrameLayerModel(
-			keyFrame->layerId, keyFrame->layerVisibility));
+	dlg->setKeyFrameLayers(d->canvas->layerlist()->toKeyFrameLayerModel(
+		keyFrame->layerId, keyFrame->layerVisibility));
 
 	utils::showWindow(dlg);
 	dlg->raise();
@@ -1058,7 +1086,8 @@ void TimelineWidget::addTrack()
 		return;
 	}
 
-	int trackId = d->model->getAvailableTrackId();
+	const canvas::TimelineModel *timeline = d->canvas->timeline();
+	int trackId = timeline->getAvailableTrackId();
 	if(trackId == 0) {
 		qWarning("Couldn't find a free ID for a new track");
 		return;
@@ -1069,7 +1098,7 @@ void TimelineWidget::addTrack()
 	emitCommand([&](uint8_t contextId) {
 		return drawdance::Message::makeTrackCreate(
 			contextId, trackId, track ? track->id : 0, 0,
-			d->model->getAvailableTrackName(tr("Track")));
+			timeline->getAvailableTrackName(tr("Track")));
 	});
 }
 
@@ -1098,7 +1127,8 @@ void TimelineWidget::duplicateTrack()
 		return;
 	}
 
-	int trackId = d->model->getAvailableTrackId();
+	const canvas::TimelineModel *timeline = d->canvas->timeline();
+	int trackId = timeline->getAvailableTrackId();
 	if(trackId == 0) {
 		qWarning("Couldn't find a free ID for a new track");
 		return;
@@ -1108,7 +1138,7 @@ void TimelineWidget::duplicateTrack()
 	emitCommand([&](uint8_t contextId) {
 		return drawdance::Message::makeTrackCreate(
 			contextId, trackId, source->id, source->id,
-			d->model->getAvailableTrackName(source->title));
+			timeline->getAvailableTrackName(source->title));
 	});
 }
 
@@ -1165,11 +1195,7 @@ void TimelineWidget::setFrameCount()
 		tr("Frame Count (key frames beyond this point will be deleted)"),
 		d->frameCount(), 1, 9999, 1, &ok);
 	if(ok) {
-		emitCommand([&](uint8_t contextId) {
-			return drawdance::Message::makeSetMetadataInt(
-				contextId, DP_MSG_SET_METADATA_INT_FIELD_FRAME_COUNT,
-				frameCount);
-		});
+		changeFrameCount(frameCount);
 	}
 }
 
@@ -1184,10 +1210,7 @@ void TimelineWidget::setFramerate()
 		this, tr("Change Framerate"), tr("Frames Per Second (FPS)"),
 		d->framerate(), 1, 999, 1, &ok);
 	if(ok) {
-		emitCommand([&](uint8_t contextId) {
-			return drawdance::Message::makeSetMetadataInt(
-				contextId, DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE, framerate);
-		});
+		changeFramerate(framerate);
 	}
 }
 
@@ -1219,7 +1242,7 @@ void TimelineWidget::trackBelow()
 
 void TimelineWidget::updateTracks()
 {
-	if(!d->model) {
+	if(!d->canvas) {
 		return;
 	}
 
@@ -1230,12 +1253,11 @@ void TimelineWidget::updateTracks()
 	d->verticalScroll->setSingleStep(d->rowHeight);
 	d->horizontalScroll->setSingleStep(d->columnWidth);
 
-	const QVector<canvas::TimelineTrack> tracks = d->model->tracks();
 	int maxTrackAdvance = 0;
 	int nextTrackId = 0;
 	int currentTrackId = 0;
 	int anyTrackId = 0;
-	for(const canvas::TimelineTrack &track : d->model->tracks()) {
+	for(const canvas::TimelineTrack &track : d->getTracks()) {
 		int trackAdvance = fm.horizontalAdvance(track.title);
 		if(trackAdvance > maxTrackAdvance) {
 			maxTrackAdvance = trackAdvance;
@@ -1284,7 +1306,7 @@ void TimelineWidget::setVerticalScroll(int pos)
 
 void TimelineWidget::updatePasteAction()
 {
-	if(d->model && d->haveActions) {
+	if(d->canvas && d->haveActions) {
 		const QMimeData *mimeData = QApplication::clipboard()->mimeData();
 		d->actions.keyFramePaste->setEnabled(
 			d->editable && d->frameCount() > 0 && d->currentTrack() &&
@@ -1341,7 +1363,7 @@ void TimelineWidget::setKeyFrameProperties(
 	bool layersChanged = prevLayerVisibility != layerVisibility;
 
 	if(titleChanged || layersChanged) {
-		uint8_t contextId = d->model->localUserId();
+		uint8_t contextId = d->canvas->localUserId();
 		drawdance::Message messages[3];
 		int fill = 0;
 		messages[fill++] = drawdance::Message::makeUndoPoint(contextId);
@@ -1369,7 +1391,7 @@ void TimelineWidget::setKeyFrameProperties(
 
 void TimelineWidget::updateActions()
 {
-	if(!d->haveActions || !d->model) {
+	if(!d->haveActions || !d->canvas) {
 		return;
 	}
 
@@ -1441,7 +1463,7 @@ void TimelineWidget::updateActions()
 
 void TimelineWidget::updateScrollbars()
 {
-	if(!d->model) {
+	if(!d->canvas) {
 		return;
 	}
 	QSize hsh = d->horizontalScroll->sizeHint();
@@ -1457,7 +1479,7 @@ void TimelineWidget::updateScrollbars()
 TimelineWidget::Target TimelineWidget::getMouseTarget(const QPoint &pos) const
 {
 	Target target{-1, 0, -1, nullptr};
-	if(d->model) {
+	if(d->canvas) {
 		int x = pos.x();
 		int headerWidth = d->headerWidth;
 		if(x > headerWidth) {
@@ -1502,7 +1524,7 @@ void TimelineWidget::emitCommand(
 	std::function<drawdance::Message(uint8_t)> getMessage)
 {
 	if(d->editable) {
-		uint8_t contextId = d->model->localUserId();
+		uint8_t contextId = d->canvas->localUserId();
 		drawdance::Message messages[] = {
 			drawdance::Message::makeUndoPoint(contextId),
 			getMessage(contextId),

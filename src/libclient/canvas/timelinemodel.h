@@ -15,6 +15,7 @@ class Track;
 
 namespace canvas {
 
+class AclState;
 class CanvasModel;
 
 struct TimelineKeyFrame final {
@@ -37,34 +38,27 @@ class TimelineModel final : public QObject {
 public:
 	explicit TimelineModel(CanvasModel *canvas);
 
-	const CanvasModel *canvas() { return m_canvas; }
+	void setAclState(AclState *aclState) { m_aclState = aclState; }
+
 	const QVector<TimelineTrack> &tracks() { return m_tracks; }
-
-	int frameCount() const { return m_frameCount; }
-	void setFrameCount(int frameCount);
-
-	uint8_t localUserId() const;
 
 	int getAvailableTrackId() const;
 	QString getAvailableTrackName(QString basename) const;
 
 public slots:
-	void setLayers(const drawdance::LayerPropsList &lpl);
 	void setTimeline(const drawdance::Timeline &tl);
 
 signals:
-	void layersChanged();
 	void tracksChanged();
-	void frameCountChanged(int frameCount);
 
 private:
 	static TimelineTrack trackToModel(const drawdance::Track &t);
+
 	static TimelineKeyFrame
 	keyFrameToModel(const drawdance::KeyFrame &kf, int frameIndex);
 
-	CanvasModel *m_canvas;
 	QVector<TimelineTrack> m_tracks;
-	int m_frameCount;
+	AclState *m_aclState;
 };
 
 }
