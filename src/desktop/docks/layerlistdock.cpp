@@ -349,7 +349,9 @@ void LayerList::addLayerOrGroup(bool group)
 		uint8_t flags = group ? DP_MSG_LAYER_TREE_CREATE_FLAGS_GROUP : 0;
 		if(index.isValid()) {
 			targetId = m_selectedId;
-			if(index.data(canvas::LayerListModel::IsGroupRole).toBool() && m_view->isExpanded(index)) {
+			bool into = index.data(canvas::LayerListModel::IsGroupRole).toBool()
+				&& (m_view->isExpanded(index) || index.data(canvas::LayerListModel::IsEmptyRole).toBool());
+			if(into) {
 				flags |= DP_MSG_LAYER_TREE_CREATE_FLAGS_INTO;
 			}
 		} else {
