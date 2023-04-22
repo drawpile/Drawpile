@@ -200,11 +200,6 @@ DP_CanvasState *DP_ops_layer_tree_create(DP_CanvasState *cs, DP_DrawContext *dc,
     // If the source is a group, create a copy of it. This can fail if not
     // enough layer ids are available, so we do it before starting to make
     // anything transient.
-    // TODO: this generates layer ids on the fly, which isn't too great an idea
-    // because it may cause desync that isn't noticed by the retcon code. This
-    // could be solved by making Drawpile generate multiple messages when
-    // cloning groups, building up the tree with explicit ids rather than in one
-    // big command blob.
     DP_TransientLayerProps *tlp;
     if (source_lre) {
         DP_LayerProps *source_lp = DP_layer_routes_entry_props(source_lre, cs);
