@@ -110,7 +110,7 @@ bool DP_message_type_command(DP_MessageType type)
     case DP_MSG_MOVE_RECT:
     case DP_MSG_SET_METADATA_INT:
     case DP_MSG_LAYER_TREE_CREATE:
-    case DP_MSG_LAYER_TREE_ORDER:
+    case DP_MSG_LAYER_TREE_MOVE:
     case DP_MSG_LAYER_TREE_DELETE:
     case DP_MSG_TRANSFORM_REGION:
     case DP_MSG_TRACK_CREATE:
@@ -233,8 +233,8 @@ const char *DP_message_type_name(DP_MessageType type)
         return "setmetadataint";
     case DP_MSG_LAYER_TREE_CREATE:
         return "layertreecreate";
-    case DP_MSG_LAYER_TREE_ORDER:
-        return "layertreeorder";
+    case DP_MSG_LAYER_TREE_MOVE:
+        return "layertreemove";
     case DP_MSG_LAYER_TREE_DELETE:
         return "layertreedelete";
     case DP_MSG_TRANSFORM_REGION:
@@ -367,8 +367,8 @@ const char *DP_message_type_enum_name(DP_MessageType type)
         return "DP_MSG_SET_METADATA_INT";
     case DP_MSG_LAYER_TREE_CREATE:
         return "DP_MSG_LAYER_TREE_CREATE";
-    case DP_MSG_LAYER_TREE_ORDER:
-        return "DP_MSG_LAYER_TREE_ORDER";
+    case DP_MSG_LAYER_TREE_MOVE:
+        return "DP_MSG_LAYER_TREE_MOVE";
     case DP_MSG_LAYER_TREE_DELETE:
         return "DP_MSG_LAYER_TREE_DELETE";
     case DP_MSG_TRANSFORM_REGION:
@@ -545,8 +545,8 @@ DP_MessageType DP_message_type_from_name(const char *type_name,
     else if (DP_str_equal(type_name, "layertreecreate")) {
         return DP_MSG_LAYER_TREE_CREATE;
     }
-    else if (DP_str_equal(type_name, "layertreeorder")) {
-        return DP_MSG_LAYER_TREE_ORDER;
+    else if (DP_str_equal(type_name, "layertreemove")) {
+        return DP_MSG_LAYER_TREE_MOVE;
     }
     else if (DP_str_equal(type_name, "layertreedelete")) {
         return DP_MSG_LAYER_TREE_DELETE;
@@ -716,8 +716,8 @@ DP_Message *DP_message_deserialize_body(int type, unsigned int context_id,
         return DP_msg_set_metadata_int_deserialize(context_id, buf, length);
     case DP_MSG_LAYER_TREE_CREATE:
         return DP_msg_layer_tree_create_deserialize(context_id, buf, length);
-    case DP_MSG_LAYER_TREE_ORDER:
-        return DP_msg_layer_tree_order_deserialize(context_id, buf, length);
+    case DP_MSG_LAYER_TREE_MOVE:
+        return DP_msg_layer_tree_move_deserialize(context_id, buf, length);
     case DP_MSG_LAYER_TREE_DELETE:
         return DP_msg_layer_tree_delete_deserialize(context_id, buf, length);
     case DP_MSG_TRANSFORM_REGION:
@@ -858,8 +858,8 @@ DP_Message *DP_message_parse_body(DP_MessageType type, unsigned int context_id,
         return DP_msg_set_metadata_int_parse(context_id, reader);
     case DP_MSG_LAYER_TREE_CREATE:
         return DP_msg_layer_tree_create_parse(context_id, reader);
-    case DP_MSG_LAYER_TREE_ORDER:
-        return DP_msg_layer_tree_order_parse(context_id, reader);
+    case DP_MSG_LAYER_TREE_MOVE:
+        return DP_msg_layer_tree_move_parse(context_id, reader);
     case DP_MSG_LAYER_TREE_DELETE:
         return DP_msg_layer_tree_delete_parse(context_id, reader);
     case DP_MSG_TRANSFORM_REGION:
@@ -7582,138 +7582,119 @@ size_t DP_msg_layer_tree_create_title_len(const DP_MsgLayerTreeCreate *mltc)
 }
 
 
-/* DP_MSG_LAYER_TREE_ORDER */
+/* DP_MSG_LAYER_TREE_MOVE */
 
-struct DP_MsgLayerTreeOrder {
-    uint16_t root;
-    uint16_t layers_count;
-    uint16_t layers[];
+struct DP_MsgLayerTreeMove {
+    uint16_t layer;
+    uint16_t parent;
+    uint16_t sibling;
 };
 
-static size_t msg_layer_tree_order_payload_length(DP_Message *msg)
+static size_t msg_layer_tree_move_payload_length(DP_UNUSED DP_Message *msg)
 {
-    DP_MsgLayerTreeOrder *mlto = DP_message_internal(msg);
-    return ((size_t)2) + DP_int_to_size(mlto->layers_count) * 2;
+    return ((size_t)6);
 }
 
-static size_t msg_layer_tree_order_serialize_payload(DP_Message *msg,
-                                                     unsigned char *data)
+static size_t msg_layer_tree_move_serialize_payload(DP_Message *msg,
+                                                    unsigned char *data)
 {
-    DP_MsgLayerTreeOrder *mlto = DP_message_internal(msg);
+    DP_MsgLayerTreeMove *mltm = DP_message_internal(msg);
     size_t written = 0;
-    written += DP_write_bigendian_uint16(mlto->root, data + written);
-    written += DP_write_bigendian_uint16_array(mlto->layers, mlto->layers_count,
-                                               data + written);
-    DP_ASSERT(written == msg_layer_tree_order_payload_length(msg));
+    written += DP_write_bigendian_uint16(mltm->layer, data + written);
+    written += DP_write_bigendian_uint16(mltm->parent, data + written);
+    written += DP_write_bigendian_uint16(mltm->sibling, data + written);
+    DP_ASSERT(written == msg_layer_tree_move_payload_length(msg));
     return written;
 }
 
-static bool msg_layer_tree_order_write_payload_text(DP_Message *msg,
-                                                    DP_TextWriter *writer)
+static bool msg_layer_tree_move_write_payload_text(DP_Message *msg,
+                                                   DP_TextWriter *writer)
 {
-    DP_MsgLayerTreeOrder *mlto = DP_message_internal(msg);
-    return DP_text_writer_write_uint16_list(writer, "layers", mlto->layers,
-                                            mlto->layers_count, true)
-        && DP_text_writer_write_uint(writer, "root", mlto->root, true);
+    DP_MsgLayerTreeMove *mltm = DP_message_internal(msg);
+    return DP_text_writer_write_uint(writer, "layer", mltm->layer, true)
+        && DP_text_writer_write_uint(writer, "parent", mltm->parent, true)
+        && DP_text_writer_write_uint(writer, "sibling", mltm->sibling, true);
 }
 
-static bool msg_layer_tree_order_equals(DP_Message *DP_RESTRICT msg,
-                                        DP_Message *DP_RESTRICT other)
+static bool msg_layer_tree_move_equals(DP_Message *DP_RESTRICT msg,
+                                       DP_Message *DP_RESTRICT other)
 {
-    DP_MsgLayerTreeOrder *a = DP_message_internal(msg);
-    DP_MsgLayerTreeOrder *b = DP_message_internal(other);
-    return a->root == b->root && a->layers_count == b->layers_count
-        && memcmp(a->layers, b->layers, DP_uint16_to_size(a->layers_count) * 2)
-               == 0;
+    DP_MsgLayerTreeMove *a = DP_message_internal(msg);
+    DP_MsgLayerTreeMove *b = DP_message_internal(other);
+    return a->layer == b->layer && a->parent == b->parent
+        && a->sibling == b->sibling;
 }
 
-static const DP_MessageMethods msg_layer_tree_order_methods = {
-    msg_layer_tree_order_payload_length,
-    msg_layer_tree_order_serialize_payload,
-    msg_layer_tree_order_write_payload_text,
-    msg_layer_tree_order_equals,
+static const DP_MessageMethods msg_layer_tree_move_methods = {
+    msg_layer_tree_move_payload_length,
+    msg_layer_tree_move_serialize_payload,
+    msg_layer_tree_move_write_payload_text,
+    msg_layer_tree_move_equals,
 };
 
-DP_Message *DP_msg_layer_tree_order_new(unsigned int context_id, uint16_t root,
-                                        void (*set_layers)(int, uint16_t *,
-                                                           void *),
-                                        int layers_count, void *layers_user)
+DP_Message *DP_msg_layer_tree_move_new(unsigned int context_id, uint16_t layer,
+                                       uint16_t parent, uint16_t sibling)
 {
-    DP_Message *msg = DP_message_new(
-        DP_MSG_LAYER_TREE_ORDER, context_id, &msg_layer_tree_order_methods,
-        DP_FLEX_SIZEOF(DP_MsgLayerTreeOrder, layers,
-                       DP_int_to_size(layers_count) * 2));
-    DP_MsgLayerTreeOrder *mlto = DP_message_internal(msg);
-    mlto->root = root;
-    mlto->layers_count = DP_int_to_uint16(layers_count);
-    if (set_layers) {
-        set_layers(mlto->layers_count, mlto->layers, layers_user);
-    }
+    DP_Message *msg = DP_message_new(DP_MSG_LAYER_TREE_MOVE, context_id,
+                                     &msg_layer_tree_move_methods,
+                                     sizeof(DP_MsgLayerTreeMove));
+    DP_MsgLayerTreeMove *mltm = DP_message_internal(msg);
+    mltm->layer = layer;
+    mltm->parent = parent;
+    mltm->sibling = sibling;
     return msg;
 }
 
-DP_Message *DP_msg_layer_tree_order_deserialize(unsigned int context_id,
-                                                const unsigned char *buffer,
-                                                size_t length)
+DP_Message *DP_msg_layer_tree_move_deserialize(unsigned int context_id,
+                                               const unsigned char *buffer,
+                                               size_t length)
 {
-    if (length < 2 || length > 65535) {
-        DP_error_set("Wrong length for layertreeorder message; "
-                     "expected between 2 and 65535, got %zu",
+    if (length != 6) {
+        DP_error_set("Wrong length for layertreemove message; "
+                     "expected 6, got %zu",
                      length);
         return NULL;
     }
     size_t read = 0;
-    uint16_t root = read_uint16(buffer + read, &read);
-    size_t layers_bytes = length - read;
-    if ((layers_bytes % 2) != 0) {
-        DP_error_set("Wrong length for layers field in layertreeorder message; "
-                     "%zu not divisible by 2",
-                     layers_bytes);
-        return NULL;
-    }
-    uint16_t layers_count = DP_size_to_uint16(layers_bytes / 2);
-    void *layers_user = (void *)(buffer + read);
-    return DP_msg_layer_tree_order_new(context_id, root, read_uint16_array,
-                                       layers_count, layers_user);
+    uint16_t layer = read_uint16(buffer + read, &read);
+    uint16_t parent = read_uint16(buffer + read, &read);
+    uint16_t sibling = read_uint16(buffer + read, &read);
+    return DP_msg_layer_tree_move_new(context_id, layer, parent, sibling);
 }
 
-DP_Message *DP_msg_layer_tree_order_parse(unsigned int context_id,
-                                          DP_TextReader *reader)
+DP_Message *DP_msg_layer_tree_move_parse(unsigned int context_id,
+                                         DP_TextReader *reader)
 {
-    uint16_t root =
-        (uint16_t)DP_text_reader_get_ulong_hex(reader, "root", UINT16_MAX);
-    int layers_count;
-    DP_TextReaderParseParams layers_params =
-        DP_text_reader_get_comma_separated(reader, "layers", &layers_count);
-    return DP_msg_layer_tree_order_new(context_id, root,
-                                       DP_text_reader_parse_uint16_array_hex,
-                                       layers_count, &layers_params);
+    uint16_t layer =
+        (uint16_t)DP_text_reader_get_ulong_hex(reader, "layer", UINT16_MAX);
+    uint16_t parent =
+        (uint16_t)DP_text_reader_get_ulong_hex(reader, "parent", UINT16_MAX);
+    uint16_t sibling =
+        (uint16_t)DP_text_reader_get_ulong_hex(reader, "sibling", UINT16_MAX);
+    return DP_msg_layer_tree_move_new(context_id, layer, parent, sibling);
 }
 
-DP_MsgLayerTreeOrder *DP_msg_layer_tree_order_cast(DP_Message *msg)
+DP_MsgLayerTreeMove *DP_msg_layer_tree_move_cast(DP_Message *msg)
 {
-    return DP_message_cast(msg, DP_MSG_LAYER_TREE_ORDER);
+    return DP_message_cast(msg, DP_MSG_LAYER_TREE_MOVE);
 }
 
-uint16_t DP_msg_layer_tree_order_root(const DP_MsgLayerTreeOrder *mlto)
+uint16_t DP_msg_layer_tree_move_layer(const DP_MsgLayerTreeMove *mltm)
 {
-    DP_ASSERT(mlto);
-    return mlto->root;
+    DP_ASSERT(mltm);
+    return mltm->layer;
 }
 
-const uint16_t *DP_msg_layer_tree_order_layers(const DP_MsgLayerTreeOrder *mlto,
-                                               int *out_count)
+uint16_t DP_msg_layer_tree_move_parent(const DP_MsgLayerTreeMove *mltm)
 {
-    DP_ASSERT(mlto);
-    if (out_count) {
-        *out_count = mlto->layers_count;
-    }
-    return mlto->layers;
+    DP_ASSERT(mltm);
+    return mltm->parent;
 }
 
-int DP_msg_layer_tree_order_layers_count(const DP_MsgLayerTreeOrder *mlto)
+uint16_t DP_msg_layer_tree_move_sibling(const DP_MsgLayerTreeMove *mltm)
 {
-    return mlto->layers_count;
+    DP_ASSERT(mltm);
+    return mltm->sibling;
 }
 
 

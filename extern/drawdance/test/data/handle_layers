@@ -724,15 +724,18 @@ begin testing
 }
 
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
--> DP_MSG_LAYER_TREE_ORDER fail - 1 error(s): Layer tree order: ordering empty
--> DP_MSG_LAYER_TREE_ORDER fail - 1 error(s): Layer tree order: ordering not even
--> DP_MSG_LAYER_TREE_ORDER fail - 1 error(s): Layer tree order: id 999 not found
--> DP_MSG_LAYER_TREE_ORDER fail - 1 error(s): Layer tree order: missing layers
--> DP_MSG_LAYER_TREE_ORDER fail - 1 error(s): Layer tree order: invalid tree
--> DP_MSG_LAYER_TREE_ORDER fail - 1 error(s): Layer tree order: id 257 has child count of 1, but is not a group
--> DP_MSG_LAYER_TREE_ORDER fail - 1 error(s): Layer tree order: id 257 not found
+-> DP_MSG_LAYER_TREE_MOVE fail - 1 error(s): Move layer tree: layer id 0 is invalid
+-> DP_MSG_LAYER_TREE_MOVE fail - 1 error(s): Move layer tree: layer 257, parent 257 and sibling 0 overlap
+-> DP_MSG_LAYER_TREE_MOVE fail - 1 error(s): Move layer tree: layer 257, parent 0 and sibling 257 overlap
+-> DP_MSG_LAYER_TREE_MOVE fail - 1 error(s): Move layer tree: layer 257, parent 258 and sibling 258 overlap
+-> DP_MSG_LAYER_TREE_MOVE fail - 1 error(s): Layer tree move: id 111 not found
+-> DP_MSG_LAYER_TREE_MOVE fail - 1 error(s): Layer tree move: parent id 222 not found
+-> DP_MSG_LAYER_TREE_MOVE fail - 1 error(s): Layer tree move: sibling id 333 not found
+-> DP_MSG_LAYER_TREE_MOVE fail - 1 error(s): Layer tree move: parent 260 is child of layer 258
+-> DP_MSG_LAYER_TREE_MOVE fail - 1 error(s): Layer tree move: parent id 261 is not a group
+-> DP_MSG_LAYER_TREE_MOVE fail - 1 error(s): Layer tree move: sibling id 258 not child of parent id 260
 
--- invalid layer orders
+-- invalid layer tree moves
 2 layer(s), 2 layer prop(s)
 [0] = {
     type: group
@@ -802,9 +805,149 @@ begin testing
 
 -> DP_MSG_UNDO ok - 0 error(s)
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
--> DP_MSG_LAYER_TREE_ORDER ok - 0 error(s)
+-> DP_MSG_LAYER_TREE_MOVE ok - 0 error(s)
 
--- order layers in root
+-- swap layers in root
+2 layer(s), 2 layer prop(s)
+[0] = {
+    type: layer
+    id: 257
+    title: "Layer 1"
+    opacity: 32768 (100.00%)
+    blend mode: MULTIPLY
+    hidden: false
+    censored: true
+    isolated: false
+    width: 16
+    height: 9
+    0 sublayer(s), 0 sublayer prop(s)
+}
+[1] = {
+    type: group
+    id: 258
+    title: "Group 1"
+    opacity: 32768 (100.00%)
+    blend mode: NORMAL
+    hidden: false
+    censored: false
+    isolated: true
+    width: 16
+    height: 9
+    2 child layer(s), 2 child layer prop(s)
+    [0] = {
+        type: layer
+        id: 259
+        title: "Layer 2"
+        opacity: 32768 (100.00%)
+        blend mode: NORMAL
+        hidden: false
+        censored: false
+        isolated: false
+        width: 16
+        height: 9
+        0 sublayer(s), 0 sublayer prop(s)
+    }
+    [1] = {
+        type: group
+        id: 260
+        title: "Group 2"
+        opacity: 32768 (100.00%)
+        blend mode: NORMAL
+        hidden: false
+        censored: false
+        isolated: true
+        width: 16
+        height: 9
+        1 child layer(s), 1 child layer prop(s)
+        [0] = {
+            type: layer
+            id: 261
+            title: "Copy of Layer 1"
+            opacity: 32768 (100.00%)
+            blend mode: MULTIPLY
+            hidden: false
+            censored: true
+            isolated: false
+            width: 16
+            height: 9
+            0 sublayer(s), 0 sublayer prop(s)
+        }
+    }
+}
+
+-> DP_MSG_LAYER_TREE_MOVE ok - 0 error(s)
+
+-- move layer out of group
+3 layer(s), 3 layer prop(s)
+[0] = {
+    type: layer
+    id: 257
+    title: "Layer 1"
+    opacity: 32768 (100.00%)
+    blend mode: MULTIPLY
+    hidden: false
+    censored: true
+    isolated: false
+    width: 16
+    height: 9
+    0 sublayer(s), 0 sublayer prop(s)
+}
+[1] = {
+    type: group
+    id: 258
+    title: "Group 1"
+    opacity: 32768 (100.00%)
+    blend mode: NORMAL
+    hidden: false
+    censored: false
+    isolated: true
+    width: 16
+    height: 9
+    1 child layer(s), 1 child layer prop(s)
+    [0] = {
+        type: layer
+        id: 259
+        title: "Layer 2"
+        opacity: 32768 (100.00%)
+        blend mode: NORMAL
+        hidden: false
+        censored: false
+        isolated: false
+        width: 16
+        height: 9
+        0 sublayer(s), 0 sublayer prop(s)
+    }
+}
+[2] = {
+    type: group
+    id: 260
+    title: "Group 2"
+    opacity: 32768 (100.00%)
+    blend mode: NORMAL
+    hidden: false
+    censored: false
+    isolated: true
+    width: 16
+    height: 9
+    1 child layer(s), 1 child layer prop(s)
+    [0] = {
+        type: layer
+        id: 261
+        title: "Copy of Layer 1"
+        opacity: 32768 (100.00%)
+        blend mode: MULTIPLY
+        hidden: false
+        censored: true
+        isolated: false
+        width: 16
+        height: 9
+        0 sublayer(s), 0 sublayer prop(s)
+    }
+}
+
+-> DP_MSG_LAYER_TREE_MOVE ok - 0 error(s)
+
+-- move layer out of nested group
 4 layer(s), 4 layer prop(s)
 [0] = {
     type: layer
@@ -874,9 +1017,9 @@ begin testing
 
 -> DP_MSG_UNDO ok - 0 error(s)
 -> DP_MSG_UNDO_POINT ok - 0 error(s)
--> DP_MSG_LAYER_TREE_ORDER ok - 0 error(s)
+-> DP_MSG_LAYER_TREE_MOVE ok - 0 error(s)
 
--- order layers in group
+-- move layer into group
 2 layer(s), 2 layer prop(s)
 [0] = {
     type: group

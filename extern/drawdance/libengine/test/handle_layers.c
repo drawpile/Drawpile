@@ -181,28 +181,12 @@ static void add_layer_tree_delete(DP_Output *output, DP_CanvasHistory *ch,
     add_message(output, ch, dc, DP_msg_layer_tree_delete_new(1, id, merge_to));
 }
 
-static void set_layers(int count, uint16_t *out, void *user)
+static void add_layer_tree_move(DP_Output *output, DP_CanvasHistory *ch,
+                                DP_DrawContext *dc, uint16_t layer,
+                                uint16_t parent, uint16_t sibling)
 {
-    int *inputs = user;
-    DP_ASSERT(inputs[count] == -1);
-    for (int i = 0; i < count; ++i) {
-        int value = inputs[i];
-        DP_ASSERT(value >= 0);
-        DP_ASSERT(value <= UINT16_MAX);
-        out[i] = DP_int_to_uint16(value);
-    }
-}
-
-static void add_layer_order(DP_Output *output, DP_CanvasHistory *ch,
-                            DP_DrawContext *dc, uint16_t root, int *inputs)
-{
-    int count = 0;
-    while (inputs[count] != -1) {
-        ++count;
-    }
-    add_message(
-        output, ch, dc,
-        DP_msg_layer_tree_order_new(1, root, set_layers, count, inputs));
+    add_message(output, ch, dc,
+                DP_msg_layer_tree_move_new(1, layer, parent, sibling));
 }
 
 static void set_pixel_dab(DP_UNUSED int count, DP_PixelDab *dabs,
@@ -287,25 +271,31 @@ static void handle_layers(DP_Output *output, DP_CanvasHistory *ch,
     dump_layers(output, ch, "pen up in indirect mode");
 
     add_undo_point(output, ch, dc);
-    add_layer_order(output, ch, dc, 0, (int[]){-1});
-    add_layer_order(output, ch, dc, 0, (int[]){0, -1});
-    add_layer_order(output, ch, dc, 0, (int[]){0, 999, -1});
-    add_layer_order(output, ch, dc, 0, (int[]){0, 257, -1});
-    add_layer_order(output, ch, dc, 0, (int[]){1, 257, -1});
-    add_layer_order(output, ch, dc, 0, (int[]){1, 257, 0, 258, -1});
-    add_layer_order(output, ch, dc, 0, (int[]){2, 258, 0, 257, 0, 257, -1});
-    dump_layers(output, ch, "invalid layer orders");
+    add_layer_tree_move(output, ch, dc, 0, 0, 0);
+    add_layer_tree_move(output, ch, dc, 257, 257, 0);
+    add_layer_tree_move(output, ch, dc, 257, 0, 257);
+    add_layer_tree_move(output, ch, dc, 257, 258, 258);
+    add_layer_tree_move(output, ch, dc, 111, 0, 0);
+    add_layer_tree_move(output, ch, dc, 257, 222, 0);
+    add_layer_tree_move(output, ch, dc, 257, 0, 333);
+    add_layer_tree_move(output, ch, dc, 258, 260, 0);
+    add_layer_tree_move(output, ch, dc, 257, 261, 0);
+    add_layer_tree_move(output, ch, dc, 257, 260, 258);
+    dump_layers(output, ch, "invalid layer tree moves");
     add_undo(output, ch, dc);
 
     add_undo_point(output, ch, dc);
-    add_layer_order(output, ch, dc, 0,
-                    (int[]){1, 260, 0, 261, 0, 259, 0, 258, 0, 257, -1});
-    dump_layers(output, ch, "order layers in root");
+    add_layer_tree_move(output, ch, dc, 257, 0, 258);
+    dump_layers(output, ch, "swap layers in root");
+    add_layer_tree_move(output, ch, dc, 260, 0, 0);
+    dump_layers(output, ch, "move layer out of group");
+    add_layer_tree_move(output, ch, dc, 259, 0, 260);
+    dump_layers(output, ch, "move layer out of nested group");
     add_undo(output, ch, dc);
 
     add_undo_point(output, ch, dc);
-    add_layer_order(output, ch, dc, 258, (int[]){2, 260, 0, 261, 0, 259, -1});
-    dump_layers(output, ch, "order layers in group");
+    add_layer_tree_move(output, ch, dc, 259, 260, 261);
+    dump_layers(output, ch, "move layer into group");
     add_undo(output, ch, dc);
 
     add_undo_point(output, ch, dc);

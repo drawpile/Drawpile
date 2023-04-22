@@ -265,9 +265,9 @@ DP_AffectedArea DP_affected_area_make(DP_Message *msg,
         return make_layer_attrs(
             DP_msg_layer_retitle_id(DP_msg_layer_retitle_cast(msg)));
     case DP_MSG_LAYER_ORDER:
-    case DP_MSG_LAYER_TREE_ORDER:
-        // Reordering layers affects an arbitrary number of them, so
-        // punt to conflicting with every other layer domain message.
+    case DP_MSG_LAYER_TREE_MOVE:
+        // Moving a layer is dependent on the state of the source, parent and
+        // sibling layer, which is beyond what we can represent.
         return make_layer_attrs(ALL_IDS);
     case DP_MSG_LAYER_DELETE: {
         DP_MsgLayerDelete *mld = DP_msg_layer_delete_cast(msg);

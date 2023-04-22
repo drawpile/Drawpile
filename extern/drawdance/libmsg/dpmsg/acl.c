@@ -666,6 +666,12 @@ static uint8_t handle_feature_access_levels(DP_AclState *acls, DP_Message *msg,
     }
 }
 
+static bool can_edit_any_or_own_layers(DP_AclState *acls, uint8_t user_id)
+{
+    return DP_acl_state_can_use_feature(acls, DP_FEATURE_EDIT_LAYERS, user_id)
+        || DP_acl_state_can_use_feature(acls, DP_FEATURE_OWN_LAYERS, user_id);
+}
+
 static bool handle_layer_create(DP_AclState *acls, int layer_id,
                                 uint8_t user_id, bool override)
 {
@@ -675,10 +681,25 @@ static bool handle_layer_create(DP_AclState *acls, int layer_id,
     // Only operators can create layers under a different owner.
     bool can_create =
         (owns_id(user_id, layer_id) || DP_acl_state_is_op(acls, user_id))
-        && (DP_acl_state_can_use_feature(acls, DP_FEATURE_EDIT_LAYERS, user_id)
-            || DP_acl_state_can_use_feature(acls, DP_FEATURE_OWN_LAYERS,
-                                            user_id));
+        && can_edit_any_or_own_layers(acls, user_id);
     return can_create;
+}
+
+static bool handle_layer_tree_move(DP_AclState *acls, DP_MsgLayerTreeMove *mltm,
+                                   uint8_t user_id, bool override)
+{
+    if (override) {
+        return true;
+    }
+    // Checking if the user is allowed to insert into the root is redundant,
+    // since if they're allowed to edit their own layer they'll also have that
+    // feature, but it's left in because it matches the idea behind it. Layer
+    // access control needs some rethinking anyway, it's too coarse.
+    int layer_id = DP_msg_layer_tree_move_layer(mltm);
+    int parent_id = DP_msg_layer_tree_move_parent(mltm);
+    return can_edit_layer(acls, user_id, layer_id)
+        && (parent_id == 0 ? can_edit_any_or_own_layers(acls, user_id)
+                           : can_edit_layer(acls, user_id, layer_id));
 }
 
 static bool can_delete_layer(DP_AclState *acls, uint8_t user_id, int layer_id,
@@ -950,11 +971,9 @@ static bool handle_command_message(DP_AclState *acls, DP_Message *msg,
             acls,
             DP_msg_layer_tree_create_id(DP_msg_layer_tree_create_cast(msg)),
             user_id, override);
-    case DP_MSG_LAYER_TREE_ORDER:
-        return override
-            || can_edit_layer(acls, user_id,
-                              DP_msg_layer_tree_order_root(
-                                  DP_msg_layer_tree_order_cast(msg)));
+    case DP_MSG_LAYER_TREE_MOVE:
+        return handle_layer_tree_move(acls, DP_msg_layer_tree_move_cast(msg),
+                                      user_id, override);
     case DP_MSG_LAYER_TREE_DELETE: {
         DP_MsgLayerTreeDelete *mltd = DP_msg_layer_tree_delete_cast(msg);
         return handle_layer_delete(acls, DP_msg_layer_tree_delete_id(mltd),

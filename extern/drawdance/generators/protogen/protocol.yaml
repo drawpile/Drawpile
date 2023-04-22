@@ -416,7 +416,7 @@ LayerRetitle:
 LayerOrder:
     id: 133
     comment: |
-             Layer order change command (legacy, subsumed by LayerTreeOrder)
+             Layer order change command (legacy, subsumed by LayerTreeMove)
 
              New layers are always added to the top of the stack.
              This command includes a list of layer IDs that define the new stacking order.
@@ -791,32 +791,25 @@ LayerTreeCreate:
         - flags flags: [group, into]
         - title utf8
 
-LayerTreeOrder:
+LayerTreeMove:
     id: 163
     comment: |
-             Reorder layers
+             Reorder a layer
 
-             The layer tree of the given group (0 means whole tree) will be reordered
-             according to the given order.
-             The order should describe a tree using (child count, layer ID) pairs.
+             Moves the given layer into the given parent group or into the root
+             if given 0. It will be placed either below the given sibling or at
+             the bottom if given 0. An invalid move, such as because the parent
+             is missing or the sibling isn't part of the parent group, will not
+             be executed at all, no fallback is attempted.
 
-             For example (indented for clarity):
-
-               2, 1,
-                 0, 10,
-                 0, 11,
-               0, 2,
-               2, 3,
-                 1, 30,
-                   0, 31
-                 0, 32
-
-              Each layer in the group must be listed exactly once in the new order,
-              or the command will be rejected.
-
+             The user is allowed to move a layer if they can edit both it and
+             the parent. Moving into the parent group is allowed if the user has
+             would be allowed to create a layer there (which is always, since
+             that's currently conflated with being allowed to edit layers.)
     fields:
-      - root u16: hex
-      - layers vec_u16: hex
+      - layer u16: hex
+      - parent u16: hex
+      - sibling u16: hex
 
 LayerTreeDelete:
     id: 164

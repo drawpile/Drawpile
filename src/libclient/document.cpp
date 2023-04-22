@@ -344,7 +344,7 @@ void Document::onMoveLayerRequested(int sourceId, int targetId, bool intoGroup, 
 			.makeLayerOrder(contextId, sourceId, targetId, below);
 	} else {
 		msg = m_canvas->paintEngine()->historyCanvasState()
-			.makeLayerTreeOrder(contextId, sourceId, targetId, intoGroup, below);
+			.makeLayerTreeMove(contextId, sourceId, targetId, intoGroup, below);
 	}
 	if(msg.isNull()) {
 		qWarning("Can't move layer: %s", DP_error());

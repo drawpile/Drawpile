@@ -236,173 +236,117 @@ DP_Message *DP_layer_routes_layer_order_make(DP_CanvasState *cs,
     }
 }
 
-
-struct DP_MakeLayerTreeOrderContext {
-    int source_id;
-    int target_id;
-    bool into;
-    bool below;
-    DP_LayerProps *source_lp;
-    DP_LayerPropsList *root_lpl;
-    int root_id;
-    int index;
-};
-
-static int count_common_layer_indexes(int source_index_count,
-                                      int *source_indexes,
-                                      int target_index_count,
-                                      int *target_indexes)
+static void get_children(int index_count, int *indexes, DP_CanvasState *cs,
+                         DP_LayerList **out_ll, DP_LayerPropsList **out_lpl)
 {
-    int min_count = DP_min_int(source_index_count, target_index_count);
-    int i;
-    for (i = 0; i < min_count; ++i) {
-        if (source_indexes[i] != target_indexes[i]) {
-            break;
-        }
-    }
-    return i;
-}
+    DP_ASSERT(cs);
+    DP_ASSERT(out_ll || out_lpl);
+    DP_LayerList *ll = DP_canvas_state_layers_noinc(cs);
+    DP_LayerPropsList *lpl = DP_canvas_state_layer_props_noinc(cs);
 
-static int count_order_layers(DP_LayerPropsList *lpl)
-{
-    int count = DP_layer_props_list_count(lpl);
-    int total = count;
-    for (int i = 0; i < count; ++i) {
-        DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, i);
-        DP_LayerPropsList *child_lpl = DP_layer_props_children_noinc(lp);
-        if (child_lpl) {
-            total += count_order_layers(child_lpl);
-        }
-    }
-    return total;
-}
+    for (int i = 0; i < index_count; ++i) {
+        int group_index = indexes[i];
 
-static void build_order_layers(struct DP_MakeLayerTreeOrderContext *c,
-                               DP_LayerPropsList *lpl, uint16_t *out,
-                               uint16_t *parent_child_count);
+        DP_LayerListEntry *lle = DP_layer_list_at_noinc(ll, group_index);
+        DP_LayerGroup *lg = DP_layer_list_entry_group_noinc(lle);
+        ll = DP_layer_group_children_noinc(lg);
 
-static void append_order_layer(struct DP_MakeLayerTreeOrderContext *c,
-                               uint16_t *out, uint16_t *parent_child_count,
-                               DP_LayerProps *lp, bool insert_source)
-{
-    if (parent_child_count) {
-        ++*parent_child_count;
+        DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, group_index);
+        lpl = DP_layer_props_children_noinc(lp);
     }
-    uint16_t *child_count = &out[c->index++];
-    *child_count = 0;
-    out[c->index++] = DP_int_to_uint16(DP_layer_props_id(lp));
-    DP_LayerPropsList *child_lpl = DP_layer_props_children_noinc(lp);
-    if (insert_source) {
-        append_order_layer(c, out, child_count, c->source_lp, false);
-        build_order_layers(c, child_lpl, out, child_count);
+
+    if (out_ll) {
+        *out_ll = ll;
     }
-    else if (child_lpl) {
-        build_order_layers(c, child_lpl, out, child_count);
+    if (out_lpl) {
+        *out_lpl = lpl;
     }
 }
 
-static void build_order_layers(struct DP_MakeLayerTreeOrderContext *c,
-                               DP_LayerPropsList *lpl, uint16_t *out,
-                               uint16_t *parent_child_count)
+static int get_layer_tree_move_parent_id(DP_CanvasState *cs,
+                                         DP_LayerRoutesEntry *target_lre)
 {
-    int count = DP_layer_props_list_count(lpl);
-    for (int i = count - 1; i >= 0; --i) {
-        DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, i);
-        int id = DP_layer_props_id(lp);
-        if (id == c->target_id) {
-            if (c->into) {
-                append_order_layer(c, out, parent_child_count, lp, true);
-            }
-            else if (c->below) {
-                append_order_layer(c, out, parent_child_count, lp, false);
-                append_order_layer(c, out, parent_child_count, c->source_lp,
-                                   false);
-            }
-            else {
-                append_order_layer(c, out, parent_child_count, c->source_lp,
-                                   false);
-                append_order_layer(c, out, parent_child_count, lp, false);
-            }
-        }
-        else if (id != c->source_id) {
-            append_order_layer(c, out, parent_child_count, lp, false);
-        }
+    int target_parent_index = target_lre->index_count - 2;
+    int *target_indexes = target_lre->indexes;
+    if (target_parent_index >= 0) {
+        DP_LayerPropsList *lpl;
+        get_children(target_parent_index, target_indexes, cs, NULL, &lpl);
+        DP_LayerProps *lp = DP_layer_props_list_at_noinc(
+            lpl, target_indexes[target_parent_index]);
+        return DP_layer_props_id(lp);
+    }
+    else {
+        return 0;
     }
 }
 
-static void set_tree_order_layers(DP_UNUSED int count, uint16_t *out,
-                                  void *user)
+static int get_layer_tree_move_sibling_id_above(DP_CanvasState *cs,
+                                                DP_LayerRoutesEntry *target_lre)
 {
-    struct DP_MakeLayerTreeOrderContext *c = user;
-    if (c->into && c->target_id == c->root_id) {
-        append_order_layer(c, out, NULL, c->source_lp, false);
+    int target_last_index = target_lre->index_count - 1;
+    int *target_indexes = target_lre->indexes;
+    int sibling_index = target_indexes[target_last_index] + 1;
+    DP_LayerPropsList *lpl;
+    get_children(target_last_index, target_indexes, cs, NULL, &lpl);
+    if (sibling_index < DP_layer_props_list_count(lpl)) {
+        DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, sibling_index);
+        return DP_layer_props_id(lp);
     }
-    build_order_layers(c, c->root_lpl, out, NULL);
-    DP_ASSERT(c->index == count);
+    else {
+        return 0;
+    }
 }
 
-DP_Message *DP_layer_routes_layer_tree_order_make(DP_LayerRoutes *lr,
-                                                  DP_CanvasState *cs,
-                                                  unsigned int context_id,
-                                                  int source_id, int target_id,
-                                                  bool into, bool below)
+DP_Message *DP_layer_routes_layer_tree_move_make(DP_LayerRoutes *lr,
+                                                 DP_CanvasState *cs,
+                                                 unsigned int context_id,
+                                                 int source_id, int target_id,
+                                                 bool into, bool below)
 {
-    DP_debug("Make layer tree order source %d target %d into %d below %d",
-             source_id, target_id, into, below);
-    if (source_id == target_id) {
-        DP_error_set("Make layer tree order: source and target are both %d",
-                     source_id);
+    DP_ASSERT(lr);
+    DP_ASSERT(cs);
+    DP_debug("Layer tree move source %d target %d into %d below %d", source_id,
+             target_id, into, below);
+
+    if (source_id == 0 || target_id == 0 || source_id == target_id) {
+        DP_error_set(
+            "Make layer tree move: invalid source id %d and target id %d given",
+            source_id, target_id);
         return NULL;
     }
 
     DP_LayerRoutesEntry *source_lre = DP_layer_routes_search(lr, source_id);
     if (!source_lre) {
-        DP_error_set("Make layer tree order: source layer %d not found",
-                     source_id);
+        DP_error_set("Make layer tree move: source id %d not found", source_id);
         return NULL;
     }
 
     DP_LayerRoutesEntry *target_lre = DP_layer_routes_search(lr, target_id);
     if (!target_lre) {
-        DP_error_set("Make layer tree order: target layer %d not found",
-                     target_id);
-        return NULL;
-    }
-    else if (into && !target_lre->is_group) {
-        DP_error_set("Make layer tree order: target %d is not a group",
-                     target_id);
+        DP_error_set("Make layer tree move: target id %d not found", target_id);
         return NULL;
     }
 
-    int source_index_count = source_lre->index_count;
-    int *source_indexes = source_lre->indexes;
-    int common_count = count_common_layer_indexes(
-        source_index_count, source_indexes,
-        target_lre->index_count - (into ? 0 : 1), target_lre->indexes);
-
-    if (common_count == source_index_count) {
-        DP_error_set("Make layer tree order: target %d is child of source %d",
-                     target_id, source_id);
-        return NULL;
+    int parent_id, sibling_id;
+    if (into) {
+        parent_id = target_id;
+        sibling_id = 0;
+    }
+    else {
+        parent_id = get_layer_tree_move_parent_id(cs, target_lre);
+        if (below) {
+            sibling_id = target_id;
+        }
+        else {
+            sibling_id = get_layer_tree_move_sibling_id_above(cs, target_lre);
+        }
     }
 
-    DP_LayerProps *lp;
-    DP_LayerPropsList *lpl = DP_canvas_state_layer_props_noinc(cs);
-    for (int i = 0; i < common_count; ++i) {
-        lp = DP_layer_props_list_at_noinc(lpl, source_indexes[i]);
-        lpl = DP_layer_props_children_noinc(lp);
-    }
-
-    int root_id = common_count > 0 ? DP_layer_props_id(lp) : 0;
-    DP_LayerProps *source_lp = DP_layer_routes_entry_props(source_lre, cs);
-    struct DP_MakeLayerTreeOrderContext params = {
-        source_id, target_id, into, below, source_lp, lpl, root_id, 0};
-
-    // The message contains pairs of child count and layer id.
-    int layer_pair_count = count_order_layers(lpl) * 2;
-    return DP_msg_layer_tree_order_new(context_id, DP_int_to_uint16(root_id),
-                                       set_tree_order_layers, layer_pair_count,
-                                       &params);
+    DP_debug("Layer tree move: layer %d, parent %d, sibling %d", source_id,
+             parent_id, sibling_id);
+    return DP_msg_layer_tree_move_new(context_id, DP_int_to_uint16(source_id),
+                                      DP_int_to_uint16(parent_id),
+                                      DP_int_to_uint16(sibling_id));
 }
 
 
@@ -510,25 +454,7 @@ void DP_layer_routes_entry_children(DP_LayerRoutesEntry *lre,
     DP_ASSERT(cs);
     DP_ASSERT(out_ll);
     DP_ASSERT(out_lpl);
-
-    int index_count = lre->index_count;
-    int *indexes = lre->indexes;
-    DP_LayerList *ll = DP_canvas_state_layers_noinc(cs);
-    DP_LayerPropsList *lpl = DP_canvas_state_layer_props_noinc(cs);
-
-    for (int i = 0; i < index_count; ++i) {
-        int group_index = indexes[i];
-
-        DP_LayerListEntry *lle = DP_layer_list_at_noinc(ll, group_index);
-        DP_LayerGroup *lg = DP_layer_list_entry_group_noinc(lle);
-        ll = DP_layer_group_children_noinc(lg);
-
-        DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, group_index);
-        lpl = DP_layer_props_children_noinc(lp);
-    }
-
-    *out_ll = ll;
-    *out_lpl = lpl;
+    get_children(lre->index_count, lre->indexes, cs, out_ll, out_lpl);
 }
 
 

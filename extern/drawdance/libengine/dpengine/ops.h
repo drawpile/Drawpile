@@ -58,9 +58,9 @@ DP_CanvasState *DP_ops_layer_order(DP_CanvasState *cs, DP_DrawContext *dc,
                                    int (*get_layer_id)(void *, int),
                                    void *user);
 
-DP_CanvasState *DP_ops_layer_tree_order(
-    DP_CanvasState *cs, DP_DrawContext *dc, int root_layer_id, int order_count,
-    struct DP_LayerOrderPair (*get_order)(void *, int), void *user);
+DP_CanvasState *DP_ops_layer_tree_move(DP_CanvasState *cs, DP_DrawContext *dc,
+                                       int layer_id, int parent_id,
+                                       int sibling_id);
 
 DP_CanvasState *DP_ops_layer_retitle(DP_CanvasState *cs, int layer_id,
                                      const char *title, size_t title_length);

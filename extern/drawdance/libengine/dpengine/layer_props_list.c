@@ -42,7 +42,7 @@ struct DP_TransientLayerPropsList {
     DP_Atomic refcount;
     bool transient;
     int count;
-    union {
+    union DP_TransientLayerPropsElement {
         DP_LayerProps *layer_props;
         DP_TransientLayerProps *transient_layer_props;
     } elements[];
@@ -54,7 +54,7 @@ struct DP_LayerPropsList {
     DP_Atomic refcount;
     bool transient;
     int count;
-    union {
+    union DP_TransientLayerPropsElement {
         DP_LayerProps *layer_props;
         DP_TransientLayerProps *transient_layer_props;
     } elements[];
@@ -368,19 +368,36 @@ void DP_transient_layer_props_list_set_inc(DP_TransientLayerPropsList *tlpl,
                                             index);
 }
 
-void DP_transient_layer_props_list_insert_transient_noinc(
-    DP_TransientLayerPropsList *tlpl, DP_TransientLayerProps *tlp, int index)
+static void insert_at(DP_TransientLayerPropsList *tlpl, int index,
+                      union DP_TransientLayerPropsElement element)
 {
     DP_ASSERT(tlpl);
     DP_ASSERT(DP_atomic_get(&tlpl->refcount) > 0);
     DP_ASSERT(tlpl->transient);
     DP_ASSERT(!tlpl->elements[tlpl->count - 1].layer_props);
-    DP_ASSERT(tlp);
     DP_ASSERT(index >= 0);
     DP_ASSERT(index < tlpl->count);
     memmove(&tlpl->elements[index + 1], &tlpl->elements[index],
             sizeof(*tlpl->elements) * DP_int_to_size(tlpl->count - index - 1));
-    tlpl->elements[index].transient_layer_props = tlp;
+    tlpl->elements[index] = element;
+}
+
+void DP_transient_layer_props_list_insert_inc(DP_TransientLayerPropsList *tlpl,
+                                              DP_LayerProps *lp, int index)
+{
+    DP_ASSERT(lp);
+    insert_at(tlpl, index,
+              (union DP_TransientLayerPropsElement){
+                  .layer_props = DP_layer_props_incref(lp)});
+}
+
+void DP_transient_layer_props_list_insert_transient_noinc(
+    DP_TransientLayerPropsList *tlpl, DP_TransientLayerProps *tlp, int index)
+{
+    DP_ASSERT(tlp);
+    insert_at(
+        tlpl, index,
+        (union DP_TransientLayerPropsElement){.transient_layer_props = tlp});
 }
 
 void DP_transient_layer_props_list_delete_at(DP_TransientLayerPropsList *tlpl,
