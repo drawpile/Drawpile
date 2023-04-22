@@ -17,28 +17,14 @@ namespace canvas {
 
 TimelineModel::TimelineModel(CanvasModel *canvas)
 	: QObject{canvas}
-	, m_canvas{canvas}
 	, m_tracks{}
-	, m_frameCount{0}
+	, m_aclState{nullptr}
 {
-}
-
-void TimelineModel::setFrameCount(int frameCount)
-{
-	if(frameCount != m_frameCount) {
-		m_frameCount = frameCount;
-		emit frameCountChanged(frameCount);
-	}
-}
-
-uint8_t TimelineModel::localUserId() const
-{
-	return m_canvas->localUserId();
 }
 
 int TimelineModel::getAvailableTrackId() const
 {
-	int prefix = int(localUserId()) << 8;
+	int prefix = (m_aclState ? int(m_aclState->localUserId()) : 0) << 8;
 	QSet<int> takenIds;
 	for(const TimelineTrack &track : m_tracks) {
 		if((track.id & 0xff00) == prefix) {
@@ -74,8 +60,6 @@ QString TimelineModel::getAvailableTrackName(QString basename) const
 	}
 	return QStringLiteral("%1 %2").arg(basename).arg(maxFound + 1);
 }
-
-void TimelineModel::setLayers(const drawdance::LayerPropsList &) {}
 
 void TimelineModel::setTimeline(const drawdance::Timeline &tl)
 {

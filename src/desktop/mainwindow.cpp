@@ -502,10 +502,7 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	m_dockLayers->setCanvas(canvas);
 	m_serverLogDialog->setUserList(canvas->userlist());
 	m_dockNavigator->setCanvasModel(canvas);
-	m_dockTimeline->setTimeline(canvas->timeline());
-
-	m_dockTimeline->setFrameCount(canvas->metadata()->frameCount());
-	connect(canvas->metadata(), &canvas::DocumentMetadata::frameCountChanged, m_dockTimeline, &docks::Timeline::setFrameCount);
+	m_dockTimeline->setCanvas(canvas);
 
 	connect(m_dockTimeline, &docks::Timeline::frameSelected, canvas->paintEngine(), &canvas::PaintEngine::setViewFrame);
 	connect(m_dockTimeline, &docks::Timeline::trackHidden, canvas->paintEngine(), &canvas::PaintEngine::setTrackVisibility);
@@ -3047,9 +3044,9 @@ void MainWindow::setupActions()
 
 	viewmenu->addSeparator();
 
-	QAction *layerViewNormal = makeAction("layerviewnormal", tr("Normal")).checkable().checked();
-	QAction *layerViewCurrentLayer = makeAction("layerviewcurrentlayer", tr("Current Layer Only")).shortcut("Home").checkable();
-	QAction *layerViewCurrentFrame = makeAction("layerviewcurrentframe", tr("Current Frame Only")).shortcut("Shift+Home").checkable();
+	QAction *layerViewNormal = makeAction("layerviewnormal", tr("Normal View")).statusTip(tr("Show all layers normally")).checkable().checked();
+	QAction *layerViewCurrentLayer = makeAction("layerviewcurrentlayer", tr("Layer View")).statusTip(tr("Show only the current layer")).shortcut("Home").checkable();
+	QAction *layerViewCurrentFrame = makeAction("layerviewcurrentframe", tr("Frame View")).statusTip(tr("Show only layers in the current frame")).shortcut("Shift+Home").checkable();
 	QAction *layerUncensor = makeAction("layerviewuncensor", tr("Show Censored Layers")).checkable().remembered();
 	m_lastLayerViewMode = layerViewNormal;
 
@@ -3139,7 +3136,7 @@ void MainWindow::setupActions()
 
 	m_currentdoctools->addAction(showFlipbook);
 	m_dockLayers->setLayerEditActions(layerAdd, groupAdd, layerDupe, layerMerge, layerProperties, layerDelete, keyFrameSetLayer);
-	m_dockTimeline->setActions({keyFrameSetLayer, keyFrameSetEmpty, keyFrameCut, keyFrameCopy, keyFramePaste, keyFrameProperties, keyFrameDelete, trackAdd, trackVisible, trackOnionSkin, trackDuplicate, trackRetitle, trackDelete, frameCountSet, framerateSet, frameNext, framePrev, trackAbove, trackBelow});
+	m_dockTimeline->setActions({keyFrameSetLayer, keyFrameSetEmpty, keyFrameCut, keyFrameCopy, keyFramePaste, keyFrameProperties, keyFrameDelete, trackAdd, trackVisible, trackOnionSkin, trackDuplicate, trackRetitle, trackDelete, frameCountSet, framerateSet, frameNext, framePrev, trackAbove, trackBelow}, layerViewNormal, layerViewCurrentFrame);
 
 	connect(showFlipbook, &QAction::triggered, this, &MainWindow::showFlipbook);
 
