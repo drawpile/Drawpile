@@ -22,6 +22,7 @@
 #include "canvas_state.h"
 #include "annotation.h"
 #include "annotation_list.h"
+#include "brush.h"
 #include "canvas_diff.h"
 #include "compress.h"
 #include "document_metadata.h"
@@ -723,6 +724,11 @@ static DP_PaintDrawDabsParams
 get_draw_dabs_mypaint_params(unsigned int context_id,
                              DP_MsgDrawDabsMyPaint *mddmp)
 {
+    int blend_mode;
+    bool indirect;
+    uint8_t posterize_num;
+    DP_mypaint_brush_mode_extract(DP_msg_draw_dabs_mypaint_mode(mddmp),
+                                  &blend_mode, &indirect, &posterize_num);
     int dab_count;
     const DP_MyPaintDab *dabs =
         DP_msg_draw_dabs_mypaint_dabs(mddmp, &dab_count);
@@ -733,13 +739,13 @@ get_draw_dabs_mypaint_params(unsigned int context_id,
         DP_msg_draw_dabs_mypaint_x(mddmp),
         DP_msg_draw_dabs_mypaint_y(mddmp),
         DP_msg_draw_dabs_mypaint_color(mddmp),
-        DP_BLEND_MODE_NORMAL_AND_ERASER,
-        false,
+        blend_mode,
+        indirect,
         dab_count,
         {.mypaint = {dabs, DP_msg_draw_dabs_mypaint_lock_alpha(mddmp),
                      DP_msg_draw_dabs_mypaint_colorize(mddmp),
                      DP_msg_draw_dabs_mypaint_posterize(mddmp),
-                     DP_msg_draw_dabs_mypaint_posterize_num(mddmp)}}};
+                     posterize_num}}};
 }
 
 static bool next_dab(void *user, DP_PaintDrawDabsParams *out_params)

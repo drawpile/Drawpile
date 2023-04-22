@@ -697,7 +697,15 @@ DrawDabsPixelSquare:
 DrawDabsMyPaint:
     id: 151
     name: mypaintdabs
-    comment: Draw MyPaint brush dabs
+    comment: |
+             Draw MyPaint brush dabs
+
+             If the highest bit (0x80) of the mode field is not set, it is
+             treated as the number of posterization colors. If it is set, the
+             first two bits decide the drawing mode of this stroke: 0x0 means
+             direct with Normal and Eraser mode, 0x1 means indirect with Normal
+             mode, 0x2 means indirect with Recolor mode and 0x3 means indirect
+             with Erase mode.
     fields:
         - layer u16: hex
         - x i32: div4
@@ -706,7 +714,7 @@ DrawDabsMyPaint:
         - lock_alpha u8
         - colorize u8
         - posterize u8
-        - posterize_num u8
+        - mode u8
         - dabs struct:
           name: MyPaintDab
           fields:

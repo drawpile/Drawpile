@@ -3,10 +3,10 @@
 #ifndef BRUSHEDITORDIALOG_H
 #define BRUSHEDITORDIALOG_H
 
-#include "libclient/brushes/brush.h"
 #include "desktop/widgets/mypaintinput.h"
-#include <dpengine/libmypaint/mypaint-brush-settings.h>
+#include "libclient/brushes/brush.h"
 #include <QDialog>
+#include <dpengine/libmypaint/mypaint-brush-settings.h>
 
 class QComboBox;
 class QListWidgetItem;
@@ -59,6 +59,8 @@ private:
 
 	static void setComboBoxIndexByData(QComboBox *combo, int data);
 	static bool shouldIncludeMyPaintSetting(int setting);
+	static bool disableIndirectMyPaintSetting(int setting);
+	static bool disableIndirectMyPaintInputs(int setting);
 
 	static QString getMyPaintInputTitle(int input);
 	static QString getMyPaintInputDescription(int input);

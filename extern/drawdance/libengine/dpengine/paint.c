@@ -891,37 +891,45 @@ static uint16_t scale_opacity(float ratio, float opacity)
 }
 
 static void apply_mypaint_dab(DP_TransientLayerContent *tlc,
-                              unsigned int context_id, DP_UPixel15 pixel,
-                              float normal, float lock_alpha, float colorize,
-                              float posterize, int posterize_num,
-                              DP_BrushStamp *stamp, uint8_t dab_opacity)
+                              unsigned int context_id, bool indirect,
+                              DP_UPixel15 pixel, float normal, float lock_alpha,
+                              float colorize, float posterize,
+                              int posterize_num, DP_BrushStamp *stamp,
+                              uint8_t dab_opacity)
 {
-    float opacity = DP_uint8_to_float(dab_opacity) / 255.0f;
-
-    if (normal > 0.0f) {
+    if (indirect) {
         DP_transient_layer_content_brush_stamp_apply(
-            tlc, context_id, pixel, scale_opacity(normal, opacity),
-            pixel.a == DP_BIT15 ? DP_BLEND_MODE_NORMAL
-                                : DP_BLEND_MODE_NORMAL_AND_ERASER,
-            stamp);
+            tlc, context_id, pixel, DP_channel8_to_15(dab_opacity),
+            DP_BLEND_MODE_ALPHA_DARKEN, stamp);
     }
+    else {
+        float opacity = DP_uint8_to_float(dab_opacity) / 255.0f;
 
-    if (lock_alpha > 0.0f && pixel.a != 0) {
-        DP_transient_layer_content_brush_stamp_apply(
-            tlc, context_id, pixel, scale_opacity(lock_alpha, opacity),
-            DP_BLEND_MODE_RECOLOR, stamp);
-    }
+        if (normal > 0.0f) {
+            DP_transient_layer_content_brush_stamp_apply(
+                tlc, context_id, pixel, scale_opacity(normal, opacity),
+                pixel.a == DP_BIT15 ? DP_BLEND_MODE_NORMAL
+                                    : DP_BLEND_MODE_NORMAL_AND_ERASER,
+                stamp);
+        }
 
-    if (colorize > 0.0f) {
-        DP_transient_layer_content_brush_stamp_apply(
-            tlc, context_id, pixel, scale_opacity(colorize, opacity),
-            DP_BLEND_MODE_COLOR, stamp);
-    }
+        if (lock_alpha > 0.0f && pixel.a != 0) {
+            DP_transient_layer_content_brush_stamp_apply(
+                tlc, context_id, pixel, scale_opacity(lock_alpha, opacity),
+                DP_BLEND_MODE_RECOLOR, stamp);
+        }
 
-    if (posterize > 0.0f) {
-        DP_transient_layer_content_brush_stamp_apply_posterize(
-            tlc, context_id, scale_opacity(posterize, opacity), posterize_num,
-            stamp);
+        if (colorize > 0.0f) {
+            DP_transient_layer_content_brush_stamp_apply(
+                tlc, context_id, pixel, scale_opacity(colorize, opacity),
+                DP_BLEND_MODE_COLOR, stamp);
+        }
+
+        if (posterize > 0.0f) {
+            DP_transient_layer_content_brush_stamp_apply_posterize(
+                tlc, context_id, scale_opacity(posterize, opacity),
+                posterize_num, stamp);
+        }
     }
 }
 
@@ -930,6 +938,7 @@ static DP_UserCursor draw_dabs_mypaint(DP_DrawContext *dc,
                                        DP_TransientLayerContent *tlc)
 {
     unsigned int context_id = params->context_id;
+    bool indirect = params->indirect;
     DP_UPixel15 pixel = DP_upixel15_from_color(params->color);
     int dab_count = params->dab_count;
     const DP_MyPaintDab *dabs = params->mypaint.dabs;
@@ -957,8 +966,8 @@ static DP_UserCursor draw_dabs_mypaint(DP_DrawContext *dc,
     DP_BrushStamp stamp;
     get_mypaint_brush_stamp(&stamp, dc, last_x, last_y, last_size,
                             last_hardness, last_aspect_ratio, last_angle);
-    apply_mypaint_dab(tlc, context_id, pixel, normal, lock_alpha, colorize,
-                      posterize, posterize_num, &stamp,
+    apply_mypaint_dab(tlc, context_id, indirect, pixel, normal, lock_alpha,
+                      colorize, posterize, posterize_num, &stamp,
                       DP_mypaint_dab_opacity(first_dab));
 
     for (int i = 1; i < dab_count; ++i) {
@@ -989,8 +998,8 @@ static DP_UserCursor draw_dabs_mypaint(DP_DrawContext *dc,
             get_mypaint_brush_stamp_offsets(&stamp, xf, yf, radius);
         }
 
-        apply_mypaint_dab(tlc, context_id, pixel, normal, lock_alpha, colorize,
-                          posterize, posterize_num, &stamp,
+        apply_mypaint_dab(tlc, context_id, indirect, pixel, normal, lock_alpha,
+                          colorize, posterize, posterize_num, &stamp,
                           DP_mypaint_dab_opacity(dab));
 
         last_x = x;

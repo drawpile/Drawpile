@@ -20,6 +20,7 @@
  * License, version 3. See 3rdparty/licenses/drawpile/COPYING for details.
  */
 #include "paint_engine.h"
+#include "brush.h"
 #include "canvas_diff.h"
 #include "canvas_history.h"
 #include "canvas_state.h"
@@ -2730,8 +2731,6 @@ static DP_CanvasState *dabs_preview_render(DP_PaintEnginePreview *preview,
             params.origin_x = DP_msg_draw_dabs_mypaint_x(mddmp);
             params.origin_y = DP_msg_draw_dabs_mypaint_y(mddmp);
             params.color = DP_msg_draw_dabs_mypaint_color(mddmp);
-            params.blend_mode = DP_BLEND_MODE_NORMAL_AND_ERASER;
-            params.indirect = false;
             params.mypaint.dabs =
                 DP_msg_draw_dabs_mypaint_dabs(mddmp, &params.dab_count);
             params.mypaint.lock_alpha =
@@ -2739,8 +2738,9 @@ static DP_CanvasState *dabs_preview_render(DP_PaintEnginePreview *preview,
             params.mypaint.colorize = DP_msg_draw_dabs_mypaint_colorize(mddmp);
             params.mypaint.posterize =
                 DP_msg_draw_dabs_mypaint_posterize(mddmp);
-            params.mypaint.posterize_num =
-                DP_msg_draw_dabs_mypaint_posterize_num(mddmp);
+            DP_mypaint_brush_mode_extract(DP_msg_draw_dabs_mypaint_mode(mddmp),
+                                          &params.blend_mode, &params.indirect,
+                                          &params.mypaint.posterize_num);
             break;
         }
         default:
