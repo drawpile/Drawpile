@@ -895,6 +895,8 @@ bool BrushSettingsDialog::shouldIncludeMyPaintSetting(int setting)
 	case MYPAINT_BRUSH_SETTING_COLOR_H:
 	case MYPAINT_BRUSH_SETTING_COLOR_S:
 	case MYPAINT_BRUSH_SETTING_COLOR_V:
+	// This is for storing the color in the brush, which we don't do.
+	case MYPAINT_BRUSH_SETTING_RESTORE_COLOR:
 	// Spectral painting is not supported in Drawpile.
 	case MYPAINT_BRUSH_SETTING_PAINT_MODE:
 	// This is a stabilizer, but Drawpile has its own one.
