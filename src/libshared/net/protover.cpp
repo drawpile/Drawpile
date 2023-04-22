@@ -72,7 +72,7 @@ QString ProtocolVersion::versionName() const
 	if(m_namespace != QStringLiteral("dp"))
 		return QString();
 
-	if(m_server == 4 && m_major == 22)
+	if(m_server == 4 && (m_major == 22 || m_major == 23))
 		return QStringLiteral("2.2.0 beta");
 	else if(m_server == 4 && m_major == 21 && m_minor == 2)
 		return QStringLiteral("2.1.x");
