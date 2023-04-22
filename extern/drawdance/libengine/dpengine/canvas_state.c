@@ -926,29 +926,28 @@ static DP_CanvasState *handle_layer_tree_create(DP_CanvasState *cs,
     return next;
 }
 
-static struct DP_LayerOrderPair get_layer_tree_order_pair(void *user, int index)
+static DP_CanvasState *handle_layer_tree_move(DP_CanvasState *cs,
+                                              DP_DrawContext *dc,
+                                              DP_MsgLayerTreeMove *mltm)
 {
-    const uint16_t *layers = user;
-    const uint16_t *pair = &layers[index * 2];
-    return (struct DP_LayerOrderPair){pair[0], pair[1]};
-}
-
-static DP_CanvasState *handle_layer_tree_order(DP_CanvasState *cs,
-                                               DP_DrawContext *dc,
-                                               DP_MsgLayerTreeOrder *mtlo)
-{
-    int count;
-    const uint16_t *layers = DP_msg_layer_tree_order_layers(mtlo, &count);
-    if (count != 0 && count % 2 == 0) {
-        return DP_ops_layer_tree_order(
-            cs, dc, DP_msg_layer_tree_order_root(mtlo), count / 2,
-            get_layer_tree_order_pair, (void *)layers);
-    }
-    else {
-        DP_error_set("Layer tree order: ordering %s",
-                     count == 0 ? "empty" : "not even");
+    int layer_id = DP_msg_layer_tree_move_layer(mltm);
+    if (layer_id == 0) {
+        DP_error_set("Move layer tree: layer id 0 is invalid");
         return NULL;
     }
+
+    int parent_id = DP_msg_layer_tree_move_parent(mltm);
+    int sibling_id = DP_msg_layer_tree_move_sibling(mltm);
+    bool overlapping_ids = layer_id == parent_id || layer_id == sibling_id
+                        || (parent_id == sibling_id && parent_id != 0);
+    if (overlapping_ids) {
+        DP_error_set(
+            "Move layer tree: layer %d, parent %d and sibling %d overlap",
+            layer_id, parent_id, sibling_id);
+        return NULL;
+    }
+
+    return DP_ops_layer_tree_move(cs, dc, layer_id, parent_id, sibling_id);
 }
 
 static DP_CanvasState *handle_layer_tree_delete(DP_CanvasState *cs,
@@ -1208,9 +1207,9 @@ static DP_CanvasStateChange handle(DP_CanvasState *cs, DP_DrawContext *dc,
         return DP_canvas_state_change_of(
             handle_layer_tree_create(cs, dc, DP_message_context_id(msg),
                                      DP_msg_layer_tree_create_cast(msg)));
-    case DP_MSG_LAYER_TREE_ORDER:
+    case DP_MSG_LAYER_TREE_MOVE:
         return DP_canvas_state_change_of(
-            handle_layer_tree_order(cs, dc, DP_msg_layer_tree_order_cast(msg)));
+            handle_layer_tree_move(cs, dc, DP_msg_layer_tree_move_cast(msg)));
     case DP_MSG_LAYER_TREE_DELETE:
         return DP_canvas_state_change_of(
             handle_layer_tree_delete(cs, dc, DP_message_context_id(msg),

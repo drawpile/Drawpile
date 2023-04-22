@@ -73,7 +73,7 @@ public:
     drawdance::Message makeLayerOrder(
         uint8_t contextId, int sourceId, int targetId, bool below) const;
 
-    drawdance::Message makeLayerTreeOrder(
+    drawdance::Message makeLayerTreeMove(
         uint8_t contextId, int sourceId, int targetId, bool intoGroup, bool below) const;
 
     LayerContent searchLayerContent(int layerId) const;

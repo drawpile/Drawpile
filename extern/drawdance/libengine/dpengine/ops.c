@@ -398,367 +398,185 @@ DP_CanvasState *DP_ops_layer_order(DP_CanvasState *cs, DP_DrawContext *dc,
 }
 
 
-typedef struct DP_LayerOrderContext {
-    DP_DrawContext *dc;
-    int order_count;
-    struct DP_LayerOrderPair (*get_order)(void *, int);
-    void *user;
-    int next_index;
-    int capacity;
-    int used;
-    struct DP_LayerPoolEntry *pool;
-} DP_LayerOrderContext;
-
-static DP_LayerOrderContext
-layer_order_context_make(DP_DrawContext *dc, int order_count,
-                         struct DP_LayerOrderPair (*get_order)(void *, int),
-                         void *user)
-{
-    DP_ASSERT(dc);
-    DP_ASSERT(get_order);
-    return (DP_LayerOrderContext){dc, order_count, get_order, user,
-                                  0,  0,           0,         NULL};
-}
-
-static void layer_order_context_reset_next(DP_LayerOrderContext *lrc)
-{
-    DP_ASSERT(lrc);
-    lrc->next_index = 0;
-}
-
-static int layer_order_context_next_child_count(DP_LayerOrderContext *lrc)
-{
-    DP_ASSERT(lrc);
-    int i = lrc->next_index++;
-    int order_count = lrc->order_count;
-    if (i < order_count) {
-        struct DP_LayerOrderPair p = lrc->get_order(lrc->user, i);
-        return p.child_count;
-    }
-    else {
-        return -1;
-    }
-}
-
-static void layer_order_context_next(DP_LayerOrderContext *lrc,
-                                     int *out_layer_id, int *out_child_count)
-{
-    DP_ASSERT(lrc);
-    DP_ASSERT(out_layer_id);
-    DP_ASSERT(out_child_count);
-    int i = lrc->next_index++;
-    DP_ASSERT(i < lrc->order_count);
-    struct DP_LayerOrderPair p = lrc->get_order(lrc->user, i);
-    *out_layer_id = p.layer_id;
-    *out_child_count = p.child_count;
-}
-
-static void layer_order_context_init_pool(DP_LayerOrderContext *lrc)
-{
-    DP_ASSERT(lrc);
-    lrc->pool = DP_draw_context_layer_pool(lrc->dc, &lrc->capacity);
-    DP_ASSERT(lrc->capacity > 0);
-}
-
-static void layer_order_context_insert(DP_LayerOrderContext *lrc,
-                                       DP_LayerListEntry *lle,
-                                       DP_LayerProps *lp)
-{
-    DP_ASSERT(lrc);
-    DP_ASSERT(lle);
-    DP_ASSERT(lp);
-    int i = lrc->used;
-    if (i == lrc->capacity) {
-        lrc->capacity *= 2;
-        lrc->pool = DP_draw_context_layer_pool_resize(lrc->dc, lrc->capacity);
-    }
-    lrc->used = i + 1;
-    lrc->pool[i] = (struct DP_LayerPoolEntry){lle, lp};
-}
-
-static bool layer_order_context_remove(DP_LayerOrderContext *lrc, int layer_id,
-                                       DP_LayerListEntry **out_lle,
-                                       DP_LayerProps **out_lp)
-{
-    DP_ASSERT(lrc);
-    DP_ASSERT(out_lle);
-    DP_ASSERT(out_lp);
-    int used = lrc->used;
-    struct DP_LayerPoolEntry *pool = lrc->pool;
-    for (int i = 0; i < used; ++i) {
-        struct DP_LayerPoolEntry *lpe = &pool[i];
-        DP_LayerProps *lp = lpe->lp;
-        if (lp && DP_layer_props_id(lp) == layer_id) {
-            DP_LayerListEntry *lle = lpe->lle;
-            DP_ASSERT(lle);
-            *lpe = (struct DP_LayerPoolEntry){NULL, NULL};
-            *out_lle = lle;
-            *out_lp = lp;
-            return true;
-        }
-    }
-    return false;
-}
-
-static bool layer_order_context_check_pool_empty(DP_LayerOrderContext *lrc)
-{
-    DP_ASSERT(lrc);
-    int used = lrc->used;
-    struct DP_LayerPoolEntry *pool = lrc->pool;
-    for (int i = 0; i < used; ++i) {
-        struct DP_LayerPoolEntry *lpe = &pool[i];
-        if (lpe->lle) {
-            DP_ASSERT(lpe->lp);
-            DP_error_set("Layer tree order: missing layers");
-            return false;
-        }
-        else {
-            DP_ASSERT(!lpe->lp);
-        }
-    }
-    return true;
-}
-
-
-union DP_LayerOrderContentOrGroup {
-    DP_LayerContent *lc;
-    DP_LayerGroup *lg;
+struct DP_LayerTreeMoveLayer {
+    DP_LayerProps *lp;
+    union {
+        DP_LayerContent *lc;
+        DP_LayerGroup *lg;
+    };
 };
 
-static void gather_layer_pool(DP_LayerOrderContext *lrc, DP_LayerList *ll,
-                              DP_LayerPropsList *lpl)
+static bool layer_tree_move_parent_valid(DP_LayerRoutesEntry *layer_lre,
+                                         DP_LayerRoutesEntry *parent_lre)
 {
-    DP_ASSERT(lrc);
-    DP_ASSERT(ll);
-    DP_ASSERT(lpl);
-    int count = DP_layer_list_count(ll);
-    DP_ASSERT(DP_layer_props_list_count(lpl) == count);
-    for (int i = 0; i < count; ++i) {
-        DP_LayerListEntry *lle = DP_layer_list_at_noinc(ll, i);
-        DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, i);
-        layer_order_context_insert(lrc, lle, lp);
-        if (DP_layer_list_entry_is_group(lle)) {
-            DP_LayerList *child_ll = DP_layer_group_children_noinc(
-                DP_layer_list_entry_group_noinc(lle));
-            DP_LayerPropsList *child_lpl = DP_layer_props_children_noinc(lp);
-            gather_layer_pool(lrc, child_ll, child_lpl);
+    int layer_count = DP_layer_routes_entry_index_count(layer_lre);
+    int parent_count = DP_layer_routes_entry_index_count(parent_lre);
+    int min_count = DP_min_int(layer_count, parent_count);
+    int i;
+    for (i = 0; i < min_count; ++i) {
+        int layer_index = DP_layer_routes_entry_index_at(layer_lre, i);
+        int parent_index = DP_layer_routes_entry_index_at(parent_lre, i);
+        if (layer_index != parent_index) {
+            break;
         }
     }
+    return i != layer_count;
 }
 
-static bool skip_layers(DP_LayerOrderContext *lrc, int count)
+static bool layer_tree_move_sibling_valid(DP_LayerRoutesEntry *parent_lre,
+                                          DP_LayerRoutesEntry *sibling_lre)
 {
-    for (int i = 0; i < count; ++i) {
-        int child_count = layer_order_context_next_child_count(lrc);
-        if (child_count == -1 || !skip_layers(lrc, child_count)) {
+    int parent_count =
+        parent_lre ? DP_layer_routes_entry_index_count(parent_lre) : 0;
+    int sibling_count = DP_layer_routes_entry_index_count(sibling_lre);
+    if (parent_count + 1 != sibling_count) {
+        return false;
+    }
+
+    for (int i = 0; i < parent_count; ++i) {
+        int parent_index = DP_layer_routes_entry_index_at(parent_lre, i);
+        int sibling_index = DP_layer_routes_entry_index_at(sibling_lre, i);
+        if (parent_index != sibling_index) {
             return false;
         }
     }
+
     return true;
 }
 
-static int count_root_layers(DP_LayerOrderContext *lrc)
+static DP_LayerRoutesEntry *layer_tree_move_check_routes(DP_CanvasState *cs,
+                                                         int layer_id,
+                                                         int parent_id,
+                                                         int sibling_id)
 {
-    int layer_count = 0;
-    int order_count = lrc->order_count;
-    while (lrc->next_index < order_count) {
-        ++layer_count;
-        int child_count = layer_order_context_next_child_count(lrc);
-        if (child_count == -1 || !skip_layers(lrc, child_count)) {
-            return -1;
-        }
-    }
-    return layer_count;
-}
-
-static bool order_into(DP_LayerOrderContext *lrc, DP_TransientLayerList *tll,
-                       DP_TransientLayerPropsList *tlpl);
-
-static bool order_layer_group(DP_LayerOrderContext *lrc, int child_count,
-                              DP_LayerGroup *lg, DP_LayerProps *lp,
-                              DP_LayerGroup **out_lg, DP_LayerProps **out_lp)
-{
-    DP_TransientLayerList *tll = DP_transient_layer_list_new_init(child_count);
-    DP_TransientLayerPropsList *tlpl =
-        DP_transient_layer_props_list_new_init(child_count);
-    if (order_into(lrc, tll, tlpl)) {
-        *out_lg =
-            (DP_LayerGroup *)DP_transient_layer_group_new_with_children_noinc(
-                lg, tll);
-        *out_lp =
-            (DP_LayerProps *)DP_transient_layer_props_new_with_children_noinc(
-                lp, tlpl);
-        return true;
-    }
-    else {
-        DP_transient_layer_list_decref(tll);
-        DP_transient_layer_props_list_decref(tlpl);
-        return false;
-    }
-}
-
-static bool order_layer_content(int child_count, DP_LayerContent *lc,
-                                DP_LayerProps *lp, DP_LayerContent **out_lc,
-                                DP_LayerProps **out_lp)
-{
-    if (child_count == 0) {
-        *out_lc = DP_layer_content_incref(lc);
-        *out_lp = DP_layer_props_incref(lp);
-        return true;
-    }
-    else {
-        DP_error_set(
-            "Layer tree order: id %d has child count of %d, but is not a group",
-            DP_layer_props_id(lp), child_count);
-        return false;
-    }
-}
-
-static bool order_layer(DP_LayerOrderContext *lrc, int layer_id,
-                        int child_count,
-                        union DP_LayerOrderContentOrGroup *out_lc_or_lg,
-                        DP_LayerProps **out_lp)
-{
-    DP_LayerListEntry *lle;
-    DP_LayerProps *lp;
-    if (layer_order_context_remove(lrc, layer_id, &lle, &lp)) {
-        if (DP_layer_list_entry_is_group(lle)) {
-            DP_ASSERT(DP_layer_props_children_noinc(lp));
-            return order_layer_group(lrc, child_count,
-                                     DP_layer_list_entry_group_noinc(lle), lp,
-                                     &out_lc_or_lg->lg, out_lp);
-        }
-        else {
-            DP_ASSERT(!DP_layer_props_children_noinc(lp));
-            return order_layer_content(child_count,
-                                       DP_layer_list_entry_content_noinc(lle),
-                                       lp, &out_lc_or_lg->lc, out_lp);
-        }
-    }
-    else {
-        DP_error_set("Layer tree order: id %d not found", layer_id);
-        return false;
-    }
-}
-
-static bool order_next_layer(DP_LayerOrderContext *lrc,
-                             union DP_LayerOrderContentOrGroup *out_lc_or_lg,
-                             DP_LayerProps **out_lp)
-{
-    int layer_id, child_count;
-    layer_order_context_next(lrc, &layer_id, &child_count);
-    return order_layer(lrc, layer_id, child_count, out_lc_or_lg, out_lp);
-}
-
-static bool order_into(DP_LayerOrderContext *lrc, DP_TransientLayerList *tll,
-                       DP_TransientLayerPropsList *tlpl)
-{
-    int list_count = DP_transient_layer_list_count(tll);
-    DP_ASSERT(DP_transient_layer_props_list_count(tlpl) == list_count);
-    // The incoming layer order is reversed, so fill them up from the back.
-    for (int i = list_count - 1; i >= 0; --i) {
-        union DP_LayerOrderContentOrGroup lc_or_lg;
-        DP_LayerProps *lp;
-        if (order_next_layer(lrc, &lc_or_lg, &lp)) {
-            if (DP_layer_props_children_noinc(lp)) {
-                DP_transient_layer_list_set_group_noinc(tll, lc_or_lg.lg, i);
-            }
-            else {
-                DP_transient_layer_list_set_content_noinc(tll, lc_or_lg.lc, i);
-            }
-            DP_transient_layer_props_list_set_noinc(tlpl, lp, i);
-        }
-        else {
-            return false;
-        }
-    }
-    return true;
-}
-
-DP_CanvasState *DP_ops_layer_tree_order(
-    DP_CanvasState *cs, DP_DrawContext *dc, int root_layer_id, int order_count,
-    struct DP_LayerOrderPair (*get_order)(void *, int), void *user)
-{
-    // Figure out where we're starting from. An id of zero means we want to
-    // reorder the root, otherwise it's a group somewhere in the layer stack.
-    DP_LayerList *root_ll;
-    DP_LayerPropsList *root_lpl;
-    DP_LayerRoutesEntry *lre;
-    if (root_layer_id == 0) {
-        lre = NULL;
-        root_ll = DP_canvas_state_layers_noinc(cs);
-        root_lpl = DP_canvas_state_layer_props_noinc(cs);
-    }
-    else {
-        DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
-        lre = DP_layer_routes_search(lr, root_layer_id);
-        if (!lre) {
-            DP_error_set("Layer tree order: id %d not found", root_layer_id);
-            return NULL;
-        }
-        else if (!DP_layer_routes_entry_is_group(lre)) {
-            DP_error_set("Layer tree order: id %d is not a group",
-                         root_layer_id);
-            return NULL;
-        }
-        DP_layer_routes_entry_children(lre, cs, &root_ll, &root_lpl);
-    }
-
-    // We have to walk the given layer order tree once to figure out how many
-    // elements to reserve for the root. The given order count is the size of
-    // the entire tree including child elements, so we can't use that directly.
-    DP_LayerOrderContext lrc =
-        layer_order_context_make(dc, order_count, get_order, user);
-    int root_reserve = count_root_layers(&lrc);
-    if (root_reserve == -1) {
-        DP_error_set("Layer tree order: invalid tree");
+    DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
+    DP_LayerRoutesEntry *layer_lre = DP_layer_routes_search(lr, layer_id);
+    if (!layer_lre) {
+        DP_error_set("Layer tree move: id %d not found", layer_id);
         return NULL;
     }
-    DP_ASSERT(lrc.next_index == lrc.order_count);
 
-    DP_TransientLayerList *root_tll =
-        DP_transient_layer_list_new_init(root_reserve);
-    DP_TransientLayerPropsList *root_tlpl =
-        DP_transient_layer_props_list_new_init(root_reserve);
-
-    // We collect all target layers into a flat mapping. The elements in it are
-    // removed during the reordering, avoiding duplicates and we can check that
-    // all layers have been reordered by checking if it's empty afterwards.
-    layer_order_context_init_pool(&lrc);
-    gather_layer_pool(&lrc, root_ll, root_lpl);
-
-    // Do the actual reordering: walk the given tree and build up a new stack
-    // of layers and groups. Afterwards make sure that all layers have been
-    // reordered and none have gone missing.
-    layer_order_context_reset_next(&lrc);
-    bool ok = order_into(&lrc, root_tll, root_tlpl)
-           && layer_order_context_check_pool_empty(&lrc);
-    if (!ok) {
-        DP_transient_layer_list_decref(root_tll);
-        DP_transient_layer_props_list_decref(root_tlpl);
-        return NULL;
-    }
-    DP_ASSERT(lrc.next_index == lrc.order_count);
-
-    DP_TransientCanvasState *tcs;
-    if (lre) {
-        tcs = DP_transient_canvas_state_new(cs);
-
-        DP_TransientLayerList *tll;
-        DP_TransientLayerPropsList *tlpl;
-        DP_layer_routes_entry_transient_children(lre, tcs, -1, 0, &tll, &tlpl);
-
-        int last_index = DP_layer_routes_entry_index_last(lre);
-        DP_transient_layer_list_transient_group_at_with_children_noinc(
-            tll, last_index, root_tll);
-        DP_transient_layer_props_list_transient_at_with_children_noinc(
-            tlpl, last_index, root_tlpl);
+    DP_LayerRoutesEntry *parent_lre;
+    if (parent_id == 0) {
+        parent_lre = NULL;
     }
     else {
-        tcs = DP_transient_canvas_state_new_with_layers_noinc(cs, root_tll,
-                                                              root_tlpl);
+        parent_lre = DP_layer_routes_search(lr, parent_id);
+        if (!parent_lre) {
+            DP_error_set("Layer tree move: parent id %d not found", parent_id);
+            return NULL;
+        }
+        else if (!DP_layer_routes_entry_is_group(parent_lre)) {
+            DP_error_set("Layer tree move: parent id %d is not a group",
+                         parent_id);
+            return NULL;
+        }
+        else if (!layer_tree_move_parent_valid(layer_lre, parent_lre)) {
+            DP_error_set("Layer tree move: parent %d is child of layer %d",
+                         parent_id, layer_id);
+            return NULL;
+        }
     }
 
+    if (sibling_id != 0) {
+        DP_LayerRoutesEntry *sibling_lre =
+            DP_layer_routes_search(lr, sibling_id);
+        if (!sibling_lre) {
+            DP_error_set("Layer tree move: sibling id %d not found",
+                         sibling_id);
+            return NULL;
+        }
+        else if (!layer_tree_move_sibling_valid(parent_lre, sibling_lre)) {
+            DP_error_set(
+                "Layer tree move: sibling id %d not child of parent id %d",
+                sibling_id, parent_id);
+            return NULL;
+        }
+    }
+
+    return layer_lre;
+}
+
+static struct DP_LayerTreeMoveLayer
+layer_tree_move_delete(DP_TransientCanvasState *tcs,
+                       DP_LayerRoutesEntry *layer_lre)
+{
+    DP_TransientLayerList *tll;
+    DP_TransientLayerPropsList *tlpl;
+    DP_layer_routes_entry_transient_children(layer_lre, tcs, -1, 0, &tll,
+                                             &tlpl);
+
+    // We don't need to increment the reference count here because we still hold
+    // a reference to the previous canvas state, which keeps the layer alive.
+    int last_index = DP_layer_routes_entry_index_last(layer_lre);
+    struct DP_LayerTreeMoveLayer ltml;
+    ltml.lp = DP_transient_layer_props_list_at_noinc(tlpl, last_index);
+    DP_LayerListEntry *lle = DP_transient_layer_list_at_noinc(tll, last_index);
+    if (DP_layer_props_children_noinc(ltml.lp)) {
+        ltml.lg = DP_layer_list_entry_group_noinc(lle);
+    }
+    else {
+        ltml.lc = DP_layer_list_entry_content_noinc(lle);
+    }
+
+    DP_transient_layer_list_delete_at(tll, last_index);
+    DP_transient_layer_props_list_delete_at(tlpl, last_index);
+
+    return ltml;
+}
+
+void layer_tree_move_insert(DP_TransientCanvasState *tcs,
+                            struct DP_LayerTreeMoveLayer ltml, int parent_id,
+                            int sibling_id)
+{
+    DP_LayerRoutes *lr = DP_transient_canvas_state_layer_routes_noinc(tcs);
+
+    DP_TransientLayerList *tll;
+    DP_TransientLayerPropsList *tlpl;
+    if (parent_id == 0) {
+        tll = DP_transient_canvas_state_transient_layers(tcs, 1);
+        tlpl = DP_transient_canvas_state_transient_layer_props(tcs, 1);
+    }
+    else {
+        DP_LayerRoutesEntry *parent_lre = DP_layer_routes_search(lr, parent_id);
+        DP_layer_routes_entry_transient_children(parent_lre, tcs, 0, 1, &tll,
+                                                 &tlpl);
+    }
+
+    int index;
+    if (sibling_id == 0) {
+        // Subtract 1 because an extra element has been reserved for insertion.
+        index = DP_transient_layer_list_count(tll) - 1;
+    }
+    else {
+        DP_LayerRoutesEntry *sibling_lre =
+            DP_layer_routes_search(lr, sibling_id);
+        index = DP_layer_routes_entry_index_last(sibling_lre);
+    }
+
+    DP_transient_layer_props_list_insert_inc(tlpl, ltml.lp, index);
+    if (DP_layer_props_children_noinc(ltml.lp)) {
+        DP_transient_layer_list_insert_group_inc(tll, ltml.lg, index);
+    }
+    else {
+        DP_transient_layer_list_insert_content_inc(tll, ltml.lc, index);
+    }
+}
+
+DP_CanvasState *DP_ops_layer_tree_move(DP_CanvasState *cs, DP_DrawContext *dc,
+                                       int layer_id, int parent_id,
+                                       int sibling_id)
+{
+    DP_LayerRoutesEntry *layer_lre =
+        layer_tree_move_check_routes(cs, layer_id, parent_id, sibling_id);
+    if (!layer_lre) {
+        return NULL;
+    }
+
+    DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
+    struct DP_LayerTreeMoveLayer ltml = layer_tree_move_delete(tcs, layer_lre);
+    DP_transient_canvas_state_layer_routes_reindex(tcs, dc);
+    layer_tree_move_insert(tcs, ltml, parent_id, sibling_id);
     DP_transient_canvas_state_layer_routes_reindex(tcs, dc);
     return DP_transient_canvas_state_persist(tcs);
 }

@@ -93,7 +93,7 @@ typedef enum DP_MessageType {
     DP_MSG_MOVE_RECT = 160,
     DP_MSG_SET_METADATA_INT = 161,
     DP_MSG_LAYER_TREE_CREATE = 162,
-    DP_MSG_LAYER_TREE_ORDER = 163,
+    DP_MSG_LAYER_TREE_MOVE = 163,
     DP_MSG_LAYER_TREE_DELETE = 164,
     DP_MSG_TRANSFORM_REGION = 165,
     DP_MSG_TRACK_CREATE = 166,
@@ -1119,7 +1119,7 @@ size_t DP_msg_layer_retitle_title_len(const DP_MsgLayerRetitle *mlr);
 /*
  * DP_MSG_LAYER_ORDER
  *
- * Layer order change command (legacy, subsumed by LayerTreeOrder)
+ * Layer order change command (legacy, subsumed by LayerTreeMove)
  *
  * New layers are always added to the top of the stack.
  * This command includes a list of layer IDs that define the new stacking order.
@@ -2050,53 +2050,32 @@ size_t DP_msg_layer_tree_create_title_len(const DP_MsgLayerTreeCreate *mltc);
 
 
 /*
- * DP_MSG_LAYER_TREE_ORDER
+ * DP_MSG_LAYER_TREE_MOVE
  *
- * Reorder layers
- *
- * The layer tree of the given group (0 means whole tree) will be reordered
- * according to the given order.
- * The order should describe a tree using (child count, layer ID) pairs.
- *
- * For example (indented for clarity):
- *
- *   2, 1,
- *     0, 10,
- *     0, 11,
- *   0, 2,
- *   2, 3,
- *     1, 30,
- *       0, 31
- *     0, 32
- *
- *  Each layer in the group must be listed exactly once in the new order,
- *  or the command will be rejected.
+ * Reorder a layer
  */
 
-#define DP_MSG_LAYER_TREE_ORDER_STATIC_LENGTH 2
+#define DP_MSG_LAYER_TREE_MOVE_STATIC_LENGTH 6
 
-typedef struct DP_MsgLayerTreeOrder DP_MsgLayerTreeOrder;
+typedef struct DP_MsgLayerTreeMove DP_MsgLayerTreeMove;
 
-DP_Message *DP_msg_layer_tree_order_new(unsigned int context_id, uint16_t root,
-                                        void (*set_layers)(int, uint16_t *,
-                                                           void *),
-                                        int layers_count, void *layers_user);
+DP_Message *DP_msg_layer_tree_move_new(unsigned int context_id, uint16_t layer,
+                                       uint16_t parent, uint16_t sibling);
 
-DP_Message *DP_msg_layer_tree_order_deserialize(unsigned int context_id,
-                                                const unsigned char *buffer,
-                                                size_t length);
+DP_Message *DP_msg_layer_tree_move_deserialize(unsigned int context_id,
+                                               const unsigned char *buffer,
+                                               size_t length);
 
-DP_Message *DP_msg_layer_tree_order_parse(unsigned int context_id,
-                                          DP_TextReader *reader);
+DP_Message *DP_msg_layer_tree_move_parse(unsigned int context_id,
+                                         DP_TextReader *reader);
 
-DP_MsgLayerTreeOrder *DP_msg_layer_tree_order_cast(DP_Message *msg);
+DP_MsgLayerTreeMove *DP_msg_layer_tree_move_cast(DP_Message *msg);
 
-uint16_t DP_msg_layer_tree_order_root(const DP_MsgLayerTreeOrder *mlto);
+uint16_t DP_msg_layer_tree_move_layer(const DP_MsgLayerTreeMove *mltm);
 
-const uint16_t *DP_msg_layer_tree_order_layers(const DP_MsgLayerTreeOrder *mlto,
-                                               int *out_count);
+uint16_t DP_msg_layer_tree_move_parent(const DP_MsgLayerTreeMove *mltm);
 
-int DP_msg_layer_tree_order_layers_count(const DP_MsgLayerTreeOrder *mlto);
+uint16_t DP_msg_layer_tree_move_sibling(const DP_MsgLayerTreeMove *mltm);
 
 
 /*

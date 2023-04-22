@@ -201,11 +201,11 @@ drawdance::Message CanvasState::makeLayerOrder(
 		m_data, contextId, sourceId, targetId, below));
 }
 
-drawdance::Message CanvasState::makeLayerTreeOrder(
+drawdance::Message CanvasState::makeLayerTreeMove(
     uint8_t contextId, int sourceId, int targetId, bool intoGroup, bool below) const
 {
     DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(m_data);
-	return drawdance::Message::noinc(DP_layer_routes_layer_tree_order_make(
+	return drawdance::Message::noinc(DP_layer_routes_layer_tree_move_make(
 		lr, m_data, contextId, sourceId, targetId, intoGroup, below));
 }
 
