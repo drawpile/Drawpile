@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "desktop/dialogs/brushsettingsdialog.h"
-#include "libclient/canvas/blendmodes.h"
 #include "desktop/widgets/curvewidget.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
 #include "desktop/widgets/toolmessage.h"
+#include "libclient/canvas/blendmodes.h"
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDialogButtonBox>
@@ -28,6 +28,8 @@ struct BrushSettingsDialog::Private {
 	struct MyPaintPage {
 		KisDoubleSliderSpinBox *baseValueSpinner;
 		widgets::MyPaintInput *inputs[MYPAINT_BRUSH_INPUTS_COUNT];
+		QLabel *constantLabel;
+		QLabel *indirectLabel;
 	};
 
 	QListWidget *categoryWidget;
@@ -278,8 +280,13 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 	connect(
 		d->paintModeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
 		[this](int index) {
-			d->brush.classic().incremental =
-				d->paintModeCombo->itemData(index).toBool();
+			if(d->brush.activeType() == brushes::ActiveBrush::CLASSIC) {
+				d->brush.classic().incremental =
+					d->paintModeCombo->itemData(index).toBool();
+			} else {
+				d->brush.myPaint().brush().incremental =
+					d->paintModeCombo->itemData(index).toBool();
+			}
 			emitChange();
 		});
 
@@ -638,13 +645,25 @@ QWidget *BrushSettingsDialog::buildMyPaintPageUi(int setting)
 		});
 
 	if(settingInfo->constant) {
-		QLabel *constantLabel = new QLabel{tr("No brush dynamics."), widget};
-		constantLabel->setWordWrap(true);
-		layout->addWidget(constantLabel);
+		page.constantLabel = new QLabel{tr("No brush dynamics."), widget};
+		page.constantLabel->setWordWrap(true);
+		layout->addWidget(page.constantLabel);
 	} else {
 		for(int input = 0; input < MYPAINT_BRUSH_INPUTS_COUNT; ++input) {
 			layout->addWidget(buildMyPaintInputUi(setting, input, settingInfo));
 		}
+	}
+
+	if(disableIndirectMyPaintSetting(setting)) {
+		page.indirectLabel =
+			new QLabel{tr("Not available in Indirect/Wash mode."), widget};
+		layout->addWidget(page.indirectLabel);
+	} else if(disableIndirectMyPaintInputs(setting)) {
+		page.indirectLabel = new QLabel{
+			tr("Dynamics not available in Indirect/Wash mode."), widget};
+		layout->addWidget(page.indirectLabel);
+	} else {
+		page.indirectLabel = nullptr;
 	}
 
 	layout->addSpacerItem(
@@ -752,8 +771,6 @@ void BrushSettingsDialog::updateUiFromClassicBrush()
 	d->paintModeCombo->setCurrentIndex(
 		haveSmudge || classic.incremental ? 0 : 1);
 	d->paintModeCombo->setDisabled(haveSmudge);
-	d->paintModeLabel->setVisible(true);
-	d->paintModeCombo->setVisible(true);
 
 	d->spacingSpinner->setValue(classic.spacing * 100.0 + 0.5);
 	d->stabilizerSpinner->setValue(classic.stabilizerSampleCount);
@@ -796,10 +813,9 @@ void BrushSettingsDialog::updateUiFromMyPaintBrush()
 	d->brushModeLabel->setVisible(false);
 	d->brushModeCombo->setVisible(false);
 	d->colorPickBox->setVisible(false);
-	d->paintModeLabel->setVisible(false);
-	d->paintModeCombo->setVisible(false);
 	d->spacingSpinner->setVisible(false);
 
+	d->paintModeCombo->setCurrentIndex(brush.incremental ? 0 : 1);
 	d->eraseModeBox->setChecked(brush.erase);
 	d->lockAlphaBox->setChecked(brush.lock_alpha);
 	d->lockAlphaBox->setVisible(true);
@@ -821,9 +837,20 @@ void BrushSettingsDialog::updateMyPaintSettingPage(int setting)
 	Private::MyPaintPage &page = d->myPaintPages[setting];
 	page.baseValueSpinner->setValue(mapping.base_value);
 
+	bool incremental = mypaint.constBrush().incremental;
+	bool disableIndirectSetting = disableIndirectMyPaintSetting(setting);
+	bool disableIndirectInputs = disableIndirectMyPaintInputs(setting);
+	if(disableIndirectSetting) {
+		page.baseValueSpinner->setVisible(incremental);
+	}
+
 	const MyPaintBrushSettingInfo *settingInfo =
 		mypaint_brush_setting_info(MyPaintBrushSetting(setting));
-	if(!settingInfo->constant) {
+	if(settingInfo->constant) {
+		if(disableIndirectSetting || disableIndirectInputs) {
+			page.constantLabel->setVisible(incremental);
+		}
+	} else {
 		for(int input = 0; input < MYPAINT_BRUSH_INPUTS_COUNT; ++input) {
 			widgets::MyPaintInput *inputWidget = page.inputs[input];
 			brushes::MyPaintCurve curve = mypaint.getCurve(setting, input);
@@ -833,7 +860,14 @@ void BrushSettingsDialog::updateMyPaintSettingPage(int setting)
 				inputWidget->setControlPoints(mapping.inputs[input]);
 				mypaint.setCurve(setting, input, inputWidget->myPaintCurve());
 			}
+			if(disableIndirectSetting || disableIndirectInputs) {
+				inputWidget->setVisible(incremental);
+			}
 		}
+	}
+
+	if(disableIndirectSetting || disableIndirectInputs) {
+		page.indirectLabel->setVisible(!incremental);
 	}
 }
 
@@ -868,6 +902,45 @@ bool BrushSettingsDialog::shouldIncludeMyPaintSetting(int setting)
 		return false;
 	default:
 		return true;
+	}
+}
+
+bool BrushSettingsDialog::disableIndirectMyPaintSetting(int setting)
+{
+	switch(setting) {
+	// Opacity linearization is supposed to compensate for direct drawing mode,
+	// in indirect mode its behavior is just really wrong, so we disable it.
+	case MYPAINT_BRUSH_SETTING_OPAQUE_LINEARIZE:
+	// Indirect mode can't smudge, affect alpha or change color along the way.
+	case MYPAINT_BRUSH_SETTING_SMUDGE:
+	case MYPAINT_BRUSH_SETTING_SMUDGE_LENGTH:
+	case MYPAINT_BRUSH_SETTING_SMUDGE_RADIUS_LOG:
+	case MYPAINT_BRUSH_SETTING_ERASER:
+	case MYPAINT_BRUSH_SETTING_LOCK_ALPHA:
+	case MYPAINT_BRUSH_SETTING_COLORIZE:
+	case MYPAINT_BRUSH_SETTING_SMUDGE_LENGTH_LOG:
+	case MYPAINT_BRUSH_SETTING_SMUDGE_BUCKET:
+	case MYPAINT_BRUSH_SETTING_SMUDGE_TRANSPARENCY:
+	case MYPAINT_BRUSH_SETTING_POSTERIZE:
+	case MYPAINT_BRUSH_SETTING_POSTERIZE_NUM:
+		return true;
+	default:
+		return false;
+	}
+}
+
+bool BrushSettingsDialog::disableIndirectMyPaintInputs(int setting)
+{
+	switch(setting) {
+	// Indirect mode can't change color along the way.
+	case MYPAINT_BRUSH_SETTING_CHANGE_COLOR_H:
+	case MYPAINT_BRUSH_SETTING_CHANGE_COLOR_L:
+	case MYPAINT_BRUSH_SETTING_CHANGE_COLOR_HSL_S:
+	case MYPAINT_BRUSH_SETTING_CHANGE_COLOR_V:
+	case MYPAINT_BRUSH_SETTING_CHANGE_COLOR_HSV_S:
+		return true;
+	default:
+		return false;
 	}
 }
 

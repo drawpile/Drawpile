@@ -130,3 +130,51 @@ uint8_t DP_classic_brush_dab_hardness_at(const DP_ClassicBrush *cb,
     float value = DP_classic_brush_hardness_at(cb, pressure) * 255.0f + 0.5f;
     return DP_float_to_uint8(CLAMP(value, 0, UINT8_MAX));
 }
+
+
+void DP_mypaint_brush_mode_extract(uint8_t mode, int *out_blend_mode,
+                                   bool *out_indirect,
+                                   uint8_t *out_posterize_num)
+{
+    int blend_mode;
+    bool indirect;
+    uint8_t posterize_num;
+    if (mode & DP_MYPAINT_BRUSH_MODE_FLAG) {
+        posterize_num = 0;
+        switch (mode & DP_MYPAINT_BRUSH_MODE_MASK) {
+        case DP_MYPAINT_BRUSH_MODE_INCREMENTAL:
+            blend_mode = DP_BLEND_MODE_NORMAL_AND_ERASER;
+            indirect = false;
+            break;
+        case DP_MYPAINT_BRUSH_MODE_NORMAL:
+            blend_mode = DP_BLEND_MODE_NORMAL;
+            indirect = true;
+            break;
+        case DP_MYPAINT_BRUSH_MODE_RECOLOR:
+            blend_mode = DP_BLEND_MODE_RECOLOR;
+            indirect = true;
+            break;
+        case DP_MYPAINT_BRUSH_MODE_ERASE:
+            blend_mode = DP_BLEND_MODE_ERASE;
+            indirect = true;
+            break;
+        default:
+            DP_UNREACHABLE();
+        }
+    }
+    else {
+        blend_mode = DP_BLEND_MODE_NORMAL_AND_ERASER;
+        indirect = false;
+        posterize_num = mode;
+    }
+
+    if (out_blend_mode) {
+        *out_blend_mode = blend_mode;
+    }
+    if (out_indirect) {
+        *out_indirect = indirect;
+    }
+    if (out_posterize_num) {
+        *out_posterize_num = posterize_num;
+    }
+}

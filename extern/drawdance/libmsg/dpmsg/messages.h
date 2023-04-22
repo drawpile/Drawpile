@@ -1817,6 +1817,13 @@ DP_MsgDrawDabsPixel *DP_msg_draw_dabs_pixel_square_cast(DP_Message *msg);
  * DP_MSG_DRAW_DABS_MYPAINT
  *
  * Draw MyPaint brush dabs
+ *
+ * If the highest bit (0x80) of the mode field is not set, it is
+ * treated as the number of posterization colors. If it is set, the
+ * first two bits decide the drawing mode of this stroke: 0x0 means
+ * direct with Normal and Eraser mode, 0x1 means indirect with Normal
+ * mode, 0x2 means indirect with Recolor mode and 0x3 means indirect
+ * with Erase mode.
  */
 
 #define DP_MSG_DRAW_DABS_MYPAINT_STATIC_LENGTH 18
@@ -1848,11 +1855,12 @@ const DP_MyPaintDab *DP_mypaint_dab_at(const DP_MyPaintDab *mpd, int i);
 
 typedef struct DP_MsgDrawDabsMyPaint DP_MsgDrawDabsMyPaint;
 
-DP_Message *DP_msg_draw_dabs_mypaint_new(
-    unsigned int context_id, uint16_t layer, int32_t x, int32_t y,
-    uint32_t color, uint8_t lock_alpha, uint8_t colorize, uint8_t posterize,
-    uint8_t posterize_num, void (*set_dabs)(int, DP_MyPaintDab *, void *),
-    int dabs_count, void *dabs_user);
+DP_Message *
+DP_msg_draw_dabs_mypaint_new(unsigned int context_id, uint16_t layer, int32_t x,
+                             int32_t y, uint32_t color, uint8_t lock_alpha,
+                             uint8_t colorize, uint8_t posterize, uint8_t mode,
+                             void (*set_dabs)(int, DP_MyPaintDab *, void *),
+                             int dabs_count, void *dabs_user);
 
 DP_Message *DP_msg_draw_dabs_mypaint_deserialize(unsigned int context_id,
                                                  const unsigned char *buffer,
@@ -1877,8 +1885,7 @@ uint8_t DP_msg_draw_dabs_mypaint_colorize(const DP_MsgDrawDabsMyPaint *mddmp);
 
 uint8_t DP_msg_draw_dabs_mypaint_posterize(const DP_MsgDrawDabsMyPaint *mddmp);
 
-uint8_t
-DP_msg_draw_dabs_mypaint_posterize_num(const DP_MsgDrawDabsMyPaint *mddmp);
+uint8_t DP_msg_draw_dabs_mypaint_mode(const DP_MsgDrawDabsMyPaint *mddmp);
 
 const DP_MyPaintDab *
 DP_msg_draw_dabs_mypaint_dabs(const DP_MsgDrawDabsMyPaint *mddmp,
@@ -2053,6 +2060,17 @@ size_t DP_msg_layer_tree_create_title_len(const DP_MsgLayerTreeCreate *mltc);
  * DP_MSG_LAYER_TREE_MOVE
  *
  * Reorder a layer
+ *
+ * Moves the given layer into the given parent group or into the root
+ * if given 0. It will be placed either below the given sibling or at
+ * the bottom if given 0. An invalid move, such as because the parent
+ * is missing or the sibling isn't part of the parent group, will not
+ * be executed at all, no fallback is attempted.
+ *
+ * The user is allowed to move a layer if they can edit both it and
+ * the parent. Moving into the parent group is allowed if the user has
+ * would be allowed to create a layer there (which is always, since
+ * that's currently conflated with being allowed to edit layers.)
  */
 
 #define DP_MSG_LAYER_TREE_MOVE_STATIC_LENGTH 6

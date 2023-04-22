@@ -25,13 +25,20 @@
 #include <dpcommon/common.h>
 #include <dpmsg/blend_mode.h>
 #ifdef DP_BUNDLED_LIBMYPAINT
-#include "libmypaint/mypaint-brush-settings-gen.h"
+#    include "libmypaint/mypaint-brush-settings-gen.h"
 #else
-#include <mypaint-brush-settings-gen.h>
+#    include <mypaint-brush-settings-gen.h>
 #endif
 
 #define DP_CLASSIC_BRUSH_CURVE_VALUE_COUNT 256
-#define DP_MYPAINT_CONTROL_POINTS_COUNT 64
+#define DP_MYPAINT_CONTROL_POINTS_COUNT    64
+
+#define DP_MYPAINT_BRUSH_MODE_FLAG        0x80
+#define DP_MYPAINT_BRUSH_MODE_INCREMENTAL 0x0
+#define DP_MYPAINT_BRUSH_MODE_NORMAL      0x1
+#define DP_MYPAINT_BRUSH_MODE_RECOLOR     0x2
+#define DP_MYPAINT_BRUSH_MODE_ERASE       0x3
+#define DP_MYPAINT_BRUSH_MODE_MASK        0x3
 
 
 typedef enum DP_BrushShape {
@@ -92,6 +99,7 @@ typedef struct DP_MyPaintBrush {
     DP_UPixelFloat color;
     bool lock_alpha;
     bool erase;
+    bool incremental;
 } DP_MyPaintBrush;
 
 
@@ -119,6 +127,11 @@ uint8_t DP_classic_brush_dab_opacity_at(const DP_ClassicBrush *cb,
 
 uint8_t DP_classic_brush_dab_hardness_at(const DP_ClassicBrush *cb,
                                          float pressure);
+
+
+void DP_mypaint_brush_mode_extract(uint8_t mode, int *out_blend_mode,
+                                   bool *out_indirect,
+                                   uint8_t *out_posterize_num);
 
 
 #endif

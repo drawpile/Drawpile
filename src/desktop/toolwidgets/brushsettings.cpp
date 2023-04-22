@@ -462,9 +462,6 @@ void BrushSettings::updateUi()
 	emit subpixelModeChanged(getSubpixelMode(), isSquare());
 	adjustSettingVisibilities(softmode, mypaintmode);
 
-	// Smudging only works right in incremental mode
-	d->ui.modeIncremental->setEnabled(classic.smudge.max == 0.0);
-
 	// Show correct blending mode
 	d->ui.blendmode->setModel(classic.erase ? d->eraseModes : d->blendModes);
 	d->ui.modeEraser->setChecked(brush.isEraser());
@@ -490,7 +487,6 @@ void BrushSettings::updateUi()
 	d->ui.pressureSmudging->setChecked(classic.smudge_pressure);
 	d->ui.colorpickupBox->setValue(classic.resmudge);
 	d->ui.brushspacingBox->setValue(qRound(classic.spacing * 100.0));
-	d->ui.modeIncremental->setChecked(classic.incremental);
 	d->ui.modeColorpick->setChecked(classic.colorpick);
 	if(softmode) {
 		d->ui.pressureHardness->setChecked(classic.hardness_pressure);
@@ -511,12 +507,17 @@ void BrushSettings::updateUi()
 		if(d->useBrushSampleCount) {
 			d->ui.stabilizerBox->setValue(myPaint.stabilizerSampleCount());
 		}
+		d->ui.modeIncremental->setChecked(myPaint.constBrush().incremental);
+		d->ui.modeIncremental->setEnabled(true);
 	} else {
 		d->ui.opacityBox->setValue(qRound(classic.opacity.max * 100.0));
 		d->ui.hardnessBox->setValue(qRound(classic.hardness.max * 100.0));
 		if(d->useBrushSampleCount) {
 			d->ui.stabilizerBox->setValue(classic.stabilizerSampleCount);
 		}
+		d->ui.modeIncremental->setChecked(classic.incremental);
+		// Smudging only works right in incremental mode
+		d->ui.modeIncremental->setEnabled(classic.smudge.max == 0.0);
 	}
 
 	// Communicate the current size of the brush cursor to the outside. These
@@ -567,7 +568,6 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 	classic.resmudge = d->ui.colorpickupBox->value();
 
 	classic.spacing = d->ui.brushspacingBox->value() / 100.0;
-	classic.incremental = d->ui.modeIncremental->isChecked();
 	classic.colorpick = d->ui.modeColorpick->isChecked();
 
 	DP_BlendMode mode = DP_BlendMode(d->ui.blendmode->currentData(Qt::UserRole).toInt());
@@ -596,6 +596,8 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 			if(d->useBrushSampleCount) {
 				myPaint.setStabilizerSampleCount(d->ui.stabilizerBox->value());
 			}
+			myPaint.brush().incremental = d->ui.modeIncremental->isChecked();
+			d->ui.modeIncremental->setEnabled(true);
 		} else {
 			classic.opacity.max = d->ui.opacityBox->value() / 100.0;
 			classic.opacity_pressure = d->ui.pressureOpacity->isChecked();
@@ -606,12 +608,12 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 			if(d->useBrushSampleCount) {
 				classic.stabilizerSampleCount = d->ui.stabilizerBox->value();
 			}
+			classic.incremental = d->ui.modeIncremental->isChecked();
+			d->ui.modeIncremental->setEnabled(classic.smudge.max == 0.0);
 		}
 	}
 
 	d->ui.preview->setBrush(brush);
-
-	d->ui.modeIncremental->setEnabled(classic.smudge.max == 0.0);
 
 	pushSettings();
 }
@@ -623,7 +625,6 @@ void BrushSettings::adjustSettingVisibilities(bool softmode, bool mypaintmode)
 		{d->ui.modeColorpick, !mypaintmode},
 		{d->ui.modeLockAlpha, mypaintmode},
 		{d->ui.modeEraser, true},
-		{d->ui.modeIncremental, !mypaintmode},
 		{d->ui.blendmode, !mypaintmode},
 		{d->ui.pressureHardness, softmode && !mypaintmode},
 		{d->ui.hardnessBox, softmode},
