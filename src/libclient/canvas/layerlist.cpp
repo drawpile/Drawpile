@@ -360,6 +360,7 @@ void LayerListModel::setLayersVisibleInFrame(const QSet<int> &layers, bool frame
 				emit dataChanged(idx, idx);
 			}
 		}
+		emit layersVisibleInFrameChanged();
 	}
 }
 

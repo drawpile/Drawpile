@@ -124,6 +124,7 @@ void LayerList::setCanvas(canvas::CanvasModel *canvas)
 
 	connect(canvas->layerlist(), &canvas::LayerListModel::modelAboutToBeReset, this, &LayerList::beforeLayerReset);
 	connect(canvas->layerlist(), &canvas::LayerListModel::modelReset, this, &LayerList::afterLayerReset);
+	connect(canvas->layerlist(), &canvas::LayerListModel::layersVisibleInFrameChanged, this, &LayerList::activeLayerVisibilityChanged);
 
 	connect(canvas->aclState(), &canvas::AclState::featureAccessChanged, this, &LayerList::onFeatureAccessChange);
 	connect(canvas->aclState(), &canvas::AclState::layerAclChanged, this, &LayerList::layerLockStatusChanged);
