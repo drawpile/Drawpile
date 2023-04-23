@@ -164,6 +164,8 @@ signals:
 	//! Emitted when layers are manually reordered
 	void moveRequested(int sourceId, int targetId, bool intoGroup, bool below);
 
+	void layersVisibleInFrameChanged();
+
 private:
 	void flattenKeyFrameLayer(
 		QVector<KeyFrameLayerItem> &items, int &index, int &layerIndex,
