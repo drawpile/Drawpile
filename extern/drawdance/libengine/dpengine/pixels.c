@@ -452,6 +452,16 @@ void DP_pixels15_to_8(DP_Pixel8 *dst, const DP_Pixel15 *src, int count)
     }
 }
 
+void DP_pixels15_to_8_unpremultiply(DP_UPixel8 *dst, const DP_Pixel15 *src,
+                                    int count)
+{
+    DP_ASSERT(count <= 0 || dst);
+    DP_ASSERT(count <= 0 || src);
+    for (int i = 0; i < count; ++i) {
+        dst[i] = DP_upixel15_to_8(DP_pixel15_unpremultiply(src[i]));
+    }
+}
+
 
 #ifdef DP_CPU_X64
 DP_TARGET_BEGIN("sse4.2")
