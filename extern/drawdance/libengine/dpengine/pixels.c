@@ -321,7 +321,7 @@ uint16_t DP_channel8_to_15(uint8_t c)
 
 uint8_t DP_channel15_to_8(uint16_t c)
 {
-    return DP_int_to_uint8(DP_uint16_to_int(c) * 255 >> 15);
+    return DP_float_to_uint8(c / BIT15_FLOAT * 255.0f + 0.5f);
 }
 
 float DP_channel8_to_float(uint8_t c)
