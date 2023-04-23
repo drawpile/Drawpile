@@ -23,7 +23,7 @@
 namespace compat {
 #if QT_VERSION >= QT_VERSION_CHECK(5, 13, 0)
 inline auto fontFamily(const QTextCharFormat &format) {
-	return format.fontFamilies().toStringList().first();
+	return format.fontFamilies().toStringList().value(0, QString{});
 }
 
 inline void setFontFamily(QTextCharFormat &format, const QString &family) {
