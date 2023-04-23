@@ -141,6 +141,9 @@ size_t DP_tile_compress(DP_Tile *tile, DP_Pixel8 *pixel_buffer,
 
 void DP_tile_copy_to_image(DP_Tile *tile_or_null, DP_Image *img, int x, int y);
 
+void DP_tile_copy_to_upixels8(DP_Tile *tile_or_null, DP_UPixel8 *pixels, int x,
+                              int y, int pixels_width, int pixels_height);
+
 
 void DP_tile_sample(DP_Tile *tile_or_null, const uint16_t *mask, int x, int y,
                     int width, int height, int skip, float *in_out_weight,

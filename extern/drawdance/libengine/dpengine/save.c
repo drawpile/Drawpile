@@ -169,17 +169,13 @@ static bool ora_store_mimetype(DP_ZipWriter *zw)
                                   false, false);
 }
 
-static bool ora_store_png(DP_SaveOraContext *c, DP_Image *img_or_null,
-                          const char *name)
+static bool ora_store_png(DP_SaveOraContext *c, const char *name,
+                          bool (*write_png)(void *, DP_Output *), void *user)
 {
     void **buffer_ptr;
     size_t *size_ptr;
     DP_Output *output = DP_mem_output_new(64, false, &buffer_ptr, &size_ptr);
-
-    bool ok = img_or_null
-                ? DP_image_write_png(img_or_null, output)
-                : DP_image_png_write(output, 1, 1, (DP_Pixel8[]){{0}});
-
+    bool ok = write_png(user, output);
     void *buffer = *buffer_ptr;
     size_t size = *size_ptr;
     DP_output_free(output);
@@ -193,15 +189,52 @@ static bool ora_store_png(DP_SaveOraContext *c, DP_Image *img_or_null,
     }
 }
 
+struct DP_OraWriteUpixelsParams {
+    DP_UPixel8 *pixels;
+    int width;
+    int height;
+};
+
+static bool ora_write_png_upixels(void *user, DP_Output *output)
+{
+    struct DP_OraWriteUpixelsParams *params = user;
+    return DP_image_png_write_unpremultiplied(output, params->width,
+                                              params->height, params->pixels);
+}
+
+static bool ora_store_png_upixels(DP_SaveOraContext *c, DP_UPixel8 *pixels,
+                                  int width, int height, const char *name)
+{
+    static DP_UPixel8 null_pixels[] = {{0}};
+    struct DP_OraWriteUpixelsParams params =
+        pixels ? (struct DP_OraWriteUpixelsParams){pixels, width, height}
+               : (struct DP_OraWriteUpixelsParams){null_pixels, 1, 1};
+    return ora_store_png(c, name, ora_write_png_upixels, &params);
+}
+
+static bool ora_write_png_image(void *user, DP_Output *output)
+{
+    DP_Image *img = user;
+    return DP_image_write_png(img, output);
+}
+
+static bool ora_store_png_image(DP_SaveOraContext *c, DP_Image *img,
+                                const char *name)
+{
+    return img ? ora_store_png(c, name, ora_write_png_image, img)
+               : ora_store_png_upixels(c, NULL, 0, 0, name);
+}
+
 static bool ora_store_layer(DP_SaveOraContext *c, DP_LayerContent *lc,
                             DP_SaveOraLayer *sol)
 {
-    DP_Image *img_or_null =
-        DP_layer_content_to_image_cropped(lc, &sol->offset_x, &sol->offset_y);
+    int width, height;
+    DP_UPixel8 *pixels = DP_layer_content_to_upixels8_cropped(
+        lc, &sol->offset_x, &sol->offset_y, &width, &height);
     const char *name =
         save_ora_context_format(c, "data/layer-%04x.png", sol->layer_id);
-    bool ok = ora_store_png(c, img_or_null, name);
-    DP_image_free(img_or_null);
+    bool ok = ora_store_png_upixels(c, pixels, width, height, name);
+    DP_free(pixels);
     return ok;
 }
 
@@ -238,39 +271,33 @@ static bool ora_store_background(DP_SaveOraContext *c, DP_CanvasState *cs)
 {
     DP_Tile *t = DP_canvas_state_background_tile_noinc(cs);
     if (t && !DP_tile_blank(t)) {
-        DP_Image *tile_img = DP_image_new(DP_TILE_SIZE, DP_TILE_SIZE);
-        DP_pixels15_to_8(DP_image_pixels(tile_img), DP_tile_pixels(t),
-                         DP_TILE_LENGTH);
-        if (!ora_store_png(c, tile_img, "data/background-tile.png")) {
-            DP_image_free(tile_img);
+        DP_UPixel8 *tile_pixels =
+            DP_malloc(sizeof(*tile_pixels) * DP_TILE_LENGTH);
+        DP_pixels15_to_8_unpremultiply(tile_pixels, DP_tile_pixels(t),
+                                       DP_TILE_LENGTH);
+        if (!ora_store_png_upixels(c, tile_pixels, DP_TILE_SIZE, DP_TILE_SIZE,
+                                   "data/background-tile.png")) {
+            DP_free(tile_pixels);
             return false;
         }
 
         int width = DP_max_int(1, DP_canvas_state_width(cs));
         int height = DP_max_int(1, DP_canvas_state_height(cs));
-        DP_Image *img = DP_image_new(width, height);
+        DP_UPixel8 *pixels = DP_malloc(sizeof(*pixels) * DP_int_to_size(width)
+                                       * DP_int_to_size(height));
 
-        DP_Pixel8 solid;
-        if (DP_image_same_pixel(tile_img, &solid)) {
-            DP_Pixel8 *pixels = DP_image_pixels(img);
-            int count = width * height;
-            for (int i = 0; i < count; ++i) {
-                pixels[i] = solid;
+        for (int y = 0; y < height; ++y) {
+            for (int x = 0; x < width; ++x) {
+                int tx = x % DP_TILE_SIZE;
+                int ty = y % DP_TILE_SIZE;
+                pixels[y * width + x] = tile_pixels[ty * DP_TILE_SIZE + tx];
             }
         }
-        else {
-            for (int y = 0; y < height; ++y) {
-                for (int x = 0; x < width; ++x) {
-                    DP_Pixel8 pixel = DP_image_pixel_at(
-                        tile_img, x % DP_TILE_SIZE, y % DP_TILE_SIZE);
-                    DP_image_pixel_at_set(img, x, y, pixel);
-                }
-            }
-        }
-        DP_image_free(tile_img);
+        DP_free(tile_pixels);
 
-        bool ok = ora_store_png(c, img, "data/background.png");
-        DP_image_free(img);
+        bool ok = ora_store_png_upixels(c, pixels, width, height,
+                                        "data/background.png");
+        DP_free(pixels);
         return ok;
     }
     return true;
@@ -285,7 +312,7 @@ static bool ora_store_merged(DP_SaveOraContext *c, DP_CanvasState *cs,
         return false;
     }
 
-    if (!ora_store_png(c, img, "mergedimage.png")) {
+    if (!ora_store_png_image(c, img, "mergedimage.png")) {
         DP_image_free(img);
         return false;
     }
@@ -296,7 +323,8 @@ static bool ora_store_merged(DP_SaveOraContext *c, DP_CanvasState *cs,
         return false;
     }
 
-    bool ok = ora_store_png(c, thumb ? thumb : img, "Thumbnails/thumbnail.png");
+    bool ok =
+        ora_store_png_image(c, thumb ? thumb : img, "Thumbnails/thumbnail.png");
     DP_free(thumb);
     DP_free(img);
     return ok;

@@ -99,6 +99,9 @@ void DP_pixels8_to_15_checked(DP_Pixel15 *dst, const DP_Pixel8 *src, int count);
 
 void DP_pixels15_to_8(DP_Pixel8 *dst, const DP_Pixel15 *src, int count);
 
+void DP_pixels15_to_8_unpremultiply(DP_UPixel8 *dst, const DP_Pixel15 *src,
+                                    int count);
+
 // Uses SIMD to convert pixels, but requires high alignments, max_align_t is not
 // enough! The pixels of tiles are automatically properly aligned, but e.g. the
 // pixels of images or compression buffers are not, so you can't use this there.

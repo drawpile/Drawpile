@@ -413,6 +413,30 @@ void DP_tile_copy_to_image(DP_Tile *tile_or_null, DP_Image *img, int x, int y)
     }
 }
 
+void DP_tile_copy_to_upixels8(DP_Tile *tile_or_null, DP_UPixel8 *pixels, int x,
+                              int y, int pixels_width, int pixels_height)
+{
+    DP_ASSERT(pixels);
+    int width = DP_min_int(pixels_width - x, DP_TILE_SIZE);
+    int height = DP_min_int(pixels_height - y, DP_TILE_SIZE);
+    DP_UPixel8 *dst = pixels + y * pixels_width + x;
+    size_t bytes = DP_int_to_size(width) * sizeof(*dst);
+
+    if (tile_or_null) {
+        DP_ASSERT(DP_atomic_get(&tile_or_null->refcount) > 0);
+        DP_Pixel15 *src = tile_or_null->pixels;
+        for (int i = 0; i < height; ++i) {
+            DP_pixels15_to_8_unpremultiply(dst + i * pixels_width,
+                                           src + i * DP_TILE_SIZE, width);
+        }
+    }
+    else {
+        for (int i = 0; i < height; ++i) {
+            memset(dst + i * pixels_width, 0, bytes);
+        }
+    }
+}
+
 
 // Based on libmypaint, see license above.
 static void sample_tile(DP_Pixel15 *src, const uint16_t *mask, int w, int h,

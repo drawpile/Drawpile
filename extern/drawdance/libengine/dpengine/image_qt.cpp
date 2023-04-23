@@ -147,13 +147,13 @@ extern "C" DP_Image *DP_image_jpeg_read(DP_Input *input)
 }
 
 
-static bool write_image(DP_Output *output, int width, int height,
-                        DP_Pixel8 *pixels, const char *format, int quality)
+static bool write_image(DP_Output *output, int width, int height, uchar *pixels,
+                        const char *format, int quality,
+                        QImage::Format imageFormat)
 {
     unsigned int error_count = DP_error_count();
     DP_OutputDevice dev{output};
-    QImage qi{reinterpret_cast<uchar *>(pixels), width, height, width * 4,
-              QImage::Format_ARGB32_Premultiplied};
+    QImage qi{pixels, width, height, width * 4, imageFormat};
     if (qi.save(&dev, format, quality)) {
         return DP_output_flush(output);
     }
@@ -168,11 +168,21 @@ static bool write_image(DP_Output *output, int width, int height,
 extern "C" bool DP_image_png_write(DP_Output *output, int width, int height,
                                    DP_Pixel8 *pixels)
 {
-    return write_image(output, width, height, pixels, "PNG", -1);
+    return write_image(output, width, height, reinterpret_cast<uchar *>(pixels),
+                       "PNG", -1, QImage::Format_ARGB32_Premultiplied);
+}
+
+extern "C" bool DP_image_png_write_unpremultiplied(DP_Output *output, int width,
+                                                   int height,
+                                                   DP_UPixel8 *pixels)
+{
+    return write_image(output, width, height, reinterpret_cast<uchar *>(pixels),
+                       "PNG", -1, QImage::Format_ARGB32);
 }
 
 bool DP_image_jpeg_write(DP_Output *output, int width, int height,
                          DP_Pixel8 *pixels)
 {
-    return write_image(output, width, height, pixels, "JPEG", 100);
+    return write_image(output, width, height, reinterpret_cast<uchar *>(pixels),
+                       "JPEG", 100, QImage::Format_ARGB32_Premultiplied);
 }

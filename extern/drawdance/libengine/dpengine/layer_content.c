@@ -454,7 +454,6 @@ static bool layer_content_tile_bounds(DP_LayerContent *lc, int *out_left,
     int right = 0;
     int bottom = 0;
 
-    // TODO: Crop pixel-perfect instead of only to the nearest tile.
     for (int y = 0; y < tile_counts.y; ++y) {
         for (int x = 0; x < tile_counts.x; ++x) {
             DP_Tile *t = DP_layer_content_tile_at_noinc(lc, x, y);
@@ -559,9 +558,11 @@ DP_Image *DP_layer_content_to_image(DP_LayerContent *lc)
     return img;
 }
 
-DP_Image *DP_layer_content_to_image_cropped(DP_LayerContent *lc,
-                                            int *out_offset_x,
-                                            int *out_offset_y)
+DP_UPixel8 *DP_layer_content_to_upixels8_cropped(DP_LayerContent *lc,
+                                                 int *out_offset_x,
+                                                 int *out_offset_y,
+                                                 int *out_width,
+                                                 int *out_height)
 {
     DP_ASSERT(lc);
     DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
@@ -573,23 +574,79 @@ DP_Image *DP_layer_content_to_image_cropped(DP_LayerContent *lc,
 
     int width = (right - left + 1) * DP_TILE_SIZE;
     int height = (bottom - top + 1) * DP_TILE_SIZE;
-    DP_Image *img = DP_image_new(width, height);
+    DP_UPixel8 *pixels = DP_malloc(sizeof(*pixels) * DP_int_to_size(width)
+                                   * DP_int_to_size(height));
     for (int y = top; y <= bottom; ++y) {
         int target_y = (y - top) * DP_TILE_SIZE;
         for (int x = left; x <= right; ++x) {
             DP_Tile *t = DP_layer_content_tile_at_noinc(lc, x, y);
             int target_x = (x - left) * DP_TILE_SIZE;
-            DP_tile_copy_to_image(t, img, target_x, target_y);
+            DP_tile_copy_to_upixels8(t, pixels, target_x, target_y, width,
+                                     height);
+        }
+    }
+
+    int min_x = width;
+    int min_y = height;
+    int max_x = -1;
+    int max_y = -1;
+    for (int y = 0; y < height; ++y) {
+        for (int x = 0; x < width; ++x) {
+            DP_UPixel8 pixel = pixels[y * width + x];
+            if (pixel.a != 0) {
+                if (x < min_x) {
+                    min_x = x;
+                }
+                if (y < min_y) {
+                    min_y = y;
+                }
+                if (x > max_x) {
+                    max_x = x;
+                }
+                if (y > max_y) {
+                    max_y = y;
+                }
+            }
+        }
+    }
+
+    if (max_x < min_x || max_y < min_y) {
+        // Turns out the image is empty after all. Can happen if almost
+        // transparent 15 bit pixels become actually transparent in 8 bits.
+        DP_free(pixels);
+        return NULL;
+    }
+
+    int pixel_width, pixel_height;
+    if (min_x == 0 && min_y == 0 && max_x == width - 1 && max_y == height - 1) {
+        pixel_width = width;
+        pixel_height = height;
+    }
+    else {
+        pixel_width = max_x - min_x + 1;
+        pixel_height = max_y - min_y + 1;
+        for (int y = 0; y < pixel_height; ++y) {
+            for (int x = 0; x < pixel_width; ++x) {
+                int tx = x + min_x;
+                int ty = y + min_y;
+                pixels[y * pixel_width + x] = pixels[ty * width + tx];
+            }
         }
     }
 
     if (out_offset_x) {
-        *out_offset_x = left * DP_TILE_SIZE;
+        *out_offset_x = left * DP_TILE_SIZE + min_x;
     }
     if (out_offset_y) {
-        *out_offset_y = top * DP_TILE_SIZE;
+        *out_offset_y = top * DP_TILE_SIZE + min_y;
     }
-    return img;
+    if (out_width) {
+        *out_width = pixel_width;
+    }
+    if (out_height) {
+        *out_height = pixel_height;
+    }
+    return pixels;
 }
 
 DP_Pixel8 *DP_layer_content_to_pixels8(DP_LayerContent *lc, int x, int y,

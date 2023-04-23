@@ -171,8 +171,8 @@ DP_Image *DP_image_png_read(DP_Input *input)
 }
 
 
-bool DP_image_png_write(DP_Output *output, int width, int height,
-                        DP_Pixel8 *pixels)
+static bool write_png_with(DP_Output *output, int width, int height,
+                           DP_UPixel8 (*get_pixel)(void *, size_t), void *user)
 {
     png_structp png_ptr =
         png_create_write_struct_2(PNG_LIBPNG_VER_STRING, NULL, error_png,
@@ -189,16 +189,12 @@ bool DP_image_png_write(DP_Output *output, int width, int height,
         return false;
     }
 
-    // Unpremultiply all pixels and stuff them into a temporary buffer.
-    // This could probably be solved without allocating said buffer and instead
-    // using the low-level libpng write interface with a custom transformation
-    // function, but that adds a lot of complexity for a bit of memory saveage.
     size_t stride = DP_int_to_size(width);
     size_t row_count = DP_int_to_size(height);
     size_t pixel_count = stride * row_count;
     png_bytep bytes = png_malloc(png_ptr, pixel_count * 4);
     for (size_t pixel_index = 0; pixel_index < pixel_count; ++pixel_index) {
-        DP_UPixel8 pixel = DP_pixel8_unpremultiply(pixels[pixel_index]);
+        DP_UPixel8 pixel = get_pixel(user, pixel_index);
         size_t byte_index = pixel_index * 4u;
         bytes[byte_index + 0u] = pixel.r;
         bytes[byte_index + 1u] = pixel.g;
@@ -209,7 +205,7 @@ bool DP_image_png_write(DP_Output *output, int width, int height,
     png_bytepp row_pointers =
         png_malloc(png_ptr, row_count * sizeof(*row_pointers));
     for (size_t i = 0; i < row_count; ++i) {
-        row_pointers[i] = bytes + i * stride * sizeof(*pixels);
+        row_pointers[i] = bytes + i * stride * sizeof(DP_UPixel8);
     }
 
     if (setjmp(png_jmpbuf(png_ptr))) {
@@ -234,4 +230,30 @@ bool DP_image_png_write(DP_Output *output, int width, int height,
     png_destroy_write_struct(&png_ptr, &info_ptr);
 
     return DP_output_flush(output);
+}
+
+static DP_UPixel8 get_premultiplied_pixel(void *user, size_t pixel_index)
+{
+    DP_Pixel8 *pixels = user;
+    return DP_pixel8_unpremultiply(pixels[pixel_index]);
+}
+
+bool DP_image_png_write(DP_Output *output, int width, int height,
+                        DP_Pixel8 *pixels)
+{
+    return write_png_with(output, width, height, get_premultiplied_pixel,
+                          pixels);
+}
+
+static DP_UPixel8 get_unpremultiplied_pixel(void *user, size_t pixel_index)
+{
+    DP_UPixel8 *pixels = user;
+    return pixels[pixel_index];
+}
+
+bool DP_image_png_write_unpremultiplied(DP_Output *output, int width,
+                                        int height, DP_UPixel8 *pixels)
+{
+    return write_png_with(output, width, height, get_unpremultiplied_pixel,
+                          pixels);
 }
