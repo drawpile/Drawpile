@@ -36,9 +36,9 @@ class QWindow;
 class QRect;
 class QWidget;
 
-struct QWindowsWinTab32DLL
+struct KisWindowsWinTab32DLL
 {
-    QWindowsWinTab32DLL() : wTOpen(0), wTClose(0), wTInfo(0), wTEnable(0), wTOverlap(0), wTPacketsGet(0), wTGet(0),
+    KisWindowsWinTab32DLL() : wTOpen(0), wTClose(0), wTInfo(0), wTEnable(0), wTOverlap(0), wTPacketsGet(0), wTGet(0),
         wTQueueSizeGet(0), wTQueueSizeSet(0) {}
 
     bool init();
@@ -64,9 +64,9 @@ struct QWindowsWinTab32DLL
     PtrWTQueueSizeSet wTQueueSizeSet;
 };
 
-struct QWindowsTabletDeviceData
+struct KisWindowsTabletDeviceData
 {
-    QWindowsTabletDeviceData() : minPressure(0), maxPressure(0), minTanPressure(0),
+    KisWindowsTabletDeviceData() : minPressure(0), maxPressure(0), minTanPressure(0),
         maxTanPressure(0), minX(0), maxX(0), minY(0), maxY(0), minZ(0), maxZ(0),
         uniqueId(0), currentDevice(0), currentPointerType(0) {}
 
@@ -88,18 +88,18 @@ struct QWindowsTabletDeviceData
     QMap<quint8, quint8> buttonsMap;
 };
 
-QDebug operator<<(QDebug d, const QWindowsTabletDeviceData &t);
+QDebug operator<<(QDebug d, const KisWindowsTabletDeviceData &t);
 
-class QWindowsTabletSupport
+class KisWindowsTabletSupport
 {
-    Q_DISABLE_COPY(QWindowsTabletSupport)
+    Q_DISABLE_COPY(KisWindowsTabletSupport)
 
-    explicit QWindowsTabletSupport(HWND window, HCTX context);
+    explicit KisWindowsTabletSupport(HWND window, HCTX context);
 
 public:
-    ~QWindowsTabletSupport();
+    ~KisWindowsTabletSupport();
 
-    static QWindowsTabletSupport *create();
+    static KisWindowsTabletSupport *create();
 
     void notifyActivate();
     QString description() const;
@@ -112,17 +112,17 @@ public:
 
 
     void tabletUpdateCursor(const int pkCursor);
-    static QWindowsWinTab32DLL m_winTab32DLL;
+    static KisWindowsWinTab32DLL m_winTab32DLL;
 
 private:
     unsigned options() const;
-    QWindowsTabletDeviceData tabletInit(const quint64 uniqueId, const UINT cursorType) const;
+    KisWindowsTabletDeviceData tabletInit(const quint64 uniqueId, const UINT cursorType) const;
 
     const HWND m_window;
     const HCTX m_context;
     int m_absoluteRange;
     bool m_tiltSupport;
-    QVector<QWindowsTabletDeviceData> m_devices;
+    QVector<KisWindowsTabletDeviceData> m_devices;
     int m_currentDevice;
     QPointF m_oldGlobalPosF;
 
