@@ -34,7 +34,8 @@ check_args() {
         note
     fi
 
-    for var in GITHUB_TOKEN TARGET_COMMIT RELEASE_NAME RELEASE_DESCRIPTION; do
+    for var in \
+            GITHUB_TOKEN TARGET_COMMIT RELEASE_NAME RELEASE_DESCRIPTION_FILE; do
         if [[ -z "${!var:-}" ]]; then
             note "Environment variable '$var' must be set"
             error=1
@@ -49,6 +50,12 @@ check_args() {
 }
 
 check_args "$@"
+
+release_description="$(cat "$RELEASE_DESCRIPTION_FILE")"
+if [[ -z $release_description ]]; then
+    note "No release description found in '$RELEASE_DESCRIPTION_FILE'"
+    exit 1
+fi
 
 GIT_REPO_SLUG="${GIT_REPO_SLUG:-drawpile/Drawpile}"
 
@@ -75,13 +82,22 @@ if [[ $error -ne 0 ]]; then
     exit 1
 fi
 
-gh release delete --repo "$GIT_REPO_SLUG" --cleanup-tag --yes "$RELEASE_NAME" \
-    || true
+if [[ $CLOBBER_EXISTING == 'true' ]]; then
+    gh release delete \
+        --repo "$GIT_REPO_SLUG" --cleanup-tag --yes "$RELEASE_NAME" \
+        || true
+fi
+
+if [[ $PRERELEASE == 'true' ]]; then
+    prerelease_arg='--prerelease'
+else
+    prerelease_arg=
+fi
 
 gh release create \
     --repo "$GIT_REPO_SLUG" \
-    --prerelease \
     --target "$TARGET_COMMIT" \
     --title "$RELEASE_NAME" \
-    --notes "$RELEASE_DESCRIPTION" \
+    --notes "$release_description" \
+    $prerelease_arg \
     "$RELEASE_NAME" "${assets[@]}"
