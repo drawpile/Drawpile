@@ -68,12 +68,12 @@ enum {
  *
  */
 
-std::unique_ptr<QWindowsTabletSupport> QTAB;
+std::unique_ptr<KisWindowsTabletSupport> QTAB;
 static QPointer<QWidget> targetWindow = 0; //< Window receiving last tablet event
 static QPointer<QWidget> qt_tablet_target = 0; //< Widget receiving last tablet event
 static bool dialogOpen = false;  //< KisTabletSupportWin is not a Q_OBJECT and can't accept dialog signals
 
-HWND createDummyWindow(const QString &className, const wchar_t *windowName, WNDPROC wndProc)
+static HWND createDummyWindow(const QString &className, const wchar_t *windowName, WNDPROC wndProc)
 {
     if (!wndProc)
         wndProc = DefWindowProc;
@@ -103,7 +103,7 @@ HWND createDummyWindow(const QString &className, const wchar_t *windowName, WNDP
 }
 
 
-void printContext(const LOGCONTEXT &lc)
+static void printContext(const LOGCONTEXT &lc)
 {
     dbgTablet << "# Getting current context data:";
     dbgTablet << ppVar(lc.lcName);
@@ -140,19 +140,19 @@ static inline bool isMouseEventType(QEvent::Type t)
             t == QEvent::MouseButtonRelease);
 }
 
-QWindowsWinTab32DLL QWindowsTabletSupport::m_winTab32DLL;
+KisWindowsWinTab32DLL KisWindowsTabletSupport::m_winTab32DLL;
 
 static QMetaObject::Connection conn;
 
 bool KisTabletSupportWin::init()
 {
-    if (!QWindowsTabletSupport::m_winTab32DLL.init()) {
+    if (!KisWindowsTabletSupport::m_winTab32DLL.init()) {
         qWarning() << "Failed to initialize Wintab";
         return false;
     }
 
     quit();
-    QTAB.reset(QWindowsTabletSupport::create());
+    QTAB.reset(KisWindowsTabletSupport::create());
     if(!QTAB) {
         return false;
     }
@@ -160,7 +160,7 @@ bool KisTabletSupportWin::init()
     // Refresh tablet context after tablet rotated, screen added, etc.
     conn = QObject::connect(qApp->primaryScreen(), &QScreen::geometryChanged,
                      [=](const QRect & ){
-                         QTAB.reset(QWindowsTabletSupport::create());
+                         QTAB.reset(KisWindowsTabletSupport::create());
                      });
 }
 
@@ -270,7 +270,7 @@ struct DefaultButtonsConverter
     void convert(DWORD btnOld, DWORD btnNew,
                  Qt::MouseButton *button,
                  Qt::MouseButtons *buttons,
-                 const QWindowsTabletDeviceData &tdd) {
+                 const KisWindowsTabletDeviceData &tdd) {
 
         int pressedButtonValue = btnNew ^ btnOld;
 
@@ -330,7 +330,7 @@ struct DefaultButtonsConverter
 
 private:
     Qt::MouseButton buttonValueToEnum(DWORD button,
-                                      const QWindowsTabletDeviceData &tdd) {
+                                      const KisWindowsTabletDeviceData &tdd) {
         const int leftButtonValue = 0x1;
         const int middleButtonValue = 0x2;
         const int rightButtonValue = 0x4;
@@ -382,7 +382,7 @@ static inline int sign(int x)
     return x >= 0 ? 1 : -1;
 }
 
-inline QPointF QWindowsTabletDeviceData::scaleCoordinates(int coordX, int coordY, const QRect &targetArea) const
+inline QPointF KisWindowsTabletDeviceData::scaleCoordinates(int coordX, int coordY, const QRect &targetArea) const
 {
     const int targetX = targetArea.x();
     const int targetY = targetArea.y();
@@ -402,13 +402,13 @@ inline QPointF QWindowsTabletDeviceData::scaleCoordinates(int coordX, int coordY
 
 
 /*!
-  \class QWindowsWinTab32DLL QWindowsTabletSupport
-  \brief Functions from wintabl32.dll shipped with WACOM tablets used by QWindowsTabletSupport.
+  \class KisWindowsWinTab32DLL KisWindowsTabletSupport
+  \brief Functions from wintabl32.dll shipped with WACOM tablets used by KisWindowsTabletSupport.
 
   \internal
   \ingroup qt-lighthouse-win
 */
-bool QWindowsWinTab32DLL::init()
+bool KisWindowsWinTab32DLL::init()
 {
     if (wTInfo)
         return true;
@@ -445,7 +445,7 @@ bool QWindowsWinTab32DLL::init()
 
 
 /*!
-  \class QWindowsTabletSupport
+  \class KisWindowsTabletSupport
   \brief Tablet support for Windows.
 
   Support for WACOM tablets.
@@ -457,7 +457,7 @@ bool QWindowsWinTab32DLL::init()
   \ingroup qt-lighthouse-win
 */
 
-QWindowsTabletSupport::QWindowsTabletSupport(HWND window, HCTX context)
+KisWindowsTabletSupport::KisWindowsTabletSupport(HWND window, HCTX context)
     : m_window(window)
     , m_context(context)
     , m_absoluteRange(-1)
@@ -466,17 +466,17 @@ QWindowsTabletSupport::QWindowsTabletSupport(HWND window, HCTX context)
 {
     AXIS orientation[3];
     // Some tablets don't support tilt, check if it is possible,
-    if (QWindowsTabletSupport::m_winTab32DLL.wTInfo(WTI_DEVICES, DVC_ORIENTATION, &orientation))
+    if (KisWindowsTabletSupport::m_winTab32DLL.wTInfo(WTI_DEVICES, DVC_ORIENTATION, &orientation))
         m_tiltSupport = orientation[0].axResolution && orientation[1].axResolution;
 }
 
-QWindowsTabletSupport::~QWindowsTabletSupport()
+KisWindowsTabletSupport::~KisWindowsTabletSupport()
 {
-    QWindowsTabletSupport::m_winTab32DLL.wTClose(m_context);
+    KisWindowsTabletSupport::m_winTab32DLL.wTClose(m_context);
     DestroyWindow(m_window);
 }
 
-QWindowsTabletSupport *QWindowsTabletSupport::create()
+KisWindowsTabletSupport *KisWindowsTabletSupport::create()
 {
     const HWND window = createDummyWindow(QStringLiteral("TabletDummyWindow"),
                                           L"TabletDummyWindow",
@@ -484,7 +484,7 @@ QWindowsTabletSupport *QWindowsTabletSupport::create()
 
     LOGCONTEXT lcMine;
     // build our context from the default context
-    QWindowsTabletSupport::m_winTab32DLL.wTInfo(WTI_DEFSYSCTX, 0, &lcMine);
+    KisWindowsTabletSupport::m_winTab32DLL.wTInfo(WTI_DEFSYSCTX, 0, &lcMine);
     // Go for the raw coordinates, the tablet event will return good stuff. The
     // defaults for lcOut rectangle are the desktop dimensions in pixels, which
     // means Wintab will do lossy rounding. Instead we specify this trivial
@@ -497,19 +497,19 @@ QWindowsTabletSupport *QWindowsTabletSupport::create()
     lcMine.lcOutExtX = lcMine.lcInExtX;
     lcMine.lcOutOrgY = 0;
     lcMine.lcOutExtY = -lcMine.lcInExtY;
-    const HCTX context = QWindowsTabletSupport::m_winTab32DLL.wTOpen(window, &lcMine, true);
+    const HCTX context = KisWindowsTabletSupport::m_winTab32DLL.wTOpen(window, &lcMine, true);
     if (!context) {
         dbgTablet << __FUNCTION__ << "Unable to open tablet.";
         DestroyWindow(window);
         return 0;
     }
     // Set the size of the Packet Queue to the correct size
-    const int currentQueueSize = QWindowsTabletSupport::m_winTab32DLL.wTQueueSizeGet(context);
+    const int currentQueueSize = KisWindowsTabletSupport::m_winTab32DLL.wTQueueSizeGet(context);
     if (currentQueueSize != TabletPacketQSize) {
-        if (!QWindowsTabletSupport::m_winTab32DLL.wTQueueSizeSet(context, TabletPacketQSize)) {
-            if (!QWindowsTabletSupport::m_winTab32DLL.wTQueueSizeSet(context, currentQueueSize))  {
+        if (!KisWindowsTabletSupport::m_winTab32DLL.wTQueueSizeSet(context, TabletPacketQSize)) {
+            if (!KisWindowsTabletSupport::m_winTab32DLL.wTQueueSizeSet(context, currentQueueSize))  {
                 qWarning() << "Unable to set queue size on tablet. The tablet will not work.";
-                QWindowsTabletSupport::m_winTab32DLL.wTClose(context);
+                KisWindowsTabletSupport::m_winTab32DLL.wTClose(context);
                 DestroyWindow(window);
                 return 0;
             } // cannot restore old size
@@ -518,11 +518,11 @@ QWindowsTabletSupport *QWindowsTabletSupport::create()
     dbgTablet << "Opened tablet context " << context << " on window "
              <<  window << "changed packet queue size " << currentQueueSize
              << "->" <<  TabletPacketQSize;
-    return new QWindowsTabletSupport(window, context);
+    return new KisWindowsTabletSupport(window, context);
 }
 
 
-unsigned QWindowsTabletSupport::options() const
+unsigned KisWindowsTabletSupport::options() const
 {
     UINT result = 0;
     m_winTab32DLL.wTInfo(WTI_INTERFACE, IFC_CTXOPTIONS, &result);
@@ -530,7 +530,7 @@ unsigned QWindowsTabletSupport::options() const
 }
 
 
-QString QWindowsTabletSupport::description() const
+QString KisWindowsTabletSupport::description() const
 {
     const unsigned size = m_winTab32DLL.wTInfo(WTI_INTERFACE, IFC_WINTABID, 0);
     if (!size)
@@ -556,15 +556,15 @@ QString QWindowsTabletSupport::description() const
     return result;
 }
 
-void QWindowsTabletSupport::notifyActivate()
+void KisWindowsTabletSupport::notifyActivate()
 {
     // Cooperate with other tablet applications, but when we get focus, I want to use the tablet.
-    const bool result = QWindowsTabletSupport::m_winTab32DLL.wTEnable(m_context, true)
-                        && QWindowsTabletSupport::m_winTab32DLL.wTOverlap(m_context, true);
+    const bool result = KisWindowsTabletSupport::m_winTab32DLL.wTEnable(m_context, true)
+                        && KisWindowsTabletSupport::m_winTab32DLL.wTOverlap(m_context, true);
     dbgTablet << __FUNCTION__ << result;
 }
 
-static inline int indexOfDevice(const QVector<QWindowsTabletDeviceData> &devices, qint64 uniqueId)
+static inline int indexOfDevice(const QVector<KisWindowsTabletDeviceData> &devices, qint64 uniqueId)
 {
     for (int i = 0; i < devices.size(); ++i)
         if (devices.at(i).uniqueId == uniqueId)
@@ -610,7 +610,7 @@ static inline compat::PointerType pointerType(unsigned pkCursor)
     return compat::UnknownPointer;
 }
 
-QDebug operator<<(QDebug d, const QWindowsTabletDeviceData &t)
+QDebug operator<<(QDebug d, const KisWindowsTabletDeviceData &t)
 {
     d << "TabletDevice id:" << t.uniqueId << " pressure: " << t.minPressure
       << ".." << t.maxPressure << " tan pressure: " << t.minTanPressure << ".."
@@ -620,30 +620,30 @@ QDebug operator<<(QDebug d, const QWindowsTabletDeviceData &t)
     return d;
 }
 
-QWindowsTabletDeviceData QWindowsTabletSupport::tabletInit(const quint64 uniqueId, const UINT cursorType) const
+KisWindowsTabletDeviceData KisWindowsTabletSupport::tabletInit(const quint64 uniqueId, const UINT cursorType) const
 {
 
-    QWindowsTabletDeviceData result;
+    KisWindowsTabletDeviceData result;
     result.uniqueId = uniqueId;
     /* browse WinTab's many info items to discover pressure handling. */
     AXIS axis;
     LOGCONTEXT lc;
     /* get the current context for its device variable. */
-    QWindowsTabletSupport::m_winTab32DLL.wTGet(m_context, &lc);
+    KisWindowsTabletSupport::m_winTab32DLL.wTGet(m_context, &lc);
 
     /* get the size of the pressure axis. */
-    QWindowsTabletSupport::m_winTab32DLL.wTInfo(WTI_DEVICES + lc.lcDevice, DVC_NPRESSURE, &axis);
+    KisWindowsTabletSupport::m_winTab32DLL.wTInfo(WTI_DEVICES + lc.lcDevice, DVC_NPRESSURE, &axis);
     result.minPressure = int(axis.axMin);
     result.maxPressure = int(axis.axMax);
 
-    QWindowsTabletSupport::m_winTab32DLL.wTInfo(WTI_DEVICES + lc.lcDevice, DVC_TPRESSURE, &axis);
+    KisWindowsTabletSupport::m_winTab32DLL.wTInfo(WTI_DEVICES + lc.lcDevice, DVC_TPRESSURE, &axis);
     result.minTanPressure = int(axis.axMin);
     result.maxTanPressure = int(axis.axMax);
 
     LOGCONTEXT defaultLc;
 
     /* get default region */
-    QWindowsTabletSupport::m_winTab32DLL.wTInfo(WTI_DEFCONTEXT, 0, &defaultLc);
+    KisWindowsTabletSupport::m_winTab32DLL.wTInfo(WTI_DEFCONTEXT, 0, &defaultLc);
     result.maxX = int(defaultLc.lcInExtX) - int(defaultLc.lcInOrgX);
     result.maxY = int(defaultLc.lcInExtY) - int(defaultLc.lcInOrgY);
     result.maxZ = int(defaultLc.lcInExtZ) - int(defaultLc.lcInOrgZ);
@@ -663,7 +663,7 @@ QWindowsTabletDeviceData QWindowsTabletSupport::tabletInit(const quint64 uniqueI
 
 
 
-bool QWindowsTabletSupport::translateTabletProximityEvent(WPARAM /* wParam */, LPARAM lParam)
+bool KisWindowsTabletSupport::translateTabletProximityEvent(WPARAM /* wParam */, LPARAM lParam)
 {
     if (dialogOpen) {
         // tabletInit(...) may show the screen resolution dialog and is blocking.
@@ -687,7 +687,7 @@ bool QWindowsTabletSupport::translateTabletProximityEvent(WPARAM /* wParam */, L
         return true;
     }
     PACKET proximityBuffer[1]; // we are only interested in the first packet in this case
-    const int totalPacks = QWindowsTabletSupport::m_winTab32DLL.wTPacketsGet(m_context, 1, proximityBuffer);
+    const int totalPacks = KisWindowsTabletSupport::m_winTab32DLL.wTPacketsGet(m_context, 1, proximityBuffer);
     if (!totalPacks)
         return false;
     UINT pkCursor = proximityBuffer[0].pkCursor;
@@ -703,16 +703,16 @@ bool QWindowsTabletSupport::translateTabletProximityEvent(WPARAM /* wParam */, L
 
 
 
-bool QWindowsTabletSupport::translateTabletPacketEvent()
+bool KisWindowsTabletSupport::translateTabletPacketEvent()
 {
     static PACKET localPacketBuf[TabletPacketQSize];  // our own tablet packet queue.
-    const int packetCount = QWindowsTabletSupport::m_winTab32DLL.wTPacketsGet(m_context, TabletPacketQSize, &localPacketBuf);
+    const int packetCount = KisWindowsTabletSupport::m_winTab32DLL.wTPacketsGet(m_context, TabletPacketQSize, &localPacketBuf);
     if (!packetCount || m_currentDevice < 0 || dialogOpen)
         return false;
 
     // In contrast to Qt, these will not be "const" during our loop.
     // This is because the Surface Pro 3 may cause us to switch devices.
-    QWindowsTabletDeviceData tabletData = m_devices.at(m_currentDevice);
+    KisWindowsTabletDeviceData tabletData = m_devices.at(m_currentDevice);
     auto currentDevice  = static_cast<compat::DeviceType>(tabletData.currentDevice);
     auto currentPointerType = static_cast<compat::PointerType>(tabletData.currentPointerType);
 
@@ -878,12 +878,12 @@ bool QWindowsTabletSupport::translateTabletPacketEvent()
 
 
 
-void QWindowsTabletSupport::tabletUpdateCursor(const int pkCursor)
+void KisWindowsTabletSupport::tabletUpdateCursor(const int pkCursor)
 {
     UINT physicalCursorId;
-    QWindowsTabletSupport::m_winTab32DLL.wTInfo(WTI_CURSORS + pkCursor, CSR_PHYSID, &physicalCursorId);
+    KisWindowsTabletSupport::m_winTab32DLL.wTInfo(WTI_CURSORS + pkCursor, CSR_PHYSID, &physicalCursorId);
     UINT cursorType;
-    QWindowsTabletSupport::m_winTab32DLL.wTInfo(WTI_CURSORS + pkCursor, CSR_TYPE, &cursorType);
+    KisWindowsTabletSupport::m_winTab32DLL.wTInfo(WTI_CURSORS + pkCursor, CSR_TYPE, &cursorType);
     const qint64 uniqueId = (qint64(cursorType & DeviceIdMask) << 32L) | qint64(physicalCursorId);
 
     m_currentDevice = indexOfDevice(m_devices, uniqueId);
@@ -931,14 +931,14 @@ void QWindowsTabletSupport::tabletUpdateCursor(const int pkCursor)
          */
 
         // we cannot use the correct api :(
-        // UINT nameLength = QWindowsTabletSupport::m_winTab32DLL.wTInfo(WTI_DEVICES, DVC_NAME, 0);
+        // UINT nameLength = KisWindowsTabletSupport::m_winTab32DLL.wTInfo(WTI_DEVICES, DVC_NAME, 0);
 
         // 1024 chars should be enough for everyone! (c)
         UINT nameLength = 1024;
 
         TCHAR* dvcName = new TCHAR[nameLength + 1];
         memset(dvcName, 0, sizeof(TCHAR) * nameLength);
-        UINT writtenBytes = QWindowsTabletSupport::m_winTab32DLL.wTInfo(WTI_DEVICES, DVC_NAME, dvcName);
+        UINT writtenBytes = KisWindowsTabletSupport::m_winTab32DLL.wTInfo(WTI_DEVICES, DVC_NAME, dvcName);
 
         if (writtenBytes > sizeof(TCHAR) * nameLength) {
             qWarning() << "WINTAB WARNING: tablet name is too long!" << writtenBytes;
