@@ -281,28 +281,10 @@ jobs:
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
-        if: matrix.packager && startsWith(github.ref, 'refs/tags/') != 'true'
+        if: matrix.packager
         with:
           name: Drawpile-${{ matrix.cross_os || runner.os }}-Qt${{ matrix.qt }}
           path: |
-            Drawpile-*.AppImage
-            Drawpile-*.apk
-            Drawpile-*.dmg
-            Drawpile-*.msi
-            Drawpile-*.zip
-
-      - name: Collect release notes
-        run: awk -v RS='' '/^[[:digit:]]{4}-[[:digit:]]{2}-[[:digit:]]{2} Version ${{ github.ref_name }}/,/^[[:digit:]]/' ChangeLog | tail '+2' > ChangeLog-release
-        if: matrix.packager && startsWith(github.ref, 'refs/tags/') == 'true'
-
-      - name: Upload release
-        uses: softprops/action-gh-release@v1
-        if: matrix.packager && startsWith(github.ref, 'refs/tags/') == 'true'
-        with:
-          body_path: ChangeLog-release
-          # In semver, hyphen indicates a pre-release tag
-          prerelease: contains(github.ref, '-')
-          files: |
             Drawpile-*.AppImage
             Drawpile-*.apk
             Drawpile-*.dmg
@@ -331,10 +313,13 @@ jobs:
         if: success() || failure()
         continue-on-error: true
 
-  continuousrelease:
+  release:
     needs: test
     runs-on: ubuntu-latest
-    if: success() && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    if: >
+      success() && (
+          github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+          || startsWith(github.ref, 'refs/tags/'))
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v3
@@ -342,21 +327,37 @@ jobs:
       - name: Dump directory contents
         run: ls -alFR
 
-      - name: Create continuous release
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          path: checkout
+
+      - name: Collect release notes
+        if: startsWith(github.ref, 'refs/tags/')
+        run: awk -v RS='' '/^[[:digit:]]{4}-[[:digit:]]{2}-[[:digit:]]{2} Version ${{ github.ref_name }}/,/^[[:digit:]]/' checkout/ChangeLog | tail '+2' > release-description
+
+      - name: Write continuous release description
+        if: "!startsWith(github.ref, 'refs/tags/')"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TARGET_COMMIT: ${{ github.sha }}
-          RELEASE_NAME: continuous
           RELEASE_DESCRIPTION: >
             This release is an automatically generated snapshot of the current
             state of development. It is continuously updated with
             work-in-progress changes that may be broken, incomplete, or
             incompatible with other versions of Drawpile. For downloads, take a
             look at the Assets below.
+        run:
+          echo "$RELEASE_DESCRIPTION" > release-description
+
+      - name: Create release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TARGET_COMMIT: ${{ github.sha }}
+          RELEASE_DESCRIPTION_FILE: release-description
+          RELEASE_NAME: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'continuous' }}
+          CLOBBER_EXISTING: ${{ !startsWith(github.ref, 'refs/tags/') }}
+          PRERELEASE: ${{ !startsWith(github.ref, 'refs/tags/') || contains(github.ref, '-') }}
         run: |
-          wget -q https://raw.githubusercontent.com/drawpile/Drawpile/main/pkg/make-github-release.sh
-          chmod +x make-github-release.sh
-          ./make-github-release.sh \
+          checkout/pkg/make-github-release.sh \
             'Drawpile-Android-Qt5.15.8;Drawpile-*.apk;Android APK' \
             'Drawpile-Linux-Qt5.15.8;Drawpile-*.AppImage;Linux AppImage' \
             'Drawpile-macOS-Qt5.15.8;Drawpile-*.dmg;macOS Disk Image' \
