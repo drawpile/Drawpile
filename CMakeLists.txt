@@ -128,6 +128,11 @@ include_directories(${CMAKE_CURRENT_LIST_DIR}/src)
 
 add_subdirectory(src/cmake-config)
 
+# Must be enabled after drawdance because it breaks drawdance
+if(DP_UNITY_BUILD)
+	set(CMAKE_UNITY_BUILD ON)
+endif()
+
 if(CLIENT OR SERVER)
 	# Everything needs these dependencies so just do it in one place
 	find_package(${QT_PACKAGE_NAME} QUIET COMPONENTS LinguistTools)

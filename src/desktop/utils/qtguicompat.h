@@ -4,6 +4,7 @@
 #ifndef DP_DESKTOP_UTILS_QTGUICOMPAT_H
 #define DP_DESKTOP_UTILS_QTGUICOMPAT_H
 
+#include <QApplication>
 #include <QtGlobal>
 #include <QKeyEvent>
 #include <QMouseEvent>

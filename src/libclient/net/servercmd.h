@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+#ifndef NET_SERVERCMD_H
+#define NET_SERVERCMD_H
 
 #include <QJsonArray>
 #include <QJsonObject>
@@ -65,3 +67,5 @@ struct ServerReply {
 };
 
 }
+
+#endif
