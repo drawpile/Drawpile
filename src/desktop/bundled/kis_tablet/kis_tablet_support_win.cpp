@@ -359,7 +359,7 @@ static DefaultButtonsConverter *globalButtonsConverter =
  */
 
 // This is the WndProc for a single additional hidden window used to collect tablet events.
-extern "C" LRESULT QT_WIN_CALLBACK qWindowsTabletSupportWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+extern "C" LRESULT QT_WIN_CALLBACK KisWindowsTabletSupportWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message) {
     case WT_PROXIMITY:
@@ -480,7 +480,7 @@ KisWindowsTabletSupport *KisWindowsTabletSupport::create()
 {
     const HWND window = createDummyWindow(QStringLiteral("TabletDummyWindow"),
                                           L"TabletDummyWindow",
-                                          qWindowsTabletSupportWndProc);
+                                          KisWindowsTabletSupportWndProc);
 
     LOGCONTEXT lcMine;
     // build our context from the default context

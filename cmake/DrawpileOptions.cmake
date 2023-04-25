@@ -63,3 +63,6 @@ foreach(sanitizer IN ITEMS Address Leak Memory Thread UndefinedBehavior)
 	option(${san_upper}_SANITIZER "Automatically enable ${sanitizer}Sanitizer" OFF)
 endforeach()
 unset(san_upper)
+
+# UNITY_BUILD is already used by cmake
+option(DP_UNITY_BUILD "Unity builds for drawpile executable and libraries (Not drawdance)" OFF)

@@ -665,3 +665,9 @@ if(${QT_PACKAGE_NAME}LinguistTools_FOUND)
 endif()
 
 directory_auto_source_groups()
+
+# Copy assets
+add_custom_command(TARGET drawpile POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy_directory
+                   ${CMAKE_CURRENT_SOURCE_DIR}/assets
+                   $<TARGET_FILE_DIR:drawpile>)

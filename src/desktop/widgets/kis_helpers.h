@@ -3,6 +3,9 @@
  *
  *  SPDX-License-Identifier: GPL-2.0-or-later
  */
+#ifndef KIS_HELPERS_H
+#define KIS_HELPERS_H
+
 #include <QColor>
 
 namespace KisAlgebra2D {
@@ -23,3 +26,5 @@ inline QColor blendColors(const QColor &c1, const QColor &c2, qreal r1)
         c1.blueF() * r1 + c2.blueF() * r2);
 }
 }
+
+#endif

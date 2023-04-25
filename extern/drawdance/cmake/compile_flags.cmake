@@ -127,7 +127,7 @@ add_feature_info("AddressSanitizer (ADDRESS_SANITIZER)" ADDRESS_SANITIZER "")
 # optimization argument warning entirely, -Wno-error doesn't work with GCC
 # in turn because it doesn't know that warning and dies because of it. At
 # the time of writing, there's no way to make CMake not pass that flag.
-if(CMAKE_INTERPROCEDURAL_OPTIMIZATION AND CMAKE_CXX_CLANG_TIDY)
+if(CMAKE_INTERPROCEDURAL_OPTIMIZATION AND CMAKE_CXX_CLANG_TIDY AND NOT MSVC)
     add_compile_options(-Wno-ignored-optimization-argument)
 endif()
 
