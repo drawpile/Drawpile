@@ -50,6 +50,7 @@ struct TimelineWidget::Private {
 	QIcon hiddenIcon;
 	QIcon onionSkinOnIcon;
 	QIcon onionSkinOffIcon;
+	QIcon uselessIcon;
 	int headerWidth = 64;
 	int rowHeight = 10;
 	int columnWidth = 10;
@@ -162,6 +163,13 @@ struct TimelineWidget::Private {
 		return keyFrameBy(hoverTarget.trackId, hoverTarget.frameIndex);
 	}
 
+	const canvas::TimelineKeyFrame *beforeHoverKeyFrame() const
+	{
+		const canvas::TimelineKeyFrame *hover = hoverKeyFrame();
+		return hover ? keyFrameBy(hoverTarget.trackId, hover->frameIndex - 1)
+					 : nullptr;
+	}
+
 	QModelIndex layerIndexById(int layerId) const
 	{
 		if(canvas) {
@@ -252,6 +260,7 @@ TimelineWidget::TimelineWidget(QWidget *parent)
 	d->hiddenIcon = QIcon::fromTheme("view-hidden");
 	d->onionSkinOnIcon = QIcon::fromTheme("onion-on");
 	d->onionSkinOffIcon = QIcon::fromTheme("onion-off");
+	d->uselessIcon = QIcon::fromTheme("edit-delete");
 	d->verticalScroll = new QScrollBar(Qt::Vertical, this);
 	d->horizontalScroll = new QScrollBar(Qt::Horizontal, this);
 	connect(
@@ -444,17 +453,37 @@ bool TimelineWidget::event(QEvent *event)
 		if(keyFrame) {
 			int layerId = keyFrame->layerId;
 			const QString &keyFrameTitle = keyFrame->title;
+			const canvas::TimelineKeyFrame *previousKeyFrame =
+				d->beforeHoverKeyFrame();
+			bool useless = previousKeyFrame &&
+						   keyFrame->hasSameContentAs(*previousKeyFrame);
 			if(layerId == 0) {
-				tip = keyFrameTitle.isEmpty()
-						  ? tr("Blank key frame")
-						  : tr("Blank key frame %1").arg(keyFrameTitle);
+				if(useless) {
+					tip = keyFrameTitle.isEmpty()
+							  ? tr("Blank key frame (duplicate)")
+							  : tr("Blank key frame %1 (duplicate)")
+									.arg(keyFrameTitle);
+				} else {
+					tip = keyFrameTitle.isEmpty()
+							  ? tr("Blank key frame")
+							  : tr("Blank key frame %1").arg(keyFrameTitle);
+				}
 			} else {
 				QString layerTitle = d->layerTitleById(layerId);
-				tip = keyFrameTitle.isEmpty()
-						  ? tr("Key frame on %1").arg(layerTitle)
-						  : tr("Key frame %1 on %2")
-								.arg(keyFrameTitle)
-								.arg(layerTitle);
+				if(useless) {
+					tip =
+						keyFrameTitle.isEmpty()
+							? tr("Key frame on %1 (duplicate)").arg(layerTitle)
+							: tr("Key frame %1 on %2 (duplicate)")
+								  .arg(keyFrameTitle)
+								  .arg(layerTitle);
+				} else {
+					tip = keyFrameTitle.isEmpty()
+							  ? tr("Key frame on %1").arg(layerTitle)
+							  : tr("Key frame %1 on %2")
+									.arg(keyFrameTitle)
+									.arg(layerTitle);
+				}
 			}
 		} else if(d->hoverTarget.action == d->actions.trackVisible) {
 			tip = tr("Toggle visibility");
@@ -545,6 +574,15 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 			painter.drawRect(x, y, columnWidth, rowHeight);
 
 			if(keyFrame.layerId != 0) {
+				bool useless =
+					j > 0 && keyFrame.hasSameContentAs(keyFrames[j - 1]);
+				if(useless) {
+					int iconSize = qMin(columnWidth, rowHeight) - 1;
+					d->uselessIcon.paint(
+						&painter, x - (iconSize - columnWidth) / 2 + 1,
+						y - (iconSize - rowHeight) / 2 + 1, iconSize, iconSize);
+				}
+
 				int until = j < keyFrameCount - 1 ? keyFrames[j + 1].frameIndex
 												  : frameCount;
 				int count = until - frame - 1;
