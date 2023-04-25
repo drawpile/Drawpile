@@ -31,6 +31,7 @@ private slots:
 	void showSettingsDialog();
 
 private:
+	static constexpr char REQ_ID[] = "serversettings";
 	void refreshPage();
 
 	Private *d;

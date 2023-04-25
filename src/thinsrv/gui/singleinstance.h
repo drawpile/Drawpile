@@ -29,6 +29,9 @@ public:
 
 signals:
 private:
+    static constexpr char SEMAPHORE_KEY[] = "drawpile-srv-gui-S";
+    static constexpr char MEM_KEY[] = "drawpile-srv-gui-M";
+
 	QSharedMemory m_sharedmem;
 	QSystemSemaphore m_semaphore;
 };

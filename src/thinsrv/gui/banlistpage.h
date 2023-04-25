@@ -28,6 +28,10 @@ private slots:
 	void removeSelectedBan();
 
 private:
+    static constexpr char REQ_ID[] = "banlist";
+    static constexpr char ADD_REQ_ID[] = "banlistAdd";
+    static constexpr char DEL_REQ_ID[] = "banlistDel";
+
 	void refreshPage();
 
 	struct Private;

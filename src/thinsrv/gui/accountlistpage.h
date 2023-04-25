@@ -29,6 +29,11 @@ private slots:
 	void removeSelectedAccount();
 
 private:
+    static constexpr char REQ_ID[] = "accountlist";
+    static constexpr char ADD_REQ_ID[] = "accountlistAdd";
+    static constexpr char UPDATE_REQ_ID[] = "accountlistUpdate";
+    static constexpr char DEL_REQ_ID[] = "accountlistDel";
+
 	void refreshPage();
 
 	struct Private;

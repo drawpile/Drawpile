@@ -9,8 +9,6 @@
 namespace server {
 namespace gui {
 
-static const QString REFRESH_REQID = "sessionlist";
-
 Server::Server(QObject *parent)
 	: QObject(parent), m_sessions(new SessionListModel(this))
 {

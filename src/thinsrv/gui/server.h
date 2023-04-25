@@ -69,6 +69,8 @@ protected slots:
 	void onApiResponse(const QString &requestId, const JsonApiResult &result);
 
 private:
+	static constexpr char REFRESH_REQID[] = "sessionlist";
+
 	SessionListModel *m_sessions;
 };
 

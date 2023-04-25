@@ -21,8 +21,6 @@
 namespace server {
 namespace gui {
 
-static const QString REQ_ID = "serverlog";
-
 struct ServerLogPage::Private {
 	Server *server;
 	ServerLogModel *model;

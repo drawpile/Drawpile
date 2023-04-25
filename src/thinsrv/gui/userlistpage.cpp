@@ -17,8 +17,6 @@
 namespace server {
 namespace gui {
 
-static const QString REQ_ID = "userlist";
-
 struct UserListPage::Private {
 	Server *server;
 	QTimer *refreshTimer;

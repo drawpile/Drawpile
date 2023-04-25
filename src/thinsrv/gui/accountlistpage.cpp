@@ -22,11 +22,6 @@
 namespace server {
 namespace gui {
 
-static const QString REQ_ID = "accountlist";
-static const QString ADD_REQ_ID = "accountlistAdd";
-static const QString UPDATE_REQ_ID = "accountlistUpdate";
-static const QString DEL_REQ_ID = "accountlistDel";
-
 struct AccountListPage::Private {
 	Server *server;
 	AccountListModel *model;

@@ -25,6 +25,8 @@ private slots:
 	void handleResponse(const QString &requestId, const JsonApiResult &result);
 
 private:
+	static constexpr char REQ_ID[] = "userlist";
+
 	void refreshPage();
 
 	struct Private;

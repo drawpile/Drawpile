@@ -21,10 +21,6 @@
 namespace server {
 namespace gui {
 
-static const QString REQ_ID = "banlist";
-static const QString ADD_REQ_ID = "banlistAdd";
-static const QString DEL_REQ_ID = "banlistDel";
-
 struct BanListPage::Private {
 	Server *server;
 	BanListModel *model;

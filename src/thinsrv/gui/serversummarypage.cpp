@@ -26,8 +26,6 @@
 namespace server {
 namespace gui {
 
-static const QString REQ_ID = "serversettings";
-
 struct ServerSummaryPage::Private {
 	Server *server;
 	QLabel

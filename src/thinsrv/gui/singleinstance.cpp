@@ -5,9 +5,6 @@
 namespace server {
 namespace gui {
 
-static const QString SEMAPHORE_KEY = "drawpile-srv-gui-S";
-static const QString MEM_KEY = "drawpile-srv-gui-M";
-
 SingleInstance::SingleInstance(QObject *parent)
 	: QObject(parent),
 	  m_sharedmem(MEM_KEY, this),
