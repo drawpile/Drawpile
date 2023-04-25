@@ -7,7 +7,7 @@ DEFAULT_REPO=drawpile/Drawpile
 usage() {
 	echo "Usage: $0 [branch] [version]"
 	echo
-	echo "Branch defaults to 'master'."
+	echo "Branch defaults to 'main'."
 	echo "Version defaults to what is listed in Cargo.toml in the branch."
 	echo "Version should only be specified for pre-releases."
 	echo
@@ -24,7 +24,7 @@ set_package_version() {
 if [ "$1" == "--help" ]; then
 	usage
 elif [ "$1" == "" ]; then
-	BRANCH="master"
+	BRANCH="main"
 else
 	BRANCH=$1
 fi
