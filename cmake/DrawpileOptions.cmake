@@ -65,4 +65,5 @@ endforeach()
 unset(san_upper)
 
 # UNITY_BUILD is already used by cmake
-option(DP_UNITY_BUILD "Unity builds for drawpile executable and libraries (Not drawdance)" OFF)
+option(DP_UNITY_BUILD "Unity builds for Drawpile (not Drawdance)" OFF)
+add_feature_info("Unity builds for Drawpile (DP_UNITY_BUILD)" DP_UNITY_BUILD "")
