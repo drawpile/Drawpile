@@ -23,6 +23,12 @@ struct TimelineKeyFrame final {
 	QString title;
 	int frameIndex;
 	QHash<int, bool> layerVisibility;
+
+	bool hasSameContentAs(const TimelineKeyFrame &other) const
+	{
+		return layerId == other.layerId &&
+			   layerVisibility == other.layerVisibility;
+	}
 };
 
 struct TimelineTrack final {
