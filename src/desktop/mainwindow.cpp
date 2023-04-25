@@ -1312,10 +1312,19 @@ void MainWindow::exportAnimation(const QString &path, AnimationSaverRunnable::Sa
 
 void MainWindow::showFlipbook()
 {
-	dialogs::Flipbook *fp = new dialogs::Flipbook(this);
-	fp->setAttribute(Qt::WA_DeleteOnClose);
-	fp->setPaintEngine(m_doc->canvas()->paintEngine());
-	utils::showWindow(fp);
+	dialogs::Flipbook *fp = findChild<dialogs::Flipbook *>(
+		"flipbook", Qt::FindDirectChildrenOnly);
+	if(fp) {
+		fp->setPaintEngine(m_doc->canvas()->paintEngine());
+		fp->activateWindow();
+		fp->raise();
+	} else {
+		fp = new dialogs::Flipbook{this};
+		fp->setObjectName("flipbook");
+		fp->setAttribute(Qt::WA_DeleteOnClose);
+		fp->setPaintEngine(m_doc->canvas()->paintEngine());
+		utils::showWindow(fp);
+	}
 }
 
 void MainWindow::setRecorderStatus(bool on)
