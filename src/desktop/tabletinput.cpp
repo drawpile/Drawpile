@@ -2,7 +2,6 @@
 #include "desktop/tabletinput.h"
 #include <QApplication>
 #include <QSettings>
-#include <memory>
 
 #ifdef Q_OS_WIN
 #	include "bundled/kis_tablet/kis_tablet_support_win.h"
@@ -50,9 +49,8 @@ protected:
 	}
 };
 
-static std::unique_ptr<KisTabletSupportWin8> kisTabletSupportWin8;
-static std::unique_ptr<SpontaneousTabletEventFilter>
-	spontaneousTabletEventFilter;
+static KisTabletSupportWin8 *kisTabletSupportWin8;
+static SpontaneousTabletEventFilter *spontaneousTabletEventFilter;
 
 static Mode getModeFromSettings(const QSettings &cfg)
 {
@@ -109,33 +107,36 @@ Mode extractMode(const QSettings &cfg)
 static void resetKisTablet(QApplication *app)
 {
 	if(spontaneousTabletEventFilter) {
-		qApp->removeEventFilter(spontaneousTabletEventFilter.get());
-		spontaneousTabletEventFilter.reset();
+		qApp->removeEventFilter(spontaneousTabletEventFilter);
+		delete spontaneousTabletEventFilter;
+		spontaneousTabletEventFilter = nullptr;
 	}
 	if(kisTabletSupportWin8) {
-		app->removeNativeEventFilter(kisTabletSupportWin8.get());
-		kisTabletSupportWin8.reset();
+		app->removeNativeEventFilter(kisTabletSupportWin8);
+		delete kisTabletSupportWin8;
+		kisTabletSupportWin8 = nullptr;
 	}
 	KisTabletSupportWin::quit();
 }
 
 static void installSpontaneousTabletEventFilter(QApplication *app)
 {
-	spontaneousTabletEventFilter.reset(new SpontaneousTabletEventFilter{app});
-	app->installEventFilter(spontaneousTabletEventFilter.get());
+	spontaneousTabletEventFilter = new SpontaneousTabletEventFilter{app};
+	app->installEventFilter(spontaneousTabletEventFilter);
 }
 
 static void enableKisTabletWinink(QApplication *app)
 {
-	kisTabletSupportWin8.reset(new KisTabletSupportWin8());
+	kisTabletSupportWin8 = new KisTabletSupportWin8;
 	if(kisTabletSupportWin8->init()) {
 		installSpontaneousTabletEventFilter(app);
-		app->installNativeEventFilter(kisTabletSupportWin8.get());
+		app->installNativeEventFilter(kisTabletSupportWin8);
 		inputMode = "KisTablet Windows Ink input";
 		currentMode = Mode::KisTabletWinink;
 	} else {
 		qWarning("Failed to initialize KisTablet Windows Ink input");
-		kisTabletSupportWin8.reset();
+		delete kisTabletSupportWin8;
+		kisTabletSupportWin8 = nullptr;
 	}
 }
 

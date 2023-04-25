@@ -42,7 +42,6 @@
 #include <QTabletEvent>
 #include <QDebug>
 #include <QtMath>
-#include <memory>
 
 
 // NOTE: we stub out qwindowcontext.cpp::347 to disable Qt's own tablet support.
@@ -68,7 +67,7 @@ enum {
  *
  */
 
-std::unique_ptr<KisWindowsTabletSupport> QTAB;
+KisWindowsTabletSupport *QTAB;
 static QPointer<QWidget> targetWindow = 0; //< Window receiving last tablet event
 static QPointer<QWidget> qt_tablet_target = 0; //< Widget receiving last tablet event
 static bool dialogOpen = false;  //< KisTabletSupportWin is not a Q_OBJECT and can't accept dialog signals
@@ -152,7 +151,7 @@ bool KisTabletSupportWin::init()
     }
 
     quit();
-    QTAB.reset(KisWindowsTabletSupport::create());
+    QTAB = KisWindowsTabletSupport::create();
     if(!QTAB) {
         return false;
     }
@@ -160,7 +159,8 @@ bool KisTabletSupportWin::init()
     // Refresh tablet context after tablet rotated, screen added, etc.
     conn = QObject::connect(qApp->primaryScreen(), &QScreen::geometryChanged,
                      [=](const QRect & ){
-                         QTAB.reset(KisWindowsTabletSupport::create());
+                         delete QTAB;
+                         QTAB = KisWindowsTabletSupport::create();
                      });
 }
 
@@ -168,7 +168,8 @@ void KisTabletSupportWin::quit()
 {
     QObject::disconnect(conn);
     conn = QMetaObject::Connection{};
-    QTAB.reset();
+    delete QTAB;
+    QTAB = nullptr;
 }
 
 void KisTabletSupportWin::enableRelativePenModeHack(bool enable)
