@@ -10,7 +10,7 @@ set(ANDROID_NDK_ROOT "" CACHE STRING "Path to Android NDK")
 set(ANDROID_HOST_PATH "" CACHE STRING "Path to Qt host installation for Android builds")
 set(ANDROID_ABI "arm64-v8a" CACHE STRING "Android ABI to build")
 set(ANDROID_PLATFORM "android-23" CACHE STRING "Android API to build")
-if(ANDROID_NDK_ROOT AND ANDROID_HOST_PATH AND ANDROID_SDK_ROOT)
+if(ANDROID_NDK_ROOT AND ANDROID_SDK_ROOT)
 	set(ANDROID true)
 endif()
 
