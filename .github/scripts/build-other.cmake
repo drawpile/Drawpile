@@ -15,6 +15,8 @@ set(QTKEYCHAIN "c6f0b66318f8da6917fb4681103f7303b1836194" CACHE STRING
 	"The Git refspec of QtKeychain to build")
 set(LIBZIP "1.9.2" CACHE STRING
 	"The version of libzip to build")
+option(KEEP_SOURCE_DIRS "Keep source directories instead of deleting them" OFF)
+option(KEEP_BINARY_DIRS "Keep build directories instead of deleting them" OFF)
 
 # Hack to get Qt version, since its `find_package` code does not support script
 # mode and this information is needed to set up QtKeychain and the macOS version

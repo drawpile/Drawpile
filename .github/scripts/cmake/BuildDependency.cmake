@@ -125,7 +125,9 @@ function(build_dependency name version build_type)
 		message(FATAL_ERROR "Unknown build kind '${generator}'")
 	endif()
 
-	file(REMOVE_RECURSE "${source_dir}")
+	if(NOT KEEP_SOURCE_DIRS)
+		file(REMOVE_RECURSE "${source_dir}")
+	endif()
 endfunction()
 
 function(_build_automake build_type source_dir)
@@ -283,7 +285,10 @@ function(_build_cmake build_type source_dir)
 		WORKING_DIRECTORY "${binary_dir}"
 		COMMAND_ERROR_IS_FATAL ANY
 	)
-	file(REMOVE_RECURSE "${binary_dir}")
+
+	if(NOT KEEP_BINARY_DIRS)
+		file(REMOVE_RECURSE "${binary_dir}")
+	endif()
 endfunction()
 
 function(get_android_env _out_env _out_triplet ndk abi platform)
@@ -429,7 +434,10 @@ function(_build_qmake build_type source_dir)
 		WORKING_DIRECTORY "${binary_dir}"
 		COMMAND_ERROR_IS_FATAL ANY
 	)
-	file(REMOVE_RECURSE "${binary_dir}")
+
+	if(NOT KEEP_BINARY_DIRS)
+		file(REMOVE_RECURSE "${binary_dir}")
+	endif()
 endfunction()
 
 function(_download url hash)
