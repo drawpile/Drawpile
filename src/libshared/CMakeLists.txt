@@ -66,6 +66,12 @@ target_link_libraries(dpshared
 		${QT_PACKAGE_NAME}::Network
 )
 
+target_precompile_headers(dpshared PRIVATE
+	<QtCore>
+	<QtNetwork>
+)
+
+
 if(ANDROID)
 	target_sources(dpshared PRIVATE
 		util/androidutils.cpp

@@ -19,9 +19,12 @@ if(CMAKE_INTERPROCEDURAL_OPTIMIZATION)
 endif()
 add_feature_info("Interprocedural optimization (CMAKE_INTERPROCEDURAL_OPTIMIZATION)" CMAKE_INTERPROCEDURAL_OPTIMIZATION "")
 
+if(WIN32)
+	add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
+endif()
+
 if(MSVC)
 	add_compile_options(/utf-8 /W4)
-	add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
 
 	if($ENV{CI})
 		add_compile_options(/WX)
@@ -103,6 +106,12 @@ else()
 
 	get_directory_property(IGNORE_WARNINGS_COMPILE_OPTIONS COMPILE_OPTIONS)
 	list(TRANSFORM IGNORE_WARNINGS_COMPILE_OPTIONS REPLACE "-W(no-)?([^=]+)(=.*$)?" "-Wno-\\2")
+
+	# Will cause “__DEPRECATED predefined macro was enabled in PCH file but is
+	# currently disabled” error if disabled with precompiled headers
+	if (CXX_HAS_DEPRECATED AND NOT CMAKE_DISABLE_PRECOMPILE_HEADERS)
+		list(TRANSFORM IGNORE_WARNINGS_COMPILE_OPTIONS REPLACE "-Wno-deprecated" "")
+	endif()
 endif()
 
 foreach(lang IN LISTS ENABLED_LANGUAGES)

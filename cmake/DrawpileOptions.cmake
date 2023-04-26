@@ -67,3 +67,5 @@ unset(san_upper)
 # UNITY_BUILD is already used by cmake
 option(DP_UNITY_BUILD "Unity builds for Drawpile (not Drawdance)" OFF)
 add_feature_info("Unity builds for Drawpile (DP_UNITY_BUILD)" DP_UNITY_BUILD "")
+
+add_feature_info("Precompiled headers (CMAKE_DISABLE_PRECOMPILE_HEADERS)" "NOT CMAKE_DISABLE_PRECOMPILE_HEADERS" "")

@@ -288,6 +288,34 @@ target_link_libraries(drawpile PRIVATE
 	${QT_PACKAGE_NAME}::Multimedia
 )
 
+if(NOT CMAKE_DISABLE_PRECOMPILE_HEADERS) 
+	file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/pch.h" "
+		#include <QtCore>
+		#include <QtGui>
+		#include <QtWidgets>
+
+		#include <libclient/brushes/brush.h>
+		#include <libclient/canvas/acl.h>
+		#include <libclient/canvas/canvasmodel.h>
+		#include <libclient/canvas/layerlist.h>
+		#include <libclient/canvas/paintengine.h>
+		#include <libclient/canvas/userlist.h>
+		#include <libclient/tools/toolcontroller.h>
+		#include <libclient/utils/kis_cubic_curve.h>
+		#include <libshared/util/qtcompat.h>
+
+		// defined by windows.h and conflicts with variable names
+		#ifdef far
+		#	undef far
+		#endif
+		#ifdef near
+		#	undef near
+		#endif	
+	")
+	target_precompile_headers(drawpile PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/pch.h") 
+endif()
+
+
 if(VERSION_CHECK)
 	target_sources(drawpile PRIVATE
 		dialogs/versioncheckdialog.cpp
@@ -462,6 +490,22 @@ else()
 	target_disable_all_warnings(drawpile-QtColorWidgets)
 	set_target_properties(drawpile-QtColorWidgets
 		PROPERTIES DP_AUTO_SOURCE_TREE_BASE bundled/QtColorWidgets
+	)	
+
+	target_precompile_headers(drawpile-QtColorWidgets PRIVATE 
+		<QtCore>
+		<QtGui>
+		<QtWidgets>
+		[["QtColorWidgets/abstract_widget_list.hpp"]]
+		[["QtColorWidgets/color_delegate.hpp"]]
+		[["QtColorWidgets/color_line_edit.hpp"]]
+		[["QtColorWidgets/color_list_widget.hpp"]]
+		[["QtColorWidgets/color_palette_widget.hpp"]]
+		[["QtColorWidgets/color_preview.hpp"]]
+		[["QtColorWidgets/color_selector.hpp"]]
+		[["QtColorWidgets/color_wheel.hpp"]]
+		[["QtColorWidgets/color_wheel_private.hpp"]]
+		[["QtColorWidgets/gradient_slider.hpp"]]
 	)
 
 	target_link_libraries(drawpile PRIVATE drawpile-QtColorWidgets)

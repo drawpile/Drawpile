@@ -203,6 +203,31 @@ target_link_libraries(dpclient
 		Drawdance::dpmsg
 )
 
+if(NOT CMAKE_DISABLE_PRECOMPILE_HEADERS) 
+	file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/pch.h" "
+		#include <QtCore>
+		#include <QtGui>
+		#include <QtNetwork>
+		#include <QtSql>
+
+		extern \"C\" {
+		#include <dpcommon/geom.h>
+		#include <dpengine/canvas_history.h>
+		#include <dpengine/paint_engine.h>
+		}
+
+		// defined by windows.h and conflicts with variable names
+		#ifdef far
+		#	undef far
+		#endif
+		#ifdef near
+		#	undef near
+		#endif
+	")
+	target_precompile_headers(dpclient PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/pch.h") 
+endif()
+
+
 if(${QT_PACKAGE_NAME}LinguistTools_FOUND)
 	add_subdirectory(i18n)
 endif()

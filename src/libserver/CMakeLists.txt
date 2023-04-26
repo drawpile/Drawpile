@@ -51,6 +51,13 @@ target_link_libraries(dpserver
 		${QT_PACKAGE_NAME}::Network
 )
 
+target_precompile_headers(dpserver PRIVATE 
+	<QtCore>
+	<QtNetwork>
+	<libshared/net/message.h>
+	<libshared/net/protover.h>
+)
+
 if(TESTS)
 	add_subdirectory(tests)
 endif()

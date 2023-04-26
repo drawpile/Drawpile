@@ -2,6 +2,10 @@
 
 #include "libclient/parentalcontrols/parentalcontrols.h"
 
+// Qt headers include win32 headers but undef "interface", causing issues when including <wpcapi.h>
+#ifndef interface
+	#define interface __STRUCT__
+#endif
 #include <wpcapi.h>
 
 #include <QDebug>

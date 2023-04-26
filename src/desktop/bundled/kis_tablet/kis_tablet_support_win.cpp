@@ -433,14 +433,14 @@ bool KisWindowsWinTab32DLL::init()
         return true;
     }
     qWarning() << "Could not resolve the following symbols:\n"
-               << "\t wTOpen" << wTOpen << "\n"
-               << "\t wtClose" << wTClose << "\n"
-               << "\t wtInfo" << wTInfo << "\n"
-               << "\t wTEnable" << wTEnable << "\n"
-               << "\t wTOverlap" << wTOverlap << "\n"
-               << "\t wTPacketsGet" << wTPacketsGet << "\n"
-               << "\t wTQueueSizeGet" << wTQueueSizeGet << "\n"
-               << "\t wTQueueSizeSet" << wTQueueSizeSet << "\n";
+               << "\t wTOpen" << (intptr_t)wTOpen << "\n"
+               << "\t wtClose" << (intptr_t)wTClose << "\n"
+               << "\t wtInfo" << (intptr_t)wTInfo << "\n"
+               << "\t wTEnable" << (intptr_t)wTEnable << "\n"
+               << "\t wTOverlap" << (intptr_t)wTOverlap << "\n"
+               << "\t wTPacketsGet" << (intptr_t)wTPacketsGet << "\n"
+               << "\t wTQueueSizeGet" << (intptr_t)wTQueueSizeGet << "\n"
+               << "\t wTQueueSizeSet" << (intptr_t)wTQueueSizeSet << "\n";
     return false;
 }
 

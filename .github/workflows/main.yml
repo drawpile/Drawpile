@@ -234,6 +234,7 @@ jobs:
           -DTESTS=on
           "-DCMAKE_PREFIX_PATH=${{ matrix.cross_os && format('{0};', steps.cross-deps.outputs.path) }}${{ steps.deps.outputs.path }}"
           -DCMAKE_INSTALL_PREFIX=out
+          -DCMAKE_DISABLE_PRECOMPILE_HEADERS=on
           -DCLANG_TIDY=${{ github.event_name != 'push' && 'on' || 'off' }}
           -DDIST_BUILD=${{ matrix.packager && 'on' }}
           -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=${{

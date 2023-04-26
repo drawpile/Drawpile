@@ -20,6 +20,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#ifndef COLOR_WHEEL_PRIVATE_HPP
+#define COLOR_WHEEL_PRIVATE_HPP
 
 #include "QtColorWidgets/color_wheel.hpp"
 #include "QtColorWidgets/color_utils.hpp"
@@ -292,3 +294,5 @@ public:
 };
 
 } //  namespace color_widgets
+
+#endif

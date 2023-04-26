@@ -201,6 +201,14 @@ if(INSTALL_DOC AND UNIX)
 	)
 endif()
 
+target_precompile_headers(${srvlib} PRIVATE 
+	<QtCore> 
+	<QtNetwork> 
+	<QtSql> 
+	<libserver/jsonapi.h> 
+	<libserver/serverconfig.h>
+)
+
 if(TESTS)
 	add_subdirectory(tests)
 endif()
