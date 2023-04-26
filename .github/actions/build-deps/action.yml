@@ -48,8 +48,12 @@ inputs:
     default: c6f0b66318f8da6917fb4681103f7303b1836194
     type: string
   libzip:
-    description: Version of libzip to build
+    description: Version of libzip to build (Qt6 only)
     default: 1.9.2
+    type: string
+  karchive:
+    description: Version of karchive to build (Qt5 only)
+    default: 5.105.0
     type: string
   zlib:
     description: Version of zlib to build (Win32 only)
