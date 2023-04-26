@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "desktop/chat/chatlineedit.h"
 #include "desktop/chat/chatwidgetpinnedarea.h"
 #include "desktop/chat/chatwidget.h"
 #include "libclient/utils/html.h"
@@ -22,8 +21,15 @@
 #include <QTabBar>
 #include <QIcon>
 #include <QMenu>
+#include <QRegularExpression>
 
 #include <memory>
+
+#ifdef Q_OS_ANDROID
+#	include "desktop/chat/chatlineeditandroid.h"
+#else
+#	include "desktop/chat/chatlineedit.h"
+#endif
 
 #define DP_PERF_CONTEXT "chat_widget"
 
@@ -167,7 +173,7 @@ ChatWidget::ChatWidget(QWidget *parent)
 
 	setLayout(layout);
 
-	connect(d->myline, &ChatLineEdit::returnPressed, this, &ChatWidget::sendMessage);
+	connect(d->myline, &ChatLineEdit::messageSent, this, &ChatWidget::sendMessage);
 
 	d->chats[0] = Chat(this);
 	d->view->setDocument(d->chats[0].doc);
@@ -207,12 +213,12 @@ void ChatWidget::Private::updatePreserveModeUi()
 
 	chatbox->setStyleSheet(
 		QStringLiteral(
-		"QTextEdit, QPlainTextEdit {"
+		"QTextEdit, QPlainTextEdit, QLineEdit {"
 			"background-color: #232629;"
 			"border: none;"
 			"color: #eff0f1"
 		"}"
-		"QPlainTextEdit {"
+		"QPlainTextEdit, QLineEdit {"
 			"border-top: 1px solid %1;"
 			"padding: 4px"
 		"}"
@@ -627,9 +633,12 @@ void ChatWidget::scrollBarMoved(int)
 	d->wasAtEnd = d->isAtEnd();
 }
 
-void ChatWidget::sendMessage(const QString &chatMessage)
+void ChatWidget::sendMessage(QString chatMessage)
 {
 	DP_PERF_SCOPE("send_message");
+	static QRegularExpression rtrimRegex{QStringLiteral("\\s+\\z")};
+	chatMessage.replace(rtrimRegex, QString{});
+
 	uint8_t tflags = d->preserveChat ? 0 : DP_MSG_CHAT_TFLAGS_BYPASS;
 	uint8_t oflags = 0;
 	QString effectiveMessage = chatMessage;

@@ -43,12 +43,12 @@ void ChatLineEdit::keyPressEvent(QKeyEvent *event)
 			setPlainText(_current);
 		}
 	} else if((event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return) && !(event->modifiers() & Qt::ShiftModifier)) {
-		QString txt = trimmedText();
-		if(!txt.isEmpty()) {
+		QString txt = toPlainText();
+		if(!txt.trimmed().isEmpty()) {
 			pushHistory(txt);
 			_historypos = _history.count();
 			setPlainText(QString());
-			emit returnPressed(txt);
+			emit messageSent(txt);
 		}
 	} else {
 		QPlainTextEdit::keyPressEvent(event);
@@ -63,23 +63,7 @@ void ChatLineEdit::resizeEvent(QResizeEvent *)
 	resizeBasedOnLines();
 }
 
-QString ChatLineEdit::trimmedText() const
-{
-	QString str = toPlainText();
-
-	// Remove trailing whitespace
-	int chop = str.length();
-	while(chop>0 && str.at(chop-1).isSpace())
-		--chop;
-
-	if(chop==0)
-		return QString();
-	str.truncate(chop);
-
-	return str;
-}
-
-void ChatLineEdit::resizeBasedOnLines() 
+void ChatLineEdit::resizeBasedOnLines()
 {
 	int lineCount = int(document()->size().height());
 	int clampedLineCount = qBound(1, lineCount, 5);

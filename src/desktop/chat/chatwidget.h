@@ -66,7 +66,7 @@ protected:
 
 private slots:
 	void scrollBarMoved(int);
-	void sendMessage(const QString &chatMessage);
+	void sendMessage(const QString chatMessage);
 	void chatTabSelected(int index);
 	void chatTabClosed(int index);
 	void showChatContextMenu(const QPoint &pos);

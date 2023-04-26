@@ -37,8 +37,6 @@ target_sources(drawpile PRIVATE
 	tabletinput.h
 	chat/chatbox.cpp
 	chat/chatbox.h
-	chat/chatlineedit.cpp
-	chat/chatlineedit.h
 	chat/chatwidget.cpp
 	chat/chatwidget.h
 	chat/chatwidgetpinnedarea.cpp
@@ -372,6 +370,8 @@ if(ANDROID)
 	# other up with no way to switch between them, so we don't allow that there.
 	target_compile_definitions(drawpile PRIVATE SINGLE_MAIN_WINDOW=1)
 	target_sources(drawpile PRIVATE
+		chat/chatlineeditandroid.cpp
+		chat/chatlineeditandroid.h
 		dialogs/androidfiledialog.cpp
 		dialogs/androidfiledialog.h
 		icons/android/drawable-anydpi-v26/ic_launcher.xml
@@ -389,6 +389,8 @@ else()
 	# Android can neither deal with exporting multiple files nor can it spawn an
 	# ffmpeg process for video recording, so we only allow it outside of it.
 	target_sources(drawpile PRIVATE
+		chat/chatlineedit.cpp
+		chat/chatlineedit.h
 		dialogs/videoexportdialog.cpp
 		dialogs/videoexportdialog.h
 		ui/videoexport.ui

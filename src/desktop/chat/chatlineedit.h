@@ -18,13 +18,8 @@ public:
 	//! Push text to history
 	void pushHistory(const QString& text);
 
-	//! Get the current text with trailing whitespace removed
-	QString trimmedText() const;
-
 signals:
-	void returnPressed(const QString &text);
-
-public slots:
+	void messageSent(const QString &text);
 
 protected:
 	void keyPressEvent(QKeyEvent *event) override;
