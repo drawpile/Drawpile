@@ -105,6 +105,11 @@ function(_get_non_qt_shared_libs out_var)
 				if(NOT TARGET ${target})
 					find_package(${package} COMPONENTS ${component} QUIET)
 				endif()
+				# At least KArchive calls its target KF5::Archive, but wants to
+				# be found as KF5Archive. So let's try that variant as well.
+				if(NOT TARGET ${target})
+					find_package("${package}${component}")
+				endif()
 			endif()
 		endif()
 

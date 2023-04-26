@@ -15,6 +15,8 @@ set(QTKEYCHAIN "c6f0b66318f8da6917fb4681103f7303b1836194" CACHE STRING
 	"The Git refspec of QtKeychain to build")
 set(LIBZIP "1.9.2" CACHE STRING
 	"The version of libzip to build")
+set(KARCHIVE "v5.105.0" CACHE STRING
+	"The version of KArchive to build")
 option(KEEP_SOURCE_DIRS "Keep source directories instead of deleting them" OFF)
 option(KEEP_BINARY_DIRS "Keep build directories instead of deleting them" OFF)
 
@@ -131,7 +133,7 @@ if(QTKEYCHAIN)
 	)
 endif()
 
-if(LIBZIP)
+if(LIBZIP AND BUILD_WITH_QT6)
 	build_dependency(libzip ${LIBZIP} ${BUILD_TYPE}
 		URL https://libzip.org/download/libzip-@version@.tar.xz
 		VERSIONS
@@ -146,6 +148,44 @@ if(LIBZIP)
 					-DENABLE_MBEDTLS=off -DENABLE_OPENSSL=off
 					-DENABLE_WINDOWS_CRYPTO=off -DENABLE_BZIP2=off
 					-DENABLE_LZMA=off -DENABLE_ZSTD=off
+					${extra_cmake_flags}
+	)
+endif()
+
+if(KARCHIVE AND NOT BUILD_WITH_QT6)
+	# KDE will install into multiarch directories on some flavors of Linux, even
+	# when not installing into the system prefix. That breaks linuxdeploy, so we
+	# specify explicitly that we really just want the regular lib directory.
+	if(UNIX AND NOT APPLE AND NOT ANDROID)
+		set(kf_extra_cmake_flags -DKDE_INSTALL_LIBDIR=lib)
+	else()
+		unset(kf_extra_cmake_flags)
+	endif()
+	# All KF libraries get released under a shared, synchronized version number,
+	# so we don't need to provide separate arguments for these.
+	build_dependency(extra-cmake-modules ${KARCHIVE} ${BUILD_TYPE}
+		URL https://invent.kde.org/frameworks/extra-cmake-modules/-/archive/@version@/extra-cmake-modules-@version@.tar.gz
+		VERSIONS
+			v5.105.0
+			SHA384=e7f6cdee1f388d44024fc20ef663562a0ab2e0851745003c83b437aa620d0f808dea7ddb60fbf1e33161a83f08815a9c
+		ALL_PLATFORMS
+			CMAKE
+				ALL
+					${kf_extra_cmake_flags}
+					${extra_cmake_flags}
+	)
+	build_dependency(karchive ${KARCHIVE} ${BUILD_TYPE}
+		URL https://invent.kde.org/frameworks/karchive/-/archive/@version@/karchive-@version@.tar.gz
+		VERSIONS
+			v5.105.0
+			SHA384=51b17b9f8d75927c6a9708c705eaef1611c3b76f157bf04f550af8ff82bf02d55e46f03b4add369751d7ef0b51086eb7
+		ALL_PLATFORMS
+			CMAKE
+				ALL
+					-DCMAKE_DISABLE_FIND_PACKAGE_BZip2=on
+					-DCMAKE_DISABLE_FIND_PACKAGE_LibLZMA=on
+					-DCMAKE_DISABLE_FIND_PACKAGE_PkgConfig=on
+					${kf_extra_cmake_flags}
 					${extra_cmake_flags}
 	)
 endif()
