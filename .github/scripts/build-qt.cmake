@@ -26,6 +26,8 @@ option(SVG "Build qtsvg" ON)
 option(IMAGEFORMATS "Build qtimageformats" ON)
 option(TOOLS "Build qttools" ON)
 option(TRANSLATIONS "Build qttranslations" ON)
+option(KEEP_SOURCE_DIRS "Keep source directories instead of deleting them" OFF)
+option(KEEP_BINARY_DIRS "Keep build directories instead of deleting them" OFF)
 
 if(NOT QT_VERSION)
 	message(FATAL_ERROR "-DQT_VERSION is required")
