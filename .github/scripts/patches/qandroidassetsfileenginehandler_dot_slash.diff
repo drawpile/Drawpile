@@ -1,0 +1,34 @@
+--- a/src/plugins/platforms/android/qandroidassetsfileenginehandler.cpp	2023-04-26 08:39:21.720887254 +0200
++++ b/src/plugins/platforms/android/qandroidassetsfileenginehandler.cpp	2023-04-26 08:39:24.477553939 +0200
+@@ -55,6 +55,7 @@
+     if (file.startsWith(assetsPrefix))
+         file.remove(0, prefixSize);
+     file.replace(QLatin1String("//"), QLatin1String("/"));
++    file.replace(QLatin1String("/."), QLatin1String(""));
+     if (file.startsWith(QLatin1Char('/')))
+         file.remove(0, 1);
+     if (file.endsWith(QLatin1Char('/')))
+@@ -66,6 +67,7 @@
+ {
+     path = assetsPrefix + QLatin1Char('/') + path;
+     path.replace(QLatin1String("//"), QLatin1String("/"));
++    path.replace(QLatin1String("/."), QLatin1String(""));
+     return path;
+ }
+
+@@ -156,6 +158,7 @@
+         }
+         m_path = assetsPrefix + QLatin1Char('/') + m_path + QLatin1Char('/');
+         m_path.replace(QLatin1String("//"), QLatin1String("/"));
++        m_path.replace(QLatin1String("/."), QLatin1String(""));
+     }
+
+     QString currentFileName() const
+@@ -407,6 +410,7 @@
+
+     QString path = fileName.mid(prefixSize);
+     path.replace(QLatin1String("//"), QLatin1String("/"));
++    path.replace(QLatin1String("/."), QLatin1String(""));
+     if (path.startsWith(QLatin1Char('/')))
+         path.remove(0, 1);
+     if (path.endsWith(QLatin1Char('/')))
