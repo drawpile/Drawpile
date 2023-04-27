@@ -223,6 +223,7 @@ if(BASE)
 				patches/qtbug-111538.diff
 			5.15.8
 				patches/androiddeployqt_needed_libs.diff
+				patches/androiddeployqt_keystore_env.diff
 				patches/cast_types_for_egl_x11_test.diff
 				patches/qmake_android_ltcg.diff
 				patches/qtbug-112504.diff
