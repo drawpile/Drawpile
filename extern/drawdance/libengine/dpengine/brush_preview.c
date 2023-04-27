@@ -365,16 +365,20 @@ void render_brush_preview(
         break;
     }
     case FOREGROUND_BARS: {
-        uint32_t w = DP_int_to_uint32(width);
         uint32_t h = DP_int_to_uint32(height);
         uint32_t bars = 5;
-        uint32_t bw = w / bars;
+        float barsf = DP_uint32_to_float(bars);
+        float bw = DP_int_to_float(width) / barsf;
+        float x = 0.0f;
         for (uint32_t i = 0; i < bars; ++i) {
-            float hue = DP_uint32_to_float(i) / DP_uint32_to_float(bars);
+            float hue = DP_uint32_to_float(i) / barsf;
             cs = handle_preview_message_dec(
                 cs, dc,
-                DP_msg_fill_rect_new(0, 1, DP_BLEND_MODE_NORMAL, i * bw, 0, bw,
-                                     h, hsv_to_bgra(hue, 0.62f, 0.86f)));
+                DP_msg_fill_rect_new(0, 1, DP_BLEND_MODE_NORMAL,
+                                     DP_float_to_uint32(x), 0,
+                                     DP_float_to_uint32(bw) + i, h,
+                                     hsv_to_bgra(hue, 0.62f, 0.86f)));
+            x += bw;
         }
         break;
     }
