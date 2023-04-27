@@ -243,12 +243,26 @@ jobs:
           }}
           ${{ matrix.build_flags }}
 
+      - name: Prepare APK signing
+        run: |
+          if [ -n "$ANDROID_KEYSTORE" ] && [ -n "$ANDROID_KEYSTORE_PASS" ]; then
+            keystore_path="$GITHUB_WORKSPACE/drawpile.keystore"
+            echo "$ANDROID_KEYSTORE" | base64 -d > "$keystore_path"
+            echo QT_ANDROID_KEYSTORE_PATH="$keystore_path" >> "$GITHUB_ENV"
+          fi
+        env:
+          ANDROID_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE }}
+          ANDROID_KEYSTORE_PASS: ${{ secrets.ANDROID_KEYSTORE_PASS }}
+        if: matrix.cross_os == 'Android' && matrix.packager
+
       - name: Build project
         run: cmake --build build --parallel $(nproc || sysctl -n hw.ncpu || echo 2) --config Release
         env:
           RUSTC_WRAPPER: sccache
           SCCACHE_CACHE_SIZE: 200M
           SCCACHE_DIR: ${{ steps.sccache.outputs.path }}/cache
+          QT_ANDROID_KEYSTORE_ALIAS: drawpile
+          QT_ANDROID_KEYSTORE_STORE_PASS: ${{ secrets.ANDROID_KEYSTORE_PASS }}
 
       - name: Run C++ tests
         run: ctest -C Release --output-on-failure
