@@ -590,16 +590,40 @@ elseif(ANDROID)
 		)
 		add_dependencies(drawpile_copy_apk apk)
 
-		# This disgusting hack is because we cannot look to see if Qt5Keychain
-		# exists or not without causing `Qt5AndroidSupport.cmake` to write the
-		# JSON file that needs the variable we are trying to generate. Since
-		# Qt6 is not this cursed, this will be going away eventually so is fine.
+		# We need to perform some disgusting hacks on the deployment settings
+		# file because of Qt5's utter inability to generate it correctly. Qt6
+		# does this properly, so hopefully this will be going away eventually.
+		file(STRINGS "${CMAKE_BINARY_DIR}/android_deployment_settings.json" cursed_json)
+
+		# It fails to include the build tools revision altogether. In qmake it
+		# would do it correctly, but in CMake it just leaves it out. This leads
+		# to androiddeployqt unable to find zipalign and apksigner. The logic
+		# used here to figure out the version mirrors what it would do in qmake.
+		if(NOT ANDROID_SDK_BUILD_TOOLS_REVISION)
+			file(
+				GLOB build_tools_dirs
+				RELATIVE "${ANDROID_SDK}/build-tools"
+				"${ANDROID_SDK}/build-tools/*"
+			)
+			foreach(build_tools_dir IN LISTS build_tools_dirs)
+				if(NOT ANDROID_SDK_BUILD_TOOLS_REVISION OR
+						build_tools_dir VERSION_GREATER ANDROID_SDK_BUILD_TOOLS_REVISION)
+					set(ANDROID_SDK_BUILD_TOOLS_REVISION "${build_tools_dir}")
+				endif()
+			endforeach()
+		endif()
+		list(INSERT cursed_json 1
+			"\"sdkBuildToolsRevision\": \"${ANDROID_SDK_BUILD_TOOLS_REVISION}\",")
+
+		# We cannot look to see if Qt5Keychain exists or not without causing
+		# `Qt5AndroidSupport.cmake` to write the JSON file that needs the
+		# variable we are trying to generate.
 		if(android_extra_libs)
 			list(JOIN android_extra_libs "," android_extra_libs)
-			file(STRINGS "${CMAKE_BINARY_DIR}/android_deployment_settings.json" cursed_json)
 			list(INSERT cursed_json 1 "\"android-extra-libs\": \"${android_extra_libs}\",")
-			file(WRITE "${CMAKE_BINARY_DIR}/android_deployment_settings.json" ${cursed_json})
 		endif()
+
+		file(WRITE "${CMAKE_BINARY_DIR}/android_deployment_settings.json" ${cursed_json})
 	endif()
 
 	include(DrawpileFileExtensions)
