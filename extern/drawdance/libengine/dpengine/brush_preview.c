@@ -285,8 +285,11 @@ void render_brush_preview(
         layer_color = color;
         background_color = 0;
     }
-    else if (mode == DP_BLEND_MODE_NORMAL_AND_ERASER
-             || !DP_blend_mode_can_increase_opacity((int)mode)) {
+    else if (mode == DP_BLEND_MODE_NORMAL_AND_ERASER) {
+        layer_color = background_color;
+        background_color = 0;
+    }
+    else if (!DP_blend_mode_can_increase_opacity((int)mode)) {
         foreground_style = FOREGROUND_DABS;
         background_color = 0;
     }
@@ -446,6 +449,23 @@ static void set_preview_mypaint_brush(void *user, DP_BrushEngine *be,
     DP_brush_engine_mypaint_brush_set(be, brush, settings, &stroke, &color);
 }
 
+static bool has_smudge_setting(const DP_MyPaintSettings *settings)
+{
+    const DP_MyPaintMapping *mapping =
+        &settings->mappings[MYPAINT_BRUSH_SETTING_SMUDGE];
+    if (mapping->base_value == 0) {
+        for (int i = 0; i < MYPAINT_BRUSH_INPUTS_COUNT; ++i) {
+            if (mapping->inputs[i].n != 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
 void DP_brush_preview_render_mypaint(DP_BrushPreview *bp, DP_DrawContext *dc,
                                      int width, int height,
                                      const DP_MyPaintBrush *brush,
@@ -459,8 +479,9 @@ void DP_brush_preview_render_mypaint(DP_BrushPreview *bp, DP_DrawContext *dc,
     DP_BlendMode mode = brush->erase      ? DP_BLEND_MODE_ERASE
                       : brush->lock_alpha ? DP_BLEND_MODE_RECOLOR
                                           : DP_BLEND_MODE_NORMAL_AND_ERASER;
-    render_brush_preview(bp, dc, width, height, shape, brush->color, false,
-                         mode, set_preview_mypaint_brush,
+    render_brush_preview(bp, dc, width, height, shape, brush->color,
+                         has_smudge_setting(settings), mode,
+                         set_preview_mypaint_brush,
                          (void *[]){(void *)brush, (void *)settings});
 }
 
