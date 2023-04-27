@@ -826,12 +826,16 @@ int BrushSettings::getSize() const
 
 bool BrushSettings::getSubpixelMode() const
 {
-	return d->currentBrush().classic().shape == DP_BRUSH_SHAPE_CLASSIC_SOFT_ROUND;
+	const brushes::ActiveBrush &brush = d->currentBrush();
+	return brush.activeType() != brushes::ActiveBrush::CLASSIC
+		|| brush.classic().shape == DP_BRUSH_SHAPE_CLASSIC_SOFT_ROUND;
 }
 
 bool BrushSettings::isSquare() const
 {
-	return d->currentBrush().classic().shape == DP_BRUSH_SHAPE_CLASSIC_PIXEL_SQUARE;
+	const brushes::ActiveBrush &brush = d->currentBrush();
+	return brush.activeType() == brushes::ActiveBrush::CLASSIC
+		&& brush.classic().shape == DP_BRUSH_SHAPE_CLASSIC_PIXEL_SQUARE;
 }
 
 double BrushSettings::radiusLogarithmicToPixelSize(int radiusLogarithmic)
