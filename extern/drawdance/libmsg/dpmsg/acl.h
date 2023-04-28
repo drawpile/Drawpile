@@ -45,7 +45,7 @@ typedef struct DP_Message DP_Message;
 #define DP_ACL_STATE_RESET_IMAGE_INCLUDE_USER_ACL            (1 << 2)
 #define DP_ACL_STATE_RESET_IMAGE_INCLUDE_LAYER_ACL_EXCLUSIVE (1 << 3)
 // Session resets include user and layer locks, but the operator and trusted
-// states are retained server-side.
+// states are retained server-side. It also includes a reset lock message.
 #define DP_ACL_STATE_RESET_IMAGE_SESSION_RESET_FLAGS \
     (DP_ACL_STATE_RESET_IMAGE_INCLUDE_USER_ACL       \
      | DP_ACL_STATE_RESET_IMAGE_INCLUDE_LAYER_ACL_EXCLUSIVE)

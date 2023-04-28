@@ -189,6 +189,8 @@ struct DP_PaintEngine {
     DP_Atomic catchup;
     DP_Atomic default_layer_id;
     DP_Atomic undo_depth_limit;
+    DP_Atomic just_reset;
+    bool catching_up;
     DP_Thread *paint_thread;
     struct {
         uint8_t acl_change_flags;
@@ -340,6 +342,7 @@ static void handle_internal(DP_PaintEngine *pe, DP_DrawContext *dc,
     DP_MsgInternalType type = DP_msg_internal_type(mi);
     switch (type) {
     case DP_MSG_INTERNAL_TYPE_RESET:
+        DP_atomic_set(&pe->just_reset, true);
         DP_canvas_history_reset(pe->ch);
         update_undo_depth_limit(pe);
         break;
@@ -562,6 +565,11 @@ static void handle_single_message(DP_PaintEngine *pe, DP_DrawContext *dc,
         if (!DP_canvas_history_handle(pe->ch, dc, msg)) {
             DP_warn("Handle remote command: %s", DP_error());
         }
+        // Resets are always followed by a canvas resize, so we can use that as
+        // a reasonable point to clear this flag and get the UI to update again.
+        if (type == DP_MSG_CANVAS_RESIZE) {
+            DP_atomic_set(&pe->just_reset, false);
+        }
     }
     DP_message_decref(msg);
 }
@@ -738,6 +746,8 @@ DP_PaintEngine *DP_paint_engine_new_inc(
     DP_atomic_set(&pe->default_layer_id, -1);
     DP_atomic_set(&pe->undo_depth_limit,
                   DP_canvas_history_undo_depth_limit(pe->ch));
+    DP_atomic_set(&pe->just_reset, false);
+    pe->catching_up = false;
     pe->paint_thread = DP_thread_new(run_paint_engine, pe);
     pe->meta.acl_change_flags = 0;
     DP_VECTOR_INIT_TYPE(&pe->meta.cursor_changes, DP_PaintEngineCursorChange,
@@ -2223,6 +2233,7 @@ void DP_paint_engine_tick(
     int progress = DP_atomic_xch(&pe->catchup, -1);
     if (progress != -1) {
         catchup(user, progress);
+        pe->catching_up = progress < 100;
     }
 
     switch (pe->record.state_change) {
@@ -2238,29 +2249,46 @@ void DP_paint_engine_tick(
         break;
     }
 
-    DP_CanvasState *prev_history_cs = pe->history_cs;
-    DP_UserCursorBuffer *ucb = &pe->meta.ucb;
-    DP_CanvasState *next_history_cs =
-        DP_canvas_history_compare_and_get(pe->ch, prev_history_cs, ucb);
-    if (next_history_cs) {
-        DP_canvas_state_decref(prev_history_cs);
-        pe->history_cs = next_history_cs;
-    }
+    // There's two flags that block on reset. The just_reset one gets set by a
+    // reset message and cleared when the first canvas resize comes in, the
+    // catching_up flag gets set when a catchup message is received and cleared
+    // when it reaches 100%. This may seem doubled up at first glance, but since
+    // the catchup message comes in *after* the reset message, there is a small
+    // chance that we grab the null canvas state right in between those two.
+    bool should_update = !DP_atomic_get(&pe->just_reset) && !pe->catching_up;
+    DP_CanvasState *next_history_cs;
+    bool preview_changed;
+    bool local_view_changed;
 
-    bool preview_changed = false;
-    for (int i = 0; i < DP_PAINT_ENGINE_PREVIEW_COUNT; ++i) {
-        DP_PaintEnginePreview *next_preview =
-            DP_atomic_ptr_xch(&pe->next_previews[i], NULL);
-        if (next_preview) {
-            free_preview(pe->previews[i]);
-            pe->previews[i] =
-                next_preview == &null_preview ? NULL : next_preview;
-            preview_changed = true;
+    if (should_update) {
+        DP_CanvasState *prev_history_cs = pe->history_cs;
+        next_history_cs = DP_canvas_history_compare_and_get(
+            pe->ch, prev_history_cs, &pe->meta.ucb);
+        if (next_history_cs) {
+            DP_canvas_state_decref(prev_history_cs);
+            pe->history_cs = next_history_cs;
         }
-    }
 
-    bool local_view_changed =
-        !pe->local_view.layers.prev_lpl || !pe->local_view.tracks.prev_tl;
+        preview_changed = false;
+        for (int i = 0; i < DP_PAINT_ENGINE_PREVIEW_COUNT; ++i) {
+            DP_PaintEnginePreview *next_preview =
+                DP_atomic_ptr_xch(&pe->next_previews[i], NULL);
+            if (next_preview) {
+                free_preview(pe->previews[i]);
+                pe->previews[i] =
+                    next_preview == &null_preview ? NULL : next_preview;
+                preview_changed = true;
+            }
+        }
+
+        local_view_changed =
+            !pe->local_view.layers.prev_lpl || !pe->local_view.tracks.prev_tl;
+    }
+    else {
+        next_history_cs = NULL;
+        preview_changed = false;
+        local_view_changed = false;
+    }
 
     if (next_history_cs || preview_changed || local_view_changed) {
         DP_PERF_BEGIN(changes, "tick:changes");
@@ -2282,8 +2310,8 @@ void DP_paint_engine_tick(
                 DP_layer_props_list_can_decrease_opacity(lpl);
         }
 
-        emit_changes(pe, prev_view_cs, next_view_cs, ucb, resized, tile_changed,
-                     layer_props_changed, annotations_changed,
+        emit_changes(pe, prev_view_cs, next_view_cs, &pe->meta.ucb, resized,
+                     tile_changed, layer_props_changed, annotations_changed,
                      document_metadata_changed, timeline_changed, cursor_moved,
                      user);
         DP_canvas_state_decref(prev_view_cs);

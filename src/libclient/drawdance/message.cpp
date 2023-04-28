@@ -503,7 +503,6 @@ Message Message::makeBackwardCompatible() const
     case DP_MSG_LASER_TRAIL:
     case DP_MSG_MOVE_POINTER:
     case DP_MSG_MARKER:
-    case DP_MSG_USER_ACL:
     case DP_MSG_LAYER_ACL:
     case DP_MSG_DEFAULT_LAYER:
     case DP_MSG_FILTERED:
@@ -524,6 +523,27 @@ Message Message::makeBackwardCompatible() const
     case DP_MSG_CANVAS_BACKGROUND:
     case DP_MSG_UNDO:
         return *this;
+    case DP_MSG_USER_ACL: {
+        DP_MsgUserAcl *mua = DP_msg_user_acl_cast(m_data);
+        int count;
+        const uint8_t *users = DP_msg_user_acl_users(mua, &count);
+        QVector<uint8_t> compatibleUsers;
+        compatibleUsers.reserve(count);
+        for(int i = 0; i < count; ++i) {
+            uint8_t user = users[i];
+            if(user != 0) { // Reset locks aren't in Drawpile 2.1.
+                compatibleUsers.append(user);
+            }
+        }
+        int compatibleCount = compatibleUsers.size();
+        if(compatibleCount == count) {
+            return *this;
+        } else {
+            qDebug("Making %s message compatible", qUtf8Printable(typeName()));
+            return noinc(DP_msg_feature_access_levels_new(
+                contextId(), setUint8s, compatibleCount, compatibleUsers.data()));
+        }
+    }
     case DP_MSG_FEATURE_ACCESS_LEVELS: {
         DP_MsgFeatureAccessLevels *mfal = DP_msg_feature_access_levels_cast(m_data);
         int count;

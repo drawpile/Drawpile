@@ -302,6 +302,7 @@ void Client::handleServerReply(const ServerReply &reply)
 		m_catchupTo = reply.reply["count"].toInt();
 		m_caughtUp = 0;
 		m_catchupProgress = 0;
+		emit catchupProgress(0);
 		break;
 	}
 }

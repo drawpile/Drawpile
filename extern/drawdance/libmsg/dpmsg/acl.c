@@ -1049,7 +1049,8 @@ uint8_t DP_acl_state_handle(DP_AclState *acls, DP_Message *msg, bool override)
     else {
         if (override || !acls->users.all_locked) {
             uint8_t user_id = message_user_id(msg);
-            if (override || !DP_user_bit_get(acls->users.locked, user_id)) {
+            if (override || user_id == 0
+                || !DP_user_bit_get(acls->users.locked, user_id)) {
                 return filter_unless(
                     handle_command_message(acls, msg, type, user_id, override));
             }
