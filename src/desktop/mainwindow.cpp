@@ -111,6 +111,7 @@ static constexpr auto CTRL_KEY = Qt::CTRL;
 #include "desktop/dialogs/dumpplaybackdialog.h"
 #include "desktop/dialogs/flipbook.h"
 #include "desktop/dialogs/resetdialog.h"
+#include "desktop/dialogs/resetnoticedialog.h"
 #include "desktop/dialogs/sessionsettings.h"
 #include "desktop/dialogs/serverlogdialog.h"
 #include "desktop/dialogs/tablettester.h"
@@ -266,7 +267,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_doc, &Document::sessionTitleChanged, this, &MainWindow::updateTitle);
 	connect(m_doc, &Document::currentFilenameChanged, this, &MainWindow::updateTitle);
 	connect(m_doc, &Document::recorderStateChanged, this, &MainWindow::setRecorderStatus);
-	connect(m_doc, &Document::sessionResetState, this, &MainWindow::promptForSaveOnReset, Qt::QueuedConnection);
+	connect(m_doc, &Document::sessionResetState, this, &MainWindow::showResetNoticeDialog, Qt::QueuedConnection);
 
 	connect(m_doc, &Document::autoResetTooLarge, this, [this](int maxSize) {
 		m_doc->sendLockSession(true);
@@ -472,6 +473,7 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 
 	connect(canvas->aclState(), &canvas::AclState::localOpChanged, this, &MainWindow::onOperatorModeChange);
 	connect(canvas->aclState(), &canvas::AclState::localLockChanged, this, &MainWindow::updateLockWidget);
+	connect(canvas->aclState(), &canvas::AclState::resetLockChanged, this, &MainWindow::updateLockWidget);
 	connect(canvas->aclState(), &canvas::AclState::featureAccessChanged, this, &MainWindow::onFeatureAccessChange);
 	connect(canvas->paintEngine(), &canvas::PaintEngine::undoDepthLimitSet, this, &MainWindow::onUndoDepthLimitSet);
 
@@ -1165,6 +1167,11 @@ void MainWindow::onCanvasSaveStarted()
 	getAction("savedocumentas")->setEnabled(false);
 	m_viewStatusBar->showMessage(tr("Saving..."));
 
+	dialogs::ResetNoticeDialog *dlg = findChild<dialogs::ResetNoticeDialog *>(
+		RESET_NOTICE_DIALOG_NAME, Qt::FindDirectChildrenOnly);
+	if(dlg) {
+		dlg->setSaveInProgress(true);
+	}
 }
 
 void MainWindow::onCanvasSaved(const QString &errorMessage)
@@ -1172,6 +1179,12 @@ void MainWindow::onCanvasSaved(const QString &errorMessage)
 	QApplication::restoreOverrideCursor();
 	getAction("savedocument")->setEnabled(true);
 	getAction("savedocumentas")->setEnabled(true);
+
+	dialogs::ResetNoticeDialog *dlg = findChild<dialogs::ResetNoticeDialog *>(
+		RESET_NOTICE_DIALOG_NAME, Qt::FindDirectChildrenOnly);
+	if(dlg) {
+		dlg->setSaveInProgress(false);
+	}
 
 	setWindowModified(m_doc->isDirty());
 	updateTitle();
@@ -1189,50 +1202,31 @@ void MainWindow::onCanvasSaved(const QString &errorMessage)
 		close();
 }
 
-void MainWindow::promptForSaveOnReset(const drawdance::CanvasState &canvasState)
+void MainWindow::showResetNoticeDialog(const drawdance::CanvasState &canvasState)
 {
-	const char *objectName = "resetsessionmessagebox";
-	bool saveOrPromptInProgress = m_doc->isSaveInProgress() ||
-		findChild<QMessageBox *>(objectName, Qt::FindDirectChildrenOnly);
-	if(!saveOrPromptInProgress) {
-		QMessageBox::Icon icon;
-		QString message;
-		if(m_doc->isCompatibilityMode()) {
-			icon = QMessageBox::Warning;
-			message = tr(
-				"The session has been reset. Since this is a Drawpile 2.1 "
-				"session and you're running Drawpile 2.2, this probably "
-				"changed how things on the canvas look. Do you want to save "
-				"the canvas as it was before the reset?");
-		} else {
-			icon = QMessageBox::Question;
-			message = tr(
-				"The session has been reset. Normally, everything on the "
-				"canvas should look the same as it did before, but that's "
-				"not guaranteed. Do you want to save the canvas as it was "
-				"before the reset?");
-		}
+	dialogs::ResetNoticeDialog *dlg = findChild<dialogs::ResetNoticeDialog *>(
+		RESET_NOTICE_DIALOG_NAME, Qt::FindDirectChildrenOnly);
+	if(!dlg) {
+		dlg = new dialogs::ResetNoticeDialog{
+			canvasState, m_doc->isCompatibilityMode(), this};
+		dlg->setObjectName(RESET_NOTICE_DIALOG_NAME);
+		dlg->setAttribute(Qt::WA_DeleteOnClose);
+		dlg->setSaveInProgress(m_doc->isSaveInProgress());
+		connect(
+			dlg, &dialogs::ResetNoticeDialog::saveRequested, this,
+			&MainWindow::savePreResetImageAs);
+		connect(
+			m_doc, &Document::catchupProgress, dlg,
+			&dialogs::ResetNoticeDialog::catchupProgress);
+		dlg->show();
+	}
+}
 
-		QMessageBox *box = new QMessageBox{
-			icon, tr("Session Reset"), message, QMessageBox::Cancel, this};
-		box->setAttribute(Qt::WA_DeleteOnClose);
-		box->setObjectName(objectName);
-		box->setModal(false);
-
-		QPushButton *saveButton = new QPushButton{
-			QIcon::fromTheme("document-save-as"), tr("Save As..."), box};
-		box->addButton(saveButton, QMessageBox::ActionRole);
-
-		connect(box, &QMessageBox::buttonClicked, this, [=](QAbstractButton *button) {
-			if(button == saveButton) {
-				QString result = FileWrangler{this}.savePreResetImageAs(m_doc, canvasState);
-				if(!result.isEmpty()) {
-					addRecentFile(result);
-				}
-			}
-		});
-
-		box->show();
+void MainWindow::savePreResetImageAs(const drawdance::CanvasState &canvasState)
+{
+	QString result = FileWrangler{this}.savePreResetImageAs(m_doc, canvasState);
+	if(!result.isEmpty()) {
+		addRecentFile(result);
 	}
 }
 
@@ -1816,19 +1810,29 @@ void MainWindow::onCompatibilityModeChanged(bool compatibilityMode)
 
 void MainWindow::updateLockWidget()
 {
-	bool locked = m_doc->canvas() && m_doc->canvas()->aclState()->isSessionLocked();
-	getAction("locksession")->setChecked(locked);
+	canvas::CanvasModel *canvas = m_doc->canvas();
+	canvas::AclState *aclState = canvas ? canvas->aclState() : nullptr;
+
+	bool resetLocked = aclState && aclState->isResetLocked();
+	bool locked = resetLocked;
 	QString toolTip;
 	if(locked) {
+		toolTip = tr("Reset in progress");
+	}
+
+	bool sessionLocked = aclState && aclState->isSessionLocked();
+	getAction("locksession")->setChecked(sessionLocked);
+	if(!locked && sessionLocked) {
+		locked = true;
 		toolTip = tr("Board is locked");
 	}
 
-	if(locked && !m_wasSessionLocked) {
+	if(sessionLocked && !m_wasSessionLocked) {
 		notification::playSound(notification::Event::LOCKED);
-	} else if(!locked && m_wasSessionLocked) {
+	} else if(!sessionLocked && m_wasSessionLocked) {
 		notification::playSound(notification::Event::UNLOCKED);
 	}
-	m_wasSessionLocked = locked;
+	m_wasSessionLocked = sessionLocked;
 
 	if(!locked && m_dockLayers->isCurrentLayerLocked()) {
 		locked = true;
@@ -1848,6 +1852,7 @@ void MainWindow::updateLockWidget()
 	m_lockstatus->setToolTip(toolTip);
 
 	m_view->setLocked(locked);
+	m_view->setResetInProgress(resetLocked);
 }
 
 void MainWindow::onNsfmChanged(bool nsfm)

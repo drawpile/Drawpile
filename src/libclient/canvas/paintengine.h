@@ -222,6 +222,7 @@ signals:
 	void
 	dumpPlaybackAt(long long pos, const drawdance::CanvasHistorySnapshot &chs);
 	void caughtUpTo(int progress);
+	void resetLockSet(bool locked);
 	void recorderStateChanged(bool started);
 	void documentMetadataChanged(const drawdance::DocumentMetadata &dm);
 	void timelineChanged(const drawdance::Timeline &tl);
@@ -246,6 +247,7 @@ private:
 	static void onDefaultLayer(void *user, int layerId);
 	static void onUndoDepthLimitSet(void *user, int undoDepthLimit);
 	static void onCatchup(void *user, int progress);
+	static void onResetLockChanged(void *user, bool locked);
 	static void onRecorderStateChanged(void *user, bool started);
 	static void onResized(
 		void *user, int offsetX, int offsetY, int prevWidth, int prevHeight);

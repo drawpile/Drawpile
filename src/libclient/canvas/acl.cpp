@@ -11,6 +11,7 @@ struct AclState::Data {
 	DP_FeatureTiers features;
 	QHash<int, Layer> layers;
 	uint8_t localUser;
+	bool resetLocked;
 
 	DP_AccessTier tier() const;
 };
@@ -45,6 +46,7 @@ AclState::AclState(QObject *parent)
 	memset(&d->users, 0, sizeof(DP_UserAcls));
 	memset(&d->features, 0, sizeof(DP_FeatureTiers));
 	d->localUser = 0;
+	d->resetLocked = false;
 }
 
 void AclState::setLocalUserId(uint8_t localUser)
@@ -81,6 +83,13 @@ void AclState::aclsChanged(const drawdance::AclState &acls, int aclChangeFlags, 
 	if(features || reset) {
 		updateFeatures(acls, reset);
 	}
+}
+
+void AclState::resetLockSet(bool locked)
+{
+	d->resetLocked = locked;
+	emit resetLockChanged(locked);
+	emit localLockChanged(amLocked());
 }
 
 void AclState::updateUserBits(const drawdance::AclState &acls, bool reset)
@@ -204,7 +213,7 @@ bool AclState::amTrusted() const
 
 bool AclState::amLocked() const
 {
-	return d->users.all_locked || isLocked(d->localUser);
+	return d->users.all_locked || d->resetLocked || isLocked(d->localUser);
 }
 
 bool AclState::isSessionLocked() const
@@ -245,6 +254,11 @@ DP_FeatureTiers AclState::featureTiers() const
 AclState::Layer AclState::layerAcl(uint16_t layerId) const
 {
 	return d->layers[layerId];
+}
+
+bool AclState::isResetLocked() const
+{
+	return d->resetLocked;
 }
 
 }

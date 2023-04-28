@@ -35,7 +35,7 @@ CanvasView::CanvasView(QWidget *parent)
 	m_scene(nullptr),
 	m_zoomWheelDelta(0),
 	m_enableTablet(true),
-	m_locked(false), m_pointertracking(false), m_pixelgrid(true),
+	m_locked(false), m_resetInProgress(false), m_pointertracking(false), m_pixelgrid(true),
 	m_enableTouchScroll(true), m_enableTouchDraw(false),
 	m_enableTouchPinch(true), m_enableTouchTwist(true),
 	m_touching(false), m_touchRotating(false),
@@ -255,6 +255,14 @@ void CanvasView::setLocked(bool lock)
 	resetCursor();
 }
 
+void CanvasView::setResetInProgress(bool resetInProgress)
+{
+	if(resetInProgress != m_resetInProgress) {
+		m_resetInProgress = resetInProgress;
+		viewport()->update();
+	}
+}
+
 void CanvasView::setBrushOutlineWidth(qreal outlineWidth)
 {
 	m_brushOutlineWidth = qIsNaN(outlineWidth) ? 1.0 : outlineWidth;
@@ -358,6 +366,16 @@ void CanvasView::setOutlineMode(bool subpixel, bool square)
 
 void CanvasView::drawForeground(QPainter *painter, const QRectF& rect)
 {
+	if(m_resetInProgress) {
+		drawResetCover(painter, rect);
+	} else {
+		drawPixelGrid(painter, rect);
+		drawCursorOutline(painter, rect);
+	}
+}
+
+void CanvasView::drawPixelGrid(QPainter *painter, const QRectF& rect)
+{
 	if(m_pixelgrid && m_zoom >= 800) {
 		QPen pen(QColor(160, 160, 160));
 		pen.setCosmetic(true);
@@ -370,7 +388,10 @@ void CanvasView::drawForeground(QPainter *painter, const QRectF& rect)
 			painter->drawLine(rect.left(), y, rect.right()+1, y);
 		}
 	}
+}
 
+void CanvasView::drawCursorOutline(QPainter *painter, const QRectF& rect)
+{
 	// We want to show an outline if we're currently drawing or able to, but
 	// also if we're adjusting the tool size, since seeing the outline while
 	// you change your brush size is really useful.
@@ -404,6 +425,14 @@ void CanvasView::drawForeground(QPainter *painter, const QRectF& rect)
 			painter->restore();
 		}
 	}
+}
+
+void CanvasView::drawResetCover(QPainter *painter, const QRectF& rect)
+{
+	painter->setOpacity(0.5);
+	painter->setPen(Qt::NoPen);
+	painter->setBrush(Qt::black);
+	painter->drawRect(rect);
 }
 
 void CanvasView::enterEvent(compat::EnterEvent *event)

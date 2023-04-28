@@ -131,7 +131,8 @@ private slots:
 	void exportAnimationFrames();
 #endif
 
-	void promptForSaveOnReset(const drawdance::CanvasState &canvasState);
+	void showResetNoticeDialog(const drawdance::CanvasState &canvasState);
+	void savePreResetImageAs(const drawdance::CanvasState &canvasState);
 	void showCompatibilityModeWarning();
 
 	void onOperatorModeChange(bool op);
@@ -201,6 +202,8 @@ protected:
 	bool event(QEvent *event) override;
 
 private:
+	static constexpr char RESET_NOTICE_DIALOG_NAME[] = "resetnoticedialog";
+
 	MainWindow *replaceableWindow();
 
 	void exportAnimation(const QString &path, AnimationSaverRunnable::SaveFn saveFn);

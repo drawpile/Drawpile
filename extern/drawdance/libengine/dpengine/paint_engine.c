@@ -191,6 +191,7 @@ struct DP_PaintEngine {
     DP_Atomic undo_depth_limit;
     DP_Atomic just_reset;
     bool catching_up;
+    bool reset_locked;
     DP_Thread *paint_thread;
     struct {
         uint8_t acl_change_flags;
@@ -748,6 +749,7 @@ DP_PaintEngine *DP_paint_engine_new_inc(
                   DP_canvas_history_undo_depth_limit(pe->ch));
     DP_atomic_set(&pe->just_reset, false);
     pe->catching_up = false;
+    pe->reset_locked = false;
     pe->paint_thread = DP_thread_new(run_paint_engine, pe);
     pe->meta.acl_change_flags = 0;
     DP_VECTOR_INIT_TYPE(&pe->meta.cursor_changes, DP_PaintEngineCursorChange,
@@ -2213,7 +2215,8 @@ emit_changes(DP_PaintEngine *pe, DP_CanvasState *prev, DP_CanvasState *cs,
 
 void DP_paint_engine_tick(
     DP_PaintEngine *pe, DP_PaintEngineCatchupFn catchup,
-    DP_PaintEngineRecorderStateChanged recorder_state_changed,
+    DP_PaintEngineResetLockChangedFn reset_lock_changed,
+    DP_PaintEngineRecorderStateChangedFn recorder_state_changed,
     DP_PaintEngineResizedFn resized, DP_CanvasDiffEachPosFn tile_changed,
     DP_PaintEngineLayerPropsChangedFn layer_props_changed,
     DP_PaintEngineAnnotationsChangedFn annotations_changed,
@@ -2232,7 +2235,6 @@ void DP_paint_engine_tick(
 
     int progress = DP_atomic_xch(&pe->catchup, -1);
     if (progress != -1) {
-        catchup(user, progress);
         pe->catching_up = progress < 100;
     }
 
@@ -2316,6 +2318,16 @@ void DP_paint_engine_tick(
                      user);
         DP_canvas_state_decref(prev_view_cs);
         DP_PERF_END(changes);
+    }
+
+    bool reset_locked = !should_update;
+    if (reset_locked != pe->reset_locked) {
+        pe->reset_locked = reset_locked;
+        reset_lock_changed(user, reset_locked);
+    }
+
+    if (progress != -1) {
+        catchup(user, progress);
     }
 
     int default_layer_id = DP_atomic_xch(&pe->default_layer_id, -1);

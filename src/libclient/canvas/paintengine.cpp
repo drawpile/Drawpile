@@ -110,9 +110,9 @@ void PaintEngine::timerEvent(QTimerEvent *)
 	m_changedTileBounds = QRect{};
 	DP_paint_engine_tick(
 		m_paintEngine.get(), &PaintEngine::onCatchup,
-		&PaintEngine::onRecorderStateChanged, &PaintEngine::onResized,
-		&PaintEngine::onTileChanged, &PaintEngine::onLayerPropsChanged,
-		&PaintEngine::onAnnotationsChanged,
+		&PaintEngine::onResetLockChanged, &PaintEngine::onRecorderStateChanged,
+		&PaintEngine::onResized, &PaintEngine::onTileChanged,
+		&PaintEngine::onLayerPropsChanged, &PaintEngine::onAnnotationsChanged,
 		&PaintEngine::onDocumentMetadataChanged,
 		&PaintEngine::onTimelineChanged, &PaintEngine::onCursorMoved,
 		&PaintEngine::onDefaultLayer, &PaintEngine::onUndoDepthLimitSet, this);
@@ -692,6 +692,12 @@ void PaintEngine::onCatchup(void *user, int progress)
 {
 	PaintEngine *pe = static_cast<PaintEngine *>(user);
 	emit pe->caughtUpTo(progress);
+}
+
+void PaintEngine::onResetLockChanged(void *user, bool locked)
+{
+	PaintEngine *pe = static_cast<PaintEngine *>(user);
+	emit pe->resetLockSet(locked);
 }
 
 void PaintEngine::onRecorderStateChanged(void *user, bool started)

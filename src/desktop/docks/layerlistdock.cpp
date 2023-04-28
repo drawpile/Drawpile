@@ -129,6 +129,7 @@ void LayerList::setCanvas(canvas::CanvasModel *canvas)
 	connect(canvas->aclState(), &canvas::AclState::featureAccessChanged, this, &LayerList::onFeatureAccessChange);
 	connect(canvas->aclState(), &canvas::AclState::layerAclChanged, this, &LayerList::layerLockStatusChanged);
 	connect(canvas->aclState(), &canvas::AclState::localLockChanged, this, &LayerList::userLockStatusChanged);
+	connect(canvas->aclState(), &canvas::AclState::resetLockChanged, this, &LayerList::setDisabled);
 	connect(m_view->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selectionChanged(QItemSelection)));
 	connect(canvas, &canvas::CanvasModel::compatibilityModeChanged, this, &LayerList::updateLockedControls);
 	connect(canvas, &canvas::CanvasModel::compatibilityModeChanged, this, &LayerList::updateBlendModes);

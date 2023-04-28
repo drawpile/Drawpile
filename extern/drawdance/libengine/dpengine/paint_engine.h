@@ -57,7 +57,8 @@ typedef void (*DP_PaintEngineDefaultLayerSetFn)(void *user, int layer_id);
 typedef void (*DP_PaintEngineUndoDepthLimitSetFn)(void *user,
                                                   int undo_depth_limit);
 typedef void (*DP_PaintEngineCatchupFn)(void *user, int progress);
-typedef void (*DP_PaintEngineRecorderStateChanged)(void *user, bool started);
+typedef void (*DP_PaintEngineResetLockChangedFn)(void *user, bool locked);
+typedef void (*DP_PaintEngineRecorderStateChangedFn)(void *user, bool started);
 typedef void (*DP_PaintEngineResizedFn)(void *user, int offset_x, int offset_y,
                                         int prev_width, int prev_height);
 typedef void (*DP_PaintEngineLayerPropsChangedFn)(void *user,
@@ -195,7 +196,8 @@ int DP_paint_engine_handle_inc(DP_PaintEngine *pe, bool local,
 
 void DP_paint_engine_tick(
     DP_PaintEngine *pe, DP_PaintEngineCatchupFn catchup,
-    DP_PaintEngineRecorderStateChanged recorder_state_changed,
+    DP_PaintEngineResetLockChangedFn reset_lock_changed,
+    DP_PaintEngineRecorderStateChangedFn recorder_state_changed,
     DP_PaintEngineResizedFn resized, DP_CanvasDiffEachPosFn tile_changed,
     DP_PaintEngineLayerPropsChangedFn layer_props_changed,
     DP_PaintEngineAnnotationsChangedFn annotations_changed,

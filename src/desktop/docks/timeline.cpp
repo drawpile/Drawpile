@@ -3,6 +3,7 @@
 #include "desktop/docks/timeline.h"
 #include "desktop/docks/titlewidget.h"
 #include "desktop/widgets/timelinewidget.h"
+#include "libclient/canvas/acl.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/documentmetadata.h"
 #include "libclient/canvas/timelinemodel.h"
@@ -54,6 +55,9 @@ void Timeline::setCanvas(canvas::CanvasModel *canvas)
 	connect(
 		canvas, &canvas::CanvasModel::compatibilityModeChanged, this,
 		&Timeline::setCompatibilityMode);
+	connect(
+		canvas->aclState(), &canvas::AclState::resetLockChanged, this,
+		&Timeline::setDisabled);
 
 	const canvas::DocumentMetadata *metadata = canvas->metadata();
 	connect(

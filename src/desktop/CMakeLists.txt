@@ -106,6 +106,8 @@ target_sources(drawpile PRIVATE
 	dialogs/playbackdialog.h
 	dialogs/resetdialog.cpp
 	dialogs/resetdialog.h
+	dialogs/resetnoticedialog.cpp
+	dialogs/resetnoticedialog.h
 	dialogs/resizedialog.cpp
 	dialogs/resizedialog.h
 	dialogs/serverlogdialog.cpp

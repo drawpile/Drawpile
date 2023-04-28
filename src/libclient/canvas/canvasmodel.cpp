@@ -40,6 +40,7 @@ CanvasModel::CanvasModel(uint8_t localUserId, int fps, int snapshotMaxCount,
 
 	connect(m_aclstate, &AclState::userBitsChanged, m_userlist, &UserListModel::updateAclState);
 	connect(m_paintengine, &PaintEngine::aclsChanged, m_aclstate, &AclState::aclsChanged);
+	connect(m_paintengine, &PaintEngine::resetLockSet, m_aclstate, &AclState::resetLockSet);
 	connect(m_paintengine, &PaintEngine::laserTrail, this, &CanvasModel::onLaserTrail);
 	connect(m_paintengine, &PaintEngine::defaultLayer, m_layerlist, &LayerListModel::setDefaultLayer);
 	connect(m_paintengine, &PaintEngine::recorderStateChanged, this, &CanvasModel::recorderStateChanged);

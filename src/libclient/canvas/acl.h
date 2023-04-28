@@ -71,8 +71,11 @@ public:
 	//! Get the layer's access control list
 	Layer layerAcl(uint16_t layerId) const;
 
+	bool isResetLocked() const;
+
 public slots:
 	void aclsChanged(const drawdance::AclState &acls, int aclChangeFlags, bool reset);
+	void resetLockSet(bool locked);
 
 signals:
 	//! Local user's operator status has changed
@@ -92,6 +95,8 @@ signals:
 
 	//! Feature access tiers have changed
 	void featureTiersChanged(const DP_FeatureTiers&);
+
+	void resetLockChanged(bool locked);
 
 private:
 	void emitFeatureChanges(int before, int now, bool reset);
