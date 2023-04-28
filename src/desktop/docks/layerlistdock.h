@@ -8,6 +8,7 @@ extern "C" {
 }
 
 #include <QDockWidget>
+#include <QSet>
 
 class QModelIndex;
 class QItemSelection;
@@ -113,7 +114,7 @@ private:
 	int m_nearestToDeletedId;
 
 	// try to retain view status across model resets
-	QHash<int, QPair<QString, qint64>> m_expandedGroups;
+	QSet<int> m_expandedGroups;
 	int m_lastScrollPosition;
 
 	bool m_noupdate;

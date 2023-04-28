@@ -549,25 +549,10 @@ void LayerList::beforeLayerReset()
 {
 	m_nearestToDeletedId = m_canvas->layerlist()->findNearestLayer(m_selectedId);
 	m_lastScrollPosition = m_view->verticalScrollBar()->value();
-	// We want to retain the expanded state of layer groups across resets, but
-	// that's pretty tricky, since we might get hit with intermediate states
-	// where the groups don't exist at all. We also don't want to expand groups
-	// that just happen to have the same ids as one that used to be expanded
-	// ages ago. So we use some heuristics here. First, we clear out all groups
-	// that are collapsed, since we might have some stale entries from earlier.
-	for(int layerId : m_expandedGroups.keys()) {
-		QModelIndex index = m_canvas->layerlist()->layerIndex(layerId);
-		if(index.isValid() && !m_view->isExpanded(index)) {
-			m_expandedGroups.remove(layerId);
-		}
-	}
-	// Now we collect all expanded groups and remember the time at which we saw
-	// them as well as their current title. When deciding whether to expand a
-	// group, we use those to guess if this is still the same group or not.
-	qint64 now = QDateTime::currentMSecsSinceEpoch();
+	m_expandedGroups.clear();
 	for(const canvas::LayerListItem &item : m_canvas->layerlist()->layerItems()) {
 		if(m_view->isExpanded(m_canvas->layerlist()->layerIndex(item.id))) {
-			m_expandedGroups.insert(item.id, {item.title, now});
+			m_expandedGroups.insert(item.id);
 		}
 	}
 }
@@ -576,6 +561,13 @@ void LayerList::afterLayerReset()
 {
 	const bool wasAnimated = m_view->isAnimated();
 	m_view->setAnimated(false);
+
+	for(int layerId : m_expandedGroups) {
+		QModelIndex index = m_canvas->layerlist()->layerIndex(layerId);
+		if(index.isValid()) {
+			m_view->setExpanded(index, true);
+		}
+	}
 
 	if(m_canvas->layerlist()->rowCount() == 0) {
 		// If there's nothing to select, the selection model doesn't emit
@@ -587,26 +579,6 @@ void LayerList::afterLayerReset()
 			selectLayerIndex(selectedIndex);
 		} else {
 			selectLayer(m_nearestToDeletedId);
-		}
-	}
-
-	// Heuristic for recognizing if the group we're dealing with is still the
-	// same. We'll say that after 1 minute, it's probably a different group.
-	// This should also cover cases where the group is deleted and then that
-	// deletion is undone or something. This might incorrectly expand a group
-	// that had a default "Group 1" name or something that was deleted and then
-	// recreated shortly after, but that's rare and non-disruptive, so whatever.
-	constexpr qint64 MAX_TIME = 60000;
-	qint64 now = QDateTime::currentMSecsSinceEpoch();
-	for(int layerId : m_expandedGroups.keys()) {
-		QModelIndex index = m_canvas->layerlist()->layerIndex(layerId);
-		if(index.isValid()) {
-			QPair<QString, qint64> pair = m_expandedGroups.value(layerId);
-			bool sameTitle = index.data(canvas::LayerListModel::TitleRole).toString() == pair.first;
-			bool inTime = now - pair.second <= MAX_TIME;
-			if(sameTitle && inTime) {
-				m_view->setExpanded(index, true);
-			}
 		}
 	}
 
