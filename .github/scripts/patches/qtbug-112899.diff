@@ -1,0 +1,103 @@
+From 4db9fdf58ea88420c5ca41c1547c55948b83d881 Mon Sep 17 00:00:00 2001
+From: Tor Arne Vestbø <tor.arne.vestbo@qt.io>
+Date: Tue, 25 Apr 2023 17:13:04 +0200
+Subject: [PATCH] macOS: Avoid memory leak when using NSSlider for style drawing
+
+To fix the broken sliders reported in QTBUG-98093 a workaround was
+added by 4bee9cdc0ac4bbee7f061e8f6050d704032f6d0f where we would
+call initWithFrame on an already initialized NSSlider.
+
+This breaks the contract of object initialization in Objective-C,
+as the class is free to allocate and prepare resources for the
+instance without freeing previously acquired resources first.
+As noted by the Object Initialization chapter of the Concepts
+in Objective-C Programming guide, "Once an object is initialized,
+you should not initialize it again.":
+
+    https://tinyurl.com/objc-object-init
+
+And as observed in QTBUG-112899, the additional initialization
+resulted in a memory leak.
+
+The other part of 4bee9cdc0ac4bbee7f061e8f6050d704032f6d0f
+was that we now called startTrackingAt twice when drawing.
+Both from setupSlider, for all consumers, and from
+drawComplexControl, and as it turns out, this is the key
+thing that "fixes" the pressed knob drawing of NSSlider.
+
+For some reason, NSSlider needs the duplicate startTrackingAt
+call both to draw the knob as pressed, and to not let one
+drawing pass affect another drawing pass. This would benefit
+from further investigation, but for now the removed leak
+is an improvement.
+
+Fixes: QTBUG-112899
+Task-number: QTBUG-98093
+Pick-to: 6.5
+Change-Id: Ia7e6ef963910f1858d2fdb10e0323fc5bb3b2eda
+Reviewed-by: Timur Pocheptsov <timur.pocheptsov@qt.io>
+---
+
+diff --git a/src/plugins/styles/mac/qmacstyle_mac.mm b/src/plugins/styles/mac/qmacstyle_mac.mm
+index 15dcea1..2bab19d 100644
+--- a/src/plugins/styles/mac/qmacstyle_mac.mm
++++ b/src/plugins/styles/mac/qmacstyle_mac.mm
+@@ -429,12 +429,7 @@
+     if (sl->minimum >= sl->maximum)
+         return false;
+ 
+-    // NSSlider seems to cache values based on tracking and the last layout of the
+-    // NSView, resulting in incorrect knob rects that break the interaction with
+-    // multiple sliders. So completely reinitialize the slider.
+-    const auto controlSize = slider.controlSize;
+-    [slider initWithFrame:sl->rect.toCGRect()];
+-    slider.controlSize = controlSize;
++    slider.frame = sl->rect.toCGRect();
+ 
+     slider.minValue = sl->minimum;
+     slider.maxValue = sl->maximum;
+@@ -465,14 +460,6 @@
+     // the cell for its metrics and to draw itself.
+     [slider layoutSubtreeIfNeeded];
+ 
+-    if (sl->state & QStyle::State_Sunken) {
+-        const CGRect knobRect = [slider.cell knobRectFlipped:slider.isFlipped];
+-        CGPoint pressPoint;
+-        pressPoint.x = CGRectGetMidX(knobRect);
+-        pressPoint.y = CGRectGetMidY(knobRect);
+-        [slider.cell startTrackingAt:pressPoint inView:slider];
+-    }
+-
+     return true;
+ }
+ 
+@@ -5386,6 +5373,15 @@
+                 const CGRect knobRect = [slider.cell knobRectFlipped:slider.isFlipped];
+                 pressPoint.x = CGRectGetMidX(knobRect);
+                 pressPoint.y = CGRectGetMidY(knobRect);
++
++                // The only way to tell a NSSlider/NSSliderCell to render as pressed
++                // is to start tracking. But this API has some weird behaviors that
++                // we have to account for. First of all, the pressed state will not
++                // be visually reflected unless we start tracking twice. And secondly
++                // if we don't track twice, the state of one render-pass will affect
++                // the render pass of other sliders, even if we set up the shared
++                // NSSlider with a new slider value.
++                [slider.cell startTrackingAt:pressPoint inView:slider];
+                 [slider.cell startTrackingAt:pressPoint inView:slider];
+             }
+ 
+@@ -5490,8 +5486,12 @@
+                 }
+             });
+ 
+-            if (isPressed)
++            if (isPressed) {
++                // We stop twice to be on the safe side, even if one seems to be enough.
++                // See startTracking above for why we do this.
+                 [slider.cell stopTracking:pressPoint at:pressPoint inView:slider mouseIsUp:NO];
++                [slider.cell stopTracking:pressPoint at:pressPoint inView:slider mouseIsUp:NO];
++            }
+         }
+         break;
+ #if QT_CONFIG(spinbox)
