@@ -85,12 +85,15 @@ if(LIBMICROHTTPD)
 				SOLUTION w32/VS-Any-Version/libmicrohttpd.vcxproj
 				SHARED Release-dll
 				STATIC Release-static
+				DEBUG_SHARED Debug-dll
+				DEBUG_STATIC Debug-static
 				INCLUDES src/include/microhttpd.h
 				RM lib/microhttpd.h bin/microhttpd.h
 		UNIX
 			AUTOMAKE
 				ALL --disable-doc --disable-examples --disable-curl
 				DEBUG --enable-asserts ${extra_debug_flags}
+				RELWITHDEBINFO --enable-asserts
 	)
 endif()
 
@@ -105,6 +108,8 @@ if(LIBSODIUM)
 				SOLUTION builds/msvc/vs2019/libsodium.sln
 				SHARED DynRelease
 				STATIC StaticRelease
+				DEBUG_SHARED DynDebug
+				DEBUG_STATIC StaticDebug
 				INCLUDES src/libsodium/include/sodium.h src/libsodium/include/sodium
 		UNIX AUTOMAKE
 	)
