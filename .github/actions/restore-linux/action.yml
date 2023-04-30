@@ -50,8 +50,8 @@ runs:
         libgl1-mesa-dev libsystemd-dev libxkbcommon-dev libvulkan-dev
         gir1.2-atspi-2.0 gir1.2-gudev-1.0 libdrm-intel1 libegl-mesa0
         libegl1 libevdev2 libgles1 libgles2 libglu1-mesa libinput-bin
-        libinput10 libllvm15 libmtdev1 libopengl0 libpciaccess0
-        libwacom-common libwacom9 libxcb-icccm4 libxcb-image0
+        libinput10 libllvm12 libmtdev1 libopengl0 libpciaccess0
+        libwacom-common libwacom2 libxcb-icccm4 libxcb-image0
         libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-shape0
         libxcb-util1 libxcb-xinerama0 libxcb-xinput0 libxcb-xkb1
         libxkbcommon-x11-0 libdrm-amdgpu1 libdrm-common libdrm-nouveau2

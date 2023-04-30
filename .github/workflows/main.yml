@@ -26,7 +26,7 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-latest
+          - ubuntu-20.04
           - macos-latest
           - windows-latest
         qt: [ 5.15.8, 6.4.2 ]
@@ -40,7 +40,7 @@ jobs:
 
         include:
           # Linux common
-          - os: ubuntu-latest
+          - os: ubuntu-20.04
             sccache_triplet: x86_64-unknown-linux-musl
             # The runner has multiple clang versions installed and CMake/Qt gets
             # confused about which one to pick for some reason, so this also
@@ -58,22 +58,22 @@ jobs:
               libxcb-sync-dev libxcb-xfixes0-dev libxcb-shape0-dev
               libxcb-randr0-dev libxcb-render0-dev libxcb-render-util0-dev
               libxcb-util-dev libinput-dev libvulkan-dev
-              libxcb-xinerama0-dev libxcb-xkb-dev libxcb-xinput-dev libclang-13-dev
+              libxcb-xinerama0-dev libxcb-xkb-dev libxcb-xinput-dev libclang-12-dev
               libasound2-dev libpulse-dev libcups2-dev libssl-dev
               libfontconfig1-dev &&
-              echo "Clang_ROOT=/usr/lib/llvm-13" >> $GITHUB_ENV
+              echo "Clang_ROOT=/usr/lib/llvm-12" >> $GITHUB_ENV
             other_pre_build: >
               sudo apt-get update &&
               sudo apt-get install --no-install-recommends
               libsecret-1-dev
 
           # Linux non-cross-compile
-          - os: ubuntu-latest
+          - os: ubuntu-20.04
             cross_os:
             build_flags: -DINITSYS=systemd
 
           # Linux Qt 5 (release)
-          - os: ubuntu-latest
+          - os: ubuntu-20.04
             cross_os:
             qt: 5.15.8
             # This causes the AppImage to be generated, instead of just creating
@@ -86,7 +86,7 @@ jobs:
             packager: EXTRA_QT_PLUGINS="svg;" VERSION=$(git describe) cmake --install build --config Release
 
           # Android common
-          - os: ubuntu-latest
+          - os: ubuntu-20.04
             cross_os: Android
             cross_qt_args: >-
               "-DANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
@@ -94,7 +94,7 @@ jobs:
               "-DANDROID_HOST_PATH=$GITHUB_WORKSPACE/.github/deps/qt"
 
           # Android Qt 6
-          - os: ubuntu-latest
+          - os: ubuntu-20.04
             cross_os: Android
             qt: 6.4.2
             cross_other_args: >-
@@ -107,7 +107,7 @@ jobs:
               -DCMAKE_FIND_ROOT_PATH_MODE_PROGRAM=BOTH
 
           # Android Qt 5 (release)
-          - os: ubuntu-latest
+          - os: ubuntu-20.04
             cross_os: Android
             qt: 5.15.8
             cross_other_args: >-
@@ -317,7 +317,7 @@ jobs:
 
   release:
     needs: test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     if: >
       success() && (
           github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
