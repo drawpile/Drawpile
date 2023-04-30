@@ -2257,7 +2257,9 @@ void DP_paint_engine_tick(
     // when it reaches 100%. This may seem doubled up at first glance, but since
     // the catchup message comes in *after* the reset message, there is a small
     // chance that we grab the null canvas state right in between those two.
-    bool should_update = !DP_atomic_get(&pe->just_reset) && !pe->catching_up;
+    bool just_reset = DP_atomic_get(&pe->just_reset);
+    bool catching_up = pe->catching_up;
+    bool should_update = !just_reset && !catching_up;
     DP_CanvasState *next_history_cs;
     bool preview_changed;
     bool local_view_changed;
@@ -2322,6 +2324,8 @@ void DP_paint_engine_tick(
 
     bool reset_locked = !should_update;
     if (reset_locked != pe->reset_locked) {
+        DP_info("Reset lock changed to %d (reset %d, catchup %d)", reset_locked,
+                just_reset, catching_up);
         pe->reset_locked = reset_locked;
         reset_lock_changed(user, reset_locked);
     }

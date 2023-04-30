@@ -87,6 +87,7 @@ void AclState::aclsChanged(const drawdance::AclState &acls, int aclChangeFlags, 
 
 void AclState::resetLockSet(bool locked)
 {
+	qDebug("Reset lock %d", locked);
 	d->resetLocked = locked;
 	emit resetLockChanged(locked);
 	emit localLockChanged(amLocked());

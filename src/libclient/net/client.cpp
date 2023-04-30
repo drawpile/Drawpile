@@ -300,6 +300,7 @@ void Client::handleServerReply(const ServerReply &reply)
 		break;
 	case ServerReply::ReplyType::Catchup:
 		m_catchupTo = reply.reply["count"].toInt();
+		qInfo("Catching up to %d messages", m_catchupTo);
 		m_caughtUp = 0;
 		m_catchupProgress = 0;
 		emit catchupProgress(m_catchupTo > 0 ? 0 : 100);
