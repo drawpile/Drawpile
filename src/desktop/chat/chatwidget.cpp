@@ -588,7 +588,7 @@ void ChatWidget::receiveMessage(int sender, int recipient, uint8_t tflags, uint8
 		}
 	}
 
-	if(!d->myline->hasFocus() || chatId != d->currentChat)
+	if(!d->myline->hasFocus() || chatId != d->currentChat || isValidAlert)
 		notification::playSound(notification::Event::CHAT);
 
 	if(wasAtEnd || isValidAlert) {
