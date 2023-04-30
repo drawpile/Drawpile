@@ -640,7 +640,7 @@ if(${QT_PACKAGE_NAME}LinguistTools_FOUND)
 	bundle_translations(bundle_files
 		NAME all
 		OUTPUT_LOCATION i18n-bundle
-		QT qt qtbase qtmultimedia
+		QT qtbase qtmultimedia
 		TARGETS dpclient drawpile
 	)
 
