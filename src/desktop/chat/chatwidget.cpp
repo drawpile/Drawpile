@@ -62,10 +62,9 @@ struct Chat {
 	}
 
 	void appendSeparator(QTextCursor &cursor);
-	void appendMessage(int userId, const QString &usernameSpan, const QString &message, bool shout);
-	void appendMessageCompact(int userId, const QString &usernameSpan, const QString &message, bool shout);
+	void appendMessage(int userId, const QString &usernameSpan, const QString &message, bool shout, bool alert);
+	void appendMessageCompact(int userId, const QString &usernameSpan, const QString &message, bool shout, bool alert);
 	void appendAction(const QString &usernameSpan, const QString &message);
-	void appendAlert(const QString &usernameSpan, const QString &message);
 	void appendNotification(const QString &message);
 };
 
@@ -337,7 +336,7 @@ void Chat::appendSeparator(QTextCursor &cursor)
 		));
 }
 
-void Chat::appendMessageCompact(int userId, const QString &usernameSpan, const QString &message, bool shout)
+void Chat::appendMessageCompact(int userId, const QString &usernameSpan, const QString &message, bool shout, bool alert)
 {
 	Q_UNUSED(userId);
 
@@ -347,31 +346,33 @@ void Chat::appendMessageCompact(int userId, const QString &usernameSpan, const Q
 
 	cursor.movePosition(QTextCursor::End);
 
+	QString content =
+		usernameSpan.isEmpty() ? message : QStringLiteral("%1: %2").arg(usernameSpan, message);
+
 	cursor.insertHtml(QStringLiteral(
-		"<table width=\"100%\" class=\"message%1\">"
+		"<table width=\"100%\" class=\"%1\">"
 		"<tr>"
 			"<td width=3 class=tab></td>"
-			"<td>%2: %3</td>"
-			"<td class=timestamp align=right>%4</td>"
+			"<td>%2</td>"
+			"<td class=timestamp align=right>%3</td>"
 		"</tr>"
 		"</table>"
 		).arg(
-			shout ? QStringLiteral(" shout") : QString(),
-			usernameSpan,
-			message,
+			alert ? " alert" : shout ? " shout" : "",
+			content,
 			timestamp()
 		)
 	);
 }
 
-void Chat::appendMessage(int userId, const QString &usernameSpan, const QString &message, bool shout)
+void Chat::appendMessage(int userId, const QString &usernameSpan, const QString &message, bool shout, bool alert)
 {
 	QTextCursor cursor(doc);
 	cursor.movePosition(QTextCursor::End);
 
 	const qint64 ts = QDateTime::currentMSecsSinceEpoch();
 
-	if(shout) {
+	if(shout || alert) {
 		lastAppendedId = -2;
 
 	} else if(lastAppendedId != userId) {
@@ -410,7 +411,7 @@ void Chat::appendMessage(int userId, const QString &usernameSpan, const QString 
 		"</tr>"
 		"</table>"
 		).arg(
-			shout ? QStringLiteral(" shout") : QString(),
+			alert ? " alert" : shout ? " shout" : "",
 			QString::number(userId),
 			usernameSpan,
 			timestamp(),
@@ -418,32 +419,6 @@ void Chat::appendMessage(int userId, const QString &usernameSpan, const QString 
 		)
 	);
 	lastMessageTs = ts;
-}
-
-void Chat::appendAlert(const QString &usernameSpan, const QString &message)
-{
-	QTextCursor cursor(doc);
-	cursor.movePosition(QTextCursor::End);
-
-	lastAppendedId = -2;
-
-	cursor.insertHtml(QStringLiteral(
-	    "<table width=\"100%\" class=\"message alert\">"
-	    "<tr>"
-	        "<td width=3 rowspan=2 class=tab></td>"
-	        "<td>%1</td>"
-	        "<td class=timestamp align=right>%2</td>"
-	    "</tr>"
-	    "<tr>"
-	        "<td colspan=2>%3</td>"
-	    "</tr>"
-	    "</table>"
-	    ).arg(
-	        usernameSpan,
-	        timestamp(),
-	        htmlutils::newlineToBr(message)
-	    )
-	);
 }
 
 void Chat::appendAction(const QString &usernameSpan, const QString &message)
@@ -588,26 +563,23 @@ void ChatWidget::receiveMessage(int sender, int recipient, uint8_t tflags, uint8
 	bool isOp = d->userlist && d->userlist->isOperator(sender);
 	bool isValidAlert = isOp && oflags & DP_MSG_CHAT_OFLAGS_ALERT;
 	bool isValidShout = isOp && oflags & DP_MSG_CHAT_OFLAGS_SHOUT;
-	if(isValidAlert) {
-		chat.appendAlert(d->usernameSpan(sender), safetext);
+	if(oflags & DP_MSG_CHAT_OFLAGS_ACTION) {
+		chat.appendAction(d->usernameSpan(sender), safetext);
+	} else if(d->compactMode) {
+		chat.appendMessageCompact(sender, d->usernameSpan(sender), safetext, isValidShout, isValidAlert);
+	} else {
+		chat.appendMessage(sender, d->usernameSpan(sender), safetext, isValidShout, isValidAlert);
+	}
 
+	if(isValidAlert) {
 		for(int i=0;i<d->tabs->count();++i) {
 			if(d->tabs->tabData(i).toInt() == chatId) {
 				d->tabs->setCurrentIndex(i);
 				break;
 			}
 		}
-
 		emit expandRequested();
-	} else if(oflags & DP_MSG_CHAT_OFLAGS_ACTION) {
-		chat.appendAction(d->usernameSpan(sender), safetext);
-	} else if(d->compactMode) {
-		chat.appendMessageCompact(sender, d->usernameSpan(sender), safetext, isValidShout);
-	} else {
-		chat.appendMessage(sender, d->usernameSpan(sender), safetext, isValidShout);
-	}
-
-	if(chatId != d->currentChat) {
+	} else if(chatId != d->currentChat) {
 		for(int i=0;i<d->tabs->count();++i) {
 			if(d->tabs->tabData(i).toInt() == chatId) {
 				d->tabs->setTabTextColor(i, QColor(218, 68, 83));
@@ -637,7 +609,7 @@ void ChatWidget::systemMessage(const QString& message, bool alert)
 {
 	const bool wasAtEnd = d->isAtEnd();
 	if(alert) {
-		d->publicChat().appendAlert(QString(), message);
+		d->publicChat().appendMessageCompact(0, QString(), message, false, true);
 		emit expandRequested();
 	} else {
 		d->publicChat().appendNotification(message.toHtmlEscaped());
