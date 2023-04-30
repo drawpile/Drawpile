@@ -84,6 +84,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 
 	const QLocale localeC = QLocale::c();
 	QStringList locales;
+	locales.append(QStringLiteral("en"));
 	for(const QString &datapath : utils::paths::dataPaths()) {
 		const QStringList files = QDir(datapath + "/i18n").entryList(QStringList("all_*.qm"), QDir::Files, QDir::Name);
 		for(const QString &file : files) {
