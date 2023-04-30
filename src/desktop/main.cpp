@@ -307,33 +307,18 @@ void DrawpileApp::deleteAllMainWindowsExcept(MainWindow *win)
 
 static void initTranslations(DrawpileApp &app, const QLocale &locale)
 {
-	const auto preferredLangs = locale.uiLanguages();
-	if(preferredLangs.size()==0)
-		return;
-
-	// TODO we should work our way down the preferred language list
-	// until we find one a translation exists for.
-	QString preferredLang = preferredLangs.at(0);
-
-	// On Windows, the locale name is sometimes in the form "fi-FI"
-	// rather than "fi_FI" that Qt expects.
-	preferredLang.replace('-', '_');
-
-	// Special case: if english is preferred language, no translations are needed.
-	// TODO: This is wrong since English still needs translations for N-variants
-	if(preferredLang.mid(0, 2) == "en")
-		return;
-
-	auto *translator = new QTranslator(&app);
-	for(const QString &datapath : utils::paths::dataPaths()) {
-		if(translator->load("all_" + preferredLang, datapath + "/i18n"))
-			break;
+	QTranslator *translator = new QTranslator{&app};
+	for(const QString &lang : locale.uiLanguages()) {
+		QString filename = QStringLiteral("all_%1").arg(lang);
+		for(const QString &datapath : utils::paths::dataPaths()) {
+			QString directory = QStringLiteral("%1/i18n").arg(datapath);
+			if(translator->load(filename, directory) && !translator->isEmpty()) {
+				qApp->installTranslator(translator);
+				return;
+			}
+		}
 	}
-
-	if(translator->isEmpty())
-		delete translator;
-	else
-		qApp->installTranslator(translator);
+	delete translator;
 }
 
 #ifdef Q_OS_WIN
