@@ -85,9 +85,9 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	const QLocale localeC = QLocale::c();
 	QStringList locales;
 	for(const QString &datapath : utils::paths::dataPaths()) {
-		const QStringList files = QDir(datapath + "/i18n").entryList(QStringList("drawpile_*.qm"), QDir::Files, QDir::Name);
+		const QStringList files = QDir(datapath + "/i18n").entryList(QStringList("all_*.qm"), QDir::Files, QDir::Name);
 		for(const QString &file : files) {
-			QString localename = file.mid(9, file.length() - 3 - 9);
+			QString localename = file.mid(4, file.length() - 3 - 4);
 			QLocale locale(localename);
 			if(locale != localeC && !locales.contains(localename)) {
 				locales << localename;
