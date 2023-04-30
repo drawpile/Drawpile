@@ -78,6 +78,13 @@ signals:
 	void expandRequested();
 
 private:
+#ifdef Q_OS_ANDROID
+	// Detaching the chat window in a single-window environment is a bad idea.
+	static constexpr bool ALLOW_DETACH = false;
+#else
+	static constexpr bool ALLOW_DETACH = true;
+#endif
+
 	struct Private;
 	Private *d;
 };
