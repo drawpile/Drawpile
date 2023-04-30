@@ -790,14 +790,16 @@ void ChatWidget::showChatContextMenu(const QPoint &pos)
 	compact->setCheckable(true);
 	compact->setChecked(d->compactMode);
 
-	if(d->isAttached) {
-		menu->addAction(tr("Detach"), this, &ChatWidget::detachRequested);
-	} else {
-		QWidget *win = parentWidget();
-		while(win->parent() != nullptr)
-			win = win->parentWidget();
+	if(ALLOW_DETACH) {
+		if(d->isAttached) {
+			menu->addAction(tr("Detach"), this, &ChatWidget::detachRequested);
+		} else {
+			QWidget *win = parentWidget();
+			while(win->parent() != nullptr)
+				win = win->parentWidget();
 
-		menu->addAction(tr("Attach"), win, &QWidget::close);
+			menu->addAction(tr("Attach"), win, &QWidget::close);
+		}
 	}
 
 	menu->exec(d->view->mapToGlobal(pos));
