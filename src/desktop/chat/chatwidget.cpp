@@ -91,7 +91,7 @@ struct ChatWidget::Private {
 	int currentChat = 0;
 
 	bool preserveChat = true;
-	bool compactMode = false;
+	bool compactMode = COMPACT_ONLY;
 	bool isAttached = true;
 	bool wasAtEnd = true;
 
@@ -180,8 +180,10 @@ ChatWidget::ChatWidget(QWidget *parent)
 
 	setPreserveMode(false);
 
-	dpApp().settings().bindCompactChat(this, [=](bool compact) {
-		d->compactMode = compact;
+	dpApp().settings().bindCompactChat(this, [this](bool compact) {
+		if(!COMPACT_ONLY) {
+			d->compactMode = compact;
+		}
 	});
 }
 
@@ -786,9 +788,11 @@ void ChatWidget::showChatContextMenu(const QPoint &pos)
 
 	menu->addAction(tr("Clear"), this, &ChatWidget::clear);
 
-	auto compact = menu->addAction(tr("Compact mode"), this, &ChatWidget::setCompactMode);
-	compact->setCheckable(true);
-	compact->setChecked(d->compactMode);
+	if(!COMPACT_ONLY) {
+		auto compact = menu->addAction(tr("Compact mode"), this, &ChatWidget::setCompactMode);
+		compact->setCheckable(true);
+		compact->setChecked(d->compactMode);
+	}
 
 	if(ALLOW_DETACH) {
 		if(d->isAttached) {
@@ -807,7 +811,9 @@ void ChatWidget::showChatContextMenu(const QPoint &pos)
 
 void ChatWidget::setCompactMode(bool compact)
 {
-	dpApp().settings().setCompactChat(compact);
+	if(!COMPACT_ONLY) {
+		dpApp().settings().setCompactChat(compact);
+	}
 }
 
 void ChatWidget::resizeEvent(QResizeEvent *)
