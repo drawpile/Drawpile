@@ -228,6 +228,7 @@ if(BASE)
 				patches/qmake_android_ltcg.diff
 				patches/qtbug-112504.diff
 				patches/qandroidassetsfileenginehandler_dot_slash.diff
+				patches/qtbug-92199.diff
 				patches/qtbug-98369.diff
 			6.4.2
 				patches/qtbug-109375.diff
