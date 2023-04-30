@@ -32,7 +32,7 @@ public:
      * uses @ref setValue
      * @param steps Number of steps that the value should change
      */
-    void stepBy(int steps) override;
+    void stepBy(int steps) final override;
     /**
      * @brief Set the value of the spinbox
      *
