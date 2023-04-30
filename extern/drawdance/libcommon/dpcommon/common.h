@@ -127,6 +127,7 @@ typedef max_align_t DP_max_align_t;
 
 typedef enum DP_LogLevel {
     DP_LOG_DEBUG,
+    DP_LOG_INFO,
     DP_LOG_WARN,
     DP_LOG_PANIC,
 } DP_LogLevel;
@@ -147,6 +148,11 @@ void *DP_log_fn_set(DP_LogFn fn, void *user);
 void DP_debug_at(const char *file, int line, const char *fmt, ...)
     DP_FORMAT(3, 4);
 #endif
+
+#define DP_info(...) \
+    DP_info_at(&__FILE__[DP_PROJECT_DIR_LENGTH], __LINE__, __VA_ARGS__)
+void DP_info_at(const char *file, int line, const char *fmt, ...)
+    DP_FORMAT(3, 4);
 
 #define DP_warn(...) \
     DP_warn_at(&__FILE__[DP_PROJECT_DIR_LENGTH], __LINE__, __VA_ARGS__)

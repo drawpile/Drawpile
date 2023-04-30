@@ -34,6 +34,8 @@ static const char *log_level_to_string(DP_LogLevel level)
     switch (level) {
     case DP_LOG_DEBUG:
         return "DEBUG";
+    case DP_LOG_INFO:
+        return "INFO";
     case DP_LOG_WARN:
         return "WARN";
     case DP_LOG_PANIC:
@@ -81,6 +83,11 @@ void DP_debug_at(const char *file, int line, const char *fmt, ...)
     DO_LOG(DP_LOG_DEBUG, file, line, fmt, ap);
 }
 #endif
+
+void DP_info_at(const char *file, int line, const char *fmt, ...)
+{
+    DO_LOG(DP_LOG_INFO, file, line, fmt, ap);
+}
 
 void DP_warn_at(const char *file, int line, const char *fmt, ...)
 {

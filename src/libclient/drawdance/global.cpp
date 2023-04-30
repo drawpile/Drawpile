@@ -30,6 +30,13 @@ PRINTF_LIKE static void logMessage(
 				qUtf8Printable(QString::vasprintf(fmt, ap)));
 		}
 		break;
+	case DP_LOG_INFO:
+		if(category.isInfoEnabled()) {
+			qCInfo(
+				category, "%s:%d - %s", file, line,
+				qUtf8Printable(QString::vasprintf(fmt, ap)));
+		}
+		break;
 	case DP_LOG_PANIC:
 		if(category.isCriticalEnabled()) {
 			qCCritical(
