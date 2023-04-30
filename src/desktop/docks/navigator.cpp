@@ -318,9 +318,7 @@ Navigator::Navigator(QWidget *parent)
 	m_zoomSlider->setPageStep(50);
 	m_zoomSlider->setValue(100);
 	m_zoomSlider->setOrientation(Qt::Horizontal);
-	titlebar->addSpace(16);
 	titlebar->addCustomWidget(m_zoomSlider, true);
-	titlebar->addSpace(16);
 
 	connect(m_view, &NavigatorView::focusMoved, this, &Navigator::focusMoved);
 	connect(m_view, &NavigatorView::wheelZoom, this, &Navigator::wheelZoom);
