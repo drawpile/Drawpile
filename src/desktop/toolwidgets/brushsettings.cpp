@@ -384,14 +384,14 @@ void BrushSettings::changeBrushType()
 
 void BrushSettings::changeSizeSetting(int size)
 {
-	if(d->ui.brushsizeBox->isVisible()) {
+	if(d->currentBrush().activeType() == brushes::ActiveBrush::CLASSIC) {
 		emit pixelSizeChanged(size);
 	}
 }
 
 void BrushSettings::changeRadiusLogarithmicSetting(int radiusLogarithmic)
 {
-	if(d->ui.radiusLogarithmicBox->isVisible()) {
+	if(d->currentBrush().activeType() == brushes::ActiveBrush::MYPAINT) {
 		emit pixelSizeChanged(radiusLogarithmicToPixelSize(radiusLogarithmic));
 	}
 }
