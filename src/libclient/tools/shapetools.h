@@ -32,10 +32,10 @@ protected:
 	QRectF rect() const { return QRectF(m_p1, m_p2).normalized(); }
 
 	QPointF m_start, m_p1, m_p2;
+	bool m_drawing;
 
 private:
 	float m_zoom;
-	bool m_drawing;
 	drawdance::BrushEngine m_brushEngine;
 };
 

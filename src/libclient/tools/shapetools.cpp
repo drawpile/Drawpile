@@ -147,6 +147,9 @@ Line::Line(ToolController &owner)
 
 void Line::motion(const canvas::Point& point, bool constrain, bool center)
 {
+	if(!m_drawing)
+		return;
+
 	if(constrain)
 		m_p2 = constraints::angle(m_start, point);
 	else
