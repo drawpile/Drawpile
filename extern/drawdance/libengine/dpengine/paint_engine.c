@@ -2032,21 +2032,11 @@ static DP_CanvasState *apply_local_layer_props(DP_PaintEngine *pe,
     DP_LayerPropsList *prev_lpl = pe->local_view.layers.prev_lpl;
     DP_Timeline *prev_tl = pe->local_view.layers.prev_tl;
     if (lpl == prev_lpl && tl == prev_tl) {
-        // If our local view doesn't have anything to change about the canvas
-        // state, we don't need to replace anything in the target state either.
-        bool keep_layer_props =
-            vm == DP_VIEW_MODE_NORMAL && !pe->local_view.reveal_censored
-            && DP_local_state_hidden_layer_id_count(pe->local_state) == 0;
-        if (keep_layer_props) {
-            return cs;
-        }
-        else {
-            DP_TransientCanvasState *tcs =
-                get_or_make_transient_canvas_state(cs);
-            DP_transient_canvas_state_layer_props_set_inc(
-                tcs, pe->local_view.layers.lpl);
-            return (DP_CanvasState *)tcs;
-        }
+        // Layer state didn't change, jam the previous version in there.
+        DP_TransientCanvasState *tcs = get_or_make_transient_canvas_state(cs);
+        DP_transient_canvas_state_layer_props_set_inc(
+            tcs, pe->local_view.layers.lpl);
+        return (DP_CanvasState *)tcs;
     }
     else {
         DP_PERF_BEGIN(local, "tick:changes:local");
