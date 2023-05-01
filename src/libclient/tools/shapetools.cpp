@@ -15,19 +15,25 @@ namespace tools {
 
 class PointVectorGenerator {
 public:
-	PointVectorGenerator(int reserve)
-		: m_time(0)
-		, m_pv()
+	PointVectorGenerator()
+		: m_time{0}
+		, m_pv{}
 	{
-		m_pv.reserve(reserve);
 	}
 
 	void append(const QPointF &point)
 	{
 		if(!m_pv.isEmpty()) {
-			m_time += canvas::Point::distance(m_pv.last(), point) * 10.0;
+			// MyPaint brushes don't take kindly to unnatural delta times. Very
+			// short ones cause weird brush behavior and long ones (5 seconds+)
+			// cause them to not draw the stroke at all. So we interpolate.
+			QLineF line{m_pv.last(), point};
+			int segments = qCeil(line.length() / SEGMENT_LENGTH);
+			for(int i = 1; i < segments; ++i) {
+				appendPoint(line.pointAt(1.0 / qreal(segments)));
+			}
 		}
-		m_pv.append(canvas::Point{m_time, point, 1.0});
+		appendPoint(point);
 	}
 
 	const canvas::PointVector &pv()
@@ -36,6 +42,18 @@ public:
 	}
 
 private:
+	static constexpr qreal SEGMENT_LENGTH = 10.0;
+	static constexpr qreal DTIME = 10.0;
+
+	void appendPoint(const QPointF &point)
+	{
+		canvas::Point cp{m_time, point, 1.0};
+		if(!m_pv.isEmpty()) {
+			m_time += canvas::Point::distance(m_pv.last(), cp) * DTIME;
+		}
+		m_pv.append(cp);
+	}
+
 	long long m_time;
 	canvas::PointVector m_pv;
 };
@@ -144,7 +162,7 @@ void Line::motion(const canvas::Point& point, bool constrain, bool center)
 
 canvas::PointVector Line::pointVector() const
 {
-	PointVectorGenerator gen{2};
+	PointVectorGenerator gen;
 	gen.append(m_p1);
 	gen.append(m_p2);
 	return gen.pv();
@@ -157,7 +175,7 @@ Rectangle::Rectangle(ToolController &owner)
 
 canvas::PointVector Rectangle::pointVector() const
 {
-	PointVectorGenerator gen{5};
+	PointVectorGenerator gen;
 	gen.append(m_p1);
 	gen.append(QPointF{m_p1.x(), m_p2.y()});
 	gen.append(m_p2);
@@ -178,7 +196,7 @@ canvas::PointVector Ellipse::pointVector() const
 	const qreal b = r.height() / 2.0;
 	const qreal cx = r.x() + a;
 	const qreal cy = r.y() + b;
-	PointVectorGenerator gen{41};
+	PointVectorGenerator gen;
 
 	// TODO smart step size selection
 	for(qreal t=0;t<2*M_PI;t+=M_PI/20) {
