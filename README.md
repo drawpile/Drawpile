@@ -1,5 +1,6 @@
-Drawpile - a collaborative drawing program [![CI status badge](../../actions/workflows/main.yml/badge.svg)](../../actions/workflows/main.yml)
-------------------------------------------
+# Drawpile - A Collaborative Drawing Program
+
+[![CI status badge](../../actions/workflows/main.yml/badge.svg)](../../actions/workflows/main.yml) [![translation status](https://hosted.weblate.org/widgets/drawpile/-/svg-badge.svg)](https://hosted.weblate.org/engage/drawpile/)
 
 Drawpile is a drawing program that lets you share the canvas
 with other users in real time.
@@ -17,6 +18,8 @@ Some feature highlights:
 * Supports OpenRaster file format
 * Encrypted connections using SSL
 * MyPaint brush support
+
+We use [Weblate](https://hosted.weblate.org/engage/drawpile/) for translations.
 
 ## Installing Drawpile
 
