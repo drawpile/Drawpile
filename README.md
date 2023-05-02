@@ -10,7 +10,7 @@ Some feature highlights:
 * Runs on Linux, Windows, macOS, and Android
 * Shared canvas using the built-in server or a dedicated server
 * Record, play back and export drawing sessions
-* Simple animation support
+* Animation support
 * Layers and blending modes
 * Text layers
 * Supports pressure sensitive Wacom tablets
