@@ -33,6 +33,12 @@
 #include <dpmsg/messages.h>
 
 
+struct DP_Image {
+    int width, height;
+    DP_Pixel8 pixels[];
+};
+
+
 static void assign_type(DP_ImageFileType *out_type, DP_ImageFileType type)
 {
     if (out_type) {
@@ -82,6 +88,17 @@ static DP_Image *read_image_guess(DP_Input *input, DP_ImageFileType *out_type)
     else {
         return NULL;
     }
+}
+
+DP_Image *DP_image_new(int width, int height)
+{
+    DP_ASSERT(width > 0);
+    DP_ASSERT(height > 0);
+    size_t count = DP_int_to_size(width) * DP_int_to_size(height);
+    DP_Image *img = DP_malloc_zeroed(DP_FLEX_SIZEOF(DP_Image, pixels, count));
+    img->width = width;
+    img->height = height;
+    return img;
 }
 
 DP_Image *DP_image_new_from_file(DP_Input *input, DP_ImageFileType type,
@@ -234,6 +251,51 @@ DP_Image *DP_image_new_from_compressed_monochrome(int width, int height,
     }
     DP_free(args.buffer);
     return img;
+}
+
+
+void DP_image_free(DP_Image *img)
+{
+    DP_free(img);
+}
+
+
+int DP_image_width(DP_Image *img)
+{
+    DP_ASSERT(img);
+    return img->width;
+}
+
+int DP_image_height(DP_Image *img)
+{
+    DP_ASSERT(img);
+    return img->height;
+}
+
+DP_Pixel8 *DP_image_pixels(DP_Image *img)
+{
+    DP_ASSERT(img);
+    return img->pixels;
+}
+
+DP_Pixel8 DP_image_pixel_at(DP_Image *img, int x, int y)
+{
+    DP_ASSERT(img);
+    DP_ASSERT(x >= 0);
+    DP_ASSERT(y >= 0);
+    DP_ASSERT(x < img->width);
+    DP_ASSERT(y < img->height);
+    return img->pixels[y * img->width + x];
+}
+
+void DP_image_pixel_at_set(DP_Image *img, int x, int y, DP_Pixel8 pixel)
+{
+    DP_ASSERT(img);
+    DP_ASSERT(x >= 0);
+    DP_ASSERT(y >= 0);
+    DP_ASSERT(x < img->width);
+    DP_ASSERT(y < img->height);
+    img->pixels[y * img->width + x] = pixel;
 }
 
 

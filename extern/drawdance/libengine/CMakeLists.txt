@@ -18,7 +18,6 @@ dp_target_sources(dpengine
     dpengine/flood_fill.c
     dpengine/frame.c
     dpengine/image.c
-    dpengine/image_base.c
     dpengine/image_transform.c
     dpengine/layer_content.c
     dpengine/layer_group.c
