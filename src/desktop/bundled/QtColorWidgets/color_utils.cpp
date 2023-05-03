@@ -96,11 +96,13 @@ QColor color_widgets::utils::get_screen_color(const QPoint &global_pos)
 
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     WId wid = QApplication::desktop()->winId();
+    QPoint screen_pos = global_pos;
 #else
     int wid = 0;
+    QPoint screen_pos = global_pos - screen->geometry().topLeft();
 #endif
 
-    QImage img = screen->grabWindow(wid, global_pos.x(), global_pos.y(), 1, 1).toImage();
+    QImage img = screen->grabWindow(wid, screen_pos.x(), screen_pos.y(), 1, 1).toImage();
 
     return img.pixel(0,0);
 }
