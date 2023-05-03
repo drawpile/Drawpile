@@ -23,6 +23,17 @@ public:
 		IsNsfwRole
 	};
 
+	enum Column : int {
+		ColumnVersion,
+		ColumnStatus,
+		ColumnTitle,
+		ColumnServer,
+		ColumnUsers,
+		ColumnOwner,
+		ColumnUptime,
+		ColumnCount,
+	};
+
 	SessionListingModel(QObject *parent=nullptr);
 
 	QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;

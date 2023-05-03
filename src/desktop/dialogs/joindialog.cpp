@@ -100,11 +100,20 @@ JoinDialog::JoinDialog(const QUrl &url, QWidget *parent)
 	m_ui->listing->expandAll();
 
 	QHeaderView *header = m_ui->listing->header();
-	header->setSectionResizeMode(0, QHeaderView::Stretch);
-	header->setSectionResizeMode(1, QHeaderView::ResizeToContents);
-	header->setSectionResizeMode(2, QHeaderView::ResizeToContents);
-	header->setSectionResizeMode(3, QHeaderView::ResizeToContents);
-	header->setSectionResizeMode(4, QHeaderView::ResizeToContents);
+	header->setSectionResizeMode(
+		SessionListingModel::ColumnVersion, QHeaderView::ResizeToContents);
+	header->setSectionResizeMode(
+		SessionListingModel::ColumnStatus, QHeaderView::ResizeToContents);
+	header->setSectionResizeMode(
+		SessionListingModel::ColumnTitle, QHeaderView::Stretch);
+	header->setSectionResizeMode(
+		SessionListingModel::ColumnServer, QHeaderView::ResizeToContents);
+	header->setSectionResizeMode(
+		SessionListingModel::ColumnUsers, QHeaderView::ResizeToContents);
+	header->setSectionResizeMode(
+		SessionListingModel::ColumnOwner, QHeaderView::ResizeToContents);
+	header->setSectionResizeMode(
+		SessionListingModel::ColumnUptime, QHeaderView::ResizeToContents);
 
 	connect(m_ui->listing, &QTreeView::clicked, this, [this](const QModelIndex &index) {
 		// Set the server URL when clicking on an item

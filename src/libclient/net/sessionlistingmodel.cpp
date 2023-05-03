@@ -10,14 +10,6 @@
 
 using sessionlisting::Session;
 
-// Columns:
-// 0 - title
-// 1 - server
-// 2 - user count
-// 3 - owner
-// 4 - uptime
-static const int COLUMN_COUNT = 5;
-
 SessionListingModel::SessionListingModel(QObject *parent)
 	: QAbstractItemModel(parent)
 {
@@ -65,7 +57,7 @@ int SessionListingModel::rowCount(const QModelIndex &parent) const
 
 int SessionListingModel::columnCount(const QModelIndex &) const
 {
-	return COLUMN_COUNT;
+	return ColumnCount;
 }
 
 static QString ageString(const qint64 seconds)
@@ -103,44 +95,82 @@ QVariant SessionListingModel::data(const QModelIndex &index, int role) const
 
 		if(role == Qt::DisplayRole) {
 			switch(index.column()) {
-			case 0: return s.title.isEmpty() ? tr("(untitled)") : s.title;
-			case 1: return s.host;
-			case 2: return s.users < 0 ? QVariant() : QString::number(s.users);
-			case 3: return s.owner;
-			case 4: return ageString(s.started.msecsTo(QDateTime::currentDateTime()) / 1000);
+			case ColumnTitle: return s.title.isEmpty() ? tr("(untitled)") : s.title;
+			case ColumnServer: return s.host;
+			case ColumnUsers: return s.users < 0 ? QVariant() : QString::number(s.users);
+			case ColumnOwner: return s.owner;
+			case ColumnUptime: return ageString(s.started.msecsTo(QDateTime::currentDateTime()) / 1000);
 			}
 
 		} else if(role == Qt::DecorationRole) {
-			if(index.column() == 0) {
-				if(!s.protocol.isCurrent())
+			switch(index.column()) {
+			case ColumnVersion:
+				if(s.protocol.isCurrent()) {
+					return QIcon::fromTheme("dialog-positive");
+				} else if(s.protocol.isPastCompatible()) {
+					return QIcon::fromTheme("dialog-warning");
+				} else {
+					return QIcon::fromTheme("dialog-error");
+				}
+			case ColumnStatus:
+				if(!s.protocol.isCompatible()) {
 					return QIcon::fromTheme("dontknow");
-				else if(s.password)
+				} else if(s.password) {
 					return QIcon::fromTheme("object-locked");
-				else if(s.nsfm)
-					return QIcon(":/icons/censored.svg");
+				} else {
+					return QVariant{};
+				}
+			case ColumnTitle:
+				return s.nsfm ? QIcon(":/icons/censored.svg") : QVariant{};
+			default:
+				return QVariant();
 			}
 
 		} else if(role == Qt::ToolTipRole) {
-			if(!s.protocol.isCurrent()) {
-				QString ver;
-				if(s.protocol.isFuture())
-					ver = tr("New version");
-				else
-					ver = s.protocol.versionName();
-				if(ver.isEmpty())
-					ver = tr("Unknown version");
-
-				return tr("Incompatible version (%1)").arg(ver);
+			switch(index.column()) {
+			case ColumnVersion:
+				if(s.protocol.isCurrent()) {
+					return tr("Drawpile 2.2 (fully compatible)");
+				} else if(s.protocol.isPastCompatible()) {
+					return tr("Drawpile 2.1 (compatibility mode)");
+				} else {
+					return tr("%1 (incompatible)").arg(s.protocol.versionName());
+				}
+			case ColumnStatus:
+				if(!s.protocol.isCompatible()) {
+					return tr("Incompatible version");
+				} else if(s.password) {
+					return tr("Session password required");
+				} else {
+					return QVariant{};
+				}
+			case ColumnTitle:
+				return s.nsfm ? tr("%1 (not safe for minors)").arg(s.title) : s.title;
+			case ColumnServer:
+				return s.host;
+			case ColumnUsers:
+				return tr("%n user(s)", "", s.users);
+			case ColumnOwner:
+				return s.owner;
+			case ColumnUptime:
+				return ageString(s.started.msecsTo(QDateTime::currentDateTime()) / 1000);
+			default:
+				return QVariant{};
 			}
 
 		} else if(role == SortKeyRole) {
 			// User Role is used for sorting keys
 			switch(index.column()) {
-			case 0: return s.title;
-			case 1: return s.host;
-			case 2: return s.users;
-			case 3: return s.owner;
-			case 4: return s.started;
+			case ColumnVersion: return s.protocol.asInteger();
+			case ColumnStatus: return
+				(s.protocol.isCompatible() ? 0x4 : 0x0) |
+				(s.password ? 0x2 : 0x0) |
+				(s.nsfm ? 0x1 : 0x0);
+			case ColumnTitle: return s.title;
+			case ColumnServer: return s.host;
+			case ColumnUsers: return s.users;
+			case ColumnOwner: return s.owner;
+			case ColumnUptime: return s.started;
 			}
 
 		} else {
@@ -154,7 +184,7 @@ QVariant SessionListingModel::data(const QModelIndex &index, int role) const
 
 	} else {
 		if(role == Qt::DisplayRole) {
-			if(index.column() == 0)
+			if(index.column() == ColumnTitle)
 				return m_listings.at(index.row()).name;
 		} else if(role == SortKeyRole) {
 			return index.row();
@@ -170,13 +200,15 @@ QVariant SessionListingModel::headerData(int section, Qt::Orientation orientatio
 		return QVariant();
 
 	switch(section) {
-	case 0: return tr("Title");
-	case 1: return tr("Server");
-	case 2: return tr("Users");
-	case 3: return tr("Owner");
-	case 4: return tr("Age");
+	case ColumnVersion: return QVariant();
+	case ColumnStatus: return QVariant();
+	case ColumnTitle: return tr("Title");
+	case ColumnServer: return tr("Server");
+	case ColumnUsers: return tr("Users");
+	case ColumnOwner: return tr("Owner");
+	case ColumnUptime: return tr("Age");
 	}
-	static_assert (COLUMN_COUNT == 5, "Update headerData()");
+	static_assert (ColumnCount == 7, "Update headerData()");
 
 	return QVariant();
 }
@@ -189,7 +221,7 @@ Qt::ItemFlags SessionListingModel::flags(const QModelIndex &index) const
 			return Qt::NoItemFlags;
 
 		const Session &s = l.sessions.at(index.row());
-		if(!s.protocol.isCurrent())
+		if(!s.protocol.isCompatible())
 			return Qt::NoItemFlags;
 	}
 	return QAbstractItemModel::flags(index);
@@ -254,7 +286,7 @@ void SessionListingModel::setList(const QString &listing, const QVector<Session>
 			}
 
 			emit dataChanged(createIndex(i, 0), createIndex(i, 0));
-			emit dataChanged(createIndex(0, 0, quintptr(i+1)), createIndex(sessions.size(), COLUMN_COUNT, quintptr(i+1)));
+			emit dataChanged(createIndex(0, 0, quintptr(i+1)), createIndex(sessions.size(), ColumnCount, quintptr(i+1)));
 			return;
 		}
 	}
