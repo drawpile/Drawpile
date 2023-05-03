@@ -26,6 +26,7 @@ private slots:
 
 		SessionFilterProxyModel filtered;
 		filtered.setSourceModel(&listmodel);
+		filtered.setFilterKeyColumn(-1);
 
 		const QModelIndex root = listmodel.index(0, 0);
 		const QModelIndex filteredRoot = filtered.index(0, 0);
