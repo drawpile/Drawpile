@@ -6,17 +6,17 @@
     <message>
         <location filename="../bundled/QtColorWidgets/abstract_widget_list.cpp" line="67"/>
         <source>Add New</source>
-        <translation type="unfinished"></translation>
+        <translation>Legg til ny</translation>
     </message>
     <message>
         <location filename="../bundled/QtColorWidgets/abstract_widget_list.cpp" line="118"/>
         <source>Move Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Flytt oppover</translation>
     </message>
     <message>
         <location filename="../bundled/QtColorWidgets/abstract_widget_list.cpp" line="119"/>
         <source>Move Down</source>
-        <translation type="unfinished"></translation>
+        <translation>Flytt nedover</translation>
     </message>
     <message>
         <location filename="../bundled/QtColorWidgets/abstract_widget_list.cpp" line="120"/>
@@ -29,27 +29,27 @@
     <message>
         <location filename="../ui/abusereport.ui" line="14"/>
         <source>Report Abuse</source>
-        <translation type="unfinished"></translation>
+        <translation>Rapporter misbruk</translation>
     </message>
     <message>
         <location filename="../ui/abusereport.ui" line="20"/>
         <source>Session:</source>
-        <translation type="unfinished"></translation>
+        <translation>Økt:</translation>
     </message>
     <message>
         <location filename="../ui/abusereport.ui" line="60"/>
         <source>Reason:</source>
-        <translation type="unfinished"></translation>
+        <translation>Grunn:</translation>
     </message>
     <message>
         <location filename="../ui/abusereport.ui" line="88"/>
         <source>Entire session</source>
-        <translation type="unfinished"></translation>
+        <translation>Hele økten</translation>
     </message>
     <message>
         <location filename="../ui/abusereport.ui" line="96"/>
         <source>User:</source>
-        <translation type="unfinished"></translation>
+        <translation>Bruker:</translation>
     </message>
     <message>
         <location filename="../dialogs/abusereport.cpp" line="34"/>
@@ -124,7 +124,7 @@
     <message>
         <location filename="../ui/avatarimport.ui" line="14"/>
         <source>Crop Avatar</source>
-        <translation type="unfinished"></translation>
+        <translation>Beskjær avatar</translation>
     </message>
     <message>
         <location filename="../dialogs/avatarimport.cpp" line="74"/>
@@ -154,12 +154,12 @@
     <message>
         <location filename="../ui/brushdock.ui" line="74"/>
         <source>Pixel brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Pikselpensel</translation>
     </message>
     <message>
         <location filename="../ui/brushdock.ui" line="94"/>
         <source>Square pixel brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Firkantig pikselpensel</translation>
     </message>
     <message>
         <location filename="../ui/brushdock.ui" line="114"/>
@@ -169,7 +169,7 @@
     <message>
         <location filename="../ui/brushdock.ui" line="134"/>
         <source>MyPaint Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>MyPaint-pensel</translation>
     </message>
     <message>
         <location filename="../ui/brushdock.ui" line="170"/>
