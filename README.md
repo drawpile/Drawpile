@@ -21,6 +21,8 @@ Some feature highlights:
 
 We use [Weblate](https://hosted.weblate.org/engage/drawpile/) for translations.
 
+[![translation status](https://hosted.weblate.org/widgets/drawpile/-/287x66-grey.png)](https://hosted.weblate.org/engage/drawpile/)
+
 ## Installing Drawpile
 
 Precompiled releases are available from the [Drawpile web site](https://drawpile.net/download/)
