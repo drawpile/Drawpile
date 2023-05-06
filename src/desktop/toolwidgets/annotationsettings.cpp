@@ -174,7 +174,8 @@ void AnnotationSettings::setEditorBackgroundColor(const QColor &color)
 	);
 
 	// We need to use the stylesheet because native styles ignore the palette.
-	m_ui->content->setStyleSheet("background-color: " + c.name());
+	m_ui->content->setStyleSheet(
+		QStringLiteral("QTextEdit { background-color: %1; }").arg(c.name()));
 }
 
 void AnnotationSettings::updateStyleButtons()
