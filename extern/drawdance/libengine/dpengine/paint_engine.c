@@ -360,9 +360,18 @@ static void handle_internal(DP_PaintEngine *pe, DP_DrawContext *dc,
             DP_warn("Error requesting snapshot: %s", DP_error());
         }
         break;
-    case DP_MSG_INTERNAL_TYPE_CATCHUP:
-        DP_atomic_set(&pe->catchup, DP_msg_internal_catchup_progress(mi));
+    case DP_MSG_INTERNAL_TYPE_CATCHUP: {
+        int progress = DP_msg_internal_catchup_progress(mi);
+        DP_atomic_set(&pe->catchup, progress);
+        // We might get disconnected right after the reset notice rolls in but
+        // before the initial canvas resize is received, which would leave us
+        // with the just_reset flag being stuck. Since a cleanup will enqueue
+        // a 100% progress message, we can use that to clear the flag.
+        if(progress >= 100) {
+            DP_atomic_set(&pe->just_reset, false);
+        }
         break;
+    }
     case DP_MSG_INTERNAL_TYPE_CLEANUP:
         DP_MUTEX_MUST_LOCK(pe->queue_mutex);
         DP_canvas_history_cleanup(pe->ch, dc, push_cleanup_message, pe);
@@ -370,6 +379,9 @@ static void handle_internal(DP_PaintEngine *pe, DP_DrawContext *dc,
             DP_message_queue_push_noinc(
                 &pe->remote_queue, DP_message_queue_shift(&pe->local_queue));
         }
+        // We might have gotten disconnected while catching up after joining the
+        // session or during a reset, so say we're 100% caught up after cleanup.
+        push_cleanup_message(pe, DP_msg_internal_catchup_new(0, 100));
         DP_MUTEX_MUST_UNLOCK(pe->queue_mutex);
         break;
     case DP_MSG_INTERNAL_TYPE_PREVIEW:
