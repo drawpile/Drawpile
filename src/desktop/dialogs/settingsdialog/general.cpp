@@ -29,6 +29,17 @@ General::General(desktop::settings::Settings &settings, QWidget *parent)
 	initUndo(settings, form);
 	form->addSpacer();
 	initSnapshots(settings, form);
+	form->addSeparator();
+	initHistory(settings, form);
+}
+
+void General::initHistory(desktop::settings::Settings &settings, utils::SanerFormLayout *form)
+{
+	auto *maxRecent = new QSpinBox;
+	maxRecent->setRange(0, 20);
+	settings.bindMaxRecentFiles(maxRecent);
+	auto *maxRecentLayout = utils::encapsulate(tr("Remember the last %1 opened files and hosts"), maxRecent);
+	form->addRow(tr("Recent items:"), maxRecentLayout);
 }
 
 void General::initLanguage(desktop::settings::Settings &settings, utils::SanerFormLayout *form)

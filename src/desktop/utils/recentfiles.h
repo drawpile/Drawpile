@@ -15,12 +15,6 @@ class RecentFiles {
 		//! Add a new entry to the list of recent files
 		static void addFile(const QString& file);
 
-		//! Set the how many files to store
-		static void setMaxFileCount(int max);
-
-		//! Get how many files to store
-		static int getMaxFileCount();
-
 		//! Fill a QMenu with filenames
 		static void initMenu(QMenu *menu);
 };
