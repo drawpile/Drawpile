@@ -229,7 +229,6 @@ private:
 
 	void drawPixelGrid(QPainter *painter, const QRectF& rect);
 	void drawCursorOutline(QPainter *painter, const QRectF& rect);
-	void drawResetCover(QPainter *painter, const QRectF& rect);
 
 	inline void viewRectChanged() { emit viewRectChange(mapToScene(rect())); }
 

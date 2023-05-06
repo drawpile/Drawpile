@@ -366,12 +366,8 @@ void CanvasView::setOutlineMode(bool subpixel, bool square)
 
 void CanvasView::drawForeground(QPainter *painter, const QRectF& rect)
 {
-	if(m_resetInProgress) {
-		drawResetCover(painter, rect);
-	} else {
-		drawPixelGrid(painter, rect);
-		drawCursorOutline(painter, rect);
-	}
+	drawPixelGrid(painter, rect);
+	drawCursorOutline(painter, rect);
 }
 
 void CanvasView::drawPixelGrid(QPainter *painter, const QRectF& rect)
@@ -425,14 +421,6 @@ void CanvasView::drawCursorOutline(QPainter *painter, const QRectF& rect)
 			painter->restore();
 		}
 	}
-}
-
-void CanvasView::drawResetCover(QPainter *painter, const QRectF& rect)
-{
-	painter->setOpacity(0.5);
-	painter->setPen(Qt::NoPen);
-	painter->setBrush(Qt::black);
-	painter->drawRect(rect);
 }
 
 void CanvasView::enterEvent(compat::EnterEvent *event)

@@ -367,7 +367,7 @@ static void handle_internal(DP_PaintEngine *pe, DP_DrawContext *dc,
         // before the initial canvas resize is received, which would leave us
         // with the just_reset flag being stuck. Since a cleanup will enqueue
         // a 100% progress message, we can use that to clear the flag.
-        if(progress >= 100) {
+        if (progress >= 100) {
             DP_atomic_set(&pe->just_reset, false);
         }
         break;
@@ -2176,7 +2176,8 @@ static DP_CanvasState *apply_local_background_tile(DP_PaintEngine *pe,
 
 static void
 emit_changes(DP_PaintEngine *pe, DP_CanvasState *prev, DP_CanvasState *cs,
-             DP_UserCursorBuffer *ucb, DP_PaintEngineResizedFn resized,
+             bool catching_up, bool catchup_done,
+             DP_PaintEngineResizedFn resized,
              DP_CanvasDiffEachPosFn tile_changed,
              DP_PaintEngineLayerPropsChangedFn layer_props_changed,
              DP_PaintEngineAnnotationsChangedFn annotations_changed,
@@ -2199,25 +2200,28 @@ emit_changes(DP_PaintEngine *pe, DP_CanvasState *prev, DP_CanvasState *cs,
     DP_canvas_state_diff(cs, prev, diff);
     DP_canvas_diff_each_pos(diff, tile_changed, user);
 
-    if (DP_canvas_diff_layer_props_changed_reset(diff)) {
-        layer_props_changed(user, DP_canvas_state_layer_props_noinc(cs));
+    if (!catching_up) {
+        if (DP_canvas_diff_layer_props_changed_reset(diff) || catchup_done) {
+            layer_props_changed(user, DP_canvas_state_layer_props_noinc(cs));
+        }
+
+        DP_AnnotationList *al = DP_canvas_state_annotations_noinc(cs);
+        if (al != DP_canvas_state_annotations_noinc(prev) || catchup_done) {
+            annotations_changed(user, al);
+        }
+
+        DP_DocumentMetadata *dm = DP_canvas_state_metadata_noinc(cs);
+        if (dm != DP_canvas_state_metadata_noinc(prev) || catchup_done) {
+            document_metadata_changed(user, dm);
+        }
+
+        DP_Timeline *tl = DP_canvas_state_timeline_noinc(cs);
+        if (tl != DP_canvas_state_timeline_noinc(prev) || catchup_done) {
+            timeline_changed(user, tl);
+        }
     }
 
-    DP_AnnotationList *al = DP_canvas_state_annotations_noinc(cs);
-    if (al != DP_canvas_state_annotations_noinc(prev)) {
-        annotations_changed(user, al);
-    }
-
-    DP_DocumentMetadata *dm = DP_canvas_state_metadata_noinc(cs);
-    if (dm != DP_canvas_state_metadata_noinc(prev)) {
-        document_metadata_changed(user, dm);
-    }
-
-    DP_Timeline *tl = DP_canvas_state_timeline_noinc(cs);
-    if (tl != DP_canvas_state_timeline_noinc(prev)) {
-        timeline_changed(user, tl);
-    }
-
+    DP_UserCursorBuffer *ucb = &pe->meta.ucb;
     int cursors_count = ucb->count;
     for (int i = 0; i < cursors_count; ++i) {
         DP_UserCursor *uc = &ucb->cursors[i];
@@ -2246,6 +2250,7 @@ void DP_paint_engine_tick(
     DP_PERF_BEGIN(fn, "tick");
 
     int progress = DP_atomic_xch(&pe->catchup, -1);
+    bool was_catching_up = pe->catching_up;
     if (progress != -1) {
         pe->catching_up = progress < 100;
     }
@@ -2271,12 +2276,16 @@ void DP_paint_engine_tick(
     // chance that we grab the null canvas state right in between those two.
     bool just_reset = DP_atomic_get(&pe->just_reset);
     bool catching_up = pe->catching_up;
-    bool should_update = !just_reset && !catching_up;
     DP_CanvasState *next_history_cs;
     bool preview_changed;
     bool local_view_changed;
 
-    if (should_update) {
+    if (just_reset) {
+        next_history_cs = NULL;
+        preview_changed = false;
+        local_view_changed = false;
+    }
+    else {
         DP_CanvasState *prev_history_cs = pe->history_cs;
         next_history_cs = DP_canvas_history_compare_and_get(
             pe->ch, prev_history_cs, &pe->meta.ucb);
@@ -2300,13 +2309,11 @@ void DP_paint_engine_tick(
         local_view_changed =
             !pe->local_view.layers.prev_lpl || !pe->local_view.tracks.prev_tl;
     }
-    else {
-        next_history_cs = NULL;
-        preview_changed = false;
-        local_view_changed = false;
-    }
 
-    if (next_history_cs || preview_changed || local_view_changed) {
+    bool catchup_done = was_catching_up && !catching_up;
+    bool have_changes = next_history_cs || preview_changed || local_view_changed
+                     || catchup_done;
+    if (have_changes) {
         DP_PERF_BEGIN(changes, "tick:changes");
         // Previews, hidden layers etc. are local changes, so we have to apply
         // them on top of the canvas state we got out of the history.
@@ -2326,15 +2333,15 @@ void DP_paint_engine_tick(
                 DP_layer_props_list_can_decrease_opacity(lpl);
         }
 
-        emit_changes(pe, prev_view_cs, next_view_cs, &pe->meta.ucb, resized,
-                     tile_changed, layer_props_changed, annotations_changed,
-                     document_metadata_changed, timeline_changed, cursor_moved,
-                     user);
+        emit_changes(pe, prev_view_cs, next_view_cs, catching_up, catchup_done,
+                     resized, tile_changed, layer_props_changed,
+                     annotations_changed, document_metadata_changed,
+                     timeline_changed, cursor_moved, user);
         DP_canvas_state_decref(prev_view_cs);
         DP_PERF_END(changes);
     }
 
-    bool reset_locked = !should_update;
+    bool reset_locked = just_reset || catching_up;
     if (reset_locked != pe->reset_locked) {
         DP_info("Reset lock changed to %d (reset %d, catchup %d)", reset_locked,
                 just_reset, catching_up);
