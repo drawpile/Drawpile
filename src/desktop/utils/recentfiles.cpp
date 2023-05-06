@@ -13,31 +13,14 @@
  */
 void RecentFiles::addFile(const QString& filename)
 {
-	const int maxrecent = getMaxFileCount();
-
 	auto &settings = dpApp().settings();
 	auto files = settings.recentFiles();
+	const auto maxrecent = settings.maxRecentFiles();
 	files.removeAll(filename);
 	files.prepend(filename);
 	while (files.size() > maxrecent)
 		files.removeLast();
 	settings.setRecentFiles(files);
-}
-
-/**
- * @param max maximum number of filenames that can be stored
- */
-void RecentFiles::setMaxFileCount(int max)
-{
-	dpApp().settings().setMaxRecentFiles(max);
-}
-
-/**
- * @return maximum number of filenames stored
- */
-int RecentFiles::getMaxFileCount()
-{
-	return dpApp().settings().maxRecentFiles();
 }
 
 /**

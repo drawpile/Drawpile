@@ -58,18 +58,22 @@ void HostDialog::rememberSettings() const
 	// Move current address to the top of the list
 	const QString current = m_ui->remotehost->currentText();
 	if(!current.isEmpty() && m_ui->useremote->isChecked()) {
+		auto &settings = dpApp().settings();
 		const int curIdx = m_ui->remotehost->findText(current);
 		if(curIdx!=-1)
 			m_ui->remotehost->removeItem(curIdx);
 
-		QStringList hosts;
-		hosts << current;
-
-		for(int i=0;i<m_ui->remotehost->count();++i)
-				hosts << m_ui->remotehost->itemText(i);
 		m_ui->remotehost->setCurrentText(current);
 
-		dpApp().settings().setRecentRemoteHosts(hosts);
+		QStringList hosts;
+		const auto max = settings.maxRecentFiles();
+		if (max > 0) {
+			hosts << current;
+			for(auto i = 0; i < qMin(max - 1, m_ui->remotehost->count()); ++i) {
+				hosts << m_ui->remotehost->itemText(i);
+			}
+		}
+		settings.setRecentRemoteHosts(hosts);
 	}
 }
 
