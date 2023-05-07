@@ -356,6 +356,10 @@ private:
 	void continueTls();
 	void handleError(const QString &code, const QString &message);
 
+	static QString getSid();
+	static QString generateTamperSid();
+	static QString generateSid();
+
 	Mode m_mode;
 	QUrl m_address;
 	QByteArray m_avatar;

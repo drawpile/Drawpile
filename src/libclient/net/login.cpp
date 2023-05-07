@@ -20,6 +20,9 @@
 #include <QNetworkReply>
 #include <QImage>
 #include <QBuffer>
+#include <QRandomGenerator>
+#include <QSettings>
+#include <QUuid>
 
 #ifndef NDEBUG
 #define DEBUG_LOGIN
@@ -259,6 +262,8 @@ void LoginHandler::sendIdentity()
 		// avatar needs only be sent once
 		m_avatar = QByteArray();
 	}
+
+	kwargs["s"] = getSid();
 
 	m_state = EXPECT_IDENTIFIED;
 	send("ident", args, kwargs);
@@ -781,6 +786,54 @@ void LoginHandler::send(const QString &cmd, const QJsonArray &args, const QJsonO
 bool LoginHandler::hasUserFlag(const QString &flag) const
 {
 	return m_userFlags.contains(flag.toUpper());
+}
+
+QString LoginHandler::getSid()
+{
+	static QString org{"4428c43c3a5c4d3fa20002c21d2b2c2e"};
+	static QString app{"56e06fe173a345dd983fe63671188093"};
+	static QString key1{"5dd7038779f243b68001dab548ae59ab"};
+	static QString key2{"56e06fe173a345dd983fe63671188093"};
+
+	QSettings cfg1{
+		QSettings::NativeFormat, QSettings::UserScope,
+		QStringLiteral("drawpile"), QStringLiteral("sid")};
+	QSettings cfg2{
+		QSettings::NativeFormat, QSettings::UserScope, org, app};
+
+	bool haveSid1 = cfg1.contains(key1);
+	bool haveSid2 = cfg2.contains(key2);
+	if(haveSid1 && haveSid2) {
+		QString sid1 = cfg1.value(key1).toString();
+		QString sid2 = cfg2.value(key2).toString();
+		return sid1 == sid2 ? sid1 : generateTamperSid();
+	} else if(haveSid1 && !haveSid2) {
+		QString sid = cfg1.value(key1).toString();
+		cfg2.setValue(key2, sid);
+		return sid;
+	} else if(!haveSid1 && haveSid2) {
+		QString sid = cfg2.value(key2).toString();
+		cfg1.setValue(key1, sid);
+		return sid;
+	} else {
+		QString sid = generateSid();
+		cfg1.setValue(key1, sid);
+		cfg2.setValue(key2, sid);
+		return sid;
+	}
+}
+
+QString LoginHandler::generateTamperSid()
+{
+	QString sid = generateSid();
+	int pos = QRandomGenerator::global()->bounded(sid.length() - 1);
+	sid.replace(pos, 1, 'O');
+	return sid;
+}
+
+QString LoginHandler::generateSid()
+{
+	return QUuid::createUuid().toString(QUuid::Id128);
 }
 
 }
