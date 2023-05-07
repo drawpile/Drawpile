@@ -103,6 +103,14 @@ else()
 
 	get_directory_property(IGNORE_WARNINGS_COMPILE_OPTIONS COMPILE_OPTIONS)
 	list(TRANSFORM IGNORE_WARNINGS_COMPILE_OPTIONS REPLACE "-W(no-)?([^=]+)(=.*$)?" "-Wno-\\2")
+
+	# This is valid in C++20 and all the C++17 compilers already support it;
+	# it must be ignored to use the QLoggingCategory macros like
+	# `qCDebug(foo) << "Message"`
+	check_cxx_compiler_flag(-Wgnu-zero-variadic-macro-arguments CXX_HAS_GNU_ZERO_VARIADIC_MACRO_ARGUMENTS)
+	if (CXX_HAS_GNU_ZERO_VARIADIC_MACRO_ARGUMENTS)
+		add_compile_options(-Wno-gnu-zero-variadic-macro-arguments)
+	endif()
 endif()
 
 foreach(lang IN LISTS ENABLED_LANGUAGES)
