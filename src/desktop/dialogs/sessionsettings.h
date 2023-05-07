@@ -65,7 +65,7 @@ private slots:
 	void changePassword();
 	void changeOpword();
 
-	void changeSesionConf(const QString &key, const QJsonValue &value, bool now=false);
+	void changeSessionConf(const QString &key, const QJsonValue &value, bool now=false);
 	void sendSessionConf();
 
 	void updatePasswordLabel(QLabel *label);
