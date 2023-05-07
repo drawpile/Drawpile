@@ -1,8 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+// SPDX-FileCopyrightText: Calle Laakkonen
 
 #include "desktop/utils/listserverdelegate.h"
+#include "libclient/utils/listservermodel.h"
 
+#include <QApplication>
 #include <QPainter>
+#include <QStyle>
 
 namespace sessionlisting {
 
@@ -12,64 +16,104 @@ ListServerDelegate::ListServerDelegate(QObject *parent)
 
 }
 
+static auto getMetric(QStyle::PixelMetric pm, const QStyleOptionViewItem &option)
+{
+	const auto *style = option.widget ? option.widget->style() : QApplication::style();
+	return style->pixelMetric(pm, &option, option.widget);
+}
+
 void ListServerDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-	QStyleOptionViewItem opt = setOptions(index, option);
+	auto opt = setOptions(index, option);
+
+	const auto iconSize = getMetric(QStyle::PM_LargeIconSize, opt);
+	const auto favicon = index.data(Qt::DecorationRole).value<QIcon>();
+
+	const QRect decorationRect(
+		opt.rect.x(), opt.rect.center().y() - iconSize / 2,
+		iconSize, iconSize
+	);
+
+	const auto left = decorationRect.x() + decorationRect.width() +
+		getMetric(QStyle::PM_FocusFrameHMargin, opt);
+
+	const auto top = getMetric(QStyle::PM_FocusFrameVMargin, opt);
+	QRect textRect(
+		left, opt.rect.y() + top,
+		opt.rect.width() - left, opt.rect.height()
+	);
+
+	drawBackground(painter, opt, index);
+	favicon.paint(painter, decorationRect);
+
 	painter->save();
 
-	QPixmap favicon = index.data(Qt::DecorationRole).value<QIcon>().pixmap(64, 64);
-
-	QRect decorationRect(opt.rect.x(), opt.rect.y(), favicon.width(), opt.rect.height());
-	QRect textRect(qMax(64, decorationRect.width()) + 15, opt.rect.y(), opt.rect.width() - decorationRect.width() - 15, opt.rect.height());
-
-	QPalette::ColorGroup cg = option.state & QStyle::State_Enabled
-							  ? QPalette::Normal : QPalette::Disabled;
-	if (cg == QPalette::Normal && !(option.state & QStyle::State_Active))
+	QPalette::ColorGroup cg = opt.state & QStyle::State_Enabled
+		? QPalette::Normal : QPalette::Disabled;
+	if (cg == QPalette::Normal && !(opt.state & QStyle::State_Active))
 		cg = QPalette::Inactive;
 
 	if((opt.state & QStyle::State_Selected)) {
-		painter->fillRect(opt.rect, opt.palette.brush(cg, QPalette::Highlight));
 		painter->setPen(opt.palette.color(cg, QPalette::HighlightedText));
 	} else {
 		painter->setPen(opt.palette.color(cg, QPalette::Text));
 	}
 
-	drawBackground(painter, opt, index);
-	drawDecoration(painter, opt, decorationRect, favicon);
-
 	QFont font = opt.font;
-	QFontMetrics fm(font);
+	const QFontMetrics fm(font);
+
 	font.setWeight(QFont::Bold);
 	painter->setFont(font);
-	painter->drawText(textRect.topLeft() + QPoint(0, 2+fm.height()), index.data(Qt::DisplayRole).toString());
+	painter->drawText(
+		textRect.topLeft() + QPoint(0, fm.ascent()),
+		index.data(Qt::DisplayRole).toString()
+	);
 
 	font.setWeight(QFont::Normal);
 	painter->setFont(font);
-	textRect.setY(textRect.y() + fm.height() + 10);
-	painter->drawText(textRect, index.data(Qt::UserRole+1).toString());
+	textRect.adjust(0, fm.lineSpacing(), 0, 0);
+	painter->drawText(
+		textRect,
+		Qt::AlignLeading | Qt::AlignTop | Qt::TextWordWrap,
+		index.data(ListServerModel::DescriptionRole).toString()
+	);
 
-	drawFocus(painter, opt, textRect);
-
-#if 0
-	painter->setPen(QColor(Qt::red));
-	painter->drawRect(opt.rect);
-#endif
+	drawFocus(painter, opt, opt.rect);
 
 	painter->restore();
 }
 
 QSize ListServerDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-	QSize minsize(64, 64);
-	QString desc = index.data(Qt::UserRole+1).toString();
+	const auto opt = setOptions(index, option);
+	const auto iconSize = getMetric(QStyle::PM_LargeIconSize, opt);
+	const auto focusVMargin = getMetric(QStyle::PM_FocusFrameVMargin, opt) * 2;
+	const auto iconMargin = getMetric(QStyle::PM_FocusFrameHMargin, opt);
+	const auto focusHMargin = iconMargin * 2;
 
-	QFontMetrics fm(option.font);
-	const QRect textrect(0, 0, 200, 64);
-	const QRect descBounds = fm.boundingRect(textrect, Qt::TextWordWrap, desc);
+	auto textRect = option.rect.isValid()
+		? option.rect.adjusted(iconSize + iconMargin, 0, 0, 0)
+		: QRect(iconSize + iconMargin, 0, (INT_MAX/256), 0);
+	textRect.setHeight(INT_MAX/256);
 
-	minsize = minsize.expandedTo(descBounds.size());
+	auto font = opt.font;
+	font.setBold(true);
+	const auto displaySize = QFontMetrics(font).boundingRect(
+		textRect,
+		0,
+		index.data(Qt::DisplayRole).toString()
+	);
 
-	return minsize;
+	const auto descriptionSize = opt.fontMetrics.boundingRect(
+		textRect,
+		Qt::TextWordWrap,
+		index.data(ListServerModel::DescriptionRole).toString()
+	);
+
+	return QSize(
+		focusHMargin + iconSize + iconMargin + qMax(displaySize.width(), descriptionSize.width()),
+		qMax(iconSize, focusVMargin + displaySize.height() + opt.fontMetrics.leading() + descriptionSize.height())
+	);
 }
 
 }
