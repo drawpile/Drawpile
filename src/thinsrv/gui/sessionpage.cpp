@@ -61,6 +61,8 @@ struct SessionPage::Private {
 	}
 };
 
+namespace sessionpage {
+
 static void addWidgets(struct SessionPage::Private *d, QGridLayout *layout, int row, const QString labelText, QWidget *value, bool addSpacer=false)
 {
 	if(!labelText.isEmpty())
@@ -88,9 +90,13 @@ static void addLabels(QGridLayout *layout, int row, const QString labelText, QLa
 	addWidgets(nullptr, layout, row, labelText, value);
 }
 
+} // namespace sessionpage
+
 SessionPage::SessionPage(Server *server, const QString &id, QWidget *parent)
 	: QWidget(parent), d(new Private)
 {
+	using namespace sessionpage;
+
 	d->server = server;
 	d->id = id;
 	d->refreshReqId = "refresh-" + id;

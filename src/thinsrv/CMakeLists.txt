@@ -14,7 +14,6 @@ target_sources(${srvlib} PRIVATE
 	dblog.cpp
 	dblog.h
 	initsys.h
-	main.cpp
 	multiserver.cpp
 	multiserver.h
 	templatefiles.cpp
