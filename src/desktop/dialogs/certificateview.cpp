@@ -38,7 +38,7 @@ CertificateView::CertificateView(const QString &hostname, const QSslCertificate 
 
 	_ui->md5_label->setText(certificate.digest(QCryptographicHash::Md5).toHex());
 	_ui->sha1_label->setText(certificate.digest(QCryptographicHash::Sha1).toHex());
-	_ui->certificateText->setText(certificate.toText());
+	_ui->certificateText->setText(certificate.toPem());
 }
 
 CertificateView::~CertificateView()
