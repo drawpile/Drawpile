@@ -464,9 +464,7 @@ MainWindow::~MainWindow()
 	delete m_canvasscene;
 
 	// Make sure all child dialogs are closed
-	QObjectList lst = children();
-	for(QObject *obj : lst) {
-		QDialog *child = qobject_cast<QDialog*>(obj);
+	for(auto *child : findChildren<QDialog *>(QString(), Qt::FindDirectChildrenOnly)) {
 		delete child;
 	}
 }
@@ -628,8 +626,7 @@ void MainWindow::loadShortcuts()
 	disconnect(m_textCopyConnection);
 	const QKeySequence standardCopyShortcut { QKeySequence::Copy };
 
-	QList<QAction*> actions = findChildren<QAction*>();
-	for(QAction *a : actions) {
+	for(auto *a : findChildren<QAction*>()) {
 		const QString &name = a->objectName();
 		if(!name.isEmpty()) {
 			if(cfg.contains(name)) {
@@ -2034,15 +2031,15 @@ void MainWindow::toggleFullscreen()
 
 void MainWindow::setFreezeDocks(bool freeze)
 {
-	const auto features = QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetMovable|QDockWidget::DockWidgetFloatable;
-	for(QObject *c : children()) {
-		QDockWidget *dw = qobject_cast<QDockWidget*>(c);
-		if(dw) {
-			if(freeze)
-				dw->setFeatures(dw->features() & ~features);
-			else
-				dw->setFeatures(dw->features() | features);
-		}
+	const auto features = QDockWidget::DockWidgetClosable
+		| QDockWidget::DockWidgetMovable
+		| QDockWidget::DockWidgetFloatable;
+
+	for(auto *dw : findChildren<QDockWidget*>(QString(), Qt::FindDirectChildrenOnly)) {
+		if(freeze)
+			dw->setFeatures(dw->features() & ~features);
+		else
+			dw->setFeatures(dw->features() | features);
 	}
 }
 
@@ -2051,11 +2048,10 @@ void MainWindow::setDocksHidden(bool hidden)
 	QPoint centerPosBefore = centralWidget()->pos();
 	if(hidden) {
 		m_hiddenDockState = saveState();
-		for(QObject *c : children()) {
-			QWidget *w = qobject_cast<QWidget *>(c);
-			bool shouldHide = w && w->isVisible() &&
-				(w->inherits("QDockWidget") || w->inherits("QToolBar"));
-			if(shouldHide) {
+		for(auto *w : findChildren<QWidget *>(QString(), Qt::FindDirectChildrenOnly)) {
+			const auto shouldHide = w->isVisible()
+				&& (w->inherits("QDockWidget") || w->inherits("QToolBar"));
+			if (shouldHide) {
 				w->hide();
 			}
 		}
@@ -2084,11 +2080,8 @@ void MainWindow::setDockTitleBarsHidden(bool hidden)
 		&& hideDockTitleBars->isChecked();
 	if(actuallyHidden != m_titleBarsHidden) {
 		m_titleBarsHidden = hidden;
-		for(QObject *c : children()) {
-			QDockWidget *dw = qobject_cast<QDockWidget*>(c);
-			if(dw) {
+		for(auto *dw : findChildren<QDockWidget*>(QString(), Qt::FindDirectChildrenOnly)) {
 				dw->titleBarWidget()->setHidden(hidden);
-			}
 		}
 	}
 }
@@ -2437,10 +2430,8 @@ void MainWindow::showLayoutsDialog()
 
 void MainWindow::showUserInfoDialog(int userId)
 {
-	for(QObject *child : children()) {
-		dialogs::UserInfoDialog *dlg =
-			qobject_cast<dialogs::UserInfoDialog *>(child);
-		if(dlg && dlg->userId() == userId) {
+	for(auto *dlg : findChildren<dialogs::UserInfoDialog *>(QString(), Qt::FindDirectChildrenOnly)) {
+		if(dlg->userId() == userId) {
 			dlg->triggerUpdate();
 			dlg->activateWindow();
 			dlg->raise();
@@ -2664,13 +2655,10 @@ void MainWindow::setupActions()
 	m_dockToggles->setExclusive(false);
 
 	// Collect list of docks for dock menu
-	for(QObject *c : children()) {
-		QDockWidget *dw = qobject_cast<QDockWidget*>(c);
-		if(dw) {
+	for(const auto *dw : findChildren<const QDockWidget *>(QString(), Qt::FindDirectChildrenOnly)) {
 			QAction *toggledockaction = dw->toggleViewAction();
 			toggledockmenu->addAction(toggledockaction);
 			m_dockToggles->addAction(toggledockaction);
-		}
 	}
 
 	toggledockmenu->addSeparator();
@@ -3423,10 +3411,8 @@ void MainWindow::setupActions()
 			m_doc->toolCtrl(), &tools::ToolController::cancelMultipartDrawing);
 
 	const QList<QAction *> globalDockActions = {sideTabDocks, hideDocks, hideDockTitleBars};
-	for(QObject *c : children()) {
-		QDockWidget *dw = qobject_cast<QDockWidget*>(c);
-		docks::TitleWidget *titlebar = dw ? qobject_cast<docks::TitleWidget *>(dw->titleBarWidget()) : nullptr;
-		if(titlebar) {
+	for(auto *dw : findChildren<QDockWidget *>(QString(), Qt::FindDirectChildrenOnly)) {
+		if(auto *titlebar = qobject_cast<docks::TitleWidget *>(dw->titleBarWidget())) {
 			titlebar->addGlobalDockActions(globalDockActions);
 		}
 	}
