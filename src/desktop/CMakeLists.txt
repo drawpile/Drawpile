@@ -478,6 +478,11 @@ endif()
 if(WIN32)
 	configure_file(drawpile.rc.in drawpile.rc)
 	target_sources(drawpile PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/drawpile.rc")
+
+	# On Windows the assets must be set up next to the output binary at build
+	# time for developers to be able to run the application without missing
+	# assets and without running `cmake --install`
+	set(build_time_assets_dir "$<TARGET_FILE_DIR:drawpile>/data")
 elseif(APPLE)
 	set_target_properties(drawpile PROPERTIES
 		RUNTIME_OUTPUT_NAME Drawpile
@@ -512,6 +517,13 @@ elseif(ANDROID)
 		QT_ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_BINARY_DIR}/android"
 	)
 
+	# On Android, the assets must be set up in advance in one directory because
+	# Qt only accepts one directory for all extra files and puts them in the APK
+	# at build time
+	set(build_time_assets_dir "${CMAKE_CURRENT_BINARY_DIR}/android/assets")
+	# This directory will get translations and other generated files added to it
+	# so it cannot be just a symlink to the source assets directory
+	file(MAKE_DIRECTORY "${build_time_assets_dir}")
 	set(output_apk "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<TARGET_PROPERTY:drawpile,OUTPUT_NAME>-${PROJECT_VERSION}.apk")
 	include(GetSharedLibs)
 	get_shared_libs(android_extra_libs drawpile)
@@ -631,6 +643,7 @@ add_resources(drawpile
 		nightmode.colors
 		initialbrushpresets.db
 	DIRS palettes sounds theme
+	BUILD_TIME_DESTINATION "${build_time_assets_dir}"
 )
 
 if(${QT_PACKAGE_NAME}LinguistTools_FOUND)
@@ -650,24 +663,29 @@ if(${QT_PACKAGE_NAME}LinguistTools_FOUND)
 		set_source_files_properties(${bundle_files}
 			PROPERTIES MACOSX_PACKAGE_LOCATION "Resources/i18n"
 		)
-	elseif(ANDROID)
-		file(CREATE_LINK
-			"${CMAKE_CURRENT_BINARY_DIR}/i18n-bundle"
-			"${CMAKE_CURRENT_BINARY_DIR}/android/assets/i18n"
-			SYMBOLIC
-		)
 	else()
-		install(
-			FILES ${bundle_files}
-			DESTINATION "${INSTALL_APPDATADIR}/i18n"
-		)
+		if(build_time_assets_dir)
+			add_custom_command(
+				TARGET drawpile PRE_LINK
+				COMMAND "${CMAKE_COMMAND}" -E make_directory
+					"${build_time_assets_dir}"
+				COMMAND "${CMAKE_COMMAND}" -E create_symlink
+					"${CMAKE_CURRENT_BINARY_DIR}/i18n-bundle"
+					"${build_time_assets_dir}/i18n"
+				COMMAND_EXPAND_LISTS
+				COMMENT "Creating symlink to i18n bundles in build directory"
+				VERBATIM
+			)
+		endif()
+
+		# Assets will be installed by Gradle on Android
+		if(NOT ANDROID)
+			install(
+				FILES ${bundle_files}
+				DESTINATION "${INSTALL_APPDATADIR}/i18n"
+			)
+		endif()
 	endif()
 endif()
 
 directory_auto_source_groups()
-
-# Copy assets
-add_custom_command(TARGET drawpile POST_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E copy_directory
-                   ${CMAKE_CURRENT_SOURCE_DIR}/assets
-                   $<TARGET_FILE_DIR:drawpile>)

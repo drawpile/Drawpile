@@ -21,6 +21,8 @@ project(Drawpile
 	LANGUAGES CXX
 )
 
+include(DrawpileCheckSymlinks)
+
 # This must come after `project` because cross-compilation is configured by the
 # `project` call
 if(APPLE)
@@ -129,11 +131,6 @@ endif()
 include_directories(${CMAKE_CURRENT_LIST_DIR}/src)
 
 add_subdirectory(src/cmake-config)
-
-# Must be enabled after drawdance because it breaks drawdance
-if(DP_UNITY_BUILD)
-	set(CMAKE_UNITY_BUILD ON)
-endif()
 
 if(CLIENT OR SERVER)
 	# Everything needs these dependencies so just do it in one place

@@ -9,6 +9,8 @@ project(Drawdance
     DESCRIPTION "A Drawpile Client"
     LANGUAGES C CXX)
 
+set(CMAKE_UNITY_BUILD off)
+
 if(NOT CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     message(STATUS "${PROJECT_NAME} building as sub-project")
     set(SUBPROJECT on)

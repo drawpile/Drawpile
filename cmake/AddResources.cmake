@@ -3,20 +3,10 @@ Adds files and directories to a target as installable resources.
 #]]
 function(add_resources target)
 	set(multiValueArgs FILES DIRS)
-	cmake_parse_arguments(PARSE_ARGV 1 ARG "" "" "${multiValueArgs}")
+	cmake_parse_arguments(PARSE_ARGV 1 ARG "" "BUILD_TIME_DESTINATION" "${multiValueArgs}")
 
 	if(NOT target)
 		message(FATAL_ERROR "missing required target")
-	endif()
-
-	# For Android, the assets must be set up in advance in one directory because
-	# Qt only accepts one directory for all extra files and puts them in the APK
-	# at build time
-	if(ANDROID)
-		get_target_property(android_dir ${target} QT_ANDROID_PACKAGE_SOURCE_DIR)
-		if(NOT android_dir)
-			message(FATAL_ERROR "Missing QT_ANDROID_PACKAGE_SOURCE_DIR for AddResources")
-		endif()
 	endif()
 
 	foreach(dir IN LISTS ARG_DIRS)
@@ -33,14 +23,23 @@ function(add_resources target)
 			)
 		endforeach()
 
-		if(ANDROID)
-			file(CREATE_LINK
-				"${CMAKE_CURRENT_SOURCE_DIR}/assets/${dir}"
-				"${android_dir}/assets/${dir}"
-				SYMBOLIC
+		if(ARG_BUILD_TIME_DESTINATION)
+			add_custom_command(
+				TARGET ${target} PRE_LINK
+				COMMAND "${CMAKE_COMMAND}" -E make_directory
+					"${ARG_BUILD_TIME_DESTINATION}"
+				COMMAND "${CMAKE_COMMAND}" -E create_symlink
+					"${CMAKE_CURRENT_SOURCE_DIR}/assets/${dir}"
+					"${ARG_BUILD_TIME_DESTINATION}/${dir}"
+				COMMAND_EXPAND_LISTS
+				COMMENT "Creating symlink to resource ${dir} in build directory"
+				VERBATIM
 			)
+		endif()
+
 		# Assets will already be installed by MACOSX_PACKAGE_LOCATION on macOS
-		elseif(NOT APPLE)
+		# and by Gradle on Android
+		if(NOT ANDROID AND NOT APPLE)
 			# No trailing slash is required or else it will strip the last path
 			# of the directory
 			install(DIRECTORY "assets/${dir}"
@@ -53,20 +52,28 @@ function(add_resources target)
 		target_sources(${target} PRIVATE "assets/${file}")
 		get_filename_component(file_dir "${file}" DIRECTORY)
 		set_source_files_properties("assets/${file}"
-			PROPERTIES MACOSX_PACKAGE_LOCATION "Resources${file_dir}"
+			PROPERTIES MACOSX_PACKAGE_LOCATION "Resources/${file_dir}"
 		)
 
-		# As of Qt 6.4, its Android support ignores RESOURCE type files
-		if(ANDROID)
-			file(CREATE_LINK
-				"${CMAKE_CURRENT_SOURCE_DIR}/assets/${file}"
-				"${android_dir}/assets/${file}"
-				SYMBOLIC
+		if(ARG_BUILD_TIME_DESTINATION)
+			add_custom_command(
+				TARGET ${target} PRE_LINK
+				COMMAND "${CMAKE_COMMAND}" -E make_directory
+					"${ARG_BUILD_TIME_DESTINATION}/${file_dir}"
+				COMMAND "${CMAKE_COMMAND}" -E create_symlink
+					"${CMAKE_CURRENT_SOURCE_DIR}/assets/${file}"
+					"${ARG_BUILD_TIME_DESTINATION}/${file}"
+				COMMAND_EXPAND_LISTS
+				COMMENT "Creating symlink to resource ${file} in build directory"
+				VERBATIM
 			)
+		endif()
+
 		# Assets will already be installed by MACOSX_PACKAGE_LOCATION on macOS
-		elseif(NOT APPLE)
+		# and by Gradle on Android
+		if(NOT ANDROID AND NOT APPLE)
 			install(FILES "assets/${file}"
-				DESTINATION "${INSTALL_APPDATADIR}${file_dir}"
+				DESTINATION "${INSTALL_APPDATADIR}/${file_dir}"
 			)
 		endif()
 	endforeach()
