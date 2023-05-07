@@ -2,6 +2,7 @@
 
 #include "desktop/dialogs/joindialog.h"
 #include "desktop/dialogs/addserverdialog.h"
+#include "desktop/dialogs/settingsdialog/helpers.h"
 #include "desktop/main.h"
 #include "desktop/utils/mandatoryfields.h"
 #include "libclient/utils/usernamevalidator.h"
@@ -406,15 +407,24 @@ void JoinDialog::addListServer()
 	// The application will fetch the server's root page (http://DOMAIN/)
 	// and see if there is a <meta name="drawpile:list-server"> tag.
 	// If there is, it will follow it and add the list server.
-	QString urlStr = m_ui->address->currentText();
-	QUrl url;
-	if(!urlStr.contains('/')) {
-		url = QUrl { "http://" + urlStr };
+	const auto urlString = m_ui->address->currentText().trimmed();
+	auto url = QUrl::fromUserInput(urlString).adjusted(
+		QUrl::RemovePath | QUrl::RemoveQuery | QUrl::RemoveFragment
+	);
+	if (url.isValid() && url.scheme().startsWith("http")) {
+		// Qt will default guessed user input to http, but it should really
+		// default to https for privacy and security.
+		if (!urlString.startsWith("http://", Qt::CaseInsensitive)) {
+			url.setScheme("https");
+		}
+		addListServerUrl(url);
 	} else {
-		url = QUrl { "http://" + QUrl{urlStr}.host() };
+		settingsdialog::execWarning(
+			tr("Join a Session"),
+			tr("'%1' is not a valid list server URL.").arg(urlString),
+			this
+		);
 	}
-
-	addListServerUrl(url);
 }
 
 void JoinDialog::addListServerUrl(const QUrl &url)
