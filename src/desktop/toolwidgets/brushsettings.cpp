@@ -20,7 +20,6 @@ extern "C" {
 #include <QKeyEvent>
 #include <QPainter>
 #include <QMimeData>
-#include <QSettings>
 #include <QStandardItemModel>
 #include <QJsonDocument>
 #include <QJsonObject>

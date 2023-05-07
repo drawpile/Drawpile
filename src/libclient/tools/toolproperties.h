@@ -5,8 +5,7 @@
 
 #include <QVariant>
 #include <QColor>
-
-class QSettings;
+#include <utility>
 
 namespace tools {
 
@@ -84,22 +83,17 @@ public:
 
 	/**
 	 * @brief Save tool properties
-	 *
-	 * The properties will be saved under a group
-	 * named by toolType()
-	 *
-	 * @param cfg
 	 */
-	void save(QSettings &cfg) const;
+	[[nodiscard]] std::pair<const QString &, const QVariantHash &> save() const;
 
 	/**
 	 * @brief Load tool properties
-	 * @param cfg
 	 * @param toolType
+	 * @param props
 	 *
 	 * @return properties
 	 */
-	static ToolProperties load(QSettings &cfg, const QString &toolType);
+	static ToolProperties load(const QString &toolType, const QVariantHash &props);
 
 private:
 	QVariantHash m_props;

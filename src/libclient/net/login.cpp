@@ -4,7 +4,7 @@
 #include "libclient/net/loginsessions.h"
 #include "libclient/net/tcpserver.h"
 #include "libclient/net/servercmd.h"
-#include "libclient/parentalcontrols/parentalcontrols.h"
+#include "libclient/contentfilter/contentfilter.h"
 
 #include "libshared/net/protover.h"
 #include "libshared/util/networkaccess.h"
@@ -47,17 +47,17 @@ QFileInfo getCertFile(CertLocation location, const QString &hostname)
 namespace net {
 
 LoginHandler::LoginHandler(Mode mode, const QUrl &url, QObject *parent)
-	: QObject(parent),
-	  m_mode(mode),
-	  m_address(url),
-	  m_state(EXPECT_HELLO),
-	  m_multisession(false),
-	  m_canPersist(false),
-	  m_canReport(false),
-	  m_needUserPassword(false),
-	  m_supportsCustomAvatars(false),
-	  m_supportsExtAuthAvatars(false),
-	  m_isGuest(true)
+	: QObject(parent)
+	, m_mode(mode)
+	, m_address(url)
+	, m_state(EXPECT_HELLO)
+	, m_multisession(false)
+	, m_canPersist(false)
+	, m_canReport(false)
+	, m_needUserPassword(false)
+	, m_supportsCustomAvatars(false)
+	, m_supportsExtAuthAvatars(false)
+	, m_isGuest(true)
 {
 	m_sessions = new LoginSessionModel(this);
 
@@ -422,7 +422,7 @@ void LoginHandler::expectSessionDescriptionJoin(const ServerReply &msg)
 	}
 
 	if(msg.reply.contains("sessions")) {
-		const parentalcontrols::Level pclevel = parentalcontrols::level();
+		const contentfilter::Level pclevel = contentfilter::level();
 
 		for(const auto jsv : msg.reply["sessions"].toArray()) {
 			const QJsonObject js = jsv.toObject();
@@ -461,10 +461,16 @@ void LoginHandler::expectSessionDescriptionJoin(const ServerReply &msg)
 			if(!m_autoJoinId.isEmpty() && (session.id == m_autoJoinId || session.alias == m_autoJoinId)) {
 				// A session ID was given as part of the URL
 
-				if(!session.incompatibleSeries.isEmpty() || (session.nsfm && pclevel >= parentalcontrols::Level::NoJoin))
-					m_autoJoinId = QString();
-				else
+				auto canJoin = session.incompatibleSeries.isEmpty();
+				if (canJoin && pclevel >= contentfilter::Level::NoJoin) {
+					canJoin = (contentfilter::useAdvisoryTag() ? !session.nsfm : true)
+						&& !contentfilter::isNsfmTitle(session.title);
+				}
+
+				if(canJoin)
 					joinSelectedSession(m_autoJoinId, session.needPassword);
+				else
+					m_autoJoinId = QString();
 			}
 		}
 	}
@@ -482,16 +488,21 @@ void LoginHandler::expectSessionDescriptionJoin(const ServerReply &msg)
 
 		if(session.id.isEmpty()) {
 			failLogin(tr("Session not yet started!"));
+			return;
+		} else if(contentfilter::level() >= contentfilter::Level::NoJoin) {
+			const auto blocked = (contentfilter::useAdvisoryTag() ? session.nsfm : false)
+				|| contentfilter::isNsfmTitle(session.title);
 
-		} else if(session.nsfm && parentalcontrols::level() >= parentalcontrols::Level::NoJoin) {
-			failLogin(tr("Blocked by parental controls"));
-
+			if (blocked) {
+				failLogin(tr("Blocked by content filter"));
+				return;
+			}
 		} else if(!session.incompatibleSeries.isEmpty()) {
-				failLogin(tr("Session for a different Drawpile version (%1) in progress!").arg(session.incompatibleSeries));
-
-		} else {
-			joinSelectedSession(session.id, session.needPassword);
+			failLogin(tr("Session for a different Drawpile version (%1) in progress!").arg(session.incompatibleSeries));
+			return;
 		}
+
+		joinSelectedSession(session.id, session.needPassword);
 	}
 }
 
@@ -538,7 +549,7 @@ bool LoginHandler::expectLoginOk(const ServerReply &msg)
 			if(!m_title.isEmpty())
 				kwargs["title"] = m_title;
 
-			if(parentalcontrols::isNsfmTitle(m_title))
+			if(contentfilter::isNsfmTitle(m_title))
 				kwargs["nsfm"] = true;
 
 			send("sessionconf", {}, kwargs);

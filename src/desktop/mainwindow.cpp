@@ -81,7 +81,7 @@ static constexpr auto CTRL_KEY = Qt::CTRL;
 #include "libclient/net/client.h"
 #include "libclient/net/login.h"
 #include "libclient/canvas/layerlist.h"
-#include "libclient/parentalcontrols/parentalcontrols.h"
+#include "libclient/contentfilter/contentfilter.h"
 
 #include "libclient/tools/toolcontroller.h"
 #include "desktop/toolwidgets/brushsettings.h"
@@ -126,6 +126,10 @@ static constexpr auto CTRL_KEY = Qt::CTRL;
 #ifdef Q_OS_WIN
 #include "desktop/bundled/kis_tablet/kis_tablet_support_win.h"
 #endif
+
+using desktop::settings::Settings;
+// Totally arbitrary nonsense
+constexpr auto DEBOUNCE_MS = 250;
 
 MainWindow::MainWindow(bool restoreWindowPosition)
 	: QMainWindow(),
@@ -173,7 +177,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	  m_exitAfterSave(false)
 {
 	// The document (initially empty)
-	m_doc = new Document(this);
+	m_doc = new Document(dpApp().settings(), this);
 
 	// Set up the main window widgets
 	// The central widget consists of a custom status bar and a splitter
@@ -413,15 +417,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 		}
 	});
 
-	DrawpileApp *app = static_cast<DrawpileApp *>(qApp);
-	connect(app, &DrawpileApp::settingsChanged, this, &MainWindow::loadShortcuts);
-	connect(app, &DrawpileApp::settingsChanged, this, &MainWindow::updateSettings);
-	connect(app, &DrawpileApp::settingsChanged, m_doc, &Document::updateSettings);
-	connect(app, &DrawpileApp::settingsChanged, m_view, &widgets::CanvasView::updateSettings);
-	connect(app, &DrawpileApp::setDockTitleBarsHidden, this, &MainWindow::setDockTitleBarsHidden);
-
-	updateSettings();
-	m_doc->updateSettings();
+	connect(&dpApp(), &DrawpileApp::setDockTitleBarsHidden, this, &MainWindow::setDockTitleBarsHidden);
 
 	// Create actions and menus
 	setupActions();
@@ -448,7 +444,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	setCorner(Qt::TopLeftCorner, Qt::LeftDockWidgetArea);
 
 #ifdef SINGLE_MAIN_WINDOW
-	app->deleteAllMainWindowsExcept(this);
+	dpApp().deleteAllMainWindowsExcept(this);
 #endif
 }
 
@@ -555,8 +551,7 @@ MainWindow *MainWindow::replaceableWindow()
 	if(!canReplace()) {
 		if(windowState().testFlag(Qt::WindowFullScreen))
 			toggleFullscreen();
-		getAction("hidedocks")->setChecked(false);
-		writeSettings();
+		saveWindowState();
 		MainWindow *win = new MainWindow(false);
 		Q_ASSERT(win->canReplace());
 		return win;
@@ -616,11 +611,8 @@ void MainWindow::setDrawingToolsEnabled(bool enable)
 /**
  * Load customized shortcuts
  */
-void MainWindow::loadShortcuts()
+void MainWindow::loadShortcuts(const QVariantMap &cfg)
 {
-	QSettings cfg;
-	cfg.beginGroup("settings/shortcuts");
-
 	static const QRegularExpression shortcutAmpersand { "&([^&])" };
 
 	disconnect(m_textCopyConnection);
@@ -675,47 +667,12 @@ void MainWindow::loadShortcuts()
 
 	// Update enabled status of certain actions
 	QAction *uncensorAction = getAction("layerviewuncensor");
-	const bool canUncensor = !parentalcontrols::isLayerUncensoringBlocked();
+	const bool canUncensor = !contentfilter::isLayerUncensoringBlocked();
 	uncensorAction->setEnabled(canUncensor);
 	if(!canUncensor) {
 		uncensorAction->setChecked(false);
 		updateLayerViewMode();
 	}
-}
-
-void MainWindow::updateSettings()
-{
-	QSettings cfg;
-	cfg.beginGroup("settings/input");
-
-	const bool enable = cfg.value("tabletevents", true).toBool();
-	const bool eraser = cfg.value("tableteraser", true).toBool();
-
-	m_view->setTabletEnabled(enable);
-
-	// Handle eraser event
-	if(eraser)
-		connect(qApp, SIGNAL(eraserNear(bool)), m_dockToolSettings, SLOT(eraserNear(bool)), Qt::UniqueConnection);
-	else
-		disconnect(qApp, SIGNAL(eraserNear(bool)), m_dockToolSettings, SLOT(eraserNear(bool)));
-
-	// not really tablet related, but close enough
-	m_view->setTouchGestures(
-		cfg.value("touchscroll", true).toBool(),
-		cfg.value("touchdraw", false).toBool(),
-		cfg.value("touchpinch", true).toBool(),
-		cfg.value("touchtwist", true).toBool());
-
-	KisCubicCurve curve;
-	curve.fromString(cfg.value("globalcurve").toString());
-	m_view->setPressureCurve(curve);
-
-	cfg.endGroup();
-
-	cfg.beginGroup("settings");
-	m_view->setBrushCursorStyle(cfg.value("brushcursor", 3).toInt(), cfg.value("brushoutlinewidth", 2.0).toReal());
-	m_dockToolSettings->brushSettings()->setShareBrushSlotColor(cfg.value("sharebrushslotcolor", false).toBool());
-	cfg.endGroup();
 }
 
 void MainWindow::toggleLayerViewMode()
@@ -775,99 +732,130 @@ void MainWindow::updateLayerViewMode()
  */
 void MainWindow::readSettings(bool windowpos)
 {
-	QSettings cfg;
-	cfg.beginGroup("window");
+	auto &settings = dpApp().settings();
+
+	settings.bindTabletEraser(m_dockToolSettings, [=](bool eraser) {
+		if(eraser) {
+			connect(&dpApp(), &DrawpileApp::eraserNear, m_dockToolSettings, &docks::ToolSettings::eraserNear, Qt::UniqueConnection);
+		} else {
+			disconnect(&dpApp(), &DrawpileApp::eraserNear, m_dockToolSettings, &docks::ToolSettings::eraserNear);
+		}
+	});
+
+	settings.bindShareBrushSlotColor(m_dockToolSettings->brushSettings(), &tools::BrushSettings::setShareBrushSlotColor);
 
 	// Restore previously used window size and position
-	resize(cfg.value("size",QSize(800,600)).toSize());
+	resize(settings.lastWindowSize());
 
-	if(windowpos && cfg.contains("pos")) {
-		const QPoint pos = cfg.value("pos").toPoint();
-		if(qApp->primaryScreen()->availableGeometry().contains(pos))
+	if(windowpos) {
+		const auto pos = settings.lastWindowPosition();
+		if (dpApp().primaryScreen()->availableGeometry().contains(pos))
 			move(pos);
 	}
 
-	bool maximize = cfg.value("maximized", false).toBool();
-	if(maximize)
+	if(settings.lastWindowMaximized())
 		setWindowState(Qt::WindowMaximized);
 
 	// Restore dock, toolbar and view states
-	if(cfg.contains("state")) {
-		restoreState(cfg.value("state").toByteArray());
+	if(const auto lastWindowState = settings.lastWindowState(); !lastWindowState.isEmpty()) {
+		restoreState(settings.lastWindowState());
 	}
-	if(cfg.contains("viewstate")) {
-		m_splitter->restoreState(cfg.value("viewstate").toByteArray());
+	if(const auto lastWindowViewState = settings.lastWindowViewState(); !lastWindowViewState.isEmpty()) {
+		m_splitter->restoreState(settings.lastWindowViewState());
 	}
 
-	cfg.beginGroup("docks");
-	for(QObject *c : children()) {
-		QDockWidget *dw = qobject_cast<QDockWidget*>(c);
-		if(dw && !dw->objectName().isEmpty()) {
-			cfg.beginGroup(dw->objectName());
-			if(cfg.value("undockable", false).toBool()) {
+	connect(m_splitter, &QSplitter::splitterMoved, this, [=] {
+		m_saveSplitterDebounce.start(DEBOUNCE_MS);
+	});
+
+	const auto docksConfig = settings.lastWindowDocks();
+	for(auto *dw : findChildren<QDockWidget *>(QString(), Qt::FindDirectChildrenOnly)) {
+		if(!dw->objectName().isEmpty()) {
+			const auto dock = docksConfig.value(dw->objectName()).value<QVariantMap>();
+			if(dock.value("undockable", false).toBool()) {
 				dw->setFloating(true);
 				dw->setAllowedAreas(Qt::NoDockWidgetArea);
 			}
-			cfg.endGroup();
 		}
 	}
-	cfg.endGroup();
 
 	// Restore remembered actions
-	cfg.beginGroup("actions");
-	for(QAction *act : actions()) {
+	m_actionsConfig = settings.lastWindowActions();
+	for(auto *act : actions()) {
 		if(act->isCheckable() && act->property("remembered").toBool()) {
-			act->setChecked(cfg.value(act->objectName(), act->property("defaultValue")).toBool());
+			act->setChecked(m_actionsConfig.value(act->objectName(), act->property("defaultValue").toBool()));
+			connect(act, &QAction::toggled, this, [=, &settings](bool checked) {
+				m_actionsConfig[act->objectName()] = checked;
+				settings.setLastWindowActions(m_actionsConfig);
+			});
 		}
 	}
-	cfg.endGroup();
-	cfg.endGroup();
-
-	// Restore tool settings
-	m_dockToolSettings->readSettings();
 
 	// Customize shortcuts
-	loadShortcuts();
+	settings.bindShortcuts(this, &MainWindow::loadShortcuts);
 
 	// Restore recent files
 	RecentFiles::initMenu(m_recentMenu);
-}
 
-/**
- * Write out settings
- */
-void MainWindow::writeSettings()
-{
-	QSettings cfg;
-	cfg.beginGroup("window");
+	connect(&m_saveWindowDebounce, &QTimer::timeout, this, &MainWindow::saveWindowState);
+	connect(&m_saveSplitterDebounce, &QTimer::timeout, this, &MainWindow::saveSplitterState);
 
-	cfg.setValue("pos", normalGeometry().topLeft());
-	cfg.setValue("size", normalGeometry().size());
-
-	cfg.setValue("maximized", isMaximized());
-	cfg.setValue("state", saveState());
-	cfg.setValue("viewstate", m_splitter->saveState());
-
-	cfg.beginGroup("docks");
-	for(QObject *c : children()) {
-		QDockWidget *dw = qobject_cast<QDockWidget*>(c);
-		if(dw && !dw->objectName().isEmpty()) {
-			cfg.beginGroup(dw->objectName());
-			bool undockable = dw->isFloating() && dw->allowedAreas() == Qt::NoDockWidgetArea;
-			cfg.setValue("undockable", undockable);
-			cfg.endGroup();
+	// QMainWindow produces no event when there is a change that would cause the
+	// serialised state to be different, so we will just have to make some
+	// guesses listening for relevant changes in the docked widgets.
+	for(auto *w : findChildren<QWidget *>(QString(), Qt::FindDirectChildrenOnly)) {
+		if (w->inherits("QDockWidget") || w->inherits("QToolBar")) {
+			w->installEventFilter(this);
 		}
 	}
-	cfg.endGroup();
+}
 
-	// Save all remembered actions
-	cfg.beginGroup("actions");
-	for(const QAction *act : actions()) {
-		if(act->isCheckable() && act->property("remembered").toBool())
-			cfg.setValue(act->objectName(), act->isChecked());
+bool MainWindow::eventFilter(QObject *object, QEvent *event)
+{
+	switch (event->type()) {
+	// This is a guessed list of events that might cause the QMainWindow state
+	// to change, and it seems to work OK but may be wrong or excessive
+	case QEvent::Show:
+	case QEvent::Hide:
+	case QEvent::Move:
+	case QEvent::Resize:
+	case QEvent::Close:
+		m_saveWindowDebounce.start(DEBOUNCE_MS);
+		break;
+	default: {}
 	}
-	cfg.endGroup();
-	cfg.endGroup();
+	return QMainWindow::eventFilter(object, event);
+}
+
+void MainWindow::saveSplitterState()
+{
+	m_saveSplitterDebounce.stop();
+
+	auto &settings = dpApp().settings();
+	settings.setLastWindowViewState(m_splitter->saveState());
+}
+
+void MainWindow::saveWindowState()
+{
+	m_saveWindowDebounce.stop();
+
+	auto &settings = dpApp().settings();
+	settings.setLastWindowPosition(normalGeometry().topLeft());
+	settings.setLastWindowSize(normalGeometry().size());
+	settings.setLastWindowMaximized(isMaximized());
+	settings.setLastWindowState(m_hiddenDockState.isEmpty() ? saveState() : m_hiddenDockState);
+
+	// TODO: This should be separate from window state and happen only when dock
+	// states change
+	Settings::LastWindowDocksType docksConfig;
+	for (const auto *dw : findChildren<const QDockWidget *>(QString(), Qt::FindDirectChildrenOnly)) {
+		if(!dw->objectName().isEmpty()) {
+			docksConfig[dw->objectName()] = QVariantMap {
+				{"undockable", dw->isFloating() && dw->allowedAreas() == Qt::NoDockWidgetArea}
+			};
+		}
+	}
+	settings.setLastWindowDocks(docksConfig);
 
 	m_dockToolSettings->saveSettings();
 }
@@ -979,20 +967,20 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 bool MainWindow::event(QEvent *event)
 {
-	if(event->type() == QEvent::StatusTip) {
+	switch (event->type()) {
+	case QEvent::StatusTip:
 		m_viewStatusBar->showMessage(static_cast<QStatusTipEvent*>(event)->tip());
 		return true;
-	} else {
+	case QEvent::KeyRelease:
 		// Monitor key-up events to switch back from temporary tools/tool slots.
 		// A short tap of the tool switch shortcut switches the tool permanently as usual,
 		// but when holding it down, the tool is activated just temporarily. The
 		// previous tool be switched back automatically when the shortcut key is released.
 		// Note: for simplicity, we only support tools with single key shortcuts.
-		if(event->type() == QEvent::KeyRelease && m_toolChangeTime.elapsed() > 250) {
+		if (m_toolChangeTime.elapsed() > 250) {
 			const QKeyEvent *e = static_cast<const QKeyEvent*>(event);
 			if(!e->isAutoRepeat()) {
-				if(m_tempToolSwitchShortcut->isShortcutSent()) {
-					if(e->modifiers() == Qt::NoModifier) {
+				if(m_tempToolSwitchShortcut->isShortcutSent() && e->modifiers() == Qt::NoModifier) {
 						// Return from temporary tool change
 						for(const QAction *act : m_drawingtools->actions()) {
 							const QKeySequence &seq = act->shortcut();
@@ -1008,15 +996,15 @@ bool MainWindow::event(QEvent *event)
 							if(seq.count()==1 && compat::keyPressed(*e) == seq[0]) {
 								m_dockToolSettings->setPreviousTool();
 								break;
-							}
 						}
 					}
 				}
 
 				m_tempToolSwitchShortcut->reset();
 			}
-
-		} else if(event->type() == QEvent::ShortcutOverride) {
+		}
+		break;
+	case QEvent::ShortcutOverride: {
 			// QLineEdit doesn't seem to override the Return key shortcut,
 			// so we have to do it ourself.
 			const QKeyEvent *e = static_cast<QKeyEvent*>(event);
@@ -1028,9 +1016,16 @@ bool MainWindow::event(QEvent *event)
 				}
 			}
 		}
+	break;
+	case QEvent::Move:
+	case QEvent::Resize:
+	case QEvent::WindowStateChange:
+		m_saveWindowDebounce.start(DEBOUNCE_MS);
+		break;
+	default: {}
+	}
 
 		return QMainWindow::event(event);
-	}
 }
 
 /**
@@ -1418,7 +1413,7 @@ void MainWindow::toggleTabletEventLog()
 				DP_event_log_write_meta("Drawpile: %s", cmake_config::version());
 				DP_event_log_write_meta("Qt: %s", QT_VERSION_STR);
 				DP_event_log_write_meta("OS: %s", qUtf8Printable(QSysInfo::prettyProductName()));
-				DP_event_log_write_meta("Input: %s", qUtf8Printable(tabletinput::current()));
+				DP_event_log_write_meta("Input: %s", tabletinput::current());
 			} else {
 				showErrorMessageWithDetails(tr("Error opening tablet event log."), DP_error());
 			}
@@ -1457,14 +1452,12 @@ void MainWindow::showBrushSettingsDialog()
 }
 
 /**
- * The settings window will be window modal and automatically destruct
- * when it is closed.
+ * The settings window will automatically destruct when it is closed.
  */
 void MainWindow::showSettings()
 {
 	dialogs::SettingsDialog *dlg = new dialogs::SettingsDialog;
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
-	dlg->setWindowModality(Qt::ApplicationModal);
 	utils::showWindow(dlg);
 }
 
@@ -1549,7 +1542,7 @@ void MainWindow::hostSession(dialogs::HostDialog *dlg)
 
 	utils::showWindow(new dialogs::LoginDialog(login, this));
 
-	m_doc->client()->connectToServer(login);
+	m_doc->client()->connectToServer(dpApp().settings().serverTimeout(), login);
 }
 
 /**
@@ -1723,7 +1716,7 @@ void MainWindow::joinSession(const QUrl& url, const QString &autoRecordFile)
 
 	dlg->show();
 	m_doc->setRecordOnConnect(autoRecordFile);
-	m_doc->client()->connectToServer(login);
+	m_doc->client()->connectToServer(dpApp().settings().serverTimeout(), login);
 }
 
 /**
@@ -1861,9 +1854,9 @@ void MainWindow::updateLockWidget()
 
 void MainWindow::onNsfmChanged(bool nsfm)
 {
-	if(nsfm && parentalcontrols::level() >= parentalcontrols::Level::Restricted) {
+	if(nsfm && contentfilter::useAdvisoryTag() && contentfilter::level() >= contentfilter::Level::Restricted) {
 		m_doc->client()->disconnectFromServer();
-		showErrorMessage(tr("Session blocked by parental controls"));
+		showErrorMessage(tr("Session blocked by content filter"));
 	}
 }
 
@@ -1921,7 +1914,7 @@ void MainWindow::exit()
 	if(windowState().testFlag(Qt::WindowFullScreen))
 		toggleFullscreen();
 	setDocksHidden(false);
-	writeSettings();
+	saveWindowState();
 	deleteLater();
 }
 
@@ -2099,10 +2092,9 @@ void MainWindow::selectTool(QAction *tool)
 		return;
 
 	if(m_dockToolSettings->currentTool() == idx) {
-		if(QSettings().value("settings/tooltoggle", true).toBool())
+		if(dpApp().settings().toolToggle())
 			m_dockToolSettings->setPreviousTool();
 		m_tempToolSwitchShortcut->reset();
-
 	} else {
 		m_dockToolSettings->setTool(tools::Tool::Type(idx));
 		m_toolChangeTime.start();
@@ -2574,7 +2566,7 @@ void MainWindow::about()
 				.arg(tr("Settings File:"))
 				.arg(QSettings{}.fileName().toHtmlEscaped())
 				.arg(tr("Tablet Input:"))
-				.arg(tabletinput::current())
+				.arg(QCoreApplication::translate("tabletinput", tabletinput::current()))
 	);
 }
 

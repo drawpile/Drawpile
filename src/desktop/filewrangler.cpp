@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "desktop/filewrangler.h"
+#include "desktop/main.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/document.h"
@@ -10,7 +11,6 @@
 #include <QMessageBox>
 #include <QPushButton>
 #include <QRegularExpression>
-#include <QSettings>
 #ifdef Q_OS_ANDROID
 #	include "desktop/dialogs/androidfiledialog.h"
 #endif
@@ -259,18 +259,10 @@ bool FileWrangler::needsOra(Document *doc)
 	return doc->canvas()->paintEngine()->needsOpenRaster();
 }
 
-QSettings &FileWrangler::beginLastPathGroup(QSettings &cfg)
-{
-	cfg.beginGroup("window");
-	cfg.beginGroup("lastpaths");
-	return cfg;
-}
-
 QString FileWrangler::getLastPath(LastPath type, const QString &ext)
 {
-	QSettings cfg;
-	QString filename =
-		beginLastPathGroup(cfg).value(getLastPathKey(type)).toString();
+	const auto paths = dpApp().settings().lastFileOpenPaths();
+	QString filename = paths.value(getLastPathKey(type)).toString();
 	if(filename.isEmpty()) {
 		return getDefaultLastPath(type, ext);
 	} else {
@@ -281,8 +273,10 @@ QString FileWrangler::getLastPath(LastPath type, const QString &ext)
 
 void FileWrangler::setLastPath(LastPath type, const QString &path)
 {
-	QSettings cfg;
-	beginLastPathGroup(cfg).setValue(getLastPathKey(type), path);
+	auto &settings = dpApp().settings();
+	auto paths = settings.lastFileOpenPaths();
+	paths[getLastPathKey(type)] = path;
+	settings.setLastFileOpenPaths(paths);
 }
 
 QString FileWrangler::getLastPathKey(LastPath type)

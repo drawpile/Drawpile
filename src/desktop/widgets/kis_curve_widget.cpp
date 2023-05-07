@@ -504,4 +504,3 @@ void KisCurveWidget::setCurve(KisCubicCurve inlist)
 void KisCurveWidget::leaveEvent(QEvent *)
 {
 }
-

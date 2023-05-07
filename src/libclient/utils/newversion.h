@@ -7,6 +7,8 @@
 #include <QUrl>
 #include <QVector>
 
+namespace libclient { namespace settings { class Settings; } }
+
 class QXmlStreamReader;
 
 /**
@@ -54,11 +56,11 @@ public:
 	 *
 	 * A version check should be performed if:
 	 *
-	 *  - the user hasn't opted out (QSettings: versioncheck/enabled, default=true)
+	 *  - the user hasn't opted out
 	 *  - it has been at least one day since the previous check
 	 *  - if the last version checked failed, it has been at least one week
 	 */
-	static bool needCheck();
+	static bool needCheck(const libclient::settings::Settings &settings);
 
 	/**
 	 * @brief Is a new series (e.g. 2.0 --> 2.1) out? (cached)
@@ -66,7 +68,7 @@ public:
 	 * Check the cached latest release if a newer incompatible version
 	 * is out.
 	 */
-	static bool isThereANewSeries();
+	static bool isThereANewSeries(const libclient::settings::Settings &settings);
 
 	/**
 	 * Show beta releases?
@@ -100,7 +102,7 @@ public:
 	 *
 	 * @param url the URL to query (if null, the default built-in URL is used)
 	 */
-	void queryVersions(QUrl url=QUrl());
+	void queryVersions(libclient::settings::Settings &settings, QUrl url=QUrl());
 
 	/**
 	 * Parse an AppData file and get the list of releases.
@@ -135,8 +137,8 @@ private:
 	bool parseDesktopElement(QXmlStreamReader &reader);
 	bool parseReleasesElement(QXmlStreamReader &reader);
 
-	void queryFail(const QString &errorMessage);
-	void querySuccess();
+	void queryFail(libclient::settings::Settings &settings, const QString &errorMessage);
+	void querySuccess(libclient::settings::Settings &settings);
 
 	int m_server, m_major, m_minor;
 	QVector<Version> m_newer;

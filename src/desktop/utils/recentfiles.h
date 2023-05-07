@@ -12,9 +12,6 @@ class QString;
  */
 class RecentFiles {
 	public:
-		//! The default maximum number of recent files to remember
-		static const int DEFAULT_MAXFILES = 6;
-
 		//! Add a new entry to the list of recent files
 		static void addFile(const QString& file);
 

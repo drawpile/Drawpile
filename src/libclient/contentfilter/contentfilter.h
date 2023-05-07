@@ -1,35 +1,41 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef PARENTALCONTROLS_H
-#define PARENTALCONTROLS_H
+#ifndef LIBCLIENT_CONTENTFILTER_CONTENTFILTER_H
+#define LIBCLIENT_CONTENTFILTER_CONTENTFILTER_H
+
+#include <QObject>
+#include <QPointer>
+
+namespace libclient { namespace settings { class Settings; } }
 
 class QString;
 
-namespace parentalcontrols {
+namespace contentfilter {
+Q_NAMESPACE
 
 enum class Level {
-	Unrestricted, // parental controls inactive
+	Unrestricted, // content filter inactive
 	NoList,       // NSFM sessions listings are hidden, but direct join is still possible
 	NoJoin,       // Cannot join sessions tagged as NSFM
 	Restricted    // Will autodisconnect from sessions that get tagged as NSFM
 };
 
-/**
- * Initialize OS parental control integration
- */
-void init();
+Q_ENUM_NS(Level)
 
 /**
- * @brief Are parental controls active on the operating system level?
+ * Initialize OS content filter integration
+ */
+void init(libclient::settings::Settings &settings);
+
+/**
+ * @brief Are content filters active on the operating system level?
  *
  * This overrides any in-application configuration
  */
 bool isOSActive();
 
 /**
- * @brief Are parental control settings locked?
- *
- * This means options to access material tagged as "Not Safe For Minors" should be disabled.
+ * @brief Are content filter settings locked?
  */
 bool isLocked();
 
@@ -47,7 +53,12 @@ QString defaultWordList();
 bool isNsfmTitle(const QString &title);
 
 /**
- * @brief Get the current parental control level
+ * @brief Should advisory tags from the session be used to filter content?
+ */
+bool useAdvisoryTag();
+
+/**
+ * @brief Get the current content filter level
  *
  * If isOSActive() is true, the minimum level is NoJoin
  */
@@ -60,7 +71,9 @@ Level level();
  */
 bool isLayerUncensoringBlocked();
 
+extern QPointer<libclient::settings::Settings> g_settings;
+
 }
 
-#endif // PARENTALCONTROLS_H
+#endif // LIBCLIENT_CONTENTFILTER_CONTENTFILTER_H
 

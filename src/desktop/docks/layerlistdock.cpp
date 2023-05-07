@@ -2,6 +2,7 @@
 
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
+#include "desktop/main.h"
 #include "libclient/canvas/blendmodes.h"
 #include "libclient/canvas/layerlist.h"
 #include "libclient/canvas/canvasmodel.h"
@@ -23,7 +24,6 @@
 #include <QPushButton>
 #include <QActionGroup>
 #include <QTimer>
-#include <QSettings>
 #include <QStandardItemModel>
 #include <QScrollBar>
 #include <QTreeView>
@@ -421,8 +421,7 @@ void LayerList::deleteSelected()
 		return;
 
 	const canvas::LayerListItem &layer = index.data().value<canvas::LayerListItem>();
-	QSettings settings;
-	if(settings.value("settings/confirmlayerdelete", false).toBool()) {
+	if(dpApp().settings().confirmLayerDelete()) {
 		QMessageBox::StandardButton result = QMessageBox::question(
 			this, tr("Delete Layer?"),
 			tr("Really delete the layer '%1'?").arg(layer.title),

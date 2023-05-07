@@ -2,6 +2,7 @@
 
 #include "desktop/docks/toolsettingsdock.h"
 #include "desktop/docks/titlewidget.h"
+#include "desktop/main.h"
 #include "desktop/toolwidgets/brushsettings.h"
 #include "desktop/toolwidgets/colorpickersettings.h"
 #include "desktop/toolwidgets/selectionsettings.h"
@@ -19,7 +20,6 @@
 #include <QIcon>
 #include <QStackedWidget>
 #include <QApplication>
-#include <QSettings>
 #include <QLabel>
 
 namespace docks {
@@ -192,6 +192,10 @@ ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
 	d->colorDialog = dialogs::newColorDialog(this);
 	d->colorDialog->setAlphaEnabled(false);
 	connect(d->colorDialog, &color_widgets::ColorDialog::colorSelected, this, &ToolSettings::setForegroundColor);
+
+	auto &settings = dpApp().settings();
+	settings.bindLastToolColor(this, &ToolSettings::setForegroundColor, &ToolSettings::foregroundColorChanged);
+	settings.bindLastTool(this, &ToolSettings::selectTool, &ToolSettings::toolChanged);
 }
 
 ToolSettings::~ToolSettings()
@@ -199,29 +203,24 @@ ToolSettings::~ToolSettings()
 	delete d;
 }
 
-void ToolSettings::readSettings()
-{
-	QSettings cfg;
-	cfg.beginGroup("tools");
-	setForegroundColor(cfg.value("color").value<QColor>());
-	selectTool(tools::Tool::Type(cfg.value("tool").toInt()));
-}
-
 void ToolSettings::saveSettings()
 {
-	QSettings cfg;
-	cfg.beginGroup("tools");
-	cfg.setValue("tool", d->currentTool);
-	cfg.setValue("color", d->color);
-
-	cfg.beginGroup("toolset");
+	desktop::settings::Settings::ToolsetType toolset;
 	for(auto ts : qAsConst(d->toolSettings)) {
 		// If no UI was loaded then the settings could not have changed and
 		// there is no need to re-save them
 		if(ts->getUi()) {
-			ts->saveToolSettings().save(cfg);
+			// TODO: Tool settings should always be going to settings whenever
+			// they are changed, and should not create a separate object just to
+			// save
+			const auto saveTs = ts->saveToolSettings();
+			const auto [name, props] = saveTs.save();
+			if (!name.isEmpty()) {
+				toolset[name] = props;
+			}
 		}
 	}
+	dpApp().settings().setToolset(toolset);
 }
 
 bool ToolSettings::isCurrentToolLocked() const
@@ -240,9 +239,8 @@ tools::ToolSettings *ToolSettings::getToolSettingsPage(tools::Tool::Type tool)
 			if(headerWidget)
 				d->headerStack->addWidget(headerWidget);
 
-			QSettings cfg;
-			cfg.beginGroup("tools/toolset");
-			ts->restoreToolSettings(tools::ToolProperties::load(cfg, ts->toolType()));
+			const auto toolset = dpApp().settings().toolset();
+			ts->restoreToolSettings(tools::ToolProperties::load(ts->toolType(), toolset[ts->toolType()]));
 		}
 		return ts;
 	}

@@ -6,11 +6,11 @@
 #include "desktop/docks/colorpalette.h"
 #include "desktop/docks/titlewidget.h"
 #include "desktop/dialogs/colordialog.h"
+#include "desktop/main.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "libshared/util/paths.h"
 
 #include <QIcon>
-#include <QSettings>
 #include <QMessageBox>
 #include <QMenu>
 #include <QFileDialog>
@@ -142,24 +142,18 @@ ColorPaletteDock::ColorPaletteDock(const QString& title, QWidget *parent)
 		}
 	});
 
-	// Restore UI state
-	QSettings cfg;
-	int lastPalette = cfg.value("history/lastpalette", 0).toInt();
-	lastPalette = qBound(0, lastPalette, d->paletteChoiceBox->model()->rowCount());
-
-	if(lastPalette>0)
-		d->paletteChoiceBox->setCurrentIndex(lastPalette);
-	else
-		paletteChanged(0);
+	dpApp().settings().bindLastPalette(d->paletteChoiceBox, [=](int index) {
+		const auto lastPalette = qBound(0, index, d->paletteChoiceBox->model()->rowCount());
+		if(lastPalette > 0)
+			d->paletteChoiceBox->setCurrentIndex(lastPalette);
+		else
+			paletteChanged(0);
+	}, QOverload<int>::of(&QComboBox::currentIndexChanged));
 }
 
 ColorPaletteDock::~ColorPaletteDock()
 {
 	d->saveCurrentPalette();
-
-	QSettings cfg;
-	cfg.setValue("history/lastpalette", d->paletteChoiceBox->currentIndex());
-
 	delete d;
 }
 

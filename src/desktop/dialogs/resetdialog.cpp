@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "desktop/dialogs/resetdialog.h"
+#include "desktop/main.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/utils/images.h"
 #include "libshared/util/qtcompat.h"
@@ -14,7 +15,6 @@
 #include <QVector>
 #include <QFileDialog>
 #include <QMessageBox>
-#include <QSettings>
 #include <QApplication>
 
 namespace {
@@ -161,7 +161,7 @@ void ResetDialog::onOpenClicked()
 	const QString file = QFileDialog::getOpenFileName(
 		this,
 		tr("Open Image"),
-		QSettings().value("window/lastpath").toString(),
+		dpApp().settings().lastFileOpenPath(),
 		utils::fileFormatFilter(utils::FileFormatOption::OpenImages)
 	);
 

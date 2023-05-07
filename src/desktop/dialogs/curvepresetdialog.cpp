@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "desktop/dialogs/curvepresetdialog.h"
+#include "desktop/main.h"
 #include "desktop/widgets/kis_curve_widget.h"
 #include <QGridLayout>
 #include <QHBoxLayout>
@@ -9,7 +10,6 @@
 #include <QListWidget>
 #include <QMessageBox>
 #include <QPushButton>
-#include <QSettings>
 #include <QtMath>
 
 namespace dialogs {
@@ -177,47 +177,36 @@ void CurvePresetDialog::loadPresets(const KisCubicCurve &current, bool linear)
 
 void CurvePresetDialog::loadSavedPresets()
 {
-	QSettings cfg;
-
-	int size = cfg.beginReadArray("curves/presets");
-	if(size == 0 && !cfg.value("curves/inputpresetsconverted").toBool()) {
-		cfg.endArray();
-		convertInputPresetsToCurvePresets(cfg);
-		cfg.setValue("curves/inputpresetsconverted", true);
-		size = cfg.beginReadArray("curves/presets");
+	auto &settings = dpApp().settings();
+	// TODO: This migration should be in Settings
+	if (settings.curvesPresets().isEmpty() && !settings.curvesPresetsConverted()) {
+		convertInputPresetsToCurvePresets(settings);
+		settings.setCurvesPresetsConverted(true);
 	}
 
-	for(int i = 0; i < size; ++i) {
-		cfg.setArrayIndex(i);
+	const auto presets = dpApp().settings().curvesPresets();
+	for (const auto &preset : presets) {
 		KisCubicCurve curve;
-		curve.fromString(cfg.value("curve").toString());
-		addPreset(cfg.value("name").toString(), Saved, curve);
+		curve.fromString(preset.value("curve").toString());
+		addPreset(preset.value("name").toString(), Saved, curve);
 	}
-	cfg.endArray();
 }
 
-void CurvePresetDialog::convertInputPresetsToCurvePresets(QSettings &cfg)
+void CurvePresetDialog::convertInputPresetsToCurvePresets(desktop::settings::Settings &cfg)
 {
-	QVector<QPair<QString, QString>> curves;
-	int inputSize = cfg.beginReadArray("inputpresets");
-	for(int i = 0; i < inputSize; ++i) {
-		cfg.setArrayIndex(i);
-		QString curveString = cfg.value("curve").toString();
+	// TODO: This migration should be in Settings
+	desktop::settings::Settings::CurvesPresetsType curves;
+	const auto inputs = cfg.inputPresets();
+	for (const auto &input : inputs) {
+		const auto curveString = input.value("curve").toString();
 		// A straight line is not an interesting preset.
 		if(!isLinearCurve(curveString)) {
-			curves.append({cfg.value("name").toString(), curveString});
+			curves.append({
+				{"name", input.value("name")},
+				{"curve", curveString}
+			});
 		}
 	}
-	cfg.endArray();
-
-	int curvesSize = curves.size();
-	cfg.beginWriteArray("curves/presets", curvesSize);
-	for(int i = 0; i < curvesSize; ++i) {
-		cfg.setArrayIndex(i);
-		cfg.setValue("name", curves[i].first);
-		cfg.setValue("curve", curves[i].second);
-	}
-	cfg.endArray();
 }
 
 bool CurvePresetDialog::isLinearCurve(const QString &curveString)
@@ -269,19 +258,18 @@ QIcon CurvePresetDialog::getPresetIcon(int type)
 
 void CurvePresetDialog::savePresets()
 {
-	QSettings cfg;
-	cfg.beginWriteArray("curves/presets");
-	int writeIndex = 0;
-	int count = m_presetList->count();
-	for(int i = 0; i < count; ++i) {
+	desktop::settings::Settings::CurvesPresetsType presets;
+	const auto count = m_presetList->count();
+	for(auto i = 0; i < count; ++i) {
 		QListWidgetItem *item = m_presetList->item(i);
 		if(item->data(TypeRole).toInt() == Saved) {
-			cfg.setArrayIndex(writeIndex++);
-			cfg.setValue("name", item->text());
-			cfg.setValue("curve", item->data(CurveRole).toString());
+			presets.append({
+				{"name", item->text()},
+				{"curve", item->data(CurveRole).toString()}
+			});
 		}
 	}
-	cfg.endArray();
+	dpApp().settings().setCurvesPresets(presets);
 }
 
 double CurvePresetDialog::quadraticIn(double x)

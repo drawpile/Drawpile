@@ -6,6 +6,7 @@
 #include "libclient/utils/html.h"
 #include "libclient/utils/funstuff.h"
 #include "desktop/notifications.h"
+#include "desktop/main.h"
 
 #include "libclient/canvas/userlist.h"
 #include "libclient/drawdance/message.h"
@@ -21,7 +22,6 @@
 #include <QTabBar>
 #include <QIcon>
 #include <QMenu>
-#include <QSettings>
 
 #include <memory>
 
@@ -174,7 +174,9 @@ ChatWidget::ChatWidget(QWidget *parent)
 
 	setPreserveMode(false);
 
-	d->compactMode = QSettings().value("history/compactchat").toBool();
+	dpApp().settings().bindCompactChat(this, [=](bool compact) {
+		d->compactMode = compact;
+	});
 }
 
 ChatWidget::~ChatWidget()
@@ -794,8 +796,7 @@ void ChatWidget::showChatContextMenu(const QPoint &pos)
 
 void ChatWidget::setCompactMode(bool compact)
 {
-	d->compactMode = compact;
-	QSettings().setValue("history/compactchat", compact);
+	dpApp().settings().setCompactChat(compact);
 }
 
 void ChatWidget::resizeEvent(QResizeEvent *)

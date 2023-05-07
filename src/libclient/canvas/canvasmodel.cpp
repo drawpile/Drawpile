@@ -16,7 +16,6 @@ extern "C" {
 #include "libclient/utils/identicon.h"
 #include "libshared/util/qtcompat.h"
 
-#include <QSettings>
 #include <QDebug>
 #include <QPainter>
 

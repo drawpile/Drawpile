@@ -5,24 +5,30 @@
 #include "libclient/canvas/canvasshortcuts.h"
 #include <QAbstractTableModel>
 #include <QVector>
+#include <QVariant>
 
-class CanvasShortcutsModel : public QAbstractTableModel {
+class CanvasShortcutsModel final : public QAbstractTableModel {
 	Q_OBJECT
 public:
+	enum Column {
+		Action = 0,
+		Shortcut,
+		Modifiers,
+		ColumnCount
+	};
+
 	explicit CanvasShortcutsModel(QObject *parent = nullptr);
 
-	void loadShortcuts(QSettings &cfg);
-	void saveShortcuts(QSettings &cfg);
+	void loadShortcuts(const QVariantMap &cfg);
+	[[nodiscard]] QVariantMap saveShortcuts();
 	void restoreDefaults();
 
 	int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 	int columnCount(const QModelIndex &parent = QModelIndex()) const override;
 
-	QVariant
-	data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+	QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
-	bool removeRows(
-		int row, int count, const QModelIndex &parent = QModelIndex()) override;
+	bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
 
 	QVariant headerData(
 		int section, Qt::Orientation orientation,
@@ -32,9 +38,9 @@ public:
 
 	const CanvasShortcuts::Shortcut *shortcutAt(int row) const;
 
-	int addShortcut(const CanvasShortcuts::Shortcut &s);
+	QModelIndex addShortcut(const CanvasShortcuts::Shortcut &s);
 
-	int editShortcut(
+	QModelIndex editShortcut(
 		const CanvasShortcuts::Shortcut &prev,
 		const CanvasShortcuts::Shortcut &s);
 

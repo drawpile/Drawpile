@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "desktop/dialogs/layoutsdialog.h"
+#include "desktop/main.h"
 #include "ui_layoutsdialog.h"
 #include <QByteArray>
 #include <QInputDialog>
-#include <QSettings>
 #include <QTimer>
 #include <QVector>
 #include <algorithm>
@@ -66,33 +66,31 @@ struct LayoutsDialog::Private {
 		, updateInProgress{false}
 	{
 		layouts.append(Layout{currentState});
-		QSettings settings;
-		int count = settings.beginReadArray("layouts");
-		if(count == 0) {
+		const auto savedLayouts = dpApp().settings().layouts();
+		if(savedLayouts.isEmpty()) {
 			createDefaultLayouts();
 		} else {
-			for(int i = 0; i < count; ++i) {
-				settings.setArrayIndex(i);
+			for (const auto &savedLayout : savedLayouts) {
 				layouts.append(Layout{
-					settings.value("title").toString(),
-					settings.value("state").toByteArray()});
+					savedLayout.value("title").toString(),
+					savedLayout.value("state").toByteArray()
+				});
 			}
 		}
 	}
 
 	void saveLayouts()
 	{
-		QSettings settings;
-		settings.beginWriteArray("layouts");
-		int i = 0;
+		desktop::settings::Settings::LayoutsType savedLayouts;
 		for(const Layout &layout : layouts) {
 			if(!layout.transient && !layout.deleted) {
-				settings.setArrayIndex(i++);
-				settings.setValue("title", layout.title);
-				settings.setValue("state", layout.state);
+				savedLayouts.append({
+					{"title", layout.title},
+					{"state", layout.state}
+				});
 			}
 		}
-		settings.endArray();
+		dpApp().settings().setLayouts(savedLayouts);
 	}
 
 	QListWidgetItem *selectedItem()

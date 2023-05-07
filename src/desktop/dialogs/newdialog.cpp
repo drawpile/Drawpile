@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "desktop/dialogs/newdialog.h"
+#include "desktop/main.h"
 #include "libclient/utils/images.h"
 
 #include "ui_newdialog.h"
 
 #include <QPushButton>
-#include <QSettings>
 #include <QMessageBox>
 
 namespace dialogs {
@@ -18,13 +18,12 @@ NewDialog::NewDialog(QWidget *parent)
 	_ui->setupUi(this);
 	_ui->buttons->button(QDialogButtonBox::Ok)->setText(tr("Create"));
 
-	QSettings cfg;
-
-	QSize lastSize = cfg.value("history/newsize", QSize(800, 600)).toSize();
+	const auto &settings = dpApp().settings();
+	const auto lastSize = settings.newCanvasSize();
 	if(lastSize.isValid())
 		setSize(lastSize);
 
-	QColor lastColor = cfg.value("history/newcolor").value<QColor>();
+	const auto lastColor = settings.newCanvasBackColor();
 	if(lastColor.isValid())
 		setBackground(lastColor);
 }
@@ -54,20 +53,15 @@ void NewDialog::done(int r)
 		if(!utils::checkImageSize(size)) {
 			QMessageBox::information(this, tr("Error"), tr("Size is too large"));
 			return;
-
 		} else {
-
-			QSettings cfg;
-			cfg.setValue("history/newsize", size);
-			cfg.setValue("history/newcolor", _ui->background->color());
+			auto &settings = dpApp().settings();
+			settings.setNewCanvasSize(size);
+			settings.setNewCanvasBackColor(_ui->background->color());
 			emit accepted(size, _ui->background->color());
-
 		}
-
 	}
 
 	QDialog::done(r);
 }
 
 }
-

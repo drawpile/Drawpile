@@ -1,20 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include <QSettings>
+#include "desktop/main.h"
 #include <QtColorWidgets/ColorDialog>
 
 namespace dialogs {
 
 void applyColorDialogSettings(color_widgets::ColorDialog *dlg)
 {
-	QSettings settings;
-	settings.beginGroup("settings/colorwheel");
-	dlg->setWheelShape(static_cast<color_widgets::ColorWheel::ShapeEnum>(
-		settings.value("shape").toInt()));
-	dlg->setWheelRotating(static_cast<color_widgets::ColorWheel::AngleEnum>(
-		settings.value("rotate").toInt()));
-	dlg->setColorSpace(static_cast<color_widgets::ColorWheel::ColorSpaceEnum>(
-		settings.value("space").toInt()));
+	auto &settings = dpApp().settings();
+	settings.bindColorWheelShape(dlg, &color_widgets::ColorDialog::setWheelShape);
+	settings.bindColorWheelAngle(dlg, &color_widgets::ColorDialog::setWheelRotating);
+	settings.bindColorWheelSpace(dlg, &color_widgets::ColorDialog::setColorSpace);
 }
 
 color_widgets::ColorDialog *newColorDialog(QWidget *parent)

@@ -2,9 +2,9 @@
 
 #include <QStringList>
 #include <QFileInfo>
-#include <QSettings>
 #include <QMenu>
 
+#include "desktop/main.h"
 #include "desktop/utils/recentfiles.h"
 #include "libshared/util/paths.h"
 
@@ -15,17 +15,13 @@ void RecentFiles::addFile(const QString& filename)
 {
 	const int maxrecent = getMaxFileCount();
 
-	QSettings cfg;
-	cfg.beginGroup("history");
-
-	QStringList files = cfg.value("recentfiles").toStringList();
+	auto &settings = dpApp().settings();
+	auto files = settings.recentFiles();
 	files.removeAll(filename);
 	files.prepend(filename);
 	while (files.size() > maxrecent)
 		files.removeLast();
-
-	cfg.setValue("recentfiles", files);
-
+	settings.setRecentFiles(files);
 }
 
 /**
@@ -33,8 +29,7 @@ void RecentFiles::addFile(const QString& filename)
  */
 void RecentFiles::setMaxFileCount(int max)
 {
-	QSettings cfg;
-	cfg.setValue("history/maxrecentfiles",max);
+	dpApp().settings().setMaxRecentFiles(max);
 }
 
 /**
@@ -42,11 +37,7 @@ void RecentFiles::setMaxFileCount(int max)
  */
 int RecentFiles::getMaxFileCount()
 {
-	QSettings cfg;
-	int maxrecent = cfg.value("history/maxrecentfiles").toInt();
-	if(maxrecent<=0)
-		maxrecent = DEFAULT_MAXFILES;
-	return maxrecent;
+	return dpApp().settings().maxRecentFiles();
 }
 
 /**
@@ -58,9 +49,7 @@ int RecentFiles::getMaxFileCount()
  */
 void RecentFiles::initMenu(QMenu *menu)
 {
-	QSettings cfg;
-	const QStringList files = cfg.value("history/recentfiles").toStringList();
-
+	const auto files = dpApp().settings().recentFiles();
 	const QList<QAction*> actions = menu->actions();
 	for(QAction *act : actions) {
 		menu->removeAction(act);

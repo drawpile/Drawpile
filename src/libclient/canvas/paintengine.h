@@ -28,10 +28,6 @@ namespace canvas {
 class PaintEngine final : public QObject {
 	Q_OBJECT
 public:
-	static constexpr int DEFAULT_FPS = 60;
-	static constexpr int DEFAULT_SNAPSHOT_MAX_COUNT = 5;
-	static constexpr int DEFAULT_SNAPSHOT_MIN_DELAY_MS = 10000;
-
 	PaintEngine(
 		int fps, int snapshotMaxCount, long long snapshotMinDelayMs,
 		bool wantCanvasHistoryDump, QObject *parent = nullptr);

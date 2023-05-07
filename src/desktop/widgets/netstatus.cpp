@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include "desktop/main.h"
 #include "desktop/widgets/netstatus.h"
 #include "desktop/widgets/popupmessage.h"
 #include "desktop/dialogs/certificateview.h"
@@ -17,7 +18,6 @@
 #include <QMessageBox>
 #include <QCheckBox>
 #include <QTimer>
-#include <QSettings>
 
 namespace widgets {
 
@@ -29,8 +29,6 @@ NetStatus::NetStatus(QWidget *parent)
 	QHBoxLayout *layout = new QHBoxLayout(this);
 	layout->setContentsMargins(1, 1, 1, 1);
 	layout->setSpacing(4);
-
-	m_hideServer = QSettings().value("settings/hideServerIp", false).toBool();
 
 	// Download progress bar
 	m_download = new QProgressBar(this);
@@ -73,12 +71,13 @@ NetStatus::NetStatus(QWidget *parent)
 	// (useful when livestreaming)
 	QAction *hideServerAction = new QAction(tr("Hide address"), this);
 	hideServerAction->setCheckable(true);
-	hideServerAction->setChecked(m_hideServer);
-	connect(hideServerAction, &QAction::triggered, this, [this](bool hide) {
-		QSettings().setValue("settings/hideServerIp", hide);
+
+	auto &settings = dpApp().settings();
+	settings.bindServerHideIp(hideServerAction, [=](bool hide) {
+		hideServerAction->setChecked(hide);
 		m_hideServer = hide;
 		updateLabel();
-	});
+	}, &QAction::triggered);
 	m_label->addAction(hideServerAction);
 
 	// Show network statistics
@@ -388,9 +387,9 @@ void NetStatus::showNetStats()
 
 void NetStatus::showCGNAlert()
 {
-	QSettings cfg;
+	auto &settings = dpApp().settings();
 
-	if(cfg.value("history/cgnalert", true).toBool()) {
+	if(!settings.ignoreCarrierGradeNat()) {
 		QMessageBox box(
 			QMessageBox::Warning,
 			tr("Notice"),
@@ -401,9 +400,7 @@ void NetStatus::showCGNAlert()
 		box.setCheckBox(new QCheckBox(tr("Don't show this again")));
 		box.exec();
 
-		if(box.checkBox()->isChecked()) {
-			cfg.setValue("history/cgnalert", false);
-		}
+		settings.setIgnoreCarrierGradeNat(box.checkBox()->isChecked());
 	}
 }
 

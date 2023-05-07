@@ -8,7 +8,6 @@
 #include <QString>
 
 class Document;
-class QSettings;
 class QWidget;
 
 namespace drawdance {
@@ -71,7 +70,6 @@ private:
 
 	static QString getLastPath(LastPath type, const QString &ext = QString{});
 	static void setLastPath(LastPath type, const QString &path);
-	static QSettings &beginLastPathGroup(QSettings &cfg);
 	static QString getLastPathKey(LastPath type);
 	static QString getDefaultLastPath(LastPath type, const QString &ext);
 

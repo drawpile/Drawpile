@@ -3,10 +3,10 @@
 #define CANVASSHORTCUTS_H
 
 #include <QSet>
+#include <QVariantMap>
 #include <QVector>
 #include <Qt>
 
-class QSettings;
 class QWheelEvent;
 
 class CanvasShortcuts {
@@ -82,10 +82,10 @@ public:
 
 	CanvasShortcuts();
 
-	static CanvasShortcuts load(QSettings &cfg);
+	static CanvasShortcuts load(const QVariantMap &cfg);
 	void loadDefaults();
 	void clear();
-	void save(QSettings &cfg) const;
+	[[nodiscard]] QVariantMap save() const;
 
 	int shortcutsCount() const;
 	const CanvasShortcuts::Shortcut *shortcutAt(int index) const;
@@ -119,9 +119,9 @@ private:
 		Type type, Qt::KeyboardModifiers mods, const QSet<Qt::Key> &keys,
 		Qt::MouseButton button = Qt::NoButton) const;
 
-	static void saveShortcut(QSettings &cfg, const Shortcut &s);
+	static QVariantMap saveShortcut(const Shortcut &s);
 
-	static Shortcut loadShortcut(const QSettings &cfg);
+	static Shortcut loadShortcut(const QVariantMap &cfg);
 
 	QVector<Shortcut> m_shortcuts;
 };

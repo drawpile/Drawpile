@@ -89,7 +89,7 @@ Returns:
             "hasPassword": boolean   (is the session password protected)
             "closed": boolean        (is the session closed to new users)
             "authOnly": boolean      (are only registered users allowed)
-            "nsfm": boolean          (does this session contain age restricted content)
+            "nsfm": boolean          (does this session include a content filter advisory)
             "startTime": "timestamp" ()
             "size": bytes            (session history size)
         }, ...

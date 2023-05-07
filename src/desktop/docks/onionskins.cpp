@@ -13,7 +13,6 @@
 #include <QPainter>
 #include <QPalette>
 #include <QPushButton>
-#include <QSettings>
 #include <QSlider>
 #include <QSpinBox>
 #include <QToolTip>
@@ -30,9 +29,6 @@ namespace {
 
 constexpr int FRAME_COUNT_MIN = 1;
 constexpr int FRAME_COUNT_MAX = 30;
-constexpr int FRAME_COUNT_DEFAULT = 8;
-constexpr QRgb TINT_BELOW_DEFAULT = 0xffff3333u;
-constexpr QRgb TINT_ABOVE_DEFAULT = 0xff3333ffu;
 constexpr int DEBOUNCE_DELAY_MS = 500;
 
 class EqualizerSlider final : public QSlider {
@@ -131,9 +127,6 @@ OnionSkinsDock::OnionSkinsDock(const QString &title, QWidget *parent)
 	d->belowPreview = new ColorPreview{titlebar};
 	d->belowPreview->setDisplayMode(ColorPreview::DisplayMode::AllAlpha);
 	titlebar->addCustomWidget(d->belowPreview);
-	connect(d->belowPreview, &ColorPreview::colorChanged, [this](QColor color) {
-		onTintColorChange(QStringLiteral("tintbelow"), color);
-	});
 	connect(d->belowPreview, &ColorPreview::clicked, [this]() {
 		showColorPicker(d->belowPreview->color(), [this](QColor color) {
 			d->belowPreview->setColor(color);
@@ -146,9 +139,6 @@ OnionSkinsDock::OnionSkinsDock(const QString &title, QWidget *parent)
 	titlebar->addCustomWidget(frameCountLabel);
 	d->frameCountSpinner = new QSpinBox{titlebar};
 	d->frameCountSpinner->setRange(FRAME_COUNT_MIN, FRAME_COUNT_MAX);
-	connect(
-		d->frameCountSpinner, QOverload<int>::of(&QSpinBox::valueChanged), this,
-		&OnionSkinsDock::frameCountChanged);
 	titlebar->addCustomWidget(d->frameCountSpinner);
 
 	titlebar->addSpace(24);
@@ -158,9 +148,6 @@ OnionSkinsDock::OnionSkinsDock(const QString &title, QWidget *parent)
 	d->abovePreview = new ColorPreview{titlebar};
 	d->abovePreview->setDisplayMode(ColorPreview::DisplayMode::AllAlpha);
 	titlebar->addCustomWidget(d->abovePreview);
-	connect(d->abovePreview, &ColorPreview::colorChanged, [this](QColor color) {
-		onTintColorChange(QStringLiteral("tintabove"), color);
-	});
 	connect(d->abovePreview, &ColorPreview::clicked, [this]() {
 		showColorPicker(d->abovePreview->color(), [this](QColor color) {
 			d->abovePreview->setColor(color);
@@ -168,10 +155,15 @@ OnionSkinsDock::OnionSkinsDock(const QString &title, QWidget *parent)
 	});
 	titlebar->addStretch();
 
-	connect(
-		static_cast<DrawpileApp *>(qApp), &DrawpileApp::settingsChanged, this,
-		&OnionSkinsDock::updateSettings);
-	updateSettings();
+	auto &settings = dpApp().settings();
+	settings.bindOnionSkinsFrameCount(d->frameCountSpinner);
+	settings.bindOnionSkinsFrameCount(this, &OnionSkinsDock::frameCountChanged);
+
+	settings.bindOnionSkinsTintBelow(d->belowPreview, &ColorPreview::setColor, &ColorPreview::colorChanged);
+	settings.bindOnionSkinsTintBelow(this, &OnionSkinsDock::triggerUpdate);
+
+	settings.bindOnionSkinsTintAbove(d->abovePreview, &ColorPreview::setColor, &ColorPreview::colorChanged);
+	settings.bindOnionSkinsTintAbove(this, &OnionSkinsDock::triggerUpdate);
 }
 
 OnionSkinsDock::~OnionSkinsDock()
@@ -211,29 +203,10 @@ void OnionSkinsDock::timerEvent(QTimerEvent *)
 	triggerUpdate();
 }
 
-void OnionSkinsDock::updateSettings()
-{
-	QSettings settings;
-	settings.beginGroup("onionskins");
-	d->frameCountSpinner->setValue(
-		settings.value("framecount", FRAME_COUNT_DEFAULT).toInt());
-	d->belowPreview->setColor(
-		settings.value("tintbelow", QColor::fromRgba(TINT_BELOW_DEFAULT))
-			.value<QColor>());
-	d->abovePreview->setColor(
-		settings.value("tintabove", QColor::fromRgba(TINT_ABOVE_DEFAULT))
-			.value<QColor>());
-}
-
 void OnionSkinsDock::frameCountChanged(int value)
 {
-	if(value != d->frameCount) {
-		QSettings settings;
-		settings.beginGroup("onionskins");
-		d->frameCount = value;
-		settings.setValue("framecount", value);
-		buildWidget(settings);
-	}
+	d->frameCount = value;
+	buildWidget();
 }
 
 int OnionSkinsDock::getSliderDefault(int frameNumber)
@@ -253,13 +226,14 @@ int OnionSkinsDock::getSliderDefault(int frameNumber)
 	}
 }
 
-void OnionSkinsDock::buildWidget(QSettings &settings)
+void OnionSkinsDock::buildWidget()
 {
 	QWidget *widget = new QWidget{this};
 	QHBoxLayout *slidersLayout = new QHBoxLayout{widget};
 	d->skinsAboveSliders.clear();
 	d->skinsBelowSliders.clear();
 
+	auto savedFrames = dpApp().settings().onionSkinsFrames();
 	for(int i = 0; i < d->frameCount * 2; ++i) {
 		if(i == d->frameCount) {
 			QFrame *line = new QFrame{widget};
@@ -280,11 +254,10 @@ void OnionSkinsDock::buildWidget(QSettings &settings)
 		}
 
 		QSlider *slider = new EqualizerSlider{widget};
-		QString settingsKey = QStringLiteral("frame%1").arg(frameNumber);
-		slider->setValue(
-			settings.value(settingsKey, getSliderDefault(frameNumber)).toInt());
+
+		slider->setValue(savedFrames.value(frameNumber, getSliderDefault(frameNumber)));
 		connect(slider, &QSlider::valueChanged, [=](int value) {
-			onSliderValueChange(settingsKey, value);
+			onSliderValueChange(frameNumber, value);
 		});
 
 		if(frameNumber < 0) {
@@ -302,25 +275,18 @@ void OnionSkinsDock::buildWidget(QSettings &settings)
 	setWidget(widget);
 }
 
-void OnionSkinsDock::onSliderValueChange(const QString &settingsKey, int value)
+void OnionSkinsDock::onSliderValueChange(int frameNumber, int value)
 {
-	QSettings settings;
-	settings.beginGroup("onionskins");
-	settings.setValue(settingsKey, value);
+	auto &settings = dpApp().settings();
+	auto savedFrames = settings.onionSkinsFrames();
+	savedFrames[frameNumber] = value;
+	settings.setOnionSkinsFrames(savedFrames);
+
 	if(d->debounceTimerId != 0) {
 		killTimer(d->debounceTimerId);
 	}
 	d->debounceTimerId = startTimer(DEBOUNCE_DELAY_MS);
 	showSliderValue(value);
-}
-
-void OnionSkinsDock::onTintColorChange(
-	const QString &settingsKey, const QColor &color)
-{
-	QSettings settings;
-	settings.beginGroup("onionskins");
-	settings.setValue(settingsKey, color);
-	triggerUpdate();
 }
 
 void OnionSkinsDock::showSliderValue(int value)

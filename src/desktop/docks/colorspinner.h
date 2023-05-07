@@ -24,9 +24,6 @@ public slots:
 signals:
 	void colorSelected(const QColor& color);
 
-private slots:
-	void updateSettings();
-
 private:
 	struct Private;
 	Private *d;

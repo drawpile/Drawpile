@@ -38,7 +38,6 @@ public:
 
 private slots:
 	void versionChecked(bool isNew, const QString &errorMessage);
-	void rememberSettings();
 	void downloadNewVersion();
 
 private:

@@ -2,29 +2,32 @@
 
 #include "desktop/utils/macui.h"
 
-#include <QApplication>
 #include <QColor>
+#include <QComboBox>
+#include <QDebug>
 #include <QLinearGradient>
 #include <QPainter>
 #include <QPalette>
 #include <QProxyStyle>
 #include <QStyle>
 #include <QStyleOption>
-#include <QWidget>
+#include <QStyleOptionButton>
 
 #import <Cocoa/Cocoa.h>
 
+class QWidget;
+
 namespace macui {
 
-// The "native" style status bar looks weird because it uses the same gradient
-// as the title bar but is taller than a normal status bar. This makes it look
-// better.
-void MacViewStatusBarProxyStyle::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const
+void MacProxyStyle::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const
 {
 	if (element != QStyle::PE_PanelStatusBar) {
 		return QProxyStyle::drawPrimitive(element, option, painter, widget);
 	}
 
+	// The "native" style status bar looks weird because it uses the same
+	// gradient as the title bar but is taller than a normal status bar. This
+	// makes it look better.
 	static const QColor darkLine(0, 0, 0);
 	static const QColor darkFill(48, 48, 48);
 	static const QLinearGradient darkGradient = [](){
@@ -55,6 +58,95 @@ void MacViewStatusBarProxyStyle::drawPrimitive(QStyle::PrimitiveElement element,
 
 	painter->setPen(dark ? darkLine : lightLine);
 	painter->drawLine(option->rect.left(), option->rect.top(), option->rect.right(), option->rect.top());
+}
+
+// This is cut'n'paste from private Qt style helper code
+enum WidgetSizePolicy { SizeLarge = 0, SizeSmall = 1, SizeMini = 2, SizeDefault = -1 };
+WidgetSizePolicy widgetSizePolicy(const QWidget *widget, const QStyleOption *opt)
+{
+	while (widget) {
+		if (widget->testAttribute(Qt::WA_MacMiniSize)) {
+			return SizeMini;
+		} else if (widget->testAttribute(Qt::WA_MacSmallSize)) {
+			return SizeSmall;
+		} else if (widget->testAttribute(Qt::WA_MacNormalSize)) {
+			return SizeLarge;
+		}
+		widget = widget->parentWidget();
+	}
+
+	if (opt && opt->state & QStyle::State_Mini)
+		return SizeMini;
+	else if (opt && opt->state & QStyle::State_Small)
+		return SizeSmall;
+
+	return SizeDefault;
+}
+
+int MacProxyStyle::layoutSpacing(
+	QSizePolicy::ControlType control1, QSizePolicy::ControlType control2,
+	Qt::Orientation orientation, const QStyleOption *option, const QWidget *widget
+) const
+{
+	if (widgetSizePolicy(widget, option) == SizeDefault) {
+		// QMacStyle has very busted ideas about how far apart some controls should
+		// be. This does not handle the small/mini controls, but Drawpile does not
+		// use any of those.
+		if (orientation == Qt::Vertical) {
+			if (control2 == QSizePolicy::ComboBox) {
+				switch (control1) {
+				// Based on having eyeballs
+				case QSizePolicy::Line: return 8;
+				// Based on having eyeballs
+				case QSizePolicy::CheckBox: return 5;
+				// Based on the General settings in System Preferences
+				default: return 4;
+				}
+			} else if (control1 & control2 & QSizePolicy::CheckBox) {
+				// Based on having eyeballs
+				return 3;
+			}
+		} else {
+			// This reverses the QStyle::SE_ComboBoxLayoutItem change to make
+			// sure things do not get too close in non-grid layouts
+			if ((control1 | control2) & QSizePolicy::ComboBox) {
+				auto spacing = QProxyStyle::layoutSpacing(control1, control2, orientation, option, widget);
+				if (control1 == QSizePolicy::ComboBox) {
+					spacing += 3;
+				}
+				if (control2 == QSizePolicy::ComboBox) {
+					spacing += 2;
+				}
+				return spacing;
+			}
+		}
+	}
+
+	return QProxyStyle::layoutSpacing(control1, control2, orientation, option, widget);
+}
+
+QRect MacProxyStyle::subElementRect(QStyle::SubElement element, const QStyleOption *option, const QWidget *widget) const
+{
+	auto rect = QProxyStyle::subElementRect(element, option, widget);
+	if (widgetSizePolicy(widget, option) == SizeDefault) {
+		switch (element) {
+		case QStyle::SE_CheckBoxLayoutItem: // QTBUG-14643, QTBUG-85142
+			rect = option->rect;
+			// +2 ensures that the checkbox has correct visual padding to line up
+			// with e.g. radio buttons which are slightly wider
+			rect.setLeft(option->rect.left() + 2);
+			rect.setRight(option->rect.right());
+			break;
+		case QStyle::SE_ComboBoxLayoutItem:
+			// This makes the layout geometry closer to the visual edge of the combo
+			// box so that there is no ugly extra spacing between rows containing
+			// combo boxes and rows containing other controls
+			rect.adjust(2, 0, -3, 0);
+			break;
+		default: {}
+		}
+	}
+	return rect;
 }
 
 bool setNativeAppearance(Appearance appearance)

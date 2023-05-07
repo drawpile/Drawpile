@@ -103,13 +103,9 @@ AnnouncementApiResponse *getApiInfo(const QUrl &apiUrl);
  * @brief Fetch the list of public sessions from a listing server
  *
  * @param url API url
- * @param protocol if specified, return only sessions using the given protocol
- * @param title if specified, return only sessions whose title contains this substring
- * @param nsfm if true, fetch sessions tagged as NSFM
- *
  * Returns QList<Session>
  */
-AnnouncementApiResponse *getSessionList(const QUrl &apiUrl, const QString &protocol=QString(), const QString &title=QString(), bool nsfm=true);
+AnnouncementApiResponse *getSessionList(const QUrl &apiUrl);
 
 /**
  * @brief Announce a session at the given listing server

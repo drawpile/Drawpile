@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include "libclient/settings.h"
 #include "libclient/utils/listservermodel.h"
 #include "libshared/util/paths.h"
 
@@ -8,15 +9,16 @@
 #include <QCryptographicHash>
 #include <QFile>
 #include <QDir>
-#include <QSettings>
 #include <QSslSocket>
 
 namespace sessionlisting {
 
-ListServerModel::ListServerModel(bool includeReadOnly, QObject *parent)
+ListServerModel::ListServerModel(libclient::settings::Settings &settings, bool includeReadOnly, QObject *parent)
 	: QAbstractListModel(parent)
+	, m_settings(settings)
+	, m_includeReadOnly(includeReadOnly)
 {
-	loadServers(includeReadOnly);
+	loadServers(settings.listServers(), m_includeReadOnly);
 }
 
 int ListServerModel::rowCount(const QModelIndex &parent) const
@@ -173,24 +175,21 @@ void ListServerModel::setFavicon(const QString &url, const QImage &icon)
 	}
 }
 
-QVector<ListServer> ListServerModel::listServers(bool includeReadOnly)
+QVector<ListServer> ListServerModel::listServers(const QVector<QVariantMap> &cfg, bool includeReadOnly)
 {
 	QVector<ListServer> list;
 
-	QSettings cfg;
 	const QString iconPath = utils::paths::writablePath("favicons/");
-	const int count = cfg.beginReadArray("listservers");
-	for(int i=0;i<count;++i) {
-		cfg.setArrayIndex(i);
+	for(const auto &item : cfg) {
 		ListServer ls {
 			QIcon(),
-			cfg.value("icon").toString(),
-			cfg.value("name").toString(),
-			cfg.value("url").toString(),
-			cfg.value("description").toString(),
-			cfg.value("readonly").toBool(),
-			cfg.value("public", true).toBool(),
-			cfg.value("private", true).toBool()
+			item.value("icon").toString(),
+			item.value("name").toString(),
+			item.value("url").toString(),
+			item.value("description").toString(),
+			item.value("readonly").toBool(),
+			item.value("public", true).toBool(),
+			item.value("private", true).toBool()
 		};
 
 		if(ls.readonly && !includeReadOnly)
@@ -203,35 +202,43 @@ QVector<ListServer> ListServerModel::listServers(bool includeReadOnly)
 
 		list << ls;
 	}
-	cfg.endArray();
 	return list;
 }
 
-void ListServerModel::loadServers(bool includeReadOnly)
+void ListServerModel::loadServers(const QVector<QVariantMap> &cfg, bool includeReadOnly)
 {
 	beginResetModel();
-	m_servers = listServers(includeReadOnly);
+	m_servers = listServers(cfg, includeReadOnly);
 	endResetModel();
 }
 
-
-void ListServerModel::saveServers() const
+QVector<QVariantMap> ListServerModel::saveServers() const
 {
-	QSettings cfg;
-	cfg.beginWriteArray("listservers", m_servers.size());
+	QVector<QVariantMap> cfg;
 	for(int i=0;i<m_servers.size();++i) {
 		const ListServer &s = m_servers.at(i);
-		cfg.setArrayIndex(i);
-
-		cfg.setValue("name", s.name);
-		cfg.setValue("url", s.url);
-		cfg.setValue("description", s.description);
-		cfg.setValue("icon", s.iconName);
-		cfg.setValue("readonly", s.readonly);
-		cfg.setValue("public", s.publicListings);
-		cfg.setValue("private", s.privateListings);
+		cfg.append({
+			{ "name", s.name },
+			{ "url", s.url },
+			{ "description", s.description },
+			{ "icon", s.iconName },
+			{ "readonly", s.readonly },
+			{ "public", s.publicListings },
+			{ "private", s.privateListings }
+		});
 	}
-	cfg.endArray();
+	return cfg;
+}
+
+void ListServerModel::revert()
+{
+	loadServers(m_settings.listServers(), m_includeReadOnly);
+}
+
+bool ListServerModel::submit()
+{
+	m_settings.setListServers(saveServers());
+	return true;
 }
 
 }

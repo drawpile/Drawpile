@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "desktop/dialogs/flipbook.h"
-#include "libclient/canvas/paintengine.h"
+#include "desktop/main.h"
 #include "desktop/utils/qtguicompat.h"
+#include "libclient/canvas/paintengine.h"
 
 #include "ui_flipbook.h"
 
-#include <QSettings>
+#include <QEvent>
 #include <QRect>
-#include <QTimer>
 #include <QScreen>
-#include <QApplication>
+#include <QTimer>
 
 namespace dialogs {
 
@@ -21,12 +21,14 @@ Flipbook::Flipbook(QWidget *parent)
 
 	m_timer = new QTimer(this);
 
+	auto &settings = dpApp().settings();
 	connect(m_ui->rewindButton, &QToolButton::clicked, this, &Flipbook::rewind);
 	connect(m_ui->playButton, &QToolButton::clicked, this, &Flipbook::playPause);
 	connect(m_ui->layerIndex, QOverload<int>::of(&QSpinBox::valueChanged), this, &Flipbook::loadFrame);
 	connect(m_ui->loopStart, QOverload<int>::of(&QSpinBox::valueChanged), this, &Flipbook::updateRange);
 	connect(m_ui->loopEnd, QOverload<int>::of(&QSpinBox::valueChanged), this, &Flipbook::updateRange);
-	connect(m_ui->fps, QOverload<int>::of(&QSpinBox::valueChanged), this, &Flipbook::updateFps);
+	settings.bindFlipbookFrameRate(m_ui->fps);
+	settings.bindFlipbookFrameRate(this, &Flipbook::updateFps);
 	connect(m_timer, &QTimer::timeout, m_ui->layerIndex, &QSpinBox::stepUp);
 	connect(m_ui->view, &FlipbookView::cropped, this, &Flipbook::setCrop);
 	connect(m_ui->zoomButton, &QToolButton::clicked, this, &Flipbook::resetCrop);
@@ -35,13 +37,7 @@ Flipbook::Flipbook(QWidget *parent)
 
 	m_ui->playButton->setFocus();
 
-	// Load default settings
-	QSettings cfg;
-	cfg.beginGroup("flipbook");
-
-	m_ui->fps->setValue(cfg.value("fps", 15).toInt());
-
-	QRect geom = cfg.value("window", QRect()).toRect();
+	const auto geom = settings.flipbookWindow();
 	if(geom.isValid()) {
 		setGeometry(geom);
 	}
@@ -52,15 +48,20 @@ Flipbook::Flipbook(QWidget *parent)
 
 Flipbook::~Flipbook()
 {
-	// Save settings
-	QSettings cfg;
-	cfg.beginGroup("flipbook");
-
-	cfg.setValue("fps", m_ui->fps->value());
-	cfg.setValue("window", geometry());
-	cfg.setValue("crop", m_crop);
-
 	delete m_ui;
+}
+
+bool Flipbook::event(QEvent *event)
+{
+	switch (event->type()) {
+	case QEvent::Move:
+	case QEvent::Resize:
+		dpApp().settings().setFlipbookWindow(geometry());
+		break;
+	default: {}
+	}
+
+	return QDialog::event(event);
 }
 
 void Flipbook::updateRange()
@@ -108,13 +109,14 @@ void Flipbook::setPaintEngine(canvas::PaintEngine *pe)
 	drawdance::CanvasState canvasState = pe->viewCanvasState();
 	m_crop = QRect(QPoint(), canvasState.size());
 
-	const QRect crop = QSettings().value("flipbook/crop").toRect();
+	const auto crop = dpApp().settings().flipbookCrop();
 	if(m_crop.contains(crop, true)) {
 		m_crop = crop;
 		m_ui->zoomButton->setEnabled(true);
 	} else {
 		m_ui->zoomButton->setEnabled(false);
 	}
+	dpApp().settings().setFlipbookCrop(m_crop);
 
 	drawdance::DocumentMetadata documentMetadata = canvasState.documentMetadata();
 	m_realFps = documentMetadata.framerate();
@@ -149,7 +151,7 @@ void Flipbook::setCrop(const QRectF &rect)
 		);
 		m_ui->zoomButton->setEnabled(true);
 	}
-
+	dpApp().settings().setFlipbookCrop(m_crop);
 	resetFrameCache();
 	loadFrame();
 }

@@ -193,7 +193,7 @@ AnnouncementApiResponse *getApiInfo(const QUrl &apiUrl)
 	return res;
 }
 
-AnnouncementApiResponse *getSessionList(const QUrl &apiUrl, const QString &protocol, const QString &title, bool nsfm)
+AnnouncementApiResponse *getSessionList(const QUrl &apiUrl)
 {
 	AnnouncementApiResponse *res = new AnnouncementApiResponse(apiUrl);
 
@@ -201,12 +201,7 @@ AnnouncementApiResponse *getSessionList(const QUrl &apiUrl, const QString &proto
 	url.setPath(slashcat(url.path(), "sessions/"));
 
 	QUrlQuery query;
-	if(!protocol.isEmpty())
-		query.addQueryItem("protocol", protocol);
-	if(!title.isEmpty())
-		query.addQueryItem("title", title);
-	if(nsfm)
-		query.addQueryItem("nsfm", "true");
+	query.addQueryItem("nsfm", "true");
 	url.setQuery(query);
 
 	QNetworkRequest req(url);

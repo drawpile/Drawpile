@@ -55,9 +55,6 @@ public:
 	tools::SelectionSettings *selectionSettings();
 	tools::ZoomSettings *zoomSettings();
 
-	//! Load tool related settings
-	void readSettings();
-
 	//! Save tool related settings
 	void saveSettings();
 
