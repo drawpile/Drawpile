@@ -189,12 +189,12 @@ LayoutsDialog::LayoutsDialog(const QByteArray &currentState, QWidget *parent)
 		d->ui.list, &QListWidget::itemSelectionChanged, this,
 		&LayoutsDialog::applySelected);
 	connect(
-		d->ui.saveButton, &QPushButton::pressed, this, &LayoutsDialog::save);
+		d->ui.saveButton, &QPushButton::clicked, this, &LayoutsDialog::save);
 	connect(
-		d->ui.renameButton, &QPushButton::pressed, this,
+		d->ui.renameButton, &QPushButton::clicked, this,
 		&LayoutsDialog::rename);
 	connect(
-		d->ui.deleteButton, &QPushButton::pressed, this,
+		d->ui.deleteButton, &QPushButton::clicked, this,
 		&LayoutsDialog::toggleDeleted);
 	connect(this, &QDialog::finished, this, &LayoutsDialog::onFinish);
 

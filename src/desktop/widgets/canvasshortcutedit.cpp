@@ -53,7 +53,7 @@ CanvasShortcutEdit::CanvasShortcutEdit(QWidget *parent)
 	outer->addWidget(m_description);
 
 	connect(
-		m_editButton, &QPushButton::pressed, this,
+		m_editButton, &QPushButton::clicked, this,
 		&CanvasShortcutEdit::toggleEdit);
 }
 

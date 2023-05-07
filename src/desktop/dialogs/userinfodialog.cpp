@@ -32,7 +32,7 @@ UserInfoDialog::UserInfoDialog(const canvas::User &user, QWidget *parent)
 	d->ui.buttons->addButton(d->refreshButton, QDialogButtonBox::ActionRole);
 
 	connect(
-		d->refreshButton, &QPushButton::pressed, this,
+		d->refreshButton, &QPushButton::clicked, this,
 		&UserInfoDialog::triggerUpdate);
 	connect(d->ui.buttons, &QDialogButtonBox::accepted, this, &QDialog::accept);
 	connect(d->ui.buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);

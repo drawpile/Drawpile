@@ -53,14 +53,14 @@ CurvePresetDialog::CurvePresetDialog(
 		m_presetList, &QListWidget::itemDoubleClicked, this,
 		&CurvePresetDialog::curveDoubleClicked);
 	connect(
-		m_useButton, &QPushButton::pressed, this, &CurvePresetDialog::accept);
+		m_useButton, &QPushButton::clicked, this, &CurvePresetDialog::accept);
 	connect(
-		cancelButton, &QPushButton::pressed, this, &CurvePresetDialog::reject);
+		cancelButton, &QPushButton::clicked, this, &CurvePresetDialog::reject);
 	connect(
-		m_saveRenameButton, &QPushButton::pressed, this,
+		m_saveRenameButton, &QPushButton::clicked, this,
 		&CurvePresetDialog::saveRenameCurve);
 	connect(
-		m_deleteButton, &QPushButton::pressed, this,
+		m_deleteButton, &QPushButton::clicked, this,
 		&CurvePresetDialog::deleteCurve);
 
 	loadPresets(current, linear);

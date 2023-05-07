@@ -67,7 +67,7 @@ QWidget *ColorPickerSettings::createUiWidget(QWidget *parent)
 	connect(m_size, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
 	connect(m_size, QOverload<int>::of(&QSpinBox::valueChanged), this, &ColorPickerSettings::pushSettings);
 	connect(m_layerpick, &QCheckBox::toggled, this, &ColorPickerSettings::pushSettings);
-	connect(addButton, &QPushButton::pressed, this, &ColorPickerSettings::openColorDialog);
+	connect(addButton, &QPushButton::clicked, this, &ColorPickerSettings::openColorDialog);
 
 	return widget;
 }

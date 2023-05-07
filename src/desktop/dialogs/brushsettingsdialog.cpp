@@ -605,7 +605,7 @@ void BrushSettingsDialog::buildClassicApplyToAllButton(
 	applyToAllButton->setToolTip(
 		tr("Set this curve for Size, Opacity, Hardness and Smudging at once."));
 	curve->addButton(applyToAllButton);
-	connect(applyToAllButton, &QPushButton::pressed, [=]() {
+	connect(applyToAllButton, &QPushButton::clicked, [=]() {
 		applyCurveToAllClassicSettings(curve->curve());
 		ToolMessage::showText(tr("Curve set for all settings in this brush."));
 	});

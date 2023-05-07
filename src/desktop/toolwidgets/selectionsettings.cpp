@@ -46,25 +46,25 @@ QWidget *SelectionSettings::createUiWidget(QWidget *parent)
 		&SelectionSettings::pushSettings);
 
 	connect(
-		m_ui->flip, &QAbstractButton::pressed, this,
+		m_ui->flip, &QAbstractButton::clicked, this,
 		&SelectionSettings::flipSelection);
 	connect(
-		m_ui->mirror, &QAbstractButton::pressed, this,
+		m_ui->mirror, &QAbstractButton::clicked, this,
 		&SelectionSettings::mirrorSelection);
 	connect(
-		m_ui->fittoscreen, &QAbstractButton::pressed, this,
+		m_ui->fittoscreen, &QAbstractButton::clicked, this,
 		&SelectionSettings::fitToScreen);
 	connect(
-		m_ui->resetsize, &QAbstractButton::pressed, this,
+		m_ui->resetsize, &QAbstractButton::clicked, this,
 		&SelectionSettings::resetSize);
 	connect(
-		m_ui->scale, &QAbstractButton::pressed, this,
+		m_ui->scale, &QAbstractButton::clicked, this,
 		&SelectionSettings::scale);
 	connect(
-		m_ui->rotateShear, &QAbstractButton::pressed, this,
+		m_ui->rotateShear, &QAbstractButton::clicked, this,
 		&SelectionSettings::rotateShear);
 	connect(
-		m_ui->distort, &QAbstractButton::pressed, this,
+		m_ui->distort, &QAbstractButton::clicked, this,
 		&SelectionSettings::distort);
 	connect(
 		controller(), &ToolController::modelChanged, this,

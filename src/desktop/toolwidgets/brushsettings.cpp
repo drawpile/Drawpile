@@ -109,7 +109,7 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	brushSlotWidgetLayout->addWidget(brushSettingsDialogButton);
 	brushSettingsDialogButton->setIcon(QIcon::fromTheme("configure"));
 	brushSettingsDialogButton->setToolTip(tr("Brush Settings"));
-	connect(brushSettingsDialogButton, &widgets::GroupedToolButton::pressed,
+	connect(brushSettingsDialogButton, &widgets::GroupedToolButton::clicked,
 		this, &BrushSettings::brushSettingsDialogRequested);
 
 	brushSlotWidgetLayout->addStretch();
