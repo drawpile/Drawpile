@@ -105,19 +105,19 @@ DumpPlaybackDialog::DumpPlaybackDialog(
 		d->paintEngine, &canvas::PaintEngine::dumpPlaybackAt, this,
 		&DumpPlaybackDialog::onDumpPlaybackAt, Qt::QueuedConnection);
 	connect(
-		d->ui.playPauseButton, &QPushButton::pressed, this,
+		d->ui.playPauseButton, &QPushButton::clicked, this,
 		&DumpPlaybackDialog::playPause);
 	connect(
-		d->ui.singleStepButton, &QPushButton::pressed, this,
+		d->ui.singleStepButton, &QPushButton::clicked, this,
 		&DumpPlaybackDialog::singleStep);
 	connect(
-		d->ui.previousResetButton, &QPushButton::pressed, this,
+		d->ui.previousResetButton, &QPushButton::clicked, this,
 		&DumpPlaybackDialog::jumpToPreviousReset);
 	connect(
-		d->ui.nextResetButton, &QPushButton::pressed, this,
+		d->ui.nextResetButton, &QPushButton::clicked, this,
 		&DumpPlaybackDialog::jumpToNextReset);
 	connect(
-		d->ui.jumpButton, &QPushButton::pressed, this,
+		d->ui.jumpButton, &QPushButton::clicked, this,
 		&DumpPlaybackDialog::jump);
 	connect(d->ui.hideWithoutState, &QCheckBox::stateChanged, [this](int) {
 		updateHistoryTable();

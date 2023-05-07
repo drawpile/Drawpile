@@ -26,7 +26,7 @@ BrushPresetProperties::BrushPresetProperties(int id, const QString &name,
 	showThumbnail(thumbnail);
 
     connect(m_ui->name, &QLineEdit::returnPressed, this, &QDialog::accept);
-	connect(m_ui->chooseThumbnailButton, &QPushButton::pressed,
+	connect(m_ui->chooseThumbnailButton, &QPushButton::clicked,
 		this, &BrushPresetProperties::chooseThumbnailFile);
     connect(m_ui->buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
     connect(m_ui->buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);

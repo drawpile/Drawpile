@@ -44,13 +44,13 @@ PlaybackDialog::PlaybackDialog(canvas::CanvasModel *canvas, QWidget *parent)
 	m_ui->buildIndexProgress->hide();
 
 	connect(
-		m_ui->buildIndexButton, &QAbstractButton::pressed, this,
+		m_ui->buildIndexButton, &QAbstractButton::clicked, this,
 		&PlaybackDialog::onBuildIndexClicked);
 #ifdef Q_OS_ANDROID
 	m_ui->configureExportButton->setVisible(false);
 #else
 	connect(
-		m_ui->configureExportButton, &QAbstractButton::pressed, this,
+		m_ui->configureExportButton, &QAbstractButton::clicked, this,
 		&PlaybackDialog::onVideoExportClicked);
 #endif
 
@@ -76,19 +76,19 @@ PlaybackDialog::PlaybackDialog(canvas::CanvasModel *canvas, QWidget *parent)
 		&PlaybackDialog::onPlaybackAt, Qt::QueuedConnection);
 
 	connect(
-		m_ui->firstButton, &QAbstractButton::pressed, this,
+		m_ui->firstButton, &QAbstractButton::clicked, this,
 		&PlaybackDialog::skipBeginning);
 	connect(
-		m_ui->prevSkipButton, &QAbstractButton::pressed, this,
+		m_ui->prevSkipButton, &QAbstractButton::clicked, this,
 		&PlaybackDialog::skipPreviousSnapshot);
 	connect(
 		m_ui->playButton, &QAbstractButton::toggled, this,
 		&PlaybackDialog::setPlaying);
 	connect(
-		m_ui->nextButton, &QAbstractButton::pressed, this,
+		m_ui->nextButton, &QAbstractButton::clicked, this,
 		&PlaybackDialog::skipNextStroke);
 	connect(
-		m_ui->nextSkipButton, &QAbstractButton::pressed, this,
+		m_ui->nextSkipButton, &QAbstractButton::clicked, this,
 		&PlaybackDialog::skipForward);
 	connect(
 		m_ui->filmStrip, &widgets::Filmstrip::doubleClicked, this,
