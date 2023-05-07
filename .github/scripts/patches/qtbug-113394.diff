@@ -1,0 +1,105 @@
+commit d62ac93bba020a79d131c3a1eba3973d7525860d
+Author: Colin Snover <github.com@zetafleet.com>
+Date:   Thu May 4 17:29:32 2023 -0500
+
+    Debounce macOS font change notifications
+    
+    Many notifications of this type may be received at once so it is
+    necessary to debounce them:
+    
+    https://www.mail-archive.com/cocoa-dev@lists.apple.com/msg73901.html
+    
+    These notifications can be triggered by font fallback resolution,
+    not just by users adding fonts manually, so it is especially
+    important to debounce since regenerating the font database is an
+    expensive operation that triggers layout invalidation every time it
+    happens.
+    
+    Other software that listens for font changes tends to use the newer
+    kCTFontManagerRegisteredFontsChangedNotification (added in 10.6),
+    but this also appears to send multiple notifications so there does
+    not seem to be any obvious benefit to switching.
+    
+    Fixes: QTBUG-113394
+    Change-Id: I7fbafaba47459acebb242e0e08859c422ecf0df5
+
+diff --git a/src/gui/text/coretext/qcoretextfontdatabase.mm b/src/gui/text/coretext/qcoretextfontdatabase.mm
+index 61c662cd..ca207a30 100644
+--- a/src/gui/text/coretext/qcoretextfontdatabase.mm
++++ b/src/gui/text/coretext/qcoretextfontdatabase.mm
+@@ -78,9 +78,12 @@
+     : m_hasPopulatedAliases(false)
+ {
+ #if defined(Q_OS_MACOS)
+-    m_fontSetObserver = QMacNotificationObserver(nil, NSFontSetChangedNotification, [] {
+-        qCDebug(lcQpaFonts) << "Fonts have changed";
+-        QPlatformFontDatabase::repopulateFontDatabase();
++    m_fontSetObserver = QMacNotificationObserver(nil, NSFontSetChangedNotification, [this] {
++        if (!m_fontSetDebounceTimer.isActive())
++            qCDebug(lcQpaFonts) << "Fonts have changed";
++
++        // The timeout length was selected arbitrarily
++        m_fontSetDebounceTimer.start(25, this);
+     });
+ #endif
+ }
+@@ -90,6 +93,18 @@
+     qDeleteAll(m_themeFonts);
+ }
+ 
++#if defined(Q_OS_MACOS)
++void QCoreTextFontDatabase::timerEvent(QTimerEvent *event)
++{
++    if (event->timerId() == m_fontSetDebounceTimer.timerId()) {
++        m_fontSetDebounceTimer.stop();
++        qCDebug(lcQpaFonts) << "Font change notifications have settled";
++        QPlatformFontDatabase::repopulateFontDatabase();
++    }
++    QObject::timerEvent(event);
++}
++#endif
++
+ CTFontDescriptorRef descriptorForFamily(const QString &familyName)
+ {
+     return CTFontDescriptorCreateWithAttributes(CFDictionaryRef(@{
+diff --git a/src/gui/text/coretext/qcoretextfontdatabase_p.h b/src/gui/text/coretext/qcoretextfontdatabase_p.h
+index 74c3f30b..c81c510b 100644
+--- a/src/gui/text/coretext/qcoretextfontdatabase_p.h
++++ b/src/gui/text/coretext/qcoretextfontdatabase_p.h
+@@ -21,6 +21,11 @@
+ #include <qpa/qplatformtheme.h>
+ #include <private/qcore_mac_p.h>
+ 
++#if defined(Q_OS_MACOS)
++#include <QtCore/qbasictimer.h>
++#include <QtCore/qobject.h>
++#endif
++
+ Q_FORWARD_DECLARE_CF_TYPE(CTFontDescriptor);
+ Q_FORWARD_DECLARE_CF_TYPE(CTFont);
+ 
+@@ -29,7 +34,11 @@ QT_DECL_METATYPE_EXTERN_TAGGED(QCFType<CFURLRef>, QCFType_CFURLRef, Q_GUI_EXPORT
+ 
+ QT_BEGIN_NAMESPACE
+ 
+-class Q_GUI_EXPORT QCoreTextFontDatabase : public QPlatformFontDatabase
++class Q_GUI_EXPORT QCoreTextFontDatabase :
++#if defined(Q_OS_MACOS)
++    public QObject,
++#endif
++    public QPlatformFontDatabase
+ {
+ public:
+     QCoreTextFontDatabase();
+@@ -63,7 +72,11 @@ private:
+     bool m_hasPopulatedAliases;
+ 
+ #if defined(Q_OS_MACOS)
++protected:
++    void timerEvent(QTimerEvent *event) override;
++private:
+     QMacNotificationObserver m_fontSetObserver;
++    QBasicTimer m_fontSetDebounceTimer;
+ #endif
+ };
+ 
