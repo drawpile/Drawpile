@@ -337,7 +337,9 @@ private:
 		ABORT_LOGIN
 	};
 
-	void send(const QString &cmd, const QJsonArray &args=QJsonArray(), const QJsonObject &kwargs=QJsonObject());
+	void send
+		(const QString &cmd, const QJsonArray &args = QJsonArray(),
+		const QJsonObject &kwargs = QJsonObject(), bool containsAvatar = false);
 
 	void expectNothing();
 	void expectHello(const ServerReply &msg);

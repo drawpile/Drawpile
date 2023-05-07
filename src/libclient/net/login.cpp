@@ -234,9 +234,6 @@ void LoginHandler::selectAvatar(const QImage &avatar)
 {
 	QBuffer a;
 	avatar.save(&a, "PNG");
-
-	// TODO size check
-
 	m_avatar = a.buffer().toBase64();
 }
 
@@ -257,7 +254,8 @@ void LoginHandler::sendIdentity()
 	if(!m_address.password().isEmpty())
 		args << m_address.password();
 
-	if(!m_avatar.isEmpty()) {
+	bool containsAvatar = !m_avatar.isEmpty();
+	if(containsAvatar) {
 		kwargs["avatar"] = QString::fromUtf8(m_avatar);
 		// avatar needs only be sent once
 		m_avatar = QByteArray();
@@ -266,7 +264,7 @@ void LoginHandler::sendIdentity()
 	kwargs["s"] = getSid();
 
 	m_state = EXPECT_IDENTIFIED;
-	send("ident", args, kwargs);
+	send("ident", args, kwargs, containsAvatar);
 }
 
 void LoginHandler::requestExtAuth(const QString &username, const QString &password)
@@ -774,13 +772,26 @@ void LoginHandler::failLogin(const QString &message, const QString &errorcode)
 	m_server->loginFailure(message, errorcode);
 }
 
-void LoginHandler::send(const QString &cmd, const QJsonArray &args, const QJsonObject &kwargs)
+void LoginHandler::send(
+	const QString &cmd, const QJsonArray &args, const QJsonObject &kwargs,
+	bool containsAvatar)
 {
 	ServerCommand sc { cmd, args, kwargs };
+	drawdance::Message msg = sc.toMessage();
+	if(msg.isNull() && containsAvatar) {
+		qWarning("Removing avatar from server command and trying again");
+		sc.kwargs.remove("avatar");
+		msg = sc.toMessage();
+	}
+
+	if(msg.isNull()) {
+		failLogin(tr("Client failed to serialize command"));
+	} else {
 #ifdef DEBUG_LOGIN
-	qInfo() << "login -->" << cmd << args << kwargs;
+		qInfo() << "login -->" << cmd << args << kwargs;
 #endif
-	m_server->sendMessage(ServerCommand::make(cmd, args, kwargs));
+		m_server->sendMessage(msg);
+	}
 }
 
 bool LoginHandler::hasUserFlag(const QString &flag) const
