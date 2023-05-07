@@ -64,6 +64,4 @@ foreach(sanitizer IN ITEMS Address Leak Memory Thread UndefinedBehavior)
 endforeach()
 unset(san_upper)
 
-# UNITY_BUILD is already used by cmake
-option(DP_UNITY_BUILD "Unity builds for Drawpile (not Drawdance)" OFF)
-add_feature_info("Unity builds for Drawpile (DP_UNITY_BUILD)" DP_UNITY_BUILD "")
+add_feature_info("Unity build (CMAKE_UNITY_BUILD)" CMAKE_UNITY_BUILD "")
