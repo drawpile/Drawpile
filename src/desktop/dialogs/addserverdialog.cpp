@@ -6,6 +6,7 @@
 
 #include <QIcon>
 #include <QPushButton>
+#include <QStyle>
 
 namespace dialogs {
 
@@ -50,17 +51,17 @@ void AddServerDialog::showError(const QString &errorMessage)
 
 void AddServerDialog::showSuccess()
 {
-	setText(QStringLiteral("<b>%1</b><br><br>%2").arg(m_serverInfo.name.toHtmlEscaped(), m_serverInfo.description.toHtmlEscaped()));
+	setText(QStringLiteral("<b>%1</b>").arg(m_serverInfo.name.toHtmlEscaped()));
+	setInformativeText(m_serverInfo.description.toHtmlEscaped());
 	auto *btn = addButton(tr("Add"), AcceptRole);
 	connect(btn, &QPushButton::clicked, this, &AddServerDialog::onAddClicked);
 	show();
 
 	if(m_serverInfo.faviconUrl == "drawpile") {
-		const auto icon = QIcon(":/icons/drawpile.png").pixmap(128, 128);
+		const auto iconSize = style()->pixelMetric(QStyle::PM_MessageBoxIconSize, nullptr, this);
+		const auto icon = QIcon(":/icons/drawpile.png").pixmap(iconSize);
 		m_favicon = icon.toImage();
 		setIconPixmap(icon);
-
-
 	} else {
 		const QUrl faviconUrl(m_serverInfo.faviconUrl);
 		if(faviconUrl.isValid()) {
@@ -71,7 +72,7 @@ void AddServerDialog::showSuccess()
 			connect(filedownload, &networkaccess::FileDownload::finished, this, [filedownload, this](const QString &errorMessage) {
 				filedownload->deleteLater();
 				if(!errorMessage.isEmpty()) {
-					qWarning("Couldnt' fetch favicon: %s", qPrintable(errorMessage));
+					qWarning("Couldn't fetch favicon: %s", qPrintable(errorMessage));
 					return;
 				}
 
@@ -112,9 +113,10 @@ void AddServerDialog::onAddClicked()
 	);
 
 	if(!m_favicon.isNull()) {
+		const auto iconSize = style()->pixelMetric(QStyle::PM_MessageBoxIconSize, nullptr, this);
 		listservers->setFavicon(
 			url,
-			QIcon(":/icons/drawpile.png").pixmap(128, 128).toImage()
+			QIcon(":/icons/drawpile.png").pixmap(iconSize).toImage()
 			);
 	}
 
