@@ -125,6 +125,8 @@ struct ServerSummaryPage::Private {
 	}
 };
 
+namespace serversummarypage {
+
 static void addWidgets(struct ServerSummaryPage::Private *d, QGridLayout *layout, int row, const QString labelText, QWidget *value, bool addSpacer=false)
 {
 	if(!labelText.isEmpty())
@@ -154,9 +156,13 @@ static void addLabels(QGridLayout *layout, int row, const QString labelText, QLa
 	addWidgets(nullptr, layout, row, labelText, value);
 }
 
+} // namespace serversummarypage
+
 ServerSummaryPage::ServerSummaryPage(Server *server, QWidget *parent)
 	: QWidget(parent), d(new Private)
 {
+	using namespace serversummarypage;
+
 	d->server = server;
 
 	d->saveTimer = new QTimer(this);
