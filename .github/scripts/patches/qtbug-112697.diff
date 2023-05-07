@@ -1,0 +1,26 @@
+From d01aa396171e101ba03638799c2c6fae6d116240 Mon Sep 17 00:00:00 2001
+From: Tor Arne Vestbø <tor.arne.vestbo@qt.io>
+Date: Fri, 28 Apr 2023 14:06:08 +0200
+Subject: [PATCH] macOS: Fix leak of application menu NSMenuItem
+
+Pick-to: 6.5 6.2
+Fixes: QTBUG-112697
+Change-Id: I0fe62e5a66f57bb9b8c073e636be346e088e0986
+Reviewed-by: Timur Pocheptsov <timur.pocheptsov@qt.io>
+---
+
+diff --git a/src/plugins/platforms/cocoa/qcocoamenuloader.mm b/src/plugins/platforms/cocoa/qcocoamenuloader.mm
+index 6d3c668..b5ee347 100644
+--- a/src/plugins/platforms/cocoa/qcocoamenuloader.mm
++++ b/src/plugins/platforms/cocoa/qcocoamenuloader.mm
+@@ -186,8 +186,8 @@
+         if (appMenu.supermenu)
+             unparentAppMenu(appMenu.supermenu);
+ 
+-    NSMenuItem *appMenuItem = [[NSMenuItem alloc] initWithTitle:@"Apple"
+-                               action:nil keyEquivalent:@""];
++    NSMenuItem *appMenuItem = [[[NSMenuItem alloc] initWithTitle:@"Apple"
++                               action:nil keyEquivalent:@""] autorelease];
+     appMenuItem.submenu = appMenu;
+     [menu insertItem:appMenuItem atIndex:0];
+ }

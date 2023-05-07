@@ -225,7 +225,10 @@ if(BASE)
 				patches/qmake_android_ltcg.diff
 				patches/qtbug-112504.diff
 			6.4.2
+				patches/qtbug-109375.diff
+				patches/qtbug-112697.diff
 				patches/qtbug-112899.diff
+				patches/qtbug-113394.diff
 	)
 endif()
 

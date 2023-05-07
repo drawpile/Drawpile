@@ -1,0 +1,44 @@
+From 3bb055d8ab045def265bb9b3eb4e7dff1874a093 Mon Sep 17 00:00:00 2001
+From: Giuseppe D'Angelo <giuseppe.dangelo@kdab.com>
+Date: Tue, 13 Dec 2022 17:57:34 +0100
+Subject: [PATCH] Fix the focus frame on Mac
+
+The Mac style uses focus in/out events (sent by QApplication) in order
+to update the focus frame. If a proxy style is installed, these events
+never reach the Mac style object.
+
+Amends 5d8a7652b995124495ef4f4a43fd8cf461367d62 , by making the
+forwarding limited to the events for which we want it to happen, and not
+just *any* event.
+
+Fixes: QTBUG-109375
+Change-Id: I6df49aa81d6ebb8dbaf00b9ba99e2a7c006e1181
+Pick-to: 6.4 6.5
+Reviewed-by: Timur Pocheptsov <timur.pocheptsov@qt.io>
+Reviewed-by: Volker Hilsheimer <volker.hilsheimer@qt.io>
+---
+
+diff --git a/src/widgets/styles/qproxystyle.cpp b/src/widgets/styles/qproxystyle.cpp
+index 6cca56f..a85c40a 100644
+--- a/src/widgets/styles/qproxystyle.cpp
++++ b/src/widgets/styles/qproxystyle.cpp
+@@ -348,7 +348,18 @@
+  */
+ bool QProxyStyle::event(QEvent *e)
+ {
+-    // ### Qt 7: remove this override
++    Q_D (QProxyStyle);
++
++    switch (e->type()) {
++    // The Mac style relies on these events in order to set the focus frame
++    case QEvent::FocusIn:
++    case QEvent::FocusOut:
++        d->ensureBaseStyle();
++        return QApplication::sendEvent(d->baseStyle, e);
++    default:
++        break;
++    }
++
+     return QCommonStyle::event(e);
+ }
+ 
