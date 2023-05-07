@@ -11,6 +11,7 @@
 #include <QGuiApplication>
 #include <QIcon>
 #include <QLabel>
+#include <QLocale>
 #include <QPainter>
 #include <QPushButton>
 #include <QRegularExpression>
@@ -19,19 +20,48 @@
 
 namespace widgets {
 
+enum {
+	FirstRow = 0,
+	FirstCol = 0,
+
+	YMaxLabelRow = FirstRow,
+	YTitleLabelRow = YMaxLabelRow + 1,
+	YMinLabelRow = YTitleLabelRow + 1,
+	XLabelRow = YMinLabelRow + 1,
+	LastRow = XLabelRow,
+
+	YLabelCol = FirstCol,
+	XMinLabelCol = YLabelCol + 1,
+	XTitleLabelCol = XMinLabelCol + 1,
+	XMaxLabelCol = XTitleLabelCol + 1,
+
+	CurveFirstRow = YMaxLabelRow,
+	CurveLastRow = YMinLabelRow,
+	CurveFirstCol = XMinLabelCol,
+	CurveLastCol = XMaxLabelCol,
+
+	RightSpaceCol = CurveLastCol + 1,
+	ButtonCol = RightSpaceCol + 1,
+
+	LastCol = ButtonCol,
+	ButtonFirstRow = FirstRow,
+	ButtonLastRow = LastRow,
+};
+
 class CurveWidget::SideLabel final : public QLabel {
 public:
 	explicit SideLabel(const QString &text, QWidget *parent = nullptr)
 		: QLabel{text, parent}
 	{
+		setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	}
 
 protected:
 	void paintEvent(QPaintEvent *) override final
 	{
 		QPainter painter{this};
-		painter.translate(sizeHint().width(), 0);
-		painter.rotate(90.0);
+		painter.translate(0, height());
+		painter.rotate(-90.0);
 		painter.drawText(0, 0, height(), width(), alignment(), text());
 	}
 
@@ -55,74 +85,66 @@ CurveWidget::CurveWidget(
 	const QString &xTitle, const QString &yTitle, bool linear, QWidget *parent)
 	: QWidget{parent}
 {
-	m_yMaxLabel = new QLabel{"1.00", this};
-	m_yMaxLabel->setAlignment(Qt::AlignRight);
+	QGridLayout *grid = new QGridLayout{this};
 
-	m_yTitleLabel = new SideLabel{yTitle, this};
-	m_yTitleLabel->setAlignment(Qt::AlignCenter);
-	m_yTitleLabel->setSizePolicy(
-		QSizePolicy::Expanding, QSizePolicy::Expanding);
+	const QLocale locale;
+	const auto zero = locale.toString(0., 'f', 1);
+	const auto one = locale.toString(1., 'f', 1);
 
-	m_yMinLabel = new QLabel{"0.00", this};
-	m_yMinLabel->setAlignment(Qt::AlignRight);
+	m_yMaxLabel = new QLabel{one};
+	m_yTitleLabel = new SideLabel{yTitle};
+	m_yMinLabel = new QLabel{zero};
 
 	m_curve = new KisCurveWidget{this};
 	m_curve->setLinear(linear);
-	m_curve->setFixedSize(300, 300);
 	connect(
 		m_curve, &KisCurveWidget::curveChanged, this,
 		&CurveWidget::curveChanged);
 
-	m_xMaxLabel = new QLabel{"1.00", this};
-	m_xMaxLabel->setAlignment(Qt::AlignRight);
-
-	m_xTitleLabel = new QLabel{xTitle, this};
-	m_xTitleLabel->setAlignment(Qt::AlignCenter);
-	m_xTitleLabel->setSizePolicy(
-		QSizePolicy::Expanding, QSizePolicy::Preferred);
-
-	m_xMinLabel = new QLabel{"0.00", this};
-	m_xMinLabel->setAlignment(Qt::AlignLeft);
+	m_xMaxLabel = new QLabel{one};
+	m_xTitleLabel = new QLabel{xTitle};
+	m_xMinLabel = new QLabel{zero};
 
 	m_buttonLayout = new QVBoxLayout;
 
-	m_copyButton =
-		new QPushButton{QIcon::fromTheme("edit-copy"), tr("Copy"), this};
+	m_copyButton = new QPushButton{tr("Copy")};
+	m_copyButton->setAutoDefault(false);
 	m_buttonLayout->addWidget(m_copyButton);
 	m_copyButton->setToolTip(
 		tr("Copies this curve to the clipboard. You can paste it into another "
 		   "setting or into the chat to share it with other users."));
-	connect(m_copyButton, &QPushButton::pressed, this, &CurveWidget::copyCurve);
+	connect(m_copyButton, &QPushButton::clicked, this, &CurveWidget::copyCurve);
 
-	m_pasteButton =
-		new QPushButton{QIcon::fromTheme("edit-paste"), tr("Paste"), this};
+	m_pasteButton = new QPushButton{tr("Paste")};
+	m_pasteButton->setAutoDefault(false);
 	m_buttonLayout->addWidget(m_pasteButton);
 	m_pasteButton->setToolTip(tr("Pastes a copied curve from the clipboard, "
 								 "overwriting what is there currently."));
 	connect(
-		m_pasteButton, &QPushButton::pressed, this, &CurveWidget::pasteCurve);
+		m_pasteButton, &QPushButton::clicked, this, &CurveWidget::pasteCurve);
 
-	m_presetsButton = new QPushButton{
-		QIcon::fromTheme("document-save"), tr("Presets..."), this};
+	m_presetsButton = new QPushButton{tr("Presets…")};
+	m_presetsButton->setAutoDefault(false);
 	m_buttonLayout->addWidget(m_presetsButton);
 	m_presetsButton->setToolTip(tr("Save and load curve presets."));
 	connect(
-		m_presetsButton, &QPushButton::pressed, this, &CurveWidget::loadCurve);
+		m_presetsButton, &QPushButton::clicked, this, &CurveWidget::loadCurve);
 
-	m_buttonLayout->addSpacerItem(
-		new QSpacerItem{0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding});
+	m_buttonLayout->addStretch();
 
-	QGridLayout *grid = new QGridLayout{this};
 	grid->setContentsMargins(0, 0, 0, 0);
-	grid->addWidget(m_yMaxLabel, 0, 0, Qt::AlignRight | Qt::AlignTop);
-	grid->addWidget(m_yTitleLabel, 1, 0, Qt::AlignRight | Qt::AlignVCenter);
-	grid->addWidget(m_yMinLabel, 2, 0, Qt::AlignRight | Qt::AlignBottom);
-	grid->addWidget(m_curve, 0, 1, 3, 3);
-	grid->addWidget(m_xMinLabel, 3, 1, Qt::AlignLeft | Qt::AlignTop);
-	grid->addWidget(m_xTitleLabel, 3, 2, Qt::AlignCenter | Qt::AlignTop);
-	grid->addWidget(m_xMaxLabel, 3, 3, Qt::AlignRight | Qt::AlignTop);
-	grid->addLayout(m_buttonLayout, 0, 4, 4, 1);
-	grid->setColumnStretch(4, 1);
+	grid->setSpacing(3);
+	grid->addWidget(m_yMaxLabel, YMaxLabelRow, YLabelCol, Qt::AlignRight | Qt::AlignTop);
+	grid->addWidget(m_yTitleLabel, YTitleLabelRow, YLabelCol, Qt::AlignRight | Qt::AlignVCenter);
+	grid->addWidget(m_yMinLabel, YMinLabelRow, YLabelCol, Qt::AlignRight | Qt::AlignBottom);
+	grid->addWidget(m_curve, CurveFirstRow, CurveFirstCol, CurveLastRow - CurveFirstRow + 1, CurveLastCol - CurveFirstCol + 1);
+	grid->addWidget(m_xMinLabel, XLabelRow, XMinLabelCol, Qt::AlignLeft | Qt::AlignTop);
+	grid->addWidget(m_xTitleLabel, XLabelRow, XTitleLabelCol, Qt::AlignCenter | Qt::AlignTop);
+	grid->addWidget(m_xMaxLabel, XLabelRow, XMaxLabelCol, Qt::AlignRight | Qt::AlignTop);
+	grid->addLayout(m_buttonLayout, ButtonFirstRow, ButtonCol, ButtonLastRow - ButtonFirstRow + 1, 1, Qt::AlignLeading);
+	grid->setRowStretch(YTitleLabelRow, 1);
+	grid->setColumnStretch(XTitleLabelCol, 1);
+	grid->setColumnStretch(RightSpaceCol, 1);
 }
 
 CurveWidget::~CurveWidget() {}
@@ -130,6 +152,11 @@ CurveWidget::~CurveWidget() {}
 KisCubicCurve CurveWidget::curve() const
 {
 	return m_curve->curve();
+}
+
+void CurveWidget::setFixedButtonWidth(int width)
+{
+	static_cast<QGridLayout*>(layout())->setColumnMinimumWidth(ButtonCol, width);
 }
 
 void CurveWidget::setCurve(const KisCubicCurve &curve)
@@ -173,6 +200,24 @@ void CurveWidget::setAxisValueLabels(
 	m_xMaxLabel->setText(xMax);
 	m_yMinLabel->setText(yMin);
 	m_yMaxLabel->setText(yMax);
+}
+
+bool CurveWidget::event(QEvent *event)
+{
+	if (event->type() == QEvent::LayoutRequest || event->type() == QEvent::Resize) {
+		auto *grid = static_cast<QGridLayout *>(layout());
+		grid->activate();
+		const auto w =
+			grid->cellRect(CurveFirstRow, CurveLastCol).right() -
+			grid->cellRect(CurveFirstRow, CurveFirstCol).left() + 1;
+		const auto h =
+			grid->cellRect(CurveLastRow, CurveFirstCol).bottom() -
+			grid->cellRect(CurveFirstRow, CurveFirstCol).top() + 1;
+		const auto size = qMax(w, h);
+		m_curve->setFixedSize(size, size);
+	}
+
+	return QWidget::event(event);
 }
 
 void CurveWidget::copyCurve()
