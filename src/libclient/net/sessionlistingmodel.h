@@ -15,23 +15,23 @@ class SessionListingModel final : public QAbstractItemModel
 {
 	Q_OBJECT
 public:
+	enum Column {
+		Title,
+		Message = Title,
+		Server,
+		UserCount,
+		Owner,
+		Uptime,
+		Version,
+		ColumnCount
+	};
+
 	enum SessionListingRoles {
 		SortKeyRole = Qt::UserRole,
 		UrlRole,
 		IsPasswordedRole,
 		IsClosedRole,
 		IsNsfwRole
-	};
-
-	enum Column : int {
-		ColumnVersion,
-		ColumnStatus,
-		ColumnTitle,
-		ColumnServer,
-		ColumnUsers,
-		ColumnOwner,
-		ColumnUptime,
-		ColumnCount,
 	};
 
 	SessionListingModel(QObject *parent=nullptr);
@@ -43,6 +43,7 @@ public:
 	QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const override;
 	QVariant headerData(int section, Qt::Orientation orientation, int role=Qt::DisplayRole) const override;
 	Qt::ItemFlags flags(const QModelIndex &index) const override;
+	QSize span(const QModelIndex &index) const override;
 
 	QModelIndex indexOfListing(const QString &listing) const;
 
@@ -51,15 +52,23 @@ public slots:
 	void setList(const QString &name, const QVector<sessionlisting::Session> sessions);
 
 private:
+	bool isNsfm(const sessionlisting::Session &session) const;
+
+	inline bool isRootItem(const QModelIndex &index) const { return index.internalId() == 0; }
+	inline int listingIndex(const QModelIndex &index) const {
+		return isRootItem(index) ? index.row() : int(index.internalId() - 1);
+	}
+
 	struct Listing {
 		QString name;
 
 		// If a message is set, the session list is not shown
 		QString message;
 		QVector<sessionlisting::Session> sessions;
+
+		inline bool offline() const { return !message.isEmpty(); }
 	};
 	QVector<Listing> m_listings;
 };
 
 #endif
-

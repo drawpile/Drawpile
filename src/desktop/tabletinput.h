@@ -2,14 +2,13 @@
 #ifndef TABLETINPUT_H
 #define TABLETINPUT_H
 
+#include <QMetaType>
 #include <QString>
 
-class QApplication;
-class QSettings;
+class DrawpileApp;
 
 namespace tabletinput {
-
-#if defined(Q_OS_WIN)
+Q_NAMESPACE
 
 enum class Mode : int {
 	Uninitialized, // Must be the first value, used for a range check.
@@ -24,13 +23,11 @@ enum class Mode : int {
 	Last = Qt5, // Must be equal to the last value, used for a range check.
 };
 
-Mode extractMode(const QSettings &cfg);
+Q_ENUM_NS(Mode)
 
-#endif
+void init(DrawpileApp &app);
 
-void update(QApplication *app, const QSettings &cfg);
-
-QString current();
+const char *current();
 
 // When KIS_TABLET isn't enabled Qt will only generate mouse events when a
 // tablet input goes unaccepted. We need those mouse events though, since it

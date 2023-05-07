@@ -20,6 +20,8 @@ public:
 		FFMPEG_CUSTOM,
 	};
 
+	Q_ENUM(Format)
+
 	VideoExporter(QObject *parent);
 
 	/**

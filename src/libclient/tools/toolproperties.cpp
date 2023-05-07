@@ -2,40 +2,18 @@
 
 #include "libclient/tools/toolproperties.h"
 
-#include <QSettings>
-
 namespace tools {
 
-void ToolProperties::save(QSettings &cfg) const
+std::pair<const QString &, const QVariantHash &> ToolProperties::save() const
 {
-	if(m_type.isEmpty())
-		return;
-
-	cfg.beginGroup(m_type);
-
-	// Remove any old values that may interfere
-	cfg.remove(QString());
-
-	QHashIterator<QString, QVariant> i(m_props);
-	while(i.hasNext()) {
-		i.next();
-		cfg.setValue(i.key(), i.value());
-	}
-
-	cfg.endGroup();
+	return { m_type, m_props };
 }
 
-ToolProperties ToolProperties::load(QSettings &cfg, const QString &toolType)
+ToolProperties ToolProperties::load(const QString &toolType, const QVariantHash &props)
 {
-	Q_ASSERT(!toolType.isEmpty());
 	ToolProperties tp(toolType);
-	cfg.beginGroup(toolType);
-	for(const QString &key : cfg.allKeys()) {
-		tp.m_props[key] = cfg.value(key);
-	}
-	cfg.endGroup();
+	tp.m_props = props;
 	return tp;
 }
 
 }
-

@@ -3,6 +3,7 @@
 #include "desktop/main.h"
 #include "desktop/mainwindow.h"
 #include "desktop/tabletinput.h"
+#include "desktop/settings.h"
 
 #include "libclient/utils/logging.h"
 #include "libclient/utils/colorscheme.h"
@@ -25,18 +26,18 @@
 #endif
 
 #include <QCommandLineParser>
+#include <QDebug>
 #include <QDir>
 #include <QIcon>
-#include <QSettings>
 #include <QStyle>
+#include <QStyleFactory>
 #include <QUrl>
 #include <QTabletEvent>
 #include <QLibraryInfo>
 #include <QTranslator>
 #include <QDateTime>
 #include <QWidget>
-
-#include <QtColorWidgets/ColorWheel>
+#include <memory>
 
 #ifdef ENABLE_VERSION_CHECK
 #	include "dialogs/versioncheckdialog.h"
@@ -51,6 +52,9 @@ DrawpileApp::DrawpileApp(int &argc, char **argv)
 	setApplicationVersion(cmake_config::version());
 	setApplicationDisplayName("Drawpile");
 	setWindowIcon(QIcon(":/icons/drawpile.png"));
+	// QSettings will use the wrong settings when it is opened before all
+	// the app and organisation names are set.
+	m_settings.reset();
 
 	drawdance::initLogging();
 	drawdance::initCpuSupport();
@@ -109,78 +113,28 @@ bool DrawpileApp::event(QEvent *e) {
 	return QApplication::event(e);
 }
 
-void DrawpileApp::notifySettingsChanged()
+void DrawpileApp::setThemeStyle(const QString &themeStyle)
 {
-	tabletinput::update(this, QSettings{});
-	emit settingsChanged();
-}
-
-void DrawpileApp::setTheme(int theme)
-{
-	if(theme < THEME_SYSTEM || theme >= THEME_COUNT) {
-		theme = THEME_DEFAULT;
-	}
-
-	switch(theme) {
-	case THEME_SYSTEM:
-	case THEME_SYSTEM_LIGHT:
-	case THEME_SYSTEM_DARK:
+	bool foundStyle = false;
 #ifdef Q_OS_WIN
-		// Empty string will use the Vista style, which is so incredibly ugly
-		// that it looks outright broken. So we use the old Windows-95-esque
-		// style instead, it looks old, but at least not totally busted.
-		setStyle(QStringLiteral("Windows"));
+	// Empty string will use the Vista style, which is so incredibly ugly
+	// that it looks outright broken. So we use the old Windows-95-esque
+	// style instead, it looks old, but at least not totally busted.
+	foundStyle = setStyle(themeStyle.isEmpty() ? QStringLiteral("Windows") : themeStyle);
 #elif defined(Q_OS_MACOS)
-		setStyle(new macui::MacViewStatusBarProxyStyle);
+	if (themeStyle.isEmpty() || themeStyle.startsWith(QStringLiteral("mac"))) {
+		foundStyle = true;
+		setStyle(new macui::MacProxyStyle);
+	} else {
+		foundStyle = setStyle(themeStyle);
+	}
 #else
-		setStyle(QStringLiteral(""));
+	foundStyle = setStyle(themeStyle);
 #endif
-		break;
-	case THEME_HOTDOG_STAND:
-		setStyle(QStringLiteral("Windows"));
-		break;
-	default:
-		setStyle(QStringLiteral("Fusion"));
-		break;
-	}
 
-	switch(theme) {
-	case THEME_SYSTEM_DARK:
-#ifdef Q_OS_MACOS
-		if (macui::setNativeAppearance(macui::Appearance::Dark)) {
-			setPalette(style()->standardPalette());
-			break;
-		}
-#endif
-		[[fallthrough]];
-	case THEME_FUSION_DARK:
-		setPalette(loadPalette(QStringLiteral("nightmode.colors")));
-		break;
-	case THEME_SYSTEM_LIGHT:
-#ifdef Q_OS_MACOS
-	if (macui::setNativeAppearance(macui::Appearance::Light)) {
-		setPalette(style()->standardPalette());
-		break;
-	}
-#endif
-		[[fallthrough]];
-	case THEME_KRITA_BRIGHT:
-		setPalette(loadPalette(QStringLiteral("kritabright.colors")));
-		break;
-	case THEME_KRITA_DARK:
-		setPalette(loadPalette(QStringLiteral("kritadark.colors")));
-		break;
-	case THEME_KRITA_DARKER:
-		setPalette(loadPalette(QStringLiteral("kritadarker.colors")));
-		break;
-	case THEME_HOTDOG_STAND:
-		setPalette(loadPalette(QStringLiteral("hotdogstand.colors")));
-		break;
-	default:
-#ifdef Q_OS_MACOS
-		macui::setNativeAppearance(macui::Appearance::System);
-#endif
-		setPalette(style()->standardPalette());
+	if (!foundStyle) {
+		qWarning() << "Could not find style" << themeStyle;
+		return;
 	}
 
 	// When the global style changes, `QApplication::setStyle` only sends
@@ -197,12 +151,83 @@ void DrawpileApp::setTheme(int theme)
 	QCoreApplication::sendEvent(this, &event);
 }
 
+void DrawpileApp::setThemePalette(desktop::settings::ThemePalette themePalette)
+{
+	using desktop::settings::ThemePalette;
+	QPalette newPalette;
+
+	switch(themePalette) {
+	case ThemePalette::System:
+#ifdef Q_OS_MACOS
+		macui::setNativeAppearance(macui::Appearance::System);
+#endif
+		setPalette(QPalette());
+		return;
+	case ThemePalette::Dark:
+#ifdef Q_OS_MACOS
+		if (macui::setNativeAppearance(macui::Appearance::Dark)) {
+			setPalette(QPalette());
+			return;
+		}
+#endif
+		newPalette = loadPalette(QStringLiteral("nightmode.colors"));
+		break;
+	case ThemePalette::Light:
+#ifdef Q_OS_MACOS
+	if (macui::setNativeAppearance(macui::Appearance::Light)) {
+		setPalette(QPalette());
+		return;
+	}
+#endif
+		[[fallthrough]];
+	case ThemePalette::KritaBright:
+		newPalette = loadPalette(QStringLiteral("kritabright.colors"));
+		break;
+	case ThemePalette::KritaDark:
+		newPalette = loadPalette(QStringLiteral("kritadark.colors"));
+		break;
+	case ThemePalette::KritaDarker:
+		newPalette = loadPalette(QStringLiteral("kritadarker.colors"));
+		break;
+	case ThemePalette::Fusion: {
+#ifdef Q_OS_MACOS
+		// Fusion palette will adapt itself to whether the system appearance is
+		// light or dark, so we need to reset that or else it will incorrectly
+		// inherit the dark mode of the previous palette
+		macui::setNativeAppearance(macui::Appearance::System);
+#endif
+		if (compat::styleName(*style()) == QStringLiteral("Fusion")) {
+			newPalette = style()->standardPalette();
+		} else if (const auto fusion = std::unique_ptr<QStyle>(QStyleFactory::create("Fusion"))) {
+			newPalette = fusion->standardPalette();
+		}
+		break;
+	}
+	case ThemePalette::HotdogStand:
+		newPalette = loadPalette(QStringLiteral("hotdogstand.colors"));
+		break;
+	}
+
+	setPalette(newPalette);
+#ifdef Q_OS_MACOS
+	// If the macOS theme is used with custom palettes, it is necessary to
+	// adjust the native appearance to match since some controls (e.g. combobox)
+	// continue to draw using the native appearance for background and only
+	// adopt the palette for parts of the UI.
+	if (newPalette.color(QPalette::Window).lightness() < 128) {
+		macui::setNativeAppearance(macui::Appearance::Dark);
+	} else {
+		macui::setNativeAppearance(macui::Appearance::Light);
+	}
+#endif
+}
+
 QPalette DrawpileApp::loadPalette(const QString &fileName)
 {
 	QString path = utils::paths::locateDataFile(fileName);
 	if(path.isEmpty()) {
 		qWarning("Could not find palette file %s", qUtf8Printable(fileName));
-		return style()->standardPalette();
+		return QPalette();
 	} else {
 		return colorscheme::loadFromFile(path);
 	}
@@ -233,21 +258,10 @@ void DrawpileApp::initTheme()
 	}
 	QIcon::setThemeSearchPaths(themePaths);
 
-	QSettings settings;
-
-	// Override widget theme
-	int theme = settings.value("settings/theme", DrawpileApp::THEME_SYSTEM).toInt();
-
-	// System themes tend to look ugly and broken. Reset the theme once to get
-	// a sensible default, the user can still revert to the ugly theme manually.
-	int themeVersion = settings.value("settings/themeversion", 0).toInt();
-	if(themeVersion < 1) {
-		theme = DrawpileApp::THEME_DEFAULT;
-		settings.setValue("settings/theme", theme);
-		settings.setValue("settings/themeversion", DrawpileApp::THEME_VERSION);
-	}
-
-	setTheme(theme);
+	m_settings.bindThemeStyle(this, &DrawpileApp::setThemeStyle);
+	m_settings.bindThemePalette(this, &DrawpileApp::setThemePalette);
+	// If the theme is set to the default theme then the palette will not change
+	// and icon initialisation will be incomplete if it is not updated once here
 	updateThemeIcons();
 }
 
@@ -279,26 +293,11 @@ void DrawpileApp::openUrl(QUrl url)
 
 void DrawpileApp::openBlankDocument()
 {
-	// Open a new window with a blank image
-	QSettings cfg;
-
-	const QSize maxSize {65536, 65536};
-	QSize size = cfg.value("history/newsize").toSize();
-
-	if(size.width()<100 || size.height()<100) {
-		// No previous size, or really small size
-		size = QSize(800, 600);
-	} else {
-		// Make sure previous size is not ridiculously huge
-		size = size.boundedTo(maxSize);
-	}
-
-	QColor color = cfg.value("history/newcolor").value<QColor>();
-	if(!color.isValid())
-		color = Qt::white;
-
 	MainWindow *win = new MainWindow;
-	win->newDocument(size, color);
+	win->newDocument(
+		m_settings.newCanvasSize(),
+		m_settings.newCanvasBackColor()
+	);
 }
 
 void DrawpileApp::deleteAllMainWindowsExcept(MainWindow *win)
@@ -327,32 +326,6 @@ static void initTranslations(DrawpileApp &app, const QLocale &locale)
 	delete translator;
 }
 
-#ifdef Q_OS_WIN
-static bool shouldCopyNativeSettings(const QSettings &settings, const QString mode)
-{
-	if(mode.compare("true", Qt::CaseInsensitive) == 0) {
-		return true;
-	} else if(mode.compare("false", Qt::CaseInsensitive) == 0) {
-		return false;
-	} else if(mode.compare("if-empty", Qt::CaseInsensitive) == 0) {
-		return settings.allKeys().isEmpty();
-	} else {
-		qCritical("Unknown --copy-legacy-settings value '%s'", qUtf8Printable(mode));
-		std::exit(EXIT_FAILURE);
-	}
-}
-
-static void copyNativeSettings(DrawpileApp &app, QSettings &settings)
-{
-	QSettings nativeSettings{
-		QSettings::NativeFormat, QSettings::UserScope,
-		app.organizationName(), app.applicationName()};
-	for(const QString &key : nativeSettings.allKeys()) {
-		settings.setValue(key, nativeSettings.value(key));
-	}
-}
-#endif
-
 // Initialize the application and return a list of files to be opened (if any)
 static QStringList initApp(DrawpileApp &app)
 {
@@ -369,6 +342,7 @@ static QStringList initApp(DrawpileApp &app)
 	QCommandLineOption portableDataDir("portable-data-dir", "Override settings directory.", "path");
 	parser.addOption(portableDataDir);
 
+#ifdef Q_OS_WIN
 	// --copy-legacy-settings
 	QCommandLineOption copyLegacySettings("copy-legacy-settings",
 		"Copy settings from Drawpile 2.1 to the new ini format. Use 'true' to "
@@ -376,6 +350,7 @@ static QStringList initApp(DrawpileApp &app)
 		"copy if the new settings are empty (this is the default.)",
 		"mode", "if-empty");
 	parser.addOption(copyLegacySettings);
+#endif
 
 	// URL
 	parser.addPositionalArgument("url", "Filename or URL.");
@@ -388,37 +363,28 @@ static QStringList initApp(DrawpileApp &app)
 
 	if(parser.isSet(portableDataDir)) {
 		utils::paths::setWritablePath(parser.value(portableDataDir));
-		QSettings::setPath(
-			QSettings::IniFormat,
-			QSettings::UserScope,
-			utils::paths::writablePath(QStandardPaths::AppConfigLocation, QString())
+		app.settings().reset(
+			utils::paths::writablePath(
+				QStandardPaths::AppConfigLocation,
+				"drawpile.ini"
+			)
 		);
 	}
 #ifdef Q_OS_WIN
 	else {
-		// It is easiest to get a reference to the native settings by creating
-		// and holding onto a QSettings object before switching the default
-		// format to INI
-		QSettings settings;
-
-		// On Windows, QSettings defaults to using the registry, which is awful.
-		// We always want to use config files, so force that format.
-		// This should never be used on other platforms since it causes the
-		// settings to end up with non-standard location or file extension.
-		QSettings::setDefaultFormat(QSettings::IniFormat);
-		if(shouldCopyNativeSettings(settings, parser.value(copyLegacySettings))) {
-			// Port over the settings from Drawpile 2.1 so that the user doesn't
-			// have to set them up again just because our format changed.
-			copyNativeSettings(app, settings);
+		const auto mode = parser.value(copyLegacySettings);
+		if(mode.compare("true", Qt::CaseInsensitive) == 0) {
+			app.settings().migrateFromNativeFormat(true);
+		} else if(mode.compare("if-empty", Qt::CaseInsensitive) == 0) {
+			app.settings().migrateFromNativeFormat(false);
+		} else if(mode.compare("false", Qt::CaseInsensitive) != 0) {
+			qCritical("Unknown --copy-legacy-settings value '%s'", qUtf8Printable(mode));
+			std::exit(EXIT_FAILURE);
 		}
 	}
 #endif
 
-	// Continue initialization (can use QSettings from now on)
-	utils::initLogging();
-
-	QSettings settings;
-
+	app.settings().bindWriteLogFile(&utils::enableLogFile);
 	app.initTheme();
 
 #ifdef Q_OS_MACOS
@@ -438,11 +404,12 @@ static QStringList initApp(DrawpileApp &app)
 	});
 #endif
 
-	tabletinput::update(&app, settings);
+	tabletinput::init(app);
+	contentfilter::init(app.settings());
 
 	// Set override locale from settings, or use system locale if no override is set
 	QLocale locale = QLocale::c();
-	QString overrideLang = settings.value("settings/language").toString();
+	QString overrideLang = app.settings().language();
 	if(!overrideLang.isEmpty())
 		locale = QLocale(overrideLang);
 

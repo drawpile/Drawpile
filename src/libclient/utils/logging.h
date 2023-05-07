@@ -11,11 +11,10 @@ namespace utils {
 
 QByteArray logFilePath();
 
-void initLogging();
+void enableLogFile(bool enable);
 
 void logMessage(int level, const char *file, uint32_t line, const char *msg);
 
 }
 
 #endif
-

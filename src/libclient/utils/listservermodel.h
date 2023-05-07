@@ -6,6 +6,8 @@
 #include <QAbstractListModel>
 #include <QIcon>
 
+namespace libclient { namespace settings { class Settings; } }
+
 namespace sessionlisting {
 
 struct ListServer {
@@ -30,7 +32,7 @@ public:
 		PrivateListRole
 	};
 
-	explicit ListServerModel(bool includeReadOnly, QObject *parent=nullptr);
+	explicit ListServerModel(libclient::settings::Settings &settings, bool includeReadOnly, QObject *parent=nullptr);
 
 	int rowCount(const QModelIndex &parent=QModelIndex()) const override;
 	QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const override;
@@ -54,15 +56,22 @@ public:
 	void setFavicon(const QString &url, const QImage &icon);
 
 	//! Get all configured list servers
-	static QVector<ListServer> listServers(bool includeReadOnly);
-
-	//! Load server list from the settings file
-	void loadServers(bool includeReadOnly);
-
-	//! Save (modified) server list. This replaces the existing list
-	void saveServers() const;
+	static QVector<ListServer> listServers(const QVector<QVariantMap> &cfg, bool includeReadOnly);
 
 private:
+	//! Load server list from the settings file
+	void loadServers(const QVector<QVariantMap> &cfg, bool includeReadOnly);
+
+	//! Save (modified) server list. This replaces the existing list
+	[[nodiscard]] QVector<QVariantMap> saveServers() const;
+
+public slots:
+	void revert() override;
+	bool submit() override;
+
+private:
+	libclient::settings::Settings &m_settings;
+	bool m_includeReadOnly;
 	QVector<ListServer> m_servers;
 };
 

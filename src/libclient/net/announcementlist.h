@@ -29,7 +29,7 @@ struct Announcement {
 class AnnouncementListModel final : public QAbstractTableModel {
 	Q_OBJECT
 public:
-	AnnouncementListModel(QObject *parent=nullptr);
+	AnnouncementListModel(const QVector<QVariantMap> &data, QObject *parent=nullptr);
 
 	QVariant data(const QModelIndex& index, int role=Qt::DisplayRole) const override;
 	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;

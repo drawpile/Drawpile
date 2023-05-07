@@ -1,20 +1,22 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "libclient/parentalcontrols/parentalcontrols.h"
+#include "libclient/contentfilter/contentfilter.h"
+#include "libclient/settings.h"
 
 #include <wpcapi.h>
 
 #include <QDebug>
 
-namespace parentalcontrols {
+namespace contentfilter {
 
 static const CLSID CLSID_WinParentalControls = {0xE77CC89B,0x7401,0x4C04,{0x8C,0xED,0x14,0x9D,0xB3,0x5A,0xDD,0x04}};
 static const IID IID_IWinParentalControls  = {0x28B4D88B,0xE072,0x49E6,{0x80,0x4D,0x26,0xED,0xBE,0x21,0xA7,0xB9}};
 
 static bool ACTIVE = false;
 
-void init()
+void init(libclient::settings::Settings &settings)
 {
+	g_settings = &settings;
 	qDebug("Initializing parental controls");
 
 	CoInitialize(nullptr);
@@ -30,10 +32,9 @@ void init()
 	IWPCSettings *wpcs;
 	hr = pc->GetUserSettings(nullptr, &wpcs);
 	if(hr == S_OK) {
-		DWORD settings;
-		wpcs->GetRestrictions(&settings);
-		// If web filtering is enabled, active PC mode
-		if((settings & 0x02)) {
+		DWORD restrictions;
+		wpcs->GetRestrictions(&restrictions);
+		if((restrictions & WPCFLAG_WEB_FILTERED)) {
 			ACTIVE = true;
 		}
 		wpcs->Release();

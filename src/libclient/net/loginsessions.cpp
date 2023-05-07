@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "libclient/net/loginsessions.h"
+#include "libclient/contentfilter/contentfilter.h"
 
 #include <QDebug>
 #include <QIcon>
@@ -8,8 +9,9 @@
 
 namespace net {
 
-LoginSessionModel::LoginSessionModel(QObject *parent) :
-	QAbstractTableModel(parent), m_moderatorMode(false)
+LoginSessionModel::LoginSessionModel(QObject *parent)
+	: QAbstractTableModel(parent)
+	, m_moderatorMode(false)
 {
 }
 
@@ -62,11 +64,11 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 		switch(index.column()) {
 		case ColumnVersion:
 			if(ls.isIncompatible()) {
-				return QIcon::fromTheme("dialog-error");
+				return QIcon::fromTheme("state-error");
 			} else if(ls.compatibilityMode) {
-				return QIcon::fromTheme("dialog-warning");
+				return QIcon::fromTheme("state-warning");
 			} else {
-				return QIcon::fromTheme("dialog-positive");
+				return QIcon::fromTheme("state-ok");
 			}
 		case ColumnStatus:
 			if(ls.isIncompatible()) {
@@ -79,7 +81,7 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 				return QVariant{};
 			}
 		case ColumnTitle:
-			return ls.nsfm ? QIcon(":/icons/censored.svg") : QVariant{};
+			return isNsfm(ls) ? QIcon(":/icons/censored.svg") : QVariant{};
 		default:
 			return QVariant{};
 		}
@@ -105,7 +107,7 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 				return QVariant{};
 			}
 		case ColumnTitle:
-			return ls.nsfm ? tr("Not safe for minors") : QVariant{};
+			return isNsfm(ls) ? tr("Not safe for me") : QVariant{};
 		default:
 			return QVariant{};
 		}
@@ -126,7 +128,7 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 		case ClosedRole: return ls.closed;
 		case IncompatibleRole: return !ls.incompatibleSeries.isEmpty();
 		case JoinableRole: return (!ls.closed || m_moderatorMode) && ls.incompatibleSeries.isEmpty();
-		case NsfmRole: return ls.nsfm;
+		case NsfmRole: return isNsfm(ls);
 		case CompatibilityModeRole: return ls.compatibilityMode;
 		default: return QVariant{};
 		}
@@ -188,5 +190,10 @@ void LoginSessionModel::removeSession(const QString &id)
 	}
 }
 
+bool LoginSessionModel::isNsfm(const LoginSession &session) const
+{
+	return (contentfilter::useAdvisoryTag() ? session.nsfm : false)
+		|| contentfilter::isNsfmTitle(session.title);
 }
 
+} // namespace net

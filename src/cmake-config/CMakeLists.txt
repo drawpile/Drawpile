@@ -10,6 +10,8 @@ target_include_directories(cmake-config PUBLIC
 )
 
 message(STATUS "Generating config.h")
+include(DrawpileTranslations)
+get_supported_langs_cxx(DRAWPILE_LOCALES)
 include(DrawpileFileExtensions)
 get_qt_extensions(RECORDING DRAWPILE_FILE_GROUP_RECORDING)
 get_qt_extensions(IMAGE DRAWPILE_FILE_GROUP_IMAGE)

@@ -5,6 +5,9 @@ add_library(dpclient)
 target_sources(dpclient PRIVATE
 	document.cpp
 	document.h
+	settings_table.h
+	settings.cpp
+	settings.h
 	brushes/brush.cpp
 	brushes/brush.h
 	brushes/brushpresetmodel.cpp
@@ -32,6 +35,8 @@ target_sources(dpclient PRIVATE
 	canvas/timelinemodel.h
 	canvas/userlist.cpp
 	canvas/userlist.h
+	contentfilter/contentfilter.cpp
+	contentfilter/contentfilter.h
 	drawdance/aclstate.cpp
 	drawdance/aclstate.h
 	drawdance/annotation.cpp
@@ -110,8 +115,6 @@ target_sources(dpclient PRIVATE
 	net/sessionlistingmodel.h
 	net/tcpserver.cpp
 	net/tcpserver.h
-	parentalcontrols/parentalcontrols.cpp
-	parentalcontrols/parentalcontrols.h
 	tools/annotation.cpp
 	tools/annotation.h
 	tools/beziertool.cpp
@@ -144,8 +147,11 @@ target_sources(dpclient PRIVATE
 	tools/zoom.h
 	utils/avatarlistmodel.cpp
 	utils/avatarlistmodel.h
+	utils/avatarlistmodeldelegate.h
 	utils/canvasshortcutsmodel.cpp
 	utils/canvasshortcutsmodel.h
+	utils/certificatestoremodel.cpp
+	utils/certificatestoremodel.h
 	utils/changeflags.h
 	utils/colorscheme.cpp
 	utils/colorscheme.h
@@ -171,7 +177,6 @@ target_sources(dpclient PRIVATE
 	utils/sessionfilterproxymodel.h
 	utils/sessionidvalidator.cpp
 	utils/sessionidvalidator.h
-	utils/settingdefault.h
 	utils/shortcutdetector.cpp
 	utils/shortcutdetector.h
 	utils/usernamevalidator.cpp
@@ -181,11 +186,11 @@ target_sources(dpclient PRIVATE
 # https://gitlab.kitware.com/cmake/cmake/-/issues/19813
 if(WIN32)
 	target_sources(dpclient PRIVATE
-		parentalcontrols/parentalcontrols_win.cpp
+		contentfilter/contentfilter_win.cpp
 	)
 else()
 	target_sources(dpclient PRIVATE
-		parentalcontrols/parentalcontrols_dummy.cpp
+		contentfilter/contentfilter_dummy.cpp
 	)
 endif()
 

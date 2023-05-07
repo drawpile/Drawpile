@@ -3,9 +3,10 @@
 #include "desktop/dialogs/logindialog.h"
 #include "desktop/dialogs/abusereport.h"
 #include "desktop/dialogs/certificateview.h"
+#include "desktop/main.h"
 #include "libclient/net/login.h"
 #include "libclient/net/loginsessions.h"
-#include "libclient/parentalcontrols/parentalcontrols.h"
+#include "libclient/contentfilter/contentfilter.h"
 
 #include "libclient/utils/avatarlistmodel.h"
 #include "libclient/utils/sessionfilterproxymodel.h"
@@ -25,7 +26,6 @@
 #include <QIcon>
 #include <QPushButton>
 #include <QMessageBox>
-#include <QSettings>
 #include <QTimer>
 #include <QStyle>
 #include <QItemSelectionModel>
@@ -92,18 +92,20 @@ struct LoginDialog::Private {
 				okButton->click();
 		});
 
-		ui->showNsfw->setEnabled(parentalcontrols::level() == parentalcontrols::Level::Unrestricted);
+		ui->showNsfw->setEnabled(contentfilter::level() == contentfilter::Level::Unrestricted);
 		sessions = new SessionFilterProxyModel(dlg);
 		sessions->setFilterCaseSensitivity(Qt::CaseInsensitive);
 		sessions->setFilterKeyColumn(-1);
-		sessions->setShowNsfw(false);
 
-		connect(ui->showNsfw, &QAbstractButton::toggled, [this](bool show) {
-			QSettings().setValue("history/filternsfw", show);
-			sessions->setShowNsfw(show);
-		});
-        connect(ui->filter, &QLineEdit::textChanged,
-                        sessions, &SessionFilterProxyModel::setFilterFixedString);
+		auto &settings = dpApp().settings();
+		settings.bindFilterNsfm(ui->showNsfw);
+		settings.bindFilterNsfm(sessions, &SessionFilterProxyModel::setShowNsfw);
+
+		settings.bindLastUsername(ui->username);
+		settings.bindLastAvatar(ui->avatarList, AvatarListModel::FilenameRole);
+
+		connect(ui->filter, &QLineEdit::textChanged,
+						sessions, &SessionFilterProxyModel::setFilterFixedString);
 
 		ui->sessionList->setModel(sessions);
 
@@ -298,20 +300,7 @@ void LoginDialog::showNewCert()
 
 void LoginDialog::onUsernameNeeded(bool canSelectAvatar)
 {
-	QSettings cfg;
-	d->ui->username->setText(cfg.value("history/username").toString());
-
-	if(canSelectAvatar && d->avatars->rowCount() > 1) {
-		d->ui->avatarList->show();
-		const QString avatar = cfg.value("history/avatar").toString();
-		if(avatar.isEmpty())
-			d->ui->avatarList->setCurrentIndex(0);
-		else
-			d->ui->avatarList->setCurrentIndex(d->avatars->getAvatar(avatar).row());
-	} else {
-		d->ui->avatarList->hide();
-	}
-
+	d->ui->avatarList->setVisible(canSelectAvatar && d->avatars->rowCount() > 1);
 	d->resetMode(Mode::identity);
 	updateOkButtonEnabled();
 }
@@ -341,7 +330,7 @@ void LoginDialog::Private::setLoginMode(const QString &prompt)
 	}
 
 	auto *readJob = new QKeychain::ReadPasswordJob(KEYCHAIN_NAME);
-	readJob->setInsecureFallback(QSettings().value("settings/insecurepasswordstorage", false).toBool());
+	readJob->setInsecureFallback(dpApp().settings().insecurePasswordStorage());
 	readJob->setKey(
 		keychainSecretName(
 			loginHandler->url().userName(),
@@ -414,7 +403,7 @@ void LoginDialog::onLoginOk()
 	if(d->ui->rememberPassword->isChecked()) {
 #ifdef HAVE_QTKEYCHAIN
 		auto *writeJob = new QKeychain::WritePasswordJob(KEYCHAIN_NAME);
-		writeJob->setInsecureFallback(QSettings().value("settings/insecurepasswordstorage", false).toBool());
+		writeJob->setInsecureFallback(dpApp().settings().insecurePasswordStorage());
 		writeJob->setKey(
 			keychainSecretName(
 				d->loginHandler->url().userName(),
@@ -435,7 +424,7 @@ void LoginDialog::onBadLoginPassword()
 
 #ifdef HAVE_QTKEYCHAIN
 	auto *deleteJob = new QKeychain::DeletePasswordJob(KEYCHAIN_NAME);
-	deleteJob->setInsecureFallback(QSettings().value("settings/insecurepasswordstorage", false).toBool());
+	deleteJob->setInsecureFallback(dpApp().settings().insecurePasswordStorage());
 	deleteJob->setKey(
 		keychainSecretName(
 			d->loginHandler->url().userName(),
@@ -458,9 +447,6 @@ void LoginDialog::onSessionChoiceNeeded(net::LoginSessionModel *sessions)
 	int newX = geom.x() + (geom.width() - newWidth) / 2;
 	int newY = geom.y() + (geom.height() - newHeight) / 2;
 	setGeometry(newX, newY, newWidth, newHeight);
-
-	if(d->ui->showNsfw->isEnabled())
-		d->ui->showNsfw->setChecked(QSettings().value("history/filternsfw").toBool());
 
 	d->sessions->setSourceModel(sessions);
 	d->ui->sessionList->resizeColumnsToContents();
@@ -530,10 +516,6 @@ void LoginDialog::onOkClicked()
 	case Mode::identity: {
 		const QPixmap avatar = d->ui->avatarList->currentData(Qt::DecorationRole).value<QPixmap>();
 		const QString avatarFile = avatar.isNull() ? QString() : d->ui->avatarList->currentData(AvatarListModel::FilenameRole).toString();
-
-		QSettings cfg;
-		cfg.setValue("history/username", d->ui->username->text());
-		cfg.setValue("history/avatar", avatarFile);
 
 		if(!avatar.isNull())
 			d->loginHandler->selectAvatar(avatar.toImage());

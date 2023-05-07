@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include "libclient/settings.h"
 #include "libclient/utils/newversion.h"
 #include "libshared/util/networkaccess.h"
 #include "libshared/net/protover.h"
@@ -9,7 +10,6 @@
 #include <QRegularExpression>
 #include <QNetworkRequest>
 #include <QNetworkReply>
-#include <QSettings>
 #include <QDate>
 
 #include <algorithm>
@@ -47,21 +47,19 @@ NewVersionCheck::NewVersionCheck(int server, int major, int minor, QObject *pare
 {
 }
 
-bool NewVersionCheck::needCheck()
+bool NewVersionCheck::needCheck(const libclient::settings::Settings &settings)
 {
-	QSettings cfg;
-	cfg.beginGroup("versioncheck");
-	if(!cfg.value("enabled", true).toBool())
+	if(!settings.versionCheckEnabled())
 		return false;
 
 	const QDate today = QDate::currentDate();
 
-	const QDate lastCheck = QDate::fromString(cfg.value("lastcheck").toString(), Qt::ISODate);
+	const QDate lastCheck = QDate::fromString(settings.versionCheckLastCheck(), Qt::ISODate);
 
 	if(!lastCheck.isValid())
 		return true;
 
-	const bool lastSuccess = cfg.value("lastsuccess").toBool();
+	const bool lastSuccess = settings.versionCheckLastSuccess();
 	const int daysSinceLastCheck = lastCheck.daysTo(today);
 
 	if(lastSuccess)
@@ -70,9 +68,9 @@ bool NewVersionCheck::needCheck()
 		return daysSinceLastCheck > 7;
 }
 
-bool NewVersionCheck::isThereANewSeries()
+bool NewVersionCheck::isThereANewSeries(const libclient::settings::Settings &settings)
 {
-	const QString latest = QSettings().value("versioncheck/latest").toString();
+	const QString latest = settings.versionCheckLatest();
 	const auto m = VERSION_RE.match(latest);
 	if(!m.hasMatch())
 		return false;
@@ -373,7 +371,7 @@ bool NewVersionCheck::parseReleasesElement(QXmlStreamReader &reader)
 	return false;
 }
 
-void NewVersionCheck::queryVersions(QUrl url)
+void NewVersionCheck::queryVersions(libclient::settings::Settings &settings, QUrl url)
 {
 	if(url.isEmpty())
 		url = QUrl("https://drawpile.net/files/metadata/net.drawpile.drawpile.appdata.xml");
@@ -383,41 +381,37 @@ void NewVersionCheck::queryVersions(QUrl url)
 	QNetworkRequest req(url);
 	auto reply = networkaccess::getInstance()->get(req);
 
-	connect(reply, &QNetworkReply::finished, this, [this, reply]() {
+	connect(reply, &QNetworkReply::finished, this, [this, reply, &settings]() {
 		if(reply->error() != QNetworkReply::NoError) {
 			qWarning("NewVersionCheck error: %s", qPrintable(reply->errorString()));
-			queryFail(reply->errorString());
+			queryFail(settings, reply->errorString());
 			return;
 		}
 
 		QXmlStreamReader reader(reply);
 
 		if(parseAppDataFile(reader))
-			querySuccess();
+			querySuccess(settings);
 		else
-			queryFail("Failed to parse version list");
+			queryFail(settings, "Failed to parse version list");
 	});
 	// Handle deletion in a separate connection so the reply object
 	// won't get orphaned if this object is deleted before it finishes
 	connect(reply, &QNetworkReply::finished, reply, &QObject::deleteLater);
 }
 
-void NewVersionCheck::queryFail(const QString &errorMessage)
+void NewVersionCheck::queryFail(libclient::settings::Settings &settings, const QString &errorMessage)
 {
-	QSettings cfg;
-	cfg.beginGroup("versioncheck");
-	cfg.setValue("lastcheck", QDate::currentDate().toString(Qt::ISODate));
-	cfg.setValue("lastsuccess", false);
+	settings.setVersionCheckLastCheck(QDate::currentDate().toString(Qt::ISODate));
+	settings.setVersionCheckLastSuccess(false);
 
 	emit versionChecked(false, errorMessage);
 }
 
-void NewVersionCheck::querySuccess()
+void NewVersionCheck::querySuccess(libclient::settings::Settings &settings)
 {
-	QSettings cfg;
-	cfg.beginGroup("versioncheck");
-	cfg.setValue("lastcheck", QDate::currentDate().toString(Qt::ISODate));
-	cfg.setValue("lastsuccess", true);
+	settings.setVersionCheckLastCheck(QDate::currentDate().toString(Qt::ISODate));
+	settings.setVersionCheckLastSuccess(true);
 
 	if(m_newer.isEmpty()) {
 		emit versionChecked(false, QString());
@@ -426,9 +420,9 @@ void NewVersionCheck::querySuccess()
 
 	const Version latest = m_newer.first();
 
-	const QString prevLatest = cfg.value("latest").toString();
+	const QString prevLatest = settings.versionCheckLatest();
 	if(latest.version != prevLatest) {
-		cfg.setValue("latest", latest.version);
+		settings.setVersionCheckLatest(latest.version);
 		emit versionChecked(true, QString());
 
 	} else {

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "desktop/dialogs/addserverdialog.h"
+#include "desktop/main.h"
 #include "libshared/util/networkaccess.h"
 #include "libclient/utils/listservermodel.h"
 
@@ -12,13 +13,14 @@ namespace dialogs {
 
 AddServerDialog::AddServerDialog(QWidget *parent)
 	 : QMessageBox(
-		   QMessageBox::Icon::NoIcon,
-		   AddServerDialog::tr("Add Server"),
-		   QString(),
-		   QMessageBox::Cancel,
-		   parent),
-	   m_servers(nullptr)
+		QMessageBox::Icon::NoIcon,
+		AddServerDialog::tr("Add Server"),
+		QString(),
+		QMessageBox::Cancel,
+		parent)
+	, m_servers(nullptr)
 {
+	setWindowModality(Qt::WindowModal);
 	setAttribute(Qt::WA_DeleteOnClose);
 }
 
@@ -92,13 +94,10 @@ void AddServerDialog::showSuccess()
 void AddServerDialog::onAddClicked()
 {
 	sessionlisting::ListServerModel *listservers;
-	bool autosave;
 	if(m_servers) {
 		listservers = m_servers;
-		autosave = false;
 	} else {
-		listservers = new sessionlisting::ListServerModel(true, this);
-		autosave = true;
+		listservers = new sessionlisting::ListServerModel(dpApp().settings(), true, this);
 	}
 
 	const auto url = m_url.toString();
@@ -120,8 +119,7 @@ void AddServerDialog::onAddClicked()
 			);
 	}
 
-	if(autosave)
-		listservers->saveServers();
+	listservers->submit();
 
 	emit serverAdded(m_serverInfo.name);
 }

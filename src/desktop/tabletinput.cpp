@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+
+#include "desktop/main.h"
 #include "desktop/tabletinput.h"
-#include <QApplication>
-#include <QSettings>
+
+#include <QCoreApplication>
 
 #ifdef Q_OS_WIN
 #	include "bundled/kis_tablet/kis_tablet_support_win.h"
@@ -14,11 +16,9 @@
 
 namespace tabletinput {
 
-static const char *inputMode = "Qt tablet input";
+static Mode currentMode = Mode::Uninitialized;
 
 #ifdef Q_OS_WIN
-
-static Mode currentMode = Mode::Uninitialized;
 
 class SpontaneousTabletEventFilter final : public QObject {
 public:
@@ -42,7 +42,7 @@ protected:
 			if(event->spontaneous()) {
 				return false;
 			}
-			Q_FALLTHROUGH();
+			[[fallthrough]];
 		default:
 			return QObject::eventFilter(watched, event);
 		}
@@ -52,86 +52,33 @@ protected:
 static KisTabletSupportWin8 *kisTabletSupportWin8;
 static SpontaneousTabletEventFilter *spontaneousTabletEventFilter;
 
-static Mode getModeFromSettings(const QSettings &cfg)
-{
-	if(cfg.contains("settings/input/tabletinputmode")) {
-		int value = cfg.value("settings/input/tabletinputmode").toInt();
-		if(value > int(Mode::Uninitialized) && value <= int(Mode::Last)) {
-			return Mode(value);
-		} else {
-			qWarning("Invalid settings/input/tabletinputmode: %d", value);
-		}
-	}
-	// Drawpile 2.1 had separate Windows Ink and relative pen mode hack
-	// settings, translate them if we don't find the new one.
-	if(cfg.value("settings/input/windowsink", true).toBool()) {
-		return Mode::KisTabletWinink;
-	} else if(cfg.value("settings/input/relativepenhack", false).toBool()) {
-		return Mode::KisTabletWintabRelativePenHack;
-	} else {
-		return Mode::KisTabletWintab;
-	}
-}
-
-Mode extractMode(const QSettings &cfg)
-{
-	// Annoying fallback definitions to get the closest available mode.
-#	if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-	constexpr Mode qt5 = Mode::Qt6Winink;
-	constexpr Mode qt6Winink = Mode::Qt6Winink;
-	constexpr Mode qt6Wintab = Mode::Qt6Wintab;
-#	else
-	constexpr Mode qt5 = Mode::Qt5;
-	constexpr Mode qt6Winink = Mode::Qt5;
-	constexpr Mode qt6Wintab = Mode::Qt5;
-#	endif
-
-	Mode mode = getModeFromSettings(cfg);
-	switch(mode) {
-	case Mode::Uninitialized:
-		Q_UNREACHABLE();
-	case Mode::KisTabletWinink:
-	case Mode::KisTabletWintab:
-	case Mode::KisTabletWintabRelativePenHack:
-		return mode;
-	case Mode::Qt5:
-		return qt5;
-	case Mode::Qt6Winink:
-		return qt6Winink;
-	case Mode::Qt6Wintab:
-		return qt6Wintab;
-	}
-	Q_UNREACHABLE();
-}
-
-static void resetKisTablet(QApplication *app)
+static void resetKisTablet(DrawpileApp &app)
 {
 	if(spontaneousTabletEventFilter) {
-		qApp->removeEventFilter(spontaneousTabletEventFilter);
+		app.removeEventFilter(spontaneousTabletEventFilter);
 		delete spontaneousTabletEventFilter;
 		spontaneousTabletEventFilter = nullptr;
 	}
 	if(kisTabletSupportWin8) {
-		app->removeNativeEventFilter(kisTabletSupportWin8);
+		app.removeNativeEventFilter(kisTabletSupportWin8);
 		delete kisTabletSupportWin8;
 		kisTabletSupportWin8 = nullptr;
 	}
 	KisTabletSupportWin::quit();
 }
 
-static void installSpontaneousTabletEventFilter(QApplication *app)
+static void installSpontaneousTabletEventFilter(DrawpileApp &app)
 {
-	spontaneousTabletEventFilter = new SpontaneousTabletEventFilter{app};
-	app->installEventFilter(spontaneousTabletEventFilter);
+	spontaneousTabletEventFilter = new SpontaneousTabletEventFilter{&app};
+	app.installEventFilter(spontaneousTabletEventFilter);
 }
 
-static void enableKisTabletWinink(QApplication *app)
+static void enableKisTabletWinink(DrawpileApp &app)
 {
 	kisTabletSupportWin8 = new KisTabletSupportWin8;
 	if(kisTabletSupportWin8->init()) {
 		installSpontaneousTabletEventFilter(app);
-		app->installNativeEventFilter(kisTabletSupportWin8);
-		inputMode = "KisTablet Windows Ink input";
+		app.installNativeEventFilter(kisTabletSupportWin8);
 		currentMode = Mode::KisTabletWinink;
 	} else {
 		qWarning("Failed to initialize KisTablet Windows Ink input");
@@ -140,15 +87,15 @@ static void enableKisTabletWinink(QApplication *app)
 	}
 }
 
-static void enableKisTabletWintab(QApplication *app, bool relativePenModeHack)
+static void enableKisTabletWintab(DrawpileApp &app, bool relativePenModeHack)
 {
 	if(KisTabletSupportWin::init()) {
 		installSpontaneousTabletEventFilter(app);
 		KisTabletSupportWin::enableRelativePenModeHack(relativePenModeHack);
 		if(relativePenModeHack) {
-			inputMode = "KisTablet Wintab input with relative pen mode hack";
+			currentMode = Mode::KisTabletWintabRelativePenHack;
 		} else {
-			inputMode = "KisTablet Wintab input";
+			currentMode = Mode::KisTabletWintab;
 		}
 	} else {
 		qWarning("Failed to initialize KisTablet Wintab input");
@@ -156,19 +103,18 @@ static void enableKisTabletWintab(QApplication *app, bool relativePenModeHack)
 }
 
 #	if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-static void enableQt6TabletInput(QApplication *app, bool wintab)
+static void enableQt6TabletInput(DrawpileApp &app, bool wintab)
 {
 	// See by qtbase tests/manual/qtabletevent/regular_widgets/main.cpp
 	using QWindowsApplication = QNativeInterface::Private::QWindowsApplication;
-	QWindowsApplication *wa = app->nativeInterface<QWindowsApplication>();
-	if(wa) {
+	if (auto *wa = app.nativeInterface<QWindowsApplication>()) {
 		wa->setWinTabEnabled(wintab);
 		if(wa->isWinTabEnabled()) {
 			qDebug("Wintab enabled");
-			inputMode = "Qt6 Wintab input";
+			currentMode = Mode::Qt6Wintab;
 		} else {
 			qDebug("Wintab disabled");
-			inputMode = "Qt6 Windows Ink input";
+			currentMode = Mode::Qt6Winink;
 		}
 	} else {
 		qWarning("Error retrieving Windows platform integration");
@@ -176,7 +122,7 @@ static void enableQt6TabletInput(QApplication *app, bool wintab)
 }
 #	endif
 
-static void resetQtInput(QApplication *app)
+static void resetQtInput(DrawpileApp &app)
 {
 #	if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 	// At the time of writing, enabling Wintab mode in Qt6 causes menus to react
@@ -190,15 +136,13 @@ static void resetQtInput(QApplication *app)
 
 #endif
 
-void update(QApplication *app, const QSettings &cfg)
+void init(DrawpileApp &app)
 {
 #ifdef Q_OS_WIN
-	Mode mode = extractMode(cfg);
-	if(mode != currentMode) {
+	app.settings().bindTabletDriver([&](Mode mode) {
 		resetKisTablet(app);
 		resetQtInput(app);
 		currentMode = Mode::Uninitialized;
-		inputMode = "Invalid";
 		switch(mode) {
 		case Mode::KisTabletWinink:
 			enableKisTabletWinink(app);
@@ -210,6 +154,7 @@ void update(QApplication *app, const QSettings &cfg)
 			enableKisTabletWintab(app, true);
 			break;
 #	if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+		case Mode::Qt5:
 		case Mode::Qt6Winink:
 			enableQt6TabletInput(app, false);
 			break;
@@ -218,24 +163,39 @@ void update(QApplication *app, const QSettings &cfg)
 			break;
 #	else
 		case Mode::Qt5:
+		case Mode::Qt6Winink:
+		case Mode::Qt6Wintab:
 			currentMode = Mode::Qt5;
-			inputMode = "Qt5 tablet input";
 			break;
 #	endif
-		default:
+		case Mode::Uninitialized:
 			break;
 		}
-	}
+	});
 #else
 	// Nothing to do on other platforms.
 	Q_UNUSED(app);
-	Q_UNUSED(cfg);
 #endif
 }
 
-QString current()
+const char *current()
 {
-	return QString::fromUtf8(inputMode);
+	switch (currentMode) {
+	case Mode::Uninitialized:
+	case Mode::Qt5:
+		return QT_TRANSLATE_NOOP("tabletinput", "Qt tablet input");
+	case Mode::KisTabletWinink:
+		return QT_TRANSLATE_NOOP("tabletinput", "KisTablet Windows Ink input");
+	case Mode::KisTabletWintab:
+		return QT_TRANSLATE_NOOP("tabletinput", "KisTablet Wintab input");
+	case Mode::KisTabletWintabRelativePenHack:
+		return QT_TRANSLATE_NOOP("tabletinput", "KisTablet Wintab input with relative pen mode");
+	case Mode::Qt6Winink:
+		return QT_TRANSLATE_NOOP("tabletinput", "Qt6 Windows Ink input");
+	case Mode::Qt6Wintab:
+		return QT_TRANSLATE_NOOP("tabletinput", "Qt6 Wintab input");
+	}
+	Q_UNREACHABLE();
 }
 
 #ifdef Q_OS_WIN

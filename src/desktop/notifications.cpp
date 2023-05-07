@@ -1,15 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include "desktop/main.h"
 #include "desktop/notifications.h"
 #include "libshared/util/paths.h"
-#include "desktop/main.h"
 
 #include <QSoundEffect>
 #include <QMap>
 #include <QFileInfo>
 #include <QDir>
 #include <QDebug>
-#include <QSettings>
 #include <QDateTime>
 
 namespace notification {
@@ -23,8 +22,8 @@ void playSoundNow(Event event, int volume)
 	}
 
 	// Lazily load the sound effect
-	DrawpileApp *app = static_cast<DrawpileApp *>(qApp);
-	if(!app->m_sounds.contains(event)) {
+	auto &app = dpApp();
+	if(!app.m_sounds.contains(event)) {
 		QString filename;
 		switch(event) {
 		case Event::CHAT: filename = QStringLiteral("sounds/chat.wav"); break;
@@ -49,34 +48,32 @@ void playSoundNow(Event event, int volume)
 
 		QSoundEffect *fx = new QSoundEffect(qApp);
 		fx->setSource(QUrl::fromLocalFile(fullpath));
-		app->m_sounds[event] = fx;
+		app.m_sounds[event] = fx;
 	}
 
 	// We have a sound effect... play it now
-	app->m_sounds[event]->setVolume(qMin(volume, 100) / 100.0);
-	app->m_sounds[event]->play();
+	app.m_sounds[event]->setVolume(qMin(volume, 100) / 100.0);
+	app.m_sounds[event]->play();
 }
 
-static bool isEnabled(Event event, QSettings &cfg)
+static bool isEnabled(Event event)
 {
+	auto &settings = dpApp().settings();
 	switch(event) {
 	case Event::CHAT:
-		return cfg.value("chat", true).toBool(); break;
+		return settings.notificationChat();
 	case Event::MARKER:
-		return cfg.value("marker", true).toBool(); break;
+		return settings.notificationMarker();
 	case Event::LOCKED:
-		return cfg.value("lock", true).toBool();
+		return settings.notificationLock();
 	case Event::UNLOCKED:
-		// Used to be the same value as lock, so default to that if not found.
-		return cfg.value("unlock", cfg.value("lock", true).toBool()).toBool();
+		return settings.notificationUnlock();
 	case Event::LOGIN:
-		return cfg.value("login", true).toBool();
+		return settings.notificationLogin();
 	case Event::LOGOUT:
-		// Used to be the same value as login, so default to that if not found.
-		return cfg.value("logout", cfg.value("login", true).toBool()).toBool();
-	default:
-		return false;
+		return settings.notificationLogout();
 	}
+	Q_UNREACHABLE();
 }
 
 void playSound(Event event)
@@ -84,9 +81,8 @@ void playSound(Event event)
 	// Notification rate limiting
 	const qint64 t = QDateTime::currentMSecsSinceEpoch();
 	if(t - lasttime >= 1500) {
-		QSettings cfg;
-		if(isEnabled(event, cfg)) {
-			playSoundNow(event, cfg.value("volume", 40).toInt());
+		if(isEnabled(event)) {
+			playSoundNow(event, dpApp().settings().soundVolume());
 		}
 	}
 }

@@ -10,7 +10,7 @@ CanvasShortcutsModel::CanvasShortcutsModel(QObject *parent)
 {
 }
 
-void CanvasShortcutsModel::loadShortcuts(QSettings &cfg)
+void CanvasShortcutsModel::loadShortcuts(const QVariantMap &cfg)
 {
 	beginResetModel();
 	m_canvasShortcuts = CanvasShortcuts::load(cfg);
@@ -18,9 +18,9 @@ void CanvasShortcutsModel::loadShortcuts(QSettings &cfg)
 	endResetModel();
 }
 
-void CanvasShortcutsModel::saveShortcuts(QSettings &cfg)
+QVariantMap CanvasShortcutsModel::saveShortcuts()
 {
-	m_canvasShortcuts.save(cfg);
+	return m_canvasShortcuts.save();
 }
 
 void CanvasShortcutsModel::restoreDefaults()
@@ -39,70 +39,70 @@ int CanvasShortcutsModel::rowCount(const QModelIndex &parent) const
 
 int CanvasShortcutsModel::columnCount(const QModelIndex &parent) const
 {
-	return parent.isValid() ? 0 : 3;
+	return parent.isValid() ? 0 : ColumnCount;
 }
 
 QVariant CanvasShortcutsModel::data(const QModelIndex &index, int role) const
 {
-	bool canHandleIndex =
-		index.isValid() && !index.parent().isValid() && role == Qt::DisplayRole;
-	if(canHandleIndex) {
-		const CanvasShortcuts::Shortcut *s = shortcutAt(index.row());
-		if(s) {
-			switch(index.column()) {
-			case 0:
-				return shortcutToString(s->type, s->mods, s->keys, s->button);
-			case 1:
-				return actionToString(*s);
-			case 2:
-				return flagsToString(*s);
-			default:
-				break;
-			}
-		}
+	if (!index.isValid()
+		|| index.parent().isValid()
+		|| (role != Qt::DisplayRole && role != Qt::ToolTipRole)
+	) {
+		return QVariant();
+	}
+
+	const auto *s = shortcutAt(index.row());
+	if (!s) {
+		return QVariant();
+	}
+
+	switch(Column(index.column())) {
+	case Shortcut:
+		return shortcutToString(s->type, s->mods, s->keys, s->button);
+	case Action:
+		return actionToString(*s);
+	case Modifiers:
+		return flagsToString(*s);
+	case ColumnCount: {}
 	}
 	return QVariant();
 }
 
-
 bool CanvasShortcutsModel::removeRows(
 	int row, int count, const QModelIndex &parent)
 {
-	bool canRemove = !parent.isValid() && count > 0 && row >= 0 &&
-					 row + count <= m_canvasShortcuts.shortcutsCount();
-	if(canRemove) {
-		beginRemoveRows(parent, row, row + count - 1);
-		m_canvasShortcuts.removeShortcutAt(row, count);
-		m_hasChanges = true;
-		endRemoveRows();
-		return true;
-	} else {
+	if (parent.isValid() || count <= 0 || row < 0 || row + count > m_canvasShortcuts.shortcutsCount()) {
 		return false;
 	}
-}
 
+	beginRemoveRows(parent, row, row + count - 1);
+	m_canvasShortcuts.removeShortcutAt(row, count);
+	m_hasChanges = true;
+	endRemoveRows();
+	return true;
+}
 
 QVariant CanvasShortcutsModel::headerData(
 	int section, Qt::Orientation orientation, int role) const
 {
-	if(role == Qt::DisplayRole && orientation == Qt::Horizontal) {
-		switch(section) {
-		case 0:
-			return tr("Shortcut");
-		case 1:
-			return tr("Action");
-		case 2:
-			return tr("Modifiers");
-		default:
-			break;
-		}
+	if (role != Qt::DisplayRole || orientation != Qt::Horizontal) {
+		return QVariant();
+	}
+
+	switch(Column(section)) {
+	case Shortcut:
+		return tr("Shortcut");
+	case Action:
+		return tr("Action");
+	case Modifiers:
+		return tr("Modifiers");
+	case ColumnCount: {}
 	}
 	return QVariant{};
 }
 
-Qt::ItemFlags CanvasShortcutsModel::flags(const QModelIndex &index) const
+Qt::ItemFlags CanvasShortcutsModel::flags(const QModelIndex &) const
 {
-	Q_UNUSED(index);
 	return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 }
 
@@ -111,31 +111,31 @@ const CanvasShortcuts::Shortcut *CanvasShortcutsModel::shortcutAt(int row) const
 	return m_canvasShortcuts.shortcutAt(row);
 }
 
-int CanvasShortcutsModel::addShortcut(const CanvasShortcuts::Shortcut &s)
+QModelIndex CanvasShortcutsModel::addShortcut(const CanvasShortcuts::Shortcut &s)
 {
-	if(s.isValid()) {
-		beginResetModel();
-		int row = m_canvasShortcuts.addShortcut(s);
-		m_hasChanges = true;
-		endResetModel();
-		return row;
-	} else {
-		return -1;
+	if(!s.isValid()) {
+		return QModelIndex();
 	}
+
+	beginResetModel();
+	const auto row = m_canvasShortcuts.addShortcut(s);
+	m_hasChanges = true;
+	endResetModel();
+	return createIndex(row, 0);
 }
 
-int CanvasShortcutsModel::editShortcut(
+QModelIndex CanvasShortcutsModel::editShortcut(
 	const CanvasShortcuts::Shortcut &prev, const CanvasShortcuts::Shortcut &s)
 {
-	if(s.isValid()) {
-		beginResetModel();
-		int row = m_canvasShortcuts.editShortcut(prev, s);
-		m_hasChanges = true;
-		endResetModel();
-		return row;
-	} else {
-		return -1;
+	if(!s.isValid()) {
+		return QModelIndex();
 	}
+
+	beginResetModel();
+	const auto row = m_canvasShortcuts.editShortcut(prev, s);
+	m_hasChanges = true;
+	endResetModel();
+	return createIndex(row, 0);
 }
 
 const CanvasShortcuts::Shortcut *CanvasShortcutsModel::searchConflict(
@@ -148,29 +148,29 @@ const CanvasShortcuts::Shortcut *CanvasShortcutsModel::searchConflict(
 QString CanvasShortcutsModel::shortcutTitle(
 	const CanvasShortcuts::Shortcut *s, bool actionAndFlagsOnly)
 {
-	if(s) {
-		QString action = actionToString(*s);
-		QString flags = flagsToString(*s);
-		if(actionAndFlagsOnly) {
-			if(flags.isEmpty()) {
-				//: Example: "Pan Canvas"
-				return tr("%1").arg(action);
-			} else {
-				//: Example: "Pan Canvas (Inverted)"
-				return tr("%1 (%2)").arg(action).arg(flags);
-			}
+	if (!s) {
+		return QString();
+	}
+
+	QString action = actionToString(*s);
+	QString flags = flagsToString(*s);
+	if(actionAndFlagsOnly) {
+		if(flags.isEmpty()) {
+			//: Example: "Pan Canvas"
+			return tr("%1").arg(action);
 		} else {
-			QString ss = shortcutToString(s->type, s->mods, s->keys, s->button);
-			if(flags.isEmpty()) {
-				//: Example: "Space: Pan Canvas"
-				return tr("%1: %2").arg(ss).arg(action);
-			} else {
-				//: Example: "Space: Pan Canvas (Inverted)"
-				return tr("%1: %2 (%3)").arg(ss).arg(action).arg(flags);
-			}
+			//: Example: "Pan Canvas (Inverted)"
+			return tr("%1 (%2)").arg(action).arg(flags);
 		}
 	} else {
-		return QString{};
+		QString ss = shortcutToString(s->type, s->mods, s->keys, s->button);
+		if(flags.isEmpty()) {
+			//: Example: "Space: Pan Canvas"
+			return tr("%1: %2").arg(ss).arg(action);
+		} else {
+			//: Example: "Space: Pan Canvas (Inverted)"
+			return tr("%1: %2 (%3)").arg(ss).arg(action).arg(flags);
+		}
 	}
 }
 
@@ -179,7 +179,7 @@ QString CanvasShortcutsModel::shortcutToString(
 	Qt::MouseButton button)
 {
 	QStringList components;
-	for(const Qt::Key key : keys) {
+	for(const auto key : keys) {
 		components.append(QKeySequence{key}.toString(QKeySequence::NativeText));
 	}
 	std::sort(components.begin(), components.end());

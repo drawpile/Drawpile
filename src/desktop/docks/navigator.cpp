@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "desktop/docks/navigator.h"
+#include "desktop/main.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/canvas/userlist.h"
@@ -12,7 +13,6 @@
 #include <QPainter>
 #include <QPainterPath>
 #include <QAction>
-#include <QSettings>
 #include <QDateTime>
 #include <QSlider>
 #include <QToolButton>
@@ -335,23 +335,12 @@ Navigator::Navigator(QWidget *parent)
 
 	m_view->setContextMenuPolicy(Qt::ActionsContextMenu);
 
-	QSettings cfg;
-	cfg.beginGroup("navigator");
+	auto &settings = dpApp().settings();
+	settings.bindNavigatorShowCursors(showCursorsAction);
+	settings.bindNavigatorShowCursors(m_view, &NavigatorView::setShowCursors);
 
-	showCursorsAction->setChecked(cfg.value("showcursors", true).toBool());
-	m_view->setShowCursors(showCursorsAction->isChecked());
-
-	realtimeUpdateAction->setChecked(cfg.value("realtime", false).toBool());
-	m_view->setRealtimeUpdate(realtimeUpdateAction->isChecked());
-
-	connect(showCursorsAction, &QAction::triggered, this, [this](bool show) {
-		QSettings().setValue("navigator/showcursors", show);
-		m_view->setShowCursors(show);
-	});
-	connect(realtimeUpdateAction, &QAction::triggered, this, [this](bool realtime) {
-		QSettings().setValue("navigator/realtime", realtime);
-		m_view->setRealtimeUpdate(realtime);
-	});
+	settings.bindNavigatorRealtime(realtimeUpdateAction);
+	settings.bindNavigatorRealtime(m_view, &NavigatorView::setRealtimeUpdate);
 }
 
 Navigator::~Navigator()

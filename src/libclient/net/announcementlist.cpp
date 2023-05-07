@@ -5,11 +5,11 @@
 
 namespace net {
 
-AnnouncementListModel::AnnouncementListModel(QObject *parent)
+AnnouncementListModel::AnnouncementListModel(const QVector<QVariantMap> &data, QObject *parent)
 	: QAbstractTableModel(parent)
 {
 	// Get list of known servers (url -> {icon, name})
-	const auto servers = sessionlisting::ListServerModel::listServers(true);
+	const auto servers = sessionlisting::ListServerModel::listServers(data, true);
 	for(const auto &s : servers) {
 		m_knownServers[s.url] = QPair<QIcon,QString>(s.icon, s.name);
 	}

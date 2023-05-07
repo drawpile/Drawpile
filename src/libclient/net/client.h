@@ -39,7 +39,7 @@ public:
 	 * @brief Connect to a remote server
 	 * @param loginhandler the login handler to use
 	 */
-	void connectToServer(LoginHandler *loginhandler);
+	void connectToServer(int timeoutSecs, LoginHandler *loginhandler);
 
 	/**
 	 * @brief Disconnect from the remote server

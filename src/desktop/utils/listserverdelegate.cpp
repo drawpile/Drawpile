@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// SPDX-FileCopyrightText: Calle Laakkonen
 
 #include "desktop/utils/listserverdelegate.h"
 #include "libclient/utils/listservermodel.h"

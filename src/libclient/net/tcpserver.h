@@ -19,7 +19,7 @@ class TcpServer final : public Server
 	Q_OBJECT
 	friend class LoginHandler;
 public:
-	explicit TcpServer(QObject *parent=nullptr);
+	explicit TcpServer(int timeoutSecs, QObject *parent=nullptr);
 
 	void login(LoginHandler *login);
 	void logout() override;

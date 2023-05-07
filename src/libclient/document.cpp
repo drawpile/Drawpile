@@ -10,15 +10,14 @@
 #include "libclient/canvas/layerlist.h"
 #include "libclient/canvas/userlist.h"
 #include "libclient/export/canvassaverrunnable.h"
+#include "libclient/settings.h"
 #include "libclient/tools/selection.h"
 #include "libclient/tools/toolcontroller.h"
 #include "libclient/utils/images.h"
-#include "libclient/utils/settingdefault.h"
 #include "libshared/util/functionrunnable.h"
 #include "libshared/util/qtcompat.h"
 
 #include <QGuiApplication>
-#include <QSettings>
 #include <QTimer>
 #include <QDir>
 #include <QClipboard>
@@ -27,13 +26,15 @@
 #include <QtEndian>
 #include <QRunnable>
 #include <QSysInfo>
+#include <tuple>
 #include <parson.h>
 
-Document::Document(QObject *parent)
+Document::Document(libclient::settings::Settings &settings, QObject *parent)
 	: QObject(parent),
 	  m_resetstate(),
 	  m_messageBuffer(),
 	  m_canvas(nullptr),
+	  m_settings(settings),
 	  m_dirty(false),
 	  m_autosave(false),
 	  m_canAutosave(false),
@@ -56,8 +57,9 @@ Document::Document(QObject *parent)
 	// Initialize
 	m_client = new net::Client(this);
 	m_toolctrl = new tools::ToolController(m_client, this);
+	m_settings.bindSmoothing(m_toolctrl, &tools::ToolController::setSmoothing);
 	m_banlist = new net::BanlistModel(this);
-	m_announcementlist = new net::AnnouncementListModel(this);
+	m_announcementlist = new net::AnnouncementListModel(settings.listServers(), this);
 	m_serverLog = new QStringListModel(this);
 
 	m_autosaveTimer = new QTimer(this);
@@ -80,34 +82,17 @@ Document::Document(QObject *parent)
 	connect(this, &Document::justInTimeSnapshotGenerated, this, &Document::sendResetSnapshot, Qt::QueuedConnection);
 }
 
-static void getPaintEngineSettings(
-	int &outFps, int &outSnapshotMaxCount, long long &outSnapshotMinDelayMs)
-{
-	QSettings settings;
-	settings.beginGroup("settings/paintengine");
-	outFps = settings.value(
-		"fps", canvas::PaintEngine::DEFAULT_FPS).toInt();
-	outSnapshotMaxCount = settings.value(
-		"snapshotcount", canvas::PaintEngine::DEFAULT_SNAPSHOT_MAX_COUNT).toInt();
-	outSnapshotMinDelayMs = settings.value(
-		"snapshotinterval", canvas::PaintEngine::DEFAULT_SNAPSHOT_MIN_DELAY_MS / 1000).toInt() * 1000LL;
-}
-
-static int getUndoDepthLimitSetting()
-{
-	return QSettings{}.value("settings/paintengine/undodepthlimit", DP_UNDO_DEPTH_DEFAULT).toInt();
-}
-
 void Document::initCanvas()
 {
 	delete m_canvas;
 
-	int fps, snapshotMaxCount;
-	long long snapshotMinDelayMs;
-	getPaintEngineSettings(fps, snapshotMaxCount, snapshotMinDelayMs);
 	m_canvas = new canvas::CanvasModel{
-		m_client->myId(), fps, snapshotMaxCount, snapshotMinDelayMs,
-		m_wantCanvasHistoryDump, this};
+		m_client->myId(),
+		m_settings.engineFrameRate(),
+		m_settings.engineSnapshotCount(),
+		m_settings.engineSnapshotInterval() * 1000LL,
+		m_wantCanvasHistoryDump, this
+	};
 
 	m_toolctrl->setModel(m_canvas);
 
@@ -154,7 +139,7 @@ bool Document::loadBlank(const QSize &size, const QColor &background)
 	initCanvas();
 	unmarkDirty();
 
-	m_canvas->loadBlank(getUndoDepthLimitSetting(), size, background);
+	m_canvas->loadBlank(m_settings.engineUndoDepth(), size, background);
 	setCurrentFilename(QString());
 	return true;
 }
@@ -170,7 +155,7 @@ DP_LoadResult Document::loadFile(const QString &path)
 		setAutosave(false);
 		initCanvas();
 		unmarkDirty();
-		m_canvas->loadCanvasState(getUndoDepthLimitSetting(), canvasState);
+		m_canvas->loadCanvasState(m_settings.engineUndoDepth(), canvasState);
 		setCurrentFilename(path);
 		return DP_LOAD_RESULT_SUCCESS;
 	}
@@ -327,7 +312,7 @@ void Document::onAutoresetRequested(int maxSize, bool query)
 
 	m_sessionHistoryMaxSize = maxSize;
 
-	if(QSettings().value("settings/server/autoreset", true).toBool()) {
+	if(m_settings.serverAutoReset()) {
 		if(query) {
 			// This is just a query: send back an affirmative response
 			m_client->sendMessage(net::ServerCommand::make("ready-to-autoreset"));
@@ -551,7 +536,7 @@ bool Document::isCompatibilityMode() const
 void Document::autosave()
 {
 	if(!m_autosaveTimer->isActive()) {
-		const int autosaveInterval = qMax(0, QSettings().value("settings/autosave", 5000).toInt());
+		const int autosaveInterval = qMax(0, m_settings.autoSaveInterval());
 		m_autosaveTimer->start(autosaveInterval);
 	}
 }
@@ -1013,16 +998,9 @@ void Document::addServerLogEntry(const QString &log)
 void Document::updateSettings()
 {
 	if(m_canvas) {
-		int fps, snapshotMaxCount;
-		long long snapshotMinDelayMs;
-		getPaintEngineSettings(fps, snapshotMaxCount, snapshotMinDelayMs);
 		canvas::PaintEngine *paintEngine = m_canvas->paintEngine();
-		paintEngine->setFps(fps);
-		paintEngine->setSnapshotMaxCount(snapshotMaxCount);
-		paintEngine->setSnapshotMinDelayMs(snapshotMinDelayMs);
+		paintEngine->setFps(m_settings.engineFrameRate());
+		paintEngine->setSnapshotMaxCount(m_settings.engineSnapshotCount());
+		paintEngine->setSnapshotMinDelayMs(m_settings.engineSnapshotInterval() * 1000LL);
 	}
-	QSettings cfg;
-	m_toolctrl->setSmoothing(
-		cfg.value("settings/input/smooth",
-		setting_default::smoothing()).toInt());
 }

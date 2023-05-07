@@ -29,7 +29,7 @@ namespace net {
 	class BanlistModel;
 	class AnnouncementListModel;
 }
-
+namespace libclient { namespace settings { class Settings; } }
 namespace tools { class ToolController; }
 
 /**
@@ -68,9 +68,7 @@ class Document final : public QObject
 
 	Q_OBJECT
 public:
-	explicit Document(QObject *parent=nullptr);
-
-	QString title() const;
+	explicit Document(libclient::settings::Settings &settings, QObject *parent=nullptr);
 
 	canvas::CanvasModel *canvas() const { return m_canvas; }
 	tools::ToolController *toolCtrl() const { return m_toolctrl; }
@@ -275,6 +273,7 @@ private:
 	net::BanlistModel *m_banlist;
 	net::AnnouncementListModel *m_announcementlist;
 	QStringListModel *m_serverLog;
+	libclient::settings::Settings &m_settings;
 
 	QString m_originalRecordingFilename;
 	QString m_recordOnConnect;

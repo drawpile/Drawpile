@@ -30,6 +30,9 @@ target_sources(drawpile PRIVATE
 	mainwindow.h
 	notifications.cpp
 	notifications.h
+	settings_table.h
+	settings.cpp
+	settings.h
 	tabletinput.cpp
 	tabletinput.h
 	chat/chatbox.cpp
@@ -111,6 +114,21 @@ target_sources(drawpile PRIVATE
 	dialogs/sessionsettings.h
 	dialogs/settingsdialog.cpp
 	dialogs/settingsdialog.h
+	dialogs/settingsdialog/contentfilter.cpp
+	dialogs/settingsdialog/contentfilter.h
+	dialogs/settingsdialog/general.cpp
+	dialogs/settingsdialog/general.h
+	dialogs/settingsdialog/helpers.h
+	dialogs/settingsdialog/input.cpp
+	dialogs/settingsdialog/input.h
+	dialogs/settingsdialog/network.cpp
+	dialogs/settingsdialog/network.h
+	dialogs/settingsdialog/servers.cpp
+	dialogs/settingsdialog/servers.h
+	dialogs/settingsdialog/shortcuts.cpp
+	dialogs/settingsdialog/shortcuts.h
+	dialogs/settingsdialog/tools.cpp
+	dialogs/settingsdialog/tools.h
 	dialogs/tablettester.cpp
 	dialogs/tablettester.h
 	dialogs/userinfodialog.cpp
@@ -200,7 +218,6 @@ target_sources(drawpile PRIVATE
 	ui/selectsettings.ui
 	ui/serverlog.ui
 	ui/sessionsettings.ui
-	ui/settings.ui
 	ui/tablettest.ui
 	ui/textsettings.ui
 	ui/userinfodialog.ui
@@ -214,6 +231,8 @@ target_sources(drawpile PRIVATE
 	utils/qtguicompat.h
 	utils/recentfiles.cpp
 	utils/recentfiles.h
+	utils/sanerformlayout.cpp
+	utils/sanerformlayout.h
 	utils/widgetutils.h
 	widgets/brushpreview.cpp
 	widgets/brushpreview.h
@@ -261,6 +280,8 @@ target_sources(drawpile PRIVATE
 	widgets/presetselector.h
 	widgets/resizerwidget.cpp
 	widgets/resizerwidget.h
+	widgets/spanawaretreeview.cpp
+	widgets/spanawaretreeview.h
 	widgets/spinner.cpp
 	widgets/spinner.h
 	widgets/tablettest.cpp

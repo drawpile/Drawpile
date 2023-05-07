@@ -8,8 +8,6 @@
 #include <QVector>
 #include <functional>
 
-class QSettings;
-
 namespace docks {
 
 
@@ -30,15 +28,12 @@ protected:
 	void timerEvent(QTimerEvent *) override;
 
 private slots:
-	void updateSettings();
 	void frameCountChanged(int value);
 
 private:
 	static int getSliderDefault(int frameNumber);
-	void buildWidget(QSettings &settings);
-	void onSliderValueChange(const QString &settingsKey, int value);
-	void onTintColorChange(const QString &settingsKey, const QColor &color);
-	void startDebounceTimer();
+	void buildWidget();
+	void onSliderValueChange(int frameNumber, int value);
 	void showSliderValue(int value);
 	void showColorPicker(
 		const QColor &currentColor,

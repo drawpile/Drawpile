@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "desktop/dialogs/versioncheckdialog.h"
+#include "desktop/main.h"
 #include "libshared/util/networkaccess.h"
 #include "libshared/util/paths.h"
 
@@ -8,7 +9,6 @@
 
 #include <QIcon>
 #include <QMessageBox>
-#include <QSettings>
 #include <QStyle>
 #include <QPushButton>
 #include <QDir>
@@ -27,9 +27,7 @@ VersionCheckDialog::VersionCheckDialog(QWidget *parent)
 
 	connect(m_downloadButton, &QPushButton::clicked, this, &VersionCheckDialog::downloadNewVersion);
 
-	m_ui->checkForUpdates->setChecked(QSettings().value("versioncheck/enabled", true).toBool());
-
-	connect(this, &VersionCheckDialog::finished, this, &VersionCheckDialog::rememberSettings);
+	dpApp().settings().bindVersionCheckEnabled(m_ui->checkForUpdates, &QCheckBox::setChecked, &QCheckBox::clicked);
 }
 
 VersionCheckDialog::~VersionCheckDialog()
@@ -37,14 +35,9 @@ VersionCheckDialog::~VersionCheckDialog()
 	delete m_ui;
 }
 
-void VersionCheckDialog::rememberSettings()
-{
-	QSettings().setValue("versioncheck/enabled", m_ui->checkForUpdates->isChecked());
-}
-
 void VersionCheckDialog::doVersionCheckIfNeeded()
 {
-	if(!QSettings().contains("versioncheck/enabled")) {
+	if(!dpApp().settings().versionCheckFirstRun()) {
 		QMessageBox mb {
 			QMessageBox::NoIcon,
 			tr("Enable auto-updates?"),
@@ -57,10 +50,11 @@ void VersionCheckDialog::doVersionCheckIfNeeded()
 		mb.setIconPixmap(pixmap);
 		mb.setInformativeText(tr("You can always check for updates manually from the Help menu."));
 		const auto result = mb.exec();
-		QSettings().setValue("versioncheck/enabled", result == QMessageBox::Yes);
+		dpApp().settings().setVersionCheckEnabled(result == QMessageBox::Yes);
+		dpApp().settings().setVersionCheckFirstRun(true);
 	}
 
-	if(NewVersionCheck::needCheck()) {
+	if(NewVersionCheck::needCheck(dpApp().settings())) {
 		// The dialog will autodelete if there is nothing to show
 		VersionCheckDialog *dlg = new VersionCheckDialog;
 		dlg->queryNewVersions();
@@ -71,7 +65,7 @@ void VersionCheckDialog::queryNewVersions()
 {
 	m_newversion = new NewVersionCheck(this);
 	connect(m_newversion, &NewVersionCheck::versionChecked, this, &VersionCheckDialog::versionChecked);
-	m_newversion->queryVersions();
+	m_newversion->queryVersions(dpApp().settings());
 }
 
 void VersionCheckDialog::versionChecked(bool isNew, const QString &errorMessage)

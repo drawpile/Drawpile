@@ -37,6 +37,7 @@ using StringView = QString;
 #endif
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#define HAVE_QT_COMPAT_QVARIANT_ENUM
 using NativeEventResult = qintptr *;
 using RetrieveDataMetaType = QMetaType;
 using sizetype = qsizetype;

@@ -13,10 +13,16 @@ update_icons() {
 			drawpile_*)
 				continue
 				;;
-			folder.svg)
+			folder.svg | network-server-database.svg)
 				category=places
 				;;
-			dialog-*.svg | security-*.svg | update-none.svg)
+			input-keyboard.svg | network-modem.svg)
+				category=devices
+				;;
+			dialog-input-devices.svg)
+				category=actions
+				;;
+			audio-volume-high.svg | state-*.svg | dialog-*.svg | security-*.svg | update-none.svg)
 				category=status
 				;;
 			application-exit.svg | edit-delete.svg | im-kick-user.svg | irc-unvoice.svg)

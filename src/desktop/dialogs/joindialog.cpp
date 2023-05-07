@@ -2,7 +2,7 @@
 
 #include "desktop/dialogs/joindialog.h"
 #include "desktop/dialogs/addserverdialog.h"
-
+#include "desktop/main.h"
 #include "desktop/utils/mandatoryfields.h"
 #include "libclient/utils/usernamevalidator.h"
 #include "libclient/utils/listservermodel.h"
@@ -10,7 +10,7 @@
 #include "libclient/utils/images.h"
 #include "libclient/utils/newversion.h"
 #include "libshared/listings/announcementapi.h"
-#include "libclient/parentalcontrols/parentalcontrols.h"
+#include "libclient/contentfilter/contentfilter.h"
 
 #ifdef HAVE_DNSSD
 #include "libshared/listings/zeroconfdiscovery.h"
@@ -20,7 +20,6 @@
 
 #include <QIcon>
 #include <QPushButton>
-#include <QSettings>
 #include <QTimer>
 #include <QUrl>
 #include <QUrlQuery>
@@ -51,10 +50,10 @@ JoinDialog::JoinDialog(const QUrl &url, QWidget *parent)
 	connect(m_ui->autoRecord, &QAbstractButton::clicked, this, &JoinDialog::recordingToggled);
 
 	// New version notification (cached)
-	m_ui->newVersionNotification->setVisible(NewVersionCheck::isThereANewSeries());
+	m_ui->newVersionNotification->setVisible(NewVersionCheck::isThereANewSeries(dpApp().settings()));
 
 	// Session listing
-	if(parentalcontrols::level() != parentalcontrols::Level::Unrestricted)
+	if(contentfilter::level() != contentfilter::Level::Unrestricted)
 		m_ui->showNsfw->setEnabled(false);
 
 	m_sessions = new SessionListingModel(this);
@@ -70,7 +69,7 @@ JoinDialog::JoinDialog(const QUrl &url, QWidget *parent)
 	}
 #endif
 
-	const auto servers = sessionlisting::ListServerModel::listServers(true);
+	const auto servers = sessionlisting::ListServerModel::listServers(dpApp().settings().listServers(), true);
 	for(const sessionlisting::ListServer &ls : servers) {
 		if(ls.publicListings)
 			m_sessions->setMessage(ls.name, tr("Loading..."));
@@ -101,19 +100,17 @@ JoinDialog::JoinDialog(const QUrl &url, QWidget *parent)
 
 	QHeaderView *header = m_ui->listing->header();
 	header->setSectionResizeMode(
-		SessionListingModel::ColumnVersion, QHeaderView::ResizeToContents);
+		SessionListingModel::Version, QHeaderView::ResizeToContents);
 	header->setSectionResizeMode(
-		SessionListingModel::ColumnStatus, QHeaderView::ResizeToContents);
+		SessionListingModel::Title, QHeaderView::Stretch);
 	header->setSectionResizeMode(
-		SessionListingModel::ColumnTitle, QHeaderView::Stretch);
+		SessionListingModel::Server, QHeaderView::ResizeToContents);
 	header->setSectionResizeMode(
-		SessionListingModel::ColumnServer, QHeaderView::ResizeToContents);
+		SessionListingModel::UserCount, QHeaderView::ResizeToContents);
 	header->setSectionResizeMode(
-		SessionListingModel::ColumnUsers, QHeaderView::ResizeToContents);
+		SessionListingModel::Owner, QHeaderView::ResizeToContents);
 	header->setSectionResizeMode(
-		SessionListingModel::ColumnOwner, QHeaderView::ResizeToContents);
-	header->setSectionResizeMode(
-		SessionListingModel::ColumnUptime, QHeaderView::ResizeToContents);
+		SessionListingModel::Uptime, QHeaderView::ResizeToContents);
 
 	connect(m_ui->listing, &QTreeView::clicked, this, [this](const QModelIndex &index) {
 		// Set the server URL when clicking on an item
@@ -153,13 +150,6 @@ JoinDialog::JoinDialog(const QUrl &url, QWidget *parent)
 
 JoinDialog::~JoinDialog()
 {
-	// Always remember these settings
-	QSettings cfg;
-	cfg.beginGroup("history");
-	cfg.setValue("filterlocked", m_ui->showPassworded->isChecked());
-	cfg.setValue("filternsfw", m_ui->showNsfw->isChecked());
-	cfg.setValue("filterclosed", m_ui->showClosed->isChecked());
-
 	delete m_ui;
 }
 
@@ -178,6 +168,8 @@ void JoinDialog::resizeEvent(QResizeEvent *event)
 
 	if(change)
 		setListingVisible(show);
+
+	dpApp().settings().setLastJoinDialogSize(size());
 }
 
 void JoinDialog::setListingVisible(bool show)
@@ -232,7 +224,7 @@ void JoinDialog::addressChanged(const QString &addr)
 		m_ui->address->lineEdit()->setReadOnly(true);
 
 		QStringList servers;
-		for(const auto &s : sessionlisting::ListServerModel::listServers(true)) {
+		for(const auto &s : sessionlisting::ListServerModel::listServers(dpApp().settings().listServers(), true)) {
 			if(s.privateListings)
 				servers << s.url;
 		}
@@ -265,7 +257,7 @@ void JoinDialog::refreshListing()
 		return;
 	m_lastRefresh = QDateTime::currentSecsSinceEpoch();
 
-	const auto listservers = sessionlisting::ListServerModel::listServers(true);
+	const auto listservers = sessionlisting::ListServerModel::listServers(dpApp().settings().listServers(), true);
 	for(const sessionlisting::ListServer &ls : listservers) {
 		if(!ls.publicListings)
 			continue;
@@ -281,9 +273,9 @@ void JoinDialog::refreshListing()
 		connect(response, &sessionlisting::AnnouncementApiResponse::serverGone,
 			[ls]() {
 				qInfo() << "List server at" << ls.url << "is gone. Removing.";
-				sessionlisting::ListServerModel servers(true);
+				sessionlisting::ListServerModel servers(dpApp().settings(), true);
 				if(servers.removeServer(ls.url))
-					servers.saveServers();
+					servers.submit();
 			});
 		connect(response, &sessionlisting::AnnouncementApiResponse::finished,
 			this, [this, ls](const QVariant &result, const QString &message, const QString &error)
@@ -344,39 +336,36 @@ void JoinDialog::resolveRoomcode(const QString &roomcode, const QStringList &ser
 
 void JoinDialog::restoreSettings()
 {
-	QSettings cfg;
-	cfg.beginGroup("history");
+	auto &settings = dpApp().settings();
 
-	const QSize oldSize = cfg.value("joindlgsize").toSize();
+	const QSize oldSize = settings.lastJoinDialogSize();
 	if(oldSize.isValid()) {
 		if(oldSize.height() < COMPACT_MODE_THRESHOLD)
 			setListingVisible(false);
 		resize(oldSize);
 	}
 
-	m_ui->address->insertItems(0, cfg.value("recenthosts").toStringList());
+	m_ui->address->insertItems(0, settings.recentHosts());
 
-	m_ui->showPassworded->setChecked(cfg.value("filterlocked", true).toBool());
-	m_ui->showClosed->setChecked(cfg.value("filterclosed", true).toBool());
+	settings.bindFilterLocked(m_ui->showPassworded);
+	settings.bindFilterClosed(m_ui->showClosed);
+	settings.bindFilterNsfm(m_ui->showNsfw);
 
-	if(m_ui->showNsfw->isEnabled())
-		m_ui->showNsfw->setChecked(cfg.value("filternsfw", true).toBool());
-	else
-		m_ui->showNsfw->setChecked(false);
-
-	const int sortColumn = cfg.value("listsortcol", 1).toInt();
-	m_ui->listing->sortByColumn(
-		qAbs(sortColumn)-1,
-		sortColumn > 0 ? Qt::AscendingOrder : Qt::DescendingOrder
-	);
+	// Off by one because stored value uses bit 0 for sort order
+	settings.bindJoinListSortColumn(m_ui->listing->header(), [=](int sortColumn) {
+		m_ui->listing->sortByColumn(
+			qAbs(sortColumn) - 1,
+			sortColumn > 0 ? Qt::AscendingOrder : Qt::DescendingOrder
+		);
+	});
+	connect(m_ui->listing->header(), &QHeaderView::sortIndicatorChanged, &settings, [&settings](int logicalIndex, Qt::SortOrder order) {
+		settings.setJoinListSortColumn((logicalIndex + 1) * (order == Qt::AscendingOrder ? 1 : -1));
+	});
 }
 
 void JoinDialog::rememberSettings() const
 {
-	QSettings cfg;
-	cfg.beginGroup("history");
-
-	cfg.setValue("joindlgsize", size());
+	auto &settings = dpApp().settings();
 
 	QStringList hosts;
 	// Move current item to the top of the list
@@ -389,14 +378,7 @@ void JoinDialog::rememberSettings() const
 		if(!m_ui->address->itemText(i).isEmpty())
 			hosts << m_ui->address->itemText(i);
 	}
-	cfg.setValue("recenthosts", hosts);
-
-	const auto *listingHeader = m_ui->listing->header();
-
-	cfg.setValue("listsortcol",
-		(listingHeader->sortIndicatorSection() + 1) *
-		(listingHeader->sortIndicatorOrder() == Qt::AscendingOrder ? 1 : -1)
-	);
+	settings.setRecentHosts(hosts);
 }
 
 QString JoinDialog::getAddress() const {

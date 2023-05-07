@@ -6,6 +6,7 @@
 #include "libclient/canvas/point.h"
 
 #include <QCursor>
+#include <QMetaType>
 
 /**
  * @brief Tools
@@ -113,6 +114,8 @@ private:
 };
 
 }
+
+Q_DECLARE_METATYPE(tools::Tool::Type)
 
 #endif
 

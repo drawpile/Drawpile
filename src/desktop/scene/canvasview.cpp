@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include "desktop/main.h"
 #include "desktop/scene/canvasview.h"
 #include "desktop/scene/canvasscene.h"
 #include "libclient/canvas/canvasmodel.h"
@@ -16,7 +17,6 @@
 #include <QPainter>
 #include <QMimeData>
 #include <QApplication>
-#include <QSettings>
 #include <QWindow>
 #include <QScreen>
 #include <QtMath>
@@ -41,7 +41,7 @@ CanvasView::CanvasView(QWidget *parent)
 	m_touching(false), m_touchRotating(false),
 	m_touchMode(TouchMode::Unknown),
 	m_dpi(96),
-	m_brushCursorStyle(0),
+	m_brushCursorStyle(BrushCursor::Dot),
 	m_brushOutlineWidth(1.0)
 {
 	viewport()->setAcceptDrops(true);
@@ -72,7 +72,31 @@ CanvasView::CanvasView(QWidget *parent)
 		m_dotcursor = QCursor(dot, 0, 0);
 	}
 
-	updateSettings();
+	auto &settings = dpApp().settings();
+
+	settings.bindTabletEvents(this, &widgets::CanvasView::setTabletEnabled);
+	settings.bindOneFingerDraw(this, &widgets::CanvasView::setTouchDraw);
+	settings.bindOneFingerScroll(this, &widgets::CanvasView::setTouchScroll);
+	settings.bindTwoFingerZoom(this, &widgets::CanvasView::setTouchPinch);
+	settings.bindTwoFingerRotate(this, &widgets::CanvasView::setTouchTwist);
+	settings.bindBrushCursor(this, &widgets::CanvasView::setBrushCursorStyle);
+	settings.bindBrushOutlineWidth(this, &widgets::CanvasView::setBrushOutlineWidth);
+
+	settings.bindGlobalPressureCurve(this, [=](QString serializedCurve) {
+		KisCubicCurve curve;
+		curve.fromString(serializedCurve);
+		setPressureCurve(curve);
+	});
+
+	settings.bindCanvasShortcuts(this, [=](desktop::settings::Settings::CanvasShortcutsType shortcuts) {
+		m_canvasShortcuts = CanvasShortcuts::load(shortcuts);
+	});
+
+	settings.bindCanvasScrollBars(this, [=](bool enabled) {
+		const auto policy = enabled ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff;
+		setHorizontalScrollBarPolicy(policy);
+		setVerticalScrollBarPolicy(policy);
+	});
 }
 
 void CanvasView::showDisconnectedWarning(const QString &message)
@@ -80,20 +104,6 @@ void CanvasView::showDisconnectedWarning(const QString &message)
 	m_notificationBar->show(message, tr("Reconnect"), NotificationBar::RoleColor::Warning);
 }
 
-void CanvasView::updateSettings()
-{
-	QSettings cfg;
-	cfg.beginGroup("settings/canvasshortcuts2");
-	m_canvasShortcuts = CanvasShortcuts::load(cfg);
-	cfg.endGroup();
-
-	cfg.beginGroup("settings");
-	Qt::ScrollBarPolicy policy = cfg.value("canvasscrollbars", false).toBool()
-		? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff;
-	setHorizontalScrollBarPolicy(policy);
-	setVerticalScrollBarPolicy(policy);
-	cfg.endGroup();
-}
 void CanvasView::setCanvas(drawingboard::CanvasScene *scene)
 {
 	m_scene = scene;
@@ -245,10 +255,9 @@ void CanvasView::setLocked(bool lock)
 	resetCursor();
 }
 
-void CanvasView::setBrushCursorStyle(int style, qreal outlineWidth)
+void CanvasView::setBrushOutlineWidth(qreal outlineWidth)
 {
-	m_brushCursorStyle = style;
-	m_brushOutlineWidth = qIsNaN(outlineWidth) || outlineWidth < 1.0 ? 1.0 : outlineWidth;
+	m_brushOutlineWidth = qIsNaN(outlineWidth) ? 1.0 : outlineWidth;
 	resetCursor();
 }
 
@@ -304,15 +313,15 @@ void CanvasView::resetCursor()
 
 	if(m_toolcursor.shape() == Qt::CrossCursor) {
 		switch(m_brushCursorStyle) {
-		case 1: viewport()->setCursor(Qt::CrossCursor); return;
-		case 2: viewport()->setCursor(Qt::ArrowCursor); return;
-		case 3: viewport()->setCursor(m_trianglerightcursor); return;
-		case 4: viewport()->setCursor(m_triangleleftcursor); return;
-		default: viewport()->setCursor(m_dotcursor); return;
+		case BrushCursor::Dot: viewport()->setCursor(m_dotcursor); break;
+		case BrushCursor::Cross: viewport()->setCursor(Qt::CrossCursor); break;
+		case BrushCursor::Arrow: viewport()->setCursor(Qt::ArrowCursor); break;
+		case BrushCursor::TriangleRight: viewport()->setCursor(m_trianglerightcursor); break;
+		case BrushCursor::TriangleLeft: viewport()->setCursor(m_triangleleftcursor); break;
 		}
+	} else {
+		viewport()->setCursor(m_toolcursor);
 	}
-
-	viewport()->setCursor(m_toolcursor);
 }
 
 void CanvasView::setPixelGrid(bool enable)
@@ -381,7 +390,7 @@ void CanvasView::drawForeground(QPainter *painter, const QRectF& rect)
 		if(!m_subpixeloutline && m_outlineSize%2==0)
 			outline.translate(-0.5, -0.5);
 
-		if(rect.intersects(outline)) {
+		if(rect.intersects(outline) && m_brushOutlineWidth > 0) {
 			painter->save();
 			QPen pen(QColor(96, 191, 96));
 			pen.setCosmetic(true);
@@ -971,14 +980,6 @@ void CanvasView::keyReleaseEvent(QKeyEvent *event) {
 static qreal squareDist(const QPointF &p)
 {
 	return p.x()*p.x() + p.y()*p.y();
-}
-
-void CanvasView::setTouchGestures(bool scroll, bool draw, bool pinch, bool twist)
-{
-	m_enableTouchScroll = scroll;
-	m_enableTouchDraw = draw;
-	m_enableTouchPinch = pinch;
-	m_enableTouchTwist = twist;
 }
 
 void CanvasView::setPressureCurve(const KisCubicCurve &pressureCurve)

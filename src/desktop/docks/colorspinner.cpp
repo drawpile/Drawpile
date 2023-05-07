@@ -7,7 +7,6 @@
 
 #include <QtColorWidgets/swatch.hpp>
 #include <QtColorWidgets/color_wheel.hpp>
-#include <QSettings>
 
 namespace docks {
 
@@ -41,10 +40,10 @@ ColorSpinnerDock::ColorSpinnerDock(const QString& title, QWidget *parent)
 
 	connect(d->colorwheel, &color_widgets::ColorWheel::colorSelected, this, &ColorSpinnerDock::colorSelected);
 
-	// Restore UI state
-	connect(static_cast<DrawpileApp*>(qApp), &DrawpileApp::settingsChanged,
-			this, &ColorSpinnerDock::updateSettings);
-	updateSettings();
+	auto &settings = dpApp().settings();
+	settings.bindColorWheelShape(d->colorwheel, &color_widgets::ColorWheel::setSelectorShape, &color_widgets::ColorWheel::selectorShapeChanged);
+	settings.bindColorWheelAngleAs<bool>(d->colorwheel, &color_widgets::ColorWheel::setRotatingSelector, &color_widgets::ColorWheel::rotatingSelectorChanged);
+	settings.bindColorWheelSpace(d->colorwheel, &color_widgets::ColorWheel::setColorSpace, &color_widgets::ColorWheel::colorSpaceChanged);
 }
 
 ColorSpinnerDock::~ColorSpinnerDock()
@@ -64,18 +63,6 @@ void ColorSpinnerDock::setLastUsedColors(const color_widgets::ColorPalette &pal)
 {
 	d->lastUsedSwatch->setPalette(pal);
 	d->lastUsedSwatch->setSelected(findPaletteColor(d->lastUsedSwatch->palette(), d->colorwheel->color()));
-}
-
-void ColorSpinnerDock::updateSettings()
-{
-	QSettings cfg;
-	cfg.beginGroup("settings/colorwheel");
-	d->colorwheel->setSelectorShape(
-			static_cast<color_widgets::ColorWheel::ShapeEnum>(cfg.value("shape").toInt()));
-	d->colorwheel->setRotatingSelector(
-			static_cast<color_widgets::ColorWheel::AngleEnum>(cfg.value("rotate").toInt()));
-	d->colorwheel->setColorSpace(
-			static_cast<color_widgets::ColorWheel::ColorSpaceEnum>(cfg.value("space").toInt()));
 }
 
 }

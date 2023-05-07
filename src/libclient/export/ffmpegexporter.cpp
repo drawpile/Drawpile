@@ -3,7 +3,6 @@
 #include <QDebug>
 #include <QImage>
 #include <QBuffer>
-#include <QSettings>
 
 #include "libclient/export/ffmpegexporter.h"
 #include "libshared/util/qtcompat.h"

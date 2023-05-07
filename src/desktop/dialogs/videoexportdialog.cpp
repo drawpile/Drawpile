@@ -2,6 +2,7 @@
 
 #include "desktop/dialogs/videoexportdialog.h"
 #include "desktop/filewrangler.h"
+#include "desktop/main.h"
 #include "libclient/export/imageseriesexporter.h"
 #include "libclient/export/ffmpegexporter.h"
 #include "libshared/util/qtcompat.h"
@@ -11,7 +12,6 @@
 #include <QDebug>
 #include <QImageWriter>
 #include <QFileDialog>
-#include <QSettings>
 #include <QStandardItemModel>
 
 namespace dialogs {
@@ -59,36 +59,24 @@ VideoExportDialog::VideoExportDialog(QWidget *parent) :
 		m_ui->imageFormatChoice->addItem(fmt);
 	m_ui->imageFormatChoice->setCurrentText("png");
 
-	// Load settings
-	QSettings cfg;
-	cfg.beginGroup("videoexport");
-	m_ui->exportFormatChoice->setCurrentIndex(cfg.value("formatchoice", 0).toInt());
-	m_ui->fps->setValue(cfg.value("fps", 30).toInt());
-	m_ui->framewidth->setValue(cfg.value("framewidth", 1280).toInt());
-	m_ui->frameheight->setValue(cfg.value("frameheight", 720).toInt());
-	m_ui->sizeChoice->setCurrentIndex(cfg.value("sizeChoice", 0).toInt());
-	m_ui->ffmpegCustom->setPlainText(cfg.value("customffmpeg").toString());
+	auto &settings = dpApp().settings();
+	settings.bindVideoExportFormat(m_ui->exportFormatChoice, std::nullopt);
+	settings.bindVideoExportFormat(this, &VideoExportDialog::updateUi);
+	settings.bindVideoExportFrameRate(m_ui->fps);
+	settings.bindVideoExportFrameRate(this, &VideoExportDialog::updateUi);
+	settings.bindVideoExportFrameWidth(m_ui->framewidth);
+	settings.bindVideoExportFrameHeight(m_ui->frameheight);
+	settings.bindVideoExportSizeChoice(m_ui->sizeChoice, std::nullopt);
+	settings.bindVideoExportCustomFfmpeg(m_ui->ffmpegCustom);
 
 	// Check for ffmpeg
 	m_ui->ffmpegNotFoundWarning->setHidden(FfmpegExporter::checkIsFfmpegAvailable());
 
-	connect(m_ui->exportFormatChoice, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &VideoExportDialog::updateUi);
-	connect(m_ui->fps, QOverload<int>::of(&QSpinBox::valueChanged), this, &VideoExportDialog::updateUi);
 	updateUi();
 }
 
 VideoExportDialog::~VideoExportDialog()
 {
-	// Remember settings
-	QSettings cfg;
-	cfg.beginGroup("videoexport");
-	cfg.setValue("formatchoice", m_ui->exportFormatChoice->currentIndex());
-	cfg.setValue("fps", m_ui->fps->value());
-	cfg.setValue("framewidth", m_ui->framewidth->value());
-	cfg.setValue("frameheight", m_ui->frameheight->value());
-	cfg.setValue("sizeChoice", m_ui->sizeChoice->currentIndex());
-	cfg.setValue("customffmpeg", m_ui->ffmpegCustom->toPlainText());
-
 	delete m_ui;
 }
 

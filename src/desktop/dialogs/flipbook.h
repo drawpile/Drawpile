@@ -9,6 +9,7 @@
 
 class Ui_Flipbook;
 
+class QEvent;
 class QTimer;
 
 namespace canvas {
@@ -25,6 +26,8 @@ public:
 	~Flipbook() override;
 
 	void setPaintEngine(canvas::PaintEngine *pe);
+
+	bool event(QEvent *event) override;
 
 private slots:
 	void loadFrame();

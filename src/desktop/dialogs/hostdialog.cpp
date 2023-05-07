@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "desktop/dialogs/hostdialog.h"
-
+#include "desktop/main.h"
 #include "desktop/utils/mandatoryfields.h"
 #include "libclient/utils/sessionidvalidator.h"
 #include "libclient/utils/images.h"
@@ -10,7 +10,6 @@
 #include "ui_hostdialog.h"
 
 #include <QPushButton>
-#include <QSettings>
 
 namespace dialogs {
 
@@ -30,28 +29,21 @@ HostDialog::HostDialog(QWidget *parent)
 		}
 	);
 
-	QSettings cfg;
-	cfg.beginGroup("history");
+	auto &settings = dpApp().settings();
+	settings.bindLastSessionTitle(m_ui->sessiontitle);
+	settings.bindLastIdAlias(m_ui->idAlias);
+	settings.bindLastAnnounce(m_ui->announce);
 
-	m_ui->sessiontitle->setText(cfg.value("sessiontitle").toString());
-	m_ui->idAlias->setText(cfg.value("idalias").toString());
-
-	m_ui->announce->setChecked(cfg.value("announce", false).toBool());
-	m_ui->listingserver->setModel(new sessionlisting::ListServerModel(false, this));
-	m_ui->listingserver->setCurrentIndex(cfg.value("listingserver", 0).toInt());
+	m_ui->listingserver->setModel(new sessionlisting::ListServerModel(settings, false, this));
+	settings.bindLastListingServer(m_ui->listingserver, std::nullopt);
 
 	connect(m_ui->announce, &QCheckBox::toggled, this, &HostDialog::updateListingPermissions);
 	connect(m_ui->listingserver, QOverload<int>::of(&QComboBox::currentIndexChanged),
 			this, &HostDialog::updateListingPermissions);
 
-	if(cfg.value("hostremote", false).toBool())
-		m_ui->useremote->setChecked(true);
+	settings.bindLastHostRemote(m_ui->useremote);
 
-	const QStringList recentRemoteHosts = cfg.value("recentremotehosts").toStringList();
-	if(recentRemoteHosts.isEmpty())
-		m_ui->remotehost->setCurrentText("pub.drawpile.net");
-	else
-		m_ui->remotehost->insertItems(0, recentRemoteHosts);
+	m_ui->remotehost->insertItems(0, settings.recentRemoteHosts());
 
 	updateListingPermissions();
 }
@@ -63,13 +55,6 @@ HostDialog::~HostDialog()
 
 void HostDialog::rememberSettings() const
 {
-	QSettings cfg;
-	cfg.beginGroup("history");
-
-	cfg.setValue("sessiontitle", getTitle());
-	cfg.setValue("announce", m_ui->announce->isChecked());
-	cfg.setValue("listingserver", m_ui->listingserver->currentIndex());
-
 	// Move current address to the top of the list
 	const QString current = m_ui->remotehost->currentText();
 	if(!current.isEmpty() && m_ui->useremote->isChecked()) {
@@ -84,14 +69,8 @@ void HostDialog::rememberSettings() const
 				hosts << m_ui->remotehost->itemText(i);
 		m_ui->remotehost->setCurrentText(current);
 
-		cfg.setValue("recentremotehosts", hosts);
+		dpApp().settings().setRecentRemoteHosts(hosts);
 	}
-
-	cfg.setValue("hostremote", m_ui->useremote->isChecked());
-
-	// Remember settings tab values
-	cfg.setValue("idalias", m_ui->idAlias->text());
-
 }
 
 QString HostDialog::getRemoteAddress() const

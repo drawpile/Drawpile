@@ -3,6 +3,8 @@
 #ifndef CMAKE_CONFIG_CONFIG_H
 #define CMAKE_CONFIG_CONFIG_H
 
+#include <array>
+
 namespace cmake_config {
 
 // The version number goes to a separate TU because it will change after every
@@ -10,6 +12,7 @@ namespace cmake_config {
 // invalidate on every new commit which would be bad for build speed
 const char *version();
 constexpr const char *website() { return "@PROJECT_HOMEPAGE_URL@"; }
+constexpr auto locales() { return std::array{ @DRAWPILE_LOCALES@ }; }
 
 namespace file_group {
 	constexpr const char *image() { return "@DRAWPILE_FILE_GROUP_IMAGE@"; }

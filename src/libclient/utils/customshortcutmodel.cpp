@@ -2,10 +2,6 @@
 
 #include "libclient/utils/customshortcutmodel.h"
 
-#include <QSettings>
-
-#include <algorithm>
-
 QMap<QString, CustomShortcut> CustomShortcutModel::m_customizableActions;
 
 CustomShortcutModel::CustomShortcutModel(QObject *parent)
@@ -25,25 +21,26 @@ int CustomShortcutModel::columnCount(const QModelIndex &parent) const
 	if(parent.isValid())
 		return 0;
 
-	// Columns:
-	// 0 - Action title
-	// 1 - Current shortcut
-	// 2 - Alternate shortcut
-	// 3 - Default shortcut
-	return 4;
+	return ColumnCount;
 }
 
 QVariant CustomShortcutModel::data(const QModelIndex &index, int role) const
 {
-	const CustomShortcut &cs = m_shortcuts.at(index.row());
+	if(!index.isValid()
+		|| (role != Qt::DisplayRole && role != Qt::EditRole)
+		|| index.row() >= m_shortcuts.size()
+	) {
+		return QVariant();
+	}
 
-	if(role == Qt::DisplayRole || role == Qt::EditRole) {
-		switch(index.column()) {
-		case 0: return cs.title;
-		case 1: return cs.currentShortcut;
-		case 2: return cs.alternateShortcut;
-		case 3: return cs.defaultShortcut;
-		}
+	const auto &cs = m_shortcuts.at(index.row());
+
+	switch(Column(index.column())) {
+	case Action: return cs.title;
+	case CurrentShortcut: return cs.currentShortcut;
+	case AlternateShortcut: return cs.alternateShortcut;
+	case DefaultShortcut: return cs.defaultShortcut;
+	case ColumnCount: {}
 	}
 
 	return QVariant();
@@ -51,24 +48,30 @@ QVariant CustomShortcutModel::data(const QModelIndex &index, int role) const
 
 bool CustomShortcutModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-	if(role == Qt::EditRole && (index.column()==1 || index.column()==2)) {
-		CustomShortcut &cs = m_shortcuts[index.row()];
-		if(index.column()==1)
-			cs.currentShortcut = value.value<QKeySequence>();
-		else
-			cs.alternateShortcut = value.value<QKeySequence>();
-		return true;
+	if(!index.isValid()
+		|| role != Qt::EditRole
+		|| (index.column() != CurrentShortcut && index.column() != AlternateShortcut)
+		|| index.row() >= m_shortcuts.size()
+	) {
+		return false;
 	}
 
-	return false;
+	auto &cs = m_shortcuts[index.row()];
+	if(index.column() == CurrentShortcut)
+		cs.currentShortcut = value.value<QKeySequence>();
+	else
+		cs.alternateShortcut = value.value<QKeySequence>();
+
+	emit dataChanged(index, index);
+	return true;
 }
 
 Qt::ItemFlags CustomShortcutModel::flags(const QModelIndex &index) const
 {
-	if(index.column()==1 || index.column()==2)
-		return QAbstractTableModel::flags(index) | Qt::ItemIsEditable;
-	else
-		return Qt::NoItemFlags;
+	auto flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+	if(index.column() == CurrentShortcut || index.column() == AlternateShortcut)
+		flags |= Qt::ItemIsEditable;
+	return flags;
 }
 
 QVariant CustomShortcutModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -76,22 +79,20 @@ QVariant CustomShortcutModel::headerData(int section, Qt::Orientation orientatio
 	if(role != Qt::DisplayRole || orientation != Qt::Horizontal)
 		return QVariant();
 
-	switch(section) {
-	case 0: return tr("Action");
-	case 1: return tr("Shortcut");
-	case 2: return tr("Alternate");
-	case 3: return tr("Default");
+	switch(Column(section)) {
+	case Action: return tr("Action");
+	case CurrentShortcut: return tr("Shortcut");
+	case AlternateShortcut: return tr("Alternate");
+	case DefaultShortcut: return tr("Default");
+	case ColumnCount: {}
 	}
 	return QVariant();
 }
 
-void CustomShortcutModel::loadShortcuts()
+void CustomShortcutModel::loadShortcuts(const QVariantMap &cfg)
 {
 	QVector<CustomShortcut> actions;
 	actions.reserve(m_customizableActions.size());
-
-	QSettings cfg;
-	cfg.beginGroup("settings/shortcuts");
 
 	for(CustomShortcut a : m_customizableActions) {
 		Q_ASSERT(!a.name.isEmpty());
@@ -106,7 +107,6 @@ void CustomShortcutModel::loadShortcuts()
 				if(vv.size() >= 2)
 					a.alternateShortcut = vv[1].value<QKeySequence>();
 			}
-
 		} else {
 			a.currentShortcut = a.defaultShortcut;
 		}
@@ -114,29 +114,26 @@ void CustomShortcutModel::loadShortcuts()
 		actions.append(a);
 	}
 
-	std::sort(actions.begin(), actions.end());
-
 	beginResetModel();
 	m_shortcuts = actions;
 	endResetModel();
 }
 
-void CustomShortcutModel::saveShortcuts()
+QVariantMap CustomShortcutModel::saveShortcuts()
 {
-	QSettings cfg;
-
-	cfg.beginGroup("settings/shortcuts");
-	cfg.remove(QString());
+	QVariantMap cfg;
 
 	for(const CustomShortcut &cs : m_shortcuts) {
 		if(cs.currentShortcut != cs.defaultShortcut || !cs.alternateShortcut.isEmpty()) {
 			if(cs.alternateShortcut.isEmpty()) {
-				cfg.setValue(cs.name, cs.currentShortcut);
+				cfg.insert(cs.name, cs.currentShortcut);
 			} else {
-				cfg.setValue(cs.name, QVariantList() << cs.currentShortcut << cs.alternateShortcut);
+				cfg.insert(cs.name, QVariantList() << cs.currentShortcut << cs.alternateShortcut);
 			}
 		}
 	}
+
+	return cfg;
 }
 
 void CustomShortcutModel::registerCustomizableAction(const QString &name, const QString &title, const QKeySequence &defaultShortcut)

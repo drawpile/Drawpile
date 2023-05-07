@@ -20,11 +20,11 @@ Client::Client(QObject *parent)
 {
 }
 
-void Client::connectToServer(LoginHandler *loginhandler)
+void Client::connectToServer(int timeoutSecs, LoginHandler *loginhandler)
 {
 	Q_ASSERT(!isConnected());
 
-	TcpServer *server = new TcpServer(this);
+	TcpServer *server = new TcpServer(timeoutSecs, this);
 	m_server = server;
 
 #ifdef Q_OS_ANDROID

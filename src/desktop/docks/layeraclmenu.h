@@ -45,7 +45,6 @@ protected:
 
 private slots:
 	void userClicked(QAction *useraction);
-	void refreshParentalControls();
 
 private:
 	QAbstractItemModel *m_userlist;

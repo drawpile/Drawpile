@@ -9,8 +9,12 @@ extern "C" {
 
 #include <QMainWindow>
 #include <QElapsedTimer>
-#include <QUrl>
+#include <QMap>
 #include <QPointer>
+#include <QString>
+#include <QTimer>
+#include <QUrl>
+#include <QVariantMap>
 
 #include "libclient/tools/tool.h"
 #include "libclient/canvas/acl.h"
@@ -68,8 +72,6 @@ class MainWindow final : public QMainWindow {
 public:
 	MainWindow(bool restoreWindowPosition=true);
 	~MainWindow() override;
-
-	MainWindow *loadRecording(const QString &path);
 
 	//! Host a session using the settings from the given dialog
 	void hostSession(dialogs::HostDialog *dlg);
@@ -145,8 +147,7 @@ private slots:
 	void updateLockWidget();
 	void setRecorderStatus(bool on);
 
-	void loadShortcuts();
-	void updateSettings();
+	void loadShortcuts(const QVariantMap &shortcuts);
 
 	void toggleLayerViewMode();
 	void updateLayerViewMode();
@@ -193,6 +194,8 @@ private slots:
 	void onCanvasSaved(const QString &errorMessage);
 	void onTemplateExported(const QString &errorMessage);
 
+	bool eventFilter(QObject *object, QEvent *event) override;
+
 protected:
 	void closeEvent(QCloseEvent *event) override;
 	bool event(QEvent *event) override;
@@ -217,13 +220,18 @@ private:
 	void showLoadResultMessage(DP_LoadResult result);
 
 	void readSettings(bool windowpos=true);
-	void writeSettings();
+	void saveSplitterState();
+	void saveWindowState();
 
 	void requestUserInfo(int userId);
 	void sendUserInfo(int userId);
 
 	void createDocks();
 	void setupActions();
+
+	QTimer m_saveWindowDebounce;
+	QTimer m_saveSplitterDebounce;
+	QMap<QString, bool> m_actionsConfig;
 
 	QSplitter *m_splitter;
 

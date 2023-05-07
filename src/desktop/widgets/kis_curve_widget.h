@@ -139,6 +139,8 @@ public:
      */
     void addPointInTheMiddle();
 
+    int heightForWidth(int w) const override { return w; }
+
 private:
 
     class Private;

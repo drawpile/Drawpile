@@ -6,7 +6,6 @@
 
 #include <QMessageLogContext>
 #include <QDateTime>
-#include <QSettings>
 
 #include <cstdio>
 
@@ -62,10 +61,16 @@ void logMessage(int level, const char *file, uint32_t line, const char *msg)
 	}
 }
 
-void initLogging()
+void enableLogFile(bool enable)
 {
-	if(!QSettings().value("settings/logfile", true).toBool()) {
-		qInfo("Logfile disabled");
+	if (enable == bool(logfile)) {
+		return;
+	}
+
+	if (logfile) {
+		qInstallMessageHandler(defaultLogger);
+		fclose(logfile);
+		logfile = nullptr;
 		return;
 	}
 
@@ -78,9 +83,8 @@ void initLogging()
 
 	} else {
 		defaultLogger = qInstallMessageHandler(logToFile);
-		qInfo("Drawpile started.");
+		qInfo("File logging started.");
 	}
 }
 
 }
-

@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "libclient/canvas/canvasshortcuts.h"
-#include <QSettings>
+
+#include <QDebug>
 #include <QWheelEvent>
 
 CanvasShortcuts::CanvasShortcuts()
@@ -9,23 +10,17 @@ CanvasShortcuts::CanvasShortcuts()
 {
 }
 
-CanvasShortcuts CanvasShortcuts::load(QSettings &cfg)
+CanvasShortcuts CanvasShortcuts::load(const QVariantMap &cfg)
 {
+	const auto shortcuts = cfg.value("shortcuts").toList();
 	CanvasShortcuts cs;
-	bool defaultsLoaded = cfg.value("defaultsloaded", false).toBool();
-	int shortcutsCount = cfg.beginReadArray("shortcuts");
-	for(int i = 0; i < shortcutsCount; ++i) {
-		cfg.setArrayIndex(i);
-		cs.addShortcut(loadShortcut(cfg));
-	}
-	cfg.endArray();
-
-	if(shortcutsCount == 0 && !defaultsLoaded) {
+	if (shortcuts.isEmpty() && !cfg.value("defaultsloaded").toBool()) {
 		cs.loadDefaults();
-		cfg.setValue("defaultsloaded", true);
-		cs.save(cfg);
+	} else {
+		for(const auto &shortcut : shortcuts) {
+			cs.addShortcut(loadShortcut(shortcut.toMap()));
+		}
 	}
-
 	return cs;
 }
 
@@ -185,15 +180,16 @@ void CanvasShortcuts::clear()
 	m_shortcuts.clear();
 }
 
-void CanvasShortcuts::save(QSettings &cfg) const
+QVariantMap CanvasShortcuts::save() const
 {
+	QVariantMap map = { {"defaultsloaded", true} };
+	QVariantList shortcuts;
 	int count = m_shortcuts.size();
-	cfg.beginWriteArray("shortcuts", count);
 	for(int i = 0; i < count; ++i) {
-		cfg.setArrayIndex(i);
-		saveShortcut(cfg, m_shortcuts[i]);
+		shortcuts.append(saveShortcut(m_shortcuts[i]));
 	}
-	cfg.endArray();
+	map.insert("shortcuts", shortcuts);
+	return map;
 }
 
 int CanvasShortcuts::shortcutsCount() const
@@ -224,7 +220,8 @@ int CanvasShortcuts::addShortcut(const Shortcut &s)
 		m_shortcuts.append(s);
 		return index;
 	} else {
-		qWarning("Not adding invalid canvas shortcut");
+		qWarning() << "Not adding invalid canvas shortcut"
+			<< s.type << s.mods << s.keys << s.button << s.action << s.flags;
 		return -1;
 	}
 }
@@ -402,8 +399,9 @@ CanvasShortcuts::Match CanvasShortcuts::matchShortcut(
 	return {match};
 }
 
-void CanvasShortcuts::saveShortcut(QSettings &cfg, const Shortcut &s)
+QVariantMap CanvasShortcuts::saveShortcut(const Shortcut &s)
 {
+	QVariantMap cfg;
 	QList<QVariant> keyVariants;
 	for(Qt::Key key : s.keys) {
 		keyVariants.append(key);
@@ -416,15 +414,16 @@ void CanvasShortcuts::saveShortcut(QSettings &cfg, const Shortcut &s)
 			Qt::Key kb = b.value<Qt::Key>();
 			return ka < kb ? -1 : ka > kb ? 1 : 0;
 		});
-	cfg.setValue("type", s.type);
-	cfg.setValue("modifiers", Qt::KeyboardModifiers::Int(s.mods));
-	cfg.setValue("keys", keyVariants);
-	cfg.setValue("button", s.button);
-	cfg.setValue("action", s.action);
-	cfg.setValue("flags", s.flags);
+	cfg.insert("type", s.type);
+	cfg.insert("modifiers", Qt::KeyboardModifiers::Int(s.mods));
+	cfg.insert("keys", keyVariants);
+	cfg.insert("button", s.button);
+	cfg.insert("action", s.action);
+	cfg.insert("flags", s.flags);
+	return cfg;
 }
 
-CanvasShortcuts::Shortcut CanvasShortcuts::loadShortcut(const QSettings &cfg)
+CanvasShortcuts::Shortcut CanvasShortcuts::loadShortcut(const QVariantMap &cfg)
 {
 	Shortcut s = {
 		Type(cfg.value("type", NO_TYPE).toUInt()),

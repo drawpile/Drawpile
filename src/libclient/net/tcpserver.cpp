@@ -10,11 +10,10 @@
 #include <QDebug>
 #include <QSslSocket>
 #include <QSslConfiguration>
-#include <QSettings>
 
 namespace net {
 
-TcpServer::TcpServer(QObject *parent) :
+TcpServer::TcpServer(int timeoutSecs, QObject *parent) :
 	Server(parent), m_loginstate(nullptr), m_securityLevel(NO_SECURITY),
 	m_localDisconnect(false), m_supportsPersistence(false)
 {
@@ -26,7 +25,7 @@ TcpServer::TcpServer(QObject *parent) :
 
 	m_msgqueue = new MessageQueue(m_socket, this);
 
-	m_msgqueue->setIdleTimeout(QSettings().value("settings/server/timeout", 60).toInt() * 1000);
+	m_msgqueue->setIdleTimeout(timeoutSecs * 1000);
 	m_msgqueue->setPingInterval(15 * 1000);
 
 	connect(m_socket, &QSslSocket::disconnected, this, &TcpServer::handleDisconnect);
