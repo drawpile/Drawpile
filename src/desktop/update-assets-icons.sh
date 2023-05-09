@@ -6,7 +6,7 @@ cd "$(dirname "$0")"/assets/theme
 
 update_icons() {
 	pushd "$1" > /dev/null
-	for icon in *.svg; do
+	for icon in ${3:-*.svg}; do
 		commit=v5.103.0
 		dir="$2"
 		case "$icon" in
@@ -55,6 +55,6 @@ update_icons() {
 }
 
 echo "Updating light icons"
-update_icons light icons
+update_icons light icons "$@"
 echo "Updating dark icons"
-update_icons dark icons-dark
+update_icons dark icons-dark "$@"
