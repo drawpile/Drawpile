@@ -224,6 +224,7 @@ if(BASE)
 				patches/cast_types_for_egl_x11_test.diff
 				patches/qmake_android_ltcg.diff
 				patches/qtbug-112504.diff
+				patches/qtbug-98369.diff
 			6.4.2
 				patches/qtbug-109375.diff
 				patches/qtbug-112697.diff

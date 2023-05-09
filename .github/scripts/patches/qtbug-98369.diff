@@ -1,0 +1,38 @@
+From 64dd5a8183eb0d80f31b8ac0c2a59066e769ae79 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Tor=20Arne=20Vestb=C3=B8?= <tor.arne.vestbo@qt.io>
+Date: Wed, 30 Mar 2022 12:32:05 +0200
+Subject: [PATCH] CoreText: Avoid populating font family aliases if family was
+ populated
+
+When trying to match a font request to fonts in the database we might
+end up with a mismatch due to the style not being available, but the
+font family itself was.
+
+If that's the case there's no point in trying to populate font aliases.
+
+Fixes: QTBUG-98369
+Fixes: QTBUG-99216
+Pick-to: 6.3 6.2 5.15
+Change-Id: I8776e5b89588a13749c9c7e414c5bfac86feab58
+Reviewed-by: Eskil Abrahamsen Blomfeldt <eskil.abrahamsen-blomfeldt@qt.io>
+---
+ src/platformsupport/fontdatabases/mac/qcoretextfontdatabase.mm | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/src/platformsupport/fontdatabases/mac/qcoretextfontdatabase.mm b/src/platformsupport/fontdatabases/mac/qcoretextfontdatabase.mm
+index 88316850e19..8665faca831 100644
+--- a/src/platformsupport/fontdatabases/mac/qcoretextfontdatabase.mm
++++ b/src/platformsupport/fontdatabases/mac/qcoretextfontdatabase.mm
+@@ -151,6 +151,12 @@
+ bool QCoreTextFontDatabase::populateFamilyAliases(const QString &missingFamily)
+ {
+ #if defined(Q_OS_MACOS)
++    if (isFamilyPopulated(missingFamily)) {
++        // We got here because one of the other properties of the font mismatched,
++        // for example the style, so there's no point in populating font aliases.
++        return false;
++    }
++
+     if (m_hasPopulatedAliases)
+         return false;
+ 
