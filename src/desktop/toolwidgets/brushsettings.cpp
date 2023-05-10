@@ -728,10 +728,8 @@ void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 	}
 
 	brushes::ActiveBrush &eraser = d->brushSlots[ERASER_SLOT];
-	if(!eraser.isEraser()) {
-		eraser.classic().erase = true;
-		eraser.myPaint().brush().erase = true;
-	}
+	eraser.classic().erase = true;
+	eraser.myPaint().brush().erase = true;
 
 	selectBrushSlot(cfg.value(toolprop::activeSlot));
 	d->previousNonEraser = d->current != ERASER_SLOT ? d->current : 0;
