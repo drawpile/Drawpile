@@ -125,6 +125,7 @@ QJsonObject ClassicBrush::toJson() const
 
 	o["blend"] = canvas::blendmode::svgName(brush_mode);
 	o["blenderase"] = canvas::blendmode::svgName(erase_mode);
+	o["erase"] = erase;
 
 	o["stabilizer"] = stabilizerSampleCount;
 
@@ -187,6 +188,7 @@ ClassicBrush ClassicBrush::fromJson(const QJsonObject &json)
 	b.brush_mode = canvas::blendmode::fromSvgName(o["blend"].toString());
 	b.erase_mode = canvas::blendmode::fromSvgName(
 		o["blenderase"].toString(), DP_BLEND_MODE_ERASE);
+	b.erase = o["erase"].toBool();
 
 	b.stabilizerSampleCount = o["stabilizer"].toInt();
 
