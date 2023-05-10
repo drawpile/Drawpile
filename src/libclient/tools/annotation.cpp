@@ -14,6 +14,7 @@ namespace tools {
 
 Annotation::Annotation(ToolController &owner)
 	: Tool(owner, ANNOTATION, QCursor(QPixmap(":cursors/text.png"), 2, 2), false, false, true)
+	, m_selectedId{0}
 {
 }
 
