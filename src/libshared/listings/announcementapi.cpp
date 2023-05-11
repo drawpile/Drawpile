@@ -406,7 +406,10 @@ AnnouncementApiResponse *refreshSessions(const QVector<QPair<Announcement, Sessi
 		const QJsonObject obj = doc.object();
 
 		res->setResult(
-			obj["responses"].toObject().toVariantHash(),
+			QVariantHash{
+				{"responses", obj["responses"].toObject().toVariantHash()},
+				{"errors", obj["errors"].toObject().toVariantHash()},
+			},
 			obj["message"].toString()
 			);
 	});

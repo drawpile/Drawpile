@@ -338,6 +338,7 @@ signals:
 private slots:
 	void removeUser(Client *user);
 	void onAnnouncementsChanged(const Announcable *session);
+	void onAnnouncementError(const Announcable *session, const QString &message);
 	void onConfigValueChanged(const ConfigKey &key);
 
 protected:

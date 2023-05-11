@@ -52,6 +52,7 @@ Session::Session(SessionHistory *history, ServerConfig *config, sessionlisting::
 
 	// Session announcements
 	connect(m_announcements, &sessionlisting::Announcements::announcementsChanged, this, &Session::onAnnouncementsChanged);
+	connect(m_announcements, &sessionlisting::Announcements::announcementError, this, &Session::onAnnouncementError);
 	for(const QString &announcement : m_history->announcements())
 		makeAnnouncement(QUrl(announcement), false);
 }
@@ -983,6 +984,13 @@ void Session::onAnnouncementsChanged(const sessionlisting::Announcable *session)
 {
 	if(session == this)
 		sendUpdatedAnnouncementList();
+}
+
+void Session::onAnnouncementError(const Announcable *session, const QString &message)
+{
+	if(session == this) {
+		messageAll(message, false);
+	}
 }
 
 void Session::onConfigValueChanged(const ConfigKey &key)

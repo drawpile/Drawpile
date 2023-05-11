@@ -227,6 +227,8 @@ void Announcements::refreshListings()
 		}
 
 		const QVariantHash results = result.toHash();
+		const QVariantHash responses = results["responses"].toHash();
+		const QVariantHash errors = results["errors"].toHash();
 
 		for(const auto &pair : updates) {
 			Q_ASSERT(pair.first.apiUrl == refreshServer);
@@ -238,13 +240,23 @@ void Announcements::refreshListings()
 			}
 
 			// Remove missing listings
-			const QString resultValue = results.value(QString::number(listing->announcement.listingId)).toString();
+			const QString listingId = QString::number(listing->announcement.listingId);
+			const QString resultValue = responses.value(listingId).toString();
 			if(resultValue != "ok") {
+				QString errorMessage = errors[listingId].toString();
 				server::Log()
 					.about(server::Log::Level::Warn, server::Log::Topic::PubList)
 					.session(listing->announcement.id)
-					.message(listing->listServer.toString() + ": " + resultValue)
+					.message(QStringLiteral("%1: %2 (%3)").arg(
+						listing->listServer.toString(), resultValue,
+						errorMessage.isEmpty() ? "no error message" : errorMessage))
 					.to(m_config->logger());
+
+				QString announcementErrorMessage =
+					QStringLiteral("The session has been delisted from %1: %2").arg(
+						listing->listServer.host(),
+						errorMessage.isEmpty() ? "no reason given" : errorMessage);
+				emit announcementError(listing->session, announcementErrorMessage);
 
 				unlistSession(listing->session, listing->listServer, false);
 			}

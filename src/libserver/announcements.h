@@ -56,6 +56,7 @@ public:
 signals:
 	//! There has been a change to the list of announcements for this session
 	void announcementsChanged(const sessionlisting::Announcable *session);
+	void announcementError(const Announcable *session, const QString &message);
 
 protected:
 	void timerEvent(QTimerEvent *event) override;
