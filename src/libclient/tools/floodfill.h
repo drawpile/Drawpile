@@ -6,6 +6,7 @@
 #include "libclient/tools/tool.h"
 
 #include <QCoreApplication>
+#include <QAtomicInt>
 
 namespace tools {
 
@@ -18,6 +19,7 @@ public:
 	void begin(const canvas::Point& point, bool right, float zoom) override;
 	void motion(const canvas::Point& point, bool constrain, bool center) override;
 	void end() override;
+	void cancelMultipart() override;
 
 	void setTolerance(qreal tolerance) { m_tolerance = tolerance; }
 	void setExpansion(int expansion) { m_expansion = expansion; }
@@ -27,12 +29,19 @@ public:
 	void setBlendMode(int blendMode) { m_blendMode = blendMode; }
 
 private:
+	class Task;
+	friend Task;
+
+	void floodFillFinished(Task *task);
+
 	qreal m_tolerance;
 	int m_expansion;
 	int m_featherRadius;
 	unsigned int m_sizelimit;
 	bool m_sampleMerged;
 	int m_blendMode;
+	bool m_running;
+	QAtomicInt m_cancel;
 };
 
 }

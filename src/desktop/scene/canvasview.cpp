@@ -35,7 +35,7 @@ CanvasView::CanvasView(QWidget *parent)
 	m_scene(nullptr),
 	m_zoomWheelDelta(0),
 	m_enableTablet(true),
-	m_locked(false), m_resetInProgress(false), m_pointertracking(false), m_pixelgrid(true),
+	m_locked(false), m_busy(false), m_resetInProgress(false), m_pointertracking(false), m_pixelgrid(true),
 	m_enableTouchScroll(true), m_enableTouchDraw(false),
 	m_enableTouchPinch(true), m_enableTouchTwist(true),
 	m_touching(false), m_touchRotating(false),
@@ -255,6 +255,12 @@ void CanvasView::setLocked(bool lock)
 	resetCursor();
 }
 
+void CanvasView::setBusy(bool busy)
+{
+	m_busy = busy;
+	resetCursor();
+}
+
 void CanvasView::setResetInProgress(bool resetInProgress)
 {
 	if(resetInProgress != m_resetInProgress) {
@@ -316,6 +322,11 @@ void CanvasView::resetCursor()
 
 	if(m_locked) {
 		viewport()->setCursor(Qt::ForbiddenCursor);
+		updateOutline();
+		return;
+	} else if(m_busy) {
+		viewport()->setCursor(Qt::WaitCursor);
+		updateOutline();
 		return;
 	}
 
@@ -393,7 +404,7 @@ void CanvasView::drawCursorOutline(QPainter *painter, const QRectF& rect)
 	// you change your brush size is really useful.
 	bool outlineVisibleInMode;
 	if(m_dragmode == ViewDragMode::None) {
-		outlineVisibleInMode = m_penmode == PenMode::Normal && !m_locked;
+		outlineVisibleInMode = m_penmode == PenMode::Normal && !m_locked && !m_busy;
 	} else {
 		outlineVisibleInMode = m_dragAction == CanvasShortcuts::TOOL_ADJUST;
 	}
@@ -1269,7 +1280,7 @@ void CanvasView::updateOutline(canvas::Point point) {
 		point.setX(qFloor(point.x()) + 0.5);
 		point.setY(qFloor(point.y()) + 0.5);
 	}
-	if(m_showoutline && !m_locked && (!m_prevoutline || !point.roughlySame(m_prevoutlinepoint))) {
+	if(m_showoutline && !m_locked && !m_busy && (!m_prevoutline || !point.roughlySame(m_prevoutlinepoint))) {
 		QList<QRectF> rect;
 		const qreal owidth = m_outlineSize + m_brushOutlineWidth;
 		const qreal orad = owidth / 2.0;

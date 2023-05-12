@@ -146,6 +146,7 @@ public slots:
 	void setViewMirror(bool mirror);
 
 	void setLocked(bool lock);
+	void setBusy(bool busy);
 
 	void setResetInProgress(bool resetInProgress);
 
@@ -291,6 +292,7 @@ private:
 
 	bool m_enableTablet;
 	bool m_locked;
+	bool m_busy;
 	bool m_resetInProgress;
 	bool m_pointertracking;
 	bool m_pixelgrid;

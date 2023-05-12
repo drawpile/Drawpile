@@ -362,6 +362,10 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_doc->toolCtrl(), &tools::ToolController::toolTip, [](const QString &message) {
 		ToolMessage::showText(message);
 	});
+	connect(m_doc->toolCtrl(), &tools::ToolController::busyStateChanged, this, [this](bool busy) {
+		m_view->setBusy(busy);
+		setDrawingToolsEnabled(!busy);
+	});
 
 	connect(m_canvasscene, &drawingboard::CanvasScene::annotationDeleted, this, [this](int id) {
 		if(m_doc->toolCtrl()->activeAnnotation() == id)

@@ -9,6 +9,7 @@
 #include "libclient/canvas/acl.h"
 
 #include <QObject>
+#include <QThreadPool>
 
 class QCursor;
 
@@ -37,6 +38,13 @@ class ToolController final : public QObject
 
 	Q_OBJECT
 public:
+	class Task : public QObject {
+	public:
+		virtual ~Task() override {}
+		virtual void run() = 0;
+		virtual void finished() = 0;
+	};
+
 	explicit ToolController(net::Client *client, QObject *parent=nullptr);
 	~ToolController() override;
 
@@ -99,6 +107,13 @@ public:
 	 */
 	void setBrushEngineBrush(drawdance::BrushEngine &be);
 
+	/**
+	 * Runs the given task in the background. Takes over the task using
+	 * setParent(), calls run() on it to execute it on a background thread and
+	 * finished() on the main thread when it's done, then calls deleteLater().
+	 */
+	void executeAsync(Task *task);
+
 public slots:
 	//! Start a new stroke
 	void startDrawing(
@@ -148,10 +163,14 @@ signals:
 
 	void toolTip(const QString &message);
 
+	void busyStateChanged(bool busy);
+	void asyncExecutionFinished(Task *task);
+
 private slots:
 	void onFeatureAccessChange(DP_Feature feature, bool canUse);
 	void onSelectionChange(canvas::Selection *sel);
 	void updateSelectionPreview();
+	void notifyAsyncExecutionFinished(Task *task);
 
 private:
 	void registerTool(Tool *tool);
@@ -175,6 +194,9 @@ private:
 	bool m_stabilizerUseBrushSampleCount;
 
 	int m_selectInterpolation;
+
+	QThreadPool m_threadPool;
+	QAtomicInt m_taskCount;
 };
 
 }

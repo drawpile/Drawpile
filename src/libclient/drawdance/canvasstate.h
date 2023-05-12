@@ -85,7 +85,7 @@ public:
     DP_FloodFillResult floodFill(
         int x, int y, const QColor &fillColor, double tolerance, int layerId,
         bool sampleMerged, int sizeLimit, int expand, int featherRadius,
-        QImage &outImg, int &outX, int &outY) const;
+        const QAtomicInt &cancel, QImage &outImg, int &outX, int &outY) const;
 
     drawdance::CanvasState makeBackwardCompatible() const;
 
@@ -95,6 +95,8 @@ private:
     static void pushMessage(void *user, DP_Message *msg);
 
     static void addLayerVisibleInFrame(void *user, int layerId, bool visible);
+
+    static bool shouldCancelFloodFill(void *user);
 
     DP_CanvasState *m_data;
 };

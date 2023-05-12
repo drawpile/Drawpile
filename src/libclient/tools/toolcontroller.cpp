@@ -16,6 +16,7 @@
 #include "libclient/canvas/point.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/paintengine.h"
+#include "libshared/util/functionrunnable.h"
 
 namespace tools {
 
@@ -32,6 +33,8 @@ ToolController::ToolController(net::Client *client, QObject *parent)
 	, m_stabilizerFinishStrokes(true)
 	, m_stabilizerUseBrushSampleCount(true)
 	, m_selectInterpolation{DP_MSG_TRANSFORM_REGION_MODE_BILINEAR}
+	, m_threadPool{this}
+	, m_taskCount{0}
 {
 	Q_ASSERT(client);
 
@@ -54,6 +57,11 @@ ToolController::ToolController(net::Client *client, QObject *parent)
 	m_activeTool = m_toolbox[Tool::FREEHAND];
 	m_activeLayer = 0;
 	m_activeAnnotation = 0;
+
+	m_threadPool.setMaxThreadCount(1);
+	connect(
+		this, &ToolController::asyncExecutionFinished, this,
+		&ToolController::notifyAsyncExecutionFinished, Qt::QueuedConnection);
 }
 
 void ToolController::registerTool(Tool *tool)
@@ -65,8 +73,13 @@ void ToolController::registerTool(Tool *tool)
 
 ToolController::~ToolController()
 {
-	for(Tool *t : m_toolbox)
+	for(Tool *t : m_toolbox) {
+		t->cancelMultipart(); // Also cancels any asynchronous jobs running.
+	}
+	m_threadPool.waitForDone();
+	for(Tool *t : m_toolbox) {
 		delete t;
+	}
 }
 
 Tool *ToolController::getTool(Tool::Type type)
@@ -391,6 +404,27 @@ void ToolController::setBrushEngineBrush(drawdance::BrushEngine &be)
 		m_stabilizerFinishStrokes,
 	};
 	brush.setInBrushEngine(be, stroke);
+}
+
+void ToolController::executeAsync(Task *task)
+{
+	task->setParent(this);
+	if(m_taskCount++ == 0) {
+		emit busyStateChanged(true);
+	}
+	m_threadPool.start(utils::FunctionRunnable::create([=](){
+		task->run();
+		emit asyncExecutionFinished(task);
+		if(--m_taskCount == 0) {
+			emit busyStateChanged(false);
+		}
+	}));
+}
+
+void ToolController::notifyAsyncExecutionFinished(Task *task)
+{
+	task->finished();
+	task->deleteLater();
 }
 
 }

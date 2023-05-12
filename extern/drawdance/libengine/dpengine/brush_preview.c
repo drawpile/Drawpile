@@ -408,7 +408,7 @@ void DP_brush_preview_render_flood_fill(DP_BrushPreview *bp,
     DP_Image *img;
     DP_FloodFillResult result = DP_flood_fill(
         cs, width / 2, height / 2, fill_color, tolerance, 1, false,
-        width * height, expand, feather_radius, &img, &x, &y);
+        width * height, expand, feather_radius, &img, &x, &y, NULL, NULL);
     if (result != DP_FLOOD_FILL_SUCCESS) {
         DP_warn("Preview flood fill: %s", DP_error());
         return;
