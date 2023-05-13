@@ -161,8 +161,6 @@ signals:
 	void colorUsed(const QColor &color);
 	void zoomRequested(const QRect &rect, int steps);
 
-	void toolTip(const QString &message);
-
 	void busyStateChanged(bool busy);
 	void asyncExecutionFinished(Task *task);
 

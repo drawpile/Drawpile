@@ -181,13 +181,39 @@ ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
 	setWidget(d->widgetStack);
 	titleWidget->addCustomWidget(d->headerStack, true);
 
-	connect(static_cast<tools::BrushSettings*>(getToolSettingsPage(tools::Tool::FREEHAND)), &tools::BrushSettings::colorChanged,
+	tools::BrushSettings *bs = brushSettings();
+	connect(
+		bs, &tools::BrushSettings::colorChanged, this,
+		&ToolSettings::setForegroundColor);
+	connect(
+		bs, &tools::BrushSettings::pixelSizeChanged, this,
+		[this](int size) {
+			if(d->currentTool == tools::Tool::FREEHAND || d->currentTool == tools::Tool::ERASER) {
+				emit sizeChanged(size);
+			}
+		});
+	connect(
+		bs, &tools::BrushSettings::subpixelModeChanged, this,
+		[this](bool subpixel, bool square) {
+			if(d->currentTool == tools::Tool::FREEHAND || d->currentTool == tools::Tool::ERASER) {
+				emit subpixelModeChanged(subpixel, square);
+			}
+		});
+
+	connect(colorPickerSettings(), &tools::ColorPickerSettings::colorSelected,
 			this, &ToolSettings::setForegroundColor);
-	connect(static_cast<tools::BrushSettings*>(getToolSettingsPage(tools::Tool::FREEHAND)), &tools::BrushSettings::subpixelModeChanged,
-			this, &ToolSettings::subpixelModeChanged);
-	connect(static_cast<tools::ColorPickerSettings*>(getToolSettingsPage(tools::Tool::PICKER)), &tools::ColorPickerSettings::colorSelected,
-			this, &ToolSettings::setForegroundColor);
-	connect(d->ctrl, &tools::ToolController::activeBrushChanged, this, &ToolSettings::activeBrushChanged);
+
+	tools::FillSettings *fs = fillSettings();
+	connect(
+		fs, &tools::FillSettings::pixelSizeChanged, this,
+		[this](int size) {
+			if(d->currentTool == tools::Tool::FLOODFILL) {
+				emit sizeChanged(size);
+			}
+		});
+
+	connect(d->ctrl, &tools::ToolController::activeBrushChanged, this,
+			&ToolSettings::activeBrushChanged);
 
 	d->colorDialog = dialogs::newColorDialog(this);
 	d->colorDialog->setAlphaEnabled(false);
@@ -264,6 +290,12 @@ tools::ColorPickerSettings *ToolSettings::colorPickerSettings()
 {
 	return static_cast<tools::ColorPickerSettings *>(
 		getToolSettingsPage(tools::Tool::PICKER));
+}
+
+tools::FillSettings *ToolSettings::fillSettings()
+{
+	return static_cast<tools::FillSettings *>(
+		getToolSettingsPage(tools::Tool::FLOODFILL));
 }
 
 tools::InspectorSettings *ToolSettings::inspectorSettings()
@@ -427,9 +459,17 @@ void ToolSettings::selectTool(tools::Tool::Type tool)
 		titleWidget->setKeepButtonSpace(ts->keepTitleBarButtonSpace());
 	}
 
-	emit toolChanged(tool);
-	emit sizeChanged(ts->getSize());
-	emit subpixelModeChanged(d->currentSettings()->getSubpixelMode(), d->currentSettings()->isSquare());
+	triggerUpdate();
+}
+
+void ToolSettings::triggerUpdate()
+{
+	emit toolChanged(d->currentTool);
+	tools::ToolSettings *ts = d->currentSettings();
+	if(ts) {
+		emit sizeChanged(ts->getSize());
+		emit subpixelModeChanged(ts->getSubpixelMode(), ts->isSquare());
+	}
 }
 
 tools::Tool::Type ToolSettings::currentTool() const

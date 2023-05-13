@@ -24,13 +24,17 @@ public:
 	void stepAdjust1(bool increase) override;
 	void setForeground(const QColor &color) override;
 
-	int getSize() const override { return 0; }
+	int getSize() const override;
 	bool getSubpixelMode() const override { return false; }
+	bool isSquare() const override { return true; }
 
 	ToolProperties saveToolSettings() override;
 	void restoreToolSettings(const ToolProperties &cfg) override;
 
 	static int modeIndexToBlendMode(int mode);
+
+signals:
+	void pixelSizeChanged(int size);
 
 public slots:
 	void pushSettings() override;

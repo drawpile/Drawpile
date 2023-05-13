@@ -91,7 +91,6 @@ static constexpr auto CTRL_KEY = Qt::CTRL;
 #include "desktop/toolwidgets/lasersettings.h"
 #include "desktop/toolwidgets/zoomsettings.h"
 #include "desktop/toolwidgets/inspectorsettings.h"
-#include "desktop/widgets/toolmessage.h"
 
 #include "desktop/filewrangler.h"
 #include "libclient/export/animationsaverrunnable.h"
@@ -359,9 +358,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_doc->toolCtrl(), &tools::ToolController::activeAnnotationChanged, m_canvasscene, &drawingboard::CanvasScene::setActiveAnnotation);
 	connect(m_doc->toolCtrl(), &tools::ToolController::colorUsed, m_dockToolSettings, &docks::ToolSettings::addLastUsedColor);
 	connect(m_doc->toolCtrl(), &tools::ToolController::zoomRequested, m_view, &widgets::CanvasView::zoomTo);
-	connect(m_doc->toolCtrl(), &tools::ToolController::toolTip, [](const QString &message) {
-		ToolMessage::showText(message);
-	});
 	connect(m_doc->toolCtrl(), &tools::ToolController::busyStateChanged, this, [this](bool busy) {
 		m_view->setBusy(busy);
 		setDrawingToolsEnabled(!busy);
@@ -428,6 +424,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	// Create actions and menus
 	setupActions();
 	setDrawingToolsEnabled(false);
+	m_dockToolSettings->triggerUpdate();
 
 	// Restore settings
 	readSettings(restoreWindowPosition);

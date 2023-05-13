@@ -16,10 +16,10 @@ namespace props {
 		expand { QStringLiteral("expand"), 0, 0, 100 },
 		featherRadius { QStringLiteral("featherRadius"), 0, 0, 40 },
 		source { QStringLiteral("source"), 0, 0, 1},
-		mode { QStringLiteral("mode"), 0, 0, 2};
+		mode { QStringLiteral("mode"), 0, 0, 2},
+		size { QStringLiteral("size"), 500, 10, 9999 };
 	static const ToolProperties::RangedValue<double>
-		tolerance { QStringLiteral("tolerance"), 0.0, 0.0, 1.0 },
-		sizelimit { QStringLiteral("sizelimit"), 50.0, 0.0, 1000.0 };
+		tolerance { QStringLiteral("tolerance"), 0.0, 0.0, 1.0 };
 }
 
 FillSettings::FillSettings(ToolController *ctrl, QObject *parent)
@@ -37,12 +37,16 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 	QWidget *uiwidget = new QWidget(parent);
 	m_ui = new Ui_FillSettings;
 	m_ui->setupUi(uiwidget);
+	m_ui->size->setExponentRatio(3.0);
 
 	m_ui->preview->setPreviewShape(DP_BRUSH_PREVIEW_FLOOD_FILL);
 
 	connect(m_ui->preview, SIGNAL(requestColorChange()), parent, SLOT(changeForegroundColor()));
+	connect(m_ui->size, QOverload<int>::of(&QSpinBox::valueChanged), this, [this](int size) {
+		emit pixelSizeChanged(size * 2);
+	});
 	connect(m_ui->tolerance, QOverload<int>::of(&QSpinBox::valueChanged), this, &FillSettings::pushSettings);
-	connect(m_ui->sizelimit, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &FillSettings::pushSettings);
+	connect(m_ui->size, QOverload<int>::of(&QSpinBox::valueChanged), this, &FillSettings::pushSettings);
 	connect(m_ui->expand, QOverload<int>::of(&QSpinBox::valueChanged), this, &FillSettings::pushSettings);
 	connect(m_ui->feather, QOverload<int>::of(&QSpinBox::valueChanged), this, &FillSettings::pushSettings);
 	connect(m_ui->source, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &FillSettings::pushSettings);
@@ -56,7 +60,7 @@ void FillSettings::pushSettings()
 	tool->setTolerance(m_ui->tolerance->value() / qreal(m_ui->tolerance->maximum()));
 	tool->setExpansion(m_ui->expand->value());
 	tool->setFeatherRadius(m_ui->feather->value());
-	tool->setSizeLimit(m_ui->sizelimit->value() * m_ui->sizelimit->value() * 10 * 10);
+	tool->setSize(m_ui->size->value());
 	tool->setSampleMerged(m_ui->source->currentIndex() == SOURCE_MERGED_IMAGE);
 	const auto mode = static_cast<Mode>(m_ui->mode->currentIndex());
 	tool->setBlendMode(modeIndexToBlendMode(mode));
@@ -80,6 +84,7 @@ ToolProperties FillSettings::saveToolSettings()
 	cfg.setValue(props::tolerance, m_ui->tolerance->value() / qreal(m_ui->tolerance->maximum()));
 	cfg.setValue(props::expand, m_ui->expand->value());
 	cfg.setValue(props::featherRadius, m_ui->feather->value());
+	cfg.setValue(props::size, m_ui->size->value());
 	cfg.setValue(props::mode, m_ui->mode->currentIndex());
 	cfg.setValue(props::source, m_ui->source->currentIndex());
 	return cfg;
@@ -90,8 +95,12 @@ void FillSettings::setForeground(const QColor &color)
 	brushes::ActiveBrush b;
 	b.classic().size.max = 1;
 	b.setQColor(color);
-	m_ui->preview->setBrush(b);
 	controller()->setActiveBrush(b);
+}
+
+int FillSettings::getSize() const
+{
+	return m_ui->size->value() * 2;
 }
 
 void FillSettings::restoreToolSettings(const ToolProperties &cfg)
@@ -99,7 +108,7 @@ void FillSettings::restoreToolSettings(const ToolProperties &cfg)
 	m_ui->tolerance->setValue(cfg.value(props::tolerance) * m_ui->tolerance->maximum());
 	m_ui->expand->setValue(cfg.value(props::expand));
 	m_ui->feather->setValue(cfg.value(props::featherRadius));
-	m_ui->sizelimit->setValue(cfg.value(props::sizelimit));
+	m_ui->size->setValue(cfg.value(props::size));
 	m_ui->source->setCurrentIndex(cfg.value(props::source));
 	m_ui->mode->setCurrentIndex(cfg.value(props::mode));
 	pushSettings();
@@ -119,21 +128,20 @@ int FillSettings::modeIndexToBlendMode(int mode)
 
 void FillSettings::quickAdjust1(qreal adjustment)
 {
-	m_quickAdjust1 += adjustment;
+	m_quickAdjust1 += adjustment * 10.0;
 	qreal i;
 	qreal f = modf(m_quickAdjust1, &i);
 	if(int(i)) {
 		m_quickAdjust1 = f;
-		m_ui->tolerance->setValue(m_ui->tolerance->value() + int(i));
+		m_ui->size->setValue(m_ui->size->value() + i);
 	}
 }
 
 void FillSettings::stepAdjust1(bool increase)
 {
-	QSpinBox *tolerance = m_ui->tolerance;
-	tolerance->setValue(stepLogarithmic(
-		tolerance->minimum(), tolerance->maximum(), tolerance->value(),
-		increase));
+	KisSliderSpinBox *size = m_ui->size;
+	size->setValue(stepLogarithmic(
+		size->minimum(), size->maximum(), size->value(), increase));
 }
 
 }

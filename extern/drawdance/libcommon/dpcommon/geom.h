@@ -219,6 +219,12 @@ DP_INLINE bool DP_rect_intersects(DP_Rect a, DP_Rect b)
         && ((a.y1 <= b.y1 && b.y1 <= a.y2) || (b.y1 <= a.y1 && a.y1 <= b.y2));
 }
 
+DP_INLINE bool DP_rect_contains(DP_Rect rect, int x, int y)
+{
+    return DP_rect_valid(rect) && x >= rect.x1 && x <= rect.x2 && y >= rect.y1
+        && y <= rect.y2;
+}
+
 
 DP_INLINE DP_Transform DP_transform_make(double m11, double m12, double m13,
                                          double m21, double m22, double m23,

@@ -13,6 +13,7 @@ namespace tools {
 	class AnnotationSettings;
 	class BrushSettings;
 	class ColorPickerSettings;
+	class FillSettings;
 	class InspectorSettings;
 	class LaserPointerSettings;
 	class SelectionSettings;
@@ -50,6 +51,7 @@ public:
 	tools::AnnotationSettings *annotationSettings();
 	tools::BrushSettings *brushSettings();
 	tools::ColorPickerSettings *colorPickerSettings();
+	tools::FillSettings *fillSettings();
 	tools::InspectorSettings *inspectorSettings();
 	tools::LaserPointerSettings *laserPointerSettings();
 	tools::SelectionSettings *selectionSettings();
@@ -59,6 +61,8 @@ public:
 	void saveSettings();
 
 	bool isCurrentToolLocked() const;
+
+	void triggerUpdate();
 
 public slots:
 	//! Set the active tool

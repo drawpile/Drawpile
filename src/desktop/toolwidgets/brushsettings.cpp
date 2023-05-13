@@ -159,7 +159,6 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	d->ui.stabilizerButton->setMenu(stabilizerMenu);
 
 	// Outside communication
-	connect(this, SIGNAL(pixelSizeChanged(int)), parent, SIGNAL(sizeChanged(int)));
 	connect(d->ui.preview, SIGNAL(requestColorChange()), parent, SLOT(changeForegroundColor()));
 
 	// Internal updates

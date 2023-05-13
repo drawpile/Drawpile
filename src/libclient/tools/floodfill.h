@@ -12,7 +12,6 @@ namespace tools {
 
 class FloodFill final : public Tool
 {
-	Q_DECLARE_TR_FUNCTIONS(FloodFill)
 public:
 	FloodFill(ToolController &owner);
 
@@ -24,7 +23,7 @@ public:
 	void setTolerance(qreal tolerance) { m_tolerance = tolerance; }
 	void setExpansion(int expansion) { m_expansion = expansion; }
 	void setFeatherRadius(int featherRadius) { m_featherRadius = featherRadius; }
-	void setSizeLimit(unsigned int limit) { m_sizelimit = qMax(100u, limit); }
+	void setSize(int size) { m_size = size; }
 	void setSampleMerged(bool sm) { m_sampleMerged = sm; }
 	void setBlendMode(int blendMode) { m_blendMode = blendMode; }
 
@@ -37,7 +36,7 @@ private:
 	qreal m_tolerance;
 	int m_expansion;
 	int m_featherRadius;
-	unsigned int m_sizelimit;
+	int m_size;
 	bool m_sampleMerged;
 	int m_blendMode;
 	bool m_running;

@@ -33,6 +33,7 @@
 #include "pixels.h"
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
+#include <dpcommon/geom.h>
 #include <dpcommon/queue.h>
 #include <limits.h>
 #include <math.h>
@@ -47,11 +48,11 @@
 typedef struct DP_FillContext {
     unsigned char *buffer;
     int width, height;
+    DP_Rect area;
     DP_LayerContent *lc;
     DP_UPixelFloat reference_color;
     double tolerance_squared;
     int min_x, min_y, max_x, max_y;
-    int pixels_left;
     DP_Queue queue;
     bool cancelled;
     DP_FloodFillShouldCancelFn should_cancel;
@@ -92,7 +93,10 @@ static void shift_seed(DP_Queue *s, int *out_x, int *out_y)
 
 static unsigned char *buffer_at(DP_FillContext *c, int x, int y)
 {
-    return &c->buffer[y * c->width + x];
+    DP_ASSERT(DP_rect_contains(c->area, x, y));
+    int bx = x - DP_rect_left(c->area);
+    int by = y - DP_rect_top(c->area);
+    return &c->buffer[by * DP_rect_width(c->area) + bx];
 }
 
 static bool is_blank(DP_FillContext *c, int x, int y)
@@ -104,6 +108,11 @@ static DP_UPixelFloat get_color_at(DP_LayerContent *lc, int x, int y)
 {
     return DP_upixel15_to_float(
         DP_pixel15_unpremultiply(DP_layer_content_pixel_at(lc, x, y)));
+}
+
+static bool is_in_bounds(DP_FillContext *c, int x, int y)
+{
+    return DP_rect_contains(c->area, x, y);
 }
 
 static bool should_fill(DP_FillContext *c, int x, int y)
@@ -120,30 +129,23 @@ static bool should_fill(DP_FillContext *c, int x, int y)
 
 static bool inside(DP_FillContext *c, int x, int y)
 {
-    return x >= 0 && x < c->width && y >= 0 && y < c->height
-        && is_blank(c, x, y) && should_fill(c, x, y);
+    return is_in_bounds(c, x, y) && is_blank(c, x, y) && should_fill(c, x, y);
 }
 
-static bool set_pixel(DP_FillContext *c, int x, int y)
+static void set_pixel(DP_FillContext *c, int x, int y)
 {
-    if (--c->pixels_left > 0) {
-        *buffer_at(c, x, y) = 1;
-        if (x < c->min_x) {
-            c->min_x = x;
-        }
-        if (x > c->max_x) {
-            c->max_x = x;
-        }
-        if (y < c->min_y) {
-            c->min_y = y;
-        }
-        if (y > c->max_y) {
-            c->max_y = y;
-        }
-        return true;
+    *buffer_at(c, x, y) = 1;
+    if (x < c->min_x) {
+        c->min_x = x;
     }
-    else {
-        return false;
+    if (x > c->max_x) {
+        c->max_x = x;
+    }
+    if (y < c->min_y) {
+        c->min_y = y;
+    }
+    if (y > c->max_y) {
+        c->max_y = y;
     }
 }
 
@@ -161,7 +163,7 @@ static void scan(DP_FillContext *c, DP_Queue *s, int lx, int rx, int y)
     }
 }
 
-static bool fill(DP_FillContext *c, int x0, int y0)
+static void fill(DP_FillContext *c, int x0, int y0)
 {
     DP_Queue *s = &c->queue;
     add_seed(s, x0, y0);
@@ -170,21 +172,16 @@ static bool fill(DP_FillContext *c, int x0, int y0)
         shift_seed(s, &x, &y);
         int lx = x;
         while (inside(c, lx - 1, y)) {
-            if (!set_pixel(c, lx - 1, y) || is_cancelled(c)) {
-                return false;
-            }
+            set_pixel(c, lx - 1, y);
             lx = lx - 1;
         }
         while (inside(c, x, y)) {
-            if (!set_pixel(c, x, y) || is_cancelled(c)) {
-                return false;
-            }
+            set_pixel(c, x, y);
             x = x + 1;
         }
         scan(c, s, lx, x - 1, y + 1);
         scan(c, s, lx, x - 1, y - 1);
     }
-    return true;
 }
 
 static int get_kernel_diameter(int radius)
@@ -401,13 +398,11 @@ DP_Image *mask_to_image(DP_FillContext *c, const float *mask, int img_width,
     return img;
 }
 
-DP_FloodFillResult DP_flood_fill(DP_CanvasState *cs, int x, int y,
-                                 DP_UPixelFloat fill_color, double tolerance,
-                                 int layer_id, bool sample_merged,
-                                 int size_limit, int expand, int feather_radius,
-                                 DP_Image **out_img, int *out_x, int *out_y,
-                                 DP_FloodFillShouldCancelFn should_cancel,
-                                 void *user)
+DP_FloodFillResult
+DP_flood_fill(DP_CanvasState *cs, int x, int y, DP_UPixelFloat fill_color,
+              double tolerance, int layer_id, bool sample_merged, int size,
+              int expand, int feather_radius, DP_Image **out_img, int *out_x,
+              int *out_y, DP_FloodFillShouldCancelFn should_cancel, void *user)
 {
     DP_ASSERT(cs);
 
@@ -415,6 +410,7 @@ DP_FloodFillResult DP_flood_fill(DP_CanvasState *cs, int x, int y,
         NULL,
         0,
         0,
+        {0, 0, 0, 0},
         NULL,
         {0.0f, 0.0f, 0.0f, 0.0f},
         tolerance * tolerance,
@@ -422,7 +418,6 @@ DP_FloodFillResult DP_flood_fill(DP_CanvasState *cs, int x, int y,
         INT_MAX,
         INT_MIN,
         INT_MIN,
-        size_limit,
         DP_QUEUE_NULL,
         false,
         should_cancel,
@@ -434,7 +429,12 @@ DP_FloodFillResult DP_flood_fill(DP_CanvasState *cs, int x, int y,
 
     c.width = DP_canvas_state_width(cs);
     c.height = DP_canvas_state_height(cs);
-    if (x < 0 || y < 0 || x >= c.width || y >= c.height) {
+    c.area.x1 = DP_max_int(0, x - size);
+    c.area.y1 = DP_max_int(0, y - size);
+    c.area.x2 = DP_min_int(c.width - 1, x + size);
+    c.area.y2 = DP_min_int(c.height - 1, y + size);
+    if (x < 0 || y < 0 || x >= c.width || y >= c.height
+        || !DP_rect_valid(c.area)) {
         DP_error_set("Flood fill: initial point out of bounds");
         return DP_FLOOD_FILL_OUT_OF_BOUNDS;
     }
@@ -453,23 +453,19 @@ DP_FloodFillResult DP_flood_fill(DP_CanvasState *cs, int x, int y,
         c.lc = DP_layer_content_incref(DP_layer_routes_entry_content(lre, cs));
     }
 
-    size_t buffer_size = DP_int_to_size(c.width) * DP_int_to_size(c.height);
+    size_t buffer_size = DP_int_to_size(DP_rect_width(c.area))
+                       * DP_int_to_size(DP_rect_height(c.area));
     c.buffer = DP_malloc_zeroed(buffer_size);
     c.reference_color = get_color_at(c.lc, x, y);
 
     DP_queue_init(&c.queue, 1024, sizeof(DP_FillSeed));
-    bool fill_done = fill(&c, x, y);
+    fill(&c, x, y);
     DP_queue_dispose(&c.queue);
     DP_layer_content_decref(c.lc);
 
     if (is_cancelled(&c)) {
         DP_free(c.buffer);
         return DP_FLOOD_FILL_CANCELLED;
-    }
-    else if (!fill_done) {
-        DP_error_set("Flood fill: size limit %d exceeded", size_limit);
-        DP_free(c.buffer);
-        return DP_FLOOD_FILL_SIZE_LIMIT_EXCEEDED;
     }
 
     if (c.min_x > c.max_x || c.min_y > c.max_y) {

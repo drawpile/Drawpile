@@ -18,8 +18,7 @@ public:
 		FloodFill *tool, const QAtomicInt &cancel,
 		const drawdance::CanvasState &canvasState, const QPointF &point,
 		const QColor &fillColor, double tolerance, int layerId,
-		bool sampleMerged, unsigned int sizeLimit, int expansion,
-		int featherRadius)
+		bool sampleMerged, int size, int expansion, int featherRadius)
 		: m_tool{tool}
 		, m_cancel{cancel}
 		, m_canvasState{canvasState}
@@ -28,7 +27,7 @@ public:
 		, m_tolerance{tolerance}
 		, m_layerId{layerId}
 		, m_sampleMerged{sampleMerged}
-		, m_sizeLimit{sizeLimit}
+		, m_size{size}
 		, m_expansion{expansion}
 		, m_featherRadius{featherRadius}
 	{
@@ -38,7 +37,7 @@ public:
 	{
 		m_result = m_canvasState.floodFill(
 			m_point.x(), m_point.y(), m_fillColor, m_tolerance, m_layerId,
-			m_sampleMerged, m_sizeLimit, m_expansion, m_featherRadius, m_cancel,
+			m_sampleMerged, m_size, m_expansion, m_featherRadius, m_cancel,
 			m_img, m_x, m_y);
 	}
 
@@ -59,7 +58,7 @@ private:
 	double m_tolerance;
 	int m_layerId;
 	bool m_sampleMerged;
-	unsigned int m_sizeLimit;
+	int m_size;
 	int m_expansion;
 	int m_featherRadius;
 	DP_FloodFillResult m_result;
@@ -75,7 +74,7 @@ FloodFill::FloodFill(ToolController &owner)
 	, m_tolerance(0.01)
 	, m_expansion(0)
 	, m_featherRadius(0)
-	, m_sizelimit(1000 * 1000)
+	, m_size(500)
 	, m_sampleMerged(true)
 	, m_blendMode(DP_BLEND_MODE_NORMAL)
 	, m_running{false}
@@ -98,7 +97,7 @@ void FloodFill::begin(const canvas::Point &point, bool right, float zoom)
 		m_owner.executeAsync(new Task{
 			this, m_cancel, model->paintEngine()->viewCanvasState(), point,
 			fillColor, m_tolerance, m_owner.activeLayer(), m_sampleMerged,
-			m_sizelimit, m_expansion, m_featherRadius});
+			m_size, m_expansion, m_featherRadius});
 	}
 }
 
@@ -130,13 +129,7 @@ void FloodFill::floodFillFinished(Task *task)
 			msgs, contextId, task->layerId(), m_blendMode, task->x(), task->y(),
 			task->img());
 		m_owner.client()->sendMessages(msgs.count(), msgs.constData());
-	} else if(result == DP_FLOOD_FILL_SIZE_LIMIT_EXCEEDED) {
-		// The flood fill failing due to an exceeded size limit is non-obvious.
-		// Show a message to the user to explain the situation.
-		emit m_owner.toolTip(tr("Size limit exceeded."));
 	} else if(result != DP_FLOOD_FILL_CANCELLED) {
-		// Other stuff is obvious errors, like trying to fill out of bounds.
-		// Don't show a message in those cases.
 		qWarning("Flood fill failed: %s", DP_error());
 	}
 }
