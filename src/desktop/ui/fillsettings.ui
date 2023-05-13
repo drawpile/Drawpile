@@ -26,50 +26,7 @@
    <property name="spacing">
     <number>3</number>
    </property>
-   <item row="5" column="0" colspan="2">
-    <widget class="KisSliderSpinBox" name="expand">
-     <property name="suffix">
-      <string> px</string>
-     </property>
-     <property name="prefix">
-      <string>Expand: </string>
-     </property>
-     <property name="maximum">
-      <number>30</number>
-     </property>
-    </widget>
-   </item>
-   <item row="9" column="0">
-    <widget class="QLabel" name="modeLabel">
-     <property name="text">
-      <string>Mode:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0" colspan="2">
-    <widget class="KisSliderSpinBox" name="tolerance">
-     <property name="prefix">
-      <string>Tolerance: </string>
-     </property>
-     <property name="maximum">
-      <number>254</number>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="0" colspan="2">
-    <widget class="KisSliderSpinBox" name="feather">
-     <property name="suffix">
-      <string> px</string>
-     </property>
-     <property name="prefix">
-      <string>Feather: </string>
-     </property>
-     <property name="maximum">
-      <number>40</number>
-     </property>
-    </widget>
-   </item>
-   <item row="9" column="1">
+   <item row="10" column="1">
     <widget class="QComboBox" name="mode">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -100,46 +57,7 @@
      </item>
     </widget>
    </item>
-   <item row="2" column="0" colspan="2">
-    <widget class="KisSliderSpinBox" name="size">
-     <property name="suffix">
-      <string>px</string>
-     </property>
-     <property name="prefix">
-      <string>Size: </string>
-     </property>
-     <property name="minimum">
-      <number>20</number>
-     </property>
-     <property name="maximum">
-      <number>5000</number>
-     </property>
-     <property name="singleStep">
-      <number>1</number>
-     </property>
-    </widget>
-   </item>
-   <item row="8" column="0">
-    <widget class="QLabel" name="sourceLabel">
-     <property name="text">
-      <string>Source:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="10" column="0" colspan="2">
-    <spacer>
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>0</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="8" column="1">
+   <item row="9" column="1">
     <widget class="QComboBox" name="source">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -163,6 +81,101 @@
        <string>Merged Image</string>
       </property>
      </item>
+    </widget>
+   </item>
+   <item row="6" column="0" colspan="2">
+    <widget class="KisSliderSpinBox" name="feather">
+     <property name="suffix">
+      <string> px</string>
+     </property>
+     <property name="prefix">
+      <string>Feather: </string>
+     </property>
+     <property name="maximum">
+      <number>40</number>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0" colspan="2">
+    <widget class="KisSliderSpinBox" name="expand">
+     <property name="suffix">
+      <string> px</string>
+     </property>
+     <property name="prefix">
+      <string>Expand: </string>
+     </property>
+     <property name="maximum">
+      <number>30</number>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="0" colspan="2">
+    <spacer>
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="2" column="0" colspan="2">
+    <widget class="KisSliderSpinBox" name="size">
+     <property name="suffix">
+      <string>px</string>
+     </property>
+     <property name="prefix">
+      <string>Size: </string>
+     </property>
+     <property name="minimum">
+      <number>20</number>
+     </property>
+     <property name="maximum">
+      <number>5000</number>
+     </property>
+     <property name="singleStep">
+      <number>1</number>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="0">
+    <widget class="QLabel" name="sourceLabel">
+     <property name="text">
+      <string>Source:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="0">
+    <widget class="QLabel" name="modeLabel">
+     <property name="text">
+      <string>Mode:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="2">
+    <widget class="KisSliderSpinBox" name="tolerance">
+     <property name="prefix">
+      <string>Tolerance: </string>
+     </property>
+     <property name="maximum">
+      <number>254</number>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0" colspan="2">
+    <widget class="KisSliderSpinBox" name="gap">
+     <property name="suffix">
+      <string>px</string>
+     </property>
+     <property name="prefix">
+      <string>Close Gaps: </string>
+     </property>
+     <property name="maximum">
+      <number>32</number>
+     </property>
     </widget>
    </item>
   </layout>

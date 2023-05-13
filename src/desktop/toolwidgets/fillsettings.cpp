@@ -17,7 +17,8 @@ namespace props {
 		featherRadius { QStringLiteral("featherRadius"), 0, 0, 40 },
 		source { QStringLiteral("source"), 0, 0, 1},
 		mode { QStringLiteral("mode"), 0, 0, 2},
-		size { QStringLiteral("size"), 500, 10, 9999 };
+		size { QStringLiteral("size"), 500, 10, 9999 },
+		gap { QStringLiteral("gap"), 0, 0, 32};
 	static const ToolProperties::RangedValue<double>
 		tolerance { QStringLiteral("tolerance"), 0.0, 0.0, 1.0 };
 }
@@ -46,6 +47,7 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 	connect(m_ui->size, QOverload<int>::of(&QSpinBox::valueChanged), this, &FillSettings::pushSettings);
 	connect(m_ui->expand, QOverload<int>::of(&QSpinBox::valueChanged), this, &FillSettings::pushSettings);
 	connect(m_ui->feather, QOverload<int>::of(&QSpinBox::valueChanged), this, &FillSettings::pushSettings);
+	connect(m_ui->gap, QOverload<int>::of(&QSpinBox::valueChanged), this, &FillSettings::pushSettings);
 	connect(m_ui->source, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &FillSettings::pushSettings);
 	connect(m_ui->mode, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &FillSettings::pushSettings);
 	return uiwidget;
@@ -58,6 +60,7 @@ void FillSettings::pushSettings()
 	tool->setExpansion(m_ui->expand->value());
 	tool->setFeatherRadius(m_ui->feather->value());
 	tool->setSize(m_ui->size->value());
+	tool->setGap(m_ui->gap->value());
 	tool->setSampleMerged(m_ui->source->currentIndex() == SOURCE_MERGED_IMAGE);
 	const auto mode = static_cast<Mode>(m_ui->mode->currentIndex());
 	tool->setBlendMode(modeIndexToBlendMode(mode));
@@ -79,6 +82,7 @@ ToolProperties FillSettings::saveToolSettings()
 	cfg.setValue(props::expand, m_ui->expand->value());
 	cfg.setValue(props::featherRadius, m_ui->feather->value());
 	cfg.setValue(props::size, m_ui->size->value());
+	cfg.setValue(props::gap, m_ui->gap->value());
 	cfg.setValue(props::mode, m_ui->mode->currentIndex());
 	cfg.setValue(props::source, m_ui->source->currentIndex());
 	return cfg;
@@ -103,6 +107,7 @@ void FillSettings::restoreToolSettings(const ToolProperties &cfg)
 	m_ui->expand->setValue(cfg.value(props::expand));
 	m_ui->feather->setValue(cfg.value(props::featherRadius));
 	m_ui->size->setValue(cfg.value(props::size));
+	m_ui->gap->setValue(cfg.value(props::gap));
 	m_ui->source->setCurrentIndex(cfg.value(props::source));
 	m_ui->mode->setCurrentIndex(cfg.value(props::mode));
 	pushSettings();

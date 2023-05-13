@@ -46,7 +46,8 @@
 // See https://en.wikipedia.org/wiki/Flood_fill#Span_Filling
 
 typedef struct DP_FillContext {
-    unsigned char *buffer;
+    unsigned char *input;
+    unsigned char *output;
     int width, height;
     DP_Rect area;
     DP_LayerContent *lc;
@@ -77,6 +78,112 @@ static bool is_cancelled(DP_FillContext *c)
     }
 }
 
+static unsigned char *buffer_at(unsigned char *buffer, DP_Rect area, int x,
+                                int y)
+{
+    DP_ASSERT(DP_rect_contains(area, x, y));
+    int bx = x - DP_rect_left(area);
+    int by = y - DP_rect_top(area);
+    return &buffer[by * DP_rect_width(area) + bx];
+}
+
+static unsigned char buffer_get(unsigned char *buffer, DP_Rect area, int x,
+                                int y)
+{
+    return *buffer_at(buffer, area, x, y);
+}
+
+static void buffer_set(unsigned char *buffer, DP_Rect area, int x, int y,
+                       unsigned char value)
+{
+    *buffer_at(buffer, area, x, y) = value;
+}
+
+static DP_UPixelFloat get_color_at(DP_LayerContent *lc, int x, int y)
+{
+    return DP_upixel15_to_float(
+        DP_pixel15_unpremultiply(DP_layer_content_pixel_at(lc, x, y)));
+}
+
+static bool should_flood(DP_FillContext *c, int x, int y)
+{
+    DP_UPixelFloat color = get_color_at(c->lc, x, y);
+    // TODO: we could use better functions for color distance than this.
+    DP_UPixelFloat reference_color = c->reference_color;
+    double b = color.b - reference_color.b;
+    double g = color.g - reference_color.g;
+    double r = color.r - reference_color.r;
+    double a = color.a - reference_color.a;
+    return b * b + g * g + r * r + a * a <= c->tolerance_squared;
+}
+
+static void flood(DP_FillContext *c)
+{
+    DP_Rect area = c->area;
+    for (int y = area.y1; y <= area.y2; ++y) {
+        for (int x = area.x1; x <= area.x2; ++x) {
+            buffer_set(c->input, area, x, y, should_flood(c, x, y) ? 1 : 0);
+        }
+    }
+}
+
+static void dilate_erode_pixel(DP_Rect area, unsigned char *src,
+                               unsigned char *dst, int gap, int x0, int y0)
+{
+    int x1 = DP_max_int(area.x1, x0 - gap);
+    int y1 = DP_max_int(area.y1, y0 - gap);
+    int x2 = DP_min_int(area.x2, x0 + gap);
+    int y2 = DP_min_int(area.y2, y0 + gap);
+    for (int y = y1; y <= y2; ++y) {
+        for (int x = x1; x <= x2; ++x) {
+            if (buffer_get(src, area, x, y) == 0) {
+                buffer_set(dst, area, x0, y0, 1);
+                return;
+            }
+        }
+    }
+}
+
+static void dilate_erode(DP_FillContext *c, unsigned char *src,
+                         unsigned char *dst, int gap)
+{
+    DP_Rect area = c->area;
+    for (int y = area.y1; y <= area.y2; ++y) {
+        for (int x = area.x1; x <= area.x2; ++x) {
+            if (is_cancelled(c)) {
+                return;
+            }
+            dilate_erode_pixel(area, src, dst, gap, x, y);
+        }
+    }
+}
+
+static void gap_fill(DP_FillContext *c, int gap, size_t buffer_size)
+{
+    // Classic, simple gap-filling algorithm: dilate the outlines into the
+    // output buffer, erode them back into the input buffer, then clear the
+    // output buffer again. Erosion just means dilation of transparent pixels,
+    // so we can use a single algorithm for these. Unlike with the fill
+    // expansion stuff below, we use a trivial square kernel, the round kernel
+    // gives worse results with more corners remaining unfilled.
+    dilate_erode(c, c->input, c->output, gap);
+    if (is_cancelled(c)) {
+        return;
+    }
+
+    memset(c->input, 0, buffer_size);
+    if (is_cancelled(c)) {
+        return;
+    }
+
+    dilate_erode(c, c->output, c->input, gap);
+    if (is_cancelled(c)) {
+        return;
+    }
+
+    memset(c->output, 0, buffer_size);
+}
+
 static void add_seed(DP_Queue *s, int x, int y)
 {
     DP_FillSeed *fs = DP_queue_push(s, sizeof(DP_FillSeed));
@@ -91,50 +198,17 @@ static void shift_seed(DP_Queue *s, int *out_x, int *out_y)
     DP_queue_shift(s);
 }
 
-static unsigned char *buffer_at(DP_FillContext *c, int x, int y)
-{
-    DP_ASSERT(DP_rect_contains(c->area, x, y));
-    int bx = x - DP_rect_left(c->area);
-    int by = y - DP_rect_top(c->area);
-    return &c->buffer[by * DP_rect_width(c->area) + bx];
-}
-
-static bool is_blank(DP_FillContext *c, int x, int y)
-{
-    return *buffer_at(c, x, y) == 0;
-}
-
-static DP_UPixelFloat get_color_at(DP_LayerContent *lc, int x, int y)
-{
-    return DP_upixel15_to_float(
-        DP_pixel15_unpremultiply(DP_layer_content_pixel_at(lc, x, y)));
-}
-
-static bool is_in_bounds(DP_FillContext *c, int x, int y)
-{
-    return DP_rect_contains(c->area, x, y);
-}
-
-static bool should_fill(DP_FillContext *c, int x, int y)
-{
-    DP_UPixelFloat color = get_color_at(c->lc, x, y);
-    // TODO: we could use better functions for color distance than this.
-    DP_UPixelFloat reference_color = c->reference_color;
-    double b = color.b - reference_color.b;
-    double g = color.g - reference_color.g;
-    double r = color.r - reference_color.r;
-    double a = color.a - reference_color.a;
-    return b * b + g * g + r * r + a * a <= c->tolerance_squared;
-}
-
 static bool inside(DP_FillContext *c, int x, int y)
 {
-    return is_in_bounds(c, x, y) && is_blank(c, x, y) && should_fill(c, x, y);
+    DP_Rect area = c->area;
+    return DP_rect_contains(area, x, y)
+        && buffer_get(c->output, c->area, x, y) == 0
+        && buffer_get(c->input, c->area, x, y) != 0;
 }
 
 static void set_pixel(DP_FillContext *c, int x, int y)
 {
-    *buffer_at(c, x, y) = 1;
+    buffer_set(c->output, c->area, x, y, 1);
     if (x < c->min_x) {
         c->min_x = x;
     }
@@ -324,6 +398,8 @@ static float *make_mask(DP_FillContext *c, int expand, int feather_radius,
     int img_height = expand_max_y - expand_min_y + feather_radius * 2 + 1;
     size_t mask_size = DP_int_to_size(img_width) * DP_int_to_size(img_height);
     float *mask = DP_malloc_zeroed(mask_size * sizeof(*mask));
+    DP_Rect area = c->area;
+    unsigned char *output = c->output;
 
     if (expand == 0) {
         for (int y = min_y; y <= max_y; ++y) {
@@ -331,7 +407,7 @@ static float *make_mask(DP_FillContext *c, int expand, int feather_radius,
                 return mask;
             }
             for (int x = min_x; x <= max_x; ++x) {
-                if (!is_blank(c, x, y)) {
+                if (buffer_get(output, area, x, y) != 0) {
                     int mx = x - min_x + feather_radius;
                     int my = y - min_y + feather_radius;
                     mask[my * img_width + mx] = 1.0f;
@@ -347,7 +423,7 @@ static float *make_mask(DP_FillContext *c, int expand, int feather_radius,
                 return mask;
             }
             for (int x = min_x; x <= max_x; ++x) {
-                if (!is_blank(c, x, y)) {
+                if (buffer_get(output, area, x, y)) {
                     apply_expansion_kernel(mask, img_width, kernel, c->width,
                                            c->height, expand, feather_radius,
                                            expand_min_x, expand_min_y, x, y);
@@ -398,15 +474,18 @@ DP_Image *mask_to_image(DP_FillContext *c, const float *mask, int img_width,
     return img;
 }
 
-DP_FloodFillResult
-DP_flood_fill(DP_CanvasState *cs, int x, int y, DP_UPixelFloat fill_color,
-              double tolerance, int layer_id, bool sample_merged, int size,
-              int expand, int feather_radius, DP_Image **out_img, int *out_x,
-              int *out_y, DP_FloodFillShouldCancelFn should_cancel, void *user)
+DP_FloodFillResult DP_flood_fill(DP_CanvasState *cs, int x, int y,
+                                 DP_UPixelFloat fill_color, double tolerance,
+                                 int layer_id, bool sample_merged, int size,
+                                 int gap, int expand, int feather_radius,
+                                 DP_Image **out_img, int *out_x, int *out_y,
+                                 DP_FloodFillShouldCancelFn should_cancel,
+                                 void *user)
 {
     DP_ASSERT(cs);
 
     DP_FillContext c = {
+        NULL,
         NULL,
         0,
         0,
@@ -455,22 +534,38 @@ DP_flood_fill(DP_CanvasState *cs, int x, int y, DP_UPixelFloat fill_color,
 
     size_t buffer_size = DP_int_to_size(DP_rect_width(c.area))
                        * DP_int_to_size(DP_rect_height(c.area));
-    c.buffer = DP_malloc_zeroed(buffer_size);
+    c.input = DP_malloc(buffer_size);
     c.reference_color = get_color_at(c.lc, x, y);
+    flood(&c);
+    DP_layer_content_decref(c.lc);
+    if (is_cancelled(&c)) {
+        DP_free(c.input);
+        return DP_FLOOD_FILL_CANCELLED;
+    }
+
+    c.output = DP_malloc_zeroed(buffer_size);
+    if (gap > 0) {
+        gap_fill(&c, gap, buffer_size);
+        if (is_cancelled(&c)) {
+            DP_free(c.input);
+            DP_free(c.output);
+            return DP_FLOOD_FILL_CANCELLED;
+        }
+    }
 
     DP_queue_init(&c.queue, 1024, sizeof(DP_FillSeed));
     fill(&c, x, y);
     DP_queue_dispose(&c.queue);
-    DP_layer_content_decref(c.lc);
+    DP_free(c.input);
 
     if (is_cancelled(&c)) {
-        DP_free(c.buffer);
+        DP_free(c.output);
         return DP_FLOOD_FILL_CANCELLED;
     }
 
     if (c.min_x > c.max_x || c.min_y > c.max_y) {
         DP_error_set("Flood fill: nothing to fill");
-        DP_free(c.buffer);
+        DP_free(c.output);
         return DP_FLOOD_FILL_NOTHING_TO_FILL;
     }
 
@@ -478,7 +573,7 @@ DP_flood_fill(DP_CanvasState *cs, int x, int y, DP_UPixelFloat fill_color,
     float *mask =
         make_mask(&c, DP_max_int(expand, 0), DP_max_int(feather_radius, 0),
                   &img_x, &img_y, &img_width, &img_height);
-    DP_free(c.buffer);
+    DP_free(c.output);
     if (is_cancelled(&c)) {
         DP_free(mask);
         return DP_FLOOD_FILL_CANCELLED;

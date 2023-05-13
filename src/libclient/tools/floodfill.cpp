@@ -18,7 +18,7 @@ public:
 		FloodFill *tool, const QAtomicInt &cancel,
 		const drawdance::CanvasState &canvasState, const QPointF &point,
 		const QColor &fillColor, double tolerance, int layerId,
-		bool sampleMerged, int size, int expansion, int featherRadius)
+		bool sampleMerged, int size, int gap, int expansion, int featherRadius)
 		: m_tool{tool}
 		, m_cancel{cancel}
 		, m_canvasState{canvasState}
@@ -28,6 +28,7 @@ public:
 		, m_layerId{layerId}
 		, m_sampleMerged{sampleMerged}
 		, m_size{size}
+		, m_gap{gap}
 		, m_expansion{expansion}
 		, m_featherRadius{featherRadius}
 	{
@@ -37,8 +38,8 @@ public:
 	{
 		m_result = m_canvasState.floodFill(
 			m_point.x(), m_point.y(), m_fillColor, m_tolerance, m_layerId,
-			m_sampleMerged, m_size, m_expansion, m_featherRadius, m_cancel,
-			m_img, m_x, m_y);
+			m_sampleMerged, m_size, m_gap, m_expansion, m_featherRadius,
+			m_cancel, m_img, m_x, m_y);
 	}
 
 	void finished() override { m_tool->floodFillFinished(this); }
@@ -59,6 +60,7 @@ private:
 	int m_layerId;
 	bool m_sampleMerged;
 	int m_size;
+	int m_gap;
 	int m_expansion;
 	int m_featherRadius;
 	DP_FloodFillResult m_result;
@@ -75,6 +77,7 @@ FloodFill::FloodFill(ToolController &owner)
 	, m_expansion(0)
 	, m_featherRadius(0)
 	, m_size(500)
+	, m_gap{0}
 	, m_sampleMerged(true)
 	, m_blendMode(DP_BLEND_MODE_NORMAL)
 	, m_running{false}
@@ -97,7 +100,7 @@ void FloodFill::begin(const canvas::Point &point, bool right, float zoom)
 		m_owner.executeAsync(new Task{
 			this, m_cancel, model->paintEngine()->viewCanvasState(), point,
 			fillColor, m_tolerance, m_owner.activeLayer(), m_sampleMerged,
-			m_size, m_expansion, m_featherRadius});
+			m_size, m_gap, m_expansion, m_featherRadius});
 	}
 }
 
