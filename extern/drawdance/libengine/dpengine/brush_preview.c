@@ -118,12 +118,6 @@ static DP_CanvasState *handle_preview_messages_multidab(DP_CanvasState *cs,
 }
 
 
-static bool is_dark_color(DP_UPixelFloat color)
-{
-    float lum = color.b * 0.0722f + color.g * 0.7152f + color.r * 0.216f;
-    return lum <= 0.5f;
-}
-
 static uint32_t hsv_to_bgra(float h, float s, float v)
 {
     hsv_to_rgb_float(&h, &s, &v);
@@ -137,6 +131,29 @@ static void set_preview_foreground_dab(DP_UNUSED int count, DP_PixelDab *pds,
     DP_ASSERT(count == 1);
     int *d_ptr = user;
     DP_pixel_dab_init(pds, 0, 0, 0, DP_int_to_uint8(*d_ptr), 255);
+}
+
+static DP_CanvasState *draw_foreground_dabs(DP_CanvasState *cs,
+                                            DP_DrawContext *dc, int width,
+                                            int height)
+{
+    int d = CLAMP(height * 2 / 3, 10, 255);
+    int x0 = d;
+    int x1 = width - d;
+    int step = d * 70 / 100;
+    float huestep =
+        359.0f / 360.0f / (DP_int_to_float(x1 - x0) / DP_int_to_float(step));
+    float hue = 0.0f;
+    for (int x = x0; x < x1; x += step, hue += huestep) {
+        cs = handle_preview_message_dec(
+            cs, dc,
+            DP_msg_draw_dabs_pixel_new(
+                0, 1, DP_int_to_int32(x), DP_int_to_int32(height / 2),
+                // Set the alpha to zero to draw in direct mode.
+                hsv_to_bgra(hue, 0.62f, 0.86f) & 0x00ffffffu,
+                DP_BLEND_MODE_NORMAL, set_preview_foreground_dab, 1, &d));
+    }
+    return cs;
 }
 
 static void stroke_to(DP_BrushEngine *be, float x, float y, float pressure,
@@ -209,41 +226,6 @@ static void stroke_ellipse(DP_BrushEngine *be, DP_CanvasState *cs, DP_Rect rect,
     }
 }
 
-static void stroke_flood_fill_blob(DP_BrushEngine *be, DP_CanvasState *cs,
-                                   DP_Rect rect, long long *in_out_time_msec)
-{
-    int rx = DP_rect_x(rect);
-    int ry = DP_rect_y(rect);
-    int rw = DP_rect_width(rect);
-    int rh = DP_rect_height(rect);
-    float rxf = DP_int_to_float(rx);
-    float rwf = DP_int_to_float(rw);
-    float rrf = DP_int_to_float(DP_rect_right(rect));
-    float mid = DP_int_to_float(ry + rh / 2);
-    float h = DP_int_to_float(rh) * 0.8f;
-
-    float a = 0.0f;
-    while (a < PI_FLOAT) {
-        float x = rxf + a / PI_FLOAT * rwf;
-        float y = powf(sinf(a), 0.5f) * 0.7f + sinf(a * 3.0f) * 0.3f;
-        stroke_to(be, x, mid - y * h, 1.0f, cs, in_out_time_msec);
-        a += 0.1f;
-    }
-
-    a = 0.1f;
-    while (a < PI_FLOAT) {
-        float x = rrf - (a / PI_FLOAT * rwf);
-        float y = powf(sinf(a), 0.5f) * 0.7f + sinf(a * 2.8f) * 0.2f;
-        stroke_to(be, x, mid + y * h, 1.0f, cs, in_out_time_msec);
-        a += 0.1f;
-    }
-
-    a = 0.0f;
-    float x = rxf + a / PI_FLOAT * rwf;
-    float y = powf(sinf(a), 0.5f) * 0.7f + sinf(a * 3.0f) * 0.3f;
-    stroke_to(be, x, mid - y * h, 1.0f, cs, in_out_time_msec);
-}
-
 void render_brush_preview(
     DP_BrushPreview *bp, DP_DrawContext *dc, int width, int height,
     DP_BrushPreviewShape shape, DP_UPixelFloat initial_color,
@@ -257,56 +239,20 @@ void render_brush_preview(
         return;
     }
 
-    uint32_t color =
-        DP_pixel8_premultiply(DP_upixel_float_to_8(initial_color)).color;
-    uint32_t layer_color = shape == DP_BRUSH_PREVIEW_FLOOD_ERASE ? color : 0;
-
-    DP_UPixelFloat brush_color;
-    bool foreground_dabs;
-    bool is_flood = shape == DP_BRUSH_PREVIEW_FLOOD_FILL
-                 || shape == DP_BRUSH_PREVIEW_FLOOD_ERASE;
-    if (is_flood) {
-        brush_color = DP_upixel8_to_float(DP_pixel8_unpremultiply((DP_Pixel8){
-            is_dark_color(initial_color) ? 0xfffafafau : 0xff202020u}));
-        foreground_dabs = false;
-    }
-    else {
-        brush_color = initial_color;
-        foreground_dabs = true;
-    }
-
     DP_CanvasState *cs = DP_canvas_state_new();
     cs = handle_preview_message_dec(
         cs, dc,
         DP_msg_canvas_resize_new(0, 0, DP_int_to_int32(width),
                                  DP_int_to_int32(height), 0));
     cs = handle_preview_message_dec(
-        cs, dc,
-        DP_msg_layer_tree_create_new(0, 1, 0, 0, layer_color, 0, "", 0));
+        cs, dc, DP_msg_layer_tree_create_new(0, 1, 0, 0, 0, 0, "", 0));
 
-    if (foreground_dabs) {
-        int d = CLAMP(height * 2 / 3, 10, 255);
-        int x0 = d;
-        int x1 = width - d;
-        int step = d * 70 / 100;
-        float huestep = 359.0f / 360.0f
-                      / (DP_int_to_float(x1 - x0) / DP_int_to_float(step));
-        float hue = 0.0f;
-        for (int x = x0; x < x1; x += step, hue += huestep) {
-            cs = handle_preview_message_dec(
-                cs, dc,
-                DP_msg_draw_dabs_pixel_new(
-                    0, 1, DP_int_to_int32(x), DP_int_to_int32(height / 2),
-                    // Set the alpha to zero to draw in direct mode.
-                    hsv_to_bgra(hue, 0.62f, 0.86f) & 0x00ffffffu,
-                    DP_BLEND_MODE_NORMAL, set_preview_foreground_dab, 1, &d));
-        }
-    }
+    cs = draw_foreground_dabs(cs, dc, width, height);
 
     DP_Rect rect = DP_rect_make(width / 8, height / 4, width - width / 4,
                                 height - height / 2);
     DP_BrushEngine *be = bp->be;
-    set_brush(user, be, brush_color);
+    set_brush(user, be, initial_color);
     DP_brush_engine_stroke_begin(be, 1, false, 1.0f);
     long long time_msec = 0;
     switch (shape) {
@@ -321,10 +267,6 @@ void render_brush_preview(
         break;
     case DP_BRUSH_PREVIEW_ELLIPSE:
         stroke_ellipse(be, cs, rect, &time_msec);
-        break;
-    case DP_BRUSH_PREVIEW_FLOOD_FILL:
-    case DP_BRUSH_PREVIEW_FLOOD_ERASE:
-        stroke_flood_fill_blob(be, cs, rect, &time_msec);
         break;
     default:
         DP_warn("Unknown preview shape %d", (int)shape);
@@ -381,48 +323,6 @@ void DP_brush_preview_render_mypaint(DP_BrushPreview *bp, DP_DrawContext *dc,
     render_brush_preview(bp, dc, width, height, shape, brush->color,
                          set_preview_mypaint_brush,
                          (void *[]){(void *)brush, (void *)settings});
-}
-
-
-void DP_brush_preview_render_flood_fill(DP_BrushPreview *bp,
-                                        DP_UPixelFloat fill_color,
-                                        double tolerance, int expand,
-                                        int feather_radius, int blend_mode)
-{
-    DP_CanvasState *cs = bp->cs;
-    if (!cs) {
-        DP_warn("Preview flood fill: no canvas state");
-        return;
-    }
-
-    DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
-    DP_LayerRoutesEntry *lre = DP_layer_routes_search(lr, 1);
-    if (!lre) {
-        DP_warn("Preview flood fill: layer not found");
-        return;
-    }
-
-    int width = DP_canvas_state_width(cs);
-    int height = DP_canvas_state_height(cs);
-    int x, y;
-    DP_Image *img;
-    DP_FloodFillResult result = DP_flood_fill(
-        cs, width / 2, height / 2, fill_color, tolerance, 1, false,
-        width * height, expand, feather_radius, &img, &x, &y, NULL, NULL);
-    if (result != DP_FLOOD_FILL_SUCCESS) {
-        DP_warn("Preview flood fill: %s", DP_error());
-        return;
-    }
-
-    DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
-    DP_canvas_state_decref(cs);
-
-    DP_TransientLayerContent *tlc =
-        DP_layer_routes_entry_transient_content(lre, tcs);
-    DP_transient_layer_content_put_image(tlc, 0, blend_mode, x, y, img);
-    DP_image_free(img);
-
-    bp->cs = DP_transient_canvas_state_persist(tcs);
 }
 
 

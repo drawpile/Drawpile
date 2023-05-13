@@ -128,14 +128,7 @@ void BrushPreview::updatePreview()
 #ifndef DESIGNER_PLUGIN
 	const QSize size = contentsRect().size();
 	m_brushPreview.reset(size);
-
 	m_brush.renderPreview(m_brushPreview, m_shape);
-	if(m_shape == DP_BRUSH_PREVIEW_FLOOD_FILL || m_shape == DP_BRUSH_PREVIEW_FLOOD_ERASE) {
-		m_brushPreview.floodFill(
-			m_brush.qColor(), m_fillTolerance / 255.0, m_fillExpansion,
-			m_fillFeatherRadius, tools::FillSettings::modeIndexToBlendMode(m_fillMode));
-	}
-
 	m_brushPreview.paint(m_background);
 #endif
 	m_needUpdate = false;

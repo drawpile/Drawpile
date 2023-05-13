@@ -26,7 +26,27 @@
    <property name="spacing">
     <number>3</number>
    </property>
-   <item row="4" column="0" colspan="2">
+   <item row="5" column="0" colspan="2">
+    <widget class="KisSliderSpinBox" name="expand">
+     <property name="suffix">
+      <string> px</string>
+     </property>
+     <property name="prefix">
+      <string>Expand: </string>
+     </property>
+     <property name="maximum">
+      <number>30</number>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="0">
+    <widget class="QLabel" name="modeLabel">
+     <property name="text">
+      <string>Mode:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="2">
     <widget class="KisSliderSpinBox" name="tolerance">
      <property name="prefix">
       <string>Tolerance: </string>
@@ -36,60 +56,20 @@
      </property>
     </widget>
    </item>
-   <item row="11" column="0" colspan="2">
-    <spacer>
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
+   <item row="6" column="0" colspan="2">
+    <widget class="KisSliderSpinBox" name="feather">
+     <property name="suffix">
+      <string> px</string>
      </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>0</height>
-      </size>
+     <property name="prefix">
+      <string>Feather: </string>
      </property>
-    </spacer>
+     <property name="maximum">
+      <number>40</number>
+     </property>
+    </widget>
    </item>
    <item row="9" column="1">
-    <widget class="QComboBox" name="source">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>24</width>
-       <height>0</height>
-      </size>
-     </property>
-     <item>
-      <property name="text">
-       <string>Current Layer</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Merged Image</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="10" column="0">
-    <widget class="QLabel" name="modeLabel">
-     <property name="text">
-      <string>Mode:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="9" column="0">
-    <widget class="QLabel" name="sourceLabel">
-     <property name="text">
-      <string>Source:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="10" column="1">
     <widget class="QComboBox" name="mode">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -120,49 +100,7 @@
      </item>
     </widget>
    </item>
-   <item row="1" column="0" colspan="2">
-    <widget class="widgets::BrushPreview" name="preview">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>32</width>
-       <height>64</height>
-      </size>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="0" colspan="2">
-    <widget class="KisSliderSpinBox" name="expand">
-     <property name="suffix">
-      <string> px</string>
-     </property>
-     <property name="prefix">
-      <string>Expand: </string>
-     </property>
-     <property name="maximum">
-      <number>30</number>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="0" colspan="2">
-    <widget class="KisSliderSpinBox" name="feather">
-     <property name="suffix">
-      <string> px</string>
-     </property>
-     <property name="prefix">
-      <string>Feather: </string>
-     </property>
-     <property name="maximum">
-      <number>40</number>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0" colspan="2">
+   <item row="2" column="0" colspan="2">
     <widget class="KisSliderSpinBox" name="size">
      <property name="suffix">
       <string>px</string>
@@ -181,15 +119,55 @@
      </property>
     </widget>
    </item>
+   <item row="8" column="0">
+    <widget class="QLabel" name="sourceLabel">
+     <property name="text">
+      <string>Source:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="0" colspan="2">
+    <spacer>
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="8" column="1">
+    <widget class="QComboBox" name="source">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>24</width>
+       <height>0</height>
+      </size>
+     </property>
+     <item>
+      <property name="text">
+       <string>Current Layer</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Merged Image</string>
+      </property>
+     </item>
+    </widget>
+   </item>
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>widgets::BrushPreview</class>
-   <extends>QFrame</extends>
-   <header>desktop/widgets/brushpreview.h</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>KisSliderSpinBox</class>
    <extends>QSpinBox</extends>
@@ -197,70 +175,5 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections>
-  <connection>
-   <sender>tolerance</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>preview</receiver>
-   <slot>setFloodFillTolerance(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>121</x>
-     <y>82</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>121</x>
-     <y>34</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>expand</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>preview</receiver>
-   <slot>setFloodFillExpansion(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>121</x>
-     <y>111</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>121</x>
-     <y>34</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>feather</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>preview</receiver>
-   <slot>setFloodFillFeatherRadius(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>121</x>
-     <y>140</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>121</x>
-     <y>34</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>mode</sender>
-   <signal>currentIndexChanged(int)</signal>
-   <receiver>preview</receiver>
-   <slot>setFloodFillMode(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>143</x>
-     <y>226</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>121</x>
-     <y>34</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

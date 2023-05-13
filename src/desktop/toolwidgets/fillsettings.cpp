@@ -39,9 +39,6 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 	m_ui->setupUi(uiwidget);
 	m_ui->size->setExponentRatio(3.0);
 
-	m_ui->preview->setPreviewShape(DP_BRUSH_PREVIEW_FLOOD_FILL);
-
-	connect(m_ui->preview, SIGNAL(requestColorChange()), parent, SLOT(changeForegroundColor()));
 	connect(m_ui->size, QOverload<int>::of(&QSpinBox::valueChanged), this, [this](int size) {
 		emit pixelSizeChanged(size * 2);
 	});
@@ -64,10 +61,7 @@ void FillSettings::pushSettings()
 	tool->setSampleMerged(m_ui->source->currentIndex() == SOURCE_MERGED_IMAGE);
 	const auto mode = static_cast<Mode>(m_ui->mode->currentIndex());
 	tool->setBlendMode(modeIndexToBlendMode(mode));
-	if(mode == Erase) {
-		m_ui->preview->setPreviewShape(DP_BRUSH_PREVIEW_FLOOD_ERASE);
-	} else {
-		m_ui->preview->setPreviewShape(DP_BRUSH_PREVIEW_FLOOD_FILL);
+	if(mode != Erase) {
 		m_previousMode = mode;
 	}
 }

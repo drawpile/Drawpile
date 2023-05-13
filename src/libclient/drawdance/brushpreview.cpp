@@ -49,20 +49,6 @@ void BrushPreview::renderMyPaint(
         m_data, dc.get(), size.width(), size.height(), &brush, &settings, shape);
 }
 
-void BrushPreview::floodFill(
-    const QColor &color, float tolerance, int expansion, int featherRadius, int blendMode)
-{
-    QColor effectiveColor;
-    if(blendMode == DP_BLEND_MODE_ERASE) {
-        effectiveColor = Qt::black;
-    } else {
-        effectiveColor = color;
-    }
-    DP_brush_preview_render_flood_fill(
-        m_data, DP_upixel_float_from_color(effectiveColor.rgba()), tolerance,
-        expansion, featherRadius, blendMode);
-}
-
 void BrushPreview::paint(const QPixmap &background)
 {
     QImage img = wrapImage(DP_brush_preview_to_image(m_data));
