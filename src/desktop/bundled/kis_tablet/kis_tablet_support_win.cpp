@@ -162,6 +162,7 @@ bool KisTabletSupportWin::init()
                          delete QTAB;
                          QTAB = KisWindowsTabletSupport::create();
                      });
+    return true;
 }
 
 void KisTabletSupportWin::quit()
