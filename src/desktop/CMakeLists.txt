@@ -15,7 +15,6 @@ endif()
 
 set_target_properties(drawpile PROPERTIES
 	AUTOUIC_SEARCH_PATHS ui
-	VERSION ${PROJECT_VERSION}
 	PROJECT_LABEL drawpile-client
 	WIN32_EXECUTABLE $<NOT:$<CONFIG:Debug>>
 )
