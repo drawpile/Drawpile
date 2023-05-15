@@ -12,12 +12,10 @@
 namespace dialogs {
 
 LayerProperties::LayerProperties(uint8_t localUser, QWidget *parent)
-	: QDialog(parent), m_user(localUser)
+	: QDialog(parent), m_user(localUser), m_compatibilityMode{false}
 {
     m_ui = new Ui_LayerProperties;
     m_ui->setupUi(this);
-
-	initBlendModeCombo(m_ui->blendMode);
 
     connect(m_ui->title, &QLineEdit::returnPressed, this, &QDialog::accept);
     connect(m_ui->buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
@@ -44,22 +42,9 @@ void LayerProperties::setLayerItem(const canvas::LayerListItem &item, const QStr
 	m_ui->visible->setChecked(!item.hidden);
 	m_ui->censored->setChecked(item.censored);
 	m_ui->defaultLayer->setChecked(isDefault);
-
-	int blendModeIndex = searchBlendModeIndex(item.blend);
-	if(blendModeIndex == -1) {
-		// Apparently we don't know this blend mode, probably because
-		// this client is outdated. Disable the control to avoid damage.
-		m_ui->blendMode->setCurrentIndex(-1);
-		m_ui->blendMode->setEnabled(false);
-
-	} else {
-		m_ui->blendMode->setCurrentIndex(blendModeIndex);
-		m_ui->blendMode->setEnabled(true);
-	}
-
-	m_ui->passThrough->setChecked(!item.group || !item.isolated);
-	m_ui->passThrough->setVisible(item.group);
 	m_ui->createdBy->setText(creator);
+	updateBlendMode(
+		m_ui->blendMode, item.blend, item.group, item.isolated, m_compatibilityMode);
 }
 
 void LayerProperties::setControlsEnabled(bool enabled) {
@@ -67,10 +52,9 @@ void LayerProperties::setControlsEnabled(bool enabled) {
 		m_ui->title,
 		m_ui->opacitySlider,
 		m_ui->blendMode,
-		m_ui->passThrough,
 		m_ui->censored
 	};
-	for(unsigned int i=0;i<sizeof(w)/sizeof(*w);++i)
+	for(unsigned int i=0;i<sizeof(w)/sizeof(w[0]);++i)
 		w[i]->setEnabled(enabled);
 }
 
@@ -81,26 +65,63 @@ void LayerProperties::setOpControlsEnabled(bool enabled)
 
 void LayerProperties::setCompatibilityMode(bool compatibilityMode)
 {
-	setBlendModeComboCompatibilityMode(m_ui->blendMode, compatibilityMode);
+	int blendModeData = m_ui->blendMode->currentData().toInt();
+	DP_BlendMode mode =
+		blendModeData == -1 ? m_item.blend : DP_BlendMode(blendModeData);
+	m_compatibilityMode = compatibilityMode;
+	updateBlendMode(
+		m_ui->blendMode, mode, m_item.group, m_item.isolated, m_compatibilityMode);
 }
 
-void LayerProperties::initBlendModeCombo(QComboBox *combo)
+void LayerProperties::updateBlendMode(
+	QComboBox *combo, DP_BlendMode mode, bool group, bool isolated,
+	bool compatibilityMode)
 {
-	combo->clear();
-	for(const canvas::blendmode::Named &m : canvas::blendmode::layerModeNames()) {
-		combo->addItem(m.name, int(m.mode));
-    }
-}
-
-void LayerProperties::setBlendModeComboCompatibilityMode(
-	QComboBox *combo, bool compatibilityMode)
-{
-	QStandardItemModel *model = qobject_cast<QStandardItemModel *>(combo->model());
-	if(model) {
-		canvas::blendmode::setCompatibilityMode(model, compatibilityMode);
+	if(compatibilityMode) {
+		combo->setModel(compatibilityLayerBlendModes());
+	} else if(group) {
+		combo->setModel(groupBlendModes());
 	} else {
-		qWarning("Blend mode combo does not use standard item model");
+		combo->setModel(layerBlendModes());
 	}
+	// If this is an unknown blend mode, disable the control to avoid damage.
+	int blendModeIndex = searchBlendModeIndex(combo, mode);
+	combo->setEnabled(blendModeIndex != -1);
+	combo->setCurrentIndex(group && !isolated ? 0 : blendModeIndex);
+}
+
+QStandardItemModel *LayerProperties::layerBlendModes()
+{
+	static QStandardItemModel *model;
+	if(!model) {
+		model = new QStandardItemModel;
+		addBlendModesTo(model);
+	}
+	return model;
+}
+
+QStandardItemModel *LayerProperties::groupBlendModes()
+{
+	static QStandardItemModel *model;
+	if(!model) {
+		model = new QStandardItemModel;
+		QStandardItem *item = new QStandardItem{tr("Pass Through")};
+		item->setData(-1, Qt::UserRole);
+		model->appendRow(item);
+		addBlendModesTo(model);
+	}
+	return model;
+}
+
+QStandardItemModel *LayerProperties::compatibilityLayerBlendModes()
+{
+	static QStandardItemModel *model;
+	if(!model) {
+		model = new QStandardItemModel;
+		addBlendModesTo(model);
+		canvas::blendmode::setCompatibilityMode(model, true);
+	}
+	return model;
 }
 
 void LayerProperties::showEvent(QShowEvent *event)
@@ -120,9 +141,22 @@ void LayerProperties::emitChanges()
 	}
 
 	const int oldOpacity = qRound(m_item.opacity * 100.0);
-	const DP_BlendMode newBlendmode = DP_BlendMode(m_ui->blendMode->currentData().toInt());
 	const bool censored = m_ui->censored->isChecked();
-	const bool isolated = !m_ui->passThrough->isChecked();
+	DP_BlendMode newBlendmode;
+	bool isolated;
+	if(m_ui->blendMode->isEnabled()) {
+		int blendModeData = m_ui->blendMode->currentData().toInt();
+		if(blendModeData == -1) {
+			newBlendmode = m_item.blend;
+			isolated = false;
+		} else {
+			newBlendmode = DP_BlendMode(blendModeData);
+			isolated = m_item.group;
+		}
+	} else {
+		newBlendmode = m_item.blend;
+		isolated = m_item.isolated;
+	}
 
 	if(
 		m_ui->opacitySlider->value() != oldOpacity ||
@@ -151,11 +185,20 @@ void LayerProperties::emitChanges()
 	emit layerCommands(messages.count(), messages.constData());
 }
 
-int LayerProperties::searchBlendModeIndex(DP_BlendMode mode)
+void LayerProperties::addBlendModesTo(QStandardItemModel *model)
 {
-	const int blendModeCount = m_ui->blendMode->count();
+	for(const canvas::blendmode::Named &m : canvas::blendmode::layerModeNames()) {
+		QStandardItem *item = new QStandardItem{m.name};
+		item->setData(int(m.mode), Qt::UserRole);
+		model->appendRow(item);
+	}
+}
+
+int LayerProperties::searchBlendModeIndex(QComboBox *combo, DP_BlendMode mode)
+{
+	int blendModeCount = combo->count();
     for(int i = 0; i < blendModeCount; ++i) {
-		if(m_ui->blendMode->itemData(i).toInt() == int(mode)) {
+		if(combo->itemData(i).toInt() == int(mode)) {
             return i;
         }
     }

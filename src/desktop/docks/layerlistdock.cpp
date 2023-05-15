@@ -56,7 +56,6 @@ LayerList::LayerList(QWidget *parent)
 
 	m_blendModeCombo = new QComboBox;
 	m_blendModeCombo->setMinimumWidth(24);
-	dialogs::LayerProperties::initBlendModeCombo(m_blendModeCombo);
 	connect(
 		m_blendModeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
 		this, &LayerList::blendModeChanged);
@@ -245,8 +244,13 @@ void LayerList::updateLockedControls()
 
 void LayerList::updateBlendModes(bool compatibilityMode)
 {
-	dialogs::LayerProperties::setBlendModeComboCompatibilityMode(
-		m_blendModeCombo, compatibilityMode);
+	QModelIndex index = currentSelection();
+	if(currentSelection().isValid()) {
+		const canvas::LayerListItem &layer = index.data().value<canvas::LayerListItem>();
+		dialogs::LayerProperties::updateBlendMode(
+			m_blendModeCombo, layer.blend, layer.group, layer.isolated,
+			compatibilityMode);
+	}
 }
 
 void LayerList::selectLayer(int id)
@@ -630,17 +634,6 @@ void LayerList::selectionChanged(const QItemSelection &selected)
 	emit layerSelected(m_selectedId);
 }
 
-static int searchBlendModeIndex(QComboBox *blendModeCombo, DP_BlendMode mode)
-{
-	const int blendModeCount = blendModeCombo->count();
-    for(int i = 0; i < blendModeCount; ++i) {
-		if(blendModeCombo->itemData(i).toInt() == int(mode)) {
-            return i;
-        }
-    }
-    return 0; // Don't know that blend mode, punt to Normal.
-}
-
 void LayerList::updateUiFromSelection()
 {
 	const canvas::LayerListItem &layer = currentSelection().data().value<canvas::LayerListItem>();
@@ -648,7 +641,9 @@ void LayerList::updateUiFromSelection()
 	m_selectedId = layer.id;
 
 	m_aclmenu->setCensored(layer.censored);
-	m_blendModeCombo->setCurrentIndex(searchBlendModeIndex(m_blendModeCombo, layer.blend));
+	dialogs::LayerProperties::updateBlendMode(
+		m_blendModeCombo, layer.blend, layer.group, layer.isolated,
+		m_canvas->isCompatibilityMode());
 	m_opacitySlider->setValue(layer.opacity * 100.0 + 0.5);
 
 	layerLockStatusChanged(layer.id);
@@ -702,10 +697,14 @@ void LayerList::triggerUpdate()
 	const canvas::LayerListItem &layer = index.data().value<canvas::LayerListItem>();
 
 	DP_BlendMode mode;
+	bool isolated;
 	if(m_updateBlendModeIndex == -1) {
 		mode = layer.blend;
+		isolated = layer.isolated;
 	} else {
-		mode = DP_BlendMode(m_blendModeCombo->itemData(m_updateBlendModeIndex).toInt());
+		int blendModeData = m_blendModeCombo->itemData(m_updateBlendModeIndex).toInt();
+		mode = blendModeData == -1 ? layer.blend : DP_BlendMode(blendModeData);
+		isolated = layer.group && blendModeData != -1;
 		m_updateBlendModeIndex = -1;
 	}
 
@@ -719,7 +718,7 @@ void LayerList::triggerUpdate()
 
 	uint8_t flags =
 		(layer.censored ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR : 0) |
-		(layer.isolated ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED : 0);
+		(isolated ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED : 0);
 
 	drawdance::Message msg = drawdance::Message::makeLayerAttributes(
 		m_canvas->localUserId(), layer.id, 0, flags, opacity * 255.0f + 0.5f, mode);

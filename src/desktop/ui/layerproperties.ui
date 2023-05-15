@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>317</width>
-    <height>347</height>
+    <height>294</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -34,6 +34,16 @@
      </property>
     </widget>
    </item>
+   <item row="2" column="1">
+    <widget class="KisSliderSpinBox" name="opacitySlider">
+     <property name="suffix">
+      <string>%</string>
+     </property>
+     <property name="maximum">
+      <number>100</number>
+     </property>
+    </widget>
+   </item>
    <item row="4" column="0">
     <widget class="QLabel" name="blendModeLabel">
      <property name="text">
@@ -44,51 +54,28 @@
    <item row="4" column="1">
     <widget class="QComboBox" name="blendMode"/>
    </item>
-   <item row="6" column="1">
-    <widget class="QCheckBox" name="passThrough">
-     <property name="text">
-      <string>Pass through</string>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="1">
-    <spacer>
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Fixed</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>5</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="8" column="0">
+   <item row="6" column="0">
     <widget class="QLabel">
      <property name="text">
       <string>Visibility:</string>
      </property>
     </widget>
    </item>
-   <item row="8" column="1">
+   <item row="6" column="1">
     <widget class="QCheckBox" name="visible">
      <property name="text">
       <string>Visible to you</string>
      </property>
     </widget>
    </item>
-   <item row="9" column="1">
+   <item row="7" column="1">
     <widget class="QCheckBox" name="censored">
      <property name="text">
       <string>Censor content</string>
      </property>
     </widget>
    </item>
-   <item row="10" column="1">
+   <item row="8" column="1">
     <spacer>
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -104,28 +91,28 @@
      </property>
     </spacer>
    </item>
-   <item row="11" column="0">
+   <item row="9" column="0">
     <widget class="QLabel">
      <property name="text">
       <string>Collaboration:</string>
      </property>
     </widget>
    </item>
-   <item row="11" column="1">
+   <item row="9" column="1">
     <widget class="QCheckBox" name="defaultLayer">
      <property name="text">
       <string>Default for new users</string>
      </property>
     </widget>
    </item>
-   <item row="13" column="0">
+   <item row="11" column="0">
     <widget class="QLabel">
      <property name="text">
       <string>Created by:</string>
      </property>
     </widget>
    </item>
-   <item row="13" column="1">
+   <item row="11" column="1">
     <widget class="QLabel" name="createdBy">
      <property name="text">
       <string notr="true">#0</string>
@@ -135,7 +122,7 @@
      </property>
     </widget>
    </item>
-   <item row="15" column="0">
+   <item row="13" column="0">
     <spacer>
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -148,20 +135,10 @@
      </property>
     </spacer>
    </item>
-   <item row="16" column="0" colspan="2">
+   <item row="14" column="0" colspan="2">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="standardButtons">
       <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1">
-    <widget class="KisSliderSpinBox" name="opacitySlider">
-     <property name="suffix">
-      <string>%</string>
-     </property>
-     <property name="maximum">
-      <number>100</number>
      </property>
     </widget>
    </item>
@@ -178,28 +155,10 @@
   <tabstop>title</tabstop>
   <tabstop>opacitySlider</tabstop>
   <tabstop>blendMode</tabstop>
-  <tabstop>passThrough</tabstop>
   <tabstop>visible</tabstop>
   <tabstop>censored</tabstop>
   <tabstop>defaultLayer</tabstop>
  </tabstops>
  <resources/>
- <connections>
-  <connection>
-   <sender>passThrough</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>blendMode</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>150</x>
-     <y>141</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>152</x>
-     <y>98</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

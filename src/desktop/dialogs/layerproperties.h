@@ -8,6 +8,7 @@
 #include <QDialog>
 
 class QComboBox;
+class QStandardItemModel;
 class Ui_LayerProperties;
 
 namespace drawdance {
@@ -30,9 +31,13 @@ public:
 
 	int layerId() const { return m_item.id; }
 
-    static void initBlendModeCombo(QComboBox *combo);
-    static void setBlendModeComboCompatibilityMode(
-        QComboBox *combo, bool compatibilityMode);
+	static void updateBlendMode(
+		QComboBox *combo, DP_BlendMode mode, bool group, bool isolated,
+		bool compatibilityMode);
+
+	static QStandardItemModel *layerBlendModes();
+	static QStandardItemModel *groupBlendModes();
+	static QStandardItemModel *compatibilityLayerBlendModes();
 
 signals:
 	void layerCommands(int count, const drawdance::Message *msgs);
@@ -45,12 +50,14 @@ private slots:
 	void emitChanges();
 
 private:
-	int searchBlendModeIndex(DP_BlendMode mode);
+	static void addBlendModesTo(QStandardItemModel *model);
+	static int searchBlendModeIndex(QComboBox *combo, DP_BlendMode mode);
 
     Ui_LayerProperties *m_ui;
 	canvas::LayerListItem m_item;
 	bool m_wasDefault;
 	uint8_t m_user;
+	bool m_compatibilityMode;
 };
 
 }
