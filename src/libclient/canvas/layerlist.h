@@ -158,6 +158,8 @@ public slots:
 	void setLayersVisibleInFrame(const QSet<int> &layers, bool frameMode);
 
 signals:
+	void layersChanged(const QVector<LayerListItem> &items);
+
 	//! A new layer was created that should be automatically selected
 	void autoSelectRequest(int);
 

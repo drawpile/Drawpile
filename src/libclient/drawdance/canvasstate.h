@@ -84,7 +84,7 @@ public:
 
     DP_FloodFillResult floodFill(
         int x, int y, const QColor &fillColor, double tolerance, int layerId,
-        bool sampleMerged, int sizeLimit, int gap, int expand, int featherRadius,
+        int sizeLimit, int gap, int expand, int featherRadius,
         const QAtomicInt &cancel, QImage &outImg, int &outX, int &outY) const;
 
     drawdance::CanvasState makeBackwardCompatible() const;

@@ -86,6 +86,7 @@ static constexpr auto CTRL_KEY = Qt::CTRL;
 #include "libclient/tools/toolcontroller.h"
 #include "desktop/toolwidgets/brushsettings.h"
 #include "desktop/toolwidgets/colorpickersettings.h"
+#include "desktop/toolwidgets/fillsettings.h"
 #include "desktop/toolwidgets/selectionsettings.h"
 #include "desktop/toolwidgets/annotationsettings.h"
 #include "desktop/toolwidgets/lasersettings.h"
@@ -384,6 +385,8 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	connect(m_dockLayers, &docks::LayerList::layerSelected, m_doc->toolCtrl(), &tools::ToolController::setActiveLayer);
 	connect(m_dockLayers, &docks::LayerList::layerSelected, m_dockTimeline, &docks::Timeline::setCurrentLayer);
+	connect(m_dockLayers, &docks::LayerList::fillSourceSet,
+		m_dockToolSettings->fillSettings(), &tools::FillSettings::setSourceLayerId);
 	connect(m_dockTimeline, &docks::Timeline::layerSelected, m_dockLayers, &docks::LayerList::selectLayer);
 	connect(m_doc->toolCtrl(), &tools::ToolController::activeAnnotationChanged,
 			m_dockToolSettings->annotationSettings(), &tools::AnnotationSettings::setSelectionId);
@@ -514,6 +517,7 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	connect(m_dockOnionSkins, &docks::OnionSkinsDock::onionSkinsChanged, canvas->paintEngine(), &canvas::PaintEngine::setOnionSkins);
 	m_dockOnionSkins->triggerUpdate();
 
+	m_dockToolSettings->fillSettings()->setLayerList(m_canvasscene->model()->layerlist());
 	m_dockToolSettings->inspectorSettings()->setUserList(m_canvasscene->model()->userlist());
 
 	// Make sure the UI matches the default feature access level
@@ -3107,6 +3111,7 @@ void MainWindow::setupActions()
 	QAction *layerMerge = makeAction("layermerge", tr("Merge Layer")).icon("arrow-down-double");
 	QAction *layerProperties = makeAction("layerproperties", tr("Properties...")).icon("configure");
 	QAction *layerDelete = makeAction("layerdelete", tr("Delete Layer")).icon("trash-empty");
+	QAction *layerSetFillSource = makeAction("layersetfillsource", tr("Set as Fill Source")).icon("fill-color");
 
 	QAction *layerUpAct = makeAction("layer-up", tr("Select Above")).shortcut("Shift+X");
 	QAction *layerDownAct = makeAction("layer-down", tr("Select Below")).shortcut("Shift+Z");
@@ -3150,7 +3155,7 @@ void MainWindow::setupActions()
 	QAction *trackBelow = makeAction("track-below", tr("Track Below")).icon("arrow-down").shortcut("Ctrl+Shift+J");
 
 	m_currentdoctools->addAction(showFlipbook);
-	m_dockLayers->setLayerEditActions(layerAdd, groupAdd, layerDupe, layerMerge, layerProperties, layerDelete, keyFrameSetLayer);
+	m_dockLayers->setLayerEditActions(layerAdd, groupAdd, layerDupe, layerMerge, layerProperties, layerDelete, layerSetFillSource, keyFrameSetLayer);
 	m_dockTimeline->setActions({keyFrameSetLayer, keyFrameSetEmpty, keyFrameCut, keyFrameCopy, keyFramePaste, keyFrameProperties, keyFrameDelete, trackAdd, trackVisible, trackOnionSkin, trackDuplicate, trackRetitle, trackDelete, frameCountSet, framerateSet, frameNext, framePrev, trackAbove, trackBelow}, layerViewNormal, layerViewCurrentFrame);
 
 	connect(showFlipbook, &QAction::triggered, this, &MainWindow::showFlipbook);

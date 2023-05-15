@@ -330,6 +330,7 @@ void LayerListModel::setLayers(const drawdance::LayerPropsList &lpl)
 	m_items = newItems;
 	endResetModel();
 
+	emit layersChanged(m_items);
 	if(autoselect >= 0) {
 		emit autoSelectRequest(autoselect);
 	}

@@ -7,6 +7,11 @@
 
 class Ui_FillSettings;
 
+namespace canvas {
+struct LayerListItem;
+class LayerListModel;
+}
+
 namespace tools {
 
 /**
@@ -31,6 +36,8 @@ public:
 	ToolProperties saveToolSettings() override;
 	void restoreToolSettings(const ToolProperties &cfg) override;
 
+	void setLayerList(canvas::LayerListModel *layerlist);
+
 	static int modeIndexToBlendMode(int mode);
 
 signals:
@@ -39,18 +46,23 @@ signals:
 public slots:
 	void pushSettings() override;
 	void toggleEraserMode() override;
+	void setActiveLayer(int layerId);
+	void setSourceLayerId(int layerId);
+	void setLayers(const QVector<canvas::LayerListItem> &items);
 
 protected:
 	QWidget *createUiWidget(QWidget *parent) override;
 
 private:
+	class FillSourceModel;
 	enum Mode {
 		Normal,
 		Behind,
 		Erase,
 	};
 
-	Ui_FillSettings * m_ui;
+	Ui_FillSettings *m_ui;
+	FillSourceModel *m_fillSourceModel;
 	Mode m_previousMode = Normal;
 	qreal m_quickAdjust1 = 0.0;
 };

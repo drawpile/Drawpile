@@ -147,7 +147,7 @@ static void addLayerButton(
 	layout->addWidget(button);
 }
 
-void LayerList::setLayerEditActions(QAction *addLayer, QAction *addGroup, QAction *duplicate, QAction *merge, QAction *properties, QAction *del, QAction *keyFrameSetLayer)
+void LayerList::setLayerEditActions(QAction *addLayer, QAction *addGroup, QAction *duplicate, QAction *merge, QAction *properties, QAction *del, QAction *setFillSource, QAction *keyFrameSetLayer)
 {
 	Q_ASSERT(addLayer);
 	Q_ASSERT(addGroup);
@@ -160,6 +160,7 @@ void LayerList::setLayerEditActions(QAction *addLayer, QAction *addGroup, QActio
 	m_mergeLayerAction = merge;
 	m_propertiesAction = properties;
 	m_deleteLayerAction = del;
+	m_setFillSourceAction = setFillSource;
 
 	// Add the actions below the layer list
 	QWidget *root = widget();
@@ -186,6 +187,7 @@ void LayerList::setLayerEditActions(QAction *addLayer, QAction *addGroup, QActio
 	m_contextMenu->addAction(m_deleteLayerAction);
 	m_contextMenu->addAction(m_propertiesAction);
 	m_contextMenu->addSeparator();
+	m_contextMenu->addAction(m_setFillSourceAction);
 	m_contextMenu->addAction(keyFrameSetLayer);
 
 	// Action functionality
@@ -195,6 +197,7 @@ void LayerList::setLayerEditActions(QAction *addLayer, QAction *addGroup, QActio
 	connect(m_mergeLayerAction, &QAction::triggered, this, &LayerList::mergeSelected);
 	connect(m_propertiesAction, &QAction::triggered, this, &LayerList::showPropertiesOfSelected);
 	connect(m_deleteLayerAction, &QAction::triggered, this, &LayerList::deleteSelected);
+	connect(m_setFillSourceAction, &QAction::triggered, this, &LayerList::setFillSourceToSelected);
 
 	updateLockedControls();
 }
@@ -239,6 +242,7 @@ void LayerList::updateLockedControls()
 		m_duplicateLayerAction->setEnabled(enabled);
 		m_deleteLayerAction->setEnabled(enabled);
 		m_mergeLayerAction->setEnabled(enabled && canMergeCurrent());
+		m_setFillSourceAction->setEnabled(m_selectedId != 0);
 	}
 }
 
@@ -489,6 +493,14 @@ void LayerList::mergeSelected()
 	drawdance::Message messages[] = {
 		drawdance::Message::makeUndoPoint(contextId), msg};
 	emit layerCommands(DP_ARRAY_LENGTH(messages), messages);
+}
+
+void LayerList::setFillSourceToSelected()
+{
+	QModelIndex index = currentSelection();
+	if(index.isValid()) {
+		emit fillSourceSet(index.data(canvas::LayerListModel::IdRole).toInt());
+	}
 }
 
 void LayerList::showPropertiesOfSelected()

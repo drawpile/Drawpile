@@ -25,7 +25,7 @@ public:
 	void setFeatherRadius(int featherRadius) { m_featherRadius = featherRadius; }
 	void setSize(int size) { m_size = size; }
 	void setGap(int gap) { m_gap = gap; }
-	void setSampleMerged(bool sm) { m_sampleMerged = sm; }
+	void setLayerId(int layerId) { m_layerId = layerId; }
 	void setBlendMode(int blendMode) { m_blendMode = blendMode; }
 
 private:
@@ -39,7 +39,7 @@ private:
 	int m_featherRadius;
 	int m_size;
 	int m_gap;
-	bool m_sampleMerged;
+	int m_layerId;
 	int m_blendMode;
 	bool m_running;
 	QAtomicInt m_cancel;

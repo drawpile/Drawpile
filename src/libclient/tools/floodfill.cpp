@@ -17,34 +17,34 @@ public:
 	Task(
 		FloodFill *tool, const QAtomicInt &cancel,
 		const drawdance::CanvasState &canvasState, const QPointF &point,
-		const QColor &fillColor, double tolerance, int layerId,
-		bool sampleMerged, int size, int gap, int expansion, int featherRadius)
+		const QColor &fillColor, double tolerance, int sourceLayerId, int size,
+		int gap, int expansion, int featherRadius, int targetLayerId)
 		: m_tool{tool}
 		, m_cancel{cancel}
 		, m_canvasState{canvasState}
 		, m_point{point}
 		, m_fillColor{fillColor}
 		, m_tolerance{tolerance}
-		, m_layerId{layerId}
-		, m_sampleMerged{sampleMerged}
+		, m_sourceLayerId{sourceLayerId}
 		, m_size{size}
 		, m_gap{gap}
 		, m_expansion{expansion}
 		, m_featherRadius{featherRadius}
+		, m_targetLayerId{targetLayerId}
 	{
 	}
 
 	void run() override
 	{
 		m_result = m_canvasState.floodFill(
-			m_point.x(), m_point.y(), m_fillColor, m_tolerance, m_layerId,
-			m_sampleMerged, m_size, m_gap, m_expansion, m_featherRadius,
-			m_cancel, m_img, m_x, m_y);
+			m_point.x(), m_point.y(), m_fillColor, m_tolerance, m_sourceLayerId,
+			m_size, m_gap, m_expansion, m_featherRadius, m_cancel, m_img, m_x,
+			m_y);
 	}
 
 	void finished() override { m_tool->floodFillFinished(this); }
 
-	int layerId() const { return m_layerId; }
+	int targetLayerId() const { return m_targetLayerId; }
 	DP_FloodFillResult result() const { return m_result; }
 	const QImage &img() const { return m_img; }
 	int x() const { return m_x; }
@@ -57,12 +57,12 @@ private:
 	QPointF m_point;
 	QColor m_fillColor;
 	double m_tolerance;
-	int m_layerId;
-	bool m_sampleMerged;
+	int m_sourceLayerId;
 	int m_size;
 	int m_gap;
 	int m_expansion;
 	int m_featherRadius;
+	int m_targetLayerId;
 	DP_FloodFillResult m_result;
 	QImage m_img;
 	int m_x;
@@ -78,7 +78,7 @@ FloodFill::FloodFill(ToolController &owner)
 	, m_featherRadius(0)
 	, m_size(500)
 	, m_gap{0}
-	, m_sampleMerged(true)
+	, m_layerId{0}
 	, m_blendMode(DP_BLEND_MODE_NORMAL)
 	, m_running{false}
 	, m_cancel{false}
@@ -99,8 +99,8 @@ void FloodFill::begin(const canvas::Point &point, bool right, float zoom)
 		m_cancel = false;
 		m_owner.executeAsync(new Task{
 			this, m_cancel, model->paintEngine()->viewCanvasState(), point,
-			fillColor, m_tolerance, m_owner.activeLayer(), m_sampleMerged,
-			m_size, m_gap, m_expansion, m_featherRadius});
+			fillColor, m_tolerance, m_layerId, m_size, m_gap, m_expansion,
+			m_featherRadius, m_owner.activeLayer()});
 	}
 }
 
@@ -129,8 +129,8 @@ void FloodFill::floodFillFinished(Task *task)
 		drawdance::MessageList msgs;
 		msgs.append(drawdance::Message::makeUndoPoint(contextId));
 		drawdance::Message::makePutImages(
-			msgs, contextId, task->layerId(), m_blendMode, task->x(), task->y(),
-			task->img());
+			msgs, contextId, task->targetLayerId(), m_blendMode, task->x(),
+			task->y(), task->img());
 		m_owner.client()->sendMessages(msgs.count(), msgs.constData());
 	} else if(result != DP_FLOOD_FILL_CANCELLED) {
 		qWarning("Flood fill failed: %s", DP_error());

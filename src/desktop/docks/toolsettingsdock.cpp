@@ -211,6 +211,9 @@ ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
 				emit sizeChanged(size);
 			}
 		});
+	connect(
+		d->ctrl, &tools::ToolController::activeLayerChanged, fs,
+		&tools::FillSettings::setActiveLayer);
 
 	connect(d->ctrl, &tools::ToolController::activeBrushChanged, this,
 			&ToolSettings::activeBrushChanged);

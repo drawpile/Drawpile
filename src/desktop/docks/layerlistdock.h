@@ -44,7 +44,7 @@ public:
 	void setCanvas(canvas::CanvasModel *canvas);
 
 	//! These actions are shown in a menu outside this dock
-	void setLayerEditActions(QAction *addLayer, QAction *addGroup, QAction *duplicate, QAction *merge, QAction *properties, QAction *del, QAction *keyFrameSetLayer);
+	void setLayerEditActions(QAction *addLayer, QAction *addGroup, QAction *duplicate, QAction *merge, QAction *properties, QAction *del, QAction *setFillSource, QAction *keyFrameSetLayer);
 
 	/**
 	 * Is the currently selected layer locked for editing?
@@ -63,6 +63,7 @@ signals:
 	//! A layer was selected by the user
 	void layerSelected(int id);
 	void activeLayerVisibilityChanged();
+	void fillSourceSet(int layerId);
 
 	void layerCommands(int count, const drawdance::Message *msgs);
 
@@ -77,6 +78,7 @@ private slots:
 	void duplicateLayer();
 	void deleteSelected();
 	void mergeSelected();
+	void setFillSourceToSelected();
 
 	void showPropertiesOfSelected();
 	void showPropertiesOfIndex(QModelIndex index);
@@ -137,6 +139,7 @@ private:
 	QAction *m_mergeLayerAction;
 	QAction *m_propertiesAction;
 	QAction *m_deleteLayerAction;
+	QAction *m_setFillSourceAction;
 };
 
 }

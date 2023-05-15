@@ -71,16 +71,6 @@
        <height>0</height>
       </size>
      </property>
-     <item>
-      <property name="text">
-       <string>Current Layer</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Merged Image</string>
-      </property>
-     </item>
     </widget>
    </item>
    <item row="6" column="0" colspan="2">
