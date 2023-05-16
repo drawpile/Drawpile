@@ -21,6 +21,29 @@ FileWrangler::FileWrangler(QWidget *parent)
 {
 }
 
+QStringList FileWrangler::getImportCertificatePaths(const QString &title) const
+{
+	const auto filter = tr("Certificates (%1)").arg("*.pem *.crt *.cer")
+		+ ";;" + QApplication::tr("All files (*)");
+
+	// TODO: QFileDialog static methods do not create sheet dialogs on macOS
+	// when appropriate, nor do they allow setting the accept button label, nor
+	// do they set the appropriate file mode to prevent selecting non-existing
+	// files, so this code should be abstracted out to get rid of those areas
+	// that use static methods where they do not do the right thing.
+	QFileDialog dialog(parentWidget(), title, QString(), filter);
+	dialog.setLabelText(QFileDialog::Accept, tr("Import"));
+	dialog.setFileMode(QFileDialog::ExistingFiles);
+	dialog.setOption(QFileDialog::ReadOnly);
+	dialog.setWindowModality(Qt::WindowModal);
+	dialog.setSupportedSchemes({QStringLiteral("file")});
+	if (dialog.exec() == QDialog::Accepted) {
+		return dialog.selectedFiles();
+	} else {
+		return {};
+	}
+}
+
 QString FileWrangler::getOpenPath() const
 {
 	return showOpenFileDialog(

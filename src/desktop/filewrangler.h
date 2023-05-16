@@ -6,6 +6,7 @@
 #include "libclient/utils/images.h"
 #include <QObject>
 #include <QString>
+#include <QStringList>
 
 class Document;
 class QWidget;
@@ -36,6 +37,7 @@ public:
 	FileWrangler &operator=(const FileWrangler &) = delete;
 	FileWrangler &operator=(FileWrangler &&) = delete;
 
+	QStringList getImportCertificatePaths(const QString &title) const;
 	QString getOpenPath() const;
 	QString getOpenPasteImagePath() const;
 	QString getOpenDebugDumpsPath() const;
