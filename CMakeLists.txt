@@ -15,15 +15,17 @@ endif()
 # file is used as the CMake project version
 include(DrawpileVersions)
 
-if(APPLE)
-	set(EXTRA_LANGUAGES OBJCXX)
-endif()
-
 project(Drawpile
 	VERSION ${PROJECT_VERSION}
 	HOMEPAGE_URL https://drawpile.net
-	LANGUAGES CXX ${EXTRA_LANGUAGES}
+	LANGUAGES CXX
 )
+
+# This must come after `project` because cross-compilation is configured by the
+# `project` call
+if(APPLE)
+	enable_language(OBJCXX)
+endif()
 
 # DrawpileOptions uses this so it must be included before then
 include(FeatureSummary)
