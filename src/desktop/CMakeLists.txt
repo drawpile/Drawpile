@@ -2,6 +2,8 @@ find_package(${QT_PACKAGE_NAME} REQUIRED COMPONENTS Gui Svg Widgets Multimedia)
 find_package(QtColorWidgets QUIET)
 find_package(${QT_PACKAGE_NAME}Keychain QUIET)
 
+set(gui_identifier net.drawpile.DrawpileClient)
+
 if(ANDROID)
 	if(QT_VERSION VERSION_GREATER_EQUAL 6)
 		qt_add_executable(drawpile)
@@ -476,7 +478,11 @@ endif()
 
 if(WIN32)
 	configure_file(drawpile.rc.in drawpile.rc)
-	target_sources(drawpile PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/drawpile.rc")
+	configure_file(drawpile.exe.manifest.in drawpile.exe.manifest)
+	target_sources(drawpile PRIVATE
+		"${CMAKE_CURRENT_BINARY_DIR}/drawpile.exe.manifest"
+		"${CMAKE_CURRENT_BINARY_DIR}/drawpile.rc"
+	)
 
 	# On Windows the assets must be set up next to the output binary at build
 	# time for developers to be able to run the application without missing
@@ -489,7 +495,7 @@ elseif(APPLE)
 		MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME}
 		MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
 		MACOSX_BUNDLE_COPYRIGHT "Copyright © Drawpile contributors"
-		MACOSX_BUNDLE_GUI_IDENTIFIER net.drawpile.DrawpileClient
+		MACOSX_BUNDLE_GUI_IDENTIFIER ${gui_identifier}
 		MACOSX_BUNDLE_ICON_FILE drawpile.icns
 		MACOSX_BUNDLE_INFO_STRING "${PROJECT_NAME} ${PROJECT_VERSION}"
 		MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION}
