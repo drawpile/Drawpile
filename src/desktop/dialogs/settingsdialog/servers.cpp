@@ -4,6 +4,7 @@
 #include "desktop/dialogs/certificateview.h"
 #include "desktop/dialogs/settingsdialog/helpers.h"
 #include "desktop/dialogs/settingsdialog/servers.h"
+#include "desktop/filewrangler.h"
 #include "desktop/settings.h"
 #include "desktop/utils/listserverdelegate.h"
 #include "desktop/utils/sanerformlayout.h"
@@ -157,23 +158,6 @@ void Servers::addListServer(sessionlisting::ListServerModel *model)
 	}
 }
 
-// TODO: Move to some utility module
-static QStringList askForFiles(const QString &title, const QString &filter, const QString &action, QWidget *parent)
-{
-	QFileDialog dialog(parent, title, QString(), filter);
-	dialog.setLabelText(QFileDialog::Accept, action);
-	dialog.setAcceptMode(QFileDialog::AcceptOpen);
-	dialog.setFileMode(QFileDialog::ExistingFiles);
-	dialog.setOption(QFileDialog::ReadOnly);
-	dialog.setWindowModality(Qt::WindowModal);
-	dialog.setSupportedSchemes({QStringLiteral("file")});
-	if (dialog.exec() == QDialog::Accepted) {
-		return dialog.selectedFiles();
-	} else {
-		return {};
-	}
-}
-
 static bool askToContinue(const QString &title, const QString &message, QWidget *parent)
 {
 	QMessageBox box(
@@ -194,13 +178,7 @@ void Servers::importCertificates(CertificateStoreModel *model)
 {
 	const auto title = tr("Import trusted certificates");
 
-	const auto paths = askForFiles(
-		title,
-		tr("Certificates (%1)").arg("*.pem *.crt *.cer") + ";;" +
-		QApplication::tr("All files (*)"),
-		tr("Import"),
-		this
-	);
+	const auto paths = FileWrangler(this).getImportCertificatePaths(title);
 
 	for (const auto &path : paths) {
 		auto [ index, error ] = model->addCertificate(path, true);
