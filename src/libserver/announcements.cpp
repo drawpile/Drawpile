@@ -44,7 +44,8 @@ void Announcements::announceSession(Announcable *session, const QUrl &listServer
 		session,
 		Announcement {},
 		QElapsedTimer(),
-		PrivacyMode::Undefined
+		PrivacyMode::Undefined,
+		{},
 	};
 
 	server::Log()
@@ -55,7 +56,7 @@ void Announcements::announceSession(Announcable *session, const QUrl &listServer
 
 	auto *response = sessionlisting::announceSession(listServer, description);
 
-	connect(response, &AnnouncementApiResponse::finished, this, [listServer, session, response, this](const QVariant &result, const QString &message, const QString &error) {
+	connect(response, &AnnouncementApiResponse::finished, this, [listServer, session, description, response, this](const QVariant &result, const QString &message, const QString &error) {
 		response->deleteLater();
 
 		Listing *listing = findListing(listServer, session);
@@ -87,6 +88,7 @@ void Announcements::announceSession(Announcable *session, const QUrl &listServer
 		listing->announcement = result.value<sessionlisting::Announcement>();
 		Q_ASSERT(listing->announcement.apiUrl == listing->listServer);
 		listing->mode = listing->announcement.isPrivate ? PrivacyMode::Private : PrivacyMode::Public;
+		listing->description = description;
 		listing->refreshTimer.start();
 
 		emit announcementsChanged(listing->session);
@@ -164,7 +166,12 @@ void Announcements::refreshListings()
 
 	// Gather a list of announcements that need refreshing
 	for(Listing &listing : m_announcements) {
-		if(listing.mode != PrivacyMode::Undefined && (listing.refreshTimer.hasExpired(listing.announcement.refreshInterval * 60 * 1000) || refreshServer == listing.listServer)) {
+		bool shouldRefresh = listing.mode != PrivacyMode::Undefined && (
+			listing.refreshTimer.hasExpired(listing.announcement.refreshInterval * 60 * 1000) ||
+			listing.session->hasUrgentAnnouncementChange(listing.description) ||
+			refreshServer == listing.listServer);
+
+		if(shouldRefresh) {
 			Q_ASSERT(listing.announcement.apiUrl == listing.listServer);
 
 			// The bulk update function can only update one server at a time.
@@ -238,6 +245,8 @@ void Announcements::refreshListings()
 				// Whoops! Looks like this session has ended
 				continue;
 			}
+
+			listing->description = pair.second;
 
 			// Remove missing listings
 			const QString listingId = QString::number(listing->announcement.listingId);

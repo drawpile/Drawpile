@@ -975,8 +975,19 @@ sessionlisting::Session Session::getSessionAnnouncement() const
 		m_history->hasFlag(SessionHistory::Nsfm),
 		sessionlisting::PrivacyMode::Undefined,
 		m_history->founderName(),
-		m_history->startTime()
+		m_history->startTime(),
+		m_history->maxUsers(),
+		m_closed,
 	};
+}
+
+bool Session::hasUrgentAnnouncementChange(const sessionlisting::Session &description) const
+{
+	return description.title != m_history->title() ||
+		description.nsfm != m_history->hasFlag(SessionHistory::Nsfm) ||
+		description.password != !m_history->passwordHash().isEmpty() ||
+		(description.users >= description.maxUsers) != (userCount() >= m_history->maxUsers()) ||
+		description.closed != m_closed;
 }
 
 

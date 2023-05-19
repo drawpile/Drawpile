@@ -241,6 +241,8 @@ public:
 
 	sessionlisting::Session getSessionAnnouncement() const override;
 
+	bool hasUrgentAnnouncementChange(const sessionlisting::Session &description) const override;
+
 	void sendListserverMessage(const QString &message) override { messageAll(message, false); }
 
 	//! Get the session state

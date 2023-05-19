@@ -69,6 +69,7 @@ private:
 
 		QElapsedTimer refreshTimer;
 		PrivacyMode mode; // undefined means the announcement hasn't finishe yet
+		sessionlisting::Session description;
 	};
 
 	Listing *findListing(const QUrl &listServer, const Announcable *session);
