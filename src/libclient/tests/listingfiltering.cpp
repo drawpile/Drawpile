@@ -91,7 +91,9 @@ private:
 			nsfm,
 			sessionlisting::PrivacyMode::Public,
 			QString(),
-			QDateTime()
+			QDateTime(),
+			254,
+			false,
 		};
 	}
 

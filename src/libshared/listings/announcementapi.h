@@ -42,6 +42,8 @@ struct Session {
 	PrivacyMode isPrivate;
 	QString owner;
 	QDateTime started;
+	int maxUsers;
+	bool closed;
 };
 
 struct Announcement {

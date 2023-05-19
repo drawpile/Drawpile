@@ -247,7 +247,9 @@ AnnouncementApiResponse *getSessionList(const QUrl &apiUrl)
 				obj["nsfm"].toBool(),
 				PrivacyMode::Public, // a listed session cannot be private by definition
 				obj["owner"].toString(),
-				started
+				started,
+				obj["maxusers"].toInt(),
+				obj["closed"].toBool(),
 			};
 		}
 
@@ -262,10 +264,12 @@ AnnouncementApiResponse *announceSession(const QUrl &apiUrl, const Session &sess
 {
 	// Construct the announcement
 	QJsonObject o;
-	if(!session.host.isEmpty())
+	if(!session.host.isEmpty()) {
 		o["host"] = session.host;
-	if(session.port>0)
+	}
+	if(session.port > 0) {
 		o["port"] = session.port;
+	}
 	o["id"] = session.id;
 	o["protocol"] = session.protocol.asString();
 	o["title"] = session.title;
@@ -274,8 +278,15 @@ AnnouncementApiResponse *announceSession(const QUrl &apiUrl, const Session &sess
 	o["password"] = session.password;
 	o["owner"] = session.owner;
 	o["nsfm"] = session.nsfm;
-	if(session.isPrivate == PrivacyMode::Private)
+	if(session.isPrivate == PrivacyMode::Private) {
 		o["private"] = true;
+	}
+	if(session.maxUsers > 0) {
+		o["maxusers"] = session.maxUsers;
+	}
+	if(session.closed) {
+		o["closed"] = session.closed;
+	}
 
 	const QString sessionId = session.id;
 
@@ -326,8 +337,11 @@ AnnouncementApiResponse *refreshSession(const Announcement &a, const Session &se
 	o["password"] = session.password;
 	o["owner"] = session.owner;
 	o["nsfm"] = session.nsfm;
-	if(session.isPrivate != PrivacyMode::Undefined)
+	if(session.isPrivate != PrivacyMode::Undefined) {
 		o["private"] = session.isPrivate == PrivacyMode::Private;
+	}
+	o["maxusers"] = session.maxUsers;
+	o["closed"] = session.closed;
 
 	// Send request
 	QUrl url = a.apiUrl;
@@ -377,8 +391,11 @@ AnnouncementApiResponse *refreshSessions(const QVector<QPair<Announcement, Sessi
 		o["password"] = listing.second.password;
 		o["owner"] = listing.second.owner;
 		o["nsfm"] = listing.second.nsfm;
-		if(listing.second.isPrivate != PrivacyMode::Undefined)
+		if(listing.second.isPrivate != PrivacyMode::Undefined) {
 			o["private"] = listing.second.isPrivate == PrivacyMode::Private;
+		}
+		o["maxusers"] = listing.second.maxUsers;
+		o["closed"] = listing.second.closed;
 
 		batch[QString::number(listing.first.listingId)] = o;
 	}
@@ -471,7 +488,9 @@ AnnouncementApiResponse *queryRoomcode(const QUrl &apiUrl, const QString &roomco
 			false,
 			PrivacyMode::Undefined,
 			QString(),
-			QDateTime()
+			QDateTime(),
+			0,
+			false,
 		};
 		res->setResult(QVariant::fromValue(session));
 	});
