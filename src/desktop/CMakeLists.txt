@@ -365,9 +365,19 @@ if(WIN32 AND QT_VERSION_MAJOR VERSION_EQUAL 6)
 	target_include_directories(drawpile PRIVATE "${Qt6Gui_PRIVATE_INCLUDE_DIRS}")
 endif()
 
+# Some special handling for Android:
+# * It can't deal with multiple main windows properly, trying to open a second
+#	one hides the first with no way to switch between them.
+# * The multi-line chat edit with history keyboard shortcuts doesn't work well
+#   on Android, so we use a simpler, single-line edit instead.
+# * It can't export multiple frames or spawn an external ffmpeg process, so the
+#   video exporter isn't compiled in.
+# * Because of restrictions in file handling, we need an extra dialog to ask the
+#   user for a file name and an extension before we open the native file dialog.
+# * Including XMLs for launcher icons, S-Pen support and other such frills.
+# * Linking Qt's Android Extras library, which is used to grab wake and network
+#   locks in Qt5. In Qt6, the JNI stuff is in Core instead.
 if(ANDROID)
-	# Android doesn't sensibly support multiple windows, they just cover each
-	# other up with no way to switch between them, so we don't allow that there.
 	target_compile_definitions(drawpile PRIVATE SINGLE_MAIN_WINDOW=1)
 	target_sources(drawpile PRIVATE
 		chat/chatlineeditandroid.cpp
@@ -386,8 +396,6 @@ if(ANDROID)
 		target_link_libraries(drawpile PRIVATE ${QT_PACKAGE_NAME}::AndroidExtras)
 	endif()
 else()
-	# Android can neither deal with exporting multiple files nor can it spawn an
-	# ffmpeg process for video recording, so we only allow it outside of it.
 	target_sources(drawpile PRIVATE
 		chat/chatlineedit.cpp
 		chat/chatlineedit.h
