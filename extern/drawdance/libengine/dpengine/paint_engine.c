@@ -976,7 +976,7 @@ DP_Tile *DP_paint_engine_local_background_tile_noinc(DP_PaintEngine *pe)
 }
 
 
-static bool record_acl_message(void *user, DP_Message *msg)
+static bool record_initial_message(void *user, DP_Message *msg)
 {
     return DP_recorder_message_push_noinc(user, msg);
 }
@@ -1014,11 +1014,15 @@ static bool start_recording(DP_PaintEngine *pe, DP_RecorderType type,
         pe->ch, type, header, pe->record.get_time_ms_fn,
         pe->record.get_time_ms_user, output);
 
-    // After initializing the state, we can set up permissions.
+    // After initializing the state, we can set up local state and permissions.
     if (r) {
-        if (!DP_acl_state_reset_image_build(
+        bool reset_image_ok =
+            DP_local_state_reset_image_build(pe->local_state, pe->preview_dc,
+                                             record_initial_message, r)
+            && DP_acl_state_reset_image_build(
                 pe->acls, 0, DP_ACL_STATE_RESET_IMAGE_RECORDING_FLAGS,
-                record_acl_message, r)) {
+                record_initial_message, r);
+        if (!reset_image_ok) {
             DP_warn("Error build recorder reset image");
             DP_recorder_free_join(r);
             r = NULL;
