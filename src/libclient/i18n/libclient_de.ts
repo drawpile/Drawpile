@@ -6,12 +6,12 @@
     <message>
         <location filename="../export/animationsaverrunnable.cpp" line="55"/>
         <source>Couldn&apos;t open file for writing</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei konnte nicht zum Schreiben geöffnet werden</translation>
     </message>
     <message>
         <location filename="../export/animationsaverrunnable.cpp" line="56"/>
         <source>An error occurred while saving image</source>
-        <translation type="unfinished"></translation>
+        <translation>Beim Speichern des Bildes ist ein Fehler aufgetreten</translation>
     </message>
 </context>
 <context>
@@ -138,7 +138,7 @@
         <location filename="../brushes/brushpresetmodel.cpp" line="788"/>
         <location filename="../brushes/brushpresetmodel.cpp" line="802"/>
         <source>Soft Brush %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Weicher Pinsel %1</translation>
     </message>
 </context>
 <context>
@@ -146,12 +146,12 @@
     <message>
         <location filename="../export/canvassaverrunnable.cpp" line="40"/>
         <source>Couldn&apos;t open file for writing</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei konnte nicht zum Schreiben geöffnet werden</translation>
     </message>
     <message>
         <location filename="../export/canvassaverrunnable.cpp" line="41"/>
         <source>An error occurred while saving image</source>
-        <translation type="unfinished"></translation>
+        <translation>Beim Speichern des Bildes ist ein Fehler aufgetreten</translation>
     </message>
 </context>
 <context>
@@ -195,7 +195,7 @@
     <message>
         <location filename="../export/ffmpegexporter.cpp" line="138"/>
         <source>Couldn&apos;t start ffmpeg!</source>
-        <translation type="unfinished"></translation>
+        <translation>ffmpeg konnte nicht gestartet werden!</translation>
     </message>
     <message>
         <location filename="../export/ffmpegexporter.cpp" line="141"/>
@@ -361,7 +361,7 @@
     <message>
         <location filename="../net/login.cpp" line="772"/>
         <source>Session alias is reserved!</source>
-        <translation type="unfinished"></translation>
+        <translation>Sitzungsalias ist reserviert!</translation>
     </message>
 </context>
 <context>
