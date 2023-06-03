@@ -141,7 +141,7 @@
     <message>
         <location filename="../dialogs/avatarimport.cpp" line="84"/>
         <source>Couldn&apos;t read image</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte das Bild nicht lesen</translation>
     </message>
     <message>
         <location filename="../dialogs/avatarimport.cpp" line="89"/>
@@ -159,7 +159,7 @@
     <message>
         <location filename="../ui/brushdock.ui" line="94"/>
         <source>Square pixel brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Quadratischer Pixelpinsel</translation>
     </message>
     <message>
         <location filename="../ui/brushdock.ui" line="114"/>
@@ -414,7 +414,8 @@
         <location filename="../ui/brushpresetproperties.ui" line="65"/>
         <source>Will be resized
 to 64x64 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation>Größe wird auf
+64x64 Pixel geändert.</translation>
     </message>
     <message>
         <location filename="../dialogs/brushpresetproperties.cpp" line="61"/>
@@ -727,7 +728,7 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../docks/colorpalette.cpp" line="231"/>
         <source>Couldn&apos;t save file</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei konnte nicht gespeichert werden</translation>
     </message>
     <message>
         <location filename="../docks/colorpalette.cpp" line="298"/>
@@ -867,7 +868,7 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../ui/hostdialog.ui" line="163"/>
         <source>Use Drawpile&apos;s built-in server</source>
-        <translation type="unfinished"></translation>
+        <translation>Eingebauten Server von Drawpile verwenden</translation>
     </message>
     <message>
         <location filename="../ui/hostdialog.ui" line="166"/>
@@ -877,7 +878,7 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../ui/hostdialog.ui" line="178"/>
         <source>Use an external dedicated server</source>
-        <translation type="unfinished"></translation>
+        <translation>Einen externen dedizierten Server verwenden</translation>
     </message>
     <message>
         <location filename="../ui/hostdialog.ui" line="46"/>
@@ -3075,7 +3076,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../ui/sessionsettings.ui" line="259"/>
         <source>Selection Move &amp; Resize:</source>
-        <translation type="unfinished"></translation>
+        <translation>Auswahl verschieben &amp;amp; Größe ändern:</translation>
     </message>
     <message>
         <location filename="../ui/sessionsettings.ui" line="269"/>
@@ -3208,12 +3209,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../dialogs/sessionsettings.cpp" line="439"/>
         <location filename="../dialogs/sessionsettings.cpp" line="460"/>
         <source>Set a new password or leave blank to remove.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ein neues Passwort festlegen oder leer lassen, um es zu entfernen.</translation>
     </message>
     <message>
         <location filename="../dialogs/sessionsettings.cpp" line="441"/>
         <source>Set a password for the session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ein Passwort für die Sitzung festlegen.</translation>
     </message>
     <message>
         <location filename="../dialogs/sessionsettings.cpp" line="446"/>
