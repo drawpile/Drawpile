@@ -45,6 +45,8 @@
 
 DrawpileApp::DrawpileApp(int &argc, char **argv)
 	: QApplication(argc, argv)
+	, m_originalSystemStyle{compat::styleName(*style())}
+	, m_originalSystemPalette{style()->standardPalette()}
 {
 	setOrganizationName("drawpile");
 	setOrganizationDomain("drawpile.net");
@@ -116,12 +118,7 @@ bool DrawpileApp::event(QEvent *e) {
 void DrawpileApp::setThemeStyle(const QString &themeStyle)
 {
 	bool foundStyle = false;
-#ifdef Q_OS_WIN
-	// Empty string will use the Vista style, which is so incredibly ugly
-	// that it looks outright broken. So we use the old Windows-95-esque
-	// style instead, it looks old, but at least not totally busted.
-	foundStyle = setStyle(themeStyle.isEmpty() ? QStringLiteral("Windows") : themeStyle);
-#elif defined(Q_OS_MACOS)
+#ifdef Q_OS_MACOS
 	if (themeStyle.isEmpty() || themeStyle.startsWith(QStringLiteral("mac"))) {
 		foundStyle = true;
 		setStyle(new macui::MacProxyStyle);
@@ -129,7 +126,7 @@ void DrawpileApp::setThemeStyle(const QString &themeStyle)
 		foundStyle = setStyle(themeStyle);
 	}
 #else
-	foundStyle = setStyle(themeStyle);
+	foundStyle = setStyle(themeStyle.isEmpty() ? m_originalSystemStyle : themeStyle);
 #endif
 
 	if (!foundStyle) {
@@ -161,7 +158,7 @@ void DrawpileApp::setThemePalette(desktop::settings::ThemePalette themePalette)
 #ifdef Q_OS_MACOS
 		macui::setNativeAppearance(macui::Appearance::System);
 #endif
-		setPalette(QPalette());
+		setPalette(m_originalSystemPalette);
 		return;
 	case ThemePalette::Dark:
 #ifdef Q_OS_MACOS
