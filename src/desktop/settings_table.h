@@ -1,5 +1,21 @@
 #include "libclient/settings_table_macros.h"
 
+#ifndef THEME_PALETTE_DEFAULT
+#	ifdef Q_OS_MACOS
+#		define THEME_PALETTE_DEFAULT ThemePalette::System
+#	else
+#		define THEME_PALETTE_DEFAULT ThemePalette::KritaDark
+#	endif
+#endif
+
+#ifndef THEME_STYLE_DEFAULT
+#	ifdef Q_OS_MACOS
+#		define THEME_STYLE_DEFAULT QString()
+#	else
+#		define THEME_STYLE_DEFAULT QString("Fusion")
+#	endif
+#endif
+
 SETTING(brushCursor               , BrushCursor               , "settings/brushcursor"                  , widgets::CanvasView::BrushCursor::TriangleRight)
 SETTING(brushOutlineWidth         , BrushOutlineWidth         , "settings/brushoutlinewidth"            , 1.0)
 SETTING(canvasScrollBars          , CanvasScrollBars          , "settings/canvasscrollbars"             , true)
@@ -78,9 +94,9 @@ SETTING_GETSET(tabletDriver       , TabletDriver              , "settings/input/
 	, &tabletDriver::get, &tabletDriver::set)
 SETTING(tabletEraser              , TabletEraser              , "settings/input/tableteraser"           , true)
 SETTING(tabletEvents              , TabletEvents              , "settings/input/tabletevents"           , true)
-SETTING_GETSET(themePalette       , ThemePalette              , "settings/theme/palette"                , ThemePalette::System
+SETTING_GETSET(themePalette       , ThemePalette              , "settings/theme/palette"                , THEME_PALETTE_DEFAULT
 	, &themePalette::get, &themePalette::set)
-SETTING_FULL(V0, themeStyle       , ThemeStyle                , "settings/theme/style"                  , QString()
+SETTING_FULL(V0, themeStyle       , ThemeStyle                , "settings/theme/style"                  , THEME_STYLE_DEFAULT
 	, &themeStyle::get, &any::set, &themeStyle::notify)
 SETTING(toolToggle                , ToolToggle                , "settings/tooltoggle"                   , true)
 SETTING(toolset                   , Toolset                   , "tools/toolset"                         , (QMap<QString, QVariantHash>()))
