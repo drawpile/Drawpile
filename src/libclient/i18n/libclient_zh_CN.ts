@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="nb_NO">
+<TS version="2.1" language="zh_CN">
 <context>
     <name>AvatarListModel</name>
     <message>
         <location filename="../utils/avatarlistmodel.cpp" line="+98"/>
         <source>No avatar</source>
-        <translation type="unfinished"></translation>
+        <translation>无头像</translation>
     </message>
 </context>
 <context>
@@ -14,42 +14,42 @@
     <message>
         <location filename="../export/canvassaverrunnable.cpp" line="+34"/>
         <source>Bad arguments, this is probably a bug in Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>糟糕的争论, 这可能是Drawpile的一个bug.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>No file extension given.</source>
-        <translation type="unfinished"></translation>
+        <translation>没有给出文件扩展名.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unsupported format.</source>
-        <translation type="unfinished"></translation>
+        <translation>不支持的格式.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t merge the canvas into a flat image.</source>
-        <translation type="unfinished"></translation>
+        <translation>无法将画布合并成一个平面图像.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t open file for writing.</source>
-        <translation type="unfinished"></translation>
+        <translation>无法打开文件进行写入.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Save operation failed, but the file might have been partially written.</source>
-        <translation type="unfinished"></translation>
+        <translation>保存操作失败, 但文件可能被部分写入.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Internal error during saving.</source>
-        <translation type="unfinished"></translation>
+        <translation>保存时出现内部错误.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unknown error.</source>
-        <translation type="unfinished"></translation>
+        <translation>未知错误.</translation>
     </message>
 </context>
 <context>
@@ -57,152 +57,152 @@
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="+94"/>
         <source>Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>快捷键</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Action</source>
-        <translation type="unfinished"></translation>
+        <translation>动作</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Modifiers</source>
-        <translation type="unfinished"></translation>
+        <translation>修饰键</translation>
     </message>
     <message>
         <location line="+62"/>
         <source>%1</source>
         <extracomment>Example: &quot;Pan Canvas&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>%1 (%2)</source>
         <extracomment>Example: &quot;Pan Canvas (Inverted)&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>%1: %2</source>
         <extracomment>Example: &quot;Space: Pan Canvas&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1: %2</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>%1: %2 (%3)</source>
         <extracomment>Example: &quot;Space: Pan Canvas (Inverted)&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1: %2 (%3)</translation>
     </message>
     <message>
         <location line="+48"/>
         <source>Mouse Wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>鼠标滚轮</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>+</source>
         <extracomment>Joins shortcut components, probably doesn&apos;t need to be translated.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>+</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Unset</source>
-        <translation type="unfinished"></translation>
+        <translation>未设置</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Left Click</source>
-        <translation type="unfinished"></translation>
+        <translation>左键点击</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Right Click</source>
-        <translation type="unfinished"></translation>
+        <translation>右键点击</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Middle Click</source>
-        <translation type="unfinished"></translation>
+        <translation>中键点击</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Unknown Button 0x%1</source>
-        <translation type="unfinished"></translation>
+        <translation>未知按钮 0x%1</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Button %1</source>
-        <translation type="unfinished"></translation>
+        <translation>按钮 %1</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Pan Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>移动画布</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Rotate Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>旋转画布</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Zoom Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>缩放画布</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pick Color</source>
-        <translation type="unfinished"></translation>
+        <translation>拾色</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pick Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>选择图层</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Brush Size</source>
-        <translation type="unfinished"></translation>
+        <translation>改变笔刷大小</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Constrain Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>约束工具</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Center Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>居中工具</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Constrain and Center Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>约束和居中工具</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unknown Constraint 0x%1</source>
-        <translation type="unfinished"></translation>
+        <translation>未知约束0x%1</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unknown Action %1</source>
-        <translation type="unfinished"></translation>
+        <translation>未知动作%1</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Inverted, Swap Axes</source>
-        <translation type="unfinished"></translation>
+        <translation>反转,切换轴向</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Inverted</source>
-        <translation type="unfinished"></translation>
+        <translation>反转</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Swap Axes</source>
-        <translation type="unfinished"></translation>
+        <translation>切换轴向</translation>
     </message>
 </context>
 <context>
@@ -258,22 +258,22 @@
     <message>
         <location filename="../utils/customshortcutmodel.cpp" line="+83"/>
         <source>Action</source>
-        <translation type="unfinished"></translation>
+        <translation>动作</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>快捷键</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Alternate</source>
-        <translation type="unfinished"></translation>
+        <translation>备选</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Default</source>
-        <translation type="unfinished">Výchozí</translation>
+        <translation>默认</translation>
     </message>
 </context>
 <context>
@@ -281,27 +281,27 @@
     <message>
         <location filename="../document.cpp" line="+592"/>
         <source>Unknown format.</source>
-        <translation type="unfinished"></translation>
+        <translation>未知格式.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Header error.</source>
-        <translation type="unfinished"></translation>
+        <translation>标题错误.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Error opening file.</source>
-        <translation type="unfinished"></translation>
+        <translation>打开文件时出现错误.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Error starting recorder.</source>
-        <translation type="unfinished"></translation>
+        <translation>启动录制时出现错误.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unknown error.</source>
-        <translation type="unfinished"></translation>
+        <translation>未知错误.</translation>
     </message>
 </context>
 <context>
@@ -309,17 +309,17 @@
     <message>
         <location filename="../export/ffmpegexporter.cpp" line="+128"/>
         <source>Couldn&apos;t start ffmpeg!</source>
-        <translation type="unfinished"></translation>
+        <translation>无法启动ffmpeg!</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ffmpeg crashed!</source>
-        <translation type="unfinished"></translation>
+        <translation>ffmpeg崩溃了!</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ffmpeg process error</source>
-        <translation type="unfinished"></translation>
+        <translation>ffmpeg进程错误</translation>
     </message>
 </context>
 <context>
@@ -327,7 +327,7 @@
     <message>
         <location filename="../tools/floodfill.cpp" line="+53"/>
         <source>Size limit exceeded.</source>
-        <translation type="unfinished"></translation>
+        <translation>超过尺寸限制.</translation>
     </message>
 </context>
 <context>
@@ -335,62 +335,62 @@
     <message>
         <location filename="../utils/images.cpp" line="+99"/>
         <source>Images (%1)</source>
-        <translation type="unfinished">Obrázky (%1)</translation>
+        <translation>图像 (%1)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>GIF (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>GIF (%1)</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Binary Recordings (%1)</source>
-        <translation type="unfinished">Binární záznamy (%1)</translation>
+        <translation>二进制录像 (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Text Recordings (%1)</source>
-        <translation type="unfinished">Textové záznamy (%1)</translation>
+        <translation>文本录像 (%1)</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Recordings (%1)</source>
-        <translation type="unfinished">Záznamy (%1)</translation>
+        <translation>录像 (%1)</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Performance Profile (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>性能概况 (%1)</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Debug Dumps (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>调试数据 (%1)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Tablet Event Log (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>数位板事件日志 (%1)</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>MP4 Video (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>MP4 视频 (%1)</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>WebM Video (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>WebM 视频 (%1)</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>All Supported Files (%1)</source>
-        <translation type="unfinished">Všechny podporované soubory (%1)</translation>
+        <translation>所有支持的文件 (%1)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>All Files (*)</source>
-        <translation type="unfinished">Všechny soubory (*)</translation>
+        <translation>所有文件(*)</translation>
     </message>
 </context>
 <context>
@@ -398,7 +398,7 @@
     <message>
         <location filename="../drawdance/canvasstate.cpp" line="+45"/>
         <source>Layer %1</source>
-        <translation type="unfinished"></translation>
+        <translation>图层 %1</translation>
     </message>
 </context>
 <context>
@@ -406,22 +406,22 @@
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="-101"/>
         <source>Shift</source>
-        <translation type="unfinished"></translation>
+        <translation>Shift键</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Alt</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt键</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ctrl</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl键</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Meta</source>
-        <translation type="unfinished"></translation>
+        <translation>Windows键</translation>
     </message>
 </context>
 <context>
@@ -429,7 +429,7 @@
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="+153"/>
         <source>(untitled)</source>
-        <translation type="unfinished">(Bez názvu)</translation>
+        <translation>(未命名)</translation>
     </message>
     <message>
         <location line="-83"/>
@@ -444,13 +444,12 @@
     <message>
         <location line="+5"/>
         <source>%1m</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1m</translation>
     </message>
     <message numerus="yes">
         <location line="+80"/>
         <source>%n users</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
     </message>
@@ -487,27 +486,27 @@
     <message>
         <location line="+6"/>
         <source>Title</source>
-        <translation type="unfinished">Název</translation>
+        <translation>标题</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Server</source>
-        <translation type="unfinished">Server</translation>
+        <translation>服务器</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Users</source>
-        <translation type="unfinished">Uživatelé</translation>
+        <translation>用户</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Owner</source>
-        <translation type="unfinished">Vlastník</translation>
+        <translation>所有者</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Age</source>
-        <translation type="unfinished">Věk</translation>
+        <translation>存在时长</translation>
     </message>
 </context>
 <context>
@@ -515,122 +514,122 @@
     <message>
         <location filename="../canvas/blendmodes.cpp" line="+40"/>
         <source>Normal</source>
-        <translation type="unfinished">Normální</translation>
+        <translation>普通</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Recolor</source>
-        <translation type="unfinished">Přebarvit</translation>
+        <translation>Recolor</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Behind</source>
-        <translation type="unfinished">Pod</translation>
+        <translation>覆盖</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Multiply</source>
-        <translation type="unfinished">Násobit</translation>
+        <translation>正片叠底</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>滤色</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Overlay</source>
-        <translation type="unfinished"></translation>
+        <translation>叠加</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Divide</source>
-        <translation type="unfinished">Dělit</translation>
+        <translation>划分</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Burn</source>
-        <translation type="unfinished">Vypálit</translation>
+        <translation>加深</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Dodge</source>
-        <translation type="unfinished">Pozměnit světlost</translation>
+        <translation>减淡</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Darken</source>
-        <translation type="unfinished">Ztmavit</translation>
+        <translation>变暗</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Lighten</source>
-        <translation type="unfinished">Zesvětlit</translation>
+        <translation>变亮</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Subtract</source>
-        <translation type="unfinished">Odečíst</translation>
+        <translation>减去</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Add</source>
-        <translation type="unfinished">Přidat</translation>
+        <translation>线性减淡</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Erase</source>
-        <translation type="unfinished">Vymazat</translation>
+        <translation>擦除</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Color Erase</source>
-        <translation type="unfinished"></translation>
+        <translation>颜色擦除</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Hard Light</source>
-        <translation type="unfinished"></translation>
+        <translation>强光</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Soft Light</source>
-        <translation type="unfinished"></translation>
+        <translation>柔光</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Linear Burn</source>
-        <translation type="unfinished"></translation>
+        <translation>线性加深</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Linear Light</source>
-        <translation type="unfinished"></translation>
+        <translation>线性光</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Luminosity/Shine (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>发光</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Hue</source>
-        <translation type="unfinished">Barevný odstín</translation>
+        <translation>色相</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Saturation</source>
-        <translation type="unfinished">Sytost</translation>
+        <translation>饱和度</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Luminosity</source>
-        <translation type="unfinished"></translation>
+        <translation>明度</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Color</source>
-        <translation type="unfinished">Barva</translation>
+        <translation>颜色</translation>
     </message>
 </context>
 <context>
@@ -638,7 +637,7 @@
     <message>
         <location filename="../brushes/brushpresetmodel.cpp" line="+638"/>
         <source>Default</source>
-        <translation type="unfinished">Výchozí</translation>
+        <translation>默认</translation>
     </message>
 </context>
 <context>
@@ -646,87 +645,87 @@
     <message>
         <location line="-98"/>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation>全部</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Untagged</source>
-        <translation type="unfinished"></translation>
+        <translation>未添加标签的</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Show all brushes, regardless of tagging.</source>
-        <translation type="unfinished"></translation>
+        <translation>显示全部笔刷,不管是否添加标签.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show brushes not assigned to any tag.</source>
-        <translation type="unfinished"></translation>
+        <translation>显示未添加标签的笔刷.</translation>
     </message>
     <message>
         <location line="+166"/>
         <source>Default</source>
-        <translation type="unfinished">Výchozí</translation>
+        <translation>Default</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Classic Brush %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Classic Brush %1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Converted from %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Converted from %1.</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Can&apos;t open &apos;%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>无法打开 &apos;%1&apos;.</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Invalid brush pack: order.conf not found inside</source>
-        <translation type="unfinished"></translation>
+        <translation>无效笔刷包: 里面未找到order.conf</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Uncategorized %1</source>
-        <translation type="unfinished"></translation>
+        <translation>未分类 %1</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Invalid brush pack: order.conf contains no brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>无效笔刷包: order.conf 未包含笔刷</translation>
     </message>
     <message>
-        <location line="+55"/>
-        <source>Could not create tag &apos;%1&apos;.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+18"/>
+        <location line="+73"/>
         <source>Could not create brush preset &apos;%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>无法创建笔刷预设&apos;%1&apos;.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Could not assign brush &apos;%1&apos; to tag &apos;%2&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>无法将笔刷&apos;%1&apos;分配给标签&apos;%2&apos;.</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="-25"/>
+        <source>Could not create tag &apos;%1&apos;.</source>
+        <translation>无法创建标签&apos;%1&apos;.</translation>
+    </message>
+    <message>
+        <location line="+43"/>
         <source>Can&apos;t read brush file &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>无法读取笔刷文件 &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Brush file &apos;%1&apos; does not contain valid JSON: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>笔刷文件 &apos;%1&apos; 不包含有效的 JSON: %1</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Can&apos;t load brush from brush file &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>无法从笔刷文件&apos;%1&apos;中加载笔刷</translation>
     </message>
 </context>
 <context>
@@ -734,7 +733,7 @@
     <message>
         <location filename="../canvas/paintengine.cpp" line="+154"/>
         <source>Layer %1</source>
-        <translation type="unfinished"></translation>
+        <translation>图层 %1</translation>
     </message>
 </context>
 <context>
@@ -742,57 +741,57 @@
     <message>
         <location filename="../canvas/userlist.cpp" line="+58"/>
         <source>Moderator</source>
-        <translation type="unfinished"></translation>
+        <translation>Moderator</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Operator</source>
-        <translation type="unfinished"></translation>
+        <translation>Operator</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>Trusted</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Registered</source>
-        <translation type="unfinished"></translation>
+        <translation>注册用户</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Online</source>
-        <translation type="unfinished"></translation>
+        <translation>Online</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Offline</source>
-        <translation type="unfinished"></translation>
+        <translation>Offline</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>User</source>
-        <translation type="unfinished">Uživatel</translation>
+        <translation>用户</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>类型</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation>状态</translation>
     </message>
     <message>
         <location line="+181"/>
         <source>Server</source>
-        <translation type="unfinished">Server</translation>
+        <translation>服务器</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>User #%1</source>
-        <translation type="unfinished">Uživatel #%1</translation>
+        <translation>用户 #%1</translation>
     </message>
 </context>
 <context>
@@ -800,27 +799,27 @@
     <message>
         <location filename="../net/announcementlist.cpp" line="+31"/>
         <source>Private</source>
-        <translation type="unfinished"></translation>
+        <translation>私密</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Public</source>
-        <translation type="unfinished"></translation>
+        <translation>公开</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Server</source>
-        <translation type="unfinished">Server</translation>
+        <translation>服务器</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Room code</source>
-        <translation type="unfinished"></translation>
+        <translation>房间代码</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>模式</translation>
     </message>
 </context>
 <context>
@@ -828,17 +827,17 @@
     <message>
         <location filename="../net/banlistmodel.cpp" line="+59"/>
         <source>User</source>
-        <translation type="unfinished">Uživatel</translation>
+        <translation>User</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>IP address</source>
-        <translation type="unfinished">Adresa IP</translation>
+        <translation>IP address</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Banned by</source>
-        <translation type="unfinished">Zakázáno</translation>
+        <translation>Banned by</translation>
     </message>
 </context>
 <context>
@@ -846,12 +845,12 @@
     <message>
         <location filename="../net/client.cpp" line="+71"/>
         <source>A server error occurred!</source>
-        <translation type="unfinished">Nastala chyba serveru!</translation>
+        <translation>服务器发生错误!</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The server is shutting down!</source>
-        <translation type="unfinished">Server se vypíná!</translation>
+        <translation>服务器已关闭!</translation>
     </message>
 </context>
 <context>
@@ -860,7 +859,7 @@
         <location filename="../net/login.cpp" line="+100"/>
         <location line="+258"/>
         <source>Invalid state</source>
-        <translation type="unfinished">Neplatný stav</translation>
+        <translation>无效状态</translation>
     </message>
     <message>
         <location line="-233"/>
@@ -870,149 +869,149 @@
         <location line="+133"/>
         <location line="+42"/>
         <source>Incompatible server</source>
-        <translation type="unfinished">Neslučitelný server</translation>
+        <translation>服务器不兼容</translation>
     </message>
     <message>
         <location line="-431"/>
         <source>Server is for a different Drawpile version!</source>
-        <translation type="unfinished">Server je pro jinou verzi programu Drawpile!</translation>
+        <translation>Server is for a different Drawpile version!</translation>
     </message>
     <message>
         <location line="+42"/>
         <source>Secure mode not enabled on a trusted host!</source>
-        <translation type="unfinished">Bezpečný režim nepovolen na důvěryhodném serveru!</translation>
+        <translation>安全模式没有在信任的主机上启动!</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+581"/>
+        <source>Username already taken!</source>
+        <translation>用户名已被使用!</translation>
+    </message>
+    <message>
+        <location line="-540"/>
         <source>This server does not allow guest logins</source>
-        <translation type="unfinished">Tento server nedovoluje přihlášení hostů</translation>
+        <translation>此服务器不支持非注册用户登入</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Password needed to log in as &quot;%1&quot;</source>
-        <translation type="unfinished">Pro přihlášení jako &quot;%1&quot; je potřeba heslo</translation>
+        <translation>&quot;%1&quot; 需要登录密码</translation>
     </message>
     <message>
         <location line="+67"/>
         <location line="+6"/>
         <source>Auth server error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>认证服务器错误: %1</translation>
     </message>
     <message>
-        <location line="+19"/>
-        <source>Group membership needed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Unexpected ext-auth response: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+22"/>
+        <location line="+44"/>
         <source>Server misconfiguration: invalid ext-auth URL</source>
-        <translation type="unfinished"></translation>
+        <translation>服务器配置错误：ext-auth URL无效</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Unsupported ext-auth URL scheme</source>
-        <translation type="unfinished"></translation>
+        <translation>不支持ext-auth的URL方案</translation>
     </message>
     <message>
         <location line="+89"/>
         <source>New version</source>
-        <translation type="unfinished"></translation>
+        <translation>新版本</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Unknown version</source>
-        <translation type="unfinished"></translation>
+        <translation>未知版本</translation>
     </message>
     <message>
         <location line="+48"/>
         <source>Session not yet started!</source>
-        <translation type="unfinished">Sezení ještě nespuštěno!</translation>
+        <translation>Session not yet started!</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Blocked by parental controls</source>
-        <translation type="unfinished">Zablokováno rodičovskou kontrolou</translation>
+        <translation>已被控制面板屏蔽</translation>
     </message>
     <message>
-        <location line="+4"/>
-        <source>Session for a different Drawpile version (%1) in progress!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+185"/>
+        <location line="+189"/>
         <location line="+20"/>
         <source>Invalid SSL certificate for host %1</source>
-        <translation type="unfinished">Neplatné osvědčení SSL pro server %1</translation>
+        <translation>服务器 %1 证书无效</translation>
     </message>
     <message>
         <location line="-17"/>
         <source>Certificate of a trusted server has changed!</source>
-        <translation type="unfinished">Osvědčení důvěryhodného serveru se změnilo!</translation>
+        <translation>信任的服务器证书已更改!</translation>
     </message>
     <message>
-        <location line="+58"/>
-        <source>Cancelled</source>
-        <translation type="unfinished">Zřušeno</translation>
-    </message>
-    <message>
-        <location line="+9"/>
-        <source>Session not found!</source>
-        <translation type="unfinished">Sezení nenalezeno!</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Incorrect password!</source>
-        <translation type="unfinished">Nesprávné heslo!</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Invalid username!</source>
-        <translation type="unfinished">Neplatné uživatelské jméno!</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>This username has been locked</source>
-        <translation type="unfinished">Toto uživatelské jméno bylo zamknuto</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Username already taken!</source>
-        <translation type="unfinished">Uživatelské jméno již obsazeno!</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Session is closed!</source>
-        <translation type="unfinished">Sezení je zavřeno!</translation>
-    </message>
-    <message>
-        <location line="+0"/>
+        <location line="+78"/>
         <source>Server is full!</source>
-        <translation type="unfinished">Server je plný!</translation>
+        <translation>服务器已满!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Hosting not authorized</source>
-        <translation type="unfinished">Hostování neschváleno</translation>
+        <translation>主机未被授权</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You have been banned from this session!</source>
-        <translation type="unfinished">Bylo vám zakázáno toto sezení!</translation>
+        <translation>你已经被禁止访问该房间!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Session alias is reserved!</source>
-        <translation type="unfinished">Přezdívka sezení je vyhrazena!</translation>
+        <translation>房间别名已保留!</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Client failed to serialize command</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-52"/>
+        <source>Cancelled</source>
+        <translation>已取消</translation>
+    </message>
+    <message>
+        <location line="-428"/>
+        <source>Group membership needed</source>
+        <translation>需要群组成员资格</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Unexpected ext-auth response: %1</source>
+        <translation>意外的ext-auth响应: %1</translation>
+    </message>
+    <message>
+        <location line="+179"/>
+        <source>Session for a different Drawpile version (%1) in progress!</source>
+        <translation>不同Drawpile版本（%1）的房间正在进行中!</translation>
+    </message>
+    <message>
+        <location line="+255"/>
+        <source>Session not found!</source>
+        <translation>未找到房间!</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Incorrect password!</source>
+        <translation>密码错误!</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Invalid username!</source>
+        <translation>用户名无效!</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>This username has been locked</source>
+        <translation>该用户名已被锁定</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Session is closed!</source>
+        <translation>房间已关闭!</translation>
     </message>
 </context>
 <context>
@@ -1020,37 +1019,37 @@
     <message>
         <location filename="../net/loginsessions.cpp" line="+48"/>
         <source>(untitled)</source>
-        <translation type="unfinished">(Bez názvu)</translation>
+        <translation>(未命名)</translation>
     </message>
     <message>
         <location line="+45"/>
         <source>%1 (incompatible)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (不兼容)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.1 (compatibility mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.1 (兼容模式)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.2 (fully compatible)</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.2 (完全兼容)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Incompatible version</source>
-        <translation type="unfinished"></translation>
+        <translation>不兼容的版本</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Closed (new logins blocked)</source>
-        <translation type="unfinished"></translation>
+        <translation>已关闭的 (新的登入被阻止)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Session password required</source>
-        <translation type="unfinished"></translation>
+        <translation>需要房间密码</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1060,17 +1059,17 @@
     <message>
         <location line="+47"/>
         <source>Title</source>
-        <translation type="unfinished">Název</translation>
+        <translation>标题</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Started by</source>
-        <translation type="unfinished">Zahájeno</translation>
+        <translation>开始于</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Users</source>
-        <translation type="unfinished">Uživatelé</translation>
+        <translation>用户</translation>
     </message>
 </context>
 <context>
@@ -1078,7 +1077,7 @@
     <message>
         <location filename="../net/tcpserver.cpp" line="+111"/>
         <source>Received invalid data</source>
-        <translation type="unfinished">Přijata neplatná data</translation>
+        <translation>接受信息无效</translation>
     </message>
 </context>
 </TS>

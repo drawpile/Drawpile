@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="nb_NO">
+<TS version="2.1" language="it_IT">
 <context>
     <name>AbstractWidgetList</name>
     <message>
         <location filename="../bundled/QtColorWidgets/abstract_widget_list.cpp" line="+67"/>
         <source>Add New</source>
-        <translation>Legg til ny</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+51"/>
         <source>Move Up</source>
-        <translation>Flytt oppover</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Move Down</source>
-        <translation>Flytt nedover</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Remove</source>
-        <translation type="unfinished">Odstranit</translation>
+        <translation type="unfinished">Rimuovi</translation>
     </message>
 </context>
 <context>
@@ -29,27 +29,27 @@
     <message>
         <location filename="../ui/abusereport.ui" line="+14"/>
         <source>Report Abuse</source>
-        <translation>Rapporter misbruk</translation>
+        <translation>Segnala Abuso</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Session:</source>
-        <translation>Økt:</translation>
+        <translation>Sessione:</translation>
     </message>
     <message>
         <location line="+40"/>
         <source>Reason:</source>
-        <translation>Grunn:</translation>
+        <translation>Ragione:</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Entire session</source>
-        <translation>Hele økten</translation>
+        <translation>Intera sessione</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>User:</source>
-        <translation>Bruker:</translation>
+        <translation>Utente:</translation>
     </message>
 </context>
 <context>
@@ -62,7 +62,7 @@
     <message>
         <location line="+13"/>
         <source>Type:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tipo:</translation>
     </message>
 </context>
 <context>
@@ -70,7 +70,7 @@
     <message>
         <location filename="../ui/avatarimport.ui" line="+14"/>
         <source>Crop Avatar</source>
-        <translation>Beskjær avatar</translation>
+        <translation>Ritaglia l&apos;&apos;Avatar</translation>
     </message>
 </context>
 <context>
@@ -78,27 +78,27 @@
     <message>
         <location filename="../ui/brushdock.ui" line="+74"/>
         <source>Pixel brush</source>
-        <translation>Pikselpensel</translation>
+        <translation>Pennello pixel</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Square pixel brush</source>
-        <translation>Firkantig pikselpensel</translation>
+        <translation>Pennello quadrato pixel</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Brush</source>
-        <translation type="unfinished">Štětec</translation>
+        <translation>Pennello</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>MyPaint Brush</source>
-        <translation>MyPaint-pensel</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+39"/>
         <source>Pick initial color from layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Scegliere il colore iniziale dallo strato</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -108,12 +108,12 @@
     <message>
         <location line="+14"/>
         <source>Eraser mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Modalità gomma</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Direct drawing mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Modalità di disegno diretto</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -141,7 +141,7 @@
         <location line="+14"/>
         <location line="+33"/>
         <source>Pressure sensitivity</source>
-        <translation type="unfinished"></translation>
+        <translation>Sensibilità alla pressione</translation>
     </message>
     <message>
         <location line="-16"/>
@@ -171,7 +171,7 @@
     <message>
         <location line="-187"/>
         <source>px</source>
-        <translation type="unfinished">px</translation>
+        <translation>px</translation>
     </message>
 </context>
 <context>
@@ -257,75 +257,75 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../ui/certificateview.ui" line="+24"/>
         <source>Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Informazioni</translation>
     </message>
     <message>
         <location line="+6"/>
         <location line="+107"/>
         <source>Organization:</source>
-        <translation type="unfinished"></translation>
+        <translation>Organizzazione:</translation>
     </message>
     <message>
         <location line="-100"/>
         <source>SHA1 fingerprint:</source>
-        <translation type="unfinished"></translation>
+        <translation>SHA1 fingerprint:</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Issued by</source>
-        <translation type="unfinished"></translation>
+        <translation>Rilasciato da</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Expires on:</source>
-        <translation type="unfinished"></translation>
+        <translation>Scade il:</translation>
     </message>
     <message>
         <location line="+63"/>
         <source>MD5 fingerprint:</source>
-        <translation type="unfinished"></translation>
+        <translation>MD5 fingerprint:</translation>
     </message>
     <message>
         <location line="+14"/>
         <location line="+14"/>
         <source>Organization unit:</source>
-        <translation type="unfinished"></translation>
+        <translation>Unità organizzativa:</translation>
     </message>
     <message>
         <location line="-7"/>
         <source>Issued on:</source>
-        <translation type="unfinished"></translation>
+        <translation>Rilasciato da:</translation>
     </message>
     <message>
         <location line="+14"/>
         <location line="+50"/>
         <source>Common name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nome comune:</translation>
     </message>
     <message>
         <location line="-43"/>
         <source>Serial number:</source>
-        <translation type="unfinished"></translation>
+        <translation>Numero di serie:</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Issued to</source>
-        <translation type="unfinished"></translation>
+        <translation>Rilasciato a</translation>
     </message>
     <message>
         <location line="+53"/>
         <source>Validity period</source>
-        <translation type="unfinished"></translation>
+        <translation>Periodo di validità</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Fingerprints</source>
-        <translation type="unfinished"></translation>
+        <translation>Impronte digitali</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Dettagli</translation>
     </message>
 </context>
 <context>
@@ -333,47 +333,47 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../bundled/QtColorWidgets/color_dialog.ui" line="+14"/>
         <source>Select Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleziona Colore</translation>
     </message>
     <message>
         <location line="+40"/>
         <source>Saturation</source>
-        <translation type="unfinished"></translation>
+        <translation>Saturazione</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Hue</source>
-        <translation type="unfinished"></translation>
+        <translation>Colore</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Hex</source>
-        <translation type="unfinished"></translation>
+        <translation>Esadecimale</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Blue</source>
-        <translation type="unfinished"></translation>
+        <translation>Blu</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>Value</source>
-        <translation type="unfinished"></translation>
+        <translation>Valore</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Green</source>
-        <translation type="unfinished"></translation>
+        <translation>Verde</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Аlpha</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Red</source>
-        <translation type="unfinished"></translation>
+        <translation>Rosso</translation>
     </message>
 </context>
 <context>
@@ -498,7 +498,7 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../filewrangler.cpp" line="+26"/>
         <source>Certificates (%1)</source>
-        <translation type="unfinished">Osvědčení (%1)</translation>
+        <translation type="unfinished">Certificati (%1)</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -513,7 +513,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+6"/>
         <source>Paste Image</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Incolla immagine</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -524,7 +524,7 @@ to 64x64 pixels.</source>
         <location line="+22"/>
         <location line="+149"/>
         <source>Save Image</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Salva Immagine</translation>
     </message>
     <message>
         <location line="-133"/>
@@ -539,7 +539,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+18"/>
         <source>Record Session</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sessione di Registrazione</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -589,17 +589,17 @@ to 64x64 pixels.</source>
     <message>
         <location line="+31"/>
         <source>The selected format does not support layers or annotations.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Il formato selezionato non supporta strati o annotazioni.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Flatten</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Appiattire</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Save as OpenRaster</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Salva come OpenRaster</translation>
     </message>
     <message>
         <location line="+90"/>
@@ -684,7 +684,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+5"/>
         <source>Erase</source>
-        <translation type="unfinished">Vymazat</translation>
+        <translation>Cancella</translation>
     </message>
 </context>
 <context>
@@ -692,17 +692,17 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../ui/flipbook.ui" line="+14"/>
         <source>Flipbook</source>
-        <translation type="unfinished"></translation>
+        <translation>Libro pieghevole</translation>
     </message>
     <message>
         <location line="+74"/>
         <source>Frame:</source>
-        <translation type="unfinished">Snímek:</translation>
+        <translation type="unfinished">Frame:</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Loop range:</source>
-        <translation type="unfinished"></translation>
+        <translation>Intervallo di loop:</translation>
     </message>
     <message>
         <location line="+64"/>
@@ -713,99 +713,99 @@ to 64x64 pixels.</source>
 <context>
     <name>HostDialog</name>
     <message>
-        <location filename="../ui/hostdialog.ui" line="+23"/>
+        <location filename="../ui/hostdialog.ui" line="+17"/>
+        <source>Host a Session</source>
+        <translation>Ospita una Sessione</translation>
+    </message>
+    <message>
+        <location line="+6"/>
         <source>Session</source>
-        <translation type="unfinished"></translation>
+        <translation>Sessione</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&amp;Title:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Titolo:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>The title is shown in the application title bar and in the session selection dialog</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+33"/>
-        <source>ID a&amp;lias:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+26"/>
-        <source>Listing</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+9"/>
-        <source>List at:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+20"/>
-        <source>Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>Il titolo è mostrato nella barra del titolo dell&apos;applicazione e nella finestra di dialogo di selezione della sessione</translation>
     </message>
     <message>
         <location line="+7"/>
-        <source>P&amp;ublic</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>Private (room code onl&amp;y)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+19"/>
-        <source>Use Drawpile&apos;s built-in server</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>This co&amp;mputer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+12"/>
-        <source>Use an external dedicated server</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-132"/>
         <source>&amp;Password:</source>
-        <translation type="unfinished"></translation>
+        <translation>П&amp;Password:</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Optional. If left blank, no password will be needed to join this session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Opzionale. Se lasciato vuoto, non sarà necessaria alcuna password per partecipare a questa sessione.</translation>
     </message>
     <message>
-        <location line="+42"/>
-        <source>Announce the session at a public list</source>
-        <translation type="unfinished"></translation>
+        <location line="+10"/>
+        <source>ID a&amp;lias:</source>
+        <translation>ID a&amp;alias:</translation>
     </message>
     <message>
-        <location line="+50"/>
-        <source>Server</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+27"/>
-        <source>Re&amp;mote:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-93"/>
+        <location line="+16"/>
         <source>An optional user friendly ID for the session</source>
-        <translation type="unfinished"></translation>
+        <translation>Un opzionale utente con ID conosciuto per la sessione</translation>
     </message>
     <message>
-        <location line="-71"/>
-        <source>Host a Session</source>
-        <translation type="unfinished"></translation>
+        <location line="+10"/>
+        <source>Listing</source>
+        <translation>Listato</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Announce the session at a public list</source>
+        <translation>Annuncia la sessione in un elenco pubblico</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>List at:</source>
+        <translation>Elenca per:</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Type:</source>
+        <translation>Tipo:</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>P&amp;ublic</source>
+        <translation>P&amp;ubblico</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Private (room code onl&amp;y)</source>
+        <translation>Privato (codice della stanza sol&amp;o)</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Server</source>
+        <translation>Server</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Use Drawpile&apos;s built-in server</source>
+        <translation>Drawpile&apos;s server integrato</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>This co&amp;mputer</source>
+        <translation>Questo co&amp;mputer</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Use an external dedicated server</source>
+        <translation>Utilizza un server esterno dedicato</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Re&amp;mote:</source>
+        <translation>Re&amp;moto:</translation>
     </message>
 </context>
 <context>
@@ -813,7 +813,7 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../ui/inspectorsettings.ui" line="+17"/>
         <source>Last edited by:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ultima modifica di:</translation>
     </message>
 </context>
 <context>
@@ -821,52 +821,52 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../ui/joindialog.ui" line="+17"/>
         <source>Join a Session</source>
-        <translation type="unfinished"></translation>
+        <translation>Partecipa ad una sessione</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>A new Drawpile version that is not compatible with this one has been released.</source>
-        <translation type="unfinished"></translation>
+        <translation>È stata rilasciata una nuova versione di Drawpile che non è compatibile con questa.</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You haven&apos;t added any servers yet. You can find some at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;drawpile.net/communities&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;You can try adding one now by entering pub.drawpile.net in the address box and clicking &lt;span style=&quot; font-style:italic;&quot;&gt;Add Server&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Non hai ancor&apos;a aggiunto alcun server. Puoi trovarne alcuni su &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;drawpile.net/communities&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Puoi provare ad aggiungerne uno ora inserendo pub.drawpile.net nella casella dell&apos;indirizzo e facendo clic &lt;span style=&quot; font-style:italic;&quot;&gt;Add Server&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+15"/>
-        <source>Filter</source>
-        <translation type="unfinished">Filtr</translation>
-    </message>
-    <message>
-        <location line="+26"/>
+        <location line="+41"/>
         <source>Show:</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Closed</source>
-        <translation type="unfinished"></translation>
+        <translation>Chiuso</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Passworded</source>
-        <translation type="unfinished"></translation>
+        <translation>Con password</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>NSFW</source>
-        <translation type="unfinished"></translation>
+        <translation>Non sicuro per il lavoro (NSFW)</translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="-47"/>
+        <source>Filter</source>
+        <translation>Filtro</translation>
+    </message>
+    <message>
+        <location line="+82"/>
         <source>Enter a host address, session URL or room code to join a session:</source>
-        <translation type="unfinished"></translation>
+        <translation>Immettere un indirizzo host, un URL di sessione o un codice locale per partecipare a una sessione:</translation>
     </message>
     <message>
         <location line="+31"/>
         <source>Record session</source>
-        <translation type="unfinished"></translation>
+        <translation>Registra sessione</translation>
     </message>
 </context>
 <context>
@@ -874,12 +874,12 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../widgets/kis_curve_widget.cpp" line="+46"/>
         <source>Remove point</source>
-        <translation type="unfinished"></translation>
+        <translation>Rimuovi punto</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Reset</source>
-        <translation type="unfinished">Nastavit znovu</translation>
+        <translation>Ripristina</translation>
     </message>
 </context>
 <context>
@@ -912,17 +912,17 @@ Subrange: [%3, %4]</source>
     <message>
         <location filename="../ui/lasersettings.ui" line="+111"/>
         <source>s</source>
-        <translation type="unfinished"></translation>
+        <translation>s</translation>
     </message>
     <message>
         <location line="-94"/>
         <source>Color:</source>
-        <translation type="unfinished"></translation>
+        <translation>Colore:</translation>
     </message>
     <message>
         <location line="+87"/>
         <source>Track hovering pointer</source>
-        <translation type="unfinished"></translation>
+        <translation>Traccia il puntatore in sospeso</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -945,7 +945,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+10"/>
         <source>Opacity:</source>
-        <translation type="unfinished">Neprůhlednost:</translation>
+        <translation type="unfinished">Opacità:</translation>
     </message>
     <message>
         <location line="+128"/>
@@ -1003,7 +1003,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+16"/>
         <source>Save</source>
-        <translation type="unfinished">Uložit</translation>
+        <translation type="unfinished">Salva</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1013,7 +1013,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+7"/>
         <source>Delete</source>
-        <translation type="unfinished">Smazat</translation>
+        <translation type="unfinished">Cancella</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -1026,62 +1026,62 @@ Subrange: [%3, %4]</source>
     <message>
         <location filename="../ui/logindialog.ui" line="+83"/>
         <source>Incorrect password.</source>
-        <translation type="unfinished"></translation>
+        <translation>Password non corretta.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Password</source>
-        <translation type="unfinished">Heslo</translation>
+        <translation>Password</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Remember my password</source>
-        <translation type="unfinished"></translation>
+        <translation>Ricorda la mia password</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Username</source>
-        <translation type="unfinished"></translation>
+        <translation>Nome utente</translation>
     </message>
     <message>
         <location line="+83"/>
         <source>Filter</source>
-        <translation type="unfinished">Filtr</translation>
+        <translation>Filtro</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Show NSFW sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra sessioni non sicure</translation>
     </message>
     <message>
         <location line="+67"/>
         <source>Password:</source>
-        <translation type="unfinished"></translation>
+        <translation>Password:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>This session is password protected</source>
-        <translation type="unfinished"></translation>
+        <translation>Questa sessione è protetta da password</translation>
     </message>
     <message>
-        <location line="+70"/>
+        <location line="+20"/>
+        <source>Catching up...</source>
+        <translation>Recuperando…</translation>
+    </message>
+    <message>
+        <location line="+50"/>
         <source>View old</source>
-        <translation type="unfinished"></translation>
+        <translation>Visualizza vecchio</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>View new</source>
-        <translation type="unfinished"></translation>
+        <translation>Vedi nuovo</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Replace pinned certificate</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-64"/>
-        <source>Catching up...</source>
-        <translation type="unfinished"></translation>
+        <translation>Sostituisci certificato appuntato</translation>
     </message>
 </context>
 <context>
@@ -1089,471 +1089,111 @@ Subrange: [%3, %4]</source>
     <message>
         <location filename="../widgets/macmenu.cpp" line="+67"/>
         <source>Minimize</source>
-        <translation type="unfinished"></translation>
+        <translation>Міnimizza</translation>
     </message>
     <message numerus="yes">
         <location line="+124"/>
         <source>You have %n images with unsaved changes. Do you want to review these changes before quitting?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Hai %n immagini con modifiche non salvate. Vuoi rivedere queste modifiche prima di uscire?</numerusform>
             <numerusform></numerusform>
         </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>If you don&apos;t review your documents, all changes will be lost</source>
-        <translation type="unfinished"></translation>
+        <translation>Se non rivedi i tuoi documenti, tutte le modifiche andranno perse</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Review changes...</source>
-        <translation type="unfinished"></translation>
+        <translation>Rivedi modifiche ...</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Discard changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Non salvare le modifiche</translation>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../mainwindow.cpp" line="+589"/>
+        <location filename="../mainwindow.cpp" line="+275"/>
+        <source>Server out of space</source>
+        <translation>Spazio server esaurito</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Server is running out of history space and session has grown too large to automatically reset! (Limit is %1 MB)
+Simplify the canvas and reset manually before space runs out.</source>
+        <translation>Il server sta esaurendo lo spazio della cronologia e la sessione è diventata troppo grande per essere ripristinata automaticamente! (Il limite è% 1 MB)</translation>
+    </message>
+    <message>
+        <location line="+217"/>
+        <source>🙋 %1 joined!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+96"/>
         <location line="+992"/>
         <source>Untitled</source>
-        <translation type="unfinished"></translation>
+        <translation>Senza titolo</translation>
     </message>
     <message>
         <location line="-664"/>
         <location line="+21"/>
         <source>Exit Drawpile</source>
-        <translation type="unfinished"></translation>
+        <translation>Esci da Drawpile</translation>
     </message>
     <message>
         <location line="-20"/>
         <source>You are still connected to a drawing session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sei ancora connesso a una sessione di disegno.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Exit anyway</source>
-        <translation type="unfinished"></translation>
+        <translation>Esci comunque</translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+22"/>
         <location line="+359"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Сancella</translation>
     </message>
     <message>
         <location line="-366"/>
         <source>There are unsaved changes. Save them before exiting?</source>
-        <translation type="unfinished"></translation>
+        <translation>Ci sono modifiche non salvate. Salvarle prima di uscire?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Save</source>
-        <translation type="unfinished">Uložit</translation>
+        <translation>Salva</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Discard</source>
-        <translation type="unfinished"></translation>
+        <translation>Abbandona</translation>
     </message>
     <message>
-        <location line="+247"/>
-        <source>Couldn&apos;t save image</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+113"/>
-        <source>Saving animation...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+197"/>
-        <source>Invalid address</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+81"/>
-        <source>Really leave the session?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>Leave</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Stay</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+9"/>
-        <source>There is still unsent data! Please wait until transmission completes!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+172"/>
-        <source>Would you like to join the session instead?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Join</source>
-        <translation type="unfinished">Připojit se</translation>
-    </message>
-    <message>
-        <location line="+52"/>
-        <source>Board is locked</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+380"/>
-        <source>The image could not be loaded</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+341"/>
-        <source>About Drawpile</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+140"/>
-        <location filename="../widgets/macmenu.cpp" line="-164"/>
-        <source>&amp;New</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <location filename="../widgets/macmenu.cpp" line="+1"/>
-        <source>&amp;Open...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>&amp;Save</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Save &amp;As...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Autosave</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-1344"/>
-        <location line="+1352"/>
-        <source>Record...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-1525"/>
+        <location line="+233"/>
         <source>Saving...</source>
-        <translation type="unfinished"></translation>
+        <translation>Salvataggio...</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+14"/>
+        <source>Couldn&apos;t save image</source>
+        <translation>Non è possibile salvare l&apos;immagine</translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>Image saved</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+146"/>
-        <source>Pause</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Play</source>
-        <translation type="unfinished">Přehrát</translation>
-    </message>
-    <message>
-        <location line="+335"/>
-        <source>Terminate session</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Really terminate this session?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <location line="+1475"/>
-        <source>Terminate</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-1365"/>
-        <source>Disconnected:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+880"/>
-        <source>Hide Docks</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+30"/>
-        <location filename="../widgets/macmenu.cpp" line="+9"/>
-        <source>&amp;Quit</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+40"/>
-        <location filename="../widgets/macmenu.cpp" line="-12"/>
-        <source>&amp;File</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+19"/>
-        <source>&amp;Export</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+28"/>
-        <source>&amp;Undo</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>&amp;Redo</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Copy selected area to the clipboard</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Copy Merged</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Copy selected area, excluding the background, to the clipboard</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Copy selected area of the current layer to the clipboard</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Cut selected area of the current layer to the clipboard</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>&amp;Paste</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>&amp;Stamp</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+12"/>
-        <source>&amp;Deselect</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+8"/>
-        <source>Expand &amp;Up</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Expand &amp;Down</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Expand &amp;Left</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Expand &amp;Right</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Fill Selection</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Recolor Selection</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Color Erase Selection</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+63"/>
-        <source>&amp;Edit</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+19"/>
-        <source>&amp;Expand Canvas</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+36"/>
-        <source>&amp;Toolbars</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>&amp;Docks</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Chat</source>
-        <translation type="unfinished">Rozhovor</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Flipbook</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Show animation preview window</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>Rotate Canvas Clockwise</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Rotate Canvas Counterclockwise</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Mirror</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Flip</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>Show Names</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Show Layers</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Show Avatars</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+121"/>
-        <source>User Pointers</source>
-        <translation type="unfinished"></translation>
+        <translation>Immagine salvata</translation>
     </message>
     <message>
         <location line="+20"/>
-        <source>New Layer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>New Group</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Duplicate Layer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Properties...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Delete Layer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+325"/>
-        <source>Color Wheel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Palette</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Color Sliders</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-381"/>
-        <source>Show Censored Layers</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+91"/>
-        <source>Report...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Lock Everything</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+236"/>
-        <source>Finish action</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>Cancel action</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-436"/>
-        <source>Show User &amp;Pointers</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-2472"/>
-        <source>🙋 %1 joined!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+720"/>
         <source>The session has been reset. Since this is a Drawpile 2.1 session and you&apos;re running Drawpile 2.2, this probably changed how things on the canvas look. Do you want to save the canvas as it was before the reset?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1593,7 +1233,570 @@ Subrange: [%3, %4]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+96"/>
+        <location line="+60"/>
+        <source>Pause</source>
+        <translation>Pausa</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Play</source>
+        <translation>Avvia</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Stop Recording</source>
+        <translation>Interrompi Registrazione</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <location line="+1352"/>
+        <source>Record...</source>
+        <translation>Registra…</translation>
+    </message>
+    <message>
+        <location line="-1201"/>
+        <source>Invalid address</source>
+        <translation>Indirizzo non valido</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Host Session</source>
+        <translation>Sessione Ospite</translation>
+    </message>
+    <message>
+        <location line="+67"/>
+        <source>Really leave the session?</source>
+        <translation>Vuoi abbandonare veramente la sessione?</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Leave</source>
+        <translation>Abbandona</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Stay</source>
+        <translation>Rimani</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>There is still unsent data! Please wait until transmission completes!</source>
+        <translation>Vi sono ancora dati non inviati! Si prega di attendere fino a quando la trasmissione sarà completata!</translation>
+    </message>
+    <message>
+        <location line="+30"/>
+        <source>Become Operator</source>
+        <translation>Diventa Operatore</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Enter operator password</source>
+        <translation>Inserire password operatore</translation>
+    </message>
+    <message>
+        <location line="+47"/>
+        <source>Terminate session</source>
+        <translation>Termina sessione</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Really terminate this session?</source>
+        <translation>Davvero terminare questa sessione?</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <location line="+1475"/>
+        <source>Terminate</source>
+        <translation>Terminata</translation>
+    </message>
+    <message>
+        <location line="-1399"/>
+        <source>Could not connect to server</source>
+        <translation>Impossibile connettersi al server</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Would you like to join the session instead?</source>
+        <translation>Vorresti unirti alla sessione?</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Join</source>
+        <translation>Entra</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Disconnected:</source>
+        <translation>Disconnesso:</translation>
+    </message>
+    <message>
+        <location line="+32"/>
+        <source>Board is locked</source>
+        <translation>La tavola è bloccata</translation>
+    </message>
+    <message>
+        <location line="+34"/>
+        <source>Session blocked by parental controls</source>
+        <translation>Sessione bloccata da controlli parentali</translation>
+    </message>
+    <message>
+        <location line="+346"/>
+        <source>The image could not be loaded</source>
+        <translation>L&apos;immagine non può essere caricata</translation>
+    </message>
+    <message>
+        <location line="+341"/>
+        <source>About Drawpile</source>
+        <translation>Informazioni su Drawpile</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>A collaborative drawing program.</source>
+        <translation>Un programma di disegno collaborativo.</translation>
+    </message>
+    <message>
+        <location line="+125"/>
+        <source>Hide Docks</source>
+        <translation>Nascondi Docks</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <location filename="../widgets/macmenu.cpp" line="-164"/>
+        <source>&amp;New</source>
+        <translation>&amp;Nuovo</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <location filename="../widgets/macmenu.cpp" line="+1"/>
+        <source>&amp;Open...</source>
+        <translation>&amp;Apri…</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Close</source>
+        <translation>Chiudi</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>&amp;Save</source>
+        <translation>&amp;Salva</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Save &amp;As...</source>
+        <translation>Salva &amp;come…</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Autosave</source>
+        <translation>Salvataggio automatico</translation>
+    </message>
+    <message>
+        <location line="-1390"/>
+        <source>Saving animation...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1389"/>
+        <source>Save Selection...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Animated &amp;GIF...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Animation &amp;Frames...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <location filename="../widgets/macmenu.cpp" line="+9"/>
+        <source>&amp;Quit</source>
+        <translation>&amp;Esci</translation>
+    </message>
+    <message>
+        <location line="+40"/>
+        <location filename="../widgets/macmenu.cpp" line="-12"/>
+        <source>&amp;File</source>
+        <translation>&amp;File</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <location filename="../widgets/macmenu.cpp" line="+8"/>
+        <source>Open &amp;Recent</source>
+        <translation>Apri &amp;Recente</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>&amp;Export</source>
+        <translation>&amp;Еsporta</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>File Tools</source>
+        <translation>Strumenti File</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>&amp;Undo</source>
+        <translation>&amp;Annulla</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Redo</source>
+        <translation>&amp;Indietro</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Copy Visible</source>
+        <translation>&amp;Copia Visibile</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Copy selected area to the clipboard</source>
+        <translation>Copia l&apos;&apos;area selezionata negli appunti</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Copy Merged</source>
+        <translation>Copia Unita</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Copy selected area, excluding the background, to the clipboard</source>
+        <translation>Copia l&apos;&apos;area selezionata, escluso lo sfondo, negli appunti</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Copy &amp;Layer</source>
+        <translation>Copia &amp;Strato</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Copy selected area of the current layer to the clipboard</source>
+        <translation>Copia l&apos;area selezionata del livello corrente negli Appunti</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Cu&amp;t Layer</source>
+        <translation>Tagli&amp;a Strato</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Cut selected area of the current layer to the clipboard</source>
+        <translation>Taglia l&apos;area selezionata del livello corrente negli appunti</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Paste</source>
+        <translation>&amp;Incolla</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>&amp;Stamp</source>
+        <translation>&amp;Timbra</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Paste &amp;From File...</source>
+        <translation>Incolla;&amp;da File...</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Delete Empty Annotations</source>
+        <translation>Elimina Annotazioni Vuote</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Resi&amp;ze Canvas...</source>
+        <translation>Ridimensio&amp;na Tela…</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <location filename="../widgets/macmenu.cpp" line="+8"/>
+        <source>Prefere&amp;nces</source>
+        <translation>Preferen&amp;ze</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Select &amp;All</source>
+        <translation>Seleziona &amp;Tutto</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Deselect</source>
+        <translation>&amp;Deseleziona</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Expand &amp;Up</source>
+        <translation>Espandi &amp;Sopra</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Expand &amp;Down</source>
+        <translation>Espandi &amp;Sotto</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Expand &amp;Left</source>
+        <translation>Espandi &amp;a Sinistra</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Expand &amp;Right</source>
+        <translation>Espandi &amp;a Destra</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Delete</source>
+        <translation>Cancella</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Fill Selection</source>
+        <translation>Riempi Selezione</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Recolor Selection</source>
+        <translation>Ricolora Selezione</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Color Erase Selection</source>
+        <translation>Cancella Colore Selezionato</translation>
+    </message>
+    <message>
+        <location line="+63"/>
+        <source>&amp;Edit</source>
+        <translation>&amp;Modifica</translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>&amp;Expand Canvas</source>
+        <translation>&amp;Espandi Tela</translation>
+    </message>
+    <message>
+        <location line="+21"/>
+        <source>Edit Tools</source>
+        <translation>Modifica Strumenti</translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>&amp;Toolbars</source>
+        <translation>&amp;Barre degli Strumenti</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>&amp;Docks</source>
+        <translation>&amp;Docks</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Chat</source>
+        <translation>Chat</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Flipbook</source>
+        <translation>Libro pieghevole</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Show animation preview window</source>
+        <translation>Mostra la finestra di anteprima dell&apos;animazione</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Zoom &amp;In</source>
+        <translation>Zoom &amp;Avanti</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Zoom &amp;Out</source>
+        <translation>Zoom &amp;Indietro</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Normal Size</source>
+        <translation>&amp;Dimensione Normale</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Reset Rotation</source>
+        <translation>&amp;Ripristina Rotazione</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Rotate Canvas Clockwise</source>
+        <translation>Ruota Tela Senso Orario</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Rotate Canvas Counterclockwise</source>
+        <translation>Ruota Tela Senso Antiorario</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Mirror</source>
+        <translation>Specchio</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Flip</source>
+        <translation>Capovolgi</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Show &amp;Annotations</source>
+        <translation>Mostra &amp;Annotazioni</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Show User &amp;Pointers</source>
+        <translation>Mostra Utente &amp;e Puntatori</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Show Names</source>
+        <translation>Mostra Nomi</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Show Layers</source>
+        <translation>Mostra Strati</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Show Avatars</source>
+        <translation>Mostra Avatars</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Show La&amp;ser Trails</source>
+        <translation>Mostra Tr&amp;accia Laser</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Show Pixel &amp;Grid</source>
+        <translation>Mostra Griglia &amp;Pixel</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>&amp;Full Screen</source>
+        <translation>&amp;Schermo Intero</translation>
+    </message>
+    <message>
+        <location line="+68"/>
+        <source>&amp;View</source>
+        <translation>&amp;Vista</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>&amp;Zoom</source>
+        <translation>&amp;Zoom</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Rotation</source>
+        <translation>Rotazione</translation>
+    </message>
+    <message>
+        <location line="+35"/>
+        <source>User Pointers</source>
+        <translation>Puntatori Utente</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>New Layer</source>
+        <translation>Nuovo Strato</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>New Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Duplicate Layer</source>
+        <translation>Duplica Strato</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Properties...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Delete Layer</source>
+        <translation>Cancella Strato</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Next Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Previous Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+124"/>
+        <source>Developer Tools</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Set Artificial Lag...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Artifical Disconnect...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Open Debug Dump...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Toggle Eraser Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Toggle Recolor Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+172"/>
+        <source>Color Wheel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Color Sliders</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-381"/>
+        <source>Show Censored Layers</source>
+        <translation>Mostra Livelli Censurati</translation>
+    </message>
+    <message>
+        <location line="-1693"/>
         <location line="+582"/>
         <source>Unsupported format.</source>
         <translation type="unfinished"></translation>
@@ -1815,32 +2018,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+27"/>
-        <source>Show La&amp;ser Trails</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Show Pixel &amp;Grid</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+71"/>
-        <source>&amp;View</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+8"/>
-        <source>&amp;Zoom</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Rotation</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+10"/>
+        <location line="+122"/>
         <source>Normal</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1886,101 +2064,251 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
     <message>
         <location line="+20"/>
-        <location filename="../widgets/macmenu.cpp" line="+25"/>
+        <location filename="../widgets/macmenu.cpp" line="+9"/>
         <source>&amp;Host...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Host...</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Share your drawingboard with others</source>
-        <translation type="unfinished"></translation>
+        <translation>Condividi il tuo tavolo da disegno con gli altri</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../widgets/macmenu.cpp" line="+1"/>
         <source>&amp;Join...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Entra...</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Join another user&apos;s drawing session</source>
-        <translation type="unfinished"></translation>
+        <translation>Partecipa alla sessione di disegno di un altro utente</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Leave</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Abbandona</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Leave this drawing session</source>
-        <translation type="unfinished"></translation>
+        <translation>Lascia questa sessione di disegno</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+2"/>
+        <source>Event Log</source>
+        <translation>Registro Eventi</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Settings...</source>
+        <translation>ImpostazionI...</translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Become Operator...</source>
-        <translation type="unfinished"></translation>
+        <translation>Diventa Operatore...</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+1"/>
+        <source>&amp;Reset...</source>
+        <translation>&amp;Resetta...</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Report...</source>
+        <translation>Rapporto...</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Lock Everything</source>
+        <translation>Blocca Tutto</translation>
+    </message>
+    <message>
+        <location line="+0"/>
         <source>Prevent changes to the drawing board</source>
-        <translation type="unfinished"></translation>
+        <translation>Impedisci le modifiche al tavolo da disegno</translation>
     </message>
     <message>
         <location line="+27"/>
         <location filename="../widgets/macmenu.cpp" line="-2"/>
         <source>&amp;Session</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Sessione</translation>
     </message>
     <message>
-        <location line="+27"/>
-        <source>Fill areas</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Select area for copying</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+25"/>
-        <source>Developer Tools</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Set Artificial Lag...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Artifical Disconnect...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Open Debug Dump...</source>
-        <translation type="unfinished"></translation>
+        <location line="+6"/>
+        <source>Moderation</source>
+        <translation>Moderazione</translation>
     </message>
     <message>
         <location line="+15"/>
-        <source>Toggle Eraser Mode</source>
-        <translation type="unfinished"></translation>
+        <source>Freehand</source>
+        <translation>A mano libera</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Freehand brush tool</source>
+        <translation>Strumento pennello a mano libera</translation>
     </message>
     <message>
         <location line="+1"/>
-        <source>Toggle Recolor Mode</source>
-        <translation type="unfinished"></translation>
+        <source>Eraser</source>
+        <translation>Gomma</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Freehand eraser brush</source>
+        <translation>Pennello da cancellare a mano libera</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Line</source>
+        <translation>&amp;Linea</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Draw straight lines</source>
+        <translation>Disegna linee rette</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Rectangle</source>
+        <translation>&amp;Rettangolo</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Draw unfilled squares and rectangles</source>
+        <translation>Disegna quadrati e rettangoli vuoti</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Ellipse</source>
+        <translation>&amp;Ellisse</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Draw unfilled circles and ellipses</source>
+        <translation>Disegna cerchi e ellissi vuoti</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Bezier Curve</source>
+        <translation>Curve di bezier</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Draw bezier curves</source>
+        <translation>Disegna le curve di Bezier</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Flood Fill</source>
+        <translation>&amp;Riempimento</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Fill areas</source>
+        <translation>Riempi le aree</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Annotation</source>
+        <translation>&amp;Annotazione</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Add text to the picture</source>
+        <translation>Aggiungi testo alla foto</translation>
     </message>
     <message>
         <location line="+2"/>
-        <source>&amp;Decrease Brush Size</source>
+        <source>&amp;Color Picker</source>
+        <translation>&amp;Scegliere Colore</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Pick colors from the image</source>
+        <translation>Scegli colori dall&apos;immagine</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Laser Pointer</source>
+        <translation>&amp;Puntatore laser</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Point out things on the canvas</source>
+        <translation>Fai notare cose sulla tela</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Select (Rectangular)</source>
+        <translation>&amp;Seleziona (Rettangolare)</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Select area for copying</source>
+        <translation>Seleziona l&apos;area per la copia</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Select (Free-Form)</source>
+        <translation>&amp;Seleziona (Forma Libera)</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Select a free-form area for copying</source>
+        <translation>Seleziona un&apos;area di forma libera per la copia</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Zoom</source>
+        <translation>Zoom</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Zoom the canvas view</source>
+        <translation>Ingrandisci la vista della tela</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Inspector</source>
+        <translation>Ispettore</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Find out who did it</source>
+        <translation>Scopri chi l&apos;ha fatto</translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>&amp;Tools</source>
+        <translation>&amp;Strumenti</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>&amp;Shortcuts</source>
+        <translation>&amp;Scorciatoie</translation>
+    </message>
+    <message>
+        <location line="+228"/>
+        <source>Onion Skins</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-203"/>
+        <source>Swap Last Colors</source>
+        <translation>Scambia Ultimi Colori</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Decrease Brush Size</source>
+        <translation>&amp;Diminuisci Dimensione Pennello</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Increase Brush Size</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Aumenta Dimensione Pennello</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1990,389 +2318,61 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+20"/>
         <source>Drawing tools</source>
-        <translation type="unfinished"></translation>
+        <translation>Strumenti di disegno</translation>
     </message>
     <message>
-        <location line="+180"/>
-        <source>Onion Skins</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-2124"/>
-        <source>Stop Recording</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+168"/>
-        <source>Host Session</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+244"/>
-        <source>Could not connect to server</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+789"/>
-        <source>A collaborative drawing program.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+141"/>
-        <source>Close</source>
-        <translation type="unfinished">Zavřít</translation>
-    </message>
-    <message>
-        <location line="+57"/>
-        <location filename="../widgets/macmenu.cpp" line="-16"/>
-        <source>Open &amp;Recent</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+28"/>
-        <source>File Tools</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+18"/>
-        <source>&amp;Copy Visible</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Copy &amp;Layer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Cu&amp;t Layer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Paste &amp;From File...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Delete Empty Annotations</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Resi&amp;ze Canvas...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <location filename="../widgets/macmenu.cpp" line="+8"/>
-        <source>Prefere&amp;nces</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Select &amp;All</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+120"/>
-        <source>Edit Tools</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+25"/>
-        <source>Zoom &amp;In</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Zoom &amp;Out</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>&amp;Normal Size</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>&amp;Reset Rotation</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Show &amp;Annotations</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+9"/>
-        <source>&amp;Full Screen</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+245"/>
-        <source>Pick colors from the image</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>&amp;Color Picker</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-7"/>
-        <source>&amp;Line</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-2936"/>
-        <source>Server out of space</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Server is running out of history space and session has grown too large to automatically reset! (Limit is %1 MB)
-Simplify the canvas and reset manually before space runs out.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1353"/>
-        <source>Become Operator</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Enter operator password</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+229"/>
-        <source>Session blocked by parental controls</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+834"/>
-        <source>Save Selection...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>Animated &amp;GIF...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Animation &amp;Frames...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+124"/>
-        <source>Delete</source>
-        <translation type="unfinished">Smazat</translation>
-    </message>
-    <message>
-        <location line="+297"/>
-        <source>Next Frame</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Previous Frame</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+31"/>
-        <source>Event Log</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Settings...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>&amp;Reset...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+37"/>
-        <source>Moderation</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+15"/>
-        <source>Freehand</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Freehand brush tool</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Eraser</source>
-        <translation type="unfinished">Guma</translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Freehand eraser brush</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Draw straight lines</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>&amp;Rectangle</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Draw unfilled squares and rectangles</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>&amp;Ellipse</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Draw unfilled circles and ellipses</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Bezier Curve</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Draw bezier curves</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>&amp;Flood Fill</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>&amp;Annotation</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Add text to the picture</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Point out things on the canvas</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>&amp;Laser Pointer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>&amp;Select (Rectangular)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>&amp;Select (Free-Form)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Select a free-form area for copying</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Zoom</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Zoom the canvas view</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Inspector</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Find out who did it</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+17"/>
-        <source>&amp;Tools</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>&amp;Shortcuts</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+25"/>
-        <source>Swap Last Colors</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+46"/>
-        <location filename="../widgets/macmenu.cpp" line="+33"/>
+        <location line="+23"/>
+        <location filename="../widgets/macmenu.cpp" line="+25"/>
         <source>&amp;Homepage</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Homepage</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Tablet Tester</source>
-        <translation type="unfinished"></translation>
+        <translation>Tablet Tester</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Log File</source>
-        <translation type="unfinished"></translation>
+        <translation>File Log</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../widgets/macmenu.cpp" line="+1"/>
         <source>&amp;About Drawpile</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Informazioni su Drawpile</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../widgets/macmenu.cpp" line="+2"/>
         <source>About &amp;Qt</source>
-        <translation type="unfinished"></translation>
+        <translation>Informazioni su &amp;Qt</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Check For Updates</source>
-        <translation type="unfinished"></translation>
+        <translation>Controlla Aggiornamenti</translation>
     </message>
     <message>
         <location line="+35"/>
         <location filename="../widgets/macmenu.cpp" line="-5"/>
         <source>&amp;Help</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Aiuto</translation>
+    </message>
+    <message>
+        <location line="+42"/>
+        <source>Finish action</source>
+        <translation>Finire l&apos;azione</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Cancel action</source>
+        <translation>Сancella azione</translation>
     </message>
     <message>
         <location filename="../widgets/macmenu.cpp" line="-13"/>
         <source>Window</source>
-        <translation type="unfinished"></translation>
+        <translation>Finestra</translation>
     </message>
 </context>
 <context>
@@ -2380,22 +2380,22 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../ui/netstats.ui" line="+14"/>
         <source>Statistics</source>
-        <translation type="unfinished">Statistika</translation>
+        <translation>Statistiche</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>Latency:</source>
-        <translation type="unfinished"></translation>
+        <translation>Latenza:</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Sent:</source>
-        <translation type="unfinished"></translation>
+        <translation>Spedito:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Received:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ricevuto:</translation>
     </message>
 </context>
 <context>
@@ -2403,38 +2403,38 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../ui/newdialog.ui" line="+17"/>
         <source>New Drawing</source>
-        <translation type="unfinished"></translation>
+        <translation>Nuovo Disegno</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Width:</source>
-        <translation type="unfinished"></translation>
+        <translation>Larghezza:</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Height:</source>
-        <translation type="unfinished"></translation>
+        <translation>Altezza:</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Background:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sfondo:</translation>
     </message>
 </context>
 <context>
     <name>PlaybackDialog</name>
     <message>
-        <location filename="../ui/playback.ui" line="+75"/>
-        <source>Play</source>
-        <translation type="unfinished">Přehrát</translation>
-    </message>
-    <message>
-        <location line="-61"/>
+        <location filename="../ui/playback.ui" line="+14"/>
         <source>Playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Riproduzione</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+61"/>
+        <source>Play</source>
+        <translation>Avvia</translation>
+    </message>
+    <message>
+        <location line="-34"/>
         <source>Rewind to Beginning</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2471,37 +2471,37 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+28"/>
         <source>Build Index</source>
-        <translation type="unfinished"></translation>
+        <translation>Costruisci indice</translation>
     </message>
     <message>
         <location line="+76"/>
         <source>Frame:</source>
-        <translation type="unfinished">Snímek:</translation>
+        <translation>Frame:</translation>
     </message>
     <message>
         <location line="+42"/>
         <source>Automatically save a frame at each step</source>
-        <translation type="unfinished"></translation>
+        <translation>Salva automaticamente un frame ad ogni passaggio</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Autosave</source>
-        <translation type="unfinished"></translation>
+        <translation>Salvataggio automatico</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Save frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Salva frame</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferma</translation>
     </message>
     <message>
         <location line="+39"/>
         <source>Export Video...</source>
-        <translation type="unfinished"></translation>
+        <translation>Esporta Video...</translation>
     </message>
 </context>
 <context>
@@ -2510,77 +2510,77 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../dialogs/avatarimport.cpp" line="+59"/>
         <location filename="../filewrangler.cpp" line="-412"/>
         <source>All files (*)</source>
-        <translation type="unfinished">Všechny soubory (*)</translation>
+        <translation>Tutti i files (*)</translation>
     </message>
     <message>
         <location filename="../docks/toolsettingsdock.cpp" line="+76"/>
         <source>Freehand</source>
-        <translation type="unfinished"></translation>
+        <translation>Mano libera</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Eraser</source>
-        <translation type="unfinished">Guma</translation>
+        <translation>Gomma</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Line</source>
-        <translation type="unfinished">Čára</translation>
+        <translation>Linea</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Rectangle</source>
-        <translation type="unfinished">Obdélník</translation>
+        <translation>Rettangolo</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Ellipse</source>
-        <translation type="unfinished">Elipsa</translation>
+        <translation>Еllisse</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Bezier Curve</source>
-        <translation type="unfinished"></translation>
+        <translation>Curva Bezier</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Flood Fill</source>
-        <translation type="unfinished">Vyplnit oblast barvou</translation>
+        <translation>Riempimento</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Annotation</source>
-        <translation type="unfinished">Poznámka</translation>
+        <translation>Annotazione</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Color Picker</source>
-        <translation type="unfinished">Kapátko</translation>
+        <translation>Prendi Colore</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Laser Pointer</source>
-        <translation type="unfinished"></translation>
+        <translation>Puntatore Laser</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Selection (Rectangular)</source>
-        <translation type="unfinished">Výběr (obdélníkový)</translation>
+        <translation>Selezione (Rettangolare)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Selection (Free-Form)</source>
-        <translation type="unfinished">Výběr (nepravidelně tvarovaný)</translation>
+        <translation>Selezione (Forma Libera)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Zoom</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Inspector</source>
-        <translation type="unfinished"></translation>
+        <translation>Іspettore</translation>
     </message>
 </context>
 <context>
@@ -2588,7 +2588,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../ui/resetsession.ui" line="+14"/>
         <source>Reset session</source>
-        <translation type="unfinished"></translation>
+        <translation>Resetta sessione</translation>
     </message>
 </context>
 <context>
@@ -2596,12 +2596,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../ui/resizedialog.ui" line="+14"/>
         <source>Resize Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Ridimensiona Tela</translation>
     </message>
     <message>
         <location line="+57"/>
         <source>Keep aspect ratio</source>
-        <translation type="unfinished"></translation>
+        <translation>Mantenere proporzioni</translation>
     </message>
 </context>
 <context>
@@ -2662,43 +2662,43 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../ui/serverlog.ui" line="+14"/>
         <location line="+10"/>
         <source>Event Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Registro Eventi</translation>
     </message>
     <message>
         <location line="+6"/>
         <location line="+26"/>
         <source>Filter</source>
-        <translation type="unfinished">Filtr</translation>
+        <translation>Filtro</translation>
     </message>
     <message>
         <location line="-8"/>
         <source>Users</source>
-        <translation type="unfinished">Uživatelé</translation>
+        <translation>Utenti</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Inspect</source>
-        <translation type="unfinished"></translation>
+        <translation>Іspettore</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Kick</source>
-        <translation type="unfinished"></translation>
+        <translation>Espelli</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Ban</source>
-        <translation type="unfinished"></translation>
+        <translation>Vieta</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>Annulla</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>Rifare</translation>
     </message>
 </context>
 <context>
@@ -2706,122 +2706,122 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../ui/sessionsettings.ui" line="+14"/>
         <source>Session Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Impostazioni Sessione</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Impostazioni</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Session</source>
-        <translation type="unfinished"></translation>
+        <translation>Sessione</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Operator password:</source>
-        <translation type="unfinished"></translation>
+        <translation>Password operatore:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Autoreset threshold:</source>
-        <translation type="unfinished"></translation>
+        <translation>Soglia Autoreset:</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Session history size at which autoreset triggers</source>
-        <translation type="unfinished"></translation>
+        <translation>Dimensione della cronologia delle sessioni in cui viene attivato il trigger automatico</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>No autoreset</source>
-        <translation type="unfinished"></translation>
+        <translation>No autoreset</translation>
     </message>
     <message>
         <location line="+3"/>
         <source> MB</source>
-        <translation type="unfinished"></translation>
+        <translation>МB</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Options:</source>
-        <translation type="unfinished">Volby:</translation>
+        <translation>Opzioni:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Include chat in session history so new users can see it as well</source>
-        <translation type="unfinished"></translation>
+        <translation>Includi la chat nella cronologia delle sessioni in modo che anche i nuovi utenti possano vederla</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Keep chat history</source>
-        <translation type="unfinished"></translation>
+        <translation>Mantieni cronologia chat</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Don&apos;t terminate session when the last user leaves</source>
-        <translation type="unfinished"></translation>
+        <translation>Non interrompere la sessione quando l&apos;ultimo utente esce</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Persist without users</source>
-        <translation type="unfinished"></translation>
+        <translation>Persistere senza utenti</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>This session contains material not suitable for minors</source>
-        <translation type="unfinished"></translation>
+        <translation>Questa sessione contiene materiale non adatto ai minori</translation>
     </message>
     <message>
-        <location line="+36"/>
+        <location line="+3"/>
+        <source>Age restricted content</source>
+        <translation>Contenuto limitato all&apos;età</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Title:</source>
+        <translation>Titolo:</translation>
+    </message>
+    <message>
+        <location line="+20"/>
         <source>Login</source>
-        <translation type="unfinished"></translation>
+        <translation>Login</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Password:</source>
-        <translation type="unfinished"></translation>
+        <translation>Password:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Max users:</source>
-        <translation type="unfinished"></translation>
+        <translation>Max utenti:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>How many users to let in. Does not affect users already logged in</source>
-        <translation type="unfinished"></translation>
+        <translation>Quanti utenti far entrare. Non influisce sugli utenti già loggati</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Block new logins</source>
-        <translation type="unfinished"></translation>
+        <translation>Blocca nuovi accessi</translation>
     </message>
     <message>
-        <location line="-79"/>
-        <source>Title:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-13"/>
-        <source>Age restricted content</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+99"/>
+        <location line="+7"/>
         <source>No guest logins</source>
-        <translation type="unfinished"></translation>
+        <translation>Nessun accesso ospite</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Permissions</source>
-        <translation type="unfinished"></translation>
+        <translation>Permessi</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Cut, Paste &amp; Fill:</source>
-        <translation type="unfinished"></translation>
+        <translation>Taglia,incolla e;Riempi:</translation>
     </message>
     <message>
         <location line="+70"/>
@@ -2831,57 +2831,57 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+61"/>
         <source>Selection Move &amp; Resize:</source>
-        <translation type="unfinished"></translation>
+        <translation>Selezione Sposta e; Ridimensiona:</translation>
     </message>
     <message>
         <location line="-118"/>
         <source>New Annotations:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nuove annotazioni:</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>General Layer Editing:</source>
-        <translation type="unfinished"></translation>
+        <translation>Editing di livello generale:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Own Layer Editing:</source>
-        <translation type="unfinished"></translation>
+        <translation>Modifica del proprio livello:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Canvas Resizing:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ridimensionamento della tela:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Canvas Background:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sfondo Tela:</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Undo &amp; Redo:</source>
-        <translation type="unfinished"></translation>
+        <translation>Annulla &amp; Rifai:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Kick &amp; Ban:</source>
-        <translation type="unfinished"></translation>
+        <translation>Espelli e &amp; Blocca:</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Operators</source>
-        <translation type="unfinished"></translation>
+        <translation>Оperatori</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>Fidati</translation>
     </message>
     <message>
         <location line="-80"/>
         <source>permissions</source>
-        <translation type="unfinished"></translation>
+        <translation>permessi</translation>
     </message>
     <message>
         <location line="+98"/>
@@ -2901,28 +2901,28 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+11"/>
         <source>Banned users</source>
-        <translation type="unfinished"></translation>
+        <translation>Utenti Bloccati</translation>
     </message>
     <message>
         <location line="+31"/>
         <location line="+66"/>
         <source>Remove selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Rimuovi selezionati</translation>
     </message>
     <message>
         <location line="-56"/>
         <source>Announcements</source>
-        <translation type="unfinished"></translation>
+        <translation>Comunicazioni</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Private listing</source>
-        <translation type="unfinished"></translation>
+        <translation>Elenco privato</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Public listing</source>
-        <translation type="unfinished"></translation>
+        <translation>Elenco pubblico</translation>
     </message>
 </context>
 <context>
@@ -2930,12 +2930,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../ui/tablettest.ui" line="+14"/>
         <source>Tablet Tester</source>
-        <translation type="unfinished"></translation>
+        <translation>Tablet Tester</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Clear</source>
-        <translation type="unfinished"></translation>
+        <translation>Pulisci</translation>
     </message>
 </context>
 <context>
@@ -2943,47 +2943,47 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../ui/textsettings.ui" line="+75"/>
         <source>Horizontal alignment</source>
-        <translation type="unfinished"></translation>
+        <translation>Allineamento orizzontale</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Vertical alignment</source>
-        <translation type="unfinished"></translation>
+        <translation>Allineamento verticale</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Background color</source>
-        <translation type="unfinished"></translation>
+        <translation>Colore di sfondo</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Text color</source>
-        <translation type="unfinished"></translation>
+        <translation>Colore testo</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Bold</source>
-        <translation type="unfinished"></translation>
+        <translation>Grassetto</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Italic</source>
-        <translation type="unfinished"></translation>
+        <translation>Italic</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Underline</source>
-        <translation type="unfinished"></translation>
+        <translation>Sottolinea</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Strikethrough</source>
-        <translation type="unfinished"></translation>
+        <translation>Barrato</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Annotation content</source>
-        <translation type="unfinished"></translation>
+        <translation>Contenuto di annotazione</translation>
     </message>
 </context>
 <context>
@@ -3006,7 +3006,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+17"/>
         <source>Smoothing:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Levigatura:</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -3059,7 +3059,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../ui/versioncheck.ui" line="+14"/>
         <source>New Version Check</source>
-        <translation type="unfinished"></translation>
+        <translation>Nuova verifica della versione</translation>
     </message>
     <message>
         <location line="+40"/>
@@ -3072,52 +3072,52 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../ui/videoexport.ui" line="+14"/>
         <source>Export video</source>
-        <translation type="unfinished">Vyvést obrazový záznam</translation>
+        <translation>Esporta video</translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+6"/>
+        <source>Video Options</source>
+        <translation>Opzioni Video</translation>
+    </message>
+    <message>
+        <location line="+49"/>
         <source>Framerate:</source>
-        <translation type="unfinished"></translation>
+        <translation>Frequenza fotogrammi:</translation>
     </message>
     <message>
         <location line="-35"/>
         <source> FPS</source>
-        <translation type="unfinished"></translation>
+        <translation> FPS</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Size:</source>
-        <translation type="unfinished">Velikost:</translation>
+        <translation>Dimensione:</translation>
     </message>
     <message>
-        <location line="-42"/>
-        <source>Video Options</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+56"/>
+        <location line="+14"/>
         <source>Format:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+72"/>
         <source>Export Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Opzioni di esportazione</translation>
     </message>
     <message>
         <location line="+31"/>
         <source>Image format:</source>
-        <translation type="unfinished"></translation>
+        <translation>Formato immagine:</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>File name pattern:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nome file modello:</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Supported pattern placeholders:&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{F}&lt;/span&gt; - frame number&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{E}&lt;/span&gt; - file extension&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;testa/&gt;&lt;corpo&gt;&lt;p&gt;Segnaposti del modello supportati:&lt;/p&gt;&lt;p&gt;&lt;stile di campata=&quot; peso del carattere:600;&quot;&gt;{F}&lt;/span&gt;-numero di frame&lt;br/&lt;&lt;stile di campata=&quot;peso del carattere:600;&quot;&gt;{E}&lt;campata &gt;-estensione del file&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -3135,7 +3135,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../bundled/QtColorWidgets/color_dialog.cpp" line="+79"/>
         <source>Pick</source>
-        <translation type="unfinished"></translation>
+        <translation>Prendi</translation>
     </message>
 </context>
 <context>
@@ -3226,7 +3226,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>All Files (*)</source>
-        <translation type="unfinished">Všechny soubory (*)</translation>
+        <translation type="unfinished">Tutti i Files(*)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3285,7 +3285,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../dialogs/abusereport.cpp" line="+17"/>
         <source>Report</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rapporto</translation>
     </message>
 </context>
 <context>
@@ -3293,12 +3293,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../dialogs/addserverdialog.cpp" line="+17"/>
         <source>Add Server</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aggiungi Server</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>Add</source>
-        <translation type="unfinished">Přidat</translation>
+        <translation type="unfinished">Aggiungi</translation>
     </message>
 </context>
 <context>
@@ -3308,22 +3308,22 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+10"/>
         <location line="+5"/>
         <source>Import Avatar</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Importa Avatar</translation>
     </message>
     <message>
         <location line="-14"/>
         <source>Images (%1)</source>
-        <translation type="unfinished">Obrázky (%1)</translation>
+        <translation type="unfinished">Immagini (%1)</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Couldn&apos;t read image</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Impossibile leggere l&apos;immagine</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Picture is too small</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">L&apos;immagine è troppo piccola</translation>
     </message>
 </context>
 <context>
@@ -3374,7 +3374,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+3"/>
         <source>MyPaint Brush</source>
-        <translation type="unfinished">MyPaint-pensel</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+23"/>
@@ -4012,7 +4012,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Eraser</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Guma</translation>
+        <translation type="unfinished">Gomma</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4774,7 +4774,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/certificateview.cpp" line="+25"/>
         <source>SSL Certificate for %1</source>
-        <translation type="unfinished">Osvědčení SSL pro %1</translation>
+        <translation type="unfinished">Certificato SSL per %1</translation>
     </message>
 </context>
 <context>
@@ -4787,7 +4787,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сancella</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -4798,12 +4798,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-68"/>
         <source>Delete</source>
-        <translation type="unfinished">Smazat</translation>
+        <translation type="unfinished">Cancella</translation>
     </message>
     <message>
         <location line="+68"/>
         <source>Save</source>
-        <translation type="unfinished">Uložit</translation>
+        <translation type="unfinished">Salva</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -4939,7 +4939,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-6"/>
         <source>Undo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Annulla</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -4980,7 +4980,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/hostdialog.cpp" line="+20"/>
         <source>Host</source>
-        <translation type="unfinished">Server</translation>
+        <translation type="unfinished">Host</translation>
     </message>
 </context>
 <context>
@@ -4988,45 +4988,45 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/joindialog.cpp" line="+43"/>
         <source>Join</source>
-        <translation type="unfinished">Připojit se</translation>
+        <translation type="unfinished">Entra</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Add Server</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aggiungi Server</translation>
     </message>
     <message>
         <location line="+19"/>
         <location line="+2"/>
         <source>Nearby</source>
-        <translation type="unfinished">V blízkosti</translation>
+        <translation type="unfinished">Vicino</translation>
     </message>
     <message>
         <location line="-2"/>
         <location line="+11"/>
         <location line="+369"/>
         <source>Loading...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Caricamento in corso...</translation>
     </message>
     <message>
         <location line="-221"/>
         <source>Searching...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ricerca in corso ...</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Record</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Record</translation>
     </message>
     <message>
         <location line="+57"/>
         <source>Room code not found!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Codice stanza non trovato!</translation>
     </message>
     <message>
         <location line="+131"/>
         <source>Join a Session</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Partecipa ad una sessione</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5064,7 +5064,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Delete</source>
-        <translation type="unfinished">Smazat</translation>
+        <translation type="unfinished">Cancella</translation>
     </message>
     <message>
         <location line="+31"/>
@@ -5074,7 +5074,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+15"/>
         <source>Default</source>
-        <translation type="unfinished">Výchozí</translation>
+        <translation type="unfinished">Predefinito</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -5132,17 +5132,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/logindialog.cpp" line="+120"/>
         <source>Report...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rapporto...</translation>
     </message>
     <message>
         <location line="+64"/>
         <source>Close</source>
-        <translation type="unfinished">Zavřít</translation>
+        <translation type="unfinished">Chiudi</translation>
     </message>
     <message>
         <location line="+200"/>
         <source>Log in with %1 credentials</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Accedi con %1 credenziali</translation>
     </message>
 </context>
 <context>
@@ -5150,7 +5150,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/netstats.cpp" line="+47"/>
         <source>not connected</source>
-        <translation type="unfinished">Nepřipojeno</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5158,17 +5158,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/newdialog.cpp" line="+19"/>
         <source>Create</source>
-        <translation type="unfinished">Vytvořit</translation>
+        <translation type="unfinished">Crea</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Error</source>
-        <translation type="unfinished">Chyba</translation>
+        <translation type="unfinished">Errore</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Size is too large</source>
-        <translation type="unfinished">Velikost je příliš velká</translation>
+        <translation type="unfinished">La dimensione è troppo grande</translation>
     </message>
 </context>
 <context>
@@ -5176,7 +5176,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="+38"/>
         <source>Playback</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Riproduzione</translation>
     </message>
     <message>
         <location line="+130"/>
@@ -5191,7 +5191,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+151"/>
         <source>Video error</source>
-        <translation type="unfinished">Chyba obrazového záznamu</translation>
+        <translation type="unfinished">Errore video</translation>
     </message>
 </context>
 <context>
@@ -5204,22 +5204,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>New</source>
-        <translation type="unfinished">Nový</translation>
+        <translation type="unfinished">Nuovo</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Open...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Apri...</translation>
     </message>
     <message>
         <location line="+31"/>
         <source>Open Image</source>
-        <translation type="unfinished">Otevřít obrázek</translation>
+        <translation type="unfinished">Apri immagine</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Reset</source>
-        <translation type="unfinished">Nastavit znovu</translation>
+        <translation type="unfinished">Ripristina</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -5232,22 +5232,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/resizedialog.cpp" line="+22"/>
         <source>Resize</source>
-        <translation type="unfinished">Změnit velikost</translation>
+        <translation type="unfinished">Ridimensiona</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Center</source>
-        <translation type="unfinished">Na střed</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+41"/>
         <source>Error</source>
-        <translation type="unfinished">Chyba</translation>
+        <translation type="unfinished">Errore</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Size is too large</source>
-        <translation type="unfinished">Velikost je příliš velká</translation>
+        <translation type="unfinished">La dimensione è troppo grande</translation>
     </message>
 </context>
 <context>
@@ -5255,12 +5255,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/sessionsettings.cpp" line="+274"/>
         <source>Operators</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Оperatori</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fidati</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5270,57 +5270,57 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Everyone</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tutti</translation>
     </message>
     <message>
         <location line="+78"/>
         <source>yes</source>
         <comment>password</comment>
-        <translation type="unfinished">Ano</translation>
+        <translation type="unfinished">password</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>no</source>
         <comment>password</comment>
-        <translation type="unfinished">Ne</translation>
+        <translation type="unfinished">password</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>change</source>
         <comment>password</comment>
-        <translation type="unfinished">Změnit</translation>
+        <translation type="unfinished">password</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>assign</source>
         <comment>password</comment>
-        <translation type="unfinished">Přiřadit</translation>
+        <translation type="unfinished">password</translation>
     </message>
     <message>
         <location line="+73"/>
         <location line="+21"/>
         <source>Set a new password or leave blank to remove.</source>
-        <translation type="unfinished">Nastavit nové heslo nebo ponechat prázdné k odstranění.</translation>
+        <translation type="unfinished">Imposta una nuova password o lascia vuoto per rimuovere.</translation>
     </message>
     <message>
         <location line="-19"/>
         <source>Set a password for the session.</source>
-        <translation type="unfinished">Nastavit heslo pro sezení.</translation>
+        <translation type="unfinished">Imposta una password per la sessione.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Session Password</source>
-        <translation type="unfinished">Heslo pro sezení</translation>
+        <translation type="unfinished">Password di sessione</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Set a password for gaining operator status.</source>
-        <translation type="unfinished">Nastavit heslo pro získání postavení operátora.</translation>
+        <translation type="unfinished">Impostare una password per ottenere lo stato dell&apos;operatore..</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Operator Password</source>
-        <translation type="unfinished">Heslo operátora</translation>
+        <translation type="unfinished">Password operatore</translation>
     </message>
 </context>
 <context>
@@ -5346,7 +5346,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="+32"/>
         <source>Preferences</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Preferenze</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -5366,7 +5366,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Network</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Network</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5376,12 +5376,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Scorciatoie</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Parental Controls</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Controlli Parentali</translation>
     </message>
 </context>
 <context>
@@ -5449,17 +5449,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+63"/>
         <source>Download %1 (%2 MB)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Scaricamento %1 (%2 MB)</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>Downloaded %1!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 Scaricato!</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Downloading %1...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Download %1 in corso ...</translation>
     </message>
 </context>
 <context>
@@ -5487,12 +5487,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Original</source>
-        <translation type="unfinished">Původní</translation>
+        <translation type="unfinished">Originale</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Custom:</source>
-        <translation type="unfinished">Vlastní:</translation>
+        <translation type="unfinished">Personalizza:</translation>
     </message>
 </context>
 <context>
@@ -5522,7 +5522,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Language:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lingua:</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -5547,7 +5547,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Logging:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Logging:</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -5622,7 +5622,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Session history:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Cronologia della sessione:</translation>
     </message>
 </context>
 <context>
@@ -5645,17 +5645,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Enable pressure sensitivity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Abilita sensibilità alla pressione</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Tablet:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tablet:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Detect eraser tip</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rileva la gomma</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -5690,7 +5690,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+15"/>
         <source>Smoothing:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Levigatura:</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -5725,12 +5725,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Pinch to zoom</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pizzica per zoomare</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Twist to rotate</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gira per ruotare</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -5828,7 +5828,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Recording marker</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Marcatore di registrazione</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5853,7 +5853,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Notifications:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Notifiche:</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5922,7 +5922,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+10"/>
         <location line="+27"/>
         <source>Lock</source>
-        <translation type="unfinished">Zamknout</translation>
+        <translation type="unfinished">Blocca</translation>
     </message>
     <message>
         <location line="-22"/>
@@ -5937,7 +5937,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+13"/>
         <source>Unlock</source>
-        <translation type="unfinished">Odemknout</translation>
+        <translation type="unfinished">Sblocca</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -5952,12 +5952,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Unlock Parental Controls</source>
-        <translation type="unfinished">Odemknout rodičovskou kontrolu</translation>
+        <translation type="unfinished">Sblocca i controlli parentali</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Lock Parental Controls</source>
-        <translation type="unfinished">Zamknout rodičovskou kontrolu</translation>
+        <translation type="unfinished">Blocca Controlli Parentali</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -5967,7 +5967,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+13"/>
         <source>Incorrect password.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Password non corretta.</translation>
     </message>
 </context>
 <context>
@@ -6163,17 +6163,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+22"/>
         <source>Dot</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dot</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Crosshair</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mirino</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Arrow</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Freccia</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6213,7 +6213,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Fixed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aggiustato</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6246,7 +6246,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/brushpalettedock.cpp" line="+100"/>
         <source>Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pennelli</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -6405,18 +6405,18 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+16"/>
         <source>New</source>
-        <translation type="unfinished">Nový</translation>
+        <translation type="unfinished">Nuovo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Duplicate</source>
-        <translation type="unfinished">Zdvojit</translation>
+        <translation type="unfinished">Duplicare</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+165"/>
         <source>Delete</source>
-        <translation type="unfinished">Smazat</translation>
+        <translation type="unfinished">Cancella</translation>
     </message>
     <message>
         <location line="-164"/>
@@ -6426,22 +6426,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Import...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Іmporta...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Export...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Еsporta...</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Add</source>
-        <translation type="unfinished">Přidat</translation>
+        <translation type="unfinished">Aggiungi</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Remove</source>
-        <translation type="unfinished">Odstranit</translation>
+        <translation type="unfinished">Rimuovi</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6456,32 +6456,32 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+53"/>
         <source>Import palette</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Importa tavolozza</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Palettes (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tavolozze (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>All files (*)</source>
-        <translation type="unfinished">Všechny soubory (*)</translation>
+        <translation type="unfinished">Tutti i files (*)</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Export palette</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Esporta tavolozza</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>GIMP palette (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tavolozza di GIMP (%1)</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Error</source>
-        <translation type="unfinished">Chyba</translation>
+        <translation type="unfinished">Errore</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -6491,7 +6491,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+67"/>
         <source>Delete palette &quot;%1&quot;?</source>
-        <translation type="unfinished">Smazat paletu &quot;%1&quot;?</translation>
+        <translation type="unfinished">Cancella tavolozza &quot;%1&quot;?</translation>
     </message>
 </context>
 <context>
@@ -6532,27 +6532,27 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/layeraclmenu.cpp" line="+24"/>
         <source>Lock this layer</source>
-        <translation type="unfinished">Uzamknout tuto vrstvu</translation>
+        <translation type="unfinished">Blocca questo livello</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Censor</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Censura</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Access tier:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Livello di accesso:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Operators</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Оperatori</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fidati</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6562,12 +6562,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Everyone</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tutti</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Exclusive access:</source>
-        <translation type="unfinished">Výhradní přístup:</translation>
+        <translation type="unfinished">Acesso esclusivo:</translation>
     </message>
 </context>
 <context>
@@ -6575,7 +6575,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="+36"/>
         <source>Layers</source>
-        <translation type="unfinished">Vrstvy</translation>
+        <translation type="unfinished">Livelli</translation>
     </message>
     <message>
         <location line="+39"/>
@@ -6591,7 +6591,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+269"/>
         <location line="+14"/>
         <source>Layer</source>
-        <translation type="unfinished">Vrstva</translation>
+        <translation type="unfinished">Strato</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -6614,17 +6614,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/navigator.cpp" line="+301"/>
         <source>Navigator</source>
-        <translation type="unfinished">Pohyb</translation>
+        <translation type="unfinished">Navigatore</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>Show Cursors</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mostra Cursore</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Realtime Update</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aggiornamento in tempo reale</translation>
     </message>
 </context>
 <context>
@@ -6675,12 +6675,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Frame:</source>
-        <translation type="unfinished">Snímek:</translation>
+        <translation type="unfinished">Frame:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>FPS:</source>
-        <translation type="unfinished">Snímků za sekundu:</translation>
+        <translation type="unfinished">FPS:</translation>
     </message>
 </context>
 <context>
@@ -6698,7 +6698,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Close</source>
-        <translation type="unfinished">Zavřít</translation>
+        <translation type="unfinished">Chiudi</translation>
     </message>
 </context>
 <context>
@@ -6752,43 +6752,43 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Merge</source>
-        <translation type="unfinished">Sloučit</translation>
+        <translation type="unfinished">Unire</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Delete</source>
-        <translation type="unfinished">Smazat</translation>
+        <translation type="unfinished">Cancella</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Left</source>
-        <translation type="unfinished">Vlevo</translation>
+        <translation type="unfinished">Sinistra</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+10"/>
         <source>Center</source>
-        <translation type="unfinished">Na střed</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="-9"/>
         <source>Justify</source>
-        <translation type="unfinished">Zarovnat do bloku</translation>
+        <translation type="unfinished">Giustifica</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Right</source>
-        <translation type="unfinished">Vpravo</translation>
+        <translation type="unfinished">Destra</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Top</source>
-        <translation type="unfinished">Nahoře</translation>
+        <translation type="unfinished">Sopra</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Bottom</source>
-        <translation type="unfinished">Dole</translation>
+        <translation type="unfinished">Sotto</translation>
     </message>
 </context>
 <context>
@@ -6839,7 +6839,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Pick from current layer only</source>
-        <translation type="unfinished">Brát pouze z nynější vrstvy</translation>
+        <translation type="unfinished">Scegli solo dal livello corrente</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -6865,12 +6865,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/zoomsettings.cpp" line="+21"/>
         <source>Normal Size</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dimensione Normale</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Fit To Window</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Adatta alla finestra</translation>
     </message>
 </context>
 <context>
@@ -6878,7 +6878,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/canvasshortcutedit.cpp" line="+269"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Сancella</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6921,7 +6921,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../scene/canvasview.cpp" line="+104"/>
         <source>Reconnect</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Riconnetti</translation>
     </message>
 </context>
 <context>
@@ -6929,32 +6929,32 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../chat/chatwidget.cpp" line="+132"/>
         <source>Public</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pubblico</translation>
     </message>
     <message>
         <location line="+66"/>
         <source>Chat (recorded)...</source>
-        <translation type="unfinished">Rozhovor (zaznamenáno)...</translation>
+        <translation type="unfinished">Сhat (registrato)...</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Chat...</source>
-        <translation type="unfinished">Rozhovor...</translation>
+        <translation type="unfinished">Сhat…</translation>
     </message>
     <message>
         <location line="+301"/>
         <source>%1 joined the session</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 Entrato nella sessione</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>%1 left the session</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 lasciato la sessione</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>You have been kicked by %1</source>
-        <translation type="unfinished">Byl jste vykopnut %1</translation>
+        <translation type="unfinished">Sei stato espulso da %1</translation>
     </message>
     <message>
         <location line="+112"/>
@@ -7018,22 +7018,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+48"/>
         <source>Clear</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Pulisci</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Compact mode</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Modalità compatta</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Detach</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Stacca</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Attach</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Attacca</translation>
     </message>
 </context>
 <context>
@@ -7041,7 +7041,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../chat/chatwindow.cpp" line="+12"/>
         <source>Chat</source>
-        <translation type="unfinished">Rozhovor</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7049,7 +7049,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/colorbutton.cpp" line="+42"/>
         <source>Select a color</source>
-        <translation type="unfinished">Vybrat barvu</translation>
+        <translation type="unfinished">Seleziona un colore</translation>
     </message>
 </context>
 <context>
@@ -7123,112 +7123,112 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/netstatus.cpp" line="+52"/>
         <source>Copy address to clipboard</source>
-        <translation type="unfinished">Kopírovat adresu do schránky</translation>
+        <translation type="unfinished">Copia l&apos;indirizzo negli appunti</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Copy session URL to clipboard</source>
-        <translation type="unfinished">Kopírovat adresu sezení (URL) do schránky</translation>
+        <translation type="unfinished">Copia URL della sessione negli appunti</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Get externally visible IP address</source>
-        <translation type="unfinished">Získat z vnějšku viditelnou adresu IP</translation>
+        <translation type="unfinished">Ottieni indirizzo IP visibile esternamente</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Hide address</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Indirizzo nascosto</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Statistics</source>
-        <translation type="unfinished">Statistika</translation>
+        <translation type="unfinished">Statistiche</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Show certificate</source>
-        <translation type="unfinished">Ukázat osvědčení</translation>
+        <translation type="unfinished">Mostra certificato</translation>
     </message>
     <message>
         <location line="+49"/>
         <source>Logged in!</source>
-        <translation type="unfinished">Přihlášen!</translation>
+        <translation type="unfinished">Connesso!</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>A previously unvisited host</source>
-        <translation type="unfinished">Předtím nenavštívený server</translation>
+        <translation type="unfinished">Un host in precedenza non visitati</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Host certificate has not changed since the last visit</source>
-        <translation type="unfinished">Osvědčení serveru se od poslední návštěny nezměnilo</translation>
+        <translation type="unfinished">Il certificato host non è cambiato dall&apos;ultima visita</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>This is a trusted host</source>
-        <translation type="unfinished">Toto je důvěryhodný server</translation>
+        <translation type="unfinished">Questo è un host fidato</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>Disconnected</source>
-        <translation type="unfinished">Odpojen</translation>
+        <translation type="unfinished">Disconnesso</translation>
     </message>
     <message>
         <location line="+115"/>
         <source>You have been kicked by %1</source>
-        <translation type="unfinished">Byl jste vykopnut %1</translation>
+        <translation type="unfinished">Sei stato espulso da %1</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>not connected</source>
-        <translation type="unfinished">Nepřipojeno</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Connecting...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Connettendo…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Connecting to %1...</source>
-        <translation type="unfinished">Připojuje se k %1...</translation>
+        <translation type="unfinished">Connesso a %1...</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Connected</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Connesso</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Host: %1</source>
-        <translation type="unfinished">Server: %1</translation>
+        <translation type="unfinished">Ospite: %1</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Room: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Stanza: %1</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Logging out...</source>
-        <translation type="unfinished">Odhlašuje se...</translation>
+        <translation type="unfinished">Disconnettendo…</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Notice</source>
-        <translation type="unfinished">Upozornění</translation>
+        <translation type="unfinished">Avviso</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Your Internet Service Provider is using Carrier Grade NAT. This makes it impossible for others to connect to you directly. See Drawpile&apos;s help page for workarounds.</source>
-        <translation type="unfinished">Váš poskytovatel internetu používá Carrier Grade NAT. To druhým znemožňuje přímé spojení s vámi. Podívejte se do nápovědy k Drawpile, jak se to dá obejít.</translation>
+        <translation type="unfinished">Il provider di servizi Internet utilizza NAT di Carrier Grade. Ciò rende impossibile agli altri collegarsi direttamente a te. Vedere la pagina di aiuto di Drawpile per soluzioni alternative.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Don&apos;t show this again</source>
-        <translation type="unfinished">Neukazovat znovu</translation>
+        <translation type="unfinished">Non mostrare ancora</translation>
     </message>
 </context>
 <context>
@@ -7236,22 +7236,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/presetselector.cpp" line="+28"/>
         <source>Presets</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Preimpostazioni</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Load</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Carica</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Save</source>
-        <translation type="unfinished">Uložit</translation>
+        <translation type="unfinished">Salva</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Delete</source>
-        <translation type="unfinished">Smazat</translation>
+        <translation type="unfinished">Cancella</translation>
     </message>
 </context>
 <context>
@@ -7260,48 +7260,48 @@ Values above 0.5 may not be noticeable.</source>
         <location filename="../chat/useritemdelegate.cpp" line="+32"/>
         <location line="+120"/>
         <source>Operator</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Оperatore</translation>
     </message>
     <message>
         <location line="-119"/>
         <location line="+121"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fidati</translation>
     </message>
     <message>
         <location line="-118"/>
         <source>Lock</source>
-        <translation type="unfinished">Zamknout</translation>
+        <translation type="unfinished">Blocca</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mute</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Muto</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Undo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Annulla</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Redo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rifare</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Kick</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Espelli</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Kick &amp;&amp; Ban</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Espelli &amp;&amp; Bannato</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Private Message</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Messaggio Privato</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7316,7 +7316,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+11"/>
         <source>Bot</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bot</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -7329,7 +7329,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/viewstatus.cpp" line="+64"/>
         <source>Canvas Rotation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rotazione Tela</translation>
     </message>
 </context>
 </TS>

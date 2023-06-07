@@ -1,6 +1,8 @@
 #[[ This module contains data and functions for internationalisation. #]]
 
-set(SUPPORTED_LANGS cs_CZ de_DE en_US fi_FI fr_FR it_IT ja_JP pt_BR ru_RU uk_UA vi_VN zh_CN)
+set(SUPPORTED_LANGS cs_CZ de_DE es_CO fi_FI fr_FR it_IT ja_JP nb_NO pt_BR ru_RU uk_UA vi_VN zh_CN)
+# Qt doesn't have Norwegian or Vietnamese translations, but Drawpile does.
+set(LANGS_UNSUPPORTED_IN_QT nb vi)
 
 define_property(TARGET PROPERTY DP_TRANSLATION_QM_FILES
 	BRIEF_DOCS ".qm files for this target"
@@ -48,9 +50,7 @@ function(target_add_translations target prefix)
 	set(ts_files "")
 
 	foreach(lang IN LISTS SUPPORTED_LANGS)
-		string(SUBSTRING ${lang} 0 2 lang_code)
-
-		set(file ${prefix}_${lang_code}.ts)
+		set(file ${prefix}_${lang}.ts)
 		list(APPEND ts_files ${file})
 		if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${file})
 			message(STATUS "Creating new empty translation file ${file}")
@@ -114,7 +114,7 @@ function(bundle_translations out_files)
 	file(MAKE_DIRECTORY "${ARG_OUTPUT_LOCATION}")
 
 	set(outputs "")
-	foreach(lang IN LISTS SUPPORTED_LANGS)
+	foreach(lang IN LISTS SUPPORTED_LANGS ITEMS en_US)
 		string(SUBSTRING ${lang} 0 2 lang_code)
 		set(files "")
 		foreach(module IN LISTS ARG_QT)
@@ -134,7 +134,7 @@ function(bundle_translations out_files)
 		endforeach()
 
 		if(files)
-			set(output "${ARG_OUTPUT_LOCATION}/${ARG_NAME}_${lang_code}.qm")
+			set(output "${ARG_OUTPUT_LOCATION}/${ARG_NAME}_${lang}.qm")
 			add_custom_command(
 				OUTPUT "${output}"
 				COMMAND "${lconvert}" -no-untranslated -o "${output}" ${files}
@@ -157,11 +157,8 @@ function(_get_qt_translation_file out_file module lang)
 			set(_qm_file "${qm_location}/${module}_${lang_code}.qm")
 		endif()
 		if(NOT EXISTS "${_qm_file}")
-			# There is no Vietnamese translation in Qt, but there is in Drawpile;
-			# any other missing translation probably means that the Qt directory
-			# is screwed up, so warning about that because parts of the UI are
-			# left confusingly untranslated
-			if(NOT lang_code STREQUAL "vi")
+			# Don't warn about langauges that are known to not exist in Qt.
+			if(NOT lang_code IN_LIST LANGS_UNSUPPORTED_IN_QT)
 				message(WARNING "Could not find Qt translation ${_qm_file}")
 			endif()
 			set(_qm_file "")

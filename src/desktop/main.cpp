@@ -307,10 +307,28 @@ void DrawpileApp::deleteAllMainWindowsExcept(MainWindow *win)
 	}
 }
 
+static QStringList gatherPotentialLanguages(const QLocale &locale)
+{
+	QStringList langs;
+	for(const QString &lang : locale.uiLanguages()) {
+		if(!langs.contains(lang)) {
+			langs.append(lang);
+		}
+		// On some platforms, languages come with dashes instead of underscores,
+		// so it's fi-FI instead of fi_FI like we want them to come as.
+		QString langWithUnderscores = lang;
+		langWithUnderscores.replace("-", "_");
+		if(!langs.contains(langWithUnderscores)) {
+			langs.append(langWithUnderscores);
+		}
+	}
+	return langs;
+}
+
 static void initTranslations(DrawpileApp &app, const QLocale &locale)
 {
 	QTranslator *translator = new QTranslator{&app};
-	for(const QString &lang : locale.uiLanguages()) {
+	for(const QString &lang : gatherPotentialLanguages(locale)) {
 		QString filename = QStringLiteral("all_%1").arg(lang);
 		for(const QString &datapath : utils::paths::dataPaths()) {
 			QString directory = QStringLiteral("%1/i18n").arg(datapath);
