@@ -9,7 +9,7 @@ SETTING(colorWheelShape           , ColorWheelShape           , "settings/colorw
 SETTING(colorWheelSpace           , ColorWheelSpace           , "settings/colorwheel/space"             , color_widgets::ColorWheel::ColorSpaceEnum::ColorHSL)
 SETTING(compactChat               , CompactChat               , "history/compactchat"                   , false)
 SETTING(confirmLayerDelete        , ConfirmLayerDelete        , "settings/confirmlayerdelete"           , true)
-SETTING(contentFilterHideLocked   , ContentFilterHideLocked   , "pc/hidelocked"                         , false)
+SETTING(parentalControlsHideLocked, ParentalControlsHideLocked, "pc/hidelocked"                         , false)
 SETTING(curvesPresets             , CurvesPresets             , "curves/presets"                        , QVector<QVariantMap>())
 SETTING(curvesPresetsConverted    , CurvesPresetsConverted    , "curves/inputpresetsconverted"          , false)
 SETTING(filterClosed              , FilterClosed              , "history/filterclosed"                  , false)

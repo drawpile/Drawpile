@@ -55,7 +55,7 @@ public:
 		ClosedRole,                // Is this session closed to new users
 		IncompatibleRole,          // Is the session meant for some other client version
 		JoinableRole,              // Is this session joinable
-		NsfmRole,                  // Is this session tagged as Not Safe For Me
+		NsfmRole,                  // Is this session tagged as Not Suitable For Minors
 		CompatibilityModeRole,     // Is this a Drawpile 2.1.x session
 	};
 

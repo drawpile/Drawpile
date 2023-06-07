@@ -35,8 +35,8 @@ target_sources(dpclient PRIVATE
 	canvas/timelinemodel.h
 	canvas/userlist.cpp
 	canvas/userlist.h
-	contentfilter/contentfilter.cpp
-	contentfilter/contentfilter.h
+	parentalcontrols/parentalcontrols.cpp
+	parentalcontrols/parentalcontrols.h
 	drawdance/aclstate.cpp
 	drawdance/aclstate.h
 	drawdance/annotation.cpp
@@ -186,11 +186,11 @@ target_sources(dpclient PRIVATE
 # https://gitlab.kitware.com/cmake/cmake/-/issues/19813
 if(WIN32)
 	target_sources(dpclient PRIVATE
-		contentfilter/contentfilter_win.cpp
+		parentalcontrols/parentalcontrols_win.cpp
 	)
 else()
 	target_sources(dpclient PRIVATE
-		contentfilter/contentfilter_dummy.cpp
+		parentalcontrols/parentalcontrols_dummy.cpp
 	)
 endif()
 

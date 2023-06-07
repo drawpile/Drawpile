@@ -4,7 +4,7 @@
 #include "libclient/net/loginsessions.h"
 #include "libclient/net/tcpserver.h"
 #include "libclient/net/servercmd.h"
-#include "libclient/contentfilter/contentfilter.h"
+#include "libclient/parentalcontrols/parentalcontrols.h"
 
 #include "libshared/net/protover.h"
 #include "libshared/util/networkaccess.h"
@@ -422,7 +422,7 @@ void LoginHandler::expectSessionDescriptionJoin(const ServerReply &msg)
 	}
 
 	if(msg.reply.contains("sessions")) {
-		const contentfilter::Level pclevel = contentfilter::level();
+		const parentalcontrols::Level pclevel = parentalcontrols::level();
 
 		for(const auto jsv : msg.reply["sessions"].toArray()) {
 			const QJsonObject js = jsv.toObject();
@@ -462,9 +462,8 @@ void LoginHandler::expectSessionDescriptionJoin(const ServerReply &msg)
 				// A session ID was given as part of the URL
 
 				auto canJoin = session.incompatibleSeries.isEmpty();
-				if (canJoin && pclevel >= contentfilter::Level::NoJoin) {
-					canJoin = (contentfilter::useAdvisoryTag() ? !session.nsfm : true)
-						&& !contentfilter::isNsfmTitle(session.title);
+				if (canJoin && pclevel >= parentalcontrols::Level::NoJoin) {
+					canJoin = !session.nsfm && !parentalcontrols::isNsfmTitle(session.title);
 				}
 
 				if(canJoin)
@@ -489,12 +488,10 @@ void LoginHandler::expectSessionDescriptionJoin(const ServerReply &msg)
 		if(session.id.isEmpty()) {
 			failLogin(tr("Session not yet started!"));
 			return;
-		} else if(contentfilter::level() >= contentfilter::Level::NoJoin) {
-			const auto blocked = (contentfilter::useAdvisoryTag() ? session.nsfm : false)
-				|| contentfilter::isNsfmTitle(session.title);
-
+		} else if(parentalcontrols::level() >= parentalcontrols::Level::NoJoin) {
+			const auto blocked = session.nsfm || parentalcontrols::isNsfmTitle(session.title);
 			if (blocked) {
-				failLogin(tr("Blocked by content filter"));
+				failLogin(tr("Blocked by parental controls"));
 				return;
 			}
 		} else if(!session.incompatibleSeries.isEmpty()) {
@@ -549,7 +546,7 @@ bool LoginHandler::expectLoginOk(const ServerReply &msg)
 			if(!m_title.isEmpty())
 				kwargs["title"] = m_title;
 
-			if(contentfilter::isNsfmTitle(m_title))
+			if(parentalcontrols::isNsfmTitle(m_title))
 				kwargs["nsfm"] = true;
 
 			send("sessionconf", {}, kwargs);

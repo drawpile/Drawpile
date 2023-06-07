@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "libclient/net/loginsessions.h"
-#include "libclient/contentfilter/contentfilter.h"
+#include "libclient/parentalcontrols/parentalcontrols.h"
 
 #include <QDebug>
 #include <QIcon>
@@ -107,7 +107,7 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 				return QVariant{};
 			}
 		case ColumnTitle:
-			return isNsfm(ls) ? tr("Not safe for me") : QVariant{};
+			return isNsfm(ls) ? tr("Not suitable for minors (NSFM)") : QVariant{};
 		default:
 			return QVariant{};
 		}
@@ -192,8 +192,7 @@ void LoginSessionModel::removeSession(const QString &id)
 
 bool LoginSessionModel::isNsfm(const LoginSession &session) const
 {
-	return (contentfilter::useAdvisoryTag() ? session.nsfm : false)
-		|| contentfilter::isNsfmTitle(session.title);
+	return session.nsfm || parentalcontrols::isNsfmTitle(session.title);
 }
 
 } // namespace net

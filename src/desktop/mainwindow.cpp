@@ -81,7 +81,7 @@ static constexpr auto CTRL_KEY = Qt::CTRL;
 #include "libclient/net/client.h"
 #include "libclient/net/login.h"
 #include "libclient/canvas/layerlist.h"
-#include "libclient/contentfilter/contentfilter.h"
+#include "libclient/parentalcontrols/parentalcontrols.h"
 
 #include "libclient/tools/toolcontroller.h"
 #include "desktop/toolwidgets/brushsettings.h"
@@ -667,7 +667,7 @@ void MainWindow::loadShortcuts(const QVariantMap &cfg)
 
 	// Update enabled status of certain actions
 	QAction *uncensorAction = getAction("layerviewuncensor");
-	const bool canUncensor = !contentfilter::isLayerUncensoringBlocked();
+	const bool canUncensor = !parentalcontrols::isLayerUncensoringBlocked();
 	uncensorAction->setEnabled(canUncensor);
 	if(!canUncensor) {
 		uncensorAction->setChecked(false);
@@ -1854,9 +1854,9 @@ void MainWindow::updateLockWidget()
 
 void MainWindow::onNsfmChanged(bool nsfm)
 {
-	if(nsfm && contentfilter::useAdvisoryTag() && contentfilter::level() >= contentfilter::Level::Restricted) {
+	if(nsfm && parentalcontrols::level() >= parentalcontrols::Level::Restricted) {
 		m_doc->client()->disconnectFromServer();
-		showErrorMessage(tr("Session blocked by content filter"));
+		showErrorMessage(tr("Session blocked by parental controls"));
 	}
 }
 

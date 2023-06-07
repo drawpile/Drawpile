@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "libclient/contentfilter/contentfilter.h"
+#include "libclient/parentalcontrols/parentalcontrols.h"
 #include "libclient/settings.h"
 
-namespace contentfilter {
+namespace parentalcontrols {
 
 void init(libclient::settings::Settings &settings)
 {

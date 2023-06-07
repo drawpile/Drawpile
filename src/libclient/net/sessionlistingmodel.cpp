@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "libclient/net/sessionlistingmodel.h"
-#include "libclient/contentfilter/contentfilter.h"
+#include "libclient/parentalcontrols/parentalcontrols.h"
 #include "cmake-config/config.h"
 
 #include <QFont>
@@ -360,6 +360,5 @@ void SessionListingModel::setList(const QString &name, const QVector<Session> se
 
 bool SessionListingModel::isNsfm(const Session &session) const
 {
-	return (contentfilter::useAdvisoryTag() ? session.nsfm : false)
-		|| contentfilter::isNsfmTitle(session.title);
+	return session.nsfm || parentalcontrols::isNsfmTitle(session.title);
 }

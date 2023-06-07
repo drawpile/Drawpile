@@ -3,7 +3,7 @@
 #include "desktop/main.h"
 #include "desktop/settings.h"
 #include "desktop/dialogs/settingsdialog.h"
-#include "desktop/dialogs/settingsdialog/contentfilter.h"
+#include "desktop/dialogs/settingsdialog/parentalcontrols.h"
 #include "desktop/dialogs/settingsdialog/general.h"
 #include "desktop/dialogs/settingsdialog/input.h"
 #include "desktop/dialogs/settingsdialog/network.h"
@@ -72,7 +72,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 		{ "network-modem", tr("Network"), new settingsdialog::Network(m_settings, this) },
 		{ "network-server-database", tr("Servers"), new settingsdialog::Servers(m_settings, this) },
 		{ "input-keyboard", tr("Shortcuts"), new settingsdialog::Shortcuts(m_settings, this) },
-		{ "view-filter", tr("Content Filter"), new settingsdialog::ContentFilter(m_settings, this) }
+		{ "flag", tr("Parental Controls"), new settingsdialog::ParentalControls(m_settings, this) }
 	};
 
 #ifdef Q_OS_MACOS

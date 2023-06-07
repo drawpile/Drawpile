@@ -7,7 +7,7 @@
 #include "libclient/net/announcementlist.h"
 #include "libclient/document.h"
 #include "libclient/canvas/canvasmodel.h"
-#include "libclient/contentfilter/contentfilter.h"
+#include "libclient/parentalcontrols/parentalcontrols.h"
 
 #include "ui_sessionsettings.h"
 
@@ -385,7 +385,7 @@ void SessionSettingsDialog::setCompatibilityMode(bool compatibilityMode)
 void SessionSettingsDialog::sendSessionConf()
 {
 	if(!m_sessionconf.isEmpty()) {
-		if(m_sessionconf.contains("title") && contentfilter::isNsfmTitle(m_sessionconf["title"].toString()))
+		if(m_sessionconf.contains("title") && parentalcontrols::isNsfmTitle(m_sessionconf["title"].toString()))
 			m_sessionconf["nsfm"] = true;
 
 		m_doc->sendSessionConf(m_sessionconf);

@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "desktop/dialogs/settingsdialog/contentfilter.h"
+#include "desktop/dialogs/settingsdialog/parentalcontrols.h"
 #include "desktop/dialogs/settingsdialog/helpers.h"
 #include "desktop/settings.h"
 #include "desktop/utils/sanerformlayout.h"
-#include "libclient/contentfilter/contentfilter.h"
+#include "libclient/parentalcontrols/parentalcontrols.h"
 #include "libshared/util/passwordhash.h"
 
 #include <QCheckBox>
@@ -19,7 +19,7 @@
 namespace dialogs {
 namespace settingsdialog {
 
-ContentFilter::ContentFilter(desktop::settings::Settings &settings, QWidget *parent)
+ParentalControls::ParentalControls(desktop::settings::Settings &settings, QWidget *parent)
 	: QWidget(parent)
 	, m_settings(settings)
 {
@@ -27,14 +27,14 @@ ContentFilter::ContentFilter(desktop::settings::Settings &settings, QWidget *par
 
 	initInfoBar(layout);
 
-	if (contentfilter::isOSActive()) {
+	if (parentalcontrols::isOSActive()) {
 		initOsManaged(layout);
 	} else {
 		initBuiltIn(settings, layout);
 	}
 }
 
-void ContentFilter::initBuiltIn(desktop::settings::Settings &settings, QVBoxLayout *layout)
+void ParentalControls::initBuiltIn(desktop::settings::Settings &settings, QVBoxLayout *layout)
 {
 	auto *stack = new QStackedWidget;
 	stack->setContentsMargins(0, 0, 0, 0);
@@ -46,43 +46,35 @@ void ContentFilter::initBuiltIn(desktop::settings::Settings &settings, QVBoxLayo
 	form->setStretchLabel(false);
 	stack->addWidget(formPage);
 
-	auto *advisory = new QCheckBox(tr("Filter sessions with a content advisory"));
-	settings.bindContentFilterAdvisoryTag(advisory);
-	form->addRow("Advisory filtering:", advisory);
-	form->addRow(nullptr, utils::note(tr("Advisories are added by session owners "
-		"when they believe a session may not be safe for everyone."), QSizePolicy::CheckBox));
-
-	form->addSpacer();
-
-	auto *autoTag = new QCheckBox(tr("Filter sessions with titles containing:"));
-	form->addRow(tr("Keyword filtering:"), autoTag);
-	settings.bindContentFilterAutoTag(autoTag);
+	auto *autoTag = new QCheckBox(tr("Consider sessions whose titles contain these keywords NSFM."));
+	form->addRow(tr("Keywords:"), autoTag);
+	settings.bindParentalControlsAutoTag(autoTag);
 	auto *tagWords = new QLineEdit(this);
-	tagWords->setPlaceholderText(contentfilter::defaultWordList());
+	tagWords->setPlaceholderText(parentalcontrols::defaultWordList());
 	utils::setSpacingControlType(tagWords, QSizePolicy::CheckBox);
 	form->addRow(nullptr, utils::indent(tagWords));
-	settings.bindContentFilterTags(tagWords);
-	settings.bindContentFilterAutoTag(tagWords, &QLineEdit::setEnabled);
+	settings.bindParentalControlsTags(tagWords);
+	settings.bindParentalControlsAutoTag(tagWords, &QLineEdit::setEnabled);
 
 	form->addSpacer();
 
 	auto *level = form->addRadioGroup(tr("Filter mode:"), false, {
-		{ tr("Unrestricted"), int(contentfilter::Level::Unrestricted) },
-		{ tr("Remove sessions from listings"), int(contentfilter::Level::NoList) },
-		{ tr("Prevent joining filtered sessions"), int(contentfilter::Level::NoJoin) },
-		{ tr("Disconnect when sessions become not safe for me"), int(contentfilter::Level::Restricted) }
+		{ tr("Unrestricted"), int(parentalcontrols::Level::Unrestricted) },
+		{ tr("Remove NSFM sessions from listings"), int(parentalcontrols::Level::NoList) },
+		{ tr("Prevent joining NSFM sessions"), int(parentalcontrols::Level::NoJoin) },
+		{ tr("Prevent joining NSFM sessions and disconnect"), int(parentalcontrols::Level::Restricted) }
 	});
-	level->button(1)->setToolTip(tr("Sessions will be hidden from server "
+	level->button(1)->setToolTip(tr("NSFM sessions will be hidden from server "
 		"listings, but can still be joined by following a direct link."));
-	level->button(2)->setToolTip(tr("Sessions will be hidden from server "
+	level->button(2)->setToolTip(tr("NSFM sessions will be hidden from server "
 		"listings and cannot be joined."));
-	level->button(3)->setToolTip(tr("Sessions will be hidden from server "
+	level->button(3)->setToolTip(tr("NSFM sessions will be hidden from server "
 		"listings and cannot be joined. Connected sessions that change "
-		"their title or advisory flags will automatically disconnect."));
-	settings.bindContentFilterLevel(level);
+		"their title or NSFM flag will automatically disconnect."));
+	settings.bindParentalControlsLevel(level);
 
-	auto *forceCensor = new QCheckBox(tr("Block layer uncensoring"));
-	settings.bindContentFilterForceCensor(forceCensor);
+	auto *forceCensor = new QCheckBox(tr("Disallow uncensoring of layers"));
+	settings.bindParentalControlsForceCensor(forceCensor);
 	form->addRow(nullptr, forceCensor);
 
 	layout->addStretch();
@@ -94,25 +86,24 @@ void ContentFilter::initBuiltIn(desktop::settings::Settings &settings, QVBoxLayo
 	auto *lock = new QPushButton(tr("Lock"));
 	lock->setAutoDefault(false);
 	lockLayout->addWidget(lock);
-	connect(lock, &QPushButton::clicked, this, &ContentFilter::toggleLock);
+	connect(lock, &QPushButton::clicked, this, &ParentalControls::toggleLock);
 
 	auto *hide = new QCheckBox(tr("Hide settings when locked"));
 	lockLayout->addWidget(hide);
-	settings.bindContentFilterHideLocked(hide);
+	settings.bindParentalControlsHideLocked(hide);
 
 	lockLayout->addStretch();
 
 	auto *hiddenPage = new QWidget;
 	auto *hiddenLayout = new QVBoxLayout(hiddenPage);
 	hiddenLayout->setContentsMargins(0, 0, 0, 0);
-	hiddenLayout->addWidget(new QLabel(tr("Content filtering settings are currently locked.")), 0, Qt::AlignCenter);
+	hiddenLayout->addWidget(new QLabel(tr("Parental controls are currently locked.")), 0, Qt::AlignCenter);
 	stack->addWidget(hiddenPage);
 
-	settings.bindContentFilterLocked(this, [=, &settings](QByteArray hash) {
+	settings.bindParentalControlsLocked(this, [=, &settings](QByteArray hash) {
 		const auto locked = !hash.isEmpty();
-		advisory->setDisabled(locked);
 		tagWords->setEchoMode(locked ? QLineEdit::Password : QLineEdit::Normal);
-		tagWords->setDisabled(locked || !settings.contentFilterAutoTag());
+		tagWords->setDisabled(locked || !settings.parentalControlsAutoTag());
 		autoTag->setDisabled(locked);
 		for (auto *button : level->buttons()) {
 			button->setDisabled(locked);
@@ -121,14 +112,14 @@ void ContentFilter::initBuiltIn(desktop::settings::Settings &settings, QVBoxLayo
 		hide->setDisabled(locked);
 		lock->setText(locked ? tr("Unlock") : tr("Lock"));
 
-		stack->setCurrentWidget(locked && settings.contentFilterHideLocked()
+		stack->setCurrentWidget(locked && settings.parentalControlsHideLocked()
 			? hiddenPage
 			: formPage
 		);
 	});
 }
 
-void ContentFilter::initInfoBar(QVBoxLayout *layout)
+void ParentalControls::initInfoBar(QVBoxLayout *layout)
 {
 	auto *info = new QHBoxLayout;
 	info->setContentsMargins(0, 0, 0, 0);
@@ -138,27 +129,30 @@ void ContentFilter::initInfoBar(QVBoxLayout *layout)
 
 	auto *description = new QLabel;
 	description->setWordWrap(true);
-	description->setText(tr("Content filters allow you to personalize your online Drawpile experience by hiding content that’s not safe for you (NSFM)."));
+	description->setText(tr(
+		"These settings configure the handling of sessions that are marked "
+		"not suitable for minors (NSFM) and of layers that have been censored."));
+
 	info->addWidget(description);
 
 	layout->addWidget(utils::makeSeparator());
 }
 
-void ContentFilter::initOsManaged(QVBoxLayout *layout)
+void ParentalControls::initOsManaged(QVBoxLayout *layout)
 {
 	auto *osManagedLayout = new QVBoxLayout;
 	osManagedLayout->setContentsMargins(0, 0, 0, 0);
-	osManagedLayout->addWidget(new QLabel(tr("Content filtering settings are currently managed by the operating system.")), 0, Qt::AlignCenter);
+	osManagedLayout->addWidget(new QLabel(tr("Parental controls are currently managed by the operating system.")), 0, Qt::AlignCenter);
 	layout->addLayout(osManagedLayout, 1);
 }
 
-void ContentFilter::toggleLock()
+void ParentalControls::toggleLock()
 {
-	const auto hash = m_settings.contentFilterLocked();
+	const auto hash = m_settings.parentalControlsLocked();
 	const auto locked = !hash.isEmpty();
 	const auto title = locked
-		? tr("Unlock Content Filter Settings")
-		: tr("Lock Content Filter Settings");
+		? tr("Unlock Parental Controls")
+		: tr("Lock Parental Controls");
 
 	for (;;) {
 		auto ok = true;
@@ -170,7 +164,7 @@ void ContentFilter::toggleLock()
 			break;
 		} else if (locked) {
 			if (server::passwordhash::check(pass, hash)) {
-				m_settings.setContentFilterLocked(QByteArray());
+				m_settings.setParentalControlsLocked(QByteArray());
 				break;
 			} else {
 				QMessageBox box(
@@ -186,7 +180,7 @@ void ContentFilter::toggleLock()
 				}
 			}
 		} else {
-			m_settings.setContentFilterLocked(server::passwordhash::hash(pass));
+			m_settings.setParentalControlsLocked(server::passwordhash::hash(pass));
 			break;
 		}
 	}

@@ -11,7 +11,7 @@
 #include "libclient/utils/images.h"
 #include "libclient/utils/newversion.h"
 #include "libshared/listings/announcementapi.h"
-#include "libclient/contentfilter/contentfilter.h"
+#include "libclient/parentalcontrols/parentalcontrols.h"
 
 #ifdef HAVE_DNSSD
 #include "libshared/listings/zeroconfdiscovery.h"
@@ -54,7 +54,7 @@ JoinDialog::JoinDialog(const QUrl &url, QWidget *parent)
 	m_ui->newVersionNotification->setVisible(NewVersionCheck::isThereANewSeries(dpApp().settings()));
 
 	// Session listing
-	if(contentfilter::level() != contentfilter::Level::Unrestricted)
+	if(parentalcontrols::level() != parentalcontrols::Level::Unrestricted)
 		m_ui->showNsfw->setEnabled(false);
 
 	m_sessions = new SessionListingModel(this);

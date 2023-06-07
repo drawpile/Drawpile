@@ -5,7 +5,7 @@
 
 #include "cmake-config/config.h"
 #include "libclient/canvas/paintengine.h"
-#include "libclient/contentfilter/contentfilter.h"
+#include "libclient/parentalcontrols/parentalcontrols.h"
 
 #include <QDebug>
 #include <QHash>

@@ -405,7 +405,7 @@ static QStringList initApp(DrawpileApp &app)
 #endif
 
 	tabletinput::init(app);
-	contentfilter::init(app.settings());
+	parentalcontrols::init(app.settings());
 
 	// Set override locale from settings, or use system locale if no override is set
 	QLocale locale = QLocale::c();

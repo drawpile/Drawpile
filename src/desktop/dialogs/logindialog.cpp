@@ -6,7 +6,7 @@
 #include "desktop/main.h"
 #include "libclient/net/login.h"
 #include "libclient/net/loginsessions.h"
-#include "libclient/contentfilter/contentfilter.h"
+#include "libclient/parentalcontrols/parentalcontrols.h"
 
 #include "libclient/utils/avatarlistmodel.h"
 #include "libclient/utils/sessionfilterproxymodel.h"
@@ -92,7 +92,7 @@ struct LoginDialog::Private {
 				okButton->click();
 		});
 
-		ui->showNsfw->setEnabled(contentfilter::level() == contentfilter::Level::Unrestricted);
+		ui->showNsfw->setEnabled(parentalcontrols::level() == parentalcontrols::Level::Unrestricted);
 		sessions = new SessionFilterProxyModel(dlg);
 		sessions->setFilterCaseSensitivity(Qt::CaseInsensitive);
 		sessions->setFilterKeyColumn(-1);

@@ -12,10 +12,10 @@ namespace desktop { namespace settings { class Settings; } }
 namespace dialogs {
 namespace settingsdialog {
 
-class ContentFilter final : public QWidget {
+class ParentalControls final : public QWidget {
 	Q_OBJECT
 public:
-	ContentFilter(desktop::settings::Settings &settings, QWidget *parent = nullptr);
+	ParentalControls(desktop::settings::Settings &settings, QWidget *parent = nullptr);
 
 private:
 	void initBuiltIn(desktop::settings::Settings &settings, QVBoxLayout *layout);

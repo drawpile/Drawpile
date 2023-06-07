@@ -3,7 +3,7 @@
 #include "desktop/docks/layeraclmenu.h"
 #include "desktop/main.h"
 #include "libclient/canvas/userlist.h"
-#include "libclient/contentfilter/contentfilter.h"
+#include "libclient/parentalcontrols/parentalcontrols.h"
 
 #include <QApplication>
 #include <QActionGroup>
@@ -42,7 +42,7 @@ LayerAclMenu::LayerAclMenu(QWidget *parent) :
 
 	connect(this, &LayerAclMenu::triggered, this, &LayerAclMenu::userClicked);
 
-	dpApp().settings().bindContentFilterForceCensor(this, [=](bool force) {
+	dpApp().settings().bindParentalControlsForceCensor(this, [=](bool force) {
 		m_censored->setDisabled(force);
 	});
 }
