@@ -41,6 +41,9 @@ protected:
 private:
 	desktop::settings::Settings m_settings;
 	QMap<notification::Event, QSoundEffect*> m_sounds;
+	QString m_originalSystemStyle;
+	QPalette m_originalSystemPalette;
+
 	void updateThemeIcons();
 
 	QPalette loadPalette(const QString &file);
