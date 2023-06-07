@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="nb_NO">
+<TS version="2.1" language="cs_CZ">
 <context>
     <name>AbstractWidgetList</name>
     <message>
         <location filename="../bundled/QtColorWidgets/abstract_widget_list.cpp" line="+67"/>
         <source>Add New</source>
-        <translation>Legg til ny</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+51"/>
         <source>Move Up</source>
-        <translation>Flytt oppover</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Move Down</source>
-        <translation>Flytt nedover</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
@@ -29,27 +29,27 @@
     <message>
         <location filename="../ui/abusereport.ui" line="+14"/>
         <source>Report Abuse</source>
-        <translation>Rapporter misbruk</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Session:</source>
-        <translation>Økt:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+40"/>
         <source>Reason:</source>
-        <translation>Grunn:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Entire session</source>
-        <translation>Hele økten</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+8"/>
         <source>User:</source>
-        <translation>Bruker:</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -70,7 +70,7 @@
     <message>
         <location filename="../ui/avatarimport.ui" line="+14"/>
         <source>Crop Avatar</source>
-        <translation>Beskjær avatar</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -78,12 +78,12 @@
     <message>
         <location filename="../ui/brushdock.ui" line="+74"/>
         <source>Pixel brush</source>
-        <translation>Pikselpensel</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Square pixel brush</source>
-        <translation>Firkantig pikselpensel</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+20"/>
@@ -93,7 +93,7 @@
     <message>
         <location line="+20"/>
         <source>MyPaint Brush</source>
-        <translation>MyPaint-pensel</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+39"/>
@@ -257,75 +257,75 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../ui/certificateview.ui" line="+24"/>
         <source>Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Informace</translation>
     </message>
     <message>
         <location line="+6"/>
         <location line="+107"/>
         <source>Organization:</source>
-        <translation type="unfinished"></translation>
+        <translation>Organizace:</translation>
     </message>
     <message>
         <location line="-100"/>
         <source>SHA1 fingerprint:</source>
-        <translation type="unfinished"></translation>
+        <translation>Otisk prstu SHA1</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Issued by</source>
-        <translation type="unfinished"></translation>
+        <translation>Vystaveno</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Expires on:</source>
-        <translation type="unfinished"></translation>
+        <translation>Přestane platit:</translation>
     </message>
     <message>
         <location line="+63"/>
         <source>MD5 fingerprint:</source>
-        <translation type="unfinished"></translation>
+        <translation>Otisk prstu MD5</translation>
     </message>
     <message>
         <location line="+14"/>
         <location line="+14"/>
         <source>Organization unit:</source>
-        <translation type="unfinished"></translation>
+        <translation>Organizační jednotka:</translation>
     </message>
     <message>
         <location line="-7"/>
         <source>Issued on:</source>
-        <translation type="unfinished"></translation>
+        <translation>Vystaveno:</translation>
     </message>
     <message>
         <location line="+14"/>
         <location line="+50"/>
         <source>Common name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Běžný název:</translation>
     </message>
     <message>
         <location line="-43"/>
         <source>Serial number:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sériové číslo:</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Issued to</source>
-        <translation type="unfinished"></translation>
+        <translation>Vystaveno</translation>
     </message>
     <message>
         <location line="+53"/>
         <source>Validity period</source>
-        <translation type="unfinished"></translation>
+        <translation>Doba platnosti</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Fingerprints</source>
-        <translation type="unfinished"></translation>
+        <translation>Otisky prstů</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Podrobnosti</translation>
     </message>
 </context>
 <context>
@@ -333,47 +333,47 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../bundled/QtColorWidgets/color_dialog.ui" line="+14"/>
         <source>Select Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Vybrat barvu</translation>
     </message>
     <message>
         <location line="+40"/>
         <source>Saturation</source>
-        <translation type="unfinished"></translation>
+        <translation>Sytost</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Hue</source>
-        <translation type="unfinished"></translation>
+        <translation>Barevný odstín</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Hex</source>
-        <translation type="unfinished"></translation>
+        <translation>Šestnáctkový (hexadecimální)</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Blue</source>
-        <translation type="unfinished"></translation>
+        <translation>Modrá</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>Value</source>
-        <translation type="unfinished"></translation>
+        <translation>Hodnota</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Green</source>
-        <translation type="unfinished"></translation>
+        <translation>Zelená</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Alfa</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Red</source>
-        <translation type="unfinished"></translation>
+        <translation>Červená</translation>
     </message>
 </context>
 <context>
@@ -513,7 +513,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+6"/>
         <source>Paste Image</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vložit obrázek</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -524,7 +524,7 @@ to 64x64 pixels.</source>
         <location line="+22"/>
         <location line="+149"/>
         <source>Save Image</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Uložit obrázek</translation>
     </message>
     <message>
         <location line="-133"/>
@@ -539,7 +539,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+18"/>
         <source>Record Session</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nahrávat sezení</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -589,17 +589,17 @@ to 64x64 pixels.</source>
     <message>
         <location line="+31"/>
         <source>The selected format does not support layers or annotations.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vybraný formát nepodporuje vrstvy a poznámky.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Flatten</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vyrovnat</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Save as OpenRaster</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Uložit jako OpenRaster</translation>
     </message>
     <message>
         <location line="+90"/>
@@ -692,7 +692,7 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../ui/flipbook.ui" line="+14"/>
         <source>Flipbook</source>
-        <translation type="unfinished"></translation>
+        <translation>Obrázkový bloček</translation>
     </message>
     <message>
         <location line="+74"/>
@@ -702,7 +702,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+20"/>
         <source>Loop range:</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozsah smyčky:</translation>
     </message>
     <message>
         <location line="+64"/>
@@ -715,17 +715,17 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../ui/hostdialog.ui" line="+23"/>
         <source>Session</source>
-        <translation type="unfinished"></translation>
+        <translation>Sezení</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&amp;Title:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Název:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>The title is shown in the application title bar and in the session selection dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Název je ukázán v pruhu s názvem programu a v dialogu pro výběr sezení</translation>
     </message>
     <message>
         <location line="+33"/>
@@ -775,37 +775,37 @@ to 64x64 pixels.</source>
     <message>
         <location line="-132"/>
         <source>&amp;Password:</source>
-        <translation type="unfinished"></translation>
+        <translation>He&amp;slo:</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Optional. If left blank, no password will be needed to join this session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Volitelné. Je-li ponecháno prázdné, nebude pro připojení k tomuto sezení potřeba žádné heslo.</translation>
     </message>
     <message>
         <location line="+42"/>
         <source>Announce the session at a public list</source>
-        <translation type="unfinished"></translation>
+        <translation>Oznámit sezení ve veřejném seznamu</translation>
     </message>
     <message>
         <location line="+50"/>
         <source>Server</source>
-        <translation type="unfinished"></translation>
+        <translation>Server</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>Re&amp;mote:</source>
-        <translation type="unfinished"></translation>
+        <translation>Vz&amp;dálený:</translation>
     </message>
     <message>
         <location line="-93"/>
         <source>An optional user friendly ID for the session</source>
-        <translation type="unfinished"></translation>
+        <translation>Volitelné uživatelsky přátelské ID pro sezení</translation>
     </message>
     <message>
         <location line="-71"/>
         <source>Host a Session</source>
-        <translation type="unfinished"></translation>
+        <translation>Hostit sezení</translation>
     </message>
 </context>
 <context>
@@ -821,7 +821,7 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../ui/joindialog.ui" line="+17"/>
         <source>Join a Session</source>
-        <translation type="unfinished"></translation>
+        <translation>Připojit se k sezení</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -866,7 +866,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+31"/>
         <source>Record session</source>
-        <translation type="unfinished"></translation>
+        <translation>Nahrávat sezení</translation>
     </message>
 </context>
 <context>
@@ -874,12 +874,12 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../widgets/kis_curve_widget.cpp" line="+46"/>
         <source>Remove point</source>
-        <translation type="unfinished"></translation>
+        <translation>Odstranit bod</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Reset</source>
-        <translation type="unfinished">Nastavit znovu</translation>
+        <translation>Nastavit znovu</translation>
     </message>
 </context>
 <context>
@@ -912,17 +912,17 @@ Subrange: [%3, %4]</source>
     <message>
         <location filename="../ui/lasersettings.ui" line="+111"/>
         <source>s</source>
-        <translation type="unfinished"></translation>
+        <translation>s</translation>
     </message>
     <message>
         <location line="-94"/>
         <source>Color:</source>
-        <translation type="unfinished"></translation>
+        <translation>Barva:</translation>
     </message>
     <message>
         <location line="+87"/>
         <source>Track hovering pointer</source>
-        <translation type="unfinished"></translation>
+        <translation>Sledovat pohyb ukazovátka</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -1056,7 +1056,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+67"/>
         <source>Password:</source>
-        <translation type="unfinished"></translation>
+        <translation>Heslo:</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -1081,7 +1081,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="-64"/>
         <source>Catching up...</source>
-        <translation type="unfinished"></translation>
+        <translation>Dohání se...</translation>
     </message>
 </context>
 <context>
@@ -1089,30 +1089,31 @@ Subrange: [%3, %4]</source>
     <message>
         <location filename="../widgets/macmenu.cpp" line="+67"/>
         <source>Minimize</source>
-        <translation type="unfinished"></translation>
+        <translation>Zmenšit</translation>
     </message>
     <message numerus="yes">
         <location line="+124"/>
         <source>You have %n images with unsaved changes. Do you want to review these changes before quitting?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Máte %n obrázek s neuloženými změnami. Chcete tyto změny před ukončením programu přezkoumat?</numerusform>
+            <numerusform>Máte %n obrázky s neuloženými změnami. Chcete tyto změny před ukončením programu přezkoumat?</numerusform>
+            <numerusform>Máte %n obrázků s neuloženými změnami. Chcete tyto změny před ukončením programu přezkoumat?</numerusform>
         </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>If you don&apos;t review your documents, all changes will be lost</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokud své dokumenty nepřezkoumáte, všechny změny budou ztraceny</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Review changes...</source>
-        <translation type="unfinished"></translation>
+        <translation>Podívat se na změny...</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Discard changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Zahodit změny</translation>
     </message>
 </context>
 <context>
@@ -1121,50 +1122,50 @@ Subrange: [%3, %4]</source>
         <location filename="../mainwindow.cpp" line="+589"/>
         <location line="+992"/>
         <source>Untitled</source>
-        <translation type="unfinished"></translation>
+        <translation>Bez názvu</translation>
     </message>
     <message>
         <location line="-664"/>
         <location line="+21"/>
         <source>Exit Drawpile</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukončit</translation>
     </message>
     <message>
         <location line="-20"/>
         <source>You are still connected to a drawing session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Stále ještě jste připojen ke kresličskému sezení.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Exit anyway</source>
-        <translation type="unfinished"></translation>
+        <translation>Přesto ukončit</translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+22"/>
         <location line="+359"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <location line="-366"/>
         <source>There are unsaved changes. Save them before exiting?</source>
-        <translation type="unfinished"></translation>
+        <translation>Jsou tu neuložené změny. Uložit je před ukončením?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Save</source>
-        <translation type="unfinished">Uložit</translation>
+        <translation>Uložit</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Discard</source>
-        <translation type="unfinished"></translation>
+        <translation>Zahodit</translation>
     </message>
     <message>
         <location line="+247"/>
         <source>Couldn&apos;t save image</source>
-        <translation type="unfinished"></translation>
+        <translation>Nepodařilo se uložit obrázek</translation>
     </message>
     <message>
         <location line="+113"/>
@@ -1174,85 +1175,85 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+197"/>
         <source>Invalid address</source>
-        <translation type="unfinished"></translation>
+        <translation>Neplatná adresa</translation>
     </message>
     <message>
         <location line="+81"/>
         <source>Really leave the session?</source>
-        <translation type="unfinished"></translation>
+        <translation>Skutečně opustit sezení?</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Leave</source>
-        <translation type="unfinished"></translation>
+        <translation>Zanechat</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Stay</source>
-        <translation type="unfinished"></translation>
+        <translation>Zůstat</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>There is still unsent data! Please wait until transmission completes!</source>
-        <translation type="unfinished"></translation>
+        <translation>Jsou tu ještě neodeslaná data! Počkejte, prosím, dokud nebude přenos dokončen!</translation>
     </message>
     <message>
         <location line="+172"/>
         <source>Would you like to join the session instead?</source>
-        <translation type="unfinished"></translation>
+        <translation>Chcete se namísto toho připojit k sezení?</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Join</source>
-        <translation type="unfinished">Připojit se</translation>
+        <translation>Připojit se</translation>
     </message>
     <message>
         <location line="+52"/>
         <source>Board is locked</source>
-        <translation type="unfinished"></translation>
+        <translation>Deska je uzamknuta</translation>
     </message>
     <message>
         <location line="+380"/>
         <source>The image could not be loaded</source>
-        <translation type="unfinished"></translation>
+        <translation>Nepodařilo se nahrát obrázek</translation>
     </message>
     <message>
         <location line="+341"/>
         <source>About Drawpile</source>
-        <translation type="unfinished"></translation>
+        <translation>O programu Drawpile</translation>
     </message>
     <message>
         <location line="+140"/>
         <location filename="../widgets/macmenu.cpp" line="-164"/>
         <source>&amp;New</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Nový</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../widgets/macmenu.cpp" line="+1"/>
         <source>&amp;Open...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Otevřít...</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Save</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Uložit</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Save &amp;As...</source>
-        <translation type="unfinished"></translation>
+        <translation>Uložit j&amp;ako...</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Autosave</source>
-        <translation type="unfinished"></translation>
+        <translation>Automaticky uložit</translation>
     </message>
     <message>
         <location line="-1344"/>
         <location line="+1352"/>
         <source>Record...</source>
-        <translation type="unfinished"></translation>
+        <translation>Nahrávat...</translation>
     </message>
     <message>
         <location line="-1525"/>
@@ -1304,33 +1305,33 @@ Subrange: [%3, %4]</source>
         <location line="+30"/>
         <location filename="../widgets/macmenu.cpp" line="+9"/>
         <source>&amp;Quit</source>
-        <translation type="unfinished"></translation>
+        <translation>U&amp;končit</translation>
     </message>
     <message>
         <location line="+40"/>
         <location filename="../widgets/macmenu.cpp" line="-12"/>
         <source>&amp;File</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Soubor</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>&amp;Export</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Vyvést</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>&amp;Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Zpět</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>Z&amp;novu</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy selected area to the clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopírovat vybranou oblast do schránky</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1345,97 +1346,97 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+1"/>
         <source>Copy selected area of the current layer to the clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopírovat vybranou oblast nynější vrstvy do schránky</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Cut selected area of the current layer to the clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyjmout vybranou oblast nynější vrstvy do schránky</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>Vl&amp;ožit</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Stamp</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Orazítkovat</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>&amp;Deselect</source>
-        <translation type="unfinished"></translation>
+        <translation>Zr&amp;ušit výběr</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Expand &amp;Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozbalit &amp;nahoru</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Expand &amp;Down</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozbalit &amp;dolů</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Expand &amp;Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozbalit &amp;vlevo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Expand &amp;Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozbalit v&amp;pravo</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Fill Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyplnit výběr</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Recolor Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Přebarvit výběr</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Color Erase Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Smazat výběr podle barvy</translation>
     </message>
     <message>
         <location line="+63"/>
         <source>&amp;Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Úp&amp;ravy</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>&amp;Expand Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Rozbalit plátno</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>&amp;Toolbars</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Nástrojové pruhy</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Docks</source>
-        <translation type="unfinished"></translation>
+        <translation>P&amp;anely</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Chat</source>
-        <translation type="unfinished">Rozhovor</translation>
+        <translation>Rozhovor</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Flipbook</source>
-        <translation type="unfinished"></translation>
+        <translation>Obrázkový bloček</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Show animation preview window</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukázat okno s náhledem animace</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -1450,12 +1451,12 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+2"/>
         <source>Mirror</source>
-        <translation type="unfinished"></translation>
+        <translation>Zrcadlit</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Flip</source>
-        <translation type="unfinished"></translation>
+        <translation>Převrátit</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1475,7 +1476,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+121"/>
         <source>User Pointers</source>
-        <translation type="unfinished"></translation>
+        <translation>Uživatelská ukazovátka</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -1530,7 +1531,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+2"/>
         <source>Lock Everything</source>
-        <translation type="unfinished"></translation>
+        <translation>Uzamknout vše</translation>
     </message>
     <message>
         <location line="+236"/>
@@ -1545,7 +1546,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="-436"/>
         <source>Show User &amp;Pointers</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukázat laserová &amp;ukazovátka uživatele</translation>
     </message>
     <message>
         <location line="-2472"/>
@@ -1817,27 +1818,27 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+27"/>
         <source>Show La&amp;ser Trails</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukázat &amp;laserové stopy</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Show Pixel &amp;Grid</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukázat pixelovou &amp;mřížku</translation>
     </message>
     <message>
         <location line="+71"/>
         <source>&amp;View</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Pohled</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>&amp;Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Zvětšení</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Rotation</source>
-        <translation type="unfinished"></translation>
+        <translation>Otočení</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -1888,59 +1889,59 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+20"/>
         <location filename="../widgets/macmenu.cpp" line="+25"/>
         <source>&amp;Host...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Hostitel...</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Share your drawingboard with others</source>
-        <translation type="unfinished"></translation>
+        <translation>Sdílet vaše kreslící prkno s ostatními</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../widgets/macmenu.cpp" line="+1"/>
         <source>&amp;Join...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Připojit se...</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Join another user&apos;s drawing session</source>
-        <translation type="unfinished"></translation>
+        <translation>Připojit se ke kresličskému sezení jiného uživatele</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Leave</source>
-        <translation type="unfinished"></translation>
+        <translation>Za&amp;nechat</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Leave this drawing session</source>
-        <translation type="unfinished"></translation>
+        <translation>Opustit toto kresličské sezení</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Become Operator...</source>
-        <translation type="unfinished"></translation>
+        <translation>Stát se operátorem...</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Prevent changes to the drawing board</source>
-        <translation type="unfinished"></translation>
+        <translation>Zabránit změnám kreslícího prkna</translation>
     </message>
     <message>
         <location line="+27"/>
         <location filename="../widgets/macmenu.cpp" line="-2"/>
         <source>&amp;Session</source>
-        <translation type="unfinished"></translation>
+        <translation>S&amp;ezení</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>Fill areas</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyplnit oblasti</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Select area for copying</source>
-        <translation type="unfinished"></translation>
+        <translation>Vybrat oblast ke kopírování</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -1975,12 +1976,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>&amp;Decrease Brush Size</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Zmenšit velikost štětce</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Increase Brush Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Z&amp;většit velikost štětce</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1990,7 +1991,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+20"/>
         <source>Drawing tools</source>
-        <translation type="unfinished"></translation>
+        <translation>Nástroje na kreslení</translation>
     </message>
     <message>
         <location line="+180"/>
@@ -2000,155 +2001,156 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-2124"/>
         <source>Stop Recording</source>
-        <translation type="unfinished"></translation>
+        <translation>Zastavit záznam</translation>
     </message>
     <message>
         <location line="+168"/>
         <source>Host Session</source>
-        <translation type="unfinished"></translation>
+        <translation>Hostit sezení</translation>
     </message>
     <message>
         <location line="+244"/>
         <source>Could not connect to server</source>
-        <translation type="unfinished"></translation>
+        <translation>Nepodařilo se připojit se k serveru</translation>
     </message>
     <message>
         <location line="+789"/>
         <source>A collaborative drawing program.</source>
-        <translation type="unfinished"></translation>
+        <translation>Společný kreslicí program.</translation>
     </message>
     <message>
         <location line="+141"/>
         <source>Close</source>
-        <translation type="unfinished">Zavřít</translation>
+        <translation>Zavřít</translation>
     </message>
     <message>
         <location line="+57"/>
         <location filename="../widgets/macmenu.cpp" line="-16"/>
         <source>Open &amp;Recent</source>
-        <translation type="unfinished"></translation>
+        <translation>Otevřít &amp;nedávné</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>File Tools</source>
-        <translation type="unfinished"></translation>
+        <translation>Nástroje na soubory</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>&amp;Copy Visible</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Kopírovat viditelné</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Copy &amp;Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopírovat &amp;vrstvu</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Cu&amp;t Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>V&amp;yjmout vrstvu</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Paste &amp;From File...</source>
-        <translation type="unfinished"></translation>
+        <translation>Vložit &amp;ze souboru...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Delete Empty Annotations</source>
-        <translation type="unfinished"></translation>
+        <translation>Smazat prázdné poznámky</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Resi&amp;ze Canvas...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Změnit velikost plátna...</translation>
     </message>
     <message>
         <location line="+5"/>
         <location filename="../widgets/macmenu.cpp" line="+8"/>
         <source>Prefere&amp;nces</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Nastavení</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Select &amp;All</source>
-        <translation type="unfinished"></translation>
+        <translation>Vybrat &amp;vše</translation>
     </message>
     <message>
         <location line="+120"/>
         <source>Edit Tools</source>
-        <translation type="unfinished"></translation>
+        <translation>Nástroje na úpravy</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Zoom &amp;In</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Přiblížit</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Zoom &amp;Out</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Oddálit</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Normal Size</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Skutečná velikost</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Reset Rotation</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Nastavit otočení znovu</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Show &amp;Annotations</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukázat &amp;vysvětlivky</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>&amp;Full Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Celá obrazovka</translation>
     </message>
     <message>
         <location line="+245"/>
         <source>Pick colors from the image</source>
-        <translation type="unfinished"></translation>
+        <translation>Vzít barvy z obrázku</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>&amp;Color Picker</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Kapátko</translation>
     </message>
     <message>
         <location line="-7"/>
         <source>&amp;Line</source>
-        <translation type="unfinished"></translation>
+        <translation>Čá&amp;ra</translation>
     </message>
     <message>
         <location line="-2936"/>
         <source>Server out of space</source>
-        <translation type="unfinished"></translation>
+        <translation>Nedostatek místa na serveru</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Server is running out of history space and session has grown too large to automatically reset! (Limit is %1 MB)
 Simplify the canvas and reset manually before space runs out.</source>
-        <translation type="unfinished"></translation>
+        <translation>Serveru dochází místo pro historii a sezení se příliš rozrostlo, takže bude automaticky nastaveno znovu! (Mez he %1 GB)
+Zjednodušte plátno a nastavte ručně, předtím než dojde místo.</translation>
     </message>
     <message>
         <location line="+1353"/>
         <source>Become Operator</source>
-        <translation type="unfinished"></translation>
+        <translation>Stát se operátorem</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Enter operator password</source>
-        <translation type="unfinished"></translation>
+        <translation>Zadejte heslo operátora</translation>
     </message>
     <message>
         <location line="+229"/>
         <source>Session blocked by parental controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Sezení zablokováno rodičovskou kontrolou</translation>
     </message>
     <message>
         <location line="+834"/>
@@ -2168,7 +2170,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+124"/>
         <source>Delete</source>
-        <translation type="unfinished">Smazat</translation>
+        <translation>Smazat</translation>
     </message>
     <message>
         <location line="+297"/>
@@ -2183,17 +2185,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+31"/>
         <source>Event Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Záznam události</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Settings...</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení...</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Reset...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Nastavit znovu...</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -2223,27 +2225,27 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>Draw straight lines</source>
-        <translation type="unfinished"></translation>
+        <translation>Kreslit rovné čáry</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Rectangle</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Obdélník</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Draw unfilled squares and rectangles</source>
-        <translation type="unfinished"></translation>
+        <translation>Kreslit nevyplněné čtverce a obdélníky</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Ellipse</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Elipsa</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Draw unfilled circles and ellipses</source>
-        <translation type="unfinished"></translation>
+        <translation>Kreslit nevyplněné kruhy a elipsy</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2258,42 +2260,42 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>&amp;Flood Fill</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyplnit &amp;oblast barvou</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Annotation</source>
-        <translation type="unfinished"></translation>
+        <translation>Po&amp;známka</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Add text to the picture</source>
-        <translation type="unfinished"></translation>
+        <translation>Přidat text do obrázku</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Point out things on the canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Upozornit na věci na plátně</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>&amp;Laser Pointer</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Laserové ukazovátko</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Select (Rectangular)</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Vybrat (obdélníkový)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Select (Free-Form)</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Vybrat (nepravidelně tvarovaný)</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Select a free-form area for copying</source>
-        <translation type="unfinished"></translation>
+        <translation>Vybrat nepravidelně tvarovanou oblast ke zkopírování</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2318,12 +2320,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+17"/>
         <source>&amp;Tools</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Nástroje</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Klávesové zkratky</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -2334,7 +2336,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+46"/>
         <location filename="../widgets/macmenu.cpp" line="+33"/>
         <source>&amp;Homepage</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Stránky</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2350,13 +2352,13 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+1"/>
         <location filename="../widgets/macmenu.cpp" line="+1"/>
         <source>&amp;About Drawpile</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;O programu Drawpile</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../widgets/macmenu.cpp" line="+2"/>
         <source>About &amp;Qt</source>
-        <translation type="unfinished"></translation>
+        <translation>O &amp;Qt</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2367,12 +2369,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+35"/>
         <location filename="../widgets/macmenu.cpp" line="-5"/>
         <source>&amp;Help</source>
-        <translation type="unfinished"></translation>
+        <translation>Nápo&amp;věda</translation>
     </message>
     <message>
         <location filename="../widgets/macmenu.cpp" line="-13"/>
         <source>Window</source>
-        <translation type="unfinished"></translation>
+        <translation>Okno</translation>
     </message>
 </context>
 <context>
@@ -2380,22 +2382,22 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../ui/netstats.ui" line="+14"/>
         <source>Statistics</source>
-        <translation type="unfinished">Statistika</translation>
+        <translation>Statistika</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>Latency:</source>
-        <translation type="unfinished"></translation>
+        <translation>Prodleva:</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Sent:</source>
-        <translation type="unfinished"></translation>
+        <translation>Posláno:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Received:</source>
-        <translation type="unfinished"></translation>
+        <translation>Přijato:</translation>
     </message>
 </context>
 <context>
@@ -2403,22 +2405,22 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../ui/newdialog.ui" line="+17"/>
         <source>New Drawing</source>
-        <translation type="unfinished"></translation>
+        <translation>Nová kresba</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Width:</source>
-        <translation type="unfinished"></translation>
+        <translation>Šířka: </translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Height:</source>
-        <translation type="unfinished"></translation>
+        <translation>Výška:</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Background:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pozadí:</translation>
     </message>
 </context>
 <context>
@@ -2426,12 +2428,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../ui/playback.ui" line="+75"/>
         <source>Play</source>
-        <translation type="unfinished">Přehrát</translation>
+        <translation>Přehrát</translation>
     </message>
     <message>
         <location line="-61"/>
         <source>Playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Přehrávání</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -2471,37 +2473,37 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+28"/>
         <source>Build Index</source>
-        <translation type="unfinished"></translation>
+        <translation>Sestavit rejstřík</translation>
     </message>
     <message>
         <location line="+76"/>
         <source>Frame:</source>
-        <translation type="unfinished">Snímek:</translation>
+        <translation>Snímek:</translation>
     </message>
     <message>
         <location line="+42"/>
         <source>Automatically save a frame at each step</source>
-        <translation type="unfinished"></translation>
+        <translation>Automaticky uložit snímek při každém kroku</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Autosave</source>
-        <translation type="unfinished"></translation>
+        <translation>Automaticky uložit</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Save frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Uložit snímek</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>Zastavit</translation>
     </message>
     <message>
         <location line="+39"/>
         <source>Export Video...</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyvést obrazový záznam...</translation>
     </message>
 </context>
 <context>
@@ -2510,7 +2512,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../dialogs/avatarimport.cpp" line="+59"/>
         <location filename="../filewrangler.cpp" line="-412"/>
         <source>All files (*)</source>
-        <translation type="unfinished">Všechny soubory (*)</translation>
+        <translation>Všechny soubory (*)</translation>
     </message>
     <message>
         <location filename="../docks/toolsettingsdock.cpp" line="+76"/>
@@ -2588,7 +2590,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../ui/resetsession.ui" line="+14"/>
         <source>Reset session</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavit sezení znovu</translation>
     </message>
 </context>
 <context>
@@ -2596,12 +2598,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../ui/resizedialog.ui" line="+14"/>
         <source>Resize Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Změnit velikost plátna</translation>
     </message>
     <message>
         <location line="+57"/>
         <source>Keep aspect ratio</source>
-        <translation type="unfinished"></translation>
+        <translation>Zachovat poměr stran</translation>
     </message>
 </context>
 <context>
@@ -2662,13 +2664,13 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location filename="../ui/serverlog.ui" line="+14"/>
         <location line="+10"/>
         <source>Event Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Záznam události</translation>
     </message>
     <message>
         <location line="+6"/>
         <location line="+26"/>
         <source>Filter</source>
-        <translation type="unfinished">Filtr</translation>
+        <translation>Filtr</translation>
     </message>
     <message>
         <location line="-8"/>
@@ -2706,22 +2708,22 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../ui/sessionsettings.ui" line="+14"/>
         <source>Session Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení sezení</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Session</source>
-        <translation type="unfinished"></translation>
+        <translation>Sezení</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Operator password:</source>
-        <translation type="unfinished"></translation>
+        <translation>Heslo operátora:</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -2751,57 +2753,57 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+7"/>
         <source>Include chat in session history so new users can see it as well</source>
-        <translation type="unfinished"></translation>
+        <translation>Zahrnout rozhovor do historie sezení, aby jej mohli vidět i noví uživatelé</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Keep chat history</source>
-        <translation type="unfinished"></translation>
+        <translation>Zachovat historii rozhovoru</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Don&apos;t terminate session when the last user leaves</source>
-        <translation type="unfinished"></translation>
+        <translation>Neskončit sezení, když poslední uživatel odejde</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Persist without users</source>
-        <translation type="unfinished"></translation>
+        <translation>Přetrvávat bez uživatelů</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>This session contains material not suitable for minors</source>
-        <translation type="unfinished"></translation>
+        <translation>Toto sezení obsahuje materiál nevhodný pro nezletilé</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Login</source>
-        <translation type="unfinished"></translation>
+        <translation>Přihlášení</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Password:</source>
-        <translation type="unfinished"></translation>
+        <translation>Heslo:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Max users:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nejvíce uživatelů:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>How many users to let in. Does not affect users already logged in</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolika uživatelům povolit vstup. Neovlivní již přihlášené uživatele</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Block new logins</source>
-        <translation type="unfinished"></translation>
+        <translation>Blokovat nová přihlášení</translation>
     </message>
     <message>
         <location line="-79"/>
         <source>Title:</source>
-        <translation type="unfinished"></translation>
+        <translation>Název:</translation>
     </message>
     <message>
         <location line="-13"/>
@@ -2901,18 +2903,18 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+11"/>
         <source>Banned users</source>
-        <translation type="unfinished"></translation>
+        <translation>Zakázání uživatelé</translation>
     </message>
     <message>
         <location line="+31"/>
         <location line="+66"/>
         <source>Remove selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Odstranit vybrané</translation>
     </message>
     <message>
         <location line="-56"/>
         <source>Announcements</source>
-        <translation type="unfinished"></translation>
+        <translation>Oznámení</translation>
     </message>
     <message>
         <location line="+34"/>
@@ -2943,47 +2945,47 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../ui/textsettings.ui" line="+75"/>
         <source>Horizontal alignment</source>
-        <translation type="unfinished"></translation>
+        <translation>Vodorovné zarovnání</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Vertical alignment</source>
-        <translation type="unfinished"></translation>
+        <translation>Svislé zarovnání</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Background color</source>
-        <translation type="unfinished"></translation>
+        <translation>Barva pozadí</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Text color</source>
-        <translation type="unfinished"></translation>
+        <translation>Barva textu</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Bold</source>
-        <translation type="unfinished"></translation>
+        <translation>Tučné</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Italic</source>
-        <translation type="unfinished"></translation>
+        <translation>Kurzíva</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Underline</source>
-        <translation type="unfinished"></translation>
+        <translation>Podtržení</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Strikethrough</source>
-        <translation type="unfinished"></translation>
+        <translation>Přeškrtnutí</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Annotation content</source>
-        <translation type="unfinished"></translation>
+        <translation>Obsah poznámky</translation>
     </message>
 </context>
 <context>
@@ -3006,7 +3008,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+17"/>
         <source>Smoothing:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vyhlazování:</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -3072,27 +3074,27 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../ui/videoexport.ui" line="+14"/>
         <source>Export video</source>
-        <translation type="unfinished">Vyvést obrazový záznam</translation>
+        <translation>Vyvést obrazový záznam</translation>
     </message>
     <message>
         <location line="+55"/>
         <source>Framerate:</source>
-        <translation type="unfinished"></translation>
+        <translation>Počet snímků:</translation>
     </message>
     <message>
         <location line="-35"/>
         <source> FPS</source>
-        <translation type="unfinished"></translation>
+        <translation> SZS</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Size:</source>
-        <translation type="unfinished">Velikost:</translation>
+        <translation>Velikost:</translation>
     </message>
     <message>
         <location line="-42"/>
         <source>Video Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Volby pro obrazový záznam</translation>
     </message>
     <message>
         <location line="+56"/>
@@ -3102,22 +3104,22 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+72"/>
         <source>Export Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Volby pro vyvedení</translation>
     </message>
     <message>
         <location line="+31"/>
         <source>Image format:</source>
-        <translation type="unfinished"></translation>
+        <translation>Formát obrázku:</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>File name pattern:</source>
-        <translation type="unfinished"></translation>
+        <translation>Vzor pro název souboru:</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Supported pattern placeholders:&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{F}&lt;/span&gt; - frame number&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{E}&lt;/span&gt; - file extension&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Podporované zástupné symboly pro vzor:&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{F}&lt;/span&gt; - číslo snímku&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{E}&lt;/span&gt; - přípona souboru&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -3135,7 +3137,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../bundled/QtColorWidgets/color_dialog.cpp" line="+79"/>
         <source>Pick</source>
-        <translation type="unfinished"></translation>
+        <translation>Zvolit</translation>
     </message>
 </context>
 <context>
@@ -3374,7 +3376,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+3"/>
         <source>MyPaint Brush</source>
-        <translation type="unfinished">MyPaint-pensel</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+23"/>
@@ -4787,7 +4789,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zrušit</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5026,7 +5028,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+131"/>
         <source>Join a Session</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Připojit se k sezení</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5176,7 +5178,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="+38"/>
         <source>Playback</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Přehrávání</translation>
     </message>
     <message>
         <location line="+130"/>
@@ -5346,7 +5348,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="+32"/>
         <source>Preferences</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nastavení</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -5366,7 +5368,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Network</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Síť</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5376,12 +5378,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zkratky</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Parental Controls</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rodičovská kontrola</translation>
     </message>
 </context>
 <context>
@@ -5522,7 +5524,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Language:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Jazyk:</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -5622,7 +5624,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Session history:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Historie sezení:</translation>
     </message>
 </context>
 <context>
@@ -5645,12 +5647,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Enable pressure sensitivity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Povolit tlakovou citlivost</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Tablet:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Destička (tablet)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5690,7 +5692,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+15"/>
         <source>Smoothing:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vyhlazování:</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -5725,12 +5727,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Pinch to zoom</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tlačit pro přiblížení</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Twist to rotate</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Otáčet pro otočení</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -5828,7 +5830,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Recording marker</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Značka záznamu</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6340,12 +6342,14 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">
             <numerusform></numerusform>
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+14"/>
         <source>%n tag(s) imported: %1</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -6359,6 +6363,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+4"/>
         <source>%n error(s) encountered.</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
@@ -6878,7 +6883,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/canvasshortcutedit.cpp" line="+269"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zrušit</translation>
     </message>
     <message>
         <location line="+2"/>

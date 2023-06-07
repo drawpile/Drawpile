@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="nb_NO">
+<TS version="2.1" language="cs_CZ">
 <context>
     <name>AvatarListModel</name>
     <message>
@@ -57,12 +57,12 @@
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="+94"/>
         <source>Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Klávesová zkratka</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Action</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Činnost</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -85,7 +85,7 @@
         <location line="+6"/>
         <source>%1: %2</source>
         <extracomment>Example: &quot;Space: Pan Canvas&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 h %2 m {1:?} {2?}</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -258,12 +258,12 @@
     <message>
         <location filename="../utils/customshortcutmodel.cpp" line="+83"/>
         <source>Action</source>
-        <translation type="unfinished"></translation>
+        <translation>Činnost</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Klávesová zkratka</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -273,7 +273,7 @@
     <message>
         <location line="+1"/>
         <source>Default</source>
-        <translation type="unfinished">Výchozí</translation>
+        <translation>Výchozí</translation>
     </message>
 </context>
 <context>
@@ -450,6 +450,7 @@
         <location line="+80"/>
         <source>%n users</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>

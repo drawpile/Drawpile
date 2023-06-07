@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="nb_NO">
+<TS version="2.1" language="pt_BR">
 <context>
     <name>AvatarListModel</name>
     <message>
         <location filename="../utils/avatarlistmodel.cpp" line="+98"/>
         <source>No avatar</source>
-        <translation type="unfinished"></translation>
+        <translation>Sem Avatar</translation>
     </message>
 </context>
 <context>
@@ -57,12 +57,12 @@
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="+94"/>
         <source>Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Atalho</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Action</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ação</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -85,7 +85,7 @@
         <location line="+6"/>
         <source>%1: %2</source>
         <extracomment>Example: &quot;Space: Pan Canvas&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1hora %2min {1:?} {2?}</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -258,22 +258,22 @@
     <message>
         <location filename="../utils/customshortcutmodel.cpp" line="+83"/>
         <source>Action</source>
-        <translation type="unfinished"></translation>
+        <translation>Ação</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Atalho</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Alternate</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternar</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Default</source>
-        <translation type="unfinished">Výchozí</translation>
+        <translation>Padrão</translation>
     </message>
 </context>
 <context>
@@ -335,7 +335,7 @@
     <message>
         <location filename="../utils/images.cpp" line="+99"/>
         <source>Images (%1)</source>
-        <translation type="unfinished">Obrázky (%1)</translation>
+        <translation>Imagens (%1)</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -345,17 +345,17 @@
     <message>
         <location line="+7"/>
         <source>Binary Recordings (%1)</source>
-        <translation type="unfinished">Binární záznamy (%1)</translation>
+        <translation>Gravações em binário (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Text Recordings (%1)</source>
-        <translation type="unfinished">Textové záznamy (%1)</translation>
+        <translation>Gravações de texto (%1)</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Recordings (%1)</source>
-        <translation type="unfinished">Záznamy (%1)</translation>
+        <translation>Gravações (%1)</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -385,12 +385,12 @@
     <message>
         <location line="+8"/>
         <source>All Supported Files (%1)</source>
-        <translation type="unfinished">Všechny podporované soubory (%1)</translation>
+        <translation>Arquivos suportados (%1)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>All Files (*)</source>
-        <translation type="unfinished">Všechny soubory (*)</translation>
+        <translation>Todos os arquivos (*)</translation>
     </message>
 </context>
 <context>
@@ -429,7 +429,7 @@
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="+153"/>
         <source>(untitled)</source>
-        <translation type="unfinished">(Bez názvu)</translation>
+        <translation>(sem nome)</translation>
     </message>
     <message>
         <location line="-83"/>
@@ -487,27 +487,27 @@
     <message>
         <location line="+6"/>
         <source>Title</source>
-        <translation type="unfinished">Název</translation>
+        <translation>Nome</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Server</source>
-        <translation type="unfinished">Server</translation>
+        <translation>Servidor</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Users</source>
-        <translation type="unfinished">Uživatelé</translation>
+        <translation>Usuários</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Owner</source>
-        <translation type="unfinished">Vlastník</translation>
+        <translation>Dono</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Age</source>
-        <translation type="unfinished">Věk</translation>
+        <translation>Idade</translation>
     </message>
 </context>
 <context>
@@ -515,22 +515,22 @@
     <message>
         <location filename="../canvas/blendmodes.cpp" line="+40"/>
         <source>Normal</source>
-        <translation type="unfinished">Normální</translation>
+        <translation type="unfinished">Normal</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Recolor</source>
-        <translation type="unfinished">Přebarvit</translation>
+        <translation type="unfinished">Recolorir</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Behind</source>
-        <translation type="unfinished">Pod</translation>
+        <translation type="unfinished">Por trás</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Multiply</source>
-        <translation type="unfinished">Násobit</translation>
+        <translation type="unfinished">Multiplicar</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -545,42 +545,42 @@
     <message>
         <location line="+5"/>
         <source>Divide</source>
-        <translation type="unfinished">Dělit</translation>
+        <translation type="unfinished">Dividir</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Burn</source>
-        <translation type="unfinished">Vypálit</translation>
+        <translation type="unfinished">Queimar</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Dodge</source>
-        <translation type="unfinished">Pozměnit světlost</translation>
+        <translation type="unfinished">Evitar</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Darken</source>
-        <translation type="unfinished">Ztmavit</translation>
+        <translation type="unfinished">Escurecer</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Lighten</source>
-        <translation type="unfinished">Zesvětlit</translation>
+        <translation type="unfinished">Iluminar</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Subtract</source>
-        <translation type="unfinished">Odečíst</translation>
+        <translation type="unfinished">Subtrair</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Add</source>
-        <translation type="unfinished">Přidat</translation>
+        <translation type="unfinished">Adicionar</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Erase</source>
-        <translation type="unfinished">Vymazat</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+5"/>
@@ -615,12 +615,12 @@
     <message>
         <location line="+5"/>
         <source>Hue</source>
-        <translation type="unfinished">Barevný odstín</translation>
+        <translation type="unfinished">Matiz</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Saturation</source>
-        <translation type="unfinished">Sytost</translation>
+        <translation type="unfinished">Saturação</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -630,7 +630,7 @@
     <message>
         <location line="+5"/>
         <source>Color</source>
-        <translation type="unfinished">Barva</translation>
+        <translation type="unfinished">Cor</translation>
     </message>
 </context>
 <context>
@@ -638,7 +638,7 @@
     <message>
         <location filename="../brushes/brushpresetmodel.cpp" line="+638"/>
         <source>Default</source>
-        <translation type="unfinished">Výchozí</translation>
+        <translation type="unfinished">Padrão</translation>
     </message>
 </context>
 <context>
@@ -666,7 +666,7 @@
     <message>
         <location line="+166"/>
         <source>Default</source>
-        <translation type="unfinished">Výchozí</translation>
+        <translation type="unfinished">Padrão</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -742,57 +742,57 @@
     <message>
         <location filename="../canvas/userlist.cpp" line="+58"/>
         <source>Moderator</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Moderador</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Operator</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Operador</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Confiável</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Registered</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Registrado</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Online</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Online</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Offline</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Offline</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>User</source>
-        <translation type="unfinished">Uživatel</translation>
+        <translation type="unfinished">Usuário</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tipo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Status</translation>
     </message>
     <message>
         <location line="+181"/>
         <source>Server</source>
-        <translation type="unfinished">Server</translation>
+        <translation type="unfinished">Servidor</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>User #%1</source>
-        <translation type="unfinished">Uživatel #%1</translation>
+        <translation type="unfinished">Usuário #%1</translation>
     </message>
 </context>
 <context>
@@ -800,7 +800,7 @@
     <message>
         <location filename="../net/announcementlist.cpp" line="+31"/>
         <source>Private</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Privada</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -810,17 +810,17 @@
     <message>
         <location line="+24"/>
         <source>Server</source>
-        <translation type="unfinished">Server</translation>
+        <translation type="unfinished">Servidor</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Room code</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Código da Sala</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mode</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Modo</translation>
     </message>
 </context>
 <context>
@@ -828,17 +828,17 @@
     <message>
         <location filename="../net/banlistmodel.cpp" line="+59"/>
         <source>User</source>
-        <translation type="unfinished">Uživatel</translation>
+        <translation type="unfinished">Usuário</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>IP address</source>
-        <translation type="unfinished">Adresa IP</translation>
+        <translation type="unfinished">Endereço IP</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Banned by</source>
-        <translation type="unfinished">Zakázáno</translation>
+        <translation type="unfinished">Banido por</translation>
     </message>
 </context>
 <context>
@@ -846,12 +846,12 @@
     <message>
         <location filename="../net/client.cpp" line="+71"/>
         <source>A server error occurred!</source>
-        <translation type="unfinished">Nastala chyba serveru!</translation>
+        <translation type="unfinished">Um erro aconteceu no servidor!</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The server is shutting down!</source>
-        <translation type="unfinished">Server se vypíná!</translation>
+        <translation type="unfinished">O servidor está desligando!</translation>
     </message>
 </context>
 <context>
@@ -860,7 +860,7 @@
         <location filename="../net/login.cpp" line="+100"/>
         <location line="+258"/>
         <source>Invalid state</source>
-        <translation type="unfinished">Neplatný stav</translation>
+        <translation type="unfinished">Estado inválido</translation>
     </message>
     <message>
         <location line="-233"/>
@@ -870,73 +870,73 @@
         <location line="+133"/>
         <location line="+42"/>
         <source>Incompatible server</source>
-        <translation type="unfinished">Neslučitelný server</translation>
+        <translation type="unfinished">Servidor incompatível</translation>
     </message>
     <message>
         <location line="-431"/>
         <source>Server is for a different Drawpile version!</source>
-        <translation type="unfinished">Server je pro jinou verzi programu Drawpile!</translation>
+        <translation type="unfinished">Este servidor é para uma versão diferente de Drawpile!</translation>
     </message>
     <message>
         <location line="+42"/>
         <source>Secure mode not enabled on a trusted host!</source>
-        <translation type="unfinished">Bezpečný režim nepovolen na důvěryhodném serveru!</translation>
+        <translation type="unfinished">O modo seguro não foi ativado num hospedeiro confiável!</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>This server does not allow guest logins</source>
-        <translation type="unfinished">Tento server nedovoluje přihlášení hostů</translation>
+        <translation type="unfinished">Esse servidor não aceita logins de visitantes</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Password needed to log in as &quot;%1&quot;</source>
-        <translation type="unfinished">Pro přihlášení jako &quot;%1&quot; je potřeba heslo</translation>
+        <translation type="unfinished">Senha necessária para entrar como &quot;%1&quot;</translation>
     </message>
     <message>
         <location line="+67"/>
         <location line="+6"/>
         <source>Auth server error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Erro no servidor de autenticação: %1</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Group membership needed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Você tem que fazer parte de um grupo</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unexpected ext-auth response: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Resposta do servidor ext-auth não esperada: %1</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Server misconfiguration: invalid ext-auth URL</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Configuração errada do servidor: Link ext-auth  inválido</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Unsupported ext-auth URL scheme</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Link de ext-auth não suportada</translation>
     </message>
     <message>
         <location line="+89"/>
         <source>New version</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Versão nova</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Unknown version</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Versão desconhecida</translation>
     </message>
     <message>
         <location line="+48"/>
         <source>Session not yet started!</source>
-        <translation type="unfinished">Sezení ještě nespuštěno!</translation>
+        <translation type="unfinished">O servidor não foi iniciado ainda!</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Blocked by parental controls</source>
-        <translation type="unfinished">Zablokováno rodičovskou kontrolou</translation>
+        <translation type="unfinished">Bloqueado pelo controle parental</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -947,67 +947,67 @@
         <location line="+185"/>
         <location line="+20"/>
         <source>Invalid SSL certificate for host %1</source>
-        <translation type="unfinished">Neplatné osvědčení SSL pro server %1</translation>
+        <translation type="unfinished">Certificado SSL para o hospedeiro %1 inválido</translation>
     </message>
     <message>
         <location line="-17"/>
         <source>Certificate of a trusted server has changed!</source>
-        <translation type="unfinished">Osvědčení důvěryhodného serveru se změnilo!</translation>
+        <translation type="unfinished">O certificado de um servidor confiável mudou!</translation>
     </message>
     <message>
         <location line="+58"/>
         <source>Cancelled</source>
-        <translation type="unfinished">Zřušeno</translation>
+        <translation type="unfinished">Cancelado</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Session not found!</source>
-        <translation type="unfinished">Sezení nenalezeno!</translation>
+        <translation type="unfinished">Sessão não encontrada!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Incorrect password!</source>
-        <translation type="unfinished">Nesprávné heslo!</translation>
+        <translation type="unfinished">Senha incorreta!</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Invalid username!</source>
-        <translation type="unfinished">Neplatné uživatelské jméno!</translation>
+        <translation type="unfinished">Usuário inválido!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>This username has been locked</source>
-        <translation type="unfinished">Toto uživatelské jméno bylo zamknuto</translation>
+        <translation type="unfinished">Esse usuário foi bloqueado</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Username already taken!</source>
-        <translation type="unfinished">Uživatelské jméno již obsazeno!</translation>
+        <translation type="unfinished">Este nome de usuário já existe!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Session is closed!</source>
-        <translation type="unfinished">Sezení je zavřeno!</translation>
+        <translation type="unfinished">A sessão foi fechada!</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Server is full!</source>
-        <translation type="unfinished">Server je plný!</translation>
+        <translation type="unfinished">Este servidor está cheio!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Hosting not authorized</source>
-        <translation type="unfinished">Hostování neschváleno</translation>
+        <translation type="unfinished">Essa hospedagem não é autorizada</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You have been banned from this session!</source>
-        <translation type="unfinished">Bylo vám zakázáno toto sezení!</translation>
+        <translation type="unfinished">Você foi banido dessa sessão!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Session alias is reserved!</source>
-        <translation type="unfinished">Přezdívka sezení je vyhrazena!</translation>
+        <translation type="unfinished">O atalho da sessão é reservado!</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -1020,7 +1020,7 @@
     <message>
         <location filename="../net/loginsessions.cpp" line="+48"/>
         <source>(untitled)</source>
-        <translation type="unfinished">(Bez názvu)</translation>
+        <translation type="unfinished">(sem nome)</translation>
     </message>
     <message>
         <location line="+45"/>
@@ -1060,17 +1060,17 @@
     <message>
         <location line="+47"/>
         <source>Title</source>
-        <translation type="unfinished">Název</translation>
+        <translation type="unfinished">Nome</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Started by</source>
-        <translation type="unfinished">Zahájeno</translation>
+        <translation type="unfinished">Iniciado por</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Users</source>
-        <translation type="unfinished">Uživatelé</translation>
+        <translation type="unfinished">Usuários</translation>
     </message>
 </context>
 <context>
@@ -1078,7 +1078,7 @@
     <message>
         <location filename="../net/tcpserver.cpp" line="+111"/>
         <source>Received invalid data</source>
-        <translation type="unfinished">Přijata neplatná data</translation>
+        <translation type="unfinished">Os dados recebidos são inválidos</translation>
     </message>
 </context>
 </TS>
