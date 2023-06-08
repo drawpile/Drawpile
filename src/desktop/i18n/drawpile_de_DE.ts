@@ -6056,10 +6056,13 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <source>Delete avatars</source>
         <translation>Avatare löschen</translation>
     </message>
-    <message>
+    <message numerus="yes">
         <location line="+0"/>
-        <source>Really delete %n avatars?</source>
-        <translation>Wirklich %n Avatare löschen?</translation>
+        <source>Really delete %n avatar(s)?</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
     <message>
         <location line="+10"/>
@@ -6249,12 +6252,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <translation>Bekannte Hosts entfernen</translation>
     </message>
     <message>
-        <location line="+1"/>
-        <source>Really remove %n known hosts?</source>
-        <translation>Wirklich %n bekannte Hosts entfernen?</translation>
-    </message>
-    <message>
-        <location line="+6"/>
+        <location line="+7"/>
         <location line="+127"/>
         <source>Trust selected hosts</source>
         <translation>Ausgewählten Hosts vertrauen</translation>
@@ -6279,10 +6277,21 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <source>Remove list servers</source>
         <translation>Listenserver entfernen</translation>
     </message>
-    <message>
-        <location line="+1"/>
-        <source>Really remove %n list servers?</source>
-        <translation>Wirklich %n Listenserver entfernen?</translation>
+    <message numerus="yes">
+        <location line="-48"/>
+        <source>Really remove %n known host(s)?</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location line="+49"/>
+        <source>Really remove %n list server(s)?</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
     <message>
         <location line="+11"/>
@@ -6353,10 +6362,13 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <source>Remove canvas shortcut</source>
         <translation>Leinwandkürzel entfernen</translation>
     </message>
-    <message>
+    <message numerus="yes">
         <location line="+1"/>
-        <source>Really remove %n canvas shortcuts?</source>
-        <translation>Wirlich %n Leinwandkürzel entfernen?</translation>
+        <source>Really remove %n canvas shortcut(s)?</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
     <message>
         <location line="+5"/>
