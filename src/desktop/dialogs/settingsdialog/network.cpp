@@ -84,7 +84,7 @@ void Network::initAvatars(utils::SanerFormLayout *form)
 	form->addSpanningRow(avatars);
 	form->addSpanningRow(listActions(avatars, tr("Add avatar…"), [=] {
 		AvatarImport::importAvatar(avatarsModel, this);
-	}, tr("Delete selected avatars…"), makeDefaultDeleter(this, avatars, tr("Delete avatars"), QT_TR_NOOP("Really delete %n avatars?"))));
+	}, tr("Delete selected avatars…"), makeDefaultDeleter(this, avatars, tr("Delete avatars"), QT_TR_N_NOOP("Really delete %n avatar(s)?"))));
 }
 
 void Network::initSounds(desktop::settings::Settings &settings, utils::SanerFormLayout *form)

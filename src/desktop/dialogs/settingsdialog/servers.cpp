@@ -64,7 +64,7 @@ void Servers::initKnownHosts(QVBoxLayout *form)
 		tr("Remove selected hosts…"),
 		makeDefaultDeleter(this, knownHosts,
 			tr("Remove known hosts"),
-			QT_TR_NOOP("Really remove %n known hosts?")
+			QT_TR_N_NOOP("Really remove %n known host(s)?")
 		)
 	);
 
@@ -113,7 +113,7 @@ void Servers::initListingServers(desktop::settings::Settings &settings, QVBoxLay
 		tr("Remove selected list servers…"),
 		makeDefaultDeleter(this, servers,
 			tr("Remove list servers"),
-			QT_TR_NOOP("Really remove %n list servers?")
+			QT_TR_N_NOOP("Really remove %n list server(s)?")
 		)
 	));
 }

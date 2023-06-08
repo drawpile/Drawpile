@@ -185,7 +185,7 @@ void Shortcuts::initCanvasShortcuts(desktop::settings::Settings &settings, QVBox
 		tr("Remove selected canvas shortcut…"),
 		makeDefaultDeleter(
 			this, shortcuts, tr("Remove canvas shortcut"),
-			QT_TR_NOOP("Really remove %n canvas shortcuts?")
+			QT_TR_N_NOOP("Really remove %n canvas shortcut(s)?")
 		)
 	);
 	actions->addStretch();
