@@ -621,58 +621,54 @@ to 64x64 pixels.</source>
 <context>
     <name>FillSettings</name>
     <message>
-        <location filename="../ui/fillsettings.ui" line="+103"/>
+        <location filename="../ui/fillsettings.ui" line="+151"/>
         <source>Tolerance: </source>
         <translation>Toleranz: </translation>
     </message>
     <message>
-        <location line="-32"/>
+        <location line="-56"/>
         <source>Expand: </source>
         <translation>Erweitern: </translation>
     </message>
     <message>
-        <location line="-39"/>
-        <location line="+36"/>
+        <location line="-16"/>
+        <location line="+13"/>
         <source> px</source>
         <translation> px</translation>
     </message>
     <message>
-        <location line="-33"/>
+        <location line="-10"/>
         <source>Feather: </source>
         <translation>Verschwimmen: </translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+36"/>
+        <location line="+43"/>
+        <source>px</source>
+        <translation type="unfinished">px</translation>
+    </message>
+    <message>
+        <location line="-40"/>
+        <source>Size: </source>
+        <translation type="unfinished">Größe: </translation>
+    </message>
+    <message>
+        <location line="+16"/>
         <source>Source:</source>
         <translation>Quelle:</translation>
     </message>
     <message>
-        <location line="+36"/>
-        <source>Size Limit: </source>
-        <translation>Maximalgröße: </translation>
+        <location line="+27"/>
+        <source>Close Gaps: </source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+3"/>
-        <source> × 10² px</source>
-        <translation> × 10² Pixel</translation>
-    </message>
-    <message>
-        <location line="+42"/>
+        <location line="-20"/>
         <source>Mode:</source>
         <translation>Modus:</translation>
     </message>
     <message>
-        <location line="+20"/>
-        <source>Current Layer</source>
-        <translation>Aktuelle Ebene</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Merged Image</source>
-        <translation>Zusammengefügtes Bild</translation>
-    </message>
-    <message>
-        <location line="+21"/>
+        <location line="-99"/>
         <source>Normal</source>
         <translation>Normal</translation>
     </message>
@@ -696,19 +692,44 @@ to 64x64 pixels.</source>
         <translation>Daumenkino</translation>
     </message>
     <message>
-        <location line="+74"/>
+        <location line="+11"/>
+        <source>Reset Zoom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Refresh</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+39"/>
+        <source>Rewind</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Play</source>
+        <translation type="unfinished">Abspielen</translation>
+    </message>
+    <message>
+        <location line="+20"/>
         <source>Frame:</source>
         <translation>Frame:</translation>
     </message>
     <message>
         <location line="+20"/>
-        <source>Loop range:</source>
-        <translation>Loop-Bereich:</translation>
+        <source>Range</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+64"/>
-        <source>Flipbook FPS:</source>
-        <translation>Daumenkino-FPS</translation>
+        <location line="+41"/>
+        <source>%</source>
+        <translation type="unfinished">%</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Playback Speed: </source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -951,17 +972,12 @@ Teilreichweite: [%3, %4]</translation>
         <translation>Deckkraft:</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+17"/>
         <source>Blending Mode:</source>
         <translation>Mischmodus:</translation>
     </message>
     <message>
         <location line="+10"/>
-        <source>Pass through</source>
-        <translation>Durchreichen</translation>
-    </message>
-    <message>
-        <location line="+23"/>
         <source>Visibility:</source>
         <translation>Sichtbarkeit:</translation>
     </message>
@@ -991,7 +1007,7 @@ Teilreichweite: [%3, %4]</translation>
         <translation>Erstellt von:</translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="-71"/>
         <source>%</source>
         <translation>%</translation>
     </message>
@@ -1121,13 +1137,13 @@ Teilreichweite: [%3, %4]</translation>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../mainwindow.cpp" line="+589"/>
-        <location line="+992"/>
+        <location filename="../mainwindow.cpp" line="+593"/>
+        <location line="+985"/>
         <source>Untitled</source>
         <translation>Unbenannt</translation>
     </message>
     <message>
-        <location line="-664"/>
+        <location line="-665"/>
         <location line="+21"/>
         <source>Exit Drawpile</source>
         <translation>Drawpile verlassen</translation>
@@ -1145,12 +1161,12 @@ Teilreichweite: [%3, %4]</translation>
     <message>
         <location line="+2"/>
         <location line="+22"/>
-        <location line="+359"/>
+        <location line="+351"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location line="-366"/>
+        <location line="-358"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation>Es gibt noch ungespeicherte Änderungen. Sollen diese vor dem Verlassen gespeichert werden?</translation>
     </message>
@@ -1170,7 +1186,7 @@ Teilreichweite: [%3, %4]</translation>
         <translation>Speichere...</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+25"/>
         <source>Couldn&apos;t save image</source>
         <translation>Bild konnte nicht gespeichert werden</translation>
     </message>
@@ -1180,7 +1196,7 @@ Teilreichweite: [%3, %4]</translation>
         <translation>Bild gespeichert</translation>
     </message>
     <message>
-        <location line="+146"/>
+        <location line="+136"/>
         <source>Pause</source>
         <translation>Pause</translation>
     </message>
@@ -1225,12 +1241,12 @@ Teilreichweite: [%3, %4]</translation>
         <translation>Beitreten</translation>
     </message>
     <message>
-        <location line="+52"/>
+        <location line="+62"/>
         <source>Board is locked</source>
         <translation>Das Zeichenbrett ist gesperrt</translation>
     </message>
     <message>
-        <location line="+380"/>
+        <location line="+381"/>
         <source>The image could not be loaded</source>
         <translation>Das Bild konnte nicht geladen werden</translation>
     </message>
@@ -1272,13 +1288,13 @@ Teilreichweite: [%3, %4]</translation>
         <translation>Automatisch speichern</translation>
     </message>
     <message>
-        <location line="-1344"/>
-        <location line="+1352"/>
+        <location line="-1355"/>
+        <location line="+1363"/>
         <source>Record...</source>
         <translation>Aufzeichnen...</translation>
     </message>
     <message>
-        <location line="-2427"/>
+        <location line="-2434"/>
         <source>Server out of space</source>
         <translation>Kein Speicherplatz auf Server</translation>
     </message>
@@ -1290,27 +1306,7 @@ Simplify the canvas and reset manually before space runs out.</source>
 Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Platz vollends ausgeht.</translation>
     </message>
     <message>
-        <location line="+937"/>
-        <source>The session has been reset. Since this is a Drawpile 2.1 session and you&apos;re running Drawpile 2.2, this probably changed how things on the canvas look. Do you want to save the canvas as it was before the reset?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>The session has been reset. Normally, everything on the canvas should look the same as it did before, but that&apos;s not guaranteed. Do you want to save the canvas as it was before the reset?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+8"/>
-        <source>Session Reset</source>
-        <translation type="unfinished">Zurücksetzen der Sitzung</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>Save As...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+19"/>
+        <location line="+964"/>
         <source>This session was hosted with an older version of Drawpile, some newer features won&apos;t be available. Other Drawpile versions will see different results, session resets may cause abrupt changes.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1330,7 +1326,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+128"/>
+        <location line="+137"/>
         <source>Error closing tablet event log.</source>
         <translation>Fehler beim Schließen des Tablet-Ereignislogs.</translation>
     </message>
@@ -1361,17 +1357,22 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
     </message>
     <message>
         <location line="+5"/>
-        <location line="+1475"/>
+        <location line="+1521"/>
         <source>Terminate</source>
         <translation>Beenden</translation>
     </message>
     <message>
-        <location line="-1365"/>
+        <location line="-1411"/>
         <source>Disconnected:</source>
         <translation>Verbindung getrennt:</translation>
     </message>
     <message>
-        <location line="+44"/>
+        <location line="+35"/>
+        <source>Reset in progress</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+19"/>
         <source>Layer is locked</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1381,7 +1382,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+18"/>
         <source>Session blocked by parental controls</source>
         <translation>Sitzung durch Jugenschutzeinstellungen blockiert</translation>
     </message>
@@ -1578,7 +1579,42 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>Chat</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+108"/>
+        <source>Normal View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Show all layers normally</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Layer View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Show only the current layer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Frame View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Show only layers in the current frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+46"/>
+        <source>Set as Fill Source</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+22"/>
         <source>Flipbook</source>
         <translatorcomment>Does this need to be translated to german?</translatorcomment>
         <translation>Daumenkino</translation>
@@ -1589,7 +1625,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>Vorschaufenster für Animation anzeigen</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="-168"/>
         <source>Mirror</source>
         <translation>Vertikal spiegeln</translation>
     </message>
@@ -1614,12 +1650,12 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>&amp;Raster anzeigen</translation>
     </message>
     <message>
-        <location line="+71"/>
+        <location line="+67"/>
         <source>&amp;View</source>
         <translation>&amp;Ansicht</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+7"/>
         <source>&amp;Zoom</source>
         <translation>&amp;Vergrößerung</translation>
     </message>
@@ -1629,17 +1665,17 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>Drehung</translation>
     </message>
     <message>
-        <location line="+58"/>
+        <location line="+55"/>
         <source>Merge Layer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+11"/>
         <source>&amp;Layer</source>
         <translation>&amp;Ebenen</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+69"/>
         <location filename="../widgets/macmenu.cpp" line="+25"/>
         <source>&amp;Host...</source>
         <translation>&amp;Hosten...</translation>
@@ -1747,7 +1783,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>Zeichenwerkzeuge</translation>
     </message>
     <message>
-        <location line="-202"/>
+        <location line="-246"/>
         <source>User Pointers</source>
         <translation>Nutzerzeiger</translation>
     </message>
@@ -1767,12 +1803,12 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>Ebene löschen</translation>
     </message>
     <message>
-        <location line="-46"/>
+        <location line="-44"/>
         <source>Show Censored Layers</source>
         <translation>Zensierte Ebenen anzeigen</translation>
     </message>
     <message>
-        <location line="+50"/>
+        <location line="+47"/>
         <source>Select Above</source>
         <translation>Darüberliegende Ebene auswählen</translation>
     </message>
@@ -1782,12 +1818,12 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>Darunterliegende Ebene auswählen</translation>
     </message>
     <message>
-        <location line="+42"/>
+        <location line="+87"/>
         <source>Lock Everything</source>
         <translation>Alles sperren</translation>
     </message>
     <message>
-        <location line="-1814"/>
+        <location line="-1860"/>
         <source>Stop Recording</source>
         <translation>Aufzeichnung beenden</translation>
     </message>
@@ -1802,7 +1838,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>Konnte nicht mit dem Server verbinden</translation>
     </message>
     <message>
-        <location line="+930"/>
+        <location line="+941"/>
         <source>Close</source>
         <translation>Schließen</translation>
     </message>
@@ -1864,7 +1900,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>Bearbeitungswerkzeuge</translation>
     </message>
     <message>
-        <location line="+25"/>
+        <location line="+24"/>
         <source>Zoom &amp;In</source>
         <translation>Ver&amp;größern</translation>
     </message>
@@ -1919,7 +1955,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>&amp;Vollbild</translation>
     </message>
     <message>
-        <location line="+245"/>
+        <location line="+281"/>
         <source>Pick colors from the image</source>
         <translation>Farben aus dem Bild aufnehmen</translation>
     </message>
@@ -1934,34 +1970,34 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>&amp;Gerade</translation>
     </message>
     <message>
-        <location line="-2718"/>
+        <location line="-2754"/>
         <source>🙋 %1 joined!</source>
         <translation>🙋 %1 ist beigetreten!</translation>
     </message>
     <message>
-        <location line="+811"/>
+        <location line="+792"/>
         <source>Saving animation...</source>
         <translation>Animation wird gespeichert...</translation>
     </message>
     <message>
-        <location line="+71"/>
-        <location line="+582"/>
+        <location line="+80"/>
+        <location line="+593"/>
         <source>Unsupported format.</source>
         <translation>Format wird nicht unterstützt.</translation>
     </message>
     <message>
-        <location line="-579"/>
+        <location line="-590"/>
         <source>Couldn&apos;t start recording.</source>
         <translation>Aufnahme konnte nicht gestartet werden.</translation>
     </message>
     <message>
         <location line="+3"/>
-        <location line="+591"/>
+        <location line="+602"/>
         <source>Unknown error.</source>
         <translation>Unbekannter Fehler.</translation>
     </message>
     <message>
-        <location line="-581"/>
+        <location line="-592"/>
         <source>Error closing profile.</source>
         <translation>Fehler beim schließen des Profils.</translation>
     </message>
@@ -1971,7 +2007,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>Profil konnte nicht geöffnet werden.</translation>
     </message>
     <message>
-        <location line="+557"/>
+        <location line="+568"/>
         <source>Bad arguments, this is probably a bug in Drawpile.</source>
         <translation>Fehlerhafte Argumente, dies ist wahrscheinlich ein Bug in Drawpile.</translation>
     </message>
@@ -2032,12 +2068,12 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
     </message>
     <message>
         <location line="+15"/>
-        <location line="+729"/>
+        <location line="+764"/>
         <source>Record Debug Dumps</source>
         <translation>Debug-Dumps aufnehmen</translation>
     </message>
     <message>
-        <location line="-728"/>
+        <location line="-763"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -2110,32 +2146,12 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
         <translation>Hintergrund</translation>
     </message>
     <message>
-        <location line="+151"/>
-        <source>Normal</source>
-        <translation>Normal</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Current Layer Only</source>
-        <translation>Nur aktuelle Ebene</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Current Frame Only</source>
-        <translation>Nur aktueller Frame</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Onion Skin</source>
-        <translation>Florpost/Onion Skin</translation>
-    </message>
-    <message>
-        <location line="+11"/>
+        <location line="+157"/>
         <source>Layer View Mode</source>
         <translation>Ebenenansichtsmodus</translation>
     </message>
     <message>
-        <location line="+32"/>
+        <location line="+31"/>
         <source>New Group</source>
         <translation>Neue Gruppe</translation>
     </message>
@@ -2145,7 +2161,77 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
         <translation>Eigenschaften...</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+25"/>
+        <source>Change Frame Count...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Change Frame Rate (FPS)...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Set Blank Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Cut Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Copy Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Paste Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Key Frame Properties...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Delete Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>New Track</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Track Visible</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Track Onion Skin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Duplicate Track</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Rename Track</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Delete Track</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
         <source>Next Frame</source>
         <translation>Nächstes Frame</translation>
     </message>
@@ -2155,7 +2241,22 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
         <translation>Vorheriges Frame</translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="+1"/>
+        <source>Track Above</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Track Below</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>&amp;Animation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+32"/>
         <source>Event Log</source>
         <translation>Ereignislog</translation>
     </message>
@@ -3347,7 +3448,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
 <context>
     <name>dialogs::BrushSettingsDialog</name>
     <message>
-        <location filename="../dialogs/brushsettingsdialog.cpp" line="+80"/>
+        <location filename="../dialogs/brushsettingsdialog.cpp" line="+82"/>
         <source>Brush Editor</source>
         <translation>Pinseleditor</translation>
     </message>
@@ -3408,7 +3509,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
         <translation>waschen/indirekt</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+14"/>
         <source>Eraser Mode</source>
         <translation>Radiermodus</translation>
     </message>
@@ -3542,18 +3643,28 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     </message>
     <message>
         <location line="-251"/>
-        <location line="+313"/>
+        <location line="+325"/>
         <source>Size</source>
         <translation>Größe</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="-63"/>
+        <source>Not available in Indirect/Wash mode.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Dynamics not available in Indirect/Wash mode.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+59"/>
         <source>The radius of the brush.</source>
         <translation>Radius des Pinsels.</translation>
     </message>
     <message>
-        <location line="-252"/>
-        <location line="+254"/>
+        <location line="-264"/>
+        <location line="+266"/>
         <source>Opacity</source>
         <translation>Deckkraft</translation>
     </message>
@@ -3563,8 +3674,8 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
         <translation>Deckkraft des Pinsels, 0% ist transparent, 100% ist voll deckend.</translation>
     </message>
     <message>
-        <location line="-194"/>
-        <location line="+198"/>
+        <location line="-206"/>
+        <location line="+210"/>
         <source>Hardness</source>
         <translation>Härte</translation>
     </message>
@@ -3574,8 +3685,8 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
         <translation>Kantenhärte, 0% ist verwaschen, 100% ist scharf.</translation>
     </message>
     <message>
-        <location line="-126"/>
-        <location line="+130"/>
+        <location line="-138"/>
+        <location line="+142"/>
         <source>Smudging</source>
         <translation>Schmieren</translation>
     </message>
@@ -4973,19 +5084,6 @@ Values above 0.5 may not be noticeable.</source>
     </message>
 </context>
 <context>
-    <name>dialogs::Flipbook</name>
-    <message>
-        <location filename="../dialogs/flipbook.cpp" line="+126"/>
-        <source>Manual Timeline, %1 FPS</source>
-        <translation>Manueller Zeitstrahl, %1 FPS</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Automatic Timeline, %1 FPS</source>
-        <translation>Automatischer Zeitstrahl, %1 FPS</translation>
-    </message>
-</context>
-<context>
     <name>dialogs::HostDialog</name>
     <message>
         <location filename="../dialogs/hostdialog.cpp" line="+20"/>
@@ -5041,6 +5139,32 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>&apos;%1&apos; is not a valid list server URL.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::KeyFramePropertiesDialog</name>
+    <message>
+        <location filename="../dialogs/keyframepropertiesdialog.cpp" line="+127"/>
+        <source>Key Frame Properties</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Title:</source>
+        <translation type="unfinished">Titel:</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Filter Layers:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::LayerProperties</name>
+    <message>
+        <location filename="../dialogs/layerproperties.cpp" line="+108"/>
+        <source>Pass Through</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5235,6 +5359,34 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+0"/>
         <source>Couldn&apos;t open file</source>
         <translation>Datei konnte nicht geöffnet werden</translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::ResetNoticeDialog</name>
+    <message>
+        <location filename="../dialogs/resetnoticedialog.cpp" line="+29"/>
+        <source>The session has been reset. Since this is a Drawpile 2.1 session and you&apos;re running Drawpile 2.2, this probably changed how things on the canvas look. Do you want to save the canvas as it was before the reset?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>The session has been reset. Normally, everything on the canvas should look the same as it did before, but that&apos;s not guaranteed. Do you want to save the canvas as it was before the reset?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Save As...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+21"/>
+        <source>Restoring Canvas %p%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Canvas Restored</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -6588,7 +6740,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Ebenen</translation>
     </message>
     <message>
-        <location line="+39"/>
+        <location line="+38"/>
         <source>Opacity: </source>
         <translation>Deckkraft: </translation>
     </message>
@@ -6598,7 +6750,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>%</translation>
     </message>
     <message>
-        <location line="+283"/>
+        <location line="+297"/>
         <source>Group</source>
         <translation>Gruppe</translation>
     </message>
@@ -6613,8 +6765,8 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Ebene &quot;%1&quot; wirklich löschen?</translation>
     </message>
     <message>
-        <location line="-82"/>
-        <location line="+14"/>
+        <location line="-84"/>
+        <location line="+16"/>
         <source>Layer</source>
         <translation>Ebene</translation>
     </message>
@@ -6640,22 +6792,22 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::OnionSkinsDock</name>
     <message>
-        <location filename="../docks/onionskins.cpp" line="+125"/>
-        <source>Tint Below: </source>
-        <translation>Darunter einfärben: </translation>
-    </message>
-    <message>
-        <location line="+13"/>
+        <location filename="../docks/onionskins.cpp" line="+137"/>
         <source>Frames: </source>
         <translation>Frames: </translation>
     </message>
     <message>
-        <location line="+8"/>
-        <source>Tint Above: </source>
-        <translation>Darüber einfärben: </translation>
+        <location line="-10"/>
+        <source>Tint Below</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+105"/>
+        <location line="+20"/>
+        <source>Tint Above</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+102"/>
         <source>-%1</source>
         <translation>-%1</translation>
     </message>
@@ -6673,24 +6825,14 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::Timeline</name>
     <message>
-        <location filename="../docks/timeline.cpp" line="+17"/>
+        <location filename="../docks/timeline.cpp" line="+20"/>
         <source>Timeline</source>
         <translation>Zeitstrahl</translation>
     </message>
     <message>
-        <location line="+12"/>
-        <source>Use manual timeline</source>
-        <translation>Manuellen Zeitstrahl verwenden</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>Frame:</source>
-        <translation>Frame:</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>FPS:</source>
-        <translation>FPS:</translation>
+        <location line="+171"/>
+        <source> FPS</source>
+        <translation type="unfinished"> FPS</translation>
     </message>
 </context>
 <context>
@@ -6858,6 +7000,19 @@ Values above 0.5 may not be noticeable.</source>
     </message>
 </context>
 <context>
+    <name>tools::FillSettings</name>
+    <message>
+        <location filename="../toolwidgets/fillsettings.cpp" line="+123"/>
+        <source>Current Layer</source>
+        <translation type="unfinished">Aktuelle Ebene</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Merged Image</source>
+        <translation type="unfinished">Zusammengefügtes Bild</translation>
+    </message>
+</context>
+<context>
     <name>tools::SelectionSettings</name>
     <message>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+40"/>
@@ -6937,12 +7092,12 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::ChatWidget</name>
     <message>
-        <location filename="../chat/chatwidget.cpp" line="+132"/>
+        <location filename="../chat/chatwidget.cpp" line="+138"/>
         <source>Public</source>
         <translation>Öffentlich</translation>
     </message>
     <message>
-        <location line="+66"/>
+        <location line="+68"/>
         <source>Chat (recorded)...</source>
         <translation>Chat (aufgezeichnet)...</translation>
     </message>
@@ -6967,7 +7122,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Sie wurden von %1 gekickt</translation>
     </message>
     <message>
-        <location line="+112"/>
+        <location line="+115"/>
         <source>/!: can only shout in a public chat.</source>
         <translation>/!: Ausrufe nur in öffentlichem Chat möglich.</translation>
     </message>
@@ -7039,12 +7194,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Leeren</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Compact mode</source>
         <translation>Kompakter Modus</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+7"/>
         <source>Detach</source>
         <translation>Ablösen</translation>
     </message>
@@ -7270,6 +7425,104 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+3"/>
         <source>Delete</source>
         <translation>Löschen</translation>
+    </message>
+</context>
+<context>
+    <name>widgets::TimelineWidget</name>
+    <message>
+        <location filename="../widgets/timelinewidget.cpp" line="+463"/>
+        <source>Blank key frame (duplicate)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Blank key frame %1 (duplicate)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Blank key frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Blank key frame %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Key frame on %1 (duplicate)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Key frame %1 on %2 (duplicate)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Key frame on %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Key frame %1 on %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Toggle visibility</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Toggle onion skin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+648"/>
+        <source>Track</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+57"/>
+        <source>Rename Track</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Track Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+36"/>
+        <source>Change Frame Count</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Frame Count (key frames beyond this point will be deleted)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Change Framerate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Frames Per Second (FPS)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+229"/>
+        <source>Set Key Frame to %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Set Key Frame to Current Layer</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

@@ -6,7 +6,7 @@
     <message>
         <location filename="../utils/avatarlistmodel.cpp" line="+98"/>
         <source>No avatar</source>
-        <translation type="unfinished"></translation>
+        <translation>Нет аватара</translation>
     </message>
 </context>
 <context>
@@ -79,7 +79,7 @@
         <location line="+3"/>
         <source>%1 (%2)</source>
         <extracomment>Example: &quot;Pan Canvas (Inverted)&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 (%2)</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -268,7 +268,7 @@
     <message>
         <location line="+1"/>
         <source>Alternate</source>
-        <translation type="unfinished"></translation>
+        <translation>Альтернатива</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -323,10 +323,20 @@
     </message>
 </context>
 <context>
-    <name>FloodFill</name>
+    <name>KeyFrameLayerModel</name>
     <message>
-        <location filename="../tools/floodfill.cpp" line="+53"/>
-        <source>Size limit exceeded.</source>
+        <location filename="../utils/keyframelayermodel.cpp" line="+23"/>
+        <source>Visibility: Hidden</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Visibility: Revealed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Visibility: Parent</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -335,7 +345,7 @@
     <message>
         <location filename="../utils/images.cpp" line="+99"/>
         <source>Images (%1)</source>
-        <translation type="unfinished">Изображения (%1)</translation>
+        <translation>Изображения (%1)</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -345,17 +355,17 @@
     <message>
         <location line="+7"/>
         <source>Binary Recordings (%1)</source>
-        <translation type="unfinished">Бинарные записи (%1)</translation>
+        <translation>Бинарные записи (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Text Recordings (%1)</source>
-        <translation type="unfinished">Текстовые записи (%1)</translation>
+        <translation>Текстовые записи (%1)</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Recordings (%1)</source>
-        <translation type="unfinished">Записи (%1)</translation>
+        <translation>Записи (%1)</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -385,18 +395,18 @@
     <message>
         <location line="+8"/>
         <source>All Supported Files (%1)</source>
-        <translation type="unfinished">Все поддерживаемые файлы (%1)</translation>
+        <translation>Все поддерживаемые файлы (%1)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>All Files (*)</source>
-        <translation type="unfinished">Все файлы(*)</translation>
+        <translation>Все файлы(*)</translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../drawdance/canvasstate.cpp" line="+45"/>
+        <location filename="../drawdance/canvasstate.cpp" line="+46"/>
         <source>Layer %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -429,7 +439,7 @@
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="+153"/>
         <source>(untitled)</source>
-        <translation type="unfinished">(без названия)</translation>
+        <translation>(без названия)</translation>
     </message>
     <message>
         <location line="-83"/>
@@ -488,27 +498,27 @@
     <message>
         <location line="+6"/>
         <source>Title</source>
-        <translation type="unfinished">Название</translation>
+        <translation>Название</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Server</source>
-        <translation type="unfinished">Сервер</translation>
+        <translation>Сервер</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Users</source>
-        <translation type="unfinished">Пользователи</translation>
+        <translation>Пользователи</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Owner</source>
-        <translation type="unfinished">Владелец</translation>
+        <translation>Владелец</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Age</source>
-        <translation type="unfinished">Возраст</translation>
+        <translation>Возраст</translation>
     </message>
 </context>
 <context>
@@ -586,7 +596,7 @@
     <message>
         <location line="+5"/>
         <source>Color Erase</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Стирание цвета</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -639,7 +649,7 @@
     <message>
         <location filename="../brushes/brushpresetmodel.cpp" line="+638"/>
         <source>Default</source>
-        <translation type="unfinished">По умолчанию</translation>
+        <translation>По умолчанию</translation>
     </message>
 </context>
 <context>
@@ -733,7 +743,7 @@
 <context>
     <name>canvas::PaintEngine</name>
     <message>
-        <location filename="../canvas/paintengine.cpp" line="+154"/>
+        <location filename="../canvas/paintengine.cpp" line="+169"/>
         <source>Layer %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -743,57 +753,57 @@
     <message>
         <location filename="../canvas/userlist.cpp" line="+58"/>
         <source>Moderator</source>
-        <translation type="unfinished"></translation>
+        <translation>Модератор</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Operator</source>
-        <translation type="unfinished"></translation>
+        <translation>Оператор</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>Доверенный</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Registered</source>
-        <translation type="unfinished"></translation>
+        <translation>Зарегистрированный</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Online</source>
-        <translation type="unfinished"></translation>
+        <translation>В сети</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Offline</source>
-        <translation type="unfinished"></translation>
+        <translation>Не в сети</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>User</source>
-        <translation type="unfinished">Пользователь</translation>
+        <translation>Пользователь</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Тип</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Состояние</translation>
     </message>
     <message>
         <location line="+181"/>
         <source>Server</source>
-        <translation type="unfinished">Сервер</translation>
+        <translation>Сервер</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>User #%1</source>
-        <translation type="unfinished">Пользователь #%1</translation>
+        <translation>Пользователь #%1</translation>
     </message>
 </context>
 <context>
@@ -801,27 +811,27 @@
     <message>
         <location filename="../net/announcementlist.cpp" line="+31"/>
         <source>Private</source>
-        <translation type="unfinished"></translation>
+        <translation>Закрытый</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Public</source>
-        <translation type="unfinished"></translation>
+        <translation>Открытый</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Server</source>
-        <translation type="unfinished">Сервер</translation>
+        <translation>Сервер</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Room code</source>
-        <translation type="unfinished"></translation>
+        <translation>Код комнаты</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Режим</translation>
     </message>
 </context>
 <context>
@@ -829,17 +839,17 @@
     <message>
         <location filename="../net/banlistmodel.cpp" line="+59"/>
         <source>User</source>
-        <translation type="unfinished">Пользователь</translation>
+        <translation>Пользователь</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>IP address</source>
-        <translation type="unfinished">IP адрес</translation>
+        <translation>IP-адрес</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Banned by</source>
-        <translation type="unfinished">Кем забанен</translation>
+        <translation>Кем забанен</translation>
     </message>
 </context>
 <context>
@@ -847,12 +857,12 @@
     <message>
         <location filename="../net/client.cpp" line="+71"/>
         <source>A server error occurred!</source>
-        <translation type="unfinished">Произошла ошибка сервера!</translation>
+        <translation>Произошла ошибка сервера!</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The server is shutting down!</source>
-        <translation type="unfinished">Сервер выключается!</translation>
+        <translation>Сервер выключается!</translation>
     </message>
 </context>
 <context>
@@ -861,7 +871,7 @@
         <location filename="../net/login.cpp" line="+100"/>
         <location line="+258"/>
         <source>Invalid state</source>
-        <translation type="unfinished">Недопустимое состояние</translation>
+        <translation>Недопустимое состояние</translation>
     </message>
     <message>
         <location line="-233"/>
@@ -871,149 +881,149 @@
         <location line="+133"/>
         <location line="+42"/>
         <source>Incompatible server</source>
-        <translation type="unfinished">Несовместимый сервер</translation>
+        <translation>Несовместимый сервер</translation>
     </message>
     <message>
         <location line="-431"/>
         <source>Server is for a different Drawpile version!</source>
-        <translation type="unfinished">Сервер для другой версии Drawpile!</translation>
+        <translation>Сервер для другой версии Drawpile!</translation>
     </message>
     <message>
         <location line="+42"/>
         <source>Secure mode not enabled on a trusted host!</source>
-        <translation type="unfinished">Безопасный режим не включен на доверенном хосте!</translation>
+        <translation>Безопасный режим не включен на доверенном хосте!</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>This server does not allow guest logins</source>
-        <translation type="unfinished">На этом сервере не разрешён гостевой вход</translation>
+        <translation>На этом сервере не разрешён гостевой вход</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Password needed to log in as &quot;%1&quot;</source>
-        <translation type="unfinished">Требуется пароль для входа под логином &quot;%1&quot;</translation>
+        <translation>Требуется пароль для входа под логином &quot;%1&quot;</translation>
     </message>
     <message>
         <location line="+67"/>
         <location line="+6"/>
         <source>Auth server error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка сервера проверки подлинности: %1</translation>
     </message>
     <message>
-        <location line="+19"/>
-        <source>Group membership needed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Unexpected ext-auth response: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+22"/>
+        <location line="+44"/>
         <source>Server misconfiguration: invalid ext-auth URL</source>
-        <translation type="unfinished"></translation>
+        <translation>Неверная конфигурация сервера: неверный URL-адрес внешнего сервера проверки подлинности</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Unsupported ext-auth URL scheme</source>
-        <translation type="unfinished"></translation>
+        <translation>Неподдерживаемая схема URL-адреса внешнего сервера проверки подлинности</translation>
     </message>
     <message>
         <location line="+89"/>
         <source>New version</source>
-        <translation type="unfinished"></translation>
+        <translation>Новая версия</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Unknown version</source>
-        <translation type="unfinished"></translation>
+        <translation>Неизвестная версия</translation>
     </message>
     <message>
         <location line="+48"/>
         <source>Session not yet started!</source>
-        <translation type="unfinished">Сессия ещё не начата!</translation>
+        <translation>Сессия ещё не начата!</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Blocked by parental controls</source>
-        <translation type="unfinished">Заблокировано родительским контролем</translation>
+        <translation>Заблокировано родительским контролем</translation>
     </message>
     <message>
-        <location line="+4"/>
-        <source>Session for a different Drawpile version (%1) in progress!</source>
+        <location line="+302"/>
+        <source>Client failed to serialize command</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+185"/>
-        <location line="+20"/>
-        <source>Invalid SSL certificate for host %1</source>
-        <translation type="unfinished">Недействительный SSL сертификат для хоста %1</translation>
-    </message>
-    <message>
-        <location line="-17"/>
-        <source>Certificate of a trusted server has changed!</source>
-        <translation type="unfinished">Сертификат доверенного сервера изменился!</translation>
-    </message>
-    <message>
-        <location line="+58"/>
-        <source>Cancelled</source>
-        <translation type="unfinished">Отменено</translation>
-    </message>
-    <message>
-        <location line="+9"/>
-        <source>Session not found!</source>
-        <translation type="unfinished">Сессия не найдена!</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Incorrect password!</source>
-        <translation type="unfinished">Неверный пароль!</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Invalid username!</source>
-        <translation type="unfinished">Неверное имя пользователя!</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>This username has been locked</source>
-        <translation type="unfinished">Это имя заблокировано</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Username already taken!</source>
-        <translation type="unfinished">Имя уже занято!</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Session is closed!</source>
-        <translation type="unfinished">Сессия закрыта!</translation>
-    </message>
-    <message>
-        <location line="+0"/>
+        <location line="-32"/>
         <source>Server is full!</source>
-        <translation type="unfinished">Сервер полон!</translation>
+        <translation>Сервер полон!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Hosting not authorized</source>
-        <translation type="unfinished">Хостинг не авторизован</translation>
+        <translation>Хостинг не авторизован</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You have been banned from this session!</source>
-        <translation type="unfinished">Вы забанены в этой сессии!</translation>
+        <translation>Вы забанены в этой сессии!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Session alias is reserved!</source>
-        <translation type="unfinished">Псевдоним сессии зарезервирован!</translation>
+        <translation>Псевдоним сессии зарезервирован!</translation>
     </message>
     <message>
-        <location line="+26"/>
-        <source>Client failed to serialize command</source>
+        <location line="-87"/>
+        <location line="+20"/>
+        <source>Invalid SSL certificate for host %1</source>
+        <translation>Недействительный SSL сертификат для хоста %1</translation>
+    </message>
+    <message>
+        <location line="-387"/>
+        <source>Group membership needed</source>
+        <translation>Необходимо членство в группе</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Unexpected ext-auth response: %1</source>
+        <translation>Неожиданный ответ внешнего сервера проверки подлинности: %1</translation>
+    </message>
+    <message>
+        <location line="+179"/>
+        <source>Session for a different Drawpile version (%1) in progress!</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+188"/>
+        <source>Certificate of a trusted server has changed!</source>
+        <translation>Сертификат доверенного сервера изменился!</translation>
+    </message>
+    <message>
+        <location line="+58"/>
+        <source>Cancelled</source>
+        <translation>Отменено</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Session not found!</source>
+        <translation>Сессия не найдена!</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Incorrect password!</source>
+        <translation>Неверный пароль!</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Invalid username!</source>
+        <translation>Неверное имя пользователя!</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>This username has been locked</source>
+        <translation>Это имя заблокировано</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Username already taken!</source>
+        <translation>Имя уже занято!</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Session is closed!</source>
+        <translation>Сессия закрыта!</translation>
     </message>
 </context>
 <context>
@@ -1021,7 +1031,7 @@
     <message>
         <location filename="../net/loginsessions.cpp" line="+48"/>
         <source>(untitled)</source>
-        <translation type="unfinished">(без названия)</translation>
+        <translation>(без названия)</translation>
     </message>
     <message>
         <location line="+45"/>
@@ -1061,17 +1071,17 @@
     <message>
         <location line="+47"/>
         <source>Title</source>
-        <translation type="unfinished">Название</translation>
+        <translation>Название</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Started by</source>
-        <translation type="unfinished">Кем начато</translation>
+        <translation>Кем начато</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Users</source>
-        <translation type="unfinished">Пользователи</translation>
+        <translation>Пользователи</translation>
     </message>
 </context>
 <context>
@@ -1079,7 +1089,7 @@
     <message>
         <location filename="../net/tcpserver.cpp" line="+111"/>
         <source>Received invalid data</source>
-        <translation type="unfinished">Получены неверные данные</translation>
+        <translation>Получены неверные данные</translation>
     </message>
 </context>
 </TS>

@@ -323,11 +323,21 @@
     </message>
 </context>
 <context>
-    <name>FloodFill</name>
+    <name>KeyFrameLayerModel</name>
     <message>
-        <location filename="../tools/floodfill.cpp" line="+53"/>
-        <source>Size limit exceeded.</source>
-        <translation>Maximalgröße überschritten.</translation>
+        <location filename="../utils/keyframelayermodel.cpp" line="+23"/>
+        <source>Visibility: Hidden</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Visibility: Revealed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Visibility: Parent</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -396,7 +406,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../drawdance/canvasstate.cpp" line="+45"/>
+        <location filename="../drawdance/canvasstate.cpp" line="+46"/>
         <source>Layer %1</source>
         <translation>Ebene %1</translation>
     </message>
@@ -732,7 +742,7 @@
 <context>
     <name>canvas::PaintEngine</name>
     <message>
-        <location filename="../canvas/paintengine.cpp" line="+154"/>
+        <location filename="../canvas/paintengine.cpp" line="+169"/>
         <source>Layer %1</source>
         <translation>Ebene %1</translation>
     </message>

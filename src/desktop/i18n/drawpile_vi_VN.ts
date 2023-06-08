@@ -621,58 +621,54 @@ to 64x64 pixels.</source>
 <context>
     <name>FillSettings</name>
     <message>
-        <location filename="../ui/fillsettings.ui" line="+32"/>
-        <location line="+36"/>
+        <location filename="../ui/fillsettings.ui" line="+79"/>
+        <location line="+13"/>
         <source> px</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-33"/>
+        <location line="-10"/>
         <source>Feather: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+36"/>
+        <location line="+43"/>
+        <source>px</source>
+        <translation type="unfinished">điểm ảnh</translation>
+    </message>
+    <message>
+        <location line="-40"/>
+        <source>Size: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+16"/>
         <source>Source:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+27"/>
+        <source>Close Gaps: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-69"/>
         <source>Expand: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+10"/>
-        <source>Size Limit: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source> × 10² px</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+19"/>
+        <location line="+56"/>
         <source>Tolerance: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="-7"/>
         <source>Mode:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+20"/>
-        <source>Current Layer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Merged Image</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+21"/>
+        <location line="-99"/>
         <source>Normal</source>
         <translation type="unfinished"></translation>
     </message>
@@ -695,18 +691,43 @@ to 64x64 pixels.</source>
         <translation>Flipbook</translation>
     </message>
     <message>
-        <location line="+74"/>
+        <location line="+11"/>
+        <source>Reset Zoom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Refresh</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+39"/>
+        <source>Rewind</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Play</source>
+        <translation type="unfinished">Phát</translation>
+    </message>
+    <message>
+        <location line="+20"/>
         <source>Frame:</source>
         <translation type="unfinished">Khung:</translation>
     </message>
     <message>
         <location line="+20"/>
-        <source>Loop range:</source>
-        <translation>Phạm vi vòng lặp:</translation>
+        <source>Range</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+64"/>
-        <source>Flipbook FPS:</source>
+        <location line="+41"/>
+        <source>%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Playback Speed: </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -948,22 +969,17 @@ Subrange: [%3, %4]</source>
         <translation type="unfinished">Độ mờ đục:</translation>
     </message>
     <message>
-        <location line="+128"/>
+        <location line="+7"/>
         <source>%</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-121"/>
+        <location line="+10"/>
         <source>Blending Mode:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+10"/>
-        <source>Pass through</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+23"/>
         <source>Visibility:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1117,13 +1133,13 @@ Subrange: [%3, %4]</source>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../mainwindow.cpp" line="+589"/>
-        <location line="+992"/>
+        <location filename="../mainwindow.cpp" line="+593"/>
+        <location line="+985"/>
         <source>Untitled</source>
         <translation>Không tựa đề</translation>
     </message>
     <message>
-        <location line="-664"/>
+        <location line="-665"/>
         <location line="+21"/>
         <source>Exit Drawpile</source>
         <translation>Thoát Drawpile</translation>
@@ -1141,12 +1157,12 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+2"/>
         <location line="+22"/>
-        <location line="+359"/>
+        <location line="+351"/>
         <source>Cancel</source>
         <translation>Hủy bỏ</translation>
     </message>
     <message>
-        <location line="-366"/>
+        <location line="-358"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation>Ở đây có các thay đổi chưa được lưu. Ghi lại chúng trước khi thoát chứ</translation>
     </message>
@@ -1166,7 +1182,7 @@ Subrange: [%3, %4]</source>
         <translation>Đang lưu...</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+25"/>
         <source>Couldn&apos;t save image</source>
         <translation>Không thể lưu ảnh</translation>
     </message>
@@ -1176,27 +1192,7 @@ Subrange: [%3, %4]</source>
         <translation>Ảnh lưu</translation>
     </message>
     <message>
-        <location line="+20"/>
-        <source>The session has been reset. Since this is a Drawpile 2.1 session and you&apos;re running Drawpile 2.2, this probably changed how things on the canvas look. Do you want to save the canvas as it was before the reset?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>The session has been reset. Normally, everything on the canvas should look the same as it did before, but that&apos;s not guaranteed. Do you want to save the canvas as it was before the reset?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+8"/>
-        <source>Session Reset</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>Save As...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+19"/>
+        <location line="+41"/>
         <source>This session was hosted with an older version of Drawpile, some newer features won&apos;t be available. Other Drawpile versions will see different results, session resets may cause abrupt changes.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1216,7 +1212,7 @@ Subrange: [%3, %4]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+60"/>
+        <location line="+69"/>
         <source>Pause</source>
         <translation>Tạm dừng</translation>
     </message>
@@ -1227,23 +1223,23 @@ Subrange: [%3, %4]</source>
     </message>
     <message>
         <location line="+33"/>
-        <location line="+582"/>
+        <location line="+593"/>
         <source>Unsupported format.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-579"/>
+        <location line="-590"/>
         <source>Couldn&apos;t start recording.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
-        <location line="+591"/>
+        <location line="+602"/>
         <source>Unknown error.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-581"/>
+        <location line="-592"/>
         <source>Error closing profile.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1298,7 +1294,12 @@ Subrange: [%3, %4]</source>
         <translation>Tham gia</translation>
     </message>
     <message>
-        <location line="+52"/>
+        <location line="+55"/>
+        <source>Reset in progress</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Board is locked</source>
         <translation>Bàn đã bị khóa</translation>
     </message>
@@ -1313,7 +1314,7 @@ Subrange: [%3, %4]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+62"/>
+        <location line="+63"/>
         <source>Undo Limit... (%1)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1404,12 +1405,12 @@ Subrange: [%3, %4]</source>
     </message>
     <message>
         <location line="+15"/>
-        <location line="+729"/>
+        <location line="+764"/>
         <source>Record Debug Dumps</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-728"/>
+        <location line="-763"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -1480,18 +1481,138 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Tự động lưu</translation>
     </message>
     <message>
-        <location line="+777"/>
+        <location line="+364"/>
+        <source>Normal View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Show all layers normally</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Layer View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Show only the current layer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Frame View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Show only layers in the current frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+46"/>
+        <source>Set as Fill Source</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Change Frame Count...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Change Frame Rate (FPS)...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Set Blank Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Cut Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Copy Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Paste Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Key Frame Properties...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Delete Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>New Track</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Track Visible</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Track Onion Skin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Duplicate Track</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Rename Track</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Delete Track</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Track Above</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Track Below</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>&amp;Animation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+351"/>
         <source>Onion Skins</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-2121"/>
-        <location line="+1352"/>
+        <location line="-2167"/>
+        <location line="+1363"/>
         <source>Record...</source>
         <translation>Thu đĩa...</translation>
     </message>
     <message>
-        <location line="-2427"/>
+        <location line="-2434"/>
         <source>Server out of space</source>
         <translation>Máy chủ hết dung lượng</translation>
     </message>
@@ -1503,7 +1624,7 @@ Simplify the canvas and reset manually before space runs out.</source>
 Đơn giản hóa khung vẽ và đặt lại thủ công trước khi hết dung lướng.</translation>
     </message>
     <message>
-        <location line="+1353"/>
+        <location line="+1349"/>
         <source>Become Operator</source>
         <translation>Trở thành nhà điều hành</translation>
     </message>
@@ -1524,17 +1645,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+5"/>
-        <location line="+1475"/>
+        <location line="+1521"/>
         <source>Terminate</source>
         <translation>Chấm dứt</translation>
     </message>
     <message>
-        <location line="-1365"/>
+        <location line="-1411"/>
         <source>Disconnected:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+66"/>
+        <location line="+77"/>
         <source>Session blocked by parental controls</source>
         <translation>Phiên bị chặn bởi sự kiểm soát của cha mẹ</translation>
     </message>
@@ -1671,7 +1792,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Chat</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+178"/>
         <source>Flipbook</source>
         <translation>Flipbook</translation>
     </message>
@@ -1681,7 +1802,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Hiển thị cửa sổ xem thử hoạt hình</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="-171"/>
         <source>Rotate Canvas Clockwise</source>
         <translation>Quay vùng vẽ ngược chiều</translation>
     </message>
@@ -1716,7 +1837,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Hiện avatar</translation>
     </message>
     <message>
-        <location line="+121"/>
+        <location line="+113"/>
         <source>User Pointers</source>
         <translation>Con trỏ người dùng</translation>
     </message>
@@ -1736,12 +1857,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Xóa lớp</translation>
     </message>
     <message>
-        <location line="-46"/>
+        <location line="-44"/>
         <source>Show Censored Layers</source>
         <translation>Hiện lớp kiểm</translation>
     </message>
     <message>
-        <location line="+91"/>
+        <location line="+133"/>
         <source>Report...</source>
         <translation>Báo cáo...</translation>
     </message>
@@ -1761,12 +1882,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Hủy bỏ thao tác</translation>
     </message>
     <message>
-        <location line="-436"/>
+        <location line="-472"/>
         <source>Show User &amp;Pointers</source>
         <translation>Hiện con trỏ người dùng</translation>
     </message>
     <message>
-        <location line="-270"/>
+        <location line="-269"/>
         <source>&amp;Brushes...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1816,7 +1937,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+26"/>
         <source>Show La&amp;ser Trails</source>
         <translation>Hiện theo dõi laser</translation>
     </message>
@@ -1826,12 +1947,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Hiện điểm ảnh lưới</translation>
     </message>
     <message>
-        <location line="+71"/>
+        <location line="+67"/>
         <source>&amp;View</source>
         <translation>&amp;Trình bày</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+7"/>
         <source>&amp;Zoom</source>
         <translation>Thu phóng</translation>
     </message>
@@ -1841,37 +1962,17 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Xoay</translation>
     </message>
     <message>
-        <location line="+10"/>
-        <source>Normal</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Current Layer Only</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Current Frame Only</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Onion Skin</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+11"/>
+        <location line="+22"/>
         <source>Layer View Mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+33"/>
         <source>Merge Layer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+5"/>
         <source>Select Above</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1881,12 +1982,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+5"/>
         <source>&amp;Layer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+69"/>
         <location filename="../widgets/macmenu.cpp" line="+25"/>
         <source>&amp;Host...</source>
         <translation>&amp;Máy chủ...</translation>
@@ -1994,7 +2095,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Công cụ vẽ</translation>
     </message>
     <message>
-        <location line="-1944"/>
+        <location line="-1990"/>
         <source>Stop Recording</source>
         <translation>Dừng thu đĩa</translation>
     </message>
@@ -2009,7 +2110,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Không thể kết nối đến máy chủ</translation>
     </message>
     <message>
-        <location line="+930"/>
+        <location line="+941"/>
         <source>Close</source>
         <translation>Đóng</translation>
     </message>
@@ -2071,7 +2172,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Công cụ sửa</translation>
     </message>
     <message>
-        <location line="+25"/>
+        <location line="+24"/>
         <source>Zoom &amp;In</source>
         <translation>&amp;Phóng to</translation>
     </message>
@@ -2101,7 +2202,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>&amp;Toàn màn hình</translation>
     </message>
     <message>
-        <location line="+245"/>
+        <location line="+281"/>
         <source>Pick colors from the image</source>
         <translation>Chọn màu từ hình ảnh</translation>
     </message>
@@ -2116,17 +2217,17 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Đườn&amp;g</translation>
     </message>
     <message>
-        <location line="-2718"/>
+        <location line="-2754"/>
         <source>🙋 %1 joined!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+811"/>
+        <location line="+792"/>
         <source>Saving animation...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1389"/>
+        <location line="+1409"/>
         <source>Save Selection...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2146,7 +2247,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Xóa</translation>
     </message>
     <message>
-        <location line="+287"/>
+        <location line="+278"/>
         <source>New Group</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2156,7 +2257,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+40"/>
         <source>Next Frame</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2166,7 +2267,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="+42"/>
         <source>Event Log</source>
         <translation>Nhật ký sự kiện</translation>
     </message>
@@ -3337,7 +3438,7 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>dialogs::BrushSettingsDialog</name>
     <message>
-        <location filename="../dialogs/brushsettingsdialog.cpp" line="+80"/>
+        <location filename="../dialogs/brushsettingsdialog.cpp" line="+82"/>
         <source>Brush Editor</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3398,7 +3499,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+14"/>
         <source>Eraser Mode</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3472,12 +3573,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="-194"/>
-        <location line="+313"/>
+        <location line="+325"/>
         <source>Size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-284"/>
+        <location line="-296"/>
         <source>Opacity: </source>
         <translation type="unfinished"></translation>
     </message>
@@ -3488,12 +3589,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+10"/>
-        <location line="+254"/>
+        <location line="+266"/>
         <source>Opacity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-225"/>
+        <location line="-237"/>
         <source>Hardness: </source>
         <translation type="unfinished"></translation>
     </message>
@@ -3504,12 +3605,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+10"/>
-        <location line="+198"/>
+        <location line="+210"/>
         <source>Hardness</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-169"/>
+        <location line="-181"/>
         <source>Smudging: </source>
         <translation type="unfinished"></translation>
     </message>
@@ -3525,12 +3626,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+10"/>
-        <location line="+130"/>
+        <location line="+142"/>
         <source>Smudging</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-110"/>
+        <location line="-122"/>
         <source>Apply to All</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3555,7 +3656,17 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+62"/>
+        <location line="+11"/>
+        <source>Not available in Indirect/Wash mode.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Dynamics not available in Indirect/Wash mode.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+59"/>
         <source>The radius of the brush.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4963,19 +5074,6 @@ Values above 0.5 may not be noticeable.</source>
     </message>
 </context>
 <context>
-    <name>dialogs::Flipbook</name>
-    <message>
-        <location filename="../dialogs/flipbook.cpp" line="+126"/>
-        <source>Manual Timeline, %1 FPS</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Automatic Timeline, %1 FPS</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>dialogs::HostDialog</name>
     <message>
         <location filename="../dialogs/hostdialog.cpp" line="+20"/>
@@ -5031,6 +5129,32 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>&apos;%1&apos; is not a valid list server URL.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::KeyFramePropertiesDialog</name>
+    <message>
+        <location filename="../dialogs/keyframepropertiesdialog.cpp" line="+127"/>
+        <source>Key Frame Properties</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Title:</source>
+        <translation type="unfinished">Tựa đề:</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Filter Layers:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::LayerProperties</name>
+    <message>
+        <location filename="../dialogs/layerproperties.cpp" line="+108"/>
+        <source>Pass Through</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5224,6 +5348,34 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Couldn&apos;t open file</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::ResetNoticeDialog</name>
+    <message>
+        <location filename="../dialogs/resetnoticedialog.cpp" line="+29"/>
+        <source>The session has been reset. Since this is a Drawpile 2.1 session and you&apos;re running Drawpile 2.2, this probably changed how things on the canvas look. Do you want to save the canvas as it was before the reset?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>The session has been reset. Normally, everything on the canvas should look the same as it did before, but that&apos;s not guaranteed. Do you want to save the canvas as it was before the reset?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Save As...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+21"/>
+        <source>Restoring Canvas %p%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Canvas Restored</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6575,7 +6727,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">Lớp</translation>
     </message>
     <message>
-        <location line="+39"/>
+        <location line="+38"/>
         <source>Opacity: </source>
         <translation type="unfinished"></translation>
     </message>
@@ -6585,8 +6737,8 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+269"/>
-        <location line="+14"/>
+        <location line="+281"/>
+        <location line="+16"/>
         <source>Layer</source>
         <translation type="unfinished">Lớp</translation>
     </message>
@@ -6627,22 +6779,22 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::OnionSkinsDock</name>
     <message>
-        <location filename="../docks/onionskins.cpp" line="+125"/>
-        <source>Tint Below: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+13"/>
+        <location filename="../docks/onionskins.cpp" line="+137"/>
         <source>Frames: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+8"/>
-        <source>Tint Above: </source>
+        <location line="-10"/>
+        <source>Tint Below</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+105"/>
+        <location line="+20"/>
+        <source>Tint Above</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+102"/>
         <source>-%1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6660,24 +6812,14 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::Timeline</name>
     <message>
-        <location filename="../docks/timeline.cpp" line="+17"/>
+        <location filename="../docks/timeline.cpp" line="+20"/>
         <source>Timeline</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+12"/>
-        <source>Use manual timeline</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>Frame:</source>
-        <translation type="unfinished">Khung:</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>FPS:</source>
-        <translation type="unfinished">FPS:</translation>
+        <location line="+171"/>
+        <source> FPS</source>
+        <translation type="unfinished"> FPS</translation>
     </message>
 </context>
 <context>
@@ -6845,6 +6987,19 @@ Values above 0.5 may not be noticeable.</source>
     </message>
 </context>
 <context>
+    <name>tools::FillSettings</name>
+    <message>
+        <location filename="../toolwidgets/fillsettings.cpp" line="+123"/>
+        <source>Current Layer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Merged Image</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>tools::SelectionSettings</name>
     <message>
         <location filename="../toolwidgets/selectionsettings.cpp" line="+40"/>
@@ -6924,12 +7079,12 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::ChatWidget</name>
     <message>
-        <location filename="../chat/chatwidget.cpp" line="+132"/>
+        <location filename="../chat/chatwidget.cpp" line="+138"/>
         <source>Public</source>
         <translation type="unfinished">Công khai</translation>
     </message>
     <message>
-        <location line="+66"/>
+        <location line="+68"/>
         <source>Chat (recorded)...</source>
         <translation type="unfinished">Chat (đã ghi lại)...</translation>
     </message>
@@ -6954,7 +7109,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">Bạn đã bị đá bởi %1</translation>
     </message>
     <message>
-        <location line="+112"/>
+        <location line="+115"/>
         <source>/!: can only shout in a public chat.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7018,12 +7173,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">Xóa</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Compact mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+7"/>
         <source>Detach</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7249,6 +7404,104 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+3"/>
         <source>Delete</source>
         <translation type="unfinished">Xóa</translation>
+    </message>
+</context>
+<context>
+    <name>widgets::TimelineWidget</name>
+    <message>
+        <location filename="../widgets/timelinewidget.cpp" line="+463"/>
+        <source>Blank key frame (duplicate)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Blank key frame %1 (duplicate)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Blank key frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Blank key frame %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Key frame on %1 (duplicate)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Key frame %1 on %2 (duplicate)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Key frame on %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Key frame %1 on %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Toggle visibility</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Toggle onion skin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+648"/>
+        <source>Track</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+57"/>
+        <source>Rename Track</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Track Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+36"/>
+        <source>Change Frame Count</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Frame Count (key frames beyond this point will be deleted)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Change Framerate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Frames Per Second (FPS)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+229"/>
+        <source>Set Key Frame to %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Set Key Frame to Current Layer</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
