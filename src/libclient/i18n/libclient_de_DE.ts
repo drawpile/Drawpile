@@ -210,47 +210,47 @@
     <message>
         <location filename="../utils/certificatestoremodel.cpp" line="+24"/>
         <source>&apos;%1&apos; does not contain any valid host certificates.</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; enthält keine gültigen Host-Zertifikate.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>&apos;%1&apos; contains multiple host certificates, which is not currently supported.</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; enthält mehrere Host-Zertifikate, was derzeit nicht unterstützt wird.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>&apos;%1&apos; contains an invalid certificate.</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; enthält ein ungültiges Zertifikat.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>&apos;%1&apos; contains a certificate with multiple hostnames, which is not currently supported.</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; enthält ein Zertifikat mit mehreren Hostnamen, was derzeit nicht unterstützt wird.</translation>
     </message>
     <message>
         <location line="+139"/>
         <source>Could not read certificate from &apos;%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte das Zertifikat von &apos;%1&apos; nicht lesen.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Could not open &apos;%1&apos; for writing: %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte &apos;%1&apos; nicht zum Schreiben öffnen: %2.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Could not write &apos;%1&apos;: %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte &apos;%1&apos; nicht schreiben: %2.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Could not move &apos;%1&apos; to &apos;%2&apos;: %3.</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte &apos;%1&apos; nicht nach &apos;%2&apos; verschieben: %3.</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Could not delete &apos;%1&apos;: %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte &apos;%1&apos; nicht löschen: %2.</translation>
     </message>
 </context>
 <context>
@@ -281,27 +281,27 @@
     <message>
         <location filename="../document.cpp" line="+592"/>
         <source>Unknown format.</source>
-        <translation type="unfinished"></translation>
+        <translation>Unbekanntes Format.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Header error.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopfdatenfehler.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Error opening file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Öffnen der Datei.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Error starting recorder.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Starten des Rekorders.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unknown error.</source>
-        <translation type="unfinished">Unbekannter Fehler.</translation>
+        <translation>Unbekannter Fehler.</translation>
     </message>
 </context>
 <context>
@@ -327,17 +327,17 @@
     <message>
         <location filename="../utils/keyframelayermodel.cpp" line="+23"/>
         <source>Visibility: Hidden</source>
-        <translation type="unfinished"></translation>
+        <translation>Sichtbarkeit: versteckt</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Visibility: Revealed</source>
-        <translation type="unfinished"></translation>
+        <translation>Sichtbarkeit: aufgedeckt</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Visibility: Parent</source>
-        <translation type="unfinished"></translation>
+        <translation>Sichtbarkeit: geerbt</translation>
     </message>
 </context>
 <context>
@@ -385,12 +385,12 @@
     <message>
         <location line="+8"/>
         <source>MP4 Video (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>MP4-Video (%1)</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>WebM Video (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>WebM-Video (%1)</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -444,55 +444,55 @@
     <message>
         <location line="-83"/>
         <source>%1d%2h%3m</source>
-        <translation type="unfinished"></translation>
+        <translation>%1d%2h%3m</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1h%2m</source>
-        <translation type="unfinished"></translation>
+        <translation>%1h%2m</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1m</source>
-        <translation type="unfinished">%1m</translation>
+        <translation>%1m</translation>
     </message>
     <message numerus="yes">
         <location line="+80"/>
         <source>%n users</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n Benutzer</numerusform>
+            <numerusform>%n Benutzer</numerusform>
         </translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Compatible</source>
-        <translation type="unfinished"></translation>
+        <translation>Kompatibel</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Requires compatibility mode (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Erfordert Kompatibilitätsmodus (%1)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Requires newer client (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Erfordert neueren Client (%1)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Incompatible (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Inkompatibel (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>unknown version</source>
-        <translation type="unfinished"></translation>
+        <translation>unbekannte Version</translation>
     </message>
     <message>
         <location line="+57"/>
         <source>Compatibility</source>
-        <translation type="unfinished"></translation>
+        <translation>Kompatibilität</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -701,7 +701,7 @@
     <message>
         <location line="+6"/>
         <source>Uncategorized %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Unkategorisiert %1</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -711,12 +711,12 @@
     <message>
         <location line="+73"/>
         <source>Could not create brush preset &apos;%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinselvoreinstellung &apos;%1&apos; konnte nicht erstellt werden.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Could not assign brush &apos;%1&apos; to tag &apos;%2&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Pinsel &apos;%1&apos; konnte nicht zu Tag &apos;%2&apos; zugewiesen werden.</translation>
     </message>
     <message>
         <location line="-25"/>
@@ -977,7 +977,7 @@
     <message>
         <location line="+26"/>
         <source>Client failed to serialize command</source>
-        <translation type="unfinished"></translation>
+        <translation>Client kann Befehl nicht serialisieren</translation>
     </message>
     <message>
         <location line="-52"/>
@@ -997,7 +997,7 @@
     <message>
         <location line="+179"/>
         <source>Session for a different Drawpile version (%1) in progress!</source>
-        <translation type="unfinished"></translation>
+        <translation>Laufende Sitzung für eine andere Drawpile-Version (%1)!</translation>
     </message>
     <message>
         <location line="+255"/>
@@ -1035,37 +1035,37 @@
     <message>
         <location line="+45"/>
         <source>%1 (incompatible)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (inkompatibel)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.1 (compatibility mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.1 (Kompatibilitätsmodus)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.2 (fully compatible)</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.2 (vollständig kompatibel)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Incompatible version</source>
-        <translation type="unfinished"></translation>
+        <translation>Inkompatible Version</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Closed (new logins blocked)</source>
-        <translation type="unfinished"></translation>
+        <translation>Geschlossen (neue Anmeldungen blockiert)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Session password required</source>
-        <translation type="unfinished"></translation>
+        <translation>Sitzungspasswort erforderlich</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation>Nicht jugendfrei (NSFM)</translation>
     </message>
     <message>
         <location line="+47"/>
