@@ -1430,12 +1430,12 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
     <message>
         <location line="+18"/>
         <source>&amp;Brushes...</source>
-        <translation>&amp;amp;Pinsel...</translation>
+        <translation>&amp;Pinsel...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Session &amp;Template...</source>
-        <translation>Sitzungs&amp;amp;vorlage...</translation>
+        <translation>Sitzungs&amp;vorlage...</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1452,7 +1452,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
     <message>
         <location line="+15"/>
         <source>&amp;Import</source>
-        <translation>&amp;amp;Import</translation>
+        <translation>&amp;Import</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1572,7 +1572,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
     <message>
         <location line="+3"/>
         <source>&amp;Docks</source>
-        <translation>&amp;amp;Docks</translation>
+        <translation>&amp;Docks</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1776,7 +1776,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
     <message>
         <location line="+1"/>
         <source>&amp;Reload Last Brush Preset</source>
-        <translation>Letzte Pinselvo&amp;amp;rlage erneut laden</translation>
+        <translation>Letzte Pinselvo&amp;rlage erneut laden</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -2254,7 +2254,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+8"/>
         <source>&amp;Animation</source>
-        <translation>&amp;amp;Animation</translation>
+        <translation>&amp;Animation</translation>
     </message>
     <message>
         <location line="+32"/>
@@ -2319,7 +2319,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+1"/>
         <source>&amp;Ellipse</source>
-        <translation>&amp;amp;Ellipse</translation>
+        <translation>&amp;Ellipse</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2977,7 +2977,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+10"/>
         <source>Kick &amp; Ban:</source>
-        <translation>Kicken &amp;amp; Bannen:</translation>
+        <translation>Kicken &amp; Bannen:</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -6732,7 +6732,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+2"/>
         <source>GIMP palette (%1)</source>
-        <translation>GIMP-Paletten (*.gpl)</translation>
+        <translation>GIMP-Paletten (%1)</translation>
     </message>
     <message>
         <location line="+7"/>
