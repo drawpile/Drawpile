@@ -9,6 +9,7 @@ update_icons() {
 	for icon in ${3:-*.svg}; do
 		commit=v5.103.0
 		dir="$2"
+		redir="$icon"
 		case "$icon" in
 			drawpile_*|onion-*)
 				continue
@@ -37,11 +38,16 @@ update_icons() {
 				commit=v5.63.0
 				category=actions
 				;;
+			window_.svg)
+				# Qt will use window.svg as the close button icon, which is just
+				# wrong. Hence we stick the underscore at the end to prevent it.
+				redir=window.svg
+				category=actions
+				;;
 			*)
 				category=actions
 				;;
 		esac
-		redir="$icon"
 		while true; do
 			url="https://raw.githubusercontent.com/KDE/breeze-icons/$commit/$dir/$category/22/$redir"
 			(curl -f -s -S -L "$url" | sed -e $'s/\r//g' > "$icon") || (echo "$url failed" && false)
