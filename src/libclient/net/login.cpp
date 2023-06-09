@@ -622,13 +622,8 @@ void LoginHandler::tlsError(const QList<QSslError> &errors)
 	// TODO this was optimized for self signed certificates back end Let's Encrypt
 	// didn't exist. This should be fixed to better support actual CAs.
 	bool isIp = QHostAddress().setAddress(m_address.host());
-	bool isSelfSigned = false;
-	for(const QSslError &e : errors) {
-		if(e.error() == QSslError::SelfSignedCertificate) {
-			isSelfSigned = true;
-			break;
-		}
-	}
+	bool isSelfSigned = m_server->hostCertificate().isSelfSigned();
+	qDebug() << errors.size() << "SSL error(s), self-signed" << isSelfSigned;
 
 	for(const QSslError &e : errors) {
 		if(e.error() == QSslError::SelfSignedCertificate) {
