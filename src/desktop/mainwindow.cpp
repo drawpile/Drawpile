@@ -2555,7 +2555,7 @@ void MainWindow::about()
 			QStringLiteral("<p><b>Drawpile %1</b><br>").arg(cmake_config::version()) +
 			tr("A collaborative drawing program.") + QStringLiteral("</p>"
 
-			"<p>Copyright © Calle Laakkonen and Drawpile contributors</p>"
+			"<p>Copyright © askmeaboutloom and contributors. Originally made by Calle Laakkonen.</p>"
 
 			"<p>This program is free software; you may redistribute it and/or "
 			"modify it under the terms of the GNU General Public License as "
