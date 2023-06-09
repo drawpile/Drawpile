@@ -2572,7 +2572,7 @@ void MainWindow::about()
 			) +
 			QStringLiteral("<hr><p><b>%1</b> %2</p><p><b>%3</b> %4</p>")
 				.arg(tr("Settings File:"))
-				.arg(QSettings{}.fileName().toHtmlEscaped())
+				.arg(dpApp().settings().path().toHtmlEscaped())
 				.arg(tr("Tablet Input:"))
 				.arg(QCoreApplication::translate("tabletinput", tabletinput::current()))
 	);

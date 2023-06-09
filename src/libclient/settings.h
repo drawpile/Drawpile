@@ -68,6 +68,8 @@ public:
 
 	void reset(const QString &path = QString());
 
+	QString path() const { return m_settings.fileName(); }
+
 	bool autoCommit() const { return m_autoCommit; }
 	void setAutoCommit(bool autoCommit) { m_autoCommit = autoCommit; }
 
