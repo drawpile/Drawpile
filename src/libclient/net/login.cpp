@@ -622,23 +622,35 @@ void LoginHandler::tlsError(const QList<QSslError> &errors)
 	// TODO this was optimized for self signed certificates back end Let's Encrypt
 	// didn't exist. This should be fixed to better support actual CAs.
 	bool isIp = QHostAddress().setAddress(m_address.host());
+	bool isSelfSigned = false;
+	for(const QSslError &e : errors) {
+		if(e.error() == QSslError::SelfSignedCertificate) {
+			isSelfSigned = true;
+			break;
+		}
+	}
 
 	for(const QSslError &e : errors) {
 		if(e.error() == QSslError::SelfSignedCertificate) {
 			// Self signed certificates are acceptable.
+			qInfo() << "Ignoring self-signed certificate error:"
+					<< int(e.error()) << e.errorString();
 			ignore << e;
 
 		} else if(isIp && e.error() == QSslError::HostNameMismatch) {
 			// Ignore CN mismatch when using an IP address rather than a hostname
 			ignore << e;
+			qInfo() << "Ignoring error about hostname mismatch with IP address:"
+					<< int(e.error()) << e.errorString();
 
-#ifdef Q_OS_MACOS
-		} else if(e.error() == QSslError::CertificateUntrusted) {
-			// Ignore "The root CA certificate is not trusted for this purpose" error that
-			// started happening on OSX. We still check that the certificate matches the one
-			// we have saved. (Most server certs are expected to be self-signed)
+		} else if(e.error() == QSslError::CertificateUntrusted && isSelfSigned) {
+			// "The root CA certificate is not trusted for this purpose" is an
+			// error that spontaneously manifested in macOS and then way later
+			// in Windows. We ignore it on self-signed certificates.
 			ignore << e;
-#endif
+			qInfo() << "Ignoring untrusted error on self-signed certificate:"
+					<< int(e.error()) << e.errorString();
+
 		} else {
 			fail = true;
 
