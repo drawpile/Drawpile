@@ -6059,9 +6059,9 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message numerus="yes">
         <location line="+0"/>
         <source>Really delete %n avatar(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Wirklich %n Avatar löschen?</numerusform>
+            <numerusform>Wirklich %n Avatare löschen?</numerusform>
         </translation>
     </message>
     <message>
@@ -6280,17 +6280,17 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message numerus="yes">
         <location line="-48"/>
         <source>Really remove %n known host(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Wirklich %n bekannten Host entfernen?</numerusform>
+            <numerusform>Wirklich %n bekannte Hosts entfernen?</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+49"/>
         <source>Really remove %n list server(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Wirklich %n Listenserver entfernen?</numerusform>
+            <numerusform>Wirklich %n Listenserver entfernen?</numerusform>
         </translation>
     </message>
     <message>
@@ -6365,9 +6365,9 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message numerus="yes">
         <location line="+1"/>
         <source>Really remove %n canvas shortcut(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Wirklich %n Leinwandkürzel entfernen?</numerusform>
+            <numerusform>Wirklich %n Leinwandkürzel entfernen?</numerusform>
         </translation>
     </message>
     <message>
