@@ -93,7 +93,7 @@ SETTING_GETSET(tabletDriver       , TabletDriver              , "settings/input/
 	, &tabletDriver::get, &tabletDriver::set)
 SETTING(tabletEraser              , TabletEraser              , "settings/input/tableteraser"           , true)
 SETTING(tabletEvents              , TabletEvents              , "settings/input/tabletevents"           , true)
-SETTING_GETSET(themePalette       , ThemePalette              , "settings/theme/palette"                , THEME_PALETTE_DEFAULT
+SETTING_GETSET_V(V1, themePalette , ThemePalette              , "settings/theme/palette"                , THEME_PALETTE_DEFAULT
 	, &themePalette::get, &themePalette::set)
 SETTING_FULL(V0, themeStyle       , ThemeStyle                , "settings/theme/style"                  , THEME_STYLE_DEFAULT
 	, &themeStyle::get, &any::set, &themeStyle::notify)
