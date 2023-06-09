@@ -167,7 +167,7 @@ void Flipbook::refreshCanvas()
 
 	m_crop = QRect(QPoint(), m_canvasState.size());
 
-	const QRect crop = QSettings().value("flipbook/crop").toRect();
+	const QRect crop = dpApp().settings().flipbookCrop();
 	if(m_crop.contains(crop, true)) {
 		m_crop = crop;
 		m_ui->zoomButton->setEnabled(true);
