@@ -94,7 +94,7 @@ void AvatarListModel::loadAvatars(bool includeBlank)
 
 	if(includeBlank) {
 		avatars << Avatar {
-			QPixmap::fromImage(make_identicon(" ")),
+			QPixmap(),
 			tr("No avatar")
 		};
 	}
