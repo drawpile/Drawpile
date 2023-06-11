@@ -26,7 +26,7 @@ using libclient::settings::findKey;
 namespace any = libclient::settings::any;
 
 namespace onionSkinsFrames {
-	QVariant get(const SettingMeta &meta, const QSettings &settings)
+	QVariant get(const SettingMeta &meta, QSettings &settings)
 	{
 		if (const auto key = findKey(settings, meta.baseKey, meta.version)) {
 			return any::getGroup(settings, key->key);
@@ -56,7 +56,7 @@ namespace onionSkinsFrames {
 }
 
 namespace newCanvasSize {
-	QVariant get(const SettingMeta &meta, const QSettings &settings)
+	QVariant get(const SettingMeta &meta, QSettings &settings)
 	{
 		return any::get(meta, settings)
 			.toSize()
@@ -66,7 +66,7 @@ namespace newCanvasSize {
 }
 
 namespace newCanvasBackColor {
-	QVariant get(const SettingMeta &meta, const QSettings &settings)
+	QVariant get(const SettingMeta &meta, QSettings &settings)
 	{
 		const auto color = any::get(meta, settings).value<QColor>();
 		if (!color.isValid()) {
@@ -77,7 +77,7 @@ namespace newCanvasBackColor {
 }
 
 namespace tabletDriver {
-	QVariant get(const SettingMeta &meta, const QSettings &settings)
+	QVariant get(const SettingMeta &meta, QSettings &settings)
 	{
 		using tabletinput::Mode;
 
@@ -137,7 +137,7 @@ namespace tabletDriver {
 }
 
 namespace themePalette {
-	QVariant get(const SettingMeta &meta, const QSettings &settings)
+	QVariant get(const SettingMeta &meta, QSettings &settings)
 	{
 		if (findKey(settings, meta.baseKey, meta.version)) {
 			return any::get(meta, settings);
@@ -194,7 +194,7 @@ namespace themePalette {
 }
 
 namespace themeStyle {
-	QVariant get(const SettingMeta &meta, const QSettings &settings)
+	QVariant get(const SettingMeta &meta, QSettings &settings)
 	{
 		if (findKey(settings, meta.baseKey, meta.version)) {
 			return any::get(meta, settings);

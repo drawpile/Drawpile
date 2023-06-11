@@ -53,7 +53,7 @@ struct SettingMeta final {
 	Version version;
 	const char *baseKey;
 	QVariant defaultValue;
-	QVariant (*const get)(const SettingMeta &, const QSettings &);
+	QVariant (*const get)(const SettingMeta &, QSettings &);
 	void (*const set)(const SettingMeta &, QSettings &, QVariant);
 	void (*const notify)(const SettingMeta &, Settings &);
 };
@@ -211,7 +211,7 @@ protected:
 	}
 
 	bool m_autoCommit = true;
-	QSettings m_settings;
+	mutable QSettings m_settings; // Annoying group interface requires mutable.
 	QHash<const SettingMeta *, QVariant> m_pending;
 };
 
@@ -223,14 +223,13 @@ struct FoundKey {
 	bool isGroup;
 };
 
-std::optional<FoundKey> findKey(const QSettings &settings, const char *baseKey, SettingMeta::Version version);
+std::optional<FoundKey> findKey(QSettings &settings, const char *baseKey, SettingMeta::Version version);
 
 // These are exposed in the header only because libclient/desktop are split
 // so desktop-only settings need access to these too.
 namespace any {
-	QVariant get(const SettingMeta &meta, const QSettings &settings);
+	QVariant get(const SettingMeta &meta, QSettings &settings);
 	QVariant getGroup(QSettings &settings, const QString &key);
-	QVariant getGroup(const QSettings &settings, const QString &key);
 	QVariant getList(QSettings &settings, const QString &key);
 	void set(const SettingMeta &meta, QSettings &settings, QVariant value);
 	void setGroup(QSettings &settings, const QString &key, const QVariant &value);

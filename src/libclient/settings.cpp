@@ -214,7 +214,7 @@ QString formatSettingKey(const char *baseKey, int version)
 		: QStringLiteral("v%1/%2").arg(version).arg(baseKey);
 }
 
-std::optional<FoundKey> findKey(const QSettings &settings, const char *baseKey, SettingMeta::Version version)
+std::optional<FoundKey> findKey(QSettings &settings, const char *baseKey, SettingMeta::Version version)
 {
 	const auto groupKeys = settings.property("allGroupKeys").value<QSet<QString>>();
 	for (auto candidate = int(version); candidate > 0; --candidate) {
@@ -278,18 +278,6 @@ namespace any {
 		return map;
 	}
 
-	QVariant getGroup(const QSettings &settings, const QString &key)
-	{
-		// No copy constructor and this seems better than a const_cast
-		QSettings group(
-			settings.format(),
-			settings.scope(),
-			settings.organizationName(),
-			settings.applicationName()
-		);
-		return getGroup(group, key);
-	}
-
 	QVariant getList(QSettings &settings, const QString &key)
 	{
 		QVariantList list;
@@ -301,7 +289,7 @@ namespace any {
 		return list;
 	}
 
-	QVariant get(const SettingMeta &meta, const QSettings &settings)
+	QVariant get(const SettingMeta &meta, QSettings &settings)
 	{
 		if (const auto key = findKey(settings, meta.baseKey, meta.version)) {
 			if (key->isGroup) {
