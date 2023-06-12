@@ -138,7 +138,8 @@ def update_release_artifacts(appdata, include_legacy_platform_ids):
         # it is what appstream validation demands
         ('x86_64-darwin-gnu', 'macos', 'osx', f'Drawpile-{version}.dmg'),
         ('x86_64-linux-gnu', '', 'appimage', f'Drawpile-{version}-x86_64.AppImage'),
-        ('source', '', 'src', f'drawpile-{version}.tar.xz'),
+        ('aarch64-linux-android', '', 'apk', f'Drawpile-{version}.apk'),
+        ('source', '', 'src', f'Drawpile-{version}.tar.gz'),
     )
 
     # Find metadata for binaries
@@ -172,7 +173,7 @@ def update_release_artifacts(appdata, include_legacy_platform_ids):
         indent(elem, 5, 4)
         location = ET.SubElement(elem, 'location')
         indent(location, after=4)
-        location.text = 'https://drawpile.net/files/' + artifact['filename']
+        location.text = f'''https://github.com/drawpile/Drawpile/releases/download/{version}/{artifact['filename']}'''
         if artifact['hash'] is not None:
             indent(location, after=5)
             checksum = ET.SubElement(elem, 'checksum', type='sha256')
