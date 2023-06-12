@@ -248,4 +248,4 @@ if __name__ == '__main__':
         appdata.getroot().tail = '\n'
         appdata.write(args.out_file, encoding='utf-8', xml_declaration=True)
         print("Validating appdata file...")
-        os.system('appstream-util validate-relax ' + args.out_file)
+        os.system(f'appstream-util validate-relax {args.out_file}')
