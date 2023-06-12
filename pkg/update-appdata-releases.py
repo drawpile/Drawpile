@@ -104,11 +104,8 @@ def add_release(appdata, changes):
     return True
 
 def find_artifact(filename):
-    path = 'artifacts/' + filename
-    try:
-        info = os.stat(path)
-    except FileNotFoundError:
-        return None
+    path = (Path('artifacts') / filename).resolve()
+    info = os.stat(path)
 
     with open(path, 'rb') as f:
         checksum = hashlib.sha256()
