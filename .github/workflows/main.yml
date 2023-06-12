@@ -10,7 +10,8 @@ on:
       # pointless to trigger yet another build in response to it.
       - continuous
   schedule:
-    - cron: '18 11 * * *'
+    # Every Monday and Thursday at 11:18 AM.
+    - cron: '18 11 * * 1,4'
 
 env:
   CARGO_TERM_COLOR: always
