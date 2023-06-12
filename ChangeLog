@@ -1,5 +1,51 @@
 Unreleased Version 2.2.0-pre
- * Releases are now generated automatically
+ * Android support
+ * New paint engine again (Drawdance)
+ * More themes, nicer default theme
+ * Improved animation support, with a timeline, tracks and keyframes
+ * Adjustible undo limit
+ * Local canvas backgrounds
+ * Better canvas shortcuts
+ * Real stabilizer, based on Krita's
+ * Indirect mode for MyPaint brushes
+ * Full-fledged brush editor
+ * Better MyPaint brush import
+ * Saving and loading of application layouts
+ * Changed default layout that works better on small screens
+ * Tablet-friendly sliders, taken from Krita
+ * Fill tool gap-filling, feathering and improved size limiting
+ * Nearest-neighbor transform option
+ * Compatibility with 2.1 sessions
+ * Docks now have a menu instead of a close and undock button
+ * Docks can now be made undockable, if you want to keep them floating
+ * Top and bottom regions of the window are now dockable
+ * Docks can now be nested
+ * Vertical tabs option for side-mounted docks
+ * Holding shift gives you rearrange mode by default
+ * More and more useful brush presets by default
+ * Chat now has multiline support
+ * Preferences tidied up a bunch, internal settings system reworked
+ * Tablet drivers on Windows can now be switched without restarting the program
+ * Reset snapshot interval and amount can now be adjusted
+ * Parental controls can be hidden when locked
+ * forceNsfm option for the server
+ * Messages from server GUI will now be alerts
+ * Indirect drawing mode now works properly
+ * Hiding docks no longer jiggers them around
+ * Transforms now preview on the target layer
+ * Session resets no longer cause the view to jerk around or a layer switch
+ * Session resets now prompt for a save
+ * Layer opacity and blend mode controls are back in the layer list dock
+ * Recording and recording indexes now handle undos properly
+ * Recordings can be played back at fast speeds again
+ * (De-)selecting layer groups no longer makes a clicking noise
+ * You now have to be operator to pin a chat message
+ * Moving your own layer into your own group no longer requires omnipotence
+ * Switching away from the annotation tool no longer conjures a blank annotation
+ * Linux and macOS now properly focus the canvas when it's interacted with
+ * Massively improved development and release infrastructure with CI and such
+ * Weblate integration
+ * Development tools, like tablet event logging, debug dumps etc.
 
 2022-08-20 Version 2.2.0-beta.3
  * Added support for MyPaint brushes
