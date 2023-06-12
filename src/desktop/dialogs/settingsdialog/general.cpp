@@ -28,9 +28,29 @@ General::General(desktop::settings::Settings &settings, QWidget *parent)
 	form->addSeparator();
 	initUndo(settings, form);
 	form->addSpacer();
+	initAutosave(settings, form);
+	form->addSpacer();
 	initSnapshots(settings, form);
 	form->addSeparator();
 	initHistory(settings, form);
+}
+
+void General::initAutosave(desktop::settings::Settings &settings, utils::SanerFormLayout *form)
+{
+	auto *autosaveInterval = new QSpinBox;
+	autosaveInterval->setRange(1, 9999999);
+	settings.bindAutoSaveInterval(this, [=](int intervalMsec) {
+		autosaveInterval->setValue(intervalMsec / 1000);
+	});
+	connect(autosaveInterval, QOverload<int>::of(&QSpinBox::valueChanged), this, [&](int intervalSec) {
+		settings.setAutoSaveInterval(intervalSec * 1000);
+	});
+
+	auto *snapshotCountLayout = utils::encapsulate(tr("When enabled, save every %1 minutes"), autosaveInterval);
+	snapshotCountLayout->setControlTypes(QSizePolicy::CheckBox);
+	form->addRow(tr("Autosave:"), snapshotCountLayout);
+
+	form->addRow(nullptr, utils::note(tr("Autosave can be enabled for the current file under <i>File ▸ Autosave</i>."), QSizePolicy::Label));
 }
 
 void General::initHistory(desktop::settings::Settings &settings, utils::SanerFormLayout *form)

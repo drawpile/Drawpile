@@ -16,6 +16,7 @@ class General final : public QWidget {
 public:
 	General(desktop::settings::Settings &settings, QWidget *parent = nullptr);
 private:
+	void initAutosave(desktop::settings::Settings &settings, utils::SanerFormLayout *form);
 	void initHistory(desktop::settings::Settings &settings, utils::SanerFormLayout *form);
 	void initLanguage(desktop::settings::Settings &settings, utils::SanerFormLayout *form);
 	void initMiscUi(desktop::settings::Settings &settings, utils::SanerFormLayout *form);
