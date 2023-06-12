@@ -119,7 +119,7 @@ void General::initSnapshots(desktop::settings::Settings &settings, utils::SanerF
 	snapshotIntervalLayout->setControlTypes(QSizePolicy::CheckBox);
 	form->addRow(nullptr, snapshotIntervalLayout);
 
-	form->addRow(nullptr, utils::note(tr("Snapshots are stored separately from the undo history in the <i>Session ▸ Reset…</i> menu."), QSizePolicy::Label));
+	form->addRow(nullptr, utils::note(tr("Snapshots can be restored from the <i>Session ▸ Reset…</i> menu."), QSizePolicy::Label));
 }
 
 void General::initTheme(desktop::settings::Settings &settings, utils::SanerFormLayout *form)
