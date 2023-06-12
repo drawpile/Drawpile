@@ -12,13 +12,13 @@ CanvasShortcuts::CanvasShortcuts()
 
 CanvasShortcuts CanvasShortcuts::load(const QVariantMap &cfg)
 {
-	const auto shortcuts = cfg.value("shortcuts").toList();
+	const QVector<QVariantMap> shortcuts = shortcutsToList(cfg.value("shortcuts"));
 	CanvasShortcuts cs;
 	if (shortcuts.isEmpty() && !cfg.value("defaultsloaded").toBool()) {
 		cs.loadDefaults();
 	} else {
 		for(const auto &shortcut : shortcuts) {
-			cs.addShortcut(loadShortcut(shortcut.toMap()));
+			cs.addShortcut(loadShortcut(shortcut));
 		}
 	}
 	return cs;
@@ -397,6 +397,27 @@ CanvasShortcuts::Match CanvasShortcuts::matchShortcut(
 		}
 	}
 	return {match};
+}
+
+QVector<QVariantMap> CanvasShortcuts::shortcutsToList(const QVariant &shortcuts)
+{
+	// Qt can't tell apart lists and maps in several formats, so it's just a
+	// dice roll which one we actually get.
+	QVector<QVariantMap> result;
+	if(shortcuts.userType() == QMetaType::QVariantList) {
+		for(const QVariant &shortcut : shortcuts.toList()) {
+			result.append(shortcut.toMap());
+		}
+	} else if(shortcuts.userType() == QMetaType::QVariantMap) {
+		QVariantMap map = shortcuts.toMap();
+		for(int i = 1; i <= map["size"].toInt(); ++i) {
+			QString key = QString::number(i);
+			result.append(map[key].toMap());
+		}
+	} else {
+		qWarning("Canvas shortcuts are neither a list nor a map");
+	}
+	return result;
 }
 
 QVariantMap CanvasShortcuts::saveShortcut(const Shortcut &s)

@@ -119,6 +119,8 @@ private:
 		Type type, Qt::KeyboardModifiers mods, const QSet<Qt::Key> &keys,
 		Qt::MouseButton button = Qt::NoButton) const;
 
+	static QVector<QVariantMap> shortcutsToList(const QVariant &shortcuts);
+
 	static QVariantMap saveShortcut(const Shortcut &s);
 
 	static Shortcut loadShortcut(const QVariantMap &cfg);
