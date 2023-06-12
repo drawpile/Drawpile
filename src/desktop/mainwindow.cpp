@@ -752,6 +752,11 @@ void MainWindow::readSettings(bool windowpos)
 	if(settings.lastWindowMaximized())
 		setWindowState(Qt::WindowMaximized);
 
+	// The following state restoration requires the window to be resized, but Qt
+	// does that lazily on the next event loop iteration. So we forcefully flush
+	// the event loop here to actually get the window resized before continuing.
+	dpApp().processEvents();
+
 	// Restore dock, toolbar and view states
 	if(const auto lastWindowState = settings.lastWindowState(); !lastWindowState.isEmpty()) {
 		restoreState(settings.lastWindowState());
