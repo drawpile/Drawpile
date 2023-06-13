@@ -8,8 +8,9 @@
 #include <QBuffer>
 #include <QCryptographicHash>
 
-AvatarListModel::AvatarListModel(QObject *parent)
+AvatarListModel::AvatarListModel(bool autoCommit, QObject *parent)
 	: QAbstractListModel(parent)
+	, m_autoCommit(autoCommit)
 {
 }
 
@@ -65,6 +66,10 @@ bool AvatarListModel::removeRows(int row, int count, const QModelIndex &parent)
 		m_avatars.remove(row);
 	}
 	endRemoveRows();
+
+	if(m_autoCommit) {
+		commit();
+	}
 	return true;
 }
 
@@ -86,6 +91,10 @@ void AvatarListModel::addAvatar(const QPixmap &icon)
 		QString()
 	};
 	endInsertRows();
+
+	if(m_autoCommit) {
+		commit();
+	}
 }
 
 void AvatarListModel::loadAvatars(bool includeBlank)

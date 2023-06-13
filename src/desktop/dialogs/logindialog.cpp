@@ -72,7 +72,7 @@ struct LoginDialog::Private {
 
 		// Identity & authentication page
 		ui->username->setValidator(new UsernameValidator(dlg));
-		avatars = new AvatarListModel(dlg);
+		avatars = new AvatarListModel(false, dlg);
 		avatars->loadAvatars(true);
 		ui->avatarList->setModel(avatars);
 

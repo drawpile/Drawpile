@@ -76,7 +76,7 @@ void Network::initAvatars(utils::SanerFormLayout *form)
 	avatars->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
 	avatars->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
-	auto *avatarsModel = new AvatarListModel(this);
+	auto *avatarsModel = new AvatarListModel(true, this);
 	avatarsModel->loadAvatars();
 	avatars->setModel(avatarsModel);
 	avatars->setItemDelegate(new AvatarItemDelegate(this));

@@ -15,7 +15,7 @@ public:
 		FilenameRole = Qt::UserRole + 1,
 	};
 
-	AvatarListModel(QObject *parent=nullptr);
+	AvatarListModel(bool autoCommit, QObject *parent=nullptr);
 
 	int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 	QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
@@ -45,6 +45,7 @@ private:
 		QString filename;
 	};
 
+	bool m_autoCommit;
 	QVector<Avatar> m_avatars;
 	QStringList m_deletions;
 };
