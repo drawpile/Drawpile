@@ -414,7 +414,7 @@ QVector<QVariantMap> CanvasShortcuts::shortcutsToList(const QVariant &shortcuts)
 			QString key = QString::number(i);
 			result.append(map[key].toMap());
 		}
-	} else {
+	} else if(!shortcuts.isNull()) {
 		qWarning("Canvas shortcuts are neither a list nor a map");
 	}
 	return result;
