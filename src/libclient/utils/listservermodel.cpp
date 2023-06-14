@@ -181,6 +181,10 @@ QVector<ListServer> ListServerModel::listServers(const QVector<QVariantMap> &cfg
 
 	const QString iconPath = utils::paths::writablePath("favicons/");
 	for(const auto &item : cfg) {
+		if(item.isEmpty()) {
+			continue; // Old Drawpile versions leave voids sometimes.
+		}
+
 		ListServer ls {
 			QIcon(),
 			item.value("icon").toString(),
