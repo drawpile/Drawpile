@@ -1,4 +1,6 @@
 Unreleased Version 2.2.0-pre
+
+2023-06-14 Version 2.2.0-beta.4
  * Android support
  * New paint engine again (Drawdance)
  * More themes, nicer default theme
