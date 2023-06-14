@@ -660,7 +660,10 @@ void ChatWidget::sendMessage(QString chatMessage)
 			return;
 
 		} else if(cmd.at(0)=='!' && d->currentChat == 0) {
-			if (d->currentChat != 0) {
+			if(!d->userlist || !d->userlist->isOperator(d->myId)) {
+				systemMessage(tr("/!: only operators are allowed to send shouts."));
+				return;
+			} else if (d->currentChat != 0) {
 				systemMessage(tr("/!: can only shout in a public chat."));
 				return;
 			} else if(chatMessage.length() <= 2) {
@@ -672,7 +675,10 @@ void ChatWidget::sendMessage(QString chatMessage)
 			}
 
 		} else if(cmd == QStringLiteral("alert")) {
-			if(params.isEmpty()) {
+			if(!d->userlist || !d->userlist->isOperator(d->myId)) {
+				systemMessage(tr("/alert: only operators are allowed to send alerts."));
+				return;
+			} else if(params.isEmpty()) {
 				systemMessage(tr("/alert: no text given."));
 				return;
 			} else {
@@ -690,7 +696,10 @@ void ChatWidget::sendMessage(QString chatMessage)
 			}
 
 		} else if(cmd == QStringLiteral("pin")) {
-			if (d->currentChat != 0) {
+			if(!d->userlist || !d->userlist->isOperator(d->myId)) {
+				systemMessage(tr("/pin: only operators are allowed to send alerts."));
+				return;
+			} else if (d->currentChat != 0) {
 				systemMessage(tr("/pin: can only pin in a public chat."));
 				return;
 			} else if(params.isEmpty()) {
