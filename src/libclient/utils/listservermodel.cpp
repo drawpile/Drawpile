@@ -52,20 +52,20 @@ QVariant ListServerModel::data(const QModelIndex &index, int role) const
 	return QVariant();
 }
 
-bool ListServerModel::moveRow(const QModelIndex &sourceParent, int sourceRow, const QModelIndex &destinationParent, int destinationChild)
+bool ListServerModel::moveServer(int sourceRow, int destinationChild)
 {
-	if(sourceParent.isValid() || destinationParent.isValid())
+	if(sourceRow < 0 || sourceRow >= m_servers.size()) {
 		return false;
+	}
 
-	if(sourceRow < 0 || sourceRow >= m_servers.size())
+	int destinationRow = qBound(0, destinationChild, m_servers.size()-1);
+	if(sourceRow == destinationRow) {
 		return false;
+	}
 
-	const int destinationRow = qBound(0, destinationChild, m_servers.size()-1);
-
-	if(sourceRow == destinationRow)
-		return false;
-
-	beginMoveRows(sourceParent, sourceRow, sourceRow, destinationParent, destinationRow + (destinationRow > sourceRow));
+	beginMoveRows(
+		QModelIndex{}, sourceRow, sourceRow, QModelIndex{},
+		destinationRow + (destinationRow > sourceRow ? 1 : 0));
 	m_servers.move(sourceRow, destinationRow);
 	endMoveRows();
 	return true;

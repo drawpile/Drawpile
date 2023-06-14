@@ -8,6 +8,7 @@
 
 class CertificateStoreModel;
 class QDir;
+class QItemSelectionModel;
 class QListView;
 class QSslCertificate;
 class QVBoxLayout;
@@ -27,6 +28,9 @@ private:
 	void initListingServers(desktop::settings::Settings &settings, QVBoxLayout *layout);
 
 	void addListServer(sessionlisting::ListServerModel *model);
+	void moveListServer(
+		sessionlisting::ListServerModel *model,
+		QItemSelectionModel *selectionModel, int offset);
 	void importCertificates(CertificateStoreModel *model);
 	void trustCertificates(CertificateStoreModel *model, const QModelIndexList &indexes);
 	void viewCertificate(CertificateStoreModel *model, const QModelIndex &index);

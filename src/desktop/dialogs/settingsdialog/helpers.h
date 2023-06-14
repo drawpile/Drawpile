@@ -33,13 +33,18 @@ inline QLabel *makeIconLabel(QStyle::StandardPixmap icon, QStyle::PixelMetric si
 	return label;
 }
 
-template <typename AddCallback, typename RemoveCallback>
+template <typename AddCallback, typename RemoveCallback, typename MoveUpCallback, typename MoveDownCallback>
 utils::EncapsulatedLayout *listActions(
 	QAbstractItemView *view,
 	const QString &addLabel,
 	AddCallback addCallback,
 	const QString &removeLabel,
-	RemoveCallback removeCallback
+	RemoveCallback removeCallback,
+	const QString &moveUpLabel,
+	MoveUpCallback moveUpCallback,
+	const QString &moveDownLabel,
+	MoveDownCallback moveDownCallback,
+	bool includeMove = true
 )
 {
 	auto *buttons = new utils::EncapsulatedLayout;
@@ -52,7 +57,9 @@ utils::EncapsulatedLayout *listActions(
 	QObject::connect(add, &widgets::GroupedToolButton::clicked, view, addCallback);
 	buttons->addWidget(add);
 
-	auto *remove = new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight);
+	auto *remove = new widgets::GroupedToolButton(
+		includeMove ? widgets::GroupedToolButton::GroupRight
+					: widgets::GroupedToolButton::GroupCenter);
 	remove->setText(removeLabel);
 	remove->setIcon(QIcon::fromTheme("list-remove"));
 	remove->setEnabled(view->selectionModel()->hasSelection());
@@ -61,9 +68,58 @@ utils::EncapsulatedLayout *listActions(
 	});
 	QObject::connect(remove, &widgets::GroupedToolButton::clicked, view, removeCallback);
 	buttons->addWidget(remove);
-	buttons->addStretch();
 
+	if(includeMove) {
+		auto *moveUp = new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupCenter);
+		moveUp->setText(moveUpLabel);
+		moveUp->setIcon(QIcon::fromTheme("arrow-up"));
+		moveUp->setEnabled(view->selectionModel()->hasSelection());
+		auto updateMoveUp = [=] {
+			auto selectionModel = view->selectionModel();
+			moveUp->setEnabled(
+				selectionModel->hasSelection() &&
+				selectionModel->selectedIndexes().size() == 1 &&
+				!selectionModel->isRowSelected(0));
+		};
+		QObject::connect(view->selectionModel(), &QItemSelectionModel::selectionChanged, view, updateMoveUp);
+		QObject::connect(view->model(), &QAbstractItemModel::rowsMoved, view, updateMoveUp);
+		QObject::connect(moveUp, &widgets::GroupedToolButton::clicked, view, moveUpCallback);
+		buttons->addWidget(moveUp);
+
+		auto *moveDown = new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight);
+		moveDown->setText(moveDownLabel);
+		moveDown->setIcon(QIcon::fromTheme("arrow-down"));
+		moveDown->setEnabled(view->selectionModel()->hasSelection());
+		auto updateMoveDown = [=] {
+			auto selectionModel = view->selectionModel();
+			moveDown->setEnabled(
+				selectionModel->hasSelection() &&
+				selectionModel->selectedIndexes().size() == 1 &&
+				!selectionModel->isRowSelected(view->model()->rowCount() - 1));
+		};
+		QObject::connect(view->selectionModel(), &QItemSelectionModel::selectionChanged, view, updateMoveDown);
+		QObject::connect(view->model(), &QAbstractItemModel::rowsMoved, view, updateMoveDown);
+		QObject::connect(moveDown, &widgets::GroupedToolButton::clicked, view, moveDownCallback);
+		buttons->addWidget(moveDown);
+	}
+
+	buttons->addStretch();
 	return buttons;
+}
+
+template <typename AddCallback, typename RemoveCallback>
+utils::EncapsulatedLayout *listActions(
+	QAbstractItemView *view,
+	const QString &addLabel,
+	AddCallback addCallback,
+	const QString &removeLabel,
+	RemoveCallback removeCallback
+)
+{
+	void (*noop)() = nullptr;
+	return listActions(
+		view, addLabel, addCallback, removeLabel, removeCallback, QString{},
+		noop, QString{}, noop, false);
 }
 
 inline bool execConfirm(const QString &title, const QString &message, QWidget *owner)

@@ -114,7 +114,13 @@ void Servers::initListingServers(desktop::settings::Settings &settings, QVBoxLay
 		makeDefaultDeleter(this, servers,
 			tr("Remove list servers"),
 			QT_TR_N_NOOP("Really remove %n list server(s)?")
-		)
+		),
+
+		tr("Move up"),
+		[=] { moveListServer(serversModel, servers->selectionModel(), -1); },
+
+		tr("Move down"),
+		[=] { moveListServer(serversModel, servers->selectionModel(), 1); }
 	));
 }
 
@@ -154,6 +160,19 @@ void Servers::addListServer(sessionlisting::ListServerModel *model)
 			if (result == QMessageBox::Cancel) {
 				return;
 			}
+		}
+	}
+}
+
+void Servers::moveListServer(
+	sessionlisting::ListServerModel *model, QItemSelectionModel *selectionModel,
+	int offset)
+{
+	const QModelIndexList selectedRows = selectionModel->selectedRows();
+	if(selectedRows.size() == 1) {
+		int sourceRow = selectedRows.first().row();
+		if(model->moveServer(sourceRow, sourceRow + offset)) {
+			model->submit();
 		}
 	}
 }
