@@ -252,17 +252,44 @@ static void removeSetting(QSettings &settings, const QString &key)
 	settings.setProperty("allGroupKeys", QVariant::fromValue(groupKeys));
 }
 
+static bool hasOnlySizeChildKey(const QSettings &settings)
+{
+	bool hasSize = false;
+	for(const QString &itemKey : settings.childKeys()) {
+		if(itemKey == QStringLiteral("size")) {
+			hasSize = true;
+		} else {
+			return false;
+		}
+	}
+	return hasSize && settings.value(QStringLiteral("size")).canConvert<int>();
+}
+
+static bool allChildGroupsIndexed(const QSettings &settings)
+{
+	for (const QString &itemKey : settings.childGroups()) {
+		bool ok;
+		int index = itemKey.toInt(&ok);
+		if(!ok || index < 1) {
+			return false;
+		}
+	}
+	return true;
+}
+
+static bool looksLikeListSetting(const QSettings &settings)
+{
+	return hasOnlySizeChildKey(settings) && allChildGroupsIndexed(settings);
+}
+
 namespace any {
 	QVariant getGroup(QSettings &settings, const QString &key)
 	{
 		settings.beginGroup(key);
-
-		const auto size = settings.value(QStringLiteral("size"));
-
-		if (size.canConvert<int>()
-			&& size.toInt() == settings.childGroups().size()
-			&& (size.toInt() == 0 || settings.childGroups().contains(QStringLiteral("1")))
-		) {
+		// Intuit if this looks like a list. This is really fragile because of
+		// how ambiguous Qt's settings format is. It should work unless there's
+		// ever an entry that could have a single integer "size" key though.
+		if (looksLikeListSetting(settings)) {
 			settings.endGroup();
 			return getList(settings, key);
 		}
