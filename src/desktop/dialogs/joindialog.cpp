@@ -100,7 +100,6 @@ JoinDialog::JoinDialog(const QUrl &url, QWidget *parent)
 	m_ui->listing->expandAll();
 
 	QHeaderView *header = m_ui->listing->header();
-	header->setSortIndicatorClearable(true);
 	header->setSectionResizeMode(
 		SessionListingModel::Version, QHeaderView::ResizeToContents);
 	header->setSectionResizeMode(
@@ -113,6 +112,10 @@ JoinDialog::JoinDialog(const QUrl &url, QWidget *parent)
 		SessionListingModel::Owner, QHeaderView::ResizeToContents);
 	header->setSectionResizeMode(
 		SessionListingModel::Uptime, QHeaderView::ResizeToContents);
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 1, 0)
+	header->setSortIndicatorClearable(true);
+#endif
 
 	connect(m_ui->listing, &QTreeView::clicked, this, [this](const QModelIndex &index) {
 		// Set the server URL when clicking on an item
