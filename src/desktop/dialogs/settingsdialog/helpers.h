@@ -58,8 +58,8 @@ utils::EncapsulatedLayout *listActions(
 	buttons->addWidget(add);
 
 	auto *remove = new widgets::GroupedToolButton(
-		includeMove ? widgets::GroupedToolButton::GroupRight
-					: widgets::GroupedToolButton::GroupCenter);
+		includeMove ? widgets::GroupedToolButton::GroupCenter
+					: widgets::GroupedToolButton::GroupRight);
 	remove->setText(removeLabel);
 	remove->setIcon(QIcon::fromTheme("list-remove"));
 	remove->setEnabled(view->selectionModel()->hasSelection());
