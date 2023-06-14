@@ -44,7 +44,7 @@ namespace onionSkinsFrames {
 
 	void set(const SettingMeta &meta, QSettings &settings, QVariant value)
 	{
-		any::set(meta, settings, value);
+		any::forceSet(meta, settings, value);
 
 		if (findKey(settings, "onionskins/frame1", SettingMeta::Version::V0)) {
 			const auto frames = value.value<Settings::OnionSkinsFramesType>();
@@ -114,7 +114,7 @@ namespace tabletDriver {
 
 	void set(const SettingMeta &meta, QSettings &settings, QVariant value)
 	{
-		any::set(meta, settings, value);
+		any::forceSet(meta, settings, value);
 
 		if (const auto oldKey = findKey(settings, "settings/input/windowsink", SettingMeta::Version::V0)) {
 			const auto mode = value.value<tabletinput::Mode>();

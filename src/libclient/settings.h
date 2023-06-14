@@ -231,6 +231,8 @@ namespace any {
 	QVariant get(const SettingMeta &meta, QSettings &settings);
 	QVariant getGroup(QSettings &settings, const QString &key);
 	QVariant getList(QSettings &settings, const QString &key);
+	void forceSetKey(QSettings &settings, const QString &key, QVariant value);
+	void forceSet(const SettingMeta &meta, QSettings &settings, QVariant value);
 	void set(const SettingMeta &meta, QSettings &settings, QVariant value);
 	void setGroup(QSettings &settings, const QString &key, const QVariant &value);
 	void setList(QSettings &settings, const QString &key, const QVariant &value);

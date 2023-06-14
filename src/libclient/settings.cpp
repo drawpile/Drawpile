@@ -354,25 +354,36 @@ namespace any {
 		ensureGroup(settings, key);
 	}
 
+	void forceSetKey(QSettings &settings, const QString &key, QVariant value)
+	{
+		// `QString` is convertible to `QStringList` for some reason,
+		// which is obviously not desired
+		if (compat::metaTypeFromVariant(value) != QMetaType::QString
+			&& compat::metaTypeFromVariant(value) != QMetaType::QByteArray
+			&& value.canConvert<QVariantList>()
+		) {
+			qCDebug(lcDpSettings) << "set list" << key;
+			setList(settings, key, value);
+		} else if (value.canConvert<QVariantMap>() || value.canConvert<QVariantHash>()) {
+			qCDebug(lcDpSettings) << "set group" << key;
+			setGroup(settings, key, value);
+		} else {
+			qCDebug(lcDpSettings) << "set value" << key << "to" << value;
+			settings.setValue(key, value);
+		}
+	}
+
+	void forceSet(const SettingMeta &meta, QSettings &settings, QVariant value)
+	{
+		const auto key = formatSettingKey(meta.baseKey, int(meta.version));
+		forceSetKey(settings, key, value);
+	}
+
 	void set(const SettingMeta &meta, QSettings &settings, QVariant value)
 	{
 		const auto key = formatSettingKey(meta.baseKey, int(meta.version));
 		if (value != meta.defaultValue) {
-			// `QString` is convertible to `QStringList` for some reason,
-			// which is obviously not desired
-			if (compat::metaTypeFromVariant(value) != QMetaType::QString
-				&& compat::metaTypeFromVariant(value) != QMetaType::QByteArray
-				&& value.canConvert<QVariantList>()
-			) {
-				qCDebug(lcDpSettings) << "set list" << key;
-				setList(settings, key, value);
-			} else if (value.canConvert<QVariantMap>() || value.canConvert<QVariantHash>()) {
-				qCDebug(lcDpSettings) << "set group" << key;
-				setGroup(settings, key, value);
-			} else {
-				qCDebug(lcDpSettings) << "set value" << key << "to" << value;
-				settings.setValue(key, value);
-			}
+			forceSetKey(settings, key, value);
 		} else {
 			qCDebug(lcDpSettings) << "remove" << key;
 			removeSetting(settings, key);
