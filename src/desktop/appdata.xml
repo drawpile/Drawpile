@@ -83,17 +83,7 @@
           <checksum type="sha256">8e8be4e8904ba8bc186ba90f1186026225d6167925a8280d2b16a760d3be183e</checksum>
           <size type="download">19255916</size>
         </artifact>
-        <artifact type="binary" platform="win64">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.4/win/Drawpile-2.2.0-beta.4.msi</location>
-          <checksum type="sha256">8e8be4e8904ba8bc186ba90f1186026225d6167925a8280d2b16a760d3be183e</checksum>
-          <size type="download">19255916</size>
-        </artifact>
         <artifact type="binary" platform="x86_64-darwin-gnu">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.4/osx/Drawpile-2.2.0-beta.4.dmg</location>
-          <checksum type="sha256">993354298338e5be2d3c36854180634519f792f769a3e397d2901c9424feedfb</checksum>
-          <size type="download">21199847</size>
-        </artifact>
-        <artifact type="binary" platform="macos">
           <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.4/osx/Drawpile-2.2.0-beta.4.dmg</location>
           <checksum type="sha256">993354298338e5be2d3c36854180634519f792f769a3e397d2901c9424feedfb</checksum>
           <size type="download">21199847</size>
