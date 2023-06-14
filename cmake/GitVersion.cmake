@@ -47,23 +47,7 @@ endfunction()
 Gets the current Git revision.
 #]]
 function(git_version_describe out_var)
-	if(NOT GIT_EXECUTABLE)
-		find_package(Git)
-	endif()
-
-	if(GIT_EXECUTABLE)
-		execute_process(
-			COMMAND "${GIT_EXECUTABLE}" describe --dirty
-			OUTPUT_VARIABLE version
-			OUTPUT_STRIP_TRAILING_WHITESPACE
-			ERROR_QUIET
-		)
-	else()
-		message(STATUS "Git not found; falling back to static versioning")
-		set(version "")
-	endif()
-
-	set(${out_var} "${version}" PARENT_SCOPE)
+	set(${out_var} "2.2.0-beta.4" PARENT_SCOPE)
 endfunction()
 
 function(_git_make_version out_var version label)
