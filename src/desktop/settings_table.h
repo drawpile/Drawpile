@@ -37,7 +37,6 @@ SETTING(globalPressureCurve       , GlobalPressureCurve       , "settings/input/
 SETTING(ignoreCarrierGradeNat     , IgnoreCarrierGradeNat     , "history/cgnalert"                      , false)
 SETTING(inputPresets              , InputPresets              , "inputpresets"                          , QVector<QVariantMap>())
 SETTING(insecurePasswordStorage   , InsecurePasswordStorage   , "settings/insecurepasswordstorage"      , false)
-SETTING(joinListSortColumn        , JoinListSortColumn        , "history/listsortcol"                   , 1) // TODO: Use an enum
 SETTING(language                  , Language                  , "settings/language"                     , QString())
 SETTING(lastAnnounce              , LastAnnounce              , "history/announce"                      , false)
 SETTING(lastAvatar                , LastAvatar                , "history/avatar"                        , QString())

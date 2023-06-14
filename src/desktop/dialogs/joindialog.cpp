@@ -355,17 +355,6 @@ void JoinDialog::restoreSettings()
 	settings.bindFilterLocked(m_ui->showPassworded);
 	settings.bindFilterClosed(m_ui->showClosed);
 	settings.bindFilterNsfm(m_ui->showNsfw);
-
-	// Off by one because stored value uses bit 0 for sort order
-	settings.bindJoinListSortColumn(m_ui->listing->header(), [=](int sortColumn) {
-		m_ui->listing->sortByColumn(
-			qAbs(sortColumn) - 1,
-			sortColumn > 0 ? Qt::AscendingOrder : Qt::DescendingOrder
-		);
-	});
-	connect(m_ui->listing->header(), &QHeaderView::sortIndicatorChanged, &settings, [&settings](int logicalIndex, Qt::SortOrder order) {
-		settings.setJoinListSortColumn((logicalIndex + 1) * (order == Qt::AscendingOrder ? 1 : -1));
-	});
 }
 
 void JoinDialog::rememberSettings() const
