@@ -23,6 +23,98 @@
     <category>Graphics</category>
   </categories>
   <releases>
+    <release version="2.2.0-beta.4" type="development" date="2023-06-14">
+      <url>https://drawpile.net/news/release-2.2.0-beta.4/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>Android support</li>
+          <li>New paint engine again (Drawdance)</li>
+          <li>More themes, nicer default theme</li>
+          <li>Improved animation support, with a timeline, tracks and keyframes</li>
+          <li>Adjustible undo limit</li>
+          <li>Local canvas backgrounds</li>
+          <li>Better canvas shortcuts</li>
+          <li>Real stabilizer, based on Krita's</li>
+          <li>Indirect mode for MyPaint brushes</li>
+          <li>Full-fledged brush editor</li>
+          <li>Better MyPaint brush import</li>
+          <li>Saving and loading of application layouts</li>
+          <li>Changed default layout that works better on small screens</li>
+          <li>Tablet-friendly sliders, taken from Krita</li>
+          <li>Fill tool gap-filling, feathering and improved size limiting</li>
+          <li>Nearest-neighbor transform option</li>
+          <li>Compatibility with 2.1 sessions</li>
+          <li>Docks now have a menu instead of a close and undock button</li>
+          <li>Docks can now be made undockable, if you want to keep them floating</li>
+          <li>Top and bottom regions of the window are now dockable</li>
+          <li>Docks can now be nested</li>
+          <li>Vertical tabs option for side-mounted docks</li>
+          <li>Holding shift gives you rearrange mode by default</li>
+          <li>More and more useful brush presets by default</li>
+          <li>Chat now has multiline support</li>
+          <li>Preferences tidied up a bunch, internal settings system reworked</li>
+          <li>Tablet drivers on Windows can now be switched without restarting the program</li>
+          <li>Reset snapshot interval and amount can now be adjusted</li>
+          <li>Parental controls can be hidden when locked</li>
+          <li>forceNsfm option for the server</li>
+          <li>Messages from server GUI will now be alerts</li>
+          <li>Indirect drawing mode now works properly</li>
+          <li>Hiding docks no longer jiggers them around</li>
+          <li>Transforms now preview on the target layer</li>
+          <li>Session resets no longer cause the view to jerk around or a layer switch</li>
+          <li>Session resets now prompt for a save</li>
+          <li>Layer opacity and blend mode controls are back in the layer list dock</li>
+          <li>Recording and recording indexes now handle undos properly</li>
+          <li>Recordings can be played back at fast speeds again</li>
+          <li>(De-)selecting layer groups no longer makes a clicking noise</li>
+          <li>You now have to be operator to pin a chat message</li>
+          <li>Moving your own layer into your own group no longer requires omnipotence</li>
+          <li>Switching away from the annotation tool no longer conjures a blank annotation</li>
+          <li>Linux and macOS now properly focus the canvas when it's interacted with</li>
+          <li>Massively improved development and release infrastructure with CI and such</li>
+          <li>Weblate integration</li>
+          <li>Development tools, like tablet event logging, debug dumps etc.</li>
+        </ul>
+      </description>
+      <artifacts>
+        <artifact type="binary" platform="x86_64-windows-msvc">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.4/win/Drawpile-2.2.0-beta.4.msi</location>
+          <checksum type="sha256">8e8be4e8904ba8bc186ba90f1186026225d6167925a8280d2b16a760d3be183e</checksum>
+          <size type="download">19255916</size>
+        </artifact>
+        <artifact type="binary" platform="win64">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.4/win/Drawpile-2.2.0-beta.4.msi</location>
+          <checksum type="sha256">8e8be4e8904ba8bc186ba90f1186026225d6167925a8280d2b16a760d3be183e</checksum>
+          <size type="download">19255916</size>
+        </artifact>
+        <artifact type="binary" platform="x86_64-darwin-gnu">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.4/osx/Drawpile-2.2.0-beta.4.dmg</location>
+          <checksum type="sha256">993354298338e5be2d3c36854180634519f792f769a3e397d2901c9424feedfb</checksum>
+          <size type="download">21199847</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.4/osx/Drawpile-2.2.0-beta.4.dmg</location>
+          <checksum type="sha256">993354298338e5be2d3c36854180634519f792f769a3e397d2901c9424feedfb</checksum>
+          <size type="download">21199847</size>
+        </artifact>
+        <artifact type="binary" platform="x86_64-linux-gnu">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.4/appimage/Drawpile-2.2.0-beta.4-x86_64.AppImage</location>
+          <checksum type="sha256">f30895b9f4bfcb06332fa1768fabbc1a46795577b5461ab2eb2d2dfee476514a</checksum>
+          <size type="download">36660416</size>
+        </artifact>
+        <artifact type="binary" platform="aarch64-linux-android">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.4/apk/Drawpile-2.2.0-beta.4.apk</location>
+          <checksum type="sha256">aa2293720025577ebaf705072c4f2adfd8269c2685d2f3a4468b65b19bc0248c</checksum>
+          <size type="download">17130386</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.4/src/Drawpile-2.2.0-beta.4.tar.gz</location>
+          <checksum type="sha256">327afc678ec70c7a61169e8103497a0d3dd900172efc2451ae0811abb4a56998</checksum>
+          <size type="download">8415018</size>
+        </artifact>
+      </artifacts>
+    </release>
     <release version="2.2.0-beta.3" type="development" date="2022-08-20">
       <url>https://drawpile.net/news/release-2.2b3/</url>
       <description>
