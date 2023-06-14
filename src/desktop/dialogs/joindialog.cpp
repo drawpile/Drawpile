@@ -100,6 +100,7 @@ JoinDialog::JoinDialog(const QUrl &url, QWidget *parent)
 	m_ui->listing->expandAll();
 
 	QHeaderView *header = m_ui->listing->header();
+	header->setSortIndicatorClearable(true);
 	header->setSectionResizeMode(
 		SessionListingModel::Version, QHeaderView::ResizeToContents);
 	header->setSectionResizeMode(
