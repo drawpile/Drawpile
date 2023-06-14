@@ -25,6 +25,7 @@ signals:
 public slots:
 	void setForceEraseMode(bool forceEraseMode);
 	void setStabilizerUseBrushSampleCount(bool useBrushSampleCount);
+	void setGlobalSmoothing(int smoothing);
 	void updateUiFromActiveBrush(const brushes::ActiveBrush &brush);
 
 private slots:
@@ -55,6 +56,7 @@ private:
 	void updateUiFromClassicBrush();
 	void updateUiFromMyPaintBrush();
 	void updateMyPaintSettingPage(int setting);
+	void updateStabilizerExplanationText();
 	void emitChange();
 
 	static void setComboBoxIndexByData(QComboBox *combo, int data);

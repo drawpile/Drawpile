@@ -59,6 +59,7 @@ public:
 public slots:
 	void selectBrushSlot(int i);
 	void selectEraserSlot(bool eraser);
+	void setGlobalSmoothing(int smoothing);
 	void toggleEraserMode() override;
 	void toggleRecolorMode() override;
 
@@ -81,6 +82,7 @@ private slots:
 	void updateUi();
 	void updateFromUi();
 	void updateFromUiWith(bool updateShared);
+	void updateStabilizationSettingVisibility();
 	void quickAdjustOn(QSpinBox *box, qreal adjustment);
 
 private:

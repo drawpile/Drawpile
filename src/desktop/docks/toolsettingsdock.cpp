@@ -199,6 +199,9 @@ ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
 				emit subpixelModeChanged(subpixel, square);
 			}
 		});
+	connect(
+		ctrl, &tools::ToolController::globalSmoothingChanged, bs,
+		&tools::BrushSettings::setGlobalSmoothing);
 
 	connect(colorPickerSettings(), &tools::ColorPickerSettings::colorSelected,
 			this, &ToolSettings::setForegroundColor);

@@ -30,7 +30,6 @@ class Tool;
 class ToolController final : public QObject
 {
 	Q_PROPERTY(QCursor activeToolCursor READ activeToolCursor() NOTIFY toolCursorChanged)
-	Q_PROPERTY(int smoothing READ smoothing WRITE setSmoothing NOTIFY smoothingChanged)
 	Q_PROPERTY(uint16_t activeLayer READ activeLayer WRITE setActiveLayer NOTIFY activeLayerChanged)
 	Q_PROPERTY(uint16_t activeAnnotation READ activeAnnotation WRITE setActiveAnnotation NOTIFY activeAnnotationChanged)
 	Q_PROPERTY(brushes::ActiveBrush activeBrush READ activeBrush WRITE setActiveBrush NOTIFY activeBrushChanged)
@@ -68,17 +67,23 @@ public:
 	void setStabilizerUseBrushSampleCount(bool stabilizerUseBrushSampleCount);
 	bool stabilizerUseBrushSampleCount() { return m_stabilizerUseBrushSampleCount; }
 
+	void setStabilizationMode(brushes::StabilizationMode stabilizationMode);
+	int stabilizationMode() { return m_stabilizationMode; }
+
 	void setStabilizerSampleCount(int stabilizerSampleCount);
 	int stabilizerSampleCount() { return m_stabilizerSampleCount; }
 
-	void setStabilizerFinishStrokes(bool stabilizerFinishStrokes);
-	bool stabilizerFinishStrokes() { return m_stabilizerFinishStrokes; }
+	void setSmoothing(int smoothing);
+	int smoothing() { return m_smoothing; }
+
+	void setFinishStrokes(bool finishStrokes);
+	bool finishStrokes() { return m_finishStrokes; }
 
 	void setModel(canvas::CanvasModel *model);
 	canvas::CanvasModel *model() const { return m_model; }
 
-	void setSmoothing(int smoothing);
-	int smoothing() const { return m_smoothing; }
+	void setGlobalSmoothing(int smoothing);
+	int globalSmoothing() const { return m_globalSmoothing; }
 
 	void setSelectInterpolation(int selectInterpolation);
 	int selectInterpolation() const { return m_selectInterpolation; }
@@ -155,7 +160,7 @@ signals:
 	void activeAnnotationChanged(uint16_t annotationId);
 	void activeBrushChanged(const brushes::ActiveBrush&);
 	void modelChanged(canvas::CanvasModel *model);
-	void smoothingChanged(int smoothing);
+	void globalSmoothingChanged(int smoothing);
 	void stabilizerUseBrushSampleCountChanged(bool useBrushSampleCount);
 
 	void colorUsed(const QColor &color);
@@ -172,6 +177,7 @@ private slots:
 
 private:
 	void registerTool(Tool *tool);
+	void updateSmoothing();
 
 	Tool *m_toolbox[Tool::_LASTTOOL];
 	net::Client *m_client;
@@ -184,11 +190,13 @@ private:
 	uint16_t m_activeAnnotation;
 	bool m_prevShift, m_prevAlt;
 
-	int m_smoothing;
+	int m_globalSmoothing;
 	StrokeSmoother m_smoother;
 
+	brushes::StabilizationMode m_stabilizationMode;
 	int m_stabilizerSampleCount;
-	bool m_stabilizerFinishStrokes;
+	int m_smoothing;
+	bool m_finishStrokes;
 	bool m_stabilizerUseBrushSampleCount;
 
 	int m_selectInterpolation;

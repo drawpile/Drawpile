@@ -57,7 +57,7 @@ Document::Document(libclient::settings::Settings &settings, QObject *parent)
 	// Initialize
 	m_client = new net::Client(this);
 	m_toolctrl = new tools::ToolController(m_client, this);
-	m_settings.bindSmoothing(m_toolctrl, &tools::ToolController::setSmoothing);
+	m_settings.bindSmoothing(m_toolctrl, &tools::ToolController::setGlobalSmoothing);
 	m_banlist = new net::BanlistModel(this);
 	m_announcementlist = new net::AnnouncementListModel(settings.listServers(), this);
 	m_serverLog = new QStringListModel(this);

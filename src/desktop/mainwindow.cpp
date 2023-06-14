@@ -887,7 +887,7 @@ void MainWindow::sendUserInfo(int userId)
 		{"tablet_mode", m_view->isTabletEnabled() ? "pressure" : "none"},
 		{"touch_mode", m_view->isTouchDrawEnabled() ? "draw"
 			: m_view->isTouchScrollEnabled() ? "scroll" : "none"},
-		{"smoothing", m_doc->toolCtrl()->smoothing()},
+		{"smoothing", m_doc->toolCtrl()->globalSmoothing()},
 		{"pressure_curve", m_view->pressureCurve().toString()},
 	};
 	net::Client *client = m_doc->client();
@@ -1444,8 +1444,11 @@ void MainWindow::showBrushSettingsDialog()
 			&dialogs::BrushSettingsDialog::updateUiFromActiveBrush);
 		connect(toolCtrl, &tools::ToolController::stabilizerUseBrushSampleCountChanged,
 			dlg, &dialogs::BrushSettingsDialog::setStabilizerUseBrushSampleCount);
+		connect(toolCtrl, &tools::ToolController::globalSmoothingChanged, dlg,
+			&dialogs::BrushSettingsDialog::setGlobalSmoothing);
 		dlg->updateUiFromActiveBrush(toolCtrl->activeBrush());
 		dlg->setStabilizerUseBrushSampleCount(toolCtrl->stabilizerUseBrushSampleCount());
+		dlg->setGlobalSmoothing(toolCtrl->globalSmoothing());
 	}
 
 	utils::showWindow(dlg);

@@ -421,16 +421,35 @@
       </widget>
      </item>
      <item row="9" column="0">
-      <widget class="KisSliderSpinBox" name="stabilizerBox">
-       <property name="prefix">
-        <string>Stabilizer: </string>
-       </property>
-       <property name="maximum">
-        <number>1000</number>
-       </property>
-       <property name="singleStep">
-        <number>1</number>
-       </property>
+      <widget class="QWidget" name="stabilizationWrapper">
+       <layout class="QHBoxLayout">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="KisSliderSpinBox" name="stabilizerBox">
+          <property name="prefix">
+           <string>Stabilizer: </string>
+          </property>
+          <property name="maximum">
+           <number>1000</number>
+          </property>
+          <property name="singleStep">
+           <number>1</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="KisSliderSpinBox" name="smoothingBox">
+          <property name="prefix">
+           <string>Smoothing: </string>
+          </property>
+          <property name="maximum">
+           <number>20</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </item>
      <item row="9" column="1">

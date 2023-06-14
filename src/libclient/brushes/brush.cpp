@@ -46,7 +46,9 @@ ClassicBrush::ClassicBrush()
 		false,
 		false,
 	}
+	, stabilizationMode(Stabilizer)
 	, stabilizerSampleCount(0)
+	, smoothing(0)
 {
 	updateCurve(m_sizeCurve, size.curve);
 	updateCurve(m_opacityCurve, opacity.curve);
@@ -127,7 +129,9 @@ QJsonObject ClassicBrush::toJson() const
 	o["blenderase"] = canvas::blendmode::svgName(erase_mode);
 	o["erase"] = erase;
 
+	o["stabilizationmode"] = stabilizationMode;
 	o["stabilizer"] = stabilizerSampleCount;
+	o["smoothing"] = smoothing;
 
 	// Note: color is intentionally omitted
 
@@ -190,7 +194,9 @@ ClassicBrush ClassicBrush::fromJson(const QJsonObject &json)
 		o["blenderase"].toString(), DP_BLEND_MODE_ERASE);
 	b.erase = o["erase"].toBool();
 
+	b.stabilizationMode = o["stabilizationmode"].toInt() == Smoothing ? Smoothing : Stabilizer;
 	b.stabilizerSampleCount = o["stabilizer"].toInt();
+	b.smoothing = o["smoothing"].toInt();
 
 	return b;
 }
@@ -213,7 +219,9 @@ void ClassicBrush::updateCurve(const KisCubicCurve &src, DP_ClassicBrushCurve &d
 MyPaintBrush::MyPaintBrush()
 	: m_brush{{0.0f, 0.0f, 0.0f, 1.0f}, false, false, true}
 	, m_settings{nullptr}
+	, m_stabilizationMode{Stabilizer}
 	, m_stabilizerSampleCount{0}
+	, m_smoothing{0}
 	, m_curves{}
 {
 }
@@ -226,7 +234,9 @@ MyPaintBrush::~MyPaintBrush()
 MyPaintBrush::MyPaintBrush(const MyPaintBrush &other)
 	: m_brush{other.m_brush}
 	, m_settings{nullptr}
+	, m_stabilizationMode{other.m_stabilizationMode}
 	, m_stabilizerSampleCount{other.m_stabilizerSampleCount}
+	, m_smoothing{other.m_smoothing}
 	, m_curves{other.m_curves}
 {
 	if(other.m_settings) {
@@ -238,7 +248,9 @@ MyPaintBrush::MyPaintBrush(const MyPaintBrush &other)
 MyPaintBrush::MyPaintBrush(MyPaintBrush &&other)
 	: m_brush{other.m_brush}
 	, m_settings{other.m_settings}
+	, m_stabilizationMode{other.m_stabilizationMode}
 	, m_stabilizerSampleCount{other.m_stabilizerSampleCount}
+	, m_smoothing{other.m_smoothing}
 	, m_curves{other.m_curves}
 {
 	other.m_settings = nullptr;
@@ -248,7 +260,9 @@ MyPaintBrush &MyPaintBrush::operator=(MyPaintBrush &&other)
 {
 	std::swap(m_brush, other.m_brush);
 	std::swap(m_settings, other.m_settings);
+	std::swap(m_stabilizationMode, other.m_stabilizationMode);
 	std::swap(m_stabilizerSampleCount, other.m_stabilizerSampleCount);
+	std::swap(m_smoothing, other.m_smoothing);
 	std::swap(m_curves, other.m_curves);
 	return *this;
 }
@@ -265,7 +279,9 @@ MyPaintBrush &MyPaintBrush::operator=(const MyPaintBrush &other)
 		delete m_settings;
 		m_settings = nullptr;
 	}
+	m_stabilizationMode = other.m_stabilizationMode;
 	m_stabilizerSampleCount = other.m_stabilizerSampleCount;
+	m_smoothing = other.m_smoothing;
 	m_curves = other.m_curves;
 	return *this;
 }
@@ -348,7 +364,9 @@ QJsonObject MyPaintBrush::toJson() const
 			{"lock_alpha", m_brush.lock_alpha},
 			{"erase", m_brush.erase},
 			{"indirect", !m_brush.incremental},
+			{"stabilizationmode", m_stabilizationMode},
 			{"stabilizer", m_stabilizerSampleCount},
+			{"smoothing", m_smoothing},
 			{"mapping", jsonMapping},
 		}},
 	};
@@ -381,7 +399,9 @@ MyPaintBrush MyPaintBrush::fromJson(const QJsonObject &json)
 			stabilizerSampleCount = 0;
 		}
 	}
+	b.m_stabilizationMode = o["stabilizationmode"].toInt() == Smoothing ? Smoothing : Stabilizer;
 	b.m_stabilizerSampleCount = stabilizerSampleCount;
+	b.m_smoothing = o["smoothing"].toInt();
 
 	return b;
 }
@@ -542,6 +562,20 @@ void ActiveBrush::setQColor(const QColor &c)
 	m_myPaint.setQColor(c);
 }
 
+StabilizationMode ActiveBrush::stabilizationMode() const
+{
+	return m_activeType == CLASSIC ? m_classic.stabilizationMode : m_myPaint.stabilizationMode();
+}
+
+void ActiveBrush::setStabilizationMode(StabilizationMode stabilizationMode)
+{
+	if(m_activeType == CLASSIC) {
+		m_classic.stabilizationMode = stabilizationMode;
+	} else {
+		m_myPaint.setStabilizationMode(stabilizationMode);
+	}
+}
+
 int ActiveBrush::stabilizerSampleCount() const
 {
 	return m_activeType == CLASSIC ? m_classic.stabilizerSampleCount : m_myPaint.stabilizerSampleCount();
@@ -556,6 +590,19 @@ void ActiveBrush::setStabilizerSampleCount(int stabilizerSampleCount)
 	}
 }
 
+int ActiveBrush::smoothing() const
+{
+	return m_activeType == CLASSIC ? m_classic.smoothing : m_myPaint.smoothing();
+}
+
+void ActiveBrush::setSmoothing(int smoothing)
+{
+	if(m_activeType == CLASSIC) {
+		m_classic.smoothing = smoothing;
+	} else {
+		m_myPaint.setSmoothing(smoothing);
+	}
+}
 
 QJsonObject ActiveBrush::toJson() const
 {

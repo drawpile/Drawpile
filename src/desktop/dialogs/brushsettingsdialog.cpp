@@ -45,7 +45,9 @@ struct BrushSettingsDialog::Private {
 	QCheckBox *colorPickBox;
 	QCheckBox *lockAlphaBox;
 	KisSliderSpinBox *spacingSpinner;
+	QComboBox *stabilizationModeCombo;
 	KisSliderSpinBox *stabilizerSpinner;
+	KisSliderSpinBox *smoothingSpinner;
 	QLabel *stabilizerExplanationLabel;
 	KisSliderSpinBox *classicSizeSpinner;
 	QCheckBox *classicSizePressureBox;
@@ -73,6 +75,8 @@ struct BrushSettingsDialog::Private {
 	int mypaintPageIndexes[MYPAINT_BRUSH_SETTINGS_COUNT];
 	DP_BrushShape lastShape;
 	brushes::ActiveBrush brush;
+	bool useBrushSampleCount;
+	int globalSmoothing;
 };
 
 BrushSettingsDialog::BrushSettingsDialog(QWidget *parent)
@@ -83,6 +87,7 @@ BrushSettingsDialog::BrushSettingsDialog(QWidget *parent)
 	resize(QSize{800, 600});
 	buildDialogUi();
 	d->lastShape = DP_BRUSH_SHAPE_COUNT;
+	d->useBrushSampleCount = true;
 }
 
 BrushSettingsDialog::~BrushSettingsDialog()
@@ -99,8 +104,19 @@ void BrushSettingsDialog::setForceEraseMode(bool forceEraseMode)
 void BrushSettingsDialog::setStabilizerUseBrushSampleCount(
 	bool useBrushSampleCount)
 {
+	d->useBrushSampleCount = useBrushSampleCount;
+	d->stabilizationModeCombo->setEnabled(useBrushSampleCount);
 	d->stabilizerSpinner->setEnabled(useBrushSampleCount);
-	d->stabilizerExplanationLabel->setHidden(useBrushSampleCount);
+	d->smoothingSpinner->setEnabled(useBrushSampleCount);
+	updateStabilizerExplanationText();
+}
+
+void BrushSettingsDialog::setGlobalSmoothing(int smoothing)
+{
+	QSignalBlocker blocker{d->smoothingSpinner};
+	d->smoothingSpinner->setValue(
+		d->smoothingSpinner->value() - d->globalSmoothing + smoothing);
+	d->globalSmoothing = smoothing;
 }
 
 void BrushSettingsDialog::updateUiFromActiveBrush(
@@ -142,6 +158,14 @@ void BrushSettingsDialog::updateUiFromActiveBrush(
 		d->categoryWidget->setCurrentRow(0);
 		d->stackedWidget->setCurrentIndex(d->generalPageIndex);
 	}
+
+	brushes::StabilizationMode stabilizationMode = brush.stabilizationMode();
+	setComboBoxIndexByData(d->stabilizationModeCombo, int(stabilizationMode));
+	d->stabilizerSpinner->setVisible(stabilizationMode == brushes::Stabilizer);
+	d->stabilizerSpinner->setValue(brush.stabilizerSampleCount());
+	d->smoothingSpinner->setVisible(stabilizationMode == brushes::Smoothing);
+	d->smoothingSpinner->setValue(d->globalSmoothing + brush.smoothing());
+	updateStabilizerExplanationText();
 }
 
 
@@ -327,6 +351,20 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 			emitChange();
 		});
 
+	d->stabilizationModeCombo = new QComboBox{widget};
+	layout->addRow(tr("Stabilization Mode:"), d->stabilizationModeCombo);
+	d->stabilizationModeCombo->addItem(
+		tr("Time-Based Stabilizer"), int(brushes::Stabilizer));
+	d->stabilizationModeCombo->addItem(
+		tr("Average Smoothing"), int(brushes::Smoothing));
+	connect(
+		d->stabilizationModeCombo,
+		QOverload<int>::of(&QComboBox::currentIndexChanged), [this](int index) {
+			d->brush.setStabilizationMode(brushes::StabilizationMode(
+				d->stabilizationModeCombo->itemData(index).toInt()));
+			emitChange();
+		});
+
 	d->stabilizerSpinner = new KisSliderSpinBox{widget};
 	layout->addRow(d->stabilizerSpinner);
 	d->stabilizerSpinner->setRange(0, 1000);
@@ -340,12 +378,22 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 			emitChange();
 		});
 
+	d->smoothingSpinner = new KisSliderSpinBox{widget};
+	layout->addRow(d->smoothingSpinner);
+	d->smoothingSpinner->setRange(0, 20);
+	d->smoothingSpinner->setPrefix(tr("Smoothing: "));
+	d->smoothingSpinner->setSingleStep(1);
+	connect(
+		d->smoothingSpinner, QOverload<int>::of(&QSpinBox::valueChanged),
+		[this](int value) {
+			d->brush.setSmoothing(value - d->globalSmoothing);
+			emitChange();
+		});
+
 	d->stabilizerExplanationLabel = new QLabel{widget};
 	layout->addRow(d->stabilizerExplanationLabel);
 	d->stabilizerExplanationLabel->setWordWrap(true);
 	d->stabilizerExplanationLabel->setTextFormat(Qt::RichText);
-	d->stabilizerExplanationLabel->setText(
-		tr("Synchronizing stabilizer settings with brushes disabled."));
 
 	return scroll;
 }
@@ -773,7 +821,6 @@ void BrushSettingsDialog::updateUiFromClassicBrush()
 	d->paintModeCombo->setDisabled(haveSmudge);
 
 	d->spacingSpinner->setValue(classic.spacing * 100.0 + 0.5);
-	d->stabilizerSpinner->setValue(classic.stabilizerSampleCount);
 	d->spacingSpinner->setVisible(true);
 
 	d->classicSizeSpinner->setValue(classic.size.max);
@@ -819,7 +866,6 @@ void BrushSettingsDialog::updateUiFromMyPaintBrush()
 	d->eraseModeBox->setChecked(brush.erase);
 	d->lockAlphaBox->setChecked(brush.lock_alpha);
 	d->lockAlphaBox->setVisible(true);
-	d->stabilizerSpinner->setValue(d->brush.myPaint().stabilizerSampleCount());
 
 	for(int setting = 0; setting < MYPAINT_BRUSH_SETTINGS_COUNT; ++setting) {
 		if(shouldIncludeMyPaintSetting(setting)) {
@@ -869,6 +915,35 @@ void BrushSettingsDialog::updateMyPaintSettingPage(int setting)
 	if(disableIndirectSetting || disableIndirectInputs) {
 		page.indirectLabel->setVisible(!incremental);
 	}
+}
+
+void BrushSettingsDialog::updateStabilizerExplanationText()
+{
+	QString text;
+	if(d->useBrushSampleCount) {
+		switch(d->brush.stabilizationMode()) {
+		case brushes::Stabilizer:
+			text = tr(
+				"Slows down the stroke to stabilize it over time. High values "
+				"give very smooth lines, but they will draw slowly. When you "
+				"stop moving, the line will catch up your cursor. Tablet "
+				"smoothing from the input preferences applies as well.");
+			break;
+		case brushes::Smoothing:
+			text = tr("Simply averages a number of inputs. Feels faster than "
+					  "the time-based stabilizer, but not as smooth and won't "
+					  "catch up to your cursor when you stop moving. Overrides "
+					  "tablet smoothing from the input preferences.");
+			break;
+		default:
+			text = tr("Unknown stabilization mode.");
+			break;
+		}
+	} else {
+		text = tr(
+			"Synchronizing stabilization settings with brushes is disabled.");
+	}
+	d->stabilizerExplanationLabel->setText(text);
 }
 
 void BrushSettingsDialog::emitChange()

@@ -28,6 +28,8 @@ namespace drawdance {
 
 namespace brushes {
 
+enum StabilizationMode { Stabilizer, Smoothing };
+
 //! A convenience wrapper for classic brush settings
 class ClassicBrush final : public DP_ClassicBrush
 {
@@ -54,7 +56,9 @@ public:
 
 	QPixmap presetThumbnail() const;
 
+	StabilizationMode stabilizationMode;
 	int stabilizerSampleCount;
+	int smoothing;
 
 private:
 	void updateCurve(const KisCubicCurve &src, DP_ClassicBrushCurve &dst);
@@ -98,10 +102,22 @@ public:
 	DP_MyPaintSettings &settings();
 	const DP_MyPaintSettings &constSettings() const;
 
+	StabilizationMode stabilizationMode() const { return m_stabilizationMode; }
+	void setStabilizationMode(StabilizationMode stabilizationMode)
+	{
+		m_stabilizationMode = stabilizationMode;
+	}
+
 	int stabilizerSampleCount() const { return m_stabilizerSampleCount; }
 	void setStabilizerSampleCount(int stabilizerSampleCount)
 	{
 		m_stabilizerSampleCount = stabilizerSampleCount;
+	}
+
+	int smoothing() const { return m_smoothing; }
+	void setSmoothing(int smoothing)
+	{
+		m_smoothing = smoothing;
 	}
 
 	MyPaintCurve getCurve(int setting, int input) const;
@@ -121,7 +137,9 @@ public:
 private:
 	DP_MyPaintBrush m_brush;
 	DP_MyPaintSettings *m_settings;
+	StabilizationMode m_stabilizationMode;
 	int m_stabilizerSampleCount;
+	int m_smoothing;
 	QHash<QPair<int, int>, MyPaintCurve> m_curves;
 
 	static const DP_MyPaintSettings &getDefaultSettings();
@@ -162,8 +180,14 @@ public:
 	QColor qColor() const;
 	void setQColor(const QColor &c);
 
+	StabilizationMode stabilizationMode() const;
+	void setStabilizationMode(StabilizationMode stabilizationMode);
+
 	int stabilizerSampleCount() const;
 	void setStabilizerSampleCount(int stabilizerSampleCount);
+
+	int smoothing() const;
+	void setSmoothing(int smoothing);
 
 	QJsonObject toJson() const;
 	static ActiveBrush fromJson(const QJsonObject &json);

@@ -13,10 +13,15 @@ public:
 	StrokeSmoother();
 
 	/**
+	 * If smoothing is enabled (smoothing > 0) or not.
+	 */
+	bool isActive() const;
+
+	/**
 	 * @brief Set smoothing strength
 	 *
-	 * The higher the value, the smoother the stroke will be.
-	 * Strength should be greater than zero.
+	 * The higher the value, the smoother the stroke will be. A strength of zero
+	 * or less disables the smoother.
 	 * @param strength
 	 */
 	void setSmoothing(int strength);
@@ -71,9 +76,9 @@ public:
 private:
 	canvas::Point at(int i) const;
 
-	canvas::PointVector _points;
-	int _pos;
-	int _count; ///< Number of actually sampled points in the buffer
+	canvas::PointVector m_points;
+	int m_pos;
+	int m_count; ///< Number of actually sampled points in the buffer
 };
 
 #endif // STROKESMOOTHER_H

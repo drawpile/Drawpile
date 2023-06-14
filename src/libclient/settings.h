@@ -41,6 +41,8 @@ inline constexpr int defaultSmoothing = 0;
 inline constexpr int defaultSmoothing = 3;
 #endif
 
+inline constexpr int maxSmoothing = 20;
+
 class Settings;
 
 struct SettingMeta final {

@@ -1,59 +1,64 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "libclient/tools/strokesmoother.h"
+#include "libclient/settings.h"
 
 StrokeSmoother::StrokeSmoother()
 {
 	reset();
 }
 
+bool StrokeSmoother::isActive() const
+{
+	return m_points.size() > 0;
+}
+
 void StrokeSmoother::setSmoothing(int strength)
 {
-	Q_ASSERT(strength>0);
-	_points.resize(strength);
+	m_points.resize(qBound(0, strength, libclient::settings::maxSmoothing));
 	reset();
 }
 
 void StrokeSmoother::addOffset(const QPointF &offset)
 {
-	for(int i=0;i<_points.size();++i)
-		_points[i] += offset;
+	for(int i=0;i<m_points.size();++i)
+		m_points[i] += offset;
 }
 
 void StrokeSmoother::addPoint(const canvas::Point &point)
 {
-	Q_ASSERT(_points.size()>0);
+	Q_ASSERT(m_points.size()>0);
 
-	if(_count == 0) {
+	if(m_count == 0) {
 		/* Pad the buffer with this point, so we blend away from it
 		 * gradually as we gain more points. We still only count this
 		 * as one point so we know how much real data we have to
 		 * drain if it was a very short stroke. */
-		_points.fill(point);
+		m_points.fill(point);
 	} else {
-		if(--_pos < 0)
-			_pos = _points.size()-1;
-		_points[_pos] = point;
+		if(--m_pos < 0)
+			m_pos = m_points.size()-1;
+		m_points[m_pos] = point;
 	}
 
-	if(_count < _points.size())
-		++_count;
+	if(m_count < m_points.size())
+		++m_count;
 }
 
 canvas::Point StrokeSmoother::at(int i) const
 {
-	return _points.at((_pos+i) % _points.size());
+	return m_points.at((m_pos+i) % m_points.size());
 }
 
 void StrokeSmoother::reset()
 {
-	_count=0;
-	_pos = 0;
+	m_count=0;
+	m_pos = 0;
 }
 
 bool StrokeSmoother::hasSmoothPoint() const
 {
-	return _count > 0;
+	return m_count > 0;
 }
 
 canvas::Point StrokeSmoother::smoothPoint() const
@@ -68,7 +73,7 @@ canvas::Point StrokeSmoother::smoothPoint() const
 	qreal ytilt = p.ytilt();
 	qreal rotation = p.rotation();
 	qreal timeMsec = p.timeMsec();
-	for(int i=1;i<_points.size();++i) {
+	for(int i=1;i<m_points.size();++i) {
 		const auto pi = at(i);
 		p.rx() += pi.x();
 		p.ry() += pi.y();
@@ -79,7 +84,7 @@ canvas::Point StrokeSmoother::smoothPoint() const
 		timeMsec += pi.timeMsec();
 	}
 
-	const qreal c = _points.size();
+	const qreal c = m_points.size();
 	p.rx() /= c;
 	p.ry() /= c;
 	p.setPressure(pressure / c);
@@ -93,9 +98,9 @@ canvas::Point StrokeSmoother::smoothPoint() const
 
 void StrokeSmoother::removePoint()
 {
-	Q_ASSERT(!_points.isEmpty());
+	Q_ASSERT(!m_points.isEmpty());
 	/* Pad the buffer with the final point, overwriting the oldest first,
 	 * for symmetry with starting. For very short strokes this should
 	 * really set all points between --_count and _points.size()-1. */
-	_points[(_pos + --_count) % _points.size()] = latestPoint();
+	m_points[(m_pos + --m_count) % m_points.size()] = latestPoint();
 }

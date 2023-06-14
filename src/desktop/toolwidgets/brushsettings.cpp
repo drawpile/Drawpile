@@ -16,6 +16,7 @@ extern "C" {
 #include "ui_brushdock.h"
 
 #include <dpengine/libmypaint/mypaint-brush-settings.h>
+#include <QActionGroup>
 #include <QIcon>
 #include <QKeyEvent>
 #include <QPainter>
@@ -40,6 +41,9 @@ struct BrushSettings::Private {
 	widgets::GroupedToolButton *brushSlotButton[BRUSH_COUNT];
 	QWidget *brushSlotWidget = nullptr;
 
+	QActionGroup *stabilizationModeGroup;
+	QAction *stabilizerAction;
+	QAction *smoothingAction;
 	QAction *finishStrokesAction;
 	QAction *useBrushSampleCountAction;
 
@@ -50,6 +54,7 @@ struct BrushSettings::Private {
 
 	bool finishStrokes = true;
 	bool useBrushSampleCount = true;
+	int globalSmoothing;
 
 	bool shareBrushSlotColor = false;
 	bool updateInProgress = false;
@@ -66,7 +71,17 @@ struct BrushSettings::Private {
 		return currentBrush().activeType() == brushes::ActiveBrush::MYPAINT;
 	}
 
+	inline brushes::StabilizationMode stabilizationMode()
+	{
+		if(smoothingAction->isChecked()) {
+			return brushes::Smoothing;
+		} else {
+			return brushes::Stabilizer;
+		}
+	}
+
 	Private(BrushSettings *b)
+		: globalSmoothing{b->controller()->globalSmoothing()}
 	{
 		blendModes = new QStandardItemModel(0, 1, b);
 		for(const canvas::blendmode::Named &m : canvas::blendmode::brushModeNames()) {
@@ -147,6 +162,20 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	d->ui.stabilizerBox->setExponentRatio(3.0);
 
 	QMenu *stabilizerMenu = new QMenu{d->ui.stabilizerButton};
+	d->stabilizationModeGroup = new QActionGroup{stabilizerMenu};
+	d->stabilizerAction = stabilizerMenu->addAction(tr("Time-Based Stabilizer"));
+	d->smoothingAction = stabilizerMenu->addAction(tr("Average Smoothing"));
+	d->stabilizerAction->setStatusTip(tr(
+		"Slows down the stroke and stabilizes it over time. Can produce very "
+		"smooth results, but may feel sluggish."));
+	d->smoothingAction->setStatusTip(tr(
+		"Simply averages inputs to get a smoother result. Faster than the "
+		"time-based stabilizer, but not as smooth."));
+	d->stabilizerAction->setCheckable(true);
+	d->smoothingAction->setCheckable(true);
+	d->stabilizationModeGroup->addAction(d->stabilizerAction);
+	d->stabilizationModeGroup->addAction(d->smoothingAction);
+	stabilizerMenu->addSeparator();
 	d->finishStrokesAction = stabilizerMenu->addAction(tr("Finish Strokes"));
 	d->finishStrokesAction->setStatusTip(tr(
 		"Draws stabilized strokes to the end, rather than cutting them off."));
@@ -192,10 +221,16 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	connect(d->ui.brushspacingBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &BrushSettings::updateFromUi);
 	connect(d->ui.gainBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &BrushSettings::updateFromUi);
 	connect(d->ui.stabilizerBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &BrushSettings::updateFromUi);
+	connect(d->ui.smoothingBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &BrushSettings::updateFromUi);
 
 	connect(d->ui.modeIncremental, &QToolButton::clicked, this, &BrushSettings::updateFromUi);
 	connect(d->ui.modeColorpick, &QToolButton::clicked, this, &BrushSettings::updateFromUi);
 	connect(d->ui.modeLockAlpha, &QToolButton::clicked, this, &BrushSettings::updateFromUi);
+
+	connect(d->stabilizerAction, &QAction::triggered, this, &BrushSettings::updateFromUi);
+	connect(d->smoothingAction, &QAction::triggered, this, &BrushSettings::updateFromUi);
+	connect(d->stabilizerAction, &QAction::triggered, this, &BrushSettings::updateStabilizationSettingVisibility);
+	connect(d->smoothingAction, &QAction::triggered, this, &BrushSettings::updateStabilizationSettingVisibility);
 
 	connect(d->finishStrokesAction, &QAction::triggered, this, &BrushSettings::updateFromUi);
 	connect(d->useBrushSampleCountAction, &QAction::triggered, this, &BrushSettings::updateFromUi);
@@ -369,6 +404,14 @@ void BrushSettings::selectEraserSlot(bool eraser)
 	}
 }
 
+void BrushSettings::setGlobalSmoothing(int smoothing)
+{
+	QSignalBlocker blocker{d->ui.smoothingBox};
+	d->ui.smoothingBox->setValue(
+		d->ui.smoothingBox->value() - d->globalSmoothing + smoothing);
+	d->globalSmoothing = smoothing;
+}
+
 bool BrushSettings::isCurrentEraserSlot() const
 {
 	return d->current == ERASER_SLOT;
@@ -503,26 +546,29 @@ void BrushSettings::updateUi()
 			MYPAINT_BRUSH_SETTING_OPAQUE);
 		setSliderFromMyPaintSetting(d->ui.hardnessBox, myPaintSettings,
 			MYPAINT_BRUSH_SETTING_HARDNESS);
-		if(d->useBrushSampleCount) {
-			d->ui.stabilizerBox->setValue(myPaint.stabilizerSampleCount());
-		}
 		d->ui.modeIncremental->setChecked(myPaint.constBrush().incremental);
 		d->ui.modeIncremental->setEnabled(true);
 	} else {
 		d->ui.opacityBox->setValue(qRound(classic.opacity.max * 100.0));
 		d->ui.hardnessBox->setValue(qRound(classic.hardness.max * 100.0));
-		if(d->useBrushSampleCount) {
-			d->ui.stabilizerBox->setValue(classic.stabilizerSampleCount);
-		}
 		d->ui.modeIncremental->setChecked(classic.incremental);
 		// Smudging only works right in incremental mode
 		d->ui.modeIncremental->setEnabled(classic.smudge.max == 0.0);
+	}
+
+	if(d->useBrushSampleCount) {
+		brushes::StabilizationMode stabilizationMode = brush.stabilizationMode();
+		d->stabilizerAction->setChecked(stabilizationMode == brushes::Stabilizer);
+		d->smoothingAction->setChecked(stabilizationMode == brushes::Smoothing);
+		d->ui.stabilizerBox->setValue(brush.stabilizerSampleCount());
+		d->ui.smoothingBox->setValue(brush.smoothing() + d->globalSmoothing);
 	}
 
 	// Communicate the current size of the brush cursor to the outside. These
 	// functions check for their applicability themselves, so we just call both.
 	changeSizeSetting(d->ui.brushsizeBox->value());
 	changeRadiusLogarithmicSetting(d->ui.radiusLogarithmicBox->value());
+	updateStabilizationSettingVisibility();
 
 	d->updateInProgress = false;
 	d->ui.preview->setBrush(d->currentBrush());
@@ -592,9 +638,6 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 				MYPAINT_BRUSH_SETTING_OPAQUE);
 			setMyPaintSettingFromSlider(d->ui.hardnessBox, myPaintSettings,
 				MYPAINT_BRUSH_SETTING_HARDNESS);
-			if(d->useBrushSampleCount) {
-				myPaint.setStabilizerSampleCount(d->ui.stabilizerBox->value());
-			}
 			myPaint.brush().incremental = d->ui.modeIncremental->isChecked();
 			d->ui.modeIncremental->setEnabled(true);
 		} else {
@@ -604,17 +647,27 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 			if(classic.shape == DP_BRUSH_SHAPE_CLASSIC_SOFT_ROUND) {
 				classic.hardness_pressure = d->ui.pressureHardness->isChecked();
 			}
-			if(d->useBrushSampleCount) {
-				classic.stabilizerSampleCount = d->ui.stabilizerBox->value();
-			}
 			classic.incremental = d->ui.modeIncremental->isChecked();
 			d->ui.modeIncremental->setEnabled(classic.smudge.max == 0.0);
 		}
 	}
 
+	if(d->useBrushSampleCount) {
+		brush.setStabilizationMode(d->stabilizationMode());
+		brush.setStabilizerSampleCount(d->ui.stabilizerBox->value());
+		brush.setSmoothing(d->ui.smoothingBox->value() - d->globalSmoothing);
+	}
+
 	d->ui.preview->setBrush(brush);
 
 	pushSettings();
+}
+
+void BrushSettings::updateStabilizationSettingVisibility()
+{
+	brushes::StabilizationMode stabilizationMode = d->stabilizationMode();
+	d->ui.stabilizerBox->setVisible(stabilizationMode == brushes::Stabilizer);
+	d->ui.smoothingBox->setVisible(stabilizationMode == brushes::Smoothing);
 }
 
 void BrushSettings::adjustSettingVisibilities(bool softmode, bool mypaintmode)
@@ -637,7 +690,7 @@ void BrushSettings::adjustSettingVisibilities(bool softmode, bool mypaintmode)
 		{d->ui.colorpickupBox, !mypaintmode},
 		{d->ui.brushspacingBox, !mypaintmode},
 		{d->ui.gainBox, mypaintmode},
-		{d->ui.stabilizerBox, true},
+		{d->ui.stabilizationWrapper, true},
 		{d->ui.stabilizerButton, true},
 	};
 	// First hide them all so that the docker doesn't end up bigger temporarily
@@ -662,8 +715,10 @@ void BrushSettings::pushSettings()
 {
 	tools::ToolController *ctrl = controller();
 	ctrl->setActiveBrush(d->ui.preview->brush());
-	ctrl->setStabilizerFinishStrokes(d->finishStrokes);
+	ctrl->setFinishStrokes(d->finishStrokes);
+	ctrl->setStabilizationMode(d->stabilizationMode());
 	ctrl->setStabilizerSampleCount(d->ui.stabilizerBox->value());
+	ctrl->setSmoothing(d->ui.smoothingBox->value() - d->globalSmoothing);
 	ctrl->setStabilizerUseBrushSampleCount(d->useBrushSampleCount);
 }
 

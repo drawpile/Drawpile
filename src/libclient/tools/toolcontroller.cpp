@@ -28,9 +28,11 @@ ToolController::ToolController(net::Client *client, QObject *parent)
 	, m_activeTool(nullptr)
 	, m_prevShift(false)
 	, m_prevAlt(false)
-	, m_smoothing(0)
+	, m_globalSmoothing(0)
+	, m_stabilizationMode(brushes::Stabilizer)
 	, m_stabilizerSampleCount(0)
-	, m_stabilizerFinishStrokes(true)
+	, m_smoothing(0)
+	, m_finishStrokes(true)
 	, m_stabilizerUseBrushSampleCount(true)
 	, m_selectInterpolation{DP_MSG_TRANSFORM_REGION_MODE_BILINEAR}
 	, m_threadPool{this}
@@ -161,14 +163,26 @@ void ToolController::setActiveBrush(const brushes::ActiveBrush &b)
 	emit activeBrushChanged(b);
 }
 
+void ToolController::setStabilizationMode(brushes::StabilizationMode stabilizationMode)
+{
+	m_stabilizationMode = stabilizationMode;
+	updateSmoothing();
+}
+
 void ToolController::setStabilizerSampleCount(int stabilizerSampleCount)
 {
 	m_stabilizerSampleCount = stabilizerSampleCount;
 }
 
-void ToolController::setStabilizerFinishStrokes(bool stabilizerFinishStrokes)
+void ToolController::setSmoothing(int smoothing)
 {
-	m_stabilizerFinishStrokes = stabilizerFinishStrokes;
+	m_smoothing = smoothing;
+	updateSmoothing();
+}
+
+void ToolController::setFinishStrokes(bool finishStrokes)
+{
+	m_finishStrokes = finishStrokes;
 }
 
 void ToolController::setStabilizerUseBrushSampleCount(bool stabilizerUseBrushSampleCount)
@@ -234,14 +248,22 @@ void ToolController::updateSelectionPreview()
 	}
 }
 
-void ToolController::setSmoothing(int smoothing)
+void ToolController::setGlobalSmoothing(int smoothing)
 {
-	if(m_smoothing != smoothing) {
-		m_smoothing = smoothing;
-		if(smoothing > 0)
-			m_smoother.setSmoothing(smoothing);
-		emit smoothingChanged(smoothing);
+	if(m_globalSmoothing != smoothing) {
+		m_globalSmoothing = smoothing;
+		updateSmoothing();
+		emit globalSmoothingChanged(smoothing);
 	}
+}
+
+void ToolController::updateSmoothing()
+{
+	int strength = m_globalSmoothing;
+	if(m_stabilizationMode == brushes::Smoothing) {
+		strength += m_smoothing;
+	}
+	m_smoother.setSmoothing(strength);
 }
 
 void ToolController::setSelectInterpolation(int selectInterpolation)
@@ -284,7 +306,7 @@ void ToolController::continueDrawing(
 	}
 
 	canvas::Point cp = canvas::Point(timeMsec, point, pressure, xtilt, ytilt, rotation);
-	if(m_smoothing > 0 && m_activeTool->allowSmoothing()) {
+	if(m_smoother.isActive() && m_activeTool->allowSmoothing()) {
 		m_smoother.addPoint(cp);
 
 		if(m_smoother.hasSmoothPoint()) {
@@ -318,9 +340,14 @@ void ToolController::endDrawing()
 	}
 
 	// Drain any remaining points from the smoothing buffer
-	if(m_smoothing > 0 && m_activeTool->allowSmoothing()) {
-		if(m_smoother.hasSmoothPoint())
+	bool shouldDrain = m_smoother.isActive() &&
+					   m_activeTool->allowSmoothing() &&
+					   (m_stabilizationMode != brushes::Smoothing ||
+						m_finishStrokes);
+	if(shouldDrain) {
+		if(m_smoother.hasSmoothPoint()) {
 			m_smoother.removePoint();
+		}
 		while(m_smoother.hasSmoothPoint()) {
 			m_activeTool->motion(
 				m_smoother.smoothPoint(), m_prevShift, m_prevAlt);
@@ -398,11 +425,14 @@ void ToolController::offsetActiveTool(int xOffset, int yOffset)
 void ToolController::setBrushEngineBrush(drawdance::BrushEngine &be)
 {
 	const brushes::ActiveBrush &brush = activeBrush();
-	DP_StrokeParams stroke = {
-		activeLayer(),
-		m_stabilizerUseBrushSampleCount ? brush.stabilizerSampleCount() : m_stabilizerSampleCount,
-		m_stabilizerFinishStrokes,
-	};
+	DP_StrokeParams stroke = {activeLayer(), 0, m_finishStrokes};
+	if(m_stabilizerUseBrushSampleCount) {
+		if(brush.stabilizationMode() == brushes::Stabilizer) {
+			stroke.stabilizer_sample_count = brush.stabilizerSampleCount();
+		}
+	} else if(m_stabilizationMode == brushes::Stabilizer) {
+		stroke.stabilizer_sample_count = m_stabilizerSampleCount;
+	}
 	brush.setInBrushEngine(be, stroke);
 }
 
