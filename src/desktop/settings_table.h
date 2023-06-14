@@ -93,10 +93,10 @@ SETTING_GETSET(tabletDriver       , TabletDriver              , "settings/input/
 	, &tabletDriver::get, &tabletDriver::set)
 SETTING(tabletEraser              , TabletEraser              , "settings/input/tableteraser"           , true)
 SETTING(tabletEvents              , TabletEvents              , "settings/input/tabletevents"           , true)
-SETTING_GETSET_V(V1, themePalette , ThemePalette              , "settings/theme/palette"                , THEME_PALETTE_DEFAULT
-	, &themePalette::get, &themePalette::set)
-SETTING_FULL(V0, themeStyle       , ThemeStyle                , "settings/theme/style"                  , THEME_STYLE_DEFAULT
-	, &themeStyle::get, &any::set, &themeStyle::notify)
+SETTING_GETSET_V(V2, themePalette , ThemePalette              , "settings/theme/palette"                , THEME_PALETTE_DEFAULT
+	, &any::get	      , &any::set)
+SETTING_FULL(V2, themeStyle       , ThemeStyle                , "settings/theme/style"                  , THEME_STYLE_DEFAULT
+	, &any::get       , &any::set, &themeStyle::notify)
 SETTING(toolToggle                , ToolToggle                , "settings/tooltoggle"                   , true)
 SETTING(toolset                   , Toolset                   , "tools/toolset"                         , (QMap<QString, QVariantHash>()))
 SETTING(twoFingerRotate           , TwoFingerRotate           , "settings/input/touchtwist"             , true)

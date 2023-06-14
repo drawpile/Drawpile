@@ -47,7 +47,7 @@ struct SettingMeta final {
 	enum class Version : int {
 		V0 = 0,
 		V1,
-		Latest = V1
+		V2,
 	};
 
 	Version version;
