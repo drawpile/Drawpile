@@ -245,7 +245,6 @@ jobs:
           -DDIST_BUILD=${{ matrix.packager && 'on' }}
           -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=${{
             matrix.packager
-            && startsWith(github.ref, 'refs/tags/')
             && 'on'
           }}
           ${{ matrix.build_flags }}
@@ -318,9 +317,7 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     if: >
-      success() && (
-          github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
-          || startsWith(github.ref, 'refs/tags/'))
+      success()
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v3
@@ -334,29 +331,16 @@ jobs:
           path: checkout
 
       - name: Collect release notes
-        if: startsWith(github.ref, 'refs/tags/')
-        run: awk -v RS='' '/^[[:digit:]]{4}-[[:digit:]]{2}-[[:digit:]]{2} Version ${{ github.ref_name }}/,/^[[:digit:]]/' checkout/ChangeLog | tail '+2' > release-description
-
-      - name: Write continuous release description
-        if: "!startsWith(github.ref, 'refs/tags/')"
-        env:
-          RELEASE_DESCRIPTION: >
-            This release is an automatically generated snapshot of the current
-            state of development. It is continuously updated with
-            work-in-progress changes that may be broken, incomplete, or
-            incompatible with other versions of Drawpile. For downloads, take a
-            look at the Assets below.
-        run:
-          echo "$RELEASE_DESCRIPTION" > release-description
+        run: awk -v RS='' '/^[[:digit:]]{4}-[[:digit:]]{2}-[[:digit:]]{2} Version 2.2.0-beta.4/,/^[[:digit:]]/' checkout/ChangeLog | tail '+2' > release-description
 
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TARGET_COMMIT: ${{ github.sha }}
           RELEASE_DESCRIPTION_FILE: release-description
-          RELEASE_NAME: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'continuous' }}
-          CLOBBER_EXISTING: ${{ !startsWith(github.ref, 'refs/tags/') }}
-          PRERELEASE: ${{ !startsWith(github.ref, 'refs/tags/') || contains(github.ref, '-') }}
+          RELEASE_NAME: 2.2.0-beta.4
+          CLOBBER_EXISTING: 'false'
+          PRERELEASE: 'true'
         run: |
           checkout/pkg/make-github-release.sh \
             'Drawpile-Android-Qt5.15.8;Drawpile-*.apk;Android APK' \
