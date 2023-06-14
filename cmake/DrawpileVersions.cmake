@@ -9,7 +9,7 @@ set(DRAWPILE_WEBADMIN_DEFAULT_PORT 27780)
 set(semver_regexp "([0-9]+\\.[0-9]+\\.[0-9]+)((-[A-Za-z0-9.-]*)?(\\+[A-Za-z0-9.-]*)?)")
 
 set(PROJECT_VERSION "2.2.0")
-set(PROJECT_VERSION_LABEL "-beta.4-dirty")
+set(PROJECT_VERSION_LABEL "-beta.4")
 
 set(dp_proto_regex "^[ \t]*version:[ \t]*\"?dp:([0-9]+)\\.([0-9]+)\\.([0-9]+)\"?$")
 file(STRINGS extern/drawdance/generators/protogen/protocol.yaml dp_proto_version LIMIT_COUNT 1 REGEX ${dp_proto_regex})
