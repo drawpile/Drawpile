@@ -21,7 +21,7 @@ namespace tools {
 class SelectionTool : public Tool {
 public:
 	SelectionTool(ToolController &owner, Type type, QCursor cursor)
-		: Tool(owner, type, cursor, false, false, false)
+		: Tool(owner, type, cursor, true, false, false)
 		, m_allowTransform{true}
 	{}
 
