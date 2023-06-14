@@ -112,7 +112,8 @@ JoinDialog::JoinDialog(const QUrl &url, QWidget *parent)
 		SessionListingModel::Owner, QHeaderView::ResizeToContents);
 	header->setSectionResizeMode(
 		SessionListingModel::Uptime, QHeaderView::ResizeToContents);
-
+	// Don't sort by default. Otherwise it sorts by the first available column.
+	header->setSortIndicator(-1, Qt::AscendingOrder);
 #if QT_VERSION >= QT_VERSION_CHECK(6, 1, 0)
 	header->setSortIndicatorClearable(true);
 #endif
