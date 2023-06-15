@@ -666,6 +666,8 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 void BrushSettings::updateStabilizationSettingVisibility()
 {
 	brushes::StabilizationMode stabilizationMode = d->stabilizationMode();
+	d->ui.stabilizerBox->setVisible(false);
+	d->ui.smoothingBox->setVisible(false);
 	d->ui.stabilizerBox->setVisible(stabilizationMode == brushes::Stabilizer);
 	d->ui.smoothingBox->setVisible(stabilizationMode == brushes::Smoothing);
 }
