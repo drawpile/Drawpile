@@ -948,7 +948,11 @@ void Document::clearArea()
 		if(sel && (sel->isMovedFromCanvas() || !sel->hasPasteImage())) {
 			fillArea(Qt::white, DP_BLEND_MODE_ERASE, sel->isMovedFromCanvas());
 		}
-		m_canvas->setSelection(nullptr);
+		// Remove selection if it's floating, but keep it for further deletions
+		// if it's just sitting on the canvas without any movement.
+		if(sel && (sel->isMovedFromCanvas() || sel->hasPasteImage())) {
+			m_canvas->setSelection(nullptr);
+		}
 	}
 }
 
