@@ -67,7 +67,7 @@ class Settings : public QObject {
 	Q_OBJECT
 public:
 	Settings(QObject *parent = nullptr);
-	~Settings();
+	~Settings() override;
 
 	void reset(const QString &path = QString());
 
