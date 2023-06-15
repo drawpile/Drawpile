@@ -4,6 +4,7 @@
 #include "desktop/settings.h"
 #include "desktop/utils/sanerformlayout.h"
 #include "desktop/widgets/curvewidget.h"
+#include "desktop/widgets/kis_slider_spin_box.h"
 #include "desktop/widgets/tablettest.h"
 
 #include <QCheckBox>
@@ -55,9 +56,15 @@ void Input::initTablet(desktop::settings::Settings &settings, utils::SanerFormLa
 	settings.bindTabletEraser(eraser);
 	form->addRow(nullptr, eraser);
 
-	form->addSpacer();
+	auto *smoothing = new KisSliderSpinBox;
+	smoothing->setMaximum(libclient::settings::maxSmoothing);
+	smoothing->setPrefix(tr("Smoothing: "));
+	settings.bindSmoothing(smoothing);
+	form->addRow(nullptr, smoothing);
 
 #ifdef Q_OS_WIN
+	form->addSpacer();
+
 	auto *driver = new QComboBox;
 	driver->addItem(
 		tr("KisTablet Windows Ink"),
@@ -83,16 +90,7 @@ void Input::initTablet(desktop::settings::Settings &settings, utils::SanerFormLa
 
 	settings.bindTabletDriver(driver, Qt::UserRole);
 	form->addRow("Driver:", driver);
-
-	form->addSpacer();
 #endif
-
-	auto *smoothing = new QSlider(Qt::Horizontal);
-	smoothing->setMaximum(10);
-	smoothing->setTickPosition(QSlider::TicksBelow);
-	smoothing->setTickInterval(1);
-	settings.bindSmoothing(smoothing);
-	form->addRow(tr("Smoothing:"), utils::labelEdges(smoothing, tr("Less"), tr("More")));
 
 	form->addSpacer(QSizePolicy::MinimumExpanding);
 
