@@ -460,6 +460,10 @@ MainWindow::~MainWindow()
 	MacMenu::instance()->removeWindow(this);
 #endif
 
+	// Get rid of the selection here, otherwise it calls back into an
+	// already-destroyed MainWindow and causes a crash.
+	m_doc->cancelSelection();
+
 	// Clear this out first so there will be no weird signals emitted
 	// while the document is being torn down.
 	m_view->setScene(nullptr);
