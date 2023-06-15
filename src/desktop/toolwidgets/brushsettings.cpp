@@ -724,7 +724,10 @@ void BrushSettings::pushSettings()
 
 namespace toolprop {
 	static const ToolProperties::RangedValue<int>
-		activeSlot = {QStringLiteral("active"), 0, 0, BRUSH_COUNT-1};
+		activeSlot = {QStringLiteral("active"), 0, 0, BRUSH_COUNT-1},
+		stabilizationMode {QString("stabilizationmode"), 0, 0, int(brushes::LastStabilizationMode)},
+		stabilizer = {QStringLiteral("stabilizer"), 0, 0, 1000},
+		smoothing = {QStringLiteral("smoothing"), 0, 0, libclient::settings::maxSmoothing};
 	static const ToolProperties::Value<bool>
 		finishStrokes = {QStringLiteral("finishstrokes"), true},
 		useBrushSampleCount = {QStringLiteral("usebrushsamplecount"), true};
@@ -738,6 +741,9 @@ ToolProperties BrushSettings::saveToolSettings()
 	cfg.setValue(toolprop::activeSlot, d->current);
 	cfg.setValue(toolprop::finishStrokes, d->finishStrokes);
 	cfg.setValue(toolprop::useBrushSampleCount, d->useBrushSampleCount);
+	cfg.setValue(toolprop::stabilizationMode, int(d->stabilizationMode()));
+	cfg.setValue(toolprop::stabilizer, d->ui.stabilizerBox->value());
+	cfg.setValue(toolprop::smoothing, d->ui.smoothingBox->value() - d->globalSmoothing);
 
 	for(int i=0;i<BRUSH_COUNT;++i) {
 		const brushes::ActiveBrush &brush = d->brushSlots[i];
@@ -789,6 +795,15 @@ void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 	d->previousNonEraser = d->current != ERASER_SLOT ? d->current : 0;
 	d->finishStrokes = cfg.value(toolprop::finishStrokes);
 	d->useBrushSampleCount = cfg.value(toolprop::useBrushSampleCount);
+	if(!d->useBrushSampleCount) {
+		if(cfg.value(toolprop::stabilizationMode) == brushes::Smoothing) {
+			d->smoothingAction->setChecked(true);
+		} else {
+			d->stabilizerAction->setChecked(true);
+		}
+		d->ui.stabilizerBox->setValue(cfg.value(toolprop::stabilizer));
+		d->ui.smoothingBox->setValue(cfg.value(toolprop::smoothing) + d->globalSmoothing);
+	}
 }
 
 void BrushSettings::setActiveTool(const tools::Tool::Type tool)

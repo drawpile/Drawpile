@@ -28,7 +28,11 @@ namespace drawdance {
 
 namespace brushes {
 
-enum StabilizationMode { Stabilizer, Smoothing };
+enum StabilizationMode {
+	Stabilizer,
+	Smoothing,
+	LastStabilizationMode = Smoothing,
+};
 
 //! A convenience wrapper for classic brush settings
 class ClassicBrush final : public DP_ClassicBrush
