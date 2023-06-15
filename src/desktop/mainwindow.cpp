@@ -452,6 +452,8 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 #ifdef SINGLE_MAIN_WINDOW
 	dpApp().deleteAllMainWindowsExcept(this);
 #endif
+
+	dpApp().settings().trySubmit();
 }
 
 MainWindow::~MainWindow()
@@ -473,6 +475,8 @@ MainWindow::~MainWindow()
 	for(auto *child : findChildren<QDialog *>(QString(), Qt::FindDirectChildrenOnly)) {
 		delete child;
 	}
+
+	dpApp().settings().trySubmit();
 }
 
 void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
@@ -1027,10 +1031,20 @@ bool MainWindow::event(QEvent *event)
 	case QEvent::WindowStateChange:
 		m_saveWindowDebounce.start(DEBOUNCE_MS);
 		break;
-	default: {}
+	case QEvent::ActivationChange:
+		if(m_saveSplitterDebounce.isActive()) {
+			saveSplitterState();
+		}
+		if(m_saveWindowDebounce.isActive()) {
+			saveWindowState();
+		}
+		dpApp().settings().submit();
+		break;
+	default:
+		break;
 	}
 
-		return QMainWindow::event(event);
+	return QMainWindow::event(event);
 }
 
 /**

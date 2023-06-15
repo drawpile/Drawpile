@@ -67,13 +67,11 @@ class Settings : public QObject {
 	Q_OBJECT
 public:
 	Settings(QObject *parent = nullptr);
+	~Settings();
 
 	void reset(const QString &path = QString());
 
 	QString path() const { return m_settings.fileName(); }
-
-	bool autoCommit() const { return m_autoCommit; }
-	void setAutoCommit(bool autoCommit) { m_autoCommit = autoCommit; }
 
 #ifdef Q_OS_WIN
 	void migrateFromNativeFormat(bool force);
@@ -83,9 +81,9 @@ public:
 #	include "libclient/settings_table.h"
 #	undef DP_SETTINGS_HEADER
 
-public slots:
 	void revert();
 	bool submit();
+	void trySubmit();
 
 protected:
 	QVariant get(const SettingMeta &setting) const;
@@ -212,7 +210,6 @@ protected:
 		}
 	}
 
-	bool m_autoCommit = true;
 	mutable QSettings m_settings; // Annoying group interface requires mutable.
 	QHash<const SettingMeta *, QVariant> m_pending;
 };

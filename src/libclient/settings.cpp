@@ -102,6 +102,14 @@ Settings::Settings(QObject *parent)
 	reset();
 }
 
+Settings::~Settings()
+{
+	if(!m_pending.isEmpty()) {
+		qWarning("Programming error: pending settings on destruction");
+		trySubmit();
+	}
+}
+
 static void cacheGroups(QSettings &settings, QSet<QString> &groupKeys, const QString &prefix = QString())
 {
 	for (const auto &group : settings.childGroups()) {
@@ -171,15 +179,25 @@ void Settings::revert()
 
 bool Settings::submit()
 {
-	for (auto entry = m_pending.cbegin(); entry != m_pending.cend(); ++entry) {
-		const auto setting = entry.key();
-		const auto &newValue = entry.value();
-		(setting->set)(*setting, m_settings, newValue);
+	if(m_pending.isEmpty()) {
+		return true;
+	} else {
+		for (auto entry = m_pending.cbegin(); entry != m_pending.cend(); ++entry) {
+			const auto setting = entry.key();
+			const auto &newValue = entry.value();
+			(setting->set)(*setting, m_settings, newValue);
+		}
+		m_settings.sync();
+		m_pending.clear();
+		return m_settings.status() == QSettings::NoError;
 	}
+}
 
-	m_settings.sync();
-	m_pending.clear();
-	return m_settings.status() == QSettings::NoError;
+void Settings::trySubmit()
+{
+	if(!submit()) {
+		qWarning("Error submitting settings");
+	}
 }
 
 QVariant Settings::get(const SettingMeta &setting) const
@@ -196,11 +214,6 @@ bool Settings::set(const SettingMeta &setting, QVariant value)
 	if (!m_pending.contains(&setting) || m_pending[&setting] != value) {
 		m_pending[&setting] = value;
 		(setting.notify)(setting, *this);
-
-		if (m_autoCommit) {
-			submit();
-		}
-
 		return true;
 	}
 
