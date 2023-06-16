@@ -362,6 +362,8 @@ QImage CanvasModel::selectionToImage(int layerId) const
 	QImage img;
 	if(layerId == 0) {
 		img = canvasState.toFlatImage(true, true, &rect);
+	} else if(layerId == -1) {
+		img = canvasState.toFlatImage(false, true, &rect);
 	} else {
 		drawdance::LayerContent layerContent = canvasState.searchLayerContent(layerId);
 		if(layerContent.isNull()) {
