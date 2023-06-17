@@ -31,7 +31,12 @@ public:
 		UrlRole,
 		IsPasswordedRole,
 		IsClosedRole,
-		IsNsfwRole
+		IsNsfwRole,
+		UrlStringRole,
+		IsListingRole,
+		TitleRole,
+		ServerRole,
+		OwnerRole,
 	};
 
 	SessionListingModel(QObject *parent=nullptr);

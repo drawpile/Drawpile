@@ -10,6 +10,9 @@ class Ui_JoinDialog;
 class SessionListingModel;
 class SessionFilterProxyModel;
 
+class QAction;
+class QMenu;
+
 namespace dialogs {
 
 class JoinDialog final : public QDialog {
@@ -43,16 +46,28 @@ private slots:
 
 	void addListServer();
 
+	void showListingContextMenu(const QPoint &pos);
+
+	void setUrlFromIndex(const QModelIndex &index);
+	void joinIndex(const QModelIndex &index);
+
 private:
 	void resolveRoomcode(const QString &roomcode, const QStringList &servers);
 	void setListingVisible(bool show);
 
 	void addListServerUrl(const QUrl &url);
 
+	QAction *makeCopySessionDataAction(const QString &text, int role);
+
+	bool canJoinIndex(const QModelIndex &index);
+	bool isListingIndex(const QModelIndex &index);
+
 	Ui_JoinDialog *m_ui;
 	QPushButton *m_addServerButton;
 	SessionFilterProxyModel *m_filteredSessions;
 	SessionListingModel *m_sessions;
+	QMenu *m_listingContextMenu;
+	QAction *m_joinAction;
 
 	qint64 m_lastRefresh;
 

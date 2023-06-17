@@ -19,9 +19,11 @@
 
 #include "ui_joindialog.h"
 
+#include <QClipboard>
 #include <QDebug>
 #include <QFileDialog>
 #include <QIcon>
+#include <QMenu>
 #include <QPushButton>
 #include <QTimer>
 #include <QUrl>
@@ -137,26 +139,33 @@ JoinDialog::JoinDialog(const QUrl &url, QWidget *parent)
 #endif
 
 	connect(
-		m_ui->listing, &QTreeView::clicked, this,
-		[this](const QModelIndex &index) {
-			// Set the server URL when clicking on an item
-			if((index.flags() & Qt::ItemIsEnabled)) {
-				m_ui->address->setCurrentText(
-					index.data(SessionListingModel::UrlRole)
-						.value<QUrl>()
-						.toString());
+		m_ui->listing->selectionModel(), &QItemSelectionModel::selectionChanged,
+		this, [this](const QItemSelection &selected, const QItemSelection &) {
+			if(selected.indexes().size() > 0) {
+				setUrlFromIndex(selected.indexes().first());
 			}
 		});
 
 	connect(
-		m_ui->listing, &QTreeView::doubleClicked,
-		[this](const QModelIndex &index) {
-			// Shortcut: double click to OK
-			if((index.flags() & Qt::ItemIsEnabled) &&
-			   m_ui->buttons->button(QDialogButtonBox::Ok)->isEnabled()) {
-				accept();
-			}
-		});
+		m_ui->listing, &QTreeView::doubleClicked, this, &JoinDialog::joinIndex);
+
+	m_listingContextMenu = new QMenu{this};
+	m_ui->listing->setContextMenuPolicy(Qt::CustomContextMenu);
+	connect(
+		m_ui->listing, &QWidget::customContextMenuRequested, this,
+		&JoinDialog::showListingContextMenu);
+
+	m_joinAction = m_listingContextMenu->addAction(tr("Join"));
+	connect(m_joinAction, &QAction::triggered, this, [this]() {
+		joinIndex(m_ui->listing->selectionModel()->currentIndex());
+	});
+
+	makeCopySessionDataAction(
+		tr("Copy session URL"), SessionListingModel::UrlStringRole);
+	makeCopySessionDataAction(tr("Copy title"), SessionListingModel::TitleRole);
+	makeCopySessionDataAction(
+		tr("Copy server"), SessionListingModel::ServerRole);
+	makeCopySessionDataAction(tr("Copy owner"), SessionListingModel::OwnerRole);
 
 	new MandatoryFields(this, m_ui->buttons->button(QDialogButtonBox::Ok));
 
@@ -483,6 +492,31 @@ void JoinDialog::addListServer()
 	}
 }
 
+void JoinDialog::showListingContextMenu(const QPoint &pos)
+{
+	QModelIndex index = m_ui->listing->selectionModel()->currentIndex();
+	if(isListingIndex(index)) {
+		setUrlFromIndex(index);
+		m_joinAction->setEnabled(canJoinIndex(index));
+		m_listingContextMenu->popup(mapToGlobal(pos));
+	}
+}
+
+void JoinDialog::setUrlFromIndex(const QModelIndex &index)
+{
+	if(isListingIndex(index) && index.flags().testFlag(Qt::ItemIsEnabled)) {
+		m_ui->address->setCurrentText(
+			index.data(SessionListingModel::UrlStringRole).toString());
+	}
+}
+
+void JoinDialog::joinIndex(const QModelIndex &index)
+{
+	if(canJoinIndex(index)) {
+		accept();
+	}
+}
+
 void JoinDialog::addListServerUrl(const QUrl &url)
 {
 	m_addServerButton->setEnabled(false);
@@ -511,6 +545,30 @@ void JoinDialog::addListServerUrl(const QUrl &url)
 		});
 
 	dlg->query(url);
+}
+
+QAction *JoinDialog::makeCopySessionDataAction(const QString &text, int role)
+{
+	QAction *action = m_listingContextMenu->addAction(text);
+	connect(action, &QAction::triggered, this, [this, role] {
+		QModelIndex index = m_ui->listing->selectionModel()->currentIndex();
+		if(isListingIndex(index)) {
+			QGuiApplication::clipboard()->setText(index.data(role).toString());
+		}
+	});
+	return action;
+}
+
+bool JoinDialog::canJoinIndex(const QModelIndex &index)
+{
+	return isListingIndex(index) && index.flags().testFlag(Qt::ItemIsEnabled) &&
+		   m_ui->buttons->button(QDialogButtonBox::Ok)->isEnabled();
+}
+
+bool JoinDialog::isListingIndex(const QModelIndex &index)
+{
+	return index.isValid() &&
+		   index.data(SessionListingModel::IsListingRole).toBool();
 }
 
 }

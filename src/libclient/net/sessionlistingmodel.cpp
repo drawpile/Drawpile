@@ -114,6 +114,10 @@ QVariant SessionListingModel::data(const QModelIndex &index, int role) const
 			font.setBold(true);
 			return font;
 		}
+		case IsListingRole:
+			return false;
+		default:
+			break;
 		}
 	} else if (listing.offline()) {
 		if (index.row() != 0) {
@@ -138,6 +142,10 @@ QVariant SessionListingModel::data(const QModelIndex &index, int role) const
 			break;
 		case Qt::ForegroundRole:
 			return QPalette().color(QPalette::Text);
+		case IsListingRole:
+			return false;
+		default:
+			break;
 		}
 	} else {
 		if(index.row() >= listing.sessions.size())
@@ -218,9 +226,14 @@ QVariant SessionListingModel::data(const QModelIndex &index, int role) const
 			}
 			break;
 		case UrlRole: return sessionUrl(session);
+		case UrlStringRole: return sessionUrl(session).toString();
 		case IsPasswordedRole: return session.password;
 		case IsNsfwRole: return isNsfm(session);
-		default: {}
+		case IsListingRole: return true;
+		case TitleRole: return session.title;
+		case ServerRole: return session.host;
+		case OwnerRole: return session.owner;
+		default: break;
 		}
 	}
 
