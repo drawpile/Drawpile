@@ -162,7 +162,7 @@ struct ToolSettings::Private {
 };
 
 ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
-	: QDockWidget(parent), d(new Private(ctrl))
+	: DockBase(parent), d(new Private(ctrl))
 {
 	setWindowTitle(tr("Tool"));
 

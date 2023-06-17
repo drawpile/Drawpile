@@ -114,7 +114,7 @@ struct OnionSkinsDock::Private {
 };
 
 OnionSkinsDock::OnionSkinsDock(const QString &title, QWidget *parent)
-	: QDockWidget{title, parent}
+	: DockBase{title, parent}
 	, d{new Private}
 {
 	TitleWidget *titlebar = new TitleWidget{this};

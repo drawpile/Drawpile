@@ -3,7 +3,7 @@
 #ifndef ONIONSKINSDOCK_H
 #define ONIONSKINSDOCK_H
 
-#include <QDockWidget>
+#include "desktop/docks/dockbase.h"
 #include <QPair>
 #include <QVector>
 #include <functional>
@@ -11,7 +11,7 @@
 namespace docks {
 
 
-class OnionSkinsDock final : public QDockWidget {
+class OnionSkinsDock final : public DockBase {
 	Q_OBJECT
 public:
 	OnionSkinsDock(const QString &title, QWidget *parent);

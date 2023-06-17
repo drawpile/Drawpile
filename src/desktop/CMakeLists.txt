@@ -143,6 +143,8 @@ target_sources(drawpile PRIVATE
 	docks/colorsliders.h
 	docks/colorspinner.cpp
 	docks/colorspinner.h
+	docks/dockbase.cpp
+	docks/dockbase.h
 	docks/layeraclmenu.cpp
 	docks/layeraclmenu.h
 	docks/layerlistdelegate.cpp

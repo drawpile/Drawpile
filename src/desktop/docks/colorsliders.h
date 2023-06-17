@@ -3,7 +3,7 @@
 #ifndef COLORSLIDERDOCK_H
 #define COLORSLIDERDOCK_H
 
-#include <QDockWidget>
+#include "desktop/docks/dockbase.h"
 
 namespace color_widgets {
 	class ColorPalette;
@@ -11,7 +11,7 @@ namespace color_widgets {
 
 namespace docks {
 
-class ColorSliderDock final : public QDockWidget {
+class ColorSliderDock final : public DockBase {
 	Q_OBJECT
 public:
 	ColorSliderDock(const QString& title, QWidget *parent);

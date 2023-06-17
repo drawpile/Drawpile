@@ -16,7 +16,7 @@ struct ColorSpinnerDock::Private {
 };
 
 ColorSpinnerDock::ColorSpinnerDock(const QString& title, QWidget *parent)
-	: QDockWidget(title, parent), d(new Private)
+	: DockBase(title, parent), d(new Private)
 {
 	// Create title bar widget
 	auto *titlebar = new TitleWidget(this);

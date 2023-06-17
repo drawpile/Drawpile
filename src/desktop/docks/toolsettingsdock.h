@@ -3,9 +3,9 @@
 #ifndef TOOLSETTINGSDOCK_H
 #define TOOLSETTINGSDOCK_H
 
+#include "desktop/docks/dockbase.h"
 #include "libclient/tools/tool.h"
 
-#include <QDockWidget>
 
 class QStackedWidget;
 
@@ -32,7 +32,7 @@ namespace docks {
  * @brief Tool settings window
  * A dock widget that displays settings for the currently selected tool.
  */
-class ToolSettings final : public QDockWidget
+class ToolSettings final : public DockBase
 {
 Q_OBJECT
 public:

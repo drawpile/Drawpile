@@ -33,7 +33,7 @@
 namespace docks {
 
 LayerList::LayerList(QWidget *parent)
-	: QDockWidget(tr("Layers"), parent),
+	: DockBase(tr("Layers"), parent),
 	  m_canvas(nullptr), m_selectedId(0), m_nearestToDeletedId(0),
 	  m_noupdate(false), m_updateBlendModeIndex(-1), m_updateOpacity(-1),
 	  m_addLayerAction(nullptr), m_duplicateLayerAction(nullptr),

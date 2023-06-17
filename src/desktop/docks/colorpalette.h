@@ -3,7 +3,7 @@
 #ifndef COLORPALETTEDOCK_H
 #define COLORPALETTEDOCK_H
 
-#include <QDockWidget>
+#include "desktop/docks/dockbase.h"
 
 namespace color_widgets {
 	class ColorPalette;
@@ -11,7 +11,7 @@ namespace color_widgets {
 
 namespace docks {
 
-class ColorPaletteDock final : public QDockWidget {
+class ColorPaletteDock final : public DockBase {
 	Q_OBJECT
 public:
 	ColorPaletteDock(const QString& title, QWidget *parent);

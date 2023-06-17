@@ -3,7 +3,7 @@
 #ifndef COLORSPINNERDOCK_H
 #define COLORSPINNERDOCK_H
 
-#include <QDockWidget>
+#include "desktop/docks/dockbase.h"
 
 namespace color_widgets {
 	class ColorPalette;
@@ -11,7 +11,7 @@ namespace color_widgets {
 
 namespace docks {
 
-class ColorSpinnerDock final : public QDockWidget {
+class ColorSpinnerDock final : public DockBase {
 	Q_OBJECT
 public:
 	ColorSpinnerDock(const QString& title, QWidget *parent);

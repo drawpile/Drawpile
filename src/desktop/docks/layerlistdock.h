@@ -7,7 +7,7 @@ extern "C" {
 #include <dpmsg/acl.h>
 }
 
-#include <QDockWidget>
+#include "desktop/docks/dockbase.h"
 #include <QSet>
 
 class QModelIndex;
@@ -35,7 +35,7 @@ namespace docks {
 
 class LayerAclMenu;
 
-class LayerList final : public QDockWidget
+class LayerList final : public DockBase
 {
 Q_OBJECT
 public:

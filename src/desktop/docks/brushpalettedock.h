@@ -5,7 +5,7 @@
 
 #include "libclient/tools/tool.h"
 
-#include <QDockWidget>
+#include "desktop/docks/dockbase.h"
 
 namespace tools {
 	class ToolProperties;
@@ -19,7 +19,7 @@ namespace docks {
  *
  * This dock displays a list of brush presets to choose from.
  */
-class BrushPalette final : public QDockWidget
+class BrushPalette final : public DockBase
 {
 Q_OBJECT
 public:

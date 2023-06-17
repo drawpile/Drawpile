@@ -298,7 +298,7 @@ void NavigatorView::onCursorMove(uint8_t userId, uint16_t layer, int x, int y)
  * Construct the navigator dock widget.
  */
 Navigator::Navigator(QWidget *parent)
-	: QDockWidget(tr("Navigator"), parent), m_updating(false)
+	: DockBase(tr("Navigator"), parent), m_updating(false)
 {
 	setObjectName("navigatordock");
 

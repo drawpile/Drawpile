@@ -3,10 +3,10 @@
 #ifndef TIMELINE_DOCK_H
 #define TIMELINE_DOCK_H
 
+#include "desktop/docks/dockbase.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/widgets/timelinewidget.h"
 #include "libclient/utils/debouncetimer.h"
-#include <QDockWidget>
 
 class QAction;
 class QSpinBox;
@@ -28,7 +28,7 @@ namespace docks {
 
 class TitleWidget;
 
-class Timeline final : public QDockWidget {
+class Timeline final : public DockBase {
 	Q_OBJECT
 public:
 	Timeline(QWidget *parent);

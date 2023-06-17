@@ -81,7 +81,7 @@ struct BrushPalette::Private {
 };
 
 BrushPalette::BrushPalette(QWidget *parent)
-	: QDockWidget(parent)
+	: DockBase(parent)
 	, d(new Private)
 {
 	static brushes::BrushPresetTagModel *tagModelInstance;

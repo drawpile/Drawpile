@@ -3,7 +3,7 @@
 #ifndef Navigator_H
 #define Navigator_H
 
-#include <QDockWidget>
+#include "desktop/docks/dockbase.h"
 
 class QSlider;
 class QToolButton;
@@ -66,7 +66,7 @@ private:
 };
 
 //! Navigator dock widget
-class Navigator final : public QDockWidget
+class Navigator final : public DockBase
 {
 	Q_OBJECT
 public:
