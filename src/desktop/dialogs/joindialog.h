@@ -12,11 +12,10 @@ class SessionFilterProxyModel;
 
 namespace dialogs {
 
-class JoinDialog final : public QDialog
-{
+class JoinDialog final : public QDialog {
 	Q_OBJECT
 public:
-	explicit JoinDialog(const QUrl &defaultUrl, QWidget *parent=nullptr);
+	explicit JoinDialog(const QUrl &defaultUrl, QWidget *parent = nullptr);
 	~JoinDialog() override;
 
 	//! Get the host address
@@ -63,4 +62,3 @@ private:
 }
 
 #endif
-
