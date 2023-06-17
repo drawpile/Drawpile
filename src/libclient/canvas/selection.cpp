@@ -507,8 +507,11 @@ void Selection::setPasteImage(const QImage &image)
 	}
 
 	closeShape();
-	m_pasteImage = image;
-	emit pasteImageChanged(image);
+	m_pasteImage =
+		image.format() == QImage::Format_ARGB32_Premultiplied
+			? image
+			: image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
+	emit pasteImageChanged(m_pasteImage);
 }
 
 void Selection::setMoveImage(const QImage &image, const QRect &imageRect, const QSize &canvasSize, int sourceLayerId)
