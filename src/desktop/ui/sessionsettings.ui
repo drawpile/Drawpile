@@ -114,10 +114,10 @@
           <item row="4" column="1">
            <widget class="QCheckBox" name="nsfm">
             <property name="toolTip">
-             <string>This session contains material not suitable for minors</string>
+             <string>This session contains age-restricted content</string>
             </property>
             <property name="text">
-             <string>Age restricted content</string>
+             <string>Not suitable for minors (NSFM)</string>
             </property>
            </widget>
           </item>
