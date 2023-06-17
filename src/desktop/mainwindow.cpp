@@ -1557,7 +1557,8 @@ void MainWindow::hostSession(dialogs::HostDialog *dlg)
 	login->setSessionAlias(dlg->getSessionAlias());
 	login->setPassword(dlg->getPassword());
 	login->setTitle(dlg->getTitle());
-	login->setAnnounceUrl(dlg->getAnnouncementUrl(), dlg->getAnnouncmentPrivate());
+	login->setAnnounceUrl(dlg->getAnnouncementUrl());
+	login->setNsfm(dlg->isNsfm());
 	if(useremote) {
 		login->setInitialState(m_doc->canvas()->generateSnapshot(
 			true, DP_ACL_STATE_RESET_IMAGE_SESSION_RESET_FLAGS));

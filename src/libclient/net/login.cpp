@@ -546,13 +546,13 @@ bool LoginHandler::expectLoginOk(const ServerReply &msg)
 			if(!m_title.isEmpty())
 				kwargs["title"] = m_title;
 
-			if(parentalcontrols::isNsfmTitle(m_title))
+			if(m_nsfm)
 				kwargs["nsfm"] = true;
 
 			send("sessionconf", {}, kwargs);
 
 			if(!m_announceUrl.isEmpty())
-				m_server->sendMessage(ServerCommand::makeAnnounce(m_announceUrl, m_announcePrivate));
+				m_server->sendMessage(ServerCommand::makeAnnounce(m_announceUrl, false));
 
 			// Upload initial session content
 			if(m_mode == Mode::HostRemote) {

@@ -46,6 +46,7 @@ SETTING(lastHostRemote            , LastHostRemote            , "history/hostrem
 SETTING(lastIdAlias               , LastIdAlias               , "history/idalias"                       , QString())
 SETTING(lastJoinDialogSize        , LastJoinDialogSize        , "history/joindlgsize"                   , QSize())
 SETTING(lastListingServer         , LastListingServer         , "history/listingserver"                 , -1)
+SETTING(lastNsfm                  , LastNsfm                  , "history/nsfm"                          , false)
 SETTING(lastPalette               , LastPalette               , "history/lastpalette"                   , 0)
 SETTING(lastSessionTitle          , LastSessionTitle          , "history/sessiontitle"                  , QString())
 SETTING(lastTool                  , LastTool                  , "tools/tool"                            , tools::Tool::Type::FREEHAND)

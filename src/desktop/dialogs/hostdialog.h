@@ -9,11 +9,10 @@ class Ui_HostDialog;
 
 namespace dialogs {
 
-class HostDialog final : public QDialog
-{
+class HostDialog final : public QDialog {
 	Q_OBJECT
 public:
-	explicit HostDialog(QWidget *parent=nullptr);
+	explicit HostDialog(QWidget *parent = nullptr);
 	~HostDialog() override;
 
 	//! Store settings in configuration file
@@ -32,20 +31,20 @@ public:
 	//! Get the desired session alias
 	QString getSessionAlias() const;
 
+	//! Should the session have its NSFM flag set?
+	bool isNsfm() const;
+
 	//! Get the announcement server URL (empty if not selected)
 	QString getAnnouncementUrl() const;
 
-	//! Make a private (room code only) announcement instead of a public one?
-	bool getAnnouncmentPrivate() const;
-
 private slots:
-	void updateListingPermissions();
+	void updateNsfmBasedOnTitle();
 
 private:
 	Ui_HostDialog *m_ui;
+	bool m_allowNsfm;
 };
 
 }
 
 #endif
-

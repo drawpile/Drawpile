@@ -88,7 +88,14 @@ public:
 	 *
 	 * Only for host mode.
 	 */
-	void setAnnounceUrl(const QString &url, bool privateMode) { Q_ASSERT(m_mode!=Mode::Join); m_announceUrl = url; m_announcePrivate = privateMode; }
+	void setAnnounceUrl(const QString &url) { Q_ASSERT(m_mode!=Mode::Join); m_announceUrl = url; }
+
+	/**
+	 * @brief Set session NSFM flag
+	 *
+	 * Only for host mode.
+	 */
+	void setNsfm(bool nsfm) { Q_ASSERT(m_mode!=Mode::Join); m_nsfm = nsfm; }
 
 	/**
 	 * @brief Set the server we're communicating with
@@ -371,8 +378,8 @@ private:
 	QString m_sessionPassword;
 	QString m_sessionAlias;
 	QString m_title;
-	bool m_announcePrivate;
 	QString m_announceUrl;
+	bool m_nsfm;
 	drawdance::MessageList m_initialState;
 
 	// Settings for joining
