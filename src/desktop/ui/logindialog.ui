@@ -213,7 +213,7 @@ padding: 16px;</string>
          <item>
           <widget class="QToolButton" name="showNsfw">
            <property name="toolTip">
-            <string>Show NSFW sessions</string>
+            <string>Show sessions not suitable for minors (NSFM)</string>
            </property>
            <property name="icon">
             <iconset>

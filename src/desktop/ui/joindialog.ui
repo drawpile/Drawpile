@@ -106,7 +106,10 @@ padding: 6px;</string>
      <item>
       <widget class="QCheckBox" name="showNsfw">
        <property name="text">
-        <string>NSFW</string>
+        <string>NSFM</string>
+       </property>
+       <property name="toolTip">
+        <string>Show sessions not suitable for minors (NSFM)</string>
        </property>
       </widget>
      </item>
