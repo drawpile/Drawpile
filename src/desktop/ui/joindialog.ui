@@ -120,9 +120,6 @@ padding: 6px;</string>
      <property name="alternatingRowColors">
       <bool>true</bool>
      </property>
-     <property name="indentation">
-      <number>0</number>
-     </property>
      <property name="rootIsDecorated">
       <bool>false</bool>
      </property>
