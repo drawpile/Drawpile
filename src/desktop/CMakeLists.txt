@@ -116,8 +116,8 @@ target_sources(drawpile PRIVATE
 	dialogs/sessionsettings.h
 	dialogs/settingsdialog.cpp
 	dialogs/settingsdialog.h
-	dialogs/settingsdialog/parentalcontrols.cpp
-	dialogs/settingsdialog/parentalcontrols.h
+	dialogs/settingsdialog/canvasshortcuts.cpp
+	dialogs/settingsdialog/canvasshortcuts.h
 	dialogs/settingsdialog/general.cpp
 	dialogs/settingsdialog/general.h
 	dialogs/settingsdialog/helpers.h
@@ -125,6 +125,10 @@ target_sources(drawpile PRIVATE
 	dialogs/settingsdialog/input.h
 	dialogs/settingsdialog/network.cpp
 	dialogs/settingsdialog/network.h
+	dialogs/settingsdialog/parentalcontrols.cpp
+	dialogs/settingsdialog/parentalcontrols.h
+	dialogs/settingsdialog/proportionaltableview.cpp
+	dialogs/settingsdialog/proportionaltableview.h
 	dialogs/settingsdialog/servers.cpp
 	dialogs/settingsdialog/servers.h
 	dialogs/settingsdialog/shortcuts.cpp

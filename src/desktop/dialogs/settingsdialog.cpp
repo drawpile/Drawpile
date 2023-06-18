@@ -9,6 +9,7 @@
 #include "desktop/dialogs/settingsdialog/network.h"
 #include "desktop/dialogs/settingsdialog/servers.h"
 #include "desktop/dialogs/settingsdialog/shortcuts.h"
+#include "desktop/dialogs/settingsdialog/canvasshortcuts.h"
 #include "desktop/dialogs/settingsdialog/tools.h"
 
 #include <QAction>
@@ -72,6 +73,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 		{ "network-modem", tr("Network"), new settingsdialog::Network(m_settings, this) },
 		{ "network-server-database", tr("Servers"), new settingsdialog::Servers(m_settings, this) },
 		{ "input-keyboard", tr("Shortcuts"), new settingsdialog::Shortcuts(m_settings, this) },
+		{ "edit-rename", tr("Canvas Shortcuts"), new settingsdialog::CanvasShortcuts(m_settings, this) },
 		{ "flag", tr("Parental Controls"), new settingsdialog::ParentalControls(m_settings, this) }
 	};
 
