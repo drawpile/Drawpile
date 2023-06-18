@@ -3,8 +3,8 @@
 #ifndef POPUPMESSAGE_H
 #define POPUPMESSAGE_H
 
-#include <QWidget>
 #include <QPainterPath>
+#include <QWidget>
 
 class QTextDocument;
 class QTimer;
@@ -15,8 +15,7 @@ namespace widgets {
  * @brief Popup messagebox
  * A simple box that can be popped up to display a message.
  */
-class PopupMessage final : public QWidget
-{
+class PopupMessage final : public QWidget {
 	Q_OBJECT
 public:
 	PopupMessage(QWidget *parent);
@@ -27,10 +26,11 @@ public:
 	 * If the popup is already visible, the message will be appended
 	 * to the existing one.
 	 *
-	 * @param point origin point for the popup (the little arrow will point here)
+	 * @param point origin point for the popup (the little arrow will point
+	 * here)
 	 * @param message the message to show.
 	 */
-	void showMessage(const QPoint& point, const QString &message);
+	void showMessage(const QPoint &point, const QString &message);
 
 protected:
 	void paintEvent(QPaintEvent *) override;
@@ -49,4 +49,3 @@ private:
 }
 
 #endif
-
