@@ -11,14 +11,29 @@
 #include "desktop/utils/qtguicompat.h"
 #include "desktop/widgets/popupmessage.h"
 
+// On Windows, giving this widget a real parent causes the main window to get
+// raised along with the notification being shown, which we don't want. On
+// Wayland on the other hand, the widget must have a parent or else it can't be
+// positioned because Wayland hates the living. On X11, not giving it a parent
+// causes some weird effects, like the notification showing up on wrong
+// desktops. No clue what it does on macOS. So were special-casing Windows for
+// now and hope that the other systems behave somewhat sensibly.
+#ifdef Q_OS_WIN
+#	define POPUP_MESSAGE_PARENT_ARG nullptr
+#else
+#	define POPUP_MESSAGE_PARENT_ARG parent
+#endif
+
 namespace widgets {
 
 PopupMessage::PopupMessage(QWidget *parent)
-	: QWidget(nullptr, Qt::ToolTip | Qt::FramelessWindowHint)
-	, m_arrowoffset(0)
-	, m_timer(new QTimer(this))
-	, m_doc(new QTextDocument(this))
-	, m_parentWidget(parent)
+	: QWidget{POPUP_MESSAGE_PARENT_ARG, Qt::ToolTip | Qt::FramelessWindowHint}
+	, m_arrowoffset{0}
+	, m_timer{new QTimer{this}}
+	, m_doc{new QTextDocument{this}}
+#ifdef Q_OS_WIN
+	, m_parentWidget{parent}
+#endif
 {
 	setAttribute(Qt::WA_TranslucentBackground);
 	m_timer->setSingleShot(true);
@@ -26,10 +41,10 @@ PopupMessage::PopupMessage(QWidget *parent)
 
 	connect(m_timer, &QTimer::timeout, this, &PopupMessage::hide);
 
-	// If this widget has a real parent, showing it will raise the parent window
-	// (on Windows,) which is undesirable.
+#ifdef Q_OS_WIN
 	connect(
 		m_parentWidget, &QWidget::destroyed, this, &PopupMessage::deleteLater);
+#endif
 }
 
 void PopupMessage::setMessage(const QString &message)
@@ -75,8 +90,12 @@ void PopupMessage::showMessage(const QPoint &point, const QString &message)
 
 	QRect rect(point - QPoint(width() - width() / 6, height()), size());
 
-	const QRect screen =
-		compat::widgetScreen(*m_parentWidget)->availableGeometry();
+#ifdef Q_OS_WIN
+	QWidget *pw = m_parentWidget;
+#else
+	QWidget *pw = parentWidget();
+#endif
+	const QRect screen = compat::widgetScreen(*pw)->availableGeometry();
 
 	// Make sure the popup fits horizontally
 	if(rect.x() + rect.width() > screen.x() + screen.width()) {
