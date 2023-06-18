@@ -49,12 +49,11 @@ void ParentalControls::initBuiltIn(desktop::settings::Settings &settings, QVBoxL
 	auto *autoTag = new QCheckBox(tr("Consider sessions whose titles contain these keywords NSFM."));
 	form->addRow(tr("Keywords:"), autoTag);
 	settings.bindParentalControlsAutoTag(autoTag);
-	auto *tagWords = new QLineEdit(this);
+	auto *tagWords = new QPlainTextEdit(this);
 	tagWords->setPlaceholderText(parentalcontrols::defaultWordList());
-	utils::setSpacingControlType(tagWords, QSizePolicy::CheckBox);
-	form->addRow(nullptr, utils::indent(tagWords));
+	form->addRow(nullptr, tagWords);
 	settings.bindParentalControlsTags(tagWords);
-	settings.bindParentalControlsAutoTag(tagWords, &QLineEdit::setEnabled);
+	settings.bindParentalControlsAutoTag(tagWords, &QPlainTextEdit::setEnabled);
 
 	form->addSpacer();
 
@@ -102,7 +101,6 @@ void ParentalControls::initBuiltIn(desktop::settings::Settings &settings, QVBoxL
 
 	settings.bindParentalControlsLocked(this, [=, &settings](QByteArray hash) {
 		const auto locked = !hash.isEmpty();
-		tagWords->setEchoMode(locked ? QLineEdit::Password : QLineEdit::Normal);
 		tagWords->setDisabled(locked || !settings.parentalControlsAutoTag());
 		autoTag->setDisabled(locked);
 		for (auto *button : level->buttons()) {
