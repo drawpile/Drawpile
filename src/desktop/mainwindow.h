@@ -22,6 +22,7 @@ extern "C" {
 
 class QActionGroup;
 class QLabel;
+class QShortcutEvent;
 class QSplitter;
 class QToolButton;
 
@@ -53,6 +54,7 @@ namespace dialogs {
 	class HostDialog;
 	class SessionSettingsDialog;
 	class ServerLogDialog;
+	class SettingsDialog;
 }
 namespace drawingboard {
 	class CanvasScene;
@@ -96,7 +98,7 @@ public slots:
 	void showFlipbook();
 
 	void showBrushSettingsDialog();
-	static void showSettings();
+	static dialogs::SettingsDialog *showSettings();
 	void reportAbuse();
 	void tryToGainOp();
 	void resetSession();
@@ -221,6 +223,7 @@ private:
 	void showErrorMessage(const QString &message);
 	void showErrorMessageWithDetails(const QString &message, const QString &details);
 	void showLoadResultMessage(DP_LoadResult result);
+	void showAmbiguousShortcutMessage(QShortcutEvent *shortcutEvent);
 
 	void readSettings(bool windowpos=true);
 	void saveSplitterState();

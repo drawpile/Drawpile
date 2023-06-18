@@ -19,6 +19,7 @@
 #include <QToolButton>
 #include <QImageReader>
 #include <QImageWriter>
+#include <QShortcutEvent>
 #include <QSplitter>
 #include <QClipboard>
 #include <QFile>
@@ -831,9 +832,45 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event)
 	case QEvent::Close:
 		m_saveWindowDebounce.start(DEBOUNCE_MS);
 		break;
+	case QEvent::Shortcut: {
+		QShortcutEvent *shortcutEvent = static_cast<QShortcutEvent *>(event);
+		if(shortcutEvent->isAmbiguous()) {
+			showAmbiguousShortcutMessage(shortcutEvent);
+			return true;
+		}
+		break;
+	}
 	default: {}
 	}
 	return QMainWindow::eventFilter(object, event);
+}
+
+void MainWindow::showAmbiguousShortcutMessage(QShortcutEvent *shortcutEvent)
+{
+	CustomShortcutModel shortcutsModel;
+	shortcutsModel.loadShortcuts(dpApp().settings().shortcuts());
+	QStringList matchingShortcuts;
+	const QKeySequence &keySequence = shortcutEvent->key();
+	for(const CustomShortcut &shortcut : shortcutsModel.getShortcutsMatching(keySequence)) {
+		matchingShortcuts.append(QString("<li>%1</li>").arg(shortcut.title.toHtmlEscaped()));
+	}
+	matchingShortcuts.sort(Qt::CaseInsensitive);
+
+	QString message =
+		tr("<p>The shortcut '%1' is ambiguous, it matches:</p><ul>%2</ul>")
+			.arg(keySequence.toString(QKeySequence::NativeText))
+			.arg(matchingShortcuts.join(QString()));
+
+	QMessageBox box{
+		QMessageBox::Warning, tr("Ambiguous Shortcut"), message,
+		QMessageBox::Close, this};
+
+	QPushButton *fixButton = box.addButton(tr("Fix"), QMessageBox::ActionRole);
+
+	box.exec();
+	if(box.clickedButton() == fixButton) {
+		showSettings()->activateShortcutsPanel();
+	}
 }
 
 void MainWindow::saveSplitterState()
@@ -1477,11 +1514,12 @@ void MainWindow::showBrushSettingsDialog()
 /**
  * The settings window will automatically destruct when it is closed.
  */
-void MainWindow::showSettings()
+dialogs::SettingsDialog *MainWindow::showSettings()
 {
 	dialogs::SettingsDialog *dlg = new dialogs::SettingsDialog;
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 	utils::showWindow(dlg);
+	return dlg;
 }
 
 void MainWindow::host()
@@ -3476,6 +3514,12 @@ void MainWindow::setupActions()
 	for(auto *dw : findChildren<QDockWidget *>(QString(), Qt::FindDirectChildrenOnly)) {
 		if(auto *titlebar = qobject_cast<docks::TitleWidget *>(dw->titleBarWidget())) {
 			titlebar->addGlobalDockActions(globalDockActions);
+		}
+	}
+
+	for(QObject *child : findChildren<QObject *>()) {
+		if(qobject_cast<QAction *>(child)) {
+			child->installEventFilter(this);
 		}
 	}
 }

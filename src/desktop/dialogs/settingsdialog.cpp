@@ -103,7 +103,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
 #endif
 
-	auto *group = new QButtonGroup(this);
+	m_group = new QButtonGroup(this);
 	auto first = true;
 	for (const auto &[ icon, title, panel ] : panels) {
 #ifdef Q_OS_MACOS
@@ -121,8 +121,9 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 		button->setChecked(first);
 
 		menu->addWidget(button);
-		group->addButton(button);
+		m_group->addButton(button);
 
+		button->setProperty("panel", QVariant::fromValue(panel));
 		connect(button, &QToolButton::toggled, this, [=, panel = panel](bool checked) {
 			if (checked) {
 				setUpdatesEnabled(false);
@@ -140,6 +141,16 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 #else
 	setFixedSize(layout->sizeHint());
 #endif
+}
+
+void SettingsDialog::activateShortcutsPanel()
+{
+	for(QAbstractButton *button : m_group->buttons()) {
+		QWidget *panel = button->property("panel").value<QWidget *>();
+		if(qobject_cast<settingsdialog::Shortcuts *>(panel)) {
+			button->click();
+		}
+	}
 }
 
 #ifdef Q_OS_MACOS

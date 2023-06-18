@@ -89,6 +89,17 @@ QVariant CustomShortcutModel::headerData(int section, Qt::Orientation orientatio
 	return QVariant();
 }
 
+QVector<CustomShortcut> CustomShortcutModel::getShortcutsMatching(const QKeySequence &keySequence)
+{
+	QVector<CustomShortcut> matches;
+	for(const CustomShortcut &shortcut : m_shortcuts) {
+		if(shortcut.currentShortcut == keySequence || shortcut.alternateShortcut == keySequence) {
+			matches.append(shortcut);
+		}
+	}
+	return matches;
+}
+
 void CustomShortcutModel::loadShortcuts(const QVariantMap &cfg)
 {
 	QVector<CustomShortcut> actions;

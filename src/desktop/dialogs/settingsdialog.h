@@ -5,6 +5,7 @@
 
 #include <QDialog>
 
+class QButtonGroup;
 class QStackedWidget;
 
 namespace desktop { namespace settings { class Settings; } }
@@ -16,6 +17,8 @@ class SettingsDialog final : public QDialog {
 public:
 	SettingsDialog(QWidget *parent=nullptr);
 
+	void activateShortcutsPanel();
+
 protected:
 	bool event(QEvent *event) override;
 
@@ -24,6 +27,7 @@ private:
 	void addPanel(QWidget *panel);
 
 	desktop::settings::Settings &m_settings;
+	QButtonGroup *m_group;
 #ifdef Q_OS_MACOS
 	QWidget *m_current = nullptr;
 #else
