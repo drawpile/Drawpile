@@ -75,8 +75,11 @@ void ToolController::registerTool(Tool *tool)
 
 ToolController::~ToolController()
 {
-	for(Tool *t : m_toolbox) {
-		t->cancelMultipart(); // Also cancels any asynchronous jobs running.
+	// May be null if a file failed to open or a session didn't connect.
+	if(m_model) {
+		for(Tool *t : m_toolbox) {
+			t->cancelMultipart(); // Also cancels any asynchronous jobs running.
+		}
 	}
 	m_threadPool.waitForDone();
 	for(Tool *t : m_toolbox) {
