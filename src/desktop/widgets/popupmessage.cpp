@@ -119,6 +119,7 @@ void PopupMessage::showMessage(const QPoint &point, const QString &message)
 		update();
 	} else {
 		show();
+		raise();
 	}
 	m_timer->start();
 }
