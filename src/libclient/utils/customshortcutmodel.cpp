@@ -2,6 +2,9 @@
 
 #include "libclient/utils/customshortcutmodel.h"
 
+#include <QColor>
+#include <QHash>
+
 QMap<QString, CustomShortcut> CustomShortcutModel::m_customizableActions;
 
 CustomShortcutModel::CustomShortcutModel(QObject *parent)
@@ -26,24 +29,45 @@ int CustomShortcutModel::columnCount(const QModelIndex &parent) const
 
 QVariant CustomShortcutModel::data(const QModelIndex &index, int role) const
 {
-	if(!index.isValid()
-		|| (role != Qt::DisplayRole && role != Qt::EditRole)
-		|| index.row() >= m_shortcuts.size()
-	) {
-		return QVariant();
+	if(!index.isValid()) {
+		return QVariant{};
 	}
 
-	const auto &cs = m_shortcuts.at(index.row());
-
-	switch(Column(index.column())) {
-	case Action: return cs.title;
-	case CurrentShortcut: return cs.currentShortcut;
-	case AlternateShortcut: return cs.alternateShortcut;
-	case DefaultShortcut: return cs.defaultShortcut;
-	case ColumnCount: {}
+	int row = index.row();
+	if(row < 0 || row > m_shortcuts.size()) {
+		return QVariant{};
 	}
 
-	return QVariant();
+	if(role == Qt::DisplayRole || role == Qt::EditRole) {
+		const CustomShortcut &cs = m_shortcuts[row];
+		switch(Column(index.column())) {
+		case Action: return cs.title;
+		case CurrentShortcut: return cs.currentShortcut;
+		case AlternateShortcut: return cs.alternateShortcut;
+		case DefaultShortcut: return cs.defaultShortcut;
+		default: return QVariant{};
+		}
+	} else if(role == Qt::ToolTipRole) {
+		if(m_conflictRows.contains(row)) {
+			return tr("Conflict");
+		} else {
+			return QVariant{};
+		}
+	} else if(role == Qt::ForegroundRole) {
+		if(m_conflictRows.contains(row)) {
+			return QColor{Qt::white};
+		} else {
+			return QVariant{};
+		}
+	} else if(role == Qt::BackgroundRole) {
+		if(m_conflictRows.contains(row)) {
+			return QColor{0xdc3545};
+		} else {
+			return QVariant{};
+		}
+	} else {
+		return QVariant{};
+	}
 }
 
 bool CustomShortcutModel::setData(const QModelIndex &index, const QVariant &value, int role)
@@ -63,6 +87,7 @@ bool CustomShortcutModel::setData(const QModelIndex &index, const QVariant &valu
 		cs.alternateShortcut = value.value<QKeySequence>();
 
 	emit dataChanged(index, index);
+	updateConflictRows();
 	return true;
 }
 
@@ -127,6 +152,7 @@ void CustomShortcutModel::loadShortcuts(const QVariantMap &cfg)
 
 	beginResetModel();
 	m_shortcuts = actions;
+	updateConflictRows();
 	endResetModel();
 }
 
@@ -167,4 +193,36 @@ QKeySequence CustomShortcutModel::getDefaultShortcut(const QString &name)
 		return m_customizableActions[name].defaultShortcut;
 	else
 		return QKeySequence();
+}
+
+void CustomShortcutModel::updateConflictRows()
+{
+	QHash<QKeySequence, QSet<int>> rowsByKeySequence;
+	int rowCount = m_shortcuts.size();
+	for(int row = 0; row < rowCount; ++row) {
+		const CustomShortcut &shortcut = m_shortcuts[row];
+		if(!shortcut.currentShortcut.isEmpty()) {
+			rowsByKeySequence[shortcut.currentShortcut].insert(row);
+		}
+		if(!shortcut.alternateShortcut.isEmpty()) {
+			rowsByKeySequence[shortcut.alternateShortcut].insert(row);
+		}
+	}
+
+	QSet<int> conflictRows;
+	for(const QSet<int> &values : rowsByKeySequence.values()) {
+		if(values.size() > 1) {
+			conflictRows.unite(values);
+		}
+	}
+
+	for(int row : conflictRows + m_conflictRows) {
+		if(!conflictRows.contains(row) || !m_conflictRows.contains(row)) {
+			emit dataChanged(
+				createIndex(row, 0), createIndex(row, ColumnCount - 1),
+				{Qt::ForegroundRole, Qt::BackgroundRole});
+		}
+	}
+
+	m_conflictRows = conflictRows;
 }

@@ -7,6 +7,7 @@
 #include <QList>
 #include <QMap>
 #include <QKeySequence>
+#include <QSet>
 
 struct CustomShortcut {
 	QString name;
@@ -48,7 +49,10 @@ public:
 	static void registerCustomizableAction(const QString &name, const QString &title, const QKeySequence &defaultShortcut);
 
 private:
+	void updateConflictRows();
+
 	QVector<CustomShortcut> m_shortcuts;
+	QSet<int> m_conflictRows;
 
 	static QMap<QString, CustomShortcut> m_customizableActions;
 };
