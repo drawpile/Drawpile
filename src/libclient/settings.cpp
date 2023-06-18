@@ -359,15 +359,32 @@ namespace any {
 		}
 
 		settings.beginGroup(key);
+		QSet<QString> keysToDelete;
+		for(const QString &childKey : settings.childKeys()) {
+			keysToDelete.insert(childKey);
+		}
+		for(const QString &childGroupKey : settings.childGroups()) {
+			keysToDelete.insert(childGroupKey);
+		}
+
 		for (auto entry = map.begin(); entry != map.end(); ++entry) {
-			if (entry.value().canConvert<QVariantList>()) {
-				setList(settings, entry.key().toString(), entry.value());
-			} else if (entry.value().canConvert<QVariantMap>()) {
-				setGroup(settings, entry.key().toString(), entry.value());
+			QString mapKey = entry.key().toString();
+			keysToDelete.remove(mapKey);
+
+			QVariant mapValue = entry.value();
+			if (mapValue.canConvert<QVariantList>()) {
+				setList(settings, mapKey, mapValue);
+			} else if (mapValue.canConvert<QVariantMap>()) {
+				setGroup(settings, mapKey, mapValue);
 			} else {
-				settings.setValue(entry.key().toString(), entry.value());
+				settings.setValue(mapKey, mapValue);
 			}
 		}
+
+		for(const QString &keyToDelete : keysToDelete) {
+			settings.remove(keyToDelete);
+		}
+
 		settings.endGroup();
 		ensureGroup(settings, key);
 	}
