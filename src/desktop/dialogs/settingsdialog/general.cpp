@@ -82,6 +82,7 @@ void General::initLanguage(desktop::settings::Settings &settings, utils::SanerFo
 
 	settings.bindLanguage(language, Qt::UserRole);
 	form->addRow(tr("Language:"), language);
+	form->addRow(nullptr, utils::note(tr("Language changes apply after you restart Drawpile."), QSizePolicy::Label));
 }
 
 void General::initMiscUi(desktop::settings::Settings &settings, utils::SanerFormLayout *form)
