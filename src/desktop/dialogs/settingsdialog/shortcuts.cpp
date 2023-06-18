@@ -74,6 +74,12 @@ void Shortcuts::initGlobalShortcuts(
 	keySequenceDelegate->setItemEditorFactory(&m_itemEditorFactory);
 	shortcuts->setItemDelegateForColumn(1, keySequenceDelegate);
 	shortcuts->setItemDelegateForColumn(2, keySequenceDelegate);
+	// The key sequence editor only saves when the index changes, but closing
+	// the window doesn't change the index and so causes the seemingly changed
+	// shortcut to not apply. So we use some additional force here.
+	connect(this, &QObject::destroyed, this, [=] {
+		shortcuts->setCurrentIndex(QModelIndex{});
+	});
 
 	layout->addWidget(shortcuts, 1);
 
