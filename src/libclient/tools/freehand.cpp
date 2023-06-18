@@ -27,13 +27,7 @@ Freehand::Freehand(ToolController &owner, bool isEraser)
 {
 	m_pollTimer.setSingleShot(false);
 	m_pollTimer.setTimerType(Qt::PreciseTimer);
-	// Krita sets the intervals like this, so since our stabilizer is based
-	// on theirs, we'll do it too. Don't know why it's higher in Windows.
-#ifdef Q_OS_WIN
-	m_pollTimer.setInterval(50);
-#else
 	m_pollTimer.setInterval(15);
-#endif
 	QObject::connect(&m_pollTimer, &QTimer::timeout, [this](){
 		poll();
 	});
