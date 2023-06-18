@@ -38,14 +38,31 @@ Shortcuts::Shortcuts(desktop::settings::Settings &settings, QWidget *parent)
 	initGlobalShortcuts(settings, layout, filter);
 }
 
+void Shortcuts::finishEditing()
+{
+	m_shortcutsTable->setCurrentIndex(QModelIndex{});
+}
+
 class KeySequenceEditFactory final : public QItemEditorCreatorBase {
 public:
+	KeySequenceEditFactory(Shortcuts *shortcuts)
+		: m_shortcuts{shortcuts}
+	{
+	}
+
 	QWidget *createWidget(QWidget *parent) const override
 	{
-		return new widgets::KeySequenceEdit(parent);
+		widgets::KeySequenceEdit *widget = new widgets::KeySequenceEdit(parent);
+		QObject::connect(
+			widget, &widgets::KeySequenceEdit::editingFinished, m_shortcuts,
+			&Shortcuts::finishEditing);
+		return widget;
 	}
 
 	QByteArray valuePropertyName() const override { return "keySequence"; }
+
+private:
+	Shortcuts *m_shortcuts;
 };
 
 void Shortcuts::initGlobalShortcuts(
@@ -65,23 +82,18 @@ void Shortcuts::initGlobalShortcuts(
 		[=, &settings] {
 			settings.setShortcuts(shortcutsModel->saveShortcuts());
 		});
-	auto *shortcuts = ProportionalTableView::make(filter, shortcutsModel);
-	shortcuts->setColumnStretches({6, 2, 2, 2});
+	m_shortcutsTable = ProportionalTableView::make(filter, shortcutsModel);
+	m_shortcutsTable->setColumnStretches({6, 2, 2, 2});
 
 	QStyledItemDelegate *keySequenceDelegate = new QStyledItemDelegate(this);
 	m_itemEditorFactory.registerEditor(
-		compat::metaTypeFromName("QKeySequence"), new KeySequenceEditFactory);
+		compat::metaTypeFromName("QKeySequence"),
+		new KeySequenceEditFactory{this});
 	keySequenceDelegate->setItemEditorFactory(&m_itemEditorFactory);
-	shortcuts->setItemDelegateForColumn(1, keySequenceDelegate);
-	shortcuts->setItemDelegateForColumn(2, keySequenceDelegate);
-	// The key sequence editor only saves when the index changes, but closing
-	// the window doesn't change the index and so causes the seemingly changed
-	// shortcut to not apply. So we use some additional force here.
-	connect(this, &QObject::destroyed, this, [=] {
-		shortcuts->setCurrentIndex(QModelIndex{});
-	});
+	m_shortcutsTable->setItemDelegateForColumn(1, keySequenceDelegate);
+	m_shortcutsTable->setItemDelegateForColumn(2, keySequenceDelegate);
 
-	layout->addWidget(shortcuts, 1);
+	layout->addWidget(m_shortcutsTable, 1);
 
 	auto *actions = new utils::EncapsulatedLayout;
 	actions->setContentsMargins(0, 0, 0, 0);
