@@ -982,7 +982,7 @@ static DP_CanvasStateChange handle_transform_region(DP_CanvasState *cs,
     return handle_region(
         cs, dc, context_id, "Transform region",
         DP_msg_transform_region_source(mtr), DP_msg_transform_region_layer(mtr),
-        DP_MSG_TRANSFORM_REGION_MODE_BILINEAR, DP_msg_transform_region_bx(mtr),
+        DP_msg_transform_region_mode(mtr), DP_msg_transform_region_bx(mtr),
         DP_msg_transform_region_by(mtr), DP_msg_transform_region_bw(mtr),
         DP_msg_transform_region_bh(mtr), DP_msg_transform_region_x1(mtr),
         DP_msg_transform_region_y1(mtr), DP_msg_transform_region_x2(mtr),
