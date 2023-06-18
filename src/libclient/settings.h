@@ -10,6 +10,7 @@
 #include <QDebug>
 #include <QHash>
 #include <QLoggingCategory>
+#include <QRecursiveMutex>
 #include <QSettings>
 #include <QVariant>
 #include <memory>
@@ -212,6 +213,7 @@ protected:
 
 	mutable QSettings m_settings; // Annoying group interface requires mutable.
 	QHash<const SettingMeta *, QVariant> m_pending;
+	mutable QRecursiveMutex m_mutex;
 };
 
 QString formatSettingKey(const char *baseKey, int version);

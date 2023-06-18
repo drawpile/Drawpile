@@ -9,6 +9,7 @@
 #include <QDebug>
 #include <QLoggingCategory>
 #include <QMetaType>
+#include <QMutexLocker>
 #include <QSequentialIterable>
 #include <QSet>
 #include <QStandardPaths>
@@ -122,6 +123,7 @@ static void cacheGroups(QSettings &settings, QSet<QString> &groupKeys, const QSt
 
 void Settings::reset(const QString &path)
 {
+	QMutexLocker locker{&m_mutex};
 	// QSettings disables assignment operators.
 	m_settings.~QSettings();
 
@@ -153,6 +155,7 @@ void Settings::reset(const QString &path)
 #ifdef Q_OS_WIN
 void Settings::migrateFromNativeFormat(bool force)
 {
+	QMutexLocker locker{&m_mutex};
 	if (m_settings.allKeys().isEmpty() || force) {
 		m_settings.clear();
 		QSettings oldSettings;
@@ -166,6 +169,7 @@ void Settings::migrateFromNativeFormat(bool force)
 
 void Settings::revert()
 {
+	QMutexLocker locker{&m_mutex};
 	const auto pending = m_pending.keys();
 
 	// Changes must be cleared before emitting events or else they will be
@@ -179,6 +183,7 @@ void Settings::revert()
 
 bool Settings::submit()
 {
+	QMutexLocker locker{&m_mutex};
 	if(m_pending.isEmpty()) {
 		return true;
 	} else {
@@ -202,6 +207,7 @@ void Settings::trySubmit()
 
 QVariant Settings::get(const SettingMeta &setting) const
 {
+	QMutexLocker locker{&m_mutex};
 	if (m_pending.contains(&setting)) {
 		return m_pending[&setting];
 	} else {
@@ -211,6 +217,7 @@ QVariant Settings::get(const SettingMeta &setting) const
 
 bool Settings::set(const SettingMeta &setting, QVariant value)
 {
+	QMutexLocker locker{&m_mutex};
 	if (!m_pending.contains(&setting) || m_pending[&setting] != value) {
 		m_pending[&setting] = value;
 		(setting.notify)(setting, *this);
