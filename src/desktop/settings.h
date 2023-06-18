@@ -165,7 +165,13 @@ protected:
 	> bind(T initialValue, void (Self::*changed)(T), void (Self::*setter)(T), QPlainTextEdit *widget) {
 		widget->setPlainText(initialValue);
 		return std::pair {
-			connect(this, changed, widget, &QPlainTextEdit::setPlainText),
+			connect(this, changed, widget, [=](const QString &text) {
+				// Setting the text moves the caret back to the beginning and
+				// purges the edit history, so we only set if necessary.
+				if(widget->toPlainText() != text) {
+					widget->setPlainText(text);
+				}
+			}),
 			connect(widget, &QPlainTextEdit::textChanged, this, [=] {
 				std::invoke(setter, this, widget->toPlainText());
 			})
