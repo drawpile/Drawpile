@@ -173,6 +173,27 @@ struct TimelineWidget::Private {
 					 : nullptr;
 	}
 
+	const canvas::TimelineKeyFrame *currentVisibleKeyFrame() const
+	{
+		const canvas::TimelineTrack *track = trackById(currentTrackId);
+		if(track) {
+			const QVector<canvas::TimelineKeyFrame> &keyFrames =
+				track->keyFrames;
+			int keyFrameCount = keyFrames.size();
+			int bestFrameIndex = -1;
+			const canvas::TimelineKeyFrame *bestKeyFrame = nullptr;
+			for(int i = 0; i < keyFrameCount; ++i) {
+				const canvas::TimelineKeyFrame &keyFrame = keyFrames[i];
+				int frameIndex = keyFrame.frameIndex;
+				if(frameIndex <= currentFrame && frameIndex > bestFrameIndex) {
+					bestKeyFrame = &keyFrame;
+				}
+			}
+			return bestKeyFrame;
+		}
+		return nullptr;
+	}
+
 	QModelIndex layerIndexById(int layerId) const
 	{
 		if(canvas) {
@@ -224,7 +245,7 @@ struct TimelineWidget::Private {
 			return lastLayerId;
 		}
 
-		const canvas::TimelineKeyFrame *keyFrame = currentKeyFrame();
+		const canvas::TimelineKeyFrame *keyFrame = currentVisibleKeyFrame();
 		return keyFrame ? keyFrame->layerId : 0;
 	}
 
