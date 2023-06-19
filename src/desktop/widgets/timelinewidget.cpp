@@ -1399,9 +1399,14 @@ void TimelineWidget::setCurrent(
 
 	int actualFrame = qBound(0, frame, qMax(0, d->frameCount() - 1));
 	if(actualFrame != d->currentFrame) {
+		const canvas::TimelineKeyFrame *prevKeyFrame =
+			d->currentVisibleKeyFrame();
 		d->currentFrame = actualFrame;
 		emit frameSelected(frame);
 		needsUpdate = true;
+		if(d->currentVisibleKeyFrame() == prevKeyFrame) {
+			selectLayer = false;
+		}
 	}
 
 	if(needsUpdate && triggerUpdate) {
