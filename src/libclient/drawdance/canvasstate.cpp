@@ -155,6 +155,15 @@ QSet<int> CanvasState::getLayersVisibleInFrame(int frameIndex) const
     return layersVisibleInFrame;
 }
 
+QSet<int> CanvasState::getLayersVisibleInTrackFrame(int trackId, int frameIndex) const
+{
+    QSet<int> layersVisibleInTrackFrame;
+    DP_view_mode_get_layers_visible_in_track_frame(
+        m_data, trackId, frameIndex, addLayerVisibleInFrame,
+        &layersVisibleInTrackFrame);
+    return layersVisibleInTrackFrame;
+}
+
 QImage CanvasState::toFlatImage(
     bool includeBackground, bool includeSublayers,
     const QRect *rect, const DP_ViewModeFilter *vmf) const

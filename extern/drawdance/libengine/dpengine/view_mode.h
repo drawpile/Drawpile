@@ -123,6 +123,12 @@ void DP_view_mode_get_layers_visible_in_frame(DP_CanvasState *cs,
                                               int frame_index,
                                               AddVisibleLayerFn fn, void *user);
 
+void DP_view_mode_get_layers_visible_in_track_frame(DP_CanvasState *cs,
+                                                    int track_id,
+                                                    int frame_index,
+                                                    AddVisibleLayerFn fn,
+                                                    void *user);
+
 
 DP_OnionSkins *DP_onion_skins_new(int count_below, int count_above);
 

@@ -11,6 +11,7 @@ extern "C" {
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/documentmetadata.h"
 #include "libclient/canvas/layerlist.h"
+#include "libclient/canvas/paintengine.h"
 #include "libclient/canvas/timelinemodel.h"
 #include "libclient/drawdance/message.h"
 
@@ -193,15 +194,19 @@ struct TimelineWidget::Private {
 		return QString{};
 	}
 
-	bool isLayerCurrentlyVisible(int layerId)
+	bool isLayerVisibleInCurrentTrack(int layerId)
 	{
-		return canvas && canvas->layerlist()->isLayerVisibleInFrame(layerId);
+		return canvas &&
+			   canvas->paintEngine()
+				   ->viewCanvasState()
+				   .getLayersVisibleInTrackFrame(currentTrackId, currentFrame)
+				   .contains(layerId);
 	}
 
 	void setSelectedLayerId(int layerId)
 	{
 		selectedLayerId = layerId;
-		if(isLayerCurrentlyVisible(layerId)) {
+		if(isLayerVisibleInCurrentTrack(layerId)) {
 			layerIdByKeyFrame.insert({currentTrackId, currentFrame}, layerId);
 		}
 	}
@@ -209,13 +214,13 @@ struct TimelineWidget::Private {
 	int guessLayerIdToSelect()
 	{
 		QPair<int, int> key = {currentTrackId, currentFrame};
-		if(isLayerCurrentlyVisible(selectedLayerId)) {
+		if(isLayerVisibleInCurrentTrack(selectedLayerId)) {
 			layerIdByKeyFrame.insert(key, selectedLayerId);
 			return 0;
 		}
 
 		int lastLayerId = layerIdByKeyFrame.value(key, 0);
-		if(lastLayerId != 0 && isLayerCurrentlyVisible(lastLayerId)) {
+		if(lastLayerId != 0 && isLayerVisibleInCurrentTrack(lastLayerId)) {
 			return lastLayerId;
 		}
 

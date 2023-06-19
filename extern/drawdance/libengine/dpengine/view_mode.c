@@ -500,6 +500,20 @@ void DP_view_mode_get_layers_visible_in_frame(DP_CanvasState *cs,
     }
 }
 
+void DP_view_mode_get_layers_visible_in_track_frame(DP_CanvasState *cs,
+                                                    int track_id,
+                                                    int frame_index,
+                                                    AddVisibleLayerFn fn,
+                                                    void *user)
+{
+    DP_Timeline *tl = DP_canvas_state_timeline_noinc(cs);
+    int index = DP_timeline_index_by_id(tl, track_id);
+    if (index != -1) {
+        DP_Track *t = DP_timeline_at_noinc(tl, index);
+        get_track_layers_visible_in_frame(cs, t, frame_index, fn, user);
+    }
+}
+
 
 DP_OnionSkins *DP_onion_skins_new(int count_below, int count_above)
 {
