@@ -35,6 +35,7 @@ struct TimelineWidget::Target {
 	int uiTrackIndex;
 	int trackId;
 	int frameIndex;
+	bool onHeader;
 	QAction *action;
 };
 
@@ -59,7 +60,8 @@ struct TimelineWidget::Private {
 	int currentTrackId = 0;
 	int currentFrame = 0;
 	int nextTrackId = 0;
-	Target hoverTarget = {-1, 0, -1, nullptr};
+	Target hoverTarget = {-1, 0, -1, false, nullptr};
+	bool pressedOnHeader = false;
 	bool editable = false;
 	Drag drag = Drag::None;
 	Drag dragHover = Drag::None;
@@ -712,15 +714,16 @@ void TimelineWidget::resizeEvent(QResizeEvent *event)
 
 void TimelineWidget::mouseMoveEvent(QMouseEvent *event)
 {
-	d->hoverTarget = getMouseTarget(compat::mousePos(*event));
+	QPoint mousePos = compat::mousePos(*event);
+	Target target = getMouseTarget(mousePos);
+	d->hoverTarget = target;
 
 	Drag dragType = d->drag;
-	bool shouldDrag =
-		d->editable &&
-		((dragType == Drag::Track && d->currentTrack()) ||
-		 (dragType == Drag::KeyFrame && d->currentKeyFrame())) &&
-		(compat::mousePos(*event) - d->dragOrigin).manhattanLength() <
-			QApplication::startDragDistance();
+	bool shouldDrag = d->editable &&
+					  ((dragType == Drag::Track && d->currentTrack()) ||
+					   (dragType == Drag::KeyFrame && d->currentKeyFrame())) &&
+					  (mousePos - d->dragOrigin).manhattanLength() <
+						  QApplication::startDragDistance();
 	if(shouldDrag) {
 		d->drag = Drag::None;
 
@@ -766,6 +769,8 @@ void TimelineWidget::mouseMoveEvent(QMouseEvent *event)
 		drag->setMimeData(mimeData); // QDrag takes ownership of the QMimeData.
 		drag->setPixmap(pixmap);
 		drag->exec(d->dropAction); // Qt takes ownership of the QDrag.
+	} else if(d->pressedOnHeader && target.frameIndex != -1) {
+		setCurrent(0, target.frameIndex, true, true);
 	}
 }
 
@@ -778,6 +783,7 @@ void TimelineWidget::mousePressEvent(QMouseEvent *event)
 	Drag drag = Drag::None;
 	Qt::DropAction dropAction = Qt::MoveAction;
 	if(button == Qt::LeftButton) {
+		d->pressedOnHeader = target.onHeader;
 		if(target.action) {
 			target.action->trigger();
 			event->accept();
@@ -825,6 +831,7 @@ void TimelineWidget::mouseDoubleClickEvent(QMouseEvent *event)
 void TimelineWidget::mouseReleaseEvent(QMouseEvent *event)
 {
 	if(event->button() == Qt::LeftButton) {
+		d->pressedOnHeader = false;
 		d->drag = Drag::None;
 	}
 }
@@ -1516,7 +1523,7 @@ void TimelineWidget::updateScrollbars()
 
 TimelineWidget::Target TimelineWidget::getMouseTarget(const QPoint &pos) const
 {
-	Target target{-1, 0, -1, nullptr};
+	Target target{-1, 0, -1, false, nullptr};
 	if(d->canvas) {
 		int x = pos.x();
 		int headerWidth = d->headerWidth;
@@ -1540,6 +1547,8 @@ TimelineWidget::Target TimelineWidget::getMouseTarget(const QPoint &pos) const
 			} else if(x >= mid && x < tp * 3 + ICON_SIZE * 2) {
 				target.action = d->actions.trackOnionSkin;
 			}
+		} else {
+			target.onHeader = true;
 		}
 	}
 	return target;
