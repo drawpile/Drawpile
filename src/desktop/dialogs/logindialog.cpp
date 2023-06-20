@@ -381,12 +381,15 @@ void LoginDialog::onExtAuthNeeded(const QString &forUsername, const QUrl &url)
 	if(!forUsername.isEmpty())
 		d->ui->username->setText(forUsername);
 
-	QString prompt = tr("Log in with %1 credentials").arg("<i>" + url.host() + "</i>");
-	if(url.scheme() != "https")
-		prompt += " (INSECURE CONNECTION!)";
+	QString prompt;
+	if(url.scheme() == "https") {
+		prompt = tr("Log in with '%1' credentials");
+	} else {
+		prompt = tr("Log in with '%1' credentials (INSECURE CONNECTION!)");
+	}
 
 	d->extauthurl = url;
-	d->setLoginMode(prompt);
+	d->setLoginMode(prompt.arg(url.host()));
 }
 
 void LoginDialog::onExtAuthComplete(bool success)
