@@ -23,6 +23,7 @@ VersionCheckDialog::VersionCheckDialog(QWidget *parent)
 	setAttribute(Qt::WA_DeleteOnClose);
 
 	m_downloadButton = m_ui->buttonBox->addButton(tr("Download"), QDialogButtonBox::ActionRole);
+	m_downloadButton->setIcon(QIcon::fromTheme("edit-download"));
 	m_downloadButton->hide();
 	showButtons(QDialogButtonBox::Cancel);
 
