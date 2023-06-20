@@ -618,11 +618,12 @@ void ChatWidget::setPinnedMessage(const QString &message)
 void ChatWidget::systemMessage(const QString& message, bool alert)
 {
 	const bool wasAtEnd = d->isAtEnd();
+	const QString safetext = htmlutils::linkify(message.toHtmlEscaped());
 	if(alert) {
-		d->publicChat().appendMessageCompact(0, QString(), message, false, true);
+		d->publicChat().appendMessageCompact(0, QString(), safetext, false, true);
 		emit expandRequested();
 	} else {
-		d->publicChat().appendNotification(message.toHtmlEscaped());
+		d->publicChat().appendNotification(safetext);
 	}
 
 	if(wasAtEnd || alert) {
