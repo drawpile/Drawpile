@@ -2721,9 +2721,18 @@ void MainWindow::setupActions()
 
 	// Collect list of docks for dock menu
 	for(const auto *dw : findChildren<const QDockWidget *>(QString(), Qt::FindDirectChildrenOnly)) {
-			QAction *toggledockaction = dw->toggleViewAction();
-			toggledockmenu->addAction(toggledockaction);
-			m_dockToggles->addAction(toggledockaction);
+		QAction *toggledockaction = dw->toggleViewAction();
+		Q_ASSERT(!dw->objectName().isEmpty());
+		Q_ASSERT(toggledockaction->objectName().isEmpty());
+		toggledockaction->setObjectName(
+			QStringLiteral("toggledock%1").arg(dw->objectName()));
+		toggledockmenu->addAction(toggledockaction);
+		m_dockToggles->addAction(toggledockaction);
+		CustomShortcutModel::registerCustomizableAction(
+			toggledockaction->objectName(),
+			tr("Toggle Dock %1").arg(toggledockaction->text()),
+			toggledockaction->shortcut());
+		addAction(toggledockaction);
 	}
 
 	toggledockmenu->addSeparator();
