@@ -314,6 +314,8 @@ QString FileWrangler::getLastPathKey(LastPath type)
 	switch(type) {
 	case LastPath::IMAGE:
 		return QStringLiteral("image");
+	case LastPath::ANIMATION_FRAMES:
+		return QStringLiteral("animationframes");
 	case LastPath::PERFORMANCE_PROFILE:
 		return QStringLiteral("performanceprofile");
 	case LastPath::TABLET_EVENT_LOG:
