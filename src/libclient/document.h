@@ -220,8 +220,6 @@ public slots:
 
 	void addServerLogEntry(const QString &log);
 
-	void updateSettings();
-
 private slots:
 	void onServerLogin(bool join, bool compatibilityMode);
 	void onServerDisconnect();

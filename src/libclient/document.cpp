@@ -87,6 +87,7 @@ void Document::initCanvas()
 	delete m_canvas;
 
 	m_canvas = new canvas::CanvasModel{
+		m_settings,
 		m_client->myId(),
 		m_settings.engineFrameRate(),
 		m_settings.engineSnapshotCount(),
@@ -999,12 +1000,3 @@ void Document::addServerLogEntry(const QString &log)
 	m_serverLog->setData(m_serverLog->index(i), log);
 }
 
-void Document::updateSettings()
-{
-	if(m_canvas) {
-		canvas::PaintEngine *paintEngine = m_canvas->paintEngine();
-		paintEngine->setFps(m_settings.engineFrameRate());
-		paintEngine->setSnapshotMaxCount(m_settings.engineSnapshotCount());
-		paintEngine->setSnapshotMinDelayMs(m_settings.engineSnapshotInterval() * 1000LL);
-	}
-}

@@ -15,6 +15,12 @@ namespace drawdance {
 	class CanvasState;
 }
 
+namespace libclient {
+namespace settings {
+class Settings;
+}
+}
+
 namespace canvas {
 
 class AclState;
@@ -30,9 +36,9 @@ class CanvasModel final : public QObject
 	Q_OBJECT
 public:
 	CanvasModel(
-		uint8_t localUserId, int fps, int snapshotMaxCount,
-		long long snapshotMinDelayMs, bool wantCanvasHistoryDump,
-		QObject *parent = nullptr);
+		libclient::settings::Settings &settings, uint8_t localUserId, int fps,
+		int snapshotMaxCount, long long snapshotMinDelayMs,
+		bool wantCanvasHistoryDump, QObject *parent = nullptr);
 
 	PaintEngine *paintEngine() const { return m_paintengine; }
 

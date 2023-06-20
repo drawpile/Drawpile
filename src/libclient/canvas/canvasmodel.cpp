@@ -13,6 +13,7 @@ extern "C" {
 #include "libclient/canvas/selection.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/canvas/documentmetadata.h"
+#include "libclient/settings.h"
 #include "libclient/utils/identicon.h"
 #include "libshared/util/qtcompat.h"
 
@@ -21,7 +22,8 @@ extern "C" {
 
 namespace canvas {
 
-CanvasModel::CanvasModel(uint8_t localUserId, int fps, int snapshotMaxCount,
+CanvasModel::CanvasModel(libclient::settings::Settings &settings,
+		uint8_t localUserId, int fps, int snapshotMaxCount,
 		long long snapshotMinDelayMs, bool wantCanvasHistoryDump,
 		QObject *parent)
 	: QObject(parent)
@@ -56,6 +58,12 @@ CanvasModel::CanvasModel(uint8_t localUserId, int fps, int snapshotMaxCount,
 	connect(m_paintengine, &PaintEngine::layersChanged, m_layerlist, &LayerListModel::setLayers);
 	connect(m_paintengine, &PaintEngine::timelineChanged, m_timeline, &TimelineModel::setTimeline);
 	connect(m_paintengine, &PaintEngine::frameVisibilityChanged, m_layerlist, &LayerListModel::setLayersVisibleInFrame);
+
+	settings.bindEngineFrameRate(m_paintengine, &PaintEngine::setFps);
+	settings.bindEngineSnapshotCount(m_paintengine, &PaintEngine::setSnapshotMaxCount);
+	settings.bindEngineSnapshotInterval(this, [this](int minDelaySec){
+		m_paintengine->setSnapshotMinDelayMs(minDelaySec * 1000LL);
+	});
 }
 
 void CanvasModel::loadBlank(int undoDepthLimit, const QSize &size, const QColor &background)
