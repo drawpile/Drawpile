@@ -431,6 +431,14 @@ void ToolSettings::addLastUsedColor(const QColor &color)
 	emit lastUsedColorsChanged(d->lastUsedColors);
 }
 
+void ToolSettings::setLastUsedColor(int i)
+{
+	QColor color = d->lastUsedColors.colorAt(i);
+	if(color.isValid()) {
+		setForegroundColor(color);
+	}
+}
+
 void ToolSettings::setPreviousTool()
 {
 	selectTool(d->previousTool);

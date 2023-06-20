@@ -103,6 +103,9 @@ public slots:
 	//! Add a color to the active last used colors palette
 	void addLastUsedColor(const QColor &color);
 
+	//! Switch to the last used color at the given index
+	void setLastUsedColor(int i);
+
 signals:
 	//! This signal is emitted when the current tool changes its size
 	void sizeChanged(int size);

@@ -3505,6 +3505,16 @@ void MainWindow::setupActions()
 		m_toolChangeTime.start();
 	});
 
+	// Color swatch shortcuts
+	for(int i = 0; i < docks::ToolSettings::LASTUSED_COLOR_COUNT; ++i) {
+		QAction *swatchAction = makeAction(
+			qUtf8Printable(QStringLiteral("swatchcolor%1").arg(i)),
+			tr("Swatch Color %1").arg(i + 1)).noDefaultShortcut();
+		connect(swatchAction, &QAction::triggered, m_dockToolSettings, [=] {
+			m_dockToolSettings->setLastUsedColor(i);
+		});
+	}
+
 	// Add temporary tool change shortcut detector
 	for(QAction *act : m_drawingtools->actions())
 		act->installEventFilter(m_tempToolSwitchShortcut);
