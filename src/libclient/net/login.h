@@ -139,7 +139,7 @@ public:
 	 */
 	bool supportsAbuseReports() const { return m_canReport; }
 
-	protocol::ProtocolVersion protocolVersion() const { return m_protocolVersion; }
+	bool compatibilityMode() const { return m_compatibilityMode; }
 
 	/**
 	 * @brief Check if the user has the given flag
@@ -215,7 +215,7 @@ public slots:
 	 * @param id session ID
 	 * @param needPassword if true, ask for password before joining
 	 */
-	void joinSelectedSession(const QString &id, bool needPassword);
+	void joinSelectedSession(const QString &id, bool needPassword, bool compatibilityMode);
 
 	/**
 	 * @brief Accept server certificate and proceed with login
@@ -408,7 +408,7 @@ private:
 	bool m_needUserPassword;
 	bool m_supportsCustomAvatars;
 	bool m_supportsExtAuthAvatars;
-	protocol::ProtocolVersion m_protocolVersion;
+	bool m_compatibilityMode;
 
 	// User flags
 	QStringList m_userFlags;

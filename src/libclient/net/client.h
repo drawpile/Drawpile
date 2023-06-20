@@ -197,7 +197,7 @@ private slots:
 	void handleMessages(int count, const drawdance::Message *msgs);
 	void handleConnect(
 		const QUrl &url, uint8_t userid, bool join, bool auth, bool moderator,
-		bool supportsAutoReset, const protocol::ProtocolVersion &protocolVersion);
+		bool supportsAutoReset, bool compatibilityMode);
 	void handleDisconnect(const QString &message, const QString &errorcode, bool localDisconnect);
 
 private:

@@ -538,7 +538,8 @@ void LoginDialog::onOkClicked()
 		const QModelIndex i = d->ui->sessionList->selectionModel()->selectedIndexes().first();
 		d->loginHandler->joinSelectedSession(
 			i.data(net::LoginSessionModel::AliasOrIdRole).toString(),
-			i.data(net::LoginSessionModel::NeedPasswordRole).toBool()
+			i.data(net::LoginSessionModel::NeedPasswordRole).toBool(),
+			i.data(net::LoginSessionModel::CompatibilityModeRole).toBool()
 		);
 		break;
 		}

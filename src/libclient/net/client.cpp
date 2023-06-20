@@ -110,14 +110,14 @@ QUrl Client::sessionUrl(bool includeUser) const
 
 void Client::handleConnect(
 	const QUrl &url, uint8_t userid, bool join, bool auth, bool moderator,
-	bool supportsAutoReset, const protocol::ProtocolVersion &protocolVersion)
+	bool supportsAutoReset, bool compatibilityMode)
 {
 	m_lastUrl = url;
 	m_myId = userid;
 	m_moderator = moderator;
 	m_isAuthenticated = auth;
 	m_supportsAutoReset = supportsAutoReset;
-	m_compatibilityMode = protocolVersion.isPastCompatible();
+	m_compatibilityMode = compatibilityMode;
 
 	emit serverLoggedIn(join, m_compatibilityMode);
 }

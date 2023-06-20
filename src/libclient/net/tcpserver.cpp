@@ -151,7 +151,6 @@ void TcpServer::loginSuccess()
 
 	m_supportsPersistence = m_loginstate->supportsPersistence();
 	m_supportsAbuseReports = m_loginstate->supportsAbuseReports();
-	m_protocolVersion = m_loginstate->protocolVersion();
 
 	emit loggedIn(
 		m_loginstate->url(),
@@ -160,7 +159,7 @@ void TcpServer::loginSuccess()
 		m_loginstate->isAuthenticated(),
 		m_loginstate->hasUserFlag("MOD"),
 		!m_loginstate->sessionFlags().contains("NOAUTORESET"),
-		m_protocolVersion);
+		m_loginstate->compatibilityMode());
 
 	m_loginstate->deleteLater();
 	m_loginstate = nullptr;

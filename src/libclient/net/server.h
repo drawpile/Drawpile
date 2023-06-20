@@ -70,8 +70,6 @@ public:
 	virtual bool supportsPersistence() const = 0;
 	virtual bool supportsAbuseReports() const = 0;
 
-	virtual protocol::ProtocolVersion protocolVersion() const = 0;
-
 	// Artificial lag for debugging.
 	virtual int artificialLagMs() const = 0;
 	virtual void setArtificialLagMs(int msecs) = 0;

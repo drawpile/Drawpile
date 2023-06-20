@@ -57,6 +57,7 @@ LoginHandler::LoginHandler(Mode mode, const QUrl &url, QObject *parent)
 	, m_needUserPassword(false)
 	, m_supportsCustomAvatars(false)
 	, m_supportsExtAuthAvatars(false)
+	, m_compatibilityMode(false)
 	, m_isGuest(true)
 {
 	m_sessions = new LoginSessionModel(this);
@@ -427,14 +428,15 @@ void LoginHandler::expectSessionDescriptionJoin(const ServerReply &msg)
 		for(const auto jsv : msg.reply["sessions"].toArray()) {
 			const QJsonObject js = jsv.toObject();
 
-			m_protocolVersion = protocol::ProtocolVersion::fromString(js["protocol"].toString());
+			protocol::ProtocolVersion protoVer =
+				protocol::ProtocolVersion::fromString(js["protocol"].toString());
 
 			QString incompatibleSeries;
-			if(!m_protocolVersion.isCompatible()) {
-				if(m_protocolVersion.isFuture()) {
+			if(!protoVer.isCompatible()) {
+				if(protoVer.isFuture()) {
 					incompatibleSeries = tr("New version");
 				} else {
-					incompatibleSeries = m_protocolVersion.versionName();
+					incompatibleSeries = protoVer.versionName();
 				}
 
 				if(incompatibleSeries.isEmpty()) {
@@ -448,7 +450,7 @@ void LoginHandler::expectSessionDescriptionJoin(const ServerReply &msg)
 				js["title"].toString(),
 				js["founder"].toString(),
 				incompatibleSeries,
-				m_protocolVersion.isPastCompatible(),
+				protoVer.isPastCompatible(),
 				js["userCount"].toInt(),
 				js["hasPassword"].toBool(),
 				js["persistent"].toBool(),
@@ -467,7 +469,7 @@ void LoginHandler::expectSessionDescriptionJoin(const ServerReply &msg)
 				}
 
 				if(canJoin)
-					joinSelectedSession(m_autoJoinId, session.needPassword);
+					joinSelectedSession(m_autoJoinId, session.needPassword, session.compatibilityMode);
 				else
 					m_autoJoinId = QString();
 			}
@@ -499,7 +501,7 @@ void LoginHandler::expectSessionDescriptionJoin(const ServerReply &msg)
 			return;
 		}
 
-		joinSelectedSession(session.id, session.needPassword);
+		joinSelectedSession(session.id, session.needPassword, session.compatibilityMode);
 	}
 }
 
@@ -573,10 +575,11 @@ bool LoginHandler::expectLoginOk(const ServerReply &msg)
 	return true;
 }
 
-void LoginHandler::joinSelectedSession(const QString &id, bool needPassword)
+void LoginHandler::joinSelectedSession(const QString &id, bool needPassword, bool compatibilityMode)
 {
 	Q_ASSERT(!id.isEmpty());
 	m_selectedId = id;
+	m_compatibilityMode = compatibilityMode;
 	if(needPassword && !m_sessions->isModeratorMode()) {
 		emit sessionPasswordNeeded();
 		m_state = WAIT_FOR_JOIN_PASSWORD;
