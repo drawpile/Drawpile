@@ -94,16 +94,21 @@ void VersionCheckDialog::setNewVersions(const QVector<NewVersionCheck::Version> 
 		m_ui->textBrowser->setHtml("<h1>You're up to date!</h1><p>No new versions found.</p>");
 
 	} else {
-		QString content = "<h1>A new version of Drawpile is available!</h1>";
-
+		const NewVersionCheck::Version *latestStable = nullptr;
 		for(const auto &version : versions) {
-			content += QStringLiteral("<h2><a href=\"%1\">Version %2</a></h2>").arg(version.announcementUrl, version.version);
-			content += version.description;
+			if(!latestStable && version.stable) {
+				latestStable = &version;
+			}
 		}
 
+		const NewVersionCheck::Version latest = latestStable ? *latestStable : versions.first();
+		QString h1 = tr("A new version of Drawpile is available!").toHtmlEscaped();
+		QString h2 = tr("Version %2").arg(latest.version).toHtmlEscaped();
+		QString content =
+			QStringLiteral("<h1>%1</h1><h2><a href=\"%2\">%3</a></h2>%4")
+				.arg(h1, latest.version, h2, latest.description);
 		m_ui->textBrowser->setHtml(content);
 
-		const auto latest = versions.first();
 		if(!latest.downloadUrl.isEmpty()) {
 			m_downloadUrl = latest.downloadUrl;
 			if(m_downloadUrl.isValid() && !m_downloadUrl.fileName().isEmpty()) {
