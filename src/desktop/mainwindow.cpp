@@ -3190,6 +3190,8 @@ void MainWindow::setupActions()
 	layerMenu->addAction(layerDupe);
 	layerMenu->addAction(layerMerge);
 	layerMenu->addAction(layerDelete);
+	layerMenu->addAction(layerProperties);
+	layerMenu->addAction(layerSetFillSource);
 
 	layerMenu->addSeparator();
 	layerMenu->addAction(layerUpAct);
