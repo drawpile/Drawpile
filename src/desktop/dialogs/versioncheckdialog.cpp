@@ -78,7 +78,9 @@ void VersionCheckDialog::versionChecked(bool isNew, const QString &errorMessage)
 	}
 
 	if(!errorMessage.isEmpty()) {
-		m_ui->textBrowser->insertHtml(QStringLiteral("<p style=\"color: red\">%1</p>").arg(errorMessage));
+		QString h1 = tr("Error checking version!").toHtmlEscaped();
+		QString p = errorMessage.toHtmlEscaped();
+		m_ui->textBrowser->insertHtml(QStringLiteral("<h1>%1</h1><p>%2</p>").arg(h1, p));
 		m_ui->views->setCurrentIndex(1);
 
 	} else {
@@ -91,7 +93,9 @@ void VersionCheckDialog::versionChecked(bool isNew, const QString &errorMessage)
 void VersionCheckDialog::setNewVersions(const QVector<NewVersionCheck::Version> &versions)
 {
 	if(versions.isEmpty()) {
-		m_ui->textBrowser->setHtml("<h1>You're up to date!</h1><p>No new versions found.</p>");
+		QString h1 = tr("You're up to date!").toHtmlEscaped();
+		QString p = tr("No new versions found.").toHtmlEscaped();
+		m_ui->textBrowser->setHtml(tr("<h1>%1</h1><p>%2</p>").arg(h1, p));
 
 	} else {
 		const NewVersionCheck::Version *latestStable = nullptr;
