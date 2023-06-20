@@ -6,6 +6,7 @@
 #include "libclient/utils/newversion.h"
 
 #include <QDialog>
+#include <QDialogButtonBox>
 
 class Ui_VersionCheckDialog;
 class QPushButton;
@@ -41,13 +42,12 @@ private slots:
 	void downloadNewVersion();
 
 private:
+	void showButtons(const QDialogButtonBox::StandardButtons &buttons);
+
 	Ui_VersionCheckDialog *m_ui;
 	NewVersionCheck *m_newversion;
 	QPushButton *m_downloadButton;
-
-	QUrl m_downloadUrl;
-	QByteArray m_downloadSha256;
-	int m_downloadSize;
+	NewVersionCheck::Version m_latest;
 };
 
 }

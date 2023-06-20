@@ -22,8 +22,9 @@ VersionCheckDialog::VersionCheckDialog(QWidget *parent)
 	m_ui->setupUi(this);
 	setAttribute(Qt::WA_DeleteOnClose);
 
-	m_downloadButton = m_ui->buttonBox->addButton(QString(), QDialogButtonBox::ActionRole);
+	m_downloadButton = m_ui->buttonBox->addButton(tr("Download"), QDialogButtonBox::ActionRole);
 	m_downloadButton->hide();
+	showButtons(QDialogButtonBox::Cancel);
 
 	connect(m_downloadButton, &QPushButton::clicked, this, &VersionCheckDialog::downloadNewVersion);
 
@@ -82,6 +83,7 @@ void VersionCheckDialog::versionChecked(bool isNew, const QString &errorMessage)
 		QString p = errorMessage.toHtmlEscaped();
 		m_ui->textBrowser->insertHtml(QStringLiteral("<h1>%1</h1><p>%2</p>").arg(h1, p));
 		m_ui->views->setCurrentIndex(1);
+		showButtons(QDialogButtonBox::Ok);
 
 	} else {
 		setNewVersions(m_newversion->getNewer());
@@ -96,6 +98,7 @@ void VersionCheckDialog::setNewVersions(const QVector<NewVersionCheck::Version> 
 		QString h1 = tr("You're up to date!").toHtmlEscaped();
 		QString p = tr("No new versions found.").toHtmlEscaped();
 		m_ui->textBrowser->setHtml(tr("<h1>%1</h1><p>%2</p>").arg(h1, p));
+		showButtons(QDialogButtonBox::Ok);
 
 	} else {
 		const NewVersionCheck::Version *latestStable = nullptr;
@@ -105,92 +108,47 @@ void VersionCheckDialog::setNewVersions(const QVector<NewVersionCheck::Version> 
 			}
 		}
 
-		const NewVersionCheck::Version latest = latestStable ? *latestStable : versions.first();
+		m_latest = latestStable ? *latestStable : versions.first();
 		QString h1 = tr("A new version of Drawpile is available!").toHtmlEscaped();
-		QString h2 = tr("Version %2").arg(latest.version).toHtmlEscaped();
+		QString h2 = tr("Version %2").arg(m_latest.version).toHtmlEscaped();
 		QString content =
 			QStringLiteral("<h1>%1</h1><h2><a href=\"%2\">%3</a></h2>%4")
-				.arg(h1, latest.version, h2, latest.description);
+				.arg(h1, m_latest.version, h2, m_latest.description);
 		m_ui->textBrowser->setHtml(content);
-
-		if(!latest.downloadUrl.isEmpty()) {
-			m_downloadUrl = latest.downloadUrl;
-			if(m_downloadUrl.isValid() && !m_downloadUrl.fileName().isEmpty()) {
-				if(latest.downloadChecksumType == "sha256")
-					m_downloadSha256 = QByteArray::fromHex(latest.downloadChecksum.toLatin1());
-				m_downloadSize = latest.downloadSize;
-
-				m_downloadButton->setText(tr("Download %1 (%2 MB)")
-					.arg(latest.version)
-					.arg(latest.downloadSize / (1024.0 * 1024.0), 0, 'f', 2)
-					);
-				m_downloadButton->show();
-			}
-		}
+		showButtons(QDialogButtonBox::Save | QDialogButtonBox::Cancel);
 	}
 	m_ui->views->setCurrentIndex(1);
 }
 
 void VersionCheckDialog::downloadNewVersion()
 {
-	Q_ASSERT(m_downloadUrl.isValid());
+	Q_ASSERT(!m_latest.version.isEmpty());
+	QString url{QStringLiteral("https://drawpile.net/download/%1")
+					.arg(m_latest.stable ? "" : "#Beta")};
+	QDesktopServices::openUrl(url);
+	QString href = url.toHtmlEscaped();
+	//: %2 is used twice, this is intentional! Don't use %3.
+	m_ui->textBrowser->setHtml(
+		tr("<p>The download page for Drawpile %1 should have opened in your "
+		   "browser. If not, visit <a href=\"%2\">%2</a> manually.</p>"
+		   "<p>Restart Drawpile after installing the new version.</p>")
+			.arg(m_latest.version, href));
+	showButtons(QDialogButtonBox::Ok);
+}
 
-	const QDir downloadDir = utils::paths::writablePath(QStandardPaths::DownloadLocation, ".", ".");
-	const auto downloadPath = downloadDir.absoluteFilePath(m_downloadUrl.fileName());
+void VersionCheckDialog::showButtons(const QDialogButtonBox::StandardButtons &buttons)
+{
+	QAbstractButton *okButton = m_ui->buttonBox->button(QDialogButtonBox::Ok);
+	okButton->setVisible(buttons.testFlag(QDialogButtonBox::Ok));
+	QAbstractButton *cancelButton = m_ui->buttonBox->button(QDialogButtonBox::Cancel);
+	cancelButton->setVisible(buttons.testFlag(QDialogButtonBox::Cancel));
+	m_downloadButton->setVisible(buttons.testFlag(QDialogButtonBox::Save));
 
-	{
-		QFile oldFile(downloadPath);
-		if(oldFile.exists()) {
-			if(oldFile.open(QFile::ReadOnly)) {
-				bool hashOk = true;
-
-				if(!m_downloadSha256.isEmpty()) {
-					QCryptographicHash hash(QCryptographicHash::Sha256);
-					hash.addData(&oldFile);
-					hashOk = hash.result() == m_downloadSha256;
-				}
-
-				if(hashOk) {
-					// Old download is still valid
-					QDesktopServices::openUrl(QUrl::fromLocalFile(downloadDir.path()));
-					return;
-				}
-			}
-
-			// File is corrupt, try to remove it
-			oldFile.remove();
-		}
+	if(m_downloadButton->isVisible()) {
+		m_downloadButton->setFocus();
+	} else if(okButton->isVisible()) {
+		okButton->setFocus();
 	}
-
-	auto *fd = new networkaccess::FileDownload(this);
-	fd->setTarget(downloadPath);
-	fd->setMaxSize(m_downloadSize);
-
-	if(!m_downloadSha256.isEmpty())
-		fd->setExpectedHash(m_downloadSha256, QCryptographicHash::Sha256);
-
-	connect(fd, &networkaccess::FileDownload::progress, this, [this](qint64 progress, qint64 total) {
-		m_ui->progressBar->setMaximum(int(total));
-		m_ui->progressBar->setValue(int(progress));
-	});
-
-	connect(fd, &networkaccess::FileDownload::finished, this, [this, downloadDir](const QString &errorMessage) {
-		if(errorMessage.isEmpty()) {
-			m_ui->downloadLabel->setText(tr("Downloaded %1!").arg(m_downloadUrl.fileName()));
-			QDesktopServices::openUrl(QUrl::fromLocalFile(downloadDir.path()));
-			close();
-
-		} else {
-			m_ui->downloadLabel->setText(errorMessage);
-		}
-	});
-
-	m_ui->downloadLabel->setText(tr("Downloading %1...").arg(m_downloadUrl.fileName()));
-	m_ui->buttonBox->setStandardButtons(QDialogButtonBox::Cancel);
-	m_downloadButton->hide();
-	m_ui->views->setCurrentIndex(2);
-
-	fd->start(m_downloadUrl);
 }
 
 }
