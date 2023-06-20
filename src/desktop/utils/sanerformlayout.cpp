@@ -117,29 +117,6 @@ EncapsulatedLayout *note(const QString &text, QSizePolicy::ControlType type)
 	}
 }
 
-QGridLayout *labelEdges(QWidget *child, const QString &left, const QString &right)
-{
-	auto *layout = new QGridLayout;
-	layout->setColumnStretch(0, 1);
-	layout->setColumnStretch(1, 1);
-	layout->setSpacing(0);
-	layout->setContentsMargins(0, 0, 0, 0);
-	layout->addWidget(child, 0, 0, 1, 2);
-
-	auto labelFont = QFont();
-	labelFont.setPointSize(labelFont.pointSize() * 4 / 5);
-
-	auto *leftLabel = new QLabel(left);
-	leftLabel->setFont(labelFont);
-	layout->addWidget(leftLabel, 1, 0, Qt::AlignLeft | Qt::AlignTop);
-
-	auto *rightLabel = new QLabel(right);
-	rightLabel->setFont(labelFont);
-	layout->addWidget(rightLabel, 1, 1, Qt::AlignRight | Qt::AlignTop);
-
-	return layout;
-}
-
 QFrame *makeSeparator()
 {
 	auto *separator = new QFrame;

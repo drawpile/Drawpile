@@ -29,7 +29,6 @@ QCheckBox *checkable(const QString &accessibleName, EncapsulatedLayout *layout, 
 EncapsulatedLayout *encapsulate(const QString &label, QWidget *child);
 EncapsulatedLayout *indent(QWidget *child);
 EncapsulatedLayout *note(const QString &text, QSizePolicy::ControlType type);
-QGridLayout *labelEdges(QWidget *child, const QString &left, const QString &right);
 QFrame *makeSeparator();
 void setSpacingControlType(EncapsulatedLayout *widget, QSizePolicy::ControlTypes type);
 void setSpacingControlType(QWidget *widget, QSizePolicy::ControlType type);

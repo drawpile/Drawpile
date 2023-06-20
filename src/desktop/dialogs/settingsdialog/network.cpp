@@ -7,6 +7,7 @@
 #include "desktop/settings.h"
 #include "desktop/utils/sanerformlayout.h"
 #include "desktop/widgets/groupedtoolbutton.h"
+#include "desktop/widgets/kis_slider_spin_box.h"
 #include "libclient/utils/avatarlistmodel.h"
 #include "libclient/utils/avatarlistmodeldelegate.h"
 
@@ -89,12 +90,11 @@ void Network::initAvatars(utils::SanerFormLayout *form)
 
 void Network::initSounds(desktop::settings::Settings &settings, utils::SanerFormLayout *form)
 {
-	auto *volume = new QSlider(Qt::Horizontal, this);
+	auto *volume = new KisSliderSpinBox(this);
 	volume->setMaximum(100);
-	volume->setTickPosition(QSlider::TicksBelow);
-	volume->setTickInterval(100);
+	volume->setSuffix(tr("%"));
 	settings.bindSoundVolume(volume);
-	form->addRow(tr("Sound volume:"), utils::labelEdges(volume, tr("Off"), tr("Loud")), 1, 2);
+	form->addRow(tr("Sound volume:"), volume, 1, 2);
 
 	using Settings = desktop::settings::Settings;
 	const std::initializer_list<
