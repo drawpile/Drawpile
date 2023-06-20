@@ -7,7 +7,11 @@
 #include <QUrl>
 #include <QVector>
 
-namespace libclient { namespace settings { class Settings; } }
+namespace libclient {
+namespace settings {
+class Settings;
+}
+}
 
 class QXmlStreamReader;
 
@@ -43,13 +47,17 @@ public:
 
 		//! Size of the download in bytes
 		int downloadSize = 0;
+
+		//! If this is a stable version or some kind of beta
+		bool stable;
 	};
 
 	//! Construct a version checker with the current version info
-	explicit NewVersionCheck(QObject *parent=nullptr);
+	explicit NewVersionCheck(QObject *parent = nullptr);
 
 	//! Construct a version checker with the given version
-	NewVersionCheck(int server, int major, int minor, QObject *parent=nullptr);
+	NewVersionCheck(
+		int server, int major, int minor, int beta, QObject *parent = nullptr);
 
 	/**
 	 * Is a new version check needed?
@@ -68,21 +76,15 @@ public:
 	 * Check the cached latest release if a newer incompatible version
 	 * is out.
 	 */
-	static bool isThereANewSeries(const libclient::settings::Settings &settings);
-
-	/**
-	 * Show beta releases?
-	 *
-	 * By default, only stable releases are shown.
-	 * This must be called before queryVersion or parseAppDataFile.
-	 */
-	void setShowBetas(bool show) { m_showBetas = show; }
+	static bool
+	isThereANewSeries(const libclient::settings::Settings &settings);
 
 	/**
 	 * Explicitly set this system's platform
 	 *
-	 * This is used to select which artifact to include in the Version structure.
-	 * If not set explicitly, the platform is selected by the build type:
+	 * This is used to select which artifact to include in the Version
+	 * structure. If not set explicitly, the platform is selected by the build
+	 * type:
 	 *
 	 *  - win64 if built for 64 bit windows
 	 *  - win32 if built for 32 bit windows
@@ -102,7 +104,8 @@ public:
 	 *
 	 * @param url the URL to query (if null, the default built-in URL is used)
 	 */
-	void queryVersions(libclient::settings::Settings &settings, QUrl url=QUrl());
+	void
+	queryVersions(libclient::settings::Settings &settings, QUrl url = QUrl());
 
 	/**
 	 * Parse an AppData file and get the list of releases.
@@ -131,20 +134,22 @@ signals:
 	 *
 	 * The errorMessage parameter will be non-empty if an error occurred.
 	 */
-	void versionChecked(bool isNewVersionAvailable, const QString &errorMessage);
+	void
+	versionChecked(bool isNewVersionAvailable, const QString &errorMessage);
 
 private:
 	bool parseDesktopElement(QXmlStreamReader &reader);
 	bool parseReleasesElement(QXmlStreamReader &reader);
 
-	void queryFail(libclient::settings::Settings &settings, const QString &errorMessage);
+	bool isVersionNewer(int server, int major, int minor, int beta);
+
+	void queryFail(
+		libclient::settings::Settings &settings, const QString &errorMessage);
 	void querySuccess(libclient::settings::Settings &settings);
 
-	int m_server, m_major, m_minor;
+	int m_server, m_major, m_minor, m_beta;
 	QVector<Version> m_newer;
-	bool m_showBetas;
 	QString m_platform;
 };
 
 #endif
-

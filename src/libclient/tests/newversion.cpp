@@ -46,7 +46,7 @@ private slots:
 		QFETCH(int, minor);
 		QFETCH(QString, newer);
 
-		NewVersionCheck vc(server, major, minor);
+		NewVersionCheck vc(server, major, minor, 0);
 
 		QXmlStreamReader reader(m_doc);
 		QVERIFY(vc.parseAppDataFile(reader));
@@ -63,8 +63,7 @@ private slots:
 
 	void testBetas()
 	{
-		NewVersionCheck vc(0, 0, 1);
-		vc.setShowBetas(true);
+		NewVersionCheck vc(0, 0, 1, 1);
 
 		QXmlStreamReader reader(m_doc);
 		QVERIFY(vc.parseAppDataFile(reader));
@@ -75,7 +74,7 @@ private slots:
 
 	void testDescription()
 	{
-		NewVersionCheck vc(2, 9999, 9999);
+		NewVersionCheck vc(2, 9999, 9999, 0);
 		QXmlStreamReader reader(m_doc);
 		QVERIFY(vc.parseAppDataFile(reader));
 
@@ -89,7 +88,7 @@ private slots:
 
 	void testArtifact()
 	{
-		NewVersionCheck vc(2, 9999, 9999);
+		NewVersionCheck vc(2, 9999, 9999, 0);
 		vc.setPlatform("win64");
 		QXmlStreamReader reader(m_doc);
 		QVERIFY(vc.parseAppDataFile(reader));
