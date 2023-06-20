@@ -28,6 +28,9 @@ public:
 		PERFORMANCE_PROFILE,
 		TABLET_EVENT_LOG,
 		DEBUG_DUMP,
+#ifdef Q_OS_ANDROID
+		LOG_FILE,
+#endif
 	};
 
 	FileWrangler(QWidget *parent);
@@ -52,7 +55,9 @@ public:
 	QString getSaveGifPath() const;
 	QString getSavePerformanceProfilePath() const;
 	QString getSaveTabletEventLogPath() const;
-#ifndef Q_OS_ANDROID
+#ifdef Q_OS_ANDROID
+	QString getSaveLogFilePath() const;
+#else
 	QString getSaveFfmpegMp4Path() const;
 	QString getSaveFfmpegWebmPath() const;
 	QString getSaveFfmpegCustomPath() const;

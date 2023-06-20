@@ -36,6 +36,7 @@ enum FileFormatOption {
 	Gif = 0x100,
 	Mp4 = 0x200,
 	Webm = 0x400,
+	Text = 0x800,
 
 #ifdef Q_OS_ANDROID
 	SaveAllFiles = 0x0,
@@ -50,6 +51,7 @@ enum FileFormatOption {
 	SaveRecordings = Recordings | SaveAllFiles | Save,
 	SaveProfile = Profile | Save,
 	SaveEventLog = EventLog | Save,
+	SaveText = Text | Save,
 	SaveGif = Gif | Save,
 	SaveMp4 = Mp4 | Save,
 	SaveWebm = Webm | Save,

@@ -3467,8 +3467,39 @@ void MainWindow::setupActions()
 		ttd->raise();
 	});
 
-	connect(showlogfile, &QAction::triggered, []() {
+	connect(showlogfile, &QAction::triggered, [this] {
+		QString logFilePath = utils::logFilePath();
+		QFile logFile{logFilePath};
+		if(!logFile.exists()) {
+			QMessageBox::warning(
+				this, tr("Missing Log File"),
+				tr("Log file doesn't exist, do you need to enable logging in the preferences?"));
+			return;
+		}
+
+#ifdef Q_OS_ANDROID
+		QString filename = FileWrangler{this}.getSaveLogFilePath();
+		if(!filename.isEmpty()) {
+			if(!logFile.open(QIODevice::ReadOnly)) {
+				QMessageBox::warning(
+					this, tr("Error Saving Log File"),
+					tr("Could not read source file: %1").arg(logFile.errorString()));
+				return;
+			}
+
+			QFile targetFile{filename};
+			if(!targetFile.open(QIODevice::WriteOnly)) {
+				QMessageBox::warning(
+					this, tr("Error Saving Log File"),
+					tr("Could not open target file: %1").arg(targetFile.errorString()));
+				return;
+			}
+
+			targetFile.write(logFile.readAll());
+		}
+#else
 		QDesktopServices::openUrl(QUrl::fromLocalFile(utils::logFilePath()));
+#endif
 	});
 
 	QMenu *helpmenu = menuBar()->addMenu(tr("&Help"));

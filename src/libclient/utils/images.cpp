@@ -161,6 +161,14 @@ QStringList fileFormatFilterList(FileFormatOptions formats)
 		}
 	}
 
+	if(formats.testFlag(FileFormatOption::Text)) {
+		if(formats.testFlag(FileFormatOption::Save)) {
+			filter << QGuiApplication::tr("Text File (%1)").arg("*.txt");
+		} else {
+			// Can't read text files.
+		}
+	}
+
 	if(!readImages.isEmpty() && !recordings.isEmpty()) {
 		filter.prepend(
 			QGuiApplication::tr("All Supported Files (%1)").arg(readImages + ' ' + recordings)
