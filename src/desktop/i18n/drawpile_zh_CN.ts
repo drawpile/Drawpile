@@ -498,12 +498,12 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../filewrangler.cpp" line="+26"/>
         <source>Certificates (%1)</source>
-        <translation type="unfinished">证书 (%1)</translation>
+        <translation>证书 (%1)</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Import</source>
-        <translation type="unfinished"></translation>
+        <translation>导入</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -645,12 +645,12 @@ to 64x64 pixels.</source>
         <location line="+36"/>
         <location line="+43"/>
         <source>px</source>
-        <translation type="unfinished">px</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="-40"/>
         <source>Size: </source>
-        <translation type="unfinished">大小: </translation>
+        <translation>大小: </translation>
     </message>
     <message>
         <location line="+16"/>
@@ -660,7 +660,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+27"/>
         <source>Close Gaps: </source>
-        <translation type="unfinished"></translation>
+        <translation>闭合间隙: </translation>
     </message>
     <message>
         <location line="-20"/>
@@ -693,37 +693,37 @@ to 64x64 pixels.</source>
     <message>
         <location line="+11"/>
         <source>Reset Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>重置缩放</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Refresh</source>
-        <translation type="unfinished">刷新</translation>
+        <translation>刷新</translation>
     </message>
     <message>
         <location line="+39"/>
         <source>Rewind</source>
-        <translation type="unfinished"></translation>
+        <translation>后退</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Play</source>
-        <translation type="unfinished">播放</translation>
+        <translation>播放</translation>
     </message>
     <message>
         <location line="+40"/>
         <source>Range</source>
-        <translation type="unfinished"></translation>
+        <translation>范围</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Playback Speed: </source>
-        <translation type="unfinished">回放速度: </translation>
+        <translation>回放速度: </translation>
     </message>
     <message>
         <location line="-64"/>
@@ -1368,7 +1368,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+35"/>
         <source>Reset in progress</source>
-        <translation type="unfinished"></translation>
+        <translation>重置进行中</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -1413,7 +1413,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+98"/>
         <source>Tablet Input:</source>
-        <translation>数位板输入:</translation>
+        <translation>输入设置:</translation>
     </message>
     <message>
         <location line="+105"/>
@@ -1575,32 +1575,32 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+108"/>
         <source>Normal View</source>
-        <translation type="unfinished"></translation>
+        <translation>正常视图</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Show all layers normally</source>
-        <translation type="unfinished"></translation>
+        <translation>正常显示所有图层</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Layer View</source>
-        <translation type="unfinished"></translation>
+        <translation>图层视图</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Show only the current layer</source>
-        <translation type="unfinished"></translation>
+        <translation>只显示当前图层</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Frame View</source>
-        <translation type="unfinished"></translation>
+        <translation>帧视图</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Show only layers in the current frame</source>
-        <translation type="unfinished"></translation>
+        <translation>只显示当前帧的图层</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -1610,7 +1610,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+3"/>
         <source>Set as Fill Source</source>
-        <translation type="unfinished"></translation>
+        <translation>设置为填充源</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -1793,7 +1793,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+27"/>
         <source>Fill areas</source>
-        <translation>油漆桶</translation>
+        <translation>填充区域</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2186,87 +2186,87 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+15"/>
         <source>Change Frame Count...</source>
-        <translation type="unfinished"></translation>
+        <translation>更改帧数...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Change Frame Rate (FPS)...</source>
-        <translation type="unfinished"></translation>
+        <translation>更改帧率 (FPS)...</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Set Blank Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>设置空白关键帧</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Cut Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>剪切关键帧</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>复制关键帧</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Paste Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>黏贴关键帧</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Key Frame Properties...</source>
-        <translation type="unfinished"></translation>
+        <translation>关键帧属性...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Delete Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>删除关键帧</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>New Track</source>
-        <translation type="unfinished"></translation>
+        <translation>新建轨道</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Track Visible</source>
-        <translation type="unfinished"></translation>
+        <translation>显示轨道</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Track Onion Skin</source>
-        <translation type="unfinished"></translation>
+        <translation>显示洋葱皮</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Duplicate Track</source>
-        <translation type="unfinished"></translation>
+        <translation>复制轨道</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Rename Track</source>
-        <translation type="unfinished"></translation>
+        <translation>重命名轨道</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Delete Track</source>
-        <translation type="unfinished"></translation>
+        <translation>删除轨道</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Track Above</source>
-        <translation type="unfinished"></translation>
+        <translation>上一个轨道</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Track Below</source>
-        <translation type="unfinished"></translation>
+        <translation>下一个轨道</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>&amp;Animation</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;动画</translation>
     </message>
     <message>
         <location line="+33"/>
@@ -2286,12 +2286,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+15"/>
         <source>Freehand</source>
-        <translation>笔刷面板</translation>
+        <translation>笔刷</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Freehand brush tool</source>
-        <translation>Freehand brush tool</translation>
+        <translation>笔刷工具</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2301,7 +2301,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+0"/>
         <source>Freehand eraser brush</source>
-        <translation>Freehand eraser brush</translation>
+        <translation>橡皮工具</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2341,7 +2341,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>&amp;Flood Fill</source>
-        <translation>&amp;填充工具</translation>
+        <translation>&amp;油漆桶</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2653,7 +2653,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+6"/>
         <source>Flood Fill</source>
-        <translation>填充工具</translation>
+        <translation>油漆桶</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -2683,7 +2683,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+6"/>
         <source>Zoom</source>
-        <translation>放大</translation>
+        <translation>缩放</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -3648,12 +3648,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-63"/>
         <source>Not available in Indirect/Wash mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>在间接/冲刷模式下不可用.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Dynamics not available in Indirect/Wash mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>动态在间接/冲刷模式下不可用.</translation>
     </message>
     <message>
         <location line="+59"/>
@@ -5228,12 +5228,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+131"/>
         <source>Join a Session</source>
-        <translation type="unfinished">加入房间</translation>
+        <translation>加入房间</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&apos;%1&apos; is not a valid list server URL.</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; 不是一个有效的列表服务器 URL.</translation>
     </message>
 </context>
 <context>
@@ -5241,17 +5241,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/keyframepropertiesdialog.cpp" line="+127"/>
         <source>Key Frame Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>关键帧属性</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Title:</source>
-        <translation type="unfinished">房名:</translation>
+        <translation>关键帧名:</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Filter Layers:</source>
-        <translation type="unfinished"></translation>
+        <translation>筛选图层:</translation>
     </message>
 </context>
 <context>
@@ -5259,7 +5259,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/layerproperties.cpp" line="+108"/>
         <source>Pass Through</source>
-        <translation type="unfinished"></translation>
+        <translation>穿透</translation>
     </message>
 </context>
 <context>
@@ -5460,27 +5460,27 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/resetnoticedialog.cpp" line="+29"/>
         <source>The session has been reset. Since this is a Drawpile 2.1 session and you&apos;re running Drawpile 2.2, this probably changed how things on the canvas look. Do you want to save the canvas as it was before the reset?</source>
-        <translation type="unfinished">房间已重置.由于这是一个Drawpile2.1房间,而你使用的是Drawpile2.2,这可能会改变画布上内容的外观.你想把画布保存为重置前的样子吗?</translation>
+        <translation>房间已重置.由于这是一个Drawpile2.1房间,而你使用的是Drawpile2.2,这可能会改变画布上内容的外观.你想把画布保存为重置前的样子吗?</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>The session has been reset. Normally, everything on the canvas should look the same as it did before, but that&apos;s not guaranteed. Do you want to save the canvas as it was before the reset?</source>
-        <translation type="unfinished">房间已重置.通常情况下,画布上的内容应该和重置前一样,但这并不能保证.你想把画布保存为重置前的样子吗?</translation>
+        <translation>房间已重置.通常情况下,画布上的内容应该和重置前一样,但这并不能保证.你想把画布保存为重置前的样子吗?</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Save As...</source>
-        <translation type="unfinished">另存为...</translation>
+        <translation>另存为...</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Restoring Canvas %p%</source>
-        <translation type="unfinished"></translation>
+        <translation>恢复画布 %p%</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Canvas Restored</source>
-        <translation type="unfinished"></translation>
+        <translation>画布已恢复</translation>
     </message>
 </context>
 <context>
@@ -5602,42 +5602,42 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog.cpp" line="+32"/>
         <source>Preferences</source>
-        <translation type="unfinished">首选项</translation>
+        <translation>首选项</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>General</source>
-        <translation type="unfinished">基本</translation>
+        <translation>基本</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Input</source>
-        <translation type="unfinished">输入设置</translation>
+        <translation>输入</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Tools</source>
-        <translation type="unfinished">工具</translation>
+        <translation>工具</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Network</source>
-        <translation type="unfinished">网络</translation>
+        <translation>网络</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Servers</source>
-        <translation type="unfinished"></translation>
+        <translation>服务器</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Shortcuts</source>
-        <translation type="unfinished">快捷键</translation>
+        <translation>快捷键</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Parental Controls</source>
-        <translation type="unfinished">限制级设定</translation>
+        <translation>限制级设定</translation>
     </message>
 </context>
 <context>
@@ -5756,129 +5756,129 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/general.cpp" line="+41"/>
         <source>Remember the last %1 opened files and hosts</source>
-        <translation type="unfinished"></translation>
+        <translation>%1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Recent items:</source>
-        <translation type="unfinished"></translation>
+        <translation>最近文件:</translation>
     </message>
     <message>
         <location line="+6"/>
         <location line="+60"/>
         <location line="+15"/>
         <source>System</source>
-        <translation type="unfinished">System</translation>
+        <translation>System</translation>
     </message>
     <message>
         <location line="-68"/>
         <source>%1 (%2)</source>
-        <translation type="unfinished">%1 (%2)</translation>
+        <translation>%1 (%2)</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Language:</source>
-        <translation type="unfinished">语言:</translation>
+        <translation>语言:</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Show scroll bars on canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>显示画布滚动条</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>User interface:</source>
-        <translation type="unfinished"></translation>
+        <translation>界面:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Ask before deleting layers</source>
-        <translation type="unfinished"></translation>
+        <translation>在删除图层时要求确认</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Write debugging log to file</source>
-        <translation type="unfinished"></translation>
+        <translation>写入日志文件</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Logging:</source>
-        <translation type="unfinished"></translation>
+        <translation>记录:</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Keep %1 canvas snapshots</source>
-        <translation type="unfinished"></translation>
+        <translation>保留的快照数量: %1</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Canvas snapshots:</source>
-        <translation type="unfinished"></translation>
+        <translation>画布快照:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Take one snapshot every %1 seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>快照间隔: %1 秒</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Snapshots are stored separately from the undo history in the &lt;i&gt;Session ▸ Reset…&lt;/i&gt; menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Snapshots are stored separately from the undo history in the &lt;i&gt;Session ▸ Reset…&lt;/i&gt; menu.</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Style:</source>
-        <translation type="unfinished"></translation>
+        <translation>风格:</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Light</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Dark</source>
-        <translation type="unfinished"></translation>
+        <translation>Dark</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Krita Bright</source>
-        <translation type="unfinished">Krita Bright</translation>
+        <translation>Krita Bright</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Krita Dark</source>
-        <translation type="unfinished">Krita Dark</translation>
+        <translation>Krita Dark</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Krita Darker</source>
-        <translation type="unfinished">Krita Darker</translation>
+        <translation>Krita Darker</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Qt Fusion</source>
-        <translation type="unfinished"></translation>
+        <translation>Qt Fusion</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Hotdog Stand</source>
-        <translation type="unfinished"></translation>
+        <translation>Hotdog Stand</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Color scheme:</source>
-        <translation type="unfinished"></translation>
+        <translation>主题:</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Use %1 undo levels by default</source>
-        <translation type="unfinished"></translation>
+        <translation>默认撤销限制: %1</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Session history:</source>
-        <translation type="unfinished">房间历史:</translation>
+        <translation>房间历史:</translation>
     </message>
 </context>
 <context>
@@ -5886,112 +5886,112 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/input.cpp" line="+35"/>
         <source>Input</source>
-        <translation type="unfinished">输入设置</translation>
+        <translation>输入</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Output</source>
-        <translation type="unfinished"></translation>
+        <translation>输出</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Global pressure curve:</source>
-        <translation type="unfinished"></translation>
+        <translation>全局曲线:</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Enable pressure sensitivity</source>
-        <translation type="unfinished">启用压感</translation>
+        <translation>启用压感</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Tablet:</source>
-        <translation type="unfinished"></translation>
+        <translation>数位板:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Detect eraser tip</source>
-        <translation type="unfinished">检测橡皮擦头</translation>
+        <translation>检测橡皮擦头</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>KisTablet Windows Ink</source>
-        <translation type="unfinished">KisTablet Windows Ink</translation>
+        <translation>KisTablet Windows Ink</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>KisTablet Wintab</source>
-        <translation type="unfinished">KisTablet Wintab</translation>
+        <translation>KisTablet Wintab</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>KisTablet Wintab Relative</source>
-        <translation type="unfinished"></translation>
+        <translation>KisTablet Wintab Relative</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Qt5</source>
-        <translation type="unfinished">Qt5</translation>
+        <translation>Qt5</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Qt6 Windows Ink</source>
-        <translation type="unfinished">Qt6 Windows Ink</translation>
+        <translation>Qt6 Windows Ink</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Qt6 Wintab</source>
-        <translation type="unfinished">Qt6 Wintab</translation>
+        <translation>Qt6 Wintab</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Smoothing:</source>
-        <translation type="unfinished">平滑:</translation>
+        <translation>平滑:</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Less</source>
-        <translation type="unfinished"></translation>
+        <translation>Less</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>More</source>
-        <translation type="unfinished"></translation>
+        <translation>More</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>One-finger input:</source>
-        <translation type="unfinished"></translation>
+        <translation>单指输入:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Do nothing</source>
-        <translation type="unfinished"></translation>
+        <translation>无操作</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Draw</source>
-        <translation type="unfinished">绘画</translation>
+        <translation>绘画</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Scroll</source>
-        <translation type="unfinished"></translation>
+        <translation>滚动</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Pinch to zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>捏合缩放</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Twist to rotate</source>
-        <translation type="unfinished"></translation>
+        <translation>扭动旋转</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Touch gestures:</source>
-        <translation type="unfinished"></translation>
+        <translation>平板手势:</translation>
     </message>
 </context>
 <context>
@@ -5999,62 +5999,62 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/network.cpp" line="+38"/>
         <source>Allow insecure local storage</source>
-        <translation type="unfinished"></translation>
+        <translation>允许储存</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Password security:</source>
-        <translation type="unfinished"></translation>
+        <translation>账号密码:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Connection quality:</source>
-        <translation type="unfinished"></translation>
+        <translation>连接质量:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Good</source>
-        <translation type="unfinished"></translation>
+        <translation>好</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Poor</source>
-        <translation type="unfinished"></translation>
+        <translation>差</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>If all operators in a session set connection quality to Poor, auto-reset will not work and the server will stop processing updates until the session is manually reset.</source>
-        <translation type="unfinished"></translation>
+        <translation>如果房间中的所有operator设置连接质量为差,自动重置将不起作用,服务器将停止处理更新,直到房间被手动重置.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Network timeout:</source>
-        <translation type="unfinished"></translation>
+        <translation>连接超时:</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>%1 seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 秒</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Chat avatars:</source>
-        <translation type="unfinished"></translation>
+        <translation>头像:</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Add avatar…</source>
-        <translation type="unfinished"></translation>
+        <translation>添加头像…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Delete selected avatars…</source>
-        <translation type="unfinished"></translation>
+        <translation>删除选中的头像…</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Delete avatars</source>
-        <translation type="unfinished"></translation>
+        <translation>删除头像</translation>
     </message>
     <message numerus="yes">
         <location line="+0"/>
@@ -6066,57 +6066,57 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+10"/>
         <source>Sound volume:</source>
-        <translation type="unfinished"></translation>
+        <translation>音量:</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Off</source>
-        <translation type="unfinished"></translation>
+        <translation>Off</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Loud</source>
-        <translation type="unfinished"></translation>
+        <translation>Loud</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Message received</source>
-        <translation type="unfinished"></translation>
+        <translation>聊天信息</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Recording marker</source>
-        <translation type="unfinished"></translation>
+        <translation>录制标记</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>User joined</source>
-        <translation type="unfinished"></translation>
+        <translation>用户加入</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>User parted</source>
-        <translation type="unfinished"></translation>
+        <translation>用户离开</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Canvas locked</source>
-        <translation type="unfinished"></translation>
+        <translation>画布锁定</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Canvas unlocked</source>
-        <translation type="unfinished"></translation>
+        <translation>画布解锁</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Notifications:</source>
-        <translation type="unfinished"></translation>
+        <translation>通知:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Preview sound</source>
-        <translation type="unfinished"></translation>
+        <translation>预览声音</translation>
     </message>
 </context>
 <context>
@@ -6124,108 +6124,108 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/parentalcontrols.cpp" line="+49"/>
         <source>Consider sessions whose titles contain these keywords NSFM.</source>
-        <translation type="unfinished"></translation>
+        <translation>Consider sessions whose titles contain these keywords NSFM.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Keywords:</source>
-        <translation type="unfinished"></translation>
+        <translation>限制级标签:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Filter mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>限制级房间:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Unrestricted</source>
-        <translation type="unfinished"></translation>
+        <translation>不严格的</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Remove NSFM sessions from listings</source>
-        <translation type="unfinished"></translation>
+        <translation>在列表中隐藏</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Prevent joining NSFM sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>不允许加入</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Prevent joining NSFM sessions and disconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>当标记为不适于未成年人时断开连接</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>NSFM sessions will be hidden from server listings, but can still be joined by following a direct link.</source>
-        <translation type="unfinished"></translation>
+        <translation>限制级房间将在列表中被隐藏,但仍然可以通过直接的地址加入.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>NSFM sessions will be hidden from server listings and cannot be joined.</source>
-        <translation type="unfinished"></translation>
+        <translation>限制级房间将在列表中被隐藏且无法加入.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>NSFM sessions will be hidden from server listings and cannot be joined. Connected sessions that change their title or NSFM flag will automatically disconnect.</source>
-        <translation type="unfinished"></translation>
+        <translation>限制级房间将在列表中被隐藏且无法加入.已连接的房间如果改变其标题或限制级标签将自动断开连接.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Disallow uncensoring of layers</source>
-        <translation type="unfinished"></translation>
+        <translation>停用图层审查功能</translation>
     </message>
     <message>
         <location line="+10"/>
         <location line="+27"/>
         <source>Lock</source>
-        <translation type="unfinished">锁定</translation>
+        <translation>锁定</translation>
     </message>
     <message>
         <location line="-22"/>
         <source>Hide settings when locked</source>
-        <translation type="unfinished">锁定时隐藏设定</translation>
+        <translation>锁定时隐藏设定</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Parental controls are currently locked.</source>
-        <translation type="unfinished"></translation>
+        <translation>限制级设定已被锁定.</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Unlock</source>
-        <translation type="unfinished">开启</translation>
+        <translation>开启</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>These settings configure the handling of sessions that are marked not suitable for minors (NSFM) and of layers that have been censored.</source>
-        <translation type="unfinished"></translation>
+        <translation>These settings configure the handling of sessions that are marked not suitable for minors (NSFM) and of layers that have been censored.</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Parental controls are currently managed by the operating system.</source>
-        <translation type="unfinished"></translation>
+        <translation>目前限制级设定是由操作系统管理的.</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Unlock Parental Controls</source>
-        <translation type="unfinished">开启控制面板</translation>
+        <translation>开启控制面板</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Lock Parental Controls</source>
-        <translation type="unfinished">锁定控制面板</translation>
+        <translation>锁定控制面板</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Enter password:</source>
-        <translation type="unfinished"></translation>
+        <translation>输入密码:</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Incorrect password.</source>
-        <translation type="unfinished">密码错误.</translation>
+        <translation>密码错误.</translation>
     </message>
 </context>
 <context>
@@ -6233,48 +6233,48 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/servers.cpp" line="+47"/>
         <source>Known hosts:</source>
-        <translation type="unfinished"></translation>
+        <translation>已知服务器:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Import trusted certificate…</source>
-        <translation type="unfinished"></translation>
+        <translation>导入信任证书…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Remove selected hosts…</source>
-        <translation type="unfinished"></translation>
+        <translation>移除选中的服务器…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Remove known hosts</source>
-        <translation type="unfinished"></translation>
+        <translation>移除已知服务器</translation>
     </message>
     <message>
         <location line="+7"/>
         <location line="+127"/>
         <source>Trust selected hosts</source>
-        <translation type="unfinished"></translation>
+        <translation>标记信任</translation>
     </message>
     <message>
         <location line="-104"/>
         <source>List servers:</source>
-        <translation type="unfinished"></translation>
+        <translation>列表服务器:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Add list servers…</source>
-        <translation type="unfinished"></translation>
+        <translation>添加列表服务器…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Remove selected list servers…</source>
-        <translation type="unfinished"></translation>
+        <translation>移除选中的列表服务器…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Remove list servers</source>
-        <translation type="unfinished"></translation>
+        <translation>移除列表服务器</translation>
     </message>
     <message numerus="yes">
         <location line="-48"/>
@@ -6294,32 +6294,32 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+11"/>
         <location line="+21"/>
         <source>Add list server</source>
-        <translation type="unfinished"></translation>
+        <translation>添加列表服务器</translation>
     </message>
     <message>
         <location line="-21"/>
         <source>Enter a list server URL:</source>
-        <translation type="unfinished"></translation>
+        <translation>输入一个列表服务器的URL:</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>&apos;%1&apos; is not a valid list server URL.</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos;不是一个有效的列表服务器URL.</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Continue</source>
-        <translation type="unfinished"></translation>
+        <translation>继续</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Import trusted certificates</source>
-        <translation type="unfinished"></translation>
+        <translation>导入信任证书</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Could not save changes to known hosts: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>无法保存对已知服务器的更改: %1</translation>
     </message>
 </context>
 <context>
@@ -6327,37 +6327,37 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/shortcuts.cpp" line="+36"/>
         <source>Search actions…</source>
-        <translation type="unfinished"></translation>
+        <translation>筛选…</translation>
     </message>
     <message>
         <location line="+113"/>
         <source>Canvas shortcuts:</source>
-        <translation type="unfinished"></translation>
+        <translation>画布快捷键:</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Edit Canvas Shortcut</source>
-        <translation type="unfinished">编辑画布快捷键</translation>
+        <translation>编辑画布快捷键</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Add canvas shortcut…</source>
-        <translation type="unfinished"></translation>
+        <translation>新建画布快捷键…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>New Canvas Shortcut</source>
-        <translation type="unfinished">新建画布快捷键</translation>
+        <translation>新建画布快捷键</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Remove selected canvas shortcut…</source>
-        <translation type="unfinished"></translation>
+        <translation>移除选中的画布快捷键…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Remove canvas shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>移除画布快捷键</translation>
     </message>
     <message numerus="yes">
         <location line="+1"/>
@@ -6369,22 +6369,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Restore defaults…</source>
-        <translation type="unfinished"></translation>
+        <translation>恢复默认…</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Restore Canvas Shortcut Defaults</source>
-        <translation type="unfinished">恢复默认画布快捷键</translation>
+        <translation>恢复默认画布快捷键</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really restore all shortcuts to their default values?</source>
-        <translation type="unfinished"></translation>
+        <translation>确定将所有画布快捷键恢复为默认值吗?</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Global shortcuts:</source>
-        <translation type="unfinished"></translation>
+        <translation>全局快捷键:</translation>
     </message>
 </context>
 <context>
@@ -6392,117 +6392,117 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/tools.cpp" line="+41"/>
         <source>Toggle between previous and current tool</source>
-        <translation type="unfinished"></translation>
+        <translation>快捷键立即触发切换回上一次选择</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Keyboard shortcuts:</source>
-        <translation type="unfinished"></translation>
+        <translation>键盘快捷键:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Share one color across all brush slots</source>
-        <translation type="unfinished"></translation>
+        <translation>笔刷面板的数字预设保持同一颜色</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Brushes:</source>
-        <translation type="unfinished"></translation>
+        <translation>笔刷:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>px</source>
-        <translation type="unfinished">px</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Show a %1 outline around the brush</source>
-        <translation type="unfinished"></translation>
+        <translation>光标宽度: %1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Enable brush outline</source>
-        <translation type="unfinished"></translation>
+        <translation>启用笔刷轮廓</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Dot</source>
-        <translation type="unfinished">圆</translation>
+        <translation>圆</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Crosshair</source>
-        <translation type="unfinished">十字</translation>
+        <translation>十字</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Arrow</source>
-        <translation type="unfinished">箭头</translation>
+        <translation>箭头</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Right-handed triangle</source>
-        <translation type="unfinished"></translation>
+        <translation>右向三角形</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Left-handed triangle</source>
-        <translation type="unfinished"></translation>
+        <translation>左向三角形</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Draw the brush as a %1</source>
-        <translation type="unfinished"></translation>
+        <translation>光标样式: %1</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Shape:</source>
-        <translation type="unfinished">形状:</translation>
+        <translation>形状:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Triangle</source>
-        <translation type="unfinished">三角</translation>
+        <translation>三角</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Square</source>
-        <translation type="unfinished">方形</translation>
+        <translation>方形</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Angle:</source>
-        <translation type="unfinished">角度:</translation>
+        <translation>角度:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Fixed</source>
-        <translation type="unfinished">固定</translation>
+        <translation>固定</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Rotating</source>
-        <translation type="unfinished">旋转</translation>
+        <translation>旋转</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Color space:</source>
-        <translation type="unfinished"></translation>
+        <translation>色彩空间:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>HSV (Hue–Saturation–Value)</source>
-        <translation type="unfinished"></translation>
+        <translation>HSV (色相, 饱和度, 明度)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>HSL (Hue–Saturation–Lightness)</source>
-        <translation type="unfinished"></translation>
+        <translation>HSL (色相, 饱和度, 亮度)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>HCL (Hue–Chroma–Luminance)</source>
-        <translation type="unfinished"></translation>
+        <translation>HCL (色相, 纯度, 亮度)</translation>
     </message>
 </context>
 <context>
@@ -6898,12 +6898,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-10"/>
         <source>Tint Below</source>
-        <translation type="unfinished"></translation>
+        <translation>过去帧</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Tint Above</source>
-        <translation type="unfinished"></translation>
+        <translation>未来帧</translation>
     </message>
     <message>
         <location line="+102"/>
@@ -6931,7 +6931,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+171"/>
         <source> FPS</source>
-        <translation type="unfinished"> 每秒帧数</translation>
+        <translation> 每秒帧数</translation>
     </message>
 </context>
 <context>
@@ -6965,32 +6965,32 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../tabletinput.cpp" line="+186"/>
         <source>Qt tablet input</source>
-        <translation type="unfinished"></translation>
+        <translation>Qt tablet input</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>KisTablet Windows Ink input</source>
-        <translation type="unfinished"></translation>
+        <translation>KisTablet Windows Ink input</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>KisTablet Wintab input</source>
-        <translation type="unfinished"></translation>
+        <translation>KisTablet Wintab input</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>KisTablet Wintab input with relative pen mode</source>
-        <translation type="unfinished"></translation>
+        <translation>KisTablet Wintab input with relative pen mode</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Qt6 Windows Ink input</source>
-        <translation type="unfinished"></translation>
+        <translation>Qt6 Windows Ink input</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Qt6 Wintab input</source>
-        <translation type="unfinished"></translation>
+        <translation>Qt6 Wintab input</translation>
     </message>
 </context>
 <context>
@@ -7103,12 +7103,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/fillsettings.cpp" line="+123"/>
         <source>Current Layer</source>
-        <translation type="unfinished">当前图层</translation>
+        <translation>当前图层</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Merged Image</source>
-        <translation type="unfinished">拼合图像</translation>
+        <translation>拼合图像</translation>
     </message>
 </context>
 <context>
@@ -7349,7 +7349,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Presets…</source>
-        <translation type="unfinished"></translation>
+        <translation>预设…</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7531,97 +7531,97 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/timelinewidget.cpp" line="+463"/>
         <source>Blank key frame (duplicate)</source>
-        <translation type="unfinished"></translation>
+        <translation>空白关键帧 (复制)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Blank key frame %1 (duplicate)</source>
-        <translation type="unfinished"></translation>
+        <translation>空白关键帧 %1 (复制)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Blank key frame</source>
-        <translation type="unfinished"></translation>
+        <translation>空白关键帧</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Blank key frame %1</source>
-        <translation type="unfinished"></translation>
+        <translation>空白关键帧 %1</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Key frame on %1 (duplicate)</source>
-        <translation type="unfinished"></translation>
+        <translation>关键帧在 %1 上 (复制)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Key frame %1 on %2 (duplicate)</source>
-        <translation type="unfinished"></translation>
+        <translation>关键帧 %1 在 %2 上 (复制)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Key frame on %1</source>
-        <translation type="unfinished"></translation>
+        <translation>关键帧在 %1 上</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Key frame %1 on %2</source>
-        <translation type="unfinished"></translation>
+        <translation>关键帧 %1 在 %2 上</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Toggle visibility</source>
-        <translation type="unfinished"></translation>
+        <translation>切换可见性</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle onion skin</source>
-        <translation type="unfinished"></translation>
+        <translation>切换洋葱皮</translation>
     </message>
     <message>
         <location line="+648"/>
         <source>Track</source>
-        <translation type="unfinished"></translation>
+        <translation>轨道</translation>
     </message>
     <message>
         <location line="+57"/>
         <source>Rename Track</source>
-        <translation type="unfinished"></translation>
+        <translation>重命名轨道</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Track Name</source>
-        <translation type="unfinished"></translation>
+        <translation>轨道名</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Change Frame Count</source>
-        <translation type="unfinished"></translation>
+        <translation>更改帧数</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Frame Count (key frames beyond this point will be deleted)</source>
-        <translation type="unfinished"></translation>
+        <translation>帧数 (超过此点的关键帧将被删除)</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Change Framerate</source>
-        <translation type="unfinished"></translation>
+        <translation>更改帧率</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Frames Per Second (FPS)</source>
-        <translation type="unfinished"></translation>
+        <translation>每秒帧数 (FPS)</translation>
     </message>
     <message>
         <location line="+229"/>
         <source>Set Key Frame to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>设置关键帧为 %1</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Set Key Frame to Current Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>设置关键帧为当前图层</translation>
     </message>
 </context>
 <context>
