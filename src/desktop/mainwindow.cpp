@@ -2736,11 +2736,11 @@ void MainWindow::setupActions()
 	}
 
 	toggledockmenu->addSeparator();
-	QAction *freezeDocks = makeAction("freezedocks", tr("Lock Docks")).checkable().remembered();
+	QAction *freezeDocks = makeAction("freezedocks", tr("Lock Docks")).noDefaultShortcut().checkable().remembered();
 	toggledockmenu->addAction(freezeDocks);
 	connect(freezeDocks, &QAction::toggled, this, &MainWindow::setFreezeDocks);
 
-	QAction *sideTabDocks = makeAction("sidetabdocks", tr("Vertical Tabs on Sides")).checkable().remembered();
+	QAction *sideTabDocks = makeAction("sidetabdocks", tr("Vertical Tabs on Sides")).noDefaultShortcut().checkable().remembered();
 	toggledockmenu->addAction(sideTabDocks);
 	auto updateSideTabDocks = [=](){
 		if(sideTabDocks->isChecked()) {
@@ -2756,7 +2756,7 @@ void MainWindow::setupActions()
 	toggledockmenu->addAction(hideDocks);
 	connect(hideDocks, &QAction::toggled, this, &MainWindow::setDocksHidden);
 
-	QAction *hideDockTitleBars = makeAction("hidedocktitlebars", tr("Hold Shift to Arrange")).checked().remembered();
+	QAction *hideDockTitleBars = makeAction("hidedocktitlebars", tr("Hold Shift to Arrange")).noDefaultShortcut().checked().remembered();
 	toggledockmenu->addAction(hideDockTitleBars);
 	connect(hideDocks, &QAction::toggled, [this](){
 		setDockTitleBarsHidden(m_titleBarsHidden);
@@ -2772,16 +2772,16 @@ void MainWindow::setupActions()
 #endif
 	QAction *save = makeAction("savedocument", tr("&Save")).icon("document-save").shortcut(QKeySequence::Save);
 	QAction *saveas = makeAction("savedocumentas", tr("Save &As...")).icon("document-save-as").shortcut(QKeySequence::SaveAs);
-	QAction *savesel = makeAction("saveselection", tr("Save Selection...")).icon("document-save-as");
-	QAction *autosave = makeAction("autosave", tr("Autosave")).checkable().disabled();
-	QAction *importBrushes = makeAction("importbrushes", tr("&Brushes..."));
-	QAction *exportTemplate = makeAction("exporttemplate", tr("Session &Template..."));
-	QAction *exportGifAnimation = makeAction("exportanimgif", tr("Animated &GIF..."));
+	QAction *savesel = makeAction("saveselection", tr("Save Selection...")).icon("document-save-as").noDefaultShortcut();
+	QAction *autosave = makeAction("autosave", tr("Autosave")).noDefaultShortcut().checkable().disabled();
+	QAction *importBrushes = makeAction("importbrushes", tr("&Brushes...")).noDefaultShortcut();
+	QAction *exportTemplate = makeAction("exporttemplate", tr("Session &Template...")).noDefaultShortcut();
+	QAction *exportGifAnimation = makeAction("exportanimgif", tr("Animated &GIF...")).noDefaultShortcut();
 #ifndef Q_OS_ANDROID
-	QAction *exportAnimationFrames = makeAction("exportanimframes", tr("Animation &Frames..."));
+	QAction *exportAnimationFrames = makeAction("exportanimframes", tr("Animation &Frames...")).noDefaultShortcut();
 #endif
 
-	QAction *record = makeAction("recordsession", tr("Record...")).icon("media-record");
+	QAction *record = makeAction("recordsession", tr("Record...")).icon("media-record").noDefaultShortcut();
 	QAction *quit = makeAction("exitprogram", tr("&Quit")).icon("application-exit").shortcut("Ctrl+Q").menuRole(QAction::QuitRole);
 
 #ifdef Q_OS_MACOS
@@ -2879,14 +2879,14 @@ void MainWindow::setupActions()
 	QAction *pasteCentered = makeAction("paste-centered", tr("Paste in View Center")).icon("edit-paste").shortcut("Ctrl+Shift+V");
 	QAction *stamp = makeAction("stamp", tr("&Stamp")).shortcut("Ctrl+T");
 
-	QAction *pastefile = makeAction("pastefile", tr("Paste &From File...")).icon("document-open");
-	QAction *deleteAnnotations = makeAction("deleteemptyannotations", tr("Delete Empty Annotations"));
-	QAction *resize = makeAction("resizecanvas", tr("Resi&ze Canvas..."));
-	QAction *canvasBackground = makeAction("canvas-background", tr("Set Session Background..."));
-	QAction *setLocalBackground = makeAction("set-local-background", tr("Set Local Background..."));
-	QAction *clearLocalBackground = makeAction("clear-local-background", tr("Clear Local Background"));
+	QAction *pastefile = makeAction("pastefile", tr("Paste &From File...")).icon("document-open").noDefaultShortcut();
+	QAction *deleteAnnotations = makeAction("deleteemptyannotations", tr("Delete Empty Annotations")).noDefaultShortcut();
+	QAction *resize = makeAction("resizecanvas", tr("Resi&ze Canvas...")).noDefaultShortcut();
+	QAction *canvasBackground = makeAction("canvas-background", tr("Set Session Background...")).noDefaultShortcut();
+	QAction *setLocalBackground = makeAction("set-local-background", tr("Set Local Background...")).noDefaultShortcut();
+	QAction *clearLocalBackground = makeAction("clear-local-background", tr("Clear Local Background")).noDefaultShortcut();
 	QAction *brushSettings = makeAction("brushsettings", tr("&Brush Settings")).shortcut("F7");
-	QAction *preferences = makeAction("preferences", tr("Prefere&nces")).menuRole(QAction::PreferencesRole);
+	QAction *preferences = makeAction("preferences", tr("Prefere&nces")).noDefaultShortcut().menuRole(QAction::PreferencesRole);
 
 	QAction *selectall = makeAction("selectall", tr("Select &All")).shortcut(QKeySequence::SelectAll);
 	QAction *selectnone = makeAction("selectnone", tr("&Deselect"))
@@ -3042,13 +3042,13 @@ void MainWindow::setupActions()
 	QAction *viewmirror = makeAction("viewmirror", tr("Mirror")).icon("object-flip-horizontal").shortcut("V").checkable();
 	QAction *viewflip = makeAction("viewflip", tr("Flip")).icon("object-flip-vertical").shortcut("C").checkable();
 
-	QAction *showannotations = makeAction("showannotations", tr("Show &Annotations")).checked().remembered();
-	QAction *showusermarkers = makeAction("showusermarkers", tr("Show User &Pointers")).checked().remembered();
-	QAction *showusernames = makeAction("showmarkernames", tr("Show Names")).checked().remembered();
-	QAction *showuserlayers = makeAction("showmarkerlayers", tr("Show Layers")).checked().remembered();
-	QAction *showuseravatars = makeAction("showmarkeravatars", tr("Show Avatars")).checked().remembered();
-	QAction *showlasers = makeAction("showlasers", tr("Show La&ser Trails")).checked().remembered();
-	QAction *showgrid = makeAction("showgrid", tr("Show Pixel &Grid")).checked().remembered();
+	QAction *showannotations = makeAction("showannotations", tr("Show &Annotations")).noDefaultShortcut().checked().remembered();
+	QAction *showusermarkers = makeAction("showusermarkers", tr("Show User &Pointers")).noDefaultShortcut().checked().remembered();
+	QAction *showusernames = makeAction("showmarkernames", tr("Show Names")).noDefaultShortcut().checked().remembered();
+	QAction *showuserlayers = makeAction("showmarkerlayers", tr("Show Layers")).noDefaultShortcut().checked().remembered();
+	QAction *showuseravatars = makeAction("showmarkeravatars", tr("Show Avatars")).noDefaultShortcut().checked().remembered();
+	QAction *showlasers = makeAction("showlasers", tr("Show La&ser Trails")).noDefaultShortcut().checked().remembered();
+	QAction *showgrid = makeAction("showgrid", tr("Show Pixel &Grid")).noDefaultShortcut().checked().remembered();
 
 #ifndef Q_OS_ANDROID
 	QAction *fullscreen = makeAction("fullscreen", tr("&Full Screen")).shortcut(QKeySequence::FullScreen).checkable();
@@ -3137,10 +3137,10 @@ void MainWindow::setupActions()
 
 	viewmenu->addSeparator();
 
-	QAction *layerViewNormal = makeAction("layerviewnormal", tr("Normal View")).statusTip(tr("Show all layers normally")).checkable().checked();
+	QAction *layerViewNormal = makeAction("layerviewnormal", tr("Normal View")).statusTip(tr("Show all layers normally")).noDefaultShortcut().checkable().checked();
 	QAction *layerViewCurrentLayer = makeAction("layerviewcurrentlayer", tr("Layer View")).statusTip(tr("Show only the current layer")).shortcut("Home").checkable();
 	QAction *layerViewCurrentFrame = makeAction("layerviewcurrentframe", tr("Frame View")).statusTip(tr("Show only layers in the current frame")).shortcut("Shift+Home").checkable();
-	QAction *layerUncensor = makeAction("layerviewuncensor", tr("Show Censored Layers")).checkable().remembered();
+	QAction *layerUncensor = makeAction("layerviewuncensor", tr("Show Censored Layers")).noDefaultShortcut().checkable().remembered();
 	m_lastLayerViewMode = layerViewNormal;
 
 	QActionGroup *layerViewModeGroup = new QActionGroup(this);
@@ -3180,12 +3180,12 @@ void MainWindow::setupActions()
 	// Layer menu
 	//
 	QAction *layerAdd = makeAction("layeradd", tr("New Layer")).shortcut("Shift+Ctrl+Insert").icon("list-add");
-	QAction *groupAdd = makeAction("groupadd", tr("New Group")).icon("folder-new");
-	QAction *layerDupe = makeAction("layerdupe", tr("Duplicate Layer")).icon("edit-copy");
-	QAction *layerMerge = makeAction("layermerge", tr("Merge Layer")).icon("arrow-down-double");
-	QAction *layerProperties = makeAction("layerproperties", tr("Properties...")).icon("configure");
-	QAction *layerDelete = makeAction("layerdelete", tr("Delete Layer")).icon("trash-empty");
-	QAction *layerSetFillSource = makeAction("layersetfillsource", tr("Set as Fill Source")).icon("fill-color");
+	QAction *groupAdd = makeAction("groupadd", tr("New Group")).icon("folder-new").noDefaultShortcut();
+	QAction *layerDupe = makeAction("layerdupe", tr("Duplicate Layer")).icon("edit-copy").noDefaultShortcut();
+	QAction *layerMerge = makeAction("layermerge", tr("Merge Layer")).icon("arrow-down-double").noDefaultShortcut();
+	QAction *layerProperties = makeAction("layerproperties", tr("Properties...")).icon("configure").noDefaultShortcut();
+	QAction *layerDelete = makeAction("layerdelete", tr("Delete Layer")).icon("trash-empty").noDefaultShortcut();
+	QAction *layerSetFillSource = makeAction("layersetfillsource", tr("Set as Fill Source")).icon("fill-color").noDefaultShortcut();
 
 	QAction *layerUpAct = makeAction("layer-up", tr("Select Above")).shortcut("Shift+X");
 	QAction *layerDownAct = makeAction("layer-down", tr("Select Below")).shortcut("Shift+Z");
@@ -3210,21 +3210,21 @@ void MainWindow::setupActions()
 	// Animation menu
 	//
 	QAction *showFlipbook = makeAction("showflipbook", tr("Flipbook")).statusTip(tr("Show animation preview window")).shortcut("Ctrl+F");
-	QAction *frameCountSet = makeAction("frame-count-set", tr("Change Frame Count..."));
-	QAction *framerateSet = makeAction("framerate-set", tr("Change Frame Rate (FPS)..."));
+	QAction *frameCountSet = makeAction("frame-count-set", tr("Change Frame Count...")).noDefaultShortcut();
+	QAction *framerateSet = makeAction("framerate-set", tr("Change Frame Rate (FPS)...")).noDefaultShortcut();
 	QAction *keyFrameSetLayer = makeAction("key-frame-set-layer", tr("Set Key Frame to Current Layer")).icon("keyframe-add").shortcut("Ctrl+Shift+F");
 	QAction *keyFrameSetEmpty = makeAction("key-frame-set-empty", tr("Set Blank Key Frame")).icon("keyframe-disable").shortcut("Ctrl+Shift+B");
-	QAction *keyFrameCut = makeAction("key-frame-cut", tr("Cut Key Frame")).icon("edit-cut");
-	QAction *keyFrameCopy = makeAction("key-frame-copy", tr("Copy Key Frame")).icon("edit-copy");
-	QAction *keyFramePaste = makeAction("key-frame-paste", tr("Paste Key Frame")).icon("edit-paste");
+	QAction *keyFrameCut = makeAction("key-frame-cut", tr("Cut Key Frame")).icon("edit-cut").noDefaultShortcut();
+	QAction *keyFrameCopy = makeAction("key-frame-copy", tr("Copy Key Frame")).icon("edit-copy").noDefaultShortcut();
+	QAction *keyFramePaste = makeAction("key-frame-paste", tr("Paste Key Frame")).icon("edit-paste").noDefaultShortcut();
 	QAction *keyFrameProperties = makeAction("key-frame-properties", tr("Key Frame Properties...")).icon("configure").shortcut("Ctrl+Shift+P");
 	QAction *keyFrameDelete = makeAction("key-frame-delete", tr("Delete Key Frame")).icon("keyframe-remove").shortcut("Ctrl+Shift+G");
-	QAction *trackAdd = makeAction("track-add", tr("New Track")).icon("list-add");
-	QAction *trackVisible = makeAction("track-visible", tr("Track Visible")).checkable();
-	QAction *trackOnionSkin = makeAction("track-onion-skin", tr("Track Onion Skin")).checkable();
-	QAction *trackDuplicate = makeAction("track-duplicate", tr("Duplicate Track")).icon("edit-copy");
-	QAction *trackRetitle = makeAction("track-retitle", tr("Rename Track")).icon("edit-rename");
-	QAction *trackDelete = makeAction("track-delete", tr("Delete Track")).icon("trash-empty");
+	QAction *trackAdd = makeAction("track-add", tr("New Track")).icon("list-add").noDefaultShortcut();
+	QAction *trackVisible = makeAction("track-visible", tr("Track Visible")).checkable().noDefaultShortcut();
+	QAction *trackOnionSkin = makeAction("track-onion-skin", tr("Track Onion Skin")).checkable().shortcut("Ctrl+Shift+O");
+	QAction *trackDuplicate = makeAction("track-duplicate", tr("Duplicate Track")).icon("edit-copy").noDefaultShortcut();
+	QAction *trackRetitle = makeAction("track-retitle", tr("Rename Track")).icon("edit-rename").noDefaultShortcut();
+	QAction *trackDelete = makeAction("track-delete", tr("Delete Track")).icon("trash-empty").noDefaultShortcut();
 	QAction *frameNext = makeAction("frame-next", tr("Next Frame")).icon("keyframe-next").shortcut("Ctrl+Shift+L");
 	QAction *framePrev = makeAction("frame-prev", tr("Previous Frame")).icon("keyframe-previous").shortcut("Ctrl+Shift+H");
 	QAction *trackAbove = makeAction("track-above", tr("Track Above")).icon("arrow-up").shortcut("Ctrl+Shift+K");
