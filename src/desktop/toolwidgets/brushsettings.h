@@ -65,7 +65,6 @@ public slots:
 
 signals:
 	void colorChanged(const QColor &color);
-	void brushSlotChanged(int i);
 	void eraseModeChanged(bool erase);
 	void subpixelModeChanged(bool subpixel, bool square);
 	void pixelSizeChanged(int size);

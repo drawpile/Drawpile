@@ -51,7 +51,6 @@ SETTING(lastPalette               , LastPalette               , "history/lastpal
 SETTING(lastSessionTitle          , LastSessionTitle          , "history/sessiontitle"                  , QString())
 SETTING(lastTool                  , LastTool                  , "tools/tool"                            , tools::Tool::Type::FREEHAND)
 SETTING(lastToolColor             , LastToolColor             , "tools/color"                           , QColor(Qt::black))
-SETTING(lastToolSlot              , LastToolSlot              , "tools/slot"                            , 0)
 SETTING(lastUsername              , LastUsername              , "history/username"                      , QString())
 SETTING(lastWindowActions         , LastWindowActions         , "window/actions"                        , (QMap<QString, bool>()))
 SETTING(lastWindowDocks           , LastWindowDocks           , "window/docks"                          , (QVariantMap()))

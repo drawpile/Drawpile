@@ -225,9 +225,12 @@ ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
 	d->colorDialog->setAlphaEnabled(false);
 	connect(d->colorDialog, &color_widgets::ColorDialog::colorSelected, this, &ToolSettings::setForegroundColor);
 
+	// Tool settings are only saved periodically currently, see TODO below.
+	// Mixing periodic and instantaneous saving causes some desynchronization
+	// with regards to tool slot colors, causing them to flicker when switching.
 	auto &settings = dpApp().settings();
-	settings.bindLastToolColor(this, &ToolSettings::setForegroundColor, &ToolSettings::foregroundColorChanged);
-	settings.bindLastTool(this, &ToolSettings::selectTool, &ToolSettings::toolChanged);
+	setForegroundColor(settings.lastToolColor());
+	selectTool(settings.lastTool());
 }
 
 ToolSettings::~ToolSettings()
@@ -252,7 +255,10 @@ void ToolSettings::saveSettings()
 			}
 		}
 	}
-	dpApp().settings().setToolset(toolset);
+	auto &settings = dpApp().settings();
+	settings.setToolset(toolset);
+	settings.setLastToolColor(foregroundColor());
+	settings.setLastTool(currentTool());
 }
 
 bool ToolSettings::isCurrentToolLocked() const

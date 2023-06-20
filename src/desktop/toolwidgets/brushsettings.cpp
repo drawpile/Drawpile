@@ -61,8 +61,6 @@ struct BrushSettings::Private {
 	bool myPaintAllowed = true;
 	bool compatibilityMode = false;
 
-	bool settingsConnected = false;
-
 	inline brushes::ActiveBrush &currentBrush() {
 		Q_ASSERT(current >= 0 && current < BRUSH_COUNT);
 		return brushSlots[current];
@@ -327,7 +325,6 @@ void BrushSettings::selectBrushSlot(int i)
 
 	d->brushSlotButton[i]->setChecked(true);
 	d->current = i;
-	emit brushSlotChanged(i);
 
 	if(!d->shareBrushSlotColor)
 		emit colorChanged(d->currentBrush().qColor());
@@ -729,6 +726,7 @@ void BrushSettings::pushSettings()
 
 namespace toolprop {
 	static const ToolProperties::RangedValue<int>
+		activeSlot = {QStringLiteral("active"), 0, 0, BRUSH_COUNT-1},
 		stabilizationMode {QString("stabilizationmode"), 0, 0, int(brushes::LastStabilizationMode)},
 		stabilizer = {QStringLiteral("stabilizer"), 0, 0, 1000},
 		smoothing = {QStringLiteral("smoothing"), 0, 0, libclient::settings::maxSmoothing};
@@ -742,6 +740,7 @@ ToolProperties BrushSettings::saveToolSettings()
 {
 	ToolProperties cfg(toolType());
 
+	cfg.setValue(toolprop::activeSlot, d->current);
 	cfg.setValue(toolprop::finishStrokes, d->finishStrokes);
 	cfg.setValue(toolprop::useBrushSampleCount, d->useBrushSampleCount);
 	cfg.setValue(toolprop::stabilizationMode, int(d->stabilizationMode()));
@@ -794,13 +793,7 @@ void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 	eraser.classic().erase = true;
 	eraser.myPaint().brush().erase = true;
 
-	if(!d->settingsConnected) {
-		d->settingsConnected = true;
-		dpApp().settings().bindLastToolSlot(
-			this, &BrushSettings::selectBrushSlot,
-			&BrushSettings::brushSlotChanged);
-	}
-
+	selectBrushSlot(cfg.value(toolprop::activeSlot));
 	d->previousNonEraser = d->current != ERASER_SLOT ? d->current : 0;
 	d->finishStrokes = cfg.value(toolprop::finishStrokes);
 	d->useBrushSampleCount = cfg.value(toolprop::useBrushSampleCount);
