@@ -210,47 +210,47 @@
     <message>
         <location filename="../utils/certificatestoremodel.cpp" line="+24"/>
         <source>&apos;%1&apos; does not contain any valid host certificates.</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; 不包含任何有效的服务器证书.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>&apos;%1&apos; contains multiple host certificates, which is not currently supported.</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; 包含多个服务器证书, 目前不支持.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>&apos;%1&apos; contains an invalid certificate.</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; 包含一个无效的证书.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>&apos;%1&apos; contains a certificate with multiple hostnames, which is not currently supported.</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; 包含一个有多个服务器名的证书, 目前不支持.</translation>
     </message>
     <message>
         <location line="+139"/>
         <source>Could not read certificate from &apos;%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>无法从&apos;%1&apos;读取证书.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Could not open &apos;%1&apos; for writing: %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>无法打开 &apos;%1&apos; 进行写入: %2.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Could not write &apos;%1&apos;: %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>无法写入 &apos;%1&apos;: %2.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Could not move &apos;%1&apos; to &apos;%2&apos;: %3.</source>
-        <translation type="unfinished"></translation>
+        <translation>无法将 &apos;%1&apos; 移动到 &apos;%2&apos;: %3.</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Could not delete &apos;%1&apos;: %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>无法删除 &apos;%1&apos;: %2.</translation>
     </message>
 </context>
 <context>
@@ -327,17 +327,17 @@
     <message>
         <location filename="../utils/keyframelayermodel.cpp" line="+23"/>
         <source>Visibility: Hidden</source>
-        <translation type="unfinished"></translation>
+        <translation>可见性: 隐藏</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Visibility: Revealed</source>
-        <translation type="unfinished"></translation>
+        <translation>可见性: 揭示</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Visibility: Parent</source>
-        <translation type="unfinished"></translation>
+        <translation>可见性: 限制</translation>
     </message>
 </context>
 <context>
@@ -444,54 +444,54 @@
     <message>
         <location line="-83"/>
         <source>%1d%2h%3m</source>
-        <translation type="unfinished"></translation>
+        <translation>%1d%2h%3m</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1h%2m</source>
-        <translation type="unfinished"></translation>
+        <translation>%1h%2m</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1m</source>
-        <translation type="unfinished">%1m</translation>
+        <translation>%1m</translation>
     </message>
     <message numerus="yes">
         <location line="+80"/>
         <source>%n users</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n 用户</numerusform>
         </translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Compatible</source>
-        <translation type="unfinished"></translation>
+        <translation>兼容的</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Requires compatibility mode (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>需要兼容模式 (%1)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Requires newer client (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>需要新的客户端版本 (%1)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Incompatible (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>不兼容 (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>unknown version</source>
-        <translation type="unfinished"></translation>
+        <translation>未知版本</translation>
     </message>
     <message>
         <location line="+57"/>
         <source>Compatibility</source>
-        <translation type="unfinished"></translation>
+        <translation>兼容性</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -976,7 +976,7 @@
     <message>
         <location line="+26"/>
         <source>Client failed to serialize command</source>
-        <translation type="unfinished"></translation>
+        <translation>客户端序列化命令失败</translation>
     </message>
     <message>
         <location line="-52"/>
@@ -1064,7 +1064,7 @@
     <message>
         <location line="+5"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation>未成年人勿入</translation>
     </message>
     <message>
         <location line="+47"/>
