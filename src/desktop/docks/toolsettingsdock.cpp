@@ -24,8 +24,6 @@
 
 namespace docks {
 
-static const int LASTUSED_COLOR_COUNT = 8;
-
 struct ToolPage {
 	// Note: multiple different tools (e.g. Freehand and Line) can share the same settings
 	QSharedPointer<tools::ToolSettings> settings;
@@ -50,8 +48,10 @@ struct ToolSettings::Private {
 	QColor color = Qt::black;
 	QColor colorAlt = Qt::black;
 
-	color_widgets::ColorPalette lastUsedColors;
-	color_widgets::ColorPalette lastUsedColorsAlt;
+	color_widgets::ColorPalette lastUsedColors{
+		QVector<QColor>{}, QString{}, LASTUSED_COLOR_COUNT};
+	color_widgets::ColorPalette lastUsedColorsAlt{
+		QVector<QColor>{}, QString{}, LASTUSED_COLOR_COUNT};
 
 	bool switchedWithStylusEraser = false;
 

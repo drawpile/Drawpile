@@ -36,6 +36,8 @@ class ToolSettings final : public DockBase
 {
 Q_OBJECT
 public:
+	static constexpr int LASTUSED_COLOR_COUNT = 8;
+
 	ToolSettings(tools::ToolController *ctrl, QWidget *parent=nullptr);
 	~ToolSettings() override;
 

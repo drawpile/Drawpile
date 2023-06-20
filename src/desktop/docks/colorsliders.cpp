@@ -3,6 +3,7 @@
 #include "desktop/docks/colorsliders.h"
 #include "desktop/docks/colorpalette.h"
 #include "desktop/docks/titlewidget.h"
+#include "desktop/docks/toolsettingsdock.h"
 
 #include <QtColorWidgets/hue_slider.hpp>
 #include <QtColorWidgets/swatch.hpp>
@@ -42,6 +43,7 @@ ColorSliderDock::ColorSliderDock(const QString& title, QWidget *parent)
 
 	d->lastUsedSwatch = new color_widgets::Swatch(titlebar);
 	d->lastUsedSwatch->setForcedRows(1);
+	d->lastUsedSwatch->setForcedColumns(docks::ToolSettings::LASTUSED_COLOR_COUNT);
 	d->lastUsedSwatch->setReadOnly(true);
 	d->lastUsedSwatch->setBorder(Qt::NoPen);
 	d->lastUsedSwatch->setMinimumHeight(24);
