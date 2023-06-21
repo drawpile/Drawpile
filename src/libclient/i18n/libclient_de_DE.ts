@@ -258,7 +258,7 @@
     <message>
         <location filename="../utils/customshortcutmodel.cpp" line="+52"/>
         <source>Conflict</source>
-        <translation type="unfinished"></translation>
+        <translation>Konflikt</translation>
     </message>
     <message>
         <location line="+56"/>
@@ -400,7 +400,7 @@
     <message>
         <location line="+8"/>
         <source>Text File (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Textdatei (%1)</translation>
     </message>
     <message>
         <location line="+8"/>
