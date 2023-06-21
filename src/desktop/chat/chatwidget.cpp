@@ -52,7 +52,7 @@ struct Chat {
 				"color: #eff0f1;"
 				"margin: 1px 0 1px 0"
 			"}"
-		    ".alert { background: #da4453 }"
+		    ".alert { background: #66da4453 }"
 			".shout { background: #34292c }"
 			".shout .tab { background: #da4453 }"
 			".action { font-style: italic }"
