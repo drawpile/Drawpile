@@ -176,7 +176,7 @@
     <message>
         <location line="+13"/>
         <source>Smoothing: </source>
-        <translation type="unfinished"></translation>
+        <translation>Glättung: </translation>
     </message>
 </context>
 <context>
@@ -570,7 +570,7 @@ angepasst.</translation>
     <message>
         <location line="+8"/>
         <source>Log File</source>
-        <translation type="unfinished">Logdatei</translation>
+        <translation>Logdatei</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -798,12 +798,12 @@ angepasst.</translation>
     <message>
         <location line="+33"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation>Nicht jugendfrei (NSFM)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Marks the session as having age-restricted content.</source>
-        <translation type="unfinished"></translation>
+        <translation>Markiert die Sitzung als nicht jugendfrei.</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -813,7 +813,7 @@ angepasst.</translation>
     <message>
         <location line="+30"/>
         <source>Host:</source>
-        <translation type="unfinished"></translation>
+        <translation>Host:</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -874,12 +874,12 @@ angepasst.</translation>
     <message>
         <location line="+7"/>
         <source>NSFM</source>
-        <translation type="unfinished"></translation>
+        <translation>NSFM</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show sessions not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Sitzungen, die als nicht-jugendfrei (NSFM) markiert sind</translation>
     </message>
     <message>
         <location line="+32"/>
@@ -1081,7 +1081,7 @@ Teilreichweite: [%3, %4]</translation>
     <message>
         <location line="-55"/>
         <source>Show sessions not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Sitzungen, die als nicht-jugendfrei (NSFM) markiert sind</translation>
     </message>
     <message>
         <location line="+169"/>
@@ -1978,17 +1978,17 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
     <message>
         <location line="+351"/>
         <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Das Tastenkürzel &apos;%1&apos; ist mehrdeutig, es trifft zu auf:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Ambiguous Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Mehrdeutiges Tastenkürzel</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Fix</source>
-        <translation type="unfinished"></translation>
+        <translation>Korrigieren</translation>
     </message>
     <message>
         <location line="+484"/>
@@ -2109,7 +2109,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+94"/>
         <source>Toggle Dock %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Dock %1 umschalten</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -2194,7 +2194,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+1"/>
         <source>Set Key Frame to Current Layer</source>
-        <translation type="unfinished">Schlüsselbild auf aktuelle Ebene setzen</translation>
+        <translation>Schlüsselbild auf aktuelle Ebene setzen</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2424,33 +2424,33 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+133"/>
         <source>Missing Log File</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehlende Logdatei</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Log file doesn&apos;t exist, do you need to enable logging in the preferences?</source>
-        <translation type="unfinished"></translation>
+        <translation>Logdatei existiert nicht, müssen Sie Logging in den Einstellungen erst aktivieren?</translation>
     </message>
     <message>
         <location line="+9"/>
         <location line="+8"/>
         <source>Error Saving Log File</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Speichern der Logdatei</translation>
     </message>
     <message>
         <location line="-7"/>
         <source>Could not read source file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Quelldatei konnte nicht gelesen werden: %1</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Could not open target file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Zieldatei konnte nicht geöffnet werden: %1</translation>
     </message>
     <message>
         <location line="+49"/>
         <source>Swatch Color %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Letzte Farbe %1</translation>
     </message>
     <message>
         <location line="+62"/>
@@ -2998,12 +2998,12 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="-145"/>
         <source>This session contains age-restricted content</source>
-        <translation type="unfinished"></translation>
+        <translation>Diese Sitzung enthält nicht-jugendfreie Inhalte</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation>Nicht jugendfrei (NSFM)</translation>
     </message>
     <message>
         <location line="+159"/>
@@ -3696,22 +3696,22 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+230"/>
         <source>Slows down the stroke to stabilize it over time. High values give very smooth lines, but they will draw slowly. When you stop moving, the line will catch up your cursor. Tablet smoothing from the input preferences applies as well.</source>
-        <translation type="unfinished"></translation>
+        <translation>Verlangsamt Striche, um sie über die Zeit zu stabilisieren. Hohe Werte geben sehr weiche Linien, aber sie werden langsam gezeichnet. Wenn Sie den Stift aufhören zu bewegen, wird die Linie den Cursor einholen. Tablet-Glättung aus den Eingabeeinstellungen werden hierauf auch angewendet.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Simply averages a number of inputs. Feels faster than the time-based stabilizer, but not as smooth and won&apos;t catch up to your cursor when you stop moving. Overrides tablet smoothing from the input preferences.</source>
-        <translation type="unfinished"></translation>
+        <translation>Berechnet einfach den Durchschnitt aus einer Anzahl von Eingaben. Fühlt sich schneller als der zeitbasierte Stabilisator an, aber ist weniger weich und holt den Cursor nicht ein, wenn Sie den Stift nicht bewegen. Überschreibt Tablet-Glättung aus den Eingabeeinstellungen.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Unknown stabilization mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>Unbekannter Stabilisationsmodus.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Synchronizing stabilization settings with brushes is disabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Synchronisation von Stabilisationseinstellungen mit Pinseln ist deaktiviert.</translation>
     </message>
     <message>
         <location line="-498"/>
@@ -3722,22 +3722,22 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="-415"/>
         <source>Stabilization Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Stabilisationsmodus:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Time-Based Stabilizer</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeitbasierter Stabilisator</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Average Smoothing</source>
-        <translation type="unfinished"></translation>
+        <translation>Durschnittsglättung</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Smoothing: </source>
-        <translation type="unfinished"></translation>
+        <translation>Glättung: </translation>
     </message>
     <message>
         <location line="+323"/>
@@ -5305,22 +5305,22 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="-368"/>
         <source>Copy session URL</source>
-        <translation type="unfinished"></translation>
+        <translation>Sitzungs-URL kopieren</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy title</source>
-        <translation type="unfinished"></translation>
+        <translation>Titel kopieren</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Copy server</source>
-        <translation type="unfinished"></translation>
+        <translation>Server kopieren</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy owner</source>
-        <translation type="unfinished"></translation>
+        <translation>Besitzer kopieren</translation>
     </message>
     <message>
         <location line="+104"/>
@@ -5482,12 +5482,12 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+202"/>
         <source>Log in with &apos;%1&apos; credentials</source>
-        <translation type="unfinished"></translation>
+        <translation>Melden Sie sich mit den Anmeldetaten von &apos;%1&apos; an</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Log in with &apos;%1&apos; credentials (INSECURE CONNECTION!)</source>
-        <translation type="unfinished"></translation>
+        <translation>Melden Sie sich mit den Anmeldetaten von &apos;%1&apos; an (UNSICHERE VERBINDUNG!)</translation>
     </message>
 </context>
 <context>
@@ -5754,7 +5754,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+1"/>
         <source>Canvas Shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Leinwandkürzel</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5812,7 +5812,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../dialogs/versioncheckdialog.cpp" line="+25"/>
         <source>Download</source>
-        <translation type="unfinished"></translation>
+        <translation>Herunterladen</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -5832,38 +5832,38 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+30"/>
         <source>Error checking version!</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler bei der Prüfung auf eine neue Version!</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>You&apos;re up to date!</source>
-        <translation type="unfinished"></translation>
+        <translation>Das Programm ist aktuell!</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>No new versions found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine neuen Versionen gefunden.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&lt;h1&gt;%1&lt;/h1&gt;&lt;p&gt;%2&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;h1&gt;%1&lt;/h1&gt;&lt;p&gt;%2&lt;/p&gt;</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>A new version of Drawpile is available!</source>
-        <translation type="unfinished"></translation>
+        <translation>Eine neue Version von Drawpile ist verfügbar!</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Version %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Version %2</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>&lt;p&gt;The download page for Drawpile %1 should have opened in your browser. If not, visit &lt;a href=&quot;%2&quot;&gt;%2&lt;/a&gt; manually.&lt;/p&gt;&lt;p&gt;Restart Drawpile after installing the new version.&lt;/p&gt;</source>
         <extracomment>%2 is used twice, this is intentional! Don&apos;t use %3.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Die Downloadseite für Drawpile %1 sollte sich in Ihrem Browser geöffnet haben. Falls nicht, besuchen Sie &lt;a href=&quot;%2&quot;&gt;%2&lt;/a&gt; manuell.&lt;/p&gt;&lt;p&gt;Starten Sie nach der Installation der neuen Version das Programm neu.&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
@@ -5904,37 +5904,37 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/canvasshortcuts.cpp" line="+38"/>
         <source>Search actions…</source>
-        <translation type="unfinished">Suche Aktionen…</translation>
+        <translation>Suche Aktionen…</translation>
     </message>
     <message>
         <location line="+73"/>
         <source>Edit Canvas Shortcut</source>
-        <translation type="unfinished">Leinwandkürzel bearbeiten</translation>
+        <translation>Leinwandkürzel bearbeiten</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Add canvas shortcut…</source>
-        <translation type="unfinished">Leinwandkürzel hinzufügen…</translation>
+        <translation>Leinwandkürzel hinzufügen…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>New Canvas Shortcut</source>
-        <translation type="unfinished">Neues Leinwandkürzel</translation>
+        <translation>Neues Leinwandkürzel</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Remove selected canvas shortcut…</source>
-        <translation type="unfinished">Ausgewähltes Leinwandkürzel entfernen…</translation>
+        <translation>Ausgewähltes Leinwandkürzel entfernen…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Remove canvas shortcut</source>
-        <translation type="unfinished">Leinwandkürzel entfernen</translation>
+        <translation>Leinwandkürzel entfernen</translation>
     </message>
     <message numerus="yes">
         <location line="+1"/>
         <source>Really remove %n canvas shortcut(s)?</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>Wirklich %n Leinwandkürzel entfernen?</numerusform>
             <numerusform>Wirklich %n Leinwandkürzel entfernen?</numerusform>
         </translation>
@@ -5942,17 +5942,17 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+3"/>
         <source>Restore defaults…</source>
-        <translation type="unfinished">Standard wiederherstellen…</translation>
+        <translation>Standard wiederherstellen…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Restore Canvas Shortcut Defaults</source>
-        <translation type="unfinished">Standard-Leinwandkürzel wiederherstellen</translation>
+        <translation>Standard-Leinwandkürzel wiederherstellen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really restore all canvas shortcuts to their default values?</source>
-        <translation type="unfinished"></translation>
+        <translation>Wirklich alle Leinwandkürzel zu ihrem Standardwert zurücksetzen?</translation>
     </message>
 </context>
 <context>
@@ -5960,17 +5960,17 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/general.cpp" line="+49"/>
         <source>When enabled, save every %1 minutes</source>
-        <translation type="unfinished"></translation>
+        <translation>Wenn aktiv, speichere alle %1 Minuten</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Autosave:</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatisches Speichern:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Autosave can be enabled for the current file under &lt;i&gt;File ▸ Autosave&lt;/i&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatisches Speichern kann für die Aktuelle Datei unter &lt;i&gt;Datei ▸ Automatisch speichern&lt;/i&gt; aktiviert werden.</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -6002,7 +6002,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+1"/>
         <source>Language changes apply after you restart Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Änderungen an der Sprache erfordern einen Neustart von Drawpile.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -6047,7 +6047,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+4"/>
         <source>Snapshots can be restored from the &lt;i&gt;Session ▸ Reset…&lt;/i&gt; menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Schnappschüsse können unter &lt;i&gt;Sitzung ▸ Zurücksetzen...&lt;/i&gt; wiederhergestellt werden.</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -6140,7 +6140,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+6"/>
         <source>Smoothing: </source>
-        <translation type="unfinished"></translation>
+        <translation>Glättung: </translation>
     </message>
     <message>
         <location line="+9"/>
@@ -6281,7 +6281,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+7"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6505,12 +6505,12 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+3"/>
         <source>Move up</source>
-        <translation type="unfinished"></translation>
+        <translation>Nach oben</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Move down</source>
-        <translation type="unfinished"></translation>
+        <translation>Nach unten</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -6554,7 +6554,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+72"/>
         <source>Restore Shortcut Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>Standard-Tastenkürzel wiederherstellen</translation>
     </message>
     <message>
         <location line="-4"/>
@@ -7235,22 +7235,22 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+41"/>
         <source>Time-Based Stabilizer</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeitbasierter Stabilisator</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Average Smoothing</source>
-        <translation type="unfinished"></translation>
+        <translation>Durschnittsglättung</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Slows down the stroke and stabilizes it over time. Can produce very smooth results, but may feel sluggish.</source>
-        <translation type="unfinished"></translation>
+        <translation>Verlangsamt Striche und stabilisiert sie über Zeit. Sehr weiche Ergebisse, aber kann sich träge anfühlen.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Simply averages inputs to get a smoother result. Faster than the time-based stabilizer, but not as smooth.</source>
-        <translation type="unfinished"></translation>
+        <translation>Berechnet einen Durchschnitt von Eingaben, um ein weicheres Resultat zu erzielen. Schneller als der zeitbasierte Stabilisator, aber weniger weich.</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -7426,7 +7426,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+116"/>
         <source>/!: only operators are allowed to send shouts.</source>
-        <translation type="unfinished"></translation>
+        <translation>/!: nur Operatoren dürfen Ansagen machen.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7441,7 +7441,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+9"/>
         <source>/alert: only operators are allowed to send alerts.</source>
-        <translation type="unfinished"></translation>
+        <translation>/alert: nur Operatoren dürfen Alarme senden.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7456,7 +7456,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+9"/>
         <source>/pin: only operators are allowed to send alerts.</source>
-        <translation type="unfinished"></translation>
+        <translation>/pin: nur Operatoren dürfen Alarme senden.</translation>
     </message>
     <message>
         <location line="+3"/>
