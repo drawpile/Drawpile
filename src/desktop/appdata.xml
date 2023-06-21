@@ -23,8 +23,79 @@
     <category>Graphics</category>
   </categories>
   <releases>
+    <release version="2.2.0-beta.5" type="development" date="2023-06-21">
+      <url>https://drawpile.net/news/release-2.2b5/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>Made the new default theme *actually* the default theme, don't sync it with the theme from Drawpile 2.1.</li>
+          <li>Fixed saving and loading settings even when Drawpile 2.1 corrupted them.</li>
+          <li>Fixed saving of shortcuts and probably also some other settings that didn't let you clear stuff anymore.</li>
+          <li>Allowed ordering of list servers in the preferences again.</li>
+          <li>Made chat pins work properly again.</li>
+          <li>Allowed color picking when using the selection tool again.</li>
+          <li>Brought back the old averaging smoothing, as another option in addition to the new time-based stabilizer.</li>
+          <li>Miscellaneous fixes and prettifications in the settings dialog.</li>
+          <li>Fixed stabilizer settings being forgotten when closing the program.</li>
+          <li>Non-floating selections now stick around after hitting Delete, since you might want to delete on multiple layers.</li>
+          <li>Fixed some crashes when closing the window when it's in a funky state.</li>
+          <li>Made settings only save to disk when you're not doing anything in the program, to avoid causing chugging on slow disks.</li>
+          <li>Fixed Copy Merged to actually work and not just copy a blank rectangle.</li>
+          <li>Fixed floating docks not being resizable on macOS.</li>
+          <li>Fixed pasting images with weird color formats.</li>
+          <li>Added an NSFM option to the host dialog, letting you turn that on right from the get-go.</li>
+          <li>Called NSFM the same everywhere in the program, instead of mixing up "NSFM", "NSFW" and "age-restricted" in different places.</li>
+          <li>Added a context menu to the join dialog, if you want to copy stuff out of there.</li>
+          <li>Made popup messages ("Connecting..." and such) work on Wayland.</li>
+          <li>Made nearest-neighbor transform actually work, it ended up being forced to bilinear every time.</li>
+          <li>Made the stabilizer not run at a really low framerate on Windows.</li>
+          <li>Split Shortcuts and Canvas Shortcuts into two settings pages again.</li>
+          <li>Fixed shortcuts not getting assigned when closing the preferences without clicking somewhere else first.</li>
+          <li>Made conflicting shortcuts actually show errors instead of silently doing nothing.</li>
+          <li>Fixed tool slots swizzling their colors when multiple windows were open.</li>
+          <li>Allow holding left-click on the timeline frames and scrubbing left and right for a quick preview.</li>
+          <li>Pick better layers when switching animation frames and tracks, so that you don't end up stuck on layers that aren't actually in your current frame.</li>
+          <li>Fixed a really stupid bug that caused sessions to seemingly revert to 2.1 mode.</li>
+          <li>You can now add keyboard shortcuts for a whole lot more stuff, such as swatch colors, dock visibility and pretty much all actions you can pick from the menu that inexplicably didn't let you assign shortcuts to them before.</li>
+          <li>Fixed the authentication dialog messages looking wonky.</li>
+          <li>Made the session password dialog look less squashed.</li>
+          <li>Made links in server messages clickable.</li>
+          <li>Brought back the version check in a way that should work also for  beta versions, on all platforms and in other languages.</li>
+          <li>Allowed saving the log file on Android, since you can't view it directly.</li>
+          <li>Made alert chat message backgrounds less bright.</li>
+          <li>Updated Chinese, German and Portuguese translations.</li>
+        </ul>
+      </description>
+      <artifacts>
+        <artifact type="binary" platform="x86_64-windows-msvc">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.5/win/Drawpile-2.2.0-beta.5.msi</location>
+          <checksum type="sha256">3a05c4ce02a6712edc35adb7d1e0ba66a5fb29b80121f6e829570d54b6b5f72a</checksum>
+          <size type="download">19313292</size>
+        </artifact>
+        <artifact type="binary" platform="x86_64-darwin-gnu">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.5/osx/Drawpile-2.2.0-beta.5.dmg</location>
+          <checksum type="sha256">1ac90f87fde334f6e7a79c424767197d1e09efd10edce2df00dfcb5e806b901f</checksum>
+          <size type="download">21249270</size>
+        </artifact>
+        <artifact type="binary" platform="x86_64-linux-gnu">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.5/appimage/Drawpile-2.2.0-beta.5-x86_64.AppImage</location>
+          <checksum type="sha256">9572ec0eb584bc73da60429b8f8e6b010661e57c2fc1c0899559841af6e93fe3</checksum>
+          <size type="download">36725952</size>
+        </artifact>
+        <artifact type="binary" platform="aarch64-linux-android">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.5/apk/Drawpile-2.2.0-beta.5.apk</location>
+          <checksum type="sha256">7c6525cda0406bea9ecc4a6da9eb609a911c75add2a8be10628b51d30c993c31</checksum>
+          <size type="download">17183797</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.5/src/Drawpile-2.2.0-beta.5.tar.gz</location>
+          <checksum type="sha256">a7afae2d20c26ad679f8a6c657f077429d55219b5dad6a0f554d6f43ad518baa</checksum>
+          <size type="download">8448714</size>
+        </artifact>
+      </artifacts>
+    </release>
     <release version="2.2.0-beta.4" type="development" date="2023-06-14">
-      <url>https://drawpile.net/news/release-2.2.0-beta.4/</url>
+      <url>https://drawpile.net/news/release-2.2b4/</url>
       <description>
         <p>Changes in this version:</p>
         <ul>
