@@ -1,0 +1,918 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop">
+  <id>net.drawpile.drawpile</id>
+  <launchable type="desktop-id">net.drawpile.drawpile.desktop</launchable>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0+</project_license>
+  <developer_name>askmeaboutloom, Calle Laakkonen and contributors</developer_name>
+  <name>Drawpile</name>
+  <summary>Collaborative Drawing</summary>
+  <description>
+    <p>Drawpile is a drawing program that lets you share a canvas with other users in real time.</p>
+    <p>You can share your drawing board with the built-in server or connect to a dedicated server.</p>
+  </description>
+  <url type="homepage">https://drawpile.net/</url>
+  <url type="help">https://drawpile.net/help/</url>
+  <url type="bugtracker">https://github.com/drawpile/Drawpile/issues</url>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://drawpile.net/media/d/images/screenshot2.png</image>
+    </screenshot>
+  </screenshots>
+  <categories>
+    <category>Graphics</category>
+  </categories>
+  <releases>
+    <release version="2.2.0-beta.5" type="development" date="2023-06-21">
+      <url>https://drawpile.net/news/release-2.2b5/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>Made the new default theme *actually* the default theme, don't sync it with the theme from Drawpile 2.1.</li>
+          <li>Fixed saving and loading settings even when Drawpile 2.1 corrupted them.</li>
+          <li>Fixed saving of shortcuts and probably also some other settings that didn't let you clear stuff anymore.</li>
+          <li>Allowed ordering of list servers in the preferences again.</li>
+          <li>Made chat pins work properly again.</li>
+          <li>Allowed color picking when using the selection tool again.</li>
+          <li>Brought back the old averaging smoothing, as another option in addition to the new time-based stabilizer.</li>
+          <li>Miscellaneous fixes and prettifications in the settings dialog.</li>
+          <li>Fixed stabilizer settings being forgotten when closing the program.</li>
+          <li>Non-floating selections now stick around after hitting Delete, since you might want to delete on multiple layers.</li>
+          <li>Fixed some crashes when closing the window when it's in a funky state.</li>
+          <li>Made settings only save to disk when you're not doing anything in the program, to avoid causing chugging on slow disks.</li>
+          <li>Fixed Copy Merged to actually work and not just copy a blank rectangle.</li>
+          <li>Fixed floating docks not being resizable on macOS.</li>
+          <li>Fixed pasting images with weird color formats.</li>
+          <li>Added an NSFM option to the host dialog, letting you turn that on right from the get-go.</li>
+          <li>Called NSFM the same everywhere in the program, instead of mixing up "NSFM", "NSFW" and "age-restricted" in different places.</li>
+          <li>Added a context menu to the join dialog, if you want to copy stuff out of there.</li>
+          <li>Made popup messages ("Connecting..." and such) work on Wayland.</li>
+          <li>Made nearest-neighbor transform actually work, it ended up being forced to bilinear every time.</li>
+          <li>Made the stabilizer not run at a really low framerate on Windows.</li>
+          <li>Split Shortcuts and Canvas Shortcuts into two settings pages again.</li>
+          <li>Fixed shortcuts not getting assigned when closing the preferences without clicking somewhere else first.</li>
+          <li>Made conflicting shortcuts actually show errors instead of silently doing nothing.</li>
+          <li>Fixed tool slots swizzling their colors when multiple windows were open.</li>
+          <li>Allow holding left-click on the timeline frames and scrubbing left and right for a quick preview.</li>
+          <li>Pick better layers when switching animation frames and tracks, so that you don't end up stuck on layers that aren't actually in your current frame.</li>
+          <li>Fixed a really stupid bug that caused sessions to seemingly revert to 2.1 mode.</li>
+          <li>You can now add keyboard shortcuts for a whole lot more stuff, such as swatch colors, dock visibility and pretty much all actions you can pick from the menu that inexplicably didn't let you assign shortcuts to them before.</li>
+          <li>Fixed the authentication dialog messages looking wonky.</li>
+          <li>Made the session password dialog look less squashed.</li>
+          <li>Made links in server messages clickable.</li>
+          <li>Brought back the version check in a way that should work also for  beta versions, on all platforms and in other languages.</li>
+          <li>Allowed saving the log file on Android, since you can't view it directly.</li>
+          <li>Made alert chat message backgrounds less bright.</li>
+          <li>Updated Chinese, German and Portuguese translations.</li>
+        </ul>
+      </description>
+      <artifacts>
+        <artifact type="binary" platform="win64">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.5/win/Drawpile-2.2.0-beta.5.msi</location>
+          <checksum type="sha256">3a05c4ce02a6712edc35adb7d1e0ba66a5fb29b80121f6e829570d54b6b5f72a</checksum>
+          <size type="download">19313292</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.5/osx/Drawpile-2.2.0-beta.5.dmg</location>
+          <checksum type="sha256">1ac90f87fde334f6e7a79c424767197d1e09efd10edce2df00dfcb5e806b901f</checksum>
+          <size type="download">21249270</size>
+        </artifact>
+        <artifact type="binary" platform="x86_64-linux-gnu">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.5/appimage/Drawpile-2.2.0-beta.5-x86_64.AppImage</location>
+          <checksum type="sha256">9572ec0eb584bc73da60429b8f8e6b010661e57c2fc1c0899559841af6e93fe3</checksum>
+          <size type="download">36725952</size>
+        </artifact>
+        <artifact type="binary" platform="aarch64-linux-android">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.5/apk/Drawpile-2.2.0-beta.5.apk</location>
+          <checksum type="sha256">7c6525cda0406bea9ecc4a6da9eb609a911c75add2a8be10628b51d30c993c31</checksum>
+          <size type="download">17183797</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.5/src/Drawpile-2.2.0-beta.5.tar.gz</location>
+          <checksum type="sha256">a7afae2d20c26ad679f8a6c657f077429d55219b5dad6a0f554d6f43ad518baa</checksum>
+          <size type="download">8448714</size>
+        </artifact>
+      </artifacts>
+    </release>
+    <release version="2.2.0-beta.4" type="development" date="2023-06-14">
+      <url>https://drawpile.net/news/release-2.2b4/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>Android support</li>
+          <li>New paint engine again (Drawdance)</li>
+          <li>More themes, nicer default theme</li>
+          <li>Improved animation support, with a timeline, tracks and keyframes</li>
+          <li>Adjustible undo limit</li>
+          <li>Local canvas backgrounds</li>
+          <li>Better canvas shortcuts</li>
+          <li>Real stabilizer, based on Krita's</li>
+          <li>Indirect mode for MyPaint brushes</li>
+          <li>Full-fledged brush editor</li>
+          <li>Better MyPaint brush import</li>
+          <li>Saving and loading of application layouts</li>
+          <li>Changed default layout that works better on small screens</li>
+          <li>Tablet-friendly sliders, taken from Krita</li>
+          <li>Fill tool gap-filling, feathering and improved size limiting</li>
+          <li>Nearest-neighbor transform option</li>
+          <li>Compatibility with 2.1 sessions</li>
+          <li>Docks now have a menu instead of a close and undock button</li>
+          <li>Docks can now be made undockable, if you want to keep them floating</li>
+          <li>Top and bottom regions of the window are now dockable</li>
+          <li>Docks can now be nested</li>
+          <li>Vertical tabs option for side-mounted docks</li>
+          <li>Holding shift gives you rearrange mode by default</li>
+          <li>More and more useful brush presets by default</li>
+          <li>Chat now has multiline support</li>
+          <li>Preferences tidied up a bunch, internal settings system reworked</li>
+          <li>Tablet drivers on Windows can now be switched without restarting the program</li>
+          <li>Reset snapshot interval and amount can now be adjusted</li>
+          <li>Parental controls can be hidden when locked</li>
+          <li>forceNsfm option for the server</li>
+          <li>Messages from server GUI will now be alerts</li>
+          <li>Indirect drawing mode now works properly</li>
+          <li>Hiding docks no longer jiggers them around</li>
+          <li>Transforms now preview on the target layer</li>
+          <li>Session resets no longer cause the view to jerk around or a layer switch</li>
+          <li>Session resets now prompt for a save</li>
+          <li>Layer opacity and blend mode controls are back in the layer list dock</li>
+          <li>Recording and recording indexes now handle undos properly</li>
+          <li>Recordings can be played back at fast speeds again</li>
+          <li>(De-)selecting layer groups no longer makes a clicking noise</li>
+          <li>You now have to be operator to pin a chat message</li>
+          <li>Moving your own layer into your own group no longer requires omnipotence</li>
+          <li>Switching away from the annotation tool no longer conjures a blank annotation</li>
+          <li>Linux and macOS now properly focus the canvas when it's interacted with</li>
+          <li>Massively improved development and release infrastructure with CI and such</li>
+          <li>Weblate integration</li>
+          <li>Development tools, like tablet event logging, debug dumps etc.</li>
+        </ul>
+      </description>
+      <artifacts>
+        <artifact type="binary" platform="win64">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.4/win/Drawpile-2.2.0-beta.4.msi</location>
+          <checksum type="sha256">8e8be4e8904ba8bc186ba90f1186026225d6167925a8280d2b16a760d3be183e</checksum>
+          <size type="download">19255916</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.4/osx/Drawpile-2.2.0-beta.4.dmg</location>
+          <checksum type="sha256">993354298338e5be2d3c36854180634519f792f769a3e397d2901c9424feedfb</checksum>
+          <size type="download">21199847</size>
+        </artifact>
+        <artifact type="binary" platform="x86_64-linux-gnu">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.4/appimage/Drawpile-2.2.0-beta.4-x86_64.AppImage</location>
+          <checksum type="sha256">f30895b9f4bfcb06332fa1768fabbc1a46795577b5461ab2eb2d2dfee476514a</checksum>
+          <size type="download">36660416</size>
+        </artifact>
+        <artifact type="binary" platform="aarch64-linux-android">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.4/apk/Drawpile-2.2.0-beta.4.apk</location>
+          <checksum type="sha256">aa2293720025577ebaf705072c4f2adfd8269c2685d2f3a4468b65b19bc0248c</checksum>
+          <size type="download">17130386</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.4/src/Drawpile-2.2.0-beta.4.tar.gz</location>
+          <checksum type="sha256">327afc678ec70c7a61169e8103497a0d3dd900172efc2451ae0811abb4a56998</checksum>
+          <size type="download">8415018</size>
+        </artifact>
+      </artifacts>
+    </release>
+    <release version="2.2.0-beta.3" type="development" date="2022-08-20">
+      <url>https://drawpile.net/news/release-2.2b3/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>Added support for MyPaint brushes</li>
+          <li>MyPaint style 15 bit color channels</li>
+          <li>Removed popup notifications for join and leave events</li>
+          <li>Fixed skew when scaling a selection from the top-right handle</li>
+          <li>Fixed mouse droppings when for large brush outline widths</li>
+          <li>Fixed laser trail persistence selection</li>
+          <li>Split color wheel, sliders and palette into separate docks</li>
+          <li>Fixed "no guest logins" checkbox eanbled state</li>
+          <li>Fixed session snapshot missing the timeline</li>
+          <li>Enable timeline editor only when given permission</li>
+          <li>Active layer is now shown in the timeline editor</li>
+          <li>Next/previous frame action also autoselects layer</li>
+        </ul>
+      </description>
+      <artifacts>
+        <artifact type="binary" platform="win64">
+          <location>https://drawpile.net/files/win/Drawpile-2.2.0b3.zip</location>
+          <checksum type="sha256">f7a3ce8685bb0ed38ffba1ca78ff3efa72898bfec6d0e192aa365d0218e97d9f</checksum>
+          <size type="download">25840196</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://drawpile.net/files/osx/Drawpile 2.2.0b3.dmg</location>
+          <checksum type="sha256">61c4983897dae9bac4306448ba78c8a6146843b5494ff40722d44ddc2876532e</checksum>
+          <size type="download">17155897</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://drawpile.net/files/src/drawpile-2.2.0b3.tar.gz</location>
+          <checksum type="sha256">bc6d832c7ddde6ccd8d6285de0fc2f65e0a236626d7ccb65d896389bc7936594</checksum>
+          <size type="download">3742000</size>
+        </artifact>
+      </artifacts>
+    </release>
+    <release version="2.2.0-beta.2" type="development" date="2022-08-11">
+      <url>https://drawpile.net/news/release-2.2b2/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>Fixed smudge color sampling mask offset</li>
+          <li>Fixed annotation loading</li>
+          <li>Added support for `/alert` chat command in private chats</li>
+          <li>Fixed crash if a group layer was moved by layer deletion</li>
+          <li>Fixed layer lock status updating</li>
+          <li>Fixed preserved chat mode</li>
+          <li>Annotation creator name is now shown in the dock titlebar</li>
+          <li>Restored palette write-protect feature</li>
+          <li>Fixed brush slider limit preferences</li>
+          <li>Layers hidden in frame/onionskin mode are now grayed out in the layer box</li>
+          <li>Modifying the timeline now updates the view immediately</li>
+          <li>New identicon style</li>
+        </ul>
+      </description>
+      <artifacts>
+        <artifact type="binary" platform="win64">
+          <location>https://drawpile.net/files/win/Drawpile-2.2.0b2.zip</location>
+          <checksum type="sha256">985001966b99c2b6bef2435639768978943de5125c720743a333ff6a0da01964</checksum>
+          <size type="download">24682217</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://drawpile.net/files/osx/Drawpile 2.2.0b2.dmg</location>
+          <checksum type="sha256">e0141d4a6450bb980a7d01a1b1b201f6f4aa318b57edb0e90924766199f07217</checksum>
+          <size type="download">15120068</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://drawpile.net/files/src/drawpile-2.2.0b2.tar.gz</location>
+          <checksum type="sha256">591f490d90b8b90236c3e54c9caf8051fa3880eaf66ef7027f31acb2ccdeb954</checksum>
+          <size type="download">2726817</size>
+        </artifact>
+      </artifacts>
+    </release>
+    <release version="2.2.0-beta.1" type="development" date="2022-08-03">
+      <url>https://drawpile.net/news/release-2.2b/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>New paint engine written in Rust</li>
+          <li>Added support for layer groups</li>
+          <li>Added animation timeline editor</li>
+          <li>Added screen blend mode</li>
+          <li>Disabled built-in server pending rewrite</li>
+          <li>Added `/alert` chat command</li>
+        </ul>
+      </description>
+      <artifacts>
+        <artifact type="binary" platform="win64">
+          <location>https://drawpile.net/files/win/Drawpile-2.2.0b.zip</location>
+          <checksum type="sha256">7a2b3a698f589af9a13317c0d132768bf937754989fd333612881825f967078b</checksum>
+          <size type="download">24678820</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://drawpile.net/files/osx/drawpile-2.2.0b.dmg</location>
+          <checksum type="sha256">297cb4a181933fb8ae19ef05fcb9491b7dfad2583f747f0f96a887311aa11037</checksum>
+          <size type="download">15118234</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://drawpile.net/files/src/drawpile-2.2.0b.tar.gz</location>
+          <checksum type="sha256">ee4f0826f9b8fb488a581f6857ec52244e8780ef07b57a99b8605afeeb3870c1</checksum>
+          <size type="download">2723608</size>
+        </artifact>
+      </artifacts>
+    </release>
+    <release version="2.1.20" date="2021-09-12">
+      <url>https://drawpile.net/news/release-2.1.20/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>Updated Portugese translations</li>
+          <li>Added more angles to canvas rotation dropdown menu</li>
+          <li>Fixed inconsistency in classic brush rendering</li>
+          <li>Fixed inconsistency in layer resize color sampling</li>
+          <li>Theme (Windows Vista style / Fusion / Fusion Dark mode) is now selectable</li>
+          <li>Fixed that a cleared annotation would not count as empty for the "delete mpty annotations" command</li>
+        </ul>
+      </description>
+      <artifacts>
+        <artifact type="binary" platform="win64">
+          <location>https://drawpile.net/files/win/drawpile-2.1.20-setup.exe</location>
+          <checksum type="sha256">878a47414d5209e784a415d507aac864827490f106ed0290802a333d641a7ac4</checksum>
+          <size type="download">16615428</size>
+        </artifact>
+        <artifact type="binary" platform="win32">
+          <location>https://drawpile.net/files/win/drawpile-2.1.20-setup-w32.exe</location>
+          <checksum type="sha256">ffb20217c890f3c874df40bb9c43fe1ec843ba76eb2fc636c16ce45d3a0f05df</checksum>
+          <size type="download">15682839</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://drawpile.net/files/osx/Drawpile 2.1.20.dmg</location>
+          <checksum type="sha256">fe7f93c2f3ec9505b8a4f044093b67bae0c80fc8d6613ba2d0dfad5243cfdf44</checksum>
+          <size type="download">14363397</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://drawpile.net/files/src/drawpile-2.1.20.tar.gz</location>
+          <checksum type="sha256">a2f45e8b7482854288eb7b7f9db0961c79f0129ab92216280fdb94457e0d0fa9</checksum>
+          <size type="download">2631090</size>
+        </artifact>
+      </artifacts>
+    </release>
+    <release version="2.1.19" date="2021-08-06">
+      <url>https://drawpile.net/news/release-2.1.19/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>Fixed performance regression</li>
+          <li>Fixed potential crash during login (catchup stage)</li>
+          <li>Fixed crash when adding a new input preset</li>
+          <li>"Fusion" style is now always used on Windows for consistency</li>
+          <li>Added canvas rotation gauge widget to status bar</li>
+          <li>Invalid canvas resize commands are now ignored</li>
+          <li>Fixed that ongoing indirect strokes weren't drawn when exporting a recording to video</li>
+          <li>Fixed garbled navigator content when joining a new session</li>
+        </ul>
+      </description>
+      <artifacts>
+        <artifact type="binary" platform="win64">
+          <location>https://drawpile.net/files/win/drawpile-2.1.19-setup.exe</location>
+          <checksum type="sha256">c6eb9a6a34de0354c880b154bf1a0bb273ef55078a7a942e250eb4ba845bcba7</checksum>
+          <size type="download">16610905</size>
+        </artifact>
+        <artifact type="binary" platform="win32">
+          <location>https://drawpile.net/files/win/drawpile-2.1.19-setup-w32.exe</location>
+          <checksum type="sha256">b9bddca67ff340ae082a59a4663037cef58ff889453f638c81acef6dc10ebfc0</checksum>
+          <size type="download">15677308</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://drawpile.net/files/osx/Drawpile 2.1.19.dmg</location>
+          <checksum type="sha256">db4632b79612c5f0b3d524717742c76955fa61fe3efdc59e370a3b40e6a07934</checksum>
+          <size type="download">14360834</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://drawpile.net/files/src/drawpile-2.1.19.tar.gz</location>
+          <checksum type="sha256">8086ed74f38848d15476d3fb245887fe1e0eb271e28a00947fe481972265dd68</checksum>
+          <size type="download">2614456</size>
+        </artifact>
+      </artifacts>
+    </release>
+    <release version="2.1.18" date="2021-07-25">
+      <url>https://drawpile.net/news/release-2.1.18/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>All actions can now be assigned an alternate shortcut</li>
+          <li>Added French and Portugese translations</li>
+          <li>Fixed inconsistent zooming at certain values</li>
+          <li>Fixed brush size adjustment shortcuts not working consistently</li>
+          <li>Fixed that undo operations would cause the layer list to scroll</li>
+          <li>Fixed moving a layer to the bottom-most position</li>
+          <li>Various bugfixes</li>
+          <li>Breaking change: active tool setting format was changed. Not compatible with older Drawpile versions.</li>
+          <li>Input preferences can now be saved per tool</li>
+          <li>Brush cursor outline width can now be changed</li>
+          <li>Layer properties can now be edited in a dialog</li>
+          <li>Color wheel shape is now selectable</li>
+          <li>Maximum brush size and spacings can now be extended (affects sliders)</li>
+          <li>Added selection perspective transform mode</li>
+        </ul>
+      </description>
+      <artifacts>
+        <artifact type="binary" platform="win64">
+          <location>https://drawpile.net/files/win/drawpile-2.1.18-setup.exe</location>
+          <checksum type="sha256">0de039c24185981270118b019a836706023f667cb3d3ee040bdf872c4472e882</checksum>
+          <size type="download">16580365</size>
+        </artifact>
+        <artifact type="binary" platform="win32">
+          <location>https://drawpile.net/files/win/drawpile-2.1.18-setup-w32.exe</location>
+          <checksum type="sha256">e5c6da2a9e69eb70c2103fd3d4670e8562558f38efdeb19c93de63dfab58a265</checksum>
+          <size type="download">15563890</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://drawpile.net/files/osx/Drawpile 2.1.18.dmg</location>
+          <checksum type="sha256">371ea7fd68aa821671ef6f5f92702e84429978f529774c084e9568b17cbc6e9a</checksum>
+          <size type="download">14273941</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://drawpile.net/files/src/drawpile-2.1.18.tar.gz</location>
+          <checksum type="sha256">20668661f6949addceb934ef094232f0890ade620fa78ae4849558d059d03caa</checksum>
+          <size type="download">2580382</size>
+        </artifact>
+      </artifacts>
+    </release>
+    <release version="2.1.17" date="2020-02-16">
+      <url>https://drawpile.net/news/release-2.1.17/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>HTTP redirects (e.g. when searching for a list server) are now followed</li>
+          <li>When launched with an URL, the URL gets set to the address box correctly again</li>
+          <li>Available list servers are now updated in session settings dialog if servers are added or removed while connected</li>
+          <li>Updated Finnish and Chinese translations</li>
+          <li>Server: User "trusted" status flag can now be changed via admin API</li>
+          <li>A list server can now be added via drawpile:// link</li>
+          <li>Fixed moderator login (would ask for password when none was needed)</li>
+        </ul>
+      </description>
+      <artifacts>
+        <artifact type="binary" platform="win64">
+          <location>https://drawpile.net/files/win/drawpile-2.1.17-setup.exe</location>
+          <checksum type="sha256">0b1d66f6a432643cb9192eb8ab991b387e4e0c677d70258314702f7a08be2ab8</checksum>
+          <size type="download">16515121</size>
+        </artifact>
+        <artifact type="binary" platform="win32">
+          <location>https://drawpile.net/files/win/drawpile-2.1.17-setup-w32.exe</location>
+          <checksum type="sha256">15c969eeee46aeb594cc096251a6521a6950ad9cafc12dee4951ecc1e7f9a0f9</checksum>
+          <size type="download">15505070</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://drawpile.net/files/osx/Drawpile 2.1.17.dmg</location>
+          <checksum type="sha256">2318fbf8dd2402736a1d86666618d719900685c73a0b3eeb2de30546bb9c1a22</checksum>
+          <size type="download">14193165</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://drawpile.net/files/src/drawpile-2.1.17.tar.gz</location>
+          <checksum type="sha256">ee7f7ba81e6f1a9c3c32275f84364d10713c24ec040da8cb4b13c3ea6bb09086</checksum>
+          <size type="download">2521585</size>
+        </artifact>
+      </artifacts>
+    </release>
+    <release version="2.1.16" date="2020-02-09">
+      <url>https://drawpile.net/news/release-2.1.16/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>Server: Added support for ext-auth "TRUSTED" flag</li>
+          <li>Server: Added "lastActive" timestamp field to session user list API</li>
+          <li>Server: Changed session ID style from GUID to ULID</li>
+          <li>Server: Added option to not respect ext-auth HOST flag</li>
+          <li>Relative URLs are now supported in "drawpile:list-server" meta tag</li>
+          <li>Added disconnect notification bar (with a reconnect button)</li>
+          <li>List servers can now be manually sorted</li>
+          <li>Fixed brush size adjustment shortcut (needed to presses to adjust)</li>
+          <li>Fixed selection scaling if selection was not entirely contained by the canvas (selection is now clipped to canvas)</li>
+          <li>Fixed copying and cutting a moved selection</li>
+          <li>Automatically remove list servers that return HTTP 410 (Gone)</li>
+          <li>Removed the default list server. Instead, a link to drawpile.net's communities section is shown.</li>
+          <li>Saved passwords are now stored in the system password store</li>
+        </ul>
+      </description>
+      <artifacts>
+        <artifact type="binary" platform="win64">
+          <location>https://drawpile.net/files/win/drawpile-2.1.16-setup.exe</location>
+          <checksum type="sha256">9d849c2622998b8595fe9036ca0baac6e29ad6ab776e0b174daacd22702cb311</checksum>
+          <size type="download">16509525</size>
+        </artifact>
+        <artifact type="binary" platform="win32">
+          <location>https://drawpile.net/files/win/drawpile-2.1.16-setup-w32.exe</location>
+          <checksum type="sha256">273eac5b491798e89e148a60a6a2f0c589ce28f2ea0f6fad2fe968ebf2ac5a2e</checksum>
+          <size type="download">15506742</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://drawpile.net/files/osx/Drawpile 2.1.16.dmg</location>
+          <checksum type="sha256">cd3ef956aeae9c6ec2b4a9dda98465efeaa65762c54dfcdb8966d18e003107db</checksum>
+          <size type="download">14186201</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://drawpile.net/files/src/drawpile-2.1.16.tar.gz</location>
+          <checksum type="sha256">5c799e7a02ef63cf6a5d1e78511f3fa9051ca809f1602c853420f5a20223e6d7</checksum>
+          <size type="download">2513154</size>
+        </artifact>
+      </artifacts>
+    </release>
+    <release version="2.1.15" date="2019-12-07">
+      <url>https://drawpile.net/news/release-2.1.15/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>Server: Added support for list server API 1.6</li>
+          <li>Server: Added `ext_host` and `ext_port` fields to status API endpoint</li>
+          <li>Server: Abuse report token can now be set via admin API</li>
+          <li>Server: List server whitelist can now be edited via the API</li>
+          <li>Server: Fixed memory leak in admin API</li>
+          <li>Server: The server can now also serve web admin site static files</li>
+          <li>Server-gui: Added "welcome message" field</li>
+          <li>drawpile-cmd: fixed ORA export format support</li>
+          <li>Added command line options to override data and config paths (portable app mode)</li>
+          <li>Added "closed" session list filtering option</li>
+          <li>Added "Add" button to join dialog for adding the server's associated list server</li>
+        </ul>
+      </description>
+      <artifacts>
+        <artifact type="binary" platform="win64">
+          <location>https://drawpile.net/files/win/drawpile-2.1.15-setup.exe</location>
+          <checksum type="sha256">36ee7e57a9d95785a45f9ae1bc09a226f741f582dc41b15a5f9f2f3495eab43b</checksum>
+          <size type="download">16491127</size>
+        </artifact>
+        <artifact type="binary" platform="win32">
+          <location>https://drawpile.net/files/win/drawpile-2.1.15-setup-w32.exe</location>
+          <checksum type="sha256">338540184d8de391e3f0e7b17dafe24a753dff08c24bb3d447b2b1361e041751</checksum>
+          <size type="download">15484837</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://drawpile.net/files/osx/Drawpile 2.1.15.dmg</location>
+          <checksum type="sha256">3e6004fb9b4b40a1c4bba70160bd107ea6f2cd806bc850d8d5a613038700f3b1</checksum>
+          <size type="download">14163265</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://drawpile.net/files/src/drawpile-2.1.15.tar.gz</location>
+          <checksum type="sha256">36625a40574e76ac4145cedc2d752038100e715263e3dfd1935f5a9bc36bcb70</checksum>
+          <size type="download">2531195</size>
+        </artifact>
+      </artifacts>
+    </release>
+    <release version="2.1.14" date="2019-11-16">
+      <url>https://drawpile.net/news/release-2.1.14/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>Fixed dab spacing in default brush presets</li>
+          <li>Fixed that selecting a brush preset could change the eraser slot into a non-erasering mode</li>
+          <li>Fixed brush preset reordering by drag&amp;drop</li>
+          <li>Added brush preset folders</li>
+          <li>Fixed that pressing spacebar while drawing would cause strange input handling behavior</li>
+          <li>Server: admin API URL is now prefixed with `/api/`</li>
+          <li>Bugfix: don't allow pasting by drag&amp;drop if cut&amp;paste is disabled</li>
+        </ul>
+      </description>
+      <artifacts>
+        <artifact type="binary" platform="win64">
+          <location>https://drawpile.net/files/win/drawpile-2.1.14-setup.exe</location>
+          <checksum type="sha256">ccb88c7e38372a0e3c120158a00f6dd6436999165062810a7b1dae2645f9578a</checksum>
+          <size type="download">16484554</size>
+        </artifact>
+        <artifact type="binary" platform="win32">
+          <location>https://drawpile.net/files/win/drawpile-2.1.14-setup-w32.exe</location>
+          <checksum type="sha256">f443d65a4eb7453e8dba751b882c5e57e7b551ccb53616515c6669905dcb8160</checksum>
+          <size type="download">15477129</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://drawpile.net/files/osx/Drawpile 2.1.14.dmg</location>
+          <checksum type="sha256">d31a40fa0b51950073c71924acf2f2c12373056e938304ca632c6ecfcf99b090</checksum>
+          <size type="download">14156029</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://drawpile.net/files/src/drawpile-2.1.14.tar.gz</location>
+          <checksum type="sha256">87e4c6934e57e1541b28c3060cb725a4c9313e6b5562397dec26d2cd35c2fa6e</checksum>
+          <size type="download">2525365</size>
+        </artifact>
+      </artifacts>
+    </release>
+    <release version="2.1.13" date="2019-11-03">
+      <url>https://drawpile.net/news/release-2.1.13/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>Bugfix: spacebar would have to be pressed again after releasing mouse button when dragging</li>
+          <li>Removed arbitrary OpenRaster image size limit</li>
+          <li>Bugfix: brush color is now initialized properly on fresh install</li>
+          <li>Bugfix: selected brush blending mode is restored again</li>
+          <li>Replaced pressure checkboxes with toggle buttons to free up some vertical space</li>
+          <li>Disabled brush preset drag&amp;drop. (Bandaid solution to a regression, will be fixed properly in the next release.)</li>
+          <li>Enabled High-DPI icons and scaling</li>
+        </ul>
+      </description>
+      <artifacts>
+        <artifact type="binary" platform="win64">
+          <location>https://drawpile.net/files/win/drawpile-2.1.13-setup.exe</location>
+          <checksum type="sha256">9ca4d954f221ecb395e2f5c16fa381f1fb87262cdc82265b3a9b9b0424903300</checksum>
+          <size type="download">16473487</size>
+        </artifact>
+        <artifact type="binary" platform="win32">
+          <location>https://drawpile.net/files/win/drawpile-2.1.13-setup-w32.exe</location>
+          <checksum type="sha256">e1f35c9ee4ac019d995829e31f05a15f92c0618008fe5d4dba23edafc7368d73</checksum>
+          <size type="download">15462612</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://drawpile.net/files/osx/Drawpile 2.1.13.dmg</location>
+          <checksum type="sha256">1ca19c6fd4fe8b35f2432b5a675ff192f83095ab418b337ee0affd464b319260</checksum>
+          <size type="download">14118637</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://drawpile.net/files/src/drawpile-2.1.13.tar.gz</location>
+          <checksum type="sha256">ae6baef4e248634396347a19a8f5d9d7003722305be6fd4b30e4d126ff84a664</checksum>
+          <size type="download">2521488</size>
+        </artifact>
+      </artifacts>
+    </release>
+    <release version="2.1.12" date="2019-10-20">
+      <url>https://drawpile.net/news/release-2.1.12/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>Added Italian translation (contributed by Albano Battistella)</li>
+          <li>Fixed lockup when opening a layered TIFF file</li>
+          <li>drawpile-cmd: added support for outputting to stdout</li>
+          <li>Improved brush preview: different styles are now used for different brush types</li>
+          <li>Smudging can now be used with all brush shapes</li>
+          <li>Canvas modifier key shortcuts can now be customized</li>
+          <li>Added cursors for layer picker, quick adjust, zoom and view rotation modes</li>
+          <li>Use the same default curve for velocity pressure emulation mode</li>
+          <li>Fixed tool quick adjustment dragging responsivity</li>
+          <li>Server: file backed session file naming is now consistent when archive mode is enabled</li>
+          <li>Added a new shortcut for canvas rotation (shift+ctrl &amp; mousewheel)</li>
+          <li>Improved selection tool: scale/rotate/shear mode is now toggled by clicking, rather than keyboard modifier</li>
+          <li>Fixed crash when using large-radius color picker near the edge of the canvas</li>
+        </ul>
+      </description>
+      <artifacts>
+        <artifact type="binary" platform="win64">
+          <location>https://drawpile.net/files/win/drawpile-2.1.12-setup.exe</location>
+          <checksum type="sha256">2369ae91a453bf05b739d64c2e629502e73a9102a2c449c7b1c46847d13ceb8d</checksum>
+          <size type="download">16471338</size>
+        </artifact>
+        <artifact type="binary" platform="win32">
+          <location>https://drawpile.net/files/win/drawpile-2.1.12-setup-w32.exe</location>
+          <checksum type="sha256">0009257b09b796cb4463abc514bac7d891dc1bd412d4ee4e37f91a073759f8ef</checksum>
+          <size type="download">15464953</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://drawpile.net/files/osx/Drawpile 2.1.12.dmg</location>
+          <checksum type="sha256">b805c7bee8b54c149299468eae35162850517e8b45ae6b391c9f7c0325a86f64</checksum>
+          <size type="download">14118296</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://drawpile.net/files/src/drawpile-2.1.12.tar.gz</location>
+          <checksum type="sha256">b6946a5c9676355e913d41a37ad98f7a06469c7ff9901be674be455a7b107e4b</checksum>
+          <size type="download">2521305</size>
+        </artifact>
+      </artifacts>
+    </release>
+    <release version="2.1.11" date="2019-06-23">
+      <url>https://drawpile.net/news/release-2.1.11/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>Fixed that brush color was uninitialized on fresh install</li>
+          <li>Fixed that using "/me" in a direct message would send it as a public message</li>
+          <li>Fixed incorrect layer when moving selection if active layer was changed before the move ended</li>
+          <li>Fixed single pixel shift when moving or copy&amp;pasting freeform selections</li>
+          <li>Join dialog's session list sort order and column is now remembered</li>
+          <li>Fixed that read-only listservers were included in the session settings "add listing" buttons</li>
+          <li>Server: registered user bans are no longer IP bans</li>
+          <li>Server: op and trusted status is now remembered by user account, rather than username</li>
+          <li>An error message is now shown if a login message is oversize</li>
+          <li>Chat box can now be detached into its own window</li>
+          <li>Client now refuses to autoreset if it knows it isn't fully caught up yet</li>
+        </ul>
+      </description>
+      <artifacts>
+        <artifact type="binary" platform="win64">
+          <location>https://drawpile.net/files/win/drawpile-2.1.11-setup.exe</location>
+          <checksum type="sha256">864beca94361ebee7615c37d451f5935a0114d558660a090b529716351f5215f</checksum>
+          <size type="download">16491501</size>
+        </artifact>
+        <artifact type="binary" platform="win32">
+          <location>https://drawpile.net/files/win/drawpile-2.1.11-setup-w32.exe</location>
+          <checksum type="sha256">d5761debd2fe6f52f4d221d65a497b99d2d71b7c2874cd8a44883f9b96a01bf9</checksum>
+          <size type="download">15484138</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://drawpile.net/files/osx/Drawpile 2.1.11.dmg</location>
+          <checksum type="sha256">30c8ec7234fb81a41ff828729b056ae40ef9ada82b525e0892ca8263ad7960cc</checksum>
+          <size type="download">14004927</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://drawpile.net/files/src/drawpile-2.1.11.tar.gz</location>
+          <checksum type="sha256">75b3050441bfc54dddfbb5bd2231a13428e5deef52c49c9319536ea6f2df2503</checksum>
+          <size type="download">2487988</size>
+        </artifact>
+      </artifacts>
+    </release>
+    <release version="2.1.10" date="2019-05-30">
+      <url>https://drawpile.net/news/release-2.1.10/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>Fixed that built-in server settings were being ignored</li>
+          <li>Updated bundled color widgets to latest upstream version</li>
+          <li>Fixed that an early undo could clear out the canvas size</li>
+          <li>Limited reset snapshots to one every 10 seconds</li>
+          <li>Fixed view jumping when canvas was resized</li>
+          <li>Fixed extra messages in the beginning of session recordings</li>
+          <li>Server: fixed that web-admin API HTTP headers were case-sensitive</li>
+          <li>Application version number is now shown in a tooltip if a session is incompatible</li>
+        </ul>
+      </description>
+      <artifacts>
+        <artifact type="binary" platform="win64">
+          <location>https://drawpile.net/files/win/drawpile-2.1.10-setup.exe</location>
+          <checksum type="sha256">d0287a5e4a32e96bdc68a6d7207e100c143a2e280d0d0bd9f258aef5cd9178ed</checksum>
+          <size type="download">16482543</size>
+        </artifact>
+        <artifact type="binary" platform="win32">
+          <location>https://drawpile.net/files/win/drawpile-2.1.10-setup-w32.exe</location>
+          <checksum type="sha256">47235f55987696113e6ed365ca85dfa441749e2f47817e4f9bb7b4c007870a1f</checksum>
+          <size type="download">15478542</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://drawpile.net/files/osx/Drawpile 2.1.10.dmg</location>
+          <checksum type="sha256">d3c38ad3e688bb59c5eb2aa722d7593efad695e7ab38f6f48ac352c4fa5a7ae7</checksum>
+          <size type="download">14001939</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://drawpile.net/files/src/drawpile-2.1.10.tar.gz</location>
+          <checksum type="sha256">1502ff00d87734d68b201894a59b53afd5a2ea3b33123fb2e2d8c0597eb9941c</checksum>
+          <size type="download">2485569</size>
+        </artifact>
+      </artifacts>
+    </release>
+    <release version="2.1.9" date="2019-05-19">
+      <url>https://drawpile.net/news/release-2.1.9/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>Fixed that disabled brush slots were still selectable with a keyboard shortcut</li>
+          <li>Fixed potential crash when logging in to a session</li>
+          <li>Incompatible sessions are no longer hidden in from the Join dialog</li>
+          <li>Ctrl+C shortcut now works in the chat box</li>
+          <li>Added support for read-only list servers</li>
+          <li>Removed drawpile-srv argument `--secure` (secure mode is now always used if TLS is enabled)</li>
+          <li>The built-in server is now based on the new Thick Server</li>
+          <li>Server: added support for real password hashing algorithms</li>
+          <li>Server: fixed crash when using file sessions (regression)</li>
+          <li>Fixed duplicate entries in the "Nearby" server list</li>
+          <li>Very long pinned chat messages no longer force the window to become wider</li>
+        </ul>
+      </description>
+      <artifacts>
+        <artifact type="binary" platform="win64">
+          <location>https://drawpile.net/files/win/drawpile-2.1.9-setup.exe</location>
+          <checksum type="sha256">f875215bd312df4596ef4ea448f4464be39f79ab512b76dd9fde263e98fc8d0a</checksum>
+          <size type="download">16484125</size>
+        </artifact>
+        <artifact type="binary" platform="win32">
+          <location>https://drawpile.net/files/win/drawpile-2.1.9-setup-w32.exe</location>
+          <checksum type="sha256">c91a4d3269e0317ec9746610859954fe8855980d0a26af9190c2dbf384fc924e</checksum>
+          <size type="download">15475260</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://drawpile.net/files/osx/Drawpile 2.1.9.dmg</location>
+          <checksum type="sha256">ea37d6922ca07bd4f3daba917dc17bd0cb4588e36de5dd4b33bd1abc26032ec6</checksum>
+          <size type="download">13996701</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://drawpile.net/files/src/drawpile-2.1.9.tar.gz</location>
+          <checksum type="sha256">f9985fe44fb4320c9e11c8f5f535b5a3eecfb683c58ccff8effb968a548840f1</checksum>
+          <size type="download">2484581</size>
+        </artifact>
+      </artifacts>
+    </release>
+    <release version="2.1.8" date="2019-05-04">
+      <url>https://drawpile.net/news/release-2.1.8/</url>
+      <description>
+        <p>Bugs fixed:</p>
+        <ul>
+          <li>Server: fixed potential crash when terminating session</li>
+          <li>Fixed formatting in update check dialog when more than one new version is shown</li>
+          <li>Drag&amp;dropping a link to an image onto the canvas now works again</li>
+          <li>Fixed crash when opening an OpenRaster file with missing stack.xml</li>
+        </ul>
+        <p>Feature improvements:</p>
+        <ul>
+          <li>Server: listings are now refreshed in batches instead of individually</li>
+          <li>Background color alpha can now be set in the "new image" dialog</li>
+          <li>Adaptive canvas zoom slider: the minimum value is now always the zoom level needed to fit the whole canvas on screen</li>
+          <li>Drawpile can now download the latest version via the "check for updates" dialog</li>
+          <li>New more efficient recording index format. Indexes are now generated faster and the files are smaller.</li>
+          <li>Enabled dark appearance support on macOS</li>
+          <li>Memory usage optimization: only the minimum amount of session history is now kept in memory</li>
+          <li>Manual session reset snapshots are now retained separately for one minute.</li>
+          <li>NSFW sessions are no longer hidden by default</li>
+        </ul>
+      </description>
+      <artifacts>
+        <artifact type="binary" platform="win64">
+          <location>https://drawpile.net/files/win/drawpile-2.1.8-setup.exe</location>
+          <checksum type="sha256">54ecb920ce9a405b1f60fa88c38fa0fa03e5782934ddf9e5ddc95243daf962cb</checksum>
+          <size type="download">16459529</size>
+        </artifact>
+        <artifact type="binary" platform="win32">
+          <location>https://drawpile.net/files/win/drawpile-2.1.8-setup-w32.exe</location>
+          <checksum type="sha256">079d4a2cf82add0c6e62460538f31c1bcde0e920f16694da2456cb12df6e2fd8</checksum>
+          <size type="download">15461363</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://drawpile.net/files/osx/Drawpile 2.1.8.dmg</location>
+          <checksum type="sha256">d4de5a015d2aecb6f92df22124c8f7489e45338f67319dffb5d77a5cde73c956</checksum>
+          <size type="download">13972005</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://drawpile.net/files/src/drawpile-2.1.8.tar.gz</location>
+          <checksum type="sha256">c5de38b905a1650e28b4a71c29cb8cf19e109d4e24df12c13630417bd647a5be</checksum>
+          <size type="download">2456018</size>
+        </artifact>
+      </artifacts>
+    </release>
+    <release version="2.1.7" date="2019-04-13">
+      <url>https://drawpile.net/news/release-2.1.7/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>Added Ukranian translation</li>
+          <li>Fixed navigator not updating correctly on canvas resize</li>
+          <li>Simplified join dialog (listings from all servers are now shown at the same time)</li>
+          <li>Windows only: another tablet support fix</li>
+        </ul>
+      </description>
+      <artifacts>
+        <artifact type="binary" platform="win64">
+          <location>https://drawpile.net/files/win/drawpile-2.1.7-setup.exe</location>
+          <checksum type="sha256">9ef7680015ca5ba42070cbf25d10a51f39fdd9440ed3a7636194f160c46ce69e</checksum>
+          <size type="download">16429733</size>
+        </artifact>
+        <artifact type="binary" platform="win32">
+          <location>https://drawpile.net/files/win/drawpile-2.1.7-setup-w32.exe</location>
+          <checksum type="sha256">ac04bc7a80ef698f476a82a1a0227e65a46b543edd2603b1d92b955d67ff9958</checksum>
+          <size type="download">15443119</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://drawpile.net/files/osx/Drawpile 2.1.7.dmg</location>
+          <checksum type="sha256">820ec2837d3c7ea4e190a64cbb1d0fdecb3797bf968277b3b7ca0cc5d758987f</checksum>
+          <size type="download">13386779</size>
+        </artifact>
+      </artifacts>
+    </release>
+    <release version="2.1.6" date="2019-04-06">
+      <url>https://drawpile.net/news/release-2.1.6/</url>
+      <description>
+        <p>Bugs fixed:</p>
+        <ul>
+          <li>Regression fix: chat box no longer autoscrolls when not already scrolled to the bottom</li>
+          <li>Fixed lines being drawn across the canvas if session reset occurs while midstroke</li>
+        </ul>
+        <p>New features:</p>
+        <ul>
+          <li>Added an option to share the same color across all tool slots</li>
+          <li>A session can now be reset to an image loaded from a file</li>
+          <li>New shortcut: Tab shows/hides toolbars and docks</li>
+          <li>Added "pick color from layer" brush mode</li>
+          <li>Added an option to activate dark theme</li>
+          <li>Session permissions can now be saved as presets</li>
+        </ul>
+        <p>Other changes:</p>
+        <ul>
+          <li>Scrollbars are now hidden in fullscreen mode</li>
+          <li>Removed default shortcuts for event log and session settings. They can still be assigned custom shortcuts, however.</li>
+          <li>Full screen mode no longer hides toolbars or docks</li>
+          <li>Enabled smooth canvas scaling at certain zoom levels (1-200% or 1-800% when rotated)</li>
+        </ul>
+      </description>
+    </release>
+    <release version="2.1.5" date="2019-03-30">
+      <url>https://drawpile.net/news/release-2.1.5/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>Fixed navigator view dragging</li>
+          <li>Fixed brush preset preview shape rendering</li>
+          <li>Fixed saving of brush preset changes</li>
+          <li>Added option to update the navigator in realtime again</li>
+          <li>Pressing Tab now toggles toolbars on and off</li>
+          <li>Entering fullscreen mode no longer hides docks and toolbars</li>
+          <li>Moved certain buttons back into the status bar</li>
+          <li>Moved zoom slider back into the status bar</li>
+        </ul>
+      </description>
+    </release>
+    <release version="2.1.4" date="2019-03-23">
+      <url>https://drawpile.net/news/release-2.1.4/</url>
+      <description>
+        <p>Bugs fixed in this version:</p>
+        <ul>
+          <li>Fixed session list sorting in login dialog</li>
+          <li>Fixed crash when resizing canvas</li>
+          <li>Fixed layer access user list going out of sync</li>
+          <li>Fixed navigator focus rect scaling</li>
+          <li>Fixed "registered" level permissions not taking effect on login</li>
+        </ul>
+        <p>New features:</p>
+        <ul>
+          <li>Added automatic new release checking</li>
+          <li>Added filter field to user list (event log)</li>
+          <li>Reimplemented navigator user cursors</li>
+          <li>Navigator cursors can now be enabled or disabled independently of the main canvas cursors</li>
+        </ul>
+      </description>
+    </release>
+    <release version="2.1.3" date="2019-03-16">
+      <url>https://drawpile.net/news/release-2.1.3/</url>
+    </release>
+    <release version="2.1.2" date="2019-03-09">
+      <url>https://drawpile.net/news/release-2.1.2/</url>
+    </release>
+    <release version="2.1.1" date="2019-02-17">
+      <url>https://drawpile.net/news/release-2.1.1/</url>
+    </release>
+    <release version="2.1.0" date="2019-02-13">
+      <url>https://drawpile.net/news/release-2.1.0/</url>
+    </release>
+  </releases>
+  <provides>
+    <binary>drawpile</binary>
+    <id>net.drawpile.drawpile.desktop</id>
+  </provides>
+  <content_rating type="oars-1.0">
+    <content_attribute id="social-chat">intense</content_attribute>
+    <content_attribute id="social-audio">intense</content_attribute>
+  </content_rating>
+</component>
