@@ -4,7 +4,7 @@
 <context>
     <name>AvatarListModel</name>
     <message>
-        <location filename="../utils/avatarlistmodel.cpp" line="+98"/>
+        <location filename="../utils/avatarlistmodel.cpp" line="+107"/>
         <source>No avatar</source>
         <translation>无头像</translation>
     </message>
@@ -256,7 +256,12 @@
 <context>
     <name>CustomShortcutModel</name>
     <message>
-        <location filename="../utils/customshortcutmodel.cpp" line="+83"/>
+        <location filename="../utils/customshortcutmodel.cpp" line="+52"/>
+        <source>Conflict</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+56"/>
         <source>Action</source>
         <translation>动作</translation>
     </message>
@@ -279,7 +284,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+592"/>
+        <location filename="../document.cpp" line="+593"/>
         <source>Unknown format.</source>
         <translation>未知格式.</translation>
     </message>
@@ -394,6 +399,11 @@
     </message>
     <message>
         <location line="+8"/>
+        <source>Text File (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>All Supported Files (%1)</source>
         <translation>所有支持的文件 (%1)</translation>
     </message>
@@ -437,12 +447,12 @@
 <context>
     <name>SessionListingModel</name>
     <message>
-        <location filename="../net/sessionlistingmodel.cpp" line="+153"/>
+        <location filename="../net/sessionlistingmodel.cpp" line="+161"/>
         <source>(untitled)</source>
         <translation>(未命名)</translation>
     </message>
     <message>
-        <location line="-83"/>
+        <location line="-91"/>
         <source>%1d%2h%3m</source>
         <translation>%1d%2h%3m</translation>
     </message>
@@ -457,7 +467,7 @@
         <translation>%1m</translation>
     </message>
     <message numerus="yes">
-        <location line="+80"/>
+        <location line="+88"/>
         <source>%n users</source>
         <translation>
             <numerusform>%n 用户</numerusform>
@@ -489,7 +499,7 @@
         <translation>未知版本</translation>
     </message>
     <message>
-        <location line="+57"/>
+        <location line="+62"/>
         <source>Compatibility</source>
         <translation>兼容性</translation>
     </message>
@@ -866,7 +876,7 @@
 <context>
     <name>net::LoginHandler</name>
     <message>
-        <location filename="../net/login.cpp" line="+100"/>
+        <location filename="../net/login.cpp" line="+101"/>
         <location line="+258"/>
         <source>Invalid state</source>
         <translation>无效状态</translation>
@@ -876,13 +886,13 @@
         <location line="+7"/>
         <location line="+64"/>
         <location line="+199"/>
-        <location line="+133"/>
+        <location line="+134"/>
         <location line="+42"/>
         <source>Incompatible server</source>
         <translation>服务器不兼容</translation>
     </message>
     <message>
-        <location line="-431"/>
+        <location line="-432"/>
         <source>Server is for a different Drawpile version!</source>
         <translation>Server is for a different Drawpile version!</translation>
     </message>
@@ -892,12 +902,12 @@
         <translation>安全模式没有在信任的主机上启动!</translation>
     </message>
     <message>
-        <location line="+581"/>
+        <location line="+590"/>
         <source>Username already taken!</source>
         <translation>用户名已被使用!</translation>
     </message>
     <message>
-        <location line="-540"/>
+        <location line="-549"/>
         <source>This server does not allow guest logins</source>
         <translation>此服务器不支持非注册用户登入</translation>
     </message>
@@ -923,7 +933,7 @@
         <translation>不支持ext-auth的URL方案</translation>
     </message>
     <message>
-        <location line="+89"/>
+        <location line="+90"/>
         <source>New version</source>
         <translation>新版本</translation>
     </message>
@@ -943,7 +953,7 @@
         <translation>已被控制面板屏蔽</translation>
     </message>
     <message>
-        <location line="+189"/>
+        <location line="+197"/>
         <location line="+20"/>
         <source>Invalid SSL certificate for host %1</source>
         <translation>服务器 %1 证书无效</translation>
@@ -984,7 +994,7 @@
         <translation>已取消</translation>
     </message>
     <message>
-        <location line="-428"/>
+        <location line="-437"/>
         <source>Group membership needed</source>
         <translation>需要群组成员资格</translation>
     </message>
@@ -994,12 +1004,12 @@
         <translation>意外的ext-auth响应: %1</translation>
     </message>
     <message>
-        <location line="+179"/>
+        <location line="+180"/>
         <source>Session for a different Drawpile version (%1) in progress!</source>
         <translation>不同Drawpile版本（%1）的房间正在进行中!</translation>
     </message>
     <message>
-        <location line="+255"/>
+        <location line="+263"/>
         <source>Session not found!</source>
         <translation>未找到房间!</translation>
     </message>

@@ -4,7 +4,7 @@
 <context>
     <name>AvatarListModel</name>
     <message>
-        <location filename="../utils/avatarlistmodel.cpp" line="+98"/>
+        <location filename="../utils/avatarlistmodel.cpp" line="+107"/>
         <source>No avatar</source>
         <translation>Нет аватара</translation>
     </message>
@@ -256,7 +256,12 @@
 <context>
     <name>CustomShortcutModel</name>
     <message>
-        <location filename="../utils/customshortcutmodel.cpp" line="+83"/>
+        <location filename="../utils/customshortcutmodel.cpp" line="+52"/>
+        <source>Conflict</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+56"/>
         <source>Action</source>
         <translation>Действие</translation>
     </message>
@@ -279,7 +284,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+592"/>
+        <location filename="../document.cpp" line="+593"/>
         <source>Unknown format.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -394,6 +399,11 @@
     </message>
     <message>
         <location line="+8"/>
+        <source>Text File (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>All Supported Files (%1)</source>
         <translation>Все поддерживаемые файлы (%1)</translation>
     </message>
@@ -437,12 +447,12 @@
 <context>
     <name>SessionListingModel</name>
     <message>
-        <location filename="../net/sessionlistingmodel.cpp" line="+153"/>
+        <location filename="../net/sessionlistingmodel.cpp" line="+161"/>
         <source>(untitled)</source>
         <translation>(без названия)</translation>
     </message>
     <message>
-        <location line="-83"/>
+        <location line="-91"/>
         <source>%1d%2h%3m</source>
         <translation type="unfinished"></translation>
     </message>
@@ -457,7 +467,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location line="+80"/>
+        <location line="+88"/>
         <source>%n users</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -491,7 +501,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+57"/>
+        <location line="+62"/>
         <source>Compatibility</source>
         <translation type="unfinished"></translation>
     </message>
@@ -868,7 +878,7 @@
 <context>
     <name>net::LoginHandler</name>
     <message>
-        <location filename="../net/login.cpp" line="+100"/>
+        <location filename="../net/login.cpp" line="+101"/>
         <location line="+258"/>
         <source>Invalid state</source>
         <translation>Недопустимое состояние</translation>
@@ -878,13 +888,13 @@
         <location line="+7"/>
         <location line="+64"/>
         <location line="+199"/>
-        <location line="+133"/>
+        <location line="+134"/>
         <location line="+42"/>
         <source>Incompatible server</source>
         <translation>Несовместимый сервер</translation>
     </message>
     <message>
-        <location line="-431"/>
+        <location line="-432"/>
         <source>Server is for a different Drawpile version!</source>
         <translation>Сервер для другой версии Drawpile!</translation>
     </message>
@@ -920,7 +930,7 @@
         <translation>Неподдерживаемая схема URL-адреса внешнего сервера проверки подлинности</translation>
     </message>
     <message>
-        <location line="+89"/>
+        <location line="+90"/>
         <source>New version</source>
         <translation>Новая версия</translation>
     </message>
@@ -940,7 +950,7 @@
         <translation>Заблокировано родительским контролем</translation>
     </message>
     <message>
-        <location line="+302"/>
+        <location line="+310"/>
         <source>Client failed to serialize command</source>
         <translation type="unfinished"></translation>
     </message>
@@ -971,7 +981,7 @@
         <translation>Недействительный SSL сертификат для хоста %1</translation>
     </message>
     <message>
-        <location line="-387"/>
+        <location line="-396"/>
         <source>Group membership needed</source>
         <translation>Необходимо членство в группе</translation>
     </message>
@@ -981,12 +991,12 @@
         <translation>Неожиданный ответ внешнего сервера проверки подлинности: %1</translation>
     </message>
     <message>
-        <location line="+179"/>
+        <location line="+180"/>
         <source>Session for a different Drawpile version (%1) in progress!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+188"/>
+        <location line="+196"/>
         <source>Certificate of a trusted server has changed!</source>
         <translation>Сертификат доверенного сервера изменился!</translation>
     </message>

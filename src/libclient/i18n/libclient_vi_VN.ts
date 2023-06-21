@@ -4,7 +4,7 @@
 <context>
     <name>AvatarListModel</name>
     <message>
-        <location filename="../utils/avatarlistmodel.cpp" line="+98"/>
+        <location filename="../utils/avatarlistmodel.cpp" line="+107"/>
         <source>No avatar</source>
         <translation>Không avatar</translation>
     </message>
@@ -256,7 +256,12 @@
 <context>
     <name>CustomShortcutModel</name>
     <message>
-        <location filename="../utils/customshortcutmodel.cpp" line="+83"/>
+        <location filename="../utils/customshortcutmodel.cpp" line="+52"/>
+        <source>Conflict</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+56"/>
         <source>Action</source>
         <translation>Thao tác</translation>
     </message>
@@ -279,7 +284,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+592"/>
+        <location filename="../document.cpp" line="+593"/>
         <source>Unknown format.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -394,6 +399,11 @@
     </message>
     <message>
         <location line="+8"/>
+        <source>Text File (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>All Supported Files (%1)</source>
         <translation type="unfinished">Mọi tập tin hỗ trợ (%1)</translation>
     </message>
@@ -437,12 +447,12 @@
 <context>
     <name>SessionListingModel</name>
     <message>
-        <location filename="../net/sessionlistingmodel.cpp" line="+153"/>
+        <location filename="../net/sessionlistingmodel.cpp" line="+161"/>
         <source>(untitled)</source>
         <translation>(không tựa đề)</translation>
     </message>
     <message>
-        <location line="-83"/>
+        <location line="-91"/>
         <source>%1d%2h%3m</source>
         <translation type="unfinished"></translation>
     </message>
@@ -457,7 +467,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location line="+80"/>
+        <location line="+88"/>
         <source>%n users</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -489,7 +499,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+57"/>
+        <location line="+62"/>
         <source>Compatibility</source>
         <translation type="unfinished"></translation>
     </message>
@@ -866,7 +876,7 @@
 <context>
     <name>net::LoginHandler</name>
     <message>
-        <location filename="../net/login.cpp" line="+100"/>
+        <location filename="../net/login.cpp" line="+101"/>
         <location line="+258"/>
         <source>Invalid state</source>
         <translation type="unfinished">Tình trạng không hợp lệ</translation>
@@ -876,13 +886,13 @@
         <location line="+7"/>
         <location line="+64"/>
         <location line="+199"/>
-        <location line="+133"/>
+        <location line="+134"/>
         <location line="+42"/>
         <source>Incompatible server</source>
         <translation type="unfinished">Máy chủ không tương thích</translation>
     </message>
     <message>
-        <location line="-431"/>
+        <location line="-432"/>
         <source>Server is for a different Drawpile version!</source>
         <translation type="unfinished">Máy chủ dành cho phiên bản Drawpile khác!</translation>
     </message>
@@ -928,7 +938,7 @@
         <translation type="unfinished">Lược đồ URL ext-auth không được hỗ trợ</translation>
     </message>
     <message>
-        <location line="+89"/>
+        <location line="+90"/>
         <source>New version</source>
         <translation type="unfinished"></translation>
     </message>
@@ -953,7 +963,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+185"/>
+        <location line="+193"/>
         <location line="+20"/>
         <source>Invalid SSL certificate for host %1</source>
         <translation type="unfinished">Chứng nhận SSL không hợp lệ để lưu trữ %1</translation>

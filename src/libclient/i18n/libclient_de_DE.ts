@@ -4,7 +4,7 @@
 <context>
     <name>AvatarListModel</name>
     <message>
-        <location filename="../utils/avatarlistmodel.cpp" line="+98"/>
+        <location filename="../utils/avatarlistmodel.cpp" line="+107"/>
         <source>No avatar</source>
         <translation>Kein Avatar</translation>
     </message>
@@ -256,7 +256,12 @@
 <context>
     <name>CustomShortcutModel</name>
     <message>
-        <location filename="../utils/customshortcutmodel.cpp" line="+83"/>
+        <location filename="../utils/customshortcutmodel.cpp" line="+52"/>
+        <source>Conflict</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+56"/>
         <source>Action</source>
         <translation>Aktion</translation>
     </message>
@@ -279,7 +284,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+592"/>
+        <location filename="../document.cpp" line="+593"/>
         <source>Unknown format.</source>
         <translation>Unbekanntes Format.</translation>
     </message>
@@ -394,6 +399,11 @@
     </message>
     <message>
         <location line="+8"/>
+        <source>Text File (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>All Supported Files (%1)</source>
         <translation>Alle unterstützten Dateiformate (%1)</translation>
     </message>
@@ -437,12 +447,12 @@
 <context>
     <name>SessionListingModel</name>
     <message>
-        <location filename="../net/sessionlistingmodel.cpp" line="+153"/>
+        <location filename="../net/sessionlistingmodel.cpp" line="+161"/>
         <source>(untitled)</source>
         <translation>(unbenannt)</translation>
     </message>
     <message>
-        <location line="-83"/>
+        <location line="-91"/>
         <source>%1d%2h%3m</source>
         <translation>%1d%2h%3m</translation>
     </message>
@@ -457,7 +467,7 @@
         <translation>%1m</translation>
     </message>
     <message numerus="yes">
-        <location line="+80"/>
+        <location line="+88"/>
         <source>%n users</source>
         <translation>
             <numerusform>%n Benutzer</numerusform>
@@ -490,7 +500,7 @@
         <translation>unbekannte Version</translation>
     </message>
     <message>
-        <location line="+57"/>
+        <location line="+62"/>
         <source>Compatibility</source>
         <translation>Kompatibilität</translation>
     </message>
@@ -867,7 +877,7 @@
 <context>
     <name>net::LoginHandler</name>
     <message>
-        <location filename="../net/login.cpp" line="+100"/>
+        <location filename="../net/login.cpp" line="+101"/>
         <location line="+258"/>
         <source>Invalid state</source>
         <translation>Ungültiger Zustand</translation>
@@ -877,13 +887,13 @@
         <location line="+7"/>
         <location line="+64"/>
         <location line="+199"/>
-        <location line="+133"/>
+        <location line="+134"/>
         <location line="+42"/>
         <source>Incompatible server</source>
         <translation>Inkompatibler Server</translation>
     </message>
     <message>
-        <location line="-431"/>
+        <location line="-432"/>
         <source>Server is for a different Drawpile version!</source>
         <translation>Server unterstützt eine andere Drawpile Version!</translation>
     </message>
@@ -893,12 +903,12 @@
         <translation>Sicherer Modus auf vertrauenswürdigem Host nicht aktiviert!</translation>
     </message>
     <message>
-        <location line="+581"/>
+        <location line="+590"/>
         <source>Username already taken!</source>
         <translation>Benutzername bereits vergeben!</translation>
     </message>
     <message>
-        <location line="-540"/>
+        <location line="-549"/>
         <source>This server does not allow guest logins</source>
         <translation>Dieser Server erlaubt keine Gastzugänge</translation>
     </message>
@@ -924,7 +934,7 @@
         <translation>URL-Schema für externe Authentifizierung nicht unterstützt</translation>
     </message>
     <message>
-        <location line="+89"/>
+        <location line="+90"/>
         <source>New version</source>
         <translation>Neue Version</translation>
     </message>
@@ -944,7 +954,7 @@
         <translation>Blockiert durch Jugendschutzeinstellungen</translation>
     </message>
     <message>
-        <location line="+189"/>
+        <location line="+197"/>
         <location line="+20"/>
         <source>Invalid SSL certificate for host %1</source>
         <translation>Ungültiges SSL Zertifikat für Host %1</translation>
@@ -985,7 +995,7 @@
         <translation>Abgebrochen</translation>
     </message>
     <message>
-        <location line="-428"/>
+        <location line="-437"/>
         <source>Group membership needed</source>
         <translation>Gruppenzugehörigkeit benötigt</translation>
     </message>
@@ -995,12 +1005,12 @@
         <translation>Unerwartete Antwort von externer Authentifizierung: %1</translation>
     </message>
     <message>
-        <location line="+179"/>
+        <location line="+180"/>
         <source>Session for a different Drawpile version (%1) in progress!</source>
         <translation>Laufende Sitzung für eine andere Drawpile-Version (%1)!</translation>
     </message>
     <message>
-        <location line="+255"/>
+        <location line="+263"/>
         <source>Session not found!</source>
         <translation>Sitzung nicht gefunden!</translation>
     </message>
