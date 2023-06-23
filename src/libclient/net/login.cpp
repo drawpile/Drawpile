@@ -51,6 +51,7 @@ LoginHandler::LoginHandler(Mode mode, const QUrl &url, QObject *parent)
 	, m_mode(mode)
 	, m_address(url)
 	, m_state(EXPECT_HELLO)
+	, m_passwordState(WAIT_FOR_LOGIN_PASSWORD)
 	, m_multisession(false)
 	, m_canPersist(false)
 	, m_canReport(false)
@@ -212,6 +213,7 @@ void LoginHandler::sendSessionPassword(const QString &password)
 
 void LoginHandler::prepareToSendIdentity()
 {
+	m_passwordState = WAIT_FOR_LOGIN_PASSWORD;
 	if(m_address.userName().isEmpty()) {
 		emit usernameNeeded(m_supportsCustomAvatars);
 
@@ -583,6 +585,7 @@ void LoginHandler::joinSelectedSession(const QString &id, bool needPassword, boo
 	if(needPassword && !m_sessions->isModeratorMode()) {
 		emit sessionPasswordNeeded();
 		m_state = WAIT_FOR_JOIN_PASSWORD;
+		m_passwordState = WAIT_FOR_JOIN_PASSWORD;
 
 	} else {
 		sendJoinCommand();
@@ -762,8 +765,12 @@ void LoginHandler::handleError(const QString &code, const QString &msg)
 	if(code == "notFound")
 		error = tr("Session not found!");
 	else if(code == "badPassword") {
-		error = tr("Incorrect password!");
-		emit badLoginPassword();
+		if(m_passwordState == WAIT_FOR_LOGIN_PASSWORD) {
+			error = tr("Incorrect password for '%1'!").arg(m_address.userName());
+			emit badLoginPassword();
+		} else {
+			error = tr("Incorrect session password!");
+		}
 	} else if(code == "badUsername")
 		error = tr("Invalid username!");
 	else if(code == "bannedName")

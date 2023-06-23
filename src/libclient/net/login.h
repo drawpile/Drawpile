@@ -393,6 +393,7 @@ private:
 	// Process state
 	TcpServer *m_server;
 	State m_state;
+	State m_passwordState;
 	LoginSessionModel *m_sessions;
 
 	QString m_selectedId;
