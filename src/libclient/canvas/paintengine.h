@@ -217,7 +217,8 @@ signals:
 	void resized(int xoffset, int yoffset, const QSize &oldSize);
 	void layersChanged(const drawdance::LayerPropsList &lpl);
 	void annotationsChanged(const drawdance::AnnotationList &al);
-	void cursorMoved(uint8_t user, uint16_t layer, int x, int y);
+	void
+	cursorMoved(unsigned int flags, uint8_t user, uint16_t layer, int x, int y);
 	void playbackAt(long long pos);
 	void
 	dumpPlaybackAt(long long pos, const drawdance::CanvasHistorySnapshot &chs);
@@ -257,7 +258,8 @@ private:
 	static void onDocumentMetadataChanged(void *user, DP_DocumentMetadata *dm);
 	static void onTimelineChanged(void *user, DP_Timeline *tl);
 	static void onCursorMoved(
-		void *user, unsigned int contextId, int layerId, int x, int y);
+		void *user, unsigned int flags, unsigned int contextId, int layerId,
+		int x, int y);
 	static void onRenderSize(void *user, int width, int height);
 	static void
 	onRenderTile(void *user, int x, int y, DP_Pixel8 *pixels, int threadIndex);

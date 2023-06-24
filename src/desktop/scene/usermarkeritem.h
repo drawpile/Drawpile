@@ -34,6 +34,18 @@ public:
 	void setAvatar(const QPixmap &avatar);
 	void setShowAvatar(bool show);
 
+	bool penUp() const { return m_penUp; }
+	void setPenUp(bool penUp) { m_penUp = penUp; }
+	bool clearPenUp()
+	{
+		if(m_penUp) {
+			m_penUp = false;
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	void fadein();
 	void fadeout();
 
@@ -65,6 +77,7 @@ private:
 	bool m_showText;
 	bool m_showSubtext;
 	bool m_showAvatar;
+	bool m_penUp;
 };
 
 }

@@ -2225,7 +2225,8 @@ emit_changes(DP_PaintEngine *pe, DP_CanvasState *prev, DP_CanvasState *cs,
     int cursors_count = ucb->count;
     for (int i = 0; i < cursors_count; ++i) {
         DP_UserCursor *uc = &ucb->cursors[i];
-        cursor_moved(user, uc->context_id, uc->layer_id, uc->x, uc->y);
+        cursor_moved(user, uc->flags, uc->context_id, uc->layer_id, uc->x,
+                     uc->y);
     }
 }
 

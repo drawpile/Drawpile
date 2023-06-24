@@ -672,7 +672,7 @@ void PaintEngine::onMovePointer(
 	void *user, unsigned int contextId, int x, int y)
 {
 	PaintEngine *pe = static_cast<PaintEngine *>(user);
-	emit pe->cursorMoved(contextId, 0, x / 4, y / 4);
+	emit pe->cursorMoved(DP_USER_CURSOR_FLAG_VALID, contextId, 0, x / 4, y / 4);
 }
 
 void PaintEngine::onDefaultLayer(void *user, int layerId)
@@ -751,10 +751,11 @@ void PaintEngine::onTimelineChanged(void *user, DP_Timeline *tl)
 }
 
 void PaintEngine::onCursorMoved(
-	void *user, unsigned int contextId, int layerId, int x, int y)
+	void *user, unsigned int flags, unsigned int contextId, int layerId, int x,
+	int y)
 {
 	PaintEngine *pe = static_cast<PaintEngine *>(user);
-	emit pe->cursorMoved(contextId, layerId, x, y);
+	emit pe->cursorMoved(flags, contextId, layerId, x, y);
 }
 
 void PaintEngine::onRenderSize(void *user, int width, int height)

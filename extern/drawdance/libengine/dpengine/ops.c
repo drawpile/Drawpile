@@ -777,9 +777,9 @@ DP_CanvasStateChange DP_ops_put_image(DP_CanvasState *cs,
                                          img);
     DP_image_free(img);
 
-    return (DP_CanvasStateChange){
-        DP_transient_canvas_state_persist(tcs),
-        {context_id, layer_id, x + width / 2, y + height / 2}};
+    return (DP_CanvasStateChange){DP_transient_canvas_state_persist(tcs),
+                                  {DP_USER_CURSOR_FLAG_VALID, context_id,
+                                   layer_id, x + width / 2, y + height / 2}};
 }
 
 
@@ -883,7 +883,7 @@ DP_CanvasStateChange DP_ops_move_region(DP_CanvasState *cs, DP_DrawContext *dc,
     return (DP_CanvasStateChange){
         move_image(cs, src_lre, dst_lre, context_id, src_rect, mask, src_img,
                    offset_x, offset_y, dst_img),
-        {context_id, dst_layer_id,
+        {DP_USER_CURSOR_FLAG_VALID, context_id, dst_layer_id,
          DP_rect_x(dst_bounds) + DP_rect_width(dst_bounds) / 2,
          DP_rect_y(dst_bounds) + DP_rect_height(dst_bounds) / 2}};
 }
@@ -926,7 +926,8 @@ DP_CanvasStateChange DP_ops_move_rect(DP_CanvasState *cs,
     return (DP_CanvasStateChange){
         move_image(cs, src_lre, dst_lre, context_id, src_rect, mask, src_img,
                    dst_x, dst_y, src_img),
-        {context_id, dst_layer_id, dst_x + DP_rect_width(*src_rect) / 2,
+        {DP_USER_CURSOR_FLAG_VALID, context_id, dst_layer_id,
+         dst_x + DP_rect_width(*src_rect) / 2,
          dst_y + DP_rect_height(*src_rect) / 2}};
 }
 
@@ -953,9 +954,10 @@ DP_CanvasStateChange DP_ops_fill_rect(DP_CanvasState *cs,
     DP_transient_layer_content_fill_rect(tlc, context_id, blend_mode, left, top,
                                          right, bottom, pixel);
 
-    return (DP_CanvasStateChange){
-        DP_transient_canvas_state_persist(tcs),
-        {context_id, layer_id, (left + right) / 2, (top + bottom)}};
+    return (DP_CanvasStateChange){DP_transient_canvas_state_persist(tcs),
+                                  {DP_USER_CURSOR_FLAG_VALID, context_id,
+                                   layer_id, (left + right) / 2,
+                                   (top + bottom)}};
 }
 
 
@@ -1063,8 +1065,8 @@ static void pen_up_layers(DP_PenUpContext *puc, DP_DrawContext *dc,
     DP_draw_context_layer_indexes_pop(dc);
 }
 
-DP_CanvasState *DP_ops_pen_up(DP_CanvasState *cs, DP_DrawContext *dc,
-                              unsigned int context_id)
+DP_CanvasStateChange DP_ops_pen_up(DP_CanvasState *cs, DP_DrawContext *dc,
+                                   unsigned int context_id)
 {
     // If the user was drawing in indirect mode, there'll be sublayers with
     // their id to merge. We walk the layer stack and merge them as we encounter
@@ -1074,12 +1076,11 @@ DP_CanvasState *DP_ops_pen_up(DP_CanvasState *cs, DP_DrawContext *dc,
     DP_draw_context_layer_indexes_clear(dc);
     pen_up_layers(&puc, dc, target_sublayer_id,
                   DP_canvas_state_layers_noinc(cs));
-    if (puc.tcs) {
-        return DP_transient_canvas_state_persist(puc.tcs);
-    }
-    else {
-        return DP_canvas_state_incref(cs);
-    }
+
+    return (DP_CanvasStateChange){
+        puc.tcs ? DP_transient_canvas_state_persist(puc.tcs)
+                : DP_canvas_state_incref(cs),
+        {DP_USER_CURSOR_FLAG_PEN_UP, context_id, 0, 0, 0}};
 }
 
 

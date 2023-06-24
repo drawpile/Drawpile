@@ -266,11 +266,11 @@ void NavigatorView::paintEvent(QPaintEvent *)
 	}
 }
 
-void NavigatorView::onCursorMove(uint8_t userId, uint16_t layer, int x, int y)
+void NavigatorView::onCursorMove(unsigned int flags, uint8_t userId, uint16_t layer, int x, int y)
 {
 	Q_UNUSED(layer);
 
-	if(!m_showCursors)
+	if(!m_showCursors || !(flags & DP_USER_CURSOR_FLAG_VALID))
 		return;
 
 	// Never show the local user's cursor in the navigator

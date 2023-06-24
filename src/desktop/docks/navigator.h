@@ -42,7 +42,7 @@ private slots:
 	void onChange();
 	void onResize();
 	void refreshCache();
-	void onCursorMove(uint8_t user, uint16_t layer, int x, int y);
+	void onCursorMove(unsigned int flags, uint8_t user, uint16_t layer, int x, int y);
 
 private:
 	struct UserCursor {

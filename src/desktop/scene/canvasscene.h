@@ -96,7 +96,7 @@ private slots:
 	void handleCanvasResize(int xoffset, int yoffset, const QSize &oldsize);
 	void advanceAnimations();
 
-	void userCursorMoved(uint8_t userId, uint16_t layerId, int x, int y);
+	void userCursorMoved(unsigned int flags, uint8_t userId, uint16_t layerId, int x, int y);
 	void laserTrail(uint8_t userId, int persistence, const QColor &color);
 
 	void annotationsChanged(const drawdance::AnnotationList &al);

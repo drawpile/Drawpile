@@ -68,7 +68,8 @@ typedef void (*DP_PaintEngineAnnotationsChangedFn)(void *user,
 typedef void (*DP_PaintEngineDocumentMetadataChangedFn)(
     void *user, DP_DocumentMetadata *dm);
 typedef void (*DP_PaintEngineTimelineChangedFn)(void *user, DP_Timeline *tl);
-typedef void (*DP_PaintEngineCursorMovedFn)(void *user, unsigned int context_id,
+typedef void (*DP_PaintEngineCursorMovedFn)(void *user, unsigned int flags,
+                                            unsigned int context_id,
                                             int layer_id, int x, int y);
 typedef void (*DP_PaintEngineRenderSizeFn)(void *user, int width, int height);
 typedef void (*DP_PaintEngineRenderTileFn)(void *user, int x, int y,

@@ -19,7 +19,7 @@ static const int ARROW = 10;
 UserMarkerItem::UserMarkerItem(int id, QGraphicsItem *parent)
 	: QGraphicsItem(parent),
 	  m_id(id), m_fadeout(0), m_lastMoved(0),
-	  m_showText(true), m_showSubtext(false), m_showAvatar(true)
+	  m_showText(true), m_showSubtext(false), m_showAvatar(true), m_penUp(false)
 {
 	setFlag(ItemIgnoresTransformations);
 	m_bgbrush.setStyle(Qt::SolidPattern);

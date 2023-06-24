@@ -102,8 +102,8 @@ DP_CanvasStateChange DP_ops_fill_rect(DP_CanvasState *cs,
 DP_CanvasState *DP_ops_put_tile(DP_CanvasState *cs, DP_Tile *tile, int layer_id,
                                 int sublayer_id, int x, int y, int repeat);
 
-DP_CanvasState *DP_ops_pen_up(DP_CanvasState *cs, DP_DrawContext *dc,
-                              unsigned int context_id);
+DP_CanvasStateChange DP_ops_pen_up(DP_CanvasState *cs, DP_DrawContext *dc,
+                                   unsigned int context_id);
 
 DP_CanvasState *DP_ops_annotation_create(DP_CanvasState *cs, int annotation_id,
                                          int x, int y, int width, int height);

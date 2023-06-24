@@ -55,6 +55,7 @@ typedef enum DP_ForkAction {
 } DP_ForkAction;
 
 typedef struct DP_Cursor {
+    unsigned int flags;
     int layer_id;
     int x, y;
 } DP_Cursor;
@@ -619,8 +620,8 @@ static void retrieve_user_cursors(DP_CanvasHistory *ch,
         unsigned int context_id = ch->cursors.user_ids[i];
         DP_Cursor *cursor = &ch->cursors.cursors_by_user[context_id];
         ch->cursors.active_by_user[context_id] = false;
-        out_user_cursors->cursors[i] =
-            (DP_UserCursor){context_id, cursor->layer_id, cursor->x, cursor->y};
+        out_user_cursors->cursors[i] = (DP_UserCursor){
+            cursor->flags, context_id, cursor->layer_id, cursor->x, cursor->y};
     }
     out_user_cursors->count = count;
 }
@@ -671,13 +672,39 @@ static void set_current_state_with_cursor_noinc(DP_CanvasHistory *ch,
         DP_Mutex *mutex = ch->mutex;
         DP_MUTEX_MUST_LOCK(mutex);
         ch->current_state = next;
-        if (!ch->cursors.active_by_user[context_id]) {
+        if (ch->cursors.active_by_user[context_id]) {
+            DP_Cursor *cursor = &ch->cursors.cursors_by_user[context_id];
+            unsigned int flags = uc->flags;
+
+            if (flags & DP_USER_CURSOR_FLAG_VALID) {
+                cursor->flags |= DP_USER_CURSOR_FLAG_VALID;
+                cursor->layer_id = uc->layer_id;
+                cursor->x = uc->x;
+                cursor->y = uc->y;
+                if (cursor->flags & DP_USER_CURSOR_FLAG_PEN_UP) {
+                    cursor->flags |= DP_USER_CURSOR_FLAG_PEN_DOWN;
+                }
+            }
+
+            if (flags & DP_USER_CURSOR_FLAG_PEN_UP) {
+                cursor->flags |= DP_USER_CURSOR_FLAG_PEN_UP;
+            }
+            else {
+                if (flags & DP_USER_CURSOR_FLAG_MYPAINT) {
+                    cursor->flags |= DP_USER_CURSOR_FLAG_MYPAINT;
+                }
+                else {
+                    cursor->flags &= ~DP_USER_CURSOR_FLAG_MYPAINT;
+                }
+            }
+        }
+        else {
             ch->cursors.active_by_user[context_id] = true;
             ch->cursors.user_ids[ch->cursors.count++] =
                 DP_uint_to_uint8(context_id);
+            ch->cursors.cursors_by_user[context_id] =
+                (DP_Cursor){uc->flags, uc->layer_id, uc->x, uc->y};
         }
-        ch->cursors.cursors_by_user[context_id] =
-            (DP_Cursor){uc->layer_id, uc->x, uc->y};
         DP_MUTEX_MUST_UNLOCK(mutex);
         DP_canvas_state_decref(current);
     }

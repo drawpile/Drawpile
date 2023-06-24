@@ -246,11 +246,12 @@ void CanvasScene::laserTrail(uint8_t userId, int persistence, const QColor &colo
 	}
 }
 
-void CanvasScene::userCursorMoved(uint8_t userId, uint16_t layerId, int x, int y)
+void CanvasScene::userCursorMoved(unsigned int flags, uint8_t userId, uint16_t layerId, int x, int y)
 {
+	bool valid = flags & DP_USER_CURSOR_FLAG_VALID;
+
 	// User cursor motion is used to update the laser trail, if one exists
-	bool isLaserPointer = m_activeLaserTrail.contains(userId);
-	if(isLaserPointer) {
+	if(valid && m_activeLaserTrail.contains(userId)) {
 		LaserTrailItem *laser = m_activeLaserTrail[userId];
 		laser->addPoint(QPointF(x, y));
 	}
@@ -263,7 +264,9 @@ void CanvasScene::userCursorMoved(uint8_t userId, uint16_t layerId, int x, int y
 		return;
 
 	UserMarkerItem *item = m_usermarkers[userId];
-	if(!item) {
+	bool penUp = flags & DP_USER_CURSOR_FLAG_PEN_UP;
+	bool penDown = flags & DP_USER_CURSOR_FLAG_PEN_DOWN;
+	if(!item && valid) {
 		const auto user = m_model->userlist()->getUserById(userId);
 		item = new UserMarkerItem(userId);
 		item->setText(user.name.isEmpty() ? QStringLiteral("#%1").arg(int(userId)) : user.name);
@@ -276,14 +279,19 @@ void CanvasScene::userCursorMoved(uint8_t userId, uint16_t layerId, int x, int y
 		m_usermarkers[userId] = item;
 	}
 
-	if(m_showUserLayers)
-		item->setSubtext(m_model->layerlist()->layerIndex(layerId).data(canvas::LayerListModel::TitleRole).toString());
+	if(item) {
+		if(valid) {
+			if(m_showUserLayers) {
+				item->setSubtext(m_model->layerlist()->layerIndex(layerId).data(canvas::LayerListModel::TitleRole).toString());
+			}
+			item->setTargetPos(x, y, item->clearPenUp() || (penUp && penDown) || !(flags & DP_USER_CURSOR_FLAG_MYPAINT));
+			item->fadein();
+		}
 
-	// Smooth the movement by default so that the curser doesn't jump around
-	// like crazy when using MyPaint brushes with spread out dabs. If this is
-	// a laser being pointed, set the position directly, without interpolation.
-	item->setTargetPos(x, y, isLaserPointer);
-	item->fadein();
+		if(penUp && !penDown) {
+			item->setPenUp(true);
+		}
+	}
 }
 
 void CanvasScene::showUserMarkers(bool show)

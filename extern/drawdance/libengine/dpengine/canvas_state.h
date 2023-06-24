@@ -44,9 +44,16 @@ typedef struct DP_ViewModeFilter DP_ViewModeFilter;
 #define DP_FLAT_IMAGE_RENDER_FLAGS \
     (DP_FLAT_IMAGE_INCLUDE_BACKGROUND | DP_FLAT_IMAGE_INCLUDE_SUBLAYERS)
 
+#define DP_USER_CURSOR_FLAG_NONE     0x0u
+#define DP_USER_CURSOR_FLAG_VALID    0x1u
+#define DP_USER_CURSOR_FLAG_MYPAINT  0x2u
+#define DP_USER_CURSOR_FLAG_PEN_UP   0x4u
+#define DP_USER_CURSOR_FLAG_PEN_DOWN 0x8u
+
 typedef struct DP_CanvasState DP_CanvasState;
 
 typedef struct DP_UserCursor {
+    unsigned int flags;
     unsigned int context_id;
     int layer_id;
     int x, y;
@@ -80,7 +87,7 @@ typedef struct DP_Timeline DP_TransientTimeline;
 
 DP_INLINE DP_CanvasStateChange DP_canvas_state_change_of(DP_CanvasState *cs)
 {
-    DP_CanvasStateChange change = {cs, {0, 0, 0, 0}};
+    DP_CanvasStateChange change = {cs, {DP_USER_CURSOR_FLAG_NONE, 0, 0, 0, 0}};
     return change;
 }
 

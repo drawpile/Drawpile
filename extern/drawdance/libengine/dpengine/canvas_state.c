@@ -621,8 +621,8 @@ static DP_CanvasState *handle_canvas_background(DP_CanvasState *cs,
     }
 }
 
-static DP_CanvasState *handle_pen_up(DP_CanvasState *cs, DP_DrawContext *dc,
-                                     unsigned int context_id)
+static DP_CanvasStateChange
+handle_pen_up(DP_CanvasState *cs, DP_DrawContext *dc, unsigned int context_id)
 {
     return DP_ops_pen_up(cs, dc, context_id);
 }
@@ -1184,8 +1184,7 @@ static DP_CanvasStateChange handle(DP_CanvasState *cs, DP_DrawContext *dc,
             handle_canvas_background(cs, dc, DP_message_context_id(msg),
                                      DP_msg_canvas_background_cast(msg)));
     case DP_MSG_PEN_UP:
-        return DP_canvas_state_change_of(
-            handle_pen_up(cs, dc, DP_message_context_id(msg)));
+        return handle_pen_up(cs, dc, DP_message_context_id(msg));
     case DP_MSG_ANNOTATION_CREATE:
         return DP_canvas_state_change_of(
             handle_annotation_create(cs, DP_msg_annotation_create_cast(msg)));

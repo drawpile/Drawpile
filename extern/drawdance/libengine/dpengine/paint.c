@@ -328,8 +328,8 @@ static DP_UserCursor draw_dabs_classic(DP_DrawContext *dc,
         last_y = y;
     }
 
-    return (DP_UserCursor){context_id, params->layer_id, last_x / 4,
-                           last_y / 4};
+    return (DP_UserCursor){DP_USER_CURSOR_FLAG_VALID, context_id,
+                           params->layer_id, last_x / 4, last_y / 4};
 }
 
 
@@ -409,7 +409,8 @@ static DP_UserCursor draw_dabs_pixel(DP_DrawContext *dc,
         last_y = y;
     }
 
-    return (DP_UserCursor){context_id, params->layer_id, last_x, last_y};
+    return (DP_UserCursor){DP_USER_CURSOR_FLAG_VALID, context_id,
+                           params->layer_id, last_x, last_y};
 }
 
 
@@ -1006,8 +1007,9 @@ static DP_UserCursor draw_dabs_mypaint(DP_DrawContext *dc,
         last_y = y;
     }
 
-    return (DP_UserCursor){context_id, params->layer_id, last_x / 4,
-                           last_y / 4};
+    return (DP_UserCursor){
+        DP_USER_CURSOR_FLAG_VALID | DP_USER_CURSOR_FLAG_MYPAINT, context_id,
+        params->layer_id, last_x / 4, last_y / 4};
 }
 
 
