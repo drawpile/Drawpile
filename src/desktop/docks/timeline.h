@@ -39,6 +39,7 @@ public:
 		const widgets::TimelineWidget::Actions &actions,
 		QAction *layerViewNormal, QAction *layerViewCurrentFrame);
 
+	int currentTrackId() const;
 	int currentFrame() const;
 
 public slots:
@@ -49,6 +50,7 @@ public slots:
 
 signals:
 	void timelineEditCommands(int count, const drawdance::Message *msgs);
+	void trackSelected(int frame);
 	void frameSelected(int frame);
 	void layerSelected(int layerId);
 	void trackHidden(int trackId, bool hidden);

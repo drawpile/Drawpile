@@ -6,6 +6,7 @@
 #include "libclient/canvas/blendmodes.h"
 #include "libclient/canvas/layerlist.h"
 #include "libclient/canvas/canvasmodel.h"
+#include "libclient/canvas/timelinemodel.h"
 #include "libclient/canvas/userlist.h"
 #include "libclient/canvas/paintengine.h"
 #include "desktop/docks/layerlistdock.h"
@@ -29,15 +30,15 @@
 #include <QTreeView>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <functional>
 
 namespace docks {
 
 LayerList::LayerList(QWidget *parent)
 	: DockBase(tr("Layers"), parent),
 	  m_canvas(nullptr), m_selectedId(0), m_nearestToDeletedId(0),
-	  m_noupdate(false), m_updateBlendModeIndex(-1), m_updateOpacity(-1),
-	  m_addLayerAction(nullptr), m_duplicateLayerAction(nullptr),
-	  m_mergeLayerAction(nullptr), m_deleteLayerAction(nullptr)
+	  m_trackId(0), m_frame(-1),
+	  m_noupdate(false), m_updateBlendModeIndex(-1), m_updateOpacity(-1)
 {
 	m_debounceTimer = new QTimer{this};
 	m_debounceTimer->setSingleShot(true);
@@ -147,20 +148,9 @@ static void addLayerButton(
 	layout->addWidget(button);
 }
 
-void LayerList::setLayerEditActions(QAction *addLayer, QAction *addGroup, QAction *duplicate, QAction *merge, QAction *properties, QAction *del, QAction *setFillSource, QAction *keyFrameSetLayer)
+void LayerList::setLayerEditActions(const Actions &actions)
 {
-	Q_ASSERT(addLayer);
-	Q_ASSERT(addGroup);
-	Q_ASSERT(duplicate);
-	Q_ASSERT(merge);
-	Q_ASSERT(del);
-	m_addLayerAction = addLayer;
-	m_addGroupAction = addGroup;
-	m_duplicateLayerAction = duplicate;
-	m_mergeLayerAction = merge;
-	m_propertiesAction = properties;
-	m_deleteLayerAction = del;
-	m_setFillSourceAction = setFillSource;
+	m_actions = actions;
 
 	// Add the actions below the layer list
 	QWidget *root = widget();
@@ -170,34 +160,64 @@ void LayerList::setLayerEditActions(QAction *addLayer, QAction *addGroup, QActio
 	QHBoxLayout *layout = new QHBoxLayout;
 	layout->setSpacing(0);
 	layout->setContentsMargins(titleBarWidget()->layout()->contentsMargins());
-	addLayerButton(root, layout, addLayer, widgets::GroupedToolButton::GroupLeft);
-	addLayerButton(root, layout, addGroup, widgets::GroupedToolButton::GroupCenter);
-	addLayerButton(root, layout, duplicate, widgets::GroupedToolButton::GroupCenter);
-	addLayerButton(root, layout, merge, widgets::GroupedToolButton::GroupCenter);
-	addLayerButton(root, layout, properties, widgets::GroupedToolButton::GroupRight);
+	addLayerButton(root, layout, m_actions.addLayer, widgets::GroupedToolButton::GroupLeft);
+	addLayerButton(root, layout, m_actions.addGroup, widgets::GroupedToolButton::GroupCenter);
+	addLayerButton(root, layout, m_actions.duplicate, widgets::GroupedToolButton::GroupCenter);
+	addLayerButton(root, layout, m_actions.merge, widgets::GroupedToolButton::GroupCenter);
+	addLayerButton(root, layout, m_actions.properties, widgets::GroupedToolButton::GroupRight);
 	layout->addStretch();
-	addLayerButton(root, layout, del, widgets::GroupedToolButton::NotGrouped);
+	addLayerButton(root, layout, m_actions.del, widgets::GroupedToolButton::NotGrouped);
 	root->layout()->addItem(layout);
 
 	// Add the actions to the context menu
-	m_contextMenu->addAction(m_addLayerAction);
-	m_contextMenu->addAction(m_addGroupAction);
-	m_contextMenu->addAction(m_duplicateLayerAction);
-	m_contextMenu->addAction(m_mergeLayerAction);
-	m_contextMenu->addAction(m_deleteLayerAction);
-	m_contextMenu->addAction(m_propertiesAction);
+	m_contextMenu->addAction(m_actions.addLayer);
+	m_contextMenu->addAction(m_actions.addGroup);
+	m_contextMenu->addAction(m_actions.duplicate);
+	m_contextMenu->addAction(m_actions.merge);
+	m_contextMenu->addAction(m_actions.del);
+	m_contextMenu->addAction(m_actions.properties);
 	m_contextMenu->addSeparator();
-	m_contextMenu->addAction(m_setFillSourceAction);
-	m_contextMenu->addAction(keyFrameSetLayer);
+	m_contextMenu->addAction(m_actions.setFillSource);
+	m_contextMenu->addAction(m_actions.keyFrameSetLayer);
 
 	// Action functionality
-	connect(m_addLayerAction, &QAction::triggered, this, &LayerList::addLayer);
-	connect(m_addGroupAction, &QAction::triggered, this, &LayerList::addGroup);
-	connect(m_duplicateLayerAction, &QAction::triggered, this, &LayerList::duplicateLayer);
-	connect(m_mergeLayerAction, &QAction::triggered, this, &LayerList::mergeSelected);
-	connect(m_propertiesAction, &QAction::triggered, this, &LayerList::showPropertiesOfSelected);
-	connect(m_deleteLayerAction, &QAction::triggered, this, &LayerList::deleteSelected);
-	connect(m_setFillSourceAction, &QAction::triggered, this, &LayerList::setFillSourceToSelected);
+	connect(
+		m_actions.addLayer, &QAction::triggered, this,
+		std::bind(&LayerList::addLayerOrGroup, this, false, false, 0));
+	connect(
+		m_actions.addGroup, &QAction::triggered, this,
+		std::bind(&LayerList::addLayerOrGroup, this, true, false, 0));
+	connect(
+		m_actions.keyFrameCreateLayer, &QAction::triggered, this,
+		std::bind(&LayerList::addLayerOrGroup, this, false, true, 0));
+	connect(
+		m_actions.keyFrameCreateLayerNext, &QAction::triggered, this,
+		std::bind(&LayerList::addLayerOrGroup, this, false, true, 1));
+	connect(
+		m_actions.keyFrameCreateLayerPrev, &QAction::triggered, this,
+		std::bind(&LayerList::addLayerOrGroup, this, false, true, -1));
+	connect(
+		m_actions.keyFrameCreateGroup, &QAction::triggered, this,
+		std::bind(&LayerList::addLayerOrGroup, this, true, true, 0));
+	connect(
+		m_actions.keyFrameCreateGroupNext, &QAction::triggered, this,
+		std::bind(&LayerList::addLayerOrGroup, this, true, true, 1));
+	connect(
+		m_actions.keyFrameCreateGroupPrev, &QAction::triggered, this,
+		std::bind(&LayerList::addLayerOrGroup, this, true, true, -1));
+	connect(
+		m_actions.duplicate, &QAction::triggered, this,
+		&LayerList::duplicateLayer);
+	connect(
+		m_actions.merge, &QAction::triggered, this, &LayerList::mergeSelected);
+	connect(
+		m_actions.properties, &QAction::triggered, this,
+		&LayerList::showPropertiesOfSelected);
+	connect(
+		m_actions.del, &QAction::triggered, this, &LayerList::deleteSelected);
+	connect(
+		m_actions.setFillSource, &QAction::triggered, this,
+		&LayerList::setFillSourceToSelected);
 
 	updateLockedControls();
 }
@@ -225,10 +245,11 @@ void LayerList::updateLockedControls()
 
 	// Layer creation actions work as long as we have an editing permission
 	const bool canAdd = !locked && (canEdit || ownLayers);
-	const bool hasEditActions = m_addLayerAction != nullptr;
+	const bool hasEditActions = m_actions.addLayer != nullptr;
 	if(hasEditActions) {
-		m_addLayerAction->setEnabled(canAdd);
-		m_addGroupAction->setEnabled(canAdd && !compatibilityMode);
+		m_actions.addLayer->setEnabled(canAdd);
+		m_actions.addGroup->setEnabled(canAdd && !compatibilityMode);
+		m_actions.layerKeyFrameGroup->setEnabled(canAdd && !compatibilityMode);
 	}
 
 	// Rest of the controls need a selection to work.
@@ -239,10 +260,10 @@ void LayerList::updateLockedControls()
 	m_opacitySlider->setEnabled(enabled);
 
 	if(hasEditActions) {
-		m_duplicateLayerAction->setEnabled(enabled);
-		m_deleteLayerAction->setEnabled(enabled);
-		m_mergeLayerAction->setEnabled(enabled && canMergeCurrent());
-		m_setFillSourceAction->setEnabled(m_selectedId != 0);
+		m_actions.duplicate->setEnabled(enabled);
+		m_actions.del->setEnabled(enabled);
+		m_actions.merge->setEnabled(enabled && canMergeCurrent());
+		m_actions.setFillSource->setEnabled(m_selectedId != 0);
 	}
 }
 
@@ -270,6 +291,16 @@ void LayerList::selectAbove()
 void LayerList::selectBelow()
 {
 	selectLayerIndex(m_view->indexBelow(currentSelection()), true);
+}
+
+void LayerList::setTrackId(int trackId)
+{
+	m_trackId = trackId;
+}
+
+void LayerList::setFrame(int frame)
+{
+	m_frame = frame;
 }
 
 void LayerList::selectLayerIndex(QModelIndex index, bool scrollTo)
@@ -320,20 +351,7 @@ void LayerList::changeLayerAcl(bool lock, DP_AccessTier tier, QVector<uint8_t> e
 	}
 }
 
-/**
- * @brief Layer add button pressed
- */
-void LayerList::addLayer()
-{
-	addLayerOrGroup(false);
-}
-
-void LayerList::addGroup()
-{
-	addLayerOrGroup(true);
-}
-
-void LayerList::addLayerOrGroup(bool group)
+void LayerList::addLayerOrGroup(bool group, bool keyFrame, int keyFrameOffset)
 {
 	const canvas::LayerListModel *layers = m_canvas->layerlist();
 	Q_ASSERT(layers);
@@ -347,34 +365,112 @@ void LayerList::addLayerOrGroup(bool group)
 	uint8_t contextId = m_canvas->localUserId();
 	QModelIndex index = layers->layerIndex(m_selectedId);
 
-	drawdance::Message msg;
-	if(m_canvas->isCompatibilityMode()) {
+	drawdance::Message layerMsg;
+	drawdance::Message keyFrameMsg;
+	drawdance::Message moveMsg;
+	bool compatibilityMode = m_canvas->isCompatibilityMode();
+	if(compatibilityMode) {
 		uint16_t targetId = index.isValid() ? m_selectedId : 0;
 		uint8_t flags = targetId == 0 ? 0 : DP_MSG_LAYER_CREATE_FLAGS_INSERT;
-		msg = drawdance::Message::makeLayerCreate(
+		layerMsg = drawdance::Message::makeLayerCreate(
 			contextId, id, targetId, 0, flags,
 			layers->getAvailableLayerName(tr("Layer")));
 	} else {
-		uint16_t targetId;
+		int targetId = -1;
 		uint8_t flags = group ? DP_MSG_LAYER_TREE_CREATE_FLAGS_GROUP : 0;
-		if(index.isValid()) {
+
+		if(keyFrame && m_trackId != 0 && m_frame != -1) {
+			// TODO: having to do a layer move here is dumb, there should be a
+			// layer create flag that throws the layer at the bottom instead.
+			int targetFrame = m_frame + keyFrameOffset;
+			int moveId = intuitKeyFrameTarget(targetFrame, targetId, flags);
+			keyFrameMsg = drawdance::Message::makeKeyFrameSet(
+				contextId, m_trackId, targetFrame, id, 0,
+				DP_MSG_KEY_FRAME_SET_SOURCE_LAYER);
+			if(moveId != -1) {
+				moveMsg = drawdance::Message::makeLayerTreeMove(
+					contextId, id, targetId, moveId);
+			}
+		}
+
+		if(targetId == -1 && index.isValid()) {
 			targetId = m_selectedId;
 			bool into = index.data(canvas::LayerListModel::IsGroupRole).toBool()
 				&& (m_view->isExpanded(index) || index.data(canvas::LayerListModel::IsEmptyRole).toBool());
 			if(into) {
 				flags |= DP_MSG_LAYER_TREE_CREATE_FLAGS_INTO;
 			}
-		} else {
-			targetId = 0;
 		}
-		msg = drawdance::Message::makeLayerTreeCreate(
-			contextId, id, 0, targetId, 0, flags,
+
+		layerMsg = drawdance::Message::makeLayerTreeCreate(
+			contextId, id, 0, qBound(0, targetId, UINT16_MAX), 0, flags,
 			layers->getAvailableLayerName(group ? tr("Group") : tr("Layer")));
 	}
 
 	drawdance::Message messages[] = {
-		drawdance::Message::makeUndoPoint(contextId), msg};
-	emit layerCommands(DP_ARRAY_LENGTH(messages), messages);
+		drawdance::Message::makeUndoPoint(contextId), layerMsg, keyFrameMsg,
+		moveMsg};
+	emit layerCommands(
+		2 + (keyFrameMsg.isNull() ? 0 : 1) + (moveMsg.isNull() ? 0 : 1),
+		messages);
+}
+
+int LayerList::intuitKeyFrameTarget(int targetFrame, int &targetId, uint8_t &flags)
+{
+	// Guess where we're supposed to throw this new layer in relation to
+	// surrounding frames in the timeline. If there's a previous key frame, we
+	// put it above its layer. If not, put it below the previous key frame's
+	// layer. In absence of both, we just act like it's a regular layer.
+	const canvas::TimelineModel *timeline = m_canvas->timeline();
+	const canvas::TimelineTrack *track = timeline->getTrackById(m_trackId);
+	if(!track) {
+		return -1;
+	}
+
+	const canvas::TimelineKeyFrame *keyFrameBefore = nullptr;
+	const canvas::TimelineKeyFrame *keyFrameAfter = nullptr;
+	for(const canvas::TimelineKeyFrame &keyFrame : track->keyFrames) {
+		if(keyFrame.layerId != 0) {
+			int frame = keyFrame.frameIndex;
+			if(frame <= targetFrame) {
+				if(!keyFrameBefore || frame > keyFrameBefore->frameIndex) {
+					keyFrameBefore = &keyFrame;
+				}
+			} else {
+				if(!keyFrameAfter || frame < keyFrameAfter->frameIndex) {
+					keyFrameAfter = &keyFrame;
+				}
+			}
+		}
+	}
+
+	if(keyFrameBefore) {
+		targetId = keyFrameBefore->layerId;
+		return -1;
+	} else if(keyFrameAfter) {
+		const canvas::LayerListModel *layers = m_canvas->layerlist();
+		QModelIndex index = layers->layerIndex(keyFrameAfter->layerId);
+		if(!index.isValid()) {
+			return -1;
+		}
+
+		QModelIndex sibling = index.siblingAtRow(index.row() + 1);
+		if(sibling.isValid()) {
+			targetId = sibling.data(canvas::LayerListModel::IdRole).toInt();
+			return -1;
+		} else {
+			QModelIndex parent = index.parent();
+			if(parent.isValid()) {
+				targetId = parent.data(canvas::LayerListModel::IdRole).toInt();
+				flags |= DP_MSG_LAYER_TREE_CREATE_FLAGS_INTO;
+			} else {
+				targetId = 0;
+			}
+			return index.data(canvas::LayerListModel::IdRole).toInt();
+		}
+	} else {
+		return -1;
+	}
 }
 
 void LayerList::duplicateLayer()

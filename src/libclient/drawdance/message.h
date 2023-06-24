@@ -59,6 +59,7 @@ public:
     static Message makeLayerTreeCreate(uint8_t contextId, uint16_t id, uint16_t source, uint16_t target, uint32_t fill, uint8_t flags, const QString &name);
     static Message makeLayerDelete(uint8_t contextId, uint16_t id, bool merge);
     static Message makeLayerTreeDelete(uint8_t contextId, uint16_t id, uint16_t mergeTo);
+    static Message makeLayerTreeMove(uint8_t contextId, uint16_t layer, uint16_t parent, uint16_t sibling);
     static Message makeLayerRetitle(uint8_t contextId, uint16_t id, const QString &title);
     static Message makeMovePointer(uint8_t contextId, int32_t x, int32_t y);
     static Message makeMoveRegion(uint8_t contextId, uint16_t layer, int32_t bx, int32_t by, int32_t bw, int32_t bh, int32_t x1, int32_t y1, int32_t x2, int32_t y2, int32_t x3, int32_t y3, int32_t x4, int32_t y4, const QImage &mask);

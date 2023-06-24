@@ -32,6 +32,9 @@ Timeline::Timeline(QWidget *parent)
 		m_widget, &widgets::TimelineWidget::timelineEditCommands, this,
 		&Timeline::timelineEditCommands);
 	connect(
+		m_widget, &widgets::TimelineWidget::trackSelected, this,
+		&Timeline::trackSelected);
+	connect(
 		m_widget, &widgets::TimelineWidget::frameSelected, this,
 		&Timeline::setCurrentFrame);
 	connect(
@@ -81,6 +84,11 @@ void Timeline::setActions(
 {
 	m_widget->setActions(actions);
 	setUpTitleWidget(actions, layerViewNormal, layerViewCurrentFrame);
+}
+
+int Timeline::currentTrackId() const
+{
+	return m_widget->currentTrackId();
 }
 
 int Timeline::currentFrame() const

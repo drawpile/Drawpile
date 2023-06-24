@@ -39,12 +39,30 @@ class LayerList final : public DockBase
 {
 Q_OBJECT
 public:
+	struct Actions {
+		QAction *addLayer = nullptr;
+		QAction *addGroup = nullptr;
+		QAction *duplicate = nullptr;
+		QAction *merge = nullptr;
+		QAction *properties = nullptr;
+		QAction *del = nullptr;
+		QAction *setFillSource = nullptr;
+		QAction *keyFrameSetLayer = nullptr;
+		QAction *keyFrameCreateLayer = nullptr;
+		QAction *keyFrameCreateLayerNext = nullptr;
+		QAction *keyFrameCreateLayerPrev = nullptr;
+		QAction *keyFrameCreateGroup = nullptr;
+		QAction *keyFrameCreateGroupNext = nullptr;
+		QAction *keyFrameCreateGroupPrev = nullptr;
+		QActionGroup *layerKeyFrameGroup = nullptr;
+	};
+
 	LayerList(QWidget *parent=nullptr);
 
 	void setCanvas(canvas::CanvasModel *canvas);
 
 	//! These actions are shown in a menu outside this dock
-	void setLayerEditActions(QAction *addLayer, QAction *addGroup, QAction *duplicate, QAction *merge, QAction *properties, QAction *del, QAction *setFillSource, QAction *keyFrameSetLayer);
+	void setLayerEditActions(const Actions &actions);
 
 	/**
 	 * Is the currently selected layer locked for editing?
@@ -58,6 +76,9 @@ public slots:
 	void selectLayer(int id);
 	void selectAbove();
 	void selectBelow();
+
+	void setTrackId(int trackId);
+	void setFrame(int frame);
 
 signals:
 	//! A layer was selected by the user
@@ -73,8 +94,6 @@ private slots:
 
 	void onFeatureAccessChange(DP_Feature feature, bool canuse);
 
-	void addLayer();
-	void addGroup();
 	void duplicateLayer();
 	void deleteSelected();
 	void mergeSelected();
@@ -102,7 +121,8 @@ private:
 
 	void updateUiFromSelection();
 
-	void addLayerOrGroup(bool group);
+	void addLayerOrGroup(bool group, bool keyFrame, int keyFrameOffset);
+	int intuitKeyFrameTarget(int targetFrame, int &targetId, uint8_t &flags);
 
 	QModelIndex currentSelection() const;
 	void selectLayerIndex(QModelIndex index, bool scrollTo=false);
@@ -119,6 +139,9 @@ private:
 	QSet<int> m_expandedGroups;
 	int m_lastScrollPosition;
 
+	int m_trackId;
+	int m_frame;
+
 	bool m_noupdate;
 
 	QMenu *m_contextMenu;
@@ -133,13 +156,7 @@ private:
 	KisSliderSpinBox *m_opacitySlider;
 	QTreeView *m_view;
 
-	QAction *m_addLayerAction;
-	QAction *m_addGroupAction;
-	QAction *m_duplicateLayerAction;
-	QAction *m_mergeLayerAction;
-	QAction *m_propertiesAction;
-	QAction *m_deleteLayerAction;
-	QAction *m_setFillSourceAction;
+	Actions m_actions;
 };
 
 }

@@ -46,7 +46,9 @@ public:
 
 	void setAclState(AclState *aclState) { m_aclState = aclState; }
 
-	const QVector<TimelineTrack> &tracks() { return m_tracks; }
+	const QVector<TimelineTrack> &tracks() const { return m_tracks; }
+
+	const TimelineTrack *getTrackById(int trackId) const;
 
 	int getAvailableTrackId() const;
 	QString getAvailableTrackName(QString basename) const;

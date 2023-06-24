@@ -161,6 +161,16 @@ struct TimelineWidget::Private {
 		return keyFrameBy(currentTrackId, currentFrame);
 	}
 
+	const canvas::TimelineKeyFrame *nextKeyFrame() const
+	{
+		return keyFrameBy(currentTrackId, currentFrame + 1);
+	}
+
+	const canvas::TimelineKeyFrame *previousKeyFrame() const
+	{
+		return keyFrameBy(currentTrackId, currentFrame - 1);
+	}
+
 	const canvas::TimelineKeyFrame *hoverKeyFrame() const
 	{
 		return keyFrameBy(hoverTarget.trackId, hoverTarget.frameIndex);
@@ -337,6 +347,9 @@ void TimelineWidget::setActions(const Actions &actions)
 	d->frameMenu->addAction(actions.keyFrameProperties);
 	d->frameMenu->addAction(actions.keyFrameDelete);
 	d->frameMenu->addSeparator();
+	d->frameMenu->addMenu(actions.animationLayerMenu);
+	d->frameMenu->addMenu(actions.animationGroupMenu);
+	d->frameMenu->addSeparator();
 	for(QMenu *menu : {d->trackMenu, d->frameMenu}) {
 		menu->addAction(actions.trackAdd);
 		menu->addAction(actions.trackDuplicate);
@@ -410,6 +423,18 @@ void TimelineWidget::setActions(const Actions &actions)
 	connect(
 		actions.trackBelow, &QAction::triggered, this,
 		&TimelineWidget::trackBelow);
+	connect(
+		actions.keyFrameCreateLayerNext, &QAction::triggered, this,
+		&TimelineWidget::nextFrame);
+	connect(
+		actions.keyFrameCreateLayerPrev, &QAction::triggered, this,
+		&TimelineWidget::prevFrame);
+	connect(
+		actions.keyFrameCreateGroupNext, &QAction::triggered, this,
+		&TimelineWidget::nextFrame);
+	connect(
+		actions.keyFrameCreateGroupPrev, &QAction::triggered, this,
+		&TimelineWidget::prevFrame);
 
 	updateActions();
 }
@@ -1528,6 +1553,21 @@ void TimelineWidget::updateActions()
 		d->actions.keyFrameSetLayer->setText(
 			tr("Set Key Frame to Current Layer"));
 	}
+
+	bool keyFrameCreatable = keyFrameSettable && !currentKeyFrame;
+	d->actions.keyFrameCreateLayer->setEnabled(keyFrameCreatable);
+	d->actions.keyFrameCreateGroup->setEnabled(keyFrameCreatable);
+
+	bool nextKeyFrameCreatable = keyFrameSettable &&
+								 d->currentFrame < d->frameCount() - 1 &&
+								 !d->nextKeyFrame();
+	d->actions.keyFrameCreateLayerNext->setEnabled(nextKeyFrameCreatable);
+	d->actions.keyFrameCreateGroupNext->setEnabled(nextKeyFrameCreatable);
+
+	bool prevKeyFrameCreatable =
+		keyFrameSettable && d->currentFrame > 0 && !d->previousKeyFrame();
+	d->actions.keyFrameCreateLayerPrev->setEnabled(prevKeyFrameCreatable);
+	d->actions.keyFrameCreateGroupPrev->setEnabled(prevKeyFrameCreatable);
 
 	bool keyFrameEditable = keyFrameSettable && currentKeyFrame;
 	d->actions.keyFrameCut->setEnabled(keyFrameEditable);

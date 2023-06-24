@@ -6,6 +6,9 @@
 #include <QWidget>
 #include <functional>
 
+class QAction;
+class QMenu;
+
 namespace canvas {
 class CanvasModel;
 }
@@ -22,6 +25,12 @@ public:
 	struct Actions {
 		QAction *keyFrameSetLayer = nullptr;
 		QAction *keyFrameSetEmpty = nullptr;
+		QAction *keyFrameCreateLayer = nullptr;
+		QAction *keyFrameCreateLayerNext = nullptr;
+		QAction *keyFrameCreateLayerPrev = nullptr;
+		QAction *keyFrameCreateGroup = nullptr;
+		QAction *keyFrameCreateGroupNext = nullptr;
+		QAction *keyFrameCreateGroupPrev = nullptr;
 		QAction *keyFrameCut = nullptr;
 		QAction *keyFrameCopy = nullptr;
 		QAction *keyFramePaste = nullptr;
@@ -39,6 +48,8 @@ public:
 		QAction *framePrev = nullptr;
 		QAction *trackAbove = nullptr;
 		QAction *trackBelow = nullptr;
+		QMenu *animationLayerMenu = nullptr;
+		QMenu *animationGroupMenu = nullptr;
 	};
 
 	explicit TimelineWidget(QWidget *parent = nullptr);

@@ -22,6 +22,16 @@ TimelineModel::TimelineModel(CanvasModel *canvas)
 {
 }
 
+const TimelineTrack *TimelineModel::getTrackById(int trackId) const
+{
+	for(const TimelineTrack &track : m_tracks) {
+		if(track.id == trackId) {
+			return &track;
+		}
+	}
+	return nullptr;
+}
+
 int TimelineModel::getAvailableTrackId() const
 {
 	int prefix = (m_aclState ? int(m_aclState->localUserId()) : 0) << 8;

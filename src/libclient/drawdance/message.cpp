@@ -199,6 +199,11 @@ Message Message::makeLayerTreeDelete(uint8_t contextId, uint16_t id, uint16_t me
     return Message{DP_msg_layer_tree_delete_new(contextId, id, mergeTo)};
 }
 
+Message Message::makeLayerTreeMove(uint8_t contextId, uint16_t layer, uint16_t parent, uint16_t sibling)
+{
+    return Message{DP_msg_layer_tree_move_new(contextId, layer, parent, sibling)};
+}
+
 Message Message::makeLayerRetitle(uint8_t contextId, uint16_t id, const QString &title)
 {
     QByteArray bytes = title.toUtf8();
