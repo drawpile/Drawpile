@@ -123,6 +123,19 @@ public:
 
     drawdance::Message makeBackwardCompatible() const;
 
+    bool shouldSmoothe()
+    {
+        switch(type()) {
+        case DP_MSG_DRAW_DABS_CLASSIC:
+        case DP_MSG_DRAW_DABS_PIXEL:
+        case DP_MSG_DRAW_DABS_PIXEL_SQUARE:
+        case DP_MSG_DRAW_DABS_MYPAINT:
+            return true;
+        default:
+            return false;
+        }
+    }
+
 private:
     explicit Message(DP_Message *cs);
 

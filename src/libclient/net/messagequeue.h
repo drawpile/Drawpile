@@ -107,6 +107,8 @@ public:
 	 */
 	void setPingInterval(int msecs);
 
+	void setSmoothing(bool enabled);
+
 	int artificalLagMs() { return m_artificialLagMs; }
 
 	void setArtificialLagMs(int msecs);
@@ -166,9 +168,14 @@ private slots:
 	void sslEncrypted();
 	void checkIdleTimeout();
 
+	void receiveSmoothedMessages();
+
 	void sendArtificallyLaggedMessages();
 
 private:
+	static constexpr int SMOOTHING_INTERVAL_MSEC = 1000 / 60;
+	static constexpr int SMOOTHING_DRAIN_STEPS = 10;
+
 	void enqueueMessages(int count, const drawdance::Message *msgs);
 
 	int haveWholeMessageToRead();
@@ -186,6 +193,13 @@ private:
 
 	drawdance::MessageList m_inbox;  // received (complete) messages
 	QQueue<drawdance::Message> m_outbox; // messages to be sent
+
+	// Smoothing of received messages. Depending on the server and network
+	// conditions, messages will arrive in chunks, which causes other people's
+	// strokes to appear choppy. Smoothing compensates for it, if enabled.
+	QTimer *m_smoothTimer;
+	drawdance::MessageList m_smoothBuffer;
+	int m_smoothMessagesToDrain;
 
 	QTimer *m_idleTimer;
 	QTimer *m_pingTimer;

@@ -20,6 +20,8 @@ static const int MSG_TYPE_PING = 2;
 
 MessageQueue::MessageQueue(QTcpSocket *socket, QObject *parent)
 	: QObject(parent), m_socket(socket),
+	  m_smoothTimer(nullptr),
+	  m_smoothMessagesToDrain(INT_MAX),
 	  m_pingTimer(nullptr),
 	  m_lastRecvTime(0),
 	  m_idleTimeout(0), m_pingSent(0),
@@ -81,6 +83,27 @@ void MessageQueue::setPingInterval(int msecs)
 	m_pingTimer->start(msecs);
 }
 
+void MessageQueue::setSmoothing(bool enabled)
+{
+	if(enabled && !m_smoothTimer) {
+		m_smoothTimer = new QTimer{this};
+		m_smoothTimer->setTimerType(Qt::PreciseTimer);
+		m_smoothTimer->setSingleShot(false);
+		m_smoothTimer->setInterval(SMOOTHING_INTERVAL_MSEC);
+		connect(
+			m_smoothTimer, &QTimer::timeout, this,
+			&MessageQueue::receiveSmoothedMessages);
+	} else if(!enabled && m_smoothTimer) {
+		delete m_smoothTimer;
+		m_smoothTimer = nullptr;
+		if(!m_smoothBuffer.isEmpty()) {
+			m_inbox.append(m_smoothBuffer);
+			m_smoothBuffer.clear();
+			emit messageAvailable();
+		}
+	}
+}
+
 void MessageQueue::setArtificialLagMs(int msecs)
 {
 	m_artificialLagMs = qMax(0, msecs);
@@ -127,6 +150,41 @@ void MessageQueue::sendMultiple(int count, const drawdance::Message *msgs)
 		if(!m_artificialLagTimer->isActive()) {
 			m_artificialLagTimer->start(m_artificialLagMs);
 		}
+	}
+}
+
+void MessageQueue::receiveSmoothedMessages()
+{
+	int count = m_smoothBuffer.size();
+	bool smoothTimerActive = m_smoothTimer->isActive();
+	if(count == 0) {
+		if(smoothTimerActive) {
+			m_smoothTimer->stop();
+		}
+	} else {
+		if(m_smoothMessagesToDrain > count) {
+			m_inbox.append(m_smoothBuffer);
+			m_smoothBuffer.clear();
+		} else {
+			// We only smoothe strokes, all other messages get flushed along.
+			int drainCount = 0;
+			int drainBuffer = 0;
+			do {
+				drawdance::Message msg = m_smoothBuffer.takeFirst();
+				if(msg.shouldSmoothe()) {
+					drainCount += drainBuffer + 1;
+					drainBuffer = 0;
+				} else {
+					++drainBuffer;
+				}
+				m_inbox.append(msg);
+			} while(drainCount < m_smoothMessagesToDrain && !m_smoothBuffer.isEmpty());
+		}
+
+		if(!m_smoothBuffer.isEmpty() && !smoothTimerActive) {
+			m_smoothTimer->start();
+		}
+		emit messageAvailable();
 	}
 }
 
@@ -182,6 +240,7 @@ void MessageQueue::sendDisconnect(GracefulDisconnect reason, const QString &mess
 	send(msg);
 	m_gracefullyDisconnecting = true;
 	m_recvbytes = 0;
+	setSmoothing(false);
 }
 
 void MessageQueue::sendPing()
@@ -230,8 +289,7 @@ int MessageQueue::haveWholeMessageToRead()
 }
 
 void MessageQueue::readData() {
-	bool gotmessage = false;
-	int read, totalread=0;
+	int read, totalread = 0, gotmessages = 0;
 	do {
 		// Read as much as fits in to the message buffer
 		read = m_socket->read(m_recvbuffer+m_recvbytes, MAX_BUF_LEN-m_recvbytes);
@@ -285,8 +343,12 @@ void MessageQueue::readData() {
 					qWarning("Error deserializing message: %s", DP_error());
 					emit badData(messageLength, type, static_cast<unsigned char>(m_recvbuffer[3]));
 				} else {
-					m_inbox.append(msg);
-					gotmessage = true;
+					if(m_smoothTimer) {
+						m_smoothBuffer.append(msg);
+					} else {
+						m_inbox.append(msg);
+					}
+					++gotmessages;
 				}
 			}
 
@@ -308,8 +370,16 @@ void MessageQueue::readData() {
 		emit bytesReceived(totalread);
 	}
 
-	if(gotmessage)
-		emit messageAvailable();
+	if(gotmessages != 0) {
+		if(m_smoothTimer) {
+			m_smoothMessagesToDrain = m_smoothBuffer.size() / SMOOTHING_DRAIN_STEPS;
+			if(!m_smoothTimer->isActive()) {
+				receiveSmoothedMessages();
+			}
+		} else {
+			emit messageAvailable();
+		}
+	}
 }
 
 void MessageQueue::handlePing(bool isPong)
