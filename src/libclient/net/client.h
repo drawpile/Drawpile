@@ -166,6 +166,8 @@ public slots:
 	 */
 	void sendResetMessages(int count, const drawdance::Message *msgs);
 
+	void setSmoothDrainRate(int smoothDrainRate);
+
 signals:
 	void messagesReceived(int count, const drawdance::Message *msgs);
 	void drawingCommandsLocal(int count, const drawdance::Message *msgs);
@@ -226,6 +228,8 @@ private:
 	int m_catchupTo = 0;
 	int m_caughtUp = 0;
 	int m_catchupProgress = 0;
+
+	int m_smoothDrainRate = 0;
 };
 
 }

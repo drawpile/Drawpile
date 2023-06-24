@@ -39,7 +39,8 @@ public:
 	bool supportsPersistence() const override { return m_supportsPersistence; }
 	bool supportsAbuseReports() const override { return m_supportsAbuseReports; }
 
-	void setSmoothing(bool enabled) override { m_msgqueue->setSmoothing(enabled); }
+	void setSmoothEnabled(bool smoothEnabled) override { m_msgqueue->setSmoothEnabled(smoothEnabled); }
+	void setSmoothDrainRate(int smoothDrainRate) override { m_msgqueue->setSmoothDrainRate(smoothDrainRate); }
 
 	int artificialLagMs() const override { return m_msgqueue->artificalLagMs(); }
 	void setArtificialLagMs(int msecs) override { m_msgqueue->setArtificialLagMs(msecs); }

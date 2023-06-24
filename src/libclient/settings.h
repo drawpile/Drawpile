@@ -44,6 +44,9 @@ inline constexpr int defaultSmoothing = 3;
 
 inline constexpr int maxSmoothing = 20;
 
+inline constexpr int defaultMessageQueueDrainRate = 20;
+inline constexpr int maxMessageQueueDrainRate = 60;
+
 class Settings;
 
 struct SettingMeta final {

@@ -56,6 +56,7 @@ Document::Document(libclient::settings::Settings &settings, QObject *parent)
 {
 	// Initialize
 	m_client = new net::Client(this);
+	m_settings.bindMessageQueueDrainRate(m_client, &net::Client::setSmoothDrainRate);
 	m_toolctrl = new tools::ToolController(m_client, this);
 	m_settings.bindSmoothing(m_toolctrl, &tools::ToolController::setGlobalSmoothing);
 	m_banlist = new net::BanlistModel(this);

@@ -26,6 +26,7 @@ void Client::connectToServer(int timeoutSecs, LoginHandler *loginhandler)
 
 	TcpServer *server = new TcpServer(timeoutSecs, this);
 	m_server = server;
+	m_server->setSmoothDrainRate(m_smoothDrainRate);
 
 #ifdef Q_OS_ANDROID
 	if(!m_wakeLock) {
@@ -249,7 +250,7 @@ void Client::handleMessages(int count, const drawdance::Message *msgs)
 			qInfo("Catchup: caught up to %d messages", m_caughtUp);
 			emit catchupProgress(100);
 			m_catchupTo = 0;
-			m_server->setSmoothing(true);
+			m_server->setSmoothEnabled(true);
 		} else {
 			int progress = 100 * m_caughtUp / m_catchupTo;
 			if(progress != m_catchupProgress) {
@@ -300,7 +301,7 @@ void Client::handleServerReply(const ServerReply &reply)
 		handleResetRequest(reply);
 		break;
 	case ServerReply::ReplyType::Catchup:
-		m_server->setSmoothing(false);
+		m_server->setSmoothEnabled(false);
 		m_catchupTo = reply.reply["count"].toInt();
 		qInfo("Catching up to %d messages", m_catchupTo);
 		m_caughtUp = 0;
@@ -363,6 +364,14 @@ void Client::Client::handleUserInfo(const drawdance::Message &msg, DP_MsgData *m
 	} else {
 		qWarning("Could not parse JSON as an object: %s",
 			qUtf8Printable(err.errorString()));
+	}
+}
+
+void Client::setSmoothDrainRate(int smoothDrainRate)
+{
+	m_smoothDrainRate = smoothDrainRate;
+	if(m_server) {
+		m_server->setSmoothDrainRate(m_smoothDrainRate);
 	}
 }
 

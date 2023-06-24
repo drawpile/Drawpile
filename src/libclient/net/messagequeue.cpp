@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "libclient/net/messagequeue.h"
+#include "libclient/settings.h"
 #include "libshared/util/qtcompat.h"
 
 #include <QtEndian>
@@ -20,6 +21,8 @@ static const int MSG_TYPE_PING = 2;
 
 MessageQueue::MessageQueue(QTcpSocket *socket, QObject *parent)
 	: QObject(parent), m_socket(socket),
+	  m_smoothEnabled(false),
+	  m_smoothDrainRate(libclient::settings::defaultMessageQueueDrainRate),
 	  m_smoothTimer(nullptr),
 	  m_smoothMessagesToDrain(INT_MAX),
 	  m_pingTimer(nullptr),
@@ -83,8 +86,22 @@ void MessageQueue::setPingInterval(int msecs)
 	m_pingTimer->start(msecs);
 }
 
-void MessageQueue::setSmoothing(bool enabled)
+void MessageQueue::setSmoothEnabled(bool enabled)
 {
+	m_smoothEnabled = enabled;
+	updateSmoothing();
+}
+
+void MessageQueue::setSmoothDrainRate(int smoothDrainRate)
+{
+	m_smoothDrainRate = qBound(
+		0, smoothDrainRate, libclient::settings::maxMessageQueueDrainRate);
+	updateSmoothing();
+}
+
+void MessageQueue::updateSmoothing()
+{
+	bool enabled = m_smoothEnabled && m_smoothDrainRate > 0;
 	if(enabled && !m_smoothTimer) {
 		m_smoothTimer = new QTimer{this};
 		m_smoothTimer->setTimerType(Qt::PreciseTimer);
@@ -240,7 +257,7 @@ void MessageQueue::sendDisconnect(GracefulDisconnect reason, const QString &mess
 	send(msg);
 	m_gracefullyDisconnecting = true;
 	m_recvbytes = 0;
-	setSmoothing(false);
+	setSmoothEnabled(false);
 }
 
 void MessageQueue::sendPing()
@@ -372,7 +389,7 @@ void MessageQueue::readData() {
 
 	if(gotmessages != 0) {
 		if(m_smoothTimer) {
-			m_smoothMessagesToDrain = m_smoothBuffer.size() / SMOOTHING_DRAIN_STEPS;
+			m_smoothMessagesToDrain = m_smoothBuffer.size() / m_smoothDrainRate;
 			if(!m_smoothTimer->isActive()) {
 				receiveSmoothedMessages();
 			}

@@ -70,7 +70,8 @@ public:
 	virtual bool supportsPersistence() const = 0;
 	virtual bool supportsAbuseReports() const = 0;
 
-	virtual void setSmoothing(bool enabled) = 0;
+	virtual void setSmoothEnabled(bool smoothEnabled) = 0;
+	virtual void setSmoothDrainRate(int smoothDrainRate) = 0;
 
 	// Artificial lag for debugging.
 	virtual int artificialLagMs() const = 0;
