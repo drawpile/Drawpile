@@ -57,6 +57,7 @@ signals:
 private slots:
 	void setCurrentFrame(int frame);
 	void setCompatibilityMode(bool compatibilityMode);
+	void setLocked(bool locked);
 
 private:
 	static constexpr int DEBOUNCE_DELAY_MS = 500;
@@ -71,7 +72,9 @@ private:
 
 	bool isCompatibilityMode() const;
 
-	void updateControlsEnabled(bool access, bool compatibilityMode);
+	void
+	updateControlsEnabled(bool access, bool locked, bool compatibilityMode);
+
 	void updateFrame(int frame);
 
 	widgets::TimelineWidget *m_widget;
@@ -81,6 +84,7 @@ private:
 	DebounceTimer m_framerateDebounce;
 	DebounceTimer m_frameCountDebounce;
 	bool m_featureAccessEnabled;
+	bool m_locked;
 };
 
 }

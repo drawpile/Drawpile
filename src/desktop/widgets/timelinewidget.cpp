@@ -430,9 +430,10 @@ void TimelineWidget::setCurrentLayer(int layerId)
 	updateActions();
 }
 
-void TimelineWidget::updateControlsEnabled(bool access, bool compatibilityMode)
+void TimelineWidget::updateControlsEnabled(
+	bool access, bool locked, bool compatibilityMode)
 {
-	d->editable = access && !compatibilityMode;
+	d->editable = access && !locked && !compatibilityMode;
 	updateActions();
 	update();
 }
