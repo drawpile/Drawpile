@@ -3214,8 +3214,8 @@ void MainWindow::setupActions()
 	// Animation menu
 	//
 	QAction *showFlipbook = makeAction("showflipbook", tr("Flipbook")).statusTip(tr("Show animation preview window")).shortcut("Ctrl+F");
-	QAction *frameCountSet = makeAction("frame-count-set", tr("Change Frame Count...")).noDefaultShortcut();
-	QAction *framerateSet = makeAction("framerate-set", tr("Change Frame Rate (FPS)...")).noDefaultShortcut();
+	QAction *frameCountSet = makeAction("frame-count-set", tr("Change Frame Count...")).icon("edit-rename").noDefaultShortcut();
+	QAction *framerateSet = makeAction("framerate-set", tr("Change Frame Rate (FPS)...")).icon("edit-rename").noDefaultShortcut();
 	QAction *keyFrameSetLayer = makeAction("key-frame-set-layer", tr("Set Key Frame to Current Layer")).icon("keyframe-add").shortcut("Ctrl+Shift+F");
 	QAction *keyFrameSetEmpty = makeAction("key-frame-set-empty", tr("Set Blank Key Frame")).icon("keyframe-disable").shortcut("Ctrl+Shift+B");
 	QAction *keyFrameCut = makeAction("key-frame-cut", tr("Cut Key Frame")).icon("edit-cut").noDefaultShortcut();

@@ -82,9 +82,7 @@ private:
 	widgets::TimelineWidget *m_widget;
 	QSpinBox *m_frameSpinner;
 	QSpinBox *m_framerateSpinner;
-	QSpinBox *m_frameCountSpinner;
 	DebounceTimer m_framerateDebounce;
-	DebounceTimer m_frameCountDebounce;
 	bool m_featureAccessEnabled;
 	bool m_locked;
 };

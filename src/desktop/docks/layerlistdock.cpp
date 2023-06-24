@@ -403,7 +403,7 @@ void LayerList::addLayerOrGroup(bool group, bool keyFrame, int keyFrameOffset)
 		}
 
 		layerMsg = drawdance::Message::makeLayerTreeCreate(
-			contextId, id, 0, qBound(0, targetId, UINT16_MAX), 0, flags,
+			contextId, id, 0, qMax(0, targetId), 0, flags,
 			layers->getAvailableLayerName(group ? tr("Group") : tr("Layer")));
 	}
 

@@ -21,9 +21,7 @@ Timeline::Timeline(QWidget *parent)
 	, m_widget{new widgets::TimelineWidget{this}}
 	, m_frameSpinner{nullptr}
 	, m_framerateSpinner{nullptr}
-	, m_frameCountSpinner{nullptr}
 	, m_framerateDebounce{DEBOUNCE_DELAY_MS}
-	, m_frameCountDebounce{DEBOUNCE_DELAY_MS}
 	, m_featureAccessEnabled{true}
 {
 	m_widget->setMinimumHeight(40);
@@ -109,11 +107,8 @@ void Timeline::setFrameCount(int frameCount)
 	if(m_frameSpinner) {
 		QSignalBlocker blocker{m_frameSpinner};
 		m_frameSpinner->setRange(1, frameCount);
+		m_frameSpinner->setSuffix(QStringLiteral("/%1").arg(frameCount));
 		updateFrame(m_widget->currentFrame());
-	}
-	if(m_frameCountSpinner) {
-		QSignalBlocker blocker{m_frameCountSpinner};
-		m_frameCountSpinner->setValue(frameCount);
 	}
 }
 
@@ -163,17 +158,10 @@ void Timeline::setUpTitleWidget(
 			m_widget->setCurrentFrame(value - 1);
 		});
 
-	titlebar->addCustomWidget(new QLabel{" / ", titlebar});
-
-	m_frameCountSpinner = new QSpinBox{titlebar};
-	m_frameCountSpinner->setRange(1, 9999);
-	titlebar->addCustomWidget(m_frameCountSpinner);
-	connect(
-		m_frameCountSpinner, QOverload<int>::of(&QSpinBox::valueChanged),
-		&m_frameCountDebounce, &DebounceTimer::setInt);
-	connect(
-		&m_frameCountDebounce, &DebounceTimer::intChanged, m_widget,
-		&widgets::TimelineWidget::changeFrameCount);
+	GroupedToolButton *setFrameCountButton =
+		new GroupedToolButton{GroupedToolButton::NotGrouped, titlebar};
+	setFrameCountButton->setDefaultAction(actions.frameCountSet);
+	titlebar->addCustomWidget(setFrameCountButton);
 
 	titlebar->addStretch();
 
