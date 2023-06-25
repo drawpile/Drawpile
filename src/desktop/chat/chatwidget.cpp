@@ -712,7 +712,10 @@ void ChatWidget::sendMessage(QString chatMessage)
 			}
 
 		} else if(cmd == QStringLiteral("unpin")) {
-			if (d->currentChat != 0) {
+			if(!d->userlist || !d->userlist->isOperator(d->myId)) {
+				systemMessage(tr("/unpin: only operators are allowed to unpin."));
+				return;
+			} else if (d->currentChat != 0) {
 				systemMessage(tr("/unpin: can only unpin in a public chat."));
 				return;
 			} else {
