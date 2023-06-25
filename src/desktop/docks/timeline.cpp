@@ -78,10 +78,11 @@ void Timeline::setCanvas(canvas::CanvasModel *canvas)
 
 void Timeline::setActions(
 	const widgets::TimelineWidget::Actions &actions, QAction *layerViewNormal,
-	QAction *layerViewCurrentFrame)
+	QAction *layerViewCurrentFrame, QAction *showFlipbook)
 {
 	m_widget->setActions(actions);
-	setUpTitleWidget(actions, layerViewNormal, layerViewCurrentFrame);
+	setUpTitleWidget(
+		actions, layerViewNormal, layerViewCurrentFrame, showFlipbook);
 }
 
 int Timeline::currentTrackId() const
@@ -143,7 +144,7 @@ void Timeline::setLocked(bool locked)
 
 void Timeline::setUpTitleWidget(
 	const widgets::TimelineWidget::Actions &actions, QAction *layerViewNormal,
-	QAction *layerViewCurrentFrame)
+	QAction *layerViewCurrentFrame, QAction *showFlipbook)
 {
 	using widgets::GroupedToolButton;
 	docks::TitleWidget *titlebar =
@@ -158,10 +159,8 @@ void Timeline::setUpTitleWidget(
 			m_widget->setCurrentFrame(value - 1);
 		});
 
-	GroupedToolButton *setFrameCountButton =
-		new GroupedToolButton{GroupedToolButton::NotGrouped, titlebar};
-	setFrameCountButton->setDefaultAction(actions.frameCountSet);
-	titlebar->addCustomWidget(setFrameCountButton);
+	addTitleButton(
+		titlebar, actions.frameCountSet, GroupedToolButton::NotGrouped);
 
 	titlebar->addStretch();
 
@@ -191,6 +190,8 @@ void Timeline::setUpTitleWidget(
 		titlebar, actions.keyFrameDelete, GroupedToolButton::GroupRight);
 
 	titlebar->addStretch();
+
+	addTitleButton(titlebar, showFlipbook, GroupedToolButton::NotGrouped);
 
 	m_framerateSpinner = new QSpinBox{titlebar};
 	m_framerateSpinner->setRange(1, 999);

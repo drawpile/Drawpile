@@ -3213,7 +3213,7 @@ void MainWindow::setupActions()
 	//
 	// Animation menu
 	//
-	QAction *showFlipbook = makeAction("showflipbook", tr("Flipbook")).statusTip(tr("Show animation preview window")).shortcut("Ctrl+F");
+	QAction *showFlipbook = makeAction("showflipbook", tr("Flipbook")).icon("media-playback-start").statusTip(tr("Show animation preview window")).shortcut("Ctrl+F");
 	QAction *frameCountSet = makeAction("frame-count-set", tr("Change Frame Count...")).icon("edit-rename").noDefaultShortcut();
 	QAction *framerateSet = makeAction("framerate-set", tr("Change Frame Rate (FPS)...")).icon("edit-rename").noDefaultShortcut();
 	QAction *keyFrameSetLayer = makeAction("key-frame-set-layer", tr("Set Key Frame to Current Layer")).icon("keyframe-add").shortcut("Ctrl+Shift+F");
@@ -3287,7 +3287,7 @@ void MainWindow::setupActions()
 
 	m_currentdoctools->addAction(showFlipbook);
 	m_dockLayers->setLayerEditActions({layerAdd, groupAdd, layerDupe, layerMerge, layerProperties, layerDelete, layerSetFillSource, keyFrameSetLayer, keyFrameCreateLayer, keyFrameCreateLayerNext, keyFrameCreateLayerPrev, keyFrameCreateGroup, keyFrameCreateGroupNext, keyFrameCreateGroupPrev, layerKeyFrameGroup});
-	m_dockTimeline->setActions({keyFrameSetLayer, keyFrameSetEmpty, keyFrameCreateLayer, keyFrameCreateLayerNext, keyFrameCreateLayerPrev, keyFrameCreateGroup, keyFrameCreateGroupNext, keyFrameCreateGroupPrev, keyFrameCut, keyFrameCopy, keyFramePaste, keyFrameProperties, keyFrameDelete, trackAdd, trackVisible, trackOnionSkin, trackDuplicate, trackRetitle, trackDelete, frameCountSet, framerateSet, frameNext, framePrev, trackAbove, trackBelow, animationLayerMenu, animationGroupMenu}, layerViewNormal, layerViewCurrentFrame);
+	m_dockTimeline->setActions({keyFrameSetLayer, keyFrameSetEmpty, keyFrameCreateLayer, keyFrameCreateLayerNext, keyFrameCreateLayerPrev, keyFrameCreateGroup, keyFrameCreateGroupNext, keyFrameCreateGroupPrev, keyFrameCut, keyFrameCopy, keyFramePaste, keyFrameProperties, keyFrameDelete, trackAdd, trackVisible, trackOnionSkin, trackDuplicate, trackRetitle, trackDelete, frameCountSet, framerateSet, frameNext, framePrev, trackAbove, trackBelow, animationLayerMenu, animationGroupMenu}, layerViewNormal, layerViewCurrentFrame, showFlipbook);
 
 	connect(showFlipbook, &QAction::triggered, this, &MainWindow::showFlipbook);
 
