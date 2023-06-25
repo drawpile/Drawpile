@@ -698,7 +698,7 @@ void ChatWidget::sendMessage(QString chatMessage)
 
 		} else if(cmd == QStringLiteral("pin")) {
 			if(!d->userlist || !d->userlist->isOperator(d->myId)) {
-				systemMessage(tr("/pin: only operators are allowed to send alerts."));
+				systemMessage(tr("/pin: only operators are allowed to pin."));
 				return;
 			} else if (d->currentChat != 0) {
 				systemMessage(tr("/pin: can only pin in a public chat."));
