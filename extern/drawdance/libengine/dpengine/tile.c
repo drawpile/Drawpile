@@ -115,6 +115,21 @@ static void *alloc_tile(bool transient, bool maybe_blank,
 }
 
 
+DP_MemoryPoolStatistics DP_tile_memory_usage(void)
+{
+    if (tile_memory_pool_lock) {
+        DP_MUTEX_MUST_LOCK(tile_memory_pool_lock);
+        DP_MemoryPoolStatistics mps =
+            DP_memory_pool_statistics(&tile_memory_pool);
+        DP_MUTEX_MUST_UNLOCK(tile_memory_pool_lock);
+        return mps;
+    }
+    else {
+        return (DP_MemoryPoolStatistics){sizeof(DP_TransientTile), 0, 0, 0};
+    }
+}
+
+
 DP_Tile *DP_tile_new(unsigned int context_id)
 {
     return DP_tile_new_from_bgra(context_id, 0);

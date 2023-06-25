@@ -50,6 +50,11 @@ struct DP_LayerPoolEntry {
     DP_LayerProps *lp;
 };
 
+typedef struct DP_DrawContextStatistics {
+    size_t static_bytes;
+    size_t pool_bytes;
+} DP_DrawContextStatistics;
+
 typedef uint16_t DP_BrushStampBuffer[DP_DRAW_CONTEXT_STAMP_BUFFER_SIZE];
 typedef float DP_RrMaskBuffer[DP_DRAW_CONTEXT_STAMP_BUFFER_SIZE];
 
@@ -59,6 +64,9 @@ typedef struct DP_DrawContext DP_DrawContext;
 DP_DrawContext *DP_draw_context_new(void);
 
 void DP_draw_context_free(DP_DrawContext *dc);
+
+
+DP_DrawContextStatistics DP_draw_context_statistics(DP_DrawContext *dc);
 
 
 // All of the following operations share the same memory, their use can't be

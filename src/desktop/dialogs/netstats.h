@@ -5,16 +5,18 @@
 
 #include <QDialog>
 
+class QTimer;
 class Ui_NetStats;
 
 namespace dialogs {
 
-class NetStats final : public QDialog
-{
+class NetStats final : public QDialog {
 	Q_OBJECT
 public:
 	explicit NetStats(QWidget *parent = nullptr);
 	~NetStats() override;
+
+	void updateMemoryUsage();
 
 public slots:
 	void setSentBytes(int bytes);
@@ -22,8 +24,14 @@ public slots:
 	void setCurrentLag(int lag);
 	void setDisconnected();
 
+private slots:
+	void updateMemoryUsagePeriodic();
+
 private:
-	Ui_NetStats *_ui;
+	static QString formatDataSize(size_t bytes);
+
+	Ui_NetStats *m_ui;
+	QTimer *m_updateMemoryTimer;
 };
 
 }

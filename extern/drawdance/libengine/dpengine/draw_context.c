@@ -81,6 +81,13 @@ void DP_draw_context_free(DP_DrawContext *dc)
 }
 
 
+DP_DrawContextStatistics DP_draw_context_statistics(DP_DrawContext *dc)
+{
+    DP_ASSERT(dc);
+    return (DP_DrawContextStatistics){sizeof(dc), dc->pool_size};
+}
+
+
 uint16_t *DP_draw_context_stamp_buffer1(DP_DrawContext *dc)
 {
     DP_ASSERT(dc);

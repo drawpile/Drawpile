@@ -26,6 +26,7 @@
 
 typedef struct DP_DrawContext DP_DrawContext;
 typedef struct DP_Image DP_Image;
+typedef struct DP_MemoryPoolStatistics DP_MemoryPoolStatistics;
 
 #define DP_TILE_BYTES            (DP_TILE_LENGTH * sizeof(DP_Pixel15))
 #define DP_TILE_COMPRESSED_BYTES (DP_TILE_LENGTH * sizeof(DP_Pixel8))
@@ -78,6 +79,9 @@ DP_INLINE int DP_tile_total_round(int width, int height)
 
 
 const uint16_t *DP_tile_opaque_mask(void);
+
+
+DP_MemoryPoolStatistics DP_tile_memory_usage(void);
 
 
 DP_Tile *DP_tile_new(unsigned int context_id);

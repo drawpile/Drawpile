@@ -40,6 +40,13 @@ typedef struct DP_MemoryPool {
     DP_MemoryPoolFreeNode *free_list;
 } DP_MemoryPool;
 
+typedef struct DP_MemoryPoolStatistics {
+    size_t el_size;
+    size_t bucket_el_count;
+    size_t buckets_len;
+    size_t el_free;
+} DP_MemoryPoolStatistics;
+
 #define DP_memory_pool_new_type(TYPE, bucket_el_count) \
     DP_memory_pool_new(sizeof(TYPE), bucket_el_count)
 DP_MemoryPool DP_memory_pool_new(size_t el_size, size_t bucket_el_count);
@@ -48,5 +55,7 @@ void DP_memory_pool_free(DP_MemoryPool *pool);
 void DP_memory_pool_reset(DP_MemoryPool *pool);
 void *DP_memory_pool_alloc_el(DP_MemoryPool *pool);
 void DP_memory_pool_free_el(DP_MemoryPool *pool, void *el);
+
+DP_MemoryPoolStatistics DP_memory_pool_statistics(DP_MemoryPool *pool);
 
 #endif

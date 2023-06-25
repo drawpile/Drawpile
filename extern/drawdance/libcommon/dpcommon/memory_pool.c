@@ -112,3 +112,14 @@ void DP_memory_pool_free_el(DP_MemoryPool *pool, void *el_voidptr)
     el->next = pool->free_list;
     pool->free_list = el;
 }
+
+DP_MemoryPoolStatistics DP_memory_pool_statistics(DP_MemoryPool *pool)
+{
+    DP_ASSERT(pool);
+    size_t el_free = 0;
+    for (DP_MemoryPoolFreeNode *n = pool->free_list; n; n = n->next) {
+        ++el_free;
+    }
+    return (DP_MemoryPoolStatistics){pool->el_size, pool->bucket_el_count,
+                                     pool->buckets_len, el_free};
+}

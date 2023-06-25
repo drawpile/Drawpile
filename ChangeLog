@@ -8,6 +8,7 @@ Unreleased Version 2.2.0-pre
  * Feature: Add a flipbook button to the timeline dock.
  * Feature: Hide the indirect mode button in the brush dock instead of just disabling it, since it's hard to tell the difference otherwise.
  * Fix: Fixed a crash when resizing the canvas while an indirect stroke is in progress.
+ * Feature: Allow viewing tile and draw context memory usage in the statistics dialog.
 
 2023-06-21 Version 2.2.0-beta.5
  * Made the new default theme *actually* the default theme, don't sync it with the theme from Drawpile 2.1.

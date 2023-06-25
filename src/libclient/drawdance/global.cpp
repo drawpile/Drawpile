@@ -112,9 +112,15 @@ DrawContext DrawContextPool::acquire()
 	return instance->acquireContext();
 }
 
+DrawContextPoolStatistics DrawContextPool::statistics()
+{
+	Q_ASSERT(instance);
+	return instance->instanceStatistics();
+}
+
 DrawContextPool::~DrawContextPool()
 {
-	for(DP_DrawContext *dc : m_dcs) {
+	for(DP_DrawContext *dc : m_available) {
 		DP_draw_context_free(dc);
 	}
 }
@@ -122,7 +128,13 @@ DrawContextPool::~DrawContextPool()
 DrawContext DrawContextPool::acquireContext()
 {
 	QMutexLocker locker{&m_mutex};
-	DP_DrawContext *dc = m_dcs.isEmpty() ? DP_draw_context_new() : m_dcs.pop();
+	DP_DrawContext *dc;
+	if(m_available.isEmpty()) {
+		dc = DP_draw_context_new();
+		m_contexts.append(dc);
+	} else {
+		dc = m_available.pop();
+	}
 	return DrawContext{dc, this};
 }
 
@@ -130,12 +142,35 @@ void DrawContextPool::releaseContext(DP_DrawContext *dc)
 {
 	Q_ASSERT(dc);
 	QMutexLocker locker{&m_mutex};
-	m_dcs.push(dc);
+	m_available.push(dc);
+}
+
+DrawContextPoolStatistics DrawContextPool::instanceStatistics()
+{
+	QMutexLocker locker{&m_mutex};
+	int contextsTotal = m_contexts.size();
+	int contextsUsed = contextsTotal - m_available.size();
+
+	size_t bytesTotal = 0;
+	for(DP_DrawContext *dc : m_contexts) {
+		DP_DrawContextStatistics dcs = DP_draw_context_statistics(dc);
+		bytesTotal += dcs.static_bytes + dcs.pool_bytes;
+	}
+
+	size_t bytesAvailable = 0;
+	for(DP_DrawContext *dc : m_available) {
+		DP_DrawContextStatistics dcs = DP_draw_context_statistics(dc);
+		bytesAvailable += dcs.static_bytes + dcs.pool_bytes;
+	}
+
+	return DrawContextPoolStatistics{
+		contextsUsed, contextsTotal, bytesTotal - bytesAvailable, bytesTotal};
 }
 
 DrawContextPool::DrawContextPool()
 	: m_mutex{}
-	, m_dcs{}
+	, m_available{}
+	, m_contexts{}
 {
 }
 

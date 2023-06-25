@@ -37,6 +37,13 @@ private:
     DrawContextPool *m_pool;
 };
 
+struct DrawContextPoolStatistics {
+    int contextsUsed;
+    int contextsTotal;
+    size_t bytesUsed;
+    size_t bytesTotal;
+};
+
 class DrawContextPool final {
     friend DrawContext;
 public:
@@ -44,6 +51,8 @@ public:
     static void deinit();
 
     static DrawContext acquire();
+
+    static DrawContextPoolStatistics statistics();
 
     ~DrawContextPool();
 
@@ -58,8 +67,11 @@ private:
     DrawContext acquireContext();
     void releaseContext(DP_DrawContext *dc);
 
+    DrawContextPoolStatistics instanceStatistics();
+
     QMutex m_mutex;
-    QStack<DP_DrawContext *> m_dcs;
+    QStack<DP_DrawContext *> m_available;
+    QVector<DP_DrawContext *> m_contexts;
 };
 
 }

@@ -147,8 +147,9 @@ void NetStatus::loggedIn(const QUrl &sessionUrl)
 	m_state = LoggedIn;
 	updateLabel();
 	message(tr("Logged in!"));
-	if(_netstats)
+	if(_netstats && _netstats->isVisible()) {
 		_netstats->setCurrentLag(_lag);
+	}
 }
 
 void NetStatus::setRoomcode(const QString &roomcode)
@@ -222,8 +223,9 @@ void NetStatus::hostDisconnected()
 void NetStatus::bytesReceived(int count)
 {
 	_recvbytes += count;
-	if(_netstats)
+	if(_netstats && _netstats->isVisible()) {
 		_netstats->setRecvBytes(_recvbytes);
+	}
 }
 
 void NetStatus::setCatchupProgress(int progress)
@@ -256,15 +258,17 @@ void NetStatus::bytesSent(int count)
 {
 	_sentbytes += count;
 
-	if(_netstats)
+	if(_netstats && _netstats->isVisible()) {
 		_netstats->setSentBytes(_recvbytes);
+	}
 }
 
 void NetStatus::lagMeasured(qint64 lag)
 {
 	_lag = lag;
-	if(_netstats)
+	if(_netstats && _netstats->isVisible()) {
 		_netstats->setCurrentLag(lag);
+	}
 }
 
 /**
@@ -376,12 +380,13 @@ void NetStatus::showNetStats()
 		_netstats = new dialogs::NetStats(this);
 		_netstats->setWindowFlags(Qt::Tool);
 		_netstats->setAttribute(Qt::WA_DeleteOnClose);
-
-		_netstats->setRecvBytes(_recvbytes);
-		_netstats->setSentBytes(_sentbytes);
-		if(!m_address.isEmpty())
-			_netstats->setCurrentLag(_lag);
 	}
+	_netstats->setRecvBytes(_recvbytes);
+	_netstats->setSentBytes(_sentbytes);
+	if(!m_address.isEmpty()) {
+		_netstats->setCurrentLag(_lag);
+	}
+	_netstats->updateMemoryUsage();
 	_netstats->show();
 }
 
