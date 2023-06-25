@@ -98,7 +98,7 @@ void VersionCheckDialog::setNewVersions(const QVector<NewVersionCheck::Version> 
 	if(versions.isEmpty()) {
 		QString h1 = tr("You're up to date!").toHtmlEscaped();
 		QString p = tr("No new versions found.").toHtmlEscaped();
-		m_ui->textBrowser->setHtml(tr("<h1>%1</h1><p>%2</p>").arg(h1, p));
+		m_ui->textBrowser->setHtml(QStringLiteral("<h1>%1</h1><p>%2</p>").arg(h1, p));
 		showButtons(QDialogButtonBox::Ok);
 
 	} else {
