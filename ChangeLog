@@ -7,6 +7,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Slow down user markers only for MyPaint brushes and snappy for classic brushes as well as when a new line is started.
  * Feature: Add a flipbook button to the timeline dock.
  * Feature: Hide the indirect mode button in the brush dock instead of just disabling it, since it's hard to tell the difference otherwise.
+ * Fix: Fixed a crash when resizing the canvas while an indirect stroke is in progress.
 
 2023-06-21 Version 2.2.0-beta.5
  * Made the new default theme *actually* the default theme, don't sync it with the theme from Drawpile 2.1.

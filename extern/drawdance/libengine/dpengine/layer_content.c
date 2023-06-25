@@ -1010,9 +1010,11 @@ DP_TransientLayerContent *DP_layer_content_resize(DP_LayerContent *lc,
 
     DP_LayerList *sub_ll = lc->sub.contents;
     if (DP_layer_list_count(sub_ll) != 0) {
+        DP_layer_list_decref(tlc->sub.contents);
         tlc->sub.transient_contents =
             DP_layer_list_resize(sub_ll, context_id, top, right, bottom, left);
-        DP_layer_list_decref(sub_ll);
+        DP_layer_props_list_decref(tlc->sub.props);
+        tlc->sub.props = DP_layer_props_list_incref(lc->sub.props);
     }
 
     return tlc;
