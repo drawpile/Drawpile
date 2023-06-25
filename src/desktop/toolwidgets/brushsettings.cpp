@@ -155,6 +155,9 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	// hiding it causes some jerking normally, so we'll tell it to retain its
 	// size. The space it's taking up is supposed to be empty anyway.
 	utils::setWidgetRetainSizeWhenHidden(d->ui.blendmode, true);
+	// It's really hard to see that the indirect mode button is disabled when
+	// smudging is turned on, so we just hide it altogether and keep the space.
+	utils::setWidgetRetainSizeWhenHidden(d->ui.modeIncremental, true);
 
 	// Exponential sliders for easier picking of small values.
 	d->ui.brushsizeBox->setExponentRatio(2.0);
@@ -547,13 +550,15 @@ void BrushSettings::updateUi()
 		setSliderFromMyPaintSetting(d->ui.hardnessBox, myPaintSettings,
 			MYPAINT_BRUSH_SETTING_HARDNESS);
 		d->ui.modeIncremental->setChecked(myPaint.constBrush().incremental);
-		d->ui.modeIncremental->setEnabled(true);
+		d->ui.modeIncremental->setVisible(true);
 	} else {
 		d->ui.opacityBox->setValue(qRound(classic.opacity.max * 100.0));
 		d->ui.hardnessBox->setValue(qRound(classic.hardness.max * 100.0));
 		d->ui.modeIncremental->setChecked(classic.incremental);
 		// Smudging only works right in incremental mode
-		d->ui.modeIncremental->setEnabled(classic.smudge.max == 0.0);
+		bool canUseIncrementalMode = classic.smudge.max == 0.0;
+		d->ui.modeIncremental->setEnabled(canUseIncrementalMode);
+		d->ui.modeIncremental->setVisible(canUseIncrementalMode);
 	}
 
 	if(d->useBrushSampleCount) {
@@ -640,6 +645,7 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 				MYPAINT_BRUSH_SETTING_HARDNESS);
 			myPaint.brush().incremental = d->ui.modeIncremental->isChecked();
 			d->ui.modeIncremental->setEnabled(true);
+			d->ui.modeIncremental->setVisible(true);
 		} else {
 			classic.opacity.max = d->ui.opacityBox->value() / 100.0;
 			classic.opacity_pressure = d->ui.pressureOpacity->isChecked();
@@ -648,7 +654,10 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 				classic.hardness_pressure = d->ui.pressureHardness->isChecked();
 			}
 			classic.incremental = d->ui.modeIncremental->isChecked();
-			d->ui.modeIncremental->setEnabled(classic.smudge.max == 0.0);
+			// Smudging only works right in incremental mode
+			bool canUseIncrementalMode = classic.smudge.max == 0.0;
+			d->ui.modeIncremental->setEnabled(canUseIncrementalMode);
+			d->ui.modeIncremental->setVisible(canUseIncrementalMode);
 		}
 	}
 
