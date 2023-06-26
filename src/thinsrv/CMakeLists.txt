@@ -104,8 +104,8 @@ if(SERVERGUI)
 		gui/userlistpage.h
 	)
 
-	target_compile_definitions(${srvlib} PRIVATE HAVE_SERVERGUI)
-	target_link_libraries(${srvlib} PRIVATE
+	target_compile_definitions(${srvlib} PUBLIC HAVE_SERVERGUI)
+	target_link_libraries(${srvlib} PUBLIC
 		${QT_PACKAGE_NAME}::Gui
 		${QT_PACKAGE_NAME}::Widgets
 	)
