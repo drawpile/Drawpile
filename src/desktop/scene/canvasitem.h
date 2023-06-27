@@ -26,6 +26,8 @@ public:
 
 	void setViewportBounds(const QRectF viewportBounds);
 
+	void setPixelGrid(bool pixelGrid);
+
 private slots:
 	void refreshImage(const QRect &area);
 	void canvasResize();
@@ -40,6 +42,7 @@ private:
 	QRectF m_boundingRect;
 	QRectF m_viewportBounds;
 	QRect m_visibleArea;
+	bool m_pixelGrid;
 };
 
 }

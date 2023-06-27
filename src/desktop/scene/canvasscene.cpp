@@ -2,6 +2,7 @@
 
 #include <QApplication>
 #include <QDebug>
+#include <QGraphicsItemGroup>
 #include <QTimer>
 
 #include "desktop/scene/annotationitem.h"
@@ -32,9 +33,12 @@ CanvasScene::CanvasScene(QObject *parent)
 	, m_showLaserTrails(true)
 {
 	setItemIndexMethod(NoIndex);
+	setSceneRect(QRectF{0.0, 0.0, 1.0, 1.0});
 
-	m_canvasItem = new CanvasItem;
-	addItem(m_canvasItem);
+	m_group = new QGraphicsItemGroup;
+	addItem(m_group);
+
+	m_canvasItem = new CanvasItem{m_group};
 
 	// Timer for on-canvas animations (user pointer fadeout, laser trail
 	// flickering and such) Our animation needs are very simple, so we use this
@@ -78,8 +82,7 @@ void CanvasScene::initCanvas(canvas::CanvasModel *model)
 		m_model, &canvas::CanvasModel::selectionChanged, this,
 		&CanvasScene::onSelectionChanged);
 
-	const auto items = this->items();
-	for(QGraphicsItem *item : items) {
+	for(QGraphicsItem *item : m_group->childItems()) {
 		if(item->type() == AnnotationItem::Type ||
 		   item->type() == UserMarkerItem::Type ||
 		   item->type() == LaserTrailItem::Type) {
@@ -94,35 +97,51 @@ void CanvasScene::initCanvas(canvas::CanvasModel *model)
 	emit changed(regions);
 }
 
+QTransform CanvasScene::canvasTransform() const
+{
+	return m_group->transform();
+}
+
+void CanvasScene::setCanvasTransform(const QTransform &matrix)
+{
+	m_group->setTransform(matrix);
+}
+
+void CanvasScene::setCanvasPixelGrid(bool pixelGrid)
+{
+	m_canvasItem->setPixelGrid(pixelGrid);
+}
+
+QRectF CanvasScene::canvasBounds() const
+{
+	return m_group->transform()
+		.map(m_group->childrenBoundingRect())
+		.boundingRect();
+}
+
 void CanvasScene::showCanvas()
 {
-	if(m_canvasItem)
-		m_canvasItem->setVisible(true);
+	m_canvasItem->setVisible(true);
 }
 
 void CanvasScene::hideCanvas()
 {
-	if(m_canvasItem)
-		m_canvasItem->setVisible(false);
+	m_canvasItem->setVisible(false);
 }
 
 void CanvasScene::canvasViewportChanged(const QPolygonF &viewport)
 {
-	if(m_canvasItem) {
-		m_canvasItem->setViewportBounds(viewport.boundingRect());
-	}
+	m_canvasItem->setViewportBounds(viewport.boundingRect());
 }
 
 void CanvasScene::onSelectionChanged(canvas::Selection *selection)
 {
 	if(m_selection) {
-		removeItem(m_selection);
 		delete m_selection;
 		m_selection = nullptr;
 	}
 	if(selection) {
-		m_selection = new SelectionItem(selection);
-		addItem(m_selection);
+		m_selection = new SelectionItem(selection, m_group);
 	}
 }
 
@@ -130,9 +149,10 @@ void CanvasScene::showAnnotations(bool show)
 {
 	if(m_showAnnotations != show) {
 		m_showAnnotations = show;
-		for(QGraphicsItem *item : items()) {
-			if(item->type() == AnnotationItem::Type)
+		for(QGraphicsItem *item : m_group->childItems()) {
+			if(item->type() == AnnotationItem::Type) {
 				item->setVisible(show);
+			}
 		}
 	}
 }
@@ -141,10 +161,11 @@ void CanvasScene::showAnnotationBorders(bool showBorders)
 {
 	if(m_showAnnotationBorders != showBorders) {
 		m_showAnnotationBorders = showBorders;
-		for(QGraphicsItem *item : items()) {
-			auto *ai = qgraphicsitem_cast<AnnotationItem *>(item);
-			if(ai)
+		for(QGraphicsItem *item : m_group->childItems()) {
+			AnnotationItem *ai = qgraphicsitem_cast<AnnotationItem *>(item);
+			if(ai) {
 				ai->setShowBorder(showBorders);
+			}
 		}
 	}
 }
@@ -152,37 +173,34 @@ void CanvasScene::showAnnotationBorders(bool showBorders)
 void CanvasScene::handleCanvasResize(
 	int xoffset, int yoffset, const QSize &oldsize)
 {
-	if(!m_canvasItem)
-		return;
-	QRectF bounds = m_canvasItem->boundingRect();
-
-	setSceneRect(bounds.adjusted(-MARGIN, -MARGIN, MARGIN, MARGIN));
 	emit canvasResized(xoffset, yoffset, oldsize);
 }
 
 AnnotationItem *CanvasScene::getAnnotationItem(int id)
 {
-	for(QGraphicsItem *i : items()) {
+	for(QGraphicsItem *i : m_group->childItems()) {
 		AnnotationItem *item = qgraphicsitem_cast<AnnotationItem *>(i);
-		if(item && item->id() == id)
+		if(item && item->id() == id) {
 			return item;
+		}
 	}
 	return nullptr;
 }
 
 void CanvasScene::setActiveAnnotation(int id)
 {
-	for(QGraphicsItem *i : items()) {
+	for(QGraphicsItem *i : m_group->childItems()) {
 		AnnotationItem *item = qgraphicsitem_cast<AnnotationItem *>(i);
-		if(item)
+		if(item) {
 			item->setHighlight(item->id() == id);
+		}
 	}
 }
 
 void CanvasScene::annotationsChanged(const drawdance::AnnotationList &al)
 {
 	QHash<int, AnnotationItem *> annotationItems;
-	for(QGraphicsItem *item : items()) {
+	for(QGraphicsItem *item : m_group->childItems()) {
 		AnnotationItem *ai = qgraphicsitem_cast<AnnotationItem *>(item);
 		if(ai) {
 			annotationItems.insert(ai->id(), ai);
@@ -196,10 +214,9 @@ void CanvasScene::annotationsChanged(const drawdance::AnnotationList &al)
 		QHash<int, AnnotationItem *>::iterator it = annotationItems.find(id);
 		AnnotationItem *ai;
 		if(it == annotationItems.end()) {
-			ai = new AnnotationItem(id);
+			ai = new AnnotationItem(id, m_group);
 			ai->setShowBorder(showAnnotationBorders());
 			ai->setVisible(m_showAnnotations);
-			addItem(ai);
 		} else {
 			ai = it.value();
 			annotationItems.erase(it);
@@ -219,12 +236,11 @@ void CanvasScene::annotationsChanged(const drawdance::AnnotationList &al)
 
 void CanvasScene::previewAnnotation(int id, const QRect &shape)
 {
-	auto ai = getAnnotationItem(id);
+	AnnotationItem *ai = getAnnotationItem(id);
 	if(!ai) {
-		ai = new AnnotationItem(id);
+		ai = new AnnotationItem(id, m_group);
 		ai->setShowBorder(showAnnotationBorders());
 		ai->setVisible(m_showAnnotations);
-		addItem(ai);
 	}
 
 	ai->setGeometry(shape);
@@ -240,12 +256,12 @@ void CanvasScene::advanceAnimations()
 {
 	const qreal STEP = 0.02; // time delta in seconds
 
-	const auto items = this->items();
-	for(QGraphicsItem *item : items) {
+	for(QGraphicsItem *item : m_group->childItems()) {
 		if(LaserTrailItem *lt = qgraphicsitem_cast<LaserTrailItem *>(item)) {
-			if(lt->animationStep(STEP) == false) {
-				if(m_activeLaserTrail.value(lt->owner()) == lt)
+			if(!lt->animationStep(STEP)) {
+				if(m_activeLaserTrail.value(lt->owner()) == lt) {
 					m_activeLaserTrail.remove(lt->owner());
+				}
 				delete item;
 			}
 
@@ -255,8 +271,9 @@ void CanvasScene::advanceAnimations()
 		}
 	}
 
-	if(m_selection)
+	if(m_selection) {
 		m_selection->marchingAnts(STEP);
+	}
 }
 
 void CanvasScene::laserTrail(
@@ -265,9 +282,9 @@ void CanvasScene::laserTrail(
 	if(persistence == 0) {
 		m_activeLaserTrail.remove(userId);
 	} else if(m_showLaserTrails) {
-		LaserTrailItem *item = new LaserTrailItem(userId, persistence, color);
+		LaserTrailItem *item =
+			new LaserTrailItem(userId, persistence, color, m_group);
 		m_activeLaserTrail[userId] = item;
-		addItem(item);
 	}
 }
 
@@ -282,20 +299,22 @@ void CanvasScene::userCursorMoved(
 		laser->addPoint(QPointF(x, y));
 	}
 
-	if(!m_showUserMarkers)
+	if(!m_showUserMarkers) {
 		return;
+	}
 
 	// TODO in some cases (playback, laser pointer) we want to show our cursor
 	// as well.
-	if(userId == m_model->localUserId())
+	if(userId == m_model->localUserId()) {
 		return;
+	}
 
 	UserMarkerItem *item = m_usermarkers[userId];
 	bool penUp = flags & DP_USER_CURSOR_FLAG_PEN_UP;
 	bool penDown = flags & DP_USER_CURSOR_FLAG_PEN_DOWN;
 	if(!item && valid) {
 		const auto user = m_model->userlist()->getUserById(userId);
-		item = new UserMarkerItem(userId);
+		item = new UserMarkerItem(userId, m_group);
 		item->setText(
 			user.name.isEmpty() ? QStringLiteral("#%1").arg(int(userId))
 								: user.name);
@@ -304,7 +323,6 @@ void CanvasScene::userCursorMoved(
 		item->setAvatar(user.avatar);
 		item->setShowAvatar(m_showUserAvatars);
 		item->setTargetPos(x, y, true);
-		addItem(item);
 		m_usermarkers[userId] = item;
 	}
 
@@ -345,8 +363,9 @@ void CanvasScene::showUserNames(bool show)
 {
 	if(m_showUserNames != show) {
 		m_showUserNames = show;
-		for(UserMarkerItem *item : qAsConst(m_usermarkers))
+		for(UserMarkerItem *item : qAsConst(m_usermarkers)) {
 			item->setShowText(show);
+		}
 	}
 }
 
@@ -354,8 +373,9 @@ void CanvasScene::showUserLayers(bool show)
 {
 	if(m_showUserLayers != show) {
 		m_showUserLayers = show;
-		for(UserMarkerItem *item : qAsConst(m_usermarkers))
+		for(UserMarkerItem *item : qAsConst(m_usermarkers)) {
 			item->setShowSubtext(show);
+		}
 	}
 }
 
@@ -363,8 +383,9 @@ void CanvasScene::showUserAvatars(bool show)
 {
 	if(m_showUserAvatars != show) {
 		m_showUserAvatars = show;
-		for(UserMarkerItem *item : qAsConst(m_usermarkers))
+		for(UserMarkerItem *item : qAsConst(m_usermarkers)) {
 			item->setShowAvatar(show);
+		}
 	}
 }
 
@@ -373,10 +394,10 @@ void CanvasScene::showLaserTrails(bool show)
 	m_showLaserTrails = show;
 	if(!show) {
 		m_activeLaserTrail.clear();
-		const auto items = this->items();
-		for(auto i : items) {
-			if(i->type() == LaserTrailItem::Type)
-				delete i;
+		for(QGraphicsItem *item : m_group->childItems()) {
+			if(item->type() == LaserTrailItem::Type) {
+				delete item;
+			}
 		}
 	}
 }

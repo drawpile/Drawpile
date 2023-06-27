@@ -34,6 +34,13 @@ public:
 		Q_ASSERT(p>=0 && p<=1);
 	}
 
+	//! Set X and Y position
+	void setPos(const QPointF &point)
+	{
+		setX(point.x());
+		setY(point.y());
+	}
+
 	//! Get the time at which this point was put on the canvas
 	long long timeMsec() const { return m_timeMsec; }
 

@@ -2,7 +2,9 @@
 
 #include "desktop/widgets/viewstatus.h"
 #include "desktop/widgets/groupedtoolbutton.h"
+#include "desktop/widgets/kis_slider_spin_box.h"
 #include "desktop/widgets/KisAngleGauge.h"
+#include "libclient/settings.h"
 #include "libshared/util/qtcompat.h"
 
 #include <QComboBox>
@@ -12,6 +14,12 @@
 #include <QRegularExpressionValidator>
 #include <QHBoxLayout>
 #include <QEvent>
+#include <QMenu>
+
+using libclient::settings::zoomMax;
+using libclient::settings::zoomMin;
+using libclient::settings::zoomSoftMax;
+using libclient::settings::zoomSoftMin;
 
 namespace widgets {
 
@@ -86,50 +94,39 @@ ViewStatus::ViewStatus(QWidget *parent)
 	layout->addSpacing(4);
 	layout->addWidget(m_angleBox);
 
-	// Zoom reset button
-	m_zoomReset = new widgets::GroupedToolButton(this);
-	m_zoomReset->setAutoRaise(true);
-
-	layout->addSpacing(10);
-	layout->addWidget(m_zoomReset);
-
 	// Zoom slider
-	m_zoomSlider = new QSlider(Qt::Horizontal, this);
+	m_zoomSlider = new KisDoubleSliderSpinBox{this};
 	m_zoomSlider->setMinimumWidth(24);
 	m_zoomSlider->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum));
-	m_zoomSlider->setMinimum(50);
-	m_zoomSlider->setMaximum(1000);
-	m_zoomSlider->setPageStep(50);
-	m_zoomSlider->setValue(100);
-	connect(m_zoomSlider, &QSlider::valueChanged, this, &ViewStatus::zoomSliderChanged);
+	m_zoomSlider->setMinimum(zoomMin * 100.0);
+	m_zoomSlider->setMaximum(zoomMax * 100.0);
+	m_zoomSlider->setExponentRatio(4.0);
+	m_zoomSlider->setValue(100.0);
+	m_zoomSlider->setSuffix("%");
+	connect(m_zoomSlider, QOverload<double>::of(&KisDoubleSliderSpinBox::valueChanged), this, &ViewStatus::zoomSliderChanged);
 
-	// Zoom box
-	m_zoomBox = new QComboBox(this);
-	m_zoomBox->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
-	m_zoomBox->setFixedWidth(m_zoomBox->fontMetrics().boundingRect("9999.9%----").width());
-	m_zoomBox->setFrame(false);
-	m_zoomBox->setEditable(true);
+	// Zoom preset button
+	m_zoomPreset = new widgets::GroupedToolButton(this);
+	m_zoomPreset->setIcon(QIcon::fromTheme("zoom-fit-none"));
+	m_zoomPreset->setText(tr("Zoom"));
+	m_zoomPreset->setAutoRaise(true);
+	m_zoomPreset->setPopupMode(QToolButton::InstantPopup);
 
-	m_zoomBox->addItems({
-		QStringLiteral("1600%"),
-		QStringLiteral("800%"),
-		QStringLiteral("400%"),
-		QStringLiteral("200%"),
-		QStringLiteral("100%"),
-		QStringLiteral("50%"),
-	});
-	m_zoomBox->setEditText(QStringLiteral("100%"));
+	m_zoomsMenu = new QMenu{m_zoomPreset};
+	m_zoomPreset->setMenu(m_zoomsMenu);
+	for(qreal zoomLevel : libclient::settings::zoomLevels()) {
+		if(zoomLevel >= zoomSoftMin && zoomLevel <= zoomSoftMax) {
+			QAction *zoomAction = m_zoomsMenu->addAction(
+				QStringLiteral("%1%").arg(zoomLevel * 100.0, 0, 'f', 2));
+			connect(zoomAction, &QAction::triggered, this, [=] {
+				emit zoomChanged(zoomLevel);
+			});
+		}
+	}
 
-	m_zoomBox->lineEdit()->setValidator(
-		new QRegularExpressionValidator(
-			QRegularExpression("[0-9]{0,4}%?"),
-			this
-		)
-	);
-	connect(m_zoomBox, &QComboBox::editTextChanged, this, &ViewStatus::zoomBoxChanged);
-
+	layout->addSpacing(10);
 	layout->addWidget(m_zoomSlider);
-	layout->addWidget(m_zoomBox);
+	layout->addWidget(m_zoomPreset);
 
 	updatePalette();
 }
@@ -140,26 +137,25 @@ void ViewStatus::updatePalette()
 	auto boxPalette = palette();
 	boxPalette.setColor(QPalette::Base, boxPalette.color(QPalette::Window));
 	m_angleBox->setPalette(boxPalette);
-	m_zoomBox->setPalette(boxPalette);
 #endif
 }
 
-void ViewStatus::setActions(QAction *flip, QAction *mirror, QAction *rotationReset, QAction *zoomReset)
+void ViewStatus::setActions(
+	QAction *flip, QAction *mirror, QAction *rotationReset,
+	const QVector<QAction *> &zoomActions)
 {
 	m_viewFlip->setDefaultAction(flip);
 	m_viewMirror->setDefaultAction(mirror);
 	m_rotationReset->setDefaultAction(rotationReset);
-	m_zoomReset->setDefaultAction(zoomReset);
+	m_zoomsMenu->addSeparator();
+	for(QAction *zoomAction : zoomActions) {
+		m_zoomsMenu->addAction(zoomAction);
+	}
 }
 
 void ViewStatus::setTransformation(qreal zoom, qreal angle)
 {
 	m_updating = true;
-	const int intZoom = qRound(zoom);
-	const int zoomCursorPos = m_zoomBox->lineEdit()->cursorPosition();
-	m_zoomBox->setEditText(QString::number(intZoom) + QChar('%'));
-	m_zoomBox->lineEdit()->setCursorPosition(zoomCursorPos);
-
 	m_compass->setAngle(angle);
 
 	const int intAngle = qRound(angle);
@@ -167,36 +163,18 @@ void ViewStatus::setTransformation(qreal zoom, qreal angle)
 	m_angleBox->setEditText(QString::number(intAngle) + QChar(0x00b0));
 	m_angleBox->lineEdit()->setCursorPosition(angleCursorPos);
 
-	if(intZoom != m_zoomSlider->value()) {
-		m_zoomSlider->setValue(intZoom);
+	const double percentZoom = zoom * 100.0;
+	if(percentZoom != m_zoomSlider->value()) {
+		m_zoomSlider->setValue(percentZoom);
 	}
 	m_updating = false;
 }
 
-void ViewStatus::setMinimumZoom(int zoom)
+void ViewStatus::zoomSliderChanged(double value)
 {
-	m_zoomSlider->setMinimum(qMax(1, zoom));
-}
-
-void ViewStatus::zoomBoxChanged(const QString &text)
-{
-	if(m_updating)
-		return;
-
-	const int suffix = text.indexOf(QChar('%'));
-	const auto num = suffix>0 ? compat::StringView{text}.left(suffix) : compat::StringView{text};
-
-	bool ok;
-	const int number = num.toInt(&ok);
-	if(ok && number>= 1 && number < 10000)
-		emit zoomChanged(number);
-}
-
-void ViewStatus::zoomSliderChanged(int value)
-{
-	if(m_updating)
-		return;
-	emit zoomChanged(value);
+	if(!m_updating) {
+		emit zoomChanged(value / 100.0);
+	}
 }
 
 void ViewStatus::angleBoxChanged(const QString &text)

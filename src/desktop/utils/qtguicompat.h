@@ -128,6 +128,10 @@ inline auto mousePos(const QMouseEvent &event) {
 	return event.position().toPoint();
 }
 
+inline auto mousePosition(const QMouseEvent &event) {
+	return event.position();
+}
+
 inline auto styleName(const QStyle &style) {
 	return style.name();
 }
@@ -195,6 +199,10 @@ inline auto globalPos(const QMouseEvent &event) {
 
 inline auto mousePos(const QMouseEvent &event) {
 	return event.pos();
+}
+
+inline auto mousePosition(const QMouseEvent &event) {
+	return ::QPointF(event.pos());
 }
 
 inline auto tabPosF(const QTabletEvent &event) {

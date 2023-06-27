@@ -5,8 +5,9 @@
 
 #include <QWidget>
 
+class KisDoubleSliderSpinBox;
 class QComboBox;
-class QSlider;
+class QMenu;
 
 namespace widgets {
 
@@ -19,11 +20,12 @@ class ViewStatus final : public QWidget
 public:
 	ViewStatus(QWidget *parent=nullptr);
 
-	void setActions(QAction *flip, QAction *mirror, QAction *rotationReset, QAction *zoomReset);
+	void setActions(
+		QAction *flip, QAction *mirror, QAction *rotationReset,
+		const QVector<QAction *> &zoomActions);
 
 public slots:
 	void setTransformation(qreal zoom, qreal angle);
-	void setMinimumZoom(int zoom);
 
 signals:
 	void zoomChanged(qreal newZoom);
@@ -33,19 +35,18 @@ protected:
 	void changeEvent(QEvent *event) override;
 
 private slots:
-	void zoomBoxChanged(const QString &text);
-	void zoomSliderChanged(int value);
+	void zoomSliderChanged(double value);
 	void angleBoxChanged(const QString &text);
 
 private:
 	void updatePalette();
 
-	QSlider *m_zoomSlider;
-	QComboBox *m_zoomBox;
+	KisDoubleSliderSpinBox *m_zoomSlider;
 	KisAngleGauge *m_compass;
 	QComboBox *m_angleBox;
 	bool m_updating;
-	widgets::GroupedToolButton *m_viewFlip, *m_viewMirror, *m_rotationReset, *m_zoomReset;
+	widgets::GroupedToolButton *m_viewFlip, *m_viewMirror, *m_rotationReset, *m_zoomPreset;
+	QMenu *m_zoomsMenu;
 };
 
 }

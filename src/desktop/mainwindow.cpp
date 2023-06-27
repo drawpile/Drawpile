@@ -289,7 +289,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_dockToolSettings->laserPointerSettings(), &tools::LaserPointerSettings::pointerTrackingToggled,
 		m_view, &widgets::CanvasView::setPointerTracking);
 	connect(m_dockToolSettings->zoomSettings(), &tools::ZoomSettings::resetZoom,
-		this, [this]() { m_view->setZoom(100.0); });
+		this, [this]() { m_view->setZoom(1.0); });
 	connect(m_dockToolSettings->zoomSettings(), &tools::ZoomSettings::fitToWindow,
 		m_view, &widgets::CanvasView::zoomToFit);
 
@@ -306,12 +306,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_view, &widgets::CanvasView::urlDropped, this, &MainWindow::dropUrl);
 	connect(m_view, &widgets::CanvasView::viewTransformed, m_viewstatus, &widgets::ViewStatus::setTransformation);
 	connect(m_view, &widgets::CanvasView::viewTransformed, m_dockNavigator, &docks::Navigator::setViewTransformation);
-
-	connect(m_view, &widgets::CanvasView::viewRectChange, m_viewstatus, [this]() {
-		const int min = qMin(int(m_view->fitToWindowScale() * 100), 100);
-		m_viewstatus->setMinimumZoom(min);
-		m_dockNavigator->setMinimumZoom(min);
-	});
 
 	connect(m_viewstatus, &widgets::ViewStatus::zoomChanged, m_view, &widgets::CanvasView::setZoom);
 	connect(m_viewstatus, &widgets::ViewStatus::angleChanged, m_view, &widgets::CanvasView::setRotation);
@@ -3039,6 +3033,9 @@ void MainWindow::setupActions()
 	QAction *zoomin = makeAction("zoomin", tr("Zoom &In")).icon("zoom-in").shortcut(QKeySequence::ZoomIn);
 	QAction *zoomout = makeAction("zoomout", tr("Zoom &Out")).icon("zoom-out").shortcut(QKeySequence::ZoomOut);
 	QAction *zoomorig = makeAction("zoomone", tr("&Normal Size")).icon("zoom-original").shortcut(QKeySequence("ctrl+0"));
+	QAction *zoomfit = makeAction("zoomfit", tr("&Fit Page")).icon("zoom-select").noDefaultShortcut();
+	QAction *zoomfitwidth = makeAction("zoomfitwidth", tr("Fit Page &Width")).icon("zoom-fit-width").noDefaultShortcut();
+	QAction *zoomfitheight = makeAction("zoomfitheight", tr("Fit Page &Height")).icon("zoom-fit-height").noDefaultShortcut();
 	QAction *rotateorig = makeAction("rotatezero", tr("&Reset Rotation")).icon("transform-rotate").shortcut(QKeySequence("ctrl+r"));
 	QAction *rotatecw = makeAction("rotatecw", tr("Rotate Canvas Clockwise")).shortcut(QKeySequence("shift+.")).icon("object-rotate-right");
 	QAction *rotateccw = makeAction("rotateccw", tr("Rotate Canvas Counterclockwise")).shortcut(QKeySequence("shift+,")).icon("object-rotate-left");
@@ -3098,7 +3095,10 @@ void MainWindow::setupActions()
 
 	connect(zoomin, &QAction::triggered, m_view, &widgets::CanvasView::zoomin);
 	connect(zoomout, &QAction::triggered, m_view, &widgets::CanvasView::zoomout);
-	connect(zoomorig, &QAction::triggered, this, [this]() { m_view->setZoom(100.0); });
+	connect(zoomorig, &QAction::triggered, this, [this]() { m_view->setZoom(1.0); });
+	connect(zoomfit, &QAction::triggered, m_view, &widgets::CanvasView::zoomToFit);
+	connect(zoomfitwidth, &QAction::triggered, m_view, &widgets::CanvasView::zoomToFitWidth);
+	connect(zoomfitheight, &QAction::triggered, m_view, &widgets::CanvasView::zoomToFitHeight);
 	connect(rotateorig, &QAction::triggered, this, [this]() { m_view->setRotation(0); });
 	connect(rotatecw, &QAction::triggered, this, [this]() { m_view->setRotation(m_view->rotation() + 5); });
 	connect(rotateccw, &QAction::triggered, this, [this]() { m_view->setRotation(m_view->rotation() - 5); });
@@ -3117,7 +3117,7 @@ void MainWindow::setupActions()
 	connect(showlasers, &QAction::toggled, this, &MainWindow::setShowLaserTrails);
 	connect(showgrid, &QAction::toggled, m_view, &widgets::CanvasView::setPixelGrid);
 
-	m_viewstatus->setActions(viewflip, viewmirror, rotateorig, zoomorig);
+	m_viewstatus->setActions(viewflip, viewmirror, rotateorig, {zoomorig, zoomfit, zoomfitwidth, zoomfitheight});
 
 	QMenu *viewmenu = menuBar()->addMenu(tr("&View"));
 	viewmenu->addAction(layoutsAction);
@@ -3130,6 +3130,9 @@ void MainWindow::setupActions()
 	zoommenu->addAction(zoomin);
 	zoommenu->addAction(zoomout);
 	zoommenu->addAction(zoomorig);
+	zoommenu->addAction(zoomfit);
+	zoommenu->addAction(zoomfitwidth);
+	zoommenu->addAction(zoomfitheight);
 
 	QMenu *rotatemenu = viewmenu->addMenu(tr("Rotation"));
 	rotatemenu->addAction(rotateorig);

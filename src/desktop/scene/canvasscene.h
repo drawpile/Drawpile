@@ -4,6 +4,7 @@
 #define CANVAS_SCENE_H
 
 #include <QGraphicsScene>
+#include <QHash>
 
 namespace canvas {
 class CanvasModel;
@@ -37,6 +38,13 @@ public:
 
 	//! Clear the canvas and assign a new model to it
 	void initCanvas(canvas::CanvasModel *model);
+
+	QTransform canvasTransform() const;
+	void setCanvasTransform(const QTransform &matrix);
+
+	void setCanvasPixelGrid(bool pixelGrid);
+
+	QRectF canvasBounds() const;
 
 	//! Is there an image on the drawing board
 	bool hasImage() const { return m_model != nullptr; }
@@ -106,6 +114,9 @@ private slots:
 private:
 	//! The actual canvas model
 	canvas::CanvasModel *m_model;
+
+	//! View wrapper for relative positioning
+	QGraphicsItemGroup *m_group;
 
 	//! The item that shows the canvas pixel content
 	CanvasItem *m_canvasItem;

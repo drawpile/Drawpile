@@ -2,9 +2,12 @@
 
 #include "desktop/docks/navigator.h"
 #include "desktop/main.h"
+#include "desktop/widgets/groupedtoolbutton.h"
+#include "desktop/widgets/kis_slider_spin_box.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/canvas/userlist.h"
+#include "libclient/settings.h"
 #include "desktop/docks/titlewidget.h"
 
 #include <QIcon>
@@ -14,9 +17,13 @@
 #include <QPainterPath>
 #include <QAction>
 #include <QDateTime>
-#include <QSlider>
-#include <QToolButton>
 #include <QBoxLayout>
+#include <QMenu>
+
+using libclient::settings::zoomMax;
+using libclient::settings::zoomMin;
+using libclient::settings::zoomSoftMax;
+using libclient::settings::zoomSoftMin;
 
 namespace docks {
 
@@ -102,26 +109,9 @@ void NavigatorView::resizeEvent(QResizeEvent *event)
  */
 void NavigatorView::mousePressEvent(QMouseEvent *event)
 {
-	if(event->button() == Qt::RightButton)
-		return;
-
-	if(m_cache.isNull())
-		return;
-
-	const QPoint p = event->pos();
-
-	const QSize s = m_cache.size().scaled(size(), Qt::KeepAspectRatio);
-	const QSize canvasSize = m_model->size();
-
-	const qreal xscale = s.width() / qreal(canvasSize.width());
-	const qreal yscale = s.height() / qreal(canvasSize.height());
-
-	const QPoint offset { width()/2 - s.width()/2, height()/2 - s.height()/2 };
-
-	emit focusMoved(QPoint(
-		(p.x() - offset.x()) / xscale,
-		(p.y() - offset.y()) / yscale
-	));
+	if(event->button() != Qt::RightButton && !m_cache.isNull()) {
+		emit focusMoved(getFocusPoint(compat::mousePosition(*event)));
+	}
 }
 
 /**
@@ -139,8 +129,8 @@ void NavigatorView::wheelEvent(QWheelEvent *event)
 	const int steps = m_zoomWheelDelta / 120;
 	m_zoomWheelDelta -= steps * 120;
 
-	if(steps != 0) {
-		emit wheelZoom(steps);
+	if(steps != 0 && !m_cache.isNull()) {
+		emit wheelZoom(steps, getFocusPoint(compat::wheelPosition(*event)));
 	}
 }
 
@@ -301,6 +291,19 @@ void NavigatorView::onCursorMove(unsigned int flags, uint8_t userId, uint16_t la
 	};
 }
 
+QPointF NavigatorView::getFocusPoint(const QPointF &eventPoint)
+{
+	QSize s = m_cache.size().scaled(size(), Qt::KeepAspectRatio);
+	QSize canvasSize = m_model->size();
+	qreal xscale = s.width() / qreal(canvasSize.width());
+	qreal yscale = s.height() / qreal(canvasSize.height());
+	QPoint offset { width()/2 - s.width()/2, height()/2 - s.height()/2 };
+	return QPointF{
+		(eventPoint.x() - offset.x()) / xscale,
+		(eventPoint.y() - offset.y()) / yscale
+	};
+}
+
 /**
  * Construct the navigator dock widget.
  */
@@ -315,22 +318,24 @@ Navigator::Navigator(QWidget *parent)
 	m_view = new NavigatorView(this);
 	setWidget(m_view);
 
-	m_resetZoomButton = new QToolButton;
+	m_resetZoomButton = new widgets::GroupedToolButton{widgets::GroupedToolButton::NotGrouped};
 	m_resetZoomButton->setIcon(QIcon::fromTheme("zoom-original"));
 	titlebar->addCustomWidget(m_resetZoomButton);
 
-	m_zoomSlider = new QSlider;
-	m_zoomSlider->setMinimum(50);
-	m_zoomSlider->setMaximum(1600);
-	m_zoomSlider->setPageStep(50);
-	m_zoomSlider->setValue(100);
-	m_zoomSlider->setOrientation(Qt::Horizontal);
+	m_zoomSlider = new KisDoubleSliderSpinBox{this};
+	m_zoomSlider->setMinimumWidth(0);
+	m_zoomSlider->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum));
+	m_zoomSlider->setMinimum(zoomMin * 100.0);
+	m_zoomSlider->setMaximum(zoomMax * 100.0);
+	m_zoomSlider->setExponentRatio(4.0);
+	m_zoomSlider->setValue(100.0);
+	m_zoomSlider->setSuffix("%");
 	titlebar->addCustomWidget(m_zoomSlider, true);
 
 	connect(m_view, &NavigatorView::focusMoved, this, &Navigator::focusMoved);
 	connect(m_view, &NavigatorView::wheelZoom, this, &Navigator::wheelZoom);
-	connect(m_resetZoomButton, &QToolButton::clicked, this, [this]() { emit zoomChanged(100.0); });
-	connect(m_zoomSlider, &QSlider::valueChanged, this, &Navigator::updateZoom);
+	connect(m_resetZoomButton, &widgets::GroupedToolButton::clicked, this, [this] { emit zoomChanged(1.0); });
+	connect(m_zoomSlider, QOverload<double>::of(&KisDoubleSliderSpinBox::valueChanged), this, &Navigator::updateZoom);
 
 	QAction *showCursorsAction = new QAction(tr("Show Cursors"), m_view);
 	showCursorsAction->setCheckable(true);
@@ -364,24 +369,18 @@ void Navigator::setViewFocus(const QPolygonF& rect)
 	m_view->setViewFocus(rect);
 }
 
-void Navigator::updateZoom(int value)
+void Navigator::updateZoom(double value)
 {
-	if(!m_updating)
-		emit zoomChanged(value);
+	if(!m_updating) {
+		emit zoomChanged(value / 100.0);
+	}
 }
 
 void Navigator::setViewTransformation(qreal zoom, qreal angle)
 {
 	Q_UNUSED(angle)
 	m_updating = true;
-	m_zoomSlider->setValue(int(zoom));
-	m_updating = false;
-}
-
-void Navigator::setMinimumZoom(int zoom)
-{
-	m_updating = true;
-	m_zoomSlider->setMinimum(qMax(1, zoom));
+	m_zoomSlider->setValue(zoom * 100.0);
 	m_updating = false;
 }
 

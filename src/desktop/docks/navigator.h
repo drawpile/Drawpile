@@ -5,11 +5,15 @@
 
 #include "desktop/docks/dockbase.h"
 
-class QSlider;
-class QToolButton;
+class KisDoubleSliderSpinBox;
+class QMenu;
 
 namespace canvas {
-	class CanvasModel;
+class CanvasModel;
+}
+
+namespace widgets{
+class GroupedToolButton;
 }
 
 namespace docks {
@@ -28,8 +32,8 @@ public slots:
 	void setRealtimeUpdate(bool realtime);
 
 signals:
-	void focusMoved(const QPoint& to);
-	void wheelZoom(int steps);
+	void focusMoved(const QPointF& to);
+	void wheelZoom(int steps, const QPointF &point);
 
 protected:
 	void paintEvent(QPaintEvent *event) override;
@@ -51,6 +55,8 @@ private:
 		qint64 lastMoved;
 		int id;
 	};
+
+	QPointF getFocusPoint(const QPointF &eventPoint);
 
 	canvas::CanvasModel *m_model;
 	QVector<UserCursor> m_cursors;
@@ -82,19 +88,17 @@ public slots:
 	//! Set the current angle and zoom
 	void setViewTransformation(qreal zoom, qreal angle);
 
-	void setMinimumZoom(int zoom);
-
 private slots:
-	void updateZoom(int value);
+	void updateZoom(double value);
 
 signals:
-	void focusMoved(const QPoint& to);
-	void wheelZoom(int steps);
+	void focusMoved(const QPointF& to);
+	void wheelZoom(int steps, const QPointF &point);
 	void zoomChanged(qreal newZoom);
 
 private:
-	QSlider *m_zoomSlider;
-	QToolButton *m_resetZoomButton;
+	KisDoubleSliderSpinBox *m_zoomSlider;
+	widgets::GroupedToolButton *m_resetZoomButton;
 	NavigatorView *m_view;
 	bool m_updating;
 };

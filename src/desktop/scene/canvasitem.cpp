@@ -18,6 +18,7 @@ CanvasItem::CanvasItem(QGraphicsItem *parent)
 	, m_image{nullptr}
 	, m_boundingRect{}
 	, m_viewportBounds{}
+	, m_pixelGrid{false}
 {
 	setFlag(ItemUsesExtendedStyleOption);
 }
@@ -60,18 +61,37 @@ void CanvasItem::setViewportBounds(const QRectF viewportBounds)
 	}
 }
 
+void CanvasItem::setPixelGrid(bool pixelGrid)
+{
+	if(pixelGrid != m_pixelGrid) {
+		m_pixelGrid = pixelGrid;
+		update(m_visibleArea);
+	}
+}
+
 void CanvasItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
 	 QWidget *)
 {
 	if(m_image) {
 		QRect exposed = option->exposedRect.toAlignedRect();
 		painter->drawPixmap(exposed, m_image->getPixmapView(m_visibleArea), exposed);
+		if(m_pixelGrid) {
+			QPen pen(QColor(160, 160, 160));
+			pen.setCosmetic(true);
+			painter->setPen(pen);
+			for(int x = exposed.left(); x <= exposed.right(); ++x) {
+				painter->drawLine(x, exposed.top(), x, exposed.bottom() + 1);
+			}
+			for(int y = exposed.top(); y <= exposed.bottom(); ++y) {
+				painter->drawLine(exposed.left(), y, exposed.right() + 1, y);
+			}
+		}
 	}
 }
 
 void CanvasItem::updateVisibleArea()
 {
-	m_visibleArea = mapRectFromScene(m_viewportBounds).intersected(m_boundingRect).toAlignedRect();
+	m_visibleArea = m_viewportBounds.intersected(m_boundingRect).toAlignedRect();
 }
 
 }

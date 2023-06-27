@@ -47,6 +47,13 @@ inline constexpr int maxSmoothing = 20;
 inline constexpr int defaultMessageQueueDrainRate = 20;
 inline constexpr int maxMessageQueueDrainRate = 60;
 
+inline constexpr qreal zoomMin = 0.05;
+inline constexpr qreal zoomMax = 64.0;
+inline constexpr qreal zoomSoftMin = 0.125;
+inline constexpr qreal zoomSoftMax = 8.0;
+
+const QVector<qreal> &zoomLevels();
+
 class Settings;
 
 struct SettingMeta final {

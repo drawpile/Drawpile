@@ -17,11 +17,16 @@
 #include <QMimeData>
 #include <QMouseEvent>
 #include <QPainter>
+#include <QScopedValueRollback>
 #include <QScreen>
 #include <QScrollBar>
 #include <QTabletEvent>
 #include <QWindow>
 #include <QtMath>
+#include <cmath>
+
+using libclient::settings::zoomMax;
+using libclient::settings::zoomMin;
 
 namespace widgets {
 
@@ -42,7 +47,8 @@ CanvasView::CanvasView(QWidget *parent)
 	, m_showoutline(false)
 	, m_subpixeloutline(true)
 	, m_squareoutline(false)
-	, m_zoom(100)
+	, m_pos{0.0, 0.0}
+	, m_zoom(1.0)
 	, m_rotate(0)
 	, m_flip(false)
 	, m_mirror(false)
@@ -64,6 +70,7 @@ CanvasView::CanvasView(QWidget *parent)
 	, m_dpi(96)
 	, m_brushCursorStyle(BrushCursor::Dot)
 	, m_brushOutlineWidth(1.0)
+	, m_scrollBarsAdjusting{false}
 {
 	viewport()->setAcceptDrops(true);
 	viewport()->setAttribute(Qt::WA_AcceptTouchEvents);
@@ -137,15 +144,13 @@ void CanvasView::setCanvas(drawingboard::CanvasScene *scene)
 {
 	m_scene = scene;
 	setScene(scene);
-
 	connect(
 		m_scene, &drawingboard::CanvasScene::canvasResized, this,
 		[this](int xoff, int yoff, const QSize &oldsize) {
 			if(oldsize.isEmpty()) {
-				centerOn(m_scene->sceneRect().center());
+				zoomToFit();
 			} else {
-				const qreal z = m_zoom / 100.0;
-				scrollBy(xoff * z, yoff * z);
+				scrollBy(xoff * m_zoom, yoff * m_zoom);
 			}
 			viewRectChanged();
 		});
@@ -155,124 +160,187 @@ void CanvasView::setCanvas(drawingboard::CanvasScene *scene)
 
 void CanvasView::scrollBy(int x, int y)
 {
-	horizontalScrollBar()->setValue(horizontalScrollBar()->value() + x);
-	verticalScrollBar()->setValue(verticalScrollBar()->value() + y);
+	updateCanvasTransform([&] {
+		m_pos.setX(m_pos.x() + x);
+		m_pos.setY(m_pos.y() + y);
+	});
 }
 
-void CanvasView::zoomSteps(int steps)
+void CanvasView::zoomSteps(int steps, const QPointF &point)
 {
-	if(m_zoom < 100 || (m_zoom == 100 && steps < 0))
-		setZoom(qRound(qMin(qreal(100), m_zoom + steps * 10) / 10) * 10);
-	else
-		setZoom(qRound(qMax(qreal(100), m_zoom + steps * 50) / 50) * 50);
-	viewRectChanged();
+	constexpr qreal eps = 1e-5;
+	const QVector<qreal> &zoomLevels = libclient::settings::zoomLevels();
+	// This doesn't actually take the number of steps into account, it just
+	// zooms by a single step. But that works really well, so I'll leave it be.
+	if(steps > 0) {
+		int i = 0;
+		while(i < zoomLevels.size() - 1 && m_zoom > zoomLevels[i] - eps) {
+			i++;
+		}
+		qreal level = zoomLevels[i];
+		qreal zoom = m_zoom > level - eps ? zoomMax : qMax(m_zoom, level);
+		setZoomAt(zoom, point);
+	} else if(steps < 0) {
+		int i = zoomLevels.size() - 1;
+		while(i > 0 && m_zoom < zoomLevels[i] + eps) {
+			i--;
+		}
+		qreal level = zoomLevels[i];
+		qreal zoom = m_zoom < level + eps ? zoomMin : qMin(m_zoom, level);
+		setZoomAt(zoom, point);
+	}
 }
 
 void CanvasView::zoomin()
 {
-	zoomSteps(1);
+	zoomSteps(1, mapToCanvas(rect().center()));
 }
 
 void CanvasView::zoomout()
 {
-	zoomSteps(-1);
+	zoomSteps(-1, mapToCanvas(rect().center()));
 }
 
 void CanvasView::zoomTo(const QRect &rect, int steps)
 {
-	centerOn(rect.center());
-
 	if(rect.width() < 15 || rect.height() < 15 || steps < 0) {
-		zoomSteps(steps);
-
+		zoomSteps(steps, rect.center());
 	} else {
-		const auto viewRect = mapFromScene(rect).boundingRect();
-		const qreal xScale = qreal(viewport()->width()) / viewRect.width();
-		const qreal yScale = qreal(viewport()->height()) / viewRect.height();
-		setZoom(m_zoom * qMin(xScale, yScale));
+		QWidget *vp = viewport();
+		QRectF viewRect = mapFromCanvas(rect).boundingRect();
+		qreal xScale = qreal(vp->width()) / viewRect.width();
+		qreal yScale = qreal(vp->height()) / viewRect.height();
+		setZoomAt(m_zoom * qMin(xScale, yScale), rect.center());
 	}
-}
-
-qreal CanvasView::fitToWindowScale() const
-{
-	if(!m_scene || !m_scene->hasImage())
-		return 100;
-
-	const auto s = m_scene->model()->size();
-
-	const qreal xScale = qreal(viewport()->width()) / s.width();
-	const qreal yScale = qreal(viewport()->height()) / s.height();
-
-	return qMin(xScale, yScale);
 }
 
 void CanvasView::zoomToFit()
 {
-	if(!m_scene || !m_scene->hasImage())
-		return;
-
-	const QRect r{QPoint(), m_scene->model()->size()};
-
-	const qreal xScale = qreal(viewport()->width()) / r.width();
-	const qreal yScale = qreal(viewport()->height()) / r.height();
-
-	centerOn(r.center());
-	setZoom(qMin(xScale, yScale) * 100);
+	setZoomToFit(Qt::Horizontal | Qt::Vertical);
 }
 
-/**
- * You should use this function instead of calling scale() directly
- * to keep track of the zoom factor.
- * @param zoom new zoom factor
- */
+void CanvasView::zoomToFitWidth()
+{
+	setZoomToFit(Qt::Horizontal);
+}
+
+void CanvasView::zoomToFitHeight()
+{
+	setZoomToFit(Qt::Vertical);
+}
+
+void CanvasView::setZoomToFit(Qt::Orientations orientations)
+{
+	if(m_scene && m_scene->hasImage()) {
+		QWidget *vp = viewport();
+		QRectF r{QPointF{}, QSizeF{m_scene->model()->size()}};
+		qreal xScale = qreal(vp->width()) / r.width();
+		qreal yScale = qreal(vp->height()) / r.height();
+		qreal scale;
+		if(orientations.testFlag(Qt::Horizontal)) {
+			if(orientations.testFlag(Qt::Vertical)) {
+				scale = qMin(xScale, yScale);
+			} else {
+				scale = xScale;
+			}
+		} else {
+			scale = yScale;
+		}
+
+		qreal rotate = m_rotate;
+		bool mirror = m_mirror;
+		bool flip = m_flip;
+
+		m_pos = r.center();
+		m_zoom = 1.0;
+		m_rotate = 0.0;
+		m_mirror = false;
+		m_flip = false;
+		setZoomAt(scale, m_pos);
+
+		setRotation(rotate);
+		setViewMirror(mirror);
+		setViewFlip(flip);
+	}
+}
+
 void CanvasView::setZoom(qreal zoom)
 {
-	if(zoom <= 0)
-		return;
-
-	m_zoom = zoom;
-	QTransform t(1, 0, 0, 1, transform().dx(), transform().dy());
-	t.scale(m_zoom / 100.0, m_zoom / 100.0);
-	t.rotate(m_rotate);
-
-	t.scale(m_mirror ? -1 : 1, m_flip ? -1 : 1);
-
-	setTransform(t);
-
-	// Enable smooth scaling when under 200% zoom, because nearest-neighbour
-	// interpolation just doesn't look good in that range.
-	// Also enable when rotating, since that tends to cause terrible jaggies
-	setRenderHint(
-		QPainter::SmoothPixmapTransform,
-		m_zoom < 200 || (m_zoom < 800 && int(m_rotate) % 90));
-
-	emit viewTransformed(m_zoom, m_rotate);
+	setZoomAt(zoom, mapToCanvas(rect().center()));
 }
 
-/**
- * You should use this function instead calling rotate() directly
- * to keep track of the rotation angle.
- * @param angle new rotation angle
- */
+void CanvasView::setZoomAt(qreal zoom, const QPointF &point)
+{
+	qreal newZoom = qBound(zoomMin, zoom, zoomMax);
+	QTransform matrix;
+	mirrorFlip(matrix, m_mirror, m_flip);
+	matrix.rotate(m_rotate);
+
+	updateCanvasTransform([&] {
+		m_pos += matrix.map(point * (newZoom - m_zoom));
+		m_zoom = newZoom;
+	});
+
+	emitViewTransformed();
+}
+
 void CanvasView::setRotation(qreal angle)
 {
-	m_rotate = angle;
-	setZoom(m_zoom);
+	angle = std::fmod(angle, 360.0);
+	if(angle < 0.0) {
+		angle += 360.0;
+	}
+
+	bool inverted = isRotationInverted();
+	if(inverted) {
+		angle = 360.0 - angle;
+	}
+
+	QTransform prev, cur;
+	prev.rotate(m_rotate);
+	cur.rotate(angle);
+
+	updateCanvasTransform([&] {
+		if(inverted) {
+			m_pos = cur.inverted().map(prev.map(m_pos));
+		} else {
+			m_pos = prev.inverted().map(cur.map(m_pos));
+		}
+		m_rotate = angle;
+	});
+
+	emitViewTransformed();
 }
 
 void CanvasView::setViewFlip(bool flip)
 {
 	if(flip != m_flip) {
-		m_flip = flip;
-		setZoom(m_zoom);
+		QTransform prev, cur;
+		mirrorFlip(prev, m_mirror, m_flip);
+		mirrorFlip(cur, m_mirror, flip);
+
+		updateCanvasTransform([&] {
+			m_pos = cur.inverted().map(prev.map(m_pos));
+			m_flip = flip;
+		});
+
+		emitViewTransformed();
 	}
 }
 
 void CanvasView::setViewMirror(bool mirror)
 {
 	if(mirror != m_mirror) {
-		m_mirror = mirror;
-		setZoom(m_zoom);
+		QTransform prev, cur;
+		mirrorFlip(prev, m_mirror, m_flip);
+		mirrorFlip(cur, mirror, m_flip);
+
+		updateCanvasTransform([&] {
+			m_pos = cur.inverted().map(prev.map(m_pos));
+			m_mirror = mirror;
+		});
+
+		emitViewTransformed();
 	}
 }
 
@@ -389,7 +457,7 @@ void CanvasView::resetCursor()
 void CanvasView::setPixelGrid(bool enable)
 {
 	m_pixelgrid = enable;
-	viewport()->update();
+	updateCanvasPixelGrid();
 }
 
 /**
@@ -398,14 +466,8 @@ void CanvasView::setPixelGrid(bool enable)
 void CanvasView::setOutlineSize(int newSize)
 {
 	if(m_showoutline && (m_outlineSize > 0 || newSize > 0)) {
-		const qreal maxSize =
-			qMax(m_outlineSize, newSize) + m_brushOutlineWidth;
-		const qreal maxRad = maxSize / 2.0;
-		QList<QRectF> rect;
-		rect.append(QRectF{
-			m_prevoutlinepoint.x() - maxRad, m_prevoutlinepoint.y() - maxRad,
-			maxSize, maxSize});
-		updateScene(rect);
+		updateScene({getOutlineBounds(
+			m_prevoutlinepoint, qMax(m_outlineSize, newSize))});
 	}
 	m_outlineSize = newSize;
 }
@@ -417,28 +479,6 @@ void CanvasView::setOutlineMode(bool subpixel, bool square)
 }
 
 void CanvasView::drawForeground(QPainter *painter, const QRectF &rect)
-{
-	drawPixelGrid(painter, rect);
-	drawCursorOutline(painter, rect);
-}
-
-void CanvasView::drawPixelGrid(QPainter *painter, const QRectF &rect)
-{
-	if(m_pixelgrid && m_zoom >= 800) {
-		QPen pen(QColor(160, 160, 160));
-		pen.setCosmetic(true);
-		painter->setPen(pen);
-		for(int x = rect.left(); x <= rect.right(); ++x) {
-			painter->drawLine(x, rect.top(), x, rect.bottom() + 1);
-		}
-
-		for(int y = rect.top(); y <= rect.bottom(); ++y) {
-			painter->drawLine(rect.left(), y, rect.right() + 1, y);
-		}
-	}
-}
-
-void CanvasView::drawCursorOutline(QPainter *painter, const QRectF &rect)
 {
 	// We want to show an outline if we're currently drawing or able to, but
 	// also if we're adjusting the tool size, since seeing the outline while
@@ -455,13 +495,14 @@ void CanvasView::drawCursorOutline(QPainter *painter, const QRectF &rect)
 		m_showoutline && m_outlineSize > 0 && outlineVisibleInMode;
 	m_prevoutline = shouldRenderOutline;
 	if(shouldRenderOutline) {
+		qreal size = m_outlineSize * m_zoom;
 		QRectF outline(
-			m_prevoutlinepoint -
-				QPointF(m_outlineSize / 2.0, m_outlineSize / 2.0),
-			QSizeF(m_outlineSize, m_outlineSize));
+			mapFromCanvas(m_prevoutlinepoint) - QPointF(size / 2.0, size / 2.0),
+			QSizeF(size, size));
 
-		if(!m_subpixeloutline && m_outlineSize % 2 == 0)
-			outline.translate(-0.5, -0.5);
+		if(!m_subpixeloutline && m_outlineSize % 2 == 0) {
+			outline.translate(-0.5 * m_zoom, -0.5 * m_zoom);
+		}
 
 		if(rect.intersects(outline) && m_brushOutlineWidth > 0) {
 			painter->save();
@@ -478,6 +519,11 @@ void CanvasView::drawCursorOutline(QPainter *painter, const QRectF &rect)
 			painter->restore();
 		}
 	}
+}
+
+void CanvasView::viewRectChanged()
+{
+	emit viewRectChange(mapToCanvas(rect()));
 }
 
 void CanvasView::enterEvent(compat::EnterEvent *event)
@@ -510,42 +556,73 @@ void CanvasView::focusInEvent(QFocusEvent *event)
 	m_keysDown.clear();
 }
 
-canvas::Point CanvasView::mapToScene(
+canvas::Point CanvasView::mapToCanvas(
 	long long timeMsec, const QPoint &point, qreal pressure, qreal xtilt,
 	qreal ytilt, qreal rotation) const
 {
 	return canvas::Point(
-		timeMsec, mapToScene(point), m_pressureCurve.value(pressure), xtilt,
+		timeMsec, mapToCanvas(point), m_pressureCurve.value(pressure), xtilt,
 		ytilt, rotation);
 }
 
-canvas::Point CanvasView::mapToScene(
+canvas::Point CanvasView::mapToCanvas(
 	long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
 	qreal ytilt, qreal rotation) const
 {
 	return canvas::Point(
-		timeMsec, mapToSceneInterpolate(point), m_pressureCurve.value(pressure),
-		xtilt, ytilt, rotation);
+		timeMsec, mapToCanvas(point), m_pressureCurve.value(pressure), xtilt,
+		ytilt, rotation);
 }
 
-QPointF CanvasView::mapToSceneInterpolate(const QPointF &point) const
+QPointF CanvasView::mapToCanvas(const QPoint &point) const
 {
-	// QGraphicsView API lacks mapToScene(QPointF), even though
-	// the QPoint is converted to QPointF internally...
-	// To work around this, map (x,y) and (x+1, y+1) and linearly interpolate
-	// between the two
-	double tmp;
-	qreal xf = qAbs(modf(point.x(), &tmp));
-	qreal yf = qAbs(modf(point.y(), &tmp));
+	return mapToCanvas(QPointF{point});
+}
 
-	QPoint p0{qFloor(point.x()), qFloor(point.y())};
-	QPointF p1 = mapToScene(p0);
-	QPointF p2 = mapToScene(p0 + QPoint{1, 1});
+QPointF CanvasView::mapToCanvas(const QPointF &point) const
+{
+	QTransform matrix = toCanvasTransform();
+	return matrix.map(point + mapToScene(QPoint{0, 0}));
+}
 
-	return QPointF{
-		(p1.x() - p2.x()) * xf + p2.x(),
-		(p1.y() - p2.y()) * yf + p2.y(),
-	};
+QPolygonF CanvasView::mapToCanvas(const QRect &rect) const
+{
+	return mapToCanvas(QRectF{rect});
+}
+
+QPolygonF CanvasView::mapToCanvas(const QRectF &rect) const
+{
+	if(rect.isValid()) {
+		QTransform matrix = toCanvasTransform();
+		QPointF offset = mapToScene(QPoint{0, 0});
+		return matrix.map(rect.translated(offset));
+	} else {
+		return QPolygonF{};
+	}
+}
+
+QTransform CanvasView::fromCanvasTransform() const
+{
+	return m_scene ? m_scene->canvasTransform() : QTransform{};
+}
+
+QTransform CanvasView::toCanvasTransform() const
+{
+	return m_scene ? m_scene->canvasTransform().inverted() : QTransform{};
+}
+
+QPointF CanvasView::mapFromCanvas(const QPointF &point) const
+{
+	return fromCanvasTransform().map(point);
+}
+
+QPolygonF CanvasView::mapFromCanvas(const QRect &rect) const
+{
+	if(rect.isValid()) {
+		return fromCanvasTransform().mapToPolygon(rect);
+	} else {
+		return QPolygonF{};
+	}
 }
 
 void CanvasView::setPointerTracking(bool tracking)
@@ -565,7 +642,7 @@ void CanvasView::onPenDown(const canvas::Point &p, bool right)
 			if(!m_locked)
 				emit penDown(
 					p.timeMsec(), p, p.pressure(), p.xtilt(), p.ytilt(),
-					p.rotation(), right, m_zoom / 100.0);
+					p.rotation(), right, m_zoom);
 			break;
 		case PenMode::Colorpick:
 			m_scene->model()->pickColor(p.x(), p.y(), 0, 0);
@@ -670,13 +747,13 @@ void CanvasView::penPressEvent(
 		m_pointerdistance = 0;
 		m_pointervelocity = 0;
 		m_prevpoint =
-			mapToScene(timeMsec, pos, pressure, xtilt, ytilt, rotation);
+			mapToCanvas(timeMsec, pos, pressure, xtilt, ytilt, rotation);
 		if(penmode != m_penmode) {
 			m_penmode = penmode;
 			resetCursor();
 		}
 		onPenDown(
-			mapToScene(timeMsec, pos, pressure, xtilt, ytilt, rotation),
+			mapToCanvas(timeMsec, pos, pressure, xtilt, ytilt, rotation),
 			button == Qt::RightButton);
 	}
 }
@@ -720,7 +797,7 @@ void CanvasView::penMoveEvent(
 
 	} else {
 		canvas::Point point =
-			mapToScene(timeMsec, pos, pressure, xtilt, ytilt, rotation);
+			mapToCanvas(timeMsec, pos, pressure, xtilt, ytilt, rotation);
 		updateOutline(point);
 		if(!m_prevpoint.intSame(point)) {
 			if(m_pendown) {
@@ -772,7 +849,7 @@ void CanvasView::penReleaseEvent(
 	long long timeMsec, const QPointF &pos, Qt::MouseButton button,
 	Qt::KeyboardModifiers modifiers)
 {
-	canvas::Point point = mapToScene(timeMsec, pos, 0.0, 0.0, 0.0, 0.0);
+	canvas::Point point = mapToCanvas(timeMsec, pos, 0.0, 0.0, 0.0, 0.0);
 	m_prevpoint = point;
 	CanvasShortcuts::Match mouseMatch = m_canvasShortcuts.matchMouseButton(
 		modifiers, m_keysDown, Qt::LeftButton);
@@ -905,7 +982,7 @@ void CanvasView::wheelEvent(QWheelEvent *event)
 			if(match.action() == CanvasShortcuts::CANVAS_ROTATE) {
 				setRotation(rotation() + steps * 10);
 			} else {
-				zoomSteps(steps);
+				zoomSteps(steps, mapToCanvas(compat::wheelPosition(*event)));
 			}
 		}
 		break;
@@ -913,13 +990,13 @@ void CanvasView::wheelEvent(QWheelEvent *event)
 	// Color and layer picking by spinning the scroll wheel is weird, but okay.
 	case CanvasShortcuts::COLOR_PICK:
 		if(m_allowColorPick && m_scene->hasImage()) {
-			QPointF p = mapToSceneInterpolate(compat::wheelPosition(*event));
+			QPointF p = mapToCanvas(compat::wheelPosition(*event));
 			m_scene->model()->pickColor(p.x(), p.y(), 0, 0);
 		}
 		break;
 	case CanvasShortcuts::LAYER_PICK: {
 		if(m_scene->hasImage()) {
-			QPointF p = mapToSceneInterpolate(compat::wheelPosition(*event));
+			QPointF p = mapToCanvas(compat::wheelPosition(*event));
 			m_scene->model()->pickLayer(p.x(), p.y());
 		}
 		break;
@@ -1206,12 +1283,14 @@ void CanvasView::touchEvent(QTouchEvent *event)
 				}
 				startAvgDist = sqrt(startAvgDist);
 
+				qreal zoom = m_zoom;
 				if(m_enableTouchPinch) {
 					avgDist = sqrt(avgDist);
 					const qreal dZoom = avgDist / startAvgDist;
-					m_zoom = m_touchStartZoom * dZoom;
+					zoom = m_touchStartZoom * dZoom;
 				}
 
+				qreal rotate = m_rotate;
 				if(m_enableTouchTwist) {
 					const auto &tps = compat::touchPoints(*event);
 
@@ -1232,12 +1311,12 @@ void CanvasView::touchEvent(QTouchEvent *event)
 					if(startAvgDist / m_dpi > 0.8 &&
 					   (qAbs(dAngle) > 3.0 || m_touchRotating)) {
 						m_touchRotating = true;
-						m_rotate = m_touchStartRotate + dAngle;
+						rotate = m_touchStartRotate + dAngle;
 					}
 				}
 
-				// Recalculate view matrix
-				setZoom(zoom());
+				setZoom(zoom);
+				setRotation(rotate);
 			}
 		}
 		break;
@@ -1375,39 +1454,35 @@ bool CanvasView::viewportEvent(QEvent *event)
 
 void CanvasView::updateOutline(canvas::Point point)
 {
-	if(!m_subpixeloutline) {
-		point.setX(qFloor(point.x()) + 0.5);
-		point.setY(qFloor(point.y()) + 0.5);
-	}
 	if(m_showoutline && !m_locked && !m_busy &&
 	   (!m_prevoutline || !point.roughlySame(m_prevoutlinepoint))) {
-		QList<QRectF> rect;
-		const qreal owidth = m_outlineSize + m_brushOutlineWidth;
-		const qreal orad = owidth / 2.0;
-		rect.append(QRectF(
-			m_prevoutlinepoint.x() - orad, m_prevoutlinepoint.y() - orad,
-			owidth, owidth));
-		rect.append(QRectF(point.x() - orad, point.y() - orad, owidth, owidth));
-		updateScene(rect);
+		if(!m_subpixeloutline) {
+			point.setX(qFloor(point.x()) + 0.5);
+			point.setY(qFloor(point.y()) + 0.5);
+		}
+		updateScene(
+			{getOutlineBounds(m_prevoutlinepoint, m_outlineSize),
+			 getOutlineBounds(point, m_outlineSize)});
 		m_prevoutlinepoint = point;
 	}
 }
 
 void CanvasView::updateOutline()
 {
-	QList<QRectF> rect;
-	const qreal owidth = m_outlineSize + m_brushOutlineWidth;
-	const qreal orad = owidth / 2.0;
+	updateScene({getOutlineBounds(m_prevoutlinepoint, m_outlineSize)});
+}
 
-	rect.append(QRectF(
-		m_prevoutlinepoint.x() - orad, m_prevoutlinepoint.y() - orad, owidth,
-		owidth));
-	updateScene(rect);
+QRectF CanvasView::getOutlineBounds(const QPointF &point, int size)
+{
+	qreal owidth = (size + m_brushOutlineWidth) * m_zoom;
+	qreal orad = owidth / 2.0;
+	QPointF mapped = mapFromCanvas(point);
+	return QRectF{mapped.x() - orad, mapped.y() - orad, owidth, owidth};
 }
 
 QPoint CanvasView::viewCenterPoint() const
 {
-	return mapToScene(rect().center()).toPoint();
+	return mapToCanvas(rect().center()).toPoint();
 }
 
 bool CanvasView::isPointVisible(const QPointF &point) const
@@ -1416,9 +1491,12 @@ bool CanvasView::isPointVisible(const QPointF &point) const
 	return p.x() > 0 && p.y() > 0 && p.x() < width() && p.y() < height();
 }
 
-void CanvasView::scrollTo(const QPoint &point)
+void CanvasView::scrollTo(const QPointF &point)
 {
-	centerOn(point);
+	m_pos = point * m_zoom;
+	updateCanvasTransform([&] {
+		m_pos = point * m_zoom;
+	});
 }
 
 /**
@@ -1476,6 +1554,122 @@ void CanvasView::moveDrag(const QPoint &point)
 	m_dragLastPoint = point;
 }
 
+void CanvasView::updateCanvasTransform(const std::function<void()> &block)
+{
+	QList<QRectF> rects;
+	QPointF outlinePoint;
+	if(m_prevoutline) {
+		outlinePoint = fromCanvasTransform().map(m_prevoutlinepoint);
+		rects.append(getOutlineBounds(m_prevoutlinepoint, m_outlineSize));
+	}
+
+	block();
+
+	if(m_scene) {
+		updatePosBounds();
+		rects.append(m_scene->canvasBounds());
+		m_scene->setCanvasTransform(calculateCanvasTransform());
+		rects.append(m_scene->canvasBounds());
+		updateScrollBars();
+		updateCanvasPixelGrid();
+		setRenderHint(QPainter::SmoothPixmapTransform, m_zoom < 1.0);
+		viewRectChanged();
+	}
+
+	if(m_prevoutline) {
+		m_prevoutlinepoint.setPos(toCanvasTransform().map(outlinePoint));
+		rects.append(getOutlineBounds(m_prevoutlinepoint, m_outlineSize));
+	}
+	updateScene(rects);
+}
+
+void CanvasView::updatePosBounds()
+{
+	if(m_scene && m_scene->hasImage()) {
+		QTransform matrix = calculateCanvasTransformFrom(
+			QPointF{}, m_zoom, m_rotate, m_mirror, m_flip);
+		QRectF cr{QPointF{}, QSizeF{m_scene->model()->size()}};
+		QRectF vr{viewport()->rect()};
+		m_posBounds = matrix.map(cr)
+						  .boundingRect()
+						  .translated(-mapToScene(QPoint{0, 0}))
+						  .adjusted(-vr.width(), -vr.height(), 0.0, 0.0)
+						  .marginsRemoved(QMarginsF{64.0, 64.0, 64.0, 64.0});
+		clampPosition();
+	}
+}
+
+void CanvasView::clampPosition()
+{
+	if(m_posBounds.isValid()) {
+		m_pos.setX(qBound(m_posBounds.left(), m_pos.x(), m_posBounds.right()));
+		m_pos.setY(qBound(m_posBounds.top(), m_pos.y(), m_posBounds.bottom()));
+	}
+}
+
+void CanvasView::updateScrollBars()
+{
+	QScopedValueRollback<bool> guard{m_scrollBarsAdjusting, true};
+	QScrollBar *hbar = horizontalScrollBar();
+	QScrollBar *vbar = verticalScrollBar();
+	if(m_posBounds.isValid()) {
+		QRect page =
+			toCanvasTransform().mapToPolygon(viewport()->rect()).boundingRect();
+
+		hbar->setRange(m_posBounds.left(), m_posBounds.right());
+		hbar->setValue(m_pos.x());
+		hbar->setPageStep(page.width() * m_zoom);
+		hbar->setSingleStep(qMax(1, hbar->pageStep() / 20));
+
+		vbar->setRange(m_posBounds.top(), m_posBounds.bottom());
+		vbar->setValue(m_pos.y());
+		vbar->setPageStep(page.height() * m_zoom);
+		vbar->setSingleStep(qMax(1, vbar->pageStep() / 20));
+	} else {
+		hbar->setRange(0, 0);
+		vbar->setRange(0, 0);
+	}
+}
+
+void CanvasView::updateCanvasPixelGrid()
+{
+	if(m_scene) {
+		m_scene->setCanvasPixelGrid(m_pixelgrid && m_zoom >= 8.0);
+	}
+}
+
+QTransform CanvasView::calculateCanvasTransform() const
+{
+	return calculateCanvasTransformFrom(
+		m_pos, m_zoom, m_rotate, m_mirror, m_flip);
+}
+
+QTransform CanvasView::calculateCanvasTransformFrom(
+	const QPointF &pos, qreal zoom, qreal rotate, bool mirror, bool flip)
+{
+	QTransform matrix;
+	matrix.translate(-pos.x(), -pos.y());
+	matrix.scale(zoom, zoom);
+	mirrorFlip(matrix, mirror, flip);
+	matrix.rotate(rotate);
+	return matrix;
+}
+
+void CanvasView::mirrorFlip(QTransform &matrix, bool mirror, bool flip)
+{
+	matrix.scale(mirror ? -1.0 : 1.0, flip ? -1.0 : 1.0);
+}
+
+void CanvasView::emitViewTransformed()
+{
+	emit viewTransformed(zoom(), rotation());
+}
+
+bool CanvasView::isRotationInverted() const
+{
+	return m_mirror ^ m_flip;
+}
+
 /**
  * @brief accept image drops
  * @param event event info
@@ -1520,7 +1714,8 @@ void CanvasView::showEvent(QShowEvent *event)
 {
 	QGraphicsView::showEvent(event);
 	// Find the DPI of the screen
-	// TODO: if the window is moved to another screen, this should be updated
+	// TODO: if the window is moved to another screen, this should be
+	// updated
 	QWidget *w = this;
 	while(w) {
 		if(w->windowHandle() != nullptr) {
@@ -1531,16 +1726,20 @@ void CanvasView::showEvent(QShowEvent *event)
 	}
 }
 
-void CanvasView::scrollContentsBy(int dx, int dy)
-{
-	QGraphicsView::scrollContentsBy(dx, dy);
-	viewRectChanged();
-}
-
 void CanvasView::resizeEvent(QResizeEvent *e)
 {
+	QScopedValueRollback<bool> guard{m_scrollBarsAdjusting, true};
 	QGraphicsView::resizeEvent(e);
-	viewRectChanged();
+	updateCanvasTransform([] {
+		// Nothing.
+	});
+}
+
+void CanvasView::scrollContentsBy(int dx, int dy)
+{
+	if(!m_scrollBarsAdjusting) {
+		scrollBy(-dx, -dy);
+	}
 }
 
 }

@@ -10,6 +10,7 @@
 #include "libclient/utils/kis_cubic_curve.h"
 
 #include <QGraphicsView>
+#include <functional>
 
 class QTouchEvent;
 
@@ -49,20 +50,31 @@ public:
 	qreal zoom() const { return m_zoom; }
 
 	//! Get the current rotation angle in degrees
-	qreal rotation() const { return m_rotate; }
+	qreal rotation() const
+	{
+		qreal rotate = isRotationInverted() ? 360.0 - m_rotate : m_rotate;
+		return rotate > 180.0 ? rotate - 360.0 : rotate;
+	}
 
 	bool isTabletEnabled() const { return m_enableTablet; }
 	bool isTouchScrollEnabled() const { return m_enableTouchScroll; }
 	bool isTouchDrawEnabled() const { return m_enableTouchDraw; }
 
-	using QGraphicsView::mapToScene;
-	canvas::Point mapToScene(
+	canvas::Point mapToCanvas(
 		long long timeMsec, const QPoint &point, qreal pressure, qreal xtilt,
 		qreal ytilt, qreal rotation) const;
-	canvas::Point mapToScene(
+
+	canvas::Point mapToCanvas(
 		long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
 		qreal ytilt, qreal rotation) const;
-	QPointF mapToSceneInterpolate(const QPointF &point) const;
+
+	QPointF mapToCanvas(const QPoint &point) const;
+	QPointF mapToCanvas(const QPointF &point) const;
+	QPolygonF mapToCanvas(const QRect &rect) const;
+	QPolygonF mapToCanvas(const QRectF &rect) const;
+
+	QPointF mapFromCanvas(const QPointF &point) const;
+	QPolygonF mapFromCanvas(const QRect &rect) const;
 
 	//! The center point of the view in scene coordinates
 	QPoint viewCenterPoint() const;
@@ -87,9 +99,6 @@ public:
 
 	//! Scroll view by the given number of pixels
 	void scrollBy(int x, int y);
-
-	//! Get the scale factor needed to fit the whole canvas in the viewport
-	qreal fitToWindowScale() const;
 
 	//! Show the notification bar with the "reconnect" button visible
 	void showDisconnectedWarning(const QString &message);
@@ -137,10 +146,13 @@ public slots:
 	void setPixelGrid(bool enable);
 
 	//! Scroll view to location
-	void scrollTo(const QPoint &point);
+	void scrollTo(const QPointF &point);
 
-	//! Set the zoom factor in percents
+	//! Set the zoom factor in percents, centered on the middle of the view
 	void setZoom(qreal zoom);
+
+	//! Set the zoom factor in percents, centered on the given point
+	void setZoomAt(qreal zoom, const QPointF &point);
 
 	//! Set the rotation angle in degrees
 	void setRotation(qreal angle);
@@ -157,7 +169,7 @@ public slots:
 	void setPointerTracking(bool tracking);
 
 	//! Increase/decrease zoom factor by this many steps
-	void zoomSteps(int steps);
+	void zoomSteps(int steps, const QPointF &point);
 
 	//! Increase zoom factor
 	void zoomin();
@@ -172,6 +184,8 @@ public slots:
 
 	//! Zoom to fit the view
 	void zoomToFit();
+	void zoomToFitWidth();
+	void zoomToFitHeight();
 
 	void setToolCursor(const QCursor &cursor);
 	void setToolCapabilities(
@@ -197,8 +211,8 @@ protected:
 	void dragMoveEvent(QDragMoveEvent *event) override;
 	void dropEvent(QDropEvent *event) override;
 	void showEvent(QShowEvent *event) override;
-	void scrollContentsBy(int dx, int dy) override;
 	void resizeEvent(QResizeEvent *) override;
+	void scrollContentsBy(int dx, int dy) override;
 
 private:
 	static constexpr qreal TOUCH_DRAW_DISTANCE = 10.0;
@@ -226,9 +240,29 @@ private:
 	//! Drag the view
 	void moveDrag(const QPoint &point);
 
+	QTransform fromCanvasTransform() const;
+	QTransform toCanvasTransform() const;
+
+	void updateCanvasTransform(const std::function<void()> &block);
+	void updatePosBounds();
+	void clampPosition();
+	void updateScrollBars();
+	void updateCanvasPixelGrid();
+
+	QTransform calculateCanvasTransform() const;
+
+	static QTransform calculateCanvasTransformFrom(
+		const QPointF &pos, qreal zoom, qreal rotate, bool mirror, bool flip);
+
+	static void mirrorFlip(QTransform &matrix, bool mirror, bool flip);
+
+	void emitViewTransformed();
+	bool isRotationInverted() const;
+
 	//! Redraw the scene around the outline cursor if necesasry
 	void updateOutline(canvas::Point point);
 	void updateOutline();
+	QRectF getOutlineBounds(const QPointF &point, int size);
 
 	void onPenDown(const canvas::Point &p, bool right);
 	void onPenMove(
@@ -241,10 +275,9 @@ private:
 
 	void resetCursor();
 
-	void drawPixelGrid(QPainter *painter, const QRectF &rect);
-	void drawCursorOutline(QPainter *painter, const QRectF &rect);
+	void setZoomToFit(Qt::Orientations orientations);
 
-	inline void viewRectChanged() { emit viewRectChange(mapToScene(rect())); }
+	void viewRectChanged();
 
 	CanvasShortcuts m_canvasShortcuts;
 	QSet<Qt::Key> m_keysDown;
@@ -290,10 +323,12 @@ private:
 	QCursor m_colorpickcursor, m_layerpickcursor, m_zoomcursor, m_rotatecursor;
 	QCursor m_toolcursor;
 
-	qreal m_zoom;	// View zoom in percents
-	qreal m_rotate; // View rotation in degrees
-	bool m_flip;	// Flip Y axis
-	bool m_mirror;	// Flip X axis
+	QPointF m_pos;		// Canvas position
+	qreal m_zoom;		// View zoom in percents
+	qreal m_rotate;		// View rotation in degrees
+	bool m_flip;		// Flip Y axis
+	bool m_mirror;		// Flip X axis
+	QRectF m_posBounds; // Position limits to keep the canvas in view.
 
 	drawingboard::CanvasScene *m_scene;
 
@@ -318,6 +353,8 @@ private:
 	qreal m_dpi;
 	BrushCursor m_brushCursorStyle;
 	qreal m_brushOutlineWidth;
+
+	bool m_scrollBarsAdjusting;
 };
 
 }
