@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include <QApplication>
 #include <QDebug>
 #include <QTimer>
-#include <QApplication>
 
-#include "desktop/scene/canvasscene.h"
-#include "desktop/scene/canvasitem.h"
-#include "desktop/scene/selectionitem.h"
 #include "desktop/scene/annotationitem.h"
-#include "desktop/scene/usermarkeritem.h"
+#include "desktop/scene/canvasitem.h"
+#include "desktop/scene/canvasscene.h"
 #include "desktop/scene/lasertrailitem.h"
+#include "desktop/scene/selectionitem.h"
+#include "desktop/scene/usermarkeritem.h"
 
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/layerlist.h"
@@ -20,22 +20,29 @@
 namespace drawingboard {
 
 CanvasScene::CanvasScene(QObject *parent)
-	: QGraphicsScene(parent), m_model(nullptr),
-	  m_selection(nullptr),
-	  m_showAnnotationBorders(false), m_showAnnotations(true),
-	  m_showUserMarkers(true), m_showUserNames(true), m_showUserLayers(true), m_showUserAvatars(true),
-	  m_showLaserTrails(true)
+	: QGraphicsScene(parent)
+	, m_model(nullptr)
+	, m_selection(nullptr)
+	, m_showAnnotationBorders(false)
+	, m_showAnnotations(true)
+	, m_showUserMarkers(true)
+	, m_showUserNames(true)
+	, m_showUserLayers(true)
+	, m_showUserAvatars(true)
+	, m_showLaserTrails(true)
 {
 	setItemIndexMethod(NoIndex);
 
 	m_canvasItem = new CanvasItem;
 	addItem(m_canvasItem);
 
-	// Timer for on-canvas animations (user pointer fadeout, laser trail flickering and such)
-	// Our animation needs are very simple, so we use this instead of QGraphicsScene own
-	// animation system.
+	// Timer for on-canvas animations (user pointer fadeout, laser trail
+	// flickering and such) Our animation needs are very simple, so we use this
+	// instead of QGraphicsScene own animation system.
 	auto animationTimer = new QTimer(this);
-	connect(animationTimer, &QTimer::timeout, this, &CanvasScene::advanceAnimations);
+	connect(
+		animationTimer, &QTimer::timeout, this,
+		&CanvasScene::advanceAnimations);
 	animationTimer->setInterval(20);
 	animationTimer->start(20);
 }
@@ -51,17 +58,31 @@ void CanvasScene::initCanvas(canvas::CanvasModel *model)
 
 	onSelectionChanged(nullptr);
 
-	connect(m_model->paintEngine(), &canvas::PaintEngine::resized, this, &CanvasScene::handleCanvasResize);
-	connect(m_model->paintEngine(), &canvas::PaintEngine::annotationsChanged, this, &CanvasScene::annotationsChanged);
-	connect(m_model->paintEngine(), &canvas::PaintEngine::cursorMoved, this, &CanvasScene::userCursorMoved);
+	connect(
+		m_model->paintEngine(), &canvas::PaintEngine::resized, this,
+		&CanvasScene::handleCanvasResize);
+	connect(
+		m_model->paintEngine(), &canvas::PaintEngine::annotationsChanged, this,
+		&CanvasScene::annotationsChanged);
+	connect(
+		m_model->paintEngine(), &canvas::PaintEngine::cursorMoved, this,
+		&CanvasScene::userCursorMoved);
 
-	connect(m_model, &canvas::CanvasModel::previewAnnotationRequested, this, &CanvasScene::previewAnnotation);
-	connect(m_model, &canvas::CanvasModel::laserTrail, this, &CanvasScene::laserTrail);
-	connect(m_model, &canvas::CanvasModel::selectionChanged, this, &CanvasScene::onSelectionChanged);
+	connect(
+		m_model, &canvas::CanvasModel::previewAnnotationRequested, this,
+		&CanvasScene::previewAnnotation);
+	connect(
+		m_model, &canvas::CanvasModel::laserTrail, this,
+		&CanvasScene::laserTrail);
+	connect(
+		m_model, &canvas::CanvasModel::selectionChanged, this,
+		&CanvasScene::onSelectionChanged);
 
 	const auto items = this->items();
 	for(QGraphicsItem *item : items) {
-		if(item->type() == AnnotationItem::Type || item->type() == UserMarkerItem::Type || item->type() == LaserTrailItem::Type) {
+		if(item->type() == AnnotationItem::Type ||
+		   item->type() == UserMarkerItem::Type ||
+		   item->type() == LaserTrailItem::Type) {
 			delete item;
 		}
 	}
@@ -121,14 +142,15 @@ void CanvasScene::showAnnotationBorders(bool showBorders)
 	if(m_showAnnotationBorders != showBorders) {
 		m_showAnnotationBorders = showBorders;
 		for(QGraphicsItem *item : items()) {
-			auto *ai = qgraphicsitem_cast<AnnotationItem*>(item);
+			auto *ai = qgraphicsitem_cast<AnnotationItem *>(item);
 			if(ai)
 				ai->setShowBorder(showBorders);
 		}
 	}
 }
 
-void CanvasScene::handleCanvasResize(int xoffset, int yoffset, const QSize &oldsize)
+void CanvasScene::handleCanvasResize(
+	int xoffset, int yoffset, const QSize &oldsize)
 {
 	if(!m_canvasItem)
 		return;
@@ -141,7 +163,7 @@ void CanvasScene::handleCanvasResize(int xoffset, int yoffset, const QSize &olds
 AnnotationItem *CanvasScene::getAnnotationItem(int id)
 {
 	for(QGraphicsItem *i : items()) {
-		AnnotationItem *item = qgraphicsitem_cast<AnnotationItem*>(i);
+		AnnotationItem *item = qgraphicsitem_cast<AnnotationItem *>(i);
 		if(item && item->id() == id)
 			return item;
 	}
@@ -151,23 +173,24 @@ AnnotationItem *CanvasScene::getAnnotationItem(int id)
 void CanvasScene::setActiveAnnotation(int id)
 {
 	for(QGraphicsItem *i : items()) {
-		AnnotationItem *item = qgraphicsitem_cast<AnnotationItem*>(i);
+		AnnotationItem *item = qgraphicsitem_cast<AnnotationItem *>(i);
 		if(item)
 			item->setHighlight(item->id() == id);
 	}
 }
 
-void CanvasScene::annotationsChanged(const drawdance::AnnotationList &al) {
-	QHash<int, AnnotationItem*> annotationItems;
+void CanvasScene::annotationsChanged(const drawdance::AnnotationList &al)
+{
+	QHash<int, AnnotationItem *> annotationItems;
 	for(QGraphicsItem *item : items()) {
-		 AnnotationItem *ai = qgraphicsitem_cast<AnnotationItem*>(item);
-		 if(ai) {
-			 annotationItems.insert(ai->id(), ai);
-		 }
+		AnnotationItem *ai = qgraphicsitem_cast<AnnotationItem *>(item);
+		if(ai) {
+			annotationItems.insert(ai->id(), ai);
+		}
 	}
 
 	int count = al.count();
-	for (int i = 0; i < count; ++i) {
+	for(int i = 0; i < count; ++i) {
 		drawdance::Annotation a = al.at(i);
 		int id = a.id();
 		QHash<int, AnnotationItem *>::iterator it = annotationItems.find(id);
@@ -210,8 +233,8 @@ void CanvasScene::previewAnnotation(int id, const QRect &shape)
 /**
  * @brief Advance canvas animations
  *
- * Note. We don't use the scene's built-in animation features since we care about
- * just a few specific animations.
+ * Note. We don't use the scene's built-in animation features since we care
+ * about just a few specific animations.
  */
 void CanvasScene::advanceAnimations()
 {
@@ -219,14 +242,15 @@ void CanvasScene::advanceAnimations()
 
 	const auto items = this->items();
 	for(QGraphicsItem *item : items) {
-		if(LaserTrailItem *lt = qgraphicsitem_cast<LaserTrailItem*>(item)) {
+		if(LaserTrailItem *lt = qgraphicsitem_cast<LaserTrailItem *>(item)) {
 			if(lt->animationStep(STEP) == false) {
 				if(m_activeLaserTrail.value(lt->owner()) == lt)
 					m_activeLaserTrail.remove(lt->owner());
 				delete item;
 			}
 
-		} else if(UserMarkerItem *um = qgraphicsitem_cast<UserMarkerItem*>(item)) {
+		} else if(
+			UserMarkerItem *um = qgraphicsitem_cast<UserMarkerItem *>(item)) {
 			um->animationStep(STEP);
 		}
 	}
@@ -235,7 +259,8 @@ void CanvasScene::advanceAnimations()
 		m_selection->marchingAnts(STEP);
 }
 
-void CanvasScene::laserTrail(uint8_t userId, int persistence, const QColor &color)
+void CanvasScene::laserTrail(
+	uint8_t userId, int persistence, const QColor &color)
 {
 	if(persistence == 0) {
 		m_activeLaserTrail.remove(userId);
@@ -246,7 +271,8 @@ void CanvasScene::laserTrail(uint8_t userId, int persistence, const QColor &colo
 	}
 }
 
-void CanvasScene::userCursorMoved(unsigned int flags, uint8_t userId, uint16_t layerId, int x, int y)
+void CanvasScene::userCursorMoved(
+	unsigned int flags, uint8_t userId, uint16_t layerId, int x, int y)
 {
 	bool valid = flags & DP_USER_CURSOR_FLAG_VALID;
 
@@ -259,7 +285,8 @@ void CanvasScene::userCursorMoved(unsigned int flags, uint8_t userId, uint16_t l
 	if(!m_showUserMarkers)
 		return;
 
-	// TODO in some cases (playback, laser pointer) we want to show our cursor as well.
+	// TODO in some cases (playback, laser pointer) we want to show our cursor
+	// as well.
 	if(userId == m_model->localUserId())
 		return;
 
@@ -269,7 +296,9 @@ void CanvasScene::userCursorMoved(unsigned int flags, uint8_t userId, uint16_t l
 	if(!item && valid) {
 		const auto user = m_model->userlist()->getUserById(userId);
 		item = new UserMarkerItem(userId);
-		item->setText(user.name.isEmpty() ? QStringLiteral("#%1").arg(int(userId)) : user.name);
+		item->setText(
+			user.name.isEmpty() ? QStringLiteral("#%1").arg(int(userId))
+								: user.name);
 		item->setShowText(m_showUserNames);
 		item->setShowSubtext(m_showUserLayers);
 		item->setAvatar(user.avatar);
@@ -282,9 +311,15 @@ void CanvasScene::userCursorMoved(unsigned int flags, uint8_t userId, uint16_t l
 	if(item) {
 		if(valid) {
 			if(m_showUserLayers) {
-				item->setSubtext(m_model->layerlist()->layerIndex(layerId).data(canvas::LayerListModel::TitleRole).toString());
+				item->setSubtext(m_model->layerlist()
+									 ->layerIndex(layerId)
+									 .data(canvas::LayerListModel::TitleRole)
+									 .toString());
 			}
-			item->setTargetPos(x, y, item->clearPenUp() || (penUp && penDown) || !(flags & DP_USER_CURSOR_FLAG_MYPAINT));
+			item->setTargetPos(
+				x, y,
+				item->clearPenUp() || (penUp && penDown) ||
+					!(flags & DP_USER_CURSOR_FLAG_MYPAINT));
 			item->fadein();
 		}
 

@@ -6,12 +6,12 @@
 #include <QGraphicsScene>
 
 namespace canvas {
-	class CanvasModel;
-	class Selection;
+class CanvasModel;
+class Selection;
 }
 
 namespace drawdance {
-	class AnnotationList;
+class AnnotationList;
 }
 
 //! Drawing board related classes
@@ -26,8 +26,7 @@ class LaserTrailItem;
 /**
  * @brief The drawing board scene
  */
-class CanvasScene final : public QGraphicsScene
-{
+class CanvasScene final : public QGraphicsScene {
 	Q_OBJECT
 
 public:
@@ -96,7 +95,9 @@ private slots:
 	void handleCanvasResize(int xoffset, int yoffset, const QSize &oldsize);
 	void advanceAnimations();
 
-	void userCursorMoved(unsigned int flags, uint8_t userId, uint16_t layerId, int x, int y);
+	void userCursorMoved(
+		unsigned int flags, uint8_t userId, uint16_t layerId, int x, int y);
+
 	void laserTrail(uint8_t userId, int persistence, const QColor &color);
 
 	void annotationsChanged(const drawdance::AnnotationList &al);
@@ -110,10 +111,10 @@ private:
 	CanvasItem *m_canvasItem;
 
 	//! Active laser pointer trail item (per user)
-	QHash<uint8_t, LaserTrailItem*> m_activeLaserTrail;
+	QHash<uint8_t, LaserTrailItem *> m_activeLaserTrail;
 
 	//! User cursor items
-	QHash<uint8_t, UserMarkerItem*> m_usermarkers;
+	QHash<uint8_t, UserMarkerItem *> m_usermarkers;
 
 	//! Current selection
 	SelectionItem *m_selection;
@@ -130,4 +131,3 @@ private:
 }
 
 #endif
-
