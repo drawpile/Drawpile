@@ -3,18 +3,18 @@
 #ifndef EDITORVIEW_H
 #define EDITORVIEW_H
 
+#include "desktop/utils/qtguicompat.h"
 #include "libclient/canvas/canvasshortcuts.h"
 #include "libclient/canvas/point.h"
 #include "libclient/tools/tool.h"
 #include "libclient/utils/kis_cubic_curve.h"
-#include "desktop/utils/qtguicompat.h"
 
 #include <QGraphicsView>
 
 class QTouchEvent;
 
 namespace drawingboard {
-	class CanvasScene;
+class CanvasScene;
 }
 
 namespace widgets {
@@ -28,8 +28,7 @@ class NotificationBar;
  * the drawing board and handes user input.
  * It also provides other features, such as brush outline preview.
  */
-class CanvasView final : public QGraphicsView
-{
+class CanvasView final : public QGraphicsView {
 	Q_OBJECT
 public:
 	enum class BrushCursor : int {
@@ -41,7 +40,7 @@ public:
 	};
 	Q_ENUM(BrushCursor)
 
-	CanvasView(QWidget *parent=nullptr);
+	CanvasView(QWidget *parent = nullptr);
 
 	//! Set the board to use
 	void setCanvas(drawingboard::CanvasScene *scene);
@@ -57,8 +56,12 @@ public:
 	bool isTouchDrawEnabled() const { return m_enableTouchDraw; }
 
 	using QGraphicsView::mapToScene;
-	canvas::Point mapToScene(long long timeMsec, const QPoint &point, qreal pressure, qreal xtilt, qreal ytilt, qreal rotation) const;
-	canvas::Point mapToScene(long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt, qreal ytilt, qreal rotation) const;
+	canvas::Point mapToScene(
+		long long timeMsec, const QPoint &point, qreal pressure, qreal xtilt,
+		qreal ytilt, qreal rotation) const;
+	canvas::Point mapToScene(
+		long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
+		qreal ytilt, qreal rotation) const;
 	QPointF mapToSceneInterpolate(const QPointF &point) const;
 
 	//! The center point of the view in scene coordinates
@@ -134,7 +137,7 @@ public slots:
 	void setPixelGrid(bool enable);
 
 	//! Scroll view to location
-	void scrollTo(const QPoint& point);
+	void scrollTo(const QPoint &point);
 
 	//! Set the zoom factor in percents
 	void setZoom(qreal zoom);
@@ -163,7 +166,8 @@ public slots:
 	void zoomout();
 
 	//! Zoom the view it's filled by the given rectangle
-	//! If the rectangle is very small, or steps are negative, just zoom by that many steps
+	//! If the rectangle is very small, or steps are negative, just zoom by that
+	//! many steps
 	void zoomTo(const QRect &rect, int steps);
 
 	//! Zoom to fit the view
@@ -183,12 +187,12 @@ protected:
 	void mouseMoveEvent(QMouseEvent *event) override;
 	void mousePressEvent(QMouseEvent *event) override;
 	void mouseReleaseEvent(QMouseEvent *event) override;
-	void mouseDoubleClickEvent(QMouseEvent*) override;
+	void mouseDoubleClickEvent(QMouseEvent *) override;
 	void wheelEvent(QWheelEvent *event) override;
 	void keyPressEvent(QKeyEvent *event) override;
 	void keyReleaseEvent(QKeyEvent *event) override;
 	bool viewportEvent(QEvent *event) override;
-	void drawForeground(QPainter *painter, const QRectF& rect) override;
+	void drawForeground(QPainter *painter, const QRectF &rect) override;
 	void dragEnterEvent(QDragEnterEvent *event) override;
 	void dragMoveEvent(QDragMoveEvent *event) override;
 	void dropEvent(QDropEvent *event) override;
@@ -201,15 +205,23 @@ private:
 	static constexpr int TOUCH_DRAW_BUFFER_COUNT = 20;
 
 	// unified mouse/stylus event handlers
-	void penPressEvent(long long timeMsec, const QPointF &pos, qreal pressure, qreal xtilt, qreal ytilt, qreal rotation, Qt::MouseButton button, Qt::KeyboardModifiers modifiers, bool isStylus);
-	void penMoveEvent(long long timeMsec, const QPointF &pos, qreal pressure, qreal xtilt, qreal ytilt, qreal rotation, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers);
-	void penReleaseEvent(long long timeMsec, const QPointF &pos, Qt::MouseButton button, Qt::KeyboardModifiers modifiers);
+	void penPressEvent(
+		long long timeMsec, const QPointF &pos, qreal pressure, qreal xtilt,
+		qreal ytilt, qreal rotation, Qt::MouseButton button,
+		Qt::KeyboardModifiers modifiers, bool isStylus);
+	void penMoveEvent(
+		long long timeMsec, const QPointF &pos, qreal pressure, qreal xtilt,
+		qreal ytilt, qreal rotation, Qt::MouseButtons buttons,
+		Qt::KeyboardModifiers modifiers);
+	void penReleaseEvent(
+		long long timeMsec, const QPointF &pos, Qt::MouseButton button,
+		Qt::KeyboardModifiers modifiers);
 
 	void touchPressEvent(long long timeMsec, const QPointF &pos);
 	void touchMoveEvent(long long timeMsec, const QPointF &pos);
 	void touchReleaseEvent(long long timeMsec, const QPointF &pos);
 
-	enum class ViewDragMode {None, Prepared, Started};
+	enum class ViewDragMode { None, Prepared, Started };
 
 	//! Drag the view
 	void moveDrag(const QPoint &point);
@@ -219,7 +231,8 @@ private:
 	void updateOutline();
 
 	void onPenDown(const canvas::Point &p, bool right);
-	void onPenMove(const canvas::Point &p, bool right, bool constrain1, bool constrain2);
+	void onPenMove(
+		const canvas::Point &p, bool right, bool constrain1, bool constrain2);
 	void onPenUp();
 
 	void flushTouchDrawBuffer();
@@ -228,8 +241,8 @@ private:
 
 	void resetCursor();
 
-	void drawPixelGrid(QPainter *painter, const QRectF& rect);
-	void drawCursorOutline(QPainter *painter, const QRectF& rect);
+	void drawPixelGrid(QPainter *painter, const QRectF &rect);
+	void drawCursorOutline(QPainter *painter, const QRectF &rect);
 
 	inline void viewRectChanged() { emit viewRectChange(mapToScene(rect())); }
 
@@ -243,15 +256,11 @@ private:
 	 * - MOUSEDOWN mouse is down
 	 * - TABLETDOWN tablet stylus is down
 	 */
-	enum {NOTDOWN, MOUSEDOWN, TABLETDOWN} m_pendown;
+	enum { NOTDOWN, MOUSEDOWN, TABLETDOWN } m_pendown;
 
-	enum class PenMode {
-		Normal, Colorpick, Layerpick
-	};
+	enum class PenMode { Normal, Colorpick, Layerpick };
 
-	enum class TouchMode {
-		Unknown, Drawing, Moving
-	};
+	enum class TouchMode { Unknown, Drawing, Moving };
 
 	NotificationBar *m_notificationBar;
 
@@ -281,10 +290,10 @@ private:
 	QCursor m_colorpickcursor, m_layerpickcursor, m_zoomcursor, m_rotatecursor;
 	QCursor m_toolcursor;
 
-	qreal m_zoom; // View zoom in percents
+	qreal m_zoom;	// View zoom in percents
 	qreal m_rotate; // View rotation in degrees
-	bool m_flip; // Flip Y axis
-	bool m_mirror; // Flip X axis
+	bool m_flip;	// Flip Y axis
+	bool m_mirror;	// Flip X axis
 
 	drawingboard::CanvasScene *m_scene;
 
@@ -314,4 +323,3 @@ private:
 }
 
 #endif
-

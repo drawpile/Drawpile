@@ -1,48 +1,69 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "desktop/main.h"
 #include "desktop/scene/canvasview.h"
+#include "desktop/main.h"
 #include "desktop/scene/canvasscene.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/drawdance/eventlog.h"
 #include "libshared/util/qtcompat.h"
 
 #include "desktop/tabletinput.h"
-#include "desktop/widgets/notifbar.h"
 #include "desktop/utils/qtguicompat.h"
+#include "desktop/widgets/notifbar.h"
 
-#include <QMouseEvent>
-#include <QTabletEvent>
-#include <QScrollBar>
-#include <QPainter>
-#include <QMimeData>
 #include <QApplication>
-#include <QWindow>
-#include <QScreen>
-#include <QtMath>
-#include <QLineF>
 #include <QDateTime>
+#include <QLineF>
+#include <QMimeData>
+#include <QMouseEvent>
+#include <QPainter>
+#include <QScreen>
+#include <QScrollBar>
+#include <QTabletEvent>
+#include <QWindow>
+#include <QtMath>
 
 namespace widgets {
 
 CanvasView::CanvasView(QWidget *parent)
-	: QGraphicsView(parent), m_pendown(NOTDOWN),
-	m_allowColorPick(false), m_allowToolAdjust(false), m_toolHandlesRightClick(false), m_penmode(PenMode::Normal),
-	m_dragmode(ViewDragMode::None), m_dragAction(CanvasShortcuts::NO_ACTION),
-	m_dragByKey(true), m_dragInverted(false), m_dragSwapAxes(false),
-	m_prevoutline(false), m_outlineSize(2), m_showoutline(false), m_subpixeloutline(true), m_squareoutline(false),
-	m_zoom(100), m_rotate(0), m_flip(false), m_mirror(false),
-	m_scene(nullptr),
-	m_zoomWheelDelta(0),
-	m_enableTablet(true),
-	m_locked(false), m_busy(false), m_resetInProgress(false), m_pointertracking(false), m_pixelgrid(true),
-	m_enableTouchScroll(true), m_enableTouchDraw(false),
-	m_enableTouchPinch(true), m_enableTouchTwist(true),
-	m_touching(false), m_touchRotating(false),
-	m_touchMode(TouchMode::Unknown),
-	m_dpi(96),
-	m_brushCursorStyle(BrushCursor::Dot),
-	m_brushOutlineWidth(1.0)
+	: QGraphicsView(parent)
+	, m_pendown(NOTDOWN)
+	, m_allowColorPick(false)
+	, m_allowToolAdjust(false)
+	, m_toolHandlesRightClick(false)
+	, m_penmode(PenMode::Normal)
+	, m_dragmode(ViewDragMode::None)
+	, m_dragAction(CanvasShortcuts::NO_ACTION)
+	, m_dragByKey(true)
+	, m_dragInverted(false)
+	, m_dragSwapAxes(false)
+	, m_prevoutline(false)
+	, m_outlineSize(2)
+	, m_showoutline(false)
+	, m_subpixeloutline(true)
+	, m_squareoutline(false)
+	, m_zoom(100)
+	, m_rotate(0)
+	, m_flip(false)
+	, m_mirror(false)
+	, m_scene(nullptr)
+	, m_zoomWheelDelta(0)
+	, m_enableTablet(true)
+	, m_locked(false)
+	, m_busy(false)
+	, m_resetInProgress(false)
+	, m_pointertracking(false)
+	, m_pixelgrid(true)
+	, m_enableTouchScroll(true)
+	, m_enableTouchDraw(false)
+	, m_enableTouchPinch(true)
+	, m_enableTouchTwist(true)
+	, m_touching(false)
+	, m_touchRotating(false)
+	, m_touchMode(TouchMode::Unknown)
+	, m_dpi(96)
+	, m_brushCursorStyle(BrushCursor::Dot)
+	, m_brushOutlineWidth(1.0)
 {
 	viewport()->setAcceptDrops(true);
 	viewport()->setAttribute(Qt::WA_AcceptTouchEvents);
@@ -50,13 +71,17 @@ CanvasView::CanvasView(QWidget *parent)
 	setAcceptDrops(true);
 	setFrameShape(QFrame::NoFrame);
 
-	setBackgroundBrush(QColor(100,100,100));
+	setBackgroundBrush(QColor(100, 100, 100));
 
 	m_notificationBar = new NotificationBar(this);
-	connect(m_notificationBar, &NotificationBar::actionButtonClicked, this, &CanvasView::reconnectRequested);
+	connect(
+		m_notificationBar, &NotificationBar::actionButtonClicked, this,
+		&CanvasView::reconnectRequested);
 
-	m_trianglerightcursor = QCursor(QPixmap(":/cursors/triangle-right.png"), 14, 14);
-	m_triangleleftcursor = QCursor(QPixmap(":/cursors/triangle-left.png"), 14, 14);
+	m_trianglerightcursor =
+		QCursor(QPixmap(":/cursors/triangle-right.png"), 14, 14);
+	m_triangleleftcursor =
+		QCursor(QPixmap(":/cursors/triangle-left.png"), 14, 14);
 	m_colorpickcursor = QCursor(QPixmap(":/cursors/colorpicker.png"), 2, 29);
 	m_layerpickcursor = QCursor(QPixmap(":/cursors/layerpicker.png"), 2, 29);
 	m_zoomcursor = QCursor(QPixmap(":/cursors/zoom.png"), 8, 8);
@@ -80,7 +105,8 @@ CanvasView::CanvasView(QWidget *parent)
 	settings.bindTwoFingerZoom(this, &widgets::CanvasView::setTouchPinch);
 	settings.bindTwoFingerRotate(this, &widgets::CanvasView::setTouchTwist);
 	settings.bindBrushCursor(this, &widgets::CanvasView::setBrushCursorStyle);
-	settings.bindBrushOutlineWidth(this, &widgets::CanvasView::setBrushOutlineWidth);
+	settings.bindBrushOutlineWidth(
+		this, &widgets::CanvasView::setBrushOutlineWidth);
 
 	settings.bindGlobalPressureCurve(this, [=](QString serializedCurve) {
 		KisCubicCurve curve;
@@ -88,12 +114,14 @@ CanvasView::CanvasView(QWidget *parent)
 		setPressureCurve(curve);
 	});
 
-	settings.bindCanvasShortcuts(this, [=](desktop::settings::Settings::CanvasShortcutsType shortcuts) {
-		m_canvasShortcuts = CanvasShortcuts::load(shortcuts);
-	});
+	settings.bindCanvasShortcuts(
+		this, [=](desktop::settings::Settings::CanvasShortcutsType shortcuts) {
+			m_canvasShortcuts = CanvasShortcuts::load(shortcuts);
+		});
 
 	settings.bindCanvasScrollBars(this, [=](bool enabled) {
-		const auto policy = enabled ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff;
+		const auto policy =
+			enabled ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff;
 		setHorizontalScrollBarPolicy(policy);
 		setVerticalScrollBarPolicy(policy);
 	});
@@ -101,7 +129,8 @@ CanvasView::CanvasView(QWidget *parent)
 
 void CanvasView::showDisconnectedWarning(const QString &message)
 {
-	m_notificationBar->show(message, tr("Reconnect"), NotificationBar::RoleColor::Warning);
+	m_notificationBar->show(
+		message, tr("Reconnect"), NotificationBar::RoleColor::Warning);
 }
 
 void CanvasView::setCanvas(drawingboard::CanvasScene *scene)
@@ -109,15 +138,17 @@ void CanvasView::setCanvas(drawingboard::CanvasScene *scene)
 	m_scene = scene;
 	setScene(scene);
 
-	connect(m_scene, &drawingboard::CanvasScene::canvasResized, this, [this](int xoff, int yoff, const QSize &oldsize) {
-		if(oldsize.isEmpty()) {
-			centerOn(m_scene->sceneRect().center());
-		} else {
-			const qreal z = m_zoom / 100.0;
-			scrollBy(xoff * z, yoff * z);
-		}
-		viewRectChanged();
-	});
+	connect(
+		m_scene, &drawingboard::CanvasScene::canvasResized, this,
+		[this](int xoff, int yoff, const QSize &oldsize) {
+			if(oldsize.isEmpty()) {
+				centerOn(m_scene->sceneRect().center());
+			} else {
+				const qreal z = m_zoom / 100.0;
+				scrollBy(xoff * z, yoff * z);
+			}
+			viewRectChanged();
+		});
 
 	viewRectChanged();
 }
@@ -130,7 +161,7 @@ void CanvasView::scrollBy(int x, int y)
 
 void CanvasView::zoomSteps(int steps)
 {
-	if(m_zoom<100 || (m_zoom==100 && steps<0))
+	if(m_zoom < 100 || (m_zoom == 100 && steps < 0))
 		setZoom(qRound(qMin(qreal(100), m_zoom + steps * 10) / 10) * 10);
 	else
 		setZoom(qRound(qMax(qreal(100), m_zoom + steps * 50) / 50) * 50);
@@ -180,10 +211,7 @@ void CanvasView::zoomToFit()
 	if(!m_scene || !m_scene->hasImage())
 		return;
 
-	const QRect r {
-		QPoint(),
-		m_scene->model()->size()
-	};
+	const QRect r{QPoint(), m_scene->model()->size()};
 
 	const qreal xScale = qreal(viewport()->width()) / r.width();
 	const qreal yScale = qreal(viewport()->height()) / r.height();
@@ -199,12 +227,12 @@ void CanvasView::zoomToFit()
  */
 void CanvasView::setZoom(qreal zoom)
 {
-	if(zoom<=0)
+	if(zoom <= 0)
 		return;
 
 	m_zoom = zoom;
-	QTransform t(1,0,0,1, transform().dx(), transform().dy());
-	t.scale(m_zoom/100.0, m_zoom/100.0);
+	QTransform t(1, 0, 0, 1, transform().dx(), transform().dy());
+	t.scale(m_zoom / 100.0, m_zoom / 100.0);
 	t.rotate(m_rotate);
 
 	t.scale(m_mirror ? -1 : 1, m_flip ? -1 : 1);
@@ -216,8 +244,7 @@ void CanvasView::setZoom(qreal zoom)
 	// Also enable when rotating, since that tends to cause terrible jaggies
 	setRenderHint(
 		QPainter::SmoothPixmapTransform,
-		m_zoom < 200 || (m_zoom < 800 && int(m_rotate) % 90)
-		);
+		m_zoom < 200 || (m_zoom < 800 && int(m_rotate) % 90));
 
 	emit viewTransformed(m_zoom, m_rotate);
 }
@@ -282,7 +309,7 @@ void CanvasView::setToolCursor(const QCursor &cursor)
 }
 
 void CanvasView::setToolCapabilities(
-		bool allowColorPick, bool allowToolAdjust, bool toolHandlesRightClick)
+	bool allowColorPick, bool allowToolAdjust, bool toolHandlesRightClick)
 {
 	m_allowColorPick = allowColorPick;
 	m_allowToolAdjust = allowToolAdjust;
@@ -294,8 +321,9 @@ void CanvasView::resetCursor()
 	if(m_dragmode != ViewDragMode::None) {
 		switch(m_dragAction) {
 		case CanvasShortcuts::CANVAS_PAN:
-			viewport()->setCursor(m_dragmode == ViewDragMode::Started
-				? Qt::ClosedHandCursor : Qt::OpenHandCursor);
+			viewport()->setCursor(
+				m_dragmode == ViewDragMode::Started ? Qt::ClosedHandCursor
+													: Qt::OpenHandCursor);
 			break;
 		case CanvasShortcuts::CANVAS_ROTATE:
 			viewport()->setCursor(m_rotatecursor);
@@ -315,9 +343,14 @@ void CanvasView::resetCursor()
 	}
 
 	switch(m_penmode) {
-	case PenMode::Normal: break;
-	case PenMode::Colorpick: viewport()->setCursor(m_colorpickcursor); return;
-	case PenMode::Layerpick: viewport()->setCursor(m_layerpickcursor); return;
+	case PenMode::Normal:
+		break;
+	case PenMode::Colorpick:
+		viewport()->setCursor(m_colorpickcursor);
+		return;
+	case PenMode::Layerpick:
+		viewport()->setCursor(m_layerpickcursor);
+		return;
 	}
 
 	if(m_locked) {
@@ -332,11 +365,21 @@ void CanvasView::resetCursor()
 
 	if(m_toolcursor.shape() == Qt::CrossCursor) {
 		switch(m_brushCursorStyle) {
-		case BrushCursor::Dot: viewport()->setCursor(m_dotcursor); break;
-		case BrushCursor::Cross: viewport()->setCursor(Qt::CrossCursor); break;
-		case BrushCursor::Arrow: viewport()->setCursor(Qt::ArrowCursor); break;
-		case BrushCursor::TriangleRight: viewport()->setCursor(m_trianglerightcursor); break;
-		case BrushCursor::TriangleLeft: viewport()->setCursor(m_triangleleftcursor); break;
+		case BrushCursor::Dot:
+			viewport()->setCursor(m_dotcursor);
+			break;
+		case BrushCursor::Cross:
+			viewport()->setCursor(Qt::CrossCursor);
+			break;
+		case BrushCursor::Arrow:
+			viewport()->setCursor(Qt::ArrowCursor);
+			break;
+		case BrushCursor::TriangleRight:
+			viewport()->setCursor(m_trianglerightcursor);
+			break;
+		case BrushCursor::TriangleLeft:
+			viewport()->setCursor(m_triangleleftcursor);
+			break;
 		}
 	} else {
 		viewport()->setCursor(m_toolcursor);
@@ -354,16 +397,14 @@ void CanvasView::setPixelGrid(bool enable)
  */
 void CanvasView::setOutlineSize(int newSize)
 {
-	if(m_showoutline && (m_outlineSize>0 || newSize>0)) {
-		const qreal maxSize = qMax(m_outlineSize, newSize) + m_brushOutlineWidth;
+	if(m_showoutline && (m_outlineSize > 0 || newSize > 0)) {
+		const qreal maxSize =
+			qMax(m_outlineSize, newSize) + m_brushOutlineWidth;
 		const qreal maxRad = maxSize / 2.0;
 		QList<QRectF> rect;
-		rect.append(QRectF {
-					m_prevoutlinepoint.x() - maxRad,
-					m_prevoutlinepoint.y() - maxRad,
-					maxSize,
-					maxSize
-					});
+		rect.append(QRectF{
+			m_prevoutlinepoint.x() - maxRad, m_prevoutlinepoint.y() - maxRad,
+			maxSize, maxSize});
 		updateScene(rect);
 	}
 	m_outlineSize = newSize;
@@ -375,47 +416,51 @@ void CanvasView::setOutlineMode(bool subpixel, bool square)
 	m_squareoutline = square;
 }
 
-void CanvasView::drawForeground(QPainter *painter, const QRectF& rect)
+void CanvasView::drawForeground(QPainter *painter, const QRectF &rect)
 {
 	drawPixelGrid(painter, rect);
 	drawCursorOutline(painter, rect);
 }
 
-void CanvasView::drawPixelGrid(QPainter *painter, const QRectF& rect)
+void CanvasView::drawPixelGrid(QPainter *painter, const QRectF &rect)
 {
 	if(m_pixelgrid && m_zoom >= 800) {
 		QPen pen(QColor(160, 160, 160));
 		pen.setCosmetic(true);
 		painter->setPen(pen);
-		for(int x=rect.left();x<=rect.right();++x) {
-			painter->drawLine(x, rect.top(), x, rect.bottom()+1);
+		for(int x = rect.left(); x <= rect.right(); ++x) {
+			painter->drawLine(x, rect.top(), x, rect.bottom() + 1);
 		}
 
-		for(int y=rect.top();y<=rect.bottom();++y) {
-			painter->drawLine(rect.left(), y, rect.right()+1, y);
+		for(int y = rect.top(); y <= rect.bottom(); ++y) {
+			painter->drawLine(rect.left(), y, rect.right() + 1, y);
 		}
 	}
 }
 
-void CanvasView::drawCursorOutline(QPainter *painter, const QRectF& rect)
+void CanvasView::drawCursorOutline(QPainter *painter, const QRectF &rect)
 {
 	// We want to show an outline if we're currently drawing or able to, but
 	// also if we're adjusting the tool size, since seeing the outline while
 	// you change your brush size is really useful.
 	bool outlineVisibleInMode;
 	if(m_dragmode == ViewDragMode::None) {
-		outlineVisibleInMode = m_penmode == PenMode::Normal && !m_locked && !m_busy;
+		outlineVisibleInMode =
+			m_penmode == PenMode::Normal && !m_locked && !m_busy;
 	} else {
 		outlineVisibleInMode = m_dragAction == CanvasShortcuts::TOOL_ADJUST;
 	}
 
-	bool shouldRenderOutline = m_showoutline && m_outlineSize > 0 && outlineVisibleInMode;
+	bool shouldRenderOutline =
+		m_showoutline && m_outlineSize > 0 && outlineVisibleInMode;
 	m_prevoutline = shouldRenderOutline;
 	if(shouldRenderOutline) {
-		QRectF outline(m_prevoutlinepoint-QPointF(m_outlineSize/2.0, m_outlineSize/2.0),
-					QSizeF(m_outlineSize, m_outlineSize));
+		QRectF outline(
+			m_prevoutlinepoint -
+				QPointF(m_outlineSize / 2.0, m_outlineSize / 2.0),
+			QSizeF(m_outlineSize, m_outlineSize));
 
-		if(!m_subpixeloutline && m_outlineSize%2==0)
+		if(!m_subpixeloutline && m_outlineSize % 2 == 0)
 			outline.translate(-0.5, -0.5);
 
 		if(rect.intersects(outline) && m_brushOutlineWidth > 0) {
@@ -424,7 +469,8 @@ void CanvasView::drawCursorOutline(QPainter *painter, const QRectF& rect)
 			pen.setCosmetic(true);
 			pen.setWidthF(m_brushOutlineWidth);
 			painter->setPen(pen);
-			painter->setCompositionMode(QPainter::RasterOp_SourceXorDestination);
+			painter->setCompositionMode(
+				QPainter::RasterOp_SourceXorDestination);
 			if(m_squareoutline)
 				painter->drawRect(outline);
 			else
@@ -443,11 +489,9 @@ void CanvasView::enterEvent(compat::EnterEvent *event)
 	// using a key for dragging works rightaway. Avoid stealing
 	// focus from text edit widgets though.
 	QWidget *oldfocus = QApplication::focusWidget();
-	if(!oldfocus || !(
-		oldfocus->inherits("QLineEdit") ||
-		oldfocus->inherits("QTextEdit") ||
-		oldfocus->inherits("QPlainTextEdit"))
-		) {
+	if(!oldfocus ||
+	   !(oldfocus->inherits("QLineEdit") || oldfocus->inherits("QTextEdit") ||
+		 oldfocus->inherits("QPlainTextEdit"))) {
 		setFocus(Qt::MouseFocusReason);
 	}
 }
@@ -466,14 +510,22 @@ void CanvasView::focusInEvent(QFocusEvent *event)
 	m_keysDown.clear();
 }
 
-canvas::Point CanvasView::mapToScene(long long timeMsec, const QPoint &point, qreal pressure, qreal xtilt, qreal ytilt, qreal rotation) const
+canvas::Point CanvasView::mapToScene(
+	long long timeMsec, const QPoint &point, qreal pressure, qreal xtilt,
+	qreal ytilt, qreal rotation) const
 {
-	return canvas::Point(timeMsec, mapToScene(point), m_pressureCurve.value(pressure), xtilt, ytilt, rotation);
+	return canvas::Point(
+		timeMsec, mapToScene(point), m_pressureCurve.value(pressure), xtilt,
+		ytilt, rotation);
 }
 
-canvas::Point CanvasView::mapToScene(long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt, qreal ytilt, qreal rotation) const
+canvas::Point CanvasView::mapToScene(
+	long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
+	qreal ytilt, qreal rotation) const
 {
-	return canvas::Point(timeMsec, mapToSceneInterpolate(point), m_pressureCurve.value(pressure), xtilt, ytilt, rotation);
+	return canvas::Point(
+		timeMsec, mapToSceneInterpolate(point), m_pressureCurve.value(pressure),
+		xtilt, ytilt, rotation);
 }
 
 QPointF CanvasView::mapToSceneInterpolate(const QPointF &point) const
@@ -491,8 +543,8 @@ QPointF CanvasView::mapToSceneInterpolate(const QPointF &point) const
 	QPointF p2 = mapToScene(p0 + QPoint{1, 1});
 
 	return QPointF{
-		(p1.x()-p2.x()) * xf + p2.x(),
-		(p1.y()-p2.y()) * yf + p2.y(),
+		(p1.x() - p2.x()) * xf + p2.x(),
+		(p1.y() - p2.y()) * yf + p2.y(),
 	};
 }
 
@@ -511,7 +563,9 @@ void CanvasView::onPenDown(const canvas::Point &p, bool right)
 		switch(m_penmode) {
 		case PenMode::Normal:
 			if(!m_locked)
-				emit penDown(p.timeMsec(), p, p.pressure(), p.xtilt(), p.ytilt(), p.rotation(), right, m_zoom / 100.0);
+				emit penDown(
+					p.timeMsec(), p, p.pressure(), p.xtilt(), p.ytilt(),
+					p.rotation(), right, m_zoom / 100.0);
 			break;
 		case PenMode::Colorpick:
 			m_scene->model()->pickColor(p.x(), p.y(), 0, 0);
@@ -523,7 +577,8 @@ void CanvasView::onPenDown(const canvas::Point &p, bool right)
 	}
 }
 
-void CanvasView::onPenMove(const canvas::Point &p, bool right, bool constrain1, bool constrain2)
+void CanvasView::onPenMove(
+	const canvas::Point &p, bool right, bool constrain1, bool constrain2)
 {
 	Q_UNUSED(right)
 
@@ -531,7 +586,9 @@ void CanvasView::onPenMove(const canvas::Point &p, bool right, bool constrain1, 
 		switch(m_penmode) {
 		case PenMode::Normal:
 			if(!m_locked)
-				emit penMove(p.timeMsec(), p, p.pressure(), p.xtilt(), p.ytilt(), p.rotation(), constrain1, constrain2);
+				emit penMove(
+					p.timeMsec(), p, p.pressure(), p.xtilt(), p.ytilt(),
+					p.rotation(), constrain1, constrain2);
 			break;
 		case PenMode::Colorpick:
 			m_scene->model()->pickColor(p.x(), p.y(), 0, 0);
@@ -550,14 +607,17 @@ void CanvasView::onPenUp()
 	}
 }
 
-void CanvasView::penPressEvent(long long timeMsec, const QPointF &pos, qreal pressure, qreal xtilt, qreal ytilt, qreal rotation, Qt::MouseButton button, Qt::KeyboardModifiers modifiers, bool isStylus)
+void CanvasView::penPressEvent(
+	long long timeMsec, const QPointF &pos, qreal pressure, qreal xtilt,
+	qreal ytilt, qreal rotation, Qt::MouseButton button,
+	Qt::KeyboardModifiers modifiers, bool isStylus)
 {
 	if(m_pendown != NOTDOWN) {
 		return;
 	}
 
-	CanvasShortcuts::Match match = m_canvasShortcuts.matchMouseButton(
-		modifiers, m_keysDown, button);
+	CanvasShortcuts::Match match =
+		m_canvasShortcuts.matchMouseButton(modifiers, m_keysDown, button);
 	// If the tool wants to receive right clicks (e.g. to undo the last point in
 	// a bezier curve), we have to override that shortcut.
 	if(m_toolHandlesRightClick && match.isUnmodifiedClick(Qt::RightButton)) {
@@ -603,16 +663,21 @@ void CanvasView::penPressEvent(long long timeMsec, const QPointF &pos, qreal pre
 		m_dragByKey = true;
 		resetCursor();
 		updateOutline();
-	} else if((button == Qt::LeftButton || button == Qt::RightButton) && m_dragmode == ViewDragMode::None) {
+	} else if(
+		(button == Qt::LeftButton || button == Qt::RightButton) &&
+		m_dragmode == ViewDragMode::None) {
 		m_pendown = isStylus ? TABLETDOWN : MOUSEDOWN;
 		m_pointerdistance = 0;
 		m_pointervelocity = 0;
-		m_prevpoint = mapToScene(timeMsec, pos, pressure, xtilt, ytilt, rotation);
+		m_prevpoint =
+			mapToScene(timeMsec, pos, pressure, xtilt, ytilt, rotation);
 		if(penmode != m_penmode) {
 			m_penmode = penmode;
 			resetCursor();
 		}
-		onPenDown(mapToScene(timeMsec, pos, pressure, xtilt, ytilt, rotation), button == Qt::RightButton);
+		onPenDown(
+			mapToScene(timeMsec, pos, pressure, xtilt, ytilt, rotation),
+			button == Qt::RightButton);
 	}
 }
 
@@ -630,34 +695,32 @@ void CanvasView::mousePressEvent(QMouseEvent *event)
 {
 	const auto mousePos = compat::mousePos(*event);
 	DP_EVENT_LOG(
-		"mouse_press x=%d y=%d buttons=0x%x modifiers=0x%x synthetic=%d pendown=%d touching=%d",
-		mousePos.x(), mousePos.y(), unsigned(event->buttons()), unsigned(event->modifiers()),
-		isSynthetic(event), m_pendown, m_touching);
+		"mouse_press x=%d y=%d buttons=0x%x modifiers=0x%x synthetic=%d "
+		"pendown=%d touching=%d",
+		mousePos.x(), mousePos.y(), unsigned(event->buttons()),
+		unsigned(event->modifiers()), isSynthetic(event), m_pendown,
+		m_touching);
 
 	if(isSynthetic(event) || m_touching) {
 		return;
 	}
 
 	penPressEvent(
-		QDateTime::currentMSecsSinceEpoch(),
-		mousePos,
-		1.0,
-		0.0,
-		0.0,
-		0.0,
-		event->button(),
-		event->modifiers(),
-		false
-	);
+		QDateTime::currentMSecsSinceEpoch(), mousePos, 1.0, 0.0, 0.0, 0.0,
+		event->button(), event->modifiers(), false);
 }
 
-void CanvasView::penMoveEvent(long long timeMsec, const QPointF &pos, qreal pressure, qreal xtilt, qreal ytilt, qreal rotation, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers)
+void CanvasView::penMoveEvent(
+	long long timeMsec, const QPointF &pos, qreal pressure, qreal xtilt,
+	qreal ytilt, qreal rotation, Qt::MouseButtons buttons,
+	Qt::KeyboardModifiers modifiers)
 {
 	if(m_dragmode == ViewDragMode::Started) {
 		moveDrag(pos.toPoint());
 
 	} else {
-		canvas::Point point = mapToScene(timeMsec, pos, pressure, xtilt, ytilt, rotation);
+		canvas::Point point =
+			mapToScene(timeMsec, pos, pressure, xtilt, ytilt, rotation);
 		updateOutline(point);
 		if(!m_prevpoint.intSame(point)) {
 			if(m_pendown) {
@@ -666,10 +729,8 @@ void CanvasView::penMoveEvent(long long timeMsec, const QPointF &pos, qreal pres
 				CanvasShortcuts::ConstraintMatch match =
 					m_canvasShortcuts.matchConstraints(modifiers, m_keysDown);
 				onPenMove(
-					point,
-					buttons.testFlag(Qt::RightButton),
-					match.toolConstraint1(),
-					match.toolConstraint2());
+					point, buttons.testFlag(Qt::RightButton),
+					match.toolConstraint1(), match.toolConstraint2());
 
 			} else {
 				emit penHover(point);
@@ -686,9 +747,11 @@ void CanvasView::mouseMoveEvent(QMouseEvent *event)
 {
 	const auto mousePos = compat::mousePos(*event);
 	DP_EVENT_LOG(
-		"mouse_move x=%d y=%d buttons=0x%x modifiers=0x%x synthetic=%d pendown=%d touching=%d",
-		mousePos.x(), mousePos.y(), unsigned(event->buttons()), unsigned(event->modifiers()),
-		isSynthetic(event), m_pendown, m_touching);
+		"mouse_move x=%d y=%d buttons=0x%x modifiers=0x%x synthetic=%d "
+		"pendown=%d touching=%d",
+		mousePos.x(), mousePos.y(), unsigned(event->buttons()),
+		unsigned(event->modifiers()), isSynthetic(event), m_pendown,
+		m_touching);
 
 	if(isSynthetic(event) || m_pendown == TABLETDOWN || m_touching) {
 		return;
@@ -701,18 +764,13 @@ void CanvasView::mouseMoveEvent(QMouseEvent *event)
 	}
 
 	penMoveEvent(
-		QDateTime::currentMSecsSinceEpoch(),
-		mousePos,
-		1.0,
-		0.0,
-		0.0,
-		0.0,
-		event->buttons(),
-		event->modifiers()
-	);
+		QDateTime::currentMSecsSinceEpoch(), mousePos, 1.0, 0.0, 0.0, 0.0,
+		event->buttons(), event->modifiers());
 }
 
-void CanvasView::penReleaseEvent(long long timeMsec, const QPointF &pos, Qt::MouseButton button, Qt::KeyboardModifiers modifiers)
+void CanvasView::penReleaseEvent(
+	long long timeMsec, const QPointF &pos, Qt::MouseButton button,
+	Qt::KeyboardModifiers modifiers)
 {
 	canvas::Point point = mapToScene(timeMsec, pos, 0.0, 0.0, 0.0, 0.0);
 	m_prevpoint = point;
@@ -735,7 +793,10 @@ void CanvasView::penReleaseEvent(long long timeMsec, const QPointF &pos, Qt::Mou
 			break;
 		}
 
-	} else if(m_pendown == TABLETDOWN || ((button == Qt::LeftButton || button == Qt::RightButton) && m_pendown == MOUSEDOWN)) {
+	} else if(
+		m_pendown == TABLETDOWN ||
+		((button == Qt::LeftButton || button == Qt::RightButton) &&
+		 m_pendown == MOUSEDOWN)) {
 		onPenUp();
 		m_pendown = NOTDOWN;
 		switch(mouseMatch.action()) {
@@ -774,12 +835,15 @@ void CanvasView::penReleaseEvent(long long timeMsec, const QPointF &pos, Qt::Mou
 
 void CanvasView::touchPressEvent(long long timeMsec, const QPointF &pos)
 {
-	penPressEvent(timeMsec, pos, 1.0, 0.0, 0.0, 0.0, Qt::LeftButton, Qt::NoModifier, false);
+	penPressEvent(
+		timeMsec, pos, 1.0, 0.0, 0.0, 0.0, Qt::LeftButton, Qt::NoModifier,
+		false);
 }
 
 void CanvasView::touchMoveEvent(long long timeMsec, const QPointF &pos)
 {
-	penMoveEvent(timeMsec, pos, 1.0, 0.0, 0.0, 0.0, Qt::LeftButton, Qt::NoModifier);
+	penMoveEvent(
+		timeMsec, pos, 1.0, 0.0, 0.0, 0.0, Qt::LeftButton, Qt::NoModifier);
 }
 
 void CanvasView::touchReleaseEvent(long long timeMsec, const QPointF &pos)
@@ -792,24 +856,28 @@ void CanvasView::mouseReleaseEvent(QMouseEvent *event)
 {
 	const auto mousePos = compat::mousePos(*event);
 	DP_EVENT_LOG(
-		"mouse_release x=%d y=%d buttons=0x%x modifiers=0x%x synthetic=%d pendown=%d touching=%d",
-		mousePos.x(), mousePos.y(), unsigned(event->buttons()), unsigned(event->modifiers()),
-		isSynthetic(event), m_pendown, m_touching);
+		"mouse_release x=%d y=%d buttons=0x%x modifiers=0x%x synthetic=%d "
+		"pendown=%d touching=%d",
+		mousePos.x(), mousePos.y(), unsigned(event->buttons()),
+		unsigned(event->modifiers()), isSynthetic(event), m_pendown,
+		m_touching);
 	if(isSynthetic(event) || m_touching) {
 		return;
 	}
-	penReleaseEvent(QDateTime::currentMSecsSinceEpoch(), mousePos, event->button(), event->modifiers());
+	penReleaseEvent(
+		QDateTime::currentMSecsSinceEpoch(), mousePos, event->button(),
+		event->modifiers());
 }
 
-void CanvasView::mouseDoubleClickEvent(QMouseEvent*)
+void CanvasView::mouseDoubleClickEvent(QMouseEvent *)
 {
 	// Ignore doubleclicks
 }
 
 void CanvasView::wheelEvent(QWheelEvent *event)
 {
-	CanvasShortcuts::Match match = m_canvasShortcuts.matchMouseWheel(
-		event->modifiers(), m_keysDown);
+	CanvasShortcuts::Match match =
+		m_canvasShortcuts.matchMouseWheel(event->modifiers(), m_keysDown);
 	QPoint angleDelta = event->angleDelta();
 	int deltaX = angleDelta.x();
 	int deltaY = angleDelta.y();
@@ -868,7 +936,8 @@ void CanvasView::wheelEvent(QWheelEvent *event)
 	}
 }
 
-void CanvasView::keyPressEvent(QKeyEvent *event) {
+void CanvasView::keyPressEvent(QKeyEvent *event)
+{
 	QGraphicsView::keyPressEvent(event);
 	if(event->isAutoRepeat()) {
 		return;
@@ -937,7 +1006,8 @@ void CanvasView::keyPressEvent(QKeyEvent *event) {
 	updateOutline();
 }
 
-void CanvasView::keyReleaseEvent(QKeyEvent *event) {
+void CanvasView::keyReleaseEvent(QKeyEvent *event)
+{
 	QGraphicsView::keyReleaseEvent(event);
 	if(event->isAutoRepeat()) {
 		return;
@@ -1007,7 +1077,7 @@ void CanvasView::keyReleaseEvent(QKeyEvent *event) {
 
 static qreal squareDist(const QPointF &p)
 {
-	return p.x()*p.x() + p.y()*p.y();
+	return p.x() * p.x() + p.y() * p.y();
 }
 
 void CanvasView::setPressureCurve(const KisCubicCurve &pressureCurve)
@@ -1030,10 +1100,12 @@ void CanvasView::touchEvent(QTouchEvent *event)
 			DP_EVENT_LOG(
 				"touch_draw_begin x=%f y=%f pendown=%d touching=%d points=%d",
 				pos.x(), pos.y(), m_pendown, m_touching, pointsCount);
-			if(m_enableTouchScroll || m_enableTouchPinch || m_enableTouchTwist) {
+			if(m_enableTouchScroll || m_enableTouchPinch ||
+			   m_enableTouchTwist) {
 				// Buffer the touch first, since it might end up being the
 				// beginning of an action that involves multiple fingers.
-				m_touchDrawBuffer.append({QDateTime::currentMSecsSinceEpoch(), pos});
+				m_touchDrawBuffer.append(
+					{QDateTime::currentMSecsSinceEpoch(), pos});
 				m_touchMode = TouchMode::Unknown;
 			} else {
 				// There's no other actions other than drawing enabled, so we
@@ -1042,14 +1114,17 @@ void CanvasView::touchEvent(QTouchEvent *event)
 				touchPressEvent(QDateTime::currentMSecsSinceEpoch(), pos);
 			}
 		} else {
-			DP_EVENT_LOG("touch_begin pendown=%d touching=%d points=%d",
-				m_pendown, m_touching, pointsCount);
+			DP_EVENT_LOG(
+				"touch_begin pendown=%d touching=%d points=%d", m_pendown,
+				m_touching, pointsCount);
 			m_touchMode = TouchMode::Moving;
 		}
 		break;
 
 	case QEvent::TouchUpdate:
-		if(m_enableTouchDraw && ((pointsCount == 1 && m_touchMode == TouchMode::Unknown) || m_touchMode == TouchMode::Drawing)) {
+		if(m_enableTouchDraw &&
+		   ((pointsCount == 1 && m_touchMode == TouchMode::Unknown) ||
+			m_touchMode == TouchMode::Drawing)) {
 			QPointF pos = compat::touchPos(compat::touchPoints(*event).first());
 			DP_EVENT_LOG(
 				"touch_draw_update x=%f y=%f pendown=%d touching=%d points=%d",
@@ -1067,10 +1142,13 @@ void CanvasView::touchEvent(QTouchEvent *event)
 				// If the finger didn't move enough of a distance and we didn't
 				// buffer an excessive amount of touches yet. Buffer the touched
 				// point and wait a bit more as to what's going to happen.
-				bool shouldAppend = bufferCount < TOUCH_DRAW_BUFFER_COUNT &&
-					QLineF{m_touchDrawBuffer.first().second, pos}.length() < TOUCH_DRAW_DISTANCE;
+				bool shouldAppend =
+					bufferCount < TOUCH_DRAW_BUFFER_COUNT &&
+					QLineF{m_touchDrawBuffer.first().second, pos}.length() <
+						TOUCH_DRAW_DISTANCE;
 				if(shouldAppend) {
-					m_touchDrawBuffer.append({QDateTime::currentMSecsSinceEpoch(), pos});
+					m_touchDrawBuffer.append(
+						{QDateTime::currentMSecsSinceEpoch(), pos});
 				} else {
 					m_touchMode = TouchMode::Drawing;
 					flushTouchDrawBuffer();
@@ -1105,21 +1183,25 @@ void CanvasView::touchEvent(QTouchEvent *event)
 			// we got here with one finger, we've come out of a multitouch
 			// operation and aren't going to be drawing until all fingers leave
 			// the surface anyway, so panning is the only sensible option.
-			bool havePinchOrTwist = pointsCount >= 2 && (m_enableTouchPinch || m_enableTouchTwist);
+			bool havePinchOrTwist =
+				pointsCount >= 2 && (m_enableTouchPinch || m_enableTouchTwist);
 			if(m_enableTouchScroll || m_enableTouchDraw || havePinchOrTwist) {
 				m_touching = true;
 				float dx = center.x() - lastCenter.x();
 				float dy = center.y() - lastCenter.y();
-				horizontalScrollBar()->setValue(horizontalScrollBar()->value() - dx);
-				verticalScrollBar()->setValue(verticalScrollBar()->value() - dy);
+				horizontalScrollBar()->setValue(
+					horizontalScrollBar()->value() - dx);
+				verticalScrollBar()->setValue(
+					verticalScrollBar()->value() - dy);
 			}
 
 			// Scaling and rotation with two fingers
 			if(havePinchOrTwist) {
 				m_touching = true;
-				float startAvgDist=0, avgDist=0;
+				float startAvgDist = 0, avgDist = 0;
 				for(const auto &tp : compat::touchPoints(*event)) {
-					startAvgDist += squareDist(compat::touchStartPos(tp) - startCenter);
+					startAvgDist +=
+						squareDist(compat::touchStartPos(tp) - startCenter);
 					avgDist += squareDist(compat::touchPos(tp) - center);
 				}
 				startAvgDist = sqrt(startAvgDist);
@@ -1133,19 +1215,25 @@ void CanvasView::touchEvent(QTouchEvent *event)
 				if(m_enableTouchTwist) {
 					const auto &tps = compat::touchPoints(*event);
 
-					const QLineF l1 { compat::touchStartPos(tps.first()), compat::touchStartPos(tps.last()) };
-					const QLineF l2 { compat::touchPos(tps.first()), compat::touchPos(tps.last()) };
+					const QLineF l1{
+						compat::touchStartPos(tps.first()),
+						compat::touchStartPos(tps.last())};
+					const QLineF l2{
+						compat::touchPos(tps.first()),
+						compat::touchPos(tps.last())};
 
 					const qreal dAngle = l1.angle() - l2.angle();
 
-					// Require a small nudge to activate rotation to avoid rotating when the user just wanted to zoom
-					// Alsom, only rotate when touch points start out far enough from each other. Initial angle measurement
-					// is inaccurate when touchpoints are close together.
-					if(startAvgDist / m_dpi > 0.8 && (qAbs(dAngle) > 3.0 || m_touchRotating)) {
+					// Require a small nudge to activate rotation to avoid
+					// rotating when the user just wanted to zoom Alsom, only
+					// rotate when touch points start out far enough from each
+					// other. Initial angle measurement is inaccurate when
+					// touchpoints are close together.
+					if(startAvgDist / m_dpi > 0.8 &&
+					   (qAbs(dAngle) > 3.0 || m_touchRotating)) {
 						m_touchRotating = true;
 						m_rotate = m_touchStartRotate + dAngle;
 					}
-
 				}
 
 				// Recalculate view matrix
@@ -1156,16 +1244,22 @@ void CanvasView::touchEvent(QTouchEvent *event)
 
 	case QEvent::TouchEnd:
 	case QEvent::TouchCancel:
-		if(m_enableTouchDraw && ((m_touchMode == TouchMode::Unknown && !m_touchDrawBuffer.isEmpty()) || m_touchMode == TouchMode::Drawing)) {
-			DP_EVENT_LOG("touch_draw_%s pendown=%d touching=%d points=%d",
-				event->type() == QEvent::TouchEnd ? "end" : "cancel",
-				m_pendown, m_touching, pointsCount);
+		if(m_enableTouchDraw && ((m_touchMode == TouchMode::Unknown &&
+								  !m_touchDrawBuffer.isEmpty()) ||
+								 m_touchMode == TouchMode::Drawing)) {
+			DP_EVENT_LOG(
+				"touch_draw_%s pendown=%d touching=%d points=%d",
+				event->type() == QEvent::TouchEnd ? "end" : "cancel", m_pendown,
+				m_touching, pointsCount);
 			flushTouchDrawBuffer();
-			touchReleaseEvent(QDateTime::currentMSecsSinceEpoch(), compat::touchPos(compat::touchPoints(*event).first()));
+			touchReleaseEvent(
+				QDateTime::currentMSecsSinceEpoch(),
+				compat::touchPos(compat::touchPoints(*event).first()));
 		} else {
-			DP_EVENT_LOG("touch_%s pendown=%d touching=%d points=%d",
-				event->type() == QEvent::TouchEnd ? "end" : "cancel",
-				m_pendown, m_touching, pointsCount);
+			DP_EVENT_LOG(
+				"touch_%s pendown=%d touching=%d points=%d",
+				event->type() == QEvent::TouchEnd ? "end" : "cancel", m_pendown,
+				m_touching, pointsCount);
 		}
 		m_touching = false;
 		break;
@@ -1197,105 +1291,103 @@ void CanvasView::flushTouchDrawBuffer()
 bool CanvasView::viewportEvent(QEvent *event)
 {
 	QEvent::Type type = event->type();
-	if(type == QEvent::TouchBegin || type == QEvent::TouchUpdate || type == QEvent::TouchEnd || type == QEvent::TouchCancel) {
-		touchEvent(static_cast<QTouchEvent*>(event));
-	}
-	else if(type == QEvent::TabletPress && m_enableTablet) {
-		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
+	if(type == QEvent::TouchBegin || type == QEvent::TouchUpdate ||
+	   type == QEvent::TouchEnd || type == QEvent::TouchCancel) {
+		touchEvent(static_cast<QTouchEvent *>(event));
+	} else if(type == QEvent::TabletPress && m_enableTablet) {
+		QTabletEvent *tabev = static_cast<QTabletEvent *>(event);
 		const auto tabPos = compat::tabPosF(*tabev);
 		DP_EVENT_LOG(
-			"tablet_press spontaneous=%d x=%f y=%f pressure=%f xtilt=%d ytilt=%d rotation=%f buttons=0x%x modifiers=0x%x pendown=%d touching=%d",
-			tabev->spontaneous(), tabPos.x(), tabPos.y(), tabev->pressure(), compat::cast_6<int>(tabev->xTilt()), compat::cast_6<int>(tabev->yTilt()),
-			qDegreesToRadians(tabev->rotation()), unsigned(tabev->buttons()), unsigned(tabev->modifiers()),
-			m_pendown, m_touching);
+			"tablet_press spontaneous=%d x=%f y=%f pressure=%f xtilt=%d "
+			"ytilt=%d rotation=%f buttons=0x%x modifiers=0x%x pendown=%d "
+			"touching=%d",
+			tabev->spontaneous(), tabPos.x(), tabPos.y(), tabev->pressure(),
+			compat::cast_6<int>(tabev->xTilt()),
+			compat::cast_6<int>(tabev->yTilt()),
+			qDegreesToRadians(tabev->rotation()), unsigned(tabev->buttons()),
+			unsigned(tabev->modifiers()), m_pendown, m_touching);
 
-		// Note: it is possible to get a mouse press event for a tablet event (even before
-		// the tablet event is received or even though tabev->accept() is called), but
-		// it is never possible to get a TabletPress for a real mouse press. Therefore,
-		// we don't actually do anything yet in the penDown handler other than remember
-		// the initial point and we'll let a TabletEvent override the mouse event.
-		// When KIS_TABLET isn't enabled we ignore synthetic mouse events though.
+		// Note: it is possible to get a mouse press event for a tablet event
+		// (even before the tablet event is received or even though
+		// tabev->accept() is called), but it is never possible to get a
+		// TabletPress for a real mouse press. Therefore, we don't actually do
+		// anything yet in the penDown handler other than remember the initial
+		// point and we'll let a TabletEvent override the mouse event. When
+		// KIS_TABLET isn't enabled we ignore synthetic mouse events though.
 		if(!tabletinput::passPenEvents()) {
 			tabev->accept();
 		}
 
 		penPressEvent(
-			QDateTime::currentMSecsSinceEpoch(),
-			compat::tabPosF(*tabev),
-			tabev->pressure(),
-			tabev->xTilt(),
-			tabev->yTilt(),
-			qDegreesToRadians(tabev->rotation()),
-			tabev->button(),
-			QApplication::queryKeyboardModifiers(), // TODO check if tablet event modifiers() is still broken in Qt 5.12
-			true
-		);
-	}
-	else if(type == QEvent::TabletMove && m_enableTablet) {
-		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
+			QDateTime::currentMSecsSinceEpoch(), compat::tabPosF(*tabev),
+			tabev->pressure(), tabev->xTilt(), tabev->yTilt(),
+			qDegreesToRadians(tabev->rotation()), tabev->button(),
+			QApplication::queryKeyboardModifiers(), // TODO check if tablet
+													// event modifiers() is
+													// still broken in Qt 5.12
+			true);
+	} else if(type == QEvent::TabletMove && m_enableTablet) {
+		QTabletEvent *tabev = static_cast<QTabletEvent *>(event);
 		const auto tabPos = compat::tabPosF(*tabev);
 		DP_EVENT_LOG(
-			"tablet_move spontaneous=%d x=%f y=%f pressure=%f xtilt=%d ytilt=%d rotation=%f buttons=0x%x modifiers=0x%x pendown=%d touching=%d",
-			tabev->spontaneous(), tabPos.x(), tabPos.y(), tabev->pressure(), compat::cast_6<int>(tabev->xTilt()), compat::cast_6<int>(tabev->yTilt()),
-			qDegreesToRadians(tabev->rotation()), unsigned(tabev->buttons()), unsigned(tabev->modifiers()),
-			m_pendown, m_touching);
+			"tablet_move spontaneous=%d x=%f y=%f pressure=%f xtilt=%d "
+			"ytilt=%d rotation=%f buttons=0x%x modifiers=0x%x pendown=%d "
+			"touching=%d",
+			tabev->spontaneous(), tabPos.x(), tabPos.y(), tabev->pressure(),
+			compat::cast_6<int>(tabev->xTilt()),
+			compat::cast_6<int>(tabev->yTilt()),
+			qDegreesToRadians(tabev->rotation()), unsigned(tabev->buttons()),
+			unsigned(tabev->modifiers()), m_pendown, m_touching);
 
 		if(!tabletinput::passPenEvents()) {
 			tabev->accept();
 		}
 
 		penMoveEvent(
-			QDateTime::currentMSecsSinceEpoch(),
-			compat::tabPosF(*tabev),
-			tabev->pressure(),
-			tabev->xTilt(),
-			tabev->yTilt(),
-			qDegreesToRadians(tabev->rotation()),
-			tabev->buttons(),
-			QApplication::queryKeyboardModifiers() // TODO check if tablet event modifiers() is still broken in Qt 5.12
+			QDateTime::currentMSecsSinceEpoch(), compat::tabPosF(*tabev),
+			tabev->pressure(), tabev->xTilt(), tabev->yTilt(),
+			qDegreesToRadians(tabev->rotation()), tabev->buttons(),
+			QApplication::queryKeyboardModifiers() // TODO check if tablet event
+												   // modifiers() is still
+												   // broken in Qt 5.12
 		);
-	}
-	else if(type == QEvent::TabletRelease && m_enableTablet) {
-		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
+	} else if(type == QEvent::TabletRelease && m_enableTablet) {
+		QTabletEvent *tabev = static_cast<QTabletEvent *>(event);
 		const auto tabPos = compat::tabPosF(*tabev);
 		DP_EVENT_LOG(
-			"tablet_release spontaneous=%d x=%f y=%f buttons=0x%x pendown=%d touching=%d",
-			tabev->spontaneous(), tabPos.x(), tabPos.y(), unsigned(tabev->buttons()),
-			m_pendown, m_touching);
+			"tablet_release spontaneous=%d x=%f y=%f buttons=0x%x pendown=%d "
+			"touching=%d",
+			tabev->spontaneous(), tabPos.x(), tabPos.y(),
+			unsigned(tabev->buttons()), m_pendown, m_touching);
 		if(!tabletinput::passPenEvents()) {
 			tabev->accept();
 		}
 		// TODO check if tablet event modifiers() is still broken in Qt 5.12
-		penReleaseEvent(QDateTime::currentMSecsSinceEpoch(), tabPos, tabev->button(), QApplication::queryKeyboardModifiers());
-	}
-	else {
+		penReleaseEvent(
+			QDateTime::currentMSecsSinceEpoch(), tabPos, tabev->button(),
+			QApplication::queryKeyboardModifiers());
+	} else {
 		return QGraphicsView::viewportEvent(event);
 	}
 
 	return true;
 }
 
-void CanvasView::updateOutline(canvas::Point point) {
+void CanvasView::updateOutline(canvas::Point point)
+{
 	if(!m_subpixeloutline) {
 		point.setX(qFloor(point.x()) + 0.5);
 		point.setY(qFloor(point.y()) + 0.5);
 	}
-	if(m_showoutline && !m_locked && !m_busy && (!m_prevoutline || !point.roughlySame(m_prevoutlinepoint))) {
+	if(m_showoutline && !m_locked && !m_busy &&
+	   (!m_prevoutline || !point.roughlySame(m_prevoutlinepoint))) {
 		QList<QRectF> rect;
 		const qreal owidth = m_outlineSize + m_brushOutlineWidth;
 		const qreal orad = owidth / 2.0;
 		rect.append(QRectF(
-					m_prevoutlinepoint.x() - orad,
-					m_prevoutlinepoint.y() - orad,
-					owidth,
-					owidth
-				));
-		rect.append(QRectF(
-						point.x() - orad,
-						point.y() - orad,
-						owidth,
-						owidth
-					));
+			m_prevoutlinepoint.x() - orad, m_prevoutlinepoint.y() - orad,
+			owidth, owidth));
+		rect.append(QRectF(point.x() - orad, point.y() - orad, owidth, owidth));
 		updateScene(rect);
 		m_prevoutlinepoint = point;
 	}
@@ -1308,13 +1400,9 @@ void CanvasView::updateOutline()
 	const qreal orad = owidth / 2.0;
 
 	rect.append(QRectF(
-		m_prevoutlinepoint.x() - orad,
-		m_prevoutlinepoint.y() - orad,
-		owidth,
-		owidth
-	));
+		m_prevoutlinepoint.x() - orad, m_prevoutlinepoint.y() - orad, owidth,
+		owidth));
 	updateScene(rect);
-
 }
 
 QPoint CanvasView::viewCenterPoint() const
@@ -1328,7 +1416,7 @@ bool CanvasView::isPointVisible(const QPointF &point) const
 	return p.x() > 0 && p.y() > 0 && p.x() < width() && p.y() < height();
 }
 
-void CanvasView::scrollTo(const QPoint& point)
+void CanvasView::scrollTo(const QPoint &point)
 {
 	centerOn(point);
 }
@@ -1396,7 +1484,8 @@ void CanvasView::moveDrag(const QPoint &point)
  */
 void CanvasView::dragEnterEvent(QDragEnterEvent *event)
 {
-	if(event->mimeData()->hasUrls() || event->mimeData()->hasImage() || event->mimeData()->hasColor())
+	if(event->mimeData()->hasUrls() || event->mimeData()->hasImage() ||
+	   event->mimeData()->hasColor())
 		event->acceptProposedAction();
 }
 
@@ -1414,7 +1503,8 @@ void CanvasView::dropEvent(QDropEvent *event)
 {
 	const QMimeData *mimeData = event->mimeData();
 	if(mimeData->hasImage()) {
-		emit imageDropped(qvariant_cast<QImage>(event->mimeData()->imageData()));
+		emit imageDropped(
+			qvariant_cast<QImage>(event->mimeData()->imageData()));
 	} else if(mimeData->hasUrls()) {
 		emit urlDropped(event->mimeData()->urls().first());
 	} else if(mimeData->hasColor()) {
@@ -1437,7 +1527,7 @@ void CanvasView::showEvent(QShowEvent *event)
 			m_dpi = w->windowHandle()->screen()->physicalDotsPerInch();
 			break;
 		}
-		w=w->parentWidget();
+		w = w->parentWidget();
 	}
 }
 
