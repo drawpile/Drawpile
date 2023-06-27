@@ -87,7 +87,14 @@ void NavigatorView::setRealtimeUpdate(bool realtime)
 void NavigatorView::resizeEvent(QResizeEvent *event)
 {
 	QWidget::resizeEvent(event);
-	onChange();
+	// Resizes while hidden mean that we're about to be shown.
+	if(!m_refreshTimer->isActive()) {
+		if(isVisible()) {
+			m_refreshTimer->start();
+		} else {
+			refreshCache();
+		}
+	}
 }
 
 /**
