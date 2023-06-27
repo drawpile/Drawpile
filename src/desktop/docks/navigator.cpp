@@ -66,9 +66,9 @@ NavigatorView::NavigatorView(QWidget *parent)
 void NavigatorView::setCanvasModel(canvas::CanvasModel *model)
 {
 	m_model = model;
-	connect(m_model->paintEngine(), &canvas::PaintEngine::areaChanged, this, &NavigatorView::onChange, Qt::QueuedConnection);
-	connect(m_model->paintEngine(), &canvas::PaintEngine::resized, this, &NavigatorView::onResize, Qt::QueuedConnection);
-	connect(m_model->paintEngine(), &canvas::PaintEngine::cursorMoved, this, &NavigatorView::onCursorMove, Qt::QueuedConnection);
+	connect(m_model->paintEngine(), &canvas::PaintEngine::areaChanged, this, &NavigatorView::onChange);
+	connect(m_model->paintEngine(), &canvas::PaintEngine::resized, this, &NavigatorView::onResize);
+	connect(m_model->paintEngine(), &canvas::PaintEngine::cursorMoved, this, &NavigatorView::onCursorMove);
 
 	refreshCache();
 }
