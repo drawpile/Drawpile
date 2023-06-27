@@ -6,7 +6,7 @@
     <message>
         <location filename="../utils/avatarlistmodel.cpp" line="+107"/>
         <source>No avatar</source>
-        <translation type="unfinished"></translation>
+        <translation>Sem Avatar</translation>
     </message>
 </context>
 <context>
@@ -14,42 +14,42 @@
     <message>
         <location filename="../export/canvassaverrunnable.cpp" line="+34"/>
         <source>Bad arguments, this is probably a bug in Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Argumentos Inválidos, isso é provavelmente um bug no Drawpile.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>No file extension given.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não foi dada nenhuma extensão de ficheiro.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unsupported format.</source>
-        <translation type="unfinished"></translation>
+        <translation>Formato sem suporte.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t merge the canvas into a flat image.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não foi possível juntar as camadas numa única imagem.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t open file for writing.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não foi possível abrir o ficheiro para escrever.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Save operation failed, but the file might have been partially written.</source>
-        <translation type="unfinished"></translation>
+        <translation>Houve uma falha ao gravar o ficheiro, mas ele pode ter sido parcialmente escrito.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Internal error during saving.</source>
-        <translation type="unfinished"></translation>
+        <translation>Erro interno ao gravar.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unknown error.</source>
-        <translation type="unfinished"></translation>
+        <translation>Erro desconhecido.</translation>
     </message>
 </context>
 <context>
@@ -57,152 +57,152 @@
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="+94"/>
         <source>Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Atalho</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Action</source>
-        <translation type="unfinished"></translation>
+        <translation>Ação</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Modifiers</source>
-        <translation type="unfinished"></translation>
+        <translation>Modificadores</translation>
     </message>
     <message>
         <location line="+62"/>
         <source>%1</source>
         <extracomment>Example: &quot;Pan Canvas&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>%1 (%2)</source>
         <extracomment>Example: &quot;Pan Canvas (Inverted)&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>%1: %2</source>
         <extracomment>Example: &quot;Space: Pan Canvas&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1: %2</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>%1: %2 (%3)</source>
         <extracomment>Example: &quot;Space: Pan Canvas (Inverted)&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1: %2 (%3)</translation>
     </message>
     <message>
         <location line="+48"/>
         <source>Mouse Wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>Roda do Rato</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>+</source>
         <extracomment>Joins shortcut components, probably doesn&apos;t need to be translated.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>+x</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Unset</source>
-        <translation type="unfinished"></translation>
+        <translation>Remover valor</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Left Click</source>
-        <translation type="unfinished"></translation>
+        <translation>Clique Esquerdo</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Right Click</source>
-        <translation type="unfinished"></translation>
+        <translation>Clique Direito</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Middle Click</source>
-        <translation type="unfinished"></translation>
+        <translation>Clique do Meio</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Unknown Button 0x%1</source>
-        <translation type="unfinished"></translation>
+        <translation>Botão desconhecido 0x%1</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Button %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Botão %1</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Pan Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Arrastar Tela de Pintura</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Rotate Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Girar Tela de Pintura</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Zoom Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Zoom da Tela de Pintura</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pick Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Conta Gotas</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pick Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Escholher Camada</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Brush Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Mudar Tamanho do Pincel</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Constrain Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Limitar Ferramenta</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Center Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Centralizar Ferramenta</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Constrain and Center Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Limitar e Centralizar Ferramenta</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unknown Constraint 0x%1</source>
-        <translation type="unfinished"></translation>
+        <translation>Limitação Desconhecida 0x%1</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unknown Action %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Ação Desconhecida %1</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Inverted, Swap Axes</source>
-        <translation type="unfinished"></translation>
+        <translation>Invertido, Eixos Trocados</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Inverted</source>
-        <translation type="unfinished"></translation>
+        <translation>Invertido</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Swap Axes</source>
-        <translation type="unfinished"></translation>
+        <translation>Eixos Invertidos</translation>
     </message>
 </context>
 <context>
@@ -210,47 +210,47 @@
     <message>
         <location filename="../utils/certificatestoremodel.cpp" line="+24"/>
         <source>&apos;%1&apos; does not contain any valid host certificates.</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; não tem nenhum certificado de hóspede válido.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>&apos;%1&apos; contains multiple host certificates, which is not currently supported.</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; contém vários certificados de hóspede, o que não é atualmente suportado.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>&apos;%1&apos; contains an invalid certificate.</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; contém um certificado inválido.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>&apos;%1&apos; contains a certificate with multiple hostnames, which is not currently supported.</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; contém um certificado com múltiplos nomes de hóspede, o que não é suportado.</translation>
     </message>
     <message>
         <location line="+139"/>
         <source>Could not read certificate from &apos;%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não foi possível ler certificado de &apos;%1&apos;.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Could not open &apos;%1&apos; for writing: %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não foi possível abrir &apos;%1&apos; para escrever: %2.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Could not write &apos;%1&apos;: %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não foi possível escrever &apos;%1&apos;: %2.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Could not move &apos;%1&apos; to &apos;%2&apos;: %3.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não foi possível mover &apos;%1&apos; para &apos;%2&apos;: %3.</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Could not delete &apos;%1&apos;: %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não foi possível apagar &apos;%1&apos;: %2.</translation>
     </message>
 </context>
 <context>
@@ -258,27 +258,27 @@
     <message>
         <location filename="../utils/customshortcutmodel.cpp" line="+52"/>
         <source>Conflict</source>
-        <translation type="unfinished"></translation>
+        <translation>Conflito</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>Action</source>
-        <translation type="unfinished"></translation>
+        <translation>Ação</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Atalho</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Alternate</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternar</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation>Padrão</translation>
     </message>
 </context>
 <context>
@@ -286,27 +286,27 @@
     <message>
         <location filename="../document.cpp" line="+593"/>
         <source>Unknown format.</source>
-        <translation type="unfinished"></translation>
+        <translation>Formato desconhecido.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Header error.</source>
-        <translation type="unfinished"></translation>
+        <translation>Erro de cabeçalho.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Error opening file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Erro ao abrir ficheiro.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Error starting recorder.</source>
-        <translation type="unfinished"></translation>
+        <translation>Erro ao começar gravador.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unknown error.</source>
-        <translation type="unfinished"></translation>
+        <translation>Erro desconhecido.</translation>
     </message>
 </context>
 <context>
@@ -314,17 +314,17 @@
     <message>
         <location filename="../export/ffmpegexporter.cpp" line="+128"/>
         <source>Couldn&apos;t start ffmpeg!</source>
-        <translation type="unfinished"></translation>
+        <translation>Não foi possível iniciar o ffmpeg!</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ffmpeg crashed!</source>
-        <translation type="unfinished"></translation>
+        <translation>O ffmpeg travou!</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ffmpeg process error</source>
-        <translation type="unfinished"></translation>
+        <translation>Erro de processamento do ffmpeg</translation>
     </message>
 </context>
 <context>
@@ -332,17 +332,17 @@
     <message>
         <location filename="../utils/keyframelayermodel.cpp" line="+23"/>
         <source>Visibility: Hidden</source>
-        <translation type="unfinished"></translation>
+        <translation>Visibilidade: Escondido</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Visibility: Revealed</source>
-        <translation type="unfinished"></translation>
+        <translation>Visibilidade: Mostrado</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Visibility: Parent</source>
-        <translation type="unfinished"></translation>
+        <translation>Visibilidade: Herdar</translation>
     </message>
 </context>
 <context>
@@ -350,67 +350,67 @@
     <message>
         <location filename="../utils/images.cpp" line="+99"/>
         <source>Images (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Imagens (%1)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>GIF (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>GIF (%1)</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Binary Recordings (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Gravações em binário (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Text Recordings (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Gravações de texto (%1)</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Recordings (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Gravações (%1)</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Performance Profile (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Perfil de Desempenho (%1)</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Debug Dumps (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Dump de Depuração (%1)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Tablet Event Log (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Registo de Eventos do Tablet (%1)</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>MP4 Video (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Vídeo MP4 (%1)</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>WebM Video (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Vídeo WebM (%1)</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Text File (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ficheiro de Texto (%1)</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>All Supported Files (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ficheiros suportados (%1)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Todos os ficheiros (*)</translation>
     </message>
 </context>
 <context>
@@ -418,7 +418,7 @@
     <message>
         <location filename="../drawdance/canvasstate.cpp" line="+46"/>
         <source>Layer %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Camada %1</translation>
     </message>
 </context>
 <context>
@@ -426,22 +426,22 @@
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="-101"/>
         <source>Shift</source>
-        <translation type="unfinished"></translation>
+        <translation>Shift</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Alt</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ctrl</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Meta</source>
-        <translation type="unfinished"></translation>
+        <translation>Windows (Meta)</translation>
     </message>
 </context>
 <context>
@@ -449,85 +449,86 @@
     <message>
         <location filename="../net/sessionlistingmodel.cpp" line="+70"/>
         <source>%1d%2h%3m</source>
-        <translation type="unfinished"></translation>
+        <translation>%1d%2h%3m</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1h%2m</source>
-        <translation type="unfinished"></translation>
+        <translation>%1h%2m</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1m</source>
-        <translation type="unfinished"></translation>
+        <translation>%1m</translation>
     </message>
     <message>
         <location line="+81"/>
         <source>(untitled)</source>
-        <translation type="unfinished"></translation>
+        <translation>(sem nome)</translation>
     </message>
     <message numerus="yes">
         <location line="+7"/>
         <source>%n users</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n usuário</numerusform>
+            <numerusform>%n usuários</numerusform>
+            <numerusform>%n usuários</numerusform>
         </translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Compatible</source>
-        <translation type="unfinished"></translation>
+        <translation>Compatível</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Requires compatibility mode (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Requer o modo de compatibilidade (%1)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Requires newer client (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Requer um cliente mais novo (%1)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Incompatible (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Incompatível (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>unknown version</source>
-        <translation type="unfinished"></translation>
+        <translation>versão desconhecida</translation>
     </message>
     <message>
         <location line="+62"/>
         <source>Compatibility</source>
-        <translation type="unfinished"></translation>
+        <translation>Compatibilidade</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Nome</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Server</source>
-        <translation type="unfinished"></translation>
+        <translation>Servidor</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Users</source>
-        <translation type="unfinished"></translation>
+        <translation>Utilizadores</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Owner</source>
-        <translation type="unfinished"></translation>
+        <translation>Dono</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Age</source>
-        <translation type="unfinished"></translation>
+        <translation>Idade</translation>
     </message>
 </context>
 <context>
@@ -535,122 +536,122 @@
     <message>
         <location filename="../canvas/blendmodes.cpp" line="+40"/>
         <source>Normal</source>
-        <translation type="unfinished"></translation>
+        <translation>Normal</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Recolor</source>
-        <translation type="unfinished"></translation>
+        <translation>Recolorir</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Behind</source>
-        <translation type="unfinished"></translation>
+        <translation>Por trás</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Multiply</source>
-        <translation type="unfinished"></translation>
+        <translation>Multiplicar</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>Ecrã</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Overlay</source>
-        <translation type="unfinished"></translation>
+        <translation>Sobrepor</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Divide</source>
-        <translation type="unfinished"></translation>
+        <translation>Dividir</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Burn</source>
-        <translation type="unfinished"></translation>
+        <translation>Queimar</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Dodge</source>
-        <translation type="unfinished"></translation>
+        <translation>Evitar</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Darken</source>
-        <translation type="unfinished"></translation>
+        <translation>Escurecer</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Lighten</source>
-        <translation type="unfinished"></translation>
+        <translation>Iluminar</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Subtract</source>
-        <translation type="unfinished"></translation>
+        <translation>Subtrair</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>Adicionar</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Erase</source>
-        <translation type="unfinished"></translation>
+        <translation>Apagar</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Color Erase</source>
-        <translation type="unfinished"></translation>
+        <translation>Apagar Cor</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Hard Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Luz Forte</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Soft Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Luz Fraca</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Linear Burn</source>
-        <translation type="unfinished"></translation>
+        <translation>Queima Linear</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Linear Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Luz Linear</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Luminosity/Shine (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>Luminosidade/Brilho (SAI)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Hue</source>
-        <translation type="unfinished"></translation>
+        <translation>Matiz</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Saturation</source>
-        <translation type="unfinished"></translation>
+        <translation>Saturação</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Luminosity</source>
-        <translation type="unfinished"></translation>
+        <translation>Luminosidade</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Cor</translation>
     </message>
 </context>
 <context>
@@ -658,7 +659,7 @@
     <message>
         <location filename="../brushes/brushpresetmodel.cpp" line="+638"/>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation>Padrão</translation>
     </message>
 </context>
 <context>
@@ -666,87 +667,87 @@
     <message>
         <location line="-98"/>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation>Todos</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Untagged</source>
-        <translation type="unfinished"></translation>
+        <translation>Sem Etiqueta</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Show all brushes, regardless of tagging.</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar todos os pincéis, independente das etiquetas.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show brushes not assigned to any tag.</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar pincéis não associados com alguma etiqueta.</translation>
     </message>
     <message>
         <location line="+166"/>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation>Padrão</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Classic Brush %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Pincel Clássico %1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Converted from %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Convertido de %1.</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Can&apos;t open &apos;%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não foi possível abrir &apos;%1&apos;.</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Invalid brush pack: order.conf not found inside</source>
-        <translation type="unfinished"></translation>
+        <translation>Pacote de pincéis inválido: o ficheiro order.conf não foi encontrado</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Uncategorized %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Sem Categoria</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Invalid brush pack: order.conf contains no brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Pacote de pincéis inválido: o ficheiro order.conf não contém pincéis</translation>
     </message>
     <message>
         <location line="+55"/>
         <source>Could not create tag &apos;%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não foi possível criar etiqueta &apos;%1&apos;.</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Could not create brush preset &apos;%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não foi possível criar predefinição de pincel &apos;%1&apos;.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Could not assign brush &apos;%1&apos; to tag &apos;%2&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não foi possível associar pincel &apos;%1&apos; para etiqueta &apos;%2&apos;.</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Can&apos;t read brush file &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Não foi possível ler ficheiro de pincel &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Brush file &apos;%1&apos; does not contain valid JSON: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Ficheiro de pincel &apos;%1&apos; não contém nenhum JSON válido: %1</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Can&apos;t load brush from brush file &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Não foi possível carregar pincel do ficheiro de pincel &apos;%1&apos;</translation>
     </message>
 </context>
 <context>
@@ -754,7 +755,7 @@
     <message>
         <location filename="../canvas/paintengine.cpp" line="+169"/>
         <source>Layer %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Camada %1</translation>
     </message>
 </context>
 <context>
@@ -762,57 +763,57 @@
     <message>
         <location filename="../canvas/userlist.cpp" line="+58"/>
         <source>Moderator</source>
-        <translation type="unfinished"></translation>
+        <translation>Moderador</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Operator</source>
-        <translation type="unfinished"></translation>
+        <translation>Operador</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>Confiável</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Registered</source>
-        <translation type="unfinished"></translation>
+        <translation>Registado</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Online</source>
-        <translation type="unfinished"></translation>
+        <translation>Online</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Offline</source>
-        <translation type="unfinished"></translation>
+        <translation>Offline</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>User</source>
-        <translation type="unfinished"></translation>
+        <translation>Utilizador</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Tipo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Estado</translation>
     </message>
     <message>
         <location line="+181"/>
         <source>Server</source>
-        <translation type="unfinished"></translation>
+        <translation>Servidor</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>User #%1</source>
-        <translation type="unfinished"></translation>
+        <translation>Utilizador #%1</translation>
     </message>
 </context>
 <context>
@@ -820,27 +821,27 @@
     <message>
         <location filename="../net/announcementlist.cpp" line="+31"/>
         <source>Private</source>
-        <translation type="unfinished"></translation>
+        <translation>Privado</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Public</source>
-        <translation type="unfinished"></translation>
+        <translation>Público</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Server</source>
-        <translation type="unfinished"></translation>
+        <translation>Servidor</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Room code</source>
-        <translation type="unfinished"></translation>
+        <translation>Código da Sala</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Modo</translation>
     </message>
 </context>
 <context>
@@ -848,17 +849,17 @@
     <message>
         <location filename="../net/banlistmodel.cpp" line="+59"/>
         <source>User</source>
-        <translation type="unfinished"></translation>
+        <translation>Utilizador</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>IP address</source>
-        <translation type="unfinished"></translation>
+        <translation>Endereço IP</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Banned by</source>
-        <translation type="unfinished"></translation>
+        <translation>Banido por</translation>
     </message>
 </context>
 <context>
@@ -866,12 +867,12 @@
     <message>
         <location filename="../net/client.cpp" line="+71"/>
         <source>A server error occurred!</source>
-        <translation type="unfinished"></translation>
+        <translation>Um erro aconteceu no servidor!</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The server is shutting down!</source>
-        <translation type="unfinished"></translation>
+        <translation>O servidor está a desligar!</translation>
     </message>
 </context>
 <context>
@@ -880,7 +881,7 @@
         <location filename="../net/login.cpp" line="+101"/>
         <location line="+258"/>
         <source>Invalid state</source>
-        <translation type="unfinished"></translation>
+        <translation>Estado inválido</translation>
     </message>
     <message>
         <location line="-233"/>
@@ -890,149 +891,149 @@
         <location line="+134"/>
         <location line="+42"/>
         <source>Incompatible server</source>
-        <translation type="unfinished"></translation>
+        <translation>Servidor incompatível</translation>
     </message>
     <message>
         <location line="-432"/>
         <source>Server is for a different Drawpile version!</source>
-        <translation type="unfinished"></translation>
+        <translation>Este servidor é para uma versão diferente de Drawpile!</translation>
     </message>
     <message>
         <location line="+42"/>
         <source>Secure mode not enabled on a trusted host!</source>
-        <translation type="unfinished"></translation>
+        <translation>O modo seguro não foi ativado num hospedeiro confiável!</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>This server does not allow guest logins</source>
-        <translation type="unfinished"></translation>
+        <translation>Esse servidor não aceita logins de visitantes</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Password needed to log in as &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>Palavra-passe necessária para entrar como &quot;%1&quot;</translation>
     </message>
     <message>
         <location line="+67"/>
         <location line="+6"/>
         <source>Auth server error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Erro no servidor de autenticação: %1</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Group membership needed</source>
-        <translation type="unfinished"></translation>
+        <translation>Tem que fazer parte de um grupo</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unexpected ext-auth response: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Resposta do servidor ext-auth não esperada: %1</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Server misconfiguration: invalid ext-auth URL</source>
-        <translation type="unfinished"></translation>
+        <translation>Configuração errada do servidor: URL de autenticação externa inválido</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Unsupported ext-auth URL scheme</source>
-        <translation type="unfinished"></translation>
+        <translation>URL de autenticação externa não suportada</translation>
     </message>
     <message>
         <location line="+90"/>
         <source>New version</source>
-        <translation type="unfinished"></translation>
+        <translation>Versão nova</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Unknown version</source>
-        <translation type="unfinished"></translation>
+        <translation>Versão desconhecida</translation>
     </message>
     <message>
         <location line="+48"/>
         <source>Session not yet started!</source>
-        <translation type="unfinished"></translation>
+        <translation>O servidor não foi iniciado ainda!</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Blocked by parental controls</source>
-        <translation type="unfinished"></translation>
+        <translation>Bloqueado pelo controle parental</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session for a different Drawpile version (%1) in progress!</source>
-        <translation type="unfinished"></translation>
+        <translation>Sessão para uma versão de Drawpile diferente (%1) em progresso!</translation>
     </message>
     <message>
         <location line="+193"/>
         <location line="+20"/>
         <source>Invalid SSL certificate for host %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Certificado SSL para o hospedeiro %1 inválido</translation>
     </message>
     <message>
         <location line="-17"/>
         <source>Certificate of a trusted server has changed!</source>
-        <translation type="unfinished"></translation>
+        <translation>O certificado de um servidor confiável mudou!</translation>
     </message>
     <message>
         <location line="+58"/>
         <source>Cancelled</source>
-        <translation type="unfinished"></translation>
+        <translation>Cancelado</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Session not found!</source>
-        <translation type="unfinished"></translation>
+        <translation>Sessão não encontrada!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Incorrect password!</source>
-        <translation type="unfinished"></translation>
+        <translation>Palavra-passe incorreta!</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Invalid username!</source>
-        <translation type="unfinished"></translation>
+        <translation>Utilizador inválido!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>This username has been locked</source>
-        <translation type="unfinished"></translation>
+        <translation>Esse utilizador foi bloqueado</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Username already taken!</source>
-        <translation type="unfinished"></translation>
+        <translation>Este nome de utilizador já foi pego!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Session is closed!</source>
-        <translation type="unfinished"></translation>
+        <translation>A sessão foi fechada!</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Server is full!</source>
-        <translation type="unfinished"></translation>
+        <translation>Este servidor está cheio!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Hosting not authorized</source>
-        <translation type="unfinished"></translation>
+        <translation>Essa hospedagem não é autorizada</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You have been banned from this session!</source>
-        <translation type="unfinished"></translation>
+        <translation>Foi banido dessa sessão!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Session alias is reserved!</source>
-        <translation type="unfinished"></translation>
+        <translation>O atalho da sessão é reservado!</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Client failed to serialize command</source>
-        <translation type="unfinished"></translation>
+        <translation>Houve uma falha do cliente ao serializar comando</translation>
     </message>
 </context>
 <context>
@@ -1040,57 +1041,57 @@
     <message>
         <location filename="../net/loginsessions.cpp" line="+48"/>
         <source>(untitled)</source>
-        <translation type="unfinished"></translation>
+        <translation>(sem nome)</translation>
     </message>
     <message>
         <location line="+45"/>
         <source>%1 (incompatible)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (incompatível)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.1 (compatibility mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.1 (modo de compatibilidade)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.2 (fully compatible)</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.2 (totalmente compatível)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Incompatible version</source>
-        <translation type="unfinished"></translation>
+        <translation>Versão incompatível</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Closed (new logins blocked)</source>
-        <translation type="unfinished"></translation>
+        <translation>Fechado (novos logins bloqueados)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Session password required</source>
-        <translation type="unfinished"></translation>
+        <translation>Requer a palavra-passe da sessão</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation>Inapropriado para menores de idade (NSFM)</translation>
     </message>
     <message>
         <location line="+47"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Título</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Started by</source>
-        <translation type="unfinished"></translation>
+        <translation>Iniciado por</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Users</source>
-        <translation type="unfinished"></translation>
+        <translation>Utilizadores</translation>
     </message>
 </context>
 <context>
@@ -1098,7 +1099,7 @@
     <message>
         <location filename="../net/tcpserver.cpp" line="+111"/>
         <source>Received invalid data</source>
-        <translation type="unfinished"></translation>
+        <translation>Os dados recebidos são inválidos</translation>
     </message>
 </context>
 </TS>
