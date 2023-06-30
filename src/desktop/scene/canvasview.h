@@ -279,6 +279,10 @@ private:
 
 	void viewRectChanged();
 
+	QString getZoomNotice() const;
+	QString getRotationNotice() const;
+	void showTransformNotice(const QString &text);
+
 	CanvasShortcuts m_canvasShortcuts;
 	QSet<Qt::Key> m_keysDown;
 
@@ -355,6 +359,7 @@ private:
 	qreal m_brushOutlineWidth;
 
 	bool m_scrollBarsAdjusting;
+	bool m_blockNotices;
 };
 
 }

@@ -180,6 +180,8 @@ target_sources(drawpile PRIVATE
 	scene/canvasview.h
 	scene/lasertrailitem.cpp
 	scene/lasertrailitem.h
+	scene/noticeitem.cpp
+	scene/noticeitem.h
 	scene/selectionitem.cpp
 	scene/selectionitem.h
 	scene/usermarkeritem.cpp

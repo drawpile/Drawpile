@@ -71,6 +71,7 @@ CanvasView::CanvasView(QWidget *parent)
 	, m_brushCursorStyle(BrushCursor::Dot)
 	, m_brushOutlineWidth(1.0)
 	, m_scrollBarsAdjusting{false}
+	, m_blockNotices{false}
 {
 	viewport()->setAcceptDrops(true);
 	viewport()->setAttribute(Qt::WA_AcceptTouchEvents);
@@ -256,8 +257,9 @@ void CanvasView::setZoomToFit(Qt::Orientations orientations)
 		m_rotate = 0.0;
 		m_mirror = false;
 		m_flip = false;
-		setZoomAt(scale, m_pos);
 
+		QScopedValueRollback<bool> guard{m_blockNotices, true};
+		setZoomAt(scale, m_pos);
 		setRotation(rotate);
 		setViewMirror(mirror);
 		setViewFlip(flip);
@@ -272,16 +274,19 @@ void CanvasView::setZoom(qreal zoom)
 void CanvasView::setZoomAt(qreal zoom, const QPointF &point)
 {
 	qreal newZoom = qBound(zoomMin, zoom, zoomMax);
-	QTransform matrix;
-	mirrorFlip(matrix, m_mirror, m_flip);
-	matrix.rotate(m_rotate);
+	if(newZoom != m_zoom) {
+		QTransform matrix;
+		mirrorFlip(matrix, m_mirror, m_flip);
+		matrix.rotate(m_rotate);
 
-	updateCanvasTransform([&] {
-		m_pos += matrix.map(point * (newZoom - m_zoom));
-		m_zoom = newZoom;
-	});
+		updateCanvasTransform([&] {
+			m_pos += matrix.map(point * (newZoom - m_zoom));
+			m_zoom = newZoom;
+		});
 
-	emitViewTransformed();
+		emitViewTransformed();
+		showTransformNotice(getZoomNotice());
+	}
 }
 
 void CanvasView::setRotation(qreal angle)
@@ -296,20 +301,23 @@ void CanvasView::setRotation(qreal angle)
 		angle = 360.0 - angle;
 	}
 
-	QTransform prev, cur;
-	prev.rotate(m_rotate);
-	cur.rotate(angle);
+	if(angle != m_rotate) {
+		QTransform prev, cur;
+		prev.rotate(m_rotate);
+		cur.rotate(angle);
 
-	updateCanvasTransform([&] {
-		if(inverted) {
-			m_pos = cur.inverted().map(prev.map(m_pos));
-		} else {
-			m_pos = prev.inverted().map(cur.map(m_pos));
-		}
-		m_rotate = angle;
-	});
+		updateCanvasTransform([&] {
+			if(inverted) {
+				m_pos = cur.inverted().map(prev.map(m_pos));
+			} else {
+				m_pos = prev.inverted().map(cur.map(m_pos));
+			}
+			m_rotate = angle;
+		});
 
-	emitViewTransformed();
+		emitViewTransformed();
+		showTransformNotice(getRotationNotice());
+	}
 }
 
 void CanvasView::setViewFlip(bool flip)
@@ -325,6 +333,8 @@ void CanvasView::setViewFlip(bool flip)
 		});
 
 		emitViewTransformed();
+		showTransformNotice(
+			m_flip ? tr("Vertical flip: ON") : tr("Vertical flip: OFF"));
 	}
 }
 
@@ -341,6 +351,9 @@ void CanvasView::setViewMirror(bool mirror)
 		});
 
 		emitViewTransformed();
+		showTransformNotice(
+			m_mirror ? tr("Horizontal mirror: ON")
+					 : tr("Horizontal mirror: OFF"));
 	}
 }
 
@@ -523,6 +536,9 @@ void CanvasView::drawForeground(QPainter *painter, const QRectF &rect)
 
 void CanvasView::viewRectChanged()
 {
+	if(m_scene) {
+		m_scene->setSceneBounds(mapToScene(viewport()->rect()).boundingRect());
+	}
 	emit viewRectChange(mapToCanvas(rect()));
 }
 
@@ -1315,8 +1331,26 @@ void CanvasView::touchEvent(QTouchEvent *event)
 					}
 				}
 
-				setZoom(zoom);
-				setRotation(rotate);
+				{
+					QScopedValueRollback<bool> guard{m_blockNotices, true};
+					setZoom(zoom);
+					setRotation(rotate);
+				}
+
+				if(m_enableTouchPinch) {
+					if(m_enableTouchTwist) {
+						showTransformNotice(QStringLiteral("%1\n%2").arg(
+							getZoomNotice(), getRotationNotice()));
+					} else {
+						showTransformNotice(getZoomNotice());
+					}
+				} else if(m_enableTouchTwist) {
+					showTransformNotice(getRotationNotice());
+				}
+				updateCanvasTransform([&] {
+					m_zoom = zoom;
+					m_rotate = rotate;
+				});
 			}
 		}
 		break;
@@ -1739,6 +1773,23 @@ void CanvasView::scrollContentsBy(int dx, int dy)
 {
 	if(!m_scrollBarsAdjusting) {
 		scrollBy(-dx, -dy);
+	}
+}
+
+QString CanvasView::getZoomNotice() const
+{
+	return tr("Zoom: %1%").arg(zoom() * 100.0, 0, 'f', 2);
+}
+
+QString CanvasView::getRotationNotice() const
+{
+	return tr("Rotation: %1°").arg(rotation(), 0, 'f', 2);
+}
+
+void CanvasView::showTransformNotice(const QString &text)
+{
+	if(m_scene && !m_blockNotices) {
+		m_scene->showTransformNotice(text);
 	}
 }
 

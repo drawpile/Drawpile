@@ -9,6 +9,7 @@
 #include "desktop/scene/canvasitem.h"
 #include "desktop/scene/canvasscene.h"
 #include "desktop/scene/lasertrailitem.h"
+#include "desktop/scene/noticeitem.h"
 #include "desktop/scene/selectionitem.h"
 #include "desktop/scene/usermarkeritem.h"
 
@@ -24,6 +25,7 @@ CanvasScene::CanvasScene(QObject *parent)
 	: QGraphicsScene(parent)
 	, m_model(nullptr)
 	, m_selection(nullptr)
+	, m_transformNotice(nullptr)
 	, m_showAnnotationBorders(false)
 	, m_showAnnotations(true)
 	, m_showUserMarkers(true)
@@ -117,6 +119,26 @@ QRectF CanvasScene::canvasBounds() const
 	return m_group->transform()
 		.map(m_group->childrenBoundingRect())
 		.boundingRect();
+}
+
+void CanvasScene::setSceneBounds(const QRectF &sceneBounds)
+{
+	m_sceneBounds = sceneBounds;
+	if(m_transformNotice) {
+		setTransformNoticePosition();
+	}
+}
+
+void CanvasScene::showTransformNotice(const QString &text)
+{
+	if(m_transformNotice) {
+		m_transformNotice->setText(text);
+	} else {
+		m_transformNotice = new NoticeItem{text};
+		addItem(m_transformNotice);
+	}
+	setTransformNoticePosition();
+	m_transformNotice->setPersist(NOTICE_PERSIST);
 }
 
 void CanvasScene::showCanvas()
@@ -274,6 +296,11 @@ void CanvasScene::advanceAnimations()
 	if(m_selection) {
 		m_selection->marchingAnts(STEP);
 	}
+
+	if(m_transformNotice && !m_transformNotice->animationStep(STEP)) {
+		delete m_transformNotice;
+		m_transformNotice = nullptr;
+	}
 }
 
 void CanvasScene::laserTrail(
@@ -400,6 +427,12 @@ void CanvasScene::showLaserTrails(bool show)
 			}
 		}
 	}
+}
+
+void CanvasScene::setTransformNoticePosition()
+{
+	m_transformNotice->setPos(
+		m_sceneBounds.topLeft() + QPointF{NOTICE_OFFSET, NOTICE_OFFSET});
 }
 
 }

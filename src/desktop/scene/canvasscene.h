@@ -18,11 +18,12 @@ class AnnotationList;
 //! Drawing board related classes
 namespace drawingboard {
 
-class CanvasItem;
 class AnnotationItem;
+class CanvasItem;
+class LaserTrailItem;
+class NoticeItem;
 class SelectionItem;
 class UserMarkerItem;
-class LaserTrailItem;
 
 /**
  * @brief The drawing board scene
@@ -48,6 +49,10 @@ public:
 
 	//! Is there an image on the drawing board
 	bool hasImage() const { return m_model != nullptr; }
+
+	void setSceneBounds(const QRectF &sceneBounds);
+
+	void showTransformNotice(const QString &text);
 
 	//! Are annotation borders shown?
 	bool showAnnotationBorders() const { return m_showAnnotationBorders; }
@@ -112,6 +117,11 @@ private slots:
 	void previewAnnotation(int id, const QRect &shape);
 
 private:
+	static constexpr qreal NOTICE_OFFSET = 16.0;
+	static constexpr qreal NOTICE_PERSIST = 1.0;
+
+	void setTransformNoticePosition();
+
 	//! The actual canvas model
 	canvas::CanvasModel *m_model;
 
@@ -130,6 +140,9 @@ private:
 	//! Current selection
 	SelectionItem *m_selection;
 
+	NoticeItem *m_transformNotice;
+	NoticeItem *m_lockNotice;
+
 	bool m_showAnnotationBorders;
 	bool m_showAnnotations;
 	bool m_showUserMarkers;
@@ -137,6 +150,8 @@ private:
 	bool m_showUserLayers;
 	bool m_showUserAvatars;
 	bool m_showLaserTrails;
+
+	QRectF m_sceneBounds;
 };
 
 }
