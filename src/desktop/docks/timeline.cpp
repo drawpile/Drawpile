@@ -23,6 +23,7 @@ Timeline::Timeline(QWidget *parent)
 	, m_framerateSpinner{nullptr}
 	, m_framerateDebounce{DEBOUNCE_DELAY_MS}
 	, m_featureAccessEnabled{true}
+	, m_locked{false}
 {
 	m_widget->setMinimumHeight(40);
 	setWidget(m_widget);
