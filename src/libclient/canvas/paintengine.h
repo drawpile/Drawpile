@@ -135,7 +135,7 @@ public:
 	void setViewMode(DP_ViewMode vm, bool censor);
 
 	//! Is the "censor" view mode flag set?
-	bool isCensored() const;
+	bool revealCensored() const;
 
 	//! Set the active view layer (for solo mode)
 	void setViewLayer(int id);

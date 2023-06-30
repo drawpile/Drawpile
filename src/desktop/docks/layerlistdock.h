@@ -8,6 +8,7 @@ extern "C" {
 }
 
 #include "desktop/docks/dockbase.h"
+#include "desktop/scene/canvasview.h"
 #include <QSet>
 
 class QModelIndex;
@@ -70,7 +71,7 @@ public:
 	 * This may be because it is actually locked or because it is hidden or a
 	 * non-editable (group) layer.
 	 */
-	bool isCurrentLayerLocked() const;
+	QFlags<widgets::CanvasView::Lock> currentLayerLock() const;
 
 public slots:
 	void selectLayer(int id);

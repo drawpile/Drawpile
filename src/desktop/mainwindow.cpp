@@ -1878,21 +1878,19 @@ void MainWindow::onCompatibilityModeChanged(bool compatibilityMode)
 
 void MainWindow::updateLockWidget()
 {
+	using Lock = widgets::CanvasView::Lock;
+	QFlags<Lock> lock = Lock::None;
 	canvas::CanvasModel *canvas = m_doc->canvas();
 	canvas::AclState *aclState = canvas ? canvas->aclState() : nullptr;
 
-	bool resetLocked = aclState && aclState->isResetLocked();
-	bool locked = resetLocked;
-	QString toolTip;
-	if(locked) {
-		toolTip = tr("Reset in progress");
+	if(aclState && aclState->isResetLocked()) {
+		lock.setFlag(Lock::Reset);
 	}
 
 	bool sessionLocked = aclState && aclState->isSessionLocked();
 	getAction("locksession")->setChecked(sessionLocked);
-	if(!locked && sessionLocked) {
-		locked = true;
-		toolTip = tr("Board is locked");
+	if(sessionLocked) {
+		lock.setFlag(Lock::Canvas);
 	}
 
 	if(sessionLocked && !m_wasSessionLocked) {
@@ -1902,25 +1900,15 @@ void MainWindow::updateLockWidget()
 	}
 	m_wasSessionLocked = sessionLocked;
 
-	if(!locked && m_dockLayers->isCurrentLayerLocked()) {
-		locked = true;
-		toolTip = tr("Layer is locked");
+	lock |= m_dockLayers->currentLayerLock();
+
+	if(m_dockToolSettings->isCurrentToolLocked()) {
+		lock.setFlag(Lock::Tool);
 	}
 
-	if(!locked && m_dockToolSettings->isCurrentToolLocked()) {
-		locked = true;
-		toolTip = tr("Tool is locked");
-	}
-
-	if(locked) {
-		m_lockstatus->setPixmap(QIcon::fromTheme("object-locked").pixmap(16, 16));
-	} else {
-		m_lockstatus->setPixmap(QPixmap());
-	}
-	m_lockstatus->setToolTip(toolTip);
-
-	m_view->setLocked(locked);
-	m_view->setResetInProgress(resetLocked);
+	m_view->setLock(lock);
+	m_lockstatus->setToolTip(m_view->lockDescription());
+	m_lockstatus->setPixmap(lock ? QIcon::fromTheme("object-locked").pixmap(16, 16) : QPixmap{});
 }
 
 void MainWindow::onNsfmChanged(bool nsfm)

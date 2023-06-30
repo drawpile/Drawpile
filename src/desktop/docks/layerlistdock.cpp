@@ -706,20 +706,30 @@ QModelIndex LayerList::currentSelection() const
 	return sel.first();
 }
 
-bool LayerList::isCurrentLayerLocked() const
+QFlags<widgets::CanvasView::Lock> LayerList::currentLayerLock() const
 {
-	if(!m_canvas)
-		return false;
-
-	QModelIndex idx = currentSelection();
-	if(idx.isValid()) {
-		const canvas::LayerListItem &item = idx.data().value<canvas::LayerListItem>();
-		return item.hidden
-			|| item.group // group layers have no pixel content to edit
-			|| idx.data(canvas::LayerListModel::IsLockedRole).toBool()
-			|| (item.censored && m_canvas->paintEngine()->isCensored());
+	using Lock = widgets::CanvasView::Lock;
+	QFlags<Lock> lock = Lock::None;
+	if(m_canvas) {
+		QModelIndex idx = currentSelection();
+		if(idx.isValid()) {
+			const canvas::LayerListItem &item =
+				idx.data().value<canvas::LayerListItem>();
+			if(item.hidden) {
+				lock.setFlag(Lock::LayerHidden);
+			}
+			if(item.group) {
+				lock.setFlag(Lock::LayerGroup);
+			}
+			if(idx.data(canvas::LayerListModel::IsLockedRole).toBool()) {
+				lock.setFlag(Lock::LayerLocked);
+			}
+			if(item.censored && !m_canvas->paintEngine()->revealCensored()) {
+				lock.setFlag(Lock::LayerCensored);
+			}
+		}
 	}
-	return false;
+	return lock;
 }
 
 void LayerList::selectionChanged(const QItemSelection &selected)

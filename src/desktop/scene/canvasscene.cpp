@@ -26,6 +26,7 @@ CanvasScene::CanvasScene(QObject *parent)
 	, m_model(nullptr)
 	, m_selection(nullptr)
 	, m_transformNotice(nullptr)
+	, m_lockNotice(nullptr)
 	, m_showAnnotationBorders(false)
 	, m_showAnnotations(true)
 	, m_showUserMarkers(true)
@@ -127,6 +128,9 @@ void CanvasScene::setSceneBounds(const QRectF &sceneBounds)
 	if(m_transformNotice) {
 		setTransformNoticePosition();
 	}
+	if(m_lockNotice) {
+		setLockNoticePosition();
+	}
 }
 
 void CanvasScene::showTransformNotice(const QString &text)
@@ -139,6 +143,23 @@ void CanvasScene::showTransformNotice(const QString &text)
 	}
 	setTransformNoticePosition();
 	m_transformNotice->setPersist(NOTICE_PERSIST);
+}
+
+void CanvasScene::showLockNotice(const QString &text)
+{
+	if(m_lockNotice) {
+		m_lockNotice->setText(text);
+	} else {
+		m_lockNotice = new NoticeItem{text};
+		addItem(m_lockNotice);
+	}
+	setLockNoticePosition();
+}
+
+void CanvasScene::hideLockNotice()
+{
+	delete m_lockNotice;
+	m_lockNotice = nullptr;
 }
 
 void CanvasScene::showCanvas()
@@ -433,6 +454,15 @@ void CanvasScene::setTransformNoticePosition()
 {
 	m_transformNotice->setPos(
 		m_sceneBounds.topLeft() + QPointF{NOTICE_OFFSET, NOTICE_OFFSET});
+}
+
+void CanvasScene::setLockNoticePosition()
+{
+	m_lockNotice->setPos(
+		m_sceneBounds.topRight() +
+		QPointF{
+			-m_lockNotice->boundingRect().width() - NOTICE_OFFSET,
+			NOTICE_OFFSET});
 }
 
 }

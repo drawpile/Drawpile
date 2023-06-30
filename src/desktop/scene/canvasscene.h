@@ -54,6 +54,9 @@ public:
 
 	void showTransformNotice(const QString &text);
 
+	void showLockNotice(const QString &text);
+	void hideLockNotice();
+
 	//! Are annotation borders shown?
 	bool showAnnotationBorders() const { return m_showAnnotationBorders; }
 
@@ -121,6 +124,7 @@ private:
 	static constexpr qreal NOTICE_PERSIST = 1.0;
 
 	void setTransformNoticePosition();
+	void setLockNoticePosition();
 
 	//! The actual canvas model
 	canvas::CanvasModel *m_model;

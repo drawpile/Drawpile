@@ -41,6 +41,19 @@ public:
 	};
 	Q_ENUM(BrushCursor)
 
+	enum class Lock : unsigned int {
+		None = 0,
+		Reset = 1 << 0,
+		Canvas = 1 << 1,
+		User = 1 << 2,
+		LayerLocked = 1 << 3,
+		LayerGroup = 1 << 4,
+		LayerCensored = 1 << 5,
+		LayerHidden = 1 << 6,
+		Tool = 1 << 7,
+	};
+	Q_ENUM(Lock)
+
 	CanvasView(QWidget *parent = nullptr);
 
 	//! Set the board to use
@@ -103,6 +116,8 @@ public:
 	//! Show the notification bar with the "reconnect" button visible
 	void showDisconnectedWarning(const QString &message);
 
+	QString lockDescription() const;
+
 signals:
 	//! An image has been dropped on the widget
 	void imageDropped(const QImage &image);
@@ -160,10 +175,8 @@ public slots:
 	void setViewFlip(bool flip);
 	void setViewMirror(bool mirror);
 
-	void setLocked(bool lock);
+	void setLock(QFlags<Lock> lock);
 	void setBusy(bool busy);
-
-	void setResetInProgress(bool resetInProgress);
 
 	//! Send pointer position updates even when not drawing
 	void setPointerTracking(bool tracking);
@@ -282,6 +295,7 @@ private:
 	QString getZoomNotice() const;
 	QString getRotationNotice() const;
 	void showTransformNotice(const QString &text);
+	void updateLockNotice();
 
 	CanvasShortcuts m_canvasShortcuts;
 	QSet<Qt::Key> m_keysDown;
@@ -339,9 +353,8 @@ private:
 	int m_zoomWheelDelta;
 
 	bool m_enableTablet;
-	bool m_locked;
+	QFlags<Lock> m_lock;
 	bool m_busy;
-	bool m_resetInProgress;
 	bool m_pointertracking;
 	bool m_pixelgrid;
 

@@ -321,7 +321,7 @@ void PaintEngine::setViewMode(DP_ViewMode vm, bool censor)
 	updateLayersVisibleInFrame();
 }
 
-bool PaintEngine::isCensored() const
+bool PaintEngine::revealCensored() const
 {
 	return m_paintEngine.revealCensored();
 }

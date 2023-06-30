@@ -55,9 +55,8 @@ CanvasView::CanvasView(QWidget *parent)
 	, m_scene(nullptr)
 	, m_zoomWheelDelta(0)
 	, m_enableTablet(true)
-	, m_locked(false)
+	, m_lock{Lock::None}
 	, m_busy(false)
-	, m_resetInProgress(false)
 	, m_pointertracking(false)
 	, m_pixelgrid(true)
 	, m_enableTouchScroll(true)
@@ -141,6 +140,39 @@ void CanvasView::showDisconnectedWarning(const QString &message)
 		message, tr("Reconnect"), NotificationBar::RoleColor::Warning);
 }
 
+QString CanvasView::lockDescription() const
+{
+	QStringList reasons;
+
+	if(m_lock.testFlag(Lock::Reset)) {
+		reasons.append(tr("Reset in progress"));
+	}
+
+	if(m_lock.testFlag(Lock::Canvas)) {
+		reasons.append(tr("Canvas is locked"));
+	}
+
+	if(m_lock.testFlag(Lock::User)) {
+		reasons.append(tr("User is locked"));
+	}
+
+	if(m_lock.testFlag(Lock::LayerGroup)) {
+		reasons.append(tr("Layer is a group"));
+	} else if(m_lock.testFlag(Lock::LayerLocked)) {
+		reasons.append(tr("Layer is locked"));
+	} else if(m_lock.testFlag(Lock::LayerCensored)) {
+		reasons.append(tr("Layer is censored"));
+	} else if(m_lock.testFlag(Lock::LayerHidden)) {
+		reasons.append(tr("Layer is hidden"));
+	}
+
+	if(m_lock.testFlag(Lock::Tool)) {
+		reasons.append(tr("Tool is locked"));
+	}
+
+	return reasons.join(QStringLiteral("\n"));
+}
+
 void CanvasView::setCanvas(drawingboard::CanvasScene *scene)
 {
 	m_scene = scene;
@@ -157,6 +189,7 @@ void CanvasView::setCanvas(drawingboard::CanvasScene *scene)
 		});
 
 	viewRectChanged();
+	updateLockNotice();
 }
 
 void CanvasView::scrollBy(int x, int y)
@@ -357,24 +390,17 @@ void CanvasView::setViewMirror(bool mirror)
 	}
 }
 
-void CanvasView::setLocked(bool lock)
+void CanvasView::setLock(QFlags<Lock> lock)
 {
-	m_locked = lock;
+	m_lock = lock;
 	resetCursor();
+	updateLockNotice();
 }
 
 void CanvasView::setBusy(bool busy)
 {
 	m_busy = busy;
 	resetCursor();
-}
-
-void CanvasView::setResetInProgress(bool resetInProgress)
-{
-	if(resetInProgress != m_resetInProgress) {
-		m_resetInProgress = resetInProgress;
-		viewport()->update();
-	}
 }
 
 void CanvasView::setBrushOutlineWidth(qreal outlineWidth)
@@ -434,7 +460,7 @@ void CanvasView::resetCursor()
 		return;
 	}
 
-	if(m_locked) {
+	if(m_lock) {
 		viewport()->setCursor(Qt::ForbiddenCursor);
 		updateOutline();
 		return;
@@ -499,7 +525,7 @@ void CanvasView::drawForeground(QPainter *painter, const QRectF &rect)
 	bool outlineVisibleInMode;
 	if(m_dragmode == ViewDragMode::None) {
 		outlineVisibleInMode =
-			m_penmode == PenMode::Normal && !m_locked && !m_busy;
+			m_penmode == PenMode::Normal && !m_lock && !m_busy;
 	} else {
 		outlineVisibleInMode = m_dragAction == CanvasShortcuts::TOOL_ADJUST;
 	}
@@ -655,7 +681,7 @@ void CanvasView::onPenDown(const canvas::Point &p, bool right)
 	if(m_scene->hasImage()) {
 		switch(m_penmode) {
 		case PenMode::Normal:
-			if(!m_locked)
+			if(!m_lock)
 				emit penDown(
 					p.timeMsec(), p, p.pressure(), p.xtilt(), p.ytilt(),
 					p.rotation(), right, m_zoom);
@@ -678,7 +704,7 @@ void CanvasView::onPenMove(
 	if(m_scene->hasImage()) {
 		switch(m_penmode) {
 		case PenMode::Normal:
-			if(!m_locked)
+			if(!m_lock)
 				emit penMove(
 					p.timeMsec(), p, p.pressure(), p.xtilt(), p.ytilt(),
 					p.rotation(), constrain1, constrain2);
@@ -695,7 +721,7 @@ void CanvasView::onPenMove(
 
 void CanvasView::onPenUp()
 {
-	if(!m_locked && m_penmode == PenMode::Normal) {
+	if(!m_lock && m_penmode == PenMode::Normal) {
 		emit penUp();
 	}
 }
@@ -1488,7 +1514,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 
 void CanvasView::updateOutline(canvas::Point point)
 {
-	if(m_showoutline && !m_locked && !m_busy &&
+	if(m_showoutline && !m_lock && !m_busy &&
 	   (!m_prevoutline || !point.roughlySame(m_prevoutlinepoint))) {
 		if(!m_subpixeloutline) {
 			point.setX(qFloor(point.x()) + 0.5);
@@ -1790,6 +1816,17 @@ void CanvasView::showTransformNotice(const QString &text)
 {
 	if(m_scene && !m_blockNotices) {
 		m_scene->showTransformNotice(text);
+	}
+}
+
+void CanvasView::updateLockNotice()
+{
+	if(m_scene) {
+		if(m_lock) {
+			m_scene->showLockNotice(lockDescription());
+		} else {
+			m_scene->hideLockNotice();
+		}
 	}
 }
 
