@@ -1902,6 +1902,10 @@ void MainWindow::updateLockWidget()
 
 	lock |= m_dockLayers->currentLayerLock();
 
+	if(aclState && aclState->amLocked()) {
+		lock.setFlag(Lock::User);
+	}
+
 	if(m_dockToolSettings->isCurrentToolLocked()) {
 		lock.setFlag(Lock::Tool);
 	}
