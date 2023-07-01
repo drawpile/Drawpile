@@ -617,13 +617,7 @@ void LayerList::showPropertiesOfIndex(QModelIndex index)
 		connect(dlg, &dialogs::LayerProperties::visibilityChanged, this, &LayerList::setLayerVisibility);
 		connect(m_canvas->layerlist(), &canvas::LayerListModel::modelReset, dlg, [this, dlg]() {
 			const auto newIndex = m_canvas->layerlist()->layerIndex(dlg->layerId());
-			if(newIndex.isValid()) {
-				dlg->setLayerItem(
-					newIndex.data().value<canvas::LayerListItem>(),
-					layerCreatorName(dlg->layerId()),
-					newIndex.data(canvas::LayerListModel::IsDefaultRole).toBool()
-				);
-			} else {
+			if(!newIndex.isValid()) {
 				dlg->deleteLater();
 			}
 		});
