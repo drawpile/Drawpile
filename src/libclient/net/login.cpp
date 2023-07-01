@@ -281,6 +281,7 @@ void LoginHandler::requestExtAuth(const QString &username, const QString &passwo
 	o["nonce"] = m_extAuthNonce;
 	if(m_supportsExtAuthAvatars)
 		o["avatar"] = true;
+	o["s"] = getSid();
 
 	// Send request
 	QNetworkRequest req(m_extAuthUrl);
