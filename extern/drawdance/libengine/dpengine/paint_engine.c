@@ -85,6 +85,10 @@ typedef enum DP_PaintEnginePreviewType {
 #define PLAYBACK_STEP_UNDO_POINTS 1
 #define PLAYBACK_STEP_MSECS       2
 
+#define NO_PUSH               0
+#define PUSH_MESSAGE          1
+#define PUSH_CLEAR_LOCAL_FORK 2
+
 typedef struct DP_PaintEnginePreview DP_PaintEnginePreview;
 typedef DP_CanvasState *(*DP_PaintEnginePreviewRenderFn)(
     DP_PaintEnginePreview *preview, DP_CanvasState *cs, DP_DrawContext *dc,
@@ -413,6 +417,11 @@ static void handle_internal(DP_PaintEngine *pe, DP_DrawContext *dc,
     }
     case DP_MSG_INTERNAL_TYPE_DUMP_COMMAND:
         handle_dump_command(pe, mi);
+        break;
+    case DP_MSG_INTERNAL_TYPE_LOCAL_FORK_CLEAR:
+        if (!DP_canvas_history_local_fork_clear(pe->ch, dc)) {
+            DP_warn("Error clearing local fork: %s", DP_error());
+        }
         break;
     default:
         DP_warn("Unhandled internal message type %d", (int)type);
@@ -1726,59 +1735,106 @@ static void handle_move_pointer(DP_PaintEngine *pe, DP_Message *msg)
                         change);
 }
 
-static bool should_push_message_remote(DP_PaintEngine *pe, DP_Message *msg,
-                                       bool override_acls)
+static int should_push_message_remote(DP_PaintEngine *pe, DP_Message *msg,
+                                      bool override_acls)
 {
     DP_MessageType type = DP_message_type(msg);
     record_message(pe, msg, type);
-    uint8_t result = DP_acl_state_handle(pe->acls, msg, override_acls);
+    DP_AclState *acls = pe->acls;
+    uint8_t result = DP_acl_state_handle(acls, msg, override_acls);
     pe->meta.acl_change_flags |= result;
     if (result & DP_ACL_STATE_FILTERED_BIT) {
         DP_debug("ACL filtered %s message from user %u",
                  DP_message_type_enum_name_unprefixed(DP_message_type(msg)),
                  DP_message_context_id(msg));
+        // If our own message was filtered, our local fork is desynchronized.
+        // Tell the paint engine to go clear it to get back to a valid state.
+        if (DP_message_context_id(msg) == DP_acl_state_local_user_id(acls)) {
+            return PUSH_CLEAR_LOCAL_FORK;
+        }
+        else {
+            return NO_PUSH;
+        }
     }
     else {
         DP_local_state_handle(pe->local_state, pe->preview_dc, msg);
         if (is_pushable_type(type) || type == DP_MSG_UNDO_DEPTH) {
-            return true;
+            return PUSH_MESSAGE;
         }
         else if (type == DP_MSG_LASER_TRAIL) {
             handle_laser_trail(pe, msg);
+            return NO_PUSH;
         }
         else if (type == DP_MSG_MOVE_POINTER) {
             handle_move_pointer(pe, msg);
+            return NO_PUSH;
+        }
+        else {
+            return NO_PUSH;
         }
     }
-    return false;
 }
 
-static bool should_push_message_local(DP_UNUSED DP_PaintEngine *pe,
-                                      DP_Message *msg,
-                                      DP_UNUSED bool ignore_acls)
+static int should_push_message_local(DP_UNUSED DP_PaintEngine *pe,
+                                     DP_Message *msg,
+                                     DP_UNUSED bool ignore_acls)
 {
     DP_MessageType type = DP_message_type(msg);
-    return is_pushable_type(type);
+    return is_pushable_type(type) ? PUSH_MESSAGE : NO_PUSH;
+}
+
+static int push_more_messages(DP_PaintEngine *pe, DP_Queue *queue,
+                              bool override_acls, int count, DP_Message **msgs,
+                              int (*should_push)(DP_PaintEngine *, DP_Message *,
+                                                 bool))
+{
+    int pushed = 1;
+    for (int i = 1; i < count; ++i) {
+        DP_Message *msg = msgs[i];
+        switch (should_push(pe, msg, override_acls)) {
+        case NO_PUSH:
+            break;
+        case PUSH_MESSAGE:
+            DP_message_queue_push_inc(queue, msg);
+            ++pushed;
+            break;
+        case PUSH_CLEAR_LOCAL_FORK:
+            DP_message_queue_push_noinc(
+                queue, DP_msg_internal_local_fork_clear_new(0));
+            ++pushed;
+            break;
+        default:
+            DP_UNREACHABLE();
+        }
+    }
+    DP_SEMAPHORE_MUST_POST_N(pe->queue_sem, pushed);
+    return pushed;
 }
 
 static int push_messages(DP_PaintEngine *pe, DP_Queue *queue,
                          bool override_acls, int count, DP_Message **msgs,
-                         bool (*should_push)(DP_PaintEngine *, DP_Message *,
-                                             bool))
+                         int (*should_push)(DP_PaintEngine *, DP_Message *,
+                                            bool))
 {
     DP_MUTEX_MUST_LOCK(pe->queue_mutex);
     // First message is the one that triggered the call to this function,
     // push it unconditionally. Then keep checking the rest again.
-    int pushed = 1;
     DP_message_queue_push_inc(queue, msgs[0]);
-    for (int i = 1; i < count; ++i) {
-        DP_Message *msg = msgs[i];
-        if (should_push(pe, msg, override_acls)) {
-            DP_message_queue_push_inc(queue, msg);
-            ++pushed;
-        }
-    }
-    DP_SEMAPHORE_MUST_POST_N(pe->queue_sem, pushed);
+    int pushed =
+        push_more_messages(pe, queue, override_acls, count, msgs, should_push);
+    DP_MUTEX_MUST_UNLOCK(pe->queue_mutex);
+    return pushed;
+}
+
+static int push_clear_local_fork_messages(
+    DP_PaintEngine *pe, DP_Queue *queue, bool override_acls, int count,
+    DP_Message **msgs, int (*should_push)(DP_PaintEngine *, DP_Message *, bool))
+{
+    DP_MUTEX_MUST_LOCK(pe->queue_mutex);
+    // First message is to instruct the paint engine to clear the local fork.
+    DP_message_queue_push_noinc(queue, DP_msg_internal_local_fork_clear_new(0));
+    int pushed =
+        push_more_messages(pe, queue, override_acls, count, msgs, should_push);
     DP_MUTEX_MUST_UNLOCK(pe->queue_mutex);
     return pushed;
 }
@@ -1794,7 +1850,7 @@ int DP_paint_engine_handle_inc(DP_PaintEngine *pe, bool local,
     DP_ASSERT(msgs);
     DP_PERF_BEGIN_DETAIL(fn, "handle", "count=%d,local=%d", count, local);
 
-    bool (*should_push)(DP_PaintEngine *, DP_Message *, bool) =
+    int (*should_push)(DP_PaintEngine *, DP_Message *, bool) =
         local ? should_push_message_local : should_push_message_remote;
 
     pe->meta.acl_change_flags = 0;
@@ -1804,11 +1860,13 @@ int DP_paint_engine_handle_inc(DP_PaintEngine *pe, bool local,
     // Don't lock anything until we actually find a message to push.
     int pushed = 0;
     for (int i = 0; i < count; ++i) {
-        if (should_push(pe, msgs[i], override_acls)) {
+        int push = should_push(pe, msgs[i], override_acls);
+        if (push) {
             DP_PERF_BEGIN(push, "handle:push");
-            pushed =
-                push_messages(pe, local ? &pe->local_queue : &pe->remote_queue,
-                              override_acls, count - i, msgs + i, should_push);
+            pushed = (push == PUSH_MESSAGE ? push_messages
+                                           : push_clear_local_fork_messages)(
+                pe, local ? &pe->local_queue : &pe->remote_queue, override_acls,
+                count - i, msgs + i, should_push);
             DP_PERF_END(push);
             break;
         }

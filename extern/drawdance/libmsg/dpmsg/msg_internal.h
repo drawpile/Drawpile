@@ -37,6 +37,7 @@ typedef enum DP_MsgInternalType {
     DP_MSG_INTERNAL_TYPE_PLAYBACK,
     DP_MSG_INTERNAL_TYPE_DUMP_PLAYBACK,
     DP_MSG_INTERNAL_TYPE_DUMP_COMMAND,
+    DP_MSG_INTERNAL_TYPE_LOCAL_FORK_CLEAR,
     DP_MSG_INTERNAL_TYPE_COUNT,
 } DP_MsgInternalType;
 
@@ -70,6 +71,8 @@ DP_Message *DP_msg_internal_dump_playback_new(unsigned int context_id,
 DP_Message *DP_msg_internal_dump_command_new_inc(unsigned int context_id,
                                                  int type, int count,
                                                  DP_Message **messages);
+
+DP_Message *DP_msg_internal_local_fork_clear_new(unsigned int context_id);
 
 DP_MsgInternal *DP_msg_internal_cast(DP_Message *msg);
 

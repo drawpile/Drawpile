@@ -1127,6 +1127,21 @@ void DP_canvas_history_cleanup(DP_CanvasHistory *ch, DP_DrawContext *dc,
 }
 
 
+bool DP_canvas_history_local_fork_clear(DP_CanvasHistory *ch,
+                                        DP_DrawContext *dc)
+{
+    DP_ASSERT(ch);
+    if (ch->fork.queue.used == 0) {
+        return true;
+    }
+    else {
+        DP_warn("Clear local fork at %d", ch->offset + ch->used);
+        clear_fork_entries(ch);
+        return search_and_replay_from(ch, dc, ch->fork.start - ch->offset);
+    }
+}
+
+
 static bool is_done_entry_by(DP_CanvasHistoryEntry *entry,
                              unsigned int context_id)
 {

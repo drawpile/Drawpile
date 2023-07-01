@@ -127,6 +127,9 @@ void DP_canvas_history_cleanup(DP_CanvasHistory *ch, DP_DrawContext *dc,
                                void (*push_message)(void *, DP_Message *),
                                void *user);
 
+bool DP_canvas_history_local_fork_clear(DP_CanvasHistory *ch,
+                                        DP_DrawContext *dc);
+
 bool DP_canvas_history_handle(DP_CanvasHistory *ch, DP_DrawContext *dc,
                               DP_Message *msg);
 

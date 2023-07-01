@@ -40,6 +40,7 @@ typedef struct DP_AnnotationAclEntry {
 } DP_AnnotationAclEntry;
 
 typedef struct DP_AclState {
+    uint8_t local_user_id;
     DP_UserAcls users;
     DP_LayerAclEntry *layers;
     DP_AnnotationAclEntry *annotations;
@@ -254,7 +255,7 @@ static DP_FeatureTiers null_feature_tiers(void)
 static DP_AclState null_acl_state(void)
 {
     return (DP_AclState){
-        {{0}, {0}, {0}, {0}, false}, NULL, NULL, null_feature_tiers()};
+        0, {{0}, {0}, {0}, {0}, false}, NULL, NULL, null_feature_tiers()};
 }
 
 DP_AclState *DP_acl_state_new(void)
@@ -297,6 +298,7 @@ void DP_acl_state_reset(DP_AclState *acls, uint8_t local_user_id)
     clear_layers(acls);
     clear_annotations(acls);
     *acls = null_acl_state();
+    acls->local_user_id = local_user_id;
     if (local_user_id != 0) {
         DP_user_bit_set(acls->users.operators, local_user_id);
     }
@@ -377,6 +379,12 @@ char *DP_acl_state_dump(DP_AclState *acls)
     char *buffer = *buffer_ptr;
     DP_output_free(output);
     return buffer;
+}
+
+uint8_t DP_acl_state_local_user_id(DP_AclState *acls)
+{
+    DP_ASSERT(acls);
+    return acls->local_user_id;
 }
 
 DP_UserAcls DP_acl_state_users(DP_AclState *acls)
