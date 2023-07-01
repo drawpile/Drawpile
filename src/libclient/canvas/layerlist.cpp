@@ -291,8 +291,8 @@ static int getAutoselect(
 		// We haven't participated yet: select the default layer if it exists.
 		if(defaultLayer > 0) {
 			for(const LayerListItem &newItem : newItems) {
-				if(newItem.id == defaultLayer) {
-					return isNewLayerId(oldItems, newItem);
+				if(newItem.id == defaultLayer && isNewLayerId(oldItems, newItem)) {
+					return defaultLayer;
 				}
 			}
 		}
