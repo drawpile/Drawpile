@@ -89,7 +89,7 @@ SETTING(shareBrushSlotColor       , ShareBrushSlotColor       , "settings/shareb
 SETTING(shortcuts                 , Shortcuts                 , "settings/shortcuts"                    , QVariantMap())
 SETTING(showTrayIcon              , ShowTrayIcon              , "ui/trayicon"                           , true)
 SETTING(soundVolume               , SoundVolume               , "notifications/volume"                  , 40)
-SETTING_GETSET(tabletDriver       , TabletDriver              , "settings/input/tabletdriver"           , tabletinput::Mode::Qt6Winink
+SETTING_GETSET(tabletDriver       , TabletDriver              , "settings/input/tabletdriver"           , tabletinput::Mode::KisTabletWinink
 	, &tabletDriver::get, &tabletDriver::set)
 SETTING(tabletEraser              , TabletEraser              , "settings/input/tableteraser"           , true)
 SETTING(tabletEvents              , TabletEvents              , "settings/input/tabletevents"           , true)
