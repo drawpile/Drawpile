@@ -89,6 +89,7 @@ private:
 	void handleIdentMessage(const protocol::ServerCommand &cmd);
 	void handleHostMessage(const protocol::ServerCommand &cmd);
 	void handleJoinMessage(const protocol::ServerCommand &cmd);
+	void logClientInfo(const protocol::ServerCommand &cmd);
 	void handleAbuseReport(const protocol::ServerCommand &cmd);
 	void handleStarttls();
 	void requestExtAuth();

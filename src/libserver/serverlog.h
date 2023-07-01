@@ -29,21 +29,22 @@ public:
 	Q_ENUM(Level)
 
 	enum class Topic {
-		Join,      // user joined a session
-		Leave,     // user left a session
-		Kick,      // user was kicked
-		Ban,       // user was banned
-		Unban,     // a ban was lifted
-		Op,        // user was granted OP
-		Deop,      // OP status was removed
-		Mute,      // User was muted
-		Unmute,    // User was unmuted
-		Trust,     // User was tagged as trusted
-		Untrust,   // User's trusted tag was removed
-		BadData,   // Received an invalid message from a client
-		RuleBreak, // User tried to use a command they're not allowed to
-		PubList,   // Session announcement
-		Status     // General stuff
+		Join,       // user joined a session
+		Leave,      // user left a session
+		Kick,       // user was kicked
+		Ban,        // user was banned
+		Unban,      // a ban was lifted
+		Op,         // user was granted OP
+		Deop,       // OP status was removed
+		Mute,       // User was muted
+		Unmute,     // User was unmuted
+		Trust,      // User was tagged as trusted
+		Untrust,    // User's trusted tag was removed
+		BadData,    // Received an invalid message from a client
+		RuleBreak,  // User tried to use a command they're not allowed to
+		PubList,    // Session announcement
+		Status,     // General stuff
+		ClientInfo, // Structured information about client joining or hosting
 	};
 	Q_ENUM(Topic)
 

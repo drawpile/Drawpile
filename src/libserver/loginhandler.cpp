@@ -558,6 +558,7 @@ void LoginHandler::handleHostMessage(const protocol::ServerCommand &cmd)
 	reply.reply["join"] = joinInfo;
 	send(reply);
 
+	logClientInfo(cmd);
 	m_complete = true;
 	session->joinUser(m_client, true);
 
@@ -627,11 +628,43 @@ void LoginHandler::handleJoinMessage(const protocol::ServerCommand &cmd)
 	reply.reply["join"] = joinInfo;
 	send(reply);
 
+	logClientInfo(cmd);
 	m_complete = true;
-
 	session->joinUser(m_client, false);
 
 	deleteLater();
+}
+
+void LoginHandler::logClientInfo(const protocol::ServerCommand &cmd)
+{
+	QJsonObject info;
+	QString keys[] = {
+		QStringLiteral("app_version"),
+		QStringLiteral("protocol_version"),
+		QStringLiteral("qt_version"),
+		QStringLiteral("os"),
+		QStringLiteral("s"),
+	};
+	for(const QString &key : keys) {
+		if(cmd.kwargs.contains(key)) {
+			QJsonValue value = cmd.kwargs[key];
+			if(value.isString()) {
+				QString s = value.toString().trimmed();
+				if(!s.isEmpty()) {
+					s.truncate(64);
+					info[key] = s;
+				}
+			}
+		}
+	}
+
+	if(!info.isEmpty()) {
+		if(m_client->isAuthenticated()) {
+			info["auth_id"] = m_client->authId();
+		}
+		m_client->log(Log().about(Log::Level::Info, Log::Topic::ClientInfo)
+			.message(QJsonDocument(info).toJson(QJsonDocument::Compact)));
+	}
 }
 
 void LoginHandler::handleAbuseReport(const protocol::ServerCommand &cmd)
