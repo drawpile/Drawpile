@@ -365,6 +365,7 @@ private:
 	void continueTls();
 	void handleError(const QString &code, const QString &message);
 
+	static QJsonObject makeClientInfoKwargs();
 	static QString getSid();
 	static QString generateTamperSid();
 	static QString generateSid();

@@ -6,6 +6,7 @@
 #include "libclient/net/servercmd.h"
 #include "libclient/parentalcontrols/parentalcontrols.h"
 
+#include "cmake-config/config.h"
 #include "libshared/net/protover.h"
 #include "libshared/util/networkaccess.h"
 #include "libshared/util/paths.h"
@@ -264,8 +265,6 @@ void LoginHandler::sendIdentity()
 		m_avatar = QByteArray();
 	}
 
-	kwargs["s"] = getSid();
-
 	m_state = EXPECT_IDENTIFIED;
 	send("ident", args, kwargs, containsAvatar);
 }
@@ -403,7 +402,7 @@ void LoginHandler::expectSessionDescriptionHost(const ServerReply &msg)
 
 void LoginHandler::sendHostCommand()
 {
-	QJsonObject kwargs;
+	QJsonObject kwargs = makeClientInfoKwargs();
 
 	if(!m_sessionAlias.isEmpty())
 		kwargs["alias"] = m_sessionAlias;
@@ -595,7 +594,7 @@ void LoginHandler::joinSelectedSession(const QString &id, bool needPassword, boo
 
 void LoginHandler::sendJoinCommand()
 {
-	QJsonObject kwargs;
+	QJsonObject kwargs = makeClientInfoKwargs();
 	if(!m_joinPassword.isEmpty()) {
 		kwargs["password"] = m_joinPassword;
 	}
@@ -823,6 +822,23 @@ void LoginHandler::send(
 bool LoginHandler::hasUserFlag(const QString &flag) const
 {
 	return m_userFlags.contains(flag.toUpper());
+}
+
+QJsonObject LoginHandler::makeClientInfoKwargs()
+{
+	// Android reports "linux" as the kernel type, which is not helpful.
+#if defined(Q_OS_ANDROID)
+	QString os = QSysInfo::productType();
+#else
+	QString os = QSysInfo::kernelType();
+#endif
+	return QJsonObject{
+		{"app_version", cmake_config::version()},
+		{"protocol_version", DP_PROTOCOL_VERSION},
+		{"qt_version", QString::number(QT_VERSION_MAJOR)},
+		{"os", os},
+		{"s", getSid()},
+	};
 }
 
 QString LoginHandler::getSid()
