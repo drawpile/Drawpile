@@ -141,8 +141,10 @@ static void addWidgets(struct ServerSummaryPage::Private *d, QGridLayout *layout
 		layout->addWidget(value, row, 1);
 	}
 
-	if(value->inherits("QAbstractSpinBox"))
-		value->connect(value, SIGNAL(valueChanged(QString)), d->saveTimer, SLOT(start()));
+	if(value->inherits("QSpinBox"))
+		value->connect(value, SIGNAL(valueChanged(int)), d->saveTimer, SLOT(start()));
+	else if(value->inherits("QDoubleSpinBox"))
+		value->connect(value, SIGNAL(valueChanged(double)), d->saveTimer, SLOT(start()));
 	else if(value->inherits("QAbstractButton"))
 		value->connect(value, SIGNAL(clicked(bool)), d->saveTimer, SLOT(start()));
 	else if(value->inherits("QLineEdit"))
