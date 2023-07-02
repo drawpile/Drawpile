@@ -38,7 +38,7 @@ General::General(desktop::settings::Settings &settings, QWidget *parent)
 void General::initAutosave(desktop::settings::Settings &settings, utils::SanerFormLayout *form)
 {
 	auto *autosaveInterval = new QSpinBox;
-	autosaveInterval->setRange(1, 9999999);
+	autosaveInterval->setRange(1, 999);
 	settings.bindAutoSaveInterval(this, [=](int intervalMsec) {
 		autosaveInterval->setValue(intervalMsec / 1000);
 	});
