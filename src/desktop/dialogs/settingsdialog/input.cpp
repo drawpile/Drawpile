@@ -89,7 +89,7 @@ void Input::initTablet(desktop::settings::Settings &settings, utils::SanerFormLa
 #endif
 
 	settings.bindTabletDriver(driver, Qt::UserRole);
-	form->addRow("Driver:", driver);
+	form->addRow(tr("Driver:"), driver);
 #endif
 
 	form->addSpacer(QSizePolicy::MinimumExpanding);
