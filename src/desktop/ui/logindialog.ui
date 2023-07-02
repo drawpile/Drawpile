@@ -255,7 +255,7 @@ padding: 16px;</string>
        <item>
         <widget class="QLabel">
          <property name="text">
-          <string>This session is password protected</string>
+          <string>This session is password-protected.</string>
          </property>
         </widget>
        </item>
@@ -289,6 +289,16 @@ padding: 16px;</string>
           </widget>
          </item>
         </layout>
+       </item>
+       <item>
+        <widget class="QLabel">
+         <property name="text">
+          <string>Enter the &lt;b&gt;session password&lt;/b&gt;, &lt;i&gt;not&lt;/i&gt; your account password.</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
        <item>
         <spacer>
