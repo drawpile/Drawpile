@@ -1902,7 +1902,7 @@ void MainWindow::updateLockWidget()
 
 	lock |= m_dockLayers->currentLayerLock();
 
-	if(aclState && aclState->amLocked()) {
+	if(aclState && aclState->isLocked(aclState->localUserId())) {
 		lock.setFlag(Lock::User);
 	}
 

@@ -49,6 +49,11 @@ AclState::AclState(QObject *parent)
 	d->resetLocked = false;
 }
 
+uint8_t AclState::localUserId()
+{
+	return d->localUser;
+}
+
 void AclState::setLocalUserId(uint8_t localUser)
 {
 	d->localUser = localUser;

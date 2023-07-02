@@ -29,6 +29,7 @@ public:
 	explicit AclState(QObject *parent=nullptr);
 	~AclState() override;
 
+	uint8_t localUserId();
 	void setLocalUserId(uint8_t localUser);
 
 	void updateUserBits(const drawdance::AclState &acls, bool reset);
