@@ -93,7 +93,7 @@
    <item row="2" column="0">
     <widget class="QLabel">
      <property name="text">
-      <string>User:</string>
+      <string>Offender:</string>
      </property>
     </widget>
    </item>
