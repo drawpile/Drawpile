@@ -54,6 +54,8 @@ private slots:
 	void onServerTitleChanged(const QString &title);
 
 private:
+	void adjustSize(int width, int height, bool allowShrink);
+
 	struct Private;
 	Private *d;
 };

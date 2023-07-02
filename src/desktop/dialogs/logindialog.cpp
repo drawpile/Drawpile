@@ -444,12 +444,7 @@ void LoginDialog::onBadLoginPassword()
 
 void LoginDialog::onSessionChoiceNeeded(net::LoginSessionModel *sessions)
 {
-	QRect geom = geometry();
-	int newWidth = qMax(geom.width(), 600);
-	int newHeight = qMax(geom.height(), 400);
-	int newX = geom.x() + (geom.width() - newWidth) / 2;
-	int newY = geom.y() + (geom.height() - newHeight) / 2;
-	setGeometry(newX, newY, newWidth, newHeight);
+	adjustSize(600, 400, false);
 
 	d->sessions->setSourceModel(sessions);
 	d->ui->sessionList->resizeColumnsToContents();
@@ -466,6 +461,7 @@ void LoginDialog::onSessionChoiceNeeded(net::LoginSessionModel *sessions)
 
 void LoginDialog::onSessionPasswordNeeded()
 {
+	adjustSize(400, 150, true);
 	d->ui->sessionPassword->setText(QString());
 	d->resetMode(Mode::sessionpassword);
 }
@@ -590,6 +586,16 @@ void LoginDialog::catchupProgress(int value)
 	d->ui->progressBar->setValue(value);
 	if(d->mode == Mode::catchup && value >= 100)
 		this->deleteLater();
+}
+
+void LoginDialog::adjustSize(int width, int height, bool allowShrink)
+{
+	QRect geom = geometry();
+	int newWidth = allowShrink ? width : qMax(geom.width(), width);
+	int newHeight = allowShrink ? height : qMax(geom.height(), height);
+	int newX = geom.x() + (geom.width() - newWidth) / 2;
+	int newY = geom.y() + (geom.height() - newHeight) / 2;
+	setGeometry(newX, newY, newWidth, newHeight);
 }
 
 }
