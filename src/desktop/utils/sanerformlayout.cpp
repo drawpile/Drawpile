@@ -7,7 +7,7 @@
 #include <QButtonGroup>
 #include <QCheckBox>
 #include <QDebug>
-#include <QFont>
+#include <QGraphicsOpacityEffect>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QRadioButton>
@@ -96,9 +96,11 @@ EncapsulatedLayout *note(const QString &text, QSizePolicy::ControlType type)
 	auto *label = new QLabel(text);
 	label->setWordWrap(true);
 	label->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+	label->setGraphicsEffect(new QGraphicsOpacityEffect);
 
+	// This is required to not make the label take up excessive vertical space.
 	auto font = QFont();
-	font.setPointSize(font.pointSize() * 9 / 10);
+	font.setPointSize(font.pointSize());
 	label->setFont(font);
 
 	utils::setSpacingControlType(label, type);
