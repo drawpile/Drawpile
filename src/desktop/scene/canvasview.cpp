@@ -1790,9 +1790,11 @@ void CanvasView::resizeEvent(QResizeEvent *e)
 {
 	QScopedValueRollback<bool> guard{m_scrollBarsAdjusting, true};
 	QGraphicsView::resizeEvent(e);
-	updateCanvasTransform([] {
-		// Nothing.
-	});
+	if(!e->size().isEmpty()) {
+		updateCanvasTransform([] {
+			// Nothing.
+		});
+	}
 }
 
 void CanvasView::scrollContentsBy(int dx, int dy)
