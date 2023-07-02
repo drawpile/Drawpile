@@ -7,6 +7,7 @@
 #include "desktop/dialogs/settingsdialog/general.h"
 #include "desktop/dialogs/settingsdialog/input.h"
 #include "desktop/dialogs/settingsdialog/network.h"
+#include "desktop/dialogs/settingsdialog/notifications.h"
 #include "desktop/dialogs/settingsdialog/servers.h"
 #include "desktop/dialogs/settingsdialog/shortcuts.h"
 #include "desktop/dialogs/settingsdialog/canvasshortcuts.h"
@@ -71,6 +72,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 		{ "dialog-input-devices", tr("Input"), new settingsdialog::Input(m_settings, this) },
 		{ "tools", tr("Tools"), new settingsdialog::Tools(m_settings, this) },
 		{ "network-modem", tr("Network"), new settingsdialog::Network(m_settings, this) },
+		{ "dialog-information", tr("Notifications"), new settingsdialog::Notifications(m_settings, this) },
 		{ "network-server-database", tr("Servers"), new settingsdialog::Servers(m_settings, this) },
 		{ "input-keyboard", tr("Shortcuts"), new settingsdialog::Shortcuts(m_settings, this) },
 		{ "edit-rename", tr("Canvas Shortcuts"), new settingsdialog::CanvasShortcuts(m_settings, this) },

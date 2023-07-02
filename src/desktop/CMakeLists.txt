@@ -125,6 +125,8 @@ target_sources(drawpile PRIVATE
 	dialogs/settingsdialog/input.h
 	dialogs/settingsdialog/network.cpp
 	dialogs/settingsdialog/network.h
+	dialogs/settingsdialog/notifications.cpp
+	dialogs/settingsdialog/notifications.h
 	dialogs/settingsdialog/parentalcontrols.cpp
 	dialogs/settingsdialog/parentalcontrols.h
 	dialogs/settingsdialog/proportionaltableview.cpp
