@@ -87,119 +87,116 @@
      </item>
      <item row="3" column="0" colspan="2">
       <widget class="QCheckBox" name="nsfm">
-       <property name="text">
-        <string>Not suitable for minors (NSFM)</string>
-       </property>
        <property name="toolTip">
         <string>Marks the session as having age-restricted content.</string>
        </property>
+       <property name="text">
+        <string>&amp;Not suitable for minors (NSFM)</string>
+       </property>
       </widget>
      </item>
-     <item row="5" column="0">
+    </layout>
+   </item>
+   <item>
+    <widget class="Line">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout">
+     <item>
       <widget class="QCheckBox" name="announce">
        <property name="toolTip">
         <string>Announce the session at a public list</string>
        </property>
        <property name="text">
-        <string>List at:</string>
+        <string>Lis&amp;t at:</string>
        </property>
       </widget>
      </item>
-     <item row="5" column="1">
+     <item>
       <widget class="QComboBox" name="listingserver">
        <property name="enabled">
         <bool>false</bool>
        </property>
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
       </widget>
      </item>
-     <item row="4" column="0" colspan="2">
-      <widget class="Line">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="0">
-      <widget class="QLabel">
-       <property name="text">
-        <string>Host:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="1">
-      <widget class="QRadioButton" name="uselocal">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
+    </layout>
+   </item>
+   <item>
+    <widget class="Line">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QRadioButton" name="uselocal">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="toolTip">
+      <string>Use Drawpile's built-in server</string>
+     </property>
+     <property name="text">
+      <string>Host on this co&amp;mputer</string>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout">
+     <item>
+      <widget class="QRadioButton" name="useremote">
        <property name="toolTip">
-        <string>Use Drawpile's built-in server</string>
+        <string>Use an external dedicated server</string>
        </property>
        <property name="text">
-        <string>This co&amp;mputer</string>
+        <string>&amp;Host at:</string>
        </property>
        <property name="checked">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
       </widget>
      </item>
-     <item row="8" column="1">
-      <layout class="QHBoxLayout">
-       <item>
-        <widget class="QRadioButton" name="useremote">
-         <property name="toolTip">
-          <string>Use an external dedicated server</string>
-         </property>
-         <property name="text">
-          <string>Re&amp;mote:</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QComboBox" name="remotehost">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>128</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="editable">
-          <bool>true</bool>
-         </property>
-         <property name="maxCount">
-          <number>10</number>
-         </property>
-         <property name="insertPolicy">
-          <enum>QComboBox::InsertAtTop</enum>
-         </property>
-         <property name="mandatoryfield" stdset="0">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item row="6" column="0" colspan="2">
-      <widget class="Line">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+     <item>
+      <widget class="QComboBox" name="remotehost">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>128</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="editable">
+        <bool>true</bool>
+       </property>
+       <property name="maxCount">
+        <number>10</number>
+       </property>
+       <property name="insertPolicy">
+        <enum>QComboBox::InsertAtTop</enum>
+       </property>
+       <property name="mandatoryfield" stdset="0">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
