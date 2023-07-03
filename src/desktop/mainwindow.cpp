@@ -637,12 +637,19 @@ void MainWindow::loadShortcuts(const QVariantMap &cfg)
 				QList<QKeySequence> shortcuts;
 
 				if(v.canConvert<QKeySequence>()) {
-					shortcuts << v.value<QKeySequence>();
+					QKeySequence shortcut = v.value<QKeySequence>();
+					if(!shortcuts.contains(shortcut)) {
+						shortcuts.append(shortcut);
+					}
 				} else {
 					const auto list = v.toList();
 					for(const auto &vv : list) {
-						if(vv.canConvert<QKeySequence>())
-							shortcuts << vv.value<QKeySequence>();
+						if(vv.canConvert<QKeySequence>()) {
+							QKeySequence shortcut = vv.value<QKeySequence>();
+							if(!shortcuts.contains(shortcut)) {
+								shortcuts.append(shortcut);
+							}
+						}
 					}
 				}
 				a->setShortcuts(shortcuts);
