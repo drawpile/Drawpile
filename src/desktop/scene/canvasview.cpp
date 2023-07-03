@@ -225,6 +225,24 @@ void CanvasView::zoomSteps(int steps, const QPointF &point)
 	}
 }
 
+void CanvasView::moveStep(Direction direction)
+{
+	switch(direction) {
+	case Direction::Left:
+		scrollBy(-horizontalScrollBar()->singleStep(), 0);
+		break;
+	case Direction::Right:
+		scrollBy(horizontalScrollBar()->singleStep(), 0);
+		break;
+	case Direction::Up:
+		scrollBy(0, -verticalScrollBar()->singleStep());
+		break;
+	case Direction::Down:
+		scrollBy(0, verticalScrollBar()->singleStep());
+		break;
+	}
+}
+
 void CanvasView::zoomin()
 {
 	zoomSteps(1, mapToCanvas(rect().center()));

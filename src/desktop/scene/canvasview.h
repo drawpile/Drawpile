@@ -41,6 +41,8 @@ public:
 	};
 	Q_ENUM(BrushCursor)
 
+	enum class Direction { Left, Right, Up, Down };
+
 	enum class Lock : unsigned int {
 		None = 0,
 		Reset = 1 << 0,
@@ -180,6 +182,8 @@ public slots:
 
 	//! Send pointer position updates even when not drawing
 	void setPointerTracking(bool tracking);
+
+	void moveStep(Direction direction);
 
 	//! Increase/decrease zoom factor by this many steps
 	void zoomSteps(int steps, const QPointF &point);

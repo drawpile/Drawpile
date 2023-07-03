@@ -3028,7 +3028,10 @@ void MainWindow::setupActions()
 
 	QAction *toggleChat = makeAction("togglechat", tr("Chat")).shortcut("Alt+C").checked();
 
-
+	QAction *moveleft = makeAction("moveleft", tr("Move Canvas Left")).noDefaultShortcut();
+	QAction *moveright = makeAction("moveright", tr("Move Canvas Right")).noDefaultShortcut();
+	QAction *moveup = makeAction("moveup", tr("Move Canvas Up")).noDefaultShortcut();
+	QAction *movedown = makeAction("movedown", tr("Move Canvas Down")).noDefaultShortcut();
 	QAction *zoomin = makeAction("zoomin", tr("Zoom &In")).icon("zoom-in").shortcut(QKeySequence::ZoomIn);
 	QAction *zoomout = makeAction("zoomout", tr("Zoom &Out")).icon("zoom-out").shortcut(QKeySequence::ZoomOut);
 	QAction *zoomorig = makeAction("zoomone", tr("&Normal Size")).icon("zoom-original").shortcut(QKeySequence("ctrl+0"));
@@ -3092,6 +3095,18 @@ void MainWindow::setupActions()
 		m_splitter->setSizes(sizes);
 	});
 
+	connect(moveleft, &QAction::triggered, m_view, [this] {
+		m_view->moveStep(widgets::CanvasView::Direction::Left);
+	});
+	connect(moveright, &QAction::triggered, m_view, [this] {
+		m_view->moveStep(widgets::CanvasView::Direction::Right);
+	});
+	connect(moveup, &QAction::triggered, m_view, [this] {
+		m_view->moveStep(widgets::CanvasView::Direction::Up);
+	});
+	connect(movedown, &QAction::triggered, m_view, [this] {
+		m_view->moveStep(widgets::CanvasView::Direction::Down);
+	});
 	connect(zoomin, &QAction::triggered, m_view, &widgets::CanvasView::zoomin);
 	connect(zoomout, &QAction::triggered, m_view, &widgets::CanvasView::zoomout);
 	connect(zoomorig, &QAction::triggered, this, [this]() { m_view->setZoom(1.0); });
