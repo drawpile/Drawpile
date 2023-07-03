@@ -108,7 +108,7 @@ int DP_track_refcount(DP_Track *t)
 {
     DP_ASSERT(t);
     DP_ASSERT(DP_atomic_get(&t->refcount) > 0);
-    return t->refcount;
+    return DP_atomic_get(&t->refcount);
 }
 
 bool DP_track_transient(DP_Track *t)

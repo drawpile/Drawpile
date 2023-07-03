@@ -109,7 +109,7 @@ int DP_key_frame_refcount(DP_KeyFrame *kf)
 {
     DP_ASSERT(kf);
     DP_ASSERT(DP_atomic_get(&kf->refcount) > 0);
-    return kf->refcount;
+    return DP_atomic_get(&kf->refcount);
 }
 
 bool DP_key_frame_transient(DP_KeyFrame *kf)
