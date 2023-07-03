@@ -1772,6 +1772,7 @@ void CanvasView::dropEvent(QDropEvent *event)
 
 void CanvasView::showEvent(QShowEvent *event)
 {
+	QScopedValueRollback<bool> guard{m_scrollBarsAdjusting, true};
 	QGraphicsView::showEvent(event);
 	// Find the DPI of the screen
 	// TODO: if the window is moved to another screen, this should be
