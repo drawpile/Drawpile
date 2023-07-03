@@ -680,6 +680,8 @@ void MainWindow::loadShortcuts(const QVariantMap &cfg)
 
 				a->setToolTip(QStringLiteral("%1 (%2)").arg(text, a->shortcut().toString()));
 			}
+
+			a->setAutoRepeat(a->property("shortcutAutoRepeats").toBool());
 		}
 	}
 
@@ -2866,8 +2868,8 @@ void MainWindow::setupActions()
 	//
 	// Edit menu
 	//
-	QAction *undo = makeAction("undo", tr("&Undo")).icon("edit-undo").shortcut(QKeySequence::Undo);
-	QAction *redo = makeAction("redo", tr("&Redo")).icon("edit-redo").shortcut(QKeySequence::Redo);
+	QAction *undo = makeAction("undo", tr("&Undo")).icon("edit-undo").shortcut(QKeySequence::Undo).autoRepeat();
+	QAction *redo = makeAction("redo", tr("&Redo")).icon("edit-redo").shortcut(QKeySequence::Redo).autoRepeat();
 	QAction *copy = makeAction("copyvisible", tr("&Copy Visible")).icon("edit-copy").statusTip(tr("Copy selected area to the clipboard")).shortcut("Shift+Ctrl+C");
 	QAction *copyMerged = makeAction("copymerged", tr("Copy Merged")).icon("edit-copy").statusTip(tr("Copy selected area, excluding the background, to the clipboard")).shortcut("Ctrl+Alt+C");
 	QAction *copylayer = makeAction("copylayer", tr("Copy &Layer")).icon("edit-copy").statusTip(tr("Copy selected area of the current layer to the clipboard")).shortcut(QKeySequence::Copy);
@@ -3028,19 +3030,19 @@ void MainWindow::setupActions()
 
 	QAction *toggleChat = makeAction("togglechat", tr("Chat")).shortcut("Alt+C").checked();
 
-	QAction *moveleft = makeAction("moveleft", tr("Move Canvas Left")).noDefaultShortcut();
-	QAction *moveright = makeAction("moveright", tr("Move Canvas Right")).noDefaultShortcut();
-	QAction *moveup = makeAction("moveup", tr("Move Canvas Up")).noDefaultShortcut();
-	QAction *movedown = makeAction("movedown", tr("Move Canvas Down")).noDefaultShortcut();
-	QAction *zoomin = makeAction("zoomin", tr("Zoom &In")).icon("zoom-in").shortcut(QKeySequence::ZoomIn);
-	QAction *zoomout = makeAction("zoomout", tr("Zoom &Out")).icon("zoom-out").shortcut(QKeySequence::ZoomOut);
+	QAction *moveleft = makeAction("moveleft", tr("Move Canvas Left")).noDefaultShortcut().autoRepeat();
+	QAction *moveright = makeAction("moveright", tr("Move Canvas Right")).noDefaultShortcut().autoRepeat();
+	QAction *moveup = makeAction("moveup", tr("Move Canvas Up")).noDefaultShortcut().autoRepeat();
+	QAction *movedown = makeAction("movedown", tr("Move Canvas Down")).noDefaultShortcut().autoRepeat();
+	QAction *zoomin = makeAction("zoomin", tr("Zoom &In")).icon("zoom-in").shortcut(QKeySequence::ZoomIn).autoRepeat();
+	QAction *zoomout = makeAction("zoomout", tr("Zoom &Out")).icon("zoom-out").shortcut(QKeySequence::ZoomOut).autoRepeat();
 	QAction *zoomorig = makeAction("zoomone", tr("&Normal Size")).icon("zoom-original").shortcut(QKeySequence("ctrl+0"));
 	QAction *zoomfit = makeAction("zoomfit", tr("&Fit Page")).icon("zoom-select").noDefaultShortcut();
 	QAction *zoomfitwidth = makeAction("zoomfitwidth", tr("Fit Page &Width")).icon("zoom-fit-width").noDefaultShortcut();
 	QAction *zoomfitheight = makeAction("zoomfitheight", tr("Fit Page &Height")).icon("zoom-fit-height").noDefaultShortcut();
 	QAction *rotateorig = makeAction("rotatezero", tr("&Reset Rotation")).icon("transform-rotate").shortcut(QKeySequence("ctrl+r"));
-	QAction *rotatecw = makeAction("rotatecw", tr("Rotate Canvas Clockwise")).shortcut(QKeySequence("shift+.")).icon("object-rotate-right");
-	QAction *rotateccw = makeAction("rotateccw", tr("Rotate Canvas Counterclockwise")).shortcut(QKeySequence("shift+,")).icon("object-rotate-left");
+	QAction *rotatecw = makeAction("rotatecw", tr("Rotate Canvas Clockwise")).shortcut(QKeySequence("shift+.")).icon("object-rotate-right").autoRepeat();
+	QAction *rotateccw = makeAction("rotateccw", tr("Rotate Canvas Counterclockwise")).shortcut(QKeySequence("shift+,")).icon("object-rotate-left").autoRepeat();
 
 	QAction *viewmirror = makeAction("viewmirror", tr("Mirror")).icon("object-flip-horizontal").shortcut("V").checkable();
 	QAction *viewflip = makeAction("viewflip", tr("Flip")).icon("object-flip-vertical").shortcut("C").checkable();
@@ -3208,8 +3210,8 @@ void MainWindow::setupActions()
 	QAction *layerDelete = makeAction("layerdelete", tr("Delete Layer")).icon("trash-empty").noDefaultShortcut();
 	QAction *layerSetFillSource = makeAction("layersetfillsource", tr("Set as Fill Source")).icon("fill-color").noDefaultShortcut();
 
-	QAction *layerUpAct = makeAction("layer-up", tr("Select Above")).shortcut("Shift+X");
-	QAction *layerDownAct = makeAction("layer-down", tr("Select Below")).shortcut("Shift+Z");
+	QAction *layerUpAct = makeAction("layer-up", tr("Select Above")).shortcut("Shift+X").autoRepeat();
+	QAction *layerDownAct = makeAction("layer-down", tr("Select Below")).shortcut("Shift+Z").autoRepeat();
 
 	connect(layerUpAct, &QAction::triggered, m_dockLayers, &docks::LayerList::selectAbove);
 	connect(layerDownAct, &QAction::triggered, m_dockLayers, &docks::LayerList::selectBelow);
@@ -3246,10 +3248,10 @@ void MainWindow::setupActions()
 	QAction *trackDuplicate = makeAction("track-duplicate", tr("Duplicate Track")).icon("edit-copy").noDefaultShortcut();
 	QAction *trackRetitle = makeAction("track-retitle", tr("Rename Track")).icon("edit-rename").noDefaultShortcut();
 	QAction *trackDelete = makeAction("track-delete", tr("Delete Track")).icon("trash-empty").noDefaultShortcut();
-	QAction *frameNext = makeAction("frame-next", tr("Next Frame")).icon("keyframe-next").shortcut("Ctrl+Shift+L");
-	QAction *framePrev = makeAction("frame-prev", tr("Previous Frame")).icon("keyframe-previous").shortcut("Ctrl+Shift+H");
-	QAction *trackAbove = makeAction("track-above", tr("Track Above")).icon("arrow-up").shortcut("Ctrl+Shift+K");
-	QAction *trackBelow = makeAction("track-below", tr("Track Below")).icon("arrow-down").shortcut("Ctrl+Shift+J");
+	QAction *frameNext = makeAction("frame-next", tr("Next Frame")).icon("keyframe-next").shortcut("Ctrl+Shift+L").autoRepeat();
+	QAction *framePrev = makeAction("frame-prev", tr("Previous Frame")).icon("keyframe-previous").shortcut("Ctrl+Shift+H").autoRepeat();
+	QAction *trackAbove = makeAction("track-above", tr("Track Above")).icon("arrow-up").shortcut("Ctrl+Shift+K").autoRepeat();
+	QAction *trackBelow = makeAction("track-below", tr("Track Below")).icon("arrow-down").shortcut("Ctrl+Shift+J").autoRepeat();
 
 	QAction *keyFrameCreateLayer = makeAction("key-frame-create-layer", tr("Create Layer on Current Key Frame")).icon("keyframe-add").shortcut("Ctrl+Shift+R");
 	QAction *keyFrameCreateLayerNext = makeAction("key-frame-create-layer-next", tr("Create Layer on Next Key Frame")).icon("keyframe-next").shortcut("Ctrl+Shift+T");
@@ -3432,8 +3434,8 @@ void MainWindow::setupActions()
 	QAction *currentEraseMode = makeAction("currenterasemode", tr("Toggle Eraser Mode")).shortcut("Ctrl+E");
 	QAction *currentRecolorMode = makeAction("currentrecolormode", tr("Toggle Recolor Mode")).shortcut("Shift+E");
 	QAction *swapcolors = makeAction("swapcolors", tr("Swap Last Colors")).shortcut("X");
-	QAction *smallerbrush = makeAction("ensmallenbrush", tr("&Decrease Brush Size")).shortcut(Qt::Key_BracketLeft);
-	QAction *biggerbrush = makeAction("embiggenbrush", tr("&Increase Brush Size")).shortcut(Qt::Key_BracketRight);
+	QAction *smallerbrush = makeAction("ensmallenbrush", tr("&Decrease Brush Size")).shortcut(Qt::Key_BracketLeft).autoRepeat();
+	QAction *biggerbrush = makeAction("embiggenbrush", tr("&Increase Brush Size")).shortcut(Qt::Key_BracketRight).autoRepeat();
 	QAction *reloadPreset = makeAction("reloadpreset", tr("&Reload Last Brush Preset")).shortcut("Shift+P");
 
 	smallerbrush->setAutoRepeat(true);

@@ -90,6 +90,12 @@ public:
 		return *this;
 	}
 
+	ActionBuilder &autoRepeat()
+	{
+		m_action->setProperty("shortcutAutoRepeats", true);
+		return *this;
+	}
+
 private:
 	QAction *m_action;
 };
