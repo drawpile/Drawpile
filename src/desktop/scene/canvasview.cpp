@@ -1655,7 +1655,7 @@ void CanvasView::updateCanvasTransform(const std::function<void()> &block)
 		rects.append(m_scene->canvasBounds());
 		updateScrollBars();
 		updateCanvasPixelGrid();
-		setRenderHint(QPainter::SmoothPixmapTransform, m_zoom < 1.0);
+		setRenderHint(QPainter::SmoothPixmapTransform, m_zoom <= 1.99);
 		viewRectChanged();
 	}
 
