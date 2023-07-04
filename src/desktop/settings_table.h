@@ -22,7 +22,7 @@ SETTING(canvasScrollBars          , CanvasScrollBars          , "settings/canvas
 SETTING(canvasShortcuts           , CanvasShortcuts           , "settings/canvasshortcuts2"             , QVariantMap())
 SETTING(colorWheelAngle           , ColorWheelAngle           , "settings/colorwheel/rotate"            , color_widgets::ColorWheel::AngleEnum::AngleRotating)
 SETTING(colorWheelShape           , ColorWheelShape           , "settings/colorwheel/shape"             , color_widgets::ColorWheel::ShapeEnum::ShapeTriangle)
-SETTING(colorWheelSpace           , ColorWheelSpace           , "settings/colorwheel/space"             , color_widgets::ColorWheel::ColorSpaceEnum::ColorHSL)
+SETTING(colorWheelSpace           , ColorWheelSpace           , "settings/colorwheel/space"             , color_widgets::ColorWheel::ColorSpaceEnum::ColorHSV)
 SETTING(compactChat               , CompactChat               , "history/compactchat"                   , false)
 SETTING(confirmLayerDelete        , ConfirmLayerDelete        , "settings/confirmlayerdelete"           , false)
 SETTING(parentalControlsHideLocked, ParentalControlsHideLocked, "pc/hidelocked"                         , false)
