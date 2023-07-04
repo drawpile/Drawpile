@@ -9,28 +9,32 @@ namespace tools {
 
 Inspector::Inspector(ToolController &owner)
 	: Tool(owner, INSPECTOR, QCursor(Qt::WhatsThisCursor), false, false, false)
+	, m_inspecting{false}
 {
 }
 
 void Inspector::begin(const canvas::Point& point, bool right, float zoom)
 {
 	Q_UNUSED(zoom);
-	if(right) {
-		return;
+	if(!right) {
+		m_inspecting = true;
+		m_owner.model()->inspectCanvas(point.x(), point.y(), true);
 	}
 
-	m_owner.model()->inspectCanvas(point.x(), point.y());
 }
 
 void Inspector::motion(const canvas::Point& point, bool constrain, bool center)
 {
-	Q_UNUSED(point);
 	Q_UNUSED(constrain);
 	Q_UNUSED(center);
+	if(m_inspecting) {
+		m_owner.model()->inspectCanvas(point.x(), point.y(), false);
+	}
 }
 
 void Inspector::end()
 {
+	m_inspecting = false;
 	m_owner.model()->stopInspectingCanvas();
 }
 

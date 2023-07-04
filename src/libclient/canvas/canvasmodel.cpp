@@ -309,13 +309,16 @@ void CanvasModel::pickColor(int x, int y, int layer, int diameter)
 	}
 }
 
-void CanvasModel::inspectCanvas(int x, int y)
+void CanvasModel::inspectCanvas(int x, int y, bool clobber)
 {
 	unsigned int contextId = m_paintengine->viewCanvasState().pickContextId(x, y);
-	if (contextId != 0) {
+	bool haveContextId = contextId != 0;
+	if(haveContextId) {
 		inspectCanvas(contextId);
 	}
-	emit canvasInspected(contextId);
+	if(haveContextId || clobber) {
+		emit canvasInspected(contextId);
+	}
 }
 
 void CanvasModel::inspectCanvas(int contextId)

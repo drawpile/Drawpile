@@ -118,7 +118,7 @@ public slots:
 
 	void pickLayer(int x, int y);
 	void pickColor(int x, int y, int layer, int diameter=0);
-	void inspectCanvas(int x, int y);
+	void inspectCanvas(int x, int y, bool clobber);
 	void inspectCanvas(int contextId);
 	void stopInspectingCanvas();
 

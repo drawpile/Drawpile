@@ -20,6 +20,9 @@ public:
 	void motion(const canvas::Point& point, bool constrain, bool center) override;
 	void end() override;
 	void cancelMultipart() override;
+
+private:
+	bool m_inspecting;
 };
 
 }
