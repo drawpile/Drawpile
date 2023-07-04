@@ -22,8 +22,6 @@
 
 using libclient::settings::zoomMax;
 using libclient::settings::zoomMin;
-using libclient::settings::zoomSoftMax;
-using libclient::settings::zoomSoftMin;
 
 namespace docks {
 
