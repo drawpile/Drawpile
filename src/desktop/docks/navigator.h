@@ -33,7 +33,7 @@ public slots:
 
 signals:
 	void focusMoved(const QPointF& to);
-	void wheelZoom(int steps, const QPointF &point);
+	void wheelZoom(int steps);
 
 protected:
 	void paintEvent(QPaintEvent *event) override;
@@ -93,7 +93,7 @@ private slots:
 
 signals:
 	void focusMoved(const QPointF& to);
-	void wheelZoom(int steps, const QPointF &point);
+	void wheelZoom(int steps);
 	void zoomChanged(qreal newZoom);
 
 private:

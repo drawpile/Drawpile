@@ -186,7 +186,8 @@ public slots:
 	void moveStep(Direction direction);
 
 	//! Increase/decrease zoom factor by this many steps
-	void zoomSteps(int steps, const QPointF &point);
+	void zoomSteps(int steps);
+	void zoomStepsAt(int steps, const QPointF &point);
 
 	//! Increase zoom factor
 	void zoomin();

@@ -200,7 +200,12 @@ void CanvasView::scrollBy(int x, int y)
 	});
 }
 
-void CanvasView::zoomSteps(int steps, const QPointF &point)
+void CanvasView::zoomSteps(int steps)
+{
+	zoomStepsAt(steps, mapToCanvas(rect().center()));
+}
+
+void CanvasView::zoomStepsAt(int steps, const QPointF &point)
 {
 	constexpr qreal eps = 1e-5;
 	const QVector<qreal> &zoomLevels = libclient::settings::zoomLevels();
@@ -245,18 +250,18 @@ void CanvasView::moveStep(Direction direction)
 
 void CanvasView::zoomin()
 {
-	zoomSteps(1, mapToCanvas(rect().center()));
+	zoomStepsAt(1, mapToCanvas(rect().center()));
 }
 
 void CanvasView::zoomout()
 {
-	zoomSteps(-1, mapToCanvas(rect().center()));
+	zoomStepsAt(-1, mapToCanvas(rect().center()));
 }
 
 void CanvasView::zoomTo(const QRect &rect, int steps)
 {
 	if(rect.width() < 15 || rect.height() < 15 || steps < 0) {
-		zoomSteps(steps, rect.center());
+		zoomStepsAt(steps, rect.center());
 	} else {
 		QWidget *vp = viewport();
 		QRectF viewRect = mapFromCanvas(rect).boundingRect();
@@ -1042,7 +1047,7 @@ void CanvasView::wheelEvent(QWheelEvent *event)
 			if(match.action() == CanvasShortcuts::CANVAS_ROTATE) {
 				setRotation(rotation() + steps * 10);
 			} else {
-				zoomSteps(steps, mapToCanvas(compat::wheelPosition(*event)));
+				zoomStepsAt(steps, mapToCanvas(compat::wheelPosition(*event)));
 			}
 		}
 		break;

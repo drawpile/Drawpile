@@ -128,7 +128,7 @@ void NavigatorView::wheelEvent(QWheelEvent *event)
 	m_zoomWheelDelta -= steps * 120;
 
 	if(steps != 0 && !m_cache.isNull()) {
-		emit wheelZoom(steps, getFocusPoint(compat::wheelPosition(*event)));
+		emit wheelZoom(steps);
 	}
 }
 
