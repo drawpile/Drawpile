@@ -59,11 +59,12 @@ DP_TileIterator DP_tile_iterator_make(int canvas_width, int canvas_height,
 bool DP_tile_iterator_next(DP_TileIterator *ti)
 {
     DP_ASSERT(ti);
-    if (ti->col < DP_rect_right(ti->tile_area)) {
+    // Directly accessing x2 and y2 because the rectangle might be invalid.
+    if (ti->col < ti->tile_area.x2) {
         ++ti->col;
         return true;
     }
-    else if (ti->row < DP_rect_bottom(ti->tile_area)) {
+    else if (ti->row < ti->tile_area.y2) {
         ti->col = DP_rect_left(ti->tile_area);
         ++ti->row;
         return true;
