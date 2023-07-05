@@ -258,7 +258,7 @@
     <message>
         <location filename="../utils/customshortcutmodel.cpp" line="+52"/>
         <source>Conflict</source>
-        <translation type="unfinished"></translation>
+        <translation>冲突</translation>
     </message>
     <message>
         <location line="+56"/>
@@ -400,7 +400,7 @@
     <message>
         <location line="+8"/>
         <source>Text File (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>文本文件 (%1)</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -776,7 +776,7 @@
     <message>
         <location line="+2"/>
         <source>Registered</source>
-        <translation>注册用户</translation>
+        <translation>Registered</translation>
     </message>
     <message>
         <location line="+4"/>
