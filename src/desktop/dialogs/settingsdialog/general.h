@@ -5,6 +5,8 @@
 
 #include <QWidget>
 
+class QLocale;
+
 namespace desktop { namespace settings { class Settings; }}
 namespace utils { class SanerFormLayout; }
 
@@ -19,6 +21,7 @@ private:
 	void initAutosave(desktop::settings::Settings &settings, utils::SanerFormLayout *form);
 	void initHistory(desktop::settings::Settings &settings, utils::SanerFormLayout *form);
 	void initLanguage(desktop::settings::Settings &settings, utils::SanerFormLayout *form);
+	static QString formatLanguage(const QLocale &locale);
 	void initMiscUi(desktop::settings::Settings &settings, utils::SanerFormLayout *form);
 	void initSnapshots(desktop::settings::Settings &settings, utils::SanerFormLayout *form);
 	void initTheme(desktop::settings::Settings &settings, utils::SanerFormLayout *form);

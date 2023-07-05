@@ -71,18 +71,37 @@ void General::initLanguage(desktop::settings::Settings &settings, utils::SanerFo
 	for (const auto *localeName : cmake_config::locales()) {
 		QLocale locale(localeName);
 		if (locale != localeC) {
-			language->addItem(
-				tr("%1 (%2)")
-					.arg(locale.nativeLanguageName())
-					.arg(QLocale::languageToString(locale.language())),
-				localeName
-			);
+			language->addItem(formatLanguage(locale), localeName);
 		}
 	}
 
 	settings.bindLanguage(language, Qt::UserRole);
 	form->addRow(tr("Language:"), language);
 	form->addRow(nullptr, utils::note(tr("Language changes apply after you restart Drawpile."), QSizePolicy::Label));
+}
+
+QString General::formatLanguage(const QLocale &locale)
+{
+	bool needsCountryDisambiguation = false;
+	for (const char *localeName : cmake_config::locales()) {
+		QLocale other(localeName);
+		if(locale != other && locale.language() == other.language()) {
+			needsCountryDisambiguation = true;
+			break;
+		}
+	}
+
+	if(needsCountryDisambiguation) {
+		return tr("%1 (%2) / %3 (%4)")
+			.arg(locale.nativeLanguageName())
+			.arg(locale.nativeCountryName())
+			.arg(QLocale::languageToString(locale.language()))
+			.arg(QLocale::countryToString(locale.country()));
+	} else {
+		return tr("%1 / %2")
+			.arg(locale.nativeLanguageName())
+			.arg(QLocale::languageToString(locale.language()));
+	}
 }
 
 void General::initMiscUi(desktop::settings::Settings &settings, utils::SanerFormLayout *form)
