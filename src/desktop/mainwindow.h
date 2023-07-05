@@ -223,7 +223,7 @@ private:
 	void showErrorMessage(const QString &message);
 	void showErrorMessageWithDetails(const QString &message, const QString &details);
 	void showLoadResultMessage(DP_LoadResult result);
-	void showAmbiguousShortcutMessage(QShortcutEvent *shortcutEvent);
+	void handleAmbiguousShortcut(QShortcutEvent *shortcutEvent);
 
 	void readSettings(bool windowpos=true);
 	void saveSplitterState();

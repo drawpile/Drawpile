@@ -842,7 +842,7 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event)
 	case QEvent::Shortcut: {
 		QShortcutEvent *shortcutEvent = static_cast<QShortcutEvent *>(event);
 		if(shortcutEvent->isAmbiguous()) {
-			showAmbiguousShortcutMessage(shortcutEvent);
+			handleAmbiguousShortcut(shortcutEvent);
 			return true;
 		}
 		break;
@@ -852,13 +852,26 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event)
 	return QMainWindow::eventFilter(object, event);
 }
 
-void MainWindow::showAmbiguousShortcutMessage(QShortcutEvent *shortcutEvent)
+void MainWindow::handleAmbiguousShortcut(QShortcutEvent *shortcutEvent)
 {
 	CustomShortcutModel shortcutsModel;
 	shortcutsModel.loadShortcuts(dpApp().settings().shortcuts());
-	QStringList matchingShortcuts;
+
 	const QKeySequence &keySequence = shortcutEvent->key();
-	for(const CustomShortcut &shortcut : shortcutsModel.getShortcutsMatching(keySequence)) {
+	QVector<CustomShortcut> shortcuts = shortcutsModel.getShortcutsMatching(keySequence);
+	// Shortcuts may conflict with stuff like the main window menu bar. We can
+	// resolve those pseudo.conflicts in the favor of our custom shortcuts.
+	if(shortcuts.size() == 1) {
+		QAction *action = findChild<QAction*>(
+			shortcuts.first().name, Qt::FindDirectChildrenOnly);
+		if(action) {
+			action->trigger();
+			return;
+		}
+	}
+
+	QStringList matchingShortcuts;
+	for(const CustomShortcut &shortcut : shortcuts) {
 		matchingShortcuts.append(QString("<li>%1</li>").arg(shortcut.title.toHtmlEscaped()));
 	}
 	matchingShortcuts.sort(Qt::CaseInsensitive);
