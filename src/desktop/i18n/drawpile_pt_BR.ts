@@ -2023,7 +2023,7 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
     <message>
         <location line="+5"/>
         <source>&amp;Layer</source>
-        <translation>&amp;Camada</translation>
+        <translation>Ca&amp;mada</translation>
     </message>
     <message>
         <location line="+79"/>
