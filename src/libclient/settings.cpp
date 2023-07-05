@@ -482,7 +482,7 @@ namespace any {
 	void set(const SettingMeta &meta, QSettings &settings, QVariant value)
 	{
 		const auto key = formatSettingKey(meta.baseKey, int(meta.version));
-		if (value != meta.defaultValue) {
+		if (meta.version != SettingMeta::Version::V0 || value != meta.defaultValue) {
 			forceSetKey(settings, key, value);
 		} else {
 			qCDebug(lcDpSettings) << "remove" << key;
