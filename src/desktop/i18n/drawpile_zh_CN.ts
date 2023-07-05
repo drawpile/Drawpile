@@ -29,7 +29,7 @@
     <message>
         <location filename="../ui/abusereport.ui" line="+14"/>
         <source>Report Abuse</source>
-        <translation>Report Abuse</translation>
+        <translation>报告</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -70,7 +70,7 @@
     <message>
         <location filename="../ui/avatarimport.ui" line="+14"/>
         <source>Crop Avatar</source>
-        <translation>Crop Avatar</translation>
+        <translation>裁剪头像</translation>
     </message>
 </context>
 <context>
@@ -171,12 +171,12 @@
     <message>
         <location line="+22"/>
         <source>Stabilizer: </source>
-        <translation>平滑度: </translation>
+        <translation>抖动修正: </translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Smoothing: </source>
-        <translation type="unfinished"></translation>
+        <translation>平滑度: </translation>
     </message>
 </context>
 <context>
@@ -569,7 +569,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+8"/>
         <source>Log File</source>
-        <translation type="unfinished">日志文件</translation>
+        <translation>日志文件</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -771,17 +771,17 @@ to 64x64 pixels.</source>
     <message>
         <location line="+23"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation>未成年人勿入</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Marks the session as having age-restricted content.</source>
-        <translation type="unfinished"></translation>
+        <translation>将房间标记为有限制级内容的.</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>Host:</source>
-        <translation type="unfinished"></translation>
+        <translation>服务器:</translation>
     </message>
     <message>
         <location line="-27"/>
@@ -873,12 +873,12 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>NSFM</source>
-        <translation type="unfinished"></translation>
+        <translation>18禁房</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show sessions not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation>显示18禁房</translation>
     </message>
     <message>
         <location line="+32"/>
@@ -1080,7 +1080,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="-55"/>
         <source>Show sessions not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation>显示18禁房</translation>
     </message>
     <message>
         <location line="+169"/>
@@ -1307,17 +1307,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+582"/>
         <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;快捷键 &apos;%1&apos; 有歧义, 它匹配:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Ambiguous Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>有歧义的快捷键</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Fix</source>
-        <translation type="unfinished"></translation>
+        <translation>更正</translation>
     </message>
     <message>
         <location line="+433"/>
@@ -1433,7 +1433,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+92"/>
         <source>Toggle Dock %1</source>
-        <translation type="unfinished"></translation>
+        <translation>切换 %1</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -2216,7 +2216,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Set Key Frame to Current Layer</source>
-        <translation type="unfinished">设置关键帧为当前图层</translation>
+        <translation>设置关键帧为当前图层</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2431,33 +2431,33 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+85"/>
         <source>Missing Log File</source>
-        <translation type="unfinished"></translation>
+        <translation>缺少日志文件</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Log file doesn&apos;t exist, do you need to enable logging in the preferences?</source>
-        <translation type="unfinished"></translation>
+        <translation>日志文件不存在,你是否需要在首选项中启用记录?</translation>
     </message>
     <message>
         <location line="+9"/>
         <location line="+8"/>
         <source>Error Saving Log File</source>
-        <translation type="unfinished"></translation>
+        <translation>保存日志文件出错</translation>
     </message>
     <message>
         <location line="-7"/>
         <source>Could not read source file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>无法读取源文件: %1</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Could not open target file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>无法打开目标文件: %1</translation>
     </message>
     <message>
         <location line="+49"/>
         <source>Swatch Color %1</source>
-        <translation type="unfinished"></translation>
+        <translation>色板颜色 %1</translation>
     </message>
     <message>
         <location line="+62"/>
@@ -2995,12 +2995,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-145"/>
         <source>This session contains age-restricted content</source>
-        <translation type="unfinished"></translation>
+        <translation>此房间包含限制级内容</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation>未成年人勿入</translation>
     </message>
     <message>
         <location line="+159"/>
@@ -3596,7 +3596,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+38"/>
         <source>Stabilizer: </source>
-        <translation>平滑度: </translation>
+        <translation>抖动修正: </translation>
     </message>
     <message>
         <location line="+43"/>
@@ -3693,22 +3693,22 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+230"/>
         <source>Slows down the stroke to stabilize it over time. High values give very smooth lines, but they will draw slowly. When you stop moving, the line will catch up your cursor. Tablet smoothing from the input preferences applies as well.</source>
-        <translation type="unfinished"></translation>
+        <translation>减慢笔画的速度使其在一段时间内稳定下来. 高值可以得到非常平滑的线条,但笔画会很慢. 当你停止移动时,线条会跟上你的光标. 调节首选项中的数位板平滑度也适用.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Simply averages a number of inputs. Feels faster than the time-based stabilizer, but not as smooth and won&apos;t catch up to your cursor when you stop moving. Overrides tablet smoothing from the input preferences.</source>
-        <translation type="unfinished"></translation>
+        <translation>简单的对输入进行平均. 会感觉比基于时间的防抖更快,但当你停止移动时,线条没有那么平滑且不会跟上你的光标. 优先于首选项中输入页面的数位板平滑度.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Unknown stabilization mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>未知的防抖模式.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Synchronizing stabilization settings with brushes is disabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>与笔刷同步的防抖设置已禁用.</translation>
     </message>
     <message>
         <location line="-498"/>
@@ -3719,22 +3719,22 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-415"/>
         <source>Stabilization Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>防抖模式:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Time-Based Stabilizer</source>
-        <translation type="unfinished"></translation>
+        <translation>基于时间的防抖</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Average Smoothing</source>
-        <translation type="unfinished"></translation>
+        <translation>平均平滑度</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Smoothing: </source>
-        <translation type="unfinished"></translation>
+        <translation>平滑度: </translation>
     </message>
     <message>
         <location line="+323"/>
@@ -5305,22 +5305,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-368"/>
         <source>Copy session URL</source>
-        <translation type="unfinished"></translation>
+        <translation>复制房间地址</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy title</source>
-        <translation type="unfinished"></translation>
+        <translation>复制房间名</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Copy server</source>
-        <translation type="unfinished"></translation>
+        <translation>复制服务器</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy owner</source>
-        <translation type="unfinished"></translation>
+        <translation>复制房主名</translation>
     </message>
     <message>
         <location line="+104"/>
@@ -5482,12 +5482,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+202"/>
         <source>Log in with &apos;%1&apos; credentials</source>
-        <translation type="unfinished"></translation>
+        <translation>用 &apos;%1&apos; 证书登录</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Log in with &apos;%1&apos; credentials (INSECURE CONNECTION!)</source>
-        <translation type="unfinished"></translation>
+        <translation>用 &apos;%1&apos; 证书登录 (不安全的连接!)</translation>
     </message>
 </context>
 <context>
@@ -5754,7 +5754,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Canvas Shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>画布快捷键</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5812,7 +5812,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/versioncheckdialog.cpp" line="+25"/>
         <source>Download</source>
-        <translation type="unfinished"></translation>
+        <translation>下载</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -5832,38 +5832,38 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+30"/>
         <source>Error checking version!</source>
-        <translation type="unfinished"></translation>
+        <translation>检查版本出错!</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>You&apos;re up to date!</source>
-        <translation type="unfinished"></translation>
+        <translation>当前已是最新版本!</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>No new versions found.</source>
-        <translation type="unfinished"></translation>
+        <translation>没有发现新的版本.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&lt;h1&gt;%1&lt;/h1&gt;&lt;p&gt;%2&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;h1&gt;%1&lt;/h1&gt;&lt;p&gt;%2&lt;/p&gt;</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>A new version of Drawpile is available!</source>
-        <translation type="unfinished"></translation>
+        <translation>新版本的Drawpile已经发布!</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Version %2</source>
-        <translation type="unfinished"></translation>
+        <translation>版本 %2</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>&lt;p&gt;The download page for Drawpile %1 should have opened in your browser. If not, visit &lt;a href=&quot;%2&quot;&gt;%2&lt;/a&gt; manually.&lt;/p&gt;&lt;p&gt;Restart Drawpile after installing the new version.&lt;/p&gt;</source>
         <extracomment>%2 is used twice, this is intentional! Don&apos;t use %3.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Drawpile的下载页面 %1 应该已经在你的浏览器中打开了. 如果没有, 请手动访问 &lt;a href=&quot;%2&quot;&gt;%2&lt;/a&gt; .&lt;/p&gt;&lt;p&gt;安装完新版本后需重新启动Drawpile.&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
@@ -5904,54 +5904,54 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/canvasshortcuts.cpp" line="+38"/>
         <source>Search actions…</source>
-        <translation type="unfinished">筛选…</translation>
+        <translation>筛选…</translation>
     </message>
     <message>
         <location line="+73"/>
         <source>Edit Canvas Shortcut</source>
-        <translation type="unfinished">编辑画布快捷键</translation>
+        <translation>编辑画布快捷键</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Add canvas shortcut…</source>
-        <translation type="unfinished">新建画布快捷键…</translation>
+        <translation>新建画布快捷键…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>New Canvas Shortcut</source>
-        <translation type="unfinished">新建画布快捷键</translation>
+        <translation>新建画布快捷键</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Remove selected canvas shortcut…</source>
-        <translation type="unfinished">移除选中的画布快捷键…</translation>
+        <translation>移除选中的画布快捷键…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Remove canvas shortcut</source>
-        <translation type="unfinished">移除画布快捷键</translation>
+        <translation>移除画布快捷键</translation>
     </message>
     <message numerus="yes">
         <location line="+1"/>
         <source>Really remove %n canvas shortcut(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>确定移除 %n 画布快捷键吗?</numerusform>
         </translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Restore defaults…</source>
-        <translation type="unfinished">恢复默认…</translation>
+        <translation>恢复默认…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Restore Canvas Shortcut Defaults</source>
-        <translation type="unfinished">恢复默认画布快捷键</translation>
+        <translation>恢复默认画布快捷键</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really restore all canvas shortcuts to their default values?</source>
-        <translation type="unfinished"></translation>
+        <translation>确定将所有画布快捷键恢复为默认值吗?</translation>
     </message>
 </context>
 <context>
@@ -5959,17 +5959,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/general.cpp" line="+49"/>
         <source>When enabled, save every %1 minutes</source>
-        <translation type="unfinished"></translation>
+        <translation>间隔: %1 分钟</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Autosave:</source>
-        <translation type="unfinished"></translation>
+        <translation>自动保存:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Autosave can be enabled for the current file under &lt;i&gt;File ▸ Autosave&lt;/i&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>自动保存可以从菜单 文件&gt;自动保存 中启用.</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -6001,7 +6001,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Language changes apply after you restart Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>语言更改需重启.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -6046,7 +6046,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Snapshots can be restored from the &lt;i&gt;Session ▸ Reset…&lt;/i&gt; menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>快照可以从菜单 房间&gt;重置… 中恢复.</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -6139,7 +6139,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Smoothing: </source>
-        <translation type="unfinished"></translation>
+        <translation>平滑度: </translation>
     </message>
     <message>
         <location line="+9"/>
@@ -6272,14 +6272,14 @@ Values above 0.5 may not be noticeable.</source>
     <message numerus="yes">
         <location line="+0"/>
         <source>Really delete %n avatar(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>确定删除 %n 头像吗?</numerusform>
         </translation>
     </message>
     <message>
         <location line="+7"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6487,26 +6487,26 @@ Values above 0.5 may not be noticeable.</source>
     <message numerus="yes">
         <location line="-48"/>
         <source>Really remove %n known host(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>确定移除 %n 已知服务器吗?</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+49"/>
         <source>Really remove %n list server(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>确定移除 %n 列表服务器吗?</numerusform>
         </translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Move up</source>
-        <translation type="unfinished"></translation>
+        <translation>上移</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Move down</source>
-        <translation type="unfinished"></translation>
+        <translation>下移</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -6550,7 +6550,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+72"/>
         <source>Restore Shortcut Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>恢复默认快捷键</translation>
     </message>
     <message>
         <location line="-4"/>
@@ -6560,7 +6560,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Really restore all shortcuts to their default values?</source>
-        <translation>确定将所有画布快捷键恢复为默认值吗?</translation>
+        <translation>确定将所有快捷键恢复为默认值吗?</translation>
     </message>
 </context>
 <context>
@@ -7228,22 +7228,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+41"/>
         <source>Time-Based Stabilizer</source>
-        <translation type="unfinished"></translation>
+        <translation>基于时间的防抖</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Average Smoothing</source>
-        <translation type="unfinished"></translation>
+        <translation>平均平滑度</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Slows down the stroke and stabilizes it over time. Can produce very smooth results, but may feel sluggish.</source>
-        <translation type="unfinished"></translation>
+        <translation>减慢笔画的速度使其在一段时间内稳定下来. 可以产生非常平稳的结果,但也可能感觉迟钝.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Simply averages inputs to get a smoother result. Faster than the time-based stabilizer, but not as smooth.</source>
-        <translation type="unfinished"></translation>
+        <translation>简单的对输入进行平均. 会感觉比基于时间的防抖更快,但没有那么平滑.</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -7419,7 +7419,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+116"/>
         <source>/!: only operators are allowed to send shouts.</source>
-        <translation type="unfinished"></translation>
+        <translation>/!:只有operator可以发送公告消息.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7434,7 +7434,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>/alert: only operators are allowed to send alerts.</source>
-        <translation type="unfinished"></translation>
+        <translation>/alert:只有operator可以发送弹窗消息.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7449,7 +7449,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>/pin: only operators are allowed to send alerts.</source>
-        <translation type="unfinished"></translation>
+        <translation>/pin:只有operator可以发送置顶消息.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7616,7 +7616,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Copy session URL to clipboard</source>
-        <translation>复制房间URL到剪贴板</translation>
+        <translation>复制房间地址到剪贴板</translation>
     </message>
     <message>
         <location line="+6"/>
