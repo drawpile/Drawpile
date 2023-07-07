@@ -114,7 +114,7 @@ uint8_t DP_classic_brush_pixel_dab_size_at(const DP_ClassicBrush *cb,
                                            float pressure)
 {
     float value = DP_classic_brush_size_at(cb, pressure) + 0.5f;
-    return DP_float_to_uint8(CLAMP(value, 1.0f, UINT8_MAX));
+    return DP_float_to_uint8(CLAMP(value, 0, UINT8_MAX));
 }
 
 uint8_t DP_classic_brush_dab_opacity_at(const DP_ClassicBrush *cb,
