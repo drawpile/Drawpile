@@ -726,6 +726,7 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 			x, y, headerWidth - x - TRACK_PADDING, rowHeight, Qt::AlignVCenter,
 			track.title);
 
+		painter.setOpacity(1.0);
 		painter.setPen(outlineColor);
 		painter.drawLine(0, y + rowHeight, headerWidth, y + rowHeight);
 	}
