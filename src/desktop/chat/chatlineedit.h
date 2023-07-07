@@ -25,13 +25,18 @@ protected:
 	void keyPressEvent(QKeyEvent *event) override;
 	void resizeEvent(QResizeEvent *event) override;
 
+private slots:
+	void fixScroll(int value);
+
 private:
 	QStringList _history;
 	QString _current;
 	int _historypos;
+	bool _fixingScroll;
 
    void resizeBasedOnLines();
    int lineCountToWidgetHeight(int lineCount) const;
+   void fixScrollAt(int value, int lineCount);
 };
 
 #endif

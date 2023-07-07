@@ -2,13 +2,17 @@
 
 #include <QKeyEvent>
 #include <QScrollBar>
+#include <QScopedValueRollback>
 
 #include "desktop/chat/chatlineedit.h"
 
 ChatLineEdit::ChatLineEdit(QWidget *parent) :
-	QPlainTextEdit(parent), _historypos(0)
+	QPlainTextEdit(parent), _historypos(0), _fixingScroll(false)
 {
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	connect(
+		verticalScrollBar(), &QAbstractSlider::valueChanged, this,
+		&ChatLineEdit::fixScroll);
 }
 
 void ChatLineEdit::pushHistory(const QString &text)
@@ -54,13 +58,18 @@ void ChatLineEdit::keyPressEvent(QKeyEvent *event)
 		QPlainTextEdit::keyPressEvent(event);
 	}
 
-	resizeBasedOnLines();	
+	resizeBasedOnLines();
 }
 
 void ChatLineEdit::resizeEvent(QResizeEvent *)
 {
 	// Line height depends on widget margins, which change after constructor is called.
 	resizeBasedOnLines();
+}
+
+void ChatLineEdit::fixScroll(int value)
+{
+	fixScrollAt(value, int(document()->size().height()));
 }
 
 void ChatLineEdit::resizeBasedOnLines()
@@ -71,13 +80,9 @@ void ChatLineEdit::resizeBasedOnLines()
 
 	// Scrollbar shows up sometimes for no reason, hardcode to hide it when in autosize range.
 	// It'll also scroll down and hide the top line for no reason.
-	if(lineCount <= 5) {
-		verticalScrollBar()->setValue(0);
-		setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	}
-	else {
-		setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-	}
+	setVerticalScrollBarPolicy(
+		lineCount <= 5 ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAlwaysOn);
+	fixScrollAt(verticalScrollBar()->value(), lineCount);
 }
 
 // Based on https://github.com/cameel/auto-resizing-text-edit/blob/master/auto_resizing_text_edit/auto_resizing_text_edit.py
@@ -94,6 +99,15 @@ int ChatLineEdit::lineCountToWidgetHeight(int lineCount) const
 		documentMargin +
 		lineCount * fontMetrics.lineSpacing() +
 		documentMargin +
-		widgetMargins.bottom() 
+		widgetMargins.bottom()
     );
+}
+
+void ChatLineEdit::fixScrollAt(int value, int lineCount)
+{
+	if(!_fixingScroll && lineCount <= 5 && value != 0) {
+		QScopedValueRollback<bool> guard{_fixingScroll, true};
+		QScrollBar *vbar = verticalScrollBar();
+		vbar->setValue(0);
+	}
 }
