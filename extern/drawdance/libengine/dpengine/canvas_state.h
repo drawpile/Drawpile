@@ -153,10 +153,6 @@ int DP_canvas_state_search_change_bounds(DP_CanvasState *cs,
                                          int *out_y, int *out_width,
                                          int *out_height);
 
-int DP_canvas_state_pick_layer(DP_CanvasState *cs, int x, int y);
-
-unsigned int DP_canvas_state_pick_context_id(DP_CanvasState *cs, int x, int y);
-
 DP_TransientLayerContent *DP_canvas_state_to_flat_layer(DP_CanvasState *cs,
                                                         unsigned int flags);
 

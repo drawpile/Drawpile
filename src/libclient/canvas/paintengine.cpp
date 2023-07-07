@@ -367,6 +367,16 @@ void PaintEngine::setViewFrame(int frame)
 	updateLayersVisibleInFrame();
 }
 
+int PaintEngine::pickLayer(int x, int y)
+{
+	return m_paintEngine.pick(x, y).layer_id;
+}
+
+unsigned int PaintEngine::pickContextId(int x, int y)
+{
+	return m_paintEngine.pick(x, y).context_id;
+}
+
 void PaintEngine::setInspectContextId(unsigned int contextId)
 {
 	m_paintEngine.setInspectContextId(contextId);

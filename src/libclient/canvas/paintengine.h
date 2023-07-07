@@ -147,6 +147,9 @@ public:
 		const QVector<QPair<float, QColor>> &skinsBelow,
 		const QVector<QPair<float, QColor>> &skinsAbove);
 
+	int pickLayer(int x, int y);
+	unsigned int pickContextId(int x, int y);
+
 	void setInspectContextId(unsigned int contextId);
 
 	//! The current canvas state with the local view (hidden layers, local

@@ -119,6 +119,8 @@ bool DP_paint_engine_reveal_censored(DP_PaintEngine *pe);
 void DP_paint_engine_reveal_censored_set(DP_PaintEngine *pe,
                                          bool reveal_censored);
 
+DP_ViewModePick DP_paint_engine_pick(DP_PaintEngine *pe, int x, int y);
+
 void DP_paint_engine_inspect_context_id_set(DP_PaintEngine *pe,
                                             unsigned int context_id);
 

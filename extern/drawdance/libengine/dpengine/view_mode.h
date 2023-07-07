@@ -68,6 +68,11 @@ typedef struct DP_ViewModeResult {
     DP_ViewModeContext child_vmc;
 } DP_ViewModeResult;
 
+typedef struct DP_ViewModePick {
+    unsigned int context_id;
+    int layer_id;
+} DP_ViewModePick;
+
 typedef struct DP_OnionSkin {
     uint16_t opacity;
     DP_UPixel15 tint;
@@ -128,6 +133,10 @@ void DP_view_mode_get_layers_visible_in_track_frame(DP_CanvasState *cs,
                                                     int frame_index,
                                                     AddVisibleLayerFn fn,
                                                     void *user);
+
+
+DP_ViewModePick DP_view_mode_pick(DP_ViewMode vm, DP_CanvasState *cs,
+                                  int layer_id, int frame_index, int x, int y);
 
 
 DP_OnionSkins *DP_onion_skins_new(int count_below, int count_above);

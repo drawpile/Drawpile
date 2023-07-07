@@ -22,6 +22,8 @@
 #include "view_mode.h"
 #include "canvas_state.h"
 #include "key_frame.h"
+#include "layer_content.h"
+#include "layer_group.h"
 #include "layer_list.h"
 #include "layer_props.h"
 #include "layer_props_list.h"
@@ -31,6 +33,7 @@
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
 #include <dpcommon/vector.h>
+#include <dpmsg/blend_mode.h>
 
 
 #define TYPE_NORMAL       0
@@ -512,6 +515,163 @@ void DP_view_mode_get_layers_visible_in_track_frame(DP_CanvasState *cs,
         DP_Track *t = DP_timeline_at_noinc(tl, index);
         get_track_layers_visible_in_frame(cs, t, frame_index, fn, user);
     }
+}
+
+
+static bool is_pickable(DP_LayerProps *lp)
+{
+    // The user wants to point at a pixel and either get the layer or the last
+    // editor of that pixel. That means we don't take hidden, fully opaque or
+    // erase layers into account, since those don't contribute pixels to the
+    // canvas. We don't take masked-off or erased areas into account, so you
+    // might still get unexpected results, but that's a pretty hard problem.
+    return DP_layer_props_visible(lp)
+        && DP_layer_props_blend_mode(lp) != DP_BLEND_MODE_ERASE;
+}
+
+static bool pick_recursive(DP_LayerList *ll, DP_LayerPropsList *lpl, int x,
+                           int y, DP_ViewModePick *out_pick);
+
+static bool pick_content(DP_LayerContent *lc, DP_LayerProps *lp, int x, int y,
+                         DP_ViewModePick *out_pick)
+{
+    bool pick_sublayer_or_layer =
+        pick_recursive(DP_layer_content_sub_contents_noinc(lc),
+                       DP_layer_content_sub_props_noinc(lc), x, y, out_pick)
+        || DP_layer_content_pick_at(lc, x, y, &out_pick->context_id);
+    if (pick_sublayer_or_layer) {
+        out_pick->layer_id = DP_layer_props_id(lp);
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+static bool pick_entry(DP_LayerListEntry *lle, DP_LayerProps *lp, int x, int y,
+                       DP_ViewModePick *out_pick)
+{
+    if (is_pickable(lp)) {
+        if (DP_layer_list_entry_is_group(lle)) {
+            DP_LayerGroup *lg = DP_layer_list_entry_group_noinc(lle);
+            DP_LayerList *child_ll = DP_layer_group_children_noinc(lg);
+            DP_LayerPropsList *child_lpl = DP_layer_props_children_noinc(lp);
+            if (pick_recursive(child_ll, child_lpl, x, y, out_pick)) {
+                return true;
+            }
+        }
+        else {
+            DP_LayerContent *lc = DP_layer_list_entry_content_noinc(lle);
+            if (pick_content(lc, lp, x, y, out_pick)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+static bool pick_recursive(DP_LayerList *ll, DP_LayerPropsList *lpl, int x,
+                           int y, DP_ViewModePick *out_pick)
+{
+    int count = DP_layer_list_count(ll);
+    DP_ASSERT(count == DP_layer_props_list_count(lpl));
+    for (int i = count - 1; i >= 0; --i) {
+        DP_LayerListEntry *lle = DP_layer_list_at_noinc(ll, i);
+        DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, i);
+        if (pick_entry(lle, lp, x, y, out_pick)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+static bool pick_normal(DP_CanvasState *cs, int x, int y,
+                        DP_ViewModePick *out_pick)
+{
+    return pick_recursive(DP_canvas_state_layers_noinc(cs),
+                          DP_canvas_state_layer_props_noinc(cs), x, y,
+                          out_pick);
+}
+
+static bool pick_layer(DP_CanvasState *cs, int layer_id, int x, int y,
+                       DP_ViewModePick *out_pick)
+{
+    DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
+    DP_LayerRoutesEntry *lre = DP_layer_routes_search(lr, layer_id);
+    if (lre) {
+        DP_LayerListEntry *lle = DP_layer_routes_entry_layer(lre, cs);
+        DP_LayerProps *lp = DP_layer_routes_entry_props(lre, cs);
+        return pick_entry(lle, lp, x, y, out_pick);
+    }
+    else {
+        return false;
+    }
+}
+
+struct DP_PickFrameContext {
+    DP_CanvasState *cs;
+    int x, y;
+    DP_ViewModePick *out_pick;
+    bool found;
+};
+
+static void pick_frame_layer(void *user, int layer_id, bool visible)
+{
+    struct DP_PickFrameContext *c = user;
+    if (visible && !c->found) {
+        DP_CanvasState *cs = c->cs;
+        DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
+        DP_LayerRoutesEntry *lre = DP_layer_routes_search(lr, layer_id);
+        if (lre && !DP_layer_routes_entry_is_group(lre)) {
+            DP_LayerContent *lc = DP_layer_routes_entry_content(lre, cs);
+            DP_LayerProps *lp = DP_layer_routes_entry_props(lre, cs);
+            if (pick_content(lc, lp, c->x, c->y, c->out_pick)) {
+                c->found = true;
+            }
+        }
+    }
+}
+
+static bool pick_frame(DP_CanvasState *cs, int frame_index, int x, int y,
+                       DP_ViewModePick *out_pick)
+{
+    struct DP_PickFrameContext c = {cs, x, y, out_pick, false};
+    DP_view_mode_get_layers_visible_in_frame(cs, frame_index, pick_frame_layer,
+                                             &c);
+    return c.found;
+}
+
+DP_ViewModePick DP_view_mode_pick(DP_ViewMode vm, DP_CanvasState *cs,
+                                  int layer_id, int frame_index, int x, int y)
+{
+    DP_ASSERT(cs);
+    DP_ASSERT(vm == DP_VIEW_MODE_NORMAL || vm == DP_VIEW_MODE_LAYER
+              || vm == DP_VIEW_MODE_FRAME);
+    bool in_bounds = x >= 0 && y >= 0 && x < DP_canvas_state_width(cs)
+                  && y < DP_canvas_state_height(cs);
+    if (in_bounds) {
+        DP_ViewModePick pick;
+        switch (vm) {
+        case DP_VIEW_MODE_NORMAL:
+            if (pick_normal(cs, x, y, &pick)) {
+                return pick;
+            }
+            break;
+        case DP_VIEW_MODE_LAYER:
+            if (pick_layer(cs, layer_id, x, y, &pick)) {
+                return pick;
+            }
+            break;
+        case DP_VIEW_MODE_FRAME:
+            if (pick_frame(cs, frame_index, x, y, &pick)) {
+                return pick;
+            }
+            break;
+        default:
+            break;
+        }
+    }
+    return (DP_ViewModePick){0, -1};
 }
 
 

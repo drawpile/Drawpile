@@ -102,6 +102,11 @@ void PaintEngine::setRevealCensored(bool revealCensored)
 	DP_paint_engine_reveal_censored_set(m_data, revealCensored);
 }
 
+DP_ViewModePick PaintEngine::pick(int x, int y)
+{
+	return DP_paint_engine_pick(m_data, x, y);
+}
+
 void PaintEngine::setInspectContextId(unsigned int contextId)
 {
 	DP_paint_engine_inspect_context_id_set(m_data, contextId);

@@ -79,10 +79,6 @@ public:
 
     LayerContent searchLayerContent(int layerId) const;
 
-    int pickLayer(int x, int y) const;
-
-    unsigned int pickContextId(int x, int y) const;
-
     DP_FloodFillResult floodFill(
         int x, int y, const QColor &fillColor, double tolerance, int layerId,
         int sizeLimit, int gap, int expand, int featherRadius,

@@ -329,6 +329,32 @@ DP_Pixel15 DP_layer_content_pixel_at(DP_LayerContent *lc, int x, int y)
     }
 }
 
+bool DP_layer_content_pick_at(DP_LayerContent *lc, int x, int y,
+                              unsigned int *out_context_id)
+{
+    DP_ASSERT(lc);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
+    DP_ASSERT(x >= 0);
+    DP_ASSERT(y >= 0);
+    DP_ASSERT(x < lc->width);
+    DP_ASSERT(y < lc->height);
+    int xt = x / DP_TILE_SIZE;
+    int yt = y / DP_TILE_SIZE;
+    int wt = DP_tile_count_round(lc->width);
+    DP_Tile *t = lc->elements[yt * wt + xt].tile;
+    if (t) {
+        int xp = x - xt * DP_TILE_SIZE;
+        int yp = y - yt * DP_TILE_SIZE;
+        if (DP_tile_pixel_at(t, xp, yp).a != 0) {
+            if (out_context_id) {
+                *out_context_id = DP_tile_context_id(t);
+            }
+            return true;
+        }
+    }
+    return false;
+}
+
 static DP_UPixel15 sample_dab_color(DP_LayerContent *lc, DP_BrushStamp stamp)
 {
     uint16_t *weights = stamp.data;

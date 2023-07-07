@@ -294,7 +294,7 @@ void CanvasModel::amendSnapshotMetadata(
 
 void CanvasModel::pickLayer(int x, int y)
 {
-	int layerId = m_paintengine->viewCanvasState().pickLayer(x, y);
+	int layerId = m_paintengine->pickLayer(x, y);
 	if(layerId > 0) {
 		emit layerAutoselectRequest(layerId);
 	}
@@ -311,7 +311,7 @@ void CanvasModel::pickColor(int x, int y, int layer, int diameter)
 
 void CanvasModel::inspectCanvas(int x, int y, bool clobber)
 {
-	unsigned int contextId = m_paintengine->viewCanvasState().pickContextId(x, y);
+	unsigned int contextId = m_paintengine->pickContextId(x, y);
 	bool haveContextId = contextId != 0;
 	if(haveContextId) {
 		inspectCanvas(contextId);

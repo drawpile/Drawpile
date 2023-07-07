@@ -944,6 +944,15 @@ void DP_paint_engine_reveal_censored_set(DP_PaintEngine *pe,
 }
 
 
+DP_ViewModePick DP_paint_engine_pick(DP_PaintEngine *pe, int x, int y)
+{
+    DP_ASSERT(pe);
+    DP_LocalState *ls = pe->local_state;
+    return DP_view_mode_pick(DP_local_state_view_mode(ls), pe->view_cs,
+                             DP_local_state_active_layer_id(ls),
+                             DP_local_state_active_frame_index(ls), x, y);
+}
+
 void DP_paint_engine_inspect_context_id_set(DP_PaintEngine *pe,
                                             unsigned int context_id)
 {

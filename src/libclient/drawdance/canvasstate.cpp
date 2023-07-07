@@ -229,16 +229,6 @@ LayerContent CanvasState::searchLayerContent(int layerId) const
     }
 }
 
-int CanvasState::pickLayer(int x, int y) const
-{
-    return DP_canvas_state_pick_layer(m_data, x, y);
-}
-
-unsigned int CanvasState::pickContextId(int x, int y) const
-{
-    return DP_canvas_state_pick_context_id(m_data, x, y);
-}
-
 
 DP_FloodFillResult CanvasState::floodFill(
     int x, int y, const QColor &fillColor, double tolerance, int layerId,

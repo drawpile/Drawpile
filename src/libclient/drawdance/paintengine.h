@@ -69,6 +69,8 @@ public:
 	bool revealCensored() const;
 	void setRevealCensored(bool revealCensored);
 
+	DP_ViewModePick pick(int x, int y);
+
 	void setInspectContextId(unsigned int contextId);
 
 	Tile localBackgroundTile() const;
