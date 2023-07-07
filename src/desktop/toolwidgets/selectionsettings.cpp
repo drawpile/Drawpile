@@ -116,7 +116,7 @@ void SelectionSettings::fitToScreen()
 		cutSelection();
 		const QSizeF size = sel->shape().boundingRect().size();
 		const QRectF screenRect =
-			m_view->mapToScene(m_view->rect()).boundingRect();
+			m_view->mapToCanvas(m_view->rect()).boundingRect();
 		const QSizeF screen = screenRect.size() * 0.7;
 
 		if(size.width() > screen.width() || size.height() > screen.height()) {
