@@ -31,6 +31,8 @@ public:
 		QAction *keyFrameCreateGroup = nullptr;
 		QAction *keyFrameCreateGroupNext = nullptr;
 		QAction *keyFrameCreateGroupPrev = nullptr;
+		QAction *keyFrameDuplicateNext = nullptr;
+		QAction *keyFrameDuplicatePrev = nullptr;
 		QAction *keyFrameCut = nullptr;
 		QAction *keyFrameCopy = nullptr;
 		QAction *keyFramePaste = nullptr;
@@ -50,6 +52,7 @@ public:
 		QAction *trackBelow = nullptr;
 		QMenu *animationLayerMenu = nullptr;
 		QMenu *animationGroupMenu = nullptr;
+		QMenu *animationDuplicateMenu = nullptr;
 	};
 
 	explicit TimelineWidget(QWidget *parent = nullptr);

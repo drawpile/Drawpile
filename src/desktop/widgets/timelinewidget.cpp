@@ -351,6 +351,7 @@ void TimelineWidget::setActions(const Actions &actions)
 	d->frameMenu->addSeparator();
 	d->frameMenu->addMenu(actions.animationLayerMenu);
 	d->frameMenu->addMenu(actions.animationGroupMenu);
+	d->frameMenu->addMenu(actions.animationDuplicateMenu);
 	d->frameMenu->addSeparator();
 	for(QMenu *menu : {d->trackMenu, d->frameMenu}) {
 		menu->addAction(actions.trackAdd);
@@ -436,6 +437,12 @@ void TimelineWidget::setActions(const Actions &actions)
 		&TimelineWidget::nextFrame);
 	connect(
 		actions.keyFrameCreateGroupPrev, &QAction::triggered, this,
+		&TimelineWidget::prevFrame);
+	connect(
+		actions.keyFrameDuplicateNext, &QAction::triggered, this,
+		&TimelineWidget::nextFrame);
+	connect(
+		actions.keyFrameDuplicatePrev, &QAction::triggered, this,
 		&TimelineWidget::prevFrame);
 
 	updateActions();
@@ -1571,6 +1578,13 @@ void TimelineWidget::updateActions()
 		keyFrameSettable && d->currentFrame > 0 && !d->previousKeyFrame();
 	d->actions.keyFrameCreateLayerPrev->setEnabled(prevKeyFrameCreatable);
 	d->actions.keyFrameCreateGroupPrev->setEnabled(prevKeyFrameCreatable);
+
+	bool keyFrameDuplicatable =
+		currentKeyFrame && currentKeyFrame->layerId != 0;
+	d->actions.keyFrameDuplicateNext->setEnabled(
+		nextKeyFrameCreatable && keyFrameDuplicatable);
+	d->actions.keyFrameDuplicatePrev->setEnabled(
+		prevKeyFrameCreatable && keyFrameDuplicatable);
 
 	bool keyFrameEditable = keyFrameSettable && currentKeyFrame;
 	d->actions.keyFrameCut->setEnabled(keyFrameEditable);

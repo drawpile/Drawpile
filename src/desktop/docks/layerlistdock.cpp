@@ -183,28 +183,34 @@ void LayerList::setLayerEditActions(const Actions &actions)
 	// Action functionality
 	connect(
 		m_actions.addLayer, &QAction::triggered, this,
-		std::bind(&LayerList::addLayerOrGroup, this, false, false, 0));
+		std::bind(&LayerList::addLayerOrGroup, this, false, false, false, 0));
 	connect(
 		m_actions.addGroup, &QAction::triggered, this,
-		std::bind(&LayerList::addLayerOrGroup, this, true, false, 0));
+		std::bind(&LayerList::addLayerOrGroup, this, true, false, false, 0));
 	connect(
 		m_actions.keyFrameCreateLayer, &QAction::triggered, this,
-		std::bind(&LayerList::addLayerOrGroup, this, false, true, 0));
+		std::bind(&LayerList::addLayerOrGroup, this, false, false, true, 0));
 	connect(
 		m_actions.keyFrameCreateLayerNext, &QAction::triggered, this,
-		std::bind(&LayerList::addLayerOrGroup, this, false, true, 1));
+		std::bind(&LayerList::addLayerOrGroup, this, false, false, true, 1));
 	connect(
 		m_actions.keyFrameCreateLayerPrev, &QAction::triggered, this,
-		std::bind(&LayerList::addLayerOrGroup, this, false, true, -1));
+		std::bind(&LayerList::addLayerOrGroup, this, false, false, true, -1));
 	connect(
 		m_actions.keyFrameCreateGroup, &QAction::triggered, this,
-		std::bind(&LayerList::addLayerOrGroup, this, true, true, 0));
+		std::bind(&LayerList::addLayerOrGroup, this, true, false, true, 0));
 	connect(
 		m_actions.keyFrameCreateGroupNext, &QAction::triggered, this,
-		std::bind(&LayerList::addLayerOrGroup, this, true, true, 1));
+		std::bind(&LayerList::addLayerOrGroup, this, true, false, true, 1));
 	connect(
 		m_actions.keyFrameCreateGroupPrev, &QAction::triggered, this,
-		std::bind(&LayerList::addLayerOrGroup, this, true, true, -1));
+		std::bind(&LayerList::addLayerOrGroup, this, true, false, true, -1));
+	connect(
+		m_actions.keyFrameDuplicateNext, &QAction::triggered, this,
+		std::bind(&LayerList::addLayerOrGroup, this, false, true, true, 1));
+	connect(
+		m_actions.keyFrameDuplicatePrev, &QAction::triggered, this,
+		std::bind(&LayerList::addLayerOrGroup, this, false, true, true, -1));
 	connect(
 		m_actions.duplicate, &QAction::triggered, this,
 		&LayerList::duplicateLayer);
@@ -351,7 +357,7 @@ void LayerList::changeLayerAcl(bool lock, DP_AccessTier tier, QVector<uint8_t> e
 	}
 }
 
-void LayerList::addLayerOrGroup(bool group, bool keyFrame, int keyFrameOffset)
+void LayerList::addLayerOrGroup(bool group, bool duplicateKeyFrame, bool keyFrame, int keyFrameOffset)
 {
 	const canvas::LayerListModel *layers = m_canvas->layerlist();
 	Q_ASSERT(layers);
@@ -377,13 +383,16 @@ void LayerList::addLayerOrGroup(bool group, bool keyFrame, int keyFrameOffset)
 			layers->getAvailableLayerName(tr("Layer")));
 	} else {
 		int targetId = -1;
+		int sourceId = 0;
 		uint8_t flags = group ? DP_MSG_LAYER_TREE_CREATE_FLAGS_GROUP : 0;
 
 		if(keyFrame && m_trackId != 0 && m_frame != -1) {
 			// TODO: having to do a layer move here is dumb, there should be a
 			// layer create flag that throws the layer at the bottom instead.
 			int targetFrame = m_frame + keyFrameOffset;
-			int moveId = intuitKeyFrameTarget(targetFrame, targetId, flags);
+			int moveId = intuitKeyFrameTarget(
+				duplicateKeyFrame ? m_frame : -1, targetFrame, sourceId,
+				targetId, flags);
 			keyFrameMsg = drawdance::Message::makeKeyFrameSet(
 				contextId, m_trackId, targetFrame, id, 0,
 				DP_MSG_KEY_FRAME_SET_SOURCE_LAYER);
@@ -402,9 +411,20 @@ void LayerList::addLayerOrGroup(bool group, bool keyFrame, int keyFrameOffset)
 			}
 		}
 
+		QString baseName;
+		if(sourceId != 0) {
+			QModelIndex sourceIndex = layers->layerIndex(sourceId);
+			if(sourceIndex.isValid()) {
+				baseName = sourceIndex.data(canvas::LayerListModel::TitleRole).toString();
+			}
+		}
+		if(baseName.isEmpty()) {
+			baseName = group ? tr("Group") : tr("Layer");
+		}
+
 		layerMsg = drawdance::Message::makeLayerTreeCreate(
-			contextId, id, 0, qMax(0, targetId), 0, flags,
-			layers->getAvailableLayerName(group ? tr("Group") : tr("Layer")));
+			contextId, id, sourceId, qMax(0, targetId), 0, flags,
+			layers->getAvailableLayerName(baseName));
 	}
 
 	drawdance::Message messages[] = {
@@ -415,7 +435,9 @@ void LayerList::addLayerOrGroup(bool group, bool keyFrame, int keyFrameOffset)
 		messages);
 }
 
-int LayerList::intuitKeyFrameTarget(int targetFrame, int &targetId, uint8_t &flags)
+int LayerList::intuitKeyFrameTarget(
+	int sourceFrame, int targetFrame, int &sourceId, int &targetId,
+	uint8_t &flags)
 {
 	// Guess where we're supposed to throw this new layer in relation to
 	// surrounding frames in the timeline. If there's a previous key frame, we
@@ -432,6 +454,10 @@ int LayerList::intuitKeyFrameTarget(int targetFrame, int &targetId, uint8_t &fla
 	for(const canvas::TimelineKeyFrame &keyFrame : track->keyFrames) {
 		if(keyFrame.layerId != 0) {
 			int frame = keyFrame.frameIndex;
+			if(frame == sourceFrame) {
+				sourceId = keyFrame.layerId;
+			}
+
 			if(frame <= targetFrame) {
 				if(!keyFrameBefore || frame > keyFrameBefore->frameIndex) {
 					keyFrameBefore = &keyFrame;

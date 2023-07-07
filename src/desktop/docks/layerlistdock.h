@@ -55,6 +55,8 @@ public:
 		QAction *keyFrameCreateGroup = nullptr;
 		QAction *keyFrameCreateGroupNext = nullptr;
 		QAction *keyFrameCreateGroupPrev = nullptr;
+		QAction *keyFrameDuplicateNext = nullptr;
+		QAction *keyFrameDuplicatePrev = nullptr;
 		QActionGroup *layerKeyFrameGroup = nullptr;
 	};
 
@@ -122,8 +124,8 @@ private:
 
 	void updateUiFromSelection();
 
-	void addLayerOrGroup(bool group, bool keyFrame, int keyFrameOffset);
-	int intuitKeyFrameTarget(int targetFrame, int &targetId, uint8_t &flags);
+	void addLayerOrGroup(bool group, bool duplicateKeyFrame, bool keyFrame, int keyFrameOffset);
+	int intuitKeyFrameTarget(int sourceFrame, int targetFrame, int &sourceId, int &targetId, uint8_t &flags);
 
 	QModelIndex currentSelection() const;
 	void selectLayerIndex(QModelIndex index, bool scrollTo=false);

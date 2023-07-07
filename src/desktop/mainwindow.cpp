@@ -3272,6 +3272,8 @@ void MainWindow::setupActions()
 	QAction *keyFrameCreateGroup = makeAction("key-frame-create-group", tr("Create Group on Current Key Frame")).icon("keyframe-add").noDefaultShortcut();
 	QAction *keyFrameCreateGroupNext = makeAction("key-frame-create-group-next", tr("Create Group on Next Key Frame")).icon("keyframe-next").noDefaultShortcut();
 	QAction *keyFrameCreateGroupPrev = makeAction("key-frame-create-group-prev", tr("Create Group on Previous Key Frame")).icon("keyframe-previous").noDefaultShortcut();
+	QAction *keyFrameDuplicateNext = makeAction("key-frame-duplicate-next", tr("Duplicate to Next Key Frame")).icon("keyframe-next").shortcut("Ctrl+Alt+Shift+T");
+	QAction *keyFrameDuplicatePrev = makeAction("key-frame-duplicate-prev", tr("Duplicate to Previous Key Frame")).icon("keyframe-previous").shortcut("Ctrl+Alt+Shift+E");
 
 	QActionGroup *layerKeyFrameGroup = new QActionGroup{this};
 	layerKeyFrameGroup->addAction(keyFrameCreateLayer);
@@ -3280,6 +3282,8 @@ void MainWindow::setupActions()
 	layerKeyFrameGroup->addAction(keyFrameCreateGroup);
 	layerKeyFrameGroup->addAction(keyFrameCreateGroupNext);
 	layerKeyFrameGroup->addAction(keyFrameCreateGroupPrev);
+	layerKeyFrameGroup->addAction(keyFrameDuplicateNext);
+	layerKeyFrameGroup->addAction(keyFrameDuplicatePrev);
 
 	QMenu *animationMenu = menuBar()->addMenu(tr("&Animation"));
 	animationMenu->addAction(showFlipbook);
@@ -3304,6 +3308,10 @@ void MainWindow::setupActions()
 	animationGroupMenu->addAction(keyFrameCreateGroup);
 	animationGroupMenu->addAction(keyFrameCreateGroupNext);
 	animationGroupMenu->addAction(keyFrameCreateGroupPrev);
+	QMenu *animationDuplicateMenu = animationMenu->addMenu(
+		QIcon::fromTheme("edit-copy"), tr("Duplicate Key Frame"));
+	animationDuplicateMenu->addAction(keyFrameDuplicateNext);
+	animationDuplicateMenu->addAction(keyFrameDuplicatePrev);
 	animationMenu->addSeparator();
 	animationMenu->addAction(trackAdd);
 	animationMenu->addAction(trackDuplicate);
@@ -3318,8 +3326,8 @@ void MainWindow::setupActions()
 	animationMenu->addAction(trackBelow);
 
 	m_currentdoctools->addAction(showFlipbook);
-	m_dockLayers->setLayerEditActions({layerAdd, groupAdd, layerDupe, layerMerge, layerProperties, layerDelete, layerSetFillSource, keyFrameSetLayer, keyFrameCreateLayer, keyFrameCreateLayerNext, keyFrameCreateLayerPrev, keyFrameCreateGroup, keyFrameCreateGroupNext, keyFrameCreateGroupPrev, layerKeyFrameGroup});
-	m_dockTimeline->setActions({keyFrameSetLayer, keyFrameSetEmpty, keyFrameCreateLayer, keyFrameCreateLayerNext, keyFrameCreateLayerPrev, keyFrameCreateGroup, keyFrameCreateGroupNext, keyFrameCreateGroupPrev, keyFrameCut, keyFrameCopy, keyFramePaste, keyFrameProperties, keyFrameDelete, trackAdd, trackVisible, trackOnionSkin, trackDuplicate, trackRetitle, trackDelete, frameCountSet, framerateSet, frameNext, framePrev, trackAbove, trackBelow, animationLayerMenu, animationGroupMenu}, layerViewNormal, layerViewCurrentFrame, showFlipbook);
+	m_dockLayers->setLayerEditActions({layerAdd, groupAdd, layerDupe, layerMerge, layerProperties, layerDelete, layerSetFillSource, keyFrameSetLayer, keyFrameCreateLayer, keyFrameCreateLayerNext, keyFrameCreateLayerPrev, keyFrameCreateGroup, keyFrameCreateGroupNext, keyFrameCreateGroupPrev, keyFrameDuplicateNext, keyFrameDuplicatePrev, layerKeyFrameGroup});
+	m_dockTimeline->setActions({keyFrameSetLayer, keyFrameSetEmpty, keyFrameCreateLayer, keyFrameCreateLayerNext, keyFrameCreateLayerPrev, keyFrameCreateGroup, keyFrameCreateGroupNext, keyFrameCreateGroupPrev, keyFrameDuplicateNext, keyFrameDuplicatePrev, keyFrameCut, keyFrameCopy, keyFramePaste, keyFrameProperties, keyFrameDelete, trackAdd, trackVisible, trackOnionSkin, trackDuplicate, trackRetitle, trackDelete, frameCountSet, framerateSet, frameNext, framePrev, trackAbove, trackBelow, animationLayerMenu, animationGroupMenu, animationDuplicateMenu}, layerViewNormal, layerViewCurrentFrame, showFlipbook);
 
 	connect(showFlipbook, &QAction::triggered, this, &MainWindow::showFlipbook);
 
