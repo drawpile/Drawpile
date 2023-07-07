@@ -1570,8 +1570,8 @@ QPoint CanvasView::viewCenterPoint() const
 
 bool CanvasView::isPointVisible(const QPointF &point) const
 {
-	QPoint p = mapFromScene(point);
-	return p.x() > 0 && p.y() > 0 && p.x() < width() && p.y() < height();
+	return mapToCanvas(viewport()->rect())
+		.containsPoint(point, Qt::OddEvenFill);
 }
 
 void CanvasView::scrollTo(const QPointF &point)
