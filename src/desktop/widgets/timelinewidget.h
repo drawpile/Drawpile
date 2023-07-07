@@ -147,7 +147,8 @@ private:
 
 	struct Target;
 	Target getMouseTarget(const QPoint &pos) const;
-	void applyMouseTarget(QMouseEvent *event, const Target &target);
+	void applyMouseTarget(QMouseEvent *event, const Target &target, bool press);
+	void executeTargetAction(const Target &target);
 
 	void emitCommand(std::function<drawdance::Message(uint8_t)> getMessage);
 

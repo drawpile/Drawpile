@@ -32,12 +32,14 @@ extern "C" {
 
 namespace widgets {
 
+enum class TrackAction { None, ToggleVisible, ToggleOnionSkin };
+
 struct TimelineWidget::Target {
 	int uiTrackIndex;
 	int trackId;
 	int frameIndex;
 	bool onHeader;
-	QAction *action;
+	TrackAction action;
 };
 
 struct TimelineWidget::Private {
@@ -61,7 +63,7 @@ struct TimelineWidget::Private {
 	int currentTrackId = 0;
 	int currentFrame = 0;
 	int nextTrackId = 0;
-	Target hoverTarget = {-1, 0, -1, false, nullptr};
+	Target hoverTarget = {-1, 0, -1, false, TrackAction::None};
 	bool pressedOnHeader = false;
 	bool editable = false;
 	Drag drag = Drag::None;
@@ -539,9 +541,9 @@ bool TimelineWidget::event(QEvent *event)
 									.arg(layerTitle);
 				}
 			}
-		} else if(d->hoverTarget.action == d->actions.trackVisible) {
+		} else if(d->hoverTarget.action == TrackAction::ToggleVisible) {
 			tip = tr("Toggle visibility");
-		} else if(d->hoverTarget.action == d->actions.trackOnionSkin) {
+		} else if(d->hoverTarget.action == TrackAction::ToggleOnionSkin) {
 			tip = tr("Toggle onion skin");
 		}
 		setToolTip(tip);
@@ -830,15 +832,15 @@ void TimelineWidget::mouseMoveEvent(QMouseEvent *event)
 void TimelineWidget::mousePressEvent(QMouseEvent *event)
 {
 	Target target = getMouseTarget(compat::mousePos(*event));
-	applyMouseTarget(event, target);
+	applyMouseTarget(event, target, true);
 
 	Qt::MouseButton button = event->button();
 	Drag drag = Drag::None;
 	Qt::DropAction dropAction = Qt::MoveAction;
 	if(button == Qt::LeftButton) {
 		d->pressedOnHeader = target.onHeader;
-		if(target.action) {
-			target.action->trigger();
+		if(target.action != TrackAction::None) {
+			executeTargetAction(target);
 			event->accept();
 		} else if(target.trackId != 0 && target.frameIndex == -1) {
 			drag = Drag::Track;
@@ -868,11 +870,11 @@ void TimelineWidget::mousePressEvent(QMouseEvent *event)
 void TimelineWidget::mouseDoubleClickEvent(QMouseEvent *event)
 {
 	Target target = getMouseTarget(compat::mousePos(*event));
-	applyMouseTarget(event, target);
+	applyMouseTarget(event, target, true);
 
 	if(event->button() == Qt::LeftButton) {
-		if(target.action) {
-			target.action->trigger();
+		if(target.action != TrackAction::None) {
+			executeTargetAction(target);
 		} else if(target.frameIndex == -1 && target.trackId != 0) {
 			retitleTrack();
 		} else if(target.frameIndex != -1 && target.trackId != 0) {
@@ -994,7 +996,7 @@ void TimelineWidget::dropEvent(QDropEvent *event)
 					   (sourceTrackId != target.trackId ||
 						sourceFrameIndex != target.frameIndex);
 		if(isValid) {
-			applyMouseTarget(nullptr, target);
+			applyMouseTarget(nullptr, target, false);
 			emitCommand([&](uint8_t contextId) {
 				if(event->dropAction() == Qt::CopyAction) {
 					return drawdance::Message::makeKeyFrameSet(
@@ -1596,7 +1598,7 @@ void TimelineWidget::updateScrollbars()
 
 TimelineWidget::Target TimelineWidget::getMouseTarget(const QPoint &pos) const
 {
-	Target target{-1, 0, -1, false, nullptr};
+	Target target{-1, 0, -1, false, TrackAction::None};
 	if(d->canvas) {
 		int x = pos.x();
 		int headerWidth = d->headerWidth;
@@ -1616,9 +1618,9 @@ TimelineWidget::Target TimelineWidget::getMouseTarget(const QPoint &pos) const
 			int tph = TRACK_PADDING / 2;
 			int mid = tph + ICON_SIZE + tp;
 			if(x >= tph && x < mid) {
-				target.action = d->actions.trackVisible;
+				target.action = TrackAction::ToggleVisible;
 			} else if(x >= mid && x < tp * 3 + ICON_SIZE * 2) {
-				target.action = d->actions.trackOnionSkin;
+				target.action = TrackAction::ToggleOnionSkin;
 			}
 		} else {
 			target.onHeader = true;
@@ -1627,17 +1629,35 @@ TimelineWidget::Target TimelineWidget::getMouseTarget(const QPoint &pos) const
 	return target;
 }
 
-void TimelineWidget::applyMouseTarget(QMouseEvent *event, const Target &target)
+void TimelineWidget::applyMouseTarget(
+	QMouseEvent *event, const Target &target, bool press)
 {
-	if(event &&
-	   ((target.trackId != 0 && target.frameIndex != -1) || target.action)) {
+	bool action = press && target.action != TrackAction::None;
+	if(event && ((target.trackId != 0 && target.frameIndex != -1) || action)) {
 		event->accept();
 	}
 
-	int trackId = target.trackId == 0 ? d->currentTrackId : target.trackId;
-	int frame = target.frameIndex == -1 ? d->currentFrame : target.frameIndex;
-	setCurrent(
-		trackId, frame, true, event && event->button() != Qt::RightButton);
+	bool right = event && event->button() == Qt::RightButton;
+	if(!action || right) {
+		int trackId = target.trackId == 0 ? d->currentTrackId : target.trackId;
+		int frame =
+			target.frameIndex == -1 ? d->currentFrame : target.frameIndex;
+		setCurrent(trackId, frame, true, event && !right);
+	}
+}
+
+void TimelineWidget::executeTargetAction(const Target &target)
+{
+	const canvas::TimelineTrack *track = d->trackById(target.trackId);
+	if(track) {
+		if(target.action == TrackAction::ToggleVisible) {
+			emit trackHidden(track->id, !track->hidden);
+		} else if(target.action == TrackAction::ToggleOnionSkin) {
+			emit trackOnionSkinEnabled(track->id, !track->onionSkin);
+		} else {
+			qWarning("Unknown track action %d", int(target.action));
+		}
+	}
 }
 
 void TimelineWidget::emitCommand(
