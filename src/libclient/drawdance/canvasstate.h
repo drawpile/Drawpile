@@ -60,7 +60,6 @@ public:
 
     bool sameFrame(int frameIndexA, int frameIndexB) const;
 
-    QSet<int> getLayersVisibleInFrame(int frameIndex) const;
     QSet<int> getLayersVisibleInTrackFrame(int trackId, int frameIndex) const;
 
     QImage toFlatImage(

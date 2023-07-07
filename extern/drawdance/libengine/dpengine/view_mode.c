@@ -28,6 +28,7 @@
 #include "layer_props.h"
 #include "layer_props_list.h"
 #include "layer_routes.h"
+#include "local_state.h"
 #include "timeline.h"
 #include "track.h"
 #include <dpcommon/common.h>
@@ -160,7 +161,7 @@ static DP_KeyFrameLayer get_key_frame_layer(int layer_id, int count,
 static bool build_frame_layer_visibility(DP_LayerProps *lp, int count,
                                          const DP_KeyFrameLayer *kfls,
                                          bool parent_hidden,
-                                         AddVisibleLayerFn fn, void *user)
+                                         DP_AddVisibleLayerFn fn, void *user)
 {
     int layer_id = DP_layer_props_id(lp);
     DP_KeyFrameLayer kfl = get_key_frame_layer(layer_id, count, kfls);
@@ -473,7 +474,8 @@ bool DP_view_mode_context_should_flatten(const DP_ViewModeContext *vmc,
 
 static void get_track_layers_visible_in_frame(DP_CanvasState *cs, DP_Track *t,
                                               int frame_index,
-                                              AddVisibleLayerFn fn, void *user)
+                                              DP_AddVisibleLayerFn fn,
+                                              void *user)
 {
     int kf_index = DP_track_key_frame_search_at_or_before(t, frame_index);
     if (kf_index != -1) {
@@ -492,21 +494,25 @@ static void get_track_layers_visible_in_frame(DP_CanvasState *cs, DP_Track *t,
 }
 
 void DP_view_mode_get_layers_visible_in_frame(DP_CanvasState *cs,
-                                              int frame_index,
-                                              AddVisibleLayerFn fn, void *user)
+                                              DP_LocalState *ls,
+                                              DP_AddVisibleLayerFn fn,
+                                              void *user)
 {
     DP_Timeline *tl = DP_canvas_state_timeline_noinc(cs);
     int track_count = DP_timeline_count(tl);
+    int frame_index = DP_local_state_active_frame_index(ls);
     for (int i = 0; i < track_count; ++i) {
         DP_Track *t = DP_timeline_at_noinc(tl, i);
-        get_track_layers_visible_in_frame(cs, t, frame_index, fn, user);
+        if (DP_local_state_track_visible(ls, DP_track_id(t))) {
+            get_track_layers_visible_in_frame(cs, t, frame_index, fn, user);
+        }
     }
 }
 
 void DP_view_mode_get_layers_visible_in_track_frame(DP_CanvasState *cs,
                                                     int track_id,
                                                     int frame_index,
-                                                    AddVisibleLayerFn fn,
+                                                    DP_AddVisibleLayerFn fn,
                                                     void *user)
 {
     DP_Timeline *tl = DP_canvas_state_timeline_noinc(cs);
@@ -593,11 +599,12 @@ static bool pick_normal(DP_CanvasState *cs, int x, int y,
                           out_pick);
 }
 
-static bool pick_layer(DP_CanvasState *cs, int layer_id, int x, int y,
+static bool pick_layer(DP_CanvasState *cs, DP_LocalState *ls, int x, int y,
                        DP_ViewModePick *out_pick)
 {
     DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
-    DP_LayerRoutesEntry *lre = DP_layer_routes_search(lr, layer_id);
+    DP_LayerRoutesEntry *lre =
+        DP_layer_routes_search(lr, DP_local_state_active_layer_id(ls));
     if (lre) {
         DP_LayerListEntry *lle = DP_layer_routes_entry_layer(lre, cs);
         DP_LayerProps *lp = DP_layer_routes_entry_props(lre, cs);
@@ -632,38 +639,35 @@ static void pick_frame_layer(void *user, int layer_id, bool visible)
     }
 }
 
-static bool pick_frame(DP_CanvasState *cs, int frame_index, int x, int y,
+static bool pick_frame(DP_CanvasState *cs, DP_LocalState *ls, int x, int y,
                        DP_ViewModePick *out_pick)
 {
     struct DP_PickFrameContext c = {cs, x, y, out_pick, false};
-    DP_view_mode_get_layers_visible_in_frame(cs, frame_index, pick_frame_layer,
-                                             &c);
+    DP_view_mode_get_layers_visible_in_frame(cs, ls, pick_frame_layer, &c);
     return c.found;
 }
 
-DP_ViewModePick DP_view_mode_pick(DP_ViewMode vm, DP_CanvasState *cs,
-                                  int layer_id, int frame_index, int x, int y)
+DP_ViewModePick DP_view_mode_pick(DP_CanvasState *cs, DP_LocalState *ls, int x,
+                                  int y)
 {
     DP_ASSERT(cs);
-    DP_ASSERT(vm == DP_VIEW_MODE_NORMAL || vm == DP_VIEW_MODE_LAYER
-              || vm == DP_VIEW_MODE_FRAME);
     bool in_bounds = x >= 0 && y >= 0 && x < DP_canvas_state_width(cs)
                   && y < DP_canvas_state_height(cs);
     if (in_bounds) {
         DP_ViewModePick pick;
-        switch (vm) {
+        switch (DP_local_state_view_mode(ls)) {
         case DP_VIEW_MODE_NORMAL:
             if (pick_normal(cs, x, y, &pick)) {
                 return pick;
             }
             break;
         case DP_VIEW_MODE_LAYER:
-            if (pick_layer(cs, layer_id, x, y, &pick)) {
+            if (pick_layer(cs, ls, x, y, &pick)) {
                 return pick;
             }
             break;
         case DP_VIEW_MODE_FRAME:
-            if (pick_frame(cs, frame_index, x, y, &pick)) {
+            if (pick_frame(cs, ls, x, y, &pick)) {
                 return pick;
             }
             break;

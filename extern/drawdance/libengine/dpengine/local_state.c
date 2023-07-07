@@ -170,6 +170,20 @@ int DP_local_state_track_state_count(DP_LocalState *ls)
     return DP_size_to_int(ls->track_states.used);
 }
 
+static bool is_hidden_track(void *element, void *user)
+{
+    DP_LocalTrackState *lts = element;
+    return lts->hidden && lts->track_id == *(int *)user;
+}
+
+bool DP_local_state_track_visible(DP_LocalState *ls, int track_id)
+{
+    DP_ASSERT(ls);
+    int hidden_index = DP_VECTOR_SEARCH_INDEX_TYPE(
+        &ls->track_states, DP_LocalTrackState, is_hidden_track, &track_id);
+    return hidden_index == -1;
+}
+
 
 static bool is_hidden_layer_id(void *element, void *user)
 {

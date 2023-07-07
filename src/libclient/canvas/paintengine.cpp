@@ -134,9 +134,7 @@ void PaintEngine::timerEvent(QTimerEvent *)
 void PaintEngine::updateLayersVisibleInFrame()
 {
 	m_updateLayersVisibleInFrame = false;
-	int frameIndex = m_paintEngine.activeFrameIndex();
-	QSet<int> layersVisibleInFrame =
-		viewCanvasState().getLayersVisibleInFrame(frameIndex);
+	QSet<int> layersVisibleInFrame = m_paintEngine.getLayersVisibleInFrame();
 	bool frameMode = m_paintEngine.viewMode() == DP_VIEW_MODE_FRAME;
 	emit frameVisibilityChanged(layersVisibleInFrame, frameMode);
 }

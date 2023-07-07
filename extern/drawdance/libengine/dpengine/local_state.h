@@ -53,6 +53,8 @@ const DP_LocalTrackState *DP_local_state_track_states(DP_LocalState *ls,
 
 int DP_local_state_track_state_count(DP_LocalState *ls);
 
+bool DP_local_state_track_visible(DP_LocalState *ls, int track_id);
+
 void DP_local_state_handle(DP_LocalState *ls, DP_DrawContext *dc,
                            DP_Message *msg);
 

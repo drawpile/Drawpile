@@ -29,6 +29,7 @@ typedef struct DP_LayerList DP_LayerList;
 typedef struct DP_LayerListEntry DP_LayerListEntry;
 typedef struct DP_LayerProps DP_LayerProps;
 typedef struct DP_LayerPropsList DP_LayerPropsList;
+typedef struct DP_LocalState DP_LocalState;
 
 
 typedef enum DP_ViewMode {
@@ -80,7 +81,7 @@ typedef struct DP_OnionSkin {
 
 typedef struct DP_OnionSkins DP_OnionSkins;
 
-typedef void (*AddVisibleLayerFn)(void *user, int layer_id, bool visible);
+typedef void (*DP_AddVisibleLayerFn)(void *user, int layer_id, bool visible);
 
 
 DP_ViewModeBuffer *DP_view_mode_buffer_new(void);
@@ -125,18 +126,19 @@ bool DP_view_mode_context_should_flatten(const DP_ViewModeContext *vmc,
 
 
 void DP_view_mode_get_layers_visible_in_frame(DP_CanvasState *cs,
-                                              int frame_index,
-                                              AddVisibleLayerFn fn, void *user);
+                                              DP_LocalState *ls,
+                                              DP_AddVisibleLayerFn fn,
+                                              void *user);
 
 void DP_view_mode_get_layers_visible_in_track_frame(DP_CanvasState *cs,
                                                     int track_id,
                                                     int frame_index,
-                                                    AddVisibleLayerFn fn,
+                                                    DP_AddVisibleLayerFn fn,
                                                     void *user);
 
 
-DP_ViewModePick DP_view_mode_pick(DP_ViewMode vm, DP_CanvasState *cs,
-                                  int layer_id, int frame_index, int x, int y);
+DP_ViewModePick DP_view_mode_pick(DP_CanvasState *cs, DP_LocalState *ls, int x,
+                                  int y);
 
 
 DP_OnionSkins *DP_onion_skins_new(int count_below, int count_above);

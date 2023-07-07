@@ -80,6 +80,9 @@
         DP_vector_shift((VECTOR), sizeof(TYPE)); \
     } while (0)
 
+#define DP_VECTOR_SEARCH_INDEX_TYPE(VECTOR, TYPE, PREDICATE, USER) \
+    DP_vector_search_index((VECTOR), sizeof(TYPE), (PREDICATE), (USER))
+
 #define DP_VECTOR_SORT_TYPE(VECTOR, TYPE, COMPARE)         \
     do {                                                   \
         DP_vector_sort((VECTOR), sizeof(TYPE), (COMPARE)); \

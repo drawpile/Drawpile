@@ -909,6 +909,15 @@ bool DP_paint_engine_local_state_reset_image_build(
                                             user);
 }
 
+void DP_paint_engine_get_layers_visible_in_frame(DP_PaintEngine *pe,
+                                                 DP_AddVisibleLayerFn fn,
+                                                 void *user)
+{
+    DP_ASSERT(pe);
+    DP_view_mode_get_layers_visible_in_frame(pe->view_cs, pe->local_state, fn,
+                                             user);
+}
+
 int DP_paint_engine_active_layer_id(DP_PaintEngine *pe)
 {
     DP_ASSERT(pe);
@@ -947,10 +956,7 @@ void DP_paint_engine_reveal_censored_set(DP_PaintEngine *pe,
 DP_ViewModePick DP_paint_engine_pick(DP_PaintEngine *pe, int x, int y)
 {
     DP_ASSERT(pe);
-    DP_LocalState *ls = pe->local_state;
-    return DP_view_mode_pick(DP_local_state_view_mode(ls), pe->view_cs,
-                             DP_local_state_active_layer_id(ls),
-                             DP_local_state_active_frame_index(ls), x, y);
+    return DP_view_mode_pick(pe->view_cs, pe->local_state, x, y);
 }
 
 void DP_paint_engine_inspect_context_id_set(DP_PaintEngine *pe,

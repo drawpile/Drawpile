@@ -108,6 +108,10 @@ void DP_paint_engine_want_canvas_history_dump_set(
 bool DP_paint_engine_local_state_reset_image_build(
     DP_PaintEngine *pe, DP_LocalStateAcceptResetMessageFn fn, void *user);
 
+void DP_paint_engine_get_layers_visible_in_frame(DP_PaintEngine *pe,
+                                                 DP_AddVisibleLayerFn fn,
+                                                 void *user);
+
 int DP_paint_engine_active_layer_id(DP_PaintEngine *pe);
 
 int DP_paint_engine_active_frame_index(DP_PaintEngine *pe);

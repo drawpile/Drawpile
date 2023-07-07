@@ -60,6 +60,8 @@ public:
 
 	void setWantCanvasHistoryDump(bool wantCanvasHistoryDump);
 
+	QSet<int> getLayersVisibleInFrame();
+
 	int activeLayerId();
 
 	int activeFrameIndex();
@@ -131,6 +133,7 @@ private:
 	static bool pushResetMessage(void *user, DP_Message *msg);
 	static bool shouldSnapshot(void *user);
 	static void indexProgress(void *user, int percent);
+	static void addLayerVisibleInFrame(void *user, int layerId, bool visible);
 
 	static const DP_Pixel8 *getTransformPreviewPixels(void *user);
 	static void disposeTransformPreviewPixels(void *user);

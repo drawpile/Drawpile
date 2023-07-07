@@ -147,14 +147,6 @@ bool CanvasState::sameFrame(int frameIndexA, int frameIndexB) const
     return DP_canvas_state_same_frame(m_data, frameIndexA, frameIndexB);
 }
 
-QSet<int> CanvasState::getLayersVisibleInFrame(int frameIndex) const
-{
-    QSet<int> layersVisibleInFrame;
-    DP_view_mode_get_layers_visible_in_frame(
-        m_data, frameIndex, addLayerVisibleInFrame, &layersVisibleInFrame);
-    return layersVisibleInFrame;
-}
-
 QSet<int> CanvasState::getLayersVisibleInTrackFrame(int trackId, int frameIndex) const
 {
     QSet<int> layersVisibleInTrackFrame;

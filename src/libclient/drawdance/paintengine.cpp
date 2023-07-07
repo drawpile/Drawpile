@@ -77,6 +77,14 @@ void PaintEngine::setWantCanvasHistoryDump(bool wantCanvasHistoryDump)
 	DP_paint_engine_want_canvas_history_dump_set(m_data, wantCanvasHistoryDump);
 }
 
+QSet<int> PaintEngine::getLayersVisibleInFrame()
+{
+	QSet<int> layersVisibleInFrame;
+	DP_paint_engine_get_layers_visible_in_frame(
+		m_data, addLayerVisibleInFrame, &layersVisibleInFrame);
+	return layersVisibleInFrame;
+}
+
 int PaintEngine::activeLayerId()
 {
 	return DP_paint_engine_active_layer_id(m_data);
@@ -405,6 +413,14 @@ bool PaintEngine::shouldSnapshot(void *user)
 	} else {
 		return false;
 	}
+}
+
+void PaintEngine::addLayerVisibleInFrame(void *user, int layerId, bool visible)
+{
+    if(visible) {
+        QSet<int> *layersVisibleInFrame = static_cast<QSet<int> *>(user);
+        layersVisibleInFrame->insert(layerId);
+    }
 }
 
 void PaintEngine::indexProgress(void *user, int percent)
