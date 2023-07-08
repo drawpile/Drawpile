@@ -2555,7 +2555,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+17"/>
         <source>Sent:</source>
-        <translation>Spedito:</translation>
+        <translation>Inviato:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -2601,42 +2601,42 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="-34"/>
         <source>Rewind to Beginning</source>
-        <translation type="unfinished"></translation>
+        <translation>Riavvolgi All&apos;Inizio</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Skip Backward</source>
-        <translation type="unfinished"></translation>
+        <translation>Skip Indietro</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>Next Stroke</source>
-        <translation type="unfinished"></translation>
+        <translation>Prossima Pennellata</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Skip Forward</source>
-        <translation type="unfinished"></translation>
+        <translation>Skip Avanti</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Playback Speed: </source>
-        <translation type="unfinished"></translation>
+        <translation>Velocità Di Riproduzione: </translation>
     </message>
     <message>
         <location line="+3"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+67"/>
         <source>Building an index will let you quickly skip to any part of your recording.</source>
-        <translation type="unfinished"></translation>
+        <translation>La creazione di un indice ti consentirà di passare rapidamente a qualsiasi parte della registrazione.</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Build Index</source>
-        <translation>Costruisci indice</translation>
+        <translation>Crea Indice</translation>
     </message>
     <message>
         <location line="+76"/>
@@ -2661,7 +2661,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+7"/>
         <source>Stop</source>
-        <translation>Ferma</translation>
+        <translation>Stop</translation>
     </message>
     <message>
         <location line="+39"/>
@@ -2675,7 +2675,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
         <location filename="../dialogs/avatarimport.cpp" line="+59"/>
         <location filename="../filewrangler.cpp" line="-425"/>
         <source>All files (*)</source>
-        <translation>Tutti i files (*)</translation>
+        <translation>Tutti i file (*)</translation>
     </message>
     <message>
         <location filename="../docks/toolsettingsdock.cpp" line="+76"/>
@@ -2710,7 +2710,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+6"/>
         <source>Flood Fill</source>
-        <translation>Riempimento</translation>
+        <translation>Secchiello</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -2720,7 +2720,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+6"/>
         <source>Color Picker</source>
-        <translation>Prendi Colore</translation>
+        <translation>Selettore di Colori</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -2753,7 +2753,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location filename="../ui/resetsession.ui" line="+14"/>
         <source>Reset session</source>
-        <translation>Resetta sessione</translation>
+        <translation>Avvia il Reset della Sessione</translation>
     </message>
 </context>
 <context>
@@ -2766,7 +2766,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+57"/>
         <source>Keep aspect ratio</source>
-        <translation>Mantenere proporzioni</translation>
+        <translation>Mantieni le proporzioni</translation>
     </message>
 </context>
 <context>
@@ -2774,51 +2774,51 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location filename="../ui/selectsettings.ui" line="+29"/>
         <source>Interpolation:</source>
-        <translation type="unfinished"></translation>
+        <translation>Interpolazione:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>Trasformazione</translation>
     </message>
     <message>
         <location line="+11"/>
         <location line="+3"/>
         <source>Flip Horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>Capovolgi Orizzontalmente</translation>
     </message>
     <message>
         <location line="+27"/>
         <location line="+3"/>
         <source>Flip Vertically</source>
-        <translation type="unfinished"></translation>
+        <translation>Capovolgi Verticalmente</translation>
     </message>
     <message>
         <location line="+27"/>
         <location line="+3"/>
         <source>Shrink to View</source>
-        <translation type="unfinished"></translation>
+        <translation>Riduci per la Visualizzazione</translation>
     </message>
     <message>
         <location line="+27"/>
         <location line="+3"/>
         <source>Reset Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>Azzera Trasformazioni</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Scala</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Rotate/Shear</source>
-        <translation type="unfinished"></translation>
+        <translation>Ruota/Inclina</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Distort</source>
-        <translation type="unfinished"></translation>
+        <translation>Distorsione</translation>
     </message>
 </context>
 <context>
@@ -2827,7 +2827,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
         <location filename="../ui/serverlog.ui" line="+14"/>
         <location line="+10"/>
         <source>Event Log</source>
-        <translation>Registro Eventi</translation>
+        <translation>Registro degli Eventi</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -2843,7 +2843,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+32"/>
         <source>Inspect</source>
-        <translation>Іspettore</translation>
+        <translation>Іspeziona</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -2853,7 +2853,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+7"/>
         <source>Ban</source>
-        <translation>Vieta</translation>
+        <translation>Banna</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -2863,7 +2863,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+7"/>
         <source>Redo</source>
-        <translation>Rifare</translation>
+        <translation>Avanti</translation>
     </message>
 </context>
 <context>
@@ -2871,7 +2871,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location filename="../ui/sessionsettings.ui" line="+14"/>
         <source>Session Settings</source>
-        <translation>Impostazioni Sessione</translation>
+        <translation>Impostazioni della Sessione</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -2891,22 +2891,22 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+14"/>
         <source>Autoreset threshold:</source>
-        <translation>Soglia Autoreset:</translation>
+        <translation>Soglia dell&apos;Autoreset:</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Session history size at which autoreset triggers</source>
-        <translation>Dimensione della cronologia delle sessioni in cui viene attivato il trigger automatico</translation>
+        <translation>Dimensione della cronologia della sessione in cui viene attivato il trigger dell&apos;autoreset</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>No autoreset</source>
-        <translation>No autoreset</translation>
+        <translation>Nessun autoreset</translation>
     </message>
     <message>
         <location line="+3"/>
         <source> MB</source>
-        <translation>МB</translation>
+        <translation> МB</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -2916,22 +2916,22 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+7"/>
         <source>Include chat in session history so new users can see it as well</source>
-        <translation>Includi la chat nella cronologia delle sessioni in modo che anche i nuovi utenti possano vederla</translation>
+        <translation>Includi la chat nella cronologia delle sessioni in modo che anche i nuovi utenti possano visualizzarla</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Keep chat history</source>
-        <translation>Mantieni cronologia chat</translation>
+        <translation>Mantieni cronologia della chat</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Don&apos;t terminate session when the last user leaves</source>
-        <translation>Non interrompere la sessione quando l&apos;ultimo utente esce</translation>
+        <translation>Non chiudere la sessione quando l&apos;ultimo utente esce</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Persist without users</source>
-        <translation>Persistere senza utenti</translation>
+        <translation>Persiste senza utenti</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -2951,12 +2951,12 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+14"/>
         <source>Max users:</source>
-        <translation>Max utenti:</translation>
+        <translation>Utenti massimi:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>How many users to let in. Does not affect users already logged in</source>
-        <translation>Quanti utenti far entrare. Non influisce sugli utenti già loggati</translation>
+        <translation>Il numero di quanti utenti vuoi far entrare. Non influisce sugli utenti già loggati</translation>
     </message>
     <message>
         <location line="+32"/>
@@ -2966,7 +2966,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+7"/>
         <source>No guest logins</source>
-        <translation>Nessun accesso ospite</translation>
+        <translation>Accessi da utenti ospiti bloccati</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -2976,62 +2976,62 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+6"/>
         <source>Cut, Paste &amp; Fill:</source>
-        <translation>Taglia,incolla e;Riempi:</translation>
+        <translation>Taglia,incolla e;Secchiello:</translation>
     </message>
     <message>
         <location line="+70"/>
         <source>Laser Pointer:</source>
-        <translation type="unfinished"></translation>
+        <translation>Puntatore Laser:</translation>
     </message>
     <message>
         <location line="+61"/>
         <source>Selection Move &amp; Resize:</source>
-        <translation>Selezione Sposta e; Ridimensiona:</translation>
+        <translation>Spostamento della Selezione e Ridimensionamento:</translation>
     </message>
     <message>
         <location line="-118"/>
         <source>New Annotations:</source>
-        <translation>Nuove annotazioni:</translation>
+        <translation>Nuove Annotazioni:</translation>
     </message>
     <message>
         <location line="-145"/>
         <source>This session contains age-restricted content</source>
-        <translation type="unfinished"></translation>
+        <translation>Questa sessione include contenuti soggetti a limiti di età</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation>Non adatto ai minori (NSFM)</translation>
     </message>
     <message>
         <location line="+159"/>
         <source>General Layer Editing:</source>
-        <translation>Editing di livello generale:</translation>
+        <translation>Editing dei Livelli Generale:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Own Layer Editing:</source>
-        <translation>Modifica del proprio livello:</translation>
+        <translation>Modifica del Proprio Livello:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Canvas Resizing:</source>
-        <translation>Ridimensionamento della tela:</translation>
+        <translation>Ridimensionamento della Tela:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Canvas Background:</source>
-        <translation>Sfondo Tela:</translation>
+        <translation>Sfondo della Tela:</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Undo &amp; Redo:</source>
-        <translation>Annulla &amp; Rifai:</translation>
+        <translation>Annulla &amp; Avanti:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Kick &amp; Ban:</source>
-        <translation>Espelli e &amp; Blocca:</translation>
+        <translation>Espelli e &amp; Ban:</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -3041,7 +3041,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+5"/>
         <source>Trusted</source>
-        <translation>Fidati</translation>
+        <translation>Utente Affidabile</translation>
     </message>
     <message>
         <location line="-80"/>
@@ -3051,22 +3051,22 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+98"/>
         <source>Metadata:</source>
-        <translation type="unfinished"></translation>
+        <translation>Metadati:</translation>
     </message>
     <message>
         <location line="-10"/>
         <source>Timeline:</source>
-        <translation type="unfinished"></translation>
+        <translation>Timeline:</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>MyPaint Brushes:</source>
-        <translation type="unfinished"></translation>
+        <translation>Brush di MyPaint:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Banned users</source>
-        <translation>Utenti Bloccati</translation>
+        <translation>Utenti Bannati</translation>
     </message>
     <message>
         <location line="+31"/>
@@ -3123,7 +3123,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+26"/>
         <source>Text color</source>
-        <translation>Colore testo</translation>
+        <translation>Colore del testo</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -3133,7 +3133,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+22"/>
         <source>Italic</source>
-        <translation>Italic</translation>
+        <translation>Corsivo</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -3148,7 +3148,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+19"/>
         <source>Annotation content</source>
-        <translation>Contenuto di annotazione</translation>
+        <translation>Testo dell&apos;annotazione</translation>
     </message>
 </context>
 <context>
@@ -3156,27 +3156,27 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location filename="../ui/userinfodialog.ui" line="+14"/>
         <source>Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Dialogo</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Qt Version:</source>
-        <translation type="unfinished"></translation>
+        <translation>Versione Qt:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Application Version:</source>
-        <translation type="unfinished"></translation>
+        <translation>Versione dell&apos;Applicazione:</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Smoothing:</source>
-        <translation type="unfinished">Levigatura:</translation>
+        <translation>Lisciatura:</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Tablet Input:</source>
-        <translation type="unfinished"></translation>
+        <translation>Input della Tavoletta:</translation>
     </message>
     <message>
         <location line="+17"/>
