@@ -843,12 +843,12 @@ yeniden boyutlandırılacak.</translation>
     <message>
         <location line="+13"/>
         <source>A new Drawpile version that is not compatible with this one has been released.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bu versiyonla uyumlu olmayan yeni bir Drawpile versiyonu yayınlandı.</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You haven&apos;t added any servers yet. You can find some at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;drawpile.net/communities&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;You can try adding one now by entering pub.drawpile.net in the address box and clicking &lt;span style=&quot; font-style:italic;&quot;&gt;Add Server&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Henüz hiçbir sunucu eklemediniz. &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;drawpile.net/communities&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt; adresinden sunuculara erişebilirsiniz. Adres kutusuna pub.drawpile.net yazarak ve &lt;span style=&quot; font-style:italic;&quot;&gt;Add Server&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt; seçeneğine tıklayarak yeni sunucu ekleyebilirsiniz.</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -873,12 +873,12 @@ yeniden boyutlandırılacak.</translation>
     <message>
         <location line="+7"/>
         <source>NSFM</source>
-        <translation type="unfinished"></translation>
+        <translation>Uygunsuz</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show sessions not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation>18 yaş altındakilere uygun olmayan oturumları göster (Uygunsuz)</translation>
     </message>
     <message>
         <location line="+32"/>
@@ -888,7 +888,7 @@ yeniden boyutlandırılacak.</translation>
     <message>
         <location line="+31"/>
         <source>Record session</source>
-        <translation type="unfinished"></translation>
+        <translation>Oturumu Kaydet</translation>
     </message>
 </context>
 <context>
@@ -944,7 +944,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+7"/>
         <source>s</source>
-        <translation type="unfinished"></translation>
+        <translation>b</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1015,7 +1015,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location filename="../ui/layoutsdialog.ui" line="+14"/>
         <source>Layouts</source>
-        <translation type="unfinished"></translation>
+        <translation>Düzenler</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -1078,7 +1078,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="-55"/>
         <source>Show sessions not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation>18 yaş altındakilere uygun olmayan oturumları göster (Uygunsuz)</translation>
     </message>
     <message>
         <location line="+119"/>
@@ -1088,17 +1088,17 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+50"/>
         <source>View old</source>
-        <translation type="unfinished"></translation>
+        <translation>Eskiye bak</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>View new</source>
-        <translation type="unfinished"></translation>
+        <translation>Yeniye bak</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Replace pinned certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>Sabitlenen sertifikayı değiştir</translation>
     </message>
 </context>
 <context>
@@ -1111,25 +1111,25 @@ Subrange: [%3, %4]</source>
     <message numerus="yes">
         <location line="+124"/>
         <source>You have %n images with unsaved changes. Do you want to review these changes before quitting?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Kaydedilmemiş değişikliğe sahip olan %n resminiz var. Çıkmadan önce bu değişiklikleri gözden geçirmek ister misiniz?</numerusform>
+            <numerusform>Kaydedilmemiş değişikliğe sahip olan %n resminiz var. Çıkmadan önce bu değişiklikleri gözden geçirmek ister misiniz?</numerusform>
         </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>If you don&apos;t review your documents, all changes will be lost</source>
-        <translation type="unfinished"></translation>
+        <translation>Dökümanlarınızı gözden geçirmezseniz yapılan tüm değişiklikler geçersiz sayılacaktır</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Review changes...</source>
-        <translation type="unfinished"></translation>
+        <translation>Değişiklikleri gözden geçir...</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Discard changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Değişiklikleri yoksay</translation>
     </message>
 </context>
 <context>
@@ -1137,13 +1137,14 @@ Subrange: [%3, %4]</source>
     <message>
         <location filename="../mainwindow.cpp" line="+277"/>
         <source>Server out of space</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sunucu kapasitesine ulaştı</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Server is running out of history space and session has grown too large to automatically reset! (Limit is %1 MB)
 Simplify the canvas and reset manually before space runs out.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sunucu geçmiş sınırına ulaştı ve otomatik sıfırlama için aşırı büyük hale geldi! (Sınır %1 MB)
+Sunucu kapasitesine ulaşmadan tuvalı sadeleştirin ve manuel olarak sıfırlayın.</translation>
     </message>
     <message>
         <location line="+231"/>
@@ -1381,7 +1382,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+20"/>
         <source>Disconnected:</source>
-        <translation type="unfinished"></translation>
+        <translation>Bağlantı Koptu:</translation>
     </message>
     <message>
         <location line="+35"/>
