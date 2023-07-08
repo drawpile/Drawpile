@@ -3109,6 +3109,7 @@ void MainWindow::setupActions()
 			sizes << 0;
 		}
 		m_splitter->setSizes(sizes);
+		m_saveSplitterDebounce.start(DEBOUNCE_MS);
 	});
 
 	connect(moveleft, &QAction::triggered, m_view, [this] {
