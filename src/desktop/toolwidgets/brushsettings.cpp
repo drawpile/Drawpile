@@ -860,25 +860,25 @@ void BrushSettings::quickAdjust1(qreal adjustment)
 {
 	// Adjust the currently visible box. Since the MyPaint radius has a much
 	// larger range, we double the adjustment so that it feels responsive.
-	if(d->ui.brushsizeBox->isVisible()) {
-		quickAdjustOn(d->ui.brushsizeBox, adjustment);
-	} else {
+	if(d->currentIsMyPaint()) {
 		quickAdjustOn(d->ui.radiusLogarithmicBox, adjustment * 2.0);
+	} else {
+		quickAdjustOn(d->ui.brushsizeBox, adjustment);
 	}
 }
 
 void BrushSettings::stepAdjust1(bool increase)
 {
-	QSpinBox *brushsizeBox = d->ui.brushsizeBox;
-	if(brushsizeBox->isVisible()) {
-		brushsizeBox->setValue(stepLogarithmic(
-			brushsizeBox->minimum(), brushsizeBox->maximum(),
-			brushsizeBox->value(), increase));
-	} else {
+	if(d->currentIsMyPaint()) {
 		QSpinBox *radiusLogarithmicBox = d->ui.radiusLogarithmicBox;
 		radiusLogarithmicBox->setValue(stepLinear(
 			radiusLogarithmicBox->minimum(), radiusLogarithmicBox->maximum(),
 			radiusLogarithmicBox->value(), increase));
+	} else {
+		QSpinBox *brushsizeBox = d->ui.brushsizeBox;
+		brushsizeBox->setValue(stepLogarithmic(
+			brushsizeBox->minimum(), brushsizeBox->maximum(),
+			brushsizeBox->value(), increase));
 	}
 }
 
@@ -895,10 +895,10 @@ void BrushSettings::quickAdjustOn(QSpinBox *box, qreal adjustment)
 
 int BrushSettings::getSize() const
 {
-	if(d->ui.brushsizeBox->isVisible()) {
-		return d->ui.brushsizeBox->value();
-	} else {
+	if(d->currentIsMyPaint()) {
 		return radiusLogarithmicToPixelSize(d->ui.radiusLogarithmicBox->value());
+	} else {
+		return d->ui.brushsizeBox->value();
 	}
 }
 
