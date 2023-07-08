@@ -2174,38 +2174,38 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+1"/>
         <source>Rename Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Rinomina Traccia</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Delete Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Elimina Traccia</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Track Above</source>
-        <translation type="unfinished"></translation>
+        <translation>Traccia Sopra</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Track Below</source>
-        <translation type="unfinished"></translation>
+        <translation>Traccia Sotto</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>&amp;Animation</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Animazione</translation>
     </message>
     <message>
         <location line="+28"/>
         <location filename="../widgets/macmenu.cpp" line="+9"/>
         <source>&amp;Host...</source>
-        <translation>&amp;Host...</translation>
+        <translation>Fai da &amp;Host...</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Share your drawingboard with others</source>
-        <translation>Condividi il tuo tavolo da disegno con gli altri</translation>
+        <translation>Condividi la tua tavola da disegno con altri</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2236,22 +2236,22 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+1"/>
         <source>Settings...</source>
-        <translation>ImpostazionI...</translation>
+        <translation>Impostazioni...</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Become Operator...</source>
-        <translation>Diventa Operatore...</translation>
+        <translation>Diventa un Operatore...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Reset...</source>
-        <translation>&amp;Resetta...</translation>
+        <translation>&amp;Avvia un Reset...</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Report...</source>
-        <translation>Rapporto...</translation>
+        <translation>Segnala...</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2261,7 +2261,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+0"/>
         <source>Prevent changes to the drawing board</source>
-        <translation>Impedisci le modifiche al tavolo da disegno</translation>
+        <translation>Impedisci modifiche alla tavola da disegno</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -2277,12 +2277,12 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+15"/>
         <source>Freehand</source>
-        <translation>A mano libera</translation>
+        <translation>Mano Libera</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Freehand brush tool</source>
-        <translation>Strumento pennello a mano libera</translation>
+        <translation>Strumento pennello</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2292,7 +2292,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+0"/>
         <source>Freehand eraser brush</source>
-        <translation>Pennello da cancellare a mano libera</translation>
+        <translation>Pennello per cancellare</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2327,7 +2327,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+1"/>
         <source>Bezier Curve</source>
-        <translation>Curve di bezier</translation>
+        <translation>Curve di Bezier</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2337,7 +2337,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+1"/>
         <source>&amp;Flood Fill</source>
-        <translation>&amp;Riempimento</translation>
+        <translation>&amp;Secchiello</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2352,17 +2352,17 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+0"/>
         <source>Add text to the picture</source>
-        <translation>Aggiungi testo alla foto</translation>
+        <translation>Aggiungi testo all&apos;immagine</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Color Picker</source>
-        <translation>&amp;Scegliere Colore</translation>
+        <translation>&amp;Selettore del Colore</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Pick colors from the image</source>
-        <translation>Scegli colori dall&apos;immagine</translation>
+        <translation>Seleziona colori dall&apos;immagine</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2372,27 +2372,27 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+0"/>
         <source>Point out things on the canvas</source>
-        <translation>Fai notare cose sulla tela</translation>
+        <translation>Evidenzia elementi sulla tavola</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Select (Rectangular)</source>
-        <translation>&amp;Seleziona (Rettangolare)</translation>
+        <translation>&amp;Selezione (Rettangolare)</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Select area for copying</source>
-        <translation>Seleziona l&apos;area per la copia</translation>
+        <translation>Seleziona l&apos;area per copiarla</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Select (Free-Form)</source>
-        <translation>&amp;Seleziona (Forma Libera)</translation>
+        <translation>&amp;Selezione (Forma Libera)</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Select a free-form area for copying</source>
-        <translation>Seleziona un&apos;area di forma libera per la copia</translation>
+        <translation>Seleziona un&apos;area di forma libera per copiarla</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2402,7 +2402,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+0"/>
         <source>Zoom the canvas view</source>
-        <translation>Ingrandisci la vista della tela</translation>
+        <translation>Ingrandisci la vista della tavola</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2412,7 +2412,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+0"/>
         <source>Find out who did it</source>
-        <translation>Scopri chi l&apos;ha fatto</translation>
+        <translation>Scopri chi ha disegnato</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -2427,43 +2427,43 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+113"/>
         <source>Missing Log File</source>
-        <translation type="unfinished"></translation>
+        <translation>File di Registro Mancante</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Log file doesn&apos;t exist, do you need to enable logging in the preferences?</source>
-        <translation type="unfinished"></translation>
+        <translation>Il File di Registro non esiste, è necessario abilitare la registrazione nelle preferenze?</translation>
     </message>
     <message>
         <location line="+9"/>
         <location line="+8"/>
         <source>Error Saving Log File</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore nel Salvataggio del File di Registro</translation>
     </message>
     <message>
         <location line="-7"/>
         <source>Could not read source file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile leggere il file di sorgente: %1</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Could not open target file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile aprire il file di destinazione: %1</translation>
     </message>
     <message>
         <location line="+49"/>
         <source>Swatch Color %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Campione Di Colore %1</translation>
     </message>
     <message>
         <location line="+94"/>
         <source>Onion Skins</source>
-        <translation type="unfinished"></translation>
+        <translation>Onion Skin</translation>
     </message>
     <message>
         <location line="-250"/>
         <source>Swap Last Colors</source>
-        <translation>Scambia Ultimi Colori</translation>
+        <translation>Scambia Gli Ultimi Colori</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2478,7 +2478,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+1"/>
         <source>&amp;Reload Last Brush Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ricarica L&apos;Ultimo Pennello Preimpostato</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -2499,7 +2499,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+1"/>
         <source>Log File</source>
-        <translation>File Log</translation>
+        <translation>File di Registro</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2527,7 +2527,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+52"/>
         <source>Finish action</source>
-        <translation>Finire l&apos;azione</translation>
+        <translation>Finisci l&apos;azione</translation>
     </message>
     <message>
         <location line="+4"/>
