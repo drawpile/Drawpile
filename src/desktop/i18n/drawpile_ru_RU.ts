@@ -93,17 +93,17 @@
     <message>
         <location line="+20"/>
         <source>MyPaint Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Кисть MyPaint</translation>
     </message>
     <message>
         <location line="+39"/>
         <source>Pick initial color from layer</source>
-        <translation>Выбрать начальный цвет со слоя</translation>
+        <translation>Захват существующего цвета со слоя</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Lock alpha (recolor mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>Заблокировать прозрачность (режим перекрашивания)</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -118,22 +118,22 @@
     <message>
         <location line="+27"/>
         <source>Size: </source>
-        <translation type="unfinished"></translation>
+        <translation>Размер: </translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Radius: </source>
-        <translation type="unfinished"></translation>
+        <translation>Радиус: </translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>Прозрачность: </translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Hardness: </source>
-        <translation type="unfinished"></translation>
+        <translation>Жесткость: </translation>
     </message>
     <message>
         <location line="+13"/>
@@ -141,22 +141,22 @@
         <location line="+14"/>
         <location line="+33"/>
         <source>Pressure sensitivity</source>
-        <translation>Чувствительность к силе нажатия</translation>
+        <translation>Чувствительность к нажатию</translation>
     </message>
     <message>
         <location line="-16"/>
         <source>Smudging: </source>
-        <translation type="unfinished"></translation>
+        <translation>Смазывание: </translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Color Pickup: 1/</source>
-        <translation type="unfinished"></translation>
+        <translation>Захват цвета: 1/</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Spacing: </source>
-        <translation type="unfinished"></translation>
+        <translation>Интервал: </translation>
     </message>
     <message>
         <location line="+19"/>
@@ -166,12 +166,12 @@
     <message>
         <location line="+22"/>
         <source>Stabilizer: </source>
-        <translation type="unfinished"></translation>
+        <translation>Стабилизация: </translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Smoothing: </source>
-        <translation type="unfinished"></translation>
+        <translation>Сглаживание: </translation>
     </message>
     <message>
         <location line="-206"/>
@@ -184,33 +184,34 @@
     <message>
         <location filename="../ui/brushpresetproperties.ui" line="+17"/>
         <source>Brush Preset Properties</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Свойства профиля кисти</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Name:</source>
-        <translation type="unfinished">Название:</translation>
+        <translation>Название:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Description:</source>
-        <translation type="unfinished"></translation>
+        <translation>Описание:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Thumbnail:</source>
-        <translation type="unfinished"></translation>
+        <translation>Миниатюра:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Choose File...</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбрать файл...</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Will be resized
 to 64x64 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation>Будет масштабировано
+до 64x64 пикселя.</translation>
     </message>
 </context>
 <context>
@@ -218,7 +219,7 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../ui/canvasshortcutsdialog.ui" line="+14"/>
         <source>Canvas Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Горячие клавиши холста</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -228,7 +229,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+22"/>
         <source>Shortcut</source>
-        <translation type="unfinished">Горячие клавиши</translation>
+        <translation>Сочетание клавиш</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -239,22 +240,22 @@ to 64x64 pixels.</source>
     <message>
         <location line="-26"/>
         <source>Inverts the input directions. For example, scrolling up to zoom out instead of zooming in.</source>
-        <translation type="unfinished"></translation>
+        <translation>Инвертировать направление ввода. Например, скролл вверх для отдаления вместо приближения.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Inverted</source>
-        <translation type="unfinished"></translation>
+        <translation>Инвертировано</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Switches horizontal and vertical directions. For example, moving the cursor up and down to change the brush size instead of moving it left and right.</source>
-        <translation type="unfinished"></translation>
+        <translation>Переключает вертикальное и горизонтальное направления. Например, двигать курсор вверх-вниз для изменения размера кисти, вместо движения влево-вправо.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Swap Axes</source>
-        <translation type="unfinished"></translation>
+        <translation>Переключить оси</translation>
     </message>
 </context>
 <context>
@@ -348,7 +349,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Hue</source>
-        <translation>Тон</translation>
+        <translation>Оттенок</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -363,7 +364,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+37"/>
         <source>Value</source>
-        <translation>Значение</translation>
+        <translation>Яркость</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -391,7 +392,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+6"/>
         <source> ms</source>
-        <translation type="unfinished"></translation>
+        <translation> мСек</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -508,12 +509,12 @@ to 64x64 pixels.</source>
     <message>
         <location line="+9"/>
         <source>Import</source>
-        <translation type="unfinished"></translation>
+        <translation>Импорт</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Open</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -539,7 +540,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+15"/>
         <source>Save Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить выделенное</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -549,22 +550,22 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Save Session Template</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить шаблон сессии</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export Animated GIF</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт в анимированный GIF</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Performance Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Профиль производительности</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Tablet Event Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Журнал событий планшета</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -589,7 +590,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Save Animation Frames</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить кадры анимации</translation>
     </message>
     <message>
         <location line="+13"/>
