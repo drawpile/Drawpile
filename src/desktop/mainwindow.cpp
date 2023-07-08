@@ -1999,6 +1999,7 @@ void MainWindow::exit()
 	if(windowState().testFlag(Qt::WindowFullScreen))
 		toggleFullscreen();
 	setDocksHidden(false);
+	saveSplitterState();
 	saveWindowState();
 	deleteLater();
 }
