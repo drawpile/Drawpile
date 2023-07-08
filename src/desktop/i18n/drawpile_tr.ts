@@ -2441,61 +2441,61 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Log File</source>
-        <translation type="unfinished"></translation>
+        <translation>Kayıt Dosyası</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../widgets/macmenu.cpp" line="+1"/>
         <source>&amp;About Drawpile</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drawpile Hakkında</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../widgets/macmenu.cpp" line="+2"/>
         <source>About &amp;Qt</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Qt Hakkında</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Check For Updates</source>
-        <translation type="unfinished"></translation>
+        <translation>Güncelleştirmeleri Kontrol Et</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Missing Log File</source>
-        <translation type="unfinished"></translation>
+        <translation>Kayıp Kayıt Dosyası</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Log file doesn&apos;t exist, do you need to enable logging in the preferences?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kayıt Dosyası yok, kaydı tercihlerden açık hale getirmeniz gerekiyor mu?</translation>
     </message>
     <message>
         <location line="+9"/>
         <location line="+8"/>
         <source>Error Saving Log File</source>
-        <translation type="unfinished"></translation>
+        <translation>Kayıt Dosyasını Kaydederken Hata</translation>
     </message>
     <message>
         <location line="-7"/>
         <source>Could not read source file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Dosya kaynağı okunamadı: %1</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Could not open target file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Hedef dosya açılamadı: %1</translation>
     </message>
     <message>
         <location line="+11"/>
         <location filename="../widgets/macmenu.cpp" line="-5"/>
         <source>&amp;Help</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Yardım</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>Swatch Color %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Palet Rengi %1</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -2510,12 +2510,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+44"/>
         <source>Color Wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>Renk Çarkı</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Palet</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2530,7 +2530,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../widgets/macmenu.cpp" line="-13"/>
         <source>Window</source>
-        <translation type="unfinished"></translation>
+        <translation>Pencere</translation>
     </message>
 </context>
 <context>
@@ -2538,22 +2538,22 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../ui/netstats.ui" line="+14"/>
         <source>Statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>İstatistikler</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>Latency:</source>
-        <translation type="unfinished"></translation>
+        <translation>Gecikme:</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Sent:</source>
-        <translation type="unfinished"></translation>
+        <translation>Gönderildi:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Received:</source>
-        <translation type="unfinished"></translation>
+        <translation>Alındı:</translation>
     </message>
 </context>
 <context>
@@ -2561,22 +2561,22 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../ui/newdialog.ui" line="+17"/>
         <source>New Drawing</source>
-        <translation type="unfinished"></translation>
+        <translation>Yeni Çizim</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Width:</source>
-        <translation type="unfinished"></translation>
+        <translation>Genişlik:</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Height:</source>
-        <translation type="unfinished"></translation>
+        <translation>Yükseklik:</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Background:</source>
-        <translation type="unfinished"></translation>
+        <translation>Arkaplan:</translation>
     </message>
 </context>
 <context>
@@ -2589,7 +2589,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+27"/>
         <source>Rewind to Beginning</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Başa geri sar</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -2599,27 +2599,27 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+17"/>
         <source>Play</source>
-        <translation type="unfinished"></translation>
+        <translation>Oynat</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Next Stroke</source>
-        <translation type="unfinished"></translation>
+        <translation>Sonraki Fırça Darbesi</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Skip Forward</source>
-        <translation type="unfinished"></translation>
+        <translation>İleri Sar</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Playback Speed: </source>
-        <translation type="unfinished"></translation>
+        <translation>Oynatma Hızı: </translation>
     </message>
     <message>
         <location line="+3"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+67"/>
@@ -2634,7 +2634,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+76"/>
         <source>Frame:</source>
-        <translation type="unfinished"></translation>
+        <translation>Kare:</translation>
     </message>
     <message>
         <location line="+42"/>
@@ -2644,17 +2644,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>Autosave</source>
-        <translation type="unfinished"></translation>
+        <translation>Otomatik Kayıt</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Save frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Kareyi Kaydet</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>Dur</translation>
     </message>
     <message>
         <location line="+39"/>
@@ -2668,7 +2668,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location filename="../dialogs/avatarimport.cpp" line="+59"/>
         <location filename="../filewrangler.cpp" line="-425"/>
         <source>All files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Tüm Dosyalar (*)</translation>
     </message>
     <message>
         <location filename="../docks/toolsettingsdock.cpp" line="+76"/>
@@ -2678,22 +2678,22 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+6"/>
         <source>Eraser</source>
-        <translation type="unfinished"></translation>
+        <translation>Silgi</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Line</source>
-        <translation type="unfinished"></translation>
+        <translation>Çizgi</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Rectangle</source>
-        <translation type="unfinished"></translation>
+        <translation>Dİkdörtgen</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Ellipse</source>
-        <translation type="unfinished"></translation>
+        <translation>Elips</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -2713,7 +2713,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+6"/>
         <source>Color Picker</source>
-        <translation type="unfinished"></translation>
+        <translation>Renk Seçici</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -2746,7 +2746,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../ui/resetsession.ui" line="+14"/>
         <source>Reset session</source>
-        <translation type="unfinished"></translation>
+        <translation>Oturumu Sıfırla</translation>
     </message>
 </context>
 <context>
@@ -2754,7 +2754,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../ui/resizedialog.ui" line="+14"/>
         <source>Resize Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Tuvali Yeniden Boyutlandır</translation>
     </message>
     <message>
         <location line="+57"/>
@@ -2772,19 +2772,19 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+10"/>
         <source>Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>Dönüştür</translation>
     </message>
     <message>
         <location line="+11"/>
         <location line="+3"/>
         <source>Flip Horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>Yatay Olarak Çevir</translation>
     </message>
     <message>
         <location line="+27"/>
         <location line="+3"/>
         <source>Flip Vertically</source>
-        <translation type="unfinished"></translation>
+        <translation>Dikey Olarak Çevir</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -2820,7 +2820,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location filename="../ui/serverlog.ui" line="+14"/>
         <location line="+10"/>
         <source>Event Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Olay</translation>
     </message>
     <message>
         <location line="+6"/>
