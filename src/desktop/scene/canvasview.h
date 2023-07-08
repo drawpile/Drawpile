@@ -278,7 +278,7 @@ private:
 	bool isRotationInverted() const;
 
 	//! Redraw the scene around the outline cursor if necesasry
-	void updateOutline(canvas::Point point);
+	void updateOutline(QPointF point);
 	void updateOutline();
 	QRectF getOutlineBounds(const QPointF &point, int size);
 
@@ -335,7 +335,7 @@ private:
 
 	//! Previous pointer location
 	canvas::Point m_prevpoint;
-	canvas::Point m_prevoutlinepoint;
+	QPointF m_prevoutlinepoint;
 	bool m_prevoutline;
 	qreal m_pointerdistance;
 	qreal m_pointervelocity;

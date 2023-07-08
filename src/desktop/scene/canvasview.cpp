@@ -1535,10 +1535,11 @@ bool CanvasView::viewportEvent(QEvent *event)
 	return true;
 }
 
-void CanvasView::updateOutline(canvas::Point point)
+void CanvasView::updateOutline(QPointF point)
 {
 	if(m_showoutline && !m_lock && !m_busy &&
-	   (!m_prevoutline || !point.roughlySame(m_prevoutlinepoint))) {
+	   (!m_prevoutline ||
+		!canvas::Point::roughlySame(point, m_prevoutlinepoint))) {
 		if(!m_subpixeloutline) {
 			point.setX(qFloor(point.x()) + 0.5);
 			point.setY(qFloor(point.y()) + 0.5);
@@ -1660,7 +1661,7 @@ void CanvasView::updateCanvasTransform(const std::function<void()> &block)
 	}
 
 	if(m_prevoutline) {
-		m_prevoutlinepoint.setPos(toCanvasTransform().map(outlinePoint));
+		m_prevoutlinepoint = toCanvasTransform().map(outlinePoint);
 		rects.append(getOutlineBounds(m_prevoutlinepoint, m_outlineSize));
 	}
 	updateScene(rects);
@@ -1815,6 +1816,7 @@ void CanvasView::resizeEvent(QResizeEvent *e)
 	QScopedValueRollback<bool> guard{m_scrollBarsAdjusting, true};
 	QGraphicsView::resizeEvent(e);
 	if(!e->size().isEmpty()) {
+		updateOutline(mapToCanvas(mapFromGlobal(QCursor::pos())));
 		updateCanvasTransform([] {
 			// Nothing.
 		});
