@@ -118,6 +118,8 @@ protected:
 		Object *object, Receiver receiver, Signal signal = nullptr
 	)
 	{
+		// The Q_UNUSED in this function are necessary for old gcc, otherwise it
+		// raises errant warnings about unused but set parameters.
 		static_assert(std::is_base_of_v<Settings, Self>);
 
 		if constexpr (
@@ -129,10 +131,12 @@ protected:
 			std::is_member_function_pointer_v<Receiver>
 			&& std::is_invocable_v<Receiver, Object *>
 		) {
+			Q_UNUSED(value);
 			std::invoke(receiver, object);
 		} else if constexpr (std::is_invocable_v<Receiver, T>) {
 			std::invoke(receiver, value);
 		} else {
+			Q_UNUSED(value);
 			std::invoke(receiver);
 		}
 
@@ -147,6 +151,8 @@ protected:
 				connect(object, signal, static_cast<Self *>(this), setter)
 			};
 		} else {
+			Q_UNUSED(signal);
+			Q_UNUSED(setter);
 			return connection;
 		}
 	}
