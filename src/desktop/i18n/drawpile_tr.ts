@@ -6,7 +6,7 @@
     <message>
         <location filename="../bundled/QtColorWidgets/abstract_widget_list.cpp" line="+67"/>
         <source>Add New</source>
-        <translation type="unfinished">Yeni Ekle</translation>
+        <translation>Yeni Ekle</translation>
     </message>
     <message>
         <location line="+51"/>
@@ -78,12 +78,12 @@
     <message>
         <location filename="../ui/brushdock.ui" line="+74"/>
         <source>Pixel brush</source>
-        <translation>Pixel fırça</translation>
+        <translation>Piksel fırça</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Square pixel brush</source>
-        <translation>Kare pixel fırça</translation>
+        <translation>Kare piksel fırça</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -93,17 +93,17 @@
     <message>
         <location line="+20"/>
         <source>MyPaint Brush</source>
-        <translation>MyPaint Fırça</translation>
+        <translation>MyPaint Fırçası</translation>
     </message>
     <message>
         <location line="+39"/>
         <source>Pick initial color from layer</source>
-        <translation type="unfinished">Rengi katmandan seç</translation>
+        <translation>Rengi katmandan seç</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Lock alpha (recolor mode)</source>
-        <translation>Alpha kilit (yeniden renklendirme modu)</translation>
+        <translation>Alfa kilit (yeniden renklendirme modu)</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -128,7 +128,7 @@
     <message>
         <location line="+16"/>
         <source>Radius: </source>
-        <translation type="unfinished">Çevre: </translation>
+        <translation>Çevre: </translation>
     </message>
     <message>
         <location line="+13"/>
@@ -146,7 +146,7 @@
         <location line="+14"/>
         <location line="+33"/>
         <source>Pressure sensitivity</source>
-        <translation>Baskı hassasiyeti</translation>
+        <translation>Basınç hassasiyeti</translation>
     </message>
     <message>
         <location line="-16"/>
@@ -156,7 +156,7 @@
     <message>
         <location line="+30"/>
         <source>Color Pickup: 1/</source>
-        <translation type="unfinished">Renk Alımı: 1/</translation>
+        <translation>Renk Alımı: 1/</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -166,12 +166,12 @@
     <message>
         <location line="+19"/>
         <source>Gain: </source>
-        <translation type="unfinished"></translation>
+        <translation>Gain: </translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Stabilizer: </source>
-        <translation>Sabitleyici: </translation>
+        <translation>Dengeleyici: </translation>
     </message>
     <message>
         <location line="+13"/>
@@ -184,7 +184,7 @@
     <message>
         <location filename="../ui/brushpresetproperties.ui" line="+17"/>
         <source>Brush Preset Properties</source>
-        <translation type="unfinished">Fırça Ayarı Özellikleri</translation>
+        <translation>Fırça Ön Ayarı Özellikleri</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -210,7 +210,7 @@
         <location line="+11"/>
         <source>Will be resized
 to 64x64 pixels.</source>
-        <translation>64x64 pixel olarak 
+        <translation>64x64 piksel olarak 
 yeniden boyutlandırılacak.</translation>
     </message>
 </context>
@@ -235,12 +235,12 @@ yeniden boyutlandırılacak.</translation>
         <location line="+16"/>
         <location line="+50"/>
         <source>Action</source>
-        <translation type="unfinished">Hareket</translation>
+        <translation>Hareket</translation>
     </message>
     <message>
         <location line="-26"/>
         <source>Inverts the input directions. For example, scrolling up to zoom out instead of zooming in.</source>
-        <translation type="unfinished">Girdi yönlerini tersine çevirir. Mesela, orta tuşu kaydırıp yakınlaştırmak yerine uzaklaştırmak.</translation>
+        <translation>Hareket yönlerini tersine çevirir. Mesela, fare tekerleğini kaydırıp yakınlaştırmak yerine uzaklaştırmak.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -250,12 +250,12 @@ yeniden boyutlandırılacak.</translation>
     <message>
         <location line="+7"/>
         <source>Switches horizontal and vertical directions. For example, moving the cursor up and down to change the brush size instead of moving it left and right.</source>
-        <translation>Yatay ve dikey boyutları değiştirir. Mesela, fırça boyutunu değiştirmek için fareyi sağa sola oynatmak yerine yukarı aşağı oynatmak.</translation>
+        <translation>Yatay ve dikey yönleri ters çevirir. Mesela, fırça boyutunu değiştirmek için fareyi sağa sola oynatmak yerine yukarı aşağı oynatmak.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Swap Axes</source>
-        <translation>Yönü Değiştir</translation>
+        <translation>Eksenleri Değiştir</translation>
     </message>
 </context>
 <context>
@@ -279,7 +279,7 @@ yeniden boyutlandırılacak.</translation>
     <message>
         <location line="+23"/>
         <source>Issued by</source>
-        <translation type="unfinished">Tarafından</translation>
+        <translation>Tarafından Verildi</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -300,7 +300,7 @@ yeniden boyutlandırılacak.</translation>
     <message>
         <location line="-7"/>
         <source>Issued on:</source>
-        <translation type="unfinished"></translation>
+        <translation>Verilme tarihi:</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -316,7 +316,7 @@ yeniden boyutlandırılacak.</translation>
     <message>
         <location line="+26"/>
         <source>Issued to</source>
-        <translation type="unfinished"></translation>
+        <translation>Kişisine Verildi</translation>
     </message>
     <message>
         <location line="+53"/>
@@ -397,7 +397,7 @@ yeniden boyutlandırılacak.</translation>
     <message>
         <location line="+3"/>
         <source>Playback Delay: </source>
-        <translation>Oynatma Gecikmesi: </translation>
+        <translation>Geri Oynatma Gecikmesi: </translation>
     </message>
     <message>
         <location line="+16"/>
@@ -471,12 +471,12 @@ yeniden boyutlandırılacak.</translation>
     <message>
         <location line="+7"/>
         <source>History Offset:</source>
-        <translation>Geçmiş Denkleştirmesi:</translation>
+        <translation>Geçmiş Ofseti:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Local Fork Fallbehind:</source>
-        <translation type="unfinished">Yerel Çatal</translation>
+        <translation>Yerel Çatal Geridekalımı:</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -491,7 +491,7 @@ yeniden boyutlandırılacak.</translation>
     <message>
         <location line="+7"/>
         <source>Hide Gone Entries</source>
-        <translation type="unfinished"></translation>
+        <translation>Gitmiş Kayıtları Gizle</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -509,7 +509,7 @@ yeniden boyutlandırılacak.</translation>
     <message>
         <location line="+9"/>
         <source>Import</source>
-        <translation type="unfinished">İçe aktar</translation>
+        <translation>İçe aktar</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -535,7 +535,7 @@ yeniden boyutlandırılacak.</translation>
     <message>
         <location line="-140"/>
         <source>Save Pre-Reset Image</source>
-        <translation>Sıfırlama Öncesi Resmi Kaydet</translation>
+        <translation>Sıfırlama-Öncesi Resmi Kaydet</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -565,7 +565,7 @@ yeniden boyutlandırılacak.</translation>
     <message>
         <location line="+7"/>
         <source>Tablet Event Log</source>
-        <translation>Tablet olay kaydı</translation>
+        <translation>Tablet Olay Kaydı</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -575,17 +575,17 @@ yeniden boyutlandırılacak.</translation>
     <message>
         <location line="+7"/>
         <source>Export MP4 Video</source>
-        <translation>MP4 Videosunu kaydet</translation>
+        <translation>MP4 Videosunu Dışa Aktar</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export WebM Video</source>
-        <translation>WebM Videosunu kaydet</translation>
+        <translation>WebM Videosunu Dışa Aktar</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export Custom FFmpeg Video</source>
-        <translation>FFmpeg Videosunu kaydet</translation>
+        <translation>FFmpeg Videosunu Dışa Aktar</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -600,7 +600,7 @@ yeniden boyutlandırılacak.</translation>
     <message>
         <location line="+31"/>
         <source>The selected format does not support layers or annotations.</source>
-        <translation>Seçilen format katman notlarını desteklemiyor.</translation>
+        <translation>Seçilen format katman dip notlarını desteklemiyor.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -655,7 +655,7 @@ yeniden boyutlandırılacak.</translation>
     <message>
         <location line="-10"/>
         <source>Feather: </source>
-        <translation type="unfinished"></translation>
+        <translation>Yumuşaklık: </translation>
     </message>
     <message>
         <location line="+13"/>
@@ -699,12 +699,12 @@ yeniden boyutlandırılacak.</translation>
     <message>
         <location filename="../ui/flipbook.ui" line="+14"/>
         <source>Flipbook</source>
-        <translation type="unfinished"></translation>
+        <translation>Ön izleme</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Reset Zoom</source>
-        <translation>Büyütmeyi Resetle</translation>
+        <translation>Yakınlaştırmayı Sıfırla</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -714,7 +714,7 @@ yeniden boyutlandırılacak.</translation>
     <message>
         <location line="+39"/>
         <source>Rewind</source>
-        <translation>Geri sar</translation>
+        <translation>Geri Sar</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -757,7 +757,7 @@ yeniden boyutlandırılacak.</translation>
     <message>
         <location line="+10"/>
         <source>The title is shown in the application title bar and in the session selection dialog</source>
-        <translation>Başıl uygulamanın başlık çubuğunda ve oturum seçim diyaloğunda gösteriliyor</translation>
+        <translation>Başlık, uygulama başlık çubuğunda ve oturum seçim diyaloğunda gözükür</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -772,7 +772,7 @@ yeniden boyutlandırılacak.</translation>
     <message>
         <location line="+10"/>
         <source>ID a&amp;lias:</source>
-        <translation type="unfinished">ID</translation>
+        <translation>ID ta&amp;kma adı:</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -782,22 +782,22 @@ yeniden boyutlandırılacak.</translation>
     <message>
         <location line="+7"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation>18 yaş altı için uygunsuz</translation>
+        <translation>18 yaş altı için uygunsuz (UYGUNSUZ)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Marks the session as having age-restricted content.</source>
-        <translation>Oturumu yaş kısıtlamalı içerik olarak işaretle.</translation>
+        <translation>Oturumu yaş kısıtlamalı içerik olarak işaretler.</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>Host:</source>
-        <translation type="unfinished"></translation>
+        <translation>Host:</translation>
     </message>
     <message>
         <location line="-30"/>
         <source>Announce the session at a public list</source>
-        <translation>Bu oturumu halka açık listede anons et</translation>
+        <translation>Bu oturumu herkese açık listede anons et</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -807,12 +807,12 @@ yeniden boyutlandırılacak.</translation>
     <message>
         <location line="+37"/>
         <source>Use Drawpile&apos;s built-in server</source>
-        <translation>DrawPile&apos;ın sunucusunu kullan</translation>
+        <translation>DrawPile&apos;ın kendi sunucusunu kullan</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This co&amp;mputer</source>
-        <translation>Bu bilgisayar</translation>
+        <translation>Bu bi&amp;lgisayar</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -822,7 +822,7 @@ yeniden boyutlandırılacak.</translation>
     <message>
         <location line="+3"/>
         <source>Re&amp;mote:</source>
-        <translation type="unfinished"></translation>
+        <translation>Uz&amp;aktan:</translation>
     </message>
 </context>
 <context>
@@ -848,7 +848,7 @@ yeniden boyutlandırılacak.</translation>
     <message>
         <location line="+17"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You haven&apos;t added any servers yet. You can find some at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;drawpile.net/communities&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;You can try adding one now by entering pub.drawpile.net in the address box and clicking &lt;span style=&quot; font-style:italic;&quot;&gt;Add Server&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Henüz hiçbir sunucu eklemediniz. &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;drawpile.net/communities&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt; adresinden sunuculara erişebilirsiniz. Adres kutusuna pub.drawpile.net yazarak ve &lt;span style=&quot; font-style:italic;&quot;&gt;Add Server&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt; seçeneğine tıklayarak yeni sunucu ekleyebilirsiniz.</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Henüz hiçbir sunucu eklemediniz. &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;drawpile.net/communities&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;adresinden sunuculara erişebilirsiniz. Adres kutusuna pub.drawpile.net yazarak ve &lt;span style=&quot; font-style:italic;&quot;&gt;Add Server&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt; seçeneğine tıklayarak yeni sunucu ekleyebilirsiniz.</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -873,17 +873,17 @@ yeniden boyutlandırılacak.</translation>
     <message>
         <location line="+7"/>
         <source>NSFM</source>
-        <translation>Uygunsuz</translation>
+        <translation>UYGUNSUZ</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show sessions not suitable for minors (NSFM)</source>
-        <translation>18 yaş altındakilere uygun olmayan oturumları göster (Uygunsuz)</translation>
+        <translation>18 yaş altındakilere uygun olmayan oturumları göster (UYGUNSUZ)</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Enter a host address, session URL or room code to join a session:</source>
-        <translation type="unfinished"></translation>
+        <translation>Bir oturuma girmek için oturum URLsi, oda kodu ya da host adresi girin:</translation>
     </message>
     <message>
         <location line="+31"/>
@@ -896,7 +896,7 @@ yeniden boyutlandırılacak.</translation>
     <message>
         <location filename="../widgets/kis_curve_widget.cpp" line="+46"/>
         <source>Remove point</source>
-        <translation type="unfinished"></translation>
+        <translation>Noktayı Kaldır</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -911,7 +911,9 @@ yeniden boyutlandırılacak.</translation>
         <source>Toggle between full range and subrange.
 Full range: [%1, %2]
 Subrange: [%3, %4]</source>
-        <translation type="unfinished"></translation>
+        <translation>Ful aralık ve alt aralık arasında geçiş yapın.
+Ful aralık: [%1, %2]
+Alt aralık: [%3, %4]</translation>
     </message>
     <message>
         <location line="+175"/>
@@ -921,12 +923,12 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+10"/>
         <source>&amp;Step up</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Yukarı adım</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Step &amp;down</source>
-        <translation type="unfinished"></translation>
+        <translation>Aşağı &amp;adım</translation>
     </message>
 </context>
 <context>
@@ -939,7 +941,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+87"/>
         <source>Track hovering pointer</source>
-        <translation type="unfinished"></translation>
+        <translation>Gezinen işaretçiyi göster</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -962,7 +964,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+6"/>
         <source>Name:</source>
-        <translation>İsim:</translation>
+        <translation>Ad:</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -972,7 +974,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+7"/>
         <source>%</source>
-        <translation>&amp;</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -997,12 +999,12 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+23"/>
         <source>Collaboration:</source>
-        <translation type="unfinished"></translation>
+        <translation>İşbirliği:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Default for new users</source>
-        <translation>Yeni kullanıcılar için varsayılan</translation>
+        <translation>Yeni kullanıcılar için varsayılır</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1035,7 +1037,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+24"/>
         <source>Drawpile&apos;s dockers can be freely arranged and combined by holding Shift and dragging them at the top. You can save and restore your favorite arrangements here. Make sure your arrangement fits your resolution, otherwise some controls may be pushed off-screen.</source>
-        <translation>Drawpile&apos;ın pencereleri Shift tuşuna basılı tutup fare ile yukarı sürükleyerek özgürce düzenlenebilir. Favori düzenlemelerinizi buraya kaydedip yeniden erişebilirsiniz. Düzenlemenizin çözünürlüğünüze uygun olduğuna emin olun, yoksa bazı pencelerer ekranın dışına itilebilir.</translation>
+        <translation>Drawpile&apos;ın pencereleri, Shift tuşuna basılı tutarken fare ile yukarıdan tutup sürükleyerek özgürce düzenlenebilir. Favori düzenlemelerinizi buraya kaydedip yeniden erişebilirsiniz. Düzenlemenizin, çözünürlüğünüze uygun olduğuna emin olun, yoksa bazı pencelerer ekranın dışına itilebilir.</translation>
     </message>
 </context>
 <context>
@@ -1078,12 +1080,12 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="-55"/>
         <source>Show sessions not suitable for minors (NSFM)</source>
-        <translation>18 yaş altındakilere uygun olmayan oturumları göster (Uygunsuz)</translation>
+        <translation>18 yaş altındakilere uygun olmayan oturumları göster (UYGUNSUZ)</translation>
     </message>
     <message>
         <location line="+119"/>
         <source>Catching up...</source>
-        <translation type="unfinished"></translation>
+        <translation>Yükleniyor...</translation>
     </message>
     <message>
         <location line="+50"/>
@@ -1137,7 +1139,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location filename="../mainwindow.cpp" line="+277"/>
         <source>Server out of space</source>
-        <translation type="unfinished">Sunucu kapasitesine ulaştı</translation>
+        <translation>Sunucu kapasitesine ulaştı</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1160,7 +1162,7 @@ Sunucu kapasitesine ulaşmadan tuvalı sadeleştirin ve manuel olarak sıfırlay
     <message>
         <location line="-783"/>
         <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
-        <translation>&lt;p&gt;&apos;%1&apos; kısayolu çok belirsiz, şu kısayolla uyuşuyor: &lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;&lt;/ul&gt;</translation>
+        <translation>&lt;p&gt; &apos;%1&apos; kısayolu çok belirsiz, şu kısayolla uyuşuyor: &lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;&lt;/ul&gt;</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1243,7 +1245,7 @@ Sunucu kapasitesine ulaşmadan tuvalı sadeleştirin ve manuel olarak sıfırlay
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t export session template</source>
-        <translation type="unfinished"></translation>
+        <translation>Oturum şablonu dışa aktarılamadı</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -1301,12 +1303,12 @@ Sunucu kapasitesine ulaşmadan tuvalı sadeleştirin ve manuel olarak sıfırlay
     <message>
         <location line="+10"/>
         <source>Error closing tablet event log.</source>
-        <translation>Tablet olay kaydını kapatırken hata oluştu</translation>
+        <translation>Tablet olay kaydını kapatırken hata oluştu.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Error opening tablet event log.</source>
-        <translation>Tablet olay kaydını açarken hata oluştu</translation>
+        <translation>Tablet olay kaydını açarken hata oluştu.</translation>
     </message>
     <message>
         <location line="+87"/>
@@ -1372,7 +1374,7 @@ Sunucu kapasitesine ulaşmadan tuvalı sadeleştirin ve manuel olarak sıfırlay
     <message>
         <location line="+12"/>
         <source>Would you like to join the session instead?</source>
-        <translation type="unfinished"></translation>
+        <translation>Bunun yerine oturuma katılmak ister misiniz?</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1422,12 +1424,12 @@ Sunucu kapasitesine ulaşmadan tuvalı sadeleştirin ve manuel olarak sıfırlay
     <message>
         <location line="+49"/>
         <source>Bad arguments, this is probably a bug in Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kötü argümanlar, bu büyük ihtimalle bir Drawpile hatası.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Couldn&apos;t open file for reading.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dosya okunma için açılamadı.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1503,7 +1505,7 @@ Sunucu kapasitesine ulaşmadan tuvalı sadeleştirin ve manuel olarak sıfırlay
         <location line="+15"/>
         <location line="+775"/>
         <source>Record Debug Dumps</source>
-        <translation type="unfinished"></translation>
+        <translation>Hata Ayıklama Çöplüklerini Kaydet</translation>
     </message>
     <message>
         <location line="-774"/>
@@ -1512,7 +1514,11 @@ Sunucu kapasitesine ulaşmadan tuvalı sadeleştirin ve manuel olarak sıfırlay
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
 
 Are you sure youwant to start recording debug dumps?</source>
-        <translation type="unfinished"></translation>
+        <translation>Hata ayıklama çöplükleri yerel ve uzaktan gelen çizim komutlarını kaydedecek. Ağ sıkıntılarını düzeltmektirken kullanılabilirler and başka pek bir katkıları yok. Eğer sıradan bir kayıt almak istiyorsanız, Dosya &gt; Kaydet... seçeneğini kullanın
+
+Hata ayıklama çöplüğü kaydı gelecek tuval sıfırlamasından sonra başlayacak ve dosyalar %1 uzqantısına kaydedilecek
+
+Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -1522,7 +1528,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>A collaborative drawing program.</source>
-        <translation type="unfinished"></translation>
+        <translation>Başkalarıyla birlikte eş zamanlı resim çizebildiğiniz bir çizim programı.</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -1532,12 +1538,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>Tablet Input:</source>
-        <translation>Tablet Girişi</translation>
+        <translation>Tablet Girişi:</translation>
     </message>
     <message>
         <location line="+92"/>
         <source>Toggle Dock %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Pencereyi Aç/Kapat %1</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -1569,7 +1575,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+1"/>
         <location filename="../widgets/macmenu.cpp" line="+1"/>
         <source>&amp;Open...</source>
-        <translation>%Aç...</translation>
+        <translation>&amp;Aç...</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1594,7 +1600,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Autosave</source>
-        <translation type="unfinished">Otomatik Kayıt</translation>
+        <translation>Otomatik Kayıt</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1632,17 +1638,17 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+3"/>
         <location filename="../widgets/macmenu.cpp" line="+8"/>
         <source>Open &amp;Recent</source>
-        <translation type="unfinished"></translation>
+        <translation>En &amp;Sonkini Aç</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>&amp;Import</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;İçe Aktar</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Export</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Dışa Aktar</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -1667,7 +1673,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+0"/>
         <source>Copy selected area to the clipboard</source>
-        <translation type="unfinished">Seçili alanı</translation>
+        <translation>Seçili alanı panoya kopyala</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1677,7 +1683,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+0"/>
         <source>Copy selected area, excluding the background, to the clipboard</source>
-        <translation type="unfinished">Seçilen bölgeyi kopyala, arka plan hariç,</translation>
+        <translation>Seçilen bölgeyi, arka plan hariç, panoya kopyala</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1687,17 +1693,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+0"/>
         <source>Copy selected area of the current layer to the clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktif katmanın seçili bölgesini panoya kopyala</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Cu&amp;t Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Katmanı Ke&amp;s</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Cut selected area of the current layer to the clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktif katmanın seçili alanını panoya kopyala</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1707,17 +1713,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Paste in View Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Görüş Merkezine Yapıştır</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Stamp</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Damga</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Paste &amp;From File...</source>
-        <translation type="unfinished"></translation>
+        <translation>Dosyadan &amp;Yapıştır...</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1763,7 +1769,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>&amp;Deselect</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Seçimi Kaldır</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -1828,12 +1834,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+13"/>
         <source>&amp;Layouts...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Düzenler...</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Toolbars</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Araç Çubukları</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1893,7 +1899,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Show User &amp;Pointers</source>
-        <translation type="unfinished"></translation>
+        <translation>Kullanıcı &amp;İşaretçilerini Göster</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1913,12 +1919,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Show La&amp;ser Trails</source>
-        <translation type="unfinished"></translation>
+        <translation>La&amp;zer İşaretlerini Göster</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Show Pixel &amp;Grid</source>
-        <translation type="unfinished"></translation>
+        <translation>Piksel &amp;Izgaralarını Göster</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1953,7 +1959,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Layer View</source>
-        <translation type="unfinished"></translation>
+        <translation>Katman Görünümü</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -1963,7 +1969,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Frame View</source>
-        <translation type="unfinished"></translation>
+        <translation>Kare Görünümü</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -1978,12 +1984,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+9"/>
         <source>Layer View Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Katman Görünümü Modu</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>User Pointers</source>
-        <translation type="unfinished"></translation>
+        <translation>Kullanıcı İşaretçileri</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -2038,7 +2044,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+16"/>
         <source>Flipbook</source>
-        <translation type="unfinished"></translation>
+        <translation>Önizleme</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2093,32 +2099,32 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>New Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Yeni Track</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Track Visible</source>
-        <translation type="unfinished"></translation>
+        <translation>Track Görünür Halde</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Track Onion Skin</source>
-        <translation type="unfinished"></translation>
+        <translation>Track Soğan Zarı</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Duplicate Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Tracki Çoğalt</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Rename Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Tracki yeniden adlandır</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Delete Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Tracki sil</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2133,12 +2139,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Track Above</source>
-        <translation type="unfinished"></translation>
+        <translation>Üstteki Track</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Track Below</source>
-        <translation type="unfinished"></translation>
+        <translation>Alttaki Track</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -2226,7 +2232,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+15"/>
         <source>Freehand</source>
-        <translation>Düzensiz</translation>
+        <translation>Özgür</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2276,17 +2282,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Bezier Curve</source>
-        <translation type="unfinished">Bezier Kıvrımı</translation>
+        <translation>Bezier Kıvrımı</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Draw bezier curves</source>
-        <translation>Bezier kıvrımı çiz</translation>
+        <translation>Bezier eğrisi çiz</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Flood Fill</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Boya Kovası</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2336,12 +2342,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>&amp;Select (Free-Form)</source>
-        <translation type="unfinished">Seç</translation>
+        <translation>&amp;Seç (Özgür)</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Select a free-form area for copying</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopyalamak için özgür bir seçim yapın</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2351,7 +2357,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+0"/>
         <source>Zoom the canvas view</source>
-        <translation type="unfinished"></translation>
+        <translation>Tuval görünümünü yakınlaştır</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2386,12 +2392,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Artifical Disconnect...</source>
-        <translation type="unfinished">Yapay</translation>
+        <translation>Yapay Bağlantı Kopumu...</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Open Debug Dump...</source>
-        <translation type="unfinished"></translation>
+        <translation>Hata Ayıklama Çöplüğünü Aç...</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -2421,7 +2427,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>&amp;Reload Last Brush Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;En Sonki Fırça Ayarını Geri Yükle</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -2469,7 +2475,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Log file doesn&apos;t exist, do you need to enable logging in the preferences?</source>
-        <translation type="unfinished">Kayıt Dosyası yok, kaydı tercihlerden açık hale getirmeniz gerekiyor mu?</translation>
+        <translation>Kayıt Dosyası mevcut değil, kaydı tercihlerden açık hale getirmeniz gerekiyor mu?</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -2496,7 +2502,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+38"/>
         <source>Swatch Color %1</source>
-        <translation type="unfinished">Palet Rengi %1</translation>
+        <translation>Renk Örneği %1</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -2506,7 +2512,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+4"/>
         <source>Cancel action</source>
-        <translation>AKsiyonu İptal Et</translation>
+        <translation>Aksiyonu İptal Et</translation>
     </message>
     <message>
         <location line="+44"/>
@@ -2590,7 +2596,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+27"/>
         <source>Rewind to Beginning</source>
-        <translation type="unfinished">Başa geri sar</translation>
+        <translation>Başa Geri Sar</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -2625,12 +2631,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+67"/>
         <source>Building an index will let you quickly skip to any part of your recording.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bir index oluşturmak hızlıca kaydınızdaki herhangi bir yere atlamanıza yardımcı olacak.</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Build Index</source>
-        <translation type="unfinished"></translation>
+        <translation>İndex Oluştur</translation>
     </message>
     <message>
         <location line="+76"/>
@@ -2640,7 +2646,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+42"/>
         <source>Automatically save a frame at each step</source>
-        <translation type="unfinished"></translation>
+        <translation>Her adımda kareyi otomatik olarak kaydet</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2660,7 +2666,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+39"/>
         <source>Export Video...</source>
-        <translation type="unfinished"></translation>
+        <translation>Videoyu Dışa Aktar...</translation>
     </message>
 </context>
 <context>
@@ -2674,7 +2680,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../docks/toolsettingsdock.cpp" line="+76"/>
         <source>Freehand</source>
-        <translation type="unfinished"></translation>
+        <translation>Özgür</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -2704,7 +2710,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+6"/>
         <source>Flood Fill</source>
-        <translation type="unfinished"></translation>
+        <translation>Boya Kovası</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -2768,7 +2774,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../ui/selectsettings.ui" line="+29"/>
         <source>Interpolation:</source>
-        <translation type="unfinished"></translation>
+        <translation>İnterpolasyon:</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -2791,7 +2797,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+27"/>
         <location line="+3"/>
         <source>Shrink to View</source>
-        <translation type="unfinished"></translation>
+        <translation>Görüşe Sığdır</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -2807,12 +2813,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+10"/>
         <source>Rotate/Shear</source>
-        <translation type="unfinished"></translation>
+        <translation>Döndür</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Distort</source>
-        <translation type="unfinished"></translation>
+        <translation>Bük</translation>
     </message>
 </context>
 <context>
@@ -3000,7 +3006,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+10"/>
         <source>Own Layer Editing:</source>
-        <translation type="unfinished"></translation>
+        <translation>Katman Düzenleme:</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -3045,7 +3051,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+10"/>
         <source>Metadata:</source>
-        <translation type="unfinished"></translation>
+        <translation>Metadata:</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -3132,12 +3138,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+17"/>
         <source>Underline</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt Çizgi</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Strikethrough</source>
-        <translation type="unfinished"></translation>
+        <translation>Üst Çizgi</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -3165,12 +3171,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+17"/>
         <source>Smoothing:</source>
-        <translation type="unfinished"></translation>
+        <translation>Yumuşatma:</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Tablet Input:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tablet Girdisi:</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -3210,7 +3216,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+7"/>
         <source>Global Pressure Curve:</source>
-        <translation type="unfinished"></translation>
+        <translation>Küresel Basınç Eğrisi:</translation>
     </message>
 </context>
 <context>
@@ -3231,7 +3237,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../ui/videoexport.ui" line="+14"/>
         <source>Export video</source>
-        <translation type="unfinished"></translation>
+        <translation>Videoyu Dışa Aktar</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -3271,22 +3277,22 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+27"/>
         <source>File name pattern:</source>
-        <translation type="unfinished"></translation>
+        <translation>Dosya adı deseni:</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Supported pattern placeholders:&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{F}&lt;/span&gt; - frame number&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{E}&lt;/span&gt; - file extension&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Desteklenen desen yer tutucuları:&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{K}&lt;/span&gt; - kare numarası&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{U}&lt;/span&gt; - dosya uzantısı&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>ffmpeg executable not found</source>
-        <translation type="unfinished"></translation>
+        <translation>ffmpeg yürütme dosyası bulunamadı</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Custom Arguments:</source>
-        <translation type="unfinished"></translation>
+        <translation>Özel Argümanlar:</translation>
     </message>
 </context>
 <context>
@@ -3416,7 +3422,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+8"/>
         <source>Edit Color...</source>
-        <translation>Rengi Düzenle</translation>
+        <translation>Rengi Düzenle...</translation>
     </message>
 </context>
 <context>
@@ -3550,12 +3556,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>Build-Up/Direct</source>
-        <translation type="unfinished"></translation>
+        <translation>Yığma/Direkt</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Wash/Indirect</source>
-        <translation type="unfinished"></translation>
+        <translation>Tonlama/Dolaylı</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -3565,7 +3571,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+9"/>
         <source>Pick Initial Color from Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Rengi Katmandan Seç</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -3591,27 +3597,27 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-275"/>
         <source>Stabilization Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Dengeleme Modu:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Time-Based Stabilizer</source>
-        <translation type="unfinished"></translation>
+        <translation>Zaman-Bazlı Dengeleyici</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Average Smoothing</source>
-        <translation type="unfinished"></translation>
+        <translation>Ortalama Yumuşatma</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Stabilizer: </source>
-        <translation type="unfinished"></translation>
+        <translation>Dengeleyici: </translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Smoothing: </source>
-        <translation type="unfinished"></translation>
+        <translation>Yumuşatma: </translation>
     </message>
     <message>
         <location line="+30"/>
@@ -3630,7 +3636,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+61"/>
         <location line="+72"/>
         <source>Pressure Sensitivity</source>
-        <translation type="unfinished"></translation>
+        <translation>Basınç Hassasiyeti</translation>
     </message>
     <message>
         <location line="-182"/>
@@ -3691,12 +3697,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+12"/>
         <source>Color Pickup: 1/</source>
-        <translation type="unfinished"></translation>
+        <translation>Renk Alımı: 1/</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Minimum Smudging: </source>
-        <translation type="unfinished"></translation>
+        <translation>Minimum Bulaşma: </translation>
     </message>
     <message>
         <location line="+10"/>
@@ -3712,12 +3718,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>Set this curve for Size, Opacity, Hardness and Smudging at once.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bu eğim Boyut, Opaklık, Sertlik ve Bulaşmayı aynı anda etkiler.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Curve set for all settings in this brush.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bu eğim seçili fırçanın tüm ayarlarını etkiler.</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -3732,22 +3738,22 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+11"/>
         <source>Not available in Indirect/Wash mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dolaylı/Tonlama modunda mevcut değil.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Dynamics not available in Indirect/Wash mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dinamikler Dolaylı/Tonlama modunda mevcut değil.</translation>
     </message>
     <message>
         <location line="+59"/>
         <source>The radius of the brush.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fırçanın yarıçapı.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Opaqueness of the brush, 0% is transparent, 100% fully opaque.</source>
-        <translation>Fırçanın opaklığı, 0% transparant, 100% tamamen opak.</translation>
+        <translation>Fırçanın opaklığı, 0% transparan, 100% tamamen opak.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -3757,17 +3763,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+4"/>
         <source>Blending of colors on the layer being drawn on.</source>
-        <translation type="unfinished"></translation>
+        <translation>Renklerin çizildikleri katmanla karışması.</translation>
     </message>
     <message>
         <location line="+145"/>
         <source>Slows down the stroke to stabilize it over time. High values give very smooth lines, but they will draw slowly. When you stop moving, the line will catch up your cursor. Tablet smoothing from the input preferences applies as well.</source>
-        <translation type="unfinished"></translation>
+        <translation>Çizginizi düzleştirmek için çizgi çekme hızını yavaşlatır. Yüksek değerler çok düz ve pürüzsüz çigiler oluşturur ama yavaş çizmenize sebep olur. Çizmeyi bıraktığınızda çektiğiniz çizgi fare imlecinize yetişir. Girdi seçeneklerindeki tablet yumuşatması da buna dahildir.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Simply averages a number of inputs. Feels faster than the time-based stabilizer, but not as smooth and won&apos;t catch up to your cursor when you stop moving. Overrides tablet smoothing from the input preferences.</source>
-        <translation type="unfinished"></translation>
+        <translation>Girdi sayılarının ortalamasını alır. Zaman-bazlı dengeleyiciden daha hızlı hissettirir, ama onun kadar hızlı değildir ve çizmeyi bıraktığınızda fare imlecinize yetişmez. Girdi tercihlerindeki tablet yumuşatması ayarını geçersiz kılar.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -3777,7 +3783,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+4"/>
         <source>Synchronizing stabilization settings with brushes is disabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dengeleme ayarlarını fırçalarla senkronize etme devre dışı.</translation>
     </message>
     <message>
         <location filename="../dialogs/brushsettingsdialog_gen.cpp" line="+12"/>
@@ -3790,14 +3796,14 @@ Are you sure youwant to start recording debug dumps?</source>
         <source>Fine speed</source>
         <comment>mypaintinput</comment>
         <extracomment>&quot;fine&quot; refers to the accuracy and update frequency of the speed value, as in &quot;fine grained&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Net Hız</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Gross speed</source>
         <comment>mypaintinput</comment>
         <extracomment>changes more smoothly but is less accurate than &quot;Fine speed&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Yaklaşık Hız</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -3809,7 +3815,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+2"/>
         <source>Stroke</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Çizgi</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -3821,57 +3827,57 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+2"/>
         <source>Declination/Tilt</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Eğim</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Ascension</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Yükselme</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Custom</source>
         <comment>mypaintinput</comment>
         <extracomment>the input is the output of the &quot;Custom input&quot; setting</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Özel</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Direction 360</source>
         <comment>mypaintinput</comment>
         <extracomment>refers to the direction of the stroke</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Yön 360</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Attack Angle</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Saldırı Açısı</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Declination/Tilt X</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Eğim X</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Declination/Tilt Y</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Eğim Y</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>GridMap X</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>IzgaraHaritası X</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>GridMap Y</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>IzgaraHaritası Y</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3884,13 +3890,13 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+2"/>
         <source>Barrel Rotation</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Varil Rotasyonu</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Base Brush Radius</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Asıl Fırça Yarıçapı</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -3902,61 +3908,61 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+8"/>
         <source>The pressure reported by the tablet. Usually between 0.0 and 1.0, but it may get larger when a pressure gain is used. If you use the mouse, it will be 0.5 when a button is pressed and 0.0 otherwise.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Basınç tablet tarafından rapot edildi. Genelde 0.0 ve 1.0 arasındadır ama basınç gaini kullanılıyorsa daha fazla olabilir. Eğer fare kullanıyorsanız; tuşa bastığınızda 0.5, basmadığınızda 0.0 olacaktır.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>How fast you currently move. This can change very quickly. Try &apos;print input values&apos; from the &apos;help&apos; menu to get a feeling for the range; negative values are rare but possible for very low speed.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Ne kadar hızlı hareket ettiğinizi gösterir. Çok hızlı değişebilir. Nasıl işlediğini kavrayabilmek için &apos;yardım&apos; menüsünden &apos;girdi değerlerini yazdır&apos; seçeneğini deneyin. Negatif değerler nadirdir ancak çok yavaş hızlarda mümkündür.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Same as fine speed, but changes slower. Also look at the &apos;gross speed filter&apos; setting.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Net hızla aynıdır ancak çok daha yavaş değişir. &apos;Yaklaşık hız filtresi&apos;ne de bakınız.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Fast random noise, changing at each evaluation. Evenly distributed between 0 and 1.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Hızlı rastgele karıncalanma, her ölçümde değişir. 0 ve 1 arasında eşit şekilde dağıtılır.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>This input slowly goes from zero to one while you draw a stroke. It can also be configured to jump back to zero periodically while you move. Look at the &apos;stroke duration&apos; and &apos;stroke hold time&apos; settings.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Bu değer siz bir çizgi çekerken yavaşça sıfırdan bire yükselir. Ayrıca siz hareket ederken periyodik olarak sıgıra geri atlamaya ayarlanabilir. &apos;Çizgi süresi&apos; ve &apos;çizgi tutum süresi&apos; ayarlarına bakınız.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The angle of the stroke, in degrees. The value will stay between 0.0 and 180.0, effectively ignoring turns of 180 degrees.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Çizginin açısıdır. Değer 0.0 ve 180.0 arasında kalacaktır.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Declination of stylus tilt. 0 when stylus is parallel to tablet and 90.0 when it&apos;s perpendicular to tablet.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Kalemin eğimidir. Kalem tablete paralelken 0, dikken 90.0.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Right ascension of stylus tilt. 0 when stylus working end points to you, +90 when rotated 90 degrees clockwise, -90 when rotated 90 degrees counterclockwise.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Kalem eğiminin yükseliş halidir. Kalemin yazan ucu size çevriliyken 0, 90 derece saat yönüne çevriliyken +90, 90 derece saat yönünün tersine çevriliyken -90.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>This is a user defined input. Look at the &apos;custom input&apos; setting for details.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Bu kullanıcının belirlediği bir girdidir. Detaylar için ayarlardan &apos;özel girdi&apos; kısmına bakın.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The angle of the stroke, from 0 to 360 degrees.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Çizginin açısıdır, 0&apos;dan 360 dereceye kadar.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -3966,33 +3972,39 @@ The range is +/-180.0.
 90 means the stroke angle is perpendicular to the angle of the stylus.
 180 means the angle of the stroke is directly opposite the angle of the stylus.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Kalemin açısı ve çizginin hareket açısının arasındaki farkı gösterir.
+Aralık +/-180,0&apos;dır
+0.0 çizgi kalemin açısına denk geliyor demektir.
+90 çizgi kalemin açısına dik geliyor demektir.
+180 çizgi kalemin açısına zıt geliyor demektir.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Declination of stylus tilt on X-Axis. 90/-90 when stylus is parallel to tablet and 0 when it&apos;s perpendicular to tablet.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Kalemin X-Eksenindeki hareketini gösterir.. Kalem tablete paralelken 90/-90, dikken 0&apos;dır.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Declination of stylus tilt on Y-Axis. 90/-90 when stylus is parallel to tablet and 0 when it&apos;s perpendicular to tablet.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Kalemin Y-Eksenindeki hareketini gösterir. Kalem tablete paralelken 90/-90, dikken 0&apos;dır.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The X coordinate on a 256 pixel grid. This will wrap around 0-256 as the cursor is moved on the X axis. Similar to &quot;Stroke&quot;. Can be used to add paper texture by modifying opacity, etc.
 The brush size should be considerably smaller than the grid scale for best results.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>256 piksellik bir ızgaradaki X koordinatıdır. Fare X ekseninde hareket ederken 0-256&apos;yı saracaktır. &quot;Çizgi&quot; seçeneğine benzer. Opaklığı vs. ayarlayarak kağıt dokusu vermede kullanılabilir.
+En iyi sonuçlar için fırça boyutu, ızgara boyutundan önemli ölçüde küçük olmalı.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The Y coordinate on a 256 pixel grid. This will wrap around 0-256 as the cursor is moved on the Y axis. Similar to &quot;Stroke&quot;. Can be used to add paper texture by modifying opacity, etc.
 The brush size should be considerably smaller than the grid scale for best results.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>256 piksellik bir ızgaradaki Y koordinatıdır. Fare Y ekseninde hareket ederken 0-256&apos;yı saracaktır. &quot;Çizgi&quot; seçeneğine benzer. Opaklığı vs. ayarlayarak kağıt dokusu vermede kullanılabilir.
+En iyi sonuçlar için fırça boyutu, ızgara boyutundan önemli ölçüde küçük olmalı.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4000,7 +4012,9 @@ The brush size should be considerably smaller than the grid scale for best resul
 Logarithmic: 0.0 is 100%, 0.69 is 200%, -1.38 is 25%
 For the Radius setting, using a value of -4.15 makes the brush size roughly constant, relative to the level of zoom.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Şu anki tuval görünümündeki yakınlaştırma seviyesidir.
+Logaritmik : &apos;0.0&apos; 100%&apos;e denk gelir, &apos;0.69&apos; 200%&apos;e denk gelir, &apos;-1.38&apos; 25%&apos;e denk gelir
+Yarıçap seçeneğinde -4.15 değeri kullanmak fırça boyutunu az çok sabit tutar, yakınlaştırma seviyesiyle orantılı tutar.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4009,7 +4023,10 @@ For the Radius setting, using a value of -4.15 makes the brush size roughly cons
 +90 when twisted clockwise 90 degrees
 -90 when twisted counterclockwise 90 degrees</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Kalemin varil rotasyonudur
+Çevrilmemişken 0
+Saat yönünde 90 derece çevrilmişken +90
+Saat yönünün tersine 90 derece çevrilmişken -90</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4017,7 +4034,9 @@ For the Radius setting, using a value of -4.15 makes the brush size roughly cons
 You can even cancel out dab size increase and adjust something else to make a brush bigger.
 Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&quot;, which behave much differently.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Asıl fırça yarıçapı, fırçayı büyütüp küçültürken fırçanın davranışınlarını değiştirmenize olanak sağlar.
+Dokundurma boyutu arttırma seçeneğini bile iptal edip, fırçanızı büyütmek için başka bir seçenek ayarlayabilirsiniz.
+&quot;Dokundurma başına düşen yaklaşık yarıçap&quot; ve &quot;Dokundurma başına düşen asıl yarıçap&quot; ayarları birbirine benzese de çok farklıdır, birbirine karıştırmamaya dikkat edin.</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -4029,19 +4048,19 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Opacity multiply</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Opaklık çoğaltma</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Opacity linearize</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Opaklık çizgileştirme</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Radius</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Yarıçap</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4053,91 +4072,91 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Pixel feather</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Piksel yumuşaklığı</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Dabs per basic radius</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Dokundurma başına düşen yaklaşık yarıçap</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Dabs per actual radius</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Dokundurma başına düşen asıl yarıçap</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Dabs per second</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Saniye başına düşen dokundurma</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Radius by random</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Rastgele yarıçap</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Fine speed filter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Asıl hız filtresi</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Gross speed filter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Yaklaşık hız filtresi</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Fine speed gamma</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Asıl hız gaması</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Gross speed gamma</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Yaklaşık hız gaması</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Jitter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Titreme</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Offset by speed</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Hız tarafından geciktirme</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Offset by speed filter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Hız filtresi tarafından geciktirme</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Slow position tracking</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Yavaş pozisyon takibi</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Slow tracking per dab</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Dokundurma başına yavaş takip</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Tracking noise</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Takip gürültüsü</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4199,19 +4218,19 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Smudge</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Bulaşma</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smudge length</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Bulaşma uzunluğu</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smudge radius</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Bulaşma yarıçapı</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4223,208 +4242,210 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Stroke threshold</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Çizgi eşiği</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Stroke duration</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Çizgi süresi uzunluğu</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Stroke hold time</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Çizge tutma süresi</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Custom input</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Özel girdi</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Custom input filter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Özel girdi filtresi</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Elliptical dab: ratio</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Eliptik dokunma: oran</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Elliptical dab: angle</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Eliptik dokunma: açı</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Direction filter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Yön filtresi</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Lock alpha</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Alpha kilit</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Colorize</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Renklendir</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Snap to pixel</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Piksele kilitlen</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pressure gain</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Basınç gaini</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>GridMap Scale</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>IzgaraHaritası Boyutu</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>GridMap Scale X</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>IzgaraHaritası Boyutu X</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>GridMap Scale Y</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>IzgaraHaritası Boyutu Y</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smudge length multiplier</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Bulaşma boyutu çoğaltıcı</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smudge bucket</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Bulaşma kovası</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smudge transparency</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Bulaşma transparanlığı</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Offset Y</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Ofset Y</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Offset X</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Ofset X</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Angular Offset: Direction</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Açısal Ofset: Yön</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Angular Offset: Ascension</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Açısal Ofset: Yükselme</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Angular Offset: View</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Açısal Ofset: Görüş</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Angular Offset Mirrored: Direction</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Açısal Ofset Ters: Yön</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Angular Offset Mirrored: Ascension</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Açısal Ofset Ters: Yükselme</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Angular Offset Mirrored: View</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Açısal Ofset Ters: Görüş</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Angular Offsets Adjustment</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Açısal Ofset Ayarlamalar</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Offsets Multiplier</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Ofset Çoğaltıcı</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Posterize</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Posterleştirme</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Posterization levels</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Posterleştirme seviyeleri</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Pigment</source>
         <comment>mypaintsetting</comment>
         <extracomment>The name Pigment refers to the fact that this kind of color mixing is more similar to how colors mix in physical paint.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Pigment</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unknown Setting</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Bilinmeyen Ayar</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>0 means brush is transparent, 1 fully visible
 (also known as alpha or opacity)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>0 ise fırça transparan, 1 ise tamamen opak
+(alfa olarak da bilinir)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>This gets multiplied with opaque. You should only change the pressure input of this setting. Use &apos;opaque&apos; instead to make opacity depend on speed.
 This setting is responsible to stop painting when there is zero pressure. This is just a convention, the behaviour is identical to &apos;opaque&apos;.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Bu opakla çoğaltılır. Bu ayarın sadece basınç girdisini değiştirmelisiniz. Opaklığı hıza bağlamak için &apos;opak&apos; ayarını kullanın.
+Bu ayar hiç basınç yokken çizimin durmasından sorumludur. &apos;Opak&apos; ile aynı işlevi görür.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4432,7 +4453,10 @@ This setting is responsible to stop painting when there is zero pressure. This i
 0.0 the opaque value above is for the individual dabs
 1.0 the opaque value above is for the final brush stroke, assuming each pixel gets (dabs_per_radius*2) brushdabs on average during a stroke</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Dokunmaları üst üste karıştırmakla oluşan doğrusal olmamayı düzelt. Bu düzeltme basınç opak_çoğaltma seçeneğindeyken, çizgisel (&quot;doğal&quot;) bir basınç yanıtı vermeli. Normalde 0.9 iyi bir değerdir ama fırçanız çok dağılıyorsa daha az, dokunma_başı_saniye kullanıyor iseniz yüksek bir değer giriniz.
+Her pikselin ortalama bir fırça darbesinde (dokunma_başı_yarıçap*2) fırçadokunması edindiğini varsayarsak:
+0.0 üstü opak değer bireysek dokundurmalar içindir
+1.0 üstü opak değer son fırça darbesi içindir</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4440,13 +4464,15 @@ This setting is responsible to stop painting when there is zero pressure. This i
  0.7 means 2 pixels
  3.0 means 20 pixels</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Basit fırça yarıçağı (logaritmik)
+0.7 2 piksel demek
+3.0 20 piksel demek</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Hard brush-circle borders (setting to zero will draw nothing). To reach the maximum hardness, you need to disable Pixel feather.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Sert fırça-dairesi sınırları (ayarı 0 yapmak hiçbir değişikliğe sebep olmayacak). Maksimum sertliğe ulaşmak için, Piksel yumuşatmasını devredışı bırakmanız gerekiyor.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4455,25 +4481,28 @@ This setting is responsible to stop painting when there is zero pressure. This i
  1.0 blur one pixel (good value)
  5.0 notable blur, thin strokes will disappear</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Bu ayar fırça darbesini bulanıklaştırarak ve gerektiğinde sertliği azaltarak piksel merdiven efektinin (aliacing) oluşmasını engeller.
+0.0 devre dışı bırak (çok güçlü silgiler ve piksel fırçaları için)
+1.0 bir piksel bulanıklaştır (iyi bir değer)
+5.0 gözle görülür bulanıklaştırma, ince çizgiler yok olacaktır</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>How many dabs to draw while the pointer moves a distance of one brush radius (more precise: the base value of the radius)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>İşaretçi bir fırça yarıçapında hareket ederken kaç tane fırça darbesi çizileceğini belirler (daha kesin: yarıçapın asıl değeri)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Same as above, but the radius actually drawn is used, which can change dynamically</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Üsttekinin aynısı ama çizilen yarıçapı kullanır, bu da dinamik olarak değişebilir</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Dabs to draw each second, no matter how far the pointer moves</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Her saniye ne kadar fırça darbesi çizileceğini belirler. (İmleç ne kadar hareket ederse etsin.)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4481,20 +4510,23 @@ This setting is responsible to stop painting when there is zero pressure. This i
 1) the opaque value will be corrected such that a big-radius dabs is more transparent
 2) it will not change the actual radius seen by dabs_per_actual_radius</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Her fırça darbesinde yarıçapı rastgele olarak değiştir. Bunu ayrıca rastgele girdi ayarından da yapabilirsiniz. Eğer buradan yaparsanız, iki farkı var:
+1) Büyük-çaplı darbeler daha transparan olacak şekilde opak değeri düzeltilecek
+2) asıl_yarıçap_başına_düşen_fırça_darbesi tarafından görülen yarıçapı değiştirmeyecek</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>How slow the input fine speed is following the real speed
 0.0 change immediately as your speed changes (not recommended, but try it)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Girdi ince hızın gerçek hızı ne kadar yavaş takip ettiğini ayarlar
+0.0 hızınız değiştiği anda değişir (önerilmez ama deneyebilirsiniz)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Same as &apos;fine speed filter&apos;, but note that the range is different</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>&apos;ince hız filtresi&apos; ile aynı ama değer limiti farklı</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4503,13 +4535,16 @@ This setting is responsible to stop painting when there is zero pressure. This i
 +8.0 very fast speed increases &apos;fine speed&apos; a lot
 For very slow speed the opposite happens.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Bu &apos;ince hız&apos; girdisinin tepkisini aşırı fiziksel hıza çevirir. Farkı en iyi &apos;ince hız&apos; yarıçapa bağlıysa görürsünüz.
+-8.0 çok hızlı hız &apos;ince hız&apos; ı daha fazla yükseltmez
++8.0 çok hızlı hız &apos;ince hız&apos; ı oldukça yükseltir
+Çok yavaş hız için tam tersi geçerlidir.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Same as &apos;fine speed gamma&apos; for gross speed</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Ortalama hız için &apos;ince hız gaması&apos; seçeneğinin aynısı</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4518,7 +4553,10 @@ For very slow speed the opposite happens.</source>
  1.0 standard deviation is one basic radius away
 &lt;0.0 negative values produce no jitter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Her fırça darbesinin çizildiği pozisyona rastgele bir ofset ekleyin
+0.0 devre dışı
+1.0 standar farklılık bir basit yarıçap ötede
+&lt;0.0 negatif değerler titreme oluşturmaz</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4527,31 +4565,34 @@ For very slow speed the opposite happens.</source>
 &gt; 0 draw where the pointer moves to
 &lt; 0 draw where the pointer comes from</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>İmleç hızına göre pozisyon değiştirir
+= 0 devre dışı bırak
+&gt;0 imlecin hareket ettiği yere çiz
+&lt;0 imlecin harekete başladığı yere çiz</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>How slow the offset goes back to zero when the cursor stops moving</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>İmlecin hareketi durduktan sonra ofsetin ne kadar yavaş sıfıra geri döneceğini ayarlar</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Slowdown pointer tracking speed. 0 disables it, higher values remove more jitter in cursor movements. Useful for drawing smooth, comic-like outlines.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>İşaretçi takip hızını yavaşlatır. 0 devre dışı bırakır, yüksek değerler imleç hareketlerinden daha çok titreme kaldırır. Yumuşak, çizgi roman-vari çizgiler çizmekte kullanışlıdır.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Similar as above but at brushdab level (ignoring how much time has passed if brushdabs do not depend on time)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Üsttekine benzer ama fırça darbesi seviyesinde (firça darbeleri zamana bağlı değilse, geçen zamanı görmezden gelir)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Add randomness to the mouse pointer; this usually generates many small lines in random directions; maybe try this together with &apos;slow tracking&apos;</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Fare imlecine rastgelelik ekler; genellikle rastgele yönlerde bir sürü küçük çizgi oluşturur; bu ayarı isterseniz &apos;yavaş takip&apos; ile beraber deneyebilirsiniz.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -4566,7 +4607,10 @@ For very slow speed the opposite happens.</source>
  0.5 change active color towards brush color
  1.0 set the active color to the brush color when selected</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Fırça seçerken; renk, fırçanın kaydedildiği renge geri çevrilebilir.
+0.0 aktif rengi değiştirme
+0.5 aktif rengi fırça rengine doğru değiştir
+1.0 fırça seçildiğinde aktif rengi fırça rengine değiştir</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4575,7 +4619,10 @@ For very slow speed the opposite happens.</source>
  0.0 disable
  0.5 counterclockwise hue shift by 180 degrees</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Renk tonunu değiştirir.
+-0.1 küçük saat yönünde renk tonu değişimi
+0.0 devre dışı bırak
+0.5 saat yönünün tersine 180 derece ton değişimi</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4584,7 +4631,10 @@ For very slow speed the opposite happens.</source>
  0.0 disable
  1.0 whiter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>HSL renk modelini kullanarak renk parlaklığını değiştirir.
+-1.0 daha siyah
+0.0 devre dışı bırak
+1.0 daha beyaz</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4593,7 +4643,10 @@ For very slow speed the opposite happens.</source>
  0.0 disable
  1.0 more saturated</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>HSL renk modelini kullanarak renk doygunluğunu değiştirir.
+-1.0 daha gri
+0.0 devre dışı bırak
+1.0 daha doygun</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4602,7 +4655,10 @@ For very slow speed the opposite happens.</source>
  0.0 disable
  1.0 brigher</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>HSV renk modelini kulllanarak renk değerini değiştirir (parlaklık, yoğunluk). HSV renk modelindeki değişiklikler HSL değişikliklerinden önce uygulanır.
+-1.0 daha karanlık
+0.0 devre dışı bırak
+1.0 daha aydınlık</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4611,7 +4667,10 @@ For very slow speed the opposite happens.</source>
  0.0 disable
  1.0 more saturated</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>HSV renk modelini kullanarak renk doygunluğunu değiştirir. HSV renk modelindeki değişiklikler HSL değişikliklerinden önce uygulanır.
+-1.0 daha gri
+0.0 devre dışı bırak
+1.0 daha doygun</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4620,7 +4679,10 @@ For very slow speed the opposite happens.</source>
  0.5 mix the smudge color with the brush color
  1.0 use only the smudge color</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Fırça renginin aksine bulaşma rengiye boyamayı sağlar. Bulaşma rengi yavaşça üzerini boyadığınız renge dönüşür.
+0.0 bulaşma rengini kullanma
+0.5 bulaşma rengini fırça rengiyle karıştır
+1.0 sadece bulaşma rengini kullan</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4629,7 +4691,10 @@ For very slow speed the opposite happens.</source>
 0.5 change the smudge color steadily towards the canvas color
 1.0 never change the smudge color</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Bulaşma renginin ne kadar hızlı üzerine boyadığınız renge dönüştüğünü kontrol eder.
+0.0 direkt olarak bulaşma rengini günceller (sık sık yapılan renk kontrolleri yüzünden daha çok CPU gücü gerektirir)
+0.5 yavaşça ve sürekli olarak bulaşma rengini tuval rengine çevir
+1.0 asla bulaşma rengini değiştirme</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4639,7 +4704,11 @@ For very slow speed the opposite happens.</source>
 +0.7 twice the brush radius
 +1.6 five times the brush radius (slow performance)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Bu ayar bulaşma için seçilen renk yarıçapını modifiye eder.
+0.0 fırça yarıçapını kullan
+-0.7 fırça yarıçapının yarısını kullan (hızlı ama hep doğru değil)
++0.7 fırça yarıçapının iki katı
++1.6 fırça yarıçapının beş katı (yavaş performans)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4648,19 +4717,22 @@ For very slow speed the opposite happens.</source>
  1.0 standard eraser
  0.5 pixels go towards 50% transparency</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Arecın ne kadar silgi gibi davrandığını belirler
+0.0 normal boyama
+1.0 standart silgi
+0.5 pikseller %50 transparan</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>How much pressure is needed to start a stroke. This affects the stroke input only. MyPaint does not need a minimum pressure to start drawing.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Bir çizgi başlatmak için gereken basınç miktarı. Bu sadece çizgi girdisini etkiler. MyPaint&apos;in çizmeye başlamak için minimum basınca ihtiyacı yoktur.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>How far you have to move until the stroke input reaches 1.0. This value is logarithmic (negative values will not invert the process).</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Çizgi değeri 1.0&apos;e ulaşınaya kadar ne kadar hareket etmeniz gerektiğini gösteren ayar. Bu değer logaritmiktir (negatif değerler işlemi tersine çevirmez).</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4668,27 +4740,31 @@ For very slow speed the opposite happens.</source>
 2.0 means twice as long as it takes to go from 0.0 to 1.0
 9.9 or higher stands for infinite</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Çizgi değerinin ne kadar 1.0 olarak kalacağını belirler. Sonrasında çizgi bitmemiş olsa bile 0.0&apos;a geri dönüp yeniden artar
+2.0, 0.0&apos;dan 1.0&apos;a gitmeyi iki kat daha uzun kılar
+9.9 ya da daha fazlası sonsuz demektir</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Set the custom input to this value. If it is slowed down, move it towards this value (see below). The idea is that you make this input depend on a mixture of pressure/speed/whatever, and then make other settings depend on this &apos;custom input&apos; instead of repeating this combination everywhere you need it.
 If you make it change &apos;by random&apos; you can generate a slow (smooth) random input.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Bu değere özel bir girdi atayın. Eğer yavaşlatılmışsa, şu değere yaklaştırın (aşağıda belirtilen).Önerilen kullanma şekli, bu girdiyi basınç/hız/ya da herhangi başka bir şeye bağlamanız ve diğer özellikleri her seferinde aynı kombinasyonu tekrar etmektense bu &apos;özel girdi&apos; ayarına bağlamanız.
+Eğer &apos;rastgele&apos; olarak değiştirirseniniz, yavaş (yumuşak) bir rastgele girdi elde edebilirsiniz.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>How slow the custom input actually follows the desired value (the one above). This happens at brushdab level (ignoring how much time has passed, if brushdabs do not depend on time).
 0.0 no slowdown (changes apply instantly)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Özel girdinin istenilen değeri ne kadar yavaş takip ettiğini ayarlar (yukarıdaki). Bu fırça darbesi seviyesinde olur (Fırça darbesi zamana bağlı değilse ne kadar zaman geçtiğini görmezden gelir.)
+0.0 yavaşlatmasız (değişiklikler hemen uygulanır)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Aspect ratio of the dabs; must be &gt;= 1.0, where 1.0 means a perfectly round dab.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Fırça darbelerinin en-boy oranı; &gt;=1.0 olmalı, 1.0 kusursuz yuvarlak bir fırça darbesi anlamına geliyor.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4697,13 +4773,16 @@ If you make it change &apos;by random&apos; you can generate a slow (smooth) ran
  45.0 45 degrees, turned clockwise
  180.0 horizontal again</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Eliptik fırça darbelerinin eğilme açılarıdır
+0.0 yatay darbeler
+45.0 45 derece, saat yönünde çevrilmiş
+180.0 tekrar yatay</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>A low value will make the direction input adapt more quickly, a high value will make it smoother</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Düşük bir değer yön girdisinin daha hızlı adapte olmasını sağlayacak, yüksek bir değer daha yumuşak olmasını</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4712,25 +4791,28 @@ If you make it change &apos;by random&apos; you can generate a slow (smooth) ran
  0.5 half of the paint gets applied normally
  1.0 alpha channel fully locked</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Katmanın alfa kanalını değiştirmeyin (sadece önceden boyanmış yerleri boya)
+0.0 normal boyama
+0.5 boyanın yarısı normal boyanır
+1.0 alfa kanalı tamamen kilitli</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Colorize the target layer, setting its hue and saturation from the active brush color while retaining its value and alpha.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Hedef katmanı renklendirin, değerini ve alfasını korurken aktif fırça rengindeki renk tonu ve doygunluğu alır.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Snap brush dab&apos;s center and its radius to pixels. Set this to 1.0 for a thin pixel brush.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Fırça darbesinin merkezini ve yarıçapını piksellere kilitleyin. İnce bir piksel fırçası elde etmek için bu ayarı 1.0 olarak ayarlayın.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>This changes how hard you have to press. It multiplies tablet pressure by a constant factor.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Ne kadar sert baskı uygulamanız gerektiğini ayarlar. Tablet basıncını sabit faktörle çarpar.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4738,7 +4820,9 @@ If you make it change &apos;by random&apos; you can generate a slow (smooth) ran
 Logarithmic (same scale as brush radius).
 A scale of 0 will make the grid 256x256 pixels.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>IzgaraHaritası fırçasının üzerinde hareket ettiği alanın boyutunu değiştirir.
+Logaritmik (fırça boyutuyla aynı).
+0 değeri ızgarayı 256x256 piksel yapacaktır.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4746,7 +4830,9 @@ A scale of 0 will make the grid 256x256 pixels.</source>
 The range is 0-5x.
 This allows you to stretch or compress the GridMap pattern.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>zgaraHaritası fırçasının üzerinde hareket ettiği alanın boyutunu değiştirir - sadece X eksenini etkiler.
+Menzili 0-5x.
+Bu IzgaraHaritası desenini sıkıştırıp esnetme imkanı sunar.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4754,7 +4840,9 @@ This allows you to stretch or compress the GridMap pattern.</source>
 The range is 0-5x.
 This allows you to stretch or compress the GridMap pattern.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>IzgaraHaritası fırçasının üzerinde hareket ettiği alanın boyutunu değiştirir - sadece Y eksenini etkiler.
+Menzili 0-5x.
+Bu IzgaraHaritası desenini sıkıştırıp esnetme imkanı sunar.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4762,7 +4850,9 @@ This allows you to stretch or compress the GridMap pattern.</source>
 Useful to correct for high-definition/large brushes with lots of dabs.
 The longer the smudge length the more a color will spread and will also boost performance dramatically, as the canvas is sampled less often</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>&quot;Bulaşma uzunluğu&quot; değeri için logaritmik çarpıcı.
+Fazla fırça darbeli, yüksek-çözünürlüklü/büyük fırçaları düzeltmekte kullanışlı.
+Bulaşma uzunluğu ne kadar uzunsa renk bir o kadar yayılır ve tuvalin daha az örneğini aldığı için programın performansını oldukça arttırır</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4770,7 +4860,9 @@ The longer the smudge length the more a color will spread and will also boost pe
 You can control which bucket to use to improve variability and realism of the brush.
 Especially useful with the &quot;Custom input&quot; setting to correlate buckets with other settings such as offsets.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Tuvalden alınan renkleri tutabilen 256 kova vardır.
+Fırçacın gerçekçiliğini ve çeşitliliğini arttırmak için hangi kovanın kullanılacağını kontrol edebilirsiniz.
+&quot;Özel girdi&quot; ile kovaları, ofset gibi diğer ayarlara bağlayabildiğiniz için oldukça kullanışlıdır.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4780,73 +4872,77 @@ Especially useful with the &quot;Custom input&quot; setting to correlate buckets
 0.0 will have no effect.
 Negative values do the reverse</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Alfa kilide benzer olarak, ne kadar transparanlığın alınıp bulaştığını kontrol edin.
+1.0 transparanlığı sabit tutar.
+0.5 transparanlığı sadece %50 ve üzeri hareket ettirir.
+0.0 hiçbir etkisi yoktur.
+Negatif değerler zıt etki yapar</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Moves the dabs up or down based on canvas coordinates.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Tuvar koordinatlarına göre fırça darbelerini yukarı ya da aşağı oynatır.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Moves the dabs left or right based on canvas coordinates.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Tuval koordinatlarına göre fırça darbelerini sağa ya da sola oynatır.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Follows the stroke direction to offset the dabs to one side.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Çizgi yönünü takip ederek fırça darbelerini bir tarafa ofsetler.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Follows the tilt direction to offset the dabs to one side. Requires Tilt.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Eğim yönünü takip ederek fırça darbelerini bir tarafa ofsetler. Eğim gerektirir.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Follows the view orientation to offset the dabs to one side.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Görüntü oryasyonunu takip ederek fırça darbelerini bir tarafa ofsetler.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Follows the stroke direction to offset the dabs, but to both sides of the stroke.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Çizgi yönünü takip ederek fırça darbelerini her iki tarafa da ofsetler.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Follows the tilt direction to offset the dabs, but to both sides of the stroke. Requires Tilt.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Eğim yönünü takip ederek fırça darbelerini her iki tarafa ofsetler. Eğim gerektirir.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Follows the view orientation to offset the dabs, but to both sides of the stroke.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Görüntü oryasyonunu takip ederek fırça darbelerini her iki tarafa da ofsetler.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change the Angular Offset angle from the default, which is 90 degrees.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>90 derece olan varsayılan Açısal Ofset ayarını değiştirin.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Logarithmic multiplier for X, Y, and Angular Offset settings.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>X, Y, ve Açısal Ofset ayarları için logaritmik çarpıcı.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Strength of posterization, reducing number of colors based on the &quot;Posterization levels&quot; setting, while retaining alpha.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Posterleştirmenin ne kadar güçlü olduğunu ayarlar. Alfayı korurken &quot;Posterleştirme seviyeleri&quot; ayarını baz alarak renklerin sayısını azaltır.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4854,7 +4950,9 @@ Negative values do the reverse</source>
 0.05 = 5 levels, 0.2 = 20 levels, etc.
 Values above 0.5 may not be noticeable.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Posterleştirme seviyelerinin sayısını ayarlar (100&apos;e bölünmüş)
+0.05 = 5 seviye, 0.2 = 20 seviye, vs.
+0.5 üstü değerler fark edilemez olabilir.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -4863,7 +4961,9 @@ Values above 0.5 may not be noticeable.</source>
 1.0 only spectral mixing</source>
         <comment>mypaintsetting</comment>
         <extracomment>If this string is difficult to translate, feel free to change it to something more descriptive. Just try to be succinct and consistent.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Dışlayıcı spektral renk karıştırma modu.
+0.0 spektral karıştırma devre dışı
+1.0 sadece spektral karıştırma</translation>
     </message>
 </context>
 <context>
@@ -4886,12 +4986,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Constraint Key</source>
-        <translation type="unfinished"></translation>
+        <translation>Kısıtlama Tuşu</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Pan Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Tuvali Hareket Ettir</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4921,37 +5021,37 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Constrain Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Kısıtlama Aleti</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Center Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Ortalama Aleti</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Constrain and Center Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Kısıtlama ve Ortalama Aleti</translation>
     </message>
     <message>
         <location line="+98"/>
         <source>A regular key combination on the canvas without further mouse or pen inputs. Example: holding Space to pan, without having to click as well.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kalem veya fare girdisi olmadan sıradan bir tuş kombinasyonuyla tuvali hareket ettirmek Örnek: Boşluk tuşuna basılı tutarak, tıklamadan kaydırmak.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Pressing a mouse or pen button, optionally while also holding down keys. Putting the pen down is like a left click. Example: holding space and pressing left click to pan.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fare ya da kalem tuşuna basarken ayrıca opsiyonel olarak klavye tuşularına basılı tutmaktır. Kalemi bırakmak sol tık gibidir. Örnek: boşluk tuşuna basılı tutup sol tıka basarak kaydırmak.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Turning the mouse wheel or some input device that acts like one, optionally while also holding down keys. Example: scrolling to zoom the canvas.</source>
-        <translation type="unfinished"></translation>
+        <translation>Farek tekerini ya da onunla aynı işlevi gören bir girdi cihazını kaydırıp, opsiyonel olarak klavye tuşlarına basılı tutmaktır. Örnek: fare tekerini kaydırarak tuvali yakınlaştırmak.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Keys to hold down to make rectangle, line or selection tools behave differently. Constrain means to e.g. keep the aspect ratio, center means to e.g. center shapes around the origin.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bir dikdörtgen yapmak için basılı tutulması gereken klavye tuşlarıdır, çizgi ya da seçim araçları farklı çalışır. Kısıtlama, en-boy oranını korumak demek; merkez, şekilleri başlangıç noktasına ortalamk demek.</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -4961,7 +5061,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+40"/>
         <source>&lt;b&gt;Conflict:&lt;/b&gt; the existing shortcut for &apos;%1&apos; will be overwritten if you proceed.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;Çakışma:&lt;/b&gt;Devam ederseniz &apos;%1&apos; için varolan kısayol silinecek.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -4979,7 +5079,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/certificateview.cpp" line="+25"/>
         <source>SSL Certificate for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 için SSL Sertifikası</translation>
     </message>
 </context>
 <context>
@@ -4992,7 +5092,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>İptal</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5013,43 +5113,43 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+19"/>
         <source>Save Curve</source>
-        <translation type="unfinished"></translation>
+        <translation>Eğriyi Kaydet</translation>
     </message>
     <message>
         <location line="+0"/>
         <location line="+15"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Ad</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Rename Curve</source>
-        <translation type="unfinished"></translation>
+        <translation>Eğriyi Yeniden Adlandır</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Delete Curve</source>
-        <translation type="unfinished"></translation>
+        <translation>Eğriyi Sil</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really delete curve &apos;%1&apos;?</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; eğrisini silmek istediğinize emin misiniz?</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Smooth Out</source>
-        <translation type="unfinished"></translation>
+        <translation>Dışa Doğru Yumuşat</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Smooth In</source>
-        <translation type="unfinished"></translation>
+        <translation>İçe Doğru Yumuşat</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Smooth</source>
-        <translation type="unfinished"></translation>
+        <translation>Yumuşat</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5077,7 +5177,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>gone</source>
-        <translation type="unfinished"></translation>
+        <translation>gitmiş</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5097,12 +5197,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>annotation %1</source>
-        <translation type="unfinished"></translation>
+        <translation>dipnot %1</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>pixels on layer %1, from (%2, %3) to (%4, %5)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 katmanındaki pikseller, şuradan (%2,%3) şuaraya (%4,%5)</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -5112,7 +5212,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>document metadata type %1</source>
-        <translation type="unfinished"></translation>
+        <translation>dökümanın metadata tipi %1</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5172,7 +5272,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/hostdialog.cpp" line="+22"/>
         <source>Host</source>
-        <translation type="unfinished"></translation>
+        <translation>Host</translation>
     </message>
 </context>
 <context>
@@ -5252,7 +5352,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/keyframepropertiesdialog.cpp" line="+127"/>
         <source>Key Frame Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Key Frame Özellikleri</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -5262,7 +5362,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Filter Layers:</source>
-        <translation type="unfinished"></translation>
+        <translation>Katmanları Filtrele:</translation>
     </message>
 </context>
 <context>
@@ -5270,7 +5370,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/layerproperties.cpp" line="+108"/>
         <source>Pass Through</source>
-        <translation type="unfinished"></translation>
+        <translation>İçinden Geç</translation>
     </message>
 </context>
 <context>
@@ -5381,12 +5481,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+202"/>
         <source>Log in with &apos;%1&apos; credentials</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; itimatnameleri ile giriş yapın</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Log in with &apos;%1&apos; credentials (INSECURE CONNECTION!)</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; itimatnameleri ile giriş yapın (EMNİYETSİZ BAĞLANTI!)</translation>
     </message>
 </context>
 <context>
@@ -5420,17 +5520,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="+38"/>
         <source>Playback</source>
-        <translation type="unfinished"></translation>
+        <translation>Geri Oynatma</translation>
     </message>
     <message>
         <location line="+130"/>
         <source>Building index...</source>
-        <translation type="unfinished"></translation>
+        <translation>İndex oluşturuluyor...</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Index building failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>İndex oluşturması başarısız.</translation>
     </message>
     <message>
         <location line="+151"/>
@@ -5491,12 +5591,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+21"/>
         <source>Restoring Canvas %p%</source>
-        <translation type="unfinished"></translation>
+        <translation>Tuval Onarılıyor %p%</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Canvas Restored</source>
-        <translation type="unfinished"></translation>
+        <translation>Tuval Onarıldı</translation>
     </message>
 </context>
 <context>
@@ -5572,7 +5672,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+73"/>
         <location line="+21"/>
         <source>Set a new password or leave blank to remove.</source>
-        <translation type="unfinished"></translation>
+        <translation>Yeni bir şifre belirleyin ya da şifreyi kaldırmak için boş bırakın.</translation>
     </message>
     <message>
         <location line="-19"/>
@@ -5582,12 +5682,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Session Password</source>
-        <translation type="unfinished"></translation>
+        <translation>Oturum Şifresi</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Set a password for gaining operator status.</source>
-        <translation type="unfinished"></translation>
+        <translation>Operatör statüsü kazanmak için bir şifre belirleyin.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -5600,7 +5700,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/sessionundodepthlimitdialog.cpp" line="+21"/>
         <source>Change Session Undo Depth Limit</source>
-        <translation type="unfinished"></translation>
+        <translation>Oturum Geri Alma Derinliği Sınırını Değiştirin</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -5688,7 +5788,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Pan Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Tuvali Hareket Ettir</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5698,12 +5798,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktif</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Disabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Devre Dışı</translation>
     </message>
 </context>
 <context>
@@ -5762,7 +5862,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+19"/>
         <source>&lt;p&gt;The download page for Drawpile %1 should have opened in your browser. If not, visit &lt;a href=&quot;%2&quot;&gt;%2&lt;/a&gt; manually.&lt;/p&gt;&lt;p&gt;Restart Drawpile after installing the new version.&lt;/p&gt;</source>
         <extracomment>%2 is used twice, this is intentional! Don&apos;t use %3.</extracomment>
-        <translation>&lt;p&gt;Drawpile %1versiyonununun indirme sayfası internet tarayıcınızda açılmış olmalı. Eğer açılmadıysa &lt;a href=&quot;%2&quot;&gt;%2&lt;/a&gt; adresini manuel olarak ziyaret edin.&lt;/p&gt;&lt;p&gt;Yeni versiyonu yükledikten sonra Drawpile&apos;ı yeniden başlatın.</translation>
+        <translation>&lt;p&gt;Drawpile %1 versiyonununun indirme sayfası internet tarayıcınızda açılmış olmalı. Eğer açılmadıysa &lt;a href=&quot;%2&quot;&gt;%2&lt;/a&gt; adresini manuel olarak ziyaret edin.&lt;/p&gt;&lt;p&gt;Yeni versiyonu yükledikten sonra Drawpile&apos;ı yeniden başlatın.&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
@@ -5770,7 +5870,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/videoexportdialog.cpp" line="+30"/>
         <source>Image Series</source>
-        <translation type="unfinished"></translation>
+        <translation>Resim Serileri</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5785,7 +5885,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Custom FFmpeg Command</source>
-        <translation type="unfinished"></translation>
+        <translation>Özel FFmpeg Komutu</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5795,7 +5895,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Custom:</source>
-        <translation type="unfinished"></translation>
+        <translation>Özel:</translation>
     </message>
 </context>
 <context>
@@ -5803,7 +5903,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/canvasshortcuts.cpp" line="+38"/>
         <source>Search actions…</source>
-        <translation type="unfinished"></translation>
+        <translation>Hareketleri ara…</translation>
     </message>
     <message>
         <location line="+73"/>
@@ -5874,12 +5974,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Remember the last %1 opened files and hosts</source>
-        <translation type="unfinished">Son %1</translation>
+        <translation>Açılan son %1 dosyayı ve hostları hatırla</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Recent items:</source>
-        <translation type="unfinished"></translation>
+        <translation>En son öğeler:</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -5906,7 +6006,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Show scroll bars on canvas</source>
-        <translation type="unfinished">Tuvalde kaydırma</translation>
+        <translation>Tuvalde kaydırma çubuklarını göster</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5921,32 +6021,32 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Write debugging log to file</source>
-        <translation type="unfinished"></translation>
+        <translation>Hata ayıklama kaydını dosyaya yaz</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Logging:</source>
-        <translation type="unfinished"></translation>
+        <translation>Giriş Yapılıyor:</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Keep %1 canvas snapshots</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 tane tuval görüntüsü kaydet</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Canvas snapshots:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tuval görüntüleri:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Take one snapshot every %1 seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>Her %1 saniyede bir tuval görüntüsü çek</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Snapshots can be restored from the &lt;i&gt;Session ▸ Reset…&lt;/i&gt; menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Görüntüler &lt;i&gt;Oturum ▸ Sıfırla...&lt;/i&gt; menüsünden geri alınabilir.</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -5996,7 +6096,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Use %1 undo levels by default</source>
-        <translation type="unfinished"></translation>
+        <translation>Varsayılan olarak %1 geri alma seviyesi kullan</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6019,7 +6119,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Global pressure curve:</source>
-        <translation type="unfinished"></translation>
+        <translation>Küresel eğri basıncı:</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -6039,42 +6139,42 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Smoothing: </source>
-        <translation type="unfinished"></translation>
+        <translation>Yumuşatma: </translation>
     </message>
     <message>
         <location line="+9"/>
         <source>KisTablet Windows Ink</source>
-        <translation type="unfinished"></translation>
+        <translation>KisTablet Windows Ink</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>KisTablet Wintab</source>
-        <translation type="unfinished"></translation>
+        <translation>KisTablet Wintab</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>KisTablet Wintab Relative</source>
-        <translation type="unfinished"></translation>
+        <translation>KisTablet Wintab Relative</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Qt5</source>
-        <translation type="unfinished"></translation>
+        <translation>Qt5</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Qt6 Windows Ink</source>
-        <translation type="unfinished"></translation>
+        <translation>Qt6 Windows Ink</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Qt6 Wintab</source>
-        <translation type="unfinished"></translation>
+        <translation>Qt6 Wintab</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>One-finger input:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tek-parmak girdisi:</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6094,17 +6194,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Pinch to zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Yakınlaştırmak için sıkıştırın</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Twist to rotate</source>
-        <translation type="unfinished"></translation>
+        <translation>Döndürmek için çevirin</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Touch gestures:</source>
-        <translation type="unfinished"></translation>
+        <translation>Dokunma jestleri:</translation>
     </message>
 </context>
 <context>
@@ -6112,7 +6212,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/network.cpp" line="+39"/>
         <source>Allow insecure local storage</source>
-        <translation type="unfinished"></translation>
+        <translation>Emniyetsiz yerel depolamaya izin ver</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6137,7 +6237,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>If all operators in a session set connection quality to Poor, auto-reset will not work and the server will stop processing updates until the session is manually reset.</source>
-        <translation type="unfinished"></translation>
+        <translation>Eğer oturumdaki tüm operatörlerin bağlantı kalitesi Kötüyse, otomatik-sıfırlama çalışmayacak ve oturum, manuel olarak sıfırlanana kadar güncelleştirmeleri işlemeyi durduracak.</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -6190,12 +6290,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Message received</source>
-        <translation type="unfinished"></translation>
+        <translation>Mesaj alındı</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Recording marker</source>
-        <translation type="unfinished"></translation>
+        <translation>Kayıt işaretleyicisi</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6225,7 +6325,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Preview sound</source>
-        <translation type="unfinished"></translation>
+        <translation>Ön izleme sesi</translation>
     </message>
 </context>
 <context>
@@ -6233,7 +6333,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/parentalcontrols.cpp" line="+49"/>
         <source>Consider sessions whose titles contain these keywords NSFM.</source>
-        <translation type="unfinished"></translation>
+        <translation>Şu anahtar kelimeleri içeren oturumları göster UYGUNSUZ.</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6248,42 +6348,42 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Unrestricted</source>
-        <translation type="unfinished"></translation>
+        <translation>Serbest</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Remove NSFM sessions from listings</source>
-        <translation>Uygunsuz oturumları listelerden kaldır</translation>
+        <translation>UYGUNSUZ oturumları listelerden kaldır</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Prevent joining NSFM sessions</source>
-        <translation>Uygunsuz oturumlara katılmayı engelle</translation>
+        <translation>UYGUNSUZ oturumlara katılmayı engelle</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Prevent joining NSFM sessions and disconnect</source>
-        <translation>Uygunsuz oturumlara katılmayı engelle ve ayrıl</translation>
+        <translation>UYGUNSUZ oturumlara katılmayı engelle ve ayrıl</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>NSFM sessions will be hidden from server listings, but can still be joined by following a direct link.</source>
-        <translation>Uygunsuz oturumlar sunucu listelerinde gözükmeyecek ancak direkt link kullanılarak erişilebilecek.</translation>
+        <translation>UYGUNSUZ oturumlar sunucu listelerinde gözükmeyecek ancak direkt link kullanılarak erişilebilecek.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>NSFM sessions will be hidden from server listings and cannot be joined.</source>
-        <translation>Uygunsuz oturumlar suncu listesinde gözükmeyecek ve katılınamayacak.</translation>
+        <translation>UYGUNSUZ oturumlar suncu listesinde gözükmeyecek ve katılınamayacak.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>NSFM sessions will be hidden from server listings and cannot be joined. Connected sessions that change their title or NSFM flag will automatically disconnect.</source>
-        <translation>Uygunsuz oturumlar suncu listesinde gözükmeyecek ve katılınamayacak. bağlı olunan oturumlar başlıklarını değitirir ya da Uygunsuz uyarısını aktive ederse otomatik olarak ayrılınacak.</translation>
+        <translation>UYGUNSUZ oturumlar suncu listesinde gözükmeyecek ve katılınamayacak. Bağlanılan oturumlar başlıklarını değiştirir ya da UYGUNSUZ uyarısını aktive ederse otomatik olarak ayrılınacak.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Disallow uncensoring of layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Katmanların sensörlerinin açılmasına izin verme</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -6309,7 +6409,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+19"/>
         <source>These settings configure the handling of sessions that are marked not suitable for minors (NSFM) and of layers that have been censored.</source>
-        <translation>Bu ayarlar 18 yaş altı çocuklara uygun olmayan olarak işaretlenen (Uygunsuz) oturumları ve sensörlenmiş katmanları ilgilendiren seçenekleri kapsar.</translation>
+        <translation>Bu ayarlar 18 yaş altına uygun olmayan olarak işaretlenen (UYGUNSUZ) oturumları ve sensörlenmiş katmanları ilgilendiren seçenekleri kapsar.</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -6342,36 +6442,36 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/servers.cpp" line="+47"/>
         <source>Known hosts:</source>
-        <translation type="unfinished">Bilinen</translation>
+        <translation>Bilinen hostlar:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Import trusted certificate…</source>
-        <translation type="unfinished"></translation>
+        <translation>Güvenilmiş sertifikayı içe aktar…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Remove selected hosts…</source>
-        <translation type="unfinished"></translation>
+        <translation>Seçilmiş hostları kaldır…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Remove known hosts</source>
-        <translation type="unfinished"></translation>
+        <translation>Bilinen hostları kaldır</translation>
     </message>
     <message numerus="yes">
         <location line="+1"/>
         <source>Really remove %n known host(s)?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n tane bilinen hostu kaldırmak istediğinize emin misiniz?</numerusform>
+            <numerusform>%n tane bilinen hostu kaldırmak istediğinize emin misiniz?</numerusform>
         </translation>
     </message>
     <message>
         <location line="+6"/>
         <location line="+146"/>
         <source>Trust selected hosts</source>
-        <translation type="unfinished"></translation>
+        <translation>Güvenilmiş hostları seç</translation>
     </message>
     <message>
         <location line="-123"/>
@@ -6435,12 +6535,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Import trusted certificates</source>
-        <translation type="unfinished"></translation>
+        <translation>Güvenilmiş sertifikaları içe aktar</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Could not save changes to known hosts: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Bilinen hostlara yapılan değişiklikler kaydedilemedi: %1</translation>
     </message>
 </context>
 <context>
@@ -6448,7 +6548,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/shortcuts.cpp" line="+35"/>
         <source>Search actions…</source>
-        <translation>Aksiyonları ara…</translation>
+        <translation>Hareketleri ara…</translation>
     </message>
     <message>
         <location line="+72"/>
@@ -6471,7 +6571,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/tools.cpp" line="+41"/>
         <source>Toggle between previous and current tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Önceki ve şu anki araç arasında git-gel yap</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6481,7 +6581,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Share one color across all brush slots</source>
-        <translation type="unfinished"></translation>
+        <translation>Tüm fırça sıralarına aynı rengi koy</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6496,12 +6596,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Show a %1 outline around the brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Fırçanın çevresinde %1 kontur göster</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Enable brush outline</source>
-        <translation type="unfinished"></translation>
+        <translation>Fırça konturünü aktifleştir</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -6511,7 +6611,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Crosshair</source>
-        <translation type="unfinished"></translation>
+        <translation>Nişangah</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6521,17 +6621,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Right-handed triangle</source>
-        <translation type="unfinished"></translation>
+        <translation>Sağlak üçgen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Left-handed triangle</source>
-        <translation type="unfinished"></translation>
+        <translation>Solak üçgen</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Draw the brush as a %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Fırçayı %1 olarak çiz</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -6561,27 +6661,27 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Rotating</source>
-        <translation type="unfinished"></translation>
+        <translation>Döndürme</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Color space:</source>
-        <translation type="unfinished"></translation>
+        <translation>Renk boşluğu:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>HSV (Hue–Saturation–Value)</source>
-        <translation type="unfinished"></translation>
+        <translation>HSV (Renk Tonu-Doygunluk-Değer)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>HSL (Hue–Saturation–Lightness)</source>
-        <translation type="unfinished"></translation>
+        <translation>HSL (Renk Tonu-Doygunluk-Parlaklık)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>HCL (Hue–Chroma–Luminance)</source>
-        <translation type="unfinished"></translation>
+        <translation>HCL (Renk Tonu-Kroma-Parlaklık)</translation>
     </message>
 </context>
 <context>
@@ -6600,35 +6700,35 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+13"/>
         <location line="+250"/>
         <source>New Brush Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Yeni Fırça Ayarı</translation>
     </message>
     <message>
         <location line="-249"/>
         <source>Duplicate Brush Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Fırça Ayarını Çoğalt</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+269"/>
         <source>Overwrite Brush Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Fırça Ayarının Üzerine Kaydet</translation>
     </message>
     <message>
         <location line="-268"/>
         <location line="+292"/>
         <source>Edit Brush Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Fırça Ayarını Düzenle</translation>
     </message>
     <message>
         <location line="-291"/>
         <location line="+302"/>
         <source>Delete Brush Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Fırça Ayarını Sil</translation>
     </message>
     <message>
         <location line="-301"/>
         <source>Brush Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Fırça Etiketleri</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6639,23 +6739,23 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+2"/>
         <location line="+191"/>
         <source>New Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Yeni Etiket</translation>
     </message>
     <message>
         <location line="-190"/>
         <source>Rename Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Etiketi Yeniden Adlandır</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+218"/>
         <source>Delete Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Etiketi Sil</translation>
     </message>
     <message>
         <location line="-216"/>
         <source>Import Brushes...</source>
-        <translation type="unfinished"></translation>
+        <translation>Fırçaları İçe Aktar...</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -6665,7 +6765,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+61"/>
         <source>Select MyPaint brush pack to import</source>
-        <translation type="unfinished"></translation>
+        <translation>İçe aktarmak için MyPaint fırça paketi seç</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6675,52 +6775,52 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+10"/>
         <source>MyPaint Brush Import</source>
-        <translation type="unfinished"></translation>
+        <translation>MyPain Fırça İçe Aktarması</translation>
     </message>
     <message numerus="yes">
         <location line="+11"/>
         <source>%n brush(es) imported.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n fırça içe aktarıldı.</numerusform>
+            <numerusform>%n fırça içe aktarıldı.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+14"/>
         <source>%n tag(s) imported: %1</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n etiket içe aktarıldı: %1</numerusform>
+            <numerusform>%n etiket içe aktarıldı: %1</numerusform>
         </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>0 tags imported.</source>
-        <translation type="unfinished"></translation>
+        <translation>0 etiket içe aktarıldı.</translation>
     </message>
     <message numerus="yes">
         <location line="+4"/>
         <source>%n error(s) encountered.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n hata ile karşılaşıldı.</numerusform>
+            <numerusform>%n hata ile karşılaşıldı.</numerusform>
         </translation>
     </message>
     <message>
         <location line="+80"/>
         <location line="+14"/>
         <source>Tag name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Etiket adı:</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Edit Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Etiketi Düzenle</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Really delete tag &apos;%1&apos;? This will not delete the brushes within.</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; aslı etiketi silmek istediğinize emin misiniz? İçindeki fırçalar silinmeyecektir.</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -6730,12 +6830,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+26"/>
         <source>Really overwrite brush preset &apos;%1&apos; with the current brush?</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; fırça ayarının üzerine seçili fırçayı kaydetmek istediğinize emin misiniz?</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Really delete brush preset &apos;%1&apos;?</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; adlı fırça ayarını silmek istediğinize emin misiniz?</translation>
     </message>
 </context>
 <context>
@@ -6743,7 +6843,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/colorpalette.cpp" line="+94"/>
         <source>Write protect</source>
-        <translation type="unfinished"></translation>
+        <translation>Koruma yaz</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -6769,12 +6869,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Import...</source>
-        <translation type="unfinished"></translation>
+        <translation>İçe aktar...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Export...</source>
-        <translation type="unfinished"></translation>
+        <translation>Dışa aktar...</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -6789,17 +6889,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Less columns</source>
-        <translation type="unfinished"></translation>
+        <translation>Daha az sütun</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>More columns</source>
-        <translation type="unfinished"></translation>
+        <translation>Daha fazla sütun</translation>
     </message>
     <message>
         <location line="+53"/>
         <source>Import palette</source>
-        <translation type="unfinished"></translation>
+        <translation>İçe palet aktar</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6814,7 +6914,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+18"/>
         <source>Export palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Paleti dışa aktar</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6842,32 +6942,32 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/colorsliders.cpp" line="+69"/>
         <source>H</source>
-        <translation type="unfinished"></translation>
+        <translation>H</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>S</source>
-        <translation type="unfinished"></translation>
+        <translation>S</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>V</source>
-        <translation type="unfinished"></translation>
+        <translation>V</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>R</source>
-        <translation type="unfinished"></translation>
+        <translation>R</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>G</source>
-        <translation type="unfinished"></translation>
+        <translation>G</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>B</source>
-        <translation type="unfinished"></translation>
+        <translation>B</translation>
     </message>
 </context>
 <context>
@@ -6885,7 +6985,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Access tier:</source>
-        <translation type="unfinished"></translation>
+        <translation>Erişim rütbesi:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6957,7 +7057,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/navigator.cpp" line="+301"/>
         <source>Navigator</source>
-        <translation type="unfinished"></translation>
+        <translation>Gezgin</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -6967,7 +7067,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Realtime Update</source>
-        <translation type="unfinished"></translation>
+        <translation>Gerçek Zamanlı Güncelleme</translation>
     </message>
 </context>
 <context>
@@ -6975,7 +7075,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/onionskins.cpp" line="+127"/>
         <source>Tint Below</source>
-        <translation type="unfinished"></translation>
+        <translation>Aşağıyı Tonla</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -6985,7 +7085,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+10"/>
         <source>Tint Above</source>
-        <translation type="unfinished"></translation>
+        <translation>Yukarıyı Tonla</translation>
     </message>
     <message>
         <location line="+102"/>
@@ -7021,12 +7121,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/titlewidget.cpp" line="+36"/>
         <source>Docked</source>
-        <translation type="unfinished"></translation>
+        <translation>Demirlendi</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Dockable by Dragging</source>
-        <translation type="unfinished"></translation>
+        <translation>Sürükleyerek Demirlenebilir</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -7047,32 +7147,32 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../tabletinput.cpp" line="+186"/>
         <source>Qt tablet input</source>
-        <translation type="unfinished"></translation>
+        <translation>Qt tablet girdisi</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>KisTablet Windows Ink input</source>
-        <translation type="unfinished"></translation>
+        <translation>KisTablet Windows Ink girdisi</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>KisTablet Wintab input</source>
-        <translation type="unfinished"></translation>
+        <translation>KisTablet Wintab girdisi</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>KisTablet Wintab input with relative pen mode</source>
-        <translation type="unfinished"></translation>
+        <translation>KisTablet Wintab girdisi ve ilgili kalem modu</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Qt6 Windows Ink input</source>
-        <translation type="unfinished"></translation>
+        <translation>Qt6 Windows Ink girdisi</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Qt6 Wintab input</source>
-        <translation type="unfinished"></translation>
+        <translation>Qt6 Wintab girdisi</translation>
     </message>
 </context>
 <context>
@@ -7106,7 +7206,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-9"/>
         <source>Justify</source>
-        <translation type="unfinished"></translation>
+        <translation>Açıkla</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7134,42 +7234,42 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+41"/>
         <source>Time-Based Stabilizer</source>
-        <translation type="unfinished"></translation>
+        <translation>Zaman-Bazlı Dengeleyici</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Average Smoothing</source>
-        <translation type="unfinished"></translation>
+        <translation>Ortalama Yumuşatma</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Slows down the stroke and stabilizes it over time. Can produce very smooth results, but may feel sluggish.</source>
-        <translation type="unfinished"></translation>
+        <translation>Çizgiyi yavaşlatır ve zaman geçtikçe dengeler. Çok yumuşak sonuçlar ortaya çıkartır ama yavaş hissetirebilir.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Simply averages inputs to get a smoother result. Faster than the time-based stabilizer, but not as smooth.</source>
-        <translation type="unfinished"></translation>
+        <translation>Daha yumuşak bir sonuç elde etmek için girdi sonuçlarının ortalamasını alır. Zaman-bazlı dengeleyici kadar yumuşak olmasa da daha hızlıdır.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Finish Strokes</source>
-        <translation type="unfinished"></translation>
+        <translation>Son Çizgiler</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Draws stabilized strokes to the end, rather than cutting them off.</source>
-        <translation type="unfinished"></translation>
+        <translation>Yarıda kesmektense, sonuna kadar dengelenmiş çizgiler çeker.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Synchronize With Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Fırça İle Senkronize</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Makes the stabilizer a brush setting, like in MyPaint, rather than an independent setting, like in Krita.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dengeleyiciyi Krita&apos;daki gibi ayrı bir seçenek yapmaktansa, MyPaint&apos;teki gibi fırça ayarı yapar.</translation>
     </message>
     <message>
         <location line="+523"/>
@@ -7179,7 +7279,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>You don&apos;t have permission to use MyPaint brushes.</source>
-        <translation>MyPaint firçalarını kullanmaya izniniz yok.</translation>
+        <translation>MyPaint fırçalarını kullanmaya izniniz yok.</translation>
     </message>
 </context>
 <context>
@@ -7192,7 +7292,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Pick from current layer only</source>
-        <translation>Sadece şu anki katmandan seç</translation>
+        <translation>Sadece aktif katmandan seç</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -7205,12 +7305,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/fillsettings.cpp" line="+123"/>
         <source>Current Layer</source>
-        <translation>Şu Anki Katman</translation>
+        <translation>Aktif Katman</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Merged Image</source>
-        <translation>Birleşmiş Resim</translation>
+        <translation>Birleştirilmiş Resim</translation>
     </message>
 </context>
 <context>
@@ -7223,7 +7323,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Bilinear</source>
-        <translation type="unfinished"></translation>
+        <translation>Bilineer</translation>
     </message>
 </context>
 <context>
@@ -7244,32 +7344,32 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/canvasshortcutedit.cpp" line="+269"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>İptal</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Set...</source>
-        <translation type="unfinished"></translation>
+        <translation>Ayarla...</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Press a key combination. Hit Escape to cancel.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bir tuş kombinasyonuna basın. İptal etmek için Çık&apos;a basın.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Click the desired mouse button into the field above, optionally while holding down keys. Hit Escape to cancel.</source>
-        <translation type="unfinished"></translation>
+        <translation>Yukarıdaki alana istediğinis fare tuşunu giriniz, isterseniz klavye tuşlarına da basılı tutabilirsiniz. İptal etmek için Çık&apos;a basın.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Turn the mouse wheel or click into in the field above, optionally while holding down keys. Hit Escape to cancel.</source>
-        <translation type="unfinished"></translation>
+        <translation>Yukarıdaki alana fare tekerleği ile tıklayın ya da fare tekerini çevirin, isterseniz klavye tuşlarına da basılı tutabilirsiniz. İptal etmek için Çık&apos;a basın.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Hold down the desired key combination and click into the field above. Hit Escape to cancel.</source>
-        <translation type="unfinished"></translation>
+        <translation>Yukarıdaki alana istediğiniz bir tuş kombinasyonu girin. İptal etmek için Çık&apos;a basın.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -7279,7 +7379,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Press the Set button to assign a shortcut.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kısayol atamak için Ayarla tuşuna basın.</translation>
     </message>
 </context>
 <context>
@@ -7325,12 +7425,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+116"/>
         <source>/!: only operators are allowed to send shouts.</source>
-        <translation>/!: sadece operatörler bağırabilir gönderebilir.</translation>
+        <translation>/!: sadece operatörler bağırabilir.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>/!: can only shout in a public chat.</source>
-        <translation>/!: sadeceherkese açık sohbette bağırılabilir.</translation>
+        <translation>/!: sadece herkese açık sohbette bağırılabilir.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7340,42 +7440,42 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>/alert: only operators are allowed to send alerts.</source>
-        <translation type="unfinished"></translation>
+        <translation>/alert: sadece operatörler uyarı gönderebilir.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>/alert: no text given.</source>
-        <translation type="unfinished"></translation>
+        <translation>/alert: metin girilmedi.</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>/me: no text given.</source>
-        <translation type="unfinished"></translation>
+        <translation>/me: metin girilmedi.</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>/pin: only operators are allowed to send alerts.</source>
-        <translation type="unfinished"></translation>
+        <translation>/pin: sadece operatörler uyarı gönderebilir.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>/pin: can only pin in a public chat.</source>
-        <translation type="unfinished"></translation>
+        <translation>/pin: sadece herkese açık sohbette sabitlenebilir.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>/pin: no text given.</source>
-        <translation type="unfinished"></translation>
+        <translation>/pin: metin girilmedi.</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>/unpin: can only unpin in a public chat.</source>
-        <translation type="unfinished"></translation>
+        <translation>/unpin: sadece herkese açık sohbette sabitleme kaldırılabilir.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>/roll: invalid dice roll description.</source>
-        <translation type="unfinished"></translation>
+        <translation>/roll: geçersiz zar açıklaması.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -7389,7 +7489,15 @@ Values above 0.5 may not be noticeable.</source>
 /me &lt;text&gt; - send action-type message
 /roll &lt;dice&gt; - roll dice, e.g. 1d6 for a six-sided die</source>
         <extracomment>Don&apos;t translate the commands, only their descriptions!</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Mevcut olan istemci komutları:
+/help- bu mesajı göster
+/clear - sohbet penceresini temizler
+/! &lt;metin&gt; - anons et (sadece Operatörler)
+/alert &lt;metin&gt; - yüksek öncelikli bir uyarı gönder (sadece Operatörler)
+/pin &lt;metin&gt; - sohbet kutusunun üstüne bir mesaj sabitle (sadece Operatörler)
+/unpin - sabitlenmiş mesajı kaldır (sadece Operatörler)
+/me &lt;metin&gt; - aksiyon-tarzı mesaj gönder
+/roll &lt;zar numarası&gt; - zar at, örnek: 6 taraflı zar için,1d6</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -7404,17 +7512,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Compact mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Sıkıştırılmış mod</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Detach</source>
-        <translation type="unfinished"></translation>
+        <translation>Sök</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Attach</source>
-        <translation type="unfinished"></translation>
+        <translation>Tuttur</translation>
     </message>
 </context>
 <context>
@@ -7443,7 +7551,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Copies this curve to the clipboard. You can paste it into another setting or into the chat to share it with other users.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bu eğriyi panoya kopyalar. Başka bir ayara yapıştırabilir ya da sohbete yapıştırıp diğer kullanıcılarla paylaşabilirsiniz.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -7453,32 +7561,32 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Pastes a copied curve from the clipboard, overwriting what is there currently.</source>
-        <translation type="unfinished"></translation>
+        <translation>Panodan bir eğriyi buraya yaıştırarak burada bulunan şeyin üzerine kaydeder.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Presets…</source>
-        <translation type="unfinished"></translation>
+        <translation>Ön ayarlar…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Save and load curve presets.</source>
-        <translation type="unfinished"></translation>
+        <translation>Eğri ön ayarlarını kaydet ve yükle.</translation>
     </message>
     <message>
         <location line="+101"/>
         <source>Curve copied to clipboard.</source>
-        <translation type="unfinished"></translation>
+        <translation>Eğri panoya kopyalandı.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Curve pasted from clipboard.</source>
-        <translation type="unfinished"></translation>
+        <translation>Eğri panodan yapıştırıldı.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Clipboard does not appear to contain a curve.</source>
-        <translation type="unfinished"></translation>
+        <translation>Panoda eğri bulunmuyor.</translation>
     </message>
 </context>
 <context>
@@ -7486,17 +7594,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/mypaintinput.cpp" line="+170"/>
         <source>Output Range: </source>
-        <translation type="unfinished"></translation>
+        <translation>Çıktı Menzili: </translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Input Minimum: </source>
-        <translation type="unfinished"></translation>
+        <translation>Girdi Minimum: </translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Input Maximum: </source>
-        <translation type="unfinished"></translation>
+        <translation>Girdi Maksimum: </translation>
     </message>
 </context>
 <context>
@@ -7504,17 +7612,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/netstatus.cpp" line="+52"/>
         <source>Copy address to clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Adresi panoya kopyala</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Copy session URL to clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Oturum URLsini panoya kopyala</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Get externally visible IP address</source>
-        <translation type="unfinished"></translation>
+        <translation>Dışarıdan görünür bir IP adresi al</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -7539,22 +7647,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+19"/>
         <source>A previously unvisited host</source>
-        <translation type="unfinished"></translation>
+        <translation>Önceden ziyaret edilmemiş bir host</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Host certificate has not changed since the last visit</source>
-        <translation type="unfinished"></translation>
+        <translation>Host sertifikası önceki ziyaretten beri değişmemiş</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>This is a trusted host</source>
-        <translation type="unfinished"></translation>
+        <translation>Bu güvenilmiş bir host</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>Disconnected</source>
-        <translation type="unfinished"></translation>
+        <translation>Bağlantı Kesildi</translation>
     </message>
     <message>
         <location line="+115"/>
@@ -7574,7 +7682,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Connecting to %1...</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 sunucusuna bağlanılıyor...</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -7584,7 +7692,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Host: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Host: %1</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7599,12 +7707,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+36"/>
         <source>Notice</source>
-        <translation type="unfinished"></translation>
+        <translation>Duyuru</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Your Internet Service Provider is using Carrier Grade NAT. This makes it impossible for others to connect to you directly. See Drawpile&apos;s help page for workarounds.</source>
-        <translation type="unfinished"></translation>
+        <translation>İnternet Hizmet Sağlayıcınız Carrier Grade NAT kullanıyor. Bu diğer kullanıcıların direkt olarak size bağlanmasını engelliyor. Çözüm için Drawpile&apos;ın yardım sayfasına bakın.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -7617,7 +7725,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/presetselector.cpp" line="+28"/>
         <source>Presets</source>
-        <translation type="unfinished"></translation>
+        <translation>Hazır Ayarlar</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -7640,97 +7748,97 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/timelinewidget.cpp" line="+491"/>
         <source>Blank key frame (duplicate)</source>
-        <translation type="unfinished"></translation>
+        <translation>Boş key frame (çoğaltılmış)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Blank key frame %1 (duplicate)</source>
-        <translation type="unfinished"></translation>
+        <translation>Boş key frame %1 (çoğaltılmış)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Blank key frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Boş key frame</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Blank key frame %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Boş key frame %1</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Key frame on %1 (duplicate)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1&apos;de key frame (çoğaltılmış)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Key frame %1 on %2 (duplicate)</source>
-        <translation type="unfinished"></translation>
+        <translation>%2&apos;de key frame %1 (çoğaltılmış)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Key frame on %1</source>
-        <translation type="unfinished"></translation>
+        <translation>%1&apos;de key frame</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Key frame %1 on %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%2&apos;de key frame %1</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Toggle visibility</source>
-        <translation type="unfinished"></translation>
+        <translation>Görünürlüğü aç-kapat</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle onion skin</source>
-        <translation type="unfinished"></translation>
+        <translation>Soğan zarını aç-kapat</translation>
     </message>
     <message>
         <location line="+653"/>
         <source>Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Track</translation>
     </message>
     <message>
         <location line="+57"/>
         <source>Rename Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Tracki yeniden adlandır</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Track Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Track Adı</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Change Frame Count</source>
-        <translation type="unfinished"></translation>
+        <translation>Kare Sayısını Değiştir</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Frame Count (key frames beyond this point will be deleted)</source>
-        <translation type="unfinished"></translation>
+        <translation>Kare Sayısı (bu noktanın ötesindeki key frameler silinecek)</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Change Framerate</source>
-        <translation type="unfinished"></translation>
+        <translation>Kare Hızını Değiştir</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Frames Per Second (FPS)</source>
-        <translation type="unfinished"></translation>
+        <translation>Kare Hızı (FPS)</translation>
     </message>
     <message>
         <location line="+234"/>
         <source>Set Key Frame to %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Keyframei %1&apos;e ayarla</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Set Key Frame to Current Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Key Framei Şu Anki Katmana Ayarla</translation>
     </message>
 </context>
 <context>
