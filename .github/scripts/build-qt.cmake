@@ -97,7 +97,7 @@ if(WIN32)
 endif()
 
 if(UNIX AND NOT APPLE AND NOT ANDROID)
-	list(APPEND BASE_FLAGS -system-freetype -fontconfig)
+	list(APPEND BASE_FLAGS -system-freetype -fontconfig -openssl-linked)
 else()
 	list(APPEND BASE_FLAGS -qt-freetype)
 endif()
@@ -211,7 +211,7 @@ if(BASE)
 					-nomake tests -nomake examples
 					-no-sql-mysql -no-sql-odbc -no-sql-psql -sql-sqlite
 					-qt-libjpeg -qt-libpng -qt-sqlite -qt-harfbuzz
-					-openssl-linked ${BASE_FLAGS}
+					${BASE_FLAGS}
 				DEBUG
 					${BASE_DEBUG_FLAGS} -separate-debug-info
 				RELWITHDEBINFO
