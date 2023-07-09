@@ -211,7 +211,7 @@ if(BASE)
 					-nomake tests -nomake examples
 					-no-sql-mysql -no-sql-odbc -no-sql-psql -sql-sqlite
 					-qt-libjpeg -qt-libpng -qt-sqlite -qt-harfbuzz
-					${BASE_FLAGS}
+					-openssl-linked ${BASE_FLAGS}
 				DEBUG
 					${BASE_DEBUG_FLAGS} -separate-debug-info
 				RELWITHDEBINFO
