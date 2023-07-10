@@ -1577,9 +1577,10 @@ bool CanvasView::isPointVisible(const QPointF &point) const
 
 void CanvasView::scrollTo(const QPointF &point)
 {
-	m_pos = point * m_zoom;
 	updateCanvasTransform([&] {
-		m_pos = point * m_zoom;
+		QTransform matrix = calculateCanvasTransformFrom(
+			QPointF{}, m_zoom, m_rotate, m_mirror, m_flip);
+		m_pos = matrix.map(point);
 	});
 }
 
