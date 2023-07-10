@@ -1114,8 +1114,8 @@ Alt aralık: [%3, %4]</translation>
         <location line="+124"/>
         <source>You have %n images with unsaved changes. Do you want to review these changes before quitting?</source>
         <translation>
-            <numerusform>Kaydedilmemiş değişikliğe sahip olan %n resminiz var. Çıkmadan önce bu değişiklikleri gözden geçirmek ister misiniz?</numerusform>
-            <numerusform>Kaydedilmemiş değişikliğe sahip olan %n resminiz var. Çıkmadan önce bu değişiklikleri gözden geçirmek ister misiniz?</numerusform>
+            <numerusform>Kaydedilmemiş değişikliğe sahip olan %n resminiz var. Programı kapatmadan önce bu değişiklikleri gözden geçirmek ister misiniz?</numerusform>
+            <numerusform>Kaydedilmemiş değişikliğe sahip olan %n resminiz var. Programı kapatmadan önce bu değişiklikleri gözden geçirmek ister misiniz?</numerusform>
         </translation>
     </message>
     <message>
@@ -1145,8 +1145,8 @@ Alt aralık: [%3, %4]</translation>
         <location line="+1"/>
         <source>Server is running out of history space and session has grown too large to automatically reset! (Limit is %1 MB)
 Simplify the canvas and reset manually before space runs out.</source>
-        <translation>Sunucu geçmiş sınırına ulaştı ve otomatik sıfırlama için aşırı büyük hale geldi! (Sınır %1 MB)
-Sunucu kapasitesine ulaşmadan tuvalı sadeleştirin ve manuel olarak sıfırlayın.</translation>
+        <translation>Sunucu, geçmiş sınırına ulaştı ve otomatik sıfırlama için aşırı büyük hale geldi! (Sınır %1 MB)
+Sunucu kapasitesi dolmadan önce tuvali sadeleştirin ve manuel olarak sıfırlayın.</translation>
     </message>
     <message>
         <location line="+231"/>
@@ -1178,7 +1178,7 @@ Sunucu kapasitesine ulaşmadan tuvalı sadeleştirin ve manuel olarak sıfırlay
         <location line="+95"/>
         <location line="+21"/>
         <source>Exit Drawpile</source>
-        <translation>Drawpile&apos;dan çık</translation>
+        <translation>Drawpile&apos;dan Çık</translation>
     </message>
     <message>
         <location line="-20"/>
@@ -1200,7 +1200,7 @@ Sunucu kapasitesine ulaşmadan tuvalı sadeleştirin ve manuel olarak sıfırlay
     <message>
         <location line="-368"/>
         <source>There are unsaved changes. Save them before exiting?</source>
-        <translation>Kaydedilmemiş değişiklikler var. Çıkmadan kaydetmek ister misiniz?</translation>
+        <translation>Kaydedilmemiş değişiklikler var. Programı kapatmadan önce kaydetmek ister misiniz?</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1318,12 +1318,12 @@ Sunucu kapasitesine ulaşmadan tuvalı sadeleştirin ve manuel olarak sıfırlay
     <message>
         <location line="+14"/>
         <source>Host Session</source>
-        <translation>Oturum Sun</translation>
+        <translation>Oturum Hostla</translation>
     </message>
     <message>
         <location line="+68"/>
         <source>Really leave the session?</source>
-        <translation>Oturumdan ayrılmak istediğine emin misin?</translation>
+        <translation>Oturumdan ayrılmak istediğinize emin misiniz?</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -1374,7 +1374,7 @@ Sunucu kapasitesine ulaşmadan tuvalı sadeleştirin ve manuel olarak sıfırlay
     <message>
         <location line="+12"/>
         <source>Would you like to join the session instead?</source>
-        <translation>Bunun yerine oturuma katılmak ister misiniz?</translation>
+        <translation>Yerine bu oturuma katılmak ister misiniz?</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1479,7 +1479,7 @@ Sunucu kapasitesine ulaşmadan tuvalı sadeleştirin ve manuel olarak sıfırlay
     <message>
         <location line="+7"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
-        <translation>Yapay Gecikmeyi Kur... (şu an %1 ms)</translation>
+        <translation>Yapay Gecikme Kur... (şu an %1 ms)</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -1489,7 +1489,7 @@ Sunucu kapasitesine ulaşmadan tuvalı sadeleştirin ve manuel olarak sıfırlay
     <message>
         <location line="+1"/>
         <source>Artificial lag in milliseconds (0 to disable):</source>
-        <translation>Yapay gecikme milisaniyeler içinde (devre dışı bırakmak için 0):</translation>
+        <translation>Yapay gecikme şu kadar milisaniye içinde (devre dışı bırakmak için 0):</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -1514,9 +1514,9 @@ Sunucu kapasitesine ulaşmadan tuvalı sadeleştirin ve manuel olarak sıfırlay
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
 
 Are you sure youwant to start recording debug dumps?</source>
-        <translation>Hata ayıklama çöplükleri yerel ve uzaktan gelen çizim komutlarını kaydedecek. Ağ sıkıntılarını düzeltmektirken kullanılabilirler and başka pek bir katkıları yok. Eğer sıradan bir kayıt almak istiyorsanız, Dosya &gt; Kaydet... seçeneğini kullanın
+        <translation>Hata ayıklama çöplükleri yerel ve uzaktan gelen çizim komutlarını kaydedecek. Ağ sıkıntılarını düzeltirken kullanılabilirler ancak başka pek bir katkıları yok. Eğer sıradan bir kayıt almak istiyorsanız, Dosya &gt; Kayda Al... seçeneğini kullanın.
 
-Hata ayıklama çöplüğü kaydı gelecek tuval sıfırlamasından sonra başlayacak ve dosyalar %1 uzqantısına kaydedilecek
+Hata ayıklama çöplüğü kaydı gelecek tuval sıfırlamasından sonra başlayacak ve dosyalar %1 uzaantısına kaydedilecek
 
 Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?</translation>
     </message>
@@ -1703,7 +1703,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+0"/>
         <source>Cut selected area of the current layer to the clipboard</source>
-        <translation>Aktif katmanın seçili alanını panoya kopyala</translation>
+        <translation>Aktif katmanın seçili bölgesini panoya kes</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1728,12 +1728,12 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+1"/>
         <source>Delete Empty Annotations</source>
-        <translation>Boş Katman Notlarını Sil</translation>
+        <translation>Boş Katman Dip Notlarını Sil</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Resi&amp;ze Canvas...</source>
-        <translation>Tuvali Yeniden Boyutlandır...</translation>
+        <translation>Tuvali Yeniden Boyu&amp;tlandır...</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1759,12 +1759,12 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <location line="+1"/>
         <location filename="../widgets/macmenu.cpp" line="+8"/>
         <source>Prefere&amp;nces</source>
-        <translation>Tercihler</translation>
+        <translation>Terci&amp;hler</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Select &amp;All</source>
-        <translation>Hepsini Seç</translation>
+        <translation>Hepsini &amp;Seç</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1819,7 +1819,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+19"/>
         <source>&amp;Expand Canvas</source>
-        <translation>&amp;Tuvali Büyüt</translation>
+        <translation>&amp;Tuvali Genişlet</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1894,7 +1894,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+2"/>
         <source>Show &amp;Annotations</source>
-        <translation>Notları Göster</translation>
+        <translation>&amp;Dip Notları Göster</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1929,7 +1929,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+3"/>
         <source>&amp;Full Screen</source>
-        <translation>&amp;Full Ekran</translation>
+        <translation>&amp;Tam Ekran</translation>
     </message>
     <message>
         <location line="+64"/>
@@ -2049,7 +2049,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+0"/>
         <source>Show animation preview window</source>
-        <translation>Animasyon önizleme modunu göster</translation>
+        <translation>Animasyon önizleme penceresini göster</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2124,7 +2124,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+1"/>
         <source>Delete Track</source>
-        <translation>Tracki sil</translation>
+        <translation>Tracki Sil</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2155,7 +2155,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <location line="+28"/>
         <location filename="../widgets/macmenu.cpp" line="+9"/>
         <source>&amp;Host...</source>
-        <translation>&amp;Sun...</translation>
+        <translation>&amp;Host...</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2237,7 +2237,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+0"/>
         <source>Freehand brush tool</source>
-        <translation>Düzensiz fırça aleti</translation>
+        <translation>Özgür fırça aleti</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2247,7 +2247,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+0"/>
         <source>Freehand eraser brush</source>
-        <translation>Düzensiz silgi fırçası</translation>
+        <translation>Özgür silgi fırçası</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2282,12 +2282,12 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+1"/>
         <source>Bezier Curve</source>
-        <translation>Bezier Kıvrımı</translation>
+        <translation>Bezier Eğrisi</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Draw bezier curves</source>
-        <translation>Bezier eğrisi çiz</translation>
+        <translation>Bezier eğrileri çiz</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2302,7 +2302,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+1"/>
         <source>&amp;Annotation</source>
-        <translation>&amp;Dipnot</translation>
+        <translation>&amp;Dip Not</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2402,7 +2402,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+15"/>
         <source>Toggle Eraser Mode</source>
-        <translation>Silgi Modunu Aç</translation>
+        <translation>Silgi Modunu Aç/Kapat</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2438,7 +2438,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <location line="+23"/>
         <location filename="../widgets/macmenu.cpp" line="+25"/>
         <source>&amp;Homepage</source>
-        <translation>Anasayfa</translation>
+        <translation>&amp;Ana Sayfa</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2532,7 +2532,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+22"/>
         <source>Onion Skins</source>
-        <translation>Soğan Ciltleri</translation>
+        <translation>Soğan Zarları</translation>
     </message>
     <message>
         <location filename="../widgets/macmenu.cpp" line="-13"/>
@@ -2601,7 +2601,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+17"/>
         <source>Skip Backward</source>
-        <translation>Geriye Doğru Atla</translation>
+        <translation>Geriye Sar</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -2631,7 +2631,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+67"/>
         <source>Building an index will let you quickly skip to any part of your recording.</source>
-        <translation>Bir index oluşturmak hızlıca kaydınızdaki herhangi bir yere atlamanıza yardımcı olacak.</translation>
+        <translation>Bir index oluşturmak kaydınızdaki herhangi bir yere hızlıca atlamanıza yardımcı olacak.</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -2695,7 +2695,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+6"/>
         <source>Rectangle</source>
-        <translation>Dİkdörtgen</translation>
+        <translation>Dikdörtgen</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -2827,7 +2827,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <location filename="../ui/serverlog.ui" line="+14"/>
         <location line="+10"/>
         <source>Event Log</source>
-        <translation>Olay</translation>
+        <translation>Olay Kaydı</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -2926,7 +2926,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+7"/>
         <source>Don&apos;t terminate session when the last user leaves</source>
-        <translation>Son kullanıcı da ayrılınca bu oturumu açık tut</translation>
+        <translation>Son kullanıcı da ayrılsa bile bu oturumu açık tut</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2941,7 +2941,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+3"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation>18 yaş altındakilere uygunsuz (Uygunsuz)</translation>
+        <translation>18 yaş altındakilere uygunsuz (UYGUNSUZ)</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -2966,7 +2966,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+7"/>
         <source>How many users to let in. Does not affect users already logged in</source>
-        <translation>Kaç tane kullanıcının katılebileceğini belirler. Giriş yapmış kullanıcıları etkilemez</translation>
+        <translation>Kaç tane kullanıcının katılabileceğini belirler. Giriş yapmış kullanıcıları etkilemez</translation>
     </message>
     <message>
         <location line="+32"/>
@@ -2991,7 +2991,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+13"/>
         <source>New Annotations:</source>
-        <translation>Yeni Dipnotlar:</translation>
+        <translation>Yeni Dip Notlar:</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -3001,7 +3001,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+7"/>
         <source>General Layer Editing:</source>
-        <translation>Genel Katman Düzenlemesi:</translation>
+        <translation>Genel Katman Düzenleme:</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -3041,7 +3041,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+5"/>
         <source>Trusted</source>
-        <translation>Güvenilmişler</translation>
+        <translation>Güvenilirler</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -3354,7 +3354,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+12"/>
         <source>Save changes to the current palette</source>
-        <translation>Şu anki palete yapılan değişiklikleri kaydet</translation>
+        <translation>Şu anki palete yapılmış değişiklikleri kaydet</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -3515,7 +3515,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+0"/>
         <source>Core brush settings.</source>
-        <translation>Temel Fırça Ayarları.</translation>
+        <translation>Temel fırça ayarları.</translation>
     </message>
     <message>
         <location line="+103"/>
@@ -3718,7 +3718,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+2"/>
         <source>Set this curve for Size, Opacity, Hardness and Smudging at once.</source>
-        <translation>Bu eğim Boyut, Opaklık, Sertlik ve Bulaşmayı aynı anda etkiler.</translation>
+        <translation>Bu eğim Boyut, Opaklık, Sertlik ve Bulaşmayı etkiler.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -3763,12 +3763,12 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+4"/>
         <source>Blending of colors on the layer being drawn on.</source>
-        <translation>Renklerin çizildikleri katmanla karışması.</translation>
+        <translation>Renklerin çizildikleri katmanda karışmaları.</translation>
     </message>
     <message>
         <location line="+145"/>
         <source>Slows down the stroke to stabilize it over time. High values give very smooth lines, but they will draw slowly. When you stop moving, the line will catch up your cursor. Tablet smoothing from the input preferences applies as well.</source>
-        <translation>Çizginizi düzleştirmek için çizgi çekme hızını yavaşlatır. Yüksek değerler çok düz ve pürüzsüz çigiler oluşturur ama yavaş çizmenize sebep olur. Çizmeyi bıraktığınızda çektiğiniz çizgi fare imlecinize yetişir. Girdi seçeneklerindeki tablet yumuşatması da buna dahildir.</translation>
+        <translation>Çizginizi düzleştirmek için çizgi çekme hızını yavaşlatır. Yüksek değerler çok düz ve pürüzsüz çigiler oluşturur ama yavaş çizmenize sebep olur. Çizmeyi bıraktığınızda, çektiğiniz çizgi fare imlecinize yetişir. Girdi tercihlerindeki tablet yumuşatması da buna dahildir.</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -3778,7 +3778,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+6"/>
         <source>Unknown stabilization mode.</source>
-        <translation>Bilinmeyen satabilizasyon modu.</translation>
+        <translation>Bilinmeyen dengeleme modu.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -3908,19 +3908,19 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <location line="+8"/>
         <source>The pressure reported by the tablet. Usually between 0.0 and 1.0, but it may get larger when a pressure gain is used. If you use the mouse, it will be 0.5 when a button is pressed and 0.0 otherwise.</source>
         <comment>mypaintinput</comment>
-        <translation>Basınç tablet tarafından rapot edildi. Genelde 0.0 ve 1.0 arasındadır ama basınç gaini kullanılıyorsa daha fazla olabilir. Eğer fare kullanıyorsanız; tuşa bastığınızda 0.5, basmadığınızda 0.0 olacaktır.</translation>
+        <translation>Tablet tarafından rapor edilen basınç. Genelde 0.0 ve 1.0 arasındadır ama basınç gaini kullanılıyorsa daha fazla olabilir. Eğer fare kullanıyorsanız; tuşa bastığınızda 0.5, basmadığınızda 0.0 olacaktır.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>How fast you currently move. This can change very quickly. Try &apos;print input values&apos; from the &apos;help&apos; menu to get a feeling for the range; negative values are rare but possible for very low speed.</source>
         <comment>mypaintinput</comment>
-        <translation>Ne kadar hızlı hareket ettiğinizi gösterir. Çok hızlı değişebilir. Nasıl işlediğini kavrayabilmek için &apos;yardım&apos; menüsünden &apos;girdi değerlerini yazdır&apos; seçeneğini deneyin. Negatif değerler nadirdir ancak çok yavaş hızlarda mümkündür.</translation>
+        <translation>Ne kadar hızlı hareket ettiğinizi gösterir. Çok hızlı değişebilir. Nasıl işlediğini kavrayabilmek için &apos;yardım&apos; menüsünden &apos;girdi değerlerini yazdır&apos; seçeneğini deneyin. Negatif değerler nadirdir ancak çok yavaş hızlarda denk gelinebilir.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Same as fine speed, but changes slower. Also look at the &apos;gross speed filter&apos; setting.</source>
         <comment>mypaintinput</comment>
-        <translation>Net hızla aynıdır ancak çok daha yavaş değişir. &apos;Yaklaşık hız filtresi&apos;ne de bakınız.</translation>
+        <translation>Net hızla aynıdır ancak çok daha yavaş değişir. &apos;Yaklaşık hız filtresi&apos; ayarına da bakınız.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -3932,37 +3932,37 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <location line="+2"/>
         <source>This input slowly goes from zero to one while you draw a stroke. It can also be configured to jump back to zero periodically while you move. Look at the &apos;stroke duration&apos; and &apos;stroke hold time&apos; settings.</source>
         <comment>mypaintinput</comment>
-        <translation>Bu değer siz bir çizgi çekerken yavaşça sıfırdan bire yükselir. Ayrıca siz hareket ederken periyodik olarak sıgıra geri atlamaya ayarlanabilir. &apos;Çizgi süresi&apos; ve &apos;çizgi tutum süresi&apos; ayarlarına bakınız.</translation>
+        <translation>Bu değer siz bir çizgi çekerken yavaşça sıfırdan bire yükselir. Ayrıca siz hareket ederken periyodik olarak sıfıra geri atlamaya ayarlanabilir. &apos;Çizgi süresi&apos; ve &apos;çizgi tutum süresi&apos; ayarlarına bakınız.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The angle of the stroke, in degrees. The value will stay between 0.0 and 180.0, effectively ignoring turns of 180 degrees.</source>
         <comment>mypaintinput</comment>
-        <translation>Çizginin açısıdır. Değer 0.0 ve 180.0 arasında kalacaktır.</translation>
+        <translation>Çizginin açısı. Değer 0.0 ve 180.0 arasında kalacaktır.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Declination of stylus tilt. 0 when stylus is parallel to tablet and 90.0 when it&apos;s perpendicular to tablet.</source>
         <comment>mypaintinput</comment>
-        <translation>Kalemin eğimidir. Kalem tablete paralelken 0, dikken 90.0.</translation>
+        <translation>Kalemin eğimi. Kalem tablete paralelken 0, dikken 90.0.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Right ascension of stylus tilt. 0 when stylus working end points to you, +90 when rotated 90 degrees clockwise, -90 when rotated 90 degrees counterclockwise.</source>
         <comment>mypaintinput</comment>
-        <translation>Kalem eğiminin yükseliş halidir. Kalemin yazan ucu size çevriliyken 0, 90 derece saat yönüne çevriliyken +90, 90 derece saat yönünün tersine çevriliyken -90.</translation>
+        <translation>Kalem eğiminin yüksekliği. Kalemin yazan ucu size çevriliyken 0, 90 derece saat yönüne çevriliyken +90, 90 derece saat yönünün tersine çevriliyken -90.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>This is a user defined input. Look at the &apos;custom input&apos; setting for details.</source>
         <comment>mypaintinput</comment>
-        <translation>Bu kullanıcının belirlediği bir girdidir. Detaylar için ayarlardan &apos;özel girdi&apos; kısmına bakın.</translation>
+        <translation>Bu kullanıcının belirlediği bir girdi. Detaylar için ayarlardan &apos;özel girdi&apos; kısmına bakın.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The angle of the stroke, from 0 to 360 degrees.</source>
         <comment>mypaintinput</comment>
-        <translation>Çizginin açısıdır, 0&apos;dan 360 dereceye kadar.</translation>
+        <translation>Çizginin açısı, 0&apos;dan 360 dereceye kadar.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4013,7 +4013,7 @@ Logarithmic: 0.0 is 100%, 0.69 is 200%, -1.38 is 25%
 For the Radius setting, using a value of -4.15 makes the brush size roughly constant, relative to the level of zoom.</source>
         <comment>mypaintinput</comment>
         <translation>Şu anki tuval görünümündeki yakınlaştırma seviyesidir.
-Logaritmik : &apos;0.0&apos; 100%&apos;e denk gelir, &apos;0.69&apos; 200%&apos;e denk gelir, &apos;-1.38&apos; 25%&apos;e denk gelir
+Logaritmik: &apos;0.0&apos; 100%&apos;e denk gelir, &apos;0.69&apos; 200%&apos;e denk gelir, &apos;-1.38&apos; 25%&apos;e denk gelir
 Yarıçap seçeneğinde -4.15 değeri kullanmak fırça boyutunu az çok sabit tutar, yakınlaştırma seviyesiyle orantılı tutar.</translation>
     </message>
     <message>
@@ -4035,8 +4035,8 @@ You can even cancel out dab size increase and adjust something else to make a br
 Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&quot;, which behave much differently.</source>
         <comment>mypaintinput</comment>
         <translation>Asıl fırça yarıçapı, fırçayı büyütüp küçültürken fırçanın davranışınlarını değiştirmenize olanak sağlar.
-Dokundurma boyutu arttırma seçeneğini bile iptal edip, fırçanızı büyütmek için başka bir seçenek ayarlayabilirsiniz.
-&quot;Dokundurma başına düşen yaklaşık yarıçap&quot; ve &quot;Dokundurma başına düşen asıl yarıçap&quot; ayarları birbirine benzese de çok farklıdır, birbirine karıştırmamaya dikkat edin.</translation>
+Fırça darbesi boyutu arttırma seçeneğini bile iptal edip, fırçanızı büyütmek için başka bir seçenek ayarlayabilirsiniz.
+&quot;Fırça darbesi başına düşen yaklaşık yarıçap&quot; ve &quot;Fırça darbesi düşen asıl yarıçap&quot; ayarları birbirine benzese de çok farklıdır, birbirine karıştırmamaya dikkat edin.</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -4078,19 +4078,19 @@ Dokundurma boyutu arttırma seçeneğini bile iptal edip, fırçanızı büyütm
         <location line="+2"/>
         <source>Dabs per basic radius</source>
         <comment>mypaintsetting</comment>
-        <translation>Dokundurma başına düşen yaklaşık yarıçap</translation>
+        <translation>Fırça darbesi başına düşen yaklaşık yarıçap</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Dabs per actual radius</source>
         <comment>mypaintsetting</comment>
-        <translation>Dokundurma başına düşen asıl yarıçap</translation>
+        <translation>Fırça darbesi başına düşen asıl yarıçap</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Dabs per second</source>
         <comment>mypaintsetting</comment>
-        <translation>Saniye başına düşen dokundurma</translation>
+        <translation>Saniye başına düşen fırça darbesi</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4102,7 +4102,7 @@ Dokundurma boyutu arttırma seçeneğini bile iptal edip, fırçanızı büyütm
         <location line="+2"/>
         <source>Fine speed filter</source>
         <comment>mypaintsetting</comment>
-        <translation>Asıl hız filtresi</translation>
+        <translation>Net hız filtresi</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4114,7 +4114,7 @@ Dokundurma boyutu arttırma seçeneğini bile iptal edip, fırçanızı büyütm
         <location line="+2"/>
         <source>Fine speed gamma</source>
         <comment>mypaintsetting</comment>
-        <translation>Asıl hız gaması</translation>
+        <translation>Net hız gaması</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4132,13 +4132,13 @@ Dokundurma boyutu arttırma seçeneğini bile iptal edip, fırçanızı büyütm
         <location line="+2"/>
         <source>Offset by speed</source>
         <comment>mypaintsetting</comment>
-        <translation>Hız tarafından geciktirme</translation>
+        <translation>Hız tarafından ofset</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Offset by speed filter</source>
         <comment>mypaintsetting</comment>
-        <translation>Hız filtresi tarafından geciktirme</translation>
+        <translation>Hız filtresi tarafından ofset</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4150,7 +4150,7 @@ Dokundurma boyutu arttırma seçeneğini bile iptal edip, fırçanızı büyütm
         <location line="+2"/>
         <source>Slow tracking per dab</source>
         <comment>mypaintsetting</comment>
-        <translation>Dokundurma başına yavaş takip</translation>
+        <translation>Fırça darbesi başına yavaş takip</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4272,13 +4272,13 @@ Dokundurma boyutu arttırma seçeneğini bile iptal edip, fırçanızı büyütm
         <location line="+2"/>
         <source>Elliptical dab: ratio</source>
         <comment>mypaintsetting</comment>
-        <translation>Eliptik dokunma: oran</translation>
+        <translation>Eliptik fırça darbesi: oran</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Elliptical dab: angle</source>
         <comment>mypaintsetting</comment>
-        <translation>Eliptik dokunma: açı</translation>
+        <translation>Eliptik fırça darbesi: açı</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4398,7 +4398,7 @@ Dokundurma boyutu arttırma seçeneğini bile iptal edip, fırçanızı büyütm
         <location line="+2"/>
         <source>Angular Offsets Adjustment</source>
         <comment>mypaintsetting</comment>
-        <translation>Açısal Ofset Ayarlamalar</translation>
+        <translation>Açısal Ofset Ayarlamaları</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5632,12 +5632,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Trusted</source>
-        <translation>Güvenilmişler</translation>
+        <translation>Güvenilirler</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Registered</source>
-        <translation>Kayıtlı</translation>
+        <translation>Kayıtlılar</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6995,7 +6995,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Trusted</source>
-        <translation>Güvenilmişler</translation>
+        <translation>Güvenilirler</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7853,7 +7853,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="-119"/>
         <location line="+121"/>
         <source>Trusted</source>
-        <translation>Güvenilmişler</translation>
+        <translation>Güvenilirler</translation>
     </message>
     <message>
         <location line="-118"/>
