@@ -97,6 +97,7 @@ ViewStatus::ViewStatus(QWidget *parent)
 	// Zoom slider
 	m_zoomSlider = new KisDoubleSliderSpinBox{this};
 	m_zoomSlider->setMinimumWidth(24);
+	m_zoomSlider->setMaximumWidth(200);
 	m_zoomSlider->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum));
 	m_zoomSlider->setMinimum(zoomMin * 100.0);
 	m_zoomSlider->setMaximum(zoomMax * 100.0);
