@@ -1900,7 +1900,9 @@ void MainWindow::onServerLogin()
 	setDrawingToolsEnabled(true);
 	m_modtools->setEnabled(m_doc->client()->isModerator());
 	getAction("reportabuse")->setEnabled(m_doc->client()->serverSupportsReports());
-	m_chatbox->expandPlease();
+	if(m_chatbox->isCollapsed()) {
+		getAction("togglechat")->trigger();
+	}
 }
 
 void MainWindow::onCompatibilityModeChanged(bool compatibilityMode)
