@@ -57,12 +57,12 @@
     <message>
         <location filename="../ui/androidfiledialog.ui" line="+20"/>
         <source>Name:</source>
-        <translation type="unfinished">Nombre:</translation>
+        <translation>Nombre:</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Type:</source>
-        <translation type="unfinished">Tipo:</translation>
+        <translation>Tipo:</translation>
     </message>
 </context>
 <context>
@@ -123,7 +123,7 @@
     <message>
         <location line="+16"/>
         <source>Radius: </source>
-        <translation type="unfinished"></translation>
+        <translation>Radio </translation>
     </message>
     <message>
         <location line="+13"/>
