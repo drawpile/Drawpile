@@ -1627,13 +1627,23 @@ void MainWindow::hostSession(dialogs::HostDialog *dlg)
 	m_doc->client()->connectToServer(dpApp().settings().serverTimeout(), login);
 }
 
+
+void MainWindow::join()
+{
+	showJoinDialog(QUrl{}, false);
+}
+
+void MainWindow::browse()
+{
+	showJoinDialog(QUrl{}, true);
+}
+
 /**
  * Show the join dialog
  */
-void MainWindow::join(const QUrl &initialUrl)
+void MainWindow::showJoinDialog(const QUrl &initialUrl, bool browse)
 {
-	auto dlg = new dialogs::JoinDialog(initialUrl, this);
-
+	auto dlg = new dialogs::JoinDialog(initialUrl, browse, this);
 	connect(dlg, &dialogs::JoinDialog::finished, this, [this, dlg](int i) {
 		if(i==QDialog::Accepted) {
 			QUrl url = dlg->getUrl();
@@ -3339,6 +3349,7 @@ void MainWindow::setupActions()
 	//
 	QAction *host = makeAction("hostsession", tr("&Host...")).statusTip(tr("Share your drawingboard with others"));
 	QAction *join = makeAction("joinsession", tr("&Join...")).statusTip(tr("Join another user's drawing session"));
+	QAction *browse = makeAction("joinsession", tr("&Browse...")).statusTip(tr("Browse session listings"));
 	QAction *logout = makeAction("leavesession", tr("&Leave")).statusTip(tr("Leave this drawing session")).disabled();
 
 	QAction *serverlog = makeAction("viewserverlog", tr("Event Log")).noDefaultShortcut();
@@ -3357,7 +3368,8 @@ void MainWindow::setupActions()
 	m_admintools->setEnabled(false);
 
 	connect(host, &QAction::triggered, this, &MainWindow::host);
-	connect(join, SIGNAL(triggered()), this, SLOT(join()));
+	connect(join, &QAction::triggered, this, &MainWindow::join);
+	connect(browse, &QAction::triggered, this, &MainWindow::browse);
 	connect(logout, &QAction::triggered, this, &MainWindow::leave);
 	connect(sessionSettings, &QAction::triggered, m_sessionSettings, [this](){
 		utils::showWindow(m_sessionSettings);
@@ -3380,6 +3392,7 @@ void MainWindow::setupActions()
 	QMenu *sessionmenu = menuBar()->addMenu(tr("&Session"));
 	sessionmenu->addAction(host);
 	sessionmenu->addAction(join);
+	sessionmenu->addAction(browse);
 	sessionmenu->addAction(logout);
 	sessionmenu->addSeparator();
 

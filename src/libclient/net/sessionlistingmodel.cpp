@@ -109,6 +109,8 @@ QVariant SessionListingModel::data(const QModelIndex &index, int role) const
 		case Qt::DisplayRole:
 		case SortKeyRole:
 			return listing.name;
+		case Qt::DecorationRole:
+			return m_icons[listing.name];
 		case Qt::FontRole: {
 			QFont font;
 			font.setBold(true);
@@ -308,6 +310,11 @@ QModelIndex SessionListingModel::indexOfListing(const QString &listing) const
 	}
 
 	return QModelIndex();
+}
+
+void SessionListingModel::setIcon(const QString &name, const QIcon &icon)
+{
+	m_icons[name] = icon;
 }
 
 void SessionListingModel::setMessage(const QString &name, const QString &message)

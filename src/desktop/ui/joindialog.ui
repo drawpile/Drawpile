@@ -14,7 +14,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Join a Session</string>
+   <string>Find a Session</string>
   </property>
   <layout class="QVBoxLayout">
    <item>
@@ -35,144 +35,189 @@ padding: 6px;</string>
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="noListServersNotification">
-     <property name="styleSheet">
-      <string notr="true">background: #cbe3ef;
+    <widget class="QTabWidget" name="tabs">
+     <widget class="QWidget" name="joinTab">
+      <attribute name="title">
+       <string>Join</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QLabel" name="urlLabel">
+         <property name="text">
+          <string>Enter a &lt;strong&gt;session URL&lt;/strong&gt;, &lt;strong&gt;host name&lt;/strong&gt;, &lt;strong&gt;IP address&lt;/strong&gt; or &lt;strong&gt;room code&lt;/strong&gt;:</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="url"/>
+       </item>
+       <item>
+        <widget class="QLabel" name="browseLinkLabel">
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You can also &lt;a href=&quot;browse&quot;&gt;browse for sessions&lt;/a&gt; instead.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="textFormat">
+          <enum>Qt::RichText</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Preferred</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QLabel" name="recentLabel">
+         <property name="text">
+          <string>Recent</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QScrollArea" name="recentScrollArea">
+         <property name="horizontalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="widgetResizable">
+          <bool>true</bool>
+         </property>
+         <widget class="QWidget" name="recentScrollAreaContents">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>692</width>
+            <height>220</height>
+           </rect>
+          </property>
+          <layout class="QVBoxLayout" name="recentScrollAreaLayout"/>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="browseTab">
+      <attribute name="title">
+       <string>Browse</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QLabel" name="noListServersNotification">
+         <property name="styleSheet">
+          <string notr="true">background: #cbe3ef;
 color: #000;
 border: 1px solid #3daee9;
 border-radius: 3px;
 padding: 6px;</string>
-     </property>
-     <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You haven't added any servers yet. You can find some at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;drawpile.net/communities&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;You can try adding one now by entering pub.drawpile.net in the address box and clicking &lt;span style=&quot; font-style:italic;&quot;&gt;Add Server&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-     <property name="openExternalLinks">
-      <bool>true</bool>
-     </property>
+         </property>
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You haven't added any servers yet. You can find some at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;drawpile.net/communities&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;You can try adding one by clicking &lt;span style=&quot; font-style:italic;&quot;&gt;Add Server&lt;/span&gt; and entering &lt;code&gt;pub.drawpile.net&lt;/code&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="openExternalLinks">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="browseFilterLayout">
+         <item>
+          <widget class="QLineEdit" name="filter">
+           <property name="placeholderText">
+            <string>Filter</string>
+           </property>
+           <property name="clearButtonEnabled">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="browseSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="showClosed">
+           <property name="text">
+            <string>Closed</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="showPassworded">
+           <property name="text">
+            <string>Passworded</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="showNsfw">
+           <property name="toolTip">
+            <string>Show sessions not suitable for minors (NSFM)</string>
+           </property>
+           <property name="text">
+            <string>NSFM</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="widgets::SpanAwareTreeView" name="listing">
+         <property name="alternatingRowColors">
+          <bool>true</bool>
+         </property>
+         <property name="rootIsDecorated">
+          <bool>false</bool>
+         </property>
+         <property name="sortingEnabled">
+          <bool>true</bool>
+         </property>
+         <attribute name="headerStretchLastSection">
+          <bool>false</bool>
+         </attribute>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout">
+    <layout class="QHBoxLayout" name="buttonsLayout">
      <item>
-      <widget class="QLineEdit" name="filter">
-       <property name="placeholderText">
-        <string>Filter</string>
-       </property>
-       <property name="clearButtonEnabled">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeType">
-        <enum>QSizePolicy::Fixed</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QLabel" name="filterLabel">
-       <property name="text">
-        <string>Show:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="showClosed">
-       <property name="text">
-        <string>Closed</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="showPassworded">
-       <property name="text">
-        <string>Passworded</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="showNsfw">
-       <property name="text">
-        <string>NSFM</string>
-       </property>
+      <widget class="QPushButton" name="autoRecord">
        <property name="toolTip">
-        <string>Show sessions not suitable for minors (NSFM)</string>
+        <string>Start a recording when joining</string>
        </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="widgets::SpanAwareTreeView" name="listing">
-     <property name="alternatingRowColors">
-      <bool>true</bool>
-     </property>
-     <property name="rootIsDecorated">
-      <bool>false</bool>
-     </property>
-     <property name="sortingEnabled">
-      <bool>true</bool>
-     </property>
-     <attribute name="headerStretchLastSection">
-      <bool>false</bool>
-     </attribute>
-    </widget>
-   </item>
-   <item>
-    <widget class="Line" name="line">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QLabel">
-     <property name="text">
-      <string>Enter a host address, session URL or room code to join a session:</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <layout class="QHBoxLayout">
-     <item>
-      <widget class="QComboBox" name="address">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="editable">
-        <bool>true</bool>
-       </property>
-       <property name="maxCount">
-        <number>20</number>
-       </property>
-       <property name="insertPolicy">
-        <enum>QComboBox::InsertAtTop</enum>
-       </property>
-       <property name="mandatoryfield" stdset="0">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="autoRecord">
-       <property name="toolTip">
-        <string>Record session</string>
+       <property name="text">
+        <string>Record</string>
        </property>
        <property name="icon">
         <iconset theme="media-record">
@@ -183,24 +228,34 @@ padding: 6px;</string>
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QPushButton" name="addServer">
+       <property name="toolTip">
+        <string>Add a listing server so you can browse its sessions</string>
+       </property>
+       <property name="text">
+        <string>Add Server</string>
+       </property>
+       <property name="icon">
+        <iconset theme="list-add">
+         <normaloff>theme:list-add.svg</normaloff>theme:list-add.svg</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDialogButtonBox" name="buttons">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="standardButtons">
+        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+       </property>
+      </widget>
+     </item>
     </layout>
-   </item>
-   <item>
-    <widget class="QDialogButtonBox" name="buttons">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
    </item>
   </layout>
  </widget>
- <tabstops>
-  <tabstop>address</tabstop>
-  <tabstop>buttons</tabstop>
- </tabstops>
  <customwidgets>
   <customwidget>
    <class>widgets::SpanAwareTreeView</class>
@@ -209,38 +264,5 @@ padding: 6px;</string>
   </customwidget>
  </customwidgets>
  <resources/>
- <connections>
-  <connection>
-   <sender>buttons</sender>
-   <signal>accepted()</signal>
-   <receiver>JoinDialog</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>254</x>
-     <y>392</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>157</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttons</sender>
-   <signal>rejected()</signal>
-   <receiver>JoinDialog</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>322</x>
-     <y>392</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>286</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

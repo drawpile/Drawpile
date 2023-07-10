@@ -54,7 +54,7 @@ public:
 	bool removeServer(const QString &url);
 
 	//!  Set the favicon for the server with the given URL
-	void setFavicon(const QString &url, const QImage &icon);
+	QIcon setFavicon(const QString &url, const QImage &icon);
 
 	//! Get all configured list servers
 	static QVector<ListServer> listServers(const QVector<QVariantMap> &cfg, bool includeReadOnly);

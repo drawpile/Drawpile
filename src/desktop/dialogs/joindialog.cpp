@@ -4,7 +4,6 @@
 #include "desktop/dialogs/addserverdialog.h"
 #include "desktop/dialogs/settingsdialog/helpers.h"
 #include "desktop/main.h"
-#include "desktop/utils/mandatoryfields.h"
 #include "libclient/parentalcontrols/parentalcontrols.h"
 #include "libclient/utils/images.h"
 #include "libclient/utils/listservermodel.h"
@@ -22,40 +21,39 @@
 #include <QClipboard>
 #include <QDebug>
 #include <QFileDialog>
+#include <QGraphicsOpacityEffect>
 #include <QIcon>
 #include <QMenu>
-#include <QPushButton>
+#include <QRegularExpression>
 #include <QTimer>
 #include <QUrl>
 #include <QUrlQuery>
 
 namespace dialogs {
 
-// Height below which the session listing widgets are hidden.
-static const int COMPACT_MODE_THRESHOLD = 300;
-
 // How often the listing view should be refreshed (in seconds)
 static const int REFRESH_INTERVAL = 60;
 
-JoinDialog::JoinDialog(const QUrl &url, QWidget *parent)
+JoinDialog::JoinDialog(const QUrl &url, bool browse, QWidget *parent)
 	: QDialog(parent)
 	, m_lastRefresh(0)
 {
 	m_ui = new Ui_JoinDialog;
 	m_ui->setupUi(this);
+	resetUrlPlaceholderText();
+
 	m_ui->buttons->button(QDialogButtonBox::Ok)->setText(tr("Join"));
 	m_ui->buttons->button(QDialogButtonBox::Ok)->setDefault(true);
-
-	m_addServerButton = m_ui->buttons->addButton(
-		tr("Add Server"), QDialogButtonBox::ActionRole);
-	m_addServerButton->setIcon(QIcon::fromTheme("list-add"));
 	connect(
-		m_addServerButton, &QPushButton::clicked, this,
+		m_ui->buttons, &QDialogButtonBox::accepted, this, &JoinDialog::join);
+	connect(m_ui->buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
+
+	connect(
+		m_ui->addServer, &QAbstractButton::clicked, this,
 		&JoinDialog::addListServer);
 
 	connect(
-		m_ui->address, &QComboBox::editTextChanged, this,
-		&JoinDialog::addressChanged);
+		m_ui->url, &QLineEdit::textChanged, this, &JoinDialog::addressChanged);
 	connect(
 		m_ui->autoRecord, &QAbstractButton::clicked, this,
 		&JoinDialog::recordingToggled);
@@ -88,6 +86,7 @@ JoinDialog::JoinDialog(const QUrl &url, QWidget *parent)
 		dpApp().settings().listServers(), true);
 	for(const sessionlisting::ListServer &ls : servers) {
 		if(ls.publicListings) {
+			m_sessions->setIcon(ls.name, ls.icon);
 			m_sessions->setMessage(ls.name, tr("Loading..."));
 		}
 	}
@@ -140,11 +139,7 @@ JoinDialog::JoinDialog(const QUrl &url, QWidget *parent)
 
 	connect(
 		m_ui->listing->selectionModel(), &QItemSelectionModel::selectionChanged,
-		this, [this](const QItemSelection &selected, const QItemSelection &) {
-			if(selected.indexes().size() > 0) {
-				setUrlFromIndex(selected.indexes().first());
-			}
-		});
+		this, &JoinDialog::updateJoinButton);
 
 	connect(
 		m_ui->listing, &QTreeView::doubleClicked, this, &JoinDialog::joinIndex);
@@ -167,17 +162,34 @@ JoinDialog::JoinDialog(const QUrl &url, QWidget *parent)
 		tr("Copy server"), SessionListingModel::ServerRole);
 	makeCopySessionDataAction(tr("Copy owner"), SessionListingModel::OwnerRole);
 
-	new MandatoryFields(this, m_ui->buttons->button(QDialogButtonBox::Ok));
+	connect(
+		m_ui->browseLinkLabel, &QLabel::linkActivated, this,
+		&JoinDialog::activateBrowseTab);
+	connect(
+		m_ui->tabs, &QTabWidget::currentChanged, this, &JoinDialog::updateTab);
+	if(browse) {
+		activateBrowseTab();
+	} else {
+		updateTab(JOIN_TAB_INDEX);
+	}
 
 	restoreSettings();
 
-	if(!url.isEmpty()) {
-		m_ui->address->setCurrentText(url.toString());
-
-		const QUrlQuery q(url);
-		QUrl addListServer = q.queryItemValue("list-server");
+	if(url.isEmpty()) {
+		QString clipboardText = QApplication::clipboard()->text();
+		bool clipboardHasValidUrl =
+			clipboardText.startsWith("drawpile://", Qt::CaseInsensitive) &&
+			QUrl::fromUserInput(clipboardText).isValid();
+		if(clipboardHasValidUrl) {
+			m_ui->url->setText(clipboardText);
+		}
+	} else {
+		QUrl addListServer = QUrlQuery{url}.queryItemValue("list-server");
 		if(addListServer.isValid() && !addListServer.isEmpty()) {
+			activateBrowseTab();
 			addListServerUrl(addListServer);
+		} else {
+			m_ui->url->setText(url.toString());
 		}
 	}
 
@@ -186,8 +198,6 @@ JoinDialog::JoinDialog(const QUrl &url, QWidget *parent)
 	connect(refreshTimer, &QTimer::timeout, this, &JoinDialog::refreshListing);
 	refreshTimer->setSingleShot(false);
 	refreshTimer->start(1000 * (REFRESH_INTERVAL + 1));
-
-	refreshListing();
 }
 
 JoinDialog::~JoinDialog()
@@ -198,39 +208,25 @@ JoinDialog::~JoinDialog()
 void JoinDialog::resizeEvent(QResizeEvent *event)
 {
 	QDialog::resizeEvent(event);
-	bool show = false;
-	bool change = false;
-	if(height() < COMPACT_MODE_THRESHOLD && !m_ui->filter->isHidden()) {
-		show = false;
-		change = true;
-	} else if(height() > COMPACT_MODE_THRESHOLD && m_ui->filter->isHidden()) {
-		show = true;
-		change = true;
-	}
-
-	if(change) {
-		setListingVisible(show);
-	}
-
 	dpApp().settings().setLastJoinDialogSize(size());
 }
 
-void JoinDialog::setListingVisible(bool show)
+bool JoinDialog::eventFilter(QObject *object, QEvent *event)
 {
-	m_ui->filter->setVisible(show);
-	m_ui->filterLabel->setVisible(show);
-	m_ui->showPassworded->setVisible(show);
-	m_ui->showNsfw->setVisible(show);
-	m_ui->showClosed->setVisible(show);
-	m_ui->listing->setVisible(show);
-	m_ui->line->setVisible(show);
-
-	if(show) {
-		refreshListing();
+	if(event->type() == QEvent::MouseButtonDblClick) {
+		QString recentHost = object->property("recenthost").toString();
+		if(!recentHost.isEmpty()) {
+			m_ui->url->setText(recentHost);
+			m_address = recentHost.trimmed();
+			accept();
+			return true;
+		}
 	}
+	return QDialog::eventFilter(object, event);
 }
 
-static QString cleanAddress(const QString &addr)
+
+QString JoinDialog::cleanAddress(const QString &addr)
 {
 	if(addr.startsWith("drawpile://")) {
 		QUrl url(addr);
@@ -245,32 +241,50 @@ static QString cleanAddress(const QString &addr)
 	return addr;
 }
 
-static bool isRoomcode(const QString &str)
+void JoinDialog::activateBrowseTab()
 {
-	// Roomcodes are always exactly 5 letters long
-	if(str.length() != 5) {
-		return false;
-	}
+	m_ui->tabs->setCurrentIndex(BROWSE_TAB_INDEX);
+}
 
-	// And consist of characters in range A-Z
-	for(int i = 0; i < str.length(); ++i) {
-		if(str.at(i) < 'A' || str.at(i) > 'Z') {
-			return false;
-		}
+void JoinDialog::updateTab(int tabIndex)
+{
+	bool browse = tabIndex == BROWSE_TAB_INDEX;
+	m_ui->addServer->setVisible(browse);
+	if(browse) {
+		m_ui->filter->setFocus();
+		refreshListing();
+	} else {
+		m_ui->url->setFocus();
 	}
+	updateJoinButton();
+}
 
-	return true;
+void JoinDialog::resetUrlPlaceholderText()
+{
+	m_ui->url->setPlaceholderText(tr("Paste your drawpile://… link here!"));
+}
+
+void JoinDialog::updateJoinButton()
+{
+	QAbstractButton *joinButton = m_ui->buttons->button(QDialogButtonBox::Ok);
+	if(m_ui->tabs->currentIndex() == BROWSE_TAB_INDEX) {
+		QModelIndex index = m_ui->listing->selectionModel()->currentIndex();
+		joinButton->setEnabled(canJoinIndex(index));
+	} else {
+		joinButton->setDisabled(
+			m_ui->url->isReadOnly() || m_ui->url->text().trimmed().isEmpty());
+	}
 }
 
 void JoinDialog::addressChanged(const QString &addr)
 {
-	m_addServerButton->setEnabled(!addr.isEmpty());
-
-	if(isRoomcode(addr)) {
+	// A roomcode is consists of exactly five uppercase ASCII letters.
+	static QRegularExpression roomcodeRe{"\\A[A-Z]{5}\\z"};
+	if(roomcodeRe.match(addr).hasMatch()) {
 		// A room code was just entered. Trigger session URL query
-		m_ui->address->setEditText(QString());
-		m_ui->address->lineEdit()->setPlaceholderText(tr("Searching..."));
-		m_ui->address->lineEdit()->setReadOnly(true);
+		m_ui->url->setText(QString());
+		m_ui->url->setPlaceholderText(tr("Searching..."));
+		m_ui->url->setReadOnly(true);
 
 		QStringList servers;
 		for(const auto &s : sessionlisting::ListServerModel::listServers(
@@ -281,6 +295,7 @@ void JoinDialog::addressChanged(const QString &addr)
 		}
 		resolveRoomcode(addr, servers);
 	}
+	updateJoinButton();
 }
 
 void JoinDialog::recordingToggled(bool checked)
@@ -302,8 +317,11 @@ QString JoinDialog::autoRecordFilename() const
 
 void JoinDialog::refreshListing()
 {
-	if(m_ui->listing->isHidden() ||
-	   QDateTime::currentSecsSinceEpoch() - m_lastRefresh < REFRESH_INTERVAL) {
+	bool skipRefresh =
+		m_ui->tabs->currentIndex() != BROWSE_TAB_INDEX ||
+		m_ui->listing->isHidden() ||
+		QDateTime::currentSecsSinceEpoch() - m_lastRefresh < REFRESH_INTERVAL;
+	if(skipRefresh) {
 		return;
 	}
 	m_lastRefresh = QDateTime::currentSecsSinceEpoch();
@@ -358,13 +376,12 @@ void JoinDialog::resolveRoomcode(
 {
 	if(servers.isEmpty()) {
 		// Tried all the servers and didn't find the code
-		m_ui->address->lineEdit()->setPlaceholderText(
-			tr("Room code not found!"));
+		m_ui->url->setPlaceholderText(tr("Room code not found!"));
 		QTimer::singleShot(1500, this, [this]() {
-			m_ui->address->setEditText(QString());
-			m_ui->address->lineEdit()->setReadOnly(false);
-			m_ui->address->lineEdit()->setPlaceholderText(QString());
-			m_ui->address->setFocus();
+			m_ui->url->setText(QString());
+			m_ui->url->setReadOnly(false);
+			resetUrlPlaceholderText();
+			m_ui->url->setFocus();
 		});
 
 		return;
@@ -393,10 +410,10 @@ void JoinDialog::resolveRoomcode(
 			}
 			url += '/';
 			url += session.id;
-			m_ui->address->lineEdit()->setReadOnly(false);
-			m_ui->address->lineEdit()->setPlaceholderText(QString());
-			m_ui->address->setEditText(url);
-			m_ui->address->setEnabled(true);
+			m_ui->url->setReadOnly(false);
+			resetUrlPlaceholderText();
+			m_ui->url->setText(url);
+			m_ui->url->setEnabled(true);
 		});
 	connect(
 		response, &sessionlisting::AnnouncementApiResponse::finished, response,
@@ -409,13 +426,24 @@ void JoinDialog::restoreSettings()
 
 	const QSize oldSize = settings.lastJoinDialogSize();
 	if(oldSize.isValid()) {
-		if(oldSize.height() < COMPACT_MODE_THRESHOLD) {
-			setListingVisible(false);
-		}
 		resize(oldSize);
 	}
 
-	m_ui->address->insertItems(0, settings.recentHosts());
+	for(const QString &recentHost : settings.recentHosts()) {
+		QLabel *label = new QLabel;
+		label->setTextFormat(Qt::RichText);
+		label->setWordWrap(true);
+		label->setText(QStringLiteral("<a href=\"%1\">%1</a>")
+						   .arg(recentHost.toHtmlEscaped()));
+		QGraphicsOpacityEffect *opacity = new QGraphicsOpacityEffect;
+		opacity->setOpacity(0.8);
+		label->setGraphicsEffect(opacity);
+		connect(label, &QLabel::linkActivated, m_ui->url, &QLineEdit::setText);
+		label->installEventFilter(this);
+		label->setProperty("recenthost", recentHost.trimmed());
+		m_ui->recentScrollAreaLayout->addWidget(label);
+	}
+	m_ui->recentScrollAreaLayout->addStretch();
 
 	settings.bindFilterLocked(m_ui->showPassworded);
 	settings.bindFilterClosed(m_ui->showClosed);
@@ -424,32 +452,33 @@ void JoinDialog::restoreSettings()
 
 void JoinDialog::rememberSettings() const
 {
-	auto &settings = dpApp().settings();
-	// Move current item to the top of the list
-	const QString current = cleanAddress(m_ui->address->currentText());
-	int curindex = m_ui->address->findText(current);
-	if(curindex >= 0) {
-		m_ui->address->removeItem(curindex);
-	}
+	desktop::settings::Settings &settings = dpApp().settings();
 
 	QStringList hosts;
-	auto max = settings.maxRecentFiles();
+	int max = qMax(0, settings.maxRecentFiles());
+
 	if(max > 0) {
-		hosts << current;
-		--max;
-		for(auto i = 0; max && i < m_ui->address->count(); ++i) {
-			if(!m_ui->address->itemText(i).isEmpty()) {
-				--max;
-				hosts << m_ui->address->itemText(i);
+		QString current = cleanAddress(m_address);
+		if(!current.isEmpty()) {
+			hosts.append(current);
+		}
+
+		for(const QString &host : settings.recentHosts()) {
+			bool shouldAdd = !host.isEmpty() &&
+							 !hosts.contains(host, Qt::CaseInsensitive) &&
+							 hosts.size() < max;
+			if(shouldAdd) {
+				hosts.append(host);
 			}
 		}
 	}
+
 	settings.setRecentHosts(hosts);
 }
 
 QString JoinDialog::getAddress() const
 {
-	return m_ui->address->currentText().trimmed();
+	return m_address.trimmed();
 }
 
 QUrl JoinDialog::getUrl() const
@@ -471,70 +500,56 @@ QUrl JoinDialog::getUrl() const
 
 void JoinDialog::addListServer()
 {
-	// This is the "simplified" way of adding list servers:
-	// The application will fetch the server's root page (http://DOMAIN/)
-	// and see if there is a <meta name="drawpile:list-server"> tag.
-	// If there is, it will follow it and add the list server.
-	const auto urlString = m_ui->address->currentText().trimmed();
-	auto url = QUrl::fromUserInput(urlString).adjusted(
-		QUrl::RemovePath | QUrl::RemoveQuery | QUrl::RemoveFragment);
-	if(url.isValid() && url.scheme().startsWith("http")) {
-		// Qt will default guessed user input to http, but it should really
-		// default to https for privacy and security.
-		if(!urlString.startsWith("http://", Qt::CaseInsensitive)) {
-			url.setScheme("https");
-		}
-		addListServerUrl(url);
-	} else {
-		settingsdialog::execWarning(
-			tr("Join a Session"),
-			tr("'%1' is not a valid list server URL.").arg(urlString), this);
-	}
+	addListServerUrl(QString{});
 }
 
 void JoinDialog::showListingContextMenu(const QPoint &pos)
 {
 	QModelIndex index = m_ui->listing->selectionModel()->currentIndex();
 	if(isListingIndex(index)) {
-		setUrlFromIndex(index);
 		m_joinAction->setEnabled(canJoinIndex(index));
 		m_listingContextMenu->popup(mapToGlobal(pos));
 	}
 }
 
-void JoinDialog::setUrlFromIndex(const QModelIndex &index)
+void JoinDialog::join()
 {
-	if(isListingIndex(index) && index.flags().testFlag(Qt::ItemIsEnabled)) {
-		m_ui->address->setCurrentText(
-			index.data(SessionListingModel::UrlStringRole).toString());
+	if(m_ui->tabs->currentIndex() == BROWSE_TAB_INDEX) {
+		QModelIndex index = m_ui->listing->selectionModel()->currentIndex();
+		joinIndex(index);
+	} else {
+		m_address = m_ui->url->text().trimmed();
+		if(!m_address.isEmpty()) {
+			accept();
+		}
 	}
 }
 
 void JoinDialog::joinIndex(const QModelIndex &index)
 {
 	if(canJoinIndex(index)) {
+		m_address = index.data(SessionListingModel::UrlStringRole).toString();
 		accept();
 	}
 }
 
 void JoinDialog::addListServerUrl(const QUrl &url)
 {
-	m_addServerButton->setEnabled(false);
+	m_ui->addServer->setEnabled(false);
 
 	auto *dlg = new AddServerDialog(this);
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
 
 	connect(dlg, &QObject::destroyed, [this]() {
-		m_addServerButton->setEnabled(true);
+		m_ui->addServer->setEnabled(true);
 	});
 
 	connect(
-		dlg, &AddServerDialog::serverAdded, this, [this](const QString &name) {
+		dlg, &AddServerDialog::serverAdded, this,
+		[this](const QString &name, const QIcon &icon) {
+			m_sessions->setIcon(name, icon);
 			m_sessions->setMessage(name, tr("Loading..."));
 			m_ui->noListServersNotification->hide();
-
-			if(height() < COMPACT_MODE_THRESHOLD) {
-				resize(width(), COMPACT_MODE_THRESHOLD + 10);
-			}
 
 			const auto index = m_sessions->index(m_sessions->rowCount() - 1, 0);
 			m_ui->listing->expandAll();
@@ -544,7 +559,11 @@ void JoinDialog::addListServerUrl(const QUrl &url)
 			refreshListing();
 		});
 
-	dlg->query(url);
+	if(!url.isEmpty()) {
+		dlg->query(url);
+	}
+
+	dlg->show();
 }
 
 QAction *JoinDialog::makeCopySessionDataAction(const QString &text, int role)
@@ -561,8 +580,7 @@ QAction *JoinDialog::makeCopySessionDataAction(const QString &text, int role)
 
 bool JoinDialog::canJoinIndex(const QModelIndex &index)
 {
-	return isListingIndex(index) && index.flags().testFlag(Qt::ItemIsEnabled) &&
-		   m_ui->buttons->button(QDialogButtonBox::Ok)->isEnabled();
+	return isListingIndex(index) && index.flags().testFlag(Qt::ItemIsEnabled);
 }
 
 bool JoinDialog::isListingIndex(const QModelIndex &index)

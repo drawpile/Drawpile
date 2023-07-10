@@ -6,7 +6,6 @@
 #include "cmake-config/config.h"
 
 #include <QNetworkRequest>
-#include <QNetworkReply>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
@@ -40,9 +39,12 @@ static inline bool IsApiError(const ApiReply &r) { return !ApiError(r).isEmpty()
 /**
  * Read response body and handle standard errors
  */
-static ApiReply readReply(QNetworkReply *reply)
+static ApiReply readReply(QNetworkReply *reply, bool cancelled)
 {
 	Q_ASSERT(reply);
+	if(cancelled) {
+		return ApiError(AnnouncementApiResponse::tr("Cancelled."));
+	}
 
 	if(reply->error() != QNetworkReply::NoError) {
 		const int statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
@@ -88,20 +90,32 @@ void AnnouncementApiResponse::setResult(const QVariant &result, const QString &m
 	emit finished(m_result, m_message, QString());
 }
 
-void AnnouncementApiResponse::setError(const QString &error)
+void AnnouncementApiResponse::setError(const QString &error, QNetworkReply::NetworkError networkError)
 {
-	m_error = error;
+	m_error = error.isEmpty() ? tr("Unknown error") : error;
+	m_networkError = networkError;
 	m_gone = isGoneMessage(error);
 	if(m_gone)
 		emit serverGone();
 	emit finished(QVariant(), QString(), error);
 }
 
+void AnnouncementApiResponse::updateRequestUrl(const QUrl &url)
+{
+	emit requestUrlChanged(url);
+}
+
+void AnnouncementApiResponse::cancel()
+{
+	m_cancelled = true;
+	emit cancelRequested();
+}
+
 static void readApiInfoReply(QNetworkReply *reply, AnnouncementApiResponse *res)
 {
-	auto r = readReply(reply);
+	auto r = readReply(reply, res->isCancelled());
 	if(IsApiError(r)) {
-		res->setError(ApiError(r));
+		res->setError(ApiError(r), reply->error());
 		return;
 	}
 	const auto doc = ApiSuccess(r);
@@ -160,21 +174,29 @@ AnnouncementApiResponse *getApiInfo(const QUrl &apiUrl)
 
 	QNetworkReply *reply = networkaccess::getInstance()->get(req);
 	reply->connect(reply, &QNetworkReply::finished, res, [reply, res]() {
+		if(res->isCancelled()) {
+			res->setError(AnnouncementApiResponse::tr("Cancelled."));
+			return;
+		}
+
 		const auto contentType = reply->header(QNetworkRequest::ContentTypeHeader).toString();
 
 		// If the URL returns HTML, extract the link to the real API from the meta tags and try again
 		if(contentType.startsWith("text/html") || contentType.startsWith("application/xhtml+xml")) {
 			if(reply->error() != QNetworkReply::NoError) {
-				res->setError(reply->errorString());
+				res->setError(reply->errorString(), reply->error());
 				return;
 			}
 
 			const auto realApiUrl = findListserverLinkHtml(reply);
 			if(realApiUrl.isEmpty()) {
-				res->setError("No listserver link found!");
+				res->setError(AnnouncementApiResponse::tr("No listserver link found!"));
 
 			} else {
-				QNetworkRequest req2(reply->url().resolved(realApiUrl));
+				QUrl apiUrl2 = reply->url().resolved(realApiUrl);
+				res->updateRequestUrl(apiUrl2);
+
+				QNetworkRequest req2(apiUrl2);
 				req2.setHeader(QNetworkRequest::UserAgentHeader, user_agent());
 
 				QNetworkReply *reply2 = networkaccess::getInstance()->get(req2);
@@ -189,6 +211,7 @@ AnnouncementApiResponse *getApiInfo(const QUrl &apiUrl)
 		}
 	});
 	reply->connect(reply, &QNetworkReply::finished, reply, &QObject::deleteLater);
+	res->connect(res, &AnnouncementApiResponse::cancelRequested, reply, &QNetworkReply::abort);
 
 	return res;
 }
@@ -209,9 +232,9 @@ AnnouncementApiResponse *getSessionList(const QUrl &apiUrl)
 
 	QNetworkReply *reply = networkaccess::getInstance()->get(req);
 	reply->connect(reply, &QNetworkReply::finished, res, [reply, res]() {
-		auto r = readReply(reply);
+		auto r = readReply(reply, res->isCancelled());
 		if(IsApiError(r)) {
-			res->setError(ApiError(r));
+			res->setError(ApiError(r), reply->error());
 			return;
 		}
 		const auto doc = ApiSuccess(r);
@@ -301,9 +324,9 @@ AnnouncementApiResponse *announceSession(const QUrl &apiUrl, const Session &sess
 
 	QNetworkReply *reply = networkaccess::getInstance()->post(req, QJsonDocument(o).toJson());
 	reply->connect(reply, &QNetworkReply::finished, res, [reply, res, apiUrl, sessionId]() {
-		auto r = readReply(reply);
+		auto r = readReply(reply, res->isCancelled());
 		if(IsApiError(r)) {
-			res->setError(ApiError(r));
+			res->setError(ApiError(r), reply->error());
 			return;
 		}
 		const auto doc = ApiSuccess(r);
@@ -356,9 +379,9 @@ AnnouncementApiResponse *refreshSession(const Announcement &a, const Session &se
 
 	QNetworkReply *reply = networkaccess::getInstance()->put(req, QJsonDocument(o).toJson());
 	reply->connect(reply, &QNetworkReply::finished, res, [reply, res, a]() {
-		auto r = readReply(reply);
+		auto r = readReply(reply, res->isCancelled());
 		if(IsApiError(r)) {
-			res->setError(ApiError(r));
+			res->setError(ApiError(r), reply->error());
 			return;
 		}
 		const auto doc = ApiSuccess(r);
@@ -414,9 +437,9 @@ AnnouncementApiResponse *refreshSessions(const QVector<QPair<Announcement, Sessi
 
 	QNetworkReply *reply = networkaccess::getInstance()->put(req, QJsonDocument(batch).toJson());
 	reply->connect(reply, &QNetworkReply::finished, res, [reply, res]() {
-		auto r = readReply(reply);
+		auto r = readReply(reply, res->isCancelled());
 		if(IsApiError(r)) {
-			res->setError(ApiError(r));
+			res->setError(ApiError(r), reply->error());
 			return;
 		}
 		const auto doc = ApiSuccess(r);
@@ -469,9 +492,9 @@ AnnouncementApiResponse *queryRoomcode(const QUrl &apiUrl, const QString &roomco
 	QNetworkReply *reply = networkaccess::getInstance()->get(req);
 
 	reply->connect(reply, &QNetworkReply::finished, res, [reply, res]() {
-		auto r = readReply(reply);
+		auto r = readReply(reply, res->isCancelled());
 		if(IsApiError(r)) {
-			res->setError(ApiError(r));
+			res->setError(ApiError(r), reply->error());
 			return;
 		}
 		const auto doc = ApiSuccess(r);

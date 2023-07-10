@@ -135,44 +135,51 @@ bool ListServerModel::removeServer(const QString &url)
 	return true;
 }
 
-void ListServerModel::setFavicon(const QString &url, const QImage &icon)
+QIcon ListServerModel::setFavicon(const QString &url, const QImage &icon)
 {
+	// Make sure the icon is not huge
+	QImage scaledIcon;
+
+	if(icon.width() > 128 || icon.height() > 128)
+		scaledIcon = icon.scaled(QSize(128, 128), Qt::KeepAspectRatio);
+	else
+		scaledIcon = icon;
+
+	// Serialize icon in PNG format
+	QByteArray data;
+	QBuffer buffer(&data);
+	buffer.open(QIODevice::WriteOnly);
+	scaledIcon.save(&buffer, "PNG");
+
+	// Generate file name
+	QCryptographicHash hash(QCryptographicHash::Sha1);
+	hash.addData(data);
+	QString iconName = hash.result().toHex() + ".png";
+	QIcon iconData{QPixmap::fromImage(scaledIcon)};
+
 	// Find the server
+	bool saved = false;
 	for(int i=0;i<m_servers.size();++i) {
 		ListServer &s = m_servers[i];
 		if(s.url != url)
 			continue;
 
-		// Make sure the icon is not huge
-		QImage scaledIcon;
+		s.iconName = iconName;
+		s.icon = iconData;
 
-		if(icon.width() > 128 || icon.height() > 128)
-			scaledIcon = icon.scaled(QSize(128, 128), Qt::KeepAspectRatio);
-		else
-			scaledIcon = icon;
-
-		// Serialize icon in PNG format
-		QByteArray data;
-		QBuffer buffer(&data);
-		buffer.open(QIODevice::WriteOnly);
-		scaledIcon.save(&buffer, "PNG");
-
-		// Generate file name
-		QCryptographicHash hash(QCryptographicHash::Sha1);
-		hash.addData(data);
-
-		s.iconName = hash.result().toHex() + ".png";
-		s.icon = QIcon(QPixmap::fromImage(scaledIcon));
-
-		// Save file to disk
-		QFile f(utils::paths::writablePath("favicons/", s.iconName));
-		if(!f.open(QIODevice::WriteOnly)) {
-			qWarning() << "Unable to open" << f.fileName() << f.errorString();
-		} else {
-			f.write(data);
-			f.close();
+		if(!saved) {
+			saved = true;
+			QFile f(utils::paths::writablePath("favicons/", s.iconName));
+			if(!f.open(QIODevice::WriteOnly)) {
+				qWarning() << "Unable to open" << f.fileName() << f.errorString();
+			} else {
+				f.write(data);
+				f.close();
+			}
 		}
 	}
+
+	return iconData;
 }
 
 QVector<ListServer> ListServerModel::listServers(const QVector<QVariantMap> &cfg, bool includeReadOnly)

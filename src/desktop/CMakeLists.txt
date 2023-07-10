@@ -207,6 +207,7 @@ target_sources(drawpile PRIVATE
 	toolwidgets/zoomsettings.cpp
 	toolwidgets/zoomsettings.h
 	ui/abusereport.ui
+	ui/addserverdialog.ui
 	ui/avatarimport.ui
 	ui/brushdock.ui
 	ui/brushpresetproperties.ui

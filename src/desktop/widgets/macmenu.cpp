@@ -138,7 +138,17 @@ void MacMenu::openRecent(QAction *action)
 
 void MacMenu::joinSession()
 {
-	auto dlg = new dialogs::JoinDialog(QUrl());
+	showJoinDialog(false);
+}
+
+void MacMenu::browseSessions()
+{
+	showJoinDialog(true);
+}
+
+void MacMenu::showJoinDialog(bool browse)
+{
+	auto dlg = new dialogs::JoinDialog(QUrl(), browse);
 	connect(dlg, &dialogs::JoinDialog::finished, [dlg](int i) {
 		if(i==QDialog::Accepted) {
 			QUrl url = dlg->getUrl();
@@ -156,7 +166,8 @@ void MacMenu::joinSession()
 		}
 		dlg->deleteLater();
 	});
-	dlg->show();}
+	dlg->show();
+}
 
 /**
  * @brief Quit program, closing all main windows

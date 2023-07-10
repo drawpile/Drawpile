@@ -17,7 +17,6 @@
 #include <QDir>
 #include <QFileDialog>
 #include <QHBoxLayout>
-#include <QInputDialog>
 #include <QLabel>
 #include <QListView>
 #include <QMessageBox>
@@ -126,42 +125,10 @@ void Servers::initListingServers(desktop::settings::Settings &settings, QVBoxLay
 
 void Servers::addListServer(sessionlisting::ListServerModel *model)
 {
-	auto urlString = QStringLiteral("https://");
-	for (;;) {
-		auto ok = true;
-		urlString = QInputDialog::getText(
-			this, tr("Add list server"), tr("Enter a list server URL:"),
-			QLineEdit::Normal, urlString, &ok,
-			Qt::Sheet, Qt::ImhUrlCharactersOnly
-		).trimmed();
-		if (!ok || urlString.isEmpty()) {
-			return;
-		}
-		auto url = QUrl::fromUserInput(urlString);
-		if (url.isValid() && url.scheme().startsWith("http")) {
-			// Qt will default guessed user input to http, but it should really
-			// default to https for privacy and security.
-			if (!urlString.startsWith("http://", Qt::CaseInsensitive)) {
-				url.setScheme("https");
-			}
-
-			auto *dialog = new AddServerDialog(this);
-			dialog->setListServerModel(model);
-			dialog->query(url);
-			return;
-		} else {
-			const auto result = execWarning(
-				tr("Add list server"),
-				tr("'%1' is not a valid list server URL.").arg(urlString),
-				this,
-				QMessageBox::Retry | QMessageBox::Cancel,
-				QMessageBox::Retry
-			);
-			if (result == QMessageBox::Cancel) {
-				return;
-			}
-		}
-	}
+	AddServerDialog *dialog = new AddServerDialog(this);
+	dialog->setAttribute(Qt::WA_DeleteOnClose);
+	dialog->setListServerModel(model);
+	dialog->show();
 }
 
 void Servers::moveListServer(

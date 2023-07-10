@@ -6,6 +6,8 @@
 #include "libshared/listings/announcementapi.h"
 
 #include <QAbstractItemModel>
+#include <QHash>
+#include <QImage>
 #include <QUrl>
 
 /**
@@ -53,6 +55,7 @@ public:
 	QModelIndex indexOfListing(const QString &listing) const;
 
 public slots:
+	void setIcon(const QString &name, const QIcon &icon);
 	void setMessage(const QString &name, const QString &message);
 	void setList(const QString &name, const QVector<sessionlisting::Session> sessions);
 
@@ -73,7 +76,9 @@ private:
 
 		inline bool offline() const { return !message.isEmpty(); }
 	};
+
 	QVector<Listing> m_listings;
+	QHash<QString, QIcon> m_icons;
 };
 
 #endif

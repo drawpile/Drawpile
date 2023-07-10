@@ -69,6 +69,8 @@ public:
 	//! Start downloading
 	void start(const QUrl &url);
 
+	void cancel();
+
 	/**
 	 * Get access to the file device
 	 *

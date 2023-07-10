@@ -27,6 +27,7 @@ public slots:
 	void newDocument();
 	void openDocument();
 	void joinSession();
+	void browseSessions();
 	void quitAll();
 
 private slots:
@@ -39,6 +40,7 @@ private slots:
 private:
 	MacMenu();
 	QAction *makeAction(QMenu *menu, const char *name, const QString &text, const QKeySequence &shortcut);
+	void showJoinDialog(bool browse);
 
 	QMenu *_recent;
 	QMenu *_windows;

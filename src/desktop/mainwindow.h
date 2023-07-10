@@ -81,6 +81,8 @@ public:
 	//! Connect to a host and join a session if full URL is provided.
 	void joinSession(const QUrl& url, const QString &autoRecordFilename=QString());
 
+	void showJoinDialog(const QUrl &defaultUrl = QUrl{}, bool browse = false);
+
 	//! Check if the current board can be replaced
 	bool canReplace() const;
 
@@ -105,7 +107,8 @@ public slots:
 	void terminateSession();
 
 	void host();
-	void join(const QUrl &defaultUrl=QUrl());
+	void join();
+	void browse();
 	void leave();
 
 	void toggleFullscreen();

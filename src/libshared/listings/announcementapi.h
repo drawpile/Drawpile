@@ -10,6 +10,7 @@
 #include <QUrl>
 #include <QVariant>
 #include <QStringList>
+#include <QNetworkReply>
 
 namespace sessionlisting {
 
@@ -69,20 +70,27 @@ class AnnouncementApiResponse final : public QObject
 	Q_OBJECT
 public:
 	AnnouncementApiResponse(const QUrl &url, QObject *parent=nullptr)
-		: QObject(parent), m_apiUrl(url), m_gone(false)
+		: QObject(parent), m_apiUrl(url), m_networkError(QNetworkReply::NoError), m_gone(false), m_cancelled(false)
 	{ }
 
 	void setResult(const QVariant &result, const QString &message=QString());
-	void setError(const QString &error);
+	void setError(const QString &error, QNetworkReply::NetworkError networkError = QNetworkReply::NoError);
 	void setUrl(const QUrl &url) { m_apiUrl = url; }
 
 	QUrl apiUrl() const { return m_apiUrl; }
 	QVariant result() const { return m_result; }
 	QString message() const { return m_message; }
 	QString errorMessage() const { return m_error; }
+	QNetworkReply::NetworkError networkError() const { return m_networkError; }
 	bool isGone() const { return m_gone; }
+	bool isCancelled() const { return m_cancelled; }
+
+	void updateRequestUrl(const QUrl &url);
+	void cancel();
 
 signals:
+	void cancelRequested();
+	void requestUrlChanged(const QUrl &url);
 	void finished(const QVariant &result, const QString &message, const QString &error);
 	void serverGone();
 
@@ -91,7 +99,9 @@ private:
 	QVariant m_result;
 	QString m_message;
 	QString m_error;
+	QNetworkReply::NetworkError m_networkError;
 	bool m_gone;
+	bool m_cancelled;
 };
 
 /**

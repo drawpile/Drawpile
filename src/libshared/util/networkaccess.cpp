@@ -85,6 +85,11 @@ void FileDownload::start(const QUrl &url)
 	connect(m_reply, &QNetworkReply::finished, this, &FileDownload::onFinished);
 }
 
+void FileDownload::cancel()
+{
+	m_reply->abort();
+}
+
 void FileDownload::onMetaDataChanged()
 {
 	const QString mimetype = m_reply->header(QNetworkRequest::ContentTypeHeader).toString();

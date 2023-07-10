@@ -18,7 +18,8 @@ namespace dialogs {
 class JoinDialog final : public QDialog {
 	Q_OBJECT
 public:
-	explicit JoinDialog(const QUrl &defaultUrl, QWidget *parent = nullptr);
+	explicit JoinDialog(
+		const QUrl &defaultUrl, bool browse, QWidget *parent = nullptr);
 	~JoinDialog() override;
 
 	//! Get the host address
@@ -38,8 +39,12 @@ public:
 
 protected:
 	void resizeEvent(QResizeEvent *event) override;
+	bool eventFilter(QObject *object, QEvent *event) override;
 
 private slots:
+	void activateBrowseTab();
+	void updateTab(int tabIndex);
+
 	void addressChanged(const QString &addr);
 	void refreshListing();
 	void recordingToggled(bool checked);
@@ -48,12 +53,19 @@ private slots:
 
 	void showListingContextMenu(const QPoint &pos);
 
-	void setUrlFromIndex(const QModelIndex &index);
+	void join();
 	void joinIndex(const QModelIndex &index);
 
 private:
+	static constexpr int JOIN_TAB_INDEX = 0;
+	static constexpr int BROWSE_TAB_INDEX = 1;
+
+	void resetUrlPlaceholderText();
+	void updateJoinButton();
+
+	static QString cleanAddress(const QString &addr);
+
 	void resolveRoomcode(const QString &roomcode, const QStringList &servers);
-	void setListingVisible(bool show);
 
 	void addListServerUrl(const QUrl &url);
 
@@ -63,7 +75,6 @@ private:
 	bool isListingIndex(const QModelIndex &index);
 
 	Ui_JoinDialog *m_ui;
-	QPushButton *m_addServerButton;
 	SessionFilterProxyModel *m_filteredSessions;
 	SessionListingModel *m_sessions;
 	QMenu *m_listingContextMenu;
@@ -71,6 +82,7 @@ private:
 
 	qint64 m_lastRefresh;
 
+	QString m_address;
 	QString m_recordingFilename;
 };
 
