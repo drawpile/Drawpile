@@ -37,6 +37,8 @@ SETTING(globalPressureCurve       , GlobalPressureCurve       , "settings/input/
 SETTING(ignoreCarrierGradeNat     , IgnoreCarrierGradeNat     , "history/cgnalert"                      , false)
 SETTING(inputPresets              , InputPresets              , "inputpresets"                          , QVector<QVariantMap>())
 SETTING(insecurePasswordStorage   , InsecurePasswordStorage   , "settings/insecurepasswordstorage"      , false)
+SETTING(inviteLinkType            , InviteLinkType            , "invites/linktype"                      , dialogs::InviteDialog::LinkType::Web)
+SETTING(inviteIncludePassword     , InviteIncludePassword     , "invites/includepassword"               , false)
 SETTING(language                  , Language                  , "settings/language"                     , QString())
 SETTING(lastAnnounce              , LastAnnounce              , "history/announce"                      , false)
 SETTING(lastAvatar                , LastAvatar                , "history/avatar"                        , QString())
@@ -87,6 +89,7 @@ SETTING(recentRemoteHosts         , RecentRemoteHosts         , "history/recentr
 SETTING(serverHideIp              , ServerHideIp              , "settings/hideServerIp"                 , false)
 SETTING(shareBrushSlotColor       , ShareBrushSlotColor       , "settings/sharebrushslotcolor"          , false)
 SETTING(shortcuts                 , Shortcuts                 , "settings/shortcuts"                    , QVariantMap())
+SETTING(showInviteDialogOnHost    , ShowInviteDialogOnHost    , "invites/showdialogonhost"              , true)
 SETTING(showTrayIcon              , ShowTrayIcon              , "ui/trayicon"                           , true)
 SETTING(soundVolume               , SoundVolume               , "notifications/volume"                  , 40)
 SETTING_GETSET(tabletDriver       , TabletDriver              , "settings/input/tabletdriver"           , tabletinput::Mode::KisTabletWinink

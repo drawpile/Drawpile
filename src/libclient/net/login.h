@@ -161,6 +161,8 @@ public:
 	 */
 	QStringList sessionFlags() const { return m_sessionFlags; }
 
+	QString joinPassword() const { return m_joinPassword; }
+
 public slots:
 	void serverDisconnected();
 

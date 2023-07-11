@@ -86,6 +86,8 @@ target_sources(drawpile PRIVATE
 	dialogs/flipbook.h
 	dialogs/hostdialog.cpp
 	dialogs/hostdialog.h
+	dialogs/invitedialog.cpp
+	dialogs/invitedialog.h
 	dialogs/joindialog.cpp
 	dialogs/joindialog.h
 	dialogs/keyframepropertiesdialog.cpp
@@ -218,6 +220,7 @@ target_sources(drawpile PRIVATE
 	ui/flipbook.ui
 	ui/hostdialog.ui
 	ui/inspectorsettings.ui
+	ui/invitedialog.ui
 	ui/joindialog.ui
 	ui/lasersettings.ui
 	ui/layerproperties.ui

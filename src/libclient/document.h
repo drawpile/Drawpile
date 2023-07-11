@@ -147,7 +147,7 @@ public:
 signals:
 	//! Connection opened, but not yet logged in
 	void serverConnected(const QString &address, int port);
-	void serverLoggedIn(bool join);
+	void serverLoggedIn(bool join, const QString &joinPassword);
 	void serverDisconnected(const QString &message, const QString &errorcode, bool localDisconnect);
 	void compatibilityModeChanged(bool compatibilityMode);
 
@@ -221,7 +221,7 @@ public slots:
 	void addServerLogEntry(const QString &log);
 
 private slots:
-	void onServerLogin(bool join, bool compatibilityMode);
+	void onServerLogin(bool join, bool compatibilityMode, const QString &joinPassword);
 	void onServerDisconnect();
 	void onSessionResetted();
 

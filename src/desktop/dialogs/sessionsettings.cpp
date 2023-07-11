@@ -445,8 +445,10 @@ void SessionSettingsDialog::changePassword()
 				QString(),
 				&ok
 	);
-	if(ok)
+	if(ok) {
+		emit joinPasswordChanged(newpass);
 		changeSessionConf("password", newpass, true);
+	}
 }
 
 void SessionSettingsDialog::changeOpword()

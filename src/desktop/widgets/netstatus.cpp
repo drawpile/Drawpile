@@ -22,7 +22,9 @@
 namespace widgets {
 
 NetStatus::NetStatus(QWidget *parent)
-	: QWidget(parent), m_state(NotConnected), _sentbytes(0), _recvbytes(0), _lag(0)
+	: QWidget(parent), m_state(NotConnected), m_haveJoinPassword(false),
+	m_isLocalHost(false),  m_haveRemoteAddress(false), _sentbytes(0),
+	_recvbytes(0), _lag(0)
 {
 	setMinimumHeight(16+2);
 
@@ -113,6 +115,16 @@ NetStatus::NetStatus(QWidget *parent)
 	updateLabel();
 }
 
+void NetStatus::setHaveJoinPassword(bool haveJoinPassword)
+{
+	m_haveJoinPassword = haveJoinPassword;
+}
+
+void NetStatus::setJoinPassword(const QString &joinPassword)
+{
+	m_joinPassword = joinPassword;
+}
+
 /**
  * Set the label to display the address.
  * A context menu to copy the address to clipboard will be enabled.
@@ -128,11 +140,12 @@ void NetStatus::connectingToHost(const QString& address, int port)
 	message(m_label->text());
 
 	// Enable "discover IP" item for local host
-	bool isLocal = WhatIsMyIp::isMyPrivateAddress(address);
-	_discoverIp->setEnabled(isLocal);
-	_discoverIp->setVisible(isLocal);
+	m_isLocalHost = WhatIsMyIp::isMyPrivateAddress(address);
+	m_haveRemoteAddress = !m_isLocalHost;
+	_discoverIp->setEnabled(m_isLocalHost);
+	_discoverIp->setVisible(m_isLocalHost);
 
-	if(!isLocal && WhatIsMyIp::isCGNAddress(address))
+	if(!m_isLocalHost && WhatIsMyIp::isCGNAddress(address))
 		showCGNAlert();
 
 	// reset statistics
@@ -140,9 +153,11 @@ void NetStatus::connectingToHost(const QString& address, int port)
 	_sentbytes = 0;
 }
 
-void NetStatus::loggedIn(const QUrl &sessionUrl)
+void NetStatus::loggedIn(const QUrl &sessionUrl, const QString &joinPassword)
 {
 	m_sessionUrl = sessionUrl;
+	m_joinPassword = joinPassword;
+	m_haveJoinPassword = !joinPassword.isEmpty();
 	_urlaction->setEnabled(true);
 	m_state = LoggedIn;
 	updateLabel();
@@ -206,6 +221,9 @@ void NetStatus::hostDisconnected()
 {
 	m_address = QString();
 	m_roomcode = QString();
+	m_isLocalHost = false;
+	m_haveRemoteAddress = false;
+	m_joinPassword = QString();
 	m_state = NotConnected;
 	updateLabel();
 
@@ -310,11 +328,14 @@ void NetStatus::externalIpDiscovered(const QString &ip)
 			port = m_address.mid(portsep);
 
 		m_address = ip;
+		m_haveRemoteAddress = true;
 		m_sessionUrl.setHost(ip);
 		updateLabel();
 
 		if(WhatIsMyIp::isCGNAddress(ip))
 			showCGNAlert();
+
+		emit remoteAddressDiscovered();
 	}
 }
 

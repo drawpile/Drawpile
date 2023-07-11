@@ -39,6 +39,7 @@ public:
 signals:
 	void requestAnnouncement(const QString &apiUrl);
 	void requestUnlisting(const QString &apiUrl);
+	void joinPasswordChanged(const QString &joinPassword);
 
 private slots:
 	void onCanvasChanged(canvas::CanvasModel*);

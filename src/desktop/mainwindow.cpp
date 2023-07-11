@@ -103,6 +103,7 @@ static constexpr auto CTRL_KEY = Qt::CTRL;
 #include "desktop/dialogs/colordialog.h"
 #include "desktop/dialogs/newdialog.h"
 #include "desktop/dialogs/hostdialog.h"
+#include "desktop/dialogs/invitedialog.h"
 #include "desktop/dialogs/joindialog.h"
 #include "desktop/dialogs/layoutsdialog.h"
 #include "desktop/dialogs/logindialog.h"
@@ -410,6 +411,8 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_doc->client(), &net::Client::serverDisconnecting, m_netstatus, &widgets::NetStatus::hostDisconnecting);
 	connect(m_doc, &Document::serverDisconnected, m_netstatus, &widgets::NetStatus::hostDisconnected);
 	connect(m_doc, &Document::sessionRoomcodeChanged, m_netstatus, &widgets::NetStatus::setRoomcode);
+	connect(m_sessionSettings, &dialogs::SessionSettingsDialog::joinPasswordChanged, m_netstatus, &widgets::NetStatus::setJoinPassword);
+	connect(m_doc, &Document::sessionPasswordChanged, m_netstatus, &widgets::NetStatus::setHaveJoinPassword);
 
 	connect(m_doc->client(), SIGNAL(bytesReceived(int)), m_netstatus, SLOT(bytesReceived(int)));
 	connect(m_doc->client(), &net::Client::bytesSent, m_netstatus, &widgets::NetStatus::bytesSent);
@@ -1627,6 +1630,12 @@ void MainWindow::hostSession(dialogs::HostDialog *dlg)
 	m_doc->client()->connectToServer(dpApp().settings().serverTimeout(), login);
 }
 
+void MainWindow::invite()
+{
+	dialogs::InviteDialog *dlg = new dialogs::InviteDialog{m_netstatus, this};
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
+	dlg->show();
+}
 
 void MainWindow::join()
 {
@@ -1833,6 +1842,7 @@ void MainWindow::onServerConnected()
 void MainWindow::onServerDisconnected(const QString &message, const QString &errorcode, bool localDisconnect)
 {
 	getAction("hostsession")->setEnabled(m_doc->canvas() != nullptr);
+	getAction("invitesession")->setEnabled(false);
 	getAction("leavesession")->setEnabled(false);
 	getAction("sessionsettings")->setEnabled(false);
 	getAction("reportabuse")->setEnabled(false);
@@ -1890,9 +1900,9 @@ void MainWindow::onServerDisconnected(const QString &message, const QString &err
 /**
  * Server connection established and login successfull
  */
-void MainWindow::onServerLogin()
+void MainWindow::onServerLogin(bool join, const QString &joinPassword)
 {
-	m_netstatus->loggedIn(m_doc->client()->sessionUrl());
+	m_netstatus->loggedIn(m_doc->client()->sessionUrl(), joinPassword);
 	m_netstatus->setSecurityLevel(m_doc->client()->securityLevel(), m_doc->client()->hostCertificate());
 	m_view->setEnabled(true);
 	m_sessionSettings->setPersistenceEnabled(m_doc->client()->serverSuppotsPersistence());
@@ -1901,8 +1911,12 @@ void MainWindow::onServerLogin()
 	setDrawingToolsEnabled(true);
 	m_modtools->setEnabled(m_doc->client()->isModerator());
 	getAction("reportabuse")->setEnabled(m_doc->client()->serverSupportsReports());
+	getAction("invitesession")->setEnabled(true);
 	if(m_chatbox->isCollapsed()) {
 		getAction("togglechat")->trigger();
+	}
+	if(!join && dpApp().settings().showInviteDialogOnHost()) {
+		invite();
 	}
 }
 
@@ -3351,6 +3365,7 @@ void MainWindow::setupActions()
 	// Session menu
 	//
 	QAction *host = makeAction("hostsession", tr("&Host...")).statusTip(tr("Share your drawingboard with others"));
+	QAction *invite = makeAction("invitesession", tr("&Invite...")).statusTip(tr("Invite another user to this session")).disabled();
 	QAction *join = makeAction("joinsession", tr("&Join...")).statusTip(tr("Join another user's drawing session"));
 	QAction *browse = makeAction("browsesession", tr("&Browse...")).statusTip(tr("Browse session listings"));
 	QAction *logout = makeAction("leavesession", tr("&Leave")).statusTip(tr("Leave this drawing session")).disabled();
@@ -3371,6 +3386,7 @@ void MainWindow::setupActions()
 	m_admintools->setEnabled(false);
 
 	connect(host, &QAction::triggered, this, &MainWindow::host);
+	connect(invite, &QAction::triggered, this, &MainWindow::invite);
 	connect(join, &QAction::triggered, this, &MainWindow::join);
 	connect(browse, &QAction::triggered, this, &MainWindow::browse);
 	connect(logout, &QAction::triggered, this, &MainWindow::leave);
@@ -3394,6 +3410,7 @@ void MainWindow::setupActions()
 
 	QMenu *sessionmenu = menuBar()->addMenu(tr("&Session"));
 	sessionmenu->addAction(host);
+	sessionmenu->addAction(invite);
 	sessionmenu->addAction(join);
 	sessionmenu->addAction(browse);
 	sessionmenu->addAction(logout);

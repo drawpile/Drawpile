@@ -107,6 +107,7 @@ public slots:
 	void terminateSession();
 
 	void host();
+	void invite();
 	void join();
 	void browse();
 	void leave();
@@ -145,7 +146,7 @@ private slots:
 	void onUndoDepthLimitSet(int undoDepthLimit);
 
 	void onServerConnected();
-	void onServerLogin();
+	void onServerLogin(bool join, const QString &joinPassword);
 	void onServerDisconnected(const QString &message, const QString &errorcode, bool localDisconnect);
 	void onCompatibilityModeChanged(bool compatibilityMode);
 	void onNsfmChanged(bool nsfm);

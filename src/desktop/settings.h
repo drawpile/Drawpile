@@ -2,6 +2,7 @@
 #ifndef DESKTOP_SETTINGS_H
 #define DESKTOP_SETTINGS_H
 
+#include "desktop/dialogs/invitedialog.h"
 #include "desktop/scene/canvasview.h"
 #include "desktop/tabletinput.h"
 #include "libclient/export/videoexporter.h"

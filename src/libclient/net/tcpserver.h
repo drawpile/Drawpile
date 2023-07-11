@@ -50,7 +50,7 @@ public:
 signals:
 	void loggedIn(
 		const QUrl &url, uint8_t userid, bool join, bool auth, bool moderator,
-		bool hasAutoreset, bool compatibilityMode);
+		bool hasAutoreset, bool compatibilityMode, const QString &joinPassword);
 	void loggingOut();
 	void gracefullyDisconnecting(MessageQueue::GracefulDisconnect, const QString &message);
 	void serverDisconnected(const QString &message, const QString &errorcode, bool localDisconnect);

@@ -203,7 +203,7 @@ DP_LoadResult Document::loadRecording(
 	return result;
 }
 
-void Document::onServerLogin(bool join, bool compatibilityMode)
+void Document::onServerLogin(bool join, bool compatibilityMode, const QString &joinPassword)
 {
 	if(join)
 		initCanvas();
@@ -220,7 +220,7 @@ void Document::onServerLogin(bool join, bool compatibilityMode)
 
 	m_sessionHistoryMaxSize = 0;
 	m_baseResetThreshold = 0;
-	emit serverLoggedIn(join);
+	emit serverLoggedIn(join, joinPassword);
 	emit compatibilityModeChanged(compatibilityMode);
 }
 

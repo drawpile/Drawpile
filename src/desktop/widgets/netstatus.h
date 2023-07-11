@@ -35,9 +35,19 @@ public:
 
 	void setSecurityLevel(net::Server::Security level, const QSslCertificate &certificate);
 
+	bool isLocalHost() const { return m_isLocalHost; }
+	bool haveRemoteAddress() const { return m_haveRemoteAddress; }
+	const QUrl &sessionUrl() const { return m_sessionUrl; }
+	QString joinPassword() const { return m_haveJoinPassword ? m_joinPassword : QString{}; }
+
+signals:
+	void remoteAddressDiscovered();
+
 public slots:
+	void setHaveJoinPassword(bool haveJoinPassword);
+	void setJoinPassword(const QString &joinPassword);
 	void connectingToHost(const QString& address, int port);
-	void loggedIn(const QUrl &sessionUrl);
+	void loggedIn(const QUrl &sessionUrl, const QString &joinPassword);
 	void hostDisconnecting();
 	void hostDisconnected();
 
@@ -64,8 +74,9 @@ public slots:
 	void copyUrl();
 	void message(const QString &msg);
 
-private slots:
 	void discoverAddress();
+
+private slots:
 	void externalIpDiscovered(const QString &ip);
 	void showCertificate();
 	void showNetStats();
@@ -87,8 +98,12 @@ private:
 	QString m_roomcode;
 	int m_port;
 	QUrl m_sessionUrl;
+	QString m_joinPassword;
+	bool m_haveJoinPassword;
 
 	bool m_hideServer;
+	bool m_isLocalHost;
+	bool m_haveRemoteAddress;
 
 	QAction *_copyaction;
 	QAction *_urlaction;

@@ -410,8 +410,10 @@ void LoginHandler::sendHostCommand()
 
 	kwargs["protocol"] = protocol::ProtocolVersion::current().asString();
 	kwargs["user_id"] = m_userid;
-	if(!m_sessionPassword.isEmpty())
+	if(!m_sessionPassword.isEmpty()) {
 		kwargs["password"] = m_sessionPassword;
+		m_joinPassword = m_sessionPassword;
+	}
 
 	send("host", {}, kwargs);
 	m_state = EXPECT_LOGIN_OK;

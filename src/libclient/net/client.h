@@ -178,7 +178,7 @@ signals:
 	void sessionConfChange(const QJsonObject &config);
 
 	void serverConnected(const QString &address, int port);
-	void serverLoggedIn(bool join, bool compatibilityMode);
+	void serverLoggedIn(bool join, bool compatibilityMode, const QString &joinPassword);
 	void serverDisconnecting();
 	void serverDisconnected(const QString &message, const QString &errorcode, bool localDisconnect);
 	void youWereKicked(const QString &kickedBy);
@@ -199,7 +199,7 @@ private slots:
 	void handleMessages(int count, const drawdance::Message *msgs);
 	void handleConnect(
 		const QUrl &url, uint8_t userid, bool join, bool auth, bool moderator,
-		bool supportsAutoReset, bool compatibilityMode);
+		bool supportsAutoReset, bool compatibilityMode, const QString &joinPassword);
 	void handleDisconnect(const QString &message, const QString &errorcode, bool localDisconnect);
 
 private:
