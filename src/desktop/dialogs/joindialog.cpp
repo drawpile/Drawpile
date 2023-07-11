@@ -37,6 +37,7 @@ static const int REFRESH_INTERVAL = 60;
 JoinDialog::JoinDialog(const QUrl &url, bool browse, QWidget *parent)
 	: QDialog(parent)
 	, m_lastRefresh(0)
+	, m_autoJoin(false)
 {
 	m_ui = new Ui_JoinDialog;
 	m_ui->setupUi(this);
@@ -190,6 +191,7 @@ JoinDialog::JoinDialog(const QUrl &url, bool browse, QWidget *parent)
 			addListServerUrl(addListServer);
 		} else {
 			m_ui->url->setText(url.toString());
+			m_autoJoin = !browse;
 		}
 	}
 
@@ -496,6 +498,13 @@ QUrl JoinDialog::getUrl() const
 	}
 
 	return url;
+}
+
+void JoinDialog::autoJoin()
+{
+	if(m_autoJoin && m_ui->tabs->currentIndex() == JOIN_TAB_INDEX) {
+		join();
+	}
 }
 
 void JoinDialog::addListServer()

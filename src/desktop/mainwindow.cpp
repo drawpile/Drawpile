@@ -1661,6 +1661,7 @@ void MainWindow::showJoinDialog(const QUrl &initialUrl, bool browse)
 		dlg->deleteLater();
 	});
 	utils::showWindow(dlg);
+	dlg->autoJoin();
 }
 
 /**

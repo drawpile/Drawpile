@@ -37,6 +37,8 @@ public:
 	//! Store settings in configuration file
 	void rememberSettings() const;
 
+	void autoJoin();
+
 protected:
 	void resizeEvent(QResizeEvent *event) override;
 	bool eventFilter(QObject *object, QEvent *event) override;
@@ -82,6 +84,7 @@ private:
 
 	qint64 m_lastRefresh;
 
+	bool m_autoJoin;
 	QString m_address;
 	QString m_recordingFilename;
 };
