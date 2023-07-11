@@ -24,6 +24,7 @@
 #include <QRandomGenerator>
 #include <QSettings>
 #include <QUuid>
+#include <QUrlQuery>
 
 #ifndef NDEBUG
 #define DEBUG_LOGIN
@@ -583,9 +584,16 @@ void LoginHandler::joinSelectedSession(const QString &id, bool needPassword, boo
 	m_selectedId = id;
 	m_compatibilityMode = compatibilityMode;
 	if(needPassword && !m_sessions->isModeratorMode()) {
-		emit sessionPasswordNeeded();
 		m_state = WAIT_FOR_JOIN_PASSWORD;
 		m_passwordState = WAIT_FOR_JOIN_PASSWORD;
+		QString joinPasswordFromUrl = QUrlQuery{m_address}.queryItemValue(
+			QStringLiteral("p"), QUrl::FullyDecoded);
+		if(joinPasswordFromUrl.isEmpty()) {
+			emit sessionPasswordNeeded();
+		} else {
+			m_joinPassword = joinPasswordFromUrl;
+			sendJoinCommand();
+		}
 
 	} else {
 		sendJoinCommand();
