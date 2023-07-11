@@ -66,6 +66,7 @@ private:
 	void updateJoinButton();
 
 	static QString cleanAddress(const QString &addr);
+	static QString fixUpInviteAddress(const QString &addr);
 
 	void resolveRoomcode(const QString &roomcode, const QStringList &servers);
 

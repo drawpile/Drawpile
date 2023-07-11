@@ -245,6 +245,33 @@ QString JoinDialog::cleanAddress(const QString &addr)
 	return addr;
 }
 
+QString JoinDialog::fixUpInviteAddress(const QString &addr)
+{
+	static QRegularExpression inviteRe{
+		"\\A/invites/([^:/]+)(?::([0-9]+))?/+([a-zA-Z0-9-]{1,50})/*\\z"};
+
+	QUrl url = QUrl::fromUserInput(addr);
+	if(!url.scheme().startsWith("http", Qt::CaseInsensitive)) {
+		return QString{};
+	}
+
+	QRegularExpressionMatch match = inviteRe.match(url.path());
+	if(!match.hasMatch()) {
+		return QString{};
+	}
+
+	url.setScheme("drawpile");
+	url.setHost(match.captured(1));
+	int port = match.captured(2).toInt();
+	if(port > 0 && port <= 65535 && port != cmake_config::proto::port()) {
+		url.setPort(port);
+	} else {
+		url.setPort(-1);
+	}
+	url.setPath(QStringLiteral("/%1").arg(match.captured(3)));
+	return url.toString();
+}
+
 void JoinDialog::activateBrowseTab()
 {
 	m_ui->tabs->setCurrentIndex(BROWSE_TAB_INDEX);
@@ -298,6 +325,11 @@ void JoinDialog::addressChanged(const QString &addr)
 			}
 		}
 		resolveRoomcode(addr, servers);
+	} else {
+		QString fixedUpUrl = fixUpInviteAddress(addr);
+		if(!fixedUpUrl.isEmpty()) {
+			m_ui->url->setText(fixedUpUrl);
+		}
 	}
 	updateJoinButton();
 }
