@@ -233,11 +233,13 @@ QString JoinDialog::cleanAddress(const QString &addr)
 	if(addr.startsWith("drawpile://")) {
 		QUrl url(addr);
 		if(url.isValid()) {
-			QString a = url.host();
-			if(url.port() != -1) {
-				a += ":" + QString::number(url.port());
+			QString host = url.host();
+			int port = url.port();
+			if(port > 0 && port != cmake_config::proto::port()) {
+				return QStringLiteral("%1:%2").arg(host).arg(port);
+			} else {
+				return host;
 			}
-			return a;
 		}
 	}
 	return addr;
