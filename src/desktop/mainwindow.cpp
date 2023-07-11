@@ -3351,7 +3351,7 @@ void MainWindow::setupActions()
 	//
 	QAction *host = makeAction("hostsession", tr("&Host...")).statusTip(tr("Share your drawingboard with others"));
 	QAction *join = makeAction("joinsession", tr("&Join...")).statusTip(tr("Join another user's drawing session"));
-	QAction *browse = makeAction("joinsession", tr("&Browse...")).statusTip(tr("Browse session listings"));
+	QAction *browse = makeAction("browsesession", tr("&Browse...")).statusTip(tr("Browse session listings"));
 	QAction *logout = makeAction("leavesession", tr("&Leave")).statusTip(tr("Leave this drawing session")).disabled();
 
 	QAction *serverlog = makeAction("viewserverlog", tr("Event Log")).noDefaultShortcut();
