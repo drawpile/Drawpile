@@ -76,6 +76,10 @@ void ParentalControls::initBuiltIn(desktop::settings::Settings &settings, QVBoxL
 	settings.bindParentalControlsForceCensor(forceCensor);
 	form->addRow(nullptr, forceCensor);
 
+	auto *warnOnJoin = new QCheckBox(tr("Warn when joining NSFM sessions"));
+	settings.bindShowNsfmWarningOnJoin(warnOnJoin);
+	form->addRow(nullptr, warnOnJoin);
+
 	layout->addStretch();
 
 	auto *lockLayout = new QHBoxLayout;

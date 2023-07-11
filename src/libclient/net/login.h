@@ -217,7 +217,16 @@ public slots:
 	 * @param id session ID
 	 * @param needPassword if true, ask for password before joining
 	 */
-	void joinSelectedSession(const QString &id, bool needPassword, bool compatibilityMode);
+	void prepareJoinSelectedSession(
+		const QString &id, bool needPassword, bool compatibilityMode,
+		const QString &title, bool nsfm, bool autoJoin);
+
+	/**
+	 * @brief Actually join the session that the user selected.
+	 *
+	 * Call this after confirming that the user really wants to join the selected session.
+	 */
+	void confirmJoinSelectedSession();
 
 	/**
 	 * @brief Accept server certificate and proceed with login
@@ -250,6 +259,18 @@ signals:
 	 * @param canSelectCustomAvatar is true if the server has announced that it accepts custom avatars
 	 */
 	void usernameNeeded(bool canSelectCustomAvatar);
+
+	/**
+	 * @brief The user must confirm their session choice
+	 *
+	 * Emitted just before joining a session, used to confirm if the user really
+	 * wants to join an NSFM session.
+	 *
+	 * @param title the session title
+	 * @param nsfm if the session is marked NSFM
+	 * @param autoJoin if this was an automatic join or if the user picked it
+	 */
+	void sessionConfirmationNeeded(const QString &title, bool nsfm, bool autoJoin);
 
 	/**
 	 * @brief The user must enter a password to proceed
@@ -413,6 +434,7 @@ private:
 	bool m_supportsCustomAvatars;
 	bool m_supportsExtAuthAvatars;
 	bool m_compatibilityMode;
+	bool m_needSessionPassword;
 
 	// User flags
 	QStringList m_userFlags;

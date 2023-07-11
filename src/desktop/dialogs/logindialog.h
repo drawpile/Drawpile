@@ -36,6 +36,8 @@ public slots:
 private slots:
 	void onOkClicked();
 	void onReportClicked();
+	void onYesClicked();
+	void onNoClicked();
 
 	void updateOkButtonEnabled();
 
@@ -47,6 +49,7 @@ private slots:
 	void onExtAuthNeeded(const QString &forUsername, const QUrl &url);
 	void onExtAuthComplete(bool success);
 	void onSessionChoiceNeeded(net::LoginSessionModel *sessions);
+	void onSessionConfirmationNeeded(const QString &title, bool nsfm, bool autoJoin);
 	void onSessionPasswordNeeded();
 	void onLoginOk();
 	void onBadLoginPassword();

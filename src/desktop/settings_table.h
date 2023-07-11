@@ -90,6 +90,7 @@ SETTING(serverHideIp              , ServerHideIp              , "settings/hideSe
 SETTING(shareBrushSlotColor       , ShareBrushSlotColor       , "settings/sharebrushslotcolor"          , false)
 SETTING(shortcuts                 , Shortcuts                 , "settings/shortcuts"                    , QVariantMap())
 SETTING(showInviteDialogOnHost    , ShowInviteDialogOnHost    , "invites/showdialogonhost"              , true)
+SETTING(showNsfmWarningOnJoin     , ShowNsfmWarningOnJoin     , "pc/shownsfmwarningonjoin"              , true)
 SETTING(showTrayIcon              , ShowTrayIcon              , "ui/trayicon"                           , true)
 SETTING(soundVolume               , SoundVolume               , "notifications/volume"                  , 40)
 SETTING_GETSET(tabletDriver       , TabletDriver              , "settings/input/tabletdriver"           , tabletinput::Mode::KisTabletWinink

@@ -41,7 +41,8 @@ enum class Mode {
 	sessionlist,     // select session to join
 	sessionpassword, // ask user for password (for session)
 	catchup,         // logged in: catching up (dialog can be closed at this point)
-	certChanged      // SSL certificate has changed (can be ignored)
+	certChanged,     // SSL certificate has changed (can be ignored)
+	confirmNsfm,	 // confirm NSFM session join
 };
 
 struct LoginDialog::Private {
@@ -53,10 +54,14 @@ struct LoginDialog::Private {
 	Ui_LoginDialog *ui;
 
 	QPushButton *okButton;
+	QPushButton *cancelButton;
 	QPushButton *reportButton;
+	QPushButton *yesButton;
+	QPushButton *noButton;
 
 	QUrl extauthurl;
 	QSslCertificate oldCert, newCert;
+	bool autoJoin;
 
 	QMetaObject::Connection loginDestructConnection;
 
@@ -104,6 +109,12 @@ struct LoginDialog::Private {
 		settings.bindLastUsername(ui->username);
 		settings.bindLastAvatar(ui->avatarList, AvatarListModel::FilenameRole);
 
+		if(settings.parentalControlsLocked().isEmpty()) {
+			settings.bindShowNsfmWarningOnJoin(ui->nsfmConfirmAgainBox);
+		} else {
+			ui->nsfmConfirmAgainBox->hide();
+		}
+
 		connect(ui->filter, &QLineEdit::textChanged,
 						sessions, &SessionFilterProxyModel::setFilterFixedString);
 
@@ -116,6 +127,10 @@ struct LoginDialog::Private {
 		// Buttons
 		okButton = ui->buttonBox->button(QDialogButtonBox::Ok);
 		okButton->setDefault(true);
+
+		cancelButton = ui->buttonBox->button(QDialogButtonBox::Cancel);
+		yesButton = ui->buttonBox->button(QDialogButtonBox::Yes);
+		noButton = ui->buttonBox->button(QDialogButtonBox::No);
 
 		reportButton = ui->buttonBox->addButton(LoginDialog::tr("Report..."), QDialogButtonBox::ActionRole);
 		reportButton->setEnabled(false); // needs a selected session to be enabled
@@ -143,7 +158,10 @@ void LoginDialog::Private::resetMode(Mode newMode)
 	QWidget *page = nullptr;
 
 	okButton->setVisible(true);
+	cancelButton->setVisible(true);
 	reportButton->setVisible(false);
+	yesButton->setVisible(false);
+	noButton->setVisible(false);
 
 	switch(mode) {
 	case Mode::loading:
@@ -187,6 +205,13 @@ void LoginDialog::Private::resetMode(Mode newMode)
 	case Mode::certChanged:
 		page = ui->certChangedPage;
 		break;
+	case Mode::confirmNsfm:
+		okButton->setVisible(false);
+		cancelButton->setVisible(false);
+		yesButton->setVisible(true);
+		noButton->setVisible(true);
+		page = ui->nsfmConfirmPage;
+		break;
 	}
 
 	Q_ASSERT(page);
@@ -226,7 +251,10 @@ LoginDialog::LoginDialog(net::LoginHandler *login, QWidget *parent) :
 	connect(d->ui->replaceCert, &QAbstractButton::toggled, this, &LoginDialog::updateOkButtonEnabled);
 
 	connect(d->okButton, &QPushButton::clicked, this, &LoginDialog::onOkClicked);
+	connect(d->cancelButton, &QPushButton::clicked, this, &LoginDialog::reject);
 	connect(d->reportButton, &QPushButton::clicked, this, &LoginDialog::onReportClicked);
+	connect(d->yesButton, &QPushButton::clicked, this, &LoginDialog::onYesClicked);
+	connect(d->noButton, &QPushButton::clicked, this, &LoginDialog::onNoClicked);
 	connect(this, &QDialog::rejected, login, &net::LoginHandler::cancelLogin);
 
 	connect(d->ui->viewOldCert, &QPushButton::clicked, this, &LoginDialog::showOldCert);
@@ -237,6 +265,7 @@ LoginDialog::LoginDialog(net::LoginHandler *login, QWidget *parent) :
 	connect(login, &net::LoginHandler::usernameNeeded, this, &LoginDialog::onUsernameNeeded);
 	connect(login, &net::LoginHandler::loginNeeded, this, &LoginDialog::onLoginNeeded);
 	connect(login, &net::LoginHandler::extAuthNeeded, this, &LoginDialog::onExtAuthNeeded);
+	connect(login, &net::LoginHandler::sessionConfirmationNeeded, this, &LoginDialog::onSessionConfirmationNeeded);
 	connect(login, &net::LoginHandler::sessionPasswordNeeded, this, &LoginDialog::onSessionPasswordNeeded);
 	connect(login, &net::LoginHandler::loginOk, this, &LoginDialog::onLoginOk);
 	connect(login, &net::LoginHandler::badLoginPassword, this, &LoginDialog::onBadLoginPassword);
@@ -257,6 +286,7 @@ void LoginDialog::updateOkButtonEnabled()
 	switch(d->mode) {
 	case Mode::loading:
 	case Mode::catchup:
+	case Mode::confirmNsfm:
 		break;
 	case Mode::identity:
 		enabled = UsernameValidator::isValid(d->ui->username->text());
@@ -459,6 +489,19 @@ void LoginDialog::onSessionChoiceNeeded(net::LoginSessionModel *sessions)
 	updateOkButtonEnabled();
 }
 
+void LoginDialog::onSessionConfirmationNeeded(const QString &title, bool nsfm, bool autoJoin)
+{
+	desktop::settings::Settings &settings = dpApp().settings();
+	if(nsfm && settings.showNsfmWarningOnJoin()) {
+		d->ui->nsfmConfirmTitle->setText(
+			QStringLiteral("<h1>%1</h1>").arg(title.toHtmlEscaped()));
+		d->autoJoin = autoJoin;
+		d->resetMode(Mode::confirmNsfm);
+	} else {
+		d->loginHandler->confirmJoinSelectedSession();
+	}
+}
+
 void LoginDialog::onSessionPasswordNeeded()
 {
 	adjustSize(400, 150, true);
@@ -509,6 +552,7 @@ void LoginDialog::onOkClicked()
 	switch(mode) {
 	case Mode::loading:
 	case Mode::catchup:
+	case Mode::confirmNsfm:
 		// No OK button in these modes
 		qWarning("OK button click in wrong mode!");
 		break;
@@ -535,11 +579,13 @@ void LoginDialog::onOkClicked()
 		}
 
 		const QModelIndex i = d->ui->sessionList->selectionModel()->selectedIndexes().first();
-		d->loginHandler->joinSelectedSession(
+		d->loginHandler->prepareJoinSelectedSession(
 			i.data(net::LoginSessionModel::AliasOrIdRole).toString(),
 			i.data(net::LoginSessionModel::NeedPasswordRole).toBool(),
-			i.data(net::LoginSessionModel::CompatibilityModeRole).toBool()
-		);
+			i.data(net::LoginSessionModel::CompatibilityModeRole).toBool(),
+			i.data(net::LoginSessionModel::TitleRole).toString(),
+			i.data(net::LoginSessionModel::NsfmRole).toBool(),
+			false);
 		break;
 		}
 	case Mode::sessionpassword:
@@ -578,6 +624,39 @@ void LoginDialog::onReportClicked()
 	});
 
 	reportDlg->show();
+}
+
+void LoginDialog::onYesClicked()
+{
+	if(!d->loginHandler) {
+		qWarning("LoginDialog::onYesClicked: login process already ended!");
+		return;
+	}
+
+	if(d->mode == Mode::confirmNsfm) {
+		d->resetMode(Mode::loading);
+		d->loginHandler->confirmJoinSelectedSession();
+	} else {
+		qWarning("Yes button click in wrong mode!");
+	}
+}
+
+void LoginDialog::onNoClicked()
+{
+	if(!d->loginHandler) {
+		qWarning("LoginDialog::onNoClicked: login process already ended!");
+		return;
+	}
+
+	if(d->mode == Mode::confirmNsfm) {
+		if(d->autoJoin) {
+			reject();
+		} else {
+			d->resetMode(Mode::sessionlist);
+		}
+	} else {
+		qWarning("No button click in wrong mode!");
+	}
 }
 
 void LoginDialog::catchupProgress(int value)

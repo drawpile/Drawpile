@@ -473,10 +473,14 @@ void LoginHandler::expectSessionDescriptionJoin(const ServerReply &msg)
 					canJoin = !session.nsfm && !parentalcontrols::isNsfmTitle(session.title);
 				}
 
-				if(canJoin)
-					joinSelectedSession(m_autoJoinId, session.needPassword, session.compatibilityMode);
-				else
+				if(canJoin) {
+					prepareJoinSelectedSession(
+						m_autoJoinId, session.needPassword,
+						session.compatibilityMode, session.title, session.nsfm,
+						true);
+				} else {
 					m_autoJoinId = QString();
+				}
 			}
 		}
 	}
@@ -506,7 +510,9 @@ void LoginHandler::expectSessionDescriptionJoin(const ServerReply &msg)
 			return;
 		}
 
-		joinSelectedSession(session.id, session.needPassword, session.compatibilityMode);
+		prepareJoinSelectedSession(
+			session.id, session.needPassword, session.compatibilityMode,
+			session.title, session.nsfm, true);
 	}
 }
 
@@ -580,12 +586,20 @@ bool LoginHandler::expectLoginOk(const ServerReply &msg)
 	return true;
 }
 
-void LoginHandler::joinSelectedSession(const QString &id, bool needPassword, bool compatibilityMode)
+void LoginHandler::prepareJoinSelectedSession(
+	const QString &id, bool needPassword, bool compatibilityMode,
+	const QString &title, bool nsfm, bool autoJoin)
 {
 	Q_ASSERT(!id.isEmpty());
 	m_selectedId = id;
 	m_compatibilityMode = compatibilityMode;
-	if(needPassword && !m_sessions->isModeratorMode()) {
+	m_needSessionPassword = needPassword;
+	emit sessionConfirmationNeeded(title, nsfm, autoJoin);
+}
+
+void LoginHandler::confirmJoinSelectedSession()
+{
+	if(m_needSessionPassword && !m_sessions->isModeratorMode()) {
 		m_state = WAIT_FOR_JOIN_PASSWORD;
 		m_passwordState = WAIT_FOR_JOIN_PASSWORD;
 		QString joinPasswordFromUrl = QUrlQuery{m_address}.queryItemValue(
