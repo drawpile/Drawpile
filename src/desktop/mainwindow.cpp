@@ -3366,7 +3366,7 @@ void MainWindow::setupActions()
 	//
 	// Session menu
 	//
-	QAction *host = makeAction("hostsession", tr("&Host...")).statusTip(tr("Share your drawingboard with others")).icon("network-server");
+	QAction *host = makeAction("hostsession", tr("&Host...")).statusTip(tr("Share your canvas with others")).icon("network-server");
 	QAction *invite = makeAction("invitesession", tr("&Invite...")).statusTip(tr("Invite another user to this session")).icon("resource-group-new").disabled();
 	QAction *join = makeAction("joinsession", tr("&Join...")).statusTip(tr("Join another user's drawing session")).icon("network-connect");
 	QAction *browse = makeAction("browsesession", tr("&Browse...")).statusTip(tr("Browse session listings")).icon("edit-find");
@@ -3381,7 +3381,7 @@ void MainWindow::setupActions()
 	QAction *terminatesession = makeAction("terminatesession", tr("Terminate"));
 	QAction *reportabuse = makeAction("reportabuse", tr("Report...")).disabled();
 
-	QAction *locksession = makeAction("locksession", tr("Lock Everything")).statusTip(tr("Prevent changes to the drawing board")).shortcut("F12").checkable();
+	QAction *locksession = makeAction("locksession", tr("Lock Everything")).statusTip(tr("Prevent changes to the canvas")).shortcut("F12").checkable();
 
 	m_admintools->addAction(locksession);
 	m_modtools->addAction(terminatesession);
