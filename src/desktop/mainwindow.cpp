@@ -1849,6 +1849,7 @@ void MainWindow::onServerDisconnected(const QString &message, const QString &err
 	m_admintools->setEnabled(false);
 	m_modtools->setEnabled(false);
 	m_sessionSettings->close();
+	m_chatbox->setConnected(false);
 
 	// Re-enable UI
 	m_view->setEnabled(true);
@@ -1912,6 +1913,7 @@ void MainWindow::onServerLogin(bool join, const QString &joinPassword)
 	m_modtools->setEnabled(m_doc->client()->isModerator());
 	getAction("reportabuse")->setEnabled(m_doc->client()->serverSupportsReports());
 	getAction("invitesession")->setEnabled(true);
+	m_chatbox->setConnected(true);
 	if(m_chatbox->isCollapsed()) {
 		getAction("togglechat")->trigger();
 	}
@@ -3364,11 +3366,11 @@ void MainWindow::setupActions()
 	//
 	// Session menu
 	//
-	QAction *host = makeAction("hostsession", tr("&Host...")).statusTip(tr("Share your drawingboard with others"));
-	QAction *invite = makeAction("invitesession", tr("&Invite...")).statusTip(tr("Invite another user to this session")).disabled();
-	QAction *join = makeAction("joinsession", tr("&Join...")).statusTip(tr("Join another user's drawing session"));
-	QAction *browse = makeAction("browsesession", tr("&Browse...")).statusTip(tr("Browse session listings"));
-	QAction *logout = makeAction("leavesession", tr("&Leave")).statusTip(tr("Leave this drawing session")).disabled();
+	QAction *host = makeAction("hostsession", tr("&Host...")).statusTip(tr("Share your drawingboard with others")).icon("network-server");
+	QAction *invite = makeAction("invitesession", tr("&Invite...")).statusTip(tr("Invite another user to this session")).icon("resource-group-new").disabled();
+	QAction *join = makeAction("joinsession", tr("&Join...")).statusTip(tr("Join another user's drawing session")).icon("network-connect");
+	QAction *browse = makeAction("browsesession", tr("&Browse...")).statusTip(tr("Browse session listings")).icon("edit-find");
+	QAction *logout = makeAction("leavesession", tr("&Leave")).statusTip(tr("Leave this drawing session")).icon("network-disconnect").disabled();
 
 	QAction *serverlog = makeAction("viewserverlog", tr("Event Log")).noDefaultShortcut();
 	QAction *sessionSettings = makeAction("sessionsettings", tr("Settings...")).noDefaultShortcut().menuRole(QAction::NoRole).disabled();
@@ -3427,6 +3429,8 @@ void MainWindow::setupActions()
 	sessionmenu->addAction(sessionSettings);
 	sessionmenu->addAction(sessionUndoDepthLimit);
 	sessionmenu->addAction(locksession);
+
+	m_chatbox->setActions(host, join, browse, invite);
 
 	//
 	// Tools menu and toolbar

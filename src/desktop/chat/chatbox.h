@@ -14,6 +14,7 @@ namespace drawdance {
 }
 
 class QListView;
+class QPushButton;
 
 class Document;
 
@@ -31,10 +32,15 @@ class ChatBox final : public QWidget
 public:
 	explicit ChatBox(Document *doc, QWidget *parent=nullptr);
 
+	void setActions(QAction *hostAction, QAction *joinAction, QAction *browseAction, QAction *inviteAction);
+
 	//! Focus the text input widget
 	void focusInput();
 
 	bool isCollapsed() const { return m_state == State::Collapsed; }
+
+public slots:
+	void setConnected(bool inviteEnabled);
 
 private slots:
 	void onCanvasChanged(canvas::CanvasModel *canvas);
@@ -71,6 +77,10 @@ private:
 
 	ChatWidget *m_chatWidget;
 	UserItemDelegate *m_userItemDelegate;
+	QPushButton *m_hostButton;
+	QPushButton *m_joinButton;
+	QPushButton *m_browseButton;
+	QPushButton *m_inviteButton;
 	QListView *m_userList;
 
 	State m_state = State::Expanded;

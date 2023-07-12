@@ -10,11 +10,13 @@
 #include "libclient/drawdance/message.h"
 #include "libclient/net/client.h"
 
+#include <QAction>
 #include <QResizeEvent>
 #include <QSplitter>
 #include <QListView>
 #include <QVBoxLayout>
 #include <QMetaObject>
+#include <QPushButton>
 
 namespace widgets {
 
@@ -26,12 +28,33 @@ ChatBox::ChatBox(Document *doc, QWidget *parent)
 	m_chatWidget = new ChatWidget(this);
 	chatsplitter->addWidget(m_chatWidget);
 
+	QWidget *sidebar = new QWidget{this};
+	QVBoxLayout *sidebarLayout = new QVBoxLayout;
+	sidebarLayout->setContentsMargins(0, 0, 0, 0);
+	sidebarLayout->setSpacing(0);
+	sidebar->setLayout(sidebarLayout);
+
+	QVBoxLayout *buttonsLayout = new QVBoxLayout;
+	buttonsLayout->setContentsMargins(0, 0, 0, 0);
+	sidebarLayout->addLayout(buttonsLayout);
+
+	m_hostButton = new QPushButton{this};
+	m_joinButton = new QPushButton{this};
+	m_browseButton = new QPushButton{this};
+	m_inviteButton = new QPushButton{this};
+	buttonsLayout->addWidget(m_hostButton);
+	buttonsLayout->addWidget(m_joinButton);
+	buttonsLayout->addWidget(m_browseButton);
+	buttonsLayout->addWidget(m_inviteButton);
+
 	m_userList = new QListView(this);
 	m_userList->setSelectionMode(QListView::NoSelection);
 	m_userItemDelegate = new UserItemDelegate(this);
 	m_userItemDelegate->setDocument(doc);
 	m_userList->setItemDelegate(m_userItemDelegate);
-	chatsplitter->addWidget(m_userList);
+	sidebarLayout->addWidget(m_userList);
+
+	chatsplitter->addWidget(sidebar);
 
 	chatsplitter->setStretchFactor(0, 5);
 	chatsplitter->setStretchFactor(1, 1);
@@ -60,6 +83,41 @@ ChatBox::ChatBox(Document *doc, QWidget *parent)
 	connect(m_userItemDelegate, &widgets::UserItemDelegate::opCommand, doc->client(), &net::Client::sendMessage);
 	connect(m_userItemDelegate, &widgets::UserItemDelegate::requestPrivateChat, m_chatWidget, &ChatWidget::openPrivateChat);
 	connect(m_userItemDelegate, &widgets::UserItemDelegate::requestUserInfo, this, &ChatBox::requestUserInfo);
+}
+
+void ChatBox::setActions(QAction *hostAction, QAction *joinAction, QAction *browseAction, QAction *inviteAction)
+{
+	const QPair<QAction *, QPushButton *> pairs[] = {
+		{hostAction, m_hostButton},
+		{joinAction, m_joinButton},
+		{browseAction, m_browseButton},
+		{inviteAction, m_inviteButton},
+	};
+	for(const QPair<QAction *, QPushButton *> &pair : pairs) {
+		QAction *action = pair.first;
+		QPushButton *button = pair.second;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+		connect(action, &QAction::enabledChanged, button, &QWidget::setEnabled);
+#else
+		connect(action, &QAction::changed, this, [=]{
+			button->setEnabled(action->isEnabled());
+		});
+#endif
+		connect(button, &QAbstractButton::clicked, action, &QAction::trigger);
+		button->setIcon(action->icon());
+		button->setText(action->text());
+		button->setToolTip(action->statusTip());
+		button->setVisible(action->isEnabled());
+	}
+	setConnected(inviteAction->isEnabled());
+}
+
+void ChatBox::setConnected(bool connected)
+{
+	m_hostButton->setVisible(!connected);
+	m_joinButton->setVisible(!connected);
+	m_browseButton->setVisible(!connected);
+	m_inviteButton->setVisible(connected);
 }
 
 void ChatBox::onCanvasChanged(canvas::CanvasModel *canvas)

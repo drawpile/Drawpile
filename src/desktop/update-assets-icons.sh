@@ -14,7 +14,7 @@ update_icons() {
 			drawpile_*|onion-*|zoom-fit-none.svg)
 				continue
 				;;
-			folder.svg | network-server-database.svg)
+			folder.svg | network-server.svg | network-server-database.svg)
 				category=places
 				;;
 			input-keyboard.svg | network-modem.svg)
