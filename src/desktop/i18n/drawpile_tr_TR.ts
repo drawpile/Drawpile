@@ -545,7 +545,7 @@ yeniden boyutlandırılacak.</translation>
     <message>
         <location line="+18"/>
         <source>Record Session</source>
-        <translation>Oturumu Kaydet</translation>
+        <translation>Oturumu Kayda Al</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -660,7 +660,7 @@ yeniden boyutlandırılacak.</translation>
     <message>
         <location line="+13"/>
         <source>Expand: </source>
-        <translation>Genişlet </translation>
+        <translation>Genişle: </translation>
     </message>
     <message>
         <location line="+23"/>
@@ -729,7 +729,7 @@ yeniden boyutlandırılacak.</translation>
     <message>
         <location line="+20"/>
         <source>Range</source>
-        <translation>Alan</translation>
+        <translation>Menzil</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -777,7 +777,7 @@ yeniden boyutlandırılacak.</translation>
     <message>
         <location line="+16"/>
         <source>An optional user friendly ID for the session</source>
-        <translation>Oturum için opsiyonel ve kullanıcı dostu ID</translation>
+        <translation>Oturum için opsiyonel ve kullanıcı dostu bir ID</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -994,7 +994,7 @@ Alt aralık: [%3, %4]</translation>
     <message>
         <location line="+7"/>
         <source>Censor content</source>
-        <translation>İçeriği sensörle</translation>
+        <translation>İçeriği sansürle</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -1271,7 +1271,7 @@ Sunucu kapasitesi dolmadan önce tuvali sadeleştirin ve manuel olarak sıfırla
         <location line="+3"/>
         <location line="+1377"/>
         <source>Record...</source>
-        <translation>Kaydet...</translation>
+        <translation>Kayda Al...</translation>
     </message>
     <message>
         <location line="-1352"/>
@@ -1338,7 +1338,7 @@ Sunucu kapasitesi dolmadan önce tuvali sadeleştirin ve manuel olarak sıfırla
     <message>
         <location line="+9"/>
         <source>There is still unsent data! Please wait until transmission completes!</source>
-        <translation>Hala gönderilmemiş veri mevcut! Lütfen iletme tamamlanana kadar bekleyin!</translation>
+        <translation>Hala gönderilmemiş veri mevcut! Lütfen gönderme tamamlanana kadar bekleyin!</translation>
     </message>
     <message>
         <location line="+30"/>
@@ -1424,7 +1424,7 @@ Sunucu kapasitesi dolmadan önce tuvali sadeleştirin ve manuel olarak sıfırla
     <message>
         <location line="+49"/>
         <source>Bad arguments, this is probably a bug in Drawpile.</source>
-        <translation>Kötü argümanlar, bu büyük ihtimalle bir Drawpile hatası.</translation>
+        <translation>Geçersiz argümanlar, bu büyük ihtimalle bir Drawpile hatası.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -1516,7 +1516,7 @@ Debug dump recording starts on the next canvas reset and the files will be saved
 Are you sure youwant to start recording debug dumps?</source>
         <translation>Hata ayıklama çöplükleri yerel ve uzaktan gelen çizim komutlarını kaydedecek. Ağ sıkıntılarını düzeltirken kullanılabilirler ancak başka pek bir katkıları yok. Eğer sıradan bir kayıt almak istiyorsanız, Dosya &gt; Kayda Al... seçeneğini kullanın.
 
-Hata ayıklama çöplüğü kaydı gelecek tuval sıfırlamasından sonra başlayacak ve dosyalar %1 uzaantısına kaydedilecek
+Hata ayıklama çöplüğü kaydı gelecek tuval sıfırlamasından sonra başlayacak ve dosyalar %1 uzantısına kaydedilecek
 
 Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?</translation>
     </message>
@@ -1979,7 +1979,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+1"/>
         <source>Show Censored Layers</source>
-        <translation>Sensörlü Katmanları Göster</translation>
+        <translation>Sansürlü Katmanları Göster</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -2044,7 +2044,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+16"/>
         <source>Flipbook</source>
-        <translation>Önizleme</translation>
+        <translation>Ön İzleme</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2262,7 +2262,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+1"/>
         <source>&amp;Rectangle</source>
-        <translation>Dikdörtgen</translation>
+        <translation>&amp;Dikdörtgen</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2438,7 +2438,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <location line="+23"/>
         <location filename="../widgets/macmenu.cpp" line="+25"/>
         <source>&amp;Homepage</source>
-        <translation>&amp;Ana Sayfa</translation>
+        <translation>&amp;Home</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2646,7 +2646,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+42"/>
         <source>Automatically save a frame at each step</source>
-        <translation>Her adımda kareyi otomatik olarak kaydet</translation>
+        <translation>Kareyi her adımda otomatik olarak kaydet</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3267,7 +3267,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+72"/>
         <source>Export Options</source>
-        <translation>Çıktı Seçenekleri</translation>
+        <translation>Dışa Aktarma Seçenekleri</translation>
     </message>
     <message>
         <location line="+31"/>
@@ -3773,7 +3773,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+7"/>
         <source>Simply averages a number of inputs. Feels faster than the time-based stabilizer, but not as smooth and won&apos;t catch up to your cursor when you stop moving. Overrides tablet smoothing from the input preferences.</source>
-        <translation>Girdi sayılarının ortalamasını alır. Zaman-bazlı dengeleyiciden daha hızlı hissettirir, ama onun kadar hızlı değildir ve çizmeyi bıraktığınızda fare imlecinize yetişmez. Girdi tercihlerindeki tablet yumuşatması ayarını geçersiz kılar.</translation>
+        <translation>Girdi sayılarının ortalamasını alır. Zaman-bazlı dengeleyiciden daha hızlı hissettirirama onun kadar hızlı değildir ve çizmeyi bıraktığınızda çizgi, fare imlecinize yetişmez. Girdi tercihlerindeki tablet yumuşatması ayarını geçersiz kılar.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -3956,7 +3956,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <location line="+2"/>
         <source>This is a user defined input. Look at the &apos;custom input&apos; setting for details.</source>
         <comment>mypaintinput</comment>
-        <translation>Bu kullanıcının belirlediği bir girdi. Detaylar için ayarlardan &apos;özel girdi&apos; kısmına bakın.</translation>
+        <translation>Bu, kullanıcının belirlediği bir girdi. Detaylar için ayarlardan &apos;özel girdi&apos; kısmına bakın.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -3973,16 +3973,16 @@ The range is +/-180.0.
 180 means the angle of the stroke is directly opposite the angle of the stylus.</source>
         <comment>mypaintinput</comment>
         <translation>Kalemin açısı ve çizginin hareket açısının arasındaki farkı gösterir.
-Aralık +/-180,0&apos;dır
+Aralık +/-180,0&apos;dir
 0.0 çizgi kalemin açısına denk geliyor demektir.
 90 çizgi kalemin açısına dik geliyor demektir.
-180 çizgi kalemin açısına zıt geliyor demektir.</translation>
+180 çizgi kalemin açısına ters geliyor demektir.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Declination of stylus tilt on X-Axis. 90/-90 when stylus is parallel to tablet and 0 when it&apos;s perpendicular to tablet.</source>
         <comment>mypaintinput</comment>
-        <translation>Kalemin X-Eksenindeki hareketini gösterir.. Kalem tablete paralelken 90/-90, dikken 0&apos;dır.</translation>
+        <translation>Kalemin X-Eksenindeki hareketini gösterir. Kalem tablete paralelken 90/-90, dikken 0&apos;dır.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4023,7 +4023,7 @@ Yarıçap seçeneğinde -4.15 değeri kullanmak fırça boyutunu az çok sabit t
 +90 when twisted clockwise 90 degrees
 -90 when twisted counterclockwise 90 degrees</source>
         <comment>mypaintinput</comment>
-        <translation>Kalemin varil rotasyonudur
+        <translation>Kalemin varil rotasyonudur.
 Çevrilmemişken 0
 Saat yönünde 90 derece çevrilmişken +90
 Saat yönünün tersine 90 derece çevrilmişken -90</translation>
@@ -4254,7 +4254,7 @@ Fırça darbesi boyutu arttırma seçeneğini bile iptal edip, fırçanızı bü
         <location line="+2"/>
         <source>Stroke hold time</source>
         <comment>mypaintsetting</comment>
-        <translation>Çizge tutma süresi</translation>
+        <translation>Çizgi tutma süresi</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4332,7 +4332,7 @@ Fırça darbesi boyutu arttırma seçeneğini bile iptal edip, fırçanızı bü
         <location line="+2"/>
         <source>Smudge length multiplier</source>
         <comment>mypaintsetting</comment>
-        <translation>Bulaşma boyutu çoğaltıcı</translation>
+        <translation>Bulaşma uzunluğu çoğaltıcı</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4453,8 +4453,8 @@ Bu ayar hiç basınç yokken çizimin durmasından sorumludur. &apos;Opak&apos; 
 0.0 the opaque value above is for the individual dabs
 1.0 the opaque value above is for the final brush stroke, assuming each pixel gets (dabs_per_radius*2) brushdabs on average during a stroke</source>
         <comment>mypaintsetting</comment>
-        <translation>Dokunmaları üst üste karıştırmakla oluşan doğrusal olmamayı düzelt. Bu düzeltme basınç opak_çoğaltma seçeneğindeyken, çizgisel (&quot;doğal&quot;) bir basınç yanıtı vermeli. Normalde 0.9 iyi bir değerdir ama fırçanız çok dağılıyorsa daha az, dokunma_başı_saniye kullanıyor iseniz yüksek bir değer giriniz.
-Her pikselin ortalama bir fırça darbesinde (dokunma_başı_yarıçap*2) fırçadokunması edindiğini varsayarsak:
+        <translation>Dokunmaları üst üste karıştırmakla oluşan doğrusal olmamayı düzeltir. Bu düzeltme basınç opak_çoğaltma seçeneğindeyken, çizgisel (&quot;doğal&quot;) bir basınç yanıtı vermeli. Normalde 0.9 iyi bir değerdir ama fırçanız çok dağılıyorsa daha az, dokunma_başı_saniye kullanıyor iseniz daha yüksek bir değer giriniz.
+Her pikselin ortalama bir fırça darbesinde (dokunma_başı_yarıçap*2) fırça darbesi edindiğini varsayarsak:
 0.0 üstü opak değer bireysek dokundurmalar içindir
 1.0 üstü opak değer son fırça darbesi içindir</translation>
     </message>
@@ -4464,7 +4464,7 @@ Her pikselin ortalama bir fırça darbesinde (dokunma_başı_yarıçap*2) fırç
  0.7 means 2 pixels
  3.0 means 20 pixels</source>
         <comment>mypaintsetting</comment>
-        <translation>Basit fırça yarıçağı (logaritmik)
+        <translation>Basit fırça yarıçapı (logaritmik)
 0.7 2 piksel demek
 3.0 20 piksel demek</translation>
     </message>
@@ -4472,7 +4472,7 @@ Her pikselin ortalama bir fırça darbesinde (dokunma_başı_yarıçap*2) fırç
         <location line="+2"/>
         <source>Hard brush-circle borders (setting to zero will draw nothing). To reach the maximum hardness, you need to disable Pixel feather.</source>
         <comment>mypaintsetting</comment>
-        <translation>Sert fırça-dairesi sınırları (ayarı 0 yapmak hiçbir değişikliğe sebep olmayacak). Maksimum sertliğe ulaşmak için, Piksel yumuşatmasını devredışı bırakmanız gerekiyor.</translation>
+        <translation>Sert fırça-çemberi sınırları (ayarı 0 yapmak hiçbir değişikliğe sebep olmayacak). Maksimum sertliğe ulaşmak için, Piksel yumuşatmasını devredışı bırakmanız gerekiyor.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4586,7 +4586,7 @@ For very slow speed the opposite happens.</source>
         <location line="+2"/>
         <source>Similar as above but at brushdab level (ignoring how much time has passed if brushdabs do not depend on time)</source>
         <comment>mypaintsetting</comment>
-        <translation>Üsttekine benzer ama fırça darbesi seviyesinde (firça darbeleri zamana bağlı değilse, geçen zamanı görmezden gelir)</translation>
+        <translation>Üsttekine benzer ama fırça darbesi seviyesinde (fırça darbeleri zamana bağlı değilse, geçen zamanı görmezden gelir)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4717,7 +4717,7 @@ For very slow speed the opposite happens.</source>
  1.0 standard eraser
  0.5 pixels go towards 50% transparency</source>
         <comment>mypaintsetting</comment>
-        <translation>Arecın ne kadar silgi gibi davrandığını belirler
+        <translation>Aracın ne kadar silgi gibi davrandığını belirler
 0.0 normal boyama
 1.0 standart silgi
 0.5 pikseller %50 transparan</translation>
@@ -4732,7 +4732,7 @@ For very slow speed the opposite happens.</source>
         <location line="+2"/>
         <source>How far you have to move until the stroke input reaches 1.0. This value is logarithmic (negative values will not invert the process).</source>
         <comment>mypaintsetting</comment>
-        <translation>Çizgi değeri 1.0&apos;e ulaşınaya kadar ne kadar hareket etmeniz gerektiğini gösteren ayar. Bu değer logaritmiktir (negatif değerler işlemi tersine çevirmez).</translation>
+        <translation>Çizgi değeri 1.0&apos;e ulaşıncaya kadar ne kadar hareket etmeniz gerektiğini gösteren ayar. Bu değer logaritmiktir (negatif değerler işlemi tersine çevirmez).</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4749,7 +4749,7 @@ For very slow speed the opposite happens.</source>
         <source>Set the custom input to this value. If it is slowed down, move it towards this value (see below). The idea is that you make this input depend on a mixture of pressure/speed/whatever, and then make other settings depend on this &apos;custom input&apos; instead of repeating this combination everywhere you need it.
 If you make it change &apos;by random&apos; you can generate a slow (smooth) random input.</source>
         <comment>mypaintsetting</comment>
-        <translation>Bu değere özel bir girdi atayın. Eğer yavaşlatılmışsa, şu değere yaklaştırın (aşağıda belirtilen).Önerilen kullanma şekli, bu girdiyi basınç/hız/ya da herhangi başka bir şeye bağlamanız ve diğer özellikleri her seferinde aynı kombinasyonu tekrar etmektense bu &apos;özel girdi&apos; ayarına bağlamanız.
+        <translation>Bu değere özel bir girdi atayın. Eğer yavaşlatılmışsa, şu değere yaklaştırın (aşağıda belirtilen). Önerilen kullanma şekli, bu girdiyi basınç/hız/ya da herhangi başka bir şeye bağlamanız ve diğer özellikleri her seferinde aynı kombinasyonu tekrar etmektense bu &apos;özel girdi&apos; ayarına bağlamanız.
 Eğer &apos;rastgele&apos; olarak değiştirirseniniz, yavaş (yumuşak) bir rastgele girdi elde edebilirsiniz.</translation>
     </message>
     <message>
@@ -4774,15 +4774,15 @@ Eğer &apos;rastgele&apos; olarak değiştirirseniniz, yavaş (yumuşak) bir ras
  180.0 horizontal again</source>
         <comment>mypaintsetting</comment>
         <translation>Eliptik fırça darbelerinin eğilme açılarıdır
-0.0 yatay darbeler
-45.0 45 derece, saat yönünde çevrilmiş
-180.0 tekrar yatay</translation>
+ 0.0 yatay darbeler
+ 45.0 45 derece, saat yönünde çevrilmiş
+ 180.0 tekrar yatay</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>A low value will make the direction input adapt more quickly, a high value will make it smoother</source>
         <comment>mypaintsetting</comment>
-        <translation>Düşük bir değer yön girdisinin daha hızlı adapte olmasını sağlayacak, yüksek bir değer daha yumuşak olmasını</translation>
+        <translation>Düşük bir değer, yön girdisinin daha hızlı adapte olmasını; yüksek bir değer daha yumuşak olmasını sağlayacak</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4792,9 +4792,9 @@ Eğer &apos;rastgele&apos; olarak değiştirirseniniz, yavaş (yumuşak) bir ras
  1.0 alpha channel fully locked</source>
         <comment>mypaintsetting</comment>
         <translation>Katmanın alfa kanalını değiştirmeyin (sadece önceden boyanmış yerleri boya)
-0.0 normal boyama
-0.5 boyanın yarısı normal boyanır
-1.0 alfa kanalı tamamen kilitli</translation>
+ 0.0 normal boyama
+ 0.5 boyanın yarısı normal boyanır
+ 1.0 alfa kanalı tamamen kilitli</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4830,9 +4830,9 @@ Logaritmik (fırça boyutuyla aynı).
 The range is 0-5x.
 This allows you to stretch or compress the GridMap pattern.</source>
         <comment>mypaintsetting</comment>
-        <translation>zgaraHaritası fırçasının üzerinde hareket ettiği alanın boyutunu değiştirir - sadece X eksenini etkiler.
+        <translation>IzgaraHaritası fırçasının üzerinde hareket ettiği alanın boyutunu değiştirir - sadece X eksenini etkiler.
 Menzili 0-5x.
-Bu IzgaraHaritası desenini sıkıştırıp esnetme imkanı sunar.</translation>
+Bu, IzgaraHaritası desenini sıkıştırıp esnetme imkanı sunar.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4842,7 +4842,7 @@ This allows you to stretch or compress the GridMap pattern.</source>
         <comment>mypaintsetting</comment>
         <translation>IzgaraHaritası fırçasının üzerinde hareket ettiği alanın boyutunu değiştirir - sadece Y eksenini etkiler.
 Menzili 0-5x.
-Bu IzgaraHaritası desenini sıkıştırıp esnetme imkanı sunar.</translation>
+Bu, IzgaraHaritası desenini sıkıştırıp esnetme imkanı sunar.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4861,7 +4861,7 @@ You can control which bucket to use to improve variability and realism of the br
 Especially useful with the &quot;Custom input&quot; setting to correlate buckets with other settings such as offsets.</source>
         <comment>mypaintsetting</comment>
         <translation>Tuvalden alınan renkleri tutabilen 256 kova vardır.
-Fırçacın gerçekçiliğini ve çeşitliliğini arttırmak için hangi kovanın kullanılacağını kontrol edebilirsiniz.
+Fırçanın gerçekçiliğini ve çeşitliliğini arttırmak için hangi kovanın kullanılacağını kontrol edebilirsiniz.
 &quot;Özel girdi&quot; ile kovaları, ofset gibi diğer ayarlara bağlayabildiğiniz için oldukça kullanışlıdır.</translation>
     </message>
     <message>
@@ -4882,7 +4882,7 @@ Negatif değerler zıt etki yapar</translation>
         <location line="+2"/>
         <source>Moves the dabs up or down based on canvas coordinates.</source>
         <comment>mypaintsetting</comment>
-        <translation>Tuvar koordinatlarına göre fırça darbelerini yukarı ya da aşağı oynatır.</translation>
+        <translation>Tuval koordinatlarına göre fırça darbelerini yukarı ya da aşağı oynatır.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4906,7 +4906,7 @@ Negatif değerler zıt etki yapar</translation>
         <location line="+2"/>
         <source>Follows the view orientation to offset the dabs to one side.</source>
         <comment>mypaintsetting</comment>
-        <translation>Görüntü oryasyonunu takip ederek fırça darbelerini bir tarafa ofsetler.</translation>
+        <translation>Görüntü oryantasyonunu takip ederek fırça darbelerini bir tarafa ofsetler.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5046,12 +5046,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Turning the mouse wheel or some input device that acts like one, optionally while also holding down keys. Example: scrolling to zoom the canvas.</source>
-        <translation>Farek tekerini ya da onunla aynı işlevi gören bir girdi cihazını kaydırıp, opsiyonel olarak klavye tuşlarına basılı tutmaktır. Örnek: fare tekerini kaydırarak tuvali yakınlaştırmak.</translation>
+        <translation>Fare tekerini ya da onunla aynı işlevi gören bir girdi cihazını kaydırıp, opsiyonel olarak klavye tuşlarına basılı tutmaktır. Örnek: fare tekerini kaydırarak tuvali yakınlaştırmak.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Keys to hold down to make rectangle, line or selection tools behave differently. Constrain means to e.g. keep the aspect ratio, center means to e.g. center shapes around the origin.</source>
-        <translation>Bir dikdörtgen yapmak için basılı tutulması gereken klavye tuşlarıdır, çizgi ya da seçim araçları farklı çalışır. Kısıtlama, en-boy oranını korumak demek; merkez, şekilleri başlangıç noktasına ortalamk demek.</translation>
+        <translation>Bir dikdörtgen yapmak için basılı tutulması gereken klavye tuşlarıdır, çizgi ya da seçim araçları farklı çalışır. Kısıtlama, en-boy oranını korumak demek; merkez, şekilleri başlangıç noktasına ortalamak demek.</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -5061,7 +5061,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+40"/>
         <source>&lt;b&gt;Conflict:&lt;/b&gt; the existing shortcut for &apos;%1&apos; will be overwritten if you proceed.</source>
-        <translation>&lt;b&gt;Çakışma:&lt;/b&gt;Devam ederseniz &apos;%1&apos; için varolan kısayol silinecek.</translation>
+        <translation>&lt;b&gt;Çakışma:&lt;/b&gt;Devam ederseniz &apos;%1&apos; için varolan kısayolun üzerine kaydedilecek.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -5525,12 +5525,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+130"/>
         <source>Building index...</source>
-        <translation>İndex oluşturuluyor...</translation>
+        <translation>İndeks oluşturuluyor...</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Index building failed.</source>
-        <translation>İndex oluşturması başarısız.</translation>
+        <translation>İndeks oluşturması başarısız.</translation>
     </message>
     <message>
         <location line="+151"/>
@@ -5581,7 +5581,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>The session has been reset. Normally, everything on the canvas should look the same as it did before, but that&apos;s not guaranteed. Do you want to save the canvas as it was before the reset?</source>
-        <translation>Bu oturum sıfırlandı. Normalde tuvaldeki her şeyin önceki gözükmesi gerekiyor, ama istisnalar olabilir. Tuvalin sıfırlanmadan önceki halini kaydetmek ister misiniz?</translation>
+        <translation>Bu oturum sıfırlandı. Normalde tuvaldeki her şeyin önceki gibi gözükmesi gerekiyor ama istisnalar olabilir. Tuvalin sıfırlanmadan önceki halini kaydetmek ister misiniz?</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -5821,7 +5821,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Should Drawpile automatically check for updates?</source>
-        <translation>Drawpile otomatik olarwak güncelleştirmeleri kontrol etsin mi?</translation>
+        <translation>Drawpile otomatik olarak güncelleştirmeleri kontrol etsin mi?</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -5831,7 +5831,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+30"/>
         <source>Error checking version!</source>
-        <translation>Versiyonu kontrol ederken hata!</translation>
+        <translation>Versiyon kontrol edilirken hata!</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -5862,7 +5862,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+19"/>
         <source>&lt;p&gt;The download page for Drawpile %1 should have opened in your browser. If not, visit &lt;a href=&quot;%2&quot;&gt;%2&lt;/a&gt; manually.&lt;/p&gt;&lt;p&gt;Restart Drawpile after installing the new version.&lt;/p&gt;</source>
         <extracomment>%2 is used twice, this is intentional! Don&apos;t use %3.</extracomment>
-        <translation>&lt;p&gt;Drawpile %1 versiyonununun indirme sayfası internet tarayıcınızda açılmış olmalı. Eğer açılmadıysa &lt;a href=&quot;%2&quot;&gt;%2&lt;/a&gt; adresini manuel olarak ziyaret edin.&lt;/p&gt;&lt;p&gt;Yeni versiyonu yükledikten sonra Drawpile&apos;ı yeniden başlatın.&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;Drawpile %1 versiyonunun indirme sayfası internet tarayıcınızda açılmış olmalı. Eğer açılmadıysa &lt;a href=&quot;%2&quot;&gt;%2&lt;/a&gt; adresini manuel olarak ziyaret edin.&lt;/p&gt;&lt;p&gt;Yeni versiyonu yükledikten sonra Drawpile&apos;ı yeniden başlatın.&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
@@ -5934,8 +5934,8 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+1"/>
         <source>Really remove %n canvas shortcut(s)?</source>
         <translation>
-            <numerusform>%n tuval kısayolunu silek istediğinize emin misiniz?</numerusform>
-            <numerusform>%n tuval kısayollarını silek istediğinize emin misiniz?</numerusform>
+            <numerusform>%n tuval kısayolunu silmek istediğinize emin misiniz?</numerusform>
+            <numerusform>%n tuval kısayollarını silmek istediğinize emin misiniz?</numerusform>
         </translation>
     </message>
     <message>
@@ -5959,7 +5959,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/general.cpp" line="+49"/>
         <source>When enabled, save every %1 minutes</source>
-        <translation>Bu seçenek aktifken, her %1 dakikada kaydet</translation>
+        <translation>Bu seçenek aktifken, her %1 dakikada bir kaydet</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6036,17 +6036,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Canvas snapshots:</source>
-        <translation>Tuval görüntüleri:</translation>
+        <translation>Tuval resmi:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Take one snapshot every %1 seconds</source>
-        <translation>Her %1 saniyede bir tuval görüntüsü çek</translation>
+        <translation>Her %1 saniyede bir tuval resmi çek</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Snapshots can be restored from the &lt;i&gt;Session ▸ Reset…&lt;/i&gt; menu.</source>
-        <translation>Görüntüler &lt;i&gt;Oturum ▸ Sıfırla...&lt;/i&gt; menüsünden geri alınabilir.</translation>
+        <translation>Tuval Resimleri &lt;i&gt;Oturum ▸ Sıfırla...&lt;/i&gt; menüsünden geri alınabilir.</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -6076,7 +6076,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Krita Darker</source>
-        <translation>Krita Daha Da Karanlık</translation>
+        <translation>Krita Daha Karanlık</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6242,7 +6242,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+10"/>
         <source>Network timeout:</source>
-        <translation>Ağ zamanaşımı:</translation>
+        <translation>Ağ zaman aşımı:</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -6273,8 +6273,8 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+0"/>
         <source>Really delete %n avatar(s)?</source>
         <translation>
-            <numerusform>%n tane avatarı silme istediğinize emin misiniz?</numerusform>
-            <numerusform>%n tane avatarı silme istediğinize emin misiniz?</numerusform>
+            <numerusform>%n avatarı silme istediğinize emin misiniz?</numerusform>
+            <numerusform>%n avatarı silme istediğinize emin misiniz?</numerusform>
         </translation>
     </message>
     <message>
@@ -6463,8 +6463,8 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+1"/>
         <source>Really remove %n known host(s)?</source>
         <translation>
-            <numerusform>%n tane bilinen hostu kaldırmak istediğinize emin misiniz?</numerusform>
-            <numerusform>%n tane bilinen hostu kaldırmak istediğinize emin misiniz?</numerusform>
+            <numerusform>%n bilinen hostu kaldırmak istediğinize emin misiniz?</numerusform>
+            <numerusform>%n bilinen hostu kaldırmak istediğinize emin misiniz?</numerusform>
         </translation>
     </message>
     <message>
@@ -6980,7 +6980,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Censor</source>
-        <translation>Sensör</translation>
+        <translation>Sansür</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7254,7 +7254,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Finish Strokes</source>
-        <translation>Son Çizgiler</translation>
+        <translation>Çizgileri Bitir</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7354,22 +7354,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+28"/>
         <source>Press a key combination. Hit Escape to cancel.</source>
-        <translation>Bir tuş kombinasyonuna basın. İptal etmek için Çık&apos;a basın.</translation>
+        <translation>Bir tuş kombinasyonuna basın. İptal etmek için ESCye basın.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Click the desired mouse button into the field above, optionally while holding down keys. Hit Escape to cancel.</source>
-        <translation>Yukarıdaki alana istediğinis fare tuşunu giriniz, isterseniz klavye tuşlarına da basılı tutabilirsiniz. İptal etmek için Çık&apos;a basın.</translation>
+        <translation>Yukarıdaki alana istediğiniz fare tuşunu giriniz, isterseniz klavye tuşlarına da basılı tutabilirsiniz. İptal etmek için ESCye basın.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Turn the mouse wheel or click into in the field above, optionally while holding down keys. Hit Escape to cancel.</source>
-        <translation>Yukarıdaki alana fare tekerleği ile tıklayın ya da fare tekerini çevirin, isterseniz klavye tuşlarına da basılı tutabilirsiniz. İptal etmek için Çık&apos;a basın.</translation>
+        <translation>Yukarıdaki alana fare tekerleği ile tıklayın ya da fare tekerini çevirin, isterseniz klavye tuşlarına da basılı tutabilirsiniz. İptal etmek için ESCye basın.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Hold down the desired key combination and click into the field above. Hit Escape to cancel.</source>
-        <translation>Yukarıdaki alana istediğiniz bir tuş kombinasyonu girin. İptal etmek için Çık&apos;a basın.</translation>
+        <translation>Yukarıdaki alana istediğiniz bir tuş kombinasyonu girin. İptal etmek için ESCye basın.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -7788,12 +7788,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Toggle visibility</source>
-        <translation>Görünürlüğü aç-kapat</translation>
+        <translation>Görünürlüğü aç/kapat</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Toggle onion skin</source>
-        <translation>Soğan zarını aç-kapat</translation>
+        <translation>Soğan zarını aç/kapat</translation>
     </message>
     <message>
         <location line="+653"/>
