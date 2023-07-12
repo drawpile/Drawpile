@@ -14,7 +14,7 @@
     <message>
         <location filename="../export/canvassaverrunnable.cpp" line="+34"/>
         <source>Bad arguments, this is probably a bug in Drawpile.</source>
-        <translation>Kötü argümanlar, bu büyük ihtimalle bir Drawpile hatası.</translation>
+        <translation>Geçersiz argümanlar, bu büyük ihtimalle bir Drawpile hatası.</translation>
     </message>
     <message>
         <location line="+2"/>
