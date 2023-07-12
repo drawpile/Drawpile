@@ -369,7 +369,7 @@ void Chat::appendMessageCompact(int userId, const QString &usernameSpan, const Q
 		"</table>"
 		).arg(
 			alert ? " alert" : shout ? " shout" : "",
-			content,
+			htmlutils::newlineToBr(content),
 			timestamp()
 		)
 	);
@@ -397,9 +397,7 @@ void Chat::appendMessage(int userId, const QString &usernameSpan, const QString 
 
 		// Using css property "white-space: pre" only works for the first message. Newlines disappear on subsequent messages.
 		// Thus the need to manually replace newlines by <br>
-		QString messageWithBr = message;
-		messageWithBr.replace("\n", "<br>");
-		cursor.insertHtml(messageWithBr);
+		cursor.insertHtml(htmlutils::newlineToBr(message));
 
 		return;
 	}
