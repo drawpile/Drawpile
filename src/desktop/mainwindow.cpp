@@ -3366,20 +3366,20 @@ void MainWindow::setupActions()
 	//
 	// Session menu
 	//
-	QAction *host = makeAction("hostsession", tr("&Host...")).statusTip(tr("Share your canvas with others")).icon("network-server");
-	QAction *invite = makeAction("invitesession", tr("&Invite...")).statusTip(tr("Invite another user to this session")).icon("resource-group-new").disabled();
-	QAction *join = makeAction("joinsession", tr("&Join...")).statusTip(tr("Join another user's drawing session")).icon("network-connect");
-	QAction *browse = makeAction("browsesession", tr("&Browse...")).statusTip(tr("Browse session listings")).icon("edit-find");
-	QAction *logout = makeAction("leavesession", tr("&Leave")).statusTip(tr("Leave this drawing session")).icon("network-disconnect").disabled();
+	QAction *host = makeAction("hostsession", tr("&Host...")).statusTip(tr("Share your canvas with others")).noDefaultShortcut().icon("network-server");
+	QAction *invite = makeAction("invitesession", tr("&Invite...")).statusTip(tr("Invite another user to this session")).noDefaultShortcut().icon("resource-group-new").disabled();
+	QAction *join = makeAction("joinsession", tr("&Join...")).statusTip(tr("Join another user's drawing session")).noDefaultShortcut().icon("network-connect");
+	QAction *browse = makeAction("browsesession", tr("&Browse...")).statusTip(tr("Browse session listings")).noDefaultShortcut().icon("edit-find");
+	QAction *logout = makeAction("leavesession", tr("&Leave")).statusTip(tr("Leave this drawing session")).noDefaultShortcut().icon("network-disconnect").disabled();
 
 	QAction *serverlog = makeAction("viewserverlog", tr("Event Log")).noDefaultShortcut();
 	QAction *sessionSettings = makeAction("sessionsettings", tr("Settings...")).noDefaultShortcut().menuRole(QAction::NoRole).disabled();
-	QAction *sessionUndoDepthLimit = makeAction("sessionundodepthlimit").disabled();
+	QAction *sessionUndoDepthLimit = makeAction("sessionundodepthlimit").noDefaultShortcut().disabled();
 
-	QAction *gainop = makeAction("gainop", tr("Become Operator...")).disabled();
-	QAction *resetsession = makeAction("resetsession", tr("&Reset..."));
-	QAction *terminatesession = makeAction("terminatesession", tr("Terminate"));
-	QAction *reportabuse = makeAction("reportabuse", tr("Report...")).disabled();
+	QAction *gainop = makeAction("gainop", tr("Become Operator...")).noDefaultShortcut().disabled();
+	QAction *resetsession = makeAction("resetsession", tr("&Reset...")).noDefaultShortcut();
+	QAction *terminatesession = makeAction("terminatesession", tr("Terminate")).noDefaultShortcut();
+	QAction *reportabuse = makeAction("reportabuse", tr("Report...")).noDefaultShortcut().disabled();
 
 	QAction *locksession = makeAction("locksession", tr("Lock Everything")).statusTip(tr("Prevent changes to the canvas")).shortcut("F12").checkable();
 
