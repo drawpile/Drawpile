@@ -11,7 +11,7 @@ update_icons() {
 		dir="$2"
 		redir="$icon"
 		case "$icon" in
-			drawpile_*|onion-*)
+			drawpile_*|onion-*|zoom-fit-none.svg)
 				continue
 				;;
 			folder.svg | network-server-database.svg)
