@@ -14,6 +14,7 @@ inline void showWindow(QWidget *widget, bool maximized = false)
     // being a full-screen window, which is also more akin to how Android's
     // native UI works. This wrapper takes care of that very common switch.
 #ifdef Q_OS_ANDROID
+    Q_UNUSED(maximized);
     widget->showFullScreen();
 #else
     if(maximized) {
