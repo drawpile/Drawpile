@@ -7,7 +7,7 @@
 
 namespace utils {
 
-inline void showWindow(QWidget *widget)
+inline void showWindow(QWidget *widget, bool maximized = false)
 {
     // On Android, we rarely want small windows unless it's like a simple
     // message box or something. Anything more complex is probably better off
@@ -16,7 +16,11 @@ inline void showWindow(QWidget *widget)
 #ifdef Q_OS_ANDROID
     widget->showFullScreen();
 #else
-    widget->show();
+    if(maximized) {
+        widget->showMaximized();
+    } else {
+        widget->show();
+    }
 #endif
 }
 

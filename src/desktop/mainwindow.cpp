@@ -179,6 +179,9 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	  m_doc(nullptr),
 	  m_exitAfterSave(false)
 {
+	// Avoid flickering of intermediate states.
+	setUpdatesEnabled(false);
+
 	m_saveSplitterDebounce.setSingleShot(true);
 	m_saveWindowDebounce.setSingleShot(true);
 	m_saveSplitterDebounce.setInterval(DEBOUNCE_MS);
@@ -436,20 +439,20 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	setDrawingToolsEnabled(false);
 	m_dockToolSettings->triggerUpdate();
 
-	// Restore settings
+	// Restore settings and show the window
+	updateTitle();
 	readSettings(restoreWindowPosition);
 
 	// Set status indicators
 	updateLockWidget();
 	setRecorderStatus(false);
 
+	// Actually paint the window
+	setUpdatesEnabled(true);
+
 #ifdef Q_OS_MACOS
 	MacMenu::instance()->addWindow(this);
 #endif
-
-	// Show self
-	updateTitle();
-	utils::showWindow(this);
 
 	setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
 	setCorner(Qt::TopRightCorner, Qt::RightDockWidgetArea);
@@ -773,8 +776,8 @@ void MainWindow::readSettings(bool windowpos)
 			move(pos);
 	}
 
-	if(settings.lastWindowMaximized())
-		setWindowState(Qt::WindowMaximized);
+	// Show self
+	utils::showWindow(this, settings.lastWindowMaximized());
 
 	// The following state restoration requires the window to be resized, but Qt
 	// does that lazily on the next event loop iteration. So we forcefully flush
@@ -903,6 +906,10 @@ void MainWindow::handleAmbiguousShortcut(QShortcutEvent *shortcutEvent)
 
 void MainWindow::saveSplitterState()
 {
+	if(!updatesEnabled()) {
+		m_saveSplitterDebounce.start();
+		return;
+	}
 	m_saveSplitterDebounce.stop();
 
 	auto &settings = dpApp().settings();
@@ -911,6 +918,10 @@ void MainWindow::saveSplitterState()
 
 void MainWindow::saveWindowState()
 {
+	if(!updatesEnabled()) {
+		m_saveWindowDebounce.start();
+		return;
+	}
 	m_saveWindowDebounce.stop();
 
 	auto &settings = dpApp().settings();
