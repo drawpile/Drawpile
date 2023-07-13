@@ -179,6 +179,11 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	  m_doc(nullptr),
 	  m_exitAfterSave(false)
 {
+	m_saveSplitterDebounce.setSingleShot(true);
+	m_saveWindowDebounce.setSingleShot(true);
+	m_saveSplitterDebounce.setInterval(DEBOUNCE_MS);
+	m_saveWindowDebounce.setInterval(DEBOUNCE_MS);
+
 	// The document (initially empty)
 	m_doc = new Document(dpApp().settings(), this);
 
@@ -785,7 +790,7 @@ void MainWindow::readSettings(bool windowpos)
 	}
 
 	connect(m_splitter, &QSplitter::splitterMoved, this, [=] {
-		m_saveSplitterDebounce.start(DEBOUNCE_MS);
+		m_saveSplitterDebounce.start();
 	});
 
 	const auto docksConfig = settings.lastWindowDocks();
@@ -840,7 +845,7 @@ bool MainWindow::eventFilter(QObject *object, QEvent *event)
 	case QEvent::Move:
 	case QEvent::Resize:
 	case QEvent::Close:
-		m_saveWindowDebounce.start(DEBOUNCE_MS);
+		m_saveWindowDebounce.start();
 		break;
 	case QEvent::Shortcut: {
 		QShortcutEvent *shortcutEvent = static_cast<QShortcutEvent *>(event);
@@ -1089,7 +1094,7 @@ bool MainWindow::event(QEvent *event)
 	case QEvent::Move:
 	case QEvent::Resize:
 	case QEvent::WindowStateChange:
-		m_saveWindowDebounce.start(DEBOUNCE_MS);
+		m_saveWindowDebounce.start();
 		break;
 	case QEvent::ActivationChange:
 		if(m_saveSplitterDebounce.isActive()) {
@@ -3139,7 +3144,7 @@ void MainWindow::setupActions()
 			sizes << 0;
 		}
 		m_splitter->setSizes(sizes);
-		m_saveSplitterDebounce.start(DEBOUNCE_MS);
+		m_saveSplitterDebounce.start();
 	});
 
 	connect(moveleft, &QAction::triggered, m_view, [this] {
