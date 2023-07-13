@@ -210,7 +210,8 @@
         <location line="+11"/>
         <source>Will be resized
 to 64x64 pixels.</source>
-        <translation>图片大小将被调整为64x64像素.</translation>
+        <translation>图片大小将被调整
+为 64x64 像素。</translation>
     </message>
 </context>
 <context>
@@ -791,7 +792,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+37"/>
         <source>Use Drawpile&apos;s built-in server</source>
-        <translation>Use Drawpile&apos;s built-in server</translation>
+        <translation>使用 Drawpile 的内置服务器</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -801,7 +802,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+12"/>
         <source>Use an external dedicated server</source>
-        <translation>Use an external dedicated server</translation>
+        <translation>使用外部独立服务器</translation>
     </message>
     <message>
         <location line="-98"/>
@@ -852,8 +853,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+17"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You haven&apos;t added any servers yet. You can find some at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;drawpile.net/communities&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;You can try adding one now by entering pub.drawpile.net in the address box and clicking &lt;span style=&quot; font-style:italic;&quot;&gt;Add Server&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;你还没有添加任何列表服务器. 你可以在这里查看到一些 &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;drawpile.net/communities&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;请在最下面的地址栏填上  pub.drawpile.net 然后点击
- &lt;span style=&quot; font-style:italic;&quot;&gt;Add Server&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;你还没有添加任何列表服务器. 你可以在这里查看到一些 &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;drawpile.net/communities&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;请在最下面的地址栏填上 pub.drawpile.net 然后点击&lt;span style=&quot; font-style:italic;&quot;&gt;Add Server&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -1257,7 +1257,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+2"/>
         <source>A collaborative drawing program.</source>
-        <translation>A collaborative drawing program.</translation>
+        <translation>一款协作绘图程序。</translation>
     </message>
     <message>
         <location line="+147"/>
@@ -1398,7 +1398,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+18"/>
         <source>Session blocked by parental controls</source>
-        <translation>Session blocked by parental controls</translation>
+        <translation>会话受家长控制屏蔽</translation>
     </message>
     <message>
         <location line="+45"/>
@@ -3099,7 +3099,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+18"/>
         <source>Clear</source>
-        <translation>清除</translation>
+        <translation>清空</translation>
     </message>
 </context>
 <context>
@@ -3320,7 +3320,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+74"/>
         <source>%1 (%2 colors)</source>
-        <translation></translation>
+        <translation>%1 (%2 颜色)</translation>
     </message>
 </context>
 <context>
@@ -3429,7 +3429,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../bundled/QtColorWidgets/gradient_list_model.cpp" line="+231"/>
         <source>%1 (%2 colors)</source>
-        <translation>%1 (%2 colors)</translation>
+        <translation>%1 (%2 颜色)</translation>
     </message>
 </context>
 <context>
@@ -3437,7 +3437,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../bundled/QtColorWidgets/swatch.cpp" line="+846"/>
         <source>Clear Color</source>
-        <translation>Clear Color</translation>
+        <translation>清除颜色</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -4452,9 +4452,7 @@ This setting is responsible to stop painting when there is zero pressure. This i
 0.0 the opaque value above is for the individual dabs
 1.0 the opaque value above is for the final brush stroke, assuming each pixel gets (dabs_per_radius*2) brushdabs on average during a stroke</source>
         <comment>mypaintsetting</comment>
-        <translation>纠正由多个点状物相互混合引入的非线性.
-当压力被映射到不透明度_倍增时, 这个修正应该能让你得到一个线性(&quot;自然&quot;)的压力响应, 因为它通常是这样做的.
-0.9对标准笔画来说是很好的, 如果你的笔刷散布很多, 就把它设置得小一点, 如果你使用每秒印迹数, 就把它设置得高一点.
+        <translation>纠正由多个轻触相互混合引起的非线性。当压力被映射到不透明度_倍增时, 这个修正应该能让你得到一个线性(&quot;自然&quot;)的压力响应, 因为它通常是这样做的。0.9对标准笔画来说是很好的, 如果你的笔刷散布很多, 就把它设置得小一点, 如果你使用每秒印迹数, 就把它设置得高一点。
 0.0 以上的不透明度值是针对单个的点
 1.0 以上的不透明度值是针对最后的笔画, 假设每个像素在一个笔画中平均得到(每半径落下的笔触仿真点数*2)个笔刷点</translation>
     </message>
@@ -5150,7 +5148,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Smooth</source>
-        <translation>Smooth</translation>
+        <translation>平滑</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5260,7 +5258,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+236"/>
         <source>Yes</source>
-        <translation></translation>
+        <translation>是</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -5293,7 +5291,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+27"/>
         <location line="+4"/>
         <source>Nearby</source>
-        <translation>Nearby</translation>
+        <translation>附近</translation>
     </message>
     <message>
         <location line="-4"/>
@@ -5384,7 +5382,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>%1 (new)</source>
-        <translation>%1 (new)</translation>
+        <translation>%1 (新)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5424,47 +5422,47 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+18"/>
         <source>FireAlpaca-esque</source>
-        <translation>FireAlpaca-esque</translation>
+        <translation>FireAlpaca风格</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Horizontal</source>
-        <translation>Horizontal</translation>
+        <translation>水平</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Hyena</source>
-        <translation>Hyena</translation>
+        <translation>鬣狗</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Krita-esque</source>
-        <translation>Krita-esque</translation>
+        <translation>Krita风格</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>MediBang-esque</source>
-        <translation>MediBang-esque</translation>
+        <translation>MediBang风格</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Mink</source>
-        <translation>Mink</translation>
+        <translation>水貂</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Paint.NET-esque</source>
-        <translation>Paint.NET-esque</translation>
+        <translation>Paint.NET风格</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>SAI-esque</source>
-        <translation>SAI-esque</translation>
+        <translation>SAI风格</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Spider</source>
-        <translation>SAI-esque</translation>
+        <translation>SAI风格</translation>
     </message>
 </context>
 <context>
@@ -5969,7 +5967,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Autosave can be enabled for the current file under &lt;i&gt;File ▸ Autosave&lt;/i&gt;.</source>
-        <translation>自动保存可以从菜单 文件&gt;自动保存 中启用.</translation>
+        <translation>自动保存可以从菜单 &lt;i&gt;文件&gt;自动保存&lt;/i&gt; 中启用.</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -6046,7 +6044,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Snapshots can be restored from the &lt;i&gt;Session ▸ Reset…&lt;/i&gt; menu.</source>
-        <translation>快照可以从菜单 房间&gt;重置… 中恢复.</translation>
+        <translation>快照可以从菜单 &lt;i&gt;房间&gt;重置…&lt;/i&gt; 中恢复。</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -6056,12 +6054,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Light</source>
-        <translation>Light</translation>
+        <translation>浅色</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Dark</source>
-        <translation>Dark</translation>
+        <translation>深色</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6332,7 +6330,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/parentalcontrols.cpp" line="+49"/>
         <source>Consider sessions whose titles contain these keywords NSFM.</source>
-        <translation>Consider sessions whose titles contain these keywords NSFM.</translation>
+        <translation>将标题包含这些标签的会话视为不适合未成年(NSFM)会话。</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6408,7 +6406,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+19"/>
         <source>These settings configure the handling of sessions that are marked not suitable for minors (NSFM) and of layers that have been censored.</source>
-        <translation>These settings configure the handling of sessions that are marked not suitable for minors (NSFM) and of layers that have been censored.</translation>
+        <translation>这些设置设定了对标记为不适合未成年人 (NSFM) 的会话以及已被审查的图层的处理方式。</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -6979,7 +6977,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Access tier:</source>
-        <translation>Access tier:</translation>
+        <translation>访问权限：</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7004,7 +7002,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Exclusive access:</source>
-        <translation>Exclusive access:</translation>
+        <translation>独占访问：</translation>
     </message>
 </context>
 <context>
@@ -7141,32 +7139,32 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../tabletinput.cpp" line="+186"/>
         <source>Qt tablet input</source>
-        <translation>Qt tablet input</translation>
+        <translation>Qt tablet 输入</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>KisTablet Windows Ink input</source>
-        <translation>KisTablet Windows Ink input</translation>
+        <translation>KisTablet Windows Ink 输入</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>KisTablet Wintab input</source>
-        <translation>KisTablet Wintab input</translation>
+        <translation>KisTablet Wintab 输入</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>KisTablet Wintab input with relative pen mode</source>
-        <translation>KisTablet Wintab input with relative pen mode</translation>
+        <translation>在相对笔模式下通过 KisTablet Wintab 进行输入</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Qt6 Windows Ink input</source>
-        <translation>Qt6 Windows Ink input</translation>
+        <translation>Qt6 Windows Ink 输入</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Qt6 Wintab input</source>
-        <translation>Qt6 Wintab input</translation>
+        <translation>Qt6 Wintab 输入</translation>
     </message>
 </context>
 <context>
@@ -7501,22 +7499,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+48"/>
         <source>Clear</source>
-        <translation>Clear</translation>
+        <translation>清空</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Compact mode</source>
-        <translation>Compact mode</translation>
+        <translation>紧凑模式</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Detach</source>
-        <translation>Detach</translation>
+        <translation>分离</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Attach</source>
-        <translation>Attach</translation>
+        <translation>贴附</translation>
     </message>
 </context>
 <context>
@@ -7841,13 +7839,13 @@ Values above 0.5 may not be noticeable.</source>
         <location filename="../chat/useritemdelegate.cpp" line="+32"/>
         <location line="+120"/>
         <source>Operator</source>
-        <translation></translation>
+        <translation>主持人</translation>
     </message>
     <message>
         <location line="-119"/>
         <location line="+121"/>
         <source>Trusted</source>
-        <translation></translation>
+        <translation>信任用户</translation>
     </message>
     <message>
         <location line="-118"/>
@@ -7892,17 +7890,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+99"/>
         <source>Moderator</source>
-        <translation></translation>
+        <translation>管理员</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Bot</source>
-        <translation></translation>
+        <translation>机器人</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Registered</source>
-        <translation></translation>
+        <translation>注册用户</translation>
     </message>
 </context>
 <context>
