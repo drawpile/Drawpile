@@ -20,3 +20,6 @@ venv/
 
 # clangd compile commands file when using -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 compile_commands.json
+
+# Temporary test files
+/test/tmp/

@@ -18,7 +18,7 @@ include(DrawpileVersions)
 project(Drawpile
 	VERSION ${PROJECT_VERSION}
 	HOMEPAGE_URL https://drawpile.net
-	LANGUAGES CXX
+	LANGUAGES C CXX
 )
 
 include(DrawpileCheckSymlinks)
@@ -102,16 +102,9 @@ if(ANDROID AND QT_VERSION VERSION_LESS 6)
 endif()
 
 if(CLIENT OR SERVER)
-	# Since Drawdance also runs `find_package(Qt)` we must run it first or else
-	# the `apk` target will pick up the sub-project `PROJECT_NAME` instead of
-	# our own `PROJECT_NAME`.
+	# Finding Qt needs to come first, otherwise automoc gets confused about
+	# being unable to generate a MOC for the cmake-config directory below.
 	find_package(${QT_PACKAGE_NAME} REQUIRED COMPONENTS Core Network)
-
-	if(EXISTS ${PROJECT_SOURCE_DIR}/extern/drawdance/CMakeLists.txt)
-		add_subdirectory(extern/drawdance EXCLUDE_FROM_ALL)
-	else()
-		find_package(Drawdance REQUIRED COMPONENTS dpcommon dpengine dpmsg)
-	endif()
 endif()
 
 # This must be included *after* drawdance is added to make sure that we do not
@@ -119,6 +112,7 @@ endif()
 # minimum required version and Qt5 for Android is not used any more, it is
 # possible that the SYSTEM flag of `add_subdirectory` may do this and then this
 # can be moved down the list to where the rest of the dependencies are.
+include(GetIgnoreWarningsInDirectory)
 include(DrawpileCompilerOptions)
 
 if(TESTS)
@@ -159,6 +153,9 @@ if(CLIENT OR SERVER)
 		endif()
 	endif()
 	add_feature_info("Zeroconf support" "TARGET KF5::DNSSD" "")
+
+	message(STATUS "Adding drawdance")
+	add_subdirectory(src/drawdance)
 
 	message(STATUS "Adding libshared")
 	add_subdirectory(src/libshared)

@@ -215,9 +215,11 @@ target_link_libraries(dpclient
 		${QT_PACKAGE_NAME}::Network
 		${QT_PACKAGE_NAME}::Gui
 		${QT_PACKAGE_NAME}::Sql
-		Drawdance::dpcommon
-		Drawdance::dpengine
-		Drawdance::dpmsg
+		dpcommon
+		dpmsg
+		dpengine
+		mypaint
+		parson
 )
 
 if(${QT_PACKAGE_NAME}LinguistTools_FOUND)

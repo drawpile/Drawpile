@@ -1,3 +1,0 @@
-[
-    {"include": ["\"cmocka.h\"", "private", "<cmocka.h>", "public"]}
-]

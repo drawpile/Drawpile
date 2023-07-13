@@ -6,7 +6,7 @@
 #include "libshared/util/qtcompat.h"
 
 #include <cmath>
-#include <dpengine/libmypaint/mypaint-brush.h>
+#include <mypaint-brush.h>
 #include <QJsonArray>
 #include <QJsonDocument>
 

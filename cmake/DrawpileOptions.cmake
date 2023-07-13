@@ -46,6 +46,19 @@ else()
 	set(INITSYS "" CACHE STRING "" FORCE)
 endif()
 
+if(NOT CMAKE_CROSSCOMPILING)
+	option(USE_GENERATORS "Do code generation" ON)
+	add_feature_info("Code generation (USE_GENERATORS)" USE_GENERATORS "")
+endif()
+
+if(NOT MSVC AND NOT EMSCRIPTEN)
+	option(USE_STRICT_ALIASING "Enable strict aliasing optimizations" OFF)
+	add_feature_info("Strict aliasing (USE_STRICT_ALIASING)" USE_STRICT_ALIASING "")
+
+	option(ENABLE_ARCH_NATIVE "Optimize for this computer's CPU" OFF)
+	add_feature_info("Non-portable optimizations (ENABLE_ARCH_NATIVE)" ENABLE_ARCH_NATIVE "")
+endif()
+
 option(DIST_BUILD "Build for stand-alone distribution")
 add_feature_info("Distribution build (DIST_BUILD)" DIST_BUILD "")
 

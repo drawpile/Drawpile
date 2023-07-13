@@ -64,7 +64,8 @@ int PaintEngine::renderThreadCount() const
 
 LayerContent PaintEngine::renderContent() const
 {
-	return LayerContent::inc(DP_paint_engine_render_content_noinc(m_data));
+	DP_TransientLayerContent *tlc = DP_paint_engine_render_content_noinc(m_data);
+	return LayerContent::inc(reinterpret_cast<DP_LayerContent *>(tlc));
 }
 
 void PaintEngine::setLocalDrawingInProgress(bool localDrawingInProgress)

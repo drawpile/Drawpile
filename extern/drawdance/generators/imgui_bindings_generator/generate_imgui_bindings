@@ -1,3 +1,0 @@
-#!/bin/sh
-perl "$(dirname "$0")/generator.pl" "$@" \
-     >../../appdrawdance/drawdance_lua/imgui_gen.cpp

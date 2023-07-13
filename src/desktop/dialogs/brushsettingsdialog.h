@@ -6,7 +6,7 @@
 #include "desktop/widgets/mypaintinput.h"
 #include "libclient/brushes/brush.h"
 #include <QDialog>
-#include <dpengine/libmypaint/mypaint-brush-settings.h>
+#include <mypaint-brush-settings.h>
 
 class QComboBox;
 class QListWidgetItem;

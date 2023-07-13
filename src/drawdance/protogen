@@ -1,0 +1,39 @@
+#!/bin/sh
+# SPDX-License-Identifier: MIT
+set -e
+cd "$(dirname "$0")"
+
+status() {
+    echo 1>&2
+    echo "=> $@" 1>&2
+    echo 1>&2
+}
+
+basedir="$(pwd)/generators/protogen"
+envdir="$basedir/env"
+envactivate="$envdir/bin/activate"
+reqpath="$basedir/requirements.txt"
+protopath="$basedir/protocol.yaml"
+
+if [ -e "$envdir" ]; then
+    status "Activating existing Python virtual environment at $envdir"
+    . "$envactivate"
+else
+    status "Setting up Python virtual environment at $envdir"
+    python3 -m venv "$envdir"
+
+    status "Activating new Python virtual environment at $envdir"
+    . "$envactivate"
+
+    status "Installing Python dependencies from $reqpath"
+    pip install -r "$reqpath"
+fi
+
+PYTHONPATH="$basedir"
+export PYTHONPATH
+
+status "Generating code from $protopath"
+generators/protogen/protogen_drawdance.py libmsg/dpmsg "$protopath"
+
+status "Formatting generated code"
+clang-format -i libmsg/dpmsg/messages.c libmsg/dpmsg/messages.h

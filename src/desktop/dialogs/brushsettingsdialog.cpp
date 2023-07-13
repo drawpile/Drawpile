@@ -20,7 +20,6 @@
 #include <QStackedWidget>
 #include <QVBoxLayout>
 #include <QWidget>
-#include <dpengine/libmypaint/mypaint-brush-settings.h>
 
 namespace dialogs {
 

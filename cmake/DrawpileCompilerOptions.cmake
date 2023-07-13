@@ -6,12 +6,22 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOMOC_PATH_PREFIX ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_C_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_OBJCXX_STANDARD 17)
 set(CMAKE_OBJCXX_STANDARD_REQUIRED ON)
 set(CMAKE_OBJCXX_EXTENSIONS OFF)
+
+if(EMSCRIPTEN)
+    set(CMAKE_EXECUTABLE_SUFFIX ".js")
+    # This flag is required when compiling all objects or linking will fail
+    # when --shared-memory is used, which it is implicitly
+    add_compile_options(-pthread)
+endif()
 
 if(CMAKE_INTERPROCEDURAL_OPTIMIZATION)
 	include(CheckIPOSupported)
@@ -41,30 +51,44 @@ if(MSVC)
 		endforeach()
 	endforeach()
 	unset(type_upper)
-
-	get_directory_property(IGNORE_WARNINGS_COMPILE_OPTIONS COMPILE_OPTIONS)
-	list(TRANSFORM IGNORE_WARNINGS_COMPILE_OPTIONS REPLACE "/W[0-9]$" "/W0")
-	list(TRANSFORM IGNORE_WARNINGS_COMPILE_OPTIONS REPLACE "/W([0-9]{4})" "/wd\\1")
 else()
 	add_compile_options(-Wall -Wextra -Wpedantic
 		-Wcast-align
-		-Wcast-qual
-		-Wextra-semi
 		-Wformat-nonliteral
-		-Wimplicit-fallthrough
-		-Wnon-virtual-dtor
-		-Wold-style-cast
-		-Woverloaded-virtual
 		-Wshadow
 		-Wunused
 		-Wunused-parameter
 		-Wunused-macros
-		-Wzero-as-null-pointer-constant
+		$<$<COMPILE_LANGUAGE:CXX,OBJCXX>:-Wcast-qual>
+		$<$<COMPILE_LANGUAGE:CXX,OBJCXX>:-Wextra-semi>
+		$<$<COMPILE_LANGUAGE:CXX,OBJCXX>:-Wnon-virtual-dtor>
+		$<$<COMPILE_LANGUAGE:CXX,OBJCXX>:-Wold-style-cast>
+		$<$<COMPILE_LANGUAGE:CXX,OBJCXX>:-Woverloaded-virtual>
+		$<$<COMPILE_LANGUAGE:CXX,OBJCXX>:-Wzero-as-null-pointer-constant>
 	)
+
+	# Some third-party libraries use comments to mark fallthrough cases, sccache
+	# strips those and that triggers warnings about implicit fallthrough.
+	foreach(lang IN LISTS ENABLED_LANGUAGES)
+		if(NOT CMAKE_${lang}_COMPILER_LAUNCHER MATCHES "sccache")
+			add_compile_options(
+				$<$<COMPILE_LANGUAGE:${lang}>:-Wimplicit-fallthrough>
+			)
+		endif()
+	endforeach()
+
+	if(NOT USE_STRICT_ALIASING)
+		add_compile_options(-fno-strict-aliasing)
+		add_compile_definitions(DP_NO_STRICT_ALIASING)
+	endif()
+
+	if(ENABLE_ARCH_NATIVE)
+		add_compile_options(-march=native)
+	endif()
 
 	# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=105725
 	if(NOT CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 12.2)
-		add_compile_options(-Wmismatched-tags)
+		add_compile_options($<$<COMPILE_LANGUAGE:CXX,OBJCXX>:-Wmismatched-tags>)
 	endif()
 
 	include(CheckCXXCompilerFlag)
@@ -79,21 +103,27 @@ else()
 		-Wformat-security
 		-Wlogical-op
 		-Wlogical-op-parentheses
-		-Wsuggest-destructor-override
-		-Wsuggest-final-methods
-		-Wsuggest-final-types
-		-Wsuggest-override
-		-Wunused-member-function
-		-Wunused-template
-		-Wuseless-cast
+		# These are only valid for C++ and Objective C++, marked by a trailing >
+		-Wsuggest-destructor-override>
+		-Wsuggest-final-methods>
+		-Wsuggest-final-types>
+		-Wsuggest-override>
+		-Wunused-member-function>
+		-Wunused-template>
+		-Wuseless-cast>
 	)
 		string(TOUPPER ${flag} flag_name)
 		string(REPLACE "-W" "CXX_HAS_" flag_name ${flag_name})
 		string(REPLACE "-" "_" flag_name ${flag_name})
 		string(REPLACE "=" "_" flag_name ${flag_name})
+		string(REPLACE ">" "" flag_name ${flag_name})
 		check_cxx_compiler_flag(${flag} ${flag_name})
 		if(${flag_name})
-			add_compile_options(${flag})
+			if("${flag}" MATCHES ">")
+				add_compile_options("$<$<COMPILE_LANGUAGE:CXX,OBJCXX>:${flag}")
+			else()
+				add_compile_options(${flag})
+			endif()
 		endif()
 	endforeach()
 
@@ -101,17 +131,16 @@ else()
 		add_compile_options(-Werror)
 	endif()
 
-	get_directory_property(IGNORE_WARNINGS_COMPILE_OPTIONS COMPILE_OPTIONS)
-	list(TRANSFORM IGNORE_WARNINGS_COMPILE_OPTIONS REPLACE "-W(no-)?([^=]+)(=.*$)?" "-Wno-\\2")
-
 	# This is valid in C++20 and all the C++17 compilers already support it;
 	# it must be ignored to use the QLoggingCategory macros like
 	# `qCDebug(foo) << "Message"`
 	check_cxx_compiler_flag(-Wgnu-zero-variadic-macro-arguments CXX_HAS_GNU_ZERO_VARIADIC_MACRO_ARGUMENTS)
-	if (CXX_HAS_GNU_ZERO_VARIADIC_MACRO_ARGUMENTS)
+	if(CXX_HAS_GNU_ZERO_VARIADIC_MACRO_ARGUMENTS)
 		add_compile_options(-Wno-gnu-zero-variadic-macro-arguments)
 	endif()
 endif()
+
+get_ignore_warnings_in_directory(IGNORE_WARNINGS_COMPILE_OPTIONS)
 
 foreach(lang IN LISTS ENABLED_LANGUAGES)
 	if(CLANG_TIDY AND NOT CMAKE_${lang}_CLANG_TIDY)

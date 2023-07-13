@@ -4,7 +4,7 @@
 #define MYPAINTINPUT_H
 #include "libclient/brushes/brush.h"
 #include <QWidget>
-#include <dpengine/libmypaint/mypaint-brush-settings.h>
+#include <mypaint-brush-settings.h>
 
 class KisDoubleSliderSpinBox;
 class QCheckBox;

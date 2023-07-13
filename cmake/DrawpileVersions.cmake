@@ -25,7 +25,7 @@ endif()
 unset(dp_version)
 
 set(dp_proto_regex "^[ \t]*version:[ \t]*\"?dp:([0-9]+)\\.([0-9]+)\\.([0-9]+)\"?$")
-file(STRINGS extern/drawdance/generators/protogen/protocol.yaml dp_proto_version LIMIT_COUNT 1 REGEX ${dp_proto_regex})
+file(STRINGS src/drawdance/generators/protogen/protocol.yaml dp_proto_version LIMIT_COUNT 1 REGEX ${dp_proto_regex})
 if(dp_proto_version MATCHES ${dp_proto_regex})
 	set(DRAWPILE_PROTO_SERVER_VERSION ${CMAKE_MATCH_1})
 	set(DRAWPILE_PROTO_MAJOR_VERSION ${CMAKE_MATCH_2})

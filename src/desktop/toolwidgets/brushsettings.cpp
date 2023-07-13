@@ -15,7 +15,7 @@ extern "C" {
 #include "desktop/utils/widgetutils.h"
 #include "ui_brushdock.h"
 
-#include <dpengine/libmypaint/mypaint-brush-settings.h>
+#include <mypaint-brush-settings.h>
 #include <QActionGroup>
 #include <QIcon>
 #include <QKeyEvent>
