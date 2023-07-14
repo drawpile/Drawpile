@@ -328,7 +328,7 @@ private:
 	//! Is the view being dragged
 	ViewDragMode m_dragmode;
 	CanvasShortcuts::Action m_dragAction;
-	bool m_dragByKey;
+	Qt::MouseButton m_dragButton;
 	bool m_dragInverted;
 	bool m_dragSwapAxes;
 	QPoint m_dragLastPoint;

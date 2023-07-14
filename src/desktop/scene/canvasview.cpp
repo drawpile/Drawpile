@@ -39,7 +39,7 @@ CanvasView::CanvasView(QWidget *parent)
 	, m_penmode(PenMode::Normal)
 	, m_dragmode(ViewDragMode::None)
 	, m_dragAction(CanvasShortcuts::NO_ACTION)
-	, m_dragByKey(true)
+	, m_dragButton(Qt::NoButton)
 	, m_dragInverted(false)
 	, m_dragSwapAxes(false)
 	, m_prevoutline(false)
@@ -782,6 +782,7 @@ void CanvasView::penPressEvent(
 		if(m_dragmode != ViewDragMode::Started) {
 			m_dragmode = ViewDragMode::Prepared;
 			m_dragAction = match.action();
+			m_dragButton = match.shortcut->button;
 			m_dragInverted = match.inverted();
 			m_dragSwapAxes = match.swapAxes();
 		}
@@ -802,7 +803,7 @@ void CanvasView::penPressEvent(
 	if(m_dragmode == ViewDragMode::Prepared) {
 		m_dragLastPoint = pos.toPoint();
 		m_dragmode = ViewDragMode::Started;
-		m_dragByKey = true;
+		m_dragButton = button;
 		resetCursor();
 		updateOutline();
 	} else if(
@@ -919,7 +920,7 @@ void CanvasView::penReleaseEvent(
 	CanvasShortcuts::Match mouseMatch = m_canvasShortcuts.matchMouseButton(
 		modifiers, m_keysDown, Qt::LeftButton);
 
-	if(m_dragmode != ViewDragMode::None) {
+	if(m_dragmode != ViewDragMode::None && m_dragButton != Qt::NoButton) {
 		switch(mouseMatch.action()) {
 		case CanvasShortcuts::CANVAS_PAN:
 		case CanvasShortcuts::CANVAS_ROTATE:
@@ -927,6 +928,7 @@ void CanvasView::penReleaseEvent(
 		case CanvasShortcuts::TOOL_ADJUST:
 			m_dragmode = ViewDragMode::Prepared;
 			m_dragAction = mouseMatch.action();
+			m_dragButton = mouseMatch.shortcut->button;
 			m_dragInverted = mouseMatch.inverted();
 			m_dragSwapAxes = mouseMatch.swapAxes();
 			break;
@@ -954,6 +956,7 @@ void CanvasView::penReleaseEvent(
 			m_penmode = PenMode::Normal;
 			m_dragmode = ViewDragMode::Prepared;
 			m_dragAction = mouseMatch.action();
+			m_dragButton = mouseMatch.shortcut->button;
 			m_dragInverted = mouseMatch.inverted();
 			m_dragSwapAxes = mouseMatch.swapAxes();
 			break;
@@ -1085,6 +1088,31 @@ void CanvasView::keyPressEvent(QKeyEvent *event)
 		return;
 	}
 
+	m_keysDown.insert(Qt::Key(event->key()));
+
+	if(m_dragmode == ViewDragMode::Started && m_dragButton != Qt::NoButton) {
+		// There's currently some dragging with a mouse button held down going
+		// on. Switch to a different flavor of drag if appropriate and bail out.
+		CanvasShortcuts::Match mouseMatch = m_canvasShortcuts.matchMouseButton(
+			event->modifiers(), m_keysDown, m_dragButton);
+		switch(mouseMatch.action()) {
+		case CanvasShortcuts::CANVAS_PAN:
+		case CanvasShortcuts::CANVAS_ROTATE:
+		case CanvasShortcuts::CANVAS_ZOOM:
+		case CanvasShortcuts::TOOL_ADJUST:
+			m_dragAction = mouseMatch.action();
+			m_dragButton = mouseMatch.shortcut->button;
+			m_dragInverted = mouseMatch.inverted();
+			m_dragSwapAxes = mouseMatch.swapAxes();
+			resetCursor();
+			updateOutline();
+			break;
+		default:
+			break;
+		}
+		return;
+	}
+
 	if(m_pendown == NOTDOWN) {
 		CanvasShortcuts::Match keyMatch = m_canvasShortcuts.matchKeyCombination(
 			event->modifiers(), Qt::Key(event->key()));
@@ -1096,7 +1124,7 @@ void CanvasView::keyPressEvent(QKeyEvent *event)
 			m_penmode = PenMode::Normal;
 			m_dragmode = ViewDragMode::Started;
 			m_dragAction = keyMatch.action();
-			m_dragByKey = true;
+			m_dragButton = Qt::NoButton;
 			m_dragInverted = keyMatch.inverted();
 			m_dragSwapAxes = keyMatch.swapAxes();
 			m_dragLastPoint = mapFromGlobal(QCursor::pos());
@@ -1109,8 +1137,6 @@ void CanvasView::keyPressEvent(QKeyEvent *event)
 	} else {
 		QGraphicsView::keyPressEvent(event);
 	}
-
-	m_keysDown.insert(Qt::Key(event->key()));
 
 	if(m_pendown == NOTDOWN) {
 		CanvasShortcuts::Match mouseMatch = m_canvasShortcuts.matchMouseButton(
@@ -1128,6 +1154,7 @@ void CanvasView::keyPressEvent(QKeyEvent *event)
 			m_penmode = PenMode::Normal;
 			m_dragmode = ViewDragMode::Prepared;
 			m_dragAction = mouseMatch.action();
+			m_dragButton = mouseMatch.shortcut->button;
 			m_dragInverted = mouseMatch.inverted();
 			m_dragSwapAxes = mouseMatch.swapAxes();
 			updateOutline();
@@ -1155,12 +1182,15 @@ void CanvasView::keyReleaseEvent(QKeyEvent *event)
 		return;
 	}
 
-	m_keysDown.remove(Qt::Key(event->key()));
-
-	if(m_dragmode == ViewDragMode::Started && m_dragByKey) {
-		CanvasShortcuts::Match keyMatch = m_canvasShortcuts.matchKeyCombination(
-			event->modifiers(), Qt::Key(event->key()));
-		switch(keyMatch.action()) {
+	bool wasDragging = m_dragmode == ViewDragMode::Started;
+	if(wasDragging) {
+		CanvasShortcuts::Match dragMatch =
+			m_dragButton == Qt::NoButton
+				? m_canvasShortcuts.matchKeyCombination(
+					  event->modifiers(), Qt::Key(event->key()))
+				: m_canvasShortcuts.matchMouseButton(
+					  event->modifiers(), m_keysDown, m_dragButton);
+		switch(dragMatch.action()) {
 		case CanvasShortcuts::CANVAS_PAN:
 		case CanvasShortcuts::CANVAS_ROTATE:
 		case CanvasShortcuts::CANVAS_ZOOM:
@@ -1172,6 +1202,30 @@ void CanvasView::keyReleaseEvent(QKeyEvent *event)
 		default:
 			break;
 		}
+	}
+
+	m_keysDown.remove(Qt::Key(event->key()));
+
+	if(wasDragging && m_dragButton != Qt::NoButton) {
+		CanvasShortcuts::Match mouseMatch = m_canvasShortcuts.matchMouseButton(
+			event->modifiers(), m_keysDown, m_dragButton);
+		switch(mouseMatch.action()) {
+		case CanvasShortcuts::CANVAS_PAN:
+		case CanvasShortcuts::CANVAS_ROTATE:
+		case CanvasShortcuts::CANVAS_ZOOM:
+		case CanvasShortcuts::TOOL_ADJUST:
+			m_dragmode = ViewDragMode::Started;
+			m_dragAction = mouseMatch.action();
+			m_dragButton = mouseMatch.shortcut->button;
+			m_dragInverted = mouseMatch.inverted();
+			m_dragSwapAxes = mouseMatch.swapAxes();
+			resetCursor();
+			updateOutline();
+			break;
+		default:
+			break;
+		}
+		return;
 	}
 
 	CanvasShortcuts::Match mouseMatch = m_canvasShortcuts.matchMouseButton(
@@ -1189,6 +1243,7 @@ void CanvasView::keyReleaseEvent(QKeyEvent *event)
 		case CanvasShortcuts::CANVAS_ZOOM:
 			m_dragmode = ViewDragMode::Prepared;
 			m_dragAction = mouseMatch.action();
+			m_dragButton = mouseMatch.shortcut->button;
 			m_dragInverted = mouseMatch.inverted();
 			m_dragSwapAxes = mouseMatch.swapAxes();
 			updateOutline();
