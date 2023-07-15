@@ -9,6 +9,7 @@
 #include "libclient/utils/colorscheme.h"
 #include "desktop/utils/hidedocktitlebarseventfilter.h"
 #include "desktop/notifications.h"
+#include "desktop/dialogs/startdialog.h"
 #include "desktop/dialogs/versioncheckdialog.h"
 #include "libshared/util/paths.h"
 #include "libclient/drawdance/global.h"
@@ -29,6 +30,7 @@
 #include <QDebug>
 #include <QDir>
 #include <QIcon>
+#include <QMetaEnum>
 #include <QStyle>
 #include <QStyleFactory>
 #include <QUrl>
@@ -38,6 +40,7 @@
 #include <QDateTime>
 #include <QWidget>
 #include <memory>
+#include <tuple>
 
 #ifdef ENABLE_VERSION_CHECK
 #	include "dialogs/versioncheckdialog.h"
@@ -107,7 +110,7 @@ bool DrawpileApp::event(QEvent *e) {
 		QApplicationStateChangeEvent *ae = static_cast<QApplicationStateChangeEvent*>(e);
 		if(ae->applicationState() == Qt::ApplicationActive && topLevelWindows().isEmpty()) {
 			// Open a new window when application is activated and there are no windows.
-			openBlankDocument();
+			openStart();
 		}
 	}
 #endif
@@ -280,7 +283,7 @@ void DrawpileApp::openUrl(QUrl url)
 
 	if(url.scheme() == "drawpile") {
 		// Our own protocol: connect to a session
-		win->showJoinDialog(url);
+		win->autoJoin(url);
 
 	} else {
 		// Other protocols: load image
@@ -288,13 +291,35 @@ void DrawpileApp::openUrl(QUrl url)
 	}
 }
 
-void DrawpileApp::openBlankDocument()
+dialogs::StartDialog::Entry getStartDialogEntry(const QString &page)
+{
+	if(page.isEmpty() || page.compare("guess", Qt::CaseInsensitive) != 0) {
+		QMetaEnum entries = QMetaEnum::fromType<dialogs::StartDialog::Entry>();
+		int count = entries.keyCount();
+		for(int i = 0; i < count; ++i) {
+			int value = entries.value(i);
+			bool pageFound = value != dialogs::StartDialog::Entry::Count &&
+				page.compare(entries.key(i), Qt::CaseInsensitive) == 0;
+			if(pageFound) {
+				return dialogs::StartDialog::Entry(value);
+			}
+		}
+		qWarning("Unknown start-page '%s'", qUtf8Printable(page));
+	}
+	return dialogs::StartDialog::Entry::Welcome;
+}
+
+void DrawpileApp::openStart(const QString &page)
 {
 	MainWindow *win = new MainWindow;
 	win->newDocument(
 		m_settings.newCanvasSize(),
 		m_settings.newCanvasBackColor()
 	);
+	if(page.compare("none", Qt::CaseInsensitive) != 0) {
+		dialogs::StartDialog *dlg = win->showStartDialog();
+		dlg->showPage(getStartDialogEntry(page));
+	}
 }
 
 void DrawpileApp::deleteAllMainWindowsExcept(MainWindow *win)
@@ -341,8 +366,21 @@ static void initTranslations(DrawpileApp &app, const QLocale &locale)
 	delete translator;
 }
 
+static QStringList getStartPages()
+{
+	QMetaEnum entries = QMetaEnum::fromType<dialogs::StartDialog::Entry>();
+	int count = entries.keyCount();
+	QStringList pages;
+	for(int i = 0; i < count; ++i) {
+		if(entries.value(i) != dialogs::StartDialog::Entry::Count) {
+			pages.append(QString::fromUtf8(entries.key(i)).toLower());
+		}
+	}
+	return pages;
+}
+
 // Initialize the application and return a list of files to be opened (if any)
-static QStringList initApp(DrawpileApp &app)
+static std::tuple<QStringList, QString> initApp(DrawpileApp &app)
 {
 	// Parse command line arguments
 	QCommandLineParser parser;
@@ -366,6 +404,13 @@ static QStringList initApp(DrawpileApp &app)
 		"mode", "if-empty");
 	parser.addOption(copyLegacySettings);
 #endif
+
+	QString startPageDescription = QStringLiteral(
+		"Which page to show on the start dialog: guess (the default), %1 or none.")
+		.arg(getStartPages().join(", "));
+	QCommandLineOption startPage(
+		"start-page", startPageDescription, "page", "guess");
+	parser.addOption(startPage);
 
 	// URL
 	parser.addPositionalArgument("url", "Filename or URL.");
@@ -433,7 +478,7 @@ static QStringList initApp(DrawpileApp &app)
 
 	initTranslations(app, locale);
 
-	return parser.positionalArguments();
+	return {parser.positionalArguments(), parser.value(startPage)};
 }
 
 int main(int argc, char *argv[]) {
@@ -454,10 +499,10 @@ int main(int argc, char *argv[]) {
 	DrawpileApp app(argc, argv);
 
 	{
-		const auto files = initApp(app);
+		const auto [files, page] = initApp(app);
 
 		if(files.isEmpty()) {
-			app.openBlankDocument();
+			app.openStart(page);
 
 		} else {
 			QUrl url(files.at(0));

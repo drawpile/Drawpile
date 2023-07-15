@@ -378,6 +378,13 @@ void SessionListingModel::setList(const QString &name, const QVector<Session> se
 	endInsertRows();
 }
 
+void SessionListingModel::clear()
+{
+	beginResetModel();
+	m_listings.clear();
+	endResetModel();
+}
+
 bool SessionListingModel::isNsfm(const Session &session) const
 {
 	return session.nsfm || parentalcontrols::isNsfmTitle(session.title);

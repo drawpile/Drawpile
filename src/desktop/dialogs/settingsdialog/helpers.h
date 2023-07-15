@@ -21,18 +21,6 @@
 namespace dialogs {
 namespace settingsdialog {
 
-inline QLabel *makeIconLabel(QStyle::StandardPixmap icon, QStyle::PixelMetric size, QWidget *parent = nullptr)
-{
-	auto *label = new QLabel;
-	auto *widget = parent ? parent : label;
-	auto *style = widget->style();
-	auto labelIcon = style->standardIcon(icon, nullptr, widget);
-	auto labelSize = style->pixelMetric(size, nullptr, widget);
-	label->setPixmap(labelIcon.pixmap(labelSize));
-	label->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-	return label;
-}
-
 template <typename AddCallback, typename RemoveCallback, typename MoveUpCallback, typename MoveDownCallback>
 utils::EncapsulatedLayout *listActions(
 	QAbstractItemView *view,

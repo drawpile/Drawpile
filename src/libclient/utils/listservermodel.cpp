@@ -18,7 +18,12 @@ ListServerModel::ListServerModel(libclient::settings::Settings &settings, bool i
 	, m_settings(settings)
 	, m_includeReadOnly(includeReadOnly)
 {
-	loadServers(settings.listServers(), m_includeReadOnly);
+	reload();
+}
+
+void ListServerModel::reload()
+{
+	loadServers(m_settings.listServers(), m_includeReadOnly);
 }
 
 int ListServerModel::rowCount(const QModelIndex &parent) const

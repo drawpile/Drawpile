@@ -7,6 +7,10 @@
 
 class MainWindow;
 
+namespace dialogs {
+class StartDialog;
+}
+
 class MacMenu final : public QMenuBar
 {
 	Q_OBJECT
@@ -40,7 +44,7 @@ private slots:
 private:
 	MacMenu();
 	QAction *makeAction(QMenu *menu, const char *name, const QString &text, const QKeySequence &shortcut);
-	void showJoinDialog(bool browse);
+	dialogs::StartDialog *showStartDialog();
 
 	QMenu *_recent;
 	QMenu *_windows;

@@ -24,7 +24,7 @@ public:
 
 	void openUrl(QUrl url);
 
-	void openBlankDocument();
+	void openStart(const QString &page = QString{});
 
 	void deleteAllMainWindowsExcept(MainWindow *win);
 

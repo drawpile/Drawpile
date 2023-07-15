@@ -34,6 +34,8 @@ public:
 
 	explicit ListServerModel(libclient::settings::Settings &settings, bool includeReadOnly, QObject *parent=nullptr);
 
+	void reload();
+
 	int rowCount(const QModelIndex &parent=QModelIndex()) const override;
 	QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const override;
 

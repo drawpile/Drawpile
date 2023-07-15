@@ -7,6 +7,8 @@
 #include <QGridLayout>
 #include <QSize>
 #include <QSizePolicy>
+#include <QStyle>
+#include <QWidget>
 #include <Qt>
 #include <optional>
 #include <utility>
@@ -15,6 +17,7 @@ class QButtonGroup;
 class QCheckBox;
 class QFrame;
 class QHBoxLayout;
+class QLabel;
 class QLayout;
 class QString;
 class QStyle;
@@ -30,6 +33,7 @@ EncapsulatedLayout *encapsulate(const QString &label, QWidget *child);
 EncapsulatedLayout *indent(QWidget *child);
 EncapsulatedLayout *note(const QString &text, QSizePolicy::ControlType type);
 QFrame *makeSeparator();
+QLabel *makeIconLabel(QStyle::StandardPixmap icon, QStyle::PixelMetric size, QWidget *parent = nullptr);
 void setSpacingControlType(EncapsulatedLayout *widget, QSizePolicy::ControlTypes type);
 void setSpacingControlType(QWidget *widget, QSizePolicy::ControlType type);
 

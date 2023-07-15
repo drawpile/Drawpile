@@ -127,6 +127,18 @@ QFrame *makeSeparator()
 	return separator;
 }
 
+QLabel *makeIconLabel(QStyle::StandardPixmap icon, QStyle::PixelMetric size, QWidget *parent)
+{
+	auto *label = new QLabel;
+	auto *widget = parent ? parent : label;
+	auto *style = widget->style();
+	auto labelIcon = style->standardIcon(icon, nullptr, widget);
+	auto labelSize = style->pixelMetric(size, nullptr, widget);
+	label->setPixmap(labelIcon.pixmap(labelSize));
+	label->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+	return label;
+}
+
 void setSpacingControlType(EncapsulatedLayout *layout, QSizePolicy::ControlTypes type)
 {
 	layout->setControlTypes(type);

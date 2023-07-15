@@ -84,12 +84,8 @@ target_sources(drawpile PRIVATE
 	dialogs/dumpplaybackdialog.h
 	dialogs/flipbook.cpp
 	dialogs/flipbook.h
-	dialogs/hostdialog.cpp
-	dialogs/hostdialog.h
 	dialogs/invitedialog.cpp
 	dialogs/invitedialog.h
-	dialogs/joindialog.cpp
-	dialogs/joindialog.h
 	dialogs/keyframepropertiesdialog.cpp
 	dialogs/keyframepropertiesdialog.h
 	dialogs/layerproperties.cpp
@@ -100,8 +96,6 @@ target_sources(drawpile PRIVATE
 	dialogs/logindialog.h
 	dialogs/netstats.cpp
 	dialogs/netstats.h
-	dialogs/newdialog.cpp
-	dialogs/newdialog.h
 	dialogs/playbackdialog.cpp
 	dialogs/playbackdialog.h
 	dialogs/resetdialog.cpp
@@ -139,6 +133,22 @@ target_sources(drawpile PRIVATE
 	dialogs/settingsdialog/shortcuts.h
 	dialogs/settingsdialog/tools.cpp
 	dialogs/settingsdialog/tools.h
+	dialogs/startdialog.cpp
+	dialogs/startdialog.h
+	dialogs/startdialog/browse.cpp
+	dialogs/startdialog/browse.h
+	dialogs/startdialog/create.cpp
+	dialogs/startdialog/create.h
+	dialogs/startdialog/host.cpp
+	dialogs/startdialog/host.h
+	dialogs/startdialog/join.cpp
+	dialogs/startdialog/join.h
+	dialogs/startdialog/links.cpp
+	dialogs/startdialog/links.h
+	dialogs/startdialog/page.cpp
+	dialogs/startdialog/page.h
+	dialogs/startdialog/welcome.cpp
+	dialogs/startdialog/welcome.h
 	dialogs/tablettester.cpp
 	dialogs/tablettester.h
 	dialogs/userinfodialog.cpp
@@ -218,16 +228,13 @@ target_sources(drawpile PRIVATE
 	ui/dumpplayback.ui
 	ui/fillsettings.ui
 	ui/flipbook.ui
-	ui/hostdialog.ui
 	ui/inspectorsettings.ui
 	ui/invitedialog.ui
-	ui/joindialog.ui
 	ui/lasersettings.ui
 	ui/layerproperties.ui
 	ui/layoutsdialog.ui
 	ui/logindialog.ui
 	ui/netstats.ui
-	ui/newdialog.ui
 	ui/playback.ui
 	ui/resetsession.ui
 	ui/resizedialog.ui

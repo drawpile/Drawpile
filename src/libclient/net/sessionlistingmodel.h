@@ -58,6 +58,7 @@ public slots:
 	void setIcon(const QString &name, const QIcon &icon);
 	void setMessage(const QString &name, const QString &message);
 	void setList(const QString &name, const QVector<sessionlisting::Session> sessions);
+	void clear();
 
 private:
 	bool isNsfm(const sessionlisting::Session &session) const;

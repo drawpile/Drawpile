@@ -101,10 +101,7 @@ static constexpr auto CTRL_KEY = Qt::CTRL;
 #include "libclient/drawdance/perf.h"
 
 #include "desktop/dialogs/colordialog.h"
-#include "desktop/dialogs/newdialog.h"
-#include "desktop/dialogs/hostdialog.h"
 #include "desktop/dialogs/invitedialog.h"
-#include "desktop/dialogs/joindialog.h"
 #include "desktop/dialogs/layoutsdialog.h"
 #include "desktop/dialogs/logindialog.h"
 #include "desktop/dialogs/settingsdialog.h"
@@ -121,6 +118,7 @@ static constexpr auto CTRL_KEY = Qt::CTRL;
 #include "desktop/dialogs/brushsettingsdialog.h"
 #include "desktop/dialogs/sessionundodepthlimitdialog.h"
 #include "desktop/dialogs/userinfodialog.h"
+#include "desktop/dialogs/startdialog.h"
 
 #ifdef ENABLE_VERSION_CHECK
 #include "desktop/dialogs/versioncheckdialog.h"
@@ -489,6 +487,12 @@ MainWindow::~MainWindow()
 	dpApp().settings().trySubmit();
 }
 
+void MainWindow::autoJoin(const QUrl &url)
+{
+	dialogs::StartDialog *dlg = showStartDialog();
+	dlg->autoJoin(url);
+}
+
 void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 {
 	m_canvasscene->initCanvas(canvas);
@@ -575,6 +579,7 @@ MainWindow *MainWindow::replaceableWindow()
 			toggleFullscreen();
 		saveWindowState();
 		MainWindow *win = new MainWindow(false);
+		emit windowReplacementFailed(win);
 		Q_ASSERT(win->canReplace());
 		return win;
 
@@ -1123,15 +1128,72 @@ bool MainWindow::event(QEvent *event)
 	return QMainWindow::event(event);
 }
 
+dialogs::StartDialog *MainWindow::showStartDialog()
+{
+	dialogs::StartDialog *dlg = new dialogs::StartDialog{this};
+	dlg->setObjectName(QStringLiteral("startdialog"));
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
+	connectStartDialog(dlg);
+	utils::showWindow(dlg);
+	return dlg;
+}
+
+void MainWindow::connectStartDialog(dialogs::StartDialog *dlg)
+{
+	static constexpr char key[] = "startdialogconnections";
+	class Connections final : public QObject {
+	public:
+		Connections(QObject *parent)
+			: QObject{parent}
+		{
+			setObjectName(key);
+		}
+
+		void add(const QMetaObject::Connection &con)
+		{
+			m_values.append(con);
+		}
+
+		void clear()
+		{
+			for(const QMetaObject::Connection &con : m_values) {
+				disconnect(con);
+			}
+		}
+
+	private:
+		QVector<QMetaObject::Connection> m_values;
+	};
+
+	Connections *previousConnections = dlg->findChild<Connections *>(key);
+	if(previousConnections) {
+		previousConnections->clear();
+		delete previousConnections;
+	}
+
+	Connections *connections = new Connections{dlg};
+	connections->add(connect(dlg, &dialogs::StartDialog::openFile, this, QOverload<>::of(&MainWindow::open)));
+	connections->add(connect(dlg, &dialogs::StartDialog::layouts, this, &MainWindow::showLayoutsDialog));
+	connections->add(connect(dlg, &dialogs::StartDialog::preferences, this, &MainWindow::showSettings));
+	connections->add(connect(dlg, &dialogs::StartDialog::join, this, &MainWindow::joinSession));
+	connections->add(connect(dlg, &dialogs::StartDialog::host, this, &MainWindow::hostSession));
+	connections->add(connect(dlg, &dialogs::StartDialog::create, this, &MainWindow::newDocument));
+	connections->add(connect(m_doc, &Document::canvasChanged, dlg, &QDialog::close));
+	connections->add(connect(m_doc, &Document::serverLoggedIn, dlg, &QDialog::close));
+	connections->add(connect(this, &MainWindow::windowReplacementFailed, dlg, [dlg](MainWindow *win){
+		dlg->setParent(win, dlg->windowFlags());
+		win->connectStartDialog(dlg);
+		utils::showWindow(dlg);
+	}));
+}
+
 /**
  * Show the "new document" dialog
  */
 void MainWindow::showNew()
 {
-	auto dlg = new dialogs::NewDialog(this);
-	dlg->setAttribute(Qt::WA_DeleteOnClose);
-	connect(dlg, &dialogs::NewDialog::accepted, this, &MainWindow::newDocument);
-	utils::showWindow(dlg);
+	dialogs::StartDialog *dlg = showStartDialog();
+	dlg->showPage(dialogs::StartDialog::Create);
 }
 
 void MainWindow::newDocument(const QSize &size, const QColor &background)
@@ -1563,41 +1625,33 @@ dialogs::SettingsDialog *MainWindow::showSettings()
 
 void MainWindow::host()
 {
+	dialogs::StartDialog *dlg = showStartDialog();
+	dlg->showPage(dialogs::StartDialog::Entry::Host);
+}
+
+void MainWindow::hostSession(
+	const QString &title, const QString &password, const QString &alias,
+	bool nsfm, const QString &announcementUrl, const QString &remoteAddress)
+{
 	if(!m_doc->canvas()) {
-		qWarning("No canvas!");
+		showErrorMessage(tr("No canvas to host! Create one or open a file."));
 		return;
 	}
 
-	auto dlg = new dialogs::HostDialog(this);
-
-	connect(dlg, &dialogs::HostDialog::finished, this, [this, dlg](int i) {
-		if(i==QDialog::Accepted) {
-			dlg->rememberSettings();
-			hostSession(dlg);
-		}
-		dlg->deleteLater();
-	});
-	utils::showWindow(dlg);
-}
-
-void MainWindow::hostSession(dialogs::HostDialog *dlg)
-{
-	const bool useremote = !dlg->getRemoteAddress().isEmpty();
+	const bool useremote = !remoteAddress.isEmpty();
 	QUrl address;
 
 	if(useremote) {
 		QString scheme;
-		if(dlg->getRemoteAddress().startsWith("drawpile://")==false)
+		if(!remoteAddress.startsWith("drawpile://", Qt::CaseInsensitive))
 			scheme = "drawpile://";
-		address = QUrl(scheme + dlg->getRemoteAddress(),
-				QUrl::TolerantMode);
+		address = QUrl(scheme + remoteAddress, QUrl::TolerantMode);
 
 	} else {
 		address.setHost(WhatIsMyIp::guessLocalAddress());
 	}
 
-	if(address.isValid() == false || address.host().isEmpty()) {
-		utils::showWindow(dlg);
+	if(!address.isValid() || address.host().isEmpty()) {
 		showErrorMessage(tr("Invalid address"));
 		return;
 	}
@@ -1631,11 +1685,11 @@ void MainWindow::hostSession(dialogs::HostDialog *dlg)
 		address,
 		this);
 	login->setUserId(m_doc->canvas()->localUserId());
-	login->setSessionAlias(dlg->getSessionAlias());
-	login->setPassword(dlg->getPassword());
-	login->setTitle(dlg->getTitle());
-	login->setAnnounceUrl(dlg->getAnnouncementUrl());
-	login->setNsfm(dlg->isNsfm());
+	login->setSessionAlias(alias);
+	login->setPassword(password);
+	login->setTitle(title);
+	login->setAnnounceUrl(announcementUrl);
+	login->setNsfm(nsfm);
 	if(useremote) {
 		login->setInitialState(m_doc->canvas()->generateSnapshot(
 			true, DP_ACL_STATE_RESET_IMAGE_SESSION_RESET_FLAGS));
@@ -1655,38 +1709,14 @@ void MainWindow::invite()
 
 void MainWindow::join()
 {
-	showJoinDialog(QUrl{}, false);
+	dialogs::StartDialog *dlg = showStartDialog();
+	dlg->showPage(dialogs::StartDialog::Entry::Join);
 }
 
 void MainWindow::browse()
 {
-	showJoinDialog(QUrl{}, true);
-}
-
-/**
- * Show the join dialog
- */
-void MainWindow::showJoinDialog(const QUrl &initialUrl, bool browse)
-{
-	auto dlg = new dialogs::JoinDialog(initialUrl, browse, this);
-	connect(dlg, &dialogs::JoinDialog::finished, this, [this, dlg](int i) {
-		if(i==QDialog::Accepted) {
-			QUrl url = dlg->getUrl();
-
-			if(!url.isValid()) {
-				// TODO add validator to prevent this from happening
-				showErrorMessage("Invalid address");
-				return;
-			}
-
-			dlg->rememberSettings();
-
-			joinSession(url, dlg->autoRecordFilename());
-		}
-		dlg->deleteLater();
-	});
-	utils::showWindow(dlg);
-	dlg->autoJoin();
+	dialogs::StartDialog *dlg = showStartDialog();
+	dlg->showPage(dialogs::StartDialog::Entry::Browse);
 }
 
 /**
@@ -1816,6 +1846,7 @@ void MainWindow::joinSession(const QUrl& url, const QString &autoRecordFile)
 {
 	if(!canReplace()) {
 		MainWindow *win = new MainWindow(false);
+		emit windowReplacementFailed(win);
 		Q_ASSERT(win->canReplace());
 		win->joinSession(url, autoRecordFile);
 		return;
@@ -1898,7 +1929,7 @@ void MainWindow::onServerDisconnected(const QString &message, const QString &err
 			QUrl url = m_doc->client()->sessionUrl(true);
 
 			connect(joinbutton, &QAbstractButton::clicked, this, [this, url]() {
-				joinSession(url);
+				joinSession(url, QString{});
 			});
 
 		}
@@ -2841,6 +2872,7 @@ void MainWindow::setupActions()
 #endif
 
 	QAction *record = makeAction("recordsession", tr("Record...")).icon("media-record").noDefaultShortcut();
+	QAction *start = makeAction("start", tr("Start...")).noDefaultShortcut();
 	QAction *quit = makeAction("exitprogram", tr("&Quit")).icon("application-exit").shortcut("Ctrl+Q").menuRole(QAction::QuitRole);
 
 #ifdef Q_OS_MACOS
@@ -2873,6 +2905,7 @@ void MainWindow::setupActions()
 	connect(exportAnimationFrames, &QAction::triggered, this, &MainWindow::exportAnimationFrames);
 #endif
 	connect(record, &QAction::triggered, this, &MainWindow::toggleRecording);
+	connect(start, &QAction::triggered, this, &MainWindow::showStartDialog);
 
 #ifdef Q_OS_MACOS
 	connect(closefile, SIGNAL(triggered()), this, SLOT(close()));
@@ -2909,7 +2942,7 @@ void MainWindow::setupActions()
 #endif
 	filemenu->addAction(record);
 	filemenu->addSeparator();
-
+	filemenu->addAction(start);
 	filemenu->addAction(quit);
 
 	QToolBar *filetools = new QToolBar(tr("File Tools"));
@@ -2944,8 +2977,8 @@ void MainWindow::setupActions()
 	QAction *canvasBackground = makeAction("canvas-background", tr("Set Session Background...")).noDefaultShortcut();
 	QAction *setLocalBackground = makeAction("set-local-background", tr("Set Local Background...")).noDefaultShortcut();
 	QAction *clearLocalBackground = makeAction("clear-local-background", tr("Clear Local Background")).noDefaultShortcut();
-	QAction *brushSettings = makeAction("brushsettings", tr("&Brush Settings")).shortcut("F7");
-	QAction *preferences = makeAction("preferences", tr("Prefere&nces")).noDefaultShortcut().menuRole(QAction::PreferencesRole);
+	QAction *brushSettings = makeAction("brushsettings", tr("&Brush Settings")).icon("draw-brush").shortcut("F7");
+	QAction *preferences = makeAction("preferences", tr("Prefere&nces")).icon("configure").noDefaultShortcut().menuRole(QAction::PreferencesRole);
 
 	QAction *selectall = makeAction("selectall", tr("Select &All")).shortcut(QKeySequence::SelectAll);
 	QAction *selectnone = makeAction("selectnone", tr("&Deselect"))
@@ -3080,7 +3113,7 @@ void MainWindow::setupActions()
 	//
 	// View menu
 	//
-	QAction *layoutsAction = makeAction("layouts", tr("&Layouts..."));
+	QAction *layoutsAction = makeAction("layouts", tr("&Layouts...")).icon("window_");
 
 	QAction *toolbartoggles = new QAction(tr("&Toolbars"), this);
 	toolbartoggles->setMenu(toggletoolbarmenu);

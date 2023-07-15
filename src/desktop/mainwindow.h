@@ -27,6 +27,7 @@ class QSplitter;
 class QToolButton;
 
 class Document;
+class MainActions;
 class ActionBuilder;
 
 namespace widgets {
@@ -55,6 +56,7 @@ namespace dialogs {
 	class SessionSettingsDialog;
 	class ServerLogDialog;
 	class SettingsDialog;
+	class StartDialog;
 }
 namespace drawingboard {
 	class CanvasScene;
@@ -75,13 +77,14 @@ public:
 	MainWindow(bool restoreWindowPosition=true);
 	~MainWindow() override;
 
-	//! Host a session using the settings from the given dialog
-	void hostSession(dialogs::HostDialog *dlg);
+	void autoJoin(const QUrl &url);
+
+	void hostSession(
+		const QString &title, const QString &password, const QString &alias,
+		bool nsfm, const QString &announcementUrl, const QString &remoteAddress);
 
 	//! Connect to a host and join a session if full URL is provided.
 	void joinSession(const QUrl& url, const QString &autoRecordFilename=QString());
-
-	void showJoinDialog(const QUrl &defaultUrl = QUrl{}, bool browse = false);
 
 	//! Check if the current board can be replaced
 	bool canReplace() const;
@@ -89,8 +92,12 @@ public:
 	//! Save settings and exit
 	void exit();
 
+signals:
+	void windowReplacementFailed(MainWindow *win);
+
 public slots:
 	// Triggerable actions
+	dialogs::StartDialog *showStartDialog();
 	void showNew();
 	void open();
 	void open(const QUrl &url);
@@ -212,6 +219,8 @@ private:
 
 	MainWindow *replaceableWindow();
 
+	void connectStartDialog(dialogs::StartDialog *dlg);
+
 	void exportAnimation(const QString &path, AnimationSaverRunnable::SaveFn saveFn);
 
 	ActionBuilder makeAction(const char *name, const QString &text = QString{});
@@ -303,6 +312,7 @@ private:
 	bool m_wasSessionLocked;
 
 	Document *m_doc;
+	MainActions *m_ma;
 	bool m_exitAfterSave;
 };
 

@@ -4,9 +4,8 @@
 #include "desktop/widgets/macmenu.h"
 #include "desktop/mainwindow.h"
 #include "desktop/utils/recentfiles.h"
-#include "desktop/dialogs/newdialog.h"
-#include "desktop/dialogs/hostdialog.h"
-#include "desktop/dialogs/joindialog.h"
+#include "desktop/dialogs/startdialog.h"
+#include "desktop/utils/widgetutils.h"
 
 #include <QAction>
 #include <QMessageBox>
@@ -114,14 +113,8 @@ QAction *MacMenu::makeAction(QMenu *menu, const char *name, const QString &text,
 
 void MacMenu::newDocument()
 {
-	auto dlg = new dialogs::NewDialog;
-	dlg->setAttribute(Qt::WA_DeleteOnClose);
-	connect(dlg, &dialogs::NewDialog::accepted, [](const QSize &size, const QColor &color) {
-		MainWindow *mw = new MainWindow;
-		mw->newDocument(size, color);
-	});
-
-	dlg->show();
+	dialogs::StartDialog *dlg = showStartDialog();
+	dlg->showPage(dialogs::StartDialog::Create);
 }
 
 void MacMenu::openDocument()
@@ -138,35 +131,20 @@ void MacMenu::openRecent(QAction *action)
 
 void MacMenu::joinSession()
 {
-	showJoinDialog(false);
+	dialogs::StartDialog *dlg = showStartDialog();
+	dlg->showPage(dialogs::StartDialog::Join);
 }
 
 void MacMenu::browseSessions()
 {
-	showJoinDialog(true);
+	dialogs::StartDialog *dlg = showStartDialog();
+	dlg->showPage(dialogs::StartDialog::Browse);
 }
 
-void MacMenu::showJoinDialog(bool browse)
+dialogs::StartDialog *MacMenu::showStartDialog()
 {
-	auto dlg = new dialogs::JoinDialog(QUrl(), browse);
-	connect(dlg, &dialogs::JoinDialog::finished, [dlg](int i) {
-		if(i==QDialog::Accepted) {
-			QUrl url = dlg->getUrl();
-
-			if(!url.isValid()) {
-				// TODO add validator to prevent this from happening
-				QMessageBox::warning(nullptr, "Error", "Invalid address");
-				return;
-			}
-
-			dlg->rememberSettings();
-
-			MainWindow *mw = new MainWindow;
-			mw->joinSession(url, dlg->autoRecordFilename());
-		}
-		dlg->deleteLater();
-	});
-	dlg->show();
+	MainWindow *mw = new MainWindow;
+	return mw->showStartDialog();
 }
 
 /**
