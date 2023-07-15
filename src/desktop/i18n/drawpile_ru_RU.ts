@@ -407,7 +407,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Jump</source>
-        <translation type="unfinished"></translation>
+        <translation>Перейти</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -427,7 +427,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+13"/>
         <source>Position: </source>
-        <translation type="unfinished"></translation>
+        <translation>Позиция: </translation>
     </message>
     <message>
         <location line="+11"/>
@@ -595,7 +595,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+13"/>
         <source>Save Image Series</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить последовательность изображений</translation>
     </message>
     <message>
         <location line="+31"/>
@@ -616,17 +616,17 @@ to 64x64 pixels.</source>
         <location line="+96"/>
         <source>Untitled%1</source>
         <extracomment>%1 will be a file extension, like .ora or .png or something.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Untitled%1</translation>
     </message>
     <message>
         <location line="+108"/>
         <source>Missing File Extension</source>
-        <translation type="unfinished"></translation>
+        <translation>Отсутствует расширение файла</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>The file name you gave does not end with &apos;%1&apos; and could not be saved. Please provide a name with an extension.</source>
-        <translation type="unfinished"></translation>
+        <translation>Имя файла не заканчивается на &apos;%1&apos; и не может быть сохранено. Пожалуйста укажите имя файла с расширением.</translation>
     </message>
 </context>
 <context>
@@ -660,7 +660,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+13"/>
         <source>Expand: </source>
-        <translation type="unfinished"></translation>
+        <translation>Расширить: </translation>
     </message>
     <message>
         <location line="+23"/>
@@ -671,17 +671,17 @@ to 64x64 pixels.</source>
     <message>
         <location line="-40"/>
         <source>Size: </source>
-        <translation type="unfinished"></translation>
+        <translation>Размер: </translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Source:</source>
-        <translation type="unfinished"></translation>
+        <translation>Источник:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Режим:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -691,7 +691,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+13"/>
         <source>Close Gaps: </source>
-        <translation type="unfinished"></translation>
+        <translation>Закрыть зазоры: </translation>
     </message>
 </context>
 <context>
@@ -709,37 +709,37 @@ to 64x64 pixels.</source>
     <message>
         <location line="+20"/>
         <source>Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>Обновить</translation>
     </message>
     <message>
         <location line="+39"/>
         <source>Rewind</source>
-        <translation type="unfinished"></translation>
+        <translation>Вернуть</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Play</source>
-        <translation type="unfinished">Воспроизвести</translation>
+        <translation>Воспроизвести</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Frame:</source>
-        <translation type="unfinished">Кадр:</translation>
+        <translation>Кадр:</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Range</source>
-        <translation type="unfinished"></translation>
+        <translation>Диапазон</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Playback Speed: </source>
-        <translation type="unfinished"></translation>
+        <translation>Скорость воспроизведения: </translation>
     </message>
 </context>
 <context>
@@ -767,12 +767,12 @@ to 64x64 pixels.</source>
     <message>
         <location line="+23"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation>Не подходит для несовершеннолетних (NSFM)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Marks the session as having age-restricted content.</source>
-        <translation type="unfinished"></translation>
+        <translation>Обозначить сессию как содержащую контент для взрослых.</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -782,7 +782,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+27"/>
         <source>Host:</source>
-        <translation type="unfinished"></translation>
+        <translation>Хост:</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -873,12 +873,12 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>NSFM</source>
-        <translation type="unfinished"></translation>
+        <translation>NSFM</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Show sessions not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation>Показывать сессии не подходящие для несовершеннолетних (NSFM)</translation>
     </message>
     <message>
         <location line="+32"/>
@@ -911,22 +911,24 @@ to 64x64 pixels.</source>
         <source>Toggle between full range and subrange.
 Full range: [%1, %2]
 Subrange: [%3, %4]</source>
-        <translation type="unfinished"></translation>
+        <translation>Переключение между полным диапазоном и поддиапазоном.
+Весь диапазон: [%1, %2]
+Поддиапазон: [%3, %4]</translation>
     </message>
     <message>
         <location line="+175"/>
         <source>&amp;Select All</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбрать всё (&amp;S)</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>&amp;Step up</source>
-        <translation type="unfinished"></translation>
+        <translation>Шаг вверх (&amp;S)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Step &amp;down</source>
-        <translation type="unfinished"></translation>
+        <translation>Шаг вниз (&amp;D)</translation>
     </message>
 </context>
 <context>
@@ -949,7 +951,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+10"/>
         <source>Trail: </source>
-        <translation type="unfinished"></translation>
+        <translation>Шлейф: </translation>
     </message>
 </context>
 <context>
@@ -977,17 +979,17 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+10"/>
         <source>Blending Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Режим наложения:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Visibility:</source>
-        <translation type="unfinished"></translation>
+        <translation>Видимость:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Visible to you</source>
-        <translation type="unfinished"></translation>
+        <translation>Виден вам</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -997,17 +999,17 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+23"/>
         <source>Collaboration:</source>
-        <translation type="unfinished"></translation>
+        <translation>Совместная работа:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Default for new users</source>
-        <translation type="unfinished"></translation>
+        <translation>Слой по умолчанию для новых пользователей</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Created by:</source>
-        <translation type="unfinished"></translation>
+        <translation>Создан:</translation>
     </message>
 </context>
 <context>
@@ -1025,12 +1027,12 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+7"/>
         <source>Rename</source>
-        <translation type="unfinished"></translation>
+        <translation>Переименовать</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Delete</source>
-        <translation type="unfinished">Удалить</translation>
+        <translation>Удалить</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -1078,7 +1080,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="-55"/>
         <source>Show sessions not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation>Показывать сессии не подходящие для несовершеннолетних (NSFM)</translation>
     </message>
     <message>
         <location line="+169"/>
@@ -1548,12 +1550,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+153"/>
         <source>Merge Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Объединить слои</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Properties...</source>
-        <translation type="unfinished">Свойства...</translation>
+        <translation>Свойства...</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1563,7 +1565,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+8"/>
         <source>&amp;Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Слой (&amp;L)</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -1598,47 +1600,47 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+175"/>
         <source>Change Frame Count...</source>
-        <translation type="unfinished"></translation>
+        <translation>Изменить количество кадров.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Change Frame Rate (FPS)...</source>
-        <translation type="unfinished"></translation>
+        <translation>Изменить скорость смены кадров (FPS)...</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Set Blank Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставить пустой ключевой кадр</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Cut Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Вырезать ключевой кадр</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Скопировать ключевой кадр</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Paste Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставить ключевой кадр</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Key Frame Properties...</source>
-        <translation type="unfinished"></translation>
+        <translation>Свойства ключевого кадра...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Delete Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить ключевой кадр</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>New Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Новая дорожка</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1653,27 +1655,27 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>Duplicate Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Клонировать дорожку</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Rename Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Переименовать дорожку</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Delete Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить дорожку</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Next Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Следующий кадр</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Previous Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Предыдущий кадр</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1688,7 +1690,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+8"/>
         <source>&amp;Animation</source>
-        <translation type="unfinished"></translation>
+        <translation>Анимация (&amp;A)</translation>
     </message>
     <message>
         <location line="+74"/>
@@ -1718,37 +1720,37 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+35"/>
         <source>Developer Tools</source>
-        <translation type="unfinished"></translation>
+        <translation>Инструменты разработчика</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Set Artificial Lag...</source>
-        <translation type="unfinished"></translation>
+        <translation>Установить искусственный лаг...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Artifical Disconnect...</source>
-        <translation type="unfinished"></translation>
+        <translation>Искусственный дисконнект...</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Open Debug Dump...</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть отладочный дамп...</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Toggle Eraser Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Переключить режим ластика</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Toggle Recolor Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Переключить режим перекрашивания</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Reload Last Brush Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Загрузить последний пресет кисти (&amp;R)</translation>
     </message>
     <message>
         <location line="+167"/>
@@ -1808,7 +1810,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="-2536"/>
         <source>🙋 %1 joined!</source>
-        <translation type="unfinished"></translation>
+        <translation>🙋 %1 присоединяется!</translation>
     </message>
     <message>
         <location line="+351"/>
