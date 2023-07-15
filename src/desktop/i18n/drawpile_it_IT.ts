@@ -2358,7 +2358,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+2"/>
         <source>&amp;Color Picker</source>
-        <translation>&amp;Selettore del Colore</translation>
+        <translation>&amp;Contagocce</translation>
     </message>
     <message>
         <location line="+0"/>
