@@ -131,19 +131,6 @@ Browse::Browse(QWidget *parent)
 	m_filteredSessions->setFilterKeyColumn(-1);
 	m_filteredSessions->setSortRole(Qt::UserRole);
 
-	connect(
-		m_filterEdit, &QLineEdit::textChanged, m_filteredSessions,
-		&SessionFilterProxyModel::setFilterFixedString);
-	connect(
-		m_passwordBox, &QAbstractButton::toggled, m_filteredSessions,
-		&SessionFilterProxyModel::setShowPassworded);
-	connect(
-		m_nsfmBox, &QAbstractButton::toggled, m_filteredSessions,
-		&SessionFilterProxyModel::setShowNsfw);
-	connect(
-		m_closedBox, &QAbstractButton::toggled, m_filteredSessions,
-		&SessionFilterProxyModel::setShowClosed);
-
 	m_listing->setModel(m_filteredSessions);
 	m_listing->expandAll();
 
@@ -200,6 +187,23 @@ Browse::Browse(QWidget *parent)
 	settings.bindFilterLocked(m_passwordBox);
 	settings.bindFilterNsfm(m_nsfmBox);
 	settings.bindListServers(this, &Browse::updateListServers);
+
+	m_filteredSessions->setShowClosed(m_closedBox->isChecked());
+	m_filteredSessions->setShowPassworded(m_passwordBox->isChecked());
+	m_filteredSessions->setShowNsfw(m_nsfmBox->isChecked());
+
+	connect(
+		m_filterEdit, &QLineEdit::textChanged, m_filteredSessions,
+		&SessionFilterProxyModel::setFilterFixedString);
+	connect(
+		m_passwordBox, &QAbstractButton::toggled, m_filteredSessions,
+		&SessionFilterProxyModel::setShowPassworded);
+	connect(
+		m_nsfmBox, &QAbstractButton::toggled, m_filteredSessions,
+		&SessionFilterProxyModel::setShowNsfw);
+	connect(
+		m_closedBox, &QAbstractButton::toggled, m_filteredSessions,
+		&SessionFilterProxyModel::setShowClosed);
 }
 
 void Browse::activate()
