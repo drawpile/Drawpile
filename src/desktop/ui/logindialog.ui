@@ -19,6 +19,9 @@
      <property name="text">
       <string notr="true">&lt;i&gt;Connecting...&lt;/i&gt;</string>
      </property>
+     <property name="openExternalLinks">
+      <bool>true</bool>
+     </property>
      <property name="wordWrap">
       <bool>true</bool>
      </property>
