@@ -5,6 +5,8 @@
 
 #include <QWidget>
 
+class QMenu;
+
 namespace canvas { class UserListModel; }
 
 namespace drawdance {
@@ -28,6 +30,8 @@ public:
 	void focusInput();
 	void setAttached(bool isAttached);
 	void setUserList(canvas::UserListModel *userlist);
+
+	QMenu *externalMenu();
 
 public slots:
 	/**
@@ -70,7 +74,9 @@ private slots:
 	void chatTabSelected(int index);
 	void chatTabClosed(int index);
 	void showChatContextMenu(const QPoint &pos);
+	void contextMenuAboutToShow();
 	void setCompactMode(bool compact);
+	void attach();
 
 signals:
 	void message(const drawdance::Message &msg);

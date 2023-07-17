@@ -22,8 +22,7 @@
 #include <QIcon>
 #include <QMenu>
 #include <QRegularExpression>
-
-#include <memory>
+#include <QSignalBlocker>
 
 #ifdef Q_OS_ANDROID
 #	include "desktop/chat/chatlineeditandroid.h"
@@ -82,6 +81,11 @@ struct ChatWidget::Private {
 	ChatLineEdit *myline = nullptr;
 	ChatWidgetPinnedArea *pinned = nullptr;
 	QTabBar *tabs = nullptr;
+	QMenu *menu = nullptr;
+	QMenu *externalMenu = nullptr;
+	QAction *compactAction = nullptr;
+	QAction *attachAction = nullptr;
+	QAction *detachAction = nullptr;
 
 	QList<int> announcedUsers;
 	canvas::UserListModel *userlist = nullptr;
@@ -178,11 +182,39 @@ ChatWidget::ChatWidget(QWidget *parent)
 	d->chats[0] = Chat(this);
 	d->view->setDocument(d->chats[0].doc);
 
+	d->menu = d->view->createStandardContextMenu();
+	d->externalMenu = new QMenu{this};
+	d->menu->addSeparator();
+
+	QAction *clearAction = d->menu->addAction(tr("Clear"), this, &ChatWidget::clear);
+	d->externalMenu->addAction(clearAction);
+
+	if(!COMPACT_ONLY) {
+		d->compactAction = d->menu->addAction(tr("Compact mode"), this, &ChatWidget::setCompactMode);
+		d->compactAction->setCheckable(true);
+		d->compactAction->setChecked(d->compactMode);
+		d->externalMenu->addAction(d->compactAction);
+	}
+
+	if(ALLOW_DETACH) {
+		d->attachAction = d->menu->addAction(tr("Attach"), this, &ChatWidget::attach);
+		d->detachAction = d->menu->addAction(tr("Detach"), this, &ChatWidget::detachRequested);
+		d->externalMenu->addAction(d->attachAction);
+		d->externalMenu->addAction(d->detachAction);
+	}
+
+	connect(d->menu, &QMenu::aboutToShow, this, &ChatWidget::contextMenuAboutToShow);
+	connect(d->externalMenu, &QMenu::aboutToShow, this, &ChatWidget::contextMenuAboutToShow);
+
 	setPreserveMode(false);
 
 	dpApp().settings().bindCompactChat(this, [this](bool compact) {
 		if(!COMPACT_ONLY) {
 			d->compactMode = compact;
+		}
+		if(d->compactAction) {
+			QSignalBlocker blocker{d->compactAction};
+			d->compactAction->setChecked(compact);
 		}
 	});
 }
@@ -248,6 +280,11 @@ void ChatWidget::focusInput()
 void ChatWidget::setUserList(canvas::UserListModel *userlist)
 {
 	 d->userlist = userlist;
+}
+
+QMenu *ChatWidget::externalMenu()
+{
+	return d->externalMenu;
 }
 
 void ChatWidget::clear()
@@ -793,31 +830,15 @@ void ChatWidget::chatTabClosed(int index)
 
 void ChatWidget::showChatContextMenu(const QPoint &pos)
 {
-	auto menu = std::unique_ptr<QMenu>(d->view->createStandardContextMenu());
+	d->menu->exec(d->view->mapToGlobal(pos));
+}
 
-	menu->addSeparator();
-
-	menu->addAction(tr("Clear"), this, &ChatWidget::clear);
-
-	if(!COMPACT_ONLY) {
-		auto compact = menu->addAction(tr("Compact mode"), this, &ChatWidget::setCompactMode);
-		compact->setCheckable(true);
-		compact->setChecked(d->compactMode);
-	}
-
+void ChatWidget::contextMenuAboutToShow()
+{
 	if(ALLOW_DETACH) {
-		if(d->isAttached) {
-			menu->addAction(tr("Detach"), this, &ChatWidget::detachRequested);
-		} else {
-			QWidget *win = parentWidget();
-			while(win->parent() != nullptr)
-				win = win->parentWidget();
-
-			menu->addAction(tr("Attach"), win, &QWidget::close);
-		}
+		d->attachAction->setVisible(!d->isAttached);
+		d->detachAction->setVisible(d->isAttached);
 	}
-
-	menu->exec(d->view->mapToGlobal(pos));
 }
 
 void ChatWidget::setCompactMode(bool compact)
@@ -825,6 +846,15 @@ void ChatWidget::setCompactMode(bool compact)
 	if(!COMPACT_ONLY) {
 		dpApp().settings().setCompactChat(compact);
 	}
+}
+
+void ChatWidget::attach()
+{
+	QWidget *win = parentWidget();
+	while(win->parent() != nullptr) {
+		win = win->parentWidget();
+	}
+	win->close();
 }
 
 void ChatWidget::resizeEvent(QResizeEvent *)

@@ -1896,7 +1896,6 @@ void MainWindow::onServerDisconnected(const QString &message, const QString &err
 	m_admintools->setEnabled(false);
 	m_modtools->setEnabled(false);
 	m_sessionSettings->close();
-	m_chatbox->setConnected(false);
 
 	// Re-enable UI
 	m_view->setEnabled(true);
@@ -1960,7 +1959,6 @@ void MainWindow::onServerLogin(bool join, const QString &joinPassword)
 	m_modtools->setEnabled(m_doc->client()->isModerator());
 	getAction("reportabuse")->setEnabled(m_doc->client()->serverSupportsReports());
 	getAction("invitesession")->setEnabled(true);
-	m_chatbox->setConnected(true);
 	if(m_chatbox->isCollapsed()) {
 		getAction("togglechat")->trigger();
 	}
@@ -3422,7 +3420,7 @@ void MainWindow::setupActions()
 	QAction *logout = makeAction("leavesession", tr("&Leave")).statusTip(tr("Leave this drawing session")).noDefaultShortcut().icon("network-disconnect").disabled();
 
 	QAction *serverlog = makeAction("viewserverlog", tr("Event Log")).noDefaultShortcut();
-	QAction *sessionSettings = makeAction("sessionsettings", tr("Settings...")).noDefaultShortcut().menuRole(QAction::NoRole).disabled();
+	QAction *sessionSettings = makeAction("sessionsettings", tr("Settings...")).statusTip(tr("Change session settings, permissions, announcements and bans")).icon("configure").noDefaultShortcut().menuRole(QAction::NoRole).disabled();
 	QAction *sessionUndoDepthLimit = makeAction("sessionundodepthlimit").noDefaultShortcut().disabled();
 
 	QAction *gainop = makeAction("gainop", tr("Become Operator...")).noDefaultShortcut().disabled();
@@ -3479,7 +3477,7 @@ void MainWindow::setupActions()
 	sessionmenu->addAction(sessionUndoDepthLimit);
 	sessionmenu->addAction(locksession);
 
-	m_chatbox->setActions(host, join, browse, invite);
+	m_chatbox->setActions(invite, sessionSettings);
 
 	//
 	// Tools menu and toolbar

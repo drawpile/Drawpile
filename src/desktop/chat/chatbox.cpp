@@ -4,6 +4,7 @@
 #include "desktop/chat/chatwidget.h"
 #include "desktop/chat/chatwindow.h"
 #include "desktop/chat/useritemdelegate.h"
+#include "desktop/widgets/groupedtoolbutton.h"
 #include "libclient/document.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/userlist.h"
@@ -34,18 +35,33 @@ ChatBox::ChatBox(Document *doc, QWidget *parent)
 	sidebarLayout->setSpacing(0);
 	sidebar->setLayout(sidebarLayout);
 
-	QVBoxLayout *buttonsLayout = new QVBoxLayout;
+	QHBoxLayout *buttonsLayout = new QHBoxLayout;
 	buttonsLayout->setContentsMargins(0, 0, 0, 0);
+	buttonsLayout->setSpacing(0);
 	sidebarLayout->addLayout(buttonsLayout);
 
-	m_hostButton = new QPushButton{this};
-	m_joinButton = new QPushButton{this};
-	m_browseButton = new QPushButton{this};
-	m_inviteButton = new QPushButton{this};
-	buttonsLayout->addWidget(m_hostButton);
-	buttonsLayout->addWidget(m_joinButton);
-	buttonsLayout->addWidget(m_browseButton);
+	buttonsLayout->addStretch();
+
+	m_inviteButton = new GroupedToolButton{GroupedToolButton::GroupLeft, this};
+	m_inviteButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+	m_inviteButton->setText(tr("Invite"));
 	buttonsLayout->addWidget(m_inviteButton);
+
+	m_sessionSettingsButton = new GroupedToolButton{GroupedToolButton::GroupCenter, this};
+	m_sessionSettingsButton->setIcon(QIcon::fromTheme("configure"));
+	m_sessionSettingsButton->setText(tr("Session"));
+	buttonsLayout->addWidget(m_sessionSettingsButton);
+
+	m_chatMenuButton = new GroupedToolButton{GroupedToolButton::GroupRight, this};
+	m_chatMenuButton->setIcon(QIcon::fromTheme("edit-comment"));
+	m_chatMenuButton->setText(tr("Chat"));
+	m_chatMenuButton->setStatusTip(tr("Show chat options"));
+	m_chatMenuButton->setToolTip(m_chatMenuButton->statusTip());
+	m_chatMenuButton->setPopupMode(QToolButton::InstantPopup);
+	m_chatMenuButton->setMenu(m_chatWidget->externalMenu());
+	buttonsLayout->addWidget(m_chatMenuButton);
+
+	buttonsLayout->addStretch();
 
 	m_userList = new QListView(this);
 	m_userList->setSelectionMode(QListView::NoSelection);
@@ -85,17 +101,15 @@ ChatBox::ChatBox(Document *doc, QWidget *parent)
 	connect(m_userItemDelegate, &widgets::UserItemDelegate::requestUserInfo, this, &ChatBox::requestUserInfo);
 }
 
-void ChatBox::setActions(QAction *hostAction, QAction *joinAction, QAction *browseAction, QAction *inviteAction)
+void ChatBox::setActions(QAction *inviteAction, QAction *sessionSettingsAction)
 {
-	const QPair<QAction *, QPushButton *> pairs[] = {
-		{hostAction, m_hostButton},
-		{joinAction, m_joinButton},
-		{browseAction, m_browseButton},
+	const QPair<QAction *, QAbstractButton *> pairs[] = {
 		{inviteAction, m_inviteButton},
+		{sessionSettingsAction, m_sessionSettingsButton},
 	};
-	for(const QPair<QAction *, QPushButton *> &pair : pairs) {
+	for(const QPair<QAction *, QAbstractButton *> &pair : pairs) {
 		QAction *action = pair.first;
-		QPushButton *button = pair.second;
+		QAbstractButton *button = pair.second;
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 		connect(action, &QAction::enabledChanged, button, &QWidget::setEnabled);
 #else
@@ -105,19 +119,10 @@ void ChatBox::setActions(QAction *hostAction, QAction *joinAction, QAction *brow
 #endif
 		connect(button, &QAbstractButton::clicked, action, &QAction::trigger);
 		button->setIcon(action->icon());
-		button->setText(action->text());
+		button->setStatusTip(action->statusTip());
 		button->setToolTip(action->statusTip());
-		button->setVisible(action->isEnabled());
+		button->setEnabled(action->isEnabled());
 	}
-	setConnected(inviteAction->isEnabled());
-}
-
-void ChatBox::setConnected(bool connected)
-{
-	m_hostButton->setVisible(!connected);
-	m_joinButton->setVisible(!connected);
-	m_browseButton->setVisible(!connected);
-	m_inviteButton->setVisible(connected);
 }
 
 void ChatBox::onCanvasChanged(canvas::CanvasModel *canvas)
