@@ -3525,12 +3525,14 @@ void MainWindow::setupActions()
 	QAction *artificialDisconnect = makeAction("artificialdisconnect", tr("Artifical Disconnect..."));
 	QAction *debugDump = makeAction("debugdump", tr("Record Debug Dumps")).checkable();
 	QAction *openDebugDump = makeAction("opendebugdump", tr("Open Debug Dump..."));
+	QAction *showNetStats = makeAction("shownetstats", tr("Statistics…"));
 	devtoolsmenu->addAction(tableteventlog);
 	devtoolsmenu->addAction(profile);
 	devtoolsmenu->addAction(artificialLag);
 	devtoolsmenu->addAction(artificialDisconnect);
 	devtoolsmenu->addAction(debugDump);
 	devtoolsmenu->addAction(openDebugDump);
+	devtoolsmenu->addAction(showNetStats);
 	connect(devtoolsmenu, &QMenu::aboutToShow, this, &MainWindow::updateDevToolsActions);
 	connect(tableteventlog, &QAction::triggered, this, &MainWindow::toggleTabletEventLog);
 	connect(profile, &QAction::triggered, this, &MainWindow::toggleProfile);
@@ -3538,6 +3540,7 @@ void MainWindow::setupActions()
 	connect(artificialDisconnect, &QAction::triggered, this, &MainWindow::setArtificialDisconnect);
 	connect(debugDump, &QAction::triggered, this, &MainWindow::toggleDebugDump);
 	connect(openDebugDump, &QAction::triggered, this, &MainWindow::openDebugDump);
+	connect(showNetStats, &QAction::triggered, m_netstatus, &widgets::NetStatus::showNetStats);
 
 	QAction *currentEraseMode = makeAction("currenterasemode", tr("Toggle Eraser Mode")).shortcut("Ctrl+E");
 	QAction *currentRecolorMode = makeAction("currentrecolormode", tr("Toggle Recolor Mode")).shortcut("Shift+E");

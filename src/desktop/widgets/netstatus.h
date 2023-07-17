@@ -76,10 +76,11 @@ public slots:
 
 	void discoverAddress();
 
+	void showNetStats();
+
 private slots:
 	void externalIpDiscovered(const QString &ip);
 	void showCertificate();
-	void showNetStats();
 
 private:
 	void showCGNAlert();
