@@ -308,7 +308,7 @@ dialogs::StartDialog::Entry getStartDialogEntry(const QString &page)
 		}
 		qWarning("Unknown start-page '%s'", qUtf8Printable(page));
 	}
-	return dialogs::StartDialog::Entry::Welcome;
+	return dialogs::StartDialog::Entry::Guess;
 }
 
 void DrawpileApp::openStart(const QString &page)

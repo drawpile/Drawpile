@@ -1194,13 +1194,19 @@ void MainWindow::connectStartDialog(dialogs::StartDialog *dlg)
 	}));
 }
 
+void MainWindow::start()
+{
+	dialogs::StartDialog *dlg = showStartDialog();
+	dlg->showPage(dialogs::StartDialog::Entry::Guess);
+}
+
 /**
  * Show the "new document" dialog
  */
 void MainWindow::showNew()
 {
 	dialogs::StartDialog *dlg = showStartDialog();
-	dlg->showPage(dialogs::StartDialog::Create);
+	dlg->showPage(dialogs::StartDialog::Entry::Create);
 }
 
 void MainWindow::newDocument(const QSize &size, const QColor &background)
@@ -2910,7 +2916,7 @@ void MainWindow::setupActions()
 	connect(exportAnimationFrames, &QAction::triggered, this, &MainWindow::exportAnimationFrames);
 #endif
 	connect(record, &QAction::triggered, this, &MainWindow::toggleRecording);
-	connect(start, &QAction::triggered, this, &MainWindow::showStartDialog);
+	connect(start, &QAction::triggered, this, &MainWindow::start);
 
 #ifdef Q_OS_MACOS
 	connect(closefile, SIGNAL(triggered()), this, SLOT(close()));

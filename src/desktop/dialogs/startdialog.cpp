@@ -12,6 +12,7 @@
 #include "desktop/filewrangler.h"
 #include "desktop/main.h"
 #include <QButtonGroup>
+#include <QDate>
 #include <QDialogButtonBox>
 #include <QFrame>
 #include <QHBoxLayout>
@@ -148,6 +149,7 @@ StartDialog::StartDialog(QWidget *parent)
 		m_buttons[i] = button;
 
 		if(def.page) {
+			def.page->setProperty(ENTRY_PROPERTY_KEY, i);
 			button->setCheckable(true);
 			m_stack->addWidget(def.page);
 			connect(
@@ -241,14 +243,19 @@ StartDialog::StartDialog(QWidget *parent)
 
 	QSize lastSize = dpApp().settings().lastStartDialogSize();
 	resize(lastSize.isValid() ? lastSize : QSize{800, 450});
+
+	connect(
+		m_stack, &QStackedWidget::currentChanged, this,
+		&StartDialog::rememberLastPage);
 }
 
 void StartDialog::showPage(Entry entry)
 {
-	Q_ASSERT(entry >= 0);
-	Q_ASSERT(entry < Entry::Count);
-	Q_ASSERT(m_buttons[entry]);
-	m_buttons[entry]->click();
+	if(entry >= 0 && entry < Entry::Count) {
+		m_buttons[entry]->click();
+	} else {
+		guessPage();
+	}
 }
 
 void StartDialog::autoJoin(const QUrl &url)
@@ -368,6 +375,21 @@ void StartDialog::hostRequested(
 	emit host(title, password, alias, nsfm, announcementUrl, remoteAddress);
 }
 
+void StartDialog::rememberLastPage(int i)
+{
+	QWidget *page = m_stack->widget(i);
+	if(page) {
+		bool ok;
+		int entry = page->property(ENTRY_PROPERTY_KEY).toInt(&ok);
+		if(ok && entry >= 0 && entry < Entry::Count) {
+			desktop::settings::Settings &settings = dpApp().settings();
+			settings.setLastStartDialogPage(entry);
+			settings.setLastStartDialogDate(
+				QDate::currentDate().toString(Qt::ISODate));
+		}
+	}
+}
+
 void StartDialog::entryClicked(Entry entry)
 {
 	switch(entry) {
@@ -404,6 +426,19 @@ void StartDialog::entryToggled(startdialog::Page *page, bool checked)
 		page->activate();
 		setUpdatesEnabled(true);
 	}
+}
+
+void StartDialog::guessPage()
+{
+	const desktop::settings::Settings &settings = dpApp().settings();
+	int lastPage = settings.lastStartDialogPage();
+	QDate lastDate =
+		QDate::fromString(settings.lastStartDialogDate(), Qt::ISODate);
+	bool lastPageValid =
+		lastPage >= 0 && lastPage < Entry::Count && lastDate.isValid() &&
+		lastDate.daysTo(QDate::currentDate()) < MAX_LAST_PAGE_REMEMBER_DAYS &&
+		m_buttons[lastPage]->isCheckable();
+	showPage(lastPageValid ? Entry(lastPage) : Entry::Welcome);
 }
 
 void StartDialog::addRecentHost(const QUrl &url, bool join)

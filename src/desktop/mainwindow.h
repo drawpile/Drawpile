@@ -93,12 +93,14 @@ public:
 	//! Save settings and exit
 	void exit();
 
+	dialogs::StartDialog *showStartDialog();
+
 signals:
 	void windowReplacementFailed(MainWindow *win);
 
 public slots:
 	// Triggerable actions
-	dialogs::StartDialog *showStartDialog();
+	void start();
 	void showNew();
 	void open();
 	void open(const QUrl &url);

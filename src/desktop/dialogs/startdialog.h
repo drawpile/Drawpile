@@ -31,6 +31,7 @@ public:
 		Layouts,
 		Preferences,
 		Count,
+		Guess = Count,
 	};
 	Q_ENUM(Entry)
 
@@ -71,10 +72,16 @@ private slots:
 		const QString &title, const QString &password, const QString &alias,
 		bool nsfm, const QString &announcementUrl,
 		const QString &remoteAddress);
+	void rememberLastPage(int i);
 
 private:
+	static constexpr char ENTRY_PROPERTY_KEY[] = "startdialogentry";
+	static constexpr int MAX_LAST_PAGE_REMEMBER_DAYS = 3;
+
 	void entryClicked(Entry entry);
 	void entryToggled(startdialog::Page *page, bool checked);
+
+	void guessPage();
 
 	static void addRecentHost(const QUrl &url, bool join);
 
