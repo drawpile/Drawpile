@@ -11,6 +11,7 @@
 #include <QScrollArea>
 #include <QSignalBlocker>
 #include <QSpacerItem>
+#include <QUrlQuery>
 #include <QVBoxLayout>
 
 namespace dialogs {
@@ -197,6 +198,15 @@ QString Join::fixUpInviteAddress(const QString &address)
 		url.setPort(-1);
 	}
 	url.setPath(QStringLiteral("/%1").arg(match.captured(3)));
+
+	QString password = url.fragment();
+	if(!password.isEmpty()) {
+		QUrlQuery query{url};
+		query.addQueryItem(QStringLiteral("p"), password);
+		url.setQuery(query);
+		url.setFragment(QString{});
+	}
+
 	return url.toString();
 }
 
