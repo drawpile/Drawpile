@@ -212,7 +212,6 @@ void SessionSettingsDialog::onOperatorModeChanged(bool op)
 		m_ui->maxUsers,
 		m_ui->denyJoins,
 		m_ui->preserveChat,
-		m_ui->nsfm,
 		m_ui->deputies,
 		m_ui->sessionPassword,
 		m_ui->opword,
@@ -229,6 +228,7 @@ void SessionSettingsDialog::onOperatorModeChanged(bool op)
 
 	m_ui->persistent->setEnabled(m_canPersist && op);
 	m_ui->autoresetThreshold->setEnabled(m_canAutoreset && op);
+	m_ui->nsfm->setEnabled(!m_doc->isSessionForceNsfm() && op);
 	m_ui->authOnly->setEnabled(op && (m_isAuth || m_ui->authOnly->isChecked()));
 	m_ui->permissionPresets->setWriteOnly(!op);
 	updatePasswordLabel(m_ui->sessionPassword);
@@ -371,7 +371,7 @@ void SessionSettingsDialog::updateNsfmCheckbox(bool)
 		m_ui->nsfm->setEnabled(false);
 		m_ui->nsfm->setChecked(true);
 	} else {
-		m_ui->nsfm->setEnabled(true);
+		m_ui->nsfm->setEnabled(m_op);
 		m_ui->nsfm->setChecked(m_doc->isSessionNsfm());
 	}
 }
