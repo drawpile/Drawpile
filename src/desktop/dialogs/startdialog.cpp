@@ -11,6 +11,7 @@
 #include "desktop/dialogs/startdialog/welcome.h"
 #include "desktop/filewrangler.h"
 #include "desktop/main.h"
+#include "libclient/utils/news.h"
 #include <QButtonGroup>
 #include <QDate>
 #include <QDialogButtonBox>
@@ -124,11 +125,19 @@ StartDialog::StartDialog(QWidget *parent)
 	m_recordButton =
 		new QPushButton{QIcon::fromTheme("media-record"), tr("Record")};
 	m_recordButton->setCheckable(true);
+	m_recordButton->hide();
 	buttonLayout->addWidget(m_recordButton);
 
 	m_addServerButton =
 		new QPushButton{QIcon::fromTheme("list-add"), tr("Add Server")};
+	m_addServerButton->hide();
 	buttonLayout->addWidget(m_addServerButton);
+
+	m_checkForUpdatesButton = new QPushButton{
+		QIcon::fromTheme("update-none"), tr("Check for Updates")};
+	m_checkForUpdatesButton->setEnabled(false);
+	m_checkForUpdatesButton->hide();
+	buttonLayout->addWidget(m_checkForUpdatesButton);
 
 	QDialogButtonBox *buttons = new QDialogButtonBox;
 	buttonLayout->addWidget(buttons);
@@ -189,6 +198,9 @@ StartDialog::StartDialog(QWidget *parent)
 		m_recordButton, &QAbstractButton::toggled, this,
 		&StartDialog::toggleRecording);
 	connect(
+		m_checkForUpdatesButton, &QAbstractButton::clicked, this,
+		&StartDialog::checkForUpdates);
+	connect(
 		m_okButton, &QAbstractButton::clicked, this, &StartDialog::okClicked);
 
 	connect(
@@ -247,6 +259,16 @@ StartDialog::StartDialog(QWidget *parent)
 	connect(
 		m_stack, &QStackedWidget::currentChanged, this,
 		&StartDialog::rememberLastPage);
+
+	m_news = new utils::News{this};
+	connect(
+		m_news, &utils::News::fetchInProgress, this,
+		&StartDialog::updateCheckForUpdatesButton);
+	connect(
+		m_news, &utils::News::newsAvailable, welcomePage,
+		&startdialog::Welcome::setNews);
+	updateCheckForUpdatesButton(false);
+	m_news->check(); // TODO: allow toggling off the news check.
 }
 
 void StartDialog::showPage(Entry entry)
@@ -306,6 +328,33 @@ void StartDialog::toggleRecording(bool checked)
 	}
 }
 
+void StartDialog::checkForUpdates()
+{
+	m_news->forceCheck(CHECK_FOR_UPDATES_DELAY_MSEC);
+}
+
+void StartDialog::updateCheckForUpdatesButton(bool inProgress)
+{
+	QString text;
+	if(inProgress) {
+		text = tr("Checking…");
+	} else {
+		QDate date = m_news->lastCheck();
+		if(date.isValid()) {
+			long long days = date.daysTo(QDate::currentDate());
+			if(days == 0) {
+				text = tr("Last check: today.");
+			} else {
+				text = tr("Last check: %n day(s) ago.", nullptr, days);
+			}
+		} else {
+			text = tr("Last check: never.");
+		}
+	}
+	m_checkForUpdatesButton->setDisabled(inProgress);
+	m_checkForUpdatesButton->setToolTip(text);
+}
+
 void StartDialog::hideLinks()
 {
 	m_linksSeparator->hide();
@@ -314,6 +363,7 @@ void StartDialog::hideLinks()
 
 void StartDialog::showWelcomeButtons()
 {
+	m_checkForUpdatesButton->show();
 	m_cancelButton->hide();
 	m_closeButton->show();
 }
@@ -415,6 +465,7 @@ void StartDialog::entryToggled(startdialog::Page *page, bool checked)
 		m_links->show();
 		m_addServerButton->hide();
 		m_recordButton->hide();
+		m_checkForUpdatesButton->hide();
 		m_okButton->hide();
 		m_cancelButton->show();
 		m_closeButton->hide();

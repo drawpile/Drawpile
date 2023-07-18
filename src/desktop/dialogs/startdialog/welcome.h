@@ -4,7 +4,8 @@
 #define DESKTOP_DIALOGS_STARTDIALOG_WELCOME_H
 
 #include "desktop/dialogs/startdialog/page.h"
-#include <QWidget>
+
+class QTextBrowser;
 
 namespace dialogs {
 namespace startdialog {
@@ -15,8 +16,14 @@ public:
 	Welcome(QWidget *parent = nullptr);
 	void activate() override;
 
+public slots:
+	void setNews(const QString &content);
+
 signals:
 	void showButtons();
+
+private:
+	QTextBrowser *m_browser;
 };
 
 }

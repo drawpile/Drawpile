@@ -161,6 +161,8 @@ target_sources(dpclient PRIVATE
 	utils/colorscheme.h
 	utils/customshortcutmodel.cpp
 	utils/customshortcutmodel.h
+	utils/database.cpp
+	utils/database.h
 	utils/debouncetimer.cpp
 	utils/debouncetimer.h
 	utils/funstuff.cpp
@@ -179,6 +181,8 @@ target_sources(dpclient PRIVATE
 	utils/listservermodel.h
 	utils/logging.cpp
 	utils/logging.h
+	utils/news.cpp
+	utils/news.h
 	utils/newversion.cpp
 	utils/newversion.h
 	utils/sessionfilterproxymodel.cpp

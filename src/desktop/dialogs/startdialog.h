@@ -11,6 +11,10 @@ class QIcon;
 class QStackedWidget;
 class QUrl;
 
+namespace utils {
+class News;
+}
+
 namespace dialogs {
 
 namespace startdialog {
@@ -60,6 +64,8 @@ private slots:
 	void addListServer();
 	void addListServerUrl(const QUrl &url);
 	void toggleRecording(bool checked);
+	void checkForUpdates();
+	void updateCheckForUpdatesButton(bool inProgress);
 	void hideLinks();
 	void showWelcomeButtons();
 	void showJoinButtons();
@@ -77,6 +83,7 @@ private slots:
 private:
 	static constexpr char ENTRY_PROPERTY_KEY[] = "startdialogentry";
 	static constexpr int MAX_LAST_PAGE_REMEMBER_DAYS = 3;
+	static constexpr int CHECK_FOR_UPDATES_DELAY_MSEC = 1000;
 
 	void entryClicked(Entry entry);
 	void entryToggled(startdialog::Page *page, bool checked);
@@ -90,12 +97,15 @@ private:
 	startdialog::Links *m_links;
 	QAbstractButton *m_addServerButton;
 	QAbstractButton *m_recordButton;
+	QAbstractButton *m_checkForUpdatesButton;
 	QAbstractButton *m_okButton;
 	QAbstractButton *m_cancelButton;
 	QAbstractButton *m_closeButton;
 	startdialog::Page *m_currentPage = nullptr;
 	QAbstractButton *m_buttons[Entry::Count];
 	QString m_recordingFilename;
+	utils::News *m_news;
+	QTimer *m_checkForUpdatesTimer;
 };
 
 }

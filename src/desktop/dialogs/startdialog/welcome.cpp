@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "desktop/dialogs/startdialog/welcome.h"
+#include "desktop/main.h"
+#include "libclient/utils/news.h"
 
 #include <QTextBrowser>
 #include <QVBoxLayout>
@@ -15,23 +17,21 @@ Welcome::Welcome(QWidget *parent)
 	layout->setContentsMargins(0, 0, 0, 0);
 	setLayout(layout);
 
-	QTextBrowser *browser = new QTextBrowser;
-	browser->setOpenExternalLinks(true);
-	layout->addWidget(browser);
-
-	browser->setText(QStringLiteral(
-		"<h1>New Start Dialog</h1><p>There'll be news and update notifications "
-		"here later, but for now enjoy this placeholder text.</p><p>This "
-		"dialog will now show up on startup to give you quick access to the "
-		"various ways of starting a drawing session through the buttons on the "
-		"left, rather than just dumping you into a blank document and making "
-		"you pick through the menus.</p>"));
+	m_browser = new QTextBrowser;
+	m_browser->setOpenExternalLinks(true);
+	layout->addWidget(m_browser);
 }
 
 void Welcome::activate()
 {
 	emit showButtons();
 }
+
+void Welcome::setNews(const QString &content)
+{
+	m_browser->setText(content);
+}
+
 
 }
 }

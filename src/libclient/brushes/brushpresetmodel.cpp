@@ -2,7 +2,7 @@
 
 #include "libclient/brushes/brushpresetmodel.h"
 #include "libclient/brushes/brush.h"
-
+#include "libclient/utils/database.h"
 #include "libshared/util/paths.h"
 #include "libshared/util/qtcompat.h"
 #include "libclient/drawdance/ziparchive.h"
@@ -44,8 +44,12 @@ struct OldPresetFolder {
 class BrushPresetTagModel::Private {
 public:
 	Private()
-		: m_db(getDbInstance())
+		: m_db{utils::db::sqlite(
+			QStringLiteral("drawpile_brush_preset_connection"),
+			QStringLiteral("brush presets"), QStringLiteral("brushes.db"),
+			QStringLiteral("initialbrushpresets.db"))}
 	{
+		initDb();
 	}
 
 	int createTag(const QString &name)
@@ -320,7 +324,7 @@ public:
 	}
 
 private:
-	QSqlDatabase &m_db;
+	QSqlDatabase m_db;
 
 	int readInt(const QString &sql,const QList<QVariant> &params = {}, int defaultValue = 0)
 	{
@@ -354,75 +358,12 @@ private:
 
 	static bool exec(QSqlQuery &query, const QString &sql, const QList<QVariant> &params = {})
 	{
-		if(!query.prepare(sql)) {
-			qWarning("Error preparing statement '%s': %s", qPrintable(sql),
-				qPrintable(query.lastError().text()));
-			return false;
-		}
-
-		for (const QVariant &param : params) {
-			query.addBindValue(param);
-		}
-
-		if(!query.exec()) {
-			qWarning("Error executing statement '%s': %s", qPrintable(sql),
-				qPrintable(query.lastError().text()));
-			return false;
-		}
-		return true;
+		return utils::db::exec(query, sql, params);
 	}
 
-
-	static void createDbFile(const QString &databasePath)
+	void initDb()
 	{
-		QFileInfo fileInfo(databasePath);
-		if(fileInfo.exists()) {
-			qDebug("Database file '%s' already exists", qUtf8Printable(databasePath));
-		} else {
-			QString initialPath = utils::paths::locateDataFile("initialbrushpresets.db");
-			if(initialPath.isEmpty()) {
-				qWarning("No initial brush preset database found");
-			} else {
-				QFile initialFile{initialPath};
-				if(initialFile.copy(databasePath)) {
-					qDebug("Created brush database '%s' from '%s'",
-						qUtf8Printable(databasePath), qUtf8Printable(initialPath));
-				} else {
-					qWarning("Could not create brush database '%s' from '%s': %s",
-						qUtf8Printable(databasePath), qUtf8Printable(initialPath),
-						qUtf8Printable(initialFile.errorString()));
-				}
-			}
-		}
-	}
-
-	static void setDbFilePermissions(const QString &databasePath)
-	{
-		QFile databaseFile{databasePath};
-		QFlags<QFileDevice::Permission> readWritePermissions =
-			QFileDevice::ReadUser | QFileDevice::WriteUser;
-		if((databaseFile.permissions() & readWritePermissions) == readWritePermissions) {
-			qDebug("Permissions of '%s' are already read-write", qUtf8Printable(databasePath));
-		} else {
-			if(databaseFile.setPermissions(readWritePermissions)) {
-				qDebug("Set permissions of '%s' to read-write", qUtf8Printable(databasePath));
-			} else {
-				qWarning("Could not set permissions of '%s' to read-write: %s",
-					qUtf8Printable(databasePath), qUtf8Printable(databaseFile.errorString()));
-			}
-		}
-	}
-
-	static QString createDb()
-	{
-		QString databasePath = utils::paths::writablePath("brushes.db");
-		createDbFile(databasePath);
-		setDbFilePermissions(databasePath);
-		return databasePath;
-	}
-
-	static void initDb(QSqlQuery &query)
-	{
+		QSqlQuery query(m_db);
 		exec(query, "pragma foreign_keys = on");
 		exec(query,
 			"create table if not exists state (\n"
@@ -453,25 +394,6 @@ private:
 		exec(query,
 			"create index if not exists tag_name_idx\n"
 			"	ON tag(LOWER(name))");
-	}
-
-	static QSqlDatabase &getDbInstance()
-	{
-		static QSqlDatabase db;
-		if(!db.isValid()) {
-			QString databasePath = createDb();
-			db = QSqlDatabase::addDatabase(
-				"QSQLITE", QStringLiteral("drawpile_brush_preset_connection"));
-			db.setDatabaseName(databasePath);
-			if(db.open()) {
-				QSqlQuery query(db);
-				initDb(query);
-			} else {
-				qWarning("Can't open brush preset model database at '%s'",
-					qPrintable(db.databaseName()));
-			}
-		}
-		return db;
 	}
 };
 
