@@ -81,8 +81,8 @@ struct ChatWidget::Private {
 	ChatLineEdit *myline = nullptr;
 	ChatWidgetPinnedArea *pinned = nullptr;
 	QTabBar *tabs = nullptr;
-	QMenu *menu = nullptr;
 	QMenu *externalMenu = nullptr;
+	QAction *clearAction = nullptr;
 	QAction *compactAction = nullptr;
 	QAction *attachAction = nullptr;
 	QAction *detachAction = nullptr;
@@ -182,28 +182,24 @@ ChatWidget::ChatWidget(QWidget *parent)
 	d->chats[0] = Chat(this);
 	d->view->setDocument(d->chats[0].doc);
 
-	d->menu = d->view->createStandardContextMenu();
 	d->externalMenu = new QMenu{this};
-	d->menu->addSeparator();
 
-	QAction *clearAction = d->menu->addAction(tr("Clear"), this, &ChatWidget::clear);
-	d->externalMenu->addAction(clearAction);
+	d->clearAction = d->externalMenu->addAction(tr("Clear"), this, &ChatWidget::clear);
 
 	if(!COMPACT_ONLY) {
-		d->compactAction = d->menu->addAction(tr("Compact mode"), this, &ChatWidget::setCompactMode);
+		d->compactAction = d->externalMenu->addAction(
+			tr("Compact mode"), this, &ChatWidget::setCompactMode);
 		d->compactAction->setCheckable(true);
 		d->compactAction->setChecked(d->compactMode);
-		d->externalMenu->addAction(d->compactAction);
 	}
 
 	if(ALLOW_DETACH) {
-		d->attachAction = d->menu->addAction(tr("Attach"), this, &ChatWidget::attach);
-		d->detachAction = d->menu->addAction(tr("Detach"), this, &ChatWidget::detachRequested);
-		d->externalMenu->addAction(d->attachAction);
-		d->externalMenu->addAction(d->detachAction);
+		d->attachAction = d->externalMenu->addAction(
+			tr("Attach"), this, &ChatWidget::attach);
+		d->detachAction = d->externalMenu->addAction(
+			tr("Detach"), this, &ChatWidget::detachRequested);
 	}
 
-	connect(d->menu, &QMenu::aboutToShow, this, &ChatWidget::contextMenuAboutToShow);
 	connect(d->externalMenu, &QMenu::aboutToShow, this, &ChatWidget::contextMenuAboutToShow);
 
 	setPreserveMode(false);
@@ -830,7 +826,20 @@ void ChatWidget::chatTabClosed(int index)
 
 void ChatWidget::showChatContextMenu(const QPoint &pos)
 {
-	d->menu->exec(d->view->mapToGlobal(pos));
+	contextMenuAboutToShow();
+	QMenu *menu = d->view->createStandardContextMenu();
+	menu->addSeparator();
+
+	QAction *actions[] = {
+		d->clearAction, d->compactAction, d->attachAction, d->detachAction};
+	for(QAction *action : actions) {
+		if(action && action->isVisible()) {
+			menu->addAction(action);
+		}
+	}
+
+	menu->exec(d->view->mapToGlobal(pos));
+	delete menu;
 }
 
 void ChatWidget::contextMenuAboutToShow()
