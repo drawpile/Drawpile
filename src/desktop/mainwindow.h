@@ -223,6 +223,7 @@ private:
 	MainWindow *replaceableWindow();
 
 	void connectStartDialog(dialogs::StartDialog *dlg);
+	void setStartDialogActions(dialogs::StartDialog *dlg);
 
 	void exportAnimation(const QString &path, AnimationSaverRunnable::SaveFn saveFn);
 

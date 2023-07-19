@@ -716,6 +716,10 @@ void MainWindow::loadShortcuts(const QVariantMap &cfg)
 		uncensorAction->setChecked(false);
 		updateLayerViewMode();
 	}
+
+	for(dialogs::StartDialog *dlg : findChildren<dialogs::StartDialog *>(QString{}, Qt::FindDirectChildrenOnly)) {
+		setStartDialogActions(dlg);
+	}
 }
 
 void MainWindow::toggleLayerViewMode()
@@ -1192,6 +1196,25 @@ void MainWindow::connectStartDialog(dialogs::StartDialog *dlg)
 		win->connectStartDialog(dlg);
 		utils::showWindow(dlg);
 	}));
+	setStartDialogActions(dlg);
+}
+
+void MainWindow::setStartDialogActions(dialogs::StartDialog *dlg)
+{
+	QPair<dialogs::StartDialog::Entry, const char *> pairs[] = {
+		{dialogs::StartDialog::Entry::Join, "joinsession"},
+		{dialogs::StartDialog::Entry::Browse, "browsesession"},
+		{dialogs::StartDialog::Entry::Host, "hostsession"},
+		{dialogs::StartDialog::Entry::Create, "newdocument"},
+		{dialogs::StartDialog::Entry::Open, "opendocument"},
+		{dialogs::StartDialog::Entry::Layouts, "layouts"},
+		{dialogs::StartDialog::Entry::Preferences, "preferences"},
+	};
+	dialogs::StartDialog::Actions actions{};
+	for(const auto &[entry, action] : pairs) {
+		actions.entries[entry] = getAction(action);
+	}
+	dlg->setActions(actions);
 }
 
 void MainWindow::start()

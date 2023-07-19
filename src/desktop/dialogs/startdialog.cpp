@@ -20,6 +20,7 @@
 #include <QIcon>
 #include <QPalette>
 #include <QPushButton>
+#include <QShortcut>
 #include <QSizePolicy>
 #include <QSpacerItem>
 #include <QStackedWidget>
@@ -269,6 +270,27 @@ StartDialog::StartDialog(QWidget *parent)
 		&startdialog::Welcome::setNews);
 	updateCheckForUpdatesButton(false);
 	m_news->check(); // TODO: allow toggling off the news check.
+}
+
+void StartDialog::setActions(const Actions &actions)
+{
+	for(QShortcut *shortcut : m_shortcuts) {
+		delete shortcut;
+	}
+	m_shortcuts.clear();
+
+	for(int i = 0; i < Entry::Count; ++i) {
+		const QAction *action = actions.entries[i];
+		if(action) {
+			for(const QKeySequence &keySequence : action->shortcuts()) {
+				QShortcut *shortcut = new QShortcut{keySequence, this};
+				connect(
+					shortcut, &QShortcut::activated, m_buttons[i],
+					&QAbstractButton::click);
+				m_shortcuts.append(shortcut);
+			}
+		}
+	}
 }
 
 void StartDialog::showPage(Entry entry)

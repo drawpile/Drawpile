@@ -4,10 +4,13 @@
 #define DESKTOP_DIALOGS_STARTDIALOG_H
 
 #include <QDialog>
+#include <QVector>
 
 class QAbstractButton;
+class QAction;
 class QFrame;
 class QIcon;
+class QShortcut;
 class QStackedWidget;
 class QUrl;
 
@@ -39,7 +42,13 @@ public:
 	};
 	Q_ENUM(Entry)
 
+	struct Actions {
+		const QAction *entries[Entry::Count];
+	};
+
 	StartDialog(QWidget *parent = nullptr);
+
+	void setActions(const Actions &actions);
 
 	void showPage(Entry entry);
 
@@ -103,6 +112,7 @@ private:
 	QAbstractButton *m_closeButton;
 	startdialog::Page *m_currentPage = nullptr;
 	QAbstractButton *m_buttons[Entry::Count];
+	QVector<QShortcut *> m_shortcuts;
 	QString m_recordingFilename;
 	utils::News *m_news;
 	QTimer *m_checkForUpdatesTimer;
