@@ -20,6 +20,7 @@ public:
 
 	void check();
 	void forceCheck(int delayMsec);
+	void checkExisting();
 	QDate lastCheck() const;
 
 signals:
@@ -27,6 +28,8 @@ signals:
 	void fetchInProgress(bool inProgress);
 
 private:
+	static constexpr long long CHECK_STALE_DAYS = 1;
+	static constexpr long long CHECK_EXISTING_STALE_DAYS = 3;
 	static constexpr char URL[] =
 		"https://drawpile.net/files/metadata/news.json";
 

@@ -82,6 +82,7 @@ private slots:
 	void showHostButtons();
 	void showCreateButtons();
 	void okClicked();
+	void followLink(const QString &fragment);
 	void joinRequested(const QUrl &url);
 	void hostRequested(
 		const QString &title, const QString &password, const QString &alias,

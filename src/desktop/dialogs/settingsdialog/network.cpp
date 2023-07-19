@@ -31,6 +31,10 @@ Network::Network(desktop::settings::Settings &settings, QWidget *parent)
 	initAvatars(form);
 	form->addSeparator();
 
+	auto *checkForUpdates = new QCheckBox(tr("Automatically check for updates"), this);
+	settings.bindUpdateCheckEnabled(checkForUpdates);
+	form->addRow(tr("Updates:"), checkForUpdates);
+
 	auto *allowInsecure = new QCheckBox(tr("Allow insecure local storage"), this);
 	settings.bindInsecurePasswordStorage(allowInsecure);
 	form->addRow(tr("Password security:"), allowInsecure);

@@ -18,6 +18,7 @@
 #include <QFrame>
 #include <QHBoxLayout>
 #include <QIcon>
+#include <QMetaEnum>
 #include <QPalette>
 #include <QPushButton>
 #include <QShortcut>
@@ -207,6 +208,9 @@ StartDialog::StartDialog(QWidget *parent)
 	connect(
 		welcomePage, &startdialog::Welcome::showButtons, this,
 		&StartDialog::showWelcomeButtons);
+	connect(
+		welcomePage, &startdialog::Welcome::linkActivated, this,
+		&StartDialog::followLink);
 
 	connect(
 		joinPage, &startdialog::Join::showButtons, this,
@@ -251,10 +255,10 @@ StartDialog::StartDialog(QWidget *parent)
 	connect(
 		createPage, &startdialog::Create::create, this, &StartDialog::create);
 
-	showPage(Entry::Welcome);
 	setMinimumSize(600, 350);
 
-	QSize lastSize = dpApp().settings().lastStartDialogSize();
+	const desktop::settings::Settings &settings = dpApp().settings();
+	QSize lastSize = settings.lastStartDialogSize();
 	resize(lastSize.isValid() ? lastSize : QSize{800, 450});
 
 	connect(
@@ -269,7 +273,14 @@ StartDialog::StartDialog(QWidget *parent)
 		m_news, &utils::News::newsAvailable, welcomePage,
 		&startdialog::Welcome::setNews);
 	updateCheckForUpdatesButton(false);
-	m_news->check(); // TODO: allow toggling off the news check.
+
+	if(!settings.welcomePageShown()) {
+		welcomePage->showFirstStartText();
+	} else if(settings.updateCheckEnabled()) {
+		m_news->check();
+	} else {
+		m_news->checkExisting();
+	}
 }
 
 void StartDialog::setActions(const Actions &actions)
@@ -424,6 +435,26 @@ void StartDialog::okClicked()
 	}
 }
 
+void StartDialog::followLink(const QString &fragment)
+{
+	if(fragment.compare("autoupdate", Qt::CaseInsensitive) == 0) {
+		dpApp().settings().setUpdateCheckEnabled(true);
+		m_checkForUpdatesButton->click();
+	} else if(fragment.compare("checkupdates", Qt::CaseInsensitive) == 0) {
+		m_checkForUpdatesButton->click();
+	} else {
+		QMetaEnum entries = QMetaEnum::fromType<Entry>();
+		for(int i = 0; i < Entry::Count; ++i) {
+			QString key = QString::fromUtf8(entries.key(i));
+			if(fragment.compare(key, Qt::CaseInsensitive) == 0) {
+				showPage(Entry(entries.value(i)));
+				return;
+			}
+		}
+		qWarning("Unknown link '%s'", qUtf8Printable(fragment));
+	}
+}
+
 void StartDialog::joinRequested(const QUrl &url)
 {
 	QString listServer = QUrlQuery{url}.queryItemValue("list-server");
@@ -504,14 +535,19 @@ void StartDialog::entryToggled(startdialog::Page *page, bool checked)
 void StartDialog::guessPage()
 {
 	const desktop::settings::Settings &settings = dpApp().settings();
-	int lastPage = settings.lastStartDialogPage();
-	QDate lastDate =
-		QDate::fromString(settings.lastStartDialogDate(), Qt::ISODate);
-	bool lastPageValid =
-		lastPage >= 0 && lastPage < Entry::Count && lastDate.isValid() &&
-		lastDate.daysTo(QDate::currentDate()) < MAX_LAST_PAGE_REMEMBER_DAYS &&
-		m_buttons[lastPage]->isCheckable();
-	showPage(lastPageValid ? Entry(lastPage) : Entry::Welcome);
+	if(settings.welcomePageShown()) {
+		int lastPage = settings.lastStartDialogPage();
+		QDate lastDate =
+			QDate::fromString(settings.lastStartDialogDate(), Qt::ISODate);
+		bool lastPageValid = lastPage >= 0 && lastPage < Entry::Count &&
+							 lastDate.isValid() &&
+							 lastDate.daysTo(QDate::currentDate()) <
+								 MAX_LAST_PAGE_REMEMBER_DAYS &&
+							 m_buttons[lastPage]->isCheckable();
+		showPage(lastPageValid ? Entry(lastPage) : Entry::Welcome);
+	} else {
+		showPage(Entry::Welcome);
+	}
 }
 
 void StartDialog::addRecentHost(const QUrl &url, bool join)

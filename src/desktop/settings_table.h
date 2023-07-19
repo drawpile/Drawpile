@@ -108,6 +108,7 @@ SETTING(toolToggle                , ToolToggle                , "settings/toolto
 SETTING(toolset                   , Toolset                   , "tools/toolset"                         , (QMap<QString, QVariantHash>()))
 SETTING(twoFingerRotate           , TwoFingerRotate           , "settings/input/touchtwist"             , true)
 SETTING(twoFingerZoom             , TwoFingerZoom             , "settings/input/touchpinch"             , true)
+SETTING(updateCheckEnabled        , UpdateCheckEnabled        , "settings/updatecheck"                  , true)
 SETTING(versionCheckFirstRun      , VersionCheckFirstRun      , "versioncheck/firstrun"                 , false)
 SETTING(videoExportCustomFfmpeg   , VideoExportCustomFfmpeg   , "videoexport/customffmpeg"              , QString())
 SETTING(videoExportFormat         , VideoExportFormat         , "videoexport/formatchoice"              , VideoExporter::Format::IMAGE_SERIES)
@@ -115,6 +116,7 @@ SETTING(videoExportFrameHeight    , VideoExportFrameHeight    , "videoexport/fra
 SETTING(videoExportFrameRate      , VideoExportFrameRate      , "videoexport/fps"                       , 30)
 SETTING(videoExportFrameWidth     , VideoExportFrameWidth     , "videoexport/framewidth"                , 1280)
 SETTING(videoExportSizeChoice     , VideoExportSizeChoice     , "videoexport/sizeChoice"                , 0) // TODO: Enum
+SETTING(welcomePageShown          , WelcomePageShown          , "history/welcomepageshown"              , false)
 SETTING(writeLogFile              , WriteLogFile              , "settings/logfile"                      , false)
 
 #include "libclient/settings_table_macros.h"

@@ -47,12 +47,18 @@ public:
 		return hasRow ? query.value(0).toString() : QString{};
 	}
 
-	bool shouldFetch(const QDate &date)
+	bool isStale(const QDate &date, long long staleDays)
 	{
 		QDate lastCheck = readLastCheck();
-		long long dayDiff = lastCheck.isValid() ? lastCheck.daysTo(date) : -999;
-		qCDebug(lcDpNews, "Day delta %lld", dayDiff);
-		return dayDiff != 0;
+		if(lastCheck.isValid()) {
+			long long dayDiff = lastCheck.daysTo(date);
+			qCDebug(lcDpNews, "Day delta %lld", dayDiff);
+			// We'll use the absolute value of days, since having checked for
+			// news *in the future* means there's something funky going on.
+			return qAbs(dayDiff) >= staleDays;
+		} else {
+			return true;
+		}
 	}
 
 	bool writeNewsAt(const QVector<News::Article> articles, const QDate &today)
@@ -162,6 +168,27 @@ void News::forceCheck(int delayMsec)
 	QTimer::singleShot(delayMsec, this, std::bind(&News::doCheck, this, true));
 }
 
+void News::checkExisting()
+{
+	QDate date = QDate::currentDate();
+	if(!d->isStale(date, CHECK_EXISTING_STALE_DAYS)) {
+		QString content = d->readNewsContentFor(date);
+		if(!content.isEmpty()) {
+			emit newsAvailable(content);
+			return;
+		}
+	}
+	emit newsAvailable(
+		QStringLiteral("<p style=\"font-size:large;\">%1</p>"
+					   "<p style=\"font-size:large;\">%2</p>")
+			.arg(
+				tr("Automatic update checking is disabled, "
+				   "<a href=\"#autoupdate\">click here to enable it</a>."),
+				tr("If you don't want automatic checks, "
+				   "<a href=\"#checkupdates\">click here to check "
+				   "manually</a>.")));
+}
+
 QDate News::lastCheck() const
 {
 	return d->readLastCheck();
@@ -183,7 +210,7 @@ void News::doCheck(bool force)
 			fetch(date, true);
 		} else {
 			emit newsAvailable(content);
-			if(d->shouldFetch(date)) {
+			if(d->isStale(date, CHECK_STALE_DAYS)) {
 				qCDebug(lcDpNews, "Fetching news");
 				fetch(date, false);
 			} else {
@@ -293,8 +320,8 @@ QVector<News::Article> News::parse(const QByteArray &bytes)
 
 void News::showMessageAsNews(const QString &message)
 {
-	emit newsAvailable(
-		QStringLiteral("<p>%1</p>").arg(message.toHtmlEscaped()));
+	emit newsAvailable(QStringLiteral("<p style=\"font-size:large;\">%1</p>")
+						   .arg(message.toHtmlEscaped()));
 }
 
 }

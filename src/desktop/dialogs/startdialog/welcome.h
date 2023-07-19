@@ -6,6 +6,7 @@
 #include "desktop/dialogs/startdialog/page.h"
 
 class QTextBrowser;
+class QUrl;
 
 namespace dialogs {
 namespace startdialog {
@@ -16,11 +17,17 @@ public:
 	Welcome(QWidget *parent = nullptr);
 	void activate() override;
 
+	void showFirstStartText();
+
 public slots:
 	void setNews(const QString &content);
 
 signals:
 	void showButtons();
+	void linkActivated(const QString &fragment);
+
+private slots:
+	void linkClicked(const QUrl &url);
 
 private:
 	QTextBrowser *m_browser;
