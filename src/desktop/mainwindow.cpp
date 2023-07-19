@@ -3457,7 +3457,7 @@ void MainWindow::setupActions()
 
 	QAction *serverlog = makeAction("viewserverlog", tr("Event Log")).noDefaultShortcut();
 	QAction *sessionSettings = makeAction("sessionsettings", tr("Settings...")).statusTip(tr("Change session settings, permissions, announcements and bans")).icon("configure").noDefaultShortcut().menuRole(QAction::NoRole).disabled();
-	QAction *sessionUndoDepthLimit = makeAction("sessionundodepthlimit").noDefaultShortcut().disabled();
+	QAction *sessionUndoDepthLimit = makeAction("sessionundodepthlimit", tr("Undo Limit…")).noDefaultShortcut().disabled();
 
 	QAction *gainop = makeAction("gainop", tr("Become Operator...")).noDefaultShortcut().disabled();
 	QAction *resetsession = makeAction("resetsession", tr("&Reset...")).noDefaultShortcut();
