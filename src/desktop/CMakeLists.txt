@@ -297,6 +297,8 @@ target_sources(drawpile PRIVATE
 	widgets/netstatus.h
 	widgets/notifbar.cpp
 	widgets/notifbar.h
+	widgets/palettewidget.cpp
+	widgets/palettewidget.h
 	widgets/popupmessage.cpp
 	widgets/popupmessage.h
 	widgets/presetselector.cpp

@@ -17,7 +17,7 @@ update_icons() {
 			folder.svg | network-server.svg | network-server-database.svg)
 				category=places
 				;;
-			input-keyboard.svg | network-modem.svg)
+			input-keyboard.svg | monitor.svg | network-modem.svg)
 				category=devices
 				;;
 			dialog-input-devices.svg)

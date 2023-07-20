@@ -206,6 +206,11 @@ ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
 	connect(colorPickerSettings(), &tools::ColorPickerSettings::colorSelected,
 			this, &ToolSettings::setForegroundColor);
 
+	tools::ColorPickerSettings *cps = colorPickerSettings();
+	connect(
+		this, &ToolSettings::toolChanged, cps,
+		&tools::ColorPickerSettings::cancelPickFromScreen);
+
 	tools::FillSettings *fs = fillSettings();
 	connect(
 		fs, &tools::FillSettings::pixelSizeChanged, this,

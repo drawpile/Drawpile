@@ -162,6 +162,7 @@ signals:
 	void modelChanged(canvas::CanvasModel *model);
 	void globalSmoothingChanged(int smoothing);
 	void stabilizerUseBrushSampleCountChanged(bool useBrushSampleCount);
+	void actionCancelled();
 
 	void colorUsed(const QColor &color);
 	void zoomRequested(const QRect &rect, int steps);

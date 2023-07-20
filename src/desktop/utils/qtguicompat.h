@@ -6,6 +6,7 @@
 
 #include <QApplication>
 #include <QtGlobal>
+#include <QDragMoveEvent>
 #include <QDropEvent>
 #include <QKeyEvent>
 #include <QMouseEvent>
@@ -156,6 +157,11 @@ inline auto touchPos(const QEventPoint &event) {
 	return event.position();
 }
 
+inline auto dragMovePos(const QDragMoveEvent &event)
+{
+	return event.position().toPoint();
+}
+
 inline auto dropPos(const QDropEvent &event)
 {
 	return event.position().toPoint();
@@ -226,6 +232,11 @@ inline auto touchLastPos(const QTouchEvent::TouchPoint &event) {
 }
 
 inline auto touchPos(const QTouchEvent::TouchPoint &event) {
+	return event.pos();
+}
+
+inline auto dragMovePos(const QDragMoveEvent &event)
+{
 	return event.pos();
 }
 

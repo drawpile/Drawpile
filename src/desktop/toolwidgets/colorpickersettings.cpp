@@ -2,30 +2,71 @@
 
 #include "desktop/toolwidgets/colorpickersettings.h"
 #include "desktop/dialogs/colordialog.h"
+#include "desktop/utils/qtguicompat.h"
+#include "desktop/widgets/groupedtoolbutton.h"
+#include "desktop/widgets/kis_slider_spin_box.h"
+#include "desktop/widgets/palettewidget.h"
+#include "libclient/tools/colorpicker.h"
 #include "libclient/tools/toolcontroller.h"
 #include "libclient/tools/toolproperties.h"
-#include "libclient/tools/colorpicker.h"
-#include "desktop/widgets/kis_slider_spin_box.h"
-
-#include <QtColorWidgets/swatch.hpp>
-
 #include <QBoxLayout>
+#include <QCheckBox>
 #include <QIcon>
 #include <QLabel>
+#include <QMouseEvent>
 #include <QSlider>
 #include <QSpinBox>
-#include <QCheckBox>
-#include <QPushButton>
+#include <QtColorWidgets/color_utils.hpp>
 
 namespace tools {
 
 namespace props {
-	static const ToolProperties::Value<bool>
-		layerPick { QStringLiteral("layerpick"), false }
-		;
-	static const ToolProperties::RangedValue<int>
-		size { QStringLiteral("size"), 1, 0, 255 }
-		;
+static const ToolProperties::Value<bool> layerPick{
+	QStringLiteral("layerpick"), false};
+static const ToolProperties::RangedValue<int> size{
+	QStringLiteral("size"), 1, 0, 255};
+}
+
+namespace colorpickersettings {
+
+HeaderWidget::HeaderWidget(QWidget *parent)
+	: QWidget{parent}
+{
+}
+
+void HeaderWidget::pickFromScreen()
+{
+	if(!m_picking) {
+		setFocusPolicy(Qt::StrongFocus);
+		setFocus();
+		grabMouse(Qt::CrossCursor);
+		grabKeyboard();
+		m_picking = true;
+		emit pickingChanged(true);
+	}
+}
+
+void HeaderWidget::stopPickingFromScreen()
+{
+	m_picking = false;
+	emit pickingChanged(false);
+	releaseKeyboard();
+	releaseMouse();
+	setFocusPolicy(Qt::NoFocus);
+}
+
+void HeaderWidget::mouseReleaseEvent(QMouseEvent *event)
+{
+	if(m_picking) {
+		emit colorPicked(
+			color_widgets::utils::get_screen_color(compat::globalPos(*event)));
+		stopPickingFromScreen();
+		event->accept();
+	} else {
+		QWidget::mouseReleaseEvent(event);
+	}
+}
+
 }
 
 ColorPickerSettings::ColorPickerSettings(ToolController *ctrl, QObject *parent)
@@ -33,65 +74,90 @@ ColorPickerSettings::ColorPickerSettings(ToolController *ctrl, QObject *parent)
 {
 }
 
-ColorPickerSettings::~ColorPickerSettings()
-{
-}
+ColorPickerSettings::~ColorPickerSettings() {}
 
 QWidget *ColorPickerSettings::createUiWidget(QWidget *parent)
 {
-	QWidget *widget = new QWidget(parent);
-	QVBoxLayout *layout = new QVBoxLayout(widget);
-	layout->setContentsMargins(3, 3, 3, 3);
-	widget->setLayout(layout);
+	m_headerWidget = new colorpickersettings::HeaderWidget{parent};
+	QHBoxLayout *headerLayout = new QHBoxLayout;
+	headerLayout->setSpacing(0);
+	headerLayout->setContentsMargins(0, 0, 4, 0);
+	m_headerWidget->setLayout(headerLayout);
+
+#ifndef Q_OS_ANDROID
+	widgets::GroupedToolButton *pickButton = new widgets::GroupedToolButton;
+	pickButton->setIcon(QIcon::fromTheme("monitor"));
+	pickButton->setToolTip(tr("Pick from screen"));
+	pickButton->setCheckable(true);
+	headerLayout->addWidget(pickButton);
+#endif
+
+	headerLayout->addSpacing(4);
 
 	m_size = new KisSliderSpinBox;
 	m_size->setPrefix(tr("Size: "));
 	m_size->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 	m_size->setMinimum(1);
 	m_size->setMaximum(128);
-	layout->addWidget(m_size);
+	headerLayout->addWidget(m_size);
+
+	QWidget *widget = new QWidget(parent);
+	QVBoxLayout *layout = new QVBoxLayout(widget);
+	layout->setContentsMargins(3, 3, 3, 3);
+	widget->setLayout(layout);
 
 	m_layerpick = new QCheckBox(tr("Pick from current layer only"), widget);
 	layout->addWidget(m_layerpick);
 
-	m_palettewidget = new color_widgets::Swatch(widget);
-	m_palettewidget->palette().setColumns(16);
-	m_palettewidget->setReadOnly(true);
-	layout->addWidget(m_palettewidget);
+	m_palettewidget = new widgets::PaletteWidget;
+	m_palettewidget->setColumns(9);
+	layout->addWidget(m_palettewidget, 1);
 
-	QPushButton *addButton = new QPushButton{
-		QIcon::fromTheme("list-add"), tr("Add Color..."), widget};
-	layout->addWidget(addButton);
-
-	connect(m_palettewidget, &color_widgets::Swatch::colorSelected, this, &ColorPickerSettings::colorSelected);
-	connect(m_size, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
-	connect(m_size, QOverload<int>::of(&QSpinBox::valueChanged), this, &ColorPickerSettings::pushSettings);
-	connect(m_layerpick, &QCheckBox::toggled, this, &ColorPickerSettings::pushSettings);
-	connect(addButton, &QPushButton::clicked, this, &ColorPickerSettings::openColorDialog);
+	connect(
+		m_palettewidget, &widgets::PaletteWidget::colorSelected, this,
+		&ColorPickerSettings::colorSelected);
+	connect(
+		m_headerWidget, &colorpickersettings::HeaderWidget::colorPicked, this,
+		&ColorPickerSettings::selectColor);
+	connect(
+		m_size, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
+	connect(
+		m_size, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		&ColorPickerSettings::pushSettings);
+	connect(
+		m_layerpick, &QCheckBox::toggled, this,
+		&ColorPickerSettings::pushSettings);
+#ifndef Q_OS_ANDROID
+	connect(
+		m_headerWidget, &colorpickersettings::HeaderWidget::pickingChanged,
+		pickButton, &QAbstractButton::setChecked);
+	connect(
+		pickButton, &QAbstractButton::clicked, this,
+		&ColorPickerSettings::pickFromScreen);
+#endif
 
 	return widget;
 }
 
 void ColorPickerSettings::pushSettings()
 {
-	auto *tool = static_cast<ColorPicker*>(controller()->getTool(Tool::PICKER));
+	ColorPicker *tool =
+		static_cast<ColorPicker *>(controller()->getTool(Tool::PICKER));
 	tool->setSize(m_size->value());
 	tool->setPickFromCurrentLayer(m_layerpick->isChecked());
 }
 
-void ColorPickerSettings::openColorDialog()
-{
-	color_widgets::ColorPalette &palette = m_palettewidget->palette();
-	color_widgets::ColorDialog *dlg = dialogs::newDeleteOnCloseColorDialog(
-		palette.count() == 0 ? Qt::black : palette.colorAt(0), m_palettewidget);
-	connect(dlg, &color_widgets::ColorDialog::colorSelected, this, &ColorPickerSettings::selectColorFromDialog);
-	dlg->show();
-}
-
-void ColorPickerSettings::selectColorFromDialog(const QColor &color)
+void ColorPickerSettings::selectColor(const QColor &color)
 {
 	addColor(color);
 	emit colorSelected(color);
+}
+
+void ColorPickerSettings::cancelPickFromScreen()
+{
+	if(m_headerWidget) {
+		m_headerWidget->stopPickingFromScreen();
+	}
 }
 
 int ColorPickerSettings::getSize() const
@@ -132,8 +198,9 @@ void ColorPickerSettings::restoreToolSettings(const ToolProperties &cfg)
 
 void ColorPickerSettings::addColor(const QColor &color)
 {
-	auto &palette = m_palettewidget->palette();
+	color_widgets::ColorPalette &palette = m_palettewidget->colorPalette();
 	palette.insertColor(0, color);
+	m_palettewidget->setNextColor(color);
 
 	int i = 1;
 	while(i < palette.count()) {
@@ -145,8 +212,12 @@ void ColorPickerSettings::addColor(const QColor &color)
 	}
 
 	if(palette.count() > 80)
-		palette.eraseColor(palette.count()-1);
+		palette.eraseColor(palette.count() - 1);
+}
+
+void ColorPickerSettings::pickFromScreen()
+{
+	m_headerWidget->pickFromScreen();
 }
 
 }
-

@@ -416,6 +416,7 @@ void ToolController::cancelMultipartDrawing()
 
 	m_smoother.reset();
 	m_activeTool->cancelMultipart();
+	emit actionCancelled();
 }
 
 void ToolController::offsetActiveTool(int xOffset, int yOffset)
