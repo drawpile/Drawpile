@@ -504,11 +504,12 @@ void CanvasView::resetCursor()
 		case BrushCursor::Arrow:
 			viewport()->setCursor(Qt::ArrowCursor);
 			break;
-		case BrushCursor::TriangleRight:
-			viewport()->setCursor(m_trianglerightcursor);
-			break;
 		case BrushCursor::TriangleLeft:
 			viewport()->setCursor(m_triangleleftcursor);
+			break;
+		case BrushCursor::TriangleRight:
+		default:
+			viewport()->setCursor(m_trianglerightcursor);
 			break;
 		}
 	} else {
