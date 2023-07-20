@@ -1,31 +1,51 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include <QtColorWidgets/swatch.hpp>
-#include <QtColorWidgets/color_palette_model.hpp>
-
 #include "desktop/docks/colorpalette.h"
-#include "desktop/docks/titlewidget.h"
 #include "desktop/dialogs/colordialog.h"
+#include "desktop/docks/titlewidget.h"
+#include "desktop/docks/toolsettingsdock.h"
 #include "desktop/main.h"
 #include "desktop/widgets/groupedtoolbutton.h"
+#include "desktop/widgets/palettewidget.h"
 #include "libshared/util/paths.h"
-
-#include <QIcon>
-#include <QMessageBox>
-#include <QMenu>
-#include <QFileDialog>
 #include <QComboBox>
-#include <QLineEdit>
 #include <QCursor>
+#include <QFileDialog>
+#include <QHBoxLayout>
+#include <QIcon>
+#include <QInputDialog>
+#include <QLineEdit>
+#include <QMenu>
+#include <QMessageBox>
+#include <QPaintEvent>
+#include <QVBoxLayout>
+#include <QtColorWidgets/color_palette_model.hpp>
+#include <QtColorWidgets/swatch.hpp>
 
 namespace docks {
+
+namespace {
+
+// Palette icons look really skrunkly, turn them off.
+class IconlessColorPaletteModel : public color_widgets::ColorPaletteModel {
+	QVariant
+	data(const QModelIndex &index, int role = Qt::DisplayRole) const override
+	{
+		return role == Qt::DecorationRole
+				   ? QVariant{}
+				   : color_widgets::ColorPaletteModel::data(index, role);
+	}
+};
+
+}
 
 static color_widgets::ColorPaletteModel *getSharedPaletteModel()
 {
 	static color_widgets::ColorPaletteModel *model;
 	if(!model) {
-		model = new color_widgets::ColorPaletteModel;
-		QString localPalettePath = utils::paths::writablePath(QString()) + "/palettes/";
+		model = new IconlessColorPaletteModel;
+		QString localPalettePath =
+			utils::paths::writablePath(QString()) + "/palettes/";
 
 		QDir localPaletteDir(localPalettePath);
 		localPaletteDir.mkpath(".");
@@ -36,15 +56,16 @@ static color_widgets::ColorPaletteModel *getSharedPaletteModel()
 
 		// If the user palette directory is empty, copy default palettes in
 		if(model->rowCount() == 0) {
-			const auto datapaths = utils::paths::dataPaths();
-			for(const auto &path : datapaths) {
-				const QString systemPalettePath = path + "/palettes/";
+			QStringList datapaths = utils::paths::dataPaths();
+			for(const QString &path : datapaths) {
+				QString systemPalettePath = path + "/palettes/";
 				if(systemPalettePath == localPalettePath)
 					continue;
 
-				const QDir pd(systemPalettePath);
-				const auto palettes = pd.entryList(QStringList() << "*.gpl", QDir::Files);
-				for(const auto &p : palettes) {
+				QDir pd(systemPalettePath);
+				QStringList palettes =
+					pd.entryList(QStringList() << "*.gpl", QDir::Files);
+				for(const QString &p : palettes) {
 					QFile::copy(pd.filePath(p), localPaletteDir.filePath(p));
 				}
 			}
@@ -57,98 +78,143 @@ static color_widgets::ColorPaletteModel *getSharedPaletteModel()
 }
 
 struct ColorPaletteDock::Private {
+	color_widgets::Swatch *lastUsedSwatch = nullptr;
+	widgets::GroupedToolButton *addColumnButton = nullptr;
+	widgets::GroupedToolButton *removeColumnButton = nullptr;
 	QComboBox *paletteChoiceBox = nullptr;
-	color_widgets::Swatch *paletteSwatch = nullptr;
-	QMenu *palettePopupMenu = nullptr;
-	QToolButton *readonlyPalette = nullptr;
+	widgets::PaletteWidget *paletteWidget = nullptr;
+	QColor color = Qt::black;
 
 	void saveCurrentPalette()
 	{
-		if(paletteSwatch->palette().dirty()) {
-			auto *pm = getSharedPaletteModel();
+		if(paletteWidget->colorPalette().dirty()) {
+			color_widgets::ColorPaletteModel *pm = getSharedPaletteModel();
 			int index = -1;
-			for(int i=0;i<pm->rowCount();++i) {
-				if(pm->palette(i).name() == paletteSwatch->palette().name()) {
+			for(int i = 0; i < pm->rowCount(); ++i) {
+				if(pm->palette(i).name() ==
+				   paletteWidget->colorPalette().name()) {
 					index = i;
 					break;
 				}
 			}
 			if(index >= 0) {
-				pm->updatePalette(index, paletteSwatch->palette());
+				pm->updatePalette(index, paletteWidget->colorPalette());
 			}
 		}
 	}
 };
 
-ColorPaletteDock::ColorPaletteDock(const QString& title, QWidget *parent)
-	: DockBase(title, parent), d(new Private)
+ColorPaletteDock::ColorPaletteDock(const QString &title, QWidget *parent)
+	: DockBase(title, parent)
+	, d(new Private)
 {
-	auto *titlebar = new TitleWidget(this);
+	TitleWidget *titlebar = new TitleWidget(this);
 	setTitleBarWidget(titlebar);
 
-	auto *menuButton = new widgets::GroupedToolButton;
-	menuButton->setIcon(QIcon::fromTheme("application-menu"));
-	titlebar->addCustomWidget(menuButton);
-
-	d->readonlyPalette = new widgets::GroupedToolButton;
-	d->readonlyPalette->setToolTip(tr("Write protect"));
-	d->readonlyPalette->setIcon(QIcon::fromTheme("object-locked"));
-	d->readonlyPalette->setCheckable(true);
-	titlebar->addCustomWidget(d->readonlyPalette);
-
-	d->paletteChoiceBox = new QComboBox;
-	d->paletteChoiceBox->setInsertPolicy(QComboBox::NoInsert); // we want to handle editingFinished signal ourselves
-	d->paletteChoiceBox->setModel(getSharedPaletteModel());
-	titlebar->addCustomWidget(d->paletteChoiceBox, true);
+	d->lastUsedSwatch = new color_widgets::Swatch(titlebar);
+	d->lastUsedSwatch->setForcedRows(1);
+	d->lastUsedSwatch->setForcedColumns(
+		docks::ToolSettings::LASTUSED_COLOR_COUNT);
+	d->lastUsedSwatch->setReadOnly(true);
+	d->lastUsedSwatch->setBorder(Qt::NoPen);
+	d->lastUsedSwatch->setMinimumHeight(24);
 
 	titlebar->addSpace(24);
+	titlebar->addCustomWidget(d->lastUsedSwatch, true);
+	titlebar->addSpace(24);
 
-	d->paletteSwatch = new color_widgets::Swatch(this);
-	setWidget(d->paletteSwatch);
+	connect(
+		d->lastUsedSwatch, &color_widgets::Swatch::colorSelected, this,
+		&ColorPaletteDock::colorSelected);
+
+	QWidget *widget = new QWidget;
+	QVBoxLayout *layout = new QVBoxLayout;
+	layout->setContentsMargins(0, 0, 0, 0);
+	layout->setSpacing(4);
+	widget->setLayout(layout);
+	setWidget(widget);
+
+	QHBoxLayout *choiceLayout = new QHBoxLayout;
+	choiceLayout->setContentsMargins(0, 0, 0, 0);
+	choiceLayout->setSpacing(0);
+	layout->addLayout(choiceLayout);
+
+	d->addColumnButton =
+		new widgets::GroupedToolButton{widgets::GroupedToolButton::GroupLeft};
+	d->addColumnButton->setIcon(
+		QIcon::fromTheme("edit-table-insert-column-right"));
+	d->addColumnButton->setToolTip(tr("Add column"));
+	choiceLayout->addWidget(d->addColumnButton);
+	connect(
+		d->addColumnButton, &QAbstractButton::clicked, this,
+		&ColorPaletteDock::addColumn);
+
+	d->removeColumnButton =
+		new widgets::GroupedToolButton{widgets::GroupedToolButton::GroupRight};
+	d->removeColumnButton->setIcon(
+		QIcon::fromTheme("edit-table-delete-column"));
+	d->removeColumnButton->setToolTip(tr("Remove column"));
+	choiceLayout->addWidget(d->removeColumnButton);
+	connect(
+		d->removeColumnButton, &QAbstractButton::clicked, this,
+		&ColorPaletteDock::removeColumn);
+
+	choiceLayout->addSpacing(4);
+
+	d->paletteChoiceBox = new QComboBox;
+	d->paletteChoiceBox->setInsertPolicy(QComboBox::NoInsert);
+	d->paletteChoiceBox->setModel(getSharedPaletteModel());
+	d->paletteChoiceBox->setMinimumWidth(24);
+	choiceLayout->addWidget(d->paletteChoiceBox, 1);
+
+	choiceLayout->addSpacing(4);
+
+	widgets::GroupedToolButton *menuButton = new widgets::GroupedToolButton;
+	menuButton->setIcon(QIcon::fromTheme("application-menu"));
+	choiceLayout->addWidget(menuButton);
+
+	d->paletteWidget = new widgets::PaletteWidget{this};
+	layout->addWidget(d->paletteWidget, 1);
+	connect(
+		d->paletteWidget, &widgets::PaletteWidget::colorSelected, this,
+		&ColorPaletteDock::selectColor);
+	connect(
+		d->paletteWidget, &widgets::PaletteWidget::columnsChanged, this,
+		&ColorPaletteDock::updateColumnButtons);
 
 	QMenu *paletteMenu = new QMenu(this);
 	paletteMenu->addAction(tr("New"), this, &ColorPaletteDock::addPalette);
-	paletteMenu->addAction(tr("Duplicate"), this, &ColorPaletteDock::copyPalette);
-	paletteMenu->addAction(tr("Delete"), this, &ColorPaletteDock::deletePalette);
-	paletteMenu->addAction(tr("Rename"), this, &ColorPaletteDock::renamePalette);
-
+	paletteMenu->addAction(
+		tr("Duplicate"), this, &ColorPaletteDock::copyPalette);
+	paletteMenu->addAction(
+		tr("Delete"), this, &ColorPaletteDock::deletePalette);
+	paletteMenu->addAction(
+		tr("Rename"), this, &ColorPaletteDock::renamePalette);
 	paletteMenu->addSeparator();
-	paletteMenu->addAction(tr("Import..."), this, &ColorPaletteDock::importPalette);
-	paletteMenu->addAction(tr("Export..."), this, &ColorPaletteDock::exportPalette);
-
+	paletteMenu->addAction(
+		tr("Import..."), this, &ColorPaletteDock::importPalette);
+	paletteMenu->addAction(
+		tr("Export..."), this, &ColorPaletteDock::exportPalette);
 	menuButton->setMenu(paletteMenu);
 	menuButton->setPopupMode(QToolButton::InstantPopup);
-	menuButton->setStyleSheet("QToolButton::menu-indicator { image: none }");
 
-	d->palettePopupMenu = new QMenu(this);
-	d->palettePopupMenu->addAction(tr("Add"))->setProperty("menuIdx", 0);
-	d->palettePopupMenu->addAction(tr("Remove"))->setProperty("menuIdx", 1);
-	d->palettePopupMenu->addSeparator();
-	d->palettePopupMenu->addAction(tr("Less columns"))->setProperty("menuIdx", 2);;
-	d->palettePopupMenu->addAction(tr("More columns"))->setProperty("menuIdx", 3);
+	connect(
+		d->paletteChoiceBox,
+		QOverload<int>::of(&QComboBox::currentIndexChanged), this,
+		&ColorPaletteDock::paletteChanged);
 
-	connect(d->paletteSwatch, &color_widgets::Swatch::clicked, this, &ColorPaletteDock::paletteClicked);
-	connect(d->paletteSwatch, &color_widgets::Swatch::doubleClicked, this, &ColorPaletteDock::paletteDoubleClicked);
-	connect(d->paletteSwatch, &color_widgets::Swatch::rightClicked, this, &ColorPaletteDock::paletteRightClicked);
-	connect(d->paletteChoiceBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &ColorPaletteDock::paletteChanged);
-	connect(d->readonlyPalette, &QToolButton::clicked, this, [this](bool checked) {
-		int idx = d->paletteChoiceBox->currentIndex();
-		if(idx >= 0) {
-			auto *pm = getSharedPaletteModel();
-			auto pal = pm->palette(idx);
-			pal.setProperty("editable", !checked);
-			pm->updatePalette(idx, pal, false);
-			setPaletteReadonly(checked);
-		}
-	});
-
-	dpApp().settings().bindLastPalette(d->paletteChoiceBox, [=](int index) {
-		const auto lastPalette = qBound(0, index, d->paletteChoiceBox->model()->rowCount());
-		if(lastPalette > 0)
-			d->paletteChoiceBox->setCurrentIndex(lastPalette);
-		else
-			paletteChanged(0);
-	}, QOverload<int>::of(&QComboBox::currentIndexChanged));
+	dpApp().settings().bindLastPalette(
+		d->paletteChoiceBox,
+		[=](int index) {
+			int lastPalette =
+				qBound(0, index, d->paletteChoiceBox->model()->rowCount());
+			if(lastPalette > 0) {
+				d->paletteChoiceBox->setCurrentIndex(lastPalette);
+			} else {
+				paletteChanged(0);
+			}
+		},
+		QOverload<int>::of(&QComboBox::currentIndexChanged));
 }
 
 ColorPaletteDock::~ColorPaletteDock()
@@ -157,126 +223,86 @@ ColorPaletteDock::~ColorPaletteDock()
 	delete d;
 }
 
+void ColorPaletteDock::setColor(const QColor &color)
+{
+	d->color = color;
+	d->paletteWidget->setNextColor(color);
+}
+
+void ColorPaletteDock::setLastUsedColors(const color_widgets::ColorPalette &pal)
+{
+	d->lastUsedSwatch->setPalette(pal);
+	d->lastUsedSwatch->setSelected(
+		findPaletteColor(d->lastUsedSwatch->palette(), d->color));
+}
+
 void ColorPaletteDock::paletteChanged(int index)
 {
-	if(index>=0) {
-		// switching palettes cancels rename operation (if in progress)
-		d->paletteChoiceBox->setEditable(false);
-
-		// Save current palette if it has any changes before switching to another one
+	if(index >= 0) {
 		d->saveCurrentPalette();
-
 		color_widgets::ColorPaletteModel *model = getSharedPaletteModel();
 		if(index < model->count()) {
-			d->paletteSwatch->setPalette(model->palette(index));
-			setPaletteReadonly(!d->paletteSwatch->palette().property("editable").toBool());
+			d->paletteWidget->setColorPalette(model->palette(index));
 		}
 	}
 }
 
-void ColorPaletteDock::importPalette()
+void ColorPaletteDock::addColumn()
 {
-	const QString &filename = QFileDialog::getOpenFileName(
-		this,
-		tr("Import palette"),
-		QString(),
-		tr("Palettes (%1)").arg("*.gpl") + ";;" +
-		tr("All files (*)")
-	);
-
-	if(!filename.isEmpty()) {
-		auto pal = color_widgets::ColorPalette::fromFile(filename);
-		if(pal.count()==0)
-			return;
-		pal.setFileName(QString());
-
-		getSharedPaletteModel()->addPalette(pal);
-		d->paletteChoiceBox->setCurrentIndex(getSharedPaletteModel()->rowCount()-1);
-	}
+	d->paletteWidget->setColumns(d->paletteWidget->columns() + 1);
 }
 
-void ColorPaletteDock::exportPalette()
+void ColorPaletteDock::removeColumn()
 {
-	const QString &filename = QFileDialog::getSaveFileName(
-		this,
-		tr("Export palette"),
-		QString(),
-		tr("GIMP palette (%1)").arg("*.gpl")
-	);
-
-	if(!filename.isEmpty()) {
-		auto pal = d->paletteSwatch->palette();
-
-		if(!pal.save(filename))
-			QMessageBox::warning(this, tr("Error"), tr("Couldn't save file"));
-	}
+	d->paletteWidget->setColumns(d->paletteWidget->columns() - 1);
 }
 
-/**
- * The user has changed the name of a palette. Update the palette
- * and rename the file if it has one.
- */
-void ColorPaletteDock::paletteRenamed()
+void ColorPaletteDock::updateColumnButtons(int columns)
 {
-	const QString newName = d->paletteChoiceBox->currentText();
-	if(!newName.isEmpty() && d->paletteSwatch->palette().name() != newName) {
-		auto *pm = getSharedPaletteModel();
-		d->paletteSwatch->palette().setName(newName);
-		pm->updatePalette(d->paletteChoiceBox->currentIndex(), d->paletteSwatch->palette());
-		d->paletteSwatch->setPalette(pm->palette(d->paletteChoiceBox->currentIndex()));
-	}
-
-	d->paletteChoiceBox->setEditable(false);
-}
-
-void ColorPaletteDock::setPaletteReadonly(bool readonly)
-{
-	d->readonlyPalette->setChecked(readonly);
-	d->paletteSwatch->setReadOnly(readonly);
-	d->palettePopupMenu->setEnabled(!readonly);
-}
-
-void ColorPaletteDock::renamePalette()
-{
-	d->paletteChoiceBox->setEditable(true);
-	connect(d->paletteChoiceBox->lineEdit(), &QLineEdit::editingFinished, this, &ColorPaletteDock::paletteRenamed, Qt::UniqueConnection);
+	d->addColumnButton->setEnabled(
+		columns < widgets::PaletteWidget::MAX_COLUMNS);
+	d->removeColumnButton->setEnabled(columns > 1);
 }
 
 void ColorPaletteDock::addPalette()
 {
-	auto pal = color_widgets::ColorPalette();
-	pal.setProperty("editable", true);
-	//pal.appendColor(d->colorwheel->color());
-	pal.appendColor(Qt::blue); // FIXME current color
-	getSharedPaletteModel()->addPalette(pal, false);
-	d->paletteChoiceBox->setCurrentIndex(d->paletteChoiceBox->model()->rowCount()-1);
-	renamePalette();
-	setPaletteReadonly(false);
+	bool ok;
+	QString name = QInputDialog::getText(
+					   this, tr("New Palette"), tr("Name"),
+					   QLineEdit::EchoMode::Normal, QString{}, &ok)
+					   .trimmed();
+	if(ok && !name.isEmpty()) {
+		color_widgets::ColorPalette pal = color_widgets::ColorPalette();
+		pal.setName(name);
+		pal.appendColor(d->color);
+		pal.setColumns(8);
+		getSharedPaletteModel()->addPalette(pal, false);
+		d->paletteChoiceBox->setCurrentIndex(
+			d->paletteChoiceBox->model()->rowCount() - 1);
+	}
 }
 
 void ColorPaletteDock::copyPalette()
 {
-	color_widgets::ColorPalette pal = d->paletteSwatch->palette();
+	color_widgets::ColorPalette pal = d->paletteWidget->colorPalette();
 	pal.setFileName(QString());
 	pal.setName(QString());
-	pal.setProperty("editable", true);
 
-	auto *pm = getSharedPaletteModel();
+	color_widgets::ColorPaletteModel *pm = getSharedPaletteModel();
 	pm->addPalette(pal, false);
-	d->paletteChoiceBox->setCurrentIndex(pm->rowCount()-1);
+	d->paletteChoiceBox->setCurrentIndex(pm->rowCount() - 1);
 	renamePalette();
-	setPaletteReadonly(false);
 }
 
 void ColorPaletteDock::deletePalette()
 {
 	const int current = d->paletteChoiceBox->currentIndex();
 	if(current >= 0) {
-	const int ret = QMessageBox::question(
-			this,
-			tr("Delete"),
-			tr("Delete palette \"%1\"?").arg(d->paletteChoiceBox->currentText()),
-			QMessageBox::Yes|QMessageBox::No);
+		const int ret = QMessageBox::question(
+			this, tr("Delete"),
+			tr("Delete palette \"%1\"?")
+				.arg(d->paletteChoiceBox->currentText()),
+			QMessageBox::Yes | QMessageBox::No);
 
 		if(ret == QMessageBox::Yes) {
 			getSharedPaletteModel()->removePalette(current);
@@ -284,81 +310,75 @@ void ColorPaletteDock::deletePalette()
 	}
 }
 
-void ColorPaletteDock::paletteClicked(int index)
+void ColorPaletteDock::renamePalette()
 {
-	if(index >= 0) {
-		const auto c = d->paletteSwatch->palette().colorAt(index);
-		setColor(c);
-		emit colorSelected(c);
-	 }
-}
-
-void ColorPaletteDock::paletteDoubleClicked(int index)
-{
-	if(d->readonlyPalette->isChecked())
-		return;
-
-	color_widgets::ColorDialog dlg;
-	dialogs::applyColorDialogSettings(&dlg);
-	dlg.setAlphaEnabled(false);
-	dlg.setButtonMode(color_widgets::ColorDialog::OkCancel);
-	dlg.setColor(d->paletteSwatch->palette().colorAt(index));
-	if(dlg.exec() == QDialog::Accepted) {
-		if(index < 0)
-			d->paletteSwatch->palette().appendColor(dlg.color());
-		else
-			d->paletteSwatch->palette().setColorAt(index, dlg.color());
-		setColor(dlg.color());
-		emit colorSelected(dlg.color());
+	bool ok;
+	QString name =
+		QInputDialog::getText(
+			this, tr("New Palette"), tr("Name"), QLineEdit::EchoMode::Normal,
+			d->paletteWidget->colorPalette().name(), &ok)
+			.trimmed();
+	if(ok && !name.isEmpty()) {
+		color_widgets::ColorPaletteModel *pm = getSharedPaletteModel();
+		d->paletteWidget->colorPalette().setName(name);
+		pm->updatePalette(
+			d->paletteChoiceBox->currentIndex(),
+			d->paletteWidget->colorPalette());
+		d->paletteWidget->setColorPalette(
+			pm->palette(d->paletteChoiceBox->currentIndex()));
 	}
 }
 
-void ColorPaletteDock::paletteRightClicked(int index)
+void ColorPaletteDock::importPalette()
 {
-	const QAction *act = d->palettePopupMenu->exec(QCursor::pos());
-	if(!act)
-		return;
+	QString filename = QFileDialog::getOpenFileName(
+		this, tr("Import palette"), QString(),
+		tr("Palettes (%1)").arg("*.gpl") + ";;" + tr("All files (*)"));
 
-	int columns = d->paletteSwatch->palette().columns();
-	if(columns == 0)
-		columns = d->paletteSwatch->palette().count();
+	if(!filename.isEmpty()) {
+		color_widgets::ColorPalette pal =
+			color_widgets::ColorPalette::fromFile(filename);
+		if(pal.count() == 0)
+			return;
+		pal.setFileName(QString());
 
-	switch(act->property("menuIdx").toInt()) {
-	case 0:
-		// FIXME current color
-		//d->paletteSwatch->palette().insertColor(index < 0 ? d->paletteSwatch->palette().count() : index+1, d->colorwheel->color());
-		break;
-	case 1:
-		if(d->paletteSwatch->palette().count() > 1 && index >= 0)
-			d->paletteSwatch->palette().eraseColor(index);
-		break;
-	case 2:
-		if(columns > 1)
-			d->paletteSwatch->palette().setColumns(columns - 1);
-		break;
-	case 3:
-		d->paletteSwatch->palette().setColumns(columns + 1);
-		break;
+		getSharedPaletteModel()->addPalette(pal);
+		d->paletteChoiceBox->setCurrentIndex(
+			getSharedPaletteModel()->rowCount() - 1);
 	}
 }
 
-int findPaletteColor(const color_widgets::ColorPalette &pal, const QColor &color)
+void ColorPaletteDock::exportPalette()
 {
-	const auto colors = pal.colors();
-	const auto rgb = color.rgb();
-	for(int i=0;i<colors.length();++i)
+	const QString &filename = QFileDialog::getSaveFileName(
+		this, tr("Export palette"), QString(),
+		tr("GIMP palette (%1)").arg("*.gpl"));
+
+	if(!filename.isEmpty()) {
+		color_widgets::ColorPalette &pal = d->paletteWidget->colorPalette();
+
+		if(!pal.save(filename))
+			QMessageBox::warning(this, tr("Error"), tr("Couldn't save file"));
+	}
+}
+
+void ColorPaletteDock::selectColor(const QColor &color)
+{
+	setColor(color);
+	emit colorSelected(color);
+}
+
+int findPaletteColor(
+	const color_widgets::ColorPalette &pal, const QColor &color)
+{
+	QVector<QPair<QColor, QString>> colors = pal.colors();
+	QRgb rgb = color.rgb();
+	for(int i = 0; i < colors.length(); ++i) {
 		if(colors.at(i).first.rgb() == rgb) {
 			return i;
+		}
 	}
-
 	return -1;
 }
 
-void ColorPaletteDock::setColor(const QColor& color)
-{
-
-	d->paletteSwatch->setSelected(findPaletteColor(d->paletteSwatch->palette(), color));
 }
-
-}
-
