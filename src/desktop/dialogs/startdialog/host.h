@@ -54,7 +54,7 @@ private:
 	QComboBox *m_listServerCombo;
 	QButtonGroup *m_useGroup;
 	QComboBox *m_remoteHostCombo;
-	bool m_allowNsfm;
+	bool m_allowNsfm = true;
 	sessionlisting::ListServerModel *m_listServerModel;
 };
 
