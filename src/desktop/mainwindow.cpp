@@ -3724,6 +3724,11 @@ void MainWindow::setupActions()
 	connect(escapeShortcut, &QAction::triggered,
 			m_doc->toolCtrl(), &tools::ToolController::cancelMultipartDrawing);
 
+	QAction *focusCanvas = makeAction("focuscanvas", tr("Focus canvas")).shortcut(CTRL_KEY | Qt::Key_Tab);
+	connect(focusCanvas, &QAction::triggered, this, [this]{
+		m_view->setFocus();
+	});
+
 	const QList<QAction *> globalDockActions = {sideTabDocks, hideDocks, hideDockTitleBars};
 	for(auto *dw : findChildren<QDockWidget *>(QString(), Qt::FindDirectChildrenOnly)) {
 		if(auto *titlebar = qobject_cast<docks::TitleWidget *>(dw->titleBarWidget())) {
