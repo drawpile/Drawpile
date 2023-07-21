@@ -2,6 +2,7 @@
 #include "desktop/widgets/palettewidget.h"
 #include "desktop/dialogs/colordialog.h"
 #include <QApplication>
+#include <QDateTime>
 #include <QDebug>
 #include <QDrag>
 #include <QHelpEvent>
@@ -28,6 +29,7 @@ PaletteWidget::PaletteWidget(QWidget *parent)
 	, m_dialogsel(-2)
 	, m_maxrows(0)
 	, m_enableScrolling(true)
+	, m_dragTime(0)
 	, m_nextColor(Qt::black)
 {
 	setAcceptDrops(true);
@@ -289,6 +291,7 @@ void PaletteWidget::paintEvent(QPaintEvent *event)
 void PaletteWidget::mousePressEvent(QMouseEvent *event)
 {
 	m_dragstart = event->pos();
+	m_dragTime = QDateTime::currentMSecsSinceEpoch();
 	m_selection = indexAt(event->pos());
 	if(m_selection == m_colorPalette.count()) {
 		// Clicked on the [+] placeholder
@@ -299,6 +302,9 @@ void PaletteWidget::mousePressEvent(QMouseEvent *event)
 		// Clicked on a valid color
 		m_outline->setGeometry(swatchRect(m_selection).adjusted(-1, -1, 1, 1));
 		m_outline->show();
+		if(event->button() == Qt::LeftButton) {
+			emit colorSelected(m_colorPalette.colorAt(m_selection));
+		}
 
 	} else {
 		m_outline->hide();
@@ -323,14 +329,6 @@ void PaletteWidget::mouseMoveEvent(QMouseEvent *event)
 
 		drag->setMimeData(mimedata);
 		drag->exec(Qt::CopyAction | Qt::MoveAction);
-	}
-}
-
-void PaletteWidget::mouseReleaseEvent(QMouseEvent *event)
-{
-	if(m_selection != -1) {
-		if(event->button() == Qt::LeftButton)
-			emit colorSelected(m_colorPalette.colorAt(m_selection));
 	}
 }
 
@@ -393,6 +391,18 @@ void PaletteWidget::focusOutEvent(QFocusEvent *)
 
 void PaletteWidget::dropEvent(QDropEvent *event)
 {
+	if(!event->mimeData()->hasFormat("application/x-color")) {
+		return;
+	}
+	event->accept();
+
+	// To avoid accidental swapping of colors, we only react to the drop event
+	// if a sufficient amount of time has elapsed.
+	if(event->source() == this &&
+	   QDateTime::currentMSecsSinceEpoch() - m_dragTime < MIN_DRAG_TIME_MSEC) {
+		return;
+	}
+
 	QPoint pos = compat::dropPos(*event);
 	int index = indexAt(pos, true);
 	if(index == m_colorPalette.count()) {

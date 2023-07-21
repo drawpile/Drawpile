@@ -51,7 +51,6 @@ protected:
 
 	void mousePressEvent(QMouseEvent *event) override;
 	void mouseMoveEvent(QMouseEvent *event) override;
-	void mouseReleaseEvent(QMouseEvent *event) override;
 	void mouseDoubleClickEvent(QMouseEvent *) override;
 	void wheelEvent(QWheelEvent *event) override;
 	void contextMenuEvent(QContextMenuEvent *event) override;
@@ -74,6 +73,8 @@ private slots:
 	void dialogDone();
 
 private:
+	static constexpr long long MIN_DRAG_TIME_MSEC = 200;
+
 	int indexAt(const QPoint &point, bool extraPadding = false) const;
 	int nearestAt(const QPoint &point) const;
 	QRect swatchRect(int index) const;
@@ -96,6 +97,7 @@ private:
 	int m_maxrows;
 	bool m_enableScrolling;
 	QPoint m_dragstart;
+	long long m_dragTime;
 	QRubberBand *m_outline;
 	QColor m_nextColor;
 };
