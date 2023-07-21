@@ -42,6 +42,10 @@ void Tools::initGeneralTools(desktop::settings::Settings &settings, utils::Saner
 	settings.bindToolToggle(toggleKeys);
 	form->addRow(tr("Keyboard shortcuts:"), toggleKeys, 1, 2);
 
+	auto *focusCanvas = new QCheckBox(tr("Double-tap Alt key to focus canvas"));
+	settings.bindDoubleTapAltToFocusCanvas(focusCanvas);
+	form->addRow(nullptr, focusCanvas);
+
 	form->addSeparator();
 
 	auto *shareColor = new QCheckBox(tr("Share one color across all brush slots"));

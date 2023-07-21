@@ -4,21 +4,27 @@
 
 #include <QObject>
 
-class HideDockTitleBarsEventFilter : public QObject {
+class QKeyEvent;
+
+class GlobalKeyEventFilter : public QObject {
 	Q_OBJECT
 public:
-	explicit HideDockTitleBarsEventFilter(QObject *parent = nullptr);
+	explicit GlobalKeyEventFilter(QObject *parent = nullptr);
 
 signals:
 	void setDockTitleBarsHidden(bool hidden);
+	void focusCanvas();
 
 protected:
 	bool eventFilter(QObject *watched, QEvent *event) override;
 
 private:
 	void checkDockTitleBarsHidden(Qt::KeyboardModifiers mods);
+	void checkCanvasFocus(QKeyEvent *event);
 
 	bool m_wasHidden;
+	long long m_lastAltPress;
+	unsigned long long m_lastAltInternalTimestamp;
 };
 
 #endif

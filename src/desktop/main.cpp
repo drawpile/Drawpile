@@ -7,7 +7,7 @@
 
 #include "libclient/utils/logging.h"
 #include "libclient/utils/colorscheme.h"
-#include "desktop/utils/hidedocktitlebarseventfilter.h"
+#include "desktop/utils/globalkeyeventfilter.h"
 #include "desktop/notifications.h"
 #include "desktop/dialogs/startdialog.h"
 #include "desktop/dialogs/versioncheckdialog.h"
@@ -67,10 +67,12 @@ DrawpileApp::DrawpileApp(int &argc, char **argv)
 
 	// Dockers are hard to drag around since their title bars are full of stuff.
 	// This event filter allows for hiding the title bars by holding shift.
-	HideDockTitleBarsEventFilter *filter = new HideDockTitleBarsEventFilter{this};
+	GlobalKeyEventFilter *filter = new GlobalKeyEventFilter{this};
 	installEventFilter(filter);
-	connect(filter, &HideDockTitleBarsEventFilter::setDockTitleBarsHidden, this,
+	connect(filter, &GlobalKeyEventFilter::setDockTitleBarsHidden, this,
 		&DrawpileApp::setDockTitleBarsHidden);
+	connect(filter, &GlobalKeyEventFilter::focusCanvas, this,
+		&DrawpileApp::focusCanvas);
 }
 
 DrawpileApp::~DrawpileApp()

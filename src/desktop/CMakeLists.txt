@@ -245,8 +245,8 @@ target_sources(drawpile PRIVATE
 	ui/textsettings.ui
 	ui/userinfodialog.ui
 	utils/actionbuilder.h
-	utils/hidedocktitlebarseventfilter.cpp
-	utils/hidedocktitlebarseventfilter.h
+	utils/globalkeyeventfilter.cpp
+	utils/globalkeyeventfilter.h
 	utils/listserverdelegate.cpp
 	utils/listserverdelegate.h
 	utils/mandatoryfields.cpp

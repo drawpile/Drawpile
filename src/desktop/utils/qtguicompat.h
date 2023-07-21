@@ -166,6 +166,11 @@ inline auto dropPos(const QDropEvent &event)
 {
 	return event.position().toPoint();
 }
+
+inline auto keyCombination(Qt::KeyboardModifiers modifiers, Qt::Key key)
+{
+	return QKeyCombination{modifiers, key};
+}
 #else
 using DeviceType = QTabletEvent::TabletDevice;
 using EnterEvent = QEvent;
@@ -243,6 +248,11 @@ inline auto dragMovePos(const QDragMoveEvent &event)
 inline auto dropPos(const QDropEvent &event)
 {
 	return event.pos();
+}
+
+inline auto keyCombination(Qt::KeyboardModifiers modifiers, Qt::Key key)
+{
+	return int(modifiers) | int(key);
 }
 #endif
 }

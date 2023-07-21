@@ -433,6 +433,11 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	});
 
 	connect(&dpApp(), &DrawpileApp::setDockTitleBarsHidden, this, &MainWindow::setDockTitleBarsHidden);
+	connect(&dpApp(), &DrawpileApp::focusCanvas, this, [this] {
+		if(dpApp().settings().doubleTapAltToFocusCanvas()) {
+			m_view->setFocus();
+		}
+	});
 
 	// Create actions and menus
 	setupActions();

@@ -28,6 +28,7 @@ SETTING(confirmLayerDelete        , ConfirmLayerDelete        , "settings/confir
 SETTING(parentalControlsHideLocked, ParentalControlsHideLocked, "pc/hidelocked"                         , false)
 SETTING(curvesPresets             , CurvesPresets             , "curves/presets"                        , QVector<QVariantMap>())
 SETTING(curvesPresetsConverted    , CurvesPresetsConverted    , "curves/inputpresetsconverted"          , false)
+SETTING(doubleTapAltToFocusCanvas , DoubleTapAltToFocusCanvas , "settings/doubletapalttofocuscanvas"    , true)
 SETTING(filterClosed              , FilterClosed              , "history/filterclosed"                  , false)
 SETTING(filterLocked              , FilterLocked              , "history/filterlocked"                  , false)
 SETTING(filterNsfm                , FilterNsfm                , "history/filternsfw"                    , false)

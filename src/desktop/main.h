@@ -34,6 +34,7 @@ public:
 signals:
 	void eraserNear(bool near);
 	void setDockTitleBarsHidden(bool hidden);
+	void focusCanvas();
 
 protected:
 	bool event(QEvent *e) override;
