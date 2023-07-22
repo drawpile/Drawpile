@@ -65,6 +65,7 @@ static constexpr auto CTRL_KEY = Qt::CTRL;
 #include "desktop/utils/widgetutils.h"
 
 #include "desktop/widgets/viewstatus.h"
+#include "desktop/widgets/viewstatusbar.h"
 #include "desktop/widgets/netstatus.h"
 #include "desktop/chat/chatbox.h"
 
@@ -204,7 +205,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	mainwinlayout->addWidget(m_splitter);
 
 	// Create custom status bar
-	m_viewStatusBar = new QStatusBar;
+	m_viewStatusBar = new widgets::ViewStatusBar;
 	m_viewStatusBar->setSizeGripEnabled(false);
 	mainwinlayout->addWidget(m_viewStatusBar);
 
@@ -257,6 +258,9 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	m_canvasscene->setBackgroundBrush(
 			palette().brush(QPalette::Active,QPalette::Window));
 	m_view->setCanvas(m_canvasscene);
+	connect(
+		m_view, &widgets::CanvasView::coordinatesChanged, m_viewStatusBar,
+		&widgets::ViewStatusBar::setCoordinates);
 
 	// Create docks
 	createDocks();

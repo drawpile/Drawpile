@@ -35,6 +35,7 @@ namespace widgets {
 	class NetStatus;
 	class ChatBox;
 	class ViewStatus;
+	class ViewStatusBar;
 }
 namespace docks {
 	class ToolSettings;
@@ -269,7 +270,7 @@ private:
 
 	widgets::CanvasView *m_view;
 
-	QStatusBar *m_viewStatusBar;
+	widgets::ViewStatusBar *m_viewStatusBar;
 	QLabel *m_lockstatus;
 	widgets::NetStatus *m_netstatus;
 	widgets::ViewStatus *m_viewstatus;

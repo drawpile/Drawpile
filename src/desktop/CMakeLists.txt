@@ -317,6 +317,8 @@ target_sources(drawpile PRIVATE
 	widgets/toolmessage.h
 	widgets/viewstatus.cpp
 	widgets/viewstatus.h
+	widgets/viewstatusbar.cpp
+	widgets/viewstatusbar.h
 )
 
 target_link_libraries(drawpile PRIVATE

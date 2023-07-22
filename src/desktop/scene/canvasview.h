@@ -145,6 +145,7 @@ signals:
 	void penHover(const QPointF &point);
 	void penUp();
 	void quickAdjust(qreal value);
+	void coordinatesChanged(const QPointF &coordinates);
 
 	void viewRectChange(const QPolygonF &viewport);
 

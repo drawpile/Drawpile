@@ -859,12 +859,14 @@ void CanvasView::penMoveEvent(
 	qreal ytilt, qreal rotation, Qt::MouseButtons buttons,
 	Qt::KeyboardModifiers modifiers)
 {
+	canvas::Point point =
+		mapToCanvas(timeMsec, pos, pressure, xtilt, ytilt, rotation);
+	emit coordinatesChanged(point);
+
 	if(m_dragmode == ViewDragMode::Started) {
 		moveDrag(pos.toPoint());
 
 	} else {
-		canvas::Point point =
-			mapToCanvas(timeMsec, pos, pressure, xtilt, ytilt, rotation);
 		updateOutline(point);
 		if(!m_prevpoint.intSame(point)) {
 			if(m_pendown) {
