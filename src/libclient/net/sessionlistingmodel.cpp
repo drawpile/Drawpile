@@ -231,6 +231,7 @@ QVariant SessionListingModel::data(const QModelIndex &index, int role) const
 		case UrlStringRole: return sessionUrl(session).toString();
 		case IsPasswordedRole: return session.password;
 		case IsNsfwRole: return isNsfm(session);
+		case IsClosedRole: return isClosed(session);
 		case IsListingRole: return true;
 		case TitleRole: return session.title;
 		case ServerRole: return session.host;
@@ -388,4 +389,10 @@ void SessionListingModel::clear()
 bool SessionListingModel::isNsfm(const Session &session) const
 {
 	return session.nsfm || parentalcontrols::isNsfmTitle(session.title);
+}
+
+bool SessionListingModel::isClosed(const sessionlisting::Session &session) const
+{
+	return session.closed ||
+		   (session.maxUsers > 0 && session.users >= session.maxUsers);
 }

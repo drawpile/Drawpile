@@ -67,7 +67,7 @@ bool SessionFilterProxyModel::filterAcceptsRow(int source_row, const QModelIndex
 	}
 
 	if(!m_showClosed && closedRole) {
-		if(i.data(pwRole).toBool())
+		if(i.data(closedRole).toBool())
 			return false;
 	}
 

@@ -62,6 +62,7 @@ public slots:
 
 private:
 	bool isNsfm(const sessionlisting::Session &session) const;
+	bool isClosed(const sessionlisting::Session &session) const;
 
 	inline bool isRootItem(const QModelIndex &index) const { return index.internalId() == 0; }
 	inline int listingIndex(const QModelIndex &index) const {
