@@ -224,10 +224,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	m_statusChatButton->hide();
 	m_viewStatusBar->addWidget(m_statusChatButton);
 
-	// Statusbar session size label
-	QLabel *sessionHistorySize = new QLabel(this);
-	m_viewStatusBar->addWidget(sessionHistorySize);
-
 	m_viewStatusBar->addPermanentWidget(m_viewstatus);
 	m_viewStatusBar->addPermanentWidget(m_netstatus);
 	m_viewStatusBar->addPermanentWidget(m_lockstatus);
@@ -350,9 +346,9 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	connect(m_doc, &Document::catchupProgress, m_netstatus, &widgets::NetStatus::setCatchupProgress);
 
-	connect(m_doc->client(), &net::Client::serverStatusUpdate, sessionHistorySize, [sessionHistorySize](int size) {
-		sessionHistorySize->setText(QString("%1 MB").arg(size / float(1024*1024), 0, 'f', 2));
-	});
+	connect(
+		m_doc->client(), &net::Client::serverStatusUpdate, m_viewStatusBar,
+		&widgets::ViewStatusBar::setSessionHistorySize);
 
 	connect(m_chatbox, &widgets::ChatBox::message, m_doc->client(), &net::Client::sendMessage);
 	connect(m_dockTimeline, &docks::Timeline::timelineEditCommands, m_doc->client(), &net::Client::sendMessages);
@@ -413,8 +409,8 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_doc, &Document::serverConnected, this, &MainWindow::onServerConnected);
 	connect(m_doc, &Document::serverLoggedIn, this, &MainWindow::onServerLogin);
 	connect(m_doc, &Document::serverDisconnected, this, &MainWindow::onServerDisconnected);
-	connect(m_doc, &Document::serverDisconnected, sessionHistorySize, [sessionHistorySize]() {
-		sessionHistorySize->setText(QString());
+	connect(m_doc, &Document::serverDisconnected, this, [this]() {
+		m_viewStatusBar->setSessionHistorySize(-1);
 	});
 	connect(m_doc, &Document::compatibilityModeChanged, this, &MainWindow::onCompatibilityModeChanged);
 	connect(m_doc, &Document::sessionNsfmChanged, this, &MainWindow::onNsfmChanged);

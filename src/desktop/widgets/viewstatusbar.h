@@ -13,6 +13,7 @@ class ViewStatusBar final : public QStatusBar {
 public:
 	ViewStatusBar(QWidget *parent = nullptr);
 
+	void setSessionHistorySize(int sessionHistorySize);
 	void setCoordinates(const QPointF &coordinates);
 
 private slots:
@@ -21,8 +22,9 @@ private slots:
 private:
 	void showCoordinatesMessage();
 
-	bool m_showCoordinates = true;
-	bool m_settingCoordinates = false;
+	bool m_showStatusMessage = true;
+	bool m_settingStatusMessage = false;
+	int m_sessionHistorySize = -1;
 	QPointF m_coordinates = {0, 0};
 };
 
