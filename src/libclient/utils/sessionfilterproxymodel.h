@@ -12,11 +12,10 @@
  *
  * Otherwise works like normal QSortFilterProxyModel
  */
-class SessionFilterProxyModel final : public QSortFilterProxyModel
-{
+class SessionFilterProxyModel final : public QSortFilterProxyModel {
 	Q_OBJECT
 public:
-	SessionFilterProxyModel(QObject *parent=nullptr);
+	SessionFilterProxyModel(QObject *parent = nullptr);
 
 	bool showNsfw() const { return m_showNsfw; }
 	bool showPassworded() const { return m_showPassworded; }
@@ -27,7 +26,8 @@ public slots:
 	void setShowClosed(bool show);
 
 protected:
-	bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const override;
+	bool filterAcceptsRow(
+		int sourceRow, const QModelIndex &sourceParent) const override;
 
 private:
 	bool m_showPassworded;
@@ -36,4 +36,3 @@ private:
 };
 
 #endif
-
