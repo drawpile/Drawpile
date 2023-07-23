@@ -155,6 +155,7 @@ StartDialog::StartDialog(QWidget *parent)
 		QToolButton *button = new QToolButton;
 		button->setIcon(QIcon::fromTheme(def.icon));
 		button->setText(def.title);
+		button->setToolTip(def.toolTip);
 		button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 		button->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 		m_buttons[i] = button;
