@@ -7,6 +7,29 @@
 
 namespace utils {
 
+class ScopedUpdateDisabler {
+public:
+	ScopedUpdateDisabler(QWidget *widget)
+		: m_widget{widget}
+		, m_wasEnabled{widget->updatesEnabled()}
+	{
+		if(m_wasEnabled) {
+			widget->setUpdatesEnabled(false);
+		}
+	}
+
+	~ScopedUpdateDisabler()
+	{
+		if(m_wasEnabled) {
+			m_widget->setUpdatesEnabled(true);
+		}
+	}
+
+private:
+	QWidget *m_widget;
+	bool m_wasEnabled;
+};
+
 inline void showWindow(QWidget *widget, bool maximized = false)
 {
     // On Android, we rarely want small windows unless it's like a simple

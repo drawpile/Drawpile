@@ -43,11 +43,15 @@ signals:
 	void join(const QUrl &url);
 	void addListServerUrlRequested(const QUrl &url);
 
+protected:
+    void resizeEvent(QResizeEvent *event) override;
+
 private slots:
 	void updateListServers(const QVector<QVariantMap> &settingsListServers);
 	void periodicRefresh();
 	void showListingContextMenu(const QPoint &pos);
 	void joinIndex(const QModelIndex &index);
+    void cascadeSectionResize(int logicalIndex, int oldSize, int newSize);
 
 private:
 	static constexpr int REFRESH_INTERVAL_SECS = 60;
@@ -76,6 +80,7 @@ private:
 	qint64 m_lastRefresh = 0;
 	QHash<QString, sessionlisting::AnnouncementApiResponse *>
 		m_refreshesInProgress;
+	bool m_sectionFitInProgress = false;
 };
 
 }

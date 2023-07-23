@@ -3,6 +3,7 @@
 #include "desktop/dialogs/startdialog/browse.h"
 #include "desktop/main.h"
 #include "desktop/utils/sanerformlayout.h"
+#include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/spanawaretreeview.h"
 #include "libclient/net/sessionlistingmodel.h"
 #include "libclient/parentalcontrols/parentalcontrols.h"
@@ -17,6 +18,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QMenu>
+#include <QScopedValueRollback>
 #include <QTimer>
 #include <QVBoxLayout>
 
@@ -107,6 +109,8 @@ Browse::Browse(QWidget *parent)
 	m_listing->setRootIsDecorated(false);
 	m_listing->setSortingEnabled(true);
 	m_listing->header()->setStretchLastSection(false);
+	m_listing->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	m_listing->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 	layout->addWidget(m_listing);
 
 	m_sessions = new SessionListingModel{this};
@@ -140,19 +144,25 @@ Browse::Browse(QWidget *parent)
 	header->setSectionResizeMode(
 		SessionListingModel::Title, QHeaderView::Stretch);
 	header->setSectionResizeMode(
-		SessionListingModel::Server, QHeaderView::ResizeToContents);
+		SessionListingModel::Server, QHeaderView::Interactive);
 	header->setSectionResizeMode(
-		SessionListingModel::UserCount, QHeaderView::ResizeToContents);
+		SessionListingModel::UserCount, QHeaderView::Interactive);
 	header->setSectionResizeMode(
-		SessionListingModel::Owner, QHeaderView::ResizeToContents);
+		SessionListingModel::Owner, QHeaderView::Interactive);
 	header->setSectionResizeMode(
-		SessionListingModel::Uptime, QHeaderView::ResizeToContents);
+		SessionListingModel::Uptime, QHeaderView::Interactive);
 	// Don't sort by default. Otherwise it sorts by the first available column.
 	header->setSortIndicator(-1, Qt::AscendingOrder);
 #if QT_VERSION >= QT_VERSION_CHECK(6, 1, 0)
 	header->setSortIndicatorClearable(true);
 #endif
+	header->resizeSections(QHeaderView::ResizeToContents);
+	header->resizeSection(SessionListingModel::Uptime, 80);
+	header->resizeSection(SessionListingModel::Server, 125);
 
+	connect(
+		header, &QHeaderView::sectionResized, this,
+		&Browse::cascadeSectionResize);
 	connect(
 		m_listing->selectionModel(), &QItemSelectionModel::selectionChanged,
 		this, &Browse::updateJoinButton);
@@ -218,6 +228,14 @@ void Browse::accept()
 	joinIndex(m_listing->selectionModel()->currentIndex());
 }
 
+void Browse::resizeEvent(QResizeEvent *event)
+{
+	Page::resizeEvent(event);
+	m_listing->header()->setSectionResizeMode(
+		SessionListingModel::Title, QHeaderView::Interactive);
+	cascadeSectionResize(SessionListingModel::ColumnCount, 0, 0);
+}
+
 void Browse::updateListServers(const QVector<QVariantMap> &settingsListServers)
 {
 	for(sessionlisting::AnnouncementApiResponse *response :
@@ -269,6 +287,68 @@ void Browse::joinIndex(const QModelIndex &index)
 {
 	if(canJoinIndex(index)) {
 		emit join(index.data(SessionListingModel::UrlRole).toUrl());
+	}
+}
+
+void Browse::cascadeSectionResize(int logicalIndex, int oldSize, int newSize)
+{
+	Q_UNUSED(oldSize);
+	if(!m_sectionFitInProgress) {
+		QScopedValueRollback<bool> guard{m_sectionFitInProgress, true};
+		utils::ScopedUpdateDisabler disabler{m_listing};
+		QHeaderView *header = m_listing->header();
+
+		int resizableWidths = 0;
+		int fixedWidths = 0;
+		for(int i = 0; i < SessionListingModel::ColumnCount; ++i) {
+			if(i != logicalIndex) {
+				int w = m_listing->columnWidth(i);
+				if(header->sectionResizeMode(i) == QHeaderView::Interactive) {
+					resizableWidths += w;
+				} else {
+					fixedWidths += w;
+				}
+			}
+		}
+
+		double ratios[SessionListingModel::ColumnCount];
+		int largestIndex = -1;
+		int largestWidth = -1;
+		for(int i = 0; i < SessionListingModel::ColumnCount; ++i) {
+			if(i != logicalIndex &&
+			   header->sectionResizeMode(i) == QHeaderView::Interactive) {
+				int w = m_listing->columnWidth(i);
+				ratios[i] = double(w) / double(resizableWidths);
+				if(w > largestWidth) {
+					largestWidth = w;
+					largestIndex = i;
+				}
+			}
+		}
+
+		int availableWidth = header->width();
+		int widthToFill = availableWidth - newSize - fixedWidths;
+		int widthFilled = 0;
+		for(int i = 0; i < SessionListingModel::ColumnCount; ++i) {
+			if(i != logicalIndex && i != largestIndex &&
+			   header->sectionResizeMode(i) == QHeaderView::Interactive) {
+				int w = qRound(double(widthToFill) * ratios[i]);
+				m_listing->setColumnWidth(i, w);
+				widthFilled += w;
+			}
+		}
+		m_listing->setColumnWidth(largestIndex, widthToFill - widthFilled);
+
+		if(logicalIndex != SessionListingModel::ColumnCount) {
+			int actualWidth = 0;
+			for(int i = 0; i < SessionListingModel::ColumnCount; ++i) {
+				if(i != logicalIndex) {
+					actualWidth += m_listing->columnWidth(i);
+				}
+			}
+			m_listing->setColumnWidth(
+				logicalIndex, availableWidth - actualWidth);
+		}
 	}
 }
 
