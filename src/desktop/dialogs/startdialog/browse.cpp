@@ -70,7 +70,7 @@ Browse::Browse(QWidget *parent)
 	QLabel *addPubLabel = new QLabel;
 	addPubLabel->setWordWrap(true);
 	addPubLabel->setTextFormat(Qt::RichText);
-	addPubLabel->setText(tr("To add the public Drawpile listing server, "
+	addPubLabel->setText(tr("To add the public Drawpile server, "
 							"<a href=\"#\">click here</a>."));
 	labelsLayout->addWidget(addPubLabel);
 	connect(addPubLabel, &QLabel::linkActivated, this, [this] {
