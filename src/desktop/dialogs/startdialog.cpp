@@ -83,7 +83,7 @@ StartDialog::StartDialog(QWidget *parent)
 
 	EntryDefinition defs[Entry::Count];
 	defs[Entry::Welcome] = {
-		"love", tr("Welcome"), tr("News and links"), welcomePage};
+		"love", tr("Welcome"), tr("News and updates"), welcomePage};
 	defs[Entry::Join] = {
 		"network-connect", tr("Join Session"),
 		tr("Connect to a drawing session directly"), joinPage};
