@@ -50,7 +50,7 @@ Browse::Browse(QWidget *parent)
 	noListServersLayout->addLayout(iconLayout);
 
 	iconLayout->addWidget(utils::makeIconLabel(
-		QStyle::SP_MessageBoxInformation, QStyle::PM_LargeIconSize,
+		QIcon::fromTheme("dialog-information"), QStyle::PM_LargeIconSize,
 		m_noListServers));
 
 	QVBoxLayout *labelsLayout = new QVBoxLayout;

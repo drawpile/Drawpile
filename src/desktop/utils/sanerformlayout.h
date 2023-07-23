@@ -33,7 +33,7 @@ EncapsulatedLayout *encapsulate(const QString &label, QWidget *child);
 EncapsulatedLayout *indent(QWidget *child);
 EncapsulatedLayout *note(const QString &text, QSizePolicy::ControlType type);
 QFrame *makeSeparator();
-QLabel *makeIconLabel(QStyle::StandardPixmap icon, QStyle::PixelMetric size, QWidget *parent = nullptr);
+QLabel *makeIconLabel(const QIcon &icon, QStyle::PixelMetric size, QWidget *parent = nullptr);
 void setSpacingControlType(EncapsulatedLayout *widget, QSizePolicy::ControlTypes type);
 void setSpacingControlType(QWidget *widget, QSizePolicy::ControlType type);
 

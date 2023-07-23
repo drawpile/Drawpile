@@ -127,7 +127,7 @@ void ParentalControls::initInfoBar(QVBoxLayout *layout)
 	info->setContentsMargins(0, 0, 0, 0);
 	layout->addLayout(info);
 
-	info->addWidget(utils::makeIconLabel(QStyle::SP_MessageBoxInformation, QStyle::PM_LargeIconSize, this));
+	info->addWidget(utils::makeIconLabel(QIcon::fromTheme("dialog-information"), QStyle::PM_LargeIconSize, this));
 
 	auto *description = new QLabel;
 	description->setWordWrap(true);

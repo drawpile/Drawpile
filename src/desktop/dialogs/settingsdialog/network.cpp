@@ -46,7 +46,7 @@ Network::Network(desktop::settings::Settings &settings, QWidget *parent)
 	settings.bindServerAutoReset(autoReset);
 	auto *autoResetNote = new QWidget;
 	auto *autoResetNoteLayout = utils::note(tr("If all operators in a session set connection quality to Poor, auto-reset will not work and the server will stop processing updates until the session is manually reset."), QSizePolicy::Label);
-	autoResetNoteLayout->insertWidget(0, utils::makeIconLabel(QStyle::SP_MessageBoxWarning, QStyle::PM_SmallIconSize, this), 0, Qt::AlignTop);
+	autoResetNoteLayout->insertWidget(0, utils::makeIconLabel(QIcon::fromTheme("dialog-warning"), QStyle::PM_SmallIconSize, this), 0, Qt::AlignTop);
 	autoResetNote->setLayout(autoResetNoteLayout);
 	form->addRow(nullptr, autoResetNote);
 	settings.bindServerAutoReset(autoResetNote, &QWidget::setHidden);
