@@ -180,6 +180,8 @@ private:
 
 	int haveWholeMessageToRead();
 	void writeData();
+	bool messagesInOutbox() const;
+	drawdance::Message dequeueFromOutbox();
 
 	void handlePing(bool isPong);
 	void sendPingMsg(bool pong);
@@ -195,6 +197,7 @@ private:
 
 	drawdance::MessageList m_inbox;  // received (complete) messages
 	QQueue<drawdance::Message> m_outbox; // messages to be sent
+	QQueue<bool> m_pings; // pings and pongs to be sent
 
 	// Smoothing of received messages. Depending on the server and network
 	// conditions, messages will arrive in chunks, which causes other people's

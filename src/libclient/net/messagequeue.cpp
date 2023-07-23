@@ -242,7 +242,15 @@ void MessageQueue::enqueueMessages(int count, const drawdance::Message *msgs)
 
 void MessageQueue::sendPingMsg(bool pong)
 {
-	send(drawdance::Message::makePing(0, pong));
+	if(m_artificialLagMs == 0) {
+		m_pings.enqueue(pong);
+		if(m_sendbuffer.isEmpty()) {
+			writeData();
+		}
+	} else {
+		// Not accurate, but probably good enough for development purposes.
+		send(drawdance::Message::makePing(0, pong));
+	}
 }
 
 void MessageQueue::sendDisconnect(GracefulDisconnect reason, const QString &message)
@@ -253,7 +261,7 @@ void MessageQueue::sendDisconnect(GracefulDisconnect reason, const QString &mess
 	drawdance::Message msg =
 		drawdance::Message::makeDisconnect(0, uint8_t(reason), message);
 
-	qInfo("Sending disconnect message (reason=%d), will disconnect after queue (%lld messages) is empty.", int(reason), compat::cast<long long>(m_outbox.size()));
+	qInfo("Sending disconnect message (reason=%d), will disconnect after queue (%lld messages) is empty.", int(reason), compat::cast<long long>(m_outbox.size() + m_pings.size()));
 	send(msg);
 	m_gracefullyDisconnecting = true;
 	m_recvbytes = 0;
@@ -280,6 +288,7 @@ int MessageQueue::uploadQueueBytes() const
 	int total = m_socket->bytesToWrite() + m_sendbuffer.length() - m_sentbytes;
 	for(const drawdance::Message &msg : m_outbox)
 		total += compat::castSize(msg.length());
+	total += m_pings.size() * (DP_MESSAGE_HEADER_LENGTH + DP_MSG_PING_STATIC_LENGTH);
 	return total;
 }
 
@@ -424,7 +433,7 @@ void MessageQueue::dataWritten(qint64 bytes)
 
 	// Write more once the buffer is empty
 	if(m_socket->bytesToWrite()==0) {
-		if(m_sendbuffer.isEmpty() && m_outbox.isEmpty() && m_gracefullyDisconnecting) {
+		if(m_sendbuffer.isEmpty() && !messagesInOutbox() && m_gracefullyDisconnecting) {
 			qInfo("All sent, gracefully disconnecting.");
 			m_socket->disconnectFromHost();
 
@@ -440,12 +449,12 @@ void MessageQueue::writeData() {
 
 	while(sendMore && sentBatch < 1024*64) {
 		sendMore = false;
-		if(m_sendbuffer.isEmpty() && !m_outbox.isEmpty()) {
+		if(m_sendbuffer.isEmpty() && messagesInOutbox()) {
 			// Upload buffer is empty, but there are messages in the outbox
 			Q_ASSERT(m_sentbytes == 0);
-			if(!m_outbox.dequeue().serialize(m_sendbuffer)) {
+			if(!dequeueFromOutbox().serialize(m_sendbuffer)) {
 				qWarning("Error serializing message: %s", DP_error());
-				sendMore = !m_outbox.isEmpty();
+				sendMore = messagesInOutbox();
 				continue;
 			}
 		}
@@ -466,9 +475,23 @@ void MessageQueue::writeData() {
 				// Complete envelope sent
 				m_sendbuffer.clear();
 				m_sentbytes = 0;
-				sendMore = !m_outbox.isEmpty();
+				sendMore = messagesInOutbox();
 			}
 		}
+	}
+}
+
+bool MessageQueue::messagesInOutbox() const
+{
+	return !m_outbox.isEmpty() || !m_pings.isEmpty();
+}
+
+drawdance::Message MessageQueue::dequeueFromOutbox()
+{
+	if(m_pings.isEmpty()) {
+		return m_outbox.dequeue();
+	} else {
+		return drawdance::Message::makePing(0, m_pings.dequeue());
 	}
 }
 
