@@ -268,11 +268,14 @@ void Browse::updateListServers(const QVector<QVariantMap> &settingsListServers)
 
 	if(servers.isEmpty()) {
 		m_noListServers->show();
+		m_sessions->setMessage(
+			tr("Nothing here yet!"), QString{},
+			tr("Read the message at the top on how to add a server."));
 	} else {
 		m_noListServers->hide();
-		m_listing->expandAll();
 		refresh();
 	}
+	m_listing->expandAll();
 }
 
 void Browse::periodicRefresh()
