@@ -302,7 +302,7 @@ void Selection::adjustTranslation(const QPointF &start, const QPointF &point)
 
 void Selection::adjustTranslation(const QPointF &delta)
 {
-	m_shape = m_preAdjustmentShape.translated(delta);
+	m_shape = m_preAdjustmentShape.translated(delta.toPoint());
 	emit shapeChanged(m_shape);
 }
 
