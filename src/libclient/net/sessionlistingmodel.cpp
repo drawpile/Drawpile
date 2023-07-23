@@ -167,7 +167,11 @@ QVariant SessionListingModel::data(const QModelIndex &index, int role) const
 				if (session.users < 0) {
 					return QVariant();
 			 	} else if (role == Qt::ToolTipRole) {
-					return tr("%n users", nullptr, session.users);
+					if(session.maxUsers > 0) {
+						return tr("%1/%n users", nullptr, session.maxUsers).arg(session.users);
+					} else {
+						return tr("%n users", nullptr, session.users);
+					}
 				} else {
 					return QString::number(session.users);
 				}
