@@ -61,6 +61,9 @@ public slots:
 	void clear();
 
 private:
+	QString formatTitle(
+		const sessionlisting::Session &session, bool includeFlags) const;
+
 	bool isNsfm(const sessionlisting::Session &session) const;
 	bool isClosed(const sessionlisting::Session &session) const;
 

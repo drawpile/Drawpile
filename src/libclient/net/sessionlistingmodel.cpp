@@ -160,7 +160,7 @@ QVariant SessionListingModel::data(const QModelIndex &index, int role) const
 		case Qt::ToolTipRole:
 			switch(Column(index.column())) {
 			case Title:
-				return session.title.isEmpty() ? tr("(untitled)") : session.title;
+				return formatTitle(session, role == Qt::ToolTipRole);
 			case Server:
 				return session.host;
 			case UserCount:
@@ -390,6 +390,29 @@ void SessionListingModel::clear()
 	beginResetModel();
 	m_listings.clear();
 	endResetModel();
+}
+
+QString SessionListingModel::formatTitle(
+	const Session &session, bool includeFlags) const
+{
+	QString title = session.title.isEmpty() ? tr("(untitled)") : session.title;
+	if(includeFlags) {
+		QStringList flags;
+		if(isClosed(session)) {
+			flags.append(tr("closed"));
+		}
+		if(session.password) {
+			flags.append(tr("password-protected"));
+		}
+		if(isNsfm(session)) {
+			flags.append(tr("NSFM"));
+		}
+		if(!flags.isEmpty()) {
+			return QStringLiteral("%1 (%2)").arg(
+				title, flags.join(QStringLiteral(", ")));
+		}
+	}
+	return title;
 }
 
 bool SessionListingModel::isNsfm(const Session &session) const
