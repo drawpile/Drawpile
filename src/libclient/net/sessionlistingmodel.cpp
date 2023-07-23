@@ -208,7 +208,9 @@ QVariant SessionListingModel::data(const QModelIndex &index, int role) const
 					return QIcon::fromTheme("state-error");
 				}
 			case Title:
-				if(session.password) {
+				if(isClosed(session)) {
+					return QIcon::fromTheme("cards-block");
+				} else if(session.password) {
 					return QIcon::fromTheme("object-locked");
 				} else if(isNsfm(session)) {
 					return QIcon(":/icons/censored.svg");
