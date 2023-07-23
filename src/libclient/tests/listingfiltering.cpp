@@ -22,7 +22,7 @@ private slots:
 		};
 
 		SessionListingModel listmodel;
-		listmodel.setList("test", testlist);
+		listmodel.setList("test", "example.com", testlist);
 
 		SessionFilterProxyModel filtered;
 		filtered.setSourceModel(&listmodel);

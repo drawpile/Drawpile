@@ -54,10 +54,12 @@ public:
 
 	QModelIndex indexOfListing(const QString &listing) const;
 
+	QModelIndex primaryIndexOfUrl(const QUrl &url) const;
+
 public slots:
 	void setIcon(const QString &name, const QIcon &icon);
-	void setMessage(const QString &name, const QString &message);
-	void setList(const QString &name, const QVector<sessionlisting::Session> sessions);
+	void setMessage(const QString &name, const QString &host, const QString &message);
+	void setList(const QString &name, const QString &host, const QVector<sessionlisting::Session> sessions);
 	void clear();
 
 private:
@@ -74,6 +76,7 @@ private:
 
 	struct Listing {
 		QString name;
+		QString host;
 
 		// If a message is set, the session list is not shown
 		QString message;

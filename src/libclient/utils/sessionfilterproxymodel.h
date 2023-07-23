@@ -24,15 +24,19 @@ public slots:
 	void setShowNsfw(bool show);
 	void setShowPassworded(bool show);
 	void setShowClosed(bool show);
+	void setShowDuplicates(bool show);
 
 protected:
 	bool filterAcceptsRow(
 		int sourceRow, const QModelIndex &sourceParent) const override;
 
 private:
+	bool isDuplicate(const QModelIndex &index) const;
+
 	bool m_showPassworded;
 	bool m_showNsfw;
 	bool m_showClosed;
+	bool m_showDuplicates;
 };
 
 #endif

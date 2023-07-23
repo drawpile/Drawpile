@@ -104,6 +104,11 @@ Browse::Browse(QWidget *parent)
 		m_nsfmBox->setEnabled(false);
 	}
 
+	m_duplicatesBox = new QCheckBox{tr("Duplicates")};
+	m_duplicatesBox->setToolTip(
+		tr("Show sessions that are listed on multiple servers"));
+	filterLayout->addWidget(m_duplicatesBox);
+
 	m_listing = new widgets::SpanAwareTreeView;
 	m_listing->setAlternatingRowColors(true);
 	m_listing->setRootIsDecorated(false);
@@ -196,11 +201,13 @@ Browse::Browse(QWidget *parent)
 	settings.bindFilterClosed(m_closedBox);
 	settings.bindFilterLocked(m_passwordBox);
 	settings.bindFilterNsfm(m_nsfmBox);
+	settings.bindFilterDuplicates(m_duplicatesBox);
 	settings.bindListServers(this, &Browse::updateListServers);
 
 	m_filteredSessions->setShowClosed(m_closedBox->isChecked());
 	m_filteredSessions->setShowPassworded(m_passwordBox->isChecked());
 	m_filteredSessions->setShowNsfw(m_nsfmBox->isChecked());
+	m_filteredSessions->setShowDuplicates(m_duplicatesBox->isChecked());
 
 	connect(
 		m_filterEdit, &QLineEdit::textChanged, m_filteredSessions,
@@ -214,6 +221,9 @@ Browse::Browse(QWidget *parent)
 	connect(
 		m_closedBox, &QAbstractButton::toggled, m_filteredSessions,
 		&SessionFilterProxyModel::setShowClosed);
+	connect(
+		m_duplicatesBox, &QAbstractButton::toggled, m_filteredSessions,
+		&SessionFilterProxyModel::setShowDuplicates);
 }
 
 void Browse::activate()
@@ -251,7 +261,8 @@ void Browse::updateListServers(const QVector<QVariantMap> &settingsListServers)
 	for(const sessionlisting::ListServer &ls : servers) {
 		if(ls.publicListings) {
 			m_sessions->setIcon(ls.name, ls.icon);
-			m_sessions->setMessage(ls.name, tr("Loading..."));
+			m_sessions->setMessage(
+				ls.name, QUrl{ls.url}.host(), tr("Loading..."));
 		}
 	}
 
@@ -401,13 +412,14 @@ void Browse::refreshServer(
 
 	connect(
 		response, &sessionlisting::AnnouncementApiResponse::finished, this,
-		[this, name = ls.name](
+		[this, name = ls.name, host = url.host()](
 			const QVariant &result, const QString &, const QString &error) {
 			if(error.isEmpty()) {
 				m_sessions->setList(
-					name, result.value<QVector<sessionlisting::Session>>());
+					name, host,
+					result.value<QVector<sessionlisting::Session>>());
 			} else {
-				m_sessions->setMessage(name, error);
+				m_sessions->setMessage(name, host, error);
 			}
 		});
 

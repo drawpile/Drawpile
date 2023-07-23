@@ -71,6 +71,7 @@ private:
 	QCheckBox *m_closedBox;
 	QCheckBox *m_passwordBox;
 	QCheckBox *m_nsfmBox;
+	QCheckBox *m_duplicatesBox;
 	widgets::SpanAwareTreeView *m_listing;
 	SessionListingModel *m_sessions;
 	SessionFilterProxyModel *m_filteredSessions;

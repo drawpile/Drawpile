@@ -30,6 +30,7 @@ SETTING(curvesPresets             , CurvesPresets             , "curves/presets"
 SETTING(curvesPresetsConverted    , CurvesPresetsConverted    , "curves/inputpresetsconverted"          , false)
 SETTING(doubleTapAltToFocusCanvas , DoubleTapAltToFocusCanvas , "settings/doubletapalttofocuscanvas"    , true)
 SETTING(filterClosed              , FilterClosed              , "history/filterclosed"                  , false)
+SETTING(filterDuplicates          , FilterDuplicates          , "history/filterduplicates"              , false)
 SETTING(filterLocked              , FilterLocked              , "history/filterlocked"                  , false)
 SETTING(filterNsfm                , FilterNsfm                , "history/filternsfw"                    , false)
 SETTING(flipbookCrop              , FlipbookCrop              , "flipbook/crop"                         , QRect())

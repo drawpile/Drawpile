@@ -319,12 +319,37 @@ QModelIndex SessionListingModel::indexOfListing(const QString &listing) const
 	return QModelIndex();
 }
 
+QModelIndex SessionListingModel::primaryIndexOfUrl(const QUrl &url) const
+{
+	QVector<QModelIndex> indexes;
+	int listingCount = m_listings.size();
+	for(int listingIndex = 0; listingIndex < listingCount; ++listingIndex) {
+		const Listing &listing = m_listings[listingIndex];
+		int sessionCount = listing.sessions.count();
+		for(int sessionIndex = 0; sessionIndex < sessionCount; ++sessionIndex) {
+			const Session &session = listing.sessions[sessionIndex];
+			if(sessionUrl(session) == url) {
+				QModelIndex i = index(sessionIndex, 0, index(listingIndex, 0));
+				bool hostedHere = session.host.compare(
+									  listing.host, Qt::CaseInsensitive) == 0;
+				if(hostedHere) {
+					indexes.prepend(i);
+				} else {
+					indexes.append(i);
+				}
+			}
+		}
+	}
+	return indexes.isEmpty() ? QModelIndex{} : indexes.first();
+}
+
 void SessionListingModel::setIcon(const QString &name, const QIcon &icon)
 {
 	m_icons[name] = icon;
 }
 
-void SessionListingModel::setMessage(const QString &name, const QString &message)
+void SessionListingModel::setMessage(
+	const QString &name, const QString &host, const QString &message)
 {
 	for(int i = 0; i < m_listings.size(); ++i) {
 		auto &listing = m_listings[i];
@@ -334,6 +359,7 @@ void SessionListingModel::setMessage(const QString &name, const QString &message
 			if (oldSize > 1)
 				beginRemoveRows(createIndex(i, 0), 1, oldSize - 1);
 
+			listing.host = host;
 			listing.message = message;
 			listing.sessions.clear();
 
@@ -348,11 +374,12 @@ void SessionListingModel::setMessage(const QString &name, const QString &message
 	}
 
 	beginInsertRows(QModelIndex(), m_listings.size(), m_listings.size());
-	m_listings << Listing { name, message, {} };
+	m_listings << Listing{name, host, message, {}};
 	endInsertRows();
 }
 
-void SessionListingModel::setList(const QString &name, const QVector<Session> sessions)
+void SessionListingModel::setList(
+	const QString &name, const QString &host, const QVector<Session> sessions)
 {
 	for (auto i = 0; i < m_listings.size(); ++i) {
 		auto &listing = m_listings[i];
@@ -363,6 +390,7 @@ void SessionListingModel::setList(const QString &name, const QVector<Session> se
 			else if (sessions.size() > oldSize)
 				beginInsertRows(createIndex(i, 0), oldSize, sessions.size() - 1);
 
+			listing.host = host;
 			listing.message = QString();
 			listing.sessions = sessions;
 
@@ -381,7 +409,7 @@ void SessionListingModel::setList(const QString &name, const QVector<Session> se
 	}
 
 	beginInsertRows(QModelIndex(), m_listings.size(), m_listings.size());
-	m_listings << Listing { name, QString(), sessions };
+	m_listings << Listing{name, host, QString(), sessions};
 	endInsertRows();
 }
 

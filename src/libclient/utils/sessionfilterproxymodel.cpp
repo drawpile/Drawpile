@@ -9,6 +9,7 @@ SessionFilterProxyModel::SessionFilterProxyModel(QObject *parent)
 	, m_showPassworded{true}
 	, m_showNsfw{true}
 	, m_showClosed{true}
+	, m_showDuplicates{true}
 {
 }
 
@@ -81,9 +82,22 @@ bool SessionFilterProxyModel::filterAcceptsRow(
 		return false;
 	}
 
-	if(!m_showClosed && i.data(closedRole).toBool()) {
+	if(!m_showDuplicates && isDuplicate(index)) {
 		return false;
 	}
 
 	return QSortFilterProxyModel::filterAcceptsRow(sourceRow, sourceParent);
+}
+
+bool SessionFilterProxyModel::isDuplicate(const QModelIndex &index) const
+{
+	SessionListingModel *sessionListingModel =
+		qobject_cast<SessionListingModel *>(sourceModel());
+	if(sessionListingModel) {
+		QModelIndex primaryIndex = sessionListingModel->primaryIndexOfUrl(
+			index.data(SessionListingModel::UrlRole).toUrl());
+		return primaryIndex.isValid() && primaryIndex != index;
+	} else {
+		return false;
+	}
 }
