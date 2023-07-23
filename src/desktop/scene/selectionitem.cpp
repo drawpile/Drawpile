@@ -198,14 +198,14 @@ void SelectionItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 		const qreal s = m_selection->handleSize() / opt->levelOfDetailFromTransform(painter->transform());
 		drawHandle(painter, rect.topLeft(), s, canvas::Selection::Handle::TopLeft, getArrow);
 		drawHandle(painter, rect.topLeft() + QPointF(rect.width()/2, 0), s, canvas::Selection::Handle::Top, getArrow);
-		drawHandle(painter, rect.topRight(), s, canvas::Selection::Handle::TopRight, getArrow);
+		drawHandle(painter, rect.topRight() + QPointF{1, 0.0}, s, canvas::Selection::Handle::TopRight, getArrow);
 
 		drawHandle(painter, rect.topLeft() + QPointF(0, rect.height()/2), s, canvas::Selection::Handle::Left, getArrow);
-		drawHandle(painter, rect.topRight() + QPointF(0, rect.height()/2), s, canvas::Selection::Handle::Right, getArrow);
+		drawHandle(painter, rect.topRight() + QPointF(1, rect.height()/2), s, canvas::Selection::Handle::Right, getArrow);
 
-		drawHandle(painter, rect.bottomLeft(), s, canvas::Selection::Handle::BottomLeft, getArrow);
-		drawHandle(painter, rect.bottomLeft() + QPointF(rect.width()/2, 0), s, canvas::Selection::Handle::Bottom, getArrow);
-		drawHandle(painter, rect.bottomRight(), s, canvas::Selection::Handle::BottomRight, getArrow);
+		drawHandle(painter, rect.bottomLeft() + QPointF(0, 1), s, canvas::Selection::Handle::BottomLeft, getArrow);
+		drawHandle(painter, rect.bottomLeft() + QPointF(rect.width()/2, 1), s, canvas::Selection::Handle::Bottom, getArrow);
+		drawHandle(painter, rect.bottomRight() + QPointF(1, 1), s, canvas::Selection::Handle::BottomRight, getArrow);
 	}
 }
 
