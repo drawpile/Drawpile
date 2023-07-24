@@ -95,7 +95,7 @@ private slots:
 
 private:
 	static constexpr char ENTRY_PROPERTY_KEY[] = "startdialogentry";
-	static constexpr int MAX_LAST_PAGE_REMEMBER_DAYS = 3;
+	static constexpr int MAX_LAST_PAGE_REMEMBER_SECS = 60 * 60 * 24;
 	static constexpr int CHECK_FOR_UPDATES_DELAY_MSEC = 1000;
 
 	void entryClicked(Entry entry);

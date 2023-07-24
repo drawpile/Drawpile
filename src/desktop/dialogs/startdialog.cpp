@@ -14,6 +14,7 @@
 #include "desktop/main.h"
 #include <QButtonGroup>
 #include <QDate>
+#include <QDateTime>
 #include <QDialogButtonBox>
 #include <QFrame>
 #include <QHBoxLayout>
@@ -511,8 +512,8 @@ void StartDialog::rememberLastPage(int i)
 		if(ok && entry >= 0 && entry < Entry::Count) {
 			desktop::settings::Settings &settings = dpApp().settings();
 			settings.setLastStartDialogPage(entry);
-			settings.setLastStartDialogDate(
-				QDate::currentDate().toString(Qt::ISODate));
+			settings.setLastStartDialogDateTime(
+				QDateTime::currentDateTimeUtc().toString(Qt::ISODate));
 		}
 	}
 }
@@ -578,13 +579,14 @@ void StartDialog::guessPage()
 	const desktop::settings::Settings &settings = dpApp().settings();
 	if(settings.welcomePageShown()) {
 		int lastPage = settings.lastStartDialogPage();
-		QDate lastDate =
-			QDate::fromString(settings.lastStartDialogDate(), Qt::ISODate);
-		bool lastPageValid = lastPage >= 0 && lastPage < Entry::Count &&
-							 lastDate.isValid() &&
-							 lastDate.daysTo(QDate::currentDate()) <
-								 MAX_LAST_PAGE_REMEMBER_DAYS &&
-							 m_buttons[lastPage]->isCheckable();
+		QDateTime lastDateTime = QDateTime::fromString(
+			settings.lastStartDialogDateTime(), Qt::ISODate);
+		bool lastPageValid =
+			lastPage >= 0 && lastPage < Entry::Count &&
+			lastDateTime.isValid() &&
+			lastDateTime.secsTo(QDateTime::currentDateTimeUtc()) <
+				MAX_LAST_PAGE_REMEMBER_SECS &&
+			m_buttons[lastPage]->isCheckable();
 		showPage(lastPageValid ? Entry(lastPage) : Entry::Welcome);
 	} else {
 		showPage(Entry::Welcome);

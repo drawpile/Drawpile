@@ -55,7 +55,7 @@ SETTING(lastRemoteHost            , LastRemoteHost            , "history/lastrem
 SETTING(lastSessionTitle          , LastSessionTitle          , "history/sessiontitle"                  , QString())
 SETTING(lastStartDialogPage       , LastStartDialogPage       , "history/laststartdialogpage"           , -1)
 SETTING(lastStartDialogSize       , LastStartDialogSize       , "history/laststartdialogsize"           , QSize())
-SETTING(lastStartDialogDate       , LastStartDialogDate       , "history/laststartdialogdate"           , QString())
+SETTING(lastStartDialogDateTime   , LastStartDialogDateTime   , "history/laststartdialogdatetime"       , QString())
 SETTING(lastTool                  , LastTool                  , "tools/tool"                            , tools::Tool::Type::FREEHAND)
 SETTING(lastToolColor             , LastToolColor             , "tools/color"                           , QColor(Qt::black))
 SETTING(lastUsername              , LastUsername              , "history/username"                      , QString())
