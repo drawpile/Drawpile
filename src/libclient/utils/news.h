@@ -5,9 +5,10 @@
 
 #include <QDate>
 #include <QObject>
+#include <QUrl>
 #include <QVector>
 
-class QByteArray;
+class QJsonDocument;
 class QNetworkReply;
 
 namespace utils {
@@ -15,6 +16,34 @@ namespace utils {
 class News final : public QObject {
 	Q_OBJECT
 public:
+	struct Version {
+		int server;
+		int major;
+		int minor;
+		int beta;
+
+		static Version parse(const QString &s);
+		static Version invalid() { return {0, 0, 0, 0}; }
+
+		bool isValid() const { return server > 0; }
+		bool isBeta() const { return beta > 0; }
+		bool isNewerThan(const Version &other) const;
+		QString toString() const;
+	};
+
+	struct Update {
+		Version version;
+		QDate date;
+		QUrl url;
+
+		static Update invalid()
+		{
+			return {Version::invalid(), QDate{}, QUrl{}};
+		}
+
+		bool isValid() const { return version.isValid(); }
+	};
+
 	explicit News(QObject *parent = nullptr);
 	~News() override;
 
@@ -25,6 +54,7 @@ public:
 
 signals:
 	void newsAvailable(const QString &content);
+	void updateAvailable(const Update &update);
 	void fetchInProgress(bool inProgress);
 
 private:
@@ -32,6 +62,7 @@ private:
 	static constexpr long long CHECK_EXISTING_STALE_DAYS = 3;
 	static constexpr char URL[] =
 		"https://drawpile.net/files/metadata/news.json";
+	static constexpr char FALLBACK_UPDATE_URL[] = "https://drawpile.net/";
 
 	struct Article {
 		QString content;
@@ -41,7 +72,9 @@ private:
 	void doCheck(bool force);
 	void fetch(const QDate &date, bool showErrorAsNews);
 	void fetchFinished(QDate date, QNetworkReply *reply, bool showErrorAsNews);
-	QVector<Article> parse(const QByteArray &bytes);
+	QVector<Article> parseNews(const QJsonDocument &doc);
+	QVector<Update> parseUpdates(const QJsonDocument &doc);
+	void checkUpdateAvailable();
 
 	void showMessageAsNews(const QString &message);
 

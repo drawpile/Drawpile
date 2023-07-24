@@ -183,8 +183,6 @@ target_sources(dpclient PRIVATE
 	utils/logging.h
 	utils/news.cpp
 	utils/news.h
-	utils/newversion.cpp
-	utils/newversion.h
 	utils/sessionfilterproxymodel.cpp
 	utils/sessionfilterproxymodel.h
 	utils/sessionidvalidator.cpp

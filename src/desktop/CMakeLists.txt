@@ -147,6 +147,8 @@ target_sources(drawpile PRIVATE
 	dialogs/startdialog/links.h
 	dialogs/startdialog/page.cpp
 	dialogs/startdialog/page.h
+	dialogs/startdialog/updatenotice.cpp
+	dialogs/startdialog/updatenotice.h
 	dialogs/startdialog/welcome.cpp
 	dialogs/startdialog/welcome.h
 	dialogs/tablettester.cpp
@@ -336,15 +338,6 @@ target_link_libraries(drawpile PRIVATE
 	${QT_PACKAGE_NAME}::Widgets
 	${QT_PACKAGE_NAME}::Multimedia
 )
-
-if(VERSION_CHECK)
-	target_sources(drawpile PRIVATE
-		dialogs/versioncheckdialog.cpp
-		dialogs/versioncheckdialog.h
-		ui/versioncheck.ui
-	)
-	target_compile_definitions(drawpile PRIVATE ENABLE_VERSION_CHECK)
-endif()
 
 if(WIN32)
 	target_sources(drawpile PRIVATE icons/drawpile.ico)

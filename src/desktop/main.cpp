@@ -10,7 +10,6 @@
 #include "desktop/utils/globalkeyeventfilter.h"
 #include "desktop/notifications.h"
 #include "desktop/dialogs/startdialog.h"
-#include "desktop/dialogs/versioncheckdialog.h"
 #include "libshared/util/paths.h"
 #include "libclient/drawdance/global.h"
 #include "libshared/util/qtcompat.h"
@@ -41,10 +40,6 @@
 #include <QWidget>
 #include <memory>
 #include <tuple>
-
-#ifdef ENABLE_VERSION_CHECK
-#	include "dialogs/versioncheckdialog.h"
-#endif
 
 DrawpileApp::DrawpileApp(int &argc, char **argv)
 	: QApplication(argc, argv)
@@ -516,10 +511,6 @@ int main(int argc, char *argv[]) {
 			app.openUrl(url);
 		}
 	}
-
-#ifdef ENABLE_VERSION_CHECK
-	dialogs::VersionCheckDialog::doVersionCheckIfNeeded();
-#endif
 
 	return app.exec();
 }

@@ -1,6 +1,0 @@
-<RCC>
-	<qresource prefix="/test">
-		<file>appdata-test.xml</file>
-	</qresource>
-</RCC>
-

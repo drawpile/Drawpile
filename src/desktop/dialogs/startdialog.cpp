@@ -8,10 +8,10 @@
 #include "desktop/dialogs/startdialog/join.h"
 #include "desktop/dialogs/startdialog/links.h"
 #include "desktop/dialogs/startdialog/page.h"
+#include "desktop/dialogs/startdialog/updatenotice.h"
 #include "desktop/dialogs/startdialog/welcome.h"
 #include "desktop/filewrangler.h"
 #include "desktop/main.h"
-#include "libclient/utils/news.h"
 #include <QButtonGroup>
 #include <QDate>
 #include <QDialogButtonBox>
@@ -26,6 +26,7 @@
 #include <QSpacerItem>
 #include <QStackedWidget>
 #include <QStyle>
+#include <QTimer>
 #include <QToolBar>
 #include <QToolButton>
 #include <QUrl>
@@ -58,13 +59,24 @@ struct LinkDefinition {
 
 StartDialog::StartDialog(QWidget *parent)
 	: QDialog{parent, WINDOW_HINTS}
+	, m_initialUpdateDelayTimer{new QTimer{this}}
+	, m_news{this}
 {
 	setWindowTitle(tr("Start"));
 	setWindowModality(Qt::WindowModal);
 
-	QHBoxLayout *layout = new QHBoxLayout{this};
+	QVBoxLayout *layout = new QVBoxLayout;
 	layout->setContentsMargins(0, 0, 0, 0);
 	layout->setSpacing(0);
+	setLayout(layout);
+
+	m_updateNotice = new startdialog::UpdateNotice;
+	layout->addWidget(m_updateNotice);
+
+	QHBoxLayout *mainLayout = new QHBoxLayout;
+	mainLayout->setContentsMargins(0, 0, 0, 0);
+	mainLayout->setSpacing(0);
+	layout->addLayout(mainLayout);
 
 	QToolBar *menu = new QToolBar;
 	menu->setMovable(false);
@@ -73,7 +85,7 @@ StartDialog::StartDialog(QWidget *parent)
 	menu->setOrientation(Qt::Vertical);
 	menu->setBackgroundRole(QPalette::Midlight);
 	menu->setAutoFillBackground(true);
-	layout->addWidget(menu);
+	mainLayout->addWidget(menu);
 
 	startdialog::Welcome *welcomePage = new startdialog::Welcome{this};
 	startdialog::Join *joinPage = new startdialog::Join{this};
@@ -112,7 +124,7 @@ StartDialog::StartDialog(QWidget *parent)
 		style()->pixelMetric(QStyle::PM_LayoutTopMargin, nullptr, this),
 		style()->pixelMetric(QStyle::PM_LayoutRightMargin, nullptr, this),
 		style()->pixelMetric(QStyle::PM_LayoutBottomMargin, nullptr, this));
-	layout->addLayout(contentLayout, 1);
+	mainLayout->addLayout(contentLayout, 1);
 
 	m_stack = new QStackedWidget;
 	m_stack->setContentsMargins(0, 0, 0, 0);
@@ -189,10 +201,10 @@ StartDialog::StartDialog(QWidget *parent)
 	m_linksSeparator = new QFrame;
 	m_linksSeparator->setForegroundRole(QPalette::Dark);
 	m_linksSeparator->setFrameShape(QFrame::VLine);
-	layout->addWidget(m_linksSeparator);
+	mainLayout->addWidget(m_linksSeparator);
 
 	m_links = new startdialog::Links;
-	layout->addWidget(m_links);
+	mainLayout->addWidget(m_links);
 
 	connect(
 		m_addServerButton, &QAbstractButton::clicked, this,
@@ -266,21 +278,32 @@ StartDialog::StartDialog(QWidget *parent)
 		m_stack, &QStackedWidget::currentChanged, this,
 		&StartDialog::rememberLastPage);
 
-	m_news = new utils::News{this};
+	// Delay showing of the update notice to make it more noticeable. It'll jerk
+	// the whole UI if it comes in after a second, making it hard to miss.
+	m_initialUpdateDelayTimer->setTimerType(Qt::CoarseTimer);
+	m_initialUpdateDelayTimer->setSingleShot(true);
+	m_initialUpdateDelayTimer->setInterval(1000);
 	connect(
-		m_news, &utils::News::fetchInProgress, this,
+		m_initialUpdateDelayTimer, &QTimer::timeout, this,
+		&StartDialog::initialUpdateDelayFinished);
+	m_initialUpdateDelayTimer->start();
+
+	connect(
+		&m_news, &utils::News::fetchInProgress, this,
 		&StartDialog::updateCheckForUpdatesButton);
 	connect(
-		m_news, &utils::News::newsAvailable, welcomePage,
+		&m_news, &utils::News::newsAvailable, welcomePage,
 		&startdialog::Welcome::setNews);
+	connect(
+		&m_news, &utils::News::updateAvailable, this, &StartDialog::setUpdate);
 	updateCheckForUpdatesButton(false);
 
 	if(!settings.welcomePageShown()) {
 		welcomePage->showFirstStartText();
 	} else if(settings.updateCheckEnabled()) {
-		m_news->check();
+		m_news.check();
 	} else {
-		m_news->checkExisting();
+		m_news.checkExisting();
 	}
 }
 
@@ -319,6 +342,11 @@ void StartDialog::autoJoin(const QUrl &url)
 	emit joinAddressSet(url.toString());
 	showPage(Entry::Join);
 	emit joinRequested(url);
+}
+
+void StartDialog::checkForUpdates()
+{
+	m_news.forceCheck(CHECK_FOR_UPDATES_DELAY_MSEC);
 }
 
 void StartDialog::resizeEvent(QResizeEvent *event)
@@ -362,18 +390,13 @@ void StartDialog::toggleRecording(bool checked)
 	}
 }
 
-void StartDialog::checkForUpdates()
-{
-	m_news->forceCheck(CHECK_FOR_UPDATES_DELAY_MSEC);
-}
-
 void StartDialog::updateCheckForUpdatesButton(bool inProgress)
 {
 	QString text;
 	if(inProgress) {
 		text = tr("Checking…");
 	} else {
-		QDate date = m_news->lastCheck();
+		QDate date = m_news.lastCheck();
 		if(date.isValid()) {
 			long long days = date.daysTo(QDate::currentDate());
 			if(days == 0) {
@@ -491,6 +514,23 @@ void StartDialog::rememberLastPage(int i)
 			settings.setLastStartDialogDate(
 				QDate::currentDate().toString(Qt::ISODate));
 		}
+	}
+}
+
+void StartDialog::initialUpdateDelayFinished()
+{
+	m_initialUpdateDelayTimer->deleteLater();
+	m_initialUpdateDelayTimer = nullptr;
+	if(m_update.isValid()) {
+		m_updateNotice->setUpdate(&m_update);
+	}
+}
+
+void StartDialog::setUpdate(const utils::News::Update &update)
+{
+	m_update = update;
+	if(!m_initialUpdateDelayTimer || !m_initialUpdateDelayTimer->isActive()) {
+		m_updateNotice->setUpdate(&m_update);
 	}
 }
 

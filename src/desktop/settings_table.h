@@ -110,7 +110,6 @@ SETTING(toolset                   , Toolset                   , "tools/toolset" 
 SETTING(twoFingerRotate           , TwoFingerRotate           , "settings/input/touchtwist"             , true)
 SETTING(twoFingerZoom             , TwoFingerZoom             , "settings/input/touchpinch"             , true)
 SETTING(updateCheckEnabled        , UpdateCheckEnabled        , "settings/updatecheck"                  , true)
-SETTING(versionCheckFirstRun      , VersionCheckFirstRun      , "versioncheck/firstrun"                 , false)
 SETTING(videoExportCustomFfmpeg   , VideoExportCustomFfmpeg   , "videoexport/customffmpeg"              , QString())
 SETTING(videoExportFormat         , VideoExportFormat         , "videoexport/formatchoice"              , VideoExporter::Format::IMAGE_SERIES)
 SETTING(videoExportFrameHeight    , VideoExportFrameHeight    , "videoexport/frameheight"               , 720)

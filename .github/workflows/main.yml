@@ -237,7 +237,6 @@ jobs:
           -DCLIENT=on
           -DSERVER=on
           -DSERVERGUI=on
-          -DVERSION_CHECK=on
           -DTOOLS=on
           -DTESTS=on
           "-DCMAKE_PREFIX_PATH=${{ matrix.cross_os && format('{0};', steps.cross-deps.outputs.path) }}${{ steps.deps.outputs.path }}"

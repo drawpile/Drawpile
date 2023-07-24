@@ -121,10 +121,6 @@ static constexpr auto CTRL_KEY = Qt::CTRL;
 #include "desktop/dialogs/userinfodialog.h"
 #include "desktop/dialogs/startdialog.h"
 
-#ifdef ENABLE_VERSION_CHECK
-#include "desktop/dialogs/versioncheckdialog.h"
-#endif
-
 #ifdef Q_OS_WIN
 #include "desktop/bundled/kis_tablet/kis_tablet_support_win.h"
 #endif
@@ -1784,6 +1780,13 @@ void MainWindow::leave()
 	}
 
 	leavebox->show();
+}
+
+void MainWindow::checkForUpdates()
+{
+	dialogs::StartDialog *dlg = showStartDialog();
+	dlg->showPage(dialogs::StartDialog::Entry::Welcome);
+	dlg->checkForUpdates();
 }
 
 void MainWindow::reportAbuse()
@@ -3631,21 +3634,14 @@ void MainWindow::setupActions()
 	QAction *showlogfile = makeAction("showlogfile", tr("Log File"));
 	QAction *about = makeAction("dpabout", tr("&About Drawpile")).menuRole(QAction::AboutRole);
 	QAction *aboutqt = makeAction("aboutqt", tr("About &Qt")).menuRole(QAction::AboutQtRole);
-#ifdef ENABLE_VERSION_CHECK
 	QAction *versioncheck = makeAction("versioncheck", tr("Check For Updates"));
-#endif
 
 	connect(homepage, &QAction::triggered, &MainWindow::homepage);
 	connect(about, &QAction::triggered, &MainWindow::about);
 	connect(aboutqt, &QAction::triggered, &QApplication::aboutQt);
 
-#ifdef ENABLE_VERSION_CHECK
-	connect(versioncheck, &QAction::triggered, this, [this]() {
-		auto *dlg = new dialogs::VersionCheckDialog(this);
-		utils::showWindow(dlg);
-		dlg->queryNewVersions();
-	});
-#endif
+	connect(
+		versioncheck, &QAction::triggered, this, &MainWindow::checkForUpdates);
 
 	connect(tablettester, &QAction::triggered, []() {
 		dialogs::TabletTestDialog *ttd=nullptr;
@@ -3710,9 +3706,7 @@ void MainWindow::setupActions()
 	helpmenu->addAction(about);
 	helpmenu->addAction(aboutqt);
 	helpmenu->addSeparator();
-#ifdef ENABLE_VERSION_CHECK
 	helpmenu->addAction(versioncheck);
-#endif
 
 	// Brush slot shortcuts
 

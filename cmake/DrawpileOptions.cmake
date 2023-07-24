@@ -48,9 +48,6 @@ endif()
 option(DIST_BUILD "Build for stand-alone distribution")
 add_feature_info("Distribution build (DIST_BUILD)" DIST_BUILD "")
 
-option(VERSION_CHECK "Enable code to check for updates" OFF)
-add_feature_info("Automatic update checking code (VERSION_CHECK)" VERSION_CHECK "")
-
 # Feature info will be emitted later once it is clear whether or not these
 # features could actually be enabled
 option(CLANG_TIDY "Automatically enable Clang-Tidy" ON)

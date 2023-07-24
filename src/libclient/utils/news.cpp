@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "libclient/utils/news.h"
+#include "cmake-config/config.h"
 #include "libclient/utils/database.h"
 #include "libshared/util/networkaccess.h"
 #include <QDate>
@@ -22,6 +23,72 @@ Q_LOGGING_CATEGORY(lcDpNews, "net.drawpile.news", QtWarningMsg)
 
 namespace utils {
 
+News::Version News::Version::parse(const QString &s)
+{
+	static QRegularExpression re{
+		"\\A([0-9]+)\\.([0-9+])\\.([0-9]+)(?:-beta\\.([0-9]+))?"};
+
+	QRegularExpressionMatch match = re.match(s);
+	if(!match.hasMatch()) {
+		return invalid();
+	}
+
+	News::Version version;
+	bool ok;
+	version.server = match.captured(1).toInt(&ok);
+	if(!ok) {
+		return invalid();
+	}
+
+	version.major = match.captured(2).toInt(&ok);
+	if(!ok) {
+		return invalid();
+	}
+
+	version.minor = match.captured(3).toInt(&ok);
+	if(!ok) {
+		return invalid();
+	}
+
+	QString betaStr = match.captured(4);
+	if(betaStr.isEmpty()) {
+		version.beta = 0;
+	} else {
+		version.beta = betaStr.toInt(&ok);
+		if(!ok) {
+			return invalid();
+		}
+	}
+
+	return version;
+}
+
+bool News::Version::isNewerThan(const Version &other) const
+{
+	if(server > other.server) {
+		return true;
+	} else if(server == other.server) {
+		if(major > other.major) {
+			return true;
+		} else if(major == other.major) {
+			if(minor > other.minor) {
+				return true;
+			} else if(minor == other.minor) {
+				if(beta > other.beta) {
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+
+QString News::Version::toString() const
+{
+	QString s = QStringLiteral("%1.%2.%3").arg(server).arg(major).arg(minor);
+	return isBeta() ? QStringLiteral("%1-beta.%2").arg(s).arg(beta) : s;
+}
+
 class News::Private {
 public:
 	Private()
@@ -35,6 +102,21 @@ public:
 	bool fetching() const { return m_fetching; }
 	void setFetching(bool fetching) { m_fetching = fetching; }
 
+	static QString dateToString(const QDate &date)
+	{
+		return date.isValid() ? date.toString(Qt::ISODate)
+							  : QStringLiteral("0000-00-00");
+	}
+
+	static QDate dateFromString(const QString &s)
+	{
+		if(s.isEmpty() || s == QStringLiteral("0000-00-00")) {
+			return QDate{};
+		} else {
+			return QDate::fromString(s, Qt::ISODate);
+		}
+	}
+
 	QString readNewsContentFor(const QDate &date)
 	{
 		QSqlQuery query(m_db);
@@ -42,7 +124,7 @@ public:
 						  query,
 						  "select content from news where date <= ?\n"
 						  "order by date desc limit 1",
-						  {date.toString(Qt::ISODate)}) &&
+						  {dateToString(date)}) &&
 					  query.next();
 		return hasRow ? query.value(0).toString() : QString{};
 	}
@@ -61,6 +143,45 @@ public:
 		}
 	}
 
+	Update readUpdateAvailable(const Version &forVersion, bool includeBeta)
+	{
+		QSqlQuery query(m_db);
+		if(utils::db::exec(
+			   query, "select server, major, minor, beta, date, url\n"
+					  "from updates\n"
+					  "order by server, major, minor, beta desc")) {
+			while(query.next()) {
+				Version candidate = {
+					query.value(0).toInt(), query.value(1).toInt(),
+					query.value(2).toInt(), query.value(3).toInt()};
+				if(candidate.isNewerThan(forVersion)) {
+					if(includeBeta || !candidate.isBeta()) {
+						qCDebug(
+							lcDpNews, "Candidate version %s > %s",
+							qUtf8Printable(candidate.toString()),
+							qUtf8Printable(forVersion.toString()));
+						return {
+							candidate,
+							dateFromString(query.value(4).toString()),
+							QUrl{query.value(5).toString()}};
+					} else {
+						qCDebug(
+							lcDpNews, "Candidate version %s > %s, but is beta",
+							qUtf8Printable(candidate.toString()),
+							qUtf8Printable(forVersion.toString()));
+					}
+				} else {
+					qCDebug(
+						lcDpNews, "Candidate version %s <= %s",
+						qUtf8Printable(candidate.toString()),
+						qUtf8Printable(forVersion.toString()));
+					break;
+				}
+			}
+		}
+		return {Version::invalid(), QDate{}, QUrl{}};
+	}
+
 	bool writeNewsAt(const QVector<News::Article> articles, const QDate &today)
 	{
 		return utils::db::tx(m_db, [&] {
@@ -77,24 +198,50 @@ public:
 
 			for(const News::Article &article : articles) {
 				query.bindValue(0, article.content);
-				query.bindValue(
-					1, article.date.isValid()
-						   ? article.date.toString(Qt::ISODate)
-						   : QStringLiteral("0000-00-00"));
+				query.bindValue(1, dateToString(article.date));
 				if(!utils::db::execPrepared(query, sql)) {
 					return false;
 				}
 			}
 
-			return putStateOn(
-				query, LAST_CHECK_KEY, today.toString(Qt::ISODate));
+			return putStateOn(query, LAST_CHECK_KEY, dateToString(today));
+		});
+	}
+
+	bool writeUpdates(const QVector<News::Update> updates)
+	{
+		return utils::db::tx(m_db, [&] {
+			QSqlQuery query{m_db};
+			if(!utils::db::exec(query, QStringLiteral("delete from updates"))) {
+				return false;
+			}
+
+			QString sql = QStringLiteral(
+				"insert into updates (server, major, minor, beta, date, url)\n"
+				"values (?, ?, ?, ?, ?, ?)");
+			if(!utils::db::prepare(query, sql)) {
+				return false;
+			}
+
+			for(const News::Update &update : updates) {
+				query.bindValue(0, update.version.server);
+				query.bindValue(1, update.version.major);
+				query.bindValue(2, update.version.minor);
+				query.bindValue(3, update.version.beta);
+				query.bindValue(4, dateToString(update.date));
+				query.bindValue(5, update.url.toString());
+				if(!utils::db::execPrepared(query, sql)) {
+					return false;
+				}
+			}
+
+			return true;
 		});
 	}
 
 	QDate readLastCheck() const
 	{
-		return QDate::fromString(
-			getStateOn(LAST_CHECK_KEY).toString(), Qt::ISODate);
+		return dateFromString(getStateOn(LAST_CHECK_KEY).toString());
 	}
 
 private:
@@ -115,6 +262,14 @@ private:
 			query, "create table if not exists news (\n"
 				   "	content text not null,\n"
 				   "	date text not null)");
+		utils::db::exec(
+			query, "create table if not exists updates (\n"
+				   "	server integer not null,\n"
+				   "	major integer not null,\n"
+				   "	minor integer not null,\n"
+				   "	beta integer not null,\n"
+				   "	date text not null,\n"
+				   "	url text not null)");
 	}
 
 	bool putStateOn(QSqlQuery &query, const QString &key, const QVariant &value)
@@ -209,6 +364,7 @@ void News::doCheck(bool force)
 			}
 			fetch(date, true);
 		} else {
+			checkUpdateAvailable();
 			emit newsAvailable(content);
 			if(d->isStale(date, CHECK_STALE_DAYS)) {
 				qCDebug(lcDpNews, "Fetching news");
@@ -248,7 +404,36 @@ void News::fetchFinished(QDate date, QNetworkReply *reply, bool showErrorAsNews)
 		return;
 	}
 
-	QVector<News::Article> articles = parse(reply->readAll());
+	QJsonParseError err;
+	QJsonDocument doc = QJsonDocument::fromJson(reply->readAll(), &err);
+	if(doc.isNull() && err.error != QJsonParseError::NoError) {
+		qCWarning(
+			lcDpNews, "Error parsing news: %s",
+			qUtf8Printable(err.errorString()));
+		if(showErrorAsNews) {
+			showMessageAsNews(tr("Couldn't make sense of the fetched data."));
+		}
+		return;
+	}
+
+	QVector<News::Update> updates = parseUpdates(doc);
+	if(updates.isEmpty()) {
+		if(showErrorAsNews) {
+			showMessageAsNews(tr("Couldn't make sense of fetched updates."));
+		}
+		return;
+	}
+
+	if(!d->writeUpdates(updates)) {
+		if(showErrorAsNews) {
+			showMessageAsNews(tr("Couldn't save updates."));
+		}
+		return;
+	}
+
+	checkUpdateAvailable();
+
+	QVector<News::Article> articles = parseNews(doc);
 	if(articles.isEmpty()) {
 		if(showErrorAsNews) {
 			showMessageAsNews(tr("Couldn't make sense of fetched news."));
@@ -274,25 +459,16 @@ void News::fetchFinished(QDate date, QNetworkReply *reply, bool showErrorAsNews)
 	emit newsAvailable(content);
 }
 
-QVector<News::Article> News::parse(const QByteArray &bytes)
+QVector<News::Article> News::parseNews(const QJsonDocument &doc)
 {
-	QJsonParseError err;
-	QJsonDocument doc = QJsonDocument::fromJson(bytes, &err);
-	if(doc.isNull() && err.error != QJsonParseError::NoError) {
-		qCWarning(
-			lcDpNews, "Error parsing news: %s",
-			qUtf8Printable(err.errorString()));
-		return {};
-	}
-
-	QJsonValue news = doc["news"];
-	if(!news.isArray()) {
+	QJsonValue input = doc["news"];
+	if(!input.isArray()) {
 		qCWarning(lcDpNews, "News element is not an array");
 		return {};
 	}
 
 	QVector<Article> articles;
-	for(QJsonValue value : news.toArray()) {
+	for(QJsonValue value : input.toArray()) {
 		QString content = value["content"].toString();
 		if(content.isEmpty()) {
 			qCWarning(lcDpNews, "News article content is empty");
@@ -302,7 +478,7 @@ QVector<News::Article> News::parse(const QByteArray &bytes)
 		QString dateString = value["date"].toString();
 		QDate date;
 		if(!dateString.isEmpty()) {
-			date = QDate::fromString(dateString, Qt::ISODate);
+			date = Private::dateFromString(dateString);
 			if(!date.isValid()) {
 				qCWarning(lcDpNews, "News article date is invalid");
 				continue;
@@ -316,6 +492,66 @@ QVector<News::Article> News::parse(const QByteArray &bytes)
 		qCWarning(lcDpNews, "No news articles in response");
 	}
 	return articles;
+}
+
+QVector<News::Update> News::parseUpdates(const QJsonDocument &doc)
+{
+	QJsonValue input = doc["updates"];
+	if(!input.isArray()) {
+		qCWarning(lcDpNews, "Updates element is not an array");
+		return {};
+	}
+
+	QVector<Update> updates;
+	for(QJsonValue value : input.toArray()) {
+		QString versionString = value["version"].toString();
+		Version version = Version::parse(versionString);
+		if(!version.isValid()) {
+			qCWarning(
+				lcDpNews, "Invalid update version '%s'",
+				qUtf8Printable(versionString));
+			continue; // No fallback for an invalid version.
+		}
+
+		QString urlString = value["url"].toString();
+		QUrl url{urlString};
+		if(!url.isValid()) {
+			qCWarning(
+				lcDpNews, "Invalid update url '%s'", qUtf8Printable(urlString));
+			url = FALLBACK_UPDATE_URL;
+		}
+
+		QString dateString = value["date"].toString();
+		QDate date = Private::dateFromString(dateString);
+		if(!date.isValid()) {
+			qCWarning(
+				lcDpNews, "Invalid update date '%s'",
+				qUtf8Printable(dateString));
+			// Keep going, we'll use 0000-00-00 as a date.
+		}
+
+		updates.append({version, date, url});
+	}
+
+	if(updates.isEmpty()) {
+		qCWarning(lcDpNews, "No updates in response");
+	}
+	return updates;
+}
+
+void News::checkUpdateAvailable()
+{
+	QString currentVersionStr{cmake_config::version()};
+	Version currentVersion = Version::parse(currentVersionStr);
+	if(currentVersion.isValid()) {
+		Update update =
+			d->readUpdateAvailable(currentVersion, currentVersion.isBeta());
+		emit updateAvailable(update);
+	} else {
+		qCWarning(
+			lcDpNews, "Current version '%s' is invalid",
+			qUtf8Printable(currentVersionStr));
+	}
 }
 
 void News::showMessageAsNews(const QString &message)

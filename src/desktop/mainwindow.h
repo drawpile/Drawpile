@@ -121,6 +121,7 @@ public slots:
 	void join();
 	void browse();
 	void leave();
+	void checkForUpdates();
 
 	void toggleFullscreen();
 	void setShowAnnotations(bool show);

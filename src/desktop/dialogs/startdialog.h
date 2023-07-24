@@ -3,6 +3,7 @@
 #ifndef DESKTOP_DIALOGS_STARTDIALOG_H
 #define DESKTOP_DIALOGS_STARTDIALOG_H
 
+#include "libclient/utils/news.h"
 #include <QDialog>
 #include <QVector>
 
@@ -12,17 +13,15 @@ class QFrame;
 class QIcon;
 class QShortcut;
 class QStackedWidget;
+class QTimer;
 class QUrl;
-
-namespace utils {
-class News;
-}
 
 namespace dialogs {
 
 namespace startdialog {
 class Links;
 class Page;
+class UpdateNotice;
 }
 
 class StartDialog final : public QDialog {
@@ -54,6 +53,9 @@ public:
 
 	void autoJoin(const QUrl &url);
 
+public slots:
+	void checkForUpdates();
+
 signals:
 	void openFile();
 	void layouts();
@@ -73,7 +75,6 @@ private slots:
 	void addListServer();
 	void addListServerUrl(const QUrl &url);
 	void toggleRecording(bool checked);
-	void checkForUpdates();
 	void updateCheckForUpdatesButton(bool inProgress);
 	void hideLinks();
 	void showWelcomeButtons();
@@ -89,6 +90,8 @@ private slots:
 		bool nsfm, const QString &announcementUrl,
 		const QString &remoteAddress);
 	void rememberLastPage(int i);
+	void initialUpdateDelayFinished();
+	void setUpdate(const utils::News::Update &update);
 
 private:
 	static constexpr char ENTRY_PROPERTY_KEY[] = "startdialogentry";
@@ -102,6 +105,7 @@ private:
 
 	static void addRecentHost(const QUrl &url, bool join);
 
+	startdialog::UpdateNotice *m_updateNotice;
 	QStackedWidget *m_stack;
 	QFrame *m_linksSeparator;
 	startdialog::Links *m_links;
@@ -115,8 +119,9 @@ private:
 	QAbstractButton *m_buttons[Entry::Count];
 	QVector<QShortcut *> m_shortcuts;
 	QString m_recordingFilename;
-	utils::News *m_news;
-	QTimer *m_checkForUpdatesTimer;
+	QTimer *m_initialUpdateDelayTimer;
+	utils::News m_news;
+	utils::News::Update m_update = utils::News::Update::invalid();
 };
 
 }
