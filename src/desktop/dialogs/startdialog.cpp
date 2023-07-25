@@ -8,6 +8,7 @@
 #include "desktop/dialogs/startdialog/join.h"
 #include "desktop/dialogs/startdialog/links.h"
 #include "desktop/dialogs/startdialog/page.h"
+#include "desktop/dialogs/startdialog/recent.h"
 #include "desktop/dialogs/startdialog/updatenotice.h"
 #include "desktop/dialogs/startdialog/welcome.h"
 #include "desktop/filewrangler.h"
@@ -61,7 +62,7 @@ struct LinkDefinition {
 StartDialog::StartDialog(QWidget *parent)
 	: QDialog{parent, WINDOW_HINTS}
 	, m_initialUpdateDelayTimer{new QTimer{this}}
-	, m_news{this}
+	, m_news{dpApp().state(), this}
 {
 	setWindowTitle(tr("Start"));
 	setWindowModality(Qt::WindowModal);
@@ -93,6 +94,7 @@ StartDialog::StartDialog(QWidget *parent)
 	startdialog::Browse *browsePage = new startdialog::Browse{this};
 	startdialog::Host *hostPage = new startdialog::Host{this};
 	startdialog::Create *createPage = new startdialog::Create{this};
+	startdialog::Recent *recentPage = new startdialog::Recent{this};
 
 	EntryDefinition defs[Entry::Count];
 	defs[Entry::Welcome] = {
@@ -111,6 +113,9 @@ StartDialog::StartDialog(QWidget *parent)
 		createPage};
 	defs[Entry::Open] = {
 		"document-open", tr("Open File"), tr("Open an image file"), nullptr};
+	defs[Entry::Recent] = {
+		"document-open-recent", tr("Recent Files"),
+		tr("Reopen a recently used file"), recentPage};
 	defs[Entry::Layouts] = {
 		"window_", tr("Layouts"), tr("Choose application layout"), nullptr};
 	defs[Entry::Preferences] = {
@@ -268,6 +273,9 @@ StartDialog::StartDialog(QWidget *parent)
 		&QWidget::setEnabled);
 	connect(
 		createPage, &startdialog::Create::create, this, &StartDialog::create);
+
+	connect(
+		recentPage, &startdialog::Recent::openUrl, this, &StartDialog::openUrl);
 
 	setMinimumSize(600, 350);
 

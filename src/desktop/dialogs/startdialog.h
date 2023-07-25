@@ -33,6 +33,7 @@ public:
 		Browse,
 		Host,
 		Create,
+		Recent,
 		Open,
 		Layouts,
 		Preferences,
@@ -58,6 +59,7 @@ public slots:
 
 signals:
 	void openFile();
+	void openUrl(const QUrl &url);
 	void layouts();
 	void preferences();
 	void join(const QUrl &url, const QString recordingFilename);

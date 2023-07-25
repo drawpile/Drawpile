@@ -7,6 +7,8 @@
 
 #include "libclient/utils/logging.h"
 #include "libclient/utils/colorscheme.h"
+#include "desktop/utils/recentfiles.h"
+#include "libclient/utils/statedatabase.h"
 #include "desktop/utils/globalkeyeventfilter.h"
 #include "desktop/notifications.h"
 #include "desktop/dialogs/startdialog.h"
@@ -73,6 +75,14 @@ DrawpileApp::DrawpileApp(int &argc, char **argv)
 DrawpileApp::~DrawpileApp()
 {
 	drawdance::DrawContextPool::deinit();
+}
+
+void DrawpileApp::initState()
+{
+	Q_ASSERT(!m_state);
+	Q_ASSERT(!m_recentFiles);
+	m_state = new utils::StateDatabase{this};
+	m_recentFiles = new utils::RecentFiles{*m_state};
 }
 
 /**
@@ -441,6 +451,7 @@ static std::tuple<QStringList, QString> initApp(DrawpileApp &app)
 	}
 #endif
 
+	app.initState();
 	app.settings().bindWriteLogFile(&utils::enableLogFile);
 	app.initTheme();
 

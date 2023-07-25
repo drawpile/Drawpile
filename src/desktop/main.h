@@ -11,12 +11,19 @@
 class MainWindow;
 class QSoundEffect;
 
+namespace utils {
+class RecentFiles;
+class StateDatabase;
+}
+
 class DrawpileApp final : public QApplication {
 Q_OBJECT
 	friend void notification::playSoundNow(notification::Event, int);
 public:
 	DrawpileApp(int &argc, char **argv);
 	~DrawpileApp() override;
+
+	void initState();
 
 	void setThemeStyle(const QString &themeStyle);
 	void setThemePalette(desktop::settings::ThemePalette themePalette);
@@ -31,6 +38,12 @@ public:
 	const desktop::settings::Settings &settings() const { return m_settings; }
 	desktop::settings::Settings &settings() { return m_settings; }
 
+	const utils::StateDatabase &state() const { return *m_state; }
+	utils::StateDatabase &state() { return *m_state; }
+
+	const utils::RecentFiles &recentFiles() const { return *m_recentFiles; }
+	utils::RecentFiles &recentFiles() { return *m_recentFiles; }
+
 signals:
 	void eraserNear(bool near);
 	void setDockTitleBarsHidden(bool hidden);
@@ -41,6 +54,8 @@ protected:
 
 private:
 	desktop::settings::Settings m_settings;
+	utils::StateDatabase *m_state = nullptr;
+	utils::RecentFiles *m_recentFiles = nullptr;
 	QMap<notification::Event, QSoundEffect*> m_sounds;
 	QString m_originalSystemStyle;
 	QPalette m_originalSystemPalette;

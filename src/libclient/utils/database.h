@@ -3,9 +3,8 @@
 #ifndef LIBCLIENT_UTILS_DATABASE_H
 #define LIBCLIENT_UTILS_DATABASE_H
 
-#include <QList>
 #include <QString>
-#include <QVariant>
+#include <QVariantList>
 #include <functional>
 
 class QSqlDatabase;
@@ -23,7 +22,7 @@ bool prepare(QSqlQuery &query, const QString &sql);
 bool execPrepared(QSqlQuery &query, const QString &sql);
 
 bool exec(
-	QSqlQuery &query, const QString &sql, const QList<QVariant> &params = {});
+	QSqlQuery &query, const QString &sql, const QVariantList &params = {});
 
 bool tx(QSqlDatabase &db, std::function<bool()> fn);
 

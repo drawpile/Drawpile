@@ -13,6 +13,8 @@ class QNetworkReply;
 
 namespace utils {
 
+class StateDatabase;
+
 class News final : public QObject {
 	Q_OBJECT
 public:
@@ -44,7 +46,7 @@ public:
 		bool isValid() const { return version.isValid(); }
 	};
 
-	explicit News(QObject *parent = nullptr);
+	explicit News(utils::StateDatabase &state, QObject *parent = nullptr);
 	~News() override;
 
 	void check();

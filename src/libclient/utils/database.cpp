@@ -146,7 +146,7 @@ bool execPrepared(QSqlQuery &query, const QString &sql)
 	}
 }
 
-bool exec(QSqlQuery &query, const QString &sql, const QList<QVariant> &params)
+bool exec(QSqlQuery &query, const QString &sql, const QVariantList &params)
 {
 	if(prepare(query, sql)) {
 		for(const QVariant &param : params) {

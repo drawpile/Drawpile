@@ -189,6 +189,8 @@ target_sources(dpclient PRIVATE
 	utils/sessionidvalidator.h
 	utils/shortcutdetector.cpp
 	utils/shortcutdetector.h
+	utils/statedatabase.cpp
+	utils/statedatabase.h
 	utils/usernamevalidator.cpp
 	utils/usernamevalidator.h
 )

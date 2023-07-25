@@ -17,8 +17,6 @@ class MacMenu final : public QMenuBar
 public:
 	static MacMenu *instance();
 
-	void updateRecentMenu();
-
 	void addWindow(MainWindow *win);
 	void removeWindow(MainWindow *win);
 	void updateWindow(MainWindow *win);

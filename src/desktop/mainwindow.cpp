@@ -598,15 +598,8 @@ MainWindow *MainWindow::replaceableWindow()
  */
 void MainWindow::addRecentFile(const QString& file)
 {
-	RecentFiles::addFile(file);
-	for(QWidget *widget : QApplication::topLevelWidgets()) {
-		MainWindow *win = qobject_cast<MainWindow*>(widget);
-		if(win)
-			RecentFiles::initMenu(win->m_recentMenu);
-	}
-#ifdef Q_OS_MACOS
-	MacMenu::instance()->updateRecentMenu();
-#endif
+	utils::RecentFiles &recentFiles = dpApp().recentFiles();
+	recentFiles.addFile(file);
 }
 
 /**
@@ -835,7 +828,7 @@ void MainWindow::readSettings(bool windowpos)
 	settings.bindShortcuts(this, &MainWindow::loadShortcuts);
 
 	// Restore recent files
-	RecentFiles::initMenu(m_recentMenu);
+	dpApp().recentFiles().bindMenu(m_recentMenu);
 
 	connect(&m_saveWindowDebounce, &QTimer::timeout, this, &MainWindow::saveWindowState);
 	connect(&m_saveSplitterDebounce, &QTimer::timeout, this, &MainWindow::saveSplitterState);
@@ -1180,6 +1173,7 @@ void MainWindow::connectStartDialog(dialogs::StartDialog *dlg)
 
 	Connections *connections = new Connections{dlg};
 	connections->add(connect(dlg, &dialogs::StartDialog::openFile, this, QOverload<>::of(&MainWindow::open)));
+	connections->add(connect(dlg, &dialogs::StartDialog::openUrl, this, QOverload<const QUrl &>::of(&MainWindow::open)));
 	connections->add(connect(dlg, &dialogs::StartDialog::layouts, this, &MainWindow::showLayoutsDialog));
 	connections->add(connect(dlg, &dialogs::StartDialog::preferences, this, &MainWindow::showSettings));
 	connections->add(connect(dlg, &dialogs::StartDialog::join, this, &MainWindow::joinSession));
@@ -2955,6 +2949,7 @@ void MainWindow::setupActions()
 	filemenu->addAction(newdocument);
 	filemenu->addAction(open);
 	m_recentMenu = filemenu->addMenu(tr("Open &Recent"));
+	m_recentMenu->setIcon(QIcon::fromTheme("document-open-recent"));
 	filemenu->addSeparator();
 
 #ifdef Q_OS_MACOS
@@ -2992,7 +2987,13 @@ void MainWindow::setupActions()
 	addToolBar(Qt::TopToolBarArea, filetools);
 
 	connect(m_recentMenu, &QMenu::triggered, this, [this](QAction *action) {
-		this->open(QUrl::fromLocalFile(action->property("filepath").toString()));
+		QVariant filepath = action->property("filepath");
+		if(filepath.isValid()) {
+			this->open(QUrl::fromLocalFile(filepath.toString()));
+		} else {
+			dialogs::StartDialog *dlg = showStartDialog();
+			dlg->showPage(dialogs::StartDialog::Entry::Recent);
+		}
 	});
 
 	//

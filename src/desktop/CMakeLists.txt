@@ -147,6 +147,8 @@ target_sources(drawpile PRIVATE
 	dialogs/startdialog/links.h
 	dialogs/startdialog/page.cpp
 	dialogs/startdialog/page.h
+	dialogs/startdialog/recent.cpp
+	dialogs/startdialog/recent.h
 	dialogs/startdialog/updatenotice.cpp
 	dialogs/startdialog/updatenotice.h
 	dialogs/startdialog/welcome.cpp
@@ -305,6 +307,8 @@ target_sources(drawpile PRIVATE
 	widgets/popupmessage.h
 	widgets/presetselector.cpp
 	widgets/presetselector.h
+	widgets/recentscroll.cpp
+	widgets/recentscroll.h
 	widgets/resizerwidget.cpp
 	widgets/resizerwidget.h
 	widgets/spanawaretreeview.cpp

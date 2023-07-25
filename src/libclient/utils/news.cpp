@@ -2,7 +2,7 @@
 
 #include "libclient/utils/news.h"
 #include "cmake-config/config.h"
-#include "libclient/utils/database.h"
+#include "libclient/utils/statedatabase.h"
 #include "libshared/util/networkaccess.h"
 #include <QDate>
 #include <QJsonArray>
@@ -12,9 +12,6 @@
 #include <QLoggingCategory>
 #include <QNetworkReply>
 #include <QNetworkRequest>
-#include <QSqlDatabase>
-#include <QSqlError>
-#include <QSqlQuery>
 #include <QTimer>
 #include <functional>
 
@@ -91,12 +88,10 @@ QString News::Version::toString() const
 
 class News::Private {
 public:
-	Private()
-		: m_db{utils::db::sqlite(
-			  QStringLiteral("drawpile_state_connection"),
-			  QStringLiteral("state"), QStringLiteral("state.db"))}
+	Private(StateDatabase &state)
+		: m_state{state}
 	{
-		initDb();
+		createTables();
 	}
 
 	bool fetching() const { return m_fetching; }
@@ -119,14 +114,14 @@ public:
 
 	QString readNewsContentFor(const QDate &date)
 	{
-		QSqlQuery query(m_db);
-		bool hasRow = utils::db::exec(
-						  query,
+		QSqlQuery qry = m_state.query();
+		bool hasRow = m_state.exec(
+						  qry,
 						  "select content from news where date <= ?\n"
 						  "order by date desc limit 1",
 						  {dateToString(date)}) &&
-					  query.next();
-		return hasRow ? query.value(0).toString() : QString{};
+					  qry.next();
+		return hasRow ? qry.value(0).toString() : QString{};
 	}
 
 	bool isStale(const QDate &date, long long staleDays)
@@ -145,15 +140,15 @@ public:
 
 	Update readUpdateAvailable(const Version &forVersion, bool includeBeta)
 	{
-		QSqlQuery query(m_db);
+		QSqlQuery qry = m_state.query();
 		if(utils::db::exec(
-			   query, "select server, major, minor, beta, date, url\n"
-					  "from updates\n"
-					  "order by server, major, minor, beta desc")) {
-			while(query.next()) {
+			   qry, "select server, major, minor, beta, date, url\n"
+					"from updates\n"
+					"order by server, major, minor, beta desc")) {
+			while(qry.next()) {
 				Version candidate = {
-					query.value(0).toInt(), query.value(1).toInt(),
-					query.value(2).toInt(), query.value(3).toInt()};
+					qry.value(0).toInt(), qry.value(1).toInt(),
+					qry.value(2).toInt(), qry.value(3).toInt()};
 				if(candidate.isNewerThan(forVersion)) {
 					if(includeBeta || !candidate.isBeta()) {
 						qCDebug(
@@ -161,9 +156,8 @@ public:
 							qUtf8Printable(candidate.toString()),
 							qUtf8Printable(forVersion.toString()));
 						return {
-							candidate,
-							dateFromString(query.value(4).toString()),
-							QUrl{query.value(5).toString()}};
+							candidate, dateFromString(qry.value(4).toString()),
+							QUrl{qry.value(5).toString()}};
 					} else {
 						qCDebug(
 							lcDpNews, "Candidate version %s > %s, but is beta",
@@ -184,53 +178,51 @@ public:
 
 	bool writeNewsAt(const QVector<News::Article> articles, const QDate &today)
 	{
-		return utils::db::tx(m_db, [&] {
-			QSqlQuery query{m_db};
-			if(!utils::db::exec(query, QStringLiteral("delete from news"))) {
+		return m_state.tx([&](QSqlQuery &qry) {
+			if(!m_state.exec(qry, QStringLiteral("delete from news"))) {
 				return false;
 			}
 
 			QString sql = QStringLiteral(
 				"insert into news (content, date) values (?, ?)");
-			if(!utils::db::prepare(query, sql)) {
+			if(!m_state.prepare(qry, sql)) {
 				return false;
 			}
 
 			for(const News::Article &article : articles) {
-				query.bindValue(0, article.content);
-				query.bindValue(1, dateToString(article.date));
-				if(!utils::db::execPrepared(query, sql)) {
+				qry.bindValue(0, article.content);
+				qry.bindValue(1, dateToString(article.date));
+				if(!m_state.execPrepared(qry, sql)) {
 					return false;
 				}
 			}
 
-			return putStateOn(query, LAST_CHECK_KEY, dateToString(today));
+			return m_state.putWith(qry, LAST_CHECK_KEY, dateToString(today));
 		});
 	}
 
 	bool writeUpdates(const QVector<News::Update> updates)
 	{
-		return utils::db::tx(m_db, [&] {
-			QSqlQuery query{m_db};
-			if(!utils::db::exec(query, QStringLiteral("delete from updates"))) {
+		return m_state.tx([&](QSqlQuery &qry) {
+			if(!m_state.exec(qry, QStringLiteral("delete from updates"))) {
 				return false;
 			}
 
 			QString sql = QStringLiteral(
 				"insert into updates (server, major, minor, beta, date, url)\n"
 				"values (?, ?, ?, ?, ?, ?)");
-			if(!utils::db::prepare(query, sql)) {
+			if(!m_state.prepare(qry, sql)) {
 				return false;
 			}
 
 			for(const News::Update &update : updates) {
-				query.bindValue(0, update.version.server);
-				query.bindValue(1, update.version.major);
-				query.bindValue(2, update.version.minor);
-				query.bindValue(3, update.version.beta);
-				query.bindValue(4, dateToString(update.date));
-				query.bindValue(5, update.url.toString());
-				if(!utils::db::execPrepared(query, sql)) {
+				qry.bindValue(0, update.version.server);
+				qry.bindValue(1, update.version.major);
+				qry.bindValue(2, update.version.minor);
+				qry.bindValue(3, update.version.beta);
+				qry.bindValue(4, dateToString(update.date));
+				qry.bindValue(5, update.url.toString());
+				if(!m_state.execPrepared(qry, sql)) {
 					return false;
 				}
 			}
@@ -241,67 +233,36 @@ public:
 
 	QDate readLastCheck() const
 	{
-		return dateFromString(getStateOn(LAST_CHECK_KEY).toString());
+		return dateFromString(m_state.get(LAST_CHECK_KEY).toString());
 	}
 
 private:
-	static constexpr char LAST_CHECK_KEY[] = "news:lastcheck";
+	static constexpr char LAST_CHECK_KEY[] = "news/lastcheck";
 
-	void initDb()
+	void createTables()
 	{
-		QSqlQuery query{m_db};
-		utils::db::exec(query, "pragma foreign_keys = on");
-		utils::db::exec(
-			query, "create table if not exists migrations (\n"
-				   "	migration_id integer primary key not null)");
-		utils::db::exec(
-			query, "create table if not exists state (\n"
-				   "	key text primary key not null,\n"
-				   "	value)");
-		utils::db::exec(
-			query, "create table if not exists news (\n"
-				   "	content text not null,\n"
-				   "	date text not null)");
-		utils::db::exec(
-			query, "create table if not exists updates (\n"
-				   "	server integer not null,\n"
-				   "	major integer not null,\n"
-				   "	minor integer not null,\n"
-				   "	beta integer not null,\n"
-				   "	date text not null,\n"
-				   "	url text not null)");
+		QSqlQuery qry = m_state.query();
+		m_state.exec(
+			qry, "create table if not exists news (\n"
+				 "	content text not null,\n"
+				 "	date text not null)");
+		m_state.exec(
+			qry, "create table if not exists updates (\n"
+				 "	server integer not null,\n"
+				 "	major integer not null,\n"
+				 "	minor integer not null,\n"
+				 "	beta integer not null,\n"
+				 "	date text not null,\n"
+				 "	url text not null)");
 	}
 
-	bool putStateOn(QSqlQuery &query, const QString &key, const QVariant &value)
-	{
-		QString sql =
-			QStringLiteral("insert into state (key, value) values (?, ?)\n"
-						   "	on conflict (key) do update set value = ?");
-		return utils::db::exec(query, sql, {key, value, value});
-	}
-
-	QVariant getStateOn(const QString &key) const
-	{
-		QSqlQuery query(m_db);
-		return getStateWith(query, key);
-	}
-
-	QVariant getStateWith(QSqlQuery &query, const QString &key) const
-	{
-		bool hasRow =
-			utils::db::exec(
-				query, "select value from state where key = ?", {key}) &&
-			query.next();
-		return hasRow ? query.value(0) : QVariant{};
-	}
-
-	QSqlDatabase m_db;
+	StateDatabase &m_state;
 	bool m_fetching = false;
 };
 
-News::News(QObject *parent)
+News::News(StateDatabase &state, QObject *parent)
 	: QObject{parent}
-	, d{new Private}
+	, d{new Private{state}}
 {
 }
 

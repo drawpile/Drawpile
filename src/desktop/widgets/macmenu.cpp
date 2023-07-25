@@ -84,15 +84,7 @@ MacMenu::MacMenu() :
 	connect(about, &QAction::triggered, &MainWindow::about);
 	connect(aboutqt, &QAction::triggered, &QApplication::aboutQt);
 
-	//
-	// Initialize
-	//
-	updateRecentMenu();
-}
-
-void MacMenu::updateRecentMenu()
-{
-	RecentFiles::initMenu(_recent);
+	dpApp().recentFiles().bindMenu(_recent);
 }
 
 QAction *MacMenu::makeAction(QMenu *menu, const char *name, const QString &text, const QKeySequence &shortcut)
@@ -125,8 +117,14 @@ void MacMenu::openDocument()
 
 void MacMenu::openRecent(QAction *action)
 {
-	MainWindow *mw = new MainWindow;
-	mw->open(QUrl::fromLocalFile(action->property("filepath").toString()));
+	QVariant filepath = action->property("filepath");
+	if(filepath.isValid()) {
+		MainWindow *mw = new MainWindow;
+		mw->open(QUrl::fromLocalFile(filepath.toString()));
+	} else {
+		dialogs::StartDialog *dlg = showStartDialog();
+		dlg->showPage(dialogs::StartDialog::Recent);
+	}
 }
 
 void MacMenu::joinSession()
