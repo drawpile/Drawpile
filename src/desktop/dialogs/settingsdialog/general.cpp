@@ -31,8 +31,6 @@ General::General(desktop::settings::Settings &settings, QWidget *parent)
 	initAutosave(settings, form);
 	form->addSpacer();
 	initSnapshots(settings, form);
-	form->addSeparator();
-	initHistory(settings, form);
 }
 
 void General::initAutosave(desktop::settings::Settings &settings, utils::SanerFormLayout *form)
@@ -51,15 +49,6 @@ void General::initAutosave(desktop::settings::Settings &settings, utils::SanerFo
 	form->addRow(tr("Autosave:"), snapshotCountLayout);
 
 	form->addRow(nullptr, utils::note(tr("Autosave can be enabled for the current file under <i>File ▸ Autosave</i>."), QSizePolicy::Label));
-}
-
-void General::initHistory(desktop::settings::Settings &settings, utils::SanerFormLayout *form)
-{
-	auto *maxRecent = new QSpinBox;
-	maxRecent->setRange(0, 20);
-	settings.bindMaxRecentFiles(maxRecent);
-	auto *maxRecentLayout = utils::encapsulate(tr("Remember the last %1 opened files and hosts"), maxRecent);
-	form->addRow(tr("Recent items:"), maxRecentLayout);
 }
 
 void General::initLanguage(desktop::settings::Settings &settings, utils::SanerFormLayout *form)

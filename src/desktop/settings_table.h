@@ -66,7 +66,6 @@ SETTING(lastWindowSize            , LastWindowSize            , "window/size"   
 SETTING(lastWindowState           , LastWindowState           , "window/state"                          , QByteArray())
 SETTING(lastWindowViewState       , LastWindowViewState       , "window/viewstate"                      , QByteArray())
 SETTING(layouts                   , Layouts                   , "layouts"                               , QVector<QVariantMap>())
-SETTING(maxRecentFiles            , MaxRecentFiles            , "history/maxrecentfiles"                , 6)
 SETTING(navigatorRealtime         , NavigatorRealtime         , "navigator/realtime"                    , false)
 SETTING(navigatorShowCursors      , NavigatorShowCursors      , "navigator/showcursors"                 , true)
 SETTING_GETSET(newCanvasBackColor , NewCanvasBackColor        , "history/newcolor"                      , (QColor(Qt::white)),
