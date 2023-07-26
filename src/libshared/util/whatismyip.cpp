@@ -126,7 +126,6 @@ bool WhatIsMyIp::isCGNAddress(const QString &address)
 		addr = QHostAddress{address};
 
 	if(addr.isNull()) {
-		qWarning() << "unparseable address:" << address;
 		return false;
 	}
 
