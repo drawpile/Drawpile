@@ -240,7 +240,8 @@ void RecentScroll::addEntry(RecentScrollEntry *entry)
 void RecentScroll::clearEntries()
 {
 	for(RecentScrollEntry *entry : m_entries) {
-		delete entry;
+		entry->setParent(nullptr);
+		entry->deleteLater();
 	}
 	m_entries.clear();
 }
