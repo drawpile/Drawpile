@@ -739,6 +739,7 @@ void ChatWidget::sendMessage(QString chatMessage)
 				return;
 			} else {
 				oflags = DP_MSG_CHAT_OFLAGS_PIN | DP_MSG_CHAT_OFLAGS_SHOUT;
+				tflags &= ~DP_MSG_CHAT_TFLAGS_BYPASS;
 				effectiveMessage = params;
 			}
 
@@ -751,6 +752,7 @@ void ChatWidget::sendMessage(QString chatMessage)
 				return;
 			} else {
 				oflags = DP_MSG_CHAT_OFLAGS_PIN | DP_MSG_CHAT_OFLAGS_SHOUT;
+				tflags &= ~DP_MSG_CHAT_TFLAGS_BYPASS;
 				effectiveMessage = QStringLiteral("-");
 			}
 
