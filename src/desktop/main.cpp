@@ -7,7 +7,7 @@
 
 #include "libclient/utils/logging.h"
 #include "libclient/utils/colorscheme.h"
-#include "desktop/utils/recentfiles.h"
+#include "desktop/utils/recents.h"
 #include "libclient/utils/statedatabase.h"
 #include "desktop/utils/globalkeyeventfilter.h"
 #include "desktop/notifications.h"
@@ -80,9 +80,9 @@ DrawpileApp::~DrawpileApp()
 void DrawpileApp::initState()
 {
 	Q_ASSERT(!m_state);
-	Q_ASSERT(!m_recentFiles);
+	Q_ASSERT(!m_recents);
 	m_state = new utils::StateDatabase{this};
-	m_recentFiles = new utils::RecentFiles{*m_state};
+	m_recents = new utils::Recents{*m_state};
 }
 
 /**

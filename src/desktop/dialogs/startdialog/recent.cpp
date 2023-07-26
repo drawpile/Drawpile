@@ -19,7 +19,7 @@ Recent::Recent(QWidget *parent)
 	m_recentScroll =
 		new widgets::RecentScroll{widgets::RecentScroll::Mode::Files};
 	connect(
-		m_recentScroll, &widgets::RecentScroll::selected, this,
+		m_recentScroll, &widgets::RecentScroll::clicked, this,
 		&Recent::recentFileSelected);
 	layout->addWidget(m_recentScroll);
 }

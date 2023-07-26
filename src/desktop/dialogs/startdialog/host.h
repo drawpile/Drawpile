@@ -37,6 +37,7 @@ private slots:
 	void updateHostEnabled();
 	void updateNsfmBasedOnTitle();
 	void updateListServers();
+	void updateRemoteHosts();
 
 private:
 	static constexpr int USE_LOCAL = 0;

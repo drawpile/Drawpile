@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "desktop/dialogs/startdialog.h"
+#include "cmake-config/config.h"
 #include "desktop/dialogs/addserverdialog.h"
 #include "desktop/dialogs/startdialog/browse.h"
 #include "desktop/dialogs/startdialog/create.h"
@@ -13,6 +14,7 @@
 #include "desktop/dialogs/startdialog/welcome.h"
 #include "desktop/filewrangler.h"
 #include "desktop/main.h"
+#include "desktop/utils/recents.h"
 #include <QButtonGroup>
 #include <QDate>
 #include <QDateTime>
@@ -606,33 +608,10 @@ void StartDialog::addRecentHost(const QUrl &url, bool join)
 	bool isValidHost = url.isValid() &&
 					   url.scheme().compare("drawpile://", Qt::CaseInsensitive);
 	if(isValidHost) {
-		QString host = url.host();
 		int port = url.port();
-		QString newHost = port > 0 && port != cmake_config::proto::port()
-							  ? QStringLiteral("%1:%2").arg(host).arg(port)
-							  : host;
-
-		desktop::settings::Settings &settings = dpApp().settings();
-		if(!join) {
-			settings.setLastRemoteHost(newHost);
-		}
-
-		int max = qMax(0, settings.maxRecentFiles());
-		QStringList hosts;
-		if(max > 0) {
-			hosts.append(newHost);
-
-			for(const QString &existingHost : settings.recentHosts()) {
-				bool shouldReAddExistingHost =
-					!existingHost.isEmpty() &&
-					!hosts.contains(existingHost, Qt::CaseInsensitive) &&
-					hosts.size() < max;
-				if(shouldReAddExistingHost) {
-					hosts.append(existingHost);
-				}
-			}
-		}
-		settings.setRecentHosts(hosts);
+		dpApp().recents().addHost(
+			url.host(), port > 0 ? port : cmake_config::proto::port(), join,
+			!join);
 	}
 }
 

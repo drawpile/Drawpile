@@ -3,7 +3,7 @@
 #include "desktop/main.h"
 #include "desktop/widgets/macmenu.h"
 #include "desktop/mainwindow.h"
-#include "desktop/utils/recentfiles.h"
+#include "desktop/utils/recents.h"
 #include "desktop/dialogs/startdialog.h"
 #include "desktop/utils/widgetutils.h"
 
@@ -84,7 +84,7 @@ MacMenu::MacMenu() :
 	connect(about, &QAction::triggered, &MainWindow::about);
 	connect(aboutqt, &QAction::triggered, &QApplication::aboutQt);
 
-	dpApp().recentFiles().bindMenu(_recent);
+	dpApp().recents().bindFileMenu(_recent);
 }
 
 QAction *MacMenu::makeAction(QMenu *menu, const char *name, const QString &text, const QKeySequence &shortcut)

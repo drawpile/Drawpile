@@ -2,7 +2,9 @@
 
 #include "desktop/dialogs/startdialog/host.h"
 #include "desktop/main.h"
+#include "desktop/utils/recents.h"
 #include "desktop/utils/sanerformlayout.h"
+#include "desktop/utils/widgetutils.h"
 #include "libclient/utils/listservermodel.h"
 #include "libclient/utils/sessionidvalidator.h"
 #include <QButtonGroup>
@@ -125,10 +127,11 @@ Host::Host(QWidget *parent)
 			updateNsfmBasedOnTitle();
 		});
 	settings.bindLastHostRemote(m_useGroup);
-	m_remoteHostCombo->insertItems(0, settings.recentHosts());
-	settings.bindLastRemoteHost(this, [this](const QString &lastRemoteHost) {
-		m_remoteHostCombo->setEditText(lastRemoteHost);
-	});
+
+	connect(
+		&dpApp().recents(), &utils::Recents::recentHostsChanged, this,
+		&Host::updateRemoteHosts);
+	updateRemoteHosts();
 
 	// TODO: remove when the local server is implemented.
 	useRemoteRadio->setChecked(true);
@@ -183,6 +186,28 @@ void Host::updateListServers()
 		if(m_listServerCombo->currentIndex() == -1) {
 			m_listServerCombo->setCurrentIndex(0);
 		}
+	}
+}
+
+void Host::updateRemoteHosts()
+{
+	utils::ScopedUpdateDisabler diabler{m_remoteHostCombo};
+	m_remoteHostCombo->clear();
+
+	QVector<utils::Recents::Host> rhs = dpApp().recents().getHosts();
+	QString editText;
+	for(const utils::Recents::Host &rh : rhs) {
+		QString value = rh.toString();
+		m_remoteHostCombo->addItem(value);
+		if(editText.isEmpty() && rh.hosted) {
+			editText = value;
+		}
+	}
+
+	if(editText.isEmpty()) {
+		m_remoteHostCombo->setEditText("pub.drawpile.net");
+	} else {
+		m_remoteHostCombo->setEditText(editText);
 	}
 }
 

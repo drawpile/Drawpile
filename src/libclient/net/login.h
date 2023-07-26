@@ -373,7 +373,6 @@ private:
 
 	void expectNothing();
 	void expectHello(const ServerReply &msg);
-	void addRecentHost() const;
 	void expectStartTls(const ServerReply &msg);
 	void prepareToSendIdentity();
 	void sendIdentity();

@@ -3,12 +3,11 @@
 #include "desktop/dialogs/startdialog/join.h"
 #include "desktop/main.h"
 #include "desktop/utils/sanerformlayout.h"
+#include "desktop/widgets/recentscroll.h"
 #include "libclient/utils/listservermodel.h"
 #include "libshared/listings/announcementapi.h"
-#include <QGraphicsOpacityEffect>
 #include <QLabel>
 #include <QLineEdit>
-#include <QScrollArea>
 #include <QSignalBlocker>
 #include <QSpacerItem>
 #include <QUrlQuery>
@@ -43,20 +42,15 @@ Join::Join(QWidget *parent)
 	QLabel *recentLabel = new QLabel{tr("Recent:")};
 	layout->addWidget(recentLabel);
 
-	QScrollArea *recentScroll = new QScrollArea;
-	recentScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	recentScroll->setWidgetResizable(true);
-	layout->addWidget(recentScroll);
-
-	QWidget *recentHostsWidget = new QWidget;
-	recentScroll->setWidget(recentHostsWidget);
-
-	m_recentHostsLayout = new QVBoxLayout;
-	recentHostsWidget->setLayout(m_recentHostsLayout);
-	m_recentHostsLayout->addStretch();
-
-	desktop::settings::Settings &settings = dpApp().settings();
-	settings.bindRecentHosts(this, &Join::updateRecentHosts);
+	m_recentScroll =
+		new widgets::RecentScroll{widgets::RecentScroll::Mode::Join};
+	layout->addWidget(m_recentScroll);
+	connect(
+		m_recentScroll, &widgets::RecentScroll::clicked, this,
+		&Join::setAddress);
+	connect(
+		m_recentScroll, &widgets::RecentScroll::doubleClicked, this,
+		&Join::acceptAddress);
 }
 
 void Join::activate()
@@ -78,17 +72,10 @@ void Join::setAddress(const QString &address)
 	m_addressEdit->setText(address);
 }
 
-bool Join::eventFilter(QObject *object, QEvent *event)
+void Join::acceptAddress(const QString &address)
 {
-	if(event->type() == QEvent::MouseButtonDblClick) {
-		QString recentHost = object->property("recenthost").toString();
-		if(!recentHost.isEmpty()) {
-			m_addressEdit->setText(recentHost);
-			accept();
-			return true;
-		}
-	}
-	return QWidget::eventFilter(object, event);
+	setAddress(address);
+	accept();
 }
 
 void Join::addressChanged(const QString &address)
@@ -114,58 +101,9 @@ void Join::resetAddressPlaceholderText()
 	m_addressEdit->setPlaceholderText(QStringLiteral("drawpile://…"));
 }
 
-void Join::updateRecentHosts(const QStringList &recentHosts)
-{
-	setUpdatesEnabled(false);
-
-	for(QLabel *label : m_recentHostsLabels) {
-		delete label;
-	}
-	m_recentHostsLabels.clear();
-
-	if(recentHosts.isEmpty()) {
-		QLabel *label = new QLabel;
-		label->setTextFormat(Qt::RichText);
-		label->setWordWrap(true);
-		label->setText(QStringLiteral("<em>%1</em>")
-						   .arg(tr("Nothing here. Entries will be added when "
-								   "you join or host sessions.")
-									.toHtmlEscaped()));
-		label->setGraphicsEffect(makeOpacityEffect(0.6));
-		m_recentHostsLayout->addWidget(label);
-	} else {
-		int count = recentHosts.size();
-		for(int i = 0; i < count; ++i) {
-			const QString &recentHost = recentHosts[i];
-			QLabel *label = new QLabel;
-			label->setTextFormat(Qt::RichText);
-			label->setWordWrap(true);
-			label->setText(QStringLiteral("<a href=\"%1\">%1</a>")
-							   .arg(recentHost.toHtmlEscaped()));
-			label->setGraphicsEffect(makeOpacityEffect(0.8));
-			connect(
-				label, &QLabel::linkActivated, m_addressEdit,
-				&QLineEdit::setText);
-			label->installEventFilter(this);
-			label->setProperty("recenthost", recentHost.trimmed());
-			m_recentHostsLayout->insertWidget(i, label);
-			m_recentHostsLabels.append(label);
-		}
-	}
-
-	setUpdatesEnabled(true);
-}
-
 void Join::updateJoinButton()
 {
 	emit enableJoin(getUrl().isValid());
-}
-
-QGraphicsOpacityEffect *Join::makeOpacityEffect(double opacity)
-{
-	QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect;
-	effect->setOpacity(opacity);
-	return effect;
 }
 
 bool Join::looksLikeRoomcode(const QString &address)

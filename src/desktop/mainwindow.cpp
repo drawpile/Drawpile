@@ -51,7 +51,7 @@ static constexpr auto CTRL_KEY = Qt::CTRL;
 #include "libclient/canvas/paintengine.h"
 #include "libclient/canvas/documentmetadata.h"
 
-#include "desktop/utils/recentfiles.h"
+#include "desktop/utils/recents.h"
 #include "libshared/util/whatismyip.h"
 #include "cmake-config/config.h"
 #include "libclient/utils/images.h"
@@ -598,8 +598,8 @@ MainWindow *MainWindow::replaceableWindow()
  */
 void MainWindow::addRecentFile(const QString& file)
 {
-	utils::RecentFiles &recentFiles = dpApp().recentFiles();
-	recentFiles.addFile(file);
+	utils::Recents &recents = dpApp().recents();
+	recents.addFile(file);
 }
 
 /**
@@ -828,7 +828,7 @@ void MainWindow::readSettings(bool windowpos)
 	settings.bindShortcuts(this, &MainWindow::loadShortcuts);
 
 	// Restore recent files
-	dpApp().recentFiles().bindMenu(m_recentMenu);
+	dpApp().recents().bindFileMenu(m_recentMenu);
 
 	connect(&m_saveWindowDebounce, &QTimer::timeout, this, &MainWindow::saveWindowState);
 	connect(&m_saveSplitterDebounce, &QTimer::timeout, this, &MainWindow::saveSplitterState);

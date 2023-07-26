@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "desktop/widgets/recentscroll.h"
+#include "cmake-config/config.h"
 #include "desktop/main.h"
 #include "desktop/utils/widgetutils.h"
 #include "libshared/util/paths.h"
@@ -26,11 +27,15 @@ RecentScrollEntry *RecentScrollEntry::ofNoFiles()
 	return entry;
 }
 
-RecentScrollEntry *
-RecentScrollEntry::ofFile(const utils::RecentFiles::File &file)
+RecentScrollEntry *RecentScrollEntry::ofFile(const utils::Recents::File &file)
 {
 	RecentScrollEntry *entry = new RecentScrollEntry;
-	entry->initDeleteButton();
+	// Small is too small, large is too large, so we pick the middle.
+	QStyle *s = entry->style();
+	entry->initDeleteButton(
+		(s->pixelMetric(QStyle::PM_SmallIconSize) +
+		 s->pixelMetric(QStyle::PM_LargeIconSize)) /
+		2);
 	entry->setText(
 		QStringLiteral("<u style=\"font-size:large;\">%1</u>")
 			.arg(makeWrappable(utils::paths::extractBasename(file.path))
@@ -40,11 +45,40 @@ RecentScrollEntry::ofFile(const utils::RecentFiles::File &file)
 	return entry;
 }
 
+RecentScrollEntry *RecentScrollEntry::ofNoHosts()
+{
+	RecentScrollEntry *entry = new RecentScrollEntry;
+	entry->initOpacity(0.8);
+	entry->setText(tr("No recent hosts.").toHtmlEscaped());
+	return entry;
+}
+
+RecentScrollEntry *RecentScrollEntry::ofHost(const utils::Recents::Host &rh)
+{
+	RecentScrollEntry *entry = new RecentScrollEntry;
+	entry->initDeleteButton(
+		entry->style()->pixelMetric(QStyle::PM_ButtonIconSize));
+	QString text = rh.port == cmake_config::proto::port()
+					   ? rh.host
+					   : QStringLiteral("%1:%2").arg(rh.host).arg(rh.port);
+	entry->setText(QStringLiteral("<u>%1</u>").arg(text.toHtmlEscaped()));
+	entry->setCursor(Qt::PointingHandCursor);
+	return entry;
+}
+
 void RecentScrollEntry::mousePressEvent(QMouseEvent *event)
 {
 	QWidget::mousePressEvent(event);
 	if(!event->isAccepted() && event->button() == Qt::LeftButton) {
-		emit selected();
+		emit clicked();
+	}
+}
+
+void RecentScrollEntry::mouseDoubleClickEvent(QMouseEvent *event)
+{
+	QWidget::mouseDoubleClickEvent(event);
+	if(!event->isAccepted() && event->button() == Qt::LeftButton) {
+		emit doubleClicked();
 	}
 }
 
@@ -69,14 +103,9 @@ void RecentScrollEntry::initOpacity(double opacity)
 	m_text->setGraphicsEffect(effect);
 }
 
-void RecentScrollEntry::initDeleteButton()
+void RecentScrollEntry::initDeleteButton(int iconSize)
 {
 	m_deleteButton = new QToolButton;
-	// Small is too small, large is too large, so we pick the middle.
-	QStyle *s = style();
-	int iconSize = (s->pixelMetric(QStyle::PM_SmallIconSize) +
-					s->pixelMetric(QStyle::PM_LargeIconSize)) /
-				   2;
 	m_deleteButton->setIconSize(QSize{iconSize, iconSize});
 	m_deleteButton->setIcon(QIcon::fromTheme("trash-empty"));
 	m_deleteButton->setToolTip(tr("Remove"));
@@ -125,11 +154,17 @@ RecentScroll::RecentScroll(Mode mode, QWidget *parent)
 	m_content->setLayout(m_layout);
 
 	if(mode == Mode::Files) {
-		utils::RecentFiles &recentFiles = dpApp().recentFiles();
+		utils::Recents &recents = dpApp().recents();
 		connect(
-			&recentFiles, &utils::RecentFiles::recentFilesChanged, this,
+			&recents, &utils::Recents::recentFilesChanged, this,
 			&RecentScroll::updateFiles);
 		updateFiles();
+	} else if(mode == Mode::Join) {
+		utils::Recents &recents = dpApp().recents();
+		connect(
+			&recents, &utils::Recents::recentHostsChanged, this,
+			&RecentScroll::updateHosts);
+		updateHosts();
 	} else {
 		qWarning("Unknown recent scroll mode %d", int(mode));
 	}
@@ -138,23 +173,52 @@ RecentScroll::RecentScroll(Mode mode, QWidget *parent)
 void RecentScroll::updateFiles()
 {
 	utils::ScopedUpdateDisabler disabler{this};
-	utils::RecentFiles &recentFiles = dpApp().recentFiles();
-	QVector<utils::RecentFiles::File> files = recentFiles.getFiles();
+	utils::Recents &recents = dpApp().recents();
+	QVector<utils::Recents::File> files = recents.getFiles();
 	clearEntries();
 	if(files.isEmpty()) {
 		addEntry(RecentScrollEntry::ofNoFiles());
 	} else {
-		for(const utils::RecentFiles::File &file : files) {
+		for(const utils::Recents::File &file : files) {
 			RecentScrollEntry *entry = RecentScrollEntry::ofFile(file);
 			connect(
-				entry, &RecentScrollEntry::selected, this,
+				entry, &RecentScrollEntry::clicked, this,
 				[this, path = file.path] {
-					emit selected(path);
+					emit clicked(path);
 				});
 			connect(
 				entry, &RecentScrollEntry::deleteRequested, this,
-				[&recentFiles, id = file.id] {
-					recentFiles.removeFileById(id);
+				[&recents, id = file.id] {
+					recents.removeFileById(id);
+				});
+			addEntry(entry);
+		}
+	}
+}
+
+void RecentScroll::updateHosts()
+{
+	utils::ScopedUpdateDisabler disabler{this};
+	utils::Recents &recents = dpApp().recents();
+	QVector<utils::Recents::Host> rhs = recents.getHosts();
+	clearEntries();
+	if(rhs.isEmpty()) {
+		addEntry(RecentScrollEntry::ofNoHosts());
+	} else {
+		for(const utils::Recents::Host &rh : rhs) {
+			RecentScrollEntry *entry = RecentScrollEntry::ofHost(rh);
+			QString value = rh.toString();
+			connect(entry, &RecentScrollEntry::clicked, this, [this, value] {
+				emit clicked(value);
+			});
+			connect(
+				entry, &RecentScrollEntry::doubleClicked, this, [this, value] {
+					emit doubleClicked(value);
+				});
+			connect(
+				entry, &RecentScrollEntry::deleteRequested, this,
+				[&recents, id = rh.id] {
+					recents.removeHostById(id);
 				});
 			addEntry(entry);
 		}

@@ -8,10 +8,13 @@
 #include <QVector>
 #include <QWidget>
 
-class QGraphicsOpacityEffect;
 class QLabel;
 class QLineEdit;
 class QUrl;
+
+namespace widgets {
+class RecentScroll;
+}
 
 namespace dialogs {
 namespace startdialog {
@@ -31,20 +34,15 @@ signals:
 	void enableJoin(bool enabled);
 	void join(const QUrl &url);
 
-protected:
-	bool eventFilter(QObject *object, QEvent *event) final override;
-
 private slots:
+	void acceptAddress(const QString &address);
 	void addressChanged(const QString &address);
 
 private:
 	static constexpr char SCHEME[] = "drawpile://";
 
 	void resetAddressPlaceholderText();
-	void updateRecentHosts(const QStringList &recentHosts);
 	void updateJoinButton();
-
-	static QGraphicsOpacityEffect *makeOpacityEffect(double opacity);
 
 	static bool looksLikeRoomcode(const QString &address);
 	static QString fixUpInviteAddress(const QString &address);
@@ -57,8 +55,7 @@ private:
 
 	QLineEdit *m_addressEdit;
 	QLabel *m_addressMessageLabel;
-	QVBoxLayout *m_recentHostsLayout;
-	QVector<QLabel *> m_recentHostsLabels;
+	widgets::RecentScroll *m_recentScroll;
 };
 
 }

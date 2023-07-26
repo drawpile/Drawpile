@@ -3,7 +3,7 @@
 #ifndef DESKTOP_WIDGETS_RECENTSCROLL_H
 #define DESKTOP_WIDGETS_RECENTSCROLL_H
 
-#include "desktop/utils/recentfiles.h"
+#include "desktop/utils/recents.h"
 #include <QScrollArea>
 #include <QVector>
 
@@ -18,20 +18,25 @@ class RecentScrollEntry final : public QWidget {
 	Q_OBJECT
 public:
 	static RecentScrollEntry *ofNoFiles();
-	static RecentScrollEntry *ofFile(const utils::RecentFiles::File &file);
+	static RecentScrollEntry *ofFile(const utils::Recents::File &file);
+
+	static RecentScrollEntry *ofNoHosts();
+	static RecentScrollEntry *ofHost(const utils::Recents::Host &rh);
 
 signals:
-	void selected();
+	void clicked();
+	void doubleClicked();
 	void deleteRequested();
 
 protected:
-    void mousePressEvent(QMouseEvent *event) override;
+	void mousePressEvent(QMouseEvent *event) override;
+	void mouseDoubleClickEvent(QMouseEvent *event) override;
 
 private:
 	RecentScrollEntry();
 
 	void initOpacity(double opacity);
-	void initDeleteButton();
+	void initDeleteButton(int iconSize);
 
 	void setText(const QString &text);
 
@@ -48,18 +53,20 @@ public:
 	static constexpr int THUMBNAIL_WIDTH = 112;
 	static constexpr int THUMBNAIL_HEIGHT = 63;
 
-	enum class Mode { Files };
+	enum class Mode { Files, Join };
 
 	explicit RecentScroll(Mode mode, QWidget *parent = nullptr);
 
 signals:
-	void selected(const QString &value);
+	void clicked(const QString &value);
+	void doubleClicked(const QString &value);
 
 protected:
 	void resizeEvent(QResizeEvent *event) override;
 
 private slots:
 	void updateFiles();
+	void updateHosts();
 
 private:
 	void addEntry(RecentScrollEntry *entry);

@@ -12,7 +12,7 @@ class MainWindow;
 class QSoundEffect;
 
 namespace utils {
-class RecentFiles;
+class Recents;
 class StateDatabase;
 }
 
@@ -41,8 +41,8 @@ public:
 	const utils::StateDatabase &state() const { return *m_state; }
 	utils::StateDatabase &state() { return *m_state; }
 
-	const utils::RecentFiles &recentFiles() const { return *m_recentFiles; }
-	utils::RecentFiles &recentFiles() { return *m_recentFiles; }
+	const utils::Recents &recents() const { return *m_recents; }
+	utils::Recents &recents() { return *m_recents; }
 
 signals:
 	void eraserNear(bool near);
@@ -55,7 +55,7 @@ protected:
 private:
 	desktop::settings::Settings m_settings;
 	utils::StateDatabase *m_state = nullptr;
-	utils::RecentFiles *m_recentFiles = nullptr;
+	utils::Recents *m_recents = nullptr;
 	QMap<notification::Event, QSoundEffect*> m_sounds;
 	QString m_originalSystemStyle;
 	QPalette m_originalSystemPalette;

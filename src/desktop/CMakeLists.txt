@@ -256,8 +256,8 @@ target_sources(drawpile PRIVATE
 	utils/mandatoryfields.cpp
 	utils/mandatoryfields.h
 	utils/qtguicompat.h
-	utils/recentfiles.cpp
-	utils/recentfiles.h
+	utils/recents.cpp
+	utils/recents.h
 	utils/sanerformlayout.cpp
 	utils/sanerformlayout.h
 	utils/widgetutils.h
