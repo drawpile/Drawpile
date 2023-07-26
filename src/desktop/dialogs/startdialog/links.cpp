@@ -36,6 +36,9 @@ Links::Links(QWidget *parent)
 		 QUrl{"https://drawpile.net/communities"}},
 		{"fa_discord", tr("Discord"), tr("Join the Drawpile Discord server"),
 		 QUrl{"https://discord.gg/M3yyMpC"}},
+		{"fa_github", tr("GitHub"),
+		 tr("Open Drawpile's GitHub page in your browser"),
+		 QUrl{"https://github.com/drawpile/Drawpile#readme"}},
 	};
 	QString css = QStringLiteral("QPushButton {"
 								 "	font-size: 20px;"
