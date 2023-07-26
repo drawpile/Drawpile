@@ -22,8 +22,9 @@ void copyFrom(
 	const QFileInfo &fileInfo)
 {
 	if(fileInfo.exists()) {
-		qDebug(
-			"Database file '%s' already exists", qUtf8Printable(databasePath));
+		qCDebug(
+			lcDpDatabase, "Database file '%s' already exists",
+			qUtf8Printable(databasePath));
 	} else {
 		QString initialPath = utils::paths::locateDataFile(sourceFileName);
 		if(initialPath.isEmpty()) {
