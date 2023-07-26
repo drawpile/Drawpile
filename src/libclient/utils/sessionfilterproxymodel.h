@@ -19,6 +19,10 @@ public:
 
 	bool showNsfw() const { return m_showNsfw; }
 	bool showPassworded() const { return m_showPassworded; }
+	bool showClosed() const { return m_showClosed; }
+	bool showDuplicates() const { return m_showDuplicates; }
+
+	void refreshDuplicates();
 
 public slots:
 	void setShowNsfw(bool show);

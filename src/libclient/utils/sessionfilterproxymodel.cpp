@@ -13,6 +13,13 @@ SessionFilterProxyModel::SessionFilterProxyModel(QObject *parent)
 {
 }
 
+void SessionFilterProxyModel::refreshDuplicates()
+{
+	if(!m_showDuplicates) {
+		invalidateFilter();
+	}
+}
+
 void SessionFilterProxyModel::setShowPassworded(bool show)
 {
 	if(m_showPassworded != show) {

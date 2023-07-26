@@ -128,6 +128,7 @@ Browse::Browse(QWidget *parent)
 			zeroconfDiscovery, &ZeroconfDiscovery::serverListUpdated, this,
 			[this](const QVector<sessionlisting::Session> &servers) {
 				m_sessions->setList(tr("Nearby"), servers);
+				m_filteredSessions->refreshDuplicates();
 			});
 		zeroconfDiscovery->discover();
 	}
@@ -424,6 +425,7 @@ void Browse::refreshServer(
 			} else {
 				m_sessions->setMessage(name, host, error);
 			}
+			m_filteredSessions->refreshDuplicates();
 		});
 
 	connect(
