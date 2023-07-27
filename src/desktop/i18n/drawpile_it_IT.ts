@@ -49,7 +49,7 @@
     <message>
         <location line="+8"/>
         <source>Offender:</source>
-        <translation type="unfinished"></translation>
+        <translation>Colpevole:</translation>
     </message>
 </context>
 <context>
@@ -57,7 +57,7 @@
     <message>
         <location filename="../ui/addserverdialog.ui" line="+14"/>
         <source>Add Server</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi Server</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -67,7 +67,7 @@
     <message>
         <location line="+43"/>
         <source>You can find some list servers at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>È possibile trovare alcune liste di server all&apos;indirizzo &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;</translation>
     </message>
 </context>
 <context>
@@ -773,42 +773,42 @@ in 64x64 pixel.</translation>
     <message>
         <location filename="../ui/invitedialog.ui" line="+14"/>
         <source>Invite</source>
-        <translation type="unfinished"></translation>
+        <translation>Invita</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Copy Invite Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Copia Link dell&apos;Invito</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Web link</source>
-        <translation type="unfinished"></translation>
+        <translation>Link dal sito</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Direct link</source>
-        <translation type="unfinished"></translation>
+        <translation>Link diretto</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Include password</source>
-        <translation type="unfinished"></translation>
+        <translation>Includi la password</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>&lt;strong&gt;Note:&lt;/strong&gt; changing the session password will cause the link to stop working! If someone else changes the password, you have to reconnect for this dialog to update.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Nota:&lt;/strong&gt; cambiando la password della sessione, il collegamento smetterà di funzionare! Se qualcun altro cambia la password, è necessario riconnettersi per aggiornare la finestra di dialogo.</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>You&apos;re hosting a session locally. If others can&apos;t join your session, take a look at &lt;a href=&quot;https://drawpile.net/help/hosting/&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Stai hostando una sessione localmente. Se altri non possono partecipare alla sessione, dai un&apos;occhiata a &lt;a href=&quot;https://drawpile.net/help/hosting/&quot;&gt; la pagina di aiuto su hosting&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+45"/>
         <source>You&apos;re hosting a session locally, so Drawpile has to find your externally visible IP address to give you an invite link. For more information, check out &lt;a href=&quot;https://drawpile.net/help/hosting/&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Stai hostando una sessione localmente, quindi Drawpile deve trovare il tuo indirizzo IP visibile esternamente per darti un link di invito. Per ulteriori informazioni, consultare &lt;a href=&quot;https://drawpile.net/help/hosting/&quot;&gt;la pagina della guida su hosting&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+32"/>
@@ -818,12 +818,12 @@ in 64x64 pixel.</translation>
     <message>
         <location line="+37"/>
         <source>Show this dialog when hosting a session</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra questa finestra di dialogo quando hosti una sessione</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>You can find this dialog again under &lt;i&gt;Session ▸ Invite…&lt;/i&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>È possibile trovare nuovamente questa finestra di dialogo in &lt;i&gt;Sessione ▸ Invita... &lt;/i&gt;</translation>
     </message>
 </context>
 <context>
@@ -1005,7 +1005,7 @@ Sottogamma: [%3, %4]</translation>
     <message>
         <location line="+52"/>
         <source>This session is password-protected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Questa sessione è protetta da una password.</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -1015,12 +1015,12 @@ Sottogamma: [%3, %4]</translation>
     <message>
         <location line="+173"/>
         <source>&lt;p&gt;This session has indicated that its contents are &lt;em&gt;not suitable for minors&lt;/em&gt; (NSFM).&lt;/p&gt;&lt;p&gt;&lt;strong&gt;You must be over the age of 18 and be allowed to consume adult content to proceed.&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Are you sure you want to join this session?&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Questa sessione ha indicato che i suoi contenuti &lt;em&gt;non sono adatti ai minori&lt;/em&gt; (NSFM).&lt;/p&gt;&lt;p&gt;&lt;strong&gt; Per procedere è necessario avere più di 18 anni ed essere autorizzati a consumare contenuti per adulti.&lt;/strong&gt;&lt;/p&gt;&lt;p&gt; Sei sicuro di voler partecipare a questa sessione?&lt;/p&gt;</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Show this warning again next time</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra di nuovo questo avviso la prossima volta</translation>
     </message>
     <message>
         <location line="-263"/>
@@ -1030,7 +1030,7 @@ Sottogamma: [%3, %4]</translation>
     <message>
         <location line="+80"/>
         <source>Enter the &lt;b&gt;session password&lt;/b&gt;, &lt;i&gt;not&lt;/i&gt; your account password.</source>
-        <translation type="unfinished"></translation>
+        <translation>Inserisci la password della sessione &lt;b&gt;&lt;/b&gt; , &lt;i&gt;non&lt;/i&gt; la password del tuo account.</translation>
     </message>
     <message>
         <location line="+36"/>
@@ -1344,7 +1344,7 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     <message>
         <location line="+184"/>
         <source>No canvas to host! Create one or open a file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nessuna tela da hostare! Creane una o aprite un file.</translation>
     </message>
     <message>
         <location line="+1233"/>
@@ -1412,7 +1412,7 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     <message>
         <location line="+1"/>
         <source>Copy Merged</source>
-        <translation>Copia Unito</translation>
+        <translation>Copia Livelli e Unisci</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -1728,42 +1728,42 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     <message>
         <location line="+72"/>
         <source>Share your canvas with others</source>
-        <translation type="unfinished"></translation>
+        <translation>Condividi la tua tela con altri utenti</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Invite...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Invita...</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Invite another user to this session</source>
-        <translation type="unfinished"></translation>
+        <translation>Invita un altro utente a questa sessione</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Browse...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Sfoglia...</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Browse session listings</source>
-        <translation type="unfinished"></translation>
+        <translation>Sfoglia gli elenchi delle sessioni</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Change session settings, permissions, announcements and bans</source>
-        <translation type="unfinished"></translation>
+        <translation>Modifica le impostazioni della sessione, permessi, annunci e ban</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Undo Limit…</source>
-        <translation type="unfinished"></translation>
+        <translation>Limite di Annullamenti…</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Prevent changes to the canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Impedisci modifiche alla tela</translation>
     </message>
     <message>
         <location line="+90"/>
@@ -1788,7 +1788,7 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     <message>
         <location line="+1"/>
         <source>Statistics…</source>
-        <translation type="unfinished"></translation>
+        <translation>Statistiche…</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -1803,7 +1803,7 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     <message>
         <location line="+170"/>
         <source>Focus canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Focus della tela</translation>
     </message>
     <message>
         <location line="+45"/>
@@ -2024,7 +2024,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+7"/>
         <source>Start...</source>
-        <translation type="unfinished"></translation>
+        <translation>Start...</translation>
     </message>
     <message>
         <location line="+58"/>
@@ -2069,37 +2069,37 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+10"/>
         <source>Move Canvas Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Sposta Tela a Sinistra</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Move Canvas Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Sposta Tela a Destra</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Move Canvas Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Sposta la Tela Verso L&apos;Alto</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Move Canvas Down</source>
-        <translation type="unfinished"></translation>
+        <translation>Sposta la Tela Verso il Basso</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Fit Page</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Adatta Pagina</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Fit Page &amp;Width</source>
-        <translation type="unfinished"></translation>
+        <translation>Adatta Pagina e Larghezza</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Fit Page &amp;Height</source>
-        <translation type="unfinished"></translation>
+        <translation>Adatta Pagina e Altezza</translation>
     </message>
     <message>
         <location line="+134"/>
@@ -2219,42 +2219,42 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+2"/>
         <source>Create Layer on Current Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Crea Livello sul Key Frame Corrente</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Create Layer on Next Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Crea Livello sul Key Frame Successivo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Create Layer on Previous Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Crea Livello sul Key Frame Precedente</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Create Group on Current Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Crea Gruppo sul Key Frame Corrente</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Create Group on Next Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Crea Gruppo sul Key Frame Successivo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Create Group on Previous Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Crea Gruppo su Key Frame Precedente</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Duplicate to Next Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Duplica al Key Frame Successivo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Duplicate to Previous Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Duplica al Key Frame Precedente</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -2264,17 +2264,17 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+14"/>
         <source>Create Layer on Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Crea Livello su Key Frame</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Create Group on Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Crea Gruppo su Key Frame</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Duplicate Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Duplica Key Frame</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -2625,22 +2625,22 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+17"/>
         <source>Tiles:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tessere:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Tile Memory:</source>
-        <translation type="unfinished"></translation>
+        <translation>Memoria della Tessera:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Contexts:</source>
-        <translation type="unfinished"></translation>
+        <translation>Contesti:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Context Memory:</source>
-        <translation type="unfinished"></translation>
+        <translation>Memoria del Contesto:</translation>
     </message>
     <message>
         <location line="-86"/>
@@ -3513,17 +3513,17 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location filename="../dialogs/addserverdialog.cpp" line="+151"/>
         <source>&lt;strong&gt;Error:&lt;/strong&gt; %1</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Errore:&lt;/strong&gt; %1</translation>
     </message>
     <message>
         <location line="+106"/>
         <source>Retrieving %1...</source>
-        <translation type="unfinished"></translation>
+        <translation>Recuperando %1...</translation>
     </message>
     <message>
         <location line="+74"/>
         <source>Check</source>
-        <translation type="unfinished"></translation>
+        <translation>Controllo</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -3533,7 +3533,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+11"/>
         <source>Checking %1...</source>
-        <translation type="unfinished"></translation>
+        <translation>Controllando %1...</translation>
     </message>
 </context>
 <context>
@@ -5340,7 +5340,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../dialogs/invitedialog.cpp" line="+74"/>
         <source>Invite link copied to clipboard.</source>
-        <translation type="unfinished"></translation>
+        <translation>Il link dell&apos;invito è stato copiato negli appunti.</translation>
     </message>
 </context>
 <context>
@@ -5721,7 +5721,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+1"/>
         <source>Notifications</source>
-        <translation type="unfinished"></translation>
+        <translation>Notifiche</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5749,37 +5749,37 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../dialogs/startdialog.cpp" line="+69"/>
         <source>Start</source>
-        <translation type="unfinished"></translation>
+        <translation>Start</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Welcome</source>
-        <translation type="unfinished"></translation>
+        <translation>Benvenuto</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>News and updates</source>
-        <translation type="unfinished"></translation>
+        <translation>Notizie e aggiornamenti</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Join Session</source>
-        <translation type="unfinished"></translation>
+        <translation>Partecipa ad una Sessione</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Connect to a drawing session directly</source>
-        <translation type="unfinished"></translation>
+        <translation>Collegati direttamente ad una sessione di disegno</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Browse Sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>Sfoglia le Sessioni</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Browse publicly listed drawing sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>Sfoglia le sessioni di disegno elencate pubblicamente</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5789,37 +5789,37 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+1"/>
         <source>Share your canvas with others</source>
-        <translation type="unfinished"></translation>
+        <translation>Condividi la tua tela con altri utenti</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>New Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Nuova Tela</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Create a new, empty canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Crea una nuova tela vuota</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Open File</source>
-        <translation type="unfinished"></translation>
+        <translation>Apri File</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Open an image file</source>
-        <translation type="unfinished"></translation>
+        <translation>Apri un file immagine</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Recent Files</source>
-        <translation type="unfinished"></translation>
+        <translation>File Recenti</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Reopen a recently used file</source>
-        <translation type="unfinished"></translation>
+        <translation>Riapri un file utilizzato di recente</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5829,7 +5829,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+0"/>
         <source>Choose application layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Scegli il layout dell&apos;applicazione</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5839,7 +5839,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+0"/>
         <source>Change application settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Modifica le impostazioni dell&apos;applicazione</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -5849,35 +5849,36 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+6"/>
         <source>Add Server</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi Server</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Check for Updates</source>
-        <translation type="unfinished"></translation>
+        <translation>Verifica Disponibilità di Aggiornamenti</translation>
     </message>
     <message>
         <location line="+249"/>
         <source>Checking…</source>
-        <translation type="unfinished"></translation>
+        <translation>Controllo…</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Last check: today.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ultimo controllo: oggi.</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
         <source>Last check: %n day(s) ago.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Ultimo controllo: %n giorno fa.</numerusform>
+            <numerusform>Ultimo controllo: %n giorni fa.</numerusform>
+            <numerusform>Ultimo controllo: %n giorni fa.</numerusform>
         </translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Last check: never.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ultimo controllo: mai.</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -6066,12 +6067,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+15"/>
         <source>%1 (%2) / %3 (%4)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2) / %3 (%4)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>%1 / %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 / %2</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -6244,7 +6245,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+5"/>
         <source>Driver:</source>
-        <translation type="unfinished"></translation>
+        <translation>Driver:</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -6287,12 +6288,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/network.cpp" line="+34"/>
         <source>Automatically check for updates</source>
-        <translation type="unfinished"></translation>
+        <translation>Verifica automaticamente la disponibilità di aggiornamenti</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Updates:</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiornamenti:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6337,12 +6338,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+5"/>
         <source>Receive delay:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ritardo di ricezione:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>The higher the value, the smoother strokes from other users come in.</source>
-        <translation type="unfinished"></translation>
+        <translation>Più alto è il valore, più fluidi sono i tratti degli altri utenti.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -6486,7 +6487,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+4"/>
         <source>Warn when joining NSFM sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>Avvisa quando ti unisci alle sessioni NSFM</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -6668,7 +6669,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+2"/>
         <source>Double-tap Alt key to focus canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Toccare due volte il tasto Alt per mettere a fuoco l&apos;area di disegno</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -6781,12 +6782,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../dialogs/startdialog/browse.cpp" line="+65"/>
         <source>You haven&apos;t added any servers yet. You can find some at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Non è stato ancora aggiunto alcun server. Puoi trovarne alcuni su &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>To add the public Drawpile server, &lt;a href=&quot;#&quot;&gt;click here&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Per aggiungere il server pubblico di Drawpile, &lt;a href=&quot;#&quot;&gt;fare clic qui&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -6801,7 +6802,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+1"/>
         <source>Show sessions that don&apos;t let new users join</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra le sessioni che non consentono l&apos;accesso a nuovi utenti</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6811,7 +6812,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+2"/>
         <source>Show sessions that require a password to join</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra le sessioni che richiedono una password per l&apos;accesso</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6826,12 +6827,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+6"/>
         <source>Duplicates</source>
-        <translation type="unfinished"></translation>
+        <translation>Duplicati</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show sessions that are listed on multiple servers</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra le sessioni elencate su più server</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -6873,12 +6874,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+79"/>
         <source>Nothing here yet!</source>
-        <translation type="unfinished"></translation>
+        <translation>Qui non c&apos;è ancora nulla!</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Read the message at the top on how to add a server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Leggi il messaggio in alto su come aggiungere un server.</translation>
     </message>
 </context>
 <context>
@@ -6902,7 +6903,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+4"/>
         <source>Canvas background color</source>
-        <translation type="unfinished"></translation>
+        <translation>Colore di sfondo della tela</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6940,7 +6941,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+1"/>
         <source>ID Alias:</source>
-        <translation type="unfinished"></translation>
+        <translation>Alias ID:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6965,7 +6966,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+14"/>
         <source>Host on this computer</source>
-        <translation type="unfinished"></translation>
+        <translation>Host su questo computer</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6975,12 +6976,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+4"/>
         <source>Not available in the 2.2 beta yet. This option will return later!</source>
-        <translation type="unfinished"></translation>
+        <translation>Non ancora disponibile nella beta 2.2. Questa opzione tornerà in seguito!</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Host at:</source>
-        <translation type="unfinished"></translation>
+        <translation>Hosta su:</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6993,22 +6994,22 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../dialogs/startdialog/join.cpp" line="+27"/>
         <source>Enter a &lt;strong&gt;session URL&lt;/strong&gt;, &lt;strong&gt;host name&lt;/strong&gt;, &lt;strong&gt;IP address&lt;/strong&gt; or &lt;strong&gt;room code&lt;/strong&gt;:</source>
-        <translation type="unfinished"></translation>
+        <translation>Inserire un &lt;strong&gt; URL di sessione ,&lt;/strong&gt; un nome host &lt;strong&gt;, &lt;/strong&gt; un indirizzo IP &lt;strong&gt;o &lt;/strong&gt; un codice stanza &lt;strong&gt;:</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Recent:</source>
-        <translation type="unfinished"></translation>
+        <translation>Recente:</translation>
     </message>
     <message>
         <location line="+44"/>
         <source>Searching…</source>
-        <translation type="unfinished"></translation>
+        <translation>Ricerca in corso…</translation>
     </message>
     <message>
         <location line="+83"/>
         <source>Roomcode not found!</source>
-        <translation type="unfinished"></translation>
+        <translation>Codice stanza non trovato!</translation>
     </message>
 </context>
 <context>
@@ -7016,12 +7017,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="+31"/>
         <source>Help</source>
-        <translation type="unfinished"></translation>
+        <translation>Aiuto</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Open Drawpile&apos;s help pages in your browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Apri le pagine di aiuto di Drawpile nel tuo browser</translation>
     </message>
     <message>
         <location line="+2"/>
