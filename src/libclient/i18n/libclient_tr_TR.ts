@@ -284,7 +284,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+593"/>
+        <location filename="../document.cpp" line="+594"/>
         <source>Unknown format.</source>
         <translation>Bilinmeyen format.</translation>
     </message>
@@ -462,20 +462,26 @@
         <translation>%1dk</translation>
     </message>
     <message>
-        <location line="+81"/>
+        <location line="+346"/>
         <source>(untitled)</source>
         <translation>(başlıksız)</translation>
     </message>
     <message numerus="yes">
-        <location line="+7"/>
+        <location line="-253"/>
         <source>%n users</source>
         <translation>
             <numerusform>%n kullanıcı</numerusform>
-            <numerusform>%n kıllanıcı</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location line="-2"/>
+        <source>%1/%n users</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
         </translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+15"/>
         <source>Compatible</source>
         <translation>Uyumlu</translation>
     </message>
@@ -500,7 +506,7 @@
         <translation>bilinmeyen versiyon</translation>
     </message>
     <message>
-        <location line="+62"/>
+        <location line="+65"/>
         <source>Compatibility</source>
         <translation>Uyumluluk</translation>
     </message>
@@ -528,6 +534,21 @@
         <location line="+1"/>
         <source>Age</source>
         <translation>Yaş</translation>
+    </message>
+    <message>
+        <location line="+162"/>
+        <source>closed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>password-protected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>NSFM</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -656,7 +677,7 @@
 <context>
     <name>brushes::BrushPresetModel</name>
     <message>
-        <location filename="../brushes/brushpresetmodel.cpp" line="+638"/>
+        <location filename="../brushes/brushpresetmodel.cpp" line="+560"/>
         <source>Default</source>
         <translation>Varsayılan</translation>
     </message>
@@ -752,7 +773,7 @@
 <context>
     <name>canvas::PaintEngine</name>
     <message>
-        <location filename="../canvas/paintengine.cpp" line="+169"/>
+        <location filename="../canvas/paintengine.cpp" line="+167"/>
         <source>Layer %1</source>
         <translation>Katman %1</translation>
     </message>
@@ -864,7 +885,7 @@
 <context>
     <name>net::Client</name>
     <message>
-        <location filename="../net/client.cpp" line="+71"/>
+        <location filename="../net/client.cpp" line="+72"/>
         <source>A server error occurred!</source>
         <translation>Bir sunucu hatası oluştu!</translation>
     </message>
@@ -877,7 +898,7 @@
 <context>
     <name>net::LoginHandler</name>
     <message>
-        <location filename="../net/login.cpp" line="+101"/>
+        <location filename="../net/login.cpp" line="+104"/>
         <location line="+258"/>
         <source>Invalid state</source>
         <translation>Geçersiz durum</translation>
@@ -887,13 +908,13 @@
         <location line="+7"/>
         <location line="+64"/>
         <location line="+199"/>
-        <location line="+134"/>
+        <location line="+142"/>
         <location line="+42"/>
         <source>Incompatible server</source>
         <translation>Uyumsuz sunucu</translation>
     </message>
     <message>
-        <location line="-432"/>
+        <location line="-440"/>
         <source>Server is for a different Drawpile version!</source>
         <translation>Bu sunucu başka bir Drawpile versiyonu için!</translation>
     </message>
@@ -903,7 +924,7 @@
         <translation>Güvenli mod güvenilmiş bir host üzerine aktive edilmedi!</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+42"/>
         <source>This server does not allow guest logins</source>
         <translation>Bu sunucu konuk olarak giriş yapanları kabul etmiyor</translation>
     </message>
@@ -913,7 +934,7 @@
         <translation>&quot;%1&quot; olarak giriş yapmak için şifre gerekiyor.</translation>
     </message>
     <message>
-        <location line="+67"/>
+        <location line="+66"/>
         <location line="+6"/>
         <source>Auth server error: %1</source>
         <translation>Yetkilendirme sunucu hatası: %1</translation>
@@ -939,7 +960,7 @@
         <translation>Desteklenmeyen dış-yetkilendirme URL şeması</translation>
     </message>
     <message>
-        <location line="+90"/>
+        <location line="+92"/>
         <source>New version</source>
         <translation>Yeni versiyon</translation>
     </message>
@@ -949,7 +970,7 @@
         <translation>Bilinmeyen versiyon</translation>
     </message>
     <message>
-        <location line="+48"/>
+        <location line="+52"/>
         <source>Session not yet started!</source>
         <translation>Oturum henüz başlamadı!</translation>
     </message>
@@ -964,7 +985,7 @@
         <translation>Farklı bir Drawpile versiyonu (%1) için oturum işleniyor!</translation>
     </message>
     <message>
-        <location line="+193"/>
+        <location line="+211"/>
         <location line="+20"/>
         <source>Invalid SSL certificate for host %1</source>
         <translation>Host için geçersiz SSL sertifikası %1</translation>
@@ -985,9 +1006,14 @@
         <translation>Oturum bulunamadı!</translation>
     </message>
     <message>
-        <location line="+2"/>
-        <source>Incorrect password!</source>
-        <translation>Geçersiz şifre!</translation>
+        <location line="+3"/>
+        <source>Incorrect password for &apos;%1&apos;!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Incorrect session password!</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1099,6 +1125,60 @@
         <location filename="../net/tcpserver.cpp" line="+111"/>
         <source>Received invalid data</source>
         <translation>Geçersiz veri teslim alındı</translation>
+    </message>
+</context>
+<context>
+    <name>utils::News</name>
+    <message>
+        <location filename="../utils/news.cpp" line="+283"/>
+        <location line="+41"/>
+        <source>Checking for updates…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-23"/>
+        <source>Automatic update checking is disabled, &lt;a href=&quot;#autoupdate&quot;&gt;click here to enable it&lt;/a&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>If you don&apos;t want automatic checks, &lt;a href=&quot;#checkupdates&quot;&gt;click here to check manually&lt;/a&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+60"/>
+        <source>Network error: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Couldn&apos;t make sense of the fetched data.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Couldn&apos;t make sense of fetched updates.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Couldn&apos;t save updates.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Couldn&apos;t make sense of fetched news.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Couldn&apos;t save news.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>No news available.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

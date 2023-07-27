@@ -48,8 +48,26 @@
     </message>
     <message>
         <location line="+8"/>
-        <source>User:</source>
-        <translation>ユーザー:</translation>
+        <source>Offender:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AddServerDialog</name>
+    <message>
+        <location filename="../ui/addserverdialog.ui" line="+14"/>
+        <source>Add Server</source>
+        <translation type="unfinished">サーバーを追加</translation>
+    </message>
+    <message>
+        <location line="+28"/>
+        <source>Enter a list server URL:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+43"/>
+        <source>You can find some list servers at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -742,89 +760,6 @@ to 64x64 pixels.</source>
     </message>
 </context>
 <context>
-    <name>HostDialog</name>
-    <message>
-        <location filename="../ui/hostdialog.ui" line="+25"/>
-        <source>&amp;Title:</source>
-        <translation>タイトル(&amp;T):</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>The title is shown in the application title bar and in the session selection dialog</source>
-        <translation>タイトルは、アプリケーションのタイトルバーとセッション選択ダイアログで表示されます</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>&amp;Password:</source>
-        <translation>パスワード(&amp;P):</translation>
-    </message>
-    <message>
-        <location line="+16"/>
-        <source>Optional. If left blank, no password will be needed to join this session.</source>
-        <translation>オプションです。空白にすると、このセッションへの参加にパスワードが不要になります。</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>ID a&amp;lias:</source>
-        <translation>別名(&amp;L):</translation>
-    </message>
-    <message>
-        <location line="+23"/>
-        <source>Not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Marks the session as having age-restricted content.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Announce the session at a public list</source>
-        <translation>セッションを公開リストで告知</translation>
-    </message>
-    <message>
-        <location line="+30"/>
-        <source>Host:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>Use Drawpile&apos;s built-in server</source>
-        <translation>Drawpile に備え付けのサーバー機能を使います</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>This co&amp;mputer</source>
-        <translation>この PC(&amp;M)</translation>
-    </message>
-    <message>
-        <location line="+12"/>
-        <source>Use an external dedicated server</source>
-        <translation>外部のサーバーを利用します</translation>
-    </message>
-    <message>
-        <location line="-52"/>
-        <source>List at:</source>
-        <translation>公開先:</translation>
-    </message>
-    <message>
-        <location line="+55"/>
-        <source>Re&amp;mote:</source>
-        <translation>外部(&amp;M):</translation>
-    </message>
-    <message>
-        <location line="-75"/>
-        <source>An optional user friendly ID for the session</source>
-        <translation>わかりやすい文字列をセッションへのリンクの代わりとして設定できます</translation>
-    </message>
-    <message>
-        <location line="-67"/>
-        <source>Host a Session</source>
-        <translation>セッションをホスト</translation>
-    </message>
-</context>
-<context>
     <name>InspectorSettings</name>
     <message>
         <location filename="../ui/inspectorsettings.ui" line="+17"/>
@@ -833,61 +768,61 @@ to 64x64 pixels.</source>
     </message>
 </context>
 <context>
-    <name>JoinDialog</name>
+    <name>InviteDialog</name>
     <message>
-        <location filename="../ui/joindialog.ui" line="+17"/>
-        <source>Join a Session</source>
-        <translation>セッションに参加</translation>
-    </message>
-    <message>
-        <location line="+13"/>
-        <source>A new Drawpile version that is not compatible with this one has been released.</source>
-        <translation>このバージョンと互換性のない新しい Drawpile がリリースされています。</translation>
-    </message>
-    <message>
-        <location line="+17"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You haven&apos;t added any servers yet. You can find some at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;drawpile.net/communities&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;You can try adding one now by entering pub.drawpile.net in the address box and clicking &lt;span style=&quot; font-style:italic;&quot;&gt;Add Server&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;サーバーが追加されていません。 &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;drawpile.net/communities&lt;/span&gt;&lt;/a&gt; で追加可能なサーバーを確認できます。&lt;/p&gt;&lt;p&gt;テキストボックスに pub.drawpile.net と入力 →「サーバーを追加」で公式サーバーをお試しになれます。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location line="+15"/>
-        <source>Filter</source>
-        <translation>フィルタ</translation>
-    </message>
-    <message>
-        <location line="+26"/>
-        <source>Show:</source>
-        <translation>表示:</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Closed</source>
+        <location filename="../ui/invitedialog.ui" line="+14"/>
+        <source>Invite</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
-        <source>Passworded</source>
-        <translation>パスワード付き</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>NSFM</source>
+        <location line="+28"/>
+        <source>Copy Invite Link</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+3"/>
-        <source>Show sessions not suitable for minors (NSFM)</source>
+        <location line="+35"/>
+        <source>Web link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Direct link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Include password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>&lt;strong&gt;Note:&lt;/strong&gt; changing the session password will cause the link to stop working! If someone else changes the password, you have to reconnect for this dialog to update.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+29"/>
+        <source>You&apos;re hosting a session locally. If others can&apos;t join your session, take a look at &lt;a href=&quot;https://drawpile.net/help/hosting/&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+45"/>
+        <source>You&apos;re hosting a session locally, so Drawpile has to find your externally visible IP address to give you an invite link. For more information, check out &lt;a href=&quot;https://drawpile.net/help/hosting/&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+32"/>
-        <source>Enter a host address, session URL or room code to join a session:</source>
-        <translation>ホストアドレス、セッションURL、ルームコードのいずれかを入力してください</translation>
+        <source>Get externally visible IP address</source>
+        <translation type="unfinished">外部公開用 IP アドレスを取得</translation>
     </message>
     <message>
-        <location line="+31"/>
-        <source>Record session</source>
-        <translation>セッションを記録</translation>
+        <location line="+37"/>
+        <source>Show this dialog when hosting a session</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>You can find this dialog again under &lt;i&gt;Session ▸ Invite…&lt;/i&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1040,12 +975,12 @@ Subrange: [%3, %4]</source>
 <context>
     <name>LoginDialog</name>
     <message>
-        <location filename="../ui/logindialog.ui" line="+293"/>
+        <location filename="../ui/logindialog.ui" line="+286"/>
         <source>Password:</source>
         <translation>パスワード:</translation>
     </message>
     <message>
-        <location line="-190"/>
+        <location line="-177"/>
         <source>Remember my password</source>
         <translation>パスワードを保存</translation>
     </message>
@@ -1075,12 +1010,27 @@ Subrange: [%3, %4]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+55"/>
-        <source>This session is password protected</source>
-        <translation>このセッションはパスワードで保護されています</translation>
+        <location line="+42"/>
+        <source>This session is password-protected.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+114"/>
+        <location line="+38"/>
+        <source>Enter the &lt;b&gt;session password&lt;/b&gt;, &lt;i&gt;not&lt;/i&gt; your account password.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+157"/>
+        <source>&lt;p&gt;This session has indicated that its contents are &lt;em&gt;not suitable for minors&lt;/em&gt; (NSFM).&lt;/p&gt;&lt;p&gt;&lt;strong&gt;You must be over the age of 18 and be allowed to consume adult content to proceed.&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Are you sure you want to join this session?&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Show this warning again next time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-97"/>
         <source>View old</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1103,12 +1053,12 @@ Subrange: [%3, %4]</source>
 <context>
     <name>MacMenu</name>
     <message>
-        <location filename="../widgets/macmenu.cpp" line="+67"/>
+        <location filename="../widgets/macmenu.cpp" line="+66"/>
         <source>Minimize</source>
         <translation>最小化</translation>
     </message>
     <message numerus="yes">
-        <location line="+124"/>
+        <location line="+112"/>
         <source>You have %n images with unsaved changes. Do you want to review these changes before quitting?</source>
         <translation>
             <numerusform>%n 個の未保存の画像があります。終了する前に変更内容を確認しますか？</numerusform>
@@ -1133,13 +1083,13 @@ Subrange: [%3, %4]</source>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../mainwindow.cpp" line="+602"/>
-        <location line="+1041"/>
+        <location filename="../mainwindow.cpp" line="+612"/>
+        <location line="+1143"/>
         <source>Untitled</source>
         <translation>無題</translation>
     </message>
     <message>
-        <location line="-680"/>
+        <location line="-748"/>
         <location line="+21"/>
         <source>Exit Drawpile</source>
         <translation>Drawpile を終了</translation>
@@ -1157,12 +1107,12 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+2"/>
         <location line="+22"/>
-        <location line="+361"/>
+        <location line="+444"/>
         <source>Cancel</source>
         <translation>キャンセル</translation>
     </message>
     <message>
-        <location line="-368"/>
+        <location line="-451"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation>未保存の変更内容があります。終了する前に保存しますか？</translation>
     </message>
@@ -1177,7 +1127,7 @@ Subrange: [%3, %4]</source>
         <translation>破棄</translation>
     </message>
     <message>
-        <location line="+268"/>
+        <location line="+351"/>
         <source>Couldn&apos;t save image</source>
         <translation>画像を保存できませんでした</translation>
     </message>
@@ -1187,12 +1137,12 @@ Subrange: [%3, %4]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+210"/>
+        <location line="+202"/>
         <source>Invalid address</source>
         <translation>無効なアドレスです</translation>
     </message>
     <message>
-        <location line="+82"/>
+        <location line="+75"/>
         <source>Really leave the session?</source>
         <translation>本当にセッションを退出しますか？</translation>
     </message>
@@ -1212,7 +1162,7 @@ Subrange: [%3, %4]</source>
         <translation>未送信のデータがあります！転送が完了するまでお待ちください！</translation>
     </message>
     <message>
-        <location line="+172"/>
+        <location line="+181"/>
         <source>Would you like to join the session instead?</source>
         <translation>代わりにこのセッションに参加しますか？</translation>
     </message>
@@ -1222,12 +1172,7 @@ Subrange: [%3, %4]</source>
         <translation>参加</translation>
     </message>
     <message>
-        <location line="+62"/>
-        <source>Board is locked</source>
-        <translation>ドローイングボードはロック中です</translation>
-    </message>
-    <message>
-        <location line="+381"/>
+        <location line="+443"/>
         <source>The image could not be loaded</source>
         <translation>画像を読み込みできませんでした</translation>
     </message>
@@ -1238,7 +1183,7 @@ Subrange: [%3, %4]</source>
     </message>
     <message>
         <location line="+149"/>
-        <location filename="../widgets/macmenu.cpp" line="-164"/>
+        <location filename="../widgets/macmenu.cpp" line="-152"/>
         <source>&amp;New</source>
         <translation>新規(&amp;N)</translation>
     </message>
@@ -1264,13 +1209,13 @@ Subrange: [%3, %4]</source>
         <translation>自動保存</translation>
     </message>
     <message>
-        <location line="-1369"/>
-        <location line="+1377"/>
+        <location line="-1363"/>
+        <location line="+1371"/>
         <source>Record...</source>
         <translation>記録...</translation>
     </message>
     <message>
-        <location line="-1551"/>
+        <location line="-1545"/>
         <source>Saving...</source>
         <translation>保存中...</translation>
     </message>
@@ -1290,7 +1235,7 @@ Subrange: [%3, %4]</source>
         <translation>再生</translation>
     </message>
     <message>
-        <location line="+340"/>
+        <location line="+332"/>
         <source>Terminate session</source>
         <translation>セッションを終了</translation>
     </message>
@@ -1301,12 +1246,12 @@ Subrange: [%3, %4]</source>
     </message>
     <message>
         <location line="+5"/>
-        <location line="+1532"/>
+        <location line="+1604"/>
         <source>Terminate</source>
         <translation>終了</translation>
     </message>
     <message>
-        <location line="-502"/>
+        <location line="-572"/>
         <source>Save Selection...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1321,24 +1266,24 @@ Subrange: [%3, %4]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+5"/>
         <location filename="../widgets/macmenu.cpp" line="+9"/>
         <source>&amp;Quit</source>
         <translation>終了(&amp;Q)</translation>
     </message>
     <message>
-        <location line="+40"/>
+        <location line="+41"/>
         <location filename="../widgets/macmenu.cpp" line="-12"/>
         <source>&amp;File</source>
         <translation>ファイル(&amp;F)</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+20"/>
         <source>&amp;Export</source>
         <translation>エクスポート(&amp;E)</translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+34"/>
         <source>&amp;Undo</source>
         <translation>取り消し(&amp;U)</translation>
     </message>
@@ -1438,7 +1383,7 @@ Subrange: [%3, %4]</source>
         <translation>チャット</translation>
     </message>
     <message>
-        <location line="+180"/>
+        <location line="+205"/>
         <source>Flipbook</source>
         <translation>フリップブック</translation>
     </message>
@@ -1448,7 +1393,7 @@ Subrange: [%3, %4]</source>
         <translation>アニメーションのプレビューウィンドウを表示</translation>
     </message>
     <message>
-        <location line="-170"/>
+        <location line="-189"/>
         <source>Mirror</source>
         <translation>左右反転</translation>
     </message>
@@ -1458,7 +1403,7 @@ Subrange: [%3, %4]</source>
         <translation>上下反転</translation>
     </message>
     <message>
-        <location line="+119"/>
+        <location line="+138"/>
         <source>User Pointers</source>
         <translation>ユーザーポインター</translation>
     </message>
@@ -1483,7 +1428,7 @@ Subrange: [%3, %4]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="+85"/>
         <source>Report...</source>
         <translation>報告...</translation>
     </message>
@@ -1503,7 +1448,7 @@ Subrange: [%3, %4]</source>
         <translation>アクションをキャンセル</translation>
     </message>
     <message>
-        <location line="+44"/>
+        <location line="+49"/>
         <source>Color Wheel</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1518,17 +1463,17 @@ Subrange: [%3, %4]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-569"/>
+        <location line="-629"/>
         <source>Show User &amp;Pointers</source>
         <translation>ユーザーポインターを表示(&amp;P)</translation>
     </message>
     <message>
-        <location line="-2537"/>
+        <location line="-2657"/>
         <source>🙋 %1 joined!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+351"/>
+        <location line="+371"/>
         <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1543,7 +1488,7 @@ Subrange: [%3, %4]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+433"/>
+        <location line="+524"/>
         <source>This session was hosted with an older version of Drawpile, some newer features won&apos;t be available. Other Drawpile versions will see different results, session resets may cause abrupt changes.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1564,23 +1509,23 @@ Subrange: [%3, %4]</source>
     </message>
     <message>
         <location line="+105"/>
-        <location line="+598"/>
+        <location line="+592"/>
         <source>Unsupported format.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-595"/>
+        <location line="-589"/>
         <source>Couldn&apos;t start recording.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
-        <location line="+607"/>
+        <location line="+601"/>
         <source>Unknown error.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-597"/>
+        <location line="-591"/>
         <source>Error closing profile.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1600,22 +1545,7 @@ Subrange: [%3, %4]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+415"/>
-        <source>Reset in progress</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+19"/>
-        <source>Layer is locked</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Tool is locked</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+63"/>
+        <location line="+495"/>
         <source>Undo Limit... (%1)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1625,7 +1555,7 @@ Subrange: [%3, %4]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="+50"/>
         <source>Bad arguments, this is probably a bug in Drawpile.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1701,12 +1631,12 @@ Subrange: [%3, %4]</source>
     </message>
     <message>
         <location line="+15"/>
-        <location line="+775"/>
+        <location line="+851"/>
         <source>Record Debug Dumps</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-774"/>
+        <location line="-850"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -1755,12 +1685,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+62"/>
+        <location line="+65"/>
         <source>&amp;Import</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+39"/>
+        <location line="+45"/>
         <source>Paste in View Center</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1795,7 +1725,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+32"/>
         <source>Show La&amp;ser Trails</source>
         <translation>レーザーの軌跡を表示(&amp;S)</translation>
     </message>
@@ -1805,7 +1735,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>ピクセルグリッドを表示(&amp;G)</translation>
     </message>
     <message>
-        <location line="+67"/>
+        <location line="+83"/>
         <source>&amp;View</source>
         <translation>表示(&amp;V)</translation>
     </message>
@@ -1815,7 +1745,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>ズーム(&amp;Z)</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+8"/>
         <source>Rotation</source>
         <translation>回転</translation>
     </message>
@@ -1850,18 +1780,13 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+52"/>
+        <location line="+86"/>
         <location filename="../widgets/macmenu.cpp" line="+25"/>
         <source>&amp;Host...</source>
         <translation>ホスト(&amp;H)...</translation>
     </message>
     <message>
-        <location line="+0"/>
-        <source>Share your drawingboard with others</source>
-        <translation>ドローイングボードを他のユーザーと共有</translation>
-    </message>
-    <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <location filename="../widgets/macmenu.cpp" line="+1"/>
         <source>&amp;Join...</source>
         <translation>参加(&amp;J)...</translation>
@@ -1872,7 +1797,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>他のユーザーのドローイングセッションに参加</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>&amp;Leave</source>
         <translation>退出(&amp;L)</translation>
     </message>
@@ -1887,18 +1812,13 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>管理者になる...</translation>
     </message>
     <message>
-        <location line="+5"/>
-        <source>Prevent changes to the drawing board</source>
-        <translation>ドローイングボードを変更されないようにします</translation>
-    </message>
-    <message>
-        <location line="+27"/>
+        <location line="+34"/>
         <location filename="../widgets/macmenu.cpp" line="-2"/>
         <source>&amp;Session</source>
         <translation>セッション(&amp;S)</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+31"/>
         <source>Fill areas</source>
         <translation>空白を塗りつぶす</translation>
     </message>
@@ -1928,7 +1848,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+18"/>
         <source>Toggle Eraser Mode</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1958,7 +1878,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>描画ツール</translation>
     </message>
     <message>
-        <location line="+65"/>
+        <location line="+58"/>
         <source>Missing Log File</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1984,27 +1904,32 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="+47"/>
         <source>Swatch Color %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+94"/>
+        <location line="+22"/>
+        <source>Focus canvas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+77"/>
         <source>Onion Skins</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-2233"/>
+        <location line="-2302"/>
         <source>Stop Recording</source>
         <translation>セッションの記録を停止</translation>
     </message>
     <message>
-        <location line="+172"/>
+        <location line="+164"/>
         <source>Host Session</source>
         <translation>セッションをホスト</translation>
     </message>
     <message>
-        <location line="+245"/>
+        <location line="+247"/>
         <source>Could not connect to server</source>
         <translation>サーバーに接続できませんでした</translation>
     </message>
@@ -2019,18 +1944,18 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>閉じる</translation>
     </message>
     <message>
-        <location line="+57"/>
+        <location line="+59"/>
         <location filename="../widgets/macmenu.cpp" line="-16"/>
         <source>Open &amp;Recent</source>
         <translation>最近使ったファイルを開く(&amp;R)</translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+29"/>
         <source>File Tools</source>
         <translation>ファイルツール</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+24"/>
         <source>&amp;Copy Visible</source>
         <translation>可視部分をコピー(&amp;C)</translation>
     </message>
@@ -2076,7 +2001,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>編集ツール</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+27"/>
         <source>Zoom &amp;In</source>
         <translation>ズームイン(&amp;I)</translation>
     </message>
@@ -2091,7 +2016,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>通常のサイズ(&amp;N)</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+4"/>
         <source>&amp;Reset Rotation</source>
         <translation>回転をリセット(&amp;R)</translation>
     </message>
@@ -2106,7 +2031,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>フルスクリーン(&amp;F)</translation>
     </message>
     <message>
-        <location line="+283"/>
+        <location line="+344"/>
         <source>Pick colors from the image</source>
         <translation>画像から色を抽出</translation>
     </message>
@@ -2121,7 +2046,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>直線(&amp;L)</translation>
     </message>
     <message>
-        <location line="-3053"/>
+        <location line="-3247"/>
         <source>Server out of space</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2132,7 +2057,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1413"/>
+        <location line="+1529"/>
         <source>Become Operator</source>
         <translation>管理者になる</translation>
     </message>
@@ -2142,22 +2067,22 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>管理者パスワードを入力</translation>
     </message>
     <message>
-        <location line="+163"/>
+        <location line="+165"/>
         <source>Disconnected:</source>
         <translation>切断:</translation>
     </message>
     <message>
-        <location line="+77"/>
+        <location line="+76"/>
         <source>Session blocked by parental controls</source>
         <translation>ペアレンタルコントロールによりブロック済のセッション</translation>
     </message>
     <message>
-        <location line="+823"/>
+        <location line="+824"/>
         <source>Hide Docks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+120"/>
+        <location line="+129"/>
         <source>Copy Merged</source>
         <translation>結合部分をコピー</translation>
     </message>
@@ -2172,7 +2097,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>削除</translation>
     </message>
     <message>
-        <location line="+134"/>
+        <location line="+140"/>
         <source>Rotate Canvas Clockwise</source>
         <translation>キャンバスを時計回りに回転</translation>
     </message>
@@ -2197,7 +2122,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>アバターを表示</translation>
     </message>
     <message>
-        <location line="+133"/>
+        <location line="+152"/>
         <source>New Layer</source>
         <translation>新しいレイヤー</translation>
     </message>
@@ -2217,7 +2142,52 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-3"/>
+        <location line="-1635"/>
+        <source>No canvas to host! Create one or open a file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1243"/>
+        <source>Start...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+258"/>
+        <source>Move Canvas Left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Move Canvas Right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Move Canvas Up</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Move Canvas Down</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>&amp;Fit Page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Fit Page &amp;Width</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Fit Page &amp;Height</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+122"/>
         <source>Normal View</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2332,12 +2302,92 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+2"/>
+        <source>Create Layer on Current Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Create Layer on Next Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Create Layer on Previous Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Create Group on Current Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Create Group on Next Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Create Group on Previous Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Duplicate to Next Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Duplicate to Previous Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
         <source>&amp;Animation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+32"/>
+        <location line="+14"/>
+        <source>Create Layer on Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Create Group on Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Duplicate Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Share your canvas with others</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Invite...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Invite another user to this session</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>&amp;Browse...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Browse session listings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Event Log</source>
         <translation>イベントログ</translation>
     </message>
@@ -2347,9 +2397,24 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>設定...</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+0"/>
+        <source>Change session settings, permissions, announcements and bans</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Undo Limit…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>&amp;Reset...</source>
         <translation>リセット(&amp;R)...</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Prevent changes to the canvas</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+37"/>
@@ -2357,7 +2422,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+17"/>
         <source>Freehand</source>
         <translation>フリーハンド</translation>
     </message>
@@ -2482,7 +2547,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>ショートカット(&amp;S)</translation>
     </message>
     <message>
-        <location line="+25"/>
+        <location line="+9"/>
+        <source>Statistics…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+19"/>
         <source>Swap Last Colors</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2515,12 +2585,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>&amp;Qt について</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+1"/>
         <source>Check For Updates</source>
         <translation>更新を確認</translation>
     </message>
     <message>
-        <location line="+66"/>
+        <location line="+60"/>
         <location filename="../widgets/macmenu.cpp" line="-5"/>
         <source>&amp;Help</source>
         <translation>ヘルプ(&amp;H)</translation>
@@ -2539,42 +2609,39 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>状態</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+40"/>
         <source>Latency:</source>
         <translation>遅延:</translation>
     </message>
     <message>
         <location line="+17"/>
+        <source>Tiles:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Tile Memory:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Contexts:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Context Memory:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-86"/>
         <source>Sent:</source>
         <translation>送信済み:</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+17"/>
         <source>Received:</source>
         <translation>受信済み:</translation>
-    </message>
-</context>
-<context>
-    <name>NewDialog</name>
-    <message>
-        <location filename="../ui/newdialog.ui" line="+17"/>
-        <source>New Drawing</source>
-        <translation>新しいドローイング</translation>
-    </message>
-    <message>
-        <location line="+8"/>
-        <source>Width:</source>
-        <translation>幅:</translation>
-    </message>
-    <message>
-        <location line="+23"/>
-        <source>Height:</source>
-        <translation>高さ:</translation>
-    </message>
-    <message>
-        <location line="+23"/>
-        <source>Background:</source>
-        <translation>背景:</translation>
     </message>
 </context>
 <context>
@@ -3211,19 +3278,6 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
 </context>
 <context>
-    <name>VersionCheckDialog</name>
-    <message>
-        <location filename="../ui/versioncheck.ui" line="+14"/>
-        <source>New Version Check</source>
-        <translation>新バージョンの確認</translation>
-    </message>
-    <message>
-        <location line="+40"/>
-        <source>Check for updates automatically</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>VideoExport</name>
     <message>
         <location filename="../ui/videoexport.ui" line="+14"/>
@@ -3447,13 +3501,28 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>dialogs::AddServerDialog</name>
     <message>
-        <location filename="../dialogs/addserverdialog.cpp" line="+17"/>
-        <source>Add Server</source>
-        <translation type="unfinished">サーバーを追加</translation>
+        <location filename="../dialogs/addserverdialog.cpp" line="+151"/>
+        <source>&lt;strong&gt;Error:&lt;/strong&gt; %1</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+106"/>
+        <source>Retrieving %1...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+74"/>
+        <source>Check</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Add</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Checking %1...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5164,82 +5233,10 @@ Values above 0.5 may not be noticeable.</source>
     </message>
 </context>
 <context>
-    <name>dialogs::HostDialog</name>
+    <name>dialogs::InviteDialog</name>
     <message>
-        <location filename="../dialogs/hostdialog.cpp" line="+22"/>
-        <source>Host</source>
-        <translation type="unfinished">ホスト</translation>
-    </message>
-</context>
-<context>
-    <name>dialogs::JoinDialog</name>
-    <message>
-        <location filename="../dialogs/joindialog.cpp" line="+46"/>
-        <location line="+112"/>
-        <source>Join</source>
-        <translation type="unfinished">参加</translation>
-    </message>
-    <message>
-        <location line="-108"/>
-        <source>Add Server</source>
-        <translation type="unfinished">サーバーを追加</translation>
-    </message>
-    <message>
-        <location line="+27"/>
-        <location line="+4"/>
-        <source>Nearby</source>
-        <translation type="unfinished">付近</translation>
-    </message>
-    <message>
-        <location line="-4"/>
-        <location line="+14"/>
-        <location line="+441"/>
-        <source>Loading...</source>
-        <translation type="unfinished">読み込み中...</translation>
-    </message>
-    <message>
-        <location line="-368"/>
-        <source>Copy session URL</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Copy title</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Copy server</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Copy owner</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+104"/>
-        <source>Searching...</source>
-        <translation type="unfinished">検索中...</translation>
-    </message>
-    <message>
-        <location line="+18"/>
-        <source>Record</source>
-        <translation type="unfinished">記録</translation>
-    </message>
-    <message>
-        <location line="+72"/>
-        <source>Room code not found!</source>
-        <translation type="unfinished">ルームコードが見つかりません！</translation>
-    </message>
-    <message>
-        <location line="+128"/>
-        <source>Join a Session</source>
-        <translation type="unfinished">セッションに参加</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>&apos;%1&apos; is not a valid list server URL.</source>
+        <location filename="../dialogs/invitedialog.cpp" line="+74"/>
+        <source>Invite link copied to clipboard.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5365,17 +5362,17 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::LoginDialog</name>
     <message>
-        <location filename="../dialogs/logindialog.cpp" line="+120"/>
+        <location filename="../dialogs/logindialog.cpp" line="+135"/>
         <source>Report...</source>
         <translation type="unfinished">報告...</translation>
     </message>
     <message>
-        <location line="+64"/>
+        <location line="+67"/>
         <source>Close</source>
         <translation type="unfinished">閉じる</translation>
     </message>
     <message>
-        <location line="+202"/>
+        <location line="+214"/>
         <source>Log in with &apos;%1&apos; credentials</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5388,27 +5385,9 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::NetStats</name>
     <message>
-        <location filename="../dialogs/netstats.cpp" line="+47"/>
+        <location filename="../dialogs/netstats.cpp" line="+77"/>
         <source>not connected</source>
         <translation type="unfinished">未接続</translation>
-    </message>
-</context>
-<context>
-    <name>dialogs::NewDialog</name>
-    <message>
-        <location filename="../dialogs/newdialog.cpp" line="+19"/>
-        <source>Create</source>
-        <translation type="unfinished">作成</translation>
-    </message>
-    <message>
-        <location line="+35"/>
-        <source>Error</source>
-        <translation type="unfinished">エラー</translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Size is too large</source>
-        <translation type="unfinished">サイズが大きすぎます</translation>
     </message>
 </context>
 <context>
@@ -5521,7 +5500,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::SessionSettingsDialog</name>
     <message>
-        <location filename="../dialogs/sessionsettings.cpp" line="+274"/>
+        <location filename="../dialogs/sessionsettings.cpp" line="+277"/>
         <source>Operators</source>
         <translation type="unfinished">管理者</translation>
     </message>
@@ -5566,12 +5545,12 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+73"/>
-        <location line="+21"/>
+        <location line="+23"/>
         <source>Set a new password or leave blank to remove.</source>
         <translation type="unfinished">新しいパスワードを設定します。空白にするとパスワードを消去できます。</translation>
     </message>
     <message>
-        <location line="-19"/>
+        <location line="-21"/>
         <source>Set a password for the session.</source>
         <translation type="unfinished">セッションのパスワードを設定します。</translation>
     </message>
@@ -5581,7 +5560,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">セッションパスワード</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+18"/>
         <source>Set a password for gaining operator status.</source>
         <translation type="unfinished">セッション管理者となるためのパスワードを設定します。</translation>
     </message>
@@ -5612,7 +5591,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::SettingsDialog</name>
     <message>
-        <location filename="../dialogs/settingsdialog.cpp" line="+33"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="+34"/>
         <source>Preferences</source>
         <translation type="unfinished">設定</translation>
     </message>
@@ -5638,6 +5617,11 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+1"/>
+        <source>Notifications</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
         <source>Servers</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5655,6 +5639,156 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+1"/>
         <source>Parental Controls</source>
         <translation type="unfinished">ペアレンタルコントロール</translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::StartDialog</name>
+    <message>
+        <location filename="../dialogs/startdialog.cpp" line="+69"/>
+        <source>Start</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+34"/>
+        <source>Welcome</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>News and updates</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Join Session</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Connect to a drawing session directly</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Browse Sessions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Browse publicly listed drawing sessions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Host Session</source>
+        <translation type="unfinished">セッションをホスト</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Share your canvas with others</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>New Canvas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Create a new, empty canvas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Open File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Open an image file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Recent Files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Reopen a recently used file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Layouts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Choose application layout</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Preferences</source>
+        <translation type="unfinished">設定</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Change application settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Record</source>
+        <translation type="unfinished">記録</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Add Server</source>
+        <translation type="unfinished">サーバーを追加</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Check for Updates</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+249"/>
+        <source>Checking…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Last check: today.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location line="+2"/>
+        <source>Last check: %n day(s) ago.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Last check: never.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Join</source>
+        <translation type="unfinished">参加</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Host</source>
+        <translation type="unfinished">ホスト</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Create</source>
+        <translation type="unfinished">作成</translation>
     </message>
 </context>
 <context>
@@ -5699,65 +5833,6 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Disabled</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>dialogs::VersionCheckDialog</name>
-    <message>
-        <location filename="../dialogs/versioncheckdialog.cpp" line="+25"/>
-        <source>Download</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+20"/>
-        <source>Enable auto-updates?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Should Drawpile automatically check for updates?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>You can always check for updates manually from the Help menu.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+30"/>
-        <source>Error checking version!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+16"/>
-        <source>You&apos;re up to date!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>No new versions found.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>&lt;h1&gt;%1&lt;/h1&gt;&lt;p&gt;%2&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+12"/>
-        <source>A new version of Drawpile is available!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Version %2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+19"/>
-        <source>&lt;p&gt;The download page for Drawpile %1 should have opened in your browser. If not, visit &lt;a href=&quot;%2&quot;&gt;%2&lt;/a&gt; manually.&lt;/p&gt;&lt;p&gt;Restart Drawpile after installing the new version.&lt;/p&gt;</source>
-        <extracomment>%2 is used twice, this is intentional! Don&apos;t use %3.</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5852,7 +5927,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::General</name>
     <message>
-        <location filename="../dialogs/settingsdialog/general.cpp" line="+49"/>
+        <location filename="../dialogs/settingsdialog/general.cpp" line="+47"/>
         <source>When enabled, save every %1 minutes</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5867,29 +5942,14 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+8"/>
-        <source>Remember the last %1 opened files and hosts</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Recent items:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location line="+6"/>
-        <location line="+61"/>
+        <location line="+80"/>
         <location line="+15"/>
         <source>System</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-69"/>
-        <source>%1 (%2)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+9"/>
+        <location line="-84"/>
         <source>Language:</source>
         <translation type="unfinished">言語:</translation>
     </message>
@@ -5899,7 +5959,17 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+15"/>
+        <source>%1 (%2) / %3 (%4)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>%1 / %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>Show scroll bars on canvas</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6067,7 +6137,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+5"/>
+        <source>Driver:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+17"/>
         <source>One-finger input:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6105,7 +6180,17 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Network</name>
     <message>
-        <location filename="../dialogs/settingsdialog/network.cpp" line="+39"/>
+        <location filename="../dialogs/settingsdialog/network.cpp" line="+34"/>
+        <source>Automatically check for updates</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Updates:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>Allow insecure local storage</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6146,6 +6231,16 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+5"/>
+        <source>Receive delay:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>The higher the value, the smoother strokes from other users come in.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
         <source>Chat avatars:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6171,8 +6266,11 @@ Values above 0.5 may not be noticeable.</source>
             <numerusform></numerusform>
         </translation>
     </message>
+</context>
+<context>
+    <name>dialogs::settingsdialog::Notifications</name>
     <message>
-        <location line="+7"/>
+        <location filename="../dialogs/settingsdialog/notifications.cpp" line="+30"/>
         <source>%</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6187,12 +6285,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Recording marker</source>
         <translation type="unfinished">セッション記録マーカー</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>User joined</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6212,7 +6310,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+10"/>
         <source>Notifications:</source>
         <translation type="unfinished">通知:</translation>
     </message>
@@ -6280,6 +6378,11 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location line="+4"/>
+        <source>Warn when joining NSFM sessions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+10"/>
         <location line="+26"/>
         <source>Lock</source>
@@ -6334,7 +6437,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Servers</name>
     <message>
-        <location filename="../dialogs/settingsdialog/servers.cpp" line="+47"/>
+        <location filename="../dialogs/settingsdialog/servers.cpp" line="+46"/>
         <source>Known hosts:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6355,12 +6458,12 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+7"/>
-        <location line="+146"/>
+        <location line="+114"/>
         <source>Trust selected hosts</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-123"/>
+        <location line="-91"/>
         <source>List servers:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6404,23 +6507,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+11"/>
-        <location line="+21"/>
-        <source>Add list server</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-21"/>
-        <source>Enter a list server URL:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+22"/>
-        <source>&apos;%1&apos; is not a valid list server URL.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+34"/>
+        <location line="+35"/>
         <source>Continue</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6471,7 +6558,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+2"/>
+        <source>Double-tap Alt key to focus canvas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
         <source>Share one color across all brush slots</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6573,6 +6665,350 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>HCL (Hue–Chroma–Luminance)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::Browse</name>
+    <message>
+        <location filename="../dialogs/startdialog/browse.cpp" line="+65"/>
+        <source>You haven&apos;t added any servers yet. You can find some at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>To add the public Drawpile server, &lt;a href=&quot;#&quot;&gt;click here&lt;/a&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Filter</source>
+        <translation type="unfinished">フィルタ</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Closed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Show sessions that don&apos;t let new users join</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Password</source>
+        <translation type="unfinished">パスワード</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Show sessions that require a password to join</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>NSFM</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Show sessions not suitable for minors (NSFM)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Duplicates</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Show sessions that are listed on multiple servers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <location line="+4"/>
+        <source>Nearby</source>
+        <translation type="unfinished">付近</translation>
+    </message>
+    <message>
+        <location line="-4"/>
+        <location line="+140"/>
+        <source>Loading...</source>
+        <translation type="unfinished">読み込み中...</translation>
+    </message>
+    <message>
+        <location line="-82"/>
+        <source>Join</source>
+        <translation type="unfinished">参加</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Copy session URL</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Copy title</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Copy server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Copy owner</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+79"/>
+        <source>Nothing here yet!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Read the message at the top on how to add a server.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::Create</name>
+    <message>
+        <location filename="../dialogs/startdialog/create.cpp" line="+24"/>
+        <location line="+7"/>
+        <source>px</source>
+        <translation type="unfinished">px</translation>
+    </message>
+    <message>
+        <location line="-3"/>
+        <source>Width:</source>
+        <translation type="unfinished">幅:</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Height:</source>
+        <translation type="unfinished">高さ:</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Canvas background color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Background:</source>
+        <translation type="unfinished">背景:</translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::Host</name>
+    <message>
+        <location filename="../dialogs/startdialog/host.cpp" line="+31"/>
+        <source>The title is shown in the application title bar and in the session selection dialog</source>
+        <translation type="unfinished">タイトルは、アプリケーションのタイトルバーとセッション選択ダイアログで表示されます</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Title:</source>
+        <translation type="unfinished">タイトル:</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Optional. If left blank, no password will be needed to join this session.</source>
+        <translation type="unfinished">オプションです。空白にすると、このセッションへの参加にパスワードが不要になります。</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Password:</source>
+        <translation type="unfinished">パスワード:</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>An optional user friendly ID for the session</source>
+        <translation type="unfinished">わかりやすい文字列をセッションへのリンクの代わりとして設定できます</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>ID Alias:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Not suitable for minors (NSFM)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Marks the session as having age-restricted content.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>List at:</source>
+        <translation type="unfinished">公開先:</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Announce the session at a public list</source>
+        <translation type="unfinished">セッションを公開リストで告知</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Host on this computer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Use Drawpile&apos;s built-in server</source>
+        <translation type="unfinished">Drawpile に備え付けのサーバー機能を使います</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Not available in the 2.2 beta yet. This option will return later!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Host at:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Use an external dedicated server</source>
+        <translation type="unfinished">外部のサーバーを利用します</translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::Join</name>
+    <message>
+        <location filename="../dialogs/startdialog/join.cpp" line="+27"/>
+        <source>Enter a &lt;strong&gt;session URL&lt;/strong&gt;, &lt;strong&gt;host name&lt;/strong&gt;, &lt;strong&gt;IP address&lt;/strong&gt; or &lt;strong&gt;room code&lt;/strong&gt;:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Recent:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+44"/>
+        <source>Searching…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+83"/>
+        <source>Roomcode not found!</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::Links</name>
+    <message>
+        <location filename="../dialogs/startdialog/links.cpp" line="+31"/>
+        <source>Help</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Open Drawpile&apos;s help pages in your browser</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Communities</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Open Drawpile&apos;s communities page in your browser</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Discord</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Join the Drawpile Discord server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>GitHub</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Open Drawpile&apos;s GitHub page in your browser</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::UpdateNotice</name>
+    <message>
+        <location filename="../dialogs/startdialog/updatenotice.cpp" line="+61"/>
+        <source>Update</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Dismiss</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Hide this notification</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>A new version of Drawpile is available!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Update to Drawpile version %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>The download page for Drawpile %1 should have opened in your browser. If not, please visit &lt;em&gt;drawpile.net&lt;/em&gt; manually.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>The download page for Drawpile %1 could not be opened, please visit &lt;em&gt;drawpile.net&lt;/em&gt; manually.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::Welcome</name>
+    <message>
+        <location filename="../dialogs/startdialog/welcome.cpp" line="+44"/>
+        <source>Welcome to Drawpile!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Take a look over the &lt;a href=&quot;#preferences&quot;&gt;Preferences&lt;/a&gt; to configure things to your liking. You might also want to pick a different &lt;a href=&quot;#layout&quot;&gt;Layout&lt;/a&gt; for the application.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>If you have an invite link to a drawing session, you can &lt;a href=&quot;#join&quot;&gt;Join&lt;/a&gt; it directly. Alternatively, you can &lt;a href=&quot;#browse&quot;&gt;Browse&lt;/a&gt; public sessions or just create a &lt;a href=&quot;#create&quot;&gt;New Canvas&lt;/a&gt; to draw on your own.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>If you have trouble, take a look at the help pages linked on the right. If they don&apos;t answer your question, you can join the Discord server and ask, there&apos;s usually folks around to help!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Next time, you&apos;ll see news and updates on this page.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6730,28 +7166,23 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::ColorPaletteDock</name>
     <message>
-        <location filename="../docks/colorpalette.cpp" line="+94"/>
-        <source>Write protect</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+16"/>
+        <location filename="../docks/colorpalette.cpp" line="+186"/>
         <source>New</source>
         <translation type="unfinished">新規</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Duplicate</source>
         <translation type="unfinished">複製</translation>
     </message>
     <message>
-        <location line="+1"/>
-        <location line="+165"/>
+        <location line="+2"/>
+        <location line="+112"/>
         <source>Delete</source>
         <translation type="unfinished">削除</translation>
     </message>
     <message>
-        <location line="-164"/>
+        <location line="-110"/>
         <source>Rename</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6761,42 +7192,44 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">インポート...</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Export...</source>
         <translation type="unfinished">エクスポート...</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <source>Add</source>
+        <location line="-51"/>
+        <source>Add column</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
-        <source>Remove</source>
-        <translation type="unfinished">削除</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Less columns</source>
+        <location line="+10"/>
+        <source>Remove column</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
-        <source>More columns</source>
+        <location line="+115"/>
+        <location line="+47"/>
+        <source>New Palette</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+53"/>
+        <location line="-47"/>
+        <location line="+47"/>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+17"/>
         <source>Import palette</source>
         <translation type="unfinished">パレットをインポート</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+1"/>
         <source>Palettes (%1)</source>
         <translation type="unfinished">パレット (%1)</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+0"/>
         <source>All files (*)</source>
         <translation type="unfinished">すべてのファイル (*)</translation>
     </message>
@@ -6806,12 +7239,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">パレットをエクスポート</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+1"/>
         <source>GIMP palette (%1)</source>
         <translation type="unfinished">GIMP パレット (%1)</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+6"/>
         <source>Error</source>
         <translation type="unfinished">エラー</translation>
     </message>
@@ -6821,7 +7254,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+67"/>
+        <location line="-58"/>
         <source>Delete palette &quot;%1&quot;?</source>
         <translation type="unfinished">パレット &quot;%1&quot; を削除しますか？</translation>
     </message>
@@ -6905,12 +7338,12 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::LayerList</name>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="+36"/>
+        <location filename="../docks/layerlistdock.cpp" line="+38"/>
         <source>Layers</source>
         <translation type="unfinished">レイヤー</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+37"/>
         <source>Opacity: </source>
         <translation type="unfinished"></translation>
     </message>
@@ -6920,8 +7353,8 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+281"/>
-        <location line="+16"/>
+        <location line="+307"/>
+        <location line="+39"/>
         <source>Layer</source>
         <translation type="unfinished">レイヤー</translation>
     </message>
@@ -6931,7 +7364,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+67"/>
+        <location line="+139"/>
         <source>Delete Layer?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6944,12 +7377,12 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::Navigator</name>
     <message>
-        <location filename="../docks/navigator.cpp" line="+301"/>
+        <location filename="../docks/navigator.cpp" line="+309"/>
         <source>Navigator</source>
         <translation type="unfinished">ナビゲーター</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+29"/>
         <source>Show Cursors</source>
         <translation type="unfinished">カーソルを表示</translation>
     </message>
@@ -7000,7 +7433,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+171"/>
+        <location line="+179"/>
         <source> FPS</source>
         <translation type="unfinished"> FPS</translation>
     </message>
@@ -7121,7 +7554,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+44"/>
         <source>Time-Based Stabilizer</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7161,7 +7594,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+523"/>
+        <location line="+529"/>
         <source>This session is hosted with Drawpile 2.1, MyPaint brushes are unavailable.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7174,19 +7607,19 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>tools::ColorPickerSettings</name>
     <message>
-        <location filename="../toolwidgets/colorpickersettings.cpp" line="+48"/>
+        <location filename="../toolwidgets/colorpickersettings.cpp" line="+90"/>
+        <source>Pick from screen</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>Size: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+11"/>
         <source>Pick from current layer only</source>
         <translation type="unfinished">現在のレイヤーから抽出</translation>
-    </message>
-    <message>
-        <location line="+9"/>
-        <source>Add Color...</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7226,6 +7659,14 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+1"/>
         <source>Fit To Window</source>
         <translation type="unfinished">ウィンドウに合わせる</translation>
+    </message>
+</context>
+<context>
+    <name>utils::Recents</name>
+    <message>
+        <location filename="../utils/recents.cpp" line="+391"/>
+        <source>More…</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7274,20 +7715,113 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::CanvasView</name>
     <message>
-        <location filename="../scene/canvasview.cpp" line="+104"/>
+        <location filename="../scene/canvasview.cpp" line="+140"/>
         <source>Reconnect</source>
         <translation type="unfinished">再接続</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Reset in progress</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Canvas is locked</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>User is locked</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Layer is a group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Layer is locked</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Layer is censored</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Layer is hidden</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Tool is locked</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+223"/>
+        <source>Vertical flip: ON</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Vertical flip: OFF</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Horizontal mirror: ON</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Horizontal mirror: OFF</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1482"/>
+        <source>Zoom: %1%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Rotation: %1°</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>widgets::ChatBox</name>
+    <message>
+        <location filename="../chat/chatbox.cpp" line="+47"/>
+        <source>Invite</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Session</source>
+        <translation type="unfinished">セッション</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Chat</source>
+        <translation type="unfinished">チャット</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Show chat options</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>widgets::ChatWidget</name>
     <message>
-        <location filename="../chat/chatwidget.cpp" line="+138"/>
+        <location filename="../chat/chatwidget.cpp" line="+142"/>
         <source>Public</source>
         <translation type="unfinished">公開</translation>
     </message>
     <message>
-        <location line="+68"/>
+        <location line="+92"/>
         <source>Chat (recorded)...</source>
         <translation type="unfinished">チャット (記録)...</translation>
     </message>
@@ -7297,7 +7831,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">チャット...</translation>
     </message>
     <message>
-        <location line="+301"/>
+        <location line="+304"/>
         <source>%1 joined the session</source>
         <translation type="unfinished">%1 が参加しました</translation>
     </message>
@@ -7343,7 +7877,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+9"/>
-        <source>/pin: only operators are allowed to send alerts.</source>
+        <source>/pin: only operators are allowed to pin.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7357,12 +7891,17 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+10"/>
+        <source>/unpin: only operators are allowed to unpin.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>/unpin: can only unpin in a public chat.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+15"/>
         <source>/roll: invalid dice roll description.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7386,22 +7925,22 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+48"/>
+        <location line="-600"/>
         <source>Clear</source>
         <translation type="unfinished">クリア</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Compact mode</source>
         <translation type="unfinished">コンパクトモード</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+9"/>
         <source>Detach</source>
         <translation type="unfinished">取り外し</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="-2"/>
         <source>Attach</source>
         <translation type="unfinished">取り付け</translation>
     </message>
@@ -7491,7 +8030,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::NetStatus</name>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="+52"/>
+        <location filename="../widgets/netstatus.cpp" line="+54"/>
         <source>Copy address to clipboard</source>
         <translation type="unfinished">アドレスをクリップボードにコピー</translation>
     </message>
@@ -7521,12 +8060,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">証明書を表示</translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="+62"/>
         <source>Logged in!</source>
         <translation type="unfinished">ログインしました！</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+20"/>
         <source>A previously unvisited host</source>
         <translation type="unfinished">過去に接続したことのないホストです</translation>
     </message>
@@ -7541,12 +8080,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">信頼済みホストです</translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+40"/>
         <source>Disconnected</source>
         <translation type="unfinished">切断しました</translation>
     </message>
     <message>
-        <location line="+115"/>
+        <location line="+121"/>
         <source>You have been kicked by %1</source>
         <translation type="unfinished">あなたは %1 にキックされました</translation>
     </message>
@@ -7586,7 +8125,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">ログアウト中...</translation>
     </message>
     <message>
-        <location line="+36"/>
+        <location line="+37"/>
         <source>Notice</source>
         <translation type="unfinished">注意</translation>
     </message>
@@ -7599,6 +8138,37 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+4"/>
         <source>Don&apos;t show this again</source>
         <translation type="unfinished">再び表示しない</translation>
+    </message>
+</context>
+<context>
+    <name>widgets::PaletteWidget</name>
+    <message>
+        <location filename="../widgets/palettewidget.cpp" line="+41"/>
+        <source>Add</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Modify</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Remove</source>
+        <translation type="unfinished">削除</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Set palette color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+196"/>
+        <source>Red: %2
+Green: %3
+Blue: %4
+Hex: %5</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7625,9 +8195,27 @@ Values above 0.5 may not be noticeable.</source>
     </message>
 </context>
 <context>
+    <name>widgets::RecentScrollEntry</name>
+    <message>
+        <location filename="../widgets/recentscroll.cpp" line="+26"/>
+        <source>No recent files.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>No recent hosts.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+59"/>
+        <source>Remove</source>
+        <translation type="unfinished">削除</translation>
+    </message>
+</context>
+<context>
     <name>widgets::TimelineWidget</name>
     <message>
-        <location filename="../widgets/timelinewidget.cpp" line="+491"/>
+        <location filename="../widgets/timelinewidget.cpp" line="+526"/>
         <source>Blank key frame (duplicate)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7677,7 +8265,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+653"/>
+        <location line="+654"/>
         <source>Track</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7795,9 +8383,14 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::ViewStatus</name>
     <message>
-        <location filename="../widgets/viewstatus.cpp" line="+64"/>
+        <location filename="../widgets/viewstatus.cpp" line="+72"/>
         <source>Canvas Rotation</source>
         <translation type="unfinished">キャンバスの回転</translation>
+    </message>
+    <message>
+        <location line="+40"/>
+        <source>Zoom</source>
+        <translation type="unfinished">ズーム</translation>
     </message>
 </context>
 </TS>

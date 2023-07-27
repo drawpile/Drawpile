@@ -48,8 +48,26 @@
     </message>
     <message>
         <location line="+8"/>
-        <source>User:</source>
-        <translation>Người dùng:</translation>
+        <source>Offender:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AddServerDialog</name>
+    <message>
+        <location filename="../ui/addserverdialog.ui" line="+14"/>
+        <source>Add Server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+28"/>
+        <source>Enter a list server URL:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+43"/>
+        <source>You can find some list servers at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -742,89 +760,6 @@ to 64x64 pixels.</source>
     </message>
 </context>
 <context>
-    <name>HostDialog</name>
-    <message>
-        <location filename="../ui/hostdialog.ui" line="+25"/>
-        <source>&amp;Title:</source>
-        <translation>&amp;Tựa đề:</translation>
-    </message>
-    <message>
-        <location line="+17"/>
-        <source>&amp;Password:</source>
-        <translation>&amp;Mật khẩu:</translation>
-    </message>
-    <message>
-        <location line="-7"/>
-        <source>The title is shown in the application title bar and in the session selection dialog</source>
-        <translation>Tiêu đề được hiển thị trong thanh tiêu đề ứng dụng và trong hôp thoại chọn phiên</translation>
-    </message>
-    <message>
-        <location line="-18"/>
-        <source>Host a Session</source>
-        <translation>Lưu trữ phiên</translation>
-    </message>
-    <message>
-        <location line="+51"/>
-        <source>ID a&amp;lias:</source>
-        <translation>Bí d&amp;anh ID:</translation>
-    </message>
-    <message>
-        <location line="+23"/>
-        <source>Not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Marks the session as having age-restricted content.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+37"/>
-        <source>Host:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-27"/>
-        <source>List at:</source>
-        <translation>Liệt kê:</translation>
-    </message>
-    <message>
-        <location line="+37"/>
-        <source>Use Drawpile&apos;s built-in server</source>
-        <translation>Sử dụng máy chủ tích hợp của Drawpile</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>This co&amp;mputer</source>
-        <translation>Trên &amp;máy tính này</translation>
-    </message>
-    <message>
-        <location line="+12"/>
-        <source>Use an external dedicated server</source>
-        <translation>Sử dụng một máy chủ chuyên dụng bên ngoài</translation>
-    </message>
-    <message>
-        <location line="-98"/>
-        <source>Optional. If left blank, no password will be needed to join this session.</source>
-        <translation>Không bắt buộc. Nếu để trống, sẽ không cần mật khẩu để tham gia phiên này.</translation>
-    </message>
-    <message>
-        <location line="+43"/>
-        <source>Announce the session at a public list</source>
-        <translation>Thông báo phiên tại một danh sách công khai</translation>
-    </message>
-    <message>
-        <location line="+58"/>
-        <source>Re&amp;mote:</source>
-        <translation>&amp;Máy chủ:</translation>
-    </message>
-    <message>
-        <location line="-75"/>
-        <source>An optional user friendly ID for the session</source>
-        <translation>ID thân thiện với người dùng tùy chọn cho phiên</translation>
-    </message>
-</context>
-<context>
     <name>InspectorSettings</name>
     <message>
         <location filename="../ui/inspectorsettings.ui" line="+17"/>
@@ -833,61 +768,61 @@ to 64x64 pixels.</source>
     </message>
 </context>
 <context>
-    <name>JoinDialog</name>
+    <name>InviteDialog</name>
     <message>
-        <location filename="../ui/joindialog.ui" line="+17"/>
-        <source>Join a Session</source>
-        <translation>Tham gia phiên</translation>
+        <location filename="../ui/invitedialog.ui" line="+14"/>
+        <source>Invite</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+28"/>
+        <source>Copy Invite Link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+35"/>
+        <source>Web link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Direct link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Include password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>&lt;strong&gt;Note:&lt;/strong&gt; changing the session password will cause the link to stop working! If someone else changes the password, you have to reconnect for this dialog to update.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+29"/>
+        <source>You&apos;re hosting a session locally. If others can&apos;t join your session, take a look at &lt;a href=&quot;https://drawpile.net/help/hosting/&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+45"/>
-        <source>Filter</source>
-        <translation>Bộ lọc</translation>
-    </message>
-    <message>
-        <location line="-32"/>
-        <source>A new Drawpile version that is not compatible with this one has been released.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+17"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You haven&apos;t added any servers yet. You can find some at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;drawpile.net/communities&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;You can try adding one now by entering pub.drawpile.net in the address box and clicking &lt;span style=&quot; font-style:italic;&quot;&gt;Add Server&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+41"/>
-        <source>Show:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Closed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Passworded</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>NSFM</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Show sessions not suitable for minors (NSFM)</source>
+        <source>You&apos;re hosting a session locally, so Drawpile has to find your externally visible IP address to give you an invite link. For more information, check out &lt;a href=&quot;https://drawpile.net/help/hosting/&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+32"/>
-        <source>Enter a host address, session URL or room code to join a session:</source>
-        <translation>Nhập địa chỉ máy chủ, URL phiên hoặc mã phòng để tham gia phiên:</translation>
+        <source>Get externally visible IP address</source>
+        <translation type="unfinished">Nhận địa chỉ IP hiển thị bên ngoài</translation>
     </message>
     <message>
-        <location line="+31"/>
-        <source>Record session</source>
-        <translation>Ghi thu lại phiên</translation>
+        <location line="+37"/>
+        <source>Show this dialog when hosting a session</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>You can find this dialog again under &lt;i&gt;Session ▸ Invite…&lt;/i&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1040,7 +975,7 @@ Subrange: [%3, %4]</source>
 <context>
     <name>LoginDialog</name>
     <message>
-        <location filename="../ui/logindialog.ui" line="+123"/>
+        <location filename="../ui/logindialog.ui" line="+129"/>
         <source>Username</source>
         <translation>Tài khoản</translation>
     </message>
@@ -1065,22 +1000,37 @@ Subrange: [%3, %4]</source>
         <translation>Bộ lọc</translation>
     </message>
     <message>
-        <location line="+87"/>
+        <location line="+52"/>
+        <source>This session is password-protected.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+22"/>
         <source>Password:</source>
         <translation>Mật khẩu:</translation>
     </message>
     <message>
-        <location line="-22"/>
-        <source>This session is password protected</source>
-        <translation>Phiên nàu được bảo vệ bằng mật khẩu</translation>
+        <location line="+173"/>
+        <source>&lt;p&gt;This session has indicated that its contents are &lt;em&gt;not suitable for minors&lt;/em&gt; (NSFM).&lt;/p&gt;&lt;p&gt;&lt;strong&gt;You must be over the age of 18 and be allowed to consume adult content to proceed.&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Are you sure you want to join this session?&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-55"/>
+        <location line="+26"/>
+        <source>Show this warning again next time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-263"/>
         <source>Show sessions not suitable for minors (NSFM)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+169"/>
+        <location line="+80"/>
+        <source>Enter the &lt;b&gt;session password&lt;/b&gt;, &lt;i&gt;not&lt;/i&gt; your account password.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+86"/>
         <source>View old</source>
         <translation>Xem tạo cũ</translation>
     </message>
@@ -1103,12 +1053,12 @@ Subrange: [%3, %4]</source>
 <context>
     <name>MacMenu</name>
     <message>
-        <location filename="../widgets/macmenu.cpp" line="+67"/>
+        <location filename="../widgets/macmenu.cpp" line="+66"/>
         <source>Minimize</source>
         <translation>Thu nhỏ</translation>
     </message>
     <message numerus="yes">
-        <location line="+124"/>
+        <location line="+112"/>
         <source>You have %n images with unsaved changes. Do you want to review these changes before quitting?</source>
         <translation>
             <numerusform>Bạn có %n hình ảnh với những thay đổi chưa được lưu. Bạn có muốn xem lại những thay đổi này trước thoát không?</numerusform>
@@ -1133,13 +1083,13 @@ Subrange: [%3, %4]</source>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../mainwindow.cpp" line="+602"/>
-        <location line="+1041"/>
+        <location filename="../mainwindow.cpp" line="+612"/>
+        <location line="+1143"/>
         <source>Untitled</source>
         <translation>Không tựa đề</translation>
     </message>
     <message>
-        <location line="-783"/>
+        <location line="-859"/>
         <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1154,7 +1104,7 @@ Subrange: [%3, %4]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+95"/>
+        <location line="+103"/>
         <location line="+21"/>
         <source>Exit Drawpile</source>
         <translation>Thoát Drawpile</translation>
@@ -1172,12 +1122,12 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+2"/>
         <location line="+22"/>
-        <location line="+361"/>
+        <location line="+444"/>
         <source>Cancel</source>
         <translation>Hủy bỏ</translation>
     </message>
     <message>
-        <location line="-368"/>
+        <location line="-451"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation>Ở đây có các thay đổi chưa được lưu. Ghi lại chúng trước khi thoát chứ</translation>
     </message>
@@ -1192,7 +1142,7 @@ Subrange: [%3, %4]</source>
         <translation>Hủy</translation>
     </message>
     <message>
-        <location line="+243"/>
+        <location line="+326"/>
         <source>Saving...</source>
         <translation>Đang lưu...</translation>
     </message>
@@ -1238,23 +1188,23 @@ Subrange: [%3, %4]</source>
     </message>
     <message>
         <location line="+33"/>
-        <location line="+598"/>
+        <location line="+592"/>
         <source>Unsupported format.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-595"/>
+        <location line="-589"/>
         <source>Couldn&apos;t start recording.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
-        <location line="+607"/>
+        <location line="+601"/>
         <source>Unknown error.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-597"/>
+        <location line="-591"/>
         <source>Error closing profile.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1274,12 +1224,12 @@ Subrange: [%3, %4]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+87"/>
+        <location line="+79"/>
         <source>Invalid address</source>
         <translation>Địa chỉ không hợp lệ</translation>
     </message>
     <message>
-        <location line="+82"/>
+        <location line="+75"/>
         <source>Really leave the session?</source>
         <translation>Thực sự rời khỏi phiên?</translation>
     </message>
@@ -1299,7 +1249,7 @@ Subrange: [%3, %4]</source>
         <translation>Vẫn còn dữ liệu chưa gửi! Xin vui lòng chờ cho đền khi truyền hoàn thành!</translation>
     </message>
     <message>
-        <location line="+172"/>
+        <location line="+181"/>
         <source>Would you like to join the session instead?</source>
         <translation>Bạn có muốn gia nhập phiên thay thế?</translation>
     </message>
@@ -1309,27 +1259,7 @@ Subrange: [%3, %4]</source>
         <translation>Tham gia</translation>
     </message>
     <message>
-        <location line="+55"/>
-        <source>Reset in progress</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Board is locked</source>
-        <translation>Bàn đã bị khóa</translation>
-    </message>
-    <message>
-        <location line="+12"/>
-        <source>Layer is locked</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Tool is locked</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+63"/>
+        <location line="+141"/>
         <source>Undo Limit... (%1)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1339,7 +1269,7 @@ Subrange: [%3, %4]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="+50"/>
         <source>Bad arguments, this is probably a bug in Drawpile.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1420,12 +1350,12 @@ Subrange: [%3, %4]</source>
     </message>
     <message>
         <location line="+15"/>
-        <location line="+775"/>
+        <location line="+851"/>
         <source>Record Debug Dumps</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-774"/>
+        <location line="-850"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -1475,7 +1405,7 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
     <message>
         <location line="+9"/>
-        <location filename="../widgets/macmenu.cpp" line="-164"/>
+        <location filename="../widgets/macmenu.cpp" line="-152"/>
         <source>&amp;New</source>
         <translation>Mớ&amp;i</translation>
     </message>
@@ -1501,7 +1431,47 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Tự động lưu</translation>
     </message>
     <message>
-        <location line="+364"/>
+        <location line="+9"/>
+        <source>Start...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+258"/>
+        <source>Move Canvas Left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Move Canvas Right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Move Canvas Up</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Move Canvas Down</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>&amp;Fit Page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Fit Page &amp;Width</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Fit Page &amp;Height</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+122"/>
         <source>Normal View</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1621,12 +1591,112 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+2"/>
+        <source>Create Layer on Current Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Create Layer on Next Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Create Layer on Previous Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Create Group on Current Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Create Group on Next Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Create Group on Previous Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Duplicate to Next Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Duplicate to Previous Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
         <source>&amp;Animation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+236"/>
+        <location line="+14"/>
+        <source>Create Layer on Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Create Group on Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Duplicate Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Share your canvas with others</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Invite...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Invite another user to this session</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>&amp;Browse...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Browse session listings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Change session settings, permissions, announcements and bans</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Undo Limit…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Prevent changes to the canvas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+97"/>
+        <source>Statistics…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+100"/>
         <source>Missing Log File</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1652,23 +1722,28 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="+47"/>
         <source>Swatch Color %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+94"/>
+        <location line="+22"/>
+        <source>Focus canvas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+77"/>
         <source>Onion Skins</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-2230"/>
-        <location line="+1377"/>
+        <location line="-2299"/>
+        <location line="+1371"/>
         <source>Record...</source>
         <translation>Thu đĩa...</translation>
     </message>
     <message>
-        <location line="-2507"/>
+        <location line="-2625"/>
         <source>Server out of space</source>
         <translation>Máy chủ hết dung lượng</translation>
     </message>
@@ -1680,7 +1755,7 @@ Simplify the canvas and reset manually before space runs out.</source>
 Đơn giản hóa khung vẽ và đặt lại thủ công trước khi hết dung lướng.</translation>
     </message>
     <message>
-        <location line="+1413"/>
+        <location line="+1529"/>
         <source>Become Operator</source>
         <translation>Trở thành nhà điều hành</translation>
     </message>
@@ -1701,44 +1776,44 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+5"/>
-        <location line="+1532"/>
+        <location line="+1604"/>
         <source>Terminate</source>
         <translation>Chấm dứt</translation>
     </message>
     <message>
-        <location line="-1422"/>
+        <location line="-1492"/>
         <source>Disconnected:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+77"/>
+        <location line="+76"/>
         <source>Session blocked by parental controls</source>
         <translation>Phiên bị chặn bởi sự kiểm soát của cha mẹ</translation>
     </message>
     <message>
-        <location line="+823"/>
+        <location line="+824"/>
         <source>Hide Docks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="+31"/>
         <location filename="../widgets/macmenu.cpp" line="+9"/>
         <source>&amp;Quit</source>
         <translation>&amp;Thoát</translation>
     </message>
     <message>
-        <location line="+40"/>
+        <location line="+41"/>
         <location filename="../widgets/macmenu.cpp" line="-12"/>
         <source>&amp;File</source>
         <translation>&amp;Tập tin</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+20"/>
         <source>&amp;Export</source>
         <translation>&amp;Xuất</translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+34"/>
         <source>&amp;Undo</source>
         <translation>&amp;Hủy</translation>
     </message>
@@ -1848,7 +1923,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Chat</translation>
     </message>
     <message>
-        <location line="+180"/>
+        <location line="+205"/>
         <source>Flipbook</source>
         <translation>Flipbook</translation>
     </message>
@@ -1858,7 +1933,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Hiển thị cửa sổ xem thử hoạt hình</translation>
     </message>
     <message>
-        <location line="-173"/>
+        <location line="-192"/>
         <source>Rotate Canvas Clockwise</source>
         <translation>Quay vùng vẽ ngược chiều</translation>
     </message>
@@ -1893,7 +1968,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Hiện avatar</translation>
     </message>
     <message>
-        <location line="+113"/>
+        <location line="+132"/>
         <source>User Pointers</source>
         <translation>Con trỏ người dùng</translation>
     </message>
@@ -1918,7 +1993,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Hiện lớp kiểm</translation>
     </message>
     <message>
-        <location line="+135"/>
+        <location line="+171"/>
         <source>Report...</source>
         <translation>Báo cáo...</translation>
     </message>
@@ -1938,12 +2013,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Hủy bỏ thao tác</translation>
     </message>
     <message>
-        <location line="-515"/>
+        <location line="-570"/>
         <source>Show User &amp;Pointers</source>
         <translation>Hiện con trỏ người dùng</translation>
     </message>
     <message>
-        <location line="-269"/>
+        <location line="-284"/>
         <source>&amp;Brushes...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1953,12 +2028,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+62"/>
+        <location line="+65"/>
         <source>&amp;Import</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+39"/>
+        <location line="+45"/>
         <source>Paste in View Center</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1993,7 +2068,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+32"/>
         <source>Show La&amp;ser Trails</source>
         <translation>Hiện theo dõi laser</translation>
     </message>
@@ -2003,7 +2078,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Hiện điểm ảnh lưới</translation>
     </message>
     <message>
-        <location line="+67"/>
+        <location line="+83"/>
         <source>&amp;View</source>
         <translation>&amp;Trình bày</translation>
     </message>
@@ -2013,7 +2088,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Thu phóng</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+8"/>
         <source>Rotation</source>
         <translation>Xoay</translation>
     </message>
@@ -2043,18 +2118,13 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+71"/>
+        <location line="+105"/>
         <location filename="../widgets/macmenu.cpp" line="+25"/>
         <source>&amp;Host...</source>
         <translation>&amp;Máy chủ...</translation>
     </message>
     <message>
-        <location line="+0"/>
-        <source>Share your drawingboard with others</source>
-        <translation>Chia sẻ bảng vẽ của bạn với những người khác</translation>
-    </message>
-    <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <location filename="../widgets/macmenu.cpp" line="+1"/>
         <source>&amp;Join...</source>
         <translation>&amp;Tham gia...</translation>
@@ -2065,7 +2135,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Tham gia phiên vẽ khác của người dùn&apos;g</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>&amp;Leave</source>
         <translation>&amp;Để lại</translation>
     </message>
@@ -2080,18 +2150,13 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Trở thành nhà điều hành...</translation>
     </message>
     <message>
-        <location line="+5"/>
-        <source>Prevent changes to the drawing board</source>
-        <translation>Ngăn chặn thay đổi bảng vẽ</translation>
-    </message>
-    <message>
-        <location line="+27"/>
+        <location line="+34"/>
         <location filename="../widgets/macmenu.cpp" line="-2"/>
         <source>&amp;Session</source>
         <translation>&amp;Phiên</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+31"/>
         <source>Fill areas</source>
         <translation>Điền vào vùng đã</translation>
     </message>
@@ -2121,7 +2186,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+18"/>
         <source>Toggle Eraser Mode</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2151,17 +2216,17 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Công cụ vẽ</translation>
     </message>
     <message>
-        <location line="-2006"/>
+        <location line="-2079"/>
         <source>Stop Recording</source>
         <translation>Dừng thu đĩa</translation>
     </message>
     <message>
-        <location line="+172"/>
+        <location line="+164"/>
         <source>Host Session</source>
         <translation>Lưu trữ phiên</translation>
     </message>
     <message>
-        <location line="+245"/>
+        <location line="+247"/>
         <source>Could not connect to server</source>
         <translation>Không thể kết nối đến máy chủ</translation>
     </message>
@@ -2171,18 +2236,18 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Đóng</translation>
     </message>
     <message>
-        <location line="+57"/>
+        <location line="+59"/>
         <location filename="../widgets/macmenu.cpp" line="-16"/>
         <source>Open &amp;Recent</source>
         <translation>Mở &amp;gần đây</translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+29"/>
         <source>File Tools</source>
         <translation>Công cụ tập tin</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+24"/>
         <source>&amp;Copy Visible</source>
         <translation>Chép phần nhìn thấy</translation>
     </message>
@@ -2228,7 +2293,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Công cụ sửa</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+27"/>
         <source>Zoom &amp;In</source>
         <translation>&amp;Phóng to</translation>
     </message>
@@ -2243,7 +2308,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>&amp;Kích thước bình thường</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+4"/>
         <source>&amp;Reset Rotation</source>
         <translation>&amp;Đặt lại xoay</translation>
     </message>
@@ -2258,7 +2323,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>&amp;Toàn màn hình</translation>
     </message>
     <message>
-        <location line="+283"/>
+        <location line="+344"/>
         <source>Pick colors from the image</source>
         <translation>Chọn màu từ hình ảnh</translation>
     </message>
@@ -2273,17 +2338,22 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Đườn&amp;g</translation>
     </message>
     <message>
-        <location line="-2821"/>
+        <location line="-3002"/>
         <source>🙋 %1 joined!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+843"/>
+        <location line="+954"/>
         <source>Saving animation...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1423"/>
+        <location line="+184"/>
+        <source>No canvas to host! Create one or open a file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1233"/>
         <source>Save Selection...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2298,12 +2368,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+124"/>
+        <location line="+133"/>
         <source>Delete</source>
         <translation>Xóa</translation>
     </message>
     <message>
-        <location line="+278"/>
+        <location line="+303"/>
         <source>New Group</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2323,7 +2393,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+42"/>
+        <location line="+78"/>
         <source>Event Log</source>
         <translation>Nhật ký sự kiện</translation>
     </message>
@@ -2338,12 +2408,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Đặt &amp;lại...</translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+41"/>
         <source>Moderation</source>
         <translation>Người điều hành</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+17"/>
         <source>Freehand</source>
         <translation>Bằng tay</translation>
     </message>
@@ -2458,7 +2528,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+263"/>
+        <location line="+262"/>
         <source>Color Wheel</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2473,7 +2543,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-256"/>
+        <location line="-255"/>
         <source>&amp;Tools</source>
         <translation>&amp;Công cụ</translation>
     </message>
@@ -2483,7 +2553,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>&amp;Phím tắt</translation>
     </message>
     <message>
-        <location line="+25"/>
+        <location line="+28"/>
         <source>Swap Last Colors</source>
         <translation>Hoán đổi màu sắc cuối cùng</translation>
     </message>
@@ -2516,12 +2586,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Giới thiệu &amp;Qt</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+1"/>
         <source>Check For Updates</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+66"/>
+        <location line="+60"/>
         <location filename="../widgets/macmenu.cpp" line="-5"/>
         <source>&amp;Help</source>
         <translation>&amp;Trợ giúp</translation>
@@ -2540,42 +2610,39 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Thống kê</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+40"/>
         <source>Latency:</source>
         <translation>Độ trễ:</translation>
     </message>
     <message>
         <location line="+17"/>
+        <source>Tiles:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Tile Memory:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Contexts:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Context Memory:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-86"/>
         <source>Sent:</source>
         <translation>Gửi:</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+17"/>
         <source>Received:</source>
         <translation>Đã nhận:</translation>
-    </message>
-</context>
-<context>
-    <name>NewDialog</name>
-    <message>
-        <location filename="../ui/newdialog.ui" line="+17"/>
-        <source>New Drawing</source>
-        <translation>Tạo bản vẽ mới</translation>
-    </message>
-    <message>
-        <location line="+8"/>
-        <source>Width:</source>
-        <translation>Rộng:</translation>
-    </message>
-    <message>
-        <location line="+23"/>
-        <source>Height:</source>
-        <translation>Cao:</translation>
-    </message>
-    <message>
-        <location line="+23"/>
-        <source>Background:</source>
-        <translation>Nền:</translation>
     </message>
 </context>
 <context>
@@ -3212,19 +3279,6 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
 </context>
 <context>
-    <name>VersionCheckDialog</name>
-    <message>
-        <location filename="../ui/versioncheck.ui" line="+14"/>
-        <source>New Version Check</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+40"/>
-        <source>Check for updates automatically</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>VideoExport</name>
     <message>
         <location filename="../ui/videoexport.ui" line="+14"/>
@@ -3448,14 +3502,29 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>dialogs::AddServerDialog</name>
     <message>
-        <location filename="../dialogs/addserverdialog.cpp" line="+17"/>
-        <source>Add Server</source>
+        <location filename="../dialogs/addserverdialog.cpp" line="+151"/>
+        <source>&lt;strong&gt;Error:&lt;/strong&gt; %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+106"/>
+        <source>Retrieving %1...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+74"/>
+        <source>Check</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Add</source>
         <translation type="unfinished">Thêm</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Checking %1...</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5165,82 +5234,10 @@ Values above 0.5 may not be noticeable.</source>
     </message>
 </context>
 <context>
-    <name>dialogs::HostDialog</name>
+    <name>dialogs::InviteDialog</name>
     <message>
-        <location filename="../dialogs/hostdialog.cpp" line="+22"/>
-        <source>Host</source>
-        <translation type="unfinished">Máy chủ</translation>
-    </message>
-</context>
-<context>
-    <name>dialogs::JoinDialog</name>
-    <message>
-        <location filename="../dialogs/joindialog.cpp" line="+46"/>
-        <location line="+112"/>
-        <source>Join</source>
-        <translation type="unfinished">Tham gia</translation>
-    </message>
-    <message>
-        <location line="-108"/>
-        <source>Add Server</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+27"/>
-        <location line="+4"/>
-        <source>Nearby</source>
-        <translation type="unfinished">Gần đây</translation>
-    </message>
-    <message>
-        <location line="-4"/>
-        <location line="+14"/>
-        <location line="+441"/>
-        <source>Loading...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-368"/>
-        <source>Copy session URL</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Copy title</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Copy server</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Copy owner</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+104"/>
-        <source>Searching...</source>
-        <translation type="unfinished">Tìm kiếm...</translation>
-    </message>
-    <message>
-        <location line="+18"/>
-        <source>Record</source>
-        <translation type="unfinished">Thu đĩa</translation>
-    </message>
-    <message>
-        <location line="+72"/>
-        <source>Room code not found!</source>
-        <translation type="unfinished">Không tìm thấy mã phòng!</translation>
-    </message>
-    <message>
-        <location line="+128"/>
-        <source>Join a Session</source>
-        <translation type="unfinished">Tham gia phiên</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>&apos;%1&apos; is not a valid list server URL.</source>
+        <location filename="../dialogs/invitedialog.cpp" line="+74"/>
+        <source>Invite link copied to clipboard.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5366,17 +5363,17 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::LoginDialog</name>
     <message>
-        <location filename="../dialogs/logindialog.cpp" line="+120"/>
+        <location filename="../dialogs/logindialog.cpp" line="+135"/>
         <source>Report...</source>
         <translation type="unfinished">Báo cáo...</translation>
     </message>
     <message>
-        <location line="+64"/>
+        <location line="+67"/>
         <source>Close</source>
         <translation type="unfinished">Đóng</translation>
     </message>
     <message>
-        <location line="+202"/>
+        <location line="+214"/>
         <source>Log in with &apos;%1&apos; credentials</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5389,27 +5386,9 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::NetStats</name>
     <message>
-        <location filename="../dialogs/netstats.cpp" line="+47"/>
+        <location filename="../dialogs/netstats.cpp" line="+77"/>
         <source>not connected</source>
         <translation type="unfinished">chưa kết nối</translation>
-    </message>
-</context>
-<context>
-    <name>dialogs::NewDialog</name>
-    <message>
-        <location filename="../dialogs/newdialog.cpp" line="+19"/>
-        <source>Create</source>
-        <translation type="unfinished">Tạo</translation>
-    </message>
-    <message>
-        <location line="+35"/>
-        <source>Error</source>
-        <translation type="unfinished">Lỗi</translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Size is too large</source>
-        <translation type="unfinished">Kích thước quá lớn</translation>
     </message>
 </context>
 <context>
@@ -5522,7 +5501,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::SessionSettingsDialog</name>
     <message>
-        <location filename="../dialogs/sessionsettings.cpp" line="+274"/>
+        <location filename="../dialogs/sessionsettings.cpp" line="+277"/>
         <source>Operators</source>
         <translation type="unfinished">Nhà điều hành</translation>
     </message>
@@ -5567,12 +5546,12 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+73"/>
-        <location line="+21"/>
+        <location line="+23"/>
         <source>Set a new password or leave blank to remove.</source>
         <translation type="unfinished">Đặt mật khẩu mới hoặc để trống để xóa.</translation>
     </message>
     <message>
-        <location line="-19"/>
+        <location line="-21"/>
         <source>Set a password for the session.</source>
         <translation type="unfinished">Đặt mật khẩu cho phiên.</translation>
     </message>
@@ -5582,7 +5561,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">Mật khẩu phiên</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+18"/>
         <source>Set a password for gaining operator status.</source>
         <translation type="unfinished">Đặt mật khẩu để đạt được trạng thái nhà điều hành.</translation>
     </message>
@@ -5613,7 +5592,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::SettingsDialog</name>
     <message>
-        <location filename="../dialogs/settingsdialog.cpp" line="+33"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="+34"/>
         <source>Preferences</source>
         <translation type="unfinished">Tùy thích</translation>
     </message>
@@ -5639,6 +5618,11 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+1"/>
+        <source>Notifications</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
         <source>Servers</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5656,6 +5640,156 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+1"/>
         <source>Parental Controls</source>
         <translation type="unfinished">Sự kiểm soát cuả cha mẹ</translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::StartDialog</name>
+    <message>
+        <location filename="../dialogs/startdialog.cpp" line="+69"/>
+        <source>Start</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+34"/>
+        <source>Welcome</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>News and updates</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Join Session</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Connect to a drawing session directly</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Browse Sessions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Browse publicly listed drawing sessions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Host Session</source>
+        <translation type="unfinished">Lưu trữ phiên</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Share your canvas with others</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>New Canvas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Create a new, empty canvas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Open File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Open an image file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Recent Files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Reopen a recently used file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Layouts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Choose application layout</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Preferences</source>
+        <translation type="unfinished">Tùy thích</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Change application settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Record</source>
+        <translation type="unfinished">Thu đĩa</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Add Server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Check for Updates</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+249"/>
+        <source>Checking…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Last check: today.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location line="+2"/>
+        <source>Last check: %n day(s) ago.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Last check: never.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Join</source>
+        <translation type="unfinished">Tham gia</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Host</source>
+        <translation type="unfinished">Máy chủ</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Create</source>
+        <translation type="unfinished">Tạo</translation>
     </message>
 </context>
 <context>
@@ -5700,65 +5834,6 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Disabled</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>dialogs::VersionCheckDialog</name>
-    <message>
-        <location filename="../dialogs/versioncheckdialog.cpp" line="+25"/>
-        <source>Download</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+20"/>
-        <source>Enable auto-updates?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Should Drawpile automatically check for updates?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>You can always check for updates manually from the Help menu.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+30"/>
-        <source>Error checking version!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+16"/>
-        <source>You&apos;re up to date!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>No new versions found.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>&lt;h1&gt;%1&lt;/h1&gt;&lt;p&gt;%2&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+12"/>
-        <source>A new version of Drawpile is available!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Version %2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+19"/>
-        <source>&lt;p&gt;The download page for Drawpile %1 should have opened in your browser. If not, visit &lt;a href=&quot;%2&quot;&gt;%2&lt;/a&gt; manually.&lt;/p&gt;&lt;p&gt;Restart Drawpile after installing the new version.&lt;/p&gt;</source>
-        <extracomment>%2 is used twice, this is intentional! Don&apos;t use %3.</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5853,7 +5928,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::General</name>
     <message>
-        <location filename="../dialogs/settingsdialog/general.cpp" line="+49"/>
+        <location filename="../dialogs/settingsdialog/general.cpp" line="+47"/>
         <source>When enabled, save every %1 minutes</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5868,29 +5943,14 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+8"/>
-        <source>Remember the last %1 opened files and hosts</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Recent items:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location line="+6"/>
-        <location line="+61"/>
+        <location line="+80"/>
         <location line="+15"/>
         <source>System</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-69"/>
-        <source>%1 (%2)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+9"/>
+        <location line="-84"/>
         <source>Language:</source>
         <translation type="unfinished">Ngôn ngữ:</translation>
     </message>
@@ -5900,7 +5960,17 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+15"/>
+        <source>%1 (%2) / %3 (%4)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>%1 / %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>Show scroll bars on canvas</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6068,7 +6138,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+5"/>
+        <source>Driver:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+17"/>
         <source>One-finger input:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6106,7 +6181,17 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Network</name>
     <message>
-        <location filename="../dialogs/settingsdialog/network.cpp" line="+39"/>
+        <location filename="../dialogs/settingsdialog/network.cpp" line="+34"/>
+        <source>Automatically check for updates</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Updates:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>Allow insecure local storage</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6147,6 +6232,16 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+5"/>
+        <source>Receive delay:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>The higher the value, the smoother strokes from other users come in.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
         <source>Chat avatars:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6172,8 +6267,11 @@ Values above 0.5 may not be noticeable.</source>
             <numerusform></numerusform>
         </translation>
     </message>
+</context>
+<context>
+    <name>dialogs::settingsdialog::Notifications</name>
     <message>
-        <location line="+7"/>
+        <location filename="../dialogs/settingsdialog/notifications.cpp" line="+30"/>
         <source>%</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6188,12 +6286,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Recording marker</source>
         <translation type="unfinished">Thu đĩa đánh dấu</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>User joined</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6213,7 +6311,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+10"/>
         <source>Notifications:</source>
         <translation type="unfinished">Thông báo:</translation>
     </message>
@@ -6281,6 +6379,11 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location line="+4"/>
+        <source>Warn when joining NSFM sessions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+10"/>
         <location line="+26"/>
         <source>Lock</source>
@@ -6335,7 +6438,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Servers</name>
     <message>
-        <location filename="../dialogs/settingsdialog/servers.cpp" line="+47"/>
+        <location filename="../dialogs/settingsdialog/servers.cpp" line="+46"/>
         <source>Known hosts:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6356,12 +6459,12 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+7"/>
-        <location line="+146"/>
+        <location line="+114"/>
         <source>Trust selected hosts</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-123"/>
+        <location line="-91"/>
         <source>List servers:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6405,23 +6508,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+11"/>
-        <location line="+21"/>
-        <source>Add list server</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-21"/>
-        <source>Enter a list server URL:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+22"/>
-        <source>&apos;%1&apos; is not a valid list server URL.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+34"/>
+        <location line="+35"/>
         <source>Continue</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6472,7 +6559,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+2"/>
+        <source>Double-tap Alt key to focus canvas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
         <source>Share one color across all brush slots</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6574,6 +6666,350 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>HCL (Hue–Chroma–Luminance)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::Browse</name>
+    <message>
+        <location filename="../dialogs/startdialog/browse.cpp" line="+65"/>
+        <source>You haven&apos;t added any servers yet. You can find some at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>To add the public Drawpile server, &lt;a href=&quot;#&quot;&gt;click here&lt;/a&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Filter</source>
+        <translation type="unfinished">Bộ lọc</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Closed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Show sessions that don&apos;t let new users join</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Password</source>
+        <translation type="unfinished">Mật khẩu</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Show sessions that require a password to join</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>NSFM</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Show sessions not suitable for minors (NSFM)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Duplicates</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Show sessions that are listed on multiple servers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <location line="+4"/>
+        <source>Nearby</source>
+        <translation type="unfinished">Gần đây</translation>
+    </message>
+    <message>
+        <location line="-4"/>
+        <location line="+140"/>
+        <source>Loading...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-82"/>
+        <source>Join</source>
+        <translation type="unfinished">Tham gia</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Copy session URL</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Copy title</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Copy server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Copy owner</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+79"/>
+        <source>Nothing here yet!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Read the message at the top on how to add a server.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::Create</name>
+    <message>
+        <location filename="../dialogs/startdialog/create.cpp" line="+24"/>
+        <location line="+7"/>
+        <source>px</source>
+        <translation type="unfinished">điểm ảnh</translation>
+    </message>
+    <message>
+        <location line="-3"/>
+        <source>Width:</source>
+        <translation type="unfinished">Rộng:</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Height:</source>
+        <translation type="unfinished">Cao:</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Canvas background color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Background:</source>
+        <translation type="unfinished">Nền:</translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::Host</name>
+    <message>
+        <location filename="../dialogs/startdialog/host.cpp" line="+31"/>
+        <source>The title is shown in the application title bar and in the session selection dialog</source>
+        <translation type="unfinished">Tiêu đề được hiển thị trong thanh tiêu đề ứng dụng và trong hôp thoại chọn phiên</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Title:</source>
+        <translation type="unfinished">Tựa đề:</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Optional. If left blank, no password will be needed to join this session.</source>
+        <translation type="unfinished">Không bắt buộc. Nếu để trống, sẽ không cần mật khẩu để tham gia phiên này.</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Password:</source>
+        <translation type="unfinished">Mật khẩu:</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>An optional user friendly ID for the session</source>
+        <translation type="unfinished">ID thân thiện với người dùng tùy chọn cho phiên</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>ID Alias:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Not suitable for minors (NSFM)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Marks the session as having age-restricted content.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>List at:</source>
+        <translation type="unfinished">Liệt kê:</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Announce the session at a public list</source>
+        <translation type="unfinished">Thông báo phiên tại một danh sách công khai</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Host on this computer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Use Drawpile&apos;s built-in server</source>
+        <translation type="unfinished">Sử dụng máy chủ tích hợp của Drawpile</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Not available in the 2.2 beta yet. This option will return later!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Host at:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Use an external dedicated server</source>
+        <translation type="unfinished">Sử dụng một máy chủ chuyên dụng bên ngoài</translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::Join</name>
+    <message>
+        <location filename="../dialogs/startdialog/join.cpp" line="+27"/>
+        <source>Enter a &lt;strong&gt;session URL&lt;/strong&gt;, &lt;strong&gt;host name&lt;/strong&gt;, &lt;strong&gt;IP address&lt;/strong&gt; or &lt;strong&gt;room code&lt;/strong&gt;:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Recent:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+44"/>
+        <source>Searching…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+83"/>
+        <source>Roomcode not found!</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::Links</name>
+    <message>
+        <location filename="../dialogs/startdialog/links.cpp" line="+31"/>
+        <source>Help</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Open Drawpile&apos;s help pages in your browser</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Communities</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Open Drawpile&apos;s communities page in your browser</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Discord</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Join the Drawpile Discord server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>GitHub</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Open Drawpile&apos;s GitHub page in your browser</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::UpdateNotice</name>
+    <message>
+        <location filename="../dialogs/startdialog/updatenotice.cpp" line="+61"/>
+        <source>Update</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Dismiss</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Hide this notification</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>A new version of Drawpile is available!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Update to Drawpile version %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>The download page for Drawpile %1 should have opened in your browser. If not, please visit &lt;em&gt;drawpile.net&lt;/em&gt; manually.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>The download page for Drawpile %1 could not be opened, please visit &lt;em&gt;drawpile.net&lt;/em&gt; manually.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::Welcome</name>
+    <message>
+        <location filename="../dialogs/startdialog/welcome.cpp" line="+44"/>
+        <source>Welcome to Drawpile!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Take a look over the &lt;a href=&quot;#preferences&quot;&gt;Preferences&lt;/a&gt; to configure things to your liking. You might also want to pick a different &lt;a href=&quot;#layout&quot;&gt;Layout&lt;/a&gt; for the application.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>If you have an invite link to a drawing session, you can &lt;a href=&quot;#join&quot;&gt;Join&lt;/a&gt; it directly. Alternatively, you can &lt;a href=&quot;#browse&quot;&gt;Browse&lt;/a&gt; public sessions or just create a &lt;a href=&quot;#create&quot;&gt;New Canvas&lt;/a&gt; to draw on your own.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>If you have trouble, take a look at the help pages linked on the right. If they don&apos;t answer your question, you can join the Discord server and ask, there&apos;s usually folks around to help!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Next time, you&apos;ll see news and updates on this page.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6731,28 +7167,23 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::ColorPaletteDock</name>
     <message>
-        <location filename="../docks/colorpalette.cpp" line="+94"/>
-        <source>Write protect</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+16"/>
+        <location filename="../docks/colorpalette.cpp" line="+186"/>
         <source>New</source>
         <translation type="unfinished">Mới</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Duplicate</source>
         <translation type="unfinished">Nhân đôi</translation>
     </message>
     <message>
-        <location line="+1"/>
-        <location line="+165"/>
+        <location line="+2"/>
+        <location line="+112"/>
         <source>Delete</source>
         <translation type="unfinished">Xóa</translation>
     </message>
     <message>
-        <location line="-164"/>
+        <location line="-110"/>
         <source>Rename</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6762,42 +7193,44 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">Nhập...</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Export...</source>
         <translation type="unfinished">Xuất...</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <source>Add</source>
-        <translation type="unfinished">Thêm</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Remove</source>
-        <translation type="unfinished">Loại bỏ</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Less columns</source>
+        <location line="-51"/>
+        <source>Add column</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
-        <source>More columns</source>
+        <location line="+10"/>
+        <source>Remove column</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+53"/>
+        <location line="+115"/>
+        <location line="+47"/>
+        <source>New Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-47"/>
+        <location line="+47"/>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+17"/>
         <source>Import palette</source>
         <translation type="unfinished">Nhập bảng chọn</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+1"/>
         <source>Palettes (%1)</source>
         <translation type="unfinished">Bảng chọn (%1)</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+0"/>
         <source>All files (*)</source>
         <translation type="unfinished">Mọi tập tin (*)</translation>
     </message>
@@ -6807,12 +7240,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">Xuất bảng chọn</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+1"/>
         <source>GIMP palette (%1)</source>
         <translation type="unfinished">Bảng chọn GIMP (%1)</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+6"/>
         <source>Error</source>
         <translation type="unfinished">Lỗi</translation>
     </message>
@@ -6822,7 +7255,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+67"/>
+        <location line="-58"/>
         <source>Delete palette &quot;%1&quot;?</source>
         <translation type="unfinished">Xóa bảng chọn &quot;%1&quot;?</translation>
     </message>
@@ -6906,12 +7339,12 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::LayerList</name>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="+36"/>
+        <location filename="../docks/layerlistdock.cpp" line="+38"/>
         <source>Layers</source>
         <translation type="unfinished">Lớp</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+37"/>
         <source>Opacity: </source>
         <translation type="unfinished"></translation>
     </message>
@@ -6921,8 +7354,8 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+281"/>
-        <location line="+16"/>
+        <location line="+307"/>
+        <location line="+39"/>
         <source>Layer</source>
         <translation type="unfinished">Lớp</translation>
     </message>
@@ -6932,7 +7365,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+67"/>
+        <location line="+139"/>
         <source>Delete Layer?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6945,12 +7378,12 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::Navigator</name>
     <message>
-        <location filename="../docks/navigator.cpp" line="+301"/>
+        <location filename="../docks/navigator.cpp" line="+309"/>
         <source>Navigator</source>
         <translation type="unfinished">Di chuyến</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+29"/>
         <source>Show Cursors</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7001,7 +7434,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+171"/>
+        <location line="+179"/>
         <source> FPS</source>
         <translation type="unfinished"> FPS</translation>
     </message>
@@ -7122,7 +7555,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+44"/>
         <source>Time-Based Stabilizer</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7162,7 +7595,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+523"/>
+        <location line="+529"/>
         <source>This session is hosted with Drawpile 2.1, MyPaint brushes are unavailable.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7175,19 +7608,19 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>tools::ColorPickerSettings</name>
     <message>
-        <location filename="../toolwidgets/colorpickersettings.cpp" line="+48"/>
+        <location filename="../toolwidgets/colorpickersettings.cpp" line="+90"/>
+        <source>Pick from screen</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>Size: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+11"/>
         <source>Pick from current layer only</source>
         <translation type="unfinished">Chỉ chọn từ lớp hiện tại</translation>
-    </message>
-    <message>
-        <location line="+9"/>
-        <source>Add Color...</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7227,6 +7660,14 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+1"/>
         <source>Fit To Window</source>
         <translation type="unfinished">Vừa cửa sổ</translation>
+    </message>
+</context>
+<context>
+    <name>utils::Recents</name>
+    <message>
+        <location filename="../utils/recents.cpp" line="+391"/>
+        <source>More…</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7275,20 +7716,113 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::CanvasView</name>
     <message>
-        <location filename="../scene/canvasview.cpp" line="+104"/>
+        <location filename="../scene/canvasview.cpp" line="+140"/>
         <source>Reconnect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Reset in progress</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Canvas is locked</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>User is locked</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Layer is a group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Layer is locked</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Layer is censored</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Layer is hidden</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Tool is locked</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+223"/>
+        <source>Vertical flip: ON</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Vertical flip: OFF</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Horizontal mirror: ON</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Horizontal mirror: OFF</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1482"/>
+        <source>Zoom: %1%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Rotation: %1°</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>widgets::ChatBox</name>
+    <message>
+        <location filename="../chat/chatbox.cpp" line="+47"/>
+        <source>Invite</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Session</source>
+        <translation type="unfinished">Phiên</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Chat</source>
+        <translation type="unfinished">Chat</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Show chat options</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>widgets::ChatWidget</name>
     <message>
-        <location filename="../chat/chatwidget.cpp" line="+138"/>
+        <location filename="../chat/chatwidget.cpp" line="+142"/>
         <source>Public</source>
         <translation type="unfinished">Công khai</translation>
     </message>
     <message>
-        <location line="+68"/>
+        <location line="+92"/>
         <source>Chat (recorded)...</source>
         <translation type="unfinished">Chat (đã ghi lại)...</translation>
     </message>
@@ -7298,7 +7832,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">Chat...</translation>
     </message>
     <message>
-        <location line="+301"/>
+        <location line="+304"/>
         <source>%1 joined the session</source>
         <translation type="unfinished">%1 tham gia phiên</translation>
     </message>
@@ -7344,7 +7878,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+9"/>
-        <source>/pin: only operators are allowed to send alerts.</source>
+        <source>/pin: only operators are allowed to pin.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7358,12 +7892,17 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+10"/>
+        <source>/unpin: only operators are allowed to unpin.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>/unpin: can only unpin in a public chat.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+15"/>
         <source>/roll: invalid dice roll description.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7387,22 +7926,22 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+48"/>
+        <location line="-600"/>
         <source>Clear</source>
         <translation type="unfinished">Xóa</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Compact mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+9"/>
         <source>Detach</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="-2"/>
         <source>Attach</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7492,7 +8031,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::NetStatus</name>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="+52"/>
+        <location filename="../widgets/netstatus.cpp" line="+54"/>
         <source>Copy address to clipboard</source>
         <translation type="unfinished">Chép địa chỉ vào clipboard</translation>
     </message>
@@ -7522,12 +8061,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">Hiện chứng nhận</translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="+62"/>
         <source>Logged in!</source>
         <translation type="unfinished">Đăng nhập!</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+20"/>
         <source>A previously unvisited host</source>
         <translation type="unfinished">Một máy chủ không mong muốn trước đây</translation>
     </message>
@@ -7542,12 +8081,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">Đây là máy đã được đánh dấu là đáng tin</translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+40"/>
         <source>Disconnected</source>
         <translation type="unfinished">Đã ngắt kết nối</translation>
     </message>
     <message>
-        <location line="+115"/>
+        <location line="+121"/>
         <source>You have been kicked by %1</source>
         <translation type="unfinished">Bạn đã bị đá bởi %1</translation>
     </message>
@@ -7587,7 +8126,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">Đã xuất...</translation>
     </message>
     <message>
-        <location line="+36"/>
+        <location line="+37"/>
         <source>Notice</source>
         <translation type="unfinished">Ghi chú</translation>
     </message>
@@ -7600,6 +8139,37 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+4"/>
         <source>Don&apos;t show this again</source>
         <translation type="unfinished">Đừng hiện cái này nữa</translation>
+    </message>
+</context>
+<context>
+    <name>widgets::PaletteWidget</name>
+    <message>
+        <location filename="../widgets/palettewidget.cpp" line="+41"/>
+        <source>Add</source>
+        <translation type="unfinished">Thêm</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Modify</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Remove</source>
+        <translation type="unfinished">Loại bỏ</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Set palette color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+196"/>
+        <source>Red: %2
+Green: %3
+Blue: %4
+Hex: %5</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7626,9 +8196,27 @@ Values above 0.5 may not be noticeable.</source>
     </message>
 </context>
 <context>
+    <name>widgets::RecentScrollEntry</name>
+    <message>
+        <location filename="../widgets/recentscroll.cpp" line="+26"/>
+        <source>No recent files.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>No recent hosts.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+59"/>
+        <source>Remove</source>
+        <translation type="unfinished">Loại bỏ</translation>
+    </message>
+</context>
+<context>
     <name>widgets::TimelineWidget</name>
     <message>
-        <location filename="../widgets/timelinewidget.cpp" line="+491"/>
+        <location filename="../widgets/timelinewidget.cpp" line="+526"/>
         <source>Blank key frame (duplicate)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7678,7 +8266,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+653"/>
+        <location line="+654"/>
         <source>Track</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7796,9 +8384,14 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::ViewStatus</name>
     <message>
-        <location filename="../widgets/viewstatus.cpp" line="+64"/>
+        <location filename="../widgets/viewstatus.cpp" line="+72"/>
         <source>Canvas Rotation</source>
         <translation type="unfinished">Xoay vùng vẽ</translation>
+    </message>
+    <message>
+        <location line="+40"/>
+        <source>Zoom</source>
+        <translation type="unfinished">Thu phóng</translation>
     </message>
 </context>
 </TS>

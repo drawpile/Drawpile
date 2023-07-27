@@ -48,8 +48,26 @@
     </message>
     <message>
         <location line="+8"/>
-        <source>User:</source>
-        <translation>Користувач:</translation>
+        <source>Offender:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AddServerDialog</name>
+    <message>
+        <location filename="../ui/addserverdialog.ui" line="+14"/>
+        <source>Add Server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+28"/>
+        <source>Enter a list server URL:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+43"/>
+        <source>You can find some list servers at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -743,89 +761,6 @@ to 64x64 pixels.</source>
     </message>
 </context>
 <context>
-    <name>HostDialog</name>
-    <message>
-        <location filename="../ui/hostdialog.ui" line="+17"/>
-        <source>Host a Session</source>
-        <translation>Керування сеансом</translation>
-    </message>
-    <message>
-        <location line="+8"/>
-        <source>&amp;Title:</source>
-        <translation>&amp;Заголовок:</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>The title is shown in the application title bar and in the session selection dialog</source>
-        <translation>Заголовок буде показано на смужці заголовка та у вікні вибору сеансу</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>&amp;Password:</source>
-        <translation>П&amp;ароль:</translation>
-    </message>
-    <message>
-        <location line="+16"/>
-        <source>Optional. If left blank, no password will be needed to join this session.</source>
-        <translation>Необов&apos;язковий. Якщо не вказувати, для долучення до сеансу не доведеться вказувати пароль.</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>ID a&amp;lias:</source>
-        <translation>&amp;Ідентифікатор:</translation>
-    </message>
-    <message>
-        <location line="+16"/>
-        <source>An optional user friendly ID for the session</source>
-        <translation>Необов&apos;язковий зручний для читання ідентифікатор сеансу</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Marks the session as having age-restricted content.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+37"/>
-        <source>Host:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-30"/>
-        <source>Announce the session at a public list</source>
-        <translation>Оголошувати сеанс у відкритому списку</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>List at:</source>
-        <translation>Список:</translation>
-    </message>
-    <message>
-        <location line="+37"/>
-        <source>Use Drawpile&apos;s built-in server</source>
-        <translation>Вбудований сервер Drawpile</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>This co&amp;mputer</source>
-        <translation>&amp;Цей комп&apos;ютер</translation>
-    </message>
-    <message>
-        <location line="+12"/>
-        <source>Use an external dedicated server</source>
-        <translation>Використовувати спеціалізований зовнішній сервер</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Re&amp;mote:</source>
-        <translation>Ві&amp;ддалений:</translation>
-    </message>
-</context>
-<context>
     <name>InspectorSettings</name>
     <message>
         <location filename="../ui/inspectorsettings.ui" line="+17"/>
@@ -834,61 +769,61 @@ to 64x64 pixels.</source>
     </message>
 </context>
 <context>
-    <name>JoinDialog</name>
+    <name>InviteDialog</name>
     <message>
-        <location filename="../ui/joindialog.ui" line="+17"/>
-        <source>Join a Session</source>
-        <translation>Долучення до сеансу</translation>
-    </message>
-    <message>
-        <location line="+13"/>
-        <source>A new Drawpile version that is not compatible with this one has been released.</source>
-        <translation>Було випущено нову версію Drawpile, яка є несумісною з поточною.</translation>
-    </message>
-    <message>
-        <location line="+17"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You haven&apos;t added any servers yet. You can find some at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2980b9;&quot;&gt;drawpile.net/communities&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;You can try adding one now by entering pub.drawpile.net in the address box and clicking &lt;span style=&quot; font-style:italic;&quot;&gt;Add Server&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <location filename="../ui/invitedialog.ui" line="+14"/>
+        <source>Invite</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+41"/>
-        <source>Show:</source>
+        <location line="+28"/>
+        <source>Copy Invite Link</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
-        <source>Closed</source>
+        <location line="+35"/>
+        <source>Web link</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
-        <source>Passworded</source>
+        <location line="+10"/>
+        <source>Direct link</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-40"/>
-        <source>Filter</source>
-        <translation>Фільтр</translation>
-    </message>
-    <message>
-        <location line="+47"/>
-        <source>NSFM</source>
+        <location line="+10"/>
+        <source>Include password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+3"/>
-        <source>Show sessions not suitable for minors (NSFM)</source>
+        <location line="+9"/>
+        <source>&lt;strong&gt;Note:&lt;/strong&gt; changing the session password will cause the link to stop working! If someone else changes the password, you have to reconnect for this dialog to update.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+29"/>
+        <source>You&apos;re hosting a session locally. If others can&apos;t join your session, take a look at &lt;a href=&quot;https://drawpile.net/help/hosting/&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+45"/>
+        <source>You&apos;re hosting a session locally, so Drawpile has to find your externally visible IP address to give you an invite link. For more information, check out &lt;a href=&quot;https://drawpile.net/help/hosting/&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+32"/>
-        <source>Enter a host address, session URL or room code to join a session:</source>
-        <translation>Вкажіть адресу вузла, адресу сеансу або код кімнати для долучення до сеансу:</translation>
+        <source>Get externally visible IP address</source>
+        <translation type="unfinished">Отримати видиму ззовні IP-адресу</translation>
     </message>
     <message>
-        <location line="+31"/>
-        <source>Record session</source>
-        <translation>Записувати сеанс</translation>
+        <location line="+37"/>
+        <source>Show this dialog when hosting a session</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>You can find this dialog again under &lt;i&gt;Session ▸ Invite…&lt;/i&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1041,7 +976,7 @@ Subrange: [%3, %4]</source>
 <context>
     <name>LoginDialog</name>
     <message>
-        <location filename="../ui/logindialog.ui" line="+83"/>
+        <location filename="../ui/logindialog.ui" line="+89"/>
         <source>Incorrect password.</source>
         <translation>Помилковий пароль.</translation>
     </message>
@@ -1066,22 +1001,37 @@ Subrange: [%3, %4]</source>
         <translation>Фільтр</translation>
     </message>
     <message>
-        <location line="+87"/>
+        <location line="+52"/>
+        <source>This session is password-protected.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+22"/>
         <source>Password:</source>
         <translation>Пароль:</translation>
     </message>
     <message>
-        <location line="-22"/>
-        <source>This session is password protected</source>
-        <translation>Цей сеанс захищено паролем</translation>
+        <location line="+173"/>
+        <source>&lt;p&gt;This session has indicated that its contents are &lt;em&gt;not suitable for minors&lt;/em&gt; (NSFM).&lt;/p&gt;&lt;p&gt;&lt;strong&gt;You must be over the age of 18 and be allowed to consume adult content to proceed.&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Are you sure you want to join this session?&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-55"/>
+        <location line="+26"/>
+        <source>Show this warning again next time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-263"/>
         <source>Show sessions not suitable for minors (NSFM)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+119"/>
+        <location line="+80"/>
+        <source>Enter the &lt;b&gt;session password&lt;/b&gt;, &lt;i&gt;not&lt;/i&gt; your account password.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+36"/>
         <source>Catching up...</source>
         <translation>Наздоганяємо…</translation>
     </message>
@@ -1104,12 +1054,12 @@ Subrange: [%3, %4]</source>
 <context>
     <name>MacMenu</name>
     <message>
-        <location filename="../widgets/macmenu.cpp" line="+67"/>
+        <location filename="../widgets/macmenu.cpp" line="+66"/>
         <source>Minimize</source>
         <translation>Мінімізувати</translation>
     </message>
     <message numerus="yes">
-        <location line="+124"/>
+        <location line="+112"/>
         <source>You have %n images with unsaved changes. Do you want to review these changes before quitting?</source>
         <translation>
             <numerusform>Зміни у %n зображенні не збережено. Хочете переглянути ці зміни, перш ніж виходити?</numerusform>
@@ -1136,7 +1086,7 @@ Subrange: [%3, %4]</source>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../mainwindow.cpp" line="+277"/>
+        <location filename="../mainwindow.cpp" line="+280"/>
         <source>Server out of space</source>
         <translation>На сервері немає місця</translation>
     </message>
@@ -1148,18 +1098,18 @@ Simplify the canvas and reset manually before space runs out.</source>
 Спростіть полотно і відновіть початковий стан вручну так, щоб місця вистачило.</translation>
     </message>
     <message>
-        <location line="+231"/>
+        <location line="+244"/>
         <source>🙋 %1 joined!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+93"/>
-        <location line="+1041"/>
+        <location line="+87"/>
+        <location line="+1143"/>
         <source>Untitled</source>
         <translation>Без назви</translation>
     </message>
     <message>
-        <location line="-680"/>
+        <location line="-748"/>
         <location line="+21"/>
         <source>Exit Drawpile</source>
         <translation>Вихід з Drawpile</translation>
@@ -1177,12 +1127,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+2"/>
         <location line="+22"/>
-        <location line="+361"/>
+        <location line="+444"/>
         <source>Cancel</source>
         <translation>Скасувати</translation>
     </message>
     <message>
-        <location line="-368"/>
+        <location line="-451"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation>Деякі зміни не збережено. Зберегти їх перед виходом?</translation>
     </message>
@@ -1197,7 +1147,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Відкинути</translation>
     </message>
     <message>
-        <location line="+243"/>
+        <location line="+326"/>
         <source>Saving...</source>
         <translation>Збереження...</translation>
     </message>
@@ -1248,12 +1198,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+3"/>
-        <location line="+1377"/>
+        <location line="+1371"/>
         <source>Record...</source>
         <translation>Записати…</translation>
     </message>
     <message>
-        <location line="-1222"/>
+        <location line="-1224"/>
         <source>Invalid address</source>
         <translation>Некоректна адреса</translation>
     </message>
@@ -1263,7 +1213,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Запуск сеансу</translation>
     </message>
     <message>
-        <location line="+68"/>
+        <location line="+61"/>
         <source>Really leave the session?</source>
         <translation>Справді хочете полишити сеанс?</translation>
     </message>
@@ -1283,7 +1233,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Частину даних ще не надіслано. Будь ласка, зачекайте на завершення передавання даних!</translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="+37"/>
         <source>Become Operator</source>
         <translation>Набуття прав оператора</translation>
     </message>
@@ -1304,12 +1254,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+5"/>
-        <location line="+1532"/>
+        <location line="+1604"/>
         <source>Terminate</source>
         <translation>Перервати</translation>
     </message>
     <message>
-        <location line="-1456"/>
+        <location line="-1526"/>
         <source>Could not connect to server</source>
         <translation>Не вдалося з&apos;єднатися з сервером</translation>
     </message>
@@ -1329,17 +1279,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+42"/>
-        <source>Board is locked</source>
-        <translation>Дошку заблоковано</translation>
-    </message>
-    <message>
-        <location line="+35"/>
+        <location line="+76"/>
         <source>Session blocked by parental controls</source>
         <translation>Сеанс заблоковано засобами батьківського контролю</translation>
     </message>
     <message>
-        <location line="+346"/>
+        <location line="+347"/>
         <source>The image could not be loaded</source>
         <translation>Не вдалося завантажити зображення</translation>
     </message>
@@ -1360,7 +1305,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+13"/>
-        <location filename="../widgets/macmenu.cpp" line="-164"/>
+        <location filename="../widgets/macmenu.cpp" line="-152"/>
         <source>&amp;New</source>
         <translation>&amp;Створити</translation>
     </message>
@@ -1391,12 +1336,17 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Автозбереження</translation>
     </message>
     <message>
-        <location line="-1424"/>
+        <location line="-1418"/>
         <source>Saving animation...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1423"/>
+        <location line="+184"/>
+        <source>No canvas to host! Create one or open a file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1233"/>
         <source>Save Selection...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1411,13 +1361,13 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+5"/>
         <location filename="../widgets/macmenu.cpp" line="+9"/>
         <source>&amp;Quit</source>
         <translation>Ви&amp;йти</translation>
     </message>
     <message>
-        <location line="+40"/>
+        <location line="+41"/>
         <location filename="../widgets/macmenu.cpp" line="-12"/>
         <source>&amp;File</source>
         <translation>&amp;Файл</translation>
@@ -1429,7 +1379,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Відкрити &amp;недавні</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+17"/>
         <source>&amp;Export</source>
         <translation>&amp;Експорт</translation>
     </message>
@@ -1439,7 +1389,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Робота з файлами</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+22"/>
         <source>&amp;Undo</source>
         <translation>С&amp;касувати</translation>
     </message>
@@ -1600,7 +1550,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Спілкування</translation>
     </message>
     <message>
-        <location line="+108"/>
+        <location line="+133"/>
         <source>Normal View</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1640,7 +1590,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Показати вікно попереднього перегляду анімації</translation>
     </message>
     <message>
-        <location line="-177"/>
+        <location line="-199"/>
         <source>Zoom &amp;In</source>
         <translation>З&amp;більшити</translation>
     </message>
@@ -1655,7 +1605,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>З&amp;вичайний розмір</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+4"/>
         <source>&amp;Reset Rotation</source>
         <translation>С&amp;кинути обертання</translation>
     </message>
@@ -1720,7 +1670,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>&amp;На весь екран</translation>
     </message>
     <message>
-        <location line="+64"/>
+        <location line="+80"/>
         <source>&amp;View</source>
         <translation>П&amp;ерегляд</translation>
     </message>
@@ -1730,7 +1680,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>&amp;Масштаб</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+8"/>
         <source>Rotation</source>
         <translation>Обертання</translation>
     </message>
@@ -1776,7 +1726,47 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+135"/>
+        <location line="+72"/>
+        <source>Share your canvas with others</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&amp;Invite...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Invite another user to this session</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>&amp;Browse...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Browse session listings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Change session settings, permissions, announcements and bans</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Undo Limit…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Prevent changes to the canvas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+90"/>
         <source>Developer Tools</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1796,7 +1786,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+1"/>
+        <source>Statistics…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+17"/>
         <source>Toggle Eraser Mode</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1806,7 +1801,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+219"/>
+        <location line="+170"/>
+        <source>Focus canvas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+45"/>
         <source>Color Wheel</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1821,12 +1821,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-472"/>
+        <location line="-513"/>
         <source>Show Censored Layers</source>
         <translation>Показати цензуровані шари</translation>
     </message>
     <message>
-        <location line="-2283"/>
+        <location line="-2402"/>
         <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1841,24 +1841,24 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+564"/>
-        <location line="+598"/>
+        <location line="+655"/>
+        <location line="+592"/>
         <source>Unsupported format.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-595"/>
+        <location line="-589"/>
         <source>Couldn&apos;t start recording.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
-        <location line="+607"/>
+        <location line="+601"/>
         <source>Unknown error.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-597"/>
+        <location line="-591"/>
         <source>Error closing profile.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1878,22 +1878,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+415"/>
-        <source>Reset in progress</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+19"/>
-        <source>Layer is locked</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Tool is locked</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+63"/>
+        <location line="+495"/>
         <source>Undo Limit... (%1)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1903,7 +1888,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="+50"/>
         <source>Bad arguments, this is probably a bug in Drawpile.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1979,12 +1964,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+15"/>
-        <location line="+775"/>
+        <location line="+851"/>
         <source>Record Debug Dumps</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-774"/>
+        <location line="-850"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -2033,12 +2018,17 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+62"/>
+        <location line="+7"/>
+        <source>Start...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+58"/>
         <source>&amp;Import</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+39"/>
+        <location line="+45"/>
         <source>Paste in View Center</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2073,7 +2063,42 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+128"/>
+        <location line="+10"/>
+        <source>Move Canvas Left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Move Canvas Right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Move Canvas Up</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Move Canvas Down</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>&amp;Fit Page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Fit Page &amp;Width</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Fit Page &amp;Height</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+134"/>
         <source>Layer View Mode</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2188,23 +2213,73 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+2"/>
+        <source>Create Layer on Current Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Create Layer on Next Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Create Layer on Previous Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Create Group on Current Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Create Group on Next Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Create Group on Previous Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Duplicate to Next Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Duplicate to Previous Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
         <source>&amp;Animation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+14"/>
+        <source>Create Layer on Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Create Group on Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Duplicate Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+25"/>
         <location filename="../widgets/macmenu.cpp" line="+9"/>
         <source>&amp;Host...</source>
         <translation>В&amp;узол…</translation>
     </message>
     <message>
-        <location line="+0"/>
-        <source>Share your drawingboard with others</source>
-        <translation>Оприлюднення дошки для малювання</translation>
-    </message>
-    <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <location filename="../widgets/macmenu.cpp" line="+1"/>
         <source>&amp;Join...</source>
         <translation>Д&amp;олучитися...</translation>
@@ -2215,7 +2290,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Долучитися до сеансу малювання іншого користувача</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>&amp;Leave</source>
         <translation>По&amp;лишити</translation>
     </message>
@@ -2255,23 +2330,18 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Заблокувати усе</translation>
     </message>
     <message>
-        <location line="+0"/>
-        <source>Prevent changes to the drawing board</source>
-        <translation>Запобігти змінам на дошці для малювання</translation>
-    </message>
-    <message>
-        <location line="+27"/>
+        <location line="+29"/>
         <location filename="../widgets/macmenu.cpp" line="-2"/>
         <source>&amp;Session</source>
         <translation>&amp;Сеанс</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+8"/>
         <source>Moderation</source>
         <translation>Модерація</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+17"/>
         <source>Freehand</source>
         <translation>Вручну</translation>
     </message>
@@ -2421,7 +2491,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>&amp;Клавіатурні скорочення</translation>
     </message>
     <message>
-        <location line="+113"/>
+        <location line="+109"/>
         <source>Missing Log File</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2447,17 +2517,17 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="+47"/>
         <source>Swatch Color %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+94"/>
+        <location line="+99"/>
         <source>Onion Skins</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-250"/>
+        <location line="-246"/>
         <source>Swap Last Colors</source>
         <translation>Поміняти місцями останні кольори</translation>
     </message>
@@ -2510,18 +2580,18 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Про &amp;Qt</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+1"/>
         <source>Check For Updates</source>
         <translation>Пошук оновлень</translation>
     </message>
     <message>
-        <location line="+66"/>
+        <location line="+60"/>
         <location filename="../widgets/macmenu.cpp" line="-5"/>
         <source>&amp;Help</source>
         <translation>&amp;Довідка</translation>
     </message>
     <message>
-        <location line="+52"/>
+        <location line="+50"/>
         <source>Finish action</source>
         <translation>Завершити дію</translation>
     </message>
@@ -2544,42 +2614,39 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Статистика</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+40"/>
         <source>Latency:</source>
         <translation>Затримка:</translation>
     </message>
     <message>
         <location line="+17"/>
+        <source>Tiles:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Tile Memory:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Contexts:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Context Memory:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-86"/>
         <source>Sent:</source>
         <translation>Надіслано:</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+17"/>
         <source>Received:</source>
         <translation>Отримано:</translation>
-    </message>
-</context>
-<context>
-    <name>NewDialog</name>
-    <message>
-        <location filename="../ui/newdialog.ui" line="+17"/>
-        <source>New Drawing</source>
-        <translation>Новий малюнок</translation>
-    </message>
-    <message>
-        <location line="+8"/>
-        <source>Width:</source>
-        <translation>Ширина:</translation>
-    </message>
-    <message>
-        <location line="+23"/>
-        <source>Height:</source>
-        <translation>Висота:</translation>
-    </message>
-    <message>
-        <location line="+23"/>
-        <source>Background:</source>
-        <translation>Тло:</translation>
     </message>
 </context>
 <context>
@@ -3216,19 +3283,6 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
 </context>
 <context>
-    <name>VersionCheckDialog</name>
-    <message>
-        <location filename="../ui/versioncheck.ui" line="+14"/>
-        <source>New Version Check</source>
-        <translation>Нова перевірка версії</translation>
-    </message>
-    <message>
-        <location line="+40"/>
-        <source>Check for updates automatically</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>VideoExport</name>
     <message>
         <location filename="../ui/videoexport.ui" line="+14"/>
@@ -3452,14 +3506,29 @@ Are you sure youwant to start recording debug dumps?</source>
 <context>
     <name>dialogs::AddServerDialog</name>
     <message>
-        <location filename="../dialogs/addserverdialog.cpp" line="+17"/>
-        <source>Add Server</source>
+        <location filename="../dialogs/addserverdialog.cpp" line="+151"/>
+        <source>&lt;strong&gt;Error:&lt;/strong&gt; %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+106"/>
+        <source>Retrieving %1...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+74"/>
+        <source>Check</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Add</source>
         <translation type="unfinished">Додати</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Checking %1...</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5169,82 +5238,10 @@ Values above 0.5 may not be noticeable.</source>
     </message>
 </context>
 <context>
-    <name>dialogs::HostDialog</name>
+    <name>dialogs::InviteDialog</name>
     <message>
-        <location filename="../dialogs/hostdialog.cpp" line="+22"/>
-        <source>Host</source>
-        <translation type="unfinished">Вузол</translation>
-    </message>
-</context>
-<context>
-    <name>dialogs::JoinDialog</name>
-    <message>
-        <location filename="../dialogs/joindialog.cpp" line="+46"/>
-        <location line="+112"/>
-        <source>Join</source>
-        <translation type="unfinished">Долучитися</translation>
-    </message>
-    <message>
-        <location line="-108"/>
-        <source>Add Server</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+27"/>
-        <location line="+4"/>
-        <source>Nearby</source>
-        <translation type="unfinished">Поблизу</translation>
-    </message>
-    <message>
-        <location line="-4"/>
-        <location line="+14"/>
-        <location line="+441"/>
-        <source>Loading...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-368"/>
-        <source>Copy session URL</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Copy title</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Copy server</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Copy owner</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+104"/>
-        <source>Searching...</source>
-        <translation type="unfinished">Шукаємо…</translation>
-    </message>
-    <message>
-        <location line="+18"/>
-        <source>Record</source>
-        <translation type="unfinished">Запис</translation>
-    </message>
-    <message>
-        <location line="+72"/>
-        <source>Room code not found!</source>
-        <translation type="unfinished">Не знайдено код кімнати!</translation>
-    </message>
-    <message>
-        <location line="+128"/>
-        <source>Join a Session</source>
-        <translation type="unfinished">Долучення до сеансу</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>&apos;%1&apos; is not a valid list server URL.</source>
+        <location filename="../dialogs/invitedialog.cpp" line="+74"/>
+        <source>Invite link copied to clipboard.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5370,17 +5367,17 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::LoginDialog</name>
     <message>
-        <location filename="../dialogs/logindialog.cpp" line="+120"/>
+        <location filename="../dialogs/logindialog.cpp" line="+135"/>
         <source>Report...</source>
         <translation type="unfinished">Звіт…</translation>
     </message>
     <message>
-        <location line="+64"/>
+        <location line="+67"/>
         <source>Close</source>
         <translation type="unfinished">Закрити</translation>
     </message>
     <message>
-        <location line="+202"/>
+        <location line="+214"/>
         <source>Log in with &apos;%1&apos; credentials</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5393,27 +5390,9 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::NetStats</name>
     <message>
-        <location filename="../dialogs/netstats.cpp" line="+47"/>
+        <location filename="../dialogs/netstats.cpp" line="+77"/>
         <source>not connected</source>
         <translation type="unfinished">не з’єднано</translation>
-    </message>
-</context>
-<context>
-    <name>dialogs::NewDialog</name>
-    <message>
-        <location filename="../dialogs/newdialog.cpp" line="+19"/>
-        <source>Create</source>
-        <translation type="unfinished">Створити</translation>
-    </message>
-    <message>
-        <location line="+35"/>
-        <source>Error</source>
-        <translation type="unfinished">Помилка</translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Size is too large</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5526,7 +5505,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::SessionSettingsDialog</name>
     <message>
-        <location filename="../dialogs/sessionsettings.cpp" line="+274"/>
+        <location filename="../dialogs/sessionsettings.cpp" line="+277"/>
         <source>Operators</source>
         <translation type="unfinished">Оператори</translation>
     </message>
@@ -5571,12 +5550,12 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+73"/>
-        <location line="+21"/>
+        <location line="+23"/>
         <source>Set a new password or leave blank to remove.</source>
         <translation type="unfinished">Встановіть новий пароль або не заповнюйте, щоб вилучити пароль.</translation>
     </message>
     <message>
-        <location line="-19"/>
+        <location line="-21"/>
         <source>Set a password for the session.</source>
         <translation type="unfinished">Встановіть пароль для сеансу.</translation>
     </message>
@@ -5586,7 +5565,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">Пароль сеансу</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+18"/>
         <source>Set a password for gaining operator status.</source>
         <translation type="unfinished">Встановіть пароль для отримання стану оператора.</translation>
     </message>
@@ -5617,7 +5596,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::SettingsDialog</name>
     <message>
-        <location filename="../dialogs/settingsdialog.cpp" line="+33"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="+34"/>
         <source>Preferences</source>
         <translation type="unfinished">Налаштування</translation>
     </message>
@@ -5643,6 +5622,11 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+1"/>
+        <source>Notifications</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
         <source>Servers</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5660,6 +5644,158 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+1"/>
         <source>Parental Controls</source>
         <translation type="unfinished">Батьківський контроль</translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::StartDialog</name>
+    <message>
+        <location filename="../dialogs/startdialog.cpp" line="+69"/>
+        <source>Start</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+34"/>
+        <source>Welcome</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>News and updates</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Join Session</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Connect to a drawing session directly</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Browse Sessions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Browse publicly listed drawing sessions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Host Session</source>
+        <translation type="unfinished">Запуск сеансу</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Share your canvas with others</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>New Canvas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Create a new, empty canvas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Open File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Open an image file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Recent Files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Reopen a recently used file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Layouts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Choose application layout</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Preferences</source>
+        <translation type="unfinished">Налаштування</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Change application settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Record</source>
+        <translation type="unfinished">Запис</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Add Server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Check for Updates</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+249"/>
+        <source>Checking…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Last check: today.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location line="+2"/>
+        <source>Last check: %n day(s) ago.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Last check: never.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Join</source>
+        <translation type="unfinished">Долучитися</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Host</source>
+        <translation type="unfinished">Вузол</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Create</source>
+        <translation type="unfinished">Створити</translation>
     </message>
 </context>
 <context>
@@ -5704,65 +5840,6 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Disabled</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>dialogs::VersionCheckDialog</name>
-    <message>
-        <location filename="../dialogs/versioncheckdialog.cpp" line="+25"/>
-        <source>Download</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+20"/>
-        <source>Enable auto-updates?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Should Drawpile automatically check for updates?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>You can always check for updates manually from the Help menu.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+30"/>
-        <source>Error checking version!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+16"/>
-        <source>You&apos;re up to date!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>No new versions found.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>&lt;h1&gt;%1&lt;/h1&gt;&lt;p&gt;%2&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+12"/>
-        <source>A new version of Drawpile is available!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Version %2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+19"/>
-        <source>&lt;p&gt;The download page for Drawpile %1 should have opened in your browser. If not, visit &lt;a href=&quot;%2&quot;&gt;%2&lt;/a&gt; manually.&lt;/p&gt;&lt;p&gt;Restart Drawpile after installing the new version.&lt;/p&gt;</source>
-        <extracomment>%2 is used twice, this is intentional! Don&apos;t use %3.</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5859,7 +5936,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::General</name>
     <message>
-        <location filename="../dialogs/settingsdialog/general.cpp" line="+49"/>
+        <location filename="../dialogs/settingsdialog/general.cpp" line="+47"/>
         <source>When enabled, save every %1 minutes</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5874,29 +5951,14 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+8"/>
-        <source>Remember the last %1 opened files and hosts</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Recent items:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location line="+6"/>
-        <location line="+61"/>
+        <location line="+80"/>
         <location line="+15"/>
         <source>System</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-69"/>
-        <source>%1 (%2)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+9"/>
+        <location line="-84"/>
         <source>Language:</source>
         <translation type="unfinished">Мова:</translation>
     </message>
@@ -5906,7 +5968,17 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+15"/>
+        <source>%1 (%2) / %3 (%4)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>%1 / %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>Show scroll bars on canvas</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6074,7 +6146,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+5"/>
+        <source>Driver:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+17"/>
         <source>One-finger input:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6112,7 +6189,17 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Network</name>
     <message>
-        <location filename="../dialogs/settingsdialog/network.cpp" line="+39"/>
+        <location filename="../dialogs/settingsdialog/network.cpp" line="+34"/>
+        <source>Automatically check for updates</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Updates:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>Allow insecure local storage</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6153,6 +6240,16 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+5"/>
+        <source>Receive delay:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>The higher the value, the smoother strokes from other users come in.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
         <source>Chat avatars:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6180,8 +6277,11 @@ Values above 0.5 may not be noticeable.</source>
             <numerusform></numerusform>
         </translation>
     </message>
+</context>
+<context>
+    <name>dialogs::settingsdialog::Notifications</name>
     <message>
-        <location line="+7"/>
+        <location filename="../dialogs/settingsdialog/notifications.cpp" line="+30"/>
         <source>%</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6196,12 +6296,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Recording marker</source>
         <translation type="unfinished">Позначка записування</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>User joined</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6221,7 +6321,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+10"/>
         <source>Notifications:</source>
         <translation type="unfinished">Сповіщення:</translation>
     </message>
@@ -6289,6 +6389,11 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location line="+4"/>
+        <source>Warn when joining NSFM sessions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+10"/>
         <location line="+26"/>
         <source>Lock</source>
@@ -6343,7 +6448,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Servers</name>
     <message>
-        <location filename="../dialogs/settingsdialog/servers.cpp" line="+47"/>
+        <location filename="../dialogs/settingsdialog/servers.cpp" line="+46"/>
         <source>Known hosts:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6364,12 +6469,12 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+7"/>
-        <location line="+146"/>
+        <location line="+114"/>
         <source>Trust selected hosts</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-123"/>
+        <location line="-91"/>
         <source>List servers:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6417,23 +6522,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+11"/>
-        <location line="+21"/>
-        <source>Add list server</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-21"/>
-        <source>Enter a list server URL:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+22"/>
-        <source>&apos;%1&apos; is not a valid list server URL.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+34"/>
+        <location line="+35"/>
         <source>Continue</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6484,7 +6573,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+2"/>
+        <source>Double-tap Alt key to focus canvas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
         <source>Share one color across all brush slots</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6586,6 +6680,350 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>HCL (Hue–Chroma–Luminance)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::Browse</name>
+    <message>
+        <location filename="../dialogs/startdialog/browse.cpp" line="+65"/>
+        <source>You haven&apos;t added any servers yet. You can find some at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>To add the public Drawpile server, &lt;a href=&quot;#&quot;&gt;click here&lt;/a&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Filter</source>
+        <translation type="unfinished">Фільтр</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Closed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Show sessions that don&apos;t let new users join</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Password</source>
+        <translation type="unfinished">Пароль</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Show sessions that require a password to join</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>NSFM</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Show sessions not suitable for minors (NSFM)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Duplicates</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Show sessions that are listed on multiple servers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <location line="+4"/>
+        <source>Nearby</source>
+        <translation type="unfinished">Поблизу</translation>
+    </message>
+    <message>
+        <location line="-4"/>
+        <location line="+140"/>
+        <source>Loading...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-82"/>
+        <source>Join</source>
+        <translation type="unfinished">Долучитися</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Copy session URL</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Copy title</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Copy server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Copy owner</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+79"/>
+        <source>Nothing here yet!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Read the message at the top on how to add a server.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::Create</name>
+    <message>
+        <location filename="../dialogs/startdialog/create.cpp" line="+24"/>
+        <location line="+7"/>
+        <source>px</source>
+        <translation type="unfinished">пк</translation>
+    </message>
+    <message>
+        <location line="-3"/>
+        <source>Width:</source>
+        <translation type="unfinished">Ширина:</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Height:</source>
+        <translation type="unfinished">Висота:</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Canvas background color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Background:</source>
+        <translation type="unfinished">Тло:</translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::Host</name>
+    <message>
+        <location filename="../dialogs/startdialog/host.cpp" line="+31"/>
+        <source>The title is shown in the application title bar and in the session selection dialog</source>
+        <translation type="unfinished">Заголовок буде показано на смужці заголовка та у вікні вибору сеансу</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Title:</source>
+        <translation type="unfinished">Заголовок:</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Optional. If left blank, no password will be needed to join this session.</source>
+        <translation type="unfinished">Необов&apos;язковий. Якщо не вказувати, для долучення до сеансу не доведеться вказувати пароль.</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Password:</source>
+        <translation type="unfinished">Пароль:</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>An optional user friendly ID for the session</source>
+        <translation type="unfinished">Необов&apos;язковий зручний для читання ідентифікатор сеансу</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>ID Alias:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Not suitable for minors (NSFM)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Marks the session as having age-restricted content.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>List at:</source>
+        <translation type="unfinished">Список:</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Announce the session at a public list</source>
+        <translation type="unfinished">Оголошувати сеанс у відкритому списку</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Host on this computer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Use Drawpile&apos;s built-in server</source>
+        <translation type="unfinished">Вбудований сервер Drawpile</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Not available in the 2.2 beta yet. This option will return later!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Host at:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Use an external dedicated server</source>
+        <translation type="unfinished">Використовувати спеціалізований зовнішній сервер</translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::Join</name>
+    <message>
+        <location filename="../dialogs/startdialog/join.cpp" line="+27"/>
+        <source>Enter a &lt;strong&gt;session URL&lt;/strong&gt;, &lt;strong&gt;host name&lt;/strong&gt;, &lt;strong&gt;IP address&lt;/strong&gt; or &lt;strong&gt;room code&lt;/strong&gt;:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Recent:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+44"/>
+        <source>Searching…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+83"/>
+        <source>Roomcode not found!</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::Links</name>
+    <message>
+        <location filename="../dialogs/startdialog/links.cpp" line="+31"/>
+        <source>Help</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Open Drawpile&apos;s help pages in your browser</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Communities</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Open Drawpile&apos;s communities page in your browser</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Discord</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Join the Drawpile Discord server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>GitHub</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Open Drawpile&apos;s GitHub page in your browser</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::UpdateNotice</name>
+    <message>
+        <location filename="../dialogs/startdialog/updatenotice.cpp" line="+61"/>
+        <source>Update</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Dismiss</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Hide this notification</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>A new version of Drawpile is available!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Update to Drawpile version %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>The download page for Drawpile %1 should have opened in your browser. If not, please visit &lt;em&gt;drawpile.net&lt;/em&gt; manually.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>The download page for Drawpile %1 could not be opened, please visit &lt;em&gt;drawpile.net&lt;/em&gt; manually.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::startdialog::Welcome</name>
+    <message>
+        <location filename="../dialogs/startdialog/welcome.cpp" line="+44"/>
+        <source>Welcome to Drawpile!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Take a look over the &lt;a href=&quot;#preferences&quot;&gt;Preferences&lt;/a&gt; to configure things to your liking. You might also want to pick a different &lt;a href=&quot;#layout&quot;&gt;Layout&lt;/a&gt; for the application.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>If you have an invite link to a drawing session, you can &lt;a href=&quot;#join&quot;&gt;Join&lt;/a&gt; it directly. Alternatively, you can &lt;a href=&quot;#browse&quot;&gt;Browse&lt;/a&gt; public sessions or just create a &lt;a href=&quot;#create&quot;&gt;New Canvas&lt;/a&gt; to draw on your own.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>If you have trouble, take a look at the help pages linked on the right. If they don&apos;t answer your question, you can join the Discord server and ask, there&apos;s usually folks around to help!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Next time, you&apos;ll see news and updates on this page.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6749,28 +7187,23 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::ColorPaletteDock</name>
     <message>
-        <location filename="../docks/colorpalette.cpp" line="+94"/>
-        <source>Write protect</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+16"/>
+        <location filename="../docks/colorpalette.cpp" line="+186"/>
         <source>New</source>
         <translation type="unfinished">Створити</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Duplicate</source>
         <translation type="unfinished">Здублювати</translation>
     </message>
     <message>
-        <location line="+1"/>
-        <location line="+165"/>
+        <location line="+2"/>
+        <location line="+112"/>
         <source>Delete</source>
         <translation type="unfinished">Вилучити</translation>
     </message>
     <message>
-        <location line="-164"/>
+        <location line="-110"/>
         <source>Rename</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6780,42 +7213,44 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">Імпортувати…</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Export...</source>
         <translation type="unfinished">Експортувати…</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <source>Add</source>
-        <translation type="unfinished">Додати</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Remove</source>
-        <translation type="unfinished">Вилучити</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Less columns</source>
+        <location line="-51"/>
+        <source>Add column</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
-        <source>More columns</source>
+        <location line="+10"/>
+        <source>Remove column</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+53"/>
+        <location line="+115"/>
+        <location line="+47"/>
+        <source>New Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-47"/>
+        <location line="+47"/>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+17"/>
         <source>Import palette</source>
         <translation type="unfinished">Імпортувати палітру</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+1"/>
         <source>Palettes (%1)</source>
         <translation type="unfinished">палітри (%1)</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+0"/>
         <source>All files (*)</source>
         <translation type="unfinished">усі файли (*)</translation>
     </message>
@@ -6825,12 +7260,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">Експортування палітри</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+1"/>
         <source>GIMP palette (%1)</source>
         <translation type="unfinished">палітра GIMP (%1)</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+6"/>
         <source>Error</source>
         <translation type="unfinished">Помилка</translation>
     </message>
@@ -6840,7 +7275,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+67"/>
+        <location line="-58"/>
         <source>Delete palette &quot;%1&quot;?</source>
         <translation type="unfinished">Вилучити палітру «%1»?</translation>
     </message>
@@ -6924,12 +7359,12 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::LayerList</name>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="+36"/>
+        <location filename="../docks/layerlistdock.cpp" line="+38"/>
         <source>Layers</source>
         <translation type="unfinished">Шари</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+37"/>
         <source>Opacity: </source>
         <translation type="unfinished"></translation>
     </message>
@@ -6939,8 +7374,8 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+281"/>
-        <location line="+16"/>
+        <location line="+307"/>
+        <location line="+39"/>
         <source>Layer</source>
         <translation type="unfinished">Шар</translation>
     </message>
@@ -6950,7 +7385,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+67"/>
+        <location line="+139"/>
         <source>Delete Layer?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6963,12 +7398,12 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::Navigator</name>
     <message>
-        <location filename="../docks/navigator.cpp" line="+301"/>
+        <location filename="../docks/navigator.cpp" line="+309"/>
         <source>Navigator</source>
         <translation type="unfinished">Навігатор</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+29"/>
         <source>Show Cursors</source>
         <translation type="unfinished">Показати курсори</translation>
     </message>
@@ -7019,7 +7454,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+171"/>
+        <location line="+179"/>
         <source> FPS</source>
         <translation type="unfinished"> кд/с</translation>
     </message>
@@ -7140,7 +7575,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+44"/>
         <source>Time-Based Stabilizer</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7180,7 +7615,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+523"/>
+        <location line="+529"/>
         <source>This session is hosted with Drawpile 2.1, MyPaint brushes are unavailable.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7193,19 +7628,19 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>tools::ColorPickerSettings</name>
     <message>
-        <location filename="../toolwidgets/colorpickersettings.cpp" line="+48"/>
+        <location filename="../toolwidgets/colorpickersettings.cpp" line="+90"/>
+        <source>Pick from screen</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>Size: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+11"/>
         <source>Pick from current layer only</source>
         <translation type="unfinished">Вибирати лише з поточного шару</translation>
-    </message>
-    <message>
-        <location line="+9"/>
-        <source>Add Color...</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7245,6 +7680,14 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+1"/>
         <source>Fit To Window</source>
         <translation type="unfinished">Вмістити у вікно</translation>
+    </message>
+</context>
+<context>
+    <name>utils::Recents</name>
+    <message>
+        <location filename="../utils/recents.cpp" line="+391"/>
+        <source>More…</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7293,20 +7736,113 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::CanvasView</name>
     <message>
-        <location filename="../scene/canvasview.cpp" line="+104"/>
+        <location filename="../scene/canvasview.cpp" line="+140"/>
         <source>Reconnect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Reset in progress</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Canvas is locked</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>User is locked</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Layer is a group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Layer is locked</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Layer is censored</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Layer is hidden</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Tool is locked</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+223"/>
+        <source>Vertical flip: ON</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Vertical flip: OFF</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Horizontal mirror: ON</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Horizontal mirror: OFF</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1482"/>
+        <source>Zoom: %1%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Rotation: %1°</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>widgets::ChatBox</name>
+    <message>
+        <location filename="../chat/chatbox.cpp" line="+47"/>
+        <source>Invite</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Session</source>
+        <translation type="unfinished">Сеанс</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Chat</source>
+        <translation type="unfinished">Спілкування</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Show chat options</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>widgets::ChatWidget</name>
     <message>
-        <location filename="../chat/chatwidget.cpp" line="+138"/>
+        <location filename="../chat/chatwidget.cpp" line="+142"/>
         <source>Public</source>
         <translation type="unfinished">Відкритий</translation>
     </message>
     <message>
-        <location line="+68"/>
+        <location line="+92"/>
         <source>Chat (recorded)...</source>
         <translation type="unfinished">Спілкування (записане)...</translation>
     </message>
@@ -7316,7 +7852,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">Спілкування…</translation>
     </message>
     <message>
-        <location line="+301"/>
+        <location line="+304"/>
         <source>%1 joined the session</source>
         <translation type="unfinished">%1 долучився(-лася) до сеансу</translation>
     </message>
@@ -7362,7 +7898,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+9"/>
-        <source>/pin: only operators are allowed to send alerts.</source>
+        <source>/pin: only operators are allowed to pin.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7376,12 +7912,17 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+10"/>
+        <source>/unpin: only operators are allowed to unpin.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>/unpin: can only unpin in a public chat.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+15"/>
         <source>/roll: invalid dice roll description.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7405,22 +7946,22 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+48"/>
+        <location line="-600"/>
         <source>Clear</source>
         <translation type="unfinished">Спорожнити</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Compact mode</source>
         <translation type="unfinished">Компактний режим</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+9"/>
         <source>Detach</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="-2"/>
         <source>Attach</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7510,7 +8051,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::NetStatus</name>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="+52"/>
+        <location filename="../widgets/netstatus.cpp" line="+54"/>
         <source>Copy address to clipboard</source>
         <translation type="unfinished">Копіювати адресу до буфера</translation>
     </message>
@@ -7540,12 +8081,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">Показати сертифікат</translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="+62"/>
         <source>Logged in!</source>
         <translation type="unfinished">Увійшли!</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+20"/>
         <source>A previously unvisited host</source>
         <translation type="unfinished">Раніше невідвідуваний вузол</translation>
     </message>
@@ -7560,12 +8101,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">Це надійний вузол</translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+40"/>
         <source>Disconnected</source>
         <translation type="unfinished">Роз&apos;єднано</translation>
     </message>
     <message>
-        <location line="+115"/>
+        <location line="+121"/>
         <source>You have been kicked by %1</source>
         <translation type="unfinished">Вас викинуто користувачем %1</translation>
     </message>
@@ -7605,7 +8146,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">Виходимо…</translation>
     </message>
     <message>
-        <location line="+36"/>
+        <location line="+37"/>
         <source>Notice</source>
         <translation type="unfinished">Зауваження</translation>
     </message>
@@ -7618,6 +8159,37 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+4"/>
         <source>Don&apos;t show this again</source>
         <translation type="unfinished">Більше не показувати</translation>
+    </message>
+</context>
+<context>
+    <name>widgets::PaletteWidget</name>
+    <message>
+        <location filename="../widgets/palettewidget.cpp" line="+41"/>
+        <source>Add</source>
+        <translation type="unfinished">Додати</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Modify</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Remove</source>
+        <translation type="unfinished">Вилучити</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Set palette color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+196"/>
+        <source>Red: %2
+Green: %3
+Blue: %4
+Hex: %5</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7644,9 +8216,27 @@ Values above 0.5 may not be noticeable.</source>
     </message>
 </context>
 <context>
+    <name>widgets::RecentScrollEntry</name>
+    <message>
+        <location filename="../widgets/recentscroll.cpp" line="+26"/>
+        <source>No recent files.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>No recent hosts.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+59"/>
+        <source>Remove</source>
+        <translation type="unfinished">Вилучити</translation>
+    </message>
+</context>
+<context>
     <name>widgets::TimelineWidget</name>
     <message>
-        <location filename="../widgets/timelinewidget.cpp" line="+491"/>
+        <location filename="../widgets/timelinewidget.cpp" line="+526"/>
         <source>Blank key frame (duplicate)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7696,7 +8286,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+653"/>
+        <location line="+654"/>
         <source>Track</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7814,9 +8404,14 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::ViewStatus</name>
     <message>
-        <location filename="../widgets/viewstatus.cpp" line="+64"/>
+        <location filename="../widgets/viewstatus.cpp" line="+72"/>
         <source>Canvas Rotation</source>
         <translation type="unfinished">Обертання полотна</translation>
+    </message>
+    <message>
+        <location line="+40"/>
+        <source>Zoom</source>
+        <translation type="unfinished">Масштаб</translation>
     </message>
 </context>
 </TS>

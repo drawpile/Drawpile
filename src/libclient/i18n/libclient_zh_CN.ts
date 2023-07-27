@@ -284,7 +284,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+593"/>
+        <location filename="../document.cpp" line="+594"/>
         <source>Unknown format.</source>
         <translation>未知格式.</translation>
     </message>
@@ -447,12 +447,12 @@
 <context>
     <name>SessionListingModel</name>
     <message>
-        <location filename="../net/sessionlistingmodel.cpp" line="+161"/>
+        <location filename="../net/sessionlistingmodel.cpp" line="+426"/>
         <source>(untitled)</source>
         <translation>(未命名)</translation>
     </message>
     <message>
-        <location line="-91"/>
+        <location line="-356"/>
         <source>%1d%2h%3m</source>
         <translation>%1d%2h%3m</translation>
     </message>
@@ -467,14 +467,21 @@
         <translation>%1m</translation>
     </message>
     <message numerus="yes">
-        <location line="+88"/>
+        <location line="+91"/>
+        <source>%1/%n users</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location line="+2"/>
         <source>%n users</source>
         <translation>
             <numerusform>%n 用户</numerusform>
         </translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+13"/>
         <source>Compatible</source>
         <translation>兼容的</translation>
     </message>
@@ -499,7 +506,7 @@
         <translation>未知版本</translation>
     </message>
     <message>
-        <location line="+62"/>
+        <location line="+65"/>
         <source>Compatibility</source>
         <translation>兼容性</translation>
     </message>
@@ -527,6 +534,21 @@
         <location line="+1"/>
         <source>Age</source>
         <translation>存在时长</translation>
+    </message>
+    <message>
+        <location line="+162"/>
+        <source>closed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>password-protected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>NSFM</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -655,7 +677,7 @@
 <context>
     <name>brushes::BrushPresetModel</name>
     <message>
-        <location filename="../brushes/brushpresetmodel.cpp" line="+638"/>
+        <location filename="../brushes/brushpresetmodel.cpp" line="+560"/>
         <source>Default</source>
         <translation>默认</translation>
     </message>
@@ -751,7 +773,7 @@
 <context>
     <name>canvas::PaintEngine</name>
     <message>
-        <location filename="../canvas/paintengine.cpp" line="+169"/>
+        <location filename="../canvas/paintengine.cpp" line="+167"/>
         <source>Layer %1</source>
         <translation>图层 %1</translation>
     </message>
@@ -863,7 +885,7 @@
 <context>
     <name>net::Client</name>
     <message>
-        <location filename="../net/client.cpp" line="+71"/>
+        <location filename="../net/client.cpp" line="+72"/>
         <source>A server error occurred!</source>
         <translation>服务器发生错误!</translation>
     </message>
@@ -876,7 +898,7 @@
 <context>
     <name>net::LoginHandler</name>
     <message>
-        <location filename="../net/login.cpp" line="+101"/>
+        <location filename="../net/login.cpp" line="+104"/>
         <location line="+258"/>
         <source>Invalid state</source>
         <translation>无效状态</translation>
@@ -886,13 +908,13 @@
         <location line="+7"/>
         <location line="+64"/>
         <location line="+199"/>
-        <location line="+134"/>
+        <location line="+142"/>
         <location line="+42"/>
         <source>Incompatible server</source>
         <translation>服务器不兼容</translation>
     </message>
     <message>
-        <location line="-432"/>
+        <location line="-440"/>
         <source>Server is for a different Drawpile version!</source>
         <translation>Server is for a different Drawpile version!</translation>
     </message>
@@ -902,12 +924,12 @@
         <translation>安全模式没有在信任的主机上启动!</translation>
     </message>
     <message>
-        <location line="+590"/>
+        <location line="+618"/>
         <source>Username already taken!</source>
         <translation>用户名已被使用!</translation>
     </message>
     <message>
-        <location line="-549"/>
+        <location line="-576"/>
         <source>This server does not allow guest logins</source>
         <translation>此服务器不支持非注册用户登入</translation>
     </message>
@@ -917,7 +939,7 @@
         <translation>&quot;%1&quot; 需要登录密码</translation>
     </message>
     <message>
-        <location line="+67"/>
+        <location line="+66"/>
         <location line="+6"/>
         <source>Auth server error: %1</source>
         <translation>认证服务器错误: %1</translation>
@@ -933,7 +955,7 @@
         <translation>不支持ext-auth的URL方案</translation>
     </message>
     <message>
-        <location line="+90"/>
+        <location line="+92"/>
         <source>New version</source>
         <translation>新版本</translation>
     </message>
@@ -943,7 +965,7 @@
         <translation>未知版本</translation>
     </message>
     <message>
-        <location line="+48"/>
+        <location line="+52"/>
         <source>Session not yet started!</source>
         <translation>Session not yet started!</translation>
     </message>
@@ -953,7 +975,7 @@
         <translation>已被控制面板屏蔽</translation>
     </message>
     <message>
-        <location line="+197"/>
+        <location line="+215"/>
         <location line="+20"/>
         <source>Invalid SSL certificate for host %1</source>
         <translation>服务器 %1 证书无效</translation>
@@ -964,7 +986,17 @@
         <translation>信任的服务器证书已更改!</translation>
     </message>
     <message>
-        <location line="+78"/>
+        <location line="+70"/>
+        <source>Incorrect password for &apos;%1&apos;!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Incorrect session password!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
         <source>Server is full!</source>
         <translation>服务器已满!</translation>
     </message>
@@ -989,12 +1021,12 @@
         <translation>客户端序列化命令失败</translation>
     </message>
     <message>
-        <location line="-52"/>
+        <location line="-56"/>
         <source>Cancelled</source>
         <translation>已取消</translation>
     </message>
     <message>
-        <location line="-437"/>
+        <location line="-461"/>
         <source>Group membership needed</source>
         <translation>需要群组成员资格</translation>
     </message>
@@ -1004,22 +1036,17 @@
         <translation>意外的ext-auth响应: %1</translation>
     </message>
     <message>
-        <location line="+180"/>
+        <location line="+186"/>
         <source>Session for a different Drawpile version (%1) in progress!</source>
         <translation>不同Drawpile版本（%1）的房间正在进行中!</translation>
     </message>
     <message>
-        <location line="+263"/>
+        <location line="+281"/>
         <source>Session not found!</source>
         <translation>未找到房间!</translation>
     </message>
     <message>
-        <location line="+2"/>
-        <source>Incorrect password!</source>
-        <translation>密码错误!</translation>
-    </message>
-    <message>
-        <location line="+3"/>
+        <location line="+9"/>
         <source>Invalid username!</source>
         <translation>用户名无效!</translation>
     </message>
@@ -1098,6 +1125,60 @@
         <location filename="../net/tcpserver.cpp" line="+111"/>
         <source>Received invalid data</source>
         <translation>接受信息无效</translation>
+    </message>
+</context>
+<context>
+    <name>utils::News</name>
+    <message>
+        <location filename="../utils/news.cpp" line="+283"/>
+        <location line="+41"/>
+        <source>Checking for updates…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-23"/>
+        <source>Automatic update checking is disabled, &lt;a href=&quot;#autoupdate&quot;&gt;click here to enable it&lt;/a&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>If you don&apos;t want automatic checks, &lt;a href=&quot;#checkupdates&quot;&gt;click here to check manually&lt;/a&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+60"/>
+        <source>Network error: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Couldn&apos;t make sense of the fetched data.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Couldn&apos;t make sense of fetched updates.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Couldn&apos;t save updates.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Couldn&apos;t make sense of fetched news.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Couldn&apos;t save news.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>No news available.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>
