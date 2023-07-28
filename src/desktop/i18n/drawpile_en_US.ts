@@ -5768,8 +5768,8 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+2"/>
         <source>Last check: %n day(s) ago.</source>
         <translation>
-            <numerusform>Last check: %n day ago</numerusform>
-            <numerusform>Last check: %n days ago</numerusform>
+            <numerusform>Last check: %n day ago.</numerusform>
+            <numerusform>Last check: %n days ago.</numerusform>
         </translation>
     </message>
     <message>
