@@ -469,9 +469,9 @@
     <message numerus="yes">
         <location line="+91"/>
         <source>%1/%n users</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%1/%n Nutzer</numerusform>
+            <numerusform>%1/%n Nutzer</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -540,17 +540,17 @@
     <message>
         <location line="+162"/>
         <source>closed</source>
-        <translation type="unfinished"></translation>
+        <translation>geschlossen</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>password-protected</source>
-        <translation type="unfinished"></translation>
+        <translation>passwortgeschützt</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>NSFM</source>
-        <translation type="unfinished"></translation>
+        <translation>nicht-jugendfrei (NSFM)</translation>
     </message>
 </context>
 <context>
@@ -563,7 +563,7 @@
     <message>
         <location line="+5"/>
         <source>Recolor</source>
-        <translation>Einfärben</translation>
+        <translation>Umfärben</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -990,12 +990,12 @@
     <message>
         <location line="+70"/>
         <source>Incorrect password for &apos;%1&apos;!</source>
-        <translation type="unfinished"></translation>
+        <translation>Falsches Passwort für &apos;%1&apos;!</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Incorrect session password!</source>
-        <translation type="unfinished"></translation>
+        <translation>Falsches Sitzungspasswort!</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -1135,52 +1135,52 @@
         <location filename="../utils/news.cpp" line="+283"/>
         <location line="+41"/>
         <source>Checking for updates…</source>
-        <translation type="unfinished"></translation>
+        <translation>Prüfe auf Updates…</translation>
     </message>
     <message>
         <location line="-23"/>
         <source>Automatic update checking is disabled, &lt;a href=&quot;#autoupdate&quot;&gt;click here to enable it&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatische Prüfung auf Updates ist deaktiviert, &lt;a href=&quot;#autoupdate&quot;&gt;klicken Sie hier um es zu aktivieren&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>If you don&apos;t want automatic checks, &lt;a href=&quot;#checkupdates&quot;&gt;click here to check manually&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wenn Sie keine automatische Prüfung wünschen, &lt;a href=&quot;#checkupdates&quot;&gt;klicken Sie hier um manuall zu prüfen&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+60"/>
         <source>Network error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Netzwerkfehler: %1</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Couldn&apos;t make sense of the fetched data.</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte keinen Sinn aus den erhaltenen Daten erarbeiten.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Couldn&apos;t make sense of fetched updates.</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte keinen Sinn aus den erhaltenen Updates erarbeiten.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Couldn&apos;t save updates.</source>
-        <translation type="unfinished"></translation>
+        <translation>Updates konnten nicht gespeichert werden.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Couldn&apos;t make sense of fetched news.</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte keinen Sinn aus den erhaltenen Neuigkeiten erarbeiten.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Couldn&apos;t save news.</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte Neuigkeiten nicht speichern.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>No news available.</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine Neuigkeiten verfügbar.</translation>
     </message>
 </context>
 </TS>
