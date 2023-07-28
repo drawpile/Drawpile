@@ -136,7 +136,7 @@
     <message>
         <location line="+27"/>
         <source>Size: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tamaño: </translation>
     </message>
     <message>
         <location line="+16"/>
@@ -146,12 +146,12 @@
     <message>
         <location line="+13"/>
         <source>Opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Opacidad: </translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Hardness: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dureza: </translation>
     </message>
     <message>
         <location line="+58"/>
@@ -176,7 +176,7 @@
     <message>
         <location line="+22"/>
         <source>Stabilizer: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Estabilizador: </translation>
     </message>
     <message>
         <location line="+13"/>
