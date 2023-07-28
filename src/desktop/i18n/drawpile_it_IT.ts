@@ -1066,6 +1066,7 @@ Sottogamma: [%3, %4]</translation>
         <translation>
             <numerusform>Hai %n immagine con modifiche non salvate. Vuoi rivedere queste modifiche prima di uscire?</numerusform>
             <numerusform>Hai %n immagini con modifiche non salvate. Vuoi rivedere queste modifiche prima di uscire?</numerusform>
+            <numerusform>Hai %n immagini con modifiche non salvate. Vuoi rivedere queste modifiche prima di uscire?</numerusform>
         </translation>
     </message>
     <message>
@@ -6012,6 +6013,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <translation>
             <numerusform>Rimuovere davvero la scorciatoia di %n tela?</numerusform>
             <numerusform>Rimuovere davvero le scorciatoie di %n tela?</numerusform>
+            <numerusform>Rimuovere davvero le scorciatoie di %n tela?</numerusform>
         </translation>
     </message>
     <message>
@@ -6371,6 +6373,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <translation>
             <numerusform>Cancellare davvero %n avatar?</numerusform>
             <numerusform>Cancellare davvero %n avatar?</numerusform>
+            <numerusform>Cancellare davvero %n avatar?</numerusform>
         </translation>
     </message>
 </context>
@@ -6595,6 +6598,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <translation>
             <numerusform>Rimuovere davvero %n host conosciuto?</numerusform>
             <numerusform>Rimuovere davvero %n host conosciuti?</numerusform>
+            <numerusform>Rimuovere davvero %n host conosciuti?</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -6602,6 +6606,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <source>Really remove %n list server(s)?</source>
         <translation>
             <numerusform>Rimuovere davvero il server di elenco %n?</numerusform>
+            <numerusform>Rimuovere davvero i server di elenco %n?</numerusform>
             <numerusform>Rimuovere davvero i server di elenco %n?</numerusform>
         </translation>
     </message>
@@ -7220,6 +7225,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <translation>
             <numerusform>%n pennello importato.</numerusform>
             <numerusform>%n pennelli importati.</numerusform>
+            <numerusform>%n pennelli importati.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -7227,6 +7233,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <source>%n tag(s) imported: %1</source>
         <translation>
             <numerusform>%n tag importato: %1</numerusform>
+            <numerusform>%n tag importati: %1</numerusform>
             <numerusform>%n tag importati: %1</numerusform>
         </translation>
     </message>
@@ -7240,6 +7247,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <source>%n error(s) encountered.</source>
         <translation>
             <numerusform>%n errore riscontrato.</numerusform>
+            <numerusform>%n errori riscontrati.</numerusform>
             <numerusform>%n errori riscontrati.</numerusform>
         </translation>
     </message>
@@ -7854,7 +7862,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+2"/>
         <source>Layer is locked</source>
-        <translation type="unfinished">Il Livello è bloccato</translation>
+        <translation>Il Livello è bloccato</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7869,7 +7877,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+4"/>
         <source>Tool is locked</source>
-        <translation type="unfinished">Lo Strumento è bloccato</translation>
+        <translation>Lo Strumento è bloccato</translation>
     </message>
     <message>
         <location line="+223"/>
@@ -7912,12 +7920,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+5"/>
         <source>Session</source>
-        <translation type="unfinished">Sessione</translation>
+        <translation>Sessione</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Chat</source>
-        <translation type="unfinished">Chat</translation>
+        <translation>Chat</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8265,7 +8273,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../widgets/palettewidget.cpp" line="+41"/>
         <source>Add</source>
-        <translation type="unfinished">Aggiungi</translation>
+        <translation>Aggiungi</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8275,7 +8283,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+1"/>
         <source>Remove</source>
-        <translation type="unfinished">Rimuovi</translation>
+        <translation>Rimuovi</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -8332,7 +8340,7 @@ Esadecimale: %5</translation>
     <message>
         <location line="+59"/>
         <source>Remove</source>
-        <translation type="unfinished">Rimuovi</translation>
+        <translation>Rimuovi</translation>
     </message>
 </context>
 <context>
@@ -8513,7 +8521,7 @@ Esadecimale: %5</translation>
     <message>
         <location line="+40"/>
         <source>Zoom</source>
-        <translation type="unfinished">Zoom</translation>
+        <translation>Zoom</translation>
     </message>
 </context>
 </TS>
