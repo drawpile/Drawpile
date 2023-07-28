@@ -49,7 +49,7 @@
     <message>
         <location line="+8"/>
         <source>Offender:</source>
-        <translation type="unfinished"></translation>
+        <translation>目标:</translation>
     </message>
 </context>
 <context>
@@ -57,17 +57,17 @@
     <message>
         <location filename="../ui/addserverdialog.ui" line="+14"/>
         <source>Add Server</source>
-        <translation type="unfinished">Add Server</translation>
+        <translation>Add Server</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Enter a list server URL:</source>
-        <translation type="unfinished">输入一个列表服务器的URL:</translation>
+        <translation>输入一个列表服务器的URL:</translation>
     </message>
     <message>
         <location line="+43"/>
         <source>You can find some list servers at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>你可以在 &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt; 上找到一些列表服务器</translation>
     </message>
 </context>
 <context>
@@ -773,57 +773,57 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../ui/invitedialog.ui" line="+14"/>
         <source>Invite</source>
-        <translation type="unfinished"></translation>
+        <translation>邀请</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Copy Invite Link</source>
-        <translation type="unfinished"></translation>
+        <translation>复制邀请链接</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Web link</source>
-        <translation type="unfinished"></translation>
+        <translation>网页链接</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Direct link</source>
-        <translation type="unfinished"></translation>
+        <translation>直接链接</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Include password</source>
-        <translation type="unfinished"></translation>
+        <translation>包含密码</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>&lt;strong&gt;Note:&lt;/strong&gt; changing the session password will cause the link to stop working! If someone else changes the password, you have to reconnect for this dialog to update.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;注意:&lt;/strong&gt; 更改房间密码会导致链接无法使用! 如果其他人更改了密码, 你必须重新连接才能更新此窗口.</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>You&apos;re hosting a session locally. If others can&apos;t join your session, take a look at &lt;a href=&quot;https://drawpile.net/help/hosting/&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>你使用本机创建了房间. 如果其他人无法加入你的房间, 请查看 &lt;a href=&quot;https://drawpile.net/help/hosting/&quot;&gt;the help page on hosting&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+45"/>
         <source>You&apos;re hosting a session locally, so Drawpile has to find your externally visible IP address to give you an invite link. For more information, check out &lt;a href=&quot;https://drawpile.net/help/hosting/&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>你使用本机创建了房间, 因此Drawpile必须找到你的外部可见 IP 地址才能为你提供邀请链接. 更多信息, 请查看 &lt;a href=&quot;https://drawpile.net/help/hosting/&quot;&gt;the help page on hosting&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Get externally visible IP address</source>
-        <translation type="unfinished">获取外部可见的IP地址</translation>
+        <translation>获取外部可见的IP地址</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>Show this dialog when hosting a session</source>
-        <translation type="unfinished"></translation>
+        <translation>在创建房间时显示此窗口</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>You can find this dialog again under &lt;i&gt;Session ▸ Invite…&lt;/i&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>你可以在菜单栏 房间&gt;邀请… 中再次找到这个窗口</translation>
     </message>
 </context>
 <context>
@@ -1005,7 +1005,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+52"/>
         <source>This session is password-protected.</source>
-        <translation type="unfinished"></translation>
+        <translation>此房间有密码保护.</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -1015,12 +1015,12 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+173"/>
         <source>&lt;p&gt;This session has indicated that its contents are &lt;em&gt;not suitable for minors&lt;/em&gt; (NSFM).&lt;/p&gt;&lt;p&gt;&lt;strong&gt;You must be over the age of 18 and be allowed to consume adult content to proceed.&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Are you sure you want to join this session?&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;此房间已表明其内容不适于未成年人.&lt;/p&gt;&lt;p&gt;&lt;strong&gt;你必须年满18周岁以便继续观看成人内容.&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;你确定要加入此房间吗?&lt;/p&gt;</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Show this warning again next time</source>
-        <translation type="unfinished"></translation>
+        <translation>下次再次显示此警告</translation>
     </message>
     <message>
         <location line="-263"/>
@@ -1030,7 +1030,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+80"/>
         <source>Enter the &lt;b&gt;session password&lt;/b&gt;, &lt;i&gt;not&lt;/i&gt; your account password.</source>
-        <translation type="unfinished"></translation>
+        <translation>请输入房间密码,而不是你的账号密码.</translation>
     </message>
     <message>
         <location line="+86"/>
@@ -1328,7 +1328,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+76"/>
         <source>Session blocked by parental controls</source>
-        <translation>会话受家长控制屏蔽</translation>
+        <translation>房间已被控制面板屏蔽</translation>
     </message>
     <message>
         <location line="+45"/>
@@ -1696,13 +1696,13 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+171"/>
         <location filename="../widgets/macmenu.cpp" line="+25"/>
         <source>&amp;Host...</source>
-        <translation>&amp;服务器...</translation>
+        <translation>&amp;创建...</translation>
     </message>
     <message>
         <location line="+2"/>
         <location filename="../widgets/macmenu.cpp" line="+1"/>
         <source>&amp;Join...</source>
-        <translation>&amp;加入...</translation>
+        <translation>&amp;地址加入...</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -1875,7 +1875,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>&amp;Normal Size</source>
-        <translation>&amp;一般大小</translation>
+        <translation>&amp;正常大小</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2126,47 +2126,47 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-1688"/>
         <source>No canvas to host! Create one or open a file.</source>
-        <translation type="unfinished"></translation>
+        <translation>没有画布可供创建房间! 新建一个或者打开一个文件.</translation>
     </message>
     <message>
         <location line="+1243"/>
         <source>Start...</source>
-        <translation type="unfinished"></translation>
+        <translation>启动页面...</translation>
     </message>
     <message>
         <location line="+258"/>
         <source>Move Canvas Left</source>
-        <translation type="unfinished"></translation>
+        <translation>左移画布</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Move Canvas Right</source>
-        <translation type="unfinished"></translation>
+        <translation>右移画布</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Move Canvas Up</source>
-        <translation type="unfinished"></translation>
+        <translation>上移画布</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Move Canvas Down</source>
-        <translation type="unfinished"></translation>
+        <translation>下移画布</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Fit Page</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;适应窗口</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Fit Page &amp;Width</source>
-        <translation type="unfinished"></translation>
+        <translation>适应窗口 &amp;宽度</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Fit Page &amp;Height</source>
-        <translation type="unfinished"></translation>
+        <translation>适应窗口 &amp;高度</translation>
     </message>
     <message>
         <location line="+195"/>
@@ -2256,42 +2256,42 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>Create Layer on Current Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>在当前关键帧上新建图层</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Create Layer on Next Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>在下一个关键帧上新建图层</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Create Layer on Previous Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>在上一个关键帧上新建图层</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Create Group on Current Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>在当前关键帧上新建图层组</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Create Group on Next Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>在下一个关键帧上新建图层组</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Create Group on Previous Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>在上一个关键帧上新建图层组</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Duplicate to Next Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>复制到下一个关键帧</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Duplicate to Previous Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>复制到上一个关键帧</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -2301,42 +2301,42 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+14"/>
         <source>Create Layer on Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>在关键帧上新建图层</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Create Group on Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>在关键帧上新建图层组</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Duplicate Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>复制关键帧</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Share your canvas with others</source>
-        <translation type="unfinished"></translation>
+        <translation>创建房间</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Invite...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;邀请...</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Invite another user to this session</source>
-        <translation type="unfinished"></translation>
+        <translation>邀请另一个用户加入房间</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Browse...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;房间大厅...</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Browse session listings</source>
-        <translation type="unfinished"></translation>
+        <translation>浏览列表上的房间</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2346,12 +2346,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+0"/>
         <source>Change session settings, permissions, announcements and bans</source>
-        <translation type="unfinished"></translation>
+        <translation>更改房间的设置,权限,公告和限制</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Undo Limit…</source>
-        <translation type="unfinished"></translation>
+        <translation>撤销限制…</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2361,7 +2361,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+4"/>
         <source>Prevent changes to the canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>防止对画布进行更改</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -2486,7 +2486,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+29"/>
         <source>Statistics…</source>
-        <translation type="unfinished"></translation>
+        <translation>状态…</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -2527,7 +2527,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+22"/>
         <source>Focus canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>对焦画布</translation>
     </message>
     <message>
         <location line="+45"/>
@@ -2624,22 +2624,22 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+17"/>
         <source>Tiles:</source>
-        <translation type="unfinished"></translation>
+        <translation>框架:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Tile Memory:</source>
-        <translation type="unfinished"></translation>
+        <translation>框架内存:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Contexts:</source>
-        <translation type="unfinished"></translation>
+        <translation>上下文:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Context Memory:</source>
-        <translation type="unfinished"></translation>
+        <translation>上下文内存:</translation>
     </message>
     <message>
         <location line="-86"/>
@@ -3102,7 +3102,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+8"/>
         <source>Operators</source>
-        <translation>管理员</translation>
+        <translation>房间管理员</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -3512,27 +3512,27 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../dialogs/addserverdialog.cpp" line="+151"/>
         <source>&lt;strong&gt;Error:&lt;/strong&gt; %1</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;错误:&lt;/strong&gt; %1</translation>
     </message>
     <message>
         <location line="+106"/>
         <source>Retrieving %1...</source>
-        <translation type="unfinished"></translation>
+        <translation>读取 %1...</translation>
     </message>
     <message>
         <location line="+74"/>
         <source>Check</source>
-        <translation type="unfinished"></translation>
+        <translation>检查</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Add</source>
-        <translation>Add</translation>
+        <translation>添加</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Checking %1...</source>
-        <translation type="unfinished"></translation>
+        <translation>检查 %1...</translation>
     </message>
 </context>
 <context>
@@ -4521,7 +4521,7 @@ This setting is responsible to stop painting when there is zero pressure. This i
 0.0 the opaque value above is for the individual dabs
 1.0 the opaque value above is for the final brush stroke, assuming each pixel gets (dabs_per_radius*2) brushdabs on average during a stroke</source>
         <comment>mypaintsetting</comment>
-        <translation>纠正由多个轻触相互混合引起的非线性。当压力被映射到不透明度_倍增时, 这个修正应该能让你得到一个线性(&quot;自然&quot;)的压力响应, 因为它通常是这样做的。0.9对标准笔画来说是很好的, 如果你的笔刷散布很多, 就把它设置得小一点, 如果你使用每秒印迹数, 就把它设置得高一点。
+        <translation>纠正由多个点相互混合引起的非线性. 当压力被映射到不透明度_倍增时, 这个修正应该能让你得到一个线性(&quot;自然&quot;)的压力响应, 因为它通常是这样做的. 0.9对标准笔画来说是很好的, 如果你的笔刷散布很多, 就把它设置得小一点, 如果你使用每秒印迹数, 就把它设置得高一点.
 0.0 以上的不透明度值是针对单个的点
 1.0 以上的不透明度值是针对最后的笔画, 假设每个像素在一个笔画中平均得到(每半径落下的笔触仿真点数*2)个笔刷点</translation>
     </message>
@@ -5340,7 +5340,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/invitedialog.cpp" line="+74"/>
         <source>Invite link copied to clipboard.</source>
-        <translation type="unfinished"></translation>
+        <translation>邀请链接已复制到剪贴板.</translation>
     </message>
 </context>
 <context>
@@ -5605,7 +5605,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/sessionsettings.cpp" line="+277"/>
         <source>Operators</source>
-        <translation>管理员</translation>
+        <translation>房间管理员</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5665,7 +5665,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+18"/>
         <source>Set a password for gaining operator status.</source>
-        <translation>设置获取管理员权限的密码.</translation>
+        <translation>设置获取房间管理员权限的密码.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -5721,7 +5721,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Notifications</source>
-        <translation type="unfinished"></translation>
+        <translation>通知</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5749,149 +5749,149 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog.cpp" line="+69"/>
         <source>Start</source>
-        <translation type="unfinished"></translation>
+        <translation>启动页面</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Welcome</source>
-        <translation type="unfinished"></translation>
+        <translation>欢迎</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>News and updates</source>
-        <translation type="unfinished"></translation>
+        <translation>新闻和更新</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Join Session</source>
-        <translation type="unfinished"></translation>
+        <translation>地址加入</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Connect to a drawing session directly</source>
-        <translation type="unfinished"></translation>
+        <translation>直接通过地址加入房间</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Browse Sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>房间大厅</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Browse publicly listed drawing sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>查看公开在列表上的房间</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Host Session</source>
-        <translation type="unfinished">创建房间</translation>
+        <translation>创建房间</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Share your canvas with others</source>
-        <translation type="unfinished"></translation>
+        <translation>创建房间</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>New Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>新建画布</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Create a new, empty canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>新建一个新的空白画布</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Open File</source>
-        <translation type="unfinished"></translation>
+        <translation>打开文件</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Open an image file</source>
-        <translation type="unfinished"></translation>
+        <translation>打开一个图像文件</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Recent Files</source>
-        <translation type="unfinished"></translation>
+        <translation>最近文件</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Reopen a recently used file</source>
-        <translation type="unfinished"></translation>
+        <translation>重新打开最近使用过的文件</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layouts</source>
-        <translation type="unfinished">界面</translation>
+        <translation>界面</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Choose application layout</source>
-        <translation type="unfinished"></translation>
+        <translation>选择软件界面</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Preferences</source>
-        <translation type="unfinished">首选项</translation>
+        <translation>首选项</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Change application settings</source>
-        <translation type="unfinished"></translation>
+        <translation>更改软件设置</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Record</source>
-        <translation type="unfinished">录制</translation>
+        <translation>录制</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Add Server</source>
-        <translation type="unfinished">Add Server</translation>
+        <translation>Add Server</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Check for Updates</source>
-        <translation type="unfinished"></translation>
+        <translation>检查更新</translation>
     </message>
     <message>
         <location line="+249"/>
         <source>Checking…</source>
-        <translation type="unfinished"></translation>
+        <translation>检查…</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Last check: today.</source>
-        <translation type="unfinished"></translation>
+        <translation>最后一次检查: 今天.</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
         <source>Last check: %n day(s) ago.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>最后一次检查: %n 天之前.</numerusform>
         </translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Last check: never.</source>
-        <translation type="unfinished"></translation>
+        <translation>最后一次检查: 从未.</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Join</source>
-        <translation type="unfinished">加入</translation>
+        <translation>加入</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Host</source>
-        <translation type="unfinished">创建</translation>
+        <translation>创建</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Create</source>
-        <translation type="unfinished">新建</translation>
+        <translation>新建</translation>
     </message>
 </context>
 <context>
@@ -6032,7 +6032,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/general.cpp" line="+47"/>
         <source>When enabled, save every %1 minutes</source>
-        <translation>间隔: %1 分钟</translation>
+        <translation>保存间隔: %1 分钟</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6042,7 +6042,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Autosave can be enabled for the current file under &lt;i&gt;File ▸ Autosave&lt;/i&gt;.</source>
-        <translation>自动保存可以从菜单 &lt;i&gt;文件&gt;自动保存&lt;/i&gt; 中启用.</translation>
+        <translation>画布快照可以从菜单 房间&gt;重置… 中恢复.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -6064,12 +6064,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+15"/>
         <source>%1 (%2) / %3 (%4)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2) / %3 (%4)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>%1 / %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 / %2</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -6114,7 +6114,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Snapshots can be restored from the &lt;i&gt;Session ▸ Reset…&lt;/i&gt; menu.</source>
-        <translation>快照可以从菜单 &lt;i&gt;房间&gt;重置…&lt;/i&gt; 中恢复。</translation>
+        <translation>自动保存可以从菜单 文件&gt;自动保存 中启用.</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -6124,12 +6124,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Light</source>
-        <translation>浅色</translation>
+        <translation>Light</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Dark</source>
-        <translation>深色</translation>
+        <translation>Dark</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6164,7 +6164,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Use %1 undo levels by default</source>
-        <translation>默认撤销限制: %1</translation>
+        <translation>默认的撤销限制: %1</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6242,7 +6242,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Driver:</source>
-        <translation type="unfinished"></translation>
+        <translation>驱动:</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -6285,12 +6285,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/network.cpp" line="+34"/>
         <source>Automatically check for updates</source>
-        <translation type="unfinished"></translation>
+        <translation>自动检查更新</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Updates:</source>
-        <translation type="unfinished"></translation>
+        <translation>软件更新:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6320,7 +6320,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>If all operators in a session set connection quality to Poor, auto-reset will not work and the server will stop processing updates until the session is manually reset.</source>
-        <translation>如果房间中的所有operator设置连接质量为差,自动重置将不起作用,服务器将停止处理更新,直到房间被手动重置.</translation>
+        <translation>如果房间中的所有管理员设置连接质量为差,自动重置将不起作用,服务器将停止处理更新,直到房间被手动重置.</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -6335,12 +6335,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Receive delay:</source>
-        <translation type="unfinished"></translation>
+        <translation>接收延迟:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>The higher the value, the smoother strokes from other users come in.</source>
-        <translation type="unfinished"></translation>
+        <translation>数值越大,其他用户输入的笔画就越流畅.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -6375,52 +6375,52 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/notifications.cpp" line="+30"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Sound volume:</source>
-        <translation type="unfinished">音量:</translation>
+        <translation>音量:</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Message received</source>
-        <translation type="unfinished">聊天信息</translation>
+        <translation>聊天信息</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Recording marker</source>
-        <translation type="unfinished">录制标记</translation>
+        <translation>录制标记</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>User joined</source>
-        <translation type="unfinished">用户加入</translation>
+        <translation>用户加入</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>User parted</source>
-        <translation type="unfinished">用户离开</translation>
+        <translation>用户离开</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Canvas locked</source>
-        <translation type="unfinished">画布锁定</translation>
+        <translation>画布锁定</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Canvas unlocked</source>
-        <translation type="unfinished">画布解锁</translation>
+        <translation>画布解锁</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Notifications:</source>
-        <translation type="unfinished">通知:</translation>
+        <translation>通知:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Preview sound</source>
-        <translation type="unfinished">预览声音</translation>
+        <translation>预览声音</translation>
     </message>
 </context>
 <context>
@@ -6428,7 +6428,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/parentalcontrols.cpp" line="+49"/>
         <source>Consider sessions whose titles contain these keywords NSFM.</source>
-        <translation>将标题包含这些标签的会话视为不适合未成年(NSFM)会话。</translation>
+        <translation>将标题包含这些标签的房间视为不适于未成年人的.</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6448,7 +6448,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Remove NSFM sessions from listings</source>
-        <translation>在列表中隐藏</translation>
+        <translation>列表中隐藏</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6483,7 +6483,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Warn when joining NSFM sessions</source>
-        <translation type="unfinished"></translation>
+        <translation>启用房间警告弹窗</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -6509,7 +6509,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+19"/>
         <source>These settings configure the handling of sessions that are marked not suitable for minors (NSFM) and of layers that have been censored.</source>
-        <translation>这些设置设定了对标记为不适合未成年人 (NSFM) 的会话以及已被审查的图层的处理方式。</translation>
+        <translation>这些是属于限制级房间和图层审查功能的相关设置.</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -6663,7 +6663,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Double-tap Alt key to focus canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>双击 Alt 键对画布进行对焦</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -6776,104 +6776,104 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/browse.cpp" line="+65"/>
         <source>You haven&apos;t added any servers yet. You can find some at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>你还未添加任何列表服务器. 你可以在 &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt; 上找到一些.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>To add the public Drawpile server, &lt;a href=&quot;#&quot;&gt;click here&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>要添加官方列表服务器, &lt;a href=&quot;#&quot;&gt;请点击这里&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>筛选</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Closed</source>
-        <translation type="unfinished">关闭房</translation>
+        <translation>关闭房</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Show sessions that don&apos;t let new users join</source>
-        <translation type="unfinished"></translation>
+        <translation>显示关闭房</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Password</source>
-        <translation type="unfinished">密码</translation>
+        <translation>密码房</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show sessions that require a password to join</source>
-        <translation type="unfinished"></translation>
+        <translation>显示密码房</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>NSFM</source>
-        <translation type="unfinished">18禁房</translation>
+        <translation>18禁房</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Show sessions not suitable for minors (NSFM)</source>
-        <translation type="unfinished">显示18禁房</translation>
+        <translation>显示18禁房</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Duplicates</source>
-        <translation type="unfinished"></translation>
+        <translation>重名房</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show sessions that are listed on multiple servers</source>
-        <translation type="unfinished"></translation>
+        <translation>显示重名房</translation>
     </message>
     <message>
         <location line="+17"/>
         <location line="+4"/>
         <source>Nearby</source>
-        <translation type="unfinished">附近</translation>
+        <translation>附近</translation>
     </message>
     <message>
         <location line="-4"/>
         <location line="+140"/>
         <source>Loading...</source>
-        <translation type="unfinished">加载中...</translation>
+        <translation>加载中...</translation>
     </message>
     <message>
         <location line="-82"/>
         <source>Join</source>
-        <translation type="unfinished">加入</translation>
+        <translation>加入</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Copy session URL</source>
-        <translation type="unfinished">复制房间地址</translation>
+        <translation>复制房间地址</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy title</source>
-        <translation type="unfinished">复制房间名</translation>
+        <translation>复制房间名</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Copy server</source>
-        <translation type="unfinished">复制服务器</translation>
+        <translation>复制服务器</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy owner</source>
-        <translation type="unfinished">复制房主名</translation>
+        <translation>复制房主名</translation>
     </message>
     <message>
         <location line="+79"/>
         <source>Nothing here yet!</source>
-        <translation type="unfinished"></translation>
+        <translation>Nothing here yet!</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Read the message at the top on how to add a server.</source>
-        <translation type="unfinished"></translation>
+        <translation>请阅读上面关于如何添加列表服务器的信息.</translation>
     </message>
 </context>
 <context>
@@ -6882,27 +6882,27 @@ Values above 0.5 may not be noticeable.</source>
         <location filename="../dialogs/startdialog/create.cpp" line="+24"/>
         <location line="+7"/>
         <source>px</source>
-        <translation type="unfinished">px</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="-3"/>
         <source>Width:</source>
-        <translation type="unfinished">宽度:</translation>
+        <translation>宽度:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Height:</source>
-        <translation type="unfinished">高度:</translation>
+        <translation>高度:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Canvas background color</source>
-        <translation type="unfinished"></translation>
+        <translation>画布背景颜色</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Background:</source>
-        <translation type="unfinished">背景:</translation>
+        <translation>背景:</translation>
     </message>
 </context>
 <context>
@@ -6910,77 +6910,77 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host.cpp" line="+31"/>
         <source>The title is shown in the application title bar and in the session selection dialog</source>
-        <translation type="unfinished">房名会显示在程序的标题栏上和房间列表界面中</translation>
+        <translation>房名会显示在程序的标题栏上和房间列表界面中</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Title:</source>
-        <translation type="unfinished"></translation>
+        <translation>房名:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Optional. If left blank, no password will be needed to join this session.</source>
-        <translation type="unfinished">可选的。如果留空，则无需密码即可加入此房间。</translation>
+        <translation>可选的.如果留空,则无需密码即可加入此房间.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Password:</source>
-        <translation type="unfinished"></translation>
+        <translation>密码:</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>An optional user friendly ID for the session</source>
-        <translation type="unfinished">An optional user friendly ID for the session</translation>
+        <translation>可选的用户友好型房间 ID</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>ID Alias:</source>
-        <translation type="unfinished"></translation>
+        <translation>后缀:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation type="unfinished">未成年人勿入</translation>
+        <translation>未成年人勿入</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Marks the session as having age-restricted content.</source>
-        <translation type="unfinished">将房间标记为有限制级内容的.</translation>
+        <translation>将房间标记为有限制级内容的.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>List at:</source>
-        <translation type="unfinished">List at:</translation>
+        <translation>公开在:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Announce the session at a public list</source>
-        <translation type="unfinished">列于公开列表</translation>
+        <translation>公开在列表上</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Host on this computer</source>
-        <translation type="unfinished"></translation>
+        <translation>本机</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Use Drawpile&apos;s built-in server</source>
-        <translation type="unfinished">使用 Drawpile 的内置服务器</translation>
+        <translation>使用 Drawpile 的内置服务器</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Not available in the 2.2 beta yet. This option will return later!</source>
-        <translation type="unfinished"></translation>
+        <translation>此功能在2.2测试版上暂不可用. 将在稍后版本中恢复!</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Host at:</source>
-        <translation type="unfinished"></translation>
+        <translation>远程服务器:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Use an external dedicated server</source>
-        <translation type="unfinished">使用外部独立服务器</translation>
+        <translation>使用外部独立服务器</translation>
     </message>
 </context>
 <context>
@@ -6988,22 +6988,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/join.cpp" line="+27"/>
         <source>Enter a &lt;strong&gt;session URL&lt;/strong&gt;, &lt;strong&gt;host name&lt;/strong&gt;, &lt;strong&gt;IP address&lt;/strong&gt; or &lt;strong&gt;room code&lt;/strong&gt;:</source>
-        <translation type="unfinished"></translation>
+        <translation>可通过输入房间地址,服务器地址,ip地址或者房间代码来加入房间:</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Recent:</source>
-        <translation type="unfinished"></translation>
+        <translation>最近加入过的服务器:</translation>
     </message>
     <message>
         <location line="+44"/>
         <source>Searching…</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索…</translation>
     </message>
     <message>
         <location line="+83"/>
         <source>Roomcode not found!</source>
-        <translation type="unfinished"></translation>
+        <translation>未找到房间代码!</translation>
     </message>
 </context>
 <context>
@@ -7011,42 +7011,42 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/links.cpp" line="+31"/>
         <source>Help</source>
-        <translation type="unfinished"></translation>
+        <translation>Help</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Open Drawpile&apos;s help pages in your browser</source>
-        <translation type="unfinished"></translation>
+        <translation>在浏览器中打开 Drawpile 的帮助页面</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Communities</source>
-        <translation type="unfinished"></translation>
+        <translation>Communities</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Open Drawpile&apos;s communities page in your browser</source>
-        <translation type="unfinished"></translation>
+        <translation>在浏览器中打开 Drawpile 的社区页面</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Discord</source>
-        <translation type="unfinished"></translation>
+        <translation>Discord</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Join the Drawpile Discord server</source>
-        <translation type="unfinished"></translation>
+        <translation>加入 Drawpile 的 Discord 服务器</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>GitHub</source>
-        <translation type="unfinished"></translation>
+        <translation>GitHub</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Open Drawpile&apos;s GitHub page in your browser</source>
-        <translation type="unfinished"></translation>
+        <translation>在浏览器中打开 Drawpile 的 GitHub 页面</translation>
     </message>
 </context>
 <context>
@@ -7054,37 +7054,37 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/updatenotice.cpp" line="+61"/>
         <source>Update</source>
-        <translation type="unfinished"></translation>
+        <translation>更新</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Dismiss</source>
-        <translation type="unfinished"></translation>
+        <translation>放弃</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Hide this notification</source>
-        <translation type="unfinished"></translation>
+        <translation>隐藏此通知</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>A new version of Drawpile is available!</source>
-        <translation type="unfinished">新版本的Drawpile已经发布!</translation>
+        <translation>新版本的Drawpile已经发布!</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Update to Drawpile version %1</source>
-        <translation type="unfinished"></translation>
+        <translation>更新到 Drawpile 版本 %1</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>The download page for Drawpile %1 should have opened in your browser. If not, please visit &lt;em&gt;drawpile.net&lt;/em&gt; manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile %1 的下载页面应该已经在你的浏览器中打开了. 如果没有, 请手动访问 &lt;em&gt;drawpile.net&lt;/em&gt; .</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>The download page for Drawpile %1 could not be opened, please visit &lt;em&gt;drawpile.net&lt;/em&gt; manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile %1 的下载页面无法打开, 请手动访问 &lt;em&gt;drawpile.net&lt;/em&gt; .</translation>
     </message>
 </context>
 <context>
@@ -7092,27 +7092,27 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/welcome.cpp" line="+44"/>
         <source>Welcome to Drawpile!</source>
-        <translation type="unfinished"></translation>
+        <translation>欢迎使用 Drawpile!</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Take a look over the &lt;a href=&quot;#preferences&quot;&gt;Preferences&lt;/a&gt; to configure things to your liking. You might also want to pick a different &lt;a href=&quot;#layout&quot;&gt;Layout&lt;/a&gt; for the application.</source>
-        <translation type="unfinished"></translation>
+        <translation>你可以查看 &lt;a href=&quot;#preferences&quot;&gt;首选项&lt;/a&gt; 来设置你的偏好. 你还可以为软件选择不同的 &lt;a href=&quot;#layout&quot;&gt;界面&lt;/a&gt; .</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>If you have an invite link to a drawing session, you can &lt;a href=&quot;#join&quot;&gt;Join&lt;/a&gt; it directly. Alternatively, you can &lt;a href=&quot;#browse&quot;&gt;Browse&lt;/a&gt; public sessions or just create a &lt;a href=&quot;#create&quot;&gt;New Canvas&lt;/a&gt; to draw on your own.</source>
-        <translation type="unfinished"></translation>
+        <translation>如果你有一个邀请加入房间的链接, 你可以直接通过 &lt;a href=&quot;#join&quot;&gt;地址加入&lt;/a&gt;. 另一种选择, 你可以通过 &lt;a href=&quot;#browse&quot;&gt;房间大厅&lt;/a&gt; 查看列表上的房间来加入或者 &lt;a href=&quot;#create&quot;&gt;新建画布&lt;/a&gt; 在上面画你自己的.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>If you have trouble, take a look at the help pages linked on the right. If they don&apos;t answer your question, you can join the Discord server and ask, there&apos;s usually folks around to help!</source>
-        <translation type="unfinished"></translation>
+        <translation>如果遇到问题, 请查看右侧的帮助链接. 如果这些页面无法解决你的问题, 你可以在discord上询问, 通常里面会有人帮助解答!</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Next time, you&apos;ll see news and updates on this page.</source>
-        <translation type="unfinished"></translation>
+        <translation>下次, 你将在本页面看到新闻和更新.</translation>
     </message>
 </context>
 <context>
@@ -7302,24 +7302,24 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-51"/>
         <source>Add column</source>
-        <translation type="unfinished"></translation>
+        <translation>添加栏</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Remove column</source>
-        <translation type="unfinished"></translation>
+        <translation>移除栏</translation>
     </message>
     <message>
         <location line="+115"/>
         <location line="+47"/>
         <source>New Palette</source>
-        <translation type="unfinished">新色板</translation>
+        <translation>新色板</translation>
     </message>
     <message>
         <location line="-47"/>
         <location line="+47"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>色板名</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -7415,7 +7415,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Operators</source>
-        <translation>管理员</translation>
+        <translation>房间管理员</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7712,7 +7712,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/colorpickersettings.cpp" line="+90"/>
         <source>Pick from screen</source>
-        <translation type="unfinished"></translation>
+        <translation>从屏幕上拾色</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -7756,7 +7756,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/zoomsettings.cpp" line="+21"/>
         <source>Normal Size</source>
-        <translation>普通大小</translation>
+        <translation>正常大小</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7769,7 +7769,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../utils/recents.cpp" line="+391"/>
         <source>More…</source>
-        <translation type="unfinished"></translation>
+        <translation>更多…</translation>
     </message>
 </context>
 <context>
@@ -7825,72 +7825,72 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Reset in progress</source>
-        <translation type="unfinished">重置进行中</translation>
+        <translation>加载进行中</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Canvas is locked</source>
-        <translation type="unfinished"></translation>
+        <translation>画布已锁定</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>User is locked</source>
-        <translation type="unfinished"></translation>
+        <translation>用户已锁定</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Layer is a group</source>
-        <translation type="unfinished"></translation>
+        <translation>此层是一个组</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layer is locked</source>
-        <translation type="unfinished">图层已锁定</translation>
+        <translation>图层已锁定</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layer is censored</source>
-        <translation type="unfinished"></translation>
+        <translation>图层已审查</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layer is hidden</source>
-        <translation type="unfinished"></translation>
+        <translation>图层已隐藏</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Tool is locked</source>
-        <translation type="unfinished">工具已锁定</translation>
+        <translation>工具已锁定</translation>
     </message>
     <message>
         <location line="+223"/>
         <source>Vertical flip: ON</source>
-        <translation type="unfinished"></translation>
+        <translation>垂直翻转: 开</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Vertical flip: OFF</source>
-        <translation type="unfinished"></translation>
+        <translation>垂直翻转: 关</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Horizontal mirror: ON</source>
-        <translation type="unfinished"></translation>
+        <translation>水平翻转: 开</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Horizontal mirror: OFF</source>
-        <translation type="unfinished"></translation>
+        <translation>水平翻转: 关</translation>
     </message>
     <message>
         <location line="+1482"/>
         <source>Zoom: %1%</source>
-        <translation type="unfinished"></translation>
+        <translation>缩放: %1%</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Rotation: %1°</source>
-        <translation type="unfinished"></translation>
+        <translation>旋转: %1°</translation>
     </message>
 </context>
 <context>
@@ -7898,22 +7898,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../chat/chatbox.cpp" line="+47"/>
         <source>Invite</source>
-        <translation type="unfinished"></translation>
+        <translation>邀请</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Session</source>
-        <translation type="unfinished">房间</translation>
+        <translation>房间</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Chat</source>
-        <translation type="unfinished">聊天</translation>
+        <translation>聊天</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Show chat options</source>
-        <translation type="unfinished"></translation>
+        <translation>显示聊天面板选项</translation>
     </message>
 </context>
 <context>
@@ -7981,7 +7981,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>/pin: only operators are allowed to pin.</source>
-        <translation type="unfinished"></translation>
+        <translation>/pin:只有operator可以发送置顶消息.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7996,7 +7996,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+10"/>
         <source>/unpin: only operators are allowed to unpin.</source>
-        <translation type="unfinished"></translation>
+        <translation>/unpin:只有operator可以取消置顶消息.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8038,7 +8038,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-600"/>
         <source>Clear</source>
-        <translation>清空</translation>
+        <translation>清空信息</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8048,12 +8048,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Detach</source>
-        <translation>分离</translation>
+        <translation>分离面板</translation>
     </message>
     <message>
         <location line="-2"/>
         <source>Attach</source>
-        <translation>贴附</translation>
+        <translation>靠拢面板</translation>
     </message>
 </context>
 <context>
@@ -8256,22 +8256,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/palettewidget.cpp" line="+41"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>添加</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Modify</source>
-        <translation type="unfinished"></translation>
+        <translation>修改</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Remove</source>
-        <translation type="unfinished">移除</translation>
+        <translation>移除</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Set palette color</source>
-        <translation type="unfinished"></translation>
+        <translation>设置色板颜色</translation>
     </message>
     <message>
         <location line="+196"/>
@@ -8279,7 +8279,10 @@ Values above 0.5 may not be noticeable.</source>
 Green: %3
 Blue: %4
 Hex: %5</source>
-        <translation type="unfinished"></translation>
+        <translation>红色: %2
+绿色: %3
+蓝色: %4
+十六进制: %5</translation>
     </message>
 </context>
 <context>
@@ -8310,17 +8313,17 @@ Hex: %5</source>
     <message>
         <location filename="../widgets/recentscroll.cpp" line="+26"/>
         <source>No recent files.</source>
-        <translation type="unfinished"></translation>
+        <translation>无最近文件.</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>No recent hosts.</source>
-        <translation type="unfinished"></translation>
+        <translation>无最近服务器.</translation>
     </message>
     <message>
         <location line="+59"/>
         <source>Remove</source>
-        <translation type="unfinished">移除</translation>
+        <translation>移除</translation>
     </message>
 </context>
 <context>
@@ -8427,7 +8430,7 @@ Hex: %5</source>
         <location filename="../chat/useritemdelegate.cpp" line="+32"/>
         <location line="+120"/>
         <source>Operator</source>
-        <translation>主持人</translation>
+        <translation>房间管理员</translation>
     </message>
     <message>
         <location line="-119"/>
@@ -8478,7 +8481,7 @@ Hex: %5</source>
     <message>
         <location line="+99"/>
         <source>Moderator</source>
-        <translation>管理员</translation>
+        <translation>服务器管理员</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -8501,7 +8504,7 @@ Hex: %5</source>
     <message>
         <location line="+40"/>
         <source>Zoom</source>
-        <translation type="unfinished">缩放</translation>
+        <translation>缩放</translation>
     </message>
 </context>
 </TS>
