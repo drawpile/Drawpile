@@ -62,7 +62,7 @@
     <message>
         <location line="+28"/>
         <source>Enter a list server URL:</source>
-        <translation type="unfinished">Inserisci un URL del server da un elenco:</translation>
+        <translation>Inserisci un URL server:</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -813,7 +813,7 @@ in 64x64 pixel.</translation>
     <message>
         <location line="+32"/>
         <source>Get externally visible IP address</source>
-        <translation type="unfinished">Ottieni indirizzo IP visibile esternamente</translation>
+        <translation>Ottieni indirizzo IP visibile esternamente</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -5784,7 +5784,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+2"/>
         <source>Host Session</source>
-        <translation type="unfinished">Crea Sessione</translation>
+        <translation>Crea Sessione</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5824,7 +5824,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+2"/>
         <source>Layouts</source>
-        <translation type="unfinished">Layout</translation>
+        <translation>Layout</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -5834,7 +5834,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+2"/>
         <source>Preferences</source>
-        <translation type="unfinished">Preferenze</translation>
+        <translation>Preferenze</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -8322,12 +8322,12 @@ Esadecimale: %5</translation>
     <message>
         <location filename="../widgets/recentscroll.cpp" line="+26"/>
         <source>No recent files.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nessun file recente.</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>No recent hosts.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nessun host recente.</translation>
     </message>
     <message>
         <location line="+59"/>
