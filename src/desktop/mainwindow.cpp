@@ -1181,6 +1181,7 @@ void MainWindow::connectStartDialog(dialogs::StartDialog *dlg)
 	connections->add(connect(dlg, &dialogs::StartDialog::create, this, &MainWindow::newDocument));
 	connections->add(connect(m_doc, &Document::canvasChanged, dlg, &QDialog::close));
 	connections->add(connect(m_doc, &Document::serverLoggedIn, dlg, &QDialog::close));
+	connections->add(connect(this, &MainWindow::hostSessionEnabled, dlg, &dialogs::StartDialog::hostSessionEnabled));
 	connections->add(connect(this, &MainWindow::windowReplacementFailed, dlg, [dlg](MainWindow *win){
 		dlg->setParent(win, dlg->windowFlags());
 		win->connectStartDialog(dlg);
@@ -1274,7 +1275,7 @@ void MainWindow::open(const QUrl& url)
 			showLoadResultMessage(result);
 			QApplication::restoreOverrideCursor();
 			if(result) {
-				getAction("hostsession")->setEnabled(true);
+				emit hostSessionEnabled(true);
 			}
 		}
 
@@ -1907,7 +1908,7 @@ void MainWindow::joinSession(const QUrl& url, const QString &autoRecordFile)
 void MainWindow::onServerConnected()
 {
 	// Enable connection related actions
-	getAction("hostsession")->setEnabled(false);
+	emit hostSessionEnabled(false);
 	getAction("leavesession")->setEnabled(true);
 	getAction("sessionsettings")->setEnabled(true);
 
@@ -1921,7 +1922,7 @@ void MainWindow::onServerConnected()
  */
 void MainWindow::onServerDisconnected(const QString &message, const QString &errorcode, bool localDisconnect)
 {
-	getAction("hostsession")->setEnabled(m_doc->canvas() != nullptr);
+	emit hostSessionEnabled(m_doc->canvas() != nullptr);
 	getAction("invitesession")->setEnabled(false);
 	getAction("leavesession")->setEnabled(false);
 	getAction("sessionsettings")->setEnabled(false);
@@ -3475,6 +3476,7 @@ void MainWindow::setupActions()
 	m_admintools->setEnabled(false);
 
 	connect(host, &QAction::triggered, this, &MainWindow::host);
+	connect(this, &MainWindow::hostSessionEnabled, host, &QAction::setEnabled);
 	connect(invite, &QAction::triggered, this, &MainWindow::invite);
 	connect(join, &QAction::triggered, this, &MainWindow::join);
 	connect(browse, &QAction::triggered, this, &MainWindow::browse);

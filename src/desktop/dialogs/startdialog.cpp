@@ -266,6 +266,9 @@ StartDialog::StartDialog(QWidget *parent)
 		&QWidget::setEnabled);
 	connect(
 		hostPage, &startdialog::Host::host, this, &StartDialog::hostRequested);
+	connect(
+		this, &StartDialog::hostSessionEnabled, hostPage,
+		&startdialog::Host::setHostEnabled);
 
 	connect(
 		createPage, &startdialog::Create::showButtons, this,
@@ -336,6 +339,11 @@ void StartDialog::setActions(const Actions &actions)
 				m_shortcuts.append(shortcut);
 			}
 		}
+	}
+
+	const QAction *hostAction = actions.entries[Entry::Host];
+	if(hostAction) {
+		emit hostSessionEnabled(hostAction->isEnabled());
 	}
 }
 

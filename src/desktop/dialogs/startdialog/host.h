@@ -25,6 +25,9 @@ public:
 	void activate() final override;
 	void accept() final override;
 
+public slots:
+	void setHostEnabled(bool enabled);
+
 signals:
 	void showButtons();
 	void enableHost(bool enabled);

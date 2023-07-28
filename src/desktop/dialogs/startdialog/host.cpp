@@ -160,6 +160,12 @@ void Host::accept()
 	}
 }
 
+void Host::setHostEnabled(bool enabled)
+{
+	setEnabled(enabled);
+	updateHostEnabled();
+}
+
 void Host::updateHostEnabled()
 {
 	emit enableHost(canHost());
@@ -213,7 +219,7 @@ void Host::updateRemoteHosts()
 
 bool Host::canHost() const
 {
-	return !m_titleEdit->text().trimmed().isEmpty() &&
+	return isEnabled() && !m_titleEdit->text().trimmed().isEmpty() &&
 		   (m_allowNsfm || !m_nsfmBox->isChecked()) &&
 		   (m_useGroup->checkedId() == USE_LOCAL ||
 			!m_remoteHostCombo->currentText().trimmed().isEmpty());

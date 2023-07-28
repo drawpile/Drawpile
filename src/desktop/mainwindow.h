@@ -96,6 +96,7 @@ public:
 	dialogs::StartDialog *showStartDialog();
 
 signals:
+	void hostSessionEnabled(bool enabled);
 	void windowReplacementFailed(MainWindow *win);
 
 public slots:
