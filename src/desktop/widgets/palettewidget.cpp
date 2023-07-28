@@ -242,7 +242,7 @@ bool PaletteWidget::event(QEvent *event)
 			QColor color = m_colorPalette.colorAt(index);
 			QToolTip::showText(
 				mapToGlobal(pos),
-				tr("Red: %2\nGreen: %3\nBlue: %4\nHex: %5")
+				tr("Red: %1\nGreen: %2\nBlue: %3\nHex: %4")
 					.arg(color.red())
 					.arg(color.green())
 					.arg(color.blue())
