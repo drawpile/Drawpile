@@ -469,8 +469,8 @@
     <message numerus="yes">
         <location line="+91"/>
         <source>%1/%n users</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%1/%n 用户</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -538,17 +538,17 @@
     <message>
         <location line="+162"/>
         <source>closed</source>
-        <translation type="unfinished"></translation>
+        <translation>已关闭的</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>password-protected</source>
-        <translation type="unfinished"></translation>
+        <translation>受密码保护的</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>NSFM</source>
-        <translation type="unfinished"></translation>
+        <translation>不适于未成年人的</translation>
     </message>
 </context>
 <context>
@@ -783,32 +783,32 @@
     <message>
         <location filename="../canvas/userlist.cpp" line="+58"/>
         <source>Moderator</source>
-        <translation>Moderator</translation>
+        <translation>服务器管理员</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Operator</source>
-        <translation>Operator</translation>
+        <translation>房间管理员</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Trusted</source>
-        <translation>Trusted</translation>
+        <translation>信任用户</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Registered</source>
-        <translation>Registered</translation>
+        <translation>注册用户</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Online</source>
-        <translation>Online</translation>
+        <translation>在线</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Offline</source>
-        <translation>Offline</translation>
+        <translation>离线</translation>
     </message>
     <message>
         <location line="+30"/>
@@ -967,7 +967,7 @@
     <message>
         <location line="+52"/>
         <source>Session not yet started!</source>
-        <translation>Session not yet started!</translation>
+        <translation>房间还未创建!</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -988,12 +988,12 @@
     <message>
         <location line="+70"/>
         <source>Incorrect password for &apos;%1&apos;!</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; 的密码不正确!</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Incorrect session password!</source>
-        <translation type="unfinished"></translation>
+        <translation>房间密码不正确!</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -1133,52 +1133,52 @@
         <location filename="../utils/news.cpp" line="+283"/>
         <location line="+41"/>
         <source>Checking for updates…</source>
-        <translation type="unfinished"></translation>
+        <translation>检查更新…</translation>
     </message>
     <message>
         <location line="-23"/>
         <source>Automatic update checking is disabled, &lt;a href=&quot;#autoupdate&quot;&gt;click here to enable it&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>自动检查更新已禁用, &lt;a href=&quot;#autoupdate&quot;&gt;请点击这里来启用&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>If you don&apos;t want automatic checks, &lt;a href=&quot;#checkupdates&quot;&gt;click here to check manually&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>如果你不想要自动检查更新, &lt;a href=&quot;#checkupdates&quot;&gt;请点击这里来手动检查&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+60"/>
         <source>Network error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>网络错误: %1</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Couldn&apos;t make sense of the fetched data.</source>
-        <translation type="unfinished"></translation>
+        <translation>无法理解获取的数据.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Couldn&apos;t make sense of fetched updates.</source>
-        <translation type="unfinished"></translation>
+        <translation>无法理解获取的更新.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Couldn&apos;t save updates.</source>
-        <translation type="unfinished"></translation>
+        <translation>无法保存更新.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Couldn&apos;t make sense of fetched news.</source>
-        <translation type="unfinished"></translation>
+        <translation>无法理解获取的新闻.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Couldn&apos;t save news.</source>
-        <translation type="unfinished"></translation>
+        <translation>无法保存新闻.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>No news available.</source>
-        <translation type="unfinished"></translation>
+        <translation>暂无新闻.</translation>
     </message>
 </context>
 </TS>
