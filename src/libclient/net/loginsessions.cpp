@@ -74,7 +74,7 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 			if(ls.isIncompatible()) {
 				return QIcon::fromTheme("dontknow");
 			} else if(ls.closed) {
-				return QIcon::fromTheme("im-ban-user");
+				return QIcon::fromTheme("cards-block");
 			} else if(ls.needPassword) {
 				return QIcon::fromTheme("object-locked");
 			} else {
