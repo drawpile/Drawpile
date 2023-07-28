@@ -459,7 +459,8 @@ void LoginHandler::expectSessionDescriptionJoin(const ServerReply &msg)
 				js["userCount"].toInt(),
 				js["hasPassword"].toBool(),
 				js["persistent"].toBool(),
-				js["closed"].toBool() || (js["authOnly"].toBool() && m_isGuest),
+				js["closed"].toBool(),
+				js["authOnly"].toBool() && m_isGuest,
 				js["nsfm"].toBool()
 			};
 

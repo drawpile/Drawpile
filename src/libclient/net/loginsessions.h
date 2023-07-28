@@ -23,7 +23,8 @@ struct LoginSession {
 
 	bool needPassword;
 	bool persistent;
-	bool closed;
+	bool newLoginsBlocked;
+	bool guestLoginBlocked; // Will only be true if we're a guest.
 
 	bool nsfm;
 
@@ -34,6 +35,7 @@ struct LoginSession {
 	}
 
 	bool isIncompatible() const { return !incompatibleSeries.isEmpty(); }
+	bool isClosed() const { return newLoginsBlocked || guestLoginBlocked; }
 };
 
 /**

@@ -73,7 +73,7 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 		case ColumnStatus:
 			if(ls.isIncompatible()) {
 				return QIcon::fromTheme("dontknow");
-			} else if(ls.closed) {
+			} else if(ls.isClosed()) {
 				return QIcon::fromTheme("cards-block");
 			} else if(ls.needPassword) {
 				return QIcon::fromTheme("object-locked");
@@ -99,7 +99,9 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 		case ColumnStatus:
 			if(ls.isIncompatible()) {
 				return tr("Incompatible version");
-			} else if(ls.closed) {
+			} else if(ls.guestLoginBlocked) {
+				return tr("Closed (guest logins blocked)");
+			} else if(ls.newLoginsBlocked) {
 				return tr("Closed (new logins blocked)");
 			} else if(ls.needPassword) {
 				return tr("Session password required");
@@ -125,9 +127,9 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 		case FounderRole: return ls.founder;
 		case NeedPasswordRole: return ls.needPassword;
 		case PersistentRole: return ls.persistent;
-		case ClosedRole: return ls.closed;
+		case ClosedRole: return ls.isClosed();
 		case IncompatibleRole: return !ls.incompatibleSeries.isEmpty();
-		case JoinableRole: return (!ls.closed || m_moderatorMode) && ls.incompatibleSeries.isEmpty();
+		case JoinableRole: return (!ls.isClosed() || m_moderatorMode) && ls.incompatibleSeries.isEmpty();
 		case NsfmRole: return isNsfm(ls);
 		case CompatibilityModeRole: return ls.compatibilityMode;
 		default: return QVariant{};
@@ -141,7 +143,7 @@ Qt::ItemFlags LoginSessionModel::flags(const QModelIndex &index) const
 		return Qt::NoItemFlags;
 
 	const LoginSession &ls = m_sessions.at(index.row());
-	if(!ls.incompatibleSeries.isEmpty() || (ls.closed && !m_moderatorMode))
+	if(!ls.incompatibleSeries.isEmpty() || (ls.isClosed() && !m_moderatorMode))
 		return Qt::NoItemFlags;
 	else
 		return QAbstractTableModel::flags(index);
