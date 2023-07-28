@@ -5844,7 +5844,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+24"/>
         <source>Record</source>
-        <translation type="unfinished">Registra</translation>
+        <translation>Registra</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -5883,17 +5883,17 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+24"/>
         <source>Join</source>
-        <translation type="unfinished">Entra</translation>
+        <translation>Entra</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Host</source>
-        <translation type="unfinished">Host</translation>
+        <translation>Host</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Create</source>
-        <translation type="unfinished">Crea</translation>
+        <translation>Crea</translation>
     </message>
 </context>
 <context>
@@ -6379,52 +6379,52 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/notifications.cpp" line="+30"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Sound volume:</source>
-        <translation type="unfinished">Volume del suono:</translation>
+        <translation>Volume del suono:</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Message received</source>
-        <translation type="unfinished">Messaggio ricevuto</translation>
+        <translation>Messaggio ricevuto</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Recording marker</source>
-        <translation type="unfinished">Marcatore di registrazione</translation>
+        <translation>Marcatore di registrazione</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>User joined</source>
-        <translation type="unfinished">L&apos;Utente si è unito</translation>
+        <translation>L&apos;Utente si è unito</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>User parted</source>
-        <translation type="unfinished">Utente disconnesso</translation>
+        <translation>Utente disconnesso</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Canvas locked</source>
-        <translation type="unfinished">Tela bloccata</translation>
+        <translation>Tela bloccata</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Canvas unlocked</source>
-        <translation type="unfinished">Tela sbloccata</translation>
+        <translation>Tela sbloccata</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Notifications:</source>
-        <translation type="unfinished">Notifiche:</translation>
+        <translation>Notifiche:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Preview sound</source>
-        <translation type="unfinished">Anteprima audio</translation>
+        <translation>Anteprima audio</translation>
     </message>
 </context>
 <context>
@@ -6792,12 +6792,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+14"/>
         <source>Filter</source>
-        <translation type="unfinished">Filtro</translation>
+        <translation>Filtro</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Closed</source>
-        <translation type="unfinished">Chiusa</translation>
+        <translation>Chiusa</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6807,7 +6807,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+3"/>
         <source>Password</source>
-        <translation type="unfinished">Password</translation>
+        <translation>Password</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6817,12 +6817,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+3"/>
         <source>NSFM</source>
-        <translation type="unfinished">NSFM</translation>
+        <translation>NSFM</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Show sessions not suitable for minors (NSFM)</source>
-        <translation type="unfinished">Mostra sessioni non adatte ai minori (NSFM)</translation>
+        <translation>Mostra sessioni non adatte ai minori (NSFM)</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -6838,38 +6838,38 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <location line="+17"/>
         <location line="+4"/>
         <source>Nearby</source>
-        <translation type="unfinished">Nelle vicinanze</translation>
+        <translation>Nelle vicinanze</translation>
     </message>
     <message>
         <location line="-4"/>
         <location line="+140"/>
         <source>Loading...</source>
-        <translation type="unfinished">Caricamento in corso...</translation>
+        <translation>Caricamento in corso...</translation>
     </message>
     <message>
         <location line="-82"/>
         <source>Join</source>
-        <translation type="unfinished">Entra</translation>
+        <translation>Entra</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Copy session URL</source>
-        <translation type="unfinished">Copia URL della sessione</translation>
+        <translation>Copia URL della sessione</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy title</source>
-        <translation type="unfinished">Copia titolo</translation>
+        <translation>Copia titolo</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Copy server</source>
-        <translation type="unfinished">Copia server</translation>
+        <translation>Copia server</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy owner</source>
-        <translation type="unfinished">Copia proprietario</translation>
+        <translation>Copia proprietario</translation>
     </message>
     <message>
         <location line="+79"/>
@@ -6888,17 +6888,17 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <location filename="../dialogs/startdialog/create.cpp" line="+24"/>
         <location line="+7"/>
         <source>px</source>
-        <translation type="unfinished">px</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="-3"/>
         <source>Width:</source>
-        <translation type="unfinished">Larghezza:</translation>
+        <translation>Larghezza:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Height:</source>
-        <translation type="unfinished">Altezza:</translation>
+        <translation>Altezza:</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -6908,7 +6908,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+2"/>
         <source>Background:</source>
-        <translation type="unfinished">Sfondo:</translation>
+        <translation>Sfondo:</translation>
     </message>
 </context>
 <context>
@@ -6916,27 +6916,27 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../dialogs/startdialog/host.cpp" line="+31"/>
         <source>The title is shown in the application title bar and in the session selection dialog</source>
-        <translation type="unfinished">Il titolo è mostrato nella barra del titolo dell&apos;applicazione e nella finestra di dialogo di selezione della sessione</translation>
+        <translation>Il titolo viene visualizzato nella barra del titolo dell&apos;applicazione e nella finestra di dialogo di selezione della sessione</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Title:</source>
-        <translation type="unfinished">Titolo:</translation>
+        <translation>Titolo:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Optional. If left blank, no password will be needed to join this session.</source>
-        <translation type="unfinished">Opzionale. Se lasciato vuoto, non sarà necessaria alcuna password per partecipare a questa sessione.</translation>
+        <translation>Opzionale. Se lasciato vuoto, non sarà necessaria alcuna password per partecipare a questa sessione.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Password:</source>
-        <translation type="unfinished">Password:</translation>
+        <translation>Password:</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>An optional user friendly ID for the session</source>
-        <translation type="unfinished">Un ID opzionale di facile utilizzo per la sessione</translation>
+        <translation>Un ID opzionale di facile utilizzo per la sessione</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6946,22 +6946,22 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+2"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation type="unfinished">Non adatto ai minori (NSFM)</translation>
+        <translation>Non adatto ai minori (NSFM)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Marks the session as having age-restricted content.</source>
-        <translation type="unfinished">Contrassegna la sessione come avente contenuto limitato all&apos;età.</translation>
+        <translation>Contrassegna la sessione come avente contenuto limitato all&apos;età.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>List at:</source>
-        <translation type="unfinished">Elenca su:</translation>
+        <translation>Elenca su:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Announce the session at a public list</source>
-        <translation type="unfinished">Annuncia la sessione in un elenco pubblico</translation>
+        <translation>Annuncia la sessione in un elenco pubblico</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -6971,7 +6971,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+1"/>
         <source>Use Drawpile&apos;s built-in server</source>
-        <translation type="unfinished">Utilizza il server integrato di Drawpile</translation>
+        <translation>Utilizza il server integrato di Drawpile</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -6986,7 +6986,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+1"/>
         <source>Use an external dedicated server</source>
-        <translation type="unfinished">Utilizza un server esterno dedicato</translation>
+        <translation>Utilizza un server esterno dedicato</translation>
     </message>
 </context>
 <context>
@@ -7075,7 +7075,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+14"/>
         <source>A new version of Drawpile is available!</source>
-        <translation type="unfinished">È disponibile una nuova versione di Drawpile!</translation>
+        <translation>È disponibile una nuova versione di Drawpile!</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7322,13 +7322,13 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <location line="+115"/>
         <location line="+47"/>
         <source>New Palette</source>
-        <translation type="unfinished">Nuova Palette</translation>
+        <translation>Nuova Palette</translation>
     </message>
     <message>
         <location line="-47"/>
         <location line="+47"/>
         <source>Name</source>
-        <translation type="unfinished">Nome</translation>
+        <translation>Nome</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -7834,7 +7834,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+8"/>
         <source>Reset in progress</source>
-        <translation type="unfinished">Reset in corso</translation>
+        <translation>Reset in corso</translation>
     </message>
     <message>
         <location line="+4"/>
