@@ -7027,32 +7027,32 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+2"/>
         <source>Communities</source>
-        <translation type="unfinished"></translation>
+        <translation>Community</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Open Drawpile&apos;s communities page in your browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Apri la pagina delle community di Drawpile nel tuo browser</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Discord</source>
-        <translation type="unfinished"></translation>
+        <translation>Discord</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Join the Drawpile Discord server</source>
-        <translation type="unfinished"></translation>
+        <translation>Unisciti al server Discord di Drawpile</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>GitHub</source>
-        <translation type="unfinished"></translation>
+        <translation>GitHub</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Open Drawpile&apos;s GitHub page in your browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Apri la pagina GitHub di Drawpile nel tuo browser</translation>
     </message>
 </context>
 <context>
@@ -7060,17 +7060,17 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../dialogs/startdialog/updatenotice.cpp" line="+61"/>
         <source>Update</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiornamento</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Dismiss</source>
-        <translation type="unfinished"></translation>
+        <translation>Chiudi</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Hide this notification</source>
-        <translation type="unfinished"></translation>
+        <translation>Nascondi questa notifica</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -7080,17 +7080,17 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+2"/>
         <source>Update to Drawpile version %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiorna alla versione di Drawpile %1</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>The download page for Drawpile %1 should have opened in your browser. If not, please visit &lt;em&gt;drawpile.net&lt;/em&gt; manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>La pagina di download di Drawpile %1 dovrebbe essersi aperta nel vostro browser. In caso contrario, visitare manualmente &lt;em&gt;drawpile.net&lt;/em&gt;.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>The download page for Drawpile %1 could not be opened, please visit &lt;em&gt;drawpile.net&lt;/em&gt; manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>Non è stato possibile aprire la pagina di download di Drawpile %1, visitare &lt;em&gt;drawpile.net&lt;/em&gt; manualmente.</translation>
     </message>
 </context>
 <context>
@@ -7098,27 +7098,27 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../dialogs/startdialog/welcome.cpp" line="+44"/>
         <source>Welcome to Drawpile!</source>
-        <translation type="unfinished"></translation>
+        <translation>Benvenuto a Drawpile!</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Take a look over the &lt;a href=&quot;#preferences&quot;&gt;Preferences&lt;/a&gt; to configure things to your liking. You might also want to pick a different &lt;a href=&quot;#layout&quot;&gt;Layout&lt;/a&gt; for the application.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dai un&apos;occhiata a &lt;a href=&quot;#preferences&quot;&gt;Preferenze&lt;/a&gt; per configurare le cose a tuo piacimento. È inoltre possibile scegliere un &lt;a href=&quot;#layout&quot;&gt;Layout&lt;/a&gt; diverso per l&apos;applicazione.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>If you have an invite link to a drawing session, you can &lt;a href=&quot;#join&quot;&gt;Join&lt;/a&gt; it directly. Alternatively, you can &lt;a href=&quot;#browse&quot;&gt;Browse&lt;/a&gt; public sessions or just create a &lt;a href=&quot;#create&quot;&gt;New Canvas&lt;/a&gt; to draw on your own.</source>
-        <translation type="unfinished"></translation>
+        <translation>Se si dispone di un link di invito a una sessione di disegno, è possibile &lt;a href=&quot;#join&quot;&gt;Partecipare&lt;/a&gt; direttamente. In alternativa, è possibile &lt;a href=&quot;#browse&quot;&gt;Sfogliare le&lt;/a&gt; sessioni pubbliche o semplicemente creare una &lt;a href=&quot;#create&quot;&gt;Nuova tela&lt;/a&gt; per disegnare da soli.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>If you have trouble, take a look at the help pages linked on the right. If they don&apos;t answer your question, you can join the Discord server and ask, there&apos;s usually folks around to help!</source>
-        <translation type="unfinished"></translation>
+        <translation>Se hai problemi, dai un&apos;occhiata alle pagine di aiuto linkate sulla destra. Se non rispondono alle vostre domande, potete unirvi al server Discord e chiedere, di solito c&apos;è gente pronta ad aiutarvi!</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Next time, you&apos;ll see news and updates on this page.</source>
-        <translation type="unfinished"></translation>
+        <translation>La prossima volta, vedrai notizie e aggiornamenti su questa pagina.</translation>
     </message>
 </context>
 <context>
@@ -7311,12 +7311,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="-51"/>
         <source>Add column</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiungi colonna</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Remove column</source>
-        <translation type="unfinished"></translation>
+        <translation>Rimuovi colonna</translation>
     </message>
     <message>
         <location line="+115"/>
@@ -7721,7 +7721,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../toolwidgets/colorpickersettings.cpp" line="+90"/>
         <source>Pick from screen</source>
-        <translation type="unfinished"></translation>
+        <translation>Scegli dallo schermo</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -7778,7 +7778,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../utils/recents.cpp" line="+391"/>
         <source>More…</source>
-        <translation type="unfinished"></translation>
+        <translation>Altro…</translation>
     </message>
 </context>
 <context>
@@ -7839,17 +7839,17 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+4"/>
         <source>Canvas is locked</source>
-        <translation type="unfinished"></translation>
+        <translation>La Tela è bloccata</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>User is locked</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;Utente è bloccato</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Layer is a group</source>
-        <translation type="unfinished"></translation>
+        <translation>Il Livello è un gruppo</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7859,12 +7859,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+2"/>
         <source>Layer is censored</source>
-        <translation type="unfinished"></translation>
+        <translation>Il Livello è censurato</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layer is hidden</source>
-        <translation type="unfinished"></translation>
+        <translation>Il Livello è nascosto</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -7874,32 +7874,32 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+223"/>
         <source>Vertical flip: ON</source>
-        <translation type="unfinished"></translation>
+        <translation>Capovolgimento verticale: ON</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Vertical flip: OFF</source>
-        <translation type="unfinished"></translation>
+        <translation>Capovolgimento verticale: OFF</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Horizontal mirror: ON</source>
-        <translation type="unfinished"></translation>
+        <translation>Specchio orizzontale: ON</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Horizontal mirror: OFF</source>
-        <translation type="unfinished"></translation>
+        <translation>Specchio orizzontale: OFF</translation>
     </message>
     <message>
         <location line="+1482"/>
         <source>Zoom: %1%</source>
-        <translation type="unfinished"></translation>
+        <translation>Zoom: %1%</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Rotation: %1°</source>
-        <translation type="unfinished"></translation>
+        <translation>Rotazione: %1°</translation>
     </message>
 </context>
 <context>
@@ -7907,7 +7907,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../chat/chatbox.cpp" line="+47"/>
         <source>Invite</source>
-        <translation type="unfinished"></translation>
+        <translation>Invita</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -7922,7 +7922,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+1"/>
         <source>Show chat options</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra le opzioni di chat</translation>
     </message>
 </context>
 <context>
@@ -7990,7 +7990,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+9"/>
         <source>/pin: only operators are allowed to pin.</source>
-        <translation type="unfinished"></translation>
+        <translation>/pin: solo gli operatori sono autorizzati a inserire i pin.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8005,7 +8005,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+10"/>
         <source>/unpin: only operators are allowed to unpin.</source>
-        <translation type="unfinished"></translation>
+        <translation>/unpin: solo gli operatori sono autorizzati a togliere i pin.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8270,7 +8270,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+1"/>
         <source>Modify</source>
-        <translation type="unfinished"></translation>
+        <translation>Modifica</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8280,7 +8280,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+6"/>
         <source>Set palette color</source>
-        <translation type="unfinished"></translation>
+        <translation>Imposta il colore della palette</translation>
     </message>
     <message>
         <location line="+196"/>
@@ -8288,7 +8288,10 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
 Green: %3
 Blue: %4
 Hex: %5</source>
-        <translation type="unfinished"></translation>
+        <translation>Rosso: %2
+Verde: %3
+Blu: %4
+Esadecimale: %5</translation>
     </message>
 </context>
 <context>
