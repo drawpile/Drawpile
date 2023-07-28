@@ -469,9 +469,10 @@
     <message numerus="yes">
         <location line="+91"/>
         <source>%1/%n users</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%1/%n utenti</numerusform>
+            <numerusform>%1/%n utenti</numerusform>
+            <numerusform>%1/%n utenti</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -540,17 +541,17 @@
     <message>
         <location line="+162"/>
         <source>closed</source>
-        <translation type="unfinished"></translation>
+        <translation>chiusa</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>password-protected</source>
-        <translation type="unfinished"></translation>
+        <translation>protetto da password</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>NSFM</source>
-        <translation type="unfinished"></translation>
+        <translation>NSFM</translation>
     </message>
 </context>
 <context>
@@ -1010,12 +1011,12 @@
     <message>
         <location line="+3"/>
         <source>Incorrect password for &apos;%1&apos;!</source>
-        <translation type="unfinished"></translation>
+        <translation>Password errata per &apos;%1&apos;!</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Incorrect session password!</source>
-        <translation type="unfinished"></translation>
+        <translation>Password di sessione errata!</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1135,52 +1136,52 @@
         <location filename="../utils/news.cpp" line="+283"/>
         <location line="+41"/>
         <source>Checking for updates…</source>
-        <translation type="unfinished"></translation>
+        <translation>Verifica della disponibilità di aggiornamenti…</translation>
     </message>
     <message>
         <location line="-23"/>
         <source>Automatic update checking is disabled, &lt;a href=&quot;#autoupdate&quot;&gt;click here to enable it&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Il controllo automatico degli aggiornamenti è disattivato, &lt;a href=&quot;#autoupdate&quot;&gt;fare clic qui per attivarlo&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>If you don&apos;t want automatic checks, &lt;a href=&quot;#checkupdates&quot;&gt;click here to check manually&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Se non si desidera un controllo automatico, &lt;a href=&quot;#checkupdates&quot;&gt;cliccare qui per controllare manualmente&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+60"/>
         <source>Network error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore di rete: %1</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Couldn&apos;t make sense of the fetched data.</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile dare un senso ai dati recuperati.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Couldn&apos;t make sense of fetched updates.</source>
-        <translation type="unfinished"></translation>
+        <translation>Non è stato possibile dare un senso agli aggiornamenti recuperati.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Couldn&apos;t save updates.</source>
-        <translation type="unfinished"></translation>
+        <translation>Non è stato possibile salvare gli aggiornamenti.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Couldn&apos;t make sense of fetched news.</source>
-        <translation type="unfinished"></translation>
+        <translation>Non è stato possibile dare un senso agli annunci recuperati.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Couldn&apos;t save news.</source>
-        <translation type="unfinished"></translation>
+        <translation>Non è stato possibile salvare gli annunci.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>No news available.</source>
-        <translation type="unfinished"></translation>
+        <translation>Non ci sono annunci disponibili.</translation>
     </message>
 </context>
 </TS>
