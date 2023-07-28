@@ -477,9 +477,9 @@
     <message numerus="yes">
         <location line="-2"/>
         <source>%1/%n users</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%1/%n user</numerusform>
+            <numerusform>%1/%n users</numerusform>
         </translation>
     </message>
     <message>
