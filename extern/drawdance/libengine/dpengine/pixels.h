@@ -89,6 +89,7 @@ DP_UPixel15 DP_upixel8_to_15(DP_UPixel8 pixel);
 DP_UPixel8 DP_upixel15_to_8(DP_UPixel15 pixel);
 DP_UPixelFloat DP_upixel8_to_float(DP_UPixel8 pixel);
 DP_UPixelFloat DP_upixel15_to_float(DP_UPixel15 pixel);
+DP_UPixelFloat DP_upixel15_to_float_round(DP_UPixel15 pixel);
 DP_UPixel8 DP_upixel_float_to_8(DP_UPixelFloat pixel);
 
 void DP_pixels8_to_15(DP_Pixel15 *dst, const DP_Pixel8 *src, int count);
@@ -130,6 +131,12 @@ DP_INLINE DP_UPixel15 DP_upixel15_from_color(uint32_t color)
 {
     DP_UPixel8 pixel = {color};
     return DP_upixel8_to_15(pixel);
+}
+
+DP_INLINE DP_UPixelFloat DP_upixel_float_zero(void)
+{
+    DP_UPixelFloat pixel = {0.0f, 0.0f, 0.0f, 0.0f};
+    return pixel;
 }
 
 DP_INLINE DP_UPixelFloat DP_upixel_float_from_color(uint32_t color)

@@ -355,7 +355,7 @@ bool DP_layer_content_pick_at(DP_LayerContent *lc, int x, int y,
     return false;
 }
 
-static DP_UPixel15 sample_dab_color(DP_LayerContent *lc, DP_BrushStamp stamp)
+static DP_UPixelFloat sample_dab_color(DP_LayerContent *lc, DP_BrushStamp stamp)
 {
     uint16_t *weights = stamp.data;
     int diameter = stamp.diameter;
@@ -405,7 +405,7 @@ static DP_UPixel15 sample_dab_color(DP_LayerContent *lc, DP_BrushStamp stamp)
     float required_alpha =
         DP_int_to_float(DP_square_int(diameter) * 30) / (float)DP_BIT15;
     if (alpha < required_alpha) {
-        return DP_upixel15_zero();
+        return DP_upixel_float_zero();
     }
 
     // Calculate final average
@@ -419,23 +419,23 @@ static DP_UPixel15 sample_dab_color(DP_LayerContent *lc, DP_BrushStamp stamp)
     green = CLAMP(green / alpha, 0.0f, 1.0f);
     blue = CLAMP(blue / alpha, 0.0f, 1.0f);
 
-    return (DP_UPixel15){
-        .b = DP_channel_float_to_15(blue),
-        .g = DP_channel_float_to_15(green),
-        .r = DP_channel_float_to_15(red),
-        .a = DP_channel_float_to_15(alpha),
+    return (DP_UPixelFloat){
+        .b = blue,
+        .g = green,
+        .r = red,
+        .a = alpha,
     };
 }
 
-DP_UPixel15 DP_layer_content_sample_color_at(DP_LayerContent *lc,
-                                             uint16_t *stamp_buffer, int x,
-                                             int y, int diameter,
-                                             int *in_out_last_diameter)
+DP_UPixelFloat DP_layer_content_sample_color_at(DP_LayerContent *lc,
+                                                uint16_t *stamp_buffer, int x,
+                                                int y, int diameter,
+                                                int *in_out_last_diameter)
 {
     if (x >= 0 && y >= 0 && x < lc->width && y < lc->height) {
         if (diameter < 2) {
             DP_Pixel15 pixel = DP_layer_content_pixel_at(lc, x, y);
-            return DP_pixel15_unpremultiply(pixel);
+            return DP_upixel15_to_float(DP_pixel15_unpremultiply(pixel));
         }
         else {
             int last_diameter;
@@ -452,7 +452,7 @@ DP_UPixel15 DP_layer_content_sample_color_at(DP_LayerContent *lc,
         }
     }
     else {
-        return DP_upixel15_zero();
+        return DP_upixel_float_zero();
     }
 }
 
