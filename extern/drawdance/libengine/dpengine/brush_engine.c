@@ -930,7 +930,7 @@ static int get_classic_smudge_diameter(const DP_ClassicBrush *cb,
                                        float pressure)
 {
     int diameter =
-        DP_float_to_int(DP_classic_brush_size_at(cb, pressure) * 2.0f + 0.5f);
+        DP_float_to_int(DP_classic_brush_size_at(cb, pressure) + 0.5f);
     return CLAMP(diameter, 2, 255);
 }
 
