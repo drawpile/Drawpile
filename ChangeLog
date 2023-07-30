@@ -3,13 +3,71 @@ Unreleased Version 2.2.0-pre
  * Fix: Smoothe out the timing of strokes received over the network to not make them appear jerky because of the paint engine drawing them too fast.
  * Fix: Lock timeline controls when the canvas or user is locked.
  * Feature: Allow adding key frames and an associated layer or group with a single action.
+ * Feature: Allow duplicating key frames along with their contents.
  * Fix: Put changing the timeline frame count behind a button, since it might get mixed up with the current frame on accident.
  * Fix: Slow down user markers only for MyPaint brushes and snappy for classic brushes as well as when a new line is started.
  * Feature: Add a flipbook button to the timeline dock.
  * Feature: Hide the indirect mode button in the brush dock instead of just disabling it, since it's hard to tell the difference otherwise.
  * Fix: Fixed a crash when resizing the canvas while an indirect stroke is in progress.
  * Feature: Allow viewing tile and draw context memory usage in the statistics dialog.
- * Fix: Make the server GUI exist again, it got lost in the build scripts.
+ * Server Fix: Make the server GUI exist again, it got lost in the build scripts.
+ * Fix: Put unpinning behind operator permissions too, just like pinning.
+ * Feature: Improved canvas view. It now allows scrolling further beyond the edges, has more sensible zoom steps and shows messages about locks and canvas transformations.
+ * Fix: Make the canvas view not jigger anymore when you zoom it out at certain sizes.
+ * Fix: Lock drawing when the user is locked.
+ * Fix: Make KisTablet Windows Ink the default tablet driver on Windows, because the Qt one is pretty busted.
+ * Fix: Re-synchronize the canvas when local desynchronization is detected, rather than just keeping going with a broken state for ages.
+ * Fix: Don't reset the layer properties dialog when someone else changes a layer. This would cause renames to get reverted to the original name, for example, which is really annoying.
+ * Fix: Make default layer actually select itself when joining a canvas.
+ * Fix: Move notifications to their own preferences page, since the network page was out of room and squashed some controls.
+ * Fix: Make preference notes larger so that they work better in non-Latin writing systems.
+ * Fix: Make the password page of the login dialog not so annoyingly large.
+ * Feature: Clarify when asking for a session password versus an account password.
+ * Fix: Handle duplicated shortcuts by complaining about it, rather than doing nothing.
+ * Feature: Add shortcuts to move the canvas around, for people who want to do it with something other than the arrow keys.
+ * Feature: Enable auto-repeat for shortcuts where it's sensible, such as zooming, moving the canvas, undo, redo or switching between layers, frames and tracks.
+ * Feature: Allow clicking and dragging the inspector around, so that it's easier to hit small sections.
+ * Fix: Don't fire an assertion when moving a selection out of bounds. This is not an error.
+ * Fix: Default color wheel to HSV mode, not HSL.
+ * Fix: Stretch columns of the ban list so they don't look so weirdly cut off.
+ * Fix: Don't revert settings with a default value that have an old version of some other value.
+ * Server Feature: Relay listing errors to the client, rather than leaving them in silence.
+ * Server Feature: Add maximum user count and closed state to listings.
+ * Server Feature: Expedite listing refreshes when something important changes, like the NSFMness, title or closedness of a session.
+ * Server Fix: Make the server GUI compatible with Qt6.
+ * Fix: Make layer picking and the inspector pay attention to the layer view mode, so that picking layers when animating works properly.
+ * Fix: Allow pixel brushes to have a minimum of zero pixels, rather than treating both 0 and 1 as 1.
+ * Fix: Make chat line not scroll into oblivion when dragging over it.
+ * Fix: Make the UI not mess up the sizes of docks and chat when starting it on Windows.
+ * Fix: Make brush outline update even when docks are hidden.
+ * Feature: Make Linux AppImage more compatible with older Linuxes.
+ * Fix: Make secure connections work in the Linux AppImage.
+ * Feature: Automatically join a session when given a URL on startup, rather than waiting for another button press.
+ * Feature: Allow including session passwords into URL.
+ * Feature: Implement an invite dialog, to make it easier to directly let people join a session without listing it publicly.
+ * Feature: Show a warning when joining an NSFM session, since it might not be obvious to new users what they're in for.
+ * Fix: Make newlines show up properly when the chat is in context mode.
+ * Fix: Handle key presses and releases while dragging the canvas, since some people start the drag before pressing the key and would like their inputs to not be ignored.
+ * Fix: Wrap server title in the login dialog to make it not stretch the window into eternity.
+ * Fix: Allow opening links in the server title. They were turned into links, but those couldn't actually be clicked.
+ * Feature: Implement a start dialog instead of dumping the user into a blank canvas and making them pick through the menu at the top. Replaces the join, host, new and update dialogs, unifying them into a single one instead that should reduce the number of clicks required to do pretty much anything.
+ * Fix: Properly disable the NSFM session setting when it can't be changed.
+ * Fix: Make the color palette work properly again, it was broken in various ways. Also makes the color picker look like it used to in 2.1.
+ * Feature: Add a button to the color picker to pick from the screen.
+ * Feature: Allow focusing the canvas by double-tapping the Alt key, as well as an assignable shortcut for it, which is Ctrl+Tab by default.
+ * Feature: Show coordinates in the view status bar.
+ * Fix: Put resize arrows at the corners of the selection, rather than offset on the far ends.
+ * Fix: Don't displace selection by some subpixel amount when moving it around.
+ * Fix: Prioritize sending of pings and pongs so that a lot of queued messages don't cause a disconnect.
+ * Fix: Make filtering closed sessions actually work.
+ * Feature: Make the server browser columns resizable.
+ * Feature: Allow filtering duplicates in the server browser.
+ * Fix: Make pinned messages persist again even when chat recording is turned off.
+ * Fix: Don't grab colors from way too far away when using classic brushes.
+ * Fix: Avoid colors tending toward black when smudging.
+ * Fix: Make the cursors for the line, rectangle, ellipse and curve tools look less skrunkly.
+ * Fix: Prefer Drawpile's own icons over system icons, to avoid nonsensical icons being used on Linux.
+ * Translation: German, Italian, Portuguese (Brazil), Portuguese (Portugal), Russian, Simplified Chinese, Spanish, Turkish.
 
 2023-06-21 Version 2.2.0-beta.5
  * Made the new default theme *actually* the default theme, don't sync it with the theme from Drawpile 2.1.
