@@ -83,6 +83,7 @@ struct DP_CanvasHistory {
     DP_AffectedIndirectAreas aia;
     bool mark_command_done;
     struct {
+        bool starts_at_undo_point;
         int start;
         int fallbehind;
         DP_Queue queue;
@@ -329,10 +330,11 @@ static void dump_snapshot(DP_CanvasHistory *ch, DP_CanvasState *cs)
 }
 
 
-static void set_fork_start(DP_CanvasHistory *ch)
+static void set_fork_start(DP_CanvasHistory *ch, bool starts_at_undo_point)
 {
     DP_ASSERT(ch->used > 0);
     DP_ASSERT(ch->offset >= 0);
+    ch->fork.starts_at_undo_point = starts_at_undo_point;
     ch->fork.start = ch->offset + ch->used - 1;
     HISTORY_DEBUG("Set fork start to %d", ch->fork.start);
 }
@@ -519,7 +521,7 @@ DP_CanvasHistory *DP_canvas_history_new_inc(
         DP_malloc(entries_size),
         {0},
         true,
-        {0, 0, DP_QUEUE_NULL},
+        {false, 0, 0, DP_QUEUE_NULL},
         {save_point_fn, save_point_user},
         {0, {0}},
         DP_ATOMIC_INIT(0),
@@ -1078,7 +1080,9 @@ static void replay_from_inc(DP_CanvasHistory *ch, DP_DrawContext *dc,
 
     if (have_local_fork(ch)) {
         DP_ASSERT(ch->fork.start >= start_index + ch->offset);
-        set_fork_start(ch);
+        bool starts_at_undo_point =
+            DP_message_type(peek_fork_entry_message(ch)) == DP_MSG_UNDO_POINT;
+        set_fork_start(ch, starts_at_undo_point);
         DP_queue_each(&ch->fork.queue, sizeof(DP_ForkEntry), replay_fork,
                       (void *[]){ch, &cs, dc});
     }
@@ -1332,6 +1336,19 @@ static bool handle_command(DP_CanvasHistory *ch, DP_DrawContext *dc,
     }
 }
 
+static void clear_fork_fallbehind(DP_CanvasHistory *ch)
+{
+    HISTORY_DEBUG("Fork fallbehind cleared");
+    ch->fork.fallbehind = 0;
+    int index = ch->fork.start - ch->offset;
+    DP_ASSERT(index >= 0 && index < ch->used);
+    DP_CanvasHistoryEntry *entry = &ch->entries[index];
+    if (!ch->fork.starts_at_undo_point && !is_undo_point_entry(entry)) {
+        DP_canvas_state_decref_nullable(entry->state);
+        entry->state = NULL;
+    }
+}
+
 static DP_ForkAction reconcile_remote_command(DP_CanvasHistory *ch,
                                               DP_Message *msg,
                                               DP_MessageType type,
@@ -1350,8 +1367,7 @@ static DP_ForkAction reconcile_remote_command(DP_CanvasHistory *ch,
             shift_fork_entry_nodec(ch);
             DP_message_decref(peeked_msg);
             if (used == 1) {
-                HISTORY_DEBUG("Fork fallbehind cleared");
-                ch->fork.fallbehind = 0;
+                clear_fork_fallbehind(ch);
             }
             if (type == DP_MSG_UNDO || type == DP_MSG_UNDO_POINT) {
                 // Undo operations aren't handled locally.
@@ -1497,7 +1513,7 @@ bool DP_canvas_history_handle_local(DP_CanvasHistory *ch, DP_DrawContext *dc,
     DP_PERF_BEGIN_DETAIL(fn, "handle_local", "type=%d", (int)type);
 
     if (!have_local_fork(ch)) {
-        set_fork_start(ch);
+        set_fork_start(ch, type == DP_MSG_UNDO_POINT);
         make_save_point(ch, find_save_point_index(ch), false);
     }
     push_fork_entry_inc(ch, msg);
@@ -1577,7 +1593,7 @@ void DP_canvas_history_handle_local_multidab_dec(DP_CanvasHistory *ch,
     DP_PERF_BEGIN_DETAIL(fn, "handle_local_multidab", "count=%d", count);
 
     if (!have_local_fork(ch)) {
-        set_fork_start(ch);
+        set_fork_start(ch, false);
         make_save_point(ch, find_save_point_index(ch), false);
     }
 
