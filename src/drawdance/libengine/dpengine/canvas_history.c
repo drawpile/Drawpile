@@ -1268,7 +1268,7 @@ static bool redo(DP_CanvasHistory *ch, DP_DrawContext *dc,
     int redo_start = find_oldest_redo_point(ch, context_id, &depth);
     HISTORY_DEBUG("Redo for user %u from %d", context_id, redo_start);
     int undo_depth_limit = ch->undo_depth_limit;
-    if (depth >> undo_depth_limit) {
+    if (depth > undo_depth_limit) {
         DP_error_set("Redo by user %u beyond history limit %d", context_id,
                      undo_depth_limit);
         return false;
