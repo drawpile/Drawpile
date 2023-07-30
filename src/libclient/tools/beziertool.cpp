@@ -18,7 +18,7 @@ using canvas::Point;
 static constexpr long long DELTA_MSEC = 10;
 
 BezierTool::BezierTool(ToolController &owner)
-	: Tool(owner, BEZIER, QCursor(QPixmap(":cursors/curve.png"), 1, 1), true, true, false)
+	: Tool(owner, BEZIER, QCursor(QPixmap(":cursors/curve.png"), 2, 2), true, true, false)
 	, m_brushEngine{}
 {
 }

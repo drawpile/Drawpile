@@ -141,7 +141,7 @@ void ShapeTool::updatePreview()
 }
 
 Line::Line(ToolController &owner)
-	: ShapeTool(owner, LINE, QCursor(QPixmap(":cursors/line.png"), 1, 1))
+	: ShapeTool(owner, LINE, QCursor(QPixmap(":cursors/line.png"), 2, 2))
 {
 }
 
@@ -172,7 +172,7 @@ canvas::PointVector Line::pointVector() const
 }
 
 Rectangle::Rectangle(ToolController &owner)
-	: ShapeTool(owner, RECTANGLE, QCursor(QPixmap(":cursors/rectangle.png"), 1, 1))
+	: ShapeTool(owner, RECTANGLE, QCursor(QPixmap(":cursors/rectangle.png"), 2, 2))
 {
 }
 
@@ -188,7 +188,7 @@ canvas::PointVector Rectangle::pointVector() const
 }
 
 Ellipse::Ellipse(ToolController &owner)
-	: ShapeTool(owner, ELLIPSE, QCursor(QPixmap(":cursors/ellipse.png"), 1, 1))
+	: ShapeTool(owner, ELLIPSE, QCursor(QPixmap(":cursors/ellipse.png"), 2, 2))
 {
 }
 
