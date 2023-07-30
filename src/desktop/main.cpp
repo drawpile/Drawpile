@@ -259,10 +259,11 @@ void DrawpileApp::initTheme()
 {
 	static QStringList defaultThemePaths{QIcon::themeSearchPaths()};
 
-	QStringList themePaths{defaultThemePaths};
+	QStringList themePaths;
 	for (const auto &path : utils::paths::dataPaths()) {
-		themePaths.prepend(path + "/theme");
+		themePaths.append(path + "/theme");
 	}
+	themePaths.append(defaultThemePaths);
 	QIcon::setThemeSearchPaths(themePaths);
 
 	m_settings.bindThemeStyle(this, &DrawpileApp::setThemeStyle);
