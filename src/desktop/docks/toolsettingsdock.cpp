@@ -188,14 +188,14 @@ ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
 	connect(
 		bs, &tools::BrushSettings::pixelSizeChanged, this,
 		[this](int size) {
-			if(d->currentTool == tools::Tool::FREEHAND || d->currentTool == tools::Tool::ERASER) {
+			if(hasBrushCursor(d->currentTool)) {
 				emit sizeChanged(size);
 			}
 		});
 	connect(
 		bs, &tools::BrushSettings::subpixelModeChanged, this,
 		[this](bool subpixel, bool square) {
-			if(d->currentTool == tools::Tool::FREEHAND || d->currentTool == tools::Tool::ERASER) {
+			if(hasBrushCursor(d->currentTool)) {
 				emit subpixelModeChanged(subpixel, square);
 			}
 		});
@@ -534,6 +534,21 @@ void ToolSettings::quickAdjustCurrent1(qreal adjustment)
 void ToolSettings::stepAdjustCurrent1(bool increase)
 {
 	d->currentSettings()->stepAdjust1(increase);
+}
+
+bool ToolSettings::hasBrushCursor(tools::Tool::Type tool)
+{
+	switch(tool) {
+	case tools::Tool::FREEHAND:
+	case tools::Tool::ERASER:
+	case tools::Tool::LINE:
+	case tools::Tool::RECTANGLE:
+	case tools::Tool::ELLIPSE:
+	case tools::Tool::BEZIER:
+		return true;
+	default:
+		return false;
+	}
 }
 
 }

@@ -126,6 +126,7 @@ signals:
 
 private:
 	void selectTool(tools::Tool::Type tool);
+	static bool hasBrushCursor(tools::Tool::Type tool);
 
 	struct Private;
 	Private *d;
