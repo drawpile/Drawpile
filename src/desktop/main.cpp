@@ -261,7 +261,7 @@ void DrawpileApp::initTheme()
 
 	QStringList themePaths{defaultThemePaths};
 	for (const auto &path : utils::paths::dataPaths()) {
-		themePaths.append(path + "/theme");
+		themePaths.prepend(path + "/theme");
 	}
 	QIcon::setThemeSearchPaths(themePaths);
 
