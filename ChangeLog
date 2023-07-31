@@ -1,6 +1,6 @@
 Unreleased Version 2.2.0-pre
 
-2023-06-31 Version 2.2.0-beta.6
+2023-07-31 Version 2.2.0-beta.6
  * Fix: Don't forget account password when entering a wrong session password.
  * Fix: Smoothe out the timing of strokes received over the network to not make them appear jerky because of the paint engine drawing them too fast.
  * Fix: Lock timeline controls when the canvas or user is locked.
