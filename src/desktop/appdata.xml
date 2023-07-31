@@ -23,6 +23,110 @@
     <category>Graphics</category>
   </categories>
   <releases>
+    <release version="2.2.0-beta.6" type="development" date="2023-07-31">
+      <url>https://drawpile.net/news/release-2.2.0-beta.6/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>Fix: Don't forget account password when entering a wrong session password.</li>
+          <li>Fix: Smoothe out the timing of strokes received over the network to not make them appear jerky because of the paint engine drawing them too fast.</li>
+          <li>Fix: Lock timeline controls when the canvas or user is locked.</li>
+          <li>Feature: Allow adding key frames and an associated layer or group with a single action.</li>
+          <li>Feature: Allow duplicating key frames along with their contents.</li>
+          <li>Fix: Put changing the timeline frame count behind a button, since it might get mixed up with the current frame on accident.</li>
+          <li>Fix: Slow down user markers only for MyPaint brushes and snappy for classic brushes as well as when a new line is started.</li>
+          <li>Feature: Add a flipbook button to the timeline dock.</li>
+          <li>Feature: Hide the indirect mode button in the brush dock instead of just disabling it, since it's hard to tell the difference otherwise.</li>
+          <li>Fix: Fixed a crash when resizing the canvas while an indirect stroke is in progress.</li>
+          <li>Feature: Allow viewing tile and draw context memory usage in the statistics dialog.</li>
+          <li>Server Fix: Make the server GUI exist again, it got lost in the build scripts.</li>
+          <li>Fix: Put unpinning behind operator permissions too, just like pinning.</li>
+          <li>Feature: Improved canvas view. It now allows scrolling further beyond the edges, has more sensible zoom steps and shows messages about locks and canvas transformations.</li>
+          <li>Fix: Make the canvas view not jigger anymore when you zoom it out at certain sizes.</li>
+          <li>Fix: Lock drawing when the user is locked.</li>
+          <li>Fix: Make KisTablet Windows Ink the default tablet driver on Windows, because the Qt one is pretty busted.</li>
+          <li>Fix: Re-synchronize the canvas when local desynchronization is detected, rather than just keeping going with a broken state for ages.</li>
+          <li>Fix: Don't reset the layer properties dialog when someone else changes a layer. This would cause renames to get reverted to the original name, for example, which is really annoying.</li>
+          <li>Fix: Make default layer actually select itself when joining a canvas.</li>
+          <li>Fix: Move notifications to their own preferences page, since the network page was out of room and squashed some controls.</li>
+          <li>Fix: Make preference notes larger so that they work better in non-Latin writing systems.</li>
+          <li>Fix: Make the password page of the login dialog not so annoyingly large.</li>
+          <li>Feature: Clarify when asking for a session password versus an account password.</li>
+          <li>Fix: Handle duplicated shortcuts by complaining about it, rather than doing nothing.</li>
+          <li>Feature: Add shortcuts to move the canvas around, for people who want to do it with something other than the arrow keys.</li>
+          <li>Feature: Enable auto-repeat for shortcuts where it's sensible, such as zooming, moving the canvas, undo, redo or switching between layers, frames and tracks.</li>
+          <li>Feature: Allow clicking and dragging the inspector around, so that it's easier to hit small sections.</li>
+          <li>Fix: Don't fire an assertion when moving a selection out of bounds. This is not an error.</li>
+          <li>Fix: Default color wheel to HSV mode, not HSL.</li>
+          <li>Fix: Stretch columns of the ban list so they don't look so weirdly cut off.</li>
+          <li>Fix: Don't revert settings with a default value that have an old version of some other value.</li>
+          <li>Server Feature: Relay listing errors to the client, rather than leaving them in silence.</li>
+          <li>Server Feature: Add maximum user count and closed state to listings.</li>
+          <li>Server Feature: Expedite listing refreshes when something important changes, like the NSFMness, title or closedness of a session.</li>
+          <li>Server Fix: Make the server GUI compatible with Qt6.</li>
+          <li>Fix: Make layer picking and the inspector pay attention to the layer view mode, so that picking layers when animating works properly.</li>
+          <li>Fix: Allow pixel brushes to have a minimum of zero pixels, rather than treating both 0 and 1 as 1.</li>
+          <li>Fix: Make chat line not scroll into oblivion when dragging over it.</li>
+          <li>Fix: Make the UI not mess up the sizes of docks and chat when starting it on Windows.</li>
+          <li>Fix: Make brush outline update even when docks are hidden.</li>
+          <li>Feature: Make Linux AppImage more compatible with older Linuxes.</li>
+          <li>Fix: Make secure connections work in the Linux AppImage.</li>
+          <li>Feature: Automatically join a session when given a URL on startup, rather than waiting for another button press.</li>
+          <li>Feature: Allow including session passwords into URL.</li>
+          <li>Feature: Implement an invite dialog, to make it easier to directly let people join a session without listing it publicly.</li>
+          <li>Feature: Show a warning when joining an NSFM session, since it might not be obvious to new users what they're in for.</li>
+          <li>Fix: Make newlines show up properly when the chat is in context mode.</li>
+          <li>Fix: Handle key presses and releases while dragging the canvas, since some people start the drag before pressing the key and would like their inputs to not be ignored.</li>
+          <li>Fix: Wrap server title in the login dialog to make it not stretch the window into eternity.</li>
+          <li>Fix: Allow opening links in the server title. They were turned into links, but those couldn't actually be clicked.</li>
+          <li>Feature: Implement a start dialog instead of dumping the user into a blank canvas and making them pick through the menu at the top. Replaces the join, host, new and update dialogs, unifying them into a single one instead that should reduce the number of clicks required to do pretty much anything.</li>
+          <li>Fix: Properly disable the NSFM session setting when it can't be changed.</li>
+          <li>Fix: Make the color palette work properly again, it was broken in various ways. Also makes the color picker look like it used to in 2.1.</li>
+          <li>Feature: Add a button to the color picker to pick from the screen.</li>
+          <li>Feature: Allow focusing the canvas by double-tapping the Alt key, as well as an assignable shortcut for it, which is Ctrl+Tab by default.</li>
+          <li>Feature: Show coordinates in the view status bar.</li>
+          <li>Fix: Put resize arrows at the corners of the selection, rather than offset on the far ends.</li>
+          <li>Fix: Don't displace selection by some subpixel amount when moving it around.</li>
+          <li>Fix: Prioritize sending of pings and pongs so that a lot of queued messages don't cause a disconnect.</li>
+          <li>Fix: Make filtering closed sessions actually work.</li>
+          <li>Feature: Make the server browser columns resizable.</li>
+          <li>Feature: Allow filtering duplicates in the server browser.</li>
+          <li>Fix: Make pinned messages persist again even when chat recording is turned off.</li>
+          <li>Fix: Don't grab colors from way too far away when using classic brushes.</li>
+          <li>Fix: Avoid colors tending toward black when smudging.</li>
+          <li>Fix: Make the cursors for the line, rectangle, ellipse and curve tools look less skrunkly.</li>
+          <li>Fix: Prefer Drawpile's own icons over system icons, to avoid nonsensical icons being used on Linux.</li>
+          <li>Translation: German, Italian, Portuguese (Brazil), Portuguese (Portugal), Russian, Simplified Chinese, Spanish, Turkish.</li>
+        </ul>
+      </description>
+      <artifacts>
+        <artifact type="binary" platform="x86_64-windows-msvc">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.6/win/Drawpile-2.2.0-beta.6.msi</location>
+          <checksum type="sha256">886be972519fd95130dad3548ec3f6014ca4ca45ca348e1e34c3d3468bd39a58</checksum>
+          <size type="download">19711799</size>
+        </artifact>
+        <artifact type="binary" platform="x86_64-darwin-gnu">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.6/osx/Drawpile-2.2.0-beta.6.dmg</location>
+          <checksum type="sha256">33cf1abc6b25549d08843460bae7dc17868f24ad390098c4a6d77df11420554e</checksum>
+          <size type="download">21752571</size>
+        </artifact>
+        <artifact type="binary" platform="x86_64-linux-gnu">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.6/appimage/Drawpile-2.2.0-beta.6-x86_64.AppImage</location>
+          <checksum type="sha256">b2602ae546fdf3548afb8657af9494cfdb751568b148ebfab89525cd5100ec2c</checksum>
+          <size type="download">37266624</size>
+        </artifact>
+        <artifact type="binary" platform="aarch64-linux-android">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.6/apk/Drawpile-2.2.0-beta.6.apk</location>
+          <checksum type="sha256">24eb571898ae6ebf49bb55bb65a54303d0a9c9f7fa617a75834724200c631ecb</checksum>
+          <size type="download">17629458</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.6/src/Drawpile-2.2.0-beta.6.tar.gz</location>
+          <checksum type="sha256">e89075195aebd31600343c93f57540069e02e6ec093c155f6cadd015916b42e2</checksum>
+          <size type="download">8692984</size>
+        </artifact>
+      </artifacts>
+    </release>
     <release version="2.2.0-beta.5" type="development" date="2023-06-21">
       <url>https://drawpile.net/news/release-2.2b5/</url>
       <description>
