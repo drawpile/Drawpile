@@ -471,13 +471,15 @@
         <source>%n users</source>
         <translation>
             <numerusform>%n kullanıcı</numerusform>
+            <numerusform>%n kullanıcı</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="-2"/>
         <source>%1/%n users</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%1/%n kullanıcı</numerusform>
+            <numerusform>%1/%n kullanıcı</numerusform>
         </translation>
     </message>
     <message>
@@ -538,17 +540,17 @@
     <message>
         <location line="+162"/>
         <source>closed</source>
-        <translation type="unfinished"></translation>
+        <translation>kapalı</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>password-protected</source>
-        <translation type="unfinished"></translation>
+        <translation>şifre-korumalı</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>NSFM</source>
-        <translation type="unfinished"></translation>
+        <translation>UYGUNSUZ</translation>
     </message>
 </context>
 <context>
@@ -1008,12 +1010,12 @@
     <message>
         <location line="+3"/>
         <source>Incorrect password for &apos;%1&apos;!</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; için geçersiz şifre!</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Incorrect session password!</source>
-        <translation type="unfinished"></translation>
+        <translation>Geçersiz oturum şifresi!</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1133,52 +1135,52 @@
         <location filename="../utils/news.cpp" line="+283"/>
         <location line="+41"/>
         <source>Checking for updates…</source>
-        <translation type="unfinished"></translation>
+        <translation>Güncelleştirmeler kontrol ediliyor…</translation>
     </message>
     <message>
         <location line="-23"/>
         <source>Automatic update checking is disabled, &lt;a href=&quot;#autoupdate&quot;&gt;click here to enable it&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Otomatik güncelleme kontrolü devre dışı, &lt;a href=&quot;#autoupdate&quot;&gt;aktive etmek için buraya tıklayın&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>If you don&apos;t want automatic checks, &lt;a href=&quot;#checkupdates&quot;&gt;click here to check manually&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Eğer otomatik kontrol istemiyorsanız, &lt;a href=&quot;#checkupdates&quot;&gt;manuel olarak kontrol etmek için buraya tıklayın&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+60"/>
         <source>Network error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Ağ hatası: %1</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Couldn&apos;t make sense of the fetched data.</source>
-        <translation type="unfinished"></translation>
+        <translation>Alınan veriden anlam çıkarılamadı.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Couldn&apos;t make sense of fetched updates.</source>
-        <translation type="unfinished"></translation>
+        <translation>Alınan güncellemelerden anlam çıkarılamadı.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Couldn&apos;t save updates.</source>
-        <translation type="unfinished"></translation>
+        <translation>Güncellemeler kaydedilemedi.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Couldn&apos;t make sense of fetched news.</source>
-        <translation type="unfinished"></translation>
+        <translation>Alınan haberlerden anlam çıkarılamadı.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Couldn&apos;t save news.</source>
-        <translation type="unfinished"></translation>
+        <translation>Haberler kaydedilemedi.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>No news available.</source>
-        <translation type="unfinished"></translation>
+        <translation>Yeni haber yok.</translation>
     </message>
 </context>
 </TS>
