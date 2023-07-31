@@ -22,24 +22,30 @@ function(git_version_configure_file in_file out_file)
 
 	get_filename_component(out_filename "${out_file}" NAME)
 
-	find_package(Git)
-	if(Git_FOUND)
-		add_custom_target("${ARG_TARGET_NAME}" ALL
-			DEPENDS "${in_file}"
-			BYPRODUCTS "${out_file}"
-			COMMENT "Generating ${out_filename} with Git version"
-			COMMAND "${CMAKE_COMMAND}"
-				"-DGIT_EXECUTABLE=${GIT_EXECUTABLE}"
-				"-DGIT_VERSION_IN_FILE=${in_file}"
-				"-DGIT_VERSION_OUT_FILE=${out_file}"
-				"-DGIT_VERSION_BUILD_LABEL=${ARG_BUILD_LABEL}"
-				"-DGIT_VERSION_VAR=${ARG_VAR}"
-				-P "${CMAKE_CURRENT_FUNCTION_LIST_FILE}"
-		)
-	else()
-		message(STATUS "Generating ${out_filename} with static version")
-		_git_make_version(${ARG_VAR} "${PROJECT_VERSION}" "${ARG_BUILD_LABEL}")
+	if(BUILD_VERSION)
+		message(STATUS "Generating ${out_filename} with BUILD_VERSION")
+		_git_make_version(${ARG_VAR} "${BUILD_VERSION}" "${ARG_BUILD_LABEL}")
 		configure_file("${in_file}" "${out_file}")
+	else()
+		find_package(Git)
+		if(Git_FOUND)
+			add_custom_target("${ARG_TARGET_NAME}" ALL
+				DEPENDS "${in_file}"
+				BYPRODUCTS "${out_file}"
+				COMMENT "Generating ${out_filename} with Git version"
+				COMMAND "${CMAKE_COMMAND}"
+					"-DGIT_EXECUTABLE=${GIT_EXECUTABLE}"
+					"-DGIT_VERSION_IN_FILE=${in_file}"
+					"-DGIT_VERSION_OUT_FILE=${out_file}"
+					"-DGIT_VERSION_BUILD_LABEL=${ARG_BUILD_LABEL}"
+					"-DGIT_VERSION_VAR=${ARG_VAR}"
+					-P "${CMAKE_CURRENT_FUNCTION_LIST_FILE}"
+			)
+		else()
+			message(STATUS "Generating ${out_filename} with static version")
+			_git_make_version(${ARG_VAR} "${PROJECT_VERSION}" "${ARG_BUILD_LABEL}")
+			configure_file("${in_file}" "${out_file}")
+		endif()
 	endif()
 endfunction()
 
@@ -47,23 +53,28 @@ endfunction()
 Gets the current Git revision.
 #]]
 function(git_version_describe out_var)
-	if(NOT GIT_EXECUTABLE)
-		find_package(Git)
-	endif()
-
-	if(GIT_EXECUTABLE)
-		execute_process(
-			COMMAND "${GIT_EXECUTABLE}" describe --dirty
-			OUTPUT_VARIABLE version
-			OUTPUT_STRIP_TRAILING_WHITESPACE
-			ERROR_QUIET
-		)
+	if(BUILD_VERSION)
+		message(STATUS "BUILD_VERSION set, using it instead of git")
+		set(${out_var} "${BUILD_VERSION}" PARENT_SCOPE)
 	else()
-		message(STATUS "Git not found; falling back to static versioning")
-		set(version "")
-	endif()
+		if(NOT GIT_EXECUTABLE)
+			find_package(Git)
+		endif()
 
-	set(${out_var} "${version}" PARENT_SCOPE)
+		if(GIT_EXECUTABLE)
+			execute_process(
+				COMMAND "${GIT_EXECUTABLE}" describe --dirty
+				OUTPUT_VARIABLE version
+				OUTPUT_STRIP_TRAILING_WHITESPACE
+				ERROR_QUIET
+			)
+		else()
+			message(STATUS "Git not found; falling back to static versioning")
+			set(version "")
+		endif()
+
+		set(${out_var} "${version}" PARENT_SCOPE)
+	endif()
 endfunction()
 
 function(_git_make_version out_var version label)

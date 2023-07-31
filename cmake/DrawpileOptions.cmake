@@ -5,8 +5,9 @@ include(CMakeDependentOption)
 option(CLIENT "Compile client" ON)
 add_feature_info("Drawpile client (CLIENT)" CLIENT "")
 
-# This does not really need to be reported as a feature
+# These don't not really need to be reported as a feature
 set(BUILD_LABEL "" CACHE STRING "A custom label to add to the version")
+set(BUILD_VERSION "" CACHE STRING "Version to use, instead of asking git")
 
 option(UPDATE_TRANSLATIONS "Update translation files from source")
 add_feature_info(".ts regeneration (slow!) (UPDATE_TRANSLATIONS)" UPDATE_TRANSLATIONS "")
