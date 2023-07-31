@@ -83,7 +83,10 @@ jobs:
             # linuxdeploy-plugin-qt does not seem to notice and so does not
             # export the iconengine if it is not told that we really, really
             # want svg plugins please
-            packager: EXTRA_QT_PLUGINS="svg;" VERSION=$(git describe) cmake --install build --config Release
+            packager: >-
+              EXTRA_QT_PLUGINS="svg;"
+              VERSION="${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || '$(git describe)' }}"
+              cmake --install build --config Release
 
           # Android common
           - os: ubuntu-20.04
