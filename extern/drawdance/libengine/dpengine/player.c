@@ -571,7 +571,6 @@ static bool emit_message(DP_Message *msg, DP_Message **out_msg)
     case DP_MSG_MARKER:
     case DP_MSG_USER_ACL:
     case DP_MSG_FEATURE_ACCESS_LEVELS:
-    case DP_MSG_UNDO_DEPTH:
     case DP_MSG_DATA:
         return false;
     // Layer ACL messages have a tier, which we want to retain, and a user
