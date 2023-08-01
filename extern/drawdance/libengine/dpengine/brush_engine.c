@@ -598,7 +598,7 @@ static void get_color_mypaint_pigment(MyPaintSurface2 *self, float x, float y,
         int diameter = DP_min_int(DP_float_to_int(radius * 2.0f + 0.5f), 255);
         DP_UPixelFloat color = DP_layer_content_sample_color_at(
             lc, be->stamp_buffer, DP_float_to_int(x + 0.5f),
-            DP_float_to_int(y + 0.5f), diameter, &be->last_diameter);
+            DP_float_to_int(y + 0.5f), diameter, false, &be->last_diameter);
         *color_r = color.r;
         *color_g = color.g;
         *color_b = color.b;
@@ -942,7 +942,7 @@ static DP_UPixelFloat sample_classic_smudge(DP_BrushEngine *be,
     int diameter = get_classic_smudge_diameter(cb, pressure);
     return DP_layer_content_sample_color_at(
         lc, be->stamp_buffer, DP_float_to_int(x), DP_float_to_int(y), diameter,
-        &be->last_diameter);
+        true, &be->last_diameter);
 }
 
 static void update_classic_smudge(DP_BrushEngine *be, DP_ClassicBrush *cb,

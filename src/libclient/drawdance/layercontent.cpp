@@ -66,10 +66,11 @@ bool LayerContent::isNull() const
 }
 
 QColor LayerContent::sampleColorAt(
-    uint16_t *stampBuffer, int x, int y, int diameter, int &lastDiameter) const
+    uint16_t *stampBuffer, int x, int y, int diameter, bool opaque,
+    int &lastDiameter) const
 {
     DP_UPixelFloat pixel = DP_layer_content_sample_color_at(
-        m_data, stampBuffer, x, y, diameter, &lastDiameter);
+        m_data, stampBuffer, x, y, diameter, opaque, &lastDiameter);
     QColor color;
     color.setRgbF(pixel.r, pixel.g, pixel.b, pixel.a);
     return color;

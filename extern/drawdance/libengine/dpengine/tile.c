@@ -455,9 +455,10 @@ void DP_tile_copy_to_upixels8(DP_Tile *tile_or_null, DP_UPixel8 *pixels, int x,
 
 // Based on libmypaint, see license above.
 static void sample_tile(DP_Pixel15 *src, const uint16_t *mask, int w, int h,
-                        int mask_skip, int base_skip, float *in_out_weight,
-                        float *in_out_red, float *in_out_green,
-                        float *in_out_blue, float *in_out_alpha)
+                        int mask_skip, int base_skip, bool opaque,
+                        float *in_out_weight, float *in_out_red,
+                        float *in_out_green, float *in_out_blue,
+                        float *in_out_alpha)
 {
     // The sum of values from a single tile fit into a 32 bit integer,
     // so we use those and only convert to a float once at the end.
@@ -471,11 +472,15 @@ static void sample_tile(DP_Pixel15 *src, const uint16_t *mask, int w, int h,
         for (int x = 0; x < w; ++x, ++mask, ++src) {
             uint_fast32_t m = *mask;
             DP_Pixel15 p = *src;
-            weight += m;
-            red += m * p.r / (uint_fast32_t)DP_BIT15;
-            green += m * p.g / (uint_fast32_t)DP_BIT15;
-            blue += m * p.b / (uint_fast32_t)DP_BIT15;
-            alpha += m * p.a / (uint_fast32_t)DP_BIT15;
+            // When working in opaque mode, disregard low alpha values because
+            // the resulting unpremultiplied colors are just too inacurrate.
+            if (!opaque || (m > 512 && p.a > 512)) {
+                weight += m;
+                red += m * p.r / (uint_fast32_t)DP_BIT15;
+                green += m * p.g / (uint_fast32_t)DP_BIT15;
+                blue += m * p.b / (uint_fast32_t)DP_BIT15;
+                alpha += m * p.a / (uint_fast32_t)DP_BIT15;
+            }
         }
         src += base_skip;
         mask += mask_skip;
@@ -502,17 +507,18 @@ static void sample_blank(const uint16_t *mask, int w, int h, int mask_skip,
 }
 
 void DP_tile_sample(DP_Tile *tile_or_null, const uint16_t *mask, int x, int y,
-                    int width, int height, int skip, float *in_out_weight,
-                    float *in_out_red, float *in_out_green, float *in_out_blue,
+                    int width, int height, int skip, bool opaque,
+                    float *in_out_weight, float *in_out_red,
+                    float *in_out_green, float *in_out_blue,
                     float *in_out_alpha)
 {
     if (tile_or_null) {
         DP_Pixel15 *src = tile_or_null->pixels + y * DP_TILE_SIZE + x;
         sample_tile(src, mask, width, height, skip, DP_TILE_SIZE - width,
-                    in_out_weight, in_out_red, in_out_green, in_out_blue,
-                    in_out_alpha);
+                    opaque, in_out_weight, in_out_red, in_out_green,
+                    in_out_blue, in_out_alpha);
     }
-    else {
+    else if (!opaque) {
         sample_blank(mask, width, height, skip, in_out_weight);
     }
 }

@@ -150,8 +150,9 @@ void DP_tile_copy_to_upixels8(DP_Tile *tile_or_null, DP_UPixel8 *pixels, int x,
 
 
 void DP_tile_sample(DP_Tile *tile_or_null, const uint16_t *mask, int x, int y,
-                    int width, int height, int skip, float *in_out_weight,
-                    float *in_out_red, float *in_out_green, float *in_out_blue,
+                    int width, int height, int skip, bool opaque,
+                    float *in_out_weight, float *in_out_red,
+                    float *in_out_green, float *in_out_blue,
                     float *in_out_alpha);
 
 

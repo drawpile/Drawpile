@@ -30,7 +30,8 @@ public:
     bool isNull() const;
 
     QColor sampleColorAt(
-        uint16_t *stampBuffer, int x, int y, int diameter, int &lastDiameter) const;
+        uint16_t *stampBuffer, int x, int y, int diameter, bool opaque,
+        int &lastDiameter) const;
 
     QImage toImage(const QRect &rect) const;
 

@@ -389,7 +389,7 @@ QColor PaintEngine::sampleColor(int x, int y, int layerId, int diameter)
 		return Qt::transparent;
 	} else {
 		return lc.sampleColorAt(
-			m_sampleColorStampBuffer, x, y, diameter,
+			m_sampleColorStampBuffer, x, y, diameter, true,
 			m_sampleColorLastDiameter);
 	}
 }
