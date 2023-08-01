@@ -350,7 +350,7 @@ private:
 	bool m_showoutline, m_subpixeloutline, m_squareoutline;
 	QCursor m_dotcursor, m_trianglerightcursor, m_triangleleftcursor;
 	QCursor m_colorpickcursor, m_layerpickcursor, m_zoomcursor, m_rotatecursor;
-	QCursor m_toolcursor;
+	QCursor m_rotatediscretecursor, m_toolcursor;
 
 	QPointF m_pos;		// Canvas position
 	qreal m_zoom;		// View zoom in percents

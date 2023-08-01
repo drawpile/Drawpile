@@ -55,6 +55,7 @@ target_sources(drawpile PRIVATE
 	cursors/line.png
 	cursors/rectangle.png
 	cursors/rotate.png
+	cursors/rotate-discrete.png
 	cursors/select-lasso.png
 	cursors/select-rectangle.png
 	cursors/text.png

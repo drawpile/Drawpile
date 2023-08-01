@@ -93,6 +93,8 @@ CanvasView::CanvasView(QWidget *parent)
 	m_layerpickcursor = QCursor(QPixmap(":/cursors/layerpicker.png"), 2, 29);
 	m_zoomcursor = QCursor(QPixmap(":/cursors/zoom.png"), 8, 8);
 	m_rotatecursor = QCursor(QPixmap(":/cursors/rotate.png"), 16, 16);
+	m_rotatediscretecursor =
+		QCursor(QPixmap(":/cursors/rotate-discrete.png"), 16, 16);
 
 	// Generate the minimalistic dot cursor
 	{
@@ -477,8 +479,10 @@ void CanvasView::resetCursor()
 													: Qt::OpenHandCursor);
 			break;
 		case CanvasShortcuts::CANVAS_ROTATE:
-		case CanvasShortcuts::CANVAS_ROTATE_DISCRETE:
 			viewport()->setCursor(m_rotatecursor);
+			break;
+		case CanvasShortcuts::CANVAS_ROTATE_DISCRETE:
+			viewport()->setCursor(m_rotatediscretecursor);
 			break;
 		case CanvasShortcuts::CANVAS_ZOOM:
 			viewport()->setCursor(m_zoomcursor);
