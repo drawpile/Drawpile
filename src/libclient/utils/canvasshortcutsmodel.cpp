@@ -288,6 +288,8 @@ QString CanvasShortcutsModel::actionToString(const CanvasShortcuts::Shortcut &s)
 		default:
 			return tr("Unknown Constraint 0x%1").arg(s.flags, 0, 16);
 		}
+	case CanvasShortcuts::CANVAS_ROTATE_DISCRETE:
+		return tr("Ratchet Rotate Canvas");
 	default:
 		return tr("Unknown Action %1").arg(s.action);
 	}

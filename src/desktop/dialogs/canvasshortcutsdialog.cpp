@@ -31,6 +31,8 @@ CanvasShortcutsDialog::CanvasShortcutsDialog(
 	d->ui.actionCombo->addItem(tr("Pan Canvas"), CanvasShortcuts::CANVAS_PAN);
 	d->ui.actionCombo->addItem(
 		tr("Rotate Canvas"), CanvasShortcuts::CANVAS_ROTATE);
+	d->ui.actionCombo->addItem(
+		tr("Ratchet Rotate Canvas"), CanvasShortcuts::CANVAS_ROTATE_DISCRETE);
 	d->ui.actionCombo->addItem(tr("Zoom Canvas"), CanvasShortcuts::CANVAS_ZOOM);
 	d->ui.actionCombo->addItem(tr("Pick Color"), CanvasShortcuts::COLOR_PICK);
 	d->ui.actionCombo->addItem(tr("Pick Layer"), CanvasShortcuts::LAYER_PICK);
@@ -190,6 +192,7 @@ void CanvasShortcutsDialog::updateAction()
 	switch(action) {
 	case CanvasShortcuts::CANVAS_PAN:
 	case CanvasShortcuts::CANVAS_ROTATE:
+	case CanvasShortcuts::CANVAS_ROTATE_DISCRETE:
 	case CanvasShortcuts::CANVAS_ZOOM:
 	case CanvasShortcuts::TOOL_ADJUST:
 		showModifiers = true;

@@ -236,6 +236,7 @@ protected:
 private:
 	static constexpr qreal TOUCH_DRAW_DISTANCE = 10.0;
 	static constexpr int TOUCH_DRAW_BUFFER_COUNT = 20;
+	static constexpr qreal ROTATION_STEP_SIZE = 15.0;
 
 	// unified mouse/stylus event handlers
 	void penPressEvent(
@@ -295,6 +296,7 @@ private:
 	void resetCursor();
 
 	void setZoomToFit(Qt::Orientations orientations);
+	void rotateByDiscreteSteps(int steps);
 
 	void viewRectChanged();
 
@@ -302,6 +304,8 @@ private:
 	QString getRotationNotice() const;
 	void showTransformNotice(const QString &text);
 	void updateLockNotice();
+
+	void initDragDiscreteRotation();
 
 	CanvasShortcuts m_canvasShortcuts;
 	QSet<Qt::Key> m_keysDown;
@@ -333,6 +337,7 @@ private:
 	bool m_dragInverted;
 	bool m_dragSwapAxes;
 	QPoint m_dragLastPoint;
+	qreal m_dragDiscreteRotation;
 
 	//! Previous pointer location
 	canvas::Point m_prevpoint;
