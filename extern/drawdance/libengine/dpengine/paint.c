@@ -1059,8 +1059,9 @@ DP_BrushStamp DP_paint_color_sampling_stamp_make(uint16_t *data, int diameter,
             for (int x = 0; x < diameter; ++x) {
                 double dist = (DP_square_double(x - radius) + yy) * lut_scale;
                 int i = DP_double_to_int(dist);
-                *d = i < CLASSIC_LUT_SIZE ? DP_float_to_uint8(DP_BIT15 * lut[i])
-                                          : 0;
+                *d = i < CLASSIC_LUT_SIZE
+                       ? DP_float_to_uint16(DP_BIT15 * lut[i])
+                       : 0;
                 ++d;
             }
         }

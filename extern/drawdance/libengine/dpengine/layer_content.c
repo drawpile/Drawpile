@@ -416,12 +416,9 @@ static DP_UPixelFloat sample_dab_color(DP_LayerContent *lc, DP_BrushStamp stamp,
     alpha /= weight;
 
     // Unpremultiply, clamp against rounding error.
-    // The fudge factor avoids smudging causing the color to tend toward black.
-    // Not entirely sure why that happens, but fudging fixes it, so whatever.
-    float fudge = 0.005f;
-    red = CLAMP(red / alpha + fudge, 0.0f, 1.0f);
-    green = CLAMP(green / alpha + fudge, 0.0f, 1.0f);
-    blue = CLAMP(blue / alpha + fudge, 0.0f, 1.0f);
+    red = CLAMP(red / alpha, 0.0f, 1.0f);
+    green = CLAMP(green / alpha, 0.0f, 1.0f);
+    blue = CLAMP(blue / alpha, 0.0f, 1.0f);
 
     return (DP_UPixelFloat){
         .b = blue,
