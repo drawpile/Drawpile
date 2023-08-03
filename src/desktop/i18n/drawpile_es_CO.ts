@@ -62,7 +62,7 @@
     <message>
         <location line="+28"/>
         <source>Enter a list server URL:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ingresa un URL de servidor</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -111,7 +111,7 @@
     <message>
         <location line="+20"/>
         <source>MyPaint Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>MyPaint Pincel</translation>
     </message>
     <message>
         <location line="+39"/>
@@ -121,7 +121,7 @@
     <message>
         <location line="+14"/>
         <source>Lock alpha (recolor mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>Bloqueo alfa (Modo de recolor)</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -166,7 +166,7 @@
     <message>
         <location line="+16"/>
         <source>Spacing: </source>
-        <translation type="unfinished"></translation>
+        <translation>Espacio </translation>
     </message>
     <message>
         <location line="+19"/>
@@ -212,7 +212,7 @@
     <message>
         <location line="+10"/>
         <source>Description:</source>
-        <translation type="unfinished"></translation>
+        <translation>Descripcion:</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -222,13 +222,14 @@
     <message>
         <location line="+11"/>
         <source>Choose File...</source>
-        <translation type="unfinished"></translation>
+        <translation>Escoge un archivo...</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Will be resized
 to 64x64 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sera redimensionado 
+a 64x54 pixeles.</translation>
     </message>
 </context>
 <context>
@@ -236,7 +237,7 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../ui/canvasshortcutsdialog.ui" line="+14"/>
         <source>Canvas Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Atajo de Lienzo</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -262,7 +263,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+3"/>
         <source>Inverted</source>
-        <translation type="unfinished"></translation>
+        <translation>Invertido</translation>
     </message>
     <message>
         <location line="+7"/>
