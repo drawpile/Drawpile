@@ -229,7 +229,7 @@
         <source>Will be resized
 to 64x64 pixels.</source>
         <translation>Sera redimensionado 
-a 64x54 pixeles.</translation>
+a 64x64 pixeles.</translation>
     </message>
 </context>
 <context>
