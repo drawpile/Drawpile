@@ -45,7 +45,7 @@ void Welcome::showFirstStartText()
 				tr("Take a look over the "
 				   "<a href=\"#preferences\">Preferences</a> to configure "
 				   "things to your liking. You might also want to pick a "
-				   "different <a href=\"#layout\">Layout</a> for the "
+				   "different <a href=\"#layouts\">Layout</a> for the "
 				   "application."),
 				tr("If you have an invite link to a drawing session, you can "
 				   "<a href=\"#join\">Join</a> it directly. Alternatively, "
