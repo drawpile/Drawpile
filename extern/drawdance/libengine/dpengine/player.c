@@ -108,7 +108,7 @@ static void player_index_dispose(DP_PlayerIndex *pi)
     DP_ASSERT(pi);
     DP_free(pi->entries);
     DP_buffered_input_dispose(&pi->input);
-    *pi = (DP_PlayerIndex){DP_BUFFERD_INPUT_NULL, 0, NULL, 0};
+    *pi = (DP_PlayerIndex){DP_BUFFERED_INPUT_NULL, 0, NULL, 0};
 }
 
 
@@ -261,7 +261,7 @@ static DP_Player *make_player(DP_PlayerType type, char *recording_path,
                           compatible,
                           false,
                           false,
-                          {DP_BUFFERD_INPUT_NULL, 0, NULL, 0}};
+                          {DP_BUFFERED_INPUT_NULL, 0, NULL, 0}};
     return player;
 }
 
@@ -342,7 +342,7 @@ static DP_Player *new_debug_dump_player(DP_Input *input)
                           true,
                           false,
                           false,
-                          {DP_BUFFERD_INPUT_NULL, 0, NULL, 0}};
+                          {DP_BUFFERED_INPUT_NULL, 0, NULL, 0}};
     return player;
 }
 

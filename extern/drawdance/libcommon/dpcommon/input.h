@@ -69,7 +69,7 @@ DP_Input *DP_mem_input_new_free_on_close(void *buffer, size_t size);
 DP_Input *DP_mem_input_new_keep_on_close(const void *buffer, size_t size);
 
 
-#define DP_BUFFERD_INPUT_NULL \
+#define DP_BUFFERED_INPUT_NULL \
     (DP_BufferedInput)        \
     {                         \
         NULL, NULL, 0         \
