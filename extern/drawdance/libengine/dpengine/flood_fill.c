@@ -400,6 +400,10 @@ static float *make_mask(DP_FillContext *c, int expand, int feather_radius,
     float *mask = DP_malloc_zeroed(mask_size * sizeof(*mask));
     DP_Rect area = c->area;
     unsigned char *output = c->output;
+    *out_img_x = expand_min_x - feather_radius;
+    *out_img_y = expand_min_y - feather_radius;
+    *out_img_width = img_width;
+    *out_img_height = img_height;
 
     if (expand == 0) {
         for (int y = min_y; y <= max_y; ++y) {
@@ -439,10 +443,6 @@ static float *make_mask(DP_FillContext *c, int expand, int feather_radius,
         DP_free(tmp);
     }
 
-    *out_img_x = expand_min_x - feather_radius;
-    *out_img_y = expand_min_y - feather_radius;
-    *out_img_width = img_width;
-    *out_img_height = img_height;
     return mask;
 }
 
