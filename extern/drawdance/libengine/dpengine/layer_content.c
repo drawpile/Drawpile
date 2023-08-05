@@ -1469,15 +1469,6 @@ static bool can_blend_blank_pixel(int blend_mode, uint16_t opacity,
             || pixel.a != 0);
 }
 
-// We want to initialize a static buffer with the same value 4096 times, so this
-// is a goofy way to achieve that at compile time without spelling it all out.
-#define DP_BIT15_4    DP_BIT15, DP_BIT15, DP_BIT15, DP_BIT15
-#define DP_BIT15_16   DP_BIT15_4, DP_BIT15_4, DP_BIT15_4, DP_BIT15_4
-#define DP_BIT15_64   DP_BIT15_16, DP_BIT15_16, DP_BIT15_16, DP_BIT15_16
-#define DP_BIT15_256  DP_BIT15_64, DP_BIT15_64, DP_BIT15_64, DP_BIT15_64
-#define DP_BIT15_1024 DP_BIT15_256, DP_BIT15_256, DP_BIT15_256, DP_BIT15_256
-#define DP_BIT15_4096 DP_BIT15_1024, DP_BIT15_1024, DP_BIT15_1024, DP_BIT15_1024
-
 static void fill_rect(DP_TransientLayerContent *tlc, unsigned int context_id,
                       int blend_mode, int left, int top, int right, int bottom,
                       DP_UPixel15 pixel)
