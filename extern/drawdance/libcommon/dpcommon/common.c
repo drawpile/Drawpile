@@ -292,13 +292,7 @@ void DP_error_count_set(unsigned int count)
 
 unsigned int DP_error_count_since(unsigned int count)
 {
-    unsigned int error_count = DP_error_count();
-    if (error_count >= count) {
-        return error_count - count;
-    }
-    else {
-        // Wraparound of the unsigned int. The wraparound is guaranteed
-        // for unsigned numbers by the C standard, so we can rely on it.
-        return UINT_MAX - count + error_count + 1;
-    }
+    // This will work correctly even when the count overflowed because
+    // wraparound is guaranteed for unsigned integers by the C standard.
+    return DP_error_count() - count;
 }
