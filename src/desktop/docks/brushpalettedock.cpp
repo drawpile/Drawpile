@@ -72,7 +72,8 @@ struct BrushPalette::Private {
 	QAction *editBrushAction;
 	QAction *deleteBrushAction;
 	QMenu *iconSizeMenu;
-	QMenu *menu;
+	QMenu *tagMenu;
+	QMenu *brushMenu;
 	QAction *newTagAction;
 	QAction *editTagAction;
 	QAction *deleteTagAction;
@@ -122,21 +123,32 @@ BrushPalette::BrushPalette(QWidget *parent)
 	titleWidget->addCustomWidget(d->menuButton);
 	titleWidget->addSpace(4);
 
-	d->menu = new QMenu(this);
-	d->newBrushAction = d->menu->addAction(QIcon::fromTheme("list-add"), tr("New Brush Preset"));
-	d->duplicateBrushAction = d->menu->addAction(QIcon::fromTheme("edit-copy"), tr("Duplicate Brush Preset"));
-	d->overwriteBrushAction = d->menu->addAction(QIcon::fromTheme("document-save"), tr("Overwrite Brush Preset"));
-	d->editBrushAction = d->menu->addAction(QIcon::fromTheme("configure"), tr("Edit Brush Preset"));
-	d->deleteBrushAction = d->menu->addAction(QIcon::fromTheme("trash-empty"), tr("Delete Brush Preset"));
-	d->assignmentMenu = d->menu->addMenu(tr("Brush Tags"));
-	d->iconSizeMenu = d->menu->addMenu(tr("Icon Size"));
-	d->menu->addSeparator();
-	d->newTagAction = d->menu->addAction(QIcon::fromTheme("folder-new"), tr("New Tag"));
-	d->editTagAction = d->menu->addAction(QIcon::fromTheme("edit-rename"), tr("Rename Tag"));
-	d->deleteTagAction = d->menu->addAction(QIcon::fromTheme("list-remove"), tr("Delete Tag"));
-	d->menu->addSeparator();
-	d->importBrushesAction = d->menu->addAction(tr("Import Brushes..."));
-	d->menuButton->setMenu(d->menu);
+	d->tagMenu = new QMenu(this);
+	d->newBrushAction = d->tagMenu->addAction(QIcon::fromTheme("list-add"), tr("New Brush Preset"));
+	d->duplicateBrushAction = d->tagMenu->addAction(QIcon::fromTheme("edit-copy"), tr("Duplicate Brush Preset"));
+	d->overwriteBrushAction = d->tagMenu->addAction(QIcon::fromTheme("document-save"), tr("Overwrite Brush Preset"));
+	d->editBrushAction = d->tagMenu->addAction(QIcon::fromTheme("configure"), tr("Edit Brush Preset"));
+	d->deleteBrushAction = d->tagMenu->addAction(QIcon::fromTheme("trash-empty"), tr("Delete Brush Preset"));
+	d->assignmentMenu = d->tagMenu->addMenu(tr("Brush Tags"));
+	d->iconSizeMenu = d->tagMenu->addMenu(tr("Icon Size"));
+	d->tagMenu->addSeparator();
+	d->newTagAction = d->tagMenu->addAction(QIcon::fromTheme("folder-new"), tr("New Tag"));
+	d->editTagAction = d->tagMenu->addAction(QIcon::fromTheme("edit-rename"), tr("Rename Tag"));
+	d->deleteTagAction = d->tagMenu->addAction(QIcon::fromTheme("list-remove"), tr("Delete Tag"));
+	d->tagMenu->addSeparator();
+	d->importBrushesAction = d->tagMenu->addAction(tr("Import Brushes..."));
+	d->menuButton->setMenu(d->tagMenu);
+
+	d->brushMenu = new QMenu(this);
+	d->brushMenu->addAction(d->newBrushAction);
+	d->brushMenu->addAction(d->duplicateBrushAction);
+	d->brushMenu->addAction(d->overwriteBrushAction);
+	d->brushMenu->addAction(d->editBrushAction);
+	d->brushMenu->addAction(d->deleteBrushAction);
+	d->brushMenu->addMenu(d->assignmentMenu);
+	d->brushMenu->addMenu(d->iconSizeMenu);
+	d->tagMenu->addSeparator();
+	d->brushMenu->addAction(d->importBrushesAction);
 
 	for(int dimension = 16; dimension <= 128; dimension += 16) {
 		QAction *sizeAction = d->iconSizeMenu->addAction(tr("%1x%1").arg(dimension));
@@ -473,7 +485,7 @@ void BrushPalette::applyToBrushSettings(const QModelIndex &proxyIndex)
 
 void BrushPalette::showPresetContextMenu(const QPoint &pos)
 {
-	d->menu->popup(d->presetListView->mapToGlobal(pos));
+	d->brushMenu->popup(d->presetListView->mapToGlobal(pos));
 }
 
 void BrushPalette::changeTagAssignment(int tagId, bool assigned)
