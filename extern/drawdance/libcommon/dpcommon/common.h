@@ -65,6 +65,7 @@
 #    ifndef DP_UNREACHABLE
 #        define DP_UNREACHABLE() __builtin_unreachable()
 #    endif
+#    define DP_FALLTHROUGH() __attribute__((__fallthrough__))
 #    define DP_FORMAT(STRING_INDEX, FIRST_TO_CHECK) \
         __attribute__((__format__(printf, STRING_INDEX, FIRST_TO_CHECK)))
 #    define DP_MALLOC_ATTR  __attribute__((malloc, alloc_size(1)))
@@ -83,6 +84,7 @@
 #            define DP_UNREACHABLE() // nothing
 #        endif
 #    endif
+#    define DP_FALLTHROUGH()                        // nothing
 #    define DP_FORMAT(STRING_INDEX, FIRST_TO_CHECK) // nothing
 #    define DP_MALLOC_ATTR                          // nothing
 #    define DP_REALLOC_ATTR                         // nothing

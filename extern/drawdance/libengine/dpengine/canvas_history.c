@@ -1655,11 +1655,12 @@ bool DP_canvas_history_reset_image_new(
             if (!accept_message(user, DP_msg_undo_new(0, 0, false))) {
                 return false;
             }
-            // fallthrough
+            DP_FALLTHROUGH();
         case DP_UNDO_DONE:
             if (!accept_message(user, DP_message_incref(entry->msg))) {
                 return false;
             }
+            break;
         default:
             break;
         }

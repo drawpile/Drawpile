@@ -75,10 +75,10 @@ char *DP_base64_encode(const unsigned char *in, size_t in_length,
     switch (in_length % 3u) {
     case 1u:
         buf[bufsize - 3u] = '=';
-        /* fallthrough */
+        DP_FALLTHROUGH();
     case 2u:
         buf[bufsize - 2u] = '=';
-        /* fallthrough */
+        DP_FALLTHROUGH();
     default:
         break;
     }
@@ -103,6 +103,7 @@ size_t DP_base64_decode_length(const char *in, size_t in_length)
             BASE64_SYMBOLS_LIST()
 #undef BASE64_X
             ++len;
+            break;
         default:
             break;
         }
