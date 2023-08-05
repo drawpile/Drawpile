@@ -116,6 +116,6 @@ extern "C" DP_Input *DP_qfile_input_new_from_path(const char *path,
         DP_error_set("Can't open '%s': %s", path,
                      qUtf8Printable(file->errorString()));
         delete file;
-        return NULL;
+        return nullptr;
     }
 }

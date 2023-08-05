@@ -100,7 +100,7 @@ static bool qfile_output_dispose(void *internal)
 }
 
 static const DP_OutputMethods qfile_output_methods = {
-    qfile_output_write, NULL,
+    qfile_output_write, nullptr,
     qfile_output_flush, qfile_output_tell,
     qfile_output_seek,  qfile_output_dispose,
 };
@@ -123,7 +123,7 @@ extern "C" DP_Output *DP_qfile_output_new_from_path(const char *path,
         DP_error_set("Can't open '%s': %s", path,
                      qUtf8Printable(file->errorString()));
         delete file;
-        return NULL;
+        return nullptr;
     }
 }
 
@@ -167,7 +167,7 @@ static bool qsavefile_output_dispose(void *internal)
 }
 
 static const DP_OutputMethods qsavefile_output_methods = {
-    qsavefile_output_write, NULL,
+    qsavefile_output_write, nullptr,
     qsavefile_output_flush, qsavefile_output_tell,
     qsavefile_output_seek,  qsavefile_output_dispose,
 };
@@ -192,7 +192,7 @@ extern "C" DP_Output *DP_qsavefile_output_new_from_path(const char *path,
         DP_error_set("Can't open '%s': %s", path,
                      qUtf8Printable(sf->errorString()));
         delete sf;
-        return NULL;
+        return nullptr;
     }
 }
 
@@ -239,8 +239,8 @@ static bool kcompressiondevice_output_dispose(void *internal)
 
 static const DP_OutputMethods kcompressiondevice_output_methods = {
     kcompressiondevice_output_write,
-    NULL,
-    NULL,
+    nullptr,
+    nullptr,
     kcompressiondevice_output_tell,
     kcompressiondevice_output_seek,
     kcompressiondevice_output_dispose,
@@ -268,7 +268,7 @@ DP_karchive_gzip_output_new_from_path(const char *path, DP_OutputQtNewFn new_fn)
         DP_error_set("Can't open '%s': %s", path,
                      qUtf8Printable(dev->errorString()));
         delete dev;
-        return NULL;
+        return nullptr;
     }
 }
 

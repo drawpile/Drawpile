@@ -93,7 +93,7 @@ DP_INLINE DP_CanvasStateChange DP_canvas_state_change_of(DP_CanvasState *cs)
 
 DP_INLINE DP_CanvasStateChange DP_canvas_state_change_null(void)
 {
-    return DP_canvas_state_change_of(NULL);
+    return DP_canvas_state_change_of(DP_NULLPTR);
 }
 
 

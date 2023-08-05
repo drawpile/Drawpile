@@ -123,10 +123,12 @@ typedef max_align_t DP_max_align_t;
 #    endif
 #    define DP_NORETURN        [[noreturn]]
 #    define DP_ANONYMOUS(NAME) NAME
+#    define DP_NULLPTR         nullptr
 #else
 #    define DP_RESTRICT        restrict
 #    define DP_NORETURN        _Noreturn
 #    define DP_ANONYMOUS(NAME) // nothing
+#    define DP_NULLPTR         NULL
 #endif
 
 
