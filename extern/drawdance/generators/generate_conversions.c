@@ -49,7 +49,7 @@ static void generate_conversion_function(FILE *fp, int i, int j)
     fprintf(fp, "DP_INLINE %s DP_%s_to_%s(%s x)\n", to->type, from->name,
             to->name, from->type);
     fprintf(fp, "{\n");
-    fprintf(fp, "    return (%s)x;\n", to->type);
+    fprintf(fp, "    return DP_CONVERT_CAST(%s, x);\n", to->type);
     fprintf(fp, "}\n");
     fprintf(fp, "\n");
 }
@@ -69,6 +69,12 @@ static bool generate_h_file(const char *path)
     fprintf(fp, "#ifndef DPCOMMON_CONVERSIONS_H\n");
     fprintf(fp, "#define DPCOMMON_CONVERSIONS_H\n");
     fprintf(fp, "#include \"common.h\"\n");
+    fprintf(fp, "\n");
+    fprintf(fp, "#ifdef __cplusplus\n");
+    fprintf(fp, "#    define DP_CONVERT_CAST(TYPE, X) static_cast<TYPE>(X)\n");
+    fprintf(fp, "#else\n");
+    fprintf(fp, "#    define DP_CONVERT_CAST(TYPE, X) ((TYPE)X)\n");
+    fprintf(fp, "#endif\n");
     fprintf(fp, "\n");
 
     int count = (int)(sizeof(conversion_types) / sizeof(conversion_types[0]));
