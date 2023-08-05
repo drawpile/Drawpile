@@ -450,6 +450,13 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	// Actually paint the window
 	setUpdatesEnabled(true);
+	// Qt will inherit the update enabled state when restoring floating widgets,
+	// but won't when re-enabling them on the parent. Gotta do it ourselves.
+	for(QWidget *widget : findChildren<QWidget *>(QString(), Qt::FindDirectChildrenOnly)) {
+		if(!widget->updatesEnabled()) {
+			widget->setUpdatesEnabled(true);
+		}
+	}
 
 #ifdef Q_OS_MACOS
 	MacMenu::instance()->addWindow(this);
