@@ -44,13 +44,13 @@ class DP_InputDevice : public QIODevice {
     qint64 readData(char *data, qint64 maxSize) override
     {
         bool error;
-        size_t read = DP_input_read(m_input, data, (size_t)maxSize, &error);
+        size_t read = DP_input_read(m_input, data, size_t(maxSize), &error);
         if (error) {
             setErrorString(QString::fromUtf8(DP_error()));
             return -1;
         }
         else {
-            return (qint64)read;
+            return qint64(read);
         }
     }
 
@@ -80,7 +80,7 @@ class DP_OutputDevice : public QIODevice {
 
     qint64 writeData(const char *data, qint64 len) override
     {
-        bool ok = DP_output_write(m_output, data, (size_t)len);
+        bool ok = DP_output_write(m_output, data, size_t(len));
         if (ok) {
             return len;
         }
