@@ -63,26 +63,22 @@ void DP_text_writer_free(DP_TextWriter *writer)
 }
 
 
-static bool print_header_field(DP_Output *output, const char *key,
-                               bool want_format, const char *fmt, ...)
+static bool print_header_field_prefix(DP_Output *output, const char *key)
 {
-    if (!(DP_output_write(output, "!", 1) && DP_output_print(output, key)
-          && DP_output_write(output, "=", 1))) {
-        return false;
-    }
+    return DP_output_write(output, "!", 1) && DP_output_print(output, key)
+        && DP_output_write(output, "=", 1);
+}
 
-    bool result;
-    if (want_format) {
-        va_list ap;
-        va_start(ap, fmt);
-        result = DP_output_vformat(output, fmt, ap);
-        va_end(ap);
-    }
-    else {
-        result = DP_output_print(output, fmt);
-    }
+static bool print_header_field_suffix(DP_Output *output)
+{
+    return DP_output_write(output, "\n", 1);
+}
 
-    return result && DP_output_write(output, "\n", 1);
+static bool print_header_field(DP_Output *output, const char *key,
+                               const char *value)
+{
+    return print_header_field_prefix(output, key)
+        && DP_output_print(output, value) && print_header_field_suffix(output);
 }
 
 static bool write_header_field(DP_Output *output, const char *key,
@@ -90,13 +86,15 @@ static bool write_header_field(DP_Output *output, const char *key,
 {
     switch (json_type(value)) {
     case JSONNull:
-        return print_header_field(output, key, false, "null");
+        return print_header_field(output, key, "null");
     case JSONString:
-        return print_header_field(output, key, false, json_string(value));
+        return print_header_field(output, key, json_string(value));
     case JSONNumber:
-        return print_header_field(output, key, true, "%f", json_number(value));
+        return print_header_field_prefix(output, key)
+            && DP_output_format(output, "%f", json_number(value))
+            && print_header_field_suffix(output);
     case JSONBoolean:
-        return print_header_field(output, key, false,
+        return print_header_field(output, key,
                                   json_boolean(value) ? "true" : "false");
     default:
         DP_error_set("Header field '%s' cannot be represented as text", key);
