@@ -136,8 +136,10 @@ extern "C" DP_SemaphoreResult DP_semaphore_try_wait(DP_Semaphore *sem)
 extern "C" unsigned long long DP_thread_current_id(void)
 {
     // Qt doesn't have a way to get a numeric thread id, only a handle.
-#if defined(__EMSCRIPTEN__) || defined(__APPLE__) || defined(__linux__)
-    return (unsigned long long)pthread_self();
+#if defined(__EMSCRIPTEN__) || defined(__linux__)
+    return static_cast<unsigned long long>(pthread_self());
+#elif defined(__APPLE__)
+    return reinterpret_cast<unsigned long long>(pthread_self());
 #elif defined(_WIN32)
     return GetCurrentThreadId();
 #else
