@@ -23,10 +23,10 @@
 #define DPENGINE_TILE_H
 #include "pixels.h"
 #include <dpcommon/common.h>
+#include <dpcommon/memory_pool.h>
 
 typedef struct DP_DrawContext DP_DrawContext;
 typedef struct DP_Image DP_Image;
-typedef struct DP_MemoryPoolStatistics DP_MemoryPoolStatistics;
 
 #define DP_TILE_BYTES            (DP_TILE_LENGTH * sizeof(DP_Pixel15))
 #define DP_TILE_COMPRESSED_BYTES (DP_TILE_LENGTH * sizeof(DP_Pixel8))
