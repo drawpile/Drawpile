@@ -470,8 +470,8 @@ static uint8_t get_mypaint_dab_posterize_num(uint8_t dab_posterize,
         return 0;
     }
     else {
-        float value = posterize_num * 100.0f + 0.5f;
-        return DP_float_to_uint8(CLAMP(value, 1.0f, 128.0f)) - (uint8_t)1;
+        float value = posterize_num * 100.0f + 0.5f - 1.0f;
+        return DP_float_to_uint8(CLAMP(value, 0.0f, 127.0f));
     }
 }
 
