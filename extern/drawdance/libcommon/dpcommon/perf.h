@@ -49,6 +49,8 @@ typedef struct DP_Output DP_Output;
 #endif
 
 
+extern DP_Output *DP_perf_output;
+
 // Takes ownership of the output, it is freed even on error.
 bool DP_perf_open(DP_Output *output);
 bool DP_perf_close(void);
@@ -57,13 +59,12 @@ bool DP_perf_is_open(void);
 DP_INLINE int DP_perf_begin(const char *realm, const char *categories,
                             const char *fmt_or_null, ...) DP_FORMAT(3, 4);
 
+int DP_perf_begin_internal(const char *realm, const char *categories,
+                           const char *fmt, va_list ap);
+
 DP_INLINE int DP_perf_begin(const char *realm, const char *categories,
                             const char *fmt_or_null, ...)
 {
-    extern DP_Output *DP_perf_output;
-    extern int DP_perf_begin_internal(const char *realm, const char *categories,
-                                      const char *fmt, va_list ap);
-
     if (DP_perf_output) {
         va_list ap;
         va_start(ap, fmt_or_null);
@@ -76,11 +77,10 @@ DP_INLINE int DP_perf_begin(const char *realm, const char *categories,
     }
 }
 
+void DP_perf_end_internal(DP_Output *output, int handle);
+
 DP_INLINE void DP_perf_end(int handle)
 {
-    extern DP_Output *DP_perf_output;
-    extern void DP_perf_end_internal(DP_Output * output, int handle);
-
     if (handle != DP_PERF_INVALID_HANDLE) {
         DP_Output *output = DP_perf_output;
         if (output) {
