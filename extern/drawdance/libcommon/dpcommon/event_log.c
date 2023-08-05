@@ -125,6 +125,9 @@ static bool get_time(long long *out_seconds, long *out_nanoseconds)
 }
 
 static bool write_log(bool timestamped, const char *fmt, va_list ap)
+    DP_VFORMAT(2);
+
+static bool write_log(bool timestamped, const char *fmt, va_list ap)
 {
     DP_Output *output = DP_event_log_output;
     bool ok = true;

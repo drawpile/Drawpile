@@ -49,7 +49,8 @@ bool DP_output_write(DP_Output *output, const void *buffer, size_t size);
 
 bool DP_output_print(DP_Output *output, const char *string);
 
-bool DP_output_vformat(DP_Output *output, const char *fmt, va_list ap);
+bool DP_output_vformat(DP_Output *output, const char *fmt, va_list ap)
+    DP_VFORMAT(2);
 
 bool DP_output_format(DP_Output *output, const char *fmt, ...) DP_FORMAT(2, 3);
 

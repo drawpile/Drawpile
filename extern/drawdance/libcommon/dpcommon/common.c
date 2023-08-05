@@ -45,6 +45,11 @@ static const char *log_level_to_string(DP_LogLevel level)
     }
 }
 
+
+static void log_message(DP_UNUSED void *user, DP_LogLevel level,
+                        const char *file, int line, const char *fmt, va_list ap)
+    DP_VFORMAT(5);
+
 static void log_message(DP_UNUSED void *user, DP_LogLevel level,
                         const char *file, int line, const char *fmt, va_list ap)
 {

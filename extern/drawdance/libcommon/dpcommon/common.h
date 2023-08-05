@@ -68,6 +68,8 @@
 #    define DP_FALLTHROUGH() __attribute__((__fallthrough__))
 #    define DP_FORMAT(STRING_INDEX, FIRST_TO_CHECK) \
         __attribute__((__format__(printf, STRING_INDEX, FIRST_TO_CHECK)))
+#    define DP_VFORMAT(STRING_INDEX) \
+        __attribute__((__format__(printf, STRING_INDEX, 0)))
 #    define DP_MALLOC_ATTR  __attribute__((malloc, alloc_size(1)))
 #    define DP_REALLOC_ATTR __attribute__((malloc, alloc_size(2)))
 #    define DP_MUST_CHECK   __attribute((warn_unused_result))
@@ -86,6 +88,7 @@
 #    endif
 #    define DP_FALLTHROUGH()                        // nothing
 #    define DP_FORMAT(STRING_INDEX, FIRST_TO_CHECK) // nothing
+#    define DP_VFORMAT(STRING_INDEX)                // nothing
 #    define DP_MALLOC_ATTR                          // nothing
 #    define DP_REALLOC_ATTR                         // nothing
 #    define DP_MUST_CHECK                           // nothing
@@ -292,7 +295,7 @@ void DP_free_simd(void *ptr);
 #endif
 
 
-char *DP_vformat(const char *fmt, va_list ap);
+char *DP_vformat(const char *fmt, va_list ap) DP_VFORMAT(1);
 
 char *DP_format(const char *fmt, ...) DP_FORMAT(1, 2);
 

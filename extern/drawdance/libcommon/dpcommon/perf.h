@@ -60,7 +60,7 @@ DP_INLINE int DP_perf_begin(const char *realm, const char *categories,
                             const char *fmt_or_null, ...) DP_FORMAT(3, 4);
 
 int DP_perf_begin_internal(const char *realm, const char *categories,
-                           const char *fmt, va_list ap);
+                           const char *fmt, va_list ap) DP_VFORMAT(3);
 
 DP_INLINE int DP_perf_begin(const char *realm, const char *categories,
                             const char *fmt_or_null, ...)
