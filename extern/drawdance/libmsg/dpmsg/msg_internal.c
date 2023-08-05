@@ -28,7 +28,10 @@
 
 
 struct DP_MsgInternal {
-    DP_MsgInternalType type;
+    // The alignment attribute is required to avoid warnings about casts
+    // changing the alignment requirements. I think they're false positives, but
+    // this stuff is maximally aligned anyway, so the attribute does no harm.
+    alignas(void *) DP_MsgInternalType type;
 };
 
 typedef struct DP_MsgInternalResetToState {
