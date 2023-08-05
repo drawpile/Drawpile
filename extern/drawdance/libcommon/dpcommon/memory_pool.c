@@ -61,9 +61,8 @@ DP_memory_pool_reset_bucket(DP_MemoryPool *pool, DP_MemoryPoolBucket bucket,
     DP_ASSERT(pool);
 
     for (size_t j = 0; j < pool->bucket_el_count; j++) {
-        DP_MemoryPoolFreeNode *el =
-            (DP_MemoryPoolFreeNode *)&bucket.elements[j * pool->el_size];
-        el->next = prev_el;
+        void *el = &bucket.elements[j * pool->el_size];
+        ((DP_MemoryPoolFreeNode *)el)->next = prev_el;
         prev_el = el;
     }
 

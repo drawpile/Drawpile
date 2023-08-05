@@ -134,7 +134,7 @@ DP_Message *DP_message_from_internal(void *internal)
 {
     DP_ASSERT(internal);
     unsigned char *bytes = internal;
-    return (DP_Message *)(bytes - offsetof(DP_Message, internal));
+    return (void *)(bytes - offsetof(DP_Message, internal));
 }
 
 void *DP_message_cast(DP_Message *msg, DP_MessageType type)

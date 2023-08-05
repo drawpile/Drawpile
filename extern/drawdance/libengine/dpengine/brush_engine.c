@@ -415,8 +415,7 @@ static void init_mypaint_once(void)
 static DP_BrushEngine *get_mypaint_surface_brush_engine(MyPaintSurface2 *self)
 {
     unsigned char *bytes = (unsigned char *)self;
-    return (DP_BrushEngine *)(bytes
-                              - offsetof(DP_BrushEngine, mypaint_surface2));
+    return (void *)(bytes - offsetof(DP_BrushEngine, mypaint_surface2));
 }
 
 static uint32_t get_mypaint_dab_color(DP_BrushEngine *be, float color_r,

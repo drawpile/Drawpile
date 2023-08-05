@@ -721,7 +721,7 @@ static void calculate_opa_mask_sse42(uint16_t *mask, float *rr_mask, int count,
             _mm_shuffle_epi8(_32, _mm_setr_epi8(0, 1, 4, 5, 8, 9, 12, 13, -1,
                                                 -1, -1, -1, -1, -1, -1, -1));
 
-        _mm_storel_epi64((__m128i *)&mask[i], _16);
+        _mm_storel_epi64((void *)&mask[i], _16);
     }
 }
 DP_TARGET_END
@@ -780,7 +780,7 @@ static void calculate_opa_mask_avx2(uint16_t *mask, float *rr_mask, int count,
         __m256i combined = _mm256_packus_epi32(_32_1, _32_2);
         __m256i _16 = _mm256_permute4x64_epi64(combined, 0xD8);
 
-        _mm256_store_si256((__m256i *)&mask[i], _16);
+        _mm256_store_si256((void *)&mask[i], _16);
     }
 }
 DP_TARGET_END

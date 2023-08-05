@@ -468,8 +468,8 @@ DP_TARGET_BEGIN("sse4.2")
 static void pixels15_to_8_sse42(DP_Pixel8 *dst, const DP_Pixel15 *src)
 {
     for (int i = 0; i < DP_TILE_LENGTH; i += 4) {
-        __m128i source1 = _mm_load_si128((__m128i *)&src[i]);
-        __m128i source2 = _mm_load_si128((__m128i *)&src[i + 2]);
+        __m128i source1 = _mm_load_si128((void *)&src[i]);
+        __m128i source2 = _mm_load_si128((void *)&src[i + 2]);
 
         // Convert 2x(8x16bit) to 4x(4x32bit)
         __m128i p1 = _mm_cvtepu16_epi32(source1);
@@ -498,7 +498,7 @@ static void pixels15_to_8_sse42(DP_Pixel8 *dst, const DP_Pixel15 *src)
             combined, _mm_setr_epi8(0, 4, 8, 12, 1, 5, 9, 13, 2, 6, 10, 14, 3,
                                     7, 11, 15));
 
-        _mm_store_si128((__m128i *)&dst[i], out);
+        _mm_store_si128((void *)&dst[i], out);
     }
 }
 DP_TARGET_END
@@ -507,8 +507,8 @@ DP_TARGET_BEGIN("avx2")
 static void pixels15_to_8_avx2(DP_Pixel8 *dst, const DP_Pixel15 *src)
 {
     for (int i = 0; i < DP_TILE_LENGTH; i += 8) {
-        __m256i source1 = _mm256_load_si256((__m256i *)&src[i]);
-        __m256i source2 = _mm256_load_si256((__m256i *)&src[i + 4]);
+        __m256i source1 = _mm256_load_si256((void *)&src[i]);
+        __m256i source2 = _mm256_load_si256((void *)&src[i + 4]);
 
         // Convert 2x(16x16bit) to 4x(8x32bit)
         __m256i p1 = _mm256_and_si256(source1, _mm256_set1_epi32(0xffff));
@@ -557,7 +557,7 @@ static void pixels15_to_8_avx2(DP_Pixel8 *dst, const DP_Pixel15 *src)
         __m256i out = _mm256_permutevar8x32_epi32(
             combined, _mm256_setr_epi32(0, 2, 4, 6, 1, 3, 5, 7));
 
-        _mm256_store_si256((__m256i *)&dst[i], out);
+        _mm256_store_si256((void *)&dst[i], out);
     }
     _mm256_zeroupper();
 }
@@ -739,9 +739,9 @@ static void load_aligned_sse42(const DP_Pixel15 src[4], __m128i *out_blue,
                                __m128i *out_alpha)
 {
     DP_ASSERT(((intptr_t)src) % 16 == 0);
-
-    __m128i source1 = _mm_load_si128((const __m128i *)src);
-    __m128i source2 = _mm_load_si128((const __m128i *)src + 1);
+    const __m128i *src128 = (const void *)src;
+    __m128i source1 = _mm_load_si128(src128);
+    __m128i source2 = _mm_load_si128(src128 + 1);
 
     shuffle_load_sse42(source1, source2, out_blue, out_green, out_red,
                        out_alpha);
@@ -751,9 +751,9 @@ static void load_unaligned_sse42(const DP_Pixel15 src[4], __m128i *out_blue,
                                  __m128i *out_green, __m128i *out_red,
                                  __m128i *out_alpha)
 {
-    __m128i source1 = _mm_loadu_si128((const __m128i *)src);
-    __m128i source2 = _mm_loadu_si128((const __m128i *)src + 1);
-
+    const __m128i *src128 = (const void *)src;
+    __m128i source1 = _mm_loadu_si128(src128);
+    __m128i source2 = _mm_loadu_si128(src128 + 1);
     shuffle_load_sse42(source1, source2, out_blue, out_green, out_red,
                        out_alpha);
 }
@@ -779,8 +779,9 @@ static void store_aligned_sse42(__m128i blue, __m128i green, __m128i red,
     __m128i out1, out2;
     shuffle_store_sse42(blue, green, red, alpha, &out1, &out2);
 
-    _mm_store_si128((__m128i *)dest, out1);
-    _mm_store_si128((__m128i *)dest + 1, out2);
+    __m128i *dest128 = (void *)dest;
+    _mm_store_si128(dest128, out1);
+    _mm_store_si128(dest128 + 1, out2);
 }
 // Store 4x32 bit registers into 4 16bit pixels.
 static void store_unaligned_sse42(__m128i blue, __m128i green, __m128i red,
@@ -789,8 +790,9 @@ static void store_unaligned_sse42(__m128i blue, __m128i green, __m128i red,
     __m128i out1, out2;
     shuffle_store_sse42(blue, green, red, alpha, &out1, &out2);
 
-    _mm_storeu_si128((__m128i *)dest, out1);
-    _mm_storeu_si128((__m128i *)dest + 1, out2);
+    __m128i *dest128 = (void *)dest;
+    _mm_storeu_si128(dest128, out1);
+    _mm_storeu_si128(dest128 + 1, out2);
 }
 
 static __m128i mul_sse42(__m128i a, __m128i b)
@@ -882,7 +884,7 @@ static void blend_mask_pixels_normal_sse42(DP_Pixel15 *dst, DP_UPixel15 src,
 
     for (int x = 0; x < count; x += 4, dst += 4, mask_int += 4) {
         // load mask
-        __m128i mask = _mm_cvtepu16_epi32(_mm_loadl_epi64((__m128i *)mask_int));
+        __m128i mask = _mm_cvtepu16_epi32(_mm_loadl_epi64((void *)mask_int));
 
         // Load dest
         __m128i dstB, dstG, dstR, dstA;
@@ -923,7 +925,7 @@ static void blend_mask_pixels_normal_and_eraser_sse42(DP_Pixel15 *dst,
 
     for (int x = 0; x < count; x += 4, dst += 4, mask_int += 4) {
         // load mask
-        __m128i mask = _mm_cvtepu16_epi32(_mm_loadl_epi64((__m128i *)mask_int));
+        __m128i mask = _mm_cvtepu16_epi32(_mm_loadl_epi64((void *)mask_int));
 
         // Load dest
         __m128i dstB, dstG, dstR, dstA;
@@ -974,8 +976,9 @@ static void load_aligned_avx2(const DP_Pixel15 src[8], __m256i *out_blue,
 {
     DP_ASSERT(((intptr_t)src) % 32 == 0);
 
-    __m256i source1 = _mm256_load_si256((const __m256i *)src);
-    __m256i source2 = _mm256_load_si256((const __m256i *)src + 1);
+    const __m256i *src256 = (const void *)src;
+    __m256i source1 = _mm256_load_si256(src256);
+    __m256i source2 = _mm256_load_si256(src256 + 1);
 
     shuffle_load_avx2(source1, source2, out_blue, out_green, out_red,
                       out_alpha);
@@ -985,8 +988,9 @@ static void load_unaligned_avx2(const DP_Pixel15 src[8], __m256i *out_blue,
                                 __m256i *out_green, __m256i *out_red,
                                 __m256i *out_alpha)
 {
-    __m256i source1 = _mm256_loadu_si256((const __m256i *)src);
-    __m256i source2 = _mm256_loadu_si256((const __m256i *)src + 1);
+    const __m256i *src256 = (const void *)src;
+    __m256i source1 = _mm256_loadu_si256(src256);
+    __m256i source2 = _mm256_loadu_si256(src256 + 1);
 
     shuffle_load_avx2(source1, source2, out_blue, out_green, out_red,
                       out_alpha);
@@ -1015,8 +1019,9 @@ static void store_aligned_avx2(__m256i blue, __m256i green, __m256i red,
     __m256i out1, out2;
     shuffle_store_avx2(blue, green, red, alpha, &out1, &out2);
 
-    _mm256_store_si256((__m256i *)dest, out1);
-    _mm256_store_si256((__m256i *)dest + 1, out2);
+    __m256i *dest256 = (void *)dest;
+    _mm256_store_si256(dest256, out1);
+    _mm256_store_si256(dest256 + 1, out2);
 }
 // Store 8x32 bit registers into 8 16bit pixels.
 static void store_unaligned_avx2(__m256i blue, __m256i green, __m256i red,
@@ -1025,8 +1030,9 @@ static void store_unaligned_avx2(__m256i blue, __m256i green, __m256i red,
     __m256i out1, out2;
     shuffle_store_avx2(blue, green, red, alpha, &out1, &out2);
 
-    _mm256_storeu_si256((__m256i *)dest, out1);
-    _mm256_storeu_si256((__m256i *)dest + 1, out2);
+    __m256i *dest256 = (void *)dest;
+    _mm256_storeu_si256(dest256, out1);
+    _mm256_storeu_si256(dest256 + 1, out2);
 }
 
 static __m256i mul_avx2(__m256i a, __m256i b)
@@ -1121,7 +1127,7 @@ static void blend_mask_pixels_normal_avx2(DP_Pixel15 *dst, DP_UPixel15 src,
 
     for (int x = 0; x < count; x += 8, dst += 8, mask_int += 8) {
         // load mask
-        __m256i mask = _mm256_cvtepu16_epi32(_mm_loadu_si128((__m128i *)mask_int));
+        __m256i mask = _mm256_cvtepu16_epi32(_mm_loadu_si128((void *)mask_int));
         // Permute mask to fit pixel load order (15263748)
         mask = _mm256_permutevar8x32_epi32(mask, _mm256_setr_epi32(0, 4, 1, 5, 2, 6, 3, 7));
 
@@ -1165,8 +1171,7 @@ static void blend_mask_pixels_normal_and_eraser_avx2(DP_Pixel15 *dst,
 
     for (int x = 0; x < count; x += 8, dst += 8, mask_int += 8) {
         // load mask
-        __m256i mask =
-            _mm256_cvtepu16_epi32(_mm_loadu_si128((__m128i *)mask_int));
+        __m256i mask = _mm256_cvtepu16_epi32(_mm_loadu_si128((void *)mask_int));
         // Permute mask to fit pixel load order (15263748)
         mask = _mm256_permutevar8x32_epi32(
             mask, _mm256_setr_epi32(0, 4, 1, 5, 2, 6, 3, 7));
