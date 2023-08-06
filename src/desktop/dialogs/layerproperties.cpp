@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "desktop/dialogs/layerproperties.h"
+#include "desktop/utils/widgetutils.h"
 #include "libclient/canvas/blendmodes.h"
 #include "libclient/drawdance/message.h"
 
@@ -12,10 +13,11 @@
 namespace dialogs {
 
 LayerProperties::LayerProperties(uint8_t localUser, QWidget *parent)
-	: QDialog(parent), m_user(localUser), m_compatibilityMode{false}
+	: QDialog(parent), m_user(localUser), m_compatibilityMode{false}, m_controlsEnabled{true}
 {
     m_ui = new Ui_LayerProperties;
     m_ui->setupUi(this);
+	utils::setWidgetRetainSizeWhenHidden(m_ui->blendMode, true);
 
     connect(m_ui->title, &QLineEdit::returnPressed, this, &QDialog::accept);
     connect(m_ui->buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
@@ -48,6 +50,7 @@ void LayerProperties::setLayerItem(const canvas::LayerListItem &item, const QStr
 }
 
 void LayerProperties::setControlsEnabled(bool enabled) {
+	m_controlsEnabled = enabled;
 	QWidget *w[] = {
 		m_ui->title,
 		m_ui->opacitySlider,
@@ -84,9 +87,9 @@ void LayerProperties::updateBlendMode(
 	} else {
 		combo->setModel(layerBlendModes());
 	}
-	// If this is an unknown blend mode, disable the control to avoid damage.
+	// If this is an unknown blend mode, hide the control to avoid damage.
 	int blendModeIndex = searchBlendModeIndex(combo, mode);
-	combo->setEnabled(blendModeIndex != -1);
+	combo->setVisible(blendModeIndex != -1);
 	combo->setCurrentIndex(group && !isolated ? 0 : blendModeIndex);
 }
 

@@ -15,6 +15,7 @@
 #include "desktop/docks/titlewidget.h"
 #include "desktop/dialogs/layerproperties.h"
 #include "libclient/utils/changeflags.h"
+#include "desktop/utils/widgetutils.h"
 
 #include <QDebug>
 #include <QComboBox>
@@ -57,6 +58,7 @@ LayerList::LayerList(QWidget *parent)
 
 	m_blendModeCombo = new QComboBox;
 	m_blendModeCombo->setMinimumWidth(24);
+	utils::setWidgetRetainSizeWhenHidden(m_blendModeCombo, true);
 	connect(
 		m_blendModeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
 		this, &LayerList::blendModeChanged);

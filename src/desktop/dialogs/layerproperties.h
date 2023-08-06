@@ -58,6 +58,7 @@ private:
 	bool m_wasDefault;
 	uint8_t m_user;
 	bool m_compatibilityMode;
+	bool m_controlsEnabled;
 };
 
 }
