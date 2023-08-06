@@ -214,7 +214,9 @@ static void consume_line(DP_TextReader *reader)
     reader->input_offset += consume;
     reader->line_end = 0;
     reader->read.used = new_used;
-    memmove(reader->read.buffer, reader->read.buffer + consume, new_used);
+    if (new_used != 0) {
+        memmove(reader->read.buffer, reader->read.buffer + consume, new_used);
+    }
 }
 
 static bool buffer_relevant_line(DP_TextReader *reader, size_t *out_start,
