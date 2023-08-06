@@ -913,7 +913,7 @@ unsigned int DP_text_reader_get_flags(DP_TextReader *reader, const char *key,
                 }
 
                 if (c == ',') {
-                    start = i + 2;
+                    start = i + 1;
                 }
                 else {
                     break;
