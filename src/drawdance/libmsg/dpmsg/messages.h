@@ -153,6 +153,9 @@ DP_Message *DP_message_parse_body(DP_MessageType type, unsigned int context_id,
 
 #define DP_MSG_SERVER_COMMAND_STATIC_LENGTH 0
 
+#define DP_MSG_SERVER_COMMAND_MSG_MIN_LEN 0
+#define DP_MSG_SERVER_COMMAND_MSG_MAX_LEN 65535
+
 typedef struct DP_MsgServerCommand DP_MsgServerCommand;
 
 DP_Message *DP_msg_server_command_new(unsigned int context_id,
@@ -189,7 +192,15 @@ size_t DP_msg_server_command_msg_len(const DP_MsgServerCommand *msc);
 #define DP_MSG_DISCONNECT_REASON_SHUTDOWN 2
 #define DP_MSG_DISCONNECT_REASON_OTHER    3
 
+#define DP_MSG_DISCONNECT_NUM_REASON 4
+#define DP_MSG_DISCONNECT_ALL_REASON                               \
+    DP_MSG_DISCONNECT_REASON_ERROR, DP_MSG_DISCONNECT_REASON_KICK, \
+        DP_MSG_DISCONNECT_REASON_SHUTDOWN, DP_MSG_DISCONNECT_REASON_OTHER
+
 const char *DP_msg_disconnect_reason_variant_name(unsigned int value);
+
+#define DP_MSG_DISCONNECT_MESSAGE_MIN_LEN 0
+#define DP_MSG_DISCONNECT_MESSAGE_MAX_LEN 65534
 
 typedef struct DP_MsgDisconnect DP_MsgDisconnect;
 
@@ -263,7 +274,17 @@ bool DP_msg_ping_is_pong(const DP_MsgPing *mp);
 #define DP_MSG_JOIN_FLAGS_MOD  0x2
 #define DP_MSG_JOIN_FLAGS_BOT  0x4
 
+#define DP_MSG_JOIN_NUM_FLAGS 3
+#define DP_MSG_JOIN_ALL_FLAGS \
+    DP_MSG_JOIN_FLAGS_AUTH, DP_MSG_JOIN_FLAGS_MOD, DP_MSG_JOIN_FLAGS_BOT
+
 const char *DP_msg_join_flags_flag_name(unsigned int value);
+
+#define DP_MSG_JOIN_NAME_MIN_LEN 1
+#define DP_MSG_JOIN_NAME_MAX_LEN 256
+
+#define DP_MSG_JOIN_AVATAR_MIN_SIZE 0
+#define DP_MSG_JOIN_AVATAR_MAX_SIZE 65533
 
 typedef struct DP_MsgJoin DP_MsgJoin;
 
@@ -329,6 +350,9 @@ DP_Message *DP_msg_leave_parse(unsigned int context_id, DP_TextReader *reader);
 
 #define DP_MSG_SESSION_OWNER_STATIC_LENGTH 0
 
+#define DP_MSG_SESSION_OWNER_USERS_MIN_COUNT 0
+#define DP_MSG_SESSION_OWNER_USERS_MAX_COUNT 255
+
 typedef struct DP_MsgSessionOwner DP_MsgSessionOwner;
 
 DP_Message *DP_msg_session_owner_new(unsigned int context_id,
@@ -365,6 +389,9 @@ int DP_msg_session_owner_users_count(const DP_MsgSessionOwner *mso);
 
 #define DP_MSG_CHAT_TFLAGS_BYPASS 0x1
 
+#define DP_MSG_CHAT_NUM_TFLAGS 1
+#define DP_MSG_CHAT_ALL_TFLAGS DP_MSG_CHAT_TFLAGS_BYPASS
+
 const char *DP_msg_chat_tflags_flag_name(unsigned int value);
 
 #define DP_MSG_CHAT_OFLAGS_SHOUT  0x1
@@ -372,7 +399,15 @@ const char *DP_msg_chat_tflags_flag_name(unsigned int value);
 #define DP_MSG_CHAT_OFLAGS_PIN    0x4
 #define DP_MSG_CHAT_OFLAGS_ALERT  0x8
 
+#define DP_MSG_CHAT_NUM_OFLAGS 4
+#define DP_MSG_CHAT_ALL_OFLAGS                           \
+    DP_MSG_CHAT_OFLAGS_SHOUT, DP_MSG_CHAT_OFLAGS_ACTION, \
+        DP_MSG_CHAT_OFLAGS_PIN, DP_MSG_CHAT_OFLAGS_ALERT
+
 const char *DP_msg_chat_oflags_flag_name(unsigned int value);
+
+#define DP_MSG_CHAT_MESSAGE_MIN_LEN 0
+#define DP_MSG_CHAT_MESSAGE_MAX_LEN 65533
 
 typedef struct DP_MsgChat DP_MsgChat;
 
@@ -414,6 +449,9 @@ size_t DP_msg_chat_message_len(const DP_MsgChat *mc);
  */
 
 #define DP_MSG_TRUSTED_USERS_STATIC_LENGTH 0
+
+#define DP_MSG_TRUSTED_USERS_USERS_MIN_COUNT 0
+#define DP_MSG_TRUSTED_USERS_USERS_MAX_COUNT 255
 
 typedef struct DP_MsgTrustedUsers DP_MsgTrustedUsers;
 
@@ -474,6 +512,9 @@ DP_Message *DP_msg_soft_reset_parse(unsigned int context_id,
  */
 
 #define DP_MSG_PRIVATE_CHAT_STATIC_LENGTH 2
+
+#define DP_MSG_PRIVATE_CHAT_MESSAGE_MIN_LEN 0
+#define DP_MSG_PRIVATE_CHAT_MESSAGE_MAX_LEN 65533
 
 typedef struct DP_MsgPrivateChat DP_MsgPrivateChat;
 
@@ -607,6 +648,9 @@ int32_t DP_msg_move_pointer_y(const DP_MsgMovePointer *mmp);
 
 #define DP_MSG_MARKER_STATIC_LENGTH 0
 
+#define DP_MSG_MARKER_TEXT_MIN_LEN 0
+#define DP_MSG_MARKER_TEXT_MAX_LEN 65535
+
 typedef struct DP_MsgMarker DP_MsgMarker;
 
 DP_Message *DP_msg_marker_new(unsigned int context_id, const char *text_value,
@@ -635,6 +679,9 @@ size_t DP_msg_marker_text_len(const DP_MsgMarker *mm);
  */
 
 #define DP_MSG_USER_ACL_STATIC_LENGTH 0
+
+#define DP_MSG_USER_ACL_USERS_MIN_COUNT 0
+#define DP_MSG_USER_ACL_USERS_MAX_COUNT 255
 
 typedef struct DP_MsgUserAcl DP_MsgUserAcl;
 
@@ -677,6 +724,9 @@ int DP_msg_user_acl_users_count(const DP_MsgUserAcl *mua);
 
 #define DP_MSG_LAYER_ACL_STATIC_LENGTH 3
 
+#define DP_MSG_LAYER_ACL_EXCLUSIVE_MIN_COUNT 0
+#define DP_MSG_LAYER_ACL_EXCLUSIVE_MAX_COUNT 255
+
 typedef struct DP_MsgLayerAcl DP_MsgLayerAcl;
 
 DP_Message *DP_msg_layer_acl_new(unsigned int context_id, uint16_t id,
@@ -714,6 +764,9 @@ int DP_msg_layer_acl_exclusive_count(const DP_MsgLayerAcl *mla);
  */
 
 #define DP_MSG_FEATURE_ACCESS_LEVELS_STATIC_LENGTH 0
+
+#define DP_MSG_FEATURE_ACCESS_LEVELS_FEATURE_TIERS_MIN_COUNT 1
+#define DP_MSG_FEATURE_ACCESS_LEVELS_FEATURE_TIERS_MAX_COUNT 255
 
 typedef struct DP_MsgFeatureAccessLevels DP_MsgFeatureAccessLevels;
 
@@ -773,6 +826,9 @@ uint16_t DP_msg_default_layer_id(const DP_MsgDefaultLayer *mdl);
  */
 
 #define DP_MSG_FILTERED_STATIC_LENGTH 0
+
+#define DP_MSG_FILTERED_MESSAGE_MIN_SIZE 0
+#define DP_MSG_FILTERED_MESSAGE_MAX_SIZE 65535
 
 typedef struct DP_MsgFiltered DP_MsgFiltered;
 
@@ -841,7 +897,13 @@ uint8_t DP_msg_undo_depth_depth(const DP_MsgUndoDepth *mud);
 
 #define DP_MSG_DATA_TYPE_USER_INFO 0
 
+#define DP_MSG_DATA_NUM_TYPE 1
+#define DP_MSG_DATA_ALL_TYPE DP_MSG_DATA_TYPE_USER_INFO
+
 const char *DP_msg_data_type_variant_name(unsigned int value);
+
+#define DP_MSG_DATA_BODY_MIN_SIZE 0
+#define DP_MSG_DATA_BODY_MAX_SIZE 65533
 
 typedef struct DP_MsgData DP_MsgData;
 
@@ -885,7 +947,21 @@ size_t DP_msg_data_body_size(const DP_MsgData *md);
 #define DP_MSG_LOCAL_CHANGE_TYPE_TRACK_VISIBILITY 6
 #define DP_MSG_LOCAL_CHANGE_TYPE_TRACK_ONION_SKIN 7
 
+#define DP_MSG_LOCAL_CHANGE_NUM_TYPE 8
+#define DP_MSG_LOCAL_CHANGE_ALL_TYPE               \
+    DP_MSG_LOCAL_CHANGE_TYPE_LAYER_VISIBILITY,     \
+        DP_MSG_LOCAL_CHANGE_TYPE_BACKGROUND_TILE,  \
+        DP_MSG_LOCAL_CHANGE_TYPE_VIEW_MODE,        \
+        DP_MSG_LOCAL_CHANGE_TYPE_ACTIVE_LAYER,     \
+        DP_MSG_LOCAL_CHANGE_TYPE_ACTIVE_FRAME,     \
+        DP_MSG_LOCAL_CHANGE_TYPE_ONION_SKINS,      \
+        DP_MSG_LOCAL_CHANGE_TYPE_TRACK_VISIBILITY, \
+        DP_MSG_LOCAL_CHANGE_TYPE_TRACK_ONION_SKIN
+
 const char *DP_msg_local_change_type_variant_name(unsigned int value);
+
+#define DP_MSG_LOCAL_CHANGE_BODY_MIN_SIZE 0
+#define DP_MSG_LOCAL_CHANGE_BODY_MAX_SIZE 65534
 
 typedef struct DP_MsgLocalChange DP_MsgLocalChange;
 
@@ -1005,7 +1081,14 @@ int32_t DP_msg_canvas_resize_left(const DP_MsgCanvasResize *mcr);
 #define DP_MSG_LAYER_CREATE_FLAGS_COPY   0x1
 #define DP_MSG_LAYER_CREATE_FLAGS_INSERT 0x2
 
+#define DP_MSG_LAYER_CREATE_NUM_FLAGS 2
+#define DP_MSG_LAYER_CREATE_ALL_FLAGS \
+    DP_MSG_LAYER_CREATE_FLAGS_COPY, DP_MSG_LAYER_CREATE_FLAGS_INSERT
+
 const char *DP_msg_layer_create_flags_flag_name(unsigned int value);
+
+#define DP_MSG_LAYER_CREATE_TITLE_MIN_LEN 0
+#define DP_MSG_LAYER_CREATE_TITLE_MAX_LEN 65526
 
 typedef struct DP_MsgLayerCreate DP_MsgLayerCreate;
 
@@ -1058,6 +1141,11 @@ size_t DP_msg_layer_create_title_len(const DP_MsgLayerCreate *mlc);
 #define DP_MSG_LAYER_ATTRIBUTES_FLAGS_FIXED    0x2
 #define DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED 0x4
 
+#define DP_MSG_LAYER_ATTRIBUTES_NUM_FLAGS 3
+#define DP_MSG_LAYER_ATTRIBUTES_ALL_FLAGS                                      \
+    DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR, DP_MSG_LAYER_ATTRIBUTES_FLAGS_FIXED, \
+        DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED
+
 const char *DP_msg_layer_attributes_flags_flag_name(unsigned int value);
 
 typedef struct DP_MsgLayerAttributes DP_MsgLayerAttributes;
@@ -1093,6 +1181,9 @@ uint8_t DP_msg_layer_attributes_blend(const DP_MsgLayerAttributes *mla);
  */
 
 #define DP_MSG_LAYER_RETITLE_STATIC_LENGTH 2
+
+#define DP_MSG_LAYER_RETITLE_TITLE_MIN_LEN 0
+#define DP_MSG_LAYER_RETITLE_TITLE_MAX_LEN 65533
 
 typedef struct DP_MsgLayerRetitle DP_MsgLayerRetitle;
 
@@ -1137,6 +1228,9 @@ size_t DP_msg_layer_retitle_title_len(const DP_MsgLayerRetitle *mlr);
  */
 
 #define DP_MSG_LAYER_ORDER_STATIC_LENGTH 0
+
+#define DP_MSG_LAYER_ORDER_LAYERS_MIN_COUNT 0
+#define DP_MSG_LAYER_ORDER_LAYERS_MAX_COUNT 32767
 
 typedef struct DP_MsgLayerOrder DP_MsgLayerOrder;
 
@@ -1241,6 +1335,9 @@ bool DP_msg_layer_visibility_visible(const DP_MsgLayerVisibility *mlv);
  */
 
 #define DP_MSG_PUT_IMAGE_STATIC_LENGTH 19
+
+#define DP_MSG_PUT_IMAGE_IMAGE_MIN_SIZE 0
+#define DP_MSG_PUT_IMAGE_IMAGE_MAX_SIZE 65516
 
 typedef struct DP_MsgPutImage DP_MsgPutImage;
 
@@ -1440,7 +1537,16 @@ uint16_t DP_msg_annotation_reshape_h(const DP_MsgAnnotationReshape *mar);
 #define DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_CENTER 0x2
 #define DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_BOTTOM 0x4
 
+#define DP_MSG_ANNOTATION_EDIT_NUM_FLAGS 3
+#define DP_MSG_ANNOTATION_EDIT_ALL_FLAGS            \
+    DP_MSG_ANNOTATION_EDIT_FLAGS_PROTECT,           \
+        DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_CENTER, \
+        DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_BOTTOM
+
 const char *DP_msg_annotation_edit_flags_flag_name(unsigned int value);
+
+#define DP_MSG_ANNOTATION_EDIT_TEXT_MIN_LEN 0
+#define DP_MSG_ANNOTATION_EDIT_TEXT_MAX_LEN 65527
 
 typedef struct DP_MsgAnnotationEdit DP_MsgAnnotationEdit;
 
@@ -1528,6 +1634,9 @@ uint16_t DP_msg_annotation_delete_id(const DP_MsgAnnotationDelete *mad);
 
 #define DP_MSG_MOVE_REGION_STATIC_LENGTH 50
 
+#define DP_MSG_MOVE_REGION_MASK_MIN_SIZE 0
+#define DP_MSG_MOVE_REGION_MASK_MAX_SIZE 65485
+
 typedef struct DP_MsgMoveRegion DP_MsgMoveRegion;
 
 DP_Message *
@@ -1595,6 +1704,9 @@ size_t DP_msg_move_region_mask_size(const DP_MsgMoveRegion *mmr);
 
 #define DP_MSG_PUT_TILE_STATIC_LENGTH 9
 
+#define DP_MSG_PUT_TILE_IMAGE_MIN_SIZE 0
+#define DP_MSG_PUT_TILE_IMAGE_MAX_SIZE 65526
+
 typedef struct DP_MsgPutTile DP_MsgPutTile;
 
 DP_Message *
@@ -1639,6 +1751,9 @@ size_t DP_msg_put_tile_image_size(const DP_MsgPutTile *mpt);
 
 #define DP_MSG_CANVAS_BACKGROUND_STATIC_LENGTH 0
 
+#define DP_MSG_CANVAS_BACKGROUND_IMAGE_MIN_SIZE 0
+#define DP_MSG_CANVAS_BACKGROUND_IMAGE_MAX_SIZE 65535
+
 typedef struct DP_MsgCanvasBackground DP_MsgCanvasBackground;
 
 DP_Message *
@@ -1674,6 +1789,9 @@ size_t DP_msg_canvas_background_image_size(const DP_MsgCanvasBackground *mcb);
  */
 
 #define DP_MSG_DRAW_DABS_CLASSIC_STATIC_LENGTH 15
+
+#define DP_MSG_DRAW_DABS_CLASSIC_DABS_MIN_COUNT 1
+#define DP_MSG_DRAW_DABS_CLASSIC_DABS_MAX_COUNT 10920
 
 #define DP_MSG_DRAW_DABS_CLASSIC_DABS_MAX 10920
 
@@ -1739,6 +1857,9 @@ int DP_msg_draw_dabs_classic_dabs_count(const DP_MsgDrawDabsClassic *mddc);
  */
 
 #define DP_MSG_DRAW_DABS_PIXEL_STATIC_LENGTH 15
+
+#define DP_MSG_DRAW_DABS_PIXEL_DABS_MIN_COUNT 1
+#define DP_MSG_DRAW_DABS_PIXEL_DABS_MAX_COUNT 16380
 
 #define DP_MSG_DRAW_DABS_PIXEL_DABS_MAX 16380
 
@@ -1828,6 +1949,9 @@ DP_MsgDrawDabsPixel *DP_msg_draw_dabs_pixel_square_cast(DP_Message *msg);
 
 #define DP_MSG_DRAW_DABS_MYPAINT_STATIC_LENGTH 18
 
+#define DP_MSG_DRAW_DABS_MYPAINT_DABS_MIN_COUNT 1
+#define DP_MSG_DRAW_DABS_MYPAINT_DABS_MAX_COUNT 8189
+
 #define DP_MSG_DRAW_DABS_MYPAINT_DABS_MAX 8189
 
 typedef struct DP_MyPaintDab DP_MyPaintDab;
@@ -1907,6 +2031,9 @@ int DP_msg_draw_dabs_mypaint_dabs_count(const DP_MsgDrawDabsMyPaint *mddmp);
 
 #define DP_MSG_MOVE_RECT_STATIC_LENGTH 28
 
+#define DP_MSG_MOVE_RECT_MASK_MIN_SIZE 0
+#define DP_MSG_MOVE_RECT_MASK_MAX_SIZE 65507
+
 typedef struct DP_MsgMoveRect DP_MsgMoveRect;
 
 DP_Message *DP_msg_move_rect_new(unsigned int context_id, uint16_t layer,
@@ -1963,6 +2090,12 @@ size_t DP_msg_move_rect_mask_size(const DP_MsgMoveRect *mmr);
 #define DP_MSG_SET_METADATA_INT_FIELD_DPIY        1
 #define DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE   2
 #define DP_MSG_SET_METADATA_INT_FIELD_FRAME_COUNT 3
+
+#define DP_MSG_SET_METADATA_INT_NUM_FIELD 4
+#define DP_MSG_SET_METADATA_INT_ALL_FIELD                                   \
+    DP_MSG_SET_METADATA_INT_FIELD_DPIX, DP_MSG_SET_METADATA_INT_FIELD_DPIY, \
+        DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE,                            \
+        DP_MSG_SET_METADATA_INT_FIELD_FRAME_COUNT
 
 const char *DP_msg_set_metadata_int_field_variant_name(unsigned int value);
 
@@ -2021,7 +2154,14 @@ int32_t DP_msg_set_metadata_int_value(const DP_MsgSetMetadataInt *msmi);
 #define DP_MSG_LAYER_TREE_CREATE_FLAGS_GROUP 0x1
 #define DP_MSG_LAYER_TREE_CREATE_FLAGS_INTO  0x2
 
+#define DP_MSG_LAYER_TREE_CREATE_NUM_FLAGS 2
+#define DP_MSG_LAYER_TREE_CREATE_ALL_FLAGS \
+    DP_MSG_LAYER_TREE_CREATE_FLAGS_GROUP, DP_MSG_LAYER_TREE_CREATE_FLAGS_INTO
+
 const char *DP_msg_layer_tree_create_flags_flag_name(unsigned int value);
+
+#define DP_MSG_LAYER_TREE_CREATE_TITLE_MIN_LEN 0
+#define DP_MSG_LAYER_TREE_CREATE_TITLE_MAX_LEN 65524
 
 typedef struct DP_MsgLayerTreeCreate DP_MsgLayerTreeCreate;
 
@@ -2159,7 +2299,14 @@ uint16_t DP_msg_layer_tree_delete_merge_to(const DP_MsgLayerTreeDelete *mltd);
 #define DP_MSG_TRANSFORM_REGION_MODE_NEAREST  0
 #define DP_MSG_TRANSFORM_REGION_MODE_BILINEAR 1
 
+#define DP_MSG_TRANSFORM_REGION_NUM_MODE 2
+#define DP_MSG_TRANSFORM_REGION_ALL_MODE \
+    DP_MSG_TRANSFORM_REGION_MODE_NEAREST, DP_MSG_TRANSFORM_REGION_MODE_BILINEAR
+
 const char *DP_msg_transform_region_mode_variant_name(unsigned int value);
+
+#define DP_MSG_TRANSFORM_REGION_MASK_MIN_SIZE 0
+#define DP_MSG_TRANSFORM_REGION_MASK_MAX_SIZE 65482
 
 typedef struct DP_MsgTransformRegion DP_MsgTransformRegion;
 
@@ -2227,6 +2374,9 @@ size_t DP_msg_transform_region_mask_size(const DP_MsgTransformRegion *mtr);
 
 #define DP_MSG_TRACK_CREATE_STATIC_LENGTH 6
 
+#define DP_MSG_TRACK_CREATE_TITLE_MIN_LEN 0
+#define DP_MSG_TRACK_CREATE_TITLE_MAX_LEN 65529
+
 typedef struct DP_MsgTrackCreate DP_MsgTrackCreate;
 
 DP_Message *DP_msg_track_create_new(unsigned int context_id, uint16_t id,
@@ -2261,6 +2411,9 @@ size_t DP_msg_track_create_title_len(const DP_MsgTrackCreate *mtc);
  */
 
 #define DP_MSG_TRACK_RETITLE_STATIC_LENGTH 2
+
+#define DP_MSG_TRACK_RETITLE_TITLE_MIN_LEN 0
+#define DP_MSG_TRACK_RETITLE_TITLE_MAX_LEN 65533
 
 typedef struct DP_MsgTrackRetitle DP_MsgTrackRetitle;
 
@@ -2319,6 +2472,9 @@ uint16_t DP_msg_track_delete_id(const DP_MsgTrackDelete *mtd);
 
 #define DP_MSG_TRACK_ORDER_STATIC_LENGTH 0
 
+#define DP_MSG_TRACK_ORDER_TRACKS_MIN_COUNT 0
+#define DP_MSG_TRACK_ORDER_TRACKS_MAX_COUNT 32767
+
 typedef struct DP_MsgTrackOrder DP_MsgTrackOrder;
 
 DP_Message *DP_msg_track_order_new(unsigned int context_id,
@@ -2360,6 +2516,10 @@ int DP_msg_track_order_tracks_count(const DP_MsgTrackOrder *mto);
 #define DP_MSG_KEY_FRAME_SET_SOURCE_LAYER     0
 #define DP_MSG_KEY_FRAME_SET_SOURCE_KEY_FRAME 1
 
+#define DP_MSG_KEY_FRAME_SET_NUM_SOURCE 2
+#define DP_MSG_KEY_FRAME_SET_ALL_SOURCE \
+    DP_MSG_KEY_FRAME_SET_SOURCE_LAYER, DP_MSG_KEY_FRAME_SET_SOURCE_KEY_FRAME
+
 const char *DP_msg_key_frame_set_source_variant_name(unsigned int value);
 
 typedef struct DP_MsgKeyFrameSet DP_MsgKeyFrameSet;
@@ -2395,6 +2555,9 @@ uint8_t DP_msg_key_frame_set_source(const DP_MsgKeyFrameSet *mkfs);
  */
 
 #define DP_MSG_KEY_FRAME_RETITLE_STATIC_LENGTH 4
+
+#define DP_MSG_KEY_FRAME_RETITLE_TITLE_MIN_LEN 0
+#define DP_MSG_KEY_FRAME_RETITLE_TITLE_MAX_LEN 65531
 
 typedef struct DP_MsgKeyFrameRetitle DP_MsgKeyFrameRetitle;
 
@@ -2446,6 +2609,9 @@ size_t DP_msg_key_frame_retitle_title_len(const DP_MsgKeyFrameRetitle *mkfr);
  */
 
 #define DP_MSG_KEY_FRAME_LAYER_ATTRIBUTES_STATIC_LENGTH 4
+
+#define DP_MSG_KEY_FRAME_LAYER_ATTRIBUTES_LAYERS_MIN_COUNT 0
+#define DP_MSG_KEY_FRAME_LAYER_ATTRIBUTES_LAYERS_MAX_COUNT 32765
 
 typedef struct DP_MsgKeyFrameLayerAttributes DP_MsgKeyFrameLayerAttributes;
 

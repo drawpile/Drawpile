@@ -88,6 +88,10 @@ endif()
 
 if(TESTS)
     add_dptest_targets(common dptest
-        "test/base64.c;test/file.c;test/queue.c;test/rect.c;test/vector.c"
+        test/base64.c
+        test/file.c
+        test/queue.c
+        test/rect.c
+        test/vector.c
     )
 endif()

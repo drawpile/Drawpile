@@ -7,7 +7,7 @@ target_sources(dptest PRIVATE
 )
 target_include_directories(dptest INTERFACE
                             "${CMAKE_CURRENT_LIST_DIR}/dptest")
-target_link_libraries(dptest PRIVATE dpcommon)
+target_link_libraries(dptest PUBLIC dpcommon)
 
 function(add_dptest_targets type lib)
     foreach(test_file IN LISTS ARGN)
@@ -18,7 +18,7 @@ function(add_dptest_targets type lib)
         target_include_directories("${test_name}" PRIVATE
             "${PROJECT_SOURCE_DIR}/src/drawdance/libtest/dptest"
         )
-        target_link_libraries("${test_name}" PRIVATE "dp${type}" "${lib}")
+        target_link_libraries("${test_name}" PUBLIC "dp${type}" "${lib}")
 
         add_test(
             NAME "${test_name}"

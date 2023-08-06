@@ -26,10 +26,10 @@ dp_target_sources(dpmsg
 )
 
 target_include_directories(dpmsg PUBLIC ${CMAKE_CURRENT_LIST_DIR})
-target_link_libraries(dpmsg PRIVATE dpcommon uthash parson)
+target_link_libraries(dpmsg PUBLIC dpcommon uthash parson)
 
-# if(BUILD_TESTS)
-#     add_dptest_targets(msg dptest
-#         test/read_write_roundtrip.c
-#     )
-# endif()
+if(TESTS)
+    add_dptest_targets(msg dptest
+        test/read_write_roundtrip.c
+    )
+endif()

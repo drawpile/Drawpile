@@ -84,10 +84,22 @@ DP_Message *DP_message_parse_body(DP_MessageType type, unsigned int context_id, 
 
         #define {{ message.enum_name }}_STATIC_LENGTH {{ message.static_payload_length }}
         {% for f in message.fields %}
+            {% if f.min != f.max %}
+
+                #define {{ message.enum_name }}_{{ f.func_name|upper }}_MIN_{{ f.array_size_name|upper }} {{ f.min }}
+                #define {{ message.enum_name }}_{{ f.func_name|upper }}_MAX_{{ f.array_size_name|upper }} {{ f.max }}
+            {% endif %}
             {% if f.flags %}
 
                 {% for flag in f.flags %}
                     #define {{ flag.define_name }} 0x{{ '%.x'|format(flag.value) }}
+                {% endfor %}
+
+                #define DP_{{ message.func_name|upper }}_NUM_{{ f.func_name|upper }} {{ f.flags|length }}
+                #define DP_{{ message.func_name|upper }}_ALL_{{ f.func_name|upper }} \
+                {% for flag in f.flags %}
+                    {{ flag.define_name }}{% if not loop.last %}, \{% endif %}
+
                 {% endfor %}
 
                 const char *DP_{{ message.func_name }}_{{ f.func_name }}_flag_name(unsigned int value);
@@ -96,6 +108,13 @@ DP_Message *DP_message_parse_body(DP_MessageType type, unsigned int context_id, 
 
                 {% for variant in f.variants %}
                     #define {{ variant.define_name }} {{ variant.value }}
+                {% endfor %}
+
+                #define DP_{{ message.func_name|upper }}_NUM_{{ f.func_name|upper }} {{ f.variants|length }}
+                #define DP_{{ message.func_name|upper }}_ALL_{{ f.func_name|upper }} \
+                {% for variant in f.variants %}
+                    {{ variant.define_name }}{% if not loop.last %}, \{% endif %}
+
                 {% endfor %}
 
                 const char *DP_{{ message.func_name }}_{{ f.func_name }}_variant_name(unsigned int value);

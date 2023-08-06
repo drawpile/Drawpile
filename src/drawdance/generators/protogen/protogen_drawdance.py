@@ -1001,6 +1001,14 @@ class DrawdanceField:
         else:
             self.sub = None
 
+        divisor = self.deserialize_field_divisor
+        if divisor:
+            self.min = field.min_len // divisor
+            self.max = field.max_len // divisor
+        else:
+            self.min = field.min_len
+            self.max = field.max_len
+
     def access(self, subject):
         return self.type.access(self, subject)
 
