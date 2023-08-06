@@ -503,7 +503,7 @@ Unreleased Version 2.2.0-pre
  * Server: web admin API can now be used with socket activation
  * Server: support 'uid' extauth token field
  * Better auth user and mod icons
- * Added a new session option to allow only authenticated users to join (requires server version 2.0.8) 
+ * Added a new session option to allow only authenticated users to join (requires server version 2.0.8)
  * Chatbox no longer shows "user joined" messages for users already in the session
  * Platform input method context plugins are now included in the AppImage
  * macOS: open a new window (if none are open) when application icon is clicked
@@ -679,7 +679,7 @@ Unreleased Version 2.2.0-pre
  * OSX: Fixed pinch gesture detection
  * Revamped dptxt format
  * Recordings can now be saved directly in dptxt format
- * Merged dprec2txt and txt2dprec into dprectool 
+ * Merged dprec2txt and txt2dprec into dprectool
  * Replaced tool slots with a tool preset pie menu
  * Server logs are now available via the admin API
  * Session specific server logs can now be viewed in the client
@@ -743,7 +743,7 @@ Unreleased Version 2.2.0-pre
  * Support new miniupnpc library version
  * Added txt2dprec tool
  * Added support for session templates in the standalone server
- * Fix shortcut saving when editor widget was not manually closed 
+ * Fix shortcut saving when editor widget was not manually closed
  * Removed default canvas size limit (screen size)
  * Recording buffer is now periodically flushed to minimize data loss in case of a crash
  * New feature: chat message pinning
