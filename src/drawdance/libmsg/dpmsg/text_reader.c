@@ -900,8 +900,18 @@ unsigned int DP_text_reader_get_flags(DP_TextReader *reader, const char *key,
         while (true) {
             char c = value[i];
             if (c == ',' || c == '\0') {
-                flags |= get_flag_value(count, keys, values, value + start,
-                                        i - start);
+                const char *in = value + start;
+                size_t len = i - start;
+                unsigned int flag =
+                    get_flag_value(count, keys, values, in, len);
+                if (flag != 0) {
+                    flags |= flag;
+                }
+                else {
+                    DP_warn("Unknown '%s' flag '%.*s'", key,
+                            DP_size_to_int(len), in);
+                }
+
                 if (c == ',') {
                     start = i + 2;
                 }
