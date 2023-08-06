@@ -212,16 +212,18 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	m_lockstatus = new QLabel(this);
 	m_lockstatus->setFixedSize(QSize(16, 16));
 
+	m_viewStatusBar->addPermanentWidget(m_viewstatus);
+	m_viewStatusBar->addPermanentWidget(m_netstatus);
+
 	// Statusbar chat button: this is normally hidden and only shown
 	// when there are unread chat messages.
 	m_statusChatButton = new QToolButton(this);
 	m_statusChatButton->setAutoRaise(true);
 	m_statusChatButton->setIcon(QIcon::fromTheme("drawpile_chat"));
+	utils::setWidgetRetainSizeWhenHidden(m_statusChatButton, true);
 	m_statusChatButton->hide();
-	m_viewStatusBar->addWidget(m_statusChatButton);
+	m_viewStatusBar->addPermanentWidget(m_statusChatButton);
 
-	m_viewStatusBar->addPermanentWidget(m_viewstatus);
-	m_viewStatusBar->addPermanentWidget(m_netstatus);
 	m_viewStatusBar->addPermanentWidget(m_lockstatus);
 
 	int SPLITTER_WIDGET_IDX = 0;
