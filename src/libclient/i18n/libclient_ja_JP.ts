@@ -14,42 +14,42 @@
     <message>
         <location filename="../export/canvassaverrunnable.cpp" line="+34"/>
         <source>Bad arguments, this is probably a bug in Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>引数が間違っています。これはおそらく Drawpile のバグです。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>No file extension given.</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイル拡張子が指定されていません。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unsupported format.</source>
-        <translation type="unfinished"></translation>
+        <translation>サポートされていない形式。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t merge the canvas into a flat image.</source>
-        <translation type="unfinished"></translation>
+        <translation>キャンバスをフラット イメージに結合できませんでした。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t open file for writing.</source>
-        <translation type="unfinished"></translation>
+        <translation>書き込み用にファイルを開けませんでした。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Save operation failed, but the file might have been partially written.</source>
-        <translation type="unfinished"></translation>
+        <translation>保存操作は失敗しましたが、ファイルは部分的に書き込まれた可能性があります。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Internal error during saving.</source>
-        <translation type="unfinished"></translation>
+        <translation>保存中に内部エラーが発生しました。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unknown error.</source>
-        <translation type="unfinished"></translation>
+        <translation>不明なエラー。</translation>
     </message>
 </context>
 <context>
@@ -57,152 +57,152 @@
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="+94"/>
         <source>Shortcut</source>
-        <translation type="unfinished">ショートカット</translation>
+        <translation>ショートカット</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Action</source>
-        <translation type="unfinished">アクション</translation>
+        <translation>アクション</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Modifiers</source>
-        <translation type="unfinished"></translation>
+        <translation>修飾</translation>
     </message>
     <message>
         <location line="+62"/>
         <source>%1</source>
         <extracomment>Example: &quot;Pan Canvas&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>%1 (%2)</source>
         <extracomment>Example: &quot;Pan Canvas (Inverted)&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>%1: %2</source>
         <extracomment>Example: &quot;Space: Pan Canvas&quot;</extracomment>
-        <translation type="unfinished">%1 時間 %2 分 {1:?} {2?}</translation>
+        <translation>%1 時間 %2 分 {1:?} {2?}</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>%1: %2 (%3)</source>
         <extracomment>Example: &quot;Space: Pan Canvas (Inverted)&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1: %2 (%3)</translation>
     </message>
     <message>
         <location line="+48"/>
         <source>Mouse Wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>マウスホイール</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>+</source>
         <extracomment>Joins shortcut components, probably doesn&apos;t need to be translated.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>+</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Unset</source>
-        <translation type="unfinished"></translation>
+        <translation>設定解除</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Left Click</source>
-        <translation type="unfinished"></translation>
+        <translation>左クリック</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Right Click</source>
-        <translation type="unfinished"></translation>
+        <translation>右クリック</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Middle Click</source>
-        <translation type="unfinished"></translation>
+        <translation>中央クリック</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Unknown Button 0x%1</source>
-        <translation type="unfinished"></translation>
+        <translation>不明なボタン 0x%1</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Button %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ボタン %1</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Pan Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>キャンバス移動</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Rotate Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>キャンバス回転</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Zoom Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>キャンバス拡大</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pick Color</source>
-        <translation type="unfinished"></translation>
+        <translation>色抽出</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pick Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤー取得</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Brush Size</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシサイズ変更</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Constrain Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>制限ツール</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Center Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>中心ツール</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Constrain and Center Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>制限ツールと中心ツール</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unknown Constraint 0x%1</source>
-        <translation type="unfinished"></translation>
+        <translation>不明な制約 0x%1</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unknown Action %1</source>
-        <translation type="unfinished"></translation>
+        <translation>不明なアクション %1</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Inverted, Swap Axes</source>
-        <translation type="unfinished"></translation>
+        <translation>反転、軸の交換</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Inverted</source>
-        <translation type="unfinished"></translation>
+        <translation>反転</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Swap Axes</source>
-        <translation type="unfinished"></translation>
+        <translation>軸を交換</translation>
     </message>
 </context>
 <context>
@@ -210,47 +210,47 @@
     <message>
         <location filename="../utils/certificatestoremodel.cpp" line="+24"/>
         <source>&apos;%1&apos; does not contain any valid host certificates.</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; には有効なホスト証明書が含まれていません。</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>&apos;%1&apos; contains multiple host certificates, which is not currently supported.</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; には複数のホスト証明書が含まれていますが、現在サポートされていません。</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>&apos;%1&apos; contains an invalid certificate.</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; には無効な証明書が含まれています。</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>&apos;%1&apos; contains a certificate with multiple hostnames, which is not currently supported.</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; には複数のホスト名を持つ証明書が含まれていますが、現在サポートされていません。</translation>
     </message>
     <message>
         <location line="+139"/>
         <source>Could not read certificate from &apos;%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; から証明書を読み取ることができませんでした。</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Could not open &apos;%1&apos; for writing: %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; を書き込みのために開けませんでした: %2。</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Could not write &apos;%1&apos;: %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; を書き込めませんでした: %2。</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Could not move &apos;%1&apos; to &apos;%2&apos;: %3.</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; を &apos;%2&apos; に移動できませんでした: %3。</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Could not delete &apos;%1&apos;: %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; を削除できませんでした: %2。</translation>
     </message>
 </context>
 <context>
@@ -258,7 +258,7 @@
     <message>
         <location filename="../utils/customshortcutmodel.cpp" line="+52"/>
         <source>Conflict</source>
-        <translation type="unfinished"></translation>
+        <translation>衝突</translation>
     </message>
     <message>
         <location line="+56"/>
@@ -273,7 +273,7 @@
     <message>
         <location line="+1"/>
         <source>Alternate</source>
-        <translation type="unfinished"></translation>
+        <translation>代替</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -286,27 +286,27 @@
     <message>
         <location filename="../document.cpp" line="+594"/>
         <source>Unknown format.</source>
-        <translation type="unfinished"></translation>
+        <translation>不明な形式。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Header error.</source>
-        <translation type="unfinished"></translation>
+        <translation>ヘッダーエラー。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Error opening file.</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルを開くときにエラーが発生しました。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Error starting recorder.</source>
-        <translation type="unfinished"></translation>
+        <translation>記録開始時にエラーが発生しました。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unknown error.</source>
-        <translation type="unfinished"></translation>
+        <translation>不明なエラー。</translation>
     </message>
 </context>
 <context>
@@ -314,17 +314,17 @@
     <message>
         <location filename="../export/ffmpegexporter.cpp" line="+128"/>
         <source>Couldn&apos;t start ffmpeg!</source>
-        <translation type="unfinished"></translation>
+        <translation>ffmpegを起動できませんでした！</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ffmpeg crashed!</source>
-        <translation type="unfinished"></translation>
+        <translation>Ffmpeg がクラッシュしました！</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ffmpeg process error</source>
-        <translation type="unfinished"></translation>
+        <translation>Ffmpegプロセスエラー</translation>
     </message>
 </context>
 <context>
@@ -332,17 +332,17 @@
     <message>
         <location filename="../utils/keyframelayermodel.cpp" line="+23"/>
         <source>Visibility: Hidden</source>
-        <translation type="unfinished"></translation>
+        <translation>表示: 非表示</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Visibility: Revealed</source>
-        <translation type="unfinished"></translation>
+        <translation>表示: 完全に表示</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Visibility: Parent</source>
-        <translation type="unfinished"></translation>
+        <translation>表示: 継承する</translation>
     </message>
 </context>
 <context>
@@ -355,17 +355,17 @@
     <message>
         <location line="+5"/>
         <source>GIF (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>GIF (%1)</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Binary Recordings (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>バイナリ記録 (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Text Recordings (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>テキスト記録 (%1)</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -375,32 +375,32 @@
     <message>
         <location line="+7"/>
         <source>Performance Profile (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>パフォーマンスプロファイル (%1)</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Debug Dumps (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>デバッグ ダンプ (%1)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Tablet Event Log (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>タブレットイベントのログ (%1)</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>MP4 Video (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>MP4 動画 (%1)</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>WebM Video (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>WebM 動画 (%1)</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Text File (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>テキストファイル (%1)</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -418,7 +418,7 @@
     <message>
         <location filename="../drawdance/canvasstate.cpp" line="+46"/>
         <source>Layer %1</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤー %1</translation>
     </message>
 </context>
 <context>
@@ -426,22 +426,22 @@
     <message>
         <location filename="../utils/canvasshortcutsmodel.cpp" line="-101"/>
         <source>Shift</source>
-        <translation type="unfinished"></translation>
+        <translation>Shift</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Alt</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ctrl</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Meta</source>
-        <translation type="unfinished"></translation>
+        <translation>Meta</translation>
     </message>
 </context>
 <context>
@@ -454,61 +454,61 @@
     <message>
         <location line="-356"/>
         <source>%1d%2h%3m</source>
-        <translation type="unfinished"></translation>
+        <translation>%1日%2時間%3分</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1h%2m</source>
-        <translation type="unfinished"></translation>
+        <translation>%1時間%2分</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1m</source>
-        <translation type="unfinished"></translation>
+        <translation>%1分</translation>
     </message>
     <message numerus="yes">
         <location line="+91"/>
         <source>%1/%n users</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%1/%n ユーザー</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
         <source>%n users</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n ユーザー</numerusform>
         </translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Compatible</source>
-        <translation type="unfinished"></translation>
+        <translation>互換性</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Requires compatibility mode (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>互換モード (%1) が必要です</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Requires newer client (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>新しいクライアント (%1) が必要です</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Incompatible (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>互換性がありません (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>unknown version</source>
-        <translation type="unfinished"></translation>
+        <translation>不明なバージョン</translation>
     </message>
     <message>
         <location line="+65"/>
         <source>Compatibility</source>
-        <translation type="unfinished"></translation>
+        <translation>互換性</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -538,17 +538,17 @@
     <message>
         <location line="+162"/>
         <source>closed</source>
-        <translation type="unfinished"></translation>
+        <translation>クローズド</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>password-protected</source>
-        <translation type="unfinished"></translation>
+        <translation>パスワード保護</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>NSFM</source>
-        <translation type="unfinished"></translation>
+        <translation>NSFM</translation>
     </message>
 </context>
 <context>
@@ -556,122 +556,122 @@
     <message>
         <location filename="../canvas/blendmodes.cpp" line="+40"/>
         <source>Normal</source>
-        <translation type="unfinished">標準</translation>
+        <translation>標準</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Recolor</source>
-        <translation type="unfinished">色替え</translation>
+        <translation>色替え</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Behind</source>
-        <translation type="unfinished">奥側に描画</translation>
+        <translation>後方</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Multiply</source>
-        <translation type="unfinished">乗算</translation>
+        <translation>乗算</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>スクリーン</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Overlay</source>
-        <translation type="unfinished"></translation>
+        <translation>オーバーレイ</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Divide</source>
-        <translation type="unfinished">除算</translation>
+        <translation>除算</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Burn</source>
-        <translation type="unfinished">焼き込み</translation>
+        <translation>焼き込み</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Dodge</source>
-        <translation type="unfinished">覆い焼き</translation>
+        <translation>覆い焼き</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Darken</source>
-        <translation type="unfinished">暗くする</translation>
+        <translation>暗くする</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Lighten</source>
-        <translation type="unfinished">明るくする</translation>
+        <translation>明るくする</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Subtract</source>
-        <translation type="unfinished">減算</translation>
+        <translation>減算</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>加算</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Erase</source>
-        <translation type="unfinished">消去</translation>
+        <translation>消去</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Color Erase</source>
-        <translation type="unfinished"></translation>
+        <translation>色消去</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Hard Light</source>
-        <translation type="unfinished"></translation>
+        <translation>ハードライト</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Soft Light</source>
-        <translation type="unfinished"></translation>
+        <translation>ソフトライト</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Linear Burn</source>
-        <translation type="unfinished"></translation>
+        <translation>焼き込み(リニア)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Linear Light</source>
-        <translation type="unfinished"></translation>
+        <translation>リニアライト</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Luminosity/Shine (SAI)</source>
-        <translation type="unfinished"></translation>
+        <translation>発光(SAI)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Hue</source>
-        <translation type="unfinished">色相</translation>
+        <translation>色相</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Saturation</source>
-        <translation type="unfinished">彩度</translation>
+        <translation>彩度</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Luminosity</source>
-        <translation type="unfinished"></translation>
+        <translation>発光</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Color</source>
-        <translation type="unfinished">色</translation>
+        <translation>色</translation>
     </message>
 </context>
 <context>
@@ -679,7 +679,7 @@
     <message>
         <location filename="../brushes/brushpresetmodel.cpp" line="+560"/>
         <source>Default</source>
-        <translation type="unfinished">デフォルト</translation>
+        <translation>デフォルト</translation>
     </message>
 </context>
 <context>
@@ -687,87 +687,87 @@
     <message>
         <location line="-98"/>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation>すべて</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Untagged</source>
-        <translation type="unfinished"></translation>
+        <translation>タグなし</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Show all brushes, regardless of tagging.</source>
-        <translation type="unfinished"></translation>
+        <translation>タグ付けに関係なく、すべてのブラシを表示します。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show brushes not assigned to any tag.</source>
-        <translation type="unfinished"></translation>
+        <translation>どのタグにも割り当てられていないブラシを表示します。</translation>
     </message>
     <message>
         <location line="+166"/>
         <source>Default</source>
-        <translation type="unfinished">デフォルト</translation>
+        <translation>デフォルト</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Classic Brush %1</source>
-        <translation type="unfinished"></translation>
+        <translation>クラシックブラシ %1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Converted from %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1から変換されました。</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Can&apos;t open &apos;%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; を開けません。</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Invalid brush pack: order.conf not found inside</source>
-        <translation type="unfinished"></translation>
+        <translation>無効なブラシ パック: order.conf が内部に見つかりません</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Uncategorized %1</source>
-        <translation type="unfinished"></translation>
+        <translation>未分類 %1</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Invalid brush pack: order.conf contains no brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>無効なブラシ パック: order.conf にブラシが含まれていません</translation>
     </message>
     <message>
         <location line="+55"/>
         <source>Could not create tag &apos;%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>タグ &apos;%1&apos; を作成できませんでした。</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Could not create brush preset &apos;%1&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシ プリセット &apos;%1&apos; を作成できませんでした。</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Could not assign brush &apos;%1&apos; to tag &apos;%2&apos;.</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシ &apos;%1&apos; をタグ &apos;%2&apos; に割り当てることができませんでした。</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Can&apos;t read brush file &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシ ファイル &apos;%1&apos; を読み取れません</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Brush file &apos;%1&apos; does not contain valid JSON: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシ ファイル &apos;%1&apos; には有効な JSON が含まれていません: %1</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Can&apos;t load brush from brush file &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシ ファイル &apos;%1&apos; からブラシをロードできません</translation>
     </message>
 </context>
 <context>
@@ -775,7 +775,7 @@
     <message>
         <location filename="../canvas/paintengine.cpp" line="+167"/>
         <source>Layer %1</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤー %1</translation>
     </message>
 </context>
 <context>
@@ -783,57 +783,57 @@
     <message>
         <location filename="../canvas/userlist.cpp" line="+58"/>
         <source>Moderator</source>
-        <translation type="unfinished">モデレーター</translation>
+        <translation>モデレーター</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Operator</source>
-        <translation type="unfinished">管理者</translation>
+        <translation>管理者</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>信頼済み</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Registered</source>
-        <translation type="unfinished">登録済み</translation>
+        <translation>登録済み</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Online</source>
-        <translation type="unfinished">オンライン</translation>
+        <translation>オンライン</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Offline</source>
-        <translation type="unfinished">オフライン</translation>
+        <translation>オフライン</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>User</source>
-        <translation type="unfinished">ユーザー</translation>
+        <translation>ユーザー</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Type</source>
-        <translation type="unfinished">種類</translation>
+        <translation>分類</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Status</source>
-        <translation type="unfinished">状態</translation>
+        <translation>状態</translation>
     </message>
     <message>
         <location line="+181"/>
         <source>Server</source>
-        <translation type="unfinished">サーバー</translation>
+        <translation>サーバー</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>User #%1</source>
-        <translation type="unfinished">ユーザー #%1</translation>
+        <translation>ユーザー #%1</translation>
     </message>
 </context>
 <context>
@@ -841,27 +841,27 @@
     <message>
         <location filename="../net/announcementlist.cpp" line="+31"/>
         <source>Private</source>
-        <translation type="unfinished">プライベート</translation>
+        <translation>非公開</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Public</source>
-        <translation type="unfinished">公開</translation>
+        <translation>公開</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Server</source>
-        <translation type="unfinished">サーバー</translation>
+        <translation>サーバー</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Room code</source>
-        <translation type="unfinished">ルームコード</translation>
+        <translation>部屋コード</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mode</source>
-        <translation type="unfinished">モード</translation>
+        <translation>モード</translation>
     </message>
 </context>
 <context>
@@ -869,17 +869,17 @@
     <message>
         <location filename="../net/banlistmodel.cpp" line="+59"/>
         <source>User</source>
-        <translation type="unfinished">ユーザー</translation>
+        <translation>ユーザー</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>IP address</source>
-        <translation type="unfinished">IP アドレス</translation>
+        <translation>IP アドレス</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Banned by</source>
-        <translation type="unfinished"></translation>
+        <translation>次のユーザーからBAN された</translation>
     </message>
 </context>
 <context>
@@ -887,12 +887,12 @@
     <message>
         <location filename="../net/client.cpp" line="+72"/>
         <source>A server error occurred!</source>
-        <translation type="unfinished">サーバーエラーが発生しました！</translation>
+        <translation>サーバーエラーが発生しました！</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The server is shutting down!</source>
-        <translation type="unfinished">このサーバーはシャットダウン中です！</translation>
+        <translation>このサーバーはシャットダウン中です！</translation>
     </message>
 </context>
 <context>
@@ -901,7 +901,7 @@
         <location filename="../net/login.cpp" line="+104"/>
         <location line="+258"/>
         <source>Invalid state</source>
-        <translation type="unfinished">無効な状態です</translation>
+        <translation>無効な状態です</translation>
     </message>
     <message>
         <location line="-233"/>
@@ -911,154 +911,154 @@
         <location line="+142"/>
         <location line="+42"/>
         <source>Incompatible server</source>
-        <translation type="unfinished">互換性のないサーバー</translation>
+        <translation>互換性のないサーバー</translation>
     </message>
     <message>
         <location line="-440"/>
         <source>Server is for a different Drawpile version!</source>
-        <translation type="unfinished">サーバーはあなたのバージョンの Drawpile 用ではありません！</translation>
+        <translation>サーバーはあなたの Drawpile と異なるバージョンです！</translation>
     </message>
     <message>
         <location line="+42"/>
         <source>Secure mode not enabled on a trusted host!</source>
-        <translation type="unfinished"></translation>
+        <translation>信頼できるホストでセキュア モードが有効になっていません！</translation>
     </message>
     <message>
         <location line="+42"/>
         <source>This server does not allow guest logins</source>
-        <translation type="unfinished">このサーバーはゲストログインを許可していません</translation>
+        <translation>このサーバーはゲストログインを許可していません</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Password needed to log in as &quot;%1&quot;</source>
-        <translation type="unfinished">&quot;%1&quot; としてログインするにはパスワードが必要です</translation>
+        <translation>&quot;%1&quot; としてログインするにはパスワードが必要です</translation>
     </message>
     <message>
         <location line="+66"/>
         <location line="+6"/>
         <source>Auth server error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>認証サーバーエラー: %1</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Group membership needed</source>
-        <translation type="unfinished"></translation>
+        <translation>グループメンバーシップが必要です</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unexpected ext-auth response: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>予期しない外部認証応答: %1</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Server misconfiguration: invalid ext-auth URL</source>
-        <translation type="unfinished"></translation>
+        <translation>サーバーの構成ミス: 無効な外部認証 URL</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Unsupported ext-auth URL scheme</source>
-        <translation type="unfinished"></translation>
+        <translation>サポートされていない外部認証 URL スキーム</translation>
     </message>
     <message>
         <location line="+92"/>
         <source>New version</source>
-        <translation type="unfinished">新バージョン</translation>
+        <translation>新しいバージョン</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Unknown version</source>
-        <translation type="unfinished">不明なバージョン</translation>
+        <translation>不明なバージョン</translation>
     </message>
     <message>
         <location line="+52"/>
         <source>Session not yet started!</source>
-        <translation type="unfinished">セッションはまだ開始されていません！</translation>
+        <translation>セッションはまだ開始されていません！</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Blocked by parental controls</source>
-        <translation type="unfinished">ペアレンタルコントロールによりブロック済</translation>
+        <translation>ペアレンタルコントロールによりブロック済</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session for a different Drawpile version (%1) in progress!</source>
-        <translation type="unfinished"></translation>
+        <translation>別の Drawpile バージョン (%1) のセッションが進行中です！</translation>
     </message>
     <message>
         <location line="+211"/>
         <location line="+20"/>
         <source>Invalid SSL certificate for host %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ホスト %1 の SSL 証明書が無効です</translation>
     </message>
     <message>
         <location line="-17"/>
         <source>Certificate of a trusted server has changed!</source>
-        <translation type="unfinished">信頼済みサーバーの証明書が更新されました！</translation>
+        <translation>信頼済みサーバーの証明書が更新されました！</translation>
     </message>
     <message>
         <location line="+58"/>
         <source>Cancelled</source>
-        <translation type="unfinished">キャンセルしました</translation>
+        <translation>キャンセルしました</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Session not found!</source>
-        <translation type="unfinished">セッションが見つかりません！</translation>
+        <translation>セッションが見つかりません！</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Incorrect password for &apos;%1&apos;!</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; のパスワードが間違っています！</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Incorrect session password!</source>
-        <translation type="unfinished"></translation>
+        <translation>セッションパスワードが間違っています！</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Invalid username!</source>
-        <translation type="unfinished">無効なユーザー名です！</translation>
+        <translation>無効なユーザー名です！</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>This username has been locked</source>
-        <translation type="unfinished">このユーザー名はロックされました</translation>
+        <translation>このユーザー名はロックされました</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Username already taken!</source>
-        <translation type="unfinished">ユーザー名は既に取得されています！</translation>
+        <translation>ユーザー名は既に取得されています！</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Session is closed!</source>
-        <translation type="unfinished">セッションは閉じられています！</translation>
+        <translation>セッションは閉じられています！</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Server is full!</source>
-        <translation type="unfinished">サーバーが満員です！</translation>
+        <translation>サーバーが満員です！</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Hosting not authorized</source>
-        <translation type="unfinished"></translation>
+        <translation>ホスティングが許可されていません</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You have been banned from this session!</source>
-        <translation type="unfinished">あなたはこのセッションから BAN されました！</translation>
+        <translation>あなたはこのセッションから BAN されました！</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Session alias is reserved!</source>
-        <translation type="unfinished"></translation>
+        <translation>セッションエイリアスは予約されています！</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Client failed to serialize command</source>
-        <translation type="unfinished"></translation>
+        <translation>クライアントがコマンドのシリアル化に失敗しました</translation>
     </message>
 </context>
 <context>
@@ -1066,57 +1066,57 @@
     <message>
         <location filename="../net/loginsessions.cpp" line="+48"/>
         <source>(untitled)</source>
-        <translation type="unfinished">(無題)</translation>
+        <translation>(無題)</translation>
     </message>
     <message>
         <location line="+45"/>
         <source>%1 (incompatible)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (互換性なし)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.1 (compatibility mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.1 (互換モード)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Drawpile 2.2 (fully compatible)</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile 2.2 (完全互換)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Incompatible version</source>
-        <translation type="unfinished"></translation>
+        <translation>互換性のないバージョン</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Closed (new logins blocked)</source>
-        <translation type="unfinished"></translation>
+        <translation>クローズ済み (新規ログインはブロックされます)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Session password required</source>
-        <translation type="unfinished"></translation>
+        <translation>セッションパスワードが必要です</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation>未成年者には適していません (NSFM)</translation>
     </message>
     <message>
         <location line="+47"/>
         <source>Title</source>
-        <translation type="unfinished">タイトル</translation>
+        <translation>タイトル</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Started by</source>
-        <translation type="unfinished"></translation>
+        <translation>次のユーザーが開始</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Users</source>
-        <translation type="unfinished">ユーザー</translation>
+        <translation>ユーザー</translation>
     </message>
 </context>
 <context>
@@ -1124,7 +1124,7 @@
     <message>
         <location filename="../net/tcpserver.cpp" line="+111"/>
         <source>Received invalid data</source>
-        <translation type="unfinished">無効なデータを受信しました</translation>
+        <translation>無効なデータを受信しました</translation>
     </message>
 </context>
 <context>
@@ -1133,52 +1133,52 @@
         <location filename="../utils/news.cpp" line="+283"/>
         <location line="+41"/>
         <source>Checking for updates…</source>
-        <translation type="unfinished"></translation>
+        <translation>アップデートの確認…</translation>
     </message>
     <message>
         <location line="-23"/>
         <source>Automatic update checking is disabled, &lt;a href=&quot;#autoupdate&quot;&gt;click here to enable it&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>自動アップデートチェックが無効になっています。&lt;a href=&quot;#autoupdate&quot;&gt;ここをクリックして有効にしてください&lt;/a&gt;。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>If you don&apos;t want automatic checks, &lt;a href=&quot;#checkupdates&quot;&gt;click here to check manually&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>自動チェックを希望しない場合は、&lt;a href=&quot;#checkupdates&quot;&gt;ここをクリックして手動でチェック&lt;/a&gt;してください。</translation>
     </message>
     <message>
         <location line="+60"/>
         <source>Network error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ネットワークエラー: %1</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Couldn&apos;t make sense of the fetched data.</source>
-        <translation type="unfinished"></translation>
+        <translation>取得したデータを解析できませんでした。</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Couldn&apos;t make sense of fetched updates.</source>
-        <translation type="unfinished"></translation>
+        <translation>取得したアップデート内容を解釈できませんでした。</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Couldn&apos;t save updates.</source>
-        <translation type="unfinished"></translation>
+        <translation>アップデートを保存できませんでした。</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Couldn&apos;t make sense of fetched news.</source>
-        <translation type="unfinished"></translation>
+        <translation>取得したニュースの解析ができませんでした。</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Couldn&apos;t save news.</source>
-        <translation type="unfinished"></translation>
+        <translation>ニュースを保存できませんでした。</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>No news available.</source>
-        <translation type="unfinished"></translation>
+        <translation>ニュースはありません。</translation>
     </message>
 </context>
 </TS>
