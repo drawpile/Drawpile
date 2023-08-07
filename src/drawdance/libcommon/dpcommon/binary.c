@@ -56,13 +56,16 @@ uint8_t DP_read_littleendian_uint8(const unsigned char *d)
 uint16_t DP_read_littleendian_uint16(const unsigned char *d)
 {
     DP_ASSERT(d);
-    return DP_int_to_uint16(d[0] + (d[1] << 8));
+    return DP_uint_to_uint16(DP_uchar_to_uint(d[0])
+                             + (DP_uchar_to_uint(d[1]) << 8u));
 }
 
 uint32_t DP_read_littleendian_uint32(const unsigned char *d)
 {
     DP_ASSERT(d);
-    return DP_int_to_uint32(d[0] + (d[1] << 8) + (d[2] << 16) + (d[3] << 24));
+    return DP_uint_to_uint32(
+        DP_uchar_to_uint(d[0]) + (DP_uchar_to_uint(d[1]) << 8u)
+        + (DP_uchar_to_uint(d[2]) << 16u) + (DP_uchar_to_uint(d[3]) << 24u));
 }
 
 uint64_t DP_read_littleendian_uint64(const unsigned char *d)
@@ -103,13 +106,16 @@ uint8_t DP_read_bigendian_uint8(const unsigned char *d)
 uint16_t DP_read_bigendian_uint16(const unsigned char *d)
 {
     DP_ASSERT(d);
-    return DP_int_to_uint16((d[0] << 8) + d[1]);
+    return DP_uint_to_uint16((DP_uchar_to_uint(d[0]) << 8u)
+                             + DP_uchar_to_uint(d[1]));
 }
 
 uint32_t DP_read_bigendian_uint32(const unsigned char *d)
 {
     DP_ASSERT(d);
-    return DP_int_to_uint32((d[0] << 24) + (d[1] << 16) + (d[2] << 8) + d[3]);
+    return DP_uint_to_uint32(
+        (DP_uchar_to_uint(d[0]) << 24u) + (DP_uchar_to_uint(d[1]) << 16u)
+        + (DP_uchar_to_uint(d[2]) << 8u) + DP_uchar_to_uint(d[3]));
 }
 
 
