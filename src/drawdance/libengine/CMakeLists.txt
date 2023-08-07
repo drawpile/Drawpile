@@ -26,7 +26,6 @@ dp_target_sources(dpengine
     dpengine/layer_props_list.c
     dpengine/layer_routes.c
     dpengine/local_state.c
-    dpengine/model_changes.c
     dpengine/ops.c
     dpengine/paint.c
     dpengine/paint_engine.c
@@ -67,7 +66,6 @@ dp_target_sources(dpengine
     dpengine/layer_props_list.h
     dpengine/layer_routes.h
     dpengine/local_state.h
-    dpengine/model_changes.h
     dpengine/ops.h
     dpengine/paint.h
     dpengine/paint_engine.h
@@ -148,7 +146,6 @@ if(TESTS)
         test/handle_metadata.c
         test/handle_timeline.c
         test/image_thumbnail.c
-        test/model_changes.c
         test/resize_image.c
     )
 endif()
