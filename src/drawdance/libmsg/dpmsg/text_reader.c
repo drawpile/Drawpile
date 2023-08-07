@@ -775,7 +775,7 @@ static double parse_decimal(const char *value, double multiplier, double min,
     }
 
     char *end;
-    double result = strtof(value, &end);
+    double result = strtod(value, &end);
     if (*end != '\0' || isnan(result)) {
         DP_warn("Error parsing decimal field '%s'", value);
         return 0.0;
