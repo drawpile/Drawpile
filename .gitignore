@@ -18,6 +18,10 @@ CMakeLists.txt.user*
 env/
 venv/
 
+# Python compile cache
+__pycache__/
+*.pyc
+
 # clangd compile commands file when using -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 compile_commands.json
 
