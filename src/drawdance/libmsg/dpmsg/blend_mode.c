@@ -29,6 +29,11 @@
 #define INCREASE_OPACITY (1 << 3)
 #define BLEND_BLANK      (1 << 4)
 
+// The Krita name for the linear light blend mode contains a space, which isn't
+// supported in draw dabs messages, since they already use the curly brace body
+// for the dab data. So we have to use this alternate, spaceless name instead.
+#define LINEAR_LIGHT_TEXT_NAME "-dp-linear-light"
+
 typedef struct DP_BlendModeAttributes {
     int flags;
     const char *enum_name;
@@ -280,6 +285,16 @@ const char *DP_blend_mode_svg_name(int blend_mode)
     return get_attributes(blend_mode)->svg_name;
 }
 
+const char *DP_blend_mode_text_name(int blend_mode)
+{
+    if (blend_mode == DP_BLEND_MODE_LINEAR_LIGHT) {
+        return LINEAR_LIGHT_TEXT_NAME;
+    }
+    else {
+        return DP_blend_mode_svg_name(blend_mode);
+    }
+}
+
 bool DP_blend_mode_can_increase_opacity(int blend_mode)
 {
     return get_attributes(blend_mode)->flags & INCREASE_OPACITY;
@@ -307,5 +322,10 @@ DP_BlendMode DP_blend_mode_by_svg_name(const char *svg_name,
                      mode_attributes[DP_BLEND_MODE_REPLACE].svg_name)) {
         return DP_BLEND_MODE_REPLACE;
     }
-    return not_found_value;
+    else if (DP_str_equal(svg_name, LINEAR_LIGHT_TEXT_NAME)) {
+        return DP_BLEND_MODE_LINEAR_LIGHT;
+    }
+    else {
+        return not_found_value;
+    }
 }

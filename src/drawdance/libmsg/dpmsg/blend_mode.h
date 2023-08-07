@@ -71,6 +71,8 @@ const char *DP_blend_mode_enum_name_unprefixed(int blend_mode);
 
 const char *DP_blend_mode_svg_name(int blend_mode);
 
+const char *DP_blend_mode_text_name(int blend_mode);
+
 bool DP_blend_mode_can_increase_opacity(int blend_mode);
 
 bool DP_blend_mode_can_decrease_opacity(int blend_mode);
