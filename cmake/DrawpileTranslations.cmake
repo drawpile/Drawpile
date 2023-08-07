@@ -97,7 +97,7 @@ Combines a set of translation files into bundles.
 function(bundle_translations out_files)
 	cmake_parse_arguments(PARSE_ARGV 1 ARG "" "NAME;OUTPUT_LOCATION" "QT;TARGETS")
 
-	find_program(lconvert lconvert)
+	find_program(lconvert "lconvert" "lconvert-qt${QT_VERSION_MAJOR}")
 
 	if(NOT ARG_NAME)
 		message(FATAL_ERROR "Missing required NAME for translation bundle")
