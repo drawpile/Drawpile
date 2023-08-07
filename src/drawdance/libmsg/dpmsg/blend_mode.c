@@ -305,7 +305,7 @@ DP_BlendMode DP_blend_mode_by_svg_name(const char *svg_name,
     }
     if (DP_str_equal(svg_name,
                      mode_attributes[DP_BLEND_MODE_REPLACE].svg_name)) {
-        return DP_BLEND_MODE_ERASE;
+        return DP_BLEND_MODE_REPLACE;
     }
     return not_found_value;
 }
