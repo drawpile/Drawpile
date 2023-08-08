@@ -570,8 +570,8 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 	int currentTrackIndex = d->trackIndexById(d->currentTrackId);
 	int currentFrame = d->currentFrame;
 
-	int w = width();
-	int h = height();
+	int w = width() - d->verticalScroll->width();
+	int h = height() - d->horizontalScroll->height();
 	int rowHeight = d->rowHeight;
 	int columnWidth = d->columnWidth;
 	int headerWidth = d->headerWidth;
