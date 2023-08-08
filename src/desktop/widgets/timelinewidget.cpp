@@ -601,17 +601,19 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 	painter.drawRect(bodyRect);
 
 	// Selected row and column.
-	QColor selectedColor = pal.highlight().color();
-	selectedColor.setAlphaF(0.5f);
-	painter.setBrush(selectedColor);
-	if(currentFrame != -1) {
-		int x = headerWidth + currentFrame * columnWidth - xScroll;
-		painter.drawRect(x, bodyRect.top(), columnWidth, bodyRect.height());
-	}
-	if(currentTrackIndex != -1) {
-		int i = trackCount - currentTrackIndex - 1;
-		int y = rowHeight + i * rowHeight - yScroll;
-		painter.drawRect(bodyRect.left(), y, bodyRect.width(), rowHeight);
+	if(trackCount != 0) {
+		QColor selectedColor = pal.highlight().color();
+		selectedColor.setAlphaF(0.5f);
+		painter.setBrush(selectedColor);
+		if(currentFrame != -1) {
+			int x = headerWidth + currentFrame * columnWidth - xScroll;
+			painter.drawRect(x, bodyRect.top(), columnWidth, bodyRect.height());
+		}
+		if(currentTrackIndex != -1) {
+			int i = trackCount - currentTrackIndex - 1;
+			int y = rowHeight + i * rowHeight - yScroll;
+			painter.drawRect(bodyRect.left(), y, bodyRect.width(), rowHeight);
+		}
 	}
 
 	// Key frames.
@@ -663,18 +665,28 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 	}
 	painter.setOpacity(1.0);
 
-	// Body grid.
-	painter.setPen(gridColor);
-	painter.setBrush(Qt::NoBrush);
-	int firstX = columnWidth - (xScroll % columnWidth);
-	for(int x = firstX; x < bodyRect.width(); x += columnWidth) {
-		int xw = x + headerWidth;
-		painter.drawLine(xw, bodyRect.top(), xw, bodyRect.bottom());
-	}
-	int firstY = rowHeight - (yScroll % rowHeight);
-	for(int y = firstY; y < bodyRect.height(); y += rowHeight) {
-		int yh = y + rowHeight;
-		painter.drawLine(bodyRect.left(), yh, bodyRect.right(), yh);
+	// Body grid or no tracks message.
+	if(trackCount == 0) {
+		painter.setPen(textColor);
+		painter.drawText(
+			bodyRect,
+			tr("There's no tracks yet.\n"
+			   "Add one using the ＋ button above\n"
+			   "or via Animation ▸ New Track."),
+			Qt::AlignHCenter | Qt::AlignVCenter);
+	} else {
+		painter.setPen(gridColor);
+		painter.setBrush(Qt::NoBrush);
+		int firstX = columnWidth - (xScroll % columnWidth);
+		for(int x = firstX; x < bodyRect.width(); x += columnWidth) {
+			int xw = x + headerWidth;
+			painter.drawLine(xw, bodyRect.top(), xw, bodyRect.bottom());
+		}
+		int firstY = rowHeight - (yScroll % rowHeight);
+		for(int y = firstY; y < bodyRect.height(); y += rowHeight) {
+			int yh = y + rowHeight;
+			painter.drawLine(bodyRect.left(), yh, bodyRect.right(), yh);
+		}
 	}
 
 	// Outlines around the sides.
