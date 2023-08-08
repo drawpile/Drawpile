@@ -182,7 +182,9 @@ void Timeline::setUpTitleWidget(
 	titlebar->addStretch();
 
 	addTitleButton(
-		titlebar, actions.keyFrameSetLayer, GroupedToolButton::GroupLeft);
+		titlebar, actions.keyFrameCreateLayer, GroupedToolButton::GroupLeft);
+	addTitleButton(
+		titlebar, actions.keyFrameSetLayer, GroupedToolButton::GroupCenter);
 	addTitleButton(
 		titlebar, actions.keyFrameSetEmpty, GroupedToolButton::GroupCenter);
 	addTitleButton(
