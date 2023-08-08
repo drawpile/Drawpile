@@ -51,6 +51,9 @@ PaletteWidget::PaletteWidget(QWidget *parent)
 	connect(
 		m_colordlg, SIGNAL(colorSelected(QColor)), this,
 		SLOT(setCurrentColor(QColor)));
+	connect(
+		m_colordlg, &color_widgets::ColorDialog::colorSelected, this,
+		&PaletteWidget::colorSelected);
 
 	connect(m_colordlg, SIGNAL(finished(int)), this, SLOT(dialogDone()));
 

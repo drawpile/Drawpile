@@ -10,6 +10,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Don't keep locally forked canvas states around. This reduces memory usage by a bunch, especially when drawing locally.
  * Feature: Add layer on current key frame button is now in the top bar of the timeline, next to the other key frame buttons. Thanks FallenArts for suggesting.
  * Feature: Show a notice when there's no tracks yet, rather than just showing an empty timeline grid.
+ * Fix: Actually pick color when adding a color to the color picker through the color dialog.
 
 2023-07-31 Version 2.2.0-beta.6
  * Fix: Don't forget account password when entering a wrong session password.
