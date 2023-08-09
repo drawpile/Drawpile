@@ -3724,7 +3724,7 @@ void MainWindow::setupActions()
 
 	m_brushSlots = new QActionGroup(this);
 	for(int i=0;i<6;++i) {
-		QAction *q = new QAction(QString("Brush slot #%1").arg(i+1), this);
+		QAction *q = new QAction(tr("Brush slot #%1").arg(i+1), this);
 		q->setAutoRepeat(false);
 		q->setObjectName(QString("quicktoolslot-%1").arg(i));
 		q->setShortcut(QKeySequence(QString::number(i+1)));
