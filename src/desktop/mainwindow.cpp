@@ -516,8 +516,10 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	connect(canvas->paintEngine(), &canvas::PaintEngine::undoDepthLimitSet, this, &MainWindow::onUndoDepthLimitSet);
 
 	connect(canvas, &canvas::CanvasModel::chatMessageReceived, this, [this]() {
-		// Demand attention if the window isn't focused.
-		QApplication::alert(this);
+		if(dpApp().settings().notificationChat()) {
+			// Demand attention if the window isn't focused.
+			QApplication::alert(this);
+		}
 		// Show a "new message" indicator when the chatbox is collapsed
 		const auto sizes = m_splitter->sizes();
 		if(sizes.length() > 1 && sizes.at(1)==0)
