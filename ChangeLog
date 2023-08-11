@@ -15,6 +15,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Don't add current color to the palette when creating it. Thanks xxxx for reporting.
  * Fix: Make exported palettes not start using the exported location to save changes to. Thanks xxxx for reporting.
  * Feature: Allow muting notifications for a window. Thanks Blozzom for suggesting.
+ * Fix: Enable the lock session menu option properly, it remained stuck disabled in some cases before.
 
 2023-07-31 Version 2.2.0-beta.6
  * Fix: Don't forget account password when entering a wrong session password.

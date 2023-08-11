@@ -2005,6 +2005,7 @@ void MainWindow::onServerLogin(bool join, const QString &joinPassword)
 	m_sessionSettings->setAuthenticated(m_doc->client()->isAuthenticated());
 	setDrawingToolsEnabled(true);
 	m_modtools->setEnabled(m_doc->client()->isModerator());
+	onOperatorModeChange(m_doc->canvas()->aclState()->amOperator());
 	getAction("reportabuse")->setEnabled(m_doc->client()->serverSupportsReports());
 	getAction("invitesession")->setEnabled(true);
 	if(m_chatbox->isCollapsed()) {
