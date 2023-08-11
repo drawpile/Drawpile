@@ -205,6 +205,7 @@ private slots:
 	void setFreezeDocks(bool freeze);
 	void setDocksHidden(bool hidden);
 	void setDockTitleBarsHidden(bool hidden);
+	void setNotificationsMuted(bool muted);
 
 	void updateTitle();
 
@@ -316,6 +317,7 @@ private:
 	ShortcutDetector *m_tempToolSwitchShortcut;
 	bool m_titleBarsHidden;
 	bool m_wasSessionLocked;
+	bool m_notificationsMuted;
 
 	Document *m_doc;
 	MainActions *m_ma;

@@ -87,6 +87,7 @@ ChatBox::ChatBox(Document *doc, QWidget *parent)
 			emit expandPlease();
 		}
 	});
+	connect(m_chatWidget, &ChatWidget::muteChanged, this, &ChatBox::muteChanged);
 
 	connect(doc, &Document::canvasChanged, this, &ChatBox::onCanvasChanged);
 	connect(doc, &Document::serverLoggedIn, this, &ChatBox::onServerLogin);

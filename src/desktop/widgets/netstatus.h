@@ -40,6 +40,8 @@ public:
 	const QUrl &sessionUrl() const { return m_sessionUrl; }
 	QString joinPassword() const { return m_haveJoinPassword ? m_joinPassword : QString{}; }
 
+	void setNotificationsMuted(bool muted) { m_notificationsMuted = muted; }
+
 signals:
 	void remoteAddressDiscovered();
 
@@ -113,6 +115,8 @@ private:
 	quint64 _sentbytes, _recvbytes, _lag;
 
 	QScopedPointer<const QSslCertificate> m_certificate;
+
+	bool m_notificationsMuted;
 };
 
 }

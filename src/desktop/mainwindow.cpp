@@ -171,6 +171,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	  m_tempToolSwitchShortcut(nullptr),
 	  m_titleBarsHidden(false),
 	  m_wasSessionLocked(false),
+	  m_notificationsMuted(false),
 	  m_doc(nullptr),
 	  m_exitAfterSave(false)
 {
@@ -516,7 +517,7 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	connect(canvas->paintEngine(), &canvas::PaintEngine::undoDepthLimitSet, this, &MainWindow::onUndoDepthLimitSet);
 
 	connect(canvas, &canvas::CanvasModel::chatMessageReceived, this, [this]() {
-		if(dpApp().settings().notificationChat()) {
+		if(dpApp().settings().notificationChat() && !m_notificationsMuted) {
 			// Demand attention if the window isn't focused.
 			QApplication::alert(this);
 		}
@@ -2037,10 +2038,12 @@ void MainWindow::updateLockWidget()
 		lock.setFlag(Lock::Canvas);
 	}
 
-	if(sessionLocked && !m_wasSessionLocked) {
-		notification::playSound(notification::Event::LOCKED);
-	} else if(!sessionLocked && m_wasSessionLocked) {
-		notification::playSound(notification::Event::UNLOCKED);
+	if(!m_notificationsMuted) {
+		if(sessionLocked && !m_wasSessionLocked) {
+			notification::playSound(notification::Event::LOCKED);
+		} else if(!sessionLocked && m_wasSessionLocked) {
+			notification::playSound(notification::Event::UNLOCKED);
+		}
 	}
 	m_wasSessionLocked = sessionLocked;
 
@@ -2285,6 +2288,12 @@ void MainWindow::setDockTitleBarsHidden(bool hidden)
 				dw->titleBarWidget()->setHidden(hidden);
 		}
 	}
+}
+
+void MainWindow::setNotificationsMuted(bool muted)
+{
+	m_notificationsMuted = muted;
+	m_netstatus->setNotificationsMuted(muted);
 }
 
 /**
@@ -3242,6 +3251,7 @@ void MainWindow::setupActions()
 		m_splitter->setSizes(sizes);
 		m_saveSplitterDebounce.start();
 	});
+	connect(m_chatbox, &widgets::ChatBox::muteChanged, this, &MainWindow::setNotificationsMuted);
 
 	connect(moveleft, &QAction::triggered, m_view, [this] {
 		m_view->moveStep(widgets::CanvasView::Direction::Left);

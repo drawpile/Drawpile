@@ -3,6 +3,7 @@
 #ifndef CHATWIDGET_H
 #define CHATWIDGET_H
 
+#include "desktop/notifications.h"
 #include <QWidget>
 
 class QMenu;
@@ -82,6 +83,7 @@ signals:
 	void message(const drawdance::Message &msg);
 	void detachRequested();
 	void expandRequested();
+	void muteChanged(bool muted);
 
 private:
 #ifdef Q_OS_ANDROID
@@ -94,6 +96,8 @@ private:
 	static constexpr bool COMPACT_ONLY = false;
 	static constexpr bool ALLOW_DETACH = true;
 #endif
+
+	void playSound(notification::Event event);
 
 	struct Private;
 	Private *d;

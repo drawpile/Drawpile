@@ -63,6 +63,8 @@ signals:
 	//! Detached chat box should be re-attached and reparented (or it will be destroyed)
 	void reattachNowPlease();
 
+	void muteChanged(bool muted);
+
 protected:
 	void resizeEvent(QResizeEvent *event) override;
 

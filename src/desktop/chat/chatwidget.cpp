@@ -4,7 +4,6 @@
 #include "desktop/chat/chatwidget.h"
 #include "libclient/utils/html.h"
 #include "libclient/utils/funstuff.h"
-#include "desktop/notifications.h"
 #include "desktop/main.h"
 
 #include "libclient/canvas/userlist.h"
@@ -86,6 +85,7 @@ struct ChatWidget::Private {
 	QAction *compactAction = nullptr;
 	QAction *attachAction = nullptr;
 	QAction *detachAction = nullptr;
+	QAction *muteAction = nullptr;
 
 	QList<int> announcedUsers;
 	canvas::UserListModel *userlist = nullptr;
@@ -199,6 +199,11 @@ ChatWidget::ChatWidget(QWidget *parent)
 		d->detachAction = d->externalMenu->addAction(
 			tr("Detach"), this, &ChatWidget::detachRequested);
 	}
+
+	d->muteAction = d->externalMenu->addAction(
+		tr("Mute notifications"), this, &ChatWidget::muteChanged);
+	d->muteAction->setStatusTip(tr("Toggle notifications for this window"));
+	d->muteAction->setCheckable(true);
 
 	connect(d->externalMenu, &QMenu::aboutToShow, this, &ChatWidget::contextMenuAboutToShow);
 
@@ -551,7 +556,7 @@ void ChatWidget::userJoined(int id, const QString &name)
 			d->scrollChatToEnd(id);
 	}
 
-	notification::playSound(notification::Event::LOGIN);
+	playSound(notification::Event::LOGIN);
 }
 
 void ChatWidget::userParted(int id)
@@ -571,7 +576,7 @@ void ChatWidget::userParted(int id)
 
 	d->announcedUsers.removeAll(id);
 
-	notification::playSound(notification::Event::LOGOUT);
+	playSound(notification::Event::LOGOUT);
 }
 
 void ChatWidget::kicked(const QString &kickedBy)
@@ -630,7 +635,7 @@ void ChatWidget::receiveMessage(int sender, int recipient, uint8_t tflags, uint8
 	}
 
 	if(!d->myline->hasFocus() || chatId != d->currentChat || isValidAlert)
-		notification::playSound(notification::Event::CHAT);
+		playSound(notification::Event::CHAT);
 
 	if(wasAtEnd || isValidAlert) {
 		d->scrollChatToEnd(chatId);
@@ -872,6 +877,13 @@ void ChatWidget::resizeEvent(QResizeEvent *)
 {
 	if(d->wasAtEnd) {
 		d->scrollToEnd();
+	}
+}
+
+void ChatWidget::playSound(notification::Event event)
+{
+	if(!d->muteAction->isChecked()) {
+		notification::playSound(event);
 	}
 }
 

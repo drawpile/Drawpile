@@ -357,9 +357,10 @@ void NetStatus::kicked(const QString& user)
 
 void NetStatus::message(const QString &msg)
 {
-	m_popup->showMessage(
-				mapToGlobal(m_label->pos() + QPoint(m_label->width()/2, 2)),
-				msg);
+	if(!m_notificationsMuted) {
+		m_popup->showMessage(
+			mapToGlobal(m_label->pos() + QPoint(m_label->width() / 2, 2)), msg);
+	}
 }
 
 void NetStatus::updateLabel()
