@@ -274,7 +274,6 @@ void ColorPaletteDock::addPalette()
 	if(ok && !name.isEmpty()) {
 		color_widgets::ColorPalette pal = color_widgets::ColorPalette();
 		pal.setName(name);
-		pal.appendColor(d->color);
 		pal.setColumns(8);
 		getSharedPaletteModel()->addPalette(pal, false);
 		d->paletteChoiceBox->setCurrentIndex(

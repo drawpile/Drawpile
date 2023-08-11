@@ -12,6 +12,7 @@ Unreleased Version 2.2.0-pre
  * Feature: Show a notice when there's no tracks yet, rather than just showing an empty timeline grid.
  * Fix: Actually pick color when adding a color to the color picker through the color dialog.
  * Feature: Mark window when a chat message is received. On Windows, this makes the icon in the task bar orange. On macOS, it supposedly bounces an icon somewhere. On other platforms it probably does something similar, indicating which window is the one that got a message ready. Thanks Radio for suggesting.
+ * Fix: Don't add current color to the palette when creating it. Thanks xxxx for reporting.
 
 2023-07-31 Version 2.2.0-beta.6
  * Fix: Don't forget account password when entering a wrong session password.
