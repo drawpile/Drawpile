@@ -354,7 +354,7 @@ void ColorPaletteDock::exportPalette()
 		tr("GIMP palette (%1)").arg("*.gpl"));
 
 	if(!filename.isEmpty()) {
-		color_widgets::ColorPalette &pal = d->paletteWidget->colorPalette();
+		color_widgets::ColorPalette pal = d->paletteWidget->colorPalette();
 
 		if(!pal.save(filename))
 			QMessageBox::warning(this, tr("Error"), tr("Couldn't save file"));
