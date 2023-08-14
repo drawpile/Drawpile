@@ -11,12 +11,15 @@ ChatWidgetPinnedArea::ChatWidgetPinnedArea(QWidget *parent) :
 	setVisible(false);
 	setOpenExternalLinks(true);
 	setWordWrap(true);
+	setTextInteractionFlags(Qt::TextBrowserInteraction);
 	setStyleSheet(QStringLiteral(
-		"background: #232629;"
-		"border-bottom: 1px solid #2980b9;"
-		"color: #eff0f1;"
-		"padding: 3px;"
-					  ));
+		"QLabel {"
+		"	background: #232629;"
+		"	border-bottom: 1px solid #2980b9;"
+		"	color: #eff0f1;"
+		"	padding: 3px;"
+		"}"
+	));
 }
 
 void ChatWidgetPinnedArea::setPinText(const QString &safetext)
