@@ -189,6 +189,10 @@ void DP_transient_tile_pixel_at_set(DP_TransientTile *tt, int x, int y,
 void DP_transient_tile_pixel_at_put(DP_TransientTile *tt, int blend_mode, int x,
                                     int y, DP_Pixel15 pixel);
 
+void DP_transient_tile_clear(DP_TransientTile *tt);
+
+void DP_transient_tile_copy(DP_TransientTile *tt, DP_Tile *t);
+
 bool DP_transient_tile_blank(DP_TransientTile *tt);
 
 void DP_transient_tile_merge(DP_TransientTile *DP_RESTRICT tt,

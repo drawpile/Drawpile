@@ -651,6 +651,26 @@ void DP_transient_tile_pixel_at_put(DP_TransientTile *tt, int blend_mode, int x,
                     blend_mode);
 }
 
+void DP_transient_tile_clear(DP_TransientTile *tt)
+{
+    DP_ASSERT(tt);
+    DP_ASSERT(DP_atomic_get(&tt->refcount) > 0);
+    DP_ASSERT(tt->transient);
+    memset(tt->pixels, 0, DP_TILE_BYTES);
+    tt->maybe_blank = true;
+}
+
+void DP_transient_tile_copy(DP_TransientTile *tt, DP_Tile *t)
+{
+    DP_ASSERT(tt);
+    DP_ASSERT(DP_atomic_get(&tt->refcount) > 0);
+    DP_ASSERT(tt->transient);
+    DP_ASSERT(t);
+    DP_ASSERT(DP_atomic_get(&t->refcount) > 0);
+    memcpy(tt->pixels, t->pixels, DP_TILE_BYTES);
+    tt->maybe_blank = t->maybe_blank;
+}
+
 bool DP_transient_tile_blank(DP_TransientTile *tt)
 {
     DP_ASSERT(tt);
