@@ -690,9 +690,52 @@ DP_OnionSkins *DP_onion_skins_new(int count_below, int count_above)
     return oss;
 }
 
+DP_OnionSkins *DP_onion_skins_new_clone(DP_OnionSkins *oss)
+{
+    DP_ASSERT(oss);
+    int count_below = oss->count_below;
+    int count_above = oss->count_above;
+    DP_OnionSkins *new_oss = DP_onion_skins_new(count_below, count_above);
+    memcpy(new_oss->skins, oss->skins,
+           sizeof(*oss->skins)
+               * (DP_int_to_size(count_below) + DP_int_to_size(count_above)));
+    return new_oss;
+}
+
+DP_OnionSkins *DP_onion_skins_new_clone_nullable(DP_OnionSkins *oss_or_null)
+{
+    return oss_or_null ? DP_onion_skins_new_clone(oss_or_null) : NULL;
+}
+
 void DP_onion_skins_free(DP_OnionSkins *oss)
 {
     DP_free(oss);
+}
+
+bool DP_onion_skins_equal(DP_OnionSkins *a, DP_OnionSkins *b)
+{
+    if (a == b) {
+        return true;
+    }
+    else if (a && b && a->count_above == b->count_above
+             && a->count_below == b->count_below) {
+        int count = a->count_above + a->count_below;
+        for (int i = 0; i < count; ++i) {
+            DP_OnionSkin *sa = &a->skins[i];
+            DP_OnionSkin *sb = &b->skins[i];
+            bool skins_differ =
+                sa->opacity != sb->opacity || sa->tint.b != sb->tint.b
+                || sa->tint.g != sb->tint.g || sa->tint.r != sb->tint.r
+                || sa->tint.a != sb->tint.a;
+            if (skins_differ) {
+                return false;
+            }
+        }
+        return true;
+    }
+    else {
+        return false;
+    }
 }
 
 int DP_onion_skins_count_below(const DP_OnionSkins *oss)

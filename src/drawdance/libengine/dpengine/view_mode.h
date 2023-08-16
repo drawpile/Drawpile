@@ -142,8 +142,12 @@ DP_ViewModePick DP_view_mode_pick(DP_CanvasState *cs, DP_LocalState *ls, int x,
 
 
 DP_OnionSkins *DP_onion_skins_new(int count_below, int count_above);
+DP_OnionSkins *DP_onion_skins_new_clone(DP_OnionSkins *oss);
+DP_OnionSkins *DP_onion_skins_new_clone_nullable(DP_OnionSkins *oss_or_null);
 
 void DP_onion_skins_free(DP_OnionSkins *oss);
+
+bool DP_onion_skins_equal(DP_OnionSkins *a, DP_OnionSkins *b);
 
 int DP_onion_skins_count_below(const DP_OnionSkins *oss);
 
