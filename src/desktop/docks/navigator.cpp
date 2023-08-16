@@ -205,17 +205,15 @@ void NavigatorView::refreshCache()
 				m_refreshArea = QRect{};
 			} else if(m_refreshArea.isValid()) {
 				QSizeF ratioSize{m_cache.size()};
-				qreal xratio = ratioSize.width() / qreal(pixmap.width());
-				qreal yratio = ratioSize.height() / qreal(pixmap.height());
+				qreal xr = ratioSize.width() / qreal(pixmap.width());
+				qreal yr = ratioSize.height() / qreal(pixmap.height());
+				QRectF sourceArea = QRectF{m_refreshArea}.adjusted(
+					-1.0 / xr, -1.0 / yr, 1.0 / xr, 1.0 / yr);
 				QRectF targetArea{
-					QPointF{
-						m_refreshArea.left() * xratio,
-						m_refreshArea.top() * yratio},
-					QPointF{
-						m_refreshArea.right() * xratio,
-						m_refreshArea.bottom() * yratio}};
+					QPointF{sourceArea.left() * xr, sourceArea.top() * yr},
+					QPointF{sourceArea.right() * xr, sourceArea.bottom() * yr}};
 				QPainter painter(&m_cache);
-				painter.drawPixmap(QRectF{targetArea}, pixmap, m_refreshArea);
+				painter.drawPixmap(targetArea, pixmap, sourceArea);
 				m_refreshArea = QRect{};
 			}
 		}
