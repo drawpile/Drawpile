@@ -746,6 +746,9 @@ QFlags<widgets::CanvasView::Lock> LayerList::currentLayerLock() const
 			if(idx.data(canvas::LayerListModel::IsLockedRole).toBool()) {
 				lock.setFlag(Lock::LayerLocked);
 			}
+			if(idx.data(canvas::LayerListModel::IsHiddenInFrameRole).toBool()) {
+				lock.setFlag(Lock::LayerHiddenInFrame);
+			}
 			if(item.censored && !m_canvas->paintEngine()->revealCensored()) {
 				lock.setFlag(Lock::LayerCensored);
 			}

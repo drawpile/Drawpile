@@ -52,7 +52,8 @@ public:
 		LayerGroup = 1 << 4,
 		LayerCensored = 1 << 5,
 		LayerHidden = 1 << 6,
-		Tool = 1 << 7,
+		LayerHiddenInFrame = 1 << 7,
+		Tool = 1 << 8,
 	};
 	Q_ENUM(Lock)
 

@@ -166,6 +166,8 @@ QString CanvasView::lockDescription() const
 		reasons.append(tr("Layer is censored"));
 	} else if(m_lock.testFlag(Lock::LayerHidden)) {
 		reasons.append(tr("Layer is hidden"));
+	} else if(m_lock.testFlag(Lock::LayerHiddenInFrame)) {
+		reasons.append(tr("Layer is not visible in this frame"));
 	}
 
 	if(m_lock.testFlag(Lock::Tool)) {

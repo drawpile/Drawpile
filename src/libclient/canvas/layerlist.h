@@ -89,6 +89,7 @@ public:
 		IsLockedRole,
 		IsGroupRole,
 		IsEmptyRole,
+		IsHiddenInFrameRole,
 	};
 
 	LayerListModel(QObject *parent=nullptr);

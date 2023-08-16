@@ -35,9 +35,10 @@ QVariant LayerListModel::data(const QModelIndex &index, int role) const
 	case Qt::EditRole: return item.title;
 	case IdRole: return item.id;
 	case IsDefaultRole: return item.id == m_defaultLayer;
-	case IsLockedRole: return (m_frameMode && !m_frameLayers.contains(item.id)) || (m_aclstate && m_aclstate->isLayerLocked(item.id));
+	case IsLockedRole: return m_aclstate && m_aclstate->isLayerLocked(item.id);
 	case IsGroupRole: return item.group;
 	case IsEmptyRole: return item.children == 0;
+	case IsHiddenInFrameRole: return m_frameMode && !m_frameLayers.contains(item.id);
 	}
 
 	return QVariant();

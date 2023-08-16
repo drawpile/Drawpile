@@ -29,8 +29,10 @@ void LayerListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 
 	const canvas::LayerListItem &layer = index.data().value<canvas::LayerListItem>();
 
-	if(index.data(canvas::LayerListModel::IsLockedRole).toBool())
+	if(index.data(canvas::LayerListModel::IsLockedRole).toBool() ||
+	   index.data(canvas::LayerListModel::IsHiddenInFrameRole).toBool()) {
 		opt.state &= ~QStyle::State_Enabled;
+	}
 
 	drawBackground(painter, opt, index);
 
