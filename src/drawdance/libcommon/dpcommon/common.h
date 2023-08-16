@@ -268,9 +268,11 @@ DP_INLINE size_t DP_flex_size(size_t type_size, size_t flex_offset,
  * member. Takes potential trailing padding being used as part of the flexible
  * array member into account.
  */
+// NOLINTBEGIN(bugprone-sizeof-expression)
 #define DP_FLEX_SIZEOF(TYPE, FIELD, COUNT)            \
     DP_flex_size(sizeof(TYPE), offsetof(TYPE, FIELD), \
                  sizeof(((TYPE *)NULL)->FIELD[0]), COUNT)
+// NOLINTEND(bugprone-sizeof-expression)
 
 
 void *DP_malloc(size_t size) DP_MALLOC_ATTR;
