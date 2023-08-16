@@ -22,6 +22,7 @@
 #ifndef DPENGINE_CANVAS_STATE_H
 #define DPENGINE_CANVAS_STATE_H
 #include "annotation_list.h"
+#include "pixels.h"
 #include <dpcommon/common.h>
 
 typedef struct DP_AnnotationList DP_AnnotationList;

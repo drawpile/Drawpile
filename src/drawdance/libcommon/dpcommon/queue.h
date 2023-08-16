@@ -67,5 +67,9 @@ void DP_queue_each(DP_Queue *queue, size_t element_size,
 bool DP_queue_all(DP_Queue *queue, size_t element_size,
                   bool (*predicate)(void *element, void *user), void *user);
 
+size_t DP_queue_search_index(DP_Queue *queue, size_t element_size,
+                             bool (*predicate)(void *element, void *user),
+                             void *user);
+
 
 #endif

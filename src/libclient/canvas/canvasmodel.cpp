@@ -54,7 +54,7 @@ CanvasModel::CanvasModel(libclient::settings::Settings &settings,
 	m_timeline->setAclState(m_aclstate);
 
 	connect(m_layerlist, &LayerListModel::autoSelectRequest, this, &CanvasModel::layerAutoselectRequest);
-	connect(m_paintengine, &PaintEngine::resized, this, &CanvasModel::onCanvasResize);
+	connect(m_paintengine, &PaintEngine::resized, this, &CanvasModel::onCanvasResize, Qt::QueuedConnection);
 	connect(m_paintengine, &PaintEngine::layersChanged, m_layerlist, &LayerListModel::setLayers);
 	connect(m_paintengine, &PaintEngine::timelineChanged, m_timeline, &TimelineModel::setTimeline);
 	connect(m_paintengine, &PaintEngine::frameVisibilityChanged, m_layerlist, &LayerListModel::setLayersVisibleInFrame);

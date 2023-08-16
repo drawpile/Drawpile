@@ -32,6 +32,7 @@ dp_target_sources(dpengine
     dpengine/pixels.c
     dpengine/player.c
     dpengine/recorder.c
+    dpengine/renderer.c
     dpengine/snapshots.c
     dpengine/text.c
     dpengine/tile.c
@@ -72,6 +73,7 @@ dp_target_sources(dpengine
     dpengine/pixels.h
     dpengine/player.h
     dpengine/recorder.h
+    dpengine/renderer.h
     dpengine/snapshots.h
     dpengine/text.h
     dpengine/tile.h

@@ -21,13 +21,14 @@
  */
 #ifndef DPENGINE_PAINT_ENGINE
 #define DPENGINE_PAINT_ENGINE
-#include "canvas_diff.h"
 #include "canvas_history.h"
 #include "local_state.h"
 #include "player.h"
 #include "recorder.h"
+#include "renderer.h"
 #include "view_mode.h"
 #include <dpcommon/common.h>
+#include <dpcommon/geom.h>
 
 typedef struct DP_AclState DP_AclState;
 typedef struct DP_AnnotationList DP_AnnotationList;
@@ -59,8 +60,6 @@ typedef void (*DP_PaintEngineUndoDepthLimitSetFn)(void *user,
 typedef void (*DP_PaintEngineCatchupFn)(void *user, int progress);
 typedef void (*DP_PaintEngineResetLockChangedFn)(void *user, bool locked);
 typedef void (*DP_PaintEngineRecorderStateChangedFn)(void *user, bool started);
-typedef void (*DP_PaintEngineResizedFn)(void *user, int offset_x, int offset_y,
-                                        int prev_width, int prev_height);
 typedef void (*DP_PaintEngineLayerPropsChangedFn)(void *user,
                                                   DP_LayerPropsList *lpl);
 typedef void (*DP_PaintEngineAnnotationsChangedFn)(void *user,
@@ -71,9 +70,6 @@ typedef void (*DP_PaintEngineTimelineChangedFn)(void *user, DP_Timeline *tl);
 typedef void (*DP_PaintEngineCursorMovedFn)(void *user, unsigned int flags,
                                             unsigned int context_id,
                                             int layer_id, int x, int y);
-typedef void (*DP_PaintEngineRenderSizeFn)(void *user, int width, int height);
-typedef void (*DP_PaintEngineRenderTileFn)(void *user, int x, int y,
-                                           DP_Pixel8 *pixels, int thread_index);
 typedef void (*DP_PaintEnginePushMessageFn)(void *user, DP_Message *msg);
 typedef const DP_Pixel8 *(*DP_PaintEngineTransformGetPixelsFn)(void *user);
 typedef void (*DP_PaintEngineTransformDisposePixelsFn)(void *user);
@@ -83,19 +79,18 @@ typedef struct DP_PaintEngine DP_PaintEngine;
 
 DP_PaintEngine *DP_paint_engine_new_inc(
     DP_DrawContext *paint_dc, DP_DrawContext *preview_dc, DP_AclState *acls,
-    DP_CanvasState *cs_or_null, DP_CanvasHistorySavePointFn save_point_fn,
-    void *save_point_user, bool want_canvas_history_dump,
-    const char *canvas_history_dump_dir, DP_RecorderGetTimeMsFn get_time_ms_fn,
-    void *get_time_ms_user, DP_Player *player_or_null,
-    DP_PaintEnginePlaybackFn playback_fn,
+    DP_CanvasState *cs_or_null, DP_RendererTileFn renderer_tile_fn,
+    DP_RendererUnlockFn renderer_unlock_fn,
+    DP_RendererResizeFn renderer_resize_fn, void *renderer_user,
+    DP_CanvasHistorySavePointFn save_point_fn, void *save_point_user,
+    bool want_canvas_history_dump, const char *canvas_history_dump_dir,
+    DP_RecorderGetTimeMsFn get_time_ms_fn, void *get_time_ms_user,
+    DP_Player *player_or_null, DP_PaintEnginePlaybackFn playback_fn,
     DP_PaintEngineDumpPlaybackFn dump_playback_fn, void *playback_user);
 
 void DP_paint_engine_free_join(DP_PaintEngine *pe);
 
 int DP_paint_engine_render_thread_count(DP_PaintEngine *pe);
-
-DP_TransientLayerContent *
-DP_paint_engine_render_content_noinc(DP_PaintEngine *pe);
 
 void DP_paint_engine_local_drawing_in_progress_set(
     DP_PaintEngine *pe, bool local_drawing_in_progress);
@@ -202,10 +197,10 @@ int DP_paint_engine_handle_inc(DP_PaintEngine *pe, bool local,
                                void *user);
 
 void DP_paint_engine_tick(
-    DP_PaintEngine *pe, DP_PaintEngineCatchupFn catchup,
+    DP_PaintEngine *pe, DP_Rect tile_bounds, bool render_outside_tile_bounds,
+    DP_PaintEngineCatchupFn catchup,
     DP_PaintEngineResetLockChangedFn reset_lock_changed,
     DP_PaintEngineRecorderStateChangedFn recorder_state_changed,
-    DP_PaintEngineResizedFn resized, DP_CanvasDiffEachPosFn tile_changed,
     DP_PaintEngineLayerPropsChangedFn layer_props_changed,
     DP_PaintEngineAnnotationsChangedFn annotations_changed,
     DP_PaintEngineDocumentMetadataChangedFn document_metadata_changed,
@@ -214,19 +209,8 @@ void DP_paint_engine_tick(
     DP_PaintEngineDefaultLayerSetFn default_layer_set,
     DP_PaintEngineUndoDepthLimitSetFn undo_depth_limit_set, void *user);
 
-void DP_paint_engine_prepare_render(DP_PaintEngine *pe,
-                                    DP_PaintEngineRenderSizeFn render_size,
-                                    void *user);
-
-void DP_paint_engine_render_everything(DP_PaintEngine *pe,
-                                       DP_PaintEngineRenderTileFn render_tile,
-                                       void *user);
-
-void DP_paint_engine_render_tile_bounds(DP_PaintEngine *pe, int tile_left,
-                                        int tile_top, int tile_right,
-                                        int tile_bottom,
-                                        DP_PaintEngineRenderTileFn render_tile,
-                                        void *user);
+void DP_paint_engine_change_bounds(DP_PaintEngine *pe, DP_Rect tile_bounds,
+                                   bool render_outside_tile_bounds);
 
 void DP_paint_engine_preview_cut(DP_PaintEngine *pe, int layer_id, int x, int y,
                                  int width, int height,

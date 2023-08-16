@@ -793,7 +793,7 @@ static const char *get_path_separator(const char *path)
 
 struct DP_SaveFrameContext {
     DP_CanvasState *cs;
-    DP_ViewModeBuffer **vmbs;
+    DP_ViewModeBuffer *vmbs;
     int frame_count;
     const char *path;
     const char *separator;
@@ -809,15 +809,6 @@ struct DP_SaveFrameJobParams {
     int count;
     int frames[];
 };
-
-static DP_ViewModeBuffer *
-get_frame_view_mode_buffer(struct DP_SaveFrameContext *c, int thread_index)
-{
-    if (!c->vmbs[thread_index]) {
-        c->vmbs[thread_index] = DP_view_mode_buffer_new();
-    }
-    return c->vmbs[thread_index];
-}
 
 static void set_error_result(struct DP_SaveFrameContext *c,
                              DP_SaveResult result)
@@ -880,7 +871,7 @@ static void save_frame_job(void *element, int thread_index)
         *(struct DP_SaveFrameJobParams **)element;
     struct DP_SaveFrameContext *c = params->c;
     if (DP_atomic_get(&c->result) == DP_SAVE_RESULT_SUCCESS) {
-        DP_ViewModeBuffer *vmb = get_frame_view_mode_buffer(c, thread_index);
+        DP_ViewModeBuffer *vmb = &c->vmbs[thread_index];
         // Render and save the first frame given.
         int first_frame = params->frames[0];
         char *path = save_frame(c, vmb, first_frame);
@@ -929,7 +920,7 @@ save_animation_frames(DP_CanvasState *cs, const char *path,
     int thread_count = DP_worker_thread_count(worker);
     struct DP_SaveFrameContext c = {
         cs,
-        DP_malloc_zeroed(sizeof(*c.vmbs) * DP_int_to_size(thread_count)),
+        DP_malloc(sizeof(*c.vmbs) * DP_int_to_size(thread_count)),
         frame_count,
         path,
         get_path_separator(path),
@@ -939,6 +930,10 @@ save_animation_frames(DP_CanvasState *cs, const char *path,
         DP_ATOMIC_INIT(DP_SAVE_RESULT_SUCCESS),
         0,
     };
+
+    for (int i = 0; i < thread_count; ++i) {
+        DP_view_mode_buffer_init(&c.vmbs[i]);
+    }
 
     int *frames = DP_malloc(sizeof(*frames) * DP_int_to_size(frame_count));
     for (int i = 0; i < frame_count; ++i) {
@@ -978,7 +973,7 @@ save_animation_frames(DP_CanvasState *cs, const char *path,
     DP_mutex_free(progress_mutex);
 
     for (int i = 0; i < thread_count; ++i) {
-        DP_view_mode_buffer_free(c.vmbs[i]);
+        DP_view_mode_buffer_dispose(&c.vmbs[i]);
     }
     DP_free(c.vmbs);
 
@@ -1054,7 +1049,8 @@ static DP_SaveResult save_animation_gif(DP_CanvasState *cs, const char *path,
         return DP_SAVE_RESULT_CANCEL;
     }
 
-    DP_ViewModeBuffer *vmb = DP_view_mode_buffer_new();
+    DP_ViewModeBuffer vmb;
+    DP_view_mode_buffer_init(&vmb);
     double centiseconds_per_frame = get_gif_centiseconds_per_frame(cs);
     double delay_frac = 0.0;
     for (int i = 0; i < frame_count; ++i) {
@@ -1066,7 +1062,7 @@ static DP_SaveResult save_animation_gif(DP_CanvasState *cs, const char *path,
         }
 
         DP_ViewModeFilter vmf =
-            DP_view_mode_filter_make_frame(vmb, cs, i, NULL);
+            DP_view_mode_filter_make_frame(&vmb, cs, i, NULL);
         DP_Image *img = DP_canvas_state_to_flat_image(
             cs, DP_FLAT_IMAGE_RENDER_FLAGS, NULL, &vmf);
         double delay = centiseconds_per_frame * DP_int_to_double(instances);
@@ -1079,18 +1075,18 @@ static DP_SaveResult save_animation_gif(DP_CanvasState *cs, const char *path,
         if (!frame_ok) {
             jo_gifx_abort(gif);
             DP_output_free(output);
-            DP_view_mode_buffer_free(vmb);
+            DP_view_mode_buffer_dispose(&vmb);
             return DP_SAVE_RESULT_WRITE_ERROR;
         }
 
         if (!report_gif_progress(progress_fn, user, i + 1, frame_count)) {
             jo_gifx_abort(gif);
             DP_output_free(output);
-            DP_view_mode_buffer_free(vmb);
+            DP_view_mode_buffer_dispose(&vmb);
             return DP_SAVE_RESULT_CANCEL;
         }
     }
-    DP_view_mode_buffer_free(vmb);
+    DP_view_mode_buffer_dispose(&vmb);
 
     if (!jo_gifx_end(write_gif, output, gif) || !DP_output_flush(output)) {
         DP_output_free(output);

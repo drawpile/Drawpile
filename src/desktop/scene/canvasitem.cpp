@@ -27,8 +27,9 @@ void CanvasItem::setPaintEngine(canvas::PaintEngine *pe)
 {
 	m_image = pe;
 	if(m_image) {
-		connect(m_image, &canvas::PaintEngine::areaChanged, this, &CanvasItem::refreshImage);
-		connect(m_image, &canvas::PaintEngine::resized, this, &CanvasItem::canvasResize);
+		connect(m_image, &canvas::PaintEngine::areaChanged, this, &CanvasItem::refreshImage, Qt::QueuedConnection);
+		connect(m_image, &canvas::PaintEngine::resized, this, &CanvasItem::canvasResize, Qt::QueuedConnection);
+		m_image->setCanvasViewArea(m_visibleArea);
 	}
 	canvasResize();
 }
@@ -74,7 +75,9 @@ void CanvasItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 {
 	if(m_image) {
 		QRect exposed = option->exposedRect.toAlignedRect();
-		painter->drawPixmap(exposed, m_image->getPixmapView(m_visibleArea), exposed);
+		m_image->withPixmap([&](const QPixmap &pixmap) {
+			painter->drawPixmap(exposed, pixmap, exposed);
+		});
 		if(m_pixelGrid) {
 			QPen pen(QColor(160, 160, 160));
 			pen.setCosmetic(true);
@@ -92,6 +95,9 @@ void CanvasItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 void CanvasItem::updateVisibleArea()
 {
 	m_visibleArea = m_viewportBounds.intersected(m_boundingRect).toAlignedRect();
+	if(m_image) {
+		m_image->setCanvasViewArea(m_visibleArea);
+	}
 }
 
 }

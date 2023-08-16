@@ -10,6 +10,7 @@ extern "C" {
 #include <QObject>
 #include <QPainter>
 #include <QPixmap>
+#include <functional>
 
 #include "libclient/drawdance/aclstate.h"
 #include "libclient/drawdance/canvashistory.h"
@@ -18,6 +19,7 @@ extern "C" {
 #include "libclient/drawdance/snapshotqueue.h"
 
 struct DP_Mutex;
+struct DP_Semaphore;
 
 namespace drawdance {
 class LayerPropsList;
@@ -47,18 +49,20 @@ public:
 			drawdance::CanvasState::null(),
 		DP_Player *player = nullptr);
 
-	/**
-	 * @brief Get a reference to the view cache pixmap while makign sure at
-	 * least the given area has been refreshed
-	 *
-	 * Should only be called by the CanvasItem, since the last refresh area is
-	 * cached and shouldn't change much.
-	 */
-	const QPixmap &getPixmapView(const QRect &refreshArea);
+	// Do something with the currently rendered canvas pixmap. This is what the
+	// user currently sees, but may have "unfinished" parts. If you need the
+	// full, proper canvas at the current time, use renderPixmap instead.
+	void withPixmap(std::function<void(const QPixmap &)> fn) const;
 
-	//! Get a reference to the view cache pixmap while making sure the whole
-	//! pixmap is refreshed
-	const QPixmap &getPixmap();
+	// Renders the whole canvas and returns it as an image. A slow operation!
+	QImage renderPixmap();
+
+	void setCanvasViewArea(const QRect &area);
+
+	void setRenderOutsideView(bool renderOutsideView)
+	{
+		m_renderOutsideView = renderOutsideView;
+	}
 
 	//! Get the number of frames in an animated canvas
 	int frameCount() const;
@@ -72,7 +76,7 @@ public:
 
 	//! Render a frame
 	QImage getFrameImage(
-		const drawdance::ViewModeBuffer &vmb, int index,
+		drawdance::ViewModeBuffer &vmb, int index,
 		const QRect &rect = QRect()) const;
 
 	//! Receive and handle messages, returns how many messages were actually
@@ -253,9 +257,6 @@ private:
 	static void onCatchup(void *user, int progress);
 	static void onResetLockChanged(void *user, bool locked);
 	static void onRecorderStateChanged(void *user, bool started);
-	static void onResized(
-		void *user, int offsetX, int offsetY, int prevWidth, int prevHeight);
-	static void onTileChanged(void *user, int x, int y);
 	static void onLayerPropsChanged(void *user, DP_LayerPropsList *lpl);
 	static void onAnnotationsChanged(void *user, DP_AnnotationList *al);
 	static void onDocumentMetadataChanged(void *user, DP_DocumentMetadata *dm);
@@ -263,13 +264,17 @@ private:
 	static void onCursorMoved(
 		void *user, unsigned int flags, unsigned int contextId, int layerId,
 		int x, int y);
-	static void onRenderSize(void *user, int width, int height);
+
 	static void
-	onRenderTile(void *user, int x, int y, DP_Pixel8 *pixels, int threadIndex);
+	onRenderTile(void *user, int tileX, int tileY, DP_Pixel8 *pixels);
+
+	static void onRenderUnlock(void *user);
+
+	static void onRenderResize(
+		void *user, int width, int height, int prevWidth, int prevHeight,
+		int offsetX, int offsetY);
 
 	void start();
-	void renderTileBounds(const QRect &tileBounds);
-	void renderEverything();
 
 	void updateLayersVisibleInFrame();
 
@@ -278,12 +283,12 @@ private:
 	drawdance::PaintEngine m_paintEngine;
 	int m_fps;
 	int m_timerId;
-	QRect m_changedTileBounds;
-	QRect m_lastRefreshAreaTileBounds;
-	bool m_lastRefreshAreaTileBoundsTouched;
 	QPixmap m_cache;
 	QPainter m_painter;
-	DP_Mutex *m_painterMutex;
+	DP_Mutex *m_cacheMutex;
+	DP_Semaphore *m_viewSem;
+	QRect m_canvasViewTileArea;
+	bool m_renderOutsideView = false;
 	uint16_t m_sampleColorStampBuffer[DP_DRAW_CONTEXT_STAMP_BUFFER_SIZE];
 	int m_sampleColorLastDiameter;
 	int m_undoDepthLimit;

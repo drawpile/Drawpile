@@ -40,13 +40,11 @@ bool DP_local_state_background_opaque(DP_LocalState *ls);
 
 DP_ViewMode DP_local_state_view_mode(DP_LocalState *ls);
 
+DP_OnionSkins *DP_local_state_onion_skins(DP_LocalState *ls);
+
 int DP_local_state_active_layer_id(DP_LocalState *ls);
 
 int DP_local_state_active_frame_index(DP_LocalState *ls);
-
-DP_ViewModeFilter DP_local_state_view_mode_filter_make(DP_LocalState *ls,
-                                                       DP_ViewModeBuffer *vmb,
-                                                       DP_CanvasState *cs);
 
 const DP_LocalTrackState *DP_local_state_track_states(DP_LocalState *ls,
                                                       int *out_count);

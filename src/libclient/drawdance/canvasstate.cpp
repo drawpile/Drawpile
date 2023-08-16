@@ -221,7 +221,6 @@ LayerContent CanvasState::searchLayerContent(int layerId) const
     }
 }
 
-
 DP_FloodFillResult CanvasState::floodFill(
     int x, int y, const QColor &fillColor, double tolerance, int layerId,
     int sizeLimit, int gap, int expand, int featherRadius,

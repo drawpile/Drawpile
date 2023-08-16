@@ -145,13 +145,10 @@ int DP_local_state_active_frame_index(DP_LocalState *ls)
     return ls->active_frame_index;
 }
 
-DP_ViewModeFilter DP_local_state_view_mode_filter_make(DP_LocalState *ls,
-                                                       DP_ViewModeBuffer *vmb,
-                                                       DP_CanvasState *cs)
+DP_OnionSkins *DP_local_state_onion_skins(DP_LocalState *ls)
 {
     DP_ASSERT(ls);
-    return DP_view_mode_filter_make(vmb, ls->view_mode, cs, ls->active_layer_id,
-                                    ls->active_frame_index, ls->onion_skins);
+    return ls->onion_skins;
 }
 
 const DP_LocalTrackState *DP_local_state_track_states(DP_LocalState *ls,

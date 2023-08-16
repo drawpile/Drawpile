@@ -14,17 +14,21 @@ extern "C" {
 
 namespace drawdance {
 
-PaintEngine::PaintEngine(AclState &acls, SnapshotQueue &sq,
-		bool wantCanvasHistoryDump, DP_PaintEnginePlaybackFn playbackFn,
-		DP_PaintEngineDumpPlaybackFn dumpPlaybackFn, void *playbackUser,
-		const CanvasState &canvasState)
+PaintEngine::PaintEngine(
+	AclState &acls, SnapshotQueue &sq, bool wantCanvasHistoryDump,
+	DP_RendererTileFn rendererTileFn, DP_RendererUnlockFn rendererUnlockFn,
+	DP_RendererResizeFn rendererResizeFn, void *rendererUser,
+	DP_PaintEnginePlaybackFn playbackFn,
+	DP_PaintEngineDumpPlaybackFn dumpPlaybackFn, void *playbackUser,
+	const CanvasState &canvasState)
 	: m_paintDc{DrawContextPool::acquire()}
 	, m_previewDc{DrawContextPool::acquire()}
-	, m_data(DP_paint_engine_new_inc(m_paintDc.get(), m_previewDc.get(),
-		acls.get(), canvasState.get(), DP_snapshot_queue_on_save_point, sq.get(),
-		wantCanvasHistoryDump, getDumpDir().toUtf8().constData(),
-		&PaintEngine::getTimeMs, nullptr, nullptr, playbackFn, dumpPlaybackFn,
-		playbackUser))
+	, m_data(DP_paint_engine_new_inc(
+		  m_paintDc.get(), m_previewDc.get(), acls.get(), canvasState.get(),
+		  rendererTileFn, rendererUnlockFn, rendererResizeFn, rendererUser,
+		  DP_snapshot_queue_on_save_point, sq.get(), wantCanvasHistoryDump,
+		  getDumpDir().toUtf8().constData(), &PaintEngine::getTimeMs, nullptr,
+		  nullptr, playbackFn, dumpPlaybackFn, playbackUser))
 {
 }
 
@@ -40,32 +44,31 @@ DP_PaintEngine *PaintEngine::get()
 
 MessageList PaintEngine::reset(
 	AclState &acls, SnapshotQueue &sq, uint8_t localUserId,
+	DP_RendererTileFn rendererTileFn, DP_RendererUnlockFn rendererUnlockFn,
+	DP_RendererResizeFn rendererResizeFn, void *rendererUser,
 	DP_PaintEnginePlaybackFn playbackFn,
 	DP_PaintEngineDumpPlaybackFn dumpPlaybackFn, void *playbackUser,
 	const CanvasState &canvasState, DP_Player *player)
 {
 	MessageList localResetImage;
-	DP_paint_engine_local_state_reset_image_build(m_data, pushResetMessage, &localResetImage);
-	bool wantCanvasHistoryDump = DP_paint_engine_want_canvas_history_dump(m_data);
+	DP_paint_engine_local_state_reset_image_build(
+		m_data, pushResetMessage, &localResetImage);
+	bool wantCanvasHistoryDump =
+		DP_paint_engine_want_canvas_history_dump(m_data);
 	DP_paint_engine_free_join(m_data);
 	acls.reset(localUserId);
-	m_data = DP_paint_engine_new_inc(m_paintDc.get(), m_previewDc.get(),
-		acls.get(), canvasState.get(), DP_snapshot_queue_on_save_point, sq.get(),
-		wantCanvasHistoryDump, getDumpDir().toUtf8().constData(),
-		&PaintEngine::getTimeMs, nullptr, player, playbackFn, dumpPlaybackFn,
-		playbackUser);
+	m_data = DP_paint_engine_new_inc(
+		m_paintDc.get(), m_previewDc.get(), acls.get(), canvasState.get(),
+		rendererTileFn, rendererUnlockFn, rendererResizeFn, rendererUser,
+		DP_snapshot_queue_on_save_point, sq.get(), wantCanvasHistoryDump,
+		getDumpDir().toUtf8().constData(), &PaintEngine::getTimeMs, nullptr,
+		player, playbackFn, dumpPlaybackFn, playbackUser);
 	return localResetImage;
 }
 
 int PaintEngine::renderThreadCount() const
 {
 	return DP_paint_engine_render_thread_count(m_data);
-}
-
-LayerContent PaintEngine::renderContent() const
-{
-	DP_TransientLayerContent *tlc = DP_paint_engine_render_content_noinc(m_data);
-	return LayerContent::inc(reinterpret_cast<DP_LayerContent *>(tlc));
 }
 
 void PaintEngine::setLocalDrawingInProgress(bool localDrawingInProgress)

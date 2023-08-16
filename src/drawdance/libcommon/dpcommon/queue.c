@@ -178,3 +178,21 @@ bool DP_queue_all(DP_Queue *queue, size_t element_size,
     }
     return true;
 }
+
+size_t DP_queue_search_index(DP_Queue *queue, size_t element_size,
+                             bool (*predicate)(void *element, void *user),
+                             void *user)
+{
+    DP_ASSERT(queue);
+    DP_ASSERT(predicate);
+    size_t capacity = queue->capacity;
+    size_t used = queue->used;
+    size_t head = queue->head;
+    for (size_t i = 0; i < used; ++i) {
+        void *element = element_at(queue, (head + i) % capacity, element_size);
+        if (predicate(element, user)) {
+            return i;
+        }
+    }
+    return used;
+}

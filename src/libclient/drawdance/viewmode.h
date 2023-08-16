@@ -3,7 +3,9 @@
 #ifndef DRAWDANCE_VIEWMODE_H
 #define DRAWDANCE_VIEWMODE_H
 
-struct DP_ViewModeBuffer;
+extern "C" {
+#include "dpengine/view_mode.h"
+}
 
 namespace drawdance {
 
@@ -17,10 +19,10 @@ public:
 	ViewModeBuffer &operator=(const ViewModeBuffer &) = delete;
 	ViewModeBuffer &operator=(ViewModeBuffer &&) = delete;
 
-	DP_ViewModeBuffer *get() const;
+	DP_ViewModeBuffer *get();
 
 private:
-	DP_ViewModeBuffer *m_data;
+	DP_ViewModeBuffer m_data;
 };
 
 }

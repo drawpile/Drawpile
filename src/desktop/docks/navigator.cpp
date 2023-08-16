@@ -71,10 +71,11 @@ NavigatorView::NavigatorView(QWidget *parent)
 void NavigatorView::setCanvasModel(canvas::CanvasModel *model)
 {
 	m_model = model;
-	connect(m_model->paintEngine(), &canvas::PaintEngine::areaChanged, this, &NavigatorView::onChange);
-	connect(m_model->paintEngine(), &canvas::PaintEngine::resized, this, &NavigatorView::onResize);
+	connect(m_model->paintEngine(), &canvas::PaintEngine::areaChanged, this, &NavigatorView::onChange, Qt::QueuedConnection);
+	connect(m_model->paintEngine(), &canvas::PaintEngine::resized, this, &NavigatorView::onResize, Qt::QueuedConnection);
 	connect(m_model->paintEngine(), &canvas::PaintEngine::cursorMoved, this, &NavigatorView::onCursorMove);
-
+	m_model->paintEngine()->setRenderOutsideView(isVisible());
+	m_refreshAll = true;
 	refreshCache();
 }
 
@@ -132,6 +133,26 @@ void NavigatorView::wheelEvent(QWheelEvent *event)
 	}
 }
 
+void NavigatorView::showEvent(QShowEvent *event)
+{
+	QWidget::showEvent(event);
+	if(m_model) {
+		m_model->paintEngine()->setRenderOutsideView(true);
+		m_refreshTimer->stop();
+		m_refreshAll = true;
+		refreshCache();
+	}
+}
+
+void NavigatorView::hideEvent(QHideEvent *event)
+{
+	QWidget::hideEvent(event);
+	m_refreshTimer->stop();
+	if(m_model) {
+		m_model->paintEngine()->setRenderOutsideView(false);
+	}
+}
+
 /**
  * The focus rectangle represents the visible area in the
  * main viewport.
@@ -143,10 +164,16 @@ void NavigatorView::setViewFocus(const QPolygonF& rect)
 }
 
 
-void NavigatorView::onChange()
+void NavigatorView::onChange(const QRect &rect)
 {
-	if(isVisible() && !m_refreshTimer->isActive())
-		m_refreshTimer->start();
+	if(isVisible()) {
+		if(rect.isValid()) {
+			m_refreshArea |= rect;
+		}
+		if(!m_refreshTimer->isActive()) {
+			m_refreshTimer->start();
+		}
+	}
 }
 
 void NavigatorView::onResize()
@@ -157,22 +184,42 @@ void NavigatorView::onResize()
 
 void NavigatorView::refreshCache()
 {
-	if(!m_model)
+	if(!m_model) {
 		return;
-
-	const QPixmap &canvas = m_model->paintEngine()->getPixmap();
-	if(canvas.isNull())
-		return;
-
-	const QSize size = this->size();
-	if(size != m_cachedSize) {
-		m_cachedSize = size;
-		const QSize pixmapSize = canvas.size().scaled(size, Qt::KeepAspectRatio);
-		m_cache = QPixmap(pixmapSize);
 	}
 
-	QPainter painter(&m_cache);
-	painter.drawPixmap(m_cache.rect(), canvas);
+	m_model->paintEngine()->withPixmap([this](const QPixmap &pixmap) {
+		if(!pixmap.isNull()) {
+			QSize navigatorSize = size();
+			if(navigatorSize != m_cachedSize) {
+				m_cachedSize = navigatorSize;
+				m_cache = QPixmap{
+					pixmap.size().scaled(navigatorSize, Qt::KeepAspectRatio)};
+				m_refreshAll = true;
+			}
+
+			if(m_refreshAll) {
+				QPainter painter(&m_cache);
+				painter.drawPixmap(m_cache.rect(), pixmap);
+				m_refreshAll = false;
+				m_refreshArea = QRect{};
+			} else if(m_refreshArea.isValid()) {
+				QSizeF ratioSize{m_cache.size()};
+				qreal xratio = ratioSize.width() / qreal(pixmap.width());
+				qreal yratio = ratioSize.height() / qreal(pixmap.height());
+				QRectF targetArea{
+					QPointF{
+						m_refreshArea.left() * xratio,
+						m_refreshArea.top() * yratio},
+					QPointF{
+						m_refreshArea.right() * xratio,
+						m_refreshArea.bottom() * yratio}};
+				QPainter painter(&m_cache);
+				painter.drawPixmap(QRectF{targetArea}, pixmap, m_refreshArea);
+				m_refreshArea = QRect{};
+			}
+		}
+	});
 
 	update();
 }

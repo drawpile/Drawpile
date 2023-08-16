@@ -67,7 +67,7 @@ void CanvasScene::initCanvas(canvas::CanvasModel *model)
 
 	connect(
 		m_model->paintEngine(), &canvas::PaintEngine::resized, this,
-		&CanvasScene::handleCanvasResize);
+		&CanvasScene::handleCanvasResize, Qt::QueuedConnection);
 	connect(
 		m_model->paintEngine(), &canvas::PaintEngine::annotationsChanged, this,
 		&CanvasScene::annotationsChanged);

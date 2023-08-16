@@ -354,7 +354,7 @@ void PlaybackDialog::exportFrame(int count)
 	Q_ASSERT(m_exporter);
 	count = qMax(1, count);
 
-	const QImage image = m_paintengine->getPixmap().toImage();
+	QImage image = m_paintengine->renderPixmap();
 	if(image.isNull()) {
 		qWarning("exportFrame: image is null!");
 		onExporterReady();

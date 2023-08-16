@@ -49,6 +49,18 @@ void DP_canvas_diff_free(DP_CanvasDiff *diff)
     }
 }
 
+int DP_canvas_diff_xtiles(DP_CanvasDiff *diff)
+{
+    DP_ASSERT(diff);
+    return diff->xtiles;
+}
+
+int DP_canvas_diff_ytiles(DP_CanvasDiff *diff)
+{
+    DP_ASSERT(diff);
+    return diff->ytiles;
+}
+
 
 void DP_canvas_diff_begin(DP_CanvasDiff *diff, int old_width, int old_height,
                           int current_width, int current_height,
@@ -170,6 +182,25 @@ void DP_canvas_diff_each_pos_reset(DP_CanvasDiff *diff,
     }
 }
 
+void DP_canvas_diff_bounds_clamp(DP_CanvasDiff *diff, int tile_left,
+                                 int tile_top, int tile_right, int tile_bottom,
+                                 int *out_left, int *out_top, int *out_right,
+                                 int *out_bottom, int *out_xtiles)
+{
+    DP_ASSERT(diff);
+    DP_ASSERT(out_left);
+    DP_ASSERT(out_top);
+    DP_ASSERT(out_right);
+    DP_ASSERT(out_bottom);
+    DP_ASSERT(out_xtiles);
+    int xtiles = diff->xtiles;
+    *out_left = DP_max_int(0, tile_left);
+    *out_top = DP_max_int(0, tile_top);
+    *out_right = DP_min_int(xtiles - 1, tile_right);
+    *out_bottom = DP_min_int(diff->ytiles - 1, tile_bottom);
+    *out_xtiles = xtiles;
+}
+
 void DP_canvas_diff_each_pos_tile_bounds_reset(DP_CanvasDiff *diff,
                                                int tile_left, int tile_top,
                                                int tile_right, int tile_bottom,
@@ -178,11 +209,10 @@ void DP_canvas_diff_each_pos_tile_bounds_reset(DP_CanvasDiff *diff,
 {
     DP_ASSERT(diff);
     DP_ASSERT(fn);
-    int xtiles = diff->xtiles;
-    int left = DP_max_int(0, tile_left);
-    int top = DP_max_int(0, tile_top);
-    int right = DP_min_int(xtiles - 1, tile_right);
-    int bottom = DP_min_int(diff->ytiles - 1, tile_bottom);
+    int left, top, right, bottom, xtiles;
+    DP_canvas_diff_bounds_clamp(diff, tile_left, tile_top, tile_right,
+                                tile_bottom, &left, &top, &right, &bottom,
+                                &xtiles);
     bool *tile_changes = diff->tile_changes;
     for (int y = top; y <= bottom; ++y) {
         for (int x = left; x <= right; ++x) {

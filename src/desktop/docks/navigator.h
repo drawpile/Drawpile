@@ -41,9 +41,11 @@ protected:
 	void mouseMoveEvent(QMouseEvent *event) override;
 	void mousePressEvent(QMouseEvent *event) override;
 	void wheelEvent(QWheelEvent *event) override;
+    void showEvent(QShowEvent *event) override;
+    void hideEvent(QHideEvent *event) override;
 
 private slots:
-	void onChange();
+	void onChange(const QRect &rect = QRect{});
 	void onResize();
 	void refreshCache();
 	void onCursorMove(unsigned int flags, uint8_t user, uint16_t layer, int x, int y);
@@ -65,6 +67,8 @@ private:
 	QSize m_cachedSize;
 
 	QTimer *m_refreshTimer;
+	QRect m_refreshArea;
+	bool m_refreshAll = false;
 
 	QPolygonF m_focusRect;
 	int m_zoomWheelDelta;

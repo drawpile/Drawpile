@@ -38,7 +38,13 @@ typedef enum DP_ViewMode {
     DP_VIEW_MODE_FRAME,
 } DP_ViewMode;
 
-typedef struct DP_ViewModeBuffer DP_ViewModeBuffer;
+typedef struct DP_ViewModeTrack DP_ViewModeTrack;
+
+typedef struct DP_ViewModeBuffer {
+    int capacity;
+    int count;
+    DP_ViewModeTrack *tracks;
+} DP_ViewModeBuffer;
 
 typedef struct DP_ViewModeFilter {
     int internal_type;
@@ -84,9 +90,9 @@ typedef struct DP_OnionSkins DP_OnionSkins;
 typedef void (*DP_AddVisibleLayerFn)(void *user, int layer_id, bool visible);
 
 
-DP_ViewModeBuffer *DP_view_mode_buffer_new(void);
+void DP_view_mode_buffer_init(DP_ViewModeBuffer *vmb);
 
-void DP_view_mode_buffer_free(DP_ViewModeBuffer *vmb);
+void DP_view_mode_buffer_dispose(DP_ViewModeBuffer *vmb);
 
 
 DP_ViewModeFilter DP_view_mode_filter_make_default(void);
@@ -100,6 +106,11 @@ DP_ViewModeFilter DP_view_mode_filter_make(DP_ViewModeBuffer *vmb,
                                            DP_ViewMode vm, DP_CanvasState *cs,
                                            int layer_id, int frame_index,
                                            const DP_OnionSkins *oss);
+
+DP_ViewModeFilter
+DP_view_mode_filter_make_from_active(DP_ViewModeBuffer *vmb, DP_ViewMode vm,
+                                     DP_CanvasState *cs, int active,
+                                     const DP_OnionSkins *oss);
 
 bool DP_view_mode_filter_excludes_everything(const DP_ViewModeFilter *vmf);
 

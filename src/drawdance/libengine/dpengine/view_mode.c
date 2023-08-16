@@ -49,12 +49,6 @@ typedef struct DP_ViewModeTrack {
     const DP_OnionSkin *onion_skin;
 } DP_ViewModeTrack;
 
-struct DP_ViewModeBuffer {
-    int capacity;
-    int count;
-    DP_ViewModeTrack *tracks;
-};
-
 struct DP_OnionSkins {
     int count_below;
     int count_above;
@@ -62,14 +56,12 @@ struct DP_OnionSkins {
 };
 
 
-DP_ViewModeBuffer *DP_view_mode_buffer_new(void)
+void DP_view_mode_buffer_init(DP_ViewModeBuffer *vmb)
 {
-    DP_ViewModeBuffer *vmb = DP_malloc(sizeof(*vmb));
     *vmb = (DP_ViewModeBuffer){0, 0, NULL};
-    return vmb;
 }
 
-void DP_view_mode_buffer_free(DP_ViewModeBuffer *vmb)
+void DP_view_mode_buffer_dispose(DP_ViewModeBuffer *vmb)
 {
     if (vmb) {
         int track_count = vmb->capacity; // Not count, we want to clean em all.
@@ -77,7 +69,6 @@ void DP_view_mode_buffer_free(DP_ViewModeBuffer *vmb)
             DP_vector_dispose(&vmb->tracks[i].hidden_layer_ids);
         }
         DP_free(vmb->tracks);
-        DP_free(vmb);
     }
 }
 
@@ -318,6 +309,15 @@ DP_ViewModeFilter DP_view_mode_filter_make(DP_ViewModeBuffer *vmb,
     default:
         DP_UNREACHABLE();
     }
+}
+
+DP_ViewModeFilter DP_view_mode_filter_make_from_active(DP_ViewModeBuffer *vmb,
+                                                       DP_ViewMode vm,
+                                                       DP_CanvasState *cs,
+                                                       int active,
+                                                       const DP_OnionSkins *oss)
+{
+    return DP_view_mode_filter_make(vmb, vm, cs, active, active, oss);
 }
 
 bool DP_view_mode_filter_excludes_everything(const DP_ViewModeFilter *vmf)

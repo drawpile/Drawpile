@@ -33,6 +33,8 @@ public:
 
 	PaintEngine(
 		AclState &acls, SnapshotQueue &sq, bool wantCanvasHistoryDump,
+		DP_RendererTileFn rendererTileFn, DP_RendererUnlockFn rendererUnlockFn,
+		DP_RendererResizeFn rendererResizeFn, void *rendererUser,
 		DP_PaintEnginePlaybackFn playbackFn,
 		DP_PaintEngineDumpPlaybackFn dumpPlaybackFn, void *playbackUser,
 		const CanvasState &canvasState = CanvasState::null());
@@ -46,15 +48,16 @@ public:
 
 	DP_PaintEngine *get();
 
-	MessageList reset(AclState &acls, SnapshotQueue &sq, uint8_t localUserId,
+	MessageList reset(
+		AclState &acls, SnapshotQueue &sq, uint8_t localUserId,
+		DP_RendererTileFn rendererTileFn, DP_RendererUnlockFn rendererUnlockFn,
+		DP_RendererResizeFn rendererResizeFn, void *rendererUser,
 		DP_PaintEnginePlaybackFn playbackFn,
 		DP_PaintEngineDumpPlaybackFn dumpPlaybackFn, void *playbackUser,
 		const CanvasState &canvasState = CanvasState::null(),
 		DP_Player *player = nullptr);
 
 	int renderThreadCount() const;
-
-	LayerContent renderContent() const;
 
 	void setLocalDrawingInProgress(bool localDrawingInProgress);
 
