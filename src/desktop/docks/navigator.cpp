@@ -87,7 +87,7 @@ void NavigatorView::setShowCursors(bool show)
 
 void NavigatorView::setRealtimeUpdate(bool realtime)
 {
-	m_refreshTimer->setInterval(realtime ? 1 : 500);
+	m_refreshTimer->setInterval(realtime ? (1000 / 60) : 500);
 }
 
 void NavigatorView::resizeEvent(QResizeEvent *event)
