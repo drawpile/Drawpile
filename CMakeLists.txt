@@ -124,6 +124,11 @@ endif()
 # source directory to not go insane figuring out what is included from where
 include_directories(${CMAKE_CURRENT_LIST_DIR}/src)
 
+# Error messages shouldn't include home directories and such, so we use the
+# project directory length to chop it off the beginning of __FILE__.
+string(LENGTH "${PROJECT_SOURCE_DIR}/" project_dir_length)
+add_compile_definitions("DP_PROJECT_DIR_LENGTH=${project_dir_length}")
+
 add_subdirectory(src/cmake-config)
 
 if(CLIENT OR SERVER)
