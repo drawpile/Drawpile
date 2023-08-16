@@ -11,12 +11,12 @@ extern "C" {
 
 #include "cmake-config/config.h"
 #include "libclient/canvas/paintengine.h"
+#include "libclient/drawdance/image.h"
 #include "libclient/drawdance/layercontent.h"
 #include "libclient/drawdance/layerpropslist.h"
 #include "libclient/drawdance/message.h"
 #include "libclient/drawdance/perf.h"
 #include "libclient/drawdance/viewmode.h"
-
 #include <QPainter>
 #include <QSet>
 #include <QTimer>
@@ -382,15 +382,24 @@ void PaintEngine::setInspectContextId(unsigned int contextId)
 
 QColor PaintEngine::sampleColor(int x, int y, int layerId, int diameter)
 {
-	drawdance::LayerContent lc =
-		layerId == 0 ? m_paintEngine.renderContent()
-					 : viewCanvasState().searchLayerContent(layerId);
-	if(lc.isNull()) {
-		return Qt::transparent;
-	} else {
-		return lc.sampleColorAt(
+	if(layerId == 0) {
+		DP_mutex_lock(m_cacheMutex);
+		QImage img = m_cache.toImage();
+		DP_mutex_unlock(m_cacheMutex);
+		return drawdance::sampleColorAt(
+			img.convertToFormat(QImage::Format_ARGB32_Premultiplied),
 			m_sampleColorStampBuffer, x, y, diameter, true,
 			m_sampleColorLastDiameter);
+	} else {
+		drawdance::LayerContent lc =
+			viewCanvasState().searchLayerContent(layerId);
+		if(lc.isNull()) {
+			return Qt::transparent;
+		} else {
+			return lc.sampleColorAt(
+				m_sampleColorStampBuffer, x, y, diameter, true,
+				m_sampleColorLastDiameter);
+		}
 	}
 }
 

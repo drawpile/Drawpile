@@ -39,6 +39,8 @@ typedef enum DP_ImageFileType {
 
 typedef struct DP_Image DP_Image;
 
+typedef DP_Pixel8 (*DP_ImageGetPixelFn)(void *user, int x, int y);
+
 DP_Image *DP_image_new(int width, int height);
 
 DP_Image *DP_image_new_from_file(DP_Input *input, DP_ImageFileType type,
@@ -94,6 +96,13 @@ bool DP_image_thumbnail(DP_Image *img, DP_DrawContext *dc, int max_width,
                         int max_height, DP_Image **out_thumb) DP_MUST_CHECK;
 
 bool DP_image_same_pixel(DP_Image *img, DP_Pixel8 *out_pixel);
+
+DP_UPixelFloat DP_image_sample_color_at_with(int width, int height,
+                                             DP_ImageGetPixelFn get_pixel,
+                                             void *user, uint16_t *stamp_buffer,
+                                             int x, int y, int diameter,
+                                             bool opaque,
+                                             int *in_out_last_diameter);
 
 
 DP_Image *DP_image_read_png(DP_Input *input);

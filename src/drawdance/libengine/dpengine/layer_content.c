@@ -35,7 +35,6 @@
 #include <dpcommon/conversions.h>
 #include <dpcommon/geom.h>
 #include <dpmsg/blend_mode.h>
-#include <helpers.h> // CLAMP
 
 
 #ifdef DP_NO_STRICT_ALIASING
@@ -402,30 +401,7 @@ static DP_UPixelFloat sample_dab_color(DP_LayerContent *lc, DP_BrushStamp stamp,
         yb = yb + hb;
     }
 
-    // There must be at least some alpha for the results to make sense
-    float required_alpha =
-        DP_int_to_float(DP_square_int(diameter) * 30) / (float)DP_BIT15;
-    if (alpha < required_alpha || weight < required_alpha) {
-        return DP_upixel_float_zero();
-    }
-
-    // Calculate final average
-    red /= weight;
-    green /= weight;
-    blue /= weight;
-    alpha /= weight;
-
-    // Unpremultiply, clamp against rounding error.
-    red = CLAMP(red / alpha, 0.0f, 1.0f);
-    green = CLAMP(green / alpha, 0.0f, 1.0f);
-    blue = CLAMP(blue / alpha, 0.0f, 1.0f);
-
-    return (DP_UPixelFloat){
-        .b = blue,
-        .g = green,
-        .r = red,
-        .a = alpha,
-    };
+    return DP_paint_sample_to_upixel(diameter, weight, red, green, blue, alpha);
 }
 
 DP_UPixelFloat DP_layer_content_sample_color_at(DP_LayerContent *lc,

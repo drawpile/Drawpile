@@ -16,6 +16,14 @@ static void cleanupPixels8(void *user)
     DP_free(static_cast<DP_Pixel8 *>(user));
 }
 
+static DP_Pixel8 getPixel(void *user, int x, int y)
+{
+	const QImage *img = static_cast<const QImage *>(user);
+	DP_Pixel8 pixel;
+	pixel.color = img->pixel(x, y);
+	return pixel;
+}
+
 namespace drawdance {
 
 QImage wrapImage(DP_Image *img)
@@ -40,5 +48,19 @@ QImage wrapPixels8(int width, int height, DP_Pixel8 *pixels)
         return QImage{};
     }
 }
+
+QColor sampleColorAt(
+	const QImage &img, uint16_t *stampBuffer, int x, int y, int diameter,
+	bool opaque, int &lastDiameter)
+{
+	DP_UPixelFloat pixel = DP_image_sample_color_at_with(
+		img.width(), img.height(), getPixel, const_cast<QImage *>(&img),
+		stampBuffer, x, y, diameter, opaque, &lastDiameter);
+	QColor color;
+	color.setRgbF(pixel.r, pixel.g, pixel.b, pixel.a);
+	return color;
+}
+
+
 
 }

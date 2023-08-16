@@ -24,6 +24,7 @@
 #include "image_jpeg.h"
 #include "image_png.h"
 #include "image_transform.h"
+#include "paint.h"
 #include <dpcommon/binary.h>
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
@@ -474,6 +475,85 @@ bool DP_image_same_pixel(DP_Image *img, DP_Pixel8 *out_pixel)
         *out_pixel = pixel;
     }
     return true;
+}
+
+static DP_UPixelFloat sample_dab_color(int width, int height,
+                                       DP_ImageGetPixelFn get_pixel, void *user,
+                                       DP_BrushStamp stamp, bool opaque)
+{
+    int diameter = stamp.diameter;
+    int right = DP_min_int(stamp.left + diameter, width);
+    int bottom = DP_min_int(stamp.top + diameter, height);
+
+    int y = DP_max_int(0, stamp.top);
+    int yb = stamp.top < 0 ? -stamp.top : 0; // y in relation to brush origin
+    int x0 = DP_max_int(0, stamp.left);
+    int xb0 = stamp.left < 0 ? -stamp.left : 0;
+
+    float weight = 0.0;
+    float red = 0.0;
+    float green = 0.0;
+    float blue = 0.0;
+    float alpha = 0.0;
+
+    // collect weighted color sums
+    while (y < bottom) {
+        int x = x0;
+        int xb = xb0; // x in relation to brush origin
+        while (x < right) {
+            uint16_t m = stamp.data[yb * stamp.diameter + xb];
+            DP_Pixel8 p = get_pixel(user, x, y);
+            // When working in opaque mode, disregard low alpha values because
+            // the resulting unpremultiplied colors are just too inacurrate.
+            if (!opaque || (m > 512 && p.a > 3)) {
+                float mf = DP_uint16_to_float(m) / (float)DP_BIT15;
+                weight += mf;
+                red += mf * DP_uint8_to_float(p.r) / 255.0f;
+                green += mf * DP_uint8_to_float(p.g) / 255.0f;
+                blue += mf * DP_uint8_to_float(p.b) / 255.0f;
+                alpha += mf * DP_uint8_to_float(p.a) / 255.0f;
+            }
+            ++x;
+            ++xb;
+        }
+        ++y;
+        ++yb;
+    }
+
+    return DP_paint_sample_to_upixel(diameter, weight, red, green, blue, alpha);
+}
+
+DP_UPixelFloat DP_image_sample_color_at_with(int width, int height,
+                                             DP_ImageGetPixelFn get_pixel,
+                                             void *user, uint16_t *stamp_buffer,
+                                             int x, int y, int diameter,
+                                             bool opaque,
+                                             int *in_out_last_diameter)
+{
+    DP_ASSERT(get_pixel);
+    if (x >= 0 && y >= 0 && x < width && y < height) {
+        if (diameter < 2) {
+            DP_Pixel8 pixel = get_pixel(user, x, y);
+            return DP_upixel8_to_float(DP_pixel8_unpremultiply(pixel));
+        }
+        else {
+            int last_diameter;
+            if (in_out_last_diameter) {
+                last_diameter = *in_out_last_diameter;
+                *in_out_last_diameter = diameter;
+            }
+            else {
+                last_diameter = -1;
+            }
+            DP_BrushStamp stamp = DP_paint_color_sampling_stamp_make(
+                stamp_buffer, diameter, x, y, last_diameter);
+            return sample_dab_color(width, height, get_pixel, user, stamp,
+                                    opaque);
+        }
+    }
+    else {
+        return DP_upixel_float_zero();
+    }
 }
 
 

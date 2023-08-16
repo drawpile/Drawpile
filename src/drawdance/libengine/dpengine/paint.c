@@ -42,6 +42,7 @@
 #include <dpmsg/blend_mode.h>
 #include <dpmsg/message.h>
 #include <math.h>
+#include <helpers.h> // CLAMP
 
 
 // These "classic" brush stamps are based on GIMP, see license above.
@@ -1068,4 +1069,33 @@ DP_BrushStamp DP_paint_color_sampling_stamp_make(uint16_t *data, int diameter,
     }
 
     return (DP_BrushStamp){top - radius, left - radius, diameter, data};
+}
+
+DP_UPixelFloat DP_paint_sample_to_upixel(int diameter, float weight, float red,
+                                         float green, float blue, float alpha)
+{
+    // There must be at least some alpha for the results to make sense
+    float required_alpha =
+        DP_int_to_float(DP_square_int(diameter) * 30) / (float)DP_BIT15;
+    if (alpha < required_alpha || weight < required_alpha) {
+        return DP_upixel_float_zero();
+    }
+
+    // Calculate final average
+    red /= weight;
+    green /= weight;
+    blue /= weight;
+    alpha /= weight;
+
+    // Unpremultiply, clamp against rounding error.
+    red = CLAMP(red / alpha, 0.0f, 1.0f);
+    green = CLAMP(green / alpha, 0.0f, 1.0f);
+    blue = CLAMP(blue / alpha, 0.0f, 1.0f);
+
+    return (DP_UPixelFloat){
+        .b = blue,
+        .g = green,
+        .r = red,
+        .a = alpha,
+    };
 }
