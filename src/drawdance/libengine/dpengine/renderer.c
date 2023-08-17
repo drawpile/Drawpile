@@ -383,16 +383,17 @@ void DP_renderer_free(DP_Renderer *renderer)
 {
     if (renderer) {
         int thread_count = renderer->thread_count;
-        DP_MUTEX_MUST_LOCK(renderer->queue_mutex);
-        DP_queue_clear(&renderer->blocking_queue, sizeof(DP_RenderJob),
-                       dispose_blocking_job);
-        renderer->tile.queue_high.used = 0;
-        renderer->tile.queue_low.used = 0;
-        DP_SEMAPHORE_MUST_POST_N(renderer->queue_sem, thread_count);
-        DP_MUTEX_MUST_UNLOCK(renderer->queue_mutex);
-
-        for (int i = 0; i < thread_count; ++i) {
-            DP_thread_free_join(renderer->threads[i]);
+        if (renderer->queue_mutex && renderer->queue_sem) {
+            DP_MUTEX_MUST_LOCK(renderer->queue_mutex);
+            DP_queue_clear(&renderer->blocking_queue, sizeof(DP_RenderJob),
+                           dispose_blocking_job);
+            renderer->tile.queue_high.used = 0;
+            renderer->tile.queue_low.used = 0;
+            DP_SEMAPHORE_MUST_POST_N(renderer->queue_sem, thread_count);
+            DP_MUTEX_MUST_UNLOCK(renderer->queue_mutex);
+            for (int i = 0; i < thread_count; ++i) {
+                DP_thread_free_join(renderer->threads[i]);
+            }
         }
         DP_semaphore_free(renderer->wait_done_sem);
         DP_semaphore_free(renderer->wait_ready_sem);
