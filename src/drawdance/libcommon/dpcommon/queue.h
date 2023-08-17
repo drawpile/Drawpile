@@ -71,5 +71,9 @@ size_t DP_queue_search_index(DP_Queue *queue, size_t element_size,
                              bool (*predicate)(void *element, void *user),
                              void *user);
 
+size_t DP_queue_search_last_index(DP_Queue *queue, size_t element_size,
+                                  bool (*predicate)(void *element, void *user),
+                                  void *user);
+
 
 #endif

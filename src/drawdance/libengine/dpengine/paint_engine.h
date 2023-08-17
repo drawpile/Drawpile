@@ -24,6 +24,7 @@
 #include "canvas_history.h"
 #include "local_state.h"
 #include "player.h"
+#include "preview.h"
 #include "recorder.h"
 #include "renderer.h"
 #include "view_mode.h"
@@ -71,16 +72,14 @@ typedef void (*DP_PaintEngineCursorMovedFn)(void *user, unsigned int flags,
                                             unsigned int context_id,
                                             int layer_id, int x, int y);
 typedef void (*DP_PaintEnginePushMessageFn)(void *user, DP_Message *msg);
-typedef const DP_Pixel8 *(*DP_PaintEngineTransformGetPixelsFn)(void *user);
-typedef void (*DP_PaintEngineTransformDisposePixelsFn)(void *user);
 
 
 typedef struct DP_PaintEngine DP_PaintEngine;
 
 DP_PaintEngine *DP_paint_engine_new_inc(
-    DP_DrawContext *paint_dc, DP_DrawContext *preview_dc, DP_AclState *acls,
-    DP_CanvasState *cs_or_null, DP_RendererTileFn renderer_tile_fn,
-    DP_RendererUnlockFn renderer_unlock_fn,
+    DP_DrawContext *paint_dc, DP_DrawContext *main_dc,
+    DP_DrawContext *preview_dc, DP_AclState *acls, DP_CanvasState *cs_or_null,
+    DP_RendererTileFn renderer_tile_fn, DP_RendererUnlockFn renderer_unlock_fn,
     DP_RendererResizeFn renderer_resize_fn, void *renderer_user,
     DP_CanvasHistorySavePointFn save_point_fn, void *save_point_user,
     bool want_canvas_history_dump, const char *canvas_history_dump_dir,
@@ -216,20 +215,16 @@ void DP_paint_engine_preview_cut(DP_PaintEngine *pe, int layer_id, int x, int y,
                                  int width, int height,
                                  const DP_Pixel8 *mask_or_null);
 
-void DP_paint_engine_preview_cut_clear(DP_PaintEngine *pe);
-
 void DP_paint_engine_preview_transform(
     DP_PaintEngine *pe, int layer_id, int x, int y, int width, int height,
     const DP_Quad *dst_quad, int interpolation,
-    DP_PaintEngineTransformGetPixelsFn get_pixels,
-    DP_PaintEngineTransformDisposePixelsFn dispose_pixels, void *user);
-
-void DP_paint_engine_preview_transform_clear(DP_PaintEngine *pe);
+    DP_PreviewTransformGetPixelsFn get_pixels,
+    DP_PreviewTransformDisposePixelsFn dispose_pixels, void *user);
 
 void DP_paint_engine_preview_dabs_inc(DP_PaintEngine *pe, int layer_id,
                                       int count, DP_Message **messages);
 
-void DP_paint_engine_preview_dabs_clear(DP_PaintEngine *pe);
+void DP_paint_engine_preview_clear(DP_PaintEngine *pe, DP_PreviewType type);
 
 DP_CanvasState *DP_paint_engine_view_canvas_state_inc(DP_PaintEngine *pe);
 

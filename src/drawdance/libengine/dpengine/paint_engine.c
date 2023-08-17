@@ -35,6 +35,7 @@
 #include "local_state.h"
 #include "paint.h"
 #include "player.h"
+#include "preview.h"
 #include "recorder.h"
 #include "renderer.h"
 #include "tile.h"
@@ -66,17 +67,7 @@
 
 #define INITIAL_QUEUE_CAPACITY 64
 
-typedef enum DP_PaintEnginePreviewType {
-    DP_PAINT_ENGINE_PREVIEW_CUT,
-    DP_PAINT_ENGINE_PREVIEW_TRANSFORM,
-    DP_PAINT_ENGINE_PREVIEW_DABS,
-    DP_PAINT_ENGINE_PREVIEW_COUNT,
-} DP_PaintEnginePreviewType;
-
-#define PREVIEW_CUT_SUBLAYER_ID       -100
-#define PREVIEW_TRANSFORM_SUBLAYER_ID -101
-#define PREVIEW_DABS_SUBLAYER_ID      -102
-#define INSPECT_SUBLAYER_ID           -200
+#define INSPECT_SUBLAYER_ID -200
 
 #define RECORDER_UNCHANGED 0
 #define RECORDER_STARTED   1
@@ -89,55 +80,6 @@ typedef enum DP_PaintEnginePreviewType {
 #define NO_PUSH               0
 #define PUSH_MESSAGE          1
 #define PUSH_CLEAR_LOCAL_FORK 2
-
-typedef struct DP_PaintEnginePreview DP_PaintEnginePreview;
-typedef DP_CanvasState *(*DP_PaintEnginePreviewRenderFn)(
-    DP_PaintEnginePreview *preview, DP_CanvasState *cs, DP_DrawContext *dc,
-    int offset_x, int offset_y);
-typedef void (*DP_PaintEnginePreviewDisposeFn)(DP_PaintEnginePreview *preview);
-
-struct DP_PaintEnginePreview {
-    int initial_offset_x, initial_offset_y;
-    DP_PaintEnginePreviewRenderFn render;
-    DP_PaintEnginePreviewDisposeFn dispose;
-};
-
-static DP_PaintEnginePreview null_preview;
-
-typedef struct DP_PaintEngineCutPreview {
-    DP_PaintEnginePreview parent;
-    DP_LayerContent *lc;
-    DP_LayerProps *lp;
-    int layer_id;
-    int x, y;
-    int width, height;
-    bool have_mask;
-    uint8_t mask[];
-} DP_PaintEngineCutPreview;
-
-typedef struct DP_PaintEngineTransformPreview {
-    DP_PaintEnginePreview parent;
-    DP_LayerContent *lc;
-    DP_LayerProps *lp;
-    int layer_id;
-    int target_layer_id;
-    int x, y, width, height;
-    DP_Quad dst_quad;
-    int interpolation;
-    DP_Image *img;
-    struct {
-        DP_PaintEngineTransformGetPixelsFn get;
-        DP_PaintEngineTransformDisposePixelsFn dispose;
-        void *user;
-    } pixels;
-} DP_PaintEngineTransformPreview;
-
-typedef struct DP_PaintEngineDabsPreview {
-    DP_PaintEnginePreview parent;
-    int layer_id;
-    int count;
-    DP_Message *messages[];
-} DP_PaintEngineDabsPreview;
 
 typedef struct DP_PaintEngineCursorChange {
     DP_MessageType type;
@@ -177,9 +119,11 @@ struct DP_PaintEngine {
         bool layers_can_decrease_opacity;
     } local_view;
     DP_DrawContext *paint_dc;
-    DP_PaintEnginePreview *previews[DP_PAINT_ENGINE_PREVIEW_COUNT];
-    DP_AtomicPtr next_previews[DP_PAINT_ENGINE_PREVIEW_COUNT];
-    DP_DrawContext *preview_dc;
+    DP_DrawContext *main_dc;
+    DP_Preview *previews[DP_PREVIEW_COUNT];
+    DP_AtomicPtr next_previews[DP_PREVIEW_COUNT];
+    DP_Atomic preview_rerendered;
+    DP_PreviewRenderer *preview_renderer;
     DP_Queue local_queue;
     DP_Queue remote_queue;
     DP_Semaphore *queue_sem;
@@ -224,11 +168,10 @@ static void push_cleanup_message(void *user, DP_Message *msg)
     DP_SEMAPHORE_MUST_POST(pe->queue_sem);
 }
 
-static void free_preview(DP_PaintEnginePreview *preview)
+static void free_preview(DP_Preview *pv)
 {
-    if (preview && preview != &null_preview) {
-        preview->dispose(preview);
-        DP_free(preview);
+    if (pv && pv != &DP_preview_null) {
+        DP_preview_decref(pv);
     }
 }
 
@@ -656,10 +599,42 @@ static void local_view_invalidated(void *user, bool check_all, int layer_id)
     invalidate_local_view(pe, check_all);
 }
 
+static void sync_preview(DP_PaintEngine *pe, DP_PreviewType type,
+                         DP_Preview *pv)
+{
+    // Make the preview go through the paint engine so that there's less jerking
+    // as previews are created and cleared. There may still be flickering, but
+    // it won't look like transforms undo themselves for a moment.
+    DP_Message *msg = DP_msg_internal_preview_new(0, (int)type, pv);
+    DP_MUTEX_MUST_LOCK(pe->queue_mutex);
+    DP_message_queue_push_noinc(&pe->local_queue, msg);
+    DP_SEMAPHORE_MUST_POST(pe->queue_sem);
+    DP_MUTEX_MUST_UNLOCK(pe->queue_mutex);
+}
+
+static void preview_rendered(void *user, DP_Preview *pv)
+{
+    DP_PaintEngine *pe = user;
+    DP_PreviewType type = DP_preview_type(pv);
+    sync_preview(pe, type, DP_preview_incref(pv));
+}
+
+static void preview_rerendered(void *user)
+{
+    DP_PaintEngine *pe = user;
+    DP_atomic_set(&pe->preview_rerendered, true);
+}
+
+static void preview_clear(void *user, DP_PreviewType type)
+{
+    DP_PaintEngine *pe = user;
+    sync_preview(pe, type, &DP_preview_null);
+}
+
 DP_PaintEngine *DP_paint_engine_new_inc(
-    DP_DrawContext *paint_dc, DP_DrawContext *preview_dc, DP_AclState *acls,
-    DP_CanvasState *cs_or_null, DP_RendererTileFn renderer_tile_fn,
-    DP_RendererUnlockFn renderer_unlock_fn,
+    DP_DrawContext *paint_dc, DP_DrawContext *main_dc,
+    DP_DrawContext *preview_dc, DP_AclState *acls, DP_CanvasState *cs_or_null,
+    DP_RendererTileFn renderer_tile_fn, DP_RendererUnlockFn renderer_unlock_fn,
     DP_RendererResizeFn renderer_resize_fn, void *renderer_user,
     DP_CanvasHistorySavePointFn save_point_fn, void *save_point_user,
     bool want_canvas_history_dump, const char *canvas_history_dump_dir,
@@ -690,11 +665,14 @@ DP_PaintEngine *DP_paint_engine_new_inc(
     pe->local_view.tracks.tl = NULL;
     pe->local_view.layers_can_decrease_opacity = true;
     pe->paint_dc = paint_dc;
-    for (int i = 0; i < DP_PAINT_ENGINE_PREVIEW_COUNT; ++i) {
+    pe->main_dc = main_dc;
+    for (int i = 0; i < DP_PREVIEW_COUNT; ++i) {
         pe->previews[i] = NULL;
         DP_atomic_ptr_set(&pe->next_previews[i], NULL);
     }
-    pe->preview_dc = preview_dc;
+    DP_atomic_set(&pe->preview_rerendered, false);
+    pe->preview_renderer = DP_preview_renderer_new(
+        preview_dc, preview_rendered, preview_rerendered, preview_clear, pe);
     DP_message_queue_init(&pe->local_queue, INITIAL_QUEUE_CAPACITY);
     DP_message_queue_init(&pe->remote_queue, INITIAL_QUEUE_CAPACITY);
     pe->queue_sem = DP_semaphore_new(0);
@@ -769,9 +747,10 @@ void DP_paint_engine_free_join(DP_PaintEngine *pe)
             DP_message_decref(msg);
         }
         DP_message_queue_dispose(&pe->local_queue);
-        for (int i = 0; i < DP_PAINT_ENGINE_PREVIEW_COUNT; ++i) {
+        DP_preview_renderer_free(pe->preview_renderer);
+        for (int i = 0; i < DP_PREVIEW_COUNT; ++i) {
             free_preview(DP_atomic_ptr_xch(&pe->next_previews[i], NULL));
-            free_preview(pe->previews[i]);
+            DP_preview_decref_nullable(pe->previews[i]);
         }
         DP_timeline_decref_nullable(pe->local_view.tracks.tl);
         DP_timeline_decref_nullable(pe->local_view.tracks.prev_tl);
@@ -820,7 +799,7 @@ bool DP_paint_engine_local_state_reset_image_build(
     DP_PaintEngine *pe, DP_LocalStateAcceptResetMessageFn fn, void *user)
 {
     DP_ASSERT(pe);
-    return DP_local_state_reset_image_build(pe->local_state, pe->preview_dc, fn,
+    return DP_local_state_reset_image_build(pe->local_state, pe->main_dc, fn,
                                             user);
 }
 
@@ -933,7 +912,7 @@ static bool start_recording(DP_PaintEngine *pe, DP_RecorderType type,
     // After initializing the state, we can set up local state and permissions.
     if (r) {
         bool reset_image_ok =
-            DP_local_state_reset_image_build(pe->local_state, pe->preview_dc,
+            DP_local_state_reset_image_build(pe->local_state, pe->main_dc,
                                              record_initial_message, r)
             && DP_acl_state_reset_image_build(
                 pe->acls, 0, DP_ACL_STATE_RESET_IMAGE_RECORDING_FLAGS,
@@ -1687,7 +1666,7 @@ static int should_push_message_remote(DP_PaintEngine *pe, DP_Message *msg,
         }
     }
     else {
-        DP_local_state_handle(pe->local_state, pe->preview_dc, msg);
+        DP_local_state_handle(pe->local_state, pe->main_dc, msg);
         if (is_pushable_type(type) || type == DP_MSG_UNDO_DEPTH) {
             return PUSH_MESSAGE;
         }
@@ -1831,21 +1810,19 @@ int DP_paint_engine_handle_inc(DP_PaintEngine *pe, bool local,
 
 static DP_CanvasState *apply_previews(DP_PaintEngine *pe, DP_CanvasState *cs)
 {
-    DP_CanvasState *next_cs = NULL;
-    for (int i = 0; i < DP_PAINT_ENGINE_PREVIEW_COUNT; ++i) {
-        DP_PaintEnginePreview *preview = pe->previews[i];
-        if (preview) {
+    DP_CanvasState *next_cs = cs;
+    DP_PreviewRenderer *pvr = pe->preview_renderer;
+    for (int i = 0; i < DP_PREVIEW_COUNT; ++i) {
+        DP_Preview *pv = pe->previews[i];
+        if (pv && pv != &DP_preview_null) {
             DP_PERF_BEGIN_DETAIL(preview, "tick:changes:preview", "type=%d", i);
-            next_cs = preview->render(
-                preview, next_cs ? next_cs : DP_canvas_state_incref(cs),
-                pe->preview_dc,
-                preview->initial_offset_x - DP_canvas_state_offset_x(cs),
-                preview->initial_offset_y - DP_canvas_state_offset_y(cs));
+            next_cs = DP_preview_apply(pv, next_cs, pvr);
             DP_PERF_END(preview);
         }
     }
-    return next_cs ? next_cs : DP_canvas_state_incref(cs);
+    return next_cs;
 }
+
 
 static DP_TransientCanvasState *
 get_or_make_transient_canvas_state(DP_CanvasState *cs)
@@ -1930,7 +1907,7 @@ static DP_CanvasState *apply_inspect(DP_PaintEngine *pe, DP_CanvasState *cs)
     else {
         DP_PERF_BEGIN(inspect, "tick:changes:inspect");
         DP_TransientCanvasState *tcs = get_or_make_transient_canvas_state(cs);
-        DP_DrawContext *dc = pe->preview_dc;
+        DP_DrawContext *dc = pe->main_dc;
         DP_draw_context_layer_indexes_clear(dc);
         DP_TileCounts tile_counts = DP_tile_counts_round(
             DP_canvas_state_width(cs), DP_canvas_state_height(cs));
@@ -2013,7 +1990,7 @@ static DP_CanvasState *set_local_layer_props(DP_PaintEngine *pe,
     DP_TransientCanvasState *tcs = get_or_make_transient_canvas_state(cs);
 
     bool reveal_censored = pe->local_view.reveal_censored;
-    DP_DrawContext *dc = pe->preview_dc;
+    DP_DrawContext *dc = pe->main_dc;
     DP_draw_context_layer_indexes_clear(dc);
     set_local_layer_props_recursive(
         tcs, dc, reveal_censored,
@@ -2271,14 +2248,14 @@ void DP_paint_engine_tick(
             pe->history_cs = next_history_cs;
         }
 
-        preview_changed = false;
-        for (int i = 0; i < DP_PAINT_ENGINE_PREVIEW_COUNT; ++i) {
-            DP_PaintEnginePreview *next_preview =
+        preview_changed = DP_atomic_xch(&pe->preview_rerendered, false);
+        for (int i = 0; i < DP_PREVIEW_COUNT; ++i) {
+            DP_Preview *next_preview =
                 DP_atomic_ptr_xch(&pe->next_previews[i], NULL);
             if (next_preview) {
-                free_preview(pe->previews[i]);
+                DP_preview_decref_nullable(pe->previews[i]);
                 pe->previews[i] =
-                    next_preview == &null_preview ? NULL : next_preview;
+                    next_preview == &DP_preview_null ? NULL : next_preview;
                 preview_changed = true;
             }
         }
@@ -2295,7 +2272,7 @@ void DP_paint_engine_tick(
         // Previews, hidden layers etc. are local changes, so we have to apply
         // them on top of the canvas state we got out of the history.
         DP_CanvasState *prev_view_cs = pe->view_cs;
-        DP_CanvasState *next_view_cs = pe->history_cs;
+        DP_CanvasState *next_view_cs = DP_canvas_state_incref(pe->history_cs);
         next_view_cs = apply_previews(pe, next_view_cs);
         next_view_cs = apply_inspect(pe, next_view_cs);
         next_view_cs = apply_local_layer_props(pe, next_view_cs);
@@ -2353,383 +2330,42 @@ void DP_paint_engine_change_bounds(DP_PaintEngine *pe, DP_Rect tile_bounds,
 }
 
 
-static void sync_preview(DP_PaintEngine *pe, int type,
-                         DP_PaintEnginePreview *preview)
-{
-    // Make the preview go through the paint engine so that there's less jerking
-    // as previews are created and cleared. There may still be flickering, but
-    // it won't look like transforms undo themselves for a moment.
-    DP_Message *msg = DP_msg_internal_preview_new(0, type, preview);
-    DP_MUTEX_MUST_LOCK(pe->queue_mutex);
-    DP_message_queue_push_noinc(&pe->local_queue, msg);
-    DP_SEMAPHORE_MUST_POST(pe->queue_sem);
-    DP_MUTEX_MUST_UNLOCK(pe->queue_mutex);
-}
-
-static void set_preview(DP_PaintEngine *pe, int type,
-                        DP_PaintEnginePreview *preview,
-                        DP_PaintEnginePreviewRenderFn render,
-                        DP_PaintEnginePreviewDisposeFn dispose)
-{
-    DP_CanvasState *cs = pe->view_cs;
-    preview->initial_offset_x = DP_canvas_state_offset_x(cs);
-    preview->initial_offset_y = DP_canvas_state_offset_y(cs);
-    preview->render = render;
-    preview->dispose = dispose;
-    sync_preview(pe, type, preview);
-}
-
-
-static DP_LayerContent *get_cut_preview_content(DP_PaintEngineCutPreview *pecp,
-                                                DP_CanvasState *cs,
-                                                int offset_x, int offset_y)
-{
-    DP_LayerContent *lc = pecp->lc;
-    int canvas_width = DP_canvas_state_width(cs);
-    int canvas_height = DP_canvas_state_height(cs);
-    bool needs_render = !lc || DP_layer_content_width(lc) != canvas_width
-                     || DP_layer_content_height(lc) != canvas_height;
-    if (needs_render) {
-        DP_layer_content_decref_nullable(lc);
-        DP_TransientLayerContent *tlc = DP_transient_layer_content_new_init(
-            canvas_width, canvas_height, NULL);
-
-        int left = pecp->x + offset_x;
-        int top = pecp->y + offset_y;
-        int width = pecp->width;
-        int height = pecp->height;
-        int right =
-            DP_min_int(DP_transient_layer_content_width(tlc), left + width);
-        int bottom =
-            DP_min_int(DP_transient_layer_content_height(tlc), top + height);
-
-        if (pecp->have_mask) {
-            for (int y = top; y < bottom; ++y) {
-                for (int x = left; x < right; ++x) {
-                    uint8_t a = pecp->mask[(y - top) * width + (x - left)];
-                    if (a != 0) {
-                        DP_transient_layer_content_pixel_at_set(
-                            tlc, 0, x, y,
-                            (DP_Pixel15){0, 0, 0, DP_channel8_to_15(a)});
-                    }
-                }
-            }
-        }
-        else {
-            DP_transient_layer_content_fill_rect(
-                tlc, 0, DP_BLEND_MODE_REPLACE, left, top, right, bottom,
-                (DP_UPixel15){0, 0, 0, DP_BIT15});
-        }
-
-        return pecp->lc = DP_transient_layer_content_persist(tlc);
-    }
-    else {
-        return lc;
-    }
-}
-
-static DP_CanvasState *cut_preview_render(DP_PaintEnginePreview *preview,
-                                          DP_CanvasState *cs,
-                                          DP_UNUSED DP_DrawContext *dc,
-                                          int offset_x, int offset_y)
-{
-    DP_PaintEngineCutPreview *pecp = (DP_PaintEngineCutPreview *)preview;
-    int layer_id = pecp->layer_id;
-    DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
-    DP_LayerRoutesEntry *lre = DP_layer_routes_search(lr, layer_id);
-    if (!lre || DP_layer_routes_entry_is_group(lre)) {
-        return cs;
-    }
-
-    DP_TransientCanvasState *tcs = get_or_make_transient_canvas_state(cs);
-    if (!pecp->lp) {
-        DP_TransientLayerProps *tlp =
-            DP_transient_layer_props_new_init(PREVIEW_CUT_SUBLAYER_ID, false);
-        DP_transient_layer_props_blend_mode_set(tlp, DP_BLEND_MODE_ERASE);
-        pecp->lp = DP_transient_layer_props_persist(tlp);
-    }
-
-    DP_TransientLayerContent *tlc =
-        DP_layer_routes_entry_transient_content(lre, tcs);
-    DP_transient_layer_content_sublayer_insert_inc(
-        tlc, get_cut_preview_content(pecp, cs, offset_x, offset_y), pecp->lp);
-    return (DP_CanvasState *)tcs;
-}
-
-static void cut_preview_dispose(DP_PaintEnginePreview *preview)
-{
-    DP_PaintEngineCutPreview *pecp = (DP_PaintEngineCutPreview *)preview;
-    DP_layer_props_decref_nullable(pecp->lp);
-    DP_layer_content_decref_nullable(pecp->lc);
-}
-
 void DP_paint_engine_preview_cut(DP_PaintEngine *pe, int layer_id, int x, int y,
                                  int width, int height,
                                  const DP_Pixel8 *mask_or_null)
 {
     DP_ASSERT(pe);
-    int mask_count = mask_or_null ? width * height : 0;
-    DP_PaintEngineCutPreview *pecp = DP_malloc(DP_FLEX_SIZEOF(
-        DP_PaintEngineCutPreview, mask, DP_int_to_size(mask_count)));
-    pecp->lc = NULL;
-    pecp->lp = NULL;
-    pecp->layer_id = layer_id;
-    pecp->x = x;
-    pecp->y = y;
-    pecp->width = width;
-    pecp->height = height;
-    pecp->have_mask = mask_or_null;
-    for (int i = 0; i < mask_count; ++i) {
-        pecp->mask[i] = mask_or_null[i].a;
-    }
-    set_preview(pe, DP_PAINT_ENGINE_PREVIEW_CUT, &pecp->parent,
-                cut_preview_render, cut_preview_dispose);
-}
-
-void DP_paint_engine_preview_cut_clear(DP_PaintEngine *pe)
-{
-    DP_ASSERT(pe);
-    sync_preview(pe, DP_PAINT_ENGINE_PREVIEW_CUT, &null_preview);
-}
-
-
-static bool transform_preview_image(DP_PaintEngineTransformPreview *petp,
-                                    DP_DrawContext *dc)
-{
-    if (petp->img) {
-        return true; // Image alread transformed successfully.
-    }
-
-    DP_PaintEngineTransformGetPixelsFn get_pixels = petp->pixels.get;
-    if (!get_pixels) {
-        return false; // Transform already attempted, but failed.
-    }
-
-    void *user = petp->pixels.user;
-    const DP_Pixel8 *pixels = get_pixels(user);
-    petp->pixels.get = NULL;
-    DP_Image *img = DP_image_transform_pixels(petp->width, petp->height, pixels,
-                                              dc, &petp->dst_quad,
-                                              petp->interpolation, NULL, NULL);
-    petp->pixels.dispose(user);
-    petp->pixels.dispose = NULL;
-
-    if (img) {
-        petp->img = img;
-        return true;
-    }
-    else {
-        DP_warn("Error transforming preview: %s", DP_error());
-        return false;
-    }
-}
-
-static DP_LayerContent *
-get_transform_preview_content(DP_PaintEngineTransformPreview *petp,
-                              DP_CanvasState *cs, int offset_x, int offset_y)
-{
-    DP_LayerContent *lc = petp->lc;
-    int canvas_width = DP_canvas_state_width(cs);
-    int canvas_height = DP_canvas_state_height(cs);
-    bool needs_render = !lc || DP_layer_content_width(lc) != canvas_width
-                     || DP_layer_content_height(lc) != canvas_height;
-    if (needs_render) {
-        DP_layer_content_decref_nullable(lc);
-        DP_TransientLayerContent *tlc = DP_transient_layer_content_new_init(
-            canvas_width, canvas_height, NULL);
-
-        int left = petp->x + offset_x;
-        int top = petp->y + offset_y;
-        DP_transient_layer_content_put_image(tlc, 0, DP_BLEND_MODE_REPLACE,
-                                             left, top, petp->img);
-
-        return petp->lc = DP_transient_layer_content_persist(tlc);
-    }
-    else {
-        return lc;
-    }
-}
-
-static DP_CanvasState *transform_preview_render(DP_PaintEnginePreview *preview,
-                                                DP_CanvasState *cs,
-                                                DP_DrawContext *dc,
-                                                int offset_x, int offset_y)
-{
-    DP_PaintEngineTransformPreview *petp =
-        (DP_PaintEngineTransformPreview *)preview;
-    int layer_id = petp->layer_id;
-    DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
-    DP_LayerRoutesEntry *lre = DP_layer_routes_search(lr, layer_id);
-    if (!lre || DP_layer_routes_entry_is_group(lre)
-        || !transform_preview_image(petp, dc)) {
-        return cs;
-    }
-
-    DP_TransientCanvasState *tcs = get_or_make_transient_canvas_state(cs);
-    if (!petp->lp) {
-        DP_TransientLayerProps *tlp = DP_transient_layer_props_new_init(
-            PREVIEW_TRANSFORM_SUBLAYER_ID, false);
-        petp->lp = DP_transient_layer_props_persist(tlp);
-    }
-
-    DP_TransientLayerContent *tlc =
-        DP_layer_routes_entry_transient_content(lre, tcs);
-    DP_transient_layer_content_sublayer_insert_inc(
-        tlc, get_transform_preview_content(petp, cs, offset_x, offset_y),
-        petp->lp);
-    return (DP_CanvasState *)tcs;
-}
-
-static void transform_preview_dispose(DP_PaintEnginePreview *preview)
-{
-    DP_PaintEngineTransformPreview *petp =
-        (DP_PaintEngineTransformPreview *)preview;
-    DP_PaintEngineTransformDisposePixelsFn dispose = petp->pixels.dispose;
-    if (dispose) {
-        dispose(petp->pixels.user);
-    }
-    DP_layer_props_decref_nullable(petp->lp);
-    DP_layer_content_decref_nullable(petp->lc);
-    DP_image_free(petp->img);
+    DP_CanvasState *cs = pe->view_cs;
+    int offset_x = DP_canvas_state_offset_x(cs);
+    int offset_y = DP_canvas_state_offset_y(cs);
+    DP_Preview *pv = DP_preview_new_cut(offset_x, offset_y, layer_id, x, y,
+                                        width, height, mask_or_null);
+    DP_preview_renderer_push_noinc(
+        pe->preview_renderer, pv, DP_canvas_state_width(cs),
+        DP_canvas_state_height(cs), offset_x, offset_y);
 }
 
 void DP_paint_engine_preview_transform(
     DP_PaintEngine *pe, int layer_id, int x, int y, int width, int height,
     const DP_Quad *dst_quad, int interpolation,
-    DP_PaintEngineTransformGetPixelsFn get_pixels,
-    DP_PaintEngineTransformDisposePixelsFn dispose_pixels, void *user)
+    DP_PreviewTransformGetPixelsFn get_pixels,
+    DP_PreviewTransformDisposePixelsFn dispose_pixels, void *user)
 {
-    DP_ASSERT(pe);
-    DP_ASSERT(dst_quad);
-    DP_ASSERT(get_pixels);
     DP_ASSERT(dispose_pixels);
     if (width > 0 && height > 0) {
-        DP_PaintEngineTransformPreview *petp = DP_malloc(sizeof(*petp));
-        petp->lc = NULL;
-        petp->lp = NULL;
-        petp->layer_id = layer_id;
-        petp->x = x;
-        petp->y = y;
-        petp->width = width;
-        petp->height = height;
-        petp->dst_quad = *dst_quad;
-        petp->interpolation = interpolation;
-        petp->pixels.get = get_pixels;
-        petp->pixels.dispose = dispose_pixels;
-        petp->pixels.user = user;
-        petp->img = NULL;
-        set_preview(pe, DP_PAINT_ENGINE_PREVIEW_TRANSFORM, &petp->parent,
-                    transform_preview_render, transform_preview_dispose);
+        DP_CanvasState *cs = pe->view_cs;
+        int offset_x = DP_canvas_state_offset_x(cs);
+        int offset_y = DP_canvas_state_offset_y(cs);
+        DP_Preview *pv = DP_preview_new_transform(
+            offset_x, offset_y, layer_id, x, y, width, height, dst_quad,
+            interpolation, get_pixels, dispose_pixels, user);
+        DP_preview_renderer_push_noinc(
+            pe->preview_renderer, pv, DP_canvas_state_width(cs),
+            DP_canvas_state_height(cs), offset_x, offset_y);
     }
     else {
         dispose_pixels(user);
-        DP_paint_engine_preview_transform_clear(pe);
-    }
-}
-
-void DP_paint_engine_preview_transform_clear(DP_PaintEngine *pe)
-{
-    DP_ASSERT(pe);
-    sync_preview(pe, DP_PAINT_ENGINE_PREVIEW_TRANSFORM, &null_preview);
-}
-
-
-static DP_CanvasState *dabs_preview_render(DP_PaintEnginePreview *preview,
-                                           DP_CanvasState *cs,
-                                           DP_DrawContext *dc, int offset_x,
-                                           int offset_y)
-{
-    DP_PaintEngineDabsPreview *pedp = (DP_PaintEngineDabsPreview *)preview;
-    int layer_id = pedp->layer_id;
-    DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
-    DP_LayerRoutesEntry *lre = DP_layer_routes_search(lr, layer_id);
-    if (!lre || DP_layer_routes_entry_is_group(lre)) {
-        return cs;
-    }
-
-    DP_TransientCanvasState *tcs = get_or_make_transient_canvas_state(cs);
-    DP_TransientLayerContent *tlc =
-        DP_layer_routes_entry_transient_content(lre, tcs);
-    DP_TransientLayerContent *sub_tlc = NULL;
-
-    int count = pedp->count;
-    DP_PaintDrawDabsParams params = {0};
-    for (int i = 0; i < count; ++i) {
-        DP_Message *msg = pedp->messages[i];
-        DP_MessageType type = DP_message_type(msg);
-        switch (type) {
-        case DP_MSG_DRAW_DABS_CLASSIC: {
-            DP_MsgDrawDabsClassic *mddc = DP_message_internal(msg);
-            params.origin_x = DP_msg_draw_dabs_classic_x(mddc);
-            params.origin_y = DP_msg_draw_dabs_classic_y(mddc);
-            params.color = DP_msg_draw_dabs_classic_color(mddc);
-            params.blend_mode = DP_msg_draw_dabs_classic_mode(mddc);
-            params.indirect = DP_msg_draw_dabs_classic_indirect(mddc);
-            params.classic.dabs =
-                DP_msg_draw_dabs_classic_dabs(mddc, &params.dab_count);
-            break;
-        }
-        case DP_MSG_DRAW_DABS_PIXEL:
-        case DP_MSG_DRAW_DABS_PIXEL_SQUARE: {
-            DP_MsgDrawDabsPixel *mddp = DP_message_internal(msg);
-            params.origin_x = DP_msg_draw_dabs_pixel_x(mddp);
-            params.origin_y = DP_msg_draw_dabs_pixel_y(mddp);
-            params.color = DP_msg_draw_dabs_pixel_color(mddp);
-            params.blend_mode = DP_msg_draw_dabs_pixel_mode(mddp);
-            params.indirect = DP_msg_draw_dabs_pixel_indirect(mddp);
-            params.pixel.dabs =
-                DP_msg_draw_dabs_pixel_dabs(mddp, &params.dab_count);
-            break;
-        }
-        case DP_MSG_DRAW_DABS_MYPAINT: {
-            DP_MsgDrawDabsMyPaint *mddmp = DP_message_internal(msg);
-            params.origin_x = DP_msg_draw_dabs_mypaint_x(mddmp);
-            params.origin_y = DP_msg_draw_dabs_mypaint_y(mddmp);
-            params.color = DP_msg_draw_dabs_mypaint_color(mddmp);
-            params.mypaint.dabs =
-                DP_msg_draw_dabs_mypaint_dabs(mddmp, &params.dab_count);
-            params.mypaint.lock_alpha =
-                DP_msg_draw_dabs_mypaint_lock_alpha(mddmp);
-            params.mypaint.colorize = DP_msg_draw_dabs_mypaint_colorize(mddmp);
-            params.mypaint.posterize =
-                DP_msg_draw_dabs_mypaint_posterize(mddmp);
-            DP_mypaint_brush_mode_extract(DP_msg_draw_dabs_mypaint_mode(mddmp),
-                                          &params.blend_mode, &params.indirect,
-                                          &params.mypaint.posterize_num);
-            break;
-        }
-        default:
-            continue;
-        }
-
-        if (params.indirect) {
-            if (!sub_tlc) {
-                DP_TransientLayerProps *tlp;
-                DP_transient_layer_content_transient_sublayer(
-                    tlc, PREVIEW_DABS_SUBLAYER_ID, &sub_tlc, &tlp);
-                DP_transient_layer_props_blend_mode_set(tlp, params.blend_mode);
-                DP_transient_layer_props_opacity_set(
-                    tlp, DP_channel8_to_15(DP_uint32_to_uint8(
-                             (params.color & 0xff000000) >> 24)));
-            }
-            params.blend_mode = DP_BLEND_MODE_NORMAL;
-        }
-
-        params.type = (int)type;
-        params.origin_x += offset_x;
-        params.origin_y += offset_y;
-        DP_paint_draw_dabs(dc, &params, params.indirect ? sub_tlc : tlc);
-    }
-
-    return (DP_CanvasState *)tcs;
-}
-
-static void dabs_preview_dispose(DP_PaintEnginePreview *preview)
-{
-    DP_PaintEngineDabsPreview *pedp = (DP_PaintEngineDabsPreview *)preview;
-    int count = pedp->count;
-    for (int i = 0; i < count; ++i) {
-        DP_message_decref(pedp->messages[i]);
+        DP_paint_engine_preview_clear(pe, DP_PREVIEW_TRANSFORM);
     }
 }
 
@@ -2738,22 +2374,26 @@ void DP_paint_engine_preview_dabs_inc(DP_PaintEngine *pe, int layer_id,
 {
     DP_ASSERT(pe);
     if (count > 0) {
-        DP_PaintEngineDabsPreview *pedp = DP_malloc(DP_FLEX_SIZEOF(
-            DP_PaintEngineDabsPreview, messages, DP_int_to_size(count)));
-        pedp->layer_id = layer_id;
-        pedp->count = count;
-        for (int i = 0; i < count; ++i) {
-            pedp->messages[i] = DP_message_incref(messages[i]);
-        }
-        set_preview(pe, DP_PAINT_ENGINE_PREVIEW_DABS, &pedp->parent,
-                    dabs_preview_render, dabs_preview_dispose);
+        DP_CanvasState *cs = pe->view_cs;
+        int offset_x = DP_canvas_state_offset_x(cs);
+        int offset_y = DP_canvas_state_offset_y(cs);
+        DP_Preview *pv = DP_preview_new_dabs_inc(offset_x, offset_y, layer_id,
+                                                 count, messages);
+        DP_preview_renderer_push_noinc(
+            pe->preview_renderer, pv, DP_canvas_state_width(cs),
+            DP_canvas_state_height(cs), offset_x, offset_y);
+    }
+    else {
+        DP_paint_engine_preview_clear(pe, DP_PREVIEW_DABS);
     }
 }
 
-void DP_paint_engine_preview_dabs_clear(DP_PaintEngine *pe)
+void DP_paint_engine_preview_clear(DP_PaintEngine *pe, DP_PreviewType type)
 {
     DP_ASSERT(pe);
-    sync_preview(pe, DP_PAINT_ENGINE_PREVIEW_DABS, &null_preview);
+    DP_ASSERT(type >= 0);
+    DP_ASSERT(type < DP_PREVIEW_COUNT);
+    DP_preview_renderer_cancel(pe->preview_renderer, type);
 }
 
 

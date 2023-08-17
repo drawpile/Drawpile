@@ -127,6 +127,7 @@ public:
 
 private:
 	DrawContext m_paintDc;
+	DrawContext m_mainDc;
 	DrawContext m_previewDc;
 	DP_PaintEngine *m_data;
 

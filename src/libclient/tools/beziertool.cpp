@@ -194,11 +194,11 @@ void BezierTool::updatePreview()
 
 	canvas::PaintEngine *paintEngine = m_owner.model()->paintEngine();
 	drawdance::CanvasState canvasState = paintEngine->sampleCanvasState();
-	m_brushEngine.beginStroke(0, true, m_zoom);
+	m_brushEngine.beginStroke(0, false, m_zoom);
 	for(const canvas::Point &p : pv) {
 		m_brushEngine.strokeTo(p, canvasState);
 	}
-	m_brushEngine.endStroke(pv.last().timeMsec() + DELTA_MSEC, canvasState, true);
+	m_brushEngine.endStroke(pv.last().timeMsec() + DELTA_MSEC, canvasState, false);
 
 	paintEngine->previewDabs(m_owner.activeLayer(), m_brushEngine.messages());
 	m_brushEngine.clearMessages();

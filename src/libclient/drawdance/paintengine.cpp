@@ -22,13 +22,15 @@ PaintEngine::PaintEngine(
 	DP_PaintEngineDumpPlaybackFn dumpPlaybackFn, void *playbackUser,
 	const CanvasState &canvasState)
 	: m_paintDc{DrawContextPool::acquire()}
+	, m_mainDc{DrawContextPool::acquire()}
 	, m_previewDc{DrawContextPool::acquire()}
 	, m_data(DP_paint_engine_new_inc(
-		  m_paintDc.get(), m_previewDc.get(), acls.get(), canvasState.get(),
-		  rendererTileFn, rendererUnlockFn, rendererResizeFn, rendererUser,
-		  DP_snapshot_queue_on_save_point, sq.get(), wantCanvasHistoryDump,
-		  getDumpDir().toUtf8().constData(), &PaintEngine::getTimeMs, nullptr,
-		  nullptr, playbackFn, dumpPlaybackFn, playbackUser))
+		  m_paintDc.get(), m_mainDc.get(), m_previewDc.get(), acls.get(),
+		  canvasState.get(), rendererTileFn, rendererUnlockFn, rendererResizeFn,
+		  rendererUser, DP_snapshot_queue_on_save_point, sq.get(),
+		  wantCanvasHistoryDump, getDumpDir().toUtf8().constData(),
+		  &PaintEngine::getTimeMs, nullptr, nullptr, playbackFn, dumpPlaybackFn,
+		  playbackUser))
 {
 }
 
@@ -58,11 +60,12 @@ MessageList PaintEngine::reset(
 	DP_paint_engine_free_join(m_data);
 	acls.reset(localUserId);
 	m_data = DP_paint_engine_new_inc(
-		m_paintDc.get(), m_previewDc.get(), acls.get(), canvasState.get(),
-		rendererTileFn, rendererUnlockFn, rendererResizeFn, rendererUser,
-		DP_snapshot_queue_on_save_point, sq.get(), wantCanvasHistoryDump,
-		getDumpDir().toUtf8().constData(), &PaintEngine::getTimeMs, nullptr,
-		player, playbackFn, dumpPlaybackFn, playbackUser);
+		m_paintDc.get(), m_mainDc.get(), m_previewDc.get(), acls.get(),
+		canvasState.get(), rendererTileFn, rendererUnlockFn, rendererResizeFn,
+		rendererUser, DP_snapshot_queue_on_save_point, sq.get(),
+		wantCanvasHistoryDump, getDumpDir().toUtf8().constData(),
+		&PaintEngine::getTimeMs, nullptr, player, playbackFn, dumpPlaybackFn,
+		playbackUser);
 	return localResetImage;
 }
 
@@ -331,7 +334,7 @@ void PaintEngine::previewCut(int layerId, const QRect &bounds, const QImage &mas
 
 void PaintEngine::clearCutPreview()
 {
-	DP_paint_engine_preview_cut_clear(m_data);
+	DP_paint_engine_preview_clear(m_data, DP_PREVIEW_CUT);
 }
 
 void PaintEngine::previewTransform(
@@ -356,7 +359,7 @@ void PaintEngine::previewTransform(
 
 void PaintEngine::clearTransformPreview()
 {
-	DP_paint_engine_preview_transform_clear(m_data);
+	DP_paint_engine_preview_clear(m_data, DP_PREVIEW_TRANSFORM);
 }
 
 void PaintEngine::previewDabs(int layerId, int count, const drawdance::Message *msgs)
@@ -367,7 +370,7 @@ void PaintEngine::previewDabs(int layerId, int count, const drawdance::Message *
 
 void PaintEngine::clearDabsPreview()
 {
-	DP_paint_engine_preview_dabs_clear(m_data);
+	DP_paint_engine_preview_clear(m_data, DP_PREVIEW_DABS);
 }
 
 CanvasState PaintEngine::viewCanvasState() const

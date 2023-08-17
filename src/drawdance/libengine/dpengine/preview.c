@@ -1,0 +1,785 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+#include "preview.h"
+#include "brush.h"
+#include "canvas_state.h"
+#include "draw_context.h"
+#include "image.h"
+#include "layer_content.h"
+#include "layer_props.h"
+#include "layer_routes.h"
+#include "paint.h"
+#include "pixels.h"
+#include <dpcommon/atomic.h>
+#include <dpcommon/common.h>
+#include <dpcommon/conversions.h>
+#include <dpcommon/geom.h>
+#include <dpcommon/queue.h>
+#include <dpcommon/threading.h>
+#include <dpmsg/blend_mode.h>
+#include <dpmsg/message.h>
+
+
+#define RENDER_NEEDED 0
+#define RENDER_QUEUED 1
+#define RENDER_ACTIVE 2
+#define RENDER_DONE   3
+#define RENDER_CANCEL 4
+
+typedef void (*DP_PreviewRenderFn)(DP_Preview *pv, DP_DrawContext *dc,
+                                   int offset_x, int offset_y,
+                                   DP_TransientLayerContent *tlc);
+typedef void (*DP_PreviewDisposeFn)(DP_Preview *pv);
+
+struct DP_Preview {
+    DP_Atomic refcount;
+    DP_Atomic status;
+    DP_PreviewType type;
+    int blend_mode;
+    int layer_id;
+    int initial_offset_x, initial_offset_y;
+    DP_AtomicPtr render_lc;
+    DP_LayerContent *lc;
+    DP_LayerProps *lp;
+    DP_PreviewRenderFn render;
+    DP_PreviewDisposeFn dispose;
+};
+
+DP_Preview DP_preview_null;
+
+static void init_preview(DP_Preview *pv, DP_PreviewType type, int blend_mode,
+                         int layer_id, int initial_offset_x,
+                         int initial_offset_y, DP_PreviewRenderFn render,
+                         DP_PreviewDisposeFn dispose)
+{
+    DP_ASSERT(pv);
+    DP_ASSERT(DP_blend_mode_exists((int)blend_mode));
+    DP_ASSERT(type >= 0);
+    DP_ASSERT(type < DP_PREVIEW_COUNT);
+    DP_ASSERT(render);
+    DP_atomic_set(&pv->refcount, 1);
+    DP_atomic_set(&pv->status, RENDER_NEEDED);
+    pv->type = type;
+    pv->blend_mode = blend_mode;
+    pv->layer_id = layer_id;
+    pv->initial_offset_x = initial_offset_x;
+    pv->initial_offset_y = initial_offset_y;
+    DP_atomic_ptr_set(&pv->render_lc, NULL);
+    pv->lc = NULL;
+    pv->lp = NULL;
+    pv->render = render;
+    pv->dispose = dispose;
+}
+
+DP_Preview *DP_preview_incref(DP_Preview *pv)
+{
+    DP_ASSERT(pv);
+    DP_ASSERT(DP_atomic_get(&pv->refcount) > 0);
+    DP_atomic_inc(&pv->refcount);
+    return pv;
+}
+
+DP_Preview *DP_preview_incref_nullable(DP_Preview *pv_or_null)
+{
+    return pv_or_null ? DP_preview_incref(pv_or_null) : NULL;
+}
+
+void DP_preview_decref(DP_Preview *pv)
+{
+    DP_ASSERT(pv);
+    DP_ASSERT(DP_atomic_get(&pv->refcount) > 0);
+    if (DP_atomic_dec(&pv->refcount)) {
+        DP_PreviewDisposeFn dispose = pv->dispose;
+        if (dispose) {
+            dispose(pv);
+        }
+        DP_layer_props_decref_nullable(pv->lp);
+        DP_layer_content_decref_nullable(pv->lc);
+        DP_layer_content_decref_nullable(
+            DP_atomic_ptr_xch(&pv->render_lc, NULL));
+        DP_free(pv);
+    }
+}
+
+void DP_preview_decref_nullable(DP_Preview *pv_or_null)
+{
+    if (pv_or_null) {
+        DP_preview_decref(pv_or_null);
+    }
+}
+
+int DP_preview_refcount(DP_Preview *pv)
+{
+    DP_ASSERT(pv);
+    DP_ASSERT(DP_atomic_get(&pv->refcount) > 0);
+    return DP_atomic_get(&pv->refcount);
+}
+
+DP_PreviewType DP_preview_type(DP_Preview *pv)
+{
+    DP_ASSERT(pv);
+    DP_ASSERT(DP_atomic_get(&pv->refcount) > 0);
+    return pv->type;
+}
+
+static DP_TransientCanvasState *
+get_or_make_transient_canvas_state(DP_CanvasState *cs)
+{
+    if (DP_canvas_state_transient(cs)) {
+        return (DP_TransientCanvasState *)cs;
+    }
+    else {
+        DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
+        DP_canvas_state_decref(cs);
+        return tcs;
+    }
+}
+
+DP_CanvasState *DP_preview_apply(DP_Preview *pv, DP_CanvasState *cs,
+                                 DP_PreviewRenderer *pvr)
+{
+    DP_ASSERT(pv);
+    DP_ASSERT(DP_atomic_get(&pv->refcount) > 0);
+
+    // Figure out where to put the preview or bail out if there's nowhere.
+    int layer_id = pv->layer_id;
+    DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
+    DP_LayerRoutesEntry *lre = DP_layer_routes_search(lr, layer_id);
+    if (!lre || DP_layer_routes_entry_is_group(lre)) {
+        return cs;
+    }
+
+    // If there's a new render available, grab it, otherwise use the cache.
+    DP_LayerContent *lc = DP_atomic_ptr_xch(&pv->render_lc, NULL);
+    if (lc) {
+        DP_layer_content_decref_nullable(pv->lc);
+        pv->lc = lc;
+    }
+    else {
+        lc = pv->lc;
+        if (!lc) {
+            return cs;
+        }
+    }
+
+    // If the canvas size changed, the existing render is unusable.
+    int canvas_width = DP_canvas_state_width(cs);
+    int canvas_height = DP_canvas_state_height(cs);
+    bool canvas_size_changed = DP_layer_content_width(lc) != canvas_width
+                            || DP_layer_content_height(lc) != canvas_height;
+    if (canvas_size_changed) {
+        if (DP_atomic_compare_exchange(&pv->status, RENDER_DONE,
+                                       RENDER_NEEDED)) {
+            DP_preview_renderer_push_rerender_inc(
+                pvr, pv, canvas_width, canvas_height,
+                DP_canvas_state_offset_x(cs), DP_canvas_state_offset_y(cs));
+        }
+        return cs;
+    }
+
+    // We have a usable render. Create props if we don't have them yet.
+    DP_LayerProps *lp = pv->lp;
+    if (!lp) {
+        DP_TransientLayerProps *tlp = DP_transient_layer_props_new_init(
+            DP_PREVIEW_SUBLAYER_ID(pv->type), false);
+        DP_transient_layer_props_blend_mode_set(tlp, pv->blend_mode);
+        lp = DP_transient_layer_props_persist(tlp);
+        pv->lp = lp;
+    }
+
+    // Jam the preview into the canvas state.
+    DP_TransientCanvasState *tcs = get_or_make_transient_canvas_state(cs);
+    DP_TransientLayerContent *tlc =
+        DP_layer_routes_entry_transient_content(lre, tcs);
+    DP_transient_layer_content_sublayer_insert_inc(tlc, lc, lp);
+    return (DP_CanvasState *)tcs;
+}
+
+void DP_preview_render_reset(DP_Preview *pv, DP_PreviewRenderer *pvr,
+                             int canvas_width, int canvas_height, int offset_x,
+                             int offset_y)
+{
+    DP_ASSERT(pv);
+    DP_ASSERT(DP_atomic_get(&pv->refcount) > 0);
+    DP_ASSERT(pvr);
+    DP_layer_content_decref(pv->lc);
+    pv->lc = NULL;
+    DP_preview_renderer_push_noinc(pvr, pv, canvas_width, canvas_height,
+                                   offset_x, offset_y);
+}
+
+
+typedef struct DP_PreviewCut {
+    DP_Preview parent;
+    int x, y;
+    int width, height;
+    bool have_mask;
+    uint8_t mask[];
+} DP_PreviewCut;
+
+static void preview_cut_render(DP_Preview *pv, DP_UNUSED DP_DrawContext *dc,
+                               int offset_x, int offset_y,
+                               DP_TransientLayerContent *tlc)
+{
+    DP_PreviewCut *pvc = (DP_PreviewCut *)pv;
+    int left = pvc->x + offset_x;
+    int top = pvc->y + offset_y;
+    int width = pvc->width;
+    int height = pvc->height;
+    int right = DP_min_int(DP_transient_layer_content_width(tlc), left + width);
+    int bottom =
+        DP_min_int(DP_transient_layer_content_height(tlc), top + height);
+    if (pvc->have_mask) {
+        for (int y = top; y < bottom; ++y) {
+            for (int x = left; x < right; ++x) {
+                uint8_t a = pvc->mask[(y - top) * width + (x - left)];
+                if (a != 0) {
+                    DP_transient_layer_content_pixel_at_set(
+                        tlc, 0, x, y,
+                        (DP_Pixel15){0, 0, 0, DP_channel8_to_15(a)});
+                }
+            }
+        }
+    }
+    else {
+        DP_transient_layer_content_fill_rect(tlc, 0, DP_BLEND_MODE_REPLACE,
+                                             left, top, right, bottom,
+                                             (DP_UPixel15){0, 0, 0, DP_BIT15});
+    }
+}
+
+DP_Preview *DP_preview_new_cut(int initial_offset_x, int initial_offset_y,
+                               int layer_id, int x, int y, int width,
+                               int height, const DP_Pixel8 *mask_or_null)
+{
+    int mask_count = mask_or_null ? width * height : 0;
+    DP_PreviewCut *pvc = DP_malloc(
+        DP_FLEX_SIZEOF(DP_PreviewCut, mask, DP_int_to_size(mask_count)));
+    init_preview(&pvc->parent, DP_PREVIEW_CUT, DP_BLEND_MODE_ERASE, layer_id,
+                 initial_offset_x, initial_offset_y, preview_cut_render, NULL);
+    pvc->x = x;
+    pvc->y = y;
+    pvc->width = width;
+    pvc->height = height;
+    pvc->have_mask = mask_or_null;
+    for (int i = 0; i < mask_count; ++i) {
+        pvc->mask[i] = mask_or_null[i].a;
+    }
+    return &pvc->parent;
+}
+
+
+typedef struct DP_PreviewTransform {
+    DP_Preview parent;
+    int target_layer_id;
+    int x, y, width, height;
+    DP_Quad dst_quad;
+    int interpolation;
+    DP_Image *img;
+    struct {
+        DP_PreviewTransformGetPixelsFn get;
+        DP_PreviewTransformDisposePixelsFn dispose;
+        void *user;
+    } pixels;
+} DP_PreviewTransform;
+
+static bool preview_transform_prepare_image(DP_PreviewTransform *pvtf,
+                                            DP_DrawContext *dc)
+{
+    if (pvtf->img) {
+        return true; // Image alread transformed successfully.
+    }
+
+    DP_PreviewTransformGetPixelsFn get_pixels = pvtf->pixels.get;
+    if (!get_pixels) {
+        return false; // Transform already attempted, but failed.
+    }
+
+    void *user = pvtf->pixels.user;
+    const DP_Pixel8 *pixels = get_pixels(user);
+    pvtf->pixels.get = NULL;
+    DP_Image *img = DP_image_transform_pixels(pvtf->width, pvtf->height, pixels,
+                                              dc, &pvtf->dst_quad,
+                                              pvtf->interpolation, NULL, NULL);
+    pvtf->pixels.dispose(user);
+    pvtf->pixels.dispose = NULL;
+
+    if (img) {
+        pvtf->img = img;
+        return true;
+    }
+    else {
+        DP_warn("Error transforming preview: %s", DP_error());
+        return false;
+    }
+}
+
+static void preview_transform_render(DP_Preview *pv, DP_DrawContext *dc,
+                                     int offset_x, int offset_y,
+                                     DP_TransientLayerContent *tlc)
+{
+    DP_PreviewTransform *pvtf = (DP_PreviewTransform *)pv;
+    if (preview_transform_prepare_image(pvtf, dc)) {
+        int left = pvtf->x + offset_x;
+        int top = pvtf->y + offset_y;
+        DP_transient_layer_content_put_image(tlc, 0, DP_BLEND_MODE_REPLACE,
+                                             left, top, pvtf->img);
+    }
+}
+
+static void preview_transform_dispose(DP_Preview *pv)
+{
+    DP_PreviewTransform *pvtf = (DP_PreviewTransform *)pv;
+    DP_PreviewTransformDisposePixelsFn dispose = pvtf->pixels.dispose;
+    if (dispose) {
+        dispose(pvtf->pixels.user);
+    }
+    DP_image_free(pvtf->img);
+}
+
+DP_Preview *DP_preview_new_transform(
+    int initial_offset_x, int initial_offset_y, int layer_id, int x, int y,
+    int width, int height, const DP_Quad *dst_quad, int interpolation,
+    DP_PreviewTransformGetPixelsFn get_pixels,
+    DP_PreviewTransformDisposePixelsFn dispose_pixels, void *user)
+{
+    DP_ASSERT(width > 0);
+    DP_ASSERT(height > 0);
+    DP_ASSERT(dst_quad);
+    DP_ASSERT(get_pixels);
+    DP_ASSERT(dispose_pixels);
+    DP_PreviewTransform *pvtf = DP_malloc(sizeof(*pvtf));
+    init_preview(&pvtf->parent, DP_PREVIEW_TRANSFORM, DP_BLEND_MODE_NORMAL,
+                 layer_id, initial_offset_x, initial_offset_y,
+                 preview_transform_render, preview_transform_dispose);
+    pvtf->x = x;
+    pvtf->y = y;
+    pvtf->width = width;
+    pvtf->height = height;
+    pvtf->dst_quad = *dst_quad;
+    pvtf->interpolation = interpolation;
+    pvtf->pixels.get = get_pixels;
+    pvtf->pixels.dispose = dispose_pixels;
+    pvtf->pixels.user = user;
+    pvtf->img = NULL;
+    return &pvtf->parent;
+}
+
+
+typedef struct DP_PreviewDabs {
+    DP_Preview parent;
+    int count;
+    DP_Message *messages[];
+} DP_PreviewDabs;
+
+static int preview_dabs_blend_mode(DP_Message *msg)
+{
+    switch (DP_message_type(msg)) {
+    case DP_MSG_DRAW_DABS_CLASSIC:
+        return DP_msg_draw_dabs_classic_mode(DP_message_internal(msg));
+    case DP_MSG_DRAW_DABS_PIXEL:
+    case DP_MSG_DRAW_DABS_PIXEL_SQUARE:
+        return DP_msg_draw_dabs_pixel_mode(DP_message_internal(msg));
+    case DP_MSG_DRAW_DABS_MYPAINT: {
+        DP_MsgDrawDabsMyPaint *mddmp = DP_message_internal(msg);
+        int blend_mode;
+        DP_mypaint_brush_mode_extract(DP_msg_draw_dabs_mypaint_mode(mddmp),
+                                      &blend_mode, NULL, NULL);
+        if (blend_mode == DP_BLEND_MODE_NORMAL_AND_ERASER) {
+            if (DP_msg_draw_dabs_mypaint_lock_alpha(mddmp) == UINT8_MAX) {
+                return DP_BLEND_MODE_RECOLOR;
+            }
+            else if (DP_msg_draw_dabs_mypaint_colorize(mddmp) == UINT8_MAX) {
+                return DP_BLEND_MODE_COLOR;
+            }
+            else if (DP_msg_draw_dabs_mypaint_color(mddmp) & 0xff000000u) {
+                return DP_BLEND_MODE_NORMAL;
+            }
+            else {
+                return DP_BLEND_MODE_ERASE;
+            }
+        }
+        else {
+            return blend_mode;
+        }
+    }
+    default:
+        DP_UNREACHABLE();
+    }
+}
+
+static void preview_dabs_render(DP_Preview *pv, DP_DrawContext *dc,
+                                int offset_x, int offset_y,
+                                DP_TransientLayerContent *tlc)
+{
+    DP_PreviewDabs *pvd = (DP_PreviewDabs *)pv;
+    int count = pvd->count;
+    DP_PaintDrawDabsParams params = {0};
+    DP_TransientLayerContent *sub_tlc = NULL;
+    uint16_t sub_opacity;
+
+    for (int i = 0; i < count; ++i) {
+        DP_Message *msg = pvd->messages[i];
+        DP_MessageType type = DP_message_type(msg);
+        switch (type) {
+        case DP_MSG_DRAW_DABS_CLASSIC: {
+            DP_MsgDrawDabsClassic *mddc = DP_message_internal(msg);
+            params.origin_x = DP_msg_draw_dabs_classic_x(mddc);
+            params.origin_y = DP_msg_draw_dabs_classic_y(mddc);
+            params.color = DP_msg_draw_dabs_classic_color(mddc);
+            params.indirect = DP_msg_draw_dabs_classic_indirect(mddc);
+            params.classic.dabs =
+                DP_msg_draw_dabs_classic_dabs(mddc, &params.dab_count);
+            break;
+        }
+        case DP_MSG_DRAW_DABS_PIXEL:
+        case DP_MSG_DRAW_DABS_PIXEL_SQUARE: {
+            DP_MsgDrawDabsPixel *mddp = DP_message_internal(msg);
+            params.origin_x = DP_msg_draw_dabs_pixel_x(mddp);
+            params.origin_y = DP_msg_draw_dabs_pixel_y(mddp);
+            params.color = DP_msg_draw_dabs_pixel_color(mddp);
+            params.indirect = DP_msg_draw_dabs_pixel_indirect(mddp);
+            params.pixel.dabs =
+                DP_msg_draw_dabs_pixel_dabs(mddp, &params.dab_count);
+            break;
+        }
+        case DP_MSG_DRAW_DABS_MYPAINT: {
+            DP_MsgDrawDabsMyPaint *mddmp = DP_message_internal(msg);
+            params.origin_x = DP_msg_draw_dabs_mypaint_x(mddmp);
+            params.origin_y = DP_msg_draw_dabs_mypaint_y(mddmp);
+            params.color = DP_msg_draw_dabs_mypaint_color(mddmp);
+            params.mypaint.dabs =
+                DP_msg_draw_dabs_mypaint_dabs(mddmp, &params.dab_count);
+            params.mypaint.lock_alpha = 0;
+            params.mypaint.colorize = 0;
+            params.mypaint.posterize = 0;
+            params.mypaint.posterize_num = 0;
+            DP_mypaint_brush_mode_extract(DP_msg_draw_dabs_mypaint_mode(mddmp),
+                                          NULL, &params.indirect, NULL);
+            break;
+        }
+        default:
+            continue;
+        }
+
+        if (params.indirect) {
+            if (!sub_tlc) {
+                sub_tlc = DP_transient_layer_content_new_init(
+                    DP_transient_layer_content_width(tlc),
+                    DP_transient_layer_content_height(tlc), NULL);
+                sub_opacity = DP_channel8_to_15(
+                    DP_uint32_to_uint8((params.color & 0xff000000u) >> 24u));
+            }
+            params.blend_mode = DP_BLEND_MODE_ALPHA_DARKEN;
+        }
+        else {
+            params.blend_mode = DP_BLEND_MODE_NORMAL;
+            params.color |= 0xff000000u;
+        }
+
+        params.type = (int)type;
+        params.origin_x += offset_x;
+        params.origin_y += offset_y;
+        DP_paint_draw_dabs(dc, &params, params.indirect ? sub_tlc : tlc);
+    }
+
+    if (sub_tlc) {
+        DP_transient_layer_content_merge(tlc, 0, (DP_LayerContent *)sub_tlc,
+                                         sub_opacity, DP_BLEND_MODE_NORMAL);
+        DP_transient_layer_content_decref(sub_tlc);
+    }
+}
+
+static void preview_dabs_dispose(DP_Preview *pv)
+{
+    DP_PreviewDabs *pvd = (DP_PreviewDabs *)pv;
+    int count = pvd->count;
+    for (int i = 0; i < count; ++i) {
+        DP_message_decref(pvd->messages[i]);
+    }
+}
+
+DP_Preview *DP_preview_new_dabs_inc(int initial_offset_x, int initial_offset_y,
+                                    int layer_id, int count,
+                                    DP_Message **messages)
+{
+    DP_ASSERT(count > 0);
+    DP_ASSERT(messages);
+    DP_PreviewDabs *pvd = DP_malloc(
+        DP_FLEX_SIZEOF(DP_PreviewDabs, messages, DP_int_to_size(count)));
+    init_preview(&pvd->parent, DP_PREVIEW_DABS,
+                 preview_dabs_blend_mode(messages[0]), layer_id,
+                 initial_offset_x, initial_offset_y, preview_dabs_render,
+                 preview_dabs_dispose);
+    pvd->count = count;
+    for (int i = 0; i < count; ++i) {
+        pvd->messages[i] = DP_message_incref(messages[i]);
+    }
+    return &pvd->parent;
+}
+
+
+struct DP_PreviewRenderer {
+    struct {
+        DP_PreviewRenderedFn rendered;
+        DP_PreviewRerenderedFn rerendered;
+        DP_PreviewClearFn clear;
+        void *user;
+    } fn;
+    DP_Queue queue;
+    DP_DrawContext *dc;
+    DP_Mutex *queue_mutex;
+    DP_Semaphore *queue_sem;
+    DP_Thread *thread;
+};
+
+typedef enum DP_PreviewRenderJobType {
+    DP_PREVIEW_RENDER_JOB_RENDER,
+    DP_PREVIEW_RENDER_JOB_RERENDER,
+    DP_PREVIEW_RENDER_JOB_CLEAR,
+    DP_PREVIEW_RENDER_JOB_QUIT,
+} DP_PreviewRenderJobType;
+
+typedef struct DP_PreviewRenderJob {
+    DP_PreviewRenderJobType type;
+    union {
+        struct {
+            DP_Preview *pv;
+            int canvas_width, canvas_height;
+            int offset_x, offset_y;
+        } render;
+        struct {
+            DP_PreviewType type;
+        } clear;
+    };
+} DP_PreviewRenderJob;
+
+static DP_PreviewRenderJob shift_render_job(DP_Queue *queue)
+{
+    DP_PreviewRenderJob *peeked = DP_queue_peek(queue, sizeof(*peeked));
+    if (peeked) {
+        DP_PreviewRenderJob job = *peeked;
+        DP_queue_shift(queue);
+        return job;
+    }
+    else {
+        DP_PreviewRenderJob job;
+        job.type = DP_PREVIEW_RENDER_JOB_QUIT;
+        return job;
+    }
+}
+static bool handle_render_job(DP_Preview *pv, DP_DrawContext *dc,
+                              int canvas_width, int canvas_height, int offset_x,
+                              int offset_y)
+{
+    if (DP_atomic_compare_exchange(&pv->status, RENDER_QUEUED, RENDER_ACTIVE)) {
+        DP_TransientLayerContent *tlc = DP_transient_layer_content_new_init(
+            canvas_width, canvas_height, NULL);
+        pv->render(pv, dc, pv->initial_offset_x - offset_x,
+                   pv->initial_offset_y - offset_y, tlc);
+
+        DP_LayerContent *lc = DP_atomic_ptr_xch(
+            &pv->render_lc, DP_transient_layer_content_persist(tlc));
+        DP_layer_content_decref_nullable(lc);
+
+        return DP_atomic_compare_exchange(&pv->status, RENDER_ACTIVE,
+                                          RENDER_DONE);
+    }
+    else {
+        return false;
+    }
+}
+
+static void run_worker_thread(void *user)
+{
+    DP_PreviewRenderer *pvr = user;
+    DP_Mutex *queue_mutex = pvr->queue_mutex;
+    DP_Semaphore *queue_sem = pvr->queue_sem;
+    DP_Queue *queue = &pvr->queue;
+    DP_DrawContext *dc = pvr->dc;
+    DP_PreviewRenderedFn rendered = pvr->fn.rendered;
+    DP_PreviewRerenderedFn rerendered = pvr->fn.rerendered;
+    DP_PreviewClearFn clear = pvr->fn.clear;
+    void *fn_user = pvr->fn.user;
+    while (true) {
+        DP_SEMAPHORE_MUST_WAIT(queue_sem);
+        DP_MUTEX_MUST_LOCK(queue_mutex);
+        DP_PreviewRenderJob job = shift_render_job(queue);
+        DP_MUTEX_MUST_UNLOCK(queue_mutex);
+        if (job.type == DP_PREVIEW_RENDER_JOB_RENDER) {
+            DP_Preview *pv = job.render.pv;
+            if (handle_render_job(pv, dc, job.render.canvas_width,
+                                  job.render.canvas_height, job.render.offset_x,
+                                  job.render.offset_y)) {
+                rendered(fn_user, pv);
+            }
+            DP_preview_decref(pv);
+        }
+        else if (job.type == DP_PREVIEW_RENDER_JOB_RERENDER) {
+            DP_Preview *pv = job.render.pv;
+            if (handle_render_job(pv, dc, job.render.canvas_width,
+                                  job.render.canvas_height, job.render.offset_x,
+                                  job.render.offset_y)) {
+                rerendered(fn_user);
+            }
+            DP_preview_decref(pv);
+        }
+        else if (job.type == DP_PREVIEW_RENDER_JOB_CLEAR) {
+            clear(fn_user, job.clear.type);
+        }
+        else {
+            DP_ASSERT(job.type == DP_PREVIEW_RENDER_JOB_QUIT);
+            break;
+        }
+    }
+}
+
+DP_PreviewRenderer *DP_preview_renderer_new(DP_DrawContext *dc,
+                                            DP_PreviewRenderedFn rendered,
+                                            DP_PreviewRerenderedFn rerendered,
+                                            DP_PreviewClearFn clear, void *user)
+{
+    DP_ASSERT(rendered);
+    DP_ASSERT(clear);
+    DP_PreviewRenderer *pvr = DP_malloc(sizeof(*pvr));
+    *pvr = (DP_PreviewRenderer){
+        {rendered, rerendered, clear, user},
+        DP_QUEUE_NULL,
+        dc,
+        NULL,
+        NULL,
+        NULL,
+    };
+    DP_queue_init(&pvr->queue, 8, sizeof(DP_PreviewRenderJob));
+    bool ok = (pvr->queue_mutex = DP_mutex_new()) != NULL
+           && (pvr->queue_sem = DP_semaphore_new(0)) != NULL
+           && (pvr->thread = DP_thread_new(run_worker_thread, pvr)) != NULL;
+    if (ok) {
+        return pvr;
+    }
+    else {
+        DP_preview_renderer_free(pvr);
+        return NULL;
+    }
+}
+
+static void dispose_preview_render_job(void *element)
+{
+    DP_PreviewRenderJob *job = element;
+    if (job->type == DP_PREVIEW_RENDER_JOB_RENDER) {
+        DP_preview_decref(job->render.pv);
+    }
+}
+
+void DP_preview_renderer_free(DP_PreviewRenderer *pvr)
+{
+    if (pvr) {
+        if (pvr->queue_mutex && pvr->queue_sem) {
+            DP_MUTEX_MUST_LOCK(pvr->queue_mutex);
+            DP_queue_clear(&pvr->queue, sizeof(DP_PreviewRenderJob),
+                           dispose_preview_render_job);
+            DP_SEMAPHORE_MUST_POST(pvr->queue_sem);
+            DP_MUTEX_MUST_UNLOCK(pvr->queue_mutex);
+            DP_thread_free_join(pvr->thread);
+        }
+        DP_semaphore_free(pvr->queue_sem);
+        DP_mutex_free(pvr->queue_mutex);
+        DP_queue_dispose(&pvr->queue);
+        DP_free(pvr);
+    }
+}
+
+static bool is_render_job_for_type(void *element, void *user)
+{
+    DP_PreviewRenderJob *job = element;
+    if (job->type == DP_PREVIEW_RENDER_JOB_RENDER) {
+        DP_Preview *pv = job->render.pv;
+        return pv->type == *(DP_PreviewType *)user
+            && DP_atomic_get(&pv->status) != RENDER_CANCEL;
+    }
+    else {
+        return false;
+    }
+}
+
+void DP_preview_renderer_push_noinc(DP_PreviewRenderer *pvr, DP_Preview *pv,
+                                    int canvas_width, int canvas_height,
+                                    int offset_x, int offset_y)
+{
+    DP_ASSERT(pvr);
+    DP_ASSERT(pv);
+
+    DP_Queue *queue = &pvr->queue;
+    DP_Mutex *queue_mutex = pvr->queue_mutex;
+    DP_MUTEX_MUST_LOCK(queue_mutex);
+
+    // Clobber an existing render job for this type if possible.
+    size_t index = DP_queue_search_last_index(
+        queue, sizeof(DP_PreviewRenderJob), is_render_job_for_type, &pv->type);
+
+    DP_PreviewRenderJob *job;
+    if (index == queue->used) {
+        job = DP_queue_push(queue, sizeof(*job));
+        DP_SEMAPHORE_MUST_POST(pvr->queue_sem);
+    }
+    else {
+        job = DP_queue_at(queue, sizeof(*job), index);
+        DP_preview_decref(job->render.pv);
+    }
+
+    *job = (DP_PreviewRenderJob){
+        DP_PREVIEW_RENDER_JOB_RENDER,
+        {.render = {pv, canvas_width, canvas_height, offset_x, offset_y}}};
+    DP_atomic_set(&pv->status, RENDER_QUEUED);
+
+    DP_MUTEX_MUST_UNLOCK(queue_mutex);
+}
+
+void DP_preview_renderer_push_rerender_inc(DP_PreviewRenderer *pvr,
+                                           DP_Preview *pv, int canvas_width,
+                                           int canvas_height, int offset_x,
+                                           int offset_y)
+{
+    DP_ASSERT(pvr);
+    DP_ASSERT(pv);
+
+    DP_Queue *queue = &pvr->queue;
+    DP_Mutex *queue_mutex = pvr->queue_mutex;
+    DP_MUTEX_MUST_LOCK(queue_mutex);
+
+    DP_PreviewRenderJob *job = DP_queue_push(queue, sizeof(*job));
+    *job =
+        (DP_PreviewRenderJob){DP_PREVIEW_RENDER_JOB_RERENDER,
+                              {.render = {DP_preview_incref(pv), canvas_width,
+                                          canvas_height, offset_x, offset_y}}};
+    DP_SEMAPHORE_MUST_POST(pvr->queue_sem);
+    DP_atomic_set(&pv->status, RENDER_QUEUED);
+
+    DP_MUTEX_MUST_UNLOCK(queue_mutex);
+}
+
+static void cancel_render_job(void *element, void *user)
+{
+    DP_PreviewRenderJob *job = element;
+    if (job->type == DP_PREVIEW_RENDER_JOB_RENDER) {
+        DP_Preview *pv = job->render.pv;
+        if (pv->type == *(DP_PreviewType *)user) {
+            DP_atomic_set(&pv->status, RENDER_CANCEL);
+        }
+    }
+}
+
+void DP_preview_renderer_cancel(DP_PreviewRenderer *pvr, DP_PreviewType type)
+{
+    DP_ASSERT(pvr);
+    DP_ASSERT(type >= 0);
+    DP_ASSERT(type < DP_PREVIEW_COUNT);
+    DP_Queue *queue = &pvr->queue;
+    DP_Mutex *queue_mutex = pvr->queue_mutex;
+    DP_MUTEX_MUST_LOCK(queue_mutex);
+    DP_queue_each(queue, sizeof(DP_PreviewRenderJob), cancel_render_job, &type);
+    DP_PreviewRenderJob *job = DP_queue_push(queue, sizeof(*job));
+    *job =
+        (DP_PreviewRenderJob){DP_PREVIEW_RENDER_JOB_CLEAR, {.clear = {type}}};
+    DP_SEMAPHORE_MUST_POST(pvr->queue_sem);
+    DP_MUTEX_MUST_UNLOCK(queue_mutex);
+}

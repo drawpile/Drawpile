@@ -130,11 +130,11 @@ void ShapeTool::updatePreview()
 
 	const canvas::PointVector pv = pointVector();
 	Q_ASSERT(pv.count() > 1);
-	m_brushEngine.beginStroke(0, true, m_zoom);
+	m_brushEngine.beginStroke(0, false, m_zoom);
 	for(const canvas::Point &p : pv) {
 		m_brushEngine.strokeTo(p, canvasState);
 	}
-	m_brushEngine.endStroke(pv.last().timeMsec() + 10, canvasState, true);
+	m_brushEngine.endStroke(pv.last().timeMsec() + 10, canvasState, false);
 
 	paintEngine->previewDabs(m_owner.activeLayer(), m_brushEngine.messages());
 	m_brushEngine.clearMessages();
