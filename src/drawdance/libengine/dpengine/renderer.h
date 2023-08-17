@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+#ifndef DPENGINE_RENDERER_H
+#define DPENGINE_RENDERER_H
 #include <dpcommon/common.h>
 #include <dpcommon/geom.h>
 
@@ -29,3 +31,5 @@ void DP_renderer_apply(DP_Renderer *renderer, DP_CanvasState *cs,
                        bool layers_can_decrease_opacity,
                        DP_Rect view_tile_bounds, bool render_outside_view,
                        bool view_bounds_changed);
+
+#endif
