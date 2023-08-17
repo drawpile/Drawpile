@@ -17,6 +17,7 @@ Unreleased Version 2.2.0-pre
  * Feature: Allow muting notifications for a window. Thanks Blozzom for suggesting.
  * Fix: Enable the lock session menu option properly, it remained stuck disabled in some cases before.
  * Feature: Allow selecting and copying text from the pinned message (through the context menu, it doesn't take keyboard shortcuts.) Thanks Bluestrings for suggesting.
+ * Fix: Don't claim that a layer is locked when it's just not visible in the current frame.
 
 2023-07-31 Version 2.2.0-beta.6
  * Fix: Don't forget account password when entering a wrong session password.
