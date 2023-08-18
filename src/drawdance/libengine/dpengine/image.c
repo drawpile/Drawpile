@@ -531,28 +531,27 @@ DP_UPixelFloat DP_image_sample_color_at_with(int width, int height,
                                              int *in_out_last_diameter)
 {
     DP_ASSERT(get_pixel);
-    if (x >= 0 && y >= 0 && x < width && y < height) {
-        if (diameter < 2) {
+    if (diameter < 2) {
+        if (x >= 0 && y >= 0 && x < width && y < height) {
             DP_Pixel8 pixel = get_pixel(user, x, y);
             return DP_upixel8_to_float(DP_pixel8_unpremultiply(pixel));
         }
         else {
-            int last_diameter;
-            if (in_out_last_diameter) {
-                last_diameter = *in_out_last_diameter;
-                *in_out_last_diameter = diameter;
-            }
-            else {
-                last_diameter = -1;
-            }
-            DP_BrushStamp stamp = DP_paint_color_sampling_stamp_make(
-                stamp_buffer, diameter, x, y, last_diameter);
-            return sample_dab_color(width, height, get_pixel, user, stamp,
-                                    opaque);
+            return DP_upixel_float_zero();
         }
     }
     else {
-        return DP_upixel_float_zero();
+        int last_diameter;
+        if (in_out_last_diameter) {
+            last_diameter = *in_out_last_diameter;
+            *in_out_last_diameter = diameter;
+        }
+        else {
+            last_diameter = -1;
+        }
+        DP_BrushStamp stamp = DP_paint_color_sampling_stamp_make(
+            stamp_buffer, diameter, x, y, last_diameter);
+        return sample_dab_color(width, height, get_pixel, user, stamp, opaque);
     }
 }
 
