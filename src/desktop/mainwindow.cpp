@@ -3586,13 +3586,13 @@ void MainWindow::setupActions()
 	QMenu *toolshortcuts = toolsmenu->addMenu(tr("&Shortcuts"));
 
 	QMenu *devtoolsmenu = toolsmenu->addMenu(tr("Developer Tools"));
-	QAction *tableteventlog = makeAction("tableteventlog");
-	QAction *profile = makeAction("profile");
-	QAction *artificialLag = makeAction("artificiallag", tr("Set Artificial Lag..."));
-	QAction *artificialDisconnect = makeAction("artificialdisconnect", tr("Artifical Disconnect..."));
-	QAction *debugDump = makeAction("debugdump", tr("Record Debug Dumps")).checkable();
-	QAction *openDebugDump = makeAction("opendebugdump", tr("Open Debug Dump..."));
-	QAction *showNetStats = makeAction("shownetstats", tr("Statistics…"));
+	QAction *tableteventlog = makeAction("tableteventlog", tr("Tablet Event Log...")).noDefaultShortcut();
+	QAction *profile = makeAction("profile", tr("Profile...")).noDefaultShortcut();
+	QAction *artificialLag = makeAction("artificiallag", tr("Set Artificial Lag...")).noDefaultShortcut();
+	QAction *artificialDisconnect = makeAction("artificialdisconnect", tr("Artifical Disconnect...")).noDefaultShortcut();
+	QAction *debugDump = makeAction("debugdump", tr("Record Debug Dumps")).checkable().noDefaultShortcut();
+	QAction *openDebugDump = makeAction("opendebugdump", tr("Open Debug Dump...")).noDefaultShortcut();
+	QAction *showNetStats = makeAction("shownetstats", tr("Statistics…")).noDefaultShortcut();
 	devtoolsmenu->addAction(tableteventlog);
 	devtoolsmenu->addAction(profile);
 	devtoolsmenu->addAction(artificialLag);
