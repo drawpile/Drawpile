@@ -6,6 +6,7 @@
 #include "desktop/docks/toolsettingsdock.h"
 #include <QGridLayout>
 #include <QLabel>
+#include <QScopedValueRollback>
 #include <QSpinBox>
 #include <QtColorWidgets/hue_slider.hpp>
 #include <QtColorWidgets/swatch.hpp>
@@ -189,7 +190,7 @@ ColorSliderDock::~ColorSliderDock()
 
 void ColorSliderDock::setColor(const QColor &color)
 {
-	d->updating = true;
+	QScopedValueRollback<bool> guard{d->updating, true};
 
 	d->lastUsedSwatch->setSelected(
 		findPaletteColor(d->lastUsedSwatch->palette(), color));
@@ -227,8 +228,6 @@ void ColorSliderDock::setColor(const QColor &color)
 	d->blue->setLastColor(QColor(color.red(), color.green(), 255));
 	d->blue->setValue(color.blue());
 	d->bluebox->setValue(color.blue());
-
-	d->updating = false;
 }
 
 void ColorSliderDock::updateFromRgbSliders()
