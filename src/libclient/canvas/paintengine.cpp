@@ -382,13 +382,35 @@ void PaintEngine::setInspectContextId(unsigned int contextId)
 QColor PaintEngine::sampleColor(int x, int y, int layerId, int diameter)
 {
 	if(layerId == 0) {
+		// Only extract the part of the pixmap that we want to sample from,
+		// since grabbing the whole thing is pretty slow.
+		QPoint pos;
+		QRect rect;
+		if(diameter < 2) {
+			pos = QPoint{0, 0};
+			rect = QRect{x, y, 1, 1};
+		} else {
+			int radius = diameter / 2;
+			int left = x - radius;
+			int top = y - radius;
+			pos = QPoint{x - left, y - top};
+			rect = QRect{left, top, diameter, diameter};
+		}
+
 		DP_mutex_lock(m_cacheMutex);
-		QImage img = m_cache.toImage();
+		QImage img = rect.intersects(m_cache.rect())
+						 ? m_cache.copy(rect).toImage()
+						 : QImage{};
 		DP_mutex_unlock(m_cacheMutex);
-		return drawdance::sampleColorAt(
-			img.convertToFormat(QImage::Format_ARGB32_Premultiplied),
-			m_sampleColorStampBuffer, x, y, diameter, true,
-			m_sampleColorLastDiameter);
+
+		if(img.isNull()) {
+			return Qt::transparent;
+		} else {
+			return drawdance::sampleColorAt(
+				img.convertToFormat(QImage::Format_ARGB32_Premultiplied),
+				m_sampleColorStampBuffer, pos.x(), pos.y(), diameter, true,
+				m_sampleColorLastDiameter);
+		}
 	} else {
 		drawdance::LayerContent lc =
 			viewCanvasState().searchLayerContent(layerId);
