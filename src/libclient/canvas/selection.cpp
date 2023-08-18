@@ -446,6 +446,13 @@ bool Selection::closeShape(const QRectF &clipRect)
 	return true;
 }
 
+void Selection::offsetBy(int x, int y)
+{
+	if(!m_moveRegion.isEmpty()) {
+		m_moveRegion.translate(x, y);
+	}
+}
+
 static bool isAxisAlignedRectangle(const QPolygon &p)
 {
 	if(p.size() != 4)

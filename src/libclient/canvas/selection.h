@@ -61,6 +61,8 @@ public:
 	 */
 	bool isClosed() const { return m_closedPolygon; }
 
+	void offsetBy(int x, int y);
+
 	/**
 	 * @brief Get the adjustment handle (if any) at the given coordinates
 	 * @param point point in canvas space

@@ -142,6 +142,14 @@ bool SelectionTool::isMultipart() const
 	return m_owner.model()->selection() != nullptr;
 }
 
+void SelectionTool::offsetActiveTool(int x, int y)
+{
+	canvas::Selection *sel = m_owner.model()->selection();
+	if(sel) {
+		sel->offsetBy(x, y);
+	}
+}
+
 void SelectionTool::startMove()
 {
 	canvas::CanvasModel *model = m_owner.model();

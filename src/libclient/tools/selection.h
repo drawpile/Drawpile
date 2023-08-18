@@ -34,6 +34,8 @@ public:
 	void undoMultipart() override final;
 	bool isMultipart() const override final;
 
+	void offsetActiveTool(int x, int y) override;
+
 	//! Start a layer region move operation
 	void startMove();
 
