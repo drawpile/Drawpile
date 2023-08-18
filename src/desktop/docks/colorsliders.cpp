@@ -4,13 +4,11 @@
 #include "desktop/docks/colorpalette.h"
 #include "desktop/docks/titlewidget.h"
 #include "desktop/docks/toolsettingsdock.h"
-
+#include <QGridLayout>
+#include <QLabel>
+#include <QSpinBox>
 #include <QtColorWidgets/hue_slider.hpp>
 #include <QtColorWidgets/swatch.hpp>
-
-#include <QLabel>
-#include <QGridLayout>
-#include <QSpinBox>
 
 namespace docks {
 
@@ -31,11 +29,12 @@ struct ColorSliderDock::Private {
 	QSpinBox *greenbox = nullptr;
 	QSpinBox *bluebox = nullptr;
 
-    bool updating = false;
+	bool updating = false;
 };
 
-ColorSliderDock::ColorSliderDock(const QString& title, QWidget *parent)
-	: DockBase(title, parent), d(new Private)
+ColorSliderDock::ColorSliderDock(const QString &title, QWidget *parent)
+	: DockBase(title, parent)
+	, d(new Private)
 {
 	// Create title bar widget
 	auto *titlebar = new TitleWidget(this);
@@ -43,7 +42,8 @@ ColorSliderDock::ColorSliderDock(const QString& title, QWidget *parent)
 
 	d->lastUsedSwatch = new color_widgets::Swatch(titlebar);
 	d->lastUsedSwatch->setForcedRows(1);
-	d->lastUsedSwatch->setForcedColumns(docks::ToolSettings::LASTUSED_COLOR_COUNT);
+	d->lastUsedSwatch->setForcedColumns(
+		docks::ToolSettings::LASTUSED_COLOR_COUNT);
 	d->lastUsedSwatch->setReadOnly(true);
 	d->lastUsedSwatch->setBorder(Qt::NoPen);
 	d->lastUsedSwatch->setMinimumHeight(24);
@@ -52,7 +52,9 @@ ColorSliderDock::ColorSliderDock(const QString& title, QWidget *parent)
 	titlebar->addCustomWidget(d->lastUsedSwatch, true);
 	titlebar->addSpace(24);
 
-	connect(d->lastUsedSwatch, &color_widgets::Swatch::colorSelected, this, &ColorSliderDock::colorSelected);
+	connect(
+		d->lastUsedSwatch, &color_widgets::Swatch::colorSelected, this,
+		&ColorSliderDock::colorSelected);
 
 	// Create main UI widget
 	QWidget *w = new QWidget;
@@ -132,23 +134,52 @@ ColorSliderDock::ColorSliderDock(const QString& title, QWidget *parent)
 
 	setWidget(w);
 
-	connect(d->hue, QOverload<int>::of(&color_widgets::HueSlider::valueChanged), this, &ColorSliderDock::updateFromHsvSliders);
-	connect(d->huebox, QOverload<int>::of(&QSpinBox::valueChanged), this, &ColorSliderDock::updateFromHsvSpinbox);
+	connect(
+		d->hue, QOverload<int>::of(&color_widgets::HueSlider::valueChanged),
+		this, &ColorSliderDock::updateFromHsvSliders);
+	connect(
+		d->huebox, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		&ColorSliderDock::updateFromHsvSpinbox);
 
-	connect(d->saturation, QOverload<int>::of(&color_widgets::GradientSlider::valueChanged), this, &ColorSliderDock::updateFromHsvSliders);
-	connect(d->saturationbox, QOverload<int>::of(&QSpinBox::valueChanged), this, &ColorSliderDock::updateFromHsvSpinbox);
+	connect(
+		d->saturation,
+		QOverload<int>::of(&color_widgets::GradientSlider::valueChanged), this,
+		&ColorSliderDock::updateFromHsvSliders);
+	connect(
+		d->saturationbox, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		&ColorSliderDock::updateFromHsvSpinbox);
 
-	connect(d->value, QOverload<int>::of(&color_widgets::GradientSlider::valueChanged), this, &ColorSliderDock::updateFromHsvSliders);
-	connect(d->valuebox, QOverload<int>::of(&QSpinBox::valueChanged), this, &ColorSliderDock::updateFromHsvSpinbox);
+	connect(
+		d->value,
+		QOverload<int>::of(&color_widgets::GradientSlider::valueChanged), this,
+		&ColorSliderDock::updateFromHsvSliders);
+	connect(
+		d->valuebox, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		&ColorSliderDock::updateFromHsvSpinbox);
 
-	connect(d->red, QOverload<int>::of(&color_widgets::GradientSlider::valueChanged), this, &ColorSliderDock::updateFromRgbSliders);
-	connect(d->redbox, QOverload<int>::of(&QSpinBox::valueChanged), this, &ColorSliderDock::updateFromRgbSpinbox);
+	connect(
+		d->red,
+		QOverload<int>::of(&color_widgets::GradientSlider::valueChanged), this,
+		&ColorSliderDock::updateFromRgbSliders);
+	connect(
+		d->redbox, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		&ColorSliderDock::updateFromRgbSpinbox);
 
-	connect(d->green, QOverload<int>::of(&color_widgets::GradientSlider::valueChanged), this, &ColorSliderDock::updateFromRgbSliders);
-	connect(d->greenbox, QOverload<int>::of(&QSpinBox::valueChanged), this, &ColorSliderDock::updateFromRgbSpinbox);
+	connect(
+		d->green,
+		QOverload<int>::of(&color_widgets::GradientSlider::valueChanged), this,
+		&ColorSliderDock::updateFromRgbSliders);
+	connect(
+		d->greenbox, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		&ColorSliderDock::updateFromRgbSpinbox);
 
-	connect(d->blue, QOverload<int>::of(&color_widgets::GradientSlider::valueChanged), this, &ColorSliderDock::updateFromRgbSliders);
-	connect(d->bluebox, QOverload<int>::of(&QSpinBox::valueChanged), this, &ColorSliderDock::updateFromRgbSpinbox);
+	connect(
+		d->blue,
+		QOverload<int>::of(&color_widgets::GradientSlider::valueChanged), this,
+		&ColorSliderDock::updateFromRgbSliders);
+	connect(
+		d->bluebox, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		&ColorSliderDock::updateFromRgbSpinbox);
 }
 
 ColorSliderDock::~ColorSliderDock()
@@ -156,24 +187,29 @@ ColorSliderDock::~ColorSliderDock()
 	delete d;
 }
 
-void ColorSliderDock::setColor(const QColor& color)
+void ColorSliderDock::setColor(const QColor &color)
 {
 	d->updating = true;
 
-	d->lastUsedSwatch->setSelected(findPaletteColor(d->lastUsedSwatch->palette(), color));
+	d->lastUsedSwatch->setSelected(
+		findPaletteColor(d->lastUsedSwatch->palette(), color));
 
 	d->hue->setColorSaturation(color.saturationF());
 	d->hue->setColorValue(color.valueF());
 	d->hue->setValue(color.hue());
 	d->huebox->setValue(color.hue());
 
-	d->saturation->setFirstColor(QColor::fromHsv(color.hue(), 0, color.value()));
-	d->saturation->setLastColor(QColor::fromHsv(color.hue(), 255, color.value()));
+	d->saturation->setFirstColor(
+		QColor::fromHsv(color.hue(), 0, color.value()));
+	d->saturation->setLastColor(
+		QColor::fromHsv(color.hue(), 255, color.value()));
 	d->saturation->setValue(color.saturation());
 	d->saturationbox->setValue(color.saturation());
 
-	d->value->setFirstColor(QColor::fromHsv(color.hue(), color.saturation(), 0));
-	d->value->setLastColor(QColor::fromHsv(color.hue(), color.saturation(), 255));
+	d->value->setFirstColor(
+		QColor::fromHsv(color.hue(), color.saturation(), 0));
+	d->value->setLastColor(
+		QColor::fromHsv(color.hue(), color.saturation(), 255));
 	d->value->setValue(color.value());
 	d->valuebox->setValue(color.value());
 
@@ -198,7 +234,8 @@ void ColorSliderDock::setColor(const QColor& color)
 void ColorSliderDock::updateFromRgbSliders()
 {
 	if(!d->updating) {
-		const QColor color(d->red->value(), d->green->value(), d->blue->value());
+		const QColor color(
+			d->red->value(), d->green->value(), d->blue->value());
 
 		setColor(color);
 		emit colorSelected(color);
@@ -208,7 +245,8 @@ void ColorSliderDock::updateFromRgbSliders()
 void ColorSliderDock::updateFromRgbSpinbox()
 {
 	if(!d->updating) {
-		const QColor color(d->redbox->value(), d->greenbox->value(), d->bluebox->value());
+		const QColor color(
+			d->redbox->value(), d->greenbox->value(), d->bluebox->value());
 		setColor(color);
 		emit colorSelected(color);
 	}
@@ -217,7 +255,8 @@ void ColorSliderDock::updateFromRgbSpinbox()
 void ColorSliderDock::updateFromHsvSliders()
 {
 	if(!d->updating) {
-		const QColor color = QColor::fromHsv(d->hue->value(), d->saturation->value(), d->value->value());
+		const QColor color = QColor::fromHsv(
+			d->hue->value(), d->saturation->value(), d->value->value());
 
 		setColor(color);
 		emit colorSelected(color);
@@ -227,7 +266,9 @@ void ColorSliderDock::updateFromHsvSliders()
 void ColorSliderDock::updateFromHsvSpinbox()
 {
 	if(!d->updating) {
-		const QColor color = QColor::fromHsv(d->huebox->value(), d->saturationbox->value(), d->valuebox->value());
+		const QColor color = QColor::fromHsv(
+			d->huebox->value(), d->saturationbox->value(),
+			d->valuebox->value());
 
 		setColor(color);
 		emit colorSelected(color);
@@ -238,8 +279,8 @@ void ColorSliderDock::setLastUsedColors(const color_widgets::ColorPalette &pal)
 {
 	d->lastUsedSwatch->setPalette(pal);
 	const QColor color(d->red->value(), d->green->value(), d->blue->value());
-	d->lastUsedSwatch->setSelected(findPaletteColor(d->lastUsedSwatch->palette(), color));
+	d->lastUsedSwatch->setSelected(
+		findPaletteColor(d->lastUsedSwatch->palette(), color));
 }
 
 }
-

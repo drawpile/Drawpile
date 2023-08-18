@@ -6,7 +6,7 @@
 #include "desktop/docks/dockbase.h"
 
 namespace color_widgets {
-	class ColorPalette;
+class ColorPalette;
 }
 
 namespace docks {
@@ -14,11 +14,11 @@ namespace docks {
 class ColorSliderDock final : public DockBase {
 	Q_OBJECT
 public:
-	ColorSliderDock(const QString& title, QWidget *parent);
+	ColorSliderDock(const QString &title, QWidget *parent);
 	~ColorSliderDock() override;
 
 public slots:
-	void setColor(const QColor& color);
+	void setColor(const QColor &color);
 	void setLastUsedColors(const color_widgets::ColorPalette &pal);
 
 private slots:
@@ -28,7 +28,7 @@ private slots:
 	void updateFromHsvSpinbox();
 
 signals:
-	void colorSelected(const QColor& color);
+	void colorSelected(const QColor &color);
 
 private:
 	struct Private;
@@ -38,4 +38,3 @@ private:
 }
 
 #endif
-
