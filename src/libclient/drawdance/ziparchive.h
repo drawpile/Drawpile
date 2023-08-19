@@ -29,11 +29,11 @@ public:
 		File &operator=(File &&) = delete;
 
 		bool isNull() const;
-    	size_t size() const;
-        void *content() const;
+		size_t size() const;
+		void *content() const;
 
-        QByteArray readBytes() const;
-        QString readUtf8() const;
+		QByteArray readBytes() const;
+		QString readUtf8() const;
 
 	private:
 		explicit File(DP_ZipReaderFile *zrf);
