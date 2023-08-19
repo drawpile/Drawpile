@@ -20,6 +20,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Don't claim that a layer is locked when it's just not visible in the current frame.
  * Feature: Make canvas rendering and preview painting asynchronous. This should make the UI much more responsive when e.g. changing layer visibility or transforming a large selection.
  * Fix: Properly handle canvas resizes while transforming a selection, it now no longer causes the source of the transform to get offset.
+ * Fix: Show the current color properly on program startup.
 
 2023-07-31 Version 2.2.0-beta.6
  * Fix: Don't forget account password when entering a wrong session password.

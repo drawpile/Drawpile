@@ -489,6 +489,7 @@ void ToolSettings::selectTool(tools::Tool::Type tool)
 
 void ToolSettings::triggerUpdate()
 {
+	emit foregroundColorChanged(d->color);
 	emit toolChanged(d->currentTool);
 	tools::ToolSettings *ts = d->currentSettings();
 	if(ts) {
