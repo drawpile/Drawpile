@@ -116,6 +116,14 @@ void Tools::initColorWheel(desktop::settings::Settings &settings, utils::SanerFo
 
 	form->addSpacer();
 
+	auto *mirror = form->addRadioGroup(tr("Direction:"), false, {
+		{ tr("Ascending"), true },
+		{ tr("Descending"), false }
+	});
+	settings.bindColorWheelMirror(mirror);
+
+	form->addSpacer();
+
 	auto *space = form->addRadioGroup(tr("Color space:"), false, {
 		{ tr("HSV (Hue–Saturation–Value)"),
 			color_widgets::ColorWheel::ColorSpaceEnum::ColorHSV },
@@ -130,6 +138,7 @@ void Tools::initColorWheel(desktop::settings::Settings &settings, utils::SanerFo
 	preview->setMinimumWidth(150);
 	settings.bindColorWheelShape(preview, &color_widgets::ColorWheel::setSelectorShape);
 	settings.bindColorWheelAngle(preview, &color_widgets::ColorWheel::setRotatingSelector);
+	settings.bindColorWheelMirror(preview, &color_widgets::ColorWheel::setMirroredSelector);
 	settings.bindColorWheelSpace(preview, &color_widgets::ColorWheel::setColorSpace);
 	form->addAside(preview, startRow);
 }

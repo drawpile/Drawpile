@@ -46,6 +46,7 @@ ColorSpinnerDock::ColorSpinnerDock(const QString& title, QWidget *parent)
 	settings.bindColorWheelShape(d->colorwheel, &color_widgets::ColorWheel::setSelectorShape, &color_widgets::ColorWheel::selectorShapeChanged);
 	settings.bindColorWheelAngleAs<bool>(d->colorwheel, &color_widgets::ColorWheel::setRotatingSelector, &color_widgets::ColorWheel::rotatingSelectorChanged);
 	settings.bindColorWheelSpace(d->colorwheel, &color_widgets::ColorWheel::setColorSpace, &color_widgets::ColorWheel::colorSpaceChanged);
+	settings.bindColorWheelMirror(d->colorwheel, &color_widgets::ColorWheel::setMirroredSelector, &color_widgets::ColorWheel::mirroredSelectorChanged);
 }
 
 ColorSpinnerDock::~ColorSpinnerDock()

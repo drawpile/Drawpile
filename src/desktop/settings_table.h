@@ -21,6 +21,7 @@ SETTING(brushOutlineWidth         , BrushOutlineWidth         , "settings/brusho
 SETTING(canvasScrollBars          , CanvasScrollBars          , "settings/canvasscrollbars"             , true)
 SETTING(canvasShortcuts           , CanvasShortcuts           , "settings/canvasshortcuts2"             , QVariantMap())
 SETTING(colorWheelAngle           , ColorWheelAngle           , "settings/colorwheel/rotate"            , color_widgets::ColorWheel::AngleEnum::AngleRotating)
+SETTING(colorWheelMirror          , ColorWheelMirror          , "settings/colorwheel/mirror"            , true)
 SETTING(colorWheelShape           , ColorWheelShape           , "settings/colorwheel/shape"             , color_widgets::ColorWheel::ShapeEnum::ShapeTriangle)
 SETTING(colorWheelSpace           , ColorWheelSpace           , "settings/colorwheel/space"             , color_widgets::ColorWheel::ColorSpaceEnum::ColorHSV)
 SETTING(compactChat               , CompactChat               , "history/compactchat"                   , false)
