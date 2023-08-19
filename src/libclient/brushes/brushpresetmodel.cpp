@@ -481,6 +481,11 @@ QVariant BrushPresetTagModel::data(const QModelIndex &index, int role) const
 	}
 }
 
+bool BrushPresetTagModel::isExportableRow(int row)
+{
+	return row != ALL_ROW;
+}
+
 Tag BrushPresetTagModel::getTagAt(int row) const
 {
 	switch(row) {
@@ -669,9 +674,9 @@ void BrushPresetTagModel::convertOldPresets()
 	}
 }
 
-MyPaintImportResult BrushPresetTagModel::importMyPaintBrushPack(const QString &file)
+BrushImportResult BrushPresetTagModel::importBrushPack(const QString &file)
 {
-	MyPaintImportResult result = {{}, {}, 0};
+	BrushImportResult result = {{}, {}, 0};
 
 	drawdance::ZipReader zr{file};
 	if(zr.isNull()) {
@@ -683,10 +688,10 @@ MyPaintImportResult BrushPresetTagModel::importMyPaintBrushPack(const QString &f
 	beginResetModel();
 	m_presetModel->beginResetModel();
 
-	QVector<MyPaintBrushGroup> groups = readMyPaintOrderConf(result, file, zr);
-	for(const MyPaintBrushGroup &group : groups) {
+	QVector<ImportBrushGroup> groups = readOrderConf(result, file, zr);
+	for(const ImportBrushGroup &group : groups) {
 		if(!group.brushes.isEmpty()) {
-			readMyPaintBrushes(result, zr, group.name, group.brushes);
+			readImportBrushes(result, zr, group.name, group.brushes);
 		}
 	}
 
@@ -695,9 +700,9 @@ MyPaintImportResult BrushPresetTagModel::importMyPaintBrushPack(const QString &f
 	return result;
 }
 
-QVector<BrushPresetTagModel::MyPaintBrushGroup>
-BrushPresetTagModel::readMyPaintOrderConf(
-	MyPaintImportResult &result, const QString &file, const drawdance::ZipReader &zr)
+QVector<BrushPresetTagModel::ImportBrushGroup>
+BrushPresetTagModel::readOrderConf(
+	BrushImportResult &result, const QString &file, const drawdance::ZipReader &zr)
 {
 	static QRegularExpression newlineRe{"[\r\n]+"};
 	static QRegularExpression groupRe{"^Group:\\s*(.+)$"};
@@ -711,7 +716,7 @@ BrushPresetTagModel::readMyPaintOrderConf(
 	}
 
 	QFileInfo info{file};
-	QVector<BrushPresetTagModel::MyPaintBrushGroup> groups;
+	QVector<BrushPresetTagModel::ImportBrushGroup> groups;
 	groups.append({tr("Uncategorized %1").arg(info.baseName()), {}});
 
 	int current = 0;
@@ -723,10 +728,10 @@ BrushPresetTagModel::readMyPaintOrderConf(
 		if(!trimmed.isEmpty() && !trimmed.startsWith("#")) {
 			QRegularExpressionMatch match = groupRe.match(trimmed);
 			if(match.hasMatch()) {
-				current = addMyPaintOrderConfGroup(groups, match.captured(1));
+				current = addOrderConfGroup(groups, match.captured(1));
 			} else {
 				haveBrush = true;
-				addMyPaintOrderConfBrush(groups[current].brushes, trimmed);
+				addOrderConfBrush(groups[current].brushes, trimmed);
 			}
 		}
 	}
@@ -739,8 +744,8 @@ BrushPresetTagModel::readMyPaintOrderConf(
 	}
 }
 
-int BrushPresetTagModel::addMyPaintOrderConfGroup(
-	QVector<MyPaintBrushGroup> &groups, const QString &name)
+int BrushPresetTagModel::addOrderConfGroup(
+	QVector<ImportBrushGroup> &groups, const QString &name)
 {
 	int count = groups.size();
 	for(int i = 0; i < count; ++i) {
@@ -752,7 +757,7 @@ int BrushPresetTagModel::addMyPaintOrderConfGroup(
 	return count;
 }
 
-void BrushPresetTagModel::addMyPaintOrderConfBrush(
+void BrushPresetTagModel::addOrderConfBrush(
 	QStringList &brushes, const QString &brush)
 {
 	if(!brushes.contains(brush)) {
@@ -760,8 +765,8 @@ void BrushPresetTagModel::addMyPaintOrderConfBrush(
 	}
 }
 
-void BrushPresetTagModel::readMyPaintBrushes(
-	MyPaintImportResult &result, const drawdance::ZipReader &zr,
+void BrushPresetTagModel::readImportBrushes(
+	BrushImportResult &result, const drawdance::ZipReader &zr,
 	const QString &groupName, const QStringList &brushes)
 {
 	QString tagName = groupName;
@@ -783,7 +788,7 @@ void BrushPresetTagModel::readMyPaintBrushes(
 		ActiveBrush brush;
 		QString description;
 		QPixmap thumbnail;
-		if(readMyPaintBrush(
+		if(readImportBrush(
 			   result, zr, prefix, brush, description, thumbnail)) {
 			if(tagId == -1) {
 				tagId = d->createTag(tagName);
@@ -820,8 +825,8 @@ void BrushPresetTagModel::readMyPaintBrushes(
 	}
 }
 
-bool BrushPresetTagModel::readMyPaintBrush(
-	MyPaintImportResult &result, const drawdance::ZipReader &zr,
+bool BrushPresetTagModel::readImportBrush(
+	BrushImportResult &result, const drawdance::ZipReader &zr,
 	const QString &prefix, ActiveBrush &outBrush, QString &outDescription,
 	QPixmap &outThumbnail)
 {
@@ -845,9 +850,8 @@ bool BrushPresetTagModel::readMyPaintBrush(
 		return false;
 	}
 
-	outBrush = ActiveBrush{ActiveBrush::MYPAINT};
 	QJsonObject object = json.object();
-	if(!outBrush.myPaint().loadMyPaintJson(object)) {
+	if(!outBrush.fromExportJson(object)) {
 		result.errors.append(tr("Can't load brush from brush file '%1'")
 							 .arg(qUtf8Printable(mybPath)));
 		return false;
@@ -880,6 +884,125 @@ bool BrushPresetTagModel::readMyPaintBrush(
 }
 
 
+BrushExportResult BrushPresetTagModel::exportBrushPack(
+	const QString &file, const QVector<BrushExportTag> &exportTags) const
+{
+	BrushExportResult result = {false, {}, 0};
+
+	drawdance::ZipWriter zw{file};
+	if(zw.isNull()) {
+		qWarning("Error opening '%s': %s", qUtf8Printable(file), DP_error());
+		result.errors.append(tr("Can't open '%1'.").arg(qUtf8Printable(file)));
+		return result;
+	}
+
+	QStringList order;
+	for(const BrushExportTag &tag : exportTags) {
+		exportTag(result, order, zw, tag);
+	}
+
+	if(result.exportedBrushCount == 0) {
+		result.errors.append(tr("No brushes exported"));
+		return result;
+	}
+
+	if(!zw.addFile(QStringLiteral("order.conf"), order.join("\n").toUtf8())) {
+		qWarning("Error exporting order.conf: %s", DP_error());
+		result.errors.append(tr("Can't export order.conf"));
+		return result;
+	}
+
+	if(zw.finish()) {
+		result.ok = true;
+	} else {
+		result.errors.append(
+			tr("Error writing '%1': %2").arg(file).arg(DP_error()));
+	}
+	return result;
+}
+
+void BrushPresetTagModel::exportTag(
+	BrushExportResult &result, QStringList &order, drawdance::ZipWriter &zw,
+	const BrushExportTag &tag) const
+{
+	QString tagPath = makeExportSafe(tag.name);
+	if(!zw.addDir(tagPath)) {
+		qWarning("Error creating tag directory '%s': %s", qUtf8Printable(tagPath), DP_error());
+		result.errors.append(tr("Can't export tag '%1'").arg(tag.name));
+		return;
+	}
+
+	order.append(QStringLiteral("Group: %1").arg(tag.name));
+	for(int presetId : tag.presetIds) {
+		exportPreset(result, order, zw, tagPath, presetId);
+	}
+	order.append(QString{});
+}
+
+void BrushPresetTagModel::exportPreset(
+	BrushExportResult &result, QStringList &order, drawdance::ZipWriter &zw,
+	const QString &tagPath, int presetId) const
+{
+	QByteArray data = d->readPresetDataById(presetId);
+	PresetMetadata preset = d->readPresetMetadataById(presetId);
+	if(data.isEmpty() || preset.id != presetId) {
+		qWarning("Preset %d not found", presetId);
+		result.errors.append(tr("Missing preset %1").arg(presetId));
+		return;
+	}
+
+	QJsonDocument doc = QJsonDocument::fromJson(data);
+	if(!doc.isObject()) {
+		qWarning("Invalid preset data %d", presetId);
+		result.errors.append(tr("Invalid preset %1").arg(presetId));
+		return;
+	}
+
+	ActiveBrush brush = ActiveBrush::fromJson(doc.object());
+	QByteArray exportData = QJsonDocument{brush.toExportJson(preset.description)}.toJson(QJsonDocument::Indented);
+
+	QString presetName = getExportName(presetId, preset.name);
+	QString presetPath = QStringLiteral("%1/%2").arg(tagPath, presetName);
+
+	QString dataPath = QStringLiteral("%1.myb").arg(presetPath);
+	if(!zw.addFile(dataPath, exportData)) {
+		qWarning("Error exporting preset '%s': %s", qUtf8Printable(dataPath), DP_error());
+		result.errors.append(tr("Can't export preset '%1'").arg(preset.name));
+		return;
+	}
+
+	QString thumbnailPath = QStringLiteral("%1_prev.png").arg(presetPath);
+	if(!zw.addFile(thumbnailPath, preset.thumbnail)) {
+		qWarning("Error exporting preset thumbnail '%s': %s", qUtf8Printable(thumbnailPath), DP_error());
+		result.errors.append(tr("Can't export preset thumbnail '%1'").arg(preset.name));
+		return;
+	}
+
+	order.append(presetPath);
+	++result.exportedBrushCount;
+}
+
+QString BrushPresetTagModel::getExportName(
+	int presetId, const QString presetName)
+{
+	static QRegularExpression baseNameRe{"(?:[0-9]+-)?([^/\\\\]+)$"};
+	QRegularExpressionMatch match = baseNameRe.match(presetName);
+	if(match.hasMatch()) {
+		return makeExportSafe(match.captured(1));
+	} else {
+		return QStringLiteral("Brush%1").arg(presetId);
+	}
+}
+
+QString BrushPresetTagModel::makeExportSafe(const QString &s)
+{
+	static QRegularExpression safeRe{"[^a-zA-Z0-9_ -]"};
+	QString t = s.trimmed();
+	t.replace(safeRe, QStringLiteral("_"));
+	return t;
+}
+
+
 BrushPresetModel::BrushPresetModel(BrushPresetTagModel *tagModel)
 	: QAbstractItemModel(tagModel)
 	, d(tagModel->d)
@@ -893,14 +1016,19 @@ int BrushPresetModel::rowCount(const QModelIndex &parent) const
 	if(parent.isValid()) {
 		return 0;
 	} else {
-		switch(m_tagIdToFilter) {
-		case ALL_ID:
-			return d->readPresetCountAll();
-		case UNTAGGED_ID:
-			return d->readPresetCountByUntagged();
-		default:
-			return d->readPresetCountByTagId(m_tagIdToFilter);
-		}
+		return rowCountForTagId(m_tagIdToFilter);
+	}
+}
+
+int BrushPresetModel::rowCountForTagId(int tagId) const
+{
+	switch(m_tagIdToFilter) {
+	case ALL_ID:
+		return d->readPresetCountAll();
+	case UNTAGGED_ID:
+		return d->readPresetCountByUntagged();
+	default:
+		return d->readPresetCountByTagId(tagId);
 	}
 }
 
@@ -916,24 +1044,32 @@ QModelIndex BrushPresetModel::parent(const QModelIndex &) const
 
 QModelIndex BrushPresetModel::index(int row, int column, const QModelIndex &parent) const
 {
-	if(!parent.isValid()) {
-		int presetId;
-		switch(m_tagIdToFilter) {
-		case ALL_ID:
-			presetId = d->readPresetIdAtIndexAll(row);
-			break;
-		case UNTAGGED_ID:
-			presetId = d->readPresetIdAtIndexByUntagged(row);
-			break;
-		default:
-			presetId = d->readPresetIdAtIndexByTagId(row, m_tagIdToFilter);
-			break;
-		}
-		if(presetId > 0) {
-			return createIndex(row, column, quintptr(presetId));
-		}
+	if(parent.isValid() || column != 0) {
+		return QModelIndex();
+	} else {
+		return indexForTagId(m_tagIdToFilter, row);
 	}
-	return QModelIndex();
+}
+
+QModelIndex BrushPresetModel::indexForTagId(int tagId, int row) const
+{
+	int presetId;
+	switch(tagId) {
+	case ALL_ID:
+		presetId = d->readPresetIdAtIndexAll(row);
+		break;
+	case UNTAGGED_ID:
+		presetId = d->readPresetIdAtIndexByUntagged(row);
+		break;
+	default:
+		presetId = d->readPresetIdAtIndexByTagId(row, tagId);
+		break;
+	}
+	if(presetId > 0) {
+		return createIndex(row, 0, quintptr(presetId));
+	} else {
+		return QModelIndex();
+	}
 }
 
 QVariant BrushPresetModel::data(const QModelIndex &index, int role) const
@@ -941,6 +1077,7 @@ QVariant BrushPresetModel::data(const QModelIndex &index, int role) const
 	switch(role) {
 	case Qt::ToolTipRole:
 	case FilterRole:
+	case TitleRole:
 		return d->readPresetNameById(index.internalId());
 	case Qt::DecorationRole: {
 		QPixmap pixmap;

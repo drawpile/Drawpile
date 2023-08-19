@@ -10,6 +10,7 @@ class QFileInfo;
 
 namespace drawdance {
 	class ZipReader;
+	class ZipWriter;
 }
 
 namespace brushes {
@@ -37,10 +38,21 @@ struct PresetMetadata {
 	QByteArray thumbnail;
 };
 
-struct MyPaintImportResult {
+struct BrushImportResult {
 	QStringList errors;
 	QVector<Tag> importedTags;
 	int importedBrushCount;
+};
+
+struct BrushExportResult {
+	bool ok;
+	QStringList errors;
+	int exportedBrushCount;
+};
+
+struct BrushExportTag {
+	QString name;
+	QVector<int> presetIds;
 };
 
 class BrushPresetModel;
@@ -62,6 +74,8 @@ public:
 
 	QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
+	static bool isExportableRow(int row);
+
 	Tag getTagAt(int row) const;
 	int getTagRowById(int tagId) const;
 
@@ -72,10 +86,13 @@ public:
 	void setState(const QString &key, const QVariant &value);
 	QVariant getState(const QString &key) const;
 
-	MyPaintImportResult importMyPaintBrushPack(const QString &file);
+	BrushImportResult importBrushPack(const QString &file);
+
+	BrushExportResult exportBrushPack(
+		const QString &file, const QVector<BrushExportTag> &exportTags) const;
 
 private:
-	struct MyPaintBrushGroup {
+	struct ImportBrushGroup {
 		QString name;
 		QStringList brushes;
 	};
@@ -89,23 +106,35 @@ private:
 	void maybeConvertOldPresets();
 	void convertOldPresets();
 
-	static QVector<MyPaintBrushGroup> readMyPaintOrderConf(
-		MyPaintImportResult &result, const QString &file, const drawdance::ZipReader &zr);
+	static QVector<ImportBrushGroup> readOrderConf(
+		BrushImportResult &result, const QString &file, const drawdance::ZipReader &zr);
 
-	static int addMyPaintOrderConfGroup(
-		QVector<MyPaintBrushGroup> &groups, const QString &name);
+	static int addOrderConfGroup(
+		QVector<ImportBrushGroup> &groups, const QString &name);
 
-	static void addMyPaintOrderConfBrush(
+	static void addOrderConfBrush(
 		QStringList &brushes, const QString &brush);
 
-	void readMyPaintBrushes(
-		MyPaintImportResult &result, const drawdance::ZipReader &zr,
+	void readImportBrushes(
+		BrushImportResult &result, const drawdance::ZipReader &zr,
 		const QString &groupName, const QStringList &brushes);
 
-	static bool readMyPaintBrush(
-		MyPaintImportResult &result, const drawdance::ZipReader &zr,
+	static bool readImportBrush(
+		BrushImportResult &result, const drawdance::ZipReader &zr,
 		const QString &prefix, ActiveBrush &outBrush, QString &outDescription,
 		QPixmap &outThumbnail);
+
+	void exportTag(
+		BrushExportResult &result, QStringList &order, drawdance::ZipWriter &zw,
+		const BrushExportTag &tag) const;
+
+	void exportPreset(
+		BrushExportResult &result, QStringList &order, drawdance::ZipWriter &zw,
+		const QString &tagPath, int presetId) const;
+
+	static QString getExportName(int presetId, const QString presetName);
+
+	static QString makeExportSafe(const QString &t);
 };
 
 class BrushPresetModel final : public QAbstractItemModel {
@@ -116,16 +145,19 @@ public:
 	enum Roles {
 		FilterRole = Qt::UserRole + 1,
 		BrushRole,
+		TitleRole,
 	};
 
 	explicit BrushPresetModel(BrushPresetTagModel *tagModel);
 	~BrushPresetModel() override;
 
 	int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+	int rowCountForTagId(int tagId) const;
 	int columnCount(const QModelIndex &parent = QModelIndex()) const override;
 
 	QModelIndex parent(const QModelIndex &index) const override;
 	QModelIndex index(int row, int column = 0, const QModelIndex &parent = QModelIndex()) const override;
+	QModelIndex indexForTagId(int tagId, int row) const;
 
 	QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 

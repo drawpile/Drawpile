@@ -169,6 +169,10 @@ QStringList fileFormatFilterList(FileFormatOptions formats)
 		}
 	}
 
+	if(formats.testFlag(FileFormatOption::BrushPack)) {
+		filter << QGuiApplication::tr("Brush Pack (%1)").arg("*.zip");
+	}
+
 	if(!readImages.isEmpty() && !recordings.isEmpty()) {
 		filter.prepend(
 			QGuiApplication::tr("All Supported Files (%1)").arg(readImages + ' ' + recordings)

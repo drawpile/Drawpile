@@ -62,7 +62,14 @@ QString FileWrangler::getOpenDebugDumpsPath() const
 {
 	return showOpenFileDialog(
 		tr("Open Debug Dump"), LastPath::DEBUG_DUMP,
-		utils::FileFormatOption::OpenDebugDumps);
+		utils::FileFormatOption::OpenBrushPack);
+}
+
+QString FileWrangler::getOpenBrushPackPath() const
+{
+	return showOpenFileDialog(
+		tr("Import Brush Pack"), LastPath::BRUSH_PACK,
+		utils::FileFormatOption::BrushPack);
 }
 
 
@@ -220,6 +227,13 @@ QString FileWrangler::getSaveImageSeriesPath() const
 }
 #endif
 
+QString FileWrangler::getSaveBrushPackPath() const
+{
+	return showSaveFileDialog(
+		tr("Export Brushes"), LastPath::BRUSH_PACK, ".zip",
+		utils::FileFormatOption::SaveBrushPack);
+}
+
 
 bool FileWrangler::confirmFlatten(Document *doc, QString &filename) const
 {
@@ -322,6 +336,8 @@ QString FileWrangler::getLastPathKey(LastPath type)
 		return QStringLiteral("tableteventlog");
 	case LastPath::DEBUG_DUMP:
 		return QStringLiteral("debugdump");
+	case LastPath::BRUSH_PACK:
+		return QStringLiteral("brushpack");
 #ifdef Q_OS_ANDROID
 	case LastPath::LOG_FILE:
 		return QStringLiteral("logfile");

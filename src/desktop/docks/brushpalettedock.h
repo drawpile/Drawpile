@@ -7,6 +7,10 @@
 
 #include "desktop/docks/dockbase.h"
 
+namespace dialogs {
+   class BrushExportDialog;
+}
+
 namespace tools {
 	class ToolProperties;
 	class ToolSettings;
@@ -29,7 +33,8 @@ public:
 	void connectBrushSettings(tools::ToolSettings *toolSettings);
 
 public slots:
-	void importMyPaintBrushes();
+	void importBrushes();
+	void exportBrushes();
 	void reloadPreset();
 
 private slots:
@@ -44,6 +49,8 @@ private slots:
    void overwriteCurrentPreset();
    void editCurrentPreset();
    void deleteCurrentPreset();
+   void exportCurrentTag();
+   void exportCurrentPreset();
    void applyPresetProperties(int id, const QString &name, const QString &description,
         const QPixmap &thumbnail);
    void applyToBrushSettings(const QModelIndex &index);
@@ -63,6 +70,8 @@ private:
    QModelIndex presetIndexToProxy(const QModelIndex &sourceIndex);
    int presetProxyIndexToId(const QModelIndex &proxyIndex);
    int currentPresetId();
+
+   dialogs::BrushExportDialog *showExportDialog();
 
    bool question(const QString &title, const QString &text) const;
 };

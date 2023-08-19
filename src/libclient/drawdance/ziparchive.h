@@ -12,6 +12,7 @@ extern "C" {
 
 struct DP_ZipReader;
 struct DP_ZipReaderFile;
+struct DP_ZipWriter;
 
 namespace drawdance {
 
@@ -55,6 +56,31 @@ public:
 
 private:
 	DP_ZipReader *m_zr;
+};
+
+class ZipWriter final {
+public:
+	explicit ZipWriter(const QString &path);
+	~ZipWriter();
+
+	ZipWriter(const ZipWriter &) = delete;
+	ZipWriter(ZipWriter &&) = delete;
+	ZipWriter &operator=(const ZipWriter &) = delete;
+	ZipWriter &operator=(ZipWriter &&) = delete;
+
+	bool isNull() const;
+
+	bool addDir(const QString &path);
+
+	bool
+	addFile(const QString &path, const QByteArray &bytes, bool deflate = true);
+
+	// Must be called on success, the destructor aborts!
+	bool finish();
+	void abort();
+
+private:
+	DP_ZipWriter *m_zw;
 };
 
 }

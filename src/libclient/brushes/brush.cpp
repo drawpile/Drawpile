@@ -4,6 +4,7 @@
 #include "libclient/canvas/blendmodes.h"
 #include "libclient/drawdance/brushengine.h"
 #include "libshared/util/qtcompat.h"
+#include "cmake-config/config.h"
 
 #include <cmath>
 #include <mypaint-brush.h>
@@ -92,54 +93,17 @@ QColor ClassicBrush::qColor() const
 
 QJsonObject ClassicBrush::toJson() const
 {
-	QJsonObject o;
-	switch(shape) {
-	case DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND: o["shape"] = "round-pixel"; break;
-	case DP_BRUSH_SHAPE_CLASSIC_PIXEL_SQUARE: o["shape"] = "square-pixel"; break;
-	default: o["shape"] = "round-soft"; break;
-	}
-
-	o["size"] = size.max;
-	if(size.min > 0) o["size2"] = size.min;
-	o["sizecurve"] = m_sizeCurve.toString();
-
-	o["opacity"] = opacity.max;
-	if(opacity.min > 0) o["opacity2"] = opacity.min;
-	o["opacitycurve"] = m_opacityCurve.toString();
-
-	o["hard"] = hardness.max;
-	if(hardness.min > 0) o["hard2"] = hardness.min;
-	o["hardcurve"] = m_hardnessCurve.toString();
-
-	if(smudge.max > 0) o["smudge"] = smudge.max;
-	if(smudge.min > 0) o["smudgeratio"] = smudge.min;
-	o["smudgecurve"] = m_smudgeCurve.toString();
-
-	o["spacing"] = spacing;
-	if(resmudge>0) o["resmudge"] = resmudge;
-
-	if(!incremental) o["indirect"] = true;
-	if(colorpick) o["colorpick"] = true;
-	if(size_pressure) o["sizep"] = true;
-	if(hardness_pressure) o["hardp"] = true;
-	if(opacity_pressure) o["opacityp"] = true;
-	if(smudge_pressure) o["smudgep"] = true;
-
-	o["blend"] = canvas::blendmode::svgName(brush_mode);
-	o["blenderase"] = canvas::blendmode::svgName(erase_mode);
-	o["erase"] = erase;
-
-	o["stabilizationmode"] = stabilizationMode;
-	o["stabilizer"] = stabilizerSampleCount;
-	o["smoothing"] = smoothing;
-
-	// Note: color is intentionally omitted
-
 	return QJsonObject {
 		{"type", "dp-classic"},
 		{"version", 1},
-		{"settings", o}
+		{"settings", settingsToJson()},
 	};
+}
+
+void ClassicBrush::exportToJson(QJsonObject &json) const
+{
+	json["drawpile_classic_settings"] = settingsToJson();
+	json["settings"] = QJsonObject{};
 }
 
 ClassicBrush ClassicBrush::fromJson(const QJsonObject &json)
@@ -201,6 +165,17 @@ ClassicBrush ClassicBrush::fromJson(const QJsonObject &json)
 	return b;
 }
 
+bool ClassicBrush::fromExportJson(const QJsonObject &json)
+{
+	QJsonObject settings = json["drawpile_classic_settings"].toObject();
+	if(settings.isEmpty()) {
+		return false;
+	} else {
+		loadSettingsFromJson(settings);
+		return true;
+	}
+}
+
 QPixmap ClassicBrush::presetThumbnail() const
 {
 	QColor c = smudge.max > 0.0f ? QColor::fromRgbF(0.1f, 0.6f, 0.9f) : Qt::gray;
@@ -213,6 +188,104 @@ void ClassicBrush::updateCurve(const KisCubicCurve &src, DP_ClassicBrushCurve &d
 	for(int i = 0; i < DP_CLASSIC_BRUSH_CURVE_VALUE_COUNT; ++i) {
 		dst.values[i] = values[i];
 	}
+}
+
+void ClassicBrush::loadSettingsFromJson(const QJsonObject &settings)
+{
+	if(settings["shape"] == "round-pixel") {
+		shape = DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND;
+	} else if(settings["shape"] == "square-pixel") {
+		shape = DP_BRUSH_SHAPE_CLASSIC_PIXEL_SQUARE;
+	} else {
+		shape = DP_BRUSH_SHAPE_CLASSIC_SOFT_ROUND;
+	}
+
+	size.max = settings["size"].toDouble();
+	size.min = settings["size2"].toDouble();
+	m_sizeCurve.fromString(settings["sizecurve"].toString());
+	updateCurve(m_sizeCurve, size.curve);
+
+	opacity.max = settings["opacity"].toDouble();
+	opacity.min = settings["opacity2"].toDouble();
+	m_opacityCurve.fromString(settings["opacitycurve"].toString());
+	updateCurve(m_opacityCurve, opacity.curve);
+
+	hardness.max = settings["hard"].toDouble();
+	hardness.min = settings["hard2"].toDouble();
+	m_hardnessCurve.fromString(settings["hardcurve"].toString());
+	updateCurve(m_hardnessCurve, hardness.curve);
+
+	smudge.max = settings["smudge"].toDouble();
+	smudge.min = settings["smudge2"].toDouble();
+	m_smudgeCurve.fromString(settings["smudgecurve"].toString());
+	updateCurve(m_smudgeCurve, smudge.curve);
+
+	spacing = settings["spacing"].toDouble();
+	resmudge = settings["resmudge"].toInt();
+
+	incremental = !settings["indirect"].toBool();
+	colorpick = settings["colorpick"].toBool();
+	size_pressure = settings["sizep"].toBool();
+	hardness_pressure = settings["hardp"].toBool();
+	opacity_pressure = settings["opacityp"].toBool();
+	smudge_pressure = settings["smudgep"].toBool();
+
+	brush_mode = canvas::blendmode::fromSvgName(settings["blend"].toString());
+	erase_mode = canvas::blendmode::fromSvgName(
+		settings["blenderase"].toString(), DP_BLEND_MODE_ERASE);
+	erase = settings["erase"].toBool();
+
+	stabilizationMode = settings["stabilizationmode"].toInt() == Smoothing ? Smoothing : Stabilizer;
+	stabilizerSampleCount = settings["stabilizer"].toInt();
+	smoothing = settings["smoothing"].toInt();
+}
+
+QJsonObject ClassicBrush::settingsToJson() const
+{
+	QJsonObject o;
+	switch(shape) {
+	case DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND: o["shape"] = "round-pixel"; break;
+	case DP_BRUSH_SHAPE_CLASSIC_PIXEL_SQUARE: o["shape"] = "square-pixel"; break;
+	default: o["shape"] = "round-soft"; break;
+	}
+
+	o["size"] = size.max;
+	if(size.min > 0) o["size2"] = size.min;
+	o["sizecurve"] = m_sizeCurve.toString();
+
+	o["opacity"] = opacity.max;
+	if(opacity.min > 0) o["opacity2"] = opacity.min;
+	o["opacitycurve"] = m_opacityCurve.toString();
+
+	o["hard"] = hardness.max;
+	if(hardness.min > 0) o["hard2"] = hardness.min;
+	o["hardcurve"] = m_hardnessCurve.toString();
+
+	if(smudge.max > 0) o["smudge"] = smudge.max;
+	if(smudge.min > 0) o["smudgeratio"] = smudge.min;
+	o["smudgecurve"] = m_smudgeCurve.toString();
+
+	o["spacing"] = spacing;
+	if(resmudge>0) o["resmudge"] = resmudge;
+
+	if(!incremental) o["indirect"] = true;
+	if(colorpick) o["colorpick"] = true;
+	if(size_pressure) o["sizep"] = true;
+	if(hardness_pressure) o["hardp"] = true;
+	if(opacity_pressure) o["opacityp"] = true;
+	if(smudge_pressure) o["smudgep"] = true;
+
+	o["blend"] = canvas::blendmode::svgName(brush_mode);
+	o["blenderase"] = canvas::blendmode::svgName(erase_mode);
+	o["erase"] = erase;
+
+	o["stabilizationmode"] = stabilizationMode;
+	o["stabilizer"] = stabilizerSampleCount;
+	o["smoothing"] = smoothing;
+
+	// Note: color is intentionally omitted
+
+	return o;
 }
 
 
@@ -326,37 +399,6 @@ QColor MyPaintBrush::qColor() const
 
 QJsonObject MyPaintBrush::toJson() const
 {
-	QJsonValue jsonMapping;
-	if(m_settings) {
-		QJsonObject o;
-		for (int i = 0; i < MYPAINT_BRUSH_SETTINGS_COUNT; ++i) {
-			const DP_MyPaintMapping &mapping = m_settings->mappings[i];
-
-			QJsonObject inputs;
-			for (int j = 0; j < MYPAINT_BRUSH_INPUTS_COUNT; ++j) {
-				const DP_MyPaintControlPoints &cps = mapping.inputs[j];
-				if (cps.n) {
-					QJsonArray points;
-					for (int k = 0; k < cps.n; ++k) {
-						points.append(QJsonArray {
-							cps.xvalues[k],
-							cps.yvalues[k],
-						});
-					}
-					MyPaintBrushInput inputId = static_cast<MyPaintBrushInput>(j);
-					inputs[mypaint_brush_input_info(inputId)->cname] = points;
-				}
-			}
-
-			MyPaintBrushSetting settingId = static_cast<MyPaintBrushSetting>(i);
-			o[mypaint_brush_setting_info(settingId)->cname] = QJsonObject {
-				{"base_value", mapping.base_value},
-				{"inputs", inputs},
-			};
-		}
-		jsonMapping = o;
-	}
-
 	return QJsonObject {
 		{"type", "dp-mypaint"},
 		{"version", 1},
@@ -367,9 +409,22 @@ QJsonObject MyPaintBrush::toJson() const
 			{"stabilizationmode", m_stabilizationMode},
 			{"stabilizer", m_stabilizerSampleCount},
 			{"smoothing", m_smoothing},
-			{"mapping", jsonMapping},
+			{"mapping", mappingToJson()},
 		}},
 	};
+}
+
+void MyPaintBrush::exportToJson(QJsonObject &json) const
+{
+	json["drawpile_settings"] = QJsonObject{
+		{"lock_alpha", m_brush.lock_alpha},
+		{"erase", m_brush.erase},
+		{"indirect", !m_brush.incremental},
+		{"stabilizationmode", m_stabilizationMode},
+		{"stabilizer", m_stabilizerSampleCount},
+		{"smoothing", m_smoothing},
+	};
+	json["settings"] = mappingToJson();
 }
 
 MyPaintBrush MyPaintBrush::fromJson(const QJsonObject &json)
@@ -406,20 +461,35 @@ MyPaintBrush MyPaintBrush::fromJson(const QJsonObject &json)
 	return b;
 }
 
-bool MyPaintBrush::loadMyPaintJson(const QJsonObject &json)
+bool MyPaintBrush::fromExportJson(const QJsonObject &json)
 {
 	if(json["version"].toInt() != 3) {
 		qWarning("MyPaintBrush::fromMyPaintJson: version not 3");
 		return false;
 	}
 
-	if(loadJsonSettings(json["settings"].toObject())) {
-		m_brush.lock_alpha = false;
-		m_brush.erase = false;
-		return true;
-	} else {
+	if(!loadJsonSettings(json["settings"].toObject())) {
 		return false;
 	}
+
+	QJsonObject drawpileSettings = json["drawpile_settings"].toObject();
+	if(drawpileSettings.isEmpty()) {
+		// Workaround for MyPaint exporting the current alpha lock state for
+		// this value. MyPaint doesn't import this either.
+		float &lockAlpha = m_settings->mappings[MYPAINT_BRUSH_SETTING_LOCK_ALPHA].base_value;
+		if(lockAlpha == 1.0f) {
+			lockAlpha = 0.0f;
+		}
+	}
+
+	m_brush.lock_alpha = drawpileSettings["lock_alpha"].toBool(false);
+	m_brush.erase = drawpileSettings["erase"].toBool(false);
+	m_brush.incremental = !drawpileSettings["indirect"].toBool(false);
+	m_stabilizationMode = drawpileSettings["stabilizationmode"].toInt() == Smoothing ? Smoothing : Stabilizer;
+	m_stabilizerSampleCount = drawpileSettings["stabilizer"].toInt(-1);
+	m_smoothing = drawpileSettings["smoothing"].toInt();
+
+	return true;
 }
 
 QPixmap MyPaintBrush::presetThumbnail() const
@@ -459,6 +529,39 @@ const DP_MyPaintSettings &MyPaintBrush::getDefaultSettings()
         brushInputPressure.yvalues[1] = 1.0;
 	}
 	return settings;
+}
+
+QJsonObject MyPaintBrush::mappingToJson() const
+{
+	QJsonObject o;
+	if(m_settings) {
+		for (int i = 0; i < MYPAINT_BRUSH_SETTINGS_COUNT; ++i) {
+			const DP_MyPaintMapping &mapping = m_settings->mappings[i];
+
+			QJsonObject inputs;
+			for (int j = 0; j < MYPAINT_BRUSH_INPUTS_COUNT; ++j) {
+				const DP_MyPaintControlPoints &cps = mapping.inputs[j];
+				if (cps.n) {
+					QJsonArray points;
+					for (int k = 0; k < cps.n; ++k) {
+						points.append(QJsonArray {
+							cps.xvalues[k],
+							cps.yvalues[k],
+						});
+					}
+					MyPaintBrushInput inputId = static_cast<MyPaintBrushInput>(j);
+					inputs[mypaint_brush_input_info(inputId)->cname] = points;
+				}
+			}
+
+			MyPaintBrushSetting settingId = static_cast<MyPaintBrushSetting>(i);
+			o[mypaint_brush_setting_info(settingId)->cname] = QJsonObject {
+				{"base_value", mapping.base_value},
+				{"inputs", inputs},
+			};
+		}
+	}
+	return o;
 }
 
 bool MyPaintBrush::loadJsonSettings(const QJsonObject &o)
@@ -617,6 +720,23 @@ QJsonObject ActiveBrush::toJson() const
 	};
 }
 
+QJsonObject ActiveBrush::toExportJson(const QString &description) const
+{
+	QJsonObject json{
+		{"comment", description},
+		{"drawpile_version", cmake_config::version()},
+		{"group", ""},
+		{"parent_brush_name", ""},
+		{"version", 3},
+	};
+	if(m_activeType == CLASSIC) {
+		m_classic.exportToJson(json);
+	} else {
+		m_myPaint.exportToJson(json);
+	}
+	return json;
+}
+
 ActiveBrush ActiveBrush::fromJson(const QJsonObject &json)
 {
 	ActiveBrush brush;
@@ -636,6 +756,17 @@ ActiveBrush ActiveBrush::fromJson(const QJsonObject &json)
 		qWarning("ActiveBrush::fromJson: type is neither dp-active, dp-classic nor dp-mypaint!");
 	}
 	return brush;
+}
+
+bool ActiveBrush::fromExportJson(const QJsonObject &json)
+{
+	if(json["drawpile_classic_settings"].isObject()) {
+		setActiveType(CLASSIC);
+		return m_classic.fromExportJson(json);
+	} else {
+		setActiveType(MYPAINT);
+		return m_myPaint.fromExportJson(json);
+	}
 }
 
 QString ActiveBrush::presetType() const

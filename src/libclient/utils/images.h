@@ -37,6 +37,7 @@ enum FileFormatOption {
 	Mp4 = 0x200,
 	Webm = 0x400,
 	Text = 0x800,
+	BrushPack = 0x1000,
 
 #ifdef Q_OS_ANDROID
 	SaveAllFiles = 0x0,
@@ -47,6 +48,7 @@ enum FileFormatOption {
 	OpenImages = Images | AllFiles,
 	OpenEverything = Images | Recordings | AllFiles,
 	OpenDebugDumps = DebugDumps,
+	OpenBrushPack = BrushPack,
 	SaveImages = Images | SaveAllFiles | Save,
 	SaveRecordings = Recordings | SaveAllFiles | Save,
 	SaveProfile = Profile | Save,
@@ -55,6 +57,7 @@ enum FileFormatOption {
 	SaveGif = Gif | Save,
 	SaveMp4 = Mp4 | Save,
 	SaveWebm = Webm | Save,
+	SaveBrushPack = BrushPack | Save,
 };
 Q_DECLARE_FLAGS(FileFormatOptions, FileFormatOption)
 Q_DECLARE_OPERATORS_FOR_FLAGS(FileFormatOptions)

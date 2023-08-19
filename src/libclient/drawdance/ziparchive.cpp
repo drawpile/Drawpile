@@ -80,4 +80,52 @@ ZipReader::File ZipReader::readFile(const QString &path) const
 }
 
 
+ZipWriter::ZipWriter(const QString &path)
+	: m_zw{DP_zip_writer_new(path.toUtf8())}
+{
+}
+
+ZipWriter::~ZipWriter()
+{
+	abort();
+}
+
+bool ZipWriter::isNull() const
+{
+	return m_zw == nullptr;
+}
+
+bool ZipWriter::addDir(const QString &path)
+{
+	QByteArray pathBytes = path.toUtf8();
+	return DP_zip_writer_add_dir(m_zw, pathBytes.constData());
+}
+
+bool ZipWriter::addFile(
+	const QString &path, const QByteArray &bytes, bool deflate)
+{
+	QByteArray pathBytes = path.toUtf8();
+	size_t size = bytes.size();
+	char *buffer = static_cast<char *>(DP_malloc(size));
+	memcpy(buffer, bytes.constData(), size);
+	return DP_zip_writer_add_file(
+		m_zw, pathBytes.constData(), buffer, size, deflate, true);
+}
+
+bool ZipWriter::finish()
+{
+	bool ok = DP_zip_writer_free_finish(m_zw);
+	m_zw = nullptr;
+	return ok;
+}
+
+void ZipWriter::abort()
+{
+	if(m_zw) {
+		DP_zip_writer_free_abort(m_zw);
+		m_zw = nullptr;
+	}
+}
+
+
 }

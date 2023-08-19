@@ -56,7 +56,9 @@ public:
 	QColor qColor() const;
 
 	QJsonObject toJson() const;
+	void exportToJson(QJsonObject &json) const;
 	static ClassicBrush fromJson(const QJsonObject &json);
+	bool fromExportJson(const QJsonObject &json);
 
 	QPixmap presetThumbnail() const;
 
@@ -66,6 +68,9 @@ public:
 
 private:
 	void updateCurve(const KisCubicCurve &src, DP_ClassicBrushCurve &dst);
+
+	void loadSettingsFromJson(const QJsonObject &settings);
+	QJsonObject settingsToJson() const;
 
 	KisCubicCurve m_sizeCurve;
 	KisCubicCurve m_opacityCurve;
@@ -132,9 +137,9 @@ public:
 	QColor qColor() const;
 
 	QJsonObject toJson() const;
+	void exportToJson(QJsonObject &json) const;
 	static MyPaintBrush fromJson(const QJsonObject &json);
-
-	bool loadMyPaintJson(const QJsonObject &json);
+	bool fromExportJson(const QJsonObject &json);
 
 	QPixmap presetThumbnail() const;
 
@@ -147,6 +152,8 @@ private:
 	QHash<QPair<int, int>, MyPaintCurve> m_curves;
 
 	static const DP_MyPaintSettings &getDefaultSettings();
+
+	QJsonObject mappingToJson() const;
 
 	bool loadJsonSettings(const QJsonObject &o);
 	bool loadJsonMapping(const QString &mappingKey, int settingId, const QJsonObject &o);
@@ -194,7 +201,9 @@ public:
 	void setSmoothing(int smoothing);
 
 	QJsonObject toJson() const;
+	QJsonObject toExportJson(const QString &description) const;
 	static ActiveBrush fromJson(const QJsonObject &json);
+	bool fromExportJson(const QJsonObject &json);
 
 	QString presetType() const;
 	QByteArray presetData() const;

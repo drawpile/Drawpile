@@ -1,17 +1,19 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "desktop/docks/brushpalettedock.h"
+#include "desktop/dialogs/brushexportdialog.h"
 #include "desktop/dialogs/brushpresetproperties.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/toolwidgets/brushsettings.h"
 #include "libclient/brushes/brushpresetmodel.h"
 #include "libclient/brushes/brush.h"
+#include "desktop/filewrangler.h"
 #include "desktop/docks/titlewidget.h"
+#include "desktop/utils/widgetutils.h"
 
 #include <QComboBox>
 #include <QDialog>
 #include <QDialogButtonBox>
-#include <QFileDialog>
 #include <QIcon>
 #include <QInputDialog>
 #include <QLabel>
@@ -78,6 +80,8 @@ struct BrushPalette::Private {
 	QAction *editTagAction;
 	QAction *deleteTagAction;
 	QAction *importBrushesAction;
+	QAction *exportTagAction;
+	QAction *exportPresetAction;
 	QListView *presetListView;
 };
 
@@ -137,6 +141,7 @@ BrushPalette::BrushPalette(QWidget *parent)
 	d->deleteTagAction = d->tagMenu->addAction(QIcon::fromTheme("list-remove"), tr("Delete Tag"));
 	d->tagMenu->addSeparator();
 	d->importBrushesAction = d->tagMenu->addAction(tr("Import Brushes..."));
+	d->exportTagAction = d->tagMenu->addAction(tr("Export Tag…"));
 	d->menuButton->setMenu(d->tagMenu);
 
 	d->brushMenu = new QMenu(this);
@@ -149,6 +154,7 @@ BrushPalette::BrushPalette(QWidget *parent)
 	d->brushMenu->addMenu(d->iconSizeMenu);
 	d->tagMenu->addSeparator();
 	d->brushMenu->addAction(d->importBrushesAction);
+	d->exportPresetAction = d->brushMenu->addAction(tr("Export Brush…"));
 
 	for(int dimension = 16; dimension <= 128; dimension += 16) {
 		QAction *sizeAction = d->iconSizeMenu->addAction(tr("%1x%1").arg(dimension));
@@ -185,7 +191,9 @@ BrushPalette::BrushPalette(QWidget *parent)
 	connect(d->overwriteBrushAction, &QAction::triggered, this, &BrushPalette::overwriteCurrentPreset);
 	connect(d->editBrushAction, &QAction::triggered, this, &BrushPalette::editCurrentPreset);
 	connect(d->deleteBrushAction, &QAction::triggered, this, &BrushPalette::deleteCurrentPreset);
-	connect(d->importBrushesAction, &QAction::triggered, this, &BrushPalette::importMyPaintBrushes);
+	connect(d->importBrushesAction, &QAction::triggered, this, &BrushPalette::importBrushes);
+	connect(d->exportTagAction, &QAction::triggered, this, &BrushPalette::exportCurrentTag);
+	connect(d->exportPresetAction, &QAction::triggered, this, &BrushPalette::exportCurrentPreset);
 	connect(d->presetListView, &QAbstractItemView::clicked, this, &BrushPalette::applyToBrushSettings);
 	connect(d->presetListView, &QAbstractItemView::doubleClicked, this, &BrushPalette::editCurrentPreset);
 	connect(d->presetListView, &QWidget::customContextMenuRequested, this, &BrushPalette::showPresetContextMenu);
@@ -209,21 +217,19 @@ void BrushPalette::connectBrushSettings(tools::ToolSettings *toolSettings)
 	d->brushSettings = qobject_cast<tools::BrushSettings*>(toolSettings);
 }
 
-void BrushPalette::importMyPaintBrushes()
+void BrushPalette::importBrushes()
 {
-	QString file = QFileDialog::getOpenFileName(this,
-		tr("Select MyPaint brush pack to import"), QString(),
-		tr("MyPaint Brush Pack (%1)").arg("*.zip"));
+	QString file = FileWrangler{this}.getOpenBrushPackPath();
 
 	if(!file.isEmpty()) {
-		brushes::MyPaintImportResult result =
-			d->tagModel->importMyPaintBrushPack(file);
+		brushes::BrushImportResult result =
+			d->tagModel->importBrushPack(file);
 		if(!result.importedTags.isEmpty()) {
 			d->tagComboBox->setCurrentIndex(tagIdToProxyRow(result.importedTags[0].id));
 		}
 
 		QDialog *dlg = new QDialog{this};
-		dlg->setWindowTitle(tr("MyPaint Brush Import"));
+		dlg->setWindowTitle(tr("Brush Import"));
 		dlg->setAttribute(Qt::WA_DeleteOnClose);
 		dlg->setModal(true);
 
@@ -273,6 +279,11 @@ void BrushPalette::importMyPaintBrushes()
 		connect(buttons, &QDialogButtonBox::rejected, dlg, &QDialog::reject);
 		dlg->show();
 	}
+}
+
+void BrushPalette::exportBrushes()
+{
+	showExportDialog();
 }
 
 void BrushPalette::reloadPreset()
@@ -449,6 +460,18 @@ void BrushPalette::deleteCurrentPreset()
 	}
 }
 
+void BrushPalette::exportCurrentTag()
+{
+	dialogs::BrushExportDialog *dlg = showExportDialog();
+	dlg->checkTag(d->currentTag.id);
+}
+
+void BrushPalette::exportCurrentPreset()
+{
+	dialogs::BrushExportDialog *dlg = showExportDialog();
+	dlg->checkPreset(currentPresetId());
+}
+
 void BrushPalette::applyPresetProperties(int id, const QString &name,
 	const QString &description, const QPixmap &thumbnail)
 {
@@ -529,6 +552,15 @@ int BrushPalette::presetProxyIndexToId(const QModelIndex &proxyIndex)
 int BrushPalette::currentPresetId()
 {
 	return presetProxyIndexToId(d->presetListView->currentIndex());
+}
+
+dialogs::BrushExportDialog *BrushPalette::showExportDialog()
+{
+	dialogs::BrushExportDialog *dlg =
+		new dialogs::BrushExportDialog{d->tagModel, d->presetModel, this};
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
+	utils::showWindow(dlg);
+	return dlg;
 }
 
 bool BrushPalette::question(const QString &title, const QString &text) const

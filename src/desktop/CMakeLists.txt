@@ -68,6 +68,8 @@ target_sources(drawpile PRIVATE
 	dialogs/addserverdialog.h
 	dialogs/avatarimport.cpp
 	dialogs/avatarimport.h
+	dialogs/brushexportdialog.cpp
+	dialogs/brushexportdialog.h
 	dialogs/brushpresetproperties.cpp
 	dialogs/brushpresetproperties.h
 	dialogs/brushsettingsdialog_gen.cpp

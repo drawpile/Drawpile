@@ -2926,6 +2926,7 @@ void MainWindow::setupActions()
 #ifndef Q_OS_ANDROID
 	QAction *exportAnimationFrames = makeAction("exportanimframes", tr("Animation &Frames...")).noDefaultShortcut();
 #endif
+	QAction *exportBrushes = makeAction("exportbrushes", tr("&Brushes…")).noDefaultShortcut();
 
 	QAction *record = makeAction("recordsession", tr("Record...")).icon("media-record").noDefaultShortcut();
 	QAction *start = makeAction("start", tr("Start...")).noDefaultShortcut();
@@ -2949,7 +2950,8 @@ void MainWindow::setupActions()
 	connect(save, SIGNAL(triggered()), this, SLOT(save()));
 	connect(saveas, SIGNAL(triggered()), this, SLOT(saveas()));
 	connect(exportTemplate, &QAction::triggered, this, &MainWindow::exportTemplate);
-	connect(importBrushes, &QAction::triggered, m_dockBrushPalette, &docks::BrushPalette::importMyPaintBrushes);
+	connect(importBrushes, &QAction::triggered, m_dockBrushPalette, &docks::BrushPalette::importBrushes);
+	connect(exportBrushes, &QAction::triggered, m_dockBrushPalette, &docks::BrushPalette::exportBrushes);
 	connect(savesel, &QAction::triggered, this, &MainWindow::saveSelection);
 
 	connect(autosave, &QAction::triggered, m_doc, &Document::setAutosave);
@@ -2997,6 +2999,7 @@ void MainWindow::setupActions()
 #ifndef Q_OS_ANDROID
 	exportMenu->addAction(exportAnimationFrames);
 #endif
+	exportMenu->addAction(exportBrushes);
 	filemenu->addAction(record);
 	filemenu->addSeparator();
 	filemenu->addAction(start);

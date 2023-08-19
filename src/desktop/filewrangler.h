@@ -28,6 +28,7 @@ public:
 		PERFORMANCE_PROFILE,
 		TABLET_EVENT_LOG,
 		DEBUG_DUMP,
+		BRUSH_PACK,
 #ifdef Q_OS_ANDROID
 		LOG_FILE,
 #endif
@@ -44,6 +45,7 @@ public:
 	QString getOpenPath() const;
 	QString getOpenPasteImagePath() const;
 	QString getOpenDebugDumpsPath() const;
+	QString getOpenBrushPackPath() const;
 
 	QString saveImage(Document *doc) const;
 	QString saveImageAs(Document *doc) const;
@@ -64,6 +66,7 @@ public:
 	QString getSaveAnimationFramesPath() const;
 	QString getSaveImageSeriesPath() const;
 #endif
+	QString getSaveBrushPackPath() const;
 
 private:
 	bool confirmFlatten(Document *doc, QString &filename) const;
