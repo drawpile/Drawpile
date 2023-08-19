@@ -355,7 +355,6 @@ void ColorWheel::setMirroredSelector(bool mirrored)
     {
         p->mirrored_selector = mirrored;
         update();
-        p->render_inner_selector();
         Q_EMIT mirroredSelectorChanged(mirrored);
     }
 }
