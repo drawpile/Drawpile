@@ -414,14 +414,14 @@ BrushPresetTagModel::~BrushPresetTagModel()
 	delete d;
 }
 
-int BrushPresetTagModel::rowCount(const QModelIndex &) const
+int BrushPresetTagModel::rowCount(const QModelIndex &parent) const
 {
-	return d->readTagCount() + TAG_OFFSET;
+	return parent.isValid() ? 0 : d->readTagCount() + TAG_OFFSET;
 }
 
-int BrushPresetTagModel::columnCount(const QModelIndex &) const
+int BrushPresetTagModel::columnCount(const QModelIndex &parent) const
 {
-	return 1;
+	return parent.isValid() ? 0 : 1;
 }
 
 QModelIndex BrushPresetTagModel::parent(const QModelIndex &) const
@@ -429,9 +429,11 @@ QModelIndex BrushPresetTagModel::parent(const QModelIndex &) const
 	return QModelIndex();
 }
 
-QModelIndex BrushPresetTagModel::index(int row, int column, const QModelIndex &) const
+QModelIndex BrushPresetTagModel::index(int row, int column, const QModelIndex &parent) const
 {
-	if(isBuiltInTag(row)) {
+	if(parent.isValid()) {
+		return QModelIndex();
+	} else if(isBuiltInTag(row)) {
 		return createIndex(row, column);
 	} else {
 		int tagId = d->readTagIdAtIndex(row - TAG_OFFSET);
@@ -886,21 +888,25 @@ BrushPresetModel::BrushPresetModel(BrushPresetTagModel *tagModel)
 
 BrushPresetModel::~BrushPresetModel() {}
 
-int BrushPresetModel::rowCount(const QModelIndex &) const
+int BrushPresetModel::rowCount(const QModelIndex &parent) const
 {
-	switch(m_tagIdToFilter) {
-	case ALL_ID:
-		return d->readPresetCountAll();
-	case UNTAGGED_ID:
-		return d->readPresetCountByUntagged();
-	default:
-		return d->readPresetCountByTagId(m_tagIdToFilter);
+	if(parent.isValid()) {
+		return 0;
+	} else {
+		switch(m_tagIdToFilter) {
+		case ALL_ID:
+			return d->readPresetCountAll();
+		case UNTAGGED_ID:
+			return d->readPresetCountByUntagged();
+		default:
+			return d->readPresetCountByTagId(m_tagIdToFilter);
+		}
 	}
 }
 
-int BrushPresetModel::columnCount(const QModelIndex &) const
+int BrushPresetModel::columnCount(const QModelIndex &parent) const
 {
-	return 1;
+	return parent.isValid() ? 0 : 1;
 }
 
 QModelIndex BrushPresetModel::parent(const QModelIndex &) const
@@ -908,25 +914,26 @@ QModelIndex BrushPresetModel::parent(const QModelIndex &) const
 	return QModelIndex();
 }
 
-QModelIndex BrushPresetModel::index(int row, int column, const QModelIndex &) const
+QModelIndex BrushPresetModel::index(int row, int column, const QModelIndex &parent) const
 {
-	int presetId;
-	switch(m_tagIdToFilter) {
-	case ALL_ID:
-		presetId = d->readPresetIdAtIndexAll(row);
-		break;
-	case UNTAGGED_ID:
-		presetId = d->readPresetIdAtIndexByUntagged(row);
-		break;
-	default:
-		presetId = d->readPresetIdAtIndexByTagId(row, m_tagIdToFilter);
-		break;
+	if(!parent.isValid()) {
+		int presetId;
+		switch(m_tagIdToFilter) {
+		case ALL_ID:
+			presetId = d->readPresetIdAtIndexAll(row);
+			break;
+		case UNTAGGED_ID:
+			presetId = d->readPresetIdAtIndexByUntagged(row);
+			break;
+		default:
+			presetId = d->readPresetIdAtIndexByTagId(row, m_tagIdToFilter);
+			break;
+		}
+		if(presetId > 0) {
+			return createIndex(row, column, quintptr(presetId));
+		}
 	}
-	if(presetId > 0) {
-		return createIndex(row, column, quintptr(presetId));
-	} else {
-		return QModelIndex();
-	}
+	return QModelIndex();
 }
 
 QVariant BrushPresetModel::data(const QModelIndex &index, int role) const
