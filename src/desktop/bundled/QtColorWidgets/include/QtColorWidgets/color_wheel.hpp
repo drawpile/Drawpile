@@ -47,6 +47,7 @@ class QCP_EXPORT ColorWheel : public QWidget
     Q_PROPERTY(ShapeEnum selectorShape READ selectorShape WRITE setSelectorShape NOTIFY selectorShapeChanged DESIGNABLE true )
     Q_PROPERTY(bool rotatingSelector READ rotatingSelector WRITE setRotatingSelector NOTIFY rotatingSelectorChanged DESIGNABLE true )
     Q_PROPERTY(ColorSpaceEnum colorSpace READ colorSpace WRITE setColorSpace NOTIFY colorSpaceChanged DESIGNABLE true )
+    Q_PROPERTY(bool mirroredSelector READ mirroredSelector WRITE setMirroredSelector NOTIFY mirroredSelectorChanged DESIGNABLE true )
 
 public:
     enum ShapeEnum
@@ -104,6 +105,9 @@ public:
     /// Color space used to preview/edit the color
     ColorSpaceEnum colorSpace() const;
 
+    /// Whether the internal selector's should be mirrored horizontally
+    bool mirroredSelector() const;
+
 public Q_SLOTS:
 
     /// Set current color
@@ -133,6 +137,9 @@ public Q_SLOTS:
     /// Sets the color space used to preview/edit the color
     void setColorSpace(ColorSpaceEnum space);
 
+    /// Sets whether the internal selector should be mirrored horizontally
+    void setMirroredSelector(bool mirrored);
+
 Q_SIGNALS:
     /**
      * Emitted when the user selects a color or setColor is called
@@ -151,6 +158,8 @@ Q_SIGNALS:
     void rotatingSelectorChanged(bool rotating);
 
     void colorSpaceChanged(ColorSpaceEnum space);
+
+    void mirroredSelectorChanged(bool mirrored);
 
     /**
      * Emitted when the user releases from dragging

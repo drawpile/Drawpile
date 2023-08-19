@@ -112,6 +112,8 @@ void ColorWheel::paintEvent(QPaintEvent * )
     if(p->inner_selector.isNull())
         p->render_inner_selector();
 
+    if ( p->mirrored_selector )
+        painter.scale(-1.0, 1.0);
     painter.rotate(p->selector_image_angle());
     painter.translate(p->selector_image_offset());
 
@@ -173,8 +175,14 @@ void ColorWheel::mouseMoveEvent(QMouseEvent *ev)
     else if(p->mouse_status == DragSquare)
     {
         QLineF glob_mouse_ln = p->line_to_point(ev->pos());
-        QLineF center_mouse_ln ( QPointF(0,0),
-                                 glob_mouse_ln.p2() - glob_mouse_ln.p1() );
+        QLineF center_mouse_ln (
+            QPointF(0,0),
+            QPointF(
+                p->mirrored_selector ? glob_mouse_ln.x1() - glob_mouse_ln.x2()
+                                     : glob_mouse_ln.x2() - glob_mouse_ln.x1(),
+                glob_mouse_ln.y2() - glob_mouse_ln.y1()
+            )
+        );
 
         center_mouse_ln.setAngle(center_mouse_ln.angle()+p->selector_image_angle());
         center_mouse_ln.setP2(center_mouse_ln.p2()-p->selector_image_offset());
@@ -279,6 +287,11 @@ color_widgets::ColorWheel::ShapeEnum ColorWheel::selectorShape() const
     return p->selector_shape;
 }
 
+bool ColorWheel::mirroredSelector() const
+{
+    return p->mirrored_selector;
+}
+
 
 void ColorWheel::setColorSpace(color_widgets::ColorWheel::ColorSpaceEnum space)
 {
@@ -333,6 +346,17 @@ void ColorWheel::setSelectorShape(color_widgets::ColorWheel::ShapeEnum shape)
         update();
         p->render_inner_selector();
         Q_EMIT selectorShapeChanged(shape);
+    }
+}
+
+void ColorWheel::setMirroredSelector(bool mirrored)
+{
+    if ( mirrored != p->mirrored_selector )
+    {
+        p->mirrored_selector = mirrored;
+        update();
+        p->render_inner_selector();
+        Q_EMIT mirroredSelectorChanged(mirrored);
     }
 }
 

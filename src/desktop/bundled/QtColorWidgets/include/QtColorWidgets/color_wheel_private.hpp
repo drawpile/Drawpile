@@ -59,6 +59,7 @@ public:
     QColor (*color_from)(qt_color_type,qt_color_type,qt_color_type,qt_color_type);
     QColor (*rainbow_from_hue)(qreal);
     int max_size = 128;
+    bool mirrored_selector = false;
 
     Private(ColorWheel *widget)
         : w(widget), hue(0), sat(0), val(0),
@@ -207,15 +208,20 @@ public:
         if ( selector_shape == ShapeTriangle )
         {
             if ( rotating_selector )
-                return -hue*360-60;
+                if ( mirrored_selector )
+                    return hue*360+120;
+                else
+                    return -hue*360-60;
             return -150;
         }
         else
         {
             if ( rotating_selector )
-                return -hue*360-45;
-            else
-                return 180;
+                if ( mirrored_selector )
+                    return hue*360+135;
+                else
+                    return -hue*360-45;
+            return 180;
         }
     }
 
