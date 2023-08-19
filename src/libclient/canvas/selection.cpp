@@ -165,14 +165,14 @@ void Selection::adjustGeometry(
 		adjustGeometryRotate(start, point, constrain);
 		break;
 	case AdjustmentMode::Distort:
-		adjustGeometryDistort((point - start).toPoint());
+		adjustGeometryDistort((point - start).toPoint(), constrain);
 		break;
 	}
 }
 
-void Selection::adjustGeometryScale(const QPoint &delta, bool keepAspect)
+void Selection::adjustGeometryScale(const QPoint &delta, bool constrain)
 {
-	if(keepAspect) {
+	if(constrain) {
 		const QRectF bounds = m_preAdjustmentShape.boundingRect();
 		QPointF handle;
 		QPointF anchor;
@@ -186,7 +186,7 @@ void Selection::adjustGeometryScale(const QPoint &delta, bool keepAspect)
 		case Handle::Outside:
 			return;
 		case Handle::Center:
-			adjustTranslation(delta);
+			adjustTranslation(delta, true);
 			return;
 		case Handle::BottomRight:
 			swap = true;
@@ -251,7 +251,7 @@ void Selection::adjustGeometryScale(const QPoint &delta, bool keepAspect)
 		case Handle::Outside:
 			return;
 		case Handle::Center:
-			adjustTranslation(delta);
+			adjustTranslation(delta, false);
 			break;
 		case Handle::TopLeft:
 			adjustScale(delta.x(), delta.y(), 0, 0);
@@ -288,7 +288,7 @@ void Selection::adjustGeometryRotate(
 	case Handle::Outside:
 		return;
 	case Handle::Center:
-		adjustTranslation(point - start);
+		adjustTranslation(point - start, constrain);
 		break;
 	case Handle::TopLeft:
 	case Handle::TopRight:
@@ -321,13 +321,13 @@ void Selection::adjustGeometryRotate(
 	}
 }
 
-void Selection::adjustGeometryDistort(const QPointF &delta)
+void Selection::adjustGeometryDistort(const QPointF &delta, bool constrain)
 {
 	switch(m_adjustmentHandle) {
 	case Handle::Outside:
 		return;
 	case Handle::Center:
-		adjustTranslation(delta);
+		adjustTranslation(delta, constrain);
 		break;
 	case Handle::TopLeft:
 		adjustDistort(delta, 0);
@@ -356,14 +356,17 @@ void Selection::adjustGeometryDistort(const QPointF &delta)
 	}
 }
 
-void Selection::adjustTranslation(const QPointF &start, const QPointF &point)
+void Selection::adjustTranslation(const QPointF &delta, bool constrain)
 {
-	adjustTranslation(point - start);
-}
-
-void Selection::adjustTranslation(const QPointF &delta)
-{
-	m_shape = m_preAdjustmentShape.translated(delta.toPoint());
+	QPointF translation;
+	if(constrain) {
+		qreal x = delta.x();
+		qreal y = delta.y();
+		translation = qAbs(x) >= qAbs(y) ? QPointF{x, 0.0} : QPointF{0.0, y};
+	} else {
+		translation = delta;
+	}
+	m_shape = m_preAdjustmentShape.translated(translation.toPoint());
 	emit shapeChanged(m_shape);
 }
 
