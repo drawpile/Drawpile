@@ -16,6 +16,7 @@
 #include "libclient/drawdance/global.h"
 #include "libshared/util/qtcompat.h"
 #include "cmake-config/config.h"
+#include "desktop/utils/fusionui.h"
 #include "desktop/utils/qtguicompat.h"
 
 #ifdef Q_OS_MACOS
@@ -132,12 +133,19 @@ void DrawpileApp::setThemeStyle(const QString &themeStyle)
 	if (themeStyle.isEmpty() || themeStyle.startsWith(QStringLiteral("mac"))) {
 		foundStyle = true;
 		setStyle(new macui::MacProxyStyle);
-	} else {
-		foundStyle = setStyle(themeStyle);
 	}
-#else
-	foundStyle = setStyle(themeStyle.isEmpty() ? m_originalSystemStyle : themeStyle);
 #endif
+	if(!foundStyle && themeStyle.contains(QStringLiteral("fusion"), Qt::CaseInsensitive)) {
+		QStyle *fusionStyle = QStyleFactory::create(themeStyle);
+		if(fusionStyle) {
+			foundStyle = true;
+			setStyle(new fusionui::FusionProxyStyle{fusionStyle});
+		}
+	}
+
+	if(!foundStyle) {
+		foundStyle = setStyle(themeStyle.isEmpty() ? m_originalSystemStyle : themeStyle);
+	}
 
 	if (!foundStyle) {
 		qWarning() << "Could not find style" << themeStyle;

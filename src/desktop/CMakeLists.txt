@@ -250,6 +250,8 @@ target_sources(drawpile PRIVATE
 	ui/textsettings.ui
 	ui/userinfodialog.ui
 	utils/actionbuilder.h
+	utils/fusionui.cpp
+	utils/fusionui.h
 	utils/globalkeyeventfilter.cpp
 	utils/globalkeyeventfilter.h
 	utils/listserverdelegate.cpp
@@ -386,6 +388,13 @@ if(WIN32 AND QT_VERSION_MAJOR VERSION_EQUAL 6)
 	# TODO: Check this is doing the right thing
 	target_include_directories(drawpile PRIVATE "${Qt6Gui_PRIVATE_INCLUDE_DIRS}")
 endif()
+
+# To make checkbox outlines not look completely invisible on dark themes, we
+# have to rope in a bunch of nonsense from the implementation of the Fusion
+# style because it's just got that color hard-coded. That implementation
+# requires some stuff out of the private headers, so we need to pull those in.
+target_include_directories(drawpile PRIVATE
+	"${Qt${QT_VERSION_MAJOR}Widgets_PRIVATE_INCLUDE_DIRS}")
 
 # Some special handling for Android:
 # * It can't deal with multiple main windows properly, trying to open a second

@@ -23,6 +23,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Show the current color properly on program startup.
  * Feature: Make the color wheel innards go from least to most saturated, putting it in line with how most other software presents it. This can be toggled in the preferences.
  * Feature: Holding Shift while moving a selection now keeps it along the closest axis. Thanks Kvothen for suggesting.
+ * Fix: Make checkbox outlines in the Fusion style not totally invisible in dark themes.
 
 2023-07-31 Version 2.2.0-beta.6
  * Fix: Don't forget account password when entering a wrong session password.
