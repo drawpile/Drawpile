@@ -1,13 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-extern "C" {
-#include <dpmsg/message.h>
-}
-
 #include "libclient/canvas/selection.h"
-#include "libclient/tools/selection.h" // for selection utilities
 #include "libclient/drawdance/message.h"
-
+#include "libclient/tools/selection.h" // for selection utilities
 #include <QPainter>
 #include <QtMath>
 
@@ -16,7 +11,6 @@ namespace canvas {
 Selection::Selection(QObject *parent)
 	: QObject(parent)
 {
-
 }
 
 void Selection::saveShape()
@@ -33,15 +27,18 @@ bool Selection::isTransformed() const
 
 bool Selection::isOnlyTranslated() const
 {
-	if(m_shape.isEmpty() || m_shape.length() != m_originalShape.length())
+	if(m_shape.isEmpty() || m_shape.length() != m_originalShape.length()) {
 		return false;
+	}
 
 	const QPointF delta = m_shape.first() - m_originalShape.first();
-	for(int i=1;i<m_shape.size();++i) {
+	for(int i = 1; i < m_shape.size(); ++i) {
 		const QPointF d = m_shape[i] - m_originalShape[i];
 
-		if(!qFuzzyCompare(d.x(), delta.x()) || !qFuzzyCompare(d.y(), delta.y()))
+		if(!qFuzzyCompare(d.x(), delta.x()) ||
+		   !qFuzzyCompare(d.y(), delta.y())) {
 			return false;
+		}
 	}
 
 	return true;
@@ -58,9 +55,9 @@ void Selection::resetShape()
 {
 	const QPointF center = m_shape.boundingRect().center();
 	m_shape.clear();
-	for(const QPointF &p : qAsConst(m_originalShape))
+	for(const QPointF &p : qAsConst(m_originalShape)) {
 		m_shape << p + center - m_originalCenter;
-
+	}
 	emit shapeChanged(m_shape);
 }
 
@@ -73,20 +70,19 @@ void Selection::setShape(const QPolygonF &shape)
 
 void Selection::setShapeRect(const QRect &rect)
 {
-	setShape(QPolygonF({
-		rect.topLeft(),
-		QPointF(rect.left() + rect.width(), rect.top()),
-		QPointF(rect.left() + rect.width(), rect.top() + rect.height()),
-		QPointF(rect.left(), rect.top() + rect.height())
-	}));
+	setShape(QPolygonF(
+		{rect.topLeft(), QPointF(rect.left() + rect.width(), rect.top()),
+		 QPointF(rect.left() + rect.width(), rect.top() + rect.height()),
+		 QPointF(rect.left(), rect.top() + rect.height())}));
 	saveShape();
 }
 
 
 void Selection::translate(const QPoint &offset)
 {
-	if(offset.x() == 0 && offset.y() == 0)
+	if(offset.x() == 0 && offset.y() == 0) {
 		return;
+	}
 
 	m_shape.translate(offset);
 	emit shapeChanged(m_shape);
@@ -94,8 +90,9 @@ void Selection::translate(const QPoint &offset)
 
 void Selection::scale(qreal x, qreal y)
 {
-	if(x==1.0 && y==1.0)
+	if(x == 1.0 && y == 1.0) {
 		return;
+	}
 
 	QPointF center = m_shape.boundingRect().center();
 	for(QPointF &p : m_shape) {
@@ -111,29 +108,34 @@ Selection::Handle Selection::handleAt(const QPointF &point, qreal zoom) const
 {
 	const qreal H = handleSize() / zoom;
 
-	const QRectF R = m_shape.boundingRect().adjusted(-H/2, -H/2, H/2, H/2);
+	const QRectF R =
+		m_shape.boundingRect().adjusted(-H / 2, -H / 2, H / 2, H / 2);
 
-	if(!R.contains(point))
+	if(!R.contains(point)) {
 		return Handle::Outside;
+	}
 
 	const QPointF p = point - R.topLeft();
 
 	if(p.x() < H) {
-		if(p.y() < H)
+		if(p.y() < H) {
 			return Handle::TopLeft;
-		else if(p.y() > R.height()-H)
+		} else if(p.y() > R.height() - H) {
 			return Handle::BottomLeft;
+		}
 		return Handle::Left;
 	} else if(p.x() > R.width() - H) {
-		if(p.y() < H)
+		if(p.y() < H) {
 			return Handle::TopRight;
-		else if(p.y() > R.height()-H)
+		} else if(p.y() > R.height() - H) {
 			return Handle::BottomRight;
+		}
 		return Handle::Right;
-	} else if(p.y() < H)
+	} else if(p.y() < H) {
 		return Handle::Top;
-	else if(p.y() > R.height()-H)
+	} else if(p.y() > R.height() - H) {
 		return Handle::Bottom;
+	}
 
 	return Handle::Center;
 }
@@ -152,7 +154,8 @@ void Selection::beginAdjustment(Handle handle)
 	m_preAdjustmentShape = m_shape;
 }
 
-void Selection::adjustGeometry(const QPointF &start, const QPointF &point, bool constrain)
+void Selection::adjustGeometry(
+	const QPointF &start, const QPointF &point, bool constrain)
 {
 	switch(m_adjustmentMode) {
 	case AdjustmentMode::Scale:
@@ -180,8 +183,11 @@ void Selection::adjustGeometryScale(const QPoint &delta, bool keepAspect)
 		int right = 0;
 
 		switch(m_adjustmentHandle) {
-		case Handle::Outside: return;
-		case Handle::Center: adjustTranslation(delta); return;
+		case Handle::Outside:
+			return;
+		case Handle::Center:
+			adjustTranslation(delta);
+			return;
 		case Handle::BottomRight:
 			swap = true;
 			[[fallthrough]];
@@ -229,33 +235,61 @@ void Selection::adjustGeometryScale(const QPoint &delta, bool keepAspect)
 		}
 
 		const QPointF sizeWithSign = handle - anchor;
-		const qreal zoom = QPointF::dotProduct(delta + sizeWithSign, sizeWithSign) / QPointF::dotProduct(sizeWithSign, sizeWithSign);
-		const QPoint snapped = (anchor + sizeWithSign * zoom - handle).toPoint();
+		const qreal zoom =
+			QPointF::dotProduct(delta + sizeWithSign, sizeWithSign) /
+			QPointF::dotProduct(sizeWithSign, sizeWithSign);
+		const QPoint snapped =
+			(anchor + sizeWithSign * zoom - handle).toPoint();
 		const qreal a = bounds.width() / bounds.height();
-		const int dx = sizeWithSign.x() == 0 ? (snapped.y() * a / 2) : snapped.x();
-		const int dy = sizeWithSign.y() == 0 ? (snapped.x() / a / 2) : snapped.y();
+		const int dx =
+			sizeWithSign.x() == 0 ? (snapped.y() * a / 2) : snapped.x();
+		const int dy =
+			sizeWithSign.y() == 0 ? (snapped.x() / a / 2) : snapped.y();
 		adjustScale(left * dx, top * dy, right * dx, bottom * dy);
 	} else {
 		switch(m_adjustmentHandle) {
-		case Handle::Outside: return;
-		case Handle::Center: adjustTranslation(delta); break;
-		case Handle::TopLeft: adjustScale(delta.x(), delta.y(), 0, 0); break;
-		case Handle::TopRight: adjustScale(0, delta.y(), delta.x(), 0); break;
-		case Handle::BottomRight: adjustScale(0, 0, delta.x(), delta.y()); break;
-		case Handle::BottomLeft: adjustScale(delta.x(), 0, 0, delta.y()); break;
-		case Handle::Top: adjustScale(0, delta.y(), 0, 0); break;
-		case Handle::Right: adjustScale(0, 0, delta.x(), 0); break;
-		case Handle::Bottom: adjustScale(0, 0, 0, delta.y()); break;
-		case Handle::Left: adjustScale(delta.x(), 0, 0, 0); break;
+		case Handle::Outside:
+			return;
+		case Handle::Center:
+			adjustTranslation(delta);
+			break;
+		case Handle::TopLeft:
+			adjustScale(delta.x(), delta.y(), 0, 0);
+			break;
+		case Handle::TopRight:
+			adjustScale(0, delta.y(), delta.x(), 0);
+			break;
+		case Handle::BottomRight:
+			adjustScale(0, 0, delta.x(), delta.y());
+			break;
+		case Handle::BottomLeft:
+			adjustScale(delta.x(), 0, 0, delta.y());
+			break;
+		case Handle::Top:
+			adjustScale(0, delta.y(), 0, 0);
+			break;
+		case Handle::Right:
+			adjustScale(0, 0, delta.x(), 0);
+			break;
+		case Handle::Bottom:
+			adjustScale(0, 0, 0, delta.y());
+			break;
+		case Handle::Left:
+			adjustScale(delta.x(), 0, 0, 0);
+			break;
 		}
 	}
 }
 
-void Selection::adjustGeometryRotate(const QPointF &start, const QPointF &point, bool constrain)
+void Selection::adjustGeometryRotate(
+	const QPointF &start, const QPointF &point, bool constrain)
 {
 	switch(m_adjustmentHandle) {
-	case Handle::Outside: return;
-	case Handle::Center: adjustTranslation(point - start); break;
+	case Handle::Outside:
+		return;
+	case Handle::Center:
+		adjustTranslation(point - start);
+		break;
 	case Handle::TopLeft:
 	case Handle::TopRight:
 	case Handle::BottomRight:
@@ -271,27 +305,54 @@ void Selection::adjustGeometryRotate(const QPointF &start, const QPointF &point,
 
 		adjustRotation(a);
 		break;
-		}
-	case Handle::Top: adjustShear((start.x() - point.x()) / 100.0, 0); break;
-	case Handle::Bottom: adjustShear((point.x() - start.x()) / 100.0, 0); break;
-	case Handle::Right: adjustShear(0, (point.y() - start.y()) / 100.0); break;
-	case Handle::Left: adjustShear(0, (start.y() - point.y()) / 100.0); break;
+	}
+	case Handle::Top:
+		adjustShear((start.x() - point.x()) / 100.0, 0);
+		break;
+	case Handle::Bottom:
+		adjustShear((point.x() - start.x()) / 100.0, 0);
+		break;
+	case Handle::Right:
+		adjustShear(0, (point.y() - start.y()) / 100.0);
+		break;
+	case Handle::Left:
+		adjustShear(0, (start.y() - point.y()) / 100.0);
+		break;
 	}
 }
 
 void Selection::adjustGeometryDistort(const QPointF &delta)
 {
 	switch(m_adjustmentHandle) {
-	case Handle::Outside: return;
-	case Handle::Center: adjustTranslation(delta); break;
-	case Handle::TopLeft: adjustDistort(delta, 0); break;
-	case Handle::Top: adjustDistort(delta, 0, 1); break;
-	case Handle::TopRight: adjustDistort(delta, 1); break;
-	case Handle::Right: adjustDistort(delta, 1, 2); break;
-	case Handle::BottomRight: adjustDistort(delta, 2); break;
-	case Handle::Bottom: adjustDistort(delta, 2, 3); break;
-	case Handle::BottomLeft: adjustDistort(delta, 3); break;
-	case Handle::Left: adjustDistort(delta, 3, 0); break;
+	case Handle::Outside:
+		return;
+	case Handle::Center:
+		adjustTranslation(delta);
+		break;
+	case Handle::TopLeft:
+		adjustDistort(delta, 0);
+		break;
+	case Handle::Top:
+		adjustDistort(delta, 0, 1);
+		break;
+	case Handle::TopRight:
+		adjustDistort(delta, 1);
+		break;
+	case Handle::Right:
+		adjustDistort(delta, 1, 2);
+		break;
+	case Handle::BottomRight:
+		adjustDistort(delta, 2);
+		break;
+	case Handle::Bottom:
+		adjustDistort(delta, 2, 3);
+		break;
+	case Handle::BottomLeft:
+		adjustDistort(delta, 3);
+		break;
+	case Handle::Left:
+		adjustDistort(delta, 3, 0);
+		break;
 	}
 }
 
@@ -315,11 +376,10 @@ void Selection::adjustScale(qreal dx1, qreal dy1, qreal dx2, qreal dy2)
 	const qreal sx = (bounds.width() - dx1 + dx2) / bounds.width();
 	const qreal sy = (bounds.height() - dy1 + dy2) / bounds.height();
 
-	for(int i=0;i<m_preAdjustmentShape.size();++i) {
+	for(int i = 0; i < m_preAdjustmentShape.size(); ++i) {
 		m_shape[i] = QPointF(
 			bounds.x() + (m_preAdjustmentShape[i].x() - bounds.x()) * sx + dx1,
-			bounds.y() + (m_preAdjustmentShape[i].y() - bounds.y()) * sy + dy1
-		);
+			bounds.y() + (m_preAdjustmentShape[i].y() - bounds.y()) * sy + dy1);
 		if(std::isnan(m_shape[i].x()) || std::isnan(m_shape[i].y())) {
 			qWarning("Selection shape[%d] is Not a Number!", i);
 			m_shape = m_preAdjustmentShape;
@@ -339,7 +399,7 @@ void Selection::adjustRotation(qreal angle)
 	t.translate(origin.x(), origin.y());
 	t.rotateRadians(angle);
 
-	for(int i=0;i<m_shape.size();++i) {
+	for(int i = 0; i < m_shape.size(); ++i) {
 		const QPointF p = m_preAdjustmentShape[i] - origin;
 		m_shape[i] = t.map(p);
 	}
@@ -359,7 +419,7 @@ void Selection::adjustShear(qreal sh, qreal sv)
 	t.translate(origin.x(), origin.y());
 	t.shear(sh, sv);
 
-	for(int i=0;i<m_shape.size();++i) {
+	for(int i = 0; i < m_shape.size(); ++i) {
 		const QPointF p = m_preAdjustmentShape[i] - origin;
 		m_shape[i] = t.map(p);
 	}
@@ -389,7 +449,7 @@ void Selection::adjustDistort(const QPointF &delta, int corner1, int corner2)
 
 	auto target = QPolygonF{source};
 	target[corner1] += delta;
-	if (corner1 != corner2 && corner2 >= 0) {
+	if(corner1 != corner2 && corner2 >= 0) {
 		target[corner2] += delta;
 	}
 
@@ -399,7 +459,7 @@ void Selection::adjustDistort(const QPointF &delta, int corner1, int corner2)
 		return;
 	}
 
-	for(int i=0;i<m_shape.size();++i) {
+	for(int i = 0; i < m_shape.size(); ++i) {
 		// No need to adjust the origin like in the other transformation
 		// functions, the quadToQuad call deals with that already.
 		m_shape[i] = t.map(m_preAdjustmentShape[i]);
@@ -413,7 +473,6 @@ void Selection::addPointToShape(const QPointF &point)
 {
 	if(m_closedPolygon) {
 		qWarning("Selection::addPointToShape: shape is closed!");
-
 	} else {
 		m_shape << point;
 		emit shapeChanged(m_shape);
@@ -455,8 +514,9 @@ void Selection::offsetBy(int x, int y)
 
 static bool isAxisAlignedRectangle(const QPolygon &p)
 {
-	if(p.size() != 4)
+	if(p.size() != 4) {
 		return false;
+	}
 
 	// When we create a rectangular polygon (see above), the points
 	// are in clockwise order, starting from the top left.
@@ -468,26 +528,21 @@ static bool isAxisAlignedRectangle(const QPolygon &p)
 	// 0==1 and 2==3 (X plane) and 0==3 and 1==2 (Y plane)
 	// OR
 	// 0==3 and 1==2 (X plane) and 0==1 and 2==3 (Y plane)
-	return
-		(
-			// case 1
-			p.at(0).y() == p.at(1).y() &&
-			p.at(2).y() == p.at(3).y() &&
-			p.at(0).x() == p.at(3).x() &&
-			p.at(1).x() == p.at(2).x()
-		) || (
-			// case 2
-			p.at(0).y() == p.at(3).y() &&
-			p.at(1).y() == p.at(2).y() &&
-			p.at(0).x() == p.at(1).x() &&
-			p.at(2).x() == p.at(3).x()
-		);
+	return (
+			   // case 1
+			   p.at(0).y() == p.at(1).y() && p.at(2).y() == p.at(3).y() &&
+			   p.at(0).x() == p.at(3).x() && p.at(1).x() == p.at(2).x()) ||
+		   (
+			   // case 2
+			   p.at(0).y() == p.at(3).y() && p.at(1).y() == p.at(2).y() &&
+			   p.at(0).x() == p.at(1).x() && p.at(2).x() == p.at(3).x());
 }
 
 bool Selection::isAxisAlignedRectangle(bool source) const
 {
 	const QPolygonF &shape = source ? m_moveRegion : m_shape;
-	return shape.size() == 4 && canvas::isAxisAlignedRectangle(shape.toPolygon());
+	return shape.size() == 4 &&
+		   canvas::isAxisAlignedRectangle(shape.toPolygon());
 }
 
 QRect Selection::boundingRect(bool source) const
@@ -496,8 +551,8 @@ QRect Selection::boundingRect(bool source) const
 	return shape.boundingRect().toRect();
 }
 
-QImage Selection::shapeMask(
-	const QColor &color, QRect *maskBounds, bool source) const
+QImage
+Selection::shapeMask(const QColor &color, QRect *maskBounds, bool source) const
 {
 	const QPolygonF &shape = source ? m_moveRegion : m_shape;
 	return tools::SelectionTool::shapeMask(color, shape, maskBounds, false);
@@ -510,7 +565,9 @@ void Selection::setPasteImage(const QImage &image)
 	const QRect selectionBounds = m_shape.boundingRect().toRect();
 	if(selectionBounds.size() != image.size() || !isAxisAlignedRectangle()) {
 		const QPoint c = selectionBounds.center();
-		setShapeRect(QRect(c.x() - image.width()/2, c.y()-image.height()/2, image.width(), image.height()));
+		setShapeRect(QRect(
+			c.x() - image.width() / 2, c.y() - image.height() / 2,
+			image.width(), image.height()));
 	}
 
 	closeShape();
@@ -521,7 +578,9 @@ void Selection::setPasteImage(const QImage &image)
 	emit pasteImageChanged(m_pasteImage);
 }
 
-void Selection::setMoveImage(const QImage &image, const QRect &imageRect, const QSize &canvasSize, int sourceLayerId)
+void Selection::setMoveImage(
+	const QImage &image, const QRect &imageRect, const QSize &canvasSize,
+	int sourceLayerId)
 {
 	m_moveRegion = m_shape;
 	m_sourceLayerId = sourceLayerId;
@@ -537,19 +596,24 @@ void Selection::setMoveImage(const QImage &image, const QRect &imageRect, const 
 	emit pasteImageChanged(image);
 }
 
-static void appendPutImage(drawdance::MessageList &buffer, uint8_t contextId, uint16_t layer, int x, int y, const QImage &image, DP_BlendMode mode)
+static void appendPutImage(
+	drawdance::MessageList &buffer, uint8_t contextId, uint16_t layer, int x,
+	int y, const QImage &image, DP_BlendMode mode)
 {
-	drawdance::Message::makePutImages(buffer, contextId, layer, mode, x, y, image);
+	drawdance::Message::makePutImages(
+		buffer, contextId, layer, mode, x, y, image);
 }
 
-bool Selection::pasteOrMoveToCanvas(drawdance::MessageList &buffer, uint8_t contextId, int layer, int interpolation, bool compatibilityMode) const
+bool Selection::pasteOrMoveToCanvas(
+	drawdance::MessageList &buffer, uint8_t contextId, int layer,
+	int interpolation, bool compatibilityMode) const
 {
 	if(m_pasteImage.isNull()) {
 		qWarning("Selection::pasteToCanvas: nothing to paste");
 		return false;
 	}
 
-	if(m_shape.size()!=4) {
+	if(m_shape.size() != 4) {
 		qWarning("Paste selection is not a quad!");
 		return false;
 	}
@@ -587,9 +651,9 @@ bool Selection::pasteOrMoveToCanvas(drawdance::MessageList &buffer, uint8_t cont
 			}
 		} else if(isOnlyTranslated()) {
 			drawdance::Message msg = drawdance::Message::makeMoveRect(
-				contextId, layer, m_sourceLayerId, moveBounds.x(), moveBounds.y(),
-				m_shape.at(0).x(), m_shape.at(0).y(), moveBounds.width(),
-				moveBounds.height(), mask);
+				contextId, layer, m_sourceLayerId, moveBounds.x(),
+				moveBounds.y(), m_shape.at(0).x(), m_shape.at(0).y(),
+				moveBounds.width(), moveBounds.height(), mask);
 			if(msg.isNull()) {
 				qWarning("Translate: mask too large");
 				return false;
@@ -600,10 +664,10 @@ bool Selection::pasteOrMoveToCanvas(drawdance::MessageList &buffer, uint8_t cont
 		} else {
 			QPolygon s = m_shape.toPolygon();
 			drawdance::Message msg = drawdance::Message::makeTransformRegion(
-				contextId, layer, m_sourceLayerId, moveBounds.x(), moveBounds.y(),
-				moveBounds.width(), moveBounds.height(), s[0].x(), s[0].y(),
-				s[1].x(), s[1].y(), s[2].x(), s[2].y(), s[3].x(), s[3].y(),
-				interpolation, mask);
+				contextId, layer, m_sourceLayerId, moveBounds.x(),
+				moveBounds.y(), moveBounds.width(), moveBounds.height(),
+				s[0].x(), s[0].y(), s[1].x(), s[1].y(), s[2].x(), s[2].y(),
+				s[3].x(), s[3].y(), interpolation, mask);
 			if(msg.isNull()) {
 				qWarning("Transform: mask too large");
 				return false;
@@ -616,9 +680,12 @@ bool Selection::pasteOrMoveToCanvas(drawdance::MessageList &buffer, uint8_t cont
 	} else {
 		// A pasted image
 		QPoint offset;
-		QImage image = tools::SelectionTool::transformSelectionImage(m_pasteImage, m_shape.toPolygon(), &offset);
+		QImage image = tools::SelectionTool::transformSelectionImage(
+			m_pasteImage, m_shape.toPolygon(), &offset);
 		buffer.append(drawdance::Message::makeUndoPoint(contextId));
-		appendPutImage(buffer, contextId, layer, offset.x(), offset.y(), image, DP_BLEND_MODE_NORMAL);
+		appendPutImage(
+			buffer, contextId, layer, offset.x(), offset.y(), image,
+			DP_BLEND_MODE_NORMAL);
 	}
 
 	return true;
@@ -626,12 +693,14 @@ bool Selection::pasteOrMoveToCanvas(drawdance::MessageList &buffer, uint8_t cont
 
 QImage Selection::transformedPasteImage() const
 {
-	return tools::SelectionTool::transformSelectionImage(m_pasteImage, m_shape.toPolygon(), nullptr);
+	return tools::SelectionTool::transformSelectionImage(
+		m_pasteImage, m_shape.toPolygon(), nullptr);
 }
 
 QPolygon Selection::destinationQuad() const
 {
-	return tools::SelectionTool::destinationQuad(m_pasteImage, m_shape.toPolygon());
+	return tools::SelectionTool::destinationQuad(
+		m_pasteImage, m_shape.toPolygon());
 }
 
 bool Selection::fillCanvas(
@@ -653,9 +722,12 @@ bool Selection::fillCanvas(
 
 		if(mask.isNull()) {
 			buffer.append(drawdance::Message::makeFillRect(
-				contextId, layer, mode, area.x(), area.y(), area.width(), area.height(), color));
+				contextId, layer, mode, area.x(), area.y(), area.width(),
+				area.height(), color));
 		} else {
-			appendPutImage(buffer, contextId, layer, maskBounds.left(), maskBounds.top(), mask, mode);
+			appendPutImage(
+				buffer, contextId, layer, maskBounds.left(), maskBounds.top(),
+				mask, mode);
 		}
 
 		return true;

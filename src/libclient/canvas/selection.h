@@ -9,8 +9,8 @@ extern "C" {
 
 #include "libclient/drawdance/message.h"
 
-#include <QObject>
 #include <QImage>
+#include <QObject>
 #include <QPolygonF>
 
 namespace canvas {
@@ -20,17 +20,28 @@ namespace canvas {
  *
  * A selection can contain in image to be pasted.
  */
-class Selection final : public QObject
-{
+class Selection final : public QObject {
 	Q_PROPERTY(QPolygonF shape READ shape WRITE setShape NOTIFY shapeChanged)
-	Q_PROPERTY(QImage pasteImage READ pasteImage WRITE setPasteImage NOTIFY pasteImageChanged)
+	Q_PROPERTY(QImage pasteImage READ pasteImage WRITE setPasteImage NOTIFY
+				   pasteImageChanged)
 	Q_PROPERTY(int handleSize READ handleSize CONSTANT)
 	Q_OBJECT
 public:
-	enum class Handle {Outside, Center, TopLeft, TopRight, BottomRight, BottomLeft, Top, Right, Bottom, Left};
+	enum class Handle {
+		Outside,
+		Center,
+		TopLeft,
+		TopRight,
+		BottomRight,
+		BottomLeft,
+		Top,
+		Right,
+		Bottom,
+		Left
+	};
 	enum class AdjustmentMode { Scale, Rotate, Distort };
 
-	explicit Selection(QObject *parent=nullptr);
+	explicit Selection(QObject *parent = nullptr);
 
 	//! Get the selection shape polygon
 	QPolygonF shape() const { return m_shape; }
@@ -91,14 +102,15 @@ public:
 	 * @brief Adjust shape geometry by dragging from one of the handles
 	 *
 	 * The selection can be translated and scaled by handle dragging.
-	 * This replaces the current shape with a modified version of the shape saved
-	 * when beginAdjustment was called.
+	 * This replaces the current shape with a modified version of the shape
+	 * saved when beginAdjustment was called.
 	 *
 	 * @param start the starting coordinate
 	 * @param point current pointer position
 	 * @param constrain apply constraint (aspect ratio or discrete angle)
 	 */
-	void adjustGeometry(const QPointF &start, const QPointF &point, bool constrain);
+	void
+	adjustGeometry(const QPointF &start, const QPointF &point, bool constrain);
 
 	/**
 	 * @brief Check if the selection is an axis-aligned rectangle
@@ -107,10 +119,12 @@ public:
 	 */
 	bool isAxisAlignedRectangle(bool source = false) const;
 
-	//! Forget that the selection buffer came from the canvas (will be treated as a pasted image)
+	//! Forget that the selection buffer came from the canvas (will be treated
+	//! as a pasted image)
 	void detachMove() { m_moveRegion = QPolygon(); }
 
-	//! Did the selection buffer come from the canvas? (as opposed to an external pasted image)
+	//! Did the selection buffer come from the canvas? (as opposed to an
+	//! external pasted image)
 	bool isMovedFromCanvas() const { return !m_moveRegion.isEmpty(); }
 
 	//! Get the shape at which the move started
@@ -130,10 +144,13 @@ public:
 	 * The current shape will be remembered.
 	 * @param image
 	 * @param imageRect the rectangle from which the image was captured
-	 * @param canvasSize the size of the canvas (selection rectangle is clipped to canvas bounds
+	 * @param canvasSize the size of the canvas (selection rectangle is clipped
+	 * to canvas bounds
 	 * @param sourceLayerId the ID of the layer where the image came from
 	 */
-	void setMoveImage(const QImage &image, const QRect &imageRect, const QSize &canvasSize, int sourceLayerId);
+	void setMoveImage(
+		const QImage &image, const QRect &imageRect, const QSize &canvasSize,
+		int sourceLayerId);
 
 	//! Get the image to be pasted (or the move preview)
 	QImage pasteImage() const { return m_pasteImage; }
@@ -148,28 +165,31 @@ public:
 	/**
 	 * @brief Generate the commands to paste or move an image
 	 *
-	 * If this selection contains a moved piece (setMoveImage called) calling this method
-	 * will return the commands for a RegionMove.
-	 * If the image came from outside (i.e the clipboard,) a PutImage command set will be returned
+	 * If this selection contains a moved piece (setMoveImage called) calling
+	 * this method will return the commands for a RegionMove. If the image came
+	 * from outside (i.e the clipboard,) a PutImage command set will be returned
 	 * instead.
 	 *
-	 * If a MoveRegion command is generated, the source layer ID set previously in setMoveImage is used
-	 * instead of the given target layer
+	 * If a MoveRegion command is generated, the source layer ID set previously
+	 * in setMoveImage is used instead of the given target layer
 	 *
 	 * @param buffer vector to put the commands into
 	 * @param contextId user ID for the commands
 	 * @param layer target layer
 	 * @param interpolation how to interpolate, one of DP_MSG_MOVE_REGION_MODE_*
-	 * @param compatibilityMode use MoveRegion messages for Drawpile 2.1 compatibility
+	 * @param compatibilityMode use MoveRegion messages for Drawpile 2.1
+	 * compatibility
 	 * @return set of commands
 	 */
-	bool pasteOrMoveToCanvas(drawdance::MessageList &buffer, uint8_t contextId, int layer, int interpolation, bool compatibilityMode) const;
+	bool pasteOrMoveToCanvas(
+		drawdance::MessageList &buffer, uint8_t contextId, int layer,
+		int interpolation, bool compatibilityMode) const;
 
 	/**
 	 * @brief Generate the commands to fill the selection with solid color
 	 *
-	 * If this is an axis aligned rectangle, a FillRect command will be returned.
-	 * Otherwise, a PutImage set will be generated.
+	 * If this is an axis aligned rectangle, a FillRect command will be
+	 * returned. Otherwise, a PutImage set will be generated.
 	 *
 	 * @param buffer vector to put the commands into
 	 * @param contextId user ID for the commands
@@ -212,7 +232,8 @@ signals:
 
 private:
 	void adjustGeometryScale(const QPoint &delta, bool keepAspect);
-	void adjustGeometryRotate(const QPointF &start, const QPointF &point, bool constrain);
+	void adjustGeometryRotate(
+		const QPointF &start, const QPointF &point, bool constrain);
 	void adjustGeometryDistort(const QPointF &delta);
 	void adjustTranslation(const QPointF &start, const QPointF &point);
 	void adjustTranslation(const QPointF &delta);
