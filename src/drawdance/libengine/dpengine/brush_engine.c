@@ -423,7 +423,9 @@ static uint32_t get_mypaint_dab_color(DP_BrushEngine *be, float color_r,
                                       float alpha_eraser)
 {
     if (be->mypaint.erase) {
-        return 0;
+        return be->mypaint.mode == DP_MYPAINT_BRUSH_MODE_INCREMENTAL
+                 ? 0x00000000u
+                 : 0xff000000u;
     }
     else {
         return combine_rgba(color_r, color_g, color_b, alpha_eraser);
@@ -515,7 +517,7 @@ static int add_dab_mypaint_pigment(MyPaintSurface2 *self, float x, float y,
         uint8_t dab_lock_alpha, dab_colorize, dab_posterize, dab_mode;
 
         uint8_t mode = be->mypaint.mode;
-        if (mode == 0) {
+        if (mode == DP_MYPAINT_BRUSH_MODE_INCREMENTAL) {
             dab_color = get_mypaint_dab_color(be, color_r, color_g, color_b,
                                               alpha_eraser);
             dab_lock_alpha = get_mypaint_dab_lock_alpha(be, lock_alpha);
