@@ -4,6 +4,7 @@
 #include "libclient/brushes/brushpresetmodel.h"
 #include <QDialogButtonBox>
 #include <QLabel>
+#include <QPalette>
 #include <QPushButton>
 #include <QTextBrowser>
 #include <QTimer>
@@ -45,6 +46,9 @@ BrushExportDialog::BrushExportDialog(
 
 	m_tree = new ExportTreeWidget;
 	m_tree->setHeaderHidden(true);
+	m_tree->setStyleSheet(
+		QStringLiteral("QAbstractScrollArea { background-color: %1; }")
+			.arg(palette().alternateBase().color().name(QColor::HexRgb)));
 	buildTreeTags();
 	layout->addWidget(m_tree);
 
