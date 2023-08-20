@@ -412,7 +412,7 @@ void ColorSliderDock::updateValueSlider(
 		colors.reserve(SLIDER_COLORS);
 		for(int i = 0; i < SLIDER_COLORS; ++i) {
 			qreal lf = i / qreal(SLIDER_COLORS - 1);
-			colors.append(color_widgets::utils::color_from_hsl(hf, cf, lf));
+			colors.append(color_widgets::utils::color_from_lch(hf, cf, lf));
 		}
 		d->value->setColors(colors);
 		if(!fromHsvSelection) {
