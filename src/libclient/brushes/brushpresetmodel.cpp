@@ -1022,7 +1022,7 @@ int BrushPresetModel::rowCount(const QModelIndex &parent) const
 
 int BrushPresetModel::rowCountForTagId(int tagId) const
 {
-	switch(m_tagIdToFilter) {
+	switch(tagId) {
 	case ALL_ID:
 		return d->readPresetCountAll();
 	case UNTAGGED_ID:
