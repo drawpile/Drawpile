@@ -62,6 +62,7 @@ struct Chat {
 			".timestamp { color: #8d8d8d }"
 		    ".alert .timestamp { color: #eff0f1 }"
 			"a:link { color: #1d99f3 }"
+			".emoji { font-size: xx-large; }"
 		);
 	}
 
@@ -601,7 +602,8 @@ void ChatWidget::receiveMessage(int sender, int recipient, uint8_t tflags, uint8
 			return;
 	}
 
-	const QString safetext = htmlutils::linkify(message.toHtmlEscaped());
+	const QString safetext =
+		htmlutils::linkify(htmlutils::wrapEmoji(message.toHtmlEscaped()));
 
 	Q_ASSERT(d->chats.contains(chatId));
 	Chat &chat = d->chats[chatId];
@@ -654,7 +656,8 @@ void ChatWidget::setPinnedMessage(const QString &message)
 void ChatWidget::systemMessage(const QString& message, bool alert)
 {
 	const bool wasAtEnd = d->isAtEnd();
-	const QString safetext = htmlutils::linkify(message.toHtmlEscaped());
+	const QString safetext =
+		htmlutils::linkify(htmlutils::wrapEmoji(message.toHtmlEscaped()));
 	if(alert) {
 		d->publicChat().appendMessageCompact(0, QString(), safetext, false, true);
 		emit expandRequested();

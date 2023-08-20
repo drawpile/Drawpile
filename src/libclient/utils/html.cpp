@@ -70,4 +70,19 @@ QString linkify(const QString &input, const QString &extra)
 	return out;
 }
 
+QString wrapEmoji(const QString &input, const QString &replacement)
+{
+	// This regex is taken from the Unicode Technical Standard #51 version 15,
+	// revision 23, section 1.4.9 "EBNF and Regex". It doesn't exactly match
+	// emoji, but it should hopefully be close enough for our use case.
+	// https://unicode.org/reports/tr51/#EBNF_and_Regex
+	static QRegularExpression re{
+		"(\\p{RI}\\p{RI}|\\p{Emoji}(\\p{EMod}|\\x{FE0F}\\x{20E3}?|[\\x{E0020}-"
+		"\\x{E007E}]+\\x{E007F})?(\\x{200D}(\\p{RI}\\p{RI}|\\p{Emoji}(\\p{EMod}"
+		"|\\x{FE0F}\\x{20E3}?|[\\x{E0020}-\\x{E007E}]+\\x{E007F})?))*)+"};
+	QString s = input;
+	s.replace(re, replacement);
+	return s;
+}
+
 }
