@@ -23,7 +23,6 @@ Unreleased Version 2.2.0-pre
  * Fix: Show the current color properly on program startup.
  * Feature: Make the color wheel innards go from least to most saturated, putting it in line with how most other software presents it. This can be toggled in the preferences.
  * Feature: Holding Shift while moving a selection now keeps it along the closest axis. Thanks Kvothen for suggesting.
- * Fix: Make checkbox outlines in the Fusion style not totally invisible in dark themes.
  * Feature: Implement brush export and make the brush import also understand classic brushes.
  * Fix: Make erasing with MyPaint brushes in indirect mode actually work.
  * Feature: Make sliders adhere to the chosen color space. Thanks to leandro2222 for suggesting.
