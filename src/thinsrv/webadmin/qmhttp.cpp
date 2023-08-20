@@ -41,6 +41,8 @@ struct MicroHttpd::Private {
 	QByteArray baUser;
 	QByteArray baPass;
 
+	QByteArray allowedOrigin;
+
 	// Access controls
 	AcceptPolicy acceptPolicy;
 
@@ -116,6 +118,14 @@ void request_completed(void *cls, struct MHD_Connection *connection, void **con_
 	*con_cls = nullptr;
 }
 
+static void addCorsHeader(MicroHttpd::Private *d, MHD_Response *res)
+{
+	if(!d->allowedOrigin.isEmpty()) {
+		MHD_add_response_header(
+			res, "Access-Control-Allow-Origin", d->allowedOrigin.constData());
+	}
+}
+
 MHD_Result request_handler(void *cls, MHD_Connection *connection, const char *url, const char *methodstr, const char *version, const char *upload_data, size_t *upload_data_size, void **con_cls)
 {
 	Q_UNUSED(version);
@@ -135,6 +145,8 @@ MHD_Result request_handler(void *cls, MHD_Connection *connection, const char *ur
 			method = HttpRequest::PUT;
 		else if(qstrcmp(methodstr, "DELETE")==0)
 			method = HttpRequest::DELETE;
+		else if(qstrcmp(methodstr, "OPTIONS")==0)
+			method = HttpRequest::OPTIONS;
 		else {
 			logMessage(connection, 405, methodstr, url);
 			return MHD_NO;
@@ -159,6 +171,7 @@ MHD_Result request_handler(void *cls, MHD_Connection *connection, const char *ur
 					strlen(MSG_404),
 					const_cast<char*>(MSG_404),
 					MHD_RESPMEM_PERSISTENT);
+			addCorsHeader(d, response);
 			const auto ret = MHD_queue_response(connection, MHD_HTTP_NOT_FOUND, response);
 			MHD_destroy_response(response);
 			return ret;
@@ -173,7 +186,7 @@ MHD_Result request_handler(void *cls, MHD_Connection *connection, const char *ur
 		ctx->request.setHeaders(headers);
 
 		// Demand authentication if basic auth is enabled
-		if(!d->baPass.isEmpty()) {
+		if(!d->baPass.isEmpty() && request.method() != HttpRequest::OPTIONS) {
 			char *user, *pass = nullptr;
 			bool fail = false;
 
@@ -193,6 +206,7 @@ MHD_Result request_handler(void *cls, MHD_Connection *connection, const char *ur
 					const_cast<char*>(MSG_401),
 					MHD_RESPMEM_PERSISTENT
 					);
+				addCorsHeader(d, response);
 
 				int ret;
 				// If a header indicating this was an AJAX request is set,
@@ -270,6 +284,7 @@ MHD_Result request_handler(void *cls, MHD_Connection *connection, const char *ur
 		MHD_add_response_header(mhdresponse, i.key().toUtf8().constData(), i.value().toUtf8().constData());
 	}
 
+	addCorsHeader(d, mhdresponse);
 	const auto ret = MHD_queue_response (connection, response.code(), mhdresponse);
 	MHD_destroy_response(mhdresponse);
 
@@ -366,6 +381,11 @@ void MicroHttpd::setBasicAuth(const QString &realm, const QString &username, con
 	_d->baPass = password.toUtf8();
 }
 
+void MicroHttpd::setAllowedOrigin(const QString &allowedOrigin)
+{
+	_d->allowedOrigin = allowedOrigin.toUtf8();
+}
+
 QString MicroHttpd::version()
 {
 	return QString::fromUtf8(MHD_get_version());
@@ -404,6 +424,12 @@ HttpResponse HttpResponse::JsonErrorResponse(const QString &message, int statusc
 	o["status"] = "error";
 	o["message"] = message;
 	return JsonResponse(QJsonDocument(o), statuscode);
+}
+
+//! Return a No Content response
+HttpResponse HttpResponse::NoContent(int statuscode)
+{
+	return HttpResponse(statuscode);
 }
 
 HttpResponse HttpResponse::MethodNotAllowed(const QStringList &allow)

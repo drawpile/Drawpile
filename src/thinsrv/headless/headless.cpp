@@ -101,6 +101,13 @@ bool start() {
 	// --web-admin-access <address/subnet>
 	QCommandLineOption webadminAccessOption("web-admin-access", "Set web admin access mask", "address/subnet|all");
 	parser.addOption(webadminAccessOption);
+
+	// --web-admin-allow-origin <origin>
+	QCommandLineOption webadminAllowedOriginOption(
+		"web-admin-allowed-origin",
+		"Allowed origin for Access-Control-Allow-Origin headers in responses",
+		"origin");
+	parser.addOption(webadminAllowedOriginOption);
 #endif
 
 	// --database, -d <filename>
@@ -268,6 +275,12 @@ bool start() {
 				return false;
 			}
 		}
+
+		QString allowedOrigin = parser.value(webadminAllowedOriginOption);
+		if(!allowedOrigin.isEmpty()) {
+			webadmin->setAllowedOrigin(allowedOrigin);
+		}
+
 #ifdef Q_OS_UNIX
 	server->connect(UnixSignals::instance(), SIGNAL(sigUsr1()), webadmin, SLOT(restart()));
 #endif

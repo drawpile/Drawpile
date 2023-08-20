@@ -27,6 +27,8 @@ public:
 	 */
 	void setBasicAuth(const QString &userpass);
 
+	void setAllowedOrigin(const QString &allowedOrigin);
+
 	//! Set the session server to administrate
 	void setSessions(MultiServer *server);
 

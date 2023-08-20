@@ -31,6 +31,11 @@ void Webadmin::setBasicAuth(const QString &userpass)
 	}
 }
 
+void Webadmin::setAllowedOrigin(const QString &allowedOrigin)
+{
+	m_server->setAllowedOrigin(allowedOrigin);
+}
+
 void Webadmin::setSessions(MultiServer *server)
 {
 	m_server->addRequestHandler("^/api/(.*)", [server](const HttpRequest &req) {
@@ -49,6 +54,13 @@ void Webadmin::setSessions(MultiServer *server)
 		case HttpRequest::DELETE:
 			m = JsonApiMethod::Delete;
 			break;
+		case HttpRequest::OPTIONS: {
+			HttpResponse r = HttpResponse::NoContent();
+			r.setHeader("Access-Control-Allow-Methods", "HEAD, GET, POST, PUT, DELETE");
+			r.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
+			r.setHeader("Access-Control-Max-Age", "86400");
+			return r;
+		}
 		default:
 			return HttpResponse::JsonErrorResponse("Unknown request method", 400);
 		}

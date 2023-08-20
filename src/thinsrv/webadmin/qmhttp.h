@@ -65,6 +65,8 @@ public:
 	//! Set server-wide basic authentication
 	void setBasicAuth(const QString &realm, const QString &username, const QString &password);
 
+	void setAllowedOrigin(const QString &allowedOrigin);
+
 	//! Get libmicrohttpd version
 	static QString version();
 
@@ -74,7 +76,7 @@ private:
 
 class HttpRequest {
 public:
-	enum Method {HEAD, GET, POST, PUT, DELETE};
+	enum Method {HEAD, GET, POST, PUT, DELETE, OPTIONS};
 
 	HttpRequest() {}
 	HttpRequest(Method method, const QString &path)
@@ -135,6 +137,9 @@ public:
 
 	//! Return an error message
 	static HttpResponse JsonErrorResponse(const QString &message, int statuscode);
+
+	//! Return a No Content response
+	static HttpResponse NoContent(int statuscode=204);
 
 	//! Return a Method Not Allowed error
 	static HttpResponse MethodNotAllowed(const QStringList &allow);
