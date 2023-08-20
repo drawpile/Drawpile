@@ -4,20 +4,25 @@
 #include "desktop/docks/colorpalette.h"
 #include "desktop/docks/titlewidget.h"
 #include "desktop/docks/toolsettingsdock.h"
+#include "desktop/main.h"
 #include <QGridLayout>
 #include <QLabel>
 #include <QScopedValueRollback>
 #include <QSpinBox>
+#include <QtColorWidgets/color_utils.hpp>
 #include <QtColorWidgets/hue_slider.hpp>
 #include <QtColorWidgets/swatch.hpp>
 
 namespace docks {
 
 struct ColorSliderDock::Private {
+	QColor lastColor = Qt::black;
 	color_widgets::Swatch *lastUsedSwatch = nullptr;
 
 	color_widgets::HueSlider *hue = nullptr;
+	QLabel *saturationLabel = nullptr;
 	color_widgets::GradientSlider *saturation = nullptr;
+	QLabel *valueLabel = nullptr;
 	color_widgets::GradientSlider *value = nullptr;
 	color_widgets::GradientSlider *red = nullptr;
 	color_widgets::GradientSlider *green = nullptr;
@@ -29,6 +34,9 @@ struct ColorSliderDock::Private {
 	QSpinBox *redbox = nullptr;
 	QSpinBox *greenbox = nullptr;
 	QSpinBox *bluebox = nullptr;
+
+	color_widgets::ColorWheel::ColorSpaceEnum colorSpace =
+		color_widgets::ColorWheel::ColorHSV;
 
 	bool updating = false;
 };
@@ -75,23 +83,25 @@ ColorSliderDock::ColorSliderDock(const QString &title, QWidget *parent)
 
 	++row;
 
+	d->saturationLabel = new QLabel{w};
 	d->saturation = new color_widgets::GradientSlider(w);
 	d->saturation->setMaximum(255);
 	d->saturationbox = new QSpinBox(w);
 	d->saturationbox->setMaximum(255);
 	d->saturation->setMaximumHeight(d->saturationbox->height());
-	layout->addWidget(new QLabel{tr("S"), w}, row, 0);
+	layout->addWidget(d->saturationLabel, row, 0);
 	layout->addWidget(d->saturation, row, 1);
 	layout->addWidget(d->saturationbox, row, 2);
 
 	++row;
 
+	d->valueLabel = new QLabel{w};
 	d->value = new color_widgets::GradientSlider(w);
 	d->value->setMaximum(255);
 	d->valuebox = new QSpinBox(w);
 	d->valuebox->setMaximum(255);
 	d->value->setMaximumHeight(d->valuebox->height());
-	layout->addWidget(new QLabel{tr("V"), w}, row, 0);
+	layout->addWidget(d->valueLabel, row, 0);
 	layout->addWidget(d->value, row, 1);
 	layout->addWidget(d->valuebox, row, 2);
 
@@ -181,6 +191,9 @@ ColorSliderDock::ColorSliderDock(const QString &title, QWidget *parent)
 	connect(
 		d->bluebox, QOverload<int>::of(&QSpinBox::valueChanged), this,
 		&ColorSliderDock::updateFromRgbSpinbox);
+
+	dpApp().settings().bindColorWheelSpace(
+		this, &ColorSliderDock::setColorSpace);
 }
 
 ColorSliderDock::~ColorSliderDock()
@@ -190,29 +203,99 @@ ColorSliderDock::~ColorSliderDock()
 
 void ColorSliderDock::setColor(const QColor &color)
 {
+	if(!d->updating) {
+		updateColor(color, false, false);
+	}
+}
+
+void ColorSliderDock::setLastUsedColors(const color_widgets::ColorPalette &pal)
+{
+	d->lastUsedSwatch->setPalette(pal);
+	const QColor color(d->red->value(), d->green->value(), d->blue->value());
+	d->lastUsedSwatch->setSelected(
+		findPaletteColor(d->lastUsedSwatch->palette(), color));
+}
+
+void ColorSliderDock::updateFromRgbSliders()
+{
+	if(!d->updating) {
+		const QColor color(
+			d->red->value(), d->green->value(), d->blue->value());
+		updateColor(color, false, true);
+	}
+}
+
+void ColorSliderDock::updateFromRgbSpinbox()
+{
+	if(!d->updating) {
+		const QColor color(
+			d->redbox->value(), d->greenbox->value(), d->bluebox->value());
+		updateColor(color, false, true);
+	}
+}
+
+void ColorSliderDock::updateFromHsvSliders()
+{
+	if(!d->updating) {
+		const QColor color = getColorSpaceColor(
+			d->hue->value(), d->saturation->value(), d->value->value());
+		d->huebox->setValue(d->hue->value());
+		d->saturationbox->setValue(d->saturation->value());
+		d->valuebox->setValue(d->value->value());
+		updateColor(color, true, true);
+	}
+}
+
+void ColorSliderDock::updateFromHsvSpinbox()
+{
+	if(!d->updating) {
+		const QColor color = getColorSpaceColor(
+			d->huebox->value(), d->saturationbox->value(),
+			d->valuebox->value());
+		d->hue->setValue(d->huebox->value());
+		d->saturation->setValue(d->saturationbox->value());
+		d->value->setValue(d->valuebox->value());
+		updateColor(color, true, true);
+	}
+}
+
+void ColorSliderDock::setColorSpace(
+	color_widgets::ColorWheel::ColorSpaceEnum colorSpace)
+{
+	switch(colorSpace) {
+	case color_widgets::ColorWheel::ColorHSL:
+		d->colorSpace = color_widgets::ColorWheel::ColorHSL;
+		d->saturationLabel->setText(tr("S"));
+		d->valueLabel->setText(tr("L"));
+		break;
+	case color_widgets::ColorWheel::ColorLCH:
+		d->colorSpace = color_widgets::ColorWheel::ColorLCH;
+		d->saturationLabel->setText(tr("C"));
+		d->valueLabel->setText(tr("L"));
+		break;
+	default:
+		d->colorSpace = color_widgets::ColorWheel::ColorHSV;
+		d->saturationLabel->setText(tr("S"));
+		d->valueLabel->setText(tr("V"));
+		break;
+	}
+	QScopedValueRollback<bool> guard{d->updating, true};
+	updateSaturationSlider(d->lastColor, false);
+	updateValueSlider(d->lastColor, false);
+}
+
+void ColorSliderDock::updateColor(
+	const QColor &color, bool fromHsvSelection, bool selected)
+{
 	QScopedValueRollback<bool> guard{d->updating, true};
 
+	d->lastColor = color;
 	d->lastUsedSwatch->setSelected(
 		findPaletteColor(d->lastUsedSwatch->palette(), color));
 
-	d->hue->setColorSaturation(color.saturationF());
-	d->hue->setColorValue(color.valueF());
-	d->hue->setValue(color.hue());
-	d->huebox->setValue(color.hue());
-
-	d->saturation->setFirstColor(
-		QColor::fromHsv(color.hue(), 0, color.value()));
-	d->saturation->setLastColor(
-		QColor::fromHsv(color.hue(), 255, color.value()));
-	d->saturation->setValue(color.saturation());
-	d->saturationbox->setValue(color.saturation());
-
-	d->value->setFirstColor(
-		QColor::fromHsv(color.hue(), color.saturation(), 0));
-	d->value->setLastColor(
-		QColor::fromHsv(color.hue(), color.saturation(), 255));
-	d->value->setValue(color.value());
-	d->valuebox->setValue(color.value());
+	updateHueSlider(color, fromHsvSelection);
+	updateSaturationSlider(color, fromHsvSelection);
+	updateValueSlider(color, fromHsvSelection);
 
 	d->red->setFirstColor(QColor(0, color.green(), color.blue()));
 	d->red->setLastColor(QColor(255, color.green(), color.blue()));
@@ -228,58 +311,153 @@ void ColorSliderDock::setColor(const QColor &color)
 	d->blue->setLastColor(QColor(color.red(), color.green(), 255));
 	d->blue->setValue(color.blue());
 	d->bluebox->setValue(color.blue());
-}
 
-void ColorSliderDock::updateFromRgbSliders()
-{
-	if(!d->updating) {
-		const QColor color(
-			d->red->value(), d->green->value(), d->blue->value());
-
-		setColor(color);
+	if(selected) {
 		emit colorSelected(color);
 	}
 }
 
-void ColorSliderDock::updateFromRgbSpinbox()
+void ColorSliderDock::updateHueSlider(
+	const QColor &color, bool fromHsvSelection)
 {
-	if(!d->updating) {
-		const QColor color(
-			d->redbox->value(), d->greenbox->value(), d->bluebox->value());
-		setColor(color);
-		emit colorSelected(color);
+	d->hue->setColorSaturation(color.saturationF());
+	d->hue->setColorValue(color.valueF());
+	if(!fromHsvSelection) {
+		d->hue->setValue(color.hue());
+		d->huebox->setValue(color.hue());
 	}
 }
 
-void ColorSliderDock::updateFromHsvSliders()
+void ColorSliderDock::updateSaturationSlider(
+	const QColor &color, bool fromHsvSelection)
 {
-	if(!d->updating) {
-		const QColor color = QColor::fromHsv(
-			d->hue->value(), d->saturation->value(), d->value->value());
-
-		setColor(color);
-		emit colorSelected(color);
+	switch(d->colorSpace) {
+	case color_widgets::ColorWheel::ColorHSL: {
+		qreal hf = color.hueF();
+		qreal lf = color_widgets::utils::color_lightnessF(color);
+		QVector<QColor> colors;
+		colors.reserve(SLIDER_COLORS);
+		for(int i = 0; i < SLIDER_COLORS; ++i) {
+			qreal sf = i / qreal(SLIDER_COLORS - 1);
+			colors.append(color_widgets::utils::color_from_hsl(hf, sf, lf));
+		}
+		d->saturation->setColors(colors);
+		// Saturation is indeterminate at the lightness extremes.
+		if(!fromHsvSelection && lf != 0.0 && lf != 1.0) {
+			int s = qRound(
+				color_widgets::utils::color_HSL_saturationF(color) * 255.0);
+			d->saturation->setValue(s);
+			d->saturationbox->setValue(s);
+		}
+		break;
+	}
+	case color_widgets::ColorWheel::ColorLCH: {
+		qreal hf = color.hueF();
+		qreal lf = color_widgets::utils::color_lumaF(color);
+		QVector<QColor> colors;
+		colors.reserve(SLIDER_COLORS);
+		for(int i = 0; i < SLIDER_COLORS; ++i) {
+			qreal cf = i / qreal(SLIDER_COLORS - 1);
+			colors.append(color_widgets::utils::color_from_lch(hf, cf, lf));
+		}
+		d->saturation->setColors(colors);
+		if(!fromHsvSelection) {
+			int c = qRound(color_widgets::utils::color_chromaF(color) * 255.0);
+			d->saturation->setValue(c);
+			d->saturationbox->setValue(c);
+		}
+		break;
+	}
+	default: {
+		int h = color.hue();
+		int v = color.value();
+		d->saturation->setColors(
+			{QColor::fromHsv(h, 0, v), QColor::fromHsv(h, 255, v)});
+		if(!fromHsvSelection) {
+			int s = color.saturation();
+			d->saturation->setValue(s);
+			d->saturationbox->setValue(s);
+		}
+		break;
+	}
 	}
 }
 
-void ColorSliderDock::updateFromHsvSpinbox()
+void ColorSliderDock::updateValueSlider(
+	const QColor &color, bool fromHsvSelection)
 {
-	if(!d->updating) {
-		const QColor color = QColor::fromHsv(
-			d->huebox->value(), d->saturationbox->value(),
-			d->valuebox->value());
-
-		setColor(color);
-		emit colorSelected(color);
+	switch(d->colorSpace) {
+	case color_widgets::ColorWheel::ColorHSL: {
+		qreal hf = color.hueF();
+		qreal sf = color_widgets::utils::color_HSL_saturationF(color);
+		QVector<QColor> colors;
+		colors.reserve(SLIDER_COLORS);
+		for(int i = 0; i < SLIDER_COLORS; ++i) {
+			qreal lf = i / qreal(SLIDER_COLORS - 1);
+			colors.append(color_widgets::utils::color_from_hsl(hf, sf, lf));
+		}
+		d->value->setColors(colors);
+		if(!fromHsvSelection) {
+			int l =
+				qRound(color_widgets::utils::color_lightnessF(color) * 255.0);
+			d->value->setValue(l);
+			d->valuebox->setValue(l);
+		}
+		break;
+	}
+	case color_widgets::ColorWheel::ColorLCH: {
+		qreal hf = color.hueF();
+		qreal cf = color_widgets::utils::color_chromaF(color);
+		QVector<QColor> colors;
+		colors.reserve(SLIDER_COLORS);
+		for(int i = 0; i < SLIDER_COLORS; ++i) {
+			qreal lf = i / qreal(SLIDER_COLORS - 1);
+			colors.append(color_widgets::utils::color_from_hsl(hf, cf, lf));
+		}
+		d->value->setColors(colors);
+		if(!fromHsvSelection) {
+			int l = qRound(color_widgets::utils::color_lumaF(color) * 255.0);
+			d->value->setValue(l);
+			d->valuebox->setValue(l);
+		}
+		break;
+	}
+	default: {
+		int h = color.hue();
+		int s = color.saturation();
+		d->value->setColors(
+			{QColor::fromHsv(h, s, 0), QColor::fromHsv(h, s, 255)});
+		if(!fromHsvSelection) {
+			int v = color.value();
+			d->value->setValue(v);
+			d->valuebox->setValue(v);
+		}
+		break;
+	}
 	}
 }
 
-void ColorSliderDock::setLastUsedColors(const color_widgets::ColorPalette &pal)
+QColor ColorSliderDock::getColorSpaceColor(int h, int s, int v) const
 {
-	d->lastUsedSwatch->setPalette(pal);
-	const QColor color(d->red->value(), d->green->value(), d->blue->value());
-	d->lastUsedSwatch->setSelected(
-		findPaletteColor(d->lastUsedSwatch->palette(), color));
+	switch(d->colorSpace) {
+	case color_widgets::ColorWheel::ColorHSL:
+		return fixHue(
+			h, color_widgets::utils::color_from_hsl(
+				   h / 359.0, s / 255.0, v / 255.0));
+	case color_widgets::ColorWheel::ColorLCH:
+		return fixHue(
+			h, color_widgets::utils::color_from_lch(
+				   h / 359.0, s / 255.0, v / 255.0));
+	default:
+		return QColor::fromHsv(h, s, v);
+	}
+}
+
+// Hue may become indeterminate in HSL and LCH color spaces, but since we know
+// the intended hue, we can fix it up.
+QColor ColorSliderDock::fixHue(int h, const QColor &color)
+{
+	return QColor::fromHsv(h, color.saturation(), color.value());
 }
 
 }
