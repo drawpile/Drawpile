@@ -19,6 +19,7 @@ struct ColorSliderDock::Private {
 	QColor lastColor = Qt::black;
 	color_widgets::Swatch *lastUsedSwatch = nullptr;
 
+	QLabel *hueLabel = nullptr;
 	color_widgets::HueSlider *hue = nullptr;
 	QLabel *saturationLabel = nullptr;
 	color_widgets::GradientSlider *saturation = nullptr;
@@ -72,12 +73,13 @@ ColorSliderDock::ColorSliderDock(const QString &title, QWidget *parent)
 
 	int row = 0;
 
+	d->hueLabel = new QLabel{w};
 	d->hue = new color_widgets::HueSlider(w);
 	d->hue->setMaximum(359);
 	d->huebox = new QSpinBox(w);
 	d->huebox->setMaximum(359);
 	d->hue->setMaximumHeight(d->huebox->height());
-	layout->addWidget(new QLabel{tr("H"), w}, row, 0);
+	layout->addWidget(d->hueLabel, row, 0);
 	layout->addWidget(d->hue, row, 1);
 	layout->addWidget(d->huebox, row, 2);
 
@@ -112,6 +114,7 @@ ColorSliderDock::ColorSliderDock(const QString &title, QWidget *parent)
 	d->redbox = new QSpinBox(w);
 	d->redbox->setMaximum(255);
 	d->red->setMaximumHeight(d->redbox->height());
+	//: The "Red" R of RGB.
 	layout->addWidget(new QLabel{tr("R"), w}, row, 0);
 	layout->addWidget(d->red, row, 1);
 	layout->addWidget(d->redbox, row, 2);
@@ -123,6 +126,7 @@ ColorSliderDock::ColorSliderDock(const QString &title, QWidget *parent)
 	d->greenbox = new QSpinBox(w);
 	d->greenbox->setMaximum(255);
 	d->green->setMaximumHeight(d->greenbox->height());
+	//: The "Green" G of RGB.
 	layout->addWidget(new QLabel{tr("G"), w}, row, 0);
 	layout->addWidget(d->green, row, 1);
 	layout->addWidget(d->greenbox, row, 2);
@@ -134,6 +138,7 @@ ColorSliderDock::ColorSliderDock(const QString &title, QWidget *parent)
 	d->bluebox = new QSpinBox(w);
 	d->bluebox->setMaximum(255);
 	d->blue->setMaximumHeight(d->bluebox->height());
+	//: The "Blue" B of RGB.
 	layout->addWidget(new QLabel{tr("B"), w}, row, 0);
 	layout->addWidget(d->blue, row, 1);
 	layout->addWidget(d->bluebox, row, 2);
@@ -265,18 +270,30 @@ void ColorSliderDock::setColorSpace(
 	switch(colorSpace) {
 	case color_widgets::ColorWheel::ColorHSL:
 		d->colorSpace = color_widgets::ColorWheel::ColorHSL;
-		d->saturationLabel->setText(tr("S"));
-		d->valueLabel->setText(tr("L"));
+		//: The "Hue" H of HSL.
+		d->hueLabel->setText(tr("H", "HSL"));
+		//: The "Saturation" S of HSL.
+		d->saturationLabel->setText(tr("S", "HSL"));
+		//: The "Lightness" L HSL.
+		d->valueLabel->setText(tr("L", "HSL"));
 		break;
 	case color_widgets::ColorWheel::ColorLCH:
 		d->colorSpace = color_widgets::ColorWheel::ColorLCH;
-		d->saturationLabel->setText(tr("C"));
-		d->valueLabel->setText(tr("L"));
+		//: The "Hue" H of HCL.
+		d->hueLabel->setText(tr("H", "HCL"));
+		//: The "Chroma" C of HCL.
+		d->saturationLabel->setText(tr("C", "HCL"));
+		//: The "Luma" L of HCL.
+		d->valueLabel->setText(tr("L", "HCL"));
 		break;
 	default:
 		d->colorSpace = color_widgets::ColorWheel::ColorHSV;
-		d->saturationLabel->setText(tr("S"));
-		d->valueLabel->setText(tr("V"));
+		//: The "Hue" H of HSV.
+		d->hueLabel->setText(tr("H", "HSV"));
+		//: The "Saturation" S of HSV.
+		d->saturationLabel->setText(tr("S", "HSV"));
+		//: The "Value" V of HSV.
+		d->valueLabel->setText(tr("V", "HSV"));
 		break;
 	}
 	QScopedValueRollback<bool> guard{d->updating, true};

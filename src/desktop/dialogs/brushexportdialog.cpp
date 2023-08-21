@@ -55,6 +55,7 @@ BrushExportDialog::BrushExportDialog(
 	QDialogButtonBox *buttons =
 		new QDialogButtonBox{QDialogButtonBox::Ok | QDialogButtonBox::Cancel};
 	m_exportButton = buttons->button(QDialogButtonBox::Ok);
+	//: This text on a button, so it's a verb, not a noun.
 	m_exportButton->setText(tr("Export"));
 	layout->addWidget(buttons);
 

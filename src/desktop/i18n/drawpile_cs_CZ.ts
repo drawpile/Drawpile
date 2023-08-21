@@ -3584,8 +3584,9 @@ Zjednodušte plátno a nastavte ručně, předtím než dojde místo.</translati
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+17"/>
         <source>Export</source>
+        <extracomment>This text on a button, so it&apos;s a verb, not a noun.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5030,8 +5031,9 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Ratchet Rotate Canvas</source>
+        <extracomment>This refers to rotating the canvas in 15° steps.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7364,45 +7366,84 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::ColorSliderDock</name>
     <message>
-        <location filename="../docks/colorsliders.cpp" line="+80"/>
-        <source>H</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+188"/>
-        <location line="+10"/>
-        <source>S</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-9"/>
-        <location line="+5"/>
-        <source>L</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-1"/>
-        <source>C</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>V</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-164"/>
+        <location filename="../docks/colorsliders.cpp" line="+118"/>
         <source>R</source>
+        <extracomment>The &quot;Red&quot; R of RGB.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+12"/>
         <source>G</source>
+        <extracomment>The &quot;Green&quot; G of RGB.</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+12"/>
         <source>B</source>
+        <extracomment>The &quot;Blue&quot; B of RGB.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+132"/>
+        <source>H</source>
+        <comment>HSL</comment>
+        <extracomment>The &quot;Hue&quot; H of HSL.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>S</source>
+        <comment>HSL</comment>
+        <extracomment>The &quot;Saturation&quot; S of HSL.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>L</source>
+        <comment>HSL</comment>
+        <extracomment>The &quot;Lightness&quot; L HSL.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>H</source>
+        <comment>HCL</comment>
+        <extracomment>The &quot;Hue&quot; H of HCL.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>C</source>
+        <comment>HCL</comment>
+        <extracomment>The &quot;Chroma&quot; C of HCL.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>L</source>
+        <comment>HCL</comment>
+        <extracomment>The &quot;Luma&quot; L of HCL.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>H</source>
+        <comment>HSV</comment>
+        <extracomment>The &quot;Hue&quot; H of HSV.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>S</source>
+        <comment>HSV</comment>
+        <extracomment>The &quot;Saturation&quot; S of HSV.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>V</source>
+        <comment>HSV</comment>
+        <extracomment>The &quot;Value&quot; V of HSV.</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>

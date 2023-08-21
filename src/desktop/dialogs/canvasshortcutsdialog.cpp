@@ -32,6 +32,7 @@ CanvasShortcutsDialog::CanvasShortcutsDialog(
 	d->ui.actionCombo->addItem(
 		tr("Rotate Canvas"), CanvasShortcuts::CANVAS_ROTATE);
 	d->ui.actionCombo->addItem(
+		//: This refers to rotating the canvas in 15° steps.
 		tr("Ratchet Rotate Canvas"), CanvasShortcuts::CANVAS_ROTATE_DISCRETE);
 	d->ui.actionCombo->addItem(tr("Zoom Canvas"), CanvasShortcuts::CANVAS_ZOOM);
 	d->ui.actionCombo->addItem(tr("Pick Color"), CanvasShortcuts::COLOR_PICK);
