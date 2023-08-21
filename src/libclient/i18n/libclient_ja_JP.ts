@@ -11,7 +11,7 @@
     <message>
         <location line="+19"/>
         <source>Add avatar…</source>
-        <translation type="unfinished"></translation>
+        <translation>アバターを追加する</translation>
     </message>
 </context>
 <context>
