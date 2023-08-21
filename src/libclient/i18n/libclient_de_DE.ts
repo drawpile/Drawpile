@@ -4,9 +4,14 @@
 <context>
     <name>AvatarListModel</name>
     <message>
-        <location filename="../utils/avatarlistmodel.cpp" line="+107"/>
+        <location filename="../utils/avatarlistmodel.cpp" line="+113"/>
         <source>No avatar</source>
         <translation>Kein Avatar</translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Add avatar…</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -186,6 +191,11 @@
     </message>
     <message>
         <location line="+3"/>
+        <source>Ratchet Rotate Canvas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>Unknown Action %1</source>
         <translation>Unbekannte Aktion %1</translation>
     </message>
@@ -403,7 +413,12 @@
         <translation>Textdatei (%1)</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+7"/>
+        <source>Brush Pack (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
         <source>All Supported Files (%1)</source>
         <translation>Alle unterstützten Dateiformate (%1)</translation>
     </message>
@@ -424,7 +439,7 @@
 <context>
     <name>QShortcut</name>
     <message>
-        <location filename="../utils/canvasshortcutsmodel.cpp" line="-101"/>
+        <location filename="../utils/canvasshortcutsmodel.cpp" line="-103"/>
         <source>Shift</source>
         <translation>Shift</translation>
     </message>
@@ -679,7 +694,7 @@
 <context>
     <name>brushes::BrushPresetModel</name>
     <message>
-        <location filename="../brushes/brushpresetmodel.cpp" line="+560"/>
+        <location filename="../brushes/brushpresetmodel.cpp" line="+567"/>
         <source>Default</source>
         <translation>Standard</translation>
     </message>
@@ -687,7 +702,7 @@
 <context>
     <name>brushes::BrushPresetTagModel</name>
     <message>
-        <location line="-98"/>
+        <location line="-103"/>
         <source>All</source>
         <translation>Alle</translation>
     </message>
@@ -707,7 +722,7 @@
         <translation>Pinsel anzeigen, die keinem Tag zugewiesen sind.</translation>
     </message>
     <message>
-        <location line="+166"/>
+        <location line="+171"/>
         <source>Default</source>
         <translation>Standard</translation>
     </message>
@@ -723,11 +738,12 @@
     </message>
     <message>
         <location line="+19"/>
+        <location line="+211"/>
         <source>Can&apos;t open &apos;%1&apos;.</source>
         <translation>Konnte &apos;%1&apos; nicht öffnen.</translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="-181"/>
         <source>Invalid brush pack: order.conf not found inside</source>
         <translation>Ungültiges Pinselpaket: order.conf wurde darin nicht gefunden</translation>
     </message>
@@ -752,7 +768,47 @@
         <translation>Pinsel &apos;%1&apos; konnte nicht zu Tag &apos;%2&apos; zugewiesen werden.</translation>
     </message>
     <message>
-        <location line="-25"/>
+        <location line="+83"/>
+        <source>No brushes exported</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Can&apos;t export order.conf</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Error writing &apos;%1&apos;: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Can&apos;t export tag &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Missing preset %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Invalid preset %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Can&apos;t export preset &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Can&apos;t export preset thumbnail &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-180"/>
         <source>Could not create tag &apos;%1&apos;.</source>
         <translation>Tag &apos;%1&apos; konnte nicht erstellt werden.</translation>
     </message>
@@ -767,7 +823,7 @@
         <translation>Pinseldatei &apos;%1&apos; enthält kein gültiges JSON: %1</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+8"/>
         <source>Can&apos;t load brush from brush file &apos;%1&apos;</source>
         <translation>Pinsel aus Pinseldatei &apos;%1&apos; konnte nicht geladen werden</translation>
     </message>
@@ -775,7 +831,7 @@
 <context>
     <name>canvas::PaintEngine</name>
     <message>
-        <location filename="../canvas/paintengine.cpp" line="+167"/>
+        <location filename="../canvas/paintengine.cpp" line="+166"/>
         <source>Layer %1</source>
         <translation>Ebene %1</translation>
     </message>
@@ -910,13 +966,13 @@
         <location line="+7"/>
         <location line="+64"/>
         <location line="+199"/>
-        <location line="+142"/>
+        <location line="+143"/>
         <location line="+42"/>
         <source>Incompatible server</source>
         <translation>Inkompatibler Server</translation>
     </message>
     <message>
-        <location line="-440"/>
+        <location line="-441"/>
         <source>Server is for a different Drawpile version!</source>
         <translation>Server unterstützt eine andere Drawpile Version!</translation>
     </message>
@@ -926,12 +982,12 @@
         <translation>Sicherer Modus auf vertrauenswürdigem Host nicht aktiviert!</translation>
     </message>
     <message>
-        <location line="+618"/>
+        <location line="+619"/>
         <source>Username already taken!</source>
         <translation>Benutzername bereits vergeben!</translation>
     </message>
     <message>
-        <location line="-576"/>
+        <location line="-577"/>
         <source>This server does not allow guest logins</source>
         <translation>Dieser Server erlaubt keine Gastzugänge</translation>
     </message>
@@ -967,7 +1023,7 @@
         <translation>Unbekannte Version</translation>
     </message>
     <message>
-        <location line="+52"/>
+        <location line="+53"/>
         <source>Session not yet started!</source>
         <translation>Sitzung hat noch nicht begonnen!</translation>
     </message>
@@ -1028,7 +1084,7 @@
         <translation>Abgebrochen</translation>
     </message>
     <message>
-        <location line="-461"/>
+        <location line="-462"/>
         <source>Group membership needed</source>
         <translation>Gruppenzugehörigkeit benötigt</translation>
     </message>
@@ -1038,7 +1094,7 @@
         <translation>Unerwartete Antwort von externer Authentifizierung: %1</translation>
     </message>
     <message>
-        <location line="+186"/>
+        <location line="+187"/>
         <source>Session for a different Drawpile version (%1) in progress!</source>
         <translation>Laufende Sitzung für eine andere Drawpile-Version (%1)!</translation>
     </message>
@@ -1089,6 +1145,11 @@
         <location line="+4"/>
         <source>Incompatible version</source>
         <translation>Inkompatible Version</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Closed (guest logins blocked)</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>

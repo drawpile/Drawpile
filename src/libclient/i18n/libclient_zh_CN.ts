@@ -4,9 +4,14 @@
 <context>
     <name>AvatarListModel</name>
     <message>
-        <location filename="../utils/avatarlistmodel.cpp" line="+107"/>
+        <location filename="../utils/avatarlistmodel.cpp" line="+113"/>
         <source>No avatar</source>
         <translation>无头像</translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Add avatar…</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -186,6 +191,11 @@
     </message>
     <message>
         <location line="+3"/>
+        <source>Ratchet Rotate Canvas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>Unknown Action %1</source>
         <translation>未知动作%1</translation>
     </message>
@@ -403,7 +413,12 @@
         <translation>文本文件 (%1)</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+7"/>
+        <source>Brush Pack (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
         <source>All Supported Files (%1)</source>
         <translation>所有支持的文件 (%1)</translation>
     </message>
@@ -424,7 +439,7 @@
 <context>
     <name>QShortcut</name>
     <message>
-        <location filename="../utils/canvasshortcutsmodel.cpp" line="-101"/>
+        <location filename="../utils/canvasshortcutsmodel.cpp" line="-103"/>
         <source>Shift</source>
         <translation>Shift键</translation>
     </message>
@@ -677,7 +692,7 @@
 <context>
     <name>brushes::BrushPresetModel</name>
     <message>
-        <location filename="../brushes/brushpresetmodel.cpp" line="+560"/>
+        <location filename="../brushes/brushpresetmodel.cpp" line="+567"/>
         <source>Default</source>
         <translation>默认</translation>
     </message>
@@ -685,7 +700,7 @@
 <context>
     <name>brushes::BrushPresetTagModel</name>
     <message>
-        <location line="-98"/>
+        <location line="-103"/>
         <source>All</source>
         <translation>全部</translation>
     </message>
@@ -705,7 +720,7 @@
         <translation>显示未添加标签的笔刷.</translation>
     </message>
     <message>
-        <location line="+166"/>
+        <location line="+171"/>
         <source>Default</source>
         <translation>Default</translation>
     </message>
@@ -721,11 +736,12 @@
     </message>
     <message>
         <location line="+19"/>
+        <location line="+211"/>
         <source>Can&apos;t open &apos;%1&apos;.</source>
         <translation>无法打开 &apos;%1&apos;.</translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="-181"/>
         <source>Invalid brush pack: order.conf not found inside</source>
         <translation>无效笔刷包: 里面未找到order.conf</translation>
     </message>
@@ -750,7 +766,47 @@
         <translation>无法将笔刷&apos;%1&apos;分配给标签&apos;%2&apos;.</translation>
     </message>
     <message>
-        <location line="-25"/>
+        <location line="+83"/>
+        <source>No brushes exported</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Can&apos;t export order.conf</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Error writing &apos;%1&apos;: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Can&apos;t export tag &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Missing preset %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Invalid preset %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Can&apos;t export preset &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Can&apos;t export preset thumbnail &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-180"/>
         <source>Could not create tag &apos;%1&apos;.</source>
         <translation>无法创建标签&apos;%1&apos;.</translation>
     </message>
@@ -765,7 +821,7 @@
         <translation>笔刷文件 &apos;%1&apos; 不包含有效的 JSON: %1</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+8"/>
         <source>Can&apos;t load brush from brush file &apos;%1&apos;</source>
         <translation>无法从笔刷文件&apos;%1&apos;中加载笔刷</translation>
     </message>
@@ -773,7 +829,7 @@
 <context>
     <name>canvas::PaintEngine</name>
     <message>
-        <location filename="../canvas/paintengine.cpp" line="+167"/>
+        <location filename="../canvas/paintengine.cpp" line="+166"/>
         <source>Layer %1</source>
         <translation>图层 %1</translation>
     </message>
@@ -908,13 +964,13 @@
         <location line="+7"/>
         <location line="+64"/>
         <location line="+199"/>
-        <location line="+142"/>
+        <location line="+143"/>
         <location line="+42"/>
         <source>Incompatible server</source>
         <translation>服务器不兼容</translation>
     </message>
     <message>
-        <location line="-440"/>
+        <location line="-441"/>
         <source>Server is for a different Drawpile version!</source>
         <translation>Server is for a different Drawpile version!</translation>
     </message>
@@ -924,12 +980,12 @@
         <translation>安全模式没有在信任的主机上启动!</translation>
     </message>
     <message>
-        <location line="+618"/>
+        <location line="+619"/>
         <source>Username already taken!</source>
         <translation>用户名已被使用!</translation>
     </message>
     <message>
-        <location line="-576"/>
+        <location line="-577"/>
         <source>This server does not allow guest logins</source>
         <translation>此服务器不支持非注册用户登入</translation>
     </message>
@@ -965,7 +1021,7 @@
         <translation>未知版本</translation>
     </message>
     <message>
-        <location line="+52"/>
+        <location line="+53"/>
         <source>Session not yet started!</source>
         <translation>房间还未创建!</translation>
     </message>
@@ -1026,7 +1082,7 @@
         <translation>已取消</translation>
     </message>
     <message>
-        <location line="-461"/>
+        <location line="-462"/>
         <source>Group membership needed</source>
         <translation>需要群组成员资格</translation>
     </message>
@@ -1036,7 +1092,7 @@
         <translation>意外的ext-auth响应: %1</translation>
     </message>
     <message>
-        <location line="+186"/>
+        <location line="+187"/>
         <source>Session for a different Drawpile version (%1) in progress!</source>
         <translation>不同Drawpile版本（%1）的房间正在进行中!</translation>
     </message>
@@ -1087,6 +1143,11 @@
         <location line="+4"/>
         <source>Incompatible version</source>
         <translation>不兼容的版本</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Closed (guest logins blocked)</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>

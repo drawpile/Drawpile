@@ -4,9 +4,14 @@
 <context>
     <name>AvatarListModel</name>
     <message>
-        <location filename="../utils/avatarlistmodel.cpp" line="+107"/>
+        <location filename="../utils/avatarlistmodel.cpp" line="+113"/>
         <source>No avatar</source>
         <translation>Nessun Avatar</translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Add avatar…</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -186,6 +191,11 @@
     </message>
     <message>
         <location line="+3"/>
+        <source>Ratchet Rotate Canvas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>Unknown Action %1</source>
         <translation>Azione sconosciuta %1</translation>
     </message>
@@ -403,7 +413,12 @@
         <translation>File di testo (%1)</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+7"/>
+        <source>Brush Pack (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
         <source>All Supported Files (%1)</source>
         <translation>Tutti i file supportati (%1)</translation>
     </message>
@@ -424,7 +439,7 @@
 <context>
     <name>QShortcut</name>
     <message>
-        <location filename="../utils/canvasshortcutsmodel.cpp" line="-101"/>
+        <location filename="../utils/canvasshortcutsmodel.cpp" line="-103"/>
         <source>Shift</source>
         <translation>Shift</translation>
     </message>
@@ -470,7 +485,6 @@
         <location line="+91"/>
         <source>%1/%n users</source>
         <translation>
-            <numerusform>%1/%n utenti</numerusform>
             <numerusform>%1/%n utenti</numerusform>
             <numerusform>%1/%n utenti</numerusform>
         </translation>
@@ -680,7 +694,7 @@
 <context>
     <name>brushes::BrushPresetModel</name>
     <message>
-        <location filename="../brushes/brushpresetmodel.cpp" line="+560"/>
+        <location filename="../brushes/brushpresetmodel.cpp" line="+567"/>
         <source>Default</source>
         <translation>Predefinito</translation>
     </message>
@@ -688,7 +702,7 @@
 <context>
     <name>brushes::BrushPresetTagModel</name>
     <message>
-        <location line="-98"/>
+        <location line="-103"/>
         <source>All</source>
         <translation>Tutto</translation>
     </message>
@@ -708,7 +722,7 @@
         <translation>Mostra i pennelli non assegnati ad alcun tag.</translation>
     </message>
     <message>
-        <location line="+166"/>
+        <location line="+171"/>
         <source>Default</source>
         <translation>Predefinito</translation>
     </message>
@@ -724,11 +738,12 @@
     </message>
     <message>
         <location line="+19"/>
+        <location line="+211"/>
         <source>Can&apos;t open &apos;%1&apos;.</source>
         <translation>Impossibile aprire &apos;%1&apos;.</translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="-181"/>
         <source>Invalid brush pack: order.conf not found inside</source>
         <translation>Pacchetto di pennelli non valido: order.conf non trovato all&apos;interno</translation>
     </message>
@@ -768,15 +783,55 @@
         <translation>Il file pennello &apos;%1&apos; non contiene JSON valido: %1</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+8"/>
         <source>Can&apos;t load brush from brush file &apos;%1&apos;</source>
         <translation>Impossibile caricare il pennello dal file pennello &apos;%1&apos;</translation>
+    </message>
+    <message>
+        <location line="+50"/>
+        <source>No brushes exported</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Can&apos;t export order.conf</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Error writing &apos;%1&apos;: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Can&apos;t export tag &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Missing preset %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Invalid preset %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Can&apos;t export preset &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Can&apos;t export preset thumbnail &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>canvas::PaintEngine</name>
     <message>
-        <location filename="../canvas/paintengine.cpp" line="+167"/>
+        <location filename="../canvas/paintengine.cpp" line="+166"/>
         <source>Layer %1</source>
         <translation>Livello %1</translation>
     </message>
@@ -911,13 +966,13 @@
         <location line="+7"/>
         <location line="+64"/>
         <location line="+199"/>
-        <location line="+142"/>
+        <location line="+143"/>
         <location line="+42"/>
         <source>Incompatible server</source>
         <translation>Server incompatibile</translation>
     </message>
     <message>
-        <location line="-440"/>
+        <location line="-441"/>
         <source>Server is for a different Drawpile version!</source>
         <translation>Il server è per una diversa versione di Drawpile!</translation>
     </message>
@@ -973,7 +1028,7 @@
         <translation>Versione sconosciuta</translation>
     </message>
     <message>
-        <location line="+52"/>
+        <location line="+53"/>
         <source>Session not yet started!</source>
         <translation>Sessione non ancora iniziata!</translation>
     </message>
@@ -1090,6 +1145,11 @@
         <location line="+4"/>
         <source>Incompatible version</source>
         <translation>Versione incompatibile</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Closed (guest logins blocked)</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>

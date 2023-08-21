@@ -545,13 +545,18 @@ to 64x64 pixels.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location line="+7"/>
+        <source>Import Brush Pack</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+22"/>
-        <location line="+156"/>
+        <location line="+163"/>
         <source>Save Image</source>
         <translation type="unfinished">Сохранить изображение</translation>
     </message>
     <message>
-        <location line="-140"/>
+        <location line="-147"/>
         <source>Save Pre-Reset Image</source>
         <translation type="unfinished"></translation>
     </message>
@@ -616,7 +621,12 @@ to 64x64 pixels.</source>
         <translation>Сохранить последовательность изображений</translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="+14"/>
+        <source>Export Brushes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+24"/>
         <source>The selected format does not support layers or annotations.</source>
         <translation type="unfinished">Выбранный формат не поддерживает слои или аннотации.</translation>
     </message>
@@ -631,7 +641,7 @@ to 64x64 pixels.</source>
         <translation type="unfinished">Сохранить как OpenRaster</translation>
     </message>
     <message>
-        <location line="+96"/>
+        <location line="+98"/>
         <source>Untitled%1</source>
         <extracomment>%1 will be a file extension, like .ora or .png or something.</extracomment>
         <translation>Untitled%1</translation>
@@ -1088,13 +1098,13 @@ Subrange: [%3, %4]</source>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../mainwindow.cpp" line="+612"/>
-        <location line="+1143"/>
+        <location filename="../mainwindow.cpp" line="+626"/>
+        <location line="+1144"/>
         <source>Untitled</source>
         <translation>Без названия</translation>
     </message>
     <message>
-        <location line="-748"/>
+        <location line="-749"/>
         <location line="+21"/>
         <source>Exit Drawpile</source>
         <translation>Выйти из Drawpile</translation>
@@ -1112,12 +1122,12 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+2"/>
         <location line="+22"/>
-        <location line="+444"/>
+        <location line="+445"/>
         <source>Cancel</source>
         <translation>Отмена</translation>
     </message>
     <message>
-        <location line="-451"/>
+        <location line="-452"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation>Есть несохранённые изменения.
 Сохранить их перед выходом?</translation>
@@ -1133,7 +1143,7 @@ Subrange: [%3, %4]</source>
         <translation>Не сохранять</translation>
     </message>
     <message>
-        <location line="+351"/>
+        <location line="+352"/>
         <source>Couldn&apos;t save image</source>
         <translation>Невозможно сохранить изображение</translation>
     </message>
@@ -1208,12 +1218,12 @@ Subrange: [%3, %4]</source>
         <translation>Присоединиться</translation>
     </message>
     <message>
-        <location line="+443"/>
+        <location line="+452"/>
         <source>The image could not be loaded</source>
         <translation>Изображение не может быть загружено</translation>
     </message>
     <message>
-        <location line="+341"/>
+        <location line="+342"/>
         <source>About Drawpile</source>
         <translation>О Drawpile</translation>
     </message>
@@ -1255,13 +1265,13 @@ Subrange: [%3, %4]</source>
         <translation>Автосохранение</translation>
     </message>
     <message>
-        <location line="-1363"/>
-        <location line="+1371"/>
+        <location line="-1373"/>
+        <location line="+1382"/>
         <source>Record...</source>
         <translation>Записать...</translation>
     </message>
     <message>
-        <location line="-2625"/>
+        <location line="-2648"/>
         <source>Server out of space</source>
         <translation>На сервере нет места</translation>
     </message>
@@ -1273,7 +1283,7 @@ Simplify the canvas and reset manually before space runs out.</source>
 Упростите холст и сбросьте вручную до того как место закончится.</translation>
     </message>
     <message>
-        <location line="+1382"/>
+        <location line="+1394"/>
         <source>No canvas to host! Create one or open a file.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1299,28 +1309,28 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+5"/>
-        <location line="+1604"/>
+        <location line="+1618"/>
         <source>Terminate</source>
         <translation>Завершить</translation>
     </message>
     <message>
-        <location line="-1416"/>
+        <location line="-1427"/>
         <source>Session blocked by parental controls</source>
         <translation>Сессия заблокирована родительским контролем</translation>
     </message>
     <message>
-        <location line="+824"/>
+        <location line="+831"/>
         <source>Hide Docks</source>
         <translation>Скрывать доки</translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="+32"/>
         <location filename="../widgets/macmenu.cpp" line="+9"/>
         <source>&amp;Quit</source>
         <translation>&amp;Выйти</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+42"/>
         <location filename="../widgets/macmenu.cpp" line="-12"/>
         <source>&amp;File</source>
         <translation>&amp;Файл</translation>
@@ -1337,7 +1347,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>&amp;Экспортировать</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+13"/>
         <source>File Tools</source>
         <translation>Файловые инструменты</translation>
     </message>
@@ -1498,7 +1508,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Чат</translation>
     </message>
     <message>
-        <location line="+178"/>
+        <location line="+179"/>
         <source>Merge Layer</source>
         <translation>Объединить слои</translation>
     </message>
@@ -1528,7 +1538,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Показать окно предпросмотра анимации</translation>
     </message>
     <message>
-        <location line="-199"/>
+        <location line="-200"/>
         <source>Zoom &amp;In</source>
         <translation>У&amp;величить</translation>
     </message>
@@ -1548,7 +1558,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>&amp;Сбросить вращение</translation>
     </message>
     <message>
-        <location line="+194"/>
+        <location line="+195"/>
         <source>Change Frame Count...</source>
         <translation>Изменить количество кадров.</translation>
     </message>
@@ -1643,7 +1653,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Анимация (&amp;A)</translation>
     </message>
     <message>
-        <location line="+101"/>
+        <location line="+102"/>
         <source>Moderation</source>
         <translation>Модерация</translation>
     </message>
@@ -1713,7 +1723,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Отменить действие</translation>
     </message>
     <message>
-        <location line="-574"/>
+        <location line="-576"/>
         <source>Mirror</source>
         <translation>Отразить</translation>
     </message>
@@ -1738,7 +1748,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Показать аватары</translation>
     </message>
     <message>
-        <location line="+132"/>
+        <location line="+133"/>
         <source>User Pointers</source>
         <translation>Указатели пользователей</translation>
     </message>
@@ -1753,12 +1763,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Заблокировать всё</translation>
     </message>
     <message>
-        <location line="-290"/>
+        <location line="-291"/>
         <source>Show &amp;Annotations</source>
         <translation>Показывать &amp;аннотации</translation>
     </message>
     <message>
-        <location line="-2656"/>
+        <location line="-2670"/>
         <source>🙋 %1 joined!</source>
         <translation>🙋 %1 присоединяется!</translation>
     </message>
@@ -1778,7 +1788,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+524"/>
+        <location line="+525"/>
         <source>This session was hosted with an older version of Drawpile, some newer features won&apos;t be available. Other Drawpile versions will see different results, session resets may cause abrupt changes.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1804,23 +1814,23 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+80"/>
-        <location line="+592"/>
+        <location line="+595"/>
         <source>Unsupported format.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-589"/>
+        <location line="-592"/>
         <source>Couldn&apos;t start recording.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
-        <location line="+601"/>
+        <location line="+604"/>
         <source>Unknown error.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-591"/>
+        <location line="-594"/>
         <source>Error closing profile.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1845,7 +1855,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Отключено:</translation>
     </message>
     <message>
-        <location line="+121"/>
+        <location line="+124"/>
         <source>Undo Limit... (%1)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1880,7 +1890,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+467"/>
+        <location line="+474"/>
         <source>User #%1</source>
         <translation type="unfinished">Пользователь #%1</translation>
     </message>
@@ -1891,21 +1901,23 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+0"/>
+        <location line="+903"/>
         <source>Tablet Event Log...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="-900"/>
         <source>Stop Profile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
+        <location line="+901"/>
         <source>Profile...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="-894"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1931,12 +1943,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+15"/>
-        <location line="+851"/>
+        <location line="+856"/>
         <source>Record Debug Dumps</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-850"/>
+        <location line="-855"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -2000,17 +2012,22 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+2"/>
+        <source>&amp;Brushes…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Start...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+58"/>
+        <location line="+59"/>
         <source>&amp;Import</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+45"/>
+        <location line="+46"/>
         <source>Paste in View Center</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2110,7 +2127,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>На весь &amp;экран</translation>
     </message>
     <message>
-        <location line="+80"/>
+        <location line="+81"/>
         <source>&amp;View</source>
         <translation>&amp;Вид</translation>
     </message>
@@ -2275,7 +2292,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+97"/>
+        <location line="+98"/>
         <source>Statistics…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2306,7 +2323,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+47"/>
+        <location line="+29"/>
+        <source>Brush slot #%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+18"/>
         <source>Swatch Color %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2336,7 +2358,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-491"/>
+        <location line="-492"/>
         <source>Delete Layer</source>
         <translation>Удалить слой</translation>
     </message>
@@ -2403,7 +2425,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Сообщить о нарушении...</translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="+32"/>
         <location filename="../widgets/macmenu.cpp" line="-2"/>
         <source>&amp;Session</source>
         <translation>&amp;Сессия</translation>
@@ -2598,7 +2620,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>По&amp;мощь</translation>
     </message>
     <message>
-        <location line="-663"/>
+        <location line="-665"/>
         <source>Delete</source>
         <translation>Удалить</translation>
     </message>
@@ -2738,7 +2760,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <name>QApplication</name>
     <message>
         <location filename="../dialogs/avatarimport.cpp" line="+59"/>
-        <location filename="../filewrangler.cpp" line="-425"/>
+        <location filename="../filewrangler.cpp" line="-441"/>
         <source>All files (*)</source>
         <translation>Все файлы(*)</translation>
     </message>
@@ -3560,6 +3582,47 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
 </context>
 <context>
+    <name>dialogs::BrushExportDialog</name>
+    <message>
+        <location filename="../dialogs/brushexportdialog.cpp" line="+42"/>
+        <source>Export Brushes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Export</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+162"/>
+        <source>Brush Export</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location line="+10"/>
+        <source>%n brush(es) exported.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Brush export failed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location line="+7"/>
+        <source>%n error(s) encountered.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+</context>
+<context>
     <name>dialogs::BrushPresetProperties</name>
     <message>
         <location filename="../dialogs/brushpresetproperties.cpp" line="+44"/>
@@ -3570,7 +3633,7 @@ Are you sure youwant to start recording debug dumps?</source>
 <context>
     <name>dialogs::BrushSettingsDialog</name>
     <message>
-        <location filename="../dialogs/brushsettingsdialog.cpp" line="+86"/>
+        <location filename="../dialogs/brushsettingsdialog.cpp" line="+85"/>
         <source>Brush Editor</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4972,6 +5035,11 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location line="+2"/>
+        <source>Ratchet Rotate Canvas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+1"/>
         <source>Zoom Canvas</source>
         <translation type="unfinished"></translation>
@@ -5032,7 +5100,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+40"/>
+        <location line="+41"/>
         <source>&lt;b&gt;Conflict:&lt;/b&gt; the existing shortcut for &apos;%1&apos; will be overwritten if you proceed.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5269,7 +5337,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::LayerProperties</name>
     <message>
-        <location filename="../dialogs/layerproperties.cpp" line="+108"/>
+        <location filename="../dialogs/layerproperties.cpp" line="+111"/>
         <source>Pass Through</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5370,17 +5438,17 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::LoginDialog</name>
     <message>
-        <location filename="../dialogs/logindialog.cpp" line="+135"/>
+        <location filename="../dialogs/logindialog.cpp" line="+136"/>
         <source>Report...</source>
         <translation>Сообщить о нарушении...</translation>
     </message>
     <message>
-        <location line="+67"/>
+        <location line="+74"/>
         <source>Close</source>
         <translation>Закрыть</translation>
     </message>
     <message>
-        <location line="+214"/>
+        <location line="+254"/>
         <source>Log in with &apos;%1&apos; credentials</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5762,7 +5830,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+249"/>
+        <location line="+257"/>
         <source>Checking…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6667,6 +6735,21 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+6"/>
+        <source>Direction:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Ascending</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Descending</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
         <source>Color space:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7011,7 +7094,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+1"/>
-        <source>Take a look over the &lt;a href=&quot;#preferences&quot;&gt;Preferences&lt;/a&gt; to configure things to your liking. You might also want to pick a different &lt;a href=&quot;#layout&quot;&gt;Layout&lt;/a&gt; for the application.</source>
+        <source>Take a look over the &lt;a href=&quot;#preferences&quot;&gt;Preferences&lt;/a&gt; to configure things to your liking. You might also want to pick a different &lt;a href=&quot;#layouts&quot;&gt;Layout&lt;/a&gt; for the application.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7033,7 +7116,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::BrushPalette</name>
     <message>
-        <location filename="../docks/brushpalettedock.cpp" line="+100"/>
+        <location filename="../docks/brushpalettedock.cpp" line="+105"/>
         <source>Brushes</source>
         <translation>Кисти</translation>
     </message>
@@ -7044,35 +7127,35 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+13"/>
-        <location line="+250"/>
+        <location line="+268"/>
         <source>New Brush Preset</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-249"/>
+        <location line="-267"/>
         <source>Duplicate Brush Preset</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+269"/>
+        <location line="+287"/>
         <source>Overwrite Brush Preset</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-268"/>
-        <location line="+292"/>
+        <location line="-286"/>
+        <location line="+310"/>
         <source>Edit Brush Preset</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-291"/>
-        <location line="+302"/>
+        <location line="-309"/>
+        <location line="+320"/>
         <source>Delete Brush Preset</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-301"/>
+        <location line="-319"/>
         <source>Brush Tags</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7083,44 +7166,44 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+191"/>
+        <location line="+209"/>
         <source>New Tag</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-190"/>
+        <location line="-208"/>
         <source>Rename Tag</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+218"/>
+        <location line="+236"/>
         <source>Delete Tag</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-216"/>
+        <location line="-234"/>
         <source>Import Brushes...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+1"/>
+        <source>Export Tag…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Export Brush…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>%1x%1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+61"/>
-        <source>Select MyPaint brush pack to import</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>MyPaint Brush Pack (%1)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>MyPaint Brush Import</source>
+        <location line="+72"/>
+        <source>Brush Import</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
@@ -7156,7 +7239,7 @@ Values above 0.5 may not be noticeable.</source>
         </translation>
     </message>
     <message>
-        <location line="+80"/>
+        <location line="+85"/>
         <location line="+14"/>
         <source>Tag name:</source>
         <translation type="unfinished"></translation>
@@ -7201,12 +7284,12 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+112"/>
+        <location line="+111"/>
         <source>Delete</source>
         <translation type="unfinished">Удалить</translation>
     </message>
     <message>
-        <location line="-110"/>
+        <location line="-109"/>
         <source>Rename</source>
         <translation type="unfinished">Переименовать</translation>
     </message>
@@ -7232,13 +7315,13 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+115"/>
-        <location line="+47"/>
+        <location line="+46"/>
         <source>New Palette</source>
         <translation type="unfinished">Новая палитра</translation>
     </message>
     <message>
-        <location line="-47"/>
-        <location line="+47"/>
+        <location line="-46"/>
+        <location line="+46"/>
         <source>Name</source>
         <translation type="unfinished">Название</translation>
     </message>
@@ -7286,22 +7369,34 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::ColorSliderDock</name>
     <message>
-        <location filename="../docks/colorsliders.cpp" line="+69"/>
+        <location filename="../docks/colorsliders.cpp" line="+80"/>
         <source>H</source>
         <translation type="unfinished">H</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+188"/>
+        <location line="+10"/>
         <source>S</source>
         <translation type="unfinished">S</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="-9"/>
+        <location line="+5"/>
+        <source>L</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-1"/>
+        <source>C</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
         <source>V</source>
         <translation type="unfinished">V</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="-164"/>
         <source>R</source>
         <translation type="unfinished">R</translation>
     </message>
@@ -7362,12 +7457,12 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::LayerList</name>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="+38"/>
+        <location filename="../docks/layerlistdock.cpp" line="+39"/>
         <source>Layers</source>
         <translation>Слои</translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+38"/>
         <source>Opacity: </source>
         <translation type="unfinished">Прозрачность: </translation>
     </message>
@@ -7401,7 +7496,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::Navigator</name>
     <message>
-        <location filename="../docks/navigator.cpp" line="+309"/>
+        <location filename="../docks/navigator.cpp" line="+354"/>
         <source>Navigator</source>
         <translation>Навигатор</translation>
     </message>
@@ -7457,7 +7552,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+179"/>
+        <location line="+181"/>
         <source> FPS</source>
         <translation type="unfinished"> FPS</translation>
     </message>
@@ -7739,7 +7834,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::CanvasView</name>
     <message>
-        <location filename="../scene/canvasview.cpp" line="+140"/>
+        <location filename="../scene/canvasview.cpp" line="+142"/>
         <source>Reconnect</source>
         <translation>Переподключиться</translation>
     </message>
@@ -7779,12 +7874,17 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location line="+2"/>
+        <source>Layer is not visible in this frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+4"/>
         <source>Tool is locked</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+223"/>
+        <location line="+244"/>
         <source>Vertical flip: ON</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7804,7 +7904,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1482"/>
+        <location line="+1517"/>
         <source>Zoom: %1%</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7840,12 +7940,22 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::ChatWidget</name>
     <message>
-        <location filename="../chat/chatwidget.cpp" line="+142"/>
+        <location filename="../chat/chatwidget.cpp" line="+143"/>
         <source>Public</source>
         <translation>Открытый</translation>
     </message>
     <message>
-        <location line="+92"/>
+        <location line="+62"/>
+        <source>Mute notifications</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Toggle notifications for this window</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+34"/>
         <source>Chat (recorded)...</source>
         <translation>Чат (записывается)...</translation>
     </message>
@@ -7870,7 +7980,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Вас выгоняет %1</translation>
     </message>
     <message>
-        <location line="+116"/>
+        <location line="+118"/>
         <source>/!: only operators are allowed to send shouts.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7949,7 +8059,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-600"/>
+        <location line="-607"/>
         <source>Clear</source>
         <translation>Очистить</translation>
     </message>
@@ -8054,12 +8164,12 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::NetStatus</name>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="+369"/>
+        <location filename="../widgets/netstatus.cpp" line="+370"/>
         <source>not connected</source>
         <translation>не подключен</translation>
     </message>
     <message>
-        <location line="-315"/>
+        <location line="-316"/>
         <source>Copy address to clipboard</source>
         <translation>Копировать адрес в буфер</translation>
     </message>
@@ -8084,7 +8194,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Показать сертификат</translation>
     </message>
     <message>
-        <location line="+272"/>
+        <location line="+273"/>
         <source>Connecting to %1...</source>
         <translation>Подключение к %1...</translation>
     </message>
@@ -8094,7 +8204,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Хост: %1</translation>
     </message>
     <message>
-        <location line="-216"/>
+        <location line="-217"/>
         <source>Logged in!</source>
         <translation>Авторизация успешна!</translation>
     </message>
@@ -8114,12 +8224,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Это доверенный хост</translation>
     </message>
     <message>
-        <location line="+190"/>
+        <location line="+191"/>
         <source>Logging out...</source>
         <translation>Выход...</translation>
     </message>
     <message>
-        <location line="-150"/>
+        <location line="-151"/>
         <source>Disconnected</source>
         <translation>Отключён</translation>
     </message>
@@ -8135,7 +8245,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Вас выгоняет %1</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+18"/>
         <source>Connecting...</source>
         <translation>Подключение...</translation>
     </message>
@@ -8188,11 +8298,11 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+196"/>
-        <source>Red: %2
-Green: %3
-Blue: %4
-Hex: %5</source>
+        <location line="+199"/>
+        <source>Red: %1
+Green: %2
+Blue: %3
+Hex: %4</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8290,7 +8400,14 @@ Hex: %5</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+654"/>
+        <location line="+119"/>
+        <source>There&apos;s no tracks yet.
+Add one using the ＋ button above
+or via Animation ▸ New Track.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+547"/>
         <source>Track</source>
         <translation type="unfinished"></translation>
     </message>

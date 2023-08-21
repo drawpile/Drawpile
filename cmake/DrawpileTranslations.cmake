@@ -1,6 +1,6 @@
 #[[ This module contains data and functions for internationalisation. #]]
 
-set(SUPPORTED_LANGS cs_CZ de_DE en_US es_CO fi_FI fr_FR it_IT ja_JP nb_NO pt_BR pt_PT ru_RU tr_TR uk_UA vi_VN zh_CN)
+set(SUPPORTED_LANGS ar_EG cs_CZ de_DE en_US es_CO fi_FI fr_FR it_IT ja_JP nb_NO pt_BR pt_PT ru_RU tr_TR uk_UA vi_VN zh_CN)
 # Qt doesn't have Norwegian or Vietnamese translations, but Drawpile does.
 set(LANGS_UNSUPPORTED_IN_QT nb vi)
 
