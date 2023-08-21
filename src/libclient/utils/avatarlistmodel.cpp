@@ -40,6 +40,7 @@ QVariant AvatarListModel::data(const QModelIndex &index, int role) const
 	case Qt::DisplayRole: return a.icon.isNull() ? a.filename : QVariant();
 	case Qt::DecorationRole: return a.icon;
 	case FilenameRole: return a.filename;
+	case TypeRole: return a.type;
 	}
 
 	return QVariant();
@@ -76,20 +77,24 @@ bool AvatarListModel::removeRows(int row, int count, const QModelIndex &parent)
 QModelIndex AvatarListModel::getAvatar(const QString &filename) const
 {
 	for(int i=0;i<m_avatars.size();++i) {
-		if(m_avatars.at(i).filename == filename)
+		const Avatar &avatar = m_avatars[i];
+		if(avatar.type == FileAvatar && avatar.filename == filename) {
 			return index(i);
+		}
 	}
-
 	return QModelIndex();
 }
 
 void AvatarListModel::addAvatar(const QPixmap &icon)
 {
-	beginInsertRows(QModelIndex(), m_avatars.size(), m_avatars.size());
-	m_avatars << Avatar {
-		icon,
-		QString()
-	};
+	// Add the new avatar before the potentially trailing "add avatar" option.
+	int count = m_avatars.size();
+	int i = count > 0 && m_avatars[count - 1].type == Type::AddAvatar
+				? count - 1
+				: count;
+
+	beginInsertRows(QModelIndex(), i, i);
+	m_avatars.insert(i, Avatar{Type::FileAvatar, icon, QString()});
 	endInsertRows();
 
 	if(m_autoCommit) {
@@ -97,12 +102,13 @@ void AvatarListModel::addAvatar(const QPixmap &icon)
 	}
 }
 
-void AvatarListModel::loadAvatars(bool includeBlank)
+void AvatarListModel::loadAvatars(bool includeBlank, bool includeAdd)
 {
 	QVector<Avatar> avatars;
 
 	if(includeBlank) {
 		avatars << Avatar {
+			Type::NoAvatar,
 			QPixmap(),
 			tr("No avatar")
 		};
@@ -113,8 +119,17 @@ void AvatarListModel::loadAvatars(bool includeBlank)
 
 	for(const QString &filename : files) {
 		avatars << Avatar {
+			Type::FileAvatar,
 			QPixmap(dir.filePath(filename), "PNG"),
 			filename
+		};
+	}
+
+	if(includeAdd) {
+		avatars << Avatar {
+			Type::AddAvatar,
+			QPixmap(),
+			tr("Add avatar…")
 		};
 	}
 
@@ -124,7 +139,7 @@ void AvatarListModel::loadAvatars(bool includeBlank)
 	endResetModel();
 }
 
-bool AvatarListModel::commit()
+void AvatarListModel::commit()
 {
 	QDir dir = utils::paths::writablePath("avatars", ".");
 
@@ -135,8 +150,10 @@ bool AvatarListModel::commit()
 	m_deletions.clear();
 
 	// Save newly added avatars
-	for(Avatar &a : m_avatars) {
-		if(!a.icon.isNull() && a.filename.isEmpty()) {
+	int count = m_avatars.size();
+	for(int i = 0; i < count; ++i) {
+		Avatar &a = m_avatars[i];
+		if(a.type == Type::FileAvatar && !a.icon.isNull() && a.filename.isEmpty()) {
 			Q_ASSERT(!a.icon.isNull());
 
 			QBuffer buf;
@@ -151,14 +168,20 @@ bool AvatarListModel::commit()
 			const QString filename = QString::fromUtf8(hash.result().toHex() + ".png");
 			QFile f { dir.filePath(filename) };
 			if(!f.open(QFile::WriteOnly)) {
-				qWarning("Couldn't save %s", qPrintable(filename));
-				return false;
+				qWarning("Couldn't open %s", qUtf8Printable(filename));
+				continue;
 			}
-			f.write(buf.data());
-			f.close();
 
-			a.filename = filename;
+			if(f.write(buf.data()) == buf.size() && f.flush()) {
+				f.close();
+				a.filename = filename;
+				QModelIndex index = createIndex(i, 0);
+				dataChanged(index, index, {Qt::DisplayRole, FilenameRole});
+			} else {
+				qWarning("Couldn't write %s", qUtf8Printable(filename));
+				f.close();
+				f.remove();
+			}
 		}
 	}
-	return true;
 }

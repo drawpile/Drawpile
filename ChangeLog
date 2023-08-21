@@ -27,6 +27,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Make erasing with MyPaint brushes in indirect mode actually work.
  * Feature: Make sliders adhere to the chosen color space. Thanks to leandro2222 for suggesting.
  * Feature: Increase font size on emoji posted into chat. Thanks to leandro2222 for suggesting.
+ * Feature: Allow adding an avatar from the login dialog.
 
 2023-07-31 Version 2.2.0-beta.6
  * Fix: Don't forget account password when entering a wrong session password.

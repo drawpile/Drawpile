@@ -41,6 +41,9 @@ private slots:
 
 	void updateOkButtonEnabled();
 
+	void updateAvatar(int row);
+	void pickNewAvatar(const QModelIndex &parent, int first, int last);
+
 	void showOldCert();
 	void showNewCert();
 

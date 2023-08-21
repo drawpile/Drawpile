@@ -2,6 +2,7 @@
 
 #include "desktop/dialogs/logindialog.h"
 #include "desktop/dialogs/abusereport.h"
+#include "desktop/dialogs/avatarimport.h"
 #include "desktop/dialogs/certificateview.h"
 #include "desktop/main.h"
 #include "libclient/net/login.h"
@@ -78,7 +79,7 @@ struct LoginDialog::Private {
 		// Identity & authentication page
 		ui->username->setValidator(new UsernameValidator(dlg));
 		avatars = new AvatarListModel(false, dlg);
-		avatars->loadAvatars(true);
+		avatars->loadAvatars(true, true);
 		ui->avatarList->setModel(avatars);
 
 #ifndef HAVE_QTKEYCHAIN
@@ -107,7 +108,7 @@ struct LoginDialog::Private {
 		settings.bindFilterNsfm(sessions, &SessionFilterProxyModel::setShowNsfw);
 
 		settings.bindLastUsername(ui->username);
-		settings.bindLastAvatar(ui->avatarList, AvatarListModel::FilenameRole);
+		revertAvatar(settings);
 
 		if(settings.parentalControlsLocked().isEmpty()) {
 			settings.bindShowNsfmWarningOnJoin(ui->nsfmConfirmAgainBox);
@@ -140,6 +141,13 @@ struct LoginDialog::Private {
 
 	~Private() {
 		delete ui;
+	}
+
+	void revertAvatar(desktop::settings::Settings &settings)
+	{
+		QModelIndex lastAvatarIndex = avatars->getAvatar(settings.lastAvatar());
+		ui->avatarList->setCurrentIndex(
+			lastAvatarIndex.isValid() ? lastAvatarIndex.row() : 0);
 	}
 
 	void resetMode(Mode mode);
@@ -257,6 +265,9 @@ LoginDialog::LoginDialog(net::LoginHandler *login, QWidget *parent) :
 	connect(d->noButton, &QPushButton::clicked, this, &LoginDialog::onNoClicked);
 	connect(this, &QDialog::rejected, login, &net::LoginHandler::cancelLogin);
 
+	connect(d->ui->avatarList, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &LoginDialog::updateAvatar);
+	connect(d->avatars, &QAbstractItemModel::rowsInserted, this, &LoginDialog::pickNewAvatar);
+
 	connect(d->ui->viewOldCert, &QPushButton::clicked, this, &LoginDialog::showOldCert);
 	connect(d->ui->viewNewCert, &QPushButton::clicked, this, &LoginDialog::showNewCert);
 
@@ -314,6 +325,43 @@ void LoginDialog::updateOkButtonEnabled()
 	d->okButton->setEnabled(enabled);
 }
 
+void LoginDialog::updateAvatar(int row)
+{
+	QModelIndex index = d->avatars->index(row);
+	int type = index.data(AvatarListModel::TypeRole).toInt();
+	desktop::settings::Settings &settings = dpApp().settings();
+	switch(type) {
+	case AvatarListModel::NoAvatar:
+		settings.setLastAvatar(QString{});
+		break;
+	case AvatarListModel::FileAvatar:
+		settings.setLastAvatar(
+			index.data(AvatarListModel::FilenameRole).toString());
+		break;
+	case AvatarListModel::AddAvatar:
+		d->revertAvatar(settings);
+		AvatarImport::importAvatar(d->avatars, this);
+		break;
+	default:
+		qWarning("Unknown avatar type %d", type);
+		d->revertAvatar(settings);
+		break;
+	}
+}
+
+void LoginDialog::pickNewAvatar(const QModelIndex &parent, int first, int last)
+{
+	Q_UNUSED(parent);
+	Q_UNUSED(last);
+	d->avatars->commit();
+	d->ui->avatarList->setCurrentIndex(first);
+	// Not sure if this is just acting weird because of my funky window manager,
+	// but sometimes picking a new avatar causes the login dialog to jump behind
+	// the (currently inactive) start dialog. So I'll make sure it's in front.
+	activateWindow();
+	raise();
+}
+
 void LoginDialog::showOldCert()
 {
 	auto dlg = new CertificateView(d->loginHandler ? d->loginHandler->url().host() : QString(), d->oldCert);
@@ -330,7 +378,7 @@ void LoginDialog::showNewCert()
 
 void LoginDialog::onUsernameNeeded(bool canSelectAvatar)
 {
-	d->ui->avatarList->setVisible(canSelectAvatar && d->avatars->rowCount() > 1);
+	d->ui->avatarList->setVisible(canSelectAvatar);
 	d->resetMode(Mode::identity);
 	updateOkButtonEnabled();
 }

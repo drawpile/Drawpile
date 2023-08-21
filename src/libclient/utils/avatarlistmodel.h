@@ -11,8 +11,10 @@ class AvatarListModel final : public QAbstractListModel
 {
 	Q_OBJECT
 public:
+	enum Type { FileAvatar, NoAvatar, AddAvatar };
 	enum AvatarListRoles {
 		FilenameRole = Qt::UserRole + 1,
+		TypeRole,
 	};
 
 	AvatarListModel(bool autoCommit, QObject *parent=nullptr);
@@ -28,19 +30,20 @@ public:
 	QModelIndex getAvatar(const QString &filename) const;
 
 	//! Reload avatar list and clear all uncommitted changes
-	void loadAvatars(bool includeBlank=false);
+	void loadAvatars(bool includeBlank = false, bool includeAdd = false);
 
 	//! Add a new avatar
 	void addAvatar(const QPixmap &icon);
 
 	//! Save changes
-	bool commit();
+	void commit();
 
 public slots:
 	void setDefaultAvatarUsername(const QString &username);
 
 private:
 	struct Avatar {
+		Type type;
 		QPixmap icon;
 		QString filename;
 	};
