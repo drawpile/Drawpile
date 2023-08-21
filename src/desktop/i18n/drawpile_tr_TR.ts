@@ -547,7 +547,7 @@ yeniden boyutlandırılacak.</translation>
     <message>
         <location line="+7"/>
         <source>Import Brush Pack</source>
-        <translation type="unfinished"></translation>
+        <translation>Fırça Paketini İçe Aktar</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -623,7 +623,7 @@ yeniden boyutlandırılacak.</translation>
     <message>
         <location line="+14"/>
         <source>Export Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Fırçaları Dışa Aktar</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -1074,6 +1074,7 @@ Alt aralık: [%3, %4]</translation>
         <location line="+112"/>
         <source>You have %n images with unsaved changes. Do you want to review these changes before quitting?</source>
         <translation>
+            <numerusform>Kaydedilmemiş değişikliğe sahip olan %n resminiz var. Programı kapatmadan önce bu değişiklikleri gözden geçirmek ister misiniz?</numerusform>
             <numerusform>Kaydedilmemiş değişikliğe sahip olan %n resminiz var. Programı kapatmadan önce bu değişiklikleri gözden geçirmek ister misiniz?</numerusform>
         </translation>
     </message>
@@ -1571,7 +1572,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+2"/>
         <source>&amp;Brushes…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Fırçalar…</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2583,7 +2584,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+18"/>
         <source>Brush slot #%1</source>
-        <translation type="unfinished"></translation>
+        <translation>Fırça slotu #%1</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -3587,35 +3588,37 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location filename="../dialogs/brushexportdialog.cpp" line="+42"/>
         <source>Export Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Fırçaları Dışa Aktar</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Export</source>
         <extracomment>This text on a button, so it&apos;s a verb, not a noun.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Dışa Aktar</translation>
     </message>
     <message>
         <location line="+162"/>
         <source>Brush Export</source>
-        <translation type="unfinished"></translation>
+        <translation>Fırça Dışa Aktarımı</translation>
     </message>
     <message numerus="yes">
         <location line="+10"/>
         <source>%n brush(es) exported.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n adet fırça dışa aktarıldı.</numerusform>
+            <numerusform>%n adet fırça dışa aktarıldı.</numerusform>
         </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Brush export failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fırça dışa aktarması başarısız oldu.</translation>
     </message>
     <message numerus="yes">
         <location line="+7"/>
         <source>%n error(s) encountered.</source>
-        <translation type="unfinished">
+        <translation>
+            <numerusform>%n hata ile karşılaşıldı.</numerusform>
             <numerusform>%n hata ile karşılaşıldı.</numerusform>
         </translation>
     </message>
@@ -5130,7 +5133,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+3"/>
         <source>Ratchet Rotate Canvas</source>
         <extracomment>This refers to rotating the canvas in 15° steps.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Tuvali 15° Döndür</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5937,6 +5940,7 @@ Values above 0.5 may not be noticeable.</source>
         <source>Last check: %n day(s) ago.</source>
         <translation>
             <numerusform>En son şu tarihte kontrol edildi: %n gün önce.</numerusform>
+            <numerusform>En son şu tarihte kontrol edildi: %n gün önce.</numerusform>
         </translation>
     </message>
     <message>
@@ -6074,6 +6078,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+1"/>
         <source>Really remove %n canvas shortcut(s)?</source>
         <translation>
+            <numerusform>%n tuval kısayolu silmek istediğinize emin misiniz?</numerusform>
             <numerusform>%n tuval kısayolu silmek istediğinize emin misiniz?</numerusform>
         </translation>
     </message>
@@ -6433,6 +6438,7 @@ Values above 0.5 may not be noticeable.</source>
         <source>Really delete %n avatar(s)?</source>
         <translation>
             <numerusform>%n avatarı silme istediğinize emin misiniz?</numerusform>
+            <numerusform>%n avatarı silme istediğinize emin misiniz?</numerusform>
         </translation>
     </message>
 </context>
@@ -6630,6 +6636,7 @@ Values above 0.5 may not be noticeable.</source>
         <source>Really remove %n known host(s)?</source>
         <translation>
             <numerusform>%n bilinen hostu kaldırmak istediğinize emin misiniz?</numerusform>
+            <numerusform>%n bilinen hostu kaldırmak istediğinize emin misiniz?</numerusform>
         </translation>
     </message>
     <message>
@@ -6662,6 +6669,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+1"/>
         <source>Really remove %n list server(s)?</source>
         <translation>
+            <numerusform>%n sunucu listesini kaldırmak istediğinize emin misiniz?</numerusform>
             <numerusform>%n sunucu listesini kaldırmak istediğinize emin misiniz?</numerusform>
         </translation>
     </message>
@@ -6819,17 +6827,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Direction:</source>
-        <translation type="unfinished"></translation>
+        <translation>Yön:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Ascending</source>
-        <translation type="unfinished"></translation>
+        <translation>Yükseliş</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Descending</source>
-        <translation type="unfinished"></translation>
+        <translation>Azalış</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -7178,7 +7186,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Take a look over the &lt;a href=&quot;#preferences&quot;&gt;Preferences&lt;/a&gt; to configure things to your liking. You might also want to pick a different &lt;a href=&quot;#layouts&quot;&gt;Layout&lt;/a&gt; for the application.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ayarları dilediğiniz şekilde değiştirmek için &lt;a href=&quot;#preferences&quot;&gt;Tercihler&lt;/a&gt; kısmına göz atın. Uygulama için farklı bir &lt;a href=&quot;#layouts&quot;&gt;Düzen&lt;/a&gt; de seçmek isteyebilirsiniz.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -7272,12 +7280,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Export Tag…</source>
-        <translation type="unfinished"></translation>
+        <translation>Etiketi Dışa Aktar…</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Export Brush…</source>
-        <translation type="unfinished"></translation>
+        <translation>Dışa Fırça Aktar…</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7287,12 +7295,13 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+72"/>
         <source>Brush Import</source>
-        <translation type="unfinished"></translation>
+        <translation>İçe Fırça Aktar</translation>
     </message>
     <message numerus="yes">
         <location line="+11"/>
         <source>%n brush(es) imported.</source>
         <translation>
+            <numerusform>%n fırça içe aktarıldı.</numerusform>
             <numerusform>%n fırça içe aktarıldı.</numerusform>
         </translation>
     </message>
@@ -7300,6 +7309,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+14"/>
         <source>%n tag(s) imported: %1</source>
         <translation>
+            <numerusform>%n etiket içe aktarıldı: %1</numerusform>
             <numerusform>%n etiket içe aktarıldı: %1</numerusform>
         </translation>
     </message>
@@ -7312,6 +7322,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+4"/>
         <source>%n error(s) encountered.</source>
         <translation>
+            <numerusform>%n hata ile karşılaşıldı.</numerusform>
             <numerusform>%n hata ile karşılaşıldı.</numerusform>
         </translation>
     </message>
@@ -7468,63 +7479,63 @@ Values above 0.5 may not be noticeable.</source>
         <source>H</source>
         <comment>HSL</comment>
         <extracomment>The &quot;Hue&quot; H of HSL.</extracomment>
-        <translation type="unfinished">H</translation>
+        <translation>H</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>S</source>
         <comment>HSL</comment>
         <extracomment>The &quot;Saturation&quot; S of HSL.</extracomment>
-        <translation type="unfinished">S</translation>
+        <translation>S</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>L</source>
         <comment>HSL</comment>
         <extracomment>The &quot;Lightness&quot; L HSL.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>L</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>H</source>
         <comment>HCL</comment>
         <extracomment>The &quot;Hue&quot; H of HCL.</extracomment>
-        <translation type="unfinished">H</translation>
+        <translation>H</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>C</source>
         <comment>HCL</comment>
         <extracomment>The &quot;Chroma&quot; C of HCL.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>C</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>L</source>
         <comment>HCL</comment>
         <extracomment>The &quot;Luma&quot; L of HCL.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>L</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>H</source>
         <comment>HSV</comment>
         <extracomment>The &quot;Hue&quot; H of HSV.</extracomment>
-        <translation type="unfinished">H</translation>
+        <translation>H</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>S</source>
         <comment>HSV</comment>
         <extracomment>The &quot;Saturation&quot; S of HSV.</extracomment>
-        <translation type="unfinished">S</translation>
+        <translation>S</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>V</source>
         <comment>HSV</comment>
         <extracomment>The &quot;Value&quot; V of HSV.</extracomment>
-        <translation type="unfinished">V</translation>
+        <translation>V</translation>
     </message>
 </context>
 <context>
@@ -7992,7 +8003,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Layer is not visible in this frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Katman bu karede görünür değil</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8063,12 +8074,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+62"/>
         <source>Mute notifications</source>
-        <translation type="unfinished"></translation>
+        <translation>Bildirimleri sessize al</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Toggle notifications for this window</source>
-        <translation type="unfinished"></translation>
+        <translation>Bu penceredeki bildirimleri aç / kapat</translation>
     </message>
     <message>
         <location line="+34"/>
@@ -8426,13 +8437,10 @@ Values above 0.5 may not be noticeable.</source>
 Green: %2
 Blue: %3
 Hex: %4</source>
-        <translation type="unfinished">Kırmızı: %2
-Yeşil: %3
-Mavi: %4
-Hex: %4 {1
-?} {2
-?} {3
-?}</translation>
+        <translation>Kırmızı: %1
+Yeşil: %2
+Mavi: %3
+Hex: %4</translation>
     </message>
 </context>
 <context>
@@ -8533,7 +8541,9 @@ Hex: %4 {1
         <source>There&apos;s no tracks yet.
 Add one using the ＋ button above
 or via Animation ▸ New Track.</source>
-        <translation type="unfinished"></translation>
+        <translation>Henüz bir track oluşturulmamış.
+Oluşturmak için yukarıdaki + tuşunu kullanın
+ya da Animasyon ▸ Yeni Track seçeneğini kullanın.</translation>
     </message>
     <message>
         <location line="+547"/>
