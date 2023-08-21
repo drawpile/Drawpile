@@ -11,7 +11,7 @@
     <message>
         <location line="+19"/>
         <source>Add avatar…</source>
-        <translation type="unfinished"></translation>
+        <translation>Avatar ekle. . .</translation>
     </message>
 </context>
 <context>
@@ -192,7 +192,7 @@
     <message>
         <location line="+3"/>
         <source>Ratchet Rotate Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Tuvali 15° Döndür</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -415,7 +415,7 @@
     <message>
         <location line="+7"/>
         <source>Brush Pack (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Fırça Paketi (%1)</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -486,12 +486,14 @@
         <source>%n users</source>
         <translation>
             <numerusform>%n kullanıcı</numerusform>
+            <numerusform>%n kullanıcı</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="-2"/>
         <source>%1/%n users</source>
         <translation>
+            <numerusform>%1/%n kullanıcı</numerusform>
             <numerusform>%1/%n kullanıcı</numerusform>
         </translation>
     </message>
@@ -788,42 +790,42 @@
     <message>
         <location line="+50"/>
         <source>No brushes exported</source>
-        <translation type="unfinished"></translation>
+        <translation>Hiçbir fırça dışa aktarılmadı</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Can&apos;t export order.conf</source>
-        <translation type="unfinished"></translation>
+        <translation>order.conf dışa aktarılamıyor</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error writing &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; yazılırken hata: %2</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Can&apos;t export tag &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Etiket &apos;%1&apos; dışa aktarılamıyor</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Missing preset %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Ön ayar kayıp %1</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Invalid preset %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Geçersiz ön ayar %1</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Can&apos;t export preset &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Ön ayar &apos;%1&apos; dışa aktarılamıyor</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Can&apos;t export preset thumbnail &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Ön ayar küçük resmi &apos;%1&apos; dışa aktarılamıyor</translation>
     </message>
 </context>
 <context>
@@ -1147,7 +1149,7 @@
     <message>
         <location line="+2"/>
         <source>Closed (guest logins blocked)</source>
-        <translation type="unfinished"></translation>
+        <translation>Kapalı (misafir girişleri engellenmiş)</translation>
     </message>
     <message>
         <location line="+2"/>
