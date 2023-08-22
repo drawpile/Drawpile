@@ -972,7 +972,7 @@
     <message>
         <location line="-441"/>
         <source>Server is for a different Drawpile version!</source>
-        <translation>Server is for a different Drawpile version!</translation>
+        <translation>服务器不支持当前的Drawpile版本！</translation>
     </message>
     <message>
         <location line="+42"/>
