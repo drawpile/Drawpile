@@ -537,7 +537,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+6"/>
         <source>Paste Image</source>
-        <translation>黏贴图像</translation>
+        <translation>粘贴图像</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -547,7 +547,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Import Brush Pack</source>
-        <translation type="unfinished"></translation>
+        <translation>导入笔刷包</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -623,7 +623,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+14"/>
         <source>Export Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>导出笔刷</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -1384,7 +1384,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+22"/>
         <source>&amp;Brushes...</source>
-        <translation>&amp;笔刷...</translation>
+        <translation>&amp;导入笔刷...</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1691,7 +1691,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+84"/>
         <source>&amp;View</source>
-        <translation>&amp;显示</translation>
+        <translation>&amp;视图</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1845,7 +1845,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+5"/>
         <source>Paste &amp;From File...</source>
-        <translation>&amp;从文件黏贴...</translation>
+        <translation>&amp;从文件粘贴...</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2143,7 +2143,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1251"/>
         <source>&amp;Brushes…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;导出笔刷…</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2218,7 +2218,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Paste Key Frame</source>
-        <translation>黏贴关键帧</translation>
+        <translation>粘贴关键帧</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2539,7 +2539,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+29"/>
         <source>Brush slot #%1</source>
-        <translation type="unfinished"></translation>
+        <translation>笔刷数字预设 #%1</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -3069,7 +3069,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+6"/>
         <source>Cut, Paste &amp; Fill:</source>
-        <translation>剪切,黏贴和填充:</translation>
+        <translation>剪切,粘贴和填充:</translation>
     </message>
     <message>
         <location line="+131"/>
@@ -3587,35 +3587,35 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../dialogs/brushexportdialog.cpp" line="+42"/>
         <source>Export Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>导出笔刷</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Export</source>
         <extracomment>This text on a button, so it&apos;s a verb, not a noun.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>导出</translation>
     </message>
     <message>
         <location line="+162"/>
         <source>Brush Export</source>
-        <translation type="unfinished"></translation>
+        <translation>笔刷导出</translation>
     </message>
     <message numerus="yes">
         <location line="+10"/>
         <source>%n brush(es) exported.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>已导出 %n 个笔刷.</numerusform>
         </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Brush export failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>笔刷导出失败.</translation>
     </message>
     <message numerus="yes">
         <location line="+7"/>
         <source>%n error(s) encountered.</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>遇到了%n个错误.</numerusform>
         </translation>
     </message>
@@ -5130,7 +5130,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+3"/>
         <source>Ratchet Rotate Canvas</source>
         <extracomment>This refers to rotating the canvas in 15° steps.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>15度增量旋转画布</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5525,7 +5525,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+19"/>
         <source>Spider</source>
-        <translation>SAI风格</translation>
+        <translation>蜘蛛</translation>
     </message>
 </context>
 <context>
@@ -6819,17 +6819,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Direction:</source>
-        <translation type="unfinished"></translation>
+        <translation>方向:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Ascending</source>
-        <translation type="unfinished"></translation>
+        <translation>上升</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Descending</source>
-        <translation type="unfinished"></translation>
+        <translation>下降</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -7178,7 +7178,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Take a look over the &lt;a href=&quot;#preferences&quot;&gt;Preferences&lt;/a&gt; to configure things to your liking. You might also want to pick a different &lt;a href=&quot;#layouts&quot;&gt;Layout&lt;/a&gt; for the application.</source>
-        <translation type="unfinished"></translation>
+        <translation>你可以查看 &lt;a href=&quot;#preferences&quot;&gt;首选项&lt;/a&gt; 来设置你的偏好. 你还可以为软件选择不同的 &lt;a href=&quot;#layouts&quot;&gt;界面&lt;/a&gt; .</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -7201,7 +7201,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/brushpalettedock.cpp" line="+105"/>
         <source>Brushes</source>
-        <translation>笔刷预设</translation>
+        <translation>预设面板</translation>
     </message>
     <message>
         <location line="+34"/>
@@ -7212,17 +7212,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-204"/>
         <source>Export Tag…</source>
-        <translation type="unfinished"></translation>
+        <translation>导出笔刷…</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Export Brush…</source>
-        <translation type="unfinished"></translation>
+        <translation>导出笔刷…</translation>
     </message>
     <message>
         <location line="+75"/>
         <source>Brush Import</source>
-        <translation type="unfinished"></translation>
+        <translation>笔刷导入</translation>
     </message>
     <message numerus="yes">
         <location line="+11"/>
@@ -7496,35 +7496,35 @@ Values above 0.5 may not be noticeable.</source>
         <source>C</source>
         <comment>HCL</comment>
         <extracomment>The &quot;Chroma&quot; C of HCL.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>C</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>L</source>
         <comment>HCL</comment>
         <extracomment>The &quot;Luma&quot; L of HCL.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>L</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>H</source>
         <comment>HSV</comment>
         <extracomment>The &quot;Hue&quot; H of HSV.</extracomment>
-        <translation type="unfinished">H</translation>
+        <translation>H</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>S</source>
         <comment>HSV</comment>
         <extracomment>The &quot;Saturation&quot; S of HSV.</extracomment>
-        <translation type="unfinished">S</translation>
+        <translation>S</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>V</source>
         <comment>HSV</comment>
         <extracomment>The &quot;Value&quot; V of HSV.</extracomment>
-        <translation type="unfinished">V</translation>
+        <translation>V</translation>
     </message>
 </context>
 <context>
@@ -7696,7 +7696,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/toolsettingsdock.cpp" line="+13"/>
         <source>Tool</source>
-        <translation>笔刷面板</translation>
+        <translation>工具面板</translation>
     </message>
 </context>
 <context>
@@ -7992,7 +7992,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Layer is not visible in this frame</source>
-        <translation type="unfinished"></translation>
+        <translation>图层在此帧上不可见</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8063,12 +8063,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+62"/>
         <source>Mute notifications</source>
-        <translation type="unfinished"></translation>
+        <translation>静音通知</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Toggle notifications for this window</source>
-        <translation type="unfinished"></translation>
+        <translation>切换此窗口的通知</translation>
     </message>
     <message>
         <location line="+34"/>
@@ -8229,17 +8229,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Copies this curve to the clipboard. You can paste it into another setting or into the chat to share it with other users.</source>
-        <translation>复制此曲线到剪贴板. 你可以把它黏贴到另一个设置中或者黏贴到聊天框中来分享给其他用户.</translation>
+        <translation>复制此曲线到剪贴板. 你可以把它粘贴到另一个设置中或者粘贴到聊天框中来分享给其他用户.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Paste</source>
-        <translation>黏贴</translation>
+        <translation>粘贴</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Pastes a copied curve from the clipboard, overwriting what is there currently.</source>
-        <translation>黏贴从剪贴板复制的曲线, 覆盖当前的内容.</translation>
+        <translation>粘贴从剪贴板复制的曲线, 覆盖当前的内容.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -8259,7 +8259,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+12"/>
         <source>Curve pasted from clipboard.</source>
-        <translation>曲线已黏贴到剪贴板.</translation>
+        <translation>曲线已粘贴到剪贴板.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8426,13 +8426,10 @@ Values above 0.5 may not be noticeable.</source>
 Green: %2
 Blue: %3
 Hex: %4</source>
-        <translation type="unfinished">红色: %2
-绿色: %3
-蓝色: %4
-十六进制: %4 {1
-?} {2
-?} {3
-?}</translation>
+        <translation>红色: %1
+绿色: %2
+蓝色: %3
+十六进制: %4</translation>
     </message>
 </context>
 <context>
@@ -8533,7 +8530,9 @@ Hex: %4</source>
         <source>There&apos;s no tracks yet.
 Add one using the ＋ button above
 or via Animation ▸ New Track.</source>
-        <translation type="unfinished"></translation>
+        <translation>当前未有轨道.
+请使用上方的 ＋ 按钮来新建一个
+或者通过菜单 动画 ▸ 新建轨道.</translation>
     </message>
     <message>
         <location line="+547"/>
