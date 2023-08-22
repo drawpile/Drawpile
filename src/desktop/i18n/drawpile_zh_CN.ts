@@ -5273,12 +5273,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+11"/>
         <source>Smooth Out</source>
-        <translation>Smooth Out</translation>
+        <translation>平滑输入</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Smooth In</source>
-        <translation>Smooth In</translation>
+        <translation>平滑输出</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5288,7 +5288,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Linear</source>
-        <translation>Linear</translation>
+        <translation>线性</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7468,28 +7468,28 @@ Values above 0.5 may not be noticeable.</source>
         <source>H</source>
         <comment>HSL</comment>
         <extracomment>The &quot;Hue&quot; H of HSL.</extracomment>
-        <translation type="unfinished">H</translation>
+        <translation>H</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>S</source>
         <comment>HSL</comment>
         <extracomment>The &quot;Saturation&quot; S of HSL.</extracomment>
-        <translation type="unfinished">S</translation>
+        <translation>S</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>L</source>
         <comment>HSL</comment>
         <extracomment>The &quot;Lightness&quot; L HSL.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>L</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>H</source>
         <comment>HCL</comment>
         <extracomment>The &quot;Hue&quot; H of HCL.</extracomment>
-        <translation type="unfinished">H</translation>
+        <translation>H</translation>
     </message>
     <message>
         <location line="+2"/>
