@@ -40,10 +40,10 @@ struct Chat {
 	int scrollPosition = 0;
 
 	Chat() : doc(nullptr) { }
-	explicit Chat(QWidget *parent)
+	explicit Chat(QObject *parent)
 		: doc(new QTextDocument(parent))
 	{
-		doc->setDefaultStyleSheet(QStringLiteral(
+		doc->setDefaultStyleSheet(
 			".sep { background: #4d4d4d }"
 			".notification { background: #232629 }"
 			".message, .notification {"
@@ -62,8 +62,8 @@ struct Chat {
 			".timestamp { color: #8d8d8d }"
 		    ".alert .timestamp { color: #eff0f1 }"
 			"a:link { color: #1d99f3 }"
-			".emoji { font-size: %1pt; }"
-		).arg(QApplication::font(parent).pointSize() * 2));
+			".emoji { font-size: xx-large; }"
+		);
 	}
 
 	void appendSeparator(QTextCursor &cursor);
@@ -125,7 +125,7 @@ struct ChatWidget::Private {
 		return chats[0];
 	}
 
-	bool ensurePrivateChatExists(int userId, QWidget *parent);
+	bool ensurePrivateChatExists(int userId, QObject *parent);
 
 	void updatePreserveModeUi();
 };
@@ -307,7 +307,7 @@ void ChatWidget::clear()
 	}
 }
 
-bool ChatWidget::Private::ensurePrivateChatExists(int userId, QWidget *parent)
+bool ChatWidget::Private::ensurePrivateChatExists(int userId, QObject *parent)
 {
 	if(userId < 1 || userId > 255) {
 		qWarning("ChatWidget::openPrivateChat(%d): Invalid user ID", userId);
