@@ -11,7 +11,7 @@
     <message>
         <location line="+19"/>
         <source>Add avatar…</source>
-        <translation type="unfinished"></translation>
+        <translation>添加头像…</translation>
     </message>
 </context>
 <context>
@@ -192,7 +192,7 @@
     <message>
         <location line="+3"/>
         <source>Ratchet Rotate Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>15度增量旋转画布</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -415,7 +415,7 @@
     <message>
         <location line="+7"/>
         <source>Brush Pack (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>笔刷包 (%1)</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -694,7 +694,7 @@
     <message>
         <location filename="../brushes/brushpresetmodel.cpp" line="+567"/>
         <source>Default</source>
-        <translation>默认</translation>
+        <translation>Default</translation>
     </message>
 </context>
 <context>
@@ -768,42 +768,42 @@
     <message>
         <location line="+83"/>
         <source>No brushes exported</source>
-        <translation type="unfinished"></translation>
+        <translation>没有笔刷导出</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Can&apos;t export order.conf</source>
-        <translation type="unfinished"></translation>
+        <translation>无法导出 order.conf</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error writing &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>错误写入 &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Can&apos;t export tag &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>无法导出标签 &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Missing preset %1</source>
-        <translation type="unfinished"></translation>
+        <translation>缺少预设 %1</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Invalid preset %1</source>
-        <translation type="unfinished"></translation>
+        <translation>无效预设 %1</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Can&apos;t export preset &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>无法导出预设 &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Can&apos;t export preset thumbnail &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>无法导出预设图标 &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="-180"/>
@@ -1147,12 +1147,12 @@
     <message>
         <location line="+2"/>
         <source>Closed (guest logins blocked)</source>
-        <translation type="unfinished"></translation>
+        <translation>已关闭 (禁止非注册用户加入)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Closed (new logins blocked)</source>
-        <translation>已关闭的 (新的登入被阻止)</translation>
+        <translation>已关闭 (禁止新用户加入)</translation>
     </message>
     <message>
         <location line="+2"/>
