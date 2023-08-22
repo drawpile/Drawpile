@@ -61,7 +61,7 @@ SETTING(lastToolColor             , LastToolColor             , "tools/color"   
 SETTING(lastUsername              , LastUsername              , "history/username"                      , QString())
 SETTING(lastWindowActions         , LastWindowActions         , "window/actions"                        , (QMap<QString, bool>()))
 SETTING(lastWindowDocks           , LastWindowDocks           , "window/docks"                          , (QVariantMap()))
-SETTING(lastWindowMaximized       , LastWindowMaximized       , "window/maximized"                      , false)
+SETTING(lastWindowMaximized       , LastWindowMaximized       , "window/maximized"                      , true)
 SETTING(lastWindowPosition        , LastWindowPosition        , "window/pos"                            , (QPoint()))
 SETTING(lastWindowSize            , LastWindowSize            , "window/size"                           , (QSize(800, 600)))
 SETTING(lastWindowState           , LastWindowState           , "window/state"                          , QByteArray())
