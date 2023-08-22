@@ -603,7 +603,7 @@ void ChatWidget::receiveMessage(int sender, int recipient, uint8_t tflags, uint8
 	}
 
 	const QString safetext =
-		htmlutils::linkify(htmlutils::wrapEmoji(message.toHtmlEscaped()));
+		htmlutils::linkify(htmlutils::emojify(message.toHtmlEscaped()));
 
 	Q_ASSERT(d->chats.contains(chatId));
 	Chat &chat = d->chats[chatId];
@@ -657,7 +657,7 @@ void ChatWidget::systemMessage(const QString& message, bool alert)
 {
 	const bool wasAtEnd = d->isAtEnd();
 	const QString safetext =
-		htmlutils::linkify(htmlutils::wrapEmoji(message.toHtmlEscaped()));
+		htmlutils::linkify(htmlutils::emojify(message.toHtmlEscaped()));
 	if(alert) {
 		d->publicChat().appendMessageCompact(0, QString(), safetext, false, true);
 		emit expandRequested();

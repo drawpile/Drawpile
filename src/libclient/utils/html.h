@@ -23,9 +23,9 @@ QString newlineToBr(const QString &input);
  */
 QString linkify(const QString &input, const QString &extra=QString());
 
-QString wrapEmoji(
-	const QString &input,
-	const QString &replacement = "<span class=\"emoji\">\\1</span>");
+QString emojify(
+	const QString &in, const QString &replacement =
+						   QStringLiteral("<span class=\"emoji\">%1</span>"));
 
 }
 
