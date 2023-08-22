@@ -29,6 +29,7 @@ Unreleased Version 2.2.0-pre
  * Feature: Increase font size on emoji posted into chat. Thanks to leandro2222 for suggesting.
  * Feature: Allow adding an avatar from the login dialog.
  * Fix: Show main window maximized by default, because who wants a drawing program in a tiny window.
+ * Fix: Give docks sensible initial sizes. Thanks to xxxx for reporting.
 
 2023-07-31 Version 2.2.0-beta.6
  * Fix: Don't forget account password when entering a wrong session password.

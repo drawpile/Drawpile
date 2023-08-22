@@ -806,7 +806,25 @@ void MainWindow::readSettings(bool windowpos)
 	// Restore dock, toolbar and view states
 	if(const auto lastWindowState = settings.lastWindowState(); !lastWindowState.isEmpty()) {
 		restoreState(settings.lastWindowState());
+	} else {
+		// Give the docks some sensible initial state then.
+		int leftWidth = 320, leftHeight = 220;
+		int rightWidth = 260, rightHeight = 200;
+		int topHeight = 200;
+		resizeDocks(
+			{m_dockToolSettings, m_dockBrushPalette, m_dockColorSpinner,
+			 m_dockColorSliders, m_dockColorPalette, m_dockLayers},
+			{leftWidth, leftWidth, rightWidth, rightWidth, rightWidth,
+			 rightWidth},
+			Qt::Horizontal);
+		resizeDocks(
+			{m_dockToolSettings, m_dockColorSpinner, m_dockColorSliders,
+			 m_dockColorPalette, m_dockTimeline, m_dockOnionSkins},
+			{leftHeight, rightHeight, rightHeight, rightHeight, topHeight,
+			 topHeight},
+			Qt::Vertical);
 	}
+
 	if(const auto lastWindowViewState = settings.lastWindowViewState(); !lastWindowViewState.isEmpty()) {
 		m_splitter->restoreState(settings.lastWindowViewState());
 	}
