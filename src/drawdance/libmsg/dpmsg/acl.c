@@ -475,7 +475,7 @@ static bool owns_id(uint8_t user_id, int id)
 static uint8_t handle_join(DP_AclState *acls, DP_Message *msg)
 {
     DP_MsgJoin *mj = DP_msg_join_cast(msg);
-    if (DP_msg_join_flags(mj) | DP_MSG_JOIN_FLAGS_AUTH) {
+    if (DP_msg_join_flags(mj) & DP_MSG_JOIN_FLAGS_AUTH) {
         DP_user_bit_set(acls->users.authenticated, message_user_id(msg));
         return DP_ACL_STATE_CHANGE_USERS_BIT;
     }

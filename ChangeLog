@@ -32,6 +32,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Give docks sensible initial sizes. Thanks to xxxx for reporting.
  * Fix: Don't tabify the now invisible-by-default timeline and onion skins by default. Thanks Ben for finding.
  * Fix: Make the flipbook remember your last crop, frame range and playback speed for the current window. Thanks Ben for finding.
+ * Fix: Don't mark guests as registered. Thanks to xxxx for reporting.
 
 2023-07-31 Version 2.2.0-beta.6
  * Fix: Don't forget account password when entering a wrong session password.
