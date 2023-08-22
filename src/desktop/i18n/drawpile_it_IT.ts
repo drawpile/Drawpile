@@ -547,7 +547,7 @@ in 64x64 pixel.</translation>
     <message>
         <location line="+7"/>
         <source>Import Brush Pack</source>
-        <translation type="unfinished"></translation>
+        <translation>Importa Pacco Pennelli</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -623,7 +623,7 @@ in 64x64 pixel.</translation>
     <message>
         <location line="+14"/>
         <source>Export Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Esporta Pennelli</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -2036,7 +2036,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+5"/>
         <source>&amp;Brushes…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Pennelli …</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2540,7 +2540,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+29"/>
         <source>Brush slot #%1</source>
-        <translation type="unfinished"></translation>
+        <translation>Slot pennello %1</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -3588,38 +3588,40 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location filename="../dialogs/brushexportdialog.cpp" line="+42"/>
         <source>Export Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Esporta Pennelli</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Export</source>
         <extracomment>This text on a button, so it&apos;s a verb, not a noun.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Esporta</translation>
     </message>
     <message>
         <location line="+162"/>
         <source>Brush Export</source>
-        <translation type="unfinished"></translation>
+        <translation>Esportazione Pennello</translation>
     </message>
     <message numerus="yes">
         <location line="+10"/>
         <source>%n brush(es) exported.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n pennello esportato.</numerusform>
+            <numerusform>%n pennelli esportati.</numerusform>
+            <numerusform>%n pennello(i) esportato(i).</numerusform>
         </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Brush export failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Esportazione pennello fallita.</translation>
     </message>
     <message numerus="yes">
         <location line="+7"/>
         <source>%n error(s) encountered.</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%n errore riscontrato.</numerusform>
             <numerusform>%n errori riscontrati.</numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
 </context>
@@ -5132,7 +5134,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <location line="+3"/>
         <source>Ratchet Rotate Canvas</source>
         <extracomment>This refers to rotating the canvas in 15° steps.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Ruota la Tela di 15°</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6826,17 +6828,17 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+6"/>
         <source>Direction:</source>
-        <translation type="unfinished"></translation>
+        <translation>Direzione:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Ascending</source>
-        <translation type="unfinished"></translation>
+        <translation>Ascendente</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Descending</source>
-        <translation type="unfinished"></translation>
+        <translation>Discendente</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -7185,7 +7187,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+1"/>
         <source>Take a look over the &lt;a href=&quot;#preferences&quot;&gt;Preferences&lt;/a&gt; to configure things to your liking. You might also want to pick a different &lt;a href=&quot;#layouts&quot;&gt;Layout&lt;/a&gt; for the application.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dai un&apos;occhiata a &lt;a href=&quot;#preferences&quot;&gt;Preferenze&lt;/a&gt; per configurare le cose a tuo piacimento. È inoltre possibile scegliere un &lt;a href=&quot;#layout&quot;&gt;Layout&lt;/a&gt; diverso per l&apos;applicazione.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -7279,12 +7281,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+1"/>
         <source>Export Tag…</source>
-        <translation type="unfinished"></translation>
+        <translation>Esporta Tag…</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Export Brush…</source>
-        <translation type="unfinished"></translation>
+        <translation>Esporta Pennello…</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7294,7 +7296,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+72"/>
         <source>Brush Import</source>
-        <translation type="unfinished"></translation>
+        <translation>Importa Pennello</translation>
     </message>
     <message numerus="yes">
         <location line="+11"/>
@@ -7478,63 +7480,63 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <source>H</source>
         <comment>HSL</comment>
         <extracomment>The &quot;Hue&quot; H of HSL.</extracomment>
-        <translation type="unfinished">H</translation>
+        <translation>H</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>S</source>
         <comment>HSL</comment>
         <extracomment>The &quot;Saturation&quot; S of HSL.</extracomment>
-        <translation type="unfinished">S</translation>
+        <translation>S</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>L</source>
         <comment>HSL</comment>
         <extracomment>The &quot;Lightness&quot; L HSL.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>L</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>H</source>
         <comment>HCL</comment>
         <extracomment>The &quot;Hue&quot; H of HCL.</extracomment>
-        <translation type="unfinished">H</translation>
+        <translation>H</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>C</source>
         <comment>HCL</comment>
         <extracomment>The &quot;Chroma&quot; C of HCL.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>C</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>L</source>
         <comment>HCL</comment>
         <extracomment>The &quot;Luma&quot; L of HCL.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>L</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>H</source>
         <comment>HSV</comment>
         <extracomment>The &quot;Hue&quot; H of HSV.</extracomment>
-        <translation type="unfinished">H</translation>
+        <translation>H</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>S</source>
         <comment>HSV</comment>
         <extracomment>The &quot;Saturation&quot; S of HSV.</extracomment>
-        <translation type="unfinished">S</translation>
+        <translation>S</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>V</source>
         <comment>HSV</comment>
         <extracomment>The &quot;Value&quot; V of HSV.</extracomment>
-        <translation type="unfinished">V</translation>
+        <translation>V</translation>
     </message>
 </context>
 <context>
@@ -8002,7 +8004,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+2"/>
         <source>Layer is not visible in this frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Il Livello non è visibile in questo frame</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8073,12 +8075,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+62"/>
         <source>Mute notifications</source>
-        <translation type="unfinished"></translation>
+        <translation>Silenzia notifiche</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Toggle notifications for this window</source>
-        <translation type="unfinished"></translation>
+        <translation>Attiva notifiche per questa finestra</translation>
     </message>
     <message>
         <location line="+34"/>
@@ -8436,13 +8438,10 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
 Green: %2
 Blue: %3
 Hex: %4</source>
-        <translation type="unfinished">Rosso: %2
+        <translation>Rosso: %2
 Verde: %3
 Blu: %4
-Esadecimale: %4 {1
-?} {2
-?} {3
-?}</translation>
+Esadecimale: %4</translation>
     </message>
 </context>
 <context>
@@ -8543,7 +8542,9 @@ Esadecimale: %4 {1
         <source>There&apos;s no tracks yet.
 Add one using the ＋ button above
 or via Animation ▸ New Track.</source>
-        <translation type="unfinished"></translation>
+        <translation>Non ci sono alcune tracce. 
+Aggiungine una usando il pulsante + sopra 
+o via Animazione ▸ Nuova Traccia</translation>
     </message>
     <message>
         <location line="+547"/>
