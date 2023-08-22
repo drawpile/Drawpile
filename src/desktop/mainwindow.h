@@ -16,6 +16,7 @@ extern "C" {
 #include <QUrl>
 #include <QVariantMap>
 
+#include "desktop/dialogs/flipbook.h"
 #include "libclient/tools/tool.h"
 #include "libclient/canvas/acl.h"
 #include "libclient/export/animationsaverrunnable.h"
@@ -286,6 +287,7 @@ private:
 	QPointer<dialogs::DumpPlaybackDialog> m_dumpPlaybackDialog;
 	dialogs::SessionSettingsDialog *m_sessionSettings;
 	dialogs::ServerLogDialog *m_serverLogDialog;
+	dialogs::Flipbook::State m_flipbookState;
 
 	drawingboard::CanvasScene *m_canvasscene;
 

@@ -109,7 +109,6 @@ static constexpr auto CTRL_KEY = Qt::CTRL;
 #include "desktop/dialogs/resizedialog.h"
 #include "desktop/dialogs/playbackdialog.h"
 #include "desktop/dialogs/dumpplaybackdialog.h"
-#include "desktop/dialogs/flipbook.h"
 #include "desktop/dialogs/resetdialog.h"
 #include "desktop/dialogs/resetnoticedialog.h"
 #include "desktop/dialogs/sessionsettings.h"
@@ -1538,7 +1537,7 @@ void MainWindow::showFlipbook()
 		fp->activateWindow();
 		fp->raise();
 	} else {
-		fp = new dialogs::Flipbook{this};
+		fp = new dialogs::Flipbook{m_flipbookState, this};
 		fp->setObjectName("flipbook");
 		fp->setAttribute(Qt::WA_DeleteOnClose);
 		fp->setPaintEngine(m_doc->canvas()->paintEngine());

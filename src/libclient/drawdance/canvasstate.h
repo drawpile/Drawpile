@@ -17,6 +17,7 @@ extern "C" {
 #include "libclient/drawdance/timeline.h"
 #include <QImage>
 #include <QMetaType>
+#include <QPoint>
 #include <QSet>
 #include <QSize>
 
@@ -50,6 +51,10 @@ public:
     int height() const;
     QSize size() const;
 
+    int offsetX() const;
+    int offsetY() const;
+    QPoint offset() const;
+
     Tile backgroundTile() const;
     DocumentMetadata documentMetadata() const;
     LayerList layers() const;
@@ -57,6 +62,7 @@ public:
     Timeline timeline() const;
 
     int frameCount() const;
+    int framerate() const;
 
     bool sameFrame(int frameIndexA, int frameIndexB) const;
 

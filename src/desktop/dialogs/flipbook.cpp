@@ -15,12 +15,14 @@ extern "C" {
 #include <QEvent>
 #include <QRect>
 #include <QScreen>
+#include <QSignalBlocker>
 #include <QTimer>
 
 namespace dialogs {
 
-Flipbook::Flipbook(QWidget *parent)
+Flipbook::Flipbook(State &state, QWidget *parent)
 	: QDialog{parent}
+	, m_state{state}
 	, m_ui{new Ui_Flipbook}
 	, m_paintengine{nullptr}
 	, m_canvasState{}
@@ -30,7 +32,6 @@ Flipbook::Flipbook(QWidget *parent)
 
 	m_timer = new QTimer(this);
 
-	auto &settings = dpApp().settings();
 	connect(m_ui->rewindButton, &QToolButton::clicked, this, &Flipbook::rewind);
 	connect(
 		m_ui->playButton, &QToolButton::clicked, this, &Flipbook::playPause);
@@ -54,12 +55,10 @@ Flipbook::Flipbook(QWidget *parent)
 		m_ui->refreshButton, &QToolButton::clicked, this,
 		&Flipbook::refreshCanvas);
 
-	updateRange();
-
 	m_ui->speedSpinner->setExponentRatio(3.0);
 	m_ui->playButton->setFocus();
 
-	const auto geom = settings.flipbookWindow();
+	const auto geom = dpApp().settings().flipbookWindow();
 	if(geom.isValid()) {
 		setGeometry(geom);
 	}
@@ -86,8 +85,12 @@ bool Flipbook::event(QEvent *event)
 
 void Flipbook::updateRange()
 {
+	int loopStart = m_ui->loopStart->value();
+	int loopEnd = m_ui->loopEnd->value();
 	m_ui->layerIndex->setMinimum(m_ui->loopStart->value());
 	m_ui->layerIndex->setMaximum(m_ui->loopEnd->value());
+	m_state.loopStart = loopStart;
+	m_state.loopEnd = loopEnd;
 }
 
 void Flipbook::rewind()
@@ -108,6 +111,7 @@ void Flipbook::playPause()
 
 void Flipbook::updateSpeed()
 {
+	m_state.speedPercent = m_ui->speedSpinner->value();
 	if(m_timer->isActive()) {
 		m_timer->setInterval(getTimerInterval());
 	}
@@ -116,7 +120,7 @@ void Flipbook::updateSpeed()
 void Flipbook::setPaintEngine(canvas::PaintEngine *pe)
 {
 	m_paintengine = pe;
-	refreshCanvas();
+	resetCanvas(false);
 	if(!m_timer->isActive()) {
 		playPause();
 	}
@@ -126,10 +130,10 @@ void Flipbook::setCrop(const QRectF &rect)
 {
 	const int w = m_crop.width();
 	const int h = m_crop.height();
+	QSize canvasSize = m_canvasState.isNull() ? QSize{} : m_canvasState.size();
 
 	if(rect.width() * w <= 5 || rect.height() * h <= 5) {
-		m_crop = QRect{
-			QPoint(), m_canvasState.isNull() ? QSize{} : m_canvasState.size()};
+		m_crop = QRect{QPoint(), canvasSize};
 		m_ui->zoomButton->setEnabled(false);
 	} else {
 		m_crop = QRect(
@@ -137,7 +141,12 @@ void Flipbook::setCrop(const QRectF &rect)
 			rect.width() * w, rect.height() * h);
 		m_ui->zoomButton->setEnabled(true);
 	}
-	dpApp().settings().setFlipbookCrop(m_crop);
+
+	m_state.crop = rect;
+	m_state.lastCanvasOffset =
+		m_canvasState.isNull() ? QPoint{} : m_canvasState.offset();
+	m_state.lastCanvasSize = canvasSize;
+
 	resetFrameCache();
 	loadFrame();
 }
@@ -149,6 +158,11 @@ void Flipbook::resetCrop()
 
 void Flipbook::refreshCanvas()
 {
+	resetCanvas(true);
+}
+
+void Flipbook::resetCanvas(bool refresh)
+{
 	if(!m_paintengine) {
 		return;
 	}
@@ -158,25 +172,41 @@ void Flipbook::refreshCanvas()
 		return;
 	}
 
-	const int max = m_canvasState.frameCount();
-	m_ui->loopStart->setMaximum(max);
-	m_ui->loopEnd->setMaximum(max);
-	m_ui->layerIndex->setMaximum(max);
-	m_ui->layerIndex->setSuffix(QStringLiteral("/%1").arg(max));
-	m_ui->loopEnd->setValue(max);
+	int frameCount = m_canvasState.frameCount();
+	m_ui->loopStart->setMaximum(frameCount);
+	m_ui->loopEnd->setMaximum(frameCount);
+	m_ui->layerIndex->setMaximum(frameCount);
+	m_ui->layerIndex->setSuffix(QStringLiteral("/%1").arg(frameCount));
 
-	m_crop = QRect(QPoint(), m_canvasState.size());
-
-	const QRect crop = dpApp().settings().flipbookCrop();
-	if(m_crop.contains(crop, true)) {
-		m_crop = crop;
-		m_ui->zoomButton->setEnabled(true);
+	if(refresh) {
+		resetFrameCache();
+		loadFrame();
 	} else {
-		m_ui->zoomButton->setEnabled(false);
-	}
+		if(m_state.speedPercent > 0.0) {
+			m_ui->speedSpinner->setValue(m_state.speedPercent);
+		} else {
+			m_ui->speedSpinner->setValue(100.0);
+		}
 
-	resetFrameCache();
-	loadFrame();
+		QSignalBlocker blocker{m_ui->loopStart};
+		if(m_state.loopStart > 0 && m_state.loopEnd > 0) {
+			m_ui->loopStart->setValue(m_state.loopStart);
+			m_ui->loopEnd->setValue(m_state.loopEnd);
+		} else {
+			m_ui->loopStart->setValue(1);
+			m_ui->loopEnd->setValue(frameCount);
+		}
+
+		QSize canvasSize = m_canvasState.size();
+		QPoint canvasOffset = m_canvasState.offset();
+		m_crop = QRect{QPoint{0, 0}, canvasSize};
+		if(m_state.crop.isValid() && canvasSize == m_state.lastCanvasSize &&
+		   canvasOffset == m_state.lastCanvasOffset) {
+			setCrop(m_state.crop);
+		} else {
+			resetCrop();
+		}
+	}
 }
 
 int Flipbook::getTimerInterval() const

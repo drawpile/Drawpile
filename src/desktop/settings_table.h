@@ -34,7 +34,6 @@ SETTING(filterClosed              , FilterClosed              , "history/filterc
 SETTING(filterDuplicates          , FilterDuplicates          , "history/filterduplicates"              , false)
 SETTING(filterLocked              , FilterLocked              , "history/filterlocked"                  , false)
 SETTING(filterNsfm                , FilterNsfm                , "history/filternsfw"                    , false)
-SETTING(flipbookCrop              , FlipbookCrop              , "flipbook/crop"                         , QRect())
 SETTING(flipbookWindow            , FlipbookWindow            , "flipbook/window"                       , QRect())
 SETTING(globalPressureCurve       , GlobalPressureCurve       , "settings/input/globalcurve"            , QString("0,0;1,1;"))
 SETTING(ignoreCarrierGradeNat     , IgnoreCarrierGradeNat     , "history/cgnalert"                      , false)

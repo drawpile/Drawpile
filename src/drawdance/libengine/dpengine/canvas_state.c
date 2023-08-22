@@ -311,6 +311,13 @@ int DP_canvas_state_frame_count(DP_CanvasState *cs)
     return DP_document_metadata_frame_count(cs->metadata);
 }
 
+int DP_canvas_state_framerate(DP_CanvasState *cs)
+{
+    DP_ASSERT(cs);
+    DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
+    return DP_document_metadata_framerate(cs->metadata);
+}
+
 bool DP_canvas_state_same_frame(DP_CanvasState *cs, int frame_index_a,
                                 int frame_index_b)
 {

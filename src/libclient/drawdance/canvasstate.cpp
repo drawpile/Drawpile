@@ -112,6 +112,21 @@ QSize CanvasState::size() const
     return QSize{width(), height()};
 }
 
+int CanvasState::offsetX() const
+{
+    return DP_canvas_state_offset_x(m_data);
+}
+
+int CanvasState::offsetY() const
+{
+    return DP_canvas_state_offset_y(m_data);
+}
+
+QPoint CanvasState::offset() const
+{
+    return QPoint{offsetX(), offsetY()};
+}
+
 Tile CanvasState::backgroundTile() const
 {
     return Tile::inc(DP_canvas_state_background_tile_noinc(m_data));
@@ -140,6 +155,11 @@ Timeline CanvasState::timeline() const
 int CanvasState::frameCount() const
 {
     return DP_canvas_state_frame_count(m_data);
+}
+
+int CanvasState::framerate() const
+{
+    return DP_canvas_state_framerate(m_data);
 }
 
 bool CanvasState::sameFrame(int frameIndexA, int frameIndexB) const

@@ -23,7 +23,16 @@ namespace dialogs {
 class Flipbook final : public QDialog {
 	Q_OBJECT
 public:
-	explicit Flipbook(QWidget *parent = nullptr);
+	struct State {
+		double speedPercent = -1.0;
+		int loopStart = -1;
+		int loopEnd = -1;
+		QRectF crop;
+		QSize lastCanvasSize;
+		QPoint lastCanvasOffset;
+	};
+
+	explicit Flipbook(State &state, QWidget *parent = nullptr);
 	~Flipbook() override;
 
 	void setPaintEngine(canvas::PaintEngine *pe);
@@ -41,10 +50,12 @@ private slots:
 	void refreshCanvas();
 
 private:
+	void resetCanvas(bool refresh);
 	int getTimerInterval() const;
 	void resetFrameCache();
 	bool searchIdenticalFrame(int f, QPixmap &outFrame);
 
+	State &m_state;
 	Ui_Flipbook *m_ui;
 	canvas::PaintEngine *m_paintengine;
 	drawdance::CanvasState m_canvasState;
