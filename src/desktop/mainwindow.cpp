@@ -3196,7 +3196,7 @@ void MainWindow::setupActions()
 	//
 	// View menu
 	//
-	QAction *layoutsAction = makeAction("layouts", tr("&Layouts...")).icon("window_");
+	QAction *layoutsAction = makeAction("layouts", tr("&Layouts...")).icon("window_").shortcut("F9");
 
 	QAction *toolbartoggles = new QAction(tr("&Toolbars"), this);
 	toolbartoggles->setMenu(toggletoolbarmenu);
@@ -3677,12 +3677,12 @@ void MainWindow::setupActions()
 	//
 	// Help menu
 	//
-	QAction *homepage = makeAction("dphomepage", tr("&Homepage")).statusTip(cmake_config::website());
-	QAction *tablettester = makeAction("tablettester", tr("Tablet Tester"));
-	QAction *showlogfile = makeAction("showlogfile", tr("Log File"));
-	QAction *about = makeAction("dpabout", tr("&About Drawpile")).menuRole(QAction::AboutRole);
-	QAction *aboutqt = makeAction("aboutqt", tr("About &Qt")).menuRole(QAction::AboutQtRole);
-	QAction *versioncheck = makeAction("versioncheck", tr("Check For Updates"));
+	QAction *homepage = makeAction("dphomepage", tr("&Homepage")).statusTip(cmake_config::website()).noDefaultShortcut();
+	QAction *tablettester = makeAction("tablettester", tr("Tablet Tester")).noDefaultShortcut();
+	QAction *showlogfile = makeAction("showlogfile", tr("Log File")).noDefaultShortcut();
+	QAction *about = makeAction("dpabout", tr("&About Drawpile")).menuRole(QAction::AboutRole).noDefaultShortcut();
+	QAction *aboutqt = makeAction("aboutqt", tr("About &Qt")).menuRole(QAction::AboutQtRole).noDefaultShortcut();
+	QAction *versioncheck = makeAction("versioncheck", tr("Check For Updates")).noDefaultShortcut();
 
 	connect(homepage, &QAction::triggered, &MainWindow::homepage);
 	connect(about, &QAction::triggered, &MainWindow::about);
