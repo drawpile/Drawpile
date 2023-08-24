@@ -34,6 +34,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Make the flipbook remember your last crop, frame range and playback speed for the current window. Thanks Ben for finding.
  * Fix: Don't mark guests as registered. Thanks to xxxx for reporting.
  * Fix: Allow assigning a shortcut to open the Layouts dialog (F9 by default) and to the entries in the Help menu (nothing by default.)
+ * Fix: Make reloading the last brush preset slot-specific, since it's nonsense to clobber your current slot with the last preset you set in another one.
 
 2023-07-31 Version 2.2.0-beta.6
  * Fix: Don't forget account password when entering a wrong session password.

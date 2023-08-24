@@ -26,6 +26,7 @@ extern "C" {
 #include <QJsonObject>
 #include <QPointer>
 #include <QMenu>
+#include <optional>
 
 namespace tools {
 
@@ -38,6 +39,7 @@ struct BrushSettings::Private {
 	QStandardItemModel *blendModes, *eraseModes;
 
 	brushes::ActiveBrush brushSlots[BRUSH_COUNT];
+	std::optional<brushes::ActiveBrush> lastPresets[BRUSH_COUNT];
 	widgets::GroupedToolButton *brushSlotButton[BRUSH_COUNT];
 	QWidget *brushSlotWidget = nullptr;
 
@@ -305,6 +307,7 @@ void BrushSettings::setCurrentBrush(brushes::ActiveBrush brush)
 	}
 
 	currentBrush.setActiveType(activeType);
+	d->lastPresets[d->current] = brush;
 	updateUi();
 }
 
@@ -369,6 +372,14 @@ void BrushSettings::toggleRecolorMode()
 			break;
 		}
 		updateUi();
+	}
+}
+
+void BrushSettings::reloadPreset()
+{
+	const std::optional<brushes::ActiveBrush> &opt = d->lastPresets[d->current];
+	if(opt.has_value()) {
+		setCurrentBrush(opt.value());
 	}
 }
 
@@ -757,20 +768,24 @@ ToolProperties BrushSettings::saveToolSettings()
 	cfg.setValue(toolprop::smoothing, d->ui.smoothingBox->value() - d->globalSmoothing);
 
 	for(int i=0;i<BRUSH_COUNT;++i) {
-		const brushes::ActiveBrush &brush = d->brushSlots[i];
-		QJsonObject b = brush.toJson();
-
-		b["_slot"] = QJsonObject {
-			{"color", brush.qColor().name()},
-		};
-
 		cfg.setValue(
 			ToolProperties::Value<QByteArray> {
 				QStringLiteral("brush%1").arg(i),
 				QByteArray()
 			},
-			QJsonDocument(b).toJson(QJsonDocument::Compact)
+			d->brushSlots[i].toJson(true)
 		);
+
+		const std::optional<brushes::ActiveBrush> &opt = d->lastPresets[i];
+		if(opt.has_value()) {
+			cfg.setValue(
+				ToolProperties::Value<QByteArray> {
+					QStringLiteral("last%1").arg(i),
+					QByteArray()
+				},
+				opt.value().toJson()
+			);
+		}
 	}
 
 	return cfg;
@@ -788,11 +803,17 @@ void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 				QByteArray()
 				})
 			).object();
-		const QJsonObject s = o["_slot"].toObject();
+		brush = brushes::ActiveBrush::fromJson(o, true);
 
-		brush = brushes::ActiveBrush::fromJson(o);
-		const auto color = QColor(s["color"].toString());
-		brush.setQColor(color.isValid() ? color : Qt::black);
+		const QJsonObject lo = QJsonDocument::fromJson(
+			cfg.value(ToolProperties::Value<QByteArray> {
+				QStringLiteral("last%1").arg(i),
+				QByteArray()
+				})
+			).object();
+		if(!lo.isEmpty()) {
+			d->lastPresets[i] = brushes::ActiveBrush::fromJson(lo);
+		}
 
 		if(!d->shareBrushSlotColor)
 			d->brushSlotButton[i]->setColorSwatch(brush.qColor());

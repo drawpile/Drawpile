@@ -707,9 +707,9 @@ void ActiveBrush::setSmoothing(int smoothing)
 	}
 }
 
-QJsonObject ActiveBrush::toJson() const
+QByteArray ActiveBrush::toJson(bool includeSlotProperties) const
 {
-	return QJsonObject {
+	QJsonObject json{
 		{"type", "dp-active"},
 		{"version", 1},
 		{"active_type", m_activeType == CLASSIC ? "classic" : "mypaint"},
@@ -718,9 +718,15 @@ QJsonObject ActiveBrush::toJson() const
 			{"mypaint", m_myPaint.toJson()},
 		}},
 	};
+	if(includeSlotProperties) {
+		json["_slot"] = QJsonObject {
+			{"color", qColor().name()},
+		};
+	}
+	return QJsonDocument{json}.toJson(QJsonDocument::Compact);
 }
 
-QJsonObject ActiveBrush::toExportJson(const QString &description) const
+QByteArray ActiveBrush::toExportJson(const QString &description) const
 {
 	QJsonObject json{
 		{"comment", description},
@@ -734,10 +740,10 @@ QJsonObject ActiveBrush::toExportJson(const QString &description) const
 	} else {
 		m_myPaint.exportToJson(json);
 	}
-	return json;
+	return QJsonDocument{json}.toJson(QJsonDocument::Indented);
 }
 
-ActiveBrush ActiveBrush::fromJson(const QJsonObject &json)
+ActiveBrush ActiveBrush::fromJson(const QJsonObject &json, bool includeSlotProperties)
 {
 	ActiveBrush brush;
 	const QJsonValue type = json["type"];
@@ -755,6 +761,15 @@ ActiveBrush ActiveBrush::fromJson(const QJsonObject &json)
 	} else {
 		qWarning("ActiveBrush::fromJson: type is neither dp-active, dp-classic nor dp-mypaint!");
 	}
+
+	if(includeSlotProperties) {
+		QJsonObject slot = json["_slot"].toObject();
+		if(!slot.isEmpty()) {
+			QColor color = QColor(slot["color"].toString());
+			brush.setQColor(color.isValid() ? color : Qt::black);
+		}
+	}
+
 	return brush;
 }
 

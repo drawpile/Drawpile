@@ -959,7 +959,7 @@ void BrushPresetTagModel::exportPreset(
 	}
 
 	ActiveBrush brush = ActiveBrush::fromJson(doc.object());
-	QByteArray exportData = QJsonDocument{brush.toExportJson(preset.description)}.toJson(QJsonDocument::Indented);
+	QByteArray exportData = brush.toExportJson(preset.description);
 
 	QString presetName = getExportName(presetId, preset.name);
 	QString presetPath = QStringLiteral("%1/%2").arg(tagPath, presetName);

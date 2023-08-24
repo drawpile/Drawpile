@@ -62,6 +62,7 @@ public slots:
 	void setGlobalSmoothing(int smoothing);
 	void toggleEraserMode() override;
 	void toggleRecolorMode() override;
+	void reloadPreset();
 
 signals:
 	void colorChanged(const QColor &color);

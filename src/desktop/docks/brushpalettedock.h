@@ -35,7 +35,6 @@ public:
 public slots:
 	void importBrushes();
 	void exportBrushes();
-	void reloadPreset();
 
 private slots:
    void tagIndexChanged(int proxyRow);

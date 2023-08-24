@@ -3645,7 +3645,7 @@ void MainWindow::setupActions()
 
 	connect(smallerbrush, &QAction::triggered, this, [this]() { m_dockToolSettings->stepAdjustCurrent1(false); });
 	connect(biggerbrush, &QAction::triggered, this, [this]() { m_dockToolSettings->stepAdjustCurrent1(true); });
-	connect(reloadPreset, &QAction::triggered, m_dockBrushPalette, &docks::BrushPalette::reloadPreset);
+	connect(reloadPreset, &QAction::triggered, m_dockToolSettings->brushSettings(), &tools::BrushSettings::reloadPreset);
 
 	toolshortcuts->addAction(currentEraseMode);
 	toolshortcuts->addAction(currentRecolorMode);

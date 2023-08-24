@@ -200,9 +200,9 @@ public:
 	int smoothing() const;
 	void setSmoothing(int smoothing);
 
-	QJsonObject toJson() const;
-	QJsonObject toExportJson(const QString &description) const;
-	static ActiveBrush fromJson(const QJsonObject &json);
+	QByteArray toJson(bool includeSlotProperties = false) const;
+	QByteArray toExportJson(const QString &description) const;
+	static ActiveBrush fromJson(const QJsonObject &json, bool includeSlotProperties = false);
 	bool fromExportJson(const QJsonObject &json);
 
 	QString presetType() const;
