@@ -392,6 +392,15 @@ static void ora_write_layer_props_xml(DP_SaveOraContext *c, DP_Output *output,
                         DP_blend_mode_svg_name(blend_mode));
     }
 
+    // Drawpile doesn't itself need the alpha preserve property, since its alpha
+    // preserve behavior depends on the blend mode, but other software cares.
+    // The Recolor blend mode is saved as src-atop, which is alpha-preserving
+    // per its definition, so it doesn't get the extra attribute.
+    if (DP_blend_mode_preserves_alpha(blend_mode)
+        && blend_mode != DP_BLEND_MODE_RECOLOR) {
+        DP_OUTPUT_PRINT_LITERAL(output, " alpha-preserve=\"true\"");
+    }
+
     if (DP_layer_props_censored(lp)) {
         DP_OUTPUT_PRINT_LITERAL(output, " drawpile:censored=\"true\"");
     }

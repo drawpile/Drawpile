@@ -28,6 +28,7 @@
 #define DECREASE_OPACITY (1 << 2)
 #define INCREASE_OPACITY (1 << 3)
 #define BLEND_BLANK      (1 << 4)
+#define PRESERVES_ALPHA  (1 << 5)
 
 // The Krita name for the linear light blend mode contains a space, which isn't
 // supported in draw dabs messages, since they already use the curly brace body
@@ -66,63 +67,63 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
         },
     [DP_BLEND_MODE_MULTIPLY] =
         {
-            LAYER | BRUSH,
+            LAYER | BRUSH | PRESERVES_ALPHA,
             "DP_BLEND_MODE_MULTIPLY",
             "svg:multiply",
             "Multiply",
         },
     [DP_BLEND_MODE_DIVIDE] =
         {
-            LAYER | BRUSH,
+            LAYER | BRUSH | PRESERVES_ALPHA,
             "DP_BLEND_MODE_DIVIDE",
             "krita:divide",
             "Divide",
         },
     [DP_BLEND_MODE_BURN] =
         {
-            LAYER | BRUSH,
+            LAYER | BRUSH | PRESERVES_ALPHA,
             "DP_BLEND_MODE_BURN",
             "svg:color-burn",
             "Burn",
         },
     [DP_BLEND_MODE_DODGE] =
         {
-            LAYER | BRUSH,
+            LAYER | BRUSH | PRESERVES_ALPHA,
             "DP_BLEND_MODE_DODGE",
             "svg:color-dodge",
             "Dodge",
         },
     [DP_BLEND_MODE_DARKEN] =
         {
-            LAYER | BRUSH,
+            LAYER | BRUSH | PRESERVES_ALPHA,
             "DP_BLEND_MODE_DARKEN",
             "svg:darken",
             "Darken",
         },
     [DP_BLEND_MODE_LIGHTEN] =
         {
-            LAYER | BRUSH,
+            LAYER | BRUSH | PRESERVES_ALPHA,
             "DP_BLEND_MODE_LIGHTEN",
             "svg:lighten",
             "Lighten",
         },
     [DP_BLEND_MODE_SUBTRACT] =
         {
-            LAYER | BRUSH,
+            LAYER | BRUSH | PRESERVES_ALPHA,
             "DP_BLEND_MODE_SUBTRACT",
             "krita:subtract",
             "Subtract",
         },
     [DP_BLEND_MODE_ADD] =
         {
-            LAYER | BRUSH,
+            LAYER | BRUSH | PRESERVES_ALPHA,
             "DP_BLEND_MODE_ADD",
             "svg:plus",
             "Add",
         },
     [DP_BLEND_MODE_RECOLOR] =
         {
-            LAYER | BRUSH,
+            LAYER | BRUSH | PRESERVES_ALPHA,
             "DP_BLEND_MODE_RECOLOR",
             "svg:src-atop",
             "Recolor",
@@ -143,7 +144,7 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
         },
     [DP_BLEND_MODE_SCREEN] =
         {
-            LAYER | BRUSH,
+            LAYER | BRUSH | PRESERVES_ALPHA,
             "DP_BLEND_MODE_SCREEN",
             "svg:screen",
             "Screen",
@@ -157,70 +158,70 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
         },
     [DP_BLEND_MODE_LUMINOSITY_SHINE_SAI] =
         {
-            LAYER | BRUSH,
+            LAYER | BRUSH | PRESERVES_ALPHA,
             "DP_BLEND_MODE_LUMINOSITY_SHINE_SAI",
             "krita:luminosity_sai",
             "Luminosity/Shine (SAI)",
         },
     [DP_BLEND_MODE_OVERLAY] =
         {
-            LAYER | BRUSH,
+            LAYER | BRUSH | PRESERVES_ALPHA,
             "DP_BLEND_MODE_OVERLAY",
             "svg:overlay",
             "Overlay",
         },
     [DP_BLEND_MODE_HARD_LIGHT] =
         {
-            LAYER | BRUSH,
+            LAYER | BRUSH | PRESERVES_ALPHA,
             "DP_BLEND_MODE_HARD_LIGHT",
             "svg:hard-light",
             "Hard Light",
         },
     [DP_BLEND_MODE_SOFT_LIGHT] =
         {
-            LAYER | BRUSH,
+            LAYER | BRUSH | PRESERVES_ALPHA,
             "DP_BLEND_MODE_SOFT_LIGHT",
             "svg:soft-light",
             "Soft Light",
         },
     [DP_BLEND_MODE_LINEAR_BURN] =
         {
-            LAYER | BRUSH,
+            LAYER | BRUSH | PRESERVES_ALPHA,
             "DP_BLEND_MODE_LINEAR_BURN",
             "krita:linear_burn",
             "Linear Burn",
         },
     [DP_BLEND_MODE_LINEAR_LIGHT] =
         {
-            LAYER | BRUSH,
+            LAYER | BRUSH | PRESERVES_ALPHA,
             "DP_BLEND_MODE_LINEAR_LIGHT",
             "krita:linear light",
             "Linear Light",
         },
     [DP_BLEND_MODE_HUE] =
         {
-            LAYER | BRUSH,
+            LAYER | BRUSH | PRESERVES_ALPHA,
             "DP_BLEND_MODE_HUE",
             "svg:hue",
             "Hue",
         },
     [DP_BLEND_MODE_SATURATION] =
         {
-            LAYER | BRUSH,
+            LAYER | BRUSH | PRESERVES_ALPHA,
             "DP_BLEND_MODE_SATURATION",
             "svg:saturation",
             "Saturation",
         },
     [DP_BLEND_MODE_LUMINOSITY] =
         {
-            LAYER | BRUSH,
+            LAYER | BRUSH | PRESERVES_ALPHA,
             "DP_BLEND_MODE_LUMINOSITY",
             "svg:luminosity",
             "Luminosity",
         },
     [DP_BLEND_MODE_COLOR] =
         {
-            LAYER | BRUSH,
+            LAYER | BRUSH | PRESERVES_ALPHA,
             "DP_BLEND_MODE_COLOR",
             "svg:color",
             "Color",
@@ -309,6 +310,11 @@ bool DP_blend_mode_can_decrease_opacity(int blend_mode)
 bool DP_blend_mode_blend_blank(int blend_mode)
 {
     return get_attributes(blend_mode)->flags & BLEND_BLANK;
+}
+
+bool DP_blend_mode_preserves_alpha(int blend_mode)
+{
+    return get_attributes(blend_mode)->flags & PRESERVES_ALPHA;
 }
 
 DP_BlendMode DP_blend_mode_by_svg_name(const char *svg_name,

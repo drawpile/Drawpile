@@ -422,6 +422,17 @@ static DP_TransientLayerProps *ora_make_layer_props(DP_XmlElement *element,
     DP_BlendMode blend_mode = DP_blend_mode_by_svg_name(
         DP_xml_element_attribute(element, NULL, "composite-op"),
         DP_BLEND_MODE_NORMAL);
+
+    // Normal with alpha preserve is Recolor. Drawpile doesn't save it this way,
+    // but it's a valid way to represent it, so we handle it.
+    if (blend_mode == DP_BLEND_MODE_NORMAL) {
+        const char *alpha_preserve =
+            DP_xml_element_attribute(element, NULL, "alpha-preserve");
+        if (DP_str_equal_lowercase(alpha_preserve, "true")) {
+            blend_mode = DP_BLEND_MODE_RECOLOR;
+        }
+    }
+
     DP_transient_layer_props_blend_mode_set(tlp, (int)blend_mode);
 
     const char *censored =
