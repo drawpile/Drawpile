@@ -462,10 +462,10 @@ function(_wxs_generate_urls out_var exe)
 					"\t\t\t<RegistryValue Name=\"URL Protocol\" Value=\"\" Type=\"string\"/>\n"
 					"\t\t\t<RegistryValue Value=\"URL: ${NAME}\" Type=\"string\"/>\n"
 					"\t\t\t<RegistryKey Key=\"DefaultIcon\">\n"
-					"\t\t\t\t<RegistryValue Value=\"[INSTALLFOLDER]${exe}\" Type=\"string\"/>\n"
+					"\t\t\t\t<RegistryValue Value=\"[INSTALL_ROOT]${exe}\" Type=\"string\"/>\n"
 					"\t\t\t</RegistryKey>\n"
 					"\t\t\t<RegistryKey Key=\"shell\\open\\command\">\n"
-					"\t\t\t\t<RegistryValue Value=\"&quot\;[INSTALLFOLDER]${exe}&quot\; &quot\;%1&quot\;\" Type=\"string\"/>\n"
+					"\t\t\t\t<RegistryValue Value=\"&quot\;[INSTALL_ROOT]${exe}&quot\; &quot\;%1&quot\;\" Type=\"string\"/>\n"
 					"\t\t\t</RegistryKey>\n"
 					"\t\t</RegistryKey>\n"
 				)
