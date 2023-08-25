@@ -38,6 +38,8 @@ public:
 		QAction *keyFramePaste = nullptr;
 		QAction *keyFrameProperties = nullptr;
 		QAction *keyFrameDelete = nullptr;
+		QAction *keyFrameExposureIncrease = nullptr;
+		QAction *keyFrameExposureDecrease = nullptr;
 		QAction *trackAdd = nullptr;
 		QAction *trackVisible = nullptr;
 		QAction *trackOnionSkin = nullptr;
@@ -112,6 +114,8 @@ private slots:
 		int trackId, int frame, const QString &title,
 		const QHash<int, bool> &layerVisibility);
 	void deleteKeyFrame();
+	void increaseKeyFrameExposure();
+	void decreaseKeyFrameExposure();
 	void addTrack();
 	void toggleTrackVisible(bool visible);
 	void toggleTrackOnionSkin(bool onionSkin);
@@ -145,6 +149,7 @@ private:
 		int trackId, int frame, const QString &prevTitle,
 		const QHash<int, bool> prevLayerVisibility, const QString &title,
 		const QHash<int, bool> layerVisibility);
+	void changeFrameExposure(int direction);
 	void updateActions();
 	void updateScrollbars();
 

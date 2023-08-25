@@ -29,6 +29,7 @@ extern "C" {
 #include <QPainter>
 #include <QScrollBar>
 #include <QSignalBlocker>
+#include <algorithm>
 
 namespace widgets {
 
@@ -40,6 +41,14 @@ struct TimelineWidget::Target {
 	int frameIndex;
 	bool onHeader;
 	TrackAction action;
+};
+
+struct Exposure {
+	int start;
+	int length;
+	bool hasFrameAtEnd;
+
+	bool isValid() const { return start != -1 && length != -1; }
 };
 
 struct TimelineWidget::Private {
@@ -199,11 +208,69 @@ struct TimelineWidget::Private {
 				int frameIndex = keyFrame.frameIndex;
 				if(frameIndex <= currentFrame && frameIndex > bestFrameIndex) {
 					bestKeyFrame = &keyFrame;
+					bestFrameIndex = frameIndex;
 				}
 			}
 			return bestKeyFrame;
 		}
 		return nullptr;
+	}
+
+	Exposure currentExposure()
+	{
+		const canvas::TimelineTrack *track = trackById(currentTrackId);
+		if(!track) {
+			return {-1, -1, false};
+		}
+
+		const QVector<canvas::TimelineKeyFrame> &keyFrames = track->keyFrames;
+		int keyFrameCount = keyFrames.size();
+		if(keyFrameCount == 0) {
+			return {-1, -1, false};
+		}
+
+		int start = 0;
+		for(int i = 0; i < keyFrameCount; ++i) {
+			int frameIndex = keyFrames[i].frameIndex;
+			if(frameIndex <= currentFrame && frameIndex > start) {
+				start = frameIndex;
+			}
+		}
+
+		int invalidIndex = frameCount();
+		int lastIndex = invalidIndex;
+		for(int i = 0; i < keyFrameCount; ++i) {
+			int frameIndex = keyFrames[i].frameIndex;
+			if(frameIndex > start && frameIndex < lastIndex) {
+				lastIndex = frameIndex;
+			}
+		}
+		if(lastIndex == invalidIndex) {
+			return {-1, -1, false};
+		}
+
+		int length = lastIndex - start;
+		bool hasFrameAtEnd =
+			keyFrameBy(currentTrackId, invalidIndex - 1) != nullptr;
+		return {start, length, hasFrameAtEnd};
+	}
+
+	QVector<int> gatherCurrentExposureFrames(int start)
+	{
+		const canvas::TimelineTrack *track = trackById(currentTrackId);
+		QVector<int> frameIndexes;
+		if(track) {
+			const QVector<canvas::TimelineKeyFrame> &keyFrames =
+				track->keyFrames;
+			int keyFrameCount = keyFrames.size();
+			for(int i = 0; i < keyFrameCount; ++i) {
+				int frameIndex = keyFrames[i].frameIndex;
+				if(frameIndex > start) {
+					frameIndexes.append(frameIndex);
+				}
+			}
+		}
+		return frameIndexes;
 	}
 
 	QModelIndex layerIndexById(int layerId) const
@@ -349,6 +416,9 @@ void TimelineWidget::setActions(const Actions &actions)
 	d->frameMenu->addAction(actions.keyFrameProperties);
 	d->frameMenu->addAction(actions.keyFrameDelete);
 	d->frameMenu->addSeparator();
+	d->frameMenu->addAction(actions.keyFrameExposureIncrease);
+	d->frameMenu->addAction(actions.keyFrameExposureDecrease);
+	d->frameMenu->addSeparator();
 	d->frameMenu->addMenu(actions.animationLayerMenu);
 	d->frameMenu->addMenu(actions.animationGroupMenu);
 	d->frameMenu->addMenu(actions.animationDuplicateMenu);
@@ -391,6 +461,12 @@ void TimelineWidget::setActions(const Actions &actions)
 	connect(
 		actions.keyFrameDelete, &QAction::triggered, this,
 		&TimelineWidget::deleteKeyFrame);
+	connect(
+		actions.keyFrameExposureIncrease, &QAction::triggered, this,
+		&TimelineWidget::increaseKeyFrameExposure);
+	connect(
+		actions.keyFrameExposureDecrease, &QAction::triggered, this,
+		&TimelineWidget::decreaseKeyFrameExposure);
 	connect(
 		actions.trackAdd, &QAction::triggered, this, &TimelineWidget::addTrack);
 	connect(
@@ -1199,6 +1275,16 @@ void TimelineWidget::deleteKeyFrame()
 	}
 }
 
+void TimelineWidget::increaseKeyFrameExposure()
+{
+	changeFrameExposure(1);
+}
+
+void TimelineWidget::decreaseKeyFrameExposure()
+{
+	changeFrameExposure(-1);
+}
+
 void TimelineWidget::addTrack()
 {
 	if(!d->editable) {
@@ -1513,6 +1599,47 @@ void TimelineWidget::setKeyFrameProperties(
 	}
 }
 
+void TimelineWidget::changeFrameExposure(int direction)
+{
+	Q_ASSERT(direction == -1 || direction == 1);
+	if(!d->editable) {
+		return;
+	}
+
+	Exposure exposure = d->currentExposure();
+	if(!exposure.isValid()) {
+		return;
+	}
+
+	bool forward = direction == 1;
+	if(forward ? exposure.hasFrameAtEnd : exposure.length <= 1) {
+		return;
+	}
+
+	QVector<int> frameIndexes = d->gatherCurrentExposureFrames(exposure.start);
+	if(frameIndexes.isEmpty()) {
+		return;
+	}
+
+	// Order these correctly so we don't move frames over each other.
+	if(forward) {
+		std::sort(frameIndexes.rbegin(), frameIndexes.rend());
+	} else {
+		std::sort(frameIndexes.begin(), frameIndexes.end());
+	}
+
+	uint8_t contextId = d->canvas->localUserId();
+	QVector<drawdance::Message> messages;
+	messages.reserve(frameIndexes.size() + 1);
+	messages.append(drawdance::Message::makeUndoPoint(contextId));
+	for(int frameIndex : frameIndexes) {
+		messages.append(drawdance::Message::makeKeyFrameDelete(
+			contextId, d->currentTrackId, frameIndex, d->currentTrackId,
+			frameIndex + direction));
+	}
+	emit timelineEditCommands(messages.size(), messages.constData());
+}
+
 void TimelineWidget::updateActions()
 {
 	if(!d->haveActions || !d->canvas) {
@@ -1603,6 +1730,18 @@ void TimelineWidget::updateActions()
 	d->actions.keyFrameCopy->setEnabled(keyFrameEditable);
 	d->actions.keyFrameProperties->setEnabled(keyFrameEditable);
 	d->actions.keyFrameDelete->setEnabled(keyFrameEditable);
+
+	bool canIncreaseExposure = false;
+	bool canDecreaseExposure = false;
+	if(timelineEditable && track) {
+		Exposure exposure = d->currentExposure();
+		if(exposure.isValid()) {
+			canIncreaseExposure = !exposure.hasFrameAtEnd;
+			canDecreaseExposure = exposure.length > 1;
+		}
+	}
+	d->actions.keyFrameExposureIncrease->setEnabled(canIncreaseExposure);
+	d->actions.keyFrameExposureDecrease->setEnabled(canDecreaseExposure);
 
 	updatePasteAction();
 }

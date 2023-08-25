@@ -3420,6 +3420,8 @@ void MainWindow::setupActions()
 	QAction *keyFramePaste = makeAction("key-frame-paste", tr("Paste Key Frame")).icon("edit-paste").noDefaultShortcut();
 	QAction *keyFrameProperties = makeAction("key-frame-properties", tr("Key Frame Properties...")).icon("configure").shortcut("Ctrl+Shift+P");
 	QAction *keyFrameDelete = makeAction("key-frame-delete", tr("Delete Key Frame")).icon("keyframe-remove").shortcut("Ctrl+Shift+G");
+	QAction *keyFrameExposureIncrease = makeAction("key-frame-exposure-increase", tr("Increase Key Frame Exposure")).icon("sidebar-expand-left").shortcut("Ctrl+Shift++");
+	QAction *keyFrameExposureDecrease = makeAction("key-frame-exposure-decrease", tr("Decrease Key Frame Exposure")).icon("sidebar-collapse-left").shortcut("Ctrl+Shift+-");
 	QAction *trackAdd = makeAction("track-add", tr("New Track")).icon("list-add").noDefaultShortcut();
 	QAction *trackVisible = makeAction("track-visible", tr("Track Visible")).checkable().noDefaultShortcut();
 	QAction *trackOnionSkin = makeAction("track-onion-skin", tr("Track Onion Skin")).checkable().shortcut("Ctrl+Shift+O");
@@ -3463,6 +3465,9 @@ void MainWindow::setupActions()
 	animationMenu->addAction(keyFrameProperties);
 	animationMenu->addAction(keyFrameDelete);
 	animationMenu->addSeparator();
+	animationMenu->addAction(keyFrameExposureIncrease);
+	animationMenu->addAction(keyFrameExposureDecrease);
+	animationMenu->addSeparator();
 	QMenu *animationLayerMenu = animationMenu->addMenu(
 		QIcon::fromTheme("layer-visible-on"), tr("Create Layer on Key Frame"));
 	animationLayerMenu->addAction(keyFrameCreateLayer);
@@ -3492,7 +3497,7 @@ void MainWindow::setupActions()
 
 	m_currentdoctools->addAction(showFlipbook);
 	m_dockLayers->setLayerEditActions({layerAdd, groupAdd, layerDupe, layerMerge, layerProperties, layerDelete, layerSetFillSource, keyFrameSetLayer, keyFrameCreateLayer, keyFrameCreateLayerNext, keyFrameCreateLayerPrev, keyFrameCreateGroup, keyFrameCreateGroupNext, keyFrameCreateGroupPrev, keyFrameDuplicateNext, keyFrameDuplicatePrev, layerKeyFrameGroup});
-	m_dockTimeline->setActions({keyFrameSetLayer, keyFrameSetEmpty, keyFrameCreateLayer, keyFrameCreateLayerNext, keyFrameCreateLayerPrev, keyFrameCreateGroup, keyFrameCreateGroupNext, keyFrameCreateGroupPrev, keyFrameDuplicateNext, keyFrameDuplicatePrev, keyFrameCut, keyFrameCopy, keyFramePaste, keyFrameProperties, keyFrameDelete, trackAdd, trackVisible, trackOnionSkin, trackDuplicate, trackRetitle, trackDelete, frameCountSet, framerateSet, frameNext, framePrev, trackAbove, trackBelow, animationLayerMenu, animationGroupMenu, animationDuplicateMenu}, layerViewNormal, layerViewCurrentFrame, showFlipbook);
+	m_dockTimeline->setActions({keyFrameSetLayer, keyFrameSetEmpty, keyFrameCreateLayer, keyFrameCreateLayerNext, keyFrameCreateLayerPrev, keyFrameCreateGroup, keyFrameCreateGroupNext, keyFrameCreateGroupPrev, keyFrameDuplicateNext, keyFrameDuplicatePrev, keyFrameCut, keyFrameCopy, keyFramePaste, keyFrameProperties, keyFrameDelete, keyFrameExposureIncrease, keyFrameExposureDecrease, trackAdd, trackVisible, trackOnionSkin, trackDuplicate, trackRetitle, trackDelete, frameCountSet, framerateSet, frameNext, framePrev, trackAbove, trackBelow, animationLayerMenu, animationGroupMenu, animationDuplicateMenu}, layerViewNormal, layerViewCurrentFrame, showFlipbook);
 
 	connect(showFlipbook, &QAction::triggered, this, &MainWindow::showFlipbook);
 
