@@ -289,6 +289,7 @@ void KisCurveWidget::paintEvent(QPaintEvent *)
 	int x;
 
 	QPolygonF poly;
+	p.setPen(QPen(palette().color(QPalette::WindowText), 1, Qt::SolidLine));
 	// Drawpile patch: linear graph for MyPaint brush settings.
 	if(d->m_linear) {
 		QList<QPointF> points = d->m_curve.points();
@@ -304,7 +305,6 @@ void KisCurveWidget::paintEvent(QPaintEvent *)
 			poly.append(QPointF(wWidth, (1.0 - points.last().y()) * wHeight));
 		}
 	} else {
-		p.setPen(QPen(palette().color(QPalette::WindowText), 1, Qt::SolidLine));
 		for (x = 0 ; x < wWidth ; x++) {
 			normalizedX = double(x) / wWidth;
 			curY = wHeight - d->m_curve.value(normalizedX) * wHeight;
