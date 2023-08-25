@@ -59,6 +59,7 @@ public:
 public slots:
 	void selectBrushSlot(int i);
 	void selectEraserSlot(bool eraser);
+	void swapWithSlot(int i);
 	void setGlobalSmoothing(int smoothing);
 	void toggleEraserMode() override;
 	void toggleRecolorMode() override;

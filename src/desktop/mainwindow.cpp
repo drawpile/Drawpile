@@ -3773,6 +3773,18 @@ void MainWindow::setupActions()
 		CustomShortcutModel::registerCustomizableAction(q->objectName(), q->text(), q->shortcut());
 		m_brushSlots->addAction(q);
 		addAction(q);
+		// Swapping with the eraser slot doesn't make sense.
+		if(i != 5) {
+			QAction *s = new QAction{tr("Swap With Brush Slot #%1").arg(i +1 ), this};
+			s->setAutoRepeat(false);
+			s->setObjectName(QStringLiteral("swapslot%1").arg(i));
+			CustomShortcutModel::registerCustomizableAction(
+				s->objectName(), s->text(), QKeySequence());
+			addAction(s);
+			connect(s, &QAction::triggered, this, [this, i] {
+				m_dockToolSettings->brushSettings()->swapWithSlot(i);
+			});
+		}
 	}
 	connect(m_brushSlots, &QActionGroup::triggered, this, [this](QAction *a) {
 		m_dockToolSettings->setToolSlot(a->property("toolslotidx").toInt());

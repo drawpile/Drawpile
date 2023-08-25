@@ -37,6 +37,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Make reloading the last brush preset slot-specific, since it's nonsense to clobber your current slot with the last preset you set in another one.
  * Feature: Allow increasing and decreasing key frame exposure. Thanks Tabuley for suggesting.
  * Fix: Properly update the view when the canvas size changes, rather than leaving stale areas outside of the canvas.
+ * Feature: Add shortcuts to swap the contents of brush slots to allow for a kind of toggling behavior using a single shortcut. Thanks xxxx for suggesting.
 
 2023-07-31 Version 2.2.0-beta.6
  * Fix: Don't forget account password when entering a wrong session password.

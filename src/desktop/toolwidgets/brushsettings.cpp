@@ -418,6 +418,17 @@ void BrushSettings::selectEraserSlot(bool eraser)
 	}
 }
 
+void BrushSettings::swapWithSlot(int i)
+{
+	Q_ASSERT(i >= 0);
+	Q_ASSERT(i < ERASER_SLOT);
+	if(i != d->current && !isCurrentEraserSlot()) {
+		std::swap(d->brushSlots[d->current], d->brushSlots[i]);
+		std::swap(d->lastPresets[d->current], d->lastPresets[i]);
+		updateUi();
+	}
+}
+
 void BrushSettings::setGlobalSmoothing(int smoothing)
 {
 	QSignalBlocker blocker{d->ui.smoothingBox};
