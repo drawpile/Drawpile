@@ -189,6 +189,7 @@ void CanvasView::setCanvas(drawingboard::CanvasScene *scene)
 			} else {
 				scrollBy(xoff * m_zoom, yoff * m_zoom);
 			}
+			invalidateScene();
 			viewRectChanged();
 		});
 
