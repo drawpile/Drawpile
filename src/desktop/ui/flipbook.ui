@@ -204,6 +204,36 @@
        </property>
       </widget>
      </item>
+     <item>
+      <spacer>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QToolButton" name="exportButton">
+       <property name="toolTip">
+        <string>Export</string>
+       </property>
+       <property name="icon">
+        <iconset theme="document-save-as">
+         <normaloff>theme:document-save-as.svg</normaloff>theme:document-save-as.svg</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>22</width>
+         <height>22</height>
+        </size>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
   </layout>

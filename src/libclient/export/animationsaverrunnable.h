@@ -6,23 +6,24 @@
 extern "C" {
 #include <dpengine/save.h>
 }
-
+#include "libclient/drawdance/canvasstate.h"
 #include <QObject>
 #include <QRunnable>
-
-namespace canvas { class PaintEngine; }
+#include <functional>
 
 /**
- * @brief A runnable for saving the canvas content as an animation in a background thread
+ * @brief A runnable for saving the canvas content as an animation in a
+ * background thread
  */
-class AnimationSaverRunnable final : public QObject, public QRunnable
-{
+class AnimationSaverRunnable final : public QObject, public QRunnable {
 	Q_OBJECT
 public:
-	using SaveFn = DP_SaveResult (*)(
-		DP_CanvasState *, const char *, DP_SaveAnimationProgressFn, void *);
+	using SaveFn = std::function<DP_SaveResult(
+		DP_CanvasState *, const char *, DP_SaveAnimationProgressFn, void *)>;
 
-	AnimationSaverRunnable(const canvas::PaintEngine *pe, SaveFn saveFn, const QString &filename, QObject *parent = nullptr);
+	AnimationSaverRunnable(
+		const drawdance::CanvasState &canvasState, SaveFn saveFn,
+		const QString &filename, QObject *parent = nullptr);
 
 	void run() override;
 
@@ -34,7 +35,7 @@ signals:
 	void saveComplete(const QString &error);
 
 private:
-	const canvas::PaintEngine *m_pe;
+	const drawdance::CanvasState m_canvasState;
 	QString m_filename;
 	SaveFn m_saveFn;
 	bool m_cancelled;

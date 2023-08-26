@@ -3,16 +3,15 @@
 extern "C" {
 #include <dpengine/view_mode.h>
 }
-
 #include "desktop/dialogs/flipbook.h"
 #include "desktop/main.h"
 #include "desktop/utils/qtguicompat.h"
 #include "libclient/canvas/paintengine.h"
-
 #include "ui_flipbook.h"
-
+#include <QAction>
 #include <QApplication>
 #include <QEvent>
+#include <QMenu>
 #include <QRect>
 #include <QScreen>
 #include <QSignalBlocker>
@@ -31,6 +30,14 @@ Flipbook::Flipbook(State &state, QWidget *parent)
 	m_ui->setupUi(this);
 
 	m_timer = new QTimer(this);
+
+	QMenu *exportMenu = new QMenu{this};
+	QAction *exportGifAction = exportMenu->addAction(tr("Export &GIF…"));
+#ifndef Q_OS_ANDROID
+	QAction *exportFramesAction = exportMenu->addAction(tr("Export &Frames…"));
+#endif
+	m_ui->exportButton->setMenu(exportMenu);
+	m_ui->exportButton->setPopupMode(QToolButton::InstantPopup);
 
 	connect(m_ui->rewindButton, &QToolButton::clicked, this, &Flipbook::rewind);
 	connect(
@@ -54,6 +61,11 @@ Flipbook::Flipbook(State &state, QWidget *parent)
 	connect(
 		m_ui->refreshButton, &QToolButton::clicked, this,
 		&Flipbook::refreshCanvas);
+	connect(exportGifAction, &QAction::triggered, this, &Flipbook::exportGif);
+#ifndef Q_OS_ANDROID
+	connect(
+		exportFramesAction, &QAction::triggered, this, &Flipbook::exportFrames);
+#endif
 
 	m_ui->speedSpinner->setExponentRatio(3.0);
 	m_ui->playButton->setFocus();
@@ -161,6 +173,25 @@ void Flipbook::refreshCanvas()
 	resetCanvas(true);
 }
 
+void Flipbook::exportGif()
+{
+	if(!m_canvasState.isNull()) {
+		emit exportGifRequested(
+			m_canvasState, getExportRect(), getExportStart(), getExportEnd(),
+			getExportFramerate());
+	}
+}
+
+#ifndef Q_OS_ANDROID
+void Flipbook::exportFrames()
+{
+	if(!m_canvasState.isNull()) {
+		emit exportFramesRequested(
+			m_canvasState, getExportRect(), getExportStart(), getExportEnd());
+	}
+}
+#endif
+
 void Flipbook::resetCanvas(bool refresh)
 {
 	if(!m_paintengine) {
@@ -208,9 +239,7 @@ void Flipbook::resetCanvas(bool refresh)
 
 int Flipbook::getTimerInterval() const
 {
-	int framerate = m_canvasState.isNull()
-						? 24
-						: m_canvasState.documentMetadata().framerate();
+	int framerate = m_canvasState.isNull() ? 24 : m_canvasState.framerate();
 	int speedPercent = m_ui->speedSpinner->value();
 	return qRound((1000.0 / framerate) / (speedPercent / 100.0));
 }
@@ -269,6 +298,42 @@ bool Flipbook::searchIdenticalFrame(int f, QPixmap &outFrame)
 		}
 	}
 	return false;
+}
+
+QRect Flipbook::getExportRect() const
+{
+	Q_ASSERT(!m_canvasState.isNull());
+	if(m_crop.isValid()) {
+		QRect canvasRect = QRect{QPoint{0, 0}, m_canvasState.size()};
+		QRect exportRect = m_crop.intersected(canvasRect);
+		if(exportRect != canvasRect) {
+			return exportRect;
+		}
+	}
+	return QRect{};
+}
+
+int Flipbook::getExportStart() const
+{
+	int start = m_ui->loopStart->value() - 1;
+	int end = m_ui->loopEnd->value() - 1;
+	return start < 0 || start > end ? 0 : start;
+}
+
+int Flipbook::getExportEnd() const
+{
+	Q_ASSERT(!m_canvasState.isNull());
+	int start = m_ui->loopStart->value() - 1;
+	int end = m_ui->loopEnd->value() - 1;
+	int canvasFrameCount = m_canvasState.frameCount();
+	return end >= canvasFrameCount || start > end ? canvasFrameCount - 1 : end;
+}
+
+int Flipbook::getExportFramerate() const
+{
+	int canvasFramerate = m_canvasState.framerate();
+	double speed = m_ui->speedSpinner->value() / 100.0;
+	return qMax(1, qRound(canvasFramerate * speed));
 }
 
 }

@@ -1489,23 +1489,66 @@ void MainWindow::onTemplateExported(const QString &errorMessage)
 
 void MainWindow::exportGifAnimation()
 {
+	exportGifAnimationWith(
+		m_doc->canvas()->paintEngine()->viewCanvasState(), QRect{}, -1, -1, -1);
+}
+
+void MainWindow::exportGifAnimationWith(
+	const drawdance::CanvasState &canvasState, const QRect &crop, int start,
+	int end, int framerate)
+{
 	QString filename = FileWrangler{this}.getSaveGifPath();
 	if(!filename.isEmpty()) {
-		exportAnimation(filename, DP_save_animation_gif);
+		exportAnimation(
+			canvasState, filename,
+			[=](DP_CanvasState *cs, const char *path, DP_SaveAnimationProgressFn progress, void *user){
+				DP_Rect r, *pr;
+				if(crop.isEmpty()) {
+					pr = nullptr;
+				} else {
+					r = DP_rect_make(
+						crop.x(), crop.y(), crop.width(), crop.height());
+					pr = &r;
+				}
+				return DP_save_animation_gif(
+					cs, path, pr, start, end, framerate, progress, user);
+			});
 	}
 }
 
 #ifndef Q_OS_ANDROID
 void MainWindow::exportAnimationFrames()
 {
+	exportAnimationFramesWith(
+		m_doc->canvas()->paintEngine()->viewCanvasState(), QRect{}, -1, -1);
+}
+
+void MainWindow::exportAnimationFramesWith(
+	const drawdance::CanvasState &canvasState, const QRect &crop, int start,
+	int end)
+{
 	QString dirname = FileWrangler{this}.getSaveAnimationFramesPath();
 	if(!dirname.isEmpty()) {
-		exportAnimation(dirname, DP_save_animation_frames);
+		exportAnimation(
+			canvasState, dirname,
+			[=](DP_CanvasState *cs, const char *path, DP_SaveAnimationProgressFn progress, void *user){
+				DP_Rect r, *pr;
+				if(crop.isEmpty()) {
+					pr = nullptr;
+				} else {
+					r = DP_rect_make(
+						crop.x(), crop.y(), crop.width(), crop.height());
+					pr = &r;
+				}
+				return DP_save_animation_frames(cs, path, pr, start, end, progress, user);
+			});
 	}
 }
 #endif
 
-void MainWindow::exportAnimation(const QString &path, AnimationSaverRunnable::SaveFn saveFn)
+void MainWindow::exportAnimation(
+	const drawdance::CanvasState &canvasState, const QString &path,
+	AnimationSaverRunnable::SaveFn saveFn)
 {
 	auto *progressDialog = new QProgressDialog(
 		tr("Saving animation..."),
@@ -1515,10 +1558,8 @@ void MainWindow::exportAnimation(const QString &path, AnimationSaverRunnable::Sa
 		this);
 	progressDialog->setMinimumDuration(500);
 
-	AnimationSaverRunnable *saver = new AnimationSaverRunnable(
-		m_doc->canvas()->paintEngine(),
-		saveFn,
-		path);
+	AnimationSaverRunnable *saver =
+		new AnimationSaverRunnable(canvasState, saveFn, path);
 
 	connect(saver, &AnimationSaverRunnable::progress, progressDialog, &QProgressDialog::setValue);
 	connect(saver, &AnimationSaverRunnable::saveComplete, this, &MainWindow::showErrorMessage);
@@ -1541,6 +1582,14 @@ void MainWindow::showFlipbook()
 		fp->setObjectName("flipbook");
 		fp->setAttribute(Qt::WA_DeleteOnClose);
 		fp->setPaintEngine(m_doc->canvas()->paintEngine());
+		connect(
+			fp, &dialogs::Flipbook::exportGifRequested, this,
+			&MainWindow::exportGifAnimationWith);
+#ifndef Q_OS_ANDROID
+		connect(
+			fp, &dialogs::Flipbook::exportFramesRequested, this,
+			&MainWindow::exportAnimationFramesWith);
+#endif
 		utils::showWindow(fp);
 	}
 }

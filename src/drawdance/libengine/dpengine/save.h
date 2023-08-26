@@ -25,6 +25,7 @@
 
 typedef struct DP_CanvasState DP_CanvasState;
 typedef struct DP_DrawContext DP_DrawContext;
+typedef struct DP_Rect DP_Rect;
 
 
 typedef struct DP_SaveFormat {
@@ -61,11 +62,19 @@ DP_SaveResult DP_save(DP_CanvasState *cs, DP_DrawContext *dc,
 
 typedef bool (*DP_SaveAnimationProgressFn)(void *user, double progress);
 
+// To use the default values from the canvas state, crop can be NULL, start and
+// end_inclusive can be -1.
 DP_SaveResult DP_save_animation_frames(DP_CanvasState *cs, const char *path,
+                                       DP_Rect *crop, int start,
+                                       int end_inclusive,
                                        DP_SaveAnimationProgressFn progress_fn,
                                        void *user);
 
+// To use the default values from the canvas state, crop can be NULL, start,
+// end_inclusive and framerate can be -1.
 DP_SaveResult DP_save_animation_gif(DP_CanvasState *cs, const char *path,
+                                    DP_Rect *crop, int start, int end_inclusive,
+                                    int framerate,
                                     DP_SaveAnimationProgressFn progress_fn,
                                     void *user);
 

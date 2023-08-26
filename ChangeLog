@@ -40,6 +40,7 @@ Unreleased Version 2.2.0-pre
  * Feature: Add shortcuts to swap the contents of brush slots to allow for a kind of toggling behavior using a single shortcut. Thanks xxxx for suggesting.
  * Fix: Make drawpile:// URL handling actually work on Windows. Thanks Sal for reporting.
  * Fix: Don't draw the curves for MyPaint brushes in the brush editor with the same color as the background grid.
+ * Feature: Allow exporting animations from the Flipbook, using the cropping, frame range and speed set in it.
 
 2023-07-31 Version 2.2.0-beta.6
  * Fix: Don't forget account password when entering a wrong session password.

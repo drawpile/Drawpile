@@ -144,10 +144,16 @@ private slots:
 
 	void exportTemplate();
 	void exportGifAnimation();
+	void exportGifAnimationWith(
+		const drawdance::CanvasState &canvasState, const QRect &crop, int start,
+		int end, int framerate);
 	// On Android, we can only save stuff to individual files that the user
 	// specifies, we're not allowed to spew multiple files into a directory.
 #ifndef Q_OS_ANDROID
 	void exportAnimationFrames();
+	void exportAnimationFramesWith(
+		const drawdance::CanvasState &canvasState, const QRect &crop, int start,
+		int end);
 #endif
 
 	void showResetNoticeDialog(const drawdance::CanvasState &canvasState);
@@ -229,7 +235,9 @@ private:
 	void connectStartDialog(dialogs::StartDialog *dlg);
 	void setStartDialogActions(dialogs::StartDialog *dlg);
 
-	void exportAnimation(const QString &path, AnimationSaverRunnable::SaveFn saveFn);
+	void exportAnimation(
+		const drawdance::CanvasState &canvasState, const QString &path,
+		AnimationSaverRunnable::SaveFn saveFn);
 
 	ActionBuilder makeAction(const char *name, const QString &text = QString{});
 	QAction *getAction(const QString &name);

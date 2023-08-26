@@ -39,6 +39,17 @@ public:
 
 	bool event(QEvent *event) override;
 
+signals:
+	void exportGifRequested(
+		const drawdance::CanvasState &canvasState, const QRect &crop, int start,
+		int end, int framerate);
+
+#ifndef Q_OS_ANDROID
+	void exportFramesRequested(
+		const drawdance::CanvasState &canvasState, const QRect &crop, int start,
+		int end);
+#endif
+
 private slots:
 	void loadFrame();
 	void playPause();
@@ -49,11 +60,21 @@ private slots:
 	void resetCrop();
 	void refreshCanvas();
 
+private slots:
+	void exportGif();
+#ifndef Q_OS_ANDROID
+	void exportFrames();
+#endif
+
 private:
 	void resetCanvas(bool refresh);
 	int getTimerInterval() const;
 	void resetFrameCache();
 	bool searchIdenticalFrame(int f, QPixmap &outFrame);
+	QRect getExportRect() const;
+	int getExportStart() const;
+	int getExportEnd() const;
+	int getExportFramerate() const;
 
 	State &m_state;
 	Ui_Flipbook *m_ui;
