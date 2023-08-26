@@ -11,7 +11,7 @@
     <message>
         <location line="+19"/>
         <source>Add avatar…</source>
-        <translation>アバターを追加する</translation>
+        <translation>アバターを追加…</translation>
     </message>
 </context>
 <context>
@@ -192,7 +192,7 @@
     <message>
         <location line="+3"/>
         <source>Ratchet Rotate Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>キャンバスの段階的回転</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -415,7 +415,7 @@
     <message>
         <location line="+7"/>
         <source>Brush Pack (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシパック (%1)</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -788,42 +788,42 @@
     <message>
         <location line="+50"/>
         <source>No brushes exported</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシはエクスポートされませんでした</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Can&apos;t export order.conf</source>
-        <translation type="unfinished"></translation>
+        <translation>order.conf をエクスポートできません</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error writing &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos;: %2 の書き込みエラー</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Can&apos;t export tag &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; タグをエクスポートできません</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Missing preset %1</source>
-        <translation type="unfinished"></translation>
+        <translation>プリセット %1 がありません</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Invalid preset %1</source>
-        <translation type="unfinished"></translation>
+        <translation>プリセット %1 は無効です</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Can&apos;t export preset &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>プリセット &apos;%1&apos; をエクスポートできません</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Can&apos;t export preset thumbnail &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>プリセット &apos;%1&apos; のサムネイルをエクスポートできません</translation>
     </message>
 </context>
 <context>
@@ -1147,7 +1147,7 @@
     <message>
         <location line="+2"/>
         <source>Closed (guest logins blocked)</source>
-        <translation type="unfinished"></translation>
+        <translation>クローズ済み(ゲストログインはブロックされます)</translation>
     </message>
     <message>
         <location line="+2"/>
