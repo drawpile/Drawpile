@@ -5839,7 +5839,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Browse Sessions</source>
-        <translation>セッション一覧の閲覧</translation>
+        <translation>セッション一覧</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7068,7 +7068,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/join.cpp" line="+27"/>
         <source>Enter a &lt;strong&gt;session URL&lt;/strong&gt;, &lt;strong&gt;host name&lt;/strong&gt;, &lt;strong&gt;IP address&lt;/strong&gt; or &lt;strong&gt;room code&lt;/strong&gt;:</source>
-        <translation>&lt;strong&gt;セッション URL&lt;/strong&gt;、&lt;strong&gt;ホスト名&lt;/strong&gt;、&lt;strong&gt;IP アドレス&lt;/strong&gt;、または&lt;strong&gt;ルーム コード&lt;/strong&gt;を入力します。</translation>
+        <translation>&lt;strong&gt;セッション URL&lt;/strong&gt;、&lt;strong&gt;ホスト名&lt;/strong&gt;、&lt;strong&gt;IP アドレス&lt;/strong&gt;、または&lt;strong&gt;ルーム コード&lt;/strong&gt;を入力してください。</translation>
     </message>
     <message>
         <location line="+15"/>
