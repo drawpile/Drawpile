@@ -87,8 +87,8 @@ void Flipbook::updateRange()
 {
 	int loopStart = m_ui->loopStart->value();
 	int loopEnd = m_ui->loopEnd->value();
-	m_ui->layerIndex->setMinimum(m_ui->loopStart->value());
-	m_ui->layerIndex->setMaximum(m_ui->loopEnd->value());
+	m_ui->layerIndex->setMinimum(loopStart);
+	m_ui->layerIndex->setMaximum(loopEnd);
 	m_state.loopStart = loopStart;
 	m_state.loopEnd = loopEnd;
 }
@@ -173,30 +173,27 @@ void Flipbook::resetCanvas(bool refresh)
 	}
 
 	int frameCount = m_canvasState.frameCount();
-	m_ui->loopStart->setMaximum(frameCount);
-	m_ui->loopEnd->setMaximum(frameCount);
-	m_ui->layerIndex->setMaximum(frameCount);
 	m_ui->layerIndex->setSuffix(QStringLiteral("/%1").arg(frameCount));
+
+	if(m_state.speedPercent > 0.0) {
+		m_ui->speedSpinner->setValue(m_state.speedPercent);
+	} else {
+		m_ui->speedSpinner->setValue(100.0);
+	}
+
+	QSignalBlocker blocker{m_ui->loopStart};
+	if(m_state.loopStart > 0 && m_state.loopEnd > 0) {
+		m_ui->loopStart->setValue(m_state.loopStart);
+		m_ui->loopEnd->setValue(m_state.loopEnd);
+	} else {
+		m_ui->loopStart->setValue(1);
+		m_ui->loopEnd->setValue(frameCount);
+	}
 
 	if(refresh) {
 		resetFrameCache();
 		loadFrame();
 	} else {
-		if(m_state.speedPercent > 0.0) {
-			m_ui->speedSpinner->setValue(m_state.speedPercent);
-		} else {
-			m_ui->speedSpinner->setValue(100.0);
-		}
-
-		QSignalBlocker blocker{m_ui->loopStart};
-		if(m_state.loopStart > 0 && m_state.loopEnd > 0) {
-			m_ui->loopStart->setValue(m_state.loopStart);
-			m_ui->loopEnd->setValue(m_state.loopEnd);
-		} else {
-			m_ui->loopStart->setValue(1);
-			m_ui->loopEnd->setValue(frameCount);
-		}
-
 		QSize canvasSize = m_canvasState.size();
 		QPoint canvasOffset = m_canvasState.offset();
 		m_crop = QRect{QPoint{0, 0}, canvasSize};
