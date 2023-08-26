@@ -302,7 +302,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Expires on:</source>
-        <translation>満了日:</translation>
+        <translation>有効期限切れ:</translation>
     </message>
     <message>
         <location line="+63"/>
@@ -313,7 +313,7 @@ to 64x64 pixels.</source>
         <location line="+14"/>
         <location line="+14"/>
         <source>Organization unit:</source>
-        <translation>組織単位:</translation>
+        <translation>部門名:</translation>
     </message>
     <message>
         <location line="-7"/>
@@ -547,7 +547,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Import Brush Pack</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシパックのインポート</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -578,7 +578,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Export Animated GIF</source>
-        <translation>アニメーションGIFをエキスポート</translation>
+        <translation>アニメーションGIFをエクスポート</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -598,12 +598,12 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Export MP4 Video</source>
-        <translation>MP4動画形式へエキスポート</translation>
+        <translation>MP4動画形式へエクスポート</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export WebM Video</source>
-        <translation>WebM動画形式へエキスポート</translation>
+        <translation>WebM動画形式へエクスポート</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -623,7 +623,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+14"/>
         <source>Export Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシのエクスポート</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -633,7 +633,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+2"/>
         <source>Flatten</source>
-        <translation>レイヤーを統合</translation>
+        <translation>画像を統合</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -684,7 +684,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+16"/>
         <source>Source:</source>
-        <translation>参照先:</translation>
+        <translation>参照元:</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -1035,7 +1035,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+157"/>
         <source>&lt;p&gt;This session has indicated that its contents are &lt;em&gt;not suitable for minors&lt;/em&gt; (NSFM).&lt;/p&gt;&lt;p&gt;&lt;strong&gt;You must be over the age of 18 and be allowed to consume adult content to proceed.&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Are you sure you want to join this session?&lt;/p&gt;</source>
-        <translation>&lt;p&gt;このセッションは、 その内容が&lt;em&gt;未成年者には適していない&lt;/em&gt;ことを示しています (NSFM)。&lt;/p&gt;&lt;p&gt;&lt;strong&gt;あなたは 18 歳以上であり、成人向けのコンテンツを閲覧することが許可されている必要があります。 &lt;/strong&gt;&lt;/p&gt;&lt;p&gt;このセッションに参加してもよろしいですか?&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;このセッションは、 その内容が&lt;em&gt;未成年者には適していない&lt;/em&gt;ことを示しています (NSFM)。&lt;/p&gt;&lt;p&gt;&lt;strong&gt;あなたは 18 歳以上であり、成人向けのコンテンツを閲覧することが許可されている必要があります。 &lt;/strong&gt;&lt;/p&gt;&lt;p&gt;このセッションに参加してもよろしいですか？&lt;/p&gt;</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -1560,12 +1560,12 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+498"/>
         <source>Undo Limit... (%1)</source>
-        <translation>取り消し回数制限... (%1)</translation>
+        <translation>取り消し制限回数... (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Change the session&apos;s undo limit, current limit is %1.</source>
-        <translation>セッションの取り消し制限回数を変更します。現在の制限回数 %1回です。</translation>
+        <translation>セッションの取り消し可能回数を変更します。現在の回数制限は %1 回です。</translation>
     </message>
     <message>
         <location line="+50"/>
@@ -1676,7 +1676,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+92"/>
         <source>Toggle Dock %1</source>
-        <translation>ドックを切替 %1</translation>
+        <translation>ドックの表示切替 %1</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -1711,17 +1711,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+46"/>
         <source>Paste in View Center</source>
-        <translation>表示中央に貼り付け</translation>
+        <translation>画面中央に貼り付け</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Set Session Background...</source>
-        <translation>セッションの背景を設定...</translation>
+        <translation>セッションの背景色を設定...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Set Local Background...</source>
-        <translation>ローカルの背景を設定...</translation>
+        <translation>ローカルの背景色を設定...</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1776,7 +1776,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+33"/>
         <source>Merge Layer</source>
-        <translation>レイヤーを統合</translation>
+        <translation>下のレイヤーと結合</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1925,7 +1925,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+29"/>
         <source>Brush slot #%1</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシスロット #%1</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -2078,8 +2078,8 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+1"/>
         <source>Server is running out of history space and session has grown too large to automatically reset! (Limit is %1 MB)
 Simplify the canvas and reset manually before space runs out.</source>
-        <translation>サーバーの履歴スペースが不足しており、セッションが大きくなりすぎて自動的にリセットできません。 (制限は %1 MB)
-キャンバスを簡素化し、スペースがなくなる前に手動でリセットします。</translation>
+        <translation>サーバーの履歴のスペースが不足しており、セッションが大きくなりすぎて自動的にリセットできません。 (制限は %1 MB)
+キャンバスの内容をシンプルにして、スペースがなくなる前に手動でリセットします。</translation>
     </message>
     <message>
         <location line="+1541"/>
@@ -2174,7 +2174,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1251"/>
         <source>&amp;Brushes…</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシ(&amp;B)…</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2249,7 +2249,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+46"/>
         <source>Set as Fill Source</source>
-        <translation>塗りつぶし参照先として設定</translation>
+        <translation>塗りつぶし参照元に設定</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -2434,7 +2434,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>Undo Limit…</source>
-        <translation>取り消し制限…</translation>
+        <translation>取り消し制限回数…</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2509,7 +2509,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>&amp;Flood Fill</source>
-        <translation>塗りつぶす(&amp;F)</translation>
+        <translation>塗りつぶし(&amp;F)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2584,7 +2584,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+19"/>
         <source>Swap Last Colors</source>
-        <translation>直前の色を交換</translation>
+        <translation>直前の色と交換</translation>
     </message>
     <message>
         <location line="+46"/>
@@ -3009,7 +3009,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+3"/>
         <source>Keep chat history</source>
-        <translation>チャット履歴を保存</translation>
+        <translation>チャットの履歴を保存</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -3129,7 +3129,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+10"/>
         <source>Canvas Background:</source>
-        <translation>キャンバスの背景:</translation>
+        <translation>キャンバスの背景色:</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -3587,35 +3587,35 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location filename="../dialogs/brushexportdialog.cpp" line="+42"/>
         <source>Export Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシのエクスポート</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Export</source>
         <extracomment>This text on a button, so it&apos;s a verb, not a noun.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>エクスポート</translation>
     </message>
     <message>
         <location line="+162"/>
         <source>Brush Export</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシのエクスポート</translation>
     </message>
     <message numerus="yes">
         <location line="+10"/>
         <source>%n brush(es) exported.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n ブラシがエクスポートされました。</numerusform>
         </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Brush export failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシのエクスポートに失敗。</translation>
     </message>
     <message numerus="yes">
         <location line="+7"/>
         <source>%n error(s) encountered.</source>
-        <translation type="unfinished">
+        <translation>
             <numerusform>%n 個のエラーが発生しました。</numerusform>
         </translation>
     </message>
@@ -4048,7 +4048,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+2"/>
         <source>Same as fine speed, but changes slower. Also look at the &apos;gross speed filter&apos; setting.</source>
         <comment>mypaintinput</comment>
-        <translation>詳細速度と同じですが、変化が遅くなります。 「大まかな速度フィルタ」設定にも注目してください。</translation>
+        <translation>詳細速度と同じですが、変化が遅くなります。 「大まかな速度フィルタ」設定も確認してください。</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5129,7 +5129,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+3"/>
         <source>Ratchet Rotate Canvas</source>
         <extracomment>This refers to rotating the canvas in 15° steps.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>キャンバスの段階的回転</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5459,7 +5459,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+138"/>
         <source>Undelete</source>
-        <translation>削除取り消し</translation>
+        <translation>削除の取り消し</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5743,17 +5743,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/sessionundodepthlimitdialog.cpp" line="+21"/>
         <source>Change Session Undo Depth Limit</source>
-        <translation>セッションの取り消し深度制限の変更</translation>
+        <translation>セッションの取り消し回数制限の変更</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Undo Limit: </source>
-        <translation>取り消し制限: </translation>
+        <translation>取り消し制限回数: </translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Choose a new undo limit for this session, the current limit is %1. Undos are shared between all participants. Changing the limit will start the undo stack anew, you won&apos;t be able to undo before the point where you changed it.</source>
-        <translation>このセッションの新しい取り消し制限を選択してください。現在の制限は %1 です。 取り消し操作はすべての参加者間で共有されます。 制限を変更すると、取り消しスタックが新たに開始され、変更した時点より前に元に戻すことはできなくなります。</translation>
+        <translation>このセッションの新しい取り消し制限回数を選択してください。現在の制限回数は %1 回です。 取り消し操作はすべての参加者間で共有されます。 制限回数を変更すると、取り消し履歴が新たに作られ回数を変更した時点より前に元に戻すことはできなくなります。</translation>
     </message>
 </context>
 <context>
@@ -6164,7 +6164,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Keep %1 canvas snapshots</source>
-        <translation>キャンバス %1 のスナップショットを保持</translation>
+        <translation>%1 個のキャンバス のスナップショットを保持</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6229,7 +6229,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Use %1 undo levels by default</source>
-        <translation>デフォルトでは取り消しレベル %1 を使用します</translation>
+        <translation>取り消し制限回数は %1 を デフォルトとする</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6355,7 +6355,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Updates:</source>
-        <translation>アップデート:</translation>
+        <translation>ソフトウェアの更新:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6400,7 +6400,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Receive delay:</source>
-        <translation>受信遅延:</translation>
+        <translation>受信の遅延:</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6450,7 +6450,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Message received</source>
-        <translation>メッセージを受信</translation>
+        <translation>メッセージ受信</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -6460,22 +6460,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>User joined</source>
-        <translation>ユーザーが参加しました</translation>
+        <translation>ユーザーが参加</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>User parted</source>
-        <translation>ユーザーが切断されました</translation>
+        <translation>ユーザーの切断</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Canvas locked</source>
-        <translation>キャンバスがロックされました</translation>
+        <translation>キャンバスのロック</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Canvas unlocked</source>
-        <translation>キャンバスのロックが解除されました</translation>
+        <translation>キャンバスのロック解除</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -6493,7 +6493,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/parentalcontrols.cpp" line="+49"/>
         <source>Consider sessions whose titles contain these keywords NSFM.</source>
-        <translation>タイトルにこれらのキーワード NSFM が含まれるセッションを検討してください。</translation>
+        <translation>タイトルに NSFM のようなキーワード が含まれるセッションを考慮する。</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6513,12 +6513,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Remove NSFM sessions from listings</source>
-        <translation>NSFM セッションをリストから削除する</translation>
+        <translation>NSFM セッションをリストから取り除く</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Prevent joining NSFM sessions</source>
-        <translation>NSFMセッションへの参加を防止する</translation>
+        <translation>NSFM セッションへの参加を防止する</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6538,7 +6538,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>NSFM sessions will be hidden from server listings and cannot be joined. Connected sessions that change their title or NSFM flag will automatically disconnect.</source>
-        <translation>NSFM セッションはサーバーのリストに表示されず、参加できません。 接続されているセッションは、タイトルまたは NSFM フラグを変更すると自動的に切断されます。</translation>
+        <translation>NSFM セッションはサーバーのリストに表示されず、参加できません。 すでに接続しているセッションは、タイトルまたは NSFM フラグを変更すると自動的に切断されます。</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -6718,7 +6718,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/tools.cpp" line="+41"/>
         <source>Toggle between previous and current tool</source>
-        <translation>以前のツールと現在のツールを切り替えます</translation>
+        <translation>前のツールと現在のツールを切り替えます</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6733,7 +6733,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Share one color across all brush slots</source>
-        <translation>すべてのブラシ スロットで 1 つの色を共有する</translation>
+        <translation>すべてのブラシ スロットで 選択している色を共有する</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6773,17 +6773,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Right-handed triangle</source>
-        <translation>右三角形</translation>
+        <translation>左向きの三角形</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Left-handed triangle</source>
-        <translation>左三角形</translation>
+        <translation>右向きの三角形</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Draw the brush as a %1</source>
-        <translation>ブラシを %1 として描画</translation>
+        <translation>カーソルの表示方法 %1</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -6818,17 +6818,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Direction:</source>
-        <translation type="unfinished"></translation>
+        <translation>方向:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Ascending</source>
-        <translation type="unfinished"></translation>
+        <translation>上昇</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Descending</source>
-        <translation type="unfinished"></translation>
+        <translation>下降</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -7177,7 +7177,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Take a look over the &lt;a href=&quot;#preferences&quot;&gt;Preferences&lt;/a&gt; to configure things to your liking. You might also want to pick a different &lt;a href=&quot;#layouts&quot;&gt;Layout&lt;/a&gt; for the application.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;a href=&quot;#preferences&quot;&gt;環境設定&lt;/a&gt;を確認して好みに合わせて設定してください。 アプリケーションに別の&lt;a href=&quot;#layouts&quot;&gt;レイアウト&lt;/a&gt;を選択することもできます。</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -7271,12 +7271,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Export Tag…</source>
-        <translation type="unfinished"></translation>
+        <translation>タグのエクスポート…</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Export Brush…</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシのエクスポート…</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7286,7 +7286,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+72"/>
         <source>Brush Import</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシのインポート</translation>
     </message>
     <message numerus="yes">
         <location line="+11"/>
@@ -7467,63 +7467,63 @@ Values above 0.5 may not be noticeable.</source>
         <source>H</source>
         <comment>HSL</comment>
         <extracomment>The &quot;Hue&quot; H of HSL.</extracomment>
-        <translation type="unfinished">H</translation>
+        <translation>H</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>S</source>
         <comment>HSL</comment>
         <extracomment>The &quot;Saturation&quot; S of HSL.</extracomment>
-        <translation type="unfinished">S</translation>
+        <translation>S</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>L</source>
         <comment>HSL</comment>
         <extracomment>The &quot;Lightness&quot; L HSL.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>L</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>H</source>
         <comment>HCL</comment>
         <extracomment>The &quot;Hue&quot; H of HCL.</extracomment>
-        <translation type="unfinished">H</translation>
+        <translation>H</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>C</source>
         <comment>HCL</comment>
         <extracomment>The &quot;Chroma&quot; C of HCL.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>C</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>L</source>
         <comment>HCL</comment>
         <extracomment>The &quot;Luma&quot; L of HCL.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>L</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>H</source>
         <comment>HSV</comment>
         <extracomment>The &quot;Hue&quot; H of HSV.</extracomment>
-        <translation type="unfinished">H</translation>
+        <translation>H</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>S</source>
         <comment>HSV</comment>
         <extracomment>The &quot;Saturation&quot; S of HSV.</extracomment>
-        <translation type="unfinished">S</translation>
+        <translation>S</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>V</source>
         <comment>HSV</comment>
         <extracomment>The &quot;Value&quot; V of HSV.</extracomment>
-        <translation type="unfinished">V</translation>
+        <translation>V</translation>
     </message>
 </context>
 <context>
@@ -7741,7 +7741,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Merge</source>
-        <translation>統合</translation>
+        <translation>キャンバスに統合</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7981,7 +7981,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Layer is censored</source>
-        <translation>レイヤーはセンシティブ設定にされています</translation>
+        <translation>レイヤーはセンシティブ設定です</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7991,7 +7991,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Layer is not visible in this frame</source>
-        <translation type="unfinished"></translation>
+        <translation>このフレームではレイヤーは表示されません</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8001,22 +8001,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+244"/>
         <source>Vertical flip: ON</source>
-        <translation>垂直反転：オン</translation>
+        <translation>上下反転：オン</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Vertical flip: OFF</source>
-        <translation>垂直反転：オフ</translation>
+        <translation>上下反転：オフ</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Horizontal mirror: ON</source>
-        <translation>水平ミラー：ON</translation>
+        <translation>左右反転：ON</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Horizontal mirror: OFF</source>
-        <translation>水平ミラー：OFF</translation>
+        <translation>左右反転：OFF</translation>
     </message>
     <message>
         <location line="+1517"/>
@@ -8062,12 +8062,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+62"/>
         <source>Mute notifications</source>
-        <translation type="unfinished"></translation>
+        <translation>通知のミュート</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Toggle notifications for this window</source>
-        <translation type="unfinished"></translation>
+        <translation>このウィンドウへの通知を切り替え</translation>
     </message>
     <message>
         <location line="+34"/>
@@ -8425,13 +8425,10 @@ Values above 0.5 may not be noticeable.</source>
 Green: %2
 Blue: %3
 Hex: %4</source>
-        <translation type="unfinished">赤: %2
-緑: %3
-青: %4
-16進数: %4 {1
-?} {2
-?} {3
-?}</translation>
+        <translation>赤: %1
+緑: %2
+青: %3
+16進数: %4</translation>
     </message>
 </context>
 <context>
@@ -8532,7 +8529,9 @@ Hex: %4</source>
         <source>There&apos;s no tracks yet.
 Add one using the ＋ button above
 or via Animation ▸ New Track.</source>
-        <translation type="unfinished"></translation>
+        <translation>まだトラックはありません。
+上の ＋ ボタンか アニメーション ▸ 新しいトラック から
+追加します。</translation>
     </message>
     <message>
         <location line="+547"/>
