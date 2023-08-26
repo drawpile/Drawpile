@@ -4508,19 +4508,19 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Angular Offset Mirrored: Direction</source>
         <comment>mypaintsetting</comment>
-        <translation>ミラー化された角度オフセット: 方向</translation>
+        <translation>反転した角度オフセット: 方向</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Angular Offset Mirrored: Ascension</source>
         <comment>mypaintsetting</comment>
-        <translation>ミラー化された角度オフセット: 上昇</translation>
+        <translation>反転した角度オフセット: 上昇</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Angular Offset Mirrored: View</source>
         <comment>mypaintsetting</comment>
-        <translation>ミラー化された角度オフセット: 表示</translation>
+        <translation>反転した角度オフセット: 表示</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6718,7 +6718,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/tools.cpp" line="+41"/>
         <source>Toggle between previous and current tool</source>
-        <translation>前のツールと現在のツールを切り替えます</translation>
+        <translation>前のツールと現在のツールを切り替える</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7866,7 +7866,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Merged Image</source>
-        <translation>結合された画像</translation>
+        <translation>画像全体</translation>
     </message>
 </context>
 <context>
