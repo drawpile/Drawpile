@@ -115,7 +115,7 @@ static bool should_flood(DP_FillContext *c, int x, int y)
     if (reference_color.a < 0.05f) {
         double a =
             DP_channel15_to_float(DP_layer_content_pixel_at(c->lc, x, y).a);
-        return a * a * 4 <= c->tolerance_squared;
+        return a * a <= c->tolerance_squared;
     }
     else {
         DP_UPixelFloat color = get_color_at(c->lc, x, y);
