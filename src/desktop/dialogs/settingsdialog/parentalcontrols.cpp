@@ -41,6 +41,8 @@ void ParentalControls::initBuiltIn(desktop::settings::Settings &settings, QVBoxL
 	layout->addWidget(stack);
 
 	auto *formPage = new QWidget;
+	// TODO: make the form layout work with RTL or go back to a QFormLayout.
+	formPage->setLayoutDirection(Qt::LeftToRight);
 	auto *form = new utils::SanerFormLayout(formPage);
 	form->setContentsMargins(0, 0, 0, 0);
 	form->setStretchLabel(false);

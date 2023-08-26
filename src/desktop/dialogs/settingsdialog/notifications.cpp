@@ -17,6 +17,8 @@ Notifications::Notifications(
 	desktop::settings::Settings &settings, QWidget *parent)
 	: QWidget(parent)
 {
+	// TODO: make the form layout work with RTL or go back to a QFormLayout.
+	setLayoutDirection(Qt::LeftToRight);
 	auto *form = new utils::SanerFormLayout(this);
 	form->setStretchLabel(false);
 	initSounds(settings, form);

@@ -43,7 +43,7 @@ void setSpacingControlType(QWidget *widget, QSizePolicy::ControlType type);
 class EncapsulatedLayout final : public QHBoxLayout {
 	Q_OBJECT
 public:
-	using QHBoxLayout::QHBoxLayout;
+	EncapsulatedLayout();
 
 	QSizePolicy::ControlTypes controlTypes() const override;
 	void setControlTypes(QSizePolicy::ControlTypes controlTypes);
@@ -71,6 +71,7 @@ private:
 #endif
 };
 
+// XXX: This layout is broken for right-to-left languages.
 class SanerFormLayout final : private QGridLayout {
 	Q_OBJECT
 public:

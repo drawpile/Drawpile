@@ -210,6 +210,11 @@ static auto getSpacing(
 	return spacing;
 }
 
+EncapsulatedLayout::EncapsulatedLayout(): QHBoxLayout()
+{
+	setDirection(LeftToRight);
+}
+
 QSizePolicy::ControlTypes EncapsulatedLayout::controlTypes() const
 {
 	if (m_controlTypes) {

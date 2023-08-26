@@ -23,6 +23,8 @@ namespace startdialog {
 Host::Host(QWidget *parent)
 	: Page{parent}
 {
+	// TODO: make the form layout work with RTL or go back to a QFormLayout.
+	setLayoutDirection(Qt::LeftToRight);
 	utils::SanerFormLayout *layout = new utils::SanerFormLayout{this};
 	layout->setContentsMargins(0, 0, 0, 0);
 
