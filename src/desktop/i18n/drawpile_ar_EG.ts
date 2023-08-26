@@ -34,7 +34,7 @@
     <message>
         <location line="+6"/>
         <source>Session:</source>
-        <translation>جلسة:</translation>
+        <translation>الجلسة:</translation>
     </message>
     <message>
         <location line="+40"/>
@@ -62,12 +62,12 @@
     <message>
         <location line="+28"/>
         <source>Enter a list server URL:</source>
-        <translation>أضف رابط قائمة الخوادم:</translation>
+        <translation>أدخل عنوان URL لخادم القائمة:</translation>
     </message>
     <message>
         <location line="+43"/>
         <source>You can find some list servers at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;</source>
-        <translation>يمكنك إيجاد قائمة خوادم على &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;</translation>
+        <translation>يمكنك العثور على بعض خوادم القائمة على &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;</translation>
     </message>
 </context>
 <context>
@@ -88,7 +88,7 @@
     <message>
         <location filename="../ui/avatarimport.ui" line="+14"/>
         <source>Crop Avatar</source>
-        <translation>قص الصورة الرمزية</translation>
+        <translation>اقتصاص الصورة الرمزية</translation>
     </message>
 </context>
 <context>
@@ -96,12 +96,12 @@
     <message>
         <location filename="../ui/brushdock.ui" line="+74"/>
         <source>Pixel brush</source>
-        <translation>فرشاة بكسل</translation>
+        <translation>فرشاة بيكسل</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Square pixel brush</source>
-        <translation>فرشاة بكسل مربعة</translation>
+        <translation>فرشاة بيكسل مربعة</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -121,7 +121,7 @@
     <message>
         <location line="+14"/>
         <source>Lock alpha (recolor mode)</source>
-        <translation>اقفل Alpha (وضع إعادة التلوين)</translation>
+        <translation>قفل ألفا (وضع إعادة التلوين)</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -136,7 +136,7 @@
     <message>
         <location line="+24"/>
         <source>px</source>
-        <translation>بكسل</translation>
+        <translation>بيكسل</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -146,7 +146,7 @@
     <message>
         <location line="+16"/>
         <source>Radius: </source>
-        <translation type="unfinished"></translation>
+        <translation>نصف القطر: </translation>
     </message>
     <message>
         <location line="+13"/>
