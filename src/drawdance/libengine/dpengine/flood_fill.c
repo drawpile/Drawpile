@@ -30,7 +30,6 @@
 #include "image.h"
 #include "layer_content.h"
 #include "layer_group.h"
-#include "layer_list.h"
 #include "layer_props.h"
 #include "layer_routes.h"
 #include "pixels.h"
@@ -541,11 +540,8 @@ DP_flood_fill(DP_CanvasState *cs, int x, int y, DP_UPixelFloat fill_color,
         else if (DP_layer_routes_entry_is_group(lre)) {
             DP_LayerGroup *lg = DP_layer_routes_entry_group(lre, cs);
             DP_LayerProps *lp = DP_layer_routes_entry_props(lre, cs);
-            DP_LayerList *ll = DP_layer_group_children_noinc(lg);
-            DP_LayerPropsList *lpl = DP_layer_props_children_noinc(lp);
-            DP_TransientLayerContent *tlc =
-                DP_transient_layer_content_new_init(c.width, c.height, NULL);
-            DP_layer_list_merge_to_flat_image(ll, lpl, tlc, DP_BIT15, true);
+            DP_TransientLayerContent *tlc = DP_layer_group_merge(lg, lp);
+            c.lc = (DP_LayerContent *)tlc;
         }
         else {
             c.lc =
