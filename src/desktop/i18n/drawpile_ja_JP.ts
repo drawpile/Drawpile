@@ -5725,12 +5725,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Session Password</source>
-        <translation>セッションパスワード</translation>
+        <translation>セッションのパスワード</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Set a password for gaining operator status.</source>
-        <translation>セッション管理者となるためのパスワードを設定します。</translation>
+        <translation>セッションの管理者となるためのパスワードを設定します。</translation>
     </message>
     <message>
         <location line="+5"/>
