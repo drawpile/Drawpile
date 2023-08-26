@@ -192,7 +192,7 @@
     <message>
         <location line="+3"/>
         <source>Ratchet Rotate Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Girar a Tela de Pintura de pouco em pouco</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -415,7 +415,7 @@
     <message>
         <location line="+7"/>
         <source>Brush Pack (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Pacote de Pincéis (%1)</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -790,42 +790,42 @@
     <message>
         <location line="+50"/>
         <source>No brushes exported</source>
-        <translation type="unfinished"></translation>
+        <translation>Nenhum pincel foi exportado</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Can&apos;t export order.conf</source>
-        <translation type="unfinished"></translation>
+        <translation>Não foi possível exportar o order.conf</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Error writing &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Erro ao salvar &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Can&apos;t export tag &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Não é possível exportar a etiqueta &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Missing preset %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Predefinição %1 faltando</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Invalid preset %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Predefinição %1 inválida</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Can&apos;t export preset &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Não é possível exportar a predefinição &apos;%1&apos;</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Can&apos;t export preset thumbnail &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Não é possível exportar a miniatura da predefinição &apos;%1&apos;</translation>
     </message>
 </context>
 <context>
@@ -1149,7 +1149,7 @@
     <message>
         <location line="+2"/>
         <source>Closed (guest logins blocked)</source>
-        <translation type="unfinished"></translation>
+        <translation>Fechado (logins sem conta bloqueados)</translation>
     </message>
     <message>
         <location line="+2"/>
