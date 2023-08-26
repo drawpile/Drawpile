@@ -23,8 +23,88 @@
     <category>Graphics</category>
   </categories>
   <releases>
+    <release version="2.2.0-beta.7" type="development" date="2023-08-26">
+      <url>https://drawpile.net/news/release-2.2.0b7/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>Fix: Make classic brushes not go brighter when smudging into transparency. Thanks to cada for reporting.</li>
+          <li>Feature: "Ratchet" canvas rotation shortcut, using Alt+Shift by default. Rotates the canvas in 15° increments. Thanks to Kvothen for suggesting.</li>
+          <li>Fix: Don't filter out undo depth messages when playing back recordings.</li>
+          <li>Fix: Make floating docks restore properly again. Thanks SnazComic for reporting.</li>
+          <li>Fix: Don't show tag options when right-clicking on a brush preset. Thanks Blozzom for reporting.</li>
+          <li>Fix: Properly disable blend mode combo box in layer properties dialog. Thanks xxxx for reporting.</li>
+          <li>Fix: Move chat status bar button into a legal position. Thanks Flz for reporting.</li>
+          <li>Fix: Correct various errors in text recording reading and writing.</li>
+          <li>Fix: Don't keep locally forked canvas states around. This reduces memory usage by a bunch, especially when drawing locally.</li>
+          <li>Feature: Add layer on current key frame button is now in the top bar of the timeline, next to the other key frame buttons. Thanks FallenArts for suggesting.</li>
+          <li>Feature: Show a notice when there's no tracks yet, rather than just showing an empty timeline grid.</li>
+          <li>Fix: Actually pick color when adding a color to the color picker through the color dialog.</li>
+          <li>Feature: Mark window when a chat message is received. On Windows, this makes the icon in the task bar orange. On macOS, it supposedly bounces an icon somewhere. On other platforms it probably does something similar, indicating which window is the one that got a message ready. Thanks Radio for suggesting.</li>
+          <li>Fix: Don't add current color to the palette when creating it. Thanks xxxx for reporting.</li>
+          <li>Fix: Make exported palettes not start using the exported location to save changes to. Thanks xxxx for reporting.</li>
+          <li>Feature: Allow muting notifications for a window. Thanks Blozzom for suggesting.</li>
+          <li>Fix: Enable the lock session menu option properly, it remained stuck disabled in some cases before.</li>
+          <li>Feature: Allow selecting and copying text from the pinned message (through the context menu, it doesn't take keyboard shortcuts.) Thanks Bluestrings for suggesting.</li>
+          <li>Fix: Don't claim that a layer is locked when it's just not visible in the current frame.</li>
+          <li>Feature: Make canvas rendering and preview painting asynchronous. This should make the UI much more responsive when e.g. changing layer visibility or transforming a large selection.</li>
+          <li>Fix: Properly handle canvas resizes while transforming a selection, it now no longer causes the source of the transform to get offset.</li>
+          <li>Fix: Show the current color properly on program startup.</li>
+          <li>Feature: Make the color wheel innards go from least to most saturated, putting it in line with how most other software presents it. This can be toggled in the preferences.</li>
+          <li>Feature: Holding Shift while moving a selection now keeps it along the closest axis. Thanks Kvothen for suggesting.</li>
+          <li>Feature: Implement brush export and make the brush import also understand classic brushes.</li>
+          <li>Fix: Make erasing with MyPaint brushes in indirect mode actually work.</li>
+          <li>Feature: Make sliders adhere to the chosen color space. Thanks to leandro2222 for suggesting.</li>
+          <li>Feature: Increase font size on emoji posted into chat. Thanks to leandro2222 for suggesting.</li>
+          <li>Feature: Allow adding an avatar from the login dialog.</li>
+          <li>Fix: Show main window maximized by default, because who wants a drawing program in a tiny window.</li>
+          <li>Fix: Give docks sensible initial sizes. Thanks to xxxx for reporting.</li>
+          <li>Fix: Don't tabify the now invisible-by-default timeline and onion skins by default. Thanks Ben for finding.</li>
+          <li>Fix: Make the flipbook remember your last crop, frame range and playback speed for the current window. Thanks Ben for finding.</li>
+          <li>Fix: Don't mark guests as registered. Thanks to xxxx for reporting.</li>
+          <li>Fix: Allow assigning a shortcut to open the Layouts dialog (F9 by default) and to the entries in the Help menu (nothing by default.)</li>
+          <li>Fix: Make reloading the last brush preset slot-specific, since it's nonsense to clobber your current slot with the last preset you set in another one.</li>
+          <li>Feature: Allow increasing and decreasing key frame exposure. Thanks Tabuley for suggesting.</li>
+          <li>Fix: Properly update the view when the canvas size changes, rather than leaving stale areas outside of the canvas.</li>
+          <li>Feature: Add shortcuts to swap the contents of brush slots to allow for a kind of toggling behavior using a single shortcut. Thanks xxxx for suggesting.</li>
+          <li>Fix: Make drawpile:// URL handling actually work on Windows. Thanks Sal for reporting.</li>
+          <li>Fix: Don't draw the curves for MyPaint brushes in the brush editor with the same color as the background grid.</li>
+          <li>Feature: Allow exporting animations from the Flipbook, using the cropping, frame range and speed set in it.</li>
+          <li>Fix: Pre-fill image saving file dialogs with the current filename, rather than the previously opened or saved one. Thanks xxxx for reporting.</li>
+          <li>Fix: Make filling transparent areas work better, rather than different surrounding colors making it behave differently.</li>
+          <li>Fix: Make layer folders work as sources for flood filling.</li>
+        </ul>
+      </description>
+      <artifacts>
+        <artifact type="binary" platform="x86_64-windows-msvc">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.7/win/Drawpile-2.2.0-beta.7.msi</location>
+          <checksum type="sha256">ad176b9821f6b3de2d7c22082f0e222169415233d3613ee3b922e11633757cd9</checksum>
+          <size type="download">19901235</size>
+        </artifact>
+        <artifact type="binary" platform="x86_64-darwin-gnu">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.7/osx/Drawpile-2.2.0-beta.7.dmg</location>
+          <checksum type="sha256">2da739e4c7d8394d4edd01e3233fc1ba82d6d6e0c0c97b2a9b8ab007190f1286</checksum>
+          <size type="download">20240996</size>
+        </artifact>
+        <artifact type="binary" platform="x86_64-linux-gnu">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.7/appimage/Drawpile-2.2.0-beta.7-x86_64.AppImage</location>
+          <checksum type="sha256">8d16934df3edbf889c04931180b7258faab81047e335dd5e613708c5504f7910</checksum>
+          <size type="download">37496000</size>
+        </artifact>
+        <artifact type="binary" platform="aarch64-linux-android">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.7/apk/Drawpile-2.2.0-beta.7.apk</location>
+          <checksum type="sha256">504b7448bf6574cf008dbbab23165ac6300cc9472d6dad74ed2fdf37abf9eadf</checksum>
+          <size type="download">17843027</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.7/src/Drawpile-2.2.0-beta.7.tar.gz</location>
+          <checksum type="sha256">5c2d5fcb04f6608f254beae2b4e36868c620b646c01fb427929e116476aa3897</checksum>
+          <size type="download">4633375</size>
+        </artifact>
+      </artifacts>
+    </release>
     <release version="2.2.0-beta.6" type="development" date="2023-07-31">
-      <url>https://drawpile.net/news/release-2.2.0-beta.6/</url>
+      <url>https://drawpile.net/news/release-2.2.0b6/</url>
       <description>
         <p>Changes in this version:</p>
         <ul>
