@@ -43,6 +43,7 @@ Unreleased Version 2.2.0-pre
  * Feature: Allow exporting animations from the Flipbook, using the cropping, frame range and speed set in it.
  * Fix: Pre-fill image saving file dialogs with the current filename, rather than the previously opened or saved one. Thanks xxxx for reporting.
  * Fix: Make filling transparent areas work better, rather than different surrounding colors making it behave differently.
+ * Fix: Make layer folders work as sources for flood filling.
 
 2023-07-31 Version 2.2.0-beta.6
  * Fix: Don't forget account password when entering a wrong session password.
