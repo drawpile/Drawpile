@@ -1,4 +1,6 @@
 Unreleased Version 2.2.0-pre
+
+2023-08-26 Version 2.2.0-beta.7
  * Fix: Make classic brushes not go brighter when smudging into transparency. Thanks to cada for reporting.
  * Feature: "Ratchet" canvas rotation shortcut, using Alt+Shift by default. Rotates the canvas in 15° increments. Thanks to Kvothen for suggesting.
  * Fix: Don't filter out undo depth messages when playing back recordings.
