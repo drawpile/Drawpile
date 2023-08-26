@@ -107,14 +107,22 @@ static DP_UPixelFloat get_color_at(DP_LayerContent *lc, int x, int y)
 
 static bool should_flood(DP_FillContext *c, int x, int y)
 {
-    DP_UPixelFloat color = get_color_at(c->lc, x, y);
-    // TODO: we could use better functions for color distance than this.
     DP_UPixelFloat reference_color = c->reference_color;
-    double b = color.b - reference_color.b;
-    double g = color.g - reference_color.g;
-    double r = color.r - reference_color.r;
-    double a = color.a - reference_color.a;
-    return b * b + g * g + r * r + a * a <= c->tolerance_squared;
+    // TODO: we could use better functions for color distance than this.
+    // Guess if we're supposed to fill a transparent-ish pixel.
+    if (reference_color.a < 0.05f) {
+        double a =
+            DP_channel15_to_float(DP_layer_content_pixel_at(c->lc, x, y).a);
+        return a * a * 4 <= c->tolerance_squared;
+    }
+    else {
+        DP_UPixelFloat color = get_color_at(c->lc, x, y);
+        double b = color.b - reference_color.b;
+        double g = color.g - reference_color.g;
+        double r = color.r - reference_color.r;
+        double a = color.a - reference_color.a;
+        return b * b + g * g + r * r + a * a <= c->tolerance_squared;
+    }
 }
 
 static void flood(DP_FillContext *c)
