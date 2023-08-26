@@ -7,6 +7,7 @@
 #include <QObject>
 #include <QString>
 #include <QStringList>
+#include <optional>
 
 class Document;
 class QWidget;
@@ -89,8 +90,8 @@ private:
 
 	QString showSaveFileDialog(
 		const QString &title, LastPath type, const QString &ext,
-		utils::FileFormatOptions formats,
-		QString *selectedFilter = nullptr) const;
+		utils::FileFormatOptions formats, QString *selectedFilter = nullptr,
+		std::optional<QString> lastPath = {}) const;
 
 	QWidget *parentWidget() const;
 };

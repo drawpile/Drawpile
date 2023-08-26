@@ -23,8 +23,8 @@ FileWrangler::FileWrangler(QWidget *parent)
 
 QStringList FileWrangler::getImportCertificatePaths(const QString &title) const
 {
-	const auto filter = tr("Certificates (%1)").arg("*.pem *.crt *.cer")
-		+ ";;" + QApplication::tr("All files (*)");
+	const auto filter = tr("Certificates (%1)").arg("*.pem *.crt *.cer") +
+						";;" + QApplication::tr("All files (*)");
 
 	// TODO: QFileDialog static methods do not create sheet dialogs on macOS
 	// when appropriate, nor do they allow setting the accept button label, nor
@@ -37,7 +37,7 @@ QStringList FileWrangler::getImportCertificatePaths(const QString &title) const
 	dialog.setOption(QFileDialog::ReadOnly);
 	dialog.setWindowModality(Qt::WindowModal);
 	dialog.setSupportedSchemes({QStringLiteral("file")});
-	if (dialog.exec() == QDialog::Accepted) {
+	if(dialog.exec() == QDialog::Accepted) {
 		return dialog.selectedFiles();
 	} else {
 		return {};
@@ -91,7 +91,8 @@ QString FileWrangler::saveImageAs(Document *doc) const
 	QString selectedFilter;
 	QString filename = showSaveFileDialog(
 		tr("Save Image"), LastPath::IMAGE, ".ora",
-		utils::FileFormatOption::SaveImages, &selectedFilter);
+		utils::FileFormatOption::SaveImages, &selectedFilter,
+		doc->currentFilename());
 
 	if(!filename.isEmpty() && confirmFlatten(doc, filename)) {
 		doc->saveCanvasAs(filename);
@@ -107,7 +108,8 @@ QString FileWrangler::savePreResetImageAs(
 	QString selectedFilter;
 	QString filename = showSaveFileDialog(
 		tr("Save Pre-Reset Image"), LastPath::IMAGE, ".ora",
-		utils::FileFormatOption::SaveImages, &selectedFilter);
+		utils::FileFormatOption::SaveImages, &selectedFilter,
+		doc->currentFilename());
 
 	if(!filename.isEmpty() && confirmFlatten(doc, filename)) {
 		doc->saveCanvasStateAs(filename, canvasState, false);
@@ -310,7 +312,9 @@ QString FileWrangler::getLastPath(LastPath type, const QString &ext)
 	if(filename.isEmpty()) {
 		return getDefaultLastPath(type, ext);
 	} else {
-		replaceExtension(filename, ext);
+		if(!ext.isEmpty()) {
+			replaceExtension(filename, ext);
+		}
 		return filename;
 	}
 }
@@ -386,7 +390,8 @@ QString FileWrangler::showOpenFileDialog(
 
 QString FileWrangler::showSaveFileDialog(
 	const QString &title, LastPath type, const QString &ext,
-	utils::FileFormatOptions formats, QString *selectedFilter) const
+	utils::FileFormatOptions formats, QString *selectedFilter,
+	std::optional<QString> lastPath) const
 {
 	QFileDialog fileDialog;
 	fileDialog.setAcceptMode(QFileDialog::AcceptSave);
@@ -405,8 +410,8 @@ QString FileWrangler::showSaveFileDialog(
 	// directory to save the file in, rather than decide to break the path
 	// after the fact.
 	dialogs::AndroidFileDialog nameAndTypeDialog{
-		getLastPath(type), utils::fileFormatFilterList(formats),
-		parentWidget()};
+		lastPath.has_value() ? lastPath.value() : getLastPath(type),
+		utils::fileFormatFilterList(formats), parentWidget()};
 	if(nameAndTypeDialog.exec() != QDialog::Accepted) {
 		return QString{};
 	}
@@ -437,7 +442,8 @@ QString FileWrangler::showSaveFileDialog(
 	if(selectedFilter && !selectedFilter->isEmpty()) {
 		fileDialog.selectNameFilter(*selectedFilter);
 	}
-	fileDialog.selectFile(getLastPath(type, ext));
+	fileDialog.selectFile(
+		lastPath.has_value() ? lastPath.value() : getLastPath(type, ext));
 #endif
 
 	QString filename;
