@@ -40,6 +40,7 @@ class QCP_EXPORT ColorDialog : public QDialog
     Q_PROPERTY(ColorWheel::ShapeEnum wheelShape READ wheelShape WRITE setWheelShape NOTIFY wheelShapeChanged)
     Q_PROPERTY(ColorWheel::ColorSpaceEnum colorSpace READ colorSpace WRITE setColorSpace NOTIFY colorSpaceChanged)
     Q_PROPERTY(bool wheelRotating READ wheelRotating WRITE setWheelRotating NOTIFY wheelRotatingChanged)
+    Q_PROPERTY(bool wheelMirrored READ wheelMirrored WRITE setWheelMirrored NOTIFY wheelMirroredChanged)
     /**
      * \brief whether the color alpha channel can be edited.
      *
@@ -91,6 +92,7 @@ public:
     ColorWheel::ShapeEnum wheelShape() const;
     ColorWheel::ColorSpaceEnum colorSpace() const;
     bool wheelRotating() const;
+    bool wheelMirrored() const;
 
     int exec() Q_DECL_OVERRIDE;
 
@@ -109,6 +111,7 @@ public Q_SLOTS:
     void setWheelShape(ColorWheel::ShapeEnum shape);
     void setColorSpace(ColorWheel::ColorSpaceEnum space);
     void setWheelRotating(bool rotating);
+    void setWheelMirrored(bool mirrored);
 
     /**
      * Set whether the color alpha channel can be edited.
@@ -130,6 +133,7 @@ Q_SIGNALS:
     void wheelShapeChanged(ColorWheel::ShapeEnum shape);
     void colorSpaceChanged(ColorWheel::ColorSpaceEnum space);
     void wheelRotatingChanged(bool rotating);
+    void wheelMirroredChanged(bool mirrored);
 
     void alphaEnabledChanged(bool alphaEnabled);
 

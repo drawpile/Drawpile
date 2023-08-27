@@ -85,6 +85,7 @@ ColorDialog::ColorDialog(QWidget *parent, Qt::WindowFlags f) :
     connect(p->ui.wheel, &ColorWheel::colorSpaceChanged, this, &ColorDialog::colorSpaceChanged);
     connect(p->ui.wheel, &ColorWheel::selectorShapeChanged, this, &ColorDialog::wheelShapeChanged);
     connect(p->ui.wheel, &ColorWheel::rotatingSelectorChanged, this, &ColorDialog::wheelRotatingChanged);
+    connect(p->ui.wheel, &ColorWheel::mirroredSelectorChanged, this, &ColorDialog::wheelMirroredChanged);
 
 }
 
@@ -409,6 +410,16 @@ void ColorDialog::setWheelRotating(bool rotating)
 bool ColorDialog::wheelRotating() const
 {
     return p->ui.wheel->rotatingSelector();
+}
+
+void ColorDialog::setWheelMirrored(bool mirrored)
+{
+    p->ui.wheel->setMirroredSelector(mirrored);
+}
+
+bool ColorDialog::wheelMirrored() const
+{
+    return p->ui.wheel->mirroredSelector();
 }
 
 int ColorDialog::exec()
