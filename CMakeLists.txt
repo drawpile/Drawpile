@@ -11,6 +11,18 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
 	"* ${CMAKE_BINARY_DIR}/CMakeFiles")
 endif()
 
+# These flags are nonsense, Drawpile only uses libraries for internal assembly,
+# we don't want to install any into the system. It may also be possible to add
+# STATIC to every add_library call, but not sure if that doesn't break on some
+# platform, so just purge these flags to not let them mess with our build.
+foreach(garbage_flag IN ITEMS BUILD_SHARED_LIBS BUILD_STATIC_LIBS)
+	if(DEFINED "${garbage_flag}")
+		message(WARNING "Ignoring nonsensical '${garbage_flag}' argument")
+		unset("${garbage_flag}")
+		unset("${garbage_flag}" CACHE)
+	endif()
+endforeach()
+
 # This must come before `project` because the version it pulls from an external
 # file is used as the CMake project version
 include(DrawpileVersions)
