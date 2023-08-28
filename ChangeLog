@@ -4,6 +4,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Make flipbook shortcut work while the flipbook is in focus, causing it to refresh its view.
  * Fix: Cap flipbook range properly, rather than letting you set a range beyond the last frame.
  * Fix: Remove the useless "?" button from dialogs in Windows. Thanks vipperz for reporting.
+ * Fix: Turn off input event compression, which causes jaggy lines on slow devices.
 
 2023-08-26 Version 2.2.0-beta.7
  * Fix: Make classic brushes not go brighter when smudging into transparency. Thanks to cada for reporting.

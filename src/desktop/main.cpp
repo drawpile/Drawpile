@@ -506,6 +506,10 @@ int main(int argc, char *argv[]) {
 	QApplication::setAttribute(Qt::AA_DontUseNativeMenuBar);
 #endif
 
+	// Don't compress input events, that causes jaggy lines on slow devices.
+	QApplication::setAttribute(Qt::AA_CompressHighFrequencyEvents, false);
+	QApplication::setAttribute(Qt::AA_CompressTabletEvents, false);
+
 	// CanvasView does not work correctly with this enabled.
 	// (Scale factor must be taken in account when zooming)
 	//QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
