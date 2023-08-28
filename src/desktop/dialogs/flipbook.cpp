@@ -229,11 +229,15 @@ void Flipbook::resetCanvas(bool refresh)
 	m_ui->loopEnd->setMaximum(frameCount);
 	if(m_state.loopStart > 0 && m_state.loopEnd > 0) {
 		m_ui->loopStart->setValue(m_state.loopStart);
-		m_ui->loopEnd->setValue(m_state.loopEnd);
+		m_ui->loopEnd->setValue(
+			m_ui->loopEnd->value() < m_state.lastCanvasFrameCount
+				? m_state.loopEnd
+				: frameCount);
 	} else {
 		m_ui->loopStart->setValue(1);
 		m_ui->loopEnd->setValue(frameCount);
 	}
+	m_state.lastCanvasFrameCount = frameCount;
 	updateRange();
 
 	if(refresh) {

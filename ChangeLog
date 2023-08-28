@@ -6,6 +6,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Remove the useless "?" button from dialogs in Windows. Thanks vipperz for reporting.
  * Fix: Turn off input event compression, which causes jaggy lines on slow devices.
  * Feature: Draw a hatching pattern on frames in the timeline that are the same as the currently visible one, making it easier to figure out if it's being re-used.
+ * Fix: Make flipbook extend the playback range if it was on the last frame and new ones are added to the timeline.
 
 2023-08-26 Version 2.2.0-beta.7
  * Fix: Make classic brushes not go brighter when smudging into transparency. Thanks to cada for reporting.
