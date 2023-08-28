@@ -496,6 +496,11 @@ int main(int argc, char *argv[]) {
 	QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 #endif
 
+#ifndef HAVE_QT_COMPAT_DEFAULT_DISABLE_WINDOW_CONTEXT_HELP_BUTTON
+	// Disable the "?" button in dialogs on Windows, we don't use those.
+	QApplication::setAttribute(Qt::AA_DisableWindowContextHelpButton);
+#endif
+
 #ifdef Q_OS_ANDROID
 	// Android has a weird title bar by default, we want a menu bar instead.
 	QApplication::setAttribute(Qt::AA_DontUseNativeMenuBar);
