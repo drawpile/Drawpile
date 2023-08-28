@@ -693,6 +693,8 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 	}
 
 	// Key frames.
+	const canvas::TimelineKeyFrame *currentVisibleKeyFrame =
+		d->currentVisibleKeyFrame();
 	for(int i = 0; i < trackCount; ++i) {
 		int y = rowHeight + i * rowHeight - yScroll;
 		const canvas::TimelineTrack &track = tracks[trackCount - i - 1];
@@ -710,6 +712,14 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 				isSelected ? pal.highlightedText() : pal.windowText();
 			if(keyFrame.layerId == 0) {
 				brush.setStyle(Qt::DiagCrossPattern);
+			} else {
+				bool sameContentAsCurrent =
+					currentVisibleKeyFrame &&
+					&keyFrame != currentVisibleKeyFrame &&
+					keyFrame.hasSameContentAs(*currentVisibleKeyFrame);
+				if(sameContentAsCurrent) {
+					brush.setStyle(Qt::Dense3Pattern);
+				}
 			}
 			painter.setBrush(brush);
 			painter.drawRect(x, y, columnWidth, rowHeight);
