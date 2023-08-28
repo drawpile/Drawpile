@@ -1776,7 +1776,14 @@ void CanvasView::updateCanvasTransform(const std::function<void()> &block)
 		rects.append(m_scene->canvasBounds());
 		updateScrollBars();
 		updateCanvasPixelGrid();
-		setRenderHint(QPainter::SmoothPixmapTransform, m_zoom <= 1.99);
+		// Use nearest-neighbor interpolation at 200% zoom and above, anything
+		// below gets linear interpolation. An exception is at exactly 100% zoom
+		// with a right-angle rotation, since otherwise the canvas gets blurred
+		// even though the pixels are at a 1:1 scale.
+		bool smooth =
+			m_zoom <= 1.99 && !(qAbs(m_zoom - 1.0) < 0.01 &&
+								std::fmod(qAbs(rotation()), 90.0) < 0.01);
+		setRenderHint(QPainter::SmoothPixmapTransform, smooth);
 		viewRectChanged();
 	}
 
