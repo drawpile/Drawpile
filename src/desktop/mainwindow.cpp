@@ -722,6 +722,10 @@ void MainWindow::loadShortcuts(const QVariantMap &cfg)
 	for(dialogs::StartDialog *dlg : findChildren<dialogs::StartDialog *>(QString{}, Qt::FindDirectChildrenOnly)) {
 		setStartDialogActions(dlg);
 	}
+
+	for(dialogs::Flipbook *fp : findChildren<dialogs::Flipbook *>(QString{}, Qt::FindDirectChildrenOnly)) {
+		fp->setRefreshShortcuts(getAction("showflipbook")->shortcuts());
+	}
 }
 
 void MainWindow::toggleLayerViewMode()
@@ -1582,6 +1586,7 @@ void MainWindow::showFlipbook()
 		fp->setObjectName("flipbook");
 		fp->setAttribute(Qt::WA_DeleteOnClose);
 		fp->setPaintEngine(m_doc->canvas()->paintEngine());
+		fp->setRefreshShortcuts(getAction("showflipbook")->shortcuts());
 		connect(
 			fp, &dialogs::Flipbook::exportGifRequested, this,
 			&MainWindow::exportGifAnimationWith);

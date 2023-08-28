@@ -29,6 +29,12 @@ Flipbook::Flipbook(State &state, QWidget *parent)
 {
 	m_ui->setupUi(this);
 
+	m_refreshAction = new QAction{this};
+	addAction(m_refreshAction);
+	connect(
+		m_refreshAction, &QAction::triggered, m_ui->refreshButton,
+		QOverload<>::of(&QAbstractButton::animateClick));
+
 	m_timer = new QTimer(this);
 
 	QMenu *exportMenu = new QMenu{this};
@@ -136,6 +142,11 @@ void Flipbook::setPaintEngine(canvas::PaintEngine *pe)
 	if(!m_timer->isActive()) {
 		playPause();
 	}
+}
+
+void Flipbook::setRefreshShortcuts(const QList<QKeySequence> &shortcuts)
+{
+	m_refreshAction->setShortcuts(shortcuts);
 }
 
 void Flipbook::setCrop(const QRectF &rect)

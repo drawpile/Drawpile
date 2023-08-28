@@ -11,6 +11,7 @@
 
 class Ui_Flipbook;
 
+class QAction;
 class QEvent;
 class QTimer;
 
@@ -36,6 +37,7 @@ public:
 	~Flipbook() override;
 
 	void setPaintEngine(canvas::PaintEngine *pe);
+	void setRefreshShortcuts(const QList<QKeySequence> &shortcuts);
 
 	bool event(QEvent *event) override;
 
@@ -78,6 +80,7 @@ private:
 
 	State &m_state;
 	Ui_Flipbook *m_ui;
+	QAction *m_refreshAction;
 	canvas::PaintEngine *m_paintengine;
 	drawdance::CanvasState m_canvasState;
 	drawdance::ViewModeBuffer m_vmb;
