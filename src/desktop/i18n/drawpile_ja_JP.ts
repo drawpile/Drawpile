@@ -258,7 +258,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="-26"/>
         <source>Inverts the input directions. For example, scrolling up to zoom out instead of zooming in.</source>
-        <translation>入力方向を反転させる。例えば、上にスクロールするとズームインではなくズームアウトします。</translation>
+        <translation>入力方向を反転させる。例えば上にスクロールするとズームインではなくズームアウトします。</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -268,7 +268,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Switches horizontal and vertical directions. For example, moving the cursor up and down to change the brush size instead of moving it left and right.</source>
-        <translation>水平方向と垂直方向を切り替えます。 例えば、カーソルを左右に動かすのではなく、上下に動かすとブラシ サイズが変更されます。</translation>
+        <translation>水平方向と垂直方向を切り替えます。 例えばカーソルを左右ではなく上下に動かすとブラシ サイズが変更されます。</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -628,7 +628,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+24"/>
         <source>The selected format does not support layers or annotations.</source>
-        <translation>選択したファイル形式は、レイヤーまたは注釈をサポートしていません。</translation>
+        <translation>選択したファイル形式はレイヤーまたは注釈をサポートしていません。</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -654,7 +654,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+1"/>
         <source>The file name you gave does not end with &apos;%1&apos; and could not be saved. Please provide a name with an extension.</source>
-        <translation>指定したファイル名は &apos;%1&apos; で終わっていないため、保存できませんでした。 拡張子を付けた名前を入力してください。</translation>
+        <translation>指定したファイル名は &apos;%1&apos; で終わっていないため保存できませんでした。 拡張子を付けた名前を入力してください。</translation>
     </message>
 </context>
 <context>
@@ -808,7 +808,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+9"/>
         <source>&lt;strong&gt;Note:&lt;/strong&gt; changing the session password will cause the link to stop working! If someone else changes the password, you have to reconnect for this dialog to update.</source>
-        <translation>&lt;strong&gt;注意:&lt;/strong&gt; セッション パスワードを変更すると、リンクが機能しなくなります。 他の人がパスワードを変更した場合、このダイアログを更新するには再接続する必要があります。</translation>
+        <translation>&lt;strong&gt;注意:&lt;/strong&gt; セッション パスワードを変更するとリンクが機能しなくなります。 他の人がパスワードを変更した場合、このダイアログを更新するには再接続する必要があります。</translation>
     </message>
     <message>
         <location line="+29"/>
@@ -858,7 +858,7 @@ Full range: [%1, %2]
 Subrange: [%3, %4]</source>
         <translation>全範囲と部分範囲を切り替えます。
 全範囲: [%1, %2]
-部分範囲: [%3、%4]</translation>
+部分範囲: [%3, %4]</translation>
     </message>
     <message>
         <location line="+175"/>
@@ -982,7 +982,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+24"/>
         <source>Drawpile&apos;s dockers can be freely arranged and combined by holding Shift and dragging them at the top. You can save and restore your favorite arrangements here. Make sure your arrangement fits your resolution, otherwise some controls may be pushed off-screen.</source>
-        <translation>Drawpile のドックウィンドウは、Shift キーを押しながら上部をドラッグして、自由に配置して組み合わせることができます。 ここでお気に入りの配置を保存したり復元したりできます。 配置が解像度に合っていることを確認してください。そうでない場合、一部のコントロールが画面外に押し出される可能性があります。</translation>
+        <translation>Drawpile のドックウィンドウは、Shift キーを押しながら上部をドラッグして自由に配置して組み合わせることができます。 ここでお気に入りの配置を保存したり復元したりできます。 配置が画面の解像度に合っていることを確認してください。そうでない場合、一部のコントロールが画面の外に押し出されてしまう可能性があります。</translation>
     </message>
 </context>
 <context>
@@ -1030,12 +1030,12 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+38"/>
         <source>Enter the &lt;b&gt;session password&lt;/b&gt;, &lt;i&gt;not&lt;/i&gt; your account password.</source>
-        <translation>&lt;b&gt;セッションのパスワード&lt;/b&gt;を入力してください、&lt;i&gt; あなたのアカウントのパスワードではありません&lt;/i&gt;。</translation>
+        <translation>&lt;b&gt;セッションのパスワード&lt;/b&gt;を入力してください。&lt;i&gt; あなたのアカウントのパスワードではありません&lt;/i&gt;。</translation>
     </message>
     <message>
         <location line="+157"/>
         <source>&lt;p&gt;This session has indicated that its contents are &lt;em&gt;not suitable for minors&lt;/em&gt; (NSFM).&lt;/p&gt;&lt;p&gt;&lt;strong&gt;You must be over the age of 18 and be allowed to consume adult content to proceed.&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Are you sure you want to join this session?&lt;/p&gt;</source>
-        <translation>&lt;p&gt;このセッションは、 その内容が&lt;em&gt;未成年者には適していない&lt;/em&gt;ことを示しています (NSFM)。&lt;/p&gt;&lt;p&gt;&lt;strong&gt;あなたは 18 歳以上であり、成人向けのコンテンツを閲覧することが許可されている必要があります。 &lt;/strong&gt;&lt;/p&gt;&lt;p&gt;このセッションに参加してもよろしいですか？&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;このセッションは、 その内容が&lt;em&gt;未成年者には適していない&lt;/em&gt;ことを示しています (NSFM)。&lt;/p&gt;&lt;p&gt;&lt;strong&gt;あなたが 18 歳以上であり、成人向けのコンテンツを閲覧することが許されている必要があります。 &lt;/strong&gt;&lt;/p&gt;&lt;p&gt;このセッションに参加してもよろしいですか？&lt;/p&gt;</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -1080,7 +1080,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+1"/>
         <source>If you don&apos;t review your documents, all changes will be lost</source>
-        <translation>ドキュメントを確認しない場合、すべての変更内容が破棄されます</translation>
+        <translation>ドキュメントを確認しない場合すべての変更内容が破棄されます</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1657,7 +1657,7 @@ Subrange: [%3, %4]</source>
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
 
 Are you sure youwant to start recording debug dumps?</source>
-        <translation>デバッグ ダンプには、ローカルおよびリモートの描画コマンドが記録されます。 これらはネットワークの問題を解決するために使用できますが、それ以外にはあまり使用できません。 通常の記録を行う場合は、代わりに [ファイル] &gt; 記録...] を使用します。
+        <translation>デバッグ ダンプにはローカルおよびリモートの描画コマンドが記録されます。 これらはネットワークの問題を解決するために使用できますが、それ以外にはあまり使用できません。 通常の記録を行う場合は代わりに [ファイル] &gt; 記録...] を使用します。
 
 デバッグ ダンプの記録は次回のキャンバスのリセット時に開始され、ファイルは %1 に保存されます。
 
@@ -2052,7 +2052,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+9"/>
         <source>&amp;Full Screen</source>
-        <translation>フルスクリーン(&amp;F)</translation>
+        <translation>全画面(&amp;F)</translation>
     </message>
     <message>
         <location line="+346"/>
@@ -2079,7 +2079,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <source>Server is running out of history space and session has grown too large to automatically reset! (Limit is %1 MB)
 Simplify the canvas and reset manually before space runs out.</source>
         <translation>サーバーの履歴のスペースが不足しており、セッションが大きくなりすぎて自動的にリセットできません。 (制限は %1 MB)
-キャンバスの内容をシンプルにして、スペースがなくなる前に手動でリセットします。</translation>
+キャンバスの内容をシンプルにしてスペースがなくなる前に手動でリセットします。</translation>
     </message>
     <message>
         <location line="+1541"/>
@@ -2109,7 +2109,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+132"/>
         <source>Copy Merged</source>
-        <translation>結合部分をコピー</translation>
+        <translation>統合してコピー</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2229,7 +2229,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>Layer View</source>
-        <translation>レイヤービュー</translation>
+        <translation>レイヤー表示</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2239,7 +2239,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>Frame View</source>
-        <translation>フレームビュー</translation>
+        <translation>フレーム表示</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -3089,7 +3089,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+6"/>
         <source>Cut, Paste &amp; Fill:</source>
-        <translation>切り取り、貼り付け、塗りつぶし:</translation>
+        <translation>切り取り,貼り付け,塗りつぶし:</translation>
     </message>
     <message>
         <location line="+131"/>
@@ -3104,7 +3104,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="-145"/>
         <source>This session contains age-restricted content</source>
-        <translation>このセッションには年齢制限のあるコンテンツが含まれています</translation>
+        <translation>このセッションには年齢制限のある内容が含まれています</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -3164,7 +3164,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+11"/>
         <source>Banned users</source>
-        <translation>BAN したユーザー</translation>
+        <translation>BANされたユーザー</translation>
     </message>
     <message>
         <location line="+31"/>
@@ -3439,7 +3439,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+12"/>
         <source>Remove the selected color from the palette</source>
-        <translation>選択色をパレットから削除</translation>
+        <translation>選択した色をパレットから削除</translation>
     </message>
     <message>
         <location filename="../bundled/QtColorWidgets/color_palette_widget.cpp" line="+186"/>
@@ -3896,12 +3896,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+145"/>
         <source>Slows down the stroke to stabilize it over time. High values give very smooth lines, but they will draw slowly. When you stop moving, the line will catch up your cursor. Tablet smoothing from the input preferences applies as well.</source>
-        <translation>ストローク描画を遅くして、時間の経過とともに安定させます。 値を高くすると、線は非常に滑らかになりますが、描画が遅くなります。 動きを止めると、線がカーソルに追いつきます。 入力設定からのタブレット スムージングも同様に適用されます。</translation>
+        <translation>ストローク描画を遅くして時間の経過とともに安定させます。 値を高くすると線は非常に滑らかになりますが描画が遅くなります。 動きを止めると線がカーソルに追いつきます。 入力設定からのタブレット スムージングも同様に適用されます。</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Simply averages a number of inputs. Feels faster than the time-based stabilizer, but not as smooth and won&apos;t catch up to your cursor when you stop moving. Overrides tablet smoothing from the input preferences.</source>
-        <translation>単純に多数の入力を平均します。 「時間基準の手ブレ補正」よりも速く感じられますが、それほどスムーズではなく、動きを止めたときにカーソルが追いつきません。 入力設定からタブレットのスムージングを上書きします。</translation>
+        <translation>単純に多数の入力を平均します。 「時間基準の手ブレ補正」よりも速く感じられますが、それほどスムーズではなく動きを止めたときにカーソルが追いつきません。 入力設定からタブレットのスムージングを上書きします。</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -4036,19 +4036,19 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+8"/>
         <source>The pressure reported by the tablet. Usually between 0.0 and 1.0, but it may get larger when a pressure gain is used. If you use the mouse, it will be 0.5 when a button is pressed and 0.0 otherwise.</source>
         <comment>mypaintinput</comment>
-        <translation>タブレットによって報告される筆圧。 通常は 0.0 ～ 1.0 ですが、筆圧ゲインを使用するとさらに大きくなる場合があります。 マウスを使用する場合、ボタンが押された場合は 0.5、それ以外の場合は 0.0 になります。</translation>
+        <translation>タブレットによって報告される筆圧。 通常は 0.0 ～ 1.0 ですが筆圧ゲインを使用するとさらに大きくなる場合があります。 マウスを使用する場合ボタンが押された場合は 0.5、それ以外の場合は 0.0 になります。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>How fast you currently move. This can change very quickly. Try &apos;print input values&apos; from the &apos;help&apos; menu to get a feeling for the range; negative values are rare but possible for very low speed.</source>
         <comment>mypaintinput</comment>
-        <translation>現在の移動速度。 これは非常に急速に変化する可能性があります。 「ヘルプ」メニューから「タブレットテスター」を試して、範囲の感覚をつかんでください。 負の値はまれですが、非常に低速な場合は発生する可能性があります。</translation>
+        <translation>現在の移動速度。 これは非常に急速に変化する可能性があります。 「ヘルプ」メニューから「タブレットテスター」を試して範囲の感覚をつかんでください。 負の値はまれですが非常に低速な場合は発生する可能性があります。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Same as fine speed, but changes slower. Also look at the &apos;gross speed filter&apos; setting.</source>
         <comment>mypaintinput</comment>
-        <translation>詳細速度と同じですが、変化が遅くなります。 「大まかな速度フィルタ」設定も確認してください。</translation>
+        <translation>詳細速度と同じですが変化が遅くなります。 「大まかな速度フィルタ」設定も確認してください。</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4084,7 +4084,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+2"/>
         <source>This is a user defined input. Look at the &apos;custom input&apos; setting for details.</source>
         <comment>mypaintinput</comment>
-        <translation>これはユーザー定義の入力です。 詳細については、「カスタム入力」設定を参照してください。</translation>
+        <translation>これはユーザー定義の入力です。 詳細については「カスタム入力」設定を参照してください。</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4102,9 +4102,9 @@ The range is +/-180.0.
         <comment>mypaintinput</comment>
         <translation>ペンが指している角度とストロークの動きの角度の差 (1度単位)。
 範囲は +/-180.0 です。
-0.0 は、ストローク角度がペンの角度に対応することを意味します。
-90 は、ストローク角度がペンの角度に対して垂直であることを意味します。
-180 は、ストロークの角度がペンの角度の正反対であることを意味します。</translation>
+0.0 はストローク角度がペンの角度に対応することを意味します。
+90 はストローク角度がペンの角度に対して垂直であることを意味します。
+180 はストロークの角度がペンの角度の正反対であることを意味します。</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4124,14 +4124,14 @@ The range is +/-180.0.
 The brush size should be considerably smaller than the grid scale for best results.</source>
         <comment>mypaintinput</comment>
         <translation>256 ピクセル グリッド上の X 座標。 カーソルが X 軸上に移動すると、これは 0 ～ 256 の周りをラップします。 「ストローク」に似ています。 不透明度などを変更して紙のテクスチャを追加するために使用できます。
-最良の結果を得るには、ブラシ のサイズはグリッド スケールよりもかなり小さい必要があります。</translation>
+ベストな結果を得るには、ブラシ のサイズはグリッド スケールよりもかなり小さい必要があります。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The Y coordinate on a 256 pixel grid. This will wrap around 0-256 as the cursor is moved on the Y axis. Similar to &quot;Stroke&quot;. Can be used to add paper texture by modifying opacity, etc.
 The brush size should be considerably smaller than the grid scale for best results.</source>
         <comment>mypaintinput</comment>
-        <translation>256 ピクセル グリッド上の Y 座標。 カーソルが Y 軸上に移動すると、これは 0 ～ 256 の周りをラップします。 「ストローク」に似ています。 不透明度などを変更して紙のテクスチャを追加するために使用できます。
+        <translation>256 ピクセル グリッド上の Y 座標。 カーソルがY軸上を移動すると、0-256で折り返します。 「ストローク」に似ています。 不透明度などを変更して紙のテクスチャを追加するために使用できます。
 最良の結果を得るには、ブラシ のサイズはグリッド スケールよりもかなり小さい必要があります。</translation>
     </message>
     <message>
@@ -4142,7 +4142,7 @@ For the Radius setting, using a value of -4.15 makes the brush size roughly cons
         <comment>mypaintinput</comment>
         <translation>キャンバス表示の現在のズーム レベル。
 対数: 0.0 は 100%、0.69 は 200%、-1.38 は 25%
-半径設定では、-4.15 の値を使用すると、ズーム レベルに応じてブラシ サイズがほぼ一定になります。</translation>
+半径設定では、-4.15 の値を使用するとズーム レベルに応じてブラシ サイズがほぼ一定になります。</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4163,7 +4163,7 @@ You can even cancel out dab size increase and adjust something else to make a br
 Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&quot;, which behave much differently.</source>
         <comment>mypaintinput</comment>
         <translation>基本ブラシ半径を使用すると、ブラシを大きくしたり小さくしたりするときにブラシの動作を変更できます。
-描点のサイズの増加をキャンセルし、他の項目を調整してブラシを大きくすることもできます。
+描点のサイズの増加をキャンセルして、他の項目を調整してブラシを大きくすることもできます。
 「基本ブラシ半径あたりの描点数」と「実際のブラシ半径あたりの描点数」は動作が大きく異なることに注意してください。</translation>
     </message>
     <message>
@@ -4382,7 +4382,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Stroke hold time</source>
         <comment>mypaintsetting</comment>
-        <translation>ストロークの残留期間</translation>
+        <translation>ストロークの保持時間</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4551,7 +4551,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <source>Pigment</source>
         <comment>mypaintsetting</comment>
         <extracomment>The name Pigment refers to the fact that this kind of color mixing is more similar to how colors mix in physical paint.</extracomment>
-        <translation>顔料(Pigment)という名前は、この種の色の混合が物理的な絵の具での色の混合方法により似ているという事実を表しています</translation>
+        <translation>顔料</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4573,7 +4573,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
 This setting is responsible to stop painting when there is zero pressure. This is just a convention, the behaviour is identical to &apos;opaque&apos;.</source>
         <comment>mypaintsetting</comment>
         <translation>これに不透明度が乗算されます。 この設定の筆圧入力のみを変更する必要があります。 不透明度を速度に依存させるには、代わりに「不透明度」を使用します。
-この設定は、筆圧がゼロのときにペイントを停止する役割を果たします。 これは単なる慣例であり、動作は「不透明」と同じです。</translation>
+この設定は筆圧がゼロのときにペイントを停止する役割を果たします。 これは単なる慣例であり動作は「不透明」と同じです。</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4581,9 +4581,9 @@ This setting is responsible to stop painting when there is zero pressure. This i
 0.0 the opaque value above is for the individual dabs
 1.0 the opaque value above is for the final brush stroke, assuming each pixel gets (dabs_per_radius*2) brushdabs on average during a stroke</source>
         <comment>mypaintsetting</comment>
-        <translation>複数の描点を重ねて合成することによって生じた非線形性を修正します。 この修正により、通常行われているように、筆圧が 透明度の乗算 にマップされる場合、線形 (「自然な」) 圧力応答が得られます。 0.9 は標準的なストロークに適しており、ブラシの散乱が多い場合はより小さく設定し、dabs_per_second を使用する場合はより高く設定します
-0.0 上の不透明な値は個々の描点に対するものです
-1.0 上記の不透明な値は、ストローク中に各ピクセルが平均して (dabs_per_radius*2) 個のブラシ描点を取得すると仮定した、最終ブラシ ストロークのものです</translation>
+        <translation>複数の描点を重ねて合成することによって生じた非線形性を修正します。 この修正により通常のように筆圧が 透明度の乗算 にマップされる場合、線形 (「自然な」) 圧力の応答を得られます。 0.9 は標準的なストロークに適しており、ブラシの散乱が多い場合はより小さく設定し、dabs_per_second を使用する場合はより高く設定します
+0.0 上記の不透明な値は個々の描点に対するものです
+1.0 上記の不透明な値は、ストローク中に各ピクセルが平均して (dabs_per_radius*2) 個のブラシ描点を取得すると仮定した、最終的なブラシ ストロークのものです</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4608,28 +4608,28 @@ This setting is responsible to stop painting when there is zero pressure. This i
  1.0 blur one pixel (good value)
  5.0 notable blur, thin strokes will disappear</source>
         <comment>mypaintsetting</comment>
-        <translation>この設定では、必要に応じて硬さを下げ、描点をよりぼやけることでピクセルの階段効果 (エイリアシング) を防ぎます。
+        <translation>この設定では必要に応じて硬さを下げ、描点をよりぼやけさせることでピクセルの階段効果 (エイリアシング) を防ぎます。
  0.0 無効 (非常に強力な消しゴムとピクセル ブラシ用)
  1.0 1 ピクセルをぼかします (良い値)
- 5.0 顕著なぼやけ、細いストロークが消えます</translation>
+ 5.0 顕著なぼかし、細いストロークは消えます</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>How many dabs to draw while the pointer moves a distance of one brush radius (more precise: the base value of the radius)</source>
         <comment>mypaintsetting</comment>
-        <translation>ポインタが 1 つのブラシ半径の距離を移動する間に描画する描点の数 (より正確には、半径の基本値)</translation>
+        <translation>ポインタが 1 つのブラシ半径の距離を移動する間に描画する描点の数 (より正確には半径の基本値)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Same as above, but the radius actually drawn is used, which can change dynamically</source>
         <comment>mypaintsetting</comment>
-        <translation>上記と同じですが、実際に描画された半径が使用され、動的に変更できます</translation>
+        <translation>上記と同じですが、実際に描画された半径が使用され動的に変更できます</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Dabs to draw each second, no matter how far the pointer moves</source>
         <comment>mypaintsetting</comment>
-        <translation>ポインターがどれだけ遠くに移動しても、毎秒描画するための描点</translation>
+        <translation>ポインターがどれだけ遠くに移動しても、一秒ごとに描画される描点</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4637,8 +4637,8 @@ This setting is responsible to stop painting when there is zero pressure. This i
 1) the opaque value will be corrected such that a big-radius dabs is more transparent
 2) it will not change the actual radius seen by dabs_per_actual_radius</source>
         <comment>mypaintsetting</comment>
-        <translation>描点ごとに半径をランダムに変更します。 半径設定の by_random 入力を使用してこれを行うこともできます。 ここで実行すると、次の 2 つの違いがあります
-1) 不透明の値は、半径の大きな描点がより透明になるように修正されます
+        <translation>描点ごとに半径をランダムに変更します。 半径設定の by_random の入力を使用してこれを行うこともできます。 ここで実行すると次の 2 つの違いがあります
+1) 不透明の値は半径の大きな描点がより透明になるように修正されます
 2) dabs_per_actual_radius によって表示される実際の半径は変更されません</translation>
     </message>
     <message>
@@ -4662,10 +4662,10 @@ This setting is responsible to stop painting when there is zero pressure. This i
 +8.0 very fast speed increases &apos;fine speed&apos; a lot
 For very slow speed the opposite happens.</source>
         <comment>mypaintsetting</comment>
-        <translation>これにより、「詳細速度」入力の反応が極端な物理的速度に変化します。 「詳細速度」を半径にマッピングすると、違いが最もよく分かります。
--8.0 の非常に速い速度では、「詳細速度」はそれほど増加しません。
-+8.0 非常に速い速度は、「詳細速度」を大幅に増加させます
-非常に遅い速度では、逆のことが起こります。</translation>
+        <translation>これにより、「詳細速度」入力の反応が極端な物理的速度に変化します。 「詳細速度」を半径にマッピングすると違いが最もよく分かります。
+-8.0 の非常に速い速度では「詳細速度」はそれほど増加しません。
++8.0 非常に速い速度は「詳細速度」を大幅に増加させます
+非常に遅い速度では逆のことが起こります。</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4719,7 +4719,7 @@ For very slow speed the opposite happens.</source>
         <location line="+2"/>
         <source>Add randomness to the mouse pointer; this usually generates many small lines in random directions; maybe try this together with &apos;slow tracking&apos;</source>
         <comment>mypaintsetting</comment>
-        <translation>マウス ポインタにランダム性を追加します。 これにより通常、ランダムな方向に多数の小さな線が生成されます。 「遅い追跡」と組み合わせて試してみてください</translation>
+        <translation>マウス ポインタにランダム性を追加します。 これにより通常ランダムな方向に多数の小さな線が生成されます。 「遅い追跡」と組み合わせて試してみてください</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -4747,9 +4747,9 @@ For very slow speed the opposite happens.</source>
  0.5 counterclockwise hue shift by 180 degrees</source>
         <comment>mypaintsetting</comment>
         <translation>色合いを変更します。
--0.1 小さい時計回りの色相にシフト
+-0.1 小さい時計回りの色相に変化
  0.0 無効
- 0.5 反時計回りに 180 度の色相にシフト</translation>
+ 0.5 反時計回りに 180 度の色相に変化</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4782,8 +4782,8 @@ For very slow speed the opposite happens.</source>
  0.0 disable
  1.0 brigher</source>
         <comment>mypaintsetting</comment>
-        <translation>HSV カラー モデルを使用して、カラー値 (明るさ、強度) を変更します。 HSV の変更は HSL の前に適用されます。
--1.0 暗くなります
+        <translation>HSV カラー モデルを使用してカラー値 (明るさ、強度) を変更します。 HSV の変更は HSL の前に適用されます。
+-1.0 暗くなる
  0.0 無効
  1.0より明るい</translation>
     </message>
@@ -4818,8 +4818,8 @@ For very slow speed the opposite happens.</source>
 0.5 change the smudge color steadily towards the canvas color
 1.0 never change the smudge color</source>
         <comment>mypaintsetting</comment>
-        <translation>これは、混色の色が描画中の色になるまでの速度を制御します。
-0.0 は、混色の色を即座に更新します (頻繁に色チェックが行われるため、より多くの CPU サイクルが必要です)。
+        <translation>これは混色の色が描画中の色になるまでの速度を制御します。
+0.0 混色の色を即座に更新します (頻繁に色チェックが行われるため、より多くの CPUの処理が必要です)。
 0.5 混色の色をキャンバスの色に向かって徐々に変更します
 1.0 混色の色を変更しない</translation>
     </message>
@@ -4835,7 +4835,7 @@ For very slow speed the opposite happens.</source>
  0.0 ブラシ半径を使用します
 -0.7 ブラシ半径の半分 (高速ですが、常に直感的であるとは限りません)
 +0.7 ブラシ半径の 2 倍
-+1.6 ブラシ半径の 5 倍 (パフォーマンスが遅い)</translation>
++1.6 ブラシ半径の 5 倍 (遅くなります)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4853,7 +4853,7 @@ For very slow speed the opposite happens.</source>
         <location line="+2"/>
         <source>How much pressure is needed to start a stroke. This affects the stroke input only. MyPaint does not need a minimum pressure to start drawing.</source>
         <comment>mypaintsetting</comment>
-        <translation>描画を開始するために必要な筆圧。 これはストローク入力のみに影響します。 MyPaint では、描画を開始するために最小限の筆圧は必要ありません。</translation>
+        <translation>描画を開始するために必要な筆圧。 これはストローク入力のみに影響します。 MyPaint では描画を開始するための最小の筆圧は必要ありません。</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4867,8 +4867,8 @@ For very slow speed the opposite happens.</source>
 2.0 means twice as long as it takes to go from 0.0 to 1.0
 9.9 or higher stands for infinite</source>
         <comment>mypaintsetting</comment>
-        <translation>これは、ストローク入力が 1.0 に留まる時間を定義します。 その後、ストロークがまだ終了していなくても、0.0 にリセットされ、再び増加が始まります。
-2.0 は、0.0 から 1.0 に移行するのにかかる時間が 2 倍であることを意味します。
+        <translation>これは、ストローク入力が 1.0 に維持される時間を定義します。 その後ストロークがまだ終了していなくても、0.0 にリセットされ再び増加が始まります。
+2.0 は0.0 から 1.0 に移行するのにかかる時間が 2 倍であることを意味します。
 9.9 以上は無限を表します</translation>
     </message>
     <message>
@@ -4876,7 +4876,7 @@ For very slow speed the opposite happens.</source>
         <source>Set the custom input to this value. If it is slowed down, move it towards this value (see below). The idea is that you make this input depend on a mixture of pressure/speed/whatever, and then make other settings depend on this &apos;custom input&apos; instead of repeating this combination everywhere you need it.
 If you make it change &apos;by random&apos; you can generate a slow (smooth) random input.</source>
         <comment>mypaintsetting</comment>
-        <translation>カスタム入力をこの値に設定します。 速度が遅くなった場合は、この値に向かって動かします (下記を参照)。 このアイデアは、この入力を圧力/速度などの組み合わせに依存させ、必要な場所でこの組み合わせを繰り返すのではなく、他の設定をこの「カスタム入力」に依存させるということです。
+        <translation>カスタム入力をこの値に設定します。 速度が遅くなった場合は、この値に向かって動かします (下記を参照)。 このアイデアはこの入力を圧力/速度などの組み合わせに依存させ、必要な場所でこの組み合わせを繰り返すのではなく、他の設定をこの「カスタム入力」に依存させるということです。
 「ランダムに」変化させると、遅い（スムーズな）ランダム入力を生成できます。</translation>
     </message>
     <message>
@@ -4885,7 +4885,7 @@ If you make it change &apos;by random&apos; you can generate a slow (smooth) ran
 0.0 no slowdown (changes apply instantly)</source>
         <comment>mypaintsetting</comment>
         <translation>カスタム入力が実際に希望の値 (上記の値) に追従する速度。 これはブラシの猫点レベルで発生します (ブラシの猫点が時間に依存しない場合は、経過時間は無視されます)。
-0.0 速度低下なし (変更は即座に適用されます)</translation>
+0.0 速度低下しない (変更は即座に適用されます)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4939,7 +4939,7 @@ If you make it change &apos;by random&apos; you can generate a slow (smooth) ran
         <location line="+2"/>
         <source>This changes how hard you have to press. It multiplies tablet pressure by a constant factor.</source>
         <comment>mypaintsetting</comment>
-        <translation>これにより、どれくらいの強さで押さなければならないかが変わります。 タブレットの筆圧に一定の係数を掛けます。</translation>
+        <translation>これにより、どれくらいの強さで筆圧をかけなければいけないかが変わります。 タブレットの筆圧に一定の係数を掛けます。</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4979,7 +4979,7 @@ The longer the smudge length the more a color will spread and will also boost pe
         <comment>mypaintsetting</comment>
         <translation>「混色する長さ」値の対数乗数
 描点が多い高解像度/大きなブラシを修正するのに役立ちます
-混色する長さが長いほど、色の広がりが大きくなり、キャンバスのサンプリング頻度が減るため、パフォーマンスも大幅に向上します</translation>
+混色する長さが長いほど、色の広がりが大きくなり、キャンバスのサンプリング頻度が減るためパフォーマンスも大幅に向上します</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4999,9 +4999,9 @@ Especially useful with the &quot;Custom input&quot; setting to correlate buckets
 0.0 will have no effect.
 Negative values do the reverse</source>
         <comment>mypaintsetting</comment>
-        <translation>透明度のロックと同様に、透明度をどの程度拾い、混色するかを制御します。
+        <translation>透明度のロックと同様に、透明度をどの程度拾い混色するかを制御します。
 1.0 では透明度は移動しません。
-0.5 では、50% 以上の透明度のみが移動します。
+0.5 では50% 以上の透明度のみが移動します。
 0.0 は効果がありません。
 負の値はその逆を行います</translation>
     </message>
@@ -5021,13 +5021,13 @@ Negative values do the reverse</source>
         <location line="+2"/>
         <source>Follows the stroke direction to offset the dabs to one side.</source>
         <comment>mypaintsetting</comment>
-        <translation>ストロークの方向に従い、描点を片側にオフセットします。</translation>
+        <translation>ストロークの方向に従い描点を片側にオフセットします。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Follows the tilt direction to offset the dabs to one side. Requires Tilt.</source>
         <comment>mypaintsetting</comment>
-        <translation>傾きの方向に従い、描点を片側にオフセットします。「傾き」が必要です。</translation>
+        <translation>傾きの方向に従い描点を片側にオフセットします。「傾き」が必要です。</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5039,7 +5039,7 @@ Negative values do the reverse</source>
         <location line="+2"/>
         <source>Follows the stroke direction to offset the dabs, but to both sides of the stroke.</source>
         <comment>mypaintsetting</comment>
-        <translation>ストロークの方向に従い、ストロークの両側に描点をオフセットします。</translation>
+        <translation>ストロークの方向に従いストロークの両側に描点をオフセットします。</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5069,7 +5069,7 @@ Negative values do the reverse</source>
         <location line="+2"/>
         <source>Strength of posterization, reducing number of colors based on the &quot;Posterization levels&quot; setting, while retaining alpha.</source>
         <comment>mypaintsetting</comment>
-        <translation>ポスタライズの強度。透明度を維持しながら、「ポスタライズ レベル」設定に基づいて色の数を減らします。</translation>
+        <translation>ポスタライズの強度。透明度を維持しながら「ポスタライズ レベル」設定に基づいて色の数を減らします。</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5169,22 +5169,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+98"/>
         <source>A regular key combination on the canvas without further mouse or pen inputs. Example: holding Space to pan, without having to click as well.</source>
-        <translation>それ以外にマウスやペン入力を必要としない、キャンバス上の通常のキーの組み合わせ。 例: Space キーを押したままにすると、クリックする必要がなくなります。</translation>
+        <translation>それ以外にマウスやペン入力を必要としない、キャンバス上の通常のキーの組み合わせ。 例: Space キーを押したままにするとクリックする必要がなくなります。</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Pressing a mouse or pen button, optionally while also holding down keys. Putting the pen down is like a left click. Example: holding space and pressing left click to pan.</source>
-        <translation>必要に応じてキーを押しながら、マウスまたはペンのボタンを押します。 ペンを置くことは左クリックと同じです。 例: スペースを押しながら左クリックを押してキャンバスを移動します。</translation>
+        <translation>必要に応じてキーを押しながらマウスまたはペンのボタンを押します。 ペンを置くことは左クリックと同じです。 例: スペースを押しながら左クリックを押してキャンバスを移動します。</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Turning the mouse wheel or some input device that acts like one, optionally while also holding down keys. Example: scrolling to zoom the canvas.</source>
-        <translation>必要に応じてキーを押しながら、マウス ホイールまたはそのように機能する入力デバイスを回転します。 例: スクロールしてキャンバスを拡大します。</translation>
+        <translation>必要に応じてキーを押しながらマウス ホイールまたはそのように機能する入力デバイスを回転します。 例: スクロールしてキャンバスを拡大します。</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Keys to hold down to make rectangle, line or selection tools behave differently. Constrain means to e.g. keep the aspect ratio, center means to e.g. center shapes around the origin.</source>
-        <translation>長方形、線、または選択ツールの動作を変えるために押し続けるキー。制限とは、例えば、 縦横比を維持します。中心とは、たとえば 形状を原点の周りに中心に配置します。</translation>
+        <translation>長方形、線、または選択ツールの動作を変えるために押し続けるキー。制限は、例えば 縦横比を維持します。中心は、例えば原点を中心に図形を配置します。</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -5194,7 +5194,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+41"/>
         <source>&lt;b&gt;Conflict:&lt;/b&gt; the existing shortcut for &apos;%1&apos; will be overwritten if you proceed.</source>
-        <translation>&lt;b&gt;競合:&lt;/b&gt; 続行すると、「%1」の既存のショートカットが上書きされます。</translation>
+        <translation>&lt;b&gt;キーの競合:&lt;/b&gt; 続行すると「%1」の既存のショートカットが上書きされます。</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -5524,7 +5524,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+19"/>
         <source>Spider</source>
-        <translation>クモ</translation>
+        <translation>スパイダー</translation>
     </message>
 </context>
 <context>
@@ -5624,7 +5624,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>The session has been reset. Normally, everything on the canvas should look the same as it did before, but that&apos;s not guaranteed. Do you want to save the canvas as it was before the reset?</source>
-        <translation>セッションがリセットされました。 通常、キャンバス上のすべては以前と同じように見えるはずですが、それは保証されていません。 キャンバスをリセット前と同じ状態で保存しますか?</translation>
+        <translation>セッションがリセットされました。 通常キャンバス上のすべては以前と同じように見えるはずですが、それは保証されていません。 キャンバスをリセット前と同じ状態で保存しますか?</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -6124,7 +6124,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Language changes apply after you restart Drawpile.</source>
-        <translation>言語の変更は、Drawpile を再起動した後に適用されます。</translation>
+        <translation>言語の変更は Drawpile を再起動した後に適用されます。</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -6179,7 +6179,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Snapshots can be restored from the &lt;i&gt;Session ▸ Reset…&lt;/i&gt; menu.</source>
-        <translation>スナップショットは、&lt;i&gt;セッション ▸ リセット…&lt;/i&gt; メニューから復元できます。</translation>
+        <translation>スナップショットは &lt;i&gt;セッション ▸ リセット…&lt;/i&gt; メニューから復元できます。</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -6990,7 +6990,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/host.cpp" line="+31"/>
         <source>The title is shown in the application title bar and in the session selection dialog</source>
-        <translation>タイトルは、アプリケーションのタイトルバーとセッション選択ダイアログで表示されます</translation>
+        <translation>タイトルはアプリケーションのタイトルバーとセッション選択ダイアログで表示されます</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7015,7 +7015,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>ID Alias:</source>
-        <translation>IDのエイリアス:</translation>
+        <translation>IDエイリアス:</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7025,7 +7025,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Marks the session as having age-restricted content.</source>
-        <translation>セッションに年齢制限のあるコンテンツがあることをマークします。</translation>
+        <translation>セッションに年齢制限のある内容があることをマークします。</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -7182,12 +7182,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>If you have an invite link to a drawing session, you can &lt;a href=&quot;#join&quot;&gt;Join&lt;/a&gt; it directly. Alternatively, you can &lt;a href=&quot;#browse&quot;&gt;Browse&lt;/a&gt; public sessions or just create a &lt;a href=&quot;#create&quot;&gt;New Canvas&lt;/a&gt; to draw on your own.</source>
-        <translation>描画セッションへの招待リンクがある場合は、直接&lt;a href=&quot;#join&quot;&gt;参加&lt;/a&gt;できます。 あるいは、公開セッションを&lt;a href=&quot;#browse&quot;&gt;参照&lt;/a&gt;したり、&lt;a href=&quot;#create&quot;&gt;新しいキャンバス&lt;/a&gt;を作成して独自に描画したりすることもできます。</translation>
+        <translation>ドローイングセッションへの招待リンクがある場合は、直接&lt;a href=&quot;#join&quot;&gt;参加&lt;/a&gt;できます。 あるいは公開セッションを&lt;a href=&quot;#browse&quot;&gt;参照&lt;/a&gt;したり、&lt;a href=&quot;#create&quot;&gt;新しいキャンバス&lt;/a&gt;を作成して独自に描画したりすることもできます。</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>If you have trouble, take a look at the help pages linked on the right. If they don&apos;t answer your question, you can join the Discord server and ask, there&apos;s usually folks around to help!</source>
-        <translation>問題が発生した場合は、右側にリンクされているヘルプページをご覧ください。 彼らがあなたの質問に答えてくれない場合は、Discord サーバーに参加して尋ねることができます。通常は助けてくれる人がいます！</translation>
+        <translation>問題が発生した場合は、右側にリンクされているヘルプページをご覧ください。それらがあなたの質問に答えてくれない場合は、Discord サーバーに参加して尋ねることができます。通常は助けてくれる人がいます！</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -7815,7 +7815,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Draws stabilized strokes to the end, rather than cutting them off.</source>
-        <translation>補正したストロークを途切れさせず最後まで描きます。</translation>
+        <translation>補正したストロークを途切れさせず最後まで描画します。</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8169,10 +8169,10 @@ Values above 0.5 may not be noticeable.</source>
         <translation>利用可能なクライアント コマンド:
 /help - このメッセージを表示します
 /clear - チャット ウィンドウをクリアします
-/! &lt;テキスト&gt; - アナウンスを行います (オペレーターのみ)
-/alert &lt;テキスト&gt; - 優先度の高いアラートを送信します (オペレーターのみ)
-/pin &lt;テキスト&gt; - チャット ボックスの上部にメッセージを固定します (オペレーターのみ)
-/unpin - 固定されたメッセージを削除します (オペレーターのみ)
+/! &lt;テキスト&gt; - アナウンスを行います (管理者のみ)
+/alert &lt;テキスト&gt; - 優先度の高いアラートを送信します (管理者のみ)
+/pin &lt;テキスト&gt; - チャット ボックスの上部にメッセージを固定します (管理者のみ)
+/unpin - 固定されたメッセージを削除します (管理者のみ)
 /me &lt;テキスト&gt; - アクションタイプのメッセージを送信します
 /roll &lt;ダイス設定&gt; - サイコロを振る、例: 6面ダイスの場合は1d6</translation>
     </message>
@@ -8228,7 +8228,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Copies this curve to the clipboard. You can paste it into another setting or into the chat to share it with other users.</source>
-        <translation>この曲線をクリップボードにコピーします。 別の設定またはチャットに貼り付けて、他のユーザーと共有できます。</translation>
+        <translation>この曲線をクリップボードにコピーします。 別の設定またはチャットに貼り付けて他のユーザーと共有できます。</translation>
     </message>
     <message>
         <location line="+4"/>
