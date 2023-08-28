@@ -2,6 +2,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Apply color wheel direction to color dialogs too. Thanks Blozzom for reporting.
  * Fix: Don't smoothe the canvas view when at 100% zoom with the canvas rotated at a right angle, since that just blurs it for no reason. Thanks SadColor for reporting.
  * Fix: Make flipbook shortcut work while the flipbook is in focus, causing it to refresh its view.
+ * Fix: Cap flipbook range properly, rather than letting you set a range beyond the last frame.
 
 2023-08-26 Version 2.2.0-beta.7
  * Fix: Make classic brushes not go brighter when smudging into transparency. Thanks to cada for reporting.

@@ -223,7 +223,10 @@ void Flipbook::resetCanvas(bool refresh)
 		m_ui->speedSpinner->setValue(100.0);
 	}
 
-	QSignalBlocker blocker{m_ui->loopStart};
+	QSignalBlocker loopStartBlocker{m_ui->loopStart};
+	QSignalBlocker loopEndBlocker{m_ui->loopEnd};
+	m_ui->loopStart->setMaximum(frameCount);
+	m_ui->loopEnd->setMaximum(frameCount);
 	if(m_state.loopStart > 0 && m_state.loopEnd > 0) {
 		m_ui->loopStart->setValue(m_state.loopStart);
 		m_ui->loopEnd->setValue(m_state.loopEnd);
@@ -231,6 +234,7 @@ void Flipbook::resetCanvas(bool refresh)
 		m_ui->loopStart->setValue(1);
 		m_ui->loopEnd->setValue(frameCount);
 	}
+	updateRange();
 
 	if(refresh) {
 		resetFrameCache();
