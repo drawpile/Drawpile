@@ -935,7 +935,7 @@
     <message>
         <location line="+1"/>
         <source>Banned by</source>
-        <translation>次のユーザーからBAN された</translation>
+        <translation>BAN実行ユーザー</translation>
     </message>
 </context>
 <context>
