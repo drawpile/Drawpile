@@ -31,9 +31,9 @@ Flipbook::Flipbook(State &state, QWidget *parent)
 
 	m_refreshAction = new QAction{this};
 	addAction(m_refreshAction);
-	connect(
-		m_refreshAction, &QAction::triggered, m_ui->refreshButton,
-		QOverload<>::of(&QAbstractButton::animateClick));
+	connect(m_refreshAction, &QAction::triggered, this, [this] {
+		m_ui->refreshButton->animateClick();
+	});
 
 	m_timer = new QTimer(this);
 
