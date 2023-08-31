@@ -425,6 +425,7 @@ void DP_player_free(DP_Player *player)
             break;
         case DP_PLAYER_TYPE_DEBUG_DUMP:
             DP_dump_reader_free(player->reader.dump);
+            break;
         default:
             break;
         }
