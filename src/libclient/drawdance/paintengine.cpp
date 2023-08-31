@@ -202,10 +202,20 @@ RecordStartResult PaintEngine::exportTemplate(
 	}
 
 	for(const drawdance::Message &msg : snapshot) {
-		DP_recorder_message_push_inc(r, msg.get());
+		if(!DP_recorder_message_push_inc(r, msg.get())) {
+			break;
+		}
 	}
-	DP_recorder_free_join(r);
-	return RECORD_START_SUCCESS;
+
+	char *error;
+	DP_recorder_free_join(r, &error);
+	if(error) {
+		DP_error_set("%s", error);
+		DP_free(error);
+		return RECORD_START_RECORDER_ERROR;
+	} else {
+		return RECORD_START_SUCCESS;
+	}
 }
 
 bool PaintEngine::stopRecorder()

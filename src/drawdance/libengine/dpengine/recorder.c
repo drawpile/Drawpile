@@ -54,6 +54,7 @@ struct DP_Recorder {
     DP_Mutex *mutex;
     DP_Semaphore *sem;
     DP_Thread *thread;
+    char *error;
 };
 
 struct DP_RecorderThreadArgs {
@@ -161,6 +162,7 @@ static bool write_message_dec(DP_Recorder *r, DP_Message *msg)
     }
     else {
         DP_atomic_set(&r->running, 0);
+        r->error = DP_strdup(DP_error());
         return false;
     }
 }
@@ -243,6 +245,7 @@ DP_Recorder *DP_recorder_new_inc(DP_RecorderType type, JSON_Value *header,
                        DP_ATOMIC_INIT(1),
                        NULL,
                        NULL,
+                       NULL,
                        NULL};
 
     switch (type) {
@@ -255,7 +258,7 @@ DP_Recorder *DP_recorder_new_inc(DP_RecorderType type, JSON_Value *header,
     default:
         DP_error_set("Unknown recorder type %d", (int)type);
         DP_output_free(output);
-        DP_recorder_free_join(r);
+        DP_recorder_free_join(r, NULL);
         return NULL;
     }
 
@@ -263,13 +266,13 @@ DP_Recorder *DP_recorder_new_inc(DP_RecorderType type, JSON_Value *header,
 
     r->mutex = DP_mutex_new();
     if (!r->mutex) {
-        DP_recorder_free_join(r);
+        DP_recorder_free_join(r, NULL);
         return NULL;
     }
 
     r->sem = DP_semaphore_new(0);
     if (!r->sem) {
-        DP_recorder_free_join(r);
+        DP_recorder_free_join(r, NULL);
         return NULL;
     }
 
@@ -278,7 +281,7 @@ DP_Recorder *DP_recorder_new_inc(DP_RecorderType type, JSON_Value *header,
         r, DP_canvas_state_incref_nullable(cs_or_null)};
     r->thread = DP_thread_new(run_recorder, args);
     if (!r->thread) {
-        DP_recorder_free_join(r);
+        DP_recorder_free_join(r, NULL);
         return NULL;
     }
 
@@ -286,7 +289,7 @@ DP_Recorder *DP_recorder_new_inc(DP_RecorderType type, JSON_Value *header,
     return r;
 }
 
-void DP_recorder_free_join(DP_Recorder *r)
+void DP_recorder_free_join(DP_Recorder *r, char **out_error)
 {
     if (r) {
         if (r->thread) {
@@ -307,7 +310,19 @@ void DP_recorder_free_join(DP_Recorder *r)
         default:
             break;
         }
+        char *error = r->error;
         DP_free(r);
+
+        if (out_error) {
+            *out_error = error;
+        }
+        else {
+            DP_warn("Error in recorder: %s", error);
+            DP_free(error);
+        }
+    }
+    else if (out_error) {
+        *out_error = NULL;
     }
 }
 

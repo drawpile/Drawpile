@@ -919,7 +919,7 @@ static bool start_recording(DP_PaintEngine *pe, DP_RecorderType type,
                 record_initial_message, r);
         if (!reset_image_ok) {
             DP_warn("Error build recorder reset image");
-            DP_recorder_free_join(r);
+            DP_recorder_free_join(r, NULL);
             r = NULL;
         }
     }
@@ -957,7 +957,7 @@ bool DP_paint_engine_recorder_stop(DP_PaintEngine *pe)
     if (pe->record.recorder) {
         // Need to take a lock due to cleanup handling, see explanation above.
         DP_MUTEX_MUST_LOCK(pe->queue_mutex);
-        DP_recorder_free_join(pe->record.recorder);
+        DP_recorder_free_join(pe->record.recorder, NULL);
         DP_free(pe->record.path);
         pe->record.path = NULL;
         pe->record.recorder = NULL;

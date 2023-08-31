@@ -1728,7 +1728,7 @@ DP_Recorder *DP_canvas_history_recorder_new(
         return params.r;
     }
     else {
-        DP_recorder_free_join(params.r);
+        DP_recorder_free_join(params.r, NULL);
         return NULL;
     }
 }

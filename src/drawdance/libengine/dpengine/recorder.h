@@ -49,7 +49,10 @@ DP_Recorder *DP_recorder_new_inc(DP_RecorderType type, JSON_Value *header,
                                  DP_RecorderGetTimeMsFn get_time_fn,
                                  void *get_time_user, DP_Output *output);
 
-void DP_recorder_free_join(DP_Recorder *r);
+// If there was an error, the error message will be placed in the provided
+// pointer, to be freed by the caller. If there was no error, it will be set to
+// NULL. Providing that out pointer is optional.
+void DP_recorder_free_join(DP_Recorder *r, char **out_error);
 
 DP_RecorderType DP_recorder_type(DP_Recorder *r);
 
