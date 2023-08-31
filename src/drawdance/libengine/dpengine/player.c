@@ -91,6 +91,7 @@ struct DP_Player {
     JSON_Value *text_reader_header_value;
     long long position;
     bool compatible;
+    bool acl_override;
     bool input_error;
     bool end;
     DP_PlayerIndex index;
@@ -261,6 +262,7 @@ static DP_Player *make_player(DP_PlayerType type, char *recording_path,
                           compatible,
                           false,
                           false,
+                          false,
                           {DP_BUFFERED_INPUT_NULL, 0, NULL, 0}};
     return player;
 }
@@ -341,6 +343,7 @@ static DP_Player *new_debug_dump_player(DP_Input *input)
                           NULL,
                           0,
                           true,
+                          false,
                           false,
                           false,
                           {DP_BUFFERED_INPUT_NULL, 0, NULL, 0}};
@@ -450,6 +453,12 @@ bool DP_player_compatible(DP_Player *player)
 {
     DP_ASSERT(player);
     return player->compatible;
+}
+
+void DP_player_acl_override_set(DP_Player *player, bool override)
+{
+    DP_ASSERT(player);
+    player->acl_override = override;
 }
 
 bool DP_player_index_loaded(DP_Player *player)
@@ -597,8 +606,9 @@ static DP_PlayerResult step_valid_message(DP_Player *player,
         DP_Message *msg;
         DP_PlayerResult result = step_message(player, &msg);
         if (result == DP_PLAYER_SUCCESS) {
-            bool filtered = DP_acl_state_handle(player->acls, msg, false)
-                          & DP_ACL_STATE_FILTERED_BIT;
+            bool filtered =
+                DP_acl_state_handle(player->acls, msg, player->acl_override)
+                & DP_ACL_STATE_FILTERED_BIT;
             if (filtered) {
                 DP_debug(
                     "ACL filtered recorded %s message from user %u",

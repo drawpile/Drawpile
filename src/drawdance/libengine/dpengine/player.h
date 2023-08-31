@@ -72,6 +72,8 @@ JSON_Value *DP_player_header(DP_Player *player);
 
 bool DP_player_compatible(DP_Player *player);
 
+void DP_player_acl_override_set(DP_Player *player, bool override);
+
 bool DP_player_index_loaded(DP_Player *player);
 
 size_t DP_player_tell(DP_Player *player);
