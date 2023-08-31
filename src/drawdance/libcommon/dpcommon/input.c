@@ -265,6 +265,11 @@ DP_Input *DP_file_input_new(FILE *fp, bool close)
     return DP_input_new(file_input_init, &state, sizeof(state));
 }
 
+DP_Input *DP_file_input_new_from_stdin(bool close)
+{
+    return DP_file_input_new(stdin, close);
+}
+
 DP_Input *DP_file_input_new_from_path(const char *path)
 {
     DP_ASSERT(path);

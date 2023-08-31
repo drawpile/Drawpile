@@ -268,6 +268,11 @@ DP_Output *DP_file_output_new(FILE *fp, bool close)
     return DP_output_new(file_output_init, &state, sizeof(state));
 }
 
+DP_Output *DP_file_output_new_from_stdout(bool close)
+{
+    return DP_file_output_new(stdout, close);
+}
+
 DP_Output *DP_file_output_new_from_path(const char *path)
 {
     DP_ASSERT(path);

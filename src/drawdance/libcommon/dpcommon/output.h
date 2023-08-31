@@ -65,6 +65,8 @@ bool DP_output_seek(DP_Output *output, size_t offset);
 
 DP_Output *DP_file_output_new(FILE *fp, bool close);
 
+DP_Output *DP_file_output_new_from_stdout(bool close);
+
 DP_Output *DP_file_output_new_from_path(const char *path);
 
 // With Qt file IO turned on, this writes to a temporary file and then renames

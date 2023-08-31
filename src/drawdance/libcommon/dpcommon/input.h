@@ -56,6 +56,8 @@ bool DP_input_seek(DP_Input *input, size_t offset);
 
 DP_Input *DP_file_input_new(FILE *fp, bool close);
 
+DP_Input *DP_file_input_new_from_stdin(bool close);
+
 DP_Input *DP_file_input_new_from_path(const char *path);
 
 
