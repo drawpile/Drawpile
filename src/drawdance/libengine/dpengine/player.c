@@ -435,6 +435,12 @@ void DP_player_free(DP_Player *player)
     }
 }
 
+DP_PlayerType DP_player_type(DP_Player *player)
+{
+    DP_ASSERT(player);
+    return player->type;
+}
+
 JSON_Value *DP_player_header(DP_Player *player)
 {
     DP_ASSERT(player);
