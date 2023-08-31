@@ -195,7 +195,10 @@ if(SERVER)
 endif()
 
 if(TOOLS)
-	message(STATUS "Someone deleted the tools")
+	message(STATUS "Adding tools")
+	# Currently only the command-line tools use Rust, so this is included here.
+	include(Cargo)
+	add_subdirectory(src/tools)
 endif()
 
 # This must run once all target creation is finished since it walks the list of

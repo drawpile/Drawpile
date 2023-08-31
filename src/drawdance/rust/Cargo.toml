@@ -1,0 +1,10 @@
+[package]
+name = "drawdance"
+version = "2.2.0-pre"
+edition = "2021"
+
+[lib]
+path = "lib.rs"
+
+[build-dependencies]
+bindgen = "0.66.1"

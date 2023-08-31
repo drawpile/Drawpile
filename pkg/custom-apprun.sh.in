@@ -13,8 +13,8 @@ case "${1-}" in
 	--client)
 		shift
 	;;
-	--tools)
-		exec=usr/bin/drawpile-cli
+	--dprectool)
+		exec=usr/bin/dprectool
 		shift
 	;;
 	--help)
@@ -26,9 +26,10 @@ case "${1-}" in
 			echo "--server"
 			echo "    Runs the Drawpile dedicated server."
 		fi
-		if [ -x "$this_dir"/usr/bin/drawpile-cli ]; then
-			echo "--tools"
-			echo "    Runs the Drawpile command-line tools."
+		if [ -x "$this_dir"/usr/bin/dprectool ]; then
+			echo "--dprectool"
+			echo "    Runs dprectool, a command-line tool for"
+			echo "    interconverting Drawpile recordings."
 		fi
 		exit 0
 	;;

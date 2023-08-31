@@ -1,5 +1,9 @@
 [workspace]
-members = []
+resolver = "2"
+members = [
+    "src/drawdance/rust",
+    "src/tools/dprectool",
+]
 
 [workspace.package]
 version = "2.2.0-pre"
