@@ -165,8 +165,10 @@ DP_LoadResult Document::loadFile(const QString &path)
 
 static bool isSessionTemplate(DP_Player *player)
 {
-	JSON_Object *header = DP_player_header(player);
-	return header && DP_str_equal(json_object_get_string(header, "type"), "template");
+	JSON_Value *header = DP_player_header(player);
+	return header && DP_str_equal(
+		json_object_get_string(json_value_get_object(header), "type"),
+		"template");
 }
 
 DP_LoadResult Document::loadRecording(

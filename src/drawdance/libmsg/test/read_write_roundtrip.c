@@ -898,7 +898,8 @@ static void read_binary_messages(TEST_PARAMS)
     DP_TextWriter *tw =
         open_text_writer(TEST_ARGS, "test/tmp/roundtrip_from_dprec.dptxt");
 
-    write_header(TEST_ARGS, bw, tw, DP_binary_reader_header(br));
+    write_header(TEST_ARGS, bw, tw,
+                 json_value_get_object(DP_binary_reader_header(br)));
 
     while (true) {
         DP_Message *msg;

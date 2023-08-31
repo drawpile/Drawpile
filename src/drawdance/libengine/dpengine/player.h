@@ -68,7 +68,7 @@ DP_Player *DP_player_new(DP_PlayerType type, const char *path_or_null,
 
 void DP_player_free(DP_Player *player);
 
-JSON_Object *DP_player_header(DP_Player *player);
+JSON_Value *DP_player_header(DP_Player *player);
 
 bool DP_player_compatible(DP_Player *player);
 

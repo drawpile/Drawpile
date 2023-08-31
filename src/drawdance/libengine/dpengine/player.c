@@ -273,7 +273,8 @@ static DP_Player *new_binary_player(char *recording_path, char *index_path,
         return NULL;
     }
 
-    JSON_Object *header = DP_binary_reader_header(binary_reader);
+    JSON_Object *header =
+        json_value_get_object(DP_binary_reader_header(binary_reader));
     char *version = DP_strdup(json_object_get_string(header, "version"));
     return make_player(DP_PLAYER_TYPE_BINARY, recording_path, index_path,
                        (DP_PlayerReader){.binary = binary_reader}, version,
@@ -430,14 +431,14 @@ void DP_player_free(DP_Player *player)
     }
 }
 
-JSON_Object *DP_player_header(DP_Player *player)
+JSON_Value *DP_player_header(DP_Player *player)
 {
     DP_ASSERT(player);
     switch (player->type) {
     case DP_PLAYER_TYPE_BINARY:
         return DP_binary_reader_header(player->reader.binary);
     case DP_PLAYER_TYPE_TEXT:
-        return json_value_get_object(player->text_reader_header_value);
+        return player->text_reader_header_value;
     case DP_PLAYER_TYPE_DEBUG_DUMP:
         return NULL;
     default:

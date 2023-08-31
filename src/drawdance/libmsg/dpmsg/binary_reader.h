@@ -25,7 +25,7 @@
 
 typedef struct DP_Input DP_Input;
 typedef struct DP_Message DP_Message;
-typedef struct json_object_t JSON_Object;
+typedef struct json_value_t JSON_Value;
 
 #define DP_DPREC_MAGIC        "DPREC"
 #define DP_DPREC_MAGIC_LENGTH 6
@@ -44,7 +44,7 @@ DP_BinaryReader *DP_binary_reader_new(DP_Input *input);
 void DP_binary_reader_free(DP_BinaryReader *reader);
 
 
-JSON_Object *DP_binary_reader_header(DP_BinaryReader *reader);
+JSON_Value *DP_binary_reader_header(DP_BinaryReader *reader);
 
 size_t DP_binary_reader_body_offset(DP_BinaryReader *reader);
 

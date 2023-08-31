@@ -184,10 +184,10 @@ void DP_binary_reader_free(DP_BinaryReader *reader)
 }
 
 
-JSON_Object *DP_binary_reader_header(DP_BinaryReader *reader)
+JSON_Value *DP_binary_reader_header(DP_BinaryReader *reader)
 {
     DP_ASSERT(reader);
-    return json_value_get_object(reader->header);
+    return reader->header;
 }
 
 size_t DP_binary_reader_body_offset(DP_BinaryReader *reader)
