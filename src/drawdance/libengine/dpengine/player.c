@@ -49,6 +49,7 @@
 #include <dpmsg/acl.h>
 #include <dpmsg/binary_reader.h>
 #include <dpmsg/blend_mode.h>
+#include <dpmsg/rust.h>
 #include <dpmsg/text_reader.h>
 #include <ctype.h>
 #include <parson.h>
@@ -90,7 +91,7 @@ struct DP_Player {
     DP_AclState *acls;
     JSON_Value *text_reader_header_value;
     long long position;
-    bool compatible;
+    DP_ProtocolVersion *protover;
     bool acl_override;
     bool input_error;
     bool end;
@@ -183,73 +184,11 @@ static char *make_index_path(const char *path)
     return index_path;
 }
 
-static bool check_namespace(char *version, size_t len, size_t *in_out_index)
-{
-    for (size_t i = *in_out_index; i < len; ++i) {
-        if (version[i] == ':') {
-            *in_out_index = i + 1;
-            return i == strlen(DP_PROTOCOL_VERSION_NAMESPACE)
-                && memcmp(version, DP_PROTOCOL_VERSION_NAMESPACE, i) == 0;
-        }
-    }
-    return false;
-}
-
-static bool check_server(char *version, size_t len, size_t *in_out_index)
-{
-    size_t start = *in_out_index;
-    for (size_t i = start; i < len; ++i) {
-        if (version[i] == '.') {
-            *in_out_index = i + 1;
-            char *end;
-            unsigned long value = strtoul(version + start, &end, 10);
-            return end == version + i && value == DP_PROTOCOL_VERSION_SERVER;
-        }
-    }
-    return false;
-}
-
-static bool check_major(char *version, size_t len, size_t *in_out_index)
-{
-    size_t start = *in_out_index;
-    for (size_t i = start; i < len; ++i) {
-        if (version[i] == '.') {
-            *in_out_index = i + 1;
-            char *end;
-            unsigned long value = strtoul(version + start, &end, 10);
-            return end == version + i && value > 21;
-        }
-    }
-    return false;
-}
-
-static bool check_minor(char *version, size_t len, size_t index)
-{
-    char *end;
-    strtoul(version + index, &end, 10);
-    return end == version + len;
-}
-
-static bool is_version_compatible(char *version)
-{
-    if (version) {
-        size_t len = strlen(version);
-        size_t index = 0;
-        return check_namespace(version, len, &index)
-            && check_server(version, len, &index)
-            && check_major(version, len, &index)
-            && check_minor(version, len, index);
-    }
-    else {
-        return false;
-    }
-}
-
 static DP_Player *make_player(DP_PlayerType type, char *recording_path,
                               char *index_path, DP_PlayerReader reader,
                               char *version, JSON_Value *header_value)
 {
-    bool compatible = is_version_compatible(version);
+    DP_ProtocolVersion *protover = DP_protocol_version_parse(version);
     DP_free(version);
     DP_Player *player = DP_malloc(sizeof(*player));
     *player = (DP_Player){recording_path,
@@ -259,7 +198,7 @@ static DP_Player *make_player(DP_PlayerType type, char *recording_path,
                           DP_acl_state_new_playback(),
                           header_value,
                           0,
-                          compatible,
+                          protover,
                           false,
                           false,
                           false,
@@ -342,7 +281,7 @@ static DP_Player *new_debug_dump_player(DP_Input *input)
                           NULL,
                           NULL,
                           0,
-                          true,
+                          NULL,
                           false,
                           false,
                           false,
@@ -399,13 +338,6 @@ DP_Player *DP_player_new(DP_PlayerType type, const char *path_or_null,
         return NULL;
     }
 
-    if (!DP_player_compatible(player)) {
-        DP_player_free(player);
-        DP_error_set("Incompatible recording");
-        assign_load_result(out_result, DP_LOAD_RESULT_RECORDING_INCOMPATIBLE);
-        return NULL;
-    }
-
     assign_load_result(out_result, DP_LOAD_RESULT_SUCCESS);
     return player;
 }
@@ -429,6 +361,7 @@ void DP_player_free(DP_Player *player)
         default:
             break;
         }
+        DP_protocol_version_free(player->protover);
         DP_free(player->index_path);
         DP_free(player->recording_path);
         DP_free(player);
@@ -456,10 +389,42 @@ JSON_Value *DP_player_header(DP_Player *player)
     }
 }
 
+DP_PlayerCompatibility DP_player_compatibility(DP_Player *player)
+{
+    DP_ASSERT(player);
+    DP_ASSERT(player->type != DP_PLAYER_TYPE_DEBUG_DUMP);
+    DP_ProtocolVersion *protover = player->protover;
+    DP_ProtocolCompatibility compat =
+        protover ? DP_protocol_version_client_compatibility(player->protover)
+                 : DP_PROTOCOL_COMPATIBILITY_INCOMPATIBLE;
+    switch (compat) {
+    case DP_PROTOCOL_COMPATIBILITY_COMPATIBLE:
+        return DP_PLAYER_COMPATIBLE;
+    case DP_PROTOCOL_COMPATIBILITY_MINOR_INCOMPATIBILITY:
+        return DP_PLAYER_MINOR_INCOMPATIBILITY;
+    case DP_PROTOCOL_COMPATIBILITY_BACKWARD_COMPATIBLE:
+        // The binary format is still the same as in Drawpile 2.1, there's just
+        // new messages added and some stuff renders differently. But the text
+        // format changed, so we can't play those back.
+        return player->type == DP_PLAYER_TYPE_BINARY
+                 ? DP_PLAYER_BACKWARD_COMPATIBLE
+                 : DP_PLAYER_INCOMPATIBLE;
+    default:
+        return DP_PLAYER_INCOMPATIBLE;
+    }
+}
+
 bool DP_player_compatible(DP_Player *player)
 {
     DP_ASSERT(player);
-    return player->compatible;
+    switch (DP_player_compatibility(player)) {
+    case DP_PLAYER_COMPATIBLE:
+    case DP_PLAYER_MINOR_INCOMPATIBILITY:
+    case DP_PLAYER_BACKWARD_COMPATIBLE:
+        return true;
+    default:
+        return false;
+    }
 }
 
 void DP_player_acl_override_set(DP_Player *player, bool override)
@@ -1783,6 +1748,11 @@ bool DP_player_index_build(DP_Player *player, DP_DrawContext *dc,
     DP_Player *index_player =
         DP_player_new(player->type, recording_path, input, NULL);
     if (!index_player) {
+        return false;
+    }
+    else if (!DP_player_compatible(player)) {
+        DP_error_set("Incompatible recording");
+        DP_player_free(player);
         return false;
     }
 

@@ -3,10 +3,16 @@ use drawdance::{
     dp_cmake_config_version,
     engine::{Player, PlayerError, Recorder, RecorderError},
     msg::Message,
-    DP_MessageType, DP_PlayerType, DP_RecorderType, DP_PLAYER_TYPE_BINARY, DP_PLAYER_TYPE_GUESS,
-    DP_PLAYER_TYPE_TEXT, DP_PROTOCOL_VERSION, DP_RECORDER_TYPE_BINARY, DP_RECORDER_TYPE_TEXT,
+    DP_MessageType, DP_PlayerType, DP_RecorderType, DP_PLAYER_BACKWARD_COMPATIBLE,
+    DP_PLAYER_COMPATIBLE, DP_PLAYER_MINOR_INCOMPATIBILITY, DP_PLAYER_TYPE_BINARY,
+    DP_PLAYER_TYPE_GUESS, DP_PLAYER_TYPE_TEXT, DP_PROTOCOL_VERSION, DP_RECORDER_TYPE_BINARY,
+    DP_RECORDER_TYPE_TEXT,
 };
-use std::{collections::HashMap, ffi::CStr, str::FromStr};
+use std::{
+    collections::HashMap,
+    ffi::{c_int, CStr},
+    str::FromStr,
+};
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default)]
 pub enum InputFormat {
@@ -243,7 +249,12 @@ pub extern "C" fn dprectool_main() -> c_int {
 fn print_version(input_format: InputFormat, input_path: String) -> Result<(), ConversionError> {
     let player = make_player(input_format, input_path)?;
 
-    let compat_flag = if player.is_compatible() { "C" } else { "I" };
+    let compat_flag = match player.compatibility() {
+        DP_PLAYER_COMPATIBLE => "C",
+        DP_PLAYER_MINOR_INCOMPATIBILITY => "M",
+        DP_PLAYER_BACKWARD_COMPATIBLE => "B",
+        _ => "I",
+    };
     let format_version = player.format_version().unwrap_or("(unknown)".to_owned());
     let writer_version = player
         .writer_version()
@@ -272,7 +283,7 @@ fn print_message_frequency(
     input_path: String,
     acl_override: bool,
 ) -> Result<(), ConversionError> {
-    let mut player = make_player(input_format, input_path)?;
+    let mut player = make_player(input_format, input_path).and_then(Player::check_compatible)?;
     player.set_acl_override(acl_override);
 
     let mut total = MessageCount::default();
@@ -319,7 +330,7 @@ fn convert_recording(
     output_path_is_default: bool,
     acl_override: bool,
 ) -> Result<(), ConversionError> {
-    let mut player = make_player(input_format, input_path)?;
+    let mut player = make_player(input_format, input_path).and_then(Player::check_compatible)?;
 
     let rtype = output_format.to_recorder_type(&output_path, output_path_is_default, &player);
     let mut recorder = if output_path == "-" {

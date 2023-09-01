@@ -67,6 +67,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "dpmsg_rust"
+version = "2.2.0-pre"
+dependencies = [
+ "drawdance",
+ "once_cell",
+ "regex",
+]
+
+[[package]]
 name = "dprectool"
 version = "2.2.0-pre"
 dependencies = [

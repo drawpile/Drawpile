@@ -50,6 +50,13 @@ typedef enum DP_PlayerResult {
     DP_PLAYER_ERROR_OPERATION,
 } DP_PlayerResult;
 
+typedef enum DP_PlayerCompatibility {
+    DP_PLAYER_COMPATIBLE,
+    DP_PLAYER_MINOR_INCOMPATIBILITY,
+    DP_PLAYER_BACKWARD_COMPATIBLE,
+    DP_PLAYER_INCOMPATIBLE,
+} DP_PlayerCompatibility;
+
 typedef struct DP_PlayerIndexEntry {
     long long message_index;
     size_t message_offset;
@@ -71,6 +78,8 @@ void DP_player_free(DP_Player *player);
 DP_PlayerType DP_player_type(DP_Player *player);
 
 JSON_Value *DP_player_header(DP_Player *player);
+
+DP_PlayerCompatibility DP_player_compatibility(DP_Player *player);
 
 bool DP_player_compatible(DP_Player *player);
 

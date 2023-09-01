@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 use crate::{
     dp_error, json_object_get_string, json_value_get_object, msg::Message, DP_Input, DP_LoadResult,
-    DP_Message, DP_Player, DP_PlayerResult, DP_PlayerType, DP_file_input_new_from_path,
-    DP_file_input_new_from_stdin, DP_player_acl_override_set, DP_player_compatible, DP_player_free,
-    DP_player_header, DP_player_new, DP_player_step, DP_player_type, JSON_Value,
+    DP_Message, DP_Player, DP_PlayerCompatibility, DP_PlayerResult, DP_PlayerType,
+    DP_file_input_new_from_path, DP_file_input_new_from_stdin, DP_player_acl_override_set,
+    DP_player_compatibility, DP_player_compatible, DP_player_free, DP_player_header, DP_player_new,
+    DP_player_step, DP_player_type, JSON_Value, DP_LOAD_RESULT_RECORDING_INCOMPATIBLE,
     DP_LOAD_RESULT_SUCCESS, DP_PLAYER_RECORDING_END, DP_PLAYER_SUCCESS,
 };
 use std::{
@@ -123,8 +124,23 @@ impl Player {
         )
     }
 
+    pub fn compatibility(&self) -> DP_PlayerCompatibility {
+        unsafe { DP_player_compatibility(self.player) }
+    }
+
     pub fn is_compatible(&self) -> bool {
         unsafe { DP_player_compatible(self.player) }
+    }
+
+    pub fn check_compatible(self) -> Result<Player, PlayerError> {
+        if self.is_compatible() {
+            Ok(self)
+        } else {
+            Err(PlayerError::LoadError(
+                DP_LOAD_RESULT_RECORDING_INCOMPATIBLE,
+                "Incompatible recording".to_owned(),
+            ))
+        }
     }
 
     pub fn set_acl_override(&mut self, acl_override: bool) {

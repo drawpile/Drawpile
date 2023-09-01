@@ -1257,6 +1257,13 @@ DP_Player *DP_load_recording(const char *path, DP_LoadResult *out_result)
         if (input) {
             player =
                 DP_player_new(DP_PLAYER_TYPE_GUESS, path, input, out_result);
+            if (player && !DP_player_compatible(player)) {
+                DP_error_set("Incompatible recording");
+                DP_player_free(player);
+                player = NULL;
+                assign_load_result(out_result,
+                                   DP_LOAD_RESULT_RECORDING_INCOMPATIBLE);
+            }
         }
         else {
             player = NULL;

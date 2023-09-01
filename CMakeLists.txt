@@ -103,6 +103,7 @@ include(QtMacDeploymentTarget)
 set_mac_deployment_target(${QT_VERSION})
 
 include(AutoSourceGroup)
+include(Cargo)
 include(DrawpileInstallDirs)
 
 # This *must* be included before `find_package(Qt5 COMPONENTS Core)` because
@@ -196,8 +197,6 @@ endif()
 
 if(TOOLS)
 	message(STATUS "Adding tools")
-	# Currently only the command-line tools use Rust, so this is included here.
-	include(Cargo)
 	add_subdirectory(src/tools)
 endif()
 

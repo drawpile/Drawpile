@@ -21,12 +21,14 @@ dp_target_sources(dpmsg
     dpmsg/messages.h
     dpmsg/message_queue.h
     dpmsg/msg_internal.h
+    dpmsg/rust.h
     dpmsg/text_reader.h
     dpmsg/text_writer.h
 )
 
+add_cargo_library(dpmsg_rust dpmsg_rust)
 target_include_directories(dpmsg PUBLIC ${CMAKE_CURRENT_LIST_DIR})
-target_link_libraries(dpmsg PUBLIC dpcommon uthash parson)
+target_link_libraries(dpmsg PUBLIC dpmsg_rust dpcommon uthash parson)
 
 if(TESTS)
     add_dptest_targets(msg dptest
