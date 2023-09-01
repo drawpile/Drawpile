@@ -4,9 +4,9 @@ use drawdance::{
     engine::{Player, PlayerError, Recorder, RecorderError},
     msg::Message,
     DP_MessageType, DP_PlayerType, DP_RecorderType, DP_PLAYER_TYPE_BINARY, DP_PLAYER_TYPE_GUESS,
-    DP_PLAYER_TYPE_TEXT, DP_RECORDER_TYPE_BINARY, DP_RECORDER_TYPE_TEXT,
+    DP_PLAYER_TYPE_TEXT, DP_PROTOCOL_VERSION, DP_RECORDER_TYPE_BINARY, DP_RECORDER_TYPE_TEXT,
 };
-use std::{collections::HashMap, str::FromStr};
+use std::{collections::HashMap, ffi::CStr, str::FromStr};
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Default)]
 pub enum InputFormat {
@@ -172,9 +172,14 @@ pub extern "C" fn dprectool_main() -> std::os::raw::c_int {
     };
 
     if flags.version {
-        let protover = std::str::from_utf8(drawdance::DP_PROTOCOL_VERSION).unwrap();
         println!("dprectool {}", dp_cmake_config_version());
-        println!("Protocol version: {}", protover);
+        println!(
+            "Protocol version: {}",
+            CStr::from_bytes_until_nul(DP_PROTOCOL_VERSION)
+                .unwrap()
+                .to_str()
+                .unwrap()
+        );
         return 0;
     }
 
