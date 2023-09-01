@@ -1,6 +1,7 @@
 [package]
 name = "drawdance"
 version = "2.2.0-pre"
+rust-version = "1.66.1"
 edition = "2021"
 
 [lib]
