@@ -3109,7 +3109,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+3"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation>未成年者には適していません (NSFM)</translation>
+        <translation>未成年者には適さない (NSFM)</translation>
     </message>
     <message>
         <location line="+159"/>
