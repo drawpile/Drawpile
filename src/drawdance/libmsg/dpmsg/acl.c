@@ -265,6 +265,16 @@ DP_AclState *DP_acl_state_new(void)
     return acls;
 }
 
+DP_AclState *DP_acl_state_new_playback(void)
+{
+    DP_AclState *acls = DP_acl_state_new();
+    for (int i = 0; i < DP_FEATURE_COUNT; ++i) {
+        acls->feature.tiers[i] = DP_ACCESS_TIER_GUEST;
+    }
+    memset(acls->users.operators, 0xff, sizeof(acls->users.operators));
+    return acls;
+}
+
 static void clear_layers(DP_AclState *acls)
 {
     DP_LayerAclEntry *entry, *tmp;

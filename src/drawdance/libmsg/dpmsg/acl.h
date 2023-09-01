@@ -136,6 +136,11 @@ DP_AccessTier DP_user_acls_tier(const DP_UserAcls *users, uint8_t user_id);
 
 DP_AclState *DP_acl_state_new(void);
 
+// Drawpile 2.1 recordings don't start out setting up permissions properly, so
+// we need a special ACL state for them. It starts with all features on access
+// tier "guest" and every user marked as an operator.
+DP_AclState *DP_acl_state_new_playback(void);
+
 void DP_acl_state_free(DP_AclState *acls);
 
 void DP_acl_state_reset(DP_AclState *acls, uint8_t local_user_id);
