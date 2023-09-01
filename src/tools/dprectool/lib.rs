@@ -175,7 +175,7 @@ pub extern "C" fn dprectool_main() -> std::os::raw::c_int {
         println!("dprectool {}", dp_cmake_config_version());
         println!(
             "Protocol version: {}",
-            CStr::from_bytes_until_nul(DP_PROTOCOL_VERSION)
+            CStr::from_bytes_with_nul(DP_PROTOCOL_VERSION)
                 .unwrap()
                 .to_str()
                 .unwrap()
