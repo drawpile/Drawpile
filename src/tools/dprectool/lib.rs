@@ -147,7 +147,7 @@ impl From<RecorderError> for ConversionError {
 }
 
 #[no_mangle]
-pub extern "C" fn dprectool_main() -> std::os::raw::c_int {
+pub extern "C" fn dprectool_main() -> c_int {
     let flags = xflags::parse_or_exit! {
         /// Displays version information and exits.
         optional -v,--version
