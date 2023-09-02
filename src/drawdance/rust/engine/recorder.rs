@@ -5,7 +5,7 @@ use crate::{
     DP_recorder_message_push_noinc, DP_recorder_new_inc, JSON_Value,
 };
 use std::{
-    ffi::{c_char, c_void, CStr, CString, NulError},
+    ffi::{c_char, CStr, CString, NulError},
     ptr,
 };
 
@@ -98,7 +98,7 @@ impl Recorder {
                 .to_str()
                 .unwrap()
                 .to_owned();
-            unsafe { DP_free(error as *mut c_void) }
+            unsafe { DP_free(error.cast()) }
             Err(RecorderError::DpError(message))
         }
     }
