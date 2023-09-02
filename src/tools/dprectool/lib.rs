@@ -154,6 +154,8 @@ impl From<RecorderError> for ConversionError {
 
 #[no_mangle]
 pub extern "C" fn dprectool_main() -> c_int {
+    drawdance::init();
+
     let flags = xflags::parse_or_exit! {
         /// Displays version information and exits.
         optional -v,--version
