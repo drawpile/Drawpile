@@ -211,6 +211,8 @@ void DP_paint_engine_tick(
 void DP_paint_engine_change_bounds(DP_PaintEngine *pe, DP_Rect tile_bounds,
                                    bool render_outside_tile_bounds);
 
+void DP_paint_engine_render_everything(DP_PaintEngine *pe);
+
 void DP_paint_engine_preview_cut(DP_PaintEngine *pe, int layer_id, int x, int y,
                                  int width, int height,
                                  const DP_Pixel8 *mask_or_null);

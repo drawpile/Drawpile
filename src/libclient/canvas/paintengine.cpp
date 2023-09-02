@@ -600,8 +600,7 @@ void PaintEngine::withPixmap(std::function<void(const QPixmap &)> fn) const
 
 QImage PaintEngine::renderPixmap()
 {
-	DP_Rect tileBounds = {0, 0, UINT16_MAX, UINT16_MAX};
-	DP_paint_engine_change_bounds(m_paintEngine.get(), tileBounds, false);
+	DP_paint_engine_render_everything(m_paintEngine.get());
 	DP_SEMAPHORE_MUST_WAIT(m_viewSem);
 	DP_mutex_lock(m_cacheMutex);
 	QImage img = m_cache.toImage();

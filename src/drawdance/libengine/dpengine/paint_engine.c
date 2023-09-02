@@ -2153,7 +2153,7 @@ emit_changes(DP_PaintEngine *pe, DP_CanvasState *prev, DP_CanvasState *cs,
     DP_canvas_state_diff(cs, prev, diff);
     DP_renderer_apply(pe->renderer, cs, pe->local_state, diff,
                       pe->local_view.layers_can_decrease_opacity, tile_bounds,
-                      render_outside_tile_bounds, false);
+                      render_outside_tile_bounds, DP_RENDERER_CONTINUOUS);
 
     if (!catching_up) {
         if (DP_canvas_diff_layer_props_changed_reset(diff) || catchup_done) {
@@ -2326,7 +2326,16 @@ void DP_paint_engine_change_bounds(DP_PaintEngine *pe, DP_Rect tile_bounds,
 {
     DP_renderer_apply(pe->renderer, pe->view_cs, pe->local_state, pe->diff,
                       pe->local_view.layers_can_decrease_opacity, tile_bounds,
-                      render_outside_tile_bounds, true);
+                      render_outside_tile_bounds,
+                      DP_RENDERER_VIEW_BOUNDS_CHANGED);
+}
+
+void DP_paint_engine_render_everything(DP_PaintEngine *pe)
+{
+    DP_renderer_apply(pe->renderer, pe->view_cs, pe->local_state, pe->diff,
+                      pe->local_view.layers_can_decrease_opacity,
+                      DP_rect_make(0, 0, UINT16_MAX, UINT16_MAX), false,
+                      DP_RENDERER_EVERYTHING);
 }
 
 

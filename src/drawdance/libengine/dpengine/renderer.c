@@ -622,7 +622,7 @@ void DP_renderer_apply(DP_Renderer *renderer, DP_CanvasState *cs,
                        DP_LocalState *ls, DP_CanvasDiff *diff,
                        bool layers_can_decrease_opacity,
                        DP_Rect view_tile_bounds, bool render_outside_view,
-                       bool view_tile_bounds_changed)
+                       DP_RendererMode mode)
 {
     DP_ASSERT(renderer);
     DP_ASSERT(cs);
@@ -687,7 +687,7 @@ void DP_renderer_apply(DP_Renderer *renderer, DP_CanvasState *cs,
         pushed += params.pushed;
     }
 
-    if (view_tile_bounds_changed) {
+    if (mode != DP_RENDERER_CONTINUOUS) {
         reprioritize_tiles(renderer, diff, view_tile_bounds);
         // Block the main thread if there's new high-priority tiles to render.
         // This avoids tiles flickering in when the user moves the view
@@ -695,7 +695,8 @@ void DP_renderer_apply(DP_Renderer *renderer, DP_CanvasState *cs,
         // the user is currently manipulating the view, they're not doing
         // anything else important, so a bit of chug feels better than tiles
         // stumbling into view, which may be miscronstrued as them "glitching".
-        if (tile_queue_high->used == tile_queue_high_used_before) {
+        if (mode != DP_RENDERER_EVERYTHING
+            && tile_queue_high->used == tile_queue_high_used_before) {
             renderer->fn.unlock(renderer->fn.user);
         }
         else {
