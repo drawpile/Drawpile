@@ -31,16 +31,18 @@
 #include <string.h>   // IWYU pragma: export
 
 
-#if defined(__EMSCRIPTEN__)
-#    define DP_PLATFORM "emscripten"
-#elif defined(_WIN32)
-#    define DP_PLATFORM "windows"
-#elif defined(__APPLE__)
-#    define DP_PLATFORM "darwin"
-#elif defined(__linux__)
-#    define DP_PLATFORM "linux"
-#else
-#    error "unknown platform"
+#ifndef RUST_BINDGEN
+#    if defined(__EMSCRIPTEN__)
+#        define DP_PLATFORM "emscripten"
+#    elif defined(_WIN32)
+#        define DP_PLATFORM "windows"
+#    elif defined(__APPLE__)
+#        define DP_PLATFORM "darwin"
+#    elif defined(__linux__)
+#        define DP_PLATFORM "linux"
+#    else
+#        error "unknown platform"
+#    endif
 #endif
 
 #ifdef NDEBUG
@@ -50,7 +52,7 @@
 #    define DP_UNREACHABLE() DP_panic("unreachable")
 #endif
 
-#if defined(_M_X64) || defined(__x86_64__)
+#if !defined(RUST_BINDGEN) && (defined(_M_X64) || defined(__x86_64__))
 #    define DP_CPU_X64
 #    define DP_SIMD_ALIGNMENT 32
 #    define DP_ALIGNAS_SIMD   alignas(DP_SIMD_ALIGNMENT)
@@ -95,7 +97,7 @@
 #    define DP_NOINLINE                             // nothing
 #endif
 
-#ifdef DP_CPU_X64
+#if !defined(RUST_BINDGEN) && defined(DP_CPU_X64)
 #    if defined(__GNUC__)
 #        define DP_ASSUME_SIMD_ALIGNED(PTR) \
             __builtin_assume_aligned((PTR), DP_SIMD_ALIGNMENT)

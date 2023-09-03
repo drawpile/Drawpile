@@ -5,7 +5,7 @@
 
 use std::ffi::{c_char, CStr};
 
-include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
+include!("bindings.rs");
 
 extern "C" {
     pub fn DP_cpu_support_init();

@@ -22,7 +22,9 @@
 #ifndef DPENGINE_PIXELS_H
 #define DPENGINE_PIXELS_H
 #include <dpcommon/common.h>
-#include <dpcommon/endianness.h>
+#ifndef RUST_BINDGEN
+#    include <dpcommon/endianness.h>
+#endif
 
 
 #define DP_BIT15 (1 << 15)
@@ -33,29 +35,33 @@
 // Premultiplied 8 bit pixel
 typedef union DP_Pixel8 {
     uint32_t color;
+#ifndef RUST_BINDGEN
     struct {
-#if defined(DP_BYTE_ORDER_LITTLE_ENDIAN)
+#    if defined(DP_BYTE_ORDER_LITTLE_ENDIAN)
         uint8_t b, g, r, a;
-#elif defined(DP_BYTE_ORDER_BIG_ENDIAN)
+#    elif defined(DP_BYTE_ORDER_BIG_ENDIAN)
         uint8_t a, r, g, b;
-#else
-#    error "Unknown byte order"
-#endif
+#    else
+#        error "Unknown byte order"
+#    endif
     } DP_ANONYMOUS(bytes);
+#endif
 } DP_Pixel8;
 
 // Unpremultiplied 8 bit pixel
 typedef union DP_UPixel8 {
     uint32_t color;
+#ifndef RUST_BINDGEN
     struct {
-#if defined(DP_BYTE_ORDER_LITTLE_ENDIAN)
+#    if defined(DP_BYTE_ORDER_LITTLE_ENDIAN)
         uint8_t b, g, r, a;
-#elif defined(DP_BYTE_ORDER_BIG_ENDIAN)
+#    elif defined(DP_BYTE_ORDER_BIG_ENDIAN)
         uint8_t a, r, g, b;
-#else
-#    error "Unknown byte order"
-#endif
+#    else
+#        error "Unknown byte order"
+#    endif
     } DP_ANONYMOUS(bytes);
+#endif
 } DP_UPixel8;
 
 // Premultiplied 15 bit pixel
