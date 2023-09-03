@@ -229,6 +229,11 @@ jobs:
           key: gradle-${{ runner.os }}+${{ matrix.cross_os }}-${{ matrix.qt }}
         if: matrix.cross_os == 'Android'
 
+      - name: Install Android Rust target
+        run: >
+          rustup target add aarch64-linux-android
+        if: matrix.cross_os == 'Android'
+
       - name: Generate project
         run: >
           cmake -S . -B build --log-level=VERBOSE
