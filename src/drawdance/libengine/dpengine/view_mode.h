@@ -126,7 +126,7 @@ bool DP_view_mode_context_excludes_everything(const DP_ViewModeContext *vmc);
 DP_ViewModeContext DP_view_mode_context_root_at(
     const DP_ViewModeContextRoot *vmcr, DP_CanvasState *cs, int index,
     DP_LayerListEntry **out_lle, DP_LayerProps **out_lp,
-    const DP_OnionSkin **out_os);
+    const DP_OnionSkin **out_os, uint16_t *out_parent_opacity);
 
 DP_ViewModeResult DP_view_mode_context_apply(const DP_ViewModeContext *vmc,
                                              DP_LayerProps *lp);

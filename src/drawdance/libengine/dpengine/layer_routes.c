@@ -457,6 +457,28 @@ void DP_layer_routes_entry_children(DP_LayerRoutesEntry *lre,
     get_children(lre->index_count, lre->indexes, cs, out_ll, out_lpl);
 }
 
+uint16_t DP_layer_routes_entry_parent_opacity(DP_LayerRoutesEntry *lre,
+                                              DP_CanvasState *cs)
+{
+    DP_ASSERT(lre);
+    DP_ASSERT(cs);
+
+    int *indexes = lre->indexes;
+    int group_indexes_count = lre->index_count - 1;
+    DP_LayerPropsList *lpl = DP_canvas_state_layer_props_noinc(cs);
+    uint16_t parent_opacity = DP_BIT15;
+
+    for (int i = 0; i < group_indexes_count; ++i) {
+        int group_index = indexes[i];
+        DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, group_index);
+        lpl = DP_layer_props_children_noinc(lp);
+        parent_opacity =
+            DP_fix15_mul(parent_opacity, DP_layer_props_opacity(lp));
+    }
+
+    return parent_opacity;
+}
+
 
 DP_TransientLayerContent *
 DP_layer_routes_entry_indexes_transient_content(int index_count, int *indexes,

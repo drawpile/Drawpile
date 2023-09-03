@@ -1365,12 +1365,13 @@ static void flattening_tile_to_image(DP_TransientTile *tt, DP_Image *img,
 
 static DP_TransientTile *
 flatten_onion_skin(int tile_index, DP_TransientTile *tt, DP_LayerListEntry *lle,
-                   DP_LayerProps *lp, bool include_sublayers,
-                   DP_ViewModeContext *vmc, const DP_OnionSkin *os)
+                   DP_LayerProps *lp, uint16_t parent_opacity,
+                   bool include_sublayers, DP_ViewModeContext *vmc,
+                   const DP_OnionSkin *os)
 {
     DP_TransientTile *skin_tt = DP_layer_list_entry_flatten_tile_to(
-        lle, lp, tile_index, DP_transient_tile_new_blank(0), os->opacity,
-        include_sublayers, vmc);
+        lle, lp, tile_index, DP_transient_tile_new_blank(0),
+        DP_fix15_mul(parent_opacity, os->opacity), include_sublayers, vmc);
 
     DP_UPixel15 tint = os->tint;
     if (tint.a != 0) {
@@ -1402,16 +1403,18 @@ DP_TransientTile *DP_canvas_state_flatten_tile_to(DP_CanvasState *cs,
         DP_LayerListEntry *lle;
         DP_LayerProps *lp;
         const DP_OnionSkin *os;
-        DP_ViewModeContext vmc =
-            DP_view_mode_context_root_at(&vmcr, cs, i, &lle, &lp, &os);
+        uint16_t parent_opacity;
+        DP_ViewModeContext vmc = DP_view_mode_context_root_at(
+            &vmcr, cs, i, &lle, &lp, &os, &parent_opacity);
         if (!DP_view_mode_context_excludes_everything(&vmc)) {
             if (os) {
-                tt = flatten_onion_skin(tile_index, tt, lle, lp,
+                tt = flatten_onion_skin(tile_index, tt, lle, lp, parent_opacity,
                                         include_sublayers, &vmc, os);
             }
             else {
                 tt = DP_layer_list_entry_flatten_tile_to(
-                    lle, lp, tile_index, tt, DP_BIT15, include_sublayers, &vmc);
+                    lle, lp, tile_index, tt, parent_opacity, include_sublayers,
+                    &vmc);
             }
         }
     }

@@ -401,7 +401,7 @@ bool DP_view_mode_context_excludes_everything(const DP_ViewModeContext *vmc)
 DP_ViewModeContext DP_view_mode_context_root_at(
     const DP_ViewModeContextRoot *vmcr, DP_CanvasState *cs, int index,
     DP_LayerListEntry **out_lle, DP_LayerProps **out_lp,
-    const DP_OnionSkin **out_os)
+    const DP_OnionSkin **out_os, uint16_t *out_parent_opacity)
 {
     DP_ASSERT(vmcr);
     DP_ASSERT(cs);
@@ -425,6 +425,7 @@ DP_ViewModeContext DP_view_mode_context_root_at(
                 *out_lle = DP_layer_routes_entry_layer(lre, cs);
                 *out_lp = DP_layer_routes_entry_props(lre, cs);
                 *out_os = vmt->onion_skin;
+                *out_parent_opacity = DP_layer_routes_entry_parent_opacity(lre, cs);
                 return make_manual_frame_context(index, vmb);
             }
             else {
@@ -434,12 +435,14 @@ DP_ViewModeContext DP_view_mode_context_root_at(
         *out_lle = NULL;
         *out_lp = NULL;
         *out_os = NULL;
+        *out_parent_opacity = DP_BIT15;
         return make_nothing_context();
     }
     else {
         *out_lle = DP_layer_list_at_noinc(ll, index);
         *out_lp = DP_layer_props_list_at_noinc(lpl, index);
         *out_os = NULL;
+        *out_parent_opacity = DP_BIT15;
         return (DP_ViewModeContext){internal_type, {.layer_id = vmf->layer_id}};
     }
 }

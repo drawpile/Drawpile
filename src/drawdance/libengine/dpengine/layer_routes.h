@@ -105,6 +105,9 @@ void DP_layer_routes_entry_children(DP_LayerRoutesEntry *lre,
                                     DP_CanvasState *cs, DP_LayerList **out_ll,
                                     DP_LayerPropsList **out_lpl);
 
+uint16_t DP_layer_routes_entry_parent_opacity(DP_LayerRoutesEntry *lre,
+                                              DP_CanvasState *cs);
+
 DP_TransientLayerContent *
 DP_layer_routes_entry_indexes_transient_content(int index_count, int *indexes,
                                                 DP_TransientCanvasState *tcs);
