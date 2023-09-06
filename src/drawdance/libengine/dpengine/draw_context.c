@@ -84,7 +84,7 @@ void DP_draw_context_free(DP_DrawContext *dc)
 DP_DrawContextStatistics DP_draw_context_statistics(DP_DrawContext *dc)
 {
     DP_ASSERT(dc);
-    return (DP_DrawContextStatistics){sizeof(dc), dc->pool_size};
+    return (DP_DrawContextStatistics){sizeof(*dc), dc->pool_size};
 }
 
 
