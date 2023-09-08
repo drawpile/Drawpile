@@ -3,12 +3,12 @@
 #ifndef EDITORVIEW_H
 #define EDITORVIEW_H
 
+#include "desktop/scene/toggleitem.h"
 #include "desktop/utils/qtguicompat.h"
 #include "libclient/canvas/canvasshortcuts.h"
 #include "libclient/canvas/point.h"
 #include "libclient/tools/tool.h"
 #include "libclient/utils/kis_cubic_curve.h"
-
 #include <QGraphicsView>
 #include <functional>
 
@@ -153,6 +153,8 @@ signals:
 	void rightClicked(const QPoint &p);
 
 	void reconnectRequested();
+
+	void toggleActionActivated(drawingboard::ToggleItem::Action action);
 
 public slots:
 	//! Set the size of the brush preview outline
@@ -385,6 +387,7 @@ private:
 
 	bool m_scrollBarsAdjusting;
 	bool m_blockNotices;
+	bool m_hoveringOverHud;
 };
 
 }

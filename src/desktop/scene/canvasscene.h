@@ -3,6 +3,7 @@
 #ifndef CANVAS_SCENE_H
 #define CANVAS_SCENE_H
 
+#include "desktop/scene/toggleitem.h"
 #include <QGraphicsScene>
 #include <QHash>
 
@@ -57,6 +58,11 @@ public:
 	void showLockNotice(const QString &text);
 	void hideLockNotice();
 
+	ToggleItem::Action
+	checkHover(const QPointF &scenePos, bool *outWasHovering = nullptr);
+
+	void removeHover();
+
 	//! Are annotation borders shown?
 	bool showAnnotationBorders() const { return m_showAnnotationBorders; }
 
@@ -87,6 +93,8 @@ public slots:
 
 	//! Show/hide laser pointer trails
 	void showLaserTrails(bool show);
+
+	void showToggleItems(bool show);
 
 	//! Select the currently active/highlighted annotation
 	void setActiveAnnotation(int id);
@@ -146,6 +154,7 @@ private:
 
 	NoticeItem *m_transformNotice;
 	NoticeItem *m_lockNotice;
+	QVector<ToggleItem *> m_toggleItems;
 
 	bool m_showAnnotationBorders;
 	bool m_showAnnotations;

@@ -28,6 +28,7 @@ public:
 	void setThemeStyle(const QString &themeStyle);
 	void setThemePalette(desktop::settings::ThemePalette themePalette);
 	void initTheme();
+	void initInterface();
 
 	void openUrl(QUrl url);
 
@@ -44,6 +45,11 @@ public:
 	const utils::Recents &recents() const { return *m_recents; }
 	utils::Recents &recents() { return *m_recents; }
 
+	bool smallScreenMode() const { return m_smallScreenMode; }
+
+	// Returns a pair of (pixel size, physical size) of the primary screen.
+	static QPair<QSize, QSizeF> screenResolution();
+
 signals:
 	void eraserNear(bool near);
 	void setDockTitleBarsHidden(bool hidden);
@@ -54,6 +60,7 @@ protected:
 
 private:
 	desktop::settings::Settings m_settings;
+	bool m_smallScreenMode;
 	utils::StateDatabase *m_state = nullptr;
 	utils::Recents *m_recents = nullptr;
 	QMap<notification::Event, QSoundEffect*> m_sounds;
@@ -61,6 +68,8 @@ private:
 	QPalette m_originalSystemPalette;
 
 	void updateThemeIcons();
+
+	desktop::settings::InterfaceMode guessInterfaceMode();
 
 	QPalette loadPalette(const QString &file);
 };

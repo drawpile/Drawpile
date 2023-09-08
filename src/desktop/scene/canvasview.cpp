@@ -71,6 +71,7 @@ CanvasView::CanvasView(QWidget *parent)
 	, m_brushOutlineWidth(1.0)
 	, m_scrollBarsAdjusting{false}
 	, m_blockNotices{false}
+	, m_hoveringOverHud{false}
 {
 	viewport()->setAcceptDrops(true);
 	viewport()->setAttribute(Qt::WA_AcceptTouchEvents);
@@ -501,6 +502,11 @@ void CanvasView::resetCursor()
 		return;
 	}
 
+	if(m_hoveringOverHud) {
+		viewport()->setCursor(Qt::PointingHandCursor);
+		return;
+	}
+
 	switch(m_penmode) {
 	case PenMode::Normal:
 		break;
@@ -557,7 +563,8 @@ void CanvasView::setPixelGrid(bool enable)
  */
 void CanvasView::setOutlineSize(int newSize)
 {
-	if(m_showoutline && (m_outlineSize > 0 || newSize > 0)) {
+	if(m_showoutline && (m_outlineSize > 0 || newSize > 0) &&
+	   !m_hoveringOverHud) {
 		updateScene({getOutlineBounds(
 			m_prevoutlinepoint, qMax(m_outlineSize, newSize))});
 	}
@@ -583,8 +590,8 @@ void CanvasView::drawForeground(QPainter *painter, const QRectF &rect)
 		outlineVisibleInMode = m_dragAction == CanvasShortcuts::TOOL_ADJUST;
 	}
 
-	bool shouldRenderOutline =
-		m_showoutline && m_outlineSize > 0 && outlineVisibleInMode;
+	bool shouldRenderOutline = m_showoutline && m_outlineSize > 0 &&
+							   outlineVisibleInMode && !m_hoveringOverHud;
 	m_prevoutline = shouldRenderOutline;
 	if(shouldRenderOutline) {
 		qreal size = m_outlineSize * m_zoom;
@@ -642,7 +649,10 @@ void CanvasView::leaveEvent(QEvent *event)
 	QGraphicsView::leaveEvent(event);
 	m_showoutline = false;
 	m_prevoutline = false;
+	m_hoveringOverHud = false;
+	m_scene->removeHover();
 	updateOutline();
+	resetCursor();
 }
 
 void CanvasView::focusInEvent(QFocusEvent *event)
@@ -788,6 +798,22 @@ void CanvasView::penPressEvent(
 		return;
 	}
 
+	bool wasHovering;
+	drawingboard::ToggleItem::Action action =
+		m_scene->checkHover(mapToScene(pos.toPoint()), &wasHovering);
+	m_hoveringOverHud = action != drawingboard::ToggleItem::Action::None;
+	if(m_hoveringOverHud != wasHovering) {
+		updateOutline();
+		resetCursor();
+	}
+	if(m_hoveringOverHud) {
+		emit toggleActionActivated(action);
+		m_hoveringOverHud = false;
+		m_scene->removeHover();
+		resetCursor();
+		return;
+	}
+
 	CanvasShortcuts::Match match =
 		m_canvasShortcuts.matchMouseButton(modifiers, m_keysDown, button);
 	// If the tool wants to receive right clicks (e.g. to undo the last point in
@@ -898,7 +924,6 @@ void CanvasView::penMoveEvent(
 		moveDrag(pos.toPoint());
 
 	} else {
-		updateOutline(point);
 		if(!m_prevpoint.intSame(point)) {
 			if(m_pendown) {
 				m_pointervelocity = point.distance(m_prevpoint);
@@ -911,11 +936,22 @@ void CanvasView::penMoveEvent(
 
 			} else {
 				emit penHover(point);
-				if(m_pointertracking && m_scene->hasImage())
+				if(m_pointertracking && m_scene->hasImage()) {
 					emit pointerMoved(point);
+				}
+
+				bool wasHovering;
+				m_hoveringOverHud =
+					m_scene->checkHover(
+						mapToScene(pos.toPoint()), &wasHovering) !=
+					drawingboard::ToggleItem::Action::None;
+				if(m_hoveringOverHud != wasHovering) {
+					resetCursor();
+				}
 			}
 			m_prevpoint = point;
 		}
+		updateOutline(point);
 	}
 }
 
@@ -978,35 +1014,40 @@ void CanvasView::penReleaseEvent(
 		 m_pendown == MOUSEDOWN)) {
 		onPenUp();
 		m_pendown = NOTDOWN;
-		switch(mouseMatch.action()) {
-		case CanvasShortcuts::TOOL_ADJUST:
-			if(!m_allowToolAdjust) {
+
+		m_hoveringOverHud = m_scene->checkHover(mapToScene(pos.toPoint())) !=
+							drawingboard::ToggleItem::Action::None;
+		if(!m_hoveringOverHud) {
+			switch(mouseMatch.action()) {
+			case CanvasShortcuts::TOOL_ADJUST:
+				if(!m_allowToolAdjust) {
+					m_penmode = PenMode::Normal;
+					break;
+				}
+				Q_FALLTHROUGH();
+			case CanvasShortcuts::CANVAS_PAN:
+			case CanvasShortcuts::CANVAS_ROTATE:
+			case CanvasShortcuts::CANVAS_ROTATE_DISCRETE:
+			case CanvasShortcuts::CANVAS_ZOOM:
+				m_penmode = PenMode::Normal;
+				m_dragmode = ViewDragMode::Prepared;
+				m_dragAction = mouseMatch.action();
+				m_dragButton = mouseMatch.shortcut->button;
+				m_dragInverted = mouseMatch.inverted();
+				m_dragSwapAxes = mouseMatch.swapAxes();
+				break;
+			case CanvasShortcuts::COLOR_PICK:
+				if(m_allowColorPick) {
+					m_penmode = PenMode::Colorpick;
+				}
+				break;
+			case CanvasShortcuts::LAYER_PICK:
+				m_penmode = PenMode::Layerpick;
+				break;
+			default:
 				m_penmode = PenMode::Normal;
 				break;
 			}
-			Q_FALLTHROUGH();
-		case CanvasShortcuts::CANVAS_PAN:
-		case CanvasShortcuts::CANVAS_ROTATE:
-		case CanvasShortcuts::CANVAS_ROTATE_DISCRETE:
-		case CanvasShortcuts::CANVAS_ZOOM:
-			m_penmode = PenMode::Normal;
-			m_dragmode = ViewDragMode::Prepared;
-			m_dragAction = mouseMatch.action();
-			m_dragButton = mouseMatch.shortcut->button;
-			m_dragInverted = mouseMatch.inverted();
-			m_dragSwapAxes = mouseMatch.swapAxes();
-			break;
-		case CanvasShortcuts::COLOR_PICK:
-			if(m_allowColorPick) {
-				m_penmode = PenMode::Colorpick;
-			}
-			break;
-		case CanvasShortcuts::LAYER_PICK:
-			m_penmode = PenMode::Layerpick;
-			break;
-		default:
-			m_penmode = PenMode::Normal;
-			break;
 		}
 	}
 
@@ -1124,7 +1165,7 @@ void CanvasView::wheelEvent(QWheelEvent *event)
 void CanvasView::keyPressEvent(QKeyEvent *event)
 {
 	QGraphicsView::keyPressEvent(event);
-	if(event->isAutoRepeat()) {
+	if(event->isAutoRepeat() || m_hoveringOverHud) {
 		return;
 	}
 
@@ -1337,11 +1378,21 @@ void CanvasView::touchEvent(QTouchEvent *event)
 	const auto points = compat::touchPoints(*event);
 	int pointsCount = points.size();
 	switch(event->type()) {
-	case QEvent::TouchBegin:
+	case QEvent::TouchBegin: {
+		QPointF pos = compat::touchPos(points.first());
+		drawingboard::ToggleItem::Action action =
+			m_scene->checkHover(mapToScene(pos.toPoint()));
+		if(action != drawingboard::ToggleItem::Action::None) {
+			emit toggleActionActivated(action);
+			m_hoveringOverHud = false;
+			m_scene->removeHover();
+			resetCursor();
+			return;
+		}
+
 		m_touchDrawBuffer.clear();
 		m_touchRotating = false;
 		if(m_enableTouchDraw && pointsCount == 1) {
-			QPointF pos = compat::touchPos(points.first());
 			DP_EVENT_LOG(
 				"touch_draw_begin x=%f y=%f pendown=%d touching=%d points=%d",
 				pos.x(), pos.y(), m_pendown, m_touching, pointsCount);
@@ -1365,6 +1416,7 @@ void CanvasView::touchEvent(QTouchEvent *event)
 			m_touchMode = TouchMode::Moving;
 		}
 		break;
+	}
 
 	case QEvent::TouchUpdate:
 		if(m_enableTouchDraw &&
@@ -1640,17 +1692,25 @@ bool CanvasView::viewportEvent(QEvent *event)
 
 void CanvasView::updateOutline(QPointF point)
 {
-	if(m_showoutline && !m_lock && !m_busy &&
+	QList<QRectF> updates;
+	updates.reserve(2);
+	if(m_prevoutline) {
+		updates.append(getOutlineBounds(m_prevoutlinepoint, m_outlineSize));
+	}
+
+	if(m_showoutline && !m_lock && !m_busy && !m_hoveringOverHud &&
 	   (!m_prevoutline ||
 		!canvas::Point::roughlySame(point, m_prevoutlinepoint))) {
 		if(!m_subpixeloutline) {
 			point.setX(qFloor(point.x()) + 0.5);
 			point.setY(qFloor(point.y()) + 0.5);
 		}
-		updateScene(
-			{getOutlineBounds(m_prevoutlinepoint, m_outlineSize),
-			 getOutlineBounds(point, m_outlineSize)});
+		updates.append(getOutlineBounds(point, m_outlineSize));
 		m_prevoutlinepoint = point;
+	}
+
+	if(!updates.isEmpty()) {
+		updateScene(updates);
 	}
 }
 

@@ -205,6 +205,8 @@ target_sources(drawpile PRIVATE
 	scene/noticeitem.h
 	scene/selectionitem.cpp
 	scene/selectionitem.h
+	scene/toggleitem.cpp
+	scene/toggleitem.h
 	scene/usermarkeritem.cpp
 	scene/usermarkeritem.h
 	toolwidgets/annotationsettings.cpp

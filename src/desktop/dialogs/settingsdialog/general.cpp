@@ -4,6 +4,7 @@
 #include "desktop/dialogs/settingsdialog/general.h"
 #include "desktop/settings.h"
 #include "desktop/utils/sanerformlayout.h"
+#include "desktop/widgets/kis_slider_spin_box.h"
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -104,6 +105,23 @@ void General::initMiscUi(desktop::settings::Settings &settings, utils::SanerForm
 	auto *confirmDelete = new QCheckBox(tr("Ask before deleting layers"));
 	settings.bindConfirmLayerDelete(confirmDelete);
 	form->addRow(nullptr, confirmDelete);
+
+	auto *interfaceMode = form->addRadioGroup(nullptr, true, {
+		{ tr("Standard Mode"), int(desktop::settings::InterfaceMode::Standard) },
+		{ tr("Small Screen Mode"), int(desktop::settings::InterfaceMode::SmallScreen) }
+	});
+	settings.bindInterfaceMode(interfaceMode);
+
+	auto *fontSize = new KisSliderSpinBox;
+	fontSize->setRange(6, 16);
+	fontSize->setPrefix(tr("Font size: "));
+	fontSize->setSuffix(tr("pt"));
+	settings.bindFontSize(fontSize);
+	form->addRow(nullptr, fontSize);
+
+	form->addRow(nullptr, utils::note(
+		tr("Changes to mode and font size apply after you restart Drawpile."),
+		QSizePolicy::Label));
 
 	form->addSeparator();
 

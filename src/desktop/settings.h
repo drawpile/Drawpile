@@ -29,6 +29,14 @@ namespace desktop {
 Q_NAMESPACE
 namespace settings {
 Q_NAMESPACE
+
+enum class InterfaceMode : int {
+	Unknown,
+	Standard,
+	SmallScreen,
+};
+Q_ENUM_NS(InterfaceMode)
+
 enum class ThemePalette : int {
 	System,
 	Light,

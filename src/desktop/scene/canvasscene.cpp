@@ -131,6 +131,9 @@ void CanvasScene::setSceneBounds(const QRectF &sceneBounds)
 	if(m_lockNotice) {
 		setLockNoticePosition();
 	}
+	for(ToggleItem *ti : m_toggleItems) {
+		ti->updatePosition(sceneBounds);
+	}
 }
 
 void CanvasScene::showTransformNotice(const QString &text)
@@ -160,6 +163,29 @@ void CanvasScene::hideLockNotice()
 {
 	delete m_lockNotice;
 	m_lockNotice = nullptr;
+}
+
+ToggleItem::Action
+CanvasScene::checkHover(const QPointF &scenePos, bool *outWasHovering)
+{
+	ToggleItem::Action action = ToggleItem::Action::None;
+	bool wasHovering = false;
+	for(ToggleItem *ti : m_toggleItems) {
+		if(ti->checkHover(scenePos, wasHovering)) {
+			action = ti->action();
+		}
+	}
+	if(outWasHovering) {
+		*outWasHovering = wasHovering;
+	}
+	return action;
+}
+
+void CanvasScene::removeHover()
+{
+	for(ToggleItem *ti : m_toggleItems) {
+		ti->removeHover();
+	}
 }
 
 void CanvasScene::showCanvas()
@@ -447,6 +473,35 @@ void CanvasScene::showLaserTrails(bool show)
 				delete item;
 			}
 		}
+	}
+}
+
+void CanvasScene::showToggleItems(bool show)
+{
+	if(show && m_toggleItems.isEmpty()) {
+		m_toggleItems = {
+			new ToggleItem{
+				ToggleItem::Action::Left, Qt::AlignLeft, 1.0 / 3.0,
+				QIcon::fromTheme("draw-brush")},
+			new ToggleItem{
+				ToggleItem::Action::Top, Qt::AlignLeft, 2.0 / 3.0,
+				QIcon::fromTheme("keyframe")},
+			new ToggleItem{
+				ToggleItem::Action::Right, Qt::AlignRight, 1.0 / 3.0,
+				QIcon::fromTheme("layer-visible-on")},
+			new ToggleItem{
+				ToggleItem::Action::Bottom, Qt::AlignRight, 2.0 / 3.0,
+				QIcon::fromTheme("edit-comment")},
+		};
+		for(ToggleItem *ti : m_toggleItems) {
+			addItem(ti);
+			ti->updatePosition(m_sceneBounds);
+		}
+	} else if(!show && !m_toggleItems.isEmpty()) {
+		for(ToggleItem *ti : m_toggleItems) {
+			removeItem(ti);
+		}
+		m_toggleItems.clear();
 	}
 }
 

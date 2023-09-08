@@ -32,6 +32,7 @@
 #include <QDir>
 #include <QIcon>
 #include <QMetaEnum>
+#include <QScreen>
 #include <QStyle>
 #include <QStyleFactory>
 #include <QUrl>
@@ -273,6 +274,50 @@ void DrawpileApp::initTheme()
 	updateThemeIcons();
 }
 
+void DrawpileApp::initInterface()
+{
+	if(m_settings.interfaceMode() == int(desktop::settings::InterfaceMode::Unknown)) {
+		m_settings.setInterfaceMode(int(guessInterfaceMode()));
+	}
+	m_smallScreenMode = m_settings.interfaceMode() == int(desktop::settings::InterfaceMode::SmallScreen);
+
+	QFont font = QApplication::font();
+	int fontSize = m_settings.fontSize();
+	if(fontSize <= 0) {
+		// We require a point size. Android uses a pixel size, which causes the
+		// point size to be reported as -1 and breaks several UI elements. But
+		// the font size is too ginormous there to be usable anyway, so it makes
+		// sense to force it to a different value anyway.
+		int pointSize = font.pointSize();
+		fontSize = pointSize <= 0 ? 9 : pointSize;
+		m_settings.setFontSize(fontSize);
+	}
+	font.setPointSize(fontSize);
+	QApplication::setFont(font);
+}
+
+desktop::settings::InterfaceMode DrawpileApp::guessInterfaceMode()
+{
+#ifdef Q_OS_ANDROID
+	auto [pixelSize, mmSize] = screenResolution();
+	if(pixelSize.width() < 700 || pixelSize.height() < 700 ||
+		mmSize.width() < 80.0 || mmSize.height() < 80.0) {
+		return desktop::settings::InterfaceMode::SmallScreen;
+	}
+#endif
+	return desktop::settings::InterfaceMode::Standard;
+}
+
+QPair<QSize, QSizeF> DrawpileApp::screenResolution()
+{
+	QScreen *screen = primaryScreen();
+	if(screen) {
+		return {screen->availableVirtualSize(), screen->physicalSize()};
+	} else {
+		return {{0, 0}, {0.0, 0.0}};
+	}
+}
+
 void DrawpileApp::openUrl(QUrl url)
 {
 	// See if there is an existing replacable window
@@ -455,6 +500,7 @@ static std::tuple<QStringList, QString> initApp(DrawpileApp &app)
 	app.initState();
 	app.settings().bindWriteLogFile(&utils::enableLogFile);
 	app.initTheme();
+	app.initInterface();
 
 #ifdef Q_OS_MACOS
 	// Mac specific settings

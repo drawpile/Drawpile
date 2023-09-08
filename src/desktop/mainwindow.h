@@ -17,6 +17,7 @@ extern "C" {
 #include <QVariantMap>
 
 #include "desktop/dialogs/flipbook.h"
+#include "desktop/scene/toggleitem.h"
 #include "libclient/tools/tool.h"
 #include "libclient/canvas/acl.h"
 #include "libclient/export/animationsaverrunnable.h"
@@ -68,6 +69,11 @@ namespace canvas {
 }
 namespace drawdance {
 	class CanvasState;
+}
+namespace desktop {
+namespace settings {
+class Settings;
+}
 }
 
 class ShortcutDetector;
@@ -212,6 +218,7 @@ private slots:
 	void setFreezeDocks(bool freeze);
 	void setDocksHidden(bool hidden);
 	void setDockTitleBarsHidden(bool hidden);
+	void handleToggleAction(drawingboard::ToggleItem::Action action);
 	void setNotificationsMuted(bool muted);
 
 	void updateTitle();
@@ -255,6 +262,10 @@ private:
 	void handleAmbiguousShortcut(QShortcutEvent *shortcutEvent);
 
 	void readSettings(bool windowpos=true);
+	void restoreSettings(const desktop::settings::Settings &settings);
+	void initSmallScreenState();
+	void initDefaultDocks();
+	void setDefaultDockSizes();
 	void saveSplitterState();
 	void saveWindowState();
 
@@ -280,6 +291,7 @@ private:
 	docks::Navigator *m_dockNavigator;
 	docks::OnionSkinsDock *m_dockOnionSkins;
 	docks::Timeline *m_dockTimeline;
+	QToolBar *m_toolBarDraw;
 	QByteArray m_hiddenDockState;
 	widgets::ChatBox *m_chatbox;
 

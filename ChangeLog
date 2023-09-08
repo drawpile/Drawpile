@@ -9,6 +9,8 @@ Unreleased Version 2.2.0-pre
  * Fix: Make flipbook extend the playback range if it was on the last frame and new ones are added to the timeline.
  * Feature: Bring back dprectool, the command-line tool that converts Drawpile recordings. It should work mostly the same as it did in Drawpile 2.1.
  * Feature: Apply parent folder opacity to frames within it, useful for sketch tracks. Thanks to TeaLord9000 for suggesting.
+ * Feature: Add a "small screen" mode, which should make the application usable on phones. Thanks to Verdrusk for suggesting.
+ * Feature: Allow changing the application font size, rather than using the system default that may be garbage, especially on Android. Also Verdrusk's fault.
 
 2023-08-26 Version 2.2.0-beta.7
  * Fix: Make classic brushes not go brighter when smudging into transparency. Thanks to cada for reporting.
