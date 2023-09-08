@@ -2,8 +2,8 @@
 
 #include "desktop/dialogs/startdialog/welcome.h"
 #include "desktop/main.h"
+#include "desktop/utils/widgetutils.h"
 #include "libclient/utils/news.h"
-
 #include <QDesktopServices>
 #include <QTextBrowser>
 #include <QVBoxLayout>
@@ -20,6 +20,7 @@ Welcome::Welcome(QWidget *parent)
 
 	m_browser = new QTextBrowser;
 	m_browser->setOpenLinks(false);
+	utils::initKineticScrolling(m_browser);
 	layout->addWidget(m_browser);
 
 	connect(
@@ -61,7 +62,10 @@ void Welcome::showFirstStartText()
 
 void Welcome::setNews(const QString &content)
 {
-	m_browser->setText(QStringLiteral("<table><tr><td style=\"padding:4px;\">%1</td></tr></table>").arg(content));
+	m_browser->setText(
+		QStringLiteral(
+			"<table><tr><td style=\"padding:4px;\">%1</td></tr></table>")
+			.arg(content));
 }
 
 void Welcome::linkClicked(const QUrl &url)

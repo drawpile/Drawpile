@@ -12,6 +12,7 @@ Unreleased Version 2.2.0-pre
  * Feature: Add a "small screen" mode, which should make the application usable on phones. Thanks to Verdrusk for suggesting.
  * Feature: Allow changing the application font size, rather than using the system default that may be garbage, especially on Android. Also Verdrusk's fault.
  * Feature: Locking docks now also locks toolbars, rather than still allowing you to move them around on accident.
+ * Feature: Kinetic scrolling. This lets you click/tap/touch scrollable stuff and fling it around instead of using the scroll bars or wheel. Configurable in the preferences. Thanks again Verdrusk.
 
 2023-08-26 Version 2.2.0-beta.7
  * Fix: Make classic brushes not go brighter when smudging into transparency. Thanks to cada for reporting.

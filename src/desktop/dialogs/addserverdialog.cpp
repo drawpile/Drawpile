@@ -2,6 +2,7 @@
 
 #include "desktop/dialogs/addserverdialog.h"
 #include "desktop/main.h"
+#include "desktop/utils/widgetutils.h"
 #include "libclient/utils/listservermodel.h"
 #include "libshared/util/networkaccess.h"
 #include "ui_addserverdialog.h"
@@ -60,6 +61,7 @@ AddServerDialog::AddServerDialog(QWidget *parent)
 {
 	d->ui.setupUi(this);
 	d->browser = new FaviconTextBrowser{d->favicon};
+	utils::initKineticScrolling(d->browser);
 	d->ui.resultLayout->addWidget(d->browser);
 	d->okButton = d->ui.buttons->button(QDialogButtonBox::Ok);
 	d->cancelButton = d->ui.buttons->button(QDialogButtonBox::Cancel);

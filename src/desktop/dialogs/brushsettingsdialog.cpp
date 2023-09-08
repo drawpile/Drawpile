@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "desktop/dialogs/brushsettingsdialog.h"
+#include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/curvewidget.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
 #include "desktop/widgets/toolmessage.h"
@@ -228,6 +229,7 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 	QWidget *widget = new QWidget{scroll};
 	scroll->setWidget(widget);
 	scroll->setWidgetResizable(true);
+	utils::initKineticScrolling(scroll);
 
 	QFormLayout *layout = new QFormLayout;
 	widget->setLayout(layout);
@@ -403,6 +405,7 @@ QWidget *BrushSettingsDialog::buildClassicSizePageUi()
 	QWidget *widget = new QWidget{scroll};
 	scroll->setWidget(widget);
 	scroll->setWidgetResizable(true);
+	utils::initKineticScrolling(scroll);
 
 	QVBoxLayout *layout = new QVBoxLayout;
 	widget->setLayout(layout);
@@ -463,6 +466,7 @@ QWidget *BrushSettingsDialog::buildClassicOpacityPageUi()
 	QWidget *widget = new QWidget{scroll};
 	scroll->setWidget(widget);
 	scroll->setWidgetResizable(true);
+	utils::initKineticScrolling(scroll);
 
 	QVBoxLayout *layout = new QVBoxLayout;
 	widget->setLayout(layout);
@@ -524,6 +528,7 @@ QWidget *BrushSettingsDialog::buildClassicHardnessPageUi()
 	QWidget *widget = new QWidget{scroll};
 	scroll->setWidget(widget);
 	scroll->setWidgetResizable(true);
+	utils::initKineticScrolling(scroll);
 
 	QVBoxLayout *layout = new QVBoxLayout;
 	widget->setLayout(layout);
@@ -585,6 +590,7 @@ QWidget *BrushSettingsDialog::buildClassicSmudgingPageUi()
 	QWidget *widget = new QWidget{scroll};
 	scroll->setWidget(widget);
 	scroll->setWidgetResizable(true);
+	utils::initKineticScrolling(scroll);
 
 	QVBoxLayout *layout = new QVBoxLayout;
 	widget->setLayout(layout);
@@ -671,6 +677,7 @@ QWidget *BrushSettingsDialog::buildMyPaintPageUi(int setting)
 	QWidget *widget = new QWidget{scroll};
 	scroll->setWidget(widget);
 	scroll->setWidgetResizable(true);
+	utils::initKineticScrolling(scroll);
 
 	QVBoxLayout *layout = new QVBoxLayout;
 	widget->setLayout(layout);

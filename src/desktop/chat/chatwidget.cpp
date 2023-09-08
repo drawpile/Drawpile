@@ -5,6 +5,7 @@
 #include "libclient/utils/html.h"
 #include "libclient/utils/funstuff.h"
 #include "desktop/main.h"
+#include "desktop/utils/widgetutils.h"
 
 #include "libclient/canvas/userlist.h"
 #include "libclient/drawdance/message.h"
@@ -166,6 +167,7 @@ ChatWidget::ChatWidget(QWidget *parent)
 
 	d->view = new QTextBrowser(this);
 	d->view->setOpenExternalLinks(true);
+	utils::initKineticScrolling(d->view);
 	connect(d->view->verticalScrollBar(), &QScrollBar::valueChanged, this, &ChatWidget::scrollBarMoved);
 
 	d->view->setContextMenuPolicy(Qt::CustomContextMenu);

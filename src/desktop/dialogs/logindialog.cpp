@@ -5,6 +5,7 @@
 #include "desktop/dialogs/avatarimport.h"
 #include "desktop/dialogs/certificateview.h"
 #include "desktop/main.h"
+#include "desktop/utils/widgetutils.h"
 #include "libclient/net/login.h"
 #include "libclient/net/loginsessions.h"
 #include "libclient/parentalcontrols/parentalcontrols.h"
@@ -93,6 +94,7 @@ struct LoginDialog::Private {
 		ui->passwordIcon->setPixmap(QIcon::fromTheme("object-locked").pixmap(22, 22));
 
 		// Session list page
+		utils::initKineticScrolling(ui->sessionList);
 		QObject::connect(ui->sessionList, &QTableView::doubleClicked, [this](const QModelIndex&) {
 			if(okButton->isEnabled())
 				okButton->click();

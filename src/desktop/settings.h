@@ -37,6 +37,15 @@ enum class InterfaceMode : int {
 };
 Q_ENUM_NS(InterfaceMode)
 
+enum class KineticScrollGesture : int {
+	None,
+	LeftClick,
+	MiddleClick,
+	RightClick,
+	Touch,
+};
+Q_ENUM_NS(KineticScrollGesture)
+
 enum class ThemePalette : int {
 	System,
 	Light,

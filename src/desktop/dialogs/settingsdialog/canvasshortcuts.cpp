@@ -5,6 +5,7 @@
 #include "desktop/dialogs/settingsdialog/helpers.h"
 #include "desktop/dialogs/settingsdialog/proportionaltableview.h"
 #include "desktop/settings.h"
+#include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "libclient/utils/canvasshortcutsmodel.h"
 #include "libshared/util/qtcompat.h"
@@ -101,6 +102,7 @@ void CanvasShortcuts::initCanvasShortcuts(
 
 	auto *shortcuts = ProportionalTableView::make(filter, shortcutsModel);
 	shortcuts->setColumnStretches({6, 3, 3, 0});
+	utils::initKineticScrolling(shortcuts);
 	connect(
 		shortcuts, &QAbstractItemView::activated, this,
 		[=](const QModelIndex &index) {

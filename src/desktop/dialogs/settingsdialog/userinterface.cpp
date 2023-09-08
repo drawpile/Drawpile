@@ -3,10 +3,13 @@
 #include "desktop/dialogs/settingsdialog/userinterface.h"
 #include "desktop/settings.h"
 #include "desktop/utils/sanerformlayout.h"
+#include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
 #include <QButtonGroup>
 #include <QCheckBox>
+#include <QComboBox>
 #include <QFont>
+#include <QPair>
 #include <QPlainTextEdit>
 
 namespace dialogs {
@@ -22,6 +25,8 @@ UserInterface::UserInterface(
 	initFontSize(settings, form);
 	form->addSeparator();
 	initInterfaceMode(settings, form);
+	form->addSeparator();
+	initKineticScrolling(settings, form);
 	form->addSeparator();
 	initMiscellaneous(settings, form);
 }
@@ -49,6 +54,7 @@ void UserInterface::initFontSize(
 		font.setPointSize(size);
 		sampleText->setFont(font);
 	});
+	utils::initKineticScrolling(sampleText);
 	form->addSpanningRow(sampleText);
 }
 
@@ -64,6 +70,52 @@ void UserInterface::initInterfaceMode(
 	form->addRow(
 		nullptr, utils::note(
 					 tr("Changes to the interface mode apply after you restart "
+						"Drawpile."),
+					 QSizePolicy::Label));
+}
+
+
+void UserInterface::initKineticScrolling(
+	desktop::settings::Settings &settings, utils::SanerFormLayout *form)
+{
+	QComboBox *kineticScrollGesture = new QComboBox;
+	kineticScrollGesture->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+
+	using desktop::settings::KineticScrollGesture;
+	QPair<QString, int> gestures[] = {
+		{tr("Disabled"), int(KineticScrollGesture::None)},
+		{tr("On left-click drag"), int(KineticScrollGesture::LeftClick)},
+		{tr("On middle-click drag"), int(KineticScrollGesture::MiddleClick)},
+		{tr("On right-click drag"), int(KineticScrollGesture::RightClick)},
+		{tr("On touch drag"), int(KineticScrollGesture::Touch)},
+	};
+	for(const auto &[name, value] : gestures) {
+		kineticScrollGesture->addItem(name, QVariant::fromValue(value));
+	}
+
+	settings.bindKineticScrollGesture(kineticScrollGesture, Qt::UserRole);
+	form->addRow(tr("Kinetic scrolling:"), kineticScrollGesture);
+
+	KisSliderSpinBox *sensitivity = new KisSliderSpinBox;
+	sensitivity->setRange(0, 100);
+	sensitivity->setPrefix(tr("Sensitivity: "));
+	settings.bindKineticScrollSensitivity(sensitivity);
+	form->addRow(nullptr, sensitivity);
+
+	QCheckBox *hideBars = new QCheckBox(tr("Hide scroll bars"));
+	settings.bindKineticScrollHideBars(hideBars);
+	form->addRow(nullptr, hideBars);
+
+	settings.bindKineticScrollGesture(
+		this, [sensitivity, hideBars](int gesture) {
+			bool enabled = gesture != int(KineticScrollGesture::None);
+			sensitivity->setEnabled(enabled);
+			hideBars->setEnabled(enabled);
+		});
+
+	form->addRow(
+		nullptr, utils::note(
+					 tr("Changes to kinetic scrolling apply after you restart "
 						"Drawpile."),
 					 QSizePolicy::Label));
 }

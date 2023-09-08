@@ -8,6 +8,7 @@
 #include "desktop/settings.h"
 #include "desktop/utils/listserverdelegate.h"
 #include "desktop/utils/sanerformlayout.h"
+#include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "libclient/utils/certificatestoremodel.h"
 #include "libclient/utils/listservermodel.h"
@@ -104,6 +105,7 @@ void Servers::initListingServers(desktop::settings::Settings &settings, QVBoxLay
 	servers->setAlternatingRowColors(true);
 	servers->setFocusPolicy(Qt::StrongFocus);
 	servers->setSelectionMode(QAbstractItemView::ExtendedSelection);
+	utils::initKineticScrolling(servers);
 	form->addWidget(servers, 1);
 	form->addLayout(listActions(servers,
 		tr("Add list servers…"),

@@ -5,6 +5,7 @@
 #include "desktop/chat/chatwindow.h"
 #include "desktop/chat/useritemdelegate.h"
 #include "desktop/widgets/groupedtoolbutton.h"
+#include "desktop/utils/widgetutils.h"
 #include "libclient/document.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/userlist.h"
@@ -68,6 +69,7 @@ ChatBox::ChatBox(Document *doc, QWidget *parent)
 	m_userItemDelegate = new UserItemDelegate(this);
 	m_userItemDelegate->setDocument(doc);
 	m_userList->setItemDelegate(m_userItemDelegate);
+	utils::initKineticScrolling(m_userList);
 	sidebarLayout->addWidget(m_userList);
 
 	chatsplitter->addWidget(sidebar);

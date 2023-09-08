@@ -95,6 +95,7 @@ LayerList::LayerList(QWidget *parent)
 	m_view->setSelectionMode(QAbstractItemView::SingleSelection);
 	m_view->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	m_view->setContextMenuPolicy(Qt::CustomContextMenu);
+	utils::initKineticScrolling(m_view);
 	rootLayout->addWidget(m_view);
 
 	m_contextMenu = new QMenu(this);

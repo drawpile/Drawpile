@@ -5,11 +5,14 @@
 #include <QScopedValueRollback>
 
 #include "desktop/chat/chatlineedit.h"
+#include "desktop/utils/widgetutils.h"
 
 ChatLineEdit::ChatLineEdit(QWidget *parent) :
-	QPlainTextEdit(parent), _historypos(0), _fixingScroll(false)
+	QPlainTextEdit(parent), _historypos(0), _fixingScroll(false),
+	_kineticScrollBarsHidden(utils::isKineticScrollingBarsHidden())
 {
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	utils::initKineticScrolling(this);
 	connect(
 		verticalScrollBar(), &QAbstractSlider::valueChanged, this,
 		&ChatLineEdit::fixScroll);
@@ -78,10 +81,13 @@ void ChatLineEdit::resizeBasedOnLines()
 	int clampedLineCount = qBound(1, lineCount, 5);
 	setFixedHeight(lineCountToWidgetHeight(clampedLineCount));
 
-	// Scrollbar shows up sometimes for no reason, hardcode to hide it when in autosize range.
-	// It'll also scroll down and hide the top line for no reason.
-	setVerticalScrollBarPolicy(
-		lineCount <= 5 ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAlwaysOn);
+	if(!_kineticScrollBarsHidden) {
+		// Scrollbar shows up sometimes for no reason, hardcode to hide it when
+		// in autosize range. It'll also scroll down and hide the top line for
+		// no reason.
+		setVerticalScrollBarPolicy(
+			lineCount <= 5 ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAlwaysOn);
+	}
 	fixScrollAt(verticalScrollBar()->value(), lineCount);
 }
 

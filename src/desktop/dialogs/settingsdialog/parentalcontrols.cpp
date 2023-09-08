@@ -4,6 +4,7 @@
 #include "desktop/dialogs/settingsdialog/helpers.h"
 #include "desktop/settings.h"
 #include "desktop/utils/sanerformlayout.h"
+#include "desktop/utils/widgetutils.h"
 #include "libclient/parentalcontrols/parentalcontrols.h"
 #include "libshared/util/passwordhash.h"
 
@@ -52,6 +53,7 @@ void ParentalControls::initBuiltIn(desktop::settings::Settings &settings, QVBoxL
 	form->addRow(tr("Keywords:"), autoTag);
 	settings.bindParentalControlsAutoTag(autoTag);
 	auto *tagWords = new QPlainTextEdit(this);
+	utils::initKineticScrolling(tagWords);
 	tagWords->setPlaceholderText(parentalcontrols::defaultWordList());
 	form->addRow(nullptr, tagWords);
 	settings.bindParentalControlsTags(tagWords);

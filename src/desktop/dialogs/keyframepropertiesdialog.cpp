@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "desktop/dialogs/keyframepropertiesdialog.h"
+#include "desktop/utils/widgetutils.h"
 #include "libclient/utils/keyframelayermodel.h"
-
 #include <QDialogButtonBox>
 #include <QFormLayout>
 #include <QLineEdit>
@@ -136,6 +136,7 @@ KeyFramePropertiesDialog::KeyFramePropertiesDialog(
 	m_layerTree->setEnabled(false);
 	m_layerTree->setHeaderHidden(true);
 	m_layerTree->setItemDelegate(m_layerDelegate);
+	utils::initKineticScrolling(m_layerTree);
 	layout->addRow(tr("Filter Layers:"), m_layerTree);
 
 	m_buttons = new QDialogButtonBox{

@@ -5,6 +5,7 @@
 #include "desktop/dialogs/settingsdialog/network.h"
 #include "desktop/settings.h"
 #include "desktop/utils/sanerformlayout.h"
+#include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
 #include "libclient/utils/avatarlistmodel.h"
 #include "libclient/utils/avatarlistmodeldelegate.h"
@@ -83,6 +84,7 @@ void Network::initAvatars(utils::SanerFormLayout *form)
 	avatars->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
 	avatars->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
 	avatars->setSelectionMode(QAbstractItemView::ExtendedSelection);
+	utils::initKineticScrolling(avatars);
 
 	auto *avatarsModel = new AvatarListModel(true, this);
 	avatarsModel->loadAvatars();

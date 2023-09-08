@@ -33,6 +33,7 @@ private:
 	QString _current;
 	int _historypos;
 	bool _fixingScroll;
+	bool _kineticScrollBarsHidden;
 
    void resizeBasedOnLines();
    int lineCountToWidgetHeight(int lineCount) const;

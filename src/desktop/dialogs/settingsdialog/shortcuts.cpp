@@ -4,6 +4,7 @@
 #include "desktop/dialogs/settingsdialog/helpers.h"
 #include "desktop/dialogs/settingsdialog/proportionaltableview.h"
 #include "desktop/settings.h"
+#include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/widgets/keysequenceedit.h"
 #include "libclient/utils/customshortcutmodel.h"
@@ -84,6 +85,7 @@ void Shortcuts::initGlobalShortcuts(
 		});
 	m_shortcutsTable = ProportionalTableView::make(filter, shortcutsModel);
 	m_shortcutsTable->setColumnStretches({6, 2, 2, 2});
+	utils::initKineticScrolling(m_shortcutsTable);
 
 	QStyledItemDelegate *keySequenceDelegate = new QStyledItemDelegate(this);
 	m_itemEditorFactory.registerEditor(

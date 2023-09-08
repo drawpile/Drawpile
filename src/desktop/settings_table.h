@@ -1,5 +1,13 @@
 #include "libclient/settings_table_macros.h"
 
+#ifndef KINETIC_SCROLL_GESTURE_DEFAULT
+#	ifdef Q_OS_ANDROID
+#		define KINETIC_SCROLL_GESTURE_DEFAULT KineticScrollGesture::LeftClick
+#	else
+#		define KINETIC_SCROLL_GESTURE_DEFAULT KineticScrollGesture::None
+#	endif
+#endif
+
 #ifndef THEME_PALETTE_DEFAULT
 #	ifdef Q_OS_MACOS
 #		define THEME_PALETTE_DEFAULT ThemePalette::System
@@ -43,6 +51,9 @@ SETTING(insecurePasswordStorage   , InsecurePasswordStorage   , "settings/insecu
 SETTING(interfaceMode             , InterfaceMode             , "settings/interfacemode"                , int(desktop::settings::InterfaceMode::Unknown))
 SETTING(inviteLinkType            , InviteLinkType            , "invites/linktype"                      , dialogs::InviteDialog::LinkType::Web)
 SETTING(inviteIncludePassword     , InviteIncludePassword     , "invites/includepassword"               , false)
+SETTING(kineticScrollGesture      , KineticScrollGesture      , "settings/kineticscroll/gesture"        , int(KINETIC_SCROLL_GESTURE_DEFAULT))
+SETTING(kineticScrollSensitivity  , KineticScrollSensitivity  , "settings/kineticscroll/sensititivy"    , 100)
+SETTING(kineticScrollHideBars     , KineticScrollHideBars     , "settings/kineticscroll/hidebars"       , false)
 SETTING(language                  , Language                  , "settings/language"                     , QString())
 SETTING(lastAnnounce              , LastAnnounce              , "history/announce"                      , false)
 SETTING(lastAvatar                , LastAvatar                , "history/avatar"                        , QString())

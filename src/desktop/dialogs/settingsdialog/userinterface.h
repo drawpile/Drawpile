@@ -26,6 +26,8 @@ private:
 		desktop::settings::Settings &settings, utils::SanerFormLayout *form);
 	void initInterfaceMode(
 		desktop::settings::Settings &settings, utils::SanerFormLayout *form);
+	void initKineticScrolling(
+		desktop::settings::Settings &settings, utils::SanerFormLayout *form);
 	void initMiscellaneous(
 		desktop::settings::Settings &settings, utils::SanerFormLayout *form);
 };

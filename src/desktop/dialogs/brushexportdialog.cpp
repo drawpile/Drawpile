@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/brushexportdialog.h"
 #include "desktop/filewrangler.h"
+#include "desktop/utils/widgetutils.h"
 #include "libclient/brushes/brushpresetmodel.h"
 #include <QDialogButtonBox>
 #include <QLabel>
@@ -244,6 +245,7 @@ void BrushExportDialog::showExportError(
 
 	QTextBrowser *browser = new QTextBrowser;
 	browser->setPlainText(result.errors.join("\n"));
+	utils::initKineticScrolling(browser);
 	layout->addWidget(browser);
 
 	QDialogButtonBox *buttons = new QDialogButtonBox;
