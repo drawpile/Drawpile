@@ -265,6 +265,7 @@ target_sources(drawpile PRIVATE
 	utils/recents.h
 	utils/sanerformlayout.cpp
 	utils/sanerformlayout.h
+	utils/widgetutils.cpp
 	utils/widgetutils.h
 	widgets/brushpreview.cpp
 	widgets/brushpreview.h
