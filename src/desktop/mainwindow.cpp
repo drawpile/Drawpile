@@ -4050,7 +4050,8 @@ void MainWindow::createDocks()
 		m_dockToolSettings->brushSettings());
 
 	// Create color docks
-	m_dockColorSpinner = new docks::ColorSpinnerDock(tr("Color Wheel"), this);
+	//: "Wheel" refers to the color wheel.
+	m_dockColorSpinner = new docks::ColorSpinnerDock(tr("Wheel"), this);
 	m_dockColorSpinner->setObjectName("colorspinnerdock");
 	m_dockColorSpinner->setAllowedAreas(Qt::AllDockWidgetAreas);
 	addDockWidget(Qt::RightDockWidgetArea, m_dockColorSpinner);
@@ -4060,7 +4061,8 @@ void MainWindow::createDocks()
 	m_dockColorPalette->setAllowedAreas(Qt::AllDockWidgetAreas);
 	addDockWidget(Qt::RightDockWidgetArea, m_dockColorPalette);
 
-	m_dockColorSliders = new docks::ColorSliderDock(tr("Color Sliders"), this);
+	//: "Sliders" refers to the RGB and HSV sliders.
+	m_dockColorSliders = new docks::ColorSliderDock(tr("Sliders"), this);
 	m_dockColorSliders->setObjectName("colorsliderdock");
 	m_dockColorSliders->setAllowedAreas(Qt::AllDockWidgetAreas);
 	addDockWidget(Qt::RightDockWidgetArea, m_dockColorSliders);
