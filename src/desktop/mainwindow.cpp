@@ -2368,6 +2368,10 @@ void MainWindow::setFreezeDocks(bool freeze)
 		else
 			dw->setFeatures(dw->features() | features);
 	}
+
+	for(QToolBar *tb : findChildren<QToolBar*>(QString(), Qt::FindDirectChildrenOnly)) {
+		tb->setMovable(!freeze);
+	}
 }
 
 void MainWindow::setDocksHidden(bool hidden)
