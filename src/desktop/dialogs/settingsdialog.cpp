@@ -12,6 +12,7 @@
 #include "desktop/dialogs/settingsdialog/shortcuts.h"
 #include "desktop/dialogs/settingsdialog/canvasshortcuts.h"
 #include "desktop/dialogs/settingsdialog/tools.h"
+#include "desktop/dialogs/settingsdialog/userinterface.h"
 
 #include <QAction>
 #include <QBoxLayout>
@@ -69,6 +70,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 
 	const std::initializer_list<std::tuple<const char *, QString, QWidget *>> panels = {
 		{ "configure", tr("General"), new settingsdialog::General(m_settings, this) },
+		{ "window_", tr("User Interface"), new settingsdialog::UserInterface(m_settings, this) },
 		{ "dialog-input-devices", tr("Input"), new settingsdialog::Input(m_settings, this) },
 		{ "tools", tr("Tools"), new settingsdialog::Tools(m_settings, this) },
 		{ "network-modem", tr("Network"), new settingsdialog::Network(m_settings, this) },

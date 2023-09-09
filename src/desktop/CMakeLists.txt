@@ -130,6 +130,8 @@ target_sources(drawpile PRIVATE
 	dialogs/settingsdialog/parentalcontrols.h
 	dialogs/settingsdialog/proportionaltableview.cpp
 	dialogs/settingsdialog/proportionaltableview.h
+	dialogs/settingsdialog/userinterface.cpp
+	dialogs/settingsdialog/userinterface.h
 	dialogs/settingsdialog/servers.cpp
 	dialogs/settingsdialog/servers.h
 	dialogs/settingsdialog/shortcuts.cpp

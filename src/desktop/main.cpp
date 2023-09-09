@@ -305,7 +305,7 @@ desktop::settings::InterfaceMode DrawpileApp::guessInterfaceMode()
 		return desktop::settings::InterfaceMode::SmallScreen;
 	}
 #endif
-	return desktop::settings::InterfaceMode::Standard;
+	return desktop::settings::InterfaceMode::Desktop;
 }
 
 QPair<QSize, QSizeF> DrawpileApp::screenResolution()

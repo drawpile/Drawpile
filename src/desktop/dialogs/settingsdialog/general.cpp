@@ -4,11 +4,9 @@
 #include "desktop/dialogs/settingsdialog/general.h"
 #include "desktop/settings.h"
 #include "desktop/utils/sanerformlayout.h"
-#include "desktop/widgets/kis_slider_spin_box.h"
 
 #include <QCheckBox>
 #include <QComboBox>
-#include <QFont>
 #include <QSpinBox>
 #include <QString>
 #include <QStyleFactory>
@@ -27,7 +25,7 @@ General::General(desktop::settings::Settings &settings, QWidget *parent)
 	initTheme(settings, form);
 	initLanguage(settings, form);
 	form->addSeparator();
-	initMiscUi(settings, form);
+	initLogging(settings, form);
 	form->addSeparator();
 	initUndo(settings, form);
 	form->addSpacer();
@@ -96,35 +94,8 @@ QString General::formatLanguage(const QLocale &locale)
 	}
 }
 
-void General::initMiscUi(desktop::settings::Settings &settings, utils::SanerFormLayout *form)
+void General::initLogging(desktop::settings::Settings &settings, utils::SanerFormLayout *form)
 {
-	auto *scrollBars = new QCheckBox(tr("Show scroll bars on canvas"));
-	settings.bindCanvasScrollBars(scrollBars);
-	form->addRow(tr("User interface:"), scrollBars);
-
-	auto *confirmDelete = new QCheckBox(tr("Ask before deleting layers"));
-	settings.bindConfirmLayerDelete(confirmDelete);
-	form->addRow(nullptr, confirmDelete);
-
-	auto *interfaceMode = form->addRadioGroup(nullptr, true, {
-		{ tr("Standard Mode"), int(desktop::settings::InterfaceMode::Standard) },
-		{ tr("Small Screen Mode"), int(desktop::settings::InterfaceMode::SmallScreen) }
-	});
-	settings.bindInterfaceMode(interfaceMode);
-
-	auto *fontSize = new KisSliderSpinBox;
-	fontSize->setRange(6, 16);
-	fontSize->setPrefix(tr("Font size: "));
-	fontSize->setSuffix(tr("pt"));
-	settings.bindFontSize(fontSize);
-	form->addRow(nullptr, fontSize);
-
-	form->addRow(nullptr, utils::note(
-		tr("Changes to mode and font size apply after you restart Drawpile."),
-		QSizePolicy::Label));
-
-	form->addSeparator();
-
 	auto *enableLogging = new QCheckBox(tr("Write debugging log to file"));
 	settings.bindWriteLogFile(enableLogging);
 	form->addRow(tr("Logging:"), enableLogging);

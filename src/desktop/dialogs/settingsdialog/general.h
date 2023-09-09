@@ -21,7 +21,7 @@ private:
 	void initAutosave(desktop::settings::Settings &settings, utils::SanerFormLayout *form);
 	void initLanguage(desktop::settings::Settings &settings, utils::SanerFormLayout *form);
 	static QString formatLanguage(const QLocale &locale);
-	void initMiscUi(desktop::settings::Settings &settings, utils::SanerFormLayout *form);
+	void initLogging(desktop::settings::Settings &settings, utils::SanerFormLayout *form);
 	void initSnapshots(desktop::settings::Settings &settings, utils::SanerFormLayout *form);
 	void initTheme(desktop::settings::Settings &settings, utils::SanerFormLayout *form);
 	void initUndo(desktop::settings::Settings &settings, utils::SanerFormLayout *form);

@@ -32,7 +32,7 @@ Q_NAMESPACE
 
 enum class InterfaceMode : int {
 	Unknown,
-	Standard,
+	Desktop,
 	SmallScreen,
 };
 Q_ENUM_NS(InterfaceMode)
