@@ -270,7 +270,6 @@ DP_Preview *DP_preview_new_cut(int initial_offset_x, int initial_offset_y,
 
 typedef struct DP_PreviewTransform {
     DP_Preview parent;
-    int target_layer_id;
     int x, y, width, height;
     DP_Quad dst_quad;
     int interpolation;
