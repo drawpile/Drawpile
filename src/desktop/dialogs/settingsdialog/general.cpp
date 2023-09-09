@@ -32,7 +32,20 @@ General::General(desktop::settings::Settings &settings, QWidget *parent)
 	initAutosave(settings, form);
 	form->addSpacer();
 	initSnapshots(settings, form);
+#ifdef Q_OS_ANDROID
+	form->addSeparator();
+	initAndroid(settings, form);
+#endif
 }
+
+#ifdef Q_OS_ANDROID
+void General::initAndroid(desktop::settings::Settings &settings, utils::SanerFormLayout *form)
+{
+	auto *captureVolumeRocker = new QCheckBox(tr("Capture volume rocker"));
+	settings.bindCaptureVolumeRocker(captureVolumeRocker);
+	form->addRow(tr("Android:"), captureVolumeRocker);
+}
+#endif
 
 void General::initAutosave(desktop::settings::Settings &settings, utils::SanerFormLayout *form)
 {

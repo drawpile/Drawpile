@@ -18,6 +18,9 @@ class General final : public QWidget {
 public:
 	General(desktop::settings::Settings &settings, QWidget *parent = nullptr);
 private:
+#ifdef Q_OS_ANDROID
+	void initAndroid(desktop::settings::Settings &settings, utils::SanerFormLayout *form);
+#endif
 	void initAutosave(desktop::settings::Settings &settings, utils::SanerFormLayout *form);
 	void initLanguage(desktop::settings::Settings &settings, utils::SanerFormLayout *form);
 	static QString formatLanguage(const QLocale &locale);

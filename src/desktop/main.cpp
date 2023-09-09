@@ -502,6 +502,16 @@ static std::tuple<QStringList, QString> initApp(DrawpileApp &app)
 	app.initTheme();
 	app.initInterface();
 
+#ifdef Q_OS_ANDROID
+	app.settings().bindCaptureVolumeRocker([](bool capture) {
+		if(capture) {
+			qputenv("QT_ANDROID_VOLUME_KEYS", "1");
+		} else {
+			qunsetenv("QT_ANDROID_VOLUME_KEYS");
+		}
+	});
+#endif
+
 #ifdef Q_OS_MACOS
 	// Mac specific settings
 	app.setAttribute(Qt::AA_DontShowIconsInMenus);

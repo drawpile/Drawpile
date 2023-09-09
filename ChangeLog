@@ -16,6 +16,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Make two-finger zoom and rotation not go completely crazy when the canvas is mirrored or flipped. Thanks BoyOnion for reporting.
  * Fix: Don't crash when picking a brush preset on Android. Thanks to zetalambo and VeeBeeArt for reporting.
  * Fix: Selections finally no longer sometimes disappear when transforming them. Thanks to Spuzzy, Xan and xxxx for reporting.
+ * Feature: Capture volume rocker on Android and bind it to undo and redo by default. Thanks to cl for suggesting.
 
 2023-08-26 Version 2.2.0-beta.7
  * Fix: Make classic brushes not go brighter when smudging into transparency. Thanks to cada for reporting.

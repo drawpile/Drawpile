@@ -3209,8 +3209,15 @@ void MainWindow::setupActions()
 	//
 	// Edit menu
 	//
-	QAction *undo = makeAction("undo", tr("&Undo")).icon("edit-undo").shortcut(QKeySequence::Undo).autoRepeat();
-	QAction *redo = makeAction("redo", tr("&Redo")).icon("edit-redo").shortcut(QKeySequence::Redo).autoRepeat();
+#ifdef Q_OS_ANDROID
+	QKeySequence undoShortcut = QKeySequence{Qt::Key_VolumeUp};
+	QKeySequence redoShortcut = QKeySequence{Qt::Key_VolumeDown};
+#else
+	QKeySequence undoShortcut = QKeySequence::Undo;
+	QKeySequence redoShortcut = QKeySequence::Redo;
+#endif
+	QAction *undo = makeAction("undo", tr("&Undo")).icon("edit-undo").shortcut(undoShortcut).autoRepeat();
+	QAction *redo = makeAction("redo", tr("&Redo")).icon("edit-redo").shortcut(redoShortcut).autoRepeat();
 	QAction *copy = makeAction("copyvisible", tr("&Copy Visible")).icon("edit-copy").statusTip(tr("Copy selected area to the clipboard")).shortcut("Shift+Ctrl+C");
 	QAction *copyMerged = makeAction("copymerged", tr("Copy Merged")).icon("edit-copy").statusTip(tr("Copy selected area, excluding the background, to the clipboard")).shortcut("Ctrl+Alt+C");
 	QAction *copylayer = makeAction("copylayer", tr("Copy &Layer")).icon("edit-copy").statusTip(tr("Copy selected area of the current layer to the clipboard")).shortcut(QKeySequence::Copy);
