@@ -1503,14 +1503,14 @@ void CanvasView::touchEvent(QTouchEvent *event)
 				}
 				startAvgDist = sqrt(startAvgDist);
 
-				qreal zoom = m_zoom;
+				qreal touchZoom = zoom();
 				if(m_enableTouchPinch) {
 					avgDist = sqrt(avgDist);
 					const qreal dZoom = avgDist / startAvgDist;
-					zoom = m_touchStartZoom * dZoom;
+					touchZoom = m_touchStartZoom * dZoom;
 				}
 
-				qreal rotate = m_rotate;
+				qreal touchRotation = rotation();
 				if(m_enableTouchTwist) {
 					const auto &tps = compat::touchPoints(*event);
 
@@ -1531,14 +1531,14 @@ void CanvasView::touchEvent(QTouchEvent *event)
 					if(startAvgDist / m_dpi > 0.8 &&
 					   (qAbs(dAngle) > 3.0 || m_touchRotating)) {
 						m_touchRotating = true;
-						rotate = m_touchStartRotate + dAngle;
+						touchRotation = m_touchStartRotate + dAngle;
 					}
 				}
 
 				{
 					QScopedValueRollback<bool> guard{m_blockNotices, true};
-					setZoom(zoom);
-					setRotation(rotate);
+					setZoom(touchZoom);
+					setRotation(touchRotation);
 				}
 
 				if(m_enableTouchPinch) {
@@ -1551,10 +1551,6 @@ void CanvasView::touchEvent(QTouchEvent *event)
 				} else if(m_enableTouchTwist) {
 					showTransformNotice(getRotationNotice());
 				}
-				updateCanvasTransform([&] {
-					m_zoom = zoom;
-					m_rotate = rotate;
-				});
 			}
 		}
 		break;
