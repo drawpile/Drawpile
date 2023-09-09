@@ -198,15 +198,13 @@ void ToolController::setStabilizerUseBrushSampleCount(bool stabilizerUseBrushSam
 
 void ToolController::setModel(canvas::CanvasModel *model)
 {
-	if(m_model != model) {
-		m_model = model;
-		connect(
-			m_model->aclState(), &canvas::AclState::featureAccessChanged, this,
-			&ToolController::onFeatureAccessChange);
-		connect(
-			m_model, &canvas::CanvasModel::selectionChanged, this,
-			&ToolController::onSelectionChange);
-	}
+	m_model = model;
+	connect(
+		m_model->aclState(), &canvas::AclState::featureAccessChanged, this,
+		&ToolController::onFeatureAccessChange);
+	connect(
+		m_model, &canvas::CanvasModel::selectionChanged, this,
+		&ToolController::onSelectionChange);
 	emit modelChanged(model);
 }
 
