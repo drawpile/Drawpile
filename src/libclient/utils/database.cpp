@@ -150,8 +150,9 @@ bool execPrepared(QSqlQuery &query, const QString &sql)
 bool exec(QSqlQuery &query, const QString &sql, const QVariantList &params)
 {
 	if(prepare(query, sql)) {
-		for(const QVariant &param : params) {
-			query.addBindValue(param);
+		int paramCount = params.size();
+		for(int i = 0; i < paramCount; ++i) {
+			query.bindValue(i, params[i]);
 		}
 		return execPrepared(query, sql);
 	} else {

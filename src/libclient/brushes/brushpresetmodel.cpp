@@ -13,6 +13,8 @@
 #include <QIcon>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QMutex>
+#include <QMutexLocker>
 #include <QPixmap>
 #include <QRegularExpression>
 #include <QSqlDatabase>
@@ -54,6 +56,7 @@ public:
 
 	int createTag(const QString &name)
 	{
+		QMutexLocker locker{&m_mutex};
 		QSqlQuery query(m_db);
 		if(exec(query, "insert into tag (name) values (?)", {name})) {
 			return query.lastInsertId().toInt();
@@ -64,21 +67,25 @@ public:
 
 	int readTagCount()
 	{
+		QMutexLocker locker{&m_mutex};
 		return readInt("select count(*) from tag");
 	}
 
 	int readTagCountByName(const QString &name)
 	{
+		QMutexLocker locker{&m_mutex};
 		return readInt("select count(*) from tag where name = ?", {name});
 	}
 
 	int readTagIdAtIndex(int index)
 	{
+		QMutexLocker locker{&m_mutex};
 		return readInt("select id from tag order by LOWER(name) limit 1 offset ?", {index});
 	}
 
 	Tag readTagAtIndex(int index)
 	{
+		QMutexLocker locker{&m_mutex};
 		QSqlQuery query(m_db);
 		QString sql = QStringLiteral(
 			"select id, name from tag order by LOWER(name) limit 1 offset ?");
@@ -91,11 +98,13 @@ public:
 
 	QString readTagNameById(int id)
 	{
+		QMutexLocker locker{&m_mutex};
 		return readString("select name from tag where id = ?", {id});
 	}
 
 	int readTagIndexById(int id)
 	{
+		QMutexLocker locker{&m_mutex};
 		QString sql = QStringLiteral(
 			"select n - 1 from (\n"
 			"	select row_number() over(order by LOWER(name)) as n, id from tag)\n"
@@ -105,6 +114,7 @@ public:
 
 	bool updateTagName(int id, const QString &name)
 	{
+		QMutexLocker locker{&m_mutex};
 		QSqlQuery query(m_db);
 		if(exec(query, "update tag set name = ? where id = ?", {name, id})) {
 			return query.numRowsAffected() == 1;
@@ -115,6 +125,7 @@ public:
 
 	bool deleteTagById(int id)
 	{
+		QMutexLocker locker{&m_mutex};
 		QSqlQuery query(m_db);
 		if(exec(query, "delete from tag where id = ?", {id})) {
 			return query.numRowsAffected() == 1;
@@ -126,6 +137,7 @@ public:
 	int createPreset(const QString &type, const QString &name, const QString &description,
 		const QByteArray &thumbnail, const QByteArray &data)
 	{
+		QMutexLocker locker{&m_mutex};
 		QSqlQuery query(m_db);
 		QString sql = QStringLiteral(
 			"insert into preset (type, name, description, thumbnail, data)\n"
@@ -139,6 +151,7 @@ public:
 
 	int createPresetFromId(int id)
 	{
+		QMutexLocker locker{&m_mutex};
 		QSqlQuery query(m_db);
 		QString sql = QStringLiteral(
 			"insert into preset (type, name, description, thumbnail, data)\n"
@@ -152,11 +165,13 @@ public:
 
 	int readPresetCountAll()
 	{
+		QMutexLocker locker{&m_mutex};
 		return readInt("select count(*) from preset");
 	}
 
 	int readPresetCountByUntagged()
 	{
+		QMutexLocker locker{&m_mutex};
 		QString sql = QStringLiteral(
 			"select count(*) from preset p where not exists(\n"
 			"	select 1 from preset_tag pt where pt.preset_id = p.id)");
@@ -165,6 +180,7 @@ public:
 
 	int readPresetCountByTagId(int tagId)
 	{
+		QMutexLocker locker{&m_mutex};
 		QString sql = QStringLiteral(
 			"select count(*) from preset p\n"
 			"	join preset_tag pt on pt.preset_id = p.id\n"
@@ -174,11 +190,13 @@ public:
 
 	int readPresetIdAtIndexAll(int index)
 	{
+		QMutexLocker locker{&m_mutex};
 		return readInt("select id from preset order by LOWER(name) limit 1 offset ?", {index});
 	}
 
 	int readPresetIdAtIndexByUntagged(int index)
 	{
+		QMutexLocker locker{&m_mutex};
 		QString sql = QStringLiteral(
 			"select p.id from preset p\n"
 			"	where not exists(select 1 from preset_tag pt where pt.preset_id = p.id)\n"
@@ -188,6 +206,7 @@ public:
 
 	int readPresetIdAtIndexByTagId(int index, int tagId)
 	{
+		QMutexLocker locker{&m_mutex};
 		QString sql = QStringLiteral(
 			"select p.id from preset p\n"
 			"	join preset_tag pt on pt.preset_id = p.id\n"
@@ -198,21 +217,25 @@ public:
 
 	QString readPresetNameById(int id)
 	{
+		QMutexLocker locker{&m_mutex};
 		return readString("select name from preset where id = ?", {id});
 	}
 
 	QByteArray readPresetThumbnailById(int id)
 	{
+		QMutexLocker locker{&m_mutex};
 		return readByteArray("select thumbnail from preset where id = ?", {id});
 	}
 
 	QByteArray readPresetDataById(int id)
 	{
+		QMutexLocker locker{&m_mutex};
 		return readByteArray("select data from preset where id = ?", {id});
 	}
 
 	PresetMetadata readPresetMetadataById(int id)
 	{
+		QMutexLocker locker{&m_mutex};
 		QSqlQuery query(m_db);
 		QString sql = QStringLiteral(
 			"select id, name, description, thumbnail from preset where id = ?");
@@ -226,6 +249,7 @@ public:
 
 	bool updatePresetData(int id, const QString &type, const QByteArray &data)
 	{
+		QMutexLocker locker{&m_mutex};
 		QSqlQuery query(m_db);
 		if(exec(query, "update preset set type = ?, data = ? where id = ?", {type, data, id})) {
 			return query.numRowsAffected() == 1;
@@ -237,6 +261,7 @@ public:
 	bool updatePresetMetadata(int id, const QString &name, const QString &description,
 		const QByteArray &thumbnail)
 	{
+		QMutexLocker locker{&m_mutex};
 		QSqlQuery query(m_db);
 		QString sql = QStringLiteral(
 			"update preset set name = ?, description = ?, thumbnail = ? where id = ?");
@@ -249,6 +274,7 @@ public:
 
 	bool deletePresetById(int id)
 	{
+		QMutexLocker locker{&m_mutex};
 		QSqlQuery query(m_db);
 		if(exec(query, "delete from preset where id = ?", {id})) {
 			return query.numRowsAffected() == 1;
@@ -259,6 +285,7 @@ public:
 
 	QList<TagAssignment> readTagAssignmentsByPresetId(int presetId)
 	{
+		QMutexLocker locker{&m_mutex};
 		QList<TagAssignment> tagAssignments;
 		QSqlQuery query(m_db);
 		QString sql = QStringLiteral(
@@ -277,6 +304,7 @@ public:
 
 	bool createPresetTag(int presetId, int tagId)
 	{
+		QMutexLocker locker{&m_mutex};
 		QSqlQuery query(m_db);
 		QString sql = QStringLiteral(
 			"insert into preset_tag (preset_id, tag_id) values (?, ?)");
@@ -285,6 +313,7 @@ public:
 
 	bool createPresetTagsFromPresetId(int targetPresetId, int sourcePresetId)
 	{
+		QMutexLocker locker{&m_mutex};
 		QSqlQuery query(m_db);
 		QString sql = QStringLiteral(
 			"insert into preset_tag (preset_id, tag_id)\n"
@@ -294,6 +323,7 @@ public:
 
 	bool deletePresetTag(int presetId, int tagId)
 	{
+		QMutexLocker locker{&m_mutex};
 		QSqlQuery query(m_db);
 		QString sql = QStringLiteral(
 			"delete from preset_tag where preset_id = ? and tag_id = ?");
@@ -306,6 +336,7 @@ public:
 
 	bool createOrUpdateState(const QString &key, const QVariant &value)
 	{
+		QMutexLocker locker{&m_mutex};
 		QSqlQuery query(m_db);
 		QString sql = QStringLiteral(
 			"insert into state (key, value) values (?, ?)\n"
@@ -315,6 +346,7 @@ public:
 
 	QVariant readState(const QString &key)
 	{
+		QMutexLocker locker{&m_mutex};
 		QSqlQuery query(m_db);
 		if(exec(query, "select value from state where key = ?", {key}) && query.next()) {
 			return query.value(0);
@@ -324,6 +356,7 @@ public:
 	}
 
 private:
+	QMutex m_mutex;
 	QSqlDatabase m_db;
 
 	int readInt(const QString &sql,const QList<QVariant> &params = {}, int defaultValue = 0)

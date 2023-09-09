@@ -14,6 +14,7 @@ Unreleased Version 2.2.0-pre
  * Feature: Locking docks now also locks toolbars, rather than still allowing you to move them around on accident.
  * Feature: Kinetic scrolling. This lets you click/tap/touch scrollable stuff and fling it around instead of using the scroll bars or wheel. Configurable in the preferences. Thanks again Verdrusk.
  * Fix: Make two-finger zoom and rotation not go completely crazy when the canvas is mirrored or flipped. Thanks BoyOnion for reporting.
+ * Fix: Don't crash when picking a brush preset on Android. Thanks to zetalambo and VeeBeeArt for reporting.
 
 2023-08-26 Version 2.2.0-beta.7
  * Fix: Make classic brushes not go brighter when smudging into transparency. Thanks to cada for reporting.
