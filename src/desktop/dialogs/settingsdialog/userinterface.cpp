@@ -34,6 +34,11 @@ UserInterface::UserInterface(
 void UserInterface::initFontSize(
 	desktop::settings::Settings &settings, utils::SanerFormLayout *form)
 {
+	QCheckBox *overrideFontSize =
+		new QCheckBox(tr("Override system font size"));
+	settings.bindOverrideFontSize(overrideFontSize);
+	form->addSpanningRow(overrideFontSize);
+
 	KisSliderSpinBox *fontSize = new KisSliderSpinBox;
 	fontSize->setRange(6, 16);
 	fontSize->setPrefix(tr("Font size: "));
@@ -56,6 +61,9 @@ void UserInterface::initFontSize(
 	});
 	utils::initKineticScrolling(sampleText);
 	form->addSpanningRow(sampleText);
+
+	settings.bindOverrideFontSize(fontSize, &QWidget::setEnabled);
+	settings.bindOverrideFontSize(sampleText, &QWidget::setEnabled);
 }
 
 void UserInterface::initInterfaceMode(

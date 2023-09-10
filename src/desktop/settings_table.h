@@ -8,6 +8,14 @@
 #	endif
 #endif
 
+#ifndef OVERRIDE_FONT_SIZE_DEFAULT
+#	ifdef Q_OS_ANDROID
+#		define OVERRIDE_FONT_SIZE_DEFAULT true
+#	else
+#		define OVERRIDE_FONT_SIZE_DEFAULT false
+#	endif
+#endif
+
 #ifndef THEME_PALETTE_DEFAULT
 #	ifdef Q_OS_MACOS
 #		define THEME_PALETTE_DEFAULT ThemePalette::System
@@ -46,6 +54,7 @@ SETTING(filterDuplicates          , FilterDuplicates          , "history/filterd
 SETTING(filterLocked              , FilterLocked              , "history/filterlocked"                  , false)
 SETTING(filterNsfm                , FilterNsfm                , "history/filternsfw"                    , false)
 SETTING(flipbookWindow            , FlipbookWindow            , "flipbook/window"                       , QRect())
+SETTING(overrideFontSize          , OverrideFontSize          , "settings/overridefontsize"             , OVERRIDE_FONT_SIZE_DEFAULT)
 SETTING(fontSize                  , FontSize                  , "settings/fontSize"                     , -1)
 SETTING(globalPressureCurve       , GlobalPressureCurve       , "settings/input/globalcurve"            , QString("0,0;1,1;"))
 SETTING(ignoreCarrierGradeNat     , IgnoreCarrierGradeNat     , "history/cgnalert"                      , false)

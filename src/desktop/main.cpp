@@ -292,8 +292,11 @@ void DrawpileApp::initInterface()
 		fontSize = pointSize <= 0 ? 9 : pointSize;
 		m_settings.setFontSize(fontSize);
 	}
-	font.setPointSize(fontSize);
-	QApplication::setFont(font);
+
+	if(m_settings.overrideFontSize()) {
+		font.setPointSize(fontSize);
+		QApplication::setFont(font);
+	}
 }
 
 desktop::settings::InterfaceMode DrawpileApp::guessInterfaceMode()
