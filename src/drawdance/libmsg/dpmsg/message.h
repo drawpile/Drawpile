@@ -89,6 +89,10 @@ DP_Message *DP_message_deserialize_length(const unsigned char *buf,
 DP_Message *DP_message_deserialize(const unsigned char *buf, size_t bufsize);
 
 
+bool DP_message_compat_flag_indirect(DP_Message *msg);
+void DP_message_compat_flag_indirect_set(DP_Message *msg);
+
+
 bool DP_msg_draw_dabs_classic_indirect(DP_MsgDrawDabsClassic *mddc);
 
 bool DP_msg_draw_dabs_pixel_indirect(DP_MsgDrawDabsPixel *mddp);

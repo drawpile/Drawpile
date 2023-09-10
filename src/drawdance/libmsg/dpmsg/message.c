@@ -25,6 +25,8 @@
 #include <dpcommon/binary.h>
 #include <dpcommon/common.h>
 
+#define COMPAT_FLAG_NONE     0x0
+#define COMPAT_FLAG_INDIRECT 0x1
 
 typedef DP_Message *(*DP_MessageDeserializeFn)(unsigned int context_id,
                                                const unsigned char *buffer,
@@ -32,7 +34,8 @@ typedef DP_Message *(*DP_MessageDeserializeFn)(unsigned int context_id,
 
 struct DP_Message {
     DP_Atomic refcount;
-    DP_MessageType type;
+    uint8_t type;
+    uint8_t compat_flags;
     unsigned int context_id;
     const DP_MessageMethods *methods;
     alignas(DP_max_align_t) unsigned char internal[];
@@ -53,7 +56,8 @@ DP_Message *DP_message_new(DP_MessageType type, unsigned int context_id,
     DP_ASSERT(internal_size <= SIZE_MAX - sizeof(DP_Message));
     DP_Message *msg = DP_malloc_zeroed(sizeof(*msg) + internal_size);
     DP_atomic_set(&msg->refcount, 1);
-    msg->type = type;
+    msg->type = (uint8_t)type;
+    msg->compat_flags = COMPAT_FLAG_NONE;
     msg->context_id = context_id;
     msg->methods = methods;
     return msg;
@@ -101,7 +105,7 @@ DP_MessageType DP_message_type(DP_Message *msg)
 {
     DP_ASSERT(msg);
     DP_ASSERT(DP_atomic_get(&msg->refcount) > 0);
-    return msg->type;
+    return (DP_MessageType)msg->type;
 }
 
 const char *DP_message_name(DP_Message *msg)
@@ -140,7 +144,7 @@ DP_Message *DP_message_from_internal(void *internal)
 void *DP_message_cast(DP_Message *msg, DP_MessageType type)
 {
     if (msg) {
-        DP_MessageType msg_type = msg->type;
+        DP_MessageType msg_type = (DP_MessageType)msg->type;
         if (msg_type == type) {
             return DP_message_internal(msg);
         }
@@ -155,7 +159,7 @@ void *DP_message_cast2(DP_Message *msg, DP_MessageType type1,
                        DP_MessageType type2)
 {
     if (msg) {
-        DP_MessageType msg_type = msg->type;
+        DP_MessageType msg_type = (DP_MessageType)msg->type;
         if (msg_type == type1 || msg_type == type2) {
             return DP_message_internal(msg);
         }
@@ -171,7 +175,7 @@ void *DP_message_cast3(DP_Message *msg, DP_MessageType type1,
                        DP_MessageType type2, DP_MessageType type3)
 {
     if (msg) {
-        DP_MessageType msg_type = msg->type;
+        DP_MessageType msg_type = (DP_MessageType)msg->type;
         if (msg_type == type1 || msg_type == type2 || msg_type == type3) {
             return DP_message_internal(msg);
         }
@@ -197,7 +201,7 @@ size_t DP_message_serialize(DP_Message *msg, bool write_body_length,
     DP_ASSERT(DP_atomic_get(&msg->refcount) > 0);
     DP_ASSERT(get_buffer);
 
-    DP_MessageType type = msg->type;
+    DP_MessageType type = (DP_MessageType)msg->type;
     if (type < 0 || type > UINT8_MAX) {
         DP_error_set("Message type out of bounds: %d", (int)type);
         return 0;
@@ -279,6 +283,21 @@ DP_Message *DP_message_deserialize(const unsigned char *buf, size_t bufsize)
         DP_error_set("Buffer size %zu too short for message header", bufsize);
         return NULL;
     }
+}
+
+
+bool DP_message_compat_flag_indirect(DP_Message *msg)
+{
+    DP_ASSERT(msg);
+    DP_ASSERT(DP_atomic_get(&msg->refcount) > 0);
+    return msg->compat_flags & COMPAT_FLAG_INDIRECT;
+}
+
+void DP_message_compat_flag_indirect_set(DP_Message *msg)
+{
+    DP_ASSERT(msg);
+    DP_ASSERT(DP_atomic_get(&msg->refcount) > 0);
+    msg->compat_flags |= COMPAT_FLAG_INDIRECT;
 }
 
 

@@ -693,7 +693,7 @@ struct DP_NextDabContext {
 
 static DP_PaintDrawDabsParams
 get_draw_dabs_classic_params(unsigned int context_id,
-                             DP_MsgDrawDabsClassic *mddc)
+                             DP_MsgDrawDabsClassic *mddc, bool indirect_compat)
 {
     int dab_count;
     const DP_ClassicDab *dabs = DP_msg_draw_dabs_classic_dabs(mddc, &dab_count);
@@ -705,13 +705,14 @@ get_draw_dabs_classic_params(unsigned int context_id,
                                     DP_msg_draw_dabs_classic_color(mddc),
                                     DP_msg_draw_dabs_classic_mode(mddc),
                                     DP_msg_draw_dabs_classic_indirect(mddc),
+                                    indirect_compat,
                                     dab_count,
                                     {.classic = {dabs}}};
 }
 
 static DP_PaintDrawDabsParams
 get_draw_dabs_pixel_params(DP_MessageType type, unsigned int context_id,
-                           DP_MsgDrawDabsPixel *mddp)
+                           DP_MsgDrawDabsPixel *mddp, bool indirect_compat)
 {
     int dab_count;
     const DP_PixelDab *dabs = DP_msg_draw_dabs_pixel_dabs(mddp, &dab_count);
@@ -723,6 +724,7 @@ get_draw_dabs_pixel_params(DP_MessageType type, unsigned int context_id,
                                     DP_msg_draw_dabs_pixel_color(mddp),
                                     DP_msg_draw_dabs_pixel_mode(mddp),
                                     DP_msg_draw_dabs_pixel_indirect(mddp),
+                                    indirect_compat,
                                     dab_count,
                                     {.pixel = {dabs}}};
 }
@@ -748,6 +750,7 @@ get_draw_dabs_mypaint_params(unsigned int context_id,
         DP_msg_draw_dabs_mypaint_color(mddmp),
         blend_mode,
         indirect,
+        false,
         dab_count,
         {.mypaint = {dabs, DP_msg_draw_dabs_mypaint_lock_alpha(mddmp),
                      DP_msg_draw_dabs_mypaint_colorize(mddmp),
@@ -768,17 +771,20 @@ static bool next_dab(void *user, DP_PaintDrawDabsParams *out_params)
             switch (DP_message_type(msg)) {
             case DP_MSG_DRAW_DABS_CLASSIC:
                 *out_params = get_draw_dabs_classic_params(
-                    context_id, DP_msg_draw_dabs_classic_cast(msg));
+                    context_id, DP_message_internal(msg),
+                    DP_message_compat_flag_indirect(msg));
                 break;
             case DP_MSG_DRAW_DABS_PIXEL:
                 *out_params = get_draw_dabs_pixel_params(
                     DP_MSG_DRAW_DABS_PIXEL, context_id,
-                    DP_msg_draw_dabs_pixel_cast(msg));
+                    DP_message_internal(msg),
+                    DP_message_compat_flag_indirect(msg));
                 break;
             case DP_MSG_DRAW_DABS_PIXEL_SQUARE:
                 *out_params = get_draw_dabs_pixel_params(
                     DP_MSG_DRAW_DABS_PIXEL_SQUARE, context_id,
-                    DP_msg_draw_dabs_pixel_square_cast(msg));
+                    DP_message_internal(msg),
+                    DP_message_compat_flag_indirect(msg));
                 break;
             case DP_MSG_DRAW_DABS_MYPAINT:
                 *out_params = get_draw_dabs_mypaint_params(

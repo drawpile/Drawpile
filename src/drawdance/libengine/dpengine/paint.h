@@ -52,6 +52,7 @@ typedef struct DP_PaintDrawDabsParams {
     uint32_t color;
     int blend_mode;
     bool indirect;
+    bool indirect_compat;
     int dab_count;
     union {
         struct {

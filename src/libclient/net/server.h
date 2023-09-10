@@ -81,7 +81,7 @@ public:
 	virtual void artificialDisconnect() = 0;
 
 signals:
-	void messagesReceived(int count, const drawdance::Message *msgs);
+	void messagesReceived(int count, drawdance::Message *msgs);
 };
 
 

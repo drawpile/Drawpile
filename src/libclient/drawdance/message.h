@@ -124,6 +124,8 @@ public:
 
     drawdance::Message makeBackwardCompatible() const;
 
+    void setIndirectCompatFlag();
+
     bool shouldSmoothe()
     {
         switch(type()) {

@@ -224,16 +224,23 @@ QVector<drawdance::Message> Client::filterCompatibleMessages(int count, const dr
 	return compatibleMsgs;
 }
 
-void Client::handleMessages(int count, const drawdance::Message *msgs)
+void Client::handleMessages(int count, drawdance::Message *msgs)
 {
 	for(int i = 0; i < count; ++i) {
-		const drawdance::Message &msg = msgs[i];
+		drawdance::Message &msg = msgs[i];
 		switch(msg.type()) {
 		case DP_MSG_SERVER_COMMAND:
 			handleServerReply(ServerReply::fromMessage(msg));
 			break;
 		case DP_MSG_DATA:
 			handleData(msg);
+			break;
+		case DP_MSG_DRAW_DABS_CLASSIC:
+		case DP_MSG_DRAW_DABS_PIXEL:
+		case DP_MSG_DRAW_DABS_PIXEL_SQUARE:
+			if(m_compatibilityMode) {
+				msg.setIndirectCompatFlag();
+			}
 			break;
 		default:
 			break;

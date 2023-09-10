@@ -81,14 +81,19 @@ private slots:
 	void changeRadiusLogarithmicSetting(int radiusLogarithmic);
 	void selectBlendMode(int);
 	void setEraserMode(bool erase);
-	void updateUi();
 	void updateFromUi();
 	void updateFromUiWith(bool updateShared);
 	void updateStabilizationSettingVisibility();
 	void quickAdjustOn(QSpinBox *box, qreal adjustment);
 
 private:
-	QString getLockedReason() const;
+	enum class Lock { None, MyPaintPermission, MyPaintCompat, IndirectCompat };
+
+	void updateUi();
+
+	Lock getLock();
+	static QString getLockDescription(Lock lock);
+
 	void adjustSettingVisibilities(bool softmode, bool mypaintmode);
 	static double radiusLogarithmicToPixelSize(int radiusLogarithmic);
 

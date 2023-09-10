@@ -685,6 +685,11 @@ Message Message::makeBackwardCompatible() const
     }
 }
 
+void Message::setIndirectCompatFlag()
+{
+    DP_message_compat_flag_indirect_set(m_data);
+}
+
 Message::Message(DP_Message *msg)
     : m_data{msg}
 {

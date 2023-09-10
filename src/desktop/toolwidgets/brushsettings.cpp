@@ -240,6 +240,12 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	connect(d->finishStrokesAction, &QAction::triggered, this, &BrushSettings::updateFromUi);
 	connect(d->useBrushSampleCountAction, &QAction::triggered, this, &BrushSettings::updateFromUi);
 
+	connect(d->ui.noPermissionLabel, &QLabel::linkActivated, this, [this] {
+		QSignalBlocker blocker{d->ui.modeIncremental};
+		d->ui.modeIncremental->setChecked(true);
+		updateFromUi();
+	});
+
 	// By default, the docker shows all settings at once, making it bigger on
 	// startup and messing up the application layout. This will hide the excess
 	// UI elements and bring the docker to a reasonable size to begin with.
@@ -255,8 +261,38 @@ QWidget *BrushSettings::getHeaderWidget()
 
 bool BrushSettings::isLocked()
 {
-	return d->currentBrush().activeType() == brushes::ActiveBrush::MYPAINT &&
-		(!d->myPaintAllowed || d->compatibilityMode);
+	return getLock() != Lock::None;
+}
+
+BrushSettings::Lock BrushSettings::getLock()
+{
+	if(d->compatibilityMode) {
+		if(d->currentIsMyPaint()) {
+			return Lock::MyPaintCompat;
+		} else if(!d->currentBrush().classic().incremental) {
+			return Lock::IndirectCompat;
+		}
+	} else if(!d->myPaintAllowed) {
+		return Lock::MyPaintPermission;
+	}
+	return Lock::None;
+}
+
+QString BrushSettings::getLockDescription(Lock lock)
+{
+	switch(lock) {
+	case Lock::MyPaintPermission:
+		return tr("You don't have permission to use MyPaint brushes.");
+	case Lock::MyPaintCompat:
+		return tr("This session is hosted with Drawpile 2.1, MyPaint brushes "
+				  "are unavailable.");
+	case Lock::IndirectCompat:
+		return tr("This session is hosted with Drawpile 2.1, Indirect/Wash "
+				  "Mode is unavailable. <a href=\"#\">Click here to switch to "
+				  "Direct/Build-Up Mode.</a>");
+	default:
+		return QString{};
+	}
 }
 
 void BrushSettings::setMyPaintAllowed(bool myPaintAllowed)
@@ -572,7 +608,7 @@ void BrushSettings::updateUi()
 		setSliderFromMyPaintSetting(d->ui.hardnessBox, myPaintSettings,
 			MYPAINT_BRUSH_SETTING_HARDNESS);
 		d->ui.modeIncremental->setChecked(myPaint.constBrush().incremental);
-		d->ui.modeIncremental->setVisible(true);
+		d->ui.modeIncremental->setVisible(!isLocked());
 	} else {
 		d->ui.opacityBox->setValue(qRound(classic.opacity.max * 100.0));
 		d->ui.hardnessBox->setValue(qRound(classic.hardness.max * 100.0));
@@ -692,6 +728,10 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 	d->ui.preview->setBrush(brush);
 
 	pushSettings();
+
+	adjustSettingVisibilities(
+		mypaintmode || classic.shape == DP_BRUSH_SHAPE_CLASSIC_SOFT_ROUND,
+		mypaintmode);
 }
 
 void BrushSettings::updateStabilizationSettingVisibility()
@@ -705,42 +745,44 @@ void BrushSettings::updateStabilizationSettingVisibility()
 
 void BrushSettings::adjustSettingVisibilities(bool softmode, bool mypaintmode)
 {
-	// Hide certain features based on the brush type and lock state.
+	Lock lock = getLock();
+	bool locked = lock != Lock::None;
 	QPair<QWidget *, bool> widgetVisibilities[] = {
-		{d->ui.modeColorpick, !mypaintmode},
-		{d->ui.modeLockAlpha, mypaintmode},
-		{d->ui.modeEraser, true},
-		{d->ui.blendmode, !mypaintmode},
-		{d->ui.pressureHardness, softmode && !mypaintmode},
-		{d->ui.hardnessBox, softmode},
-		{d->ui.brushsizeBox, !mypaintmode},
-		{d->ui.pressureSize, !mypaintmode},
-		{d->ui.radiusLogarithmicBox, mypaintmode},
-		{d->ui.opacityBox, true},
-		{d->ui.pressureOpacity, !mypaintmode},
-		{d->ui.smudgingBox, !mypaintmode},
-		{d->ui.pressureSmudging, !mypaintmode},
-		{d->ui.colorpickupBox, !mypaintmode},
-		{d->ui.brushspacingBox, !mypaintmode},
-		{d->ui.gainBox, mypaintmode},
-		{d->ui.stabilizationWrapper, true},
-		{d->ui.stabilizerButton, true},
+		{d->ui.modeColorpick, !locked && !mypaintmode},
+		{d->ui.modeLockAlpha, !locked && mypaintmode},
+		{d->ui.modeEraser, !locked},
+		{d->ui.modeIncremental, !locked || (!mypaintmode && lock == Lock::IndirectCompat)},
+		{d->ui.blendmode, !locked && !mypaintmode},
+		{d->ui.pressureHardness, !locked && softmode && !mypaintmode},
+		{d->ui.hardnessBox, !locked && softmode},
+		{d->ui.brushsizeBox, !locked && !mypaintmode},
+		{d->ui.pressureSize, !locked && !mypaintmode},
+		{d->ui.radiusLogarithmicBox, !locked && mypaintmode},
+		{d->ui.opacityBox, !locked},
+		{d->ui.pressureOpacity, !locked && !mypaintmode},
+		{d->ui.smudgingBox, !locked && !mypaintmode},
+		{d->ui.pressureSmudging, !locked && !mypaintmode},
+		{d->ui.colorpickupBox, !locked && !mypaintmode},
+		{d->ui.brushspacingBox, !locked && !mypaintmode},
+		{d->ui.gainBox, !locked && mypaintmode},
+		{d->ui.stabilizationWrapper, !locked},
+		{d->ui.stabilizerButton, !locked},
 	};
+
 	// First hide them all so that the docker doesn't end up bigger temporarily
 	// and messes up the layout. Then afterwards show the applicable ones.
 	for (const QPair<QWidget *, bool> &pair : widgetVisibilities) {
 		pair.first->setVisible(false);
 	}
-	bool locked = isLocked();
+
+	d->ui.preview->setDisabled(locked);
 	d->ui.noPermissionLabel->setVisible(locked);
 	if(locked) {
-		d->ui.noPermissionLabel->setText(d->compatibilityMode
-			? tr("This session is hosted with Drawpile 2.1, MyPaint brushes are unavailable.")
-			: tr("You don't have permission to use MyPaint brushes."));
+		d->ui.noPermissionLabel->setText(getLockDescription(lock));
 	}
-	d->ui.preview->setDisabled(locked);
+
 	for (const QPair<QWidget *, bool> &pair : widgetVisibilities) {
-		pair.first->setVisible(pair.second && !locked);
+		pair.first->setVisible(pair.second);
 	}
 }
 

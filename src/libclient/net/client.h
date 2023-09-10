@@ -196,7 +196,7 @@ signals:
 	void userInfoReceived(int userId, const QJsonObject &info);
 
 private slots:
-	void handleMessages(int count, const drawdance::Message *msgs);
+	void handleMessages(int count, drawdance::Message *msgs);
 	void handleConnect(
 		const QUrl &url, uint8_t userid, bool join, bool auth, bool moderator,
 		bool supportsAutoReset, bool compatibilityMode, const QString &joinPassword);

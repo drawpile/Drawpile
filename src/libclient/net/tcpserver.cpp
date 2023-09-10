@@ -92,12 +92,12 @@ void TcpServer::handleMessage()
 				const int offset = i + 1;
 				if(!expectMoreLogin && offset < count) {
 					emit messagesReceived(
-						count - offset, m_receiveBuffer.constData() + offset);
+						count - offset, m_receiveBuffer.data() + offset);
 					break;
 				}
 			}
 		} else {
-			emit messagesReceived(count, m_receiveBuffer.constData());
+			emit messagesReceived(count, m_receiveBuffer.data());
 		}
 		m_receiveBuffer.clear();
 	}
