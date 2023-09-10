@@ -151,6 +151,7 @@ void TcpServer::loginSuccess()
 
 	m_supportsPersistence = m_loginstate->supportsPersistence();
 	m_supportsAbuseReports = m_loginstate->supportsAbuseReports();
+	m_msgqueue->setContextId(m_loginstate->userId());
 
 	emit loggedIn(
 		m_loginstate->url(),

@@ -25,6 +25,7 @@ MessageQueue::MessageQueue(QTcpSocket *socket, QObject *parent)
 	  m_smoothDrainRate(libclient::settings::defaultMessageQueueDrainRate),
 	  m_smoothTimer(nullptr),
 	  m_smoothMessagesToDrain(INT_MAX),
+	  m_contextId(0),
 	  m_pingTimer(nullptr),
 	  m_lastRecvTime(0),
 	  m_idleTimeout(0), m_pingSent(0),
@@ -316,6 +317,7 @@ int MessageQueue::haveWholeMessageToRead()
 
 void MessageQueue::readData() {
 	int read, totalread = 0, gotmessages = 0;
+	bool smoothFlush = false;
 	do {
 		// Read as much as fits in to the message buffer
 		read = m_socket->read(m_recvbuffer+m_recvbytes, MAX_BUF_LEN-m_recvbytes);
@@ -370,6 +372,14 @@ void MessageQueue::readData() {
 					emit badData(messageLength, type, static_cast<unsigned char>(m_recvbuffer[3]));
 				} else {
 					if(m_smoothTimer) {
+						// Undos already have a delay because they require a
+						// round trip, we don't want to make them even slower.
+						bool ownUndoReceived = m_contextId != 0 &&
+											   msg.type() == DP_MSG_UNDO &&
+											   msg.contextId() == m_contextId;
+						if(ownUndoReceived) {
+							smoothFlush = true;
+						}
 						m_smoothBuffer.append(msg);
 					} else {
 						m_inbox.append(msg);
@@ -398,9 +408,17 @@ void MessageQueue::readData() {
 
 	if(gotmessages != 0) {
 		if(m_smoothTimer) {
-			m_smoothMessagesToDrain = m_smoothBuffer.size() / m_smoothDrainRate;
-			if(!m_smoothTimer->isActive()) {
-				receiveSmoothedMessages();
+			if(smoothFlush) {
+				m_inbox.append(m_smoothBuffer);
+				m_smoothBuffer.clear();
+				emit messageAvailable();
+				m_smoothTimer->stop();
+			} else {
+				m_smoothMessagesToDrain =
+					m_smoothBuffer.size() / m_smoothDrainRate;
+				if(!m_smoothTimer->isActive()) {
+					receiveSmoothedMessages();
+				}
 			}
 		} else {
 			emit messageAvailable();

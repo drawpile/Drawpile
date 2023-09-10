@@ -114,6 +114,8 @@ public:
 
 	void setArtificialLagMs(int msecs);
 
+	void setContextId(unsigned int contextId) { m_contextId = contextId; }
+
 public slots:
 	/**
 	 * @brief Send a Ping message
@@ -207,6 +209,7 @@ private:
 	QTimer *m_smoothTimer;
 	drawdance::MessageList m_smoothBuffer;
 	int m_smoothMessagesToDrain;
+	unsigned int m_contextId;
 
 	QTimer *m_idleTimer;
 	QTimer *m_pingTimer;
