@@ -40,6 +40,7 @@ Create::Create(QWidget *parent)
 	m_backgroundPreview->setDisplayMode(ColorPreview::DisplayMode::AllAlpha);
 	m_backgroundPreview->setToolTip(tr("Canvas background color"));
 	m_backgroundPreview->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+	m_backgroundPreview->setCursor(Qt::PointingHandCursor);
 	layout->addRow(tr("Background:"), m_backgroundPreview, 1, 1, Qt::AlignLeft);
 
 	const desktop::settings::Settings &settings = dpApp().settings();
