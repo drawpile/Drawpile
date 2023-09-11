@@ -790,8 +790,8 @@ void CanvasView::onPenUp()
 }
 
 void CanvasView::penPressEvent(
-	long long timeMsec, const QPointF &pos, qreal pressure, qreal xtilt,
-	qreal ytilt, qreal rotation, Qt::MouseButton button,
+	QEvent *event, long long timeMsec, const QPointF &pos, qreal pressure,
+	qreal xtilt, qreal ytilt, qreal rotation, Qt::MouseButton button,
 	Qt::KeyboardModifiers modifiers, bool isStylus)
 {
 	if(m_pendown != NOTDOWN) {
@@ -807,6 +807,9 @@ void CanvasView::penPressEvent(
 		resetCursor();
 	}
 	if(m_hoveringOverHud) {
+		if(event) {
+			event->accept();
+		}
 		emit toggleActionActivated(action);
 		m_hoveringOverHud = false;
 		m_scene->removeHover();
@@ -907,8 +910,8 @@ void CanvasView::mousePressEvent(QMouseEvent *event)
 	}
 
 	penPressEvent(
-		QDateTime::currentMSecsSinceEpoch(), mousePos, 1.0, 0.0, 0.0, 0.0,
-		event->button(), event->modifiers(), false);
+		event, QDateTime::currentMSecsSinceEpoch(), mousePos, 1.0, 0.0, 0.0,
+		0.0, event->button(), event->modifiers(), false);
 }
 
 void CanvasView::penMoveEvent(
@@ -1055,11 +1058,12 @@ void CanvasView::penReleaseEvent(
 	updateOutline(point);
 }
 
-void CanvasView::touchPressEvent(long long timeMsec, const QPointF &pos)
+void CanvasView::touchPressEvent(
+	QEvent *event, long long timeMsec, const QPointF &pos)
 {
 	penPressEvent(
-		timeMsec, pos, 1.0, 0.0, 0.0, 0.0, Qt::LeftButton, Qt::NoModifier,
-		false);
+		event, timeMsec, pos, 1.0, 0.0, 0.0, 0.0, Qt::LeftButton,
+		Qt::NoModifier, false);
 }
 
 void CanvasView::touchMoveEvent(long long timeMsec, const QPointF &pos)
@@ -1407,7 +1411,8 @@ void CanvasView::touchEvent(QTouchEvent *event)
 				// There's no other actions other than drawing enabled, so we
 				// can just start drawing without awaiting what happens next.
 				m_touchMode = TouchMode::Drawing;
-				touchPressEvent(QDateTime::currentMSecsSinceEpoch(), pos);
+				touchPressEvent(
+					event, QDateTime::currentMSecsSinceEpoch(), pos);
 			}
 		} else {
 			DP_EVENT_LOG(
@@ -1432,7 +1437,8 @@ void CanvasView::touchEvent(QTouchEvent *event)
 					touchMoveEvent(QDateTime::currentMSecsSinceEpoch(), pos);
 				} else { // Shouldn't happen, but we'll deal with it anyway.
 					m_touchMode = TouchMode::Drawing;
-					touchPressEvent(QDateTime::currentMSecsSinceEpoch(), pos);
+					touchPressEvent(
+						event, QDateTime::currentMSecsSinceEpoch(), pos);
 				}
 			} else {
 				// This still might be the beginning of a multitouch operation.
@@ -1587,7 +1593,7 @@ void CanvasView::flushTouchDrawBuffer()
 	int bufferCount = m_touchDrawBuffer.size();
 	if(bufferCount != 0) {
 		const QPair<long long, QPointF> &press = m_touchDrawBuffer.first();
-		touchPressEvent(press.first, press.second);
+		touchPressEvent(nullptr, press.first, press.second);
 		for(int i = 0; i < bufferCount; ++i) {
 			const QPair<long long, QPointF> &move = m_touchDrawBuffer[i];
 			touchMoveEvent(move.first, move.second);
@@ -1632,7 +1638,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 		}
 
 		penPressEvent(
-			QDateTime::currentMSecsSinceEpoch(), compat::tabPosF(*tabev),
+			event, QDateTime::currentMSecsSinceEpoch(), compat::tabPosF(*tabev),
 			tabev->pressure(), tabev->xTilt(), tabev->yTilt(),
 			qDegreesToRadians(tabev->rotation()), tabev->button(),
 			QApplication::queryKeyboardModifiers(), // TODO check if tablet

@@ -243,8 +243,8 @@ private:
 
 	// unified mouse/stylus event handlers
 	void penPressEvent(
-		long long timeMsec, const QPointF &pos, qreal pressure, qreal xtilt,
-		qreal ytilt, qreal rotation, Qt::MouseButton button,
+		QEvent *event, long long timeMsec, const QPointF &pos, qreal pressure,
+		qreal xtilt, qreal ytilt, qreal rotation, Qt::MouseButton button,
 		Qt::KeyboardModifiers modifiers, bool isStylus);
 	void penMoveEvent(
 		long long timeMsec, const QPointF &pos, qreal pressure, qreal xtilt,
@@ -254,7 +254,7 @@ private:
 		long long timeMsec, const QPointF &pos, Qt::MouseButton button,
 		Qt::KeyboardModifiers modifiers);
 
-	void touchPressEvent(long long timeMsec, const QPointF &pos);
+	void touchPressEvent(QEvent *event, long long timeMsec, const QPointF &pos);
 	void touchMoveEvent(long long timeMsec, const QPointF &pos);
 	void touchReleaseEvent(long long timeMsec, const QPointF &pos);
 
