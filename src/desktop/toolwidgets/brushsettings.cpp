@@ -608,13 +608,21 @@ void BrushSettings::updateUi()
 		setSliderFromMyPaintSetting(d->ui.hardnessBox, myPaintSettings,
 			MYPAINT_BRUSH_SETTING_HARDNESS);
 		d->ui.modeIncremental->setChecked(myPaint.constBrush().incremental);
-		d->ui.modeIncremental->setVisible(!isLocked());
+		bool canUseIncrementalMode = !isLocked();
+		d->ui.modeIncremental->setEnabled(canUseIncrementalMode);
+		d->ui.modeIncremental->setVisible(canUseIncrementalMode);
 	} else {
 		d->ui.opacityBox->setValue(qRound(classic.opacity.max * 100.0));
 		d->ui.hardnessBox->setValue(qRound(classic.hardness.max * 100.0));
 		d->ui.modeIncremental->setChecked(classic.incremental);
 		// Smudging only works right in incremental mode
-		bool canUseIncrementalMode = classic.smudge.max == 0.0;
+		bool canUseIncrementalMode;
+		if(classic.smudge.max == 0.0) {
+			Lock lock = getLock();
+			canUseIncrementalMode = lock == Lock::None || lock == Lock::IndirectCompat;
+		} else {
+			canUseIncrementalMode = false;
+		}
 		d->ui.modeIncremental->setEnabled(canUseIncrementalMode);
 		d->ui.modeIncremental->setVisible(canUseIncrementalMode);
 	}
@@ -702,8 +710,9 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 			setMyPaintSettingFromSlider(d->ui.hardnessBox, myPaintSettings,
 				MYPAINT_BRUSH_SETTING_HARDNESS);
 			myPaint.brush().incremental = d->ui.modeIncremental->isChecked();
-			d->ui.modeIncremental->setEnabled(true);
-			d->ui.modeIncremental->setVisible(true);
+			bool canUseIncrementalMode = !isLocked();
+			d->ui.modeIncremental->setEnabled(canUseIncrementalMode);
+			d->ui.modeIncremental->setVisible(canUseIncrementalMode);
 		} else {
 			classic.opacity.max = d->ui.opacityBox->value() / 100.0;
 			classic.opacity_pressure = d->ui.pressureOpacity->isChecked();
@@ -713,7 +722,13 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 			}
 			classic.incremental = d->ui.modeIncremental->isChecked();
 			// Smudging only works right in incremental mode
-			bool canUseIncrementalMode = classic.smudge.max == 0.0;
+			bool canUseIncrementalMode;
+			if(classic.smudge.max == 0.0) {
+				Lock lock = getLock();
+				canUseIncrementalMode = lock == Lock::None || lock == Lock::IndirectCompat;
+			} else {
+				canUseIncrementalMode = false;
+			}
 			d->ui.modeIncremental->setEnabled(canUseIncrementalMode);
 			d->ui.modeIncremental->setVisible(canUseIncrementalMode);
 		}
@@ -751,7 +766,9 @@ void BrushSettings::adjustSettingVisibilities(bool softmode, bool mypaintmode)
 		{d->ui.modeColorpick, !locked && !mypaintmode},
 		{d->ui.modeLockAlpha, !locked && mypaintmode},
 		{d->ui.modeEraser, !locked},
-		{d->ui.modeIncremental, !locked || (!mypaintmode && lock == Lock::IndirectCompat)},
+		{d->ui.modeIncremental,
+			d->ui.modeIncremental->isEnabled() &&
+				(!locked || (!mypaintmode && lock == Lock::IndirectCompat))},
 		{d->ui.blendmode, !locked && !mypaintmode},
 		{d->ui.pressureHardness, !locked && softmode && !mypaintmode},
 		{d->ui.hardnessBox, !locked && softmode},
