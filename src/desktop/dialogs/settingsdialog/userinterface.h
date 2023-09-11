@@ -30,6 +30,7 @@ private:
 		desktop::settings::Settings &settings, utils::SanerFormLayout *form);
 	void initMiscellaneous(
 		desktop::settings::Settings &settings, utils::SanerFormLayout *form);
+	void pickCanvasBackgroundColor(desktop::settings::Settings &settings);
 };
 
 }

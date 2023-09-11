@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "desktop/dialogs/settingsdialog/userinterface.h"
+#include "desktop/dialogs/colordialog.h"
 #include "desktop/settings.h"
 #include "desktop/utils/sanerformlayout.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
+#include <QtColorWidgets/ColorPreview>
 #include <QButtonGroup>
 #include <QCheckBox>
 #include <QComboBox>
@@ -130,6 +132,21 @@ void UserInterface::initKineticScrolling(
 void UserInterface::initMiscellaneous(
 	desktop::settings::Settings &settings, utils::SanerFormLayout *form)
 {
+	using color_widgets::ColorPreview;
+	ColorPreview *colorPreview = new ColorPreview;
+	colorPreview->setDisplayMode(ColorPreview::DisplayMode::NoAlpha);
+	colorPreview->setToolTip(tr("Background color behind the canvas"));
+	colorPreview->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+	colorPreview->setCursor(Qt::PointingHandCursor);
+	form->addRow(tr("Color behind canvas:"), colorPreview);
+	settings.bindCanvasViewBackgroundColor(this, [colorPreview](const QColor &color) {
+		colorPreview->setColor(color);
+	});
+
+	connect(
+		colorPreview, &ColorPreview::clicked, this,
+		[this, &settings] { pickCanvasBackgroundColor(settings); });
+
 	QCheckBox *scrollBars = new QCheckBox(tr("Show scroll bars on canvas"));
 	settings.bindCanvasScrollBars(scrollBars);
 	form->addRow(tr("Miscellaneous:"), scrollBars);
@@ -137,6 +154,18 @@ void UserInterface::initMiscellaneous(
 	QCheckBox *confirmDelete = new QCheckBox(tr("Ask before deleting layers"));
 	settings.bindConfirmLayerDelete(confirmDelete);
 	form->addRow(nullptr, confirmDelete);
+}
+
+void UserInterface::pickCanvasBackgroundColor(desktop::settings::Settings &settings)
+{
+	using color_widgets::ColorDialog;
+	ColorDialog dlg;
+	dlg.setColor(settings.canvasViewBackgroundColor());
+	dlg.setAlphaEnabled(false);
+	dialogs::applyColorDialogSettings(&dlg);
+	if(dlg.exec() == QDialog::Accepted) {
+		settings.setCanvasViewBackgroundColor(dlg.color());
+	}
 }
 
 }

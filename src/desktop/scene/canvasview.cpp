@@ -79,7 +79,12 @@ CanvasView::CanvasView(QWidget *parent)
 	setAcceptDrops(true);
 	setFrameShape(QFrame::NoFrame);
 
-	setBackgroundBrush(QColor(100, 100, 100));
+	auto &settings = dpApp().settings();
+	settings.bindCanvasViewBackgroundColor(this, [this](QColor color) {
+		color.setAlpha(255);
+		setBackgroundBrush(color);
+		invalidateScene(QRectF{}, QGraphicsScene::BackgroundLayer);
+	});
 
 	m_notificationBar = new NotificationBar(this);
 	connect(
@@ -106,8 +111,6 @@ CanvasView::CanvasView(QWidget *parent)
 		p.drawPoint(0, 0);
 		m_dotcursor = QCursor(dot, 0, 0);
 	}
-
-	auto &settings = dpApp().settings();
 
 	settings.bindTabletEvents(this, &widgets::CanvasView::setTabletEnabled);
 	settings.bindOneFingerDraw(this, &widgets::CanvasView::setTouchDraw);

@@ -19,6 +19,7 @@ Unreleased Version 2.2.0-pre
  * Feature: Capture volume rocker on Android and bind it to undo and redo by default. Thanks to cl for suggesting.
  * Feature: Add compatibility for Drawpile 2.1's broken indirect mode.
  * Fix: Make the receive delay not delay your own undos.
+ * Feature: Add a setting for the background color behind the canvas. Thanks to Nightshade for suggesting.
 
 2023-08-26 Version 2.2.0-beta.7
  * Fix: Make classic brushes not go brighter when smudging into transparency. Thanks to cada for reporting.
