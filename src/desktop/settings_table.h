@@ -64,7 +64,7 @@ SETTING(interfaceMode             , InterfaceMode             , "settings/interf
 SETTING(inviteLinkType            , InviteLinkType            , "invites/linktype"                      , dialogs::InviteDialog::LinkType::Web)
 SETTING(inviteIncludePassword     , InviteIncludePassword     , "invites/includepassword"               , false)
 SETTING(kineticScrollGesture      , KineticScrollGesture      , "settings/kineticscroll/gesture"        , int(KINETIC_SCROLL_GESTURE_DEFAULT))
-SETTING(kineticScrollSensitivity  , KineticScrollSensitivity  , "settings/kineticscroll/sensititivy"    , 100)
+SETTING(kineticScrollThreshold    , KineticScrollThreshold    , "settings/kineticscroll/threshold"      , 10)
 SETTING(kineticScrollHideBars     , KineticScrollHideBars     , "settings/kineticscroll/hidebars"       , false)
 SETTING(language                  , Language                  , "settings/language"                     , QString())
 SETTING(lastAnnounce              , LastAnnounce              , "history/announce"                      , false)

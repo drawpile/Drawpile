@@ -106,7 +106,8 @@ void initKineticScrolling(QAbstractScrollArea *scrollArea)
 	// SPDX-License-Identifier: GPL-3.0-or-later
 	// SDPX—SnippetName: Kinetic scroll setup from Krita
 	if(scrollArea && enabled) {
-		int sensitivity = settings.kineticScrollSensitivity();
+		int sensitivity =
+			100 - qBound(0, settings.kineticScrollThreshold(), 100);
 		bool hideScrollBars = settings.kineticScrollHideBars();
 		float resistanceCoefficient = 10.0f;
 		float dragVelocitySmoothFactor = 1.0f;

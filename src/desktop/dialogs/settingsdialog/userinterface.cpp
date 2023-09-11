@@ -104,22 +104,21 @@ void UserInterface::initKineticScrolling(
 	settings.bindKineticScrollGesture(kineticScrollGesture, Qt::UserRole);
 	form->addRow(tr("Kinetic scrolling:"), kineticScrollGesture);
 
-	KisSliderSpinBox *sensitivity = new KisSliderSpinBox;
-	sensitivity->setRange(0, 100);
-	sensitivity->setPrefix(tr("Sensitivity: "));
-	settings.bindKineticScrollSensitivity(sensitivity);
-	form->addRow(nullptr, sensitivity);
+	KisSliderSpinBox *threshold = new KisSliderSpinBox;
+	threshold->setRange(0, 100);
+	threshold->setPrefix(tr("Threshold: "));
+	settings.bindKineticScrollThreshold(threshold);
+	form->addRow(nullptr, threshold);
 
 	QCheckBox *hideBars = new QCheckBox(tr("Hide scroll bars"));
 	settings.bindKineticScrollHideBars(hideBars);
 	form->addRow(nullptr, hideBars);
 
-	settings.bindKineticScrollGesture(
-		this, [sensitivity, hideBars](int gesture) {
-			bool enabled = gesture != int(KineticScrollGesture::None);
-			sensitivity->setEnabled(enabled);
-			hideBars->setEnabled(enabled);
-		});
+	settings.bindKineticScrollGesture(this, [threshold, hideBars](int gesture) {
+		bool enabled = gesture != int(KineticScrollGesture::None);
+		threshold->setEnabled(enabled);
+		hideBars->setEnabled(enabled);
+	});
 
 	form->addRow(
 		nullptr, utils::note(
