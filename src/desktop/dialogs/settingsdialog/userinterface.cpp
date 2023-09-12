@@ -163,6 +163,7 @@ void UserInterface::pickCanvasBackgroundColor(desktop::settings::Settings &setti
 	dlg.setColor(settings.canvasViewBackgroundColor());
 	dlg.setAlphaEnabled(false);
 	dialogs::applyColorDialogSettings(&dlg);
+	dialogs::setColorDialogResetColor(&dlg, CANVAS_VIEW_BACKGROUND_COLOR_DEFAULT);
 	if(dlg.exec() == QDialog::Accepted) {
 		settings.setCanvasViewBackgroundColor(dlg.color());
 	}

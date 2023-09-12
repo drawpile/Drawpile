@@ -2,6 +2,7 @@
 
 #include "desktop/main.h"
 #include <QtColorWidgets/ColorDialog>
+#include <QtColorWidgets/ColorPreview>
 
 namespace dialogs {
 
@@ -12,6 +13,18 @@ void applyColorDialogSettings(color_widgets::ColorDialog *dlg)
 	settings.bindColorWheelAngle(dlg, &color_widgets::ColorDialog::setWheelRotating);
 	settings.bindColorWheelSpace(dlg, &color_widgets::ColorDialog::setColorSpace);
 	settings.bindColorWheelMirror(dlg, &color_widgets::ColorDialog::setWheelMirrored);
+}
+
+void setColorDialogResetColor(color_widgets::ColorDialog *dlg, const QColor &color)
+{
+	color_widgets::ColorPreview *preview = dlg->findChild<color_widgets::ColorPreview *>(
+		QStringLiteral("preview"), Qt::FindDirectChildrenOnly);
+	if(preview) {
+		preview->setComparisonColor(color);
+		preview->setDisplayMode(color_widgets::ColorPreview::SplitColor);
+	} else {
+		qWarning("Preview not found in color dialog, reset color not set");
+	}
 }
 
 color_widgets::ColorDialog *newColorDialog(QWidget *parent)

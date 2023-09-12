@@ -1,5 +1,7 @@
 #include "libclient/settings_table_macros.h"
 
+#define CANVAS_VIEW_BACKGROUND_COLOR_DEFAULT QColor(100, 100, 100)
+
 #ifndef KINETIC_SCROLL_GESTURE_DEFAULT
 #	ifdef Q_OS_ANDROID
 #		define KINETIC_SCROLL_GESTURE_DEFAULT KineticScrollGesture::LeftClick
@@ -34,7 +36,7 @@
 
 SETTING(brushCursor               , BrushCursor               , "settings/brushcursor"                  , widgets::CanvasView::BrushCursor::TriangleRight)
 SETTING(brushOutlineWidth         , BrushOutlineWidth         , "settings/brushoutlinewidth"            , 1.0)
-SETTING(canvasViewBackgroundColor , CanvasViewBackgroundColor , "settings/canvasviewbackgroundcolor"    , QColor(100, 100, 100))
+SETTING(canvasViewBackgroundColor , CanvasViewBackgroundColor , "settings/canvasviewbackgroundcolor"    , CANVAS_VIEW_BACKGROUND_COLOR_DEFAULT)
 SETTING(canvasScrollBars          , CanvasScrollBars          , "settings/canvasscrollbars"             , true)
 SETTING(canvasShortcuts           , CanvasShortcuts           , "settings/canvasshortcuts2"             , QVariantMap())
 #ifdef Q_OS_ANDROID
