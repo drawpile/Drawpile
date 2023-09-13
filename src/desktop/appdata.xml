@@ -381,17 +381,17 @@
       </description>
       <artifacts>
         <artifact type="binary" platform="x86_64-windows-msvc">
-          <location>https://drawpile.net/files/win/Drawpile-2.2.0b3.zip</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.3/drawpile-2.2.0b3.zip</location>
           <checksum type="sha256">f7a3ce8685bb0ed38ffba1ca78ff3efa72898bfec6d0e192aa365d0218e97d9f</checksum>
           <size type="download">25840196</size>
         </artifact>
         <artifact type="binary" platform="x86_64-darwin-gnu">
-          <location>https://drawpile.net/files/osx/Drawpile 2.2.0b3.dmg</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.3/Drawpile.2.2.0b3.dmg</location>
           <checksum type="sha256">61c4983897dae9bac4306448ba78c8a6146843b5494ff40722d44ddc2876532e</checksum>
           <size type="download">17155897</size>
         </artifact>
         <artifact type="source">
-          <location>https://drawpile.net/files/src/drawpile-2.2.0b3.tar.gz</location>
+          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.2.0-beta.3.tar.gz</location>
           <checksum type="sha256">bc6d832c7ddde6ccd8d6285de0fc2f65e0a236626d7ccb65d896389bc7936594</checksum>
           <size type="download">3742000</size>
         </artifact>
@@ -418,17 +418,17 @@
       </description>
       <artifacts>
         <artifact type="binary" platform="x86_64-windows-msvc">
-          <location>https://drawpile.net/files/win/Drawpile-2.2.0b2.zip</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0b2/drawpile-2.2.0b2.zip</location>
           <checksum type="sha256">985001966b99c2b6bef2435639768978943de5125c720743a333ff6a0da01964</checksum>
           <size type="download">24682217</size>
         </artifact>
         <artifact type="binary" platform="x86_64-darwin-gnu">
-          <location>https://drawpile.net/files/osx/Drawpile 2.2.0b2.dmg</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0b2/Drawpile.2.2.0b2.dmg</location>
           <checksum type="sha256">e0141d4a6450bb980a7d01a1b1b201f6f4aa318b57edb0e90924766199f07217</checksum>
           <size type="download">15120068</size>
         </artifact>
         <artifact type="source">
-          <location>https://drawpile.net/files/src/drawpile-2.2.0b2.tar.gz</location>
+          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.2.0b2.tar.gz</location>
           <checksum type="sha256">591f490d90b8b90236c3e54c9caf8051fa3880eaf66ef7027f31acb2ccdeb954</checksum>
           <size type="download">2726817</size>
         </artifact>
@@ -449,17 +449,17 @@
       </description>
       <artifacts>
         <artifact type="binary" platform="x86_64-windows-msvc">
-          <location>https://drawpile.net/files/win/Drawpile-2.2.0b.zip</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0b/drawpile-2.2.0b.zip</location>
           <checksum type="sha256">7a2b3a698f589af9a13317c0d132768bf937754989fd333612881825f967078b</checksum>
           <size type="download">24678820</size>
         </artifact>
         <artifact type="binary" platform="x86_64-darwin-gnu">
-          <location>https://drawpile.net/files/osx/drawpile-2.2.0b.dmg</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0b/drawpile-2.2.0b.dmg</location>
           <checksum type="sha256">297cb4a181933fb8ae19ef05fcb9491b7dfad2583f747f0f96a887311aa11037</checksum>
           <size type="download">15118234</size>
         </artifact>
         <artifact type="source">
-          <location>https://drawpile.net/files/src/drawpile-2.2.0b.tar.gz</location>
+          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.2.0b.tar.gz</location>
           <checksum type="sha256">ee4f0826f9b8fb488a581f6857ec52244e8780ef07b57a99b8605afeeb3870c1</checksum>
           <size type="download">2723608</size>
         </artifact>
@@ -480,22 +480,22 @@
       </description>
       <artifacts>
         <artifact type="binary" platform="x86_64-windows-gnu">
-          <location>https://drawpile.net/files/win/drawpile-2.1.20-setup.exe</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.1.20/drawpile-2.1.20-setup.exe</location>
           <checksum type="sha256">878a47414d5209e784a415d507aac864827490f106ed0290802a333d641a7ac4</checksum>
           <size type="download">16615428</size>
         </artifact>
         <artifact type="binary" platform="i386-windows-gnu">
-          <location>https://drawpile.net/files/win/drawpile-2.1.20-setup-w32.exe</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.1.20/drawpile-2.1.20-setup-w32.exe</location>
           <checksum type="sha256">ffb20217c890f3c874df40bb9c43fe1ec843ba76eb2fc636c16ce45d3a0f05df</checksum>
           <size type="download">15682839</size>
         </artifact>
         <artifact type="binary" platform="x86_64-darwin-gnu">
-          <location>https://drawpile.net/files/osx/Drawpile 2.1.20.dmg</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.1.20/Drawpile.2.1.20.dmg</location>
           <checksum type="sha256">fe7f93c2f3ec9505b8a4f044093b67bae0c80fc8d6613ba2d0dfad5243cfdf44</checksum>
           <size type="download">14363397</size>
         </artifact>
         <artifact type="source">
-          <location>https://drawpile.net/files/src/drawpile-2.1.20.tar.gz</location>
+          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.1.20.tar.gz</location>
           <checksum type="sha256">a2f45e8b7482854288eb7b7f9db0961c79f0129ab92216280fdb94457e0d0fa9</checksum>
           <size type="download">2631090</size>
         </artifact>
@@ -518,22 +518,22 @@
       </description>
       <artifacts>
         <artifact type="binary" platform="x86_64-windows-gnu">
-          <location>https://drawpile.net/files/win/drawpile-2.1.19-setup.exe</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.1.19/drawpile-2.1.19-setup.exe</location>
           <checksum type="sha256">c6eb9a6a34de0354c880b154bf1a0bb273ef55078a7a942e250eb4ba845bcba7</checksum>
           <size type="download">16610905</size>
         </artifact>
         <artifact type="binary" platform="i386-windows-gnu">
-          <location>https://drawpile.net/files/win/drawpile-2.1.19-setup-w32.exe</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.1.19/drawpile-2.1.19-setup-w32.exe</location>
           <checksum type="sha256">b9bddca67ff340ae082a59a4663037cef58ff889453f638c81acef6dc10ebfc0</checksum>
           <size type="download">15677308</size>
         </artifact>
         <artifact type="binary" platform="x86_64-darwin-gnu">
-          <location>https://drawpile.net/files/osx/Drawpile 2.1.19.dmg</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.1.19/Drawpile.2.1.19.dmg</location>
           <checksum type="sha256">db4632b79612c5f0b3d524717742c76955fa61fe3efdc59e370a3b40e6a07934</checksum>
           <size type="download">14360834</size>
         </artifact>
         <artifact type="source">
-          <location>https://drawpile.net/files/src/drawpile-2.1.19.tar.gz</location>
+          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.1.19.tar.gz</location>
           <checksum type="sha256">8086ed74f38848d15476d3fb245887fe1e0eb271e28a00947fe481972265dd68</checksum>
           <size type="download">2614456</size>
         </artifact>
@@ -562,22 +562,22 @@
       </description>
       <artifacts>
         <artifact type="binary" platform="x86_64-windows-gnu">
-          <location>https://drawpile.net/files/win/drawpile-2.1.18-setup.exe</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.1.18/drawpile-2.1.18-setup.exe</location>
           <checksum type="sha256">0de039c24185981270118b019a836706023f667cb3d3ee040bdf872c4472e882</checksum>
           <size type="download">16580365</size>
         </artifact>
         <artifact type="binary" platform="i386-windows-gnu">
-          <location>https://drawpile.net/files/win/drawpile-2.1.18-setup-w32.exe</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.1.18/drawpile-2.1.18-setup-w32.exe</location>
           <checksum type="sha256">e5c6da2a9e69eb70c2103fd3d4670e8562558f38efdeb19c93de63dfab58a265</checksum>
           <size type="download">15563890</size>
         </artifact>
         <artifact type="binary" platform="x86_64-darwin-gnu">
-          <location>https://drawpile.net/files/osx/Drawpile 2.1.18.dmg</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.1.18/Drawpile.2.1.18.dmg</location>
           <checksum type="sha256">371ea7fd68aa821671ef6f5f92702e84429978f529774c084e9568b17cbc6e9a</checksum>
           <size type="download">14273941</size>
         </artifact>
         <artifact type="source">
-          <location>https://drawpile.net/files/src/drawpile-2.1.18.tar.gz</location>
+          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.1.18.tar.gz</location>
           <checksum type="sha256">20668661f6949addceb934ef094232f0890ade620fa78ae4849558d059d03caa</checksum>
           <size type="download">2580382</size>
         </artifact>
@@ -599,22 +599,22 @@
       </description>
       <artifacts>
         <artifact type="binary" platform="x86_64-windows-gnu">
-          <location>https://drawpile.net/files/win/drawpile-2.1.17-setup.exe</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.1.17/drawpile-2.1.17-setup.exe</location>
           <checksum type="sha256">0b1d66f6a432643cb9192eb8ab991b387e4e0c677d70258314702f7a08be2ab8</checksum>
           <size type="download">16515121</size>
         </artifact>
         <artifact type="binary" platform="i386-windows-gnu">
-          <location>https://drawpile.net/files/win/drawpile-2.1.17-setup-w32.exe</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.1.17/drawpile-2.1.17-setup-w32.exe</location>
           <checksum type="sha256">15c969eeee46aeb594cc096251a6521a6950ad9cafc12dee4951ecc1e7f9a0f9</checksum>
           <size type="download">15505070</size>
         </artifact>
         <artifact type="binary" platform="x86_64-darwin-gnu">
-          <location>https://drawpile.net/files/osx/Drawpile 2.1.17.dmg</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.1.17/Drawpile.2.1.17.dmg</location>
           <checksum type="sha256">2318fbf8dd2402736a1d86666618d719900685c73a0b3eeb2de30546bb9c1a22</checksum>
           <size type="download">14193165</size>
         </artifact>
         <artifact type="source">
-          <location>https://drawpile.net/files/src/drawpile-2.1.17.tar.gz</location>
+          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.1.17.tar.gz</location>
           <checksum type="sha256">ee7f7ba81e6f1a9c3c32275f84364d10713c24ec040da8cb4b13c3ea6bb09086</checksum>
           <size type="download">2521585</size>
         </artifact>
@@ -642,22 +642,22 @@
       </description>
       <artifacts>
         <artifact type="binary" platform="x86_64-windows-gnu">
-          <location>https://drawpile.net/files/win/drawpile-2.1.16-setup.exe</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.1.16/drawpile-2.1.16-setup.exe</location>
           <checksum type="sha256">9d849c2622998b8595fe9036ca0baac6e29ad6ab776e0b174daacd22702cb311</checksum>
           <size type="download">16509525</size>
         </artifact>
         <artifact type="binary" platform="i386-windows-gnu">
-          <location>https://drawpile.net/files/win/drawpile-2.1.16-setup-w32.exe</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.1.16/drawpile-2.1.16-setup-w32.exe</location>
           <checksum type="sha256">273eac5b491798e89e148a60a6a2f0c589ce28f2ea0f6fad2fe968ebf2ac5a2e</checksum>
           <size type="download">15506742</size>
         </artifact>
         <artifact type="binary" platform="x86_64-darwin-gnu">
-          <location>https://drawpile.net/files/osx/Drawpile 2.1.16.dmg</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.1.16/Drawpile.2.1.16.dmg</location>
           <checksum type="sha256">cd3ef956aeae9c6ec2b4a9dda98465efeaa65762c54dfcdb8966d18e003107db</checksum>
           <size type="download">14186201</size>
         </artifact>
         <artifact type="source">
-          <location>https://drawpile.net/files/src/drawpile-2.1.16.tar.gz</location>
+          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.1.16.tar.gz</location>
           <checksum type="sha256">5c799e7a02ef63cf6a5d1e78511f3fa9051ca809f1602c853420f5a20223e6d7</checksum>
           <size type="download">2513154</size>
         </artifact>
@@ -683,22 +683,22 @@
       </description>
       <artifacts>
         <artifact type="binary" platform="x86_64-windows-gnu">
-          <location>https://drawpile.net/files/win/drawpile-2.1.15-setup.exe</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.1.15/drawpile-2.1.15-setup.exe</location>
           <checksum type="sha256">36ee7e57a9d95785a45f9ae1bc09a226f741f582dc41b15a5f9f2f3495eab43b</checksum>
           <size type="download">16491127</size>
         </artifact>
         <artifact type="binary" platform="i386-windows-gnu">
-          <location>https://drawpile.net/files/win/drawpile-2.1.15-setup-w32.exe</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.1.15/drawpile-2.1.15-setup-w32.exe</location>
           <checksum type="sha256">338540184d8de391e3f0e7b17dafe24a753dff08c24bb3d447b2b1361e041751</checksum>
           <size type="download">15484837</size>
         </artifact>
         <artifact type="binary" platform="x86_64-darwin-gnu">
-          <location>https://drawpile.net/files/osx/Drawpile 2.1.15.dmg</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.1.15/Drawpile.2.1.15.dmg</location>
           <checksum type="sha256">3e6004fb9b4b40a1c4bba70160bd107ea6f2cd806bc850d8d5a613038700f3b1</checksum>
           <size type="download">14163265</size>
         </artifact>
         <artifact type="source">
-          <location>https://drawpile.net/files/src/drawpile-2.1.15.tar.gz</location>
+          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.1.15.tar.gz</location>
           <checksum type="sha256">36625a40574e76ac4145cedc2d752038100e715263e3dfd1935f5a9bc36bcb70</checksum>
           <size type="download">2531195</size>
         </artifact>
@@ -720,22 +720,22 @@
       </description>
       <artifacts>
         <artifact type="binary" platform="x86_64-windows-gnu">
-          <location>https://drawpile.net/files/win/drawpile-2.1.14-setup.exe</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.1.14/drawpile-2.1.14-setup.exe</location>
           <checksum type="sha256">ccb88c7e38372a0e3c120158a00f6dd6436999165062810a7b1dae2645f9578a</checksum>
           <size type="download">16484554</size>
         </artifact>
         <artifact type="binary" platform="i386-windows-gnu">
-          <location>https://drawpile.net/files/win/drawpile-2.1.14-setup-w32.exe</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.1.14/drawpile-2.1.14-setup-w32.exe</location>
           <checksum type="sha256">f443d65a4eb7453e8dba751b882c5e57e7b551ccb53616515c6669905dcb8160</checksum>
           <size type="download">15477129</size>
         </artifact>
         <artifact type="binary" platform="x86_64-darwin-gnu">
-          <location>https://drawpile.net/files/osx/Drawpile 2.1.14.dmg</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.1.14/Drawpile.2.1.14.dmg</location>
           <checksum type="sha256">d31a40fa0b51950073c71924acf2f2c12373056e938304ca632c6ecfcf99b090</checksum>
           <size type="download">14156029</size>
         </artifact>
         <artifact type="source">
-          <location>https://drawpile.net/files/src/drawpile-2.1.14.tar.gz</location>
+          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.1.14.tar.gz</location>
           <checksum type="sha256">87e4c6934e57e1541b28c3060cb725a4c9313e6b5562397dec26d2cd35c2fa6e</checksum>
           <size type="download">2525365</size>
         </artifact>
@@ -757,22 +757,22 @@
       </description>
       <artifacts>
         <artifact type="binary" platform="x86_64-windows-gnu">
-          <location>https://drawpile.net/files/win/drawpile-2.1.13-setup.exe</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.1.13/drawpile-2.1.13-setup.exe</location>
           <checksum type="sha256">9ca4d954f221ecb395e2f5c16fa381f1fb87262cdc82265b3a9b9b0424903300</checksum>
           <size type="download">16473487</size>
         </artifact>
         <artifact type="binary" platform="i386-windows-gnu">
-          <location>https://drawpile.net/files/win/drawpile-2.1.13-setup-w32.exe</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.1.13/drawpile-2.1.13-setup-w32.exe</location>
           <checksum type="sha256">e1f35c9ee4ac019d995829e31f05a15f92c0618008fe5d4dba23edafc7368d73</checksum>
           <size type="download">15462612</size>
         </artifact>
         <artifact type="binary" platform="x86_64-darwin-gnu">
-          <location>https://drawpile.net/files/osx/Drawpile 2.1.13.dmg</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.1.13/Drawpile.2.1.13.dmg</location>
           <checksum type="sha256">1ca19c6fd4fe8b35f2432b5a675ff192f83095ab418b337ee0affd464b319260</checksum>
           <size type="download">14118637</size>
         </artifact>
         <artifact type="source">
-          <location>https://drawpile.net/files/src/drawpile-2.1.13.tar.gz</location>
+          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.1.13.tar.gz</location>
           <checksum type="sha256">ae6baef4e248634396347a19a8f5d9d7003722305be6fd4b30e4d126ff84a664</checksum>
           <size type="download">2521488</size>
         </artifact>
@@ -800,22 +800,22 @@
       </description>
       <artifacts>
         <artifact type="binary" platform="x86_64-windows-gnu">
-          <location>https://drawpile.net/files/win/drawpile-2.1.12-setup.exe</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.1.12/drawpile-2.1.12-setup.exe</location>
           <checksum type="sha256">2369ae91a453bf05b739d64c2e629502e73a9102a2c449c7b1c46847d13ceb8d</checksum>
           <size type="download">16471338</size>
         </artifact>
         <artifact type="binary" platform="i386-windows-gnu">
-          <location>https://drawpile.net/files/win/drawpile-2.1.12-setup-w32.exe</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.1.12/drawpile-2.1.12-setup-w32.exe</location>
           <checksum type="sha256">0009257b09b796cb4463abc514bac7d891dc1bd412d4ee4e37f91a073759f8ef</checksum>
           <size type="download">15464953</size>
         </artifact>
         <artifact type="binary" platform="x86_64-darwin-gnu">
-          <location>https://drawpile.net/files/osx/Drawpile 2.1.12.dmg</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.1.12/Drawpile.2.1.12.dmg</location>
           <checksum type="sha256">b805c7bee8b54c149299468eae35162850517e8b45ae6b391c9f7c0325a86f64</checksum>
           <size type="download">14118296</size>
         </artifact>
         <artifact type="source">
-          <location>https://drawpile.net/files/src/drawpile-2.1.12.tar.gz</location>
+          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.1.12.tar.gz</location>
           <checksum type="sha256">b6946a5c9676355e913d41a37ad98f7a06469c7ff9901be674be455a7b107e4b</checksum>
           <size type="download">2521305</size>
         </artifact>
@@ -841,22 +841,22 @@
       </description>
       <artifacts>
         <artifact type="binary" platform="x86_64-windows-gnu">
-          <location>https://drawpile.net/files/win/drawpile-2.1.11-setup.exe</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.1.11/drawpile-2.1.11-setup.exe</location>
           <checksum type="sha256">864beca94361ebee7615c37d451f5935a0114d558660a090b529716351f5215f</checksum>
           <size type="download">16491501</size>
         </artifact>
         <artifact type="binary" platform="i386-windows-gnu">
-          <location>https://drawpile.net/files/win/drawpile-2.1.11-setup-w32.exe</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.1.11/drawpile-2.1.11-setup-w32.exe</location>
           <checksum type="sha256">d5761debd2fe6f52f4d221d65a497b99d2d71b7c2874cd8a44883f9b96a01bf9</checksum>
           <size type="download">15484138</size>
         </artifact>
         <artifact type="binary" platform="x86_64-darwin-gnu">
-          <location>https://drawpile.net/files/osx/Drawpile 2.1.11.dmg</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.1.11/Drawpile.2.1.11.dmg</location>
           <checksum type="sha256">30c8ec7234fb81a41ff828729b056ae40ef9ada82b525e0892ca8263ad7960cc</checksum>
           <size type="download">14004927</size>
         </artifact>
         <artifact type="source">
-          <location>https://drawpile.net/files/src/drawpile-2.1.11.tar.gz</location>
+          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.1.11.tar.gz</location>
           <checksum type="sha256">75b3050441bfc54dddfbb5bd2231a13428e5deef52c49c9319536ea6f2df2503</checksum>
           <size type="download">2487988</size>
         </artifact>
@@ -879,22 +879,22 @@
       </description>
       <artifacts>
         <artifact type="binary" platform="x86_64-windows-gnu">
-          <location>https://drawpile.net/files/win/drawpile-2.1.10-setup.exe</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.1.10/drawpile-2.1.10-setup.exe</location>
           <checksum type="sha256">d0287a5e4a32e96bdc68a6d7207e100c143a2e280d0d0bd9f258aef5cd9178ed</checksum>
           <size type="download">16482543</size>
         </artifact>
         <artifact type="binary" platform="i386-windows-gnu">
-          <location>https://drawpile.net/files/win/drawpile-2.1.10-setup-w32.exe</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.1.10/drawpile-2.1.10-setup-w32.exe</location>
           <checksum type="sha256">47235f55987696113e6ed365ca85dfa441749e2f47817e4f9bb7b4c007870a1f</checksum>
           <size type="download">15478542</size>
         </artifact>
         <artifact type="binary" platform="x86_64-darwin-gnu">
-          <location>https://drawpile.net/files/osx/Drawpile 2.1.10.dmg</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.1.10/Drawpile.2.1.10.dmg</location>
           <checksum type="sha256">d3c38ad3e688bb59c5eb2aa722d7593efad695e7ab38f6f48ac352c4fa5a7ae7</checksum>
           <size type="download">14001939</size>
         </artifact>
         <artifact type="source">
-          <location>https://drawpile.net/files/src/drawpile-2.1.10.tar.gz</location>
+          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.1.10.tar.gz</location>
           <checksum type="sha256">1502ff00d87734d68b201894a59b53afd5a2ea3b33123fb2e2d8c0597eb9941c</checksum>
           <size type="download">2485569</size>
         </artifact>
@@ -920,22 +920,22 @@
       </description>
       <artifacts>
         <artifact type="binary" platform="x86_64-windows-gnu">
-          <location>https://drawpile.net/files/win/drawpile-2.1.9-setup.exe</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.1.9/drawpile-2.1.9-setup.exe</location>
           <checksum type="sha256">f875215bd312df4596ef4ea448f4464be39f79ab512b76dd9fde263e98fc8d0a</checksum>
           <size type="download">16484125</size>
         </artifact>
         <artifact type="binary" platform="i386-windows-gnu">
-          <location>https://drawpile.net/files/win/drawpile-2.1.9-setup-w32.exe</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.1.9/drawpile-2.1.9-setup-w32.exe</location>
           <checksum type="sha256">c91a4d3269e0317ec9746610859954fe8855980d0a26af9190c2dbf384fc924e</checksum>
           <size type="download">15475260</size>
         </artifact>
         <artifact type="binary" platform="x86_64-darwin-gnu">
-          <location>https://drawpile.net/files/osx/Drawpile 2.1.9.dmg</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.1.9/Drawpile.2.1.9.dmg</location>
           <checksum type="sha256">ea37d6922ca07bd4f3daba917dc17bd0cb4588e36de5dd4b33bd1abc26032ec6</checksum>
           <size type="download">13996701</size>
         </artifact>
         <artifact type="source">
-          <location>https://drawpile.net/files/src/drawpile-2.1.9.tar.gz</location>
+          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.1.9.tar.gz</location>
           <checksum type="sha256">f9985fe44fb4320c9e11c8f5f535b5a3eecfb683c58ccff8effb968a548840f1</checksum>
           <size type="download">2484581</size>
         </artifact>
@@ -966,22 +966,22 @@
       </description>
       <artifacts>
         <artifact type="binary" platform="x86_64-windows-gnu">
-          <location>https://drawpile.net/files/win/drawpile-2.1.8-setup.exe</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.1.8/drawpile-2.1.8-setup.exe</location>
           <checksum type="sha256">54ecb920ce9a405b1f60fa88c38fa0fa03e5782934ddf9e5ddc95243daf962cb</checksum>
           <size type="download">16459529</size>
         </artifact>
         <artifact type="binary" platform="i386-windows-gnu">
-          <location>https://drawpile.net/files/win/drawpile-2.1.8-setup-w32.exe</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.1.8/drawpile-2.1.8-setup-w32.exe</location>
           <checksum type="sha256">079d4a2cf82add0c6e62460538f31c1bcde0e920f16694da2456cb12df6e2fd8</checksum>
           <size type="download">15461363</size>
         </artifact>
         <artifact type="binary" platform="x86_64-darwin-gnu">
-          <location>https://drawpile.net/files/osx/Drawpile 2.1.8.dmg</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.1.8/Drawpile.2.1.8.dmg</location>
           <checksum type="sha256">d4de5a015d2aecb6f92df22124c8f7489e45338f67319dffb5d77a5cde73c956</checksum>
           <size type="download">13972005</size>
         </artifact>
         <artifact type="source">
-          <location>https://drawpile.net/files/src/drawpile-2.1.8.tar.gz</location>
+          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.1.8.tar.gz</location>
           <checksum type="sha256">c5de38b905a1650e28b4a71c29cb8cf19e109d4e24df12c13630417bd647a5be</checksum>
           <size type="download">2456018</size>
         </artifact>
@@ -1000,17 +1000,17 @@
       </description>
       <artifacts>
         <artifact type="binary" platform="x86_64-windows-gnu">
-          <location>https://drawpile.net/files/win/drawpile-2.1.7-setup.exe</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.1.7/drawpile-2.1.7-setup.exe</location>
           <checksum type="sha256">9ef7680015ca5ba42070cbf25d10a51f39fdd9440ed3a7636194f160c46ce69e</checksum>
           <size type="download">16429733</size>
         </artifact>
         <artifact type="binary" platform="i386-windows-gnu">
-          <location>https://drawpile.net/files/win/drawpile-2.1.7-setup-w32.exe</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.1.7/drawpile-2.1.7-setup-w32.exe</location>
           <checksum type="sha256">ac04bc7a80ef698f476a82a1a0227e65a46b543edd2603b1d92b955d67ff9958</checksum>
           <size type="download">15443119</size>
         </artifact>
         <artifact type="binary" platform="x86_64-darwin-gnu">
-          <location>https://drawpile.net/files/osx/Drawpile 2.1.7.dmg</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.1.7/Drawpile.2.1.7.dmg</location>
           <checksum type="sha256">820ec2837d3c7ea4e190a64cbb1d0fdecb3797bf968277b3b7ca0cc5d758987f</checksum>
           <size type="download">13386779</size>
         </artifact>
