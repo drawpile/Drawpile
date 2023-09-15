@@ -20,6 +20,7 @@ Unreleased Version 2.2.0-pre
  * Feature: Add compatibility for Drawpile 2.1's broken indirect mode.
  * Fix: Make the receive delay not delay your own undos.
  * Feature: Add a setting for the background color behind the canvas. Thanks to Nightshade for suggesting.
+ * Feature: Let operators create layers beyond the 256 per-user maximum. They will use layers of user 0 first, then 255, 254 etc. Thanks to haxekhaex2 for reporting.
 
 2023-08-26 Version 2.2.0-beta.7
  * Fix: Make classic brushes not go brighter when smudging into transparency. Thanks to cada for reporting.

@@ -119,6 +119,8 @@ public:
 	 */
 	void setAutoselectAny(bool autoselect) { m_autoselectAny = autoselect; }
 
+	void setLayerIdToSelect(int layerId) { m_layerIdToSelect = layerId; }
+
 	/**
 	 * @brief Get the default layer to select when logging in
 	 * Zero means no default.
@@ -170,6 +172,8 @@ signals:
 	void layersVisibleInFrameChanged();
 
 private:
+	static int searchAvailableLayerId(const QSet<int> &takenIds, int contextId);
+
 	void flattenKeyFrameLayer(
 		QVector<KeyFrameLayerItem> &items, int &index, int &layerIndex,
 		int relIndex, const QHash<int, bool> &layerVisibiltiy) const;
@@ -182,6 +186,7 @@ private:
 	uint16_t m_defaultLayer;
 	bool m_autoselectAny;
 	bool m_frameMode;
+	int m_layerIdToSelect;
 };
 
 /**

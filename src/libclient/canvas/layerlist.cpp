@@ -18,7 +18,8 @@ namespace canvas {
 
 LayerListModel::LayerListModel(QObject *parent)
 	: QAbstractItemModel(parent), m_aclstate(nullptr),
-	  m_rootLayerCount(0), m_defaultLayer(0), m_autoselectAny(true), m_frameMode(false)
+	  m_rootLayerCount(0), m_defaultLayer(0), m_autoselectAny(true),
+	  m_frameMode(false), m_layerIdToSelect(0)
 {
 }
 
@@ -285,7 +286,7 @@ static bool isNewLayerId(
 }
 
 static int getAutoselect(
-	uint8_t localUser, bool autoselectAny, int defaultLayer,
+	uint8_t localUser, bool autoselectAny, int layerIdToSelect, int defaultLayer,
 	const QVector<LayerListItem> &oldItems, const QVector<LayerListItem> &newItems)
 {
 	if(autoselectAny) {
@@ -307,7 +308,9 @@ static int getAutoselect(
 		// We already participated: we might have just created a new layer,
 		// try to select that one.
 		for(const LayerListItem &newItem : newItems) {
-			if(isNewLayerId(oldItems, newItem) && newItem.creatorId() == localUser) {
+			if(isNewLayerId(oldItems, newItem) &&
+			   (newItem.creatorId() == localUser ||
+				newItem.id == layerIdToSelect)) {
 				return newItem.id;
 			}
 		}
@@ -324,7 +327,16 @@ void LayerListModel::setLayers(const drawdance::LayerPropsList &lpl)
 
 	const uint8_t localUser = m_aclstate ? m_aclstate->localUserId() : 0;
 	int autoselect = getAutoselect(
-		localUser, m_autoselectAny, m_defaultLayer, m_items, newItems);
+		localUser, m_autoselectAny, m_layerIdToSelect, m_defaultLayer, m_items, newItems);
+
+	if(m_layerIdToSelect != 0) {
+		for(const LayerListItem &item : newItems) {
+			if(item.id == m_layerIdToSelect) {
+				m_layerIdToSelect = 0;
+				break;
+			}
+		}
+	}
 
 	beginResetModel();
 	m_rootLayerCount = lpl.count();
@@ -469,19 +481,39 @@ int LayerListModel::getAvailableLayerId() const
 {
 	Q_ASSERT(m_aclstate);
 
-	const int prefix = int(m_aclstate->localUserId()) << 8;
-	QList<int> takenIds;
+	QSet<int> takenIds;
+	takenIds.insert(0);
 	for(const LayerListItem &item : m_items) {
-		if((item.id & 0xff00) == prefix)
-			takenIds.append(item.id);
+		takenIds.insert(item.id);
 	}
 
-	for(int i=0;i<256;++i) {
+	int localUserId = m_aclstate->localUserId();
+	int layerId = searchAvailableLayerId(takenIds, localUserId);
+	if(layerId == 0 && m_aclstate->amOperator()) {
+		layerId = searchAvailableLayerId(takenIds, 0);
+		if(layerId == 0) {
+			for(int i = 255; i > 0; --i) {
+				layerId = searchAvailableLayerId(takenIds, i);
+				if(layerId != 0) {
+					break;
+				}
+			}
+		}
+	}
+
+	return layerId;
+}
+
+int LayerListModel::searchAvailableLayerId(
+	const QSet<int> &takenIds, int contextId)
+{
+	int prefix = contextId << 8;
+	for(int i = 0; i < 256; ++i) {
 		int id = prefix | i;
-		if(!takenIds.contains(id))
+		if(!takenIds.contains(id)) {
 			return id;
+		}
 	}
-
 	return 0;
 }
 

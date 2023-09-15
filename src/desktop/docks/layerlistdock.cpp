@@ -362,7 +362,7 @@ void LayerList::changeLayerAcl(bool lock, DP_AccessTier tier, QVector<uint8_t> e
 
 void LayerList::addLayerOrGroup(bool group, bool duplicateKeyFrame, bool keyFrame, int keyFrameOffset)
 {
-	const canvas::LayerListModel *layers = m_canvas->layerlist();
+	canvas::LayerListModel *layers = m_canvas->layerlist();
 	Q_ASSERT(layers);
 
 	const int id = layers->getAvailableLayerId();
@@ -430,6 +430,7 @@ void LayerList::addLayerOrGroup(bool group, bool duplicateKeyFrame, bool keyFram
 			layers->getAvailableLayerName(baseName));
 	}
 
+	layers->setLayerIdToSelect(id);
 	drawdance::Message messages[] = {
 		drawdance::Message::makeUndoPoint(contextId), layerMsg, keyFrameMsg,
 		moveMsg};
@@ -507,7 +508,7 @@ void LayerList::duplicateLayer()
 	const QModelIndex index = currentSelection();
 	const canvas::LayerListItem layer = index.data().value<canvas::LayerListItem>();
 
-	const canvas::LayerListModel *layers = m_canvas->layerlist();
+	canvas::LayerListModel *layers = m_canvas->layerlist();
 	Q_ASSERT(layers);
 
 	const int id = layers->getAvailableLayerId();
@@ -530,6 +531,7 @@ void LayerList::duplicateLayer()
 			layers->getAvailableLayerName(layer.title));
 	}
 
+	layers->setLayerIdToSelect(id);
 	drawdance::Message messages[] = {
 		drawdance::Message::makeUndoPoint(contextId), msg};
 	emit layerCommands(DP_ARRAY_LENGTH(messages), messages);
