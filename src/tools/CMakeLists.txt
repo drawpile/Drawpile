@@ -17,4 +17,4 @@ add_executable(
 target_link_libraries(drawpile-timelapse PUBLIC
     Qt${QT_VERSION_MAJOR}::Core drawpile-timelapse_rust dpengine cmake-config)
 
-install(TARGETS dprectool drawpile-cmd)
+install(TARGETS dprectool drawpile-cmd drawpile-timelapse)
