@@ -19,12 +19,6 @@
  * If not otherwise noted, this code is wholly based on the Qt framework's
  * raster paint engine implementation, using it under the GNU General Public
  * License, version 3. See 3rdparty/licenses/qt/license.GPL3 for details.
- *
- * --------------------------------------------------------------------
- *
- * Parts of this code are based on Krita, using it under the GNU General
- * Public License, version 3. See 3rdparty/licenses/krita/COPYING.txt for
- * details.
  */
 #include "image_transform.h"
 #include "dpcommon/conversions.h"
@@ -169,40 +163,13 @@ static DP_Pixel8 *fetch_transformed_pixels(int width, int height,
     return out_buffer;
 }
 
-unsigned int get_span_opacity(int interpolation, int coverage)
+static uint8_t get_span_opacity(int interpolation, int coverage)
 {
     switch (interpolation) {
     case DP_MSG_TRANSFORM_REGION_MODE_NEAREST:
         return coverage < 128 ? 0u : 255u;
     default:
-        return DP_int_to_uint(CLAMP(coverage, 0, 255));
-    }
-}
-
-// Multiplying two bytes as if they were floats between 0 and 1.
-// Adapted from Krita, see license above.
-static uint8_t mul(unsigned int a, unsigned int b)
-{
-    unsigned int c = a * b + 0x80u;
-    return DP_uint_to_uint8(((c >> 8u) + c) >> 8u);
-}
-
-// Normal blending with 8 bit pixels.
-static void process_span(int len, unsigned int opacity,
-                         DP_Pixel8 *DP_RESTRICT src, DP_Pixel8 *DP_RESTRICT dst)
-{
-    for (int i = 0; i < len; ++i) {
-        DP_Pixel8 s = src[i];
-        DP_Pixel8 d = dst[i];
-        unsigned int sa1 = 255u - mul(s.a, opacity);
-        if (sa1 != 255u) {
-            dst[i] = (DP_Pixel8){
-                .b = (uint8_t)(mul(s.b, opacity) + mul(d.b, sa1)),
-                .g = (uint8_t)(mul(s.g, opacity) + mul(d.g, sa1)),
-                .r = (uint8_t)(mul(s.r, opacity) + mul(d.r, sa1)),
-                .a = (uint8_t)(mul(s.a, opacity) + mul(d.a, sa1)),
-            };
-        }
+        return DP_int_to_uint8(CLAMP(coverage, 0, 255));
     }
 }
 
@@ -252,8 +219,8 @@ static void render_spans(int count, const DP_FT_Span *spans, void *user)
 
                 int pr = spans->x + spans->len;
                 int pl = DP_min_int(l, pr - x);
-                process_span(pl, get_span_opacity(interpolation, coverage),
-                             src + offset, dst + offset);
+                DP_blend_pixels8(dst + offset, src + offset, pl,
+                                 get_span_opacity(interpolation, coverage));
 
                 l -= pl;
                 x += pl;
@@ -277,9 +244,9 @@ static DP_FT_Vector transform_outline_point(DP_Transform tf, double x, double y)
 }
 
 bool DP_image_transform_draw(int src_width, int src_height,
-                                    const DP_Pixel8 *src_pixels,
-                                    DP_DrawContext *dc, DP_Image *dst_img,
-                                    DP_Transform tf, int interpolation)
+                             const DP_Pixel8 *src_pixels, DP_DrawContext *dc,
+                             DP_Image *dst_img, DP_Transform tf,
+                             int interpolation)
 {
     DP_Transform delta = DP_transform_make(1.0, 0.0, 0.0, 0.0, 1.0, 0.0,
                                            1.0 / 65536.0, 1.0 / 65536.0, 1.0);

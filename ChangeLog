@@ -23,6 +23,8 @@ Unreleased Version 2.2.0-pre
  * Feature: Let operators create layers beyond the 256 per-user maximum. They will use layers of user 0 first, then 255, 254 etc. Thanks to haxekhaex2 for reporting.
  * Fix: Make Drawpile 2.1 binary (dprec) recordings play back properly. Text (dptxt) recordings are not supported.
  * Fix: Synchronize rendering during recording playback properly.
+ * Feature: Bring back drawpile-cmd, the command-line tool that renders Drawpile recordings to images. Should also mostly work like it did in Drawpile 2.1.
+ * Feature: Implement drawpile-timelapse, a new command-line tool that turns Drawpile recordings into timelapse videos.
 
 2023-08-26 Version 2.2.0-beta.7
  * Fix: Make classic brushes not go brighter when smudging into transparency. Thanks to cada for reporting.

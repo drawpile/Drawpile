@@ -1,0 +1,7 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource prefix="/timelapse">
+        <file>logo1.png</file>
+    </qresource>
+</RCC>
+

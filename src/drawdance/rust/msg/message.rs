@@ -5,6 +5,7 @@ use crate::{
 };
 use std::{ffi::CStr, ptr};
 
+#[repr(C)]
 pub struct Message {
     msg: *mut DP_Message,
 }

@@ -1,5 +1,10 @@
 #include <dpcommon/input.h>
 #include <dpcommon/output.h>
+#include <dpengine/draw_context.h>
+#include <dpengine/image.h>
+#include <dpengine/paint_engine.h>
 #include <dpengine/player.h>
+#include <dpengine/save.h>
+#include <dpmsg/acl.h>
 #include <dpmsg/message.h>
 #include <parson/parson.h>

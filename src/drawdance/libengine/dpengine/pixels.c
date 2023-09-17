@@ -2127,3 +2127,56 @@ void DP_posterize_mask(DP_Pixel15 *dst, int posterize_num, const uint16_t *mask,
         *dst = from_ubgra(posterize(p, o, DP_pixel15_unpremultiply(*dst)));
     });
 }
+
+
+// SPDX-SnippetBegin
+// SPDX-License-Identifier: GPL-3.0-or-later
+// SDPX—SnippetName: 8 bit multiplication adapted from Krita
+static uint8_t mul(unsigned int a, unsigned int b)
+{
+    unsigned int c = a * b + 0x80u;
+    return DP_uint_to_uint8(((c >> 8u) + c) >> 8u);
+}
+// SPDX-SnippetEnd
+
+void DP_blend_color8_to(DP_Pixel8 *DP_RESTRICT out,
+                        const DP_Pixel8 *DP_RESTRICT dst, DP_UPixel8 color,
+                        int pixel_count, uint8_t opacity)
+{
+    DP_Pixel8 src = DP_pixel8_premultiply(color);
+    unsigned int sa1 = 255u - mul(src.a, opacity);
+    if (sa1 != 255u) {
+        unsigned int sb = mul(src.b, opacity);
+        unsigned int sg = mul(src.g, opacity);
+        unsigned int sr = mul(src.r, opacity);
+        unsigned int sa = mul(src.a, opacity);
+        for (int i = 0; i < pixel_count; ++i) {
+            DP_Pixel8 d = dst[i];
+            out[i] = (DP_Pixel8){
+                .b = (uint8_t)(sb + mul(d.b, sa1)),
+                .g = (uint8_t)(sg + mul(d.g, sa1)),
+                .r = (uint8_t)(sr + mul(d.r, sa1)),
+                .a = (uint8_t)(sa + mul(d.a, sa1)),
+            };
+        }
+    }
+}
+
+void DP_blend_pixels8(DP_Pixel8 *DP_RESTRICT dst,
+                      const DP_Pixel8 *DP_RESTRICT src, int pixel_count,
+                      uint8_t opacity)
+{
+    for (int i = 0; i < pixel_count; ++i) {
+        DP_Pixel8 s = src[i];
+        DP_Pixel8 d = dst[i];
+        unsigned int sa1 = 255u - mul(s.a, opacity);
+        if (sa1 != 255u) {
+            dst[i] = (DP_Pixel8){
+                .b = (uint8_t)(mul(s.b, opacity) + mul(d.b, sa1)),
+                .g = (uint8_t)(mul(s.g, opacity) + mul(d.g, sa1)),
+                .r = (uint8_t)(mul(s.r, opacity) + mul(d.r, sa1)),
+                .a = (uint8_t)(mul(s.a, opacity) + mul(d.a, sa1)),
+            };
+        }
+    }
+}

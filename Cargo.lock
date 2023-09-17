@@ -41,6 +41,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "drawpiletimelapse"
+version = "2.2.0-pre"
+dependencies = [
+ "drawdance",
+ "regex",
+ "xflags",
+]
+
+[[package]]
 name = "memchr"
 version = "2.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"

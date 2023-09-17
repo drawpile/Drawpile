@@ -84,6 +84,12 @@ impl Player {
         }
     }
 
+    pub fn move_to_ptr(mut self) -> *mut DP_Player {
+        let player = self.player;
+        self.player = ptr::null_mut();
+        player
+    }
+
     pub fn player_type(&self) -> DP_PlayerType {
         unsafe { DP_player_type(self.player) }
     }

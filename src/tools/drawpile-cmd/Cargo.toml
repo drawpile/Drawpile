@@ -1,0 +1,13 @@
+[package]
+name = "drawpilecmd"
+version = "2.2.0-pre"
+rust-version = "1.66.1"
+edition = "2021"
+
+[lib]
+crate-type = ["staticlib"]
+path = "lib.rs"
+
+[dependencies]
+drawdance = { path = "../../drawdance/rust" }
+xflags = "0.3.1"

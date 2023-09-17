@@ -1,0 +1,14 @@
+[package]
+name = "drawpiletimelapse"
+version = "2.2.0-pre"
+rust-version = "1.66.1"
+edition = "2021"
+
+[lib]
+crate-type = ["staticlib"]
+path = "lib.rs"
+
+[dependencies]
+drawdance = { path = "../../drawdance/rust" }
+regex = "1.9.4"
+xflags = "0.3.1"

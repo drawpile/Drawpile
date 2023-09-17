@@ -17,6 +17,14 @@ case "${1-}" in
 		exec=usr/bin/dprectool
 		shift
 	;;
+	--drawpile-cmd)
+		exec=usr/bin/drawpile-cmd
+		shift
+	;;
+	--drawpile-timelapse)
+		exec=usr/bin/drawpile-timelapse
+		shift
+	;;
 	--help)
 		echo "Drawpile @GIT_VERSION@"
 		echo
@@ -30,6 +38,16 @@ case "${1-}" in
 			echo "--dprectool"
 			echo "    Runs dprectool, a command-line tool for"
 			echo "    interconverting Drawpile recordings."
+		fi
+		if [ -x "$this_dir"/usr/bin/drawpile-cmd ]; then
+			echo "--drawpile-cmd"
+			echo "    Runs drawpile-cmd, a command-line tool for"
+			echo "    rendering Drawpile recordings to images."
+		fi
+		if [ -x "$this_dir"/usr/bin/drawpile-timelapse ]; then
+			echo "--drawpile-timelapse"
+			echo "    Runs drawpile-timelapse, a command-line tool for"
+			echo "    turning Drawpile recordings into timelapse videos."
 		fi
 		exit 0
 	;;
