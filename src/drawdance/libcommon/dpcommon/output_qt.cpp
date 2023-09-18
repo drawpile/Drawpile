@@ -63,6 +63,7 @@ static bool do_seek(const char *type, QIODevice *dev, size_t offset)
 
 struct DP_QFileOutputState {
     QFile *file;
+    bool close;
 };
 
 static QFile *get_file(void *internal)
@@ -93,23 +94,32 @@ static bool qfile_output_seek(void *internal, size_t offset)
 
 static bool qfile_output_dispose(void *internal)
 {
-    QFile *file = get_file(internal);
+    DP_QFileOutputState *state = static_cast<DP_QFileOutputState *>(internal);
+    QFile *file = state->file;
     bool ok = do_flush("QFile", file);
-    delete file;
+    if (state->close) {
+        delete file;
+    }
     return ok;
 }
 
 static const DP_OutputMethods qfile_output_methods = {
-    qfile_output_write, nullptr,
-    qfile_output_flush, qfile_output_tell,
-    qfile_output_seek,  qfile_output_dispose,
+    qfile_output_write, nullptr,           qfile_output_flush,
+    qfile_output_tell,  qfile_output_seek, qfile_output_dispose,
 };
 
 static const DP_OutputMethods *qfile_output_init(void *internal, void *arg)
 {
     DP_QFileOutputState *state = static_cast<DP_QFileOutputState *>(internal);
-    state->file = static_cast<QFile *>(arg);
+    *state = *static_cast<DP_QFileOutputState *>(arg);
     return &qfile_output_methods;
+}
+
+extern "C" DP_Output *DP_qfile_output_new(QFile *file, bool close,
+                                          DP_OutputQtNewFn new_fn)
+{
+    DP_QFileOutputState state = {file, close};
+    return new_fn(qfile_output_init, &state, sizeof(DP_QFileOutputState));
 }
 
 extern "C" DP_Output *DP_qfile_output_new_from_path(const char *path,
@@ -117,7 +127,7 @@ extern "C" DP_Output *DP_qfile_output_new_from_path(const char *path,
 {
     QFile *file = new QFile{QString::fromUtf8(path)};
     if (file->open(QIODevice::WriteOnly)) {
-        return new_fn(qfile_output_init, file, sizeof(DP_QFileOutputState));
+        return DP_qfile_output_new(file, true, new_fn);
     }
     else {
         DP_error_set("Can't open '%s': %s", path,

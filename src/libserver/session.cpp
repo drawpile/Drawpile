@@ -1,30 +1,28 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#include "libserver/session.h"
+extern "C" {
+#include <dpcommon/output.h>
+#include <dpengine/recorder.h>
+}
+#include "libserver/announcements.h"
 #include "libserver/client.h"
+#include "libserver/opcommands.h"
 #include "libserver/serverconfig.h"
 #include "libserver/serverlog.h"
-#include "libserver/opcommands.h"
-#include "libserver/announcements.h"
-
-#include "libshared/net/control.h"
-#include "libshared/net/meta.h"
-#include "libshared/record/writer.h"
+#include "libserver/session.h"
+#include "libshared/net/servercmd.h"
 #include "libshared/util/filename.h"
-#include "libshared/util/passwordhash.h"
 #include "libshared/util/networkaccess.h"
-
-#include <QTimer>
-#include <QNetworkRequest>
+#include "libshared/util/passwordhash.h"
 #include <QNetworkReply>
+#include <QNetworkRequest>
+#include <QTimer>
 
 namespace server {
 
-using protocol::MessagePtr;
-
 static bool forceEnableNsfm(SessionHistory *history, const ServerConfig *config)
 {
-	if(config->getConfigBool(config::ForceNsfm) && !history->hasFlag(SessionHistory::Nsfm)) {
+	if(config->getConfigBool(config::ForceNsfm) &&
+	   !history->hasFlag(SessionHistory::Nsfm)) {
 		SessionHistory::Flags flags = history->flags();
 		flags.setFlag(SessionHistory::Nsfm);
 		history->setFlags(flags);
@@ -34,75 +32,80 @@ static bool forceEnableNsfm(SessionHistory *history, const ServerConfig *config)
 	}
 }
 
-Session::Session(SessionHistory *history, ServerConfig *config, sessionlisting::Announcements *announcements, QObject *parent)
-	: QObject(parent),
-	m_history(history),
-	m_config(config),
-	m_announcements(announcements)
+Session::Session(
+	SessionHistory *history, ServerConfig *config,
+	sessionlisting::Announcements *announcements, QObject *parent)
+	: QObject(parent)
+	, m_history(history)
+	, m_config(config)
+	, m_announcements(announcements)
 {
 	m_history->setParent(this);
-	connect(m_config, &ServerConfig::configValueChanged, this, &Session::onConfigValueChanged);
+	connect(
+		m_config, &ServerConfig::configValueChanged, this,
+		&Session::onConfigValueChanged);
 	forceEnableNsfm(m_history, m_config);
 
 	m_lastEventTime.start();
 
 	// History already exists? Skip the Initialization state.
-	if(history->sizeInBytes()>0)
+	if(history->sizeInBytes() > 0)
 		m_state = State::Running;
 
 	// Session announcements
-	connect(m_announcements, &sessionlisting::Announcements::announcementsChanged, this, &Session::onAnnouncementsChanged);
-	connect(m_announcements, &sessionlisting::Announcements::announcementError, this, &Session::onAnnouncementError);
+	connect(
+		m_announcements, &sessionlisting::Announcements::announcementsChanged,
+		this, &Session::onAnnouncementsChanged);
+	connect(
+		m_announcements, &sessionlisting::Announcements::announcementError,
+		this, &Session::onAnnouncementError);
 	for(const QString &announcement : m_history->announcements())
 		makeAnnouncement(QUrl(announcement), false);
 }
 
-static protocol::MessagePtr makeLogMessage(const Log &log)
+static net::Message makeLogMessage(const Log &log)
 {
-	protocol::ServerReply sr {
-		protocol::ServerReply::LOG,
-		log.message(),
-		log.toJson(Log::NoPrivateData|Log::NoSession)
-	};
-	return protocol::MessagePtr(new protocol::Command(0, sr));
+	return net::ServerReply::makeLog(
+		log.message(), log.toJson(Log::NoPrivateData | Log::NoSession));
 }
 
-protocol::MessageList Session::serverSideStateMessages() const
+net::MessageList Session::serverSideStateMessages() const
 {
-	protocol::MessageList msgs;
-
-	QList<uint8_t> owners;
-	QList<uint8_t> trusted;
+	net::MessageList msgs;
+	QVector<uint8_t> owners;
+	QVector<uint8_t> trusted;
 
 	for(const Client *c : m_clients) {
-		msgs << c->joinMessage();
-		if(c->isOperator())
-			owners << c->id();
-		if(c->isTrusted())
-			trusted << c->id();
+		msgs.append(c->joinMessage());
+		if(c->isOperator()) {
+			owners.append(c->id());
+		}
+		if(c->isTrusted()) {
+			trusted.append(c->id());
+		}
 	}
 
-	msgs << protocol::MessagePtr(new protocol::SessionOwner(0, owners));
-
-	if(!trusted.isEmpty())
-		msgs << protocol::MessagePtr(new protocol::TrustedUsers(0, trusted));
+	msgs.append(net::makeSessionOwnerMessage(0, owners));
+	if(!trusted.isEmpty()) {
+		msgs.append(net::makeTrustedUsersMessage(0, trusted));
+	}
 
 	return msgs;
 }
 
 void Session::switchState(State newstate)
 {
-	if(newstate==State::Initialization) {
+	if(newstate == State::Initialization) {
 		qFatal("Illegal state change to Initialization from %d", int(m_state));
 
-	} else if(newstate==State::Running) {
-		if(m_state!=State::Initialization && m_state!=State::Reset)
+	} else if(newstate == State::Running) {
+		if(m_state != State::Initialization && m_state != State::Reset)
 			qFatal("Illegal state change to Running from %d", int(m_state));
 
 		m_initUser = -1;
 		bool success = true;
 
-		if(m_state==State::Reset && !m_resetstream.isEmpty()) {
+		if(m_state == State::Reset && !m_resetstream.isEmpty()) {
 			// Reset buffer uploaded. Now perform the reset before returning to
 			// normal running state.
 
@@ -110,24 +113,21 @@ void Session::switchState(State newstate)
 
 			// Send reset snapshot
 			if(!m_history->reset(resetImage)) {
-				// This shouldn't normally happen, as the size limit should be caught while
-				// still uploading the reset.
+				// This shouldn't normally happen, as the size limit should be
+				// caught while still uploading the reset.
 				messageAll("Session reset failed!", true);
 				success = false;
 
 			} else {
-				protocol::ServerReply resetcmd;
-				resetcmd.type = protocol::ServerReply::RESET;
-				resetcmd.reply["state"] = "reset";
-				resetcmd.message = "Session reset!";
-				directToAll(MessagePtr(new protocol::Command(0, resetcmd)));
+				directToAll(net::ServerReply::makeReset(
+					QStringLiteral("Session reset!"), QStringLiteral("reset")));
 
 				onSessionReset();
 
 				sendUpdatedSessionProperties();
 			}
 
-			m_resetstream = protocol::MessageList();
+			m_resetstream = net::MessageList{};
 			m_resetstreamsize = 0;
 		}
 
@@ -137,9 +137,10 @@ void Session::switchState(State newstate)
 		for(Client *c : m_clients)
 			c->setHoldLocked(false);
 
-	} else if(newstate==State::Reset) {
-		if(m_state!=State::Running)
+	} else if(newstate == State::Reset) {
+		if(m_state != State::Running) {
 			qFatal("Illegal state change to Reset from %d", int(m_state));
+		}
 
 		m_resetstream.clear();
 		m_resetstreamsize = 0;
@@ -153,12 +154,13 @@ void Session::assignId(Client *user)
 {
 	uint8_t id = m_history->idQueue().getIdForName(user->username());
 
-	int loops=256;
-	while(loops>0 && (id==0 || getClientById(id))) {
+	int loops = 256;
+	while(loops > 0 && (id == 0 || getClientById(id))) {
 		id = m_history->idQueue().nextId();
-		  --loops;
+		--loops;
 	}
-	Q_ASSERT(loops>0); // shouldn't happen, since we don't let new users in if the session is full
+	Q_ASSERT(loops > 0); // shouldn't happen, since we don't let new users in if
+						 // the session is full
 	user->setId(id);
 }
 
@@ -173,10 +175,15 @@ void Session::joinUser(Client *user, bool host)
 
 	// Send session log history to the new client
 	{
-		QList<Log> log = m_config->logger()->query().session(id()).atleast(Log::Level::Info).get();
+		QList<Log> log = m_config->logger()
+							 ->query()
+							 .session(id())
+							 .atleast(Log::Level::Info)
+							 .get();
 		// Note: the query returns the log entries in latest first, but we send
-		// new entries to clients as they occur, so we reverse the list before sending it
-		for(int i=log.size()-1;i>=0;--i) {
+		// new entries to clients as they occur, so we reverse the list before
+		// sending it
+		for(int i = log.size() - 1; i >= 0; --i) {
 			user->sendDirectMessage(makeLogMessage(log.at(i)));
 		}
 	}
@@ -197,12 +204,14 @@ void Session::joinUser(Client *user, bool host)
 	if(user->isOperator() || m_history->isOperator(user->authId()))
 		changeOpStatus(user->id(), true, "the server");
 
-	if(user->authFlags().contains("TRUSTED") || m_history->isTrusted(user->authId()))
+	if(user->authFlags().contains("TRUSTED") ||
+	   m_history->isTrusted(user->authId()))
 		changeTrustedStatus(user->id(), true, "the server");
 
 	ensureOperatorExists();
 
-	const QString welcomeMessage = m_config->getConfigString(config::WelcomeMessage);
+	const QString welcomeMessage =
+		m_config->getConfigString(config::WelcomeMessage);
 	if(!welcomeMessage.isEmpty()) {
 		user->sendSystemChat(welcomeMessage);
 	}
@@ -214,7 +223,9 @@ void Session::joinUser(Client *user, bool host)
 
 	m_history->joinUser(user->id(), user->username());
 
-	user->log(Log().about(Log::Level::Info, Log::Topic::Join).message("Joined session"));
+	user->log(Log()
+				  .about(Log::Level::Info, Log::Topic::Join)
+				  .message("Joined session"));
 	emit sessionAttributeChanged(this);
 }
 
@@ -223,16 +234,15 @@ void Session::removeUser(Client *user)
 	if(!m_clients.removeOne(user))
 		return;
 
-	m_pastClients.insert(user->id(), PastClient {
-		user->id(),
-		user->authId(),
-		user->username(),
-		user->peerAddress(),
-		!user->isModerator()
-	});
+	m_pastClients.insert(
+		user->id(), PastClient{
+						user->id(), user->authId(), user->username(),
+						user->peerAddress(), !user->isModerator()});
 
 	Q_ASSERT(user->session() == this);
-	user->log(Log().about(Log::Level::Info, Log::Topic::Leave).message("Left session"));
+	user->log(Log()
+				  .about(Log::Level::Info, Log::Topic::Leave)
+				  .message("Left session"));
 	user->setSession(nullptr);
 
 	disconnect(user, nullptr, this, nullptr);
@@ -244,8 +254,9 @@ void Session::removeUser(Client *user)
 		abortReset();
 	}
 
-	addToHistory(MessagePtr(new protocol::UserLeave(user->id())));
-	m_history->idQueue().reserveId(user->id()); // Try not to reuse the ID right away
+	addToHistory(net::makeLeaveMessage(user->id()));
+	// Try not to reuse the ID right away
+	m_history->idQueue().reserveId(user->id());
 
 	ensureOperatorExists();
 
@@ -269,8 +280,9 @@ void Session::abortReset()
 Client *Session::getClientById(uint8_t id)
 {
 	for(Client *c : m_clients) {
-		if(c->id() == id)
+		if(c->id() == id) {
 			return c;
+		}
 	}
 	return nullptr;
 }
@@ -278,8 +290,9 @@ Client *Session::getClientById(uint8_t id)
 Client *Session::getClientByUsername(const QString &username)
 {
 	for(Client *c : m_clients) {
-		if(c->username().compare(username, Qt::CaseInsensitive)==0)
+		if(c->username().compare(username, Qt::CaseInsensitive) == 0) {
 			return c;
+		}
 	}
 	return nullptr;
 }
@@ -287,17 +300,25 @@ Client *Session::getClientByUsername(const QString &username)
 void Session::addBan(const Client *target, const QString &bannedBy)
 {
 	Q_ASSERT(target);
-	if(m_history->addBan(target->username(), target->peerAddress(), target->authId(), bannedBy)) {
-		target->log(Log().about(Log::Level::Info, Log::Topic::Ban).message("Banned by " + bannedBy));
+	if(m_history->addBan(
+		   target->username(), target->peerAddress(), target->authId(),
+		   bannedBy)) {
+		target->log(Log()
+						.about(Log::Level::Info, Log::Topic::Ban)
+						.message("Banned by " + bannedBy));
 		sendUpdatedBanlist();
 	}
 }
 
 void Session::addBan(const PastClient &target, const QString &bannedBy)
 {
-	Q_ASSERT(target.id>0);
-	if(m_history->addBan(target.username, target.peerAddress, target.authId, bannedBy)) {
-		log(Log().user(target.id, target.peerAddress, target.username).about(Log::Level::Info, Log::Topic::Ban).message("Banned by " + bannedBy));
+	Q_ASSERT(target.id > 0);
+	if(m_history->addBan(
+		   target.username, target.peerAddress, target.authId, bannedBy)) {
+		log(Log()
+				.user(target.id, target.peerAddress, target.username)
+				.about(Log::Level::Info, Log::Topic::Ban)
+				.message("Banned by " + bannedBy));
 		sendUpdatedBanlist();
 	}
 }
@@ -306,16 +327,17 @@ void Session::removeBan(int entryId, const QString &removedBy)
 {
 	QString unbanned = m_history->removeBan(entryId);
 	if(!unbanned.isEmpty()) {
-		log(Log().about(Log::Level::Info, Log::Topic::Unban).message(unbanned + " unbanned by " + removedBy));
+		log(Log()
+				.about(Log::Level::Info, Log::Topic::Unban)
+				.message(unbanned + " unbanned by " + removedBy));
 		sendUpdatedBanlist();
 	}
 }
 
 bool Session::isClosed() const
 {
-	return m_closed
-		|| userCount() >= m_history->maxUsers()
-		|| (m_state != State::Initialization && m_state != State::Running);
+	return m_closed || userCount() >= m_history->maxUsers() ||
+		   (m_state != State::Initialization && m_state != State::Running);
 }
 
 void Session::setClosed(bool closed)
@@ -340,16 +362,24 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 	if(conf.contains("authOnly")) {
 		const bool authOnly = conf["authOnly"].toBool();
 		// The authOnly flag can only be set by an authenticated user.
-		// Otherwise it would be possible for users to accidentally lock themselves out.
+		// Otherwise it would be possible for users to accidentally lock
+		// themselves out.
 		if(!authOnly || !changedBy || changedBy->isAuthenticated()) {
 			flags.setFlag(SessionHistory::AuthOnly, authOnly);
-			changes << (authOnly ? "blocked guest logins" : "permitted guest logins");
+			changes
+				<< (authOnly ? "blocked guest logins"
+							 : "permitted guest logins");
 		}
 	}
 
 	if(conf.contains("persistent")) {
-		flags.setFlag(SessionHistory::Persistent, conf["persistent"].toBool() && m_config->getConfigBool(config::EnablePersistence));
-		changes << (conf["persistent"].toBool() ? "made persistent" : "made nonpersistent");
+		flags.setFlag(
+			SessionHistory::Persistent,
+			conf["persistent"].toBool() &&
+				m_config->getConfigBool(config::EnablePersistence));
+		changes
+			<< (conf["persistent"].toBool() ? "made persistent"
+											: "made nonpersistent");
 	}
 
 	if(conf.contains("title")) {
@@ -367,7 +397,8 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 		if(conf["resetThreshold"].isDouble())
 			val = conf["resetThreshold"].toInt();
 		else
-			val = ServerConfig::parseSizeString(conf["resetThreshold"].toString());
+			val = ServerConfig::parseSizeString(
+				conf["resetThreshold"].toString());
 		m_history->setAutoResetThreshold(val);
 		changes << "changed autoreset threshold";
 	}
@@ -386,8 +417,11 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 	// the client whether to send preserved/recorded chat messages
 	// by default.
 	if(conf.contains("preserveChat")) {
-		flags.setFlag(SessionHistory::PreserveChat, conf["preserveChat"].toBool());
-		changes << (conf["preserveChat"].toBool() ? "preserve chat" : "don't preserve chat");
+		flags.setFlag(
+			SessionHistory::PreserveChat, conf["preserveChat"].toBool());
+		changes
+			<< (conf["preserveChat"].toBool() ? "preserve chat"
+											  : "don't preserve chat");
 	}
 
 	if(m_config->getConfigBool(config::ForceNsfm)) {
@@ -402,7 +436,9 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 
 	if(conf.contains("deputies")) {
 		flags.setFlag(SessionHistory::Deputies, conf["deputies"].toBool());
-		changes << (conf["deputies"].toBool() ? "enabled deputies" : "disabled deputies");
+		changes
+			<< (conf["deputies"].toBool() ? "enabled deputies"
+										  : "disabled deputies");
 	}
 
 	m_history->setFlags(flags);
@@ -412,7 +448,8 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 		QString logmsg = changes.join(", ");
 		logmsg[0] = logmsg[0].toUpper();
 
-		Log l = Log().about(Log::Level::Info, Log::Topic::Status).message(logmsg);
+		Log l =
+			Log().about(Log::Level::Info, Log::Topic::Status).message(logmsg);
 		if(changedBy)
 			changedBy->log(l);
 		else
@@ -420,18 +457,19 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 	}
 }
 
-QList<uint8_t> Session::updateOwnership(QList<uint8_t> ids, const QString &changedBy)
+QVector<uint8_t>
+Session::updateOwnership(QVector<uint8_t> ids, const QString &changedBy)
 {
-	QList<uint8_t> truelist;
+	QVector<uint8_t> truelist;
 	Client *kickResetter = nullptr;
 	for(Client *c : m_clients) {
 		const bool op = ids.contains(c->id()) || c->isModerator();
 		if(op != c->isOperator()) {
 			if(!op && c->id() == m_initUser && m_state == State::Reset) {
-				// OP status removed mid-reset! The user probably has at least part
-				// of the reset image still queued for upload, which will messs up
-				// the session once we're out of reset mode. Kicking the client
-				// is the easiest workaround.
+				// OP status removed mid-reset! The user probably has at least
+				// part of the reset image still queued for upload, which will
+				// messs up the session once we're out of reset mode. Kicking
+				// the client is the easiest workaround.
 				// TODO for 3.0: send a cancel command to the client and ignore
 				// all further input until ack is received.
 				kickResetter = c;
@@ -441,254 +479,286 @@ QList<uint8_t> Session::updateOwnership(QList<uint8_t> ids, const QString &chang
 			QString msg;
 			if(op) {
 				msg = "Made operator by " + changedBy;
-				c->log(Log().about(Log::Level::Info, Log::Topic::Op).message(msg));
+				c->log(
+					Log().about(Log::Level::Info, Log::Topic::Op).message(msg));
 			} else {
 				msg = "Operator status revoked by " + changedBy;
-				c->log(Log().about(Log::Level::Info, Log::Topic::Deop).message(msg));
+				c->log(Log()
+						   .about(Log::Level::Info, Log::Topic::Deop)
+						   .message(msg));
 			}
 			messageAll(c->username() + " " + msg, false);
-			if(c->isAuthenticated() && !c->isModerator())
+			if(c->isAuthenticated() && !c->isModerator()) {
 				m_history->setAuthenticatedOperator(c->authId(), op);
-
+			}
 		}
-		if(c->isOperator())
-			truelist << c->id();
+		if(c->isOperator()) {
+			truelist.append(c->id());
+		}
 	}
 
-	if(kickResetter)
-		kickResetter->disconnectClient(Client::DisconnectionReason::Error, "De-opped while resetting");
+	if(kickResetter) {
+		kickResetter->disconnectClient(
+			Client::DisconnectionReason::Error, "De-opped while resetting");
+	}
 
 	return truelist;
 }
 
 void Session::changeOpStatus(uint8_t id, bool op, const QString &changedBy)
 {
-	QList<uint8_t> ids;
+	QVector<uint8_t> ids;
 	for(const Client *c : m_clients) {
-		if(c->isOperator())
-			ids << c->id();
+		if(c->isOperator()) {
+			ids.append(c->id());
+		}
 	}
 
-	if(op)
-		ids << id;
-	else
+	if(op) {
+		ids.append(id);
+	} else {
 		ids.removeOne(id);
+	}
 
 	ids = updateOwnership(ids, changedBy);
-	addToHistory(protocol::MessagePtr(new protocol::SessionOwner(0, ids)));
+	addToHistory(net::makeSessionOwnerMessage(0, ids));
 }
 
-QList<uint8_t> Session::updateTrustedUsers(QList<uint8_t> ids, const QString &changedBy)
+QVector<uint8_t>
+Session::updateTrustedUsers(QVector<uint8_t> ids, const QString &changedBy)
 {
-	QList<uint8_t> truelist;
+	QVector<uint8_t> truelist;
 	for(Client *c : m_clients) {
-		const bool trusted = ids.contains(c->id());
+		bool trusted = ids.contains(c->id());
 		if(trusted != c->isTrusted()) {
 			c->setTrusted(trusted);
 			QString msg;
 			if(trusted) {
 				msg = "Trusted by " + changedBy;
-				c->log(Log().about(Log::Level::Info, Log::Topic::Trust).message(msg));
+				c->log(Log()
+						   .about(Log::Level::Info, Log::Topic::Trust)
+						   .message(msg));
 			} else {
 				msg = "Untrusted by " + changedBy;
-				c->log(Log().about(Log::Level::Info, Log::Topic::Untrust).message(msg));
+				c->log(Log()
+						   .about(Log::Level::Info, Log::Topic::Untrust)
+						   .message(msg));
 			}
 			messageAll(c->username() + " " + msg, false);
-			if(c->isAuthenticated())
+			if(c->isAuthenticated()) {
 				m_history->setAuthenticatedTrust(c->authId(), trusted);
-
+			}
 		}
-		if(c->isTrusted())
-			truelist << c->id();
+		if(c->isTrusted()) {
+			truelist.append(c->id());
+		}
 	}
 
 	return truelist;
 }
 
-void Session::changeTrustedStatus(uint8_t id, bool trusted, const QString &changedBy)
+void Session::changeTrustedStatus(
+	uint8_t id, bool trusted, const QString &changedBy)
 {
-	QList<uint8_t> ids;
+	QVector<uint8_t> ids;
 	for(const Client *c : m_clients) {
-		if(c->isTrusted())
-			ids << c->id();
+		if(c->isTrusted()) {
+			ids.append(c->id());
+		}
 	}
 
-	if(trusted)
-		ids << id;
-	else
+	if(trusted) {
+		ids.append(id);
+	} else {
 		ids.removeOne(id);
+	}
 
 	ids = updateTrustedUsers(ids, changedBy);
-	addToHistory(protocol::MessagePtr(new protocol::TrustedUsers(0, ids)));
+	addToHistory(net::makeTrustedUsersMessage(0, ids));
 }
 
 void Session::sendUpdatedSessionProperties()
 {
-	protocol::ServerReply props;
-	props.type = protocol::ServerReply::SESSIONCONF;
-	QJsonObject	conf;
-	conf["closed"] = m_closed; // this refers specifically to the closed flag, not the general status
-	conf["authOnly"] = m_history->hasFlag(SessionHistory::AuthOnly);
-	conf["persistent"] = m_history->hasFlag(SessionHistory::Persistent);
-	conf["title"] = m_history->title();
-	conf["maxUserCount"] = m_history->maxUsers();
-	conf["resetThreshold"] = int(m_history->autoResetThreshold());
-	conf["resetThresholdBase"] = int(m_history->autoResetThresholdBase());
-	conf["preserveChat"] = m_history->flags().testFlag(SessionHistory::PreserveChat);
-	conf["nsfm"] = m_history->flags().testFlag(SessionHistory::Nsfm);
-	conf["deputies"] = m_history->flags().testFlag(SessionHistory::Deputies);
-	conf["hasPassword"] = !m_history->passwordHash().isEmpty();
-	conf["hasOpword"] = !m_history->opwordHash().isEmpty();
-	// This config option is basically a session property set by the server.
-	// We report it here so the client can disable the checkbox in the UI.
-	conf["forceNsfm"] = m_config->getConfigBool(config::ForceNsfm);
-	props.reply["config"] = conf;
-
-	addToHistory(protocol::MessagePtr(new protocol::Command(0, props)));
+	addToHistory(net::ServerReply::makeSessionConf({
+		// this refers specifically to the closed flag, not the general status
+		{QStringLiteral("closed"), m_closed},
+		{QStringLiteral("authOnly"),
+		 m_history->hasFlag(SessionHistory::AuthOnly)},
+		{QStringLiteral("persistent"),
+		 m_history->hasFlag(SessionHistory::Persistent)},
+		{QStringLiteral("title"), m_history->title()},
+		{QStringLiteral("maxUserCount"), m_history->maxUsers()},
+		{QStringLiteral("resetThreshold"),
+		 int(m_history->autoResetThreshold())},
+		{QStringLiteral("resetThresholdBase"),
+		 int(m_history->autoResetThresholdBase())},
+		{QStringLiteral("preserveChat"),
+		 m_history->flags().testFlag(SessionHistory::PreserveChat)},
+		{QStringLiteral("nsfm"),
+		 m_history->flags().testFlag(SessionHistory::Nsfm)},
+		{QStringLiteral("deputies"),
+		 m_history->flags().testFlag(SessionHistory::Deputies)},
+		{QStringLiteral("hasPassword"), !m_history->passwordHash().isEmpty()},
+		{QStringLiteral("hasOpword"), !m_history->opwordHash().isEmpty()},
+		// This config option is basically a session property set by the server.
+		// We report it here so the client can disable the checkbox in the UI.
+		{QStringLiteral("forceNsfm"),
+		 m_config->getConfigBool(config::ForceNsfm)},
+	}));
 	emit sessionAttributeChanged(this);
 }
 
 void Session::sendUpdatedBanlist()
 {
-	// The banlist is not usually included in the sessionconf.
-	// Moderators and local users get to see the actual IP addresses too
-	protocol::ServerReply msg;
-	msg.type = protocol::ServerReply::SESSIONCONF;
-	QJsonObject conf;
-	conf["banlist"] = m_history->banlist().toJson(false);
-	msg.reply["config"] = conf;
-
 	// Normal users don't get to see the actual IP addresses
-	const protocol::MessagePtr normalVersion(new protocol::Command(0, msg));
+	net::Message normalVersion(net::ServerReply::makeSessionConf(
+		{{QStringLiteral("banlist"), m_history->banlist().toJson(false)}}));
 
 	// But moderators and local users do
-	conf["banlist"] = m_history->banlist().toJson(true);
-	msg.reply["config"] = conf;
-	const protocol::MessagePtr modVersion(new protocol::Command(0, msg));
+	net::Message modVersion(net::ServerReply::makeSessionConf(
+		{{QStringLiteral("banlist"), m_history->banlist().toJson(true)}}));
 
 	for(Client *c : m_clients) {
-		if(c->isModerator() || c->peerAddress().isLoopback())
+		if(c->isModerator() || c->peerAddress().isLoopback()) {
 			c->sendDirectMessage(modVersion);
-		else
+		} else {
 			c->sendDirectMessage(normalVersion);
+		}
 	}
 }
 
 void Session::sendUpdatedAnnouncementList()
 {
 	// The announcement list is not usually included in the sessionconf.
-	protocol::ServerReply msg;
-	msg.type = protocol::ServerReply::SESSIONCONF;
-	QJsonArray list;
-	const auto announcements = m_announcements->getAnnouncements(this);
-	for(const sessionlisting::Announcement &a : announcements) {
-		QJsonObject o;
-		o["url"] = a.apiUrl.toString();
-		o["roomcode"] = a.roomcode;
-		o["private"] = a.isPrivate;
-		list.append(o);
+	QJsonArray announcements;
+	for(const sessionlisting::Announcement &a :
+		m_announcements->getAnnouncements(this)) {
+		announcements.append(QJsonObject{
+			{QStringLiteral("url"), a.apiUrl.toString()},
+			{QStringLiteral("roomcode"), a.roomcode},
+			{QStringLiteral("private"), a.isPrivate},
+		});
 	}
-
-	QJsonObject conf;
-	conf["announcements"]= list;
-	msg.reply["config"] = conf;
-	directToAll(protocol::MessagePtr(new protocol::Command(0, msg)));
+	directToAll(net::ServerReply::makeSessionConf(
+		{{QStringLiteral("announcements"), announcements}}));
 }
 
 void Session::sendUpdatedMuteList()
 {
 	// The mute list is not usually included in the sessionconf.
-	protocol::ServerReply msg;
-	msg.type = protocol::ServerReply::SESSIONCONF;
 	QJsonArray muted;
 	for(const Client *c : m_clients) {
-		if(c->isMuted())
+		if(c->isMuted()) {
 			muted.append(c->id());
+		}
 	}
-
-	QJsonObject conf;
-	conf["muted"]= muted;
-	msg.reply["config"] = conf;
-	directToAll(protocol::MessagePtr(new protocol::Command(0, msg)));
+	directToAll(
+		net::ServerReply::makeSessionConf({{QStringLiteral("muted"), muted}}));
 }
 
-void Session::handleClientMessage(Client &client, protocol::MessagePtr msg)
+void Session::handleClientMessage(Client &client, const net::Message &msg)
 {
 	// Filter away server-to-client-only messages
-	switch(msg->type()) {
-	using namespace protocol;
-	case MSG_USER_JOIN:
-	case MSG_USER_LEAVE:
-	case MSG_SOFTRESET:
-		client.log(Log().about(Log::Level::Warn, Log::Topic::RuleBreak).message("Received server-to-user only command " + msg->messageName()));
+	switch(msg.type()) {
+	case DP_MSG_JOIN:
+	case DP_MSG_LEAVE:
+	case DP_MSG_SOFT_RESET:
+		client.log(
+			Log()
+				.about(Log::Level::Warn, Log::Topic::RuleBreak)
+				.message(
+					"Received server-to-user only command " + msg.typeName()));
 		return;
-	case MSG_DISCONNECT:
+	case DP_MSG_DISCONNECT:
 		// we don't do anything with disconnect notifications from the client
 		return;
-	default: break;
+	default:
+		break;
 	}
 
 	// Some meta commands affect the server too
-	switch(msg->type()) {
-		case protocol::MSG_COMMAND: {
-			protocol::ServerCommand cmd = msg.cast<protocol::Command>().cmd();
-			handleClientServerCommand(&client, cmd.cmd, cmd.args, cmd.kwargs);
+	switch(msg.type()) {
+	case DP_MSG_SERVER_COMMAND: {
+		net::ServerCommand cmd = net::ServerCommand::fromMessage(msg);
+		handleClientServerCommand(&client, cmd.cmd, cmd.args, cmd.kwargs);
+		return;
+	}
+	case DP_MSG_SESSION_OWNER: {
+		if(!client.isOperator()) {
+			client.log(Log()
+						   .about(Log::Level::Warn, Log::Topic::RuleBreak)
+						   .message("Tried to change session ownership"));
 			return;
 		}
-		case protocol::MSG_SESSION_OWNER: {
-			if(!client.isOperator()) {
-				client.log(Log().about(Log::Level::Warn, Log::Topic::RuleBreak).message("Tried to change session ownership"));
-				return;
-			}
 
-			QList<uint8_t> ids = msg.cast<protocol::SessionOwner>().ids();
-			ids.append(client.id());
-			ids = updateOwnership(ids, client.username());
-			msg.cast<protocol::SessionOwner>().setIds(ids);
-			break;
-		}
-		case protocol::MSG_CHAT: {
-			if(client.isMuted())
-				return;
-			if(msg.cast<protocol::Chat>().isBypass()) {
-				directToAll(msg);
-				return;
-			}
-			break;
-		}
-		case protocol::MSG_PRIVATE_CHAT: {
-			const protocol::PrivateChat &chat = msg.cast<protocol::PrivateChat>();
-			if(chat.target()>0) {
-				Client *target = getClientById(chat.target());
-				if(target) {
-					client.sendDirectMessage(msg);
-					target->sendDirectMessage(msg);
-				}
-			}
+		int count;
+		const uint8_t *users =
+			DP_msg_session_owner_users(msg.toSessionOwner(), &count);
+		QVector<uint8_t> ids{users, users + count};
+		ids.append(client.id());
+		addClientMessage(
+			client,
+			net::makeSessionOwnerMessage(
+				msg.contextId(), updateOwnership(ids, client.username())));
+		return;
+	}
+	case DP_MSG_CHAT: {
+		if(client.isMuted()) {
 			return;
 		}
-		case protocol::MSG_TRUSTED_USERS: {
-			if(!client.isOperator()) {
-				log(Log().about(Log::Level::Warn, Log::Topic::RuleBreak).message("Tried to change trusted user list"));
-				return;
-			}
-
-			QList<uint8_t> ids = msg.cast<protocol::TrustedUsers>().ids();
-			ids = updateTrustedUsers(ids, client.username());
-			msg.cast<protocol::TrustedUsers>().setIds(ids);
-			break;
+		if(DP_msg_chat_tflags(msg.toChat()) & DP_MSG_CHAT_TFLAGS_BYPASS) {
+			directToAll(msg);
+			return;
 		}
-		default: break;
+		break;
+	}
+	case DP_MSG_PRIVATE_CHAT: {
+		uint8_t targetId = DP_msg_private_chat_target(msg.toPrivateChat());
+		if(targetId > 0) {
+			Client *target = getClientById(targetId);
+			if(target) {
+				client.sendDirectMessage(msg);
+				target->sendDirectMessage(msg);
+			}
+		}
+		return;
+	}
+	case DP_MSG_TRUSTED_USERS: {
+		if(!client.isOperator()) {
+			log(Log()
+					.about(Log::Level::Warn, Log::Topic::RuleBreak)
+					.message("Tried to change trusted user list"));
+			return;
+		}
+
+		int count;
+		const uint8_t *users =
+			DP_msg_trusted_users_users(msg.toTrustedUsers(), &count);
+		QVector<uint8_t> ids{users, users + count};
+		addClientMessage(
+			client,
+			net::makeTrustedUsersMessage(
+				msg.contextId(), updateTrustedUsers(ids, client.username())));
+		return;
+	}
+	default:
+		break;
 	}
 
 	// Rest of the messages are added to session history
-	if(initUserId() == client.id())
-		addToInitStream(msg);
-	else
-		addToHistory(msg);
+	addClientMessage(client, msg);
 }
 
-void Session::addToInitStream(protocol::MessagePtr msg)
+void Session::addClientMessage(const Client &client, const net::Message &msg)
+{
+	if(initUserId() == client.id()) {
+		addToInitStream(msg);
+	} else {
+		addToHistory(msg);
+	}
+}
+
+void Session::addToInitStream(const net::Message &msg)
 {
 	Q_ASSERT(m_state != State::Running);
 
@@ -696,14 +766,18 @@ void Session::addToInitStream(protocol::MessagePtr msg)
 		addToHistory(msg);
 
 	} else if(m_state == State::Reset) {
-		m_resetstreamsize += msg->length();
+		m_resetstreamsize += int(msg.length());
 		m_resetstream.append(msg);
 
-		// Well behaved clients should be aware of the history limit and not exceed it.
-		if(m_history->sizeLimit()>0 && m_resetstreamsize > m_history->sizeLimit()) {
+		// Well behaved clients should be aware of the history limit and not
+		// exceed it.
+		if(m_history->sizeLimit() > 0 &&
+		   m_resetstreamsize > m_history->sizeLimit()) {
 			Client *resetter = getClientById(m_initUser);
 			if(resetter)
-				resetter->disconnectClient(Client::DisconnectionReason::Error, "History limit exceeded");
+				resetter->disconnectClient(
+					Client::DisconnectionReason::Error,
+					"History limit exceeded");
 		}
 	}
 }
@@ -713,23 +787,36 @@ void Session::handleInitBegin(int ctxId)
 	Client *c = getClientById(ctxId);
 	if(!c) {
 		// Shouldn't happen
-		log(Log().about(Log::Level::Error, Log::Topic::RuleBreak).message(QString("Non-existent user %1 sent init-begin").arg(ctxId)));
+		log(Log()
+				.about(Log::Level::Error, Log::Topic::RuleBreak)
+				.message(QString("Non-existent user %1 sent init-begin")
+							 .arg(ctxId)));
 		return;
 	}
 
 	if(ctxId != m_initUser) {
-		c->log(Log().about(Log::Level::Warn, Log::Topic::RuleBreak).message(QString("Sent init-begin, but init user is #%1").arg(m_initUser)));
+		c->log(Log()
+				   .about(Log::Level::Warn, Log::Topic::RuleBreak)
+				   .message(QString("Sent init-begin, but init user is #%1")
+								.arg(m_initUser)));
 		return;
 	}
 
-	c->log(Log().about(Log::Level::Debug, Log::Topic::Status).message("init-begin"));
+	c->log(Log()
+			   .about(Log::Level::Debug, Log::Topic::Status)
+			   .message("init-begin"));
 
-	// It's possible that regular non-reset commands were still in the upload buffer
-	// when the client started sending the reset snapshot. The init-begin indicates
-	// the start of the true reset snapshot, so we can clear out the buffer here.
-	// For backward-compatibility, sending the init-begin command is optional.
-	if(m_resetstreamsize>0) {
-		c->log(Log().about(Log::Level::Debug, Log::Topic::Status).message(QStringLiteral("%1 extra messages cleared by init-begin").arg(m_resetstream.size())));
+	// It's possible that regular non-reset commands were still in the upload
+	// buffer when the client started sending the reset snapshot. The init-begin
+	// indicates the start of the true reset snapshot, so we can clear out the
+	// buffer here. For backward-compatibility, sending the init-begin command
+	// is optional.
+	if(m_resetstreamsize > 0) {
+		c->log(Log()
+				   .about(Log::Level::Debug, Log::Topic::Status)
+				   .message(
+					   QStringLiteral("%1 extra messages cleared by init-begin")
+						   .arg(m_resetstream.size())));
 		m_resetstream.clear();
 		m_resetstreamsize = 0;
 	}
@@ -740,16 +827,24 @@ void Session::handleInitComplete(int ctxId)
 	Client *c = getClientById(ctxId);
 	if(!c) {
 		// Shouldn't happen
-		log(Log().about(Log::Level::Error, Log::Topic::RuleBreak).message(QString("Non-existent user %1 sent init-complete").arg(ctxId)));
+		log(Log()
+				.about(Log::Level::Error, Log::Topic::RuleBreak)
+				.message(QString("Non-existent user %1 sent init-complete")
+							 .arg(ctxId)));
 		return;
 	}
 
 	if(ctxId != m_initUser) {
-		c->log(Log().about(Log::Level::Warn, Log::Topic::RuleBreak).message(QString("Sent init-complete, but init user is #%1").arg(m_initUser)));
+		c->log(Log()
+				   .about(Log::Level::Warn, Log::Topic::RuleBreak)
+				   .message(QString("Sent init-complete, but init user is #%1")
+								.arg(m_initUser)));
 		return;
 	}
 
-	c->log(Log().about(Log::Level::Debug, Log::Topic::Status).message("init-complete"));
+	c->log(Log()
+			   .about(Log::Level::Debug, Log::Topic::Status)
+			   .message("init-complete"));
 
 	switchState(State::Running);
 }
@@ -760,16 +855,24 @@ void Session::handleInitCancel(int ctxId)
 	Client *c = getClientById(ctxId);
 	if(!c) {
 		// Shouldn't happen
-		log(Log().about(Log::Level::Error, Log::Topic::RuleBreak).message(QString("Non-existent user %1 sent init-complete").arg(ctxId)));
+		log(Log()
+				.about(Log::Level::Error, Log::Topic::RuleBreak)
+				.message(QString("Non-existent user %1 sent init-complete")
+							 .arg(ctxId)));
 		return;
 	}
 
 	if(ctxId != m_initUser) {
-		c->log(Log().about(Log::Level::Warn, Log::Topic::RuleBreak).message(QString("Sent init-cancel, but init user is #%1").arg(m_initUser)));
+		c->log(Log()
+				   .about(Log::Level::Warn, Log::Topic::RuleBreak)
+				   .message(QString("Sent init-cancel, but init user is #%1")
+								.arg(m_initUser)));
 		return;
 	}
 
-	c->log(Log().about(Log::Level::Debug, Log::Topic::Status).message("init-cancel"));
+	c->log(Log()
+			   .about(Log::Level::Debug, Log::Topic::Status)
+			   .message("init-cancel"));
 	abortReset();
 }
 
@@ -781,12 +884,9 @@ void Session::resetSession(int resetter)
 	m_initUser = resetter;
 	switchState(State::Reset);
 
-	protocol::ServerReply resetRequest;
-	resetRequest.type = protocol::ServerReply::RESET;
-	resetRequest.reply["state"] = "init";
-	resetRequest.message = "Prepared to receive session data";
-
-	getClientById(resetter)->sendDirectMessage(protocol::MessagePtr(new protocol::Command(0, resetRequest)));
+	getClientById(resetter)->sendDirectMessage(net::ServerReply::makeReset(
+		QStringLiteral("Prepared to receive session data"),
+		QStringLiteral("init")));
 }
 
 void Session::killSession(bool terminate)
@@ -799,7 +899,8 @@ void Session::killSession(bool terminate)
 	stopRecording();
 
 	for(Client *c : m_clients) {
-		c->disconnectClient(Client::DisconnectionReason::Shutdown, "Session terminated");
+		c->disconnectClient(
+			Client::DisconnectionReason::Shutdown, "Session terminated");
 		c->setSession(nullptr);
 	}
 	m_clients.clear();
@@ -810,7 +911,7 @@ void Session::killSession(bool terminate)
 	this->deleteLater();
 }
 
-void Session::directToAll(protocol::MessagePtr msg)
+void Session::directToAll(const net::Message &msg)
 {
 	for(Client *c : m_clients) {
 		c->sendDirectMessage(msg);
@@ -819,29 +920,25 @@ void Session::directToAll(protocol::MessagePtr msg)
 
 void Session::messageAll(const QString &message, bool alert)
 {
-	if(message.isEmpty())
-		return;
-
-	directToAll(protocol::MessagePtr(new protocol::Command(0,
-		(protocol::ServerReply {
-			alert ? protocol::ServerReply::ALERT : protocol::ServerReply::MESSAGE,
-			message,
-			QJsonObject()
-		}).toJson()))
-	);
+	if(!message.isEmpty()) {
+		directToAll(
+			alert ? net::ServerReply::makeAlert(message)
+				  : net::ServerReply::makeMessage(message));
+	}
 }
 
 void Session::ensureOperatorExists()
 {
 	// If there is a way to gain OP status without being explicitly granted,
 	// it's OK for the session to not have any operators for a while.
-	if(!m_history->opwordHash().isEmpty() || m_history->isAuthenticatedOperators())
+	if(!m_history->opwordHash().isEmpty() ||
+	   m_history->isAuthenticatedOperators())
 		return;
 
-	bool hasOp=false;
+	bool hasOp = false;
 	for(const Client *c : m_clients) {
 		if(c->isOperator()) {
-			hasOp=true;
+			hasOp = true;
 			break;
 		}
 	}
@@ -851,11 +948,14 @@ void Session::ensureOperatorExists()
 	}
 }
 
-void Session::addedToHistory(protocol::MessagePtr msg)
+void Session::addedToHistory(const net::Message &msg)
 {
-	if(m_recorder)
-		m_recorder->recordMessage(msg);
-
+	if(m_recorder) {
+		if(!DP_recorder_message_push_inc(m_recorder, msg.get())) {
+			DP_recorder_free_join(m_recorder, nullptr);
+			m_recorder = nullptr;
+		}
+	}
 	m_lastEventTime.start();
 	// TODO calculate activity score that can be shown in listings
 }
@@ -863,72 +963,76 @@ void Session::addedToHistory(protocol::MessagePtr msg)
 void Session::restartRecording()
 {
 	if(m_recorder) {
-		m_recorder->close();
-		delete m_recorder;
+		DP_recorder_free_join(m_recorder, nullptr);
 	}
 
 	// Start recording
 	QString filename = utils::makeFilenameUnique(m_recordingFile, ".dprec");
 	qDebug("Starting session recording %s", qPrintable(filename));
 
-	m_recorder = new recording::Writer(filename, this);
-	if(!m_recorder->open()) {
-		qWarning("Couldn't write session recording to %s: %s", qPrintable(filename), qPrintable(m_recorder->errorString()));
-		delete m_recorder;
-		m_recorder = nullptr;
+	DP_Output *output = DP_file_output_new_from_path(qUtf8Printable(filename));
+	m_recorder =
+		output
+			? DP_recorder_new_inc(
+				  DP_RECORDER_TYPE_BINARY,
+				  DP_recorder_header_new(
+					  "server-recording", "true", "version",
+					  qUtf8Printable(m_history->protocolVersion().asString()),
+					  static_cast<const char *>(nullptr)),
+				  nullptr, nullptr, nullptr, output)
+			: nullptr;
+	if(!m_recorder) {
+		qWarning(
+			"Couldn't write session recording to %s: %s",
+			qUtf8Printable(filename), DP_error());
 		return;
 	}
 
-	QJsonObject metadata;
-	metadata["server-recording"] = true;
-	metadata["version"] = m_history->protocolVersion().asString();
-
-	m_recorder->writeHeader(metadata);
-	m_recorder->setAutoflush();
-
-	int lastBatchIndex=0;
+	int lastBatchIndex = 0;
 	do {
-		protocol::MessageList history;
+		net::MessageList history;
 		std::tie(history, lastBatchIndex) = m_history->getBatch(lastBatchIndex);
-		for(MessagePtr m : history)
-			m_recorder->recordMessage(m);
+		for(const net::Message &msg : history) {
+			DP_recorder_message_push_inc(m_recorder, msg.get());
+		}
 
-	} while(lastBatchIndex<m_history->lastIndex());
+	} while(lastBatchIndex < m_history->lastIndex());
 }
 
 void Session::stopRecording()
 {
 	if(m_recorder) {
-		m_recorder->close();
-		delete m_recorder;
+		DP_recorder_free_join(m_recorder, nullptr);
 		m_recorder = nullptr;
 	}
 }
 
 QString Session::uptime() const
 {
-	qint64 up = (QDateTime::currentMSecsSinceEpoch() - m_history->startTime().toMSecsSinceEpoch()) / 1000;
+	qint64 up = (QDateTime::currentMSecsSinceEpoch() -
+				 m_history->startTime().toMSecsSinceEpoch()) /
+				1000;
 
-	int days = up / (60*60*24);
-	up -= days * (60*60*24);
+	int days = up / (60 * 60 * 24);
+	up -= days * (60 * 60 * 24);
 
-	int hours = up / (60*60);
-	up -= hours * (60*60);
+	int hours = up / (60 * 60);
+	up -= hours * (60 * 60);
 
 	int minutes = up / 60;
 
 	QString uptime;
-	if(days==1)
+	if(days == 1)
 		uptime = "one day, ";
-	else if(days>1)
+	else if(days > 1)
 		uptime = QString::number(days) + " days, ";
 
-	if(hours==1)
+	if(hours == 1)
 		uptime += "1 hour and ";
 	else
 		uptime += QString::number(hours) + " hours and ";
 
-	if(minutes==1)
+	if(minutes == 1)
 		uptime += "1 minute";
 	else
 		uptime += QString::number(minutes) + " minutes.";
@@ -947,7 +1051,10 @@ QStringList Session::userNames() const
 void Session::makeAnnouncement(const QUrl &url, bool privateListing)
 {
 	Q_ASSERT(m_announcements);
-	m_announcements->announceSession(this, url, privateListing ? sessionlisting::PrivacyMode::Private : sessionlisting::PrivacyMode::Public);
+	m_announcements->announceSession(
+		this, url,
+		privateListing ? sessionlisting::PrivacyMode::Private
+					   : sessionlisting::PrivacyMode::Public);
 }
 
 void Session::unlistAnnouncement(const QUrl &url, bool terminate)
@@ -961,16 +1068,19 @@ void Session::unlistAnnouncement(const QUrl &url, bool terminate)
 
 sessionlisting::Session Session::getSessionAnnouncement() const
 {
-	const bool privateUserList = m_config->getConfigBool(config::PrivateUserList);
+	const bool privateUserList =
+		m_config->getConfigBool(config::PrivateUserList);
 
-	return sessionlisting::Session {
+	return sessionlisting::Session{
 		m_config->internalConfig().localHostname,
 		m_config->internalConfig().getAnnouncePort(),
 		aliasOrId(),
 		m_history->protocolVersion(),
 		m_history->title(),
 		userCount(),
-		(!m_history->passwordHash().isEmpty() || privateUserList) ? QStringList() : userNames(),
+		(!m_history->passwordHash().isEmpty() || privateUserList)
+			? QStringList()
+			: userNames(),
 		!m_history->passwordHash().isEmpty(),
 		m_history->hasFlag(SessionHistory::Nsfm),
 		sessionlisting::PrivacyMode::Undefined,
@@ -981,13 +1091,15 @@ sessionlisting::Session Session::getSessionAnnouncement() const
 	};
 }
 
-bool Session::hasUrgentAnnouncementChange(const sessionlisting::Session &description) const
+bool Session::hasUrgentAnnouncementChange(
+	const sessionlisting::Session &description) const
 {
 	return description.title != m_history->title() ||
-		description.nsfm != m_history->hasFlag(SessionHistory::Nsfm) ||
-		description.password != !m_history->passwordHash().isEmpty() ||
-		(description.users >= description.maxUsers) != (userCount() >= m_history->maxUsers()) ||
-		description.closed != m_closed;
+		   description.nsfm != m_history->hasFlag(SessionHistory::Nsfm) ||
+		   description.password != !m_history->passwordHash().isEmpty() ||
+		   (description.users >= description.maxUsers) !=
+			   (userCount() >= m_history->maxUsers()) ||
+		   description.closed != m_closed;
 }
 
 
@@ -997,7 +1109,8 @@ void Session::onAnnouncementsChanged(const sessionlisting::Announcable *session)
 		sendUpdatedAnnouncementList();
 }
 
-void Session::onAnnouncementError(const Announcable *session, const QString &message)
+void Session::onAnnouncementError(
+	const Announcable *session, const QString &message)
 {
 	if(session == this) {
 		messageAll(message, false);
@@ -1008,29 +1121,43 @@ void Session::onConfigValueChanged(const ConfigKey &key)
 {
 	if(key.index == config::ForceNsfm.index) {
 		if(forceEnableNsfm(m_history, m_config)) {
-			log(Log().about(Log::Level::Info, Log::Topic::Status).message("Forced NSFM after config change"));
+			log(Log()
+					.about(Log::Level::Info, Log::Topic::Status)
+					.message("Forced NSFM after config change"));
 		}
 		sendUpdatedSessionProperties();
 	}
 }
 
-void Session::sendAbuseReport(const Client *reporter, int aboutUser, const QString &message)
+void Session::sendAbuseReport(
+	const Client *reporter, int aboutUser, const QString &message)
 {
 	Q_ASSERT(reporter);
 
-	reporter->log(Log().about(Log::Level::Info, Log::Topic::Status).message(QString("Abuse report about user %1 received: %2").arg(aboutUser).arg(message)));
+	reporter->log(
+		Log()
+			.about(Log::Level::Info, Log::Topic::Status)
+			.message(QString("Abuse report about user %1 received: %2")
+						 .arg(aboutUser)
+						 .arg(message)));
 
 	const QUrl url = m_config->internalConfig().reportUrl;
 	if(!url.isValid()) {
 		// This shouldn't happen normally. If the URL is not configured,
 		// the server does not advertise the capability to receive reports.
-		log(Log().about(Log::Level::Warn, Log::Topic::Status).message("Cannot send abuse report: server URL not configured!"));
+		log(Log()
+				.about(Log::Level::Warn, Log::Topic::Status)
+				.message(
+					"Cannot send abuse report: server URL not configured!"));
 		return;
 	}
 
 	if(!m_config->getConfigBool(config::AbuseReport)) {
-		// This can happen if reporting is disabled when a session is still in progress
-		log(Log().about(Log::Level::Warn, Log::Topic::Status).message("Cannot send abuse report: not enabled!"));
+		// This can happen if reporting is disabled when a session is still in
+		// progress
+		log(Log()
+				.about(Log::Level::Warn, Log::Topic::Status)
+				.message("Cannot send abuse report: not enabled!"));
 		return;
 	}
 
@@ -1040,7 +1167,7 @@ void Session::sendAbuseReport(const Client *reporter, int aboutUser, const QStri
 	o["user"] = reporter->username();
 	o["auth"] = reporter->isAuthenticated();
 	o["ip"] = reporter->peerAddress().toString();
-	if(aboutUser>0)
+	if(aboutUser > 0)
 		o["perp"] = aboutUser;
 
 	o["message"] = message;
@@ -1063,10 +1190,15 @@ void Session::sendAbuseReport(const Client *reporter, int aboutUser, const QStri
 	req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 	if(!authToken.isEmpty())
 		req.setRawHeader("Authorization", "Token " + authToken.toUtf8());
-	QNetworkReply *reply = networkaccess::getInstance()->post(req, QJsonDocument(o).toJson());
+	QNetworkReply *reply =
+		networkaccess::getInstance()->post(req, QJsonDocument(o).toJson());
 	connect(reply, &QNetworkReply::finished, this, [this, reply]() {
 		if(reply->error() != QNetworkReply::NoError) {
-			log(Log().about(Log::Level::Warn, Log::Topic::Status).message("Unable to send abuse report: " + reply->errorString()));
+			log(Log()
+					.about(Log::Level::Warn, Log::Topic::Status)
+					.message(
+						"Unable to send abuse report: " +
+						reply->errorString()));
 		}
 	});
 	connect(reply, &QNetworkReply::finished, reply, &QObject::deleteLater);
@@ -1076,7 +1208,7 @@ QJsonObject Session::getDescription(bool full) const
 {
 	// The basic description contains just the information
 	// needed for the login session listing
-	QJsonObject o {
+	QJsonObject o{
 		{"id", id()},
 		{"alias", idAlias()},
 		{"protocol", m_history->protocolVersion().asString()},
@@ -1089,8 +1221,7 @@ QJsonObject Session::getDescription(bool full) const
 		{"authOnly", m_history->hasFlag(SessionHistory::AuthOnly)},
 		{"nsfm", m_history->hasFlag(SessionHistory::Nsfm)},
 		{"startTime", m_history->startTime().toString(Qt::ISODate)},
-		{"size", int(m_history->sizeInBytes())}
-	};
+		{"size", int(m_history->sizeInBytes())}};
 
 	if(m_config->getConfigBool(config::EnablePersistence))
 		o["persistent"] = m_history->hasFlag(SessionHistory::Persistent);
@@ -1108,25 +1239,24 @@ QJsonObject Session::getDescription(bool full) const
 			u["online"] = true;
 			users << u;
 		}
-		for(auto u=m_pastClients.constBegin();u!=m_pastClients.constEnd();++u) {
-			users << QJsonObject {
+		for(auto u = m_pastClients.constBegin(); u != m_pastClients.constEnd();
+			++u) {
+			users << QJsonObject{
 				{"id", u->id},
 				{"name", u->username},
 				{"ip", u->peerAddress.toString()},
-				{"online", false}
-			};
+				{"online", false}};
 		}
 		o["users"] = users;
 
 		QJsonArray listings;
 		const auto announcements = m_announcements->getAnnouncements(this);
 		for(const sessionlisting::Announcement &a : announcements) {
-			listings << QJsonObject {
+			listings << QJsonObject{
 				{"id", a.listingId},
 				{"url", a.apiUrl.toString()},
 				{"roomcode", a.roomcode},
-				{"private", a.isPrivate}
-			};
+				{"private", a.isPrivate}};
 		}
 		o["listings"] = listings;
 	}
@@ -1134,7 +1264,8 @@ QJsonObject Session::getDescription(bool full) const
 	return o;
 }
 
-JsonApiResult Session::callJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request)
+JsonApiResult Session::callJsonApi(
+	JsonApiMethod method, const QStringList &path, const QJsonObject &request)
 {
 	if(!path.isEmpty()) {
 		QString head;
@@ -1145,7 +1276,7 @@ JsonApiResult Session::callJsonApi(JsonApiMethod method, const QStringList &path
 			return callListingsJsonApi(method, tail, request);
 
 		int userId = head.toInt();
-		if(userId>0) {
+		if(userId > 0) {
 			Client *c = getClientById(userId);
 			if(c)
 				return c->callJsonApi(method, tail, request);
@@ -1164,13 +1295,16 @@ JsonApiResult Session::callJsonApi(JsonApiMethod method, const QStringList &path
 
 	} else if(method == JsonApiMethod::Delete) {
 		killSession();
-		return JsonApiResult{ JsonApiResult::Ok, QJsonDocument(QJsonObject{ { "status", "ok "} }) };
+		return JsonApiResult{
+			JsonApiResult::Ok, QJsonDocument(QJsonObject{{"status", "ok "}})};
 	}
 
-	return JsonApiResult{JsonApiResult::Ok, QJsonDocument(getDescription(true))};
+	return JsonApiResult{
+		JsonApiResult::Ok, QJsonDocument(getDescription(true))};
 }
 
-JsonApiResult Session::callListingsJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request)
+JsonApiResult Session::callListingsJsonApi(
+	JsonApiMethod method, const QStringList &path, const QJsonObject &request)
 {
 	Q_UNUSED(request);
 	if(path.length() != 1)
@@ -1182,7 +1316,9 @@ JsonApiResult Session::callListingsJsonApi(JsonApiMethod method, const QStringLi
 		if(a.listingId == id) {
 			if(method == JsonApiMethod::Delete) {
 				unlistAnnouncement(a.apiUrl.toString());
-				return JsonApiResult{ JsonApiResult::Ok, QJsonDocument(QJsonObject{ { "status", "ok "} }) };
+				return JsonApiResult{
+					JsonApiResult::Ok,
+					QJsonDocument(QJsonObject{{"status", "ok "}})};
 
 			} else {
 				return JsonApiBadMethod();
@@ -1204,4 +1340,3 @@ void Session::log(const Log &log)
 }
 
 }
-

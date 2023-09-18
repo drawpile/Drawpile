@@ -1,18 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #ifndef DP_NET_SERVER_H
 #define DP_NET_SERVER_H
-
-#include <QObject>
 #include "libshared/net/protover.h"
+#include <QObject>
 
 class QSslCertificate;
 
-namespace drawdance {
-	class Message;
-}
-
 namespace net {
+
+class Message;
 
 /**
  * \brief Abstract base class for servers interfaces
@@ -22,8 +18,8 @@ class Server : public QObject {
 public:
 	enum Security {
 		NO_SECURITY, // No secure connection
-		NEW_HOST,    // Secure connection to a host we haven't seen before
-		KNOWN_HOST,  // Secure connection whose certificate we have seen before
+		NEW_HOST,	 // Secure connection to a host we haven't seen before
+		KNOWN_HOST,	 // Secure connection whose certificate we have seen before
 		TRUSTED_HOST // A host we have explicitly marked as trusted
 	};
 
@@ -32,17 +28,17 @@ public:
 	/**
 	 * \brief Send a message to the server
 	 */
-	virtual void sendMessage(const drawdance::Message &msg) = 0;
+	virtual void sendMessage(const net::Message &msg) = 0;
 
 	/**
 	 * \brief Send multiple messages to the server
 	 */
-	virtual void sendMessages(int count, const drawdance::Message *msgs) = 0;
+	virtual void sendMessages(int count, const net::Message *msgs) = 0;
 
-    /**
-     * @brief Log out from the server
-     */
-    virtual void logout() = 0;
+	/**
+	 * @brief Log out from the server
+	 */
+	virtual void logout() = 0;
 
 	/**
 	 * @brief Is the user in a session
@@ -81,11 +77,10 @@ public:
 	virtual void artificialDisconnect() = 0;
 
 signals:
-	void messagesReceived(int count, drawdance::Message *msgs);
+	void messagesReceived(int count, net::Message *msgs);
 };
 
 
 }
 
 #endif
-

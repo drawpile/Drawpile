@@ -1,19 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/chat/useritemdelegate.h"
-#include "libclient/canvas/acl.h"
-#include "libclient/canvas/userlist.h"
-#include "libclient/canvas/canvasmodel.h"
-#include "libclient/drawdance/message.h"
-#include "libclient/net/servercmd.h"
-#include "libclient/document.h"
 #include "desktop/utils/qtguicompat.h"
-
-#include <QPainter>
+#include "libclient/canvas/acl.h"
+#include "libclient/canvas/canvasmodel.h"
+#include "libclient/canvas/userlist.h"
+#include "libclient/document.h"
+#include "libclient/net/message.h"
+#include "libshared/net/servercmd.h"
 #include <QIcon>
+#include <QMenu>
 #include <QModelIndex>
 #include <QMouseEvent>
-#include <QMenu>
+#include <QPainter>
 
 namespace widgets {
 
@@ -24,7 +22,8 @@ static const int STATUS_OVERLAY_SIZE = 16;
 static const int BUTTON_WIDTH = 16;
 
 UserItemDelegate::UserItemDelegate(QObject *parent)
-	: QAbstractItemDelegate(parent), m_doc(nullptr)
+	: QAbstractItemDelegate(parent)
+	, m_doc(nullptr)
 {
 	m_userMenu = new QMenu;
 	m_menuTitle = m_userMenu->addSection("User");
@@ -53,16 +52,26 @@ UserItemDelegate::UserItemDelegate(QObject *parent)
 	m_lockAction->setCheckable(true);
 	m_muteAction->setCheckable(true);
 
-	connect(m_opAction, &QAction::triggered, this, &UserItemDelegate::toggleOpMode);
-	connect(m_trustAction, &QAction::triggered, this, &UserItemDelegate::toggleTrusted);
-	connect(m_lockAction, &QAction::triggered, this, &UserItemDelegate::toggleLock);
-	connect(m_muteAction, &QAction::triggered, this, &UserItemDelegate::toggleMute);
-	connect(m_kickAction, &QAction::triggered, this, &UserItemDelegate::kickUser);
+	connect(
+		m_opAction, &QAction::triggered, this, &UserItemDelegate::toggleOpMode);
+	connect(
+		m_trustAction, &QAction::triggered, this,
+		&UserItemDelegate::toggleTrusted);
+	connect(
+		m_lockAction, &QAction::triggered, this, &UserItemDelegate::toggleLock);
+	connect(
+		m_muteAction, &QAction::triggered, this, &UserItemDelegate::toggleMute);
+	connect(
+		m_kickAction, &QAction::triggered, this, &UserItemDelegate::kickUser);
 	connect(m_banAction, &QAction::triggered, this, &UserItemDelegate::banUser);
 	connect(m_chatAction, &QAction::triggered, this, &UserItemDelegate::pmUser);
-	connect(m_infoAction, &QAction::triggered, this, &UserItemDelegate::showUserInfo);
-	connect(m_undoAction, &QAction::triggered, this, &UserItemDelegate::undoByUser);
-	connect(m_redoAction, &QAction::triggered, this, &UserItemDelegate::redoByUser);
+	connect(
+		m_infoAction, &QAction::triggered, this,
+		&UserItemDelegate::showUserInfo);
+	connect(
+		m_undoAction, &QAction::triggered, this, &UserItemDelegate::undoByUser);
+	connect(
+		m_redoAction, &QAction::triggered, this, &UserItemDelegate::redoByUser);
 
 	m_lockIcon = QIcon::fromTheme("object-locked");
 	m_muteIcon = QIcon::fromTheme("irc-unvoice");
@@ -78,15 +87,18 @@ void UserItemDelegate::setCompatibilityMode(bool compatibilityMode)
 	m_infoAction->setDisabled(compatibilityMode);
 }
 
-QSize UserItemDelegate::sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const
+QSize UserItemDelegate::sizeHint(
+	const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
 	Q_UNUSED(option);
 	Q_UNUSED(index);
 
-	return QSize(AVATAR_SIZE*4, AVATAR_SIZE+2*MARGIN);
+	return QSize(AVATAR_SIZE * 4, AVATAR_SIZE + 2 * MARGIN);
 }
 
-void UserItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+void UserItemDelegate::paint(
+	QPainter *painter, const QStyleOptionViewItem &option,
+	const QModelIndex &index) const
 {
 	painter->save();
 	painter->fillRect(option.rect, option.backgroundBrush);
@@ -94,25 +106,20 @@ void UserItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
 	// Draw avatar
 	const QRect avatarRect(
-		option.rect.x() + MARGIN,
-		option.rect.y() + MARGIN,
-		AVATAR_SIZE,
-		AVATAR_SIZE
-		);
+		option.rect.x() + MARGIN, option.rect.y() + MARGIN, AVATAR_SIZE,
+		AVATAR_SIZE);
 	painter->drawPixmap(
 		avatarRect,
-		index.data(canvas::UserListModel::AvatarRole).value<QPixmap>()
-		);
+		index.data(canvas::UserListModel::AvatarRole).value<QPixmap>());
 
 	// Draw status overlay
-	const bool isLocked = index.data(canvas::UserListModel::IsLockedRole).toBool();
+	const bool isLocked =
+		index.data(canvas::UserListModel::IsLockedRole).toBool();
 	if(isLocked || index.data(canvas::UserListModel::IsMutedRole).toBool()) {
 		const QRect statusOverlayRect(
 			avatarRect.right() - STATUS_OVERLAY_SIZE,
-			avatarRect.bottom() - STATUS_OVERLAY_SIZE,
-			STATUS_OVERLAY_SIZE,
-			STATUS_OVERLAY_SIZE
-			);
+			avatarRect.bottom() - STATUS_OVERLAY_SIZE, STATUS_OVERLAY_SIZE,
+			STATUS_OVERLAY_SIZE);
 
 		painter->setBrush(option.palette.color(QPalette::AlternateBase));
 		painter->setPen(QPen(option.palette.color(QPalette::Base), 2));
@@ -125,21 +132,18 @@ void UserItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
 	// Draw username
 	const QRect usernameRect(
-		avatarRect.right() + PADDING,
-		avatarRect.y(),
-		option.rect.width() - avatarRect.right() - PADDING - BUTTON_WIDTH - MARGIN,
-		option.rect.height() - MARGIN*2
-		);
+		avatarRect.right() + PADDING, avatarRect.y(),
+		option.rect.width() - avatarRect.right() - PADDING - BUTTON_WIDTH -
+			MARGIN,
+		option.rect.height() - MARGIN * 2);
 	QFont font = option.font;
 	font.setPixelSize(16);
 	font.setWeight(QFont::Light);
 	painter->setPen(option.palette.text().color());
 	painter->setFont(font);
 	painter->drawText(
-		usernameRect,
-		Qt::AlignLeft | Qt::AlignTop,
-		index.data(canvas::UserListModel::NameRole).toString()
-	);
+		usernameRect, Qt::AlignLeft | Qt::AlignTop,
+		index.data(canvas::UserListModel::NameRole).toString());
 
 	// Draw user flags
 	QString flags;
@@ -174,46 +178,44 @@ void UserItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
 	// Draw the context menu buttons
 	const QRect buttonRect(
-		option.rect.right() - BUTTON_WIDTH - MARGIN,
-		option.rect.top() + MARGIN,
-		BUTTON_WIDTH,
-		option.rect.height() - 2*MARGIN
-		);
+		option.rect.right() - BUTTON_WIDTH - MARGIN, option.rect.top() + MARGIN,
+		BUTTON_WIDTH, option.rect.height() - 2 * MARGIN);
 
 	painter->setPen(Qt::NoPen);
-	//if((option.state & QStyle::State_MouseOver))
-		painter->setBrush(option.palette.color(QPalette::WindowText));
-	//else
-		//painter->setBrush(option.palette.color(QPalette::AlternateBase));
+	// if((option.state & QStyle::State_MouseOver))
+	painter->setBrush(option.palette.color(QPalette::WindowText));
+	// else
+	// painter->setBrush(option.palette.color(QPalette::AlternateBase));
 
-	const int buttonSize = buttonRect.height()/7;
-	for(int i=0;i<3;++i) {
+	const int buttonSize = buttonRect.height() / 7;
+	for(int i = 0; i < 3; ++i) {
 		painter->drawEllipse(QRect(
-			buttonRect.x() + (buttonRect.width()-buttonSize)/2,
-			buttonRect.y() + (1+i*2) * buttonSize,
-			buttonSize,
-			buttonSize
-		));
+			buttonRect.x() + (buttonRect.width() - buttonSize) / 2,
+			buttonRect.y() + (1 + i * 2) * buttonSize, buttonSize, buttonSize));
 	}
 
 	painter->restore();
 }
 
-bool UserItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index)
+bool UserItemDelegate::editorEvent(
+	QEvent *event, QAbstractItemModel *model,
+	const QStyleOptionViewItem &option, const QModelIndex &index)
 {
 	Q_UNUSED(model);
 
 	if(event->type() == QEvent::MouseButtonPress && m_doc) {
-		const QMouseEvent *e = static_cast<const QMouseEvent*>(event);
+		const QMouseEvent *e = static_cast<const QMouseEvent *>(event);
 
-		if(e->button() == Qt::RightButton || (e->button() == Qt::LeftButton && compat::mousePos(*e).x() > option.rect.right() - MARGIN - BUTTON_WIDTH)) {
+		if(e->button() == Qt::RightButton ||
+		   (e->button() == Qt::LeftButton &&
+			compat::mousePos(*e).x() >
+				option.rect.right() - MARGIN - BUTTON_WIDTH)) {
 			showContextMenu(index, compat::globalPos(*e));
 			return true;
 		}
-	}
-	else if(event->type() == QEvent::MouseButtonDblClick && m_doc) {
+	} else if(event->type() == QEvent::MouseButtonDblClick && m_doc) {
 		const int userId = index.data(canvas::UserListModel::IdRole).toInt();
-		if(userId>0 && userId != m_doc->canvas()->localUserId()) {
+		if(userId > 0 && userId != m_doc->canvas()->localUserId()) {
 			emit requestPrivateChat(userId);
 			return true;
 		}
@@ -221,21 +223,28 @@ bool UserItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, con
 	return false;
 }
 
-void UserItemDelegate::showContextMenu(const QModelIndex &index, const QPoint &pos)
+void UserItemDelegate::showContextMenu(
+	const QModelIndex &index, const QPoint &pos)
 {
 	m_menuId = index.data(canvas::UserListModel::IdRole).toInt();
 
-	m_menuTitle->setText(index.data(canvas::UserListModel::NameRole).toString());
+	m_menuTitle->setText(
+		index.data(canvas::UserListModel::NameRole).toString());
 
 	const bool amOp = m_doc->canvas()->aclState()->amOperator();
-	const bool amDeputy = m_doc->canvas()->aclState()->amTrusted() && m_doc->isSessionDeputies();
+	const bool amDeputy =
+		m_doc->canvas()->aclState()->amTrusted() && m_doc->isSessionDeputies();
 	const bool isSelf = m_menuId == m_doc->canvas()->localUserId();
 	const bool isMod = index.data(canvas::UserListModel::IsModRole).toBool();
 
-	m_opAction->setChecked(index.data(canvas::UserListModel::IsOpRole).toBool());
-	m_trustAction->setChecked(index.data(canvas::UserListModel::IsTrustedRole).toBool());
-	m_lockAction->setChecked(index.data(canvas::UserListModel::IsLockedRole).toBool());
-	m_muteAction->setChecked(index.data(canvas::UserListModel::IsMutedRole).toBool());
+	m_opAction->setChecked(
+		index.data(canvas::UserListModel::IsOpRole).toBool());
+	m_trustAction->setChecked(
+		index.data(canvas::UserListModel::IsTrustedRole).toBool());
+	m_lockAction->setChecked(
+		index.data(canvas::UserListModel::IsLockedRole).toBool());
+	m_muteAction->setChecked(
+		index.data(canvas::UserListModel::IsMutedRole).toBool());
 
 	// Can't deop self or moderators
 	m_opAction->setEnabled(amOp && !isSelf && !isMod);
@@ -248,15 +257,12 @@ void UserItemDelegate::showContextMenu(const QModelIndex &index, const QPoint &p
 
 	// Deputies can only kick non-trusted users
 	// No-one can kick themselves or moderators
-	const bool canKick = !isSelf && !isMod &&
-		(
-			amOp ||
-			(amDeputy && !(
-				index.data(canvas::UserListModel::IsOpRole).toBool() ||
-				index.data(canvas::UserListModel::IsTrustedRole).toBool()
-				)
-			)
-		);
+	const bool canKick =
+		!isSelf && !isMod &&
+		(amOp ||
+		 (amDeputy &&
+		  !(index.data(canvas::UserListModel::IsOpRole).toBool() ||
+			index.data(canvas::UserListModel::IsTrustedRole).toBool())));
 	m_kickAction->setEnabled(canKick);
 	m_banAction->setEnabled(canKick);
 
@@ -268,17 +274,20 @@ void UserItemDelegate::showContextMenu(const QModelIndex &index, const QPoint &p
 
 void UserItemDelegate::toggleOpMode(bool op)
 {
-	emit opCommand(m_doc->canvas()->userlist()->getOpUserCommand(m_doc->canvas()->localUserId(), m_menuId, op));
+	emit opCommand(m_doc->canvas()->userlist()->getOpUserCommand(
+		m_doc->canvas()->localUserId(), m_menuId, op));
 }
 
 void UserItemDelegate::toggleTrusted(bool trust)
 {
-	emit opCommand(m_doc->canvas()->userlist()->getTrustUserCommand(m_doc->canvas()->localUserId(), m_menuId, trust));
+	emit opCommand(m_doc->canvas()->userlist()->getTrustUserCommand(
+		m_doc->canvas()->localUserId(), m_menuId, trust));
 }
 
 void UserItemDelegate::toggleLock(bool op)
 {
-	emit opCommand(m_doc->canvas()->userlist()->getLockUserCommand(m_doc->canvas()->localUserId(), m_menuId, op));
+	emit opCommand(m_doc->canvas()->userlist()->getLockUserCommand(
+		m_doc->canvas()->localUserId(), m_menuId, op));
 }
 
 void UserItemDelegate::toggleMute(bool mute)
@@ -308,12 +317,14 @@ void UserItemDelegate::showUserInfo()
 
 void UserItemDelegate::undoByUser()
 {
-	emit opCommand(drawdance::Message::makeUndo(m_doc->canvas()->localUserId(), m_menuId, false));
+	emit opCommand(
+		net::makeUndoMessage(m_doc->canvas()->localUserId(), m_menuId, false));
 }
 
 void UserItemDelegate::redoByUser()
 {
-	emit opCommand(drawdance::Message::makeUndo(m_doc->canvas()->localUserId(), m_menuId, true));
+	emit opCommand(
+		net::makeUndoMessage(m_doc->canvas()->localUserId(), m_menuId, true));
 }
 
 }

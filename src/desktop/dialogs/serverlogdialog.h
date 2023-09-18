@@ -1,31 +1,27 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #ifndef SERVERLOGDIALOG_H
 #define SERVERLOGDIALOG_H
-
 #include <QDialog>
 
+class QAbstractItemModel;
+class QItemSelection;
+class QSortFilterProxyModel;
 class Ui_ServerLogDialog;
 
-class QSortFilterProxyModel;
-class QItemSelection;
-class QAbstractItemModel;
-
 namespace canvas {
-	class UserListModel;
+class UserListModel;
 }
 
-namespace drawdance {
-	class Message;
+namespace net {
+class Message;
 }
 
 namespace dialogs {
 
-class ServerLogDialog final : public QDialog
-{
+class ServerLogDialog final : public QDialog {
 	Q_OBJECT
 public:
-	ServerLogDialog(QWidget *parent=nullptr);
+	ServerLogDialog(QWidget *parent = nullptr);
 	~ServerLogDialog() override;
 
 	void setModel(QAbstractItemModel *model);
@@ -37,7 +33,7 @@ public slots:
 signals:
 	void inspectModeChanged(int contextId);
 	void inspectModeStopped();
-	void opCommand(const drawdance::Message &msg);
+	void opCommand(const net::Message &msg);
 
 protected:
 	void hideEvent(QHideEvent *event) override;
@@ -66,4 +62,3 @@ private:
 }
 
 #endif
-

@@ -84,11 +84,6 @@ bool start() {
 	QCommandLineOption recordOption("record", "Record sessions", "path");
 	parser.addOption(recordOption);
 
-#ifndef NDEBUG
-	QCommandLineOption lagOption("random-lag", "Randomly sleep to simulate lag", "msecs", "0");
-	parser.addOption(lagOption);
-#endif
-
 #ifdef HAVE_WEBADMIN
 	// --web-admin-port <port>
 	QCommandLineOption webadminPortOption("web-admin-port", "Web admin interface port", "port", "0");
@@ -252,13 +247,6 @@ bool start() {
 		}
 		server->setTemplateDirectory(dir);
 	}
-
-#ifndef NDEBUG
-	{
-		uint lag = parser.value(lagOption).toUInt();
-		server->setRandomLag(lag);
-	}
-#endif
 
 #ifdef HAVE_WEBADMIN
 	server::Webadmin *webadmin = new server::Webadmin;

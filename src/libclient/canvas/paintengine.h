@@ -1,22 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #ifndef PAINTENGINE_H
 #define PAINTENGINE_H
-
 extern "C" {
 #include <dpengine/draw_context.h>
 }
-
-#include <QObject>
-#include <QPainter>
-#include <QPixmap>
-#include <functional>
-
 #include "libclient/drawdance/aclstate.h"
 #include "libclient/drawdance/canvashistory.h"
 #include "libclient/drawdance/canvasstate.h"
 #include "libclient/drawdance/paintengine.h"
 #include "libclient/drawdance/snapshotqueue.h"
+#include <QObject>
+#include <QPainter>
+#include <QPixmap>
+#include <functional>
 
 struct DP_Mutex;
 struct DP_Semaphore;
@@ -82,7 +78,7 @@ public:
 	//! Receive and handle messages, returns how many messages were actually
 	//! pushed to the paint engine.
 	int receiveMessages(
-		bool local, int count, const drawdance::Message *msgs,
+		bool local, int count, const net::Message *msgs,
 		bool overrideAcls = false);
 
 	void enqueueReset();
@@ -188,7 +184,7 @@ public:
 
 	drawdance::RecordStartResult startRecording(const QString &path);
 	drawdance::RecordStartResult
-	exportTemplate(const QString &path, const drawdance::MessageList &snapshot);
+	exportTemplate(const QString &path, const net::MessageList &snapshot);
 	bool stopRecording();
 	bool isRecording() const;
 
@@ -216,7 +212,7 @@ public:
 		int layerId, int x, int y, const QImage &img,
 		const QPolygon &dstPolygon, int interpolation);
 	void clearTransformPreview();
-	void previewDabs(int layerId, const drawdance::MessageList &msgs);
+	void previewDabs(int layerId, const net::MessageList &msgs);
 	void clearDabsPreview();
 
 signals:

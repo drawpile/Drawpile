@@ -1,19 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #ifndef DP_CLIENT_NET_LOGINHANDLER_H
 #define DP_CLIENT_NET_LOGINHANDLER_H
-
-#include <QString>
-#include <QUrl>
-#include <QObject>
-#include <QSslError>
-#include <QFileInfo>
+#include "libclient/net/message.h"
+#include "libshared/net/protover.h"
 #include <QByteArray>
+#include <QFileInfo>
 #include <QJsonArray>
 #include <QJsonObject>
-
-#include "libclient/drawdance/message.h"
-#include "libshared/net/protover.h"
+#include <QObject>
+#include <QSslError>
+#include <QString>
+#include <QUrl>
 
 class QImage;
 
@@ -29,24 +26,30 @@ struct ServerReply;
  *
  * See also LoginHandler in src/shared/server/ for the serverside implementation
  *
- * In some situations, the user must prompted for decisions (e.g. password is needed
- * or user must decide which session to join.) In these situations, a signal is emitted.
+ * In some situations, the user must prompted for decisions (e.g. password is
+ * needed or user must decide which session to join.) In these situations, a
+ * signal is emitted.
  */
 class LoginHandler final : public QObject {
 	Q_OBJECT
 public:
-	enum class Mode {HostRemote, HostBuiltin, Join};
+	enum class Mode { HostRemote, HostBuiltin, Join };
 
-	LoginHandler(Mode mode, const QUrl &url, QObject *parent=nullptr);
+	LoginHandler(Mode mode, const QUrl &url, QObject *parent = nullptr);
 
 	/**
 	 * @brief Set the desired user ID
 	 *
-	 * Only for host mode. When joining an existing session, the server assigns the user ID.
+	 * Only for host mode. When joining an existing session, the server assigns
+	 * the user ID.
 	 *
 	 * @param userid
 	 */
-	void setUserId(uint8_t userid) { Q_ASSERT(m_mode!=Mode::Join); m_userid=userid; }
+	void setUserId(uint8_t userid)
+	{
+		Q_ASSERT(m_mode != Mode::Join);
+		m_userid = userid;
+	}
 
 	/**
 	 * @brief Set desired session ID alias
@@ -54,7 +57,11 @@ public:
 	 * Only in host mode.
 	 * @param id
 	 */
-	void setSessionAlias(const QString &alias) { Q_ASSERT(m_mode!=Mode::Join); m_sessionAlias=alias; }
+	void setSessionAlias(const QString &alias)
+	{
+		Q_ASSERT(m_mode != Mode::Join);
+		m_sessionAlias = alias;
+	}
 
 	/**
 	 * @brief Set the session password
@@ -63,7 +70,11 @@ public:
 	 *
 	 * @param password
 	 */
-	void setPassword(const QString &password) { Q_ASSERT(m_mode!=Mode::Join); m_sessionPassword=password; }
+	void setPassword(const QString &password)
+	{
+		Q_ASSERT(m_mode != Mode::Join);
+		m_sessionPassword = password;
+	}
 
 	/**
 	 * @brief Set the session title
@@ -72,7 +83,11 @@ public:
 	 *
 	 * @param title
 	 */
-	void setTitle(const QString &title) { Q_ASSERT(m_mode!=Mode::Join); m_title=title; }
+	void setTitle(const QString &title)
+	{
+		Q_ASSERT(m_mode != Mode::Join);
+		m_title = title;
+	}
 
 	/**
 	 * @brief Set the initial session content to upload to the server
@@ -81,21 +96,33 @@ public:
 	 *
 	 * @param msgs
 	 */
-	void setInitialState(const drawdance::MessageList &msgs) { Q_ASSERT(m_mode==Mode::HostRemote); m_initialState = msgs; }
+	void setInitialState(const net::MessageList &msgs)
+	{
+		Q_ASSERT(m_mode == Mode::HostRemote);
+		m_initialState = msgs;
+	}
 
 	/**
 	 * @brief Set session announcement URL
 	 *
 	 * Only for host mode.
 	 */
-	void setAnnounceUrl(const QString &url) { Q_ASSERT(m_mode!=Mode::Join); m_announceUrl = url; }
+	void setAnnounceUrl(const QString &url)
+	{
+		Q_ASSERT(m_mode != Mode::Join);
+		m_announceUrl = url;
+	}
 
 	/**
 	 * @brief Set session NSFM flag
 	 *
 	 * Only for host mode.
 	 */
-	void setNsfm(bool nsfm) { Q_ASSERT(m_mode!=Mode::Join); m_nsfm = nsfm; }
+	void setNsfm(bool nsfm)
+	{
+		Q_ASSERT(m_mode != Mode::Join);
+		m_nsfm = nsfm;
+	}
 
 	/**
 	 * @brief Set the server we're communicating with
@@ -224,7 +251,8 @@ public slots:
 	/**
 	 * @brief Actually join the session that the user selected.
 	 *
-	 * Call this after confirming that the user really wants to join the selected session.
+	 * Call this after confirming that the user really wants to join the
+	 * selected session.
 	 */
 	void confirmJoinSelectedSession();
 
@@ -256,7 +284,8 @@ signals:
 	 * Proceed by calling selectIdentity(username, QString())
 	 * (omit password at this point to attempt a guest login)
 	 *
-	 * @param canSelectCustomAvatar is true if the server has announced that it accepts custom avatars
+	 * @param canSelectCustomAvatar is true if the server has announced that it
+	 * accepts custom avatars
 	 */
 	void usernameNeeded(bool canSelectCustomAvatar);
 
@@ -270,13 +299,14 @@ signals:
 	 * @param nsfm if the session is marked NSFM
 	 * @param autoJoin if this was an automatic join or if the user picked it
 	 */
-	void sessionConfirmationNeeded(const QString &title, bool nsfm, bool autoJoin);
+	void
+	sessionConfirmationNeeded(const QString &title, bool nsfm, bool autoJoin);
 
 	/**
 	 * @brief The user must enter a password to proceed
 	 *
-	 * This is emitted when attempting to join a session that is password protected.
-	 * After the user has made a decision, call either
+	 * This is emitted when attempting to join a session that is password
+	 * protected. After the user has made a decision, call either
 	 * sendSessionPassword(password) to proceed or cancelLogin() to exit.
 	 *
 	 */
@@ -289,7 +319,8 @@ signals:
 	 * either because the account is protected or because guest
 	 * logins are not allowed.
 	 *
-	 * Proceed by calling either selectIdentity(username, password) or cancelLogin()
+	 * Proceed by calling either selectIdentity(username, password) or
+	 * cancelLogin()
 	 *
 	 * @param prompt prompt text
 	 */
@@ -340,7 +371,8 @@ signals:
 	 *
 	 * Call acceptServerCertificate() or cancelLogin() to proceed()
 	 */
-	void certificateCheckNeeded(const QSslCertificate &newCert, const QSslCertificate &oldCert);
+	void certificateCheckNeeded(
+		const QSslCertificate &newCert, const QSslCertificate &oldCert);
 
 	/**
 	 * @brief Server title has changed
@@ -349,7 +381,8 @@ signals:
 	void serverTitleChanged(const QString &title);
 
 private slots:
-	void failLogin(const QString &message, const QString &errorcode=QString());
+	void
+	failLogin(const QString &message, const QString &errorcode = QString());
 	void tlsStarted();
 	void tlsError(const QList<QSslError> &errors);
 
@@ -367,8 +400,8 @@ private:
 		ABORT_LOGIN
 	};
 
-	void send
-		(const QString &cmd, const QJsonArray &args = QJsonArray(),
+	void send(
+		const QString &cmd, const QJsonArray &args = QJsonArray(),
 		const QJsonObject &kwargs = QJsonObject(), bool containsAvatar = false);
 
 	void expectNothing();
@@ -404,7 +437,7 @@ private:
 	QString m_title;
 	QString m_announceUrl;
 	bool m_nsfm;
-	drawdance::MessageList m_initialState;
+	net::MessageList m_initialState;
 
 	// Settings for joining
 	QString m_joinPassword;

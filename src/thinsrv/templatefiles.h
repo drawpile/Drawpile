@@ -1,15 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #ifndef DP_SERVER_TEMPLATEFILES_H
 #define DP_SERVER_TEMPLATEFILES_H
-
 #include "libserver/templateloader.h"
-
-#include <QObject>
-#include <QDir>
-#include <QJsonObject>
 #include <QDateTime>
+#include <QDir>
 #include <QHash>
+#include <QJsonObject>
+#include <QObject>
 
 class QFileSystemWatcher;
 
@@ -17,7 +14,7 @@ namespace server {
 
 class TemplateFiles final : public QObject, public TemplateLoader {
 public:
-	explicit TemplateFiles(const QDir &dir, QObject *parent=nullptr);
+	explicit TemplateFiles(const QDir &dir, QObject *parent = nullptr);
 
 	QJsonArray templateDescriptions() const override;
 	QJsonObject templateDescription(const QString &alias) const override;
@@ -29,7 +26,8 @@ private slots:
 	void scanDirectory();
 
 private:
-	QJsonObject templateFileDescription(const QString &path, const QString &alias) const;
+	QJsonObject
+	templateFileDescription(const QString &path, const QString &alias) const;
 
 	struct Template {
 		QJsonObject description;
@@ -37,7 +35,7 @@ private:
 		QDateTime lastmod;
 	};
 
-	QHash<QString,Template> m_templates;
+	QHash<QString, Template> m_templates;
 	QFileSystemWatcher *m_watcher;
 	QDir m_dir;
 };
@@ -45,4 +43,3 @@ private:
 }
 
 #endif
-

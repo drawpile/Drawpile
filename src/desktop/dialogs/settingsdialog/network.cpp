@@ -61,7 +61,7 @@ Network::Network(desktop::settings::Settings &settings, QWidget *parent)
 	form->addRow(tr("Network timeout:"), utils::encapsulate(tr("%1 seconds"), timeout));
 
 	auto *messageQueueDrainRate = new KisSliderSpinBox;
-	messageQueueDrainRate->setRange(0, libclient::settings::maxMessageQueueDrainRate);
+	messageQueueDrainRate->setRange(0, net::MessageQueue::MAX_SMOOTH_DRAIN_RATE);
 	settings.bindMessageQueueDrainRate(messageQueueDrainRate);
 	form->addRow(tr("Receive delay:"), messageQueueDrainRate);
 	form->addRow(nullptr, utils::note(tr("The higher the value, the smoother strokes from other users come in."), QSizePolicy::Label));

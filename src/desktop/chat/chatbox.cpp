@@ -1,24 +1,21 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/chat/chatbox.h"
 #include "desktop/chat/chatwidget.h"
 #include "desktop/chat/chatwindow.h"
 #include "desktop/chat/useritemdelegate.h"
-#include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/utils/widgetutils.h"
-#include "libclient/document.h"
+#include "desktop/widgets/groupedtoolbutton.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/userlist.h"
-#include "libclient/drawdance/message.h"
+#include "libclient/document.h"
 #include "libclient/net/client.h"
-
 #include <QAction>
-#include <QResizeEvent>
-#include <QSplitter>
 #include <QListView>
-#include <QVBoxLayout>
 #include <QMetaObject>
 #include <QPushButton>
+#include <QResizeEvent>
+#include <QSplitter>
+#include <QVBoxLayout>
 
 namespace widgets {
 
@@ -48,12 +45,14 @@ ChatBox::ChatBox(Document *doc, QWidget *parent)
 	m_inviteButton->setText(tr("Invite"));
 	buttonsLayout->addWidget(m_inviteButton);
 
-	m_sessionSettingsButton = new GroupedToolButton{GroupedToolButton::GroupCenter, this};
+	m_sessionSettingsButton =
+		new GroupedToolButton{GroupedToolButton::GroupCenter, this};
 	m_sessionSettingsButton->setIcon(QIcon::fromTheme("configure"));
 	m_sessionSettingsButton->setText(tr("Session"));
 	buttonsLayout->addWidget(m_sessionSettingsButton);
 
-	m_chatMenuButton = new GroupedToolButton{GroupedToolButton::GroupRight, this};
+	m_chatMenuButton =
+		new GroupedToolButton{GroupedToolButton::GroupRight, this};
 	m_chatMenuButton->setIcon(QIcon::fromTheme("edit-comment"));
 	m_chatMenuButton->setText(tr("Chat"));
 	m_chatMenuButton->setStatusTip(tr("Show chat options"));
@@ -83,25 +82,42 @@ ChatBox::ChatBox(Document *doc, QWidget *parent)
 	setLayout(layout);
 
 	connect(m_chatWidget, &ChatWidget::message, this, &ChatBox::message);
-	connect(m_chatWidget, &ChatWidget::detachRequested, this, &ChatBox::detachFromParent);
+	connect(
+		m_chatWidget, &ChatWidget::detachRequested, this,
+		&ChatBox::detachFromParent);
 	connect(m_chatWidget, &ChatWidget::expandRequested, this, [this]() {
 		if(isCollapsed()) {
 			emit expandPlease();
 		}
 	});
-	connect(m_chatWidget, &ChatWidget::muteChanged, this, &ChatBox::muteChanged);
+	connect(
+		m_chatWidget, &ChatWidget::muteChanged, this, &ChatBox::muteChanged);
 
 	connect(doc, &Document::canvasChanged, this, &ChatBox::onCanvasChanged);
 	connect(doc, &Document::serverLoggedIn, this, &ChatBox::onServerLogin);
-	connect(doc, &Document::compatibilityModeChanged, this, &ChatBox::onCompatibilityModeChanged);
+	connect(
+		doc, &Document::compatibilityModeChanged, this,
+		&ChatBox::onCompatibilityModeChanged);
 
-	connect(doc, &Document::sessionPreserveChatChanged, m_chatWidget, &ChatWidget::setPreserveMode);
-	connect(doc->client(), &net::Client::serverMessage, m_chatWidget, &ChatWidget::systemMessage);
-	connect(doc->client(), &net::Client::youWereKicked, m_chatWidget, &ChatWidget::kicked);
+	connect(
+		doc, &Document::sessionPreserveChatChanged, m_chatWidget,
+		&ChatWidget::setPreserveMode);
+	connect(
+		doc->client(), &net::Client::serverMessage, m_chatWidget,
+		&ChatWidget::systemMessage);
+	connect(
+		doc->client(), &net::Client::youWereKicked, m_chatWidget,
+		&ChatWidget::kicked);
 
-	connect(m_userItemDelegate, &widgets::UserItemDelegate::opCommand, doc->client(), &net::Client::sendMessage);
-	connect(m_userItemDelegate, &widgets::UserItemDelegate::requestPrivateChat, m_chatWidget, &ChatWidget::openPrivateChat);
-	connect(m_userItemDelegate, &widgets::UserItemDelegate::requestUserInfo, this, &ChatBox::requestUserInfo);
+	connect(
+		m_userItemDelegate, &widgets::UserItemDelegate::opCommand,
+		doc->client(), &net::Client::sendMessage);
+	connect(
+		m_userItemDelegate, &widgets::UserItemDelegate::requestPrivateChat,
+		m_chatWidget, &ChatWidget::openPrivateChat);
+	connect(
+		m_userItemDelegate, &widgets::UserItemDelegate::requestUserInfo, this,
+		&ChatBox::requestUserInfo);
 }
 
 void ChatBox::setActions(QAction *inviteAction, QAction *sessionSettingsAction)
@@ -116,7 +132,7 @@ void ChatBox::setActions(QAction *inviteAction, QAction *sessionSettingsAction)
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 		connect(action, &QAction::enabledChanged, button, &QWidget::setEnabled);
 #else
-		connect(action, &QAction::changed, this, [=]{
+		connect(action, &QAction::changed, this, [=] {
 			button->setEnabled(action->isEnabled());
 		});
 #endif
@@ -133,15 +149,23 @@ void ChatBox::onCanvasChanged(canvas::CanvasModel *canvas)
 	m_userList->setModel(canvas->userlist()->onlineUsers());
 	m_chatWidget->setUserList(canvas->userlist());
 
-	connect(canvas, &canvas::CanvasModel::chatMessageReceived, m_chatWidget, &ChatWidget::receiveMessage);
-	connect(canvas, &canvas::CanvasModel::pinnedMessageChanged, m_chatWidget, &ChatWidget::setPinnedMessage);
-	connect(canvas, &canvas::CanvasModel::userJoined, m_chatWidget, &ChatWidget::userJoined);
-	connect(canvas, &canvas::CanvasModel::userLeft, m_chatWidget, &ChatWidget::userParted);
+	connect(
+		canvas, &canvas::CanvasModel::chatMessageReceived, m_chatWidget,
+		&ChatWidget::receiveMessage);
+	connect(
+		canvas, &canvas::CanvasModel::pinnedMessageChanged, m_chatWidget,
+		&ChatWidget::setPinnedMessage);
+	connect(
+		canvas, &canvas::CanvasModel::userJoined, m_chatWidget,
+		&ChatWidget::userJoined);
+	connect(
+		canvas, &canvas::CanvasModel::userLeft, m_chatWidget,
+		&ChatWidget::userParted);
 }
 
 void ChatBox::onServerLogin()
 {
-	m_chatWidget->loggedIn(static_cast<Document*>(sender())->client()->myId());
+	m_chatWidget->loggedIn(static_cast<Document *>(sender())->client()->myId());
 }
 
 void ChatBox::onCompatibilityModeChanged(bool compatibilityMode)
@@ -156,7 +180,7 @@ void ChatBox::focusInput()
 
 void ChatBox::detachFromParent()
 {
-	if(!parent() || qobject_cast<ChatWindow*>(parent()))
+	if(!parent() || qobject_cast<ChatWindow *>(parent()))
 		return;
 
 	m_state = State::Detached;

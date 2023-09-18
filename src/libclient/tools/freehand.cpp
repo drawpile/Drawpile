@@ -1,18 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-extern "C" {
-#include <dpcommon/queue.h>
-#include <dpmsg/message.h>
-}
-
+#include "libclient/tools/freehand.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/net/client.h"
-
 #include "libclient/tools/toolcontroller.h"
-#include "libclient/tools/freehand.h"
-
-#include "libshared/net/undo.h"
 #include <QDateTime>
 
 using std::placeholders::_1;
@@ -20,7 +11,9 @@ using std::placeholders::_1;
 namespace tools {
 
 Freehand::Freehand(ToolController &owner, bool isEraser)
-	: Tool(owner, isEraser ? ERASER : FREEHAND, Qt::CrossCursor, true, true, false)
+	: Tool(
+		  owner, isEraser ? ERASER : FREEHAND, Qt::CrossCursor, true, true,
+		  false)
 	, m_pollTimer{}
 	, m_brushEngine{std::bind(&Freehand::pollControl, this, _1)}
 	, m_drawing(false)
@@ -28,16 +21,14 @@ Freehand::Freehand(ToolController &owner, bool isEraser)
 	m_pollTimer.setSingleShot(false);
 	m_pollTimer.setTimerType(Qt::PreciseTimer);
 	m_pollTimer.setInterval(15);
-	QObject::connect(&m_pollTimer, &QTimer::timeout, [this](){
+	QObject::connect(&m_pollTimer, &QTimer::timeout, [this]() {
 		poll();
 	});
 }
 
-Freehand::~Freehand()
-{
-}
+Freehand::~Freehand() {}
 
-void Freehand::begin(const canvas::Point& point, bool right, float zoom)
+void Freehand::begin(const canvas::Point &point, bool right, float zoom)
 {
 	Q_ASSERT(!m_drawing);
 	if(right) {
@@ -56,14 +47,15 @@ void Freehand::begin(const canvas::Point& point, bool right, float zoom)
 	m_zoom = zoom;
 }
 
-void Freehand::motion(const canvas::Point& point, bool constrain, bool center)
+void Freehand::motion(const canvas::Point &point, bool constrain, bool center)
 {
 	Q_UNUSED(constrain);
 	Q_UNUSED(center);
 	if(!m_drawing)
 		return;
 
-	drawdance::CanvasState canvasState = m_owner.model()->paintEngine()->sampleCanvasState();
+	drawdance::CanvasState canvasState =
+		m_owner.model()->paintEngine()->sampleCanvasState();
 
 	if(m_firstPoint) {
 		m_firstPoint = false;
@@ -89,7 +81,8 @@ void Freehand::end()
 			m_brushEngine.strokeTo(m_start, canvasState);
 		}
 
-		m_brushEngine.endStroke(QDateTime::currentMSecsSinceEpoch(), canvasState, true);
+		m_brushEngine.endStroke(
+			QDateTime::currentMSecsSinceEpoch(), canvasState, true);
 		m_brushEngine.sendMessagesTo(m_owner.client());
 	}
 }
@@ -112,10 +105,10 @@ void Freehand::pollControl(bool enable)
 
 void Freehand::poll()
 {
-	drawdance::CanvasState canvasState = m_owner.model()->paintEngine()->sampleCanvasState();
+	drawdance::CanvasState canvasState =
+		m_owner.model()->paintEngine()->sampleCanvasState();
 	m_brushEngine.poll(QDateTime::currentMSecsSinceEpoch(), canvasState);
 	m_brushEngine.sendMessagesTo(m_owner.client());
 }
 
 }
-

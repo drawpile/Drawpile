@@ -1,19 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef DP_SERVER_SESSION_HISTORY_H
-#define DP_SERVER_SESSION_HISTORY_H
-
+#ifndef LIBSERVER_SESSION_HISTORY_H
+#define LIBSERVER_SESSION_HISTORY_H
+#include "libserver/idqueue.h"
+#include "libserver/sessionban.h"
 #include "libshared/net/message.h"
 #include "libshared/util/passwordhash.h"
-#include "libserver/sessionban.h"
-#include "libserver/idqueue.h"
-
-#include <QObject>
 #include <QDateTime>
+#include <QObject>
 #include <tuple>
 
 namespace protocol {
-	class ProtocolVersion;
+class ProtocolVersion;
 }
 
 namespace server {
@@ -60,18 +57,27 @@ public:
 	 * An empty QByteArray is returned if no password is set
 	 */
 	virtual QByteArray passwordHash() const = 0;
-	bool checkPassword(const QString &password) { return passwordhash::check(password, passwordHash()); }
+	bool checkPassword(const QString &password)
+	{
+		return passwordhash::check(password, passwordHash());
+	}
 
 	//! Set (or clear) this session's password
 	virtual void setPasswordHash(const QByteArray &passwordHash) = 0;
-	void setPassword(const QString &password) { setPasswordHash(passwordhash::hash(password)); }
+	void setPassword(const QString &password)
+	{
+		setPasswordHash(passwordhash::hash(password));
+	}
 
 	//! Get the operator password hash
 	virtual QByteArray opwordHash() const = 0;
 
 	//! Set (or clear) the operator password
 	virtual void setOpwordHash(const QByteArray &opword) = 0;
-	void setOpword(const QString &opword) { setOpwordHash(passwordhash::hash(opword)); }
+	void setOpword(const QString &opword)
+	{
+		setOpwordHash(passwordhash::hash(opword));
+	}
 
 	//! Get the starting timestamp
 	QDateTime startTime() const { return m_startTime; }
@@ -104,7 +110,8 @@ public:
 	//! Get the history autoreset request threshold
 	virtual uint autoResetThreshold() const = 0;
 
-	//! Get the final autoreset threshold that includes the reset image base size
+	//! Get the final autoreset threshold that includes the reset image base
+	//! size
 	uint effectiveAutoResetThreshold() const;
 
 	//! Get the reset image base size
@@ -117,7 +124,7 @@ public:
 	 *
 	 * @return false if there was no space for this message
 	 */
-	bool addMessage(const protocol::MessagePtr &msg);
+	bool addMessage(const net::Message &msg);
 
 	/**
 	 * @brief Reset the session history
@@ -129,7 +136,7 @@ public:
 	 *
 	 * @return false if new history is larger than the size limit
 	 */
-	bool reset(const protocol::MessageList &newHistory);
+	bool reset(const net::MessageList &newHistory);
 
 	/**
 	 * @brief Get a batch of messages
@@ -141,7 +148,7 @@ public:
 	 * The second element of the tuple is the index of the last message
 	 * in the batch, or lastIndex() if there were no more available messages
 	 */
-	virtual std::tuple<protocol::MessageList, int> getBatch(int after) const = 0;
+	virtual std::tuple<net::MessageList, int> getBatch(int after) const = 0;
 
 	/**
 	 * @brief Mark messages before the given index as unneeded (for now)
@@ -185,7 +192,10 @@ public:
 	/**
 	 * @brief Has the session ran out of space
 	 */
-	bool isOutOfSpace() const { return m_sizeLimit>0 && m_sizeInBytes >= m_sizeLimit; }
+	bool isOutOfSpace() const
+	{
+		return m_sizeLimit > 0 && m_sizeInBytes >= m_sizeLimit;
+	}
 
 	/**
 	 * @brief Get the index number of the first message in history
@@ -208,7 +218,9 @@ public:
 	/**
 	 * @brief Add a new banlist entry
 	 */
-	bool addBan(const QString &username, const QHostAddress &ip, const QString &extAuthId, const QString &bannedBy);
+	bool addBan(
+		const QString &username, const QHostAddress &ip,
+		const QString &extAuthId, const QString &bannedBy);
 
 	/**
 	 * @brief removeBan Remove a banlist entry
@@ -276,15 +288,17 @@ signals:
 	/**
 	 * @brief This signal is emited when new messages are added to the history
 	 *
-	 * Clients whose upload queues are empty should get the new message batch and
-	 * start sending.
+	 * Clients whose upload queues are empty should get the new message batch
+	 * and start sending.
 	 */
 	void newMessagesAvailable();
 
 protected:
-	virtual void historyAdd(const protocol::MessagePtr &msg) = 0;
-	virtual void historyReset(const protocol::MessageList &newHistory) = 0;
-	virtual void historyAddBan(int id, const QString &username, const QHostAddress &ip, const QString &extAuthId, const QString &bannedBy) = 0;
+	virtual void historyAdd(const net::Message &msg) = 0;
+	virtual void historyReset(const net::MessageList &newHistory) = 0;
+	virtual void historyAddBan(
+		int id, const QString &username, const QHostAddress &ip,
+		const QString &extAuthId, const QString &bannedBy) = 0;
 	virtual void historyRemoveBan(int id) = 0;
 	void historyLoaded(uint size, int messageCount);
 
@@ -304,9 +318,9 @@ private:
 
 // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=69210
 namespace diagnostic_marker_private {
-	class [[maybe_unused]] AbstractSessionHistoryMarker : SessionHistory {
-		inline void joinUser(uint8_t, const QString&) override {}
-	};
+class [[maybe_unused]] AbstractSessionHistoryMarker : SessionHistory {
+	inline void joinUser(uint8_t, const QString &) override {}
+};
 }
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(SessionHistory::Flags)
@@ -314,4 +328,3 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(SessionHistory::Flags)
 }
 
 #endif
-

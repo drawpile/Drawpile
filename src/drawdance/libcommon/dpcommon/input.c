@@ -143,6 +143,19 @@ bool DP_input_seek(DP_Input *input, size_t offset)
         return seek(input->internal, offset);
     }
     else {
+        DP_error_set("Seek not supported");
+        return false;
+    }
+}
+
+bool DP_input_seek_by(DP_Input *input, size_t size)
+{
+    DP_ASSERT(input);
+    bool (*seek_by)(void *, size_t) = input->methods->seek_by;
+    if (seek_by) {
+        return seek_by(input->internal, size);
+    }
+    else {
         DP_error_set("Seek by not supported");
         return false;
     }
@@ -216,8 +229,7 @@ static bool file_input_rewind(void *internal)
 static bool file_input_rewind_by(void *internal, size_t size)
 {
     DP_FileInputState *state = internal;
-    long offset = -DP_size_to_long(size);
-    if (fseek(state->fp, offset, SEEK_CUR) == 0) {
+    if (fseek(state->fp, -DP_size_to_long(size), SEEK_CUR) == 0) {
         return true;
     }
     else {
@@ -240,6 +252,19 @@ static bool file_input_seek(void *internal, size_t offset)
     }
 }
 
+static bool file_input_seek_by(void *internal, size_t size)
+{
+    DP_FileInputState *state = internal;
+    if (fseek(state->fp, DP_size_to_long(size), SEEK_CUR) == 0) {
+        return true;
+    }
+    else {
+        DP_error_set("File input could not seek by %zu: %s", size,
+                     strerror(errno));
+        return false;
+    }
+}
+
 static void file_input_dispose(void *internal)
 {
     DP_FileInputState *state = internal;
@@ -250,7 +275,8 @@ static void file_input_dispose(void *internal)
 
 static const DP_InputMethods file_input_methods = {
     file_input_read,      file_input_length, file_input_rewind,
-    file_input_rewind_by, file_input_seek,   file_input_dispose,
+    file_input_rewind_by, file_input_seek,   file_input_seek_by,
+    file_input_dispose,
 };
 
 const DP_InputMethods *file_input_init(void *internal, void *arg)
@@ -349,6 +375,12 @@ static bool mem_input_seek(void *internal, size_t offset)
     }
 }
 
+static bool mem_input_seek_by(void *internal, size_t size)
+{
+    DP_MemInputState *state = internal;
+    return mem_input_seek(internal, state->pos + size);
+}
+
 static void mem_input_dispose(void *internal)
 {
     DP_MemInputState *state = internal;
@@ -359,8 +391,8 @@ static void mem_input_dispose(void *internal)
 }
 
 static const DP_InputMethods mem_input_methods = {
-    mem_input_read,      mem_input_length, mem_input_rewind,
-    mem_input_rewind_by, mem_input_seek,   mem_input_dispose,
+    mem_input_read, mem_input_length,  mem_input_rewind,  mem_input_rewind_by,
+    mem_input_seek, mem_input_seek_by, mem_input_dispose,
 };
 
 const DP_InputMethods *mem_input_init(void *internal, void *arg)

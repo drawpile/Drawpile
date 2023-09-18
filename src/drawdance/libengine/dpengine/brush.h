@@ -24,11 +24,7 @@
 #include "pixels.h"
 #include <dpcommon/common.h>
 #include <dpmsg/blend_mode.h>
-#ifdef DP_BUNDLED_LIBMYPAINT
-#    include "libmypaint/mypaint-brush-settings-gen.h"
-#else
-#    include <mypaint-brush-settings-gen.h>
-#endif
+#include <mypaint-brush-settings-gen.h>
 
 #define DP_CLASSIC_BRUSH_CURVE_VALUE_COUNT 256
 #define DP_MYPAINT_CONTROL_POINTS_COUNT    64

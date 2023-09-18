@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "libclient/canvas/selection.h"
-#include "libclient/drawdance/message.h"
+#include "libclient/net/message.h"
 #include "libclient/tools/selection.h" // for selection utilities
 #include <QPainter>
 #include <QtMath>
@@ -600,16 +599,15 @@ void Selection::setMoveImage(
 }
 
 static void appendPutImage(
-	drawdance::MessageList &buffer, uint8_t contextId, uint16_t layer, int x,
-	int y, const QImage &image, DP_BlendMode mode)
+	net::MessageList &buffer, uint8_t contextId, uint16_t layer, int x, int y,
+	const QImage &image, DP_BlendMode mode)
 {
-	drawdance::Message::makePutImages(
-		buffer, contextId, layer, mode, x, y, image);
+	net::makePutImageMessages(buffer, contextId, layer, mode, x, y, image);
 }
 
 bool Selection::pasteOrMoveToCanvas(
-	drawdance::MessageList &buffer, uint8_t contextId, int layer,
-	int interpolation, bool compatibilityMode) const
+	net::MessageList &buffer, uint8_t contextId, int layer, int interpolation,
+	bool compatibilityMode) const
 {
 	if(m_pasteImage.isNull()) {
 		qWarning("Selection::pasteToCanvas: nothing to paste");
@@ -640,7 +638,7 @@ bool Selection::pasteOrMoveToCanvas(
 		if(compatibilityMode) {
 			QPolygon s = m_shape.toPolygon();
 			// TODO: moving between different layers via putimage?
-			drawdance::Message msg = drawdance::Message::makeMoveRegion(
+			net::Message msg = net::makeMoveRegionMessage(
 				contextId, layer, moveBounds.x(), moveBounds.y(),
 				moveBounds.width(), moveBounds.height(), s[0].x(), s[0].y(),
 				s[1].x(), s[1].y(), s[2].x(), s[2].y(), s[3].x(), s[3].y(),
@@ -649,11 +647,11 @@ bool Selection::pasteOrMoveToCanvas(
 				qWarning("Transform: mask too large");
 				return false;
 			} else {
-				buffer.append(drawdance::Message::makeUndoPoint(contextId));
+				buffer.append(net::makeUndoPointMessage(contextId));
 				buffer.append(msg);
 			}
 		} else if(isOnlyTranslated()) {
-			drawdance::Message msg = drawdance::Message::makeMoveRect(
+			net::Message msg = net::makeMoveRectMessage(
 				contextId, layer, m_sourceLayerId, moveBounds.x(),
 				moveBounds.y(), m_shape.at(0).x(), m_shape.at(0).y(),
 				moveBounds.width(), moveBounds.height(), mask);
@@ -661,12 +659,12 @@ bool Selection::pasteOrMoveToCanvas(
 				qWarning("Translate: mask too large");
 				return false;
 			} else {
-				buffer.append(drawdance::Message::makeUndoPoint(contextId));
+				buffer.append(net::makeUndoPointMessage(contextId));
 				buffer.append(msg);
 			}
 		} else {
 			QPolygon s = m_shape.toPolygon();
-			drawdance::Message msg = drawdance::Message::makeTransformRegion(
+			net::Message msg = net::makeTransformRegionMessage(
 				contextId, layer, m_sourceLayerId, moveBounds.x(),
 				moveBounds.y(), moveBounds.width(), moveBounds.height(),
 				s[0].x(), s[0].y(), s[1].x(), s[1].y(), s[2].x(), s[2].y(),
@@ -675,7 +673,7 @@ bool Selection::pasteOrMoveToCanvas(
 				qWarning("Transform: mask too large");
 				return false;
 			} else {
-				buffer.append(drawdance::Message::makeUndoPoint(contextId));
+				buffer.append(net::makeUndoPointMessage(contextId));
 				buffer.append(msg);
 			}
 		}
@@ -685,7 +683,7 @@ bool Selection::pasteOrMoveToCanvas(
 		QPoint offset;
 		QImage image = tools::SelectionTool::transformSelectionImage(
 			m_pasteImage, m_shape.toPolygon(), &offset);
-		buffer.append(drawdance::Message::makeUndoPoint(contextId));
+		buffer.append(net::makeUndoPointMessage(contextId));
 		appendPutImage(
 			buffer, contextId, layer, offset.x(), offset.y(), image,
 			DP_BLEND_MODE_NORMAL);
@@ -707,7 +705,7 @@ QPolygon Selection::destinationQuad() const
 }
 
 bool Selection::fillCanvas(
-	drawdance::MessageList &buffer, uint8_t contextId, const QColor &color,
+	net::MessageList &buffer, uint8_t contextId, const QColor &color,
 	DP_BlendMode mode, int layer, bool source) const
 {
 	QRect area;
@@ -721,10 +719,10 @@ bool Selection::fillCanvas(
 	}
 
 	if(!area.isEmpty() || !mask.isNull()) {
-		buffer.append(drawdance::Message::makeUndoPoint(contextId));
+		buffer.append(net::makeUndoPointMessage(contextId));
 
 		if(mask.isNull()) {
-			buffer.append(drawdance::Message::makeFillRect(
+			buffer.append(net::makeFillRectMessage(
 				contextId, layer, mode, area.x(), area.y(), area.width(),
 				area.height(), color));
 		} else {

@@ -1,36 +1,37 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #ifndef USERITEMDELEGATE_H
 #define USERITEMDELEGATE_H
-
 #include <QAbstractItemDelegate>
 
+class Document;
 class QMenu;
 
-class Document;
-
-namespace drawdance {
-	class Message;
+namespace net {
+class Message;
 }
 
 namespace widgets {
 
-class UserItemDelegate final : public QAbstractItemDelegate
-{
+class UserItemDelegate final : public QAbstractItemDelegate {
 	Q_OBJECT
 public:
-	UserItemDelegate(QObject *parent=nullptr);
+	UserItemDelegate(QObject *parent = nullptr);
 	~UserItemDelegate() override;
 
-	void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
-	QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
-	bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index) override;
+	void paint(
+		QPainter *painter, const QStyleOptionViewItem &option,
+		const QModelIndex &index) const override;
+	QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index)
+		const override;
+	bool editorEvent(
+		QEvent *event, QAbstractItemModel *model,
+		const QStyleOptionViewItem &option, const QModelIndex &index) override;
 
 	void setDocument(Document *doc) { m_doc = doc; }
 	void setCompatibilityMode(bool compatibilityMode);
 
 signals:
-	void opCommand(const drawdance::Message &msg);
+	void opCommand(const net::Message &msg);
 	void requestPrivateChat(int userId);
 	void requestUserInfo(int userId);
 

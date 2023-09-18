@@ -1,18 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
+#include "libclient/tools/selection.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/net/client.h"
-
-#include "libclient/tools/selection.h"
 #include "libclient/tools/toolcontroller.h"
 #include "libclient/tools/utils.h"
-
+#include <QPainter>
 #include <QPixmap>
-#include <QtMath>
 #include <QPolygonF>
 #include <QTransform>
-#include <QPainter>
+#include <QtMath>
 
 namespace tools {
 
@@ -22,7 +19,8 @@ void SelectionTool::begin(const canvas::Point &point, bool right, float zoom)
 		return;
 	}
 
-	canvas::Selection *sel = m_allowTransform ? m_owner.model()->selection() : nullptr;
+	canvas::Selection *sel =
+		m_allowTransform ? m_owner.model()->selection() : nullptr;
 	if(sel)
 		m_handle = sel->handleAt(point, zoom);
 	else
@@ -34,9 +32,10 @@ void SelectionTool::begin(const canvas::Point &point, bool right, float zoom)
 
 	if(m_handle == canvas::Selection::Handle::Outside) {
 		net::Client *client = m_owner.client();
-		if(sel && sel->pasteOrMoveToCanvas(m_messages, client->myId(),
-				m_owner.activeLayer(), m_owner.selectInterpolation(),
-				client->isCompatibilityMode())) {
+		if(sel &&
+		   sel->pasteOrMoveToCanvas(
+			   m_messages, client->myId(), m_owner.activeLayer(),
+			   m_owner.selectInterpolation(), client->isCompatibilityMode())) {
 			client->sendMessages(m_messages.count(), m_messages.constData());
 			m_messages.clear();
 		}
@@ -49,7 +48,8 @@ void SelectionTool::begin(const canvas::Point &point, bool right, float zoom)
 	}
 }
 
-void SelectionTool::motion(const canvas::Point &point, bool constrain, bool center)
+void SelectionTool::motion(
+	const canvas::Point &point, bool constrain, bool center)
 {
 	canvas::Selection *sel = m_owner.model()->selection();
 	if(!sel)
@@ -57,11 +57,12 @@ void SelectionTool::motion(const canvas::Point &point, bool constrain, bool cent
 
 	m_end = point;
 
-	if(m_handle==canvas::Selection::Handle::Outside) {
+	if(m_handle == canvas::Selection::Handle::Outside) {
 		newSelectionMotion(point, constrain, center);
 
 	} else {
-		if(sel->pasteImage().isNull() && !m_owner.model()->aclState()->isLayerLocked(m_owner.activeLayer())) {
+		if(sel->pasteImage().isNull() &&
+		   !m_owner.model()->aclState()->isLayerLocked(m_owner.activeLayer())) {
 			startMove();
 		}
 
@@ -76,7 +77,8 @@ void SelectionTool::end()
 		return;
 
 	// The shape must be closed after the end of the selection operation
-	if(!m_owner.model()->selection()->closeShape(QRectF(QPointF(), m_owner.model()->size()))) {
+	if(!m_owner.model()->selection()->closeShape(
+		   QRectF(QPointF(), m_owner.model()->size()))) {
 		// Clear selection if it was entirely outside the canvas
 		m_owner.model()->setSelection(nullptr);
 		return;
@@ -111,10 +113,12 @@ void SelectionTool::finishMultipart()
 {
 	canvas::Selection *sel = m_owner.model()->selection();
 	net::Client *client = m_owner.client();
-	if(sel && sel->pasteOrMoveToCanvas(m_messages, client->myId(),
-			m_owner.activeLayer(), m_owner.selectInterpolation(),
-			client->isCompatibilityMode())) {
-		m_owner.client()->sendMessages(m_messages.count(), m_messages.constData());
+	if(sel &&
+	   sel->pasteOrMoveToCanvas(
+		   m_messages, client->myId(), m_owner.activeLayer(),
+		   m_owner.selectInterpolation(), client->isCompatibilityMode())) {
+		m_owner.client()->sendMessages(
+			m_messages.count(), m_messages.constData());
 		m_messages.clear();
 		m_owner.model()->setSelection(nullptr);
 	}
@@ -156,7 +160,8 @@ void SelectionTool::startMove()
 	canvas::Selection *sel = model->selection();
 	Q_ASSERT(sel);
 
-	// Get the selection shape mask (needs to be done before the shape is overwritten by setMoveImage)
+	// Get the selection shape mask (needs to be done before the shape is
+	// overwritten by setMoveImage)
 	QRect maskBounds;
 	QImage eraseMask = sel->shapeMask(Qt::white, &maskBounds);
 
@@ -165,13 +170,15 @@ void SelectionTool::startMove()
 	const QImage img = model->selectionToImage(layerId);
 	sel->setMoveImage(img, maskBounds, model->size(), layerId);
 
-	// The actual canvas pixels aren't touch yet, so we create a temporary sublayer
-	// to erase the selected region.
+	// The actual canvas pixels aren't touch yet, so we create a temporary
+	// sublayer to erase the selected region.
 	model->paintEngine()->previewCut(layerId, maskBounds, eraseMask);
 }
 
 RectangleSelection::RectangleSelection(ToolController &owner)
-	: SelectionTool(owner, SELECTION, QCursor(QPixmap(":cursors/select-rectangle.png"), 2, 2))
+	: SelectionTool(
+		  owner, SELECTION,
+		  QCursor(QPixmap(":cursors/select-rectangle.png"), 2, 2))
 {
 }
 
@@ -181,7 +188,8 @@ void RectangleSelection::initSelection(canvas::Selection *selection)
 	selection->setShapeRect(QRect(p, p));
 }
 
-void RectangleSelection::newSelectionMotion(const canvas::Point &point, bool constrain, bool center)
+void RectangleSelection::newSelectionMotion(
+	const canvas::Point &point, bool constrain, bool center)
 {
 	QPointF p;
 	if(constrain)
@@ -194,20 +202,24 @@ void RectangleSelection::newSelectionMotion(const canvas::Point &point, bool con
 	else
 		m_p1 = m_start;
 
-	m_owner.model()->selection()->setShapeRect(QRectF(m_p1, p).normalized().toRect());
+	m_owner.model()->selection()->setShapeRect(
+		QRectF(m_p1, p).normalized().toRect());
 }
 
 PolygonSelection::PolygonSelection(ToolController &owner)
-	: SelectionTool(owner, POLYGONSELECTION, QCursor(QPixmap(":cursors/select-lasso.png"), 2, 29))
+	: SelectionTool(
+		  owner, POLYGONSELECTION,
+		  QCursor(QPixmap(":cursors/select-lasso.png"), 2, 29))
 {
 }
 
 void PolygonSelection::initSelection(canvas::Selection *selection)
 {
-	selection->setShape(QPolygonF({ m_start }));
+	selection->setShape(QPolygonF({m_start}));
 }
 
-void PolygonSelection::newSelectionMotion(const canvas::Point &point, bool constrain, bool center)
+void PolygonSelection::newSelectionMotion(
+	const canvas::Point &point, bool constrain, bool center)
 {
 	Q_UNUSED(constrain);
 	Q_UNUSED(center);
@@ -216,7 +228,8 @@ void PolygonSelection::newSelectionMotion(const canvas::Point &point, bool const
 	m_owner.model()->selection()->addPointToShape(point);
 }
 
-QImage SelectionTool::transformSelectionImage(const QImage &source, const QPolygon &target, QPoint *offset)
+QImage SelectionTool::transformSelectionImage(
+	const QImage &source, const QPolygon &target, QPoint *offset)
 {
 	Q_ASSERT(!source.isNull());
 	Q_ASSERT(target.size() == 4);
@@ -243,18 +256,18 @@ QImage SelectionTool::transformSelectionImage(const QImage &source, const QPolyg
 	return out;
 }
 
-QPolygon SelectionTool::destinationQuad(const QImage &source, const QPolygon &target, QRect *outBounds, QPolygonF *outSrcPolygon)
+QPolygon SelectionTool::destinationQuad(
+	const QImage &source, const QPolygon &target, QRect *outBounds,
+	QPolygonF *outSrcPolygon)
 {
 	Q_ASSERT(!source.isNull());
 	Q_ASSERT(target.size() == 4);
 
 	const QRect bounds = target.boundingRect();
-	const QPolygonF srcPolygon({
-		QPointF(0, 0),
-		QPointF(source.width(), 0),
-		QPointF(source.width(), source.height()),
-		QPointF(0, source.height())
-	});
+	const QPolygonF srcPolygon(
+		{QPointF(0, 0), QPointF(source.width(), 0),
+		 QPointF(source.width(), source.height()),
+		 QPointF(0, source.height())});
 
 	if(outBounds) {
 		*outBounds = bounds;
@@ -265,13 +278,17 @@ QPolygon SelectionTool::destinationQuad(const QImage &source, const QPolygon &ta
 	return target.translated(-bounds.topLeft());
 }
 
-QImage SelectionTool::shapeMask(const QColor &color, const QPolygonF &selection, QRect *maskBounds, bool mono)
+QImage SelectionTool::shapeMask(
+	const QColor &color, const QPolygonF &selection, QRect *maskBounds,
+	bool mono)
 {
 	const QRectF bf = selection.boundingRect();
 	const QRect b = bf.toRect();
 	const QPolygonF p = selection.translated(-bf.topLeft());
 
-	QImage mask(b.size(), mono ? QImage::Format_Mono : QImage::Format_ARGB32_Premultiplied);
+	QImage mask(
+		b.size(),
+		mono ? QImage::Format_Mono : QImage::Format_ARGB32_Premultiplied);
 	mask.fill(0);
 
 	QPainter painter(&mask);

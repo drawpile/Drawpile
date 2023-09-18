@@ -1,7 +1,7 @@
 #include "libclient/settings_table_macros.h"
 
 SETTING(autoSaveInterval            , AutoSaveInterval            , "settings/autosave"                     , 5000)
-SETTING(messageQueueDrainRate       , MessageQueueDrainRate       , "settings/messagequeuedrainrate"        , defaultMessageQueueDrainRate)
+SETTING(messageQueueDrainRate       , MessageQueueDrainRate       , "settings/messagequeuedrainrate"        , net::MessageQueue::DEFAULT_SMOOTH_DRAIN_RATE)
 SETTING(parentalControlsAutoTag     , ParentalControlsAutoTag     , "pc/autotag"                            , true)
 SETTING(parentalControlsForceCensor , ParentalControlsForceCensor , "pc/noUncensoring"                      , false)
 SETTING(parentalControlsLevel       , ParentalControlsLevel       , "pc/level"                              , parentalcontrols::Level::Unrestricted)

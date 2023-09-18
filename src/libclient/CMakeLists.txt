@@ -71,8 +71,6 @@ target_sources(dpclient PRIVATE
 	drawdance/layerprops.h
 	drawdance/layerpropslist.cpp
 	drawdance/layerpropslist.h
-	drawdance/message.cpp
-	drawdance/message.h
 	drawdance/paintengine.cpp
 	drawdance/paintengine.h
 	drawdance/perf.cpp
@@ -109,12 +107,10 @@ target_sources(dpclient PRIVATE
 	net/login.h
 	net/loginsessions.cpp
 	net/loginsessions.h
-	net/messagequeue.cpp
-	net/messagequeue.h
+	net/message.cpp
+	net/message.h
 	net/server.cpp
 	net/server.h
-	net/servercmd.cpp
-	net/servercmd.h
 	net/sessionlistingmodel.cpp
 	net/sessionlistingmodel.h
 	net/tcpserver.cpp

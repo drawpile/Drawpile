@@ -94,7 +94,7 @@ static DP_DumpReaderResult handle_message(DP_DumpReader *dr)
         return DP_DUMP_READER_ERROR_INPUT;
     }
 
-    DP_Message *msg = DP_message_deserialize(dr->input.buffer, size);
+    DP_Message *msg = DP_message_deserialize(dr->input.buffer, size, true);
     if (msg) {
         DP_VECTOR_PUSH_TYPE(&dr->messages, DP_Message *, msg);
         return DP_DUMP_READER_SUCCESS;

@@ -2,43 +2,42 @@
 
 #ifndef LAYERLISTDOCK_H
 #define LAYERLISTDOCK_H
-
 extern "C" {
 #include <dpmsg/acl.h>
 }
-
 #include "desktop/docks/dockbase.h"
 #include "desktop/scene/canvasview.h"
 #include <QSet>
 
-class QModelIndex;
+class KisSliderSpinBox;
+class QAction;
+class QActionGroup;
+class QComboBox;
 class QItemSelection;
 class QMenu;
+class QModelIndex;
+class QSlider;
 class QTimer;
 class QTreeView;
-class QComboBox;
-class QSlider;
-class KisSliderSpinBox;
 
 namespace canvas {
-	class CanvasModel;
+class CanvasModel;
 }
 
-namespace drawdance {
-	class Message;
+namespace net {
+class Message;
 }
 
 namespace widgets {
-	class GroupedToolButton;
+class GroupedToolButton;
 }
 
 namespace docks {
 
 class LayerAclMenu;
 
-class LayerList final : public DockBase
-{
-Q_OBJECT
+class LayerList final : public DockBase {
+	Q_OBJECT
 public:
 	struct Actions {
 		QAction *addLayer = nullptr;
@@ -60,7 +59,7 @@ public:
 		QActionGroup *layerKeyFrameGroup = nullptr;
 	};
 
-	LayerList(QWidget *parent=nullptr);
+	LayerList(QWidget *parent = nullptr);
 
 	void setCanvas(canvas::CanvasModel *canvas);
 
@@ -89,7 +88,7 @@ signals:
 	void activeLayerVisibilityChanged();
 	void fillSourceSet(int layerId);
 
-	void layerCommands(int count, const drawdance::Message *msgs);
+	void layerCommands(int count, const net::Message *msgs);
 
 private slots:
 	void beforeLayerReset();
@@ -107,7 +106,8 @@ private slots:
 	void showContextMenu(const QPoint &pos);
 	void censorSelected(bool censor);
 	void setLayerVisibility(int layerId, bool visible);
-	void changeLayerAcl(bool lock, DP_AccessTier tier, QVector<uint8_t> exclusive);
+	void
+	changeLayerAcl(bool lock, DP_AccessTier tier, QVector<uint8_t> exclusive);
 
 	void layerLockStatusChanged(int layerId);
 	void userLockStatusChanged(bool);
@@ -124,11 +124,14 @@ private:
 
 	void updateUiFromSelection();
 
-	void addLayerOrGroup(bool group, bool duplicateKeyFrame, bool keyFrame, int keyFrameOffset);
-	int intuitKeyFrameTarget(int sourceFrame, int targetFrame, int &sourceId, int &targetId, uint8_t &flags);
+	void addLayerOrGroup(
+		bool group, bool duplicateKeyFrame, bool keyFrame, int keyFrameOffset);
+	int intuitKeyFrameTarget(
+		int sourceFrame, int targetFrame, int &sourceId, int &targetId,
+		uint8_t &flags);
 
 	QModelIndex currentSelection() const;
-	void selectLayerIndex(QModelIndex index, bool scrollTo=false);
+	void selectLayerIndex(QModelIndex index, bool scrollTo = false);
 
 	QString layerCreatorName(uint16_t layerId) const;
 
@@ -165,4 +168,3 @@ private:
 }
 
 #endif
-

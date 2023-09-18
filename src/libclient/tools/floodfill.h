@@ -1,28 +1,28 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #ifndef TOOLS_FLOODFILL_H
 #define TOOLS_FLOODFILL_H
-
 #include "libclient/tools/tool.h"
-
-#include <QCoreApplication>
 #include <QAtomicInt>
+#include <QCoreApplication>
 
 namespace tools {
 
-class FloodFill final : public Tool
-{
+class FloodFill final : public Tool {
 public:
 	FloodFill(ToolController &owner);
 
-	void begin(const canvas::Point& point, bool right, float zoom) override;
-	void motion(const canvas::Point& point, bool constrain, bool center) override;
+	void begin(const canvas::Point &point, bool right, float zoom) override;
+	void
+	motion(const canvas::Point &point, bool constrain, bool center) override;
 	void end() override;
 	void cancelMultipart() override;
 
 	void setTolerance(qreal tolerance) { m_tolerance = tolerance; }
 	void setExpansion(int expansion) { m_expansion = expansion; }
-	void setFeatherRadius(int featherRadius) { m_featherRadius = featherRadius; }
+	void setFeatherRadius(int featherRadius)
+	{
+		m_featherRadius = featherRadius;
+	}
 	void setSize(int size) { m_size = size; }
 	void setGap(int gap) { m_gap = gap; }
 	void setLayerId(int layerId) { m_layerId = layerId; }

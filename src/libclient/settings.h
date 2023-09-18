@@ -6,6 +6,7 @@
 #include "cmake-config/config.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/parentalcontrols/parentalcontrols.h"
+#include "libshared/net/messagequeue.h"
 
 #include <QDebug>
 #include <QHash>
@@ -43,9 +44,6 @@ inline constexpr int defaultSmoothing = 3;
 #endif
 
 inline constexpr int maxSmoothing = 20;
-
-inline constexpr int defaultMessageQueueDrainRate = 20;
-inline constexpr int maxMessageQueueDrainRate = 60;
 
 inline constexpr qreal zoomMin = 0.05;
 inline constexpr qreal zoomMax = 64.0;

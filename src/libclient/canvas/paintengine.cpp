@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 extern "C" {
 #include <dpcommon/threading.h>
 #include <dpengine/layer_routes.h>
@@ -8,15 +7,14 @@ extern "C" {
 #include <dpengine/tile.h>
 #include <dpmsg/msg_internal.h>
 }
-
 #include "cmake-config/config.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/drawdance/image.h"
 #include "libclient/drawdance/layercontent.h"
 #include "libclient/drawdance/layerpropslist.h"
-#include "libclient/drawdance/message.h"
 #include "libclient/drawdance/perf.h"
 #include "libclient/drawdance/viewmode.h"
+#include "libclient/net/message.h"
 #include <QPainter>
 #include <QSet>
 #include <QTimer>
@@ -94,7 +92,7 @@ void PaintEngine::reset(
 	uint8_t localUserId, const drawdance::CanvasState &canvasState,
 	DP_Player *player)
 {
-	drawdance::MessageList localResetImage = m_paintEngine.reset(
+	net::MessageList localResetImage = m_paintEngine.reset(
 		m_acls, m_snapshotQueue, localUserId, PaintEngine::onRenderTile,
 		PaintEngine::onRenderUnlock, PaintEngine::onRenderResize, this,
 		PaintEngine::onPlayback, PaintEngine::onDumpPlayback, this, canvasState,
@@ -139,40 +137,38 @@ void PaintEngine::updateLayersVisibleInFrame()
 }
 
 int PaintEngine::receiveMessages(
-	bool local, int count, const drawdance::Message *msgs, bool overrideAcls)
+	bool local, int count, const net::Message *msgs, bool overrideAcls)
 {
 	return DP_paint_engine_handle_inc(
 		m_paintEngine.get(), local, overrideAcls, count,
-		drawdance::Message::asRawMessages(msgs), &PaintEngine::onAclsChanged,
+		net::Message::asRawMessages(msgs), &PaintEngine::onAclsChanged,
 		&PaintEngine::onLaserTrail, &PaintEngine::onMovePointer, this);
 }
 
 void PaintEngine::enqueueReset()
 {
-	drawdance::Message msg = drawdance::Message::makeInternalReset(0);
+	net::Message msg = net::makeInternalResetMessage(0);
 	receiveMessages(false, 1, &msg);
 }
 
 void PaintEngine::enqueueLoadBlank(
 	int undoDepthLimit, const QSize &size, const QColor &backgroundColor)
 {
-	drawdance::Message messages[] = {
-		drawdance::Message::makeInternalReset(0),
-		drawdance::Message::makeUndoDepth(0, undoDepthLimit),
-		drawdance::Message::makeCanvasBackground(0, backgroundColor),
-		drawdance::Message::makeCanvasResize(
-			0, 0, size.width(), size.height(), 0),
-		drawdance::Message::makeLayerTreeCreate(
+	net::Message messages[] = {
+		net::makeInternalResetMessage(0),
+		net::makeUndoDepthMessage(0, undoDepthLimit),
+		net::makeCanvasBackgroundMessage(0, backgroundColor),
+		net::makeCanvasResizeMessage(0, 0, size.width(), size.height(), 0),
+		net::makeLayerTreeCreateMessage(
 			0, 0x100, 0, 0, 0, 0, tr("Layer %1").arg(1)),
-		drawdance::Message::makeInternalSnapshot(0),
+		net::makeInternalSnapshotMessage(0),
 	};
 	receiveMessages(false, DP_ARRAY_LENGTH(messages), messages);
 }
 
 void PaintEngine::enqueueCatchupProgress(int progress)
 {
-	drawdance::Message msg =
-		drawdance::Message::makeInternalCatchup(0, progress);
+	net::Message msg = net::makeInternalCatchupMessage(0, progress);
 	receiveMessages(false, 1, &msg);
 }
 
@@ -184,7 +180,7 @@ void PaintEngine::resetAcl(uint8_t localUserId)
 
 void PaintEngine::cleanup()
 {
-	drawdance::Message msg = drawdance::Message::makeInternalCleanup(0);
+	net::Message msg = net::makeInternalCleanupMessage(0);
 	receiveMessages(false, 1, &msg);
 }
 
@@ -211,8 +207,7 @@ bool PaintEngine::localBackgroundColor(QColor &outColor) const
 
 void PaintEngine::setLocalBackgroundColor(const QColor &color)
 {
-	drawdance::Message msg =
-		drawdance::Message::makeLocalChangeBackgroundColor(color);
+	net::Message msg = net::makeLocalChangeBackgroundColorMessage(color);
 	if(msg.isNull()) {
 		qWarning("Error setting local background color: %s", DP_error());
 	} else {
@@ -222,8 +217,7 @@ void PaintEngine::setLocalBackgroundColor(const QColor &color)
 
 void PaintEngine::clearLocalBackgroundColor()
 {
-	drawdance::Message msg =
-		drawdance::Message::makeLocalChangeBackgroundClear();
+	net::Message msg = net::makeLocalChangeBackgroundClearMessage();
 	receiveMessages(false, 1, &msg);
 }
 
@@ -291,28 +285,28 @@ void PaintEngine::setLocalDrawingInProgress(bool localDrawingInProgress)
 
 void PaintEngine::setLayerVisibility(int layerId, bool hidden)
 {
-	drawdance::Message msg =
-		drawdance::Message::makeLocalChangeLayerVisibility(layerId, hidden);
+	net::Message msg =
+		net::makeLocalChangeLayerVisibilityMessage(layerId, hidden);
 	receiveMessages(false, 1, &msg);
 }
 
 void PaintEngine::setTrackVisibility(int trackId, bool hidden)
 {
-	drawdance::Message msg =
-		drawdance::Message::makeLocalChangeTrackVisibility(trackId, hidden);
+	net::Message msg =
+		net::makeLocalChangeTrackVisibilityMessage(trackId, hidden);
 	receiveMessages(false, 1, &msg);
 }
 
 void PaintEngine::setTrackOnionSkin(int trackId, bool onionSkin)
 {
-	drawdance::Message msg =
-		drawdance::Message::makeLocalChangeTrackOnionSkin(trackId, onionSkin);
+	net::Message msg =
+		net::makeLocalChangeTrackOnionSkinMessage(trackId, onionSkin);
 	receiveMessages(false, 1, &msg);
 }
 
 void PaintEngine::setViewMode(DP_ViewMode vm, bool censor)
 {
-	drawdance::Message msg = drawdance::Message::makeLocalChangeViewMode(vm);
+	net::Message msg = net::makeLocalChangeViewModeMessage(vm);
 	receiveMessages(false, 1, &msg);
 	m_paintEngine.setRevealCensored(!censor);
 	updateLayersVisibleInFrame();
@@ -345,21 +339,20 @@ void PaintEngine::setOnionSkins(
 			DP_upixel15_from_color(skin.second.rgba()));
 	}
 
-	drawdance::Message msg = drawdance::Message::makeLocalChangeOnionSkins(oss);
+	net::Message msg = net::makeLocalChangeOnionSkinsMessage(oss);
 	receiveMessages(false, 1, &msg);
 	DP_onion_skins_free(oss);
 }
 
 void PaintEngine::setViewLayer(int id)
 {
-	drawdance::Message msg = drawdance::Message::makeLocalChangeActiveLayer(id);
+	net::Message msg = net::makeLocalChangeActiveLayerMessage(id);
 	receiveMessages(false, 1, &msg);
 }
 
 void PaintEngine::setViewFrame(int frame)
 {
-	drawdance::Message msg =
-		drawdance::Message::makeLocalChangeActiveFrame(frame);
+	net::Message msg = net::makeLocalChangeActiveFrameMessage(frame);
 	receiveMessages(false, 1, &msg);
 	updateLayersVisibleInFrame();
 }
@@ -431,7 +424,7 @@ drawdance::RecordStartResult PaintEngine::startRecording(const QString &path)
 }
 
 drawdance::RecordStartResult PaintEngine::exportTemplate(
-	const QString &path, const drawdance::MessageList &snapshot)
+	const QString &path, const net::MessageList &snapshot)
 {
 	return m_paintEngine.exportTemplate(
 		path, snapshot, "drawpile", cmake_config::version(), "template");
@@ -449,7 +442,7 @@ bool PaintEngine::isRecording() const
 
 DP_PlayerResult PaintEngine::stepPlayback(long long steps)
 {
-	drawdance::MessageList msgs;
+	net::MessageList msgs;
 	DP_PlayerResult result = m_paintEngine.stepPlayback(steps, msgs);
 	receiveMessages(false, msgs.count(), msgs.constData(), true);
 	return result;
@@ -457,7 +450,7 @@ DP_PlayerResult PaintEngine::stepPlayback(long long steps)
 
 DP_PlayerResult PaintEngine::skipPlaybackBy(long long steps, bool bySnapshots)
 {
-	drawdance::MessageList msgs;
+	net::MessageList msgs;
 	DP_PlayerResult result =
 		m_paintEngine.skipPlaybackBy(steps, bySnapshots, msgs);
 	receiveMessages(false, msgs.count(), msgs.constData(), true);
@@ -466,7 +459,7 @@ DP_PlayerResult PaintEngine::skipPlaybackBy(long long steps, bool bySnapshots)
 
 DP_PlayerResult PaintEngine::jumpPlaybackTo(long long position)
 {
-	drawdance::MessageList msgs;
+	net::MessageList msgs;
 	DP_PlayerResult result = m_paintEngine.jumpPlaybackTo(position, msgs);
 	receiveMessages(false, msgs.count(), msgs.constData(), true);
 	return result;
@@ -479,7 +472,7 @@ DP_PlayerResult PaintEngine::beginPlayback()
 
 DP_PlayerResult PaintEngine::playPlayback(long long msecs)
 {
-	drawdance::MessageList msgs;
+	net::MessageList msgs;
 	DP_PlayerResult result = m_paintEngine.playPlayback(msecs, msgs);
 	receiveMessages(false, msgs.count(), msgs.constData(), true);
 	return result;
@@ -513,7 +506,7 @@ QImage PaintEngine::playbackIndexThumbnailAt(size_t index)
 
 DP_PlayerResult PaintEngine::stepDumpPlayback()
 {
-	drawdance::MessageList msgs;
+	net::MessageList msgs;
 	DP_PlayerResult result = m_paintEngine.stepDumpPlayback(msgs);
 	receiveMessages(false, msgs.count(), msgs.constData(), true);
 	return result;
@@ -521,7 +514,7 @@ DP_PlayerResult PaintEngine::stepDumpPlayback()
 
 DP_PlayerResult PaintEngine::jumpDumpPlaybackToPreviousReset()
 {
-	drawdance::MessageList msgs;
+	net::MessageList msgs;
 	DP_PlayerResult result =
 		m_paintEngine.jumpDumpPlaybackToPreviousReset(msgs);
 	receiveMessages(false, msgs.count(), msgs.constData(), true);
@@ -530,7 +523,7 @@ DP_PlayerResult PaintEngine::jumpDumpPlaybackToPreviousReset()
 
 DP_PlayerResult PaintEngine::jumpDumpPlaybackToNextReset()
 {
-	drawdance::MessageList msgs;
+	net::MessageList msgs;
 	DP_PlayerResult result = m_paintEngine.jumpDumpPlaybackToNextReset(msgs);
 	receiveMessages(false, msgs.count(), msgs.constData(), true);
 	return result;
@@ -538,7 +531,7 @@ DP_PlayerResult PaintEngine::jumpDumpPlaybackToNextReset()
 
 DP_PlayerResult PaintEngine::jumpDumpPlayback(long long position)
 {
-	drawdance::MessageList msgs;
+	net::MessageList msgs;
 	DP_PlayerResult result = m_paintEngine.jumpDumpPlayback(position, msgs);
 	receiveMessages(false, msgs.count(), msgs.constData(), true);
 	return result;
@@ -546,7 +539,7 @@ DP_PlayerResult PaintEngine::jumpDumpPlayback(long long position)
 
 bool PaintEngine::flushPlayback()
 {
-	drawdance::MessageList msgs;
+	net::MessageList msgs;
 	bool ok = m_paintEngine.flushPlayback(msgs);
 	receiveMessages(false, msgs.count(), msgs.constData());
 	return ok;
@@ -581,7 +574,7 @@ void PaintEngine::clearTransformPreview()
 	m_paintEngine.clearTransformPreview();
 }
 
-void PaintEngine::previewDabs(int layerId, const drawdance::MessageList &msgs)
+void PaintEngine::previewDabs(int layerId, const net::MessageList &msgs)
 {
 	m_paintEngine.previewDabs(layerId, msgs.count(), msgs.constData());
 }

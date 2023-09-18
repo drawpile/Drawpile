@@ -5,15 +5,16 @@
 
 #include "libserver/sessionhistory.h"
 #include "libshared/net/protover.h"
-
 #include <QDir>
-#include <QVector>
 #include <QSet>
+#include <QVector>
+
+struct DP_BinaryReader;
+struct DP_BinaryWriter;
 
 namespace server {
 
-class FiledHistory final : public SessionHistory
-{
+class FiledHistory final : public SessionHistory {
 	Q_OBJECT
 public:
 	~FiledHistory() override;
@@ -28,7 +29,10 @@ public:
 	 * @param parent
 	 * @return FiledHistory object or nullptr on error
 	 */
-	static FiledHistory *startNew(const QDir &dir, const QString &id, const QString &alias, const protocol::ProtocolVersion &version, const QString &founder, QObject *parent=nullptr);
+	static FiledHistory *startNew(
+		const QDir &dir, const QString &id, const QString &alias,
+		const protocol::ProtocolVersion &version, const QString &founder,
+		QObject *parent = nullptr);
 
 	/**
 	 * @brief Load a session from file
@@ -36,7 +40,7 @@ public:
 	 * @param parent
 	 * @return
 	 */
-	static FiledHistory *load(const QString &path, QObject *parent=nullptr);
+	static FiledHistory *load(const QString &path, QObject *parent = nullptr);
 
 	/**
 	 * @brief Close the currently open block (if any) and start a new one
@@ -47,7 +51,8 @@ public:
 	 * @brief Enable archival mode
 	 *
 	 * In archive mode, files are not deleted when session ends or is reset.
-	 * Instead, ".archived" is appended to the end of the journal file on termination.
+	 * Instead, ".archived" is appended to the end of the journal file on
+	 * termination.
 	 * @param archive
 	 */
 	void setArchive(bool archive) { m_archive = archive; }
@@ -57,7 +62,10 @@ public:
 
 	QString idAlias() const override { return m_alias; }
 	QString founderName() const override { return m_founder; }
-	protocol::ProtocolVersion protocolVersion() const override { return m_version; }
+	protocol::ProtocolVersion protocolVersion() const override
+	{
+		return m_version;
+	}
 	QByteArray passwordHash() const override { return m_password; }
 	QByteArray opwordHash() const override { return m_opword; }
 	int maxUsers() const override { return m_maxUsers; }
@@ -75,7 +83,7 @@ public:
 
 	void terminate() override;
 	void cleanupBatches(int before) override;
-	std::tuple<protocol::MessageList, int> getBatch(int after) const override;
+	std::tuple<net::MessageList, int> getBatch(int after) const override;
 
 	void addAnnouncement(const QString &) override;
 	void removeAnnouncement(const QString &url) override;
@@ -83,29 +91,43 @@ public:
 
 	void setAuthenticatedOperator(const QString &authId, bool op) override;
 	void setAuthenticatedTrust(const QString &authId, bool trusted) override;
-	bool isOperator(const QString &authId) const override { return m_ops.contains(authId); }
-	bool isTrusted(const QString &authId) const override { return m_trusted.contains(authId); }
+	bool isOperator(const QString &authId) const override
+	{
+		return m_ops.contains(authId);
+	}
+	bool isTrusted(const QString &authId) const override
+	{
+		return m_trusted.contains(authId);
+	}
 	bool isAuthenticatedOperators() const override { return !m_ops.isEmpty(); }
 
 protected:
-	void historyAdd(const protocol::MessagePtr &msg) override;
-	void historyReset(const protocol::MessageList &newHistory) override;
-	void historyAddBan(int id, const QString &username, const QHostAddress &ip, const QString &extAuthId, const QString &bannedBy) override;
+	void historyAdd(const net::Message &msg) override;
+	void historyReset(const net::MessageList &newHistory) override;
+	void historyAddBan(
+		int id, const QString &username, const QHostAddress &ip,
+		const QString &extAuthId, const QString &bannedBy) override;
 	void historyRemoveBan(int id) override;
 
 	void timerEvent(QTimerEvent *event) override;
 
 private:
-	FiledHistory(const QDir &dir, QFile *journal, const QString &id, const QString &alias, const protocol::ProtocolVersion &version, const QString &founder, QObject *parent);
-	FiledHistory(const QDir &dir, QFile *journal, const QString &id, QObject *parent);
+	FiledHistory(
+		const QDir &dir, QFile *journal, const QString &id,
+		const QString &alias, const protocol::ProtocolVersion &version,
+		const QString &founder, QObject *parent);
+	FiledHistory(
+		const QDir &dir, QFile *journal, const QString &id, QObject *parent);
 
 	struct Block {
 		qint64 startOffset;
 		int startIndex;
 		int count;
 		qint64 endOffset;
-		protocol::MessageList messages;
+		net::MessageList messages;
 	};
+
+	void discardWriterOnError(const QString &context, const QString &filename);
 
 	bool create();
 	bool load();
@@ -115,6 +137,8 @@ private:
 	QDir m_dir;
 	QFile *m_journal;
 	QFile *m_recording;
+	DP_BinaryReader *m_reader;
+	DP_BinaryWriter *m_writer;
 
 	// Current state:
 	QString m_alias;
@@ -130,7 +154,7 @@ private:
 	QSet<QString> m_ops;
 	QSet<QString> m_trusted;
 
-	QVector<Block> m_blocks;
+	mutable QVector<Block> m_blocks;
 	int m_fileCount;
 	bool m_archive;
 };

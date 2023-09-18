@@ -1,34 +1,43 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
+extern "C" {
+#include <dpcommon/input.h>
+#include <dpcommon/input_qt.h>
+#include <dpcommon/output.h>
+#include <dpcommon/output_qt.h>
+#include <dpmsg/binary_reader.h>
+#include <dpmsg/binary_writer.h>
+}
 #include "libserver/filedhistory.h"
-#include "libshared/util/passwordhash.h"
 #include "libshared/util/filename.h"
-#include "libshared/record/header.h"
-#include "libshared/net/meta.h"
-
-#include <QFile>
-#include <QJsonObject>
-#include <QVarLengthArray>
+#include "libshared/util/passwordhash.h"
 #include <QDebug>
+#include <QFile>
+#include <QScopedPointer>
 #include <QTimerEvent>
+#include <QVarLengthArray>
 
 namespace server {
 
 // A block is closed when its size goes above this limit
 static const qint64 MAX_BLOCK_SIZE = 0xffff * 10;
 
-FiledHistory::FiledHistory(const QDir &dir, QFile *journal, const QString &id, const QString &alias, const protocol::ProtocolVersion &version, const QString &founder, QObject *parent)
-	: SessionHistory(id, parent),
-	  m_dir(dir),
-	  m_journal(journal),
-	  m_recording(nullptr),
-	  m_alias(alias),
-	  m_founder(founder),
-	  m_version(version),
-	  m_maxUsers(254),
-	  m_flags(),
-	  m_fileCount(0),
-	  m_archive(false)
+FiledHistory::FiledHistory(
+	const QDir &dir, QFile *journal, const QString &id, const QString &alias,
+	const protocol::ProtocolVersion &version, const QString &founder,
+	QObject *parent)
+	: SessionHistory(id, parent)
+	, m_dir(dir)
+	, m_journal(journal)
+	, m_recording(nullptr)
+	, m_reader(nullptr)
+	, m_writer(nullptr)
+	, m_alias(alias)
+	, m_founder(founder)
+	, m_version(version)
+	, m_maxUsers(254)
+	, m_flags()
+	, m_fileCount(0)
+	, m_archive(false)
 {
 	Q_ASSERT(journal);
 
@@ -36,13 +45,18 @@ FiledHistory::FiledHistory(const QDir &dir, QFile *journal, const QString &id, c
 	startTimer(1000 * 30, Qt::VeryCoarseTimer);
 }
 
-FiledHistory::FiledHistory(const QDir &dir, QFile *journal, const QString &id, QObject *parent)
-	: FiledHistory(dir, journal, id, QString(), protocol::ProtocolVersion(), QString(), parent)
+FiledHistory::FiledHistory(
+	const QDir &dir, QFile *journal, const QString &id, QObject *parent)
+	: FiledHistory(
+		  dir, journal, id, QString(), protocol::ProtocolVersion(), QString(),
+		  parent)
 {
 }
 
 FiledHistory::~FiledHistory()
 {
+	DP_binary_writer_free(m_writer);
+	DP_binary_reader_free(m_reader);
 }
 
 QString FiledHistory::journalFilename(const QString &id)
@@ -50,7 +64,8 @@ QString FiledHistory::journalFilename(const QString &id)
 	return id + ".session";
 }
 
-static QString uniqueRecordingFilename(const QDir &dir, const QString &id, int idx)
+static QString
+uniqueRecordingFilename(const QDir &dir, const QString &id, int idx)
 {
 	QString idstr = id;
 	if(idx > 1)
@@ -60,11 +75,16 @@ static QString uniqueRecordingFilename(const QDir &dir, const QString &id, int i
 	return utils::uniqueFilename(dir, idstr, "dprec", false);
 }
 
-FiledHistory *FiledHistory::startNew(const QDir &dir, const QString &id, const QString &alias, const protocol::ProtocolVersion &version, const QString &founder, QObject *parent)
+FiledHistory *FiledHistory::startNew(
+	const QDir &dir, const QString &id, const QString &alias,
+	const protocol::ProtocolVersion &version, const QString &founder,
+	QObject *parent)
 {
-	QFile *journal = new QFile(QFileInfo(dir, journalFilename(id)).absoluteFilePath());
+	QFile *journal =
+		new QFile(QFileInfo(dir, journalFilename(id)).absoluteFilePath());
 
-	FiledHistory *fh = new FiledHistory(dir, journal, id, alias, version, founder, parent);
+	FiledHistory *fh =
+		new FiledHistory(dir, journal, id, alias, version, founder, parent);
 	journal->setParent(fh);
 
 	if(!fh->create()) {
@@ -125,7 +145,8 @@ bool FiledHistory::initRecording()
 {
 	Q_ASSERT(m_blocks.isEmpty());
 
-	const QString filename = uniqueRecordingFilename(m_dir, id(), ++m_fileCount);
+	const QString filename =
+		uniqueRecordingFilename(m_dir, id(), ++m_fileCount);
 
 	m_recording = new QFile(m_dir.absoluteFilePath(filename), this);
 	if(!m_recording->open(QFile::ReadWrite)) {
@@ -133,22 +154,33 @@ bool FiledHistory::initRecording()
 		return false;
 	}
 
-	QJsonObject metadata;
-	metadata["version"] = m_version.asString(); // the hosting client's protocol version
-	recording::writeRecordingHeader(m_recording, metadata);
+	Q_ASSERT(!m_reader);
+	m_reader = DP_binary_reader_new(
+		DP_qfile_input_new(m_recording, false, DP_input_new),
+		DP_BINARY_READER_FLAG_NO_LENGTH | DP_BINARY_READER_FLAG_NO_HEADER);
+	Q_ASSERT(!m_writer);
+	m_writer = DP_binary_writer_new(
+		DP_qfile_output_new(m_recording, false, DP_output_new));
+
+	JSON_Value *header_value = json_value_init_object();
+	JSON_Object *header_object = json_value_get_object(header_value);
+	json_object_set_string( // the hosting client's protocol version
+		header_object, "version", qUtf8Printable(m_version.asString()));
+	bool ok = DP_binary_writer_write_header(m_writer, header_object);
+	json_value_free(header_value);
+	if(!ok) {
+		qWarning() << filename << DP_error();
+		return false;
+	}
 
 	m_recording->flush();
 
 	m_journal->write(QString("FILE %1\n").arg(filename).toUtf8());
 	m_journal->flush();
 
-	m_blocks << Block {
-		m_recording->pos(),
-		firstIndex(),
-		0,
-		m_recording->pos(),
-		protocol::MessageList()
-		};
+	m_blocks << Block{
+		m_recording->pos(), firstIndex(), 0, m_recording->pos(),
+		net::MessageList()};
 
 	return true;
 }
@@ -165,15 +197,15 @@ bool FiledHistory::load()
 		if(line.isEmpty() || line.at(0) == '#')
 			continue;
 
-		//qDebug() << QString::fromUtf8(line.trimmed());
+		// qDebug() << QString::fromUtf8(line.trimmed());
 
 		QByteArray params;
 		int sep = line.indexOf(' ');
-		if(sep<0) {
+		if(sep < 0) {
 			cmd = line;
 		} else {
 			cmd = line.left(sep).trimmed();
-			params = line.mid(sep+1).trimmed();
+			params = line.mid(sep + 1).trimmed();
 		}
 
 		if(cmd == "FILE") {
@@ -224,20 +256,25 @@ bool FiledHistory::load()
 				else if(f == "authonly")
 					flags |= AuthOnly;
 				else
-					qWarning() << id() << "unknown flag:" << QString::fromUtf8(f);
+					qWarning()
+						<< id() << "unknown flag:" << QString::fromUtf8(f);
 			}
 			m_flags = flags;
 
 		} else if(cmd == "BAN") {
 			const QList<QByteArray> args = params.split(' ');
 			if(args.length() != 5) {
-				qWarning() << id() << "invalid ban entry:" << QString::fromUtf8(params);
+				qWarning() << id()
+						   << "invalid ban entry:" << QString::fromUtf8(params);
 			} else {
 				int id = args.at(0).toInt();
-				QString name { QString::fromUtf8(QByteArray::fromPercentEncoding(args.at(1))) };
-				QHostAddress ip { QString::fromUtf8(args.at(2)) };
-				QString extAuthId { QString::fromUtf8(QByteArray::fromPercentEncoding(args.at(3))) };
-				QString bannedBy { QString::fromUtf8(QByteArray::fromPercentEncoding(args.at(4))) };
+				QString name{QString::fromUtf8(
+					QByteArray::fromPercentEncoding(args.at(1)))};
+				QHostAddress ip{QString::fromUtf8(args.at(2))};
+				QString extAuthId{QString::fromUtf8(
+					QByteArray::fromPercentEncoding(args.at(3)))};
+				QString bannedBy{QString::fromUtf8(
+					QByteArray::fromPercentEncoding(args.at(4)))};
 				m_banlist.addBan(name, ip, extAuthId, bannedBy, id);
 			}
 
@@ -253,11 +290,13 @@ bool FiledHistory::load()
 
 		} else if(cmd == "USER") {
 			const QList<QByteArray> args = params.split(' ');
-			if(args.length()!=2) {
-				qWarning() << "Invalid USER entry:" << QString::fromUtf8(params);
+			if(args.length() != 2) {
+				qWarning() << "Invalid USER entry:"
+						   << QString::fromUtf8(params);
 			} else {
 				int id = args.at(0).toInt();
-				QString name { QString::fromUtf8(QByteArray::fromPercentEncoding(args.at(1))) };
+				QString name{QString::fromUtf8(
+					QByteArray::fromPercentEncoding(args.at(1)))};
 				idQueue().setIdForName(id, name);
 			}
 
@@ -278,7 +317,8 @@ bool FiledHistory::load()
 			m_trusted.remove(QString::fromUtf8(params));
 
 		} else {
-			qWarning() << id() << "unknown journal entry:" << QString::fromUtf8(cmd);
+			qWarning() << id()
+					   << "unknown journal entry:" << QString::fromUtf8(cmd);
 		}
 	} while(!m_journal->atEnd());
 
@@ -300,25 +340,34 @@ bool FiledHistory::load()
 		return false;
 	}
 
-	// Recording must have a valid header
-	QJsonObject header = recording::readRecordingHeader(m_recording);
-	if(header.isEmpty()) {
+	m_reader = DP_binary_reader_new(
+		DP_qfile_input_new(m_recording, false, DP_input_new),
+		DP_BINARY_READER_FLAG_NO_LENGTH);
+	if(!m_reader) {
 		qWarning() << recordingFile << "invalid header";
 		return false;
 	}
 
-	m_version = protocol::ProtocolVersion::fromString(header["version"].toString());
+	JSON_Object *header =
+		json_value_get_object(DP_binary_reader_header(m_reader));
+
+	m_version = protocol::ProtocolVersion::fromString(
+		QString::fromUtf8(json_object_get_string(header, "version")));
 	if(!m_version.isValid()) {
 		qWarning() << recordingFile << "invalid protocol version";
 		return false;
 	}
 
-	if(m_version.serverVersion() != protocol::ProtocolVersion::current().serverVersion()) {
+	if(m_version.serverVersion() !=
+	   protocol::ProtocolVersion::current().serverVersion()) {
 		qWarning() << recordingFile << "incompatible server version";
 		return false;
 	}
 
 	qint64 startOffset = m_recording->pos();
+	Q_ASSERT(!m_writer);
+	m_writer = DP_binary_writer_new(
+		DP_qfile_output_new(m_recording, false, DP_output_new));
 
 	// Scan the recording file and build the index of blocks
 	if(!scanBlocks()) {
@@ -326,7 +375,9 @@ bool FiledHistory::load()
 		return false;
 	}
 
-	historyLoaded(m_blocks.last().endOffset-startOffset, m_blocks.last().startIndex+m_blocks.last().count);
+	historyLoaded(
+		m_blocks.last().endOffset - startOffset,
+		m_blocks.last().startIndex + m_blocks.last().count);
 
 	// If a loaded session is empty, the server expects the first joining client
 	// to supply the initial content, while the client is expecting to join
@@ -344,25 +395,21 @@ bool FiledHistory::scanBlocks()
 	Q_ASSERT(m_blocks.isEmpty());
 	// Note: m_recording should be at the start of the recording
 
-	m_blocks << Block {
-		m_recording->pos(),
-		firstIndex(),
-		0,
-		m_recording->pos(),
-		protocol::MessageList()
-	};
+	m_blocks << Block{
+		m_recording->pos(), firstIndex(), 0, m_recording->pos(),
+		net::MessageList()};
 
 	QSet<uint8_t> users;
 
 	do {
 		Block &b = m_blocks.last();
 		uint8_t msgType, ctxId;
-
-		const int msglen = recording::skipRecordingMessage(m_recording, &msgType, &ctxId);
-		if(msglen<0) {
+		int msglen = DP_binary_reader_skip_message(m_reader, &msgType, &ctxId);
+		if(msglen < 0) {
 			// Truncated message encountered.
 			// Rewind back to the end of the previous message
-			qWarning() << m_recording->fileName() << "Recording truncated at" << int(b.endOffset);
+			qWarning() << m_recording->fileName() << "Recording truncated at"
+					   << int(b.endOffset);
 			m_recording->seek(b.endOffset);
 			break;
 		}
@@ -371,19 +418,17 @@ bool FiledHistory::scanBlocks()
 		b.endOffset += msglen;
 		Q_ASSERT(b.endOffset == m_recording->pos());
 
-		if(b.endOffset-b.startOffset >= MAX_BLOCK_SIZE) {
-			m_blocks << Block {
-				b.endOffset,
-				b.startIndex+b.count,
-				0,
-				b.endOffset,
-				protocol::MessageList()
-			};
+		if(b.endOffset - b.startOffset >= MAX_BLOCK_SIZE) {
+			m_blocks << Block{
+				b.endOffset, b.startIndex + b.count, 0, b.endOffset,
+				net::MessageList()};
 		}
 
 		switch(msgType) {
-		case protocol::MSG_USER_JOIN: users.insert(ctxId); break;
-		case protocol::MSG_USER_LEAVE:
+		case DP_MSG_JOIN:
+			users.insert(ctxId);
+			break;
+		case DP_MSG_LEAVE:
 			users.remove(ctxId);
 			idQueue().reserveId(ctxId);
 			break;
@@ -392,12 +437,12 @@ bool FiledHistory::scanBlocks()
 
 	// There should be no users at the end of the recording.
 	for(const uint8_t user : users) {
-		protocol::UserLeave msg(user);
+		net::Message msg = net::makeLeaveMessage(user);
 		m_blocks.last().count++;
-		m_blocks.last().endOffset += msg.length();
-		char buf[16];
-		msg.serialize(buf);
-		m_recording->write(buf, msg.length());
+		m_blocks.last().endOffset += qint64(msg.length());
+		if(DP_binary_writer_write_message(m_writer, msg.get()) == 0) {
+			return false;
+		}
 		idQueue().reserveId(user);
 	}
 	return true;
@@ -405,6 +450,10 @@ bool FiledHistory::scanBlocks()
 
 void FiledHistory::terminate()
 {
+	DP_binary_reader_free(m_reader);
+	m_reader = nullptr;
+	DP_binary_writer_free(m_writer);
+	m_writer = nullptr;
 	m_recording->close();
 	m_journal->close();
 
@@ -425,17 +474,13 @@ void FiledHistory::closeBlock()
 
 	// Check if anything needs to be done
 	Block &b = m_blocks.last();
-	if(b.count==0)
+	if(b.count == 0)
 		return;
 
 	// Mark last block as closed and start a new one
-	m_blocks << Block {
-				b.endOffset,
-				b.startIndex+b.count,
-				0,
-				b.endOffset,
-				protocol::MessageList()
-	};
+	m_blocks << Block{
+		b.endOffset, b.startIndex + b.count, 0, b.endOffset,
+		net::MessageList()};
 }
 
 void FiledHistory::setPasswordHash(const QByteArray &password)
@@ -474,7 +519,8 @@ void FiledHistory::setMaxUsers(int max)
 
 void FiledHistory::setAutoResetThreshold(uint limit)
 {
-	const uint newLimit = sizeLimit() == 0 ? limit : qMin(uint(sizeLimit() * 0.9), limit);
+	const uint newLimit =
+		sizeLimit() == 0 ? limit : qMin(uint(sizeLimit() * 0.9), limit);
 	if(newLimit != m_autoResetThreshold) {
 		m_autoResetThreshold = newLimit;
 		m_journal->write(QString("AUTORESET %1\n").arg(newLimit).toUtf8());
@@ -515,82 +561,78 @@ void FiledHistory::joinUser(uint8_t id, const QString &name)
 {
 	SessionHistory::joinUser(id, name);
 	m_journal->write(
-		"USER "
-		+ QByteArray::number(int(id))
-		+ " "
-		+ name.toUtf8().toPercentEncoding(QByteArray(), " ")
-		+ "\n");
+		"USER " + QByteArray::number(int(id)) + " " +
+		name.toUtf8().toPercentEncoding(QByteArray(), " ") + "\n");
 	m_journal->flush();
 }
 
-std::tuple<protocol::MessageList, int> FiledHistory::getBatch(int after) const
+std::tuple<net::MessageList, int> FiledHistory::getBatch(int after) const
 {
 	// Find the block that contains the index *after*
-	int i=m_blocks.size()-1;
-	for(;i>0;--i) {
-		const Block &b = m_blocks.at(i-1);
-		if(b.startIndex+b.count-1 <= after)
+	int i = m_blocks.size() - 1;
+	for(; i > 0; --i) {
+		const Block &b = m_blocks.at(i - 1);
+		if(b.startIndex + b.count - 1 <= after)
 			break;
 	}
 
-	const Block &b = m_blocks.at(i);
+	Block &b = m_blocks[i];
+	int idxOffset = qMax(0, after - b.startIndex + 1);
+	if(idxOffset >= b.count) {
+		return std::make_tuple(net::MessageList(), b.startIndex + b.count - 1);
+	}
 
-	const int idxOffset = qMax(0, after - b.startIndex + 1);
-	if(idxOffset >= b.count)
-		return std::make_tuple(protocol::MessageList(), b.startIndex+b.count-1);
-
-	if(b.messages.isEmpty() && b.count>0) {
+	if(b.messages.isEmpty() && b.count > 0) {
 		// Load the block worth of messages to memory if not already loaded
 		const qint64 prevPos = m_recording->pos();
 		qDebug() << m_recording->fileName() << "loading block" << i;
 		m_recording->seek(b.startOffset);
-		QByteArray buffer;
-		for(int m=0;m<b.count;++m) {
-			if(!recording::readRecordingMessage(m_recording, buffer)) {
+		for(int m = 0; m < b.count; ++m) {
+			DP_Message *msg;
+			DP_BinaryReaderResult result =
+				DP_binary_reader_read_message(m_reader, false, &msg);
+			if(result != DP_BINARY_READER_SUCCESS) {
 				qWarning() << m_recording->fileName() << "read error!";
 				m_recording->close();
 				break;
 			}
-			protocol::NullableMessageRef msg = protocol::Message::deserialize(reinterpret_cast<const uchar*>(buffer.constData()), buffer.length(), false);
-			if(msg.isNull()) {
-				qWarning() << m_recording->fileName() << "Invalid message in block" << i;
-				m_recording->close();
-				break;
-			}
-			const_cast<Block&>(b).messages << protocol::MessagePtr::fromNullable(msg);
+			b.messages.append(net::Message::noinc(msg));
 		}
 
 		m_recording->seek(prevPos);
 	}
 	Q_ASSERT(b.messages.size() == b.count);
-	return std::make_tuple(b.messages.mid(idxOffset), b.startIndex+b.count-1);
+	return std::make_tuple(
+		b.messages.mid(idxOffset), b.startIndex + b.count - 1);
 }
 
-void FiledHistory::historyAdd(const protocol::MessagePtr &msg)
+void FiledHistory::historyAdd(const net::Message &msg)
 {
-	QVarLengthArray<char> buf(msg->length());
-	const int len = msg->serialize(buf.data());
-	Q_ASSERT(len == buf.length());
-	m_recording->write(buf.data(), len);
+	size_t len = DP_binary_writer_write_message(m_writer, msg.get());
 
 	Block &b = m_blocks.last();
 	b.count++;
 	b.endOffset += len;
 
-	// Add message to cache, if already active (if cache is empty, it will be loaded from disk when needed)
+	// Add message to cache, if already active (if cache is empty, it will be
+	// loaded from disk when needed)
 	if(!b.messages.isEmpty())
 		b.messages.append(msg);
 
-	if(b.endOffset-b.startOffset > MAX_BLOCK_SIZE)
+	if(b.endOffset - b.startOffset > MAX_BLOCK_SIZE)
 		closeBlock();
 }
 
-void FiledHistory::historyReset(const protocol::MessageList &newHistory)
+void FiledHistory::historyReset(const net::MessageList &newHistory)
 {
 	QFile *oldRecording = m_recording;
 	oldRecording->close();
 
 	m_recording = nullptr;
+	DP_binary_reader_free(m_reader);
+	m_reader = nullptr;
+	DP_binary_writer_free(m_writer);
+	m_writer = nullptr;
 	m_blocks.clear();
 	initRecording();
 
@@ -602,31 +644,35 @@ void FiledHistory::historyReset(const protocol::MessageList &newHistory)
 		oldRecording->remove();
 	delete oldRecording;
 
-	for(const protocol::MessagePtr &msg : newHistory)
+	for(const net::Message &msg : newHistory) {
 		historyAdd(msg);
+	}
 }
 
 void FiledHistory::cleanupBatches(int before)
 {
 	for(Block &b : m_blocks) {
-		if(b.startIndex+b.count >= before)
+		if(b.startIndex + b.count >= before)
 			break;
 		if(!b.messages.isEmpty()) {
-			qDebug() << "releasing history block cache from" << b.startIndex << "to" << b.startIndex+b.count-1;
-			b.messages = protocol::MessageList();
+			qDebug() << "releasing history block cache from" << b.startIndex
+					 << "to" << b.startIndex + b.count - 1;
+			b.messages = net::MessageList();
 		}
 	}
 }
 
-void FiledHistory::historyAddBan(int id, const QString &username, const QHostAddress &ip, const QString &extAuthId, const QString &bannedBy)
+void FiledHistory::historyAddBan(
+	int id, const QString &username, const QHostAddress &ip,
+	const QString &extAuthId, const QString &bannedBy)
 {
 	const QByteArray include = " ";
-	QByteArray entry = "BAN " +
-			QByteArray::number(id) + " " +
-			username.toUtf8().toPercentEncoding(QByteArray(), include) + " " +
-			ip.toString().toUtf8() + " " +
-			extAuthId.toUtf8().toPercentEncoding(QByteArray(), include) + " " +
-			bannedBy.toUtf8().toPercentEncoding(QByteArray(), include) + "\n";
+	QByteArray entry =
+		"BAN " + QByteArray::number(id) + " " +
+		username.toUtf8().toPercentEncoding(QByteArray(), include) + " " +
+		ip.toString().toUtf8() + " " +
+		extAuthId.toUtf8().toPercentEncoding(QByteArray(), include) + " " +
+		bannedBy.toUtf8().toPercentEncoding(QByteArray(), include) + "\n";
 	m_journal->write(entry);
 	m_journal->flush();
 }
@@ -695,7 +741,8 @@ void FiledHistory::setAuthenticatedTrust(const QString &authId, bool trusted)
 	} else {
 		if(m_trusted.contains(authId)) {
 			m_trusted.remove(authId);
-			m_journal->write(QStringLiteral("UNTRUST %1\n").arg(authId).toUtf8());
+			m_journal->write(
+				QStringLiteral("UNTRUST %1\n").arg(authId).toUtf8());
 			m_journal->flush();
 		}
 	}

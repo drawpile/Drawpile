@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #ifndef TIMELINE_DOCK_H
 #define TIMELINE_DOCK_H
-
 #include "desktop/docks/dockbase.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "desktop/widgets/timelinewidget.h"
@@ -15,7 +13,7 @@ namespace canvas {
 class CanvasModel;
 }
 
-namespace drawdance {
+namespace net {
 class Message;
 }
 
@@ -50,7 +48,7 @@ public slots:
 	void setFeatureAccess(bool access);
 
 signals:
-	void timelineEditCommands(int count, const drawdance::Message *msgs);
+	void timelineEditCommands(int count, const net::Message *msgs);
 	void trackSelected(int frame);
 	void frameSelected(int frame);
 	void layerSelected(int layerId);

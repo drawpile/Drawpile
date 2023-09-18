@@ -1,31 +1,26 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "libserver/client.h"
+#include "libserver/serverconfig.h"
+#include "libserver/serverlog.h"
 #include "libserver/session.h"
 #include "libserver/sessionhistory.h"
-#include "libserver/serverlog.h"
-#include "libserver/serverconfig.h"
-
 #include "libshared/net/messagequeue.h"
-#include "libshared/net/control.h"
-#include "libshared/net/meta.h"
+#include "libshared/net/servercmd.h"
 #include "libshared/util/qtcompat.h"
-
+#include <QPointer>
 #include <QSslSocket>
 #include <QStringList>
-#include <QPointer>
 
 namespace server {
-
-using protocol::MessagePtr;
 
 struct Client::Private {
 	QPointer<Session> session;
 	QTcpSocket *socket;
 	ServerLog *logger;
 
-	protocol::MessageQueue *msgqueue;
-	protocol::MessageList holdqueue;
+	net::MessageQueue *msgqueue;
+	net::MessageList holdqueue;
 
 	QString username;
 	QString authId;
@@ -44,7 +39,8 @@ struct Client::Private {
 	bool isAwaitingReset = false;
 
 	Private(QTcpSocket *socket_, ServerLog *logger_)
-		: socket(socket_), logger(logger_)
+		: socket(socket_)
+		, logger(logger_)
 	{
 		Q_ASSERT(socket);
 		Q_ASSERT(logger);
@@ -52,15 +48,21 @@ struct Client::Private {
 };
 
 Client::Client(QTcpSocket *socket, ServerLog *logger, QObject *parent)
-	: QObject(parent), d(new Private(socket, logger))
+	: QObject(parent)
+	, d(new Private(socket, logger))
 {
-	d->msgqueue = new protocol::MessageQueue(socket, this);
+	d->msgqueue = new net::MessageQueue(socket, false, this);
 	d->socket->setParent(this);
 
-	connect(d->socket, &QAbstractSocket::disconnected, this, &Client::socketDisconnect);
+	connect(
+		d->socket, &QAbstractSocket::disconnected, this,
+		&Client::socketDisconnect);
 	connect(d->socket, compat::SocketError, this, &Client::socketError);
-	connect(d->msgqueue, &protocol::MessageQueue::messageAvailable, this, &Client::receiveMessages);
-	connect(d->msgqueue, &protocol::MessageQueue::badData, this, &Client::gotBadData);
+	connect(
+		d->msgqueue, &net::MessageQueue::messageAvailable, this,
+		&Client::receiveMessages);
+	connect(
+		d->msgqueue, &net::MessageQueue::badData, this, &Client::gotBadData);
 }
 
 Client::~Client()
@@ -68,19 +70,16 @@ Client::~Client()
 	delete d;
 }
 
-protocol::MessageQueue *Client::messageQueue()
+net::MessageQueue *Client::messageQueue()
 {
 	return d->msgqueue;
 }
 
-protocol::MessagePtr Client::joinMessage() const
+net::Message Client::joinMessage() const
 {
-	return protocol::MessagePtr(new protocol::UserJoin(
-			id(),
-			(isAuthenticated() ? protocol::UserJoin::FLAG_AUTH : 0) | (isModerator() ? protocol::UserJoin::FLAG_MOD : 0),
-			username(),
-			avatar()
-	));
+	uint8_t flags = (isAuthenticated() ? DP_MSG_JOIN_FLAGS_AUTH : 0) |
+					(isModerator() ? DP_MSG_JOIN_FLAGS_MOD : 0);
+	return net::makeJoinMessage(id(), flags, username(), avatar());
 }
 
 QJsonObject Client::description(bool includeSession) const
@@ -89,21 +88,25 @@ QJsonObject Client::description(bool includeSession) const
 	u["id"] = id();
 	u["name"] = username();
 	u["ip"] = peerAddress().toString();
-	u["lastActive"] = QDateTime::fromMSecsSinceEpoch(d->lastActive, Qt::UTC).toString(Qt::ISODate);
+	u["lastActive"] = QDateTime::fromMSecsSinceEpoch(d->lastActive, Qt::UTC)
+						  .toString(Qt::ISODate);
 	u["auth"] = isAuthenticated();
 	u["op"] = isOperator();
 	u["muted"] = isMuted();
 	u["mod"] = isModerator();
 	u["tls"] = isSecure();
-	if(includeSession && d->session)
+	if(includeSession && d->session) {
 		u["session"] = d->session->id();
+	}
 	return u;
 }
 
-JsonApiResult Client::callJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request)
+JsonApiResult Client::callJsonApi(
+	JsonApiMethod method, const QStringList &path, const QJsonObject &request)
 {
-	if(!path.isEmpty())
+	if(!path.isEmpty()) {
 		return JsonApiNotFound();
+	}
 
 	if(method == JsonApiMethod::Delete) {
 		disconnectClient(Client::DisconnectionReason::Kick, "server operator");
@@ -113,31 +116,35 @@ JsonApiResult Client::callJsonApi(JsonApiMethod method, const QStringList &path,
 
 	} else if(method == JsonApiMethod::Update) {
 		QString msg = request["message"].toString();
-		if(!msg.isEmpty())
+		if(!msg.isEmpty()) {
 			sendSystemChat(msg);
+		}
 
 		QString alert = request["alert"].toString();
-		if(!alert.isEmpty())
+		if(!alert.isEmpty()) {
 			sendSystemChat(alert, true);
+		}
 
 		if(request.contains("op")) {
 			const bool op = request["op"].toBool();
 			if(d->isOperator != op && d->session) {
-				d->session->changeOpStatus(id(), op, "the server administrator");
+				d->session->changeOpStatus(
+					id(), op, "the server administrator");
 			}
 		}
 
 		if(request.contains("trusted")) {
 			const bool trusted = request["trusted"].toBool();
 			if(d->isTrusted != trusted && d->session) {
-				d->session->changeTrustedStatus(id(), trusted, "the server administrator");
+				d->session->changeTrustedStatus(
+					id(), trusted, "the server administrator");
 			}
 		}
 
-		return JsonApiResult { JsonApiResult::Ok, QJsonDocument(description()) };
+		return JsonApiResult{JsonApiResult::Ok, QJsonDocument(description())};
 
 	} else if(method == JsonApiMethod::Get) {
-		return JsonApiResult { JsonApiResult::Ok, QJsonDocument(description()) };
+		return JsonApiResult{JsonApiResult::Ok, QJsonDocument(description())};
 
 	} else {
 		return JsonApiBadMethod();
@@ -156,7 +163,7 @@ Session *Client::session()
 
 void Client::setId(uint8_t id)
 {
-	Q_ASSERT(d->id==0 && id != 0); // ID is only assigned once
+	Q_ASSERT(d->id == 0 && id != 0); // ID is only assigned once
 	d->id = id;
 }
 
@@ -217,10 +224,8 @@ bool Client::isOperator() const
 
 bool Client::isDeputy() const
 {
-	return !isOperator()
-		&& isTrusted()
-		&& d->session
-		&& d->session->history()->hasFlag(SessionHistory::Deputies);
+	return !isOperator() && isTrusted() && d->session &&
+		   d->session->history()->hasFlag(SessionHistory::Deputies);
 }
 
 void Client::setModerator(bool mod)
@@ -245,7 +250,7 @@ void Client::setTrusted(bool trusted)
 
 bool Client::isAuthenticated() const
 {
-	return! d->authId.isEmpty();
+	return !d->authId.isEmpty();
 }
 
 void Client::setMuted(bool m)
@@ -263,88 +268,86 @@ void Client::setConnectionTimeout(int timeout)
 	d->msgqueue->setIdleTimeout(timeout);
 }
 
-#ifndef NDEBUG
-void Client::setRandomLag(uint lag)
-{
-	d->msgqueue->setRandomLag(lag);
-}
-#endif
-
 QHostAddress Client::peerAddress() const
 {
 	return d->socket->peerAddress();
 }
 
-void Client::sendDirectMessage(protocol::MessagePtr msg)
+void Client::sendDirectMessage(const net::Message &msg)
 {
-	if(!d->isAwaitingReset || msg->isControl())
+	if(!d->isAwaitingReset || msg.isControl()) {
 		d->msgqueue->send(msg);
+	}
 }
 
-void Client::sendDirectMessage(const protocol::MessageList &msgs)
+void Client::sendDirectMessages(const net::MessageList &msgs)
 {
 	if(d->isAwaitingReset) {
-		for(MessagePtr msg : msgs)
-			if(msg->isControl())
+		for(const net::Message &msg : msgs) {
+			if(msg.isControl()) {
 				d->msgqueue->send(msg);
+			}
+		}
 	} else {
-		d->msgqueue->send(msgs);
+		d->msgqueue->sendMultiple(msgs.size(), msgs.constData());
 	}
 }
 
 void Client::sendSystemChat(const QString &message, bool alert)
 {
-	protocol::ServerReply msg {
-		alert ? protocol::ServerReply::ALERT : protocol::ServerReply::MESSAGE,
-		message,
-		QJsonObject()
-	};
-
-	d->msgqueue->send(MessagePtr(new protocol::Command(0, msg.toJson())));
+	d->msgqueue->send(
+		alert ? net::ServerReply::makeAlert(message)
+			  : net::ServerReply::makeMessage(message));
 }
 
 void Client::receiveMessages()
 {
 	while(d->msgqueue->isPending()) {
-		MessagePtr msg = d->msgqueue->getPending();
-
+		net::Message msg = d->msgqueue->shiftPending();
 		d->lastActive = QDateTime::currentMSecsSinceEpoch();
 
 		if(d->session.isNull()) {
 			// No session? We must be in the login phase
-			if(msg->type() == protocol::MSG_COMMAND)
+			if(msg.type() == DP_MSG_SERVER_COMMAND) {
 				emit loginMessage(msg);
-			else
-				log(Log().about(Log::Level::Warn, Log::Topic::RuleBreak).message(
-					QString("Got non-login message (type=%1) in login state").arg(msg->type())
-					));
-
+			} else {
+				log(Log()
+						.about(Log::Level::Warn, Log::Topic::RuleBreak)
+						.message(QStringLiteral("Got non-login message "
+												"(type=%1) in login state")
+									 .arg(msg.type())));
+			}
 		} else {
-
 			// Enforce origin ID, except when receiving a snapshot
-			if(d->session->initUserId() != d->id)
-				msg->setContextId(d->id);
+			if(d->session->initUserId() != d->id) {
+				msg.setContextId(d->id);
+			}
 
-			if(isHoldLocked())
-				d->holdqueue << msg;
-			else
+			if(isHoldLocked()) {
+				d->holdqueue.append(msg);
+			} else {
 				d->session->handleClientMessage(*this, msg);
+			}
 		}
 	}
 }
 
 void Client::gotBadData(int len, int type)
 {
-	log(Log().about(Log::Level::Warn, Log::Topic::RuleBreak).message(
-		QString("Received unknown message type %1 of length %2").arg(type).arg(len)
-		));
+	log(Log()
+			.about(Log::Level::Warn, Log::Topic::RuleBreak)
+			.message(QString("Received unknown message type %1 of length %2")
+						 .arg(type)
+						 .arg(len)));
 	d->socket->abort();
 }
 
 void Client::socketError(QAbstractSocket::SocketError error)
 {
 	if(error != QAbstractSocket::RemoteHostClosedError) {
-		log(Log().about(Log::Level::Warn, Log::Topic::Status).message("Socket error: " + d->socket->errorString()));
+		log(Log()
+				.about(Log::Level::Warn, Log::Topic::Status)
+				.message("Socket error: " + d->socket->errorString()));
 		d->socket->abort();
 	}
 }
@@ -355,22 +358,25 @@ void Client::socketDisconnect()
 	this->deleteLater();
 }
 
-void Client::disconnectClient(DisconnectionReason reason, const QString &message)
+void Client::disconnectClient(
+	DisconnectionReason reason, const QString &message)
 {
-	protocol::Disconnect::Reason pr { protocol::Disconnect::OTHER };
-	Log::Topic topic { Log::Topic::Leave };
+	net::MessageQueue::GracefulDisconnect pr{
+		net::MessageQueue::GracefulDisconnect::Other};
+	Log::Topic topic{Log::Topic::Leave};
 	switch(reason) {
 	case DisconnectionReason::Kick:
-		pr = protocol::Disconnect::KICK;
+		pr = net::MessageQueue::GracefulDisconnect::Kick;
 		topic = Log::Topic::Kick;
 		break;
-	case DisconnectionReason::Error: pr = protocol::Disconnect::ERROR; break;
-	case DisconnectionReason::Shutdown: pr = protocol::Disconnect::SHUTDOWN; break;
+	case DisconnectionReason::Error:
+		pr = net::MessageQueue::GracefulDisconnect::Error;
+		break;
+	case DisconnectionReason::Shutdown:
+		pr = net::MessageQueue::GracefulDisconnect::Shutdown;
+		break;
 	}
-	log(Log()
-		.about(Log::Level::Info, topic)
-		.message(message)
-		);
+	log(Log().about(Log::Level::Info, topic).message(message));
 
 	emit loggedOff(this);
 	d->msgqueue->sendDisconnect(pr, message);
@@ -380,8 +386,9 @@ void Client::setHoldLocked(bool lock)
 {
 	d->isHoldLocked = lock;
 	if(!lock) {
-		for(MessagePtr msg : d->holdqueue)
+		for(const net::Message &msg : d->holdqueue) {
 			d->session->handleClientMessage(*this, msg);
+		}
 		d->holdqueue.clear();
 	}
 }
@@ -408,13 +415,13 @@ bool Client::hasSslSupport() const
 
 bool Client::isSecure() const
 {
-	QSslSocket *socket = qobject_cast<QSslSocket*>(d->socket);
+	QSslSocket *socket = qobject_cast<QSslSocket *>(d->socket);
 	return socket && socket->isEncrypted();
 }
 
 void Client::startTls()
 {
-	QSslSocket *socket = qobject_cast<QSslSocket*>(d->socket);
+	QSslSocket *socket = qobject_cast<QSslSocket *>(d->socket);
 	Q_ASSERT(socket);
 	socket->startServerEncryption();
 }
@@ -428,10 +435,10 @@ void Client::log(Log entry) const
 		d->logger->logMessage(entry);
 }
 
-Log Client::log() const {
+Log Client::log() const
+{
 	return Log().user(d->id, d->socket->peerAddress(), d->username);
 }
 
 
 }
-

@@ -1,33 +1,30 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "libclient/net/login.h"
+#include "cmake-config/config.h"
 #include "libclient/net/loginsessions.h"
 #include "libclient/net/tcpserver.h"
-#include "libclient/net/servercmd.h"
 #include "libclient/parentalcontrols/parentalcontrols.h"
-
-#include "cmake-config/config.h"
 #include "libshared/net/protover.h"
+#include "libshared/net/servercmd.h"
 #include "libshared/util/networkaccess.h"
 #include "libshared/util/paths.h"
-
+#include <QBuffer>
 #include <QDebug>
-#include <QStringList>
-#include <QRegularExpression>
-#include <QSslSocket>
 #include <QFile>
 #include <QHostAddress>
-#include <QNetworkRequest>
-#include <QNetworkReply>
 #include <QImage>
-#include <QBuffer>
+#include <QNetworkReply>
+#include <QNetworkRequest>
 #include <QRandomGenerator>
+#include <QRegularExpression>
 #include <QSettings>
-#include <QUuid>
+#include <QSslSocket>
+#include <QStringList>
 #include <QUrlQuery>
+#include <QUuid>
 
 #ifndef NDEBUG
-#define DEBUG_LOGIN
+#	define DEBUG_LOGIN
 #endif
 
 namespace {
@@ -41,7 +38,8 @@ QFileInfo getCertFile(CertLocation location, const QString &hostname)
 	else
 		locationpath = "trusted-hosts/";
 
-	return QFileInfo(utils::paths::writablePath(locationpath, hostname + ".pem"));
+	return QFileInfo(
+		utils::paths::writablePath(locationpath, hostname + ".pem"));
 }
 
 }
@@ -67,7 +65,7 @@ LoginHandler::LoginHandler(Mode mode, const QUrl &url, QObject *parent)
 
 	// Automatically join a session if the ID is included in the URL
 	QString path = m_address.path();
-	if(path.length()>1) {
+	if(path.length() > 1) {
 		QRegularExpression idre("\\A/([a-zA-Z0-9:-]{1,64})/?\\z");
 		auto m = idre.match(path);
 		if(m.hasMatch())
@@ -75,9 +73,7 @@ LoginHandler::LoginHandler(Mode mode, const QUrl &url, QObject *parent)
 	}
 }
 
-void LoginHandler::serverDisconnected()
-{
-}
+void LoginHandler::serverDisconnected() {}
 
 bool LoginHandler::receiveMessage(const ServerReply &msg)
 {
@@ -99,25 +95,42 @@ bool LoginHandler::receiveMessage(const ServerReply &msg)
 		handleError(msg.reply["code"].toString(), msg.message);
 		return true;
 
-	} else if(msg.type != ServerReply::ReplyType::Login && msg.type != ServerReply::ReplyType::Result) {
-		qWarning() << "Login error: got reply type" << int(msg.type) << "when expected LOGIN, RESULT or ERROR";
+	} else if(
+		msg.type != ServerReply::ReplyType::Login &&
+		msg.type != ServerReply::ReplyType::Result) {
+		qWarning() << "Login error: got reply type" << int(msg.type)
+				   << "when expected LOGIN, RESULT or ERROR";
 		failLogin(tr("Invalid state"));
 
 		return true;
 	}
 
 	switch(m_state) {
-	case EXPECT_HELLO: expectHello(msg); break;
-	case EXPECT_STARTTLS: expectStartTls(msg); break;
+	case EXPECT_HELLO:
+		expectHello(msg);
+		break;
+	case EXPECT_STARTTLS:
+		expectStartTls(msg);
+		break;
 	case WAIT_FOR_LOGIN_PASSWORD:
 	case WAIT_FOR_EXTAUTH:
-		expectNothing(); break;
-	case EXPECT_IDENTIFIED: expectIdentified(msg); break;
-	case EXPECT_SESSIONLIST_TO_JOIN: expectSessionDescriptionJoin(msg); break;
-	case EXPECT_SESSIONLIST_TO_HOST: expectSessionDescriptionHost(msg); break;
+		expectNothing();
+		break;
+	case EXPECT_IDENTIFIED:
+		expectIdentified(msg);
+		break;
+	case EXPECT_SESSIONLIST_TO_JOIN:
+		expectSessionDescriptionJoin(msg);
+		break;
+	case EXPECT_SESSIONLIST_TO_HOST:
+		expectSessionDescriptionHost(msg);
+		break;
 	case WAIT_FOR_JOIN_PASSWORD:
-	case EXPECT_LOGIN_OK: return expectLoginOk(msg); break;
-	case ABORT_LOGIN: /* ignore messages in this state */ break;
+	case EXPECT_LOGIN_OK:
+		return expectLoginOk(msg);
+		break;
+	case ABORT_LOGIN: /* ignore messages in this state */
+		break;
 	}
 
 	return true;
@@ -132,7 +145,8 @@ void LoginHandler::expectNothing()
 void LoginHandler::expectHello(const ServerReply &msg)
 {
 	if(msg.type != ServerReply::ReplyType::Login) {
-		qWarning() << "Login error. Greeting type is not LOGIN:" << int(msg.type);
+		qWarning() << "Login error. Greeting type is not LOGIN:"
+				   << int(msg.type);
 		failLogin(tr("Incompatible server"));
 		return;
 	}
@@ -160,7 +174,8 @@ void LoginHandler::expectHello(const ServerReply &msg)
 		} else if(flag == "TLS") {
 			startTls = true;
 		} else if(flag == "SECURE") {
-			// Changed in 2.1.9 (although in practice we've always done this): this flag is implied by TLS
+			// Changed in 2.1.9 (although in practice we've always done this):
+			// this flag is implied by TLS
 		} else if(flag == "PERSIST") {
 			m_canPersist = true;
 		} else if(flag == "NOGUEST") {
@@ -226,7 +241,8 @@ void LoginHandler::prepareToSendIdentity()
 		if(m_mustAuth)
 			prompt = tr("This server does not allow guest logins");
 		else
-			prompt = tr("Password needed to log in as \"%1\"").arg(m_address.userName());
+			prompt = tr("Password needed to log in as \"%1\"")
+						 .arg(m_address.userName());
 
 		emit loginNeeded(m_address.userName(), prompt);
 
@@ -242,7 +258,8 @@ void LoginHandler::selectAvatar(const QImage &avatar)
 	m_avatar = a.buffer().toBase64();
 }
 
-void LoginHandler::selectIdentity(const QString &username, const QString &password)
+void LoginHandler::selectIdentity(
+	const QString &username, const QString &password)
 {
 	m_address.setUserName(username);
 	m_address.setPassword(password);
@@ -270,7 +287,8 @@ void LoginHandler::sendIdentity()
 	send("ident", args, kwargs, containsAvatar);
 }
 
-void LoginHandler::requestExtAuth(const QString &username, const QString &password)
+void LoginHandler::requestExtAuth(
+	const QString &username, const QString &password)
 {
 	// Construct request body
 	QJsonObject o;
@@ -287,7 +305,8 @@ void LoginHandler::requestExtAuth(const QString &username, const QString &passwo
 	QNetworkRequest req(m_extAuthUrl);
 	req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
-	QNetworkReply *reply = networkaccess::getInstance()->post(req, QJsonDocument(o).toJson());
+	QNetworkReply *reply =
+		networkaccess::getInstance()->post(req, QJsonDocument(o).toJson());
 	connect(reply, &QNetworkReply::finished, this, [reply, this]() {
 		reply->deleteLater();
 
@@ -296,7 +315,8 @@ void LoginHandler::requestExtAuth(const QString &username, const QString &passwo
 			return;
 		}
 		QJsonParseError error;
-		const QJsonDocument doc = QJsonDocument::fromJson(reply->readAll(), &error);
+		const QJsonDocument doc =
+			QJsonDocument::fromJson(reply->readAll(), &error);
 		if(error.error != QJsonParseError::NoError) {
 			failLogin(tr("Auth server error: %1").arg(error.errorString()));
 			return;
@@ -306,7 +326,7 @@ void LoginHandler::requestExtAuth(const QString &username, const QString &passwo
 		const QString status = obj["status"].toString();
 		if(status == "auth") {
 			m_state = EXPECT_IDENTIFIED;
-			send("ident", { m_address.userName() }, {{"extauth", obj["token"]}});
+			send("ident", {m_address.userName()}, {{"extauth", obj["token"]}});
 
 			emit extAuthComplete(true);
 
@@ -341,12 +361,17 @@ void LoginHandler::expectIdentified(const ServerReply &msg)
 		m_supportsExtAuthAvatars = msg.reply["avatar"].toBool();
 
 		if(!m_extAuthUrl.isValid()) {
-			qWarning("Invalid ext-auth URL: %s", qPrintable(msg.reply["extauthurl"].toString()));
+			qWarning(
+				"Invalid ext-auth URL: %s",
+				qPrintable(msg.reply["extauthurl"].toString()));
 			failLogin(tr("Server misconfiguration: invalid ext-auth URL"));
 			return;
 		}
-		if(m_extAuthUrl.scheme() != "http" && m_extAuthUrl.scheme() != "https") {
-			qWarning("Unsupported ext-auth URL: %s", qPrintable(msg.reply["extauthurl"].toString()));
+		if(m_extAuthUrl.scheme() != "http" &&
+		   m_extAuthUrl.scheme() != "https") {
+			qWarning(
+				"Unsupported ext-auth URL: %s",
+				qPrintable(msg.reply["extauthurl"].toString()));
 			failLogin(tr("Unsupported ext-auth URL scheme"));
 			return;
 		}
@@ -434,7 +459,8 @@ void LoginHandler::expectSessionDescriptionJoin(const ServerReply &msg)
 			const QJsonObject js = jsv.toObject();
 
 			protocol::ProtocolVersion protoVer =
-				protocol::ProtocolVersion::fromString(js["protocol"].toString());
+				protocol::ProtocolVersion::fromString(
+					js["protocol"].toString());
 
 			QString incompatibleSeries;
 			if(!protoVer.isCompatible()) {
@@ -449,7 +475,7 @@ void LoginHandler::expectSessionDescriptionJoin(const ServerReply &msg)
 				}
 			}
 
-			const LoginSession session {
+			const LoginSession session{
 				js["id"].toString(),
 				js["alias"].toString(),
 				js["title"].toString(),
@@ -461,17 +487,18 @@ void LoginHandler::expectSessionDescriptionJoin(const ServerReply &msg)
 				js["persistent"].toBool(),
 				js["closed"].toBool(),
 				js["authOnly"].toBool() && m_isGuest,
-				js["nsfm"].toBool()
-			};
+				js["nsfm"].toBool()};
 
 			m_sessions->updateSession(session);
 
-			if(!m_autoJoinId.isEmpty() && (session.id == m_autoJoinId || session.alias == m_autoJoinId)) {
+			if(!m_autoJoinId.isEmpty() &&
+			   (session.id == m_autoJoinId || session.alias == m_autoJoinId)) {
 				// A session ID was given as part of the URL
 
 				auto canJoin = session.incompatibleSeries.isEmpty();
-				if (canJoin && pclevel >= parentalcontrols::Level::NoJoin) {
-					canJoin = !session.nsfm && !parentalcontrols::isNsfmTitle(session.title);
+				if(canJoin && pclevel >= parentalcontrols::Level::NoJoin) {
+					canJoin = !session.nsfm &&
+							  !parentalcontrols::isNsfmTitle(session.title);
 				}
 
 				if(canJoin) {
@@ -500,14 +527,18 @@ void LoginHandler::expectSessionDescriptionJoin(const ServerReply &msg)
 		if(session.id.isEmpty()) {
 			failLogin(tr("Session not yet started!"));
 			return;
-		} else if(parentalcontrols::level() >= parentalcontrols::Level::NoJoin) {
-			const auto blocked = session.nsfm || parentalcontrols::isNsfmTitle(session.title);
-			if (blocked) {
+		} else if(
+			parentalcontrols::level() >= parentalcontrols::Level::NoJoin) {
+			const auto blocked =
+				session.nsfm || parentalcontrols::isNsfmTitle(session.title);
+			if(blocked) {
 				failLogin(tr("Blocked by parental controls"));
 				return;
 			}
 		} else if(!session.incompatibleSeries.isEmpty()) {
-			failLogin(tr("Session for a different Drawpile version (%1) in progress!").arg(session.incompatibleSeries));
+			failLogin(
+				tr("Session for a different Drawpile version (%1) in progress!")
+					.arg(session.incompatibleSeries));
 			return;
 		}
 
@@ -538,14 +569,16 @@ bool LoginHandler::expectLoginOk(const ServerReply &msg)
 		const int userid = msg.reply["join"].toObject()["user"].toInt();
 
 		if(userid < 1 || userid > 254) {
-			qWarning() << "Login error. User ID" << userid << "out of supported range.";
+			qWarning() << "Login error. User ID" << userid
+					   << "out of supported range.";
 			failLogin(tr("Incompatible server"));
 			return true;
 		}
 
 		m_userid = uint8_t(userid);
 
-		const QJsonArray sessionFlags = msg.reply["join"].toObject()["flags"].toArray();
+		const QJsonArray sessionFlags =
+			msg.reply["join"].toObject()["flags"].toArray();
 		for(const QJsonValue &val : sessionFlags) {
 			if(val.isString())
 				m_sessionFlags << val.toString();
@@ -566,11 +599,13 @@ bool LoginHandler::expectLoginOk(const ServerReply &msg)
 			send("sessionconf", {}, kwargs);
 
 			if(!m_announceUrl.isEmpty())
-				m_server->sendMessage(ServerCommand::makeAnnounce(m_announceUrl, false));
+				m_server->sendMessage(
+					ServerCommand::makeAnnounce(m_announceUrl, false));
 
 			// Upload initial session content
 			if(m_mode == Mode::HostRemote) {
-				m_server->sendMessages(m_initialState.count(), m_initialState.constData());
+				m_server->sendMessages(
+					m_initialState.count(), m_initialState.constData());
 				send("init-complete");
 			}
 		}
@@ -580,7 +615,8 @@ bool LoginHandler::expectLoginOk(const ServerReply &msg)
 
 	} else {
 		// Unexpected response
-		qWarning() << "Login error. Unexpected response while waiting for OK:" << msg.reply;
+		qWarning() << "Login error. Unexpected response while waiting for OK:"
+				   << msg.reply;
 		failLogin(tr("Incompatible server"));
 	}
 
@@ -624,22 +660,24 @@ void LoginHandler::sendJoinCommand()
 		kwargs["password"] = m_joinPassword;
 	}
 
-	send("join", { m_selectedId }, kwargs);
+	send("join", {m_selectedId}, kwargs);
 	m_state = EXPECT_LOGIN_OK;
 }
 
 void LoginHandler::reportSession(const QString &id, const QString &reason)
 {
-	send("report", {}, {
-		{"session", id},
-		{"reason", reason}
-	});
+	send("report", {}, {{"session", id}, {"reason", reason}});
 }
 
 void LoginHandler::startTls()
 {
-	connect(m_server->m_socket, &QSslSocket::encrypted, this, &LoginHandler::tlsStarted);
-	connect(m_server->m_socket, QOverload<const QList<QSslError>&>::of(&QSslSocket::sslErrors), this, &LoginHandler::tlsError);
+	connect(
+		m_server->m_socket, &QSslSocket::encrypted, this,
+		&LoginHandler::tlsStarted);
+	connect(
+		m_server->m_socket,
+		QOverload<const QList<QSslError> &>::of(&QSslSocket::sslErrors), this,
+		&LoginHandler::tlsError);
 
 	m_server->m_socket->startClientEncryption();
 }
@@ -650,8 +688,8 @@ void LoginHandler::tlsError(const QList<QSslError> &errors)
 	QString errorstr;
 	bool fail = false;
 
-	// TODO this was optimized for self signed certificates back end Let's Encrypt
-	// didn't exist. This should be fixed to better support actual CAs.
+	// TODO this was optimized for self signed certificates back end Let's
+	// Encrypt didn't exist. This should be fixed to better support actual CAs.
 	bool isIp = QHostAddress().setAddress(m_address.host());
 	bool isSelfSigned = m_server->hostCertificate().isSelfSigned();
 	qDebug() << errors.size() << "SSL error(s), self-signed" << isSelfSigned;
@@ -664,12 +702,14 @@ void LoginHandler::tlsError(const QList<QSslError> &errors)
 			ignore << e;
 
 		} else if(isIp && e.error() == QSslError::HostNameMismatch) {
-			// Ignore CN mismatch when using an IP address rather than a hostname
+			// Ignore CN mismatch when using an IP address rather than a
+			// hostname
 			ignore << e;
 			qInfo() << "Ignoring error about hostname mismatch with IP address:"
 					<< int(e.error()) << e.errorString();
 
-		} else if(e.error() == QSslError::CertificateUntrusted && isSelfSigned) {
+		} else if(
+			e.error() == QSslError::CertificateUntrusted && isSelfSigned) {
 			// "The root CA certificate is not trusted for this purpose" is an
 			// error that spontaneously manifested in macOS and then way later
 			// in Windows. We ignore it on self-signed certificates.
@@ -715,7 +755,8 @@ void LoginHandler::tlsStarted()
 	m_certFile = getCertFile(TRUSTED_HOSTS, hostname);
 
 	if(m_certFile.exists()) {
-		QList<QSslCertificate> trustedcerts = QSslCertificate::fromPath(m_certFile.absoluteFilePath());
+		QList<QSslCertificate> trustedcerts =
+			QSslCertificate::fromPath(m_certFile.absoluteFilePath());
 
 		if(trustedcerts.isEmpty() || trustedcerts.at(0).isNull()) {
 			failLogin(tr("Invalid SSL certificate for host %1").arg(hostname));
@@ -735,7 +776,8 @@ void LoginHandler::tlsStarted()
 	// Okay, not a trusted certificate, but check if we've seen it before
 	m_certFile = getCertFile(KNOWN_HOSTS, hostname);
 	if(m_certFile.exists()) {
-		QList<QSslCertificate> knowncerts = QSslCertificate::fromPath(m_certFile.absoluteFilePath());
+		QList<QSslCertificate> knowncerts =
+			QSslCertificate::fromPath(m_certFile.absoluteFilePath());
 
 		if(knowncerts.isEmpty() || knowncerts.at(0).isNull()) {
 			failLogin(tr("Invalid SSL certificate for host %1").arg(hostname));
@@ -791,7 +833,8 @@ void LoginHandler::handleError(const QString &code, const QString &msg)
 		error = tr("Session not found!");
 	else if(code == "badPassword") {
 		if(m_passwordState == WAIT_FOR_LOGIN_PASSWORD) {
-			error = tr("Incorrect password for '%1'!").arg(m_address.userName());
+			error =
+				tr("Incorrect password for '%1'!").arg(m_address.userName());
 			emit badLoginPassword();
 		} else {
 			error = tr("Incorrect session password!");
@@ -803,7 +846,8 @@ void LoginHandler::handleError(const QString &code, const QString &msg)
 	else if(code == "nameInUse")
 		error = tr("Username already taken!");
 	else if(code == "closed")
-		error = m_mode == Mode::Join ? tr("Session is closed!") : tr("Server is full!");
+		error = m_mode == Mode::Join ? tr("Session is closed!")
+									 : tr("Server is full!");
 	else if(code == "unauthorizedHost")
 		error = tr("Hosting not authorized");
 	else if(code == "banned")
@@ -826,8 +870,8 @@ void LoginHandler::send(
 	const QString &cmd, const QJsonArray &args, const QJsonObject &kwargs,
 	bool containsAvatar)
 {
-	ServerCommand sc { cmd, args, kwargs };
-	drawdance::Message msg = sc.toMessage();
+	ServerCommand sc{cmd, args, kwargs};
+	net::Message msg = sc.toMessage();
 	if(msg.isNull() && containsAvatar) {
 		qWarning("Removing avatar from server command and trying again");
 		sc.kwargs.remove("avatar");
@@ -876,8 +920,7 @@ QString LoginHandler::getSid()
 	QSettings cfg1{
 		QSettings::NativeFormat, QSettings::UserScope,
 		QStringLiteral("drawpile"), QStringLiteral("sid")};
-	QSettings cfg2{
-		QSettings::NativeFormat, QSettings::UserScope, org, app};
+	QSettings cfg2{QSettings::NativeFormat, QSettings::UserScope, org, app};
 
 	bool haveSid1 = cfg1.contains(key1);
 	bool haveSid2 = cfg2.contains(key2);

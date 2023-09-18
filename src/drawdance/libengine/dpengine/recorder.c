@@ -146,7 +146,7 @@ static bool write_message_dec(DP_Recorder *r, DP_Message *msg)
     bool ok;
     switch (r->type) {
     case DP_RECORDER_TYPE_BINARY:
-        ok = DP_binary_writer_write_message(r->binary_writer, msg);
+        ok = DP_binary_writer_write_message(r->binary_writer, msg) != 0;
         break;
     case DP_RECORDER_TYPE_TEXT:
         ok = DP_message_write_text(msg, r->text_writer);

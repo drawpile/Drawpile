@@ -1,31 +1,28 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 extern "C" {
 #include <dpmsg/acl.h>
 #include <dpmsg/message.h>
 }
-
-#include "libclient/canvas/canvasmodel.h"
-#include "libclient/canvas/layerlist.h"
-#include "libclient/canvas/userlist.h"
-#include "libclient/canvas/timelinemodel.h"
 #include "libclient/canvas/acl.h"
-#include "libclient/canvas/selection.h"
-#include "libclient/canvas/paintengine.h"
+#include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/documentmetadata.h"
+#include "libclient/canvas/layerlist.h"
+#include "libclient/canvas/paintengine.h"
+#include "libclient/canvas/selection.h"
+#include "libclient/canvas/timelinemodel.h"
+#include "libclient/canvas/userlist.h"
 #include "libclient/settings.h"
 #include "libclient/utils/identicon.h"
 #include "libshared/util/qtcompat.h"
-
 #include <QDebug>
 #include <QPainter>
 
 namespace canvas {
 
-CanvasModel::CanvasModel(libclient::settings::Settings &settings,
-		uint8_t localUserId, int fps, int snapshotMaxCount,
-		long long snapshotMinDelayMs, bool wantCanvasHistoryDump,
-		QObject *parent)
+CanvasModel::CanvasModel(
+	libclient::settings::Settings &settings, uint8_t localUserId, int fps,
+	int snapshotMaxCount, long long snapshotMinDelayMs,
+	bool wantCanvasHistoryDump, QObject *parent)
 	: QObject(parent)
 	, m_selection(nullptr)
 	, m_localUserId(1)
@@ -40,33 +37,59 @@ CanvasModel::CanvasModel(libclient::settings::Settings &settings,
 	m_timeline = new TimelineModel(this);
 	m_metadata = new DocumentMetadata(m_paintengine, this);
 
-	connect(m_aclstate, &AclState::userBitsChanged, m_userlist, &UserListModel::updateAclState);
-	connect(m_paintengine, &PaintEngine::aclsChanged, m_aclstate, &AclState::aclsChanged);
-	connect(m_paintengine, &PaintEngine::resetLockSet, m_aclstate, &AclState::resetLockSet);
-	connect(m_paintengine, &PaintEngine::laserTrail, this, &CanvasModel::onLaserTrail);
-	connect(m_paintengine, &PaintEngine::defaultLayer, m_layerlist, &LayerListModel::setDefaultLayer);
-	connect(m_paintengine, &PaintEngine::recorderStateChanged, this, &CanvasModel::recorderStateChanged);
+	connect(
+		m_aclstate, &AclState::userBitsChanged, m_userlist,
+		&UserListModel::updateAclState);
+	connect(
+		m_paintengine, &PaintEngine::aclsChanged, m_aclstate,
+		&AclState::aclsChanged);
+	connect(
+		m_paintengine, &PaintEngine::resetLockSet, m_aclstate,
+		&AclState::resetLockSet);
+	connect(
+		m_paintengine, &PaintEngine::laserTrail, this,
+		&CanvasModel::onLaserTrail);
+	connect(
+		m_paintengine, &PaintEngine::defaultLayer, m_layerlist,
+		&LayerListModel::setDefaultLayer);
+	connect(
+		m_paintengine, &PaintEngine::recorderStateChanged, this,
+		&CanvasModel::recorderStateChanged);
 
 	m_aclstate->setLocalUserId(localUserId);
 
 	m_layerlist->setAclState(m_aclstate);
-	m_layerlist->setLayerGetter([this](int id)->QImage { return m_paintengine->getLayerImage(id); });
+	m_layerlist->setLayerGetter([this](int id) -> QImage {
+		return m_paintengine->getLayerImage(id);
+	});
 	m_timeline->setAclState(m_aclstate);
 
-	connect(m_layerlist, &LayerListModel::autoSelectRequest, this, &CanvasModel::layerAutoselectRequest);
-	connect(m_paintengine, &PaintEngine::resized, this, &CanvasModel::onCanvasResize, Qt::QueuedConnection);
-	connect(m_paintengine, &PaintEngine::layersChanged, m_layerlist, &LayerListModel::setLayers);
-	connect(m_paintengine, &PaintEngine::timelineChanged, m_timeline, &TimelineModel::setTimeline);
-	connect(m_paintengine, &PaintEngine::frameVisibilityChanged, m_layerlist, &LayerListModel::setLayersVisibleInFrame);
+	connect(
+		m_layerlist, &LayerListModel::autoSelectRequest, this,
+		&CanvasModel::layerAutoselectRequest);
+	connect(
+		m_paintengine, &PaintEngine::resized, this,
+		&CanvasModel::onCanvasResize, Qt::QueuedConnection);
+	connect(
+		m_paintengine, &PaintEngine::layersChanged, m_layerlist,
+		&LayerListModel::setLayers);
+	connect(
+		m_paintengine, &PaintEngine::timelineChanged, m_timeline,
+		&TimelineModel::setTimeline);
+	connect(
+		m_paintengine, &PaintEngine::frameVisibilityChanged, m_layerlist,
+		&LayerListModel::setLayersVisibleInFrame);
 
 	settings.bindEngineFrameRate(m_paintengine, &PaintEngine::setFps);
-	settings.bindEngineSnapshotCount(m_paintengine, &PaintEngine::setSnapshotMaxCount);
-	settings.bindEngineSnapshotInterval(this, [this](int minDelaySec){
+	settings.bindEngineSnapshotCount(
+		m_paintengine, &PaintEngine::setSnapshotMaxCount);
+	settings.bindEngineSnapshotInterval(this, [this](int minDelaySec) {
 		m_paintengine->setSnapshotMinDelayMs(minDelaySec * 1000LL);
 	});
 }
 
-void CanvasModel::loadBlank(int undoDepthLimit, const QSize &size, const QColor &background)
+void CanvasModel::loadBlank(
+	int undoDepthLimit, const QSize &size, const QColor &background)
 {
 	m_paintengine->enqueueLoadBlank(undoDepthLimit, size, background);
 }
@@ -75,7 +98,8 @@ void CanvasModel::loadCanvasState(
 	int undoDepthLimit, const drawdance::CanvasState &canvasState)
 {
 	m_paintengine->reset(m_localUserId, canvasState);
-	drawdance::Message undoDepthMessage = drawdance::Message::makeUndoDepth(0, undoDepthLimit);
+	net::Message undoDepthMessage =
+		net::makeUndoDepthMessage(0, undoDepthLimit);
 	m_paintengine->receiveMessages(false, 1, &undoDepthMessage);
 }
 
@@ -95,7 +119,8 @@ void CanvasModel::previewAnnotation(int id, const QRect &shape)
 	emit previewAnnotationRequested(id, shape);
 }
 
-void CanvasModel::connectedToServer(uint8_t myUserId, bool join, bool compatibilityMode)
+void CanvasModel::connectedToServer(
+	uint8_t myUserId, bool join, bool compatibilityMode)
 {
 	if(myUserId == 0) {
 		// Zero is a reserved "null" user ID
@@ -126,7 +151,7 @@ void CanvasModel::disconnectedFromServer()
 	emit compatibilityModeChanged(m_compatibilityMode);
 }
 
-void CanvasModel::handleCommands(int count, const drawdance::Message *msgs)
+void CanvasModel::handleCommands(int count, const net::Message *msgs)
 {
 	handleMetaMessages(count, msgs);
 	if(m_paintengine->receiveMessages(false, count, msgs) != 0) {
@@ -134,17 +159,17 @@ void CanvasModel::handleCommands(int count, const drawdance::Message *msgs)
 	}
 }
 
-void CanvasModel::handleLocalCommands(int count, const drawdance::Message *msgs)
+void CanvasModel::handleLocalCommands(int count, const net::Message *msgs)
 {
 	if(m_paintengine->receiveMessages(true, count, msgs) != 0) {
 		m_layerlist->setAutoselectAny(false);
 	}
 }
 
-void CanvasModel::handleMetaMessages(int count, const drawdance::Message *msgs)
+void CanvasModel::handleMetaMessages(int count, const net::Message *msgs)
 {
-	for (int i = 0; i < count; ++i) {
-		const drawdance::Message &msg = msgs[i];
+	for(int i = 0; i < count; ++i) {
+		const net::Message &msg = msgs[i];
 		switch(msg.type()) {
 		case DP_MSG_JOIN:
 			handleJoin(msg);
@@ -164,7 +189,7 @@ void CanvasModel::handleMetaMessages(int count, const drawdance::Message *msgs)
 	}
 }
 
-void CanvasModel::handleJoin(const drawdance::Message &msg)
+void CanvasModel::handleJoin(const net::Message &msg)
 {
 	DP_MsgJoin *mj = DP_msg_join_cast(msg.get());
 	uint8_t user_id = msg.contextId();
@@ -177,14 +202,19 @@ void CanvasModel::handleJoin(const drawdance::Message &msg)
 	const unsigned char *avatarBytes = DP_msg_join_avatar(mj, &avatarSize);
 	QImage avatar;
 	if(avatarSize != 0) {
-		QByteArray avatarData = QByteArray::fromRawData(reinterpret_cast<const char*>(avatarBytes), compat::castSize(avatarSize));
+		QByteArray avatarData = QByteArray::fromRawData(
+			reinterpret_cast<const char *>(avatarBytes),
+			compat::castSize(avatarSize));
 		if(!avatar.loadFromData(avatarData)) {
-			qWarning("Avatar loading failed for user '%s' (#%d)", qPrintable(name), user_id);
+			qWarning(
+				"Avatar loading failed for user '%s' (#%d)", qPrintable(name),
+				user_id);
 		}
 
 		// Rescale avatar if its the wrong size
 		if(avatar.width() > 32 || avatar.height() > 32) {
-			avatar = avatar.scaled(32, 32, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+			avatar = avatar.scaled(
+				32, 32, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 		}
 	}
 	if(avatar.isNull()) {
@@ -192,7 +222,7 @@ void CanvasModel::handleJoin(const drawdance::Message &msg)
 	}
 
 	uint8_t flags = DP_msg_join_flags(mj);
-	const User u {
+	const User u{
 		user_id,
 		name,
 		QPixmap::fromImage(avatar),
@@ -204,14 +234,13 @@ void CanvasModel::handleJoin(const drawdance::Message &msg)
 		bool(flags & DP_MSG_JOIN_FLAGS_AUTH),
 		false,
 		false,
-		true
-	};
+		true};
 
 	m_userlist->userLogin(u);
 	emit userJoined(user_id, name);
 }
 
-void CanvasModel::handleLeave(const drawdance::Message &msg)
+void CanvasModel::handleLeave(const net::Message &msg)
 {
 	uint8_t user_id = msg.contextId();
 	QString name = m_userlist->getUsername(user_id);
@@ -219,13 +248,14 @@ void CanvasModel::handleLeave(const drawdance::Message &msg)
 	emit userLeft(user_id, name);
 }
 
-void CanvasModel::handleChat(const drawdance::Message &msg)
+void CanvasModel::handleChat(const net::Message &msg)
 {
 	DP_MsgChat *mc = DP_msg_chat_cast(msg.get());
 
 	size_t messageLength;
 	const char *messageBytes = DP_msg_chat_message(mc, &messageLength);
-	QString message = QString::fromUtf8(messageBytes, compat::castSize(messageLength));
+	QString message =
+		QString::fromUtf8(messageBytes, compat::castSize(messageLength));
 
 	uint8_t oflags = DP_msg_chat_oflags(mc);
 	if(oflags & DP_MSG_CHAT_OFLAGS_PIN) {
@@ -244,13 +274,14 @@ void CanvasModel::handleChat(const drawdance::Message &msg)
 	}
 }
 
-void CanvasModel::handlePrivateChat(const drawdance::Message &msg)
+void CanvasModel::handlePrivateChat(const net::Message &msg)
 {
 	DP_MsgPrivateChat *mpc = DP_msg_private_chat_cast(msg.get());
 
 	size_t messageLength;
 	const char *messageBytes = DP_msg_private_chat_message(mpc, &messageLength);
-	QString message = QString::fromUtf8(messageBytes, compat::castSize(messageLength));
+	QString message =
+		QString::fromUtf8(messageBytes, compat::castSize(messageLength));
 
 	uint8_t target = DP_msg_private_chat_target(mpc);
 	uint8_t oflags = DP_msg_private_chat_oflags(mpc);
@@ -259,33 +290,34 @@ void CanvasModel::handlePrivateChat(const drawdance::Message &msg)
 
 void CanvasModel::onLaserTrail(uint8_t userId, int persistence, uint32_t color)
 {
-	emit laserTrail(userId, qMin(15, persistence) * 1000, QColor::fromRgb(color));
+	emit laserTrail(
+		userId, qMin(15, persistence) * 1000, QColor::fromRgb(color));
 }
 
-drawdance::MessageList CanvasModel::generateSnapshot(
+net::MessageList CanvasModel::generateSnapshot(
 	bool includePinnedMessage, unsigned int aclIncludeFlags) const
 {
-	drawdance::MessageList snapshot;
+	net::MessageList snapshot;
 	m_paintengine->historyCanvasState().toResetImage(snapshot, 0);
 	amendSnapshotMetadata(snapshot, includePinnedMessage, aclIncludeFlags);
 	return snapshot;
 }
 
 void CanvasModel::amendSnapshotMetadata(
-	drawdance::MessageList &snapshot, bool includePinnedMessage,
+	net::MessageList &snapshot, bool includePinnedMessage,
 	unsigned int aclIncludeFlags) const
 {
-	snapshot.prepend(drawdance::Message::makeUndoDepth(
-		0, m_paintengine->undoDepthLimit()));
+	snapshot.prepend(
+		net::makeUndoDepthMessage(0, m_paintengine->undoDepthLimit()));
 
 	if(includePinnedMessage && !m_pinnedMessage.isEmpty()) {
-		snapshot.prepend(drawdance::Message::makeChat(
+		snapshot.prepend(net::makeChatMessage(
 			m_localUserId, 0, DP_MSG_CHAT_OFLAGS_PIN, m_pinnedMessage));
 	}
 
 	int defaultLayerId = m_layerlist->defaultLayer();
 	if(defaultLayerId > 0) {
-		snapshot.append(drawdance::Message::makeDefaultLayer(0, defaultLayerId));
+		snapshot.append(net::makeDefaultLayerMessage(0, defaultLayerId));
 	}
 
 	m_paintengine->aclState().toResetImage(
@@ -376,7 +408,8 @@ QImage CanvasModel::selectionToImage(int layerId) const
 	} else if(layerId == -1) {
 		img = canvasState.toFlatImage(false, true, &rect);
 	} else {
-		drawdance::LayerContent layerContent = canvasState.searchLayerContent(layerId);
+		drawdance::LayerContent layerContent =
+			canvasState.searchLayerContent(layerId);
 		if(layerContent.isNull()) {
 			qWarning("selectionToImage: layer %d not found", layerId);
 			img = QImage(rect.size(), QImage::Format_ARGB32_Premultiplied);
@@ -394,12 +427,14 @@ QImage CanvasModel::selectionToImage(int layerId) const
 		QRect maskBounds;
 		const QImage mask = m_selection->shapeMask(Qt::white, &maskBounds);
 
-		mp.drawImage(qMin(0, maskBounds.left()), qMin(0, maskBounds.top()), mask);
+		mp.drawImage(
+			qMin(0, maskBounds.left()), qMin(0, maskBounds.top()), mask);
 	}
 	return img;
 }
 
-void CanvasModel::pasteFromImage(const QImage &image, const QPoint &defaultPoint, bool forceDefault)
+void CanvasModel::pasteFromImage(
+	const QImage &image, const QPoint &defaultPoint, bool forceDefault)
 {
 	QPoint center;
 	if(m_selection && !forceDefault)
@@ -408,7 +443,9 @@ void CanvasModel::pasteFromImage(const QImage &image, const QPoint &defaultPoint
 		center = defaultPoint;
 
 	Selection *paste = new Selection;
-	paste->setShapeRect(QRect(center.x() - image.width()/2, center.y() - image.height()/2, image.width(), image.height()));
+	paste->setShapeRect(QRect(
+		center.x() - image.width() / 2, center.y() - image.height() / 2,
+		image.width(), image.height()));
 	paste->setPasteImage(image);
 
 	setSelection(paste);

@@ -40,6 +40,9 @@ DP_Message *DP_message_new(DP_MessageType type, unsigned int context_id,
                            const DP_MessageMethods *methods,
                            size_t internal_size);
 
+DP_Message *DP_message_new_opaque(DP_MessageType type, unsigned int context_id,
+                                  const unsigned char *body, size_t length);
+
 DP_Message *DP_message_incref(DP_Message *msg);
 
 DP_Message *DP_message_incref_nullable(DP_Message *msg_or_null);
@@ -53,6 +56,8 @@ int DP_message_refcount(DP_Message *msg);
 
 DP_MessageType DP_message_type(DP_Message *msg);
 
+bool DP_message_opaque(DP_Message *msg);
+
 const char *DP_message_name(DP_Message *msg);
 
 unsigned int DP_message_context_id(DP_Message *msg);
@@ -64,12 +69,6 @@ void *DP_message_internal(DP_Message *msg);
 DP_Message *DP_message_from_internal(void *internal);
 
 void *DP_message_cast(DP_Message *msg, DP_MessageType type);
-
-void *DP_message_cast2(DP_Message *msg, DP_MessageType type1,
-                       DP_MessageType type2);
-
-void *DP_message_cast3(DP_Message *msg, DP_MessageType type1,
-                       DP_MessageType type2, DP_MessageType type3);
 
 size_t DP_message_length(DP_Message *msg);
 
@@ -84,9 +83,11 @@ bool DP_message_equals(DP_Message *msg, DP_Message *other);
 
 
 DP_Message *DP_message_deserialize_length(const unsigned char *buf,
-                                          size_t bufsize, size_t body_length);
+                                          size_t bufsize, size_t body_length,
+                                          bool decode_opaque);
 
-DP_Message *DP_message_deserialize(const unsigned char *buf, size_t bufsize);
+DP_Message *DP_message_deserialize(const unsigned char *buf, size_t bufsize,
+                                   bool decode_opaque);
 
 
 bool DP_message_compat_flag_indirect(DP_Message *msg);

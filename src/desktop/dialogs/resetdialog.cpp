@@ -1,21 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/dialogs/resetdialog.h"
 #include "desktop/main.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/utils/images.h"
 #include "libshared/util/qtcompat.h"
-
 #include "ui_resetsession.h"
-
-#include <QScopedPointer>
-#include <QIcon>
-#include <QPushButton>
-#include <QPainter>
-#include <QVector>
-#include <QFileDialog>
-#include <QMessageBox>
 #include <QApplication>
+#include <QFileDialog>
+#include <QIcon>
+#include <QMessageBox>
+#include <QPainter>
+#include <QPushButton>
+#include <QScopedPointer>
+#include <QVector>
 
 namespace {
 
@@ -27,21 +24,24 @@ struct ResetPoint {
 QVector<ResetPoint> makeResetPoints(const canvas::PaintEngine *pe)
 {
 	QVector<ResetPoint> resetPoints;
-	pe->snapshotQueue().getSnapshotsWith([&](size_t count, drawdance::SnapshotQueue::SnapshotAtFn at) {
-		resetPoints.reserve(compat::castSize(count + 1));
-		for (size_t i = 0; i < count; ++i) {
-			DP_Snapshot *s = at(i);
-			resetPoints.append(ResetPoint{
-				drawdance::CanvasState::inc(DP_snapshot_canvas_state_noinc(s)),
-				QPixmap{},
-			});
-		}
-	});
+	pe->snapshotQueue().getSnapshotsWith(
+		[&](size_t count, drawdance::SnapshotQueue::SnapshotAtFn at) {
+			resetPoints.reserve(compat::castSize(count + 1));
+			for(size_t i = 0; i < count; ++i) {
+				DP_Snapshot *s = at(i);
+				resetPoints.append(ResetPoint{
+					drawdance::CanvasState::inc(
+						DP_snapshot_canvas_state_noinc(s)),
+					QPixmap{},
+				});
+			}
+		});
 
 	drawdance::CanvasState currentCanvasState = pe->historyCanvasState();
 	int lastIndex = resetPoints.count() - 1;
 	// Don't repeat last reset point if the canvas state hasn't changed since.
-	if(lastIndex < 0 || currentCanvasState.get() != resetPoints[lastIndex].canvasState.get()) {
+	if(lastIndex < 0 ||
+	   currentCanvasState.get() != resetPoints[lastIndex].canvasState.get()) {
 		resetPoints.append(ResetPoint{
 			currentCanvasState,
 			QPixmap{},
@@ -77,17 +77,14 @@ struct ResetDialog::Private {
 	static void drawCheckerBackground(QImage &image)
 	{
 		const int TS = 16;
-		const QBrush checker[] = {
-			QColor(128,128,128),
-			QColor(Qt::white)
-		};
+		const QBrush checker[] = {QColor(128, 128, 128), QColor(Qt::white)};
 		QPainter painter(&image);
 		painter.setCompositionMode(QPainter::CompositionMode_DestinationOver);
-		for(int y=0;y<image.height();y+=TS) {
-			for(int x=0;x<image.width();x+=TS*2) {
-				const int z = (y/TS+x) % 2 == 0;
+		for(int y = 0; y < image.height(); y += TS) {
+			for(int x = 0; x < image.width(); x += TS * 2) {
+				const int z = (y / TS + x) % 2 == 0;
 				painter.fillRect(x, y, TS, TS, checker[z]);
-				painter.fillRect(x+TS, y, TS, TS, checker[1-z]);
+				painter.fillRect(x + TS, y, TS, TS, checker[1 - z]);
 			}
 		}
 	}
@@ -112,29 +109,39 @@ struct ResetDialog::Private {
 	}
 };
 
-ResetDialog::ResetDialog(const canvas::PaintEngine *pe, bool compatibilityMode, QWidget *parent)
-	: QDialog(parent), d(new Private(pe, compatibilityMode))
+ResetDialog::ResetDialog(
+	const canvas::PaintEngine *pe, bool compatibilityMode, QWidget *parent)
+	: QDialog(parent)
+	, d(new Private(pe, compatibilityMode))
 {
 	d->ui->setupUi(this);
 
-	d->resetButton = d->ui->buttonBox->addButton(tr("Reset Session"), QDialogButtonBox::DestructiveRole);
+	d->resetButton = d->ui->buttonBox->addButton(
+		tr("Reset Session"), QDialogButtonBox::DestructiveRole);
 	d->resetButton->setIcon(QIcon::fromTheme("edit-undo"));
-	connect(d->resetButton, &QPushButton::clicked, this, &ResetDialog::resetSelected);
+	connect(
+		d->resetButton, &QPushButton::clicked, this,
+		&ResetDialog::resetSelected);
 
 #ifndef SINGLE_MAIN_WINDOW
 	// If we can't open a new window, this would obliterate the current session.
 	// That's confusing and not terribly useful, so we don't offer this option.
-	QPushButton *newButton = d->ui->buttonBox->addButton(tr("New"), QDialogButtonBox::ActionRole);
+	QPushButton *newButton =
+		d->ui->buttonBox->addButton(tr("New"), QDialogButtonBox::ActionRole);
 	newButton->setIcon(QIcon::fromTheme("document-new"));
 	connect(newButton, &QPushButton::clicked, this, &ResetDialog::newSelected);
 #endif
 
-	QPushButton *openButton = d->ui->buttonBox->addButton(tr("Open..."), QDialogButtonBox::ActionRole);
+	QPushButton *openButton = d->ui->buttonBox->addButton(
+		tr("Open..."), QDialogButtonBox::ActionRole);
 	openButton->setIcon(QIcon::fromTheme("document-open"));
-	connect(openButton, &QPushButton::clicked, this, &ResetDialog::onOpenClicked);
+	connect(
+		openButton, &QPushButton::clicked, this, &ResetDialog::onOpenClicked);
 
 	d->ui->snapshotSlider->setMaximum(d->resetPoints.size());
-	connect(d->ui->snapshotSlider, &QSlider::valueChanged, this, &ResetDialog::onSelectionChanged);
+	connect(
+		d->ui->snapshotSlider, &QSlider::valueChanged, this,
+		&ResetDialog::onSelectionChanged);
 
 	d->updateSelection();
 }
@@ -159,11 +166,8 @@ void ResetDialog::onSelectionChanged(int pos)
 void ResetDialog::onOpenClicked()
 {
 	const QString file = QFileDialog::getOpenFileName(
-		this,
-		tr("Open Image"),
-		dpApp().settings().lastFileOpenPath(),
-		utils::fileFormatFilter(utils::FileFormatOption::OpenImages)
-	);
+		this, tr("Open Image"), dpApp().settings().lastFileOpenPath(),
+		utils::fileFormatFilter(utils::FileFormatOption::OpenImages));
 
 	if(file.isEmpty())
 		return;
@@ -187,9 +191,9 @@ void ResetDialog::onOpenClicked()
 	}
 }
 
-drawdance::MessageList ResetDialog::getResetImage() const
+net::MessageList ResetDialog::getResetImage() const
 {
-	drawdance::MessageList resetImage;
+	net::MessageList resetImage;
 	d->resetPoints[d->selection].canvasState.toResetImage(resetImage, 0);
 	return resetImage;
 }

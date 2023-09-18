@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/docks/timeline.h"
 #include "desktop/docks/titlewidget.h"
 #include "desktop/widgets/timelinewidget.h"
@@ -7,8 +6,7 @@
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/documentmetadata.h"
 #include "libclient/canvas/timelinemodel.h"
-#include "libclient/drawdance/message.h"
-
+#include "libclient/net/message.h"
 #include <QCheckBox>
 #include <QLabel>
 #include <QSpinBox>

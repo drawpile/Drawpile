@@ -1,29 +1,25 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#include "desktop/chat/chatwidgetpinnedarea.h"
 #include "desktop/chat/chatwidget.h"
-#include "libclient/utils/html.h"
-#include "libclient/utils/funstuff.h"
+#include "desktop/chat/chatwidgetpinnedarea.h"
 #include "desktop/main.h"
 #include "desktop/utils/widgetutils.h"
-
 #include "libclient/canvas/userlist.h"
-#include "libclient/drawdance/message.h"
 #include "libclient/drawdance/perf.h"
-
-#include <QResizeEvent>
-#include <QTextBrowser>
-#include <QVBoxLayout>
-#include <QLabel>
+#include "libclient/net/message.h"
+#include "libclient/utils/funstuff.h"
+#include "libclient/utils/html.h"
 #include <QDateTime>
-#include <QTextBlock>
-#include <QScrollBar>
-#include <QTabBar>
 #include <QIcon>
+#include <QLabel>
 #include <QMenu>
 #include <QRegularExpression>
+#include <QResizeEvent>
+#include <QScrollBar>
 #include <QSignalBlocker>
-
+#include <QTabBar>
+#include <QTextBlock>
+#include <QTextBrowser>
+#include <QVBoxLayout>
 #ifdef Q_OS_ANDROID
 #	include "desktop/chat/chatlineeditandroid.h"
 #else
@@ -40,44 +36,52 @@ struct Chat {
 	qint64 lastMessageTs = 0;
 	int scrollPosition = 0;
 
-	Chat() : doc(nullptr) { }
+	Chat()
+		: doc(nullptr)
+	{
+	}
 	explicit Chat(QObject *parent)
 		: doc(new QTextDocument(parent))
 	{
-		doc->setDefaultStyleSheet(
-			".sep { background: #4d4d4d }"
-			".notification { background: #232629 }"
-			".message, .notification {"
-				"color: #eff0f1;"
-				"margin: 1px 0 1px 0"
-			"}"
-		    ".alert { background: #66da4453 }"
-			".shout { background: #34292c }"
-			".shout .tab { background: #da4453 }"
-			".action { font-style: italic }"
-			".username { font-weight: bold }"
-			".trusted { color: #27ae60 }"
-			".registered { color: #16a085 }"
-			".op { color: #f47750 }"
-			".mod { color: #ed1515 }"
-			".timestamp { color: #8d8d8d }"
-		    ".alert .timestamp { color: #eff0f1 }"
-			"a:link { color: #1d99f3 }"
-			".emoji { font-size: xx-large; }"
-		);
+		doc->setDefaultStyleSheet(".sep { background: #4d4d4d }"
+								  ".notification { background: #232629 }"
+								  ".message, .notification {"
+								  "color: #eff0f1;"
+								  "margin: 1px 0 1px 0"
+								  "}"
+								  ".alert { background: #66da4453 }"
+								  ".shout { background: #34292c }"
+								  ".shout .tab { background: #da4453 }"
+								  ".action { font-style: italic }"
+								  ".username { font-weight: bold }"
+								  ".trusted { color: #27ae60 }"
+								  ".registered { color: #16a085 }"
+								  ".op { color: #f47750 }"
+								  ".mod { color: #ed1515 }"
+								  ".timestamp { color: #8d8d8d }"
+								  ".alert .timestamp { color: #eff0f1 }"
+								  "a:link { color: #1d99f3 }"
+								  ".emoji { font-size: xx-large; }");
 	}
 
 	void appendSeparator(QTextCursor &cursor);
-	void appendMessage(int userId, const QString &usernameSpan, const QString &message, bool shout, bool alert);
-	void appendMessageCompact(int userId, const QString &usernameSpan, const QString &message, bool shout, bool alert);
+	void appendMessage(
+		int userId, const QString &usernameSpan, const QString &message,
+		bool shout, bool alert);
+	void appendMessageCompact(
+		int userId, const QString &usernameSpan, const QString &message,
+		bool shout, bool alert);
 	void appendAction(const QString &usernameSpan, const QString &message);
 	void appendNotification(const QString &message);
 };
 
 struct ChatWidget::Private {
-	Private(ChatWidget *parent) : chatbox(parent) { }
+	Private(ChatWidget *parent)
+		: chatbox(parent)
+	{
+	}
 
-	ChatWidget * const chatbox;
+	ChatWidget *const chatbox;
 	QTextBrowser *view = nullptr;
 	ChatLineEdit *myline = nullptr;
 	ChatWidgetPinnedArea *pinned = nullptr;
@@ -105,7 +109,8 @@ struct ChatWidget::Private {
 
 	bool isAtEnd() const
 	{
-		return view->verticalScrollBar()->value() == view->verticalScrollBar()->maximum();
+		return view->verticalScrollBar()->value() ==
+			   view->verticalScrollBar()->maximum();
 	}
 
 	void scrollChatToEnd(int ifCurrentId)
@@ -117,7 +122,8 @@ struct ChatWidget::Private {
 
 	void scrollToEnd()
 	{
-		view->verticalScrollBar()->setValue(view->verticalScrollBar()->maximum());
+		view->verticalScrollBar()->setValue(
+			view->verticalScrollBar()->maximum());
 	}
 
 	inline Chat &publicChat()
@@ -132,7 +138,8 @@ struct ChatWidget::Private {
 };
 
 ChatWidget::ChatWidget(QWidget *parent)
-	: QWidget(parent), d(new Private(this))
+	: QWidget(parent)
+	, d(new Private(this))
 {
 	QVBoxLayout *layout = new QVBoxLayout(this);
 
@@ -158,8 +165,10 @@ ChatWidget::ChatWidget(QWidget *parent)
 		d->tabs->setTabButton(0, QTabBar::RightSide, nullptr);
 	}
 
-	connect(d->tabs, &QTabBar::currentChanged, this, &ChatWidget::chatTabSelected);
-	connect(d->tabs, &QTabBar::tabCloseRequested, this, &ChatWidget::chatTabClosed);
+	connect(
+		d->tabs, &QTabBar::currentChanged, this, &ChatWidget::chatTabSelected);
+	connect(
+		d->tabs, &QTabBar::tabCloseRequested, this, &ChatWidget::chatTabClosed);
 	layout->addWidget(d->tabs, 0);
 
 	d->pinned = new ChatWidgetPinnedArea(this);
@@ -168,10 +177,14 @@ ChatWidget::ChatWidget(QWidget *parent)
 	d->view = new QTextBrowser(this);
 	d->view->setOpenExternalLinks(true);
 	utils::initKineticScrolling(d->view);
-	connect(d->view->verticalScrollBar(), &QScrollBar::valueChanged, this, &ChatWidget::scrollBarMoved);
+	connect(
+		d->view->verticalScrollBar(), &QScrollBar::valueChanged, this,
+		&ChatWidget::scrollBarMoved);
 
 	d->view->setContextMenuPolicy(Qt::CustomContextMenu);
-	connect(d->view, &QTextBrowser::customContextMenuRequested, this, &ChatWidget::showChatContextMenu);
+	connect(
+		d->view, &QTextBrowser::customContextMenuRequested, this,
+		&ChatWidget::showChatContextMenu);
 
 	layout->addWidget(d->view, 1);
 
@@ -180,14 +193,16 @@ ChatWidget::ChatWidget(QWidget *parent)
 
 	setLayout(layout);
 
-	connect(d->myline, &ChatLineEdit::messageSent, this, &ChatWidget::sendMessage);
+	connect(
+		d->myline, &ChatLineEdit::messageSent, this, &ChatWidget::sendMessage);
 
 	d->chats[0] = Chat(this);
 	d->view->setDocument(d->chats[0].doc);
 
 	d->externalMenu = new QMenu{this};
 
-	d->clearAction = d->externalMenu->addAction(tr("Clear"), this, &ChatWidget::clear);
+	d->clearAction =
+		d->externalMenu->addAction(tr("Clear"), this, &ChatWidget::clear);
 
 	if(!COMPACT_ONLY) {
 		d->compactAction = d->externalMenu->addAction(
@@ -197,8 +212,8 @@ ChatWidget::ChatWidget(QWidget *parent)
 	}
 
 	if(ALLOW_DETACH && !dpApp().smallScreenMode()) {
-		d->attachAction = d->externalMenu->addAction(
-			tr("Attach"), this, &ChatWidget::attach);
+		d->attachAction =
+			d->externalMenu->addAction(tr("Attach"), this, &ChatWidget::attach);
 		d->detachAction = d->externalMenu->addAction(
 			tr("Detach"), this, &ChatWidget::detachRequested);
 	}
@@ -208,7 +223,9 @@ ChatWidget::ChatWidget(QWidget *parent)
 	d->muteAction->setStatusTip(tr("Toggle notifications for this window"));
 	d->muteAction->setCheckable(true);
 
-	connect(d->externalMenu, &QMenu::aboutToShow, this, &ChatWidget::contextMenuAboutToShow);
+	connect(
+		d->externalMenu, &QMenu::aboutToShow, this,
+		&ChatWidget::contextMenuAboutToShow);
 
 	setPreserveMode(false);
 
@@ -250,19 +267,16 @@ void ChatWidget::Private::updatePreserveModeUi()
 	myline->setPlaceholderText(placeholder);
 
 	chatbox->setStyleSheet(
-		QStringLiteral(
-		"QTextEdit, QPlainTextEdit, QLineEdit {"
-			"background-color: #232629;"
-			"border: none;"
-			"color: #eff0f1"
-		"}"
-		"QPlainTextEdit, QLineEdit {"
-			"border-top: 1px solid %1;"
-			"padding: 4px"
-		"}"
-		).arg(color)
-	);
-
+		QStringLiteral("QTextEdit, QPlainTextEdit, QLineEdit {"
+					   "background-color: #232629;"
+					   "border: none;"
+					   "color: #eff0f1"
+					   "}"
+					   "QPlainTextEdit, QLineEdit {"
+					   "border-top: 1px solid %1;"
+					   "padding: 4px"
+					   "}")
+			.arg(color));
 }
 void ChatWidget::setPreserveMode(bool preservechat)
 {
@@ -283,7 +297,7 @@ void ChatWidget::focusInput()
 
 void ChatWidget::setUserList(canvas::UserListModel *userlist)
 {
-	 d->userlist = userlist;
+	d->userlist = userlist;
 }
 
 QMenu *ChatWidget::externalMenu()
@@ -302,9 +316,7 @@ void ChatWidget::clear()
 		for(const auto &u : d->userlist->users()) {
 			chat.doc->addResource(
 				QTextDocument::ImageResource,
-				QUrl(QStringLiteral("avatar://%1").arg(u.id)),
-				u.avatar
-			);
+				QUrl(QStringLiteral("avatar://%1").arg(u.id)), u.avatar);
 		}
 	}
 }
@@ -328,13 +340,11 @@ bool ChatWidget::Private::ensurePrivateChatExists(int userId, QObject *parent)
 		chats[userId].doc->addResource(
 			QTextDocument::ImageResource,
 			QUrl(QStringLiteral("avatar://%1").arg(userId)),
-			userlist->getUserById(userId).avatar
-		);
+			userlist->getUserById(userId).avatar);
 		chats[userId].doc->addResource(
 			QTextDocument::ImageResource,
 			QUrl(QStringLiteral("avatar://%1").arg(myId)),
-			userlist->getUserById(myId).avatar
-		);
+			userlist->getUserById(myId).avatar);
 	}
 
 	return true;
@@ -345,7 +355,7 @@ void ChatWidget::openPrivateChat(int userId)
 	if(!d->ensurePrivateChatExists(userId, this))
 		return;
 
-	for(int i=d->tabs->count()-1;i>=0;--i) {
+	for(int i = d->tabs->count() - 1; i >= 0; --i) {
 		if(d->tabs->tabData(i).toInt() == userId) {
 			d->tabs->setCurrentIndex(i);
 			break;
@@ -355,14 +365,14 @@ void ChatWidget::openPrivateChat(int userId)
 
 static QString timestamp()
 {
-	return QStringLiteral("<span class=ts>%1</span>").arg(
-		QDateTime::currentDateTime().toString("HH:mm")
-	);
+	return QStringLiteral("<span class=ts>%1</span>")
+		.arg(QDateTime::currentDateTime().toString("HH:mm"));
 }
 
 QString ChatWidget::Private::usernameSpan(int userId)
 {
-	const canvas::User user = userlist ? userlist->getUserById(userId) : canvas::User();
+	const canvas::User user =
+		userlist ? userlist->getUserById(userId) : canvas::User();
 
 	QString userclass;
 	if(user.isMod)
@@ -374,20 +384,22 @@ QString ChatWidget::Private::usernameSpan(int userId)
 	else if(user.isAuth)
 		userclass = QStringLiteral("registered");
 
-	return QStringLiteral("<span class=\"username %1\">%2</span>").arg(
-		userclass,
-		user.name.isEmpty() ? QStringLiteral("<s>User #%1</s>").arg(userId) : user.name.toHtmlEscaped()
-	);
+	return QStringLiteral("<span class=\"username %1\">%2</span>")
+		.arg(
+			userclass, user.name.isEmpty()
+						   ? QStringLiteral("<s>User #%1</s>").arg(userId)
+						   : user.name.toHtmlEscaped());
 }
 
 void Chat::appendSeparator(QTextCursor &cursor)
 {
 	cursor.insertHtml(QStringLiteral(
-		"<table height=1 width=\"100%\" class=sep><tr><td></td></tr></table>"
-		));
+		"<table height=1 width=\"100%\" class=sep><tr><td></td></tr></table>"));
 }
 
-void Chat::appendMessageCompact(int userId, const QString &usernameSpan, const QString &message, bool shout, bool alert)
+void Chat::appendMessageCompact(
+	int userId, const QString &usernameSpan, const QString &message, bool shout,
+	bool alert)
 {
 	Q_UNUSED(userId);
 
@@ -397,26 +409,27 @@ void Chat::appendMessageCompact(int userId, const QString &usernameSpan, const Q
 
 	cursor.movePosition(QTextCursor::End);
 
-	QString content =
-		usernameSpan.isEmpty() ? message : QStringLiteral("%1: %2").arg(usernameSpan, message);
+	QString content = usernameSpan.isEmpty()
+						  ? message
+						  : QStringLiteral("%1: %2").arg(usernameSpan, message);
 
-	cursor.insertHtml(QStringLiteral(
-		"<table width=\"100%\" class=\"%1\">"
-		"<tr>"
-			"<td width=3 class=tab></td>"
-			"<td>%2</td>"
-			"<td class=timestamp align=right>%3</td>"
-		"</tr>"
-		"</table>"
-		).arg(
-			alert ? " alert" : shout ? " shout" : "",
-			htmlutils::newlineToBr(content),
-			timestamp()
-		)
-	);
+	cursor.insertHtml(QStringLiteral("<table width=\"100%\" class=\"%1\">"
+									 "<tr>"
+									 "<td width=3 class=tab></td>"
+									 "<td>%2</td>"
+									 "<td class=timestamp align=right>%3</td>"
+									 "</tr>"
+									 "</table>")
+						  .arg(
+							  alert	  ? " alert"
+							  : shout ? " shout"
+									  : "",
+							  htmlutils::newlineToBr(content), timestamp()));
 }
 
-void Chat::appendMessage(int userId, const QString &usernameSpan, const QString &message, bool shout, bool alert)
+void Chat::appendMessage(
+	int userId, const QString &usernameSpan, const QString &message, bool shout,
+	bool alert)
 {
 	QTextCursor cursor(doc);
 	cursor.movePosition(QTextCursor::End);
@@ -436,8 +449,9 @@ void Chat::appendMessage(int userId, const QString &usernameSpan, const QString 
 
 		cursor.insertHtml(QStringLiteral("<br>"));
 
-		// Using css property "white-space: pre" only works for the first message. Newlines disappear on subsequent messages.
-		// Thus the need to manually replace newlines by <br>
+		// Using css property "white-space: pre" only works for the first
+		// message. Newlines disappear on subsequent messages. Thus the need to
+		// manually replace newlines by <br>
 		cursor.insertHtml(htmlutils::newlineToBr(message));
 
 		return;
@@ -447,26 +461,24 @@ void Chat::appendMessage(int userId, const QString &usernameSpan, const QString 
 	// http://doc.qt.io/qt-5/richtext-html-subset.html
 	// Embedding a whole browser engine just to render the chat widget would
 	// be excessive.
-	cursor.insertHtml(QStringLiteral(
-		"<table width=\"100%\" class=\"message%1\">"
-		"<tr>"
-			"<td width=3 rowspan=2 class=tab></td>"
-			"<td width=40 rowspan=2><img src=\"avatar://%2\"></td>"
-			"<td>%3</td>"
-			"<td class=timestamp align=right>%4</td>"
-		"</tr>"
-		"<tr>"
-			"<td colspan=2>%5</td>"
-		"</tr>"
-		"</table>"
-		).arg(
-			alert ? " alert" : shout ? " shout" : "",
-			QString::number(userId),
-			usernameSpan,
-			timestamp(),
-			htmlutils::newlineToBr(message)
-		)
-	);
+	cursor.insertHtml(
+		QStringLiteral("<table width=\"100%\" class=\"message%1\">"
+					   "<tr>"
+					   "<td width=3 rowspan=2 class=tab></td>"
+					   "<td width=40 rowspan=2><img src=\"avatar://%2\"></td>"
+					   "<td>%3</td>"
+					   "<td class=timestamp align=right>%4</td>"
+					   "</tr>"
+					   "<tr>"
+					   "<td colspan=2>%5</td>"
+					   "</tr>"
+					   "</table>")
+			.arg(
+				alert	? " alert"
+				: shout ? " shout"
+						: "",
+				QString::number(userId), usernameSpan, timestamp(),
+				htmlutils::newlineToBr(message)));
 	lastMessageTs = ts;
 }
 
@@ -479,20 +491,14 @@ void Chat::appendAction(const QString &usernameSpan, const QString &message)
 		appendSeparator(cursor);
 		lastAppendedId = -1;
 	}
-	cursor.insertHtml(QStringLiteral(
-		"<table width=\"100%\" class=message>"
-		"<tr>"
-			"<td width=3 class=tab></td>"
-			"<td><span class=action>%1 %2</span></td>"
-			"<td class=timestamp align=right>%3</td>"
-		"</tr>"
-		"</table>"
-		).arg(
-			usernameSpan,
-			message,
-			timestamp()
-		)
-	);
+	cursor.insertHtml(QStringLiteral("<table width=\"100%\" class=message>"
+									 "<tr>"
+									 "<td width=3 class=tab></td>"
+									 "<td><span class=action>%1 %2</span></td>"
+									 "<td class=timestamp align=right>%3</td>"
+									 "</tr>"
+									 "</table>")
+						  .arg(usernameSpan, message, timestamp()));
 }
 
 void Chat::appendNotification(const QString &message)
@@ -505,17 +511,13 @@ void Chat::appendNotification(const QString &message)
 		lastAppendedId = 0;
 	}
 
-	cursor.insertHtml(QStringLiteral(
-		"<table width=\"100%\" class=notification><tr>"
-			"<td width=3 class=tab></td>"
-			"<td>%1</td>"
-			"<td align=right class=timestamp>%2</td>"
-		"</tr></table>"
-		).arg(
-			htmlutils::newlineToBr(message),
-			timestamp()
-		)
-	);
+	cursor.insertHtml(
+		QStringLiteral("<table width=\"100%\" class=notification><tr>"
+					   "<td width=3 class=tab></td>"
+					   "<td>%1</td>"
+					   "<td align=right class=timestamp>%2</td>"
+					   "</tr></table>")
+			.arg(htmlutils::newlineToBr(message), timestamp()));
 }
 
 void ChatWidget::userJoined(int id, const QString &name)
@@ -526,18 +528,19 @@ void ChatWidget::userJoined(int id, const QString &name)
 		d->chats[0].doc->addResource(
 			QTextDocument::ImageResource,
 			QUrl(QStringLiteral("avatar://%1").arg(id)),
-			d->userlist->getUserById(id).avatar
-		);
+			d->userlist->getUserById(id).avatar);
 		if(d->chats.contains(id)) {
 			d->chats[id].doc->addResource(
 				QTextDocument::ImageResource,
 				QUrl(QStringLiteral("avatar://%1").arg(id)),
-				d->userlist->getUserById(id).avatar
-			);
+				d->userlist->getUserById(id).avatar);
 		}
 
 	} else {
-		qWarning("User #%d logged in, but userlist object not assigned to ChatWidget!", id);
+		qWarning(
+			"User #%d logged in, but userlist object not assigned to "
+			"ChatWidget!",
+			id);
 	}
 
 	// The server resends UserJoin messages during session reset.
@@ -585,19 +588,24 @@ void ChatWidget::userParted(int id)
 void ChatWidget::kicked(const QString &kickedBy)
 {
 	const bool wasAtEnd = d->isAtEnd();
-	d->publicChat().appendNotification(tr("You have been kicked by %1").arg(kickedBy.toHtmlEscaped()));
+	d->publicChat().appendNotification(
+		tr("You have been kicked by %1").arg(kickedBy.toHtmlEscaped()));
 	if(wasAtEnd)
 		d->scrollChatToEnd(0);
 }
 
-void ChatWidget::receiveMessage(int sender, int recipient, uint8_t tflags, uint8_t oflags, const QString &message)
+void ChatWidget::receiveMessage(
+	int sender, int recipient, uint8_t tflags, uint8_t oflags,
+	const QString &message)
 {
 	Q_UNUSED(tflags);
 
 	const bool wasAtEnd = d->isAtEnd();
-	// The server echoes our PMs back to us, in which case we identify the chat box
-	// the message belongs to based on the recipient field rather than the sender (which is us)
-	const int chatId = recipient > 0 ? (recipient == d->myId ? sender : recipient) : 0;
+	// The server echoes our PMs back to us, in which case we identify the chat
+	// box the message belongs to based on the recipient field rather than the
+	// sender (which is us)
+	const int chatId =
+		recipient > 0 ? (recipient == d->myId ? sender : recipient) : 0;
 
 	if(chatId > 0) {
 		if(!d->ensurePrivateChatExists(chatId, this))
@@ -616,13 +624,17 @@ void ChatWidget::receiveMessage(int sender, int recipient, uint8_t tflags, uint8
 	if(oflags & DP_MSG_CHAT_OFLAGS_ACTION) {
 		chat.appendAction(d->usernameSpan(sender), safetext);
 	} else if(d->compactMode) {
-		chat.appendMessageCompact(sender, d->usernameSpan(sender), safetext, isValidShout, isValidAlert);
+		chat.appendMessageCompact(
+			sender, d->usernameSpan(sender), safetext, isValidShout,
+			isValidAlert);
 	} else {
-		chat.appendMessage(sender, d->usernameSpan(sender), safetext, isValidShout, isValidAlert);
+		chat.appendMessage(
+			sender, d->usernameSpan(sender), safetext, isValidShout,
+			isValidAlert);
 	}
 
 	if(isValidAlert) {
-		for(int i=0;i<d->tabs->count();++i) {
+		for(int i = 0; i < d->tabs->count(); ++i) {
 			if(d->tabs->tabData(i).toInt() == chatId) {
 				d->tabs->setCurrentIndex(i);
 				break;
@@ -630,7 +642,7 @@ void ChatWidget::receiveMessage(int sender, int recipient, uint8_t tflags, uint8
 		}
 		emit expandRequested();
 	} else if(chatId != d->currentChat) {
-		for(int i=0;i<d->tabs->count();++i) {
+		for(int i = 0; i < d->tabs->count(); ++i) {
 			if(d->tabs->tabData(i).toInt() == chatId) {
 				d->tabs->setTabTextColor(i, QColor(218, 68, 83));
 				break;
@@ -655,13 +667,14 @@ void ChatWidget::setPinnedMessage(const QString &message)
 	}
 }
 
-void ChatWidget::systemMessage(const QString& message, bool alert)
+void ChatWidget::systemMessage(const QString &message, bool alert)
 {
 	const bool wasAtEnd = d->isAtEnd();
 	const QString safetext =
 		htmlutils::linkify(htmlutils::emojify(message.toHtmlEscaped()));
 	if(alert) {
-		d->publicChat().appendMessageCompact(0, QString(), safetext, false, true);
+		d->publicChat().appendMessageCompact(
+			0, QString(), safetext, false, true);
 		emit expandRequested();
 	} else {
 		d->publicChat().appendNotification(safetext);
@@ -691,21 +704,22 @@ void ChatWidget::sendMessage(QString chatMessage)
 		// Special commands
 
 		int split = chatMessage.indexOf(' ');
-		if(split<0)
+		if(split < 0)
 			split = chatMessage.length();
 
-		const auto cmd = chatMessage.mid(1, split-1);
+		const auto cmd = chatMessage.mid(1, split - 1);
 		const auto params = chatMessage.mid(split).trimmed();
 
 		if(cmd == QStringLiteral("clear")) {
 			clear();
 			return;
 
-		} else if(cmd.at(0)=='!' && d->currentChat == 0) {
+		} else if(cmd.at(0) == '!' && d->currentChat == 0) {
 			if(!d->userlist || !d->userlist->isOperator(d->myId)) {
-				systemMessage(tr("/!: only operators are allowed to send shouts."));
+				systemMessage(
+					tr("/!: only operators are allowed to send shouts."));
 				return;
-			} else if (d->currentChat != 0) {
+			} else if(d->currentChat != 0) {
 				systemMessage(tr("/!: can only shout in a public chat."));
 				return;
 			} else if(chatMessage.length() <= 2) {
@@ -718,7 +732,8 @@ void ChatWidget::sendMessage(QString chatMessage)
 
 		} else if(cmd == QStringLiteral("alert")) {
 			if(!d->userlist || !d->userlist->isOperator(d->myId)) {
-				systemMessage(tr("/alert: only operators are allowed to send alerts."));
+				systemMessage(
+					tr("/alert: only operators are allowed to send alerts."));
 				return;
 			} else if(params.isEmpty()) {
 				systemMessage(tr("/alert: no text given."));
@@ -741,7 +756,7 @@ void ChatWidget::sendMessage(QString chatMessage)
 			if(!d->userlist || !d->userlist->isOperator(d->myId)) {
 				systemMessage(tr("/pin: only operators are allowed to pin."));
 				return;
-			} else if (d->currentChat != 0) {
+			} else if(d->currentChat != 0) {
 				systemMessage(tr("/pin: can only pin in a public chat."));
 				return;
 			} else if(params.isEmpty()) {
@@ -755,9 +770,10 @@ void ChatWidget::sendMessage(QString chatMessage)
 
 		} else if(cmd == QStringLiteral("unpin")) {
 			if(!d->userlist || !d->userlist->isOperator(d->myId)) {
-				systemMessage(tr("/unpin: only operators are allowed to unpin."));
+				systemMessage(
+					tr("/unpin: only operators are allowed to unpin."));
 				return;
-			} else if (d->currentChat != 0) {
+			} else if(d->currentChat != 0) {
 				systemMessage(tr("/unpin: can only unpin in a public chat."));
 				return;
 			} else {
@@ -768,8 +784,9 @@ void ChatWidget::sendMessage(QString chatMessage)
 
 		} else if(cmd == QStringLiteral("roll")) {
 			// TODO this should be done serverside to prevent cheating
-			utils::DiceRoll result = utils::diceRoll(params.isEmpty() ? QStringLiteral("1d6") : params);
-			if(result.number>0) {
+			utils::DiceRoll result = utils::diceRoll(
+				params.isEmpty() ? QStringLiteral("1d6") : params);
+			if(result.number > 0) {
 				oflags = DP_MSG_CHAT_OFLAGS_ACTION;
 				effectiveMessage = "rolls " + result.toString();
 			} else {
@@ -785,11 +802,11 @@ void ChatWidget::sendMessage(QString chatMessage)
 				"/clear - clear chat window\n"
 				"/! <text> - make an announcement (Operators only)\n"
 				"/alert <text> - send a high priority alert (Operators only)\n"
-				"/pin <text> - pin a message to the top of the chat box (Operators only)\n"
+				"/pin <text> - pin a message to the top of the chat box "
+				"(Operators only)\n"
 				"/unpin - remove pinned message (Operators only)\n"
 				"/me <text> - send action-type message\n"
-				"/roll <dice> - roll dice, e.g. 1d6 for a six-sided die"
-			);
+				"/roll <dice> - roll dice, e.g. 1d6 for a six-sided die");
 			systemMessage(text);
 			return;
 
@@ -802,15 +819,18 @@ void ChatWidget::sendMessage(QString chatMessage)
 	// Send the chat message
 	int target = d->currentChat;
 	uint8_t contextId = d->myId;
-	drawdance::Message msg = target == 0
-		? drawdance::Message::makeChat(contextId, tflags, oflags, effectiveMessage)
-		: drawdance::Message::makePrivateChat(contextId, target, oflags, effectiveMessage);
+	net::Message msg =
+		target == 0
+			? net::makeChatMessage(contextId, tflags, oflags, effectiveMessage)
+			: net::makePrivateChatMessage(
+				  contextId, target, oflags, effectiveMessage);
 	emit message(msg);
 }
 
 void ChatWidget::chatTabSelected(int index)
 {
-	d->chats[d->currentChat].scrollPosition = d->view->verticalScrollBar()->value();
+	d->chats[d->currentChat].scrollPosition =
+		d->view->verticalScrollBar()->value();
 
 	const int id = d->tabs->tabData(index).toInt();
 	Q_ASSERT(d->chats.contains(id));

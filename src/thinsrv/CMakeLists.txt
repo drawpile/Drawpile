@@ -41,6 +41,31 @@ target_link_libraries(${srvlib} PUBLIC
 	${QT_PACKAGE_NAME}::Sql
 )
 
+# For some reason there's circular dependency issues here. Solve them with a
+# link group, which unfortunately requires hacks on old CMake.
+if(${CMAKE_VERSION} VERSION_LESS "3.24.0")
+	if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+		message(WARNING
+			"CMake version ${CMAKE_VERSION} is older than 3.24.0, link groups "
+			"are unavailable. Will try to make it work anyway, knock on wood.")
+		# This ends up grouping too many libraries, but otherwise seems to work.
+		# Better than refusing operation on old cmake versions I guess.
+		target_link_libraries(${srvlib} PUBLIC
+			-Wl,--start-group dpengine dpmsg dpmsg_rust -Wl,--end-group
+		)
+	else()
+		message(STATUS "Assuming rescan is not needed on this linker")
+	endif()
+else()
+	if(CMAKE_LINK_GROUP_USING_RESCAN_SUPPORTED OR CMAKE_CXX_LINK_GROUP_USING_RESCAN_SUPPORTED)
+		target_link_libraries(${srvlib} PUBLIC
+			"$<LINK_GROUP:RESCAN,dpengine,dpmsg,dpmsg_rust>"
+		)
+	else()
+		message(STATUS "Rescan is not supported, assuming it's not needed")
+	endif()
+endif()
+
 target_link_libraries(${srvname} PRIVATE ${srvlib})
 
 if(SERVERGUI)

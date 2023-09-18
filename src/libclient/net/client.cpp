@@ -1,17 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#include "libclient/drawdance/message.h"
 #include "libclient/net/client.h"
-#include "libclient/net/tcpserver.h"
 #include "libclient/net/login.h"
-#include "libclient/net/servercmd.h"
+#include "libclient/net/message.h"
+#include "libclient/net/tcpserver.h"
+#include "libshared/net/servercmd.h"
 #include "libshared/util/qtcompat.h"
-
+#include <QDebug>
 #ifdef Q_OS_ANDROID
 #	include "libshared/util/androidutils.h"
 #endif
-
-#include <QDebug>
 
 namespace net {
 
@@ -42,52 +39,61 @@ void Client::connectToServer(int timeoutSecs, LoginHandler *loginhandler)
 						.arg(
 							reinterpret_cast<quintptr>(server),
 							QT_POINTER_SIZE * 2, 16, QLatin1Char('0'))};
-		m_wifiLock = new utils::AndroidWifiLock{"WIFI_MODE_FULL_LOW_LATENCY", tag};
+		m_wifiLock =
+			new utils::AndroidWifiLock{"WIFI_MODE_FULL_LOW_LATENCY", tag};
 	}
 #endif
 
 	connect(server, &TcpServer::loggingOut, this, &Client::serverDisconnecting);
-	connect(server, &TcpServer::serverDisconnected, this, &Client::handleDisconnect);
-	connect(server, &TcpServer::serverDisconnected, loginhandler, &LoginHandler::serverDisconnected);
+	connect(
+		server, &TcpServer::serverDisconnected, this,
+		&Client::handleDisconnect);
+	connect(
+		server, &TcpServer::serverDisconnected, loginhandler,
+		&LoginHandler::serverDisconnected);
 	connect(server, &TcpServer::loggedIn, this, &Client::handleConnect);
-	connect(server, &TcpServer::messagesReceived, this, &Client::handleMessages);
+	connect(
+		server, &TcpServer::messagesReceived, this, &Client::handleMessages);
 
 	connect(server, &TcpServer::bytesReceived, this, &Client::bytesReceived);
 	connect(server, &TcpServer::bytesSent, this, &Client::bytesSent);
 	connect(server, &TcpServer::lagMeasured, this, &Client::lagMeasured);
 
-	connect(server, &TcpServer::gracefullyDisconnecting, this, [this](MessageQueue::GracefulDisconnect reason, const QString &message)
-	{
-		if(reason == MessageQueue::GracefulDisconnect::Kick) {
-			emit youWereKicked(message);
-			return;
-		}
+	connect(
+		server, &TcpServer::gracefullyDisconnecting, this,
+		[this](
+			MessageQueue::GracefulDisconnect reason, const QString &message) {
+			if(reason == MessageQueue::GracefulDisconnect::Kick) {
+				emit youWereKicked(message);
+				return;
+			}
 
-		QString chat;
-		switch(reason) {
-		case MessageQueue::GracefulDisconnect::Kick:
-			emit youWereKicked(message);
-			return;
-		case MessageQueue::GracefulDisconnect::Error:
-			chat = tr("A server error occurred!");
-			break;
-		case MessageQueue::GracefulDisconnect::Shutdown:
-			chat = tr("The server is shutting down!");
-			break;
-		default:
-			chat = "Unknown error";
-		}
+			QString chat;
+			switch(reason) {
+			case MessageQueue::GracefulDisconnect::Kick:
+				emit youWereKicked(message);
+				return;
+			case MessageQueue::GracefulDisconnect::Error:
+				chat = tr("A server error occurred!");
+				break;
+			case MessageQueue::GracefulDisconnect::Shutdown:
+				chat = tr("The server is shutting down!");
+				break;
+			default:
+				chat = "Unknown error";
+			}
 
-		if(!message.isEmpty())
-			chat = QString("%1 (%2)").arg(chat, message);
+			if(!message.isEmpty())
+				chat = QString("%1 (%2)").arg(chat, message);
 
-		emit serverMessage(chat, true);
-	});
+			emit serverMessage(chat, true);
+		});
 
 	if(loginhandler->mode() == LoginHandler::Mode::HostRemote)
 		loginhandler->setUserId(m_myId);
 
-	emit serverConnected(loginhandler->url().host(), loginhandler->url().port());
+	emit serverConnected(
+		loginhandler->url().host(), loginhandler->url().port());
 	server->login(loginhandler);
 
 	m_catchupTo = 0;
@@ -123,7 +129,8 @@ void Client::handleConnect(
 	emit serverLoggedIn(join, m_compatibilityMode, joinPassword);
 }
 
-void Client::handleDisconnect(const QString &message,const QString &errorcode, bool localDisconnect)
+void Client::handleDisconnect(
+	const QString &message, const QString &errorcode, bool localDisconnect)
 {
 	Q_ASSERT(isConnected());
 
@@ -149,22 +156,24 @@ int Client::uploadQueueBytes() const
 }
 
 
-void Client::sendMessage(const drawdance::Message &msg)
+void Client::sendMessage(const net::Message &msg)
 {
 	sendMessages(1, &msg);
 }
 
-void Client::sendMessages(int count, const drawdance::Message *msgs)
+void Client::sendMessages(int count, const net::Message *msgs)
 {
 	if(m_compatibilityMode) {
-		QVector<drawdance::Message> compatibleMsgs = filterCompatibleMessages(count, msgs);
-		sendCompatibleMessages(compatibleMsgs.count(), compatibleMsgs.constData());
+		QVector<net::Message> compatibleMsgs =
+			filterCompatibleMessages(count, msgs);
+		sendCompatibleMessages(
+			compatibleMsgs.count(), compatibleMsgs.constData());
 	} else {
 		sendCompatibleMessages(count, msgs);
 	}
 }
 
-void Client::sendCompatibleMessages(int count, const drawdance::Message *msgs)
+void Client::sendCompatibleMessages(int count, const net::Message *msgs)
 {
 	if(count > 0) {
 		emit drawingCommandsLocal(count, msgs);
@@ -179,22 +188,24 @@ void Client::sendCompatibleMessages(int count, const drawdance::Message *msgs)
 	}
 }
 
-void Client::sendResetMessage(const drawdance::Message &msg)
+void Client::sendResetMessage(const net::Message &msg)
 {
 	sendResetMessages(1, &msg);
 }
 
-void Client::sendResetMessages(int count, const drawdance::Message *msgs)
+void Client::sendResetMessages(int count, const net::Message *msgs)
 {
 	if(m_compatibilityMode) {
-		QVector<drawdance::Message> compatibleMsgs = filterCompatibleMessages(count, msgs);
-		sendCompatibleResetMessages(compatibleMsgs.count(), compatibleMsgs.constData());
+		QVector<net::Message> compatibleMsgs =
+			filterCompatibleMessages(count, msgs);
+		sendCompatibleResetMessages(
+			compatibleMsgs.count(), compatibleMsgs.constData());
 	} else {
 		sendCompatibleResetMessages(count, msgs);
 	}
 }
 
-void Client::sendCompatibleResetMessages(int count, const drawdance::Message *msgs)
+void Client::sendCompatibleResetMessages(int count, const net::Message *msgs)
 {
 	if(count > 0) {
 		if(m_server) {
@@ -205,16 +216,18 @@ void Client::sendCompatibleResetMessages(int count, const drawdance::Message *ms
 	}
 }
 
-QVector<drawdance::Message> Client::filterCompatibleMessages(int count, const drawdance::Message *msgs)
+QVector<net::Message>
+Client::filterCompatibleMessages(int count, const net::Message *msgs)
 {
 	// Ideally, the client shouldn't be attempting to send any incompatible
 	// messages in the first place, but we'll err on the side of caution. In
 	// particular, a thick server will kick us out if we send a wrong message.
-	QVector<drawdance::Message> compatibleMsgs;
+	QVector<net::Message> compatibleMsgs;
 	compatibleMsgs.reserve(count);
 	for(int i = 0; i < count; ++i) {
-		const drawdance::Message &msg = msgs[i];
-		const drawdance::Message compatibleMsg = msg.makeBackwardCompatible();
+		const net::Message &msg = msgs[i];
+		const net::Message compatibleMsg =
+			net::makeMessageBackwardCompatible(msg);
 		if(compatibleMsg.isNull()) {
 			qWarning("Incompatible %s message", qUtf8Printable(msg.typeName()));
 		} else {
@@ -224,10 +237,10 @@ QVector<drawdance::Message> Client::filterCompatibleMessages(int count, const dr
 	return compatibleMsgs;
 }
 
-void Client::handleMessages(int count, drawdance::Message *msgs)
+void Client::handleMessages(int count, net::Message *msgs)
 {
 	for(int i = 0; i < count; ++i) {
-		drawdance::Message &msg = msgs[i];
+		net::Message &msg = msgs[i];
 		switch(msg.type()) {
 		case DP_MSG_SERVER_COMMAND:
 			handleServerReply(ServerReply::fromMessage(msg));
@@ -248,10 +261,10 @@ void Client::handleMessages(int count, drawdance::Message *msgs)
 	}
 	emit messagesReceived(count, msgs);
 
-	// The server can send a "catchup" message when there is a significant number
-	// of messages queued. During login, we can show a progress bar and hide the canvas
-	// to speed up the initial catchup phase.
-	if(m_catchupTo>0) {
+	// The server can send a "catchup" message when there is a significant
+	// number of messages queued. During login, we can show a progress bar and
+	// hide the canvas to speed up the initial catchup phase.
+	if(m_catchupTo > 0) {
 		m_caughtUp += count;
 		if(m_caughtUp >= m_catchupTo) {
 			qInfo("Catchup: caught up to %d messages", m_caughtUp);
@@ -281,17 +294,21 @@ void Client::handleServerReply(const ServerReply &reply)
 	case ServerReply::ReplyType::Alert:
 	case ServerReply::ReplyType::Error:
 	case ServerReply::ReplyType::Result:
-		emit serverMessage(reply.message, reply.type == ServerReply::ReplyType::Alert);
+		emit serverMessage(
+			reply.message, reply.type == ServerReply::ReplyType::Alert);
 		break;
 	case ServerReply::ReplyType::Log: {
-		QString time = QDateTime::fromString(reply.reply["timestamp"].toString(), Qt::ISODate).toLocalTime().toString(Qt::ISODate);
+		QString time = QDateTime::fromString(
+						   reply.reply["timestamp"].toString(), Qt::ISODate)
+						   .toLocalTime()
+						   .toString(Qt::ISODate);
 		QString user = reply.reply["user"].toString();
 		QString msg = reply.message;
 		if(user.isEmpty())
 			emit serverLog(QStringLiteral("[%1] %2").arg(time, msg));
 		else
 			emit serverLog(QStringLiteral("[%1] %2: %3").arg(time, user, msg));
-		} break;
+	} break;
 	case ServerReply::ReplyType::SessionConf:
 		emit sessionConfChange(reply.reply["config"].toObject());
 		break;
@@ -299,7 +316,8 @@ void Client::handleServerReply(const ServerReply &reply)
 		// No longer used since 2.1.0. Replaced by RESETREQUEST
 		break;
 	case ServerReply::ReplyType::ResetRequest:
-		emit autoresetRequested(reply.reply["maxSize"].toInt(), reply.reply["query"].toBool());
+		emit autoresetRequested(
+			reply.reply["maxSize"].toInt(), reply.reply["query"].toBool());
 		break;
 	case ServerReply::ReplyType::Status:
 		emit serverStatusUpdate(reply.reply["size"].toInt());
@@ -334,7 +352,7 @@ void Client::handleResetRequest(const ServerReply &msg)
 	}
 }
 
-void Client::handleData(const drawdance::Message &msg)
+void Client::handleData(const net::Message &msg)
 {
 	DP_MsgData *md = msg.toData();
 	if(md && DP_msg_data_recipient(md) == m_myId) {
@@ -347,17 +365,18 @@ void Client::handleData(const drawdance::Message &msg)
 			qWarning("Unknown data message type %d", type);
 			break;
 		}
-
 	}
 }
 
-void Client::Client::handleUserInfo(const drawdance::Message &msg, DP_MsgData *md)
+void Client::Client::handleUserInfo(const net::Message &msg, DP_MsgData *md)
 {
 	size_t size;
 	const unsigned char *bytes = DP_msg_data_body(md, &size);
 	QJsonParseError err;
-	QJsonDocument json = QJsonDocument::fromJson(QByteArray::fromRawData(
-		reinterpret_cast<const char *>(bytes), compat::castSize(size)), &err);
+	QJsonDocument json = QJsonDocument::fromJson(
+		QByteArray::fromRawData(
+			reinterpret_cast<const char *>(bytes), compat::castSize(size)),
+		&err);
 	if(json.isObject()) {
 		QJsonObject info = json.object();
 		QString type = info["type"].toString();
@@ -369,7 +388,8 @@ void Client::Client::handleUserInfo(const drawdance::Message &msg, DP_MsgData *m
 			qWarning("Unknown user info type '%s'", qUtf8Printable(type));
 		}
 	} else {
-		qWarning("Could not parse JSON as an object: %s",
+		qWarning(
+			"Could not parse JSON as an object: %s",
 			qUtf8Printable(err.errorString()));
 	}
 }

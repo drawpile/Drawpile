@@ -1,14 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #ifndef DP_NET_USERLISTMODEL_H
 #define DP_NET_USERLISTMODEL_H
-
-#include "libclient/drawdance/message.h"
-
+#include "libclient/net/message.h"
 #include <QAbstractTableModel>
-#include <QSortFilterProxyModel>
 #include <QList>
 #include <QPixmap>
+#include <QSortFilterProxyModel>
 #include <optional>
 
 class QJsonArray;
@@ -57,12 +54,15 @@ public:
 		IsOnlineRole
 	};
 
-	UserListModel(QObject *parent=nullptr);
+	UserListModel(QObject *parent = nullptr);
 
-	QVariant data(const QModelIndex& index, int role=Qt::DisplayRole) const override;
-	int rowCount(const QModelIndex& parent=QModelIndex()) const override;
-	int columnCount(const QModelIndex& parent=QModelIndex()) const override;
-	QVariant headerData(int section, Qt::Orientation orientation, int role=Qt::DisplayRole) const override;
+	QVariant
+	data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+	int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+	int columnCount(const QModelIndex &parent = QModelIndex()) const override;
+	QVariant headerData(
+		int section, Qt::Orientation orientation,
+		int role = Qt::DisplayRole) const override;
 
 	//! A new user logs in
 	void userLogin(const User &user);
@@ -118,7 +118,7 @@ public:
 	 * @param lock
 	 * @return
 	 */
-	drawdance::Message getLockUserCommand(int localId, int userId, bool lock) const;
+	net::Message getLockUserCommand(int localId, int userId, bool lock) const;
 
 	/**
 	 * @brief Get the command for granting or revoking operator privileges
@@ -127,7 +127,7 @@ public:
 	 * @param op
 	 * @return
 	 */
-	drawdance::Message getOpUserCommand(int localId, int userId, bool op) const;
+	net::Message getOpUserCommand(int localId, int userId, bool op) const;
 
 	/**
 	 * @brief Get the command for granting or revoking trusted status
@@ -136,13 +136,13 @@ public:
 	 * @param trusted
 	 * @return
 	 */
-	drawdance::Message getTrustUserCommand(int localId, int userId, bool op) const;
+	net::Message getTrustUserCommand(int localId, int userId, bool op) const;
 
 	/**
-		* @brief Check if the given user is an operator
-		* @param userId
-		* @return
-		*/
+	 * @brief Check if the given user is an operator
+	 * @param userId
+	 * @return
+	 */
 	bool isOperator(int userId) const;
 
 public slots:
@@ -157,14 +157,14 @@ private:
 /**
  * A filtered user list model that only includes online users
  */
-class OnlineUserListModel final : public QSortFilterProxyModel
-{
+class OnlineUserListModel final : public QSortFilterProxyModel {
 	Q_OBJECT
 public:
 	using QSortFilterProxyModel::QSortFilterProxyModel;
 
 protected:
-	bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const override;
+	bool filterAcceptsRow(
+		int source_row, const QModelIndex &source_parent) const override;
 };
 
 }
@@ -172,4 +172,3 @@ protected:
 Q_DECLARE_METATYPE(canvas::User)
 
 #endif
-

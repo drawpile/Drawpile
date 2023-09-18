@@ -143,21 +143,25 @@ bool DP_message_type_parse_multiline_tuples(DP_MessageType type)
 }
 
 
-DP_Message *DP_message_deserialize_body(int type, unsigned int context_id, const unsigned char *buf, size_t length)
+DP_Message *DP_message_deserialize_body(int type, unsigned int context_id, const unsigned char *buf, size_t length, bool decode_opaque)
 {
-    switch (type) {
-    {% for message in messages %}
-        case {{ message.enum_name }}:
-            {% if message.reserved %}
-                DP_error_set("Can't deserialize reserved message type {{ message.id }} {{ message.enum_name }}");
-                return NULL;
-            {% else %}
-                return DP_{{ message.func_name }}_deserialize(context_id, buf, length);
-            {% endif %}
-    {% endfor %}
-    default:
-        DP_error_set("Can't deserialize unknown message type %d", type);
-        return NULL;
+    if (type < 64 || decode_opaque) {
+        switch (type) {
+        {% for message in messages %}
+            case {{ message.enum_name }}:
+                {% if message.reserved %}
+                    DP_error_set("Can't deserialize reserved message type {{ message.id }} {{ message.enum_name }}");
+                    return NULL;
+                {% else %}
+                    return DP_{{ message.func_name }}_deserialize(context_id, buf, length);
+                {% endif %}
+        {% endfor %}
+        default:
+            DP_error_set("Can't deserialize unknown message type %d", type);
+            return NULL;
+        }
+    } else {
+        return DP_message_new_opaque((DP_MessageType)type, context_id, buf, length);
     }
 }
 

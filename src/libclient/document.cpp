@@ -1,66 +1,66 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "libclient/document.h"
-
-#include "libclient/net/client.h"
-#include "libclient/net/servercmd.h"
 #include "libclient/canvas/canvasmodel.h"
+#include "libclient/canvas/layerlist.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/canvas/selection.h"
-#include "libclient/canvas/layerlist.h"
 #include "libclient/canvas/userlist.h"
 #include "libclient/export/canvassaverrunnable.h"
+#include "libclient/net/client.h"
 #include "libclient/settings.h"
 #include "libclient/tools/selection.h"
 #include "libclient/tools/toolcontroller.h"
 #include "libclient/utils/images.h"
+#include "libshared/net/servercmd.h"
 #include "libshared/util/functionrunnable.h"
 #include "libshared/util/qtcompat.h"
-
-#include <QGuiApplication>
-#include <QTimer>
-#include <QDir>
 #include <QClipboard>
-#include <QThreadPool>
+#include <QDir>
+#include <QGuiApplication>
 #include <QPainter>
-#include <QtEndian>
 #include <QRunnable>
 #include <QSysInfo>
-#include <tuple>
+#include <QThreadPool>
+#include <QTimer>
+#include <QtEndian>
 #include <parson.h>
+#include <tuple>
 
 Document::Document(libclient::settings::Settings &settings, QObject *parent)
-	: QObject(parent),
-	  m_resetstate(),
-	  m_messageBuffer(),
-	  m_canvas(nullptr),
-	  m_settings(settings),
-	  m_dirty(false),
-	  m_autosave(false),
-	  m_canAutosave(false),
-	  m_saveInProgress(false),
-	  m_wantCanvasHistoryDump(false),
-	  m_sessionPersistent(false),
-	  m_sessionClosed(false),
-	  m_sessionAuthOnly(false),
-	  m_sessionPreserveChat(false),
-	  m_sessionPasswordProtected(false),
-	  m_sessionOpword(false),
-	  m_sessionNsfm(false),
-	  m_sessionForceNsfm(false),
-	  m_sessionDeputies(false),
-	  m_sessionMaxUserCount(0),
-	  m_sessionHistoryMaxSize(0),
-	  m_sessionResetThreshold(0),
-	  m_baseResetThreshold(0)
+	: QObject(parent)
+	, m_resetstate()
+	, m_messageBuffer()
+	, m_canvas(nullptr)
+	, m_settings(settings)
+	, m_dirty(false)
+	, m_autosave(false)
+	, m_canAutosave(false)
+	, m_saveInProgress(false)
+	, m_wantCanvasHistoryDump(false)
+	, m_sessionPersistent(false)
+	, m_sessionClosed(false)
+	, m_sessionAuthOnly(false)
+	, m_sessionPreserveChat(false)
+	, m_sessionPasswordProtected(false)
+	, m_sessionOpword(false)
+	, m_sessionNsfm(false)
+	, m_sessionForceNsfm(false)
+	, m_sessionDeputies(false)
+	, m_sessionMaxUserCount(0)
+	, m_sessionHistoryMaxSize(0)
+	, m_sessionResetThreshold(0)
+	, m_baseResetThreshold(0)
 {
 	// Initialize
 	m_client = new net::Client(this);
-	m_settings.bindMessageQueueDrainRate(m_client, &net::Client::setSmoothDrainRate);
+	m_settings.bindMessageQueueDrainRate(
+		m_client, &net::Client::setSmoothDrainRate);
 	m_toolctrl = new tools::ToolController(m_client, this);
-	m_settings.bindSmoothing(m_toolctrl, &tools::ToolController::setGlobalSmoothing);
+	m_settings.bindSmoothing(
+		m_toolctrl, &tools::ToolController::setGlobalSmoothing);
 	m_banlist = new net::BanlistModel(this);
-	m_announcementlist = new net::AnnouncementListModel(settings.listServers(), this);
+	m_announcementlist =
+		new net::AnnouncementListModel(settings.listServers(), this);
 	m_serverLog = new QStringListModel(this);
 
 	m_autosaveTimer = new QTimer(this);
@@ -68,19 +68,36 @@ Document::Document(libclient::settings::Settings &settings, QObject *parent)
 	connect(m_autosaveTimer, &QTimer::timeout, this, &Document::autosaveNow);
 
 	// Make connections
-	connect(m_client, &net::Client::serverConnected, this, &Document::serverConnected);
-	connect(m_client, &net::Client::serverLoggedIn, this, &Document::onServerLogin);
-	connect(m_client, &net::Client::serverDisconnected, this, &Document::onServerDisconnect);
-	connect(m_client, &net::Client::serverDisconnected, this, &Document::serverDisconnected);
+	connect(
+		m_client, &net::Client::serverConnected, this,
+		&Document::serverConnected);
+	connect(
+		m_client, &net::Client::serverLoggedIn, this, &Document::onServerLogin);
+	connect(
+		m_client, &net::Client::serverDisconnected, this,
+		&Document::onServerDisconnect);
+	connect(
+		m_client, &net::Client::serverDisconnected, this,
+		&Document::serverDisconnected);
 
-	connect(m_client, &net::Client::needSnapshot, this, &Document::snapshotNeeded);
-	connect(m_client, &net::Client::sessionConfChange, this, &Document::onSessionConfChanged);
-	connect(m_client, &net::Client::autoresetRequested, this, &Document::onAutoresetRequested);
-	connect(m_client, &net::Client::serverLog, this, &Document::addServerLogEntry);
+	connect(
+		m_client, &net::Client::needSnapshot, this, &Document::snapshotNeeded);
+	connect(
+		m_client, &net::Client::sessionConfChange, this,
+		&Document::onSessionConfChanged);
+	connect(
+		m_client, &net::Client::autoresetRequested, this,
+		&Document::onAutoresetRequested);
+	connect(
+		m_client, &net::Client::serverLog, this, &Document::addServerLogEntry);
 
-	connect(m_client, &net::Client::sessionResetted, this, &Document::onSessionResetted);
+	connect(
+		m_client, &net::Client::sessionResetted, this,
+		&Document::onSessionResetted);
 
-	connect(this, &Document::justInTimeSnapshotGenerated, this, &Document::sendResetSnapshot, Qt::QueuedConnection);
+	connect(
+		this, &Document::justInTimeSnapshotGenerated, this,
+		&Document::sendResetSnapshot, Qt::QueuedConnection);
 }
 
 void Document::initCanvas()
@@ -93,21 +110,37 @@ void Document::initCanvas()
 		m_settings.engineFrameRate(),
 		m_settings.engineSnapshotCount(),
 		m_settings.engineSnapshotInterval() * 1000LL,
-		m_wantCanvasHistoryDump, this
-	};
+		m_wantCanvasHistoryDump,
+		this};
 
 	m_toolctrl->setModel(m_canvas);
 
-	connect(m_client, &net::Client::messagesReceived, m_canvas, &canvas::CanvasModel::handleCommands);
-	connect(m_client, &net::Client::drawingCommandsLocal, m_canvas, &canvas::CanvasModel::handleLocalCommands);
-	connect(m_canvas, &canvas::CanvasModel::canvasModified, this, &Document::markDirty);
-	connect(m_canvas->layerlist(), &canvas::LayerListModel::moveRequested, this, &Document::onMoveLayerRequested);
+	connect(
+		m_client, &net::Client::messagesReceived, m_canvas,
+		&canvas::CanvasModel::handleCommands);
+	connect(
+		m_client, &net::Client::drawingCommandsLocal, m_canvas,
+		&canvas::CanvasModel::handleLocalCommands);
+	connect(
+		m_canvas, &canvas::CanvasModel::canvasModified, this,
+		&Document::markDirty);
+	connect(
+		m_canvas->layerlist(), &canvas::LayerListModel::moveRequested, this,
+		&Document::onMoveLayerRequested);
 
-	connect(m_canvas, &canvas::CanvasModel::titleChanged, this, &Document::sessionTitleChanged);
-	connect(m_canvas, &canvas::CanvasModel::recorderStateChanged, this, &Document::recorderStateChanged);
+	connect(
+		m_canvas, &canvas::CanvasModel::titleChanged, this,
+		&Document::sessionTitleChanged);
+	connect(
+		m_canvas, &canvas::CanvasModel::recorderStateChanged, this,
+		&Document::recorderStateChanged);
 
-	connect(m_client, &net::Client::catchupProgress, m_canvas->paintEngine(), &canvas::PaintEngine::enqueueCatchupProgress);
-	connect(m_canvas->paintEngine(), &canvas::PaintEngine::caughtUpTo, this, &Document::catchupProgress, Qt::QueuedConnection);
+	connect(
+		m_client, &net::Client::catchupProgress, m_canvas->paintEngine(),
+		&canvas::PaintEngine::enqueueCatchupProgress);
+	connect(
+		m_canvas->paintEngine(), &canvas::PaintEngine::caughtUpTo, this,
+		&Document::catchupProgress, Qt::QueuedConnection);
 
 	emit canvasChanged(m_canvas);
 	m_canvas->paintEngine()->resetAcl(m_client->myId());
@@ -130,7 +163,8 @@ void Document::onSessionResetted()
 
 	emit sessionResetState(m_canvas->paintEngine()->viewCanvasState());
 
-	// Clear out the canvas in preparation for the new data that is about to follow
+	// Clear out the canvas in preparation for the new data that is about to
+	// follow
 	m_canvas->resetCanvas();
 	m_resetstate.clear();
 }
@@ -149,7 +183,8 @@ bool Document::loadBlank(const QSize &size, const QColor &background)
 DP_LoadResult Document::loadFile(const QString &path)
 {
 	DP_LoadResult result;
-	drawdance::CanvasState canvasState = drawdance::CanvasState::load(path, &result);
+	drawdance::CanvasState canvasState =
+		drawdance::CanvasState::load(path, &result);
 	if(canvasState.isNull()) {
 		Q_ASSERT(result != DP_LOAD_RESULT_SUCCESS);
 		return result;
@@ -166,20 +201,21 @@ DP_LoadResult Document::loadFile(const QString &path)
 static bool isSessionTemplate(DP_Player *player)
 {
 	JSON_Value *header = DP_player_header(player);
-	return header && DP_str_equal(
-		json_object_get_string(json_value_get_object(header), "type"),
-		"template");
+	return header &&
+		   DP_str_equal(
+			   json_object_get_string(json_value_get_object(header), "type"),
+			   "template");
 }
 
 DP_LoadResult Document::loadRecording(
 	const QString &path, bool debugDump, bool *outIsTemplate)
 {
 	DP_LoadResult result;
-	DP_Player *player = debugDump
-		? DP_load_debug_dump(path.toUtf8().constData(), &result)
-		: DP_load_recording(path.toUtf8().constData(), &result);
+	DP_Player *player =
+		debugDump ? DP_load_debug_dump(path.toUtf8().constData(), &result)
+				  : DP_load_recording(path.toUtf8().constData(), &result);
 	bool isTemplate;
-	switch (result) {
+	switch(result) {
 	case DP_LOAD_RESULT_SUCCESS:
 		setAutosave(false);
 		initCanvas();
@@ -199,13 +235,14 @@ DP_LoadResult Document::loadRecording(
 		isTemplate = false;
 		break;
 	}
-	if(outIsTemplate){
+	if(outIsTemplate) {
 		*outIsTemplate = isTemplate;
 	}
 	return result;
 }
 
-void Document::onServerLogin(bool join, bool compatibilityMode, const QString &joinPassword)
+void Document::onServerLogin(
+	bool join, bool compatibilityMode, const QString &joinPassword)
 {
 	if(join)
 		initCanvas();
@@ -290,11 +327,9 @@ void Document::onSessionConfChanged(const QJsonObject &config)
 		QString jc;
 		for(auto v : config["announcements"].toArray()) {
 			const QJsonObject o = v.toObject();
-			const net::Announcement a {
-				o["url"].toString(),
-				o["roomcode"].toString(),
-				o["private"].toBool()
-			};
+			const net::Announcement a{
+				o["url"].toString(), o["roomcode"].toString(),
+				o["private"].toBool()};
 			m_announcementlist->addAnnouncement(a);
 			if(!a.roomcode.isEmpty())
 				jc = a.roomcode;
@@ -310,7 +345,8 @@ void Document::onAutoresetRequested(int maxSize, bool query)
 	qInfo("Server requested autoreset (query=%d)", query);
 
 	if(!m_client->isFullyCaughtUp()) {
-		qInfo("Ignoring autoreset request because we're not fully caught up yet.");
+		qInfo("Ignoring autoreset request because we're not fully caught up "
+			  "yet.");
 		return;
 	}
 
@@ -319,7 +355,8 @@ void Document::onAutoresetRequested(int maxSize, bool query)
 	if(m_settings.serverAutoReset()) {
 		if(query) {
 			// This is just a query: send back an affirmative response
-			m_client->sendMessage(net::ServerCommand::make("ready-to-autoreset"));
+			m_client->sendMessage(
+				net::ServerCommand::make("ready-to-autoreset"));
 
 		} else {
 			// Autoreset on request
@@ -328,8 +365,9 @@ void Document::onAutoresetRequested(int maxSize, bool query)
 			// subsequent server command comes in too fast.
 			sendLockSession(true);
 
-			m_client->sendMessage(drawdance::Message::makeChat(
-				m_client->myId(), DP_MSG_CHAT_TFLAGS_BYPASS, DP_MSG_CHAT_OFLAGS_ACTION,
+			m_client->sendMessage(net::makeChatMessage(
+				m_client->myId(), DP_MSG_CHAT_TFLAGS_BYPASS,
+				DP_MSG_CHAT_OFLAGS_ACTION,
 				QStringLiteral("beginning session autoreset...")));
 
 			sendResetSession();
@@ -339,22 +377,22 @@ void Document::onAutoresetRequested(int maxSize, bool query)
 	}
 }
 
-void Document::onMoveLayerRequested(int sourceId, int targetId, bool intoGroup, bool below)
+void Document::onMoveLayerRequested(
+	int sourceId, int targetId, bool intoGroup, bool below)
 {
 	uint8_t contextId = m_client->myId();
-	drawdance::Message msg;
+	net::Message msg;
 	if(m_client->isCompatibilityMode()) {
-		msg = m_canvas->paintEngine()->historyCanvasState()
-			.makeLayerOrder(contextId, sourceId, targetId, below);
+		msg = m_canvas->paintEngine()->historyCanvasState().makeLayerOrder(
+			contextId, sourceId, targetId, below);
 	} else {
-		msg = m_canvas->paintEngine()->historyCanvasState()
-			.makeLayerTreeMove(contextId, sourceId, targetId, intoGroup, below);
+		msg = m_canvas->paintEngine()->historyCanvasState().makeLayerTreeMove(
+			contextId, sourceId, targetId, intoGroup, below);
 	}
 	if(msg.isNull()) {
 		qWarning("Can't move layer: %s", DP_error());
 	} else {
-		drawdance::Message messages[] = {
-			drawdance::Message::makeUndoPoint(contextId), msg};
+		net::Message messages[] = {net::makeUndoPointMessage(contextId), msg};
 		m_client->sendMessages(DP_ARRAY_LENGTH(messages), messages);
 	}
 }
@@ -397,7 +435,7 @@ void Document::setSessionResetThreshold(int threshold)
 	// if a low hard size limit is in place. This ensures the settings dialog
 	// value is always up to date.
 	m_sessionResetThreshold = threshold;
-	emit sessionResetThresholdChanged(threshold / double(1024*1024));
+	emit sessionResetThresholdChanged(threshold / double(1024 * 1024));
 }
 
 void Document::setBaseResetThreshold(int threshold)
@@ -520,7 +558,8 @@ void Document::setWantCanvasHistoryDump(bool wantCanvasHistoryDump)
 {
 	m_wantCanvasHistoryDump = wantCanvasHistoryDump;
 	if(m_canvas) {
-		m_canvas->paintEngine()->setWantCanvasHistoryDump(wantCanvasHistoryDump);
+		m_canvas->paintEngine()->setWantCanvasHistoryDump(
+			wantCanvasHistoryDump);
 	}
 }
 
@@ -557,7 +596,8 @@ void Document::autosaveNow()
 
 void Document::saveCanvasAs(const QString &filename)
 {
-	saveCanvasStateAs(filename, m_canvas->paintEngine()->viewCanvasState(), true);
+	saveCanvasStateAs(
+		filename, m_canvas->paintEngine()->viewCanvasState(), true);
 }
 
 void Document::saveCanvasStateAs(
@@ -568,25 +608,30 @@ void Document::saveCanvasStateAs(
 	saveCanvasState(canvasState, isCurrentState);
 }
 
-void Document::saveCanvasState(const drawdance::CanvasState &canvasState, bool isCurrentState)
+void Document::saveCanvasState(
+	const drawdance::CanvasState &canvasState, bool isCurrentState)
 {
 	Q_ASSERT(!m_saveInProgress);
 	m_saveInProgress = true;
 
-	CanvasSaverRunnable *saver = new CanvasSaverRunnable(canvasState, m_currentFilename);
+	CanvasSaverRunnable *saver =
+		new CanvasSaverRunnable(canvasState, m_currentFilename);
 	if(isCurrentState) {
 		unmarkDirty();
 	}
-	connect(saver, &CanvasSaverRunnable::saveComplete, this, &Document::onCanvasSaved);
+	connect(
+		saver, &CanvasSaverRunnable::saveComplete, this,
+		&Document::onCanvasSaved);
 	emit canvasSaveStarted();
 	QThreadPool::globalInstance()->start(saver);
 }
 
 void Document::exportTemplate(const QString &path)
 {
-	drawdance::MessageList snapshot = m_canvas->generateSnapshot(
+	net::MessageList snapshot = m_canvas->generateSnapshot(
 		false, DP_ACL_STATE_RESET_IMAGE_TEMPLATE_FLAGS);
-	drawdance::RecordStartResult result = m_canvas->paintEngine()->exportTemplate(path, snapshot);
+	drawdance::RecordStartResult result =
+		m_canvas->paintEngine()->exportTemplate(path, snapshot);
 	QString errorMessage;
 	switch(result) {
 	case drawdance::RECORD_START_SUCCESS:
@@ -645,30 +690,33 @@ bool Document::isRecording() const
 
 void Document::sendPointerMove(const QPointF &point)
 {
-	m_client->sendMessage(drawdance::Message::makeMovePointer(
+	m_client->sendMessage(net::makeMovePointerMessage(
 		m_client->myId(), point.x() * 4, point.y() * 4));
 }
 
 void Document::sendSessionConf(const QJsonObject &sessionconf)
 {
-	m_client->sendMessage(net::ServerCommand::make("sessionconf", QJsonArray(), sessionconf));
+	m_client->sendMessage(
+		net::ServerCommand::make("sessionconf", QJsonArray(), sessionconf));
 }
 
-void Document::sendFeatureAccessLevelChange(const uint8_t tiers[DP_FEATURE_COUNT])
+void Document::sendFeatureAccessLevelChange(
+	const uint8_t tiers[DP_FEATURE_COUNT])
 {
-	m_client->sendMessage(drawdance::Message::makeFeatureAccessLevels(
+	m_client->sendMessage(net::makeFeatureAccessLevelsMessage(
 		m_client->myId(), DP_FEATURE_COUNT, tiers));
 }
 
 void Document::sendLockSession(bool lock)
 {
-	m_client->sendMessage(drawdance::Message::makeLayerAcl(
+	m_client->sendMessage(net::makeLayerAclMessage(
 		m_client->myId(), 0, lock ? DP_ACL_ALL_LOCKED_BIT : 0, {}));
 }
 
 void Document::sendOpword(const QString &opword)
 {
-	m_client->sendMessage(net::ServerCommand::make("gain-op", QJsonArray() << opword));
+	m_client->sendMessage(
+		net::ServerCommand::make("gain-op", QJsonArray() << opword));
 }
 
 /**
@@ -677,13 +725,15 @@ void Document::sendOpword(const QString &opword)
  * The reset image will be sent when the server acknowledges the request.
  * If an empty reset image is given here, one will be generated just in time.
  *
- * If the document is in offline mode, this will immediately reset the current canvas.
+ * If the document is in offline mode, this will immediately reset the current
+ * canvas.
  */
-void Document::sendResetSession(const drawdance::MessageList &resetImage)
+void Document::sendResetSession(const net::MessageList &resetImage)
 {
 	if(!m_client->isConnected()) {
 		if(resetImage.isEmpty()) {
-			qWarning("Tried to do an offline session reset with a blank reset image");
+			qWarning("Tried to do an offline session reset with a blank reset "
+					 "image");
 			return;
 		}
 		// Not connected? Do a local reset
@@ -695,7 +745,9 @@ void Document::sendResetSession(const drawdance::MessageList &resetImage)
 	if(resetImage.isEmpty()) {
 		qInfo("Sending session reset request. (Just in time snapshot)");
 	} else {
-		qInfo("Sending session reset request. (Snapshot size is %lld bytes)", compat::cast<long long>(resetImage.length()));
+		qInfo(
+			"Sending session reset request. (Snapshot size is %lld bytes)",
+			compat::cast<long long>(resetImage.length()));
 	}
 
 	m_resetstate = resetImage;
@@ -705,9 +757,9 @@ void Document::sendResetSession(const drawdance::MessageList &resetImage)
 void Document::sendResizeCanvas(int top, int right, int bottom, int left)
 {
 	uint8_t contextId = m_client->myId();
-	drawdance::Message msgs[] = {
-		drawdance::Message::makeUndoPoint(contextId),
-		drawdance::Message::makeCanvasResize(contextId, top, right, bottom, left),
+	net::Message msgs[] = {
+		net::makeUndoPointMessage(contextId),
+		net::makeCanvasResizeMessage(contextId, top, right, bottom, left),
 	};
 	m_client->sendMessages(DP_ARRAY_LENGTH(msgs), msgs);
 }
@@ -735,9 +787,9 @@ void Document::sendTerminateSession()
 void Document::sendCanvasBackground(const QColor &color)
 {
 	uint8_t contextId = m_client->myId();
-	drawdance::Message msgs[] = {
-		drawdance::Message::makeUndoPoint(contextId),
-		drawdance::Message::makeCanvasBackground(contextId, color),
+	net::Message msgs[] = {
+		net::makeUndoPointMessage(contextId),
+		net::makeCanvasBackgroundMessage(contextId, color),
 	};
 	m_client->sendMessages(DP_ARRAY_LENGTH(msgs), msgs);
 }
@@ -748,7 +800,8 @@ void Document::sendAbuseReport(int userId, const QString &message)
 	if(userId > 0 && userId < 256)
 		kwargs["user"] = userId;
 	kwargs["reason"] = message;
-	m_client->sendMessage(net::ServerCommand::make("report", QJsonArray(), kwargs));
+	m_client->sendMessage(
+		net::ServerCommand::make("report", QJsonArray(), kwargs));
 }
 
 void Document::snapshotNeeded()
@@ -757,7 +810,7 @@ void Document::snapshotNeeded()
 	if(m_canvas) {
 		if(m_resetstate.isEmpty()) {
 			// FunctionRunnable has autoDelete enabled
-			auto runnable = new utils::FunctionRunnable([this](){
+			auto runnable = new utils::FunctionRunnable([this]() {
 				generateJustInTimeSnapshot();
 			});
 			QThreadPool::globalInstance()->start(runnable);
@@ -765,7 +818,8 @@ void Document::snapshotNeeded()
 			sendResetSnapshot();
 		}
 	} else {
-		qWarning("Server requested snapshot, but canvas is not yet initialized!");
+		qWarning(
+			"Server requested snapshot, but canvas is not yet initialized!");
 		m_client->sendMessage(net::ServerCommand::make("init-cancel"));
 	}
 }
@@ -786,14 +840,19 @@ void Document::generateJustInTimeSnapshot()
 void Document::sendResetSnapshot()
 {
 	// Size limit check. The server will kick us if we send an oversized reset.
-	if(m_sessionHistoryMaxSize > 0 && m_resetstate.length() > m_sessionHistoryMaxSize) {
-		qWarning("Reset snapshot (%lld) is larger than the size limit (%d)!", compat::cast<long long>(m_resetstate.length()), m_sessionHistoryMaxSize);
+	if(m_sessionHistoryMaxSize > 0 &&
+	   m_resetstate.length() > m_sessionHistoryMaxSize) {
+		qWarning(
+			"Reset snapshot (%lld) is larger than the size limit (%d)!",
+			compat::cast<long long>(m_resetstate.length()),
+			m_sessionHistoryMaxSize);
 		emit autoResetTooLarge(m_sessionHistoryMaxSize);
 		m_client->sendMessage(net::ServerCommand::make("init-cancel"));
 	} else {
 		// Send the reset command+image
 		m_client->sendResetMessage(net::ServerCommand::make("init-begin"));
-		m_client->sendResetMessages(m_resetstate.count(), m_resetstate.constData());
+		m_client->sendResetMessages(
+			m_resetstate.count(), m_resetstate.constData());
 		m_client->sendResetMessage(net::ServerCommand::make("init-complete"));
 	}
 	m_resetstate.clear();
@@ -805,8 +864,7 @@ void Document::undo()
 		return;
 
 	if(!m_toolctrl->undoMultipartDrawing()) {
-		m_client->sendMessage(
-			drawdance::Message::makeUndo(m_client->myId(), 0, false));
+		m_client->sendMessage(net::makeUndoMessage(m_client->myId(), 0, false));
 	}
 }
 
@@ -817,8 +875,7 @@ void Document::redo()
 
 	// Cannot redo while a multipart drawing action is in progress
 	if(!m_toolctrl->isMultipartDrawing()) {
-		m_client->sendMessage(
-			drawdance::Message::makeUndo(m_client->myId(), 0, true));
+		m_client->sendMessage(net::makeUndoMessage(m_client->myId(), 0, true));
 	}
 }
 
@@ -835,10 +892,13 @@ void Document::selectAll()
 
 void Document::selectNone()
 {
-	if(m_canvas && m_canvas->selection() && m_canvas->selection()->pasteOrMoveToCanvas(
-			m_messageBuffer, m_client->myId(), m_toolctrl->activeLayer(),
-			m_toolctrl->selectInterpolation(), m_client->isCompatibilityMode())) {
-		m_client->sendMessages(m_messageBuffer.count(), m_messageBuffer.constData());
+	if(m_canvas && m_canvas->selection() &&
+	   m_canvas->selection()->pasteOrMoveToCanvas(
+		   m_messageBuffer, m_client->myId(), m_toolctrl->activeLayer(),
+		   m_toolctrl->selectInterpolation(),
+		   m_client->isCompatibilityMode())) {
+		m_client->sendMessages(
+			m_messageBuffer.count(), m_messageBuffer.constData());
 		m_messageBuffer.clear();
 	}
 	cancelSelection();
@@ -865,21 +925,17 @@ void Document::copyFromLayer(int layer)
 	QPoint srcpos;
 	if(m_canvas->selection()) {
 		const auto br = m_canvas->selection()->boundingRect();
-		srcpos = br.topLeft() + QPoint {
-			img.width() / 2,
-			img.height() / 2
-		};
+		srcpos = br.topLeft() + QPoint{img.width() / 2, img.height() / 2};
 
 	} else {
 		const QSize s = m_canvas->size();
-		srcpos = QPoint(s.width()/2, s.height()/2);
+		srcpos = QPoint(s.width() / 2, s.height() / 2);
 	}
 
-	QByteArray srcbuf =
-		QByteArray::number(srcpos.x()) + "," +
-		QByteArray::number(srcpos.y()) + "," +
-		QByteArray::number(qApp->applicationPid()) + "," +
-		QByteArray::number(pasteId());
+	QByteArray srcbuf = QByteArray::number(srcpos.x()) + "," +
+						QByteArray::number(srcpos.y()) + "," +
+						QByteArray::number(qApp->applicationPid()) + "," +
+						QByteArray::number(pasteId());
 	data->setData("x-drawpile/pastesrc", srcbuf);
 
 	QGuiApplication::clipboard()->setMimeData(data);
@@ -926,7 +982,8 @@ void Document::cutLayer()
 	}
 }
 
-void Document::pasteImage(const QImage &image, const QPoint &point, bool forcePoint)
+void Document::pasteImage(
+	const QImage &image, const QPoint &point, bool forcePoint)
 {
 	if(m_canvas) {
 		m_canvas->pasteFromImage(image, point, forcePoint);
@@ -936,10 +993,13 @@ void Document::pasteImage(const QImage &image, const QPoint &point, bool forcePo
 void Document::stamp()
 {
 	canvas::Selection *sel = m_canvas ? m_canvas->selection() : nullptr;
-	if(sel && !sel->pasteImage().isNull() && sel->pasteOrMoveToCanvas(
-			m_messageBuffer, m_client->myId(), m_toolctrl->activeLayer(),
-			m_toolctrl->selectInterpolation(), m_client->isCompatibilityMode())) {
-		m_client->sendMessages(m_messageBuffer.count(), m_messageBuffer.constData());
+	if(sel && !sel->pasteImage().isNull() &&
+	   sel->pasteOrMoveToCanvas(
+		   m_messageBuffer, m_client->myId(), m_toolctrl->activeLayer(),
+		   m_toolctrl->selectInterpolation(),
+		   m_client->isCompatibilityMode())) {
+		m_client->sendMessages(
+			m_messageBuffer.count(), m_messageBuffer.constData());
 		m_messageBuffer.clear();
 		sel->detachMove();
 	}
@@ -966,10 +1026,13 @@ void Document::fillArea(const QColor &color, DP_BlendMode mode, bool source)
 		qWarning("fillArea: no canvas!");
 		return;
 	}
-	if(m_canvas->selection() && !m_canvas->aclState()->isLayerLocked(m_toolctrl->activeLayer())
-			&& m_canvas->selection()->fillCanvas(
-				m_messageBuffer, m_client->myId(), color, mode, m_toolctrl->activeLayer(), source)) {
-		m_client->sendMessages(m_messageBuffer.count(), m_messageBuffer.constData());
+	if(m_canvas->selection() &&
+	   !m_canvas->aclState()->isLayerLocked(m_toolctrl->activeLayer()) &&
+	   m_canvas->selection()->fillCanvas(
+		   m_messageBuffer, m_client->myId(), color, mode,
+		   m_toolctrl->activeLayer(), source)) {
+		m_client->sendMessages(
+			m_messageBuffer.count(), m_messageBuffer.constData());
 		m_messageBuffer.clear();
 	}
 }
@@ -982,17 +1045,19 @@ void Document::removeEmptyAnnotations()
 	}
 
 	uint8_t contextId = m_canvas->localUserId();
-	drawdance::AnnotationList al = m_canvas->paintEngine()->historyCanvasState().annotations();
+	drawdance::AnnotationList al =
+		m_canvas->paintEngine()->historyCanvasState().annotations();
 	int count = al.count();
 	for(int i = 0; i < count; ++i) {
 		drawdance::Annotation a = al.at(i);
 		if(a.textBytes().length() == 0) {
 			m_messageBuffer.append(
-				drawdance::Message::makeAnnotationDelete(contextId, a.id()));
+				net::makeAnnotationDeleteMessage(contextId, a.id()));
 		}
 	}
 
-	m_client->sendMessages(m_messageBuffer.count(), m_messageBuffer.constData());
+	m_client->sendMessages(
+		m_messageBuffer.count(), m_messageBuffer.constData());
 	m_messageBuffer.clear();
 }
 
@@ -1002,4 +1067,3 @@ void Document::addServerLogEntry(const QString &log)
 	m_serverLog->insertRow(i);
 	m_serverLog->setData(m_serverLog->index(i), log);
 }
-

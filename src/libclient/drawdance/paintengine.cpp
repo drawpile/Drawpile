@@ -1,13 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 extern "C" {
 #include <dpcommon/output.h>
 #include <dpengine/tile.h>
 }
-
-#include "libclient/drawdance/paintengine.h"
 #include "libclient/drawdance/aclstate.h"
 #include "libclient/drawdance/image.h"
+#include "libclient/drawdance/paintengine.h"
 #include "libclient/drawdance/snapshotqueue.h"
 #include "libshared/util/paths.h"
 #include <QDateTime>
@@ -44,7 +42,7 @@ DP_PaintEngine *PaintEngine::get()
 	return m_data;
 }
 
-MessageList PaintEngine::reset(
+net::MessageList PaintEngine::reset(
 	AclState &acls, SnapshotQueue &sq, uint8_t localUserId,
 	DP_RendererTileFn rendererTileFn, DP_RendererUnlockFn rendererUnlockFn,
 	DP_RendererResizeFn rendererResizeFn, void *rendererUser,
@@ -52,7 +50,7 @@ MessageList PaintEngine::reset(
 	DP_PaintEngineDumpPlaybackFn dumpPlaybackFn, void *playbackUser,
 	const CanvasState &canvasState, DP_Player *player)
 {
-	MessageList localResetImage;
+	net::MessageList localResetImage;
 	DP_paint_engine_local_state_reset_image_build(
 		m_data, pushResetMessage, &localResetImage);
 	bool wantCanvasHistoryDump =
@@ -76,7 +74,8 @@ int PaintEngine::renderThreadCount() const
 
 void PaintEngine::setLocalDrawingInProgress(bool localDrawingInProgress)
 {
-	DP_paint_engine_local_drawing_in_progress_set(m_data, localDrawingInProgress);
+	DP_paint_engine_local_drawing_in_progress_set(
+		m_data, localDrawingInProgress);
 }
 
 void PaintEngine::setWantCanvasHistoryDump(bool wantCanvasHistoryDump)
@@ -134,7 +133,8 @@ Tile PaintEngine::localBackgroundTile() const
 
 RecordStartResult PaintEngine::makeRecorderParameters(
 	const QString &path, const QString &writer, const QString &writerVersion,
-	const QString &type, DP_RecorderType &outRecorderType, JSON_Value *&outHeader)
+	const QString &type, DP_RecorderType &outRecorderType,
+	JSON_Value *&outHeader)
 {
 	DP_RecorderType recorderType;
 	if(path.endsWith(".dprec", Qt::CaseInsensitive)) {
@@ -146,9 +146,8 @@ RecordStartResult PaintEngine::makeRecorderParameters(
 	}
 
 	JSON_Value *header = DP_recorder_header_new(
-		"writer", qUtf8Printable(writer),
-		"writerversion", qUtf8Printable(writerVersion),
-		"type", qUtf8Printable(type), NULL);
+		"writer", qUtf8Printable(writer), "writerversion",
+		qUtf8Printable(writerVersion), "type", qUtf8Printable(type), NULL);
 	if(!header) {
 		return RECORD_START_HEADER_ERROR;
 	}
@@ -171,7 +170,8 @@ RecordStartResult PaintEngine::startRecorder(
 	}
 
 	QByteArray pathBytes = path.toUtf8();
-	if (DP_paint_engine_recorder_start(m_data, recorderType, header, pathBytes.constData())) {
+	if(DP_paint_engine_recorder_start(
+		   m_data, recorderType, header, pathBytes.constData())) {
 		return RECORD_START_SUCCESS;
 	} else {
 		return RECORD_START_OPEN_ERROR;
@@ -179,7 +179,7 @@ RecordStartResult PaintEngine::startRecorder(
 }
 
 RecordStartResult PaintEngine::exportTemplate(
-	const QString &path, const drawdance::MessageList &snapshot,
+	const QString &path, const net::MessageList &snapshot,
 	const QString &writer, const QString &writerVersion, const QString &type)
 {
 	DP_RecorderType recorderType;
@@ -191,17 +191,19 @@ RecordStartResult PaintEngine::exportTemplate(
 	}
 
 	QByteArray pathBytes = path.toUtf8();
-	DP_Output *output = DP_file_output_save_new_from_path(pathBytes.constData());
+	DP_Output *output =
+		DP_file_output_save_new_from_path(pathBytes.constData());
 	if(!output) {
 		return RECORD_START_OPEN_ERROR;
 	}
 
-	DP_Recorder *r = DP_recorder_new_inc(recorderType, header, nullptr, nullptr, nullptr, output);
+	DP_Recorder *r = DP_recorder_new_inc(
+		recorderType, header, nullptr, nullptr, nullptr, output);
 	if(!r) {
 		return RECORD_START_RECORDER_ERROR;
 	}
 
-	for(const drawdance::Message &msg : snapshot) {
+	for(const net::Message &msg : snapshot) {
 		if(!DP_recorder_message_push_inc(r, msg.get())) {
 			break;
 		}
@@ -228,24 +230,30 @@ bool PaintEngine::recorderIsRecording() const
 	return DP_paint_engine_recorder_is_recording(m_data);
 }
 
-DP_PlayerResult PaintEngine::stepPlayback(long long steps, MessageList &outMsgs)
+DP_PlayerResult
+PaintEngine::stepPlayback(long long steps, net::MessageList &outMsgs)
 {
-	return DP_paint_engine_playback_step(m_data, steps, PaintEngine::pushMessage, &outMsgs);
+	return DP_paint_engine_playback_step(
+		m_data, steps, PaintEngine::pushMessage, &outMsgs);
 }
 
-DP_PlayerResult PaintEngine::skipPlaybackBy(long long steps, bool bySnapshots, MessageList &outMsgs)
+DP_PlayerResult PaintEngine::skipPlaybackBy(
+	long long steps, bool bySnapshots, net::MessageList &outMsgs)
 {
 	DrawContext drawContext = DrawContextPool::acquire();
 	return DP_paint_engine_playback_skip_by(
-		m_data, drawContext.get(), steps, bySnapshots, PaintEngine::pushMessage, &outMsgs);
+		m_data, drawContext.get(), steps, bySnapshots, PaintEngine::pushMessage,
+		&outMsgs);
 }
 
-DP_PlayerResult PaintEngine::jumpPlaybackTo(long long position, MessageList &outMsgs)
+DP_PlayerResult
+PaintEngine::jumpPlaybackTo(long long position, net::MessageList &outMsgs)
 {
 
 	DrawContext drawContext = DrawContextPool::acquire();
 	return DP_paint_engine_playback_jump_to(
-		m_data, drawContext.get(), position, PaintEngine::pushMessage, &outMsgs);
+		m_data, drawContext.get(), position, PaintEngine::pushMessage,
+		&outMsgs);
 }
 
 DP_PlayerResult PaintEngine::beginPlayback()
@@ -253,7 +261,8 @@ DP_PlayerResult PaintEngine::beginPlayback()
 	return DP_paint_engine_playback_begin(m_data);
 }
 
-DP_PlayerResult PaintEngine::playPlayback(long long msecs, MessageList &outMsgs)
+DP_PlayerResult
+PaintEngine::playPlayback(long long msecs, net::MessageList &outMsgs)
 {
 	return DP_paint_engine_playback_play(
 		m_data, msecs, PaintEngine::pushMessage, &outMsgs);
@@ -296,36 +305,44 @@ QImage PaintEngine::playbackIndexThumbnailAt(size_t index)
 {
 	bool error;
 	QImage img = wrapImage(
-		 DP_paint_engine_playback_index_thumbnail_at(m_data, index, &error));
-	if (error) {
+		DP_paint_engine_playback_index_thumbnail_at(m_data, index, &error));
+	if(error) {
 		qWarning("Error in thumbnail at index %zu: %s", index, DP_error());
 	}
 	return img;
 }
 
-DP_PlayerResult PaintEngine::stepDumpPlayback(MessageList &outMsgs)
+DP_PlayerResult PaintEngine::stepDumpPlayback(net::MessageList &outMsgs)
 {
-	return DP_paint_engine_playback_dump_step(m_data, PaintEngine::pushMessage, &outMsgs);
+	return DP_paint_engine_playback_dump_step(
+		m_data, PaintEngine::pushMessage, &outMsgs);
 }
 
-DP_PlayerResult PaintEngine::jumpDumpPlaybackToPreviousReset(MessageList &outMsgs)
+DP_PlayerResult
+PaintEngine::jumpDumpPlaybackToPreviousReset(net::MessageList &outMsgs)
 {
-	return DP_paint_engine_playback_dump_jump_previous_reset(m_data, PaintEngine::pushMessage, &outMsgs);
+	return DP_paint_engine_playback_dump_jump_previous_reset(
+		m_data, PaintEngine::pushMessage, &outMsgs);
 }
 
-DP_PlayerResult PaintEngine::jumpDumpPlaybackToNextReset(MessageList &outMsgs)
+DP_PlayerResult
+PaintEngine::jumpDumpPlaybackToNextReset(net::MessageList &outMsgs)
 {
-	return DP_paint_engine_playback_dump_jump_next_reset(m_data, PaintEngine::pushMessage, &outMsgs);
+	return DP_paint_engine_playback_dump_jump_next_reset(
+		m_data, PaintEngine::pushMessage, &outMsgs);
 }
 
-DP_PlayerResult PaintEngine::jumpDumpPlayback(long long position, MessageList &outMsgs)
+DP_PlayerResult
+PaintEngine::jumpDumpPlayback(long long position, net::MessageList &outMsgs)
 {
-	return DP_paint_engine_playback_dump_jump(m_data, position, PaintEngine::pushMessage, &outMsgs);
+	return DP_paint_engine_playback_dump_jump(
+		m_data, position, PaintEngine::pushMessage, &outMsgs);
 }
 
-bool PaintEngine::flushPlayback(MessageList &outMsgs)
+bool PaintEngine::flushPlayback(net::MessageList &outMsgs)
 {
-	return DP_paint_engine_playback_flush(m_data, PaintEngine::pushMessage, &outMsgs);
+	return DP_paint_engine_playback_flush(
+		m_data, PaintEngine::pushMessage, &outMsgs);
 }
 
 bool PaintEngine::closePlayback()
@@ -333,13 +350,17 @@ bool PaintEngine::closePlayback()
 	return DP_paint_engine_playback_close(m_data);
 }
 
-void PaintEngine::previewCut(int layerId, const QRect &bounds, const QImage &mask)
+void PaintEngine::previewCut(
+	int layerId, const QRect &bounds, const QImage &mask)
 {
-	Q_ASSERT(mask.isNull() || mask.format() == QImage::Format_ARGB32_Premultiplied);
+	Q_ASSERT(
+		mask.isNull() || mask.format() == QImage::Format_ARGB32_Premultiplied);
 	Q_ASSERT(mask.isNull() || mask.size() == bounds.size());
 	DP_paint_engine_preview_cut(
-		m_data, layerId, bounds.x(), bounds.y(), bounds.width(), bounds.height(),
-		mask.isNull() ? nullptr : reinterpret_cast<const DP_Pixel8 *>(mask.constBits()));
+		m_data, layerId, bounds.x(), bounds.y(), bounds.width(),
+		bounds.height(),
+		mask.isNull() ? nullptr
+					  : reinterpret_cast<const DP_Pixel8 *>(mask.constBits()));
 }
 
 void PaintEngine::clearCutPreview()
@@ -372,10 +393,10 @@ void PaintEngine::clearTransformPreview()
 	DP_paint_engine_preview_clear(m_data, DP_PREVIEW_TRANSFORM);
 }
 
-void PaintEngine::previewDabs(int layerId, int count, const drawdance::Message *msgs)
+void PaintEngine::previewDabs(int layerId, int count, const net::Message *msgs)
 {
 	DP_paint_engine_preview_dabs_inc(
-		m_data, layerId, count, drawdance::Message::asRawMessages(msgs));
+		m_data, layerId, count, net::Message::asRawMessages(msgs));
 }
 
 void PaintEngine::clearDabsPreview()
@@ -385,17 +406,20 @@ void PaintEngine::clearDabsPreview()
 
 CanvasState PaintEngine::viewCanvasState() const
 {
-	return drawdance::CanvasState::noinc(DP_paint_engine_view_canvas_state_inc(m_data));
+	return drawdance::CanvasState::noinc(
+		DP_paint_engine_view_canvas_state_inc(m_data));
 }
 
 CanvasState PaintEngine::historyCanvasState() const
 {
-	return drawdance::CanvasState::noinc(DP_paint_engine_history_canvas_state_inc(m_data));
+	return drawdance::CanvasState::noinc(
+		DP_paint_engine_history_canvas_state_inc(m_data));
 }
 
 CanvasState PaintEngine::sampleCanvasState() const
 {
-	return drawdance::CanvasState::noinc(DP_paint_engine_sample_canvas_state_inc(m_data));
+	return drawdance::CanvasState::noinc(
+		DP_paint_engine_sample_canvas_state_inc(m_data));
 }
 
 QString PaintEngine::getDumpDir()
@@ -410,8 +434,8 @@ long long PaintEngine::getTimeMs(void *)
 
 void PaintEngine::pushMessage(void *user, DP_Message *msg)
 {
-	MessageList *outMsgs = static_cast<MessageList *>(user);
-	outMsgs->append(drawdance::Message::noinc(msg));
+	net::MessageList *outMsgs = static_cast<net::MessageList *>(user);
+	outMsgs->append(net::Message::noinc(msg));
 }
 
 bool PaintEngine::pushResetMessage(void *user, DP_Message *msg)
@@ -424,7 +448,7 @@ bool PaintEngine::shouldSnapshot(void *user)
 {
 	static constexpr long long MESSAGE_INDEX_INTERVAL = 10000;
 	BuildIndexParams *params = static_cast<BuildIndexParams *>(user);
-	if( params->messagesSinceLastSnapshot++ > MESSAGE_INDEX_INTERVAL) {
+	if(params->messagesSinceLastSnapshot++ > MESSAGE_INDEX_INTERVAL) {
 		params->messagesSinceLastSnapshot = 0;
 		return true;
 	} else {
@@ -434,10 +458,10 @@ bool PaintEngine::shouldSnapshot(void *user)
 
 void PaintEngine::addLayerVisibleInFrame(void *user, int layerId, bool visible)
 {
-    if(visible) {
-        QSet<int> *layersVisibleInFrame = static_cast<QSet<int> *>(user);
-        layersVisibleInFrame->insert(layerId);
-    }
+	if(visible) {
+		QSet<int> *layersVisibleInFrame = static_cast<QSet<int> *>(user);
+		layersVisibleInFrame->insert(layerId);
+	}
 }
 
 void PaintEngine::indexProgress(void *user, int percent)

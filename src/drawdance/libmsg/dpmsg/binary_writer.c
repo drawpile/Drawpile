@@ -107,15 +107,13 @@ static unsigned char *get_buffer(void *user, size_t size)
     return reserve(user, size);
 }
 
-bool DP_binary_writer_write_message(DP_BinaryWriter *writer, DP_Message *msg)
+size_t DP_binary_writer_write_message(DP_BinaryWriter *writer, DP_Message *msg)
 {
     DP_ASSERT(writer);
     DP_ASSERT(msg);
-
     size_t length = DP_message_serialize(msg, true, get_buffer, writer);
-    if (length == 0) {
-        return false;
-    }
-
-    return DP_output_write(writer->output, writer->buffer, length);
+    return length != 0
+                && DP_output_write(writer->output, writer->buffer, length)
+             ? length
+             : 0;
 }

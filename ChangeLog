@@ -26,6 +26,7 @@ Unreleased Version 2.2.0-pre
  * Feature: Bring back drawpile-cmd, the command-line tool that renders Drawpile recordings to images. Should also mostly work like it did in Drawpile 2.1.
  * Feature: Implement drawpile-timelapse, a new command-line tool that turns Drawpile recordings into timelapse videos.
  * Server Feature: Add --web-admin-allowed-origin option, to set the Access-Control-Allow-Origin header to the given value. Particularly useful for development, where you don't particularly want to set up an nginx to make CORS happy. Thanks Chem for reporting.
+ * Server Feature: Update the server to use the 2.2 protocol.
 
 2023-08-26 Version 2.2.0-beta.7
  * Fix: Make classic brushes not go brighter when smudging into transparency. Thanks to cada for reporting.

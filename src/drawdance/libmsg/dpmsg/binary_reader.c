@@ -150,21 +150,34 @@ static JSON_Value *read_header(DP_Input *input, size_t *input_offset)
 }
 
 
-DP_BinaryReader *DP_binary_reader_new(DP_Input *input)
+DP_BinaryReader *DP_binary_reader_new(DP_Input *input, unsigned int flags)
 {
     DP_ASSERT(input);
-    bool error;
-    size_t input_length = DP_input_length(input, &error);
-    if (error) {
-        DP_input_free(input);
-        return NULL;
+
+    size_t input_length;
+    if (flags & DP_BINARY_READER_FLAG_NO_LENGTH) {
+        input_length = 0;
+    }
+    else {
+        bool error;
+        input_length = DP_input_length(input, &error);
+        if (error) {
+            DP_input_free(input);
+            return NULL;
+        }
     }
 
     size_t input_offset = 0;
-    JSON_Value *header = read_header(input, &input_offset);
-    if (!header) {
-        DP_input_free(input);
-        return NULL;
+    JSON_Value *header;
+    if (flags & DP_BINARY_READER_FLAG_NO_HEADER) {
+        header = NULL;
+    }
+    else {
+        header = read_header(input, &input_offset);
+        if (!header) {
+            DP_input_free(input);
+            return NULL;
+        }
     }
 
     DP_BinaryReader *reader = DP_malloc(sizeof(*reader));
@@ -247,12 +260,9 @@ static size_t read_into(DP_BinaryReader *reader, size_t size, size_t offset,
     return read;
 }
 
-DP_BinaryReaderResult DP_binary_reader_read_message(DP_BinaryReader *reader,
-                                                    DP_Message **out_msg)
+static DP_BinaryReaderResult read_message_header(DP_BinaryReader *reader,
+                                                 size_t *out_body_length)
 {
-    DP_ASSERT(reader);
-    DP_ASSERT(out_msg);
-
     bool error;
     size_t read = read_into(reader, DP_MESSAGE_HEADER_LENGTH, 0, &error);
     if (error) {
@@ -266,20 +276,39 @@ DP_BinaryReaderResult DP_binary_reader_read_message(DP_BinaryReader *reader,
                      DP_MESSAGE_HEADER_LENGTH, read);
         return DP_BINARY_READER_ERROR_INPUT;
     }
+    else {
+        *out_body_length = DP_read_bigendian_uint16(reader->buffer);
+        return DP_BINARY_READER_SUCCESS;
+    }
+}
 
-    size_t body_length = DP_read_bigendian_uint16(reader->buffer);
-    read = read_into(reader, body_length, DP_MESSAGE_HEADER_LENGTH, &error);
+DP_BinaryReaderResult DP_binary_reader_read_message(DP_BinaryReader *reader,
+                                                    bool decode_opaque,
+                                                    DP_Message **out_msg)
+{
+    DP_ASSERT(reader);
+    DP_ASSERT(out_msg);
+
+    size_t body_length;
+    DP_BinaryReaderResult result = read_message_header(reader, &body_length);
+    if (result != DP_BINARY_READER_SUCCESS) {
+        return result;
+    }
+
+    bool error;
+    size_t read =
+        read_into(reader, body_length, DP_MESSAGE_HEADER_LENGTH, &error);
     if (error) {
         return DP_BINARY_READER_ERROR_INPUT;
     }
     else if (read != body_length) {
-        DP_error_set("Treid to read message body of %zu bytes, but got %zu",
+        DP_error_set("Tried to read message body of %zu bytes, but got %zu",
                      body_length, read);
         return DP_BINARY_READER_ERROR_INPUT;
     }
 
     DP_Message *msg = DP_message_deserialize(
-        reader->buffer, DP_MESSAGE_HEADER_LENGTH + body_length);
+        reader->buffer, DP_MESSAGE_HEADER_LENGTH + body_length, decode_opaque);
     if (msg) {
         *out_msg = msg;
         return DP_BINARY_READER_SUCCESS;
@@ -287,4 +316,29 @@ DP_BinaryReaderResult DP_binary_reader_read_message(DP_BinaryReader *reader,
     else {
         return DP_BINARY_READER_ERROR_PARSE;
     }
+}
+
+int DP_binary_reader_skip_message(DP_BinaryReader *reader, uint8_t *out_type,
+                                  uint8_t *out_context_id)
+{
+    DP_ASSERT(reader);
+
+    size_t body_length;
+    DP_BinaryReaderResult result = read_message_header(reader, &body_length);
+    if (result != DP_BINARY_READER_SUCCESS) {
+        return -1;
+    }
+
+    DP_Input *input = reader->input;
+    if (!DP_input_seek_by(input, body_length)) {
+        return -1;
+    }
+
+    if (out_type) {
+        *out_type = reader->buffer[2];
+    }
+    if (out_context_id) {
+        *out_context_id = reader->buffer[3];
+    }
+    return DP_size_to_int(DP_MESSAGE_HEADER_LENGTH + body_length);
 }

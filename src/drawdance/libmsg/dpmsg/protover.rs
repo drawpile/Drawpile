@@ -96,13 +96,17 @@ impl ProtocolVersion {
 
 #[no_mangle]
 pub extern "C" fn DP_protocol_version_parse(s: *const c_char) -> *mut ProtocolVersion {
-    match unsafe { CStr::from_ptr(s) }
-        .to_str()
-        .ok()
-        .and_then(ProtocolVersion::parse)
-    {
-        Some(protover) => Box::into_raw(Box::new(protover)),
-        None => null_mut(),
+    if s.is_null() {
+        null_mut()
+    } else {
+        match unsafe { CStr::from_ptr(s) }
+            .to_str()
+            .ok()
+            .and_then(ProtocolVersion::parse)
+        {
+            Some(protover) => Box::into_raw(Box::new(protover)),
+            None => null_mut(),
+        }
     }
 }
 

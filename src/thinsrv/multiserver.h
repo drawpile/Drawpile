@@ -33,10 +33,6 @@ public:
 	void setSessionDirectory(const QDir &dir);
 	void setTemplateDirectory(const QDir &dir);
 
-#ifndef NDEBUG
-	void setRandomLag(uint lag);
-#endif
-
 	/**
 	 * @brief Get the port the server is running from
 	 * @return port number or zero if server is not running

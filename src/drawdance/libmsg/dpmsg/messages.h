@@ -131,8 +131,8 @@ bool DP_message_type_parse_multiline_tuples(DP_MessageType type);
 
 
 DP_Message *DP_message_deserialize_body(int type, unsigned int context_id,
-                                        const unsigned char *buf,
-                                        size_t length);
+                                        const unsigned char *buf, size_t length,
+                                        bool decode_opaque);
 
 DP_Message *DP_message_parse_body(DP_MessageType type, unsigned int context_id,
                                   DP_TextReader *reader);

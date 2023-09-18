@@ -1,14 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #ifndef SELECTION_H
 #define SELECTION_H
-
 extern "C" {
 #include <dpmsg/blend_mode.h>
 }
-
-#include "libclient/drawdance/message.h"
-
+#include "libclient/net/message.h"
 #include <QImage>
 #include <QObject>
 #include <QPolygonF>
@@ -182,7 +178,7 @@ public:
 	 * @return set of commands
 	 */
 	bool pasteOrMoveToCanvas(
-		drawdance::MessageList &buffer, uint8_t contextId, int layer,
+		net::MessageList &buffer, uint8_t contextId, int layer,
 		int interpolation, bool compatibilityMode) const;
 
 	/**
@@ -200,7 +196,7 @@ public:
 	 * @return set of commands
 	 */
 	bool fillCanvas(
-		drawdance::MessageList &buffer, uint8_t contextId, const QColor &color,
+		net::MessageList &buffer, uint8_t contextId, const QColor &color,
 		DP_BlendMode mode, int layer, bool source = false) const;
 
 	/**

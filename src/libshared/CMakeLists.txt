@@ -5,40 +5,14 @@ target_sources(dpshared PRIVATE
 	listings/announcementapi.h
 	listings/listserverfinder.cpp
 	listings/listserverfinder.h
-	net/annotation.cpp
-	net/annotation.h
-	net/brushes.cpp
-	net/brushes.h
-	net/control.cpp
-	net/control.h
-	net/image.cpp
-	net/image.h
-	net/layer.cpp
-	net/layer.h
 	net/message.cpp
 	net/message.h
 	net/messagequeue.cpp
 	net/messagequeue.h
-	net/meta.cpp
-	net/meta.h
-	net/meta2.cpp
-	net/meta2.h
-	net/opaque.cpp
-	net/opaque.h
 	net/protover.cpp
 	net/protover.h
-	net/recording.cpp
-	net/recording.h
-	net/textmode.cpp
-	net/textmode.h
-	net/undo.cpp
-	net/undo.h
-	record/header.cpp
-	record/header.h
-	record/reader.cpp
-	record/reader.h
-	record/writer.cpp
-	record/writer.h
+	net/servercmd.cpp
+	net/servercmd.h
 	util/filename.cpp
 	util/filename.h
 	util/functionrunnable.cpp
@@ -64,6 +38,7 @@ target_link_libraries(dpshared
 	PUBLIC
 		${QT_PACKAGE_NAME}::Core
 		${QT_PACKAGE_NAME}::Network
+		dpengine
 )
 
 if(ANDROID)

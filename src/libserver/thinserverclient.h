@@ -1,16 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #ifndef THINSERVERCLIENT_H
 #define THINSERVERCLIENT_H
-
 #include "libserver/client.h"
 
 namespace server {
 
-class ThinServerClient final : public Client
-{
+class ThinServerClient final : public Client {
 public:
-	ThinServerClient(QTcpSocket *socket, ServerLog *logger, QObject *parent=nullptr);
+	ThinServerClient(
+		QTcpSocket *socket, ServerLog *logger, QObject *parent = nullptr);
 
 	/**
 	 * @brief Get this client's position in the session history

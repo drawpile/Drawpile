@@ -30,6 +30,9 @@ typedef struct json_value_t JSON_Value;
 #define DP_DPREC_MAGIC        "DPREC"
 #define DP_DPREC_MAGIC_LENGTH 6
 
+#define DP_BINARY_READER_FLAG_NO_LENGTH 0x1u
+#define DP_BINARY_READER_FLAG_NO_HEADER 0x2u
+
 typedef struct DP_BinaryReader DP_BinaryReader;
 
 typedef enum DP_BinaryReaderResult {
@@ -39,7 +42,7 @@ typedef enum DP_BinaryReaderResult {
     DP_BINARY_READER_ERROR_PARSE,
 } DP_BinaryReaderResult;
 
-DP_BinaryReader *DP_binary_reader_new(DP_Input *input);
+DP_BinaryReader *DP_binary_reader_new(DP_Input *input, unsigned int flags);
 
 void DP_binary_reader_free(DP_BinaryReader *reader);
 
@@ -55,7 +58,12 @@ bool DP_binary_reader_seek(DP_BinaryReader *reader, size_t offset);
 double DP_binary_reader_progress(DP_BinaryReader *reader);
 
 DP_BinaryReaderResult DP_binary_reader_read_message(DP_BinaryReader *reader,
+                                                    bool decode_opaque,
                                                     DP_Message **out_msg);
+
+// Returns the message length (including header) or -1 on error.
+int DP_binary_reader_skip_message(DP_BinaryReader *reader, uint8_t *out_type,
+                                  uint8_t *out_context_id);
 
 
 #endif

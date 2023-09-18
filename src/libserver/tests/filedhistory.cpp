@@ -1,19 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "libserver/filedhistory.h"
 #include "libshared/util/passwordhash.h"
+#include "libshared/util/qtcompat.h"
 #include "libshared/util/ulid.h"
-#include "libshared/net/meta.h"
-
-#include <QtTest/QtTest>
-#include <QTemporaryDir>
 #include <QDir>
+#include <QTemporaryDir>
+#include <QtTest/QtTest>
 #include <memory>
 
 using namespace server;
 
-class TestFiledHistory final : public QObject
-{
+class TestFiledHistory final : public QObject {
 	Q_OBJECT
 private slots:
 	void initTestCase()
@@ -30,9 +27,12 @@ private slots:
 		const int maxUsers = 11;
 		const QString title = "Hello world";
 		const QString idAlias = "test";
-		const protocol::ProtocolVersion protover = protocol::ProtocolVersion::current();
+		const protocol::ProtocolVersion protover =
+			protocol::ProtocolVersion::current();
 		const QString founder = "me!";
-		const SessionHistory::Flags flags = SessionHistory::Persistent | SessionHistory::PreserveChat | SessionHistory::Nsfm;
+		const SessionHistory::Flags flags = SessionHistory::Persistent |
+											SessionHistory::PreserveChat |
+											SessionHistory::Nsfm;
 
 		const QString bannedUser = "troll user with a long \\ \"name}%[";
 		const QString opUser = "op";
@@ -43,17 +43,22 @@ private slots:
 
 		auto testId = Ulid::make().toString();
 		{
-			std::unique_ptr<FiledHistory> fh { FiledHistory::startNew(m_dir, testId, idAlias, protover, founder) };
+			std::unique_ptr<FiledHistory> fh{FiledHistory::startNew(
+				m_dir, testId, idAlias, protover, founder)};
 			QVERIFY(fh.get());
 			fh->setPasswordHash(passwordhash::hash(password));
 			fh->setOpwordHash(passwordhash::hash(opword));
 			fh->setMaxUsers(200);
-			fh->setMaxUsers(maxUsers); // this should replace the previously set value
+			fh->setMaxUsers(
+				maxUsers); // this should replace the previously set value
 			fh->setTitle(title);
 			fh->setFlags(flags);
 			fh->addBan(bannedUser, bannedAddress, QString(), opUser);
-			fh->addBan("test", QHostAddress("192.168.0.101"), QString(), opUser);
-			fh->addBan("test3", QHostAddress("192.168.0.102"), bannedExtAuthId, opUser);
+			fh->addBan(
+				"test", QHostAddress("192.168.0.101"), QString(), opUser);
+			fh->addBan(
+				"test3", QHostAddress("192.168.0.102"), bannedExtAuthId,
+				opUser);
 			fh->removeBan(2);
 			fh->addAnnouncement(announcementUrl);
 			fh->addAnnouncement("http://example.com/2/");
@@ -65,11 +70,13 @@ private slots:
 			fh->setAuthenticatedOperator("u1", false);
 
 			// The history file must have some content before it can be loaded
-			fh->addMessage(protocol::MessagePtr(new protocol::Chat(1, 0, 0, QByteArray("test"))));
+			fh->addMessage(
+				net::makeChatMessage(1, 0, 0, QStringLiteral("test")));
 		}
 
 		{
-			std::unique_ptr<FiledHistory> fh { FiledHistory::load(m_dir.absoluteFilePath(FiledHistory::journalFilename(testId))) };
+			std::unique_ptr<FiledHistory> fh{FiledHistory::load(
+				m_dir.absoluteFilePath(FiledHistory::journalFilename(testId)))};
 			QVERIFY(fh.get());
 
 			QCOMPARE(fh->id(), testId);
@@ -84,13 +91,21 @@ private slots:
 
 			QJsonArray banlist = fh->banlist().toJson(true);
 			QCOMPARE(banlist.size(), 2);
-			QCOMPARE(banlist.at(0).toObject()["username"].toString(), bannedUser);
+			QCOMPARE(
+				banlist.at(0).toObject()["username"].toString(), bannedUser);
 			QCOMPARE(banlist.at(0).toObject()["bannedBy"].toString(), opUser);
-			QCOMPARE(banlist.at(0).toObject()["ip"].toString(), bannedAddress.toString());
-			QCOMPARE(banlist.at(0).toObject()["extauthid"].toString(), QString());
+			QCOMPARE(
+				banlist.at(0).toObject()["ip"].toString(),
+				bannedAddress.toString());
+			QCOMPARE(
+				banlist.at(0).toObject()["extauthid"].toString(), QString());
 
-			QCOMPARE(banlist.at(1).toObject()["username"].toString(), QString("test3"));
-			QCOMPARE(banlist.at(1).toObject()["extauthid"].toString(), bannedExtAuthId);
+			QCOMPARE(
+				banlist.at(1).toObject()["username"].toString(),
+				QString("test3"));
+			QCOMPARE(
+				banlist.at(1).toObject()["extauthid"].toString(),
+				bannedExtAuthId);
 			QCOMPARE(banlist.at(1).toObject()["bannedBy"].toString(), opUser);
 
 			QStringList announcements = fh->announcements();
@@ -106,31 +121,39 @@ private slots:
 		}
 	}
 
+	static QString getChatMessage(const net::Message &msg)
+	{
+		size_t len;
+		const char *message = DP_msg_chat_message(msg.toChat(), &len);
+		return QString::fromUtf8(message, compat::castSize(len));
+	}
+
 	// Test that a recording can be loaded correctly
 	void testLoading()
 	{
 		QString file = makeTestRecording();
-		std::unique_ptr<FiledHistory> fh { FiledHistory::load(m_dir.absoluteFilePath(file)) };
+		std::unique_ptr<FiledHistory> fh{
+			FiledHistory::load(m_dir.absoluteFilePath(file))};
 
-		protocol::MessageList msgs;
+		net::MessageList msgs;
 		int lastIdx;
 
 		std::tie(msgs, lastIdx) = fh->getBatch(-1);
 
 		QCOMPARE(msgs.size(), 3);
-		QCOMPARE(msgs.at(0).cast<protocol::Chat>().message(), QString("test1"));
+		QCOMPARE(getChatMessage(msgs.at(0)), QString("test1"));
 		QCOMPARE(lastIdx, 2);
 
 		std::tie(msgs, lastIdx) = fh->getBatch(0);
 
 		QCOMPARE(msgs.size(), 2);
-		QCOMPARE(msgs.at(0).cast<protocol::Chat>().message(), QString("test2"));
+		QCOMPARE(getChatMessage(msgs.at(0)), QString("test2"));
 		QCOMPARE(lastIdx, 2);
 
 		std::tie(msgs, lastIdx) = fh->getBatch(1);
 
 		QCOMPARE(msgs.size(), 1);
-		QCOMPARE(msgs.at(0).cast<protocol::Chat>().message(), QString("test3"));
+		QCOMPARE(getChatMessage(msgs.at(0)), QString("test3"));
 		QCOMPARE(lastIdx, 2);
 
 		std::tie(msgs, lastIdx) = fh->getBatch(2);
@@ -144,18 +167,21 @@ private slots:
 	void testLoadAppend()
 	{
 		QString file = makeTestRecording();
-		std::unique_ptr<FiledHistory> fh { FiledHistory::load(m_dir.absoluteFilePath(file)) };
+		std::unique_ptr<FiledHistory> fh{
+			FiledHistory::load(m_dir.absoluteFilePath(file))};
 
 		// Read the whole recording to load it into the cache
 		fh->getBatch(-1);
 
 		// Add something to it. This should go to the cache as well
-		auto testMsg = protocol::MessagePtr(new protocol::Chat(1, 0, 0, QByteArray("appended")));
+		auto testMsg =
+			net::makeChatMessage(1, 0, 0, QStringLiteral("appended"));
 
 		fh->addMessage(testMsg);
 
-		// The recording should now have a length of 4 and the last message should be there
-		protocol::MessageList msgs;
+		// The recording should now have a length of 4 and the last message
+		// should be there
+		net::MessageList msgs;
 		int lastIdx;
 		std::tie(msgs, lastIdx) = fh->getBatch(-1);
 
@@ -176,16 +202,17 @@ private slots:
 		QVERIFY(rf.resize(rf.size() - 3));
 
 		// The first two messages should still be readable
-		std::unique_ptr<FiledHistory> fh { FiledHistory::load(m_dir.absoluteFilePath(file)) };
+		std::unique_ptr<FiledHistory> fh{
+			FiledHistory::load(m_dir.absoluteFilePath(file))};
 
-		protocol::MessageList msgs;
+		net::MessageList msgs;
 		int lastIdx;
 
 		std::tie(msgs, lastIdx) = fh->getBatch(-1);
 
 		QCOMPARE(msgs.size(), 2);
-		QCOMPARE(msgs.at(0).cast<protocol::Chat>().message(), QString("test1"));
-		QCOMPARE(msgs.at(1).cast<protocol::Chat>().message(), QString("test2"));
+		QCOMPARE(getChatMessage(msgs.at(0)), QString("test1"));
+		QCOMPARE(getChatMessage(msgs.at(1)), QString("test2"));
 		QCOMPARE(lastIdx, 1);
 	}
 
@@ -193,34 +220,36 @@ private slots:
 	void testReset()
 	{
 		QString file = makeTestRecording();
-		std::unique_ptr<FiledHistory> fh { FiledHistory::load(m_dir.absoluteFilePath(file)) };
+		std::unique_ptr<FiledHistory> fh{
+			FiledHistory::load(m_dir.absoluteFilePath(file))};
 
-		auto testMsg = protocol::MessagePtr(new protocol::Chat(1, 0, 0, QByteArray("test0")));
+		auto testMsg = net::makeChatMessage(1, 0, 0, QStringLiteral("test0"));
 
 		fh->addMessage(testMsg);
 		fh->addMessage(testMsg);
 		fh->addMessage(testMsg);
 
 		QCOMPARE(fh->lastIndex(), 5);
-		QCOMPARE(fh->sizeInBytes(), uint(testMsg->length()*6));
+		QCOMPARE(fh->sizeInBytes(), uint(testMsg.length() * 6));
 
-		protocol::MessageList msgs;
+		net::MessageList msgs;
 		int lastIdx;
 		std::tie(msgs, lastIdx) = fh->getBatch(-1);
 		QCOMPARE(msgs.size(), 6);
 		QCOMPARE(lastIdx, 5);
 		QVERIFY(msgs.at(3).equals(testMsg));
 
-		protocol::MessageList newContent;
+		net::MessageList newContent;
 		newContent << testMsg;
 		newContent << testMsg;
 
 		fh->reset(newContent);
 
 		QCOMPARE(fh->lastIndex(), 7);
-		QCOMPARE(fh->sizeInBytes(), uint(testMsg->length()*2));
+		QCOMPARE(fh->sizeInBytes(), uint(testMsg.length() * 2));
 
-		std::tie(msgs, lastIdx) = fh->getBatch(1); // any index below firstIndex() should work the same
+		// any index below firstIndex() should work the same
+		std::tie(msgs, lastIdx) = fh->getBatch(1);
 		QCOMPARE(msgs.size(), 2);
 		QCOMPARE(lastIdx, 7);
 		QVERIFY(msgs.at(0).equals(testMsg));
@@ -229,13 +258,14 @@ private slots:
 	void testBlockEnd()
 	{
 		QString file = makeTestRecording();
-		std::unique_ptr<FiledHistory> fh { FiledHistory::load(m_dir.absoluteFilePath(file)) };
+		std::unique_ptr<FiledHistory> fh{
+			FiledHistory::load(m_dir.absoluteFilePath(file))};
 
 		QCOMPARE(fh->lastIndex(), 2);
 
 		fh->closeBlock();
 
-		auto testMsg = protocol::MessagePtr(new protocol::Chat(1, 0, 0, QByteArray("test0")));
+		auto testMsg = net::makeChatMessage(1, 0, 0, QByteArray("test0"));
 
 		fh->addMessage(testMsg);
 		fh->addMessage(testMsg);
@@ -243,18 +273,18 @@ private slots:
 		QCOMPARE(fh->lastIndex(), 4);
 
 		// First batch should contain the first block
-		protocol::MessageList msgs;
+		net::MessageList msgs;
 		int lastIdx;
 		std::tie(msgs, lastIdx) = fh->getBatch(-1);
 		QCOMPARE(msgs.size(), 3);
 		QCOMPARE(lastIdx, 2);
-		QCOMPARE(msgs.last().cast<protocol::Chat>().message(), QString("test3"));
+		QCOMPARE(getChatMessage(msgs.last()), QString("test3"));
 
 		// Second batch
 		std::tie(msgs, lastIdx) = fh->getBatch(lastIdx);
 		QCOMPARE(msgs.size(), 2);
 		QCOMPARE(lastIdx, 4);
-		QCOMPARE(msgs.first().cast<protocol::Chat>().message(), QString("test0"));
+		QCOMPARE(getChatMessage(msgs.first()), QString("test0"));
 
 		// There is no third batch
 		std::tie(msgs, lastIdx) = fh->getBatch(lastIdx);
@@ -272,7 +302,7 @@ private slots:
 
 		// Having an empty block at the end shouldn't have any effect
 		fh->closeBlock();
-		std::tie(msgs, lastIdx) = fh->getBatch(lastIdx-1);
+		std::tie(msgs, lastIdx) = fh->getBatch(lastIdx - 1);
 		QCOMPARE(msgs.size(), 1);
 		QCOMPARE(lastIdx, 5);
 	}
@@ -281,23 +311,29 @@ private slots:
 	{
 		auto id = Ulid::make().toString();
 		{
-			std::unique_ptr<FiledHistory> fh { FiledHistory::startNew(m_dir, id, QString(), protocol::ProtocolVersion::current(), "test") };
+			std::unique_ptr<FiledHistory> fh{FiledHistory::startNew(
+				m_dir, id, QString(), protocol::ProtocolVersion::current(),
+				"test")};
 
-			fh->addMessage(protocol::MessagePtr(new protocol::UserJoin(1, 0, QByteArray("u1"), QByteArray())));
-			fh->addMessage(protocol::MessagePtr(new protocol::UserJoin(2, 0, QByteArray("u2"), QByteArray())));
-			fh->addMessage(protocol::MessagePtr(new protocol::Chat(1, 0, 0, QByteArray("test1"))));
-			fh->addMessage(protocol::MessagePtr(new protocol::UserLeave(2)));
+			fh->addMessage(
+				net::makeJoinMessage(1, 0, QStringLiteral("u1"), QByteArray()));
+			fh->addMessage(
+				net::makeJoinMessage(2, 0, QStringLiteral("u2"), QByteArray()));
+			fh->addMessage(
+				net::makeChatMessage(1, 0, 0, QStringLiteral("test1")));
+			fh->addMessage(net::makeLeaveMessage(2));
 		}
 		{
-			std::unique_ptr<FiledHistory> fh { FiledHistory::load(m_dir.absoluteFilePath(FiledHistory::journalFilename(id))) };
+			std::unique_ptr<FiledHistory> fh{FiledHistory::load(
+				m_dir.absoluteFilePath(FiledHistory::journalFilename(id)))};
 			QVERIFY(fh.get());
 
-			protocol::MessageList msgs;
+			net::MessageList msgs;
 			int lastIdx;
 			std::tie(msgs, lastIdx) = fh->getBatch(-1);
 			QCOMPARE(msgs.size(), 5);
-			QCOMPARE(msgs.last()->type(), protocol::MSG_USER_LEAVE);
-			QCOMPARE(msgs.last()->contextId(), uint8_t(1));
+			QCOMPARE(msgs.last().type(), DP_MSG_LEAVE);
+			QCOMPARE(msgs.last().contextId(), uint8_t(1));
 
 			// Id Queue should have been updated by the leave events
 			QVERIFY(fh->idQueue().nextId() > 2);
@@ -309,11 +345,13 @@ private:
 	QString makeTestRecording()
 	{
 		auto id = Ulid::make().toString();
-		std::unique_ptr<FiledHistory> fh { FiledHistory::startNew(m_dir, id, QString(), protocol::ProtocolVersion::current(), "test") };
+		std::unique_ptr<FiledHistory> fh{FiledHistory::startNew(
+			m_dir, id, QString(), protocol::ProtocolVersion::current(),
+			"test")};
 
-		fh->addMessage(protocol::MessagePtr(new protocol::Chat(1, 0, 0, QByteArray("test1"))));
-		fh->addMessage(protocol::MessagePtr(new protocol::Chat(1, 0, 0, QByteArray("test2"))));
-		fh->addMessage(protocol::MessagePtr(new protocol::Chat(1, 0, 0, QByteArray("test3"))));
+		fh->addMessage(net::makeChatMessage(1, 0, 0, QStringLiteral("test1")));
+		fh->addMessage(net::makeChatMessage(1, 0, 0, QStringLiteral("test2")));
+		fh->addMessage(net::makeChatMessage(1, 0, 0, QStringLiteral("test3")));
 
 		return FiledHistory::journalFilename(id);
 	}
@@ -326,4 +364,3 @@ private:
 
 QTEST_MAIN(TestFiledHistory)
 #include "filedhistory.moc"
-

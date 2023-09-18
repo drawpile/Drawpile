@@ -1,27 +1,23 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "libshared/net/messagequeue.h"
-#include "libshared/net/meta.h"
-
-#include <QtTest/QtTest>
-#include <QTcpSocket>
-#include <memory>
-
-#include <QMutex>
-#include <QThread>
-#include <QTcpServer>
+#include "libshared/util/qtcompat.h"
 #include <QDebug>
-
-using namespace protocol;
+#include <QMutex>
+#include <QTcpServer>
+#include <QTcpSocket>
+#include <QThread>
+#include <QtTest/QtTest>
+#include <memory>
 
 // A simple TCP server that echoes back whatever is written to it.
 // Used by the actual test case.
-class EchoServer final : public QObject
-{
+class EchoServer final : public QObject {
 	Q_OBJECT
 public:
-	EchoServer() :
-		m_thread(nullptr), m_server(nullptr), m_port(0)
+	EchoServer()
+		: m_thread(nullptr)
+		, m_server(nullptr)
+		, m_port(0)
 	{
 	}
 
@@ -32,10 +28,12 @@ public:
 		m_server = new QTcpServer(this);
 
 		if(!m_server->listen(QHostAddress::LocalHost)) {
-			qWarning() << "Couldn't start echo server:" << m_server->errorString();
+			qWarning() << "Couldn't start echo server:"
+					   << m_server->errorString();
 			return false;
 		}
-		connect(m_server, &QTcpServer::newConnection, this, &EchoServer::acceptNew);
+		connect(
+			m_server, &QTcpServer::newConnection, this, &EchoServer::acceptNew);
 		m_port = m_server->serverPort();
 		return true;
 	}
@@ -55,7 +53,9 @@ public:
 			if(!server->listen()) {
 				server = nullptr;
 			} else {
-				connect(thread, &QThread::finished, server, &EchoServer::deleteLater);
+				connect(
+					thread, &QThread::finished, server,
+					&EchoServer::deleteLater);
 			}
 
 			mutex.unlock();
@@ -79,12 +79,12 @@ private slots:
 	void acceptNew()
 	{
 		QTcpSocket *s;
-		while((s=m_server->nextPendingConnection())) {
+		while((s = m_server->nextPendingConnection())) {
 			connect(s, &QTcpSocket::disconnected, s, &QTcpSocket::deleteLater);
 			connect(s, &QTcpSocket::readyRead, [s]() {
 				char buf[128];
 				qint64 readbytes;
-				while((readbytes=s->read(buf, sizeof(buf)))>0) {
+				while((readbytes = s->read(buf, sizeof(buf))) > 0) {
 					s->write(buf, readbytes);
 				}
 			});
@@ -99,8 +99,7 @@ private:
 
 
 // The actual test case
-class TestMessageQueue final : public QObject
-{
+class TestMessageQueue final : public QObject {
 	Q_OBJECT
 private slots:
 	void initTestCase()
@@ -109,12 +108,10 @@ private slots:
 		QVERIFY(m_server);
 	}
 
-	void cleanupTestCase()
-	{
-		m_server->stopInAnotherThread();
-	}
+	void cleanupTestCase() { m_server->stopInAnotherThread(); }
 
-	void selftest() {
+	void selftest()
+	{
 		auto s = getConnection();
 		s->write("Hello");
 		s->waitForReadyRead();
@@ -126,15 +123,20 @@ private slots:
 	{
 		auto mq = getMsgQueue();
 
-		MessagePtr msg(new Chat(0, 0, 0, QByteArray("Hello world!")));
+		net::Message msg =
+			net::makeChatMessage(0, 0, 0, QStringLiteral("Hello world!"));
 
 		bool messageReceived = false;
 
-		connect(mq.get(), &MessageQueue::messageAvailable, [&mq, msg, &messageReceived]() {
-			MessagePtr got = mq->getPending();
-			messageReceived = true;
-			QVERIFY(got.equals(msg));
-		});
+		connect(
+			mq.get(), &net::MessageQueue::messageAvailable,
+			[&mq, msg, &messageReceived]() {
+				net::MessageList got;
+				mq->receive(got);
+				messageReceived = true;
+				QVERIFY(got.size() == 1);
+				QVERIFY(got[0].equals(msg));
+			});
 		mq->send(msg);
 		loopUntil(messageReceived);
 	}
@@ -148,22 +150,32 @@ private slots:
 		int countReceived = 0;
 		bool allReceived = false;
 
-		connect(mq.get(), &MessageQueue::messageAvailable, [&]() {
+		connect(mq.get(), &net::MessageQueue::messageAvailable, [&]() {
 			while(mq->isPending()) {
-				MessagePtr got = mq->getPending();
-				// Expect to receive the messages in the same order as we sent them
-				QCOMPARE(got->type(), MSG_CHAT);
-				QCOMPARE(got.cast<Chat>().message(), QString::number(countReceived));
-				if(++countReceived == sendCount)
-					allReceived = true;
+				net::MessageList got;
+				mq->receive(got);
+				// Expect to receive the messages in the same order as we sent
+				// them
+				for(const net::Message &msg : got) {
+					QCOMPARE(msg.type(), DP_MSG_CHAT);
+					size_t len;
+					const char *text = DP_msg_chat_message(msg.toChat(), &len);
+					QCOMPARE(
+						QString::fromUtf8(text, compat::castSize(len)),
+						QString::number(countReceived));
+					if(++countReceived == sendCount) {
+						allReceived = true;
+					}
+				}
 				QVERIFY(countReceived <= sendCount);
 			}
 		});
 
 		int totalSendLen = 0;
-		for(int i=0;i<sendCount;++i) {
-			MessagePtr msg(new Chat(0, 0, 0, QByteArray::number(i)));
-			totalSendLen += msg->length();
+		for(int i = 0; i < sendCount; ++i) {
+			net::Message msg =
+				net::makeChatMessage(0, 0, 0, QByteArray::number(i));
+			totalSendLen += int(msg.length());
 			mq->send(msg);
 		}
 
@@ -176,7 +188,7 @@ private slots:
 	void testSendDisconnect()
 	{
 		auto s = getConnection();
-		MessageQueue mq(s.get());
+		net::MessageQueue mq(s.get(), true, nullptr);
 
 		bool disconnected = false;
 
@@ -185,8 +197,9 @@ private slots:
 		});
 
 		// Note: because the connection is cut just after the disconnect message
-		// is sent, we can't test the reception of the message with an echo server.
-		mq.sendDisconnect(0, "test");
+		// is sent, we can't test the reception of the message with an echo
+		// server.
+		mq.sendDisconnect(net::MessageQueue::GracefulDisconnect(0), "test");
 
 		loopUntil(disconnected);
 	}
@@ -194,21 +207,23 @@ private slots:
 private:
 	std::unique_ptr<QTcpSocket> getConnection()
 	{
-		std::unique_ptr<QTcpSocket> s { new QTcpSocket };
+		std::unique_ptr<QTcpSocket> s{new QTcpSocket};
 		s->connectToHost(QHostAddress::LocalHost, m_server->port());
 		return s;
 	}
 
-	std::unique_ptr<MessageQueue> getMsgQueue()
+	std::unique_ptr<net::MessageQueue> getMsgQueue()
 	{
 		auto s = getConnection();
-		std::unique_ptr<MessageQueue> q { new MessageQueue(s.get()) };
+		std::unique_ptr<net::MessageQueue> q{
+			new net::MessageQueue(s.get(), true, nullptr)};
 		s->setParent(q.get());
 		s.release();
 		return q;
 	}
 
-	void loopUntil(bool &condition) {
+	void loopUntil(bool &condition)
+	{
 		const int timeout = 3000;
 		QElapsedTimer t;
 		t.start();
@@ -224,4 +239,3 @@ private:
 
 QTEST_MAIN(TestMessageQueue)
 #include "messagequeue.moc"
-

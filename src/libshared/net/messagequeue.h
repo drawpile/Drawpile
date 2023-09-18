@@ -1,40 +1,40 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef DP_NET_MSGQUEUE_H
-#define DP_NET_MSGQUEUE_H
-
+#ifndef LIBSHARED_MSGQUEUE_H
+#define LIBSHARED_MSGQUEUE_H
 #include "libshared/net/message.h"
-
-#include <QQueue>
 #include <QObject>
+#include <QQueue>
+#include <QVector>
 
 class QTcpSocket;
 class QTimer;
 
-namespace protocol {
+namespace net {
 
 /**
  * A wrapper for an IO device for sending and receiving messages.
  */
 class MessageQueue final : public QObject {
-Q_OBJECT
+	Q_OBJECT
 public:
+	static constexpr int DEFAULT_SMOOTH_DRAIN_RATE = 20;
+	static constexpr int MAX_SMOOTH_DRAIN_RATE = 60;
+
+	enum class GracefulDisconnect {
+		Error,	  // An error occurred
+		Kick,	  // client was kicked by the session operator
+		Shutdown, // server is shutting down
+		Other,	  // other unspecified error
+	};
+
 	/**
 	 * @brief Create a message queue that wraps a TCP socket.
 	 *
 	 * The MessageQueue does not take ownership of the device.
 	 */
-	explicit MessageQueue(QTcpSocket *socket, QObject *parent = nullptr);
-	MessageQueue(const MessageQueue&) = delete;
+	explicit MessageQueue(
+		QTcpSocket *socket, bool decodeOpaque, QObject *parent);
 	~MessageQueue() override;
-
-	/**
-	 * @brief Automatically decode opaque messages?
-	 *
-	 * This should be used on the client side only.
-	 * @param d
-	 */
-	void setDecodeOpaque(bool d) { m_decodeOpaque = d; }
 
 	/**
 	 * @brief Check if there are new messages available
@@ -42,29 +42,35 @@ public:
 	 */
 	bool isPending() const;
 
-	/**
-	 * Get the next message in the queue.
-	 * @return message
-	 */
-	MessagePtr getPending();
+	net::Message shiftPending();
 
 	/**
-	 * Enqueue a message for sending.
+	 * Get received messages, swaps (!) the given buffer with the inbox.
 	 */
-	void send(const MessagePtr &message);
-	void send(const MessageList &messages);
+	void receive(net::MessageList &buffer);
+
+	/**
+	 * Enqueue a single message for sending.
+	 */
+	void send(const net::Message &msg);
+
+	/**
+	 * Enqueue multiple messages for sending.
+	 */
+	void sendMultiple(int count, const net::Message *msgs);
 
 	/**
 	 * @brief Gracefully disconnect
 	 *
-	 * This function enqueues the disconnect notification message. The connection will
-	 * be automatically closed after the message has been sent. Additionally, it
-	 * causes all incoming messages to be ignored.
+	 * This function enqueues the disconnect notification message. The
+	 * connection will be automatically closed after the message has been sent.
+	 * Additionally, it causes all incoming messages to be ignored and no more
+	 * data to be accepted for sending.
 	 *
 	 * @param reason
 	 * @param message
 	 */
-	void sendDisconnect(int reason, const QString &message);
+	void sendDisconnect(GracefulDisconnect reason, const QString &message);
 
 	/**
 	 * @brief Get the number of bytes in the upload queue
@@ -78,15 +84,16 @@ public:
 	bool isUploading() const;
 
 	/**
-	 * @brief Get the number of milliseconds since the last message sent by the remote end
+	 * @brief Get the number of milliseconds since the last message sent by the
+	 * remote end
 	 */
 	qint64 idleTime() const;
 
 	/**
 	 * @brief Set the maximum time the remote end can be quiet before timing out
 	 *
-	 * This can be used together with a keepalive message to detect disconnects more
-	 * reliably than relying on TCP, which may have a very long timeout.
+	 * This can be used together with a keepalive message to detect disconnects
+	 * more reliably than relying on TCP, which may have a very long timeout.
 	 *
 	 * @param timeout timeout in milliseconds
 	 */
@@ -95,8 +102,8 @@ public:
 	/**
 	 * @brief Set Ping interval in milliseconds
 	 *
-	 * When ping interval is greater than zero, a Ping messages will automatically
-	 * be sent.
+	 * When ping interval is greater than zero, a Ping messages will
+	 * automatically be sent.
 	 *
 	 * Note. This should be used by the client only.
 	 *
@@ -104,9 +111,14 @@ public:
 	 */
 	void setPingInterval(int msecs);
 
-#ifndef NDEBUG
-	void setRandomLag(uint lag) { m_randomlag = lag; }
-#endif
+	void setSmoothEnabled(bool smoothingEnabled);
+	void setSmoothDrainRate(int smoothDrainRate);
+
+	int artificalLagMs() { return m_artificialLagMs; }
+
+	void setArtificialLagMs(int msecs);
+
+	void setContextId(unsigned int contextId) { m_contextId = contextId; }
 
 public slots:
 	/**
@@ -114,7 +126,8 @@ public slots:
 	 *
 	 * Note. Use this function instead of creating the Ping message yourself
 	 * to make sure the roundtrip timer is set correctly!
-	 * This function will not send another ping message until a reply has been received.
+	 * This function will not send another ping message until a reply has been
+	 * received.
 	 */
 	void sendPing();
 
@@ -153,9 +166,14 @@ signals:
 
 	/**
 	 * @brief A reply to our Ping was just received
-	 * @param roundtripTime time now - ping sent time
+	 * @param roundtripTime milliseconds since we sent our ping
 	 */
 	void pingPong(qint64 roundtripTime);
+
+	/**
+	 * The server sent a graceful disconnect notification
+	 */
+	void gracefulDisconnect(GracefulDisconnect reason, const QString &message);
 
 private slots:
 	void readData();
@@ -163,21 +181,49 @@ private slots:
 	void sslEncrypted();
 	void checkIdleTimeout();
 
-private:
-	void sendNow(MessagePtr msg);
+	void receiveSmoothedMessages();
 
+	void sendArtificallyLaggedMessages();
+
+private:
+	static constexpr int MAX_BUF_LEN = 0xffff + DP_MESSAGE_HEADER_LENGTH;
+	static constexpr int MSG_TYPE_DISCONNECT = 1;
+	static constexpr int MSG_TYPE_PING = 2;
+	static constexpr int SMOOTHING_INTERVAL_MSEC = 1000 / 60;
+
+	void enqueueMessages(int count, const net::Message *msgs);
+
+	int haveWholeMessageToRead();
 	void writeData();
+	bool messagesInOutbox() const;
+	net::Message dequeueFromOutbox();
+
+	void handlePing(bool isPong);
+	void sendPingMsg(bool pong);
+
+	void updateSmoothing();
 
 	QTcpSocket *m_socket;
+	bool m_decodeOpaque;
 
-	char *m_recvbuffer; // raw message reception buffer
-	char *m_sendbuffer; // raw message upload buffer
-	int m_recvbytes;    // number of bytes in reception buffer
-	int m_sentbytes;    // number of bytes in upload buffer already sent
-	int m_sendbuflen;   // length of the data in the upload buffer
+	char *m_recvbuffer;		 // raw message reception buffer
+	QByteArray m_sendbuffer; // raw message upload buffer
+	int m_recvbytes;		 // number of bytes in reception buffer
+	int m_sentbytes;		 // number of bytes in upload buffer already sent
 
-	QQueue<MessagePtr> m_inbox;  // pending messages
-	QQueue<MessagePtr> m_outbox; // messages to be sent
+	net::MessageList m_inbox;	   // received (complete) messages
+	QQueue<net::Message> m_outbox; // messages to be sent
+	QQueue<bool> m_pings;		   // pings and pongs to be sent
+
+	// Smoothing of received messages. Depending on the server and network
+	// conditions, messages will arrive in chunks, which causes other people's
+	// strokes to appear choppy. Smoothing compensates for it, if enabled.
+	bool m_smoothEnabled;
+	int m_smoothDrainRate;
+	QTimer *m_smoothTimer;
+	net::MessageList m_smoothBuffer;
+	int m_smoothMessagesToDrain;
+	unsigned int m_contextId;
 
 	QTimer *m_idleTimer;
 	QTimer *m_pingTimer;
@@ -185,17 +231,14 @@ private:
 	qint64 m_idleTimeout;
 	qint64 m_pingSent;
 
-	bool m_closeWhenReady;
-	bool m_ignoreIncoming;
+	bool m_gracefullyDisconnecting;
 
-	bool m_decodeOpaque;
-
-#ifndef NDEBUG
-	uint m_randomlag;
-#endif
+	int m_artificialLagMs;
+	QVector<long long> m_artificialLagTimes;
+	QVector<net::Message> m_artificialLagMessages;
+	QTimer *m_artificialLagTimer;
 };
 
 }
 
 #endif
-

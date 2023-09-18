@@ -601,149 +601,165 @@ bool DP_message_type_parse_multiline_tuples(DP_MessageType type)
 
 
 DP_Message *DP_message_deserialize_body(int type, unsigned int context_id,
-                                        const unsigned char *buf, size_t length)
+                                        const unsigned char *buf, size_t length,
+                                        bool decode_opaque)
 {
-    switch (type) {
-    case DP_MSG_SERVER_COMMAND:
-        return DP_msg_server_command_deserialize(context_id, buf, length);
-    case DP_MSG_DISCONNECT:
-        return DP_msg_disconnect_deserialize(context_id, buf, length);
-    case DP_MSG_PING:
-        return DP_msg_ping_deserialize(context_id, buf, length);
-    case DP_MSG_INTERNAL:
-        DP_error_set(
-            "Can't deserialize reserved message type 31 DP_MSG_INTERNAL");
-        return NULL;
-    case DP_MSG_JOIN:
-        return DP_msg_join_deserialize(context_id, buf, length);
-    case DP_MSG_LEAVE:
-        return DP_msg_leave_deserialize(context_id, buf, length);
-    case DP_MSG_SESSION_OWNER:
-        return DP_msg_session_owner_deserialize(context_id, buf, length);
-    case DP_MSG_CHAT:
-        return DP_msg_chat_deserialize(context_id, buf, length);
-    case DP_MSG_TRUSTED_USERS:
-        return DP_msg_trusted_users_deserialize(context_id, buf, length);
-    case DP_MSG_SOFT_RESET:
-        return DP_msg_soft_reset_deserialize(context_id, buf, length);
-    case DP_MSG_PRIVATE_CHAT:
-        return DP_msg_private_chat_deserialize(context_id, buf, length);
-    case DP_MSG_INTERVAL:
-        return DP_msg_interval_deserialize(context_id, buf, length);
-    case DP_MSG_LASER_TRAIL:
-        return DP_msg_laser_trail_deserialize(context_id, buf, length);
-    case DP_MSG_MOVE_POINTER:
-        return DP_msg_move_pointer_deserialize(context_id, buf, length);
-    case DP_MSG_MARKER:
-        return DP_msg_marker_deserialize(context_id, buf, length);
-    case DP_MSG_USER_ACL:
-        return DP_msg_user_acl_deserialize(context_id, buf, length);
-    case DP_MSG_LAYER_ACL:
-        return DP_msg_layer_acl_deserialize(context_id, buf, length);
-    case DP_MSG_FEATURE_ACCESS_LEVELS:
-        return DP_msg_feature_access_levels_deserialize(context_id, buf,
+    if (type < 64 || decode_opaque) {
+        switch (type) {
+        case DP_MSG_SERVER_COMMAND:
+            return DP_msg_server_command_deserialize(context_id, buf, length);
+        case DP_MSG_DISCONNECT:
+            return DP_msg_disconnect_deserialize(context_id, buf, length);
+        case DP_MSG_PING:
+            return DP_msg_ping_deserialize(context_id, buf, length);
+        case DP_MSG_INTERNAL:
+            DP_error_set(
+                "Can't deserialize reserved message type 31 DP_MSG_INTERNAL");
+            return NULL;
+        case DP_MSG_JOIN:
+            return DP_msg_join_deserialize(context_id, buf, length);
+        case DP_MSG_LEAVE:
+            return DP_msg_leave_deserialize(context_id, buf, length);
+        case DP_MSG_SESSION_OWNER:
+            return DP_msg_session_owner_deserialize(context_id, buf, length);
+        case DP_MSG_CHAT:
+            return DP_msg_chat_deserialize(context_id, buf, length);
+        case DP_MSG_TRUSTED_USERS:
+            return DP_msg_trusted_users_deserialize(context_id, buf, length);
+        case DP_MSG_SOFT_RESET:
+            return DP_msg_soft_reset_deserialize(context_id, buf, length);
+        case DP_MSG_PRIVATE_CHAT:
+            return DP_msg_private_chat_deserialize(context_id, buf, length);
+        case DP_MSG_INTERVAL:
+            return DP_msg_interval_deserialize(context_id, buf, length);
+        case DP_MSG_LASER_TRAIL:
+            return DP_msg_laser_trail_deserialize(context_id, buf, length);
+        case DP_MSG_MOVE_POINTER:
+            return DP_msg_move_pointer_deserialize(context_id, buf, length);
+        case DP_MSG_MARKER:
+            return DP_msg_marker_deserialize(context_id, buf, length);
+        case DP_MSG_USER_ACL:
+            return DP_msg_user_acl_deserialize(context_id, buf, length);
+        case DP_MSG_LAYER_ACL:
+            return DP_msg_layer_acl_deserialize(context_id, buf, length);
+        case DP_MSG_FEATURE_ACCESS_LEVELS:
+            return DP_msg_feature_access_levels_deserialize(context_id, buf,
+                                                            length);
+        case DP_MSG_DEFAULT_LAYER:
+            return DP_msg_default_layer_deserialize(context_id, buf, length);
+        case DP_MSG_FILTERED:
+            return DP_msg_filtered_deserialize(context_id, buf, length);
+        case DP_MSG_EXTENSION:
+            DP_error_set(
+                "Can't deserialize reserved message type 73 DP_MSG_EXTENSION");
+            return NULL;
+        case DP_MSG_UNDO_DEPTH:
+            return DP_msg_undo_depth_deserialize(context_id, buf, length);
+        case DP_MSG_DATA:
+            return DP_msg_data_deserialize(context_id, buf, length);
+        case DP_MSG_LOCAL_CHANGE:
+            return DP_msg_local_change_deserialize(context_id, buf, length);
+        case DP_MSG_UNDO_POINT:
+            return DP_msg_undo_point_deserialize(context_id, buf, length);
+        case DP_MSG_CANVAS_RESIZE:
+            return DP_msg_canvas_resize_deserialize(context_id, buf, length);
+        case DP_MSG_LAYER_CREATE:
+            return DP_msg_layer_create_deserialize(context_id, buf, length);
+        case DP_MSG_LAYER_ATTRIBUTES:
+            return DP_msg_layer_attributes_deserialize(context_id, buf, length);
+        case DP_MSG_LAYER_RETITLE:
+            return DP_msg_layer_retitle_deserialize(context_id, buf, length);
+        case DP_MSG_LAYER_ORDER:
+            return DP_msg_layer_order_deserialize(context_id, buf, length);
+        case DP_MSG_LAYER_DELETE:
+            return DP_msg_layer_delete_deserialize(context_id, buf, length);
+        case DP_MSG_LAYER_VISIBILITY:
+            return DP_msg_layer_visibility_deserialize(context_id, buf, length);
+        case DP_MSG_PUT_IMAGE:
+            return DP_msg_put_image_deserialize(context_id, buf, length);
+        case DP_MSG_FILL_RECT:
+            return DP_msg_fill_rect_deserialize(context_id, buf, length);
+        case DP_MSG_TOOL_CHANGE:
+            DP_error_set("Can't deserialize reserved message type 138 "
+                         "DP_MSG_TOOL_CHANGE");
+            return NULL;
+        case DP_MSG_PEN_MOVE:
+            DP_error_set(
+                "Can't deserialize reserved message type 139 DP_MSG_PEN_MOVE");
+            return NULL;
+        case DP_MSG_PEN_UP:
+            return DP_msg_pen_up_deserialize(context_id, buf, length);
+        case DP_MSG_ANNOTATION_CREATE:
+            return DP_msg_annotation_create_deserialize(context_id, buf,
                                                         length);
-    case DP_MSG_DEFAULT_LAYER:
-        return DP_msg_default_layer_deserialize(context_id, buf, length);
-    case DP_MSG_FILTERED:
-        return DP_msg_filtered_deserialize(context_id, buf, length);
-    case DP_MSG_EXTENSION:
-        DP_error_set(
-            "Can't deserialize reserved message type 73 DP_MSG_EXTENSION");
-        return NULL;
-    case DP_MSG_UNDO_DEPTH:
-        return DP_msg_undo_depth_deserialize(context_id, buf, length);
-    case DP_MSG_DATA:
-        return DP_msg_data_deserialize(context_id, buf, length);
-    case DP_MSG_LOCAL_CHANGE:
-        return DP_msg_local_change_deserialize(context_id, buf, length);
-    case DP_MSG_UNDO_POINT:
-        return DP_msg_undo_point_deserialize(context_id, buf, length);
-    case DP_MSG_CANVAS_RESIZE:
-        return DP_msg_canvas_resize_deserialize(context_id, buf, length);
-    case DP_MSG_LAYER_CREATE:
-        return DP_msg_layer_create_deserialize(context_id, buf, length);
-    case DP_MSG_LAYER_ATTRIBUTES:
-        return DP_msg_layer_attributes_deserialize(context_id, buf, length);
-    case DP_MSG_LAYER_RETITLE:
-        return DP_msg_layer_retitle_deserialize(context_id, buf, length);
-    case DP_MSG_LAYER_ORDER:
-        return DP_msg_layer_order_deserialize(context_id, buf, length);
-    case DP_MSG_LAYER_DELETE:
-        return DP_msg_layer_delete_deserialize(context_id, buf, length);
-    case DP_MSG_LAYER_VISIBILITY:
-        return DP_msg_layer_visibility_deserialize(context_id, buf, length);
-    case DP_MSG_PUT_IMAGE:
-        return DP_msg_put_image_deserialize(context_id, buf, length);
-    case DP_MSG_FILL_RECT:
-        return DP_msg_fill_rect_deserialize(context_id, buf, length);
-    case DP_MSG_TOOL_CHANGE:
-        DP_error_set(
-            "Can't deserialize reserved message type 138 DP_MSG_TOOL_CHANGE");
-        return NULL;
-    case DP_MSG_PEN_MOVE:
-        DP_error_set(
-            "Can't deserialize reserved message type 139 DP_MSG_PEN_MOVE");
-        return NULL;
-    case DP_MSG_PEN_UP:
-        return DP_msg_pen_up_deserialize(context_id, buf, length);
-    case DP_MSG_ANNOTATION_CREATE:
-        return DP_msg_annotation_create_deserialize(context_id, buf, length);
-    case DP_MSG_ANNOTATION_RESHAPE:
-        return DP_msg_annotation_reshape_deserialize(context_id, buf, length);
-    case DP_MSG_ANNOTATION_EDIT:
-        return DP_msg_annotation_edit_deserialize(context_id, buf, length);
-    case DP_MSG_ANNOTATION_DELETE:
-        return DP_msg_annotation_delete_deserialize(context_id, buf, length);
-    case DP_MSG_MOVE_REGION:
-        return DP_msg_move_region_deserialize(context_id, buf, length);
-    case DP_MSG_PUT_TILE:
-        return DP_msg_put_tile_deserialize(context_id, buf, length);
-    case DP_MSG_CANVAS_BACKGROUND:
-        return DP_msg_canvas_background_deserialize(context_id, buf, length);
-    case DP_MSG_DRAW_DABS_CLASSIC:
-        return DP_msg_draw_dabs_classic_deserialize(context_id, buf, length);
-    case DP_MSG_DRAW_DABS_PIXEL:
-        return DP_msg_draw_dabs_pixel_deserialize(context_id, buf, length);
-    case DP_MSG_DRAW_DABS_PIXEL_SQUARE:
-        return DP_msg_draw_dabs_pixel_square_deserialize(context_id, buf,
+        case DP_MSG_ANNOTATION_RESHAPE:
+            return DP_msg_annotation_reshape_deserialize(context_id, buf,
                                                          length);
-    case DP_MSG_DRAW_DABS_MYPAINT:
-        return DP_msg_draw_dabs_mypaint_deserialize(context_id, buf, length);
-    case DP_MSG_MOVE_RECT:
-        return DP_msg_move_rect_deserialize(context_id, buf, length);
-    case DP_MSG_SET_METADATA_INT:
-        return DP_msg_set_metadata_int_deserialize(context_id, buf, length);
-    case DP_MSG_LAYER_TREE_CREATE:
-        return DP_msg_layer_tree_create_deserialize(context_id, buf, length);
-    case DP_MSG_LAYER_TREE_MOVE:
-        return DP_msg_layer_tree_move_deserialize(context_id, buf, length);
-    case DP_MSG_LAYER_TREE_DELETE:
-        return DP_msg_layer_tree_delete_deserialize(context_id, buf, length);
-    case DP_MSG_TRANSFORM_REGION:
-        return DP_msg_transform_region_deserialize(context_id, buf, length);
-    case DP_MSG_TRACK_CREATE:
-        return DP_msg_track_create_deserialize(context_id, buf, length);
-    case DP_MSG_TRACK_RETITLE:
-        return DP_msg_track_retitle_deserialize(context_id, buf, length);
-    case DP_MSG_TRACK_DELETE:
-        return DP_msg_track_delete_deserialize(context_id, buf, length);
-    case DP_MSG_TRACK_ORDER:
-        return DP_msg_track_order_deserialize(context_id, buf, length);
-    case DP_MSG_KEY_FRAME_SET:
-        return DP_msg_key_frame_set_deserialize(context_id, buf, length);
-    case DP_MSG_KEY_FRAME_RETITLE:
-        return DP_msg_key_frame_retitle_deserialize(context_id, buf, length);
-    case DP_MSG_KEY_FRAME_LAYER_ATTRIBUTES:
-        return DP_msg_key_frame_layer_attributes_deserialize(context_id, buf,
+        case DP_MSG_ANNOTATION_EDIT:
+            return DP_msg_annotation_edit_deserialize(context_id, buf, length);
+        case DP_MSG_ANNOTATION_DELETE:
+            return DP_msg_annotation_delete_deserialize(context_id, buf,
+                                                        length);
+        case DP_MSG_MOVE_REGION:
+            return DP_msg_move_region_deserialize(context_id, buf, length);
+        case DP_MSG_PUT_TILE:
+            return DP_msg_put_tile_deserialize(context_id, buf, length);
+        case DP_MSG_CANVAS_BACKGROUND:
+            return DP_msg_canvas_background_deserialize(context_id, buf,
+                                                        length);
+        case DP_MSG_DRAW_DABS_CLASSIC:
+            return DP_msg_draw_dabs_classic_deserialize(context_id, buf,
+                                                        length);
+        case DP_MSG_DRAW_DABS_PIXEL:
+            return DP_msg_draw_dabs_pixel_deserialize(context_id, buf, length);
+        case DP_MSG_DRAW_DABS_PIXEL_SQUARE:
+            return DP_msg_draw_dabs_pixel_square_deserialize(context_id, buf,
                                                              length);
-    case DP_MSG_KEY_FRAME_DELETE:
-        return DP_msg_key_frame_delete_deserialize(context_id, buf, length);
-    case DP_MSG_UNDO:
-        return DP_msg_undo_deserialize(context_id, buf, length);
-    default:
-        DP_error_set("Can't deserialize unknown message type %d", type);
-        return NULL;
+        case DP_MSG_DRAW_DABS_MYPAINT:
+            return DP_msg_draw_dabs_mypaint_deserialize(context_id, buf,
+                                                        length);
+        case DP_MSG_MOVE_RECT:
+            return DP_msg_move_rect_deserialize(context_id, buf, length);
+        case DP_MSG_SET_METADATA_INT:
+            return DP_msg_set_metadata_int_deserialize(context_id, buf, length);
+        case DP_MSG_LAYER_TREE_CREATE:
+            return DP_msg_layer_tree_create_deserialize(context_id, buf,
+                                                        length);
+        case DP_MSG_LAYER_TREE_MOVE:
+            return DP_msg_layer_tree_move_deserialize(context_id, buf, length);
+        case DP_MSG_LAYER_TREE_DELETE:
+            return DP_msg_layer_tree_delete_deserialize(context_id, buf,
+                                                        length);
+        case DP_MSG_TRANSFORM_REGION:
+            return DP_msg_transform_region_deserialize(context_id, buf, length);
+        case DP_MSG_TRACK_CREATE:
+            return DP_msg_track_create_deserialize(context_id, buf, length);
+        case DP_MSG_TRACK_RETITLE:
+            return DP_msg_track_retitle_deserialize(context_id, buf, length);
+        case DP_MSG_TRACK_DELETE:
+            return DP_msg_track_delete_deserialize(context_id, buf, length);
+        case DP_MSG_TRACK_ORDER:
+            return DP_msg_track_order_deserialize(context_id, buf, length);
+        case DP_MSG_KEY_FRAME_SET:
+            return DP_msg_key_frame_set_deserialize(context_id, buf, length);
+        case DP_MSG_KEY_FRAME_RETITLE:
+            return DP_msg_key_frame_retitle_deserialize(context_id, buf,
+                                                        length);
+        case DP_MSG_KEY_FRAME_LAYER_ATTRIBUTES:
+            return DP_msg_key_frame_layer_attributes_deserialize(context_id,
+                                                                 buf, length);
+        case DP_MSG_KEY_FRAME_DELETE:
+            return DP_msg_key_frame_delete_deserialize(context_id, buf, length);
+        case DP_MSG_UNDO:
+            return DP_msg_undo_deserialize(context_id, buf, length);
+        default:
+            DP_error_set("Can't deserialize unknown message type %d", type);
+            return NULL;
+        }
+    }
+    else {
+        return DP_message_new_opaque((DP_MessageType)type, context_id, buf,
+                                     length);
     }
 }
 

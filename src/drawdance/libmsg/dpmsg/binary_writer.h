@@ -22,11 +22,7 @@
 #ifndef DPMSG_BINARY_WRITER_H
 #define DPMSG_BINARY_WRITER_H
 #include <dpcommon/common.h>
-#ifdef DP_BUNDLED_PARSON
-#include "parson/parson.h"
-#else
 #include <parson.h>
-#endif
 
 typedef struct DP_Message DP_Message;
 typedef struct DP_Output DP_Output;
@@ -43,8 +39,9 @@ bool DP_binary_writer_write_header(DP_BinaryWriter *writer,
                                    JSON_Object *header) DP_MUST_CHECK;
 
 
-bool DP_binary_writer_write_message(DP_BinaryWriter *writer,
-                                    DP_Message *msg) DP_MUST_CHECK;
+// Returns the length of the written message (including header) or 0 on error.
+size_t DP_binary_writer_write_message(DP_BinaryWriter *writer,
+                                      DP_Message *msg) DP_MUST_CHECK;
 
 
 #endif

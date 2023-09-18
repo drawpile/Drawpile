@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #ifndef CHATWIDGET_H
 #define CHATWIDGET_H
-
 #include "desktop/notifications.h"
 #include <QWidget>
 
 class QMenu;
 
-namespace canvas { class UserListModel; }
+namespace canvas {
+class UserListModel;
+}
 
-namespace drawdance {
-	class Message;
+namespace net {
+class Message;
 }
 
 namespace widgets {
@@ -21,11 +21,10 @@ namespace widgets {
  *
  * A widget for chatting with other users
  */
-class ChatWidget final : public QWidget
-{
+class ChatWidget final : public QWidget {
 	Q_OBJECT
 public:
-	explicit ChatWidget(QWidget *parent=nullptr);
+	explicit ChatWidget(QWidget *parent = nullptr);
 	~ChatWidget() override;
 
 	void focusInput();
@@ -38,17 +37,19 @@ public slots:
 	/**
 	 * @brief Set default message preservation mode
 	 *
-	 * This sets a visual cue that informs the user whether chat messages are preserved
-	 * in the session history or not
+	 * This sets a visual cue that informs the user whether chat messages are
+	 * preserved in the session history or not
 	 *
 	 */
 	void setPreserveMode(bool preservechat);
 
 	//! Display a received message
-	void receiveMessage(int sender, int recipient, uint8_t tflags, uint8_t oflags, const QString &message);
+	void receiveMessage(
+		int sender, int recipient, uint8_t tflags, uint8_t oflags,
+		const QString &message);
 
 	//! Display a system message
-	void systemMessage(const QString& message, bool isAlert=false);
+	void systemMessage(const QString &message, bool isAlert = false);
 
 	//! Set the message pinned to the top of the chat box
 	void setPinnedMessage(const QString &message);
@@ -80,7 +81,7 @@ private slots:
 	void attach();
 
 signals:
-	void message(const drawdance::Message &msg);
+	void message(const net::Message &msg);
 	void detachRequested();
 	void expandRequested();
 	void muteChanged(bool muted);
@@ -106,4 +107,3 @@ private:
 }
 
 #endif
-

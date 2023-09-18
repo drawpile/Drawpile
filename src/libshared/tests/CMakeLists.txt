@@ -2,7 +2,7 @@ find_package(${QT_PACKAGE_NAME} ${DP_MIN_QT_VERSION_SERVER} REQUIRED COMPONENTS 
 
 add_unit_tests(shared
 	LIBS dpshared ${QT_PACKAGE_NAME}::Test
-	TESTS passwordhash filename messages recording messagequeue listings ulid
+	TESTS passwordhash filename messagequeue listings ulid
 )
 
 if(TARGET libsodium::libsodium)

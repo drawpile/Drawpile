@@ -1,17 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/dialogs/serverlogdialog.h"
 #include "libclient/canvas/userlist.h"
-#include "libclient/drawdance/message.h"
-#include "libclient/net/servercmd.h"
+#include "libclient/net/message.h"
+#include "libshared/net/servercmd.h"
 #include "ui_serverlog.h"
-
 #include <QSortFilterProxyModel>
 
 namespace dialogs {
 
 ServerLogDialog::ServerLogDialog(QWidget *parent)
-	: QDialog(parent), m_opMode(false)
+	: QDialog(parent)
+	, m_opMode(false)
 {
 	m_ui = new Ui_ServerLogDialog;
 	m_ui->setupUi(this);
@@ -20,7 +19,9 @@ ServerLogDialog::ServerLogDialog(QWidget *parent)
 	m_ui->view->setModel(m_eventlogProxy);
 
 	m_eventlogProxy->setFilterCaseSensitivity(Qt::CaseInsensitive);
-	connect(m_ui->filter, &QLineEdit::textChanged, m_eventlogProxy, &QSortFilterProxyModel::setFilterFixedString);
+	connect(
+		m_ui->filter, &QLineEdit::textChanged, m_eventlogProxy,
+		&QSortFilterProxyModel::setFilterFixedString);
 
 	m_userlistProxy = new QSortFilterProxyModel(this);
 	m_ui->userlistView->setModel(m_userlistProxy);
@@ -28,13 +29,25 @@ ServerLogDialog::ServerLogDialog(QWidget *parent)
 	m_userlistProxy->setFilterKeyColumn(0);
 	m_userlistProxy->setFilterRole(Qt::DisplayRole);
 	m_userlistProxy->setFilterCaseSensitivity(Qt::CaseInsensitive);
-	connect(m_ui->userlistFilter, &QLineEdit::textChanged, m_userlistProxy, &QSortFilterProxyModel::setFilterFixedString);
+	connect(
+		m_ui->userlistFilter, &QLineEdit::textChanged, m_userlistProxy,
+		&QSortFilterProxyModel::setFilterFixedString);
 
-	connect(m_ui->inspectMode, &QPushButton::toggled, this, &ServerLogDialog::setInspectMode);
-	connect(m_ui->kickUser, &QPushButton::clicked, this, &ServerLogDialog::kickSelected);
-	connect(m_ui->banUser, &QPushButton::clicked, this, &ServerLogDialog::banSelected);
-	connect(m_ui->undoUser, &QPushButton::clicked, this, &ServerLogDialog::undoSelected);
-	connect(m_ui->redoUser, &QPushButton::clicked, this, &ServerLogDialog::redoSelected);
+	connect(
+		m_ui->inspectMode, &QPushButton::toggled, this,
+		&ServerLogDialog::setInspectMode);
+	connect(
+		m_ui->kickUser, &QPushButton::clicked, this,
+		&ServerLogDialog::kickSelected);
+	connect(
+		m_ui->banUser, &QPushButton::clicked, this,
+		&ServerLogDialog::banSelected);
+	connect(
+		m_ui->undoUser, &QPushButton::clicked, this,
+		&ServerLogDialog::undoSelected);
+	connect(
+		m_ui->redoUser, &QPushButton::clicked, this,
+		&ServerLogDialog::redoSelected);
 
 	userSelected(QItemSelection());
 }
@@ -60,10 +73,15 @@ void ServerLogDialog::setUserList(canvas::UserListModel *userlist)
 	m_userlist = userlist;
 	m_userlistProxy->setSourceModel(userlist);
 
-	m_ui->userlistView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-	m_ui->userlistView->horizontalHeader()->setSectionResizeMode(0,	QHeaderView::Stretch);
+	m_ui->userlistView->horizontalHeader()->setSectionResizeMode(
+		QHeaderView::ResizeToContents);
+	m_ui->userlistView->horizontalHeader()->setSectionResizeMode(
+		0, QHeaderView::Stretch);
 
-	connect(m_ui->userlistView->selectionModel(), &QItemSelectionModel::selectionChanged, this, &ServerLogDialog::userSelected);
+	connect(
+		m_ui->userlistView->selectionModel(),
+		&QItemSelectionModel::selectionChanged, this,
+		&ServerLogDialog::userSelected);
 }
 
 void ServerLogDialog::setOperatorMode(bool op)
@@ -78,7 +96,11 @@ void ServerLogDialog::setOperatorMode(bool op)
 void ServerLogDialog::userSelected(const QItemSelection &selected)
 {
 	const bool s = m_opMode && !selected.isEmpty();
-	m_ui->kickUser->setEnabled(s && selected.indexes().first().data(canvas::UserListModel::IsOnlineRole).toBool());
+	m_ui->kickUser->setEnabled(
+		s && selected.indexes()
+				 .first()
+				 .data(canvas::UserListModel::IsOnlineRole)
+				 .toBool());
 	m_ui->banUser->setEnabled(s);
 	m_ui->undoUser->setEnabled(s);
 	m_ui->redoUser->setEnabled(s);
@@ -91,9 +113,14 @@ uint8_t ServerLogDialog::selectedUserId() const
 	if(!m_ui->userlistView->selectionModel())
 		return 0;
 
-	const auto selection = m_ui->userlistView->selectionModel()->selection().indexes();
+	const auto selection =
+		m_ui->userlistView->selectionModel()->selection().indexes();
 
-	return selection.isEmpty() ? 0 : uint8_t(selection.first().data(canvas::UserListModel::IdRole).toInt());
+	return selection.isEmpty()
+			   ? 0
+			   : uint8_t(selection.first()
+							 .data(canvas::UserListModel::IdRole)
+							 .toInt());
 }
 
 void ServerLogDialog::setInspectMode(bool inspect)
@@ -126,8 +153,9 @@ void ServerLogDialog::undoSelected()
 {
 	uint8_t user = selectedUserId();
 	if(user != 0) {
-		// note: using a context id of 0 here is acceptable since the server will fix it for us
-		emit opCommand(drawdance::Message::makeUndo(0, user, false));
+		// note: using a context id of 0 here is acceptable since the server
+		// will fix it for us
+		emit opCommand(net::makeUndoMessage(0, user, false));
 	}
 }
 
@@ -135,10 +163,10 @@ void ServerLogDialog::redoSelected()
 {
 	uint8_t user = selectedUserId();
 	if(user != 0) {
-		// note: using a context id of 0 here is acceptable since the server will fix it for us
-		emit opCommand(drawdance::Message::makeUndo(0, user, true));
+		// note: using a context id of 0 here is acceptable since the server
+		// will fix it for us
+		emit opCommand(net::makeUndoMessage(0, user, true));
 	}
 }
 
 }
-

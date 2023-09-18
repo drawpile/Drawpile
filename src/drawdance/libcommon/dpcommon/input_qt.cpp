@@ -8,6 +8,7 @@ extern "C" {
 
 struct DP_QFileInputState {
     QFile *file;
+    bool close;
 };
 
 QFile *get_file(void *internal)
@@ -86,23 +87,49 @@ static bool qfile_input_seek(void *internal, size_t offset)
     }
 }
 
-static void qfile_input_dispose(void *internal)
+static bool qfile_input_seek_by(void *internal, size_t size)
 {
     QFile *file = get_file(internal);
-    file->close();
-    delete file;
+    qint64 pos = file->pos();
+    if (pos >= 0) {
+        qint64 target = pos + qint64(size);
+        if (target <= file->size() && file->seek(target)) {
+            return true;
+        }
+    }
+    DP_error_set("File input could not seek by %zu: %s", size,
+                 qUtf8Printable(file->errorString()));
+    return false;
+}
+
+static void qfile_input_dispose(void *internal)
+{
+    DP_QFileInputState *state = static_cast<DP_QFileInputState *>(internal);
+    if (state->close) {
+        QFile *file = state->file;
+        file->close();
+        delete file;
+    }
 }
 
 static const DP_InputMethods qfile_input_methods = {
     qfile_input_read,      qfile_input_length, qfile_input_rewind,
-    qfile_input_rewind_by, qfile_input_seek,   qfile_input_dispose,
+    qfile_input_rewind_by, qfile_input_seek,   qfile_input_seek_by,
+    qfile_input_dispose,
 };
 
 const DP_InputMethods *qfile_input_init(void *internal, void *arg)
 {
     DP_QFileInputState *state = static_cast<DP_QFileInputState *>(internal);
-    state->file = static_cast<QFile *>(arg);
+    *state = *static_cast<DP_QFileInputState *>(arg);
     return &qfile_input_methods;
+}
+
+extern "C" DP_Input *DP_qfile_input_new(QFile *file, bool close,
+                                        DP_InputQtNewFn new_fn)
+{
+    DP_QFileInputState state = {file, close};
+    return new_fn(qfile_input_init, &state, sizeof(DP_QFileInputState));
 }
 
 extern "C" DP_Input *DP_qfile_input_new_from_path(const char *path,
@@ -110,7 +137,7 @@ extern "C" DP_Input *DP_qfile_input_new_from_path(const char *path,
 {
     QFile *file = new QFile{QString::fromUtf8(path)};
     if (file->open(QIODevice::ReadOnly)) {
-        return new_fn(qfile_input_init, file, sizeof(DP_QFileInputState));
+        return DP_qfile_input_new(file, true, new_fn);
     }
     else {
         DP_error_set("Can't open '%s': %s", path,

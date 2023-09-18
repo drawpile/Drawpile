@@ -1,10 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #ifndef DP_NET_CLIENT_H
 #define DP_NET_CLIENT_H
-
 #include "libclient/net/server.h"
-
 #include <QObject>
 #include <QSslCertificate>
 #include <QUrl>
@@ -13,17 +10,14 @@ class QJsonObject;
 class QJsonArray;
 struct DP_MsgData;
 
-namespace drawdance {
-	class Message;
-}
-
 namespace utils {
-	class AndroidWakeLock;
-	class AndroidWifiLock;
+class AndroidWakeLock;
+class AndroidWifiLock;
 }
 
 namespace net {
 
+class Message;
 class LoginHandler;
 struct ServerReply;
 
@@ -33,7 +27,7 @@ struct ServerReply;
 class Client final : public QObject {
 	Q_OBJECT
 public:
-	explicit Client(QObject *parent=nullptr);
+	explicit Client(QObject *parent = nullptr);
 
 	/**
 	 * @brief Connect to a remote server
@@ -55,7 +49,7 @@ public:
 	/**
 	 * Return the URL of the current (or last connected) session
 	 */
-	QUrl sessionUrl(bool includeUser=false) const;
+	QUrl sessionUrl(bool includeUser = false) const;
 
 	/**
 	 * @brief Is the client connected by network?
@@ -65,7 +59,8 @@ public:
 
 	/**
 	 * @brief Is the user connected and logged in?
-	 * @return true if there is an active network connection and login process has completed
+	 * @return true if there is an active network connection and login process
+	 * has completed
 	 */
 	bool isLoggedIn() const { return m_server && m_server->isLoggedIn(); }
 
@@ -77,34 +72,47 @@ public:
 	/**
 	 * @brief Is this user a moderator?
 	 *
-	 * Moderator status is a feature of the user account and cannot change during
-	 * the connection.
+	 * Moderator status is a feature of the user account and cannot change
+	 * during the connection.
 	 */
 	bool isModerator() const { return m_moderator; }
 
 	/**
 	 * @brief Get connection security level
 	 */
-	Server::Security securityLevel() const { return m_server ? m_server->securityLevel() : Server::Security::NO_SECURITY; }
+	Server::Security securityLevel() const
+	{
+		return m_server ? m_server->securityLevel()
+						: Server::Security::NO_SECURITY;
+	}
 
 	/**
 	 * @brief Get host certificate
 	 *
 	 * This is meaningful only if securityLevel != NO_SECURITY
 	 */
-	QSslCertificate hostCertificate() const { return m_server ? m_server->hostCertificate() : QSslCertificate(); }
+	QSslCertificate hostCertificate() const
+	{
+		return m_server ? m_server->hostCertificate() : QSslCertificate();
+	}
 
 	/**
 	 * @brief Does the server support persistent sessions?
 	 *
 	 * TODO for version 3.0: Change this to sessionSupportsPersistence
 	 */
-	bool serverSuppotsPersistence() const { return m_server && m_server->supportsPersistence(); }
+	bool serverSuppotsPersistence() const
+	{
+		return m_server && m_server->supportsPersistence();
+	}
 
 	/**
 	 * @brief Can the server receive abuse reports?
 	 */
-	bool serverSupportsReports() const { return m_server && m_server->supportsAbuseReports(); }
+	bool serverSupportsReports() const
+	{
+		return m_server && m_server->supportsAbuseReports();
+	}
 
 	bool sessionSupportsAutoReset() const { return m_supportsAutoReset; }
 
@@ -119,7 +127,10 @@ public:
 	//! Are we expecting more incoming data?
 	bool isFullyCaughtUp() const { return m_catchupTo == 0; }
 
-	int artificialLagMs() const { return m_server ? m_server->artificialLagMs() : 0; }
+	int artificialLagMs() const
+	{
+		return m_server ? m_server->artificialLagMs() : 0;
+	}
 
 	void setArtificialLagMs(int msecs)
 	{
@@ -141,21 +152,22 @@ public slots:
 	 *
 	 * Just a convenience method around sendMessages.
 	 */
-	void sendMessage(const drawdance::Message &msg);
+	void sendMessage(const net::Message &msg);
 
 	/**
 	 * @brief Send messages to the server
 	 *
-	 * A drawingCommandLocal signal will be emitted for drawing command messages.
+	 * A drawingCommandLocal signal will be emitted for drawing command
+	 * messages.
 	 */
-	void sendMessages(int count, const drawdance::Message *msgs);
+	void sendMessages(int count, const net::Message *msgs);
 
 	/**
 	 * @brief Send a single reset message to the server
 	 *
 	 * Just a convenience method around sendResetMessages.
 	 */
-	void sendResetMessage(const drawdance::Message &msg);
+	void sendResetMessage(const net::Message &msg);
 
 	/**
 	 * @brief Send the reset image to the server
@@ -164,13 +176,13 @@ public slots:
 	 * will not be emitted, as the reset image was generate from content already
 	 * on the canvas.
 	 */
-	void sendResetMessages(int count, const drawdance::Message *msgs);
+	void sendResetMessages(int count, const net::Message *msgs);
 
 	void setSmoothDrainRate(int smoothDrainRate);
 
 signals:
-	void messagesReceived(int count, const drawdance::Message *msgs);
-	void drawingCommandsLocal(int count, const drawdance::Message *msgs);
+	void messagesReceived(int count, const net::Message *msgs);
+	void drawingCommandsLocal(int count, const net::Message *msgs);
 	void catchupProgress(int percentage);
 
 	void needSnapshot();
@@ -178,9 +190,11 @@ signals:
 	void sessionConfChange(const QJsonObject &config);
 
 	void serverConnected(const QString &address, int port);
-	void serverLoggedIn(bool join, bool compatibilityMode, const QString &joinPassword);
+	void serverLoggedIn(
+		bool join, bool compatibilityMode, const QString &joinPassword);
 	void serverDisconnecting();
-	void serverDisconnected(const QString &message, const QString &errorcode, bool localDisconnect);
+	void serverDisconnected(
+		const QString &message, const QString &errorcode, bool localDisconnect);
 	void youWereKicked(const QString &kickedBy);
 
 	void serverMessage(const QString &message, bool isAlert);
@@ -196,21 +210,24 @@ signals:
 	void userInfoReceived(int userId, const QJsonObject &info);
 
 private slots:
-	void handleMessages(int count, drawdance::Message *msgs);
+	void handleMessages(int count, net::Message *msgs);
 	void handleConnect(
 		const QUrl &url, uint8_t userid, bool join, bool auth, bool moderator,
-		bool supportsAutoReset, bool compatibilityMode, const QString &joinPassword);
-	void handleDisconnect(const QString &message, const QString &errorcode, bool localDisconnect);
+		bool supportsAutoReset, bool compatibilityMode,
+		const QString &joinPassword);
+	void handleDisconnect(
+		const QString &message, const QString &errorcode, bool localDisconnect);
 
 private:
-	void sendCompatibleMessages(int count, const drawdance::Message *msgs);
-	void sendCompatibleResetMessages(int count, const drawdance::Message *msgs);
-	QVector<drawdance::Message> filterCompatibleMessages(int count, const drawdance::Message *msgs);
+	void sendCompatibleMessages(int count, const net::Message *msgs);
+	void sendCompatibleResetMessages(int count, const net::Message *msgs);
+	QVector<net::Message>
+	filterCompatibleMessages(int count, const net::Message *msgs);
 
 	void handleServerReply(const ServerReply &msg);
 	void handleResetRequest(const ServerReply &msg);
-	void handleData(const drawdance::Message &msg);
-	void handleUserInfo(const drawdance::Message &msg, DP_MsgData *md);
+	void handleData(const net::Message &msg);
+	void handleUserInfo(const net::Message &msg, DP_MsgData *md);
 
 	Server *m_server = nullptr;
 #ifdef Q_OS_ANDROID

@@ -98,7 +98,6 @@ static constexpr auto CTRL_KEY = Qt::CTRL;
 
 #include "desktop/filewrangler.h"
 #include "libclient/export/animationsaverrunnable.h"
-#include "libshared/record/reader.h"
 #include "libclient/drawdance/eventlog.h"
 #include "libclient/drawdance/perf.h"
 
@@ -1040,7 +1039,7 @@ void MainWindow::requestUserInfo(int userId)
 {
 	net::Client *client = m_doc->client();
 	QJsonObject info{{"type", "request_user_info"}};
-	client->sendMessage(drawdance::Message::makeUserInfo(
+	client->sendMessage(net::makeUserInfoMessage(
 		client->myId(), userId, QJsonDocument{info}));
 }
 
@@ -1066,7 +1065,7 @@ void MainWindow::sendUserInfo(int userId)
 		{"pressure_curve", m_view->pressureCurve().toString()},
 	};
 	net::Client *client = m_doc->client();
-	client->sendMessage(drawdance::Message::makeUserInfo(
+	client->sendMessage(net::makeUserInfoMessage(
 		client->myId(), userId, QJsonDocument{info}));
 }
 
@@ -1973,7 +1972,7 @@ void MainWindow::resetSession()
 		connect(dlg, &dialogs::ResetDialog::resetSelected, this, [this, dlg]() {
 			canvas::CanvasModel *canvas = m_doc->canvas();
 			if(canvas->aclState()->amOperator()) {
-				drawdance::MessageList snapshot = dlg->getResetImage();
+				net::MessageList snapshot = dlg->getResetImage();
 				canvas->amendSnapshotMetadata(
 					snapshot, true, DP_ACL_STATE_RESET_IMAGE_SESSION_RESET_FLAGS);
 				m_doc->sendResetSession(snapshot);
@@ -2666,9 +2665,9 @@ void MainWindow::clearOrDelete()
 		if(a>0) {
 			net::Client *client = m_doc->client();
 			uint8_t contextId = client->myId();
-			drawdance::Message messages[] = {
-				drawdance::Message::makeUndoPoint(contextId),
-				drawdance::Message::makeAnnotationDelete(contextId, a),
+			net::Message messages[] = {
+				net::makeUndoPointMessage(contextId),
+				net::makeAnnotationDeleteMessage(contextId, a),
 			};
 			client->sendMessages(DP_ARRAY_LENGTH(messages), messages);
 			return;
@@ -2855,7 +2854,7 @@ void MainWindow::changeUndoDepthLimit()
 	if(dlg.exec() == QDialog::Accepted) {
 		int undoDepthLimit = dlg.undoDepthLimit();
 		if(undoDepthLimit != previousUndoDepthLimit) {
-			m_doc->client()->sendMessage(drawdance::Message::makeUndoDepth(
+			m_doc->client()->sendMessage(net::makeUndoDepthMessage(
 				m_doc->canvas()->localUserId(), undoDepthLimit));
 		}
 	}

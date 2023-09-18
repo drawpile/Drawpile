@@ -1,22 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#include "thinsrv/templatefiles.h"
 #include "libserver/inmemoryhistory.h"
 #include "libshared/net/protover.h"
 #include "libshared/util/passwordhash.h"
 #include "libshared/util/ulid.h"
-
-#include <QtTest/QtTest>
-#include <QTemporaryDir>
+#include "thinsrv/templatefiles.h"
+#include <QDebug>
 #include <QDir>
 #include <QFile>
-
-#include <QDebug>
+#include <QTemporaryDir>
+#include <QtTest/QtTest>
 
 using namespace server;
 
-class TestTemplates final : public QObject
-{
+class TestTemplates final : public QObject {
 	Q_OBJECT
 private slots:
 	void testTemplateLoading()
@@ -26,8 +22,10 @@ private slots:
 		QDir dir(tempDir.path());
 
 		// Copy some test files to the temp dir
-		QVERIFY(QFile(":test/test-config.cfg").copy(dir.absoluteFilePath("test.cfg")));
-		QVERIFY(QFile(":test/test.dptxt").copy(dir.absoluteFilePath("test.dptxt")));
+		QVERIFY(QFile(":test/test-config.cfg")
+					.copy(dir.absoluteFilePath("test.cfg")));
+		QVERIFY(
+			QFile(":test/test.dptxt").copy(dir.absoluteFilePath("test.dptxt")));
 		QVERIFY(touch(dir.absoluteFilePath("empty.dptxt")));
 
 		// Scan templates
@@ -47,11 +45,10 @@ private slots:
 
 		// Try loading the template
 		InMemoryHistory history(
-			Ulid::make().toString(),
-			"test",
-			protocol::ProtocolVersion::fromString(desc.value("protocol").toString()),
-			desc.value("founder").toString()
-			);
+			Ulid::make().toString(), "test",
+			protocol::ProtocolVersion::fromString(
+				desc.value("protocol").toString()),
+			desc.value("founder").toString());
 
 		QVERIFY(templates.init(&history));
 
@@ -60,23 +57,24 @@ private slots:
 		QCOMPARE(history.maxUsers(), 1);
 		QCOMPARE(history.title(), QString("Test"));
 		QCOMPARE(int(history.flags()), 0);
-		QCOMPARE(passwordhash::check("qwerty123", history.passwordHash()), true);
+		QCOMPARE(
+			passwordhash::check("qwerty123", history.passwordHash()), true);
 
 		// History content should now match the test template
-		protocol::MessageList msgs;
+		net::MessageList msgs;
 		int last;
 		std::tie(msgs, last) = history.getBatch(-1);
 
 		QCOMPARE(msgs.size(), 2);
 
-		QCOMPARE(msgs.at(0)->type(), protocol::MSG_CANVAS_RESIZE);
-		QCOMPARE(msgs.at(1)->type(), protocol::MSG_LAYER_CREATE);
+		QCOMPARE(msgs.at(0).type(), DP_MSG_CANVAS_RESIZE);
+		QCOMPARE(msgs.at(1).type(), DP_MSG_LAYER_CREATE);
 	}
 
 private:
 	bool touch(const QString &path)
 	{
-		QFile f { path };
+		QFile f{path};
 		if(!f.open(QIODevice::WriteOnly))
 			return false;
 		f.close();
@@ -87,4 +85,3 @@ private:
 
 QTEST_MAIN(TestTemplates)
 #include "templates.moc"
-

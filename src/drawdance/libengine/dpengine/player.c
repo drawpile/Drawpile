@@ -209,7 +209,7 @@ static DP_Player *make_player(DP_PlayerType type, char *recording_path,
 static DP_Player *new_binary_player(char *recording_path, char *index_path,
                                     DP_Input *input)
 {
-    DP_BinaryReader *binary_reader = DP_binary_reader_new(input);
+    DP_BinaryReader *binary_reader = DP_binary_reader_new(input, 0);
     if (!binary_reader) {
         return NULL;
     }
@@ -479,7 +479,7 @@ long long DP_player_position(DP_Player *player)
 static DP_PlayerResult step_binary(DP_Player *player, DP_Message **out_msg)
 {
     DP_BinaryReaderResult result =
-        DP_binary_reader_read_message(player->reader.binary, out_msg);
+        DP_binary_reader_read_message(player->reader.binary, true, out_msg);
     switch (result) {
     case DP_BINARY_READER_SUCCESS:
         return DP_PLAYER_SUCCESS;
@@ -2487,7 +2487,7 @@ static bool read_index_history(DP_ReadSnapshotContext *c, size_t offset,
         }
 
         DP_Message *msg = DP_message_deserialize_length(
-            input->buffer, length, length < 2 ? 0 : length - 2);
+            input->buffer, length, length < 2 ? 0 : length - 2, true);
         if (msg) {
             snapshot->messages[i] = msg;
         }

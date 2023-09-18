@@ -1,10 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #ifndef TOOLS_ANNOTATION_H
 #define TOOLS_ANNOTATION_H
-
 #include "libclient/tools/tool.h"
-
 #include <QRect>
 
 namespace tools {
@@ -16,8 +13,11 @@ class Annotation final : public Tool {
 public:
 	Annotation(ToolController &owner);
 
-	void begin(const canvas::Point& point, bool right, float zoom) override;
-	void motion(const canvas::Point& point, bool constrain, bool center) override;
+	void begin(const canvas::Point &point, bool right, float zoom) override;
+
+	void
+	motion(const canvas::Point &point, bool constrain, bool center) override;
+
 	void end() override;
 
 private:
@@ -56,4 +56,3 @@ private:
 }
 
 #endif
-

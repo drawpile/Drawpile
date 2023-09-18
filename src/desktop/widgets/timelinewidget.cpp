@@ -1,9 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 extern "C" {
 #include <dpengine/key_frame.h>
 }
-
 #include "desktop/dialogs/keyframepropertiesdialog.h"
 #include "desktop/utils/qtguicompat.h"
 #include "desktop/utils/widgetutils.h"
@@ -13,8 +11,7 @@ extern "C" {
 #include "libclient/canvas/layerlist.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/canvas/timelinemodel.h"
-#include "libclient/drawdance/message.h"
-
+#include "libclient/net/message.h"
 #include <QApplication>
 #include <QClipboard>
 #include <QDrag>
@@ -571,7 +568,7 @@ int TimelineWidget::currentFrame() const
 void TimelineWidget::changeFramerate(int framerate)
 {
 	emitCommand([&](uint8_t contextId) {
-		return drawdance::Message::makeSetMetadataInt(
+		return net::makeSetMetadataIntMessage(
 			contextId, DP_MSG_SET_METADATA_INT_FIELD_FRAMERATE, framerate);
 	});
 }
@@ -579,7 +576,7 @@ void TimelineWidget::changeFramerate(int framerate)
 void TimelineWidget::changeFrameCount(int frameCount)
 {
 	emitCommand([&](uint8_t contextId) {
-		return drawdance::Message::makeSetMetadataInt(
+		return net::makeSetMetadataIntMessage(
 			contextId, DP_MSG_SET_METADATA_INT_FIELD_FRAME_COUNT, frameCount);
 	});
 }
@@ -1091,7 +1088,7 @@ void TimelineWidget::dropEvent(QDropEvent *event)
 		trackIds.move(source, target);
 
 		emitCommand([&](uint8_t contextId) {
-			return drawdance::Message::makeTrackOrder(contextId, trackIds);
+			return net::makeTrackOrderMessage(contextId, trackIds);
 		});
 	} else if(dragType == int(Drag::KeyFrame)) {
 		int sourceTrackId = mimeData->property("trackId").toInt();
@@ -1104,12 +1101,12 @@ void TimelineWidget::dropEvent(QDropEvent *event)
 			applyMouseTarget(nullptr, target, false);
 			emitCommand([&](uint8_t contextId) {
 				if(event->dropAction() == Qt::CopyAction) {
-					return drawdance::Message::makeKeyFrameSet(
+					return net::makeKeyFrameSetMessage(
 						contextId, target.trackId, target.frameIndex,
 						sourceTrackId, sourceFrameIndex,
 						DP_MSG_KEY_FRAME_SET_SOURCE_KEY_FRAME);
 				} else {
-					return drawdance::Message::makeKeyFrameDelete(
+					return net::makeKeyFrameDeleteMessage(
 						contextId, sourceTrackId, sourceFrameIndex,
 						target.trackId, target.frameIndex);
 				}
@@ -1279,7 +1276,7 @@ void TimelineWidget::deleteKeyFrame()
 	const canvas::TimelineKeyFrame *keyFrame = d->currentKeyFrame();
 	if(keyFrame) {
 		emitCommand([&](uint8_t contextId) {
-			return drawdance::Message::makeKeyFrameDelete(
+			return net::makeKeyFrameDeleteMessage(
 				contextId, d->currentTrackId, keyFrame->frameIndex, 0, 0);
 		});
 	}
@@ -1311,7 +1308,7 @@ void TimelineWidget::addTrack()
 	d->nextTrackId = trackId;
 	const canvas::TimelineTrack *track = d->currentTrack();
 	emitCommand([&](uint8_t contextId) {
-		return drawdance::Message::makeTrackCreate(
+		return net::makeTrackCreateMessage(
 			contextId, trackId, track ? track->id : 0, 0,
 			timeline->getAvailableTrackName(tr("Track")));
 	});
@@ -1351,7 +1348,7 @@ void TimelineWidget::duplicateTrack()
 
 	d->nextTrackId = trackId;
 	emitCommand([&](uint8_t contextId) {
-		return drawdance::Message::makeTrackCreate(
+		return net::makeTrackCreateMessage(
 			contextId, trackId, source->id, source->id,
 			timeline->getAvailableTrackName(source->title));
 	});
@@ -1374,7 +1371,7 @@ void TimelineWidget::retitleTrack()
 		source->title, &ok);
 	if(ok && !(title = title.trimmed()).isEmpty()) {
 		emitCommand([&](uint8_t contextId) {
-			return drawdance::Message::makeTrackRetitle(
+			return net::makeTrackRetitleMessage(
 				contextId, d->currentTrackId, title);
 		});
 	}
@@ -1394,7 +1391,7 @@ void TimelineWidget::deleteTrack()
 	}
 
 	emitCommand([&](uint8_t contextId) {
-		return drawdance::Message::makeTrackDelete(contextId, trackId);
+		return net::makeTrackDeleteMessage(contextId, trackId);
 	});
 }
 
@@ -1568,7 +1565,7 @@ void TimelineWidget::setCurrent(
 void TimelineWidget::setKeyFrame(int layerId)
 {
 	emitCommand([&](uint8_t contextId) {
-		return drawdance::Message::makeKeyFrameSet(
+		return net::makeKeyFrameSetMessage(
 			contextId, d->currentTrackId, d->currentFrame, layerId, 0,
 			DP_MSG_KEY_FRAME_SET_SOURCE_LAYER);
 	});
@@ -1584,11 +1581,11 @@ void TimelineWidget::setKeyFrameProperties(
 
 	if(titleChanged || layersChanged) {
 		uint8_t contextId = d->canvas->localUserId();
-		drawdance::Message messages[3];
+		net::Message messages[3];
 		int fill = 0;
-		messages[fill++] = drawdance::Message::makeUndoPoint(contextId);
+		messages[fill++] = net::makeUndoPointMessage(contextId);
 		if(titleChanged) {
-			messages[fill++] = drawdance::Message::makeKeyFrameRetitle(
+			messages[fill++] = net::makeKeyFrameRetitleMessage(
 				contextId, trackId, frame, title);
 		}
 		if(layersChanged) {
@@ -1602,7 +1599,7 @@ void TimelineWidget::setKeyFrameProperties(
 					it.value() ? DP_KEY_FRAME_LAYER_REVEALED
 							   : DP_KEY_FRAME_LAYER_HIDDEN);
 			}
-			messages[fill++] = drawdance::Message::makeKeyFrameLayerAttributes(
+			messages[fill++] = net::makeKeyFrameLayerAttributesMessage(
 				contextId, trackId, frame, layers);
 		}
 		emit timelineEditCommands(fill, messages);
@@ -1639,11 +1636,11 @@ void TimelineWidget::changeFrameExposure(int direction)
 	}
 
 	uint8_t contextId = d->canvas->localUserId();
-	QVector<drawdance::Message> messages;
+	QVector<net::Message> messages;
 	messages.reserve(frameIndexes.size() + 1);
-	messages.append(drawdance::Message::makeUndoPoint(contextId));
+	messages.append(net::makeUndoPointMessage(contextId));
 	for(int frameIndex : frameIndexes) {
-		messages.append(drawdance::Message::makeKeyFrameDelete(
+		messages.append(net::makeKeyFrameDeleteMessage(
 			contextId, d->currentTrackId, frameIndex, d->currentTrackId,
 			frameIndex + direction));
 	}
@@ -1836,12 +1833,12 @@ void TimelineWidget::executeTargetAction(const Target &target)
 }
 
 void TimelineWidget::emitCommand(
-	std::function<drawdance::Message(uint8_t)> getMessage)
+	std::function<net::Message(uint8_t)> getMessage)
 {
 	if(d->editable) {
 		uint8_t contextId = d->canvas->localUserId();
-		drawdance::Message messages[] = {
-			drawdance::Message::makeUndoPoint(contextId),
+		net::Message messages[] = {
+			net::makeUndoPointMessage(contextId),
 			getMessage(contextId),
 		};
 		emit timelineEditCommands(DP_ARRAY_LENGTH(messages), messages);

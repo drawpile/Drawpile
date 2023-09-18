@@ -29,10 +29,6 @@ SessionServer::SessionServer(ServerConfig *config, QObject *parent)
 	connect(cleanupTimer, &QTimer::timeout, this, &SessionServer::cleanupSessions);
 	cleanupTimer->setInterval(15 * 1000);
 	cleanupTimer->start(cleanupTimer->interval());
-
-#ifndef NDEBUG
-	m_randomlag = 0;
-#endif
 }
 
 void SessionServer::setSessionDir(const QDir &dir)
@@ -212,10 +208,6 @@ void SessionServer::addClient(ThinServerClient *client)
 {
 	client->setParent(this);
 	client->setConnectionTimeout(m_config->getConfigTime(config::ClientTimeout) * 1000);
-
-#ifndef NDEBUG
-	client->setRandomLag(m_randomlag);
-#endif
 
 	m_clients.append(client);
 	connect(client, &Client::destroyed, this, &SessionServer::removeClient);

@@ -25,8 +25,9 @@
 #include <dpcommon/binary.h>
 #include <dpcommon/common.h>
 
-#define COMPAT_FLAG_NONE     0x0
-#define COMPAT_FLAG_INDIRECT 0x1
+#define FLAG_NONE            0x0
+#define FLAG_OPAQUE          0x1
+#define FLAG_COMPAT_INDIRECT 0x2
 
 typedef DP_Message *(*DP_MessageDeserializeFn)(unsigned int context_id,
                                                const unsigned char *buffer,
@@ -35,7 +36,7 @@ typedef DP_Message *(*DP_MessageDeserializeFn)(unsigned int context_id,
 struct DP_Message {
     DP_Atomic refcount;
     uint8_t type;
-    uint8_t compat_flags;
+    uint8_t flags;
     unsigned int context_id;
     const DP_MessageMethods *methods;
     alignas(DP_max_align_t) unsigned char internal[];
@@ -54,12 +55,78 @@ DP_Message *DP_message_new(DP_MessageType type, unsigned int context_id,
     DP_ASSERT(methods->equals);
     DP_ASSERT(methods->write_payload_text);
     DP_ASSERT(internal_size <= SIZE_MAX - sizeof(DP_Message));
-    DP_Message *msg = DP_malloc_zeroed(sizeof(*msg) + internal_size);
+    DP_Message *msg =
+        DP_malloc_zeroed(DP_FLEX_SIZEOF(DP_Message, internal, internal_size));
     DP_atomic_set(&msg->refcount, 1);
     msg->type = (uint8_t)type;
-    msg->compat_flags = COMPAT_FLAG_NONE;
+    msg->flags = FLAG_NONE;
     msg->context_id = context_id;
     msg->methods = methods;
+    return msg;
+}
+
+typedef struct DP_OpaqueMessage {
+    size_t length;
+    unsigned char body[];
+} DP_OpaqueMessage;
+
+static size_t opaque_payload_length(DP_Message *msg)
+{
+    DP_OpaqueMessage *om = (void *)msg->internal;
+    return om->length;
+}
+
+static size_t opaque_serialize_payload(DP_Message *msg, unsigned char *data)
+{
+    DP_OpaqueMessage *om = (void *)msg->internal;
+    size_t length = om->length;
+    if (length != 0) {
+        memcpy(data, om->body, length);
+    }
+    return length;
+}
+
+static bool opaque_write_payload_text(DP_UNUSED DP_Message *msg,
+                                      DP_UNUSED DP_TextWriter *writer)
+{
+    DP_error_set("Can't write payload text of opaque message");
+    return false;
+}
+
+static bool opaque_equals(DP_Message *DP_RESTRICT msg,
+                          DP_Message *DP_RESTRICT other)
+{
+    DP_OpaqueMessage *a = (void *)msg->internal;
+    DP_OpaqueMessage *b = (void *)other->internal;
+    return a->length == b->length && memcmp(a->body, b->body, a->length) == 0;
+}
+
+static const DP_MessageMethods opaque_methods = {
+    opaque_payload_length,
+    opaque_serialize_payload,
+    opaque_write_payload_text,
+    opaque_equals,
+};
+
+DP_Message *DP_message_new_opaque(DP_MessageType type, unsigned int context_id,
+                                  const unsigned char *body, size_t length)
+{
+    DP_ASSERT(type >= 0);
+    DP_ASSERT(type <= DP_MESSAGE_MAX);
+    DP_ASSERT(context_id <= UINT8_MAX);
+    DP_ASSERT(length <= SIZE_MAX - sizeof(DP_Message));
+    DP_Message *msg = DP_malloc_zeroed(DP_FLEX_SIZEOF(
+        DP_Message, internal, DP_FLEX_SIZEOF(DP_OpaqueMessage, body, length)));
+    DP_atomic_set(&msg->refcount, 1);
+    msg->type = (uint8_t)type;
+    msg->flags = FLAG_OPAQUE;
+    msg->context_id = context_id;
+    msg->methods = &opaque_methods;
+    DP_OpaqueMessage *om = (void *)msg->internal;
+    om->length = length;
+    if (length != 0) {
+        memcpy(om->body, body, length);
+    }
     return msg;
 }
 
@@ -108,6 +175,13 @@ DP_MessageType DP_message_type(DP_Message *msg)
     return (DP_MessageType)msg->type;
 }
 
+bool DP_message_opaque(DP_Message *msg)
+{
+    DP_ASSERT(msg);
+    DP_ASSERT(DP_atomic_get(&msg->refcount) > 0);
+    return msg->flags & FLAG_OPAQUE;
+}
+
 const char *DP_message_name(DP_Message *msg)
 {
     return DP_message_type_name(DP_message_type(msg));
@@ -131,6 +205,7 @@ void *DP_message_internal(DP_Message *msg)
 {
     DP_ASSERT(msg);
     DP_ASSERT(DP_atomic_get(&msg->refcount) > 0);
+    DP_ASSERT(!DP_message_opaque(msg));
     return msg->internal;
 }
 
@@ -150,38 +225,6 @@ void *DP_message_cast(DP_Message *msg, DP_MessageType type)
         }
         else {
             DP_error_set("Wrong message type %d, wanted %d", msg_type, type);
-        }
-    }
-    return NULL;
-}
-
-void *DP_message_cast2(DP_Message *msg, DP_MessageType type1,
-                       DP_MessageType type2)
-{
-    if (msg) {
-        DP_MessageType msg_type = (DP_MessageType)msg->type;
-        if (msg_type == type1 || msg_type == type2) {
-            return DP_message_internal(msg);
-        }
-        else {
-            DP_error_set("Wrong message type %d, wanted %d or %d", msg_type,
-                         type1, type2);
-        }
-    }
-    return NULL;
-}
-
-void *DP_message_cast3(DP_Message *msg, DP_MessageType type1,
-                       DP_MessageType type2, DP_MessageType type3)
-{
-    if (msg) {
-        DP_MessageType msg_type = (DP_MessageType)msg->type;
-        if (msg_type == type1 || msg_type == type2 || msg_type == type3) {
-            return DP_message_internal(msg);
-        }
-        else {
-            DP_error_set("Wrong message type %d, wanted %d, %d or %d", msg_type,
-                         type1, type2, type3);
         }
     }
     return NULL;
@@ -250,20 +293,28 @@ bool DP_message_write_text(DP_Message *msg, DP_TextWriter *writer)
 
 bool DP_message_equals(DP_Message *msg, DP_Message *other)
 {
-    return (msg == other)
-        || (msg && other && msg->type == other->type
-            && msg->methods->equals(msg, other));
+    if (msg == other) {
+        return true;
+    }
+    else if (msg && other && msg->type == other->type) {
+        DP_ASSERT(DP_message_opaque(msg) == DP_message_opaque(other));
+        return msg->methods->equals(msg, other);
+    }
+    else {
+        return false;
+    }
 }
 
 
 DP_Message *DP_message_deserialize_length(const unsigned char *buf,
-                                          size_t bufsize, size_t body_length)
+                                          size_t bufsize, size_t body_length,
+                                          bool decode_opaque)
 {
     DP_ASSERT(buf);
     size_t total_length = 2 + body_length;
     if (bufsize >= total_length) {
-        return DP_message_deserialize_body(buf[0], buf[1], buf + 2,
-                                           body_length);
+        return DP_message_deserialize_body(buf[0], buf[1], buf + 2, body_length,
+                                           decode_opaque);
     }
     else {
         DP_error_set("Buffer size %zu shorter than message length %zu", bufsize,
@@ -272,12 +323,14 @@ DP_Message *DP_message_deserialize_length(const unsigned char *buf,
     }
 }
 
-DP_Message *DP_message_deserialize(const unsigned char *buf, size_t bufsize)
+DP_Message *DP_message_deserialize(const unsigned char *buf, size_t bufsize,
+                                   bool decode_opaque)
 {
     if (bufsize >= DP_MESSAGE_HEADER_LENGTH) {
         DP_ASSERT(buf);
         size_t body_length = DP_read_bigendian_uint16(buf);
-        return DP_message_deserialize_length(buf + 2, bufsize - 2, body_length);
+        return DP_message_deserialize_length(buf + 2, bufsize - 2, body_length,
+                                             decode_opaque);
     }
     else {
         DP_error_set("Buffer size %zu too short for message header", bufsize);
@@ -290,14 +343,14 @@ bool DP_message_compat_flag_indirect(DP_Message *msg)
 {
     DP_ASSERT(msg);
     DP_ASSERT(DP_atomic_get(&msg->refcount) > 0);
-    return msg->compat_flags & COMPAT_FLAG_INDIRECT;
+    return msg->flags & FLAG_COMPAT_INDIRECT;
 }
 
 void DP_message_compat_flag_indirect_set(DP_Message *msg)
 {
     DP_ASSERT(msg);
     DP_ASSERT(DP_atomic_get(&msg->refcount) > 0);
-    msg->compat_flags |= COMPAT_FLAG_INDIRECT;
+    msg->flags |= FLAG_COMPAT_INDIRECT;
 }
 
 

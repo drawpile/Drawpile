@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #ifndef TIMELINEWIDGET_H
 #define TIMELINEWIDGET_H
-
 #include <QWidget>
 #include <functional>
 
@@ -13,7 +11,7 @@ namespace canvas {
 class CanvasModel;
 }
 
-namespace drawdance {
+namespace net {
 class Message;
 }
 
@@ -82,7 +80,7 @@ public slots:
 	void changeFrameCount(int frameCount);
 
 signals:
-	void timelineEditCommands(int count, const drawdance::Message *msgs);
+	void timelineEditCommands(int count, const net::Message *msgs);
 	void trackSelected(int trackId);
 	void frameSelected(int frame);
 	void layerSelected(int layerId);
@@ -158,7 +156,7 @@ private:
 	void applyMouseTarget(QMouseEvent *event, const Target &target, bool press);
 	void executeTargetAction(const Target &target);
 
-	void emitCommand(std::function<drawdance::Message(uint8_t)> getMessage);
+	void emitCommand(std::function<net::Message(uint8_t)> getMessage);
 
 	static void setCheckedSignalBlocked(QAction *action, bool checked);
 

@@ -1,22 +1,19 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #ifndef CHATBOX_H
 #define CHATBOX_H
-
 #include <QWidget>
 
-namespace canvas {
-	class CanvasModel;
-}
-
-namespace drawdance {
-	class Message;
-}
-
+class Document;
 class QListView;
 class QPushButton;
 
-class Document;
+namespace canvas {
+class CanvasModel;
+}
+
+namespace net {
+class Message;
+}
 
 namespace widgets {
 
@@ -27,18 +24,20 @@ class UserItemDelegate;
 /**
  * Chat box with user list
  */
-class ChatBox final : public QWidget
-{
+class ChatBox final : public QWidget {
 	Q_OBJECT
 public:
-	explicit ChatBox(Document *doc, QWidget *parent=nullptr);
+	explicit ChatBox(Document *doc, QWidget *parent = nullptr);
 
 	void setActions(QAction *inviteAction, QAction *sessionSettingsAction);
 
 	//! Focus the text input widget
 	void focusInput();
 
-	bool isCollapsed() const { return m_state == State::Collapsed || !isVisible(); }
+	bool isCollapsed() const
+	{
+		return m_state == State::Collapsed || !isVisible();
+	}
 
 private slots:
 	void onCanvasChanged(canvas::CanvasModel *canvas);
@@ -49,7 +48,7 @@ private slots:
 
 signals:
 	//! User has written a new message
-	void message(const drawdance::Message &msg);
+	void message(const net::Message &msg);
 
 	//! Request information dialog about this user
 	void requestUserInfo(int userId);
@@ -60,7 +59,8 @@ signals:
 	//! Request that the chatbox be expanded
 	void expandPlease();
 
-	//! Detached chat box should be re-attached and reparented (or it will be destroyed)
+	//! Detached chat box should be re-attached and reparented (or it will be
+	//! destroyed)
 	void reattachNowPlease();
 
 	void muteChanged(bool muted);
@@ -69,11 +69,7 @@ protected:
 	void resizeEvent(QResizeEvent *event) override;
 
 private:
-	enum class State {
-		Expanded,
-		Collapsed,
-		Detached
-	};
+	enum class State { Expanded, Collapsed, Detached };
 
 	ChatWidget *m_chatWidget;
 	UserItemDelegate *m_userItemDelegate;
@@ -88,4 +84,3 @@ private:
 }
 
 #endif
-

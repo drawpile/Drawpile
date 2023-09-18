@@ -1,17 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-extern "C" {
-#include <dpmsg/message.h>
-}
-
 #include "libclient/canvas/userlist.h"
 #include "libclient/canvas/acl.h"
-
 #include <QDebug>
 #include <QIcon>
 #include <QJsonArray>
-#include <QPixmap>
 #include <QPalette>
+#include <QPixmap>
 
 namespace canvas {
 
@@ -23,7 +17,7 @@ UserListModel::UserListModel(QObject *parent)
 }
 
 
-QVariant UserListModel::data(const QModelIndex& index, int role) const
+QVariant UserListModel::data(const QModelIndex &index, int role) const
 {
 	if(!index.isValid() || index.row() < 0 || index.row() >= m_users.size())
 		return QVariant();
@@ -31,27 +25,39 @@ QVariant UserListModel::data(const QModelIndex& index, int role) const
 	const User &u = m_users.at(index.row());
 
 	if(role == Qt::ForegroundRole && !u.isOnline) {
-		return QPalette().color(QPalette::ColorGroup::Disabled, QPalette::ColorRole::WindowText);
+		return QPalette().color(
+			QPalette::ColorGroup::Disabled, QPalette::ColorRole::WindowText);
 	}
 
 	if(index.column() == 0) {
 		switch(role) {
-			case IdRole: return u.id;
-			case Qt::DisplayRole:
-			case NameRole: return u.name;
-			case Qt::DecorationRole:
-			case AvatarRole: return u.avatar;
-			case IsOpRole: return u.isOperator;
-			case IsTrustedRole: return u.isTrusted;
-			case IsModRole: return u.isMod;
-			case IsAuthRole: return u.isAuth;
-			case IsBotRole: return u.isBot;
-			case IsLockedRole: return u.isLocked;
-			case IsMutedRole: return u.isMuted;
-			case IsOnlineRole: return u.isOnline;
+		case IdRole:
+			return u.id;
+		case Qt::DisplayRole:
+		case NameRole:
+			return u.name;
+		case Qt::DecorationRole:
+		case AvatarRole:
+			return u.avatar;
+		case IsOpRole:
+			return u.isOperator;
+		case IsTrustedRole:
+			return u.isTrusted;
+		case IsModRole:
+			return u.isMod;
+		case IsAuthRole:
+			return u.isAuth;
+		case IsBotRole:
+			return u.isBot;
+		case IsLockedRole:
+			return u.isLocked;
+		case IsMutedRole:
+			return u.isMuted;
+		case IsOnlineRole:
+			return u.isOnline;
 		}
 
-	} else if(role==Qt::DisplayRole) {
+	} else if(role == Qt::DisplayRole) {
 		switch(index.column()) {
 		case 1:
 			if(u.isMod)
@@ -65,48 +71,58 @@ QVariant UserListModel::data(const QModelIndex& index, int role) const
 			else
 				return QVariant();
 
-		case 2: return u.isOnline ? tr("Online") : tr("Offline");
+		case 2:
+			return u.isOnline ? tr("Online") : tr("Offline");
 		}
 
-	} else if(role==Qt::DecorationRole) {
+	} else if(role == Qt::DecorationRole) {
 		switch(index.column()) {
-		case 3: return u.isLocked ? QIcon::fromTheme("object-locked") : QVariant();
-		case 4: return u.isMuted ? QIcon::fromTheme("irc-unvoice") : QVariant();
+		case 3:
+			return u.isLocked ? QIcon::fromTheme("object-locked") : QVariant();
+		case 4:
+			return u.isMuted ? QIcon::fromTheme("irc-unvoice") : QVariant();
 		}
 	}
 
 	return QVariant();
 }
 
-int UserListModel::columnCount(const QModelIndex&) const
+int UserListModel::columnCount(const QModelIndex &) const
 {
 	return 5;
 }
 
-int UserListModel::rowCount(const QModelIndex& parent) const
+int UserListModel::rowCount(const QModelIndex &parent) const
 {
 	if(parent.isValid())
 		return 0;
 	return m_users.count();
 }
 
-QVariant UserListModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant UserListModel::headerData(
+	int section, Qt::Orientation orientation, int role) const
 {
 	if(orientation == Qt::Horizontal) {
 		if(role == Qt::DisplayRole) {
 			switch(section) {
-			case 0: return tr("User");
-			case 1: return tr("Type");
-			case 2: return tr("Status");
+			case 0:
+				return tr("User");
+			case 1:
+				return tr("Type");
+			case 2:
+				return tr("Status");
 			}
 		} else if(role == Qt::DecorationRole) {
 			switch(section) {
-			case 3: return QIcon::fromTheme("object-locked");
-			case 4: return QIcon::fromTheme("irc-unvoice");
+			case 3:
+				return QIcon::fromTheme("object-locked");
+			case 4:
+				return QIcon::fromTheme("irc-unvoice");
 			}
 		}
 
-	} else if(section >=0 && section < m_users.size() && role == Qt::DisplayRole) {
+	} else if(
+		section >= 0 && section < m_users.size() && role == Qt::DisplayRole) {
 		return m_users.at(section).id;
 	}
 
@@ -116,7 +132,7 @@ QVariant UserListModel::headerData(int section, Qt::Orientation orientation, int
 void UserListModel::userLogin(const User &user)
 {
 	// Check if this is a returning user
-	for(int i=0;i<m_users.count();++i) {
+	for(int i = 0; i < m_users.count(); ++i) {
 		User &u = m_users[i];
 		if(u.id == user.id) {
 			u.name = user.name;
@@ -128,24 +144,24 @@ void UserListModel::userLogin(const User &user)
 			u.isMuted = user.isMuted;
 			u.isOnline = true;
 
-			emit dataChanged(index(i, 0), index(i, columnCount()-1));
+			emit dataChanged(index(i, 0), index(i, columnCount() - 1));
 			return;
 		}
 	}
 
 	// Add new user
 	int pos = m_users.count();
-	beginInsertRows(QModelIndex(),pos,pos);
+	beginInsertRows(QModelIndex(), pos, pos);
 	m_users.append(user);
 	endInsertRows();
 }
 
 void UserListModel::userLogout(int id)
 {
-	for(int i=0;i<m_users.size();++i) {
+	for(int i = 0; i < m_users.size(); ++i) {
 		if(m_users.at(i).id == id) {
 			m_users[i].isOnline = false;
-			emit dataChanged(index(i, 0), index(i, columnCount()-1));
+			emit dataChanged(index(i, 0), index(i, columnCount() - 1));
 			return;
 		}
 	}
@@ -154,12 +170,10 @@ void UserListModel::userLogout(int id)
 void UserListModel::allLogout()
 {
 	if(!m_users.isEmpty()) {
-		for(int i=0;i<m_users.size();++i)
+		for(int i = 0; i < m_users.size(); ++i)
 			m_users[i].isOnline = false;
 		emit dataChanged(
-			index(0, 0),
-			index(m_users.size()-1, columnCount()-1)
-		);
+			index(0, 0), index(m_users.size() - 1, columnCount() - 1));
 	}
 }
 
@@ -175,7 +189,7 @@ void UserListModel::reset()
 
 void UserListModel::updateAclState(const AclState *acl)
 {
-	for(int i=0;i<m_users.size();++i) {
+	for(int i = 0; i < m_users.size(); ++i) {
 		User &u = m_users[i];
 
 		bool changed = false;
@@ -200,18 +214,18 @@ void UserListModel::updateAclState(const AclState *acl)
 		}
 
 		if(changed)
-			emit dataChanged(index(i, 0), index(i, columnCount()-1));
+			emit dataChanged(index(i, 0), index(i, columnCount() - 1));
 	}
 }
 
 void UserListModel::updateMuteList(const QJsonArray &mutedUserIds)
 {
-	for(int i=0;i<m_users.size();++i) {
+	for(int i = 0; i < m_users.size(); ++i) {
 		User &u = m_users[i];
 		const bool mute = mutedUserIds.contains(u.id);
 		if(u.isMuted != mute) {
 			u.isMuted = mute;
-			emit dataChanged(index(i, 0), index(i, columnCount()-1));
+			emit dataChanged(index(i, 0), index(i, columnCount() - 1));
 		}
 	}
 }
@@ -219,7 +233,7 @@ void UserListModel::updateMuteList(const QJsonArray &mutedUserIds)
 QVector<uint8_t> UserListModel::operatorList() const
 {
 	QVector<uint8_t> ops;
-	for(int i=0;i<m_users.size();++i) {
+	for(int i = 0; i < m_users.size(); ++i) {
 		const User &u = m_users.at(i);
 		if(u.isOnline && (u.isOperator || u.isMod))
 			ops << u.id;
@@ -230,7 +244,7 @@ QVector<uint8_t> UserListModel::operatorList() const
 QVector<uint8_t> UserListModel::lockList() const
 {
 	QVector<uint8_t> locks;
-	for(int i=0;i<m_users.size();++i) {
+	for(int i = 0; i < m_users.size(); ++i) {
 		const User &u = m_users.at(i);
 		if(u.isOnline && u.isLocked)
 			locks << m_users.at(i).id;
@@ -241,7 +255,7 @@ QVector<uint8_t> UserListModel::lockList() const
 QVector<uint8_t> UserListModel::trustedList() const
 {
 	QVector<uint8_t> ids;
-	for(int i=0;i<m_users.size();++i) {
+	for(int i = 0; i < m_users.size(); ++i) {
 		const User &u = m_users.at(i);
 		if(u.isOnline && u.isTrusted)
 			ids << m_users.at(i).id;
@@ -277,7 +291,7 @@ bool UserListModel::isOperator(int userId) const
 QString UserListModel::getUsername(int id) const
 {
 	// Special case: id 0 is reserved for the server
-	if(id==0)
+	if(id == 0)
 		return tr("Server");
 
 	for(const User &u : m_users)
@@ -288,9 +302,10 @@ QString UserListModel::getUsername(int id) const
 	return tr("User #%1").arg(id);
 }
 
-drawdance::Message UserListModel::getLockUserCommand(int localId, int userId, bool lock) const
+net::Message
+UserListModel::getLockUserCommand(int localId, int userId, bool lock) const
 {
-	Q_ASSERT(userId>0 && userId<255);
+	Q_ASSERT(userId > 0 && userId < 255);
 
 	QVector<uint8_t> ids = lockList();
 	if(lock) {
@@ -300,12 +315,13 @@ drawdance::Message UserListModel::getLockUserCommand(int localId, int userId, bo
 		ids.removeAll(userId);
 	}
 
-	return drawdance::Message::makeUserAcl(localId, ids);
+	return net::makeUserAclMessage(localId, ids);
 }
 
-drawdance::Message UserListModel::getOpUserCommand(int localId, int userId, bool op) const
+net::Message
+UserListModel::getOpUserCommand(int localId, int userId, bool op) const
 {
-	Q_ASSERT(userId>0 && userId<255);
+	Q_ASSERT(userId > 0 && userId < 255);
 
 	QVector<uint8_t> ops = operatorList();
 	if(op) {
@@ -315,12 +331,13 @@ drawdance::Message UserListModel::getOpUserCommand(int localId, int userId, bool
 		ops.removeOne(userId);
 	}
 
-	return drawdance::Message::makeSessionOwner(localId, ops);
+	return net::makeSessionOwnerMessage(localId, ops);
 }
 
-drawdance::Message UserListModel::getTrustUserCommand(int localId, int userId, bool trust) const
+net::Message
+UserListModel::getTrustUserCommand(int localId, int userId, bool trust) const
 {
-	Q_ASSERT(userId>0 && userId<255);
+	Q_ASSERT(userId > 0 && userId < 255);
 
 	QVector<uint8_t> trusted = trustedList();
 	if(trust) {
@@ -330,13 +347,15 @@ drawdance::Message UserListModel::getTrustUserCommand(int localId, int userId, b
 		trusted.removeOne(userId);
 	}
 
-	return drawdance::Message::makeTrustedUsers(localId, trusted);
+	return net::makeTrustedUsersMessage(localId, trusted);
 }
 
-bool OnlineUserListModel::filterAcceptsRow(int source_row, const QModelIndex &parent) const
+bool OnlineUserListModel::filterAcceptsRow(
+	int source_row, const QModelIndex &parent) const
 {
 	const auto i = sourceModel()->index(source_row, 0);
-	return i.data(UserListModel::IsOnlineRole).toBool() && QSortFilterProxyModel::filterAcceptsRow(source_row, parent);
+	return i.data(UserListModel::IsOnlineRole).toBool() &&
+		   QSortFilterProxyModel::filterAcceptsRow(source_row, parent);
 }
 
 }

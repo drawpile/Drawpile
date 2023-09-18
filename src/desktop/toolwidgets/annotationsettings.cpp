@@ -1,23 +1,19 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/toolwidgets/annotationsettings.h"
-#include "libclient/tools/toolcontroller.h"
+#include "desktop/scene/annotationitem.h"
+#include "desktop/scene/canvasscene.h"
+#include "desktop/utils/qtguicompat.h"
+#include "desktop/widgets/groupedtoolbutton.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/userlist.h"
-#include "desktop/scene/canvasscene.h"
-#include "desktop/scene/annotationitem.h"
 #include "libclient/net/client.h"
-#include "desktop/widgets/groupedtoolbutton.h"
-#include "desktop/utils/qtguicompat.h"
-
-
+#include "libclient/tools/toolcontroller.h"
 #include "ui_textsettings.h"
-
 #include <QActionGroup>
 #include <QIcon>
-#include <QTimer>
-#include <QTextBlock>
 #include <QMenu>
+#include <QTextBlock>
+#include <QTimer>
 
 namespace tools {
 
@@ -25,8 +21,11 @@ static const char *HALIGN_PROP = "HALIGN";
 static const char *VALIGN_PROP = "VALIGN";
 
 AnnotationSettings::AnnotationSettings(ToolController *ctrl, QObject *parent)
-	: ToolSettings(ctrl, parent), m_ui(nullptr), m_headerWidget(nullptr),
-	  m_selectionId(0), m_noupdate(false)
+	: ToolSettings(ctrl, parent)
+	, m_ui(nullptr)
+	, m_headerWidget(nullptr)
+	, m_selectionId(0)
+	, m_noupdate(false)
 {
 }
 
@@ -47,14 +46,17 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 	m_ui->headerLayout->setContentsMargins(0, 0, 1, 0);
 	m_headerWidget->setLayout(m_ui->headerLayout);
 
-	m_protectedAction = new QAction(QIcon::fromTheme("object-locked"), tr("Protect"), this);
+	m_protectedAction =
+		new QAction(QIcon::fromTheme("object-locked"), tr("Protect"), this);
 	m_protectedAction->setCheckable(true);
 	m_ui->protectButton->setDefaultAction(m_protectedAction);
 
-	QAction *mergeAction = new QAction(QIcon::fromTheme("arrow-down-double"), tr("Merge"), this);
+	QAction *mergeAction =
+		new QAction(QIcon::fromTheme("arrow-down-double"), tr("Merge"), this);
 	m_ui->mergeButton->setDefaultAction(mergeAction);
 
-	QAction *deleteAction = new QAction(QIcon::fromTheme("list-remove"), tr("Delete"), this);
+	QAction *deleteAction =
+		new QAction(QIcon::fromTheme("list-remove"), tr("Delete"), this);
 	m_ui->deleteButton->setDefaultAction(deleteAction);
 
 	m_editActions = new QActionGroup(this);
@@ -70,53 +72,97 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 
 	// Horizontal alignment options
 	QMenu *halignMenu = new QMenu(parent);
-	halignMenu->addAction(QIcon::fromTheme("format-justify-left"), tr("Left"))->setProperty(HALIGN_PROP, Qt::AlignLeft);
-	halignMenu->addAction(QIcon::fromTheme("format-justify-center"), tr("Center"))->setProperty(HALIGN_PROP, Qt::AlignCenter);
-	halignMenu->addAction(QIcon::fromTheme("format-justify-fill"), tr("Justify"))->setProperty(HALIGN_PROP, Qt::AlignJustify);
-	halignMenu->addAction(QIcon::fromTheme("format-justify-right"), tr("Right"))->setProperty(HALIGN_PROP, Qt::AlignRight);
+	halignMenu->addAction(QIcon::fromTheme("format-justify-left"), tr("Left"))
+		->setProperty(HALIGN_PROP, Qt::AlignLeft);
+	halignMenu
+		->addAction(QIcon::fromTheme("format-justify-center"), tr("Center"))
+		->setProperty(HALIGN_PROP, Qt::AlignCenter);
+	halignMenu
+		->addAction(QIcon::fromTheme("format-justify-fill"), tr("Justify"))
+		->setProperty(HALIGN_PROP, Qt::AlignJustify);
+	halignMenu->addAction(QIcon::fromTheme("format-justify-right"), tr("Right"))
+		->setProperty(HALIGN_PROP, Qt::AlignRight);
 	m_ui->halign->setIcon(halignMenu->actions().constFirst()->icon());
-	connect(halignMenu, &QMenu::triggered, this, &AnnotationSettings::changeAlignment);
+	connect(
+		halignMenu, &QMenu::triggered, this,
+		&AnnotationSettings::changeAlignment);
 	m_ui->halign->setMenu(halignMenu);
 
 	// Vertical alignment options
 	QMenu *valignMenu = new QMenu(parent);
-	valignMenu->addAction(QIcon::fromTheme("format-align-vertical-top"), tr("Top"))->setProperty(VALIGN_PROP, 0);
-	valignMenu->addAction(QIcon::fromTheme("format-align-vertical-center"), tr("Center"))->setProperty(VALIGN_PROP, DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_CENTER);
-	valignMenu->addAction(QIcon::fromTheme("format-align-vertical-bottom"), tr("Bottom"))->setProperty(VALIGN_PROP, DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_BOTTOM);
+	valignMenu
+		->addAction(QIcon::fromTheme("format-align-vertical-top"), tr("Top"))
+		->setProperty(VALIGN_PROP, 0);
+	valignMenu
+		->addAction(
+			QIcon::fromTheme("format-align-vertical-center"), tr("Center"))
+		->setProperty(VALIGN_PROP, DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_CENTER);
+	valignMenu
+		->addAction(
+			QIcon::fromTheme("format-align-vertical-bottom"), tr("Bottom"))
+		->setProperty(VALIGN_PROP, DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_BOTTOM);
 	m_ui->valign->setIcon(valignMenu->actions().constFirst()->icon());
-	connect(valignMenu, &QMenu::triggered, this, &AnnotationSettings::changeAlignment);
+	connect(
+		valignMenu, &QMenu::triggered, this,
+		&AnnotationSettings::changeAlignment);
 	m_ui->valign->setMenu(valignMenu);
 
 	m_ui->btnTextColor->setColor(Qt::black);
 	m_ui->btnBackground->setColor(Qt::transparent);
 
 	// Editor events
-	connect(m_ui->content, &QTextEdit::textChanged, this, &AnnotationSettings::applyChanges);
-	connect(m_ui->content, &QTextEdit::cursorPositionChanged, this, &AnnotationSettings::updateStyleButtons);
+	connect(
+		m_ui->content, &QTextEdit::textChanged, this,
+		&AnnotationSettings::applyChanges);
+	connect(
+		m_ui->content, &QTextEdit::cursorPositionChanged, this,
+		&AnnotationSettings::updateStyleButtons);
 
-	connect(m_ui->btnBackground, &widgets::ColorButton::colorChanged, this, &AnnotationSettings::setEditorBackgroundColor);
-	connect(m_ui->btnBackground, &widgets::ColorButton::colorChanged, this, &AnnotationSettings::applyChanges);
+	connect(
+		m_ui->btnBackground, &widgets::ColorButton::colorChanged, this,
+		&AnnotationSettings::setEditorBackgroundColor);
+	connect(
+		m_ui->btnBackground, &widgets::ColorButton::colorChanged, this,
+		&AnnotationSettings::applyChanges);
 
-	connect(deleteAction, &QAction::triggered, this, &AnnotationSettings::removeAnnotation);
+	connect(
+		deleteAction, &QAction::triggered, this,
+		&AnnotationSettings::removeAnnotation);
 	connect(mergeAction, &QAction::triggered, this, &AnnotationSettings::bake);
-	connect(m_protectedAction, &QAction::triggered, this, &AnnotationSettings::saveChanges);
+	connect(
+		m_protectedAction, &QAction::triggered, this,
+		&AnnotationSettings::saveChanges);
 
-	connect(m_ui->font, SIGNAL(currentIndexChanged(int)), this, SLOT(updateFontIfUniform()));
-	connect(m_ui->size, SIGNAL(valueChanged(double)), this, SLOT(updateFontIfUniform()));
-	connect(m_ui->btnTextColor, &widgets::ColorButton::colorChanged, this, &AnnotationSettings::updateFontIfUniform);
+	connect(
+		m_ui->font, SIGNAL(currentIndexChanged(int)), this,
+		SLOT(updateFontIfUniform()));
+	connect(
+		m_ui->size, SIGNAL(valueChanged(double)), this,
+		SLOT(updateFontIfUniform()));
+	connect(
+		m_ui->btnTextColor, &widgets::ColorButton::colorChanged, this,
+		&AnnotationSettings::updateFontIfUniform);
 
 	// Intra-editor connections that couldn't be made in the UI designer
-	connect(m_ui->bold, &QToolButton::toggled, this, &AnnotationSettings::toggleBold);
-	connect(m_ui->strikethrough, &QToolButton::toggled, this, &AnnotationSettings::toggleStrikethrough);
+	connect(
+		m_ui->bold, &QToolButton::toggled, this,
+		&AnnotationSettings::toggleBold);
+	connect(
+		m_ui->strikethrough, &QToolButton::toggled, this,
+		&AnnotationSettings::toggleStrikethrough);
 
-	connect(m_updatetimer, &QTimer::timeout, this, &AnnotationSettings::saveChanges);
+	connect(
+		m_updatetimer, &QTimer::timeout, this,
+		&AnnotationSettings::saveChanges);
 
 	// Select a nice default font
 	QStringList defaultFonts;
-	defaultFonts << "Arial" << "Helvetica" << "Sans Serif";
+	defaultFonts << "Arial"
+				 << "Helvetica"
+				 << "Sans Serif";
 	for(const QString &df : defaultFonts) {
 		int i = m_ui->font->findText(df, Qt::MatchFixedString);
-		if(i>=0) {
+		if(i >= 0) {
 			m_ui->font->setCurrentIndex(i);
 			break;
 		}
@@ -142,18 +188,10 @@ QWidget *AnnotationSettings::getHeaderWidget()
 void AnnotationSettings::setUiEnabled(bool enabled)
 {
 	QWidget *widgets[] = {
-		m_ui->content,
-		m_ui->btnBackground,
-		m_ui->btnTextColor,
-		m_ui->halign,
-		m_ui->valign,
-		m_ui->bold,
-		m_ui->italic,
-		m_ui->underline,
-		m_ui->strikethrough,
-		m_ui->font,
-		m_ui->size
-	};
+		m_ui->content, m_ui->btnBackground, m_ui->btnTextColor,
+		m_ui->halign,  m_ui->valign,		m_ui->bold,
+		m_ui->italic,  m_ui->underline,		m_ui->strikethrough,
+		m_ui->font,	   m_ui->size};
 	for(QWidget *w : widgets) {
 		w->setEnabled(enabled);
 	}
@@ -168,10 +206,9 @@ void AnnotationSettings::setEditorBackgroundColor(const QColor &color)
 {
 	// Blend transparent colors with white
 	const QColor c = QColor::fromRgbF(
-		color.redF() * color.alphaF() + (1-color.alphaF()),
-		color.greenF() * color.alphaF() + (1-color.alphaF()),
-		color.blueF() * color.alphaF() + (1-color.alphaF())
-	);
+		color.redF() * color.alphaF() + (1 - color.alphaF()),
+		color.greenF() * color.alphaF() + (1 - color.alphaF()),
+		color.blueF() * color.alphaF() + (1 - color.alphaF()));
 
 	// We need to use the stylesheet because native styles ignore the palette.
 	m_ui->content->setStyleSheet(
@@ -182,11 +219,20 @@ void AnnotationSettings::updateStyleButtons()
 {
 	QTextBlockFormat bf = m_ui->content->textCursor().blockFormat();
 	switch(bf.alignment()) {
-	case Qt::AlignLeft: m_ui->halign->setIcon(QIcon::fromTheme("format-justify-left")); break;
-	case Qt::AlignCenter: m_ui->halign->setIcon(QIcon::fromTheme("format-justify-center")); break;
-	case Qt::AlignJustify: m_ui->halign->setIcon(QIcon::fromTheme("format-justify-fill")); break;
-	case Qt::AlignRight: m_ui->halign->setIcon(QIcon::fromTheme("format-justify-right")); break;
-	default: break;
+	case Qt::AlignLeft:
+		m_ui->halign->setIcon(QIcon::fromTheme("format-justify-left"));
+		break;
+	case Qt::AlignCenter:
+		m_ui->halign->setIcon(QIcon::fromTheme("format-justify-center"));
+		break;
+	case Qt::AlignJustify:
+		m_ui->halign->setIcon(QIcon::fromTheme("format-justify-fill"));
+		break;
+	case Qt::AlignRight:
+		m_ui->halign->setIcon(QIcon::fromTheme("format-justify-right"));
+		break;
+	default:
+		break;
 	}
 
 	QTextCharFormat cf = m_ui->content->textCursor().charFormat();
@@ -247,7 +293,7 @@ void AnnotationSettings::updateFontIfUniform()
 
 	QTextBlock b = doc->firstBlock();
 	QTextCharFormat fmt1;
-	bool first=true;
+	bool first = true;
 
 	// Check all character formats in all blocks. If they are the same,
 	// we can reset the font for the wole document.
@@ -260,8 +306,10 @@ void AnnotationSettings::updateFontIfUniform()
 				first = false;
 
 			} else {
-				uniformFontFamily &= compat::fontFamily(fr.format) == compat::fontFamily(fmt1);
-				uniformSize &= qFuzzyCompare(fr.format.fontPointSize(), fmt1.fontPointSize());
+				uniformFontFamily &=
+					compat::fontFamily(fr.format) == compat::fontFamily(fmt1);
+				uniformSize &= qFuzzyCompare(
+					fr.format.fontPointSize(), fmt1.fontPointSize());
 				uniformColor &= fr.format.foreground() == fmt1.foreground();
 			}
 		}
@@ -271,9 +319,10 @@ void AnnotationSettings::updateFontIfUniform()
 	resetContentFont(uniformFontFamily, uniformSize, uniformColor);
 }
 
-void AnnotationSettings::resetContentFont(bool resetFamily, bool resetSize, bool resetColor)
+void AnnotationSettings::resetContentFont(
+	bool resetFamily, bool resetSize, bool resetColor)
 {
-	if(!(resetFamily|resetSize|resetColor))
+	if(!(resetFamily | resetSize | resetColor))
 		return;
 
 	QTextCursor cursor(m_ui->content->document());
@@ -300,7 +349,7 @@ void AnnotationSettings::setFontFamily(QTextCharFormat &fmt)
 void AnnotationSettings::setSelectionId(uint16_t id)
 {
 	m_noupdate = true;
-	setUiEnabled(id>0);
+	setUiEnabled(id > 0);
 
 	m_selectionId = id;
 	if(id) {
@@ -318,23 +367,29 @@ void AnnotationSettings::setSelectionId(uint16_t id)
 		int align = 0;
 		switch(a->valign()) {
 		case 0:
-			m_ui->valign->setIcon(QIcon::fromTheme("format-align-vertical-top"));
+			m_ui->valign->setIcon(
+				QIcon::fromTheme("format-align-vertical-top"));
 			break;
 		case 1:
-			m_ui->valign->setIcon(QIcon::fromTheme("format-align-vertical-center"));
+			m_ui->valign->setIcon(
+				QIcon::fromTheme("format-align-vertical-center"));
 			align = DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_CENTER;
 			break;
 		case 2:
-			m_ui->valign->setIcon(QIcon::fromTheme("format-align-vertical-bottom"));
+			m_ui->valign->setIcon(
+				QIcon::fromTheme("format-align-vertical-bottom"));
 			align = DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_BOTTOM;
 			break;
 		}
 		m_ui->valign->setProperty(VALIGN_PROP, align);
 
-		m_ui->creatorLabel->setText(controller()->model()->userlist()->getUsername(a->userId()));
+		m_ui->creatorLabel->setText(
+			controller()->model()->userlist()->getUsername(a->userId()));
 		m_protectedAction->setChecked(a->protect());
 
-		const bool opOrOwner = controller()->model()->aclState()->amOperator() || (a->id() >> 8) == controller()->client()->myId();
+		const bool opOrOwner =
+			controller()->model()->aclState()->amOperator() ||
+			(a->id() >> 8) == controller()->client()->myId();
 		m_protectedAction->setEnabled(opOrOwner);
 
 		if(a->protect() && !opOrOwner)
@@ -346,7 +401,7 @@ void AnnotationSettings::setSelectionId(uint16_t id)
 void AnnotationSettings::setFocusAt(int cursorPos)
 {
 	m_ui->content->setFocus();
-	if(cursorPos>=0) {
+	if(cursorPos >= 0) {
 		QTextCursor c = m_ui->content->textCursor();
 		c.setPosition(cursorPos);
 		m_ui->content->setTextCursor(c);
@@ -382,11 +437,13 @@ void AnnotationSettings::saveChanges()
 
 		net::Client *client = controller()->client();
 		uint8_t contextId = client->myId();
-		uint8_t flags =
-			(m_protectedAction->isChecked() ? DP_MSG_ANNOTATION_EDIT_FLAGS_PROTECT : 0) |
-			uint8_t(m_ui->valign->property(VALIGN_PROP).toInt());
-		client->sendMessage(drawdance::Message::makeAnnotationEdit(
-			contextId, selected(), m_ui->btnBackground->color().rgba(), flags, 0, content));
+		uint8_t flags = (m_protectedAction->isChecked()
+							 ? DP_MSG_ANNOTATION_EDIT_FLAGS_PROTECT
+							 : 0) |
+						uint8_t(m_ui->valign->property(VALIGN_PROP).toInt());
+		client->sendMessage(net::makeAnnotationEditMessage(
+			contextId, selected(), m_ui->btnBackground->color().rgba(), flags,
+			0, content));
 	}
 }
 
@@ -395,9 +452,9 @@ void AnnotationSettings::removeAnnotation()
 	Q_ASSERT(selected());
 	net::Client *client = controller()->client();
 	uint8_t contextId = client->myId();
-	drawdance::Message messages[] = {
-		drawdance::Message::makeUndoPoint(contextId),
-		drawdance::Message::makeAnnotationDelete(contextId, selected()),
+	net::Message messages[] = {
+		net::makeUndoPointMessage(contextId),
+		net::makeAnnotationDeleteMessage(contextId, selected()),
 	};
 	client->sendMessages(DP_ARRAY_LENGTH(messages), messages);
 }
@@ -416,14 +473,13 @@ void AnnotationSettings::bake()
 	int layer = controller()->activeLayer();
 	QRect rect = a->rect().toRect();
 	QImage img = a->toImage();
-	drawdance::MessageList msgs = {
-		drawdance::Message::makeUndoPoint(contextId),
-		drawdance::Message::makeAnnotationDelete(contextId, selected()),
+	net::MessageList msgs = {
+		net::makeUndoPointMessage(contextId),
+		net::makeAnnotationDeleteMessage(contextId, selected()),
 	};
-	drawdance::Message::makePutImages(
+	net::makePutImageMessages(
 		msgs, contextId, layer, DP_BLEND_MODE_NORMAL, rect.x(), rect.y(), img);
 	client->sendMessages(msgs.count(), msgs.data());
 }
 
 }
-

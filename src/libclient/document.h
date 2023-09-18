@@ -1,20 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #ifndef DRAWPILE_DOCUMENT_H
 #define DRAWPILE_DOCUMENT_H
-
 extern "C" {
+#include <dpengine/load.h>
 #include <dpmsg/acl.h>
 #include <dpmsg/blend_mode.h>
-#include <dpengine/load.h>
 }
-
-#include "libclient/drawdance/message.h"
 #include "libclient/drawdance/paintengine.h"
 #include "libclient/net/announcementlist.h"
 #include "libclient/net/banlistmodel.h"
+#include "libclient/net/message.h"
 #include "libshared/util/qtcompat.h"
-
 #include <QObject>
 #include <QStringListModel>
 
@@ -22,59 +18,84 @@ class QString;
 class QTimer;
 
 namespace canvas {
-	class CanvasModel;
+class CanvasModel;
 }
 namespace net {
-	class Client;
-	class BanlistModel;
-	class AnnouncementListModel;
+class Client;
+class BanlistModel;
+class AnnouncementListModel;
 }
-namespace libclient { namespace settings { class Settings; } }
-namespace tools { class ToolController; }
+namespace libclient {
+namespace settings {
+class Settings;
+}
+}
+namespace tools {
+class ToolController;
+}
 
 /**
- * @brief An active document and its associated data, including the network connection
+ * @brief An active document and its associated data, including the network
+ * connection
  *
  * This is an UI agnostic class that should be usable from both a widget
  * based application or a pure QML app.
  *
  */
-class Document final : public QObject
-{
-	Q_PROPERTY(canvas::CanvasModel* canvas READ canvas() NOTIFY canvasChanged)
-	Q_PROPERTY(net::BanlistModel* banlist READ banlist() CONSTANT)
-	Q_PROPERTY(net::AnnouncementListModel* announcementList READ announcementList() CONSTANT)
-	Q_PROPERTY(QStringListModel* serverLog READ serverLog() CONSTANT)
+class Document final : public QObject {
+	Q_PROPERTY(canvas::CanvasModel *canvas READ canvas() NOTIFY canvasChanged)
+	Q_PROPERTY(net::BanlistModel *banlist READ banlist() CONSTANT)
+	Q_PROPERTY(net::AnnouncementListModel *announcementList READ
+				   announcementList() CONSTANT)
+	Q_PROPERTY(QStringListModel *serverLog READ serverLog() CONSTANT)
 	Q_PROPERTY(bool dirty READ isDirty NOTIFY dirtyCanvas)
-	Q_PROPERTY(bool autosave READ isAutosave WRITE setAutosave NOTIFY autosaveChanged)
+	Q_PROPERTY(
+		bool autosave READ isAutosave WRITE setAutosave NOTIFY autosaveChanged)
 	Q_PROPERTY(bool canAutosave READ canAutosave NOTIFY canAutosaveChanged)
-	Q_PROPERTY(QString sessionTitle READ sessionTitle NOTIFY sessionTitleChanged)
-	Q_PROPERTY(QString currentFilename READ currentFilename() NOTIFY currentFilenameChanged)
+	Q_PROPERTY(
+		QString sessionTitle READ sessionTitle NOTIFY sessionTitleChanged)
+	Q_PROPERTY(QString currentFilename READ currentFilename()
+				   NOTIFY currentFilenameChanged)
 	Q_PROPERTY(bool recording READ isRecording() NOTIFY recorderStateChanged)
 
-	Q_PROPERTY(bool sessionPersistent READ isSessionPersistent NOTIFY sessionPersistentChanged)
-	Q_PROPERTY(bool sessionClosed READ isSessionClosed NOTIFY sessionClosedChanged)
-	Q_PROPERTY(bool sessionAuthOnly READ isSessionAuthOnly NOTIFY sessionAuthOnlyChanged)
-	Q_PROPERTY(bool sessionPreserveChat READ isSessionPreserveChat NOTIFY sessionPreserveChatChanged)
-	Q_PROPERTY(bool sessionPasswordProtected READ isSessionPasswordProtected NOTIFY sessionPasswordChanged)
-	Q_PROPERTY(bool sessionHasOpword READ isSessionOpword NOTIFY sessionOpwordChanged)
+	Q_PROPERTY(bool sessionPersistent READ isSessionPersistent NOTIFY
+				   sessionPersistentChanged)
+	Q_PROPERTY(
+		bool sessionClosed READ isSessionClosed NOTIFY sessionClosedChanged)
+	Q_PROPERTY(bool sessionAuthOnly READ isSessionAuthOnly NOTIFY
+				   sessionAuthOnlyChanged)
+	Q_PROPERTY(bool sessionPreserveChat READ isSessionPreserveChat NOTIFY
+				   sessionPreserveChatChanged)
+	Q_PROPERTY(bool sessionPasswordProtected READ isSessionPasswordProtected
+				   NOTIFY sessionPasswordChanged)
+	Q_PROPERTY(
+		bool sessionHasOpword READ isSessionOpword NOTIFY sessionOpwordChanged)
 	Q_PROPERTY(bool sessionNsfm READ isSessionNsfm NOTIFY sessionNsfmChanged)
-	Q_PROPERTY(bool sessionForceNsfm READ isSessionForceNsfm NOTIFY sessionForceNsfmChanged)
-	Q_PROPERTY(bool sessionDeputies READ isSessionDeputies NOTIFY sessionDeputiesChanged)
-	Q_PROPERTY(int sessionMaxUserCount READ sessionMaxUserCount NOTIFY sessionMaxUserCountChanged)
-	Q_PROPERTY(double sessionResetThreshold READ sessionResetThreshold NOTIFY sessionResetThresholdChanged)
-	Q_PROPERTY(double baseResetThreshold READ baseResetThreshold NOTIFY baseResetThresholdChanged)
+	Q_PROPERTY(bool sessionForceNsfm READ isSessionForceNsfm NOTIFY
+				   sessionForceNsfmChanged)
+	Q_PROPERTY(bool sessionDeputies READ isSessionDeputies NOTIFY
+				   sessionDeputiesChanged)
+	Q_PROPERTY(int sessionMaxUserCount READ sessionMaxUserCount NOTIFY
+				   sessionMaxUserCountChanged)
+	Q_PROPERTY(double sessionResetThreshold READ sessionResetThreshold NOTIFY
+				   sessionResetThresholdChanged)
+	Q_PROPERTY(double baseResetThreshold READ baseResetThreshold NOTIFY
+				   baseResetThresholdChanged)
 	Q_PROPERTY(QString roomcode READ roomcode NOTIFY sessionRoomcodeChanged)
 
 	Q_OBJECT
 public:
-	explicit Document(libclient::settings::Settings &settings, QObject *parent=nullptr);
+	explicit Document(
+		libclient::settings::Settings &settings, QObject *parent = nullptr);
 
 	canvas::CanvasModel *canvas() const { return m_canvas; }
 	tools::ToolController *toolCtrl() const { return m_toolctrl; }
 	net::Client *client() const { return m_client; }
 	net::BanlistModel *banlist() const { return m_banlist; }
-	net::AnnouncementListModel *announcementList() const { return m_announcementlist; }
+	net::AnnouncementListModel *announcementList() const
+	{
+		return m_announcementlist;
+	}
 	QStringListModel *serverLog() const { return m_serverLog; }
 
 	/**
@@ -127,18 +148,30 @@ public:
 	bool isSessionClosed() const { return m_sessionClosed; }
 	bool isSessionAuthOnly() const { return m_sessionAuthOnly; }
 	bool isSessionPreserveChat() const { return m_sessionPreserveChat; }
-	bool isSessionPasswordProtected() const { return m_sessionPasswordProtected; }
+	bool isSessionPasswordProtected() const
+	{
+		return m_sessionPasswordProtected;
+	}
 	bool isSessionOpword() const { return m_sessionOpword; }
 	bool isSessionNsfm() const { return m_sessionNsfm; }
 	bool isSessionForceNsfm() const { return m_sessionForceNsfm; }
 	bool isSessionDeputies() const { return m_sessionDeputies; }
 	int sessionMaxUserCount() const { return m_sessionMaxUserCount; }
-	double sessionResetThreshold() const { return m_sessionResetThreshold/double(1024*1024); }
-	double baseResetThreshold() const { return m_baseResetThreshold/double(1024*1024); }
+	double sessionResetThreshold() const
+	{
+		return m_sessionResetThreshold / double(1024 * 1024);
+	}
+	double baseResetThreshold() const
+	{
+		return m_baseResetThreshold / double(1024 * 1024);
+	}
 
 	QString roomcode() const { return m_roomcode; }
 
-	void setRecordOnConnect(const QString &filename) { m_recordOnConnect = filename; }
+	void setRecordOnConnect(const QString &filename)
+	{
+		m_recordOnConnect = filename;
+	}
 
 	qulonglong pasteId() const { return reinterpret_cast<uintptr_t>(this); }
 
@@ -148,7 +181,8 @@ signals:
 	//! Connection opened, but not yet logged in
 	void serverConnected(const QString &address, int port);
 	void serverLoggedIn(bool join, const QString &joinPassword);
-	void serverDisconnected(const QString &message, const QString &errorcode, bool localDisconnect);
+	void serverDisconnected(
+		const QString &message, const QString &errorcode, bool localDisconnect);
 	void compatibilityModeChanged(bool compatibilityMode);
 
 	void canvasChanged(canvas::CanvasModel *canvas);
@@ -188,9 +222,9 @@ public slots:
 	void sendPointerMove(const QPointF &point);
 	void sendSessionConf(const QJsonObject &sessionconf);
 	void sendFeatureAccessLevelChange(const uint8_t[DP_FEATURE_COUNT]);
-	void sendLockSession(bool lock=true);
+	void sendLockSession(bool lock = true);
 	void sendOpword(const QString &opword);
-	void sendResetSession(const drawdance::MessageList &resetImage = {});
+	void sendResetSession(const net::MessageList &resetImage = {});
 	void sendResizeCanvas(int top, int right, int bottom, int left);
 	void sendUnban(int entryId);
 	void sendAnnounce(const QString &url, bool privateMode);
@@ -203,7 +237,8 @@ public slots:
 	void undo();
 	void redo();
 
-	void selectAll(); // Note: selection tool should be activated before calling this
+	void
+	selectAll(); // Note: selection tool should be activated before calling this
 	void selectNone();
 	void cancelSelection();
 
@@ -211,7 +246,10 @@ public slots:
 	void copyMerged();
 	void copyLayer();
 	void cutLayer();
-	void pasteImage(const QImage &image, const QPoint &point, bool forcePoint); // Note: selection tool should be activated before calling this
+	void pasteImage(
+		const QImage &image, const QPoint &point,
+		bool forcePoint); // Note: selection tool should be activated before
+						  // calling this
 	void stamp();
 
 	void removeEmptyAnnotations();
@@ -221,13 +259,15 @@ public slots:
 	void addServerLogEntry(const QString &log);
 
 private slots:
-	void onServerLogin(bool join, bool compatibilityMode, const QString &joinPassword);
+	void onServerLogin(
+		bool join, bool compatibilityMode, const QString &joinPassword);
 	void onServerDisconnect();
 	void onSessionResetted();
 
 	void onSessionConfChanged(const QJsonObject &config);
 	void onAutoresetRequested(int maxSize, bool query);
-	void onMoveLayerRequested(int sourceId, int targetId, bool intoGroup, bool below);
+	void onMoveLayerRequested(
+		int sourceId, int targetId, bool intoGroup, bool below);
 
 	void snapshotNeeded();
 	void markDirty();
@@ -237,7 +277,8 @@ private slots:
 	void onCanvasSaved(const QString &errorMessage);
 
 private:
-	void saveCanvasState(const drawdance::CanvasState &canvasState, bool isCurrentState);
+	void saveCanvasState(
+		const drawdance::CanvasState &canvasState, bool isCurrentState);
 	void setCurrentFilename(const QString &filename);
 	void setSessionPersistent(bool p);
 	void setSessionClosed(bool closed);
@@ -262,8 +303,8 @@ private:
 
 	QString m_currentFilename;
 
-	drawdance::MessageList m_resetstate;
-	drawdance::MessageList m_messageBuffer;
+	net::MessageList m_resetstate;
+	net::MessageList m_messageBuffer;
 
 	canvas::CanvasModel *m_canvas;
 	tools::ToolController *m_toolctrl;
@@ -302,4 +343,3 @@ private:
 };
 
 #endif // DOCUMENT_H
-

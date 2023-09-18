@@ -1,10 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #ifndef TOOLS_SELECTION_H
 #define TOOLS_SELECTION_H
-
 #include "libclient/canvas/selection.h"
-#include "libclient/drawdance/message.h"
+#include "libclient/net/message.h"
 #include "libclient/tools/tool.h"
 
 class QImage;
@@ -23,10 +21,15 @@ public:
 	SelectionTool(ToolController &owner, Type type, QCursor cursor)
 		: Tool(owner, type, cursor, true, false, false)
 		, m_allowTransform{true}
-	{}
+	{
+	}
 
-	void begin(const canvas::Point& point, bool right, float zoom) override final;
-	void motion(const canvas::Point& point, bool constrain, bool center) override final;
+	void
+	begin(const canvas::Point &point, bool right, float zoom) override final;
+
+	void motion(
+		const canvas::Point &point, bool constrain, bool center) override final;
+
 	void end() override final;
 
 	void finishMultipart() override final;
@@ -42,22 +45,26 @@ public:
 	//! Allow selection moving and resizing
 	void setTransformEnabled(bool enable) { m_allowTransform = enable; }
 
-	static QImage transformSelectionImage(const QImage &source, const QPolygon &target, QPoint *offset);
+	static QImage transformSelectionImage(
+		const QImage &source, const QPolygon &target, QPoint *offset);
 	static QPolygon destinationQuad(
 		const QImage &source, const QPolygon &target,
 		QRect *outBounds = nullptr, QPolygonF *outSrcPolygon = nullptr);
-	static QImage shapeMask(const QColor &color, const QPolygonF &selection, QRect *maskBounds, bool mono);
+	static QImage shapeMask(
+		const QColor &color, const QPolygonF &selection, QRect *maskBounds,
+		bool mono);
 
 protected:
 	virtual void initSelection(canvas::Selection *selection) = 0;
-	virtual void newSelectionMotion(const canvas::Point &point, bool constrain, bool center) = 0;
+	virtual void newSelectionMotion(
+		const canvas::Point &point, bool constrain, bool center) = 0;
 
 	QPointF m_start, m_p1, m_end;
 	canvas::Selection::Handle m_handle;
 
 private:
 	bool m_allowTransform;
-	drawdance::MessageList m_messages;
+	net::MessageList m_messages;
 };
 
 class RectangleSelection final : public SelectionTool {
@@ -66,7 +73,8 @@ public:
 
 protected:
 	void initSelection(canvas::Selection *selection) override;
-	void newSelectionMotion(const canvas::Point &point, bool constrain, bool center) override;
+	void newSelectionMotion(
+		const canvas::Point &point, bool constrain, bool center) override;
 };
 
 class PolygonSelection final : public SelectionTool {
@@ -75,10 +83,10 @@ public:
 
 protected:
 	void initSelection(canvas::Selection *selection) override;
-	void newSelectionMotion(const canvas::Point &point, bool constrain, bool center) override;
+	void newSelectionMotion(
+		const canvas::Point &point, bool constrain, bool center) override;
 };
 
 }
 
 #endif
-

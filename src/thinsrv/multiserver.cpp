@@ -49,13 +49,6 @@ MultiServer::MultiServer(ServerConfig *config, QObject *parent)
 	});
 }
 
-#ifndef NDEBUG
-void MultiServer::setRandomLag(uint lag)
-{
-	m_sessions->setRandomLag(lag);
-}
-#endif
-
 /**
  * @brief Automatically stop server when last session is closed
  *

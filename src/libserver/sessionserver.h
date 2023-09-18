@@ -53,10 +53,6 @@ public:
 	 */
 	const ServerConfig *config() const { return m_config; }
 
-#ifndef NDEBUG
-	void setRandomLag(uint lag) { m_randomlag = lag; }
-#endif
-
 	/**
 	 * @brief Add a new client
 	 *
@@ -183,10 +179,6 @@ private:
 
 	QList<Session*> m_sessions;
 	QList<ThinServerClient*> m_clients;
-
-#ifndef NDEBUG
-	uint m_randomlag;
-#endif
 };
 
 }

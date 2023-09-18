@@ -763,6 +763,9 @@ pub struct DP_InputMethods {
     pub seek: ::std::option::Option<
         unsafe extern "C" fn(internal: *mut ::std::os::raw::c_void, offset: usize) -> bool,
     >,
+    pub seek_by: ::std::option::Option<
+        unsafe extern "C" fn(internal: *mut ::std::os::raw::c_void, size: usize) -> bool,
+    >,
     pub dispose: ::std::option::Option<unsafe extern "C" fn(internal: *mut ::std::os::raw::c_void)>,
 }
 #[test]
@@ -771,7 +774,7 @@ fn bindgen_test_layout_DP_InputMethods() {
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<DP_InputMethods>(),
-        48usize,
+        56usize,
         concat!("Size of: ", stringify!(DP_InputMethods))
     );
     assert_eq!(
@@ -830,8 +833,18 @@ fn bindgen_test_layout_DP_InputMethods() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).dispose) as usize - ptr as usize },
+        unsafe { ::std::ptr::addr_of!((*ptr).seek_by) as usize - ptr as usize },
         40usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_InputMethods),
+            "::",
+            stringify!(seek_by)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).dispose) as usize - ptr as usize },
+        48usize,
         concat!(
             "Offset of field: ",
             stringify!(DP_InputMethods),
@@ -875,6 +888,9 @@ extern "C" {
 }
 extern "C" {
     pub fn DP_input_seek(input: *mut DP_Input, offset: usize) -> bool;
+}
+extern "C" {
+    pub fn DP_input_seek_by(input: *mut DP_Input, size: usize) -> bool;
 }
 extern "C" {
     pub fn DP_file_input_new(fp: *mut FILE, close: bool) -> *mut DP_Input;
@@ -5741,6 +5757,7 @@ extern "C" {
         context_id: ::std::os::raw::c_uint,
         buf: *const ::std::os::raw::c_uchar,
         length: usize,
+        decode_opaque: bool,
     ) -> *mut DP_Message;
 }
 extern "C" {
@@ -8593,6 +8610,14 @@ extern "C" {
     ) -> *mut DP_Message;
 }
 extern "C" {
+    pub fn DP_message_new_opaque(
+        type_: DP_MessageType,
+        context_id: ::std::os::raw::c_uint,
+        body: *const ::std::os::raw::c_uchar,
+        length: usize,
+    ) -> *mut DP_Message;
+}
+extern "C" {
     pub fn DP_message_incref(msg: *mut DP_Message) -> *mut DP_Message;
 }
 extern "C" {
@@ -8609,6 +8634,9 @@ extern "C" {
 }
 extern "C" {
     pub fn DP_message_type(msg: *mut DP_Message) -> DP_MessageType;
+}
+extern "C" {
+    pub fn DP_message_opaque(msg: *mut DP_Message) -> bool;
 }
 extern "C" {
     pub fn DP_message_name(msg: *mut DP_Message) -> *const ::std::os::raw::c_char;
@@ -8629,21 +8657,6 @@ extern "C" {
     pub fn DP_message_cast(
         msg: *mut DP_Message,
         type_: DP_MessageType,
-    ) -> *mut ::std::os::raw::c_void;
-}
-extern "C" {
-    pub fn DP_message_cast2(
-        msg: *mut DP_Message,
-        type1: DP_MessageType,
-        type2: DP_MessageType,
-    ) -> *mut ::std::os::raw::c_void;
-}
-extern "C" {
-    pub fn DP_message_cast3(
-        msg: *mut DP_Message,
-        type1: DP_MessageType,
-        type2: DP_MessageType,
-        type3: DP_MessageType,
     ) -> *mut ::std::os::raw::c_void;
 }
 extern "C" {
@@ -8668,12 +8681,14 @@ extern "C" {
         buf: *const ::std::os::raw::c_uchar,
         bufsize: usize,
         body_length: usize,
+        decode_opaque: bool,
     ) -> *mut DP_Message;
 }
 extern "C" {
     pub fn DP_message_deserialize(
         buf: *const ::std::os::raw::c_uchar,
         bufsize: usize,
+        decode_opaque: bool,
     ) -> *mut DP_Message;
 }
 extern "C" {

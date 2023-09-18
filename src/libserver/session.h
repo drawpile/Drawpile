@@ -1,29 +1,23 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef DP_SHARED_SERVER_SESSION_H
-#define DP_SHARED_SERVER_SESSION_H
-
+#ifndef LIBSHARED_SERVER_SESSION_H
+#define LIBSHARED_SERVER_SESSION_H
 #include "libserver/announcable.h"
+#include "libserver/jsonapi.h"
+#include "libserver/sessionhistory.h"
 #include "libshared/net/message.h"
 #include "libshared/net/protover.h"
-#include "libserver/sessionhistory.h"
-#include "libserver/jsonapi.h"
-
-#include <QHash>
-#include <QString>
-#include <QObject>
 #include <QDateTime>
 #include <QElapsedTimer>
+#include <QHash>
 #include <QJsonObject>
+#include <QObject>
+#include <QString>
 
 class QTimer;
-
-namespace recording {
-	class Writer;
-}
+struct DP_Recorder;
 
 namespace sessionlisting {
-	class Announcements;
+class Announcements;
 }
 
 namespace server {
@@ -36,19 +30,14 @@ class Log;
 /**
  * The serverside session state.
  *
- * This is an abstract base class. Concrete implementations are ThinSession and ThickSession,
- * for thin and thick servers respectively.
+ * This is an abstract base class. Concrete implementations are ThinSession and
+ * ThickSession, for thin and thick servers respectively.
  */
 class Session : public QObject, public sessionlisting::Announcable {
 	Q_OBJECT
 public:
 	//! State of the session
-	enum class State {
-		Initialization,
-		Running,
-		Reset,
-		Shutdown
-	};
+	enum class State { Initialization, Running, Reset, Shutdown };
 
 	//! Information about a user who has since logged out
 	struct PastClient {
@@ -68,12 +57,14 @@ public:
 	/**
 	 * @brief Get the custom alias for the session ID
 	 *
-	 * Session ID alias is optional. If set, it can be used in place of the ID when joining a session.
+	 * Session ID alias is optional. If set, it can be used in place of the ID
+	 * when joining a session.
 	 */
 	QString idAlias() const { return m_history->idAlias(); }
 
 	//! Get the session alias if set, or the ID if not
-	QString aliasOrId() const {
+	QString aliasOrId() const
+	{
 		return m_history->idAlias().isEmpty() ? id() : m_history->idAlias();
 	}
 
@@ -83,7 +74,10 @@ public:
 	 * The recording will be created after a snapshot point has been created.
 	 * @param filename path to output file
 	 */
-	void setRecordingFile(const QString &filename) { m_recordingFile = filename; }
+	void setRecordingFile(const QString &filename)
+	{
+		m_recordingFile = filename;
+	}
 
 	/**
 	 * @brief Is the session closed to new users?
@@ -131,10 +125,14 @@ public:
 	Client *getClientById(uint8_t id);
 
 	//! Has a client with the given ID been logged in (not currently)?
-	bool hasPastClientWithId(uint8_t id) const { return m_pastClients.contains(id); }
+	bool hasPastClientWithId(uint8_t id) const
+	{
+		return m_pastClients.contains(id);
+	}
 
 	//! Get information about a past client who used the given ID
-	PastClient getPastClientById(uint8_t id) const {
+	PastClient getPastClientById(uint8_t id) const
+	{
 		Q_ASSERT(hasPastClientWithId(id));
 		return m_pastClients[id];
 	}
@@ -165,7 +163,7 @@ public:
 	int userCount() const { return m_clients.size(); }
 
 	//! Get the of clients currently in this session
-	const QList<Client*> &clients() const { return m_clients; }
+	const QVector<Client *> &clients() const { return m_clients; }
 
 	/**
 	 * @brief Get the ID of the user uploading initialization or reset data
@@ -197,7 +195,7 @@ public:
 	 * @param client
 	 * @param message
 	 */
-	void handleClientMessage(Client &client, protocol::MessagePtr message);
+	void handleClientMessage(Client &client, const net::Message &message);
 
 	/**
 	 * @brief Initiate the shutdown of this session
@@ -206,7 +204,7 @@ public:
 	 * will not be terminated. This allows the session to survive
 	 * server restarts.
 	 */
-	void killSession(bool terminate=true);
+	void killSession(bool terminate = true);
 
 	/**
 	 * @brief Send a direct message to all session participants
@@ -214,7 +212,7 @@ public:
 	 * This bypasses the session history.
 	 * @param msg
 	 */
-	void directToAll(protocol::MessagePtr msg);
+	void directToAll(const net::Message &msg);
 
 	/**
 	 * @brief Send a message to every user of this session
@@ -234,16 +232,22 @@ public:
 	/**
 	 * @brief Generate a request for session announcement unlisting
 	 * @param url API url
-	 * @param terminate if false, the removal is not logged in the history journal
-	 * @param removeOnly if true, an unlisting request is not sent (use in case of error)
+	 * @param terminate if false, the removal is not logged in the history
+	 * journal
+	 * @param removeOnly if true, an unlisting request is not sent (use in case
+	 * of error)
 	 */
-	void unlistAnnouncement(const QUrl &url, bool terminate=true);
+	void unlistAnnouncement(const QUrl &url, bool terminate = true);
 
 	sessionlisting::Session getSessionAnnouncement() const override;
 
-	bool hasUrgentAnnouncementChange(const sessionlisting::Session &description) const override;
+	bool hasUrgentAnnouncementChange(
+		const sessionlisting::Session &description) const override;
 
-	void sendListserverMessage(const QString &message) override { messageAll(message, false); }
+	void sendListserverMessage(const QString &message) override
+	{
+		messageAll(message, false);
+	}
 
 	//! Get the session state
 	State state() const { return m_state; }
@@ -269,7 +273,8 @@ public:
 	 * @param trusted new status
 	 * @param changedBy name of the user who issued the command
 	 */
-	void changeTrustedStatus(uint8_t id, bool trusted, const QString &changedBy);
+	void
+	changeTrustedStatus(uint8_t id, bool trusted, const QString &changedBy);
 
 	//! Send refreshed ban list to all logged in users
 	void sendUpdatedBanlist();
@@ -286,10 +291,12 @@ public:
 	 * A reporting backend server must have been configured.
 	 *
 	 * @param reporter the user who is making the report
-	 * @param aboutUser the ID of the user this report is about (if 0, the report is about the session in general)
+	 * @param aboutUser the ID of the user this report is about (if 0, the
+	 * report is about the session in general)
 	 * @param message freeform message entered by the reporter
 	 */
-	void sendAbuseReport(const Client *reporter, int aboutUser, const QString &message);
+	void sendAbuseReport(
+		const Client *reporter, int aboutUser, const QString &message);
 
 	/**
 	 * @brief Get a JSON object describing the session
@@ -300,7 +307,7 @@ public:
 	 * @param full - include detailed information (for admin use)
 	 * @return
 	 */
-	QJsonObject getDescription(bool full=false) const;
+	QJsonObject getDescription(bool full = false) const;
 
 	/**
 	 * @brief Call the server's JSON administration API
@@ -312,7 +319,9 @@ public:
 	 * @param request request body content
 	 * @return JSON API response content
 	 */
-	JsonApiResult callJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
+	JsonApiResult callJsonApi(
+		JsonApiMethod method, const QStringList &path,
+		const QJsonObject &request);
 
 	/**
 	 * @brief Write a session related log entry.
@@ -340,14 +349,17 @@ signals:
 private slots:
 	void removeUser(Client *user);
 	void onAnnouncementsChanged(const Announcable *session);
-	void onAnnouncementError(const Announcable *session, const QString &message);
+	void
+	onAnnouncementError(const Announcable *session, const QString &message);
 	void onConfigValueChanged(const ConfigKey &key);
 
 protected:
-	Session(SessionHistory *history, ServerConfig *config, sessionlisting::Announcements *announcements, QObject *parent);
+	Session(
+		SessionHistory *history, ServerConfig *config,
+		sessionlisting::Announcements *announcements, QObject *parent);
 
 	//! Add a message to the session history
-	virtual void addToHistory(protocol::MessagePtr msg) = 0;
+	virtual void addToHistory(const net::Message &msg) = 0;
 
 	//! Session history was just reset
 	virtual void onSessionReset() = 0;
@@ -356,14 +368,17 @@ protected:
 	virtual void onClientJoin(Client *client, bool host) = 0;
 
 	//! This message was just added to session history
-	void addedToHistory(protocol::MessagePtr msg);
+	void addedToHistory(const net::Message &msg);
 
 	void switchState(State newstate);
 
-	//! Get the user join, SessionOwner, etc. messages that should be prepended to a reset image
-	protocol::MessageList serverSideStateMessages() const;
+	//! Get the user join, SessionOwner, etc. messages that should be prepended
+	//! to a reset image
+	net::MessageList serverSideStateMessages() const;
 
 private:
+	void addClientMessage(const Client &client, const net::Message &msg);
+
 	/**
 	 * Add a message to the initialization stream
 	 *
@@ -371,7 +386,7 @@ private:
 	 * During reset state, this goes to a reset buffer which will
 	 * replace the old session history once completed.
 	 */
-	void addToInitStream(protocol::MessagePtr msg);
+	void addToInitStream(const net::Message &msg);
 
 	/**
 	 * @brief Update session operator bits
@@ -382,7 +397,8 @@ private:
 	 * @param changedBy name of the user who issued the change command
 	 * @return sanitized list of actual session operators
 	 */
-	QList<uint8_t> updateOwnership(QList<uint8_t> ids, const QString &changedBy);
+	QVector<uint8_t>
+	updateOwnership(QVector<uint8_t> ids, const QString &changedBy);
 
 	/**
 	 * @brief Update the list of trusted users
@@ -392,7 +408,8 @@ private:
 	 * @param changedBy name of the user who issued the change command
 	 * @return sanitized list of actual trusted users
 	 */
-	QList<uint8_t> updateTrustedUsers(QList<uint8_t> ids, const QString &changedBy);
+	QVector<uint8_t>
+	updateTrustedUsers(QVector<uint8_t> ids, const QString &changedBy);
 
 	void restartRecording();
 	void stopRecording();
@@ -401,7 +418,9 @@ private:
 	void sendUpdatedSessionProperties();
 	void ensureOperatorExists();
 
-	JsonApiResult callListingsJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
+	JsonApiResult callListingsJsonApi(
+		JsonApiMethod method, const QStringList &path,
+		const QJsonObject &request);
 
 	SessionHistory *m_history;
 	ServerConfig *m_config;
@@ -410,13 +429,13 @@ private:
 	State m_state = State::Initialization;
 	int m_initUser = -1; // the user who is currently uploading init/reset data
 
-	recording::Writer *m_recorder = nullptr;
+	DP_Recorder *m_recorder = nullptr;
 	QString m_recordingFile;
 
-	QList<Client*> m_clients;
+	QVector<Client *> m_clients;
 	QHash<int, PastClient> m_pastClients;
 
-	protocol::MessageList m_resetstream;
+	net::MessageList m_resetstream;
 	uint m_resetstreamsize = 0;
 
 	QElapsedTimer m_lastEventTime;
@@ -426,12 +445,9 @@ private:
 
 // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=69210
 namespace diagnostic_marker_private {
-	class [[maybe_unused]] AbstractSessionMarker : Session
-	{
-	};
+class [[maybe_unused]] AbstractSessionMarker : Session {};
 }
 
 }
 
 #endif
-

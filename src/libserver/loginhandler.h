@@ -1,17 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #ifndef DP_SERVER_LOGINHANDLER_H
 #define DP_SERVER_LOGINHANDLER_H
-
 #include "libshared/net/message.h"
-
+#include <QByteArray>
 #include <QObject>
 #include <QStringList>
-#include <QByteArray>
 
-namespace protocol {
-	struct ServerCommand;
-	struct ServerReply;
+namespace net {
+struct ServerCommand;
+struct ServerReply;
 }
 
 namespace server {
@@ -39,13 +36,15 @@ class ServerConfig;
  *
  * S: SESSION LIST UPDATES
  *
- * - Note. Server may send updates to session list and title until the client has made a choice -
+ * - Note. Server may send updates to session list and title until the client
+ * has made a choice -
  *
  * C: HOST or JOIN session
  *
  * S: OK or ERROR
  *
- * - if OK, the client is added to the session. If the client is hosting, initial state must be uploaded next. -
+ * - if OK, the client is added to the session. If the client is hosting,
+ * initial state must be uploaded next. -
  *
  * Notes:
  * ------
@@ -63,8 +62,7 @@ class ServerConfig;
  * If the ID was specified by the user (vanity ID), it is prefixed with '!'
  *
  */
-class LoginHandler final : public QObject
-{
+class LoginHandler final : public QObject {
 	Q_OBJECT
 public:
 	LoginHandler(Client *client, Sessions *sessions, ServerConfig *config);
@@ -76,26 +74,25 @@ public slots:
 	void announceSessionEnd(const QString &id);
 
 private slots:
-	void handleLoginMessage(protocol::MessagePtr message);
+	void handleLoginMessage(const net::Message &msg);
 
 private:
-	enum class State {
-		WaitForSecure,
-		WaitForIdent,
-		WaitForLogin
-	};
+	enum class State { WaitForSecure, WaitForIdent, WaitForLogin };
 
 	void announceServerInfo();
-	void handleIdentMessage(const protocol::ServerCommand &cmd);
-	void handleHostMessage(const protocol::ServerCommand &cmd);
-	void handleJoinMessage(const protocol::ServerCommand &cmd);
-	void logClientInfo(const protocol::ServerCommand &cmd);
-	void handleAbuseReport(const protocol::ServerCommand &cmd);
+	void handleIdentMessage(const net::ServerCommand &cmd);
+	void handleHostMessage(const net::ServerCommand &cmd);
+	void handleJoinMessage(const net::ServerCommand &cmd);
+	void logClientInfo(const net::ServerCommand &cmd);
+	void handleAbuseReport(const net::ServerCommand &cmd);
 	void handleStarttls();
 	void requestExtAuth();
 	void guestLogin(const QString &username);
-	void authLoginOk(const QString &username, const QString &authId, const QStringList &flags, const QByteArray &avatar, bool allowMod, bool allowHost);
-	bool send(const protocol::ServerReply &cmd);
+	void authLoginOk(
+		const QString &username, const QString &authId,
+		const QStringList &flags, const QByteArray &avatar, bool allowMod,
+		bool allowHost);
+	bool send(const net::Message &msg);
 	void sendError(const QString &code, const QString &message);
 	void extAuthGuestLogin(const QString &username);
 
@@ -112,4 +109,3 @@ private:
 }
 
 #endif // LOGINHANDLER_H
-

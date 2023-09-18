@@ -1,12 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "libclient/tools/floodfill.h"
-#include "libclient/tools/toolcontroller.h"
-
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/net/client.h"
-
+#include "libclient/tools/toolcontroller.h"
 #include <QGuiApplication>
 #include <QPixmap>
 
@@ -126,9 +123,9 @@ void FloodFill::floodFillFinished(Task *task)
 	DP_FloodFillResult result = task->result();
 	if(result == DP_FLOOD_FILL_SUCCESS) {
 		uint8_t contextId = m_owner.model()->localUserId();
-		drawdance::MessageList msgs;
-		msgs.append(drawdance::Message::makeUndoPoint(contextId));
-		drawdance::Message::makePutImages(
+		net::MessageList msgs;
+		msgs.append(net::makeUndoPointMessage(contextId));
+		net::makePutImageMessages(
 			msgs, contextId, task->targetLayerId(), m_blendMode, task->x(),
 			task->y(), task->img());
 		m_owner.client()->sendMessages(msgs.count(), msgs.constData());

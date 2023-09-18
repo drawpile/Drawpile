@@ -1,18 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #ifndef DP_SERVER_CLIENT_H
 #define DP_SERVER_CLIENT_H
-
-#include "libshared/net/message.h"
 #include "libserver/jsonapi.h"
-
+#include "libshared/net/message.h"
 #include <QObject>
 #include <QTcpSocket>
 
 class QHostAddress;
 
-namespace protocol {
-	class MessageQueue;
+namespace net {
+class MessageQueue;
 }
 
 namespace server {
@@ -28,9 +25,8 @@ class ServerLog;
  * A client is initially in a "lobby" state, until it finishes the login
  * handshake, at which point it is assigned to a session.
  */
-class Client : public QObject
-{
-    Q_OBJECT
+class Client : public QObject {
+	Q_OBJECT
 
 public:
 	~Client() override;
@@ -60,7 +56,8 @@ public:
 	/**
 	 * @brief Get an authenticated user's flags
 	 *
-	 * User flags come from the account system, either the built-in one or ext-auth.
+	 * User flags come from the account system, either the built-in one or
+	 * ext-auth.
 	 */
 	QStringList authFlags() const;
 	void setAuthFlags(const QStringList &flags);
@@ -108,7 +105,8 @@ public:
 
 	/**
 	 * @brief Is this user a moderator?
-	 * Moderators can access any session, always have OP status and cannot be kicked by other users.
+	 * Moderators can access any session, always have OP status and cannot be
+	 * kicked by other users.
 	 */
 	bool isModerator() const;
 	void setModerator(bool mod);
@@ -116,14 +114,16 @@ public:
 	/**
 	 * @brief Is this a trusted user?
 	 *
-	 * The trust flag is granted by session operators. It's effects are purely clientside,
-	 * but the server is aware of it so it can remember it for authenticated users.
+	 * The trust flag is granted by session operators. It's effects are purely
+	 * clientside, but the server is aware of it so it can remember it for
+	 * authenticated users.
 	 */
 	bool isTrusted() const;
 	void setTrusted(bool trusted);
 
 	/**
-	 * @brief Has this user been authenticated (using either an internal account or ext-auth)?
+	 * @brief Has this user been authenticated (using either an internal account
+	 * or ext-auth)?
 	 */
 	bool isAuthenticated() const;
 
@@ -140,19 +140,16 @@ public:
 	void setConnectionTimeout(int timeout);
 
 	/**
-	 * Get the timestamp of this client's last activity (i.e. non-keepalive message received)
+	 * Get the timestamp of this client's last activity (i.e. non-keepalive
+	 * message received)
 	 *
 	 * Returned value is given in milliseconds since Epoch.
 	 */
 	qint64 lastActive() const;
 
-#ifndef NDEBUG
-	void setRandomLag(uint lag);
-#endif
-
 	enum class DisconnectionReason {
-		Kick,     // kicked by an operator
-		Error,    // kicked due to some server or protocol error
+		Kick,	  // kicked by an operator
+		Error,	  // kicked due to some server or protocol error
 		Shutdown, // the server is shutting down
 	};
 
@@ -171,11 +168,12 @@ public:
 	 * @brief Send a message directly to this client
 	 *
 	 * Note. Typically messages are sent via the shared session history. Direct
-	 * messages are used during the login phase and for client specific notifications.
+	 * messages are used during the login phase and for client specific
+	 * notifications.
 	 * @param msg
 	 */
-	void sendDirectMessage(protocol::MessagePtr msg);
-	void sendDirectMessage(const protocol::MessageList &msgs);
+	void sendDirectMessage(const net::Message &msg);
+	void sendDirectMessages(const net::MessageList &msgs);
 
 	/**
 	 * @brief Send a message from the server directly to this user
@@ -206,14 +204,14 @@ public:
 	/**
 	 * @brief Get a Join message for this user
 	 */
-	protocol::MessagePtr joinMessage() const;
+	net::Message joinMessage() const;
 
 	/**
 	 * @brief Get a JSON object describing this user
 	 *
 	 * This is used by the admin API
 	 */
-	QJsonObject description(bool includeSession=true) const;
+	QJsonObject description(bool includeSession = true) const;
 
 	/**
 	 * @brief Call the client's JSON administration API
@@ -225,7 +223,9 @@ public:
 	 * @param request request body content
 	 * @return JSON API response content
 	 */
-	JsonApiResult callJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
+	JsonApiResult callJsonApi(
+		JsonApiMethod method, const QStringList &path,
+		const QJsonObject &request);
 
 	/**
 	 * @brief Divert incoming messages to a holding buffer
@@ -241,8 +241,8 @@ public:
 	/**
 	 * @brief Block all messages sent to this user
 	 *
-	 * This state is set when a fresh reset is imminent and we don't want to send
-	 * any messages to the client before that happens.
+	 * This state is set when a fresh reset is imminent and we don't want to
+	 * send any messages to the client before that happens.
 	 */
 	void setAwaitingReset(bool awaiting);
 	bool isAwaitingReset() const;
@@ -260,7 +260,7 @@ signals:
 	/**
 	 * @brief Message received while not part of a session
 	 */
-	void loginMessage(protocol::MessagePtr message);
+	void loginMessage(net::Message message);
 
 	/**
 	 * @brief This client is disconnecting
@@ -279,10 +279,10 @@ private slots:
 
 protected:
 	Client(QTcpSocket *socket, ServerLog *logger, QObject *parent);
-	protocol::MessageQueue *messageQueue();
+	net::MessageQueue *messageQueue();
 
 private:
-	void handleSessionMessage(protocol::MessagePtr msg);
+	void handleSessionMessage(net::Message msg);
 
 	struct Private;
 	Private *d;
@@ -291,4 +291,3 @@ private:
 }
 
 #endif
-

@@ -55,7 +55,7 @@ static DP_BinaryReader *open_binary_reader(TEST_PARAMS, const char *path)
 {
     DP_Input *bi = DP_file_input_new_from_path(path);
     FATAL(NOT_NULL_OK(bi, "got binary input for %s", path));
-    DP_BinaryReader *br = DP_binary_reader_new(bi);
+    DP_BinaryReader *br = DP_binary_reader_new(bi, 0);
     FATAL(NOT_NULL_OK(br, "got binary reader for %s", path));
     return br;
 }
@@ -91,7 +91,7 @@ static void write_initial_header(TEST_PARAMS, DP_BinaryWriter *bw,
 static void write_message_binary(TEST_PARAMS, DP_Message *msg,
                                  DP_BinaryWriter *bw)
 {
-    OK(DP_binary_writer_write_message(bw, msg), "wrote message to binary");
+    OK(DP_binary_writer_write_message(bw, msg) != 0, "wrote message to binary");
 }
 
 static void write_message_text(TEST_PARAMS, DP_Message *msg, DP_TextWriter *tw)
@@ -903,7 +903,8 @@ static void read_binary_messages(TEST_PARAMS)
 
     while (true) {
         DP_Message *msg;
-        DP_BinaryReaderResult result = DP_binary_reader_read_message(br, &msg);
+        DP_BinaryReaderResult result =
+            DP_binary_reader_read_message(br, true, &msg);
         OK(result == DP_BINARY_READER_SUCCESS
                || result == DP_BINARY_READER_INPUT_END,
            "read binary message");

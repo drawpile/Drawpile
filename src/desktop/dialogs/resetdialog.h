@@ -1,31 +1,27 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #ifndef RESETSESSIONDIALOG_H
 #define RESETSESSIONDIALOG_H
-
-#include "libclient/drawdance/message.h"
-
+#include "libclient/net/message.h"
 #include <QDialog>
 
 namespace canvas {
-	class PaintEngine;
+class PaintEngine;
 }
 
 namespace dialogs {
 
-class ResetDialog final : public QDialog
-{
+class ResetDialog final : public QDialog {
 	Q_OBJECT
 public:
 	ResetDialog(
-      const canvas::PaintEngine *pe, bool compatibilityMode,
-      QWidget *parent = nullptr);
+		const canvas::PaintEngine *pe, bool compatibilityMode,
+		QWidget *parent = nullptr);
 
 	~ResetDialog() override;
 
 	void setCanReset(bool canReset);
 
-	drawdance::MessageList getResetImage() const;
+	net::MessageList getResetImage() const;
 
 signals:
 	void resetSelected();
@@ -45,4 +41,3 @@ private:
 }
 
 #endif
-

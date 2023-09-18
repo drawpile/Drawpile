@@ -1,18 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #ifndef TOOLSETTINGS_ANNOTATION_H
 #define TOOLSETTINGS_ANNOTATION_H
-
 #include "desktop/toolwidgets/toolsettings.h"
 
-class Ui_TextSettings;
 class QAction;
 class QActionGroup;
 class QTextCharFormat;
 class QTimer;
+class Ui_TextSettings;
 
 namespace drawingboard {
-	class CanvasScene;
+class CanvasScene;
 }
 
 namespace tools {
@@ -26,7 +24,7 @@ namespace tools {
 class AnnotationSettings final : public ToolSettings {
 	Q_OBJECT
 public:
-	AnnotationSettings(ToolController *ctrl, QObject *parent=nullptr);
+	AnnotationSettings(ToolController *ctrl, QObject *parent = nullptr);
 	~AnnotationSettings() override;
 
 	QString toolType() const override { return QStringLiteral("annotation"); }
@@ -94,4 +92,3 @@ private:
 }
 
 #endif
-
