@@ -631,7 +631,7 @@ fn timelapse_recording(
     let mut initial = true;
     loop {
         let pos = if initial {
-            pe.step_playback(1)
+            pe.skip_playback(1)
         } else {
             pe.play_playback(interval)
         }?;
