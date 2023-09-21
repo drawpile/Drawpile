@@ -69,7 +69,7 @@ MainWindow::MainWindow(Server *serverConnection, QWidget *parent)
 	sidebar->setFocusPolicy(Qt::NoFocus);
 	sidebar->setFrameShape(QFrame::NoFrame);
 	sidebar->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	sidebar->setItemDelegate(new SidebarItemDelegate);
+	sidebar->setItemDelegate(new SidebarItemDelegate{this});
 	sidebar->setExpandsOnDoubleClick(false);
 	QPalette sidebarPalette = sidebar->palette();
 	sidebarPalette.setColor(QPalette::Base, sidebarPalette.color(QPalette::Window));
