@@ -89,7 +89,9 @@ void LocalServer::startServer()
 		if(!sessionDir.mkpath(".")) {
 			qWarning("Couldn't create session directory");
 		} else {
-			m_server->setSessionDirectory(sessionDir);
+			QMetaObject::invokeMethod(
+				m_server, "setSessionDirectory", Qt::BlockingQueuedConnection,
+				Q_ARG(QDir, sessionDir));
 		}
 	}
 

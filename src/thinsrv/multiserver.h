@@ -30,7 +30,6 @@ public:
 	void setSslCertFile(const QString &certfile, const QString &keyfile) { m_sslCertFile = certfile; m_sslKeyFile = keyfile; }
 	void setAutoStop(bool autostop);
 	void setRecordingPath(const QString &path);
-	void setSessionDirectory(const QDir &dir);
 	void setTemplateDirectory(const QDir &dir);
 
 	/**
@@ -49,6 +48,8 @@ public:
 	ServerConfig *config() { return m_config; }
 
 public slots:
+	void setSessionDirectory(const QDir &dir);
+
 	//! Start the server on the given port and listening address
 	bool start(quint16 port, const QHostAddress& address = QHostAddress::Any);
 
