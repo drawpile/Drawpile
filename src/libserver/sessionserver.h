@@ -163,7 +163,8 @@ signals:
 	void sessionEnded(const QString &id);
 
 private slots:
-	void removeClient(QObject *client);
+	void removeSession(Session *session);
+	void removeClient(ThinServerClient *client);
 	void onSessionAttributeChanged(Session *session);
 	void cleanupSessions();
 

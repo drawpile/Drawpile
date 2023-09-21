@@ -6,9 +6,12 @@
 namespace server {
 
 class ThinServerClient final : public Client {
+	Q_OBJECT
 public:
 	ThinServerClient(
 		QTcpSocket *socket, ServerLog *logger, QObject *parent = nullptr);
+
+	~ThinServerClient() override;
 
 	/**
 	 * @brief Get this client's position in the session history
@@ -18,6 +21,9 @@ public:
 	int historyPosition() const { return m_historyPosition; }
 
 	void setHistoryPosition(int pos) { m_historyPosition = pos; }
+
+signals:
+	void thinServerClientDestroyed(ThinServerClient *thisClient);
 
 public slots:
 	void sendNextHistoryBatch();

@@ -157,19 +157,18 @@ void SessionServer::initSession(Session *session)
 {
 	m_sessions.append(session);
 
-	const QString idString = session->id();
-
 	connect(session, &Session::sessionAttributeChanged, this, &SessionServer::onSessionAttributeChanged);
-	connect(session, &Session::destroyed, this, [this, idString](QObject *object) {
-		auto *oldSession = static_cast<Session*>(object);
-		m_sessions.removeOne(oldSession);
-		m_announcements->unlistSession(oldSession); // just to be safe
-
-		emit sessionEnded(idString);
-	});
+	connect(session, &Session::sessionDestroyed, this, &SessionServer::removeSession, Qt::DirectConnection);
 
 	emit sessionCreated(session);
 	emit sessionChanged(session->getDescription());
+}
+
+void SessionServer::removeSession(Session *session)
+{
+	m_sessions.removeOne(session);
+	m_announcements->unlistSession(session); // just to be safe
+	emit sessionEnded(session->id());
 }
 
 Session *SessionServer::getSessionById(const QString &id, bool load)
@@ -210,7 +209,9 @@ void SessionServer::addClient(ThinServerClient *client)
 	client->setConnectionTimeout(m_config->getConfigTime(config::ClientTimeout) * 1000);
 
 	m_clients.append(client);
-	connect(client, &Client::destroyed, this, &SessionServer::removeClient);
+	connect(
+		client, &ThinServerClient::thinServerClientDestroyed, this,
+		&SessionServer::removeClient, Qt::DirectConnection);
 
 	emit userCountChanged(m_clients.size());
 
@@ -220,9 +221,9 @@ void SessionServer::addClient(ThinServerClient *client)
 	login->startLoginProcess();
 }
 
-void SessionServer::removeClient(QObject *client)
+void SessionServer::removeClient(ThinServerClient *client)
 {
-	m_clients.removeOne(static_cast<ThinServerClient*>(client));
+	m_clients.removeOne(client);
 	emit userCountChanged(m_clients.size());
 }
 

@@ -48,6 +48,8 @@ public:
 		bool isBannable;
 	};
 
+	~Session() override;
+
 	//! Get the server configuration
 	const ServerConfig *config() const { return m_config; }
 
@@ -345,6 +347,8 @@ signals:
 	 * @param thisSession
 	 */
 	void sessionAttributeChanged(Session *thisSession);
+
+	void sessionDestroyed(Session *thisSession);
 
 private slots:
 	void removeUser(Client *user);

@@ -63,6 +63,11 @@ Session::Session(
 		makeAnnouncement(QUrl(announcement), false);
 }
 
+Session::~Session()
+{
+	emit sessionDestroyed(this);
+}
+
 static net::Message makeLogMessage(const Log &log)
 {
 	return net::ServerReply::makeLog(

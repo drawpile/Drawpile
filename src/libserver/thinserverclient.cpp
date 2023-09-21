@@ -15,6 +15,11 @@ ThinServerClient::ThinServerClient(
 		&ThinServerClient::sendNextHistoryBatch);
 }
 
+ThinServerClient::~ThinServerClient()
+{
+	emit thinServerClientDestroyed(this);
+}
+
 void ThinServerClient::sendNextHistoryBatch()
 {
 	// Only enqueue messages for uploading when upload queue is empty
