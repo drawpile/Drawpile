@@ -82,6 +82,7 @@ DP_PaintEngine *DP_paint_engine_new_inc(
     DP_RendererTileFn renderer_tile_fn, DP_RendererUnlockFn renderer_unlock_fn,
     DP_RendererResizeFn renderer_resize_fn, void *renderer_user,
     DP_CanvasHistorySavePointFn save_point_fn, void *save_point_user,
+    DP_CanvasHistorySoftResetFn soft_reset_fn, void *soft_reset_user,
     bool want_canvas_history_dump, const char *canvas_history_dump_dir,
     DP_RecorderGetTimeMsFn get_time_ms_fn, void *get_time_ms_user,
     DP_Player *player_or_null, DP_PaintEnginePlaybackFn playback_fn,

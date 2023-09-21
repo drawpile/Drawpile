@@ -27,7 +27,6 @@ typedef struct DP_Message DP_Message;
 
 typedef enum DP_MsgInternalType {
     DP_MSG_INTERNAL_TYPE_RESET,
-    DP_MSG_INTERNAL_TYPE_SOFT_RESET,
     DP_MSG_INTERNAL_TYPE_RESET_TO_STATE,
     DP_MSG_INTERNAL_TYPE_SNAPSHOT,
     DP_MSG_INTERNAL_TYPE_CATCHUP,
@@ -46,8 +45,6 @@ typedef enum DP_MsgInternalType {
 typedef struct DP_MsgInternal DP_MsgInternal;
 
 DP_Message *DP_msg_internal_reset_new(unsigned int context_id);
-
-DP_Message *DP_msg_internal_soft_reset_new(unsigned int context_id);
 
 DP_Message *DP_msg_internal_reset_to_state_new(unsigned int context_id,
                                                void *data);

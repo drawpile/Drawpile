@@ -22,6 +22,10 @@ class LayerPropsList;
 class ViewModeBuffer;
 }
 
+namespace server {
+class BuiltinServer;
+}
+
 namespace canvas {
 
 class PaintEngine final : public QObject {
@@ -182,6 +186,8 @@ public:
 
 	QColor sampleColor(int x, int y, int layerId, int diameter);
 
+	void setServer(server::BuiltinServer *server);
+
 	drawdance::RecordStartResult startRecording(const QString &path);
 	drawdance::RecordStartResult
 	exportTemplate(const QString &path, const net::MessageList &snapshot);
@@ -240,7 +246,12 @@ signals:
 protected:
 	void timerEvent(QTimerEvent *) override;
 
+private slots:
+	void unsetServer();
+
 private:
+	static void
+	onSoftReset(void *user, unsigned int contextId, DP_CanvasState *cs);
 	static void onPlayback(void *user, long long position);
 	static void onDumpPlayback(
 		void *user, long long position, DP_CanvasHistorySnapshot *chs);
@@ -289,6 +300,7 @@ private:
 	int m_sampleColorLastDiameter;
 	int m_undoDepthLimit;
 	bool m_updateLayersVisibleInFrame;
+	server::BuiltinServer *m_server = nullptr;
 };
 
 }

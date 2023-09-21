@@ -85,6 +85,7 @@ static constexpr auto CTRL_KEY = Qt::CTRL;
 #include "libclient/net/login.h"
 #include "libclient/canvas/layerlist.h"
 #include "libclient/parentalcontrols/parentalcontrols.h"
+#include "libclient/server/builtinserver.h"
 
 #include "libclient/tools/toolcontroller.h"
 #include "desktop/toolwidgets/brushsettings.h"
@@ -1820,25 +1821,30 @@ void MainWindow::hostSession(
 
 	// Start server if hosting locally
 	if(!useremote) {
-#if 0 // FIXME
-		auto *server = new server::BuiltinServer(
-			m_doc->canvas()->stateTracker(),
-			m_doc->canvas()->aclFilter(),
-			this);
+		canvas::PaintEngine *paintEngine = m_doc->canvas()->paintEngine();
+		server::BuiltinServer *server =
+			new server::BuiltinServer(paintEngine, this);
 
+		const desktop::settings::Settings &settings = dpApp().settings();
 		QString errorMessage;
-		if(!server->start(&errorMessage)) {
+		bool serverStarted = server->start(
+			settings.serverPort(), settings.serverTimeout(),
+			settings.serverPrivateUserList(), settings.serverDnssd(),
+			&errorMessage);
+		if(!serverStarted) {
 			QMessageBox::warning(this, tr("Host Session"), errorMessage);
 			delete server;
 			return;
 		}
 
-		connect(m_doc->client(), &net::Client::serverDisconnected, server, &server::BuiltinServer::stop);
-		connect(m_doc->canvas()->stateTracker(), &canvas::StateTracker::softResetPoint, server, &server::BuiltinServer::doInternalReset);
+		connect(
+			m_doc->client(), &net::Client::serverDisconnected, server,
+			&server::BuiltinServer::stop);
+		paintEngine->setServer(server);
 
-		if(server->port() != DRAWPILE_PROTO_DEFAULT_PORT)
+		if(server->port() != cmake_config::proto::port()) {
 			address.setPort(server->port());
-#endif
+		}
 	}
 
 	// Connect to server

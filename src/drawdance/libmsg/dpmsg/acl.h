@@ -141,6 +141,8 @@ DP_AclState *DP_acl_state_new(void);
 // tier "guest" and every user marked as an operator.
 DP_AclState *DP_acl_state_new_playback(void);
 
+DP_AclState *DP_acl_state_new_clone(DP_AclState *acls, uint8_t local_user_id);
+
 void DP_acl_state_free(DP_AclState *acls);
 
 void DP_acl_state_reset(DP_AclState *acls, uint8_t local_user_id);

@@ -7,7 +7,7 @@ namespace server {
 
 ThinServerClient::ThinServerClient(
 	QTcpSocket *socket, ServerLog *logger, QObject *parent)
-	: Client(socket, logger, parent)
+	: Client(socket, logger, false, parent)
 	, m_historyPosition(-1)
 {
 	connect(

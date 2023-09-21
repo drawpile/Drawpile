@@ -32,6 +32,7 @@ public:
 		AclState &acls, SnapshotQueue &sq, bool wantCanvasHistoryDump,
 		DP_RendererTileFn rendererTileFn, DP_RendererUnlockFn rendererUnlockFn,
 		DP_RendererResizeFn rendererResizeFn, void *rendererUser,
+		DP_CanvasHistorySoftResetFn softResetFn, void *softResetUser,
 		DP_PaintEnginePlaybackFn playbackFn,
 		DP_PaintEngineDumpPlaybackFn dumpPlaybackFn, void *playbackUser,
 		const CanvasState &canvasState = CanvasState::null());
@@ -49,6 +50,7 @@ public:
 		AclState &acls, SnapshotQueue &sq, uint8_t localUserId,
 		DP_RendererTileFn rendererTileFn, DP_RendererUnlockFn rendererUnlockFn,
 		DP_RendererResizeFn rendererResizeFn, void *rendererUser,
+		DP_CanvasHistorySoftResetFn softResetFn, void *softResetUser,
 		DP_PaintEnginePlaybackFn playbackFn,
 		DP_PaintEngineDumpPlaybackFn dumpPlaybackFn, void *playbackUser,
 		const CanvasState &canvasState = CanvasState::null(),

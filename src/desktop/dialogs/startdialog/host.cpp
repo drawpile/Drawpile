@@ -76,11 +76,7 @@ Host::Host(QWidget *parent)
 
 	QRadioButton *useLocalRadio = new QRadioButton{tr("Host on this computer")};
 	useLocalRadio->setToolTip(tr("Use Drawpile's built-in server"));
-	useLocalRadio->setEnabled(false);
 	layout->addSpanningRow(useLocalRadio);
-	layout->addSpanningRow(utils::note(
-		tr("Not available in the 2.2 beta yet. This option will return later!"),
-		QSizePolicy::RadioButton));
 
 	layout->addSpacer();
 
@@ -134,9 +130,6 @@ Host::Host(QWidget *parent)
 		&dpApp().recents(), &utils::Recents::recentHostsChanged, this,
 		&Host::updateRemoteHosts);
 	updateRemoteHosts();
-
-	// TODO: remove when the local server is implemented.
-	useRemoteRadio->setChecked(true);
 
 	updateListServers();
 	updateHostEnabled();

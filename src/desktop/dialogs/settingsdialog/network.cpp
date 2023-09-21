@@ -65,6 +65,9 @@ Network::Network(desktop::settings::Settings &settings, QWidget *parent)
 	settings.bindMessageQueueDrainRate(messageQueueDrainRate);
 	form->addRow(tr("Receive delay:"), messageQueueDrainRate);
 	form->addRow(nullptr, utils::note(tr("The higher the value, the smoother strokes from other users come in."), QSizePolicy::Label));
+
+	form->addSeparator();
+	initBuiltinServer(settings, form);
 }
 
 void Network::initAvatars(utils::SanerFormLayout *form)
@@ -95,6 +98,25 @@ void Network::initAvatars(utils::SanerFormLayout *form)
 	form->addSpanningRow(listActions(avatars, tr("Add avatar…"), [=] {
 		AvatarImport::importAvatar(avatarsModel, this);
 	}, tr("Delete selected avatars…"), makeDefaultDeleter(this, avatars, tr("Delete avatars"), QT_TR_N_NOOP("Really delete %n avatar(s)?"))));
+}
+
+void Network::initBuiltinServer(desktop::settings::Settings &settings, utils::SanerFormLayout *form)
+{
+	auto *privateUserList = new QCheckBox(tr("Hide user list in announcements"));
+	settings.bindServerPrivateUserList(privateUserList);
+	form->addRow(tr("Builtin server:"), privateUserList);
+
+#ifdef HAVE_DNSSD
+	auto *dnssd = new QCheckBox(tr("Announce with Zeroconf"));
+	settings.bindServerDnssd(dnssd);
+	form->addRow(nullptr, dnssd);
+#endif
+
+	auto *port = new QSpinBox;
+	port->setAlignment(Qt::AlignLeft);
+	port->setRange(1, UINT16_MAX);
+	settings.bindServerPort(port);
+	form->addRow(nullptr, utils::encapsulate(tr("Host on port %1 if available"), port));
 }
 
 } // namespace settingsdialog

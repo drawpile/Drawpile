@@ -294,6 +294,11 @@ makeSetMetadataIntMessage(uint8_t contextId, uint8_t field, int32_t value)
 	return Message::noinc(DP_msg_set_metadata_int_new(contextId, field, value));
 }
 
+Message makeSoftResetMessage(uint8_t contextId)
+{
+	return Message::noinc(DP_msg_soft_reset_new(contextId));
+}
+
 Message makeTrackCreateMessage(
 	uint8_t contextId, uint16_t id, uint16_t insertId, uint16_t sourceId,
 	const QString &title)

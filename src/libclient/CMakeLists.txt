@@ -115,6 +115,12 @@ target_sources(dpclient PRIVATE
 	net/sessionlistingmodel.h
 	net/tcpserver.cpp
 	net/tcpserver.h
+	server/builtinclient.cpp
+	server/builtinclient.h
+	server/builtinsession.cpp
+	server/builtinsession.h
+	server/builtinserver.cpp
+	server/builtinserver.h
 	tools/annotation.cpp
 	tools/annotation.h
 	tools/beziertool.cpp
@@ -207,6 +213,7 @@ target_link_libraries(dpclient
 	PRIVATE
 		cmake-config
 	PUBLIC
+		dpserver
 		dpshared
 		${QT_PACKAGE_NAME}::Core
 		${QT_PACKAGE_NAME}::Network

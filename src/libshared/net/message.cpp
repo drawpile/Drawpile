@@ -159,6 +159,12 @@ DP_MsgData *Message::toData() const
 	return static_cast<DP_MsgData *>(DP_message_internal(m_data));
 }
 
+DP_MsgDefaultLayer *Message::toDefaultLayer() const
+{
+	Q_ASSERT(type() == DP_MSG_DEFAULT_LAYER);
+	return static_cast<DP_MsgDefaultLayer *>(DP_message_internal(m_data));
+}
+
 DP_MsgDrawDabsClassic *Message::toDrawDabsClassic() const
 {
 	Q_ASSERT(type() == DP_MSG_DRAW_DABS_CLASSIC);

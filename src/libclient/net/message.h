@@ -124,6 +124,8 @@ Message makePutImageMessage(
 Message
 makeSetMetadataIntMessage(uint8_t contextId, uint8_t field, int32_t value);
 
+Message makeSoftResetMessage(uint8_t contextId);
+
 Message makeTrackCreateMessage(
 	uint8_t contextId, uint16_t id, uint16_t insertId, uint16_t sourceId,
 	const QString &title);

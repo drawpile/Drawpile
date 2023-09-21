@@ -99,6 +99,10 @@ typedef struct DP_PaintEngineCursorChange {
 struct DP_PaintEngine {
     DP_AclState *acls;
     DP_CanvasHistory *ch;
+    struct {
+        DP_CanvasHistorySoftResetFn fn;
+        void *user;
+    } soft_reset;
     DP_CanvasDiff *diff;
     DP_Tile *checker;
     DP_CanvasState *history_cs;
@@ -241,7 +245,8 @@ static void handle_dump_command(DP_PaintEngine *pe, DP_MsgInternal *mi)
         break;
     case DP_DUMP_SOFT_RESET:
         decref_messages(count, msgs);
-        DP_canvas_history_soft_reset(ch);
+        DP_canvas_history_soft_reset(ch, 0, pe->soft_reset.fn,
+                                     pe->soft_reset.user);
         break;
     case DP_DUMP_CLEANUP:
         decref_messages(count, msgs);
@@ -270,9 +275,6 @@ static void handle_internal(DP_PaintEngine *pe, DP_DrawContext *dc,
         DP_atomic_set(&pe->just_reset, true);
         DP_canvas_history_reset(pe->ch);
         update_undo_depth_limit(pe);
-        break;
-    case DP_MSG_INTERNAL_TYPE_SOFT_RESET:
-        DP_canvas_history_soft_reset(pe->ch);
         break;
     case DP_MSG_INTERNAL_TYPE_RESET_TO_STATE:
         DP_canvas_history_reset_to_state_noinc(
@@ -486,6 +488,10 @@ static void handle_single_message(DP_PaintEngine *pe, DP_DrawContext *dc,
     if (type == DP_MSG_INTERNAL) {
         handle_internal(pe, dc, DP_msg_internal_cast(msg));
     }
+    else if (type == DP_MSG_SOFT_RESET) {
+        DP_canvas_history_soft_reset(pe->ch, DP_message_context_id(msg),
+                                     pe->soft_reset.fn, pe->soft_reset.user);
+    }
     else if (type == DP_MSG_DEFAULT_LAYER) {
         DP_MsgDefaultLayer *mdl = DP_message_internal(msg);
         int default_layer_id = DP_msg_default_layer_id(mdl);
@@ -637,6 +643,7 @@ DP_PaintEngine *DP_paint_engine_new_inc(
     DP_RendererTileFn renderer_tile_fn, DP_RendererUnlockFn renderer_unlock_fn,
     DP_RendererResizeFn renderer_resize_fn, void *renderer_user,
     DP_CanvasHistorySavePointFn save_point_fn, void *save_point_user,
+    DP_CanvasHistorySoftResetFn soft_reset_fn, void *soft_reset_user,
     bool want_canvas_history_dump, const char *canvas_history_dump_dir,
     DP_RecorderGetTimeMsFn get_time_ms_fn, void *get_time_ms_user,
     DP_Player *player_or_null, DP_PaintEnginePlaybackFn playback_fn,
@@ -648,6 +655,8 @@ DP_PaintEngine *DP_paint_engine_new_inc(
     pe->ch = DP_canvas_history_new_inc(
         cs_or_null, save_point_fn, save_point_user, want_canvas_history_dump,
         canvas_history_dump_dir);
+    pe->soft_reset.fn = soft_reset_fn;
+    pe->soft_reset.user = soft_reset_user;
     pe->diff = DP_canvas_diff_new();
     pe->checker = DP_tile_new_checker(
         0, (DP_Pixel15){DP_BIT15 / 2, DP_BIT15 / 2, DP_BIT15 / 2, DP_BIT15},
@@ -1667,7 +1676,8 @@ static int should_push_message_remote(DP_PaintEngine *pe, DP_Message *msg,
     }
     else {
         DP_local_state_handle(pe->local_state, pe->main_dc, msg);
-        if (is_pushable_type(type) || type == DP_MSG_UNDO_DEPTH) {
+        if (is_pushable_type(type) || type == DP_MSG_UNDO_DEPTH
+            || type == DP_MSG_SOFT_RESET) {
             return PUSH_MESSAGE;
         }
         else if (type == DP_MSG_LASER_TRAIL) {

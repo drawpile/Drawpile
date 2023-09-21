@@ -64,6 +64,8 @@ typedef struct DP_UserCursorBuffer {
 
 typedef void (*DP_CanvasHistorySavePointFn)(void *user, DP_CanvasState *cs,
                                             bool snapshot_requested);
+typedef void (*DP_CanvasHistorySoftResetFn)(void *user, unsigned int context_id,
+                                            DP_CanvasState *cs);
 typedef bool (*DP_CanvasHistoryAcceptResetStateFn)(void *user,
                                                    DP_CanvasState *cs);
 typedef bool (*DP_CanvasHistoryAcceptResetMessageFn)(void *user,
@@ -111,7 +113,8 @@ void DP_canvas_history_reset(DP_CanvasHistory *ch);
 void DP_canvas_history_reset_to_state_noinc(DP_CanvasHistory *ch,
                                             DP_CanvasState *cs);
 
-void DP_canvas_history_soft_reset(DP_CanvasHistory *ch);
+void DP_canvas_history_soft_reset(DP_CanvasHistory *ch, unsigned int context_id,
+                                  DP_CanvasHistorySoftResetFn fn, void *user);
 
 int DP_canvas_history_undo_depth_limit(DP_CanvasHistory *ch);
 

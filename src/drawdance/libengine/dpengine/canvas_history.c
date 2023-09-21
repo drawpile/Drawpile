@@ -752,7 +752,8 @@ void DP_canvas_history_reset_to_state_noinc(DP_CanvasHistory *ch,
     dump_snapshot(ch, cs);
 }
 
-void DP_canvas_history_soft_reset(DP_CanvasHistory *ch)
+void DP_canvas_history_soft_reset(DP_CanvasHistory *ch, unsigned int context_id,
+                                  DP_CanvasHistorySoftResetFn fn, void *user)
 {
     // Soft reset: erase history, but keep the current canvas state.
     // Is used to avoid resetting the whole session when a new user joins
@@ -764,6 +765,9 @@ void DP_canvas_history_soft_reset(DP_CanvasHistory *ch)
     HISTORY_DEBUG("Soft reset");
     dump_internal(ch, DP_DUMP_SOFT_RESET);
     reset_to_state_noinc(ch, DP_canvas_state_incref(ch->current_state));
+    if (fn) {
+        fn(user, context_id, ch->current_state);
+    }
 }
 
 int DP_canvas_history_undo_depth_limit(DP_CanvasHistory *ch)
@@ -840,9 +844,6 @@ static bool handle_internal(DP_CanvasHistory *ch, DP_MsgInternal *mi)
     switch (internal_type) {
     case DP_MSG_INTERNAL_TYPE_RESET:
         DP_canvas_history_reset(ch);
-        return true;
-    case DP_MSG_INTERNAL_TYPE_SOFT_RESET:
-        DP_canvas_history_soft_reset(ch);
         return true;
     case DP_MSG_INTERNAL_TYPE_SNAPSHOT:
         return DP_canvas_history_save_point_make(ch);

@@ -15,6 +15,7 @@ extern "C" {
 #include "libclient/drawdance/perf.h"
 #include "libclient/drawdance/viewmode.h"
 #include "libclient/net/message.h"
+#include "libclient/server/builtinserver.h"
 #include <QPainter>
 #include <QSet>
 #include <QTimer>
@@ -33,8 +34,8 @@ PaintEngine::PaintEngine(
 	, m_paintEngine(
 		  m_acls, m_snapshotQueue, wantCanvasHistoryDump,
 		  PaintEngine::onRenderTile, PaintEngine::onRenderUnlock,
-		  PaintEngine::onRenderResize, this, PaintEngine::onPlayback,
-		  PaintEngine::onDumpPlayback, this)
+		  PaintEngine::onRenderResize, this, PaintEngine::onSoftReset, this,
+		  PaintEngine::onPlayback, PaintEngine::onDumpPlayback, this)
 	, m_fps{fps}
 	, m_timerId{0}
 	, m_cache{}
@@ -95,8 +96,8 @@ void PaintEngine::reset(
 	net::MessageList localResetImage = m_paintEngine.reset(
 		m_acls, m_snapshotQueue, localUserId, PaintEngine::onRenderTile,
 		PaintEngine::onRenderUnlock, PaintEngine::onRenderResize, this,
-		PaintEngine::onPlayback, PaintEngine::onDumpPlayback, this, canvasState,
-		player);
+		PaintEngine::onSoftReset, this, PaintEngine::onPlayback,
+		PaintEngine::onDumpPlayback, this, canvasState, player);
 	DP_mutex_lock(m_cacheMutex);
 	m_cache = QPixmap{};
 	DP_mutex_unlock(m_cacheMutex);
@@ -417,6 +418,24 @@ QColor PaintEngine::sampleColor(int x, int y, int layerId, int diameter)
 	}
 }
 
+void PaintEngine::setServer(server::BuiltinServer *server)
+{
+	unsetServer();
+	if(server) {
+		m_server = server;
+		connect(m_server, &QObject::destroyed, this, &PaintEngine::unsetServer);
+	}
+}
+
+void PaintEngine::unsetServer()
+{
+	if(m_server) {
+		disconnect(
+			m_server, &QObject::destroyed, this, &PaintEngine::unsetServer);
+		m_server = nullptr;
+	}
+}
+
 drawdance::RecordStartResult PaintEngine::startRecording(const QString &path)
 {
 	return m_paintEngine.startRecorder(
@@ -649,6 +668,18 @@ QImage PaintEngine::getFrameImage(
 	return cs.toFlatImage(true, true, &area, &vmf);
 }
 
+
+void PaintEngine::onSoftReset(
+	void *user, unsigned int contextId, DP_CanvasState *cs)
+{
+	PaintEngine *pe = static_cast<PaintEngine *>(user);
+	server::BuiltinServer *server = pe->m_server;
+	if(server && contextId == pe->m_acls.localUserId()) {
+		QMetaObject::invokeMethod(
+			server, "doInternalReset", Qt::BlockingQueuedConnection,
+			Q_ARG(drawdance::CanvasState, drawdance::CanvasState::inc(cs)));
+	}
+}
 
 void PaintEngine::onPlayback(void *user, long long position)
 {

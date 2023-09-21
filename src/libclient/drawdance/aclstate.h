@@ -24,9 +24,13 @@ public:
 
 	DP_AclState *get();
 
+	AclState clone(uint8_t localUserId) const;
+
 	void reset(uint8_t localUserId);
 
 	char *dump() const;
+
+	uint8_t localUserId() const;
 
 	DP_UserAcls users() const;
 
@@ -34,11 +38,15 @@ public:
 
 	void eachLayerAcl(EachLayerFn fn) const;
 
+	uint8_t handle(const net::Message &msg, bool overrideAcls = false);
+
 	void toResetImage(
 		net::MessageList &msgs, uint8_t userId,
 		unsigned int includeFlags) const;
 
 private:
+	AclState(DP_AclState *data);
+
 	static void
 	onLayerAcl(void *user, int layerId, const DP_LayerAcl *layerAcl);
 

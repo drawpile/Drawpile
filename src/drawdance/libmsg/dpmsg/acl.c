@@ -275,6 +275,39 @@ DP_AclState *DP_acl_state_new_playback(void)
     return acls;
 }
 
+static void clone_layers(DP_AclState *acls, DP_AclState *clone)
+{
+    DP_LayerAclEntry *entry, *tmp;
+    HASH_ITER(hh, acls->layers, entry, tmp) {
+        DP_LayerAclEntry *entry_clone = DP_malloc(sizeof(*entry_clone));
+        entry_clone->layer_id = entry->layer_id;
+        entry_clone->layer_acl = entry->layer_acl;
+        HASH_ADD_INT(clone->layers, layer_id, entry_clone);
+    }
+}
+
+static void clone_annotations(DP_AclState *acls, DP_AclState *clone)
+{
+    DP_AnnotationAclEntry *entry, *tmp;
+    HASH_ITER(hh, acls->annotations, entry, tmp) {
+        DP_AnnotationAclEntry *entry_clone = DP_malloc(sizeof(*entry_clone));
+        entry_clone->annotation_id = entry->annotation_id;
+        HASH_ADD_INT(clone->annotations, annotation_id, entry_clone);
+    }
+}
+
+DP_AclState *DP_acl_state_new_clone(DP_AclState *acls, uint8_t local_user_id)
+{
+    DP_ASSERT(acls);
+    DP_AclState *clone = DP_acl_state_new();
+    clone->local_user_id = local_user_id;
+    clone->users = acls->users;
+    clone_layers(acls, clone);
+    clone_annotations(acls, clone);
+    clone->feature = acls->feature;
+    return clone;
+}
+
 static void clear_layers(DP_AclState *acls)
 {
     DP_LayerAclEntry *entry, *tmp;

@@ -121,12 +121,6 @@ DP_Message *DP_msg_internal_reset_new(unsigned int context_id)
                             sizeof(DP_MsgInternal));
 }
 
-DP_Message *DP_msg_internal_soft_reset_new(unsigned int context_id)
-{
-    return msg_internal_new(context_id, DP_MSG_INTERNAL_TYPE_SOFT_RESET,
-                            sizeof(DP_MsgInternal));
-}
-
 DP_Message *DP_msg_internal_reset_to_state_new(unsigned int context_id,
                                                void *data)
 {

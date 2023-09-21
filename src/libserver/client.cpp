@@ -47,11 +47,12 @@ struct Client::Private {
 	}
 };
 
-Client::Client(QTcpSocket *socket, ServerLog *logger, QObject *parent)
+Client::Client(
+	QTcpSocket *socket, ServerLog *logger, bool decodeOpaque, QObject *parent)
 	: QObject(parent)
 	, d(new Private(socket, logger))
 {
-	d->msgqueue = new net::MessageQueue(socket, false, this);
+	d->msgqueue = new net::MessageQueue(socket, decodeOpaque, this);
 	d->socket->setParent(this);
 
 	connect(

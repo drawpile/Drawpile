@@ -55,6 +55,7 @@ public:
 
 	DP_MsgChat *toChat() const;
 	DP_MsgData *toData() const;
+	DP_MsgDefaultLayer *toDefaultLayer() const;
 	DP_MsgDrawDabsClassic *toDrawDabsClassic() const;
 	DP_MsgDrawDabsPixel *toDrawDabsPixel() const;
 	DP_MsgFeatureAccessLevels *toFeatureAccessLevels() const;

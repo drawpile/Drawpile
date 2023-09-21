@@ -278,7 +278,9 @@ private slots:
 	void socketDisconnect();
 
 protected:
-	Client(QTcpSocket *socket, ServerLog *logger, QObject *parent);
+	Client(
+		QTcpSocket *socket, ServerLog *logger, bool decodeOpaque,
+		QObject *parent);
 	net::MessageQueue *messageQueue();
 
 private:

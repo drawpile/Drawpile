@@ -16,6 +16,7 @@ PaintEngine::PaintEngine(
 	AclState &acls, SnapshotQueue &sq, bool wantCanvasHistoryDump,
 	DP_RendererTileFn rendererTileFn, DP_RendererUnlockFn rendererUnlockFn,
 	DP_RendererResizeFn rendererResizeFn, void *rendererUser,
+	DP_CanvasHistorySoftResetFn softResetFn, void *softResetUser,
 	DP_PaintEnginePlaybackFn playbackFn,
 	DP_PaintEngineDumpPlaybackFn dumpPlaybackFn, void *playbackUser,
 	const CanvasState &canvasState)
@@ -25,10 +26,10 @@ PaintEngine::PaintEngine(
 	, m_data(DP_paint_engine_new_inc(
 		  m_paintDc.get(), m_mainDc.get(), m_previewDc.get(), acls.get(),
 		  canvasState.get(), rendererTileFn, rendererUnlockFn, rendererResizeFn,
-		  rendererUser, DP_snapshot_queue_on_save_point, sq.get(),
-		  wantCanvasHistoryDump, getDumpDir().toUtf8().constData(),
-		  &PaintEngine::getTimeMs, nullptr, nullptr, playbackFn, dumpPlaybackFn,
-		  playbackUser))
+		  rendererUser, DP_snapshot_queue_on_save_point, sq.get(), softResetFn,
+		  softResetUser, wantCanvasHistoryDump,
+		  getDumpDir().toUtf8().constData(), &PaintEngine::getTimeMs, nullptr,
+		  nullptr, playbackFn, dumpPlaybackFn, playbackUser))
 {
 }
 
@@ -46,6 +47,7 @@ net::MessageList PaintEngine::reset(
 	AclState &acls, SnapshotQueue &sq, uint8_t localUserId,
 	DP_RendererTileFn rendererTileFn, DP_RendererUnlockFn rendererUnlockFn,
 	DP_RendererResizeFn rendererResizeFn, void *rendererUser,
+	DP_CanvasHistorySoftResetFn softResetFn, void *softResetUser,
 	DP_PaintEnginePlaybackFn playbackFn,
 	DP_PaintEngineDumpPlaybackFn dumpPlaybackFn, void *playbackUser,
 	const CanvasState &canvasState, DP_Player *player)
@@ -60,8 +62,8 @@ net::MessageList PaintEngine::reset(
 	m_data = DP_paint_engine_new_inc(
 		m_paintDc.get(), m_mainDc.get(), m_previewDc.get(), acls.get(),
 		canvasState.get(), rendererTileFn, rendererUnlockFn, rendererResizeFn,
-		rendererUser, DP_snapshot_queue_on_save_point, sq.get(),
-		wantCanvasHistoryDump, getDumpDir().toUtf8().constData(),
+		rendererUser, DP_snapshot_queue_on_save_point, sq.get(), softResetFn,
+		softResetUser, wantCanvasHistoryDump, getDumpDir().toUtf8().constData(),
 		&PaintEngine::getTimeMs, nullptr, player, playbackFn, dumpPlaybackFn,
 		playbackUser);
 	return localResetImage;

@@ -17,6 +17,7 @@ public:
 	Network(desktop::settings::Settings &settings, QWidget *parent = nullptr);
 private:
 	void initAvatars(utils::SanerFormLayout *form);
+	void initBuiltinServer(desktop::settings::Settings &settings, utils::SanerFormLayout *form);
 };
 
 } // namespace settingsdialog
