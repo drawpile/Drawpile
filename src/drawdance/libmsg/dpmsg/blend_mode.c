@@ -33,6 +33,7 @@
 // supported in draw dabs messages, since they already use the curly brace body
 // for the dab data. So we have to use this alternate, spaceless name instead.
 #define LINEAR_LIGHT_TEXT_NAME "-dp-linear-light"
+#define REPLACE_NAME           "-dp-replace"
 
 typedef struct DP_BlendModeAttributes {
     int flags;
@@ -53,7 +54,7 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
         {
             LAYER | BRUSH | DECREASE_OPACITY,
             "DP_BLEND_MODE_ERASE",
-            "-dp-erase",
+            "svg:dst-out",
             "Erase",
         },
     [DP_BLEND_MODE_NORMAL] =
@@ -74,7 +75,7 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
         {
             LAYER | BRUSH,
             "DP_BLEND_MODE_DIVIDE",
-            "-dp-divide",
+            "krita:divide",
             "Divide",
         },
     [DP_BLEND_MODE_BURN] =
@@ -109,7 +110,7 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
         {
             LAYER | BRUSH,
             "DP_BLEND_MODE_SUBTRACT",
-            "-dp-minus",
+            "krita:subtract",
             "Subtract",
         },
     [DP_BLEND_MODE_ADD] =
@@ -235,7 +236,7 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
         {
             BRUSH | INCREASE_OPACITY | DECREASE_OPACITY | BLEND_BLANK,
             "DP_BLEND_MODE_REPLACE",
-            "-dp-replace",
+            REPLACE_NAME,
             "Replace",
         },
 };
@@ -318,14 +319,26 @@ DP_BlendMode DP_blend_mode_by_svg_name(const char *svg_name,
             return (DP_BlendMode)i;
         }
     }
-    if (DP_str_equal(svg_name,
-                     mode_attributes[DP_BLEND_MODE_REPLACE].svg_name)) {
-        return DP_BLEND_MODE_REPLACE;
+
+    static const struct {
+        const char *name;
+        DP_BlendMode mode;
+    } additional_modes[] = {
+        // Old names for blend modes that aren't compatible with Krita. We don't
+        // write these anymore, but we still want to read them correctly.
+        {"-dp-erase", DP_BLEND_MODE_ERASE},
+        {"-dp-divide", DP_BLEND_MODE_DIVIDE},
+        {"-dp-minus", DP_BLEND_MODE_SUBTRACT},
+        // Text mode compatibility, see above.
+        {LINEAR_LIGHT_TEXT_NAME, DP_BLEND_MODE_LINEAR_LIGHT},
+        // Makes the code a bit easier to have this here.
+        {REPLACE_NAME, DP_BLEND_MODE_REPLACE},
+    };
+    for (size_t i = 0; i < DP_ARRAY_LENGTH(additional_modes); ++i) {
+        if (DP_str_equal(svg_name, additional_modes[i].name)) {
+            return additional_modes[i].mode;
+        }
     }
-    else if (DP_str_equal(svg_name, LINEAR_LIGHT_TEXT_NAME)) {
-        return DP_BLEND_MODE_LINEAR_LIGHT;
-    }
-    else {
-        return not_found_value;
-    }
+
+    return not_found_value;
 }
