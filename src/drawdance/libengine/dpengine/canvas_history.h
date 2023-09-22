@@ -113,12 +113,14 @@ void DP_canvas_history_reset(DP_CanvasHistory *ch);
 void DP_canvas_history_reset_to_state_noinc(DP_CanvasHistory *ch,
                                             DP_CanvasState *cs);
 
-void DP_canvas_history_soft_reset(DP_CanvasHistory *ch, unsigned int context_id,
+void DP_canvas_history_soft_reset(DP_CanvasHistory *ch, DP_DrawContext *dc,
+                                  unsigned int context_id,
                                   DP_CanvasHistorySoftResetFn fn, void *user);
 
 int DP_canvas_history_undo_depth_limit(DP_CanvasHistory *ch);
 
 void DP_canvas_history_undo_depth_limit_set(DP_CanvasHistory *ch,
+                                            DP_DrawContext *dc,
                                             int undo_depth_limit);
 
 bool DP_canvas_history_save_point_make(DP_CanvasHistory *ch);

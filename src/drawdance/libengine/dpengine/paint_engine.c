@@ -245,7 +245,7 @@ static void handle_dump_command(DP_PaintEngine *pe, DP_MsgInternal *mi)
         break;
     case DP_DUMP_SOFT_RESET:
         decref_messages(count, msgs);
-        DP_canvas_history_soft_reset(ch, 0, pe->soft_reset.fn,
+        DP_canvas_history_soft_reset(ch, dc, 0, pe->soft_reset.fn,
                                      pe->soft_reset.user);
         break;
     case DP_DUMP_CLEANUP:
@@ -255,7 +255,7 @@ static void handle_dump_command(DP_PaintEngine *pe, DP_MsgInternal *mi)
     case DP_DUMP_UNDO_DEPTH_LIMIT:
         DP_ASSERT(count == 1);
         DP_canvas_history_undo_depth_limit_set(
-            ch, DP_msg_undo_depth_depth(DP_message_internal(msgs[0])));
+            ch, dc, DP_msg_undo_depth_depth(DP_message_internal(msgs[0])));
         update_undo_depth_limit(pe);
         decref_messages(count, msgs);
         break;
@@ -489,7 +489,7 @@ static void handle_single_message(DP_PaintEngine *pe, DP_DrawContext *dc,
         handle_internal(pe, dc, DP_msg_internal_cast(msg));
     }
     else if (type == DP_MSG_SOFT_RESET) {
-        DP_canvas_history_soft_reset(pe->ch, DP_message_context_id(msg),
+        DP_canvas_history_soft_reset(pe->ch, dc, DP_message_context_id(msg),
                                      pe->soft_reset.fn, pe->soft_reset.user);
     }
     else if (type == DP_MSG_DEFAULT_LAYER) {
@@ -500,7 +500,7 @@ static void handle_single_message(DP_PaintEngine *pe, DP_DrawContext *dc,
     else if (type == DP_MSG_UNDO_DEPTH) {
         DP_MsgUndoDepth *mud = DP_message_internal(msg);
         int undo_depth_limit = DP_msg_undo_depth_depth(mud);
-        DP_canvas_history_undo_depth_limit_set(pe->ch, undo_depth_limit);
+        DP_canvas_history_undo_depth_limit_set(pe->ch, dc, undo_depth_limit);
         DP_atomic_xch(&pe->undo_depth_limit,
                       DP_canvas_history_undo_depth_limit(pe->ch));
     }

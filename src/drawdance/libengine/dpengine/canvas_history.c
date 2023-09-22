@@ -456,7 +456,8 @@ static bool is_valid_save_point_entry(DP_CanvasHistoryEntry *entry)
     }
 }
 
-static void validate_history(DP_UNUSED DP_CanvasHistory *ch)
+static void validate_history(DP_UNUSED DP_CanvasHistory *ch,
+                             DP_UNUSED bool check_fork)
 {
     dump_history(ch);
 #ifndef NDEBUG
@@ -479,7 +480,7 @@ static void validate_history(DP_UNUSED DP_CanvasHistory *ch)
     // There must exist at least one save point.
     DP_ASSERT(have_save_point);
     // If the local fork contains entries, it must also be consistent.
-    if (have_local_fork(ch)) {
+    if (check_fork && have_local_fork(ch)) {
         // Fork start can't be beyond the truncation point.
         DP_ASSERT(ch->fork.start >= ch->offset);
     }
@@ -536,7 +537,7 @@ DP_CanvasHistory *DP_canvas_history_new_inc(
 
     DP_queue_init(&ch->fork.queue, INITIAL_CAPACITY, sizeof(DP_ForkEntry));
     set_initial_entry(ch, cs);
-    validate_history(ch);
+    validate_history(ch, true);
     return ch;
 }
 
@@ -713,17 +714,20 @@ static void set_current_state_with_cursor_noinc(DP_CanvasHistory *ch,
 }
 
 
-static void reset_to_state_noinc(DP_CanvasHistory *ch, DP_CanvasState *cs)
+static void reset_to_state_noinc(DP_CanvasHistory *ch, DP_CanvasState *cs,
+                                 bool clear_fork)
 {
     set_current_state_noinc(ch, cs);
-    clear_fork_entries(ch);
+    if (clear_fork) {
+        clear_fork_entries(ch);
+    }
     truncate_history(ch, ch->used);
     DP_affected_indirect_areas_clear(&ch->aia);
     set_initial_entry(ch, cs);
     ch->used = 1;
     ch->offset = 0;
     ch->mark_command_done = true;
-    validate_history(ch);
+    validate_history(ch, clear_fork);
 }
 
 void DP_canvas_history_reset(DP_CanvasHistory *ch)
@@ -737,7 +741,7 @@ void DP_canvas_history_reset(DP_CanvasHistory *ch)
     dump_internal(ch, DP_DUMP_RESET);
     // Create a snapshot here, since there may be a reset to a desynced state.
     call_save_point_fn(ch, ch->current_state, true);
-    reset_to_state_noinc(ch, DP_canvas_state_new());
+    reset_to_state_noinc(ch, DP_canvas_state_new(), true);
     ch->undo_depth_limit = DP_UNDO_DEPTH_DEFAULT;
     dump_init(ch);
 }
@@ -747,12 +751,177 @@ void DP_canvas_history_reset_to_state_noinc(DP_CanvasHistory *ch,
 {
     HISTORY_DEBUG("Reset to state");
     dump_internal(ch, DP_DUMP_RESET);
-    reset_to_state_noinc(ch, cs);
+    reset_to_state_noinc(ch, cs, true);
     dump_init(ch);
     dump_snapshot(ch, cs);
 }
 
-void DP_canvas_history_soft_reset(DP_CanvasHistory *ch, unsigned int context_id,
+static bool is_draw_dabs_message_type(DP_MessageType type)
+{
+    switch (type) {
+    case DP_MSG_DRAW_DABS_CLASSIC:
+    case DP_MSG_DRAW_DABS_PIXEL:
+    case DP_MSG_DRAW_DABS_PIXEL_SQUARE:
+    case DP_MSG_DRAW_DABS_MYPAINT:
+        return true;
+    default:
+        return false;
+    }
+}
+
+static DP_CanvasState *flush_replay_buffer(DP_CanvasHistory *ch,
+                                           DP_CanvasState *cs,
+                                           DP_DrawContext *dc)
+{
+    DP_CanvasState *next = DP_canvas_state_handle_multidab(
+                               cs, dc, ch->replay.used, ch->replay.buffer)
+                               .cs;
+    ch->replay.used = 0;
+    if (next) {
+        DP_canvas_state_decref(cs);
+        return next;
+    }
+    else {
+        DP_warn("Error replaying drawing commands: %s", DP_error());
+        return cs;
+    }
+}
+
+static DP_CanvasState *
+replay_drawing_command(DP_CanvasHistory *ch, DP_CanvasState *cs,
+                       DP_DrawContext *dc, DP_Message *msg, DP_MessageType type)
+{
+    if (is_draw_dabs_message_type(type)) {
+        int index = ch->replay.used++;
+        DP_ASSERT(index < REPLAY_BUFFER_CAPACITY);
+        ch->replay.buffer[index] = msg;
+        if (index < REPLAY_BUFFER_CAPACITY - 1) {
+            return cs;
+        }
+        else {
+            return flush_replay_buffer(ch, cs, dc);
+        }
+    }
+    else {
+        if (ch->replay.used != 0) {
+            cs = flush_replay_buffer(ch, cs, dc);
+        }
+        DP_CanvasState *next = DP_canvas_state_handle(cs, dc, msg).cs;
+        if (next) {
+            DP_canvas_state_decref(cs);
+            return next;
+        }
+        else {
+            DP_warn("Error replaying drawing command: %s", DP_error());
+            return cs;
+        }
+    }
+}
+
+static int search_save_point_index(DP_CanvasHistory *ch, int target_index)
+{
+    DP_CanvasHistoryEntry *entries = ch->entries;
+    for (int i = target_index; i >= 0; --i) {
+        DP_CanvasHistoryEntry *entry = &entries[i];
+        if (entry->state) {
+            DP_ASSERT(is_valid_save_point_entry(entry));
+            return i;
+        }
+    }
+    return -1;
+}
+
+static void replay_fork_entry(void *element, void *user)
+{
+    DP_ForkEntry *fe = element;
+    DP_Message *msg = fe->msg;
+    DP_MessageType type = DP_message_type(msg);
+    if (type != DP_MSG_UNDO && type != DP_MSG_UNDO_POINT) {
+        DP_CanvasHistory *ch = ((void **)user)[0];
+        DP_CanvasState **cs = ((void **)user)[1];
+        DP_DrawContext *dc = ((void **)user)[2];
+        *cs = replay_drawing_command(ch, *cs, dc, msg, type);
+        validate_history(ch, true);
+    }
+}
+
+static DP_CanvasState *replay_fork(DP_CanvasHistory *ch, DP_CanvasState *cs,
+                                   DP_DrawContext *dc)
+{
+    bool starts_at_undo_point =
+        DP_message_type(peek_fork_entry_message(ch)) == DP_MSG_UNDO_POINT;
+    set_fork_start(ch, starts_at_undo_point);
+    DP_queue_each(&ch->fork.queue, sizeof(DP_ForkEntry), replay_fork_entry,
+                  (void *[]){ch, &cs, dc});
+    return cs;
+}
+
+static void finish_replay(DP_CanvasHistory *ch, DP_CanvasState *cs,
+                          DP_DrawContext *dc)
+{
+    if (ch->replay.used != 0) {
+        cs = flush_replay_buffer(ch, cs, dc);
+    }
+    set_current_state_noinc(ch, cs);
+}
+
+static void replay_from_inc(DP_CanvasHistory *ch, DP_DrawContext *dc,
+                            int start_index, DP_CanvasState *start_cs,
+                            bool with_fork)
+{
+    DP_ASSERT(start_cs);
+    DP_CanvasHistoryEntry *entries = ch->entries;
+    DP_CanvasState *cs = DP_canvas_state_incref(start_cs);
+
+    int used = ch->used;
+    for (int i = start_index + 1; i < used; ++i) {
+        DP_CanvasHistoryEntry *entry = &entries[i];
+        DP_Undo undo = entry->undo;
+        if (undo != DP_UNDO_GONE) {
+            DP_Message *msg = entry->msg;
+            DP_MessageType type = DP_message_type(msg);
+            // Update undo points even when they're undone so
+            // they can serve as a starting point for redos.
+            if (type == DP_MSG_UNDO_POINT) {
+                if (ch->replay.used != 0) {
+                    cs = flush_replay_buffer(ch, cs, dc);
+                }
+                DP_canvas_state_decref_nullable(entry->state);
+                entry->state = DP_canvas_state_incref(cs);
+            }
+            else if (undo == DP_UNDO_DONE) {
+                cs = replay_drawing_command(ch, cs, dc, msg, type);
+                validate_history(ch, with_fork);
+            }
+        }
+    }
+
+    if (with_fork && have_local_fork(ch)) {
+        DP_ASSERT(ch->fork.start >= start_index + ch->offset);
+        cs = replay_fork(ch, cs, dc);
+    }
+
+    finish_replay(ch, cs, dc);
+}
+
+static bool search_and_replay_from(DP_CanvasHistory *ch, DP_DrawContext *dc,
+                                   int target_index, bool with_fork)
+{
+    int start_index = search_save_point_index(ch, target_index);
+    HISTORY_DEBUG("Replay from target %d, start %d", target_index, start_index);
+    if (start_index >= 0) {
+        replay_from_inc(ch, dc, start_index, ch->entries[start_index].state,
+                        with_fork);
+        return true;
+    }
+    else {
+        DP_error_set("Can't find save point at or before %d", target_index);
+        return false;
+    }
+}
+
+void DP_canvas_history_soft_reset(DP_CanvasHistory *ch, DP_DrawContext *dc,
+                                  unsigned int context_id,
                                   DP_CanvasHistorySoftResetFn fn, void *user)
 {
     // Soft reset: erase history, but keep the current canvas state.
@@ -764,9 +933,20 @@ void DP_canvas_history_soft_reset(DP_CanvasHistory *ch, unsigned int context_id,
     // client joined at.
     HISTORY_DEBUG("Soft reset");
     dump_internal(ch, DP_DUMP_SOFT_RESET);
-    reset_to_state_noinc(ch, DP_canvas_state_incref(ch->current_state));
+
+    bool have_fork = have_local_fork(ch);
+    if (have_fork) {
+        search_and_replay_from(ch, dc, ch->fork.start - ch->offset, false);
+    }
+
+    DP_CanvasState *cs = DP_canvas_state_incref(ch->current_state);
     if (fn) {
-        fn(user, context_id, ch->current_state);
+        fn(user, context_id, cs);
+    }
+    reset_to_state_noinc(ch, cs, false);
+
+    if (have_fork) {
+        finish_replay(ch, replay_fork(ch, cs, dc), dc);
     }
 }
 
@@ -777,9 +957,15 @@ int DP_canvas_history_undo_depth_limit(DP_CanvasHistory *ch)
 }
 
 void DP_canvas_history_undo_depth_limit_set(DP_CanvasHistory *ch,
+                                            DP_DrawContext *dc,
                                             int undo_depth_limit)
 {
     DP_ASSERT(ch);
+
+    bool have_fork = have_local_fork(ch);
+    if (have_fork) {
+        search_and_replay_from(ch, dc, ch->fork.start - ch->offset, false);
+    }
 
     int effective_limit =
         DP_clamp_int(undo_depth_limit, DP_CANVAS_HISTORY_UNDO_DEPTH_MIN,
@@ -790,7 +976,12 @@ void DP_canvas_history_undo_depth_limit_set(DP_CanvasHistory *ch,
     ch->undo_depth_limit = effective_limit;
 
     HISTORY_DEBUG("Set undo depth limit");
-    reset_to_state_noinc(ch, DP_canvas_state_incref(ch->current_state));
+    DP_CanvasState *cs = DP_canvas_state_incref(ch->current_state);
+    reset_to_state_noinc(ch, cs, false);
+
+    if (have_fork) {
+        finish_replay(ch, replay_fork(ch, cs, dc), dc);
+    }
 }
 
 static int find_save_point_index(DP_CanvasHistory *ch)
@@ -960,156 +1151,6 @@ static void handle_undo_point(DP_CanvasHistory *ch, int index)
 }
 
 
-static bool is_draw_dabs_message_type(DP_MessageType type)
-{
-    switch (type) {
-    case DP_MSG_DRAW_DABS_CLASSIC:
-    case DP_MSG_DRAW_DABS_PIXEL:
-    case DP_MSG_DRAW_DABS_PIXEL_SQUARE:
-    case DP_MSG_DRAW_DABS_MYPAINT:
-        return true;
-    default:
-        return false;
-    }
-}
-
-static DP_CanvasState *flush_replay_buffer(DP_CanvasHistory *ch,
-                                           DP_CanvasState *cs,
-                                           DP_DrawContext *dc)
-{
-    DP_CanvasState *next = DP_canvas_state_handle_multidab(
-                               cs, dc, ch->replay.used, ch->replay.buffer)
-                               .cs;
-    ch->replay.used = 0;
-    if (next) {
-        DP_canvas_state_decref(cs);
-        return next;
-    }
-    else {
-        DP_warn("Error replaying drawing commands: %s", DP_error());
-        return cs;
-    }
-}
-
-static DP_CanvasState *
-replay_drawing_command(DP_CanvasHistory *ch, DP_CanvasState *cs,
-                       DP_DrawContext *dc, DP_Message *msg, DP_MessageType type)
-{
-    if (is_draw_dabs_message_type(type)) {
-        int index = ch->replay.used++;
-        DP_ASSERT(index < REPLAY_BUFFER_CAPACITY);
-        ch->replay.buffer[index] = msg;
-        if (index < REPLAY_BUFFER_CAPACITY - 1) {
-            return cs;
-        }
-        else {
-            return flush_replay_buffer(ch, cs, dc);
-        }
-    }
-    else {
-        if (ch->replay.used != 0) {
-            cs = flush_replay_buffer(ch, cs, dc);
-        }
-        DP_CanvasState *next = DP_canvas_state_handle(cs, dc, msg).cs;
-        if (next) {
-            DP_canvas_state_decref(cs);
-            return next;
-        }
-        else {
-            DP_warn("Error replaying drawing command: %s", DP_error());
-            return cs;
-        }
-    }
-}
-
-static int search_save_point_index(DP_CanvasHistory *ch, int target_index)
-{
-    DP_CanvasHistoryEntry *entries = ch->entries;
-    for (int i = target_index; i >= 0; --i) {
-        DP_CanvasHistoryEntry *entry = &entries[i];
-        if (entry->state) {
-            DP_ASSERT(is_valid_save_point_entry(entry));
-            return i;
-        }
-    }
-    return -1;
-}
-
-static void replay_fork(void *element, void *user)
-{
-    DP_ForkEntry *fe = element;
-    DP_Message *msg = fe->msg;
-    DP_MessageType type = DP_message_type(msg);
-    if (type != DP_MSG_UNDO && type != DP_MSG_UNDO_POINT) {
-        DP_CanvasHistory *ch = ((void **)user)[0];
-        DP_CanvasState **cs = ((void **)user)[1];
-        DP_DrawContext *dc = ((void **)user)[2];
-        *cs = replay_drawing_command(ch, *cs, dc, msg, type);
-        validate_history(ch);
-    }
-}
-
-static void replay_from_inc(DP_CanvasHistory *ch, DP_DrawContext *dc,
-                            int start_index, DP_CanvasState *start_cs)
-{
-    DP_ASSERT(start_cs);
-    DP_CanvasHistoryEntry *entries = ch->entries;
-    DP_CanvasState *cs = DP_canvas_state_incref(start_cs);
-
-    int used = ch->used;
-    for (int i = start_index + 1; i < used; ++i) {
-        DP_CanvasHistoryEntry *entry = &entries[i];
-        DP_Undo undo = entry->undo;
-        if (undo != DP_UNDO_GONE) {
-            DP_Message *msg = entry->msg;
-            DP_MessageType type = DP_message_type(msg);
-            // Update undo points even when they're undone so
-            // they can serve as a starting point for redos.
-            if (type == DP_MSG_UNDO_POINT) {
-                if (ch->replay.used != 0) {
-                    cs = flush_replay_buffer(ch, cs, dc);
-                }
-                DP_canvas_state_decref_nullable(entry->state);
-                entry->state = DP_canvas_state_incref(cs);
-            }
-            else if (undo == DP_UNDO_DONE) {
-                cs = replay_drawing_command(ch, cs, dc, msg, type);
-                validate_history(ch);
-            }
-        }
-    }
-
-    if (have_local_fork(ch)) {
-        DP_ASSERT(ch->fork.start >= start_index + ch->offset);
-        bool starts_at_undo_point =
-            DP_message_type(peek_fork_entry_message(ch)) == DP_MSG_UNDO_POINT;
-        set_fork_start(ch, starts_at_undo_point);
-        DP_queue_each(&ch->fork.queue, sizeof(DP_ForkEntry), replay_fork,
-                      (void *[]){ch, &cs, dc});
-    }
-
-    if (ch->replay.used != 0) {
-        cs = flush_replay_buffer(ch, cs, dc);
-    }
-
-    set_current_state_noinc(ch, cs);
-}
-
-static bool search_and_replay_from(DP_CanvasHistory *ch, DP_DrawContext *dc,
-                                   int target_index)
-{
-    int start_index = search_save_point_index(ch, target_index);
-    HISTORY_DEBUG("Replay from target %d, start %d", target_index, start_index);
-    if (start_index >= 0) {
-        replay_from_inc(ch, dc, start_index, ch->entries[start_index].state);
-        return true;
-    }
-    else {
-        DP_error_set("Can't find save point at or before %d", target_index);
-        return false;
-    }
-}
-
 void DP_canvas_history_cleanup(DP_CanvasHistory *ch, DP_DrawContext *dc,
                                void (*push_message)(void *, DP_Message *),
                                void *user)
@@ -1124,7 +1165,7 @@ void DP_canvas_history_cleanup(DP_CanvasHistory *ch, DP_DrawContext *dc,
             push_message(user, msg);
             shift_fork_entry_nodec(ch);
         }
-        if (!search_and_replay_from(ch, dc, target_index)) {
+        if (!search_and_replay_from(ch, dc, target_index, true)) {
             DP_warn("Cleanup: %s", DP_error());
         }
     }
@@ -1142,7 +1183,8 @@ bool DP_canvas_history_local_fork_clear(DP_CanvasHistory *ch,
     else {
         DP_warn("Clear local fork at %d", ch->offset + ch->used);
         clear_fork_entries(ch);
-        return search_and_replay_from(ch, dc, ch->fork.start - ch->offset);
+        return search_and_replay_from(ch, dc, ch->fork.start - ch->offset,
+                                      true);
     }
 }
 
@@ -1215,7 +1257,7 @@ static bool undo(DP_CanvasHistory *ch, DP_DrawContext *dc,
     }
     else {
         mark_entries_undone(ch, context_id, undo_start);
-        return search_and_replay_from(ch, dc, undo_start);
+        return search_and_replay_from(ch, dc, undo_start, true);
     }
 }
 
@@ -1284,7 +1326,7 @@ static bool redo(DP_CanvasHistory *ch, DP_DrawContext *dc,
     }
     else {
         mark_entries_redone(ch, context_id, redo_start);
-        return search_and_replay_from(ch, dc, redo_start);
+        return search_and_replay_from(ch, dc, redo_start, true);
     }
 }
 
@@ -1433,7 +1475,8 @@ static bool handle_remote_command(DP_CanvasHistory *ch, DP_DrawContext *dc,
     case DP_FORK_ACTION_CONCURRENT:
         return handle_command(ch, dc, msg, type, index);
     case DP_FORK_ACTION_ROLLBACK:
-        return search_and_replay_from(ch, dc, ch->fork.start - ch->offset);
+        return search_and_replay_from(ch, dc, ch->fork.start - ch->offset,
+                                      true);
     default:
         DP_ASSERT(fork_action == DP_FORK_ACTION_ALREADY_DONE);
         return true;
@@ -1494,7 +1537,7 @@ bool DP_canvas_history_handle(DP_CanvasHistory *ch, DP_DrawContext *dc,
                          local_drawing_in_progress);
     bool ok =
         handle_remote_message(ch, dc, msg, type, local_drawing_in_progress);
-    validate_history(ch);
+    validate_history(ch, true);
     DP_PERF_END(fn);
     return ok;
 }
@@ -1521,7 +1564,7 @@ bool DP_canvas_history_handle_local(DP_CanvasHistory *ch, DP_DrawContext *dc,
 
     bool ok = type == DP_MSG_UNDO || type == DP_MSG_UNDO_POINT
            || handle_drawing_command(ch, dc, msg);
-    validate_history(ch);
+    validate_history(ch, true);
 
     DP_PERF_END(fn);
     return ok;
@@ -1553,7 +1596,7 @@ void DP_canvas_history_handle_multidab_dec(DP_CanvasHistory *ch,
             ch, msg, DP_message_type(msg), local_drawing_in_progress);
         switch (fork_action) {
         case DP_FORK_ACTION_ROLLBACK:
-            search_and_replay_from(ch, dc, ch->fork.start - ch->offset);
+            search_and_replay_from(ch, dc, ch->fork.start - ch->offset, true);
             offset = i + 1; // Those messages are already replayed now.
             break;
         case DP_FORK_ACTION_ALREADY_DONE:
@@ -1569,7 +1612,7 @@ void DP_canvas_history_handle_multidab_dec(DP_CanvasHistory *ch,
             break;
         }
     }
-    validate_history(ch);
+    validate_history(ch, true);
 
     if (offset != count) {
         DP_CanvasStateChange change = DP_canvas_state_handle_multidab(
@@ -1608,7 +1651,7 @@ void DP_canvas_history_handle_local_multidab_dec(DP_CanvasHistory *ch,
         set_current_state_with_cursor_noinc(ch, change.cs, &change.user_cursor);
     }
 
-    validate_history(ch);
+    validate_history(ch, true);
     DP_PERF_END(fn);
 }
 
