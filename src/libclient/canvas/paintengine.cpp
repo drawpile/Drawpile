@@ -15,11 +15,16 @@ extern "C" {
 #include "libclient/drawdance/perf.h"
 #include "libclient/drawdance/viewmode.h"
 #include "libclient/net/message.h"
-#include "libclient/server/builtinserver.h"
 #include <QPainter>
 #include <QSet>
 #include <QTimer>
 #include <QtEndian>
+#ifdef DP_HAVE_BUILTIN_SERVER
+#	include "libclient/server/builtinserver.h"
+#	define ON_SOFT_RESET_FN PaintEngine::onSoftReset
+#else
+#	define ON_SOFT_RESET_FN nullptr
+#endif
 
 #define DP_PERF_CONTEXT "paint_engine"
 
@@ -34,7 +39,7 @@ PaintEngine::PaintEngine(
 	, m_paintEngine(
 		  m_acls, m_snapshotQueue, wantCanvasHistoryDump,
 		  PaintEngine::onRenderTile, PaintEngine::onRenderUnlock,
-		  PaintEngine::onRenderResize, this, PaintEngine::onSoftReset, this,
+		  PaintEngine::onRenderResize, this, ON_SOFT_RESET_FN, this,
 		  PaintEngine::onPlayback, PaintEngine::onDumpPlayback, this)
 	, m_fps{fps}
 	, m_timerId{0}
@@ -96,7 +101,7 @@ void PaintEngine::reset(
 	net::MessageList localResetImage = m_paintEngine.reset(
 		m_acls, m_snapshotQueue, localUserId, PaintEngine::onRenderTile,
 		PaintEngine::onRenderUnlock, PaintEngine::onRenderResize, this,
-		PaintEngine::onSoftReset, this, PaintEngine::onPlayback,
+		ON_SOFT_RESET_FN, this, PaintEngine::onPlayback,
 		PaintEngine::onDumpPlayback, this, canvasState, player);
 	DP_mutex_lock(m_cacheMutex);
 	m_cache = QPixmap{};
@@ -418,6 +423,7 @@ QColor PaintEngine::sampleColor(int x, int y, int layerId, int diameter)
 	}
 }
 
+#ifdef DP_HAVE_BUILTIN_SERVER
 void PaintEngine::setServer(server::BuiltinServer *server)
 {
 	unsetServer();
@@ -435,6 +441,7 @@ void PaintEngine::unsetServer()
 		m_server = nullptr;
 	}
 }
+#endif
 
 drawdance::RecordStartResult PaintEngine::startRecording(const QString &path)
 {
@@ -669,6 +676,7 @@ QImage PaintEngine::getFrameImage(
 }
 
 
+#ifdef DP_HAVE_BUILTIN_SERVER
 void PaintEngine::onSoftReset(
 	void *user, unsigned int contextId, DP_CanvasState *cs)
 {
@@ -680,6 +688,7 @@ void PaintEngine::onSoftReset(
 			Q_ARG(drawdance::CanvasState, drawdance::CanvasState::inc(cs)));
 	}
 }
+#endif
 
 void PaintEngine::onPlayback(void *user, long long position)
 {

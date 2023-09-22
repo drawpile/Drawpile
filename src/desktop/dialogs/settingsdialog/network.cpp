@@ -66,8 +66,10 @@ Network::Network(desktop::settings::Settings &settings, QWidget *parent)
 	form->addRow(tr("Receive delay:"), messageQueueDrainRate);
 	form->addRow(nullptr, utils::note(tr("The higher the value, the smoother strokes from other users come in."), QSizePolicy::Label));
 
+#ifdef DP_HAVE_BUILTIN_SERVER
 	form->addSeparator();
 	initBuiltinServer(settings, form);
+#endif
 }
 
 void Network::initAvatars(utils::SanerFormLayout *form)

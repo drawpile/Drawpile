@@ -115,12 +115,6 @@ target_sources(dpclient PRIVATE
 	net/sessionlistingmodel.h
 	net/tcpserver.cpp
 	net/tcpserver.h
-	server/builtinclient.cpp
-	server/builtinclient.h
-	server/builtinsession.cpp
-	server/builtinsession.h
-	server/builtinserver.cpp
-	server/builtinserver.h
 	tools/annotation.cpp
 	tools/annotation.h
 	tools/beziertool.cpp
@@ -198,6 +192,19 @@ target_sources(dpclient PRIVATE
 	utils/usernamevalidator.h
 )
 
+if(SERVER)
+	target_compile_definitions(dpclient PUBLIC DP_HAVE_BUILTIN_SERVER=1)
+	target_link_libraries(dpclient PUBLIC dpserver)
+	target_sources(dpclient PRIVATE
+		server/builtinclient.cpp
+		server/builtinclient.h
+		server/builtinsession.cpp
+		server/builtinsession.h
+		server/builtinserver.cpp
+		server/builtinserver.h
+	)
+endif()
+
 # https://gitlab.kitware.com/cmake/cmake/-/issues/19813
 if(WIN32)
 	target_sources(dpclient PRIVATE
@@ -213,7 +220,6 @@ target_link_libraries(dpclient
 	PRIVATE
 		cmake-config
 	PUBLIC
-		dpserver
 		dpshared
 		${QT_PACKAGE_NAME}::Core
 		${QT_PACKAGE_NAME}::Network

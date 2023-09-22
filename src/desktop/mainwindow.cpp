@@ -85,7 +85,6 @@ static constexpr auto CTRL_KEY = Qt::CTRL;
 #include "libclient/net/login.h"
 #include "libclient/canvas/layerlist.h"
 #include "libclient/parentalcontrols/parentalcontrols.h"
-#include "libclient/server/builtinserver.h"
 
 #include "libclient/tools/toolcontroller.h"
 #include "desktop/toolwidgets/brushsettings.h"
@@ -123,6 +122,10 @@ static constexpr auto CTRL_KEY = Qt::CTRL;
 
 #ifdef Q_OS_WIN
 #include "desktop/bundled/kis_tablet/kis_tablet_support_win.h"
+#endif
+
+#ifdef DP_HAVE_BUILTIN_SERVER
+#	include "libclient/server/builtinserver.h"
 #endif
 
 using desktop::settings::Settings;
@@ -1821,6 +1824,7 @@ void MainWindow::hostSession(
 	// Start server if hosting locally
 	const desktop::settings::Settings &settings = dpApp().settings();
 	if(!useremote) {
+#ifdef DP_HAVE_BUILTIN_SERVER
 		canvas::PaintEngine *paintEngine = m_doc->canvas()->paintEngine();
 		server::BuiltinServer *server =
 			new server::BuiltinServer(paintEngine, this);
@@ -1844,6 +1848,10 @@ void MainWindow::hostSession(
 		if(server->port() != cmake_config::proto::port()) {
 			address.setPort(server->port());
 		}
+#else
+		showErrorMessage(tr("Hosting on this computer is not available"));
+		return;
+#endif
 	}
 
 	// Connect to server
@@ -2073,9 +2081,11 @@ void MainWindow::onServerDisconnected(const QString &message, const QString &err
 {
 	canvas::CanvasModel *canvas = m_doc->canvas();
 	emit hostSessionEnabled(canvas != nullptr);
+#ifdef DP_HAVE_BUILTIN_SERVER
 	if(canvas) {
 		canvas->paintEngine()->setServer(nullptr);
 	}
+#endif
 
 	getAction("invitesession")->setEnabled(false);
 	getAction("leavesession")->setEnabled(false);

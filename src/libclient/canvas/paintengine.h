@@ -186,7 +186,9 @@ public:
 
 	QColor sampleColor(int x, int y, int layerId, int diameter);
 
+#ifdef DP_HAVE_BUILTIN_SERVER
 	void setServer(server::BuiltinServer *server);
+#endif
 
 	drawdance::RecordStartResult startRecording(const QString &path);
 	drawdance::RecordStartResult
@@ -247,11 +249,15 @@ protected:
 	void timerEvent(QTimerEvent *) override;
 
 private slots:
+#ifdef DP_HAVE_BUILTIN_SERVER
 	void unsetServer();
+#endif
 
 private:
+#ifdef DP_HAVE_BUILTIN_SERVER
 	static void
 	onSoftReset(void *user, unsigned int contextId, DP_CanvasState *cs);
+#endif
 	static void onPlayback(void *user, long long position);
 	static void onDumpPlayback(
 		void *user, long long position, DP_CanvasHistorySnapshot *chs);
@@ -300,7 +306,9 @@ private:
 	int m_sampleColorLastDiameter;
 	int m_undoDepthLimit;
 	bool m_updateLayersVisibleInFrame;
+#ifdef DP_HAVE_BUILTIN_SERVER
 	server::BuiltinServer *m_server = nullptr;
+#endif
 };
 
 }

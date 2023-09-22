@@ -77,6 +77,18 @@ Host::Host(QWidget *parent)
 	QRadioButton *useLocalRadio = new QRadioButton{tr("Host on this computer")};
 	useLocalRadio->setToolTip(tr("Use Drawpile's built-in server"));
 	layout->addSpanningRow(useLocalRadio);
+#ifndef DP_HAVE_BUILTIN_SERVER
+	useLocalRadio->setEnabled(false);
+#	ifdef Q_OS_ANDROID
+	QString notAvailableMessage =
+		tr("The built-in server is not available on Android.");
+#	else
+	QString notAvailableMessage = tr("The built-in server is not available on "
+									 "this installation of Drawpile.");
+#	endif
+	layout->addSpanningRow(
+		utils::note(notAvailableMessage, QSizePolicy::RadioButton));
+#endif
 
 	layout->addSpacer();
 
@@ -130,6 +142,10 @@ Host::Host(QWidget *parent)
 		&dpApp().recents(), &utils::Recents::recentHostsChanged, this,
 		&Host::updateRemoteHosts);
 	updateRemoteHosts();
+
+#ifndef DP_HAVE_BUILTIN_SERVER
+	useRemoteRadio->setChecked(true);
+#endif
 
 	updateListServers();
 	updateHostEnabled();
