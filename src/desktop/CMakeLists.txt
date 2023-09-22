@@ -339,7 +339,7 @@ target_link_libraries(drawpile PRIVATE
 	cmake-config
 	dpshared
 	dpclient
-	dpengine
+	drawdance
 	${QT_PACKAGE_NAME}::Core
 	${QT_PACKAGE_NAME}::Gui
 	# Svg is used only indirectly as an image loader plugin, but e.g.

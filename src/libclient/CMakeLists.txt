@@ -221,15 +221,11 @@ target_link_libraries(dpclient
 		cmake-config
 	PUBLIC
 		dpshared
+		drawdance
 		${QT_PACKAGE_NAME}::Core
 		${QT_PACKAGE_NAME}::Network
 		${QT_PACKAGE_NAME}::Gui
 		${QT_PACKAGE_NAME}::Sql
-		dpcommon
-		dpmsg
-		dpengine
-		mypaint
-		parson
 )
 
 if(${QT_PACKAGE_NAME}LinguistTools_FOUND)

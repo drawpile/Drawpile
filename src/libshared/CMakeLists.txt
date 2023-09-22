@@ -36,9 +36,9 @@ target_link_libraries(dpshared
 	PRIVATE
 		cmake-config
 	PUBLIC
+		drawdance
 		${QT_PACKAGE_NAME}::Core
 		${QT_PACKAGE_NAME}::Network
-		dpengine
 )
 
 if(ANDROID)
