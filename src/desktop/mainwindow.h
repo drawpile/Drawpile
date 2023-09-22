@@ -316,7 +316,6 @@ private:
 
 	QActionGroup *m_currentdoctools; // general tools that require no special permissions
 	QActionGroup *m_admintools;      // session operator actions
-	QActionGroup *m_modtools;        // session moderator tools
 	QActionGroup *m_canvasbgtools;   // tools related to canvas background feature
 	QActionGroup *m_resizetools;     // tools related to canvas resizing feature
 	QActionGroup *m_putimagetools;   // Cut&Paste related tools

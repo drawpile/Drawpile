@@ -33,7 +33,8 @@ public:
 	 * @brief Connect to a remote server
 	 * @param loginhandler the login handler to use
 	 */
-	void connectToServer(int timeoutSecs, LoginHandler *loginhandler);
+	void
+	connectToServer(int timeoutSecs, LoginHandler *loginhandler, bool builtin);
 
 	/**
 	 * @brief Disconnect from the remote server
@@ -56,6 +57,8 @@ public:
 	 * @return true if a network connection is open
 	 */
 	bool isConnected() const { return m_server != nullptr; }
+
+	bool isBuiltin() const { return m_builtin; }
 
 	/**
 	 * @brief Is the user connected and logged in?
@@ -237,6 +240,7 @@ private:
 
 	QUrl m_lastUrl;
 	uint8_t m_myId = 1;
+	bool m_builtin = false;
 	bool m_moderator = false;
 	bool m_isAuthenticated = false;
 	bool m_supportsAutoReset = false;

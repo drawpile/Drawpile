@@ -156,7 +156,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	  m_lastLayerViewMode(nullptr),
 	  m_currentdoctools(nullptr),
 	  m_admintools(nullptr),
-	  m_modtools(nullptr),
 	  m_canvasbgtools(nullptr),
 	  m_resizetools(nullptr),
 	  m_putimagetools(nullptr),
@@ -1820,12 +1819,12 @@ void MainWindow::hostSession(
 	}
 
 	// Start server if hosting locally
+	const desktop::settings::Settings &settings = dpApp().settings();
 	if(!useremote) {
 		canvas::PaintEngine *paintEngine = m_doc->canvas()->paintEngine();
 		server::BuiltinServer *server =
 			new server::BuiltinServer(paintEngine, this);
 
-		const desktop::settings::Settings &settings = dpApp().settings();
 		QString errorMessage;
 		bool serverStarted = server->start(
 			settings.serverPort(), settings.serverTimeout(),
@@ -1865,7 +1864,8 @@ void MainWindow::hostSession(
 
 	utils::showWindow(new dialogs::LoginDialog(login, this));
 
-	m_doc->client()->connectToServer(dpApp().settings().serverTimeout(), login);
+	m_doc->client()->connectToServer(
+		settings.serverTimeout(), login, !useremote);
 }
 
 void MainWindow::invite()
@@ -1895,7 +1895,9 @@ void MainWindow::leave()
 	QMessageBox *leavebox = new QMessageBox(
 		QMessageBox::Question,
 		m_doc->sessionTitle().isEmpty() ? tr("Untitled") : m_doc->sessionTitle(),
-		tr("Really leave the session?"),
+		m_doc->client()->isBuiltin()
+			? tr("Really leave and terminate the session?")
+			: tr("Really leave the session?"),
 		QMessageBox::NoButton,
 		this,
 		Qt::MSWindowsFixedSizeDialogHint|Qt::Sheet
@@ -1995,23 +1997,29 @@ void MainWindow::resetSession()
 
 void MainWindow::terminateSession()
 {
-	auto dlg = new QMessageBox(
-		QMessageBox::Question,
-		tr("Terminate session"),
-		tr("Really terminate this session?"),
-		QMessageBox::Ok|QMessageBox::Cancel,
-		this);
-	dlg->setAttribute(Qt::WA_DeleteOnClose);
-	dlg->setDefaultButton(QMessageBox::Cancel);
-	dlg->button(QMessageBox::Ok)->setText(tr("Terminate"));
-	dlg->setWindowModality(Qt::WindowModal);
+	// When hosting on the builtin server, terminating the session isn't done
+	// through mod commands, it's a matter of leaving and stopping the server.
+	if(m_doc->client()->isBuiltin()) {
+		leave();
+	} else {
+		auto dlg = new QMessageBox(
+			QMessageBox::Question,
+			tr("Terminate session"),
+			tr("Really terminate this session?"),
+			QMessageBox::Ok|QMessageBox::Cancel,
+			this);
+		dlg->setAttribute(Qt::WA_DeleteOnClose);
+		dlg->setDefaultButton(QMessageBox::Cancel);
+		dlg->button(QMessageBox::Ok)->setText(tr("Terminate"));
+		dlg->setWindowModality(Qt::WindowModal);
 
-	connect(dlg, &QMessageBox::finished, this, [this](int res) {
-		if(res == QMessageBox::Ok)
-			m_doc->sendTerminateSession();
-	});
+		connect(dlg, &QMessageBox::finished, this, [this](int res) {
+			if(res == QMessageBox::Ok)
+				m_doc->sendTerminateSession();
+		});
 
-	dlg->show();
+		dlg->show();
+	}
 }
 
 /**
@@ -2040,7 +2048,7 @@ void MainWindow::joinSession(const QUrl& url, const QString &autoRecordFile)
 
 	dlg->show();
 	m_doc->setRecordOnConnect(autoRecordFile);
-	m_doc->client()->connectToServer(dpApp().settings().serverTimeout(), login);
+	m_doc->client()->connectToServer(dpApp().settings().serverTimeout(), login, false);
 }
 
 /**
@@ -2063,13 +2071,18 @@ void MainWindow::onServerConnected()
  */
 void MainWindow::onServerDisconnected(const QString &message, const QString &errorcode, bool localDisconnect)
 {
-	emit hostSessionEnabled(m_doc->canvas() != nullptr);
+	canvas::CanvasModel *canvas = m_doc->canvas();
+	emit hostSessionEnabled(canvas != nullptr);
+	if(canvas) {
+		canvas->paintEngine()->setServer(nullptr);
+	}
+
 	getAction("invitesession")->setEnabled(false);
 	getAction("leavesession")->setEnabled(false);
 	getAction("sessionsettings")->setEnabled(false);
 	getAction("reportabuse")->setEnabled(false);
+	getAction("terminatesession")->setEnabled(false);
 	m_admintools->setEnabled(false);
-	m_modtools->setEnabled(false);
 	m_sessionSettings->close();
 
 	// Re-enable UI
@@ -2124,16 +2137,18 @@ void MainWindow::onServerDisconnected(const QString &message, const QString &err
  */
 void MainWindow::onServerLogin(bool join, const QString &joinPassword)
 {
-	m_netstatus->loggedIn(m_doc->client()->sessionUrl(), joinPassword);
-	m_netstatus->setSecurityLevel(m_doc->client()->securityLevel(), m_doc->client()->hostCertificate());
+	net::Client *client = m_doc->client();
+	m_netstatus->loggedIn(client->sessionUrl(), joinPassword);
+	m_netstatus->setSecurityLevel(client->securityLevel(), client->hostCertificate());
 	m_view->setEnabled(true);
-	m_sessionSettings->setPersistenceEnabled(m_doc->client()->serverSuppotsPersistence());
-	m_sessionSettings->setAutoResetEnabled(m_doc->client()->sessionSupportsAutoReset());
-	m_sessionSettings->setAuthenticated(m_doc->client()->isAuthenticated());
+	m_sessionSettings->setPersistenceEnabled(client->serverSuppotsPersistence());
+	m_sessionSettings->setAutoResetEnabled(client->sessionSupportsAutoReset());
+	m_sessionSettings->setAuthenticated(client->isAuthenticated());
 	setDrawingToolsEnabled(true);
-	m_modtools->setEnabled(m_doc->client()->isModerator());
+	getAction("terminatesession")->setEnabled(
+		client->isModerator() || client->isBuiltin());
 	onOperatorModeChange(m_doc->canvas()->aclState()->amOperator());
-	getAction("reportabuse")->setEnabled(m_doc->client()->serverSupportsReports());
+	getAction("reportabuse")->setEnabled(client->serverSupportsReports());
 	getAction("invitesession")->setEnabled(true);
 	if(m_chatbox->isCollapsed()) {
 		getAction("togglechat")->trigger();
@@ -3030,9 +3045,6 @@ void MainWindow::setupActions()
 	m_admintools = new QActionGroup(this);
 	m_admintools->setExclusive(false);
 
-	m_modtools = new QActionGroup(this);
-	m_modtools->setEnabled(false);
-
 	m_canvasbgtools = new QActionGroup(this);
 	m_canvasbgtools->setEnabled(false);
 
@@ -3715,7 +3727,7 @@ void MainWindow::setupActions()
 	QAction *locksession = makeAction("locksession", tr("Lock Everything")).statusTip(tr("Prevent changes to the canvas")).shortcut("F12").checkable();
 
 	m_admintools->addAction(locksession);
-	m_modtools->addAction(terminatesession);
+	terminatesession->setEnabled(false);
 	m_admintools->setEnabled(false);
 
 	connect(host, &QAction::triggered, this, &MainWindow::host);

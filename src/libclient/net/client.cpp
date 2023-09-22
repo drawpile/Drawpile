@@ -17,9 +17,11 @@ Client::Client(QObject *parent)
 {
 }
 
-void Client::connectToServer(int timeoutSecs, LoginHandler *loginhandler)
+void Client::connectToServer(
+	int timeoutSecs, LoginHandler *loginhandler, bool builtin)
 {
 	Q_ASSERT(!isConnected());
+	m_builtin = builtin;
 
 	TcpServer *server = new TcpServer(timeoutSecs, this);
 	m_server = server;
