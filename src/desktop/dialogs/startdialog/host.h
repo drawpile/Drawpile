@@ -9,6 +9,8 @@
 class QButtonGroup;
 class QCheckBox;
 class QComboBox;
+class QFormLayout;
+class QLabel;
 class QLineEdit;
 
 namespace sessionlisting {
@@ -41,6 +43,7 @@ private slots:
 	void updateNsfmBasedOnTitle();
 	void updateListServers();
 	void updateRemoteHosts();
+	void updateAdvancedSectionVisible(bool visible);
 
 private:
 	static constexpr int USE_LOCAL = 0;
@@ -52,12 +55,15 @@ private:
 
 	QLineEdit *m_titleEdit;
 	QLineEdit *m_passwordEdit;
-	QLineEdit *m_idAliasEdit;
 	QCheckBox *m_nsfmBox;
 	QCheckBox *m_announceBox;
-	QComboBox *m_listServerCombo;
 	QButtonGroup *m_useGroup;
 	QComboBox *m_remoteHostCombo;
+	QCheckBox *m_advancedBox;
+	QFormLayout *m_advancedSection;
+	QLabel *m_idAliasLabel;
+	QLineEdit *m_idAliasEdit;
+	QComboBox *m_listServerCombo;
 	bool m_allowNsfm = true;
 	sessionlisting::ListServerModel *m_listServerModel;
 };

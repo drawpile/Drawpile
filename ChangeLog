@@ -31,6 +31,8 @@ Unreleased Version 2.2.0-pre
  * Feature: Bring back the builtin server, allowing you to host "on this computer" again.
  * Fix: Don't duplicate local fork on soft reset or undo depth change.
  * Fix: Make Erase, Divide and Subtract layer modes in ORA files compatible with Krita.
+ * Feature: Stick ID alias and listing hosting options behind an advanced options checkbox, since they keep causing confusion.
+ * Fix: Make host page in the start dialog work properly on Arabic and other right-to-left languages.
 
 2023-08-26 Version 2.2.0-beta.7
  * Fix: Make classic brushes not go brighter when smudging into transparency. Thanks to cada for reporting.

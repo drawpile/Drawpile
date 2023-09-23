@@ -6,6 +6,9 @@
 #include <QScroller>
 
 class QAbstractScrollArea;
+class QFormLayout;
+class QFrame;
+class QVBoxLayout;
 class QWidget;
 
 namespace utils {
@@ -45,6 +48,11 @@ void setWidgetRetainSizeWhenHidden(QWidget *widget, bool retainSize);
 
 void initKineticScrolling(QAbstractScrollArea *scrollArea);
 bool isKineticScrollingBarsHidden();
+
+QFormLayout *addFormSection(QVBoxLayout *layout);
+int getFormSpacing(QVBoxLayout *layout);
+void addFormSpacer(QVBoxLayout *layout);
+void addFormSeparator(QVBoxLayout *layout);
 
 }
 

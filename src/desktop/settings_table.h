@@ -60,6 +60,7 @@ SETTING(flipbookWindow            , FlipbookWindow            , "flipbook/window
 SETTING(overrideFontSize          , OverrideFontSize          , "settings/overridefontsize"             , OVERRIDE_FONT_SIZE_DEFAULT)
 SETTING(fontSize                  , FontSize                  , "settings/fontSize"                     , -1)
 SETTING(globalPressureCurve       , GlobalPressureCurve       , "settings/input/globalcurve"            , QString("0,0;1,1;"))
+SETTING(hostEnableAdvanced        , HostEnableAdvanced        , "history/hostenableadvanced"            , false)
 SETTING(ignoreCarrierGradeNat     , IgnoreCarrierGradeNat     , "history/cgnalert"                      , false)
 SETTING(inputPresets              , InputPresets              , "inputpresets"                          , QVector<QVariantMap>())
 SETTING(insecurePasswordStorage   , InsecurePasswordStorage   , "settings/insecurepasswordstorage"      , false)

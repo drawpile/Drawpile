@@ -10,8 +10,11 @@
 #include <QButtonGroup>
 #include <QCheckBox>
 #include <QComboBox>
+#include <QFormLayout>
 #include <QFrame>
+#include <QGridLayout>
 #include <QHBoxLayout>
+#include <QLabel>
 #include <QLineEdit>
 #include <QPalette>
 #include <QRadioButton>
@@ -23,16 +26,16 @@ namespace startdialog {
 Host::Host(QWidget *parent)
 	: Page{parent}
 {
-	// TODO: make the form layout work with RTL or go back to a QFormLayout.
-	setLayoutDirection(Qt::LeftToRight);
-	utils::SanerFormLayout *layout = new utils::SanerFormLayout{this};
+	QVBoxLayout *layout = new QVBoxLayout{this};
+	layout->setAlignment(Qt::AlignTop);
 	layout->setContentsMargins(0, 0, 0, 0);
 
+	QFormLayout *generalSection = utils::addFormSection(layout);
 	m_titleEdit = new QLineEdit;
 	m_titleEdit->setMaxLength(100);
 	m_titleEdit->setToolTip(tr("The title is shown in the application title "
 							   "bar and in the session selection dialog"));
-	layout->addRow(tr("Title:"), m_titleEdit);
+	generalSection->addRow(tr("Title:"), m_titleEdit);
 	connect(
 		m_titleEdit, &QLineEdit::textChanged, this, &Host::updateHostEnabled);
 
@@ -41,42 +44,18 @@ Host::Host(QWidget *parent)
 	m_passwordEdit->setToolTip(
 		tr("Optional. If left blank, no password will be needed "
 		   "to join this session."));
-	layout->addRow(tr("Password:"), m_passwordEdit);
-
-	m_idAliasEdit = new QLineEdit;
-	m_idAliasEdit->setValidator(new SessionIdAliasValidator{this});
-	m_idAliasEdit->setToolTip(
-		tr("An optional user friendly ID for the session"));
-	layout->addRow(tr("ID Alias:"), m_idAliasEdit);
+	generalSection->addRow(tr("Password:"), m_passwordEdit);
 
 	m_nsfmBox = new QCheckBox{tr("Not suitable for minors (NSFM)")};
 	m_nsfmBox->setToolTip(
 		tr("Marks the session as having age-restricted content."));
-	layout->addSpanningRow(m_nsfmBox);
+	layout->addWidget(m_nsfmBox);
 
-	layout->addSeparator();
-
-	QHBoxLayout *listingLayout = new QHBoxLayout;
-	layout->addSpanningRow(listingLayout);
-
-	m_announceBox = new QCheckBox{tr("List at:")};
-	m_announceBox->setToolTip(tr("Announce the session at a public list"));
-	listingLayout->addWidget(m_announceBox);
-
-	m_listServerCombo = new QComboBox;
-	m_listServerCombo->setSizePolicy(
-		QSizePolicy::Expanding, QSizePolicy::Fixed);
-	listingLayout->addWidget(m_listServerCombo);
-	connect(
-		m_announceBox, &QAbstractButton::toggled, m_listServerCombo,
-		&QWidget::setEnabled);
-	m_listServerCombo->setEnabled(m_announceBox->isChecked());
-
-	layout->addSeparator();
+	utils::addFormSeparator(layout);
 
 	QRadioButton *useLocalRadio = new QRadioButton{tr("Host on this computer")};
 	useLocalRadio->setToolTip(tr("Use Drawpile's built-in server"));
-	layout->addSpanningRow(useLocalRadio);
+	layout->addWidget(useLocalRadio);
 #ifndef DP_HAVE_BUILTIN_SERVER
 	useLocalRadio->setEnabled(false);
 #	ifdef Q_OS_ANDROID
@@ -86,14 +65,13 @@ Host::Host(QWidget *parent)
 	QString notAvailableMessage = tr("The built-in server is not available on "
 									 "this installation of Drawpile.");
 #	endif
-	layout->addSpanningRow(
+	layout->addLayout(
 		utils::note(notAvailableMessage, QSizePolicy::RadioButton));
+	utils::addFormSpacer(layout);
 #endif
 
-	layout->addSpacer();
-
 	QHBoxLayout *remoteLayout = new QHBoxLayout;
-	layout->addSpanningRow(remoteLayout);
+	layout->addLayout(remoteLayout);
 
 	QRadioButton *useRemoteRadio = new QRadioButton{tr("Host at:")};
 	useRemoteRadio->setToolTip(tr("Use an external dedicated server"));
@@ -117,6 +95,34 @@ Host::Host(QWidget *parent)
 		useRemoteRadio, &QAbstractButton::toggled, m_remoteHostCombo,
 		&QWidget::setEnabled);
 	m_remoteHostCombo->setEnabled(m_useGroup->checkedId() == USE_REMOTE);
+
+	utils::addFormSeparator(layout);
+
+	m_advancedBox = new QCheckBox(tr("Enable advanced options"));
+	layout->addWidget(m_advancedBox);
+	connect(
+		m_advancedBox, &QCheckBox::stateChanged, this,
+		&Host::updateAdvancedSectionVisible);
+
+	m_advancedSection = utils::addFormSection(layout);
+
+	m_idAliasLabel = new QLabel(tr("ID Alias:"));
+	m_idAliasEdit = new QLineEdit;
+	m_idAliasEdit->setValidator(new SessionIdAliasValidator{this});
+	m_idAliasEdit->setToolTip(
+		tr("An optional user friendly ID for the session"));
+	m_advancedSection->addRow(m_idAliasLabel, m_idAliasEdit);
+
+	m_announceBox = new QCheckBox{tr("List at:")};
+	m_announceBox->setToolTip(tr("Announce the session at a public list"));
+	m_listServerCombo = new QComboBox;
+	m_listServerCombo->setSizePolicy(
+		QSizePolicy::Expanding, QSizePolicy::Fixed);
+	m_advancedSection->addRow(m_announceBox, m_listServerCombo);
+	connect(
+		m_announceBox, &QAbstractButton::toggled, m_listServerCombo,
+		&QWidget::setEnabled);
+	m_listServerCombo->setEnabled(m_announceBox->isChecked());
 
 	desktop::settings::Settings &settings = dpApp().settings();
 	settings.bindLastSessionTitle(m_titleEdit);
@@ -143,6 +149,9 @@ Host::Host(QWidget *parent)
 		&Host::updateRemoteHosts);
 	updateRemoteHosts();
 
+	settings.bindHostEnableAdvanced(m_advancedBox);
+	settings.bindHostEnableAdvanced(this, &Host::updateAdvancedSectionVisible);
+
 #ifndef DP_HAVE_BUILTIN_SERVER
 	useRemoteRadio->setChecked(true);
 #endif
@@ -160,10 +169,12 @@ void Host::activate()
 void Host::accept()
 {
 	if(canHost()) {
+		bool advanced = m_advancedBox->isChecked();
 		emit host(
 			m_titleEdit->text().trimmed(), m_passwordEdit->text().trimmed(),
-			m_idAliasEdit->text(), m_nsfmBox->isChecked(),
-			m_announceBox->isChecked()
+			advanced ? m_idAliasEdit->text() : QString(),
+			m_nsfmBox->isChecked(),
+			advanced && m_announceBox->isChecked()
 				? m_listServerCombo->currentData().toString()
 				: QString{},
 			m_useGroup->checkedId() == USE_LOCAL ? QString{}
@@ -226,6 +237,15 @@ void Host::updateRemoteHosts()
 	} else {
 		m_remoteHostCombo->setEditText(editText);
 	}
+}
+
+void Host::updateAdvancedSectionVisible(bool visible)
+{
+	utils::ScopedUpdateDisabler disabler(this);
+	m_idAliasLabel->setVisible(visible);
+	m_idAliasEdit->setVisible(visible);
+	m_announceBox->setVisible(visible);
+	m_listServerCombo->setVisible(visible);
 }
 
 bool Host::canHost() const

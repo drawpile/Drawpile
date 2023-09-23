@@ -4,8 +4,11 @@
 #include <QAbstractItemView>
 #include <QAbstractScrollArea>
 #include <QEvent>
+#include <QFormLayout>
+#include <QFrame>
 #include <QPair>
 #include <QScrollBar>
+#include <QVBoxLayout>
 #include <QWidget>
 
 namespace utils {
@@ -197,6 +200,38 @@ bool isKineticScrollingBarsHidden()
 	const desktop::settings::Settings &settings = dpApp().settings();
 	return getKineticScrollEnabledGesture(settings).first &&
 		   settings.kineticScrollHideBars();
+}
+
+QFormLayout *addFormSection(QVBoxLayout *layout)
+{
+	QFormLayout *formLayout = new QFormLayout;
+	layout->addLayout(formLayout);
+	return formLayout;
+}
+
+int getFormSpacing(QVBoxLayout *layout)
+{
+	int rawSpacing = layout->parentWidget()->style()->pixelMetric(
+		QStyle::PM_LayoutVerticalSpacing, nullptr, layout->parentWidget());
+	// This can be negative on macOS apparently, so we use a measured value.
+	return rawSpacing < 0 ? 13 : rawSpacing * 3 / 2;
+}
+
+void addFormSpacer(QVBoxLayout *layout)
+{
+	QSpacerItem *spacer = new QSpacerItem(
+		0, getFormSpacing(layout), QSizePolicy::Minimum, QSizePolicy::Fixed);
+	layout->addSpacerItem(spacer);
+}
+
+void addFormSeparator(QVBoxLayout *layout)
+{
+	addFormSpacer(layout);
+	QFrame *separator = new QFrame;
+	separator->setForegroundRole(QPalette::Dark);
+	separator->setFrameShape(QFrame::HLine);
+	layout->addWidget(separator);
+	addFormSpacer(layout);
 }
 
 }
