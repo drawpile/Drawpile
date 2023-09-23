@@ -75,7 +75,7 @@ SETTING(lastAnnounce              , LastAnnounce              , "history/announc
 SETTING(lastAvatar                , LastAvatar                , "history/avatar"                        , QString())
 SETTING(lastFileOpenPath          , LastFileOpenPath          , "window/lastpath"                       , QString())
 SETTING(lastFileOpenPaths         , LastFileOpenPaths         , "window/lastpaths"                      , QVariantMap())
-SETTING(lastHostRemote            , LastHostRemote            , "history/hostremote"                    , false)
+SETTING(lastHostRemote            , LastHostRemote            , "history/hostremote"                    , true)
 SETTING(lastIdAlias               , LastIdAlias               , "history/idalias"                       , QString())
 SETTING(lastListingServer         , LastListingServer         , "history/listingserver"                 , -1)
 SETTING(lastNsfm                  , LastNsfm                  , "history/nsfm"                          , false)
