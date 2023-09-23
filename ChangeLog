@@ -34,6 +34,7 @@ Unreleased Version 2.2.0-pre
  * Feature: Stick ID alias and listing hosting options behind an advanced options checkbox, since they keep causing confusion.
  * Fix: Make host page in the start dialog work properly on Arabic and other right-to-left languages.
  * Feature: Allow choosing ffmpeg path on Windows. Thanks xxxx for suggesting.
+ * Fix: Move brushes to the proper place in MediBang-esque layout. Thanks xxxx for reporting.
 
 2023-08-26 Version 2.2.0-beta.7
  * Fix: Make classic brushes not go brighter when smudging into transparency. Thanks to cada for reporting.
