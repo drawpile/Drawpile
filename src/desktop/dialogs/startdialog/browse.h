@@ -82,6 +82,7 @@ private:
 	QHash<QString, sessionlisting::AnnouncementApiResponse *>
 		m_refreshesInProgress;
 	bool m_sectionFitInProgress = false;
+	bool m_activated = false;
 };
 
 }

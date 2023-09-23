@@ -204,7 +204,6 @@ Browse::Browse(QWidget *parent)
 	settings.bindFilterLocked(m_passwordBox);
 	settings.bindFilterNsfm(m_nsfmBox);
 	settings.bindFilterDuplicates(m_duplicatesBox);
-	settings.bindListServers(this, &Browse::updateListServers);
 
 	m_filteredSessions->setShowClosed(m_closedBox->isChecked());
 	m_filteredSessions->setShowPassworded(m_passwordBox->isChecked());
@@ -233,6 +232,10 @@ void Browse::activate()
 	emit hideLinks();
 	emit showButtons();
 	updateJoinButton();
+	if(!m_activated) {
+		m_activated = true;
+		dpApp().settings().bindListServers(this, &Browse::updateListServers);
+	}
 }
 
 void Browse::accept()
