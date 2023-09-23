@@ -176,7 +176,7 @@ ServerReply::makeCommandError(const QString &command, const QString &message)
 net::Message ServerReply::makeMessage(const QString &message)
 {
 	return make(
-		{{QStringLiteral("type"), QStringLiteral("message")},
+		{{QStringLiteral("type"), QStringLiteral("msg")},
 		 {QStringLiteral("message"), message}});
 }
 
