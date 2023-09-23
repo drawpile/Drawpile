@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>405</height>
+    <height>422</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,7 +15,7 @@
   </property>
   <layout class="QVBoxLayout">
    <item>
-    <widget class="QGroupBox">
+    <widget class="QGroupBox" name="videoOptionsGroup">
      <property name="title">
       <string>Video Options</string>
      </property>
@@ -27,7 +27,7 @@
        <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
       </property>
       <item row="1" column="1">
-       <layout class="QHBoxLayout">
+       <layout class="QHBoxLayout" name="framerateLayout">
         <item>
          <widget class="QSpinBox" name="fps">
           <property name="suffix">
@@ -42,7 +42,7 @@
          </widget>
         </item>
         <item>
-         <spacer>
+         <spacer name="framerateSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -57,21 +57,21 @@
        </layout>
       </item>
       <item row="3" column="0">
-       <widget class="QLabel">
+       <widget class="QLabel" name="framesizeLabel">
         <property name="text">
          <string>Size:</string>
         </property>
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QLabel">
+       <widget class="QLabel" name="framerateLabel">
         <property name="text">
          <string>Framerate:</string>
         </property>
        </widget>
       </item>
       <item row="0" column="0">
-       <widget class="QLabel">
+       <widget class="QLabel" name="videoFormatLabel">
         <property name="text">
          <string>Format:</string>
         </property>
@@ -81,7 +81,7 @@
        <widget class="QComboBox" name="exportFormatChoice"/>
       </item>
       <item row="3" column="1">
-       <layout class="QHBoxLayout">
+       <layout class="QHBoxLayout" name="framesizeLayout">
         <item>
          <widget class="QComboBox" name="sizeChoice"/>
         </item>
@@ -125,7 +125,7 @@
          </widget>
         </item>
         <item>
-         <spacer>
+         <spacer name="framesizeSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -143,7 +143,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox">
+    <widget class="QGroupBox" name="groupBox">
      <property name="title">
       <string>Export Options</string>
      </property>
@@ -171,22 +171,22 @@
         <property name="currentIndex">
          <number>0</number>
         </property>
-        <widget class="QWidget">
+        <widget class="QWidget" name="imageSeriesPage">
          <layout class="QFormLayout">
           <item row="0" column="0">
-           <widget class="QLabel">
+           <widget class="QLabel" name="imageFormatLabel">
             <property name="text">
              <string>Image format:</string>
             </property>
            </widget>
           </item>
           <item row="0" column="1">
-           <layout class="QHBoxLayout">
+           <layout class="QHBoxLayout" name="imageFormatLayout">
             <item>
              <widget class="QComboBox" name="imageFormatChoice"/>
             </item>
             <item>
-             <spacer>
+             <spacer name="imageFormatSpacer">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -201,7 +201,7 @@
            </layout>
           </item>
           <item row="1" column="0">
-           <widget class="QLabel">
+           <widget class="QLabel" name="filenamePatternLabel">
             <property name="text">
              <string>File name pattern:</string>
             </property>
@@ -221,7 +221,7 @@
            </widget>
           </item>
           <item row="3" column="1">
-           <widget class="QLabel">
+           <widget class="QLabel" name="filenamePlaceholderLabel">
             <property name="text">
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Supported pattern placeholders:&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{F}&lt;/span&gt; - frame number&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{E}&lt;/span&gt; - file extension&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
@@ -232,20 +232,32 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget">
+        <widget class="QWidget" name="ffmpegPage">
          <layout class="QFormLayout">
-          <item row="0" column="0" colspan="2">
-           <widget class="QLabel" name="ffmpegNotFoundWarning">
-            <property name="styleSheet">
-             <string notr="true">color: red</string>
-            </property>
+          <item row="0" column="0">
+           <widget class="QLabel" name="ffmpegPathLabel">
             <property name="text">
-             <string>ffmpeg executable not found</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
+             <string>Path to ffmpeg:</string>
             </property>
            </widget>
+          </item>
+          <item row="0" column="1">
+           <layout class="QHBoxLayout" name="ffmpegPathLayout">
+            <item>
+             <widget class="QLineEdit" name="ffmpegPathEdit">
+              <property name="placeholderText">
+               <string notr="true">ffmpeg</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="ffmpegPathButton">
+              <property name="text">
+               <string>Choose</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item row="1" column="0" colspan="2">
            <widget class="QLineEdit" name="ffmpegBasics">
@@ -254,17 +266,17 @@
             </property>
            </widget>
           </item>
+          <item row="2" column="0" colspan="2">
+           <widget class="QLabel" name="ffmpegCustomLabel">
+            <property name="text">
+             <string>Custom Arguments:</string>
+            </property>
+           </widget>
+          </item>
           <item row="3" column="0" colspan="2">
            <widget class="QPlainTextEdit" name="ffmpegCustom">
             <property name="placeholderText">
              <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="ffmpegCustomLabel">
-            <property name="text">
-             <string>Custom Arguments:</string>
             </property>
            </widget>
           </item>

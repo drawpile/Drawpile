@@ -139,6 +139,7 @@ SETTING(twoFingerRotate           , TwoFingerRotate           , "settings/input/
 SETTING(twoFingerZoom             , TwoFingerZoom             , "settings/input/touchpinch"             , true)
 SETTING(updateCheckEnabled        , UpdateCheckEnabled        , "settings/updatecheck"                  , true)
 SETTING(videoExportCustomFfmpeg   , VideoExportCustomFfmpeg   , "videoexport/customffmpeg"              , QString())
+SETTING(videoExportFfmpegPath     , VideoExportFfmpegPath     , "videoexport/ffmpegpath"                , QString("ffmpeg"))
 SETTING(videoExportFormat         , VideoExportFormat         , "videoexport/formatchoice"              , VideoExporter::Format::IMAGE_SERIES)
 SETTING(videoExportFrameHeight    , VideoExportFrameHeight    , "videoexport/frameheight"               , 720)
 SETTING(videoExportFrameRate      , VideoExportFrameRate      , "videoexport/fps"                       , 30)

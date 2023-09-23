@@ -67,10 +67,12 @@ VideoExportDialog::VideoExportDialog(QWidget *parent) :
 	settings.bindVideoExportFrameWidth(m_ui->framewidth);
 	settings.bindVideoExportFrameHeight(m_ui->frameheight);
 	settings.bindVideoExportSizeChoice(m_ui->sizeChoice, std::nullopt);
+	settings.bindVideoExportFfmpegPath(m_ui->ffmpegPathEdit);
+	settings.bindVideoExportFfmpegPath(this, &VideoExportDialog::updateUi);
 	settings.bindVideoExportCustomFfmpeg(m_ui->ffmpegCustom);
-
-	// Check for ffmpeg
-	m_ui->ffmpegNotFoundWarning->setHidden(FfmpegExporter::checkIsFfmpegAvailable());
+	connect(
+		m_ui->ffmpegPathButton, &QAbstractButton::clicked, this,
+		&VideoExportDialog::chooseFfmpegPath);
 
 	updateUi();
 }
@@ -78,6 +80,22 @@ VideoExportDialog::VideoExportDialog(QWidget *parent) :
 VideoExportDialog::~VideoExportDialog()
 {
 	delete m_ui;
+}
+
+void VideoExportDialog::chooseFfmpegPath()
+{
+#ifdef Q_OS_WINDOWS
+	QString executableFilter =
+		//: Used for picking a kind of file, used like "Executables (*.exe)".
+		QStringLiteral("%1 (*.exe)").arg(tr("Executables"));
+#else
+	QString executableFilter;
+#endif
+	QString ffmpegPath = QFileDialog::getOpenFileName(
+		this, tr("Choose ffmpeg path"), QString(), executableFilter);
+	if(!ffmpegPath.isEmpty()) {
+		m_ui->ffmpegPathEdit->setText(ffmpegPath);
+	}
 }
 
 void VideoExportDialog::updateUi()
@@ -98,7 +116,8 @@ void VideoExportDialog::updateUi()
 		}
 		args.append({"-y", "<FILENAME>"});
 
-		m_ui->ffmpegBasics->setText("ffmpeg " + args.join(QChar(' ')));
+		m_ui->ffmpegBasics->setText(QStringLiteral("%1 %2").arg(
+			getFfmpegPath(), args.join(QChar(' '))));
 		m_ui->ffmpegCustomLabel->setVisible(format == VideoExporter::FFMPEG_CUSTOM);
 		m_ui->ffmpegCustom->setVisible(format == VideoExporter::FFMPEG_CUSTOM);
 	}
@@ -136,6 +155,12 @@ VideoExporter *VideoExportDialog::getExporter()
 	return ve;
 }
 
+QString VideoExportDialog::getFfmpegPath()
+{
+	QString path = m_ui->ffmpegPathEdit->text().trimmed();
+	return path.isEmpty() ? QStringLiteral("ffmpeg") : path;
+}
+
 VideoExporter *VideoExportDialog::getImageSeriesExporter()
 {
 	QString dir = FileWrangler{this}.getSaveAnimationFramesPath();
@@ -166,7 +191,8 @@ VideoExporter *VideoExportDialog::getFfmpegExporter(VideoExporter::Format format
 		return nullptr;
 	} else {
 		return new FfmpegExporter{
-			format, filename, m_ui->ffmpegCustom->toPlainText()};
+			format, getFfmpegPath(), filename,
+			m_ui->ffmpegCustom->toPlainText()};
 	}
 }
 

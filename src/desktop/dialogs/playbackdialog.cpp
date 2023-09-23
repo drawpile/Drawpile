@@ -303,49 +303,61 @@ void PlaybackDialog::keyPressEvent(QKeyEvent *event)
 #ifndef Q_OS_ANDROID
 void PlaybackDialog::onVideoExportClicked()
 {
-	QScopedPointer<VideoExportDialog> dialog(new VideoExportDialog(this));
-	VideoExporter *ve = nullptr;
+	VideoExportDialog *dlg = new VideoExportDialog(this);
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
+	dlg->setWindowModality(Qt::WindowModal);
+	connect(dlg, &QDialog::accepted, this, [this, dlg]() {
+		startVideoExport(dlg->getExporter());
+	});
+	dlg->show();
+}
 
-	// Loop until the user has selected a valid exporter
-	// configuration or cancelled.
-	while(!ve) {
-		if(dialog->exec() != QDialog::Accepted)
-			return;
-
-		ve = dialog->getExporter();
-	}
-
-	m_exporter = ve;
+void PlaybackDialog::startVideoExport(VideoExporter *exporter)
+{
+	m_exporter = exporter;
 	m_exporter->setParent(this);
 	m_exporter->start();
 
 	m_ui->exportStack->setCurrentIndex(0);
 	m_ui->saveFrame->setEnabled(true);
-	connect(m_exporter, &VideoExporter::exporterFinished, this, [this]() {
-		setPlaying(false);
-		m_ui->exportStack->setCurrentIndex(1);
-	});
-	connect(
-		m_exporter, &VideoExporter::exporterFinished, m_exporter,
-		&VideoExporter::deleteLater);
 
+	connect(
+		m_exporter, &VideoExporter::exporterFinished, this,
+		&PlaybackDialog::videoExporterFinished);
 	connect(
 		m_exporter, &VideoExporter::exporterError, this,
-		[this](const QString &msg) {
-			setPlaying(false);
-			QMessageBox::warning(this, tr("Video error"), msg);
-		});
-
+		&PlaybackDialog::videoExporterError);
 	connect(
 		m_ui->saveFrame, &QAbstractButton::clicked, this,
 		&PlaybackDialog::exportFrame);
 	connect(
 		m_ui->stopExport, &QAbstractButton::clicked, m_exporter,
 		&VideoExporter::finish);
-
 	connect(
 		m_exporter, &VideoExporter::exporterReady, this,
 		&PlaybackDialog::onExporterReady);
+}
+
+void PlaybackDialog::videoExporterError(const QString &msg)
+{
+	setPlaying(false);
+	QMessageBox::warning(this, tr("Video error"), msg);
+}
+
+void PlaybackDialog::videoExporterFinished(bool showExportDialogAgain)
+{
+	setPlaying(false);
+	m_ui->exportStack->setCurrentIndex(1);
+
+	if(m_exporter) {
+		m_exporter->deleteLater();
+		m_exporter = nullptr;
+	}
+
+	if(showExportDialogAgain) {
+		QMetaObject::invokeMethod(
+			this, "onVideoExportClicked", Qt::QueuedConnection);
+	}
 }
 #endif
 

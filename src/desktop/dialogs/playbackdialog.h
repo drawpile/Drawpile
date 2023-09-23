@@ -56,6 +56,8 @@ private slots:
 	void onBuildIndexClicked();
 #ifndef Q_OS_ANDROID
 	void onVideoExportClicked();
+	void videoExporterError(const QString &msg);
+	void videoExporterFinished(bool showExportDialogAgain);
 #endif
 
 	void exportFrame(int count = 1);
@@ -64,6 +66,10 @@ private:
 	void playbackCommand(std::function<DP_PlayerResult()> fn);
 	void updateButtons();
 	static bool isErrorResult(DP_PlayerResult result);
+
+#ifndef Q_OS_ANDROID
+	void startVideoExport(VideoExporter *exporter);
+#endif
 
 	Ui_PlaybackDialog *m_ui;
 	canvas::PaintEngine *m_paintengine;

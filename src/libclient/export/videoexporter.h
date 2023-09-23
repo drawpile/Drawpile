@@ -95,7 +95,7 @@ signals:
 	void exporterError(const QString &message);
 
 	//! This signal is emitted after the exporter has shut down normally
-	void exporterFinished();
+	void exporterFinished(bool showExportDialogAgain);
 
 protected:
 	/**

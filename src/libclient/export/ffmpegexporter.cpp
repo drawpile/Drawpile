@@ -8,10 +8,11 @@
 #include "libshared/util/qtcompat.h"
 
 FfmpegExporter::FfmpegExporter(
-	Format format, const QString &filename, const QString &customArguments,
-	QObject *parent)
+	Format format, const QString &ffmpegPath, const QString &filename,
+	const QString &customArguments, QObject *parent)
 	: VideoExporter(parent)
 	, m_format{format}
+	, m_ffmpegPath{ffmpegPath}
 	, m_filename{filename}
 	, m_customArguments{customArguments}
 	, m_encoder{nullptr}
@@ -113,20 +114,39 @@ void FfmpegExporter::initExporter()
 	connect(m_encoder, &QProcess::errorOccurred, this, &FfmpegExporter::processError);
 	connect(m_encoder, &QProcess::bytesWritten, this, &FfmpegExporter::bytesWritten);
 	connect(m_encoder, &QProcess::started, this, &FfmpegExporter::exporterReady);
-	connect(m_encoder, SIGNAL(finished(int)), this, SIGNAL(exporterFinished()));
+	connect(
+		m_encoder,
+		QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this,
+		&FfmpegExporter::processFinished);
 
-	qDebug() << "Encoding:" << "ffmpeg" << args;
+	qDebug() << "Encoding:" << m_ffmpegPath << args;
 
-	m_encoder->start("ffmpeg", args);
+	m_encoder->start(m_ffmpegPath, args);
 }
 
 void FfmpegExporter::processError(QProcess::ProcessError error)
 {
 	qWarning() << "Ffmpeg error:" << error;
 	switch(error) {
-	case QProcess::FailedToStart:
-		emit exporterError(tr("Couldn't start ffmpeg!"));
+	case QProcess::FailedToStart: {
+#if defined(Q_OS_WINDOWS)
+		QString installNote = tr(
+			"You can downlod a Windows version of ffmpeg from "
+			"<a href=\"https://ffmpeg.org/download.html\">ffmpeg.org</a>. "
+			"Choose ffmpeg.exe for the path to ffmpeg in Drawpile.");
+#elif defined(Q_OS_MACOS)
+		QString installNote = tr("You can install ffmpeg through Homebrew.");
+#else
+		QString installNote =
+			tr("You can probably install ffmpeg through your package manager.");
+#endif
+		//: %1 is the path to ffmpeg, %2 is the note on what to do to acquire
+		//: ffmpeg, e.g. download it on Windows or install the package on Linux.
+		emit exporterError(tr("Failed to start ffmpeg using '%1'. %2")
+							   .arg(m_ffmpegPath, installNote));
+		emit exporterFinished(true);
 		break;
+	}
 	case QProcess::Crashed:
 		emit exporterError(tr("Ffmpeg crashed!"));
 		break;
@@ -188,18 +208,15 @@ void FfmpegExporter::bytesWritten(qint64 bytes)
 	}
 }
 
+void FfmpegExporter::processFinished(int exitCode, QProcess::ExitStatus exitStatus)
+{
+	Q_UNUSED(exitCode);
+	Q_UNUSED(exitStatus);
+	emit exporterFinished(false);
+}
+
 void FfmpegExporter::shutdownExporter()
 {
 	m_encoder->closeWriteChannel();
-}
-
-bool FfmpegExporter::checkIsFfmpegAvailable()
-{
-	QProcess p;
-	p.start("ffmpeg", QStringList());
-	const bool found = p.waitForStarted();
-	p.waitForFinished();
-
-	return found;
 }
 

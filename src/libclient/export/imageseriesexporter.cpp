@@ -36,5 +36,5 @@ void ImageSeriesExporter::initExporter()
 
 void ImageSeriesExporter::shutdownExporter()
 {
-	emit exporterFinished();
+	emit exporterFinished(false);
 }
