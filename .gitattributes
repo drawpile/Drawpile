@@ -3,3 +3,4 @@
 *.jpg -text
 *.jpeg -text
 *.db -text
+*.diff text !eol
