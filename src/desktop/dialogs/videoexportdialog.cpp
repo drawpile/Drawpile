@@ -74,6 +74,10 @@ VideoExportDialog::VideoExportDialog(QWidget *parent) :
 		m_ui->ffmpegPathButton, &QAbstractButton::clicked, this,
 		&VideoExportDialog::chooseFfmpegPath);
 
+	connect(
+		m_ui->buttonBox, &QDialogButtonBox::accepted, this,
+		&VideoExportDialog::chooseExportPath);
+
 	updateUi();
 }
 
@@ -123,17 +127,45 @@ void VideoExportDialog::updateUi()
 	}
 }
 
+void VideoExportDialog::chooseExportPath()
+{
+	m_format =
+		VideoExporter::Format(m_ui->exportFormatChoice->currentData().toInt());
+
+	switch(m_format) {
+	case VideoExporter::IMAGE_SERIES:
+		m_exportPath = FileWrangler{this}.getSaveAnimationFramesPath();
+		break;
+	case VideoExporter::FFMPEG_MP4:
+		m_exportPath = FileWrangler{this}.getSaveFfmpegMp4Path();
+		break;
+	case VideoExporter::FFMPEG_WEBM:
+		m_exportPath = FileWrangler{this}.getSaveFfmpegWebmPath();
+		break;
+	case VideoExporter::FFMPEG_CUSTOM:
+		m_exportPath = FileWrangler{this}.getSaveFfmpegCustomPath();
+		break;
+	default:
+		qWarning("Unknown video exporter format %d", int(m_format));
+		m_exportPath.clear();
+		break;
+	}
+
+	if(!m_exportPath.isEmpty()) {
+		accept();
+	}
+}
+
 VideoExporter *VideoExportDialog::getExporter()
 {
-	if(result() != QDialog::Accepted)
+	if(result() != QDialog::Accepted || m_exportPath.isEmpty()) {
 		return nullptr;
+	}
 
 	// Return appropriate exporter based on exporter format box selection
-	VideoExporter::Format format =
-		VideoExporter::Format(m_ui->exportFormatChoice->currentData().toInt());
-	VideoExporter *ve = format == VideoExporter::IMAGE_SERIES
+	VideoExporter *ve = m_format == VideoExporter::IMAGE_SERIES
 							? getImageSeriesExporter()
-							: getFfmpegExporter(format);
+							: getFfmpegExporter();
 
 	// Set common settings
 	ve->setFps(m_ui->fps->value());
@@ -163,37 +195,18 @@ QString VideoExportDialog::getFfmpegPath()
 
 VideoExporter *VideoExportDialog::getImageSeriesExporter()
 {
-	QString dir = FileWrangler{this}.getSaveAnimationFramesPath();
-	if(dir.isEmpty()) {
-		return nullptr;
-	} else {
-		ImageSeriesExporter *exporter = new ImageSeriesExporter;
-		exporter->setFilePattern(m_ui->filenamePattern->text());
-		exporter->setOutputPath(dir);
-		exporter->setFormat(m_ui->imageFormatChoice->currentText());
-		return exporter;
-	}
+	ImageSeriesExporter *exporter = new ImageSeriesExporter;
+	exporter->setFilePattern(m_ui->filenamePattern->text());
+	exporter->setOutputPath(m_exportPath);
+	exporter->setFormat(m_ui->imageFormatChoice->currentText());
+	return exporter;
 }
 
-VideoExporter *VideoExportDialog::getFfmpegExporter(VideoExporter::Format format)
+VideoExporter *VideoExportDialog::getFfmpegExporter()
 {
-	FileWrangler fw{this};
-	QString filename;
-	if(format == VideoExporter::FFMPEG_MP4) {
-		filename = FileWrangler{this}.getSaveFfmpegMp4Path();
-	} else if(format == VideoExporter::FFMPEG_WEBM) {
-		filename = FileWrangler{this}.getSaveFfmpegWebmPath();
-	} else {
-		filename = FileWrangler{this}.getSaveFfmpegCustomPath();
-	}
-
-	if(filename.isEmpty()) {
-		return nullptr;
-	} else {
-		return new FfmpegExporter{
-			format, getFfmpegPath(), filename,
-			m_ui->ffmpegCustom->toPlainText()};
-	}
+	return new FfmpegExporter{
+		m_format, getFfmpegPath(), m_exportPath,
+		m_ui->ffmpegCustom->toPlainText()};
 }
 
 }

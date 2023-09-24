@@ -26,13 +26,16 @@ public:
 private slots:
 	void chooseFfmpegPath();
 	void updateUi();
+	void chooseExportPath();
 
 private:
 	QString getFfmpegPath();
 	VideoExporter *getImageSeriesExporter();
-	VideoExporter *getFfmpegExporter(VideoExporter::Format format);
+	VideoExporter *getFfmpegExporter();
 
 	Ui_VideoExport *m_ui;
+	VideoExporter::Format m_format;
+	QString m_exportPath;
 };
 
 }
