@@ -316,7 +316,7 @@ void DP_recorder_free_join(DP_Recorder *r, char **out_error)
         if (out_error) {
             *out_error = error;
         }
-        else {
+        else if (error) {
             DP_warn("Error in recorder: %s", error);
             DP_free(error);
         }
