@@ -3327,6 +3327,13 @@ pub type DP_CanvasHistorySavePointFn = ::std::option::Option<
         snapshot_requested: bool,
     ),
 >;
+pub type DP_CanvasHistorySoftResetFn = ::std::option::Option<
+    unsafe extern "C" fn(
+        user: *mut ::std::os::raw::c_void,
+        context_id: ::std::os::raw::c_uint,
+        cs: *mut DP_CanvasState,
+    ),
+>;
 pub type DP_CanvasHistoryAcceptResetStateFn = ::std::option::Option<
     unsafe extern "C" fn(user: *mut ::std::os::raw::c_void, cs: *mut DP_CanvasState) -> bool,
 >;
@@ -3396,7 +3403,13 @@ extern "C" {
     );
 }
 extern "C" {
-    pub fn DP_canvas_history_soft_reset(ch: *mut DP_CanvasHistory);
+    pub fn DP_canvas_history_soft_reset(
+        ch: *mut DP_CanvasHistory,
+        dc: *mut DP_DrawContext,
+        context_id: ::std::os::raw::c_uint,
+        fn_: DP_CanvasHistorySoftResetFn,
+        user: *mut ::std::os::raw::c_void,
+    );
 }
 extern "C" {
     pub fn DP_canvas_history_undo_depth_limit(ch: *mut DP_CanvasHistory) -> ::std::os::raw::c_int;
@@ -3404,6 +3417,7 @@ extern "C" {
 extern "C" {
     pub fn DP_canvas_history_undo_depth_limit_set(
         ch: *mut DP_CanvasHistory,
+        dc: *mut DP_DrawContext,
         undo_depth_limit: ::std::os::raw::c_int,
     );
 }
@@ -4894,6 +4908,8 @@ extern "C" {
         renderer_user: *mut ::std::os::raw::c_void,
         save_point_fn: DP_CanvasHistorySavePointFn,
         save_point_user: *mut ::std::os::raw::c_void,
+        soft_reset_fn: DP_CanvasHistorySoftResetFn,
+        soft_reset_user: *mut ::std::os::raw::c_void,
         want_canvas_history_dump: bool,
         canvas_history_dump_dir: *const ::std::os::raw::c_char,
         get_time_ms_fn: DP_RecorderGetTimeMsFn,
@@ -5503,6 +5519,9 @@ extern "C" {
 }
 extern "C" {
     pub fn DP_acl_state_new_playback() -> *mut DP_AclState;
+}
+extern "C" {
+    pub fn DP_acl_state_new_clone(acls: *mut DP_AclState, local_user_id: u8) -> *mut DP_AclState;
 }
 extern "C" {
     pub fn DP_acl_state_free(acls: *mut DP_AclState);

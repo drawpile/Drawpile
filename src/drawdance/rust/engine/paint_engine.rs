@@ -77,6 +77,8 @@ impl PaintEngine {
                 user.cast(),
                 Some(Self::on_save_point),
                 user.cast(),
+                None,
+                ptr::null_mut(),
                 false,
                 ptr::null(),
                 Some(Self::on_get_time_ms),
