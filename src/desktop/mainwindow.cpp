@@ -2151,7 +2151,10 @@ void MainWindow::onServerDisconnected(const QString &message, const QString &err
 	}
 	// If logged in but disconnected unexpectedly, show notification bar
 	else if(m_doc->client()->isLoggedIn() && !localDisconnect) {
-		m_view->showDisconnectedWarning(tr("Disconnected:") + " " + message);
+		m_view->showDisconnectedWarning(
+			message.isEmpty()
+			? tr("You've been disconnected from the session.")
+			: tr("Disconnected: %1").arg(message));
 	}
 }
 
