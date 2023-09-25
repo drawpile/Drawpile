@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/resetdialog.h"
 #include "desktop/main.h"
+#include "desktop/utils/widgetutils.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/utils/images.h"
 #include "libshared/util/qtcompat.h"
@@ -49,6 +50,12 @@ QVector<ResetPoint> makeResetPoints(const canvas::PaintEngine *pe)
 	}
 
 	return resetPoints;
+}
+
+drawdance::CanvasState loadCanvasStateFromFile(const QString &file)
+{
+	utils::ScopedOverrideCursor waitCursor;
+	return drawdance::CanvasState::load(file);
 }
 
 }
@@ -172,11 +179,7 @@ void ResetDialog::onOpenClicked()
 	if(file.isEmpty())
 		return;
 
-	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-
-	drawdance::CanvasState canvasState = drawdance::CanvasState::load(file);
-	QApplication::restoreOverrideCursor();
-
+	drawdance::CanvasState canvasState = loadCanvasStateFromFile(file);
 	if(canvasState.isNull()) {
 		QMessageBox::warning(this, tr("Reset"), tr("Couldn't open file"));
 	} else {

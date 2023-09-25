@@ -1358,10 +1358,9 @@ void MainWindow::open(const QUrl& url)
 			}
 
 		} else {
-			QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+			utils::ScopedOverrideCursor waitCursor;
 			DP_LoadResult result = m_doc->loadFile(file);
 			showLoadResultMessage(result);
-			QApplication::restoreOverrideCursor();
 			if(result) {
 				emit hostSessionEnabled(true);
 			}
@@ -1969,6 +1968,7 @@ void MainWindow::tryToGainOp()
 
 void MainWindow::resetSession()
 {
+	utils::ScopedOverrideCursor waitCursor;
 	dialogs::ResetDialog *dlg = new dialogs::ResetDialog(
 		m_doc->canvas()->paintEngine(), m_doc->isCompatibilityMode(), this);
 	dlg->setWindowModality(Qt::WindowModal);
@@ -1986,6 +1986,7 @@ void MainWindow::resetSession()
 	// Session resetting is available only to session operators
 	if(m_doc->canvas()->aclState()->amOperator()) {
 		connect(dlg, &dialogs::ResetDialog::resetSelected, this, [this, dlg]() {
+			utils::ScopedOverrideCursor innerWaitCursor;
 			canvas::CanvasModel *canvas = m_doc->canvas();
 			if(canvas->aclState()->amOperator()) {
 				net::MessageList snapshot = dlg->getResetImage();

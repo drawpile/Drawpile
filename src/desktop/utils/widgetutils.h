@@ -6,12 +6,20 @@
 #include <QScroller>
 
 class QAbstractScrollArea;
+class QCursor;
 class QFormLayout;
 class QFrame;
 class QVBoxLayout;
 class QWidget;
 
 namespace utils {
+
+class ScopedOverrideCursor {
+public:
+	ScopedOverrideCursor(); // Uses Qt::WaitCursor.
+	ScopedOverrideCursor(const QCursor &cursor);
+	~ScopedOverrideCursor();
+};
 
 class ScopedUpdateDisabler {
 public:

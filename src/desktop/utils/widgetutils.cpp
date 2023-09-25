@@ -3,6 +3,7 @@
 #include "desktop/main.h"
 #include <QAbstractItemView>
 #include <QAbstractScrollArea>
+#include <QCursor>
 #include <QEvent>
 #include <QFormLayout>
 #include <QFrame>
@@ -12,6 +13,21 @@
 #include <QWidget>
 
 namespace utils {
+
+ScopedOverrideCursor::ScopedOverrideCursor()
+	: ScopedOverrideCursor(QCursor(Qt::WaitCursor))
+{
+}
+
+ScopedOverrideCursor::ScopedOverrideCursor(const QCursor &cursor)
+{
+	QApplication::setOverrideCursor(cursor);
+}
+
+ScopedOverrideCursor::~ScopedOverrideCursor()
+{
+	QApplication::restoreOverrideCursor();
+}
 
 ScopedUpdateDisabler::ScopedUpdateDisabler(QWidget *widget)
 	: m_widget{widget}
