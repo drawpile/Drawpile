@@ -304,24 +304,28 @@ setMute(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 	if(args.size() != 2)
 		return CmdResult::err("Expected two arguments: userId true/false");
 
-	Client *c;
-	CmdResult result = getClient(client->session(), args.at(0), c);
+	Client *target;
+	CmdResult result = getClient(client->session(), args.at(0), target);
 	if(!result.success()) {
 		return result;
 	}
 
 	const bool m = args.at(1).toBool();
-	if(c->isMuted() != m) {
-		c->setMuted(m);
+	if(m && target->isModerator()) {
+		return CmdResult::err("cannot mute moderators");
+	}
+
+	if(target->isMuted() != m) {
+		target->setMuted(m);
 		client->session()->sendUpdatedMuteList();
 		if(m)
-			c->log(Log()
-					   .about(Log::Level::Info, Log::Topic::Mute)
-					   .message("Muted by " + client->username()));
+			target->log(Log()
+							.about(Log::Level::Info, Log::Topic::Mute)
+							.message("Muted by " + client->username()));
 		else
-			c->log(Log()
-					   .about(Log::Level::Info, Log::Topic::Unmute)
-					   .message("Unmuted by " + client->username()));
+			target->log(Log()
+							.about(Log::Level::Info, Log::Topic::Unmute)
+							.message("Unmuted by " + client->username()));
 	}
 	return CmdResult::ok();
 }
