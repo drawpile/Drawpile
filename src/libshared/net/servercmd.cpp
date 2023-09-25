@@ -187,6 +187,32 @@ net::Message ServerReply::makeAlert(const QString &message)
 		 {QStringLiteral("message"), message}});
 }
 
+net::Message ServerReply::makeKeyMessage(
+	const QString &message, const QString &key, const QJsonObject &params)
+{
+	QJsonObject data = {
+		{QStringLiteral("type"), QStringLiteral("msg")},
+		{QStringLiteral("message"), message},
+		{QStringLiteral("T"), key}};
+	if(!params.isEmpty()) {
+		data[QStringLiteral("P")] = params;
+	}
+	return make(data);
+}
+
+net::Message ServerReply::makeKeyAlert(
+	const QString &message, const QString &key, const QJsonObject &params)
+{
+	QJsonObject data = {
+		{QStringLiteral("type"), QStringLiteral("alert")},
+		{QStringLiteral("message"), message},
+		{QStringLiteral("T"), key}};
+	if(!params.isEmpty()) {
+		data[QStringLiteral("P")] = params;
+	}
+	return make(data);
+}
+
 net::Message ServerReply::makeCatchup(int count)
 {
 	return make(

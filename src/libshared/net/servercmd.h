@@ -46,6 +46,17 @@ struct ServerCommand {
  * message
  */
 struct ServerReply {
+	static constexpr char KEY_BAN[] = "ban";
+	static constexpr char KEY_KICK[] = "kick";
+	static constexpr char KEY_OP_GIVE[] = "opgive";
+	static constexpr char KEY_OP_TAKE[] = "optake";
+	static constexpr char KEY_RESET_CANCEL[] = "resetcancel";
+	static constexpr char KEY_RESET_FAILED[] = "resetfailed";
+	static constexpr char KEY_RESET_PREPARE[] = "resetprepare";
+	static constexpr char KEY_TERMINATE_SESSION[] = "terminatesession";
+	static constexpr char KEY_TRUST_GIVE[] = "trustgive";
+	static constexpr char KEY_TRUST_TAKE[] = "trusttake";
+
 	enum class ReplyType {
 		Unknown,
 		Login,			  // used during the login phase
@@ -77,6 +88,17 @@ struct ServerReply {
 	static net::Message makeMessage(const QString &message);
 
 	static net::Message makeAlert(const QString &message);
+
+	// Translatable messages. If the client knows the key, it will use a
+	// translated message. Otherwise, it will just print the literal message.
+
+	static net::Message makeKeyMessage(
+		const QString &message, const QString &key,
+		const QJsonObject &params = {});
+
+	static net::Message makeKeyAlert(
+		const QString &message, const QString &key,
+		const QJsonObject &params = {});
 
 	static net::Message makeCatchup(int count);
 

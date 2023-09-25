@@ -120,7 +120,9 @@ void Session::switchState(State newstate)
 			if(!m_history->reset(resetImage)) {
 				// This shouldn't normally happen, as the size limit should be
 				// caught while still uploading the reset.
-				messageAll("Session reset failed!", true);
+				keyMessageAll(
+					"Session reset failed!", true,
+					net::ServerReply::KEY_RESET_FAILED);
 				success = false;
 
 			} else {
@@ -149,7 +151,9 @@ void Session::switchState(State newstate)
 
 		m_resetstream.clear();
 		m_resetstreamsize = 0;
-		messageAll("Preparing for session reset!", true);
+		keyMessageAll(
+			"Preparing for session reset!", true,
+			net::ServerReply::KEY_RESET_PREPARE);
 	}
 
 	m_state = newstate;
@@ -207,11 +211,11 @@ void Session::joinUser(Client *user, bool host)
 	addToHistory(user->joinMessage());
 
 	if(user->isOperator() || m_history->isOperator(user->authId()))
-		changeOpStatus(user->id(), true, "the server");
+		changeOpStatus(user->id(), true, QString());
 
 	if(user->authFlags().contains("TRUSTED") ||
 	   m_history->isTrusted(user->authId()))
-		changeTrustedStatus(user->id(), true, "the server");
+		changeTrustedStatus(user->id(), true, QString());
 
 	ensureOperatorExists();
 
@@ -279,7 +283,8 @@ void Session::abortReset()
 	m_resetstream.clear();
 	m_resetstreamsize = 0;
 	switchState(State::Running);
-	messageAll("Session reset cancelled.", true);
+	keyMessageAll(
+		"Session reset cancelled.", true, net::ServerReply::KEY_RESET_CANCEL);
 }
 
 Client *Session::getClientById(uint8_t id)
@@ -481,18 +486,30 @@ Session::updateOwnership(QVector<uint8_t> ids, const QString &changedBy)
 			}
 
 			c->setOperator(op);
-			QString msg;
+			QString msg, key;
 			if(op) {
-				msg = "Made operator by " + changedBy;
+				msg = "Made operator by " + (changedBy.isEmpty()
+												 ? QStringLiteral("the server")
+												 : changedBy);
+				key = net::ServerReply::KEY_OP_GIVE;
 				c->log(
 					Log().about(Log::Level::Info, Log::Topic::Op).message(msg));
 			} else {
-				msg = "Operator status revoked by " + changedBy;
+				msg = "Operator status revoked by " +
+					  (changedBy.isEmpty() ? QStringLiteral("the server")
+										   : changedBy);
+				key = net::ServerReply::KEY_OP_TAKE;
 				c->log(Log()
 						   .about(Log::Level::Info, Log::Topic::Deop)
 						   .message(msg));
 			}
-			messageAll(c->username() + " " + msg, false);
+			keyMessageAll(
+				c->username() + " " + msg, false, key,
+				changedBy.isEmpty()
+					? QJsonObject{{QStringLiteral("target"), c->username()}}
+					: QJsonObject{
+						  {QStringLiteral("target"), c->username()},
+						  {QStringLiteral("by"), changedBy}});
 			if(c->isAuthenticated() && !c->isModerator()) {
 				m_history->setAuthenticatedOperator(c->authId(), op);
 			}
@@ -537,19 +554,31 @@ Session::updateTrustedUsers(QVector<uint8_t> ids, const QString &changedBy)
 		bool trusted = ids.contains(c->id());
 		if(trusted != c->isTrusted()) {
 			c->setTrusted(trusted);
-			QString msg;
+			QString msg, key;
 			if(trusted) {
-				msg = "Trusted by " + changedBy;
+				msg = "Trusted by " + (changedBy.isEmpty()
+										   ? QStringLiteral("the server")
+										   : changedBy);
+				key = net::ServerReply::KEY_TRUST_GIVE;
 				c->log(Log()
 						   .about(Log::Level::Info, Log::Topic::Trust)
 						   .message(msg));
 			} else {
-				msg = "Untrusted by " + changedBy;
+				msg = "Untrusted by " + (changedBy.isEmpty()
+											 ? QStringLiteral("the server")
+											 : changedBy);
+				key = net::ServerReply::KEY_TRUST_TAKE;
 				c->log(Log()
 						   .about(Log::Level::Info, Log::Topic::Untrust)
 						   .message(msg));
 			}
-			messageAll(c->username() + " " + msg, false);
+			keyMessageAll(
+				c->username() + " " + msg, false, key,
+				changedBy.isEmpty()
+					? QJsonObject{{QStringLiteral("target"), c->username()}}
+					: QJsonObject{
+						  {QStringLiteral("target"), c->username()},
+						  {QStringLiteral("by"), changedBy}});
 			if(c->isAuthenticated()) {
 				m_history->setAuthenticatedTrust(c->authId(), trusted);
 			}
@@ -932,6 +961,16 @@ void Session::messageAll(const QString &message, bool alert)
 	}
 }
 
+void Session::keyMessageAll(
+	const QString &message, bool alert, const QString &key,
+	const QJsonObject &params)
+{
+	Q_ASSERT(!message.isEmpty());
+	directToAll(
+		alert ? net::ServerReply::makeKeyAlert(message, key, params)
+			  : net::ServerReply::makeKeyMessage(message, key, params));
+}
+
 void Session::ensureOperatorExists()
 {
 	// If there is a way to gain OP status without being explicitly granted,
@@ -949,7 +988,7 @@ void Session::ensureOperatorExists()
 	}
 
 	if(!hasOp && !m_clients.isEmpty()) {
-		changeOpStatus(m_clients.first()->id(), true, "the server");
+		changeOpStatus(m_clients.first()->id(), true, QString());
 	}
 }
 

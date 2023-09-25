@@ -223,6 +223,10 @@ public:
 	 */
 	void messageAll(const QString &message, bool alert);
 
+	void keyMessageAll(
+		const QString &message, bool alert, const QString &key,
+		const QJsonObject &params = {});
+
 	/**
 	 * @brief Generate a request for session announcement
 	 *

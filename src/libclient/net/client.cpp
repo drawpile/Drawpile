@@ -283,11 +283,11 @@ void Client::handleMessages(int count, net::Message *msgs)
 	}
 }
 
-void Client::handleServerReply(const ServerReply &reply)
+void Client::handleServerReply(const ServerReply &msg)
 {
-	switch(reply.type) {
+	switch(msg.type) {
 	case ServerReply::ReplyType::Unknown:
-		qWarning() << "Unknown server reply:" << reply.message << reply.reply;
+		qWarning() << "Unknown server reply:" << msg.message << msg.reply;
 		break;
 	case ServerReply::ReplyType::Login:
 		qWarning("got login message while in session!");
@@ -297,45 +297,114 @@ void Client::handleServerReply(const ServerReply &reply)
 	case ServerReply::ReplyType::Error:
 	case ServerReply::ReplyType::Result:
 		emit serverMessage(
-			reply.message, reply.type == ServerReply::ReplyType::Alert);
+			translateMessage(msg.reply),
+			msg.type == ServerReply::ReplyType::Alert);
 		break;
 	case ServerReply::ReplyType::Log: {
 		QString time = QDateTime::fromString(
-						   reply.reply["timestamp"].toString(), Qt::ISODate)
+						   msg.reply["timestamp"].toString(), Qt::ISODate)
 						   .toLocalTime()
 						   .toString(Qt::ISODate);
-		QString user = reply.reply["user"].toString();
-		QString msg = reply.message;
+		QString user = msg.reply["user"].toString();
+		QString message = msg.message;
 		if(user.isEmpty())
-			emit serverLog(QStringLiteral("[%1] %2").arg(time, msg));
+			emit serverLog(QStringLiteral("[%1] %2").arg(time, message));
 		else
-			emit serverLog(QStringLiteral("[%1] %2: %3").arg(time, user, msg));
+			emit serverLog(
+				QStringLiteral("[%1] %2: %3").arg(time, user, message));
 	} break;
 	case ServerReply::ReplyType::SessionConf:
-		emit sessionConfChange(reply.reply["config"].toObject());
+		emit sessionConfChange(msg.reply["config"].toObject());
 		break;
 	case ServerReply::ReplyType::SizeLimitWarning:
 		// No longer used since 2.1.0. Replaced by RESETREQUEST
 		break;
 	case ServerReply::ReplyType::ResetRequest:
 		emit autoresetRequested(
-			reply.reply["maxSize"].toInt(), reply.reply["query"].toBool());
+			msg.reply["maxSize"].toInt(), msg.reply["query"].toBool());
 		break;
 	case ServerReply::ReplyType::Status:
-		emit serverStatusUpdate(reply.reply["size"].toInt());
+		emit serverStatusUpdate(msg.reply["size"].toInt());
 		break;
 	case ServerReply::ReplyType::Reset:
-		handleResetRequest(reply);
+		handleResetRequest(msg);
 		break;
 	case ServerReply::ReplyType::Catchup:
 		m_server->setSmoothEnabled(false);
-		m_catchupTo = reply.reply["count"].toInt();
+		m_catchupTo = msg.reply["count"].toInt();
 		qInfo("Catching up to %d messages", m_catchupTo);
 		m_caughtUp = 0;
 		m_catchupProgress = 0;
 		emit catchupProgress(m_catchupTo > 0 ? 0 : 100);
 		break;
 	}
+}
+
+QString Client::translateMessage(const QJsonObject &reply)
+{
+	QJsonValue keyValue = reply[QStringLiteral("T")];
+	if(keyValue.isString()) {
+		QString key = keyValue.toString();
+		QJsonObject params = reply[QStringLiteral("P")].toObject();
+		if(key == net::ServerReply::KEY_BAN) {
+			return tr("%1 banned by %2.")
+				.arg(
+					params[QStringLiteral("target")].toString(),
+					params[QStringLiteral("by")].toString());
+		} else if(key == net::ServerReply::KEY_KICK) {
+			return tr("%1 kicked by %2.")
+				.arg(
+					params[QStringLiteral("target")].toString(),
+					params[QStringLiteral("by")].toString());
+		} else if(key == net::ServerReply::KEY_OP_GIVE) {
+			QString target = params[QStringLiteral("target")].toString();
+			QString by = params[QStringLiteral("by")].toString();
+			if(by.isEmpty()) {
+				return tr("%1 made operator by the server.").arg(target);
+			} else {
+				return tr("%1 made operator by %2.").arg(target, by);
+			}
+		} else if(key == net::ServerReply::KEY_OP_TAKE) {
+			QString target = params[QStringLiteral("target")].toString();
+			QString by = params[QStringLiteral("by")].toString();
+			if(by.isEmpty()) {
+				return tr("Operator status revoked from %1 by the server.")
+					.arg(target);
+			} else {
+				return tr("Operator status revoked form %1 by %2.")
+					.arg(target, by);
+			}
+		} else if(key == net::ServerReply::KEY_RESET_CANCEL) {
+			return tr("Session reset cancelled! An operator must unlock the "
+					  "canvas and reset the session manually.");
+		} else if(key == net::ServerReply::KEY_RESET_FAILED) {
+			return tr("Session reset failed! An operator must unlock the "
+					  "canvas and reset the session manually.");
+		} else if(key == net::ServerReply::KEY_RESET_PREPARE) {
+			return tr("Preparing for session reset! Please wait, the session "
+					  "should be available again shortly…");
+		} else if(key == net::ServerReply::KEY_TERMINATE_SESSION) {
+			return tr("Session terminated by moderator (%1).")
+				.arg(params[QStringLiteral("by")].toString());
+		} else if(key == net::ServerReply::KEY_TRUST_GIVE) {
+			QString target = params[QStringLiteral("target")].toString();
+			QString by = params[QStringLiteral("by")].toString();
+			if(by.isEmpty()) {
+				return tr("%1 trusted by the server.").arg(target);
+			} else {
+				return tr("%1 trusted by %2.").arg(target, by);
+			}
+		} else if(key == net::ServerReply::KEY_TRUST_TAKE) {
+			QString target = params[QStringLiteral("target")].toString();
+			QString by = params[QStringLiteral("by")].toString();
+			if(by.isEmpty()) {
+				return tr("%1 untrusted by the server.").arg(target);
+			} else {
+				return tr("%1 untrusted by %2.").arg(target, by);
+			}
+		}
+	}
+	return reply[QStringLiteral("message")].toString();
 }
 
 void Client::handleResetRequest(const ServerReply &msg)

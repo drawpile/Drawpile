@@ -228,6 +228,7 @@ private:
 	filterCompatibleMessages(int count, const net::Message *msgs);
 
 	void handleServerReply(const ServerReply &msg);
+	QString translateMessage(const QJsonObject &reply);
 	void handleResetRequest(const ServerReply &msg);
 	void handleData(const net::Message &msg);
 	void handleUserInfo(const net::Message &msg, DP_MsgData *md);

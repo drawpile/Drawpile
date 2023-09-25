@@ -184,8 +184,11 @@ kickUser(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 			client->session()->getPastClientById(args.at(0).toInt());
 		if(target.isBannable) {
 			client->session()->addBan(target, client->username());
-			client->session()->messageAll(
-				target.username + " banned by " + client->username(), false);
+			client->session()->keyMessageAll(
+				target.username + " banned by " + client->username(), false,
+				net::ServerReply::KEY_BAN,
+				{{QStringLiteral("target"), target.username},
+				 {QStringLiteral("by"), client->username()}});
 			return CmdResult::ok();
 		} else {
 			return CmdResult::err(target.username + " cannot be banned.");
@@ -211,11 +214,17 @@ kickUser(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 
 	if(ban) {
 		client->session()->addBan(target, client->username());
-		client->session()->messageAll(
-			target->username() + " banned by " + client->username(), false);
+		client->session()->keyMessageAll(
+			target->username() + " banned by " + client->username(), false,
+			net::ServerReply::KEY_BAN,
+			{{QStringLiteral("target"), target->username()},
+			 {QStringLiteral("by"), client->username()}});
 	} else {
-		client->session()->messageAll(
-			target->username() + " kicked by " + client->username(), false);
+		client->session()->keyMessageAll(
+			target->username() + " kicked by " + client->username(), false,
+			net::ServerReply::KEY_KICK,
+			{{QStringLiteral("target"), target->username()},
+			 {QStringLiteral("by"), client->username()}});
 	}
 
 	target->disconnectClient(
@@ -240,9 +249,11 @@ killSession(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 	Q_UNUSED(args);
 	Q_UNUSED(kwargs);
 
-	client->session()->messageAll(
-		QString("Session shut down by moderator (%1)").arg(client->username()),
-		true);
+	client->session()->keyMessageAll(
+		QStringLiteral("Session shut down by moderator (%1)")
+			.arg(client->username()),
+		true, net::ServerReply::KEY_TERMINATE_SESSION,
+		{{QStringLiteral("by"), client->username()}});
 	client->session()->killSession();
 	return CmdResult::ok();
 }
