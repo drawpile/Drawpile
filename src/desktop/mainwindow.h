@@ -20,6 +20,7 @@ extern "C" {
 #include "desktop/scene/toggleitem.h"
 #include "libclient/tools/tool.h"
 #include "libclient/canvas/acl.h"
+#include "libclient/drawdance/canvasstate.h"
 #include "libclient/export/animationsaverrunnable.h"
 
 class QActionGroup;
@@ -163,7 +164,9 @@ private slots:
 #endif
 
 	void showResetNoticeDialog(const drawdance::CanvasState &canvasState);
-	void savePreResetImageAs(const drawdance::CanvasState &canvasState);
+	void updateCatchupProgress(int percent);
+	void savePreResetImageAs();
+	void discardPreResetImage();
 	void showCompatibilityModeWarning();
 
 	void onOperatorModeChange(bool op);
@@ -235,8 +238,6 @@ protected:
 	bool event(QEvent *event) override;
 
 private:
-	static constexpr char RESET_NOTICE_DIALOG_NAME[] = "resetnoticedialog";
-
 	MainWindow *replaceableWindow();
 
 	void connectStartDialog(dialogs::StartDialog *dlg);
@@ -343,6 +344,8 @@ private:
 	Document *m_doc;
 	MainActions *m_ma;
 	bool m_exitAfterSave;
+
+	drawdance::CanvasState m_preResetCanvasState;
 };
 
 #endif

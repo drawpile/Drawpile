@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/widgets/notifbar.h"
-
-#include <QResizeEvent>
+#include "desktop/main.h"
 #include <QBoxLayout>
+#include <QGraphicsDropShadowEffect>
 #include <QLabel>
-#include <QPushButton>
 #include <QPainter>
 #include <QPalette>
-#include <QGraphicsDropShadowEffect>
+#include <QPushButton>
+#include <QResizeEvent>
 #include <QStyle>
+#include <QTimer>
 
 namespace widgets {
 
@@ -28,13 +28,23 @@ NotificationBar::NotificationBar(QWidget *parent)
 
 	m_actionButton = new QPushButton(this);
 	layout->addWidget(m_actionButton);
-	connect(m_actionButton, &QPushButton::clicked, this, &NotificationBar::actionButtonClicked);
-	connect(m_actionButton, &QPushButton::clicked, this, &NotificationBar::hide);
+	connect(
+		m_actionButton, &QPushButton::clicked, this,
+		&NotificationBar::actionButtonClicked);
+	connect(
+		m_actionButton, &QPushButton::clicked, this,
+		&NotificationBar::cancelAutoDismissTimer);
 
 	m_closeButton = new QPushButton(this);
-	m_closeButton->setIcon(style()->standardIcon(QStyle::SP_DialogCloseButton));
+	m_closeButton->setIcon(QIcon::fromTheme("cards-block"));
 	layout->addWidget(m_closeButton);
-	connect(m_closeButton, &QPushButton::clicked, this, &NotificationBar::hide);
+	connect(
+		m_closeButton, &QPushButton::clicked, this,
+		&NotificationBar::closeButtonClicked);
+	connect(
+		m_closeButton, &QPushButton::clicked, this,
+		&NotificationBar::cancelAutoDismissTimer);
+	updateCloseButtonText();
 
 	auto *dropshadow = new QGraphicsDropShadowEffect(this);
 	dropshadow->setOffset(0, 2);
@@ -44,33 +54,85 @@ NotificationBar::NotificationBar(QWidget *parent)
 	setGraphicsEffect(dropshadow);
 }
 
-void NotificationBar::show(const QString &text, const QString &actionButtonLabel, RoleColor color)
+void NotificationBar::show(
+	const QString &text, const QIcon &actionButtonIcon,
+	const QString &actionButtonLabel, RoleColor color)
 {
 	Q_ASSERT(parentWidget());
+	cancelAutoDismissTimer();
 
-	switch(color) {
-	case RoleColor::Warning:
-	case RoleColor::Fatal: setColor(0xed1515);//"#ed1515");
+	if(color == RoleColor::Warning) {
+		setColor(0xed1515, Qt::white);
+	} else {
+		QPalette pal = dpApp().palette();
+		setColor(pal.color(QPalette::Base), pal.color(QPalette::Text));
 	}
 
 	m_label->setText(text);
-	m_actionButton->setHidden(actionButtonLabel.isEmpty());
+	m_actionButton->setIcon(actionButtonIcon);
 	m_actionButton->setText(actionButtonLabel);
 
-	if(color == RoleColor::Fatal) {
-		m_closeButton->hide();
-	}
 	QWidget::show();
 }
 
-void NotificationBar::setColor(const QColor &color)
+void NotificationBar::setActionButtonEnabled(bool enabled)
+{
+	m_actionButton->setEnabled(enabled);
+}
+
+bool NotificationBar::isActionButtonEnabled() const
+{
+	return m_actionButton->isEnabled();
+}
+
+void NotificationBar::startAutoDismissTimer()
+{
+	if(!m_dismissTimer) {
+		m_dismissTimer = new QTimer(this);
+		m_dismissTimer->setInterval(1000);
+		connect(
+			m_dismissTimer, &QTimer::timeout, this,
+			&NotificationBar::tickAutoDismiss);
+	}
+	if(!m_dismissTimer->isActive()) {
+		m_dismissSeconds = NotificationBar::AUTO_DISMISS_SECONDS;
+		m_dismissTimer->start();
+		updateCloseButtonText();
+	}
+}
+
+void NotificationBar::cancelAutoDismissTimer()
+{
+	if(m_dismissTimer) {
+		m_dismissTimer->stop();
+		updateCloseButtonText();
+	}
+}
+
+void NotificationBar::tickAutoDismiss()
+{
+	if(--m_dismissSeconds > 0) {
+		updateCloseButtonText();
+	} else {
+		m_dismissTimer->stop();
+		m_closeButton->click();
+	}
+}
+
+void NotificationBar::updateCloseButtonText()
+{
+	m_closeButton->setText(
+		m_dismissTimer && m_dismissTimer->isActive()
+			//: Countdown to dismissal: "Dismiss (10)", "Dismiss (9)" etc.
+			? tr("Dismiss (%1)").arg(m_dismissSeconds)
+			: tr("Dismiss"));
+}
+
+void NotificationBar::setColor(const QColor &color, const QColor &textColor)
 {
 	m_color = color;
-	auto pal = palette();
-	if(color.lightness() < 128)
-		pal.setColor(QPalette::Text, Qt::white);
-	else
-		pal.setColor(QPalette::Text, Qt::black);
+	QPalette pal = palette();
+	pal.setColor(QPalette::Text, textColor);
 	setPalette(pal);
 	update();
 }
@@ -86,16 +148,16 @@ void NotificationBar::hideEvent(QHideEvent *)
 {
 	Q_ASSERT(parent());
 	parent()->removeEventFilter(this);
+	emit heightChanged(0);
 }
 
 bool NotificationBar::eventFilter(QObject *obj, QEvent *event)
 {
 	Q_ASSERT(obj == parent());
 	if(event->type() == QEvent::Resize) {
-		const QResizeEvent *re = static_cast<const QResizeEvent*>(event);
+		const QResizeEvent *re = static_cast<const QResizeEvent *>(event);
 		updateSize(re->size());
 	}
-
 	return false;
 }
 
@@ -107,15 +169,13 @@ void NotificationBar::paintEvent(QPaintEvent *e)
 
 void NotificationBar::updateSize(const QSize &parentSize)
 {
-	const int minHeight = qMax(
-		m_label->sizeHint().height(),
-		m_actionButton->sizeHint().height()
-	);
+	int height =
+		qMax(
+			m_label->sizeHint().height(), m_actionButton->sizeHint().height()) +
+		30;
 	move(0, 0);
-	resize(
-		parentSize.width(),
-		minHeight + 30
-	);
+	resize(parentSize.width(), height);
+	emit heightChanged(height);
 }
 
 }

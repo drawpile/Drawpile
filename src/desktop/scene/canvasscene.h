@@ -21,6 +21,7 @@ namespace drawingboard {
 
 class AnnotationItem;
 class CanvasItem;
+class CatchupItem;
 class LaserTrailItem;
 class NoticeItem;
 class SelectionItem;
@@ -52,6 +53,9 @@ public:
 	bool hasImage() const { return m_model != nullptr; }
 
 	void setSceneBounds(const QRectF &sceneBounds);
+
+	// Move HUD notices down when a reconnect or reset notification is shown.
+	void setNotificationBarHeight(int height);
 
 	void showTransformNotice(const QString &text);
 
@@ -107,6 +111,8 @@ public slots:
 
 	void canvasViewportChanged(const QPolygonF &viewport);
 
+	void setCatchupProgress(int percent);
+
 signals:
 	//! Canvas size has just changed
 	void canvasResized(int xoffset, int yoffset, const QSize &oldSize);
@@ -133,6 +139,7 @@ private:
 
 	void setTransformNoticePosition();
 	void setLockNoticePosition();
+	void setCatchupPosition();
 
 	//! The actual canvas model
 	canvas::CanvasModel *m_model;
@@ -152,8 +159,10 @@ private:
 	//! Current selection
 	SelectionItem *m_selection;
 
+	qreal m_topOffset = 0.0;
 	NoticeItem *m_transformNotice;
 	NoticeItem *m_lockNotice;
+	CatchupItem *m_catchup;
 	QVector<ToggleItem *> m_toggleItems;
 
 	bool m_showAnnotationBorders;

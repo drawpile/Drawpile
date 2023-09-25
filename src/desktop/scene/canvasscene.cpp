@@ -1,23 +1,21 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#include <QApplication>
-#include <QDebug>
-#include <QGraphicsItemGroup>
-#include <QTimer>
-
+#include "desktop/scene/canvasscene.h"
 #include "desktop/scene/annotationitem.h"
 #include "desktop/scene/canvasitem.h"
-#include "desktop/scene/canvasscene.h"
+#include "desktop/scene/catchupitem.h"
 #include "desktop/scene/lasertrailitem.h"
 #include "desktop/scene/noticeitem.h"
 #include "desktop/scene/selectionitem.h"
 #include "desktop/scene/usermarkeritem.h"
-
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/layerlist.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/canvas/userlist.h"
 #include "libclient/drawdance/annotationlist.h"
+#include <QApplication>
+#include <QDebug>
+#include <QGraphicsItemGroup>
+#include <QTimer>
 
 namespace drawingboard {
 
@@ -27,6 +25,7 @@ CanvasScene::CanvasScene(QObject *parent)
 	, m_selection(nullptr)
 	, m_transformNotice(nullptr)
 	, m_lockNotice(nullptr)
+	, m_catchup(nullptr)
 	, m_showAnnotationBorders(false)
 	, m_showAnnotations(true)
 	, m_showUserMarkers(true)
@@ -131,8 +130,25 @@ void CanvasScene::setSceneBounds(const QRectF &sceneBounds)
 	if(m_lockNotice) {
 		setLockNoticePosition();
 	}
+	if(m_catchup) {
+		setCatchupPosition();
+	}
 	for(ToggleItem *ti : m_toggleItems) {
 		ti->updatePosition(sceneBounds);
+	}
+}
+
+void CanvasScene::setNotificationBarHeight(int height)
+{
+	qreal topOffset = height;
+	if(m_topOffset != topOffset) {
+		m_topOffset = topOffset;
+		if(m_transformNotice) {
+			setTransformNoticePosition();
+		}
+		if(m_lockNotice) {
+			setLockNoticePosition();
+		}
 	}
 }
 
@@ -201,6 +217,16 @@ void CanvasScene::hideCanvas()
 void CanvasScene::canvasViewportChanged(const QPolygonF &viewport)
 {
 	m_canvasItem->setViewportBounds(viewport.boundingRect());
+}
+
+void CanvasScene::setCatchupProgress(int percent)
+{
+	if(!m_catchup) {
+		m_catchup = new CatchupItem(tr("Restoring canvas…"));
+		addItem(m_catchup);
+	}
+	m_catchup->setCatchupProgress(percent);
+	setCatchupPosition();
 }
 
 void CanvasScene::onSelectionChanged(canvas::Selection *selection)
@@ -347,6 +373,11 @@ void CanvasScene::advanceAnimations()
 	if(m_transformNotice && !m_transformNotice->animationStep(STEP)) {
 		delete m_transformNotice;
 		m_transformNotice = nullptr;
+	}
+
+	if(m_catchup && !m_catchup->animationStep(STEP)) {
+		delete m_catchup;
+		m_catchup = nullptr;
 	}
 }
 
@@ -508,16 +539,27 @@ void CanvasScene::showToggleItems(bool show)
 void CanvasScene::setTransformNoticePosition()
 {
 	m_transformNotice->setPos(
-		m_sceneBounds.topLeft() + QPointF{NOTICE_OFFSET, NOTICE_OFFSET});
+		m_sceneBounds.topLeft() +
+		QPointF(NOTICE_OFFSET, NOTICE_OFFSET + m_topOffset));
 }
 
 void CanvasScene::setLockNoticePosition()
 {
 	m_lockNotice->setPos(
 		m_sceneBounds.topRight() +
-		QPointF{
+		QPointF(
 			-m_lockNotice->boundingRect().width() - NOTICE_OFFSET,
-			NOTICE_OFFSET});
+			NOTICE_OFFSET + m_topOffset));
+}
+
+void CanvasScene::setCatchupPosition()
+{
+	QRectF catchupBounds = m_catchup->boundingRect();
+	m_catchup->setPos(
+		m_sceneBounds.bottomRight() -
+		QPointF(
+			catchupBounds.width() + NOTICE_OFFSET,
+			catchupBounds.height() + NOTICE_OFFSET));
 }
 
 }

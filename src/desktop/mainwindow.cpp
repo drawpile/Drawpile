@@ -110,7 +110,6 @@ static constexpr auto CTRL_KEY = Qt::CTRL;
 #include "desktop/dialogs/playbackdialog.h"
 #include "desktop/dialogs/dumpplaybackdialog.h"
 #include "desktop/dialogs/resetdialog.h"
-#include "desktop/dialogs/resetnoticedialog.h"
 #include "desktop/dialogs/sessionsettings.h"
 #include "desktop/dialogs/serverlogdialog.h"
 #include "desktop/dialogs/tablettester.h"
@@ -407,7 +406,14 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	connect(m_view, &widgets::CanvasView::reconnectRequested, this, [this]() {
 		joinSession(m_doc->client()->sessionUrl(true));
+		m_view->hideDisconnectedWarning();
 	});
+	connect(
+		m_view, &widgets::CanvasView::savePreResetStateRequested, this,
+		&MainWindow::savePreResetImageAs);
+	connect(
+		m_view, &widgets::CanvasView::savePreResetStateDismissed, this,
+		&MainWindow::discardPreResetImage);
 
 	// Network status changes
 	connect(m_doc, &Document::serverConnected, this, &MainWindow::onServerConnected);
@@ -1446,12 +1452,7 @@ void MainWindow::onCanvasSaveStarted()
 	getAction("savedocument")->setEnabled(false);
 	getAction("savedocumentas")->setEnabled(false);
 	m_viewStatusBar->showMessage(tr("Saving..."));
-
-	dialogs::ResetNoticeDialog *dlg = findChild<dialogs::ResetNoticeDialog *>(
-		RESET_NOTICE_DIALOG_NAME, Qt::FindDirectChildrenOnly);
-	if(dlg) {
-		dlg->setSaveInProgress(true);
-	}
+	m_view->setSaveInProgress(true);
 }
 
 void MainWindow::onCanvasSaved(const QString &errorMessage)
@@ -1459,12 +1460,7 @@ void MainWindow::onCanvasSaved(const QString &errorMessage)
 	QApplication::restoreOverrideCursor();
 	getAction("savedocument")->setEnabled(true);
 	getAction("savedocumentas")->setEnabled(true);
-
-	dialogs::ResetNoticeDialog *dlg = findChild<dialogs::ResetNoticeDialog *>(
-		RESET_NOTICE_DIALOG_NAME, Qt::FindDirectChildrenOnly);
-	if(dlg) {
-		dlg->setSaveInProgress(false);
-	}
+	m_view->setSaveInProgress(false);
 
 	setWindowModified(m_doc->isDirty());
 	updateTitle();
@@ -1484,30 +1480,46 @@ void MainWindow::onCanvasSaved(const QString &errorMessage)
 
 void MainWindow::showResetNoticeDialog(const drawdance::CanvasState &canvasState)
 {
-	dialogs::ResetNoticeDialog *dlg = findChild<dialogs::ResetNoticeDialog *>(
-		RESET_NOTICE_DIALOG_NAME, Qt::FindDirectChildrenOnly);
-	if(!dlg) {
-		dlg = new dialogs::ResetNoticeDialog{
-			canvasState, m_doc->isCompatibilityMode(), this};
-		dlg->setObjectName(RESET_NOTICE_DIALOG_NAME);
-		dlg->setAttribute(Qt::WA_DeleteOnClose);
-		dlg->setSaveInProgress(m_doc->isSaveInProgress());
-		connect(
-			dlg, &dialogs::ResetNoticeDialog::saveRequested, this,
-			&MainWindow::savePreResetImageAs);
-		connect(
-			m_doc, &Document::catchupProgress, dlg,
-			&dialogs::ResetNoticeDialog::catchupProgress);
-		dlg->show();
+	connect(
+		m_doc, &Document::catchupProgress, this,
+		&MainWindow::updateCatchupProgress);
+	updateCatchupProgress(0);
+	m_view->showResetNotice(
+		m_doc->isCompatibilityMode(), m_doc->isSaveInProgress());
+	if(m_preResetCanvasState.isNull()) {
+		m_preResetCanvasState = canvasState;
 	}
 }
 
-void MainWindow::savePreResetImageAs(const drawdance::CanvasState &canvasState)
+void MainWindow::updateCatchupProgress(int percent)
 {
-	QString result = FileWrangler{this}.savePreResetImageAs(m_doc, canvasState);
-	if(!result.isEmpty()) {
-		addRecentFile(result);
+	m_canvasscene->setCatchupProgress(percent);
+	if(percent >= 100) {
+		disconnect(
+			m_doc, &Document::catchupProgress, this,
+			&MainWindow::updateCatchupProgress);
 	}
+}
+
+void MainWindow::savePreResetImageAs()
+{
+	if(m_preResetCanvasState.isNull()) {
+		m_view->hideResetNotice();
+	} else {
+		QString result = FileWrangler(this).savePreResetImageAs(
+			m_doc, m_preResetCanvasState);
+		if(!result.isEmpty()) {
+			m_preResetCanvasState = drawdance::CanvasState::null();
+			m_view->hideResetNotice();
+			addRecentFile(result);
+		}
+	}
+}
+
+void MainWindow::discardPreResetImage()
+{
+	m_preResetCanvasState = drawdance::CanvasState::null();
+	m_view->hideResetNotice();
 }
 
 void MainWindow::showCompatibilityModeWarning()

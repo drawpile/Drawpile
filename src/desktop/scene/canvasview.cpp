@@ -89,7 +89,10 @@ CanvasView::CanvasView(QWidget *parent)
 	m_notificationBar = new NotificationBar(this);
 	connect(
 		m_notificationBar, &NotificationBar::actionButtonClicked, this,
-		&CanvasView::reconnectRequested);
+		&CanvasView::activateNotificationBarAction);
+	connect(
+		m_notificationBar, &NotificationBar::closeButtonClicked, this,
+		&CanvasView::dismissNotificationBar);
 
 	m_trianglerightcursor =
 		QCursor(QPixmap(":/cursors/triangle-right.png"), 14, 14);
@@ -142,8 +145,90 @@ CanvasView::CanvasView(QWidget *parent)
 
 void CanvasView::showDisconnectedWarning(const QString &message)
 {
-	m_notificationBar->show(
-		message, tr("Reconnect"), NotificationBar::RoleColor::Warning);
+	if(m_notificationBarState != NotificationBarState::Reconnect) {
+		dismissNotificationBar();
+		m_notificationBarState = NotificationBarState::Reconnect;
+		m_notificationBar->show(
+			message, QIcon::fromTheme("view-refresh"), tr("Reconnect"),
+			NotificationBar::RoleColor::Warning);
+		m_notificationBar->setActionButtonEnabled(true);
+	}
+}
+
+void CanvasView::hideDisconnectedWarning()
+{
+	if(m_notificationBarState == NotificationBarState::Reconnect) {
+		m_notificationBarState = NotificationBarState::None;
+		m_notificationBar->hide();
+	}
+}
+
+void CanvasView::showResetNotice(bool compatibilityMode, bool saveInProgress)
+{
+	if(m_notificationBarState != NotificationBarState::Reset) {
+		dismissNotificationBar();
+		m_notificationBarState = NotificationBarState::Reset;
+		QString message =
+			compatibilityMode
+				? tr("Do you want to save the canvas as it was before the "
+					 "reset? Since this is a Drawpile 2.1 session, it may have "
+					 "desynchronized!")
+				: tr("Do you want to save the canvas as it was before the "
+					 "reset?");
+		m_notificationBar->show(
+			message, QIcon::fromTheme("document-save-as"), tr("Save As…"),
+			NotificationBar::RoleColor::Notice);
+		m_notificationBar->setActionButtonEnabled(!saveInProgress);
+	}
+}
+
+void CanvasView::hideResetNotice()
+{
+	if(m_notificationBarState == NotificationBarState::Reset) {
+		m_notificationBarState = NotificationBarState::None;
+		m_notificationBar->hide();
+	}
+}
+
+void CanvasView::activateNotificationBarAction()
+{
+	switch(m_notificationBarState) {
+	case NotificationBarState::Reconnect:
+		emit reconnectRequested();
+		break;
+	case NotificationBarState::Reset:
+		emit savePreResetStateRequested();
+		break;
+	default:
+		qWarning(
+			"Unknown notification bar state %d", int(m_notificationBarState));
+		break;
+	}
+}
+
+void CanvasView::dismissNotificationBar()
+{
+	m_notificationBar->hide();
+	NotificationBarState state = m_notificationBarState;
+	m_notificationBarState = NotificationBarState::None;
+	switch(state) {
+	case NotificationBarState::None:
+	case NotificationBarState::Reconnect:
+		break;
+	case NotificationBarState::Reset:
+		emit savePreResetStateDismissed();
+		break;
+	default:
+		qWarning("Unknown notification bar state %d", int(state));
+		break;
+	}
+}
+
+void CanvasView::setSaveInProgress(bool saveInProgress)
+{
+	m_notificationBar->setActionButtonEnabled(
+		m_notificationBarState != NotificationBarState::Reset ||
+		!saveInProgress);
 }
 
 QString CanvasView::lockDescription() const
@@ -196,6 +281,9 @@ void CanvasView::setCanvas(drawingboard::CanvasScene *scene)
 			invalidateScene();
 			viewRectChanged();
 		});
+	connect(
+		m_notificationBar, &NotificationBar::heightChanged, m_scene,
+		&drawingboard::CanvasScene::setNotificationBarHeight);
 
 	viewRectChanged();
 	updateLockNotice();
@@ -759,6 +847,14 @@ void CanvasView::onPenDown(const canvas::Point &p, bool right)
 			m_scene->model()->pickLayer(p.x(), p.y());
 			break;
 		}
+	}
+
+	if(m_notificationBarState == NotificationBarState::Reset &&
+	   m_notificationBar->isActionButtonEnabled()) {
+		// There's a notice asking the user if they want to save the pre-reset
+		// image, but they started drawing again, so apparently they don't want
+		// to save it. Start a timer to automatically dismiss the notice.
+		m_notificationBar->startAutoDismissTimer();
 	}
 }
 

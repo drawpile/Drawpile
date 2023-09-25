@@ -103,8 +103,6 @@ target_sources(drawpile PRIVATE
 	dialogs/playbackdialog.h
 	dialogs/resetdialog.cpp
 	dialogs/resetdialog.h
-	dialogs/resetnoticedialog.cpp
-	dialogs/resetnoticedialog.h
 	dialogs/resizedialog.cpp
 	dialogs/resizedialog.h
 	dialogs/serverlogdialog.cpp
@@ -201,6 +199,8 @@ target_sources(drawpile PRIVATE
 	scene/canvasscene.h
 	scene/canvasview.cpp
 	scene/canvasview.h
+	scene/catchupitem.cpp
+	scene/catchupitem.h
 	scene/lasertrailitem.cpp
 	scene/lasertrailitem.h
 	scene/noticeitem.cpp

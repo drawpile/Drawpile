@@ -118,6 +118,9 @@ public:
 
 	//! Show the notification bar with the "reconnect" button visible
 	void showDisconnectedWarning(const QString &message);
+	void hideDisconnectedWarning();
+	void showResetNotice(bool compatibilityMode, bool saveInProgress);
+	void hideResetNotice();
 
 	QString lockDescription() const;
 
@@ -153,6 +156,8 @@ signals:
 	void rightClicked(const QPoint &p);
 
 	void reconnectRequested();
+	void savePreResetStateRequested();
+	void savePreResetStateDismissed();
 
 	void toggleActionActivated(drawingboard::ToggleItem::Action action);
 
@@ -183,6 +188,7 @@ public slots:
 
 	void setLock(QFlags<Lock> lock);
 	void setBusy(bool busy);
+	void setSaveInProgress(bool saveInProgress);
 
 	//! Send pointer position updates even when not drawing
 	void setPointerTracking(bool tracking);
@@ -236,10 +242,16 @@ protected:
 	void resizeEvent(QResizeEvent *) override;
 	void scrollContentsBy(int dx, int dy) override;
 
+private slots:
+	void activateNotificationBarAction();
+	void dismissNotificationBar();
+
 private:
 	static constexpr qreal TOUCH_DRAW_DISTANCE = 10.0;
 	static constexpr int TOUCH_DRAW_BUFFER_COUNT = 20;
 	static constexpr qreal ROTATION_STEP_SIZE = 15.0;
+
+	enum class NotificationBarState { None, Reconnect, Reset };
 
 	// unified mouse/stylus event handlers
 	void penPressEvent(
@@ -327,6 +339,7 @@ private:
 	enum class TouchMode { Unknown, Drawing, Moving };
 
 	NotificationBar *m_notificationBar;
+	NotificationBarState m_notificationBarState = NotificationBarState::None;
 
 	bool m_allowColorPick;
 	bool m_allowToolAdjust;
