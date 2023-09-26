@@ -772,7 +772,7 @@ yeniden boyutlandırılacak.</translation>
     <message>
         <location line="+29"/>
         <source>Export</source>
-        <translation type="unfinished">Dışa Aktar</translation>
+        <translation>Dışa Aktar</translation>
     </message>
 </context>
 <context>
@@ -1079,6 +1079,7 @@ Alt aralık: [%3, %4]</translation>
         <location line="+112"/>
         <source>You have %n images with unsaved changes. Do you want to review these changes before quitting?</source>
         <translation>
+            <numerusform>Kaydedilmemiş değişikliğe sahip olan %n resminiz var. Programı kapatmadan önce bu değişiklikleri gözden geçirmek ister misiniz?</numerusform>
             <numerusform>Kaydedilmemiş değişikliğe sahip olan %n resminiz var. Programı kapatmadan önce bu değişiklikleri gözden geçirmek ister misiniz?</numerusform>
         </translation>
     </message>
@@ -1489,12 +1490,12 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+2"/>
         <source>Primary screen:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ana ekran:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%1x%2px² (%3x%4mm²)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1x%2px² (%3x%4mm²)</translation>
     </message>
     <message>
         <location line="+89"/>
@@ -2100,12 +2101,12 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+1"/>
         <source>Increase Key Frame Exposure</source>
-        <translation type="unfinished"></translation>
+        <translation>Key Frame Pozlamasını Arttır</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Decrease Key Frame Exposure</source>
-        <translation type="unfinished"></translation>
+        <translation>Key Frame Pozlamasını Azalt</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2247,13 +2248,13 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <location line="+355"/>
         <source>Wheel</source>
         <extracomment>&quot;Wheel&quot; refers to the color wheel.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Çark</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Sliders</source>
         <extracomment>&quot;Sliders&quot; refers to the RGB and HSV sliders.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Kontroller</translation>
     </message>
     <message>
         <location line="-379"/>
@@ -2264,22 +2265,22 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="-1877"/>
         <source>Hosting on this computer is not available</source>
-        <translation type="unfinished"></translation>
+        <translation>Bu bilgisayarda hostlamak mevcut değil</translation>
     </message>
     <message>
         <location line="+55"/>
         <source>Really leave and terminate the session?</source>
-        <translation type="unfinished"></translation>
+        <translation>Oturumdan ayrılıp oturmu sonlandırmak istediğinize emin misiniz?</translation>
     </message>
     <message>
         <location line="+238"/>
         <source>You&apos;ve been disconnected from the session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Oturumdan bağlantınız kesildi.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Disconnected: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Bağlantı kesildi: %1</translation>
     </message>
     <message>
         <location line="+1583"/>
@@ -2640,7 +2641,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+10"/>
         <source>Swap With Brush Slot #%1</source>
-        <translation type="unfinished"></translation>
+        <translation>Fırça Slotu #%1 ile Değiştri</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -3409,12 +3410,12 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
     <message>
         <location line="+14"/>
         <source>Path to ffmpeg:</source>
-        <translation type="unfinished"></translation>
+        <translation>ffmpeg yolu:</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Choose</source>
-        <translation type="unfinished"></translation>
+        <translation>Seç</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -3657,6 +3658,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <source>%n brush(es) exported.</source>
         <translation>
             <numerusform>%n adet fırça dışa aktarıldı.</numerusform>
+            <numerusform>%n adet fırça dışa aktarıldı.</numerusform>
         </translation>
     </message>
     <message>
@@ -3668,6 +3670,7 @@ Hata ayıklama çöplüklerini kaydetmeye başlamak istediğinize emin misiniz?<
         <location line="+7"/>
         <source>%n error(s) encountered.</source>
         <translation>
+            <numerusform>%n hata ile karşılaşıldı.</numerusform>
             <numerusform>%n hata ile karşılaşıldı.</numerusform>
         </translation>
     </message>
@@ -5458,12 +5461,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/flipbook.cpp" line="+41"/>
         <source>Export &amp;GIF…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;GIF Dışa Aktar…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Export &amp;Frames…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Kareleri Dışa Aktar…</translation>
     </message>
 </context>
 <context>
@@ -5809,7 +5812,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>User Interface</source>
-        <translation type="unfinished"></translation>
+        <translation>Kullanıcı Arayüzü</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5979,6 +5982,7 @@ Values above 0.5 may not be noticeable.</source>
         <source>Last check: %n day(s) ago.</source>
         <translation>
             <numerusform>En son şu tarihte kontrol edildi: %n gün önce.</numerusform>
+            <numerusform>En son şu tarihte kontrol edildi: %n gün önce.</numerusform>
         </translation>
     </message>
     <message>
@@ -6083,12 +6087,12 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+57"/>
         <source>Executables</source>
         <extracomment>Used for picking a kind of file, used like &quot;Executables (*.exe)&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Yürütülebilirler</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Choose ffmpeg path</source>
-        <translation type="unfinished"></translation>
+        <translation>ffmpeg yolu seçin</translation>
     </message>
 </context>
 <context>
@@ -6127,6 +6131,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+1"/>
         <source>Really remove %n canvas shortcut(s)?</source>
         <translation>
+            <numerusform>%n tuval kısayolu silmek istediğinize emin misiniz?</numerusform>
             <numerusform>%n tuval kısayolu silmek istediğinize emin misiniz?</numerusform>
         </translation>
     </message>
@@ -6213,22 +6218,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-101"/>
         <source>Capture volume rocker</source>
-        <translation type="unfinished"></translation>
+        <translation>Ses seviyesi değişikliklerini kayda al</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Android:</source>
-        <translation type="unfinished"></translation>
+        <translation>Android:</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Autosave can be enabled for the current file under File ▸ Autosave.</source>
-        <translation type="unfinished"></translation>
+        <translation>Şu anki dosya için Otomatik Kayıt ayarını Dosya ▸ Otomatik Kayıt uzantısından aktifleştirebilirsiniz.</translation>
     </message>
     <message>
         <location line="+81"/>
         <source>Snapshots can be restored from the Session ▸ Reset… menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ekran görüntüleri Oturum ▸ Sıfırlama… menüsünden onarılabilir.</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -6399,22 +6404,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/network.cpp" line="+82"/>
         <source>Hide user list in announcements</source>
-        <translation type="unfinished"></translation>
+        <translation>Anonslarda kullanıcı listesini sakla</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Builtin server:</source>
-        <translation type="unfinished"></translation>
+        <translation>Yerleşik sunucu:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Announce with Zeroconf</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeroconf ile anons et</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Host on port %1 if available</source>
-        <translation type="unfinished"></translation>
+        <translation>Mevcutsa %1 portunda hostla</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -6500,6 +6505,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+1"/>
         <source>Really delete %n avatar(s)?</source>
         <translation>
+            <numerusform>%n avatarı silme istediğinize emin misiniz?</numerusform>
             <numerusform>%n avatarı silme istediğinize emin misiniz?</numerusform>
         </translation>
     </message>
@@ -6698,6 +6704,7 @@ Values above 0.5 may not be noticeable.</source>
         <source>Really remove %n known host(s)?</source>
         <translation>
             <numerusform>%n bilinen hostu kaldırmak istediğinize emin misiniz?</numerusform>
+            <numerusform>%n bilinen hostu kaldırmak istediğinize emin misiniz?</numerusform>
         </translation>
     </message>
     <message>
@@ -6730,6 +6737,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+1"/>
         <source>Really remove %n list server(s)?</source>
         <translation>
+            <numerusform>%n sunucu listesini kaldırmak istediğinize emin misiniz?</numerusform>
             <numerusform>%n sunucu listesini kaldırmak istediğinize emin misiniz?</numerusform>
         </translation>
     </message>
@@ -6925,117 +6933,117 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/userinterface.cpp" line="+42"/>
         <source>Override system font size</source>
-        <translation type="unfinished"></translation>
+        <translation>Sistem font boyutunu görmezden gel</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Font size: </source>
-        <translation type="unfinished"></translation>
+        <translation>Font boyutu: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>pt</source>
-        <translation type="unfinished"></translation>
+        <translation>pt</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Changes the font size apply after you restart Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Font boyutuna yapılan değişiklikler Drawpile yeniden başlatıldıktan sonra aktifleşir.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Type text here to try out the effects of your chosen font size.</source>
-        <translation type="unfinished"></translation>
+        <translation>Seçilmiş font boyutunuzu denemek için buraya yazın.</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Interface mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Arayüz modu:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Desktop</source>
-        <translation type="unfinished"></translation>
+        <translation>Masaüstü</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Small screen (experimental)</source>
-        <translation type="unfinished"></translation>
+        <translation>Küçük ekran (deneysel)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Changes to the interface mode apply after you restart Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Arayüz moduna yapılan değişiklikler Drawpile yeniden başlatıldıktan sonra aktif olur.</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Disabled</source>
-        <translation type="unfinished">Devre Dışı</translation>
+        <translation>Devre Dışı</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>On left-click drag</source>
-        <translation type="unfinished"></translation>
+        <translation>Sol-tık sürüklemede</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>On middle-click drag</source>
-        <translation type="unfinished"></translation>
+        <translation>Orta-tık sürüklemede</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>On right-click drag</source>
-        <translation type="unfinished"></translation>
+        <translation>Sağ-tık sürüklemede</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>On touch drag</source>
-        <translation type="unfinished"></translation>
+        <translation>Dokun-sürüklemede</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Kinetic scrolling:</source>
-        <translation type="unfinished"></translation>
+        <translation>Kinetik kaydırma:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Threshold: </source>
-        <translation type="unfinished"></translation>
+        <translation>Eşik: </translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Hide scroll bars</source>
-        <translation type="unfinished"></translation>
+        <translation>Kaydırma çubuklarını sakla</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Changes to kinetic scrolling apply after you restart Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kinetik kaydırmaya yapılan değişikliker Drawpile yeniden başlatıldıktan sonra aktif olur.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Background color behind the canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Tuvalin arkasındaki arkaplan rengi</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Color behind canvas:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tuvalin arkasındaki renk:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Show scroll bars on canvas</source>
-        <translation type="unfinished">Tuvalde kaydırma çubuklarını göster</translation>
+        <translation>Tuvalde kaydırma çubuklarını göster</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Miscellaneous:</source>
-        <translation type="unfinished"></translation>
+        <translation>Diğer:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Ask before deleting layers</source>
-        <translation type="unfinished">Katmanları silmeden önce sor</translation>
+        <translation>Katmanları silmeden önce sor</translation>
     </message>
 </context>
 <context>
@@ -7197,17 +7205,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+16"/>
         <source>The built-in server is not available on Android.</source>
-        <translation type="unfinished"></translation>
+        <translation>Yerleşik sunucular Android&apos;de mevcut değil.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The built-in server is not available on this installation of Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Yerleşik sunucular Drawpile&apos;ın bu sürümünde mevcut değil.</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Enable advanced options</source>
-        <translation type="unfinished"></translation>
+        <translation>Gelişmiş seçenekleri aktifleştir</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -7490,12 +7498,14 @@ Values above 0.5 may not be noticeable.</source>
         <source>%n brush(es) imported.</source>
         <translation>
             <numerusform>%n fırça içe aktarıldı.</numerusform>
+            <numerusform>%n fırça içe aktarıldı.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+14"/>
         <source>%n tag(s) imported: %1</source>
         <translation>
+            <numerusform>%n etiket içe aktarıldı: %1</numerusform>
             <numerusform>%n etiket içe aktarıldı: %1</numerusform>
         </translation>
     </message>
@@ -7508,6 +7518,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+4"/>
         <source>%n error(s) encountered.</source>
         <translation>
+            <numerusform>%n hata ile karşılaşıldı.</numerusform>
             <numerusform>%n hata ile karşılaşıldı.</numerusform>
         </translation>
     </message>
@@ -7900,7 +7911,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../scene/canvasscene.cpp" line="+225"/>
         <source>Restoring canvas…</source>
-        <translation type="unfinished"></translation>
+        <translation>Tuval onarılıyor…</translation>
     </message>
 </context>
 <context>
@@ -8040,7 +8051,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>This session is hosted with Drawpile 2.1, Indirect/Wash Mode is unavailable. &lt;a href=&quot;#&quot;&gt;Click here to switch to Direct/Build-Up Mode.&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Bu oturum Drawpile 2.1 ile hostlanıyor, Dolaylı/Tonlama Modu mevcut değil. Direkt/Katmanlama moduna geçiş yapmak için buraya tıklayınız: &lt;a href=&quot;#&quot;&gt;.&lt;/a&gt;</translation>
     </message>
     <message>
         <location line="-5"/>
@@ -8166,17 +8177,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+21"/>
         <source>Do you want to save the canvas as it was before the reset? Since this is a Drawpile 2.1 session, it may have desynchronized!</source>
-        <translation type="unfinished"></translation>
+        <translation>Tuvalin sıfırlamadan önceki halini kaydetmek ister misiniz? Bu bir Drawpile 2.1 oturumu olduğu için desenkronize olmuş olabilir!</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Do you want to save the canvas as it was before the reset?</source>
-        <translation type="unfinished"></translation>
+        <translation>Tuvalin sıfırlanmadan önceki halini kaydetmek ister misiniz?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Save As…</source>
-        <translation type="unfinished"></translation>
+        <translation>Farklı Kaydet…</translation>
     </message>
     <message>
         <location line="+60"/>
@@ -8627,12 +8638,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/notifbar.cpp" line="+127"/>
         <source>Dismiss (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Reddet (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Dismiss</source>
-        <translation type="unfinished">Reddet</translation>
+        <translation>Reddet</translation>
     </message>
 </context>
 <context>
