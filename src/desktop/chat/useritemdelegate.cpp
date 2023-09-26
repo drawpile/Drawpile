@@ -231,33 +231,34 @@ void UserItemDelegate::showContextMenu(
 	m_menuTitle->setText(
 		index.data(canvas::UserListModel::NameRole).toString());
 
-	const bool amOp = m_doc->canvas()->aclState()->amOperator();
-	const bool amDeputy =
+	bool amOp = m_doc->canvas()->aclState()->amOperator();
+	bool amDeputy =
 		m_doc->canvas()->aclState()->amTrusted() && m_doc->isSessionDeputies();
-	const bool isSelf = m_menuId == m_doc->canvas()->localUserId();
-	const bool isMod = index.data(canvas::UserListModel::IsModRole).toBool();
+	bool isSelf = m_menuId == m_doc->canvas()->localUserId();
+	bool isMod = index.data(canvas::UserListModel::IsModRole).toBool();
+	bool isLocked = index.data(canvas::UserListModel::IsLockedRole).toBool();
+	bool isMuted = index.data(canvas::UserListModel::IsMutedRole).toBool();
 
 	m_opAction->setChecked(
 		index.data(canvas::UserListModel::IsOpRole).toBool());
 	m_trustAction->setChecked(
 		index.data(canvas::UserListModel::IsTrustedRole).toBool());
-	m_lockAction->setChecked(
-		index.data(canvas::UserListModel::IsLockedRole).toBool());
-	m_muteAction->setChecked(
-		index.data(canvas::UserListModel::IsMutedRole).toBool());
+	m_lockAction->setChecked(isLocked);
+	m_muteAction->setChecked(isMuted);
 
 	// Can't deop self or moderators
 	m_opAction->setEnabled(amOp && !isSelf && !isMod);
-
 	m_trustAction->setEnabled(amOp);
-	m_lockAction->setEnabled(amOp);
-	m_muteAction->setEnabled(amOp);
+	// You're not supposed to be able to lock or mute moderators, but that's not
+	// necessarily enforced server-side, so unlocking and unmuting is allowed.
+	m_lockAction->setEnabled(amOp && (!isMod || isLocked));
+	m_muteAction->setEnabled(amOp && (!isMod || isMuted));
 	m_undoAction->setEnabled(amOp);
 	m_redoAction->setEnabled(amOp);
 
 	// Deputies can only kick non-trusted users
 	// No-one can kick themselves or moderators
-	const bool canKick =
+	bool canKick =
 		!isSelf && !isMod &&
 		(amOp ||
 		 (amDeputy &&
