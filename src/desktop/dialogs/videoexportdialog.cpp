@@ -98,7 +98,7 @@ void VideoExportDialog::chooseFfmpegPath()
 	QString ffmpegPath = QFileDialog::getOpenFileName(
 		this, tr("Choose ffmpeg path"), QString(), executableFilter);
 	if(!ffmpegPath.isEmpty()) {
-		m_ui->ffmpegPathEdit->setText(ffmpegPath);
+		dpApp().settings().setVideoExportFfmpegPath(ffmpegPath);
 	}
 }
 
