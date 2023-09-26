@@ -551,17 +551,17 @@ to 64x64 pixels.</source>
     </message>
     <message>
         <location line="+22"/>
-        <location line="+163"/>
+        <location line="+165"/>
         <source>Save Image</source>
         <translation>保存图片</translation>
     </message>
     <message>
-        <location line="-147"/>
+        <location line="-148"/>
         <source>Save Pre-Reset Image</source>
         <translation>保存预重置图像</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+16"/>
         <source>Save Selection</source>
         <translation>保存选择</translation>
     </message>
@@ -641,13 +641,13 @@ to 64x64 pixels.</source>
         <translation>以OpenRaster格式保存</translation>
     </message>
     <message>
-        <location line="+98"/>
+        <location line="+100"/>
         <source>Untitled%1</source>
         <extracomment>%1 will be a file extension, like .ora or .png or something.</extracomment>
         <translation>未命名%1</translation>
     </message>
     <message>
-        <location line="+108"/>
+        <location line="+110"/>
         <source>Missing File Extension</source>
         <translation>缺少文件扩展名</translation>
     </message>
@@ -765,7 +765,12 @@ to 64x64 pixels.</source>
         <translation>回放速度: </translation>
     </message>
     <message>
-        <location line="-64"/>
+        <location line="+29"/>
+        <source>Export</source>
+        <translation type="unfinished">导出</translation>
+    </message>
+    <message>
+        <location line="-93"/>
         <source>Frame:</source>
         <translation>帧:</translation>
     </message>
@@ -1096,13 +1101,13 @@ Subrange: [%3, %4]</source>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../mainwindow.cpp" line="+626"/>
-        <location line="+1144"/>
+        <location filename="../mainwindow.cpp" line="+637"/>
+        <location line="+1279"/>
         <source>Untitled</source>
         <translation>未命名</translation>
     </message>
     <message>
-        <location line="-749"/>
+        <location line="-815"/>
         <location line="+21"/>
         <source>Exit Drawpile</source>
         <translation>退出Drawpile</translation>
@@ -1120,12 +1125,12 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+2"/>
         <location line="+22"/>
-        <location line="+445"/>
+        <location line="+493"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location line="-452"/>
+        <location line="-500"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation>有未保存的更改. 要在退出前保存它们吗?</translation>
     </message>
@@ -1140,12 +1145,12 @@ Subrange: [%3, %4]</source>
         <translation>放弃</translation>
     </message>
     <message>
-        <location line="+327"/>
+        <location line="+326"/>
         <source>Saving...</source>
         <translation>保存为...</translation>
     </message>
     <message>
-        <location line="+25"/>
+        <location line="+15"/>
         <source>Couldn&apos;t save image</source>
         <translation>无法保存图片</translation>
     </message>
@@ -1155,7 +1160,7 @@ Subrange: [%3, %4]</source>
         <translation>图片已保存</translation>
     </message>
     <message>
-        <location line="+136"/>
+        <location line="+202"/>
         <source>Pause</source>
         <translation>暂停</translation>
     </message>
@@ -1170,7 +1175,7 @@ Subrange: [%3, %4]</source>
         <translation>无效地址</translation>
     </message>
     <message>
-        <location line="+75"/>
+        <location line="+88"/>
         <source>Really leave the session?</source>
         <translation>确认离开房间？</translation>
     </message>
@@ -1190,7 +1195,7 @@ Subrange: [%3, %4]</source>
         <translation>信息未完全传出! 请稍等!</translation>
     </message>
     <message>
-        <location line="+181"/>
+        <location line="+196"/>
         <source>Would you like to join the session instead?</source>
         <translation>你想加入房间吗?</translation>
     </message>
@@ -1200,12 +1205,12 @@ Subrange: [%3, %4]</source>
         <translation>加入</translation>
     </message>
     <message>
-        <location line="+452"/>
+        <location line="+514"/>
         <source>The image could not be loaded</source>
         <translation>无法载入图片</translation>
     </message>
     <message>
-        <location line="+342"/>
+        <location line="+343"/>
         <source>About Drawpile</source>
         <translation>关于 Drawpile</translation>
     </message>
@@ -1242,13 +1247,13 @@ Subrange: [%3, %4]</source>
         <translation>自动保存</translation>
     </message>
     <message>
-        <location line="-1373"/>
-        <location line="+1382"/>
+        <location line="-1464"/>
+        <location line="+1473"/>
         <source>Record...</source>
         <translation>录制...</translation>
     </message>
     <message>
-        <location line="-2648"/>
+        <location line="-2871"/>
         <source>Server out of space</source>
         <translation>服务器空间不足</translation>
     </message>
@@ -1260,7 +1265,7 @@ Simplify the canvas and reset manually before space runs out.</source>
 请在空间用完前清理画布并手动重置.</translation>
     </message>
     <message>
-        <location line="+626"/>
+        <location line="+700"/>
         <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
         <translation>&lt;p&gt;快捷键 &apos;%1&apos; 有歧义, 它匹配:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</translation>
     </message>
@@ -1275,7 +1280,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>更正</translation>
     </message>
     <message>
-        <location line="+525"/>
+        <location line="+533"/>
         <source>This session was hosted with an older version of Drawpile, some newer features won&apos;t be available. Other Drawpile versions will see different results, session resets may cause abrupt changes.</source>
         <translation>这个房间是用Drawpile旧版本开的, 一些新功能将无法使用. 其他Drawpile版本将看到不同的结果, 房间重置可能导致突然的变化.</translation>
     </message>
@@ -1295,7 +1300,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>无法导出房间模板</translation>
     </message>
     <message>
-        <location line="+137"/>
+        <location line="+187"/>
         <source>Error closing tablet event log.</source>
         <translation>关闭数位板事件日志出错.</translation>
     </message>
@@ -1305,7 +1310,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>打开数位板事件日志出错.</translation>
     </message>
     <message>
-        <location line="+208"/>
+        <location line="+221"/>
         <source>Become Operator</source>
         <translation>成为管理员</translation>
     </message>
@@ -1315,7 +1320,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>输入管理员密码</translation>
     </message>
     <message>
-        <location line="+47"/>
+        <location line="+54"/>
         <source>Terminate session</source>
         <translation>终止房间</translation>
     </message>
@@ -1326,17 +1331,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+5"/>
-        <location line="+1618"/>
+        <location line="+1716"/>
         <source>Terminate</source>
         <translation>终止</translation>
     </message>
     <message>
-        <location line="-1506"/>
-        <source>Disconnected:</source>
-        <translation>已断开连接:</translation>
-    </message>
-    <message>
-        <location line="+79"/>
+        <location line="-1512"/>
         <source>Session blocked by parental controls</source>
         <translation>房间已被控制面板屏蔽</translation>
     </message>
@@ -1351,7 +1351,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>更改房间撤销限制, 当前限制是 %1.</translation>
     </message>
     <message>
-        <location line="+539"/>
+        <location line="+596"/>
         <source>User #%1</source>
         <translation>用户 #%1</translation>
     </message>
@@ -1362,12 +1362,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+903"/>
+        <location line="+931"/>
         <source>Tablet Event Log...</source>
         <translation>数位板事件日志...</translation>
     </message>
     <message>
-        <location line="-805"/>
+        <location line="-832"/>
         <source>Tablet Input:</source>
         <translation>输入设置:</translation>
     </message>
@@ -1414,7 +1414,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>&amp;导出</translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="+41"/>
         <source>&amp;Undo</source>
         <translation>&amp;撤销</translation>
     </message>
@@ -1514,7 +1514,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>&amp;扩大画布</translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+33"/>
         <source>&amp;Layouts...</source>
         <translation>&amp;界面...</translation>
     </message>
@@ -1534,7 +1534,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>聊天</translation>
     </message>
     <message>
-        <location line="+134"/>
+        <location line="+151"/>
         <source>Normal View</source>
         <translation>正常视图</translation>
     </message>
@@ -1584,7 +1584,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>显示动画预览窗口</translation>
     </message>
     <message>
-        <location line="-193"/>
+        <location line="-210"/>
         <source>Rotate Canvas Clockwise</source>
         <translation>顺时针旋转画布</translation>
     </message>
@@ -1619,7 +1619,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>显示用户头像</translation>
     </message>
     <message>
-        <location line="+133"/>
+        <location line="+150"/>
         <source>User Pointers</source>
         <translation>用户光标</translation>
     </message>
@@ -1654,7 +1654,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>选择下一个图层</translation>
     </message>
     <message>
-        <location line="+123"/>
+        <location line="+128"/>
         <source>Report...</source>
         <translation>报告...</translation>
     </message>
@@ -1664,7 +1664,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>锁定全部</translation>
     </message>
     <message>
-        <location line="+278"/>
+        <location line="+301"/>
         <source>Finish action</source>
         <translation>完成动作</translation>
     </message>
@@ -1674,7 +1674,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>取消动作</translation>
     </message>
     <message>
-        <location line="-572"/>
+        <location line="-617"/>
         <source>Show User &amp;Pointers</source>
         <translation>&amp;显示光标</translation>
     </message>
@@ -1689,12 +1689,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>&amp;显示像素网格</translation>
     </message>
     <message>
-        <location line="+84"/>
+        <location line="+88"/>
         <source>&amp;View</source>
         <translation>&amp;视图</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+9"/>
         <source>&amp;Zoom</source>
         <translation>&amp;缩放</translation>
     </message>
@@ -1704,7 +1704,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>旋转</translation>
     </message>
     <message>
-        <location line="+171"/>
+        <location line="+187"/>
         <location filename="../widgets/macmenu.cpp" line="+25"/>
         <source>&amp;Host...</source>
         <translation>&amp;创建...</translation>
@@ -1797,22 +1797,22 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>绘画工具</translation>
     </message>
     <message>
-        <location line="-2094"/>
+        <location line="-2212"/>
         <source>Stop Recording</source>
         <translation>停止录制</translation>
     </message>
     <message>
-        <location line="+164"/>
+        <location line="+168"/>
         <source>Host Session</source>
         <translation>创建房间</translation>
     </message>
     <message>
-        <location line="+247"/>
+        <location line="+271"/>
         <source>Could not connect to server</source>
         <translation>无法连接至服务器</translation>
     </message>
     <message>
-        <location line="+960"/>
+        <location line="+1023"/>
         <source>Close</source>
         <translation>关闭</translation>
     </message>
@@ -1828,7 +1828,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>文件工具</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+30"/>
         <source>&amp;Copy Visible</source>
         <translation>&amp;复制可见区域</translation>
     </message>
@@ -1874,7 +1874,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>编辑工具</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+26"/>
         <source>Zoom &amp;In</source>
         <translation>&amp;放大</translation>
     </message>
@@ -1904,7 +1904,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>&amp;全屏</translation>
     </message>
     <message>
-        <location line="+346"/>
+        <location line="+368"/>
         <source>Pick colors from the image</source>
         <translation>从当前图层取色</translation>
     </message>
@@ -1919,34 +1919,34 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>&amp;直线</translation>
     </message>
     <message>
-        <location line="-3018"/>
+        <location line="-3260"/>
         <source>🙋 %1 joined!</source>
         <translation>🙋 %1 加入了!</translation>
     </message>
     <message>
-        <location line="+955"/>
+        <location line="+1072"/>
         <source>Saving animation...</source>
         <translation>保存动画...</translation>
     </message>
     <message>
-        <location line="+80"/>
-        <location line="+595"/>
+        <location line="+87"/>
+        <location line="+628"/>
         <source>Unsupported format.</source>
         <translation>不支持的格式.</translation>
     </message>
     <message>
-        <location line="-592"/>
+        <location line="-625"/>
         <source>Couldn&apos;t start recording.</source>
         <translation>无法开始录制.</translation>
     </message>
     <message>
         <location line="+3"/>
-        <location line="+604"/>
+        <location line="+637"/>
         <source>Unknown error.</source>
         <translation>未知错误.</translation>
     </message>
     <message>
-        <location line="-594"/>
+        <location line="-627"/>
         <source>Error closing profile.</source>
         <translation>关闭简介时出错.</translation>
     </message>
@@ -1956,7 +1956,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>打开简介时出错.</translation>
     </message>
     <message>
-        <location line="+570"/>
+        <location line="+603"/>
         <source>Bad arguments, this is probably a bug in Drawpile.</source>
         <translation>糟糕的争论,这可能是Drawpile的一个bug.</translation>
     </message>
@@ -1981,18 +1981,18 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>录像不兼容.</translation>
     </message>
     <message>
-        <location line="+511"/>
+        <location line="+568"/>
         <source>Stop Profile</source>
         <translation>停止概况</translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+901"/>
+        <location line="+929"/>
         <source>Profile...</source>
         <translation>概况...</translation>
     </message>
     <message>
-        <location line="-894"/>
+        <location line="-922"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation>设置人工滞后... (目前为 %1 ms)</translation>
     </message>
@@ -2018,12 +2018,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+15"/>
-        <location line="+856"/>
+        <location line="+884"/>
         <source>Record Debug Dumps</source>
         <translation>录制调试数据</translation>
     </message>
     <message>
-        <location line="-855"/>
+        <location line="-883"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -2036,7 +2036,7 @@ Are you sure youwant to start recording debug dumps?</source>
 你确定你要开始录制调试数据吗?</translation>
     </message>
     <message>
-        <location line="+44"/>
+        <location line="+45"/>
         <source>Settings File:</source>
         <translation>设置文件:</translation>
     </message>
@@ -2071,7 +2071,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>动画 &amp;帧数...</translation>
     </message>
     <message>
-        <location line="+110"/>
+        <location line="+116"/>
         <source>Paste in View Center</source>
         <translation>粘贴在视图中心</translation>
     </message>
@@ -2101,7 +2101,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>画布背景</translation>
     </message>
     <message>
-        <location line="+183"/>
+        <location line="+199"/>
         <source>Layer View Mode</source>
         <translation>图层视图模式</translation>
     </message>
@@ -2116,7 +2116,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>图层属性...</translation>
     </message>
     <message>
-        <location line="+42"/>
+        <location line="+44"/>
         <source>Next Frame</source>
         <translation>下一帧</translation>
     </message>
@@ -2126,22 +2126,52 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>上一帧</translation>
     </message>
     <message>
-        <location line="+78"/>
+        <location line="+81"/>
         <source>Event Log</source>
         <translation>事件日志</translation>
     </message>
     <message>
-        <location line="-111"/>
+        <location line="-116"/>
         <source>&amp;Layer</source>
         <translation>&amp;图层</translation>
     </message>
     <message>
-        <location line="-1702"/>
+        <location line="-1815"/>
         <source>No canvas to host! Create one or open a file.</source>
         <translation>没有画布可供创建房间! 新建一个或者打开一个文件.</translation>
     </message>
     <message>
-        <location line="+1251"/>
+        <location line="+50"/>
+        <source>Hosting on this computer is not available</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+55"/>
+        <source>Really leave and terminate the session?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+238"/>
+        <source>You&apos;ve been disconnected from the session.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Disconnected: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+858"/>
+        <source>Primary screen:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>%1x%2px² (%3x%4mm²)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+139"/>
         <source>&amp;Brushes…</source>
         <translation>&amp;导出笔刷…</translation>
     </message>
@@ -2151,7 +2181,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>启动页面...</translation>
     </message>
     <message>
-        <location line="+260"/>
+        <location line="+265"/>
         <source>Move Canvas Left</source>
         <translation>左移画布</translation>
     </message>
@@ -2186,7 +2216,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>适应窗口 &amp;高度</translation>
     </message>
     <message>
-        <location line="+196"/>
+        <location line="+213"/>
         <source>Change Frame Count...</source>
         <translation>更改帧数...</translation>
     </message>
@@ -2229,6 +2259,16 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+1"/>
         <source>Delete Key Frame</source>
         <translation>删除关键帧</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Increase Key Frame Exposure</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Decrease Key Frame Exposure</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2316,7 +2356,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>&amp;动画</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+17"/>
         <source>Create Layer on Key Frame</source>
         <translation>在关键帧上新建图层</translation>
     </message>
@@ -2511,7 +2551,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>&amp;切换上一个笔刷预设</translation>
     </message>
     <message>
-        <location line="+78"/>
+        <location line="+89"/>
         <source>Missing Log File</source>
         <translation>缺少日志文件</translation>
     </message>
@@ -2542,7 +2582,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>笔刷数字预设 #%1</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+10"/>
+        <source>Swap With Brush Slot #%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+20"/>
         <source>Swatch Color %1</source>
         <translation>色板颜色 %1</translation>
     </message>
@@ -2552,27 +2597,29 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>对焦画布</translation>
     </message>
     <message>
-        <location line="+45"/>
-        <source>Color Wheel</source>
-        <translation>色轮</translation>
+        <location line="+46"/>
+        <source>Wheel</source>
+        <extracomment>&quot;Wheel&quot; refers to the color wheel.</extracomment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+11"/>
+        <source>Sliders</source>
+        <extracomment>&quot;Sliders&quot; refers to the RGB and HSV sliders.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-6"/>
         <source>Palette</source>
         <translation>色板</translation>
     </message>
     <message>
-        <location line="+5"/>
-        <source>Color Sliders</source>
-        <translation>颜色滑块</translation>
-    </message>
-    <message>
-        <location line="+22"/>
+        <location line="+34"/>
         <source>Onion Skins</source>
         <translation>洋葱皮</translation>
     </message>
     <message>
-        <location line="-277"/>
+        <location line="-308"/>
         <source>&amp;Tools</source>
         <translation>&amp;工具</translation>
     </message>
@@ -2587,7 +2634,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>切换上一个颜色</translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+57"/>
         <location filename="../widgets/macmenu.cpp" line="+33"/>
         <source>&amp;Homepage</source>
         <translation>&amp;主页</translation>
@@ -2761,7 +2808,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <name>QApplication</name>
     <message>
         <location filename="../dialogs/avatarimport.cpp" line="+59"/>
-        <location filename="../filewrangler.cpp" line="-441"/>
+        <location filename="../filewrangler.cpp" line="-447"/>
         <source>All files (*)</source>
         <translation>所有文件(*)</translation>
     </message>
@@ -3360,14 +3407,19 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;支持占位符格式:&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{F}&lt;/span&gt; - 帧数&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{E}&lt;/span&gt; - 文件拓展名&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+41"/>
-        <source>Custom Arguments:</source>
-        <translation>自定义参数:</translation>
+        <location line="+14"/>
+        <source>Path to ffmpeg:</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-24"/>
-        <source>ffmpeg executable not found</source>
-        <translation>未找到ffmpeg可执行文件</translation>
+        <location line="+16"/>
+        <source>Choose</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Custom Arguments:</source>
+        <translation>自定义参数:</translation>
     </message>
 </context>
 <context>
@@ -3532,7 +3584,7 @@ Are you sure youwant to start recording debug dumps?</source>
 <context>
     <name>dialogs::AddServerDialog</name>
     <message>
-        <location filename="../dialogs/addserverdialog.cpp" line="+151"/>
+        <location filename="../dialogs/addserverdialog.cpp" line="+153"/>
         <source>&lt;strong&gt;Error:&lt;/strong&gt; %1</source>
         <translation>&lt;strong&gt;错误:&lt;/strong&gt; %1</translation>
     </message>
@@ -3585,7 +3637,7 @@ Are you sure youwant to start recording debug dumps?</source>
 <context>
     <name>dialogs::BrushExportDialog</name>
     <message>
-        <location filename="../dialogs/brushexportdialog.cpp" line="+42"/>
+        <location filename="../dialogs/brushexportdialog.cpp" line="+43"/>
         <source>Export Brushes</source>
         <translation>导出笔刷</translation>
     </message>
@@ -3631,7 +3683,7 @@ Are you sure youwant to start recording debug dumps?</source>
 <context>
     <name>dialogs::BrushSettingsDialog</name>
     <message>
-        <location filename="../dialogs/brushsettingsdialog.cpp" line="+85"/>
+        <location filename="../dialogs/brushsettingsdialog.cpp" line="+86"/>
         <source>Brush Editor</source>
         <translation>笔刷编辑器</translation>
     </message>
@@ -3646,7 +3698,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>核心笔刷设定.</translation>
     </message>
     <message>
-        <location line="+103"/>
+        <location line="+104"/>
         <source>Brush Type:</source>
         <translation>笔刷类型:</translation>
     </message>
@@ -3708,17 +3760,17 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+129"/>
+        <location line="+131"/>
         <location line="+22"/>
-        <location line="+39"/>
+        <location line="+40"/>
         <location line="+22"/>
-        <location line="+39"/>
+        <location line="+40"/>
         <location line="+33"/>
         <source>%</source>
         <translation>%</translation>
     </message>
     <message>
-        <location line="-297"/>
+        <location line="-301"/>
         <source>Lock Alpha (Recolor Mode)</source>
         <translation>锁定透明度 (Recolor模式)</translation>
     </message>
@@ -3728,7 +3780,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>抖动修正: </translation>
     </message>
     <message>
-        <location line="+43"/>
+        <location line="+44"/>
         <source>Size: </source>
         <translation>大小: </translation>
     </message>
@@ -3740,27 +3792,27 @@ Are you sure youwant to start recording debug dumps?</source>
     </message>
     <message>
         <location line="-12"/>
-        <location line="+60"/>
         <location line="+61"/>
-        <location line="+72"/>
+        <location line="+62"/>
+        <location line="+73"/>
         <source>Pressure Sensitivity</source>
         <translation>压感</translation>
     </message>
     <message>
-        <location line="-182"/>
+        <location line="-185"/>
         <source>Minimum Size: </source>
         <translation>大小最小值: </translation>
     </message>
     <message>
         <location line="+10"/>
-        <location line="+61"/>
-        <location line="+61"/>
-        <location line="+72"/>
+        <location line="+62"/>
+        <location line="+62"/>
+        <location line="+73"/>
         <source>Pressure</source>
         <translation>压力</translation>
     </message>
     <message>
-        <location line="-165"/>
+        <location line="-167"/>
         <source>Opacity: </source>
         <translation>不透明度: </translation>
     </message>
@@ -3770,7 +3822,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>不透明度最小值: </translation>
     </message>
     <message>
-        <location line="+39"/>
+        <location line="+40"/>
         <source>Hardness: </source>
         <translation>硬度: </translation>
     </message>
@@ -3780,7 +3832,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>硬度最小值: </translation>
     </message>
     <message>
-        <location line="+39"/>
+        <location line="+40"/>
         <source>Smudging: </source>
         <translation>混合: </translation>
     </message>
@@ -3810,7 +3862,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>曲线应用于这个笔刷的所有设置.</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+21"/>
         <source>Value: </source>
         <translation>基准值: </translation>
     </message>
@@ -3840,13 +3892,13 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>与笔刷同步的防抖设置已禁用.</translation>
     </message>
     <message>
-        <location line="-498"/>
-        <location line="+325"/>
+        <location line="-502"/>
+        <location line="+329"/>
         <source>Size</source>
         <translation>大小</translation>
     </message>
     <message>
-        <location line="-415"/>
+        <location line="-420"/>
         <source>Stabilization Mode:</source>
         <translation>防抖模式:</translation>
     </message>
@@ -3866,7 +3918,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>平滑度: </translation>
     </message>
     <message>
-        <location line="+323"/>
+        <location line="+328"/>
         <source>Not available in Indirect/Wash mode.</source>
         <translation>在间接/冲刷模式下不可用.</translation>
     </message>
@@ -3881,8 +3933,8 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>笔刷的半径.</translation>
     </message>
     <message>
-        <location line="-264"/>
-        <location line="+266"/>
+        <location line="-267"/>
+        <location line="+269"/>
         <source>Opacity</source>
         <translation>不透明度</translation>
     </message>
@@ -3892,8 +3944,8 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>笔刷的不透明度, 0% 是透明的, 100% 完全不透明的.</translation>
     </message>
     <message>
-        <location line="-206"/>
-        <location line="+210"/>
+        <location line="-208"/>
+        <location line="+212"/>
         <source>Hardness</source>
         <translation>硬度</translation>
     </message>
@@ -3903,8 +3955,8 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>边缘的硬度, 0% 是模糊的, 100% 是锐利的.</translation>
     </message>
     <message>
-        <location line="-138"/>
-        <location line="+142"/>
+        <location line="-139"/>
+        <location line="+143"/>
         <source>Smudging</source>
         <translation>混合</translation>
     </message>
@@ -5402,6 +5454,19 @@ Values above 0.5 may not be noticeable.</source>
     </message>
 </context>
 <context>
+    <name>dialogs::Flipbook</name>
+    <message>
+        <location filename="../dialogs/flipbook.cpp" line="+41"/>
+        <source>Export &amp;GIF…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Export &amp;Frames…</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>dialogs::InviteDialog</name>
     <message>
         <location filename="../dialogs/invitedialog.cpp" line="+74"/>
@@ -5422,7 +5487,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>关键帧名:</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+7"/>
         <source>Filter Layers:</source>
         <translation>筛选图层:</translation>
     </message>
@@ -5430,7 +5495,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::LayerProperties</name>
     <message>
-        <location filename="../dialogs/layerproperties.cpp" line="+111"/>
+        <location filename="../dialogs/layerproperties.cpp" line="+114"/>
         <source>Pass Through</source>
         <translation>穿透</translation>
     </message>
@@ -5531,7 +5596,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::LoginDialog</name>
     <message>
-        <location filename="../dialogs/logindialog.cpp" line="+136"/>
+        <location filename="../dialogs/logindialog.cpp" line="+138"/>
         <source>Report...</source>
         <translation>报告...</translation>
     </message>
@@ -5577,7 +5642,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>创建索引失败.</translation>
     </message>
     <message>
-        <location line="+151"/>
+        <location line="+162"/>
         <source>Video error</source>
         <translation>视频错误</translation>
     </message>
@@ -5585,27 +5650,27 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::ResetDialog</name>
     <message>
-        <location filename="../dialogs/resetdialog.cpp" line="+120"/>
+        <location filename="../dialogs/resetdialog.cpp" line="+127"/>
         <source>Reset Session</source>
         <translation>重置房间</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+10"/>
         <source>New</source>
         <translation>新建</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>Open...</source>
         <translation>打开...</translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="+33"/>
         <source>Open Image</source>
         <translation>打开图像</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+8"/>
         <source>Reset</source>
         <translation>重置</translation>
     </message>
@@ -5613,34 +5678,6 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+0"/>
         <source>Couldn&apos;t open file</source>
         <translation>无法打开文件</translation>
-    </message>
-</context>
-<context>
-    <name>dialogs::ResetNoticeDialog</name>
-    <message>
-        <location filename="../dialogs/resetnoticedialog.cpp" line="+29"/>
-        <source>The session has been reset. Since this is a Drawpile 2.1 session and you&apos;re running Drawpile 2.2, this probably changed how things on the canvas look. Do you want to save the canvas as it was before the reset?</source>
-        <translation>房间已重置.由于这是一个Drawpile2.1房间,而你使用的是Drawpile2.2,这可能会改变画布上内容的外观.你想把画布保存为重置前的样子吗?</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>The session has been reset. Normally, everything on the canvas should look the same as it did before, but that&apos;s not guaranteed. Do you want to save the canvas as it was before the reset?</source>
-        <translation>房间已重置.通常情况下,画布上的内容应该和重置前一样,但这并不能保证.你想把画布保存为重置前的样子吗?</translation>
-    </message>
-    <message>
-        <location line="+18"/>
-        <source>Save As...</source>
-        <translation>另存为...</translation>
-    </message>
-    <message>
-        <location line="+21"/>
-        <source>Restoring Canvas %p%</source>
-        <translation>恢复画布 %p%</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Canvas Restored</source>
-        <translation>画布已恢复</translation>
     </message>
 </context>
 <context>
@@ -5760,22 +5797,27 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::SettingsDialog</name>
     <message>
-        <location filename="../dialogs/settingsdialog.cpp" line="+34"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="+31"/>
         <source>Preferences</source>
         <translation>首选项</translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+24"/>
         <source>General</source>
         <translation>基本</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
+        <source>User Interface</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>Input</source>
         <translation>输入</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Tools</source>
         <translation>工具</translation>
     </message>
@@ -5785,27 +5827,27 @@ Values above 0.5 may not be noticeable.</source>
         <translation>网络</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Notifications</source>
         <translation>通知</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Servers</source>
         <translation>服务器</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Shortcuts</source>
         <translation>快捷键</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Canvas Shortcuts</source>
         <translation>画布快捷键</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Parental Controls</source>
         <translation>限制级设定</translation>
     </message>
@@ -6037,16 +6079,27 @@ Values above 0.5 may not be noticeable.</source>
         <source>Custom:</source>
         <translation>自定义:</translation>
     </message>
+    <message>
+        <location line="+57"/>
+        <source>Executables</source>
+        <extracomment>Used for picking a kind of file, used like &quot;Executables (*.exe)&quot;.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Choose ffmpeg path</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>dialogs::settingsdialog::CanvasShortcuts</name>
     <message>
-        <location filename="../dialogs/settingsdialog/canvasshortcuts.cpp" line="+38"/>
+        <location filename="../dialogs/settingsdialog/canvasshortcuts.cpp" line="+37"/>
         <source>Search actions…</source>
         <translation>筛选…</translation>
     </message>
     <message>
-        <location line="+73"/>
+        <location line="+74"/>
         <source>Edit Canvas Shortcut</source>
         <translation>编辑画布快捷键</translation>
     </message>
@@ -6096,7 +6149,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::General</name>
     <message>
-        <location filename="../dialogs/settingsdialog/general.cpp" line="+47"/>
+        <location filename="../dialogs/settingsdialog/general.cpp" line="+72"/>
         <source>When enabled, save every %1 minutes</source>
         <translation>保存间隔: %1 分钟</translation>
     </message>
@@ -6106,12 +6159,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>自动保存:</translation>
     </message>
     <message>
-        <location line="+2"/>
-        <source>Autosave can be enabled for the current file under &lt;i&gt;File ▸ Autosave&lt;/i&gt;.</source>
-        <translation>画布快照可以从菜单 房间&gt;重置… 中恢复.</translation>
-    </message>
-    <message>
-        <location line="+6"/>
+        <location line="+12"/>
         <location line="+80"/>
         <location line="+15"/>
         <source>System</source>
@@ -6123,7 +6171,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>语言:</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+3"/>
         <source>Language changes apply after you restart Drawpile.</source>
         <translation>语言更改需重启.</translation>
     </message>
@@ -6138,22 +6186,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>%1 / %2</translation>
     </message>
     <message>
-        <location line="+8"/>
-        <source>Show scroll bars on canvas</source>
-        <translation>显示画布滚动条</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>User interface:</source>
-        <translation>界面:</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Ask before deleting layers</source>
-        <translation>在删除图层时要求确认</translation>
-    </message>
-    <message>
-        <location line="+6"/>
+        <location line="+9"/>
         <source>Write debugging log to file</source>
         <translation>写入日志文件</translation>
     </message>
@@ -6163,7 +6196,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>记录:</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+10"/>
         <source>Keep %1 canvas snapshots</source>
         <translation>保留的快照数量: %1</translation>
     </message>
@@ -6173,32 +6206,47 @@ Values above 0.5 may not be noticeable.</source>
         <translation>画布快照:</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+8"/>
         <source>Take one snapshot every %1 seconds</source>
         <translation>快照间隔: %1 秒</translation>
     </message>
     <message>
-        <location line="+4"/>
-        <source>Snapshots can be restored from the &lt;i&gt;Session ▸ Reset…&lt;/i&gt; menu.</source>
-        <translation>自动保存可以从菜单 文件&gt;自动保存 中启用.</translation>
+        <location line="-101"/>
+        <source>Capture volume rocker</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+2"/>
+        <source>Android:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Autosave can be enabled for the current file under File ▸ Autosave.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+81"/>
+        <source>Snapshots can be restored from the Session ▸ Reset… menu.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+18"/>
         <source>Style:</source>
         <translation>风格:</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+4"/>
         <source>Light</source>
         <translation>Light</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+0"/>
         <source>Dark</source>
         <translation>Dark</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+0"/>
         <source>Krita Bright</source>
         <translation>Krita Bright</translation>
     </message>
@@ -6208,12 +6256,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Krita Dark</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+0"/>
         <source>Krita Darker</source>
         <translation>Krita Darker</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+0"/>
         <source>Qt Fusion</source>
         <translation>Qt Fusion</translation>
     </message>
@@ -6223,12 +6271,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Hotdog Stand</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+2"/>
         <source>Color scheme:</source>
         <translation>主题:</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+9"/>
         <source>Use %1 undo levels by default</source>
         <translation>默认的撤销限制: %1</translation>
     </message>
@@ -6241,7 +6289,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Input</name>
     <message>
-        <location filename="../dialogs/settingsdialog/input.cpp" line="+36"/>
+        <location filename="../dialogs/settingsdialog/input.cpp" line="+39"/>
         <source>Input</source>
         <translation>输入</translation>
     </message>
@@ -6251,12 +6299,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>输出</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+9"/>
         <source>Global pressure curve:</source>
         <translation>全局曲线:</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+11"/>
         <source>Enable pressure sensitivity</source>
         <translation>启用压感</translation>
     </message>
@@ -6291,12 +6339,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>KisTablet Wintab Relative</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+3"/>
         <source>Qt5</source>
         <translation>Qt5</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+3"/>
         <source>Qt6 Windows Ink</source>
         <translation>Qt6 Windows Ink</translation>
     </message>
@@ -6306,17 +6354,17 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Qt6 Wintab</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+4"/>
         <source>Driver:</source>
         <translation>驱动:</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+18"/>
         <source>One-finger input:</source>
         <translation>单指输入:</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Do nothing</source>
         <translation>无操作</translation>
     </message>
@@ -6349,7 +6397,27 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Network</name>
     <message>
-        <location filename="../dialogs/settingsdialog/network.cpp" line="+34"/>
+        <location filename="../dialogs/settingsdialog/network.cpp" line="+82"/>
+        <source>Hide user list in announcements</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Builtin server:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Announce with Zeroconf</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Host on port %1 if available</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Automatically check for updates</source>
         <translation>自动检查更新</translation>
     </message>
@@ -6359,7 +6427,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>软件更新:</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Allow insecure local storage</source>
         <translation>允许储存</translation>
     </message>
@@ -6369,7 +6437,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>账号密码:</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Connection quality:</source>
         <translation>连接质量:</translation>
     </message>
@@ -6379,17 +6447,17 @@ Values above 0.5 may not be noticeable.</source>
         <translation>好</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+0"/>
         <source>Poor</source>
         <translation>差</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+3"/>
         <source>If all operators in a session set connection quality to Poor, auto-reset will not work and the server will stop processing updates until the session is manually reset.</source>
         <translation>如果房间中的所有管理员设置连接质量为差,自动重置将不起作用,服务器将停止处理更新,直到房间被手动重置.</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+12"/>
         <source>Network timeout:</source>
         <translation>连接超时:</translation>
     </message>
@@ -6399,37 +6467,37 @@ Values above 0.5 may not be noticeable.</source>
         <translation>%1 秒</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>Receive delay:</source>
         <translation>接收延迟:</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>The higher the value, the smoother strokes from other users come in.</source>
         <translation>数值越大,其他用户输入的笔画就越流畅.</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="-94"/>
         <source>Chat avatars:</source>
         <translation>头像:</translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+24"/>
         <source>Add avatar…</source>
         <translation>添加头像…</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+4"/>
         <source>Delete selected avatars…</source>
         <translation>删除选中的头像…</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="+2"/>
         <source>Delete avatars</source>
         <translation>删除头像</translation>
     </message>
     <message numerus="yes">
-        <location line="+0"/>
+        <location line="+1"/>
         <source>Really delete %n avatar(s)?</source>
         <translation>
             <numerusform>确定删除 %n 头像吗?</numerusform>
@@ -6439,7 +6507,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Notifications</name>
     <message>
-        <location filename="../dialogs/settingsdialog/notifications.cpp" line="+30"/>
+        <location filename="../dialogs/settingsdialog/notifications.cpp" line="+35"/>
         <source>%</source>
         <translation>%</translation>
     </message>
@@ -6479,12 +6547,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>画布解锁</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+27"/>
         <source>Notifications:</source>
         <translation>通知:</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="-12"/>
         <source>Preview sound</source>
         <translation>预览声音</translation>
     </message>
@@ -6492,7 +6560,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::ParentalControls</name>
     <message>
-        <location filename="../dialogs/settingsdialog/parentalcontrols.cpp" line="+49"/>
+        <location filename="../dialogs/settingsdialog/parentalcontrols.cpp" line="+57"/>
         <source>Consider sessions whose titles contain these keywords NSFM.</source>
         <translation>将标题包含这些标签的房间视为不适于未成年人的.</translation>
     </message>
@@ -6502,7 +6570,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>限制级标签:</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+12"/>
         <source>Filter mode:</source>
         <translation>限制级房间:</translation>
     </message>
@@ -6517,17 +6585,17 @@ Values above 0.5 may not be noticeable.</source>
         <translation>列表中隐藏</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Prevent joining NSFM sessions</source>
         <translation>不允许加入</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Prevent joining NSFM sessions and disconnect</source>
         <translation>当标记为不适于未成年人时断开连接</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>NSFM sessions will be hidden from server listings, but can still be joined by following a direct link.</source>
         <translation>限制级房间将在列表中被隐藏,但仍然可以通过直接的地址加入.</translation>
     </message>
@@ -6537,7 +6605,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>限制级房间将在列表中被隐藏且无法加入.</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>NSFM sessions will be hidden from server listings and cannot be joined. Connected sessions that change their title or NSFM flag will automatically disconnect.</source>
         <translation>限制级房间将在列表中被隐藏且无法加入.已连接的房间如果改变其标题或限制级标签将自动断开连接.</translation>
     </message>
@@ -6553,42 +6621,42 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+10"/>
-        <location line="+26"/>
+        <location line="+28"/>
         <source>Lock</source>
         <translation>锁定</translation>
     </message>
     <message>
-        <location line="-21"/>
+        <location line="-23"/>
         <source>Hide settings when locked</source>
         <translation>锁定时隐藏设定</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+10"/>
         <source>Parental controls are currently locked.</source>
         <translation>限制级设定已被锁定.</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+13"/>
         <source>Unlock</source>
         <translation>开启</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+20"/>
         <source>These settings configure the handling of sessions that are marked not suitable for minors (NSFM) and of layers that have been censored.</source>
         <translation>这些是属于限制级房间和图层审查功能的相关设置.</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+14"/>
         <source>Parental controls are currently managed by the operating system.</source>
         <translation>目前限制级设定是由操作系统管理的.</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+11"/>
         <source>Unlock Parental Controls</source>
         <translation>开启控制面板</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+0"/>
         <source>Lock Parental Controls</source>
         <translation>锁定控制面板</translation>
     </message>
@@ -6598,7 +6666,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>输入密码:</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+10"/>
         <source>Incorrect password.</source>
         <translation>密码错误.</translation>
     </message>
@@ -6606,7 +6674,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Servers</name>
     <message>
-        <location filename="../dialogs/settingsdialog/servers.cpp" line="+46"/>
+        <location filename="../dialogs/settingsdialog/servers.cpp" line="+45"/>
         <source>Known hosts:</source>
         <translation>已知服务器:</translation>
     </message>
@@ -6616,7 +6684,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>导入信任证书…</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+5"/>
         <source>Remove selected hosts…</source>
         <translation>移除选中的服务器…</translation>
     </message>
@@ -6626,23 +6694,23 @@ Values above 0.5 may not be noticeable.</source>
         <translation>移除已知服务器</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <location line="+114"/>
+        <location line="+5"/>
+        <location line="+122"/>
         <source>Trust selected hosts</source>
         <translation>标记信任</translation>
     </message>
     <message>
-        <location line="-91"/>
+        <location line="-95"/>
         <source>List servers:</source>
         <translation>列表服务器:</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+16"/>
         <source>Add list servers…</source>
         <translation>添加列表服务器…</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+5"/>
         <source>Remove selected list servers…</source>
         <translation>移除选中的列表服务器…</translation>
     </message>
@@ -6652,31 +6720,31 @@ Values above 0.5 may not be noticeable.</source>
         <translation>移除列表服务器</translation>
     </message>
     <message numerus="yes">
-        <location line="-48"/>
+        <location line="-54"/>
         <source>Really remove %n known host(s)?</source>
         <translation>
             <numerusform>确定移除 %n 已知服务器吗?</numerusform>
         </translation>
     </message>
     <message numerus="yes">
-        <location line="+49"/>
+        <location line="+55"/>
         <source>Really remove %n list server(s)?</source>
         <translation>
             <numerusform>确定移除 %n 列表服务器吗?</numerusform>
         </translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+2"/>
         <source>Move up</source>
         <translation>上移</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+5"/>
         <source>Move down</source>
         <translation>下移</translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="+33"/>
         <source>Continue</source>
         <translation>继续</translation>
     </message>
@@ -6686,7 +6754,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>导入信任证书</translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+23"/>
         <source>Could not save changes to known hosts: %1</source>
         <translation>无法保存对已知服务器的更改: %1</translation>
     </message>
@@ -6694,12 +6762,12 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Shortcuts</name>
     <message>
-        <location filename="../dialogs/settingsdialog/shortcuts.cpp" line="+35"/>
+        <location filename="../dialogs/settingsdialog/shortcuts.cpp" line="+34"/>
         <source>Search actions…</source>
         <translation>筛选…</translation>
     </message>
     <message>
-        <location line="+72"/>
+        <location line="+73"/>
         <source>Restore Shortcut Defaults</source>
         <translation>恢复默认快捷键</translation>
     </message>
@@ -6717,7 +6785,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Tools</name>
     <message>
-        <location filename="../dialogs/settingsdialog/tools.cpp" line="+41"/>
+        <location filename="../dialogs/settingsdialog/tools.cpp" line="+161"/>
         <source>Toggle between previous and current tool</source>
         <translation>快捷键立即触发切换回上一次选择</translation>
     </message>
@@ -6732,7 +6800,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>双击 Alt 键对画布进行对焦</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="-61"/>
         <source>Share one color across all brush slots</source>
         <translation>笔刷面板的数字预设保持同一颜色</translation>
     </message>
@@ -6747,17 +6815,17 @@ Values above 0.5 may not be noticeable.</source>
         <translation>px</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Show a %1 outline around the brush</source>
         <translation>光标宽度: %1</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Enable brush outline</source>
         <translation>启用笔刷轮廓</translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+25"/>
         <source>Dot</source>
         <translation>圆</translation>
     </message>
@@ -6787,7 +6855,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>光标样式: %1</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="-98"/>
         <source>Shape:</source>
         <translation>形状:</translation>
     </message>
@@ -6817,7 +6885,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>旋转</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+7"/>
         <source>Direction:</source>
         <translation>方向:</translation>
     </message>
@@ -6827,7 +6895,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>上升</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+0"/>
         <source>Descending</source>
         <translation>下降</translation>
     </message>
@@ -6853,9 +6921,127 @@ Values above 0.5 may not be noticeable.</source>
     </message>
 </context>
 <context>
+    <name>dialogs::settingsdialog::UserInterface</name>
+    <message>
+        <location filename="../dialogs/settingsdialog/userinterface.cpp" line="+42"/>
+        <source>Override system font size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Font size: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>pt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Changes the font size apply after you restart Drawpile.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Type text here to try out the effects of your chosen font size.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>Interface mode:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Desktop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Small screen (experimental)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Changes to the interface mode apply after you restart Drawpile.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Disabled</source>
+        <translation type="unfinished">禁用</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>On left-click drag</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>On middle-click drag</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>On right-click drag</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>On touch drag</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Kinetic scrolling:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Threshold: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Hide scroll bars</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Changes to kinetic scrolling apply after you restart Drawpile.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Background color behind the canvas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Color behind canvas:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Show scroll bars on canvas</source>
+        <translation type="unfinished">显示画布滚动条</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Miscellaneous:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Ask before deleting layers</source>
+        <translation type="unfinished">在删除图层时要求确认</translation>
+    </message>
+</context>
+<context>
     <name>dialogs::startdialog::Browse</name>
     <message>
-        <location filename="../dialogs/startdialog/browse.cpp" line="+65"/>
+        <location filename="../dialogs/startdialog/browse.cpp" line="+62"/>
         <source>You haven&apos;t added any servers yet. You can find some at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;.</source>
         <translation>你还未添加任何列表服务器. 你可以在 &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt; 上找到一些.</translation>
     </message>
@@ -6910,19 +7096,19 @@ Values above 0.5 may not be noticeable.</source>
         <translation>显示重名房</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+18"/>
         <location line="+4"/>
         <source>Nearby</source>
         <translation>附近</translation>
     </message>
     <message>
         <location line="-4"/>
-        <location line="+140"/>
+        <location line="+143"/>
         <source>Loading...</source>
         <translation>加载中...</translation>
     </message>
     <message>
-        <location line="-82"/>
+        <location line="-85"/>
         <source>Join</source>
         <translation>加入</translation>
     </message>
@@ -6947,7 +7133,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>复制房主名</translation>
     </message>
     <message>
-        <location line="+79"/>
+        <location line="+82"/>
         <source>Nothing here yet!</source>
         <translation>Nothing here yet!</translation>
     </message>
@@ -6960,7 +7146,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::startdialog::Create</name>
     <message>
-        <location filename="../dialogs/startdialog/create.cpp" line="+24"/>
+        <location filename="../dialogs/startdialog/create.cpp" line="+26"/>
         <location line="+7"/>
         <source>px</source>
         <translation>px</translation>
@@ -6981,7 +7167,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>画布背景颜色</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Background:</source>
         <translation>背景:</translation>
     </message>
@@ -6989,7 +7175,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::startdialog::Host</name>
     <message>
-        <location filename="../dialogs/startdialog/host.cpp" line="+31"/>
+        <location filename="../dialogs/startdialog/host.cpp" line="+34"/>
         <source>The title is shown in the application title bar and in the session selection dialog</source>
         <translation>房名会显示在程序的标题栏上和房间列表界面中</translation>
     </message>
@@ -7009,17 +7195,32 @@ Values above 0.5 may not be noticeable.</source>
         <translation>密码:</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+16"/>
+        <source>The built-in server is not available on Android.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>The built-in server is not available on this installation of Drawpile.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+36"/>
+        <source>Enable advanced options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
         <source>An optional user friendly ID for the session</source>
         <translation>可选的用户友好型房间 ID</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-4"/>
         <source>ID Alias:</source>
         <translation>后缀:</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="-60"/>
         <source>Not suitable for minors (NSFM)</source>
         <translation>未成年人勿入</translation>
     </message>
@@ -7029,7 +7230,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>将房间标记为有限制级内容的.</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+65"/>
         <source>List at:</source>
         <translation>公开在:</translation>
     </message>
@@ -7039,7 +7240,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>公开在列表上</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="-61"/>
         <source>Host on this computer</source>
         <translation>本机</translation>
     </message>
@@ -7049,12 +7250,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>使用 Drawpile 的内置服务器</translation>
     </message>
     <message>
-        <location line="+4"/>
-        <source>Not available in the 2.2 beta yet. This option will return later!</source>
-        <translation>此功能在2.2测试版上暂不可用. 将在稍后版本中恢复!</translation>
-    </message>
-    <message>
-        <location line="+8"/>
+        <location line="+19"/>
         <source>Host at:</source>
         <translation>远程服务器:</translation>
     </message>
@@ -7067,7 +7263,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::startdialog::Join</name>
     <message>
-        <location filename="../dialogs/startdialog/join.cpp" line="+27"/>
+        <location filename="../dialogs/startdialog/join.cpp" line="+25"/>
         <source>Enter a &lt;strong&gt;session URL&lt;/strong&gt;, &lt;strong&gt;host name&lt;/strong&gt;, &lt;strong&gt;IP address&lt;/strong&gt; or &lt;strong&gt;room code&lt;/strong&gt;:</source>
         <translation>可通过输入房间地址,服务器地址,ip地址或者房间代码来加入房间:</translation>
     </message>
@@ -7133,7 +7329,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::startdialog::UpdateNotice</name>
     <message>
-        <location filename="../dialogs/startdialog/updatenotice.cpp" line="+61"/>
+        <location filename="../dialogs/startdialog/updatenotice.cpp" line="+60"/>
         <source>Update</source>
         <translation>更新</translation>
     </message>
@@ -7171,7 +7367,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::startdialog::Welcome</name>
     <message>
-        <location filename="../dialogs/startdialog/welcome.cpp" line="+44"/>
+        <location filename="../dialogs/startdialog/welcome.cpp" line="+45"/>
         <source>Welcome to Drawpile!</source>
         <translation>欢迎使用 Drawpile!</translation>
     </message>
@@ -7199,18 +7395,18 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::BrushPalette</name>
     <message>
-        <location filename="../docks/brushpalettedock.cpp" line="+105"/>
+        <location filename="../docks/brushpalettedock.cpp" line="+103"/>
         <source>Brushes</source>
         <translation>预设面板</translation>
     </message>
     <message>
         <location line="+34"/>
-        <location line="+209"/>
+        <location line="+204"/>
         <source>New Tag</source>
         <translation>新建标签</translation>
     </message>
     <message>
-        <location line="-204"/>
+        <location line="-199"/>
         <source>Export Tag…</source>
         <translation>导出笔刷…</translation>
     </message>
@@ -7220,7 +7416,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>导出笔刷…</translation>
     </message>
     <message>
-        <location line="+75"/>
+        <location line="+76"/>
         <source>Brush Import</source>
         <translation>笔刷导入</translation>
     </message>
@@ -7251,13 +7447,13 @@ Values above 0.5 may not be noticeable.</source>
         </translation>
     </message>
     <message>
-        <location line="+99"/>
+        <location line="+93"/>
         <source>Edit Tag</source>
         <translation>编辑标签</translation>
     </message>
     <message>
-        <location line="-221"/>
-        <location line="+236"/>
+        <location line="-216"/>
+        <location line="+231"/>
         <source>Delete Tag</source>
         <translation>删除标签</translation>
     </message>
@@ -7272,7 +7468,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>新建笔刷</translation>
     </message>
     <message>
-        <location line="-259"/>
+        <location line="-254"/>
         <source>Brush Tags</source>
         <translation>笔刷标签</translation>
     </message>
@@ -7287,19 +7483,19 @@ Values above 0.5 may not be noticeable.</source>
         <translation>%1x%1</translation>
     </message>
     <message>
-        <location line="+188"/>
+        <location line="+183"/>
         <location line="+14"/>
         <source>Tag name:</source>
         <translation>标签名:</translation>
     </message>
     <message>
-        <location line="-231"/>
-        <location line="+268"/>
+        <location line="-226"/>
+        <location line="+263"/>
         <source>New Brush Preset</source>
         <translation>新建笔刷预设</translation>
     </message>
     <message>
-        <location line="-281"/>
+        <location line="-276"/>
         <source>Search</source>
         <translation>搜索</translation>
     </message>
@@ -7310,24 +7506,24 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+287"/>
+        <location line="+282"/>
         <source>Overwrite Brush Preset</source>
         <translation>覆盖笔刷预设</translation>
     </message>
     <message>
-        <location line="-286"/>
-        <location line="+310"/>
+        <location line="-281"/>
+        <location line="+305"/>
         <source>Edit Brush Preset</source>
         <translation>编辑笔刷预设</translation>
     </message>
     <message>
-        <location line="-309"/>
-        <location line="+320"/>
+        <location line="-304"/>
+        <location line="+315"/>
         <source>Delete Brush Preset</source>
         <translation>删除笔刷预设</translation>
     </message>
     <message>
-        <location line="-315"/>
+        <location line="-310"/>
         <source>Rename Tag</source>
         <translation>重命名标签</translation>
     </message>
@@ -7337,7 +7533,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>导入笔刷...</translation>
     </message>
     <message>
-        <location line="+278"/>
+        <location line="+273"/>
         <source>Really overwrite brush preset &apos;%1&apos; with the current brush?</source>
         <translation>确定用当前笔刷覆盖笔刷预设&apos;%1&apos;吗?</translation>
     </message>
@@ -7573,12 +7769,12 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::LayerList</name>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="+39"/>
+        <location filename="../docks/layerlistdock.cpp" line="+38"/>
         <source>Layers</source>
         <translation>图层面板</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+44"/>
         <source>Opacity: </source>
         <translation>不透明度: </translation>
     </message>
@@ -7588,12 +7784,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>%</translation>
     </message>
     <message>
-        <location line="+346"/>
+        <location line="+405"/>
         <source>Group</source>
         <translation>图层组</translation>
     </message>
     <message>
-        <location line="+139"/>
+        <location line="+142"/>
         <source>Delete Layer?</source>
         <translation>删除图层?</translation>
     </message>
@@ -7603,8 +7799,8 @@ Values above 0.5 may not be noticeable.</source>
         <translation>确定删除图层 &apos;%1&apos;?</translation>
     </message>
     <message>
-        <location line="-179"/>
-        <location line="+39"/>
+        <location line="-185"/>
+        <location line="+42"/>
         <source>Layer</source>
         <translation>图层</translation>
     </message>
@@ -7663,7 +7859,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::Timeline</name>
     <message>
-        <location filename="../docks/timeline.cpp" line="+20"/>
+        <location filename="../docks/timeline.cpp" line="+18"/>
         <source>Timeline</source>
         <translation>时间轴</translation>
     </message>
@@ -7697,6 +7893,14 @@ Values above 0.5 may not be noticeable.</source>
         <location filename="../docks/toolsettingsdock.cpp" line="+13"/>
         <source>Tool</source>
         <translation>工具面板</translation>
+    </message>
+</context>
+<context>
+    <name>drawingboard::CanvasScene</name>
+    <message>
+        <location filename="../scene/canvasscene.cpp" line="+225"/>
+        <source>Restoring canvas…</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7740,12 +7944,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>保护注释内容</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+5"/>
         <source>Merge</source>
         <translation>合并</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Delete</source>
         <translation>删除</translation>
     </message>
@@ -7755,28 +7959,28 @@ Values above 0.5 may not be noticeable.</source>
         <translation>靠左</translation>
     </message>
     <message>
-        <location line="+1"/>
-        <location line="+10"/>
+        <location line="+3"/>
+        <location line="+20"/>
         <source>Center</source>
         <translation>居中</translation>
     </message>
     <message>
-        <location line="-9"/>
+        <location line="-17"/>
         <source>Justify</source>
         <translation>两端对齐</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Right</source>
         <translation>靠右</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+11"/>
         <source>Top</source>
         <translation>靠上</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+8"/>
         <source>Bottom</source>
         <translation>靠下</translation>
     </message>
@@ -7784,7 +7988,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>tools::BrushSettings</name>
     <message>
-        <location filename="../toolwidgets/brushsettings.cpp" line="+125"/>
+        <location filename="../toolwidgets/brushsettings.cpp" line="+127"/>
         <source>Brush Settings</source>
         <translation>笔刷设定</translation>
     </message>
@@ -7829,12 +8033,17 @@ Values above 0.5 may not be noticeable.</source>
         <translation>使稳定器成为笔刷设置, 就像在MyPaint中一样, 而不是像Krita中的独立设置.</translation>
     </message>
     <message>
-        <location line="+529"/>
+        <location line="+98"/>
         <source>This session is hosted with Drawpile 2.1, MyPaint brushes are unavailable.</source>
         <translation>此房间是由Drawpile2.1开的, MyPaint笔刷无法使用.</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+3"/>
+        <source>This session is hosted with Drawpile 2.1, Indirect/Wash Mode is unavailable. &lt;a href=&quot;#&quot;&gt;Click here to switch to Direct/Build-Up Mode.&lt;/a&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-5"/>
         <source>You don&apos;t have permission to use MyPaint brushes.</source>
         <translation>你没有权限使用MyPaint笔刷.</translation>
     </message>
@@ -7950,12 +8159,27 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::CanvasView</name>
     <message>
-        <location filename="../scene/canvasview.cpp" line="+142"/>
+        <location filename="../scene/canvasview.cpp" line="+152"/>
         <source>Reconnect</source>
         <translation>重新连接</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+21"/>
+        <source>Do you want to save the canvas as it was before the reset? Since this is a Drawpile 2.1 session, it may have desynchronized!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Do you want to save the canvas as it was before the reset?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Save As…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+60"/>
         <source>Reset in progress</source>
         <translation>加载进行中</translation>
     </message>
@@ -8000,7 +8224,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>工具已锁定</translation>
     </message>
     <message>
-        <location line="+244"/>
+        <location line="+248"/>
         <source>Vertical flip: ON</source>
         <translation>垂直翻转: 开</translation>
     </message>
@@ -8020,7 +8244,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>水平翻转: 关</translation>
     </message>
     <message>
-        <location line="+1517"/>
+        <location line="+1593"/>
         <source>Zoom: %1%</source>
         <translation>缩放: %1%</translation>
     </message>
@@ -8033,17 +8257,17 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::ChatBox</name>
     <message>
-        <location filename="../chat/chatbox.cpp" line="+47"/>
+        <location filename="../chat/chatbox.cpp" line="+45"/>
         <source>Invite</source>
         <translation>邀请</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>Session</source>
         <translation>房间</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>Chat</source>
         <translation>聊天</translation>
     </message>
@@ -8056,12 +8280,12 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::ChatWidget</name>
     <message>
-        <location filename="../chat/chatwidget.cpp" line="+143"/>
+        <location filename="../chat/chatwidget.cpp" line="+151"/>
         <source>Public</source>
         <translation>公开</translation>
     </message>
     <message>
-        <location line="+62"/>
+        <location line="+71"/>
         <source>Mute notifications</source>
         <translation>静音通知</translation>
     </message>
@@ -8071,7 +8295,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>切换此窗口的通知</translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+36"/>
         <source>Chat (recorded)...</source>
         <translation>聊天 (录制中)...</translation>
     </message>
@@ -8081,7 +8305,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>聊天...</translation>
     </message>
     <message>
-        <location line="+304"/>
+        <location line="+290"/>
         <source>%1 joined the session</source>
         <translation>%1 加入房间</translation>
     </message>
@@ -8091,12 +8315,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>%1 离开房间</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+22"/>
         <source>You have been kicked by %1</source>
         <translation>你已被%1踢出房间</translation>
     </message>
     <message>
-        <location line="+118"/>
+        <location line="+128"/>
         <source>/!: only operators are allowed to send shouts.</source>
         <translation>/!:只有operator可以发送公告消息.</translation>
     </message>
@@ -8111,7 +8335,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>/!:没有给出文本.</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+10"/>
         <source>/alert: only operators are allowed to send alerts.</source>
         <translation>/alert:只有operator可以发送弹窗消息.</translation>
     </message>
@@ -8141,7 +8365,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>/pin:没有给出文本.</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+11"/>
         <source>/unpin: only operators are allowed to unpin.</source>
         <translation>/unpin:只有operator可以取消置顶消息.</translation>
     </message>
@@ -8151,7 +8375,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>/unpin:只能在公共聊天中取消置顶.</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+16"/>
         <source>/roll: invalid dice roll description.</source>
         <translation>/roll:无效的掷骰子描述.</translation>
     </message>
@@ -8183,7 +8407,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>未知命令: %1</translation>
     </message>
     <message>
-        <location line="-607"/>
+        <location line="-609"/>
         <source>Clear</source>
         <translation>清空信息</translation>
     </message>
@@ -8252,7 +8476,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>保存和加载曲线预设.</translation>
     </message>
     <message>
-        <location line="+101"/>
+        <location line="+85"/>
         <source>Curve copied to clipboard.</source>
         <translation>曲线已复制到剪贴板.</translation>
     </message>
@@ -8399,6 +8623,19 @@ Values above 0.5 may not be noticeable.</source>
     </message>
 </context>
 <context>
+    <name>widgets::NotificationBar</name>
+    <message>
+        <location filename="../widgets/notifbar.cpp" line="+127"/>
+        <source>Dismiss (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Dismiss</source>
+        <translation type="unfinished">放弃</translation>
+    </message>
+</context>
+<context>
     <name>widgets::PaletteWidget</name>
     <message>
         <location filename="../widgets/palettewidget.cpp" line="+41"/>
@@ -8476,7 +8713,7 @@ Hex: %4</source>
 <context>
     <name>widgets::TimelineWidget</name>
     <message>
-        <location filename="../widgets/timelinewidget.cpp" line="+526"/>
+        <location filename="../widgets/timelinewidget.cpp" line="+599"/>
         <source>Blank key frame (duplicate)</source>
         <translation>空白关键帧 (复制)</translation>
     </message>
@@ -8526,7 +8763,7 @@ Hex: %4</source>
         <translation>切换洋葱皮</translation>
     </message>
     <message>
-        <location line="+119"/>
+        <location line="+129"/>
         <source>There&apos;s no tracks yet.
 Add one using the ＋ button above
 or via Animation ▸ New Track.</source>
@@ -8535,7 +8772,7 @@ or via Animation ▸ New Track.</source>
 或者通过菜单 动画 ▸ 新建轨道.</translation>
     </message>
     <message>
-        <location line="+547"/>
+        <location line="+557"/>
         <source>Track</source>
         <translation>轨道</translation>
     </message>
@@ -8570,7 +8807,7 @@ or via Animation ▸ New Track.</source>
         <translation>每秒帧数 (FPS)</translation>
     </message>
     <message>
-        <location line="+234"/>
+        <location line="+275"/>
         <source>Set Key Frame to %1</source>
         <translation>设置关键帧为 %1</translation>
     </message>
@@ -8583,19 +8820,19 @@ or via Animation ▸ New Track.</source>
 <context>
     <name>widgets::UserItemDelegate</name>
     <message>
-        <location filename="../chat/useritemdelegate.cpp" line="+32"/>
-        <location line="+120"/>
+        <location filename="../chat/useritemdelegate.cpp" line="+31"/>
+        <location line="+125"/>
         <source>Operator</source>
         <translation>房间管理员</translation>
     </message>
     <message>
-        <location line="-119"/>
-        <location line="+121"/>
+        <location line="-124"/>
+        <location line="+126"/>
         <source>Trusted</source>
         <translation>信任用户</translation>
     </message>
     <message>
-        <location line="-118"/>
+        <location line="-123"/>
         <source>Lock</source>
         <translation>锁定</translation>
     </message>
@@ -8635,7 +8872,7 @@ or via Animation ▸ New Track.</source>
         <translation>显示用户信息</translation>
     </message>
     <message>
-        <location line="+99"/>
+        <location line="+104"/>
         <source>Moderator</source>
         <translation>服务器管理员</translation>
     </message>
