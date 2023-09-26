@@ -560,7 +560,7 @@
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
    <receiver>SessionSettingsDialog</receiver>
-   <slot>accept()</slot>
+   <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>224</x>
@@ -576,7 +576,7 @@
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
    <receiver>SessionSettingsDialog</receiver>
-   <slot>reject()</slot>
+   <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>292</x>
