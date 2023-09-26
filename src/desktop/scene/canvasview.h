@@ -353,6 +353,7 @@ private:
 	bool m_dragInverted;
 	bool m_dragSwapAxes;
 	QPoint m_dragLastPoint;
+	QPointF m_dragCanvasPoint;
 	qreal m_dragDiscreteRotation;
 
 	//! Previous pointer location

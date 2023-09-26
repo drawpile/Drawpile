@@ -961,6 +961,7 @@ void CanvasView::penPressEvent(
 
 	if(m_dragmode == ViewDragMode::Prepared) {
 		m_dragLastPoint = pos.toPoint();
+		m_dragCanvasPoint = mapToCanvas(m_dragLastPoint);
 		m_dragmode = ViewDragMode::Started;
 		m_dragButton = button;
 		m_dragDiscreteRotation = 0.0;
@@ -1314,6 +1315,7 @@ void CanvasView::keyPressEvent(QKeyEvent *event)
 			m_dragInverted = keyMatch.inverted();
 			m_dragSwapAxes = keyMatch.swapAxes();
 			m_dragLastPoint = mapFromGlobal(QCursor::pos());
+			m_dragCanvasPoint = mapToCanvas(m_dragLastPoint);
 			m_dragDiscreteRotation = 0.0;
 			resetCursor();
 			updateOutline();
@@ -1897,9 +1899,9 @@ void CanvasView::moveDrag(const QPoint &point)
 		if(deltaY != 0) {
 			qreal delta = qBound(-1.0, deltaY / 100.0, 1.0);
 			if(delta > 0.0) {
-				setZoom(m_zoom * (1.0 + delta));
+				setZoomAt(m_zoom * (1.0 + delta), m_dragCanvasPoint);
 			} else if(delta < 0.0) {
-				setZoom(m_zoom / (1.0 - delta));
+				setZoomAt(m_zoom / (1.0 - delta), m_dragCanvasPoint);
 			}
 		}
 		break;

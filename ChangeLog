@@ -38,6 +38,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Replace the reset notice dialog with less disruptive on-canvas messages. If you continue drawing, the notice about saving the previous state will dismiss itself. Thanks to Blozzom, vipperz, xxxx, zheida and probably others for reporting.
  * Feature: Allow the client to translate server messages, rather than having them always be in English.
  * Fix: Make preferences dialog not use custom layouts anymore. Fixes the dialog getting stuck at an unusably tiny size on Windows, makes it work with Arabic and other right-to-left languages and allows resizing the dialog as well as scrolling its contents.
+ * Fix: Drag-zooming (Ctrl+Middle Click by default) now zooms on the initial click location, rather than the center of the canvas. Thanks to Valaek for reporting.
 
 2023-08-26 Version 2.2.0-beta.7
  * Fix: Make classic brushes not go brighter when smudging into transparency. Thanks to cada for reporting.
