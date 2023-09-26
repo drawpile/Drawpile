@@ -773,7 +773,7 @@ angepasst.</translation>
     <message>
         <location line="+29"/>
         <source>Export</source>
-        <translation type="unfinished">Exportieren</translation>
+        <translation>Exportieren</translation>
     </message>
 </context>
 <context>
@@ -1961,22 +1961,22 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
     <message>
         <location line="+50"/>
         <source>Hosting on this computer is not available</source>
-        <translation type="unfinished"></translation>
+        <translation>Hosten auf diesem Computer ist nicht verfügbar</translation>
     </message>
     <message>
         <location line="+55"/>
         <source>Really leave and terminate the session?</source>
-        <translation type="unfinished"></translation>
+        <translation>Wirklich die Sitzung verlassen und beenden?</translation>
     </message>
     <message>
         <location line="+238"/>
         <source>You&apos;ve been disconnected from the session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ihre verbindung zur Sitzung wurde getrennt.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Disconnected: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Verbindung getrennt: %1</translation>
     </message>
     <message>
         <location line="+177"/>
@@ -2066,12 +2066,12 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+4"/>
         <source>Primary screen:</source>
-        <translation type="unfinished"></translation>
+        <translation>Primärer Bildschirm:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%1x%2px² (%3x%4mm²)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1x%2px² (%3x%4mm²)</translation>
     </message>
     <message>
         <location line="+89"/>
@@ -2241,12 +2241,12 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+1"/>
         <source>Increase Key Frame Exposure</source>
-        <translation type="unfinished"></translation>
+        <translation>Schlüsselbild verlängern</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Decrease Key Frame Exposure</source>
-        <translation type="unfinished"></translation>
+        <translation>Schlüsselbild verkürzen</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2577,7 +2577,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+10"/>
         <source>Swap With Brush Slot #%1</source>
-        <translation type="unfinished"></translation>
+        <translation>Mit Pinselslot %1 vertauschen</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -2593,13 +2593,13 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
         <location line="+46"/>
         <source>Wheel</source>
         <extracomment>&quot;Wheel&quot; refers to the color wheel.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Rad</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Sliders</source>
         <extracomment>&quot;Sliders&quot; refers to the RGB and HSV sliders.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Schieber</translation>
     </message>
     <message>
         <location line="-6"/>
@@ -3412,12 +3412,12 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+14"/>
         <source>Path to ffmpeg:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pfad zu ffmpeg:</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Choose</source>
-        <translation type="unfinished"></translation>
+        <translation>Wählen</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -5462,12 +5462,12 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../dialogs/flipbook.cpp" line="+41"/>
         <source>Export &amp;GIF…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;GIF exportieren…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Export &amp;Frames…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Frames exportieren…</translation>
     </message>
 </context>
 <context>
@@ -5813,7 +5813,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+2"/>
         <source>User Interface</source>
-        <translation type="unfinished"></translation>
+        <translation>Nutzerinterface</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6088,12 +6088,12 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <location line="+57"/>
         <source>Executables</source>
         <extracomment>Used for picking a kind of file, used like &quot;Executables (*.exe)&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Ausführbare Dateien</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Choose ffmpeg path</source>
-        <translation type="unfinished"></translation>
+        <translation>ffmpeg-Pfad auswählen</translation>
     </message>
 </context>
 <context>
@@ -6219,22 +6219,22 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="-101"/>
         <source>Capture volume rocker</source>
-        <translation type="unfinished"></translation>
+        <translation>Lautstärkeregler erfassen</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Android:</source>
-        <translation type="unfinished"></translation>
+        <translation>Android:</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Autosave can be enabled for the current file under File ▸ Autosave.</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatisches Speichern kann für die aktuelle Datei unter Datei ▸ Automatsiches Speichern aktiviert werden.</translation>
     </message>
     <message>
         <location line="+81"/>
         <source>Snapshots can be restored from the Session ▸ Reset… menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Schnappschüsse können über das Menü Sitzung ▸ Zurücksetzen… wiederhergestellt werden.</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -6405,22 +6405,22 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/network.cpp" line="+82"/>
         <source>Hide user list in announcements</source>
-        <translation type="unfinished"></translation>
+        <translation>Nutzerliste in Ankündigungen verbergen</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Builtin server:</source>
-        <translation type="unfinished"></translation>
+        <translation>Eingebauter Server:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Announce with Zeroconf</source>
-        <translation type="unfinished"></translation>
+        <translation>Mit Zeroconf ankündigen</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Host on port %1 if available</source>
-        <translation type="unfinished"></translation>
+        <translation>Auf Port %1 hosten, wenn verfügbar</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -6934,117 +6934,117 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/userinterface.cpp" line="+42"/>
         <source>Override system font size</source>
-        <translation type="unfinished"></translation>
+        <translation>Systemschriftgröße überschreiben</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Font size: </source>
-        <translation type="unfinished"></translation>
+        <translation>Schriftgröße: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>pt</source>
-        <translation type="unfinished"></translation>
+        <translation>pt</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Changes the font size apply after you restart Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Änderungen an der Schriftgröße werden nach einem Neustart von Drawpile angewendet.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Type text here to try out the effects of your chosen font size.</source>
-        <translation type="unfinished"></translation>
+        <translation>Schreiben Sie hier Text, um den Effekt Ihrer gewählten Schriftgröße auszuprobieren.</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Interface mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Interfacemodus:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Desktop</source>
-        <translation type="unfinished"></translation>
+        <translation>Desktop</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Small screen (experimental)</source>
-        <translation type="unfinished"></translation>
+        <translation>Kleiner Bildschirm (experimentell)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Changes to the interface mode apply after you restart Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Änderungen am Interfacemodus werden nach einem Neustart von Drawpile angewendet.</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Disabled</source>
-        <translation type="unfinished">Deaktiviert</translation>
+        <translation>Deaktiviert</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>On left-click drag</source>
-        <translation type="unfinished"></translation>
+        <translation>Mit Linksklick ziehen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>On middle-click drag</source>
-        <translation type="unfinished"></translation>
+        <translation>Mit Mittelklick ziehen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>On right-click drag</source>
-        <translation type="unfinished"></translation>
+        <translation>Mit Rechtsklick ziehen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>On touch drag</source>
-        <translation type="unfinished"></translation>
+        <translation>Mit Finger ziehen</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Kinetic scrolling:</source>
-        <translation type="unfinished"></translation>
+        <translation>Kinetisches Scrollen:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Threshold: </source>
-        <translation type="unfinished"></translation>
+        <translation>Grenzwert: </translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Hide scroll bars</source>
-        <translation type="unfinished"></translation>
+        <translation>Scrollbalken verbergen</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Changes to kinetic scrolling apply after you restart Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Änderungen am kinetischen Scrollen werden nach einem Neustart von Drawpile angewendet.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Background color behind the canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Farbe hinter der Leinwand</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Color behind canvas:</source>
-        <translation type="unfinished"></translation>
+        <translation>Farbe hinter Leinwand:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Show scroll bars on canvas</source>
-        <translation type="unfinished">Scrollbalken an der Leinwand anzeigen</translation>
+        <translation>Scrollbalken an der Leinwand anzeigen</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Miscellaneous:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sonstige:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Ask before deleting layers</source>
-        <translation type="unfinished">Vor dem Löschen von Ebenen nachfragen</translation>
+        <translation>Vor dem Löschen von Ebenen nachfragen</translation>
     </message>
 </context>
 <context>
@@ -7206,17 +7206,17 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+16"/>
         <source>The built-in server is not available on Android.</source>
-        <translation type="unfinished"></translation>
+        <translation>Der eingebaute Server ist auf Android nicht verfügbar.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The built-in server is not available on this installation of Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Der eingebaute Server ist auf dieser Installation von Drawpile nicht verfügbar.</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Enable advanced options</source>
-        <translation type="unfinished"></translation>
+        <translation>Erweiterte Optionen aktivieren</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -7912,7 +7912,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../scene/canvasscene.cpp" line="+225"/>
         <source>Restoring canvas…</source>
-        <translation type="unfinished"></translation>
+        <translation>Leinwand wiederherstellen…</translation>
     </message>
 </context>
 <context>
@@ -8052,7 +8052,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+3"/>
         <source>This session is hosted with Drawpile 2.1, Indirect/Wash Mode is unavailable. &lt;a href=&quot;#&quot;&gt;Click here to switch to Direct/Build-Up Mode.&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Diese Sitzung wurde mit Drawpile 2.1 gehostet, der indirekte Pinselmodus ist nicht verfügbar. &lt;a href=&quot;#&quot;&gt;Klicke Sie hier, um in den direkten Modus zu wechseln.&lt;/a&gt;</translation>
     </message>
     <message>
         <location line="-5"/>
@@ -8178,17 +8178,17 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+21"/>
         <source>Do you want to save the canvas as it was before the reset? Since this is a Drawpile 2.1 session, it may have desynchronized!</source>
-        <translation type="unfinished"></translation>
+        <translation>Möchten Sie die Leinwand in dem Zustand speichern, bevor sie zurückgesetzt wurde? Da dies eine Sitzung von Drawpile 2.1 ist, könnte sie sich desynchronisiert haben!</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Do you want to save the canvas as it was before the reset?</source>
-        <translation type="unfinished"></translation>
+        <translation>Möchten Sie die Leinwand in dem Zustand speichern, bevor sie zurückgesetzt wurde?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Save As…</source>
-        <translation type="unfinished"></translation>
+        <translation>Speichern als…</translation>
     </message>
     <message>
         <location line="+60"/>
@@ -8639,12 +8639,12 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../widgets/notifbar.cpp" line="+127"/>
         <source>Dismiss (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Schließen (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Dismiss</source>
-        <translation type="unfinished">Schließen</translation>
+        <translation>Schließen</translation>
     </message>
 </context>
 <context>
