@@ -324,23 +324,23 @@
     <message>
         <location filename="../export/ffmpegexporter.cpp" line="+133"/>
         <source>You can downlod a Windows version of ffmpeg from &lt;a href=&quot;https://ffmpeg.org/download.html&quot;&gt;ffmpeg.org&lt;/a&gt;. Choose ffmpeg.exe for the path to ffmpeg in Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>È possibile scaricare una versione di Windows di ffmpeg da &lt;a href=&quot;https://ffmpeg.org/download.html&quot;&gt;ffmpeg.org&lt;/a&gt;. Scegli ffmpeg.exe per il percorso a ffmpeg su Drawpile.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>You can install ffmpeg through Homebrew.</source>
-        <translation type="unfinished"></translation>
+        <translation>È possibile installare ffmpeg attraverso Homebrew.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You can probably install ffmpeg through your package manager.</source>
-        <translation type="unfinished"></translation>
+        <translation>Probabilmente puoi installare ffmpeg tramite il tuo gestore di pacchetti.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Failed to start ffmpeg using &apos;%1&apos;. %2</source>
         <extracomment>%1 is the path to ffmpeg, %2 is the note on what to do to acquire ffmpeg, e.g. download it on Windows or install the package on Linux.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Non è stato possibile avviare ffmpeg usando &apos;%1&apos;. %2</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -971,72 +971,72 @@
     <message>
         <location line="+268"/>
         <source>%1 banned by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 bannato da %2.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 kicked by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 espulso da %2.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>%1 made operator by the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 reso operatore dal server.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 made operator by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 reso operatore da %2.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Operator status revoked from %1 by the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Stato da Operatore revocato da %1 dal server.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Operator status revoked form %1 by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Stato Operatore revocato di %1 da %2.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session reset cancelled! An operator must unlock the canvas and reset the session manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>Reset della sessione cancellato! Un operatore deve sbloccare la tela e resettare la sessione manualmente.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Session reset failed! An operator must unlock the canvas and reset the session manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>Reset della sessione fallito! Un operatore deve sbloccare la tela e resettare la sessione manualmente.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Preparing for session reset! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>Preparazione per il reset di sessione! Si prega di attendere, la sessione dovrebbe essere disponibile di nuovo a breve…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Session terminated by moderator (%1).</source>
-        <translation type="unfinished"></translation>
+        <translation>Sessione terminata dal moderatore (%1).</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>%1 trusted by the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 attendibile dal server.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 trusted by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 fidato da %2.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>%1 untrusted by the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 inaffidato dal server.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 untrusted by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 inaffidato da %2.</translation>
     </message>
 </context>
 <context>
