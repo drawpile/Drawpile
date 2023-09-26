@@ -324,23 +324,23 @@
     <message>
         <location filename="../export/ffmpegexporter.cpp" line="+133"/>
         <source>You can downlod a Windows version of ffmpeg from &lt;a href=&quot;https://ffmpeg.org/download.html&quot;&gt;ffmpeg.org&lt;/a&gt;. Choose ffmpeg.exe for the path to ffmpeg in Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>ffmpeg&apos;in bir Windows versiyonunu &lt;a href=&quot;https://ffmpeg.org/download.html&quot;&gt;ffmpeg.org&lt;/a&gt; adresinden indirebilirsiniz. Drawpile üzerinden ffmpeg yolunu ffmpeg.exe olarak seçin.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>You can install ffmpeg through Homebrew.</source>
-        <translation type="unfinished"></translation>
+        <translation>Homebrew üzerinden ffmpeg kurabilirsiniz.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You can probably install ffmpeg through your package manager.</source>
-        <translation type="unfinished"></translation>
+        <translation>Büyük ihtimalle kendi sıkıştırılmış dosya yöneticiniz üzerinden ffmpeg kurabilirsiniz.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Failed to start ffmpeg using &apos;%1&apos;. %2</source>
         <extracomment>%1 is the path to ffmpeg, %2 is the note on what to do to acquire ffmpeg, e.g. download it on Windows or install the package on Linux.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>&apos;%1&apos; kullanarak ffmpeg başlatırken hata oluştu. %2</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -502,12 +502,14 @@
         <source>%n users</source>
         <translation>
             <numerusform>%n kullanıcı</numerusform>
+            <numerusform>%n kullanıcı</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="-2"/>
         <source>%1/%n users</source>
         <translation>
+            <numerusform>%1/%n kullanıcı</numerusform>
             <numerusform>%1/%n kullanıcı</numerusform>
         </translation>
     </message>
@@ -969,72 +971,72 @@
     <message>
         <location line="+268"/>
         <source>%1 banned by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1, %2 tarafından engellendi.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 kicked by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1, %2 tarafından kovuldu.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>%1 made operator by the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 sunucu tarafından operatör yapıldı.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 made operator by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1, %2 tarafından operatör yapıldı.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Operator status revoked from %1 by the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 adlı kullanıcın operatör statüsü sunucu tarafından geri çekildi.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Operator status revoked form %1 by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 adlı kullanıcın operatör statüsü %2 adlı kullanıcı tarafından geri çekildi.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session reset cancelled! An operator must unlock the canvas and reset the session manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>Oturum sıfırlaması iptal edildi! Bir operatör tuvalin kilidini açıp oturumu manuel olarak sıfırlamalı.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Session reset failed! An operator must unlock the canvas and reset the session manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>Oturum sıfırlaması başarısız! Bir operatör tuvalin kilidini açıp oturumu manuel olarak sıfırlamalı.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Preparing for session reset! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>Oturum sıfırlaması için hazırlık yapılıyor! Lütfen bekleyin, oturum birazdan hazır olacaktır…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Session terminated by moderator (%1).</source>
-        <translation type="unfinished"></translation>
+        <translation>Oturum moderatör tarafından sonlandırıldı (%1).</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>%1 trusted by the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 adlı kullanıcıya sunucu tarafından güvenildi.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 trusted by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 adlı kullanıcıya %2 tarafından güvenildi.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>%1 untrusted by the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 adlı kullanıcının güvenilir statüsü oturum tarafından geri alındı.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 untrusted by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 adlı kullanıcının güvenilir statüsü %2 tarafından geri alındı.</translation>
     </message>
 </context>
 <context>
