@@ -8,7 +8,6 @@
 
 class KisCurveWidget;
 class QAbstractButton;
-class QEvent;
 class QLabel;
 class QPushButton;
 class QVBoxLayout;
@@ -31,6 +30,8 @@ public:
 	CurveWidget &operator=(const CurveWidget &) = delete;
 	CurveWidget &operator=(CurveWidget &&) = delete;
 
+	void setCurveSize(int width, int height);
+
 	KisCubicCurve curve() const;
 	void setCurve(const KisCubicCurve &curve);
 	void setCurveFromString(const QString &curveString);
@@ -44,10 +45,6 @@ public:
 	void setAxisValueLabels(
 		const QString &xMin, const QString &xMax, const QString &yMin,
 		const QString &yMax);
-
-	void setFixedButtonWidth(int width);
-
-	bool event(QEvent *event) override;
 
 signals:
 	void curveChanged(const KisCubicCurve &curve);

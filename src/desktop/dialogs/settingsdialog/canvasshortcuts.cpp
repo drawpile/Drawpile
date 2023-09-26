@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/dialogs/settingsdialog/canvasshortcuts.h"
 #include "desktop/dialogs/canvasshortcutsdialog.h"
 #include "desktop/dialogs/settingsdialog/helpers.h"
@@ -9,7 +8,6 @@
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "libclient/utils/canvasshortcutsmodel.h"
 #include "libshared/util/qtcompat.h"
-
 #include <QAbstractItemView>
 #include <QHeaderView>
 #include <QLabel>

@@ -1,9 +1,7 @@
 #ifndef DESKTOP_DIALOGS_SETTINGSDIALOG_HELPERS_H
 #define DESKTOP_DIALOGS_SETTINGSDIALOG_HELPERS_H
-
-#include "desktop/utils/sanerformlayout.h"
+#include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/groupedtoolbutton.h"
-
 #include <QAbstractItemView>
 #include <QIcon>
 #include <QItemSelectionModel>
@@ -21,28 +19,26 @@
 namespace dialogs {
 namespace settingsdialog {
 
-template <typename AddCallback, typename RemoveCallback, typename MoveUpCallback, typename MoveDownCallback>
+template <
+	typename AddCallback, typename RemoveCallback, typename MoveUpCallback,
+	typename MoveDownCallback>
 utils::EncapsulatedLayout *listActions(
-	QAbstractItemView *view,
-	const QString &addLabel,
-	AddCallback addCallback,
-	const QString &removeLabel,
-	RemoveCallback removeCallback,
-	const QString &moveUpLabel,
-	MoveUpCallback moveUpCallback,
-	const QString &moveDownLabel,
-	MoveDownCallback moveDownCallback,
-	bool includeMove = true
-)
+	QAbstractItemView *view, const QString &addLabel, AddCallback addCallback,
+	const QString &removeLabel, RemoveCallback removeCallback,
+	const QString &moveUpLabel, MoveUpCallback moveUpCallback,
+	const QString &moveDownLabel, MoveDownCallback moveDownCallback,
+	bool includeMove = true)
 {
 	auto *buttons = new utils::EncapsulatedLayout;
 	buttons->setContentsMargins(0, 0, 0, 0);
 	buttons->setSpacing(0);
 
-	auto *add = new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupLeft);
+	auto *add =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupLeft);
 	add->setText(addLabel);
 	add->setIcon(QIcon::fromTheme("list-add"));
-	QObject::connect(add, &widgets::GroupedToolButton::clicked, view, addCallback);
+	QObject::connect(
+		add, &widgets::GroupedToolButton::clicked, view, addCallback);
 	buttons->addWidget(add);
 
 	auto *remove = new widgets::GroupedToolButton(
@@ -51,14 +47,18 @@ utils::EncapsulatedLayout *listActions(
 	remove->setText(removeLabel);
 	remove->setIcon(QIcon::fromTheme("list-remove"));
 	remove->setEnabled(view->selectionModel()->hasSelection());
-	QObject::connect(view->selectionModel(), &QItemSelectionModel::selectionChanged, view, [=] {
-		remove->setEnabled(view->selectionModel()->hasSelection());
-	});
-	QObject::connect(remove, &widgets::GroupedToolButton::clicked, view, removeCallback);
+	QObject::connect(
+		view->selectionModel(), &QItemSelectionModel::selectionChanged, view,
+		[=] {
+			remove->setEnabled(view->selectionModel()->hasSelection());
+		});
+	QObject::connect(
+		remove, &widgets::GroupedToolButton::clicked, view, removeCallback);
 	buttons->addWidget(remove);
 
 	if(includeMove) {
-		auto *moveUp = new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupCenter);
+		auto *moveUp = new widgets::GroupedToolButton(
+			widgets::GroupedToolButton::GroupCenter);
 		moveUp->setText(moveUpLabel);
 		moveUp->setIcon(QIcon::fromTheme("arrow-up"));
 		moveUp->setEnabled(view->selectionModel()->hasSelection());
@@ -69,12 +69,17 @@ utils::EncapsulatedLayout *listActions(
 				selectionModel->selectedIndexes().size() == 1 &&
 				!selectionModel->isRowSelected(0));
 		};
-		QObject::connect(view->selectionModel(), &QItemSelectionModel::selectionChanged, view, updateMoveUp);
-		QObject::connect(view->model(), &QAbstractItemModel::rowsMoved, view, updateMoveUp);
-		QObject::connect(moveUp, &widgets::GroupedToolButton::clicked, view, moveUpCallback);
+		QObject::connect(
+			view->selectionModel(), &QItemSelectionModel::selectionChanged,
+			view, updateMoveUp);
+		QObject::connect(
+			view->model(), &QAbstractItemModel::rowsMoved, view, updateMoveUp);
+		QObject::connect(
+			moveUp, &widgets::GroupedToolButton::clicked, view, moveUpCallback);
 		buttons->addWidget(moveUp);
 
-		auto *moveDown = new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight);
+		auto *moveDown = new widgets::GroupedToolButton(
+			widgets::GroupedToolButton::GroupRight);
 		moveDown->setText(moveDownLabel);
 		moveDown->setIcon(QIcon::fromTheme("arrow-down"));
 		moveDown->setEnabled(view->selectionModel()->hasSelection());
@@ -85,9 +90,15 @@ utils::EncapsulatedLayout *listActions(
 				selectionModel->selectedIndexes().size() == 1 &&
 				!selectionModel->isRowSelected(view->model()->rowCount() - 1));
 		};
-		QObject::connect(view->selectionModel(), &QItemSelectionModel::selectionChanged, view, updateMoveDown);
-		QObject::connect(view->model(), &QAbstractItemModel::rowsMoved, view, updateMoveDown);
-		QObject::connect(moveDown, &widgets::GroupedToolButton::clicked, view, moveDownCallback);
+		QObject::connect(
+			view->selectionModel(), &QItemSelectionModel::selectionChanged,
+			view, updateMoveDown);
+		QObject::connect(
+			view->model(), &QAbstractItemModel::rowsMoved, view,
+			updateMoveDown);
+		QObject::connect(
+			moveDown, &widgets::GroupedToolButton::clicked, view,
+			moveDownCallback);
 		buttons->addWidget(moveDown);
 	}
 
@@ -97,12 +108,8 @@ utils::EncapsulatedLayout *listActions(
 
 template <typename AddCallback, typename RemoveCallback>
 utils::EncapsulatedLayout *listActions(
-	QAbstractItemView *view,
-	const QString &addLabel,
-	AddCallback addCallback,
-	const QString &removeLabel,
-	RemoveCallback removeCallback
-)
+	QAbstractItemView *view, const QString &addLabel, AddCallback addCallback,
+	const QString &removeLabel, RemoveCallback removeCallback)
 {
 	void (*noop)() = nullptr;
 	return listActions(
@@ -110,15 +117,12 @@ utils::EncapsulatedLayout *listActions(
 		noop, QString{}, noop, false);
 }
 
-inline bool execConfirm(const QString &title, const QString &message, QWidget *owner)
+inline bool
+execConfirm(const QString &title, const QString &message, QWidget *owner)
 {
 	QMessageBox box(
-		QMessageBox::Question,
-		title,
-		message,
-		QMessageBox::Yes | QMessageBox::No,
-		owner
-	);
+		QMessageBox::Question, title, message,
+		QMessageBox::Yes | QMessageBox::No, owner);
 	box.setDefaultButton(QMessageBox::No);
 	box.setWindowModality(Qt::WindowModal);
 	return box.exec() == QMessageBox::Yes;
@@ -127,34 +131,26 @@ inline bool execConfirm(const QString &title, const QString &message, QWidget *o
 inline int execWarning(
 	const QString &title, const QString &message, QWidget *owner,
 	QMessageBox::StandardButtons buttons = QMessageBox::Ok,
-	QMessageBox::StandardButton defaultButton = QMessageBox::Ok
-)
+	QMessageBox::StandardButton defaultButton = QMessageBox::Ok)
 {
-	QMessageBox box(
-		QMessageBox::Warning,
-		title,
-		message,
-		buttons,
-		owner
-	);
+	QMessageBox box(QMessageBox::Warning, title, message, buttons, owner);
 	box.setDefaultButton(defaultButton);
 	box.setWindowModality(Qt::WindowModal);
 	return box.exec();
 }
 
 template <typename Widget, typename Fn>
-auto makeDefaultDeleter(Widget *owner, QAbstractItemView *view, const QString &title, const char *message, Fn fn)
+auto makeDefaultDeleter(
+	Widget *owner, QAbstractItemView *view, const QString &title,
+	const char *message, Fn fn)
 {
 	return [=] {
 		auto selection = view->selectionModel()->selectedRows();
 
 		const auto confirm = execConfirm(
-			title,
-			Widget::tr(message, nullptr, selection.size()),
-			owner
-		);
+			title, Widget::tr(message, nullptr, selection.size()), owner);
 
-		if (!confirm) {
+		if(!confirm) {
 			return;
 		}
 
@@ -162,12 +158,13 @@ auto makeDefaultDeleter(Widget *owner, QAbstractItemView *view, const QString &t
 		// and do not invalidate
 		std::sort(
 			selection.begin(), selection.end(),
-			[](QModelIndex a, QModelIndex b) { return b < a; }
-		);
+			[](QModelIndex a, QModelIndex b) {
+				return b < a;
+			});
 
 		auto *model = view->model();
-		for (const auto &index : selection) {
-			if (fn(index)) {
+		for(const auto &index : selection) {
+			if(fn(index)) {
 				model->removeRow(index.row(), index.parent());
 			} else {
 				model->revert();
@@ -180,11 +177,14 @@ auto makeDefaultDeleter(Widget *owner, QAbstractItemView *view, const QString &t
 }
 
 template <typename Widget>
-auto makeDefaultDeleter(Widget *owner, QAbstractItemView *view, const QString &title, const char *message)
+auto makeDefaultDeleter(
+	Widget *owner, QAbstractItemView *view, const QString &title,
+	const char *message)
 {
-	return makeDefaultDeleter(owner, view, title, message, [](const QModelIndex &) {
-		return true;
-	});
+	return makeDefaultDeleter(
+		owner, view, title, message, [](const QModelIndex &) {
+			return true;
+		});
 }
 
 } // namespace settingsdialog

@@ -1,45 +1,52 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#include "cmake-config/config.h"
 #include "desktop/dialogs/settingsdialog/general.h"
+#include "cmake-config/config.h"
 #include "desktop/settings.h"
-#include "desktop/utils/sanerformlayout.h"
-
+#include "desktop/utils/widgetutils.h"
 #include <QCheckBox>
 #include <QComboBox>
+#include <QFormLayout>
 #include <QSpinBox>
 #include <QString>
 #include <QStyleFactory>
+#include <QVBoxLayout>
 #include <QWidget>
 
 namespace dialogs {
 namespace settingsdialog {
 
 General::General(desktop::settings::Settings &settings, QWidget *parent)
-	: QWidget(parent)
+	: Page(parent)
 {
-	// TODO: make the form layout work with RTL or go back to a QFormLayout.
-	setLayoutDirection(Qt::LeftToRight);
-	auto *form = new utils::SanerFormLayout(this);
+	init(settings);
+}
 
-	initTheme(settings, form);
-	initLanguage(settings, form);
-	form->addSeparator();
-	initLogging(settings, form);
-	form->addSeparator();
-	initUndo(settings, form);
-	form->addSpacer();
-	initAutosave(settings, form);
-	form->addSpacer();
-	initSnapshots(settings, form);
+void General::setUp(desktop::settings::Settings &settings, QVBoxLayout *layout)
+{
+	QFormLayout *themeLanguageSection = utils::addFormSection(layout);
+	initTheme(settings, themeLanguageSection);
+	initLanguage(settings, themeLanguageSection);
+
+	utils::addFormSeparator(layout);
+
+	QFormLayout *canvasSection = utils::addFormSection(layout);
+	initLogging(settings, canvasSection);
+	utils::addFormSpacer(canvasSection);
+	initUndo(settings, canvasSection);
+	utils::addFormSpacer(canvasSection);
+	initAutosave(settings, canvasSection);
+	utils::addFormSpacer(canvasSection);
+	initSnapshots(settings, canvasSection);
+
 #ifdef Q_OS_ANDROID
-	form->addSeparator();
-	initAndroid(settings, form);
+	utils::addFormSeparator(layout);
+	initAndroid(settings, utils::addFormSection(layout));
 #endif
 }
 
 #ifdef Q_OS_ANDROID
-void General::initAndroid(desktop::settings::Settings &settings, utils::SanerFormLayout *form)
+void General::initAndroid(
+	desktop::settings::Settings &settings, QFormLayout *form)
 {
 	auto *captureVolumeRocker = new QCheckBox(tr("Capture volume rocker"));
 	settings.bindCaptureVolumeRocker(captureVolumeRocker);
@@ -47,46 +54,56 @@ void General::initAndroid(desktop::settings::Settings &settings, utils::SanerFor
 }
 #endif
 
-void General::initAutosave(desktop::settings::Settings &settings, utils::SanerFormLayout *form)
+void General::initAutosave(
+	desktop::settings::Settings &settings, QFormLayout *form)
 {
 	auto *autosaveInterval = new QSpinBox;
 	autosaveInterval->setRange(1, 999);
 	settings.bindAutoSaveInterval(this, [=](int intervalMsec) {
 		autosaveInterval->setValue(intervalMsec / 1000);
 	});
-	connect(autosaveInterval, QOverload<int>::of(&QSpinBox::valueChanged), this, [&](int intervalSec) {
-		settings.setAutoSaveInterval(intervalSec * 1000);
-	});
+	connect(
+		autosaveInterval, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		[&](int intervalSec) {
+			settings.setAutoSaveInterval(intervalSec * 1000);
+		});
 
-	auto *snapshotCountLayout = utils::encapsulate(tr("When enabled, save every %1 minutes"), autosaveInterval);
+	auto *snapshotCountLayout = utils::encapsulate(
+		tr("When enabled, save every %1 minutes"), autosaveInterval);
 	snapshotCountLayout->setControlTypes(QSizePolicy::CheckBox);
 	form->addRow(tr("Autosave:"), snapshotCountLayout);
 
-	form->addRow(nullptr, utils::note(tr("Autosave can be enabled for the current file under <i>File ▸ Autosave</i>."), QSizePolicy::Label));
+	form->addRow(
+		nullptr,
+		utils::formNote(tr("Autosave can be enabled for the current file under "
+						   "File ▸ Autosave.")));
 }
 
-void General::initLanguage(desktop::settings::Settings &settings, utils::SanerFormLayout *form)
+void General::initLanguage(
+	desktop::settings::Settings &settings, QFormLayout *form)
 {
 	auto *language = new QComboBox;
 	language->addItem(tr("System"), QString());
 
 	const QLocale localeC = QLocale::c();
-	for (const auto *localeName : cmake_config::locales()) {
+	for(const auto *localeName : cmake_config::locales()) {
 		QLocale locale(localeName);
-		if (locale != localeC) {
+		if(locale != localeC) {
 			language->addItem(formatLanguage(locale), localeName);
 		}
 	}
 
 	settings.bindLanguage(language, Qt::UserRole);
 	form->addRow(tr("Language:"), language);
-	form->addRow(nullptr, utils::note(tr("Language changes apply after you restart Drawpile."), QSizePolicy::Label));
+	form->addRow(
+		nullptr, utils::formNote(
+					 tr("Language changes apply after you restart Drawpile.")));
 }
 
 QString General::formatLanguage(const QLocale &locale)
 {
 	bool needsCountryDisambiguation = false;
-	for (const char *localeName : cmake_config::locales()) {
+	for(const char *localeName : cmake_config::locales()) {
 		QLocale other(localeName);
 		if(locale != other && locale.language() == other.language()) {
 			needsCountryDisambiguation = true;
@@ -107,19 +124,22 @@ QString General::formatLanguage(const QLocale &locale)
 	}
 }
 
-void General::initLogging(desktop::settings::Settings &settings, utils::SanerFormLayout *form)
+void General::initLogging(
+	desktop::settings::Settings &settings, QFormLayout *form)
 {
 	auto *enableLogging = new QCheckBox(tr("Write debugging log to file"));
 	settings.bindWriteLogFile(enableLogging);
 	form->addRow(tr("Logging:"), enableLogging);
 }
 
-void General::initSnapshots(desktop::settings::Settings &settings, utils::SanerFormLayout *form)
+void General::initSnapshots(
+	desktop::settings::Settings &settings, QFormLayout *form)
 {
 	auto *snapshotCount = new QSpinBox;
 	snapshotCount->setRange(0, 99);
 	settings.bindEngineSnapshotCount(snapshotCount);
-	auto *snapshotCountLayout = utils::encapsulate(tr("Keep %1 canvas snapshots"), snapshotCount);
+	auto *snapshotCountLayout =
+		utils::encapsulate(tr("Keep %1 canvas snapshots"), snapshotCount);
 	snapshotCountLayout->setControlTypes(QSizePolicy::CheckBox);
 	form->addRow(tr("Canvas snapshots:"), snapshotCountLayout);
 
@@ -128,21 +148,26 @@ void General::initSnapshots(desktop::settings::Settings &settings, utils::SanerF
 	snapshotInterval->setSingleStep(5);
 	settings.bindEngineSnapshotInterval(snapshotInterval);
 	settings.bindEngineSnapshotCount(snapshotInterval, &QSpinBox::setEnabled);
-	auto *snapshotIntervalLayout = utils::encapsulate(tr("Take one snapshot every %1 seconds"), snapshotInterval);
+	auto *snapshotIntervalLayout = utils::encapsulate(
+		tr("Take one snapshot every %1 seconds"), snapshotInterval);
 	snapshotIntervalLayout->setControlTypes(QSizePolicy::CheckBox);
 	form->addRow(nullptr, snapshotIntervalLayout);
 
-	form->addRow(nullptr, utils::note(tr("Snapshots can be restored from the <i>Session ▸ Reset…</i> menu."), QSizePolicy::Label));
+	form->addRow(
+		nullptr,
+		utils::formNote(
+			tr("Snapshots can be restored from the Session ▸ Reset… menu.")));
 }
 
-void General::initTheme(desktop::settings::Settings &settings, utils::SanerFormLayout *form)
+void General::initTheme(
+	desktop::settings::Settings &settings, QFormLayout *form)
 {
 	auto *style = new QComboBox;
 	style->addItem(tr("System"), QString());
 	const auto styleNames = QStyleFactory::keys();
-	for (const auto &styleName : styleNames) {
+	for(const auto &styleName : styleNames) {
 		// Qt5 does not give a proper name for the macOS style
-		if (styleName == "macintosh") {
+		if(styleName == "macintosh") {
 			style->addItem("macOS", styleName);
 		} else {
 			style->addItem(styleName, styleName);
@@ -152,26 +177,21 @@ void General::initTheme(desktop::settings::Settings &settings, utils::SanerFormL
 	form->addRow(tr("Style:"), style);
 
 	auto *theme = new QComboBox;
-	theme->addItems({
-		tr("System"),
-		tr("Light"),
-		tr("Dark"),
-		tr("Krita Bright"),
-		tr("Krita Dark"),
-		tr("Krita Darker"),
-		tr("Qt Fusion"),
-		tr("Hotdog Stand")
-	});
+	theme->addItems(
+		{tr("System"), tr("Light"), tr("Dark"), tr("Krita Bright"),
+		 tr("Krita Dark"), tr("Krita Darker"), tr("Qt Fusion"),
+		 tr("Hotdog Stand")});
 	settings.bindThemePalette(theme, std::nullopt);
 	form->addRow(tr("Color scheme:"), theme);
 }
 
-void General::initUndo(desktop::settings::Settings &settings, utils::SanerFormLayout *form)
+void General::initUndo(desktop::settings::Settings &settings, QFormLayout *form)
 {
 	auto *undoLimit = new QSpinBox;
 	undoLimit->setRange(1, 255);
 	settings.bindEngineUndoDepth(undoLimit);
-	auto *undoLimitLayout = utils::encapsulate(tr("Use %1 undo levels by default"), undoLimit);
+	auto *undoLimitLayout =
+		utils::encapsulate(tr("Use %1 undo levels by default"), undoLimit);
 	undoLimitLayout->setControlTypes(QSizePolicy::CheckBox);
 	form->addRow(tr("Session history:"), undoLimitLayout);
 }

@@ -40,8 +40,8 @@ enum {
 	CurveFirstCol = XMinLabelCol,
 	CurveLastCol = XMaxLabelCol,
 
-	RightSpaceCol = CurveLastCol + 1,
-	ButtonCol = RightSpaceCol + 1,
+	ButtonSpaceCol = CurveLastCol + 1,
+	ButtonCol = ButtonSpaceCol + 1,
 
 	LastCol = ButtonCol,
 	ButtonFirstRow = FirstRow,
@@ -143,20 +143,22 @@ CurveWidget::CurveWidget(
 	grid->addWidget(m_xMaxLabel, XLabelRow, XMaxLabelCol, Qt::AlignRight | Qt::AlignTop);
 	grid->addLayout(m_buttonLayout, ButtonFirstRow, ButtonCol, ButtonLastRow - ButtonFirstRow + 1, 1, Qt::AlignLeading);
 	grid->setRowStretch(YTitleLabelRow, 1);
-	grid->setColumnStretch(XTitleLabelCol, 1);
-	grid->setColumnStretch(RightSpaceCol, 1);
+	grid->setColumnMinimumWidth(ButtonSpaceCol, 6);
+	grid->setColumnStretch(LastCol + 1, 1);
+
+	setCurveSize(300, 300);
 }
 
 CurveWidget::~CurveWidget() {}
 
+void CurveWidget::setCurveSize(int width, int height)
+{
+	m_curve->setFixedSize(width, height);
+}
+
 KisCubicCurve CurveWidget::curve() const
 {
 	return m_curve->curve();
-}
-
-void CurveWidget::setFixedButtonWidth(int width)
-{
-	static_cast<QGridLayout*>(layout())->setColumnMinimumWidth(ButtonCol, width);
 }
 
 void CurveWidget::setCurve(const KisCubicCurve &curve)
@@ -200,24 +202,6 @@ void CurveWidget::setAxisValueLabels(
 	m_xMaxLabel->setText(xMax);
 	m_yMinLabel->setText(yMin);
 	m_yMaxLabel->setText(yMax);
-}
-
-bool CurveWidget::event(QEvent *event)
-{
-	if (event->type() == QEvent::LayoutRequest || event->type() == QEvent::Resize) {
-		auto *grid = static_cast<QGridLayout *>(layout());
-		grid->activate();
-		const auto w =
-			grid->cellRect(CurveFirstRow, CurveLastCol).right() -
-			grid->cellRect(CurveFirstRow, CurveFirstCol).left() + 1;
-		const auto h =
-			grid->cellRect(CurveLastRow, CurveFirstCol).bottom() -
-			grid->cellRect(CurveFirstRow, CurveFirstCol).top() + 1;
-		const auto size = qMax(w, h);
-		m_curve->setFixedSize(size, size);
-	}
-
-	return QWidget::event(event);
 }
 
 void CurveWidget::copyCurve()

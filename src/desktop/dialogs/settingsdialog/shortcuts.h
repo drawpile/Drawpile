@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #ifndef DESKTOP_DIALOGS_SETTINGSDIALOG_SHORTCUTS_H
 #define DESKTOP_DIALOGS_SETTINGSDIALOG_SHORTCUTS_H
-
 #include <QItemEditorFactory>
 #include <QWidget>
 

@@ -1,9 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/dialogs/startdialog/host.h"
 #include "desktop/main.h"
 #include "desktop/utils/recents.h"
-#include "desktop/utils/sanerformlayout.h"
 #include "desktop/utils/widgetutils.h"
 #include "libclient/utils/listservermodel.h"
 #include "libclient/utils/sessionidvalidator.h"
@@ -65,8 +63,8 @@ Host::Host(QWidget *parent)
 	QString notAvailableMessage = tr("The built-in server is not available on "
 									 "this installation of Drawpile.");
 #	endif
-	layout->addLayout(
-		utils::note(notAvailableMessage, QSizePolicy::RadioButton));
+	layout->addWidget(
+		utils::formNote(notAvailableMessage, QSizePolicy::RadioButton));
 	utils::addFormSpacer(layout);
 #endif
 

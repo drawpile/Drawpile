@@ -1,35 +1,43 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef DESKTOP_DIALOGS_SETTINGSDIALOG_USERINTERFACE_H
 #define DESKTOP_DIALOGS_SETTINGSDIALOG_USERINTERFACE_H
-#include <QWidget>
+#include "desktop/dialogs/settingsdialog/page.h"
+
+class QFormLayout;
+class QVBoxLayout;
 
 namespace desktop {
 namespace settings {
 class Settings;
 }
 }
-namespace utils {
-class SanerFormLayout;
-}
 
 namespace dialogs {
 namespace settingsdialog {
 
-class UserInterface final : public QWidget {
+class UserInterface final : public Page {
 	Q_OBJECT
 public:
 	UserInterface(
 		desktop::settings::Settings &settings, QWidget *parent = nullptr);
 
+protected:
+	void
+	setUp(desktop::settings::Settings &settings, QVBoxLayout *layout) override;
+
 private:
-	void initFontSize(
-		desktop::settings::Settings &settings, utils::SanerFormLayout *form);
-	void initInterfaceMode(
-		desktop::settings::Settings &settings, utils::SanerFormLayout *form);
+	void
+	initFontSize(desktop::settings::Settings &settings, QVBoxLayout *layout);
+
+	void
+	initInterfaceMode(desktop::settings::Settings &settings, QFormLayout *form);
+
 	void initKineticScrolling(
-		desktop::settings::Settings &settings, utils::SanerFormLayout *form);
-	void initMiscellaneous(
-		desktop::settings::Settings &settings, utils::SanerFormLayout *form);
+		desktop::settings::Settings &settings, QFormLayout *form);
+
+	void
+	initMiscellaneous(desktop::settings::Settings &settings, QFormLayout *form);
+
 	void pickCanvasBackgroundColor(desktop::settings::Settings &settings);
 };
 

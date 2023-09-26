@@ -124,6 +124,8 @@ target_sources(drawpile PRIVATE
 	dialogs/settingsdialog/network.h
 	dialogs/settingsdialog/notifications.cpp
 	dialogs/settingsdialog/notifications.h
+	dialogs/settingsdialog/page.cpp
+	dialogs/settingsdialog/page.h
 	dialogs/settingsdialog/parentalcontrols.cpp
 	dialogs/settingsdialog/parentalcontrols.h
 	dialogs/settingsdialog/proportionaltableview.cpp
@@ -265,8 +267,6 @@ target_sources(drawpile PRIVATE
 	utils/qtguicompat.h
 	utils/recents.cpp
 	utils/recents.h
-	utils/sanerformlayout.cpp
-	utils/sanerformlayout.h
 	utils/widgetutils.cpp
 	utils/widgetutils.h
 	widgets/brushpreview.cpp

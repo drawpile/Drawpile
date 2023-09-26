@@ -1,59 +1,60 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/dialogs/settingsdialog/userinterface.h"
 #include "desktop/dialogs/colordialog.h"
 #include "desktop/settings.h"
-#include "desktop/utils/sanerformlayout.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
-#include <QtColorWidgets/ColorPreview>
 #include <QButtonGroup>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QFont>
+#include <QFormLayout>
 #include <QPair>
 #include <QPlainTextEdit>
+#include <QtColorWidgets/ColorPreview>
 
 namespace dialogs {
 namespace settingsdialog {
 
 UserInterface::UserInterface(
 	desktop::settings::Settings &settings, QWidget *parent)
-	: QWidget(parent)
+	: Page(parent)
 {
-	// TODO: make the form layout work with RTL or go back to a QFormLayout.
-	setLayoutDirection(Qt::LeftToRight);
-	utils::SanerFormLayout *form = new utils::SanerFormLayout(this);
-	initFontSize(settings, form);
-	form->addSeparator();
-	initInterfaceMode(settings, form);
-	form->addSeparator();
-	initKineticScrolling(settings, form);
-	form->addSeparator();
-	initMiscellaneous(settings, form);
+	init(settings);
+}
+
+void UserInterface::setUp(
+	desktop::settings::Settings &settings, QVBoxLayout *layout)
+{
+	initFontSize(settings, layout);
+	utils::addFormSeparator(layout);
+	initInterfaceMode(settings, utils::addFormSection(layout));
+	utils::addFormSeparator(layout);
+	initKineticScrolling(settings, utils::addFormSection(layout));
+	utils::addFormSeparator(layout);
+	initMiscellaneous(settings, utils::addFormSection(layout));
 }
 
 void UserInterface::initFontSize(
-	desktop::settings::Settings &settings, utils::SanerFormLayout *form)
+	desktop::settings::Settings &settings, QVBoxLayout *layout)
 {
 	QCheckBox *overrideFontSize =
 		new QCheckBox(tr("Override system font size"));
 	settings.bindOverrideFontSize(overrideFontSize);
-	form->addSpanningRow(overrideFontSize);
+	layout->addWidget(overrideFontSize);
 
 	KisSliderSpinBox *fontSize = new KisSliderSpinBox;
 	fontSize->setRange(6, 16);
 	fontSize->setPrefix(tr("Font size: "));
 	fontSize->setSuffix(tr("pt"));
 	settings.bindFontSize(fontSize);
-	form->addSpanningRow(fontSize);
+	layout->addWidget(fontSize);
 
-	form->addSpanningRow(utils::note(
-		tr("Changes the font size apply after you restart Drawpile."),
-		QSizePolicy::Label));
+	layout->addWidget(utils::formNote(
+		tr("Changes the font size apply after you restart Drawpile.")));
 
 	QPlainTextEdit *sampleText = new QPlainTextEdit;
-	sampleText->setMaximumHeight(100);
+	sampleText->setFixedHeight(100);
 	sampleText->setPlaceholderText(
 		tr("Type text here to try out the effects of your chosen font size."));
 	settings.bindFontSize(this, [sampleText](int size) {
@@ -62,31 +63,29 @@ void UserInterface::initFontSize(
 		sampleText->setFont(font);
 	});
 	utils::initKineticScrolling(sampleText);
-	form->addSpanningRow(sampleText);
+	layout->addWidget(sampleText);
 
 	settings.bindOverrideFontSize(fontSize, &QWidget::setEnabled);
 	settings.bindOverrideFontSize(sampleText, &QWidget::setEnabled);
 }
 
 void UserInterface::initInterfaceMode(
-	desktop::settings::Settings &settings, utils::SanerFormLayout *form)
+	desktop::settings::Settings &settings, QFormLayout *form)
 {
-	QButtonGroup *interfaceMode = form->addRadioGroup(
-		tr("Interface mode:"), true,
+	QButtonGroup *interfaceMode = utils::addRadioGroup(
+		form, tr("Interface mode:"), true,
 		{{tr("Desktop"), int(desktop::settings::InterfaceMode::Desktop)},
 		 {tr("Small screen (experimental)"),
 		  int(desktop::settings::InterfaceMode::SmallScreen)}});
 	settings.bindInterfaceMode(interfaceMode);
 	form->addRow(
-		nullptr, utils::note(
-					 tr("Changes to the interface mode apply after you restart "
-						"Drawpile."),
-					 QSizePolicy::Label));
+		nullptr, utils::formNote(tr("Changes to the interface mode apply after "
+									"you restart Drawpile.")));
 }
 
 
 void UserInterface::initKineticScrolling(
-	desktop::settings::Settings &settings, utils::SanerFormLayout *form)
+	desktop::settings::Settings &settings, QFormLayout *form)
 {
 	QComboBox *kineticScrollGesture = new QComboBox;
 	kineticScrollGesture->setSizeAdjustPolicy(QComboBox::AdjustToContents);
@@ -123,14 +122,13 @@ void UserInterface::initKineticScrolling(
 	});
 
 	form->addRow(
-		nullptr, utils::note(
-					 tr("Changes to kinetic scrolling apply after you restart "
-						"Drawpile."),
-					 QSizePolicy::Label));
+		nullptr,
+		utils::formNote(tr(
+			"Changes to kinetic scrolling apply after you restart Drawpile.")));
 }
 
 void UserInterface::initMiscellaneous(
-	desktop::settings::Settings &settings, utils::SanerFormLayout *form)
+	desktop::settings::Settings &settings, QFormLayout *form)
 {
 	using color_widgets::ColorPreview;
 	ColorPreview *colorPreview = new ColorPreview;
@@ -139,13 +137,14 @@ void UserInterface::initMiscellaneous(
 	colorPreview->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	colorPreview->setCursor(Qt::PointingHandCursor);
 	form->addRow(tr("Color behind canvas:"), colorPreview);
-	settings.bindCanvasViewBackgroundColor(this, [colorPreview](const QColor &color) {
-		colorPreview->setColor(color);
-	});
+	settings.bindCanvasViewBackgroundColor(
+		this, [colorPreview](const QColor &color) {
+			colorPreview->setColor(color);
+		});
 
-	connect(
-		colorPreview, &ColorPreview::clicked, this,
-		[this, &settings] { pickCanvasBackgroundColor(settings); });
+	connect(colorPreview, &ColorPreview::clicked, this, [this, &settings] {
+		pickCanvasBackgroundColor(settings);
+	});
 
 	QCheckBox *scrollBars = new QCheckBox(tr("Show scroll bars on canvas"));
 	settings.bindCanvasScrollBars(scrollBars);
@@ -156,14 +155,16 @@ void UserInterface::initMiscellaneous(
 	form->addRow(nullptr, confirmDelete);
 }
 
-void UserInterface::pickCanvasBackgroundColor(desktop::settings::Settings &settings)
+void UserInterface::pickCanvasBackgroundColor(
+	desktop::settings::Settings &settings)
 {
 	using color_widgets::ColorDialog;
 	ColorDialog dlg;
 	dlg.setColor(settings.canvasViewBackgroundColor());
 	dlg.setAlphaEnabled(false);
 	dialogs::applyColorDialogSettings(&dlg);
-	dialogs::setColorDialogResetColor(&dlg, CANVAS_VIEW_BACKGROUND_COLOR_DEFAULT);
+	dialogs::setColorDialogResetColor(
+		&dlg, CANVAS_VIEW_BACKGROUND_COLOR_DEFAULT);
 	if(dlg.exec() == QDialog::Accepted) {
 		settings.setCanvasViewBackgroundColor(dlg.color());
 	}

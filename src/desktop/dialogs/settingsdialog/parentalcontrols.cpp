@@ -1,14 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/dialogs/settingsdialog/parentalcontrols.h"
 #include "desktop/dialogs/settingsdialog/helpers.h"
 #include "desktop/settings.h"
-#include "desktop/utils/sanerformlayout.h"
 #include "desktop/utils/widgetutils.h"
 #include "libclient/parentalcontrols/parentalcontrols.h"
 #include "libshared/util/passwordhash.h"
-
 #include <QCheckBox>
+#include <QFormLayout>
 #include <QHBoxLayout>
 #include <QInputDialog>
 #include <QLabel>
@@ -16,40 +14,47 @@
 #include <QMessageBox>
 #include <QPushButton>
 #include <QStackedWidget>
+#include <QVBoxLayout>
 
 namespace dialogs {
 namespace settingsdialog {
 
-ParentalControls::ParentalControls(desktop::settings::Settings &settings, QWidget *parent)
-	: QWidget(parent)
+ParentalControls::ParentalControls(
+	desktop::settings::Settings &settings, QWidget *parent)
+	: Page(parent)
 	, m_settings(settings)
 {
-	auto *layout = new QVBoxLayout(this);
+	init(settings);
+}
 
+void ParentalControls::setUp(
+	desktop::settings::Settings &settings, QVBoxLayout *layout)
+{
 	initInfoBar(layout);
 
-	if (parentalcontrols::isOSActive()) {
+	if(parentalcontrols::isOSActive()) {
 		initOsManaged(layout);
 	} else {
 		initBuiltIn(settings, layout);
 	}
 }
 
-void ParentalControls::initBuiltIn(desktop::settings::Settings &settings, QVBoxLayout *layout)
+void ParentalControls::initBuiltIn(
+	desktop::settings::Settings &settings, QVBoxLayout *layout)
 {
 	auto *stack = new QStackedWidget;
 	stack->setContentsMargins(0, 0, 0, 0);
 	layout->addWidget(stack);
 
 	auto *formPage = new QWidget;
-	// TODO: make the form layout work with RTL or go back to a QFormLayout.
-	formPage->setLayoutDirection(Qt::LeftToRight);
-	auto *form = new utils::SanerFormLayout(formPage);
+	auto *form = new QFormLayout;
+	formPage->setLayout(form);
 	form->setContentsMargins(0, 0, 0, 0);
-	form->setStretchLabel(false);
+	form->setFormAlignment(Qt::AlignTop);
 	stack->addWidget(formPage);
 
-	auto *autoTag = new QCheckBox(tr("Consider sessions whose titles contain these keywords NSFM."));
+	auto *autoTag = new QCheckBox(
+		tr("Consider sessions whose titles contain these keywords NSFM."));
 	form->addRow(tr("Keywords:"), autoTag);
 	settings.bindParentalControlsAutoTag(autoTag);
 	auto *tagWords = new QPlainTextEdit(this);
@@ -59,21 +64,26 @@ void ParentalControls::initBuiltIn(desktop::settings::Settings &settings, QVBoxL
 	settings.bindParentalControlsTags(tagWords);
 	settings.bindParentalControlsAutoTag(tagWords, &QPlainTextEdit::setEnabled);
 
-	form->addSpacer();
+	utils::addFormSpacer(form);
 
-	auto *level = form->addRadioGroup(tr("Filter mode:"), false, {
-		{ tr("Unrestricted"), int(parentalcontrols::Level::Unrestricted) },
-		{ tr("Remove NSFM sessions from listings"), int(parentalcontrols::Level::NoList) },
-		{ tr("Prevent joining NSFM sessions"), int(parentalcontrols::Level::NoJoin) },
-		{ tr("Prevent joining NSFM sessions and disconnect"), int(parentalcontrols::Level::Restricted) }
-	});
-	level->button(1)->setToolTip(tr("NSFM sessions will be hidden from server "
-		"listings, but can still be joined by following a direct link."));
+	auto *level = utils::addRadioGroup(
+		form, tr("Filter mode:"), false,
+		{{tr("Unrestricted"), int(parentalcontrols::Level::Unrestricted)},
+		 {tr("Remove NSFM sessions from listings"),
+		  int(parentalcontrols::Level::NoList)},
+		 {tr("Prevent joining NSFM sessions"),
+		  int(parentalcontrols::Level::NoJoin)},
+		 {tr("Prevent joining NSFM sessions and disconnect"),
+		  int(parentalcontrols::Level::Restricted)}});
+	level->button(1)->setToolTip(
+		tr("NSFM sessions will be hidden from server "
+		   "listings, but can still be joined by following a direct link."));
 	level->button(2)->setToolTip(tr("NSFM sessions will be hidden from server "
-		"listings and cannot be joined."));
-	level->button(3)->setToolTip(tr("NSFM sessions will be hidden from server "
-		"listings and cannot be joined. Connected sessions that change "
-		"their title or NSFM flag will automatically disconnect."));
+									"listings and cannot be joined."));
+	level->button(3)->setToolTip(
+		tr("NSFM sessions will be hidden from server "
+		   "listings and cannot be joined. Connected sessions that change "
+		   "their title or NSFM flag will automatically disconnect."));
 	settings.bindParentalControlsLevel(level);
 
 	auto *forceCensor = new QCheckBox(tr("Disallow uncensoring of layers"));
@@ -104,24 +114,25 @@ void ParentalControls::initBuiltIn(desktop::settings::Settings &settings, QVBoxL
 	auto *hiddenPage = new QWidget;
 	auto *hiddenLayout = new QVBoxLayout(hiddenPage);
 	hiddenLayout->setContentsMargins(0, 0, 0, 0);
-	hiddenLayout->addWidget(new QLabel(tr("Parental controls are currently locked.")), 0, Qt::AlignCenter);
+	hiddenLayout->addWidget(
+		new QLabel(tr("Parental controls are currently locked.")), 0,
+		Qt::AlignCenter);
 	stack->addWidget(hiddenPage);
 
 	settings.bindParentalControlsLocked(this, [=, &settings](QByteArray hash) {
 		const auto locked = !hash.isEmpty();
 		tagWords->setDisabled(locked || !settings.parentalControlsAutoTag());
 		autoTag->setDisabled(locked);
-		for (auto *button : level->buttons()) {
+		for(auto *button : level->buttons()) {
 			button->setDisabled(locked);
 		}
 		forceCensor->setDisabled(locked);
 		hide->setDisabled(locked);
 		lock->setText(locked ? tr("Unlock") : tr("Lock"));
 
-		stack->setCurrentWidget(locked && settings.parentalControlsHideLocked()
-			? hiddenPage
-			: formPage
-		);
+		stack->setCurrentWidget(
+			locked && settings.parentalControlsHideLocked() ? hiddenPage
+															: formPage);
 	});
 }
 
@@ -131,24 +142,29 @@ void ParentalControls::initInfoBar(QVBoxLayout *layout)
 	info->setContentsMargins(0, 0, 0, 0);
 	layout->addLayout(info);
 
-	info->addWidget(utils::makeIconLabel(QIcon::fromTheme("dialog-information"), QStyle::PM_LargeIconSize, this));
+	info->addWidget(
+		utils::makeIconLabel(QIcon::fromTheme("dialog-information"), this));
 
 	auto *description = new QLabel;
 	description->setWordWrap(true);
-	description->setText(tr(
-		"These settings configure the handling of sessions that are marked "
-		"not suitable for minors (NSFM) and of layers that have been censored."));
+	description->setText(
+		tr("These settings configure the handling of sessions that are marked "
+		   "not suitable for minors (NSFM) and of layers that have been "
+		   "censored."));
 
 	info->addWidget(description);
 
-	layout->addWidget(utils::makeSeparator());
+	utils::addFormSeparator(layout);
 }
 
 void ParentalControls::initOsManaged(QVBoxLayout *layout)
 {
 	auto *osManagedLayout = new QVBoxLayout;
 	osManagedLayout->setContentsMargins(0, 0, 0, 0);
-	osManagedLayout->addWidget(new QLabel(tr("Parental controls are currently managed by the operating system.")), 0, Qt::AlignCenter);
+	osManagedLayout->addWidget(
+		new QLabel(tr("Parental controls are currently managed by the "
+					  "operating system.")),
+		0, Qt::AlignCenter);
 	layout->addLayout(osManagedLayout, 1);
 }
 
@@ -156,37 +172,32 @@ void ParentalControls::toggleLock()
 {
 	const auto hash = m_settings.parentalControlsLocked();
 	const auto locked = !hash.isEmpty();
-	const auto title = locked
-		? tr("Unlock Parental Controls")
-		: tr("Lock Parental Controls");
+	const auto title =
+		locked ? tr("Unlock Parental Controls") : tr("Lock Parental Controls");
 
-	for (;;) {
+	for(;;) {
 		auto ok = true;
 		const auto pass = QInputDialog::getText(
-			this, title, tr("Enter password:"), QLineEdit::Password,
-			QString(), &ok, Qt::Sheet
-		);
-		if (!ok) {
+			this, title, tr("Enter password:"), QLineEdit::Password, QString(),
+			&ok, Qt::Sheet);
+		if(!ok) {
 			break;
-		} else if (locked) {
-			if (server::passwordhash::check(pass, hash)) {
+		} else if(locked) {
+			if(server::passwordhash::check(pass, hash)) {
 				m_settings.setParentalControlsLocked(QByteArray());
 				break;
 			} else {
 				QMessageBox box(
-					QMessageBox::Warning,
-					title,
-					tr("Incorrect password."),
-					QMessageBox::Retry | QMessageBox::Cancel,
-					this
-				);
+					QMessageBox::Warning, title, tr("Incorrect password."),
+					QMessageBox::Retry | QMessageBox::Cancel, this);
 				box.setWindowModality(Qt::WindowModal);
-				if (box.exec() == QMessageBox::Cancel) {
+				if(box.exec() == QMessageBox::Cancel) {
 					break;
 				}
 			}
 		} else {
-			m_settings.setParentalControlsLocked(server::passwordhash::hash(pass));
+			m_settings.setParentalControlsLocked(
+				server::passwordhash::hash(pass));
 			break;
 		}
 	}

@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/dialogs/startdialog/create.h"
 #include "desktop/dialogs/colordialog.h"
 #include "desktop/main.h"
-#include "desktop/utils/sanerformlayout.h"
 #include "libclient/utils/images.h"
+#include <QFormLayout>
 #include <QSpinBox>
 #include <QtColorWidgets/ColorPreview>
 
@@ -19,29 +18,30 @@ Create::Create(QWidget *parent)
 {
 	// TODO: make the form layout work with RTL or go back to a QFormLayout.
 	setLayoutDirection(Qt::LeftToRight);
-	utils::SanerFormLayout *layout = new utils::SanerFormLayout{this};
+	QFormLayout *layout = new QFormLayout;
 	layout->setContentsMargins(0, 0, 0, 0);
+	setLayout(layout);
 
 	m_widthSpinner = new QSpinBox;
 	m_widthSpinner->setSuffix(tr("px"));
 	m_widthSpinner->setSingleStep(10);
 	m_widthSpinner->setRange(1, INT16_MAX);
 	m_widthSpinner->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-	layout->addRow(tr("Width:"), m_widthSpinner, 1, 1, Qt::AlignLeft);
+	layout->addRow(tr("Width:"), m_widthSpinner);
 
 	m_heightSpinner = new QSpinBox;
 	m_heightSpinner->setSuffix(tr("px"));
 	m_heightSpinner->setSingleStep(10);
 	m_heightSpinner->setRange(1, INT16_MAX);
 	m_heightSpinner->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
-	layout->addRow(tr("Height:"), m_heightSpinner, 1, 1, Qt::AlignLeft);
+	layout->addRow(tr("Height:"), m_heightSpinner);
 
 	m_backgroundPreview = new ColorPreview;
 	m_backgroundPreview->setDisplayMode(ColorPreview::DisplayMode::AllAlpha);
 	m_backgroundPreview->setToolTip(tr("Canvas background color"));
 	m_backgroundPreview->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	m_backgroundPreview->setCursor(Qt::PointingHandCursor);
-	layout->addRow(tr("Background:"), m_backgroundPreview, 1, 1, Qt::AlignLeft);
+	layout->addRow(tr("Background:"), m_backgroundPreview);
 
 	const desktop::settings::Settings &settings = dpApp().settings();
 	QSize lastSize = settings.newCanvasSize();

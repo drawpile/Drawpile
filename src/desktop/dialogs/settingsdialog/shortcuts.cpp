@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/dialogs/settingsdialog/shortcuts.h"
 #include "desktop/dialogs/settingsdialog/helpers.h"
 #include "desktop/dialogs/settingsdialog/proportionaltableview.h"
@@ -9,7 +8,6 @@
 #include "desktop/widgets/keysequenceedit.h"
 #include "libclient/utils/customshortcutmodel.h"
 #include "libshared/util/qtcompat.h"
-
 #include <QAbstractItemView>
 #include <QHeaderView>
 #include <QLabel>

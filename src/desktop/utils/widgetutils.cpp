@@ -3,11 +3,21 @@
 #include "desktop/main.h"
 #include <QAbstractItemView>
 #include <QAbstractScrollArea>
+#include <QButtonGroup>
+#include <QCheckBox>
 #include <QCursor>
 #include <QEvent>
+#include <QFont>
+#include <QFontMetrics>
 #include <QFormLayout>
 #include <QFrame>
+#include <QGraphicsOpacityEffect>
+#include <QLabel>
+#include <QPaintEvent>
+#include <QPainter>
 #include <QPair>
+#include <QRadioButton>
+#include <QResizeEvent>
 #include <QScrollBar>
 #include <QVBoxLayout>
 #include <QWidget>
@@ -44,6 +54,190 @@ ScopedUpdateDisabler::~ScopedUpdateDisabler()
 		m_widget->setUpdatesEnabled(true);
 	}
 }
+
+
+EncapsulatedLayout::EncapsulatedLayout()
+	: QHBoxLayout()
+{
+	setDirection(LeftToRight);
+}
+
+QSizePolicy::ControlTypes EncapsulatedLayout::controlTypes() const
+{
+	if(m_controlTypes) {
+		return *m_controlTypes;
+	} else {
+		return QHBoxLayout::controlTypes();
+	}
+}
+
+void EncapsulatedLayout::setControlTypes(QSizePolicy::ControlTypes types)
+{
+	m_controlTypes = types;
+}
+
+// On macOS only, `QBoxLayout::effectiveMargins` adds extra hidden margins
+// to the layout. This is purportedly to avoid the macOS widget decorations
+// being cropped (or, I suppose, overdrawing onto other widgets), but it really
+// only succeeds in breaking grid alignment since (a) controls in modern macOS
+// don’t have giant shadows like they used to, and (b) the layouts are nested
+// and so have plenty of space for decorations.
+// The best way to deal with this is to rewrite all of Qt layouts from scratch
+// (and probably also the macOS style), which is a bit beyond the scope of this
+// project, so this workaround is fine.
+#ifdef Q_OS_MACOS
+int EncapsulatedLayout::heightForWidth(int width) const
+{
+	return adjustHeightForWidth(QHBoxLayout::heightForWidth(width));
+}
+
+void EncapsulatedLayout::invalidate()
+{
+	m_dirty = true;
+	QHBoxLayout::invalidate();
+}
+
+QSize EncapsulatedLayout::maximumSize() const
+{
+	auto maxSize = adjustSizeHint(QHBoxLayout::maximumSize());
+
+	if(alignment() & Qt::AlignHorizontal_Mask) {
+		maxSize.setWidth(QLAYOUTSIZE_MAX);
+	}
+	if(alignment() & Qt::AlignVertical_Mask) {
+		maxSize.setHeight(QLAYOUTSIZE_MAX);
+	}
+
+	return maxSize;
+}
+
+int EncapsulatedLayout::minimumHeightForWidth(int width) const
+{
+	return adjustHeightForWidth(QHBoxLayout::minimumHeightForWidth(width));
+}
+
+QSize EncapsulatedLayout::minimumSize() const
+{
+	return adjustSizeHint(QHBoxLayout::minimumSize());
+}
+
+// Since we override the size hint to stop the layout from growing, we
+// also have to undo `QBoxLayout` correcting all the widget geometry for the
+// extra fake layout margins that no longer exist.
+void EncapsulatedLayout::setGeometry(const QRect &rect)
+{
+	recoverEffectiveMargins();
+
+	const auto c = count();
+
+	// Since QHBoxLayout does not expect anything to meddle with the geometry of
+	// the widgets that it controls, it is necessary to restore the original
+	// geometries or else widgets will start marching in the direction of any
+	// asymmetrical margin correction every time the layout resizes. This
+	// suggests that reusing QBoxLayout is probably a really truly bad idea.
+	if(m_topMargin || m_bottomMargin) {
+		for(auto i = 0; i < c; ++i) {
+			auto *item = itemAt(i);
+			if(auto *widget = item->widget()) {
+				auto oldGeometry =
+					widget->property("encapsulatedLayoutGeometry").toRect();
+				if(oldGeometry.isValid()) {
+					widget->setGeometry(oldGeometry);
+				}
+			}
+		}
+	}
+
+	// This fixes the geometry of the layout box
+	QHBoxLayout::setGeometry(rect.adjusted(
+		-m_leftMargin, -m_topMargin, -m_rightMargin, -m_bottomMargin));
+
+	// This fixes the position and size of all the widgets inside the layout box
+	// that were adjusted with the extra `QBoxLayoutPrivate::effectiveMargins`
+	//
+	// TODO: Adjusting the left (and probably right) margin causes e.g.
+	// checkboxes to misalign with other ones in the same form layout that are
+	// not using `EncapsulatedLayout`. It also causes required whitespace on the
+	// right side of inline widgets to disappear. The approach being used here
+	// is cursed so it could just be implemented incorrectly, but it is also
+	// possible `QBoxLayout` does something different depending on the direction
+	// of the layout. Since this component is horizontal-only for now anyway,
+	// just only adjust the top/bottom since those definitely need fixing.
+	if(m_topMargin || m_bottomMargin) {
+		for(auto i = 0; i < c; ++i) {
+			auto *item = itemAt(i);
+			if(auto *widget = item->widget()) {
+				widget->setProperty(
+					"encapsulatedLayoutGeometry", widget->geometry());
+				item->setGeometry(item->geometry().adjusted(
+					0, -m_topMargin, 0, m_topMargin + m_bottomMargin));
+			}
+		}
+	}
+}
+
+QSize EncapsulatedLayout::sizeHint() const
+{
+	return adjustSizeHint(QHBoxLayout::sizeHint());
+}
+
+int EncapsulatedLayout::adjustHeightForWidth(int height) const
+{
+	if(height == -1) {
+		return height;
+	}
+
+	recoverEffectiveMargins();
+	return height - m_topMargin - m_bottomMargin;
+}
+
+QSize EncapsulatedLayout::adjustSizeHint(QSize size) const
+{
+	recoverEffectiveMargins();
+	size.rwidth() -= m_leftMargin + m_rightMargin;
+	size.rheight() -= m_topMargin + m_bottomMargin;
+
+	return size;
+}
+
+void EncapsulatedLayout::recoverEffectiveMargins() const
+{
+	if(m_dirty) {
+		m_dirty = false;
+	} else {
+		return;
+	}
+
+	m_leftMargin = 0;
+	m_rightMargin = 0;
+	m_topMargin = 0;
+	m_bottomMargin = 0;
+
+	// This is basically `QBoxLayoutPrivate::effectiveMargins`
+	const auto c = count();
+	auto *first = itemAt(0);
+	auto *last = itemAt(c - 1);
+	if(direction() == QBoxLayout::RightToLeft) {
+		std::swap(first, last);
+	}
+	if(auto *widget = first->widget()) {
+		m_leftMargin = first->geometry().left() - widget->geometry().left();
+	}
+	if(auto *widget = last->widget()) {
+		m_rightMargin = last->geometry().right() - widget->geometry().right();
+	}
+	for(auto i = 0; i < c; ++i) {
+		auto *item = itemAt(i);
+		if(auto *widget = item->widget()) {
+			const auto itemGeom = item->geometry();
+			const auto widgetGeom = widget->geometry();
+			m_topMargin = qMax(m_topMargin, itemGeom.top() - widgetGeom.top());
+			m_bottomMargin =
+				qMax(m_bottomMargin, widgetGeom.bottom() - itemGeom.bottom());
+		}
+	}
+}
+#endif
 
 
 // SPDX-SnippetBegin
@@ -218,36 +412,304 @@ bool isKineticScrollingBarsHidden()
 		   settings.kineticScrollHideBars();
 }
 
-QFormLayout *addFormSection(QVBoxLayout *layout)
+QFormLayout *addFormSection(QBoxLayout *layout)
 {
 	QFormLayout *formLayout = new QFormLayout;
 	layout->addLayout(formLayout);
 	return formLayout;
 }
 
-int getFormSpacing(QVBoxLayout *layout)
+static int getSpacerSpacingFrom(const QWidget *parent, const QStyle *style)
 {
-	int rawSpacing = layout->parentWidget()->style()->pixelMetric(
-		QStyle::PM_LayoutVerticalSpacing, nullptr, layout->parentWidget());
+	int rawSpacing =
+		style->pixelMetric(QStyle::PM_LayoutVerticalSpacing, nullptr, parent);
 	// This can be negative on macOS apparently, so we use a measured value.
 	return rawSpacing < 0 ? 13 : rawSpacing * 3 / 2;
 }
 
-void addFormSpacer(QVBoxLayout *layout)
+static int getSpacerSpacing(QLayout *layout)
 {
-	QSpacerItem *spacer = new QSpacerItem(
-		0, getFormSpacing(layout), QSizePolicy::Minimum, QSizePolicy::Fixed);
-	layout->addSpacerItem(spacer);
+	QWidget *parent = layout->parentWidget();
+	return getSpacerSpacingFrom(parent, parent->style());
 }
 
-void addFormSeparator(QVBoxLayout *layout)
+static int getSpacing(
+	bool lastIsEmpty, bool currentIsEmpty, QSizePolicy::ControlTypes last,
+	QSizePolicy::ControlTypes current, Qt::Orientation orientation,
+	QWidget *parent)
 {
-	addFormSpacer(layout);
+	const QStyle *style = parent ? parent->style() : QApplication::style();
+
+	// Post-spacer
+	if(lastIsEmpty && !(current & QSizePolicy::Line)) {
+		return 0;
+	}
+
+	// Spacer
+	if(currentIsEmpty) {
+		return getSpacerSpacingFrom(parent, style);
+	}
+
+	// Widget or layout
+	int spacing = style->combinedLayoutSpacing(
+		last, current, orientation, nullptr, parent);
+
+	// TODO: This is all really just hacks for the Fusion style that should
+	// probably be going into a proxy style
+	if(spacing == -1) {
+		const QStyle::PixelMetric pm =
+			(orientation == Qt::Horizontal ? QStyle::PM_LayoutHorizontalSpacing
+										   : QStyle::PM_LayoutVerticalSpacing);
+
+		spacing = style->pixelMetric(pm, nullptr, parent);
+
+		if(orientation == Qt::Vertical) {
+			if((last | current) & QSizePolicy::Line) {
+				spacing *= 2;
+			} else if((last & current & QSizePolicy::RadioButton)) {
+				spacing = 0;
+			} else if((last & current & QSizePolicy::CheckBox)) {
+				spacing /= 2;
+			} else if(
+				(last & QSizePolicy::CheckBox) &&
+				(current & QSizePolicy::ComboBox)) {
+				spacing /= 2;
+			}
+		}
+	}
+
+	return spacing;
+}
+
+void addFormSpacer(QLayout *layout, QSizePolicy::Policy vPolicy)
+{
+	QSpacerItem *spacer = new QSpacerItem(
+		0, getSpacerSpacing(layout), QSizePolicy::Minimum, vPolicy);
+	layout->addItem(spacer);
+}
+
+QFrame *makeSeparator()
+{
 	QFrame *separator = new QFrame;
 	separator->setForegroundRole(QPalette::Dark);
 	separator->setFrameShape(QFrame::HLine);
-	layout->addWidget(separator);
+	return separator;
+}
+
+void addFormSeparator(QBoxLayout *layout)
+{
 	addFormSpacer(layout);
+	layout->addWidget(makeSeparator());
+	addFormSpacer(layout);
+}
+
+EncapsulatedLayout *encapsulate(const QString &label, QWidget *child)
+{
+	auto *layout = new EncapsulatedLayout;
+	layout->setContentsMargins(0, 0, 0, 0);
+	layout->setSpacing(0);
+
+	auto text = label.split("%1");
+
+	if(text.size() > 0 && !text.first().isEmpty()) {
+		auto *left = new QLabel(text.first());
+		left->setBuddy(child);
+		layout->addWidget(left);
+	}
+
+	layout->addWidget(child);
+
+	if(text.size() > 1 && !text.at(1).isEmpty()) {
+		auto *right = new QLabel(text.at(1));
+		right->setBuddy(child);
+		layout->addWidget(right);
+	}
+
+	layout->addStretch();
+
+	return layout;
+}
+
+// TODO: This needs to update when the style changes
+static int indentSize(QWidget *widget)
+{
+	QStyle *style = widget->style();
+	QStyleOption option;
+	return style->subElementRect(QStyle::SE_CheckBoxContents, &option, nullptr)
+		.left();
+}
+
+EncapsulatedLayout *indent(QWidget *child)
+{
+	EncapsulatedLayout *layout = new EncapsulatedLayout;
+	layout->setSpacing(0);
+	layout->setContentsMargins(indentSize(child), 0, 0, 0);
+	layout->addWidget(child);
+	return layout;
+}
+
+// QLabel refuses to behave, it will just take up excessive vertical space when
+// word wrap is enabled despite telling it not to. So we make our own widget
+// that just draws some slightly opaque, wrapped text sanely.
+class Note final : public QWidget {
+public:
+	Note(const QString &text, bool indent, const QIcon &icon)
+		: QWidget()
+		, m_text(text)
+		, m_indent(indent ? indentSize(this) : 0)
+		, m_icon(icon)
+	{
+		setContentsMargins(0, 0, 0, 0);
+		setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+	}
+
+	QSize sizeHint() const override
+	{
+		return QSize(m_indent + m_iconSize + m_width, m_height);
+	}
+
+	QSize minimumSizeHint() const override { return QSize(1, m_height); }
+
+protected:
+	void paintEvent(QPaintEvent *) override
+	{
+		QPainter painter(this);
+		painter.setOpacity(0.7);
+		if(!m_icon.isNull()) {
+			m_icon.paint(&painter, QRect(0, 0, m_iconSize, m_iconSize));
+		}
+		painter.setPen(palette().color(QPalette::Text));
+		painter.drawText(
+			QRect(m_indent + m_iconSize, 0, m_width, m_height), m_text);
+	}
+
+	void resizeEvent(QResizeEvent *event) override
+	{
+		if(!m_icon.isNull()) {
+			m_iconSize =
+				style()->pixelMetric(QStyle::PM_SmallIconSize, nullptr, this);
+			m_indent = style()->pixelMetric(
+				QStyle::PM_LayoutHorizontalSpacing, nullptr, this);
+		}
+		int width = event->size().width() - m_indent - m_iconSize;
+		QSize size = QFontMetrics(font())
+						 .boundingRect(
+							 QRect(0, 0, width <= 0 ? 0xffff : width, 0xffff),
+							 Qt::TextWordWrap, m_text)
+						 .size();
+		if(size != QSize(m_width, m_height)) {
+			m_width = size.width();
+			m_height = qMax(m_iconSize, size.height());
+			setFixedHeight(m_height);
+		}
+	}
+
+private:
+	QString m_text;
+	int m_indent;
+	QIcon m_icon;
+	int m_iconSize = 0;
+	int m_width = 1;
+	int m_height = 1;
+};
+
+QWidget *
+formNote(const QString &text, QSizePolicy::ControlType type, const QIcon &icon)
+{
+	return new Note(
+		text, type == QSizePolicy::CheckBox || type == QSizePolicy::RadioButton,
+		icon);
+}
+
+void setSpacingControlType(
+	EncapsulatedLayout *layout, QSizePolicy::ControlTypes type)
+{
+	layout->setControlTypes(type);
+}
+
+void setSpacingControlType(QWidget *widget, QSizePolicy::ControlType type)
+{
+	QSizePolicy policy = widget->sizePolicy();
+	policy.setControlType(type);
+	widget->setSizePolicy(policy);
+}
+
+QButtonGroup *addRadioGroup(
+	QFormLayout *form, const QString &label, bool horizontal,
+	std::initializer_list<std::pair<const QString &, int>> items)
+{
+	QButtonGroup *group = new QButtonGroup(form->parentWidget());
+
+	EncapsulatedLayout *layout = nullptr;
+	if(horizontal) {
+		layout = new EncapsulatedLayout;
+		layout->setSpacing(getSpacing(
+			false, false, QSizePolicy::RadioButton, QSizePolicy::RadioButton,
+			Qt::Horizontal, form->parentWidget()));
+	}
+
+	bool first = true;
+	for(const auto [text, id] : items) {
+		auto *button = new QRadioButton(text);
+		group->addButton(button, id);
+		if(horizontal) {
+			layout->addWidget(button);
+		} else {
+			form->addRow(first ? label : nullptr, button);
+			first = false;
+		}
+	}
+
+	if(horizontal) {
+		layout->addStretch();
+		form->addRow(label, layout);
+	}
+
+	return group;
+}
+
+// TODO: This needs to update when the style changes
+static int checkBoxLabelSpacing(const QWidget *widget)
+{
+	const QStyle *style = widget->style();
+
+	// This has to be done the stupid way instead of just asking for the pixel
+	// metric because at least QCommonStyle has an off-by-one error from using
+	// `QRect::right` without correct for that being an inclusive coordinate
+	QStyleOption option;
+	int l =
+		style->subElementRect(QStyle::SE_CheckBoxIndicator, &option, nullptr)
+			.width();
+	int r = style->subElementRect(QStyle::SE_CheckBoxContents, &option, nullptr)
+				.left();
+
+	return r - l;
+}
+
+QCheckBox *addCheckable(
+	const QString &accessibleName, EncapsulatedLayout *layout, QWidget *child)
+{
+	QCheckBox *check = new QCheckBox;
+	check->setAccessibleName(accessibleName);
+	layout->insertWidget(0, check);
+	// TODO: This needs to update when the style changes
+	layout->insertSpacing(1, utils::checkBoxLabelSpacing(child));
+	child->setEnabled(false);
+	QObject::connect(check, &QCheckBox::toggled, child, &QWidget::setEnabled);
+	setSpacingControlType(layout, QSizePolicy::CheckBox);
+	return check;
+}
+
+QLabel *makeIconLabel(const QIcon &icon, QWidget *parent)
+{
+	QLabel *label = new QLabel;
+	QWidget *widget = parent ? parent : label;
+	QStyle *style = widget->style();
+	int labelSize =
+		style->pixelMetric(QStyle::PM_LargeIconSize, nullptr, widget);
+	label->setPixmap(icon.pixmap(labelSize));
+	label->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+	return label;
 }
 
 }

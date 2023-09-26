@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "desktop/dialogs/startdialog/updatenotice.h"
-#include "desktop/utils/sanerformlayout.h"
 #include "desktop/utils/widgetutils.h"
 #include <QDesktopServices>
 #include <QFrame>
@@ -36,8 +35,8 @@ UpdateNotice::UpdateNotice(QWidget *parent)
 	iconLayout->setSpacing(hspace);
 	layout->addLayout(iconLayout);
 
-	iconLayout->addWidget(utils::makeIconLabel(
-		QIcon::fromTheme("update-none"), QStyle::PM_LargeIconSize, this));
+	iconLayout->addWidget(
+		utils::makeIconLabel(QIcon::fromTheme("update-none"), this));
 
 	iconLayout->addSpacing(qMax(0, left - hspace));
 

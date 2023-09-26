@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/dialogs/startdialog/browse.h"
 #include "desktop/main.h"
-#include "desktop/utils/sanerformlayout.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/spanawaretreeview.h"
 #include "libclient/net/sessionlistingmodel.h"
@@ -50,8 +48,7 @@ Browse::Browse(QWidget *parent)
 	noListServersLayout->addLayout(iconLayout);
 
 	iconLayout->addWidget(utils::makeIconLabel(
-		QIcon::fromTheme("dialog-information"), QStyle::PM_LargeIconSize,
-		m_noListServers));
+		QIcon::fromTheme("dialog-information"), m_noListServers));
 
 	QVBoxLayout *labelsLayout = new QVBoxLayout;
 	labelsLayout->setContentsMargins(0, 0, 0, 0);

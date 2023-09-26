@@ -1,19 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
+#include "desktop/dialogs/settingsdialog/servers.h"
 #include "desktop/dialogs/addserverdialog.h"
 #include "desktop/dialogs/certificateview.h"
 #include "desktop/dialogs/settingsdialog/helpers.h"
-#include "desktop/dialogs/settingsdialog/servers.h"
 #include "desktop/filewrangler.h"
 #include "desktop/settings.h"
 #include "desktop/utils/listserverdelegate.h"
-#include "desktop/utils/sanerformlayout.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "libclient/utils/certificatestoremodel.h"
 #include "libclient/utils/listservermodel.h"
 #include "libshared/util/paths.h"
-
 #include <QApplication>
 #include <QDir>
 #include <QFileDialog>
@@ -28,6 +25,7 @@
 #include <QVBoxLayout>
 #include <algorithm>
 #include <optional>
+#include <utility>
 
 namespace dialogs {
 namespace settingsdialog {
@@ -35,10 +33,10 @@ namespace settingsdialog {
 Servers::Servers(desktop::settings::Settings &settings, QWidget *parent)
 	: QWidget(parent)
 {
-	auto *layout = new QVBoxLayout(this);
-
+	QVBoxLayout *layout = new QVBoxLayout;
+	setLayout(layout);
 	initListingServers(settings, layout);
-	layout->addSpacing(6);
+	utils::addFormSpacer(layout);
 	initKnownHosts(layout);
 }
 
@@ -57,48 +55,53 @@ void Servers::initKnownHosts(QVBoxLayout *form)
 	auto *knownHostsModel = new CertificateStoreModel(this);
 	knownHosts->setModel(knownHostsModel);
 
-	auto *actions = listActions(knownHosts,
-		tr("Import trusted certificate…"),
-		[=] { importCertificates(knownHostsModel); },
+	auto *actions = listActions(
+		knownHosts, tr("Import trusted certificate…"),
+		[=] {
+			importCertificates(knownHostsModel);
+		},
 
 		tr("Remove selected hosts…"),
-		makeDefaultDeleter(this, knownHosts,
-			tr("Remove known hosts"),
-			QT_TR_N_NOOP("Really remove %n known host(s)?")
-		)
-	);
+		makeDefaultDeleter(
+			this, knownHosts, tr("Remove known hosts"),
+			QT_TR_N_NOOP("Really remove %n known host(s)?")));
 
 	actions->addStretch();
 
 	auto *trustButton = new QPushButton(tr("Trust selected hosts"));
 	trustButton->setAutoDefault(false);
 	trustButton->setEnabled(knownHosts->selectionModel()->hasSelection());
-	connect(knownHosts->selectionModel(), &QItemSelectionModel::selectionChanged, trustButton, [=] {
-		trustButton->setEnabled(knownHosts->selectionModel()->hasSelection());
-	});
+	connect(
+		knownHosts->selectionModel(), &QItemSelectionModel::selectionChanged,
+		trustButton, [=] {
+			trustButton->setEnabled(
+				knownHosts->selectionModel()->hasSelection());
+		});
 	connect(trustButton, &QPushButton::clicked, knownHosts, [=] {
 		trustCertificates(
-			knownHostsModel,
-			knownHosts->selectionModel()->selectedIndexes()
-		);
+			knownHostsModel, knownHosts->selectionModel()->selectedIndexes());
 	});
 	actions->addWidget(trustButton);
 
-	connect(knownHosts, &QListView::doubleClicked, this, [=](const QModelIndex &index) {
-		viewCertificate(knownHostsModel, index);
-	});
+	connect(
+		knownHosts, &QListView::doubleClicked, this,
+		[=](const QModelIndex &index) {
+			viewCertificate(knownHostsModel, index);
+		});
 
 	form->addLayout(actions);
 }
 
-void Servers::initListingServers(desktop::settings::Settings &settings, QVBoxLayout *form)
+void Servers::initListingServers(
+	desktop::settings::Settings &settings, QVBoxLayout *form)
 {
 	auto *serversLabel = new QLabel(tr("List servers:"));
 	form->addWidget(serversLabel);
 
 	auto *servers = new QListView;
 	serversLabel->setBuddy(servers);
-	auto *serversModel = new sessionlisting::ListServerModel(settings, true, this);
+	auto *serversModel =
+		new sessionlisting::ListServerModel(settings, true, this);
 	servers->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	servers->setModel(serversModel);
 	servers->setItemDelegate(new sessionlisting::ListServerDelegate(this));
@@ -107,22 +110,26 @@ void Servers::initListingServers(desktop::settings::Settings &settings, QVBoxLay
 	servers->setSelectionMode(QAbstractItemView::ExtendedSelection);
 	utils::initKineticScrolling(servers);
 	form->addWidget(servers, 1);
-	form->addLayout(listActions(servers,
-		tr("Add list servers…"),
-		[=] { addListServer(serversModel); },
+	form->addLayout(listActions(
+		servers, tr("Add list servers…"),
+		[=] {
+			addListServer(serversModel);
+		},
 
 		tr("Remove selected list servers…"),
-		makeDefaultDeleter(this, servers,
-			tr("Remove list servers"),
-			QT_TR_N_NOOP("Really remove %n list server(s)?")
-		),
+		makeDefaultDeleter(
+			this, servers, tr("Remove list servers"),
+			QT_TR_N_NOOP("Really remove %n list server(s)?")),
 
 		tr("Move up"),
-		[=] { moveListServer(serversModel, servers->selectionModel(), -1); },
+		[=] {
+			moveListServer(serversModel, servers->selectionModel(), -1);
+		},
 
 		tr("Move down"),
-		[=] { moveListServer(serversModel, servers->selectionModel(), 1); }
-	));
+		[=] {
+			moveListServer(serversModel, servers->selectionModel(), 1);
+		}));
 }
 
 void Servers::addListServer(sessionlisting::ListServerModel *model)
@@ -146,16 +153,13 @@ void Servers::moveListServer(
 	}
 }
 
-static bool askToContinue(const QString &title, const QString &message, QWidget *parent)
+static bool
+askToContinue(const QString &title, const QString &message, QWidget *parent)
 {
 	QMessageBox box(
-		QMessageBox::Warning,
-		title,
-		message,
-		QMessageBox::Cancel,
-		parent
-	);
-	const auto *ok = box.addButton(Servers::tr("Continue"), QMessageBox::AcceptRole);
+		QMessageBox::Warning, title, message, QMessageBox::Cancel, parent);
+	const auto *ok =
+		box.addButton(Servers::tr("Continue"), QMessageBox::AcceptRole);
 	box.setDefaultButton(QMessageBox::Cancel);
 	box.setWindowModality(Qt::WindowModal);
 	box.exec();
@@ -168,9 +172,9 @@ void Servers::importCertificates(CertificateStoreModel *model)
 
 	const auto paths = FileWrangler(this).getImportCertificatePaths(title);
 
-	for (const auto &path : paths) {
-		auto [ index, error ] = model->addCertificate(path, true);
-		if (!error.isEmpty() && !askToContinue(title, error, this)) {
+	for(const auto &path : paths) {
+		auto [index, error] = model->addCertificate(path, true);
+		if(!error.isEmpty() && !askToContinue(title, error, this)) {
 			model->revert();
 			return;
 		}
@@ -178,25 +182,27 @@ void Servers::importCertificates(CertificateStoreModel *model)
 	model->submit();
 }
 
-void Servers::trustCertificates(CertificateStoreModel *model, const QModelIndexList &indexes)
+void Servers::trustCertificates(
+	CertificateStoreModel *model, const QModelIndexList &indexes)
 {
-	for (const auto &index : indexes) {
+	for(const auto &index : indexes) {
 		model->setData(index, true, CertificateStoreModel::TrustedRole);
 	}
-	if (!model->submit()) {
+	if(!model->submit()) {
 		execWarning(
 			tr("Trust selected hosts"),
-			tr("Could not save changes to known hosts: %1").arg(model->lastError()),
-			this
-		);
+			tr("Could not save changes to known hosts: %1")
+				.arg(model->lastError()),
+			this);
 	}
 }
 
-void Servers::viewCertificate(CertificateStoreModel *model, const QModelIndex &index)
+void Servers::viewCertificate(
+	CertificateStoreModel *model, const QModelIndex &index)
 {
 	const auto host = model->data(index, Qt::DisplayRole).toString();
 	const auto cert = model->certificate(index);
-	if (!cert) {
+	if(!cert) {
 		return;
 	}
 	auto *cv = new CertificateView(host, *cert, this);
