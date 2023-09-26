@@ -22,7 +22,7 @@ Page::Page(QWidget *parent)
 {
 }
 
-void Page::init(desktop::settings::Settings &settings)
+void Page::init(desktop::settings::Settings &settings, bool stretch)
 {
 	setFrameStyle(QFrame::NoFrame);
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -39,7 +39,9 @@ void Page::init(desktop::settings::Settings &settings)
 
 	setUp(settings, layout);
 
-	layout->addStretch(1);
+	if(stretch) {
+		layout->addStretch(1);
+	}
 }
 
 }

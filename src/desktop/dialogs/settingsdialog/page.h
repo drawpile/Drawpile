@@ -21,7 +21,7 @@ public:
 protected:
 	Page(QWidget *parent);
 
-	void init(desktop::settings::Settings &settings);
+	void init(desktop::settings::Settings &settings, bool stretch = true);
 
 	virtual void
 	setUp(desktop::settings::Settings &settings, QVBoxLayout *layout) = 0;

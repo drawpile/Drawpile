@@ -24,7 +24,7 @@ ParentalControls::ParentalControls(
 	: Page(parent)
 	, m_settings(settings)
 {
-	init(settings);
+	init(settings, false);
 }
 
 void ParentalControls::setUp(
@@ -95,6 +95,7 @@ void ParentalControls::initBuiltIn(
 	form->addRow(nullptr, warnOnJoin);
 
 	layout->addStretch();
+	utils::addFormSeparator(layout);
 
 	auto *lockLayout = new QHBoxLayout;
 	lockLayout->setContentsMargins(0, 0, 0, 0);
@@ -159,13 +160,12 @@ void ParentalControls::initInfoBar(QVBoxLayout *layout)
 
 void ParentalControls::initOsManaged(QVBoxLayout *layout)
 {
-	auto *osManagedLayout = new QVBoxLayout;
-	osManagedLayout->setContentsMargins(0, 0, 0, 0);
-	osManagedLayout->addWidget(
+	layout->addStretch();
+	layout->addWidget(
 		new QLabel(tr("Parental controls are currently managed by the "
 					  "operating system.")),
 		0, Qt::AlignCenter);
-	layout->addLayout(osManagedLayout, 1);
+	layout->addStretch();
 }
 
 void ParentalControls::toggleLock()
