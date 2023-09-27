@@ -70,12 +70,23 @@ bool LayerListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, co
 			if(glyphrect.contains(me->pos())) {
 				// Clicked on opacity glyph: toggle visibility
 				emit toggleVisibility(layer.id, layer.hidden);
+				m_justToggledVisibility = true;
 				return true;
 			}
 		}
-	}
+		m_justToggledVisibility = false;
 
-	if(type == QEvent::MouseButtonDblClick) {
+	} else if (type == QEvent::MouseMove) {
+		// Mouse movements with the button held down cause the layer to be
+		// selected, which is immensely annoying when you're just trying to
+		// toggle visibility. So if the last click was a visibility toggle, we
+		// eat the event to prevent that from happening.
+		if(m_justToggledVisibility) {
+			return true;
+		}
+
+	} else if(type == QEvent::MouseButtonDblClick) {
+		m_justToggledVisibility = false;
 		const QMouseEvent *me = static_cast<QMouseEvent*>(event);
 		if(me->button() == Qt::LeftButton) {
 			const QRect glyphrect {
