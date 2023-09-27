@@ -40,6 +40,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Make preferences dialog not use custom layouts anymore. Fixes the dialog getting stuck at an unusably tiny size on Windows, makes it work with Arabic and other right-to-left languages and allows resizing the dialog as well as scrolling its contents.
  * Fix: Drag-zooming (Ctrl+Middle Click by default) now zooms on the initial click location, rather than the center of the canvas. Thanks to Valaek for reporting.
  * Fix: Don't select layer when toggling its visibility.
+ * Fix: Show a crossed-out folder icon for hidden layer groups, rather than switching to the layer icon for them. Thanks to Blozzom for reporting.
 
 2023-08-26 Version 2.2.0-beta.7
  * Fix: Make classic brushes not go brighter when smudging into transparency. Thanks to cada for reporting.

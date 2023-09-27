@@ -18,7 +18,8 @@ LayerListDelegate::LayerListDelegate(QObject *parent)
 	  m_visibleIcon(QIcon::fromTheme("layer-visible-on")),
 	  m_groupIcon(QIcon::fromTheme("folder")),
 	  m_censoredIcon(QIcon(":/icons/censored.svg")),
-	  m_hiddenIcon(QIcon::fromTheme("layer-visible-off"))
+	  m_hiddenIcon(QIcon::fromTheme("layer-visible-off")),
+	  m_groupHiddenIcon(QIcon::fromTheme("drawpile_folderhidden"))
 {
 }
 
@@ -132,7 +133,11 @@ void LayerListDelegate::drawOpacityGlyph(const QRectF& rect, QPainter *painter, 
 	};
 
 	if(hidden) {
-		m_hiddenIcon.paint(painter, r);
+		if(group) {
+			m_groupHiddenIcon.paint(painter, r);
+		} else {
+			m_hiddenIcon.paint(painter, r);
+		}
 
 	} else {
 		painter->save();
