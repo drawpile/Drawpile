@@ -319,7 +319,6 @@ void PlaybackDialog::startVideoExport(VideoExporter *exporter)
 {
 	m_exporter = exporter;
 	m_exporter->setParent(this);
-	m_exporter->start();
 
 	m_ui->exportStack->setCurrentIndex(0);
 	m_ui->saveFrame->setEnabled(true);
@@ -339,6 +338,8 @@ void PlaybackDialog::startVideoExport(VideoExporter *exporter)
 	connect(
 		m_exporter, &VideoExporter::exporterReady, this,
 		&PlaybackDialog::onExporterReady);
+
+	m_exporter->start();
 }
 
 void PlaybackDialog::videoExporterError(const QString &msg)
