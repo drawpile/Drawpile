@@ -120,10 +120,14 @@ void VideoExportDialog::updateUi()
 		}
 		args.append({"-y", "<FILENAME>"});
 
-		m_ui->ffmpegBasics->setText(QStringLiteral("%1 %2").arg(
-			getFfmpegPath(), args.join(QChar(' '))));
-		m_ui->ffmpegCustomLabel->setVisible(format == VideoExporter::FFMPEG_CUSTOM);
-		m_ui->ffmpegCustom->setVisible(format == VideoExporter::FFMPEG_CUSTOM);
+		bool isCustomExport = format == VideoExporter::FFMPEG_CUSTOM;
+		if(isCustomExport) {
+			m_ui->ffmpegBasics->setText(QStringLiteral("%1 %2").arg(
+				getFfmpegPath(), args.join(QChar(' '))));
+		}
+		m_ui->ffmpegBasics->setVisible(isCustomExport);
+		m_ui->ffmpegCustomLabel->setVisible(isCustomExport);
+		m_ui->ffmpegCustom->setVisible(isCustomExport);
 	}
 }
 
