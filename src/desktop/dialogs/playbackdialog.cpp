@@ -58,7 +58,11 @@ PlaybackDialog::PlaybackDialog(canvas::CanvasModel *canvas, QWidget *parent)
 	m_playTimer->setTimerType(Qt::PreciseTimer);
 	m_playTimer->setSingleShot(true);
 	connect(m_playTimer, &QTimer::timeout, this, [this]() {
-		playNext(qMin(PLAY_MSECS_MAX, double(m_lastFrameTime.elapsed())));
+		double msecs =
+			m_exporter
+				? 1000.0 / m_exporter->fps()
+				: qMin(PLAY_MSECS_MAX, double(m_lastFrameTime.elapsed()));
+		playNext(msecs);
 	});
 
 	m_ui->speedSpinner->setExponentRatio(3.0);
@@ -143,7 +147,13 @@ void PlaybackDialog::onExporterReady()
 	m_ui->saveFrame->setEnabled(true);
 	m_ui->frameLabel->setText(QString::number(m_exporter->frame()));
 	if(m_autoplay) {
-		playNext(1000.0 / m_exporter->fps());
+		double elapsed = m_lastFrameTime.elapsed();
+		double msecs = 1000.0 / m_exporter->fps();
+		if(elapsed < msecs) {
+			m_playTimer->start(msecs - elapsed);
+		} else {
+			playNext(msecs);
+		}
 	}
 }
 
