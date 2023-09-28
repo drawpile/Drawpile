@@ -149,8 +149,9 @@ void ThinSession::readyToAutoReset(int ctxId)
 void ThinSession::onSessionReset()
 {
 	directToAll(net::ServerReply::makeCatchup(
-		history()->lastIndex() - history()->firstIndex()));
+		history()->lastIndex() - history()->firstIndex(), 0));
 	m_autoResetRequestStatus = AutoResetState::NotSent;
+	history()->addMessage(net::ServerReply::makeCaughtUp(0));
 }
 
 void ThinSession::onClientJoin(Client *client, bool host)
@@ -165,7 +166,13 @@ void ThinSession::onClientJoin(Client *client, bool host)
 		// The client can use this information to display a progress bar during
 		// the login phase
 		client->sendDirectMessage(net::ServerReply::makeCatchup(
-			history()->lastIndex() - history()->firstIndex()));
+			history()->lastIndex() - history()->firstIndex(),
+			m_nextCatchupKey));
+		history()->addMessage(net::ServerReply::makeCaughtUp(m_nextCatchupKey));
+		// Wrap around the catchup key at an arbitrary, but plenty large value.
+		if(++m_nextCatchupKey > 999999) {
+			m_nextCatchupKey = 1;
+		}
 	}
 }
 

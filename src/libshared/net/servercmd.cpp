@@ -143,6 +143,8 @@ ServerReply ServerReply::fromJson(const QJsonDocument &doc)
 		r.type = ServerReply::ReplyType::ResetRequest;
 	else if(typestr == "catchup")
 		r.type = ServerReply::ReplyType::Catchup;
+	else if(typestr == "caughtup")
+		r.type = ServerReply::ReplyType::CaughtUp;
 	else
 		r.type = ServerReply::ReplyType::Unknown;
 
@@ -213,11 +215,19 @@ net::Message ServerReply::makeKeyAlert(
 	return make(data);
 }
 
-net::Message ServerReply::makeCatchup(int count)
+net::Message ServerReply::makeCatchup(int count, int key)
 {
 	return make(
 		{{QStringLiteral("type"), QStringLiteral("catchup")},
-		 {QStringLiteral("count"), count}});
+		 {QStringLiteral("count"), count},
+		 {QStringLiteral("key"), key}});
+}
+
+net::Message ServerReply::makeCaughtUp(int key)
+{
+	return make(
+		{{QStringLiteral("type"), QStringLiteral("caughtup")},
+		 {QStringLiteral("key"), key}});
 }
 
 net::Message ServerReply::makeLog(const QString &message, QJsonObject data)

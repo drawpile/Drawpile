@@ -227,11 +227,12 @@ private:
 	QVector<net::Message>
 	filterCompatibleMessages(int count, const net::Message *msgs);
 
-	void handleServerReply(const ServerReply &msg);
+	void handleServerReply(const ServerReply &msg, int handledMessageIndex = 0);
 	QString translateMessage(const QJsonObject &reply);
 	void handleResetRequest(const ServerReply &msg);
 	void handleData(const net::Message &msg);
 	void handleUserInfo(const net::Message &msg, DP_MsgData *md);
+	void finishCatchup(const char *reason, int handledMessageIndex = 0);
 
 	Server *m_server = nullptr;
 #ifdef Q_OS_ANDROID
@@ -250,6 +251,7 @@ private:
 	int m_catchupTo = 0;
 	int m_caughtUp = 0;
 	int m_catchupProgress = 0;
+	int m_catchupKey = 0;
 
 	int m_smoothDrainRate = 0;
 };

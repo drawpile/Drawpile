@@ -41,6 +41,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Drag-zooming (Ctrl+Middle Click by default) now zooms on the initial click location, rather than the center of the canvas. Thanks to Valaek for reporting.
  * Fix: Don't select layer when toggling its visibility.
  * Fix: Show a crossed-out folder icon for hidden layer groups, rather than switching to the layer icon for them. Thanks to Blozzom for reporting.
+ * Fix: Make catchup explicit. Solves both the "stuck at 99%" problem during session resets and the canvas too be unlocked too early.
 
 2023-08-26 Version 2.2.0-beta.7
  * Fix: Make classic brushes not go brighter when smudging into transparency. Thanks to cada for reporting.

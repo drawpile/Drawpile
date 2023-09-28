@@ -245,7 +245,7 @@ void Client::handleMessages(int count, net::Message *msgs)
 		net::Message &msg = msgs[i];
 		switch(msg.type()) {
 		case DP_MSG_SERVER_COMMAND:
-			handleServerReply(ServerReply::fromMessage(msg));
+			handleServerReply(ServerReply::fromMessage(msg), i);
 			break;
 		case DP_MSG_DATA:
 			handleData(msg);
@@ -269,12 +269,12 @@ void Client::handleMessages(int count, net::Message *msgs)
 	if(m_catchupTo > 0) {
 		m_caughtUp += count;
 		if(m_caughtUp >= m_catchupTo) {
-			qInfo("Catchup: caught up to %d messages", m_caughtUp);
-			emit catchupProgress(100);
-			m_catchupTo = 0;
-			m_server->setSmoothEnabled(true);
+			// If we have a catchup key, wait for a caughtup message instead.
+			if(m_catchupKey == -1) {
+				finishCatchup("reached catchup count");
+			}
 		} else {
-			int progress = 100 * m_caughtUp / m_catchupTo;
+			int progress = qBound(0, 100 * m_caughtUp / m_catchupTo, 99);
 			if(progress != m_catchupProgress) {
 				m_catchupProgress = progress;
 				emit catchupProgress(progress);
@@ -283,7 +283,7 @@ void Client::handleMessages(int count, net::Message *msgs)
 	}
 }
 
-void Client::handleServerReply(const ServerReply &msg)
+void Client::handleServerReply(const ServerReply &msg, int handledMessageIndex)
 {
 	switch(msg.type) {
 	case ServerReply::ReplyType::Unknown:
@@ -330,12 +330,27 @@ void Client::handleServerReply(const ServerReply &msg)
 		handleResetRequest(msg);
 		break;
 	case ServerReply::ReplyType::Catchup:
-		m_server->setSmoothEnabled(false);
 		m_catchupTo = msg.reply["count"].toInt();
-		qInfo("Catching up to %d messages", m_catchupTo);
+		m_catchupKey =
+			msg.reply.contains("key") ? qMax(0, msg.reply["key"].toInt()) : -1;
+		m_server->setSmoothEnabled(false);
+		qInfo(
+			"Catching up to %d messages with key %d", m_catchupTo,
+			m_catchupKey);
 		m_caughtUp = 0;
 		m_catchupProgress = 0;
-		emit catchupProgress(m_catchupTo > 0 ? 0 : 100);
+		emit catchupProgress(0);
+		// Shouldn't happen, but we'll handle catching up to nothing as well.
+		if(m_catchupTo <= 0) {
+			emit finishCatchup("caught up to nothing");
+		}
+		break;
+	case ServerReply::ReplyType::CaughtUp:
+		if(m_catchupTo > 0 &&
+		   qMax(0, msg.reply["key"].toInt()) == m_catchupKey) {
+			finishCatchup(
+				"received caughtup command from server", handledMessageIndex);
+		}
 		break;
 	}
 }
@@ -471,6 +486,16 @@ void Client::setSmoothDrainRate(int smoothDrainRate)
 	if(m_server) {
 		m_server->setSmoothDrainRate(m_smoothDrainRate);
 	}
+}
+
+void Client::finishCatchup(const char *reason, int handledMessageIndex)
+{
+	qInfo(
+		"Caught up to %d/%d messages with key %d (%s)",
+		m_caughtUp + handledMessageIndex, m_catchupTo, m_catchupKey, reason);
+	m_catchupTo = 0;
+	m_server->setSmoothEnabled(true);
+	emit catchupProgress(100);
 }
 
 }

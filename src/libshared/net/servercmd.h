@@ -69,8 +69,9 @@ struct ServerReply {
 		SizeLimitWarning, // session history size nearing limit (deprecated)
 		Status,			  // periodic status update
 		Reset,			  // session reset state
-		Catchup, // number of messages queued for upload (use for progress bars)
-		ResetRequest, // request client to perform a reset
+		Catchup,		  // number of messages queued for upload
+		ResetRequest,	  // request client to perform a reset
+		CaughtUp,		  // previous catchup is complete
 	} type;
 	QString message;
 	QJsonObject reply;
@@ -100,7 +101,11 @@ struct ServerReply {
 		const QString &message, const QString &key,
 		const QJsonObject &params = {});
 
-	static net::Message makeCatchup(int count);
+	// They key is used for correlation in thin sessions, where caughtup
+	// messages are stored in the session history. Key 0 stands for a reset,
+	// other keys are for joining clients catching up.
+	static net::Message makeCatchup(int count, int key);
+	static net::Message makeCaughtUp(int key);
 
 	static net::Message makeLog(const QString &message, QJsonObject data);
 

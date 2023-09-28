@@ -62,11 +62,13 @@ void BuiltinSession::doInternalReset(const drawdance::CanvasState &canvasState)
 	Q_ASSERT(lastBatchIndex == history()->lastIndex());
 	history()->reset(net::MessageList());
 
-	net::Message catchup = net::ServerReply::makeCatchup(msgs.size());
+	net::Message catchup = net::ServerReply::makeCatchup(msgs.size(), 1);
+	net::Message caughtup = net::ServerReply::makeCaughtUp(1);
 	for(Client *c : awaitingClients) {
 		c->setAwaitingReset(false);
 		c->sendDirectMessage(catchup);
 		c->sendDirectMessages(msgs);
+		c->sendDirectMessage(caughtup);
 	}
 }
 
@@ -134,10 +136,12 @@ void BuiltinSession::onSessionReset()
 		m_acls.handle(msg);
 	}
 
-	net::Message catchup = net::ServerReply::makeCatchup(msgs.size());
+	net::Message catchup = net::ServerReply::makeCatchup(msgs.size(), 0);
+	net::Message caughtup = net::ServerReply::makeCaughtUp(0);
 	for(Client *client : clients()) {
 		client->sendDirectMessage(catchup);
 		client->sendDirectMessages(msgs);
+		client->sendDirectMessage(caughtup);
 	}
 }
 
