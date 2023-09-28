@@ -767,7 +767,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+29"/>
         <source>Export</source>
-        <translation type="unfinished">导出</translation>
+        <translation>导出</translation>
     </message>
     <message>
         <location line="-93"/>
@@ -1217,7 +1217,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+2"/>
         <source>A collaborative drawing program.</source>
-        <translation>一款协作绘图程序。</translation>
+        <translation>一款协作绘图程序.</translation>
     </message>
     <message>
         <location line="+147"/>
@@ -1384,7 +1384,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+22"/>
         <source>&amp;Brushes...</source>
-        <translation>&amp;导入笔刷...</translation>
+        <translation>&amp;导入 笔刷...</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1395,7 +1395,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+9"/>
         <location filename="../widgets/macmenu.cpp" line="+9"/>
         <source>&amp;Quit</source>
-        <translation>&amp;退出</translation>
+        <translation>&amp;退出软件</translation>
     </message>
     <message>
         <location line="+42"/>
@@ -1501,7 +1501,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>Color Erase Selection</source>
-        <translation>擦除所选颜色区域</translation>
+        <translation>颜色擦除所选区域</translation>
     </message>
     <message>
         <location line="+63"/>
@@ -2143,37 +2143,37 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+50"/>
         <source>Hosting on this computer is not available</source>
-        <translation type="unfinished"></translation>
+        <translation>本机内置服务器无法使用</translation>
     </message>
     <message>
         <location line="+55"/>
         <source>Really leave and terminate the session?</source>
-        <translation type="unfinished"></translation>
+        <translation>确定离开并终止房间吗?</translation>
     </message>
     <message>
         <location line="+238"/>
         <source>You&apos;ve been disconnected from the session.</source>
-        <translation type="unfinished"></translation>
+        <translation>你已从房间中断开连接.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Disconnected: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>断开连接: %1</translation>
     </message>
     <message>
         <location line="+858"/>
         <source>Primary screen:</source>
-        <translation type="unfinished"></translation>
+        <translation>主屏幕:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%1x%2px² (%3x%4mm²)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1x%2px² (%3x%4mm²)</translation>
     </message>
     <message>
         <location line="+139"/>
         <source>&amp;Brushes…</source>
-        <translation>&amp;导出笔刷…</translation>
+        <translation>&amp;导出 笔刷…</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2263,12 +2263,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Increase Key Frame Exposure</source>
-        <translation type="unfinished"></translation>
+        <translation>增加关键帧曝光</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Decrease Key Frame Exposure</source>
-        <translation type="unfinished"></translation>
+        <translation>减少关键帧曝光</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2548,7 +2548,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+22"/>
         <source>&amp;Reload Last Brush Preset</source>
-        <translation>&amp;切换上一个笔刷预设</translation>
+        <translation>&amp;重载初始数字预设值</translation>
     </message>
     <message>
         <location line="+89"/>
@@ -2584,12 +2584,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+10"/>
         <source>Swap With Brush Slot #%1</source>
-        <translation type="unfinished"></translation>
+        <translation>与笔刷数字预设 #%1 交换</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Swatch Color %1</source>
-        <translation>色板颜色 %1</translation>
+        <translation>色块 %1</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -2600,13 +2600,13 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+46"/>
         <source>Wheel</source>
         <extracomment>&quot;Wheel&quot; refers to the color wheel.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>色轮</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Sliders</source>
         <extracomment>&quot;Sliders&quot; refers to the RGB and HSV sliders.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>颜色滑块</translation>
     </message>
     <message>
         <location line="-6"/>
@@ -2631,7 +2631,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+28"/>
         <source>Swap Last Colors</source>
-        <translation>切换上一个颜色</translation>
+        <translation>切换上一个历史色板</translation>
     </message>
     <message>
         <location line="+57"/>
@@ -3409,12 +3409,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+14"/>
         <source>Path to ffmpeg:</source>
-        <translation type="unfinished"></translation>
+        <translation>ffmpeg 路径:</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Choose</source>
-        <translation type="unfinished"></translation>
+        <translation>选择</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -5458,12 +5458,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/flipbook.cpp" line="+41"/>
         <source>Export &amp;GIF…</source>
-        <translation type="unfinished"></translation>
+        <translation>导出 &amp;GIF…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Export &amp;Frames…</source>
-        <translation type="unfinished"></translation>
+        <translation>导出 &amp;帧数…</translation>
     </message>
 </context>
 <context>
@@ -5809,7 +5809,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>User Interface</source>
-        <translation type="unfinished"></translation>
+        <translation>界面</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6083,12 +6083,12 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+57"/>
         <source>Executables</source>
         <extracomment>Used for picking a kind of file, used like &quot;Executables (*.exe)&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>可执行的程序</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Choose ffmpeg path</source>
-        <translation type="unfinished"></translation>
+        <translation>选择 ffmpeg 路径</translation>
     </message>
 </context>
 <context>
@@ -6213,22 +6213,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-101"/>
         <source>Capture volume rocker</source>
-        <translation type="unfinished"></translation>
+        <translation>捕捉音量摇杆</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Android:</source>
-        <translation type="unfinished"></translation>
+        <translation>安卓:</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Autosave can be enabled for the current file under File ▸ Autosave.</source>
-        <translation type="unfinished"></translation>
+        <translation>自动保存可以从菜单 文件&gt;自动保存 中启用.</translation>
     </message>
     <message>
         <location line="+81"/>
         <source>Snapshots can be restored from the Session ▸ Reset… menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>画布快照可以从菜单 房间&gt;重置… 中恢复.</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -6399,22 +6399,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/network.cpp" line="+82"/>
         <source>Hide user list in announcements</source>
-        <translation type="unfinished"></translation>
+        <translation>在公告中隐藏用户列表</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Builtin server:</source>
-        <translation type="unfinished"></translation>
+        <translation>内置服务器:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Announce with Zeroconf</source>
-        <translation type="unfinished"></translation>
+        <translation>使用零配置发布</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Host on port %1 if available</source>
-        <translation type="unfinished"></translation>
+        <translation>端口 %1</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -6807,7 +6807,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Brushes:</source>
-        <translation>笔刷:</translation>
+        <translation>笔刷相关项:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -6925,117 +6925,117 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/userinterface.cpp" line="+42"/>
         <source>Override system font size</source>
-        <translation type="unfinished"></translation>
+        <translation>覆盖系统字体大小</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Font size: </source>
-        <translation type="unfinished"></translation>
+        <translation>字体大小: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>pt</source>
-        <translation type="unfinished"></translation>
+        <translation>pt</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Changes the font size apply after you restart Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>更改字体大小需重启软件.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Type text here to try out the effects of your chosen font size.</source>
-        <translation type="unfinished"></translation>
+        <translation>在此输入文字来预览所选字体大小的效果.</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Interface mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>界面模式:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Desktop</source>
-        <translation type="unfinished"></translation>
+        <translation>大屏幕</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Small screen (experimental)</source>
-        <translation type="unfinished"></translation>
+        <translation>小屏幕 (实验性)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Changes to the interface mode apply after you restart Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>更改界面模式需重启软件.</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Disabled</source>
-        <translation type="unfinished">禁用</translation>
+        <translation>禁用</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>On left-click drag</source>
-        <translation type="unfinished"></translation>
+        <translation>左键拖动</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>On middle-click drag</source>
-        <translation type="unfinished"></translation>
+        <translation>中键拖动</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>On right-click drag</source>
-        <translation type="unfinished"></translation>
+        <translation>右键拖动</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>On touch drag</source>
-        <translation type="unfinished"></translation>
+        <translation>触摸拖动</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Kinetic scrolling:</source>
-        <translation type="unfinished"></translation>
+        <translation>动态滚动:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Threshold: </source>
-        <translation type="unfinished"></translation>
+        <translation>阈值: </translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Hide scroll bars</source>
-        <translation type="unfinished"></translation>
+        <translation>隐藏滚动条</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Changes to kinetic scrolling apply after you restart Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>更改动态滚动需重启软件.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Background color behind the canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>画布背后的界面背景色</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Color behind canvas:</source>
-        <translation type="unfinished"></translation>
+        <translation>背景色:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Show scroll bars on canvas</source>
-        <translation type="unfinished">显示画布滚动条</translation>
+        <translation>显示画布滚动条</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Miscellaneous:</source>
-        <translation type="unfinished"></translation>
+        <translation>其他项:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Ask before deleting layers</source>
-        <translation type="unfinished">在删除图层时要求确认</translation>
+        <translation>在删除图层时要求确认</translation>
     </message>
 </context>
 <context>
@@ -7197,17 +7197,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+16"/>
         <source>The built-in server is not available on Android.</source>
-        <translation type="unfinished"></translation>
+        <translation>内置服务器在安卓中无法使用.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The built-in server is not available on this installation of Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>内置服务器在此安装版本的Drawpile无法使用.</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Enable advanced options</source>
-        <translation type="unfinished"></translation>
+        <translation>启用高级选项</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -7356,12 +7356,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+13"/>
         <source>The download page for Drawpile %1 should have opened in your browser. If not, please visit &lt;em&gt;drawpile.net&lt;/em&gt; manually.</source>
-        <translation>Drawpile %1 的下载页面应该已经在你的浏览器中打开了. 如果没有, 请手动访问 &lt;em&gt;drawpile.net&lt;/em&gt; .</translation>
+        <translation>Drawpile %1 的下载页面应该已经在你的浏览器中打开了.如果没有,请手动访问 &lt;em&gt;drawpile.net&lt;/em&gt; .</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>The download page for Drawpile %1 could not be opened, please visit &lt;em&gt;drawpile.net&lt;/em&gt; manually.</source>
-        <translation>Drawpile %1 的下载页面无法打开, 请手动访问 &lt;em&gt;drawpile.net&lt;/em&gt; .</translation>
+        <translation>Drawpile %1 的下载页面无法打开,请手动访问 &lt;em&gt;drawpile.net&lt;/em&gt; .</translation>
     </message>
 </context>
 <context>
@@ -7900,7 +7900,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../scene/canvasscene.cpp" line="+225"/>
         <source>Restoring canvas…</source>
-        <translation type="unfinished"></translation>
+        <translation>恢复画布…</translation>
     </message>
 </context>
 <context>
@@ -8040,7 +8040,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>This session is hosted with Drawpile 2.1, Indirect/Wash Mode is unavailable. &lt;a href=&quot;#&quot;&gt;Click here to switch to Direct/Build-Up Mode.&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>此房间是由Drawpile2.1开的, 间接/冲刷 模式无法使用. &lt;a href=&quot;#&quot;&gt;可以点击这里来切换到 直接/堆积 模式.&lt;/a&gt;</translation>
     </message>
     <message>
         <location line="-5"/>
@@ -8166,17 +8166,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+21"/>
         <source>Do you want to save the canvas as it was before the reset? Since this is a Drawpile 2.1 session, it may have desynchronized!</source>
-        <translation type="unfinished"></translation>
+        <translation>你想把画布保存为重置前的样子吗? 由于这是一个2.1版本的房间, 它有可能出现不同步的情况!</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Do you want to save the canvas as it was before the reset?</source>
-        <translation type="unfinished"></translation>
+        <translation>你想把画布保存为重置前的样子吗?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Save As…</source>
-        <translation type="unfinished"></translation>
+        <translation>另存为…</translation>
     </message>
     <message>
         <location line="+60"/>
@@ -8627,12 +8627,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/notifbar.cpp" line="+127"/>
         <source>Dismiss (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>放弃 (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Dismiss</source>
-        <translation type="unfinished">放弃</translation>
+        <translation>放弃</translation>
     </message>
 </context>
 <context>
