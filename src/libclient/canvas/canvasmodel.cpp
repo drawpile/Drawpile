@@ -446,7 +446,9 @@ void CanvasModel::pasteFromImage(
 	} else {
 		// No explicit paste position. Paste in the center of the canvas if the
 		// image is equal or larger than the canvas, else use the default point.
-		auto [w, h] = size();
+		QSize canvasSize = size();
+		int w = canvasSize.width();
+		int h = canvasSize.height();
 		center = QPoint(
 			w <= 0 || image.width() < w ? defaultPoint.x() : w / 2,
 			h <= 0 || image.height() < h ? defaultPoint.y() : h / 2);
