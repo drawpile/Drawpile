@@ -101,6 +101,7 @@ private:
 	static QString getLockDescription(Lock lock);
 
 	void adjustSettingVisibilities(bool softmode, bool mypaintmode);
+	void emitBrushModeChanged();
 	static double radiusLogarithmicToPixelSize(int radiusLogarithmic);
 
 	struct Private;

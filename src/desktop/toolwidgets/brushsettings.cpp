@@ -641,12 +641,7 @@ void BrushSettings::updateUi()
 	changeSizeSetting(d->ui.brushsizeBox->value());
 	changeRadiusLogarithmicSetting(d->ui.radiusLogarithmicBox->value());
 	updateStabilizationSettingVisibility();
-
-	BrushMode currentBrushMode = getBrushMode();
-	if(d->previousBrushMode != currentBrushMode) {
-		d->previousBrushMode = currentBrushMode;
-		emit brushModeChanged(currentBrushMode);
-	}
+	emitBrushModeChanged();
 
 	d->updateInProgress = false;
 	d->ui.preview->setBrush(d->currentBrush());
@@ -754,6 +749,7 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 	adjustSettingVisibilities(
 		mypaintmode || classic.shape == DP_BRUSH_SHAPE_CLASSIC_SOFT_ROUND,
 		mypaintmode);
+	emitBrushModeChanged();
 }
 
 void BrushSettings::updateStabilizationSettingVisibility()
@@ -807,6 +803,15 @@ void BrushSettings::adjustSettingVisibilities(bool softmode, bool mypaintmode)
 
 	for (const QPair<QWidget *, bool> &pair : widgetVisibilities) {
 		pair.first->setVisible(pair.second);
+	}
+}
+
+void BrushSettings::emitBrushModeChanged()
+{
+	BrushMode currentBrushMode = getBrushMode();
+	if(d->previousBrushMode != currentBrushMode) {
+		d->previousBrushMode = currentBrushMode;
+		emit brushModeChanged(currentBrushMode);
 	}
 }
 
