@@ -653,7 +653,9 @@ void MainWindow::updateTitle()
 
 void MainWindow::setDrawingToolsEnabled(bool enable)
 {
-	m_drawingtools->setEnabled(enable && m_doc->canvas());
+	bool actuallyEnabled = enable && m_doc->canvas();
+	m_drawingtools->setEnabled(actuallyEnabled);
+	m_freehandButton->setEnabled(actuallyEnabled);
 }
 
 /**
@@ -2574,6 +2576,40 @@ void MainWindow::toolChanged(tools::Tool::Type tool)
 	updateLockWidget();
 }
 
+void MainWindow::updateFreehandToolButton(int brushMode)
+{
+	QString iconName;
+	switch(brushMode) {
+	case tools::BrushSettings::EraseMode:
+		iconName = QStringLiteral("drawpile_brusherase");
+		break;
+	case tools::BrushSettings::AlphaLockMode:
+		iconName = QStringLiteral("drawpile_brushlock");
+		break;
+	case tools::BrushSettings::NormalMode:
+		iconName = QStringLiteral("draw-brush");
+		break;
+	default:
+		return; // Eraser slot active, don't mess with the icon.
+	}
+	m_freehandButton->setIcon(QIcon::fromTheme(iconName));
+}
+
+void MainWindow::handleFreehandToolButtonClicked()
+{
+	QSignalBlocker blocker(m_freehandButton);
+	switch(m_dockToolSettings->brushSettings()->getBrushMode()) {
+	case tools::BrushSettings::EraseMode:
+	case tools::BrushSettings::AlphaLockMode:
+		m_dockToolSettings->brushSettings()->resetBrushMode();
+		m_freehandButton->setChecked(m_freehandAction->isChecked());
+		break;
+	default:
+		m_freehandAction->trigger();
+		break;
+	}
+}
+
 void MainWindow::selectionRemoved()
 {
 	if(m_lastToolBeforePaste>=0) {
@@ -3805,7 +3841,7 @@ void MainWindow::setupActions()
 	//
 	// Tools menu and toolbar
 	//
-	QAction *freehandtool = makeAction("toolbrush", tr("Freehand")).icon("draw-brush").statusTip(tr("Freehand brush tool")).shortcut("B").checkable();
+	m_freehandAction = makeAction("toolbrush", tr("Freehand")).icon("draw-brush").statusTip(tr("Freehand brush tool")).shortcut("B").checkable();
 	QAction *erasertool = makeAction("tooleraser", tr("Eraser")).icon("draw-eraser").statusTip(tr("Freehand eraser brush")).shortcut("E").checkable();
 	QAction *linetool = makeAction("toolline", tr("&Line")).icon("draw-line").statusTip(tr("Draw straight lines")).shortcut("U").checkable();
 	QAction *recttool = makeAction("toolrect", tr("&Rectangle")).icon("draw-rectangle").statusTip(tr("Draw unfilled squares and rectangles")).shortcut("R").checkable();
@@ -3821,7 +3857,7 @@ void MainWindow::setupActions()
 	QAction *zoomtool = makeAction("toolzoom", tr("Zoom")).icon("zoom-select").statusTip(tr("Zoom the canvas view")).shortcut("Z").checkable();
 	QAction *inspectortool = makeAction("toolinspector", tr("Inspector")).icon("help-whatsthis").statusTip(tr("Find out who did it")).shortcut("Ctrl+I").checkable();
 
-	m_drawingtools->addAction(freehandtool);
+	m_drawingtools->addAction(m_freehandAction);
 	m_drawingtools->addAction(erasertool);
 	m_drawingtools->addAction(linetool);
 	m_drawingtools->addAction(recttool);
@@ -3894,11 +3930,35 @@ void MainWindow::setupActions()
 	m_toolBarDraw->setObjectName("drawtoolsbar");
 	toggletoolbarmenu->addAction(m_toolBarDraw->toggleViewAction());
 
+	m_freehandButton = new QToolButton(this);
+	m_freehandButton->setCheckable(true);
+	m_freehandButton->setChecked(m_freehandAction->isChecked());
+	m_freehandButton->setIcon(m_freehandAction->icon());
+	m_freehandButton->setToolTip(m_freehandAction->toolTip());
+	updateFreehandToolButton(
+		int(m_dockToolSettings->brushSettings()->getBrushMode()));
+	connect(
+		m_freehandAction, &QAction::toggled, m_freehandButton,
+		&QAbstractButton::setChecked);
+	connect(
+		m_freehandButton, &QAbstractButton::clicked, this,
+		&MainWindow::handleFreehandToolButtonClicked);
+	connect(
+		m_dockToolSettings->brushSettings(),
+		&tools::BrushSettings::brushModeChanged, this,
+		&MainWindow::updateFreehandToolButton);
+
 	for(QAction *dt : m_drawingtools->actions()) {
 		// Add a separator before color picker to separate brushes from non-destructive tools
-		if(dt == pickertool)
+		if(dt == pickertool) {
 			m_toolBarDraw->addSeparator();
-		m_toolBarDraw->addAction(dt);
+		}
+		// Special button for the freehand tool to show erase and lock state.
+		if(dt == m_freehandAction) {
+			m_toolBarDraw->addWidget(m_freehandButton);
+		} else {
+			m_toolBarDraw->addAction(dt);
+		}
 	}
 
 	if(dpApp().smallScreenMode()) {

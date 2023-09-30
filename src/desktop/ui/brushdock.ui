@@ -201,8 +201,8 @@
         <string>Eraser mode</string>
        </property>
        <property name="icon">
-        <iconset theme="draw-eraser">
-         <normaloff>theme:draw-eraser.svg</normaloff>theme:draw-eraser.svg</iconset>
+        <iconset theme="drawpile_brusherase">
+         <normaloff>theme:drawpile_brusherase.svg</normaloff>theme:drawpile_brusherase.svg</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>

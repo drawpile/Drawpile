@@ -23,6 +23,8 @@ class BrushSettings final : public ToolSettings {
 	Q_OBJECT
 	friend class AdvancedBrushSettings;
 public:
+	enum BrushMode : int { NormalMode, EraseMode, AlphaLockMode, UnknownMode };
+
 	BrushSettings(ToolController *ctrl, QObject *parent=nullptr);
 	~BrushSettings() override;
 
@@ -36,6 +38,9 @@ public:
 	int getSize() const override;
 	bool getSubpixelMode() const override;
 	bool isSquare() const override;
+
+	BrushMode getBrushMode() const;
+	void resetBrushMode();
 
 	void pushSettings() override;
 	ToolProperties saveToolSettings() override;
@@ -69,6 +74,7 @@ signals:
 	void colorChanged(const QColor &color);
 	void eraseModeChanged(bool erase);
 	void subpixelModeChanged(bool subpixel, bool square);
+	void brushModeChanged(int brushMode); // See enum BrushMode above.
 	void pixelSizeChanged(int size);
 	void brushSettingsDialogRequested();
 

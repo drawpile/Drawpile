@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 22 22"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="drawpile_brusherase.svg"
+   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="13.7243"
+     inkscape:cx="5.2461693"
+     inkscape:cy="14.062648"
+     inkscape:window-width="1920"
+     inkscape:window-height="1060"
+     inkscape:window-x="0"
+     inkscape:window-y="20"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg1" />
+  <defs
+     id="defs3051">
+    <style
+       type="text/css"
+       id="current-color-scheme">.ColorScheme-Text { color:#232629; }</style>
+  </defs>
+  <g
+     id="g1"
+     transform="translate(-2.5686065,-1.941455)">
+    <path
+       style="fill:currentColor;fill-opacity:1;stroke:none"
+       d="M 19.513672,4.00781 A 2,9 45 0 0 12.06836,9.105469 2,9 45 0 0 8.525391,13.21875 c 1.07606,0.34264 1.915172,1.181743 2.257812,2.257812 A 2,9 45 0 0 14.896484,11.933594 2,9 45 0 0 19.845703,4.15625 2,9 45 0 0 19.513672,4.00781 M 8,14.664062 C 3.99999,15.735863 7,18.26795 4,20 c 4.00339,0 6,-2.00082 6,-3.335938 0,-0.66488 0.0676,-1.88944 -2,-2 z"
+       class="ColorScheme-Text"
+       id="path1"
+       transform="translate(-0.99999,-0.99999)" />
+    <path
+       style="fill:currentColor;fill-opacity:1;stroke:none"
+       d="m 20.137203,6.8825555 -8,7.9999995 4,4 8,-8 -4,-3.9999995 m -10,9.9999995 -2.0000003,2 4.0000003,4 2,-2 -4,-4"
+       class="ColorScheme-Text"
+       id="path1-7" />
+  </g>
+</svg>

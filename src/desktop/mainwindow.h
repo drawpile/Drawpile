@@ -215,6 +215,8 @@ private slots:
 	void openDebugDump();
 
 	void toolChanged(tools::Tool::Type tool);
+	void updateFreehandToolButton(int brushMode);
+	void handleFreehandToolButtonClicked();
 
 	void selectionRemoved();
 
@@ -293,6 +295,8 @@ private:
 	docks::OnionSkinsDock *m_dockOnionSkins;
 	docks::Timeline *m_dockTimeline;
 	QToolBar *m_toolBarDraw;
+	QAction *m_freehandAction;
+	QToolButton *m_freehandButton;
 	QByteArray m_hiddenDockState;
 	widgets::ChatBox *m_chatbox;
 

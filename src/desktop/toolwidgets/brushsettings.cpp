@@ -51,6 +51,7 @@ struct BrushSettings::Private {
 
 	int current = 0;
 	int previousNonEraser = 0;
+	BrushMode previousBrushMode = UnknownMode;
 
 	qreal quickAdjust1 = 0.0;
 
@@ -641,6 +642,12 @@ void BrushSettings::updateUi()
 	changeRadiusLogarithmicSetting(d->ui.radiusLogarithmicBox->value());
 	updateStabilizationSettingVisibility();
 
+	BrushMode currentBrushMode = getBrushMode();
+	if(d->previousBrushMode != currentBrushMode) {
+		d->previousBrushMode = currentBrushMode;
+		emit brushModeChanged(currentBrushMode);
+	}
+
 	d->updateInProgress = false;
 	d->ui.preview->setBrush(d->currentBrush());
 	pushSettings();
@@ -1005,6 +1012,43 @@ bool BrushSettings::isSquare() const
 	const brushes::ActiveBrush &brush = d->currentBrush();
 	return brush.activeType() == brushes::ActiveBrush::CLASSIC
 		&& brush.classic().shape == DP_BRUSH_SHAPE_CLASSIC_PIXEL_SQUARE;
+}
+
+BrushSettings::BrushMode BrushSettings::getBrushMode() const
+{
+	if(isCurrentEraserSlot()) {
+		return UnknownMode;
+	} else {
+		const brushes::ActiveBrush &brush = d->currentBrush();
+		if(brush.activeType() == brushes::ActiveBrush::MYPAINT) {
+			const DP_MyPaintBrush &b = brush.myPaint().constBrush();
+			return
+				b.erase ? EraseMode :
+				b.lock_alpha ? AlphaLockMode :
+				NormalMode;
+		} else {
+			const DP_ClassicBrush &b = brush.classic();
+			return
+				b.erase ? EraseMode :
+				b.brush_mode == DP_BLEND_MODE_NORMAL ? NormalMode :
+				AlphaLockMode;
+		}
+	}
+}
+
+void BrushSettings::resetBrushMode()
+{
+	brushes::ActiveBrush &brush = d->currentBrush();
+	if(brush.activeType() == brushes::ActiveBrush::MYPAINT) {
+		DP_MyPaintBrush &b = brush.myPaint().brush();
+		b.erase = false;
+		b.lock_alpha = false;
+	} else {
+		DP_ClassicBrush &b = brush.classic();
+		b.erase = false;
+		b.brush_mode = DP_BLEND_MODE_NORMAL;
+	}
+	updateUi();
 }
 
 double BrushSettings::radiusLogarithmicToPixelSize(int radiusLogarithmic)
