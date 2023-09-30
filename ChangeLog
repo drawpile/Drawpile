@@ -44,6 +44,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Make catchup explicit. Solves both the "stuck at 99%" problem during session resets and the canvas too be unlocked too early.
  * Fix: Give erase mode its own icon so that it doesn't get confused for the eraser slot. Thanks Geese for reporting.
  * Feature: Show if the current brush is in erase or alpha lock mode in the toolbar and allow resetting it via a click. Thanks Geese for suggesting.
+ * Feature: Paste in center of the canvas (instead of the center of the view) when the pasted image size is equal to or larger than the canvas size. Thanks Meru for suggesting.
 
 2023-08-26 Version 2.2.0-beta.7
  * Fix: Make classic brushes not go brighter when smudging into transparency. Thanks to cada for reporting.
