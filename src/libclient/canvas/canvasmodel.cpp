@@ -442,7 +442,9 @@ void CanvasModel::pasteFromImage(
 		center = defaultPoint;
 	} else if(m_selection) {
 		// There's already a selection present, paste it there.
-		center = m_selection->boundingRect().center();
+		QRect bounds = m_selection->boundingRect();
+		center = QPoint(
+			bounds.x() + bounds.width() / 2, bounds.y() + bounds.height() / 2);
 	} else {
 		// No explicit paste position. Paste in the center of the canvas if the
 		// image is equal or larger than the canvas, else use the default point.
