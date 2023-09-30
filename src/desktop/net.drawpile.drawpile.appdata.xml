@@ -23,6 +23,88 @@
     <category>Graphics</category>
   </categories>
   <releases>
+    <release version="2.2.0-beta.8" type="development" date="2023-09-30">
+      <url>https://drawpile.net/news/release-2.2.0-beta.8/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>Fix: Apply color wheel direction to color dialogs too. Thanks Blozzom for reporting.</li>
+          <li>Fix: Don't smoothe the canvas view when at 100% zoom with the canvas rotated at a right angle, since that just blurs it for no reason. Thanks SadColor for reporting.</li>
+          <li>Fix: Make flipbook shortcut work while the flipbook is in focus, causing it to refresh its view.</li>
+          <li>Fix: Cap flipbook range properly, rather than letting you set a range beyond the last frame.</li>
+          <li>Fix: Remove the useless "?" button from dialogs in Windows. Thanks vipperz for reporting.</li>
+          <li>Fix: Turn off input event compression, which causes jaggy lines on slow devices.</li>
+          <li>Feature: Draw a hatching pattern on frames in the timeline that are the same as the currently visible one, making it easier to figure out if it's being re-used.</li>
+          <li>Fix: Make flipbook extend the playback range if it was on the last frame and new ones are added to the timeline.</li>
+          <li>Feature: Bring back dprectool, the command-line tool that converts Drawpile recordings. It should work mostly the same as it did in Drawpile 2.1.</li>
+          <li>Feature: Apply parent folder opacity to frames within it, useful for sketch tracks. Thanks to TeaLord9000 for suggesting.</li>
+          <li>Feature: Add a "small screen" mode, which should make the application usable on phones. Thanks to Verdrusk for suggesting.</li>
+          <li>Feature: Allow changing the application font size, rather than using the system default that may be garbage, especially on Android. Also Verdrusk's fault.</li>
+          <li>Feature: Locking docks now also locks toolbars, rather than still allowing you to move them around on accident.</li>
+          <li>Feature: Kinetic scrolling. This lets you click/tap/touch scrollable stuff and fling it around instead of using the scroll bars or wheel. Configurable in the preferences. Thanks again Verdrusk.</li>
+          <li>Fix: Make two-finger zoom and rotation not go completely crazy when the canvas is mirrored or flipped. Thanks BoyOnion for reporting.</li>
+          <li>Fix: Don't crash when picking a brush preset on Android. Thanks to zetalambo and VeeBeeArt for reporting.</li>
+          <li>Fix: Selections finally no longer sometimes disappear when transforming them. Thanks to Spuzzy, Xan and xxxx for reporting.</li>
+          <li>Feature: Capture volume rocker on Android and bind it to undo and redo by default. Thanks to cl for suggesting.</li>
+          <li>Feature: Add compatibility for Drawpile 2.1's broken indirect mode.</li>
+          <li>Fix: Make the receive delay not delay your own undos.</li>
+          <li>Feature: Add a setting for the background color behind the canvas. Thanks to Nightshade for suggesting.</li>
+          <li>Feature: Let operators create layers beyond the 256 per-user maximum. They will use layers of user 0 first, then 255, 254 etc. Thanks to haxekhaex2 for reporting.</li>
+          <li>Fix: Make Drawpile 2.1 binary (dprec) recordings play back properly. Text (dptxt) recordings are not supported.</li>
+          <li>Fix: Synchronize rendering during recording playback properly.</li>
+          <li>Feature: Bring back drawpile-cmd, the command-line tool that renders Drawpile recordings to images. Should also mostly work like it did in Drawpile 2.1.</li>
+          <li>Feature: Implement drawpile-timelapse, a new command-line tool that turns Drawpile recordings into timelapse videos.</li>
+          <li>Server Feature: Add --web-admin-allowed-origin option, to set the Access-Control-Allow-Origin header to the given value. Particularly useful for development, where you don't particularly want to set up an nginx to make CORS happy. Thanks Chem for reporting.</li>
+          <li>Server Feature: Update the server to use the 2.2 protocol.</li>
+          <li>Server Fix: Fix up some invalid casts and thread ownership issues. Not sure if they actually caused issues in practice, but especially on Windows they might have.</li>
+          <li>Feature: Bring back the builtin server, allowing you to host "on this computer" again.</li>
+          <li>Fix: Don't duplicate local fork on soft reset or undo depth change.</li>
+          <li>Fix: Make Erase, Divide and Subtract layer modes in ORA files compatible with Krita.</li>
+          <li>Feature: Stick ID alias and listing hosting options behind an advanced options checkbox, since they keep causing confusion.</li>
+          <li>Fix: Make host page in the start dialog work properly on Arabic and other right-to-left languages.</li>
+          <li>Feature: Allow choosing ffmpeg path on Windows. Thanks xxxx for suggesting.</li>
+          <li>Fix: Move brushes to the proper place in MediBang-esque layout. Thanks xxxx for reporting.</li>
+          <li>Fix: Replace the reset notice dialog with less disruptive on-canvas messages. If you continue drawing, the notice about saving the previous state will dismiss itself. Thanks to Blozzom, vipperz, xxxx, zheida and probably others for reporting.</li>
+          <li>Feature: Allow the client to translate server messages, rather than having them always be in English.</li>
+          <li>Fix: Make preferences dialog not use custom layouts anymore. Fixes the dialog getting stuck at an unusably tiny size on Windows, makes it work with Arabic and other right-to-left languages and allows resizing the dialog as well as scrolling its contents.</li>
+          <li>Fix: Drag-zooming (Ctrl+Middle Click by default) now zooms on the initial click location, rather than the center of the canvas. Thanks to Valaek for reporting.</li>
+          <li>Fix: Don't select layer when toggling its visibility.</li>
+          <li>Fix: Show a crossed-out folder icon for hidden layer groups, rather than switching to the layer icon for them. Thanks to Blozzom for reporting.</li>
+          <li>Fix: Make catchup explicit. Solves both the "stuck at 99%" problem during session resets and the canvas too be unlocked too early.</li>
+          <li>Fix: Give erase mode its own icon so that it doesn't get confused for the eraser slot. Thanks Geese for reporting.</li>
+          <li>Feature: Show if the current brush is in erase or alpha lock mode in the toolbar and allow resetting it via a click. Thanks Geese for suggesting.</li>
+          <li>Feature: Paste in center of the canvas (instead of the center of the view) when the pasted image size is equal to or larger than the canvas size. Thanks Meru for suggesting.</li>
+          <li>Fix: Single-pixel offset when pasting with an existing selection present. Thanks Meru for reporting.</li>
+        </ul>
+      </description>
+      <artifacts>
+        <artifact type="binary" platform="win64">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.8/win/Drawpile-2.2.0-beta.8.msi</location>
+          <checksum type="sha256">f225c90b68cb8ebebba83511a6aaba97746fb6cadf4bdffccedbbfdaf7804e9f</checksum>
+          <size type="download">23793773</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.8/osx/Drawpile-2.2.0-beta.8.dmg</location>
+          <checksum type="sha256">4b19027b946a79c37c3cb1e2ee6d7f0c368e46a01cd1afa52aaecbcc7f77154e</checksum>
+          <size type="download">29491019</size>
+        </artifact>
+        <artifact type="binary" platform="x86_64-linux-gnu">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.8/appimage/Drawpile-2.2.0-beta.8-x86_64.AppImage</location>
+          <checksum type="sha256">55501d6e01f0b01783b1c2caae3620bf7161b980355a255c68d38a3864cc25ca</checksum>
+          <size type="download">50574528</size>
+        </artifact>
+        <artifact type="binary" platform="aarch64-linux-android">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.8/apk/Drawpile-2.2.0-beta.8.apk</location>
+          <checksum type="sha256">7aa1b01c4b6ddc60ccaaf3fbd4fcdef2e115f8d2933b3f52c8cccec8b227e422</checksum>
+          <size type="download">18949388</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.8/src/Drawpile-2.2.0-beta.8.tar.gz</location>
+          <checksum type="sha256">a1c0164c240f905c78d49db4c53250b3dde32926a0ef5947a798e8522c6192c3</checksum>
+          <size type="download">4723931</size>
+        </artifact>
+      </artifacts>
+    </release>
     <release version="2.2.0-beta.7" type="development" date="2023-08-26">
       <url>https://drawpile.net/news/release-2.2.0b7/</url>
       <description>
