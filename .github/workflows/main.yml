@@ -27,8 +27,16 @@ jobs:
       matrix:
         os:
           - ubuntu-20.04
-        qt: [ 5.15.8 ]
-        cross_os: [ Android ]
+          - macos-latest
+          - windows-latest
+        qt: [ 5.15.8, 6.4.2 ]
+        cross_os: [ '', Android ]
+
+        exclude:
+          - os: windows-latest
+            cross_os: Android
+          - os: macos-latest
+            cross_os: Android
 
         include:
           # Linux common
@@ -77,7 +85,7 @@ jobs:
             # want svg plugins please
             packager: >-
               EXTRA_QT_PLUGINS="svg;"
-              VERSION="2.2.0-beta.8"
+              VERSION="${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || '$(git describe)' }}"
               cmake --install build --config Release
 
           # Android common
@@ -246,9 +254,14 @@ jobs:
           -DDIST_BUILD=${{ matrix.packager && 'on' }}
           -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=${{
             matrix.packager
+            && startsWith(github.ref, 'refs/tags/')
             && 'on'
           }}
-          -DBUILD_VERSION='2.2.0-beta.8'
+          -DBUILD_VERSION='${{
+            matrix.packager
+            && startsWith(github.ref, 'refs/tags/')
+            && github.ref_name
+          }}'
           ${{ matrix.build_flags }}
 
       - name: Prepare APK signing
@@ -314,3 +327,54 @@ jobs:
         run: sccache --show-stats
         if: success() || failure()
         continue-on-error: true
+
+  release:
+    needs: test
+    runs-on: ubuntu-20.04
+    if: >
+      success() && (
+          github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+          || startsWith(github.ref, 'refs/tags/'))
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+
+      - name: Dump directory contents
+        run: ls -alFR
+
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          path: checkout
+
+      - name: Collect release notes
+        if: startsWith(github.ref, 'refs/tags/')
+        run: awk -v RS='' '/^[[:digit:]]{4}-[[:digit:]]{2}-[[:digit:]]{2} Version ${{ github.ref_name }}/,/^[[:digit:]]/' checkout/ChangeLog | tail '+2' > release-description
+
+      - name: Write continuous release description
+        if: "!startsWith(github.ref, 'refs/tags/')"
+        env:
+          RELEASE_DESCRIPTION: >
+            This release is an automatically generated snapshot of the current
+            state of development. It is continuously updated with
+            work-in-progress changes that may be broken, incomplete, or
+            incompatible with other versions of Drawpile. For downloads, take a
+            look at the Assets below.
+        run:
+          echo "$RELEASE_DESCRIPTION" > release-description
+
+      - name: Create release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TARGET_COMMIT: ${{ github.sha }}
+          RELEASE_DESCRIPTION_FILE: release-description
+          RELEASE_NAME: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'continuous' }}
+          CLOBBER_EXISTING: ${{ !startsWith(github.ref, 'refs/tags/') }}
+          PRERELEASE: ${{ !startsWith(github.ref, 'refs/tags/') || contains(github.ref, '-') }}
+        run: |
+          checkout/pkg/make-github-release.sh \
+            'Drawpile-Android-Qt5.15.8;Drawpile-*.apk;Android APK' \
+            'Drawpile-Linux-Qt5.15.8;Drawpile-*.AppImage;Linux AppImage' \
+            'Drawpile-macOS-Qt5.15.8;Drawpile-*.dmg;macOS Disk Image' \
+            'Drawpile-Windows-Qt5.15.8;Drawpile-*.msi;Windows Installer' \
+            'Drawpile-Windows-Qt5.15.8;Drawpile-*.zip;Windows Portable ZIP'
