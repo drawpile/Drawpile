@@ -95,7 +95,7 @@
         </artifact>
         <artifact type="binary" platform="aarch64-linux-android">
           <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.8/apk/Drawpile-2.2.0-beta.8.apk</location>
-          <checksum type="sha256">7aa1b01c4b6ddc60ccaaf3fbd4fcdef2e115f8d2933b3f52c8cccec8b227e422</checksum>
+          <checksum type="sha256">75098085f107dee632fef5baac0f3a02d3516891af599b6d5f44938e0520a804</checksum>
           <size type="download">18949388</size>
         </artifact>
         <artifact type="source">
