@@ -1,4 +1,5 @@
 Unreleased Version 2.2.0-pre
+ * Fix: Make Android build work again. Thanks Tetriser for reporting.
 
 2023-09-30 Version 2.2.0-beta.8
  * Fix: Apply color wheel direction to color dialogs too. Thanks Blozzom for reporting.
