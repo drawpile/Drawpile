@@ -474,7 +474,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>No</source>
-        <translation>いいえ</translation>
+        <translation>無効</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -772,7 +772,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+29"/>
         <source>Export</source>
-        <translation type="unfinished">エクスポート</translation>
+        <translation>エクスポート</translation>
     </message>
 </context>
 <context>
@@ -1925,7 +1925,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+10"/>
         <source>Swap With Brush Slot #%1</source>
-        <translation type="unfinished"></translation>
+        <translation>ブラシスロット #%1 と交換</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -1941,13 +1941,13 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+46"/>
         <source>Wheel</source>
         <extracomment>&quot;Wheel&quot; refers to the color wheel.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>ホイール</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Sliders</source>
         <extracomment>&quot;Sliders&quot; refers to the RGB and HSV sliders.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>スライダー</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -2181,32 +2181,32 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+50"/>
         <source>Hosting on this computer is not available</source>
-        <translation type="unfinished"></translation>
+        <translation>このコンピューターでホストすることはできません</translation>
     </message>
     <message>
         <location line="+55"/>
         <source>Really leave and terminate the session?</source>
-        <translation type="unfinished"></translation>
+        <translation>本当に退出してセッションを終了しますか？</translation>
     </message>
     <message>
         <location line="+238"/>
         <source>You&apos;ve been disconnected from the session.</source>
-        <translation type="unfinished"></translation>
+        <translation>セッションから切断されました。</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Disconnected: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>切断済み: %1</translation>
     </message>
     <message>
         <location line="+858"/>
         <source>Primary screen:</source>
-        <translation type="unfinished"></translation>
+        <translation>メイン画面:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%1x%2px² (%3x%4mm²)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1x%2px² (%3x%4mm²)</translation>
     </message>
     <message>
         <location line="+139"/>
@@ -2331,12 +2331,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>Increase Key Frame Exposure</source>
-        <translation type="unfinished"></translation>
+        <translation>キーフレームの露出を増やす</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Decrease Key Frame Exposure</source>
-        <translation type="unfinished"></translation>
+        <translation>キーフレームの露出を減らす</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2476,7 +2476,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+0"/>
         <source>Change session settings, permissions, announcements and bans</source>
-        <translation>セッション設定、権限、アナウンス、BANを変更する</translation>
+        <translation>セッション設定、権限、告知、BANを変更する</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3409,12 +3409,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+14"/>
         <source>Path to ffmpeg:</source>
-        <translation type="unfinished"></translation>
+        <translation>ffmpegのパス:</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Choose</source>
-        <translation type="unfinished"></translation>
+        <translation>選択</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -5344,7 +5344,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Current (unsaved)</source>
-        <translation>カレント (未保存)</translation>
+        <translation>現在の設定 (未保存)</translation>
     </message>
 </context>
 <context>
@@ -5444,12 +5444,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+236"/>
         <source>Yes</source>
-        <translation>はい</translation>
+        <translation>有効</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>No</source>
-        <translation>いいえ</translation>
+        <translation>無効</translation>
     </message>
 </context>
 <context>
@@ -5457,12 +5457,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/flipbook.cpp" line="+41"/>
         <source>Export &amp;GIF…</source>
-        <translation type="unfinished"></translation>
+        <translation>エキスポート&amp;GIF…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Export &amp;Frames…</source>
-        <translation type="unfinished"></translation>
+        <translation>エキスポート&amp;フレーム…</translation>
     </message>
 </context>
 <context>
@@ -5504,7 +5504,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/layoutsdialog.cpp" line="+122"/>
         <source>Current (unsaved)</source>
-        <translation>カレント (未保存)</translation>
+        <translation>現在の設定 (未保存)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5728,13 +5728,13 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+78"/>
         <source>yes</source>
         <comment>password</comment>
-        <translation>はい</translation>
+        <translation>有効</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>no</source>
         <comment>password</comment>
-        <translation>いいえ</translation>
+        <translation>無効</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -5808,7 +5808,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>User Interface</source>
-        <translation type="unfinished"></translation>
+        <translation>ユーザーインターフェース</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6082,12 +6082,12 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+57"/>
         <source>Executables</source>
         <extracomment>Used for picking a kind of file, used like &quot;Executables (*.exe)&quot;.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>実行可能ファイル</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Choose ffmpeg path</source>
-        <translation type="unfinished"></translation>
+        <translation>ffmpegのパスを選択</translation>
     </message>
 </context>
 <context>
@@ -6212,22 +6212,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-101"/>
         <source>Capture volume rocker</source>
-        <translation type="unfinished"></translation>
+        <translation>Volume rockerでキャプチャー</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Android:</source>
-        <translation type="unfinished"></translation>
+        <translation>Android:</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Autosave can be enabled for the current file under File ▸ Autosave.</source>
-        <translation type="unfinished"></translation>
+        <translation>[ファイル] ▸ [自動保存] で現在のファイルの自動保存を有効にできます。</translation>
     </message>
     <message>
         <location line="+81"/>
         <source>Snapshots can be restored from the Session ▸ Reset… menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>スナップショットは [セッション] ▸ [リセット… ] メニューから復元できます。</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -6370,7 +6370,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Draw</source>
-        <translation>描く</translation>
+        <translation>描画</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -6398,22 +6398,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/network.cpp" line="+82"/>
         <source>Hide user list in announcements</source>
-        <translation type="unfinished"></translation>
+        <translation>告知でユーザーリストを非表示</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Builtin server:</source>
-        <translation type="unfinished"></translation>
+        <translation>内蔵サーバー:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Announce with Zeroconf</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeroconfで告知</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Host on port %1 if available</source>
-        <translation type="unfinished"></translation>
+        <translation>ホストするポート %1 有効ならば</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -6453,7 +6453,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>If all operators in a session set connection quality to Poor, auto-reset will not work and the server will stop processing updates until the session is manually reset.</source>
-        <translation>セッション内のすべてのオペレーターが接続品質を「悪い」に設定している場合、自動リセットは機能せず、セッションが手動でリセットされるまでサーバーは更新の処理を停止します。</translation>
+        <translation>セッション内のすべての管理者が接続品質を「悪い」に設定している場合、自動リセットは機能せず、セッションが手動でリセットされるまでサーバーは更新の処理を停止します。</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -6924,117 +6924,117 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/userinterface.cpp" line="+42"/>
         <source>Override system font size</source>
-        <translation type="unfinished"></translation>
+        <translation>システムフォントサイズを上書き</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Font size: </source>
-        <translation type="unfinished"></translation>
+        <translation>フォントサイズ: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>pt</source>
-        <translation type="unfinished"></translation>
+        <translation>pt</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Changes the font size apply after you restart Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>フォントサイズの変更はDrawpileの再起動後に適用されます。</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Type text here to try out the effects of your chosen font size.</source>
-        <translation type="unfinished"></translation>
+        <translation>ここにテキストを入力して選択したフォント サイズの効果を試してください。</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Interface mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>インターフェースモード:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Desktop</source>
-        <translation type="unfinished"></translation>
+        <translation>デスクトップ向け</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Small screen (experimental)</source>
-        <translation type="unfinished"></translation>
+        <translation>小さい画面向け(実験的)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Changes to the interface mode apply after you restart Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>インターフェースモードの変更はDrawpileの再起動後に適用されます。</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Disabled</source>
-        <translation type="unfinished">無効</translation>
+        <translation>無効</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>On left-click drag</source>
-        <translation type="unfinished"></translation>
+        <translation>左クリックでドラッグ</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>On middle-click drag</source>
-        <translation type="unfinished"></translation>
+        <translation>中央クリックでドラッグ</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>On right-click drag</source>
-        <translation type="unfinished"></translation>
+        <translation>右クリックでドラッグ</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>On touch drag</source>
-        <translation type="unfinished"></translation>
+        <translation>タッチでドラッグ</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Kinetic scrolling:</source>
-        <translation type="unfinished"></translation>
+        <translation>動的スクロール:</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Threshold: </source>
-        <translation type="unfinished"></translation>
+        <translation>しきい値: </translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Hide scroll bars</source>
-        <translation type="unfinished"></translation>
+        <translation>スクロールバーを隠す</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Changes to kinetic scrolling apply after you restart Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>動的スクロールの変更はDrawpileの再起動後に適用されます。</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Background color behind the canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>キャンバスの裏の背景色</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Color behind canvas:</source>
-        <translation type="unfinished"></translation>
+        <translation>キャンバス裏の色:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Show scroll bars on canvas</source>
-        <translation type="unfinished">キャンバス上にスクロールバーを表示</translation>
+        <translation>キャンバス上にスクロールバーを表示</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Miscellaneous:</source>
-        <translation type="unfinished"></translation>
+        <translation>その他:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Ask before deleting layers</source>
-        <translation type="unfinished">レイヤーを削除する前に確認する</translation>
+        <translation>レイヤーを削除する前に確認する</translation>
     </message>
 </context>
 <context>
@@ -7196,17 +7196,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+16"/>
         <source>The built-in server is not available on Android.</source>
-        <translation type="unfinished"></translation>
+        <translation>内蔵サーバーはAndroidでは利用できません。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The built-in server is not available on this installation of Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>内蔵サーバーはこのインストールされたDrawpileでは利用できません。</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Enable advanced options</source>
-        <translation type="unfinished"></translation>
+        <translation>詳細オプションを有効</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -7899,7 +7899,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../scene/canvasscene.cpp" line="+225"/>
         <source>Restoring canvas…</source>
-        <translation type="unfinished"></translation>
+        <translation>キャンバスを復元中…</translation>
     </message>
 </context>
 <context>
@@ -8039,7 +8039,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>This session is hosted with Drawpile 2.1, Indirect/Wash Mode is unavailable. &lt;a href=&quot;#&quot;&gt;Click here to switch to Direct/Build-Up Mode.&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>このセッションはDrawpile2.1でホストされています、水彩・間接的 モードは利用できません。&lt;a href=&quot;#&quot;&gt;ここをクリックして 蓄積・直接的 モードに切り替えます。&lt;/a&gt;</translation>
     </message>
     <message>
         <location line="-5"/>
@@ -8165,22 +8165,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+21"/>
         <source>Do you want to save the canvas as it was before the reset? Since this is a Drawpile 2.1 session, it may have desynchronized!</source>
-        <translation type="unfinished"></translation>
+        <translation>キャンバスをリセット前の状態で保存しますか？これは Drawpile 2.1 セッションであるため同期していない可能性があります！</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Do you want to save the canvas as it was before the reset?</source>
-        <translation type="unfinished"></translation>
+        <translation>キャンバスをリセット前の状態で保存しますか？</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Save As…</source>
-        <translation type="unfinished"></translation>
+        <translation>名前を付けて保存…</translation>
     </message>
     <message>
         <location line="+60"/>
         <source>Reset in progress</source>
-        <translation>リセット中です</translation>
+        <translation>リセット進行中</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8321,7 +8321,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+128"/>
         <source>/!: only operators are allowed to send shouts.</source>
-        <translation>/!: オペレーターのみがシャウトを送信できます。</translation>
+        <translation>/!: 管理者のみがシャウトを送信できます。</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8336,7 +8336,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+10"/>
         <source>/alert: only operators are allowed to send alerts.</source>
-        <translation>/alert: オペレーターのみがアラートの送信を許可されます。</translation>
+        <translation>/alert: 管理者のみがアラートの送信を許可されます。</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8351,7 +8351,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>/pin: only operators are allowed to pin.</source>
-        <translation>/pin: オペレーターのみピン留めを許可されます。</translation>
+        <translation>/pin: 管理者のみピン留めを許可されます。</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8366,7 +8366,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+11"/>
         <source>/unpin: only operators are allowed to unpin.</source>
-        <translation>/unpin: オペレーターのみがピン留めを解除できます。</translation>
+        <translation>/unpin: 管理者のみがピン留めを解除できます。</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8626,12 +8626,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/notifbar.cpp" line="+127"/>
         <source>Dismiss (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>無視 (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Dismiss</source>
-        <translation type="unfinished">無視</translation>
+        <translation>無視</translation>
     </message>
 </context>
 <context>
