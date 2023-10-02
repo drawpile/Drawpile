@@ -5,6 +5,7 @@
 
 #include <QtGlobal>
 #include <QAbstractSocket>
+#include <QDebug>
 #include <QLibraryInfo>
 #include <QVariant>
 #include <limits>
@@ -76,6 +77,11 @@ template <typename T, typename U>
 inline auto cast_6(U value) {
 	return static_cast<T>(value);
 }
+
+template <typename T>
+inline QString debug(T &&object) {
+	return QDebug::toString(std::forward<T>(object));
+}
 #else
 using NativeEventResult = long *;
 using RetrieveDataMetaType = QVariant::Type;
@@ -115,6 +121,18 @@ template <typename T>
 inline T cast_6(T value) {
 	return value;
 }
+
+// SPDX-SnippetBegin
+// SPDX-License-Identifier: LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+// SDPX—SnippetName: QDebug::toString from Qt 6
+template <typename T>
+QString debug(T &&object) {
+	QString buffer;
+	QDebug stream(&buffer);
+	stream.nospace() << std::forward<T>(object);
+	return buffer;
+}
+// SPDX-SnippetEnd
 #endif
 
 } // namespace compat

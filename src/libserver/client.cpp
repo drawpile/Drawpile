@@ -9,8 +9,10 @@
 #include "libshared/net/servercmd.h"
 #include "libshared/util/qtcompat.h"
 #include <QPointer>
+#include <QRandomGenerator>
 #include <QSslSocket>
 #include <QStringList>
+#include <QTimer>
 
 namespace server {
 
@@ -37,6 +39,8 @@ struct Client::Private {
 	bool isMuted = false;
 	bool isHoldLocked = false;
 	bool isAwaitingReset = false;
+	bool isBanTriggered = false;
+	BanResult ban = BanResult::notBanned();
 
 	Private(QTcpSocket *socket_, ServerLog *logger_)
 		: socket(socket_)
@@ -262,6 +266,166 @@ void Client::setMuted(bool m)
 bool Client::isMuted() const
 {
 	return d->isMuted;
+}
+
+bool Client::isBanInProgress() const
+{
+	return d->ban.reaction != BanReaction::NotBanned;
+}
+
+bool Client::isImmuneToServerBans() const
+{
+	return d->ban.isExemptable && isModerator();
+}
+
+void Client::applyBan(const BanResult &ban)
+{
+	if(ban.reaction != BanReaction::NotBanned && !isBanInProgress()) {
+		d->ban = ban;
+	}
+}
+
+bool Client::triggerBan(bool early)
+{
+	bool shouldTrigger = !d->isBanTriggered && !isImmuneToServerBans() &&
+						 (!early || rollEarlyTrigger());
+	if(shouldTrigger) {
+		switch(d->ban.reaction) {
+		case BanReaction::NotBanned:
+			return false;
+		case BanReaction::NormalBan:
+		case BanReaction::Unknown:
+			if(early) {
+				return false;
+			} else {
+				triggerNormalBan();
+				return true;
+			}
+		case BanReaction::NetError:
+			triggerNetError();
+			return true;
+		case BanReaction::Garbage:
+			triggerGarbage();
+			return true;
+		case BanReaction::Hang:
+			triggerHang();
+			return true;
+		case BanReaction::Timer:
+			triggerTimer();
+			return false; // We don't disconnect yet.
+		}
+		qWarning("Invalid ban reaction %d", int(d->ban.reaction));
+	}
+	return false;
+}
+
+bool Client::rollEarlyTrigger()
+{
+	return QRandomGenerator::global()->generateDouble() >= 0.5;
+}
+
+void Client::triggerNormalBan()
+{
+	Q_ASSERT(!d->isBanTriggered);
+	d->isBanTriggered = true;
+
+	log(Log()
+			.about(Log::Level::Warn, Log::Topic::Kick)
+			.user(d->id, d->socket->peerAddress(), QString())
+			.message(QStringLiteral("%1 '%2' is banned (%3 %4)")
+						 .arg(
+							 d->ban.sourceType, d->ban.cause, d->ban.source,
+							 QString::number(d->ban.sourceId))));
+	QString message;
+	QJsonObject params;
+
+	// We'll say that 99 years has sufficient permanence.
+	QDate date = d->ban.expires.isValid() ? d->ban.expires.date() : QDate();
+	bool isTemporary =
+		date.isValid() && date.year() - QDate::currentDate().year() < 99;
+	if(isTemporary) {
+		message = QStringLiteral("Banned from this server until ") +
+				  date.toString(Qt::ISODate);
+	} else {
+		message = QStringLiteral("Permanently banned from this server");
+	}
+
+	QString reason = d->ban.reason.trimmed();
+	if(!reason.isEmpty()) {
+		message += QStringLiteral(": ") + reason;
+	}
+
+	disconnectClient(Client::DisconnectionReason::Error, message);
+}
+
+void Client::triggerNetError()
+{
+	Q_ASSERT(!d->isBanTriggered);
+	d->isBanTriggered = true;
+
+	log(Log()
+			.about(Log::Level::Warn, Log::Topic::Kick)
+			.user(d->id, d->socket->peerAddress(), QString())
+			.message(QStringLiteral("%1 '%2' is NETERROR banned (%3 %4)")
+						 .arg(
+							 d->ban.sourceType, d->ban.cause, d->ban.source,
+							 QString::number(d->ban.sourceId))));
+
+	disconnectClient(
+		Client::DisconnectionReason::Error,
+		QStringLiteral("Network error: no route to host"));
+}
+
+void Client::triggerGarbage()
+{
+	Q_ASSERT(!d->isBanTriggered);
+	d->isBanTriggered = true;
+
+	log(Log()
+			.about(Log::Level::Warn, Log::Topic::Kick)
+			.user(d->id, d->socket->peerAddress(), QString())
+			.message(QStringLiteral("%1 '%2' is GARBAGE banned (%3 %4)")
+						 .arg(
+							 d->ban.sourceType, d->ban.cause, d->ban.source,
+							 QString::number(d->ban.sourceId))));
+
+	sendDirectMessage(net::ServerReply::makeResultGarbage());
+}
+
+void Client::triggerHang()
+{
+	Q_ASSERT(!d->isBanTriggered);
+	d->isBanTriggered = true;
+
+	log(Log()
+			.about(Log::Level::Warn, Log::Topic::Kick)
+			.user(d->id, d->socket->peerAddress(), QString())
+			.message(QStringLiteral("%1 '%2' is HANG banned (%3 %4)")
+						 .arg(
+							 d->ban.sourceType, d->ban.cause, d->ban.source,
+							 QString::number(d->ban.sourceId))));
+
+	// Do absolutely nothing, just leave the client hanging until they leave.
+}
+
+void Client::triggerTimer()
+{
+	Q_ASSERT(!d->isBanTriggered);
+	d->isBanTriggered = true;
+
+	int msec = QRandomGenerator::global()->bounded(1000, 5000);
+	log(Log()
+			.about(Log::Level::Warn, Log::Topic::Kick)
+			.user(d->id, d->socket->peerAddress(), QString())
+			.message(QStringLiteral("%1 '%2' is TIMER banned (%3 %4), severing "
+									"connection in %5ms")
+						 .arg(
+							 d->ban.sourceType, d->ban.cause, d->ban.source,
+							 QString::number(d->ban.sourceId),
+							 QString::number(msec))));
+	QTimer::singleShot(msec, this, [this]() {
+		d->socket->abort();
+	});
 }
 
 void Client::setConnectionTimeout(int timeout)

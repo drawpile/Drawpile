@@ -2,7 +2,7 @@
 
 #include "libclient/brushes/brushpresetmodel.h"
 #include "libclient/brushes/brush.h"
-#include "libclient/utils/database.h"
+#include "libshared/util/database.h"
 #include "libshared/util/paths.h"
 #include "libshared/util/qtcompat.h"
 #include "libclient/drawdance/ziparchive.h"

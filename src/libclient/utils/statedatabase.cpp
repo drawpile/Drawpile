@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "libclient/utils/statedatabase.h"
-#include "libclient/utils/database.h"
+#include "libshared/util/database.h"
 #include <QMutex>
 #include <QMutexLocker>
 #include <QSqlError>

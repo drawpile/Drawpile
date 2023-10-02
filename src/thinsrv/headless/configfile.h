@@ -42,7 +42,9 @@ public:
 	bool isModified() const;
 
 	bool isAllowedAnnouncementUrl(const QUrl &url) const override;
-	bool isAddressBanned(const QHostAddress &addr) const override;
+	BanResult isAddressBanned(const QHostAddress &addr) const override;
+	BanResult isSystemBanned(const QString &sid) const override;
+	BanResult isUserBanned(long long userId) const override;
 	RegisteredUser getUserAccount(const QString &username, const QString &password) const override;
 
 	ServerLog *logger() const override { return m_logger; }
@@ -65,7 +67,9 @@ private:
 	// Cached settings:
 	mutable QHash<QString, QString> m_config;
 	mutable QHash<QString, User> m_users;
-	mutable QList<QPair<QHostAddress, int>> m_banlist;
+	mutable QList<QPair<QHostAddress, int>> m_ipbans;
+	mutable QHash<QString, BanResult> m_systembans;
+	mutable QHash<long long, BanResult> m_userbans;
 	mutable QList<QUrl> m_announcewhitelist;
 	mutable QDateTime m_lastmod;
 };

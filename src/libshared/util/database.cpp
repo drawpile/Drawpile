@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "libclient/utils/database.h"
+#include "libshared/util/database.h"
 #include "libshared/util/paths.h"
 #include <QFile>
 #include <QFileInfo>
@@ -142,6 +142,19 @@ bool execPrepared(QSqlQuery &query, const QString &sql)
 	} else {
 		qWarning(
 			lcDpDatabase, "Error executing statement '%s': %s",
+			qUtf8Printable(sql), qUtf8Printable(query.lastError().text()));
+		return false;
+	}
+}
+
+
+bool execBatch(QSqlQuery &query, const QString &sql)
+{
+	if(query.execBatch()) {
+		return true;
+	} else {
+		qWarning(
+			lcDpDatabase, "Error executing batch '%s': %s",
 			qUtf8Printable(sql), qUtf8Printable(query.lastError().text()));
 		return false;
 	}

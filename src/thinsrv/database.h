@@ -5,7 +5,11 @@
 
 #include "libserver/serverconfig.h"
 
+class QSqlQuery;
+
 namespace server {
+
+class ExtBans;
 
 /**
  * @brief Configuration database access object.
@@ -21,8 +25,14 @@ public:
 
 	Q_INVOKABLE bool openFile(const QString &path);
 
+	void loadExternalIpBans(ExtBans *extBans);
+
+	bool setExternalBanEnabled(int id, bool enabled) override;
+
 	bool isAllowedAnnouncementUrl(const QUrl &url) const override;
-	bool isAddressBanned(const QHostAddress &addr) const override;
+	BanResult isAddressBanned(const QHostAddress &addr) const override;
+	BanResult isSystemBanned(const QString &sid) const override;
+	BanResult isUserBanned(long long userId) const override;
 	RegisteredUser getUserAccount(const QString &username, const QString &password) const override;
 	ServerLog *logger() const override;
 
@@ -33,9 +43,21 @@ public:
 	void updateListServerWhitelist(const QStringList &whitelist);
 
 	//! Get a JSON representation of the full banlist
-	QJsonArray getBanlist() const;
-	QJsonObject addBan(const QHostAddress &ip, int subnet,	const QDateTime &expiration, const QString &comment);
-	bool deleteBan(int entryId);
+	QJsonArray getIpBanlist() const;
+	QJsonArray getSystemBanlist() const;
+	QJsonArray getUserBanlist() const;
+	QJsonObject addIpBan(
+		const QHostAddress &ip, int subnet, const QDateTime &expiration,
+		const QString &comment);
+	QJsonObject addSystemBan(
+		const QString &sid, const QDateTime &expires, BanReaction reaction,
+		const QString &reason, const QString &comment);
+	QJsonObject addUserBan(
+		long long userId, const QDateTime &exires, BanReaction reaction,
+		const QString &reason, const QString &comment);
+	bool deleteIpBan(int entryId);
+	bool deleteSystemBan(int entryId);
+	bool deleteUserBan(int entryId);
 
 	//! Get a JSON representation of registered user accounts
 	QJsonArray getAccountList() const;
@@ -51,6 +73,13 @@ protected:
 	void setConfigValue(ConfigKey key, const QString &value) override;
 
 private:
+	QString getConfigValueByName(const QString &name, bool &found) const;
+	void setConfigValueByName(const QString &name, const QString &value);
+
+	static QJsonObject ipBanResultToJson(const QSqlQuery &q);
+	static QJsonObject systemBanResultToJson(const QSqlQuery &q);
+	static QJsonObject userBanResultToJson(const QSqlQuery &q);
+
 	struct Private;
 	Private *d;
 };

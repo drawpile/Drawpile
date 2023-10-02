@@ -1,4 +1,4 @@
-find_package(${QT_PACKAGE_NAME} REQUIRED COMPONENTS Gui Sql)
+find_package(${QT_PACKAGE_NAME} REQUIRED COMPONENTS Gui)
 
 add_library(dpclient)
 
@@ -155,8 +155,6 @@ target_sources(dpclient PRIVATE
 	utils/colorscheme.h
 	utils/customshortcutmodel.cpp
 	utils/customshortcutmodel.h
-	utils/database.cpp
-	utils/database.h
 	utils/debouncetimer.cpp
 	utils/debouncetimer.h
 	utils/funstuff.cpp
@@ -223,7 +221,6 @@ target_link_libraries(dpclient
 		${QT_PACKAGE_NAME}::Core
 		${QT_PACKAGE_NAME}::Network
 		${QT_PACKAGE_NAME}::Gui
-		${QT_PACKAGE_NAME}::Sql
 )
 
 if(${QT_PACKAGE_NAME}LinguistTools_FOUND)

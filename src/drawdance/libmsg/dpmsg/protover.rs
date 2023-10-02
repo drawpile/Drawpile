@@ -104,6 +104,12 @@ impl ProtocolVersion {
             && self.minor == 2
     }
 
+    pub fn should_have_system_id(&self) -> bool {
+        self.ns.as_bytes_with_nul() == DP_PROTOCOL_VERSION_NAMESPACE
+            && (self.server > 4
+                || (self.server == 4 && (self.major > 24 || (self.major == 24 && self.minor >= 0))))
+    }
+
     pub fn version_name(&self) -> Option<&'static [u8]> {
         if self.ns.as_ref() == Self::current_namespace() && self.server == 4 {
             if self.major == 24 {
@@ -249,6 +255,16 @@ pub extern "C" fn DP_protocol_version_is_future(protover: *const ProtocolVersion
 pub extern "C" fn DP_protocol_version_is_past_compatible(protover: *const ProtocolVersion) -> bool {
     match unsafe { protover.as_ref() } {
         Some(p) => p.is_past_compatible(),
+        None => false,
+    }
+}
+
+#[no_mangle]
+pub extern "C" fn DP_protocol_version_should_have_system_id(
+    protover: *const ProtocolVersion,
+) -> bool {
+    match unsafe { protover.as_ref() } {
+        Some(p) => p.should_have_system_id(),
         None => false,
     }
 }

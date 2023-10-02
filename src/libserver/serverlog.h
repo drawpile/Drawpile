@@ -45,6 +45,7 @@ public:
 		PubList,    // Session announcement
 		Status,     // General stuff
 		ClientInfo, // Structured information about client joining or hosting
+		ExtBan,     // Externally sourced bans
 	};
 	Q_ENUM(Topic)
 
@@ -70,6 +71,8 @@ public:
 
 	//! Get the freeform message part
 	QString message() const { return m_message; }
+
+	bool isSensitive() const { return m_topic == Topic::ClientInfo; }
 
 	Log &about(Level l, Topic t) { m_level=l; m_topic=t; return *this; }
 	Log &user(uint8_t id, const QHostAddress &ip, const QString &name) { m_user = QStringLiteral("%1;%2;%3").arg(int(id)).arg(ip.toString()).arg(name); return *this; }
@@ -119,12 +122,13 @@ class ServerLog;
  */
 class ServerLogQuery {
 public:
-	ServerLogQuery(const ServerLog &log) : m_log(log), m_offset(0), m_limit(0), m_atleast(Log::Level::Debug) { }
+	ServerLogQuery(const ServerLog &log) : m_log(log), m_offset(0), m_limit(0), m_atleast(Log::Level::Debug), m_omitSensitive(true) { }
 
 	ServerLogQuery &session(const QString &id) { m_session = id; return *this; }
 	ServerLogQuery &page(int page, int entriesPerPage) { m_offset = page*entriesPerPage; m_limit=entriesPerPage; return *this; }
 	ServerLogQuery &after(const QDateTime &ts) { m_after = ts; return *this; }
 	ServerLogQuery &atleast(Log::Level level) { m_atleast = level; return *this; }
+	ServerLogQuery &omitSensitive(bool omitSensitive) { m_omitSensitive = omitSensitive; return *this; }
 
 	bool isFiltered() const { return !m_session.isNull() || m_offset>0 || m_limit>0; }
 	QList<Log> get() const;
@@ -136,6 +140,7 @@ private:
 	int m_limit;
 	Log::Level m_atleast;
 	QDateTime m_after;
+	bool m_omitSensitive;
 };
 
 /**
@@ -165,8 +170,9 @@ public:
 	 * @param atleast minimum log level
 	 * @param offset ignore first *offset* messages
 	 * @param limit return at most this many messages
+	 * @param omitSensitive leave out messages with sensitive data, like IPs
 	 */
-	virtual QList<Log> getLogEntries(const QString &session, const QDateTime &after, Log::Level atleast, int offset, int limit) const = 0;
+	virtual QList<Log> getLogEntries(const QString &session, const QDateTime &after, Log::Level atleast, bool omitSensitive, int offset, int limit) const = 0;
 
 	/**
 	 * @brief Return a query builder
@@ -182,7 +188,7 @@ private:
 };
 
 inline QList<Log> ServerLogQuery::get() const {
-	return m_log.getLogEntries(m_session, m_after, m_atleast, m_offset, m_limit);
+	return m_log.getLogEntries(m_session, m_after, m_atleast, m_omitSensitive, m_offset, m_limit);
 }
 
 void Log::to(ServerLog *logger)
@@ -202,7 +208,7 @@ public:
 	InMemoryLog() : m_limit(1000) { }
 	void setHistoryLimit(int limit);
 
-	QList<Log> getLogEntries(const QString &session, const QDateTime &after, Log::Level atleast, int offset, int limit) const override;
+	QList<Log> getLogEntries(const QString &session, const QDateTime &after, Log::Level atleast, bool omitSensitive, int offset, int limit) const override;
 
 protected:
 	void storeMessage(const Log &entry) override;

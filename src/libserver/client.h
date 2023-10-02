@@ -17,6 +17,7 @@ namespace server {
 class Session;
 class Log;
 class ServerLog;
+struct BanResult;
 
 /**
  * @brief Server client
@@ -132,6 +133,11 @@ public:
 	 */
 	bool isMuted() const;
 	void setMuted(bool m);
+
+	bool isBanInProgress() const;
+	bool isImmuneToServerBans() const;
+	void applyBan(const BanResult &ban);
+	bool triggerBan(bool early);
 
 	/**
 	 * @brief Set connection idle timeout
@@ -285,6 +291,12 @@ protected:
 
 private:
 	void handleSessionMessage(net::Message msg);
+	static bool rollEarlyTrigger();
+	void triggerNormalBan();
+	void triggerNetError();
+	void triggerGarbage();
+	void triggerHang();
+	void triggerTimer();
 
 	struct Private;
 	Private *d;

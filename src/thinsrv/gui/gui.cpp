@@ -135,6 +135,10 @@ bool start() {
 	QCommandLineOption remoteOption(QStringList() << "remote", "Remote admin mode", "address");
 	parser.addOption(remoteOption);
 
+	// --dump-config
+	QCommandLineOption dumpConfigOption(QStringList() << "dump-config", "Dump config and exit");
+	parser.addOption(dumpConfigOption);
+
 	// Parse
 	parser.process(*QCoreApplication::instance());
 

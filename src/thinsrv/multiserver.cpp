@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "thinsrv/multiserver.h"
+#include "thinsrv/extbans.h"
 #include "thinsrv/initsys.h"
 #include "thinsrv/database.h"
 #include "thinsrv/templatefiles.h"
@@ -11,6 +12,7 @@
 #include "libserver/serverconfig.h"
 #include "libserver/serverlog.h"
 #include "libserver/sslserver.h"
+#include "libshared/net/servercmd.h"
 #include "libshared/util/whatismyip.h"
 
 #include <QTcpSocket>
@@ -20,6 +22,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QRegularExpression>
+#include <QTimer>
 
 namespace server {
 
@@ -27,12 +30,21 @@ MultiServer::MultiServer(ServerConfig *config, QObject *parent)
 	: QObject(parent),
 	m_config(config),
 	m_server(nullptr),
+	m_extBans(new ExtBans(config, this)),
 	m_state(STOPPED),
 	m_autoStop(false),
 	m_port(0)
 {
 	m_sessions = new SessionServer(config, this);
 	m_started = QDateTime::currentDateTimeUtc();
+
+	Database *db = qobject_cast<Database*>(m_config);
+	if(db) {
+		db->loadExternalIpBans(m_extBans);
+	}
+
+	connect(this, &MultiServer::serverStarted, m_extBans, &ExtBans::start);
+	connect(this, &MultiServer::serverStopped, m_extBans, &ExtBans::stop);
 
 	connect(m_sessions, &SessionServer::sessionCreated, this, &MultiServer::assignRecording);
 	connect(m_sessions, &SessionServer::sessionEnded, this, &MultiServer::tryAutoStop);
@@ -228,18 +240,9 @@ void MultiServer::newClient()
 		.message(QStringLiteral("New client connected")));
 
 	auto *client = new ThinServerClient(socket, m_sessions->config()->logger());
-
-	if(m_config->isAddressBanned(socket->peerAddress())) {
-		client->log(Log().about(Log::Level::Warn, Log::Topic::Kick)
-			.user(0, socket->peerAddress(), QString())
-			.message("Kicking banned user straight away"));
-
-		client->disconnectClient(Client::DisconnectionReason::Error, "BANNED");
-
-	} else {
-		m_sessions->addClient(client);
-		printStatusUpdate();
-	}
+	client->applyBan(m_config->isAddressBanned(socket->peerAddress()));
+	m_sessions->addClient(client);
+	printStatusUpdate();
 }
 
 
@@ -311,12 +314,18 @@ JsonApiResult MultiServer::callJsonApi(JsonApiMethod method, const QStringList &
 		return m_sessions->callUserJsonApi(method, tail, request);
 	else if(head == "banlist")
 		return banlistJsonApi(method, tail, request);
+	else if(head == "systembans")
+		return systembansJsonApi(method, tail, request);
+	else if(head == "userbans")
+		return userbansJsonApi(method, tail, request);
 	else if(head == "listserverwhitelist")
 		return listserverWhitelistJsonApi(method, tail, request);
 	else if(head == "accounts")
 		return accountsJsonApi(method, tail, request);
 	else if(head == "log")
 		return logJsonApi(method, tail, request);
+	else if(head == "extbans")
+		return extbansJsonApi(method, tail, request);
 
 	return JsonApiNotFound();
 }
@@ -370,6 +379,8 @@ JsonApiResult MultiServer::serverJsonApi(JsonApiMethod method, const QStringList
 		config::AbuseReport,
 		config::ReportToken,
 		config::ForceNsfm,
+		config::ExtBansUrl,
+		config::ExtBansCheckInterval,
 	};
 	const int settingCount = sizeof(settings) / sizeof(settings[0]);
 
@@ -446,7 +457,7 @@ JsonApiResult MultiServer::banlistJsonApi(JsonApiMethod method, const QStringLis
 	if(path.size()==1) {
 		if(method != JsonApiMethod::Delete)
 			return JsonApiBadMethod();
-		if(db->deleteBan(path.at(0).toInt())) {
+		if(db->deleteIpBan(path.at(0).toInt())) {
 			QJsonObject body;
 			body["status"] = "ok";
 			body["deleted"] = path.at(0).toInt();
@@ -459,22 +470,158 @@ JsonApiResult MultiServer::banlistJsonApi(JsonApiMethod method, const QStringLis
 		return JsonApiNotFound();
 
 	if(method == JsonApiMethod::Get) {
-		return JsonApiResult { JsonApiResult::Ok, QJsonDocument(db->getBanlist()) };
+		return JsonApiResult { JsonApiResult::Ok, QJsonDocument(db->getIpBanlist()) };
 
 	} else if(method == JsonApiMethod::Create) {
 		QHostAddress ip { request["ip"].toString() };
 		if(ip.isNull())
 			return JsonApiErrorResult(JsonApiResult::BadRequest, "Valid IP address required");
 		int subnet = request["subnet"].toInt();
-		QDateTime expiration = QDateTime::fromString(request["expires"].toString(), "yyyy-MM-dd HH:mm:ss");
+		QDateTime expiration = ServerConfig::parseDateTime(request["expires"].toString());
 		if(expiration.isNull())
 			return JsonApiErrorResult(JsonApiResult::BadRequest, "Valid expiration time required");
 		QString comment = request["comment"].toString();
 
-		return JsonApiResult { JsonApiResult::Ok, QJsonDocument(db->addBan(ip, subnet, expiration, comment)) };
+		return JsonApiResult { JsonApiResult::Ok, QJsonDocument(db->addIpBan(ip, subnet, expiration, comment)) };
 
 	} else
 		return JsonApiBadMethod();
+}
+
+JsonApiResult MultiServer::systembansJsonApi(
+	JsonApiMethod method, const QStringList &path, const QJsonObject &request)
+{
+	Database *db = qobject_cast<Database *>(m_config);
+	if(!db) {
+		return JsonApiNotFound();
+	}
+
+	if(path.size() == 1) {
+		if(method != JsonApiMethod::Delete) {
+			return JsonApiBadMethod();
+		} else if(db->deleteSystemBan(path.at(0).toInt())) {
+			QJsonObject body;
+			body["status"] = "ok";
+			body["deleted"] = path.at(0).toInt();
+			return JsonApiResult{JsonApiResult::Ok, QJsonDocument(body)};
+		} else {
+			return JsonApiNotFound();
+		}
+	}
+
+	if(!path.isEmpty()) {
+		return JsonApiNotFound();
+	}
+
+	if(method == JsonApiMethod::Get) {
+		return JsonApiResult{
+			JsonApiResult::Ok, QJsonDocument(db->getSystemBanlist())};
+
+	} else if(method == JsonApiMethod::Create) {
+		qDebug() << request;
+		QString sid = request["sid"].toString();
+		if(sid.isEmpty()) {
+			return JsonApiErrorResult(
+				JsonApiResult::BadRequest, "SID required");
+		}
+
+		QDateTime expiration =
+			ServerConfig::parseDateTime(request["expires"].toString());
+		if(expiration.isNull()) {
+			return JsonApiErrorResult(
+				JsonApiResult::BadRequest, "Valid expiration time required");
+		}
+
+		BanReaction reaction =
+			ServerConfig::parseReaction(request["reaction"].toString());
+		if(reaction == BanReaction::Unknown ||
+		   reaction == BanReaction::NotBanned) {
+			return JsonApiErrorResult(
+				JsonApiResult::BadRequest, "Invalid reaction");
+		}
+
+		QString comment = request["comment"].toString();
+		QString reason = request["reason"].toString();
+
+		QJsonObject result =
+			db->addSystemBan(sid, expiration, reaction, reason, comment);
+		if(result.isEmpty()) {
+			return JsonApiErrorResult(
+				JsonApiResult::InternalError, "Database error");
+		} else {
+			return {JsonApiResult::Ok, QJsonDocument(result)};
+		}
+	} else {
+		return JsonApiBadMethod();
+	}
+}
+
+JsonApiResult MultiServer::userbansJsonApi(
+	JsonApiMethod method, const QStringList &path, const QJsonObject &request)
+{
+	Database *db = qobject_cast<Database *>(m_config);
+	if(!db) {
+		return JsonApiNotFound();
+	}
+
+	if(path.size() == 1) {
+		if(method != JsonApiMethod::Delete) {
+			return JsonApiBadMethod();
+		} else if(db->deleteUserBan(path.at(0).toInt())) {
+			QJsonObject body;
+			body["status"] = "ok";
+			body["deleted"] = path.at(0).toInt();
+			return JsonApiResult{JsonApiResult::Ok, QJsonDocument(body)};
+		} else {
+			return JsonApiNotFound();
+		}
+	}
+
+	if(!path.isEmpty()) {
+		return JsonApiNotFound();
+	}
+
+	if(method == JsonApiMethod::Get) {
+		return JsonApiResult{
+			JsonApiResult::Ok, QJsonDocument(db->getUserBanlist())};
+
+	} else if(method == JsonApiMethod::Create) {
+		QJsonValue rawUserId = request["userId"];
+		long long userId = rawUserId.isDouble() ? rawUserId.toDouble() : 0;
+		if(userId <= 0) {
+			return JsonApiErrorResult(
+				JsonApiResult::BadRequest, "Valid user ID required");
+		}
+
+		QDateTime expiration =
+			ServerConfig::parseDateTime(request["expires"].toString());
+		if(expiration.isNull()) {
+			return JsonApiErrorResult(
+				JsonApiResult::BadRequest, "Valid expiration time required");
+		}
+
+		BanReaction reaction =
+			ServerConfig::parseReaction(request["reaction"].toString());
+		if(reaction == BanReaction::Unknown ||
+		   reaction == BanReaction::NotBanned) {
+			return JsonApiErrorResult(
+				JsonApiResult::BadRequest, "Invalid reaction");
+		}
+
+		QString comment = request["comment"].toString();
+		QString reason = request["reason"].toString();
+
+		QJsonObject result =
+			db->addUserBan(userId, expiration, reaction, reason, comment);
+		if(result.isEmpty()) {
+			return JsonApiErrorResult(
+				JsonApiResult::InternalError, "Database error");
+		} else {
+			return {JsonApiResult::Ok, QJsonDocument(result)};
+		}
+	} else {
+		return JsonApiBadMethod();
+	}
 }
 
 /**
@@ -603,11 +750,107 @@ JsonApiResult MultiServer::logJsonApi(JsonApiMethod method, const QStringList &p
 	}
 
 	QJsonArray out;
-	for(const Log &log : q.get()) {
+	for(const Log &log : q.omitSensitive(false).get()) {
 		out.append(log.toJson());
 	}
 
 	return JsonApiResult { JsonApiResult::Ok, QJsonDocument(out) };
+}
+
+JsonApiResult MultiServer::extbansJsonApi(
+	JsonApiMethod method, const QStringList &path, const QJsonObject &request)
+{
+	Q_UNUSED(request);
+	int pathLength = path.length();
+	if(pathLength == 0) {
+		if(method == JsonApiMethod::Get || method == JsonApiMethod::Delete) {
+			if (method == JsonApiMethod::Delete) {
+				m_config->setConfigString(config::ExtBansCacheUrl, QString());
+				m_config->setConfigString(config::ExtBansCacheKey, QString());
+				m_config->setExternalBans({});
+			}
+			QJsonObject out = {
+				{QStringLiteral("config"),
+				 QJsonObject{
+					 {config::ExtBansUrl.name,
+					  m_config->getConfigString(config::ExtBansUrl)},
+					 {config::ExtBansCheckInterval.name,
+					  m_config->getConfigTime(config::ExtBansCheckInterval)},
+					 {config::ExtBansCacheUrl.name,
+					  m_config->getConfigString(config::ExtBansCacheUrl)},
+					 {config::ExtBansCacheKey.name,
+					  m_config->getConfigString(config::ExtBansCacheKey)},
+				 }},
+				{QStringLiteral("bans"), m_config->getExternalBans()},
+				{QStringLiteral("status"), m_extBans->status()},
+			};
+			return JsonApiResult{JsonApiResult::Ok, QJsonDocument(out)};
+		} else {
+			return JsonApiBadMethod();
+		}
+
+	} else if(pathLength == 1) {
+		if(path[0] == QStringLiteral("refresh")) {
+			if(method == JsonApiMethod::Create) {
+				JsonApiResult::Status status;
+				QString msg;
+				switch(m_extBans->refreshNow()) {
+				case ExtBans::RefreshResult::Ok:
+					status = JsonApiResult::Ok;
+					msg = QStringLiteral("refresh triggered");
+					break;
+				case ExtBans::RefreshResult::AlreadyInProgress:
+					status = JsonApiResult::BadRequest;
+					msg = QStringLiteral("refresh already in progress");
+					break;
+				case ExtBans::RefreshResult::NotActive:
+					status = JsonApiResult::BadRequest;
+					msg = QStringLiteral("external bans not active");
+					break;
+				default:
+					status = JsonApiResult::InternalError;
+					msg = QStringLiteral("internal error");
+					break;
+				}
+				return JsonApiResult{
+					status,
+					QJsonDocument(QJsonObject{{QStringLiteral("msg"), msg}})};
+			} else {
+				return JsonApiBadMethod();
+			}
+		}
+
+		bool ok;
+		int id = path[0].toInt(&ok);
+		if(ok) {
+			if(method == JsonApiMethod::Update) {
+				const QString enabledKey = QStringLiteral("enabled");
+				if(request.contains(enabledKey)) {
+					bool enabled = request[enabledKey].toBool();
+					if(m_config->setExternalBanEnabled(id, enabled)) {
+						return JsonApiResult{JsonApiResult::Ok, {}};
+					} else {
+						return JsonApiErrorResult(
+							JsonApiResult::NotFound,
+							QStringLiteral(
+								"External ipban with id '%1' not found")
+								.arg(id));
+					}
+				} else {
+					return JsonApiErrorResult(
+						JsonApiResult::BadRequest,
+						QStringLiteral("Missing 'enabled' in request"));
+				}
+			} else {
+				return JsonApiBadMethod();
+			}
+		}
+
+		return JsonApiNotFound();
+
+	} else {
+		return JsonApiNotFound();
+	}
 }
 
 }

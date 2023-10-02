@@ -6,6 +6,10 @@
 #include <QObject>
 #include <QStringList>
 
+namespace protocol {
+class ProtocolVersion;
+}
+
 namespace net {
 struct ServerCommand;
 struct ServerReply;
@@ -77,7 +81,7 @@ private slots:
 	void handleLoginMessage(const net::Message &msg);
 
 private:
-	enum class State { WaitForSecure, WaitForIdent, WaitForLogin };
+	enum class State { WaitForSecure, WaitForIdent, WaitForLogin, Banned };
 
 	void announceServerInfo();
 	void handleIdentMessage(const net::ServerCommand &cmd);
@@ -95,6 +99,13 @@ private:
 	bool send(const net::Message &msg);
 	void sendError(const QString &code, const QString &message);
 	void extAuthGuestLogin(const QString &username);
+
+	bool verifySystemId(
+		const net::ServerCommand &cmd, const protocol::ProtocolVersion &protver);
+
+	static bool isValidSid(const QString &sid);
+
+	bool verifyUserId(long long userId);
 
 	Client *m_client;
 	Sessions *m_sessions;

@@ -97,6 +97,11 @@ bool ProtocolVersion::isPastCompatible() const
 	return DP_protocol_version_is_past_compatible(m_protocolVersion);
 }
 
+bool ProtocolVersion::shouldHaveSystemId() const
+{
+	return DP_protocol_version_should_have_system_id(m_protocolVersion);
+}
+
 QString ProtocolVersion::versionName() const
 {
 	const char *name = DP_protocol_version_name(m_protocolVersion);

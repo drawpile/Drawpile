@@ -146,6 +146,8 @@ struct ServerReply {
 	static net::Message
 	makeResultStartTls(const QString &message, bool startTls);
 
+	static net::Message makeResultGarbage();
+
 	static net::Message makeSessionConf(const QJsonObject &config);
 
 	static net::Message makeSizeLimitWarning(int size, int maxSize);

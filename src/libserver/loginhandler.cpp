@@ -113,7 +113,9 @@ void LoginHandler::handleLoginMessage(const net::Message &msg)
 
 	net::ServerCommand cmd = net::ServerCommand::fromMessage(msg);
 
-	if(m_state == State::WaitForSecure) {
+	if(m_state == State::Banned) {
+		// Intentionally leave the client hanging.
+	} else if(m_state == State::WaitForSecure) {
 		// Secure mode: wait for STARTTLS before doing anything
 		if(cmd.cmd == "startTls") {
 			handleStarttls();
@@ -244,11 +246,15 @@ void LoginHandler::handleIdentMessage(const net::ServerCommand &cmd)
 				const QJsonObject ea = extAuthToken.payload();
 				const QJsonValue uid = ea["uid"];
 
+				if(uid.isDouble() && !verifyUserId(uid.toDouble())) {
+					return;
+				}
+
 				// We need some unique identifier. If the server didn't provide
 				// one, the username is better than nothing.
-				QString extAuthId = uid.isDouble()
-										? QString::number(uid.toInt())
-										: uid.toString();
+				QString extAuthId =
+					uid.isDouble() ? QString::number(qlonglong(uid.toDouble()))
+								   : uid.toString();
 				if(extAuthId.isEmpty())
 					extAuthId = ea["username"].toString();
 
@@ -337,7 +343,13 @@ void LoginHandler::authLoginOk(
 	if(!avatar.isEmpty())
 		m_client->setAvatar(avatar);
 	m_hostPrivilege = flags.contains("HOST") && allowHost;
-	m_state = State::WaitForLogin;
+
+	if(m_client->triggerBan(true)) {
+		m_state = State::Banned;
+		return;
+	} else {
+		m_state = State::WaitForLogin;
+	}
 
 	send(net::ServerReply::makeResultLoginOk(
 		QStringLiteral("Authenticated login OK!"), QStringLiteral("identOk"),
@@ -462,11 +474,17 @@ void LoginHandler::guestLogin(const QString &username)
 	}
 
 	m_client->setUsername(username);
-	m_state = State::WaitForLogin;
+
+	if(m_client->triggerBan(true)) {
+		m_state = State::Banned;
+		return;
+	} else {
+		m_state = State::WaitForLogin;
+	}
+
 	send(net::ServerReply::makeResultLoginOk(
 		QStringLiteral("Guest login OK!"), QStringLiteral("identOk"), {},
 		m_client->username(), true));
-
 	announceServerInfo();
 }
 
@@ -485,7 +503,6 @@ static QJsonArray sessionFlags(const Session *session)
 void LoginHandler::handleHostMessage(const net::ServerCommand &cmd)
 {
 	Q_ASSERT(!m_client->username().isEmpty());
-
 	// Basic validation
 	if(!m_config->getConfigBool(config::AllowGuestHosts) && !m_hostPrivilege) {
 		sendError("unauthorizedHost", "Hosting not authorized");
@@ -498,6 +515,10 @@ void LoginHandler::handleHostMessage(const net::ServerCommand &cmd)
 
 	if(!protocolVersion.isValid()) {
 		sendError("syntax", "Unparseable protocol version");
+		return;
+	}
+
+	if(!verifySystemId(cmd, protocolVersion)) {
 		return;
 	}
 
@@ -516,6 +537,11 @@ void LoginHandler::handleHostMessage(const net::ServerCommand &cmd)
 			sendError("badAlias", "Invalid session alias");
 			return;
 		}
+	}
+
+	if(m_client->triggerBan(false)) {
+		m_state = State::Banned;
+		return;
 	}
 
 	// Create a new session
@@ -552,9 +578,9 @@ void LoginHandler::handleHostMessage(const net::ServerCommand &cmd)
 		 {QStringLiteral("user"), userId},
 		 {QStringLiteral("flags"), sessionFlags(session)}}));
 
-	logClientInfo(cmd);
 	m_complete = true;
 	session->joinUser(m_client, true);
+	logClientInfo(cmd);
 
 	deleteLater();
 }
@@ -568,10 +594,13 @@ void LoginHandler::handleJoinMessage(const net::ServerCommand &cmd)
 	}
 
 	QString sessionId = cmd.args.at(0).toString();
-
 	Session *session = m_sessions->getSessionById(sessionId, true);
 	if(!session) {
 		sendError("notFound", "Session not found!");
+		return;
+	}
+
+	if(!verifySystemId(cmd, session->history()->protocolVersion())) {
 		return;
 	}
 
@@ -616,6 +645,11 @@ void LoginHandler::handleJoinMessage(const net::ServerCommand &cmd)
 #endif
 	}
 
+	if(m_client->triggerBan(false)) {
+		m_state = State::Banned;
+		return;
+	}
+
 	// Ok, join the session
 	session->assignId(m_client);
 	send(net::ServerReply::makeResultJoinHost(
@@ -624,9 +658,9 @@ void LoginHandler::handleJoinMessage(const net::ServerCommand &cmd)
 		 {QStringLiteral("user"), m_client->id()},
 		 {QStringLiteral("flags"), sessionFlags(session)}}));
 
-	logClientInfo(cmd);
 	m_complete = true;
 	session->joinUser(m_client, false);
+	logClientInfo(cmd);
 
 	deleteLater();
 }
@@ -652,23 +686,27 @@ void LoginHandler::logClientInfo(const net::ServerCommand &cmd)
 		}
 	}
 
-	if(!info.isEmpty()) {
-		if(m_client->isAuthenticated()) {
-			info["auth_id"] = m_client->authId();
-		}
-		m_client->log(
-			Log()
-				.about(Log::Level::Info, Log::Topic::ClientInfo)
-				.message(QJsonDocument(info).toJson(QJsonDocument::Compact)));
+
+	info[QStringLiteral("address")] = m_client->peerAddress().toString();
+	if(m_client->isAuthenticated()) {
+		info[QStringLiteral("auth_id")] = m_client->authId();
 	}
+	m_client->log(
+		Log()
+			.about(Log::Level::Info, Log::Topic::ClientInfo)
+			.message(QJsonDocument(info).toJson(QJsonDocument::Compact)));
 }
 
 void LoginHandler::handleAbuseReport(const net::ServerCommand &cmd)
 {
-	Session *s =
-		m_sessions->getSessionById(cmd.kwargs["session"].toString(), false);
-	if(s) {
-		s->sendAbuseReport(m_client, 0, cmd.kwargs["reason"].toString());
+	// We don't tell users that they're banned until they actually attempt to
+	// join or host a session, so they don't get to make reports before that.
+	if(!m_client->isBanInProgress()) {
+		Session *s =
+			m_sessions->getSessionById(cmd.kwargs["session"].toString(), false);
+		if(s) {
+			s->sendAbuseReport(m_client, 0, cmd.kwargs["reason"].toString());
+		}
 	}
 }
 
@@ -712,6 +750,48 @@ void LoginHandler::sendError(const QString &code, const QString &message)
 	send(net::ServerReply::makeError(message, code));
 	m_client->disconnectClient(
 		Client::DisconnectionReason::Error, "Login error");
+}
+
+bool LoginHandler::verifySystemId(
+	const net::ServerCommand &cmd, const protocol::ProtocolVersion &protover)
+{
+	QString sid = cmd.kwargs[QStringLiteral("s")].toString();
+	if(sid.isEmpty()) {
+		if(protover.shouldHaveSystemId()) {
+			m_client->log(Log()
+							  .about(Log::Level::Error, Log::Topic::RuleBreak)
+							  .message(QStringLiteral("Missing required sid")));
+			m_client->disconnectClient(
+				Client::DisconnectionReason::Error, "invalid message");
+			return false;
+		}
+	} else if(!isValidSid(sid)) {
+		m_client->log(Log()
+						  .about(Log::Level::Error, Log::Topic::RuleBreak)
+						  .message(QStringLiteral("Invalid sid %1").arg(sid)));
+		m_client->disconnectClient(
+			Client::DisconnectionReason::Error, "invalid message");
+		return false;
+	} else if(!m_client->isBanInProgress()) {
+		BanResult ban = m_config->isSystemBanned(sid);
+		m_client->applyBan(ban);
+	}
+	return true;
+}
+
+bool LoginHandler::isValidSid(const QString &sid)
+{
+	static QRegularExpression sidRe(QStringLiteral("\\A[0-9a-fA-F]{32}\\z"));
+	return sidRe.match(sid).hasMatch();
+}
+
+bool LoginHandler::verifyUserId(long long userId)
+{
+	if(!m_client->isBanInProgress()) {
+		BanResult ban = m_config->isUserBanned(userId);
+		m_client->applyBan(ban);
+	}
+	return true;
 }
 
 }

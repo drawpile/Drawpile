@@ -1,3 +1,5 @@
+find_package(${QT_PACKAGE_NAME} REQUIRED COMPONENTS Sql)
+
 add_library(dpshared)
 
 target_sources(dpshared PRIVATE
@@ -13,6 +15,8 @@ target_sources(dpshared PRIVATE
 	net/protover.h
 	net/servercmd.cpp
 	net/servercmd.h
+	util/database.cpp
+	util/database.h
 	util/filename.cpp
 	util/filename.h
 	util/functionrunnable.cpp
@@ -39,6 +43,7 @@ target_link_libraries(dpshared
 		drawdance
 		${QT_PACKAGE_NAME}::Core
 		${QT_PACKAGE_NAME}::Network
+		${QT_PACKAGE_NAME}::Sql
 )
 
 if(ANDROID)

@@ -78,15 +78,13 @@ void Webadmin::setSessions(MultiServer *server)
 			reqBodyDoc = QJsonDocument(params);
 
 		} else if(m == JsonApiMethod::Create|| m == JsonApiMethod::Update) {
-			if(req.headers()["content-type"] != "application/json") {
-				return HttpResponse::JsonErrorResponse("Content-Type should be application/json", 400);
+			QByteArray body = req.body();
+			if(!body.isEmpty()) {
+				QJsonParseError parseError;
+				reqBodyDoc = QJsonDocument::fromJson(body, &parseError);
+				if(parseError.error != QJsonParseError::NoError)
+					return HttpResponse::JsonErrorResponse(parseError.errorString(), 400);
 			}
-
-			QJsonParseError parseError;
-			reqBodyDoc = QJsonDocument::fromJson(req.body(), &parseError);
-
-			if(parseError.error != QJsonParseError::NoError)
-				return HttpResponse::JsonErrorResponse(parseError.errorString(), 400);
 		}
 
 		JsonApiResult result;

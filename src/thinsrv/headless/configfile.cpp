@@ -48,11 +48,13 @@ void ConfigFile::reloadFile() const
 	QTextStream in(&f);
 
 	m_config.clear();
-	m_banlist.clear();
+	m_ipbans.clear();
+	m_systembans.clear();
+	m_userbans.clear();
 	m_announcewhitelist.clear();
 	m_users.clear();
 
-	enum { CONFIG, BANLIST, AWL, USERS } section = CONFIG;
+	enum { CONFIG, IPBANS, SYSTEMBANS, USERBANS, AWL, USERS } section = CONFIG;
 
 	while(!in.atEnd()) {
 		QString line = in.readLine().trimmed();
@@ -63,7 +65,11 @@ void ConfigFile::reloadFile() const
 			if(line.compare("[config]", Qt::CaseInsensitive)==0)
 				section = CONFIG;
 			else if(line.compare("[ipbans]", Qt::CaseInsensitive)==0)
-				section = BANLIST;
+				section = IPBANS;
+			else if(line.compare("[systembans]", Qt::CaseInsensitive)==0)
+				section = SYSTEMBANS;
+			else if(line.compare("[userbans]", Qt::CaseInsensitive)==0)
+				section = USERBANS;
 			else if(line.compare("[announcewhitelist]", Qt::CaseInsensitive)==0)
 				section = AWL;
 			else if(line.compare("[users]", Qt::CaseInsensitive)==0)
@@ -85,7 +91,7 @@ void ConfigFile::reloadFile() const
 
 			m_config[key] = value;
 
-		} else if(section == BANLIST) {
+		} else if(section == IPBANS) {
 			int sep = line.indexOf('/');
 			QString ip, subnet;
 			if(sep<0) {
@@ -102,7 +108,66 @@ void ConfigFile::reloadFile() const
 				continue;
 			}
 
-			m_banlist << QPair<QHostAddress,int> { ipaddr, subnet.toInt() };
+			m_ipbans << QPair<QHostAddress,int> { ipaddr, subnet.toInt() };
+
+		} else if(section == SYSTEMBANS) {
+			int sep = line.indexOf(':');
+			QString sid;
+			BanReaction reaction;
+			if(sep < 0) {
+				sid = line;
+				reaction = BanReaction::NormalBan;
+			} else {
+				sid = line.left(sep);
+				reaction = parseReaction(line.mid(sep + 1));
+			}
+
+			if(m_systembans.contains(sid)) {
+				qWarning(
+					"Duplicate system ban with sid '%s'", qUtf8Printable(sid));
+			}
+			int sourceId = m_systembans.size() + 1;
+			m_systembans[sid] = {
+				reaction,
+				QString(),
+				QDateTime(),
+				sid,
+				QStringLiteral("configfile"),
+				QStringLiteral("SID"),
+				sourceId,
+				false};
+
+		} else if(section == USERBANS) {
+			int sep = line.indexOf(':');
+			QString userIdString;
+			BanReaction reaction;
+			if(sep < 0) {
+				userIdString = line;
+				reaction = BanReaction::NormalBan;
+			} else {
+				userIdString = line.left(sep);
+				reaction = parseReaction(line.mid(sep + 1));
+			}
+
+			bool ok;
+			long long userId = userIdString.toLongLong(&ok);
+			if(ok) {
+				if(m_userbans.contains(userId)) {
+					qWarning("Duplicate user ban with user id '%lld'", userId);
+				}
+				int sourceId = m_userbans.size() + 1;
+				m_userbans[userId] = {
+					reaction,
+					QString(),
+					QDateTime(),
+					QString::number(userId),
+					QStringLiteral("configfile"),
+					QStringLiteral("User"),
+					sourceId,
+					false};
+			} else {
+				qWarning("Invalid user id '%s'", qUtf8Printable(userIdString));
+			}
 
 		} else if(section == AWL) {
 			QUrl url(line);
@@ -145,28 +210,50 @@ QString ConfigFile::getConfigValue(const ConfigKey key, bool &found) const
 	}
 }
 
-bool ConfigFile::isAddressBanned(const QHostAddress &addr) const
+BanResult ConfigFile::isAddressBanned(const QHostAddress &addr) const
 {
-	if(isModified())
+	if(isModified()) {
 		reloadFile();
-
-	for(const QPair<QHostAddress,int> &ipban : m_banlist) {
-		QHostAddress subnet = ipban.first;
-		int mask = ipban.second;
-
-		if(mask==0) {
-			switch(subnet.protocol()) {
-			case QAbstractSocket::IPv4Protocol: mask=32; break;
-			case QAbstractSocket::IPv6Protocol: mask=128; break;
-			default: break;
-			}
-		}
-
-		if(addr.isInSubnet(subnet, mask))
-			return true;
 	}
 
-	return false;
+	int banCount = m_ipbans.size();
+	for(int i = 0; i < banCount; ++i) {
+		const QPair<QHostAddress, int> &ipban = m_ipbans[i];
+		if(matchesBannedAddress(addr, ipban.first, ipban.second)) {
+			return {
+				BanReaction::NormalBan, QString(), QDateTime(),
+				addr.toString(), QStringLiteral("configfile"),
+				QStringLiteral("IP"), i + 1, true};
+		}
+	}
+
+	return ServerConfig::isAddressBanned(addr);
+}
+
+BanResult ConfigFile::isSystemBanned(const QString &sid) const
+{
+	if(isModified()) {
+		reloadFile();
+	}
+
+	if(m_systembans.contains(sid)) {
+		return m_systembans[sid];
+	} else {
+		return ServerConfig::isSystemBanned(sid);
+	}
+}
+
+BanResult ConfigFile::isUserBanned(long long userId) const
+{
+	if(isModified()) {
+		reloadFile();
+	}
+
+	if(m_userbans.contains(userId)) {
+		return m_userbans[userId];
+	} else {
+		return ServerConfig::isUserBanned(userId);
+	}
 }
 
 bool ConfigFile::isAllowedAnnouncementUrl(const QUrl &url) const

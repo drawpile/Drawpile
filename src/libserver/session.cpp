@@ -188,6 +188,7 @@ void Session::joinUser(Client *user, bool host)
 							 ->query()
 							 .session(id())
 							 .atleast(Log::Level::Info)
+							 .omitSensitive(!user->isModerator())
 							 .get();
 		// Note: the query returns the log entries in latest first, but we send
 		// new entries to clients as they occur, so we reverse the list before
@@ -1379,7 +1380,16 @@ void Session::log(const Log &log)
 	m_config->logger()->logMessage(entry);
 
 	if(entry.level() < Log::Level::Debug) {
-		directToAll(makeLogMessage(entry));
+		net::Message msg = makeLogMessage(entry);
+		if(entry.isSensitive()) {
+			for(Client *c : m_clients) {
+				if(c->isModerator()) {
+					c->sendDirectMessage(msg);
+				}
+			}
+		} else {
+			directToAll(msg);
+		}
 	}
 }
 

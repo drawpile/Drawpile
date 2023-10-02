@@ -9,6 +9,7 @@ Unreleased Version 2.2.0-pre
  * Feature: Interpolate inputs that are far away from each other to compensate against fast strokes producing jagged curves. Can be disabled in the input preferences.
  * Fix: Make build directories outside of the source directory work again. Thanks Aquargent for reporting.
  * Fix: Properly handle modifier key releases for keyboard canvas shortcuts. Thanks Daystream for reporting.
+ * Server Feature: Implement a centralized bans system, so that moderators don't have to manage it on all community servers separately, which increases the chances of getting a ban wrong. Thanks Bluestrings for suggesting.
 
 2023-09-30 Version 2.2.0-beta.8
  * Fix: Apply color wheel direction to color dialogs too. Thanks Blozzom for reporting.

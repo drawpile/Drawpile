@@ -3,6 +3,7 @@
 #include "libclient/utils/news.h"
 #include "cmake-config/config.h"
 #include "libclient/utils/statedatabase.h"
+#include "libshared/util/database.h"
 #include "libshared/util/networkaccess.h"
 #include <QDate>
 #include <QJsonArray>

@@ -356,6 +356,14 @@ ServerReply::makeResultStartTls(const QString &message, bool startTls)
 		 {QStringLiteral("startTls"), startTls}});
 }
 
+net::Message ServerReply::makeResultGarbage()
+{
+	return make(
+		{{QStringLiteral("type"), QStringLiteral("result")},
+		 {QStringLiteral("message"), QStringLiteral("check authentication")},
+		 {QStringLiteral("state"), QStringLiteral("checkauth")}});
+}
+
 net::Message ServerReply::makeSessionConf(const QJsonObject &config)
 {
 	return make(

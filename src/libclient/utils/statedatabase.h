@@ -3,7 +3,6 @@
 #ifndef LIBCLIENT_UTILS_STATEDATABASE_H
 #define LIBCLIENT_UTILS_STATEDATABASE_H
 
-#include "libclient/utils/database.h"
 #include <QObject>
 #include <QSqlDatabase>
 #include <QSqlQuery>

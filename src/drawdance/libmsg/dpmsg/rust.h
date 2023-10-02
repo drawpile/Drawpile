@@ -44,6 +44,9 @@ bool DP_protocol_version_is_future(const struct DP_ProtocolVersion *protover);
 bool DP_protocol_version_is_past_compatible(
     const struct DP_ProtocolVersion *protover);
 
+bool DP_protocol_version_should_have_system_id(
+    const struct DP_ProtocolVersion *protover);
+
 const char *DP_protocol_version_ns(const struct DP_ProtocolVersion *protover);
 
 int DP_protocol_version_server(const struct DP_ProtocolVersion *protover);

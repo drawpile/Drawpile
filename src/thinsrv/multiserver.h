@@ -15,6 +15,7 @@ class QDir;
 namespace server {
 
 class Client;
+class ExtBans;
 class Session;
 class SessionServer;
 class ServerConfig;
@@ -92,15 +93,19 @@ private:
 	JsonApiResult serverJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
 	JsonApiResult statusJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
 	JsonApiResult banlistJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
+	JsonApiResult systembansJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
+	JsonApiResult userbansJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
 	JsonApiResult listserverWhitelistJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
 	JsonApiResult accountsJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
 	JsonApiResult logJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
+	JsonApiResult extbansJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
 
 	enum State {RUNNING, STOPPING, STOPPED};
 
 	ServerConfig *m_config;
 	QTcpServer *m_server;
 	SessionServer *m_sessions;
+	ExtBans *m_extBans;
 
 	State m_state;
 

@@ -164,10 +164,10 @@ private slots:
 		QCOMPARE(cfg.getConfigTime(server::config::ClientTimeout), 10*60);
 		QCOMPARE(cfg.getConfigSize(server::config::SessionSizeLimit), 99*1024*1024);
 
-		QCOMPARE(cfg.isAddressBanned(QHostAddress("192.168.1.2")), false);
-		QCOMPARE(cfg.isAddressBanned(QHostAddress("192.168.1.1")), true);
-		QCOMPARE(cfg.isAddressBanned(QHostAddress("10.0.0.2")), true);
-		QCOMPARE(cfg.isAddressBanned(QHostAddress("11.0.0.2")), false);
+		QCOMPARE(cfg.isAddressBanned(QHostAddress("192.168.1.2")).reaction, server::BanReaction::NotBanned);
+		QCOMPARE(cfg.isAddressBanned(QHostAddress("192.168.1.1")).reaction, server::BanReaction::NormalBan);
+		QCOMPARE(cfg.isAddressBanned(QHostAddress("10.0.0.2")).reaction, server::BanReaction::NormalBan);
+		QCOMPARE(cfg.isAddressBanned(QHostAddress("11.0.0.2")).reaction, server::BanReaction::NotBanned);
 
 		QCOMPARE(cfg.isAllowedAnnouncementUrl(QUrl("https://example.com/api/listing/")), false);
 		QCOMPARE(cfg.isAllowedAnnouncementUrl(QUrl("https://drawpile.net/api/listing/")), true);

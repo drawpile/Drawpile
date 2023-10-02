@@ -3,6 +3,7 @@
 #include "libserver/serverconfig.h"
 
 #include <QRegularExpression>
+#include <QJsonObject>
 
 namespace server {
 
@@ -109,16 +110,89 @@ void ServerConfig::setConfigBool(ConfigKey key, bool value)
 	setConfigString(key, value ? QStringLiteral("true") : QStringLiteral("false"));
 }
 
+bool ServerConfig::setExternalBanEnabled(int id, bool enabled)
+{
+	if(enabled) {
+		m_disabledExtBanIds.remove(id);
+	} else {
+		m_disabledExtBanIds.insert(id);
+	}
+	return true;
+}
+
+QJsonArray ServerConfig::getExternalBans() const
+{
+	QJsonArray bans;
+	for(const ExtBan &ban : m_extBans) {
+		bans.append(QJsonObject{
+			{QStringLiteral("id"), ban.id},
+			{QStringLiteral("ips"), banIpRangesToJson(ban.ips, true)},
+			{QStringLiteral("ipsexcluded"), banIpRangesToJson(ban.ipsExcluded, false)},
+			{QStringLiteral("system"), banSystemToJson(ban.system)},
+			{QStringLiteral("users"), banUsersToJson(ban.users)},
+			{QStringLiteral("expires"), formatDateTime(ban.expires)},
+			{QStringLiteral("comment"), ban.comment},
+			{QStringLiteral("reason"), ban.reason},
+			{QStringLiteral("enabled"), !m_disabledExtBanIds.contains(ban.id)},
+		});
+	}
+	return bans;
+}
+
 bool ServerConfig::isAllowedAnnouncementUrl(const QUrl &url) const
 {
 	Q_UNUSED(url);
 	return true;
 }
 
-bool ServerConfig::isAddressBanned(const QHostAddress &addr) const
+BanResult ServerConfig::isAddressBanned(const QHostAddress &addr) const
 {
-	Q_UNUSED(addr);
-	return false;
+	QDateTime now = QDateTime::currentDateTime();
+	for(const ExtBan &ban : m_extBans) {
+		BanReaction reaction = BanReaction::NotBanned;
+		bool banned = !m_disabledExtBanIds.contains(ban.id) &&
+					  ban.expires > now &&
+					  isInAnyRange(addr, ban.ips, &reaction) &&
+					  !isInAnyRange(addr, ban.ipsExcluded);
+		if(banned) {
+			return makeBanResult(
+				ban, addr.toString(), QStringLiteral("IP"), reaction, true);
+		}
+	}
+	return BanResult::notBanned();
+}
+
+BanResult ServerConfig::isSystemBanned(const QString &sid) const
+{
+	QDateTime now = QDateTime::currentDateTime();
+	for(const ExtBan &ban : m_extBans) {
+		BanReaction reaction = BanReaction::NotBanned;
+		bool banned = !m_disabledExtBanIds.contains(ban.id) &&
+					  ban.expires > now &&
+					  isInAnySystem(sid, ban.system, reaction);
+		if(banned) {
+			return makeBanResult(
+				ban, sid, QStringLiteral("SID"), reaction, false);
+		}
+	}
+	return BanResult::notBanned();
+}
+
+BanResult ServerConfig::isUserBanned(long long userId) const
+{
+	QDateTime now = QDateTime::currentDateTime();
+	for(const ExtBan &ban : m_extBans) {
+		BanReaction reaction = BanReaction::NotBanned;
+		bool banned = !m_disabledExtBanIds.contains(ban.id) &&
+					  ban.expires > now &&
+					  isInAnyUser(userId, ban.users, reaction);
+		if(banned) {
+			return makeBanResult(
+				ban, QString::number(userId), QStringLiteral("User"), reaction,
+				false);
+		}
+	}
+	return BanResult::notBanned();
 }
 
 RegisteredUser ServerConfig::getUserAccount(const QString &username, const QString &password) const
@@ -166,6 +240,214 @@ int ServerConfig::parseSizeString(const QString &str)
 		s *= 1024;
 
 	return s;
+}
+
+QDateTime ServerConfig::parseDateTime(const QString &expires)
+{
+	return QDateTime::fromString(
+		expires, QStringLiteral("yyyy-MM-dd HH:mm:ss"));
+}
+
+QString ServerConfig::formatDateTime(const QDateTime &expires)
+{
+	return expires.toString(QStringLiteral("yyyy-MM-dd HH:mm:ss"));
+}
+
+bool ServerConfig::matchesBannedAddress(
+	const QHostAddress &addr, const QHostAddress &ip, int subnet)
+{
+	if(subnet == 0) {
+		switch(ip.protocol()) {
+		case QAbstractSocket::IPv4Protocol:
+			subnet = 32;
+			break;
+		case QAbstractSocket::IPv6Protocol:
+			subnet = 128;
+			break;
+		default:
+			break;
+		}
+	}
+	return addr.isInSubnet(ip, subnet);
+}
+
+BanReaction ServerConfig::parseReaction(const QString &reaction)
+{
+	if(reaction.isEmpty() || reaction == QStringLiteral("normal")) {
+		return BanReaction::NormalBan;
+	} else if(reaction == QStringLiteral("neterror")) {
+		return BanReaction::NetError;
+	} else if(reaction == QStringLiteral("garbage")) {
+		return BanReaction::Garbage;
+	} else if(reaction == QStringLiteral("hang")) {
+		return BanReaction::Hang;
+	} else if(reaction == QStringLiteral("timer")) {
+		return BanReaction::Timer;
+	} else {
+		return BanReaction::Unknown;
+	}
+}
+
+bool ServerConfig::isAddressInRange(
+	const QHostAddress &addr, const QHostAddress &from, const QHostAddress &to)
+{
+	return !addr.isNull() && !from.isNull() && !to.isNull() &&
+		   (isAddressInRangeV4(addr, from, to) ||
+			isAddressInRangeV6(addr, from, to));
+}
+
+bool ServerConfig::isInAnyRange(
+	const QHostAddress &addr, const QVector<BanIpRange> &ranges,
+	BanReaction *outReaction)
+{
+	for(const BanIpRange &range : ranges) {
+		if(isAddressInRange(addr, range.from, range.to)) {
+			if(outReaction) {
+				*outReaction = range.reaction;
+			}
+			return true;
+		}
+	}
+	return false;
+}
+
+bool ServerConfig::isAddressInRangeV4(
+	const QHostAddress &addr, const QHostAddress &from, const QHostAddress &to)
+{
+	bool ok;
+	quint32 a4 = addr.toIPv4Address(&ok);
+	if(ok) {
+		quint32 f4 = from.toIPv4Address(&ok);
+		if(ok && a4 >= f4) {
+			quint32 t4 = to.toIPv4Address(&ok);
+			return ok && a4 <= t4;
+		}
+	}
+	return false;
+}
+
+bool ServerConfig::isAddressInRangeV6(
+	const QHostAddress &addr, const QHostAddress &from, const QHostAddress &to)
+{
+	constexpr size_t SIZE = sizeof(Q_IPV6ADDR::c);
+	static_assert(SIZE == 16, "IPv6 array is 16 bytes");
+	Q_IPV6ADDR a6 = addr.toIPv6Address();
+	Q_IPV6ADDR f6 = from.toIPv6Address();
+	if(memcmp(a6.c, f6.c, SIZE) >= 0) {
+		Q_IPV6ADDR t6 = to.toIPv6Address();
+		return memcmp(a6.c, t6.c, SIZE) <= 0;
+	}
+	return false;
+}
+
+bool ServerConfig::isInAnySystem(
+	const QString &sid, const QVector<BanSystemIdentifier> &system,
+	BanReaction &outReaction)
+{
+	for(const BanSystemIdentifier &s : system) {
+		if(s.sids.contains(sid)) {
+			outReaction = s.reaction;
+			return true;
+		}
+	}
+	return false;
+}
+
+bool ServerConfig::isInAnyUser(
+	long long userId, const QVector<BanUser> &users, BanReaction &outReaction)
+{
+	for(const BanUser &u : users) {
+		if(u.ids.contains(userId)) {
+			outReaction = u.reaction;
+			return true;
+		}
+	}
+	return false;
+}
+
+BanResult ServerConfig::makeBanResult(
+	const ExtBan &ban, const QString &cause, const QString &sourceType,
+	BanReaction reaction, bool isExemptable)
+{
+	// If we don't have a sensible reaction, treat this as a normal ban.
+	if(reaction == BanReaction::NotBanned || reaction == BanReaction::Unknown) {
+		reaction = BanReaction::NormalBan;
+	}
+	return {
+		reaction,	ban.reason, ban.expires, cause, QStringLiteral("extban"),
+		sourceType, ban.id, isExemptable};
+}
+
+QJsonArray ServerConfig::banIpRangesToJson(
+	const QVector<BanIpRange> &ranges, bool includeReaction)
+{
+	QJsonArray json;
+	for(const BanIpRange &range : ranges) {
+		QJsonObject object{
+			{QStringLiteral("from"), range.from.toString()},
+			{QStringLiteral("to"), range.to.toString()},
+		};
+		if(includeReaction) {
+			object[QStringLiteral("reaction")] =
+				reactionToString(range.reaction);
+		}
+		json.append(object);
+	}
+	return json;
+}
+
+QJsonArray ServerConfig::banSystemToJson(
+	const QVector<BanSystemIdentifier> &system)
+{
+	QJsonArray json;
+	for(const BanSystemIdentifier &s : system) {
+		QJsonArray sids;
+		for(const QString &sid : s.sids) {
+			sids.append(sid);
+		}
+		json.append(QJsonObject{
+			{QStringLiteral("sids"), sids},
+			{QStringLiteral("reaction"), reactionToString(s.reaction)},
+		});
+	}
+	return json;
+}
+
+QJsonArray ServerConfig::banUsersToJson(const QVector<BanUser> &users)
+{
+	QJsonArray json;
+	for(const BanUser &u : users) {
+		QJsonArray ids;
+		for(long long id : u.ids) {
+			ids.append(id);
+		}
+		json.append(QJsonObject{
+			{QStringLiteral("ids"), ids},
+			{QStringLiteral("reaction"), reactionToString(u.reaction)},
+		});
+	}
+	return json;
+}
+
+QString ServerConfig::reactionToString(BanReaction reaction)
+{
+	switch(reaction) {
+	case BanReaction::NotBanned:
+		return QStringLiteral("notbanned");
+	case BanReaction::Unknown:
+		return QStringLiteral("unknown");
+	case BanReaction::NormalBan:
+		return QStringLiteral("normal");
+	case BanReaction::NetError:
+		return QStringLiteral("neterror");
+	case BanReaction::Garbage:
+		return QStringLiteral("garbage");
+	case BanReaction::Hang:
+		return QStringLiteral("hang");
+	case BanReaction::Timer:
+		return QStringLiteral("timer");
+	}
+	return QString();
 }
 
 }

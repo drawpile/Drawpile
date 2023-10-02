@@ -73,6 +73,8 @@ public:
 	 */
 	bool isCompatible() const { return isCurrent() || isPastCompatible(); }
 
+	bool shouldHaveSystemId() const;
+
 	/**
 	 * Get the client version series that support this
 	 * protocol version, if known. The returned string is

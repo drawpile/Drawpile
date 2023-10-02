@@ -2,6 +2,7 @@
 #ifndef THINSERVERCLIENT_H
 #define THINSERVERCLIENT_H
 #include "libserver/client.h"
+#include "libserver/serverconfig.h"
 
 namespace server {
 

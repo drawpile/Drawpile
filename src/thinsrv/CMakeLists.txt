@@ -13,6 +13,8 @@ target_sources(${srvlib} PRIVATE
 	database.h
 	dblog.cpp
 	dblog.h
+	extbans.cpp
+	extbans.h
 	initsys.h
 	multiserver.cpp
 	multiserver.h

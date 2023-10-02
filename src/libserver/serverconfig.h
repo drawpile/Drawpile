@@ -7,6 +7,9 @@
 #include <QString>
 #include <QHash>
 #include <QUrl>
+#include <QDateTime>
+#include <QHostAddress>
+#include <QJsonArray>
 
 class QHostAddress;
 
@@ -60,8 +63,17 @@ namespace config {
 		AutoresetThreshold(21, "autoResetThreshold", "15mb", ConfigKey::SIZE), // Default autoreset threshold in bytes
 		AllowCustomAvatars(22, "customAvatars", "true", ConfigKey::BOOL),      // Allow users to set a custom avatar when logging in
 		ExtAuthAvatars(23, "extAuthAvatars", "true", ConfigKey::BOOL),         // Use avatars received from ext-auth server (unless a custom avatar has been set)
-		ForceNsfm(24, "forceNsfm", "false", ConfigKey::BOOL)                   // Force NSFM flag to be set on all sessions
-		;
+		ForceNsfm(24, "forceNsfm", "false", ConfigKey::BOOL),                  // Force NSFM flag to be set on all sessions
+		// URL to source an external ban list from.
+		ExtBansUrl(25, "extBansUrl", "", ConfigKey::STRING),
+		// How often to refresh the external ban list (minimum 1 minute.)
+		ExtBansCheckInterval(26, "extBansCheckInterval", "900", ConfigKey::TIME),
+		// Last URL used to fetch bans. Internal value used for caching.
+		ExtBansCacheUrl(27, "extBansCacheUrl", "", ConfigKey::STRING),
+		// Last cache key from external bans. Internal value used for caching.
+		ExtBansCacheKey(28, "extBansCacheKey", "", ConfigKey::STRING),
+		// Last external bans response. Internal value used for caching.
+		ExtBansCacheResponse(29, "extBansCacheResponse", "", ConfigKey::STRING);
 }
 
 //! Settings that are not adjustable after the server has started
@@ -87,6 +99,59 @@ struct RegisteredUser {
 	QString username;
 	QStringList flags;
 	QString userId;
+};
+
+enum class BanReaction {
+	NotBanned,
+	Unknown,
+	NormalBan,
+	NetError,
+	Garbage,
+	Hang,
+	Timer,
+};
+
+struct BanResult {
+	BanReaction reaction;
+	QString reason;
+	QDateTime expires;
+	QString cause;
+	QString source;
+	QString sourceType;
+	int sourceId;
+	bool isExemptable;
+
+	static BanResult notBanned()
+	{
+		return {BanReaction::NotBanned, {}, {}, {}, {}, {}, 0, true};
+	}
+};
+
+struct BanIpRange {
+	QHostAddress from;
+	QHostAddress to;
+	BanReaction reaction;
+};
+
+struct BanSystemIdentifier {
+	QSet<QString> sids;
+	BanReaction reaction;
+};
+
+struct BanUser {
+	QSet<long long> ids;
+	BanReaction reaction;
+};
+
+struct ExtBan {
+	int id;
+	QVector<BanIpRange> ips;
+	QVector<BanIpRange> ipsExcluded;
+	QVector<BanSystemIdentifier> system;
+	QVector<BanUser> users;
+	QDateTime expires;
+	QString comment;
+	QString reason;
 };
 
 /**
@@ -126,6 +191,10 @@ public:
 	void setConfigInt(ConfigKey, int value);
 	void setConfigBool(ConfigKey, bool value);
 
+	void setExternalBans(const QVector<ExtBan> &bans) { m_extBans = bans; }
+	virtual bool setExternalBanEnabled(int id, bool enabled);
+	QJsonArray getExternalBans() const;
+
 	/**
 	 * @brief Check if the given listing site URL is allowed
 	 *
@@ -135,10 +204,10 @@ public:
 
 	/**
 	 * @brief Check if the given address is banned from this server
-	 *
-	 * The default implementation always returns false
 	 */
-	virtual bool isAddressBanned(const QHostAddress &addr) const;
+	virtual BanResult isAddressBanned(const QHostAddress &addr) const;
+	virtual BanResult isSystemBanned(const QString &sid) const;
+	virtual BanResult isUserBanned(long long userId) const;
 
 	/**
 	 * @brief See if there is a registered user with the given credentials
@@ -166,10 +235,17 @@ public:
 	 */
 	static int parseSizeString(const QString &str);
 
+	static QDateTime parseDateTime(const QString &expires);
+	static QString formatDateTime(const QDateTime &expires);
+
+	static BanReaction parseReaction(const QString &reaction);
+
 signals:
 	void configValueChanged(const ConfigKey &key);
 
 protected:
+	const QVector<ExtBan> extBans() const { return m_extBans; }
+
 	/**
 	 * @brief Get the configuration value for the given key
 	 *
@@ -182,8 +258,51 @@ protected:
 	virtual QString getConfigValue(const ConfigKey key, bool &found) const = 0;
 	virtual void setConfigValue(const ConfigKey key, const QString &value) = 0;
 
+	static bool matchesBannedAddress(
+		const QHostAddress &addr, const QHostAddress &ip, int subnet);
+
+	static bool isAddressInRange(
+		const QHostAddress &addr, const QHostAddress &from,
+		const QHostAddress &to);
+
+	static QString reactionToString(BanReaction reaction);
+
 private:
+	static bool isInAnyRange(
+		const QHostAddress &addr, const QVector<BanIpRange> &ranges,
+		BanReaction *outReaction = nullptr);
+
+	static bool isAddressInRangeV4(
+		const QHostAddress &addr, const QHostAddress &from,
+		const QHostAddress &to);
+
+	static bool isAddressInRangeV6(
+		const QHostAddress &addr, const QHostAddress &from,
+		const QHostAddress &to);
+
+	static bool isInAnySystem(
+		const QString &sid, const QVector<BanSystemIdentifier> &system,
+		BanReaction &outReaction);
+
+	static bool isInAnyUser(
+		long long userId, const QVector<BanUser> &users,
+		BanReaction &outReaction);
+
+	static BanResult makeBanResult(
+		const ExtBan &ban, const QString &cause, const QString &sourceType,
+		BanReaction reaction, bool isExemptable);
+
+	static QJsonArray banIpRangesToJson(
+		const QVector<BanIpRange> &ranges, bool includeReaction);
+
+	static QJsonArray banSystemToJson(
+		const QVector<BanSystemIdentifier> &system);
+
+	static QJsonArray banUsersToJson(const QVector<BanUser> &users);
+
 	InternalConfig m_internalCfg;
+	QVector<ExtBan> m_extBans;
+	QSet<int> m_disabledExtBanIds;
 };
 
 // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=69210
@@ -192,7 +311,6 @@ namespace diagnostic_marker_private {
 	{
 		inline RegisteredUser getUserAccount(const QString &, const QString &) const override { return RegisteredUser(); }
 		inline bool isAllowedAnnouncementUrl(const QUrl &) const override { return false; }
-		inline bool isAddressBanned(const QHostAddress &) const override { return false; }
 	};
 }
 

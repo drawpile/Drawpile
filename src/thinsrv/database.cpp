@@ -2,6 +2,8 @@
 
 #include "thinsrv/database.h"
 #include "thinsrv/dblog.h"
+#include "thinsrv/extbans.h"
+#include "libshared/util/database.h"
 #include "libshared/util/passwordhash.h"
 #include "libshared/util/validators.h"
 #include "libserver/serverlog.h"
@@ -48,6 +50,32 @@ static bool initDatabase(QSqlDatabase db)
 		))
 		return false;
 
+	// List of serverwide system bans
+	if(!utils::db::exec(q, QStringLiteral(
+		"CREATE TABLE IF NOT EXISTS systembans ("
+			"id INTEGER PRIMARY KEY NOT NULL,"
+			"sid TEXT NOT NULL,"
+			"reaction TEXT NOT NULL DEFAULT 'normal',"
+			"expires TEXT NOT NULL,"
+			"comment TEXT,"
+			"reason TEXT,"
+			"added TEXT NOT NULL);"
+		)))
+		return false;
+
+	// List of serverwide external user bans
+	if(!utils::db::exec(q, QStringLiteral(
+		"CREATE TABLE IF NOT EXISTS userbans ("
+			"id INTEGER PRIMARY KEY NOT NULL,"
+			"userid INTEGER NOT NULL,"
+			"reaction TEXT NOT NULL DEFAULT 'normal',"
+			"expires TEXT NOT NULL,"
+			"comment TEXT,"
+			"reason TEXT,"
+			"added TEXT NOT NULL);"
+		)))
+		return false;
+
 	// Registered user accounts
 	if(!q.exec(
 		"CREATE TABLE IF NOT EXISTS users ("
@@ -57,6 +85,13 @@ static bool initDatabase(QSqlDatabase db)
 			"flags"            // comma separated list of extra features (e.g. "mod")
 			");"
 		))
+		return false;
+
+	// Disabling of external, imported bans
+	if(!utils::db::exec(q, QStringLiteral(
+		"CREATE TABLE IF NOT EXISTS disabledextbans ("
+			"id INTEGER PRIMARY KEY NOT NULL);"
+		)))
 		return false;
 
 	return true;
@@ -114,20 +149,52 @@ bool Database::openFile(const QString &path)
 	return true;
 }
 
+void Database::loadExternalIpBans(ExtBans *extBans)
+{
+	extBans->loadFromCache();
+	QSqlQuery q(d->db);
+	if(utils::db::exec(q, QStringLiteral("SELECT id FROM disabledextbans"))) {
+		while(q.next()) {
+			ServerConfig::setExternalBanEnabled(q.value(0).toInt(), false);
+		}
+	}
+}
+
+bool Database::setExternalBanEnabled(int id, bool enabled)
+{
+	QSqlQuery q(d->db);
+	QString sql =
+		enabled ? QStringLiteral("DELETE FROM disabledextbans WHERE id = ?")
+				: QStringLiteral(
+					  "INSERT OR REPLACE INTO disabledextbans (id) VALUES (?)");
+	return utils::db::exec(q, sql, {id}) &&
+		   ServerConfig::setExternalBanEnabled(id, enabled);
+}
+
 void Database::setConfigValue(ConfigKey key, const QString &value)
+{
+	setConfigValueByName(key.name, value);
+}
+
+void Database::setConfigValueByName(const QString &name, const QString &value)
 {
 	QSqlQuery q(d->db);
 	q.prepare("INSERT OR REPLACE INTO settings VALUES (?, ?)");
-	q.bindValue(0, key.name);
+	q.bindValue(0, name);
 	q.bindValue(1, value);
 	q.exec();
 }
 
 QString Database::getConfigValue(const ConfigKey key, bool &found) const
 {
+	return getConfigValueByName(key.name, found);
+}
+
+QString Database::getConfigValueByName(const QString &name, bool &found) const
+{
 	QSqlQuery q(d->db);
 	q.prepare("SELECT value FROM settings WHERE key=?");
-	q.bindValue(0, key.name);
+	q.bindValue(0, name);
 	q.exec();
 	if(q.next()) {
 		found = true;
@@ -193,54 +260,125 @@ void Database::updateListServerWhitelist(const QStringList &whitelist)
 	q.exec("COMMIT");
 }
 
-bool Database::isAddressBanned(const QHostAddress &addr) const
+BanResult Database::isAddressBanned(const QHostAddress &addr) const
 {
 	QSqlQuery q(d->db);
-	q.exec("SELECT ip, subnet FROM ipbans WHERE expires > datetime('now')");
-
-	while(q.next()) {
-		const QHostAddress a(q.value(0).toString());
-		int subnet = q.value(1).toInt();
-		if(subnet==0) {
-			switch(a.protocol()) {
-			case QAbstractSocket::IPv4Protocol: subnet=32; break;
-			case QAbstractSocket::IPv6Protocol: subnet=128; break;
-			default: break;
+	bool ok = utils::db::exec(q, QStringLiteral(
+		"SELECT rowid, ip, subnet, expires FROM ipbans\n"
+		"WHERE expires > datetime('now')"));
+	if(ok) {
+		while(q.next()) {
+			QHostAddress ip(q.value(1).toString());
+			int subnet = q.value(2).toInt();
+			if(matchesBannedAddress(addr, ip, subnet)) {
+				return {
+					BanReaction::NormalBan,
+					QString(),
+					parseDateTime(q.value(4).toString()),
+					addr.toString(),
+					QStringLiteral("database"),
+					QStringLiteral("IP"),
+					q.value(0).toInt(),
+					true};
 			}
 		}
-
-		if(addr.isInSubnet(a, subnet))
-			return true;
 	}
-
-	return false;
+	return ServerConfig::isAddressBanned(addr);
 }
 
-static QJsonObject banResultToJson(const QSqlQuery &q)
+BanResult Database::isSystemBanned(const QString &sid) const
 {
-	QJsonObject b;
-	b["id"] = q.value(0).toInt();
-	b["ip"] = q.value(1).toString();
-	b["subnet"] = q.value(2).toInt();
-	b["expires"] = q.value(3).toString();
-	b["comment"] = q.value(4).toString();
-	b["added"] = q.value(5).toString();
-	return b;
+	QSqlQuery q(d->db);
+	bool ok = utils::db::exec(
+		q,
+		QStringLiteral("SELECT id, reaction, expires, reason FROM systembans\n"
+					   "WHERE sid = ? AND expires > datetime('now')\n"
+					   "LIMIT 1"),
+		{sid});
+	if(ok && q.next()) {
+		int id = q.value(0).toLongLong();
+		BanReaction reaction = parseReaction(q.value(1).toString());
+		QDateTime expires = parseDateTime(q.value(2).toString());
+		QString reason = q.value(3).toString();
+		return {
+			reaction,
+			reason,
+			expires,
+			sid,
+			QStringLiteral("database"),
+			QStringLiteral("SID"),
+			id,
+			false};
+	}
+	return ServerConfig::isSystemBanned(sid);
 }
 
-QJsonArray Database::getBanlist() const
+BanResult Database::isUserBanned(long long userId) const
+{
+	QSqlQuery q(d->db);
+	bool ok = utils::db::exec(
+		q,
+		QStringLiteral("SELECT id, reaction, expires, reason FROM userbans\n"
+					   "WHERE userid = ? AND expires > datetime('now')\n"
+					   "LIMIT 1"),
+		{userId});
+	if(ok && q.next()) {
+		int id = q.value(0).toLongLong();
+		BanReaction reaction = parseReaction(q.value(1).toString());
+		QDateTime expires = parseDateTime(q.value(2).toString());
+		QString reason = q.value(3).toString();
+		return {
+			reaction,
+			reason,
+			expires,
+			QString::number(userId),
+			QStringLiteral("database"),
+			QStringLiteral("User"),
+			id,
+			false};
+	}
+	return ServerConfig::isUserBanned(userId);
+}
+
+QJsonArray Database::getIpBanlist() const
 {
 	QJsonArray result;
 	QSqlQuery q(d->db);
 	q.exec("SELECT rowid, ip, subnet, expires, comment, added FROM ipbans");
 
 	while(q.next()) {
-		result.append(banResultToJson(q));
+		result.append(ipBanResultToJson(q));
 	}
 	return result;
 }
 
-QJsonObject Database::addBan(const QHostAddress &ip, int subnet, const QDateTime &expiration, const QString &comment)
+QJsonArray Database::getSystemBanlist() const
+{
+	QJsonArray result;
+	QSqlQuery q(d->db);
+	bool ok = utils::db::exec(
+		q, QStringLiteral("SELECT id, sid, expires, reaction, reason, comment, "
+						  "added FROM systembans ORDER BY id ASC"));
+	while(ok && q.next()) {
+		result.append(systemBanResultToJson(q));
+	}
+	return result;
+}
+
+QJsonArray Database::getUserBanlist() const
+{
+	QJsonArray result;
+	QSqlQuery q(d->db);
+	bool ok = utils::db::exec(
+		q, QStringLiteral("SELECT id, userid, expires, reaction, reason, "
+						  "comment, added FROM userbans ORDER BY id ASC"));
+	while(ok && q.next()) {
+		result.append(userBanResultToJson(q));
+	}
+	return result;
+}
+
+QJsonObject Database::addIpBan(const QHostAddress &ip, int subnet, const QDateTime &expiration, const QString &comment)
 {
 	QSqlQuery q(d->db);
 	q.prepare("SELECT rowid, ip, subnet, expires, comment, added FROM ipbans WHERE ip=? AND subnet=?");
@@ -249,11 +387,10 @@ QJsonObject Database::addBan(const QHostAddress &ip, int subnet, const QDateTime
 	q.exec();
 	if(q.next()) {
 		// Matching entry already in database
-		return banResultToJson(q);
+		return ipBanResultToJson(q);
 	} else {
-		const QString datefmt = "yyyy-MM-dd HH:mm:ss";
-		QString datestr = expiration.toString(datefmt);
-		QString now = QDateTime::currentDateTime().toString(datefmt);
+		QString datestr = formatDateTime(expiration);
+		QString now = formatDateTime(QDateTime::currentDateTime());
 
 		q.prepare("INSERT INTO ipbans (ip, subnet, expires, comment, added) VALUES (?, ?, ?, ?, ?)");
 		q.bindValue(0, ip.toString());
@@ -274,13 +411,129 @@ QJsonObject Database::addBan(const QHostAddress &ip, int subnet, const QDateTime
 	}
 }
 
-bool Database::deleteBan(int entryId)
+QJsonObject Database::addSystemBan(
+	const QString &sid, const QDateTime &expires, BanReaction reaction,
+	const QString &reason, const QString &comment)
+{
+	QSqlQuery q(d->db);
+	QString expiresString = formatDateTime(expires);
+	QString addedString = formatDateTime(QDateTime::currentDateTime());
+	QString reactionString = reactionToString(reaction);
+
+	bool ok = utils::db::exec(
+		q,
+		QStringLiteral("INSERT INTO systembans (sid, expires, reaction, "
+					   "reason, comment, added) VALUES (?, ?, ?, ?, ?, ?)"),
+		{sid, expiresString, reactionString, reason, comment, addedString});
+
+	if(ok) {
+		return {
+			{QStringLiteral("id"), q.lastInsertId().toInt()},
+			{QStringLiteral("sid"), sid},
+			{QStringLiteral("expires"), expiresString},
+			{QStringLiteral("reaction"), reactionString},
+			{QStringLiteral("reason"), reason},
+			{QStringLiteral("comment"), comment},
+			{QStringLiteral("added"), addedString},
+		};
+	} else {
+		return {};
+	}
+}
+
+QJsonObject Database::addUserBan(
+	long long userId, const QDateTime &expires, BanReaction reaction,
+	const QString &reason, const QString &comment)
+{
+	QSqlQuery q(d->db);
+	QString expiresString = formatDateTime(expires);
+	QString addedString = formatDateTime(QDateTime::currentDateTime());
+	QString reactionString = reactionToString(reaction);
+
+	bool ok = utils::db::exec(
+		q,
+		QStringLiteral("INSERT INTO userbans (userid, expires, reaction, "
+					   "reason, comment, added) VALUES (?, ?, ?, ?, ?, ?)"),
+		{userId, expiresString, reactionString, reason, comment, addedString});
+
+	if(ok) {
+		return {
+			{QStringLiteral("id"), q.lastInsertId().toInt()},
+			{QStringLiteral("userId"), userId},
+			{QStringLiteral("expires"), expiresString},
+			{QStringLiteral("reaction"), reactionString},
+			{QStringLiteral("reason"), reason},
+			{QStringLiteral("comment"), comment},
+			{QStringLiteral("added"), addedString},
+		};
+	} else {
+		return {};
+	}
+}
+
+bool Database::deleteIpBan(int entryId)
 {
 	QSqlQuery q(d->db);
 	q.prepare("DELETE FROM ipbans WHERE rowid=?");
 	q.bindValue(0, entryId);
 	q.exec();
 	return q.numRowsAffected()>0;
+}
+
+bool Database::deleteSystemBan(int entryId)
+{
+	QSqlQuery q(d->db);
+	return utils::db::exec(
+			   q, QStringLiteral("DELETE FROM systembans WHERE id = ?"),
+			   {entryId}) &&
+		   q.numRowsAffected() > 0;
+}
+
+bool Database::deleteUserBan(int entryId)
+{
+	QSqlQuery q(d->db);
+	return utils::db::exec(
+			   q, QStringLiteral("DELETE FROM userbans WHERE id = ?"),
+			   {entryId}) &&
+		   q.numRowsAffected() > 0;
+}
+
+QJsonObject Database::ipBanResultToJson(const QSqlQuery &q)
+{
+	QJsonObject b;
+	b["id"] = q.value(0).toInt();
+	b["ip"] = q.value(1).toString();
+	b["subnet"] = q.value(2).toInt();
+	b["expires"] = q.value(3).toString();
+	b["comment"] = q.value(4).toString();
+	b["added"] = q.value(5).toString();
+	return b;
+}
+
+QJsonObject Database::systemBanResultToJson(const QSqlQuery &q)
+{
+	QJsonObject b;
+	b["id"] = q.value(0).toInt();
+	b["sid"] = q.value(1).toString();
+	b["expires"] = q.value(2).toString();
+	b["reaction"] = q.value(3).toString();
+	b["reason"] = q.value(4).toString();
+	b["comment"] = q.value(5).toString();
+	b["added"] = q.value(6).toString();
+	return b;
+}
+
+QJsonObject Database::userBanResultToJson(const QSqlQuery &q)
+{
+	QJsonObject b;
+	b["id"] = q.value(0).toInt();
+	b["userId"] = double(q.value(1).toLongLong());
+	b["expires"] = q.value(2).toString();
+	b["reaction"] = q.value(3).toString();
+	b["reason"] = q.value(4).toString();
+	b["comment"] = q.value(5).toString();
+	b["added"] = q.value(6).toString();
+	return b;
 }
 
 ServerLog *Database::logger() const
