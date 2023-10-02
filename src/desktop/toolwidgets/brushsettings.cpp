@@ -241,9 +241,15 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	connect(d->finishStrokesAction, &QAction::triggered, this, &BrushSettings::updateFromUi);
 	connect(d->useBrushSampleCountAction, &QAction::triggered, this, &BrushSettings::updateFromUi);
 
-	connect(d->ui.noPermissionLabel, &QLabel::linkActivated, this, [this] {
+	connect(d->ui.noPermissionLabel, &QLabel::linkActivated, this, [this](const QString &link) {
 		QSignalBlocker blocker{d->ui.modeIncremental};
-		d->ui.modeIncremental->setChecked(true);
+		if(link == QStringLiteral("#inc")) {
+			d->ui.modeIncremental->setChecked(true);
+		} else if(link == QStringLiteral("#opa")) {
+			d->ui.pressureOpacity->setChecked(false);
+		} else {
+			qWarning("Unknown link '%s' clicked", qUtf8Printable(link));
+		}
 		updateFromUi();
 	});
 
@@ -270,8 +276,11 @@ BrushSettings::Lock BrushSettings::getLock()
 	if(d->compatibilityMode) {
 		if(d->currentIsMyPaint()) {
 			return Lock::MyPaintCompat;
-		} else if(!d->currentBrush().classic().incremental) {
-			return Lock::IndirectCompat;
+		} else {
+			const brushes::ClassicBrush &classic = d->currentBrush().classic();
+			if(!classic.incremental && classic.opacity_pressure) {
+				return Lock::IndirectCompat;
+			}
 		}
 	} else if(!d->myPaintAllowed) {
 		return Lock::MyPaintPermission;
@@ -288,9 +297,11 @@ QString BrushSettings::getLockDescription(Lock lock)
 		return tr("This session is hosted with Drawpile 2.1, MyPaint brushes "
 				  "are unavailable.");
 	case Lock::IndirectCompat:
-		return tr("This session is hosted with Drawpile 2.1, Indirect/Wash "
-				  "Mode is unavailable. <a href=\"#\">Click here to switch to "
-				  "Direct/Build-Up Mode.</a>");
+		return tr(
+			"This session is hosted with Drawpile 2.1, Indirect/Wash Mode with "
+			"opacity dynamics is unavailable. <a href=\"#inc\">Click here to "
+			"switch to Direct/Build-Up Mode</a> or <a href=\"#opa\">here to "
+			"disable opacity dynamics</a>.");
 	default:
 		return QString{};
 	}
@@ -779,7 +790,8 @@ void BrushSettings::adjustSettingVisibilities(bool softmode, bool mypaintmode)
 		{d->ui.pressureSize, !locked && !mypaintmode},
 		{d->ui.radiusLogarithmicBox, !locked && mypaintmode},
 		{d->ui.opacityBox, !locked},
-		{d->ui.pressureOpacity, !locked && !mypaintmode},
+		{d->ui.pressureOpacity,
+			!mypaintmode && (!locked || lock == Lock::IndirectCompat)},
 		{d->ui.smudgingBox, !locked && !mypaintmode},
 		{d->ui.pressureSmudging, !locked && !mypaintmode},
 		{d->ui.colorpickupBox, !locked && !mypaintmode},
