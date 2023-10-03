@@ -1,6 +1,7 @@
 Unreleased Version 2.2.0-pre
  * Fix: Make Android build work again. Thanks Tetriser for reporting.
  * Fix: Allow indirect mode in 2.1 sessions when opacity dynamics are disabled. Thanks to Blozzom for reporting.
+ * Fix: Make LCH color wheel circle not look so bright and discontinuous.
 
 2023-09-30 Version 2.2.0-beta.8
  * Fix: Apply color wheel direction to color dialogs too. Thanks Blozzom for reporting.

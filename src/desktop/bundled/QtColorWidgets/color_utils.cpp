@@ -43,7 +43,7 @@ QColor color_widgets::utils::color_from_lch(qt_color_type hue, qt_color_type chr
         col = QColor::fromRgbF(0,x,chroma);
     else if ( h1 < 5 )
         col = QColor::fromRgbF(x,0,chroma);
-    else if ( h1 < 6 )
+    else if ( h1 <= 6 )
         col = QColor::fromRgbF(chroma,0,x);
 
     qreal m = luma - color_lumaF(col);

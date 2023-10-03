@@ -50,7 +50,7 @@ QCP_EXPORT QColor color_from_lch(qt_color_type hue, qt_color_type chroma, qt_col
 
 QCP_EXPORT inline QColor rainbow_lch(qreal hue)
 {
-    return color_from_lch(hue,1,1);
+    return color_from_lch(hue,1,0.5);
 }
 
 QCP_EXPORT inline QColor rainbow_hsv(qreal hue)
