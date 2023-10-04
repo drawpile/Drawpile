@@ -775,7 +775,7 @@ para 64x64 pixels.</translation>
     <message>
         <location line="+29"/>
         <source>Export</source>
-        <translation type="unfinished">Exportar</translation>
+        <translation>Exportar</translation>
     </message>
 </context>
 <context>
@@ -1738,22 +1738,22 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location line="+50"/>
         <source>Hosting on this computer is not available</source>
-        <translation type="unfinished"></translation>
+        <translation>Não é possível hospedar neste computador</translation>
     </message>
     <message>
         <location line="+55"/>
         <source>Really leave and terminate the session?</source>
-        <translation type="unfinished"></translation>
+        <translation>Deseja mesmo sair e terminar a sessão?</translation>
     </message>
     <message>
         <location line="+238"/>
         <source>You&apos;ve been disconnected from the session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Você foi desconectado da Sessão.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Disconnected: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Desconectado: %1</translation>
     </message>
     <message>
         <location line="+126"/>
