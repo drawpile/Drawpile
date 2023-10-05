@@ -83,7 +83,7 @@ CanvasView::CanvasView(QWidget *parent)
 	settings.bindCanvasViewBackgroundColor(this, [this](QColor color) {
 		color.setAlpha(255);
 		setBackgroundBrush(color);
-		invalidateScene(QRectF{}, QGraphicsScene::BackgroundLayer);
+		update();
 	});
 
 	m_notificationBar = new NotificationBar(this);
@@ -278,7 +278,7 @@ void CanvasView::setCanvas(drawingboard::CanvasScene *scene)
 			} else {
 				scrollBy(xoff * m_zoom, yoff * m_zoom);
 			}
-			invalidateScene();
+			update();
 			viewRectChanged();
 		});
 	connect(
