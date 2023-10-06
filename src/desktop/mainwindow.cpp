@@ -740,6 +740,9 @@ void MainWindow::loadShortcuts(const QVariantMap &cfg)
 	for(dialogs::Flipbook *fp : findChildren<dialogs::Flipbook *>(QString{}, Qt::FindDirectChildrenOnly)) {
 		fp->setRefreshShortcuts(getAction("showflipbook")->shortcuts());
 	}
+
+	updateFreehandToolButton(
+		int(m_dockToolSettings->brushSettings()->getBrushMode()));
 }
 
 void MainWindow::toggleLayerViewMode()
@@ -2579,20 +2582,30 @@ void MainWindow::toolChanged(tools::Tool::Type tool)
 void MainWindow::updateFreehandToolButton(int brushMode)
 {
 	QString iconName;
+	QString toolTip;
+	QString statusTip;
 	switch(brushMode) {
 	case tools::BrushSettings::EraseMode:
 		iconName = QStringLiteral("drawpile_brusherase");
+		toolTip = tr("Freehand (erase mode, click to reset)");
+		statusTip = tr("Freehand brush tool (erase mode)");
 		break;
 	case tools::BrushSettings::AlphaLockMode:
 		iconName = QStringLiteral("drawpile_brushlock");
+		toolTip = tr("Freehand (alpha lock mode, click to reset)");
+		statusTip = tr("Freehand brush tool (alpha lock mode)");
 		break;
 	case tools::BrushSettings::NormalMode:
 		iconName = QStringLiteral("draw-brush");
+		toolTip = m_freehandAction->toolTip();
+		statusTip = m_freehandAction->statusTip();
 		break;
 	default:
 		return; // Eraser slot active, don't mess with the icon.
 	}
 	m_freehandButton->setIcon(QIcon::fromTheme(iconName));
+	m_freehandButton->setToolTip(toolTip);
+	m_freehandButton->setStatusTip(statusTip);
 }
 
 void MainWindow::handleFreehandToolButtonClicked()
@@ -3935,9 +3948,7 @@ void MainWindow::setupActions()
 	m_freehandButton = new QToolButton(this);
 	m_freehandButton->setCheckable(true);
 	m_freehandButton->setChecked(m_freehandAction->isChecked());
-	m_freehandButton->setIcon(m_freehandAction->icon());
-	m_freehandButton->setToolTip(m_freehandAction->toolTip());
-	m_freehandButton->setStatusTip(m_freehandAction->statusTip());
+	updateFreehandToolButton(tools::BrushSettings::NormalMode);
 	updateFreehandToolButton(
 		int(m_dockToolSettings->brushSettings()->getBrushMode()));
 	connect(
