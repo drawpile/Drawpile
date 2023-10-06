@@ -151,12 +151,12 @@
     <message>
         <location line="+13"/>
         <source>Opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>العتامة: </translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Hardness: </source>
-        <translation type="unfinished"></translation>
+        <translation>الحدة: </translation>
     </message>
     <message>
         <location line="+13"/>
@@ -164,37 +164,37 @@
         <location line="+14"/>
         <location line="+33"/>
         <source>Pressure sensitivity</source>
-        <translation type="unfinished"></translation>
+        <translation>حساسية الضغط</translation>
     </message>
     <message>
         <location line="-16"/>
         <source>Smudging: </source>
-        <translation type="unfinished"></translation>
+        <translation>التلطيخ: </translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Color Pickup: 1/</source>
-        <translation type="unfinished"></translation>
+        <translation>لاقط اللون: 1/</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Spacing: </source>
-        <translation type="unfinished"></translation>
+        <translation>التباعد: </translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Gain: </source>
-        <translation type="unfinished"></translation>
+        <translation>الاكتساب: </translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Stabilizer: </source>
-        <translation type="unfinished"></translation>
+        <translation>استقرار الخط: </translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Smoothing: </source>
-        <translation type="unfinished"></translation>
+        <translation>تنعيم الخط: </translation>
     </message>
 </context>
 <context>
@@ -202,7 +202,7 @@
     <message>
         <location filename="../ui/brushpresetproperties.ui" line="+17"/>
         <source>Brush Preset Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>خصائص الفرش مسبقة الإعداد</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -212,23 +212,24 @@
     <message>
         <location line="+10"/>
         <source>Description:</source>
-        <translation type="unfinished"></translation>
+        <translation>الوصف:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Thumbnail:</source>
-        <translation type="unfinished"></translation>
+        <translation>الصورة المصغرة:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Choose File...</source>
-        <translation type="unfinished"></translation>
+        <translation>اختيار ملف...</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Will be resized
 to 64x64 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation>سيتم تغيير حجمها
+إلى 64 × 64 بكسل.</translation>
     </message>
 </context>
 <context>
