@@ -324,23 +324,23 @@
     <message>
         <location filename="../export/ffmpegexporter.cpp" line="+133"/>
         <source>You can downlod a Windows version of ffmpeg from &lt;a href=&quot;https://ffmpeg.org/download.html&quot;&gt;ffmpeg.org&lt;/a&gt;. Choose ffmpeg.exe for the path to ffmpeg in Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>يمكنك تحميل إصدار Windows لـffmpeg من &lt;a href=&quot;https://ffmpeg.org/download.html&quot;&gt;ffmpeg.org&lt;/a&gt;. اختر مسار البرنامج ffmpeg.exe عند تحديد ffmpeg في Drawpile.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>You can install ffmpeg through Homebrew.</source>
-        <translation type="unfinished"></translation>
+        <translation>يمكنك تثبيت ffmpeg من خلال Homebrew.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>You can probably install ffmpeg through your package manager.</source>
-        <translation type="unfinished"></translation>
+        <translation>ربما يمكنك تثبيت ffmpeg من خلال مدير الحزم لديك.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Failed to start ffmpeg using &apos;%1&apos;. %2</source>
         <extracomment>%1 is the path to ffmpeg, %2 is the note on what to do to acquire ffmpeg, e.g. download it on Windows or install the package on Linux.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>فشل بدء تشغيل ffmpeg باستخدام &apos;%1&apos;. %2</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -979,72 +979,72 @@
     <message>
         <location line="+268"/>
         <source>%1 banned by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>تم حظر %1 بواسطة %2.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 kicked by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>تم طرد %1 بواسطة %2.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>%1 made operator by the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>تم جعل %1 المشغل بواسطة الخادم.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 made operator by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>تم جعل %1 المشغل بواسطة %2.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Operator status revoked from %1 by the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>تم إبطال حالة المشغل من %1 بواسطة الخادم.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Operator status revoked form %1 by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>تم إبطال حالة المشغل من %1 بواسطة %2.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session reset cancelled! An operator must unlock the canvas and reset the session manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>تم إلغاء إعادة تعيين الجلسة! يجب على المشغل فتح قفل اللوحة وإعادة تعيين الجلسة يدويًا.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Session reset failed! An operator must unlock the canvas and reset the session manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>فشلت إعادة تعيين الجلسة! يجب على المشغل فتح قفل اللوحة وإعادة تعيين الجلسة يدويًا.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Preparing for session reset! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>يتم التحضير لإعادة تعيين الجلسة! الرجاء الانتظار، من المفترض أن تكون الجلسة متاحة مرة أخرى قريبًا…</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Session terminated by moderator (%1).</source>
-        <translation type="unfinished"></translation>
+        <translation>تم إنهاء الجلسة بواسطة المدير (%1).</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>%1 trusted by the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 موثوق به من قبل الخادم.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 trusted by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 موثوق به من قبل %2.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>%1 untrusted by the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 غير موثوق به من قبل الخادم.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 untrusted by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 غير موثوق به من قبل %2.</translation>
     </message>
 </context>
 <context>
@@ -1094,7 +1094,7 @@
     <message>
         <location line="+19"/>
         <source>Group membership needed</source>
-        <translation>مطلوب عضوية المجموعة</translation>
+        <translation>مطلوب عضوية للمجموعة</translation>
     </message>
     <message>
         <location line="+3"/>
