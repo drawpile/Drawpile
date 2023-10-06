@@ -3937,6 +3937,7 @@ void MainWindow::setupActions()
 	m_freehandButton->setChecked(m_freehandAction->isChecked());
 	m_freehandButton->setIcon(m_freehandAction->icon());
 	m_freehandButton->setToolTip(m_freehandAction->toolTip());
+	m_freehandButton->setStatusTip(m_freehandAction->statusTip());
 	updateFreehandToolButton(
 		int(m_dockToolSettings->brushSettings()->getBrushMode()));
 	connect(
