@@ -24,6 +24,7 @@ public:
 	explicit ResizeDialog(const QSize &oldsize, QWidget *parent=nullptr);
 	~ResizeDialog() override;
 
+	void setBackgroundColor(const QColor &bgColor);
 	void setPreviewImage(const QImage &image);
 	void setBounds(const QRect &rect);
 

@@ -22,6 +22,7 @@ class QDESIGNER_WIDGET_EXPORT ResizerWidget final : public QWidget
 public:
 	explicit ResizerWidget(QWidget *parent=nullptr);
 
+	void setBackgroundColor(const QColor &bgColor);
 	void setImage(const QImage &image);
 	void setTargetSize(const QSize &size);
 	void setOriginalSize(const QSize &size);

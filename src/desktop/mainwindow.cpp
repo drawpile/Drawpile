@@ -2770,7 +2770,9 @@ void MainWindow::resizeCanvas()
 
 	const QSize size = m_doc->canvas()->size();
 	dialogs::ResizeDialog *dlg = new dialogs::ResizeDialog(size, this);
-	dlg->setPreviewImage(m_doc->canvas()->paintEngine()->renderPixmap().scaled(
+	canvas::PaintEngine *paintEngine = m_doc->canvas()->paintEngine();
+	dlg->setBackgroundColor(paintEngine->backgroundColor());
+	dlg->setPreviewImage(paintEngine->renderPixmap().scaled(
 		300, 300, Qt::KeepAspectRatio));
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 

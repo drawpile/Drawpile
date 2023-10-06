@@ -40,6 +40,11 @@ ResizeDialog::~ResizeDialog()
 	delete m_ui;
 }
 
+void ResizeDialog::setBackgroundColor(const QColor &bgColor)
+{
+	m_ui->resizer->setBackgroundColor(bgColor);
+}
+
 void ResizeDialog::setPreviewImage(const QImage &image)
 {
 	m_ui->resizer->setImage(image);

@@ -4,7 +4,6 @@
 
 #include <QPainter>
 #include <QMouseEvent>
-#include <QHash>
 
 namespace widgets {
 
@@ -17,34 +16,16 @@ ResizerWidget::ResizerWidget(QWidget *parent)
 	center();
 }
 
+void ResizerWidget::setBackgroundColor(const QColor &bgColor)
+{
+	if(bgColor != m_bgColor) {
+		m_bgColor = bgColor;
+		update();
+	}
+}
+
 void ResizerWidget::setImage(const QImage &image)
 {
-	// Sample colors at the edges of the image to determine background color
-	const int STEP = 32;
-	QHash<QRgb, int> colors;
-	for(int x=0;x<image.width();x+=STEP) {
-		++colors[image.pixel(x, 0)];
-		++colors[image.pixel(x, image.height()-1)];
-	}
-	for(int y=STEP;y<image.height()-STEP;y+=STEP) {
-		++colors[image.pixel(0, y)];
-		++colors[image.pixel(image.width()-1, y)];
-	}
-
-	// Determine the most frequent color
-	QHashIterator<QRgb, int> i(colors);
-	QRgb color=0xffffffff;
-	int freq=0;
-	while(i.hasNext()) {
-		i.next();
-		if(i.value() > freq) {
-			freq = i.value();
-			color = i.key();
-		}
-	}
-
-	m_bgColor = QColor::fromRgb(color);
-
 	m_originalPixmap = QPixmap::fromImage(image);
 	update();
 }
