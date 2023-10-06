@@ -3312,10 +3312,10 @@ void MainWindow::setupActions()
 #endif
 	QAction *undo = makeAction("undo", tr("&Undo")).icon("edit-undo").shortcut(undoShortcut).autoRepeat();
 	QAction *redo = makeAction("redo", tr("&Redo")).icon("edit-redo").shortcut(redoShortcut).autoRepeat();
-	QAction *copy = makeAction("copyvisible", tr("&Copy Visible")).icon("edit-copy").statusTip(tr("Copy selected area to the clipboard")).shortcut("Shift+Ctrl+C");
-	QAction *copyMerged = makeAction("copymerged", tr("Copy Merged")).icon("edit-copy").statusTip(tr("Copy selected area, excluding the background, to the clipboard")).shortcut("Ctrl+Alt+C");
-	QAction *copylayer = makeAction("copylayer", tr("Copy &Layer")).icon("edit-copy").statusTip(tr("Copy selected area of the current layer to the clipboard")).shortcut(QKeySequence::Copy);
-	QAction *cutlayer = makeAction("cutlayer", tr("Cu&t Layer")).icon("edit-cut").statusTip(tr("Cut selected area of the current layer to the clipboard")).shortcut(QKeySequence::Cut);
+	QAction *copy = makeAction("copyvisible", tr("&Copy Merged")).icon("edit-copy").statusTip(tr("Copy selected area to the clipboard")).shortcut("Shift+Ctrl+C");
+	QAction *copyMerged = makeAction("copymerged", tr("Copy Without Background")).icon("edit-copy").statusTip(tr("Copy selected area, excluding the background, to the clipboard")).shortcut("Ctrl+Alt+C");
+	QAction *copylayer = makeAction("copylayer", tr("Copy From &Layer")).icon("edit-copy").statusTip(tr("Copy selected area of the current layer to the clipboard")).shortcut(QKeySequence::Copy);
+	QAction *cutlayer = makeAction("cutlayer", tr("Cu&t From Layer")).icon("edit-cut").statusTip(tr("Cut selected area of the current layer to the clipboard")).shortcut(QKeySequence::Cut);
 	QAction *paste = makeAction("paste", tr("&Paste")).icon("edit-paste").shortcut(QKeySequence::Paste);
 	QAction *pasteCentered = makeAction("paste-centered", tr("Paste in View Center")).icon("edit-paste").shortcut("Ctrl+Shift+V");
 	QAction *stamp = makeAction("stamp", tr("&Stamp")).shortcut("Ctrl+T");
