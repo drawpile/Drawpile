@@ -3666,7 +3666,7 @@ void MainWindow::setupActions()
 	QAction *groupAdd = makeAction("groupadd", tr("New Group")).icon("folder-new").noDefaultShortcut();
 	QAction *layerDupe = makeAction("layerdupe", tr("Duplicate Layer")).icon("edit-copy").noDefaultShortcut();
 	QAction *layerMerge = makeAction("layermerge", tr("Merge Layer")).icon("arrow-down-double").noDefaultShortcut();
-	QAction *layerProperties = makeAction("layerproperties", tr("Properties...")).icon("configure").noDefaultShortcut();
+	QAction *layerProperties = makeAction("layerproperties", tr("Layer Properties…")).icon("configure").noDefaultShortcut();
 	QAction *layerDelete = makeAction("layerdelete", tr("Delete Layer")).icon("trash-empty").noDefaultShortcut();
 	QAction *layerSetFillSource = makeAction("layersetfillsource", tr("Set as Fill Source")).icon("fill-color").noDefaultShortcut();
 
