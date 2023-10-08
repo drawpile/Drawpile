@@ -375,14 +375,15 @@ bool DP_test_vok(DP_TestContext *T, const char *file, int line, bool value,
     if (value) {
         ++T->passed;
     }
-    fprintf(T->out, "%s %lld - ", value ? "ok" : "not ok", n);
-    vfprintf(T->out, fmt, ap);
-    fputc('\n', T->out);
+    char *desc = DP_vformat(fmt, ap);
+    fprintf(T->out, "%s %lld - %s\n", value ? "ok" : "not ok", n, desc);
     fflush(T->out);
     if (!value) {
         DP_test_diag(T, "Failure in test '%s' (%s, line %d)", T->test->name,
                      &file[DP_PROJECT_DIR_LENGTH], line);
+        DP_test_diag(T, "%lld - «%s»", n, desc);
     }
+    DP_free(desc);
     return value;
 }
 
