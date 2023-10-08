@@ -150,6 +150,7 @@ if(TESTS)
         test/handle_metadata.c
         test/handle_timeline.c
         test/image_thumbnail.c
+        test/pixel_conversion.c
         test/resize_image.c
     )
 endif()

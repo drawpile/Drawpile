@@ -69,7 +69,12 @@ typedef int_fast32_t IFix15;
 #define FIX_12        ((Fix15)12)
 #define FIX_15        ((Fix15)15)
 #define FIX_16        ((Fix15)16)
+#define FIX_255       ((Fix15)255)
 #define BIT15_INC_FIX ((Fix15)(DP_BIT15 + 1))
+
+// Fudge factor of 64 * 255 + 64 added to 15 bit channels when converting them
+// to 8 bit channels to round instead of flooring them.
+#define FUDGE15_TO_8 16384
 
 typedef struct BGR15 {
     Fix15 b, g, r;
@@ -316,12 +321,12 @@ uint16_t DP_fix15_mul(uint16_t a, uint16_t b)
 
 uint16_t DP_channel8_to_15(uint8_t c)
 {
-    return DP_float_to_uint16(DP_uint8_to_float(c) / 255.0f * BIT15_FLOAT);
+    return (uint16_t)(((Fix15)c << FIX_15) / FIX_255);
 }
 
 uint8_t DP_channel15_to_8(uint16_t c)
 {
-    return DP_float_to_uint8(c / BIT15_FLOAT * 255.0f + 0.5f);
+    return (uint8_t)(((Fix15)c * FIX_255 + (Fix15)FUDGE15_TO_8) >> FIX_15);
 }
 
 float DP_channel8_to_float(uint8_t c)
@@ -477,12 +482,17 @@ static void pixels15_to_8_sse42(DP_Pixel8 *dst, const DP_Pixel15 *src)
         __m128i p3 = _mm_cvtepu16_epi32(source2);
         __m128i p4 = _mm_cvtepu16_epi32(_mm_srli_si128(source2, 8));
 
-        // Convert 15bit pixels to 8bit pixels. (p * 255) >> 15
+        // Convert 15bit pixels to 8bit pixels. (p * 255 + 16384) >> 15
         __m128i _255 = _mm_set1_epi32(255);
-        p1 = _mm_srli_epi32(_mm_mullo_epi32(p1, _255), 15);
-        p2 = _mm_srli_epi32(_mm_mullo_epi32(p2, _255), 15);
-        p3 = _mm_srli_epi32(_mm_mullo_epi32(p3, _255), 15);
-        p4 = _mm_srli_epi32(_mm_mullo_epi32(p4, _255), 15);
+        __m128i fudge = _mm_set1_epi32(FUDGE15_TO_8);
+        p1 =
+            _mm_srli_epi32(_mm_add_epi32(_mm_mullo_epi32(p1, _255), fudge), 15);
+        p2 =
+            _mm_srli_epi32(_mm_add_epi32(_mm_mullo_epi32(p2, _255), fudge), 15);
+        p3 =
+            _mm_srli_epi32(_mm_add_epi32(_mm_mullo_epi32(p3, _255), fudge), 15);
+        p4 =
+            _mm_srli_epi32(_mm_add_epi32(_mm_mullo_epi32(p4, _255), fudge), 15);
 
         // Shift every first byte of every 32bit spot to an empty spot.
         p2 = _mm_slli_si128(p2, 1);
@@ -518,12 +528,17 @@ static void pixels15_to_8_avx2(DP_Pixel8 *dst, const DP_Pixel15 *src)
         __m256i p4 = _mm256_srli_epi32(
             _mm256_and_si256(source2, _mm256_set1_epi32((int)0xffff0000)), 16);
 
-        // Convert 15bit pixels to 8bit pixels. (p * 255) >> 15
+        // Convert 15bit pixels to 8bit pixels. (p * 255 + 16384) >> 15
         __m256i _255 = _mm256_set1_epi32(255);
-        p1 = _mm256_srli_epi32(_mm256_mullo_epi32(p1, _255), 15);
-        p2 = _mm256_srli_epi32(_mm256_mullo_epi32(p2, _255), 15);
-        p3 = _mm256_srli_epi32(_mm256_mullo_epi32(p3, _255), 15);
-        p4 = _mm256_srli_epi32(_mm256_mullo_epi32(p4, _255), 15);
+        __m256i fudge = _mm256_set1_epi32(FUDGE15_TO_8);
+        p1 = _mm256_srli_epi32(
+            _mm256_add_epi32(_mm256_mullo_epi32(p1, _255), fudge), 15);
+        p2 = _mm256_srli_epi32(
+            _mm256_add_epi32(_mm256_mullo_epi32(p2, _255), fudge), 15);
+        p3 = _mm256_srli_epi32(
+            _mm256_add_epi32(_mm256_mullo_epi32(p3, _255), fudge), 15);
+        p4 = _mm256_srli_epi32(
+            _mm256_add_epi32(_mm256_mullo_epi32(p4, _255), fudge), 15);
 
         // Shuffle the first of every 32bit spot to form an 4x8bit RGBA.
         // Every register shuffles to a empty spot so they can be ORed together.
