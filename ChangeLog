@@ -6,6 +6,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Use proper background color in resize dialog. Thanks xxxx for reporting.
  * Fix: Correct a rounding error when converting pixels for display. This corrects both the visuals and the color picker when picking from the merged image. Thanks deovise and hipofiz for reporting.
  * Fix: Don't crash when a new user joins when using the builtin server and a local fork is present. Thanks to Kink for reporting.
+ * Feature: Interpolate inputs that are far away from each other to compensate against fast strokes producing jagged curves. Can be disabled in the input preferences.
 
 2023-09-30 Version 2.2.0-beta.8
  * Fix: Apply color wheel direction to color dialogs too. Thanks Blozzom for reporting.

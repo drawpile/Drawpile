@@ -58,6 +58,8 @@ Document::Document(libclient::settings::Settings &settings, QObject *parent)
 	m_toolctrl = new tools::ToolController(m_client, this);
 	m_settings.bindSmoothing(
 		m_toolctrl, &tools::ToolController::setGlobalSmoothing);
+	m_settings.bindInterpolateInputs(
+		m_toolctrl, &tools::ToolController::setInterpolateInputs);
 	m_banlist = new net::BanlistModel(this);
 	m_announcementlist =
 		new net::AnnouncementListModel(settings.listServers(), this);

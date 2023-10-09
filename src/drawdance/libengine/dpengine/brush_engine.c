@@ -1,30 +1,4 @@
-/*
- * Copyright (C) 2022-2023 askmeaboutloom
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * --------------------------------------------------------------------
- *
- * This code is based on Drawpile, using it under the GNU General Public
- * License, version 3. See 3rdparty/licenses/drawpile/COPYING for details.
- *
- * --------------------------------------------------------------------
- *
- * The stabilizer implementation is based on Krita, using it under the GNU
- * General Public License, version 3. See 3rdparty/licenses/krita/COPYING.txt
- * for details.
- */
+// SPDX-License-Identifier: GPL-3.0-or-later
 #include "brush_engine.h"
 #include "brush.h"
 #include "canvas_state.h"
@@ -46,6 +20,14 @@
 
 #define DP_PERF_CONTEXT "brush_engine"
 
+
+#define SPLINE_DISTANCE    8.0f
+#define SPLINE_DRAIN_DELAY 100LL
+#define SPLINE_POINT_NULL                                    \
+    (DP_SplinePoint)                                         \
+    {                                                        \
+        {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0}, 0.0f, false \
+    }
 
 #define STABILIZER_MIN_QUEUE_SIZE 3
 #define STABILIZER_SAMPLE_TIME    1
@@ -86,6 +68,12 @@ typedef struct DP_BrushEngineMyPaintDab {
     uint8_t aspect_ratio;
 } DP_BrushEngineMyPaintDab;
 
+typedef struct DP_SplinePoint {
+    DP_BrushPoint p;
+    float length;
+    bool drawn;
+} DP_SplinePoint;
+
 struct DP_BrushEngine {
     int layer_id;
     DP_LayerContent *lc;
@@ -101,6 +89,12 @@ struct DP_BrushEngine {
         bool in_progress;
         long long last_time_msec;
     } stroke;
+    struct {
+        bool enabled;
+        int fill;
+        int offset;
+        DP_SplinePoint points[4];
+    } spline;
     struct {
         int sample_count;
         bool finish_strokes;
@@ -153,6 +147,19 @@ struct DP_BrushEngine {
     void *user;
 };
 
+
+static void set_poll_control_enabled(DP_BrushEngine *be, bool enabled)
+{
+    DP_BrushEnginePollControlFn poll_control = be->poll_control;
+    if (poll_control) {
+        poll_control(be->user, enabled);
+    }
+}
+
+
+// SPDX-SnippetBegin
+// SPDX-License-Identifier: GPL-3.0-or-later
+// SDPX—SnippetName: stabilizer implementation from Krita
 
 static void stabilizer_queue_push(DP_BrushEngine *be, DP_BrushPoint bp)
 {
@@ -215,8 +222,6 @@ static void stabilizer_init(DP_BrushEngine *be, DP_BrushPoint bp)
 
     stabilizer_points_clear(be, bp.time_msec);
     stabilizer_points_push(be, bp);
-
-    be->poll_control(be->user, true);
 }
 
 static void stabilizer_stroke_to(DP_BrushEngine *be, DP_BrushPoint bp)
@@ -261,7 +266,6 @@ static DP_BrushPoint stabilizer_stabilize(DP_BrushEngine *be, DP_BrushPoint bp)
 static void stabilizer_finish(DP_BrushEngine *be, long long time_msec,
                               DP_CanvasState *cs_or_null)
 {
-    be->poll_control(be->user, false);
     if (be->stabilizer.finish_strokes) {
         // Flush existing events.
         DP_brush_engine_poll(be, time_msec, cs_or_null);
@@ -274,6 +278,8 @@ static void stabilizer_finish(DP_BrushEngine *be, long long time_msec,
     }
     be->stabilizer.active = false;
 }
+
+// SPDX-SnippetEnd
 
 
 static bool delta_xy(DP_BrushEngine *be, int32_t dab_x, int32_t dab_y,
@@ -642,6 +648,11 @@ DP_brush_engine_new(DP_BrushEnginePushMessageFn push_message,
          get_color_mypaint_pigment,
          NULL},
         {0, 1.0f, false, 0},
+        {false,
+         0,
+         0,
+         {SPLINE_POINT_NULL, SPLINE_POINT_NULL, SPLINE_POINT_NULL,
+          SPLINE_POINT_NULL}},
         {0,
          true,
          false,
@@ -715,6 +726,7 @@ void DP_brush_engine_classic_brush_set(DP_BrushEngine *be,
     }
     be->classic.brush_color = color;
 
+    be->spline.enabled = stroke->interpolate;
     be->stabilizer.sample_count = stroke->stabilizer_sample_count;
     be->stabilizer.finish_strokes = stroke->stabilizer_finish_strokes;
 }
@@ -809,6 +821,7 @@ void DP_brush_engine_mypaint_brush_set(DP_BrushEngine *be,
         disable_mypaint_dynamics(mb, MYPAINT_BRUSH_SETTING_CHANGE_COLOR_HSV_S);
     }
 
+    be->spline.enabled = stroke->interpolate;
     be->stabilizer.sample_count = stroke->stabilizer_sample_count;
     be->stabilizer.finish_strokes = stroke->stabilizer_finish_strokes;
 }
@@ -922,6 +935,9 @@ void DP_brush_engine_stroke_begin(DP_BrushEngine *be, unsigned int context_id,
     if (push_undo_point) {
         be->push_message(be->user, DP_msg_undo_point_new(context_id));
     }
+    be->spline.fill = 0;
+    be->spline.offset = 0;
+    set_poll_control_enabled(be, true);
 
     DP_PERF_END(fn);
 }
@@ -1206,11 +1222,10 @@ static void stroke_to(DP_BrushEngine *be, DP_BrushPoint bp,
     DP_PERF_END(fn);
 }
 
-void DP_brush_engine_stroke_to(DP_BrushEngine *be, DP_BrushPoint bp,
-                               DP_CanvasState *cs_or_null)
+static void handle_stroke_to(DP_BrushEngine *be, DP_BrushPoint bp,
+                             DP_CanvasState *cs_or_null)
 {
-    DP_ASSERT(be);
-    if (be->poll_control && be->stabilizer.sample_count > 0) {
+    if (be->stabilizer.sample_count > 0) {
         stabilizer_stroke_to(be, bp);
     }
     else {
@@ -1218,10 +1233,152 @@ void DP_brush_engine_stroke_to(DP_BrushEngine *be, DP_BrushPoint bp,
     }
 }
 
+
+// Points are interpolated along a spline when the distance between two points
+// is sufficiently large. We keep 4 points around for this, which seems to be
+// enough for getting good results.
+
+static DP_SplinePoint *spline_push(DP_BrushEngine *be, DP_BrushPoint bp,
+                                   float length)
+{
+    DP_ASSERT(be->spline.fill >= 0);
+    DP_ASSERT(be->spline.fill < 4);
+    int fill = be->spline.fill++;
+    DP_SplinePoint *sp = &be->spline.points[(be->spline.offset + fill) % 4];
+    *sp = (DP_SplinePoint){bp, length, false};
+    return sp;
+}
+
+static void spline_shift(DP_BrushEngine *be)
+{
+    DP_ASSERT(be->spline.fill == 4);
+    DP_ASSERT(be->spline.points[be->spline.offset].drawn);
+    be->spline.fill = 3;
+    be->spline.offset = (be->spline.offset + 1) % 4;
+}
+
+static DP_SplinePoint *spline_at(DP_BrushEngine *be, int index)
+{
+    DP_ASSERT(index >= 0);
+    DP_ASSERT(index < be->spline.fill);
+    DP_ASSERT(be->spline.fill <= 4);
+    return &be->spline.points[(be->spline.offset + index) % 4];
+}
+
+static float lerpf(float a, float b, float t)
+{
+    return a + t * (b - a);
+}
+
+static long long lerpll(long long a, long long b, float t)
+{
+    return a + DP_float_to_llong(t * DP_llong_to_float(b - a));
+}
+
+static void spline_interpolate(DP_BrushEngine *be, DP_CanvasState *cs_or_null,
+                               DP_BrushPoint p2, float length, DP_BrushPoint p3)
+{
+    DP_ASSERT(length > SPLINE_DISTANCE);
+    DP_ASSERT(be->spline.fill > 1);
+    DP_BrushPoint p0 = spline_at(be, 0)->p;
+    DP_BrushPoint p1 = spline_at(be, 1)->p;
+    float countf = ceilf(length / SPLINE_DISTANCE);
+    int count = DP_float_to_int(countf);
+    for (int i = 1; i < count; ++i) {
+        // SPDX-SnippetBegin
+        // SPDX-License-Identifier: MIT
+        // SDPX—SnippetName: spline interpolation from perfect-cursors
+        float t = DP_int_to_float(i) / countf;
+        float tt = t * t;
+        float ttt = tt * t;
+        float q1 = -ttt + 2.0f * tt - t;
+        float q2 = 3.0f * ttt - 5.0f * tt + 2.0f;
+        float q3 = -3.0f * ttt + 4.0f * tt + t;
+        float q4 = ttt - tt;
+        float x = (p0.x * q1 + p1.x * q2 + p2.x * q3 + p3.x * q4) / 2.0f;
+        float y = (p0.y * q1 + p1.y * q2 + p2.y * q3 + p3.y * q4) / 2.0f;
+        // SPDX-SnippetEnd
+        handle_stroke_to(be,
+                         (DP_BrushPoint){x, y,
+                                         lerpf(p1.pressure, p2.pressure, t),
+                                         lerpf(p1.xtilt, p2.xtilt, t),
+                                         lerpf(p1.ytilt, p2.ytilt, t),
+                                         lerpf(p1.rotation, p2.rotation, t),
+                                         lerpll(p1.time_msec, p2.time_msec, t)},
+                         cs_or_null);
+    }
+    handle_stroke_to(be, p2, cs_or_null);
+}
+
+static void interpolate_stroke_to(DP_BrushEngine *be, DP_BrushPoint bp,
+                                  DP_CanvasState *cs_or_null)
+{
+    int prev_fill = be->spline.fill;
+    DP_ASSERT(prev_fill >= 0);
+    DP_ASSERT(prev_fill < 4);
+    if (prev_fill == 0) {
+        DP_SplinePoint *sp = spline_push(be, bp, 0.0f);
+        handle_stroke_to(be, bp, cs_or_null);
+        sp->drawn = true;
+    }
+    else {
+        DP_SplinePoint *prev_sp = spline_at(be, prev_fill - 1);
+        DP_BrushPoint prev_bp = prev_sp->p;
+        float length = hypotf(prev_bp.y - bp.y, prev_bp.x - bp.x);
+        DP_SplinePoint *sp = spline_push(be, bp, length);
+
+        if (prev_fill == 3) {
+            if (!prev_sp->drawn) {
+                spline_interpolate(be, cs_or_null, prev_bp, prev_sp->length,
+                                   bp);
+                prev_sp->drawn = true;
+            }
+            spline_shift(be);
+        }
+
+        if (prev_fill == 1 || length <= SPLINE_DISTANCE) {
+            handle_stroke_to(be, bp, cs_or_null);
+            sp->drawn = true;
+        }
+    }
+}
+
+static void spline_drain(DP_BrushEngine *be, DP_CanvasState *cs_or_null)
+{
+    if (be->spline.fill == 3) {
+        DP_SplinePoint *sp = spline_at(be, 2);
+        if (!sp->drawn) {
+            spline_interpolate(be, cs_or_null, sp->p, sp->length, sp->p);
+        }
+    }
+}
+
+
+void DP_brush_engine_stroke_to(DP_BrushEngine *be, DP_BrushPoint bp,
+                               DP_CanvasState *cs_or_null)
+{
+    DP_ASSERT(be);
+    if (be->spline.enabled) {
+        interpolate_stroke_to(be, bp, cs_or_null);
+    }
+    else {
+        handle_stroke_to(be, bp, cs_or_null);
+    }
+}
+
 void DP_brush_engine_poll(DP_BrushEngine *be, long long time_msec,
                           DP_CanvasState *cs_or_null)
 {
     DP_ASSERT(be);
+
+    if (be->spline.fill == 3) {
+        DP_SplinePoint *sp = spline_at(be, 2);
+        if (!sp->drawn && time_msec - sp->p.time_msec > SPLINE_DRAIN_DELAY) {
+            spline_interpolate(be, cs_or_null, sp->p, sp->length, sp->p);
+            sp->drawn = true;
+        }
+    }
+
     if (be->stabilizer.active) {
         long long elapsed_msec = time_msec - be->stabilizer.last_time_msec;
         long long elapsed = elapsed_msec / STABILIZER_SAMPLE_TIME;
@@ -1245,6 +1402,8 @@ void DP_brush_engine_stroke_end(DP_BrushEngine *be, long long time_msec,
     DP_PERF_BEGIN_DETAIL(fn, "stroke_end", "active=%d", (int)be->active);
     DP_EVENT_LOG("stroke_end");
 
+    set_poll_control_enabled(be, false);
+    spline_drain(be, cs_or_null);
     if (be->stabilizer.active) {
         stabilizer_finish(be, time_msec, cs_or_null);
     }

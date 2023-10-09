@@ -29,6 +29,7 @@ ToolController::ToolController(net::Client *client, QObject *parent)
 	, m_prevShift(false)
 	, m_prevAlt(false)
 	, m_globalSmoothing(0)
+	, m_interpolateInputs(false)
 	, m_stabilizationMode(brushes::Stabilizer)
 	, m_stabilizerSampleCount(0)
 	, m_smoothing(0)
@@ -164,6 +165,11 @@ void ToolController::setActiveBrush(const brushes::ActiveBrush &b)
 {
 	m_activebrush = b;
 	emit activeBrushChanged(b);
+}
+
+void ToolController::setInterpolateInputs(bool interpolateInputs)
+{
+	m_interpolateInputs = interpolateInputs;
 }
 
 void ToolController::setStabilizationMode(brushes::StabilizationMode stabilizationMode)
@@ -427,7 +433,8 @@ void ToolController::offsetActiveTool(int xOffset, int yOffset)
 void ToolController::setBrushEngineBrush(drawdance::BrushEngine &be)
 {
 	const brushes::ActiveBrush &brush = activeBrush();
-	DP_StrokeParams stroke = {activeLayer(), 0, m_finishStrokes};
+	DP_StrokeParams stroke = {
+		activeLayer(), m_interpolateInputs, 0, m_finishStrokes};
 	if(m_stabilizerUseBrushSampleCount) {
 		if(brush.stabilizationMode() == brushes::Stabilizer) {
 			stroke.stabilizer_sample_count = brush.stabilizerSampleCount();

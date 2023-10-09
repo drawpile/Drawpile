@@ -64,6 +64,10 @@ void Input::initTablet(
 	settings.bindTabletEraser(eraser);
 	form->addRow(nullptr, eraser);
 
+	auto *interpolate = new QCheckBox(tr("Compensate jagged curves"));
+	settings.bindInterpolateInputs(interpolate);
+	form->addRow(nullptr, interpolate);
+
 	auto *smoothing = new KisSliderSpinBox;
 	smoothing->setMaximum(libclient::settings::maxSmoothing);
 	smoothing->setPrefix(tr("Smoothing: "));

@@ -64,6 +64,8 @@ public:
 	void setActiveBrush(const brushes::ActiveBrush &b);
 	const brushes::ActiveBrush &activeBrush() const { return m_activebrush; }
 
+	void setInterpolateInputs(bool interpolateInputs);
+
 	void setStabilizerUseBrushSampleCount(bool stabilizerUseBrushSampleCount);
 	bool stabilizerUseBrushSampleCount() { return m_stabilizerUseBrushSampleCount; }
 
@@ -194,6 +196,7 @@ private:
 	int m_globalSmoothing;
 	StrokeSmoother m_smoother;
 
+	bool m_interpolateInputs;
 	brushes::StabilizationMode m_stabilizationMode;
 	int m_stabilizerSampleCount;
 	int m_smoothing;

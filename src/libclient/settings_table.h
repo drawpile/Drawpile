@@ -1,6 +1,7 @@
 #include "libclient/settings_table_macros.h"
 
 SETTING(autoSaveInterval            , AutoSaveInterval            , "settings/autosave"                     , 5000)
+SETTING(interpolateInputs           , InterpolateInputs           , "settings/input/interpolate"            , true)
 SETTING(messageQueueDrainRate       , MessageQueueDrainRate       , "settings/messagequeuedrainrate"        , net::MessageQueue::DEFAULT_SMOOTH_DRAIN_RATE)
 SETTING(parentalControlsAutoTag     , ParentalControlsAutoTag     , "pc/autotag"                            , true)
 SETTING(parentalControlsForceCensor , ParentalControlsForceCensor , "pc/noUncensoring"                      , false)
