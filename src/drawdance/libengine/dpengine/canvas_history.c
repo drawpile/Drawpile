@@ -548,11 +548,10 @@ static void dispose_entry(DP_CanvasHistoryEntry *entry)
     DP_canvas_state_decref_nullable(entry->state);
 }
 
-static void truncate_history(DP_CanvasHistory *ch, int until)
+static void truncate_history_without_fork_check(DP_CanvasHistory *ch, int until)
 {
     HISTORY_DEBUG("Truncate history until %d", until);
     DP_ASSERT(until <= ch->used);
-    DP_ASSERT(!have_local_fork(ch) || ch->fork.start >= ch->offset + until);
     DP_CanvasHistoryEntry *entries = ch->entries;
     for (int i = 0; i < until; ++i) {
         dispose_entry(&entries[i]);
@@ -561,6 +560,13 @@ static void truncate_history(DP_CanvasHistory *ch, int until)
     ch->offset += until;
     size_t size = sizeof(*entries) * DP_int_to_size(ch->used);
     memmove(entries, entries + until, size);
+}
+
+static void truncate_history(DP_CanvasHistory *ch, int until)
+{
+    DP_ASSERT(until <= ch->used);
+    DP_ASSERT(!have_local_fork(ch) || ch->fork.start >= ch->offset + until);
+    truncate_history_without_fork_check(ch, until);
 }
 
 void DP_canvas_history_free(DP_CanvasHistory *ch)
@@ -720,8 +726,11 @@ static void reset_to_state_noinc(DP_CanvasHistory *ch, DP_CanvasState *cs,
     set_current_state_noinc(ch, cs);
     if (clear_fork) {
         clear_fork_entries(ch);
+        truncate_history(ch, ch->used);
     }
-    truncate_history(ch, ch->used);
+    else {
+        truncate_history_without_fork_check(ch, ch->used);
+    }
     DP_affected_indirect_areas_clear(&ch->aia);
     set_initial_entry(ch, cs);
     ch->used = 1;
@@ -787,9 +796,11 @@ static DP_CanvasState *flush_replay_buffer(DP_CanvasHistory *ch,
     }
 }
 
-static DP_CanvasState *
-replay_drawing_command(DP_CanvasHistory *ch, DP_CanvasState *cs,
-                       DP_DrawContext *dc, DP_Message *msg, DP_MessageType type)
+static DP_CanvasState *replay_drawing_command_dec(DP_CanvasHistory *ch,
+                                                  DP_CanvasState *cs,
+                                                  DP_DrawContext *dc,
+                                                  DP_Message *msg,
+                                                  DP_MessageType type)
 {
     if (is_draw_dabs_message_type(type)) {
         int index = ch->replay.used++;
@@ -840,13 +851,13 @@ static void replay_fork_entry(void *element, void *user)
         DP_CanvasHistory *ch = ((void **)user)[0];
         DP_CanvasState **cs = ((void **)user)[1];
         DP_DrawContext *dc = ((void **)user)[2];
-        *cs = replay_drawing_command(ch, *cs, dc, msg, type);
+        *cs = replay_drawing_command_dec(ch, *cs, dc, msg, type);
         validate_history(ch, true);
     }
 }
 
-static DP_CanvasState *replay_fork(DP_CanvasHistory *ch, DP_CanvasState *cs,
-                                   DP_DrawContext *dc)
+static DP_CanvasState *replay_fork_dec(DP_CanvasHistory *ch, DP_CanvasState *cs,
+                                       DP_DrawContext *dc)
 {
     bool starts_at_undo_point =
         DP_message_type(peek_fork_entry_message(ch)) == DP_MSG_UNDO_POINT;
@@ -890,7 +901,7 @@ static void replay_from_inc(DP_CanvasHistory *ch, DP_DrawContext *dc,
                 entry->state = DP_canvas_state_incref(cs);
             }
             else if (undo == DP_UNDO_DONE) {
-                cs = replay_drawing_command(ch, cs, dc, msg, type);
+                cs = replay_drawing_command_dec(ch, cs, dc, msg, type);
                 validate_history(ch, with_fork);
             }
         }
@@ -898,7 +909,7 @@ static void replay_from_inc(DP_CanvasHistory *ch, DP_DrawContext *dc,
 
     if (with_fork && have_local_fork(ch)) {
         DP_ASSERT(ch->fork.start >= start_index + ch->offset);
-        cs = replay_fork(ch, cs, dc);
+        cs = replay_fork_dec(ch, cs, dc);
     }
 
     finish_replay(ch, cs, dc);
@@ -946,7 +957,8 @@ void DP_canvas_history_soft_reset(DP_CanvasHistory *ch, DP_DrawContext *dc,
     reset_to_state_noinc(ch, cs, false);
 
     if (have_fork) {
-        finish_replay(ch, replay_fork(ch, cs, dc), dc);
+        finish_replay(ch, replay_fork_dec(ch, DP_canvas_state_incref(cs), dc),
+                      dc);
     }
 }
 
@@ -980,7 +992,8 @@ void DP_canvas_history_undo_depth_limit_set(DP_CanvasHistory *ch,
     reset_to_state_noinc(ch, cs, false);
 
     if (have_fork) {
-        finish_replay(ch, replay_fork(ch, cs, dc), dc);
+        finish_replay(ch, replay_fork_dec(ch, DP_canvas_state_incref(cs), dc),
+                      dc);
     }
 }
 
