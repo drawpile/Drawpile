@@ -20,8 +20,6 @@ public:
 
 	void end() override;
 
-	bool allowSmoothing() const override { return true; }
-
 	void offsetActiveTool(int x, int y) override;
 
 private:

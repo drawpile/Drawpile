@@ -41,6 +41,8 @@ typedef struct DP_BrushPoint {
 typedef struct DP_StrokeParams {
     int layer_id;
     bool interpolate;
+    int smoothing;
+    bool smoothing_finish_strokes;
     int stabilizer_sample_count;
     bool stabilizer_finish_strokes;
 } DP_StrokeParams;

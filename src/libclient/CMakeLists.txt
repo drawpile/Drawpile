@@ -133,8 +133,6 @@ target_sources(dpclient PRIVATE
 	tools/selection.h
 	tools/shapetools.cpp
 	tools/shapetools.h
-	tools/strokesmoother.cpp
-	tools/strokesmoother.h
 	tools/tool.cpp
 	tools/tool.h
 	tools/toolcontroller.cpp

@@ -3,7 +3,6 @@
 #ifndef TOOLCONTROLLER_H
 #define TOOLCONTROLLER_H
 
-#include "libclient/tools/strokesmoother.h"
 #include "libclient/tools/tool.h"
 #include "libclient/brushes/brush.h"
 #include "libclient/canvas/acl.h"
@@ -191,15 +190,13 @@ private:
 	Tool *m_activeTool;
 	uint16_t m_activeLayer;
 	uint16_t m_activeAnnotation;
-	bool m_prevShift, m_prevAlt;
 
 	int m_globalSmoothing;
-	StrokeSmoother m_smoother;
-
 	bool m_interpolateInputs;
 	brushes::StabilizationMode m_stabilizationMode;
 	int m_stabilizerSampleCount;
 	int m_smoothing;
+	int m_effectiveSmoothing;
 	bool m_finishStrokes;
 	bool m_stabilizerUseBrushSampleCount;
 

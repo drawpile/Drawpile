@@ -16,8 +16,6 @@ public:
 
 	void end() override;
 
-	bool allowSmoothing() const override { return true; }
-
 	void setPersistence(int p) { m_persistence = p; }
 
 private:

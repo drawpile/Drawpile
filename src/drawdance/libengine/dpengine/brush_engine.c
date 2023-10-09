@@ -96,6 +96,14 @@ struct DP_BrushEngine {
         DP_SplinePoint points[4];
     } spline;
     struct {
+        int size;
+        bool finish_strokes;
+        int capacity;
+        int fill;
+        int offset;
+        DP_BrushPoint *points;
+    } smoother;
+    struct {
         int sample_count;
         bool finish_strokes;
         bool active;
@@ -653,6 +661,7 @@ DP_brush_engine_new(DP_BrushEnginePushMessageFn push_message,
          0,
          {SPLINE_POINT_NULL, SPLINE_POINT_NULL, SPLINE_POINT_NULL,
           SPLINE_POINT_NULL}},
+        {0, false, 0, 0, 0, NULL},
         {0,
          true,
          false,
@@ -676,12 +685,32 @@ void DP_brush_engine_free(DP_BrushEngine *be)
         DP_free(be->dabs.buffer);
         mypaint_brush_unref(be->mypaint_brush);
         DP_layer_content_decref_nullable(be->lc);
+        DP_free(be->smoother.points);
         DP_vector_dispose(&be->stabilizer.points);
         DP_queue_dispose(&be->stabilizer.queue);
         DP_free(be);
     }
 }
 
+
+static void set_common_stroke_params(DP_BrushEngine *be,
+                                     const DP_StrokeParams *stroke)
+{
+    be->layer_id = stroke->layer_id;
+    be->spline.enabled = stroke->interpolate;
+    be->stabilizer.sample_count = stroke->stabilizer_sample_count;
+    be->stabilizer.finish_strokes = stroke->stabilizer_finish_strokes;
+
+    int smoothing = DP_max_int(0, stroke->smoothing);
+    be->smoother.size = smoothing;
+    be->smoother.finish_strokes = stroke->smoothing_finish_strokes;
+    if (be->smoother.capacity < smoothing) {
+        be->smoother.points =
+            DP_realloc(be->smoother.points, sizeof(*be->smoother.points)
+                                                * DP_int_to_size(smoothing));
+        be->smoother.capacity = smoothing;
+    }
+}
 
 void DP_brush_engine_classic_brush_set(DP_BrushEngine *be,
                                        const DP_ClassicBrush *brush,
@@ -694,7 +723,7 @@ void DP_brush_engine_classic_brush_set(DP_BrushEngine *be,
     DP_ASSERT(stroke->layer_id >= 0);
     DP_ASSERT(stroke->layer_id <= UINT16_MAX);
 
-    be->layer_id = stroke->layer_id;
+    set_common_stroke_params(be, stroke);
 
     switch (brush->shape) {
     case DP_BRUSH_SHAPE_CLASSIC_PIXEL_ROUND:
@@ -725,10 +754,6 @@ void DP_brush_engine_classic_brush_set(DP_BrushEngine *be,
         }
     }
     be->classic.brush_color = color;
-
-    be->spline.enabled = stroke->interpolate;
-    be->stabilizer.sample_count = stroke->stabilizer_sample_count;
-    be->stabilizer.finish_strokes = stroke->stabilizer_finish_strokes;
 }
 
 static void disable_mypaint_dynamics(MyPaintBrush *mb, MyPaintBrushSetting s)
@@ -756,7 +781,8 @@ void DP_brush_engine_mypaint_brush_set(DP_BrushEngine *be,
     DP_ASSERT(stroke);
     DP_ASSERT(stroke->layer_id >= 0);
     DP_ASSERT(stroke->layer_id <= UINT16_MAX);
-    be->layer_id = stroke->layer_id;
+
+    set_common_stroke_params(be, stroke);
     be->active = DP_BRUSH_ENGINE_ACTIVE_MYPAINT;
 
     MyPaintBrush *mb = be->mypaint_brush;
@@ -820,10 +846,6 @@ void DP_brush_engine_mypaint_brush_set(DP_BrushEngine *be,
         disable_mypaint_dynamics(mb, MYPAINT_BRUSH_SETTING_CHANGE_COLOR_V);
         disable_mypaint_dynamics(mb, MYPAINT_BRUSH_SETTING_CHANGE_COLOR_HSV_S);
     }
-
-    be->spline.enabled = stroke->interpolate;
-    be->stabilizer.sample_count = stroke->stabilizer_sample_count;
-    be->stabilizer.finish_strokes = stroke->stabilizer_finish_strokes;
 }
 
 
@@ -937,6 +959,8 @@ void DP_brush_engine_stroke_begin(DP_BrushEngine *be, unsigned int context_id,
     }
     be->spline.fill = 0;
     be->spline.offset = 0;
+    be->smoother.fill = 0;
+    be->smoother.offset = 0;
     set_poll_control_enabled(be, true);
 
     DP_PERF_END(fn);
@@ -1222,14 +1246,124 @@ static void stroke_to(DP_BrushEngine *be, DP_BrushPoint bp,
     DP_PERF_END(fn);
 }
 
-static void handle_stroke_to(DP_BrushEngine *be, DP_BrushPoint bp,
-                             DP_CanvasState *cs_or_null)
+
+static void handle_stroke_stabilizer(DP_BrushEngine *be, DP_BrushPoint bp,
+                                     DP_CanvasState *cs_or_null)
 {
     if (be->stabilizer.sample_count > 0) {
         stabilizer_stroke_to(be, bp);
     }
     else {
         stroke_to(be, bp, cs_or_null);
+    }
+}
+
+
+static DP_BrushPoint smoother_get(DP_BrushPoint *points, int size)
+{
+    DP_ASSERT(size > 0);
+    // A simple unweighted sliding-average smoother
+    DP_BrushPoint first = points[0];
+    float x = first.x;
+    float y = first.y;
+    float pressure = first.pressure;
+    float xtilt = first.xtilt;
+    float ytilt = first.ytilt;
+    float rotation = first.rotation;
+    double time_msec = DP_llong_to_double(first.time_msec);
+
+    for (int i = 1; i < size; ++i) {
+        DP_BrushPoint bp = points[i];
+        x += bp.x;
+        y += bp.y;
+        pressure += bp.pressure;
+        xtilt += bp.xtilt;
+        ytilt += bp.ytilt;
+        rotation += bp.rotation;
+        time_msec += DP_llong_to_double(bp.time_msec);
+    }
+
+    float fsize = DP_int_to_float(size);
+    return (DP_BrushPoint){
+        x / fsize,
+        y / fsize,
+        pressure / fsize,
+        xtilt / fsize,
+        ytilt / fsize,
+        rotation / fsize,
+        DP_double_to_llong(time_msec / DP_int_to_double(size) + 0.5),
+    };
+}
+
+static void smoother_stroke_to(DP_BrushEngine *be, DP_BrushPoint bp,
+                               DP_CanvasState *cs_or_null)
+{
+    DP_ASSERT(be->smoother.size > 0);
+    int size = be->smoother.size;
+    int fill = be->smoother.fill;
+    int offset = be->smoother.offset;
+    DP_BrushPoint *points = be->smoother.points;
+
+    if (fill == 0) {
+        // Pad the buffer with this point, so we blend away from it gradually as
+        // we gain more points. We still only count this as one point so we know
+        // how much real data we have to drain if it was a very short stroke.
+        for (int i = 0; i < size; ++i) {
+            points[i] = bp;
+        }
+    }
+    else {
+        if (--offset < 0) {
+            offset = size - 1;
+        }
+        points[offset] = bp;
+        be->smoother.offset = offset;
+    }
+
+    if (fill < size) {
+        be->smoother.fill = fill + 1;
+    }
+
+    handle_stroke_stabilizer(be, smoother_get(points, size), cs_or_null);
+}
+
+static void handle_stroke_smoother(DP_BrushEngine *be, DP_BrushPoint bp,
+                                   DP_CanvasState *cs_or_null)
+{
+    if (be->smoother.size > 0) {
+        smoother_stroke_to(be, bp, cs_or_null);
+    }
+    else {
+        handle_stroke_stabilizer(be, bp, cs_or_null);
+    }
+}
+
+static void smoother_remove(DP_BrushPoint *points, int size, int fill,
+                            int offset)
+{
+	// Pad the buffer with the final point, overwriting the oldest first, for
+	// symmetry with starting. For very short strokes this should really set all
+	// points between --fill and size - 1.
+    points[(offset + fill - 1) % size] = points[offset];
+}
+
+static void smoother_drain(DP_BrushEngine *be, DP_CanvasState *cs_or_null)
+{
+    int size = be->smoother.size;
+    if (size > 0 && be->smoother.finish_strokes) {
+        DP_BrushPoint *points = be->smoother.points;
+        int fill = be->smoother.fill;
+        int offset = be->smoother.offset;
+        if (fill > 1) {
+            smoother_remove(points, size, fill, offset);
+            --fill;
+            while (fill > 0) {
+                handle_stroke_stabilizer(be, smoother_get(points, size),
+                                         cs_or_null);
+                smoother_remove(points, size, fill, offset);
+                --fill;
+            }
+        }
     }
 }
 
@@ -1298,27 +1432,27 @@ static void spline_interpolate(DP_BrushEngine *be, DP_CanvasState *cs_or_null,
         float x = (p0.x * q1 + p1.x * q2 + p2.x * q3 + p3.x * q4) / 2.0f;
         float y = (p0.y * q1 + p1.y * q2 + p2.y * q3 + p3.y * q4) / 2.0f;
         // SPDX-SnippetEnd
-        handle_stroke_to(be,
-                         (DP_BrushPoint){x, y,
-                                         lerpf(p1.pressure, p2.pressure, t),
-                                         lerpf(p1.xtilt, p2.xtilt, t),
-                                         lerpf(p1.ytilt, p2.ytilt, t),
-                                         lerpf(p1.rotation, p2.rotation, t),
-                                         lerpll(p1.time_msec, p2.time_msec, t)},
-                         cs_or_null);
+        handle_stroke_smoother(
+            be,
+            (DP_BrushPoint){x, y, lerpf(p1.pressure, p2.pressure, t),
+                            lerpf(p1.xtilt, p2.xtilt, t),
+                            lerpf(p1.ytilt, p2.ytilt, t),
+                            lerpf(p1.rotation, p2.rotation, t),
+                            lerpll(p1.time_msec, p2.time_msec, t)},
+            cs_or_null);
     }
-    handle_stroke_to(be, p2, cs_or_null);
+    handle_stroke_smoother(be, p2, cs_or_null);
 }
 
-static void interpolate_stroke_to(DP_BrushEngine *be, DP_BrushPoint bp,
-                                  DP_CanvasState *cs_or_null)
+static void handle_stroke_spline(DP_BrushEngine *be, DP_BrushPoint bp,
+                                 DP_CanvasState *cs_or_null)
 {
     int prev_fill = be->spline.fill;
     DP_ASSERT(prev_fill >= 0);
     DP_ASSERT(prev_fill < 4);
     if (prev_fill == 0) {
         DP_SplinePoint *sp = spline_push(be, bp, 0.0f);
-        handle_stroke_to(be, bp, cs_or_null);
+        handle_stroke_smoother(be, bp, cs_or_null);
         sp->drawn = true;
     }
     else {
@@ -1337,7 +1471,7 @@ static void interpolate_stroke_to(DP_BrushEngine *be, DP_BrushPoint bp,
         }
 
         if (prev_fill == 1 || length <= SPLINE_DISTANCE) {
-            handle_stroke_to(be, bp, cs_or_null);
+            handle_stroke_smoother(be, bp, cs_or_null);
             sp->drawn = true;
         }
     }
@@ -1359,10 +1493,10 @@ void DP_brush_engine_stroke_to(DP_BrushEngine *be, DP_BrushPoint bp,
 {
     DP_ASSERT(be);
     if (be->spline.enabled) {
-        interpolate_stroke_to(be, bp, cs_or_null);
+        handle_stroke_spline(be, bp, cs_or_null);
     }
     else {
-        handle_stroke_to(be, bp, cs_or_null);
+        handle_stroke_smoother(be, bp, cs_or_null);
     }
 }
 
@@ -1404,6 +1538,7 @@ void DP_brush_engine_stroke_end(DP_BrushEngine *be, long long time_msec,
 
     set_poll_control_enabled(be, false);
     spline_drain(be, cs_or_null);
+    smoother_drain(be, cs_or_null);
     if (be->stabilizer.active) {
         stabilizer_finish(be, time_msec, cs_or_null);
     }

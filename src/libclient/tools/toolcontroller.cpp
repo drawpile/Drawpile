@@ -2,6 +2,7 @@
 
 #include "libclient/tools/toolcontroller.h"
 
+#include "libclient/settings.h"
 #include "libclient/tools/annotation.h"
 #include "libclient/tools/freehand.h"
 #include "libclient/tools/colorpicker.h"
@@ -26,13 +27,12 @@ ToolController::ToolController(net::Client *client, QObject *parent)
 	, m_client(client)
 	, m_model(nullptr)
 	, m_activeTool(nullptr)
-	, m_prevShift(false)
-	, m_prevAlt(false)
 	, m_globalSmoothing(0)
 	, m_interpolateInputs(false)
 	, m_stabilizationMode(brushes::Stabilizer)
 	, m_stabilizerSampleCount(0)
 	, m_smoothing(0)
+	, m_effectiveSmoothing(0)
 	, m_finishStrokes(true)
 	, m_stabilizerUseBrushSampleCount(true)
 	, m_selectInterpolation{DP_MSG_TRANSFORM_REGION_MODE_BILINEAR}
@@ -270,7 +270,8 @@ void ToolController::updateSmoothing()
 	if(m_stabilizationMode == brushes::Smoothing) {
 		strength += m_smoothing;
 	}
-	m_smoother.setSmoothing(strength);
+	m_effectiveSmoothing =
+		qBound(0, strength, libclient::settings::maxSmoothing);
 }
 
 void ToolController::setSelectInterpolation(int selectInterpolation)
@@ -290,7 +291,6 @@ void ToolController::startDrawing(
 		return;
 	}
 
-	m_smoother.reset();
 	m_activeTool->begin(canvas::Point(timeMsec, point, pressure, xtilt, ytilt, rotation), right, zoom);
 
 	if(!m_activeTool->isMultipart()) {
@@ -313,19 +313,7 @@ void ToolController::continueDrawing(
 	}
 
 	canvas::Point cp = canvas::Point(timeMsec, point, pressure, xtilt, ytilt, rotation);
-	if(m_smoother.isActive() && m_activeTool->allowSmoothing()) {
-		m_smoother.addPoint(cp);
-
-		if(m_smoother.hasSmoothPoint()) {
-			m_activeTool->motion(m_smoother.smoothPoint(), shift, alt);
-		}
-
-	} else {
-		m_activeTool->motion(cp, shift, alt);
-	}
-
-	m_prevShift = shift;
-	m_prevAlt = alt;
+	m_activeTool->motion(cp, shift, alt);
 }
 
 void ToolController::hoverDrawing(const QPointF &point)
@@ -344,22 +332,6 @@ void ToolController::endDrawing()
 	if(!m_model) {
 		qWarning("ToolController::endDrawing: no model set!");
 		return;
-	}
-
-	// Drain any remaining points from the smoothing buffer
-	bool shouldDrain = m_smoother.isActive() &&
-					   m_activeTool->allowSmoothing() &&
-					   (m_stabilizationMode != brushes::Smoothing ||
-						m_finishStrokes);
-	if(shouldDrain) {
-		if(m_smoother.hasSmoothPoint()) {
-			m_smoother.removePoint();
-		}
-		while(m_smoother.hasSmoothPoint()) {
-			m_activeTool->motion(
-				m_smoother.smoothPoint(), m_prevShift, m_prevAlt);
-			m_smoother.removePoint();
-		}
 	}
 
 	m_activeTool->end();
@@ -405,7 +377,6 @@ void ToolController::finishMultipartDrawing()
 		return;
 	}
 
-	m_smoother.reset();
 	m_activeTool->finishMultipart();
 }
 
@@ -418,7 +389,6 @@ void ToolController::cancelMultipartDrawing()
 		return;
 	}
 
-	m_smoother.reset();
 	m_activeTool->cancelMultipart();
 	emit actionCancelled();
 }
@@ -427,14 +397,19 @@ void ToolController::offsetActiveTool(int xOffset, int yOffset)
 {
 	Q_ASSERT(m_activeTool);
 	m_activeTool->offsetActiveTool(xOffset, yOffset);
-	m_smoother.addOffset(QPointF(xOffset, yOffset));
 }
 
 void ToolController::setBrushEngineBrush(drawdance::BrushEngine &be)
 {
 	const brushes::ActiveBrush &brush = activeBrush();
 	DP_StrokeParams stroke = {
-		activeLayer(), m_interpolateInputs, 0, m_finishStrokes};
+		activeLayer(),
+		m_interpolateInputs,
+		m_effectiveSmoothing,
+		m_stabilizationMode != brushes::Smoothing || m_finishStrokes,
+		0,
+		m_finishStrokes,
+	};
 	if(m_stabilizerUseBrushSampleCount) {
 		if(brush.stabilizationMode() == brushes::Stabilizer) {
 			stroke.stabilizer_sample_count = brush.stabilizerSampleCount();

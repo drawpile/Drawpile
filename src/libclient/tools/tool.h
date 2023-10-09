@@ -97,9 +97,6 @@ public:
 	//! Add an offset to this tool's current position (if active)
 	virtual void offsetActiveTool(int x, int y) { Q_UNUSED(x) Q_UNUSED(y) /* most tools don't need to do anything here */ }
 
-	//! Does this tool allow stroke smoothing to be used?
-	virtual bool allowSmoothing() const { return false; }
-
 protected:
 	void setHandlesRightClick(bool handlesRightClickk);
 
