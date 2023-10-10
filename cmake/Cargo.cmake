@@ -153,6 +153,7 @@ function(add_cargo_library target package)
 			"$<$<BOOL:${triple}>:--target;${triple}>"
 			"$<$<BOOL:${package}>:--package;${package}>"
 			"$<$<BOOL:${VERBOSE}>:--verbose>"
+			--manifest-path "${PROJECT_SOURCE_DIR}/Cargo.toml"
 			--profile "$<IF:$<CONFIG:Debug>,dev,$<LOWER_CASE:$<CONFIG>>>"
 			--target-dir ${cargo_dir}
 		COMMAND ${CMAKE_COMMAND} -E copy_if_different "${cargo_target_dir}/${out_name}" "${out_dir}/${out_name}"
