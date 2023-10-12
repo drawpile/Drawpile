@@ -273,9 +273,22 @@ bool Client::isBanInProgress() const
 	return d->ban.reaction != BanReaction::NotBanned;
 }
 
-bool Client::isImmuneToServerBans() const
+void Client::applyBanExemption(bool exempt)
 {
-	return d->ban.isExemptable && isModerator();
+	bool shouldRevokeBan = exempt &&
+						   d->ban.reaction != BanReaction::NotBanned &&
+						   d->ban.isExemptable;
+	if(shouldRevokeBan) {
+		log(Log()
+				.about(Log::Level::Info, Log::Topic::Status)
+				.user(d->id, d->socket->peerAddress(), QString())
+				.message(QStringLiteral(
+							 "%1 '%2' is banned (%3 %4), but user is exempt")
+							 .arg(
+								 d->ban.sourceType, d->ban.cause, d->ban.source,
+								 QString::number(d->ban.sourceId))));
+		d->ban = BanResult::notBanned();
+	}
 }
 
 void Client::applyBan(const BanResult &ban)
@@ -287,8 +300,7 @@ void Client::applyBan(const BanResult &ban)
 
 bool Client::triggerBan(bool early)
 {
-	bool shouldTrigger = !d->isBanTriggered && !isImmuneToServerBans() &&
-						 (!early || rollEarlyTrigger());
+	bool shouldTrigger = !d->isBanTriggered && (!early || rollEarlyTrigger());
 	if(shouldTrigger) {
 		switch(d->ban.reaction) {
 		case BanReaction::NotBanned:

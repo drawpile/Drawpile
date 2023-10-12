@@ -246,6 +246,15 @@ void LoginHandler::handleIdentMessage(const net::ServerCommand &cmd)
 				const QJsonObject ea = extAuthToken.payload();
 				const QJsonValue uid = ea["uid"];
 
+				bool extAuthMod = m_config->getConfigBool(config::ExtAuthMod);
+				bool extAuthBanExempt =
+					m_config->getConfigBool(config::ExtAuthBanExempt);
+				QStringList flags =
+					jsonArrayToStringList(ea["flags"].toArray());
+				m_client->applyBanExemption(
+					(extAuthMod && flags.contains("MOD")) ||
+					(extAuthBanExempt && flags.contains("BANEXEMPT")));
+
 				if(uid.isDouble() && !verifyUserId(uid.toDouble())) {
 					return;
 				}
@@ -267,8 +276,7 @@ void LoginHandler::handleIdentMessage(const net::ServerCommand &cmd)
 					avatar = extAuthToken.avatar();
 
 				authLoginOk(
-					ea["username"].toString(), extAuthId,
-					jsonArrayToStringList(ea["flags"].toArray()), avatar,
+					ea["username"].toString(), extAuthId, flags, avatar,
 					m_config->getConfigBool(config::ExtAuthMod),
 					m_config->getConfigBool(config::ExtAuthHost));
 
@@ -322,6 +330,9 @@ void LoginHandler::handleIdentMessage(const net::ServerCommand &cmd)
 
 	case RegisteredUser::Ok:
 		// Yay, username and password were valid!
+		m_client->applyBanExemption(
+			userAccount.flags.contains("MOD") ||
+			userAccount.flags.contains("BANEXEMPT"));
 		authLoginOk(
 			username, QStringLiteral("internal:%1").arg(userAccount.userId),
 			userAccount.flags, QByteArray(), true, true);

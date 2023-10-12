@@ -114,6 +114,7 @@ private:
 	State m_state = State::WaitForIdent;
 	quint64 m_extauth_nonce = 0;
 	bool m_hostPrivilege = false;
+	bool m_exemptFromBans = false;
 	bool m_complete = false;
 };
 

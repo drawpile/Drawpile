@@ -135,7 +135,7 @@ public:
 	void setMuted(bool m);
 
 	bool isBanInProgress() const;
-	bool isImmuneToServerBans() const;
+	void applyBanExemption(bool exempt);
 	void applyBan(const BanResult &ban);
 	bool triggerBan(bool early);
 
