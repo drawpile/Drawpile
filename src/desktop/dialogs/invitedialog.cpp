@@ -100,12 +100,20 @@ void InviteDialog::updateInviteLink()
 	bool includePassword =
 		d->ui.includePasswordBox->isChecked() && !d->joinPassword.isEmpty();
 	if(d->linkTypeGroup->checkedId() == int(LinkType::Web)) {
+		// Because I guess nobody thought it through, IPv6 has colons, which is
+		// incompatible with URLs and has to be enclosed with brackets to make
+		// it work. As far as I can see, QUrl doesn't handle this sensibly.
+		QString host = url.host();
+		QString mangledHost =
+			host.contains(':') ? QStringLiteral("[%1]").arg(host) : host;
+
 		int port = url.port();
 		QString portSuffix = port > 0 && port != cmake_config::proto::port()
 								 ? QStringLiteral(":%1").arg(port)
 								 : QString{};
+
 		url = QUrl{QStringLiteral("https://drawpile.net/invites/%1%2%3")
-					   .arg(url.host(), portSuffix, url.path())};
+					   .arg(mangledHost, portSuffix, url.path())};
 		if(includePassword) {
 			url.setFragment(d->joinPassword);
 		}

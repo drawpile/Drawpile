@@ -321,14 +321,13 @@ void NetStatus::externalIpDiscovered(const QString &ip)
 	if(_discoverIp->isVisible()) {
 		_discoverIp->setEnabled(false);
 
-		// TODO handle IPv6 style addresses
-		int portsep = m_address.lastIndexOf(':');
-		QString port;
-		if(portsep>0)
-			port = m_address.mid(portsep);
-
-		m_address = ip;
+		int port = m_sessionUrl.port();
+		m_address = port <= 0 ? ip : QStringLiteral("%1:%2").arg(ip).arg(port);
 		m_haveRemoteAddress = true;
+		// QUrl doesn't seem to handle IPv6 without ports correctly.
+		if(ip.contains(':') && port <= 0) {
+			m_sessionUrl.setPort(cmake_config::proto::port());
+		}
 		m_sessionUrl.setHost(ip);
 		updateLabel();
 
