@@ -1830,6 +1830,7 @@ void MainWindow::hostSession(
 
 	} else {
 		address.setHost(WhatIsMyIp::guessLocalAddress());
+		address.setScheme(QStringLiteral("drawpile"));
 	}
 
 	if(!address.isValid() || address.host().isEmpty()) {
