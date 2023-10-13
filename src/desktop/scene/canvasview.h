@@ -350,6 +350,7 @@ private:
 	ViewDragMode m_dragmode;
 	CanvasShortcuts::Action m_dragAction;
 	Qt::MouseButton m_dragButton;
+	Qt::KeyboardModifiers m_dragModifiers;
 	bool m_dragInverted;
 	bool m_dragSwapAxes;
 	QPoint m_dragLastPoint;
