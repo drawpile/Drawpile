@@ -1,0 +1,13 @@
+[package]
+name = "dpengine_rust"
+version = "2.2.0-pre"
+rust-version = "1.63.0"
+edition = "2021"
+
+[lib]
+crate-type = ["staticlib"]
+path = "dpengine/lib.rs"
+
+[dependencies]
+anyhow = "1.0.75"
+drawdance = { path = "../rust" }

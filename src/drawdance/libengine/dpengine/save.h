@@ -42,6 +42,7 @@ typedef enum DP_SaveImageType {
     DP_SAVE_IMAGE_ORA,
     DP_SAVE_IMAGE_PNG,
     DP_SAVE_IMAGE_JPEG,
+    DP_SAVE_IMAGE_PSD,
 } DP_SaveImageType;
 
 typedef enum DP_SaveResult {

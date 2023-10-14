@@ -3,12 +3,19 @@ include_guard = "DPENGINE_RUST_H"
 header = "// SPDX-License-Identifier: GPL-3.0-or-later"
 autogen_warning = "// This file is auto-generated , don't edit it manually.\n// To regenerate it, run src/drawdance/generators/cbindgen.bash"
 documentation_style = "c99"
+includes = ["rust_preamble.h"]
 
 [parse]
-include = ["dpmsg_rust"]
+include = ["dpengine_rust"]
 
 [export]
 prefix = "DP_"
+renaming_overrides_prefixing = true
+
+[export.rename]
+"DP_CanvasState" = "DP_CanvasState"
+"DP_DrawContext" = "DP_DrawContext"
+"DP_SaveResult" = "DP_SaveResult"
 
 [enum]
 rename_variants = "QualifiedScreamingSnakeCase"

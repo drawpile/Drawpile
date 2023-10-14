@@ -12,6 +12,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "anyhow"
+version = "1.0.75"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a4668cab20f66d8d020e1fbc0ebe47217433c1b6c8f2040faf858554e394ace6"
+
+[[package]]
+name = "dpengine_rust"
+version = "2.2.0-pre"
+dependencies = [
+ "anyhow",
+ "drawdance",
+]
+
+[[package]]
 name = "dpmsg_rust"
 version = "2.2.0-pre"
 dependencies = [
@@ -31,6 +45,9 @@ dependencies = [
 [[package]]
 name = "drawdance"
 version = "2.2.0-pre"
+dependencies = [
+ "anyhow",
+]
 
 [[package]]
 name = "drawpilecmd"

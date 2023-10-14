@@ -33,6 +33,7 @@
 #include "layer_list.h"
 #include "layer_props.h"
 #include "layer_props_list.h"
+#include "rust.h"
 #include "tile.h"
 #include "timeline.h"
 #include "track.h"
@@ -62,10 +63,12 @@ const DP_SaveFormat *DP_save_supported_formats(void)
     static const char *ora_ext[] = {"ora", NULL};
     static const char *png_ext[] = {"png", NULL};
     static const char *jpeg_ext[] = {"jpg", "jpeg", NULL};
+    static const char *psd_ext[] = {"psd", NULL};
     static const DP_SaveFormat formats[] = {
         {"OpenRaster", ora_ext},
         {"PNG", png_ext},
         {"JPEG", jpeg_ext},
+        {"Photoshop Document", psd_ext},
         {NULL, NULL},
     };
     return formats;
@@ -722,6 +725,10 @@ static DP_SaveResult guess_image_type(const char *path,
         *out_type = DP_SAVE_IMAGE_JPEG;
         return DP_SAVE_RESULT_SUCCESS;
     }
+    else if (DP_str_equal_lowercase(ext, "psd")) {
+        *out_type = DP_SAVE_IMAGE_PSD;
+        return DP_SAVE_RESULT_SUCCESS;
+    }
     else {
         DP_error_set("Unknown image format in '%s'", path);
         return DP_SAVE_RESULT_UNKNOWN_FORMAT;
@@ -747,6 +754,8 @@ static DP_SaveResult save(DP_CanvasState *cs, DP_DrawContext *dc,
     case DP_SAVE_IMAGE_JPEG:
         return save_flat_image(cs, NULL, path, save_jpeg,
                                DP_view_mode_filter_make_default());
+    case DP_SAVE_IMAGE_PSD:
+        return DP_save_psd(cs, path, dc);
     default:
         DP_error_set("Unknown save format");
         return DP_SAVE_RESULT_UNKNOWN_FORMAT;

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef DPMSG_RUST_H
-#define DPMSG_RUST_H
+#ifndef DPENGINE_RUST_H
+#define DPENGINE_RUST_H
 
 // This file is auto-generated , don't edit it manually.
 // To regenerate it, run src/drawdance/generators/cbindgen.bash
@@ -66,4 +66,4 @@ bool DP_protocol_version_equals(const struct DP_ProtocolVersion *a,
 uint64_t
 DP_protocol_version_as_integer(const struct DP_ProtocolVersion *protover);
 
-#endif /* DPMSG_RUST_H */
+#endif /* DPENGINE_RUST_H */

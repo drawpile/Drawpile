@@ -4,6 +4,7 @@ mod acl;
 mod draw_context;
 mod image;
 mod paint_engine;
+mod pixels;
 mod player;
 mod recorder;
 

@@ -86,8 +86,12 @@ dp_target_sources(dpengine
 )
 
 target_include_directories(dpengine PUBLIC ${CMAKE_CURRENT_LIST_DIR})
+
+add_cargo_library(dpengine_rust dpengine_rust)
+target_include_directories(dpengine PUBLIC ${CMAKE_CURRENT_LIST_DIR})
 target_link_libraries(dpengine PUBLIC
-    mypaint uthash qgrayraster jo_gifx parson dpmsg dpcommon ZLIB::ZLIB
+    mypaint uthash qgrayraster jo_gifx parson dpengine_rust dpmsg dpcommon
+    ZLIB::ZLIB
 )
 
 # Qt is too heavy a dependency just for an XML parser, libzip has to be compiled

@@ -28,3 +28,4 @@ run_cbindgen () (
 
 cd "$(dirname "$0")/.."
 run_cbindgen libmsg dpmsg/rust.h
+run_cbindgen libengine dpengine/rust.h

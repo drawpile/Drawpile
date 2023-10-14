@@ -107,6 +107,9 @@ DP_UPixel8 *DP_layer_content_to_upixels8_cropped(DP_LayerContent *lc,
                                                  int *out_width,
                                                  int *out_height);
 
+DP_UPixel8 *DP_layer_content_to_upixels8(DP_LayerContent *lc, int x, int y,
+                                         int width, int height);
+
 DP_Pixel8 *DP_layer_content_to_pixels8(DP_LayerContent *lc, int x, int y,
                                        int width, int height);
 

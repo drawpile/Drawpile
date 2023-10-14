@@ -653,6 +653,34 @@ DP_UPixel8 *DP_layer_content_to_upixels8_cropped(DP_LayerContent *lc,
     return pixels;
 }
 
+DP_UPixel8 *DP_layer_content_to_upixels8(DP_LayerContent *lc, int x, int y,
+                                         int width, int height)
+{
+    DP_ASSERT(lc);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
+    DP_ASSERT(width > 0);
+    DP_ASSERT(height > 0);
+
+    DP_TileIterator ti = DP_tile_iterator_make(
+        lc->width, lc->height, DP_rect_make(x, y, width, height));
+    DP_UPixel8 *pixels = DP_malloc_zeroed(
+        sizeof(*pixels) * DP_int_to_size(width) * DP_int_to_size(height));
+
+    while (DP_tile_iterator_next(&ti)) {
+        DP_Tile *t = DP_layer_content_tile_at_noinc(lc, ti.col, ti.row);
+        if (t) {
+            DP_TileIntoDstIterator tidi = DP_tile_into_dst_iterator_make(&ti);
+            while (DP_tile_into_dst_iterator_next(&tidi)) {
+                pixels[tidi.dst_y * width + tidi.dst_x] =
+                    DP_upixel15_to_8(DP_pixel15_unpremultiply(
+                        DP_tile_pixel_at(t, tidi.tile_x, tidi.tile_y)));
+            }
+        }
+    }
+
+    return pixels;
+}
+
 DP_Pixel8 *DP_layer_content_to_pixels8(DP_LayerContent *lc, int x, int y,
                                        int width, int height)
 {
