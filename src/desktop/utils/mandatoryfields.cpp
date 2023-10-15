@@ -6,6 +6,7 @@
 #include <QComboBox>
 #include <QVariant>
 #include <QDebug>
+#include <utility>
 
 /**
  * When constructed, all mandatory fields are searched recursively from
@@ -43,7 +44,7 @@ void MandatoryFields::collectFields(QObject *parent)
 void MandatoryFields::update()
 {
 	bool enable = true;
-	for(QObject *obj : qAsConst(m_widgets)) {
+	for(QObject *obj : std::as_const(m_widgets)) {
 		if(!obj->property("mandatoryfield").toBool())
 			continue;
 

@@ -21,6 +21,7 @@
 #include <QStackedWidget>
 #include <QApplication>
 #include <QLabel>
+#include <utility>
 
 namespace docks {
 
@@ -246,7 +247,7 @@ ToolSettings::~ToolSettings()
 void ToolSettings::saveSettings()
 {
 	desktop::settings::Settings::ToolsetType toolset;
-	for(auto ts : qAsConst(d->toolSettings)) {
+	for(auto ts : std::as_const(d->toolSettings)) {
 		// If no UI was loaded then the settings could not have changed and
 		// there is no need to re-save them
 		if(ts->getUi()) {

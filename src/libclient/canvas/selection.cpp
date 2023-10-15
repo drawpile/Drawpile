@@ -4,6 +4,7 @@
 #include "libclient/tools/selection.h" // for selection utilities
 #include <QPainter>
 #include <QtMath>
+#include <utility>
 
 namespace canvas {
 
@@ -54,7 +55,7 @@ void Selection::resetShape()
 {
 	const QPointF center = m_shape.boundingRect().center();
 	m_shape.clear();
-	for(const QPointF &p : qAsConst(m_originalShape)) {
+	for(const QPointF &p : std::as_const(m_originalShape)) {
 		m_shape << p + center - m_originalCenter;
 	}
 	emit shapeChanged(m_shape);

@@ -16,6 +16,7 @@
 #include <QDebug>
 #include <QGraphicsItemGroup>
 #include <QTimer>
+#include <utility>
 
 namespace drawingboard {
 
@@ -457,7 +458,7 @@ void CanvasScene::showUserMarkers(bool show)
 	if(m_showUserMarkers != show) {
 		m_showUserMarkers = show;
 		if(!show) {
-			for(UserMarkerItem *item : qAsConst(m_usermarkers)) {
+			for(UserMarkerItem *item : std::as_const(m_usermarkers)) {
 				item->hide();
 			}
 		}
@@ -468,7 +469,7 @@ void CanvasScene::showUserNames(bool show)
 {
 	if(m_showUserNames != show) {
 		m_showUserNames = show;
-		for(UserMarkerItem *item : qAsConst(m_usermarkers)) {
+		for(UserMarkerItem *item : std::as_const(m_usermarkers)) {
 			item->setShowText(show);
 		}
 	}
@@ -478,7 +479,7 @@ void CanvasScene::showUserLayers(bool show)
 {
 	if(m_showUserLayers != show) {
 		m_showUserLayers = show;
-		for(UserMarkerItem *item : qAsConst(m_usermarkers)) {
+		for(UserMarkerItem *item : std::as_const(m_usermarkers)) {
 			item->setShowSubtext(show);
 		}
 	}
@@ -488,7 +489,7 @@ void CanvasScene::showUserAvatars(bool show)
 {
 	if(m_showUserAvatars != show) {
 		m_showUserAvatars = show;
-		for(UserMarkerItem *item : qAsConst(m_usermarkers)) {
+		for(UserMarkerItem *item : std::as_const(m_usermarkers)) {
 			item->setShowAvatar(show);
 		}
 	}
