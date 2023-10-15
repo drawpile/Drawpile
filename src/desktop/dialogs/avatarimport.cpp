@@ -73,7 +73,7 @@ void AvatarImport::importAvatar(AvatarListModel *avatarList, QPointer<QWidget> p
 		return;
 	}
 
-	if(picture.width() != picture.height()) {
+	if(picture.width() != Size || picture.height() != Size || picture.width() != picture.height()) {
 		// Not square format: needs cropping
 		auto *dlg = new dialogs::AvatarImport(picture, parentWindow);
 		dlg->setModal(true);
