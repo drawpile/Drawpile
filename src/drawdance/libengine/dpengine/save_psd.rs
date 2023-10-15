@@ -104,7 +104,7 @@ fn blend_mode_to_psd(blend_mode: DP_BlendMode) -> &'static [u8] {
         DP_BLEND_MODE_BURN => b"idiv",
         DP_BLEND_MODE_LINEAR_BURN => b"lbrn",
         DP_BLEND_MODE_LIGHTEN => b"lite",
-        DP_BLEND_MODE_SCREEN => b"scrm",
+        DP_BLEND_MODE_SCREEN => b"scrn",
         DP_BLEND_MODE_DODGE => b"div ",
         DP_BLEND_MODE_ADD => b"lddg",
         DP_BLEND_MODE_OVERLAY => b"over",

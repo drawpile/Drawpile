@@ -1909,6 +1909,16 @@ void DP_transient_canvas_state_layer_props_set_inc(DP_TransientCanvasState *tcs,
     tcs->layer_props = DP_layer_props_list_incref(lpl);
 }
 
+void DP_transient_canvas_state_transient_layer_props_set_noinc(
+    DP_TransientCanvasState *tcs, DP_TransientLayerPropsList *tlpl)
+{
+    DP_ASSERT(tcs);
+    DP_ASSERT(DP_atomic_get(&tcs->refcount) > 0);
+    DP_ASSERT(tcs->transient);
+    DP_layer_props_list_decref(tcs->layer_props);
+    tcs->transient_layer_props = tlpl;
+}
+
 DP_TransientAnnotationList *
 DP_transient_canvas_state_transient_annotations(DP_TransientCanvasState *tcs,
                                                 int reserve)

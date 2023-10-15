@@ -64,11 +64,10 @@ const DP_LoadFormat *DP_load_supported_formats(void)
     static const char *ora_ext[] = {"ora", NULL};
     static const char *png_ext[] = {"png", NULL};
     static const char *jpeg_ext[] = {"jpg", "jpeg", NULL};
+    static const char *psd_ext[] = {"psd", NULL};
     static const DP_LoadFormat formats[] = {
-        {"OpenRaster", ora_ext},
-        {"PNG", png_ext},
-        {"JPEG", jpeg_ext},
-        {NULL, NULL},
+        {"OpenRaster", ora_ext},         {"PNG", png_ext}, {"JPEG", jpeg_ext},
+        {"Photoshop Document", psd_ext}, {NULL, NULL},
     };
     return formats;
 }
@@ -1216,6 +1215,10 @@ static DP_CanvasState *load(DP_DrawContext *dc, const char *path,
     const char *dot = strrchr(path, '.');
     if (DP_str_equal_lowercase(dot, ".ora")) {
         return load_ora(dc, path, out_result);
+    }
+
+    if (DP_str_equal_lowercase(dot, ".psd")) {
+        return DP_load_psd(dc, path, out_result);
     }
 
     DP_Input *input = DP_file_input_new_from_path(path);

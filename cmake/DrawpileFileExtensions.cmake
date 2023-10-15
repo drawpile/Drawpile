@@ -11,7 +11,7 @@ set(SUPPORTED_FILE_TYPES
 		MIME application/vnd.drawpile.recording
 		UTI net.drawpile.dprec
 		CONFORMS_TO public.image
-		EXT dprec dprecz
+		EXT dprec
 		MAGIC "DPREC\\0"
 
 	TYPE
@@ -21,7 +21,7 @@ set(SUPPORTED_FILE_TYPES
 		MIME text/vnd.drawpile.recording
 		UTI net.drawpile.dptxt
 		CONFORMS_TO public.image public.text
-		EXT dptxt dptxtz
+		EXT dptxt
 
 	TYPE
 		IMPORTED
@@ -44,21 +44,14 @@ set(SUPPORTED_FILE_TYPES
 		GROUP IMAGE
 		MIME image/jpeg
 		UTI public.jpeg
-		EXT jpg jpeg jpe jif jfif jfi
+		EXT jpg jpeg
 
 	TYPE
-		NAME GIF image
+		NAME Photoshop document
 		GROUP IMAGE
-		MIME image/gif
-		UTI com.compuserve.gif
-		EXT gif
-
-	TYPE
-		NAME WebP image
-		GROUP IMAGE
-		MIME image/webp
-		UTI org.webmproject.webp
-		EXT webp
+		MIME image/vnd.adobe.photoshop
+		UTI com.adobe.photoshop-image
+		EXT psd
 )
 
 set(SUPPORTED_URL_PROTOCOLS

@@ -45,11 +45,18 @@ typedef enum DP_LoadResult {
     DP_LOAD_RESULT_READ_ERROR,
     DP_LOAD_RESULT_BAD_MIMETYPE,
     DP_LOAD_RESULT_RECORDING_INCOMPATIBLE,
+    DP_LOAD_RESULT_UNSUPPORTED_PSD_BITS_PER_CHANNEL,
+    DP_LOAD_RESULT_UNSUPPORTED_PSD_COLOR_MODE,
+    DP_LOAD_RESULT_IMAGE_TOO_LARGE,
+    DP_LOAD_RESULT_INTERNAL_ERROR,
 } DP_LoadResult;
 
 DP_CanvasState *DP_load(DP_DrawContext *dc, const char *path,
                         const char *flat_image_layer_title,
                         DP_LoadResult *out_result);
+
+DP_CanvasState *DP_load_psd(DP_DrawContext *dc, const char *path,
+                            DP_LoadResult *out_result);
 
 DP_Player *DP_load_recording(const char *path, DP_LoadResult *out_result);
 

@@ -2354,6 +2354,18 @@ void MainWindow::showLoadResultMessage(DP_LoadResult result)
 	case DP_LOAD_RESULT_RECORDING_INCOMPATIBLE:
 		showErrorMessage(tr("Incompatible recording."));
 		break;
+	case DP_LOAD_RESULT_UNSUPPORTED_PSD_BITS_PER_CHANNEL:
+		showErrorMessage(tr("Unsupported bits per channel. Only 8 bits are supported."));
+		break;
+	case DP_LOAD_RESULT_UNSUPPORTED_PSD_COLOR_MODE:
+		showErrorMessage(tr("Unsupported color mode. Only RGB/RGBA is supported."));
+		break;
+	case DP_LOAD_RESULT_IMAGE_TOO_LARGE:
+		showErrorMessage(tr("Image dimensions are too large."));
+		break;
+	case DP_LOAD_RESULT_INTERNAL_ERROR:
+		showErrorMessage(tr("Internal error, this is probably a bug."));
+		break;
 	default:
 		showErrorMessageWithDetails(tr("Unknown error."), DP_error());
 		break;

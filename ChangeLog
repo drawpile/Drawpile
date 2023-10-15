@@ -13,7 +13,7 @@ Unreleased Version 2.2.0-pre
  * Server Feature: Allow exempting users from ban ranges, to help alleviate false positives.
  * Fix: Make IPv6 addresses work in invite links.
  * Fix: Properly add drawpile:// in front of direct invite links when hosting "on this computer".
- * Feature: Support writing Photoshop Document (PSD) files. Thanks pachuco, onyx, Geese and probably others for suggesting.
+ * Feature: Support reading and writing Photoshop Document (PSD) files. Thanks pachuco, onyx, Geese and probably others for suggesting.
 
 2023-09-30 Version 2.2.0-beta.8
  * Fix: Apply color wheel direction to color dialogs too. Thanks Blozzom for reporting.

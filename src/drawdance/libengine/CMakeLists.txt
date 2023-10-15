@@ -98,9 +98,11 @@ target_link_libraries(dpengine PUBLIC
 # manually out-of-tree, both of them are not used by the web app now anyway, so
 # just exclude them from emscripten builds
 if(NOT EMSCRIPTEN)
+
     dp_target_sources(dpengine
         dpengine/load.c
         dpengine/load.h
+        dpengine/load_psd.cpp
         dpengine/save.c
         dpengine/save.h
         dpengine/xml_stream.h
@@ -108,7 +110,7 @@ if(NOT EMSCRIPTEN)
         dpengine/zip_archive.h
     )
     target_link_libraries(dpengine PUBLIC
-        "Qt${QT_VERSION_MAJOR}::Xml"
+        psd_sdk "Qt${QT_VERSION_MAJOR}::Xml"
     )
 
     if(ZIP_IMPL STREQUAL "LIBZIP")

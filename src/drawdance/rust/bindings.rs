@@ -2339,6 +2339,12 @@ extern "C" {
     );
 }
 extern "C" {
+    pub fn DP_transient_canvas_state_transient_layer_props_set_noinc(
+        tcs: *mut DP_TransientCanvasState,
+        tlpl: *mut DP_TransientLayerPropsList,
+    );
+}
+extern "C" {
     pub fn DP_transient_canvas_state_transient_annotations(
         tcs: *mut DP_TransientCanvasState,
         reserve: ::std::os::raw::c_int,
@@ -5478,12 +5484,22 @@ pub const DP_LOAD_RESULT_OPEN_ERROR: DP_LoadResult = 3;
 pub const DP_LOAD_RESULT_READ_ERROR: DP_LoadResult = 4;
 pub const DP_LOAD_RESULT_BAD_MIMETYPE: DP_LoadResult = 5;
 pub const DP_LOAD_RESULT_RECORDING_INCOMPATIBLE: DP_LoadResult = 6;
+pub const DP_LOAD_RESULT_UNSUPPORTED_COLOR_MODE: DP_LoadResult = 7;
+pub const DP_LOAD_RESULT_IMAGE_TOO_LARGE: DP_LoadResult = 8;
+pub const DP_LOAD_RESULT_INTERNAL_ERROR: DP_LoadResult = 9;
 pub type DP_LoadResult = ::std::os::raw::c_uint;
 extern "C" {
     pub fn DP_load(
         dc: *mut DP_DrawContext,
         path: *const ::std::os::raw::c_char,
         flat_image_layer_title: *const ::std::os::raw::c_char,
+        out_result: *mut DP_LoadResult,
+    ) -> *mut DP_CanvasState;
+}
+extern "C" {
+    pub fn DP_load_psd(
+        dc: *mut DP_DrawContext,
+        path: *const ::std::os::raw::c_char,
         out_result: *mut DP_LoadResult,
     ) -> *mut DP_CanvasState;
 }
