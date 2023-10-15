@@ -41,6 +41,7 @@ struct Layer
 
 	uint32_t type;						///< The layer's type. Can be any of \ref layerType::Enum.
 	bool isVisible;						///< The layer's visibility.
+	bool isPassThrough;					///< If the layer is a pass-through group.
 };
 
 PSD_NAMESPACE_END

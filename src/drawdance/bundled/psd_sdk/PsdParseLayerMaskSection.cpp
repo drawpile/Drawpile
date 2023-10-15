@@ -528,6 +528,7 @@ namespace
 				layer->layerMask = nullptr;
 				layer->vectorMask = nullptr;
 				layer->type = layerType::ANY;
+				layer->isPassThrough = false;
 
 				layer->top = fileUtil::ReadFromFileBE<int32_t>(reader);
 				layer->left = fileUtil::ReadFromFileBE<int32_t>(reader);
@@ -704,9 +705,22 @@ namespace
 					if (key == util::Key<'l', 's', 'c', 't'>::VALUE)
 					{
 						layer->type = fileUtil::ReadFromFileBE<uint32_t>(reader);
-
-						// skip the rest of the data
-						reader.Skip(length - 4u);
+						// there may be another blend mode here to tell us if the group is pass-through
+						if(length >= 12u)
+						{
+							const uint32_t lsctKey = fileUtil::ReadFromFileBE<uint32_t>(reader);
+							const uint32_t modeKey = fileUtil::ReadFromFileBE<uint32_t>(reader);
+							if (lsctKey == util::Key<'8', 'B', 'I', 'M'>::VALUE && modeKey == util::Key<'p', 'a', 's', 's'>::VALUE)
+							{
+								layer->isPassThrough = true;
+							}
+							reader.Skip(length - 12u);
+						}
+						else
+						{
+							// skip the rest of the data
+							reader.Skip(length - 4u);
+						}
 					}
 					// read Unicode layer name
 					else if (key == util::Key<'l', 'u', 'n', 'i'>::VALUE)
