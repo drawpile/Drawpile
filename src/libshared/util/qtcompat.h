@@ -7,6 +7,7 @@
 #include <QAbstractSocket>
 #include <QDebug>
 #include <QLibraryInfo>
+#include <QLocale>
 #include <QVariant>
 #include <limits>
 
@@ -133,6 +134,24 @@ inline QString debug(T &&object) {
 	return buffer;
 }
 // SPDX-SnippetEnd
+#endif
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 0)
+inline QString nativeTerritoryName(const QLocale &locale) {
+	return locale.nativeTerritoryName();
+}
+
+inline QString territoryToString(const QLocale &locale) {
+	return QLocale::territoryToString(locale.territory());
+}
+#else
+inline QString nativeTerritoryName(const QLocale &locale) {
+	return locale.nativeCountryName();
+}
+
+inline QString territoryToString(const QLocale &locale) {
+	return QLocale::countryToString(locale.country());
+}
 #endif
 
 } // namespace compat

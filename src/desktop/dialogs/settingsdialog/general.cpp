@@ -3,6 +3,7 @@
 #include "cmake-config/config.h"
 #include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
+#include "libshared/util/qtcompat.h"
 #include <QCheckBox>
 #include <QComboBox>
 #include <QFormLayout>
@@ -114,9 +115,9 @@ QString General::formatLanguage(const QLocale &locale)
 	if(needsCountryDisambiguation) {
 		return tr("%1 (%2) / %3 (%4)")
 			.arg(locale.nativeLanguageName())
-			.arg(locale.nativeCountryName())
+			.arg(compat::nativeTerritoryName(locale))
 			.arg(QLocale::languageToString(locale.language()))
-			.arg(QLocale::countryToString(locale.country()));
+			.arg(compat::territoryToString(locale));
 	} else {
 		return tr("%1 / %2")
 			.arg(locale.nativeLanguageName())
