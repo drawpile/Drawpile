@@ -111,7 +111,7 @@ public:
 	 * The freehand parameter can be used to turn off stabilizer
 	 * interference when drawing previews, shapes, lines and curves.
 	 */
-	void setBrushEngineBrush(drawdance::BrushEngine &be);
+	void setBrushEngineBrush(drawdance::BrushEngine &be, bool freehand);
 
 	/**
 	 * Runs the given task in the background. Takes over the task using

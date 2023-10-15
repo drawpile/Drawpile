@@ -399,23 +399,28 @@ void ToolController::offsetActiveTool(int xOffset, int yOffset)
 	m_activeTool->offsetActiveTool(xOffset, yOffset);
 }
 
-void ToolController::setBrushEngineBrush(drawdance::BrushEngine &be)
+void ToolController::setBrushEngineBrush(
+	drawdance::BrushEngine &be, bool freehand)
 {
 	const brushes::ActiveBrush &brush = activeBrush();
 	DP_StrokeParams stroke = {
 		activeLayer(),
-		m_interpolateInputs,
-		m_effectiveSmoothing,
+		false,
+		0,
 		m_stabilizationMode != brushes::Smoothing || m_finishStrokes,
 		0,
 		m_finishStrokes,
 	};
-	if(m_stabilizerUseBrushSampleCount) {
-		if(brush.stabilizationMode() == brushes::Stabilizer) {
-			stroke.stabilizer_sample_count = brush.stabilizerSampleCount();
+	if(freehand) {
+		stroke.interpolate = m_interpolateInputs;
+		stroke.smoothing = m_effectiveSmoothing;
+		if(m_stabilizerUseBrushSampleCount) {
+			if(brush.stabilizationMode() == brushes::Stabilizer) {
+				stroke.stabilizer_sample_count = brush.stabilizerSampleCount();
+			}
+		} else if(m_stabilizationMode == brushes::Stabilizer) {
+			stroke.stabilizer_sample_count = m_stabilizerSampleCount;
 		}
-	} else if(m_stabilizationMode == brushes::Stabilizer) {
-		stroke.stabilizer_sample_count = m_stabilizerSampleCount;
 	}
 	brush.setInBrushEngine(be, stroke);
 }

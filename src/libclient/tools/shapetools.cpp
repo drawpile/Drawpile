@@ -109,7 +109,7 @@ void ShapeTool::end()
 	canvas::PaintEngine *paintEngine = m_owner.model()->paintEngine();
 	drawdance::CanvasState canvasState = paintEngine->sampleCanvasState();
 
-	m_owner.setBrushEngineBrush(m_brushEngine);
+	m_owner.setBrushEngineBrush(m_brushEngine, false);
 
 	const canvas::PointVector pv = pointVector();
 	m_brushEngine.beginStroke(client->myId(), true, m_zoom);
@@ -124,7 +124,7 @@ void ShapeTool::end()
 
 void ShapeTool::updatePreview()
 {
-	m_owner.setBrushEngineBrush(m_brushEngine);
+	m_owner.setBrushEngineBrush(m_brushEngine, false);
 	canvas::PaintEngine *paintEngine = m_owner.model()->paintEngine();
 	drawdance::CanvasState canvasState = paintEngine->sampleCanvasState();
 

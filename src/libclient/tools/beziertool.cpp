@@ -99,7 +99,7 @@ void BezierTool::finishMultipart()
 	if(m_points.size() > 2) {
 		m_points.pop_back();
 
-		m_owner.setBrushEngineBrush(m_brushEngine);
+		m_owner.setBrushEngineBrush(m_brushEngine, false);
 
 		net::Client *client = m_owner.client();
 		const uint8_t contextId = client->myId();
@@ -190,7 +190,7 @@ void BezierTool::updatePreview()
 	if(pv.size()<=1)
 		return;
 
-	m_owner.setBrushEngineBrush(m_brushEngine);
+	m_owner.setBrushEngineBrush(m_brushEngine, false);
 
 	canvas::PaintEngine *paintEngine = m_owner.model()->paintEngine();
 	drawdance::CanvasState canvasState = paintEngine->sampleCanvasState();

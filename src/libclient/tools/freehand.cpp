@@ -38,7 +38,7 @@ void Freehand::begin(const canvas::Point &point, bool right, float zoom)
 	m_drawing = true;
 	m_firstPoint = true;
 
-	m_owner.setBrushEngineBrush(m_brushEngine);
+	m_owner.setBrushEngineBrush(m_brushEngine, true);
 
 	// The pressure value of the first point is unreliable
 	// because it is (or was?) possible to get a synthetic MousePress event
