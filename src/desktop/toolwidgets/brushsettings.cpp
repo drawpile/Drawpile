@@ -282,7 +282,7 @@ BrushSettings::Lock BrushSettings::getLock()
 				return Lock::IndirectCompat;
 			}
 		}
-	} else if(!d->myPaintAllowed) {
+	} else if(!d->myPaintAllowed && d->currentIsMyPaint()) {
 		return Lock::MyPaintPermission;
 	}
 	return Lock::None;
