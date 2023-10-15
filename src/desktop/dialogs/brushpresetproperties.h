@@ -32,6 +32,8 @@ private:
     Ui_BrushPresetProperties *m_ui;
 
     void showThumbnail(const QPixmap &thumbnail);
+    void renderThumbnail();
+    QPixmap applyThumbnailLabel(const QString &label);
 };
 
 }
