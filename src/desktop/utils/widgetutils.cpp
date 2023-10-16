@@ -18,6 +18,7 @@
 #include <QPair>
 #include <QRadioButton>
 #include <QResizeEvent>
+#include <QScreen>
 #include <QScrollBar>
 #include <QVBoxLayout>
 #include <QWidget>
