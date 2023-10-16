@@ -17,6 +17,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Make MyPaint brush permission not deny drawing with classic brushes. Thanks xxxx for reporting.
  * Fix: Offer to crop all avatars, not just non-square ones. Thanks Bluestrings for reporting.
  * Feature: Allow adding labels onto brush preset thumbnails. Thanks Paris Green for causing this.
+ * Fix: Don't restore flipbook to previous location and size if that would put it outside of any available screen. Thanks Ausjamcian for reporting.
 
 2023-09-30 Version 2.2.0-beta.8
  * Fix: Apply color wheel direction to color dialogs too. Thanks Blozzom for reporting.

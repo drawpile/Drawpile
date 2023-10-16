@@ -6,6 +6,7 @@ extern "C" {
 #include "desktop/dialogs/flipbook.h"
 #include "desktop/main.h"
 #include "desktop/utils/qtguicompat.h"
+#include "desktop/utils/widgetutils.h"
 #include "libclient/canvas/paintengine.h"
 #include "ui_flipbook.h"
 #include <QAction>
@@ -76,10 +77,7 @@ Flipbook::Flipbook(State &state, QWidget *parent)
 	m_ui->speedSpinner->setExponentRatio(3.0);
 	m_ui->playButton->setFocus();
 
-	const auto geom = dpApp().settings().flipbookWindow();
-	if(geom.isValid()) {
-		setGeometry(geom);
-	}
+	utils::setGeometryIfOnScreen(this, dpApp().settings().flipbookWindow());
 }
 
 Flipbook::~Flipbook()

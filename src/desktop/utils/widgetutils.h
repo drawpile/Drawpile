@@ -95,6 +95,8 @@ void showWindow(QWidget *widget, bool maximized = false);
 
 void setWidgetRetainSizeWhenHidden(QWidget *widget, bool retainSize);
 
+bool setGeometryIfOnScreen(QWidget *widget, const QRect &geometry);
+
 void initKineticScrolling(QAbstractScrollArea *scrollArea);
 bool isKineticScrollingBarsHidden();
 

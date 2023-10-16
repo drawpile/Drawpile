@@ -293,6 +293,23 @@ void setWidgetRetainSizeWhenHidden(QWidget *widget, bool retainSize)
 	widget->setSizePolicy(sp);
 }
 
+bool setGeometryIfOnScreen(QWidget *widget, const QRect &geometry)
+{
+	if(!geometry.isEmpty()) {
+		// Make sure at least half of the window is on screen.
+		int requiredWidth = qMax(1, geometry.width() / 2);
+		int requiredHeight = qMax(1, geometry.height() / 2);
+		for(QScreen *screen : dpApp().screens()) {
+			QRect r = screen->availableGeometry().intersected(geometry);
+			if(r.width() >= requiredWidth && r.height() >= requiredHeight) {
+				widget->setGeometry(geometry);
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 static QPair<bool, QScroller::ScrollerGestureType>
 getKineticScrollEnabledGesture(const desktop::settings::Settings &settings)
 {
