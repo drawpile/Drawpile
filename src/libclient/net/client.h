@@ -109,6 +109,16 @@ public:
 		return m_server && m_server->supportsPersistence();
 	}
 
+	bool serverSupportsCryptBanImpEx() const
+	{
+		return m_server && m_server->supportsCryptBanImpEx();
+	}
+
+	bool serverSupportsModBanImpEx() const
+	{
+		return m_server && m_server->supportsModBanImpEx();
+	}
+
 	/**
 	 * @brief Can the server receive abuse reports?
 	 */
@@ -183,10 +193,16 @@ public slots:
 
 	void setSmoothDrainRate(int smoothDrainRate);
 
+	void requestBanExport(bool plain);
+	void requestBanImport(const QString &bans);
+
 signals:
 	void messagesReceived(int count, const net::Message *msgs);
 	void drawingCommandsLocal(int count, const net::Message *msgs);
 	void catchupProgress(int percentage);
+	void bansExported(const QByteArray &bans);
+	void bansImported(int total, int imported);
+	void bansImpExError(const QString &message);
 
 	void needSnapshot();
 	void sessionResetted();
@@ -228,7 +244,9 @@ private:
 	filterCompatibleMessages(int count, const net::Message *msgs);
 
 	void handleServerReply(const ServerReply &msg, int handledMessageIndex = 0);
-	QString translateMessage(const QJsonObject &reply);
+	QString translateMessage(
+		const QJsonObject &reply,
+		const QString &fallbackKey = QStringLiteral("message"));
 	void handleResetRequest(const ServerReply &msg);
 	void handleData(const net::Message &msg);
 	void handleUserInfo(const net::Message &msg, DP_MsgData *md);

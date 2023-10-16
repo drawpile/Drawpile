@@ -17,6 +17,9 @@ TcpServer::TcpServer(int timeoutSecs, QObject *parent)
 	, m_securityLevel(NO_SECURITY)
 	, m_localDisconnect(false)
 	, m_supportsPersistence(false)
+	, m_supportsCryptBanImpEx(false)
+	, m_supportsModBanImpEx(false)
+	, m_compatibilityMode(false)
 {
 	m_socket = new QSslSocket(this);
 
@@ -169,6 +172,8 @@ void TcpServer::loginSuccess()
 			 << m_loginstate->userId();
 
 	m_supportsPersistence = m_loginstate->supportsPersistence();
+	m_supportsCryptBanImpEx = m_loginstate->supportsCryptBanImEx();
+	m_supportsModBanImpEx = m_loginstate->supportsModBanImEx();
 	m_supportsAbuseReports = m_loginstate->supportsAbuseReports();
 	m_msgqueue->setContextId(m_loginstate->userId());
 

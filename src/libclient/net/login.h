@@ -161,6 +161,9 @@ public:
 	 */
 	bool supportsPersistence() const { return m_canPersist; }
 
+	bool supportsCryptBanImEx() const { return m_supportsCryptBanImpEx; }
+	bool supportsModBanImEx() const { return m_supportsModBanImpEx; }
+
 	/**
 	 * @brief Can the server receive abuse reports?
 	 */
@@ -465,6 +468,8 @@ private:
 	bool m_mustAuth;
 	bool m_needUserPassword;
 	bool m_supportsCustomAvatars;
+	bool m_supportsCryptBanImpEx;
+	bool m_supportsModBanImpEx;
 	bool m_supportsExtAuthAvatars;
 	bool m_compatibilityMode;
 	bool m_needSessionPassword;

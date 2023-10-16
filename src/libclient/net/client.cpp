@@ -285,9 +285,10 @@ void Client::handleMessages(int count, net::Message *msgs)
 
 void Client::handleServerReply(const ServerReply &msg, int handledMessageIndex)
 {
+	const QJsonObject &reply = msg.reply;
 	switch(msg.type) {
 	case ServerReply::ReplyType::Unknown:
-		qWarning() << "Unknown server reply:" << msg.message << msg.reply;
+		qWarning() << "Unknown server reply:" << msg.message << reply;
 		break;
 	case ServerReply::ReplyType::Login:
 		qWarning("got login message while in session!");
@@ -297,15 +298,14 @@ void Client::handleServerReply(const ServerReply &msg, int handledMessageIndex)
 	case ServerReply::ReplyType::Error:
 	case ServerReply::ReplyType::Result:
 		emit serverMessage(
-			translateMessage(msg.reply),
-			msg.type == ServerReply::ReplyType::Alert);
+			translateMessage(reply), msg.type == ServerReply::ReplyType::Alert);
 		break;
 	case ServerReply::ReplyType::Log: {
-		QString time = QDateTime::fromString(
-						   msg.reply["timestamp"].toString(), Qt::ISODate)
-						   .toLocalTime()
-						   .toString(Qt::ISODate);
-		QString user = msg.reply["user"].toString();
+		QString time =
+			QDateTime::fromString(reply["timestamp"].toString(), Qt::ISODate)
+				.toLocalTime()
+				.toString(Qt::ISODate);
+		QString user = reply["user"].toString();
 		QString message = msg.message;
 		if(user.isEmpty())
 			emit serverLog(QStringLiteral("[%1] %2").arg(time, message));
@@ -314,25 +314,25 @@ void Client::handleServerReply(const ServerReply &msg, int handledMessageIndex)
 				QStringLiteral("[%1] %2: %3").arg(time, user, message));
 	} break;
 	case ServerReply::ReplyType::SessionConf:
-		emit sessionConfChange(msg.reply["config"].toObject());
+		emit sessionConfChange(reply["config"].toObject());
 		break;
 	case ServerReply::ReplyType::SizeLimitWarning:
 		// No longer used since 2.1.0. Replaced by RESETREQUEST
 		break;
 	case ServerReply::ReplyType::ResetRequest:
 		emit autoresetRequested(
-			msg.reply["maxSize"].toInt(), msg.reply["query"].toBool());
+			reply["maxSize"].toInt(), reply["query"].toBool());
 		break;
 	case ServerReply::ReplyType::Status:
-		emit serverStatusUpdate(msg.reply["size"].toInt());
+		emit serverStatusUpdate(reply["size"].toInt());
 		break;
 	case ServerReply::ReplyType::Reset:
 		handleResetRequest(msg);
 		break;
 	case ServerReply::ReplyType::Catchup:
-		m_catchupTo = msg.reply["count"].toInt();
+		m_catchupTo = reply["count"].toInt();
 		m_catchupKey =
-			msg.reply.contains("key") ? qMax(0, msg.reply["key"].toInt()) : -1;
+			reply.contains("key") ? qMax(0, reply["key"].toInt()) : -1;
 		m_server->setSmoothEnabled(false);
 		qInfo(
 			"Catching up to %d messages with key %d", m_catchupTo,
@@ -346,22 +346,61 @@ void Client::handleServerReply(const ServerReply &msg, int handledMessageIndex)
 		}
 		break;
 	case ServerReply::ReplyType::CaughtUp:
-		if(m_catchupTo > 0 &&
-		   qMax(0, msg.reply["key"].toInt()) == m_catchupKey) {
+		if(m_catchupTo > 0 && qMax(0, reply["key"].toInt()) == m_catchupKey) {
 			finishCatchup(
 				"received caughtup command from server", handledMessageIndex);
+		}
+		break;
+	case ServerReply::ReplyType::BanImpEx:
+		if(reply.contains(QStringLiteral("export"))) {
+			emit bansExported(
+				reply[QStringLiteral("export")].toString().toUtf8());
+		} else if(reply.contains(QStringLiteral("imported"))) {
+			emit bansImported(
+				reply[QStringLiteral("total")].toInt(),
+				reply[QStringLiteral("imported")].toInt());
+		} else if(reply.contains(QStringLiteral("error"))) {
+			emit bansImpExError(
+				translateMessage(reply, QStringLiteral("error")));
+		} else {
+			qWarning() << "Unknown banimpex message:" << reply;
 		}
 		break;
 	}
 }
 
-QString Client::translateMessage(const QJsonObject &reply)
+QString
+Client::translateMessage(const QJsonObject &reply, const QString &fallbackKey)
 {
 	QJsonValue keyValue = reply[QStringLiteral("T")];
 	if(keyValue.isString()) {
 		QString key = keyValue.toString();
 		QJsonObject params = reply[QStringLiteral("P")].toObject();
-		if(key == net::ServerReply::KEY_BAN) {
+		if(key == net::ServerReply::KEY_BANEXPORT_MODONLY) {
+			//: "Plain" meaning "not encrypted."
+			return tr("Only moderators can export plain bans.");
+		} else if(key == net::ServerReply::KEY_BANEXPORT_SERVERERROR) {
+			return tr("Server error.");
+		} else if(key == net::ServerReply::KEY_BANEXPORT_UNCONFIGURED) {
+			return tr(
+				"Exporting encrypted bans not configured on this server.");
+		} else if(key == net::ServerReply::KEY_BANEXPORT_UNSUPPORTED) {
+			return tr("Exporting encrypted bans not supported by this server.");
+		} else if(key == net::ServerReply::KEY_BANIMPORT_CRYPTERROR) {
+			return tr(
+				"The server couldn't read the import data. This is likely "
+				"because it was exported from a different server. You can only "
+				"import bans into the same server they were exported from.");
+		} else if(key == net::ServerReply::KEY_BANIMPORT_INVALID) {
+			return tr("Invalid import data.");
+		} else if(key == net::ServerReply::KEY_BANIMPORT_MALFORMED) {
+			return tr("Malformed import data.");
+		} else if(key == net::ServerReply::KEY_BANIMPORT_UNCONFIGURED) {
+			return tr(
+				"Importing encrypted bans not configured on this server.");
+		} else if(key == net::ServerReply::KEY_BANIMPORT_UNSUPPORTED) {
+			return tr("Importing encrypted bans not supported by this server.");
+		} else if(key == net::ServerReply::KEY_BAN) {
 			return tr("%1 banned by %2.")
 				.arg(
 					params[QStringLiteral("target")].toString(),
@@ -419,7 +458,7 @@ QString Client::translateMessage(const QJsonObject &reply)
 			}
 		}
 	}
-	return reply[QStringLiteral("message")].toString();
+	return reply[fallbackKey].toString();
 }
 
 void Client::handleResetRequest(const ServerReply &msg)
@@ -496,6 +535,22 @@ void Client::finishCatchup(const char *reason, int handledMessageIndex)
 	m_catchupTo = 0;
 	m_server->setSmoothEnabled(true);
 	emit catchupProgress(100);
+}
+
+void Client::requestBanExport(bool plain)
+{
+	QJsonObject kwargs;
+	if(plain) {
+		kwargs[QStringLiteral("plain")] = true;
+	}
+	sendMessage(
+		net::ServerCommand::make(QStringLiteral("export-bans"), {}, kwargs));
+}
+
+void Client::requestBanImport(const QString &bans)
+{
+	sendMessage(
+		net::ServerCommand::make(QStringLiteral("import-bans"), {bans}));
 }
 
 }

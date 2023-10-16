@@ -52,6 +52,13 @@ void LoginHandler::startLoginProcess()
 		flags << "REPORT";
 	if(m_config->getConfigBool(config::AllowCustomAvatars))
 		flags << "AVATAR";
+#ifdef HAVE_LIBSODIUM
+	if(!m_config->internalConfig().cryptKey.isEmpty()) {
+		flags << "CBANIMPEX";
+	}
+#endif
+	// Moderators can always export bans.
+	flags << "MBANIMPEX";
 
 	// Start by telling who we are
 	send(net::ServerReply::makeLoginGreeting(
@@ -618,7 +625,8 @@ void LoginHandler::handleJoinMessage(const net::ServerCommand &cmd)
 	if(!m_client->isModerator()) {
 		// Non-moderators have to obey access restrictions
 		if(session->history()->banlist().isBanned(
-			   m_client->peerAddress(), m_client->authId())) {
+			   m_client->username(), m_client->peerAddress(),
+			   m_client->authId(), m_client->sid()) != 0) {
 			sendError("banned", "You have been banned from this session");
 			return;
 		}
@@ -767,6 +775,7 @@ bool LoginHandler::verifySystemId(
 	const net::ServerCommand &cmd, const protocol::ProtocolVersion &protover)
 {
 	QString sid = cmd.kwargs[QStringLiteral("s")].toString();
+	m_client->setSid(sid);
 	if(sid.isEmpty()) {
 		if(protover.shouldHaveSystemId()) {
 			m_client->log(Log()

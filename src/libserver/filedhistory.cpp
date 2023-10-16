@@ -263,7 +263,8 @@ bool FiledHistory::load()
 
 		} else if(cmd == "BAN") {
 			const QList<QByteArray> args = params.split(' ');
-			if(args.length() != 5) {
+			int length = args.length();
+			if(length < 5 || length > 6) {
 				qWarning() << id()
 						   << "invalid ban entry:" << QString::fromUtf8(params);
 			} else {
@@ -275,7 +276,12 @@ bool FiledHistory::load()
 					QByteArray::fromPercentEncoding(args.at(3)))};
 				QString bannedBy{QString::fromUtf8(
 					QByteArray::fromPercentEncoding(args.at(4)))};
-				m_banlist.addBan(name, ip, extAuthId, bannedBy, id);
+				QString sid;
+				if(length >= 6) {
+					sid = QString::fromUtf8(
+						QByteArray::fromPercentEncoding(args.at(5)));
+				}
+				m_banlist.addBan(name, ip, extAuthId, sid, bannedBy, id);
 			}
 
 		} else if(cmd == "UNBAN") {
@@ -664,7 +670,7 @@ void FiledHistory::cleanupBatches(int before)
 
 void FiledHistory::historyAddBan(
 	int id, const QString &username, const QHostAddress &ip,
-	const QString &extAuthId, const QString &bannedBy)
+	const QString &extAuthId, const QString &sid, const QString &bannedBy)
 {
 	const QByteArray include = " ";
 	QByteArray entry =
@@ -672,7 +678,8 @@ void FiledHistory::historyAddBan(
 		username.toUtf8().toPercentEncoding(QByteArray(), include) + " " +
 		ip.toString().toUtf8() + " " +
 		extAuthId.toUtf8().toPercentEncoding(QByteArray(), include) + " " +
-		bannedBy.toUtf8().toPercentEncoding(QByteArray(), include) + "\n";
+		bannedBy.toUtf8().toPercentEncoding(QByteArray(), include) + " " +
+		sid.toUtf8().toPercentEncoding(QByteArray(), include) + "\n";
 	m_journal->write(entry);
 	m_journal->flush();
 }

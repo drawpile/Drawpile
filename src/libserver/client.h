@@ -90,6 +90,9 @@ public:
 	const QString &authId() const;
 	void setAuthId(const QString &id);
 
+	const QString &sid() const;
+	void setSid(const QString &sid);
+
 	/**
 	 * @brief Does this user have session operator privileges?
 	 * @return

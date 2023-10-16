@@ -72,6 +72,13 @@ QString FileWrangler::getOpenBrushPackPath() const
 		utils::FileFormatOption::BrushPack);
 }
 
+QString FileWrangler::getOpenSessionBansPath() const
+{
+	return showOpenFileDialog(
+		tr("Import Session Bans"), LastPath::SESSION_BANS,
+		utils::FileFormatOption::SessionBans);
+}
+
 
 QString FileWrangler::saveImage(Document *doc) const
 {
@@ -236,6 +243,13 @@ QString FileWrangler::getSaveBrushPackPath() const
 		utils::FileFormatOption::SaveBrushPack);
 }
 
+QString FileWrangler::getSaveSessionBansPath() const
+{
+	return showSaveFileDialog(
+		tr("Export Session Bans"), LastPath::SESSION_BANS, ".dpbans",
+		utils::FileFormatOption::SaveSessionBans);
+}
+
 
 bool FileWrangler::confirmFlatten(Document *doc, QString &filename) const
 {
@@ -342,13 +356,14 @@ QString FileWrangler::getLastPathKey(LastPath type)
 		return QStringLiteral("debugdump");
 	case LastPath::BRUSH_PACK:
 		return QStringLiteral("brushpack");
+	case LastPath::SESSION_BANS:
+		return QStringLiteral("sessionbans");
 #ifdef Q_OS_ANDROID
 	case LastPath::LOG_FILE:
 		return QStringLiteral("logfile");
 #endif
-	default:
-		return QStringLiteral("unknown");
 	}
+	return QStringLiteral("unknown");
 }
 
 QString FileWrangler::getDefaultLastPath(LastPath type, const QString &ext)

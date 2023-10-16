@@ -30,6 +30,7 @@ public:
 		TABLET_EVENT_LOG,
 		DEBUG_DUMP,
 		BRUSH_PACK,
+		SESSION_BANS,
 #ifdef Q_OS_ANDROID
 		LOG_FILE,
 #endif
@@ -47,6 +48,7 @@ public:
 	QString getOpenPasteImagePath() const;
 	QString getOpenDebugDumpsPath() const;
 	QString getOpenBrushPackPath() const;
+	QString getOpenSessionBansPath() const;
 
 	QString saveImage(Document *doc) const;
 	QString saveImageAs(Document *doc) const;
@@ -68,6 +70,7 @@ public:
 	QString getSaveImageSeriesPath() const;
 #endif
 	QString getSaveBrushPackPath() const;
+	QString getSaveSessionBansPath() const;
 
 private:
 	bool confirmFlatten(Document *doc, QString &filename) const;

@@ -23,6 +23,10 @@
 #include "thinsrv/headless/unixsignals.h"
 #endif
 
+#ifdef HAVE_LIBSODIUM
+#include <sodium.h>
+#endif
+
 namespace server {
 namespace headless {
 
@@ -121,10 +125,18 @@ bool start() {
 	QCommandLineOption templatesOption(QStringList() << "templates" << "t", "Session templates", "path");
 	parser.addOption(templatesOption);
 
-	// --extauth <url>
 #ifdef HAVE_LIBSODIUM
+	// --extauth <url>
 	QCommandLineOption extAuthOption(QStringList() << "extauth", "Extauth server URL", "url");
 	parser.addOption(extAuthOption);
+
+	// --crypt-key
+	QCommandLineOption cryptKeyOption(QStringList() << "crypt-key", "Encryption key for session ban exports", "key");
+	parser.addOption(cryptKeyOption);
+
+	// --generate-crypt-key
+	QCommandLineOption generateCryptKeyOption(QStringList() << "generate-crypt-key", "Generate a key to pass to --crypt-key and exit");
+	parser.addOption(generateCryptKeyOption);
 #endif
 
 	// --report-url <url>
@@ -138,6 +150,19 @@ bool start() {
 		printVersion();
 		::exit(0);
 	}
+
+#ifdef HAVE_LIBSODIUM
+	if(parser.isSet(generateCryptKeyOption)) {
+		if(sodium_init() < 0) {
+			qCritical("Failed to initialize sodium");
+			::exit(1);
+		}
+		QByteArray key(crypto_secretbox_KEYBYTES, 0);
+		randombytes_buf(key.data(), key.size());
+		puts(key.toBase64().constData());
+		::exit(0);
+	}
+#endif
 
 	// Set server configuration file or database
 	ServerConfig *serverconfig;
@@ -168,6 +193,22 @@ bool start() {
 	icfg.localHostname = parser.value(localAddr);
 #ifdef HAVE_LIBSODIUM
 	icfg.extAuthUrl = parser.value(extAuthOption);
+	QString cryptKey = parser.value(cryptKeyOption);
+	if(!cryptKey.isEmpty()) {
+		QByteArray decodedKey = QByteArray::fromBase64(cryptKey.toUtf8());
+		if(decodedKey.size() == crypto_secretbox_KEYBYTES) {
+			icfg.cryptKey = decodedKey;
+			if(sodium_init() < 0) {
+				qCritical("Failed to initialize sodium");
+				return false;
+			}
+		} else {
+			qCritical("Invalid crypt key '%s'", qUtf8Printable(cryptKey));
+			qInfo("Use --generate-crypt-key to generate a proper one.");
+			delete serverconfig;
+			return false;
+		}
+	}
 #endif
 	icfg.reportUrl = parser.value(reportUrlOption);
 
@@ -176,6 +217,7 @@ bool start() {
 		icfg.announcePort = parser.value(announcePortOption).toInt(&ok);
 		if(!ok || icfg.announcePort>0xffff) {
 			qCritical("Invalid port %s", qPrintable(parser.value(announcePortOption)));
+			delete serverconfig;
 			return false;
 		}
 	}

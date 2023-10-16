@@ -15,6 +15,8 @@ class ProtocolVersion;
 
 namespace server {
 
+class Client;
+
 /**
  * @brief Abstract base class for session history implementations
  *
@@ -220,7 +222,12 @@ public:
 	 */
 	bool addBan(
 		const QString &username, const QHostAddress &ip,
-		const QString &extAuthId, const QString &bannedBy);
+		const QString &extAuthId, const QString &sid, const QString &bannedBy,
+		const Client *client = nullptr);
+
+	bool importBans(
+		const QJsonObject &data, int &outTotal, int &outImported,
+		const Client *client = nullptr);
 
 	/**
 	 * @brief removeBan Remove a banlist entry
@@ -298,7 +305,8 @@ protected:
 	virtual void historyReset(const net::MessageList &newHistory) = 0;
 	virtual void historyAddBan(
 		int id, const QString &username, const QHostAddress &ip,
-		const QString &extAuthId, const QString &bannedBy) = 0;
+		const QString &extAuthId, const QString &sid,
+		const QString &bannedBy) = 0;
 	virtual void historyRemoveBan(int id) = 0;
 	void historyLoaded(uint size, int messageCount);
 

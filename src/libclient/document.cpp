@@ -252,6 +252,7 @@ void Document::onServerLogin(
 	Q_ASSERT(m_canvas);
 
 	m_canvas->connectedToServer(m_client->myId(), join, compatibilityMode);
+	m_banlist->setShowSensitive(m_client->isModerator());
 
 	if(!m_recordOnConnect.isEmpty()) {
 		m_originalRecordingFilename = m_recordOnConnect;

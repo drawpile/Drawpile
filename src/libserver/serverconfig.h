@@ -85,6 +85,7 @@ struct InternalConfig {
 	int announcePort = 0;  // The port to use in session announcements
 	QUrl extAuthUrl;       // URL of the external authentication server
 	QUrl reportUrl;        // Abuse report handler backend URL
+	QByteArray cryptKey;   // Key used to encrypt session ban exports
 
 	int getAnnouncePort() const { return announcePort > 0 ? announcePort : realPort; }
 };

@@ -13,6 +13,8 @@ struct BanlistEntry {
 	int id;
 	QString username;
 	QString ip;
+	QString authId;
+	QString sid;
 	QString bannedBy;
 };
 
@@ -34,6 +36,8 @@ public:
 
 	QVariant headerData(int section, Qt::Orientation orientation, int role=Qt::DisplayRole) const override;
 
+	void setShowSensitive(bool showSensitive);
+
 	//! Replace banlist content
 	void updateBans(const QJsonArray &banlist);
 
@@ -41,6 +45,7 @@ public:
 
 private:
 	QList<BanlistEntry> m_banlist;
+	bool m_showSensitive = false;
 };
 
 }

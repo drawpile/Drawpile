@@ -38,6 +38,7 @@ private slots:
 		const QString opUser = "op";
 		const QHostAddress bannedAddress("::ffff:192.168.0.100");
 		const QString bannedExtAuthId = "trololo";
+		const QString bannedSid = "012345689abcdef";
 
 		const QString announcementUrl = "http://example.com/";
 
@@ -53,12 +54,12 @@ private slots:
 				maxUsers); // this should replace the previously set value
 			fh->setTitle(title);
 			fh->setFlags(flags);
-			fh->addBan(bannedUser, bannedAddress, QString(), opUser);
+			fh->addBan(bannedUser, bannedAddress, QString(), QString(), opUser);
 			fh->addBan(
-				"test", QHostAddress("192.168.0.101"), QString(), opUser);
+				"test", QHostAddress("192.168.0.101"), QString(), QString(), opUser);
 			fh->addBan(
 				"test3", QHostAddress("192.168.0.102"), bannedExtAuthId,
-				opUser);
+				bannedSid, opUser);
 			fh->removeBan(2);
 			fh->addAnnouncement(announcementUrl);
 			fh->addAnnouncement("http://example.com/2/");
@@ -99,6 +100,8 @@ private slots:
 				bannedAddress.toString());
 			QCOMPARE(
 				banlist.at(0).toObject()["extauthid"].toString(), QString());
+			QCOMPARE(
+				banlist.at(0).toObject()["s"].toString(), QString());
 
 			QCOMPARE(
 				banlist.at(1).toObject()["username"].toString(),
@@ -106,6 +109,9 @@ private slots:
 			QCOMPARE(
 				banlist.at(1).toObject()["extauthid"].toString(),
 				bannedExtAuthId);
+			QCOMPARE(
+				banlist.at(1).toObject()["s"].toString(),
+				bannedSid);
 			QCOMPARE(banlist.at(1).toObject()["bannedBy"].toString(), opUser);
 
 			QStringList announcements = fh->announcements();

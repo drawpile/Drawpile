@@ -361,6 +361,12 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	connect(m_doc->client(), &net::Client::userInfoRequested, this, &MainWindow::sendUserInfo);
 
+	connect(m_doc->client(), &net::Client::bansImported, m_sessionSettings, &dialogs::SessionSettingsDialog::bansImported);
+	connect(m_doc->client(), &net::Client::bansExported, m_sessionSettings, &dialogs::SessionSettingsDialog::bansExported);
+	connect(m_doc->client(), &net::Client::bansImpExError, m_sessionSettings, &dialogs::SessionSettingsDialog::bansImpExError);
+	connect(m_sessionSettings, &dialogs::SessionSettingsDialog::requestBanImport, m_doc->client(), &net::Client::requestBanImport);
+	connect(m_sessionSettings, &dialogs::SessionSettingsDialog::requestBanExport, m_doc->client(), &net::Client::requestBanExport);
+
 	// Tool controller <-> UI connections
 	connect(m_doc->toolCtrl(), &tools::ToolController::activeAnnotationChanged, m_canvasscene, &drawingboard::CanvasScene::setActiveAnnotation);
 	connect(m_doc->toolCtrl(), &tools::ToolController::colorUsed, m_dockToolSettings, &docks::ToolSettings::addLastUsedColor);
@@ -2174,6 +2180,9 @@ void MainWindow::onServerLogin(bool join, const QString &joinPassword)
 	m_netstatus->setSecurityLevel(client->securityLevel(), client->hostCertificate());
 	m_view->setEnabled(true);
 	m_sessionSettings->setPersistenceEnabled(client->serverSuppotsPersistence());
+	m_sessionSettings->setBanImpExEnabled(
+		client->isModerator(), client->serverSupportsCryptBanImpEx(),
+		client->serverSupportsModBanImpEx());
 	m_sessionSettings->setAutoResetEnabled(client->sessionSupportsAutoReset());
 	m_sessionSettings->setAuthenticated(client->isAuthenticated());
 	setDrawingToolsEnabled(true);

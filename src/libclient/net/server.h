@@ -64,6 +64,8 @@ public:
 	 * @brief Does the server support persistent sessions?
 	 */
 	virtual bool supportsPersistence() const = 0;
+	virtual bool supportsCryptBanImpEx() const = 0;
+	virtual bool supportsModBanImpEx() const = 0;
 	virtual bool supportsAbuseReports() const = 0;
 
 	virtual void setSmoothEnabled(bool smoothEnabled) = 0;

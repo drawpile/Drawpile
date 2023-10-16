@@ -26,6 +26,7 @@ struct Client::Private {
 
 	QString username;
 	QString authId;
+	QString sid;
 	QByteArray avatar;
 	QStringList flags;
 
@@ -93,6 +94,7 @@ QJsonObject Client::description(bool includeSession) const
 	u["id"] = id();
 	u["name"] = username();
 	u["ip"] = peerAddress().toString();
+	u["s"] = sid();
 	u["lastActive"] = QDateTime::fromMSecsSinceEpoch(d->lastActive, Qt::UTC)
 						  .toString(Qt::ISODate);
 	u["auth"] = isAuthenticated();
@@ -215,6 +217,16 @@ const QString &Client::authId() const
 void Client::setAuthId(const QString &authId)
 {
 	d->authId = authId;
+}
+
+const QString &Client::sid() const
+{
+	return d->sid;
+}
+
+void Client::setSid(const QString &sid)
+{
+	d->sid = sid;
 }
 
 void Client::setOperator(bool op)

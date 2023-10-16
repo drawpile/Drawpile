@@ -46,6 +46,17 @@ struct ServerCommand {
  * message
  */
 struct ServerReply {
+	static constexpr char KEY_BANEXPORT_MODONLY[] = "banexportmodonly";
+	static constexpr char KEY_BANEXPORT_SERVERERROR[] = "banexportservererror";
+	static constexpr char KEY_BANEXPORT_UNCONFIGURED[] =
+		"banexportunconfigured";
+	static constexpr char KEY_BANEXPORT_UNSUPPORTED[] = "banexportunsupported";
+	static constexpr char KEY_BANIMPORT_CRYPTERROR[] = "banimportcrypterror";
+	static constexpr char KEY_BANIMPORT_INVALID[] = "banimportinvalid";
+	static constexpr char KEY_BANIMPORT_MALFORMED[] = "banimportmalformed";
+	static constexpr char KEY_BANIMPORT_UNCONFIGURED[] =
+		"banimportunconfigured";
+	static constexpr char KEY_BANIMPORT_UNSUPPORTED[] = "banimportunsupported";
 	static constexpr char KEY_BAN[] = "ban";
 	static constexpr char KEY_KICK[] = "kick";
 	static constexpr char KEY_OP_GIVE[] = "opgive";
@@ -72,6 +83,7 @@ struct ServerReply {
 		Catchup,		  // number of messages queued for upload
 		ResetRequest,	  // request client to perform a reset
 		CaughtUp,		  // previous catchup is complete
+		BanImpEx,		  // session ban import/export
 	} type;
 	QString message;
 	QJsonObject reply;
@@ -85,6 +97,13 @@ struct ServerReply {
 
 	static net::Message
 	makeCommandError(const QString &command, const QString &message);
+
+	static net::Message makeBanExportResult(const QString &data);
+
+	static net::Message makeBanImportResult(int total, int imported);
+
+	static net::Message
+	makeBanImpExError(const QString &message, const QString &key);
 
 	static net::Message makeMessage(const QString &message);
 

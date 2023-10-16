@@ -106,7 +106,8 @@ protected:
 	void historyReset(const net::MessageList &newHistory) override;
 	void historyAddBan(
 		int id, const QString &username, const QHostAddress &ip,
-		const QString &extAuthId, const QString &bannedBy) override;
+		const QString &extAuthId, const QString &sid,
+		const QString &bannedBy) override;
 	void historyRemoveBan(int id) override;
 
 	void timerEvent(QTimerEvent *event) override;

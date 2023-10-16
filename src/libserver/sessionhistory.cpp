@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "libserver/sessionhistory.h"
+#include "libserver/client.h"
 
 namespace server {
 
@@ -17,14 +18,39 @@ SessionHistory::SessionHistory(const QString &id, QObject *parent)
 
 bool SessionHistory::addBan(
 	const QString &username, const QHostAddress &ip, const QString &extAuthId,
-	const QString &bannedBy)
+	const QString &sid, const QString &bannedBy, const Client *client)
 {
-	const int id = m_banlist.addBan(username, ip, extAuthId, bannedBy);
+	int id;
+	if(client) {
+		const SessionBanner banner = {
+			client->username(),
+			client->authId(),
+			client->peerAddress(),
+			client->sid(),
+		};
+		id = m_banlist.addBan(
+			username, ip, extAuthId, sid, bannedBy, 0, &banner);
+	} else {
+		id = m_banlist.addBan(username, ip, extAuthId, sid, bannedBy);
+	}
+
 	if(id > 0) {
-		historyAddBan(id, username, ip, extAuthId, bannedBy);
+		historyAddBan(id, username, ip, extAuthId, sid, bannedBy);
 		return true;
 	}
 	return false;
+}
+
+bool SessionHistory::importBans(
+	const QJsonObject &data, int &outTotal, int &outImported,
+	const Client *client)
+{
+	return SessionBanList::importBans(data, [&](const SessionBan &b) {
+		++outTotal;
+		if(addBan(b.username, b.ip, b.authId, b.sid, b.bannedBy, client)) {
+			++outImported;
+		}
+	});
 }
 
 QString SessionHistory::removeBan(int id)

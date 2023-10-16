@@ -411,6 +411,28 @@
        <item>
         <layout class="QHBoxLayout">
          <item>
+          <widget class="QPushButton" name="importButton">
+           <property name="text">
+            <string>Import</string>
+           </property>
+           <property name="icon">
+            <iconset theme="document-import">
+             <normaloff>theme:document-import.svg</normaloff>theme:document-import.svg</iconset>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="exportButton">
+           <property name="text">
+            <string>Export</string>
+           </property>
+           <property name="icon">
+            <iconset theme="document-export">
+             <normaloff>theme:document-export.svg</normaloff>theme:document-export.svg</iconset>
+           </property>
+          </widget>
+         </item>
+         <item>
           <spacer>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>

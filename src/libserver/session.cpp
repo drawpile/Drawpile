@@ -245,9 +245,8 @@ void Session::removeUser(Client *user)
 		return;
 
 	m_pastClients.insert(
-		user->id(), PastClient{
-						user->id(), user->authId(), user->username(),
-						user->peerAddress(), !user->isModerator()});
+		user->id(), {user->id(), user->authId(), user->username(),
+					 user->peerAddress(), user->sid(), !user->isModerator()});
 
 	Q_ASSERT(user->session() == this);
 	user->log(Log()
@@ -308,12 +307,13 @@ Client *Session::getClientByUsername(const QString &username)
 	return nullptr;
 }
 
-void Session::addBan(const Client *target, const QString &bannedBy)
+void Session::addBan(
+	const Client *target, const QString &bannedBy, const Client *client)
 {
 	Q_ASSERT(target);
 	if(m_history->addBan(
 		   target->username(), target->peerAddress(), target->authId(),
-		   bannedBy)) {
+		   target->sid(), bannedBy, client)) {
 		target->log(Log()
 						.about(Log::Level::Info, Log::Topic::Ban)
 						.message("Banned by " + bannedBy));
@@ -321,11 +321,13 @@ void Session::addBan(const Client *target, const QString &bannedBy)
 	}
 }
 
-void Session::addBan(const PastClient &target, const QString &bannedBy)
+void Session::addPastBan(
+	const PastClient &target, const QString &bannedBy, const Client *client)
 {
 	Q_ASSERT(target.id > 0);
 	if(m_history->addBan(
-		   target.username, target.peerAddress, target.authId, bannedBy)) {
+		   target.username, target.peerAddress, target.authId, target.sid,
+		   bannedBy, client)) {
 		log(Log()
 				.user(target.id, target.peerAddress, target.username)
 				.about(Log::Level::Info, Log::Topic::Ban)
@@ -1290,6 +1292,7 @@ QJsonObject Session::getDescription(bool full) const
 				{"id", u->id},
 				{"name", u->username},
 				{"ip", u->peerAddress.toString()},
+				{"s", u->sid},
 				{"online", false}};
 		}
 		o["users"] = users;
@@ -1307,6 +1310,22 @@ QJsonObject Session::getDescription(bool full) const
 	}
 
 	return o;
+}
+
+QJsonObject Session::getExportBanList() const
+{
+	return m_history->banlist().toExportJson();
+}
+
+bool Session::importBans(
+	const QJsonObject &data, int &outTotal, int &outImported,
+	const Client *client)
+{
+	bool ok = m_history->importBans(data, outTotal, outImported, client);
+	if(ok && outImported > 0) {
+		sendUpdatedBanlist();
+	}
+	return ok;
 }
 
 JsonApiResult Session::callJsonApi(

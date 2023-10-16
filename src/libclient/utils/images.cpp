@@ -173,6 +173,10 @@ QStringList fileFormatFilterList(FileFormatOptions formats)
 		filter << QGuiApplication::tr("Brush Pack (%1)").arg("*.zip");
 	}
 
+	if(formats.testFlag(FileFormatOption::SessionBans)) {
+		filter << QGuiApplication::tr("Session Bans (%1)").arg("*.dpbans");
+	}
+
 	if(!readImages.isEmpty() && !recordings.isEmpty()) {
 		filter.prepend(
 			QGuiApplication::tr("All Supported Files (%1)").arg(readImages + ' ' + recordings)

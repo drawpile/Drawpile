@@ -1,14 +1,20 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "libserver/opcommands.h"
 #include "libserver/client.h"
+#include "libserver/serverconfig.h"
 #include "libserver/serverlog.h"
 #include "libserver/session.h"
 #include "libshared/net/servercmd.h"
 #include "libshared/util/passwordhash.h"
 #include <QJsonArray>
 #include <QList>
+#include <QRegularExpression>
 #include <QStringList>
 #include <QUrl>
+#include <utility>
+#ifdef HAVE_LIBSODIUM
+#	include <sodium.h>
+#endif
 
 namespace server {
 
@@ -16,25 +22,43 @@ namespace {
 
 class CmdResult {
 public:
-	static CmdResult ok() { return CmdResult{true, QString{}}; }
+	static CmdResult ok()
+	{
+		return CmdResult(true, QString(), net::Message::null());
+	}
 
 	static CmdResult err(const QString &message)
 	{
-		return CmdResult{false, message};
+		return CmdResult(false, message, net::Message::null());
+	}
+
+	static CmdResult reply(net::Message &&reply)
+	{
+		return CmdResult(false, QString(), std::forward<net::Message>(reply));
 	}
 
 	bool success() const { return m_success; }
-	const QString &message() const { return m_message; }
+
+	net::Message getReply(const QString &command) const
+	{
+		if(m_reply.isNull()) {
+			return net::ServerReply::makeCommandError(command, m_message);
+		} else {
+			return m_reply;
+		}
+	}
 
 private:
-	CmdResult(bool success, const QString &message)
+	CmdResult(bool success, const QString &message, net::Message &&reply)
 		: m_success(success)
 		, m_message(message)
+		, m_reply(reply)
 	{
 	}
 
 	bool m_success;
 	QString m_message;
+	net::Message m_reply;
 };
 
 typedef CmdResult (*SrvCommandFn)(
@@ -183,7 +207,7 @@ kickUser(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 		const auto target =
 			client->session()->getPastClientById(args.at(0).toInt());
 		if(target.isBannable) {
-			client->session()->addBan(target, client->username());
+			client->session()->addPastBan(target, client->username(), client);
 			client->session()->keyMessageAll(
 				target.username + " banned by " + client->username(), false,
 				net::ServerReply::KEY_BAN,
@@ -213,7 +237,7 @@ kickUser(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 	}
 
 	if(ban) {
-		client->session()->addBan(target, client->username());
+		client->session()->addBan(target, client->username(), client);
 		client->session()->keyMessageAll(
 			target->username() + " banned by " + client->username(), false,
 			net::ServerReply::KEY_BAN,
@@ -342,6 +366,252 @@ reportAbuse(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 	return CmdResult::ok();
 }
 
+QString buildBanExport(
+	Client *client, ServerLog *logger, QByteArray cryptKey, QByteArray input)
+{
+	QByteArray compressed = qCompress(input);
+	if(compressed.isEmpty()) {
+		logger->logMessage(
+			Log()
+				.user(client->id(), client->peerAddress(), client->username())
+				.about(Log::Level::Error, Log::Topic::BanImpEx)
+				.message(
+					QStringLiteral("Error compressing ban list from session %1")
+						.arg(client->session()->id())));
+		return QString();
+	}
+
+	if(cryptKey.isEmpty()) {
+		return QStringLiteral("p%1").arg(
+			QString::fromUtf8(compressed.toBase64()));
+	} else {
+#if HAVE_LIBSODIUM
+		QByteArray nonce(compat::sizetype(crypto_secretbox_NONCEBYTES), 0);
+		randombytes_buf(nonce.data(), nonce.size());
+
+		QByteArray output(
+			compat::sizetype(crypto_secretbox_MACBYTES) + compressed.size(), 0);
+		int cryptResult = crypto_secretbox_easy(
+			reinterpret_cast<unsigned char *>(output.data()),
+			reinterpret_cast<const unsigned char *>(compressed.constData()),
+			compressed.size(),
+			reinterpret_cast<const unsigned char *>(nonce.constData()),
+			reinterpret_cast<const unsigned char *>(cryptKey.constData()));
+		if(cryptResult != 0) {
+			logger->logMessage(
+				Log()
+					.user(
+						client->id(), client->peerAddress(), client->username())
+					.about(Log::Level::Error, Log::Topic::BanImpEx)
+					.message(QStringLiteral(
+								 "Error encrypting ban list from session %1")
+								 .arg(client->session()->id())));
+			return QString();
+		}
+
+		return QStringLiteral("c%1:%2").arg(
+			QString::fromUtf8(nonce.toBase64()),
+			QString::fromUtf8(output.toBase64()));
+#else
+		logger->logMessage(
+			Log()
+				.user(client->id(), client->peerAddress(), client->username())
+				.about(Log::Level::Error, Log::Topic::BanImpEx)
+				.message(
+					QStringLiteral("Encrypted ban export requested for session "
+								   "%1, but sodium is not compiled in!")
+						.arg(client->session()->id())));
+		return QString();
+#endif
+	}
+}
+
+CmdResult exportPlainBans(Client *client)
+{
+	if(!client->isModerator()) {
+		return CmdResult::reply(net::ServerReply::makeBanImpExError(
+			QStringLiteral("Only moderators can export plain bans."),
+			net::ServerReply::KEY_BANEXPORT_MODONLY));
+	}
+
+	const Session *session = client->session();
+	const ServerConfig *config = session->config();
+	QString result = buildBanExport(
+		client, config->logger(), QByteArray(),
+		QJsonDocument(session->getExportBanList())
+			.toJson(QJsonDocument::Compact));
+	if(result.isEmpty()) {
+		return CmdResult::reply(net::ServerReply::makeBanImpExError(
+			QStringLiteral("Server error."),
+			net::ServerReply::KEY_BANEXPORT_SERVERERROR));
+	}
+
+	config->logger()->logMessage(
+		Log()
+			.user(client->id(), client->peerAddress(), client->username())
+			.about(Log::Level::Info, Log::Topic::BanImpEx)
+			.message(QStringLiteral("Exported plain bans from session %1")
+						 .arg(session->id())));
+	client->sendDirectMessage(net::ServerReply::makeBanExportResult(result));
+	return CmdResult::ok();
+}
+
+CmdResult exportEncryptedBans(Client *client)
+{
+#ifdef HAVE_LIBSODIUM
+	const Session *session = client->session();
+	const ServerConfig *config = session->config();
+	QByteArray cryptKey = config->internalConfig().cryptKey;
+	if(cryptKey.size() != compat::sizetype(crypto_secretbox_KEYBYTES)) {
+		return CmdResult::reply(net::ServerReply::makeBanImpExError(
+			QStringLiteral(
+				"Exporting encrypted bans not configured on this server."),
+			net::ServerReply::KEY_BANEXPORT_UNCONFIGURED));
+	}
+
+	QString result = buildBanExport(
+		client, config->logger(), cryptKey,
+		QJsonDocument(session->getExportBanList())
+			.toJson(QJsonDocument::Compact));
+	if(result.isEmpty()) {
+		return CmdResult::reply(net::ServerReply::makeBanImpExError(
+			QStringLiteral("Server error."),
+			net::ServerReply::KEY_BANEXPORT_SERVERERROR));
+	}
+
+	config->logger()->logMessage(
+		Log()
+			.user(client->id(), client->peerAddress(), client->username())
+			.about(Log::Level::Info, Log::Topic::BanImpEx)
+			.message(QStringLiteral("Exported encrypted bans from session %1")
+						 .arg(session->id())));
+	client->sendDirectMessage(net::ServerReply::makeBanExportResult(result));
+	return CmdResult::ok();
+#else
+	Q_UNUSED(client);
+	return CmdResult::reply(net::ServerReply::makeBanImpExError(
+		QStringLiteral(
+			"Exporting encrypted bans not supported by this server."),
+		net::ServerReply::KEY_BANEXPORT_UNSUPPORTED));
+#endif
+}
+
+CmdResult
+exportBans(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
+{
+	Q_UNUSED(args);
+	bool plain = kwargs[QStringLiteral("plain")].toBool();
+	return plain ? exportPlainBans(client) : exportEncryptedBans(client);
+}
+
+bool decodeBanImport(
+	const QString &input, QByteArray &outNonce, QByteArray &outPayload)
+{
+	static QRegularExpression plainRe(
+		QStringLiteral("\\Ap([a-zA-Z0-9+/=]+)\\z"));
+	QRegularExpressionMatch plainMatch = plainRe.match(input);
+	if(plainMatch.hasMatch()) {
+		outNonce.clear();
+		outPayload = QByteArray::fromBase64(plainMatch.captured(1).toUtf8());
+		return !outPayload.isEmpty();
+	}
+
+	static QRegularExpression re(
+		QStringLiteral("\\Ac([a-zA-Z0-9+/=]+):([a-zA-Z0-9+/=]+)\\z"));
+	QRegularExpressionMatch match = re.match(input);
+	if(!match.hasMatch()) {
+		return false;
+	}
+
+	outNonce = QByteArray::fromBase64(match.captured(1).toUtf8());
+#ifdef HAVE_LIBSODIUM
+	bool badNonce =
+		outNonce.size() != compat::sizetype(crypto_secretbox_NONCEBYTES);
+#else
+	bool badNonce = outNonce.isEmpty();
+#endif
+	if(badNonce) {
+		return false;
+	}
+
+	outPayload = QByteArray::fromBase64(match.captured(2).toUtf8());
+	return outPayload.size() >= compat::sizetype(crypto_secretbox_MACBYTES);
+}
+
+CmdResult
+importBans(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
+{
+	Q_UNUSED(kwargs);
+	if(args.size() != 1) {
+		return CmdResult::err("Expected one argument: bans");
+	}
+
+	Session *session = client->session();
+	QByteArray nonce, payload;
+	if(!decodeBanImport(args[0].toString(), nonce, payload)) {
+		return CmdResult::reply(net::ServerReply::makeBanImpExError(
+			QStringLiteral("Malformed import data."),
+			net::ServerReply::KEY_BANIMPORT_MALFORMED));
+	}
+
+	const ServerConfig *config = session->config();
+	if(!nonce.isEmpty()) {
+#ifdef HAVE_LIBSODIUM
+		QByteArray cryptKey = config->internalConfig().cryptKey;
+		if(cryptKey.size() != compat::sizetype(crypto_secretbox_KEYBYTES)) {
+			return CmdResult::reply(net::ServerReply::makeBanImpExError(
+				QStringLiteral(
+					"Importing encrypted bans not configured on this server."),
+				net::ServerReply::KEY_BANIMPORT_UNCONFIGURED));
+		}
+
+		int cryptResult = crypto_secretbox_open_easy(
+			reinterpret_cast<unsigned char *>(payload.data()),
+			reinterpret_cast<const unsigned char *>(payload.constData()),
+			payload.size(),
+			reinterpret_cast<const unsigned char *>(nonce.constData()),
+			reinterpret_cast<const unsigned char *>(cryptKey.constData()));
+		if(cryptResult != 0) {
+			return CmdResult::reply(net::ServerReply::makeBanImpExError(
+				QStringLiteral("The server couldn't read the import data. This "
+							   "is likely because it was exported from a "
+							   "different server. You can only import bans "
+							   "into the same server they were exported from."),
+				net::ServerReply::KEY_BANIMPORT_CRYPTERROR));
+		}
+		payload.resize(
+			payload.size() - compat::sizetype(crypto_secretbox_MACBYTES));
+#else
+		return CmdResult::reply(net::ServerReply::makeBanImpExError(
+			QStringLiteral(
+				"Importing encrypted bans not supported by this server."),
+			net::ServerReply::KEY_BANIMPORT_UNSUPPORTED));
+#endif
+	}
+
+	QJsonObject bans = QJsonDocument::fromJson(qUncompress(payload)).object();
+	int total, imported;
+	bool ok = session->importBans(bans, total, imported, client);
+	if(!ok) {
+		return CmdResult::reply(net::ServerReply::makeBanImpExError(
+			QStringLiteral("Invalid import data."),
+			net::ServerReply::KEY_BANIMPORT_INVALID));
+	}
+
+	config->logger()->logMessage(
+		Log()
+			.user(client->id(), client->peerAddress(), client->username())
+			.about(Log::Level::Info, Log::Topic::BanImpEx)
+			.message(QStringLiteral("Imported %1/%2 bans into session %3")
+						 .arg(
+							 QString::number(imported), QString::number(total),
+							 session->id())));
+	client->sendDirectMessage(
+		net::ServerReply::makeBanImportResult(total, imported));
+
+	return CmdResult::ok();
+}
+
 SrvCommandSet::SrvCommandSet()
 {
 	commands << SrvCommand("ready-to-autoreset", readyToAutoReset)
@@ -351,17 +621,15 @@ SrvCommandSet::SrvCommandSet()
 			 << SrvCommand("sessionconf", sessionConf)
 			 << SrvCommand("kick-user", kickUser, SrvCommand::DEPUTY)
 			 << SrvCommand("gain-op", opWord, SrvCommand::NONOP)
-
 			 << SrvCommand("reset-session", resetSession)
 			 << SrvCommand("kill-session", killSession, SrvCommand::MOD)
-
 			 << SrvCommand("announce-session", announceSession)
 			 << SrvCommand("unlist-session", unlistSession)
-
 			 << SrvCommand("remove-ban", removeBan)
 			 << SrvCommand("mute", setMute)
-
-			 << SrvCommand("report", reportAbuse, SrvCommand::NONOP);
+			 << SrvCommand("report", reportAbuse, SrvCommand::NONOP)
+			 << SrvCommand("export-bans", exportBans)
+			 << SrvCommand("import-bans", importBans);
 }
 
 } // end of anonymous namespace
@@ -391,8 +659,7 @@ void handleClientServerCommand(
 
 			CmdResult result = c.call(client, args, kwargs);
 			if(!result.success()) {
-				client->sendDirectMessage(net::ServerReply::makeCommandError(
-					command, result.message()));
+				client->sendDirectMessage(result.getReply(command));
 			}
 			return;
 		}
@@ -401,5 +668,4 @@ void handleClientServerCommand(
 	client->sendDirectMessage(
 		net::ServerReply::makeCommandError(command, "Unknown command"));
 }
-
 }

@@ -1,34 +1,34 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #ifndef SESSIONSETTINGSDIALOG_H
 #define SESSIONSETTINGSDIALOG_H
-
 #include "libclient/canvas/acl.h"
-
 #include <QDialog>
 #include <QJsonObject>
 
+class Document;
+class QComboBox;
+class QLabel;
 class QStringListModel;
 class QTimer;
-class QLabel;
-class QComboBox;
-
 class Ui_SessionSettingsDialog;
-class Document;
 
-namespace canvas { class CanvasModel; }
+namespace canvas {
+class CanvasModel;
+}
 
 namespace dialogs {
 
-class SessionSettingsDialog final : public QDialog
-{
+class SessionSettingsDialog final : public QDialog {
 	Q_OBJECT
 public:
-	SessionSettingsDialog(Document *doc, QWidget *parent=nullptr);
+	SessionSettingsDialog(Document *doc, QWidget *parent = nullptr);
 	~SessionSettingsDialog() override;
 
 	//! Is persistence available at all on this server?
 	void setPersistenceEnabled(bool);
+
+	void
+	setBanImpExEnabled(bool isModerator, bool cryptEnabled, bool modEnabled);
 
 	//! Is autoreset supported?
 	void setAutoResetEnabled(bool);
@@ -36,13 +36,20 @@ public:
 	//! Is the local user authenticated/not a guest?
 	void setAuthenticated(bool);
 
+public slots:
+	void bansImported(int total, int imported);
+	void bansExported(const QByteArray &bans);
+	void bansImpExError(const QString &message);
+
 signals:
 	void requestAnnouncement(const QString &apiUrl);
 	void requestUnlisting(const QString &apiUrl);
 	void joinPasswordChanged(const QString &joinPassword);
+	void requestBanExport(bool plain);
+	void requestBanImport(const QString &bans);
 
 private slots:
-	void onCanvasChanged(canvas::CanvasModel*);
+	void onCanvasChanged(canvas::CanvasModel *);
 	void onOperatorModeChanged(bool op);
 	void onFeatureTiersChanged(const DP_FeatureTiers &features);
 
@@ -66,7 +73,8 @@ private slots:
 	void changePassword();
 	void changeOpword();
 
-	void changeSessionConf(const QString &key, const QJsonValue &value, bool now=false);
+	void changeSessionConf(
+		const QString &key, const QJsonValue &value, bool now = false);
 	void sendSessionConf();
 
 	void updatePasswordLabel(QLabel *label);
@@ -74,13 +82,18 @@ private slots:
 
 	void setCompatibilityMode(bool compatibilityMode);
 
+	void importBans();
+	void exportBans();
+
 protected:
 	void showEvent(QShowEvent *event) override;
 
 private:
 	void initPermissionComboBoxes();
+	void updateBanImportExportState();
 	void reloadSettings();
 	QComboBox *featureBox(DP_Feature f);
+	bool checkBanImport(const QString &bans, QString &outErrorMessage) const;
 
 	Ui_SessionSettingsDialog *m_ui;
 	Document *m_doc;
@@ -92,7 +105,12 @@ private:
 	bool m_op = false;
 	bool m_isAuth = false;
 	bool m_canPersist = false;
+	bool m_canCryptImpExBans = false;
+	bool m_canModImportBans = false;
+	bool m_canModExportBans = false;
 	bool m_canAutoreset = false;
+	bool m_awaitingImportExportResponse = false;
+	QString m_importExportTitle;
 };
 
 }

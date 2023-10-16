@@ -104,7 +104,7 @@ protected:
 	void historyReset(const net::MessageList &newHistory) override;
 	void historyAddBan(
 		int, const QString &, const QHostAddress &, const QString &,
-		const QString &) override
+		const QString &, const QString &) override
 	{ /* not persistent */
 	}
 	void historyRemoveBan(int) override

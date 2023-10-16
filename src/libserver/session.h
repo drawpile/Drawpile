@@ -45,6 +45,7 @@ public:
 		QString authId;
 		QString username;
 		QHostAddress peerAddress;
+		QString sid;
 		bool isBannable;
 	};
 
@@ -152,8 +153,13 @@ public:
 	/**
 	 * @brief Add an in-session IP ban for the given client
 	 */
-	void addBan(const Client *client, const QString &bannedBy);
-	void addBan(const PastClient &client, const QString &bannedBy);
+	void addBan(
+		const Client *target, const QString &bannedBy,
+		const Client *client = nullptr);
+
+	void addPastBan(
+		const PastClient &target, const QString &bannedBy,
+		const Client *client = nullptr);
 
 	/**
 	 * @brief Remove a session specific IP ban
@@ -314,6 +320,12 @@ public:
 	 * @return
 	 */
 	QJsonObject getDescription(bool full = false) const;
+
+	QJsonObject getExportBanList() const;
+
+	bool importBans(
+		const QJsonObject &data, int &outTotal, int &outImported,
+		const Client *client = nullptr);
 
 	/**
 	 * @brief Call the server's JSON administration API

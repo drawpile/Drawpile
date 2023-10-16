@@ -46,6 +46,7 @@ public:
 		Status,     // General stuff
 		ClientInfo, // Structured information about client joining or hosting
 		ExtBan,     // Externally sourced bans
+		BanImpEx,	// Session ban import and export
 	};
 	Q_ENUM(Topic)
 

@@ -116,39 +116,42 @@ ServerReply ServerReply::fromMessage(const net::Message &msg)
 ServerReply ServerReply::fromJson(const QJsonDocument &doc)
 {
 	QJsonObject data = doc.object();
-	QString typestr = data.value("type").toString();
+	QString typestr = data.value(QStringLiteral("type")).toString();
 
 	ServerReply r;
-	if(typestr == "login")
+	if(typestr == QStringLiteral("login")) {
 		r.type = ServerReply::ReplyType::Login;
-	else if(typestr == "msg")
+	} else if(typestr == QStringLiteral("msg")) {
 		r.type = ServerReply::ReplyType::Message;
-	else if(typestr == "alert")
+	} else if(typestr == QStringLiteral("alert")) {
 		r.type = ServerReply::ReplyType::Alert;
-	else if(typestr == "error")
+	} else if(typestr == QStringLiteral("error")) {
 		r.type = ServerReply::ReplyType::Error;
-	else if(typestr == "result")
+	} else if(typestr == QStringLiteral("result")) {
 		r.type = ServerReply::ReplyType::Result;
-	else if(typestr == "log")
+	} else if(typestr == QStringLiteral("log")) {
 		r.type = ServerReply::ReplyType::Log;
-	else if(typestr == "sessionconf")
+	} else if(typestr == QStringLiteral("sessionconf")) {
 		r.type = ServerReply::ReplyType::SessionConf;
-	else if(typestr == "sizelimit")
+	} else if(typestr == QStringLiteral("sizelimit")) {
 		r.type = ServerReply::ReplyType::SizeLimitWarning;
-	else if(typestr == "status")
+	} else if(typestr == QStringLiteral("status")) {
 		r.type = ServerReply::ReplyType::Status;
-	else if(typestr == "reset")
+	} else if(typestr == QStringLiteral("reset")) {
 		r.type = ServerReply::ReplyType::Reset;
-	else if(typestr == "autoreset")
+	} else if(typestr == QStringLiteral("autoreset")) {
 		r.type = ServerReply::ReplyType::ResetRequest;
-	else if(typestr == "catchup")
+	} else if(typestr == QStringLiteral("catchup")) {
 		r.type = ServerReply::ReplyType::Catchup;
-	else if(typestr == "caughtup")
+	} else if(typestr == QStringLiteral("caughtup")) {
 		r.type = ServerReply::ReplyType::CaughtUp;
-	else
+	} else if(typestr == QStringLiteral("banimpex")) {
+		r.type = ServerReply::ReplyType::BanImpEx;
+	} else {
 		r.type = ServerReply::ReplyType::Unknown;
+	}
 
-	r.message = data.value("message").toString();
+	r.message = data.value(QStringLiteral("message")).toString();
 	r.reply = data;
 	return r;
 }
@@ -173,6 +176,30 @@ ServerReply::makeCommandError(const QString &command, const QString &message)
 		{{QStringLiteral("type"), QStringLiteral("error")},
 		 {QStringLiteral("message"),
 		  QStringLiteral("%1: %2").arg(command, message)}});
+}
+
+net::Message ServerReply::makeBanExportResult(const QString &data)
+{
+	return make(
+		{{QStringLiteral("type"), QStringLiteral("banimpex")},
+		 {QStringLiteral("export"), data}});
+}
+
+net::Message ServerReply::makeBanImportResult(int total, int imported)
+{
+	return make(
+		{{QStringLiteral("type"), QStringLiteral("banimpex")},
+		 {QStringLiteral("imported"), imported},
+		 {QStringLiteral("total"), total}});
+}
+
+net::Message
+ServerReply::makeBanImpExError(const QString &message, const QString &key)
+{
+	return make(
+		{{QStringLiteral("type"), QStringLiteral("banimpex")},
+		 {QStringLiteral("error"), message},
+		 {QStringLiteral("T"), key}});
 }
 
 net::Message ServerReply::makeMessage(const QString &message)

@@ -15,32 +15,37 @@ BanlistModel::BanlistModel(QObject *parent)
 
 int BanlistModel::rowCount(const QModelIndex &parent) const
 {
-	if(parent.isValid())
-		return 0;
-	return m_banlist.size();
+	return parent.isValid() ? 0 : m_banlist.size();
 }
 
 int BanlistModel::columnCount(const QModelIndex &parent) const
 {
-	if(parent.isValid())
-		return 0;
-	// Columns:
-	// 0 - user
-	// 1 - IP
-	// 2 - banned by
-	return 3;
+	return parent.isValid() ? 0 : m_showSensitive ? 4 : 2;
 }
 
 QVariant BanlistModel::data(const QModelIndex &index, int role) const
 {
-	if(index.isValid() && index.row()>=0 && index.row() < m_banlist.size()) {
-		if(role == Qt::DisplayRole) {
+	if(index.isValid() && index.row() >= 0 && index.row() < m_banlist.size()) {
+		if(role == Qt::DisplayRole || role == Qt::ToolTipRole) {
 			const BanlistEntry &e = m_banlist.at(index.row());
-
-			switch(index.column()) {
-			case 0: return e.username;
-			case 1: return e.ip;
-			case 2: return e.bannedBy;
+			if(m_showSensitive) {
+				switch(index.column()) {
+				case 0:
+					return e.username;
+				case 1:
+					return e.ip;
+				case 2:
+					return QStringLiteral("%1@%2").arg(e.authId, e.sid);
+				case 3:
+					return e.bannedBy;
+				}
+			} else {
+				switch(index.column()) {
+				case 0:
+					return e.username;
+				case 1:
+					return e.bannedBy;
+				}
 			}
 		} else if(role == Qt::UserRole) {
 			return m_banlist.at(index.row()).id;
@@ -50,24 +55,51 @@ QVariant BanlistModel::data(const QModelIndex &index, int role) const
 	return QVariant();
 }
 
-QVariant BanlistModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant BanlistModel::headerData(
+	int section, Qt::Orientation orientation, int role) const
 {
-	if(role != Qt::DisplayRole || orientation != Qt::Horizontal)
-		return QVariant();
-
-	switch(section) {
-	case 0: return tr("User");
-	case 1: return tr("IP address");
-	case 2: return tr("Banned by");
+	if(role == Qt::DisplayRole && orientation == Qt::Horizontal) {
+		if(m_showSensitive) {
+			switch(section) {
+			case 0:
+				return tr("User");
+			case 1:
+				return tr("IP address");
+			case 2:
+				return tr("Client info");
+			case 3:
+				return tr("Banned by");
+			default:
+				break;
+			}
+		} else {
+			switch(section) {
+			case 0:
+				return tr("User");
+			case 1:
+				return tr("Banned by");
+			default:
+				break;
+			}
+		}
 	}
-
 	return QVariant();
+}
+
+void BanlistModel::setShowSensitive(bool showSensitive)
+{
+	if(showSensitive != m_showSensitive) {
+		beginResetModel();
+		m_showSensitive = showSensitive;
+		endResetModel();
+	}
 }
 
 void BanlistModel::clear()
 {
 	beginResetModel();
 	m_banlist.clear();
+	m_showSensitive = false;
 	endResetModel();
 }
 
@@ -77,12 +109,14 @@ void BanlistModel::updateBans(const QJsonArray &banlist)
 	m_banlist.clear();
 	for(const QJsonValue &v : banlist) {
 		QJsonObject b = v.toObject();
-		m_banlist << BanlistEntry {
+		m_banlist.append({
 			b["id"].toInt(),
 			b["username"].toString(),
-			b["ip"].isString() ? b["ip"].toString() : QStringLiteral("***"),
-			b["bannedBy"].toString()
-		};
+			b["ip"].toString(),
+			b["extauthid"].toString(),
+			b["s"].toString(),
+			b["bannedBy"].toString(),
+		});
 	}
 	endResetModel();
 }

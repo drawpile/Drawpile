@@ -1,84 +1,143 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/dialogs/sessionsettings.h"
+#include "desktop/filewrangler.h"
 #include "desktop/main.h"
-#include "libclient/utils/listservermodel.h"
-#include "libclient/net/banlistmodel.h"
-#include "libclient/net/announcementlist.h"
-#include "libclient/document.h"
 #include "libclient/canvas/canvasmodel.h"
+#include "libclient/document.h"
+#include "libclient/net/announcementlist.h"
+#include "libclient/net/banlistmodel.h"
 #include "libclient/parentalcontrols/parentalcontrols.h"
-
+#include "libclient/utils/listservermodel.h"
 #include "ui_sessionsettings.h"
-
 #include <QDebug>
-#include <QStringListModel>
-#include <QMenu>
-#include <QTimer>
-#include <QInputDialog>
 #include <QFile>
+#include <QInputDialog>
 #include <QJsonDocument>
+#include <QMenu>
+#include <QMessageBox>
+#include <QStringListModel>
+#include <QTimer>
 
 namespace dialogs {
 
 SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
-	: QDialog(parent), m_ui(new Ui_SessionSettingsDialog), m_doc(doc)
+	: QDialog(parent)
+	, m_ui(new Ui_SessionSettingsDialog)
+	, m_doc(doc)
 {
 	Q_ASSERT(doc);
 	m_ui->setupUi(this);
 
 	initPermissionComboBoxes();
 
-	connect(m_doc, &Document::canvasChanged, this, &SessionSettingsDialog::onCanvasChanged);
+	connect(
+		m_doc, &Document::canvasChanged, this,
+		&SessionSettingsDialog::onCanvasChanged);
 
 	// Set up the settings page
 	m_saveTimer = new QTimer(this);
 	m_saveTimer->setSingleShot(true);
 	m_saveTimer->setInterval(1000);
-	connect(m_saveTimer, &QTimer::timeout, this, &SessionSettingsDialog::sendSessionConf);
+	connect(
+		m_saveTimer, &QTimer::timeout, this,
+		&SessionSettingsDialog::sendSessionConf);
 
-	connect(m_ui->title, &QLineEdit::textEdited, this, &SessionSettingsDialog::titleChanged);
-	connect(m_ui->maxUsers, &QSpinBox::editingFinished, this, &SessionSettingsDialog::maxUsersChanged);
-	connect(m_ui->denyJoins, &QCheckBox::clicked, this, &SessionSettingsDialog::denyJoinsChanged);
-	connect(m_ui->authOnly, &QCheckBox::clicked, this, &SessionSettingsDialog::authOnlyChanged);
-	connect(m_ui->autoresetThreshold, &QDoubleSpinBox::editingFinished, this, &SessionSettingsDialog::autoresetThresholdChanged);
-	connect(m_ui->preserveChat, &QCheckBox::clicked, this, &SessionSettingsDialog::keepChatChanged);
-	connect(m_ui->persistent, &QCheckBox::clicked, this, &SessionSettingsDialog::persistenceChanged);
-	connect(m_ui->nsfm, &QCheckBox::clicked, this, &SessionSettingsDialog::nsfmChanged);
-	connect(m_ui->deputies, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &SessionSettingsDialog::deputiesChanged);
+	connect(
+		m_ui->title, &QLineEdit::textEdited, this,
+		&SessionSettingsDialog::titleChanged);
+	connect(
+		m_ui->maxUsers, &QSpinBox::editingFinished, this,
+		&SessionSettingsDialog::maxUsersChanged);
+	connect(
+		m_ui->denyJoins, &QCheckBox::clicked, this,
+		&SessionSettingsDialog::denyJoinsChanged);
+	connect(
+		m_ui->authOnly, &QCheckBox::clicked, this,
+		&SessionSettingsDialog::authOnlyChanged);
+	connect(
+		m_ui->autoresetThreshold, &QDoubleSpinBox::editingFinished, this,
+		&SessionSettingsDialog::autoresetThresholdChanged);
+	connect(
+		m_ui->preserveChat, &QCheckBox::clicked, this,
+		&SessionSettingsDialog::keepChatChanged);
+	connect(
+		m_ui->persistent, &QCheckBox::clicked, this,
+		&SessionSettingsDialog::persistenceChanged);
+	connect(
+		m_ui->nsfm, &QCheckBox::clicked, this,
+		&SessionSettingsDialog::nsfmChanged);
+	connect(
+		m_ui->deputies, QOverload<int>::of(&QComboBox::currentIndexChanged),
+		this, &SessionSettingsDialog::deputiesChanged);
 
-	connect(m_ui->sessionPassword, &QLabel::linkActivated, this, &SessionSettingsDialog::changePassword);
-	connect(m_ui->opword, &QLabel::linkActivated, this, &SessionSettingsDialog::changeOpword);
+	connect(
+		m_ui->sessionPassword, &QLabel::linkActivated, this,
+		&SessionSettingsDialog::changePassword);
+	connect(
+		m_ui->opword, &QLabel::linkActivated, this,
+		&SessionSettingsDialog::changeOpword);
 
-	connect(m_doc, &Document::sessionTitleChanged, m_ui->title, &QLineEdit::setText);
-	connect(m_doc, &Document::sessionPreserveChatChanged, m_ui->preserveChat, &QCheckBox::setChecked);
-	connect(m_doc, &Document::sessionPersistentChanged, m_ui->persistent, &QCheckBox::setChecked);
-	connect(m_doc, &Document::sessionClosedChanged, m_ui->denyJoins, &QCheckBox::setChecked);
-	connect(m_doc, &Document::sessionAuthOnlyChanged, this, [this](bool authOnly) {
-		m_ui->authOnly->setEnabled(m_op && (authOnly || m_isAuth));
-		m_ui->authOnly->setChecked(authOnly);
-	});
-	connect(m_doc, &Document::sessionPasswordChanged, this, [this](bool hasPassword) {
-		m_ui->sessionPassword->setProperty("haspass", hasPassword);
-		updatePasswordLabel(m_ui->sessionPassword);
-	});
-	connect(m_doc, &Document::sessionOpwordChanged, this, [this](bool hasPassword) {
-		m_ui->opword->setProperty("haspass", hasPassword);
-		updatePasswordLabel(m_ui->opword);
-	});
-	connect(m_doc, &Document::sessionNsfmChanged, this, &SessionSettingsDialog::updateNsfmCheckbox);
-	connect(m_doc, &Document::sessionForceNsfmChanged, this, &SessionSettingsDialog::updateNsfmCheckbox);
-	connect(m_doc, &Document::sessionDeputiesChanged, this, [this](bool deputies) { m_ui->deputies->setCurrentIndex(deputies ? 1 : 0); });
-	connect(m_doc, &Document::sessionMaxUserCountChanged, m_ui->maxUsers, &QSpinBox::setValue);
-	connect(m_doc, &Document::sessionResetThresholdChanged, m_ui->autoresetThreshold, &QDoubleSpinBox::setValue);
-	connect(m_doc, &Document::baseResetThresholdChanged, this, [this](int threshold) {
-		m_ui->baseResetThreshold->setText(QStringLiteral("+ %1 MB").arg(threshold/(1024.0*1024.0), 0, 'f', 1));
-	});
-	connect(m_doc, &Document::compatibilityModeChanged, this, &SessionSettingsDialog::setCompatibilityMode);
+	connect(
+		m_doc, &Document::sessionTitleChanged, m_ui->title,
+		&QLineEdit::setText);
+	connect(
+		m_doc, &Document::sessionPreserveChatChanged, m_ui->preserveChat,
+		&QCheckBox::setChecked);
+	connect(
+		m_doc, &Document::sessionPersistentChanged, m_ui->persistent,
+		&QCheckBox::setChecked);
+	connect(
+		m_doc, &Document::sessionClosedChanged, m_ui->denyJoins,
+		&QCheckBox::setChecked);
+	connect(
+		m_doc, &Document::sessionAuthOnlyChanged, this, [this](bool authOnly) {
+			m_ui->authOnly->setEnabled(m_op && (authOnly || m_isAuth));
+			m_ui->authOnly->setChecked(authOnly);
+		});
+	connect(
+		m_doc, &Document::sessionPasswordChanged, this,
+		[this](bool hasPassword) {
+			m_ui->sessionPassword->setProperty("haspass", hasPassword);
+			updatePasswordLabel(m_ui->sessionPassword);
+		});
+	connect(
+		m_doc, &Document::sessionOpwordChanged, this, [this](bool hasPassword) {
+			m_ui->opword->setProperty("haspass", hasPassword);
+			updatePasswordLabel(m_ui->opword);
+		});
+	connect(
+		m_doc, &Document::sessionNsfmChanged, this,
+		&SessionSettingsDialog::updateNsfmCheckbox);
+	connect(
+		m_doc, &Document::sessionForceNsfmChanged, this,
+		&SessionSettingsDialog::updateNsfmCheckbox);
+	connect(
+		m_doc, &Document::sessionDeputiesChanged, this, [this](bool deputies) {
+			m_ui->deputies->setCurrentIndex(deputies ? 1 : 0);
+		});
+	connect(
+		m_doc, &Document::sessionMaxUserCountChanged, m_ui->maxUsers,
+		&QSpinBox::setValue);
+	connect(
+		m_doc, &Document::sessionResetThresholdChanged,
+		m_ui->autoresetThreshold, &QDoubleSpinBox::setValue);
+	connect(
+		m_doc, &Document::baseResetThresholdChanged, this,
+		[this](int threshold) {
+			m_ui->baseResetThreshold->setText(QStringLiteral("+ %1 MB").arg(
+				threshold / (1024.0 * 1024.0), 0, 'f', 1));
+		});
+	connect(
+		m_doc, &Document::compatibilityModeChanged, this,
+		&SessionSettingsDialog::setCompatibilityMode);
 
 	// Set up permissions tab
-	connect(m_ui->permissionPresets, &widgets::PresetSelector::saveRequested, this, &SessionSettingsDialog::permissionPresetSaving);
-	connect(m_ui->permissionPresets, &widgets::PresetSelector::loadRequested, this, &SessionSettingsDialog::permissionPresetSelected);
+	connect(
+		m_ui->permissionPresets, &widgets::PresetSelector::saveRequested, this,
+		&SessionSettingsDialog::permissionPresetSaving);
+	connect(
+		m_ui->permissionPresets, &widgets::PresetSelector::loadRequested, this,
+		&SessionSettingsDialog::permissionPresetSelected);
 
 	// Set up banlist tab
 	m_ui->banlistView->setModel(doc->banlist());
@@ -86,16 +145,26 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 	banlistHeader->setSectionResizeMode(0, QHeaderView::Stretch);
 	banlistHeader->setSectionResizeMode(2, QHeaderView::Stretch);
 	connect(m_ui->removeBan, &QPushButton::clicked, [this]() {
-		const int id = m_ui->banlistView->selectionModel()->currentIndex().data(Qt::UserRole).toInt();
-		if(id>0) {
+		const int id = m_ui->banlistView->selectionModel()
+						   ->currentIndex()
+						   .data(Qt::UserRole)
+						   .toInt();
+		if(id > 0) {
 			qDebug() << "requesting removal of in-session ban entry" << id;
 			m_doc->sendUnban(id);
 		}
 	});
+	connect(
+		m_ui->importButton, &QAbstractButton::clicked, this,
+		&SessionSettingsDialog::importBans);
+	connect(
+		m_ui->exportButton, &QAbstractButton::clicked, this,
+		&SessionSettingsDialog::exportBans);
 
 	// Set up announcements tab
 	m_ui->announcementTableView->setModel(doc->announcementList());
-	QHeaderView *announcementHeader = m_ui->announcementTableView->horizontalHeader();
+	QHeaderView *announcementHeader =
+		m_ui->announcementTableView->horizontalHeader();
 	announcementHeader->setSectionResizeMode(0, QHeaderView::Stretch);
 
 	QMenu *addAnnouncementMenu = new QMenu(this);
@@ -119,7 +188,8 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 		auto sel = m_ui->announcementTableView->selectionModel()->selection();
 		QString apiUrl;
 		if(!sel.isEmpty())
-			apiUrl = sel.first().indexes().first().data(Qt::UserRole).toString();
+			apiUrl =
+				sel.first().indexes().first().data(Qt::UserRole).toString();
 		if(!apiUrl.isEmpty()) {
 			qDebug() << "Requesting unlisting:" << apiUrl;
 			m_doc->sendUnannounce(apiUrl);
@@ -132,6 +202,7 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 	m_ui->permMetadata->hide();
 	m_ui->labelMetadata->hide();
 	setCompatibilityMode(m_doc->isCompatibilityMode());
+	updateBanImportExportState();
 }
 
 SessionSettingsDialog::~SessionSettingsDialog()
@@ -147,7 +218,8 @@ void SessionSettingsDialog::showEvent(QShowEvent *event)
 
 void SessionSettingsDialog::reloadSettings()
 {
-	const auto listservers = sessionlisting::ListServerModel::listServers(dpApp().settings().listServers(), false);
+	const auto listservers = sessionlisting::ListServerModel::listServers(
+		dpApp().settings().listServers(), false);
 	auto *addAnnouncementMenu = m_ui->addAnnouncement->menu();
 	auto *addPrivateAnnouncementMenu = m_ui->addPrivateAnnouncement->menu();
 
@@ -156,24 +228,37 @@ void SessionSettingsDialog::reloadSettings()
 
 	for(const auto &listserver : listservers) {
 		if(listserver.publicListings) {
-			QAction *a = addAnnouncementMenu->addAction(listserver.icon, listserver.name);
+			QAction *a = addAnnouncementMenu->addAction(
+				listserver.icon, listserver.name);
 			a->setProperty("API_URL", listserver.url);
 		}
 
 		if(listserver.privateListings) {
-			QAction *a2 = addPrivateAnnouncementMenu->addAction(listserver.icon, listserver.name);
+			QAction *a2 = addPrivateAnnouncementMenu->addAction(
+				listserver.icon, listserver.name);
 			a2->setProperty("API_URL", listserver.url);
 		}
 	}
 
 	m_ui->addAnnouncement->setEnabled(!addAnnouncementMenu->isEmpty());
-	m_ui->addPrivateAnnouncement->setEnabled(!addPrivateAnnouncementMenu->isEmpty());
+	m_ui->addPrivateAnnouncement->setEnabled(
+		!addPrivateAnnouncementMenu->isEmpty());
 }
 
 void SessionSettingsDialog::setPersistenceEnabled(bool enable)
 {
 	m_ui->persistent->setEnabled(m_op && enable);
 	m_canPersist = enable;
+}
+
+void SessionSettingsDialog::setBanImpExEnabled(
+	bool isModerator, bool cryptEnabled, bool modEnabled)
+{
+	m_canCryptImpExBans = cryptEnabled;
+	m_canModImportBans = modEnabled;
+	m_canModExportBans = isModerator && modEnabled;
+	m_awaitingImportExportResponse = false;
+	updateBanImportExportState();
 }
 
 void SessionSettingsDialog::setAutoResetEnabled(bool enable)
@@ -187,7 +272,62 @@ void SessionSettingsDialog::setAuthenticated(bool auth)
 	m_isAuth = auth;
 	// auth-only can only be enabled if the current user is authenticated,
 	// otherwise it's possible to accidentally lock yourself out.
-	m_ui->authOnly->setEnabled(m_op && (m_isAuth || m_ui->authOnly->isChecked()));
+	m_ui->authOnly->setEnabled(
+		m_op && (m_isAuth || m_ui->authOnly->isChecked()));
+}
+
+void SessionSettingsDialog::bansImported(int total, int imported)
+{
+	if(!m_awaitingImportExportResponse) {
+		return;
+	}
+	m_awaitingImportExportResponse = false;
+	updateBanImportExportState();
+
+	QString message = tr("Imported %n session ban(s).", "", total);
+	if(imported < total) {
+		//: %1 is the "Imported %n session ban(s)." message.
+		message = tr("%1 %n were not imported because they were invalid or "
+					 "duplicates.",
+					 "", total - imported)
+					  .arg(message);
+	}
+	QMessageBox::information(this, tr("Session Ban Import"), message);
+}
+
+void SessionSettingsDialog::bansExported(const QByteArray &bans)
+{
+	if(!m_awaitingImportExportResponse) {
+		return;
+	}
+	m_awaitingImportExportResponse = false;
+	updateBanImportExportState();
+
+	QString path = FileWrangler(this).getSaveSessionBansPath();
+	if(path.isEmpty()) {
+		return;
+	}
+
+	QFile file(path);
+	bool ok = file.open(QFile::WriteOnly) && file.write(bans) == bans.size() &&
+			  file.flush();
+	if(!ok) {
+		QMessageBox::critical(
+			this, tr("Session Ban Export"),
+			tr("Error writing saving bans to '%1': %2")
+				.arg(path, file.errorString()));
+	}
+}
+
+void SessionSettingsDialog::bansImpExError(const QString &message)
+{
+	if(!m_awaitingImportExportResponse) {
+		return;
+	}
+	m_awaitingImportExportResponse = false;
+	updateBanImportExportState();
+
+	QMessageBox::critical(this, tr("Session Ban Error"), message);
 }
 
 void SessionSettingsDialog::onCanvasChanged(canvas::CanvasModel *canvas)
@@ -197,34 +337,34 @@ void SessionSettingsDialog::onCanvasChanged(canvas::CanvasModel *canvas)
 
 	canvas::AclState *acl = canvas->aclState();
 
-	connect(acl, &canvas::AclState::localOpChanged, this, &SessionSettingsDialog::onOperatorModeChanged);
-	connect(acl, &canvas::AclState::featureTiersChanged, this, &SessionSettingsDialog::onFeatureTiersChanged);
+	connect(
+		acl, &canvas::AclState::localOpChanged, this,
+		&SessionSettingsDialog::onOperatorModeChanged);
+	connect(
+		acl, &canvas::AclState::featureTiersChanged, this,
+		&SessionSettingsDialog::onFeatureTiersChanged);
 
 	onOperatorModeChanged(acl->amOperator());
 	onFeatureTiersChanged(acl->featureTiers());
-
 }
 
 void SessionSettingsDialog::onOperatorModeChanged(bool op)
 {
-	QWidget *w[] = {
-		m_ui->title,
-		m_ui->maxUsers,
-		m_ui->denyJoins,
-		m_ui->preserveChat,
-		m_ui->deputies,
-		m_ui->sessionPassword,
-		m_ui->opword,
-		m_ui->addAnnouncement,
-		m_ui->removeAnnouncement,
-		m_ui->removeBan
-	};
 	m_op = op;
-	for(unsigned int i=0;i<sizeof(w)/sizeof(*w);++i)
-		w[i]->setEnabled(op);
 
-	for(int i = 0; i < DP_FEATURE_COUNT; ++i)
+	QWidget *widgets[] = {
+		m_ui->title,		m_ui->maxUsers,		   m_ui->denyJoins,
+		m_ui->preserveChat, m_ui->deputies,		   m_ui->sessionPassword,
+		m_ui->opword,		m_ui->addAnnouncement, m_ui->removeAnnouncement,
+		m_ui->removeBan,
+	};
+	for(QWidget *widget : widgets) {
+		widget->setEnabled(op);
+	}
+
+	for(int i = 0; i < DP_FEATURE_COUNT; ++i) {
 		featureBox(DP_Feature(i))->setEnabled(op);
+	}
 
 	m_ui->persistent->setEnabled(m_canPersist && op);
 	m_ui->autoresetThreshold->setEnabled(m_canAutoreset && op);
@@ -239,34 +379,57 @@ void SessionSettingsDialog::onOperatorModeChanged(bool op)
 QComboBox *SessionSettingsDialog::featureBox(DP_Feature f)
 {
 	switch(f) {
-	case DP_FEATURE_PUT_IMAGE: return m_ui->permPutImage;
-	case DP_FEATURE_REGION_MOVE: return m_ui->permRegionMove;
-	case DP_FEATURE_RESIZE: return m_ui->permResize;
-	case DP_FEATURE_BACKGROUND: return m_ui->permBackground;
-	case DP_FEATURE_EDIT_LAYERS: return m_ui->permEditLayers;
-	case DP_FEATURE_OWN_LAYERS: return m_ui->permOwnLayers;
-	case DP_FEATURE_CREATE_ANNOTATION: return m_ui->permCreateAnnotation;
-	case DP_FEATURE_LASER: return m_ui->permLaser;
-	case DP_FEATURE_UNDO: return m_ui->permUndo;
-	case DP_FEATURE_METADATA: return m_ui->permMetadata;
-	case DP_FEATURE_TIMELINE: return m_ui->permTimeline;
-	case DP_FEATURE_MYPAINT: return m_ui->permMyPaint;
-	default: Q_ASSERT_X(false, "featureBox", "unhandled case"); return nullptr;
+	case DP_FEATURE_PUT_IMAGE:
+		return m_ui->permPutImage;
+	case DP_FEATURE_REGION_MOVE:
+		return m_ui->permRegionMove;
+	case DP_FEATURE_RESIZE:
+		return m_ui->permResize;
+	case DP_FEATURE_BACKGROUND:
+		return m_ui->permBackground;
+	case DP_FEATURE_EDIT_LAYERS:
+		return m_ui->permEditLayers;
+	case DP_FEATURE_OWN_LAYERS:
+		return m_ui->permOwnLayers;
+	case DP_FEATURE_CREATE_ANNOTATION:
+		return m_ui->permCreateAnnotation;
+	case DP_FEATURE_LASER:
+		return m_ui->permLaser;
+	case DP_FEATURE_UNDO:
+		return m_ui->permUndo;
+	case DP_FEATURE_METADATA:
+		return m_ui->permMetadata;
+	case DP_FEATURE_TIMELINE:
+		return m_ui->permTimeline;
+	case DP_FEATURE_MYPAINT:
+		return m_ui->permMyPaint;
+	default:
+		Q_ASSERT_X(false, "featureBox", "unhandled case");
+		return nullptr;
 	}
 }
-void SessionSettingsDialog::onFeatureTiersChanged(const DP_FeatureTiers &features)
+void SessionSettingsDialog::onFeatureTiersChanged(
+	const DP_FeatureTiers &features)
 {
-	m_ui->permPutImage->setCurrentIndex(int(features.tiers[DP_FEATURE_PUT_IMAGE]));
-	m_ui->permRegionMove->setCurrentIndex(int(features.tiers[DP_FEATURE_REGION_MOVE]));
+	m_ui->permPutImage->setCurrentIndex(
+		int(features.tiers[DP_FEATURE_PUT_IMAGE]));
+	m_ui->permRegionMove->setCurrentIndex(
+		int(features.tiers[DP_FEATURE_REGION_MOVE]));
 	m_ui->permResize->setCurrentIndex(int(features.tiers[DP_FEATURE_RESIZE]));
-	m_ui->permBackground->setCurrentIndex(int(features.tiers[DP_FEATURE_BACKGROUND]));
-	m_ui->permEditLayers->setCurrentIndex(int(features.tiers[DP_FEATURE_EDIT_LAYERS]));
-	m_ui->permOwnLayers->setCurrentIndex(int(features.tiers[DP_FEATURE_OWN_LAYERS]));
-	m_ui->permCreateAnnotation->setCurrentIndex(int(features.tiers[DP_FEATURE_CREATE_ANNOTATION]));
+	m_ui->permBackground->setCurrentIndex(
+		int(features.tiers[DP_FEATURE_BACKGROUND]));
+	m_ui->permEditLayers->setCurrentIndex(
+		int(features.tiers[DP_FEATURE_EDIT_LAYERS]));
+	m_ui->permOwnLayers->setCurrentIndex(
+		int(features.tiers[DP_FEATURE_OWN_LAYERS]));
+	m_ui->permCreateAnnotation->setCurrentIndex(
+		int(features.tiers[DP_FEATURE_CREATE_ANNOTATION]));
 	m_ui->permLaser->setCurrentIndex(int(features.tiers[DP_FEATURE_LASER]));
 	m_ui->permUndo->setCurrentIndex(int(features.tiers[DP_FEATURE_UNDO]));
-	m_ui->permMetadata->setCurrentIndex(int(features.tiers[DP_FEATURE_METADATA]));
-	m_ui->permTimeline->setCurrentIndex(int(features.tiers[DP_FEATURE_TIMELINE]));
+	m_ui->permMetadata->setCurrentIndex(
+		int(features.tiers[DP_FEATURE_METADATA]));
+	m_ui->permTimeline->setCurrentIndex(
+		int(features.tiers[DP_FEATURE_TIMELINE]));
 	m_ui->permMyPaint->setCurrentIndex(int(features.tiers[DP_FEATURE_MYPAINT]));
 }
 
@@ -274,11 +437,7 @@ void SessionSettingsDialog::initPermissionComboBoxes()
 {
 	// Note: these must match the canvas::Tier enum
 	const QString items[] = {
-		tr("Operators"),
-		tr("Trusted"),
-		tr("Registered"),
-		tr("Everyone")
-	};
+		tr("Operators"), tr("Trusted"), tr("Registered"), tr("Everyone")};
 
 	for(int i = 0; i < DP_FEATURE_COUNT; ++i) {
 		QComboBox *box = featureBox(DP_Feature(i));
@@ -286,7 +445,9 @@ void SessionSettingsDialog::initPermissionComboBoxes()
 			box->addItem(items[j]);
 
 		box->setProperty("featureIdx", i);
-		connect(box, QOverload<int>::of(&QComboBox::activated), this, &SessionSettingsDialog::permissionChanged);
+		connect(
+			box, QOverload<int>::of(&QComboBox::activated), this,
+			&SessionSettingsDialog::permissionChanged);
 	}
 }
 
@@ -310,8 +471,7 @@ void SessionSettingsDialog::permissionPresetSelected(const QString &presetFile)
 	for(int i = 0; i < DP_FEATURE_COUNT; ++i) {
 		auto *box = featureBox(DP_Feature(i));
 		box->setCurrentIndex(
-			cfg.value(box->objectName()).toInt(box->currentIndex())
-			);
+			cfg.value(box->objectName()).toInt(box->currentIndex()));
 	}
 	permissionChanged();
 
@@ -319,11 +479,9 @@ void SessionSettingsDialog::permissionPresetSelected(const QString &presetFile)
 	{
 		auto *box = m_ui->deputies;
 		box->setCurrentIndex(
-			cfg.value(box->objectName()).toInt(box->currentIndex())
-			);
+			cfg.value(box->objectName()).toInt(box->currentIndex()));
 		deputiesChanged(box->currentIndex());
 	}
-
 }
 
 void SessionSettingsDialog::permissionPresetSaving(const QString &presetFile)
@@ -354,12 +512,15 @@ void SessionSettingsDialog::permissionPresetSaving(const QString &presetFile)
 void SessionSettingsDialog::updatePasswordLabel(QLabel *label)
 {
 	bool hasPass = label->property("haspass").toBool();
-	QString txt = QStringLiteral("<b>%1</b>").arg(
-		hasPass ? tr("yes", "password") : tr("no", "password"));
+	QString txt =
+		QStringLiteral("<b>%1</b>")
+			.arg(hasPass ? tr("yes", "password") : tr("no", "password"));
 
 	if(m_op) {
-		txt.append(QStringLiteral(" (<a href=\"#\">%1</a>)").arg(
-			hasPass ? tr("change", "password") : tr("assign", "password")));
+		txt.append(QStringLiteral(" (<a href=\"#\">%1</a>)")
+					   .arg(
+						   hasPass ? tr("change", "password")
+								   : tr("assign", "password")));
 	}
 
 	label->setText(txt);
@@ -388,7 +549,8 @@ void SessionSettingsDialog::setCompatibilityMode(bool compatibilityMode)
 void SessionSettingsDialog::sendSessionConf()
 {
 	if(!m_sessionconf.isEmpty()) {
-		if(m_sessionconf.contains("title") && parentalcontrols::isNsfmTitle(m_sessionconf["title"].toString()))
+		if(m_sessionconf.contains("title") &&
+		   parentalcontrols::isNsfmTitle(m_sessionconf["title"].toString()))
 			m_sessionconf["nsfm"] = true;
 
 		m_doc->sendSessionConf(m_sessionconf);
@@ -406,7 +568,8 @@ void SessionSettingsDialog::sendSessionConf()
 	}
 }
 
-void SessionSettingsDialog::changeSessionConf(const QString &key, const QJsonValue &value, bool now)
+void SessionSettingsDialog::changeSessionConf(
+	const QString &key, const QJsonValue &value, bool now)
 {
 	m_sessionconf[key] = value;
 	if(now) {
@@ -417,16 +580,44 @@ void SessionSettingsDialog::changeSessionConf(const QString &key, const QJsonVal
 	}
 }
 
-void SessionSettingsDialog::titleChanged(const QString &title) { changeSessionConf("title", title); }
-void SessionSettingsDialog::maxUsersChanged() { changeSessionConf("maxUserCount", m_ui->maxUsers->value()); }
-void SessionSettingsDialog::denyJoinsChanged(bool set) { changeSessionConf("closed", set); }
-void SessionSettingsDialog::authOnlyChanged(bool set) { changeSessionConf("authOnly", set); }
+void SessionSettingsDialog::titleChanged(const QString &title)
+{
+	changeSessionConf("title", title);
+}
+void SessionSettingsDialog::maxUsersChanged()
+{
+	changeSessionConf("maxUserCount", m_ui->maxUsers->value());
+}
+void SessionSettingsDialog::denyJoinsChanged(bool set)
+{
+	changeSessionConf("closed", set);
+}
+void SessionSettingsDialog::authOnlyChanged(bool set)
+{
+	changeSessionConf("authOnly", set);
+}
 
-void SessionSettingsDialog::autoresetThresholdChanged() { changeSessionConf("resetThreshold", int(m_ui->autoresetThreshold->value()* 1024 * 1024)); }
-void SessionSettingsDialog::keepChatChanged(bool set) { changeSessionConf("preserveChat", set); }
-void SessionSettingsDialog::persistenceChanged(bool set) { changeSessionConf("persistent", set); }
-void SessionSettingsDialog::nsfmChanged(bool set) { changeSessionConf("nsfm", set); }
-void SessionSettingsDialog::deputiesChanged(int idx) { changeSessionConf("deputies", idx>0); }
+void SessionSettingsDialog::autoresetThresholdChanged()
+{
+	changeSessionConf(
+		"resetThreshold", int(m_ui->autoresetThreshold->value() * 1024 * 1024));
+}
+void SessionSettingsDialog::keepChatChanged(bool set)
+{
+	changeSessionConf("preserveChat", set);
+}
+void SessionSettingsDialog::persistenceChanged(bool set)
+{
+	changeSessionConf("persistent", set);
+}
+void SessionSettingsDialog::nsfmChanged(bool set)
+{
+	changeSessionConf("nsfm", set);
+}
+void SessionSettingsDialog::deputiesChanged(int idx)
+{
+	changeSessionConf("deputies", idx > 0);
+}
 
 void SessionSettingsDialog::changePassword()
 {
@@ -438,13 +629,8 @@ void SessionSettingsDialog::changePassword()
 
 	bool ok;
 	QString newpass = QInputDialog::getText(
-				this,
-				tr("Session Password"),
-				prompt,
-				QLineEdit::Password,
-				QString(),
-				&ok
-	);
+		this, tr("Session Password"), prompt, QLineEdit::Password, QString(),
+		&ok);
 	if(ok) {
 		emit joinPasswordChanged(newpass);
 		changeSessionConf("password", newpass, true);
@@ -461,15 +647,121 @@ void SessionSettingsDialog::changeOpword()
 
 	bool ok;
 	QString newpass = QInputDialog::getText(
-				this,
-				tr("Operator Password"),
-				prompt,
-				QLineEdit::Password,
-				QString(),
-				&ok
-	);
+		this, tr("Operator Password"), prompt, QLineEdit::Password, QString(),
+		&ok);
 	if(ok)
 		changeSessionConf("opword", newpass, true);
+}
+
+void SessionSettingsDialog::updateBanImportExportState()
+{
+	m_ui->importButton->setEnabled(
+		m_op && (m_canCryptImpExBans || m_canModImportBans));
+	m_ui->exportButton->setEnabled(
+		m_op && (m_canCryptImpExBans || m_canModExportBans));
+}
+
+void SessionSettingsDialog::importBans()
+{
+	if(!m_op || !(m_canModImportBans || m_canCryptImpExBans) ||
+	   m_awaitingImportExportResponse) {
+		return;
+	}
+
+	QString path = FileWrangler(this).getOpenSessionBansPath();
+	if(path.isEmpty()) {
+		return;
+	}
+
+	QFile file(path);
+	if(!file.open(QFile::ReadOnly)) {
+		QMessageBox::critical(
+			this, tr("Session Ban Import"),
+			tr("Error opening '%1': %2").arg(path, file.errorString()));
+		return;
+	}
+	QString bans = QString::fromUtf8(file.readAll());
+	file.close();
+
+	QString errorMessage;
+	if(!checkBanImport(bans, errorMessage)) {
+		QMessageBox::critical(this, tr("Session Ban Import"), errorMessage);
+		return;
+	}
+
+	m_awaitingImportExportResponse = true;
+	updateBanImportExportState();
+	emit requestBanImport(bans);
+}
+
+bool SessionSettingsDialog::checkBanImport(
+	const QString &bans, QString &outErrorMessage) const
+{
+	static QRegularExpression cryptRe(
+		QStringLiteral("\\Ac[a-zA-Z0-9+/=]+:[a-zA-Z0-9+/=]+\\z"));
+	if(cryptRe.match(bans).hasMatch()) {
+		if(m_canCryptImpExBans) {
+			return true;
+		} else {
+			outErrorMessage =
+				tr("This server does not support importing encrypted bans.");
+			return false;
+		}
+	}
+
+	static QRegularExpression plainRe(QStringLiteral("\\Ap[a-zA-Z0-9+/=]+\\z"));
+	if(plainRe.match(bans).hasMatch()) {
+		if(m_canModImportBans) {
+			return true;
+		} else {
+			outErrorMessage =
+				tr("This server does not support importing plain bans.");
+			return false;
+		}
+	}
+
+	outErrorMessage = tr("File does not appear to contain any ban data.");
+	return false;
+}
+
+void SessionSettingsDialog::exportBans()
+{
+	if(!m_op || !(m_canModExportBans || m_canCryptImpExBans) ||
+	   m_awaitingImportExportResponse) {
+		return;
+	}
+
+	bool plain;
+	if(m_canModExportBans) {
+		if(m_canCryptImpExBans) {
+			QMessageBox messageBox(
+				QMessageBox::Question, tr("Choose Ban Export Type"),
+				tr("Since you are a moderator, you can export bans encrypted "
+				   "or plain. Encrypted bans can only be imported on this "
+				   "server. Which format do you want to export?"),
+				QMessageBox::Cancel, this);
+			QPushButton *encryptedButton =
+				messageBox.addButton(tr("Encrypted"), QMessageBox::ActionRole);
+			QPushButton *plainButton =
+				messageBox.addButton(tr("Plain"), QMessageBox::ActionRole);
+			messageBox.exec();
+			if(messageBox.clickedButton() == encryptedButton) {
+				plain = false;
+			} else if(messageBox.clickedButton() == plainButton) {
+				plain = true;
+			} else {
+				return;
+			}
+		} else {
+			plain = true;
+		}
+	} else {
+		plain = false;
+	}
+
+	m_awaitingImportExportResponse = true;
+	updateBanImportExportState();
+	emit requestBanExport(plain);
 }
 
 }

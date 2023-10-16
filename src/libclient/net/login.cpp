@@ -57,6 +57,8 @@ LoginHandler::LoginHandler(Mode mode, const QUrl &url, QObject *parent)
 	, m_canReport(false)
 	, m_needUserPassword(false)
 	, m_supportsCustomAvatars(false)
+	, m_supportsCryptBanImpEx(false)
+	, m_supportsModBanImpEx(false)
 	, m_supportsExtAuthAvatars(false)
 	, m_compatibilityMode(false)
 	, m_isGuest(true)
@@ -184,6 +186,10 @@ void LoginHandler::expectHello(const ServerReply &msg)
 			m_canReport = true;
 		} else if(flag == "AVATAR") {
 			m_supportsCustomAvatars = true;
+		} else if(flag == "CBANIMPEX") {
+			m_supportsCryptBanImpEx = true;
+		} else if(flag == "MBANIMPEX") {
+			m_supportsModBanImpEx = true;
 		} else {
 			qWarning() << "Unknown server capability:" << flag;
 		}

@@ -34,6 +34,17 @@ public:
 	QSslCertificate hostCertificate() const override;
 
 	bool supportsPersistence() const override { return m_supportsPersistence; }
+
+	bool supportsCryptBanImpEx() const override
+	{
+		return m_supportsCryptBanImpEx;
+	}
+
+	bool supportsModBanImpEx() const override
+	{
+		return m_supportsModBanImpEx;
+	}
+
 	bool supportsAbuseReports() const override
 	{
 		return m_supportsAbuseReports;
@@ -93,6 +104,8 @@ private:
 	Security m_securityLevel;
 	bool m_localDisconnect;
 	bool m_supportsPersistence;
+	bool m_supportsCryptBanImpEx;
+	bool m_supportsModBanImpEx;
 	bool m_supportsAbuseReports;
 	bool m_compatibilityMode;
 };
