@@ -34,7 +34,7 @@
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t merge the canvas into a flat image.</source>
-        <translation type="unfinished"></translation>
+        <translation>No se pudo unir el canvas en un imagen plana</translation>
     </message>
     <message>
         <location line="+2"/>
