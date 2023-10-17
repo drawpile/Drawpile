@@ -624,10 +624,22 @@ void LoginHandler::handleJoinMessage(const net::ServerCommand &cmd)
 
 	if(!m_client->isModerator()) {
 		// Non-moderators have to obey access restrictions
-		if(session->history()->banlist().isBanned(
-			   m_client->username(), m_client->peerAddress(),
-			   m_client->authId(), m_client->sid()) != 0) {
-			sendError("banned", "You have been banned from this session");
+		int banId = session->history()->banlist().isBanned(
+			m_client->username(), m_client->peerAddress(), m_client->authId(),
+			m_client->sid());
+		if(banId != 0) {
+			session->log(
+				Log()
+					.about(Log::Level::Info, Log::Topic::Ban)
+					.user(
+						m_client->id(), m_client->peerAddress(),
+						m_client->username())
+					.message(
+						QStringLiteral("Join prevented by ban %1").arg(banId)));
+			sendError(
+				"banned", QStringLiteral(
+							  "You have been banned from this session (ban %1)")
+							  .arg(banId));
 			return;
 		}
 		if(session->isClosed()) {

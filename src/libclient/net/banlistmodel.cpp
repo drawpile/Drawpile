@@ -20,7 +20,7 @@ int BanlistModel::rowCount(const QModelIndex &parent) const
 
 int BanlistModel::columnCount(const QModelIndex &parent) const
 {
-	return parent.isValid() ? 0 : m_showSensitive ? 4 : 2;
+	return parent.isValid() ? 0 : m_showSensitive ? 5 : 3;
 }
 
 QVariant BanlistModel::data(const QModelIndex &index, int role) const
@@ -31,19 +31,23 @@ QVariant BanlistModel::data(const QModelIndex &index, int role) const
 			if(m_showSensitive) {
 				switch(index.column()) {
 				case 0:
-					return e.username;
+					return e.id;
 				case 1:
-					return e.ip;
+					return e.username;
 				case 2:
-					return QStringLiteral("%1@%2").arg(e.authId, e.sid);
+					return e.ip;
 				case 3:
+					return QStringLiteral("%1@%2").arg(e.authId, e.sid);
+				case 4:
 					return e.bannedBy;
 				}
 			} else {
 				switch(index.column()) {
 				case 0:
-					return e.username;
+					return e.id;
 				case 1:
+					return e.username;
+				case 2:
 					return e.bannedBy;
 				}
 			}
@@ -62,12 +66,14 @@ QVariant BanlistModel::headerData(
 		if(m_showSensitive) {
 			switch(section) {
 			case 0:
-				return tr("User");
+				return tr("ID");
 			case 1:
-				return tr("IP address");
+				return tr("User");
 			case 2:
-				return tr("Client info");
+				return tr("IP address");
 			case 3:
+				return tr("Client info");
+			case 4:
 				return tr("Banned by");
 			default:
 				break;
@@ -75,8 +81,10 @@ QVariant BanlistModel::headerData(
 		} else {
 			switch(section) {
 			case 0:
-				return tr("User");
+				return tr("ID");
 			case 1:
+				return tr("User");
+			case 2:
 				return tr("Banned by");
 			default:
 				break;
