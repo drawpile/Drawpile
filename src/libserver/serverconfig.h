@@ -75,7 +75,7 @@ namespace config {
 		// Last external bans response. Internal value used for caching.
 		ExtBansCacheResponse(29, "extBansCacheResponse", "", ConfigKey::STRING),
 		// Respect ext-auth user's "BANEXEMPT" flag.
-		ExtAuthBanExempt(30, "extauthbanexempt", "true", ConfigKey::BOOL);
+		ExtAuthBanExempt(30, "extauthbanexempt", "false", ConfigKey::BOOL);
 }
 
 //! Settings that are not adjustable after the server has started
