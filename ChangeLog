@@ -21,6 +21,7 @@ Unreleased Version 2.2.0-pre
  * Feature: Allow exporting and importing session bans. They are encrypted with a per-server key by default. Thanks tincancrab for suggesting.
  * Fix: Prevent banning yourself from sessions.
  * Feature: Allow moderators to exempt sessions from the idle timeout. This ability can be disabled by server owners. Thanks Bluestrings for suggesting.
+ * Feature: Show proper reasons when a session is terminated, rather than always claiming the server is shutting down.
 
 2023-09-30 Version 2.2.0-beta.8
  * Fix: Apply color wheel direction to color dialogs too. Thanks Blozzom for reporting.

@@ -79,7 +79,11 @@ void Client::connectToServer(
 				chat = tr("A server error occurred!");
 				break;
 			case MessageQueue::GracefulDisconnect::Shutdown:
-				chat = tr("The server is shutting down!");
+				if(message.isEmpty()) {
+					chat = tr("The server is shutting down!");
+				} else {
+					chat = tr("The session has been shut down!");
+				}
 				break;
 			default:
 				chat = "Unknown error";

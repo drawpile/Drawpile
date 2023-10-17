@@ -278,7 +278,8 @@ killSession(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 			.arg(client->username()),
 		true, net::ServerReply::KEY_TERMINATE_SESSION,
 		{{QStringLiteral("by"), client->username()}});
-	client->session()->killSession();
+	client->session()->killSession(
+		QStringLiteral("Session terminated by moderator"));
 	return CmdResult::ok();
 }
 

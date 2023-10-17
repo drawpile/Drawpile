@@ -193,7 +193,7 @@ void SessionServer::stopAll()
 	}
 
 	for(Session *s : m_sessions)
-		s->killSession(false);
+		s->killSession(QStringLiteral("Server shutting down"), false);
 }
 
 void SessionServer::messageAll(const QString &message, bool alert)
@@ -252,7 +252,7 @@ void SessionServer::onSessionAttributeChanged(Session *session)
 	}
 
 	if(delSession)
-		session->killSession();
+		session->killSession(QStringLiteral("Session terminated due to being empty"));
 	else
 		emit sessionChanged(session->getDescription());
 }
@@ -270,7 +270,7 @@ void SessionServer::cleanupSessions()
 				 !s->history()->hasFlag(SessionHistory::IdleOverride));
 			if(isExpired) {
 				s->log(Log().about(Log::Level::Info, Log::Topic::Status).message("Idle session expired."));
-				s->killSession();
+				s->killSession(QStringLiteral("Session terminated due to being idle too long"));
 			}
 		}
 	}

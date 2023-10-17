@@ -212,7 +212,7 @@ public:
 	 * will not be terminated. This allows the session to survive
 	 * server restarts.
 	 */
-	void killSession(bool terminate = true);
+	void killSession(const QString &message, bool terminate = true);
 
 	/**
 	 * @brief Send a direct message to all session participants

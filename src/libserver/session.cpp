@@ -942,7 +942,7 @@ void Session::resetSession(int resetter)
 		QStringLiteral("init")));
 }
 
-void Session::killSession(bool terminate)
+void Session::killSession(const QString &message, bool terminate)
 {
 	if(m_state == State::Shutdown)
 		return;
@@ -952,8 +952,7 @@ void Session::killSession(bool terminate)
 	stopRecording();
 
 	for(Client *c : m_clients) {
-		c->disconnectClient(
-			Client::DisconnectionReason::Shutdown, "Session terminated");
+		c->disconnectClient(Client::DisconnectionReason::Shutdown, message);
 		c->setSession(nullptr);
 	}
 	m_clients.clear();
@@ -1386,7 +1385,7 @@ JsonApiResult Session::callJsonApi(
 			messageAll(request["alert"].toString(), true);
 
 	} else if(method == JsonApiMethod::Delete) {
-		killSession();
+		killSession(QStringLiteral("Session terminated by administrator"));
 		return JsonApiResult{
 			JsonApiResult::Ok, QJsonDocument(QJsonObject{{"status", "ok "}})};
 	}
