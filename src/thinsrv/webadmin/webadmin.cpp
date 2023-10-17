@@ -68,7 +68,7 @@ void Webadmin::setSessions(MultiServer *server)
 		const QStringList path = req.pathMatch().captured(1).split('/', compat::SkipEmptyParts);
 
 		QJsonDocument reqBodyDoc;
-		if(m == JsonApiMethod::Get) {
+		if(m == JsonApiMethod::Get || m ==JsonApiMethod::Delete) {
 			QJsonObject params;
 			QHashIterator<QString, QString> i(req.getData());
 			while(i.hasNext()) {

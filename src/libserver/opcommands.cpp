@@ -271,13 +271,21 @@ CmdResult
 killSession(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 {
 	Q_UNUSED(args);
-	Q_UNUSED(kwargs);
-
-	client->session()->keyMessageAll(
-		QStringLiteral("Session shut down by moderator (%1)")
-			.arg(client->username()),
-		true, net::ServerReply::KEY_TERMINATE_SESSION,
-		{{QStringLiteral("by"), client->username()}});
+	QString reason = kwargs[QStringLiteral("reason")].toString().trimmed();
+	if(reason.isEmpty()) {
+		client->session()->keyMessageAll(
+			QStringLiteral("Session shut down by moderator (%1)")
+				.arg(client->username()),
+			true, net::ServerReply::KEY_TERMINATE_SESSION,
+			{{QStringLiteral("by"), client->username()}});
+	} else {
+		client->session()->keyMessageAll(
+			QStringLiteral("Session shut down by moderator (%1): %2")
+				.arg(client->username(), reason),
+			true, net::ServerReply::KEY_TERMINATE_SESSION_REASON,
+			{{QStringLiteral("by"), client->username()},
+			 {QStringLiteral("reason"), reason}});
+	}
 	client->session()->killSession(
 		QStringLiteral("Session terminated by moderator"));
 	return CmdResult::ok();

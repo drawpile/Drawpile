@@ -442,8 +442,19 @@ Client::translateMessage(const QJsonObject &reply, const QString &fallbackKey)
 			return tr("Preparing for session reset! Please wait, the session "
 					  "should be available again shortly…");
 		} else if(key == net::ServerReply::KEY_TERMINATE_SESSION) {
+			//: %1 is the name of the moderator.
 			return tr("Session terminated by moderator (%1).")
 				.arg(params[QStringLiteral("by")].toString());
+		} else if(key == net::ServerReply::KEY_TERMINATE_SESSION_ADMIN) {
+			//: %1 is the reason given.
+			return tr("Session terminated by administrator: %2")
+				.arg(params[QStringLiteral("reason")].toString());
+		} else if(key == net::ServerReply::KEY_TERMINATE_SESSION_REASON) {
+			//: %1 is the name of the moderator, %2 is the reason given.
+			return tr("Session terminated by moderator (%1): %2")
+				.arg(
+					params[QStringLiteral("by")].toString(),
+					params[QStringLiteral("reason")].toString());
 		} else if(key == net::ServerReply::KEY_TRUST_GIVE) {
 			QString target = params[QStringLiteral("target")].toString();
 			QString by = params[QStringLiteral("by")].toString();

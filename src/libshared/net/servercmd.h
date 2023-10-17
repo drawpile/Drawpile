@@ -65,6 +65,10 @@ struct ServerReply {
 	static constexpr char KEY_RESET_FAILED[] = "resetfailed";
 	static constexpr char KEY_RESET_PREPARE[] = "resetprepare";
 	static constexpr char KEY_TERMINATE_SESSION[] = "terminatesession";
+	static constexpr char KEY_TERMINATE_SESSION_ADMIN[] =
+		"terminatesessionadmin";
+	static constexpr char KEY_TERMINATE_SESSION_REASON[] =
+		"terminatesessionreason";
 	static constexpr char KEY_TRUST_GIVE[] = "trustgive";
 	static constexpr char KEY_TRUST_TAKE[] = "trusttake";
 

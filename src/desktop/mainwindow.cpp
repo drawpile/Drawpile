@@ -2035,22 +2035,16 @@ void MainWindow::terminateSession()
 	if(m_doc->client()->isBuiltin()) {
 		leave();
 	} else {
-		auto dlg = new QMessageBox(
-			QMessageBox::Question,
-			tr("Terminate session"),
-			tr("Really terminate this session?"),
-			QMessageBox::Ok|QMessageBox::Cancel,
-			this);
+		QInputDialog *dlg = new QInputDialog(this);
+		dlg->setInputMode(QInputDialog::TextInput);
 		dlg->setAttribute(Qt::WA_DeleteOnClose);
-		dlg->setDefaultButton(QMessageBox::Cancel);
-		dlg->button(QMessageBox::Ok)->setText(tr("Terminate"));
+		dlg->setWindowTitle(tr("Terminate session"));
+		dlg->setLabelText(tr("Reason:"));
+		dlg->setOkButtonText(tr("Terminate"));
 		dlg->setWindowModality(Qt::WindowModal);
-
-		connect(dlg, &QMessageBox::finished, this, [this](int res) {
-			if(res == QMessageBox::Ok)
-				m_doc->sendTerminateSession();
-		});
-
+		connect(
+			dlg, &QInputDialog::textValueSelected, m_doc,
+			&Document::sendTerminateSession);
 		dlg->show();
 	}
 }

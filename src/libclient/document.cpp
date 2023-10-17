@@ -819,9 +819,14 @@ void Document::sendUnannounce(const QString &url)
 	m_client->sendMessage(net::ServerCommand::makeUnannounce(url));
 }
 
-void Document::sendTerminateSession()
+void Document::sendTerminateSession(const QString &reason)
 {
-	m_client->sendMessage(net::ServerCommand::make("kill-session"));
+	QJsonObject kwargs;
+	QString trimmed = reason.trimmed().mid(0, 255);
+	if(!trimmed.isEmpty()) {
+		kwargs[QStringLiteral("reason")] = trimmed;
+	}
+	m_client->sendMessage(net::ServerCommand::make("kill-session", {}, kwargs));
 }
 
 void Document::sendCanvasBackground(const QColor &color)

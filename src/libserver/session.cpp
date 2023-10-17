@@ -1385,6 +1385,14 @@ JsonApiResult Session::callJsonApi(
 			messageAll(request["alert"].toString(), true);
 
 	} else if(method == JsonApiMethod::Delete) {
+		QString reason = request[QStringLiteral("reason")].toString().trimmed();
+		if(!reason.isEmpty()) {
+			keyMessageAll(
+				QStringLiteral("Session shut down by administrator: %1")
+					.arg(reason),
+				true, net::ServerReply::KEY_TERMINATE_SESSION_ADMIN,
+				{{QStringLiteral("reason"), reason}});
+		}
 		killSession(QStringLiteral("Session terminated by administrator"));
 		return JsonApiResult{
 			JsonApiResult::Ok, QJsonDocument(QJsonObject{{"status", "ok "}})};

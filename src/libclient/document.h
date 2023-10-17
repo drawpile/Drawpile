@@ -230,7 +230,7 @@ public slots:
 	void sendUnban(int entryId);
 	void sendAnnounce(const QString &url, bool privateMode);
 	void sendUnannounce(const QString &url);
-	void sendTerminateSession();
+	void sendTerminateSession(const QString &reason);
 	void sendCanvasBackground(const QColor &color);
 	void sendAbuseReport(int userId, const QString &message);
 
