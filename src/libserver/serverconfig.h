@@ -75,7 +75,9 @@ namespace config {
 		// Last external bans response. Internal value used for caching.
 		ExtBansCacheResponse(29, "extBansCacheResponse", "", ConfigKey::STRING),
 		// Respect ext-auth user's "BANEXEMPT" flag.
-		ExtAuthBanExempt(30, "extauthbanexempt", "false", ConfigKey::BOOL);
+		ExtAuthBanExempt(30, "extauthbanexempt", "false", ConfigKey::BOOL),
+		// Allow mods to disable the idle timer for individual sessions.
+		AllowIdleOverride(31, "allowIdleOverride", "true", ConfigKey::BOOL);
 }
 
 //! Settings that are not adjustable after the server has started

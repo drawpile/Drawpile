@@ -260,10 +260,15 @@ void SessionServer::onSessionAttributeChanged(Session *session)
 void SessionServer::cleanupSessions()
 {
 	const qint64 expirationTime = m_config->getConfigTime(config::IdleTimeLimit) * 1000;
+	bool allowIdleOverride = m_config->getConfigBool(config::AllowIdleOverride);
 
 	if(expirationTime>0) {
 		for(Session *s : m_sessions) {
-			if(s->lastEventTime() > expirationTime) {
+			bool isExpired =
+				s->lastEventTime() > expirationTime &&
+				(!allowIdleOverride ||
+				 !s->history()->hasFlag(SessionHistory::IdleOverride));
+			if(isExpired) {
 				s->log(Log().about(Log::Level::Info, Log::Topic::Status).message("Idle session expired."));
 				s->killSession();
 			}

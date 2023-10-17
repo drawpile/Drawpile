@@ -20,6 +20,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Don't restore flipbook to previous location and size if that would put it outside of any available screen. Thanks Ausjamcian for reporting.
  * Feature: Allow exporting and importing session bans. They are encrypted with a per-server key by default. Thanks tincancrab for suggesting.
  * Fix: Prevent banning yourself from sessions.
+ * Feature: Allow moderators to exempt sessions from the idle timeout. This ability can be disabled by server owners. Thanks Bluestrings for suggesting.
 
 2023-09-30 Version 2.2.0-beta.8
  * Fix: Apply color wheel direction to color dialogs too. Thanks Blozzom for reporting.

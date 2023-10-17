@@ -202,6 +202,7 @@ signals:
 	void sessionNsfmChanged(bool nsfm);
 	void sessionForceNsfmChanged(bool forceNsfm);
 	void sessionDeputiesChanged(bool deputies);
+	void sessionIdleChanged(int timeLimit, bool overridden, bool canOverride);
 	void sessionMaxUserCountChanged(int count);
 	void sessionRoomcodeChanged(const QString &code);
 	void sessionResetThresholdChanged(double threshold);
@@ -292,6 +293,9 @@ private:
 	void setSessionNsfm(bool nsfm);
 	void setSessionForceNsfm(bool forceNsfm);
 	void setSessionDeputies(bool deputies);
+	void setSessionIdleTimeLimit(int idleTimeLimit);
+	void setSessionIdleOverride(bool idleOverride);
+	void setSessionAllowIdleOverride(bool allowIdleOverride);
 	void setRoomcode(const QString &roomcode);
 
 	void copyFromLayer(int layer);
@@ -335,11 +339,14 @@ private:
 	bool m_sessionNsfm;
 	bool m_sessionForceNsfm;
 	bool m_sessionDeputies;
+	bool m_sessionIdleOverride;
+	bool m_sessionAllowIdleOverride;
 
 	int m_sessionMaxUserCount;
 	int m_sessionHistoryMaxSize;
 	int m_sessionResetThreshold;
 	int m_baseResetThreshold;
+	int m_sessionIdleTimeLimit;
 };
 
 #endif // DOCUMENT_H

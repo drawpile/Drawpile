@@ -21,11 +21,8 @@ namespace server {
 
 static bool forceEnableNsfm(SessionHistory *history, const ServerConfig *config)
 {
-	if(config->getConfigBool(config::ForceNsfm) &&
-	   !history->hasFlag(SessionHistory::Nsfm)) {
-		SessionHistory::Flags flags = history->flags();
-		flags.setFlag(SessionHistory::Nsfm);
-		history->setFlags(flags);
+	if(config->getConfigBool(config::ForceNsfm)) {
+		history->setFlag(SessionHistory::Nsfm);
 		return true;
 	} else {
 		return false;
@@ -454,6 +451,20 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 										  : "disabled deputies");
 	}
 
+	// Changing the idle override is only allowed if it's configured and the
+	// client is a moderator or the request came from the API (null changedBy.)
+	bool changeIdleOverride =
+		conf.contains(QStringLiteral("idleOverride")) &&
+		m_config->getConfigBool(config::AllowIdleOverride) &&
+		(!changedBy || changedBy->isModerator());
+	if(changeIdleOverride) {
+		bool idleOverride = conf[QStringLiteral("idleOverride")].toBool();
+		flags.setFlag(SessionHistory::IdleOverride, idleOverride);
+		changes
+			<< (idleOverride ? QStringLiteral("enabled idle override")
+							 : QStringLiteral("disabled idle override"));
+	}
+
 	m_history->setFlags(flags);
 
 	if(!changes.isEmpty()) {
@@ -630,17 +641,22 @@ void Session::sendUpdatedSessionProperties()
 		{QStringLiteral("resetThresholdBase"),
 		 int(m_history->autoResetThresholdBase())},
 		{QStringLiteral("preserveChat"),
-		 m_history->flags().testFlag(SessionHistory::PreserveChat)},
-		{QStringLiteral("nsfm"),
-		 m_history->flags().testFlag(SessionHistory::Nsfm)},
+		 m_history->hasFlag(SessionHistory::PreserveChat)},
+		{QStringLiteral("nsfm"), m_history->hasFlag(SessionHistory::Nsfm)},
 		{QStringLiteral("deputies"),
-		 m_history->flags().testFlag(SessionHistory::Deputies)},
+		 m_history->hasFlag(SessionHistory::Deputies)},
 		{QStringLiteral("hasPassword"), !m_history->passwordHash().isEmpty()},
 		{QStringLiteral("hasOpword"), !m_history->opwordHash().isEmpty()},
-		// This config option is basically a session property set by the server.
-		// We report it here so the client can disable the checkbox in the UI.
+		{QStringLiteral("idleOverride"),
+		 m_history->hasFlag(SessionHistory::IdleOverride)},
+		// These configs are basically session properties set by the server.
+		// We report them here so the client can show them in the UI.
 		{QStringLiteral("forceNsfm"),
 		 m_config->getConfigBool(config::ForceNsfm)},
+		{QStringLiteral("idleTimeLimit"),
+		 m_config->getConfigTime(config::IdleTimeLimit)},
+		{QStringLiteral("allowIdleOverride"),
+		 m_config->getConfigBool(config::AllowIdleOverride)},
 	}));
 	emit sessionAttributeChanged(this);
 }
@@ -1166,11 +1182,18 @@ void Session::onAnnouncementError(
 
 void Session::onConfigValueChanged(const ConfigKey &key)
 {
-	if(key.index == config::ForceNsfm.index) {
+	if(key.index == config::IdleTimeLimit.index) {
+		sendUpdatedSessionProperties();
+	} else if(key.index == config::ForceNsfm.index) {
 		if(forceEnableNsfm(m_history, m_config)) {
 			log(Log()
 					.about(Log::Level::Info, Log::Topic::Status)
 					.message("Forced NSFM after config change"));
+		}
+		sendUpdatedSessionProperties();
+	} else if(key.index == config::AllowIdleOverride.index) {
+		if(!m_config->getConfigBool(config::AllowIdleOverride)) {
+			m_history->setFlag(SessionHistory::IdleOverride, false);
 		}
 		sendUpdatedSessionProperties();
 	}
@@ -1270,8 +1293,13 @@ QJsonObject Session::getDescription(bool full) const
 		{"startTime", m_history->startTime().toString(Qt::ISODate)},
 		{"size", int(m_history->sizeInBytes())}};
 
-	if(m_config->getConfigBool(config::EnablePersistence))
+	if(m_config->getConfigBool(config::EnablePersistence)) {
 		o["persistent"] = m_history->hasFlag(SessionHistory::Persistent);
+	}
+
+	if(m_config->getConfigBool(config::AllowIdleOverride)) {
+		o["idleOverride"] = m_history->hasFlag(SessionHistory::IdleOverride);
+	}
 
 	if(full) {
 		// Full descriptions includes detailed info for server admins.

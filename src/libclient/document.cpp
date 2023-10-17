@@ -46,10 +46,13 @@ Document::Document(libclient::settings::Settings &settings, QObject *parent)
 	, m_sessionNsfm(false)
 	, m_sessionForceNsfm(false)
 	, m_sessionDeputies(false)
+	, m_sessionIdleOverride(false)
+	, m_sessionAllowIdleOverride(false)
 	, m_sessionMaxUserCount(0)
 	, m_sessionHistoryMaxSize(0)
 	, m_sessionResetThreshold(0)
 	, m_baseResetThreshold(0)
+	, m_sessionIdleTimeLimit(0)
 {
 	// Initialize
 	m_client = new net::Client(this);
@@ -310,6 +313,25 @@ void Document::onSessionConfChanged(const QJsonObject &config)
 	if(config.contains("deputies"))
 		setSessionDeputies(config["deputies"].toBool());
 
+	bool idleConfigSet = false;
+	if(config.contains("idleTimeLimit")) {
+		idleConfigSet = true;
+		setSessionIdleTimeLimit(config["idleTimeLimit"].toInt());
+	}
+	if(config.contains("idleOverride")) {
+		idleConfigSet = true;
+		setSessionIdleOverride(config["idleOverride"].toBool());
+	}
+	if(config.contains("allowIdleOverride")) {
+		idleConfigSet = true;
+		setSessionAllowIdleOverride(config["allowIdleOverride"].toBool());
+	}
+	if(idleConfigSet) {
+		emit sessionIdleChanged(
+			m_sessionIdleTimeLimit, m_sessionIdleOverride,
+			m_sessionAllowIdleOverride && m_client->isModerator());
+	}
+
 	if(config.contains("maxUserCount"))
 		setSessionMaxUserCount(config["maxUserCount"].toInt());
 
@@ -495,6 +517,21 @@ void Document::setSessionDeputies(bool deputies)
 		m_sessionDeputies = deputies;
 		emit sessionDeputiesChanged(deputies);
 	}
+}
+
+void Document::setSessionIdleTimeLimit(int idleTimeLimit)
+{
+	m_sessionIdleTimeLimit = idleTimeLimit;
+}
+
+void Document::setSessionIdleOverride(bool idleOverride)
+{
+	m_sessionIdleOverride = idleOverride;
+}
+
+void Document::setSessionAllowIdleOverride(bool allowIdleOverride)
+{
+	m_sessionAllowIdleOverride = allowIdleOverride;
 }
 
 void Document::setRoomcode(const QString &roomcode)

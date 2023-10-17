@@ -69,6 +69,7 @@ private slots:
 	void persistenceChanged(bool);
 	void nsfmChanged(bool);
 	void deputiesChanged(int);
+	void idleOverrideChanged(bool idleTimeoutOverride);
 
 	void changePassword();
 	void changeOpword();
@@ -79,6 +80,7 @@ private slots:
 
 	void updatePasswordLabel(QLabel *label);
 	void updateNsfmCheckbox(bool);
+	void updateIdleSettings(int timeLimit, bool overridden, bool canOverride);
 
 	void setCompatibilityMode(bool compatibilityMode);
 

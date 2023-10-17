@@ -31,7 +31,8 @@ public:
 		PreserveChat = 0x02,
 		Nsfm = 0x04,
 		Deputies = 0x08,
-		AuthOnly = 0x10
+		AuthOnly = 0x10,
+		IdleOverride = 0x20,
 	};
 	Q_DECLARE_FLAGS(Flags, Flag)
 
@@ -102,6 +103,15 @@ public:
 
 	//! Set the persistent session flags
 	virtual void setFlags(Flags f) = 0;
+	void setFlag(Flag flag, bool on = true)
+	{
+		Flags f = flags();
+		bool isSet = f.testFlag(flag);
+		if((on && !isSet) || (!on && isSet)) {
+			f.setFlag(flag, on);
+			setFlags(f);
+		}
+	}
 
 	//! Remember a user who joined
 	virtual void joinUser(uint8_t id, const QString &name);

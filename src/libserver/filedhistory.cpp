@@ -245,19 +245,22 @@ bool FiledHistory::load()
 		} else if(cmd == "FLAGS") {
 			Flags flags;
 			for(const QByteArray &f : params.split(' ')) {
-				if(f == "persistent")
+				if(f == QStringLiteral("persistent")) {
 					flags |= Persistent;
-				else if(f == "preserveChat")
+				} else if(f == QStringLiteral("preserveChat")) {
 					flags |= PreserveChat;
-				else if(f == "nsfm")
+				} else if(f == QStringLiteral("nsfm")) {
 					flags |= Nsfm;
-				else if(f == "deputies")
+				} else if(f == QStringLiteral("deputies")) {
 					flags |= Deputies;
-				else if(f == "authonly")
+				} else if(f == QStringLiteral("authonly")) {
 					flags |= AuthOnly;
-				else
+				} else if(f == QStringLiteral("idleoverride")) {
+					flags |= IdleOverride;
+				} else {
 					qWarning()
 						<< id() << "unknown flag:" << QString::fromUtf8(f);
+				}
 			}
 			m_flags = flags;
 
@@ -548,17 +551,26 @@ void FiledHistory::setFlags(Flags f)
 	if(m_flags != f) {
 		m_flags = f;
 		QStringList fstr;
-		if(f.testFlag(Persistent))
-			fstr << "persistent";
-		if(f.testFlag(PreserveChat))
-			fstr << "preserveChat";
-		if(f.testFlag(Nsfm))
-			fstr << "nsfm";
-		if(f.testFlag(Deputies))
-			fstr << "deputies";
-		if(f.testFlag(AuthOnly))
-			fstr << "authonly";
-		m_journal->write(QString("FLAGS %1\n").arg(fstr.join(' ')).toUtf8());
+		if(f.testFlag(Persistent)) {
+			fstr.append(QStringLiteral("persistent"));
+		}
+		if(f.testFlag(PreserveChat)) {
+			fstr.append(QStringLiteral("preserveChat"));
+		}
+		if(f.testFlag(Nsfm)) {
+			fstr.append(QStringLiteral("nsfm"));
+		}
+		if(f.testFlag(Deputies)) {
+			fstr.append(QStringLiteral("deputies"));
+		}
+		if(f.testFlag(AuthOnly)) {
+			fstr.append(QStringLiteral("authonly"));
+		}
+		if(f.testFlag(IdleOverride)) {
+			fstr.append(QStringLiteral("idleoverride"));
+		}
+		m_journal->write(
+			QStringLiteral("FLAGS %1\n").arg(fstr.join(' ')).toUtf8());
 		m_journal->flush();
 	}
 }

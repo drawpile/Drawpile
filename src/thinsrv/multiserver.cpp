@@ -382,6 +382,7 @@ JsonApiResult MultiServer::serverJsonApi(JsonApiMethod method, const QStringList
 		config::ForceNsfm,
 		config::ExtBansUrl,
 		config::ExtBansCheckInterval,
+		config::AllowIdleOverride,
 	};
 	const int settingCount = sizeof(settings) / sizeof(settings[0]);
 

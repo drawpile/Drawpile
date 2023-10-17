@@ -69,6 +69,9 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 	connect(
 		m_ui->deputies, QOverload<int>::of(&QComboBox::currentIndexChanged),
 		this, &SessionSettingsDialog::deputiesChanged);
+	connect(
+		m_ui->idleTimeoutOverride, &QCheckBox::clicked, this,
+		&SessionSettingsDialog::idleOverrideChanged);
 
 	connect(
 		m_ui->sessionPassword, &QLabel::linkActivated, this,
@@ -115,6 +118,9 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 		m_doc, &Document::sessionDeputiesChanged, this, [this](bool deputies) {
 			m_ui->deputies->setCurrentIndex(deputies ? 1 : 0);
 		});
+	connect(
+		m_doc, &Document::sessionIdleChanged, this,
+		&SessionSettingsDialog::updateIdleSettings);
 	connect(
 		m_doc, &Document::sessionMaxUserCountChanged, m_ui->maxUsers,
 		&QSpinBox::setValue);
@@ -203,6 +209,7 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 	m_ui->labelMetadata->hide();
 	setCompatibilityMode(m_doc->isCompatibilityMode());
 	updateBanImportExportState();
+	updateIdleSettings(0, false, false);
 }
 
 SessionSettingsDialog::~SessionSettingsDialog()
@@ -537,6 +544,51 @@ void SessionSettingsDialog::updateNsfmCheckbox(bool)
 	}
 }
 
+void SessionSettingsDialog::updateIdleSettings(
+	int timeLimit, bool overridden, bool canOverride)
+{
+	QSignalBlocker blocker(m_ui->idleTimeoutOverride);
+	m_ui->idleTimeoutOverride->setChecked(overridden);
+	m_ui->idleTimeoutOverride->setEnabled(canOverride);
+	m_ui->idleTimeoutOverride->setVisible(canOverride);
+
+	bool visible = timeLimit > 0 || canOverride;
+	m_ui->idleTimeoutLabel->setVisible(visible);
+	m_ui->idleTimeoutAmount->setVisible(visible);
+
+	QString amount;
+	if(timeLimit <= 0) {
+		//: "Idle timeout: never"
+		amount = tr("never");
+	} else if(overridden && !canOverride) {
+		//: "Idle timeout: disabled by moderator"
+		amount = tr("disabled by moderator");
+	} else {
+		QStringList pieces;
+		int hours = timeLimit / 3600;
+		if(hours != 0) {
+			//: Idle timeout hours. May be joined with minutes and seconds.
+			pieces.append(tr("%n hour(s)", "", hours));
+		}
+
+		int minutes = timeLimit / 60 - hours * 60;
+		if(minutes != 0) {
+			//: Idle timeout minutes. May be joined with hours and seconds.
+			pieces.append(tr("%n minute(s)", "", minutes));
+		}
+
+		int seconds = timeLimit % 60;
+		if(seconds != 0) {
+			//: Idle timeout seconds. May be joined with hours and minutes.
+			pieces.append(tr("%n second(s)", "", seconds));
+		}
+
+		//: This string joins the hours, minutes and seconds for the idle time.
+		amount = pieces.join(tr(", "));
+	}
+	m_ui->idleTimeoutAmount->setText(amount);
+}
+
 void SessionSettingsDialog::setCompatibilityMode(bool compatibilityMode)
 {
 	if(compatibilityMode) {
@@ -617,6 +669,10 @@ void SessionSettingsDialog::nsfmChanged(bool set)
 void SessionSettingsDialog::deputiesChanged(int idx)
 {
 	changeSessionConf("deputies", idx > 0);
+}
+void SessionSettingsDialog::idleOverrideChanged(bool idleOverride)
+{
+	changeSessionConf("idleOverride", idleOverride);
 }
 
 void SessionSettingsDialog::changePassword()
