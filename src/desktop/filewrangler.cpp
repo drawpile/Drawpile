@@ -135,7 +135,7 @@ QString FileWrangler::saveSelectionAs(Document *doc) const
 			utils::FileFormatOption::QtImagesOnly,
 		&selectedFilter);
 
-	if(!filename.isEmpty() && confirmFlatten(doc, filename)) {
+	if(!filename.isEmpty()) {
 		doc->saveSelection(filename);
 		return filename;
 	} else {
