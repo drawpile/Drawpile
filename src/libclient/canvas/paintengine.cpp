@@ -280,7 +280,7 @@ PaintEngine::getAnnotationAt(int x, int y, int expand) const
 bool PaintEngine::needsOpenRaster() const
 {
 	drawdance::CanvasState cs = viewCanvasState();
-	return cs.backgroundTile().isNull() && cs.layers().count() > 1 &&
+	return !cs.backgroundTile().isNull() || cs.layers().count() > 1 ||
 		   cs.annotations().count() != 0;
 }
 
