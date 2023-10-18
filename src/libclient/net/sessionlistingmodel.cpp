@@ -8,6 +8,7 @@
 #include <QIcon>
 #include <QPalette>
 #include <QPixmap>
+#include <QRegularExpression>
 #include <QSize>
 #include <QUrl>
 
@@ -107,6 +108,8 @@ QVariant SessionListingModel::data(const QModelIndex &index, int role) const
 
 		switch (role) {
 		case Qt::DisplayRole:
+			return squashWhitespace(listing.name);
+		case Qt::ToolTipRole:
 		case SortKeyRole:
 			return listing.name;
 		case Qt::DecorationRole:
@@ -128,6 +131,7 @@ QVariant SessionListingModel::data(const QModelIndex &index, int role) const
 
 		switch(role) {
 		case Qt::DisplayRole:
+		case Qt::ToolTipRole:
 			if (index.column() == Message)
 				return listing.message;
 			break;
@@ -162,7 +166,7 @@ QVariant SessionListingModel::data(const QModelIndex &index, int role) const
 			case Title:
 				return formatTitle(session, role == Qt::ToolTipRole);
 			case Server:
-				return session.host;
+				return role == Qt::DisplayRole ? squashWhitespace(session.host) : session.host;
 			case UserCount:
 				if (session.users < 0) {
 					return QVariant();
@@ -176,7 +180,7 @@ QVariant SessionListingModel::data(const QModelIndex &index, int role) const
 					return QString::number(session.users);
 				}
 			case Owner:
-				return session.owner;
+				return role == Qt::DisplayRole ? squashWhitespace(session.owner) : session.owner;
 			case Uptime:
 				return ageString(session.started.secsTo(QDateTime::currentDateTime()));
 			case Version:
@@ -423,7 +427,16 @@ void SessionListingModel::clear()
 QString SessionListingModel::formatTitle(
 	const Session &session, bool includeFlags) const
 {
-	QString title = session.title.isEmpty() ? tr("(untitled)") : session.title;
+	QString title;
+	if(session.title.isEmpty()) {
+		title = tr("(untitled)");
+	} else if(includeFlags) {
+		title = session.title;
+	} else {
+		static QRegularExpression re(QStringLiteral("\\s+"));
+		title = squashWhitespace(session.title);
+	}
+
 	if(includeFlags) {
 		QStringList flags;
 		if(isClosed(session)) {
@@ -441,6 +454,12 @@ QString SessionListingModel::formatTitle(
 		}
 	}
 	return title;
+}
+
+QString SessionListingModel::squashWhitespace(const QString &s)
+{
+	static QRegularExpression re(QStringLiteral("\\s+"));
+	return s.trimmed().replace(re, QStringLiteral(" "));
 }
 
 bool SessionListingModel::isNsfm(const Session &session) const

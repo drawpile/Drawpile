@@ -66,6 +66,8 @@ private:
 	QString formatTitle(
 		const sessionlisting::Session &session, bool includeFlags) const;
 
+	static QString squashWhitespace(const QString &s);
+
 	bool isNsfm(const sessionlisting::Session &session) const;
 	bool isClosed(const sessionlisting::Session &session) const;
 
