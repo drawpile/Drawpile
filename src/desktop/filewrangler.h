@@ -51,7 +51,7 @@ public:
 	QString getOpenSessionBansPath() const;
 
 	QString saveImage(Document *doc) const;
-	QString saveImageAs(Document *doc) const;
+	QString saveImageAs(Document *doc, bool exported) const;
 	QString savePreResetImageAs(
 		Document *doc, const drawdance::CanvasState &canvasState) const;
 	QString saveSelectionAs(Document *doc) const;

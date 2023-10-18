@@ -84,25 +84,25 @@ QString FileWrangler::saveImage(Document *doc) const
 {
 	QString filename = doc->currentFilename();
 	if(filename.isEmpty() || !utils::isWritableFormat(filename)) {
-		return saveImageAs(doc);
+		return saveImageAs(doc, false);
 	} else if(confirmFlatten(doc, filename)) {
-		doc->saveCanvasAs(filename);
+		doc->saveCanvasAs(filename, false);
 		return filename;
 	} else {
 		return QString{};
 	}
 }
 
-QString FileWrangler::saveImageAs(Document *doc) const
+QString FileWrangler::saveImageAs(Document *doc, bool exported) const
 {
 	QString selectedFilter;
 	QString filename = showSaveFileDialog(
-		tr("Save Image"), LastPath::IMAGE, ".ora",
-		utils::FileFormatOption::SaveImages, &selectedFilter,
+		exported ? tr("Export Image") : tr("Save Image"), LastPath::IMAGE,
+		".ora", utils::FileFormatOption::SaveImages, &selectedFilter,
 		doc->currentFilename());
 
-	if(!filename.isEmpty() && confirmFlatten(doc, filename)) {
-		doc->saveCanvasAs(filename);
+	if(!filename.isEmpty() && (exported || confirmFlatten(doc, filename))) {
+		doc->saveCanvasAs(filename, exported);
 		return filename;
 	} else {
 		return QString{};
@@ -119,7 +119,7 @@ QString FileWrangler::savePreResetImageAs(
 		doc->currentFilename());
 
 	if(!filename.isEmpty() && confirmFlatten(doc, filename)) {
-		doc->saveCanvasStateAs(filename, canvasState, false);
+		doc->saveCanvasStateAs(filename, canvasState, false, false);
 		return filename;
 	} else {
 		return QString{};

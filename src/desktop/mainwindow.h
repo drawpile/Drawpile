@@ -116,6 +116,7 @@ public slots:
 	void save();
 	void saveas();
 	void saveSelection();
+	void exportImage();
 	void showFlipbook();
 
 	void showBrushSettingsDialog();

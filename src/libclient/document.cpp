@@ -634,17 +634,19 @@ void Document::autosaveNow()
 	saveCanvasState(m_canvas->paintEngine()->viewCanvasState(), true);
 }
 
-void Document::saveCanvasAs(const QString &filename)
+void Document::saveCanvasAs(const QString &filename, bool exported)
 {
 	saveCanvasStateAs(
-		filename, m_canvas->paintEngine()->viewCanvasState(), true);
+		filename, m_canvas->paintEngine()->viewCanvasState(), true, exported);
 }
 
 void Document::saveCanvasStateAs(
 	const QString &filename, const drawdance::CanvasState &canvasState,
-	bool isCurrentState)
+	bool isCurrentState, bool exported)
 {
-	setCurrentFilename(filename);
+	if(!exported) {
+		setCurrentFilename(filename);
+	}
 	saveCanvasState(canvasState, isCurrentState);
 }
 

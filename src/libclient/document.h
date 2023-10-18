@@ -119,10 +119,10 @@ public:
 	 * @param filename the file to save to
 	 * @param errorMessage if not null, error message is stored here
 	 */
-	void saveCanvasAs(const QString &filename);
+	void saveCanvasAs(const QString &filename, bool exported);
 	void saveCanvasStateAs(
 		const QString &filename, const drawdance::CanvasState &canvasState,
-		bool isCurrentState);
+		bool isCurrentState, bool exported);
 	void exportTemplate(const QString &path);
 	bool saveSelection(const QString &path);
 	bool isSaveInProgress() const { return m_saveInProgress; }

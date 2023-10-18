@@ -1443,7 +1443,7 @@ void MainWindow::save()
  */
 void MainWindow::saveas()
 {
-	QString result = FileWrangler{this}.saveImageAs(m_doc);
+	QString result = FileWrangler{this}.saveImageAs(m_doc, false);
 	if(!result.isEmpty()) {
 		addRecentFile(result);
 	}
@@ -1457,11 +1457,20 @@ void MainWindow::saveSelection()
 	}
 }
 
+void MainWindow::exportImage()
+{
+	QString result = FileWrangler(this).saveImageAs(m_doc, true);
+	if(!result.isEmpty()) {
+		addRecentFile(result);
+	}
+}
+
 void MainWindow::onCanvasSaveStarted()
 {
 	QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
 	getAction("savedocument")->setEnabled(false);
 	getAction("savedocumentas")->setEnabled(false);
+	getAction("exportdocument")->setEnabled(false);
 	m_viewStatusBar->showMessage(tr("Saving..."));
 	m_view->setSaveInProgress(true);
 }
@@ -1471,6 +1480,7 @@ void MainWindow::onCanvasSaved(const QString &errorMessage)
 	QApplication::restoreOverrideCursor();
 	getAction("savedocument")->setEnabled(true);
 	getAction("savedocumentas")->setEnabled(true);
+	getAction("exportdocument")->setEnabled(true);
 	m_view->setSaveInProgress(false);
 
 	setWindowModified(m_doc->isDirty());
@@ -3211,7 +3221,8 @@ void MainWindow::setupActions()
 #endif
 	QAction *save = makeAction("savedocument", tr("&Save")).icon("document-save").shortcut(QKeySequence::Save);
 	QAction *saveas = makeAction("savedocumentas", tr("Save &As...")).icon("document-save-as").shortcut(QKeySequence::SaveAs);
-	QAction *savesel = makeAction("saveselection", tr("Save Selection...")).icon("document-save-as").noDefaultShortcut();
+	QAction *exportDocument = makeAction("exportdocument", tr("Export Image…")).icon("document-export").noDefaultShortcut();
+	QAction *savesel = makeAction("saveselection", tr("Export Selection...")).icon("select-rectangular").noDefaultShortcut();
 	QAction *autosave = makeAction("autosave", tr("Autosave")).noDefaultShortcut().checkable().disabled();
 	QAction *importBrushes = makeAction("importbrushes", tr("&Brushes...")).noDefaultShortcut();
 	QAction *exportTemplate = makeAction("exporttemplate", tr("Session &Template...")).noDefaultShortcut();
@@ -3232,6 +3243,7 @@ void MainWindow::setupActions()
 	m_currentdoctools->addAction(saveas);
 	m_currentdoctools->addAction(exportTemplate);
 	m_currentdoctools->addAction(savesel);
+	m_currentdoctools->addAction(exportDocument);
 	m_currentdoctools->addAction(exportGifAnimation);
 #ifndef Q_OS_ANDROID
 	m_currentdoctools->addAction(exportAnimationFrames);
@@ -3242,6 +3254,7 @@ void MainWindow::setupActions()
 	connect(open, SIGNAL(triggered()), this, SLOT(open()));
 	connect(save, SIGNAL(triggered()), this, SLOT(save()));
 	connect(saveas, SIGNAL(triggered()), this, SLOT(saveas()));
+	connect(exportDocument, &QAction::triggered, this, &MainWindow::exportImage);
 	connect(exportTemplate, &QAction::triggered, this, &MainWindow::exportTemplate);
 	connect(importBrushes, &QAction::triggered, m_dockBrushPalette, &docks::BrushPalette::importBrushes);
 	connect(exportBrushes, &QAction::triggered, m_dockBrushPalette, &docks::BrushPalette::exportBrushes);
@@ -3278,6 +3291,7 @@ void MainWindow::setupActions()
 	filemenu->addAction(save);
 	filemenu->addAction(saveas);
 	filemenu->addAction(savesel);
+	filemenu->addAction(exportDocument);
 	filemenu->addAction(autosave);
 	filemenu->addSeparator();
 
