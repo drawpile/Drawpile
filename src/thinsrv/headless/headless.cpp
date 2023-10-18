@@ -30,6 +30,7 @@
 namespace server {
 namespace headless {
 
+namespace {
 void printVersion()
 {
 	printf("drawpile-srv %s\n", cmake_config::version());
@@ -41,6 +42,56 @@ void printVersion()
 #else
 	printf("Libmicrohttpd version: N/A\n");
 #endif
+}
+
+bool isBadDrawpileNetExtAuthUrl(const QUrl &url)
+{
+	// Don't use "www.drawpile.net" or something.
+	if(url.host().endsWith(
+		   QStringLiteral(".drawpile.net"), Qt::CaseInsensitive)) {
+		return true;
+	} else if(url.host().compare(
+				  QStringLiteral("drawpile.net"), Qt::CaseInsensitive) == 0) {
+		// The URL should be "https://drawpile.net/api/ext-auth/". Don't allow
+		// funny capitalization, a scheme other than https, a missing slash or
+		// anything else.  Specifying port 443 explicitly, adding query
+		// parameters or a fragment are okay though.
+		return url.host() != QStringLiteral("drawpile.net") ||
+			   (url.port() >= 0 && url.port() != 443) ||
+			   url.scheme() != QStringLiteral("https") ||
+			   url.path() != QStringLiteral("/api/ext-auth/");
+	} else {
+		return false;
+	}
+}
+
+bool validateExtAuthUrl(const QString &param, const QUrl &url)
+{
+	if(!url.isValid()) {
+		qCritical(
+			"Invalid extauthurl '%s': %s", qUtf8Printable(param),
+			qUtf8Printable(url.errorString()));
+		return false;
+	}
+
+	QString scheme = url.scheme();
+	if(scheme != QStringLiteral("http") && scheme != QStringLiteral("https")) {
+		qCritical(
+			"Invalid extauthurl '%s': must start with https: or http:",
+			qUtf8Printable(param));
+		return false;
+	}
+
+	if(isBadDrawpileNetExtAuthUrl(url)) {
+		qCritical(
+			"Bad drawpile.net extauthurl '%s', should be "
+			"'https://drawpile.net/api/ext-auth/'",
+			qUtf8Printable(param));
+		return false;
+	}
+
+	return true;
+}
 }
 
 bool start() {
@@ -192,7 +243,15 @@ bool start() {
 	InternalConfig icfg;
 	icfg.localHostname = parser.value(localAddr);
 #ifdef HAVE_LIBSODIUM
-	icfg.extAuthUrl = parser.value(extAuthOption);
+	QString extAuthUrl = parser.value(extAuthOption);
+	if(!extAuthUrl.isEmpty()) {
+		icfg.extAuthUrl = QUrl(extAuthUrl, QUrl::StrictMode);
+		if(!validateExtAuthUrl(extAuthUrl, icfg.extAuthUrl)) {
+			delete serverconfig;
+			return false;
+		}
+	}
+
 	QString cryptKey = parser.value(cryptKeyOption);
 	if(!cryptKey.isEmpty()) {
 		QByteArray decodedKey = QByteArray::fromBase64(cryptKey.toUtf8());

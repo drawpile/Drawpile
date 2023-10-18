@@ -24,6 +24,7 @@ Unreleased Version 2.2.0-pre
  * Feature: Show proper reasons when a session is terminated, rather than always claiming the server is shutting down.
  * Feature: Allow specifying a reason when terminating a session manually.
  * Fix: Squash whitespace in session listings to prevent funky display. Thanks yeen for reporting.
+ * Fix: Error out when invalid --extauth parameter is given to drawpile-srv. Previously it would just keep going and simply not work without any indication as to why. Thanks RAINTARD for running into this.
 
 2023-09-30 Version 2.2.0-beta.8
  * Fix: Apply color wheel direction to color dialogs too. Thanks Blozzom for reporting.
