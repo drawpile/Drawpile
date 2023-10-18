@@ -268,13 +268,29 @@ bool FileWrangler::confirmFlatten(Document *doc, QString &filename) const
 		return true;
 	}
 
+	static QRegularExpression extRe =
+		QRegularExpression(QStringLiteral("\\.(\\w+)\\z"));
+	QRegularExpressionMatch match = extRe.match(filename);
+	QString format = match.hasMatch() ? match.captured(1).toUpper() : QString();
+
 	QMessageBox box(
 		QMessageBox::Information, tr("Save Image"),
-		tr("The selected format does not support layers or annotations."),
+		filename.endsWith(".psd", Qt::CaseInsensitive)
+			? tr("The PSD format lacks support for annotations, the animation "
+				 "timeline and some blend modes. If you want those to be "
+				 "retained properly, you must save an ORA file.")
+			: tr("The selected format will save a merged image. If you want to "
+				 "retain layers, annotations and the animation timeline, you "
+				 "must save an ORA file."),
 		QMessageBox::Cancel, parentWidget());
-	box.addButton(tr("Flatten"), QMessageBox::AcceptRole);
+
+	box.addButton(
+		format.isEmpty() ? tr("Save as Selected Format")
+						 : tr("Save as %1").arg(format),
+		QMessageBox::AcceptRole);
+
 	QPushButton *saveOraButton =
-		box.addButton(tr("Save as OpenRaster"), QMessageBox::ActionRole);
+		box.addButton(tr("Save as ORA"), QMessageBox::ActionRole);
 
 	if(box.exec() == QMessageBox::Cancel) {
 		// Cancel saving altogether.
