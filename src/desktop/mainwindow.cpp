@@ -369,6 +369,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	// Tool controller <-> UI connections
 	connect(m_doc->toolCtrl(), &tools::ToolController::activeAnnotationChanged, m_canvasscene, &drawingboard::CanvasScene::setActiveAnnotation);
+	connect(m_doc->toolCtrl(), &tools::ToolController::activeAnnotationChanged, this, &MainWindow::activeAnnotationChanged);
 	connect(m_doc->toolCtrl(), &tools::ToolController::colorUsed, m_dockToolSettings, &docks::ToolSettings::addLastUsedColor);
 	connect(m_doc->toolCtrl(), &tools::ToolController::actionCancelled, m_dockToolSettings->colorPickerSettings(), &tools::ColorPickerSettings::cancelPickFromScreen);
 	connect(m_doc->toolCtrl(), &tools::ToolController::zoomRequested, m_view, &widgets::CanvasView::zoomTo);
@@ -550,6 +551,7 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	connect(canvas, &canvas::CanvasModel::canvasInspected, m_dockToolSettings->inspectorSettings(), &tools::InspectorSettings::onCanvasInspected);
 	connect(canvas, &canvas::CanvasModel::previewAnnotationRequested, m_doc->toolCtrl(), &tools::ToolController::setActiveAnnotation);
 
+	connect(canvas, &canvas::CanvasModel::selectionChanged, this, &MainWindow::selectionChanged);
 	connect(canvas, &canvas::CanvasModel::selectionRemoved, this, &MainWindow::selectionRemoved);
 
 	connect(canvas, &canvas::CanvasModel::userJoined, this, [this](int, const QString &name) {
@@ -584,6 +586,8 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 		onFeatureAccessChange(f, m_doc->canvas()->aclState()->canUseFeature(f));
 	}
 	onUndoDepthLimitSet(canvas->paintEngine()->undoDepthLimit());
+
+	selectionChanged(canvas->selection());
 }
 
 /**
@@ -2649,8 +2653,31 @@ void MainWindow::handleFreehandToolButtonClicked()
 	}
 }
 
+void MainWindow::activeAnnotationChanged(int annotationId)
+{
+	canvas::CanvasModel *canvas = m_doc->canvas();
+	bool haveSelection = canvas && canvas->selection();
+	getAction("cleararea")->setEnabled(haveSelection || annotationId > 0);
+}
+
+void MainWindow::selectionChanged(canvas::Selection *selection)
+{
+	bool haveSelection = selection != nullptr;
+	getAction("saveselection")->setEnabled(haveSelection);
+	getAction("selectnone")->setEnabled(haveSelection);
+	getAction("stamp")->setEnabled(haveSelection);
+	getAction("fillfgarea")->setEnabled(haveSelection);
+	getAction("recolorarea")->setEnabled(haveSelection);
+	getAction("colorerasearea")->setEnabled(haveSelection);
+	bool haveAnnotation =
+		getAction("tooltext")->isChecked() &&
+		m_dockToolSettings->annotationSettings()->selected() != 0;
+	getAction("cleararea")->setEnabled(haveSelection || haveAnnotation);
+}
+
 void MainWindow::selectionRemoved()
 {
+	getAction("saveselection")->setEnabled(false);
 	if(m_lastToolBeforePaste>=0) {
 		// Selection was just removed and we had just pasted an image
 		// so restore the previously used tool
@@ -3348,7 +3375,7 @@ void MainWindow::setupActions()
 	QAction *cutlayer = makeAction("cutlayer", tr("Cu&t From Layer")).icon("edit-cut").statusTip(tr("Cut selected area of the current layer to the clipboard")).shortcut(QKeySequence::Cut);
 	QAction *paste = makeAction("paste", tr("&Paste")).icon("edit-paste").shortcut(QKeySequence::Paste);
 	QAction *pasteCentered = makeAction("paste-centered", tr("Paste in View Center")).icon("edit-paste").shortcut("Ctrl+Shift+V");
-	QAction *stamp = makeAction("stamp", tr("&Stamp")).shortcut("Ctrl+T");
+	QAction *stamp = makeAction("stamp", tr("&Stamp Selection")).shortcut("Ctrl+T");
 
 	QAction *pastefile = makeAction("pastefile", tr("Paste &From File...")).icon("document-open").noDefaultShortcut();
 	QAction *deleteAnnotations = makeAction("deleteemptyannotations", tr("Delete Empty Annotations")).noDefaultShortcut();

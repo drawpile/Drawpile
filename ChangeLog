@@ -26,6 +26,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Squash whitespace in session listings to prevent funky display. Thanks yeen for reporting.
  * Fix: Error out when invalid --extauth parameter is given to drawpile-srv. Previously it would just keep going and simply not work without any indication as to why. Thanks RAINTARD for running into this.
  * Feature: Allow exporting images, which saves them without setting the current file or warning about the image being merged together.
+ * Feature: Disable selection-dependent menu items (Deselect, Fill Selection etc.) when no selection is present.
 
 2023-09-30 Version 2.2.0-beta.8
  * Fix: Apply color wheel direction to color dialogs too. Thanks Blozzom for reporting.

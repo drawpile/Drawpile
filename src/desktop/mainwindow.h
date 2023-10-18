@@ -67,6 +67,7 @@ namespace drawingboard {
 }
 namespace canvas {
 	class CanvasModel;
+	class Selection;
 }
 namespace drawdance {
 	class CanvasState;
@@ -219,6 +220,8 @@ private slots:
 	void updateFreehandToolButton(int brushMode);
 	void handleFreehandToolButtonClicked();
 
+	void activeAnnotationChanged(int annotationId);
+	void selectionChanged(canvas::Selection *selection);
 	void selectionRemoved();
 
 	void setFreezeDocks(bool freeze);
