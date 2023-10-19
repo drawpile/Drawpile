@@ -155,11 +155,7 @@ Browse::Browse(QWidget *parent)
 		SessionListingModel::Owner, QHeaderView::Interactive);
 	header->setSectionResizeMode(
 		SessionListingModel::Uptime, QHeaderView::Interactive);
-	// Don't sort by default. Otherwise it sorts by the first available column.
-	header->setSortIndicator(-1, Qt::AscendingOrder);
-#if QT_VERSION >= QT_VERSION_CHECK(6, 1, 0)
-	header->setSortIndicatorClearable(true);
-#endif
+	utils::initSortingHeader(header);
 	header->resizeSections(QHeaderView::ResizeToContents);
 	header->resizeSection(SessionListingModel::Uptime, 80);
 	header->resizeSection(SessionListingModel::Server, 125);

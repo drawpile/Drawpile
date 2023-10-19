@@ -15,6 +15,7 @@ class QCheckBox;
 class QCursor;
 class QFormLayout;
 class QFrame;
+class QHeaderView;
 class QLabel;
 class QWidget;
 
@@ -96,6 +97,10 @@ void showWindow(QWidget *widget, bool maximized = false);
 void setWidgetRetainSizeWhenHidden(QWidget *widget, bool retainSize);
 
 bool setGeometryIfOnScreen(QWidget *widget, const QRect &geometry);
+
+// Sets header to sort by no column (as opposed to the first one) and enables
+// clearing the sort indicator if the Qt version is >= 6.1.0.
+void initSortingHeader(QHeaderView *header);
 
 void initKineticScrolling(QAbstractScrollArea *scrollArea);
 bool isKineticScrollingBarsHidden();

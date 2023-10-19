@@ -12,6 +12,7 @@
 #include <QFormLayout>
 #include <QFrame>
 #include <QGraphicsOpacityEffect>
+#include <QHeaderView>
 #include <QLabel>
 #include <QPaintEvent>
 #include <QPainter>
@@ -309,6 +310,14 @@ bool setGeometryIfOnScreen(QWidget *widget, const QRect &geometry)
 		}
 	}
 	return false;
+}
+
+void initSortingHeader(QHeaderView *header)
+{
+	header->setSortIndicator(-1, Qt::AscendingOrder);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 1, 0)
+	header->setSortIndicatorClearable(true);
+#endif
 }
 
 static QPair<bool, QScroller::ScrollerGestureType>
