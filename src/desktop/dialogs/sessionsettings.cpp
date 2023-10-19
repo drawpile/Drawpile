@@ -148,7 +148,7 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 	// Set up banlist tab
 	m_ui->banlistView->setModel(doc->banlist());
 	QHeaderView *banlistHeader = m_ui->banlistView->horizontalHeader();
-	banlistHeader->setSectionResizeMode(0, QHeaderView::Stretch);
+	banlistHeader->setSectionResizeMode(1, QHeaderView::Stretch);
 	banlistHeader->setSectionResizeMode(2, QHeaderView::Stretch);
 	connect(m_ui->removeBan, &QPushButton::clicked, [this]() {
 		const int id = m_ui->banlistView->selectionModel()
