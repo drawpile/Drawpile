@@ -291,7 +291,7 @@ void SessionSettingsDialog::bansImported(int total, int imported)
 	m_awaitingImportExportResponse = false;
 	updateBanImportExportState();
 
-	QString message = tr("Imported %n session ban(s).", "", total);
+	QString message = tr("Imported %n session ban(s).", "", imported);
 	if(imported < total) {
 		//: %1 is the "Imported %n session ban(s)." message.
 		message = tr("%1 %n were not imported because they were invalid or "
