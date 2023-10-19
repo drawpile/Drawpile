@@ -321,8 +321,7 @@ void SessionSettingsDialog::bansExported(const QByteArray &bans)
 	if(!ok) {
 		QMessageBox::critical(
 			this, tr("Session Ban Export"),
-			tr("Error writing saving bans to '%1': %2")
-				.arg(path, file.errorString()));
+			tr("Error saving bans to '%1': %2").arg(path, file.errorString()));
 	}
 }
 
