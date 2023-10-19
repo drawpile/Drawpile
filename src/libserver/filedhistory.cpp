@@ -13,6 +13,7 @@ extern "C" {
 #include <QDebug>
 #include <QFile>
 #include <QScopedPointer>
+#include <QSet>
 #include <QTimerEvent>
 #include <QVarLengthArray>
 
@@ -310,20 +311,39 @@ bool FiledHistory::load()
 			}
 
 		} else if(cmd == "OP") {
-			const QString authId = QString::fromUtf8(params);
-			if(!authId.isEmpty())
-				m_ops.insert(authId);
+			QString authId = QString::fromUtf8(params);
+			if(!authId.isEmpty()) {
+				SessionHistory::setAuthenticatedOperator(authId, true);
+			}
 
 		} else if(cmd == "DEOP") {
-			m_ops.remove(QString::fromUtf8(params));
+			QString authId = QString::fromUtf8(params);
+			SessionHistory::setAuthenticatedOperator(authId, false);
 
 		} else if(cmd == "TRUST") {
 			const QString authId = QString::fromUtf8(params);
-			if(!authId.isEmpty())
-				m_trusted.insert(authId);
+			if(!authId.isEmpty()) {
+				SessionHistory::setAuthenticatedTrust(authId, true);
+			}
 
 		} else if(cmd == "UNTRUST") {
-			m_trusted.remove(QString::fromUtf8(params));
+			QString authId = QString::fromUtf8(params);
+			SessionHistory::setAuthenticatedTrust(authId, false);
+
+		} else if(cmd == "AUTHNAME") {
+			const QList<QByteArray> args = params.split(' ');
+			if(args.length() != 2) {
+				qWarning() << "Invalid AUTHNAME entry:"
+						   << QString::fromUtf8(params);
+			} else {
+				QString authId = QString::fromUtf8(
+					QByteArray::fromPercentEncoding(args.at(0)));
+				QString username = QString::fromUtf8(
+					QByteArray::fromPercentEncoding(args.at(1)));
+				if(!authId.isEmpty() && !username.isEmpty()) {
+					SessionHistory::setAuthenticatedUsername(authId, username);
+				}
+			}
 
 		} else {
 			qWarning() << id()
@@ -728,43 +748,41 @@ void FiledHistory::removeAnnouncement(const QString &url)
 
 void FiledHistory::setAuthenticatedOperator(const QString &authId, bool op)
 {
-	if(authId.isEmpty())
-		return;
-
-	if(op) {
-		if(!m_ops.contains(authId)) {
-			m_ops.insert(authId);
-			m_journal->write(QStringLiteral("OP %1\n").arg(authId).toUtf8());
-			m_journal->flush();
-		}
-	} else {
-		if(m_ops.contains(authId)) {
-			m_ops.remove(authId);
-			m_journal->write(QStringLiteral("DEOP %1\n").arg(authId).toUtf8());
-			m_journal->flush();
-		}
+	bool currentlyOp = isOperator(authId);
+	if(op && !currentlyOp) {
+		m_journal->write("OP " + authId.toUtf8() + "\n");
+		m_journal->flush();
+	} else if(!op && currentlyOp) {
+		m_journal->write("DEOP " + authId.toUtf8() + "\n");
+		m_journal->flush();
 	}
+	SessionHistory::setAuthenticatedOperator(authId, op);
 }
 
 void FiledHistory::setAuthenticatedTrust(const QString &authId, bool trusted)
 {
-	if(authId.isEmpty())
-		return;
-
-	if(trusted) {
-		if(!m_trusted.contains(authId)) {
-			m_trusted.insert(authId);
-			m_journal->write(QStringLiteral("TRUST %1\n").arg(authId).toUtf8());
-			m_journal->flush();
-		}
-	} else {
-		if(m_trusted.contains(authId)) {
-			m_trusted.remove(authId);
-			m_journal->write(
-				QStringLiteral("UNTRUST %1\n").arg(authId).toUtf8());
-			m_journal->flush();
-		}
+	bool currentlyTrusted = isTrusted(authId);
+	if(trusted && !currentlyTrusted) {
+		m_journal->write("TRUST " + authId.toUtf8() + "\n");
+		m_journal->flush();
+	} else if(!trusted && currentlyTrusted) {
+		m_journal->write("UNTRUST " + authId.toUtf8() + "\n");
+		m_journal->flush();
 	}
+	SessionHistory::setAuthenticatedTrust(authId, trusted);
+}
+
+void FiledHistory::setAuthenticatedUsername(
+	const QString &authId, const QString &username)
+{
+	const QString *currentUsername = authenticatedUsernameFor(authId);
+	if(!currentUsername || *currentUsername != username) {
+		m_journal->write(
+			"AUTHNAME " + authId.toUtf8().toPercentEncoding() + " " +
+			username.toUtf8().toPercentEncoding() + "\n");
+		m_journal->flush();
+	}
+	SessionHistory::setAuthenticatedUsername(authId, username);
 }
 
 }

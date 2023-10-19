@@ -39,6 +39,7 @@ enum FileFormatOption {
 	Text = 0x800,
 	BrushPack = 0x1000,
 	SessionBans = 0x2000,
+	AuthList = 0x4000,
 
 #ifdef Q_OS_ANDROID
 	SaveAllFiles = 0x0,
@@ -61,6 +62,7 @@ enum FileFormatOption {
 	SaveWebm = Webm | Save,
 	SaveBrushPack = BrushPack | Save,
 	SaveSessionBans = SessionBans | Save,
+	SaveAuthList = AuthList | Save,
 };
 Q_DECLARE_FLAGS(FileFormatOptions, FileFormatOption)
 Q_DECLARE_OPERATORS_FOR_FLAGS(FileFormatOptions)

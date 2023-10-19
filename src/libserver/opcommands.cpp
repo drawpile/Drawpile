@@ -621,6 +621,82 @@ importBans(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 	return CmdResult::ok();
 }
 
+CmdResult
+authList(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
+{
+	Q_UNUSED(kwargs);
+	if(args.size() != 1) {
+		return CmdResult::err("Expected one argument: list");
+	}
+
+	QJsonArray list = args.at(0).toArray();
+	if(list.size() > 100) {
+		return CmdResult::err("Insane argument");
+	}
+
+	Session *session = client->session();
+	SessionHistory *history = session->history();
+	bool sendUpdate = false;
+
+	qDebug() << list;
+	for(const QJsonValue &value : list) {
+		QString authId = value[QStringLiteral("a")].toString();
+		qDebug() << authId;
+		if(!authId.isEmpty()) {
+			Client *target = session->getClientByAuthId(authId);
+
+			if(client != target) {
+				QJsonValue opValue = value[QStringLiteral("o")];
+				if(opValue.isBool()) {
+					bool op = opValue.toBool();
+					if(target) {
+						if(target->isOperator() != op) {
+							sendUpdate = true;
+							session->changeOpStatus(
+								target->id(), op, client->username(), false);
+						}
+					} else {
+						sendUpdate = true;
+						history->setAuthenticatedOperator(authId, op);
+					}
+				}
+			}
+
+			QJsonValue trustedValue = value[QStringLiteral("t")];
+			if(trustedValue.isBool()) {
+				bool trusted = trustedValue.toBool();
+				if(target) {
+					if(target->isTrusted() != trusted) {
+						sendUpdate = true;
+						session->changeTrustedStatus(
+							target->id(), trusted, client->username(), false);
+					}
+				} else {
+					sendUpdate = true;
+					history->setAuthenticatedTrust(authId, trusted);
+				}
+			}
+
+			if(!target) {
+				QJsonValue usernameValue = value[QStringLiteral("u")];
+				if(usernameValue.isString()) {
+					QString username = usernameValue.toString();
+					if(!username.isEmpty()) {
+						sendUpdate = true;
+						history->setAuthenticatedUsername(authId, username);
+					}
+				}
+			}
+		}
+	}
+
+	if(sendUpdate) {
+		client->session()->sendUpdatedAuthList();
+	}
+
+	return CmdResult::ok();
+}
+
 SrvCommandSet::SrvCommandSet()
 {
 	commands << SrvCommand("ready-to-autoreset", readyToAutoReset)
@@ -638,7 +714,8 @@ SrvCommandSet::SrvCommandSet()
 			 << SrvCommand("mute", setMute)
 			 << SrvCommand("report", reportAbuse, SrvCommand::NONOP)
 			 << SrvCommand("export-bans", exportBans)
-			 << SrvCommand("import-bans", importBans);
+			 << SrvCommand("import-bans", importBans)
+			 << SrvCommand("auth-list", authList);
 }
 
 } // end of anonymous namespace

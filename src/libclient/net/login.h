@@ -156,6 +156,8 @@ public:
 	 */
 	uint8_t userId() const { return m_userid; }
 
+	const QString &authId() const { return m_authId; }
+
 	/**
 	 * @brief Does the server support session persistence?
 	 */
@@ -435,6 +437,7 @@ private:
 
 	// Settings for hosting
 	uint8_t m_userid;
+	QString m_authId;
 	QString m_sessionPassword;
 	QString m_sessionAlias;
 	QString m_title;

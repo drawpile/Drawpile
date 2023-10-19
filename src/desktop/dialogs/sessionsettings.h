@@ -47,6 +47,7 @@ signals:
 	void joinPasswordChanged(const QString &joinPassword);
 	void requestBanExport(bool plain);
 	void requestBanImport(const QString &bans);
+	void requestUpdateAuthList(const QJsonArray &list);
 
 private slots:
 	void onCanvasChanged(canvas::CanvasModel *);
@@ -81,21 +82,33 @@ private slots:
 	void updatePasswordLabel(QLabel *label);
 	void updateNsfmCheckbox(bool);
 	void updateIdleSettings(int timeLimit, bool overridden, bool canOverride);
+	void updateAuthListCheckboxes();
 
 	void setCompatibilityMode(bool compatibilityMode);
 
 	void importBans();
 	void exportBans();
 
+	void authListChangeOp(bool op);
+	void authListChangeTrusted(bool trusted);
+	void importAuthList();
+	void exportAuthList();
+
 protected:
 	void showEvent(QShowEvent *event) override;
 
 private:
+	static const QByteArray authExportPrefix;
+
 	void initPermissionComboBoxes();
 	void updateBanImportExportState();
 	void reloadSettings();
 	QComboBox *featureBox(DP_Feature f);
 	bool checkBanImport(const QString &bans, QString &outErrorMessage) const;
+	bool
+	readAuthListImport(const QByteArray &content, QJsonArray &outList) const;
+	QModelIndex getSelectedAuthListEntry();
+	void authListChangeParam(const QString &key, bool value);
 
 	Ui_SessionSettingsDialog *m_ui;
 	Document *m_doc;

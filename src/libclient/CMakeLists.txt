@@ -99,6 +99,8 @@ target_sources(dpclient PRIVATE
 	export/videoexporter.h
 	net/announcementlist.cpp
 	net/announcementlist.h
+	net/authlistmodel.cpp
+	net/authlistmodel.h
 	net/banlistmodel.cpp
 	net/banlistmodel.h
 	net/client.cpp

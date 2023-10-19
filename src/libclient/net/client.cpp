@@ -123,7 +123,8 @@ QUrl Client::sessionUrl(bool includeUser) const
 
 void Client::handleConnect(
 	const QUrl &url, uint8_t userid, bool join, bool auth, bool moderator,
-	bool supportsAutoReset, bool compatibilityMode, const QString &joinPassword)
+	bool supportsAutoReset, bool compatibilityMode, const QString &joinPassword,
+	const QString &authId)
 {
 	m_lastUrl = url;
 	m_myId = userid;
@@ -132,7 +133,7 @@ void Client::handleConnect(
 	m_supportsAutoReset = supportsAutoReset;
 	m_compatibilityMode = compatibilityMode;
 
-	emit serverLoggedIn(join, m_compatibilityMode, joinPassword);
+	emit serverLoggedIn(join, m_compatibilityMode, joinPassword, authId);
 }
 
 void Client::handleDisconnect(
@@ -566,6 +567,13 @@ void Client::requestBanImport(const QString &bans)
 {
 	sendMessage(
 		net::ServerCommand::make(QStringLiteral("import-bans"), {bans}));
+}
+
+void Client::requestUpdateAuthList(const QJsonArray &list)
+{
+	QJsonArray args;
+	args.append(list);
+	sendMessage(net::ServerCommand::make(QStringLiteral("auth-list"), args));
 }
 
 }

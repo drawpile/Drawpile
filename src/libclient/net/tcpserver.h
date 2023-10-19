@@ -40,10 +40,7 @@ public:
 		return m_supportsCryptBanImpEx;
 	}
 
-	bool supportsModBanImpEx() const override
-	{
-		return m_supportsModBanImpEx;
-	}
+	bool supportsModBanImpEx() const override { return m_supportsModBanImpEx; }
 
 	bool supportsAbuseReports() const override
 	{
@@ -73,7 +70,8 @@ public:
 signals:
 	void loggedIn(
 		const QUrl &url, uint8_t userid, bool join, bool auth, bool moderator,
-		bool hasAutoreset, bool compatibilityMode, const QString &joinPassword);
+		bool hasAutoreset, bool compatibilityMode, const QString &joinPassword,
+		const QString &authId);
 	void loggingOut();
 	void gracefullyDisconnecting(
 		MessageQueue::GracefulDisconnect, const QString &message);

@@ -208,12 +208,19 @@ void Session::joinUser(Client *user, bool host)
 
 	addToHistory(user->joinMessage());
 
-	if(user->isOperator() || m_history->isOperator(user->authId()))
-		changeOpStatus(user->id(), true, QString());
+	const QString &authId = user->authId();
+	const QString &username = user->username();
+	if(!authId.isEmpty()) {
+		m_history->setAuthenticatedUsername(authId, username);
+	}
 
-	if(user->authFlags().contains("TRUSTED") ||
-	   m_history->isTrusted(user->authId()))
-		changeTrustedStatus(user->id(), true, QString());
+	if(user->isOperator() || m_history->isOperator(authId)) {
+		changeOpStatus(user->id(), true, QString(), false);
+	}
+
+	if(user->authFlags().contains("TRUSTED") || m_history->isTrusted(authId)) {
+		changeTrustedStatus(user->id(), true, QString(), false);
+	}
 
 	ensureOperatorExists();
 
@@ -227,8 +234,9 @@ void Session::joinUser(Client *user, bool host)
 	sendUpdatedAnnouncementList();
 	sendUpdatedBanlist();
 	sendUpdatedMuteList();
+	sendUpdatedAuthList();
 
-	m_history->joinUser(user->id(), user->username());
+	m_history->joinUser(user->id(), username);
 
 	user->log(Log()
 				  .about(Log::Level::Info, Log::Topic::Join)
@@ -289,6 +297,18 @@ Client *Session::getClientById(uint8_t id)
 	for(Client *c : m_clients) {
 		if(c->id() == id) {
 			return c;
+		}
+	}
+	return nullptr;
+}
+
+Client *Session::getClientByAuthId(const QString &authId)
+{
+	if(!authId.isEmpty()) {
+		for(Client *c : m_clients) {
+			if(c->authId() == authId) {
+				return c;
+			}
 		}
 	}
 	return nullptr;
@@ -481,14 +501,16 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 	}
 }
 
-QVector<uint8_t>
-Session::updateOwnership(QVector<uint8_t> ids, const QString &changedBy)
+QVector<uint8_t> Session::updateOwnership(
+	QVector<uint8_t> ids, const QString &changedBy, bool sendUpdate)
 {
 	QVector<uint8_t> truelist;
 	Client *kickResetter = nullptr;
+	bool needsUpdate = false;
 	for(Client *c : m_clients) {
 		const bool op = ids.contains(c->id()) || c->isModerator();
 		if(op != c->isOperator()) {
+			needsUpdate = true;
 			if(!op && c->id() == m_initUser && m_state == State::Reset) {
 				// OP status removed mid-reset! The user probably has at least
 				// part of the reset image still queued for upload, which will
@@ -538,10 +560,15 @@ Session::updateOwnership(QVector<uint8_t> ids, const QString &changedBy)
 			Client::DisconnectionReason::Error, "De-opped while resetting");
 	}
 
+	if(sendUpdate && needsUpdate) {
+		sendUpdatedAuthList();
+	}
+
 	return truelist;
 }
 
-void Session::changeOpStatus(uint8_t id, bool op, const QString &changedBy)
+void Session::changeOpStatus(
+	uint8_t id, bool op, const QString &changedBy, bool sendUpdate)
 {
 	QVector<uint8_t> ids;
 	for(const Client *c : m_clients) {
@@ -556,17 +583,19 @@ void Session::changeOpStatus(uint8_t id, bool op, const QString &changedBy)
 		ids.removeOne(id);
 	}
 
-	ids = updateOwnership(ids, changedBy);
+	ids = updateOwnership(ids, changedBy, sendUpdate);
 	addToHistory(net::makeSessionOwnerMessage(0, ids));
 }
 
-QVector<uint8_t>
-Session::updateTrustedUsers(QVector<uint8_t> ids, const QString &changedBy)
+QVector<uint8_t> Session::updateTrustedUsers(
+	QVector<uint8_t> ids, const QString &changedBy, bool sendUpdate)
 {
 	QVector<uint8_t> truelist;
+	bool needsUpdate = false;
 	for(Client *c : m_clients) {
 		bool trusted = ids.contains(c->id());
 		if(trusted != c->isTrusted()) {
+			needsUpdate = true;
 			c->setTrusted(trusted);
 			QString msg, key;
 			if(trusted) {
@@ -602,11 +631,15 @@ Session::updateTrustedUsers(QVector<uint8_t> ids, const QString &changedBy)
 		}
 	}
 
+	if(sendUpdate && needsUpdate) {
+		sendUpdatedAuthList();
+	}
+
 	return truelist;
 }
 
 void Session::changeTrustedStatus(
-	uint8_t id, bool trusted, const QString &changedBy)
+	uint8_t id, bool trusted, const QString &changedBy, bool sendUpdate)
 {
 	QVector<uint8_t> ids;
 	for(const Client *c : m_clients) {
@@ -621,7 +654,7 @@ void Session::changeTrustedStatus(
 		ids.removeOne(id);
 	}
 
-	ids = updateTrustedUsers(ids, changedBy);
+	ids = updateTrustedUsers(ids, changedBy, sendUpdate);
 	addToHistory(net::makeTrustedUsersMessage(0, ids));
 }
 
@@ -707,6 +740,47 @@ void Session::sendUpdatedMuteList()
 	}
 	directToAll(
 		net::ServerReply::makeSessionConf({{QStringLiteral("muted"), muted}}));
+}
+
+void Session::sendUpdatedAuthList()
+{
+	QSet<QString> modAuthIds;
+	for(Client *c : m_clients) {
+		if(c->isModerator()) {
+			const QString &authId = c->authId();
+			if(!authId.isEmpty()) {
+				modAuthIds.insert(authId);
+			}
+		}
+	}
+
+	QJsonArray auth;
+	const QHash<QString, QString> names = m_history->authenticatedUsernames();
+	for(auto it = names.constBegin(); it != names.constEnd(); ++it) {
+		const QString &authId = it.key();
+		QJsonObject o = {
+			{QStringLiteral("authId"), authId},
+			{QStringLiteral("username"), it.value()},
+		};
+		if(m_history->isOperator(authId)) {
+			o[QStringLiteral("op")] = true;
+		}
+		if(m_history->isTrusted(authId)) {
+			o[QStringLiteral("trusted")] = true;
+		}
+		if(modAuthIds.contains(authId)) {
+			o[QStringLiteral("mod")] = true;
+		}
+		auth.append(o);
+	}
+
+	net::Message msg = net::ServerReply::makeSessionConf(
+		QJsonObject{{QStringLiteral("auth"), auth}});
+	for(Client *c : m_clients) {
+		if(c->isOperator()) {
+			c->sendDirectMessage(msg);
+		}
+	}
 }
 
 void Session::handleClientMessage(Client &client, const net::Message &msg)

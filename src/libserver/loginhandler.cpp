@@ -594,7 +594,8 @@ void LoginHandler::handleHostMessage(const net::ServerCommand &cmd)
 		{{QStringLiteral("id"),
 		  sessionAlias.isEmpty() ? session->id() : sessionAlias},
 		 {QStringLiteral("user"), userId},
-		 {QStringLiteral("flags"), sessionFlags(session)}}));
+		 {QStringLiteral("flags"), sessionFlags(session)},
+		 {QStringLiteral("authId"), m_client->authId()}}));
 
 	m_complete = true;
 	session->joinUser(m_client, true);
@@ -687,7 +688,8 @@ void LoginHandler::handleJoinMessage(const net::ServerCommand &cmd)
 		QStringLiteral("Joining a session!"), QStringLiteral("join"),
 		{{QStringLiteral("id"), session->aliasOrId()},
 		 {QStringLiteral("user"), m_client->id()},
-		 {QStringLiteral("flags"), sessionFlags(session)}}));
+		 {QStringLiteral("flags"), sessionFlags(session)},
+		 {QStringLiteral("authId"), m_client->authId()}}));
 
 	m_complete = true;
 	session->joinUser(m_client, false);

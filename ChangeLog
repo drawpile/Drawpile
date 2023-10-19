@@ -27,6 +27,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Error out when invalid --extauth parameter is given to drawpile-srv. Previously it would just keep going and simply not work without any indication as to why. Thanks RAINTARD for running into this.
  * Feature: Allow exporting images, which saves them without setting the current file or warning about the image being merged together.
  * Feature: Disable selection-dependent menu items (Deselect, Fill Selection etc.) when no selection is present.
+ * Feature: Add Roles tab to session settings to allow changing operator and trusted status of registered users not currently online, as well as allowing importing and exporting this list of users. Thanks tincancrab for suggesting.
 
 2023-09-30 Version 2.2.0-beta.8
  * Fix: Apply color wheel direction to color dialogs too. Thanks Blozzom for reporting.

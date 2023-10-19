@@ -182,7 +182,8 @@ void TcpServer::loginSuccess()
 		m_loginstate->mode() == LoginHandler::Mode::Join,
 		m_loginstate->isAuthenticated(), m_loginstate->hasUserFlag("MOD"),
 		!m_loginstate->sessionFlags().contains("NOAUTORESET"),
-		m_loginstate->compatibilityMode(), m_loginstate->joinPassword());
+		m_loginstate->compatibilityMode(), m_loginstate->joinPassword(),
+		m_loginstate->authId());
 
 	m_loginstate->deleteLater();
 	m_loginstate = nullptr;

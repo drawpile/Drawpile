@@ -118,4 +118,38 @@ uint SessionHistory::effectiveAutoResetThreshold() const
 	return t;
 }
 
+void SessionHistory::setAuthenticatedOperator(const QString &authId, bool op)
+{
+	if(op) {
+		Q_ASSERT(!authId.isEmpty());
+		m_authOps.insert(authId);
+	} else {
+		m_authOps.remove(authId);
+	}
+}
+
+void SessionHistory::setAuthenticatedTrust(const QString &authId, bool trusted)
+{
+	if(trusted) {
+		Q_ASSERT(!authId.isEmpty());
+		m_authTrusted.insert(authId);
+	} else {
+		m_authTrusted.remove(authId);
+	}
+}
+
+void SessionHistory::setAuthenticatedUsername(
+	const QString &authId, const QString &username)
+{
+	Q_ASSERT(!authId.isEmpty());
+	Q_ASSERT(!username.isEmpty());
+	m_authUsernames.insert(authId, username);
+}
+
+const QString *SessionHistory::authenticatedUsernameFor(const QString &authId)
+{
+	QHash<QString, QString>::const_iterator it = m_authUsernames.find(authId);
+	return it == m_authUsernames.constEnd() ? nullptr : &it.value();
+}
+
 }

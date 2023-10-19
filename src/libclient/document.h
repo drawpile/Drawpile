@@ -8,6 +8,7 @@ extern "C" {
 }
 #include "libclient/drawdance/paintengine.h"
 #include "libclient/net/announcementlist.h"
+#include "libclient/net/authlistmodel.h"
 #include "libclient/net/banlistmodel.h"
 #include "libclient/net/message.h"
 #include "libshared/util/qtcompat.h"
@@ -45,6 +46,7 @@ class ToolController;
 class Document final : public QObject {
 	Q_PROPERTY(canvas::CanvasModel *canvas READ canvas() NOTIFY canvasChanged)
 	Q_PROPERTY(net::BanlistModel *banlist READ banlist() CONSTANT)
+	Q_PROPERTY(net::AuthListModel *authList READ authList() CONSTANT)
 	Q_PROPERTY(net::AnnouncementListModel *announcementList READ
 				   announcementList() CONSTANT)
 	Q_PROPERTY(QStringListModel *serverLog READ serverLog() CONSTANT)
@@ -92,6 +94,7 @@ public:
 	tools::ToolController *toolCtrl() const { return m_toolctrl; }
 	net::Client *client() const { return m_client; }
 	net::BanlistModel *banlist() const { return m_banlist; }
+	net::AuthListModel *authList() const { return m_authList; }
 	net::AnnouncementListModel *announcementList() const
 	{
 		return m_announcementlist;
@@ -261,7 +264,8 @@ public slots:
 
 private slots:
 	void onServerLogin(
-		bool join, bool compatibilityMode, const QString &joinPassword);
+		bool join, bool compatibilityMode, const QString &joinPassword,
+		const QString &authId);
 	void onServerDisconnect();
 	void onSessionResetted();
 
@@ -314,6 +318,7 @@ private:
 	tools::ToolController *m_toolctrl;
 	net::Client *m_client;
 	net::BanlistModel *m_banlist;
+	net::AuthListModel *m_authList;
 	net::AnnouncementListModel *m_announcementlist;
 	QStringListModel *m_serverLog;
 	libclient::settings::Settings &m_settings;

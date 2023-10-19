@@ -79,6 +79,13 @@ QString FileWrangler::getOpenSessionBansPath() const
 		utils::FileFormatOption::SessionBans);
 }
 
+QString FileWrangler::getOpenAuthListPath() const
+{
+	return showOpenFileDialog(
+		tr("Import Roles"), LastPath::AUTH_LIST,
+		utils::FileFormatOption::AuthList);
+}
+
 
 QString FileWrangler::saveImage(Document *doc) const
 {
@@ -250,6 +257,13 @@ QString FileWrangler::getSaveSessionBansPath() const
 		utils::FileFormatOption::SaveSessionBans);
 }
 
+QString FileWrangler::getSaveAuthListPath() const
+{
+	return showSaveFileDialog(
+		tr("Export Roles"), LastPath::AUTH_LIST, ".dproles",
+		utils::FileFormatOption::SaveAuthList);
+}
+
 
 bool FileWrangler::confirmFlatten(Document *doc, QString &filename) const
 {
@@ -374,6 +388,8 @@ QString FileWrangler::getLastPathKey(LastPath type)
 		return QStringLiteral("brushpack");
 	case LastPath::SESSION_BANS:
 		return QStringLiteral("sessionbans");
+	case LastPath::AUTH_LIST:
+		return QStringLiteral("authlist");
 #ifdef Q_OS_ANDROID
 	case LastPath::LOG_FILE:
 		return QStringLiteral("logfile");

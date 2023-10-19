@@ -31,6 +31,7 @@ public:
 		DEBUG_DUMP,
 		BRUSH_PACK,
 		SESSION_BANS,
+		AUTH_LIST,
 #ifdef Q_OS_ANDROID
 		LOG_FILE,
 #endif
@@ -49,6 +50,7 @@ public:
 	QString getOpenDebugDumpsPath() const;
 	QString getOpenBrushPackPath() const;
 	QString getOpenSessionBansPath() const;
+	QString getOpenAuthListPath() const;
 
 	QString saveImage(Document *doc) const;
 	QString saveImageAs(Document *doc, bool exported) const;
@@ -71,6 +73,7 @@ public:
 #endif
 	QString getSaveBrushPackPath() const;
 	QString getSaveSessionBansPath() const;
+	QString getSaveAuthListPath() const;
 
 private:
 	bool confirmFlatten(Document *doc, QString &filename) const;

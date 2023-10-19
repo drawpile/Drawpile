@@ -71,34 +71,6 @@ public:
 		return m_announcements.values();
 	}
 
-	void setAuthenticatedOperator(const QString &authId, bool op) override
-	{
-		if(authId.isEmpty())
-			return;
-		if(op)
-			m_ops.insert(authId);
-		else
-			m_ops.remove(authId);
-	}
-	void setAuthenticatedTrust(const QString &authId, bool trusted) override
-	{
-		if(authId.isEmpty())
-			return;
-		if(trusted)
-			m_trusted.insert(authId);
-		else
-			m_trusted.remove(authId);
-	}
-	bool isOperator(const QString &authId) const override
-	{
-		return m_ops.contains(authId);
-	}
-	bool isTrusted(const QString &authId) const override
-	{
-		return m_trusted.contains(authId);
-	}
-	bool isAuthenticatedOperators() const override { return !m_ops.isEmpty(); }
-
 protected:
 	void historyAdd(const net::Message &msg) override;
 	void historyReset(const net::MessageList &newHistory) override;
@@ -113,8 +85,6 @@ protected:
 
 private:
 	net::MessageList m_history;
-	QSet<QString> m_ops;
-	QSet<QString> m_trusted;
 	QSet<QString> m_announcements;
 	QString m_alias;
 	QString m_founder;

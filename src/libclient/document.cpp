@@ -64,6 +64,7 @@ Document::Document(libclient::settings::Settings &settings, QObject *parent)
 	m_settings.bindInterpolateInputs(
 		m_toolctrl, &tools::ToolController::setInterpolateInputs);
 	m_banlist = new net::BanlistModel(this);
+	m_authList = new net::AuthListModel(this);
 	m_announcementlist =
 		new net::AnnouncementListModel(settings.listServers(), this);
 	m_serverLog = new QStringListModel(this);
@@ -146,6 +147,10 @@ void Document::initCanvas()
 	connect(
 		m_canvas->paintEngine(), &canvas::PaintEngine::caughtUpTo, this,
 		&Document::catchupProgress, Qt::QueuedConnection);
+
+	connect(
+		m_canvas->aclState(), &canvas::AclState::localOpChanged, m_authList,
+		&net::AuthListModel::setIsOperator);
 
 	emit canvasChanged(m_canvas);
 	m_canvas->paintEngine()->resetAcl(m_client->myId());
@@ -247,7 +252,8 @@ DP_LoadResult Document::loadRecording(
 }
 
 void Document::onServerLogin(
-	bool join, bool compatibilityMode, const QString &joinPassword)
+	bool join, bool compatibilityMode, const QString &joinPassword,
+	const QString &authId)
 {
 	if(join)
 		initCanvas();
@@ -256,6 +262,7 @@ void Document::onServerLogin(
 
 	m_canvas->connectedToServer(m_client->myId(), join, compatibilityMode);
 	m_banlist->setShowSensitive(m_client->isModerator());
+	m_authList->setOwnAuthId(authId);
 
 	if(!m_recordOnConnect.isEmpty()) {
 		m_originalRecordingFilename = m_recordOnConnect;
@@ -276,6 +283,7 @@ void Document::onServerDisconnect()
 		m_canvas->setTitle(QString());
 	}
 	m_banlist->clear();
+	m_authList->clear();
 	m_announcementlist->clear();
 	setSessionOpword(false);
 	emit compatibilityModeChanged(false);
@@ -360,6 +368,10 @@ void Document::onSessionConfChanged(const QJsonObject &config)
 				jc = a.roomcode;
 		}
 		setRoomcode(jc);
+	}
+
+	if(config.contains("auth")) {
+		m_authList->update(config["auth"].toArray());
 	}
 }
 

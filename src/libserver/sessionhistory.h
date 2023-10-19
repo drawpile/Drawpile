@@ -276,7 +276,7 @@ public:
 	 * This is used to remember an authenticated user's status so it
 	 * can be automatically restored when they log in again.
 	 */
-	virtual void setAuthenticatedOperator(const QString &authId, bool op) = 0;
+	virtual void setAuthenticatedOperator(const QString &authId, bool op);
 
 	/**
 	 * @brief Set an authenticated user's trust status
@@ -284,22 +284,40 @@ public:
 	 * This is used to remember an authenticated user's status so it
 	 * can be automatically restored when they log in again.
 	 */
-	virtual void setAuthenticatedTrust(const QString &authId, bool trusted) = 0;
+	virtual void setAuthenticatedTrust(const QString &authId, bool trusted);
+
+	virtual void
+	setAuthenticatedUsername(const QString &authId, const QString &username);
 
 	/**
 	 * @brief Is the given name on the list of operators
 	 */
-	virtual bool isOperator(const QString &authId) const = 0;
+	bool isOperator(const QString &authId) const
+	{
+		return m_authOps.contains(authId);
+	}
 
 	/**
 	 * @brief Is the given name on the list of trusted users
 	 */
-	virtual bool isTrusted(const QString &authId) const = 0;
+	bool isTrusted(const QString &authId)
+	{
+		return m_authTrusted.contains(authId);
+	}
+
+	const QString *authenticatedUsernameFor(const QString &authId);
 
 	/**
 	 * @brief Are there any names on the list of authenticated operators?
 	 */
-	virtual bool isAuthenticatedOperators() const = 0;
+	bool isAuthenticatedOperators() const { return !m_authOps.isEmpty(); }
+	const QSet<QString> &authenticatedOperators() const { return m_authOps; }
+	const QSet<QString> &authenticatedTrusted() const { return m_authTrusted; }
+
+	const QHash<QString, QString> &authenticatedUsernames() const
+	{
+		return m_authUsernames;
+	}
 
 signals:
 	/**
@@ -332,6 +350,10 @@ private:
 	uint m_autoResetBaseSize;
 	int m_firstIndex;
 	int m_lastIndex;
+
+	QSet<QString> m_authOps;
+	QSet<QString> m_authTrusted;
+	QHash<QString, QString> m_authUsernames;
 };
 
 // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=69210

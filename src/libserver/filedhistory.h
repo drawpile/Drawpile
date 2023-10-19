@@ -1,12 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #ifndef DP_SERVER_FILEDHISTORY_H
 #define DP_SERVER_FILEDHISTORY_H
-
 #include "libserver/sessionhistory.h"
 #include "libshared/net/protover.h"
 #include <QDir>
-#include <QSet>
 #include <QVector>
 
 struct DP_BinaryReader;
@@ -90,16 +87,11 @@ public:
 	QStringList announcements() const override { return m_announcements; }
 
 	void setAuthenticatedOperator(const QString &authId, bool op) override;
+
 	void setAuthenticatedTrust(const QString &authId, bool trusted) override;
-	bool isOperator(const QString &authId) const override
-	{
-		return m_ops.contains(authId);
-	}
-	bool isTrusted(const QString &authId) const override
-	{
-		return m_trusted.contains(authId);
-	}
-	bool isAuthenticatedOperators() const override { return !m_ops.isEmpty(); }
+
+	void setAuthenticatedUsername(
+		const QString &authId, const QString &username) override;
 
 protected:
 	void historyAdd(const net::Message &msg) override;
@@ -152,8 +144,6 @@ private:
 	uint m_autoResetThreshold;
 	Flags m_flags;
 	QStringList m_announcements;
-	QSet<QString> m_ops;
-	QSet<QString> m_trusted;
 
 	mutable QVector<Block> m_blocks;
 	int m_fileCount;

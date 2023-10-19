@@ -572,7 +572,9 @@ bool LoginHandler::expectLoginOk(const ServerReply &msg)
 
 	if(msg.reply["state"] == "join" || msg.reply["state"] == "host") {
 		m_address.setPath("/" + msg.reply["join"].toObject()["id"].toString());
-		const int userid = msg.reply["join"].toObject()["user"].toInt();
+
+		QJsonValue join = msg.reply["join"];
+		int userid = join["user"].toInt();
 
 		if(userid < 1 || userid > 254) {
 			qWarning() << "Login error. User ID" << userid
@@ -582,9 +584,9 @@ bool LoginHandler::expectLoginOk(const ServerReply &msg)
 		}
 
 		m_userid = uint8_t(userid);
+		m_authId = join["authId"].toString();
 
-		const QJsonArray sessionFlags =
-			msg.reply["join"].toObject()["flags"].toArray();
+		QJsonArray sessionFlags = join["flags"].toArray();
 		for(const QJsonValue &val : sessionFlags) {
 			if(val.isString())
 				m_sessionFlags << val.toString();

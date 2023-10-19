@@ -195,6 +195,7 @@ public slots:
 
 	void requestBanExport(bool plain);
 	void requestBanImport(const QString &bans);
+	void requestUpdateAuthList(const QJsonArray &list);
 
 signals:
 	void messagesReceived(int count, const net::Message *msgs);
@@ -210,7 +211,8 @@ signals:
 
 	void serverConnected(const QString &address, int port);
 	void serverLoggedIn(
-		bool join, bool compatibilityMode, const QString &joinPassword);
+		bool join, bool compatibilityMode, const QString &joinPassword,
+		const QString &authId);
 	void serverDisconnecting();
 	void serverDisconnected(
 		const QString &message, const QString &errorcode, bool localDisconnect);
@@ -233,7 +235,7 @@ private slots:
 	void handleConnect(
 		const QUrl &url, uint8_t userid, bool join, bool auth, bool moderator,
 		bool supportsAutoReset, bool compatibilityMode,
-		const QString &joinPassword);
+		const QString &joinPassword, const QString &authId);
 	void handleDisconnect(
 		const QString &message, const QString &errorcode, bool localDisconnect);
 

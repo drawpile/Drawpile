@@ -126,6 +126,7 @@ public:
 	 * @return user or nullptr if not found
 	 */
 	Client *getClientById(uint8_t id);
+	Client *getClientByAuthId(const QString &authId);
 
 	//! Has a client with the given ID been logged in (not currently)?
 	bool hasPastClientWithId(uint8_t id) const
@@ -276,17 +277,21 @@ public:
 	 * @param id user ID
 	 * @param op new status
 	 * @param changedBy name of the user who issued the command
+	 * @param sendUpdate whether to send an updated auth list to operators
 	 */
-	void changeOpStatus(uint8_t id, bool op, const QString &changedBy);
+	void changeOpStatus(
+		uint8_t id, bool op, const QString &changedBy, bool sendUpdate = true);
 
 	/**
 	 * @brief Grant or revoke trusted status of a user
 	 * @param id user ID
 	 * @param trusted new status
 	 * @param changedBy name of the user who issued the command
+	 * @param sendUpdate whether to send an updated auth list to operators
 	 */
-	void
-	changeTrustedStatus(uint8_t id, bool trusted, const QString &changedBy);
+	void changeTrustedStatus(
+		uint8_t id, bool trusted, const QString &changedBy,
+		bool sendUpdate = true);
 
 	//! Send refreshed ban list to all logged in users
 	void sendUpdatedBanlist();
@@ -296,6 +301,9 @@ public:
 
 	//! Send a refreshed list of muted users
 	void sendUpdatedMuteList();
+
+	//! Send a refreshed list or registered users with op and trusted states.
+	void sendUpdatedAuthList();
 
 	/**
 	 * @brief Send an abuse report
@@ -415,10 +423,11 @@ private:
 	 *
 	 * @param ids new list of session operators
 	 * @param changedBy name of the user who issued the change command
+	 * @param sendUpdate whether to send an updated auth list to operators
 	 * @return sanitized list of actual session operators
 	 */
-	QVector<uint8_t>
-	updateOwnership(QVector<uint8_t> ids, const QString &changedBy);
+	QVector<uint8_t> updateOwnership(
+		QVector<uint8_t> ids, const QString &changedBy, bool sendUpdate = true);
 
 	/**
 	 * @brief Update the list of trusted users
@@ -426,10 +435,11 @@ private:
 	 * Generates log entries for each change
 	 * @param ids new list of trusted users
 	 * @param changedBy name of the user who issued the change command
+	 * @param sendUpdate whether to send an updated auth list to operators
 	 * @return sanitized list of actual trusted users
 	 */
-	QVector<uint8_t>
-	updateTrustedUsers(QVector<uint8_t> ids, const QString &changedBy);
+	QVector<uint8_t> updateTrustedUsers(
+		QVector<uint8_t> ids, const QString &changedBy, bool sendUpdate = true);
 
 	void restartRecording();
 	void stopRecording();

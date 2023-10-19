@@ -177,6 +177,10 @@ QStringList fileFormatFilterList(FileFormatOptions formats)
 		filter << QGuiApplication::tr("Session Bans (%1)").arg("*.dpbans");
 	}
 
+	if(formats.testFlag(FileFormatOption::AuthList)) {
+		filter << QGuiApplication::tr("Roles (%1)").arg("*.dproles");
+	}
+
 	if(!readImages.isEmpty() && !recordings.isEmpty()) {
 		filter.prepend(
 			QGuiApplication::tr("All Supported Files (%1)").arg(readImages + ' ' + recordings)

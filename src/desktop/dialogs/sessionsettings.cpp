@@ -12,9 +12,12 @@
 #include <QDebug>
 #include <QFile>
 #include <QInputDialog>
+#include <QJsonArray>
 #include <QJsonDocument>
+#include <QJsonObject>
 #include <QMenu>
 #include <QMessageBox>
+#include <QSortFilterProxyModel>
 #include <QStringListModel>
 #include <QTimer>
 
@@ -166,6 +169,41 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 	connect(
 		m_ui->exportButton, &QAbstractButton::clicked, this,
 		&SessionSettingsDialog::exportBans);
+
+	// Set up auth list tab
+	QSortFilterProxyModel *authListSortModel = new QSortFilterProxyModel(this);
+	net::AuthListModel *authList = doc->authList();
+	authListSortModel->setSourceModel(authList);
+	authListSortModel->setSortCaseSensitivity(Qt::CaseInsensitive);
+	m_ui->authListView->setModel(authListSortModel);
+
+	QHeaderView *authListHeader = m_ui->authListView->horizontalHeader();
+	authListHeader->setSectionResizeMode(0, QHeaderView::Stretch);
+	authListHeader->setSectionResizeMode(1, QHeaderView::Stretch);
+
+	// The viewport only repaints when it has focus by default, force it.
+	connect(
+		authList, &net::AuthListModel::updateApplied,
+		m_ui->authListView->viewport(), QOverload<>::of(&QWidget::update));
+	connect(
+		authList, &net::AuthListModel::updateApplied, this,
+		&SessionSettingsDialog::updateAuthListCheckboxes);
+	connect(
+		m_ui->authListView->selectionModel(),
+		&QItemSelectionModel::selectionChanged, this,
+		&SessionSettingsDialog::updateAuthListCheckboxes);
+	connect(
+		m_ui->authImportButton, &QAbstractButton::clicked, this,
+		&SessionSettingsDialog::importAuthList);
+	connect(
+		m_ui->authExportButton, &QAbstractButton::clicked, this,
+		&SessionSettingsDialog::exportAuthList);
+	connect(
+		m_ui->authOp, &QCheckBox::clicked, this,
+		&SessionSettingsDialog::authListChangeOp);
+	connect(
+		m_ui->authTrusted, &QCheckBox::clicked, this,
+		&SessionSettingsDialog::authListChangeTrusted);
 
 	// Set up announcements tab
 	m_ui->announcementTableView->setModel(doc->announcementList());
@@ -359,11 +397,11 @@ void SessionSettingsDialog::onOperatorModeChanged(bool op)
 	m_op = op;
 
 	QWidget *widgets[] = {
-		m_ui->title,		m_ui->maxUsers,		   m_ui->denyJoins,
-		m_ui->preserveChat, m_ui->deputies,		   m_ui->sessionPassword,
-		m_ui->opword,		m_ui->addAnnouncement, m_ui->removeAnnouncement,
-		m_ui->removeBan,
-	};
+		m_ui->title,		   m_ui->maxUsers,		  m_ui->denyJoins,
+		m_ui->preserveChat,	   m_ui->deputies,		  m_ui->sessionPassword,
+		m_ui->opword,		   m_ui->addAnnouncement, m_ui->removeAnnouncement,
+		m_ui->removeBan,	   m_ui->authListView,	  m_ui->authImportButton,
+		m_ui->authExportButton};
 	for(QWidget *widget : widgets) {
 		widget->setEnabled(op);
 	}
@@ -380,6 +418,11 @@ void SessionSettingsDialog::onOperatorModeChanged(bool op)
 	updatePasswordLabel(m_ui->sessionPassword);
 	updatePasswordLabel(m_ui->opword);
 	setCompatibilityMode(m_doc->isCompatibilityMode());
+
+	m_ui->authLabel->setText(
+		op ? tr("This list shows only registered users.")
+		   : tr("Only operators can see this list."));
+	updateAuthListCheckboxes();
 }
 
 QComboBox *SessionSettingsDialog::featureBox(DP_Feature f)
@@ -438,6 +481,9 @@ void SessionSettingsDialog::onFeatureTiersChanged(
 		int(features.tiers[DP_FEATURE_TIMELINE]));
 	m_ui->permMyPaint->setCurrentIndex(int(features.tiers[DP_FEATURE_MYPAINT]));
 }
+
+const QByteArray SessionSettingsDialog::authExportPrefix =
+	QByteArray("dpauth\0", 7);
 
 void SessionSettingsDialog::initPermissionComboBoxes()
 {
@@ -586,6 +632,27 @@ void SessionSettingsDialog::updateIdleSettings(
 		amount = pieces.join(tr(", "));
 	}
 	m_ui->idleTimeoutAmount->setText(amount);
+}
+
+void SessionSettingsDialog::updateAuthListCheckboxes()
+{
+	bool enableOp = false;
+	bool enableTrusted = false;
+	bool checkOp = false;
+	bool checkTrusted = false;
+	QModelIndex idx = getSelectedAuthListEntry();
+	if(idx.isValid() && !idx.data(net::AuthListModel::IsModRole).toBool()) {
+		enableOp = !idx.data(net::AuthListModel::IsOwnRole).toBool();
+		enableTrusted = true;
+		checkOp = idx.data(net::AuthListModel::IsOpRole).toBool();
+		checkTrusted = idx.data(net::AuthListModel::IsTrustedRole).toBool();
+	}
+	QSignalBlocker authOpBlocker(m_ui->authOp);
+	QSignalBlocker authTrustedBlocker(m_ui->authTrusted);
+	m_ui->authOp->setEnabled(enableOp);
+	m_ui->authTrusted->setEnabled(enableTrusted);
+	m_ui->authOp->setChecked(checkOp);
+	m_ui->authTrusted->setChecked(checkTrusted);
 }
 
 void SessionSettingsDialog::setCompatibilityMode(bool compatibilityMode)
@@ -817,6 +884,161 @@ void SessionSettingsDialog::exportBans()
 	m_awaitingImportExportResponse = true;
 	updateBanImportExportState();
 	emit requestBanExport(plain);
+}
+
+
+void SessionSettingsDialog::authListChangeOp(bool op)
+{
+	authListChangeParam(QStringLiteral("o"), op);
+}
+
+void SessionSettingsDialog::authListChangeTrusted(bool trusted)
+{
+	authListChangeParam(QStringLiteral("t"), trusted);
+}
+
+void SessionSettingsDialog::importAuthList()
+{
+	if(!m_op) {
+		return;
+	}
+
+	QString path = FileWrangler(this).getOpenAuthListPath();
+	if(path.isEmpty()) {
+		return;
+	}
+
+	QFile file(path);
+	if(!file.open(QFile::ReadOnly)) {
+		QMessageBox::critical(
+			this, tr("Role Import"),
+			tr("Error opening '%1': %2").arg(path, file.errorString()));
+		return;
+	}
+	QByteArray content = file.readAll();
+	file.close();
+
+	QJsonArray list;
+	if(!readAuthListImport(content, list)) {
+		QMessageBox::critical(
+			this, tr("Role Import"),
+			tr("File '%1' does not contain a valid role export.").arg(path));
+		return;
+	}
+
+	compat::sizetype count = list.size();
+	if(count != 0) {
+		emit requestUpdateAuthList(list);
+	}
+	QMessageBox::information(
+		this, tr("Role Import"), tr("%n role(s) imported.", "", count));
+}
+
+void SessionSettingsDialog::exportAuthList()
+{
+	if(!m_op) {
+		return;
+	}
+
+	QString path = FileWrangler(this).getSaveAuthListPath();
+	if(path.isEmpty()) {
+		return;
+	}
+
+	QJsonArray list;
+	for(const net::AuthListEntry &e : m_doc->authList()->entries()) {
+		if(e.op || e.trusted) {
+			QJsonObject o = {
+				{QStringLiteral("a"), e.authId},
+				{QStringLiteral("u"), e.username},
+			};
+			if(e.op) {
+				o[QStringLiteral("o")] = true;
+			}
+			if(e.trusted) {
+				o[QStringLiteral("t")] = true;
+			}
+			list.append(o);
+		}
+	}
+
+	QByteArray content =
+		authExportPrefix +
+		qCompress(QJsonDocument(list).toJson(QJsonDocument::Compact));
+
+	QFile file(path);
+	bool ok = file.open(QFile::WriteOnly) &&
+			  file.write(content) == content.size() && file.flush();
+	if(!ok) {
+		QMessageBox::critical(
+			this, tr("Role Export"),
+			tr("Error saving roles to '%1': %2").arg(path, file.errorString()));
+	}
+}
+
+bool SessionSettingsDialog::readAuthListImport(
+	const QByteArray &content, QJsonArray &outList) const
+{
+	if(!content.startsWith(authExportPrefix)) {
+		return false;
+	}
+
+	QJsonDocument doc = QJsonDocument::fromJson(
+		qUncompress(content.mid(authExportPrefix.size())));
+	if(!doc.isArray()) {
+		return false;
+	}
+
+	for(const QJsonValue &value : doc.array()) {
+		QString authId = value[QStringLiteral("a")].toString();
+		if(authId.isEmpty()) {
+			return false;
+		}
+
+		bool op = value[QStringLiteral("o")].toBool();
+		bool trusted = value[QStringLiteral("t")].toBool();
+		if(!op && !trusted) {
+			return false;
+		}
+
+		QJsonObject o = {
+			{QStringLiteral("a"), authId},
+			{QStringLiteral("u"), value[QStringLiteral("u")].toString()},
+		};
+		if(op) {
+			o[QStringLiteral("o")] = true;
+		}
+		if(trusted) {
+			o[QStringLiteral("t")] = true;
+		}
+		outList.append(o);
+	}
+
+	return true;
+}
+
+QModelIndex SessionSettingsDialog::getSelectedAuthListEntry()
+{
+	if(m_op) {
+		QModelIndexList selected =
+			m_ui->authListView->selectionModel()->selectedRows();
+		if(selected.size() == 1) {
+			return selected.at(0);
+		}
+	}
+	return QModelIndex();
+}
+
+void SessionSettingsDialog::authListChangeParam(const QString &key, bool value)
+{
+	QModelIndex idx = getSelectedAuthListEntry();
+	if(idx.isValid() && !idx.data(net::AuthListModel::IsModRole).toBool()) {
+		QString authId = idx.data(net::AuthListModel::AuthIdRole).toString();
+		emit requestUpdateAuthList({QJsonObject{
+			{QStringLiteral("a"), authId},
+			{key, value},
+		}});
+	}
 }
 
 }

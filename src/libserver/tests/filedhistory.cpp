@@ -56,7 +56,8 @@ private slots:
 			fh->setFlags(flags);
 			fh->addBan(bannedUser, bannedAddress, QString(), QString(), opUser);
 			fh->addBan(
-				"test", QHostAddress("192.168.0.101"), QString(), QString(), opUser);
+				"test", QHostAddress("192.168.0.101"), QString(), QString(),
+				opUser);
 			fh->addBan(
 				"test3", QHostAddress("192.168.0.102"), bannedExtAuthId,
 				bannedSid, opUser);
@@ -68,7 +69,18 @@ private slots:
 			fh->joinUser(2, "u2");
 			fh->setAuthenticatedOperator("u1", true);
 			fh->setAuthenticatedOperator("u2", true);
+			fh->setAuthenticatedOperator("u3", true);
+			fh->setAuthenticatedOperator("u4", true);
+			fh->setAuthenticatedOperator("u4", true);
 			fh->setAuthenticatedOperator("u1", false);
+			fh->setAuthenticatedTrust("t1", true);
+			fh->setAuthenticatedTrust("t2", true);
+			fh->setAuthenticatedTrust("t2", true);
+			fh->setAuthenticatedTrust("t3", true);
+			fh->setAuthenticatedTrust("t1", false);
+			fh->setAuthenticatedUsername("n1", "Some User");
+			fh->setAuthenticatedUsername("n2", "Some Other User");
+			fh->setAuthenticatedUsername("n2", "Some Other User Part 2");
 
 			// The history file must have some content before it can be loaded
 			fh->addMessage(
@@ -100,8 +112,7 @@ private slots:
 				bannedAddress.toString());
 			QCOMPARE(
 				banlist.at(0).toObject()["extauthid"].toString(), QString());
-			QCOMPARE(
-				banlist.at(0).toObject()["s"].toString(), QString());
+			QCOMPARE(banlist.at(0).toObject()["s"].toString(), QString());
 
 			QCOMPARE(
 				banlist.at(1).toObject()["username"].toString(),
@@ -109,9 +120,7 @@ private slots:
 			QCOMPARE(
 				banlist.at(1).toObject()["extauthid"].toString(),
 				bannedExtAuthId);
-			QCOMPARE(
-				banlist.at(1).toObject()["s"].toString(),
-				bannedSid);
+			QCOMPARE(banlist.at(1).toObject()["s"].toString(), bannedSid);
 			QCOMPARE(banlist.at(1).toObject()["bannedBy"].toString(), opUser);
 
 			QStringList announcements = fh->announcements();
@@ -122,8 +131,17 @@ private slots:
 			QCOMPARE(fh->idQueue().getIdForName("u2"), uint8_t(2));
 
 			QCOMPARE(fh->isAuthenticatedOperators(), true);
-			QCOMPARE(fh->isOperator("u1"), false);
-			QCOMPARE(fh->isOperator("u2"), true);
+			QSet<QString> expectedOps = {"u2", "u3", "u4"};
+			QCOMPARE(fh->authenticatedOperators(), expectedOps);
+
+			QSet<QString> expectedTrusted = {"t2", "t3"};
+			QCOMPARE(fh->authenticatedTrusted(), expectedTrusted);
+
+			QHash<QString, QString> expectedUsernames = {
+				{"n1", "Some User"},
+				{"n2", "Some Other User Part 2"},
+			};
+			QCOMPARE(fh->authenticatedUsernames(), expectedUsernames);
 		}
 	}
 

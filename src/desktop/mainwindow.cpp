@@ -366,6 +366,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_doc->client(), &net::Client::bansImpExError, m_sessionSettings, &dialogs::SessionSettingsDialog::bansImpExError);
 	connect(m_sessionSettings, &dialogs::SessionSettingsDialog::requestBanImport, m_doc->client(), &net::Client::requestBanImport);
 	connect(m_sessionSettings, &dialogs::SessionSettingsDialog::requestBanExport, m_doc->client(), &net::Client::requestBanExport);
+	connect(m_sessionSettings, &dialogs::SessionSettingsDialog::requestUpdateAuthList, m_doc->client(), &net::Client::requestUpdateAuthList);
 
 	// Tool controller <-> UI connections
 	connect(m_doc->toolCtrl(), &tools::ToolController::activeAnnotationChanged, m_canvasscene, &drawingboard::CanvasScene::setActiveAnnotation);
