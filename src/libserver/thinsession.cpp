@@ -36,7 +36,6 @@ void ThinSession::addToHistory(const net::Message &msg)
 	// (since they originated it), but we still want to send them notifications.
 	if(state() == State::Initialization) {
 		Client *origin = getClientById(initUserId());
-		Q_ASSERT(origin);
 		if(origin) {
 			static_cast<ThinServerClient *>(origin)->setHistoryPosition(
 				history()->lastIndex());
