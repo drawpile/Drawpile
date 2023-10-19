@@ -56,7 +56,6 @@ public slots:
 
 	void userJoined(int id, const QString &name);
 	void userParted(int id);
-	void kicked(const QString &kickedBy);
 
 	//! Empty the chat box
 	void clear();
@@ -97,8 +96,6 @@ private:
 	static constexpr bool COMPACT_ONLY = false;
 	static constexpr bool ALLOW_DETACH = true;
 #endif
-
-	void playSound(notification::Event event);
 
 	struct Private;
 	Private *d;

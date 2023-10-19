@@ -43,7 +43,7 @@ MacMenu::MacMenu() :
 
 	QAction *preferences = makeAction(filemenu, nullptr, MainWindow::tr("Prefere&nces"), QKeySequence());
 	preferences->setMenuRole(QAction::PreferencesRole);
-	connect(preferences, &QAction::triggered, &MainWindow::showSettings);
+	connect(preferences, &QAction::triggered, this, &MacMenu::showSettings);
 
 	//
 	// Session menu
@@ -125,6 +125,23 @@ void MacMenu::openRecent(QAction *action)
 		dialogs::StartDialog *dlg = showStartDialog();
 		dlg->showPage(dialogs::StartDialog::Recent);
 	}
+}
+
+void MacMenu::showSettings()
+{
+	MainWindow *mw = qobject_cast<MainWindow*>(qApp->activeWindow());
+	if(!mw) {
+		for(QWidget *widget : qApp->topLevelWidgets()) {
+			mw = qobject_cast<MainWindow*>(widget);
+			if(mw) {
+				break;
+			}
+		}
+	}
+	if(!mw) {
+		mw = new MainWindow();
+	}
+	mw->showSettings();
 }
 
 void MacMenu::joinSession()

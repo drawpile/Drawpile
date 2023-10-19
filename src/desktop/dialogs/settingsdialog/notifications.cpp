@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/settingsdialog/notifications.h"
 #include "desktop/dialogs/settingsdialog/helpers.h"
+#include "desktop/main.h"
 #include "desktop/notifications.h"
 #include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
@@ -24,65 +25,121 @@ Notifications::Notifications(
 void Notifications::setUp(
 	desktop::settings::Settings &settings, QVBoxLayout *layout)
 {
-	initSounds(settings, utils::addFormSection(layout));
+	initGrid(settings, layout);
+	utils::addFormSeparator(layout);
+	initOptions(settings, utils::addFormSection(layout));
 }
 
-void Notifications::initSounds(
+void Notifications::initGrid(
+	desktop::settings::Settings &settings, QVBoxLayout *layout)
+{
+	QGridLayout *grid = new QGridLayout;
+
+	std::tuple<QString, QString, Qt::Alignment> header[] = {
+		{tr("Event"), tr("What triggered this notification"), Qt::AlignLeft},
+		{tr("Play sound"), tr("Play a sound effect when this event occurs."),
+		 Qt::AlignHCenter},
+		{tr("Popup"),
+		 tr("Pop up a speech bubble in the corner when this event occurs."),
+		 Qt::AlignHCenter},
+#if defined(Q_OS_WIN)
+		{tr("Flash taskbar"),
+		 tr("Flash the Drawpile window in the taskbar when this event occurs."),
+		 Qt::AlignHCenter},
+#elif defined(Q_OS_MACOS)
+		{tr("Bounce dock"),
+		 tr("Bounce Drawpile's icon in the dock when this event occurs."),
+		 Qt::AlignHCenter},
+#else
+		{tr("Demand attention"),
+		 tr("Mark Drawpile's window as requiring attention. How exactly this "
+			"looks depends on your system."),
+		 Qt::AlignHCenter},
+#endif
+		{tr("Preview"), tr("Trigger this event so you can see what happens."),
+		 Qt::AlignHCenter},
+	};
+	int column = 0;
+	for(auto [text, tooltip, alignment] : header) {
+		QLabel *label = new QLabel(this);
+		label->setText(QStringLiteral("<b>%1</b>").arg(text));
+		label->setToolTip(tooltip);
+		grid->addWidget(label, 0, column++, alignment);
+	}
+
+	using Settings = desktop::settings::Settings;
+	using Bind = std::pair<QMetaObject::Connection, QMetaObject::Connection> (
+		desktop::settings::Settings::*)(QCheckBox *&&args);
+	std::tuple<QString, Bind, Bind, Bind, notification::Event> sounds[] = {
+		{tr("Chat message"), &Settings::bindNotifSoundChat<QCheckBox *>,
+		 &Settings::bindNotifPopupChat<QCheckBox *>,
+		 &Settings::bindNotifFlashChat<QCheckBox *>, notification::Event::Chat},
+		{tr("User joined"), &Settings::bindNotifSoundLogin<QCheckBox *>,
+		 &Settings::bindNotifPopupLogin<QCheckBox *>,
+		 &Settings::bindNotifFlashLogin<QCheckBox *>,
+		 notification::Event::Login},
+		{tr("User left"), &Settings::bindNotifSoundLogout<QCheckBox *>,
+		 &Settings::bindNotifPopupLogout<QCheckBox *>,
+		 &Settings::bindNotifFlashLogout<QCheckBox *>,
+		 notification::Event::Logout},
+		{tr("Canvas locked"), &Settings::bindNotifSoundLock<QCheckBox *>,
+		 &Settings::bindNotifPopupLock<QCheckBox *>,
+		 &Settings::bindNotifFlashLock<QCheckBox *>,
+		 notification::Event::Locked},
+		{tr("Canvas unlocked"), &Settings::bindNotifSoundUnlock<QCheckBox *>,
+		 &Settings::bindNotifPopupUnlock<QCheckBox *>,
+		 &Settings::bindNotifFlashUnlock<QCheckBox *>,
+		 notification::Event::Unlocked},
+		{tr("Disconnected"), &Settings::bindNotifSoundDisconnect<QCheckBox *>,
+		 &Settings::bindNotifPopupDisconnect<QCheckBox *>,
+		 &Settings::bindNotifFlashDisconnect<QCheckBox *>,
+		 notification::Event::Disconnect},
+	};
+	int row = 1;
+	for(auto [text, bindSound, bindPopup, bindFlash, event] : sounds) {
+		QLabel *label = new QLabel(this);
+		label->setText(text);
+		grid->addWidget(label, row, 0, Qt::AlignLeft);
+
+		QCheckBox *soundBox = new QCheckBox(this);
+		soundBox->setToolTip(std::get<1>(header[1]));
+		((&settings)->*bindSound)(std::forward<QCheckBox *>(soundBox));
+		grid->addWidget(soundBox, row, 1, Qt::AlignHCenter);
+
+		QCheckBox *popupBox = new QCheckBox(this);
+		popupBox->setToolTip(std::get<1>(header[2]));
+		((&settings)->*bindPopup)(std::forward<QCheckBox *>(popupBox));
+		grid->addWidget(popupBox, row, 2, Qt::AlignHCenter);
+
+		QCheckBox *flashBox = new QCheckBox(this);
+		flashBox->setToolTip(std::get<1>(header[3]));
+		((&settings)->*bindFlash)(std::forward<QCheckBox *>(flashBox));
+		grid->addWidget(flashBox, row, 3, Qt::AlignHCenter);
+
+		QToolButton *preview = new QToolButton(this);
+		preview->setText(tr("Preview event"));
+		flashBox->setToolTip(std::get<1>(header[4]));
+		preview->setIcon(QIcon::fromTheme("media-playback-start"));
+		grid->addWidget(preview, row, 4, Qt::AlignHCenter);
+
+		connect(
+			preview, &QToolButton::clicked, [this, text = text, event = event] {
+				dpApp().notifications()->trigger(this, event, text, true);
+			});
+
+		++row;
+	}
+	layout->addLayout(grid);
+}
+
+void Notifications::initOptions(
 	desktop::settings::Settings &settings, QFormLayout *form)
 {
-	auto *volume = new KisSliderSpinBox(this);
+	KisSliderSpinBox *volume = new KisSliderSpinBox(this);
 	volume->setMaximum(100);
 	volume->setSuffix(tr("%"));
 	settings.bindSoundVolume(volume);
 	form->addRow(tr("Sound volume:"), volume);
-
-	using Settings = desktop::settings::Settings;
-	const std::initializer_list<std::tuple<
-		QString,
-		std::pair<QMetaObject::Connection, QMetaObject::Connection> (
-			desktop::settings::Settings::*)(QCheckBox *&&args),
-		notification::Event>>
-		sounds = {
-			{tr("Message received"),
-			 &Settings::bindNotificationChat<QCheckBox *>,
-			 notification::Event::CHAT},
-			{tr("Recording marker"),
-			 &Settings::bindNotificationMarker<QCheckBox *>,
-			 notification::Event::MARKER},
-			{tr("User joined"), &Settings::bindNotificationLogin<QCheckBox *>,
-			 notification::Event::LOGIN},
-			{tr("User parted"), &Settings::bindNotificationLogout<QCheckBox *>,
-			 notification::Event::LOGOUT},
-			{tr("Canvas locked"), &Settings::bindNotificationLock<QCheckBox *>,
-			 notification::Event::LOCKED},
-			{tr("Canvas unlocked"),
-			 &Settings::bindNotificationUnlock<QCheckBox *>,
-			 notification::Event::UNLOCKED},
-		};
-
-	QGridLayout *grid = new QGridLayout;
-	grid->setColumnStretch(0, 1);
-	int row = 0;
-	for(auto [text, bindable, event] : sounds) {
-		auto *checkbox = new QCheckBox(text, this);
-		((&settings)->*bindable)(std::forward<QCheckBox *>(checkbox));
-		grid->addWidget(checkbox, row, 0);
-
-		auto *preview = new QToolButton(this);
-		preview->setFixedHeight(checkbox->sizeHint().height());
-		preview->setText(tr("Preview sound"));
-		preview->setIcon(QIcon::fromTheme("audio-volume-high"));
-		grid->addWidget(preview, row, 1);
-
-		connect(preview, &QToolButton::clicked, [event = event, &settings] {
-			notification::playSoundNow(event, settings.soundVolume());
-		});
-		settings.bindSoundVolume(checkbox, &QCheckBox::setEnabled);
-		settings.bindSoundVolume(preview, &QToolButton::setEnabled);
-
-		++row;
-	}
-	form->addRow(tr("Notifications:"), grid);
 }
 
 } // namespace settingsdialog

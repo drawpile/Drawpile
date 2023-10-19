@@ -18,7 +18,6 @@ class StateDatabase;
 
 class DrawpileApp final : public QApplication {
 Q_OBJECT
-	friend void notification::playSoundNow(notification::Event, int);
 public:
 	DrawpileApp(int &argc, char **argv);
 	~DrawpileApp() override;
@@ -38,6 +37,8 @@ public:
 
 	const desktop::settings::Settings &settings() const { return m_settings; }
 	desktop::settings::Settings &settings() { return m_settings; }
+
+	notification::Notifications *notifications() { return m_notifications; }
 
 	const utils::StateDatabase &state() const { return *m_state; }
 	utils::StateDatabase &state() { return *m_state; }
@@ -60,10 +61,10 @@ protected:
 
 private:
 	desktop::settings::Settings m_settings;
+	notification::Notifications *m_notifications;
 	bool m_smallScreenMode;
 	utils::StateDatabase *m_state = nullptr;
 	utils::Recents *m_recents = nullptr;
-	QMap<notification::Event, QSoundEffect*> m_sounds;
 	QString m_originalSystemStyle;
 	QPalette m_originalSystemPalette;
 

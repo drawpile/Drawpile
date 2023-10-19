@@ -1,32 +1,37 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "desktop/main.h"
 #include "desktop/widgets/netstatus.h"
-#include "desktop/widgets/popupmessage.h"
 #include "desktop/dialogs/certificateview.h"
 #include "desktop/dialogs/netstats.h"
+#include "desktop/main.h"
+#include "desktop/widgets/popupmessage.h"
 #include "libshared/util/whatismyip.h"
 
 #include <QAction>
-#include <QIcon>
-#include <QLabel>
 #include <QApplication>
+#include <QCheckBox>
 #include <QClipboard>
 #include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QProgressBar>
+#include <QIcon>
+#include <QLabel>
 #include <QMessageBox>
-#include <QCheckBox>
+#include <QProgressBar>
 #include <QTimer>
+#include <QVBoxLayout>
 
 namespace widgets {
 
 NetStatus::NetStatus(QWidget *parent)
-	: QWidget(parent), m_state(NotConnected), m_haveJoinPassword(false),
-	m_isLocalHost(false),  m_haveRemoteAddress(false), _sentbytes(0),
-	_recvbytes(0), _lag(0)
+	: QWidget(parent)
+	, m_state(NotConnected)
+	, m_haveJoinPassword(false)
+	, m_isLocalHost(false)
+	, m_haveRemoteAddress(false)
+	, m_sentbytes(0)
+	, m_recvbytes(0)
+	, m_lag(0)
 {
-	setMinimumHeight(16+2);
+	setMinimumHeight(16 + 2);
 
 	QHBoxLayout *layout = new QHBoxLayout(this);
 	layout->setContentsMargins(1, 1, 1, 1);
@@ -44,30 +49,31 @@ NetStatus::NetStatus(QWidget *parent)
 	// Host address label
 	m_label = new QLabel(this);
 	m_label->setTextInteractionFlags(
-			Qt::TextSelectableByMouse|Qt::TextSelectableByKeyboard
-			);
+		Qt::TextSelectableByMouse | Qt::TextSelectableByKeyboard);
 	m_label->setCursor(Qt::IBeamCursor);
 	m_label->setContextMenuPolicy(Qt::ActionsContextMenu);
 	layout->addWidget(m_label);
 
 	// Action to copy address to clipboard
-	_copyaction = new QAction(tr("Copy address to clipboard"), this);
-	_copyaction->setEnabled(false);
-	m_label->addAction(_copyaction);
-	connect(_copyaction,SIGNAL(triggered()),this,SLOT(copyAddress()));
+	m_copyaction = new QAction(tr("Copy address to clipboard"), this);
+	m_copyaction->setEnabled(false);
+	m_label->addAction(m_copyaction);
+	connect(m_copyaction, SIGNAL(triggered()), this, SLOT(copyAddress()));
 
 	// Action to copy the full session URL to clipboard
-	_urlaction = new QAction(tr("Copy session URL to clipboard"), this);
-	_urlaction->setEnabled(false);
-	m_label->addAction(_urlaction);
-	connect(_urlaction, SIGNAL(triggered()), this, SLOT(copyUrl()));
+	m_urlaction = new QAction(tr("Copy session URL to clipboard"), this);
+	m_urlaction->setEnabled(false);
+	m_label->addAction(m_urlaction);
+	connect(m_urlaction, SIGNAL(triggered()), this, SLOT(copyUrl()));
 
 	// Discover local IP address
-	_discoverIp = new QAction(tr("Get externally visible IP address"), this);
-	_discoverIp->setVisible(false);
-	m_label->addAction(_discoverIp);
-	connect(_discoverIp, SIGNAL(triggered()), this, SLOT(discoverAddress()));
-	connect(WhatIsMyIp::instance(), SIGNAL(myAddressIs(QString)), this, SLOT(externalIpDiscovered(QString)));
+	m_discoverIp = new QAction(tr("Get externally visible IP address"), this);
+	m_discoverIp->setVisible(false);
+	m_label->addAction(m_discoverIp);
+	connect(m_discoverIp, SIGNAL(triggered()), this, SLOT(discoverAddress()));
+	connect(
+		WhatIsMyIp::instance(), SIGNAL(myAddressIs(QString)), this,
+		SLOT(externalIpDiscovered(QString)));
 
 	// Option to hide the server address
 	// (useful when livestreaming)
@@ -75,11 +81,14 @@ NetStatus::NetStatus(QWidget *parent)
 	hideServerAction->setCheckable(true);
 
 	auto &settings = dpApp().settings();
-	settings.bindServerHideIp(hideServerAction, [=](bool hide) {
-		hideServerAction->setChecked(hide);
-		m_hideServer = hide;
-		updateLabel();
-	}, &QAction::triggered);
+	settings.bindServerHideIp(
+		hideServerAction,
+		[=](bool hide) {
+			hideServerAction->setChecked(hide);
+			m_hideServer = hide;
+			updateLabel();
+		},
+		&QAction::triggered);
 	m_label->addAction(hideServerAction);
 
 	// Show network statistics
@@ -106,7 +115,8 @@ NetStatus::NetStatus(QWidget *parent)
 	// Popup label
 	m_popup = new PopupMessage(this);
 
-	// Some styles are buggy and have bad tooltip colors, so we force the colors here.
+	// Some styles are buggy and have bad tooltip colors, so we force the colors
+	// here.
 	QPalette popupPalette;
 	popupPalette.setColor(QPalette::ToolTipBase, Qt::black);
 	popupPalette.setColor(QPalette::ToolTipText, Qt::white);
@@ -130,27 +140,26 @@ void NetStatus::setJoinPassword(const QString &joinPassword)
  * A context menu to copy the address to clipboard will be enabled.
  * @param address the address to display
  */
-void NetStatus::connectingToHost(const QString& address, int port)
+void NetStatus::connectingToHost(const QString &address, int port)
 {
 	m_address = address;
 	m_port = port;
 	m_state = Connecting;
-	_copyaction->setEnabled(true);
+	m_copyaction->setEnabled(true);
 	updateLabel();
-	message(m_label->text());
 
 	// Enable "discover IP" item for local host
 	m_isLocalHost = WhatIsMyIp::isMyPrivateAddress(address);
 	m_haveRemoteAddress = !m_isLocalHost;
-	_discoverIp->setEnabled(m_isLocalHost);
-	_discoverIp->setVisible(m_isLocalHost);
+	m_discoverIp->setEnabled(m_isLocalHost);
+	m_discoverIp->setVisible(m_isLocalHost);
 
 	if(!m_isLocalHost && WhatIsMyIp::isCGNAddress(address))
 		showCGNAlert();
 
 	// reset statistics
-	_recvbytes = 0;
-	_sentbytes = 0;
+	m_recvbytes = 0;
+	m_sentbytes = 0;
 }
 
 void NetStatus::loggedIn(const QUrl &sessionUrl, const QString &joinPassword)
@@ -158,12 +167,11 @@ void NetStatus::loggedIn(const QUrl &sessionUrl, const QString &joinPassword)
 	m_sessionUrl = sessionUrl;
 	m_joinPassword = joinPassword;
 	m_haveJoinPassword = !joinPassword.isEmpty();
-	_urlaction->setEnabled(true);
+	m_urlaction->setEnabled(true);
 	m_state = LoggedIn;
 	updateLabel();
-	message(tr("Logged in!"));
-	if(_netstats && _netstats->isVisible()) {
-		_netstats->setCurrentLag(_lag);
+	if(m_netstats && m_netstats->isVisible()) {
+		m_netstats->setCurrentLag(m_lag);
 	}
 }
 
@@ -173,12 +181,14 @@ void NetStatus::setRoomcode(const QString &roomcode)
 	updateLabel();
 }
 
-void NetStatus::setSecurityLevel(net::Server::Security level, const QSslCertificate &certificate)
+void NetStatus::setSecurityLevel(
+	net::Server::Security level, const QSslCertificate &certificate)
 {
 	QString iconname;
 	QString tooltip;
 	switch(level) {
-	case net::Server::NO_SECURITY: break;
+	case net::Server::NO_SECURITY:
+		break;
 	case net::Server::NEW_HOST:
 		iconname = "security-medium";
 		tooltip = tr("A previously unvisited host");
@@ -210,7 +220,6 @@ void NetStatus::hostDisconnecting()
 {
 	m_state = Disconnecting;
 	updateLabel();
-	message(m_label->text());
 }
 
 /**
@@ -227,28 +236,27 @@ void NetStatus::hostDisconnected()
 	m_state = NotConnected;
 	updateLabel();
 
-	_urlaction->setEnabled(false);
-	_copyaction->setEnabled(false);
-	_discoverIp->setVisible(false);
+	m_urlaction->setEnabled(false);
+	m_copyaction->setEnabled(false);
+	m_discoverIp->setVisible(false);
 
-	message(tr("Disconnected"));
 	setSecurityLevel(net::Server::NO_SECURITY, QSslCertificate());
 
-	if(_netstats)
-		_netstats->setDisconnected();
+	if(m_netstats)
+		m_netstats->setDisconnected();
 }
 
 void NetStatus::bytesReceived(int count)
 {
-	_recvbytes += count;
-	if(_netstats && _netstats->isVisible()) {
-		_netstats->setRecvBytes(_recvbytes);
+	m_recvbytes += count;
+	if(m_netstats && m_netstats->isVisible()) {
+		m_netstats->setRecvBytes(m_recvbytes);
 	}
 }
 
 void NetStatus::setCatchupProgress(int progress)
 {
-	if(progress<100) {
+	if(progress < 100) {
 		m_download->show();
 		m_download->setValue(progress);
 	} else {
@@ -274,18 +282,18 @@ void NetStatus::hideDownloadProgress()
 
 void NetStatus::bytesSent(int count)
 {
-	_sentbytes += count;
+	m_sentbytes += count;
 
-	if(_netstats && _netstats->isVisible()) {
-		_netstats->setSentBytes(_recvbytes);
+	if(m_netstats && m_netstats->isVisible()) {
+		m_netstats->setSentBytes(m_recvbytes);
 	}
 }
 
 void NetStatus::lagMeasured(qint64 lag)
 {
-	_lag = lag;
-	if(_netstats && _netstats->isVisible()) {
-		_netstats->setCurrentLag(lag);
+	m_lag = lag;
+	if(m_netstats && m_netstats->isVisible()) {
+		m_netstats->setCurrentLag(lag);
 	}
 }
 
@@ -312,14 +320,14 @@ void NetStatus::copyUrl()
 void NetStatus::discoverAddress()
 {
 	WhatIsMyIp::instance()->discoverMyIp();
-	_discoverIp->setEnabled(false);
+	m_discoverIp->setEnabled(false);
 }
 
 void NetStatus::externalIpDiscovered(const QString &ip)
 {
 	// Only update IP if solicited
-	if(_discoverIp->isVisible()) {
-		_discoverIp->setEnabled(false);
+	if(m_discoverIp->isVisible()) {
+		m_discoverIp->setEnabled(false);
 
 		int port = m_sessionUrl.port();
 		m_address = port <= 0 ? ip : QStringLiteral("%1:%2").arg(ip).arg(port);
@@ -341,7 +349,7 @@ void NetStatus::externalIpDiscovered(const QString &ip)
 QString NetStatus::fullAddress() const
 {
 	QString addr;
-	if(m_port>0)
+	if(m_port > 0)
 		addr = QString("%1:%2").arg(m_address).arg(m_port);
 	else
 		addr = m_address;
@@ -349,24 +357,19 @@ QString NetStatus::fullAddress() const
 	return addr;
 }
 
-void NetStatus::kicked(const QString& user)
+void NetStatus::showMessage(const QString &msg)
 {
-	message(tr("You have been kicked by %1").arg(user.toHtmlEscaped()));
-}
-
-void NetStatus::message(const QString &msg)
-{
-	if(!m_notificationsMuted) {
-		m_popup->showMessage(
-			mapToGlobal(m_label->pos() + QPoint(m_label->width() / 2, 2)), msg);
-	}
+	m_popup->showMessage(
+		mapToGlobal(m_label->pos() + QPoint(m_label->width() / 2, 2)), msg);
 }
 
 void NetStatus::updateLabel()
 {
 	QString txt;
 	switch(m_state) {
-	case NotConnected: txt = tr("not connected"); break;
+	case NotConnected:
+		txt = tr("not connected");
+		break;
 	case Connecting:
 		if(m_hideServer)
 			txt = tr("Connecting...");
@@ -381,7 +384,9 @@ void NetStatus::updateLabel()
 		else
 			txt = tr("Room: %1").arg(m_roomcode);
 		break;
-	case Disconnecting: txt = tr("Logging out..."); break;
+	case Disconnecting:
+		txt = tr("Logging out...");
+		break;
 	}
 	m_label->setText(txt);
 }
@@ -390,25 +395,26 @@ void NetStatus::showCertificate()
 {
 	if(!m_certificate)
 		return;
-	dialogs::CertificateView *certdlg = new dialogs::CertificateView(m_address, *m_certificate, parentWidget());
+	dialogs::CertificateView *certdlg =
+		new dialogs::CertificateView(m_address, *m_certificate, parentWidget());
 	certdlg->setAttribute(Qt::WA_DeleteOnClose);
 	certdlg->show();
 }
 
 void NetStatus::showNetStats()
 {
-	if(!_netstats) {
-		_netstats = new dialogs::NetStats(this);
-		_netstats->setWindowFlags(Qt::Tool);
-		_netstats->setAttribute(Qt::WA_DeleteOnClose);
+	if(!m_netstats) {
+		m_netstats = new dialogs::NetStats(this);
+		m_netstats->setWindowFlags(Qt::Tool);
+		m_netstats->setAttribute(Qt::WA_DeleteOnClose);
 	}
-	_netstats->setRecvBytes(_recvbytes);
-	_netstats->setSentBytes(_sentbytes);
+	m_netstats->setRecvBytes(m_recvbytes);
+	m_netstats->setSentBytes(m_sentbytes);
 	if(!m_address.isEmpty()) {
-		_netstats->setCurrentLag(_lag);
+		m_netstats->setCurrentLag(m_lag);
 	}
-	_netstats->updateMemoryUsage();
-	_netstats->show();
+	m_netstats->updateMemoryUsage();
+	m_netstats->show();
 }
 
 void NetStatus::showCGNAlert()
@@ -417,11 +423,11 @@ void NetStatus::showCGNAlert()
 
 	if(!settings.ignoreCarrierGradeNat()) {
 		QMessageBox box(
-			QMessageBox::Warning,
-			tr("Notice"),
-			tr("Your Internet Service Provider is using Carrier Grade NAT. This makes it impossible for others to connect to you directly. See Drawpile's help page for workarounds."),
-			QMessageBox::Ok
-		);
+			QMessageBox::Warning, tr("Notice"),
+			tr("Your Internet Service Provider is using Carrier Grade NAT. "
+			   "This makes it impossible for others to connect to you "
+			   "directly. See Drawpile's help page for workarounds."),
+			QMessageBox::Ok);
 
 		box.setCheckBox(new QCheckBox(tr("Don't show this again")));
 		box.exec();
@@ -431,4 +437,3 @@ void NetStatus::showCGNAlert()
 }
 
 }
-

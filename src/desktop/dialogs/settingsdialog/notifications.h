@@ -25,7 +25,8 @@ protected:
 	setUp(desktop::settings::Settings &settings, QVBoxLayout *layout) override;
 
 private:
-	void initSounds(desktop::settings::Settings &settings, QFormLayout *form);
+	void initGrid(desktop::settings::Settings &settings, QVBoxLayout *layout);
+	void initOptions(desktop::settings::Settings &settings, QFormLayout *form);
 };
 
 } // namespace settingsdialog

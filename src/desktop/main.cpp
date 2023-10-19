@@ -46,6 +46,7 @@
 
 DrawpileApp::DrawpileApp(int &argc, char **argv)
 	: QApplication(argc, argv)
+	, m_notifications(new notification::Notifications(this))
 	, m_originalSystemStyle{compat::styleName(*style())}
 	, m_originalSystemPalette{style()->standardPalette()}
 {

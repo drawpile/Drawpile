@@ -443,12 +443,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_doc->client(), SIGNAL(bytesReceived(int)), m_netstatus, SLOT(bytesReceived(int)));
 	connect(m_doc->client(), &net::Client::bytesSent, m_netstatus, &widgets::NetStatus::bytesSent);
 	connect(m_doc->client(), &net::Client::lagMeasured, m_netstatus, &widgets::NetStatus::lagMeasured);
-	connect(m_doc->client(), &net::Client::youWereKicked, m_netstatus, &widgets::NetStatus::kicked);
-	connect(m_doc->client(), &net::Client::serverMessage, [=](const QString &message, bool alert) {
-		if (alert && m_chatbox->isCollapsed()) {
-			m_netstatus->message(message);
-		}
-	});
 
 	connect(&dpApp(), &DrawpileApp::setDockTitleBarsHidden, this, &MainWindow::setDockTitleBarsHidden);
 	connect(&dpApp(), &DrawpileApp::focusCanvas, this, [this] {
@@ -536,10 +530,6 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	connect(canvas->paintEngine(), &canvas::PaintEngine::undoDepthLimitSet, this, &MainWindow::onUndoDepthLimitSet);
 
 	connect(canvas, &canvas::CanvasModel::chatMessageReceived, this, [this]() {
-		if(dpApp().settings().notificationChat() && !m_notificationsMuted) {
-			// Demand attention if the window isn't focused.
-			QApplication::alert(this);
-		}
 		// Show a "new message" indicator when the chatbox is collapsed
 		const auto sizes = m_splitter->sizes();
 		if(sizes.length() > 1 && sizes.at(1)==0)
@@ -1248,6 +1238,11 @@ dialogs::StartDialog *MainWindow::showStartDialog()
 	return dlg;
 }
 
+void MainWindow::showPopupMessage(const QString &message)
+{
+	m_netstatus->showMessage(message);
+}
+
 void MainWindow::connectStartDialog(dialogs::StartDialog *dlg)
 {
 	static constexpr char key[] = "startdialogconnections";
@@ -1819,7 +1814,7 @@ void MainWindow::showBrushSettingsDialog()
  */
 dialogs::SettingsDialog *MainWindow::showSettings()
 {
-	dialogs::SettingsDialog *dlg = new dialogs::SettingsDialog;
+	dialogs::SettingsDialog *dlg = new dialogs::SettingsDialog(this);
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 	utils::showWindow(dlg);
 	return dlg;
@@ -2172,10 +2167,12 @@ void MainWindow::onServerDisconnected(const QString &message, const QString &err
 	}
 	// If logged in but disconnected unexpectedly, show notification bar
 	else if(m_doc->client()->isLoggedIn() && !localDisconnect) {
-		m_view->showDisconnectedWarning(
-			message.isEmpty()
-			? tr("You've been disconnected from the session.")
-			: tr("Disconnected: %1").arg(message));
+		QString notif = message.isEmpty()
+				? tr("You've been disconnected from the session.")
+				: tr("Disconnected: %1").arg(message);
+		m_view->showDisconnectedWarning(notif);
+		dpApp().notifications()->trigger(
+			this, notification::Event::Disconnect, notif);
 	}
 }
 
@@ -2233,9 +2230,11 @@ void MainWindow::updateLockWidget()
 
 	if(!m_notificationsMuted) {
 		if(sessionLocked && !m_wasSessionLocked) {
-			notification::playSound(notification::Event::LOCKED);
+			dpApp().notifications()->trigger(
+				this, notification::Event::Locked, tr("Canvas locked"));
 		} else if(!sessionLocked && m_wasSessionLocked) {
-			notification::playSound(notification::Event::UNLOCKED);
+			dpApp().notifications()->trigger(
+				this, notification::Event::Unlocked, tr("Canvas unlocked"));
 		}
 	}
 	m_wasSessionLocked = sessionLocked;
@@ -2555,7 +2554,6 @@ void MainWindow::handleToggleAction(drawingboard::ToggleItem::Action action)
 void MainWindow::setNotificationsMuted(bool muted)
 {
 	m_notificationsMuted = muted;
-	m_netstatus->setNotificationsMuted(muted);
 }
 
 /**

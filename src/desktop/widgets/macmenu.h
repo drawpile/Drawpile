@@ -34,7 +34,7 @@ public slots:
 
 private slots:
 	void openRecent(QAction *action);
-
+	void showSettings();
 	void winMinimize();
 	void winSelect(QAction *a);
 	void updateWinMenu();

@@ -1,21 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #ifndef NETSTATUS_H
 #define NETSTATUS_H
-
 #include "libclient/net/server.h"
-
-#include <QWidget>
-#include <QUrl>
 #include <QPointer>
 #include <QSslCertificate>
+#include <QUrl>
+#include <QWidget>
 
 class QLabel;
 class QTimer;
 class QProgressBar;
 
 namespace dialogs {
-	class NetStats;
+class NetStats;
 }
 
 namespace widgets {
@@ -27,20 +24,22 @@ class PopupMessage;
  * This widget displays the current status of the connection with the server
  * and the address of the host.
  */
-class NetStatus final : public QWidget
-{
-Q_OBJECT
+class NetStatus final : public QWidget {
+	Q_OBJECT
 public:
 	NetStatus(QWidget *parent);
 
-	void setSecurityLevel(net::Server::Security level, const QSslCertificate &certificate);
+	void setSecurityLevel(
+		net::Server::Security level, const QSslCertificate &certificate);
 
 	bool isLocalHost() const { return m_isLocalHost; }
 	bool haveRemoteAddress() const { return m_haveRemoteAddress; }
 	const QUrl &sessionUrl() const { return m_sessionUrl; }
-	QString joinPassword() const { return m_haveJoinPassword ? m_joinPassword : QString{}; }
 
-	void setNotificationsMuted(bool muted) { m_notificationsMuted = muted; }
+	QString joinPassword() const
+	{
+		return m_haveJoinPassword ? m_joinPassword : QString{};
+	}
 
 signals:
 	void remoteAddressDiscovered();
@@ -48,7 +47,7 @@ signals:
 public slots:
 	void setHaveJoinPassword(bool haveJoinPassword);
 	void setJoinPassword(const QString &joinPassword);
-	void connectingToHost(const QString& address, int port);
+	void connectingToHost(const QString &address, int port);
 	void loggedIn(const QUrl &sessionUrl, const QString &joinPassword);
 	void hostDisconnecting();
 	void hostDisconnected();
@@ -69,12 +68,9 @@ public slots:
 	//! Download over, hide the progress bar
 	void hideDownloadProgress();
 
-	//! This user was kicked off the session
-	void kicked(const QString& user);
-
 	void copyAddress();
 	void copyUrl();
-	void message(const QString &msg);
+	void showMessage(const QString &msg);
 
 	void discoverAddress();
 
@@ -92,7 +88,7 @@ private:
 
 	QString fullAddress() const;
 
-	QPointer<dialogs::NetStats> _netstats;
+	QPointer<dialogs::NetStats> m_netstats;
 	QProgressBar *m_download;
 
 	QLabel *m_label, *m_security;
@@ -108,18 +104,15 @@ private:
 	bool m_isLocalHost;
 	bool m_haveRemoteAddress;
 
-	QAction *_copyaction;
-	QAction *_urlaction;
-	QAction *_discoverIp;
+	QAction *m_copyaction;
+	QAction *m_urlaction;
+	QAction *m_discoverIp;
 
-	quint64 _sentbytes, _recvbytes, _lag;
+	quint64 m_sentbytes, m_recvbytes, m_lag;
 
 	QScopedPointer<const QSslCertificate> m_certificate;
-
-	bool m_notificationsMuted;
 };
 
 }
 
 #endif
-

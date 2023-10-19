@@ -65,33 +65,38 @@ void Client::connectToServer(
 		server, &TcpServer::gracefullyDisconnecting, this,
 		[this](
 			MessageQueue::GracefulDisconnect reason, const QString &message) {
-			if(reason == MessageQueue::GracefulDisconnect::Kick) {
-				emit youWereKicked(message);
-				return;
-			}
-
 			QString chat;
 			switch(reason) {
 			case MessageQueue::GracefulDisconnect::Kick:
-				emit youWereKicked(message);
-				return;
+				if(message.isEmpty()) {
+					chat = tr("You have been kicked.");
+				} else {
+					chat = tr("You have been kicked by %1.").arg(message);
+				}
+				break;
 			case MessageQueue::GracefulDisconnect::Error:
-				chat = tr("A server error occurred!");
+				if(message.isEmpty()) {
+					chat = tr("A server error occurred.");
+				} else {
+					chat = tr("A server error occurred: %1").arg(message);
+				}
 				break;
 			case MessageQueue::GracefulDisconnect::Shutdown:
 				if(message.isEmpty()) {
-					chat = tr("The server is shutting down!");
+					chat = tr("The server is shutting down.");
 				} else {
-					chat = tr("The session has been shut down!");
+					chat =
+						tr("The session has been shut down: %1").arg(message);
 				}
 				break;
 			default:
-				chat = "Unknown error";
+				if(message.isEmpty()) {
+					chat = tr("Disconnected.");
+				} else {
+					chat = tr("Disconnected: %1").arg(message);
+				}
+				break;
 			}
-
-			if(!message.isEmpty())
-				chat = QString("%1 (%2)").arg(chat, message);
-
 			emit serverMessage(chat, true);
 		});
 

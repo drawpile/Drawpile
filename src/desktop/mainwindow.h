@@ -104,6 +104,10 @@ public:
 
 	dialogs::StartDialog *showStartDialog();
 
+	void showPopupMessage(const QString &message);
+
+	bool notificationsMuted() const { return m_notificationsMuted; }
+
 signals:
 	void hostSessionEnabled(bool enabled);
 	void windowReplacementFailed(MainWindow *win);
@@ -121,7 +125,7 @@ public slots:
 	void showFlipbook();
 
 	void showBrushSettingsDialog();
-	static dialogs::SettingsDialog *showSettings();
+	dialogs::SettingsDialog *showSettings();
 	void reportAbuse();
 	void tryToGainOp();
 	void resetSession();

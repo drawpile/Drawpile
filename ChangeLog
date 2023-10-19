@@ -28,6 +28,8 @@ Unreleased Version 2.2.0-pre
  * Feature: Allow exporting images, which saves them without setting the current file or warning about the image being merged together.
  * Feature: Disable selection-dependent menu items (Deselect, Fill Selection etc.) when no selection is present.
  * Feature: Add Roles tab to session settings to allow changing operator and trusted status of registered users not currently online, as well as allowing importing and exporting this list of users. Thanks tincancrab for suggesting.
+ * Feature: In addition to sounds, allow configuring popup bubbles and task bar flashing in notification preferences. Thanks MagicaJaphet and Bluestrings for suggesting.
+ * Feature: Add a notification for unexpected disconnects.
 
 2023-09-30 Version 2.2.0-beta.8
  * Fix: Apply color wheel direction to color dialogs too. Thanks Blozzom for reporting.

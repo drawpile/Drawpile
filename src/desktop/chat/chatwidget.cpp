@@ -562,7 +562,7 @@ void ChatWidget::userJoined(int id, const QString &name)
 			d->scrollChatToEnd(id);
 	}
 
-	playSound(notification::Event::LOGIN);
+	dpApp().notifications()->trigger(this, notification::Event::Login, msg);
 }
 
 void ChatWidget::userParted(int id)
@@ -582,16 +582,7 @@ void ChatWidget::userParted(int id)
 
 	d->announcedUsers.removeAll(id);
 
-	playSound(notification::Event::LOGOUT);
-}
-
-void ChatWidget::kicked(const QString &kickedBy)
-{
-	const bool wasAtEnd = d->isAtEnd();
-	d->publicChat().appendNotification(
-		tr("You have been kicked by %1").arg(kickedBy.toHtmlEscaped()));
-	if(wasAtEnd)
-		d->scrollChatToEnd(0);
+	dpApp().notifications()->trigger(this, notification::Event::Logout, msg);
 }
 
 void ChatWidget::receiveMessage(
@@ -650,8 +641,12 @@ void ChatWidget::receiveMessage(
 		}
 	}
 
-	if(!d->myline->hasFocus() || chatId != d->currentChat || isValidAlert)
-		playSound(notification::Event::CHAT);
+	if(!d->myline->hasFocus() || chatId != d->currentChat || isValidAlert) {
+		dpApp().notifications()->trigger(
+			this, notification::Event::Chat,
+			message.length() < 100 ? message
+								   : message.mid(0, 100) + QStringLiteral("…"));
+	}
 
 	if(wasAtEnd || isValidAlert) {
 		d->scrollChatToEnd(chatId);
@@ -902,13 +897,6 @@ void ChatWidget::resizeEvent(QResizeEvent *)
 {
 	if(d->wasAtEnd) {
 		d->scrollToEnd();
-	}
-}
-
-void ChatWidget::playSound(notification::Event event)
-{
-	if(!d->muteAction->isChecked()) {
-		notification::playSound(event);
 	}
 }
 
