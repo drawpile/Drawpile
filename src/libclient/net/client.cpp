@@ -429,7 +429,7 @@ Client::translateMessage(const QJsonObject &reply, const QString &fallbackKey)
 				return tr("Operator status revoked from %1 by the server.")
 					.arg(target);
 			} else {
-				return tr("Operator status revoked form %1 by %2.")
+				return tr("Operator status revoked from %1 by %2.")
 					.arg(target, by);
 			}
 		} else if(key == net::ServerReply::KEY_RESET_CANCEL) {
