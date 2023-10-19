@@ -3,9 +3,15 @@
 #define NOTIFICATIONS_H
 #include <QHash>
 #include <QObject>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#	include <QUrl>
+#else
+#	include <QMediaContent>
+#endif
 
 class MainWindow;
-class QSoundEffect;
+class QAudioOutput;
+class QMediaPlayer;
 class QWidget;
 
 namespace desktop {
@@ -30,12 +36,20 @@ class Notifications : public QObject {
 public:
 	explicit Notifications(QObject *parent = nullptr);
 
-	void trigger(
-		QWidget *widget, Event event, const QString &message,
-		bool skipMute = false);
+	void preview(QWidget *widget, Event event, const QString &message);
+	void trigger(QWidget *widget, Event event, const QString &message);
 
 private:
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+	using Sound = QUrl;
+#else
+	using Sound = QMediaContent;
+#endif
+
 	static constexpr qint64 SOUND_DELAY_MSEC = 1500;
+
+	void notify(
+		QWidget *widget, Event event, const QString &message, bool isPreview);
 
 	static MainWindow *getMainWindow(QWidget *widget);
 
@@ -49,10 +63,17 @@ private:
 	isFlashEnabled(const desktop::settings::Settings &settings, Event event);
 
 	void playSound(Event event, int volume);
-	QSoundEffect *getSound(Event event);
+	Sound getSound(Event event);
+
+	bool isPlayerAvailable();
+	static bool isSoundValid(const Sound &sound);
 
 	qint64 m_lastSoundMsec;
-	QHash<int, QSoundEffect *> m_sounds;
+	QHash<int, Sound> m_sounds;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+	QAudioOutput *m_audioOutput;
+#endif
+	QMediaPlayer *m_player;
 };
 
 }

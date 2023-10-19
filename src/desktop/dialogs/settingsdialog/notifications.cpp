@@ -124,7 +124,7 @@ void Notifications::initGrid(
 
 		connect(
 			preview, &QToolButton::clicked, [this, text = text, event = event] {
-				dpApp().notifications()->trigger(this, event, text, true);
+				dpApp().notifications()->preview(this, event, text);
 			});
 
 		++row;

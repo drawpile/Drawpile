@@ -30,6 +30,8 @@ Unreleased Version 2.2.0-pre
  * Feature: Add Roles tab to session settings to allow changing operator and trusted status of registered users not currently online, as well as allowing importing and exporting this list of users. Thanks tincancrab for suggesting.
  * Feature: In addition to sounds, allow configuring popup bubbles and task bar flashing in notification preferences. Thanks MagicaJaphet and Bluestrings for suggesting.
  * Feature: Add a notification for unexpected disconnects.
+ * Fix: Play back sounds in a different way that should fix the issues with chugging or wrong output devices that some systems have. Thanks Blozzom and Snover for reporting.
+ * Feature: Allow configuring notifications for private messages separately from regular chat messages. Thanks leandro2222 for suggesting.
 
 2023-09-30 Version 2.2.0-beta.8
  * Fix: Apply color wheel direction to color dialogs too. Thanks Blozzom for reporting.

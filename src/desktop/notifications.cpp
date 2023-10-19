@@ -3,43 +3,64 @@
 #include "desktop/main.h"
 #include "desktop/mainwindow.h"
 #include "libshared/util/paths.h"
+#include <QAudioOutput>
 #include <QDateTime>
 #include <QDebug>
 #include <QDir>
 #include <QFileInfo>
 #include <QMap>
-#include <QSoundEffect>
+#include <QMediaPlayer>
 
 namespace notification {
 
 Notifications::Notifications(QObject *parent)
 	: QObject(parent)
 	, m_lastSoundMsec(QDateTime::currentMSecsSinceEpoch())
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+	, m_audioOutput(new QAudioOutput(this))
+#endif
+	, m_player(new QMediaPlayer(this))
 {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+	m_player->setAudioOutput(m_audioOutput);
+#endif
+}
+
+void Notifications::preview(
+	QWidget *widget, Event event, const QString &message)
+{
+	notify(widget, event, message, true);
 }
 
 void Notifications::trigger(
-	QWidget *widget, Event event, const QString &message, bool skipMute)
+	QWidget *widget, Event event, const QString &message)
+{
+	notify(widget, event, message, false);
+}
+
+void Notifications::notify(
+	QWidget *widget, Event event, const QString &message, bool isPreview)
 {
 	MainWindow *mw = getMainWindow(widget);
 	if(!mw) {
 		qWarning("No main window found for event %d", int(event));
-	} else if(!skipMute && mw->notificationsMuted()) {
+	} else if(!isPreview && mw->notificationsMuted()) {
 		return;
 	}
 
 	qint64 now = QDateTime::currentMSecsSinceEpoch();
 	desktop::settings::Settings &settings = dpApp().settings();
 	int volume;
-	if(now - m_lastSoundMsec >= SOUND_DELAY_MSEC) {
+	if(isPreview || now - m_lastSoundMsec >= SOUND_DELAY_MSEC) {
 		volume = settings.soundVolume();
 		m_lastSoundMsec = now;
 	} else {
 		volume = 0;
 	}
 
-	if(volume > 0 && isSoundEnabled(settings, event)) {
-		playSound(event, volume);
+	if(volume > 0 && isSoundEnabled(settings, event) &&
+	   (isPreview || isPlayerAvailable())) {
+		playSound(event, qBound(0, volume, 100));
 	}
 
 	if(mw && isPopupEnabled(settings, event)) {
@@ -125,14 +146,22 @@ bool Notifications::isFlashEnabled(
 
 void Notifications::playSound(Event event, int volume)
 {
-	QSoundEffect *sound = getSound(event);
-	if(sound && !sound->isPlaying()) {
-		sound->setVolume(float(qBound(0, volume, 100)) / 100.0f);
-		sound->play();
+	Sound sound = getSound(event);
+	if(isSoundValid(sound)) {
+		m_player->stop();
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+		m_player->setSource(sound);
+		m_audioOutput->setVolume(qreal(volume) / 100.0);
+#else
+		m_player->setMedia(sound);
+		m_player->setVolume(volume);
+#endif
+		m_player->setPosition(0);
+		m_player->play();
 	}
 }
 
-QSoundEffect *Notifications::getSound(Event event)
+Notifications::Sound Notifications::getSound(Event event)
 {
 	int key = int(event);
 	if(m_sounds.contains(key)) {
@@ -162,22 +191,39 @@ QSoundEffect *Notifications::getSound(Event event)
 
 		if(filename.isEmpty()) {
 			qWarning("Sound effect %d not defined", int(event));
-			m_sounds[key] = nullptr;
-			return nullptr;
+			m_sounds[key] = Sound();
+			return Sound();
 		}
 
 		QString path = utils::paths::locateDataFile(filename);
 		if(path.isEmpty()) {
 			qWarning("Sound file '%s' not found", qUtf8Printable(filename));
-			m_sounds[key] = nullptr;
-			return nullptr;
+			m_sounds[key] = Sound();
+			return Sound();
 		}
 
-		QSoundEffect *sound = new QSoundEffect(this);
-		sound->setSource(QUrl::fromLocalFile(path));
+		Sound sound(QUrl::fromLocalFile(path));
 		m_sounds[key] = sound;
 		return sound;
 	}
+}
+
+bool Notifications::isPlayerAvailable()
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+	return m_player->playbackState() != QMediaPlayer::PlayingState;
+#else
+	return m_player->state() != QMediaPlayer::PlayingState;
+#endif
+}
+
+bool Notifications::isSoundValid(const Sound &sound)
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+	return sound.isValid();
+#else
+	return !sound.isNull();
+#endif
 }
 
 }
