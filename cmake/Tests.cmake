@@ -46,6 +46,11 @@ function(add_unit_test prefix name)
 		target_compile_definitions(${target_name} PRIVATE ${ARG_DEFINITIONS})
 	endif()
 
+	if(MSVC)
+		# C4702: unreachable code has trouble with qtestcase.h on Qt6.
+		target_compile_options(${target_name} PRIVATE /wd4702)
+	endif()
+
 	add_test(
 		NAME ${test_name}
 		COMMAND ${target_name}
