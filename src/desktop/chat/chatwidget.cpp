@@ -598,9 +598,13 @@ void ChatWidget::receiveMessage(
 	const int chatId =
 		recipient > 0 ? (recipient == d->myId ? sender : recipient) : 0;
 
+	notification::Event event;
 	if(chatId > 0) {
+		event = notification::Event::PrivateChat;
 		if(!d->ensurePrivateChatExists(chatId, this))
 			return;
+	} else {
+		event = notification::Event::Chat;
 	}
 
 	const QString safetext =
@@ -643,7 +647,7 @@ void ChatWidget::receiveMessage(
 
 	if(!d->myline->hasFocus() || chatId != d->currentChat || isValidAlert) {
 		dpApp().notifications()->trigger(
-			this, notification::Event::Chat,
+			this, event,
 			message.length() < 100 ? message
 								   : message.mid(0, 100) + QStringLiteral("…"));
 	}

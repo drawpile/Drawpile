@@ -87,6 +87,8 @@ bool Notifications::isSoundEnabled(
 	switch(event) {
 	case Event::Chat:
 		return settings.notifSoundChat();
+	case Event::PrivateChat:
+		return settings.notifSoundPrivateChat();
 	case Event::Locked:
 		return settings.notifSoundLock();
 	case Event::Unlocked:
@@ -108,6 +110,8 @@ bool Notifications::isPopupEnabled(
 	switch(event) {
 	case Event::Chat:
 		return settings.notifPopupChat();
+	case Event::PrivateChat:
+		return settings.notifPopupPrivateChat();
 	case Event::Locked:
 		return settings.notifPopupLock();
 	case Event::Unlocked:
@@ -129,6 +133,8 @@ bool Notifications::isFlashEnabled(
 	switch(event) {
 	case Event::Chat:
 		return settings.notifFlashChat();
+	case Event::PrivateChat:
+		return settings.notifFlashPrivateChat();
 	case Event::Locked:
 		return settings.notifFlashLock();
 	case Event::Unlocked:
@@ -163,13 +169,14 @@ void Notifications::playSound(Event event, int volume)
 
 Notifications::Sound Notifications::getSound(Event event)
 {
-	int key = int(event);
+	int key = int(event == Event::PrivateChat ? Event::Chat : event);
 	if(m_sounds.contains(key)) {
 		return m_sounds[key];
 	} else {
 		QString filename;
 		switch(event) {
 		case Event::Chat:
+		case Event::PrivateChat:
 			filename = QStringLiteral("sounds/chat.wav");
 			break;
 		case Event::Locked:

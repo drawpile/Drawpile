@@ -23,12 +23,13 @@ class Settings;
 namespace notification {
 
 enum class Event : int {
-	Chat,		// Chat message received
-	Locked,		// Canvas was locked
-	Unlocked,	// ...unlocked
-	Login,		// A user just logged in
-	Logout,		// ...logged out
-	Disconnect, // Disconnected from a session
+	Chat,		 // Chat message received
+	PrivateChat, // ...directed specifically at this user
+	Locked,		 // Canvas was locked
+	Unlocked,	 // ...unlocked
+	Login,		 // A user just logged in
+	Logout,		 // ...logged out
+	Disconnect,	 // Disconnected from a session
 };
 
 class Notifications : public QObject {
