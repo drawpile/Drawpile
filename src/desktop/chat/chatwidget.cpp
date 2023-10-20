@@ -734,7 +734,7 @@ void ChatWidget::sendMessage(QString chatMessage)
 			clear();
 			return;
 
-		} else if(cmd.at(0) == '!' && d->currentChat == 0) {
+		} else if(cmd.startsWith('!') && d->currentChat == 0) {
 			if(!d->userlist || !d->userlist->isOperator(d->myId)) {
 				systemMessage(
 					tr("/!: only operators are allowed to send shouts."));
