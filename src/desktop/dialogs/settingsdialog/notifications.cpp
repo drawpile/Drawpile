@@ -9,6 +9,7 @@
 #include <QCheckBox>
 #include <QFormLayout>
 #include <QGridLayout>
+#include <QPlainTextEdit>
 #include <QToolButton>
 #include <QVBoxLayout>
 
@@ -145,6 +146,25 @@ void Notifications::initOptions(
 	volume->setSuffix(tr("%"));
 	settings.bindSoundVolume(volume);
 	form->addRow(tr("Sound volume:"), volume);
+
+	QCheckBox *mentionEnabled =
+		new QCheckBox(tr("Use private message notification for mentions"));
+	settings.bindMentionEnabled(mentionEnabled);
+	form->addRow(tr("Mentions:"), mentionEnabled);
+
+	QPlainTextEdit *triggerList = new QPlainTextEdit;
+	triggerList->setFixedHeight(100);
+	triggerList->setPlaceholderText(
+		tr("Additional triggers go here, one per line."));
+	settings.bindMentionTriggerList(triggerList);
+	settings.bindMentionEnabled(triggerList, &QWidget::setEnabled);
+	form->addRow(nullptr, triggerList);
+	form->addRow(
+		nullptr, utils::formNote(
+					 tr("Your username always counts as a mention. You can "
+						"add additional trigger words or phrases that you "
+						"want to count as well, such as other nicknames. One "
+						"word or phrase per line, case doesn't matter.")));
 }
 
 } // namespace settingsdialog

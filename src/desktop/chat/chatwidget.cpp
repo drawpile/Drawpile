@@ -104,6 +104,11 @@ struct ChatWidget::Private {
 	bool compactMode = COMPACT_ONLY;
 	bool isAttached = true;
 	bool wasAtEnd = true;
+	bool mentionEnabled = false;
+	bool haveMentionUsernameRe = false;
+	QRegularExpression mentionUsernameRe;
+	bool haveMentionTriggerRe = false;
+	QRegularExpression mentionTriggerRe;
 
 	QString usernameSpan(int userId);
 
@@ -229,7 +234,8 @@ ChatWidget::ChatWidget(QWidget *parent)
 
 	setPreserveMode(false);
 
-	dpApp().settings().bindCompactChat(this, [this](bool compact) {
+	desktop::settings::Settings &settings = dpApp().settings();
+	settings.bindCompactChat(this, [this](bool compact) {
 		if(!COMPACT_ONLY) {
 			d->compactMode = compact;
 		}
@@ -238,6 +244,8 @@ ChatWidget::ChatWidget(QWidget *parent)
 			d->compactAction->setChecked(compact);
 		}
 	});
+	settings.bindMentionEnabled(this, &ChatWidget::setMentionEnabled);
+	settings.bindMentionTriggerList(this, &ChatWidget::setMentionTriggerList);
 }
 
 ChatWidget::~ChatWidget()
@@ -548,6 +556,10 @@ void ChatWidget::userJoined(int id, const QString &name)
 	if(d->announcedUsers.contains(id))
 		return;
 
+	if(d->userlist && id == d->myId) {
+		setMentionUsername(d->userlist->getUsername(id));
+	}
+
 	d->announcedUsers << id;
 	const QString msg = tr("%1 joined the session").arg(d->usernameSpan(id));
 	const bool wasAtEnd = d->isAtEnd();
@@ -603,6 +615,8 @@ void ChatWidget::receiveMessage(
 		event = notification::Event::PrivateChat;
 		if(!d->ensurePrivateChatExists(chatId, this))
 			return;
+	} else if(isMention(message)) {
+		event = notification::Event::PrivateChat;
 	} else {
 		event = notification::Event::Chat;
 	}
@@ -901,6 +915,64 @@ void ChatWidget::resizeEvent(QResizeEvent *)
 {
 	if(d->wasAtEnd) {
 		d->scrollToEnd();
+	}
+}
+
+void ChatWidget::setMentionEnabled(bool enabled)
+{
+	d->mentionEnabled = enabled;
+}
+
+void ChatWidget::setMentionTriggerList(const QString &triggerList)
+{
+	QStringList patterns;
+	for(const QString &line : triggerList.split('\n')) {
+		QString pattern = makeMentionPattern(line);
+		if(!pattern.isEmpty()) {
+			patterns.append(pattern);
+		}
+	}
+
+	d->haveMentionTriggerRe = !patterns.isEmpty();
+	if(d->haveMentionTriggerRe) {
+		d->mentionTriggerRe = QRegularExpression(
+			patterns.join(QStringLiteral("|")),
+			QRegularExpression::CaseInsensitiveOption);
+	}
+}
+
+void ChatWidget::setMentionUsername(const QString &username)
+{
+	QString pattern = makeMentionPattern(username);
+	d->haveMentionUsernameRe = !pattern.isEmpty();
+	if(d->haveMentionUsernameRe) {
+		d->mentionUsernameRe = QRegularExpression(
+			pattern, QRegularExpression::CaseInsensitiveOption);
+	}
+}
+
+bool ChatWidget::isMention(const QString &message)
+{
+	return d->mentionEnabled &&
+		   ((d->haveMentionUsernameRe &&
+			 d->mentionUsernameRe.match(message).hasMatch()) ||
+			(d->haveMentionTriggerRe &&
+			 d->mentionTriggerRe.match(message).hasMatch()));
+}
+
+QString ChatWidget::makeMentionPattern(const QString &trigger)
+{
+	QString trimmed = trigger.trimmed();
+	if(trimmed.isEmpty()) {
+		return QString();
+	} else {
+		static QRegularExpression whitespaceRe(QStringLiteral("\\s+"));
+		QStringList pieces;
+		for(const QString &s : trimmed.split(whitespaceRe)) {
+			pieces.append(QRegularExpression::escape(s));
+		}
+		return QStringLiteral("\\b%1\\b")
+			.arg(pieces.join(QStringLiteral("\\s+")));
 	}
 }
 

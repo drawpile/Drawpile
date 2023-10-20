@@ -78,6 +78,8 @@ private slots:
 	void contextMenuAboutToShow();
 	void setCompactMode(bool compact);
 	void attach();
+	void setMentionEnabled(bool enabled);
+	void setMentionTriggerList(const QString &triggerList);
 
 signals:
 	void message(const net::Message &msg);
@@ -96,6 +98,10 @@ private:
 	static constexpr bool COMPACT_ONLY = false;
 	static constexpr bool ALLOW_DETACH = true;
 #endif
+
+	void setMentionUsername(const QString &username);
+	bool isMention(const QString &message);
+	static QString makeMentionPattern(const QString &trigger);
 
 	struct Private;
 	Private *d;

@@ -95,6 +95,8 @@ SETTING(lastWindowSize            , LastWindowSize            , "window/size"   
 SETTING(lastWindowState           , LastWindowState           , "window/state"                          , QByteArray())
 SETTING(lastWindowViewState       , LastWindowViewState       , "window/viewstate"                      , QByteArray())
 SETTING(layouts                   , Layouts                   , "layouts"                               , QVector<QVariantMap>())
+SETTING(mentionEnabled            , MentionEnabled            , "settings/mentions/enabled"             , true)
+SETTING(mentionTriggerList        , MentionTriggerList        , "settings/mentions/triggerlist"         , QString())
 SETTING(navigatorRealtime         , NavigatorRealtime         , "navigator/realtime"                    , false)
 SETTING(navigatorShowCursors      , NavigatorShowCursors      , "navigator/showcursors"                 , true)
 SETTING_GETSET(newCanvasBackColor , NewCanvasBackColor        , "history/newcolor"                      , (QColor(Qt::white)),

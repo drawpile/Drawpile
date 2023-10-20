@@ -31,7 +31,7 @@ Unreleased Version 2.2.0-pre
  * Feature: In addition to sounds, allow configuring popup bubbles and task bar flashing in notification preferences. Thanks MagicaJaphet and Bluestrings for suggesting.
  * Feature: Add a notification for unexpected disconnects.
  * Fix: Play back sounds in a different way that should fix the issues with chugging or wrong output devices that some systems have. Thanks Blozzom and Snover for reporting.
- * Feature: Allow configuring notifications for private messages separately from regular chat messages. Thanks leandro2222 for suggesting.
+ * Feature: Allow configuring notifications for private messages separately from regular chat messages. Mentions can be configured to use these notifications, allowing silencing of regular chat, but still being notified or stuff directed at you. Thanks leandro2222 for suggesting.
  * Fix: Replace the terrifying notification sound effects with stuff from KDE's Ocean Sound Theme.
 
 2023-09-30 Version 2.2.0-beta.8
