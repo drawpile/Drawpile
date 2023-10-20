@@ -643,7 +643,8 @@ void Document::autosaveNow()
 
 	Q_ASSERT(utils::isWritableFormat(currentFilename()));
 
-	saveCanvasState(m_canvas->paintEngine()->viewCanvasState(), true);
+	saveCanvasState(
+		m_canvas->paintEngine()->viewCanvasState(), true, currentFilename());
 }
 
 void Document::saveCanvasAs(const QString &filename, bool exported)
@@ -659,17 +660,17 @@ void Document::saveCanvasStateAs(
 	if(!exported) {
 		setCurrentFilename(filename);
 	}
-	saveCanvasState(canvasState, isCurrentState);
+	saveCanvasState(canvasState, isCurrentState, filename);
 }
 
 void Document::saveCanvasState(
-	const drawdance::CanvasState &canvasState, bool isCurrentState)
+	const drawdance::CanvasState &canvasState, bool isCurrentState,
+	const QString &filename)
 {
 	Q_ASSERT(!m_saveInProgress);
 	m_saveInProgress = true;
 
-	CanvasSaverRunnable *saver =
-		new CanvasSaverRunnable(canvasState, m_currentFilename);
+	CanvasSaverRunnable *saver = new CanvasSaverRunnable(canvasState, filename);
 	if(isCurrentState) {
 		unmarkDirty();
 	}

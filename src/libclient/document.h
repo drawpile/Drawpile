@@ -283,7 +283,8 @@ private slots:
 
 private:
 	void saveCanvasState(
-		const drawdance::CanvasState &canvasState, bool isCurrentState);
+		const drawdance::CanvasState &canvasState, bool isCurrentState,
+		const QString &filename);
 	void setCurrentFilename(const QString &filename);
 	void setSessionPersistent(bool p);
 	void setSessionClosed(bool closed);
