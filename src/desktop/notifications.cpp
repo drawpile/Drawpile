@@ -169,30 +169,32 @@ void Notifications::playSound(Event event, int volume)
 
 Notifications::Sound Notifications::getSound(Event event)
 {
-	int key = int(event == Event::PrivateChat ? Event::Chat : event);
+	int key = int(event);
 	if(m_sounds.contains(key)) {
 		return m_sounds[key];
 	} else {
 		QString filename;
 		switch(event) {
 		case Event::Chat:
+			filename = QStringLiteral("sounds/notif-chat.wav");
+			break;
 		case Event::PrivateChat:
-			filename = QStringLiteral("sounds/chat.wav");
+			filename = QStringLiteral("sounds/notif-private-chat.wav");
 			break;
 		case Event::Locked:
-			filename = QStringLiteral("sounds/lock.wav");
+			filename = QStringLiteral("sounds/notif-lock.wav");
 			break;
 		case Event::Unlocked:
-			filename = QStringLiteral("sounds/unlock.wav");
+			filename = QStringLiteral("sounds/notif-unlock.wav");
 			break;
 		case Event::Login:
-			filename = QStringLiteral("sounds/login.wav");
+			filename = QStringLiteral("sounds/notif-login.wav");
 			break;
 		case Event::Logout:
-			filename = QStringLiteral("sounds/logout.wav");
+			filename = QStringLiteral("sounds/notif-logout.wav");
 			break;
 		case Event::Disconnect:
-			filename = QStringLiteral("sounds/marker.wav");
+			filename = QStringLiteral("sounds/notif-disconnect.wav");
 			break;
 		}
 

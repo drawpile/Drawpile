@@ -1,8 +1,5 @@
-Notification sounds are based on Create Commons licensed sound effects
-from freesound.org
+Notification sounds are from the KDE Ocean Sound Theme for Plasma.
 
-chat.wav: https://www.freesound.org/people/TheGertz/sounds/235911/
-login/logout.wav: https://www.freesound.org/people/shall555/sounds/72197/
-marker.wav: http://freesound.org/people/joedeshon/sounds/145805/
-lock/unlock.wav: https://www.freesound.org/people/eizzof/sounds/190035/
+All sounds are by Guilherme Marçal Silva <guimarcalsilva@gmail.com>, licensed under CC-BY-SA-4.0.
 
+They have been converted from their original format into mono WAV files.

@@ -139,7 +139,7 @@ SETTING(shortcuts                 , Shortcuts                 , "settings/shortc
 SETTING(showInviteDialogOnHost    , ShowInviteDialogOnHost    , "invites/showdialogonhost"              , true)
 SETTING(showNsfmWarningOnJoin     , ShowNsfmWarningOnJoin     , "pc/shownsfmwarningonjoin"              , true)
 SETTING(showTrayIcon              , ShowTrayIcon              , "ui/trayicon"                           , true)
-SETTING(soundVolume               , SoundVolume               , "notifications/volume"                  , 40)
+SETTING(soundVolume               , SoundVolume               , "notifications/volume"                  , 60)
 SETTING_GETSET(tabletDriver       , TabletDriver              , "settings/input/tabletdriver"           , tabletinput::Mode::KisTabletWinink
 	, &tabletDriver::get, &tabletDriver::set)
 SETTING(tabletEraser              , TabletEraser              , "settings/input/tableteraser"           , true)
