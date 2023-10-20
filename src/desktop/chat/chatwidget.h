@@ -103,6 +103,9 @@ private:
 	bool isMention(const QString &message);
 	static QString makeMentionPattern(const QString &trigger);
 
+	void notifySanitize(notification::Event event, const QString &message);
+	void notify(notification::Event event, const QString &message);
+
 	struct Private;
 	Private *d;
 };

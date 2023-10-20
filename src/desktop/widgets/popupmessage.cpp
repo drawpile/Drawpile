@@ -60,7 +60,7 @@ void PopupMessage::setMessage(const QString &message)
 		cursor.insertBlock();
 	}
 
-	cursor.insertHtml(message);
+	cursor.insertText(message);
 
 	// Force tooltip text color
 	QTextCharFormat fmt;

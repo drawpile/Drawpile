@@ -110,6 +110,7 @@ struct ChatWidget::Private {
 	bool haveMentionTriggerRe = false;
 	QRegularExpression mentionTriggerRe;
 
+	QString usernamePlain(int userId);
 	QString usernameSpan(int userId);
 
 	bool isAtEnd() const
@@ -377,6 +378,12 @@ static QString timestamp()
 		.arg(QDateTime::currentDateTime().toString("HH:mm"));
 }
 
+QString ChatWidget::Private::usernamePlain(int userId)
+{
+	return userlist ? userlist->getUsername(userId)
+					: QStringLiteral("User #%1").arg(userId);
+}
+
 QString ChatWidget::Private::usernameSpan(int userId)
 {
 	const canvas::User user =
@@ -561,8 +568,9 @@ void ChatWidget::userJoined(int id, const QString &name)
 	}
 
 	d->announcedUsers << id;
-	const QString msg = tr("%1 joined the session").arg(d->usernameSpan(id));
-	const bool wasAtEnd = d->isAtEnd();
+	QString fmt = tr("%1 joined the session");
+	QString msg = fmt.arg(d->usernameSpan(id));
+	bool wasAtEnd = d->isAtEnd();
 
 	d->publicChat().appendNotification(msg);
 	if(wasAtEnd)
@@ -574,13 +582,14 @@ void ChatWidget::userJoined(int id, const QString &name)
 			d->scrollChatToEnd(id);
 	}
 
-	dpApp().notifications()->trigger(this, notification::Event::Login, msg);
+	notify(notification::Event::Login, fmt.arg(d->usernamePlain(id)));
 }
 
 void ChatWidget::userParted(int id)
 {
-	QString msg = tr("%1 left the session").arg(d->usernameSpan(id));
-	const bool wasAtEnd = d->isAtEnd();
+	QString fmt = tr("%1 left the session");
+	QString msg = fmt.arg(d->usernameSpan(id));
+	bool wasAtEnd = d->isAtEnd();
 
 	d->publicChat().appendNotification(msg);
 	if(wasAtEnd)
@@ -594,7 +603,7 @@ void ChatWidget::userParted(int id)
 
 	d->announcedUsers.removeAll(id);
 
-	dpApp().notifications()->trigger(this, notification::Event::Logout, msg);
+	notify(notification::Event::Logout, fmt.arg(d->usernamePlain(id)));
 }
 
 void ChatWidget::receiveMessage(
@@ -610,15 +619,8 @@ void ChatWidget::receiveMessage(
 	const int chatId =
 		recipient > 0 ? (recipient == d->myId ? sender : recipient) : 0;
 
-	notification::Event event;
-	if(chatId > 0) {
-		event = notification::Event::PrivateChat;
-		if(!d->ensurePrivateChatExists(chatId, this))
-			return;
-	} else if(isMention(message)) {
-		event = notification::Event::PrivateChat;
-	} else {
-		event = notification::Event::Chat;
+	if(chatId > 0 && !d->ensurePrivateChatExists(chatId, this)) {
+		return;
 	}
 
 	const QString safetext =
@@ -660,10 +662,11 @@ void ChatWidget::receiveMessage(
 	}
 
 	if(!d->myline->hasFocus() || chatId != d->currentChat || isValidAlert) {
-		dpApp().notifications()->trigger(
-			this, event,
-			message.length() < 100 ? message
-								   : message.mid(0, 100) + QStringLiteral("…"));
+		notification::Event event =
+			chatId > 0 || isValidAlert || isValidShout || isMention(message)
+				? notification::Event::PrivateChat
+				: notification::Event::Chat;
+		notifySanitize(event, message);
 	}
 
 	if(wasAtEnd || isValidAlert) {
@@ -692,6 +695,10 @@ void ChatWidget::systemMessage(const QString &message, bool alert)
 	} else {
 		d->publicChat().appendNotification(safetext);
 	}
+
+	notification::Event event =
+		alert ? notification::Event::PrivateChat : notification::Event::Chat;
+	notifySanitize(event, message);
 
 	if(wasAtEnd || alert) {
 		d->scrollChatToEnd(0);
@@ -974,6 +981,31 @@ QString ChatWidget::makeMentionPattern(const QString &trigger)
 		return QStringLiteral("\\b%1\\b")
 			.arg(pieces.join(QStringLiteral("\\s+")));
 	}
+}
+
+void ChatWidget::notifySanitize(
+	notification::Event event, const QString &message)
+{
+	QString clean = message.trimmed();
+	int newlinePos = clean.indexOf('\n');
+	bool truncated = false;
+	if(newlinePos >= 0) {
+		clean.truncate(newlinePos);
+		truncated = true;
+	}
+	if(clean.length() > 100) {
+		clean.truncate(99);
+		truncated = true;
+	}
+	if(truncated) {
+		clean.append(QStringLiteral("…"));
+	}
+	notify(event, clean);
+}
+
+void ChatWidget::notify(notification::Event event, const QString &message)
+{
+	dpApp().notifications()->trigger(this, event, message);
 }
 
 }
