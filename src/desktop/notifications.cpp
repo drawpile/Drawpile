@@ -50,17 +50,16 @@ void Notifications::notify(
 
 	qint64 now = QDateTime::currentMSecsSinceEpoch();
 	desktop::settings::Settings &settings = dpApp().settings();
-	int volume;
-	if(isPreview || now - m_lastSoundMsec >= SOUND_DELAY_MSEC) {
-		volume = settings.soundVolume();
-		m_lastSoundMsec = now;
-	} else {
-		volume = 0;
-	}
-
-	if(volume > 0 && isSoundEnabled(settings, event) &&
-	   (isPreview || isPlayerAvailable())) {
-		playSound(event, qBound(0, volume, 100));
+	bool shouldPlay =
+		isSoundEnabled(settings, event) &&
+		(isPreview || isHighPriority(event) ||
+		 (now - m_lastSoundMsec >= SOUND_DELAY_MSEC && isPlayerAvailable()));
+	if(shouldPlay) {
+		int volume = settings.soundVolume();
+		if(volume > 0) {
+			m_lastSoundMsec = now;
+			playSound(event, qBound(0, volume, 100));
+		}
 	}
 
 	if(mw && isPopupEnabled(settings, event)) {
@@ -233,6 +232,14 @@ bool Notifications::isSoundValid(const Sound &sound)
 #else
 	return !sound.isNull();
 #endif
+}
+
+bool Notifications::isHighPriority(Event event)
+{
+	// There's usually a chat sound played right before the disconnect event,
+	// which would prevent the more important disconnect sound from playing.
+	// So we treat that one as high-priority, making it stop the other sound.
+	return event == Event::Disconnect;
 }
 
 }

@@ -68,6 +68,7 @@ private:
 
 	bool isPlayerAvailable();
 	static bool isSoundValid(const Sound &sound);
+	static bool isHighPriority(Event event);
 
 	qint64 m_lastSoundMsec;
 	QHash<int, Sound> m_sounds;
