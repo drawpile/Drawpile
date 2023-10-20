@@ -8,16 +8,16 @@ use drawdance::{
     DP_channel15_to_8, DP_draw_context_pool_require, DP_free, DP_layer_content_to_upixels8,
     DP_layer_content_to_upixels8_cropped, DP_layer_group_children_noinc,
     DP_layer_list_content_at_noinc, DP_layer_list_group_at_noinc, DP_layer_props_blend_mode,
-    DP_layer_props_children_noinc, DP_layer_props_isolated, DP_layer_props_list_at_noinc,
-    DP_layer_props_list_count, DP_layer_props_opacity, DP_layer_props_title,
-    DP_transient_layer_content_decref, DP_transient_layer_content_new_init, DP_BLEND_MODE_ADD,
-    DP_BLEND_MODE_BURN, DP_BLEND_MODE_COLOR, DP_BLEND_MODE_DARKEN, DP_BLEND_MODE_DIVIDE,
-    DP_BLEND_MODE_DODGE, DP_BLEND_MODE_HARD_LIGHT, DP_BLEND_MODE_HUE, DP_BLEND_MODE_LIGHTEN,
-    DP_BLEND_MODE_LINEAR_BURN, DP_BLEND_MODE_LINEAR_LIGHT, DP_BLEND_MODE_LUMINOSITY,
-    DP_BLEND_MODE_MULTIPLY, DP_BLEND_MODE_NORMAL, DP_BLEND_MODE_OVERLAY, DP_BLEND_MODE_SATURATION,
-    DP_BLEND_MODE_SCREEN, DP_BLEND_MODE_SOFT_LIGHT, DP_BLEND_MODE_SUBTRACT,
-    DP_SAVE_RESULT_INTERNAL_ERROR, DP_SAVE_RESULT_OPEN_ERROR, DP_SAVE_RESULT_SUCCESS,
-    DP_SAVE_RESULT_WRITE_ERROR,
+    DP_layer_props_children_noinc, DP_layer_props_hidden, DP_layer_props_isolated,
+    DP_layer_props_list_at_noinc, DP_layer_props_list_count, DP_layer_props_opacity,
+    DP_layer_props_title, DP_transient_layer_content_decref, DP_transient_layer_content_new_init,
+    DP_BLEND_MODE_ADD, DP_BLEND_MODE_BURN, DP_BLEND_MODE_COLOR, DP_BLEND_MODE_DARKEN,
+    DP_BLEND_MODE_DIVIDE, DP_BLEND_MODE_DODGE, DP_BLEND_MODE_HARD_LIGHT, DP_BLEND_MODE_HUE,
+    DP_BLEND_MODE_LIGHTEN, DP_BLEND_MODE_LINEAR_BURN, DP_BLEND_MODE_LINEAR_LIGHT,
+    DP_BLEND_MODE_LUMINOSITY, DP_BLEND_MODE_MULTIPLY, DP_BLEND_MODE_NORMAL, DP_BLEND_MODE_OVERLAY,
+    DP_BLEND_MODE_SATURATION, DP_BLEND_MODE_SCREEN, DP_BLEND_MODE_SOFT_LIGHT,
+    DP_BLEND_MODE_SUBTRACT, DP_SAVE_RESULT_INTERNAL_ERROR, DP_SAVE_RESULT_OPEN_ERROR,
+    DP_SAVE_RESULT_SUCCESS, DP_SAVE_RESULT_WRITE_ERROR,
 };
 use std::{
     collections::HashMap,
@@ -125,6 +125,7 @@ fn write_layer_info(
     out: &mut Output,
     blend_mode: DP_BlendMode,
     opacity: u8,
+    hidden: bool,
     title: &[u8],
     section: Section,
     isolated: bool,
@@ -147,7 +148,8 @@ fn write_layer_info(
     out.write_bytes(psd_blend_mode)?;
 
     // Opacity, clipping (none), flags, reserved byte.
-    out.write_bytes(&[opacity, 0, section.flags(), 0])?;
+    let flags = if hidden { 0x2 } else { 0x0 };
+    out.write_bytes(&[opacity, 0, flags | section.flags(), 0])?;
 
     // Extra layer data section.
     let section_start = write_preliminary_size_prefix(out)?;
@@ -198,11 +200,13 @@ fn write_layer_props_info(
 ) -> Result<()> {
     let blend_mode = unsafe { DP_layer_props_blend_mode(lp) } as DP_BlendMode;
     let opacity = unsafe { DP_channel15_to_8(DP_layer_props_opacity(lp)) };
+    let hidden = unsafe { DP_layer_props_hidden(lp) };
     if section == Section::Divider {
         write_layer_info(
             out,
             blend_mode,
             opacity,
+            hidden,
             b"</Layer group>",
             section,
             isolated,
@@ -211,7 +215,7 @@ fn write_layer_props_info(
         let mut title_length = 0usize;
         let title_data = unsafe { DP_layer_props_title(lp, &mut title_length) };
         let title = unsafe { from_raw_parts(title_data.cast(), title_length) };
-        write_layer_info(out, blend_mode, opacity, title, section, isolated)?;
+        write_layer_info(out, blend_mode, opacity, hidden, title, section, isolated)?;
     }
     Ok(())
 }
@@ -541,6 +545,7 @@ fn write_layer_info_section(
         out,
         DP_BLEND_MODE_NORMAL,
         255,
+        false,
         b"Background",
         Section::Other,
         true,

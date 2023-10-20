@@ -185,6 +185,9 @@ static void apply_layer_props(DP_TransientLayerProps *tlp, psd::Layer *layer)
                                          DP_channel8_to_15(layer->opacity));
     DP_transient_layer_props_blend_mode_set(
         tlp, extract_blend_mode(layer->blendModeKey));
+    if (!layer->isVisible) {
+        DP_transient_layer_props_hidden_set(tlp, true);
+    }
     if (DP_transient_layer_props_children_noinc(tlp) && layer->isPassThrough) {
         DP_transient_layer_props_isolated_set(tlp, false);
     }
