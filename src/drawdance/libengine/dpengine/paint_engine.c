@@ -1681,11 +1681,17 @@ static int should_push_message_remote(DP_PaintEngine *pe, DP_Message *msg,
             return PUSH_MESSAGE;
         }
         else if (type == DP_MSG_LASER_TRAIL) {
-            handle_laser_trail(pe, msg);
+            if (DP_message_context_id(msg)
+                != DP_acl_state_local_user_id(acls)) {
+                handle_laser_trail(pe, msg);
+            }
             return NO_PUSH;
         }
         else if (type == DP_MSG_MOVE_POINTER) {
-            handle_move_pointer(pe, msg);
+            if (DP_message_context_id(msg)
+                != DP_acl_state_local_user_id(acls)) {
+                handle_move_pointer(pe, msg);
+            }
             return NO_PUSH;
         }
         else {
@@ -1699,7 +1705,18 @@ static int should_push_message_local(DP_UNUSED DP_PaintEngine *pe,
                                      DP_UNUSED bool ignore_acls)
 {
     DP_MessageType type = DP_message_type(msg);
-    return is_pushable_type(type) ? PUSH_MESSAGE : NO_PUSH;
+    if (is_pushable_type(type)) {
+        return PUSH_MESSAGE;
+    }
+    else {
+        if (type == DP_MSG_LASER_TRAIL) {
+            handle_laser_trail(pe, msg);
+        }
+        else if (type == DP_MSG_MOVE_POINTER) {
+            handle_move_pointer(pe, msg);
+        }
+        return NO_PUSH;
+    }
 }
 
 static int push_more_messages(DP_PaintEngine *pe, DP_Queue *queue,
