@@ -247,35 +247,6 @@ fn write_layer_infos_recursive(
     Ok(())
 }
 
-fn write_layer_info_section(
-    cs: *mut DP_CanvasState,
-    out: &mut Output,
-    layer_offsets: &mut HashMap<*mut c_void, usize>,
-) -> Result<()> {
-    let section_start = write_preliminary_size_prefix(out)?;
-
-    // Number of layers, plus one for the background.
-    let lpl = unsafe { DP_canvas_state_layer_props_noinc(cs) };
-    out.write_i16_be(i16::try_from(count_layers_recursive(lpl) + 1)?)?;
-
-    // Background layer info.
-    layer_offsets.insert(null_mut(), out.tell()?);
-    write_layer_info(
-        out,
-        DP_BLEND_MODE_NORMAL,
-        255,
-        b"Background",
-        Section::Other,
-        true,
-    )?;
-
-    // Remaining layer info.
-    write_layer_infos_recursive(lpl, out, layer_offsets)?;
-
-    write_size_prefix(out, section_start, 2)?;
-    Ok(())
-}
-
 fn extract_channel(pixels: &[DP_UPixel8], src: &mut [u8], extract: fn(DP_UPixel8) -> u8) {
     assert_eq!(pixels.len(), src.len());
     for i in 0..pixels.len() {
@@ -551,18 +522,50 @@ fn write_layer_pixel_data_section(
     Ok(())
 }
 
+fn write_layer_info_section(
+    cs: *mut DP_CanvasState,
+    dc: *mut DP_DrawContext,
+    out: &mut Output,
+    layer_offsets: &mut HashMap<*mut c_void, usize>,
+) -> Result<()> {
+    let section_start = write_preliminary_size_prefix(out)?;
+
+    // Number of layers, plus one for the background. As a negative number
+    // because, uh, something about alpha channels. GIMP requires that anyway.
+    let lpl = unsafe { DP_canvas_state_layer_props_noinc(cs) };
+    out.write_i16_be(-i16::try_from(count_layers_recursive(lpl) + 1)?)?;
+
+    // Background layer info.
+    layer_offsets.insert(null_mut(), out.tell()?);
+    write_layer_info(
+        out,
+        DP_BLEND_MODE_NORMAL,
+        255,
+        b"Background",
+        Section::Other,
+        true,
+    )?;
+
+    // Remaining layer info.
+    write_layer_infos_recursive(lpl, out, layer_offsets)?;
+
+    // Channel pixel data.
+    write_layer_pixel_data_section(cs, dc, out, &layer_offsets)?;
+
+    write_size_prefix(out, section_start, 2)?;
+    Ok(())
+}
+
 fn write_layer_sections(
     cs: *mut DP_CanvasState,
     dc: *mut DP_DrawContext,
-    mut out: Output,
+    out: &mut Output,
 ) -> Result<()> {
-    let section_start = write_preliminary_size_prefix(&mut out)?;
+    let section_start = write_preliminary_size_prefix(out)?;
     let mut layer_offsets = HashMap::new();
-    write_layer_info_section(cs, &mut out, &mut layer_offsets)?;
-    write_layer_pixel_data_section(cs, dc, &mut out, &layer_offsets)?;
+    write_layer_info_section(cs, dc, out, &mut layer_offsets)?;
     out.write_bytes(&[0, 0, 0, 0])?; // Global layer mask info (none).
-    write_size_prefix(&mut out, section_start, 2)?;
-    out.close()?;
+    write_size_prefix(out, section_start, 2)?;
     Ok(())
 }
 
@@ -584,7 +587,8 @@ fn write_psd(cs: *mut DP_CanvasState, dc: *mut DP_DrawContext, mut out: Output) 
         0, 0, 0, 0, // Color mode section length, always zero for RGB.
         0, 0, 0, 0, // Image resources section length, we don't have any.
     ])?;
-    write_layer_sections(cs, dc, out)?;
+    write_layer_sections(cs, dc, &mut out)?;
+    out.close()?;
     Ok(())
 }
 

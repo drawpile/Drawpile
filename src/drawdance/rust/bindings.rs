@@ -5484,9 +5484,10 @@ pub const DP_LOAD_RESULT_OPEN_ERROR: DP_LoadResult = 3;
 pub const DP_LOAD_RESULT_READ_ERROR: DP_LoadResult = 4;
 pub const DP_LOAD_RESULT_BAD_MIMETYPE: DP_LoadResult = 5;
 pub const DP_LOAD_RESULT_RECORDING_INCOMPATIBLE: DP_LoadResult = 6;
-pub const DP_LOAD_RESULT_UNSUPPORTED_COLOR_MODE: DP_LoadResult = 7;
-pub const DP_LOAD_RESULT_IMAGE_TOO_LARGE: DP_LoadResult = 8;
-pub const DP_LOAD_RESULT_INTERNAL_ERROR: DP_LoadResult = 9;
+pub const DP_LOAD_RESULT_UNSUPPORTED_PSD_BITS_PER_CHANNEL: DP_LoadResult = 7;
+pub const DP_LOAD_RESULT_UNSUPPORTED_PSD_COLOR_MODE: DP_LoadResult = 8;
+pub const DP_LOAD_RESULT_IMAGE_TOO_LARGE: DP_LoadResult = 9;
+pub const DP_LOAD_RESULT_INTERNAL_ERROR: DP_LoadResult = 10;
 pub type DP_LoadResult = ::std::os::raw::c_uint;
 extern "C" {
     pub fn DP_load(
