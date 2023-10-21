@@ -2591,9 +2591,13 @@ void MainWindow::toolChanged(tools::Tool::Type tool)
 	// When using the annotation tool, highlight all text boxes
 	m_canvasscene->showAnnotationBorders(tool==tools::Tool::ANNOTATION);
 
-	// Send pointer updates when using the laser pointer (TODO checkbox)
+	// Show own user marker if laser pointer is selected.
+	bool isLaserPointerSelected = tool == tools::Tool::LASERPOINTER;
+	m_canvasscene->setShowOwnUserMarker(isLaserPointerSelected);
+
+	// Send pointer updates when using the laser pointer
 	m_view->setPointerTracking(
-		tool == tools::Tool::LASERPOINTER &&
+		isLaserPointerSelected &&
 		m_dockToolSettings->laserPointerSettings()->pointerTracking());
 
 	// Remove selection when not using selection tool

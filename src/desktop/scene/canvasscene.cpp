@@ -34,6 +34,7 @@ CanvasScene::CanvasScene(QObject *parent)
 	, m_showUserLayers(true)
 	, m_showUserAvatars(true)
 	, m_showLaserTrails(true)
+	, m_showOwnUserMarker(false)
 {
 	setItemIndexMethod(NoIndex);
 	setSceneRect(QRectF{0.0, 0.0, 1.0, 1.0});
@@ -422,9 +423,7 @@ void CanvasScene::userCursorMoved(
 		return;
 	}
 
-	// TODO in some cases (playback, laser pointer) we want to show our cursor
-	// as well.
-	if(userId == m_model->localUserId()) {
+	if(!m_showOwnUserMarker && userId == m_model->localUserId()) {
 		return;
 	}
 

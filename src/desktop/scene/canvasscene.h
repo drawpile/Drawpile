@@ -79,6 +79,8 @@ public:
 	//! Get an annotation item
 	AnnotationItem *getAnnotationItem(int id);
 
+	void setShowOwnUserMarker(bool show) { m_showOwnUserMarker = show; }
+
 public slots:
 	//! Show annotation borders
 	void showAnnotationBorders(bool show);
@@ -173,6 +175,7 @@ private:
 	bool m_showUserLayers;
 	bool m_showUserAvatars;
 	bool m_showLaserTrails;
+	bool m_showOwnUserMarker;
 
 	QRectF m_sceneBounds;
 };

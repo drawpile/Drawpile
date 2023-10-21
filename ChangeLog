@@ -35,6 +35,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Replace the terrifying notification sound effects with stuff from KDE's Ocean Sound Theme.
  * Fix: Don't delay own laser trails as if it were a stroke from another user. Thanks matt for reporting.
  * Fix: Properly update avatar on user markers when they reconnect with a different one. Thanks xxxx for reporting.
+ * Fix: Show own user marker again when using the laser pointer.
 
 2023-09-30 Version 2.2.0-beta.8
  * Fix: Apply color wheel direction to color dialogs too. Thanks Blozzom for reporting.

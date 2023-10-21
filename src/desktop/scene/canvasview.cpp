@@ -824,10 +824,6 @@ QPolygonF CanvasView::mapFromCanvas(const QRect &rect) const
 void CanvasView::setPointerTracking(bool tracking)
 {
 	m_pointertracking = tracking;
-	if(!tracking && m_scene) {
-		// TODO
-		//_scene->hideUserMarker();
-	}
 }
 
 void CanvasView::onPenDown(const canvas::Point &p, bool right)
