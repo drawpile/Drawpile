@@ -286,6 +286,8 @@ LoginDialog::LoginDialog(net::LoginHandler *login, QWidget *parent) :
 	connect(login, &net::LoginHandler::sessionChoiceNeeded, this, &LoginDialog::onSessionChoiceNeeded);
 	connect(login, &net::LoginHandler::certificateCheckNeeded, this, &LoginDialog::onCertificateCheckNeeded);
 	connect(login, &net::LoginHandler::serverTitleChanged, this, &LoginDialog::onServerTitleChanged);
+
+	selectCurrentAvatar();
 }
 
 LoginDialog::~LoginDialog()
@@ -607,12 +609,7 @@ void LoginDialog::onOkClicked()
 		qWarning("OK button click in wrong mode!");
 		break;
 	case Mode::identity: {
-		const QPixmap avatar = d->ui->avatarList->currentData(Qt::DecorationRole).value<QPixmap>();
-		const QString avatarFile = avatar.isNull() ? QString() : d->ui->avatarList->currentData(AvatarListModel::FilenameRole).toString();
-
-		if(!avatar.isNull())
-			d->loginHandler->selectAvatar(avatar.toImage());
-
+		selectCurrentAvatar();
 		d->loginHandler->selectIdentity(d->ui->username->text(), QString());
 		break; }
 	case Mode::authenticate:
@@ -725,6 +722,13 @@ void LoginDialog::adjustSize(int width, int height, bool allowShrink)
 	int newX = geom.x() + (geom.width() - newWidth) / 2;
 	int newY = geom.y() + (geom.height() - newHeight) / 2;
 	setGeometry(newX, newY, newWidth, newHeight);
+}
+
+void LoginDialog::selectCurrentAvatar()
+{
+	QPixmap avatar =
+		d->ui->avatarList->currentData(Qt::DecorationRole).value<QPixmap>();
+	d->loginHandler->selectAvatar(avatar);
 }
 
 }

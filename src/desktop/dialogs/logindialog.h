@@ -61,6 +61,7 @@ private slots:
 
 private:
 	void adjustSize(int width, int height, bool allowShrink);
+	void selectCurrentAvatar();
 
 	struct Private;
 	Private *d;

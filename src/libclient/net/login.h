@@ -8,6 +8,7 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QObject>
+#include <QPixmap>
 #include <QSslError>
 #include <QString>
 #include <QUrl>
@@ -215,7 +216,7 @@ public slots:
 	 *
 	 * @param avatar
 	 */
-	void selectAvatar(const QImage &avatar);
+	void selectAvatar(const QPixmap &avatar);
 
 	/**
 	 * @brief Send identity
@@ -426,6 +427,8 @@ private:
 	void continueTls();
 	void handleError(const QString &code, const QString &message);
 
+	QString takeAvatar();
+
 	static QJsonObject makeClientInfoKwargs();
 	static QString getSid();
 	static QString generateTamperSid();
@@ -433,7 +436,7 @@ private:
 
 	Mode m_mode;
 	QUrl m_address;
-	QByteArray m_avatar;
+	QPixmap m_avatar;
 
 	// Settings for hosting
 	uint8_t m_userid;

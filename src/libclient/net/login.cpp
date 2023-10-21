@@ -257,11 +257,9 @@ void LoginHandler::prepareToSendIdentity()
 	}
 }
 
-void LoginHandler::selectAvatar(const QImage &avatar)
+void LoginHandler::selectAvatar(const QPixmap &avatar)
 {
-	QBuffer a;
-	avatar.save(&a, "PNG");
-	m_avatar = a.buffer().toBase64();
+	m_avatar = avatar;
 }
 
 void LoginHandler::selectIdentity(
@@ -282,15 +280,13 @@ void LoginHandler::sendIdentity()
 	if(!m_address.password().isEmpty())
 		args << m_address.password();
 
-	bool containsAvatar = !m_avatar.isEmpty();
-	if(containsAvatar) {
-		kwargs["avatar"] = QString::fromUtf8(m_avatar);
-		// avatar needs only be sent once
-		m_avatar = QByteArray();
+	QString avatar = takeAvatar();
+	if(!avatar.isEmpty()) {
+		kwargs["avatar"] = avatar;
 	}
 
 	m_state = EXPECT_IDENTIFIED;
-	send("ident", args, kwargs, containsAvatar);
+	send("ident", args, kwargs, !avatar.isEmpty());
 }
 
 void LoginHandler::requestExtAuth(
@@ -899,6 +895,28 @@ void LoginHandler::send(
 bool LoginHandler::hasUserFlag(const QString &flag) const
 {
 	return m_userFlags.contains(flag.toUpper());
+}
+
+QString LoginHandler::takeAvatar()
+{
+	QString result;
+	if(!m_avatar.isNull()) {
+		if(m_supportsCustomAvatars) {
+			QByteArray bytes;
+			{
+				QBuffer a;
+				if(m_avatar.save(&a, "PNG")) {
+					bytes = a.buffer();
+				}
+			}
+			if(!bytes.isEmpty()) {
+				result = QString::fromUtf8(bytes.toBase64());
+			}
+		}
+		// Avatar only needs to be sent once.
+		m_avatar = QPixmap();
+	}
+	return result;
 }
 
 QJsonObject LoginHandler::makeClientInfoKwargs()
