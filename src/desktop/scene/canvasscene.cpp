@@ -84,6 +84,9 @@ void CanvasScene::initCanvas(canvas::CanvasModel *model)
 	connect(
 		m_model, &canvas::CanvasModel::selectionChanged, this,
 		&CanvasScene::onSelectionChanged);
+	connect(
+		m_model, &canvas::CanvasModel::userJoined, this,
+		&CanvasScene::onUserJoined);
 
 	for(QGraphicsItem *item : m_group->childItems()) {
 		if(item->type() == AnnotationItem::Type ||
@@ -238,6 +241,16 @@ void CanvasScene::onSelectionChanged(canvas::Selection *selection)
 	}
 	if(selection) {
 		m_selection = new SelectionItem(selection, m_group);
+	}
+}
+
+void CanvasScene::onUserJoined(int id, const QString &name)
+{
+	Q_UNUSED(name);
+	UserMarkerItem *um = m_usermarkers.value(id);
+	if(um) {
+		m_usermarkers.remove(id);
+		delete um;
 	}
 }
 
