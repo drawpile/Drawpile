@@ -107,6 +107,7 @@ public:
 	void showPopupMessage(const QString &message);
 
 	bool notificationsMuted() const { return m_notificationsMuted; }
+	bool isInitialCatchup() const { return m_initialCatchup; }
 
 signals:
 	void hostSessionEnabled(bool enabled);
@@ -352,6 +353,7 @@ private:
 	bool m_titleBarsHidden;
 	bool m_wasSessionLocked;
 	bool m_notificationsMuted;
+	bool m_initialCatchup;
 
 	Document *m_doc;
 	MainActions *m_ma;

@@ -173,6 +173,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	  m_titleBarsHidden(false),
 	  m_wasSessionLocked(false),
 	  m_notificationsMuted(false),
+	  m_initialCatchup(false),
 	  m_doc(nullptr),
 	  m_exitAfterSave(false)
 {
@@ -347,6 +348,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	// Network client <-> UI connections
 	connect(m_view, &widgets::CanvasView::pointerMoved, m_doc, &Document::sendPointerMove);
 
+	connect(m_doc, &Document::catchupProgress, this, &MainWindow::updateCatchupProgress);
 	connect(m_doc, &Document::catchupProgress, m_netstatus, &widgets::NetStatus::setCatchupProgress);
 
 	connect(
@@ -1501,10 +1503,7 @@ void MainWindow::onCanvasSaved(const QString &errorMessage)
 
 void MainWindow::showResetNoticeDialog(const drawdance::CanvasState &canvasState)
 {
-	connect(
-		m_doc, &Document::catchupProgress, this,
-		&MainWindow::updateCatchupProgress);
-	updateCatchupProgress(0);
+	m_canvasscene->setCatchupProgress(0);
 	m_view->showResetNotice(
 		m_doc->isCompatibilityMode(), m_doc->isSaveInProgress());
 	if(m_preResetCanvasState.isNull()) {
@@ -1514,11 +1513,13 @@ void MainWindow::showResetNoticeDialog(const drawdance::CanvasState &canvasState
 
 void MainWindow::updateCatchupProgress(int percent)
 {
-	m_canvasscene->setCatchupProgress(percent);
-	if(percent >= 100) {
-		disconnect(
-			m_doc, &Document::catchupProgress, this,
-			&MainWindow::updateCatchupProgress);
+	if(percent >= 100 && m_initialCatchup) {
+		m_initialCatchup = false;
+		dpApp().notifications()->trigger(
+			this, notification::Event::Login, tr("Joined the session!"));
+	}
+	if(m_canvasscene->hasCatchup()) {
+		m_canvasscene->setCatchupProgress(percent);
 	}
 }
 
@@ -2181,6 +2182,7 @@ void MainWindow::onServerDisconnected(const QString &message, const QString &err
  */
 void MainWindow::onServerLogin(bool join, const QString &joinPassword)
 {
+	m_initialCatchup = true;
 	net::Client *client = m_doc->client();
 	m_netstatus->loggedIn(client->sessionUrl(), joinPassword);
 	m_netstatus->setSecurityLevel(client->securityLevel(), client->hostCertificate());

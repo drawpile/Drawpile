@@ -44,7 +44,10 @@ void Notifications::notify(
 	MainWindow *mw = getMainWindow(widget);
 	if(!mw) {
 		qWarning("No main window found for event %d", int(event));
-	} else if(!isPreview && mw->notificationsMuted()) {
+	} else if(
+		!isPreview &&
+		(mw->notificationsMuted() ||
+		 (mw->isInitialCatchup() && !isEmittedDuringCatchup(event)))) {
 		return;
 	}
 
@@ -240,6 +243,23 @@ bool Notifications::isHighPriority(Event event)
 	// which would prevent the more important disconnect sound from playing.
 	// So we treat that one as high-priority, making it stop the other sound.
 	return event == Event::Disconnect;
+}
+
+bool Notifications::isEmittedDuringCatchup(Event event)
+{
+	switch(event) {
+	case Event::Chat:
+	case Event::PrivateChat:
+	case Event::Locked:
+	case Event::Unlocked:
+	case Event::Login:
+	case Event::Logout:
+		return false;
+	case Event::Disconnect:
+		return true;
+	}
+	qWarning("Unknown emitted during catchup event %d", int(event));
+	return false;
 }
 
 }

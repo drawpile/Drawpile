@@ -81,6 +81,8 @@ public:
 
 	void setShowOwnUserMarker(bool show) { m_showOwnUserMarker = show; }
 
+	bool hasCatchup() const { return m_catchup != nullptr; }
+
 public slots:
 	//! Show annotation borders
 	void showAnnotationBorders(bool show);
