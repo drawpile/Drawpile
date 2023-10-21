@@ -72,10 +72,10 @@ private:
 
 	qint64 m_lastSoundMsec;
 	QHash<int, Sound> m_sounds;
+	QMediaPlayer *m_player;
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 	QAudioOutput *m_audioOutput;
 #endif
-	QMediaPlayer *m_player;
 };
 
 }

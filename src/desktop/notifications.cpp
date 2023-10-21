@@ -16,10 +16,10 @@ namespace notification {
 Notifications::Notifications(QObject *parent)
 	: QObject(parent)
 	, m_lastSoundMsec(QDateTime::currentMSecsSinceEpoch())
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-	, m_audioOutput(new QAudioOutput(this))
-#endif
 	, m_player(new QMediaPlayer(this))
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+	, m_audioOutput(new QAudioOutput(m_player))
+#endif
 {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 	m_player->setAudioOutput(m_audioOutput);
