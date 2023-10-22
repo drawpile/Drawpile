@@ -544,7 +544,11 @@ bool decodeBanImport(
 	}
 
 	outPayload = QByteArray::fromBase64(match.captured(2).toUtf8());
+#ifdef HAVE_LIBSODIUM
 	return outPayload.size() >= compat::sizetype(crypto_secretbox_MACBYTES);
+#else
+	return !outPayload.isEmpty();
+#endif
 }
 
 CmdResult
