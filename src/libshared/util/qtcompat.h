@@ -89,7 +89,7 @@ using RetrieveDataMetaType = QVariant::Type;
 using sizetype = int;
 
 inline auto castSize(size_t size) {
-	Q_ASSERT(size < std::numeric_limits<int>().max());
+	Q_ASSERT(size < size_t(std::numeric_limits<int>().max()));
 	return int(size);
 }
 
