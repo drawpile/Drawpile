@@ -158,7 +158,7 @@ typedef struct RunThreadArgs {
     void *arg;
 } RunThreadArgs;
 
-static DWORD run_thread(void *fn_arg)
+static DWORD WINAPI run_thread(void *fn_arg)
 {
     DP_ThreadFn fn = ((RunThreadArgs *)fn_arg)->fn;
     void *arg = ((RunThreadArgs *)fn_arg)->arg;
