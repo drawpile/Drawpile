@@ -3098,7 +3098,7 @@ void MainWindow::about()
 {
 	auto [pixelSize, mmSize] = DrawpileApp::screenResolution();
 	QMessageBox::about(nullptr, tr("About Drawpile"),
-			QStringLiteral("<p><b>Drawpile %1</b><br>").arg(cmake_config::version()) +
+			QStringLiteral("<p><b>Drawpile %1</b> (%2)<br>").arg(cmake_config::version(), QSysInfo::buildCpuArchitecture()) +
 			tr("A collaborative drawing program.") + QStringLiteral("</p>"
 
 			"<p>Copyright © askmeaboutloom and contributors. Originally made by Calle Laakkonen.</p>"
