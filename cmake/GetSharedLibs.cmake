@@ -92,12 +92,22 @@ function(_get_shared_library_path out_var target)
 endfunction()
 
 function(_get_non_qt_shared_libs out_var)
+	get_property(done GLOBAL PROPERTY _get_shared_libs_done)
+
 	foreach(target IN LISTS ARGN)
 		# Matching `^-` to ignore junk like `-pthreads`
 		if(NOT target OR target MATCHES "^-")
 			message(DEBUG "Skipping ${target}")
 			continue()
 		endif()
+
+		if(target IN_LIST done)
+			message(DEBUG "Already did raw target ${target}")
+			continue()
+		endif()
+
+		list(APPEND done "${target}")
+		set_property(GLOBAL APPEND PROPERTY _get_shared_libs_done "${target}")
 
 		# Some targets may not be visible from this directory if they
 		# were found in a sibling directory, so try to find them as
@@ -158,6 +168,7 @@ function(get_shared_libs out_var target)
 		set(extras OpenSSL::Crypto OpenSSL::SSL)
 	endif()
 
+	set_property(GLOBAL PROPERTY _get_shared_libs_done)
 	_get_non_qt_shared_libs(libs ${target} ${extras})
 	message(STATUS "Shared libraries for ${target}: ${libs}")
 	set(${out_var} ${libs} PARENT_SCOPE)
