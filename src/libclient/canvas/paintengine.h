@@ -148,7 +148,7 @@ public:
 	void setViewFrame(int frame);
 
 	void setOnionSkins(
-		const QVector<QPair<float, QColor>> &skinsBelow,
+		bool wrap, const QVector<QPair<float, QColor>> &skinsBelow,
 		const QVector<QPair<float, QColor>> &skinsAbove);
 
 	int pickLayer(int x, int y);

@@ -21,7 +21,7 @@ public:
 
 signals:
 	void onionSkinsChanged(
-		const QVector<QPair<float, QColor>> &skinsBelow,
+		bool wrap, const QVector<QPair<float, QColor>> &skinsBelow,
 		const QVector<QPair<float, QColor>> &skinsAbove);
 
 protected:

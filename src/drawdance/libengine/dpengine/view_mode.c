@@ -50,6 +50,7 @@ typedef struct DP_ViewModeTrack {
 } DP_ViewModeTrack;
 
 struct DP_OnionSkins {
+    bool wrap;
     int count_below;
     int count_above;
     DP_OnionSkin skins[];
@@ -227,15 +228,22 @@ static void build_key_frame(DP_ViewModeBuffer *vmb, DP_CanvasState *cs,
     }
 }
 
+static int imod(int x, int y)
+{
+    return ((x % y) + y) % y; // Modulo with positive results.
+}
+
 static void build_track_onion_skins(DP_ViewModeBuffer *vmb, DP_CanvasState *cs,
                                     DP_Track *t, const DP_OnionSkins *oss,
                                     int target)
 {
     int key_frame_count = DP_track_key_frame_count(t);
+    bool wrap = DP_onion_skins_wrap(oss);
 
     int count_below = DP_onion_skins_count_below(oss);
     for (int i = 0; i < count_below; ++i) {
-        int skin_index = target - count_below + i;
+        int j = target - count_below + i;
+        int skin_index = wrap ? imod(j, key_frame_count) : j;
         const DP_OnionSkin *os = DP_onion_skins_skin_below_at(oss, i);
         bool is_visible =
             skin_index >= 0 && skin_index < key_frame_count && os->opacity != 0;
@@ -246,7 +254,8 @@ static void build_track_onion_skins(DP_ViewModeBuffer *vmb, DP_CanvasState *cs,
 
     int count_above = DP_onion_skins_count_above(oss);
     for (int i = 0; i < count_above; ++i) {
-        int skin_index = target + i + 1;
+        int j = target + i + 1;
+        int skin_index = wrap ? imod(j, key_frame_count) : j;
         const DP_OnionSkin *os = DP_onion_skins_skin_above_at(oss, i);
         bool is_visible =
             skin_index >= 0 && skin_index < key_frame_count && os->opacity != 0;
@@ -425,7 +434,8 @@ DP_ViewModeContext DP_view_mode_context_root_at(
                 *out_lle = DP_layer_routes_entry_layer(lre, cs);
                 *out_lp = DP_layer_routes_entry_props(lre, cs);
                 *out_os = vmt->onion_skin;
-                *out_parent_opacity = DP_layer_routes_entry_parent_opacity(lre, cs);
+                *out_parent_opacity =
+                    DP_layer_routes_entry_parent_opacity(lre, cs);
                 return make_manual_frame_context(index, vmb);
             }
             else {
@@ -682,12 +692,13 @@ DP_ViewModePick DP_view_mode_pick(DP_CanvasState *cs, DP_LocalState *ls, int x,
 }
 
 
-DP_OnionSkins *DP_onion_skins_new(int count_below, int count_above)
+DP_OnionSkins *DP_onion_skins_new(bool wrap, int count_below, int count_above)
 {
     DP_ASSERT(count_below >= 0);
     DP_ASSERT(count_above >= 0);
     DP_OnionSkins *oss = DP_malloc_zeroed(DP_FLEX_SIZEOF(
         DP_OnionSkins, skins, DP_int_to_size(count_below + count_above)));
+    oss->wrap = wrap;
     oss->count_below = count_below;
     oss->count_above = count_above;
     return oss;
@@ -698,7 +709,8 @@ DP_OnionSkins *DP_onion_skins_new_clone(DP_OnionSkins *oss)
     DP_ASSERT(oss);
     int count_below = oss->count_below;
     int count_above = oss->count_above;
-    DP_OnionSkins *new_oss = DP_onion_skins_new(count_below, count_above);
+    DP_OnionSkins *new_oss =
+        DP_onion_skins_new(oss->wrap, count_below, count_above);
     memcpy(new_oss->skins, oss->skins,
            sizeof(*oss->skins)
                * (DP_int_to_size(count_below) + DP_int_to_size(count_above)));
@@ -720,7 +732,7 @@ bool DP_onion_skins_equal(DP_OnionSkins *a, DP_OnionSkins *b)
     if (a == b) {
         return true;
     }
-    else if (a && b && a->count_above == b->count_above
+    else if (a && b && a->wrap == b->wrap && a->count_above == b->count_above
              && a->count_below == b->count_below) {
         int count = a->count_above + a->count_below;
         for (int i = 0; i < count; ++i) {
@@ -739,6 +751,12 @@ bool DP_onion_skins_equal(DP_OnionSkins *a, DP_OnionSkins *b)
     else {
         return false;
     }
+}
+
+bool DP_onion_skins_wrap(const DP_OnionSkins *oss)
+{
+    DP_ASSERT(oss);
+    return oss->wrap;
 }
 
 int DP_onion_skins_count_below(const DP_OnionSkins *oss)

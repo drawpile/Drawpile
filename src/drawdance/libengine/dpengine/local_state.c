@@ -331,6 +331,13 @@ static void handle_active_frame(DP_LocalState *ls, DP_MsgLocalChange *mlc)
     }
 }
 
+static bool read_bool(const unsigned char *body, size_t *in_out_read)
+{
+    bool value = body[*in_out_read] != 0;
+    *in_out_read += 1;
+    return value;
+}
+
 static int read_int(const unsigned char *body, size_t *in_out_read)
 {
     int value = DP_int32_to_int(DP_read_bigendian_int32(body + *in_out_read));
@@ -356,7 +363,7 @@ static void handle_onion_skins(DP_LocalState *ls, DP_MsgLocalChange *mlc)
 {
     size_t size;
     const unsigned char *body = DP_msg_local_change_body(mlc, &size);
-    size_t minimum_size = sizeof(int32_t) + sizeof(int32_t);
+    size_t minimum_size = 1 + sizeof(int32_t) + sizeof(int32_t);
     if (size < minimum_size) {
         DP_warn("Wrong size for local onion skins change: wanted at least %zu, "
                 "got %zu",
@@ -365,6 +372,7 @@ static void handle_onion_skins(DP_LocalState *ls, DP_MsgLocalChange *mlc)
     }
 
     size_t read = 0;
+    bool wrap = read_bool(body, &read);
     int count_below = read_int(body, &read);
     int count_above = read_int(body, &read);
 
@@ -382,7 +390,7 @@ static void handle_onion_skins(DP_LocalState *ls, DP_MsgLocalChange *mlc)
         oss = NULL;
     }
     else {
-        oss = DP_onion_skins_new(count_below, count_above);
+        oss = DP_onion_skins_new(wrap, count_below, count_above);
         for (int i = 0; i < count_below; ++i) {
             uint16_t opacity = read_uint16(body, &read);
             DP_UPixel15 tint = read_upixel(body, &read);
@@ -548,6 +556,7 @@ void DP_local_state_handle(DP_LocalState *ls, DP_DrawContext *dc,
     case DP_MSG_TRACK_CREATE:
         update_track_state(ls, DP_msg_track_create_id(DP_message_internal(msg)),
                            set_track_state_all, false);
+        break;
     default:
         break;
     }
@@ -700,6 +709,7 @@ static void set_onion_skins(DP_UNUSED size_t size, unsigned char *out,
 {
     const DP_OnionSkins *oss = user;
     size_t written = 0;
+    written += DP_write_bigendian_uint8(DP_onion_skins_wrap(oss), out);
 
     int count_below = DP_onion_skins_count_below(oss);
     written +=
@@ -728,7 +738,7 @@ static void set_onion_skins(DP_UNUSED size_t size, unsigned char *out,
 
 DP_Message *DP_local_state_msg_onion_skins_new(const DP_OnionSkins *oss)
 {
-    size_t size = sizeof(int32_t) + sizeof(int32_t)
+    size_t size = 1 + sizeof(int32_t) + sizeof(int32_t)
                 + DP_int_to_size(DP_onion_skins_count_below(oss)
                                  + DP_onion_skins_count_above(oss))
                       * (sizeof(uint16_t) + sizeof(uint32_t));

@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/docks/onionskins.h"
 #include "desktop/dialogs/colordialog.h"
-#include "desktop/main.h"
 #include "desktop/docks/titlewidget.h"
+#include "desktop/main.h"
 #include "desktop/utils/qtguicompat.h"
-
+#include <QCheckBox>
 #include <QFrame>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -107,6 +106,7 @@ struct OnionSkinsDock::Private {
 	int debounceTimerId = 0;
 	int frameCount = FRAME_COUNT_MIN - 1;
 	QSpinBox *frameCountSpinner = nullptr;
+	QCheckBox *wrapCheckBox = nullptr;
 	ColorPreview *belowPreview = nullptr;
 	ColorPreview *abovePreview = nullptr;
 	QVector<QSlider *> skinsAboveSliders = {};
@@ -139,6 +139,10 @@ OnionSkinsDock::OnionSkinsDock(const QString &title, QWidget *parent)
 	d->frameCountSpinner = new QSpinBox{titlebar};
 	d->frameCountSpinner->setRange(FRAME_COUNT_MIN, FRAME_COUNT_MAX);
 	titlebar->addCustomWidget(d->frameCountSpinner);
+	titlebar->addStretch();
+	d->wrapCheckBox = new QCheckBox(titlebar);
+	d->wrapCheckBox->setText(tr("Wrap"));
+	titlebar->addCustomWidget(d->wrapCheckBox);
 
 	titlebar->addStretch();
 	d->abovePreview = new ColorPreview{titlebar};
@@ -154,13 +158,18 @@ OnionSkinsDock::OnionSkinsDock(const QString &title, QWidget *parent)
 	titlebar->addStretch();
 
 	auto &settings = dpApp().settings();
+	settings.bindOnionSkinsWrap(d->wrapCheckBox);
+	settings.bindOnionSkinsWrap(this, &OnionSkinsDock::triggerUpdate);
+
 	settings.bindOnionSkinsFrameCount(d->frameCountSpinner);
 	settings.bindOnionSkinsFrameCount(this, &OnionSkinsDock::frameCountChanged);
 
-	settings.bindOnionSkinsTintBelow(d->belowPreview, &ColorPreview::setColor, &ColorPreview::colorChanged);
+	settings.bindOnionSkinsTintBelow(
+		d->belowPreview, &ColorPreview::setColor, &ColorPreview::colorChanged);
 	settings.bindOnionSkinsTintBelow(this, &OnionSkinsDock::triggerUpdate);
 
-	settings.bindOnionSkinsTintAbove(d->abovePreview, &ColorPreview::setColor, &ColorPreview::colorChanged);
+	settings.bindOnionSkinsTintAbove(
+		d->abovePreview, &ColorPreview::setColor, &ColorPreview::colorChanged);
 	settings.bindOnionSkinsTintAbove(this, &OnionSkinsDock::triggerUpdate);
 }
 
@@ -173,6 +182,8 @@ void OnionSkinsDock::triggerUpdate()
 {
 	killTimer(d->debounceTimerId);
 	d->debounceTimerId = 0;
+
+	bool wrap = d->wrapCheckBox->isChecked();
 
 	QColor tintBelow = d->belowPreview->color();
 	QVector<QPair<float, QColor>> skinsBelow;
@@ -193,7 +204,7 @@ void OnionSkinsDock::triggerUpdate()
 		}
 	}
 
-	emit onionSkinsChanged(skinsBelow, skinsAbove);
+	emit onionSkinsChanged(wrap, skinsBelow, skinsAbove);
 }
 
 void OnionSkinsDock::timerEvent(QTimerEvent *)
@@ -253,7 +264,8 @@ void OnionSkinsDock::buildWidget()
 
 		QSlider *slider = new EqualizerSlider{widget};
 
-		slider->setValue(savedFrames.value(frameNumber, getSliderDefault(frameNumber)));
+		slider->setValue(
+			savedFrames.value(frameNumber, getSliderDefault(frameNumber)));
 		connect(slider, &QSlider::valueChanged, [=](int value) {
 			onSliderValueChange(frameNumber, value);
 		});

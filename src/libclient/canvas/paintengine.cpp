@@ -324,12 +324,12 @@ bool PaintEngine::revealCensored() const
 }
 
 void PaintEngine::setOnionSkins(
-	const QVector<QPair<float, QColor>> &skinsBelow,
+	bool wrap, const QVector<QPair<float, QColor>> &skinsBelow,
 	const QVector<QPair<float, QColor>> &skinsAbove)
 {
 	int countBelow = skinsBelow.count();
 	int countAbove = skinsAbove.count();
-	DP_OnionSkins *oss = DP_onion_skins_new(countBelow, countAbove);
+	DP_OnionSkins *oss = DP_onion_skins_new(wrap, countBelow, countAbove);
 
 	for(int i = 0; i < countBelow; ++i) {
 		const QPair<float, QColor> &skin = skinsBelow[i];

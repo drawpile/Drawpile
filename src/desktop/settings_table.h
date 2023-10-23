@@ -132,6 +132,7 @@ SETTING_GETSET_V(
 	&onionSkinsFrames::get, &onionSkinsFrames::set)
 SETTING(onionSkinsTintAbove       , OnionSkinsTintAbove       , "onionskins/tintabove"                  , (QColor::fromRgb(0x33, 0x33, 0xff)))
 SETTING(onionSkinsTintBelow       , OnionSkinsTintBelow       , "onionskins/tintbelow"                  , (QColor::fromRgb(0xff, 0x33, 0x33)))
+SETTING(onionSkinsWrap            , OnionSkinsWrap            , "onionskins/wrap"                       , true)
 SETTING(recentFiles               , RecentFiles               , "history/recentfiles"                   , QStringList())
 SETTING(recentHosts               , RecentHosts               , "history/recenthosts"                   , QStringList())
 SETTING(recentRemoteHosts         , RecentRemoteHosts         , "history/recentremotehosts"             , QStringList())
