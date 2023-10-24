@@ -6,6 +6,7 @@
 #include "libshared/net/servercmd.h"
 #include "libshared/util/qtcompat.h"
 #include <QDebug>
+#include <QTimer>
 #ifdef Q_OS_ANDROID
 #	include "libshared/util/androidutils.h"
 #endif
@@ -14,7 +15,11 @@ namespace net {
 
 Client::Client(QObject *parent)
 	: QObject(parent)
+	, m_catchupTimer(new QTimer(this))
 {
+	m_catchupTimer->setSingleShot(true);
+	m_catchupTimer->setTimerType(Qt::CoarseTimer);
+	connect(m_catchupTimer, &QTimer::timeout, this, &Client::nudgeCatchup);
 }
 
 void Client::connectToServer(
@@ -160,6 +165,21 @@ void Client::handleDisconnect(
 #endif
 }
 
+void Client::nudgeCatchup()
+{
+	if(m_catchupTo > 0) {
+		qWarning(
+			"Catchup stuck at %d%% with no message in %dms, nudging it",
+			m_catchupProgress, m_catchupTimer->interval());
+		if(++m_catchupProgress < 100) {
+			emit catchupProgress(m_catchupProgress);
+			m_catchupTimer->start(qMax(100, m_catchupTimer->interval() / 2));
+		} else {
+			finishCatchup("catchup stuck");
+		}
+	}
+}
+
 int Client::uploadQueueBytes() const
 {
 	if(m_server)
@@ -251,6 +271,10 @@ Client::filterCompatibleMessages(int count, const net::Message *msgs)
 
 void Client::handleMessages(int count, net::Message *msgs)
 {
+	if(m_catchupTo > 0) {
+		m_catchupTimer->stop();
+	}
+
 	for(int i = 0; i < count; ++i) {
 		net::Message &msg = msgs[i];
 		switch(msg.type()) {
@@ -283,12 +307,14 @@ void Client::handleMessages(int count, net::Message *msgs)
 			if(m_catchupKey == -1) {
 				finishCatchup("reached catchup count");
 			}
+			m_catchupTimer->start(CATCHUP_TIMER_MSEC);
 		} else {
 			int progress = qBound(0, 100 * m_caughtUp / m_catchupTo, 99);
-			if(progress != m_catchupProgress) {
+			if(progress > m_catchupProgress) {
 				m_catchupProgress = progress;
 				emit catchupProgress(progress);
 			}
+			m_catchupTimer->start(CATCHUP_TIMER_MSEC);
 		}
 	}
 }
@@ -554,6 +580,7 @@ void Client::finishCatchup(const char *reason, int handledMessageIndex)
 		"Caught up to %d/%d messages with key %d (%s)",
 		m_caughtUp + handledMessageIndex, m_catchupTo, m_catchupKey, reason);
 	m_catchupTo = 0;
+	m_catchupTimer->stop();
 	m_server->setSmoothEnabled(true);
 	emit catchupProgress(100);
 }

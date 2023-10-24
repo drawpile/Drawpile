@@ -8,6 +8,7 @@
 
 class QJsonObject;
 class QJsonArray;
+class QTimer;
 struct DP_MsgData;
 
 namespace utils {
@@ -238,8 +239,11 @@ private slots:
 		const QString &joinPassword, const QString &authId);
 	void handleDisconnect(
 		const QString &message, const QString &errorcode, bool localDisconnect);
+	void nudgeCatchup();
 
 private:
+	static constexpr int CATCHUP_TIMER_MSEC = 4000;
+
 	void sendCompatibleMessages(int count, const net::Message *msgs);
 	void sendCompatibleResetMessages(int count, const net::Message *msgs);
 	QVector<net::Message>
@@ -272,6 +276,7 @@ private:
 	int m_caughtUp = 0;
 	int m_catchupProgress = 0;
 	int m_catchupKey = 0;
+	QTimer *m_catchupTimer;
 
 	int m_smoothDrainRate = 0;
 };
