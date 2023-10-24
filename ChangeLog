@@ -41,6 +41,7 @@ Unreleased Version 2.2.0-pre
  * Feature: Store alpha preserve state of layers in ORA files for better Krita compatibility (will be in Krita 5.2.1 probably.)
  * Feature: Allow onion skins to wrap around the timeline, toggleable in the onion skins dock. Thanks Hopfel for suggesting.
  * Feature: Fill the brush slots with nicer default values on first startup, rather than them all being the same pixel brush.
+ * Fix: Don't lock tool slots when using the eraser tool, to avoid accidentally getting stuck in it.
 
 2023-09-30 Version 2.2.0-beta.8
  * Fix: Apply color wheel direction to color dialogs too. Thanks Blozzom for reporting.

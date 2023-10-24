@@ -943,12 +943,7 @@ void BrushSettings::setActiveTool(const tools::Tool::Type tool)
 
 	if(tool == tools::Tool::ERASER) {
 		selectEraserSlot(true);
-		for(int i=0;i<BRUSH_COUNT-1;++i)
-			d->brushSlotButton[i]->setEnabled(false);
 	} else {
-		for(int i=0;i<BRUSH_COUNT-1;++i)
-			d->brushSlotButton[i]->setEnabled(true);
-
 		selectEraserSlot(false);
 	}
 }
