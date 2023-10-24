@@ -2200,7 +2200,7 @@ void MainWindow::onServerDisconnected(const QString &message, const QString &err
  */
 void MainWindow::onServerLogin(bool join, const QString &joinPassword)
 {
-	m_initialCatchup = true;
+	m_initialCatchup = join;
 	net::Client *client = m_doc->client();
 	m_netstatus->loggedIn(client->sessionUrl(), joinPassword);
 	m_netstatus->setSecurityLevel(client->securityLevel(), client->hostCertificate());
