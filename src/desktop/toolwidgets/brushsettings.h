@@ -104,6 +104,8 @@ private:
 	void emitBrushModeChanged();
 	static double radiusLogarithmicToPixelSize(int radiusLogarithmic);
 
+	static QByteArray getDefaultBrushForSlot(int i);
+
 	struct Private;
 	Private *d;
 };

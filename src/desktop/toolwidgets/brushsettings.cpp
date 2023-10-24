@@ -894,7 +894,7 @@ void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 		const QJsonObject o = QJsonDocument::fromJson(
 			cfg.value(ToolProperties::Value<QByteArray> {
 				QStringLiteral("brush%1").arg(i),
-				QByteArray()
+				getDefaultBrushForSlot(i)
 				})
 			).object();
 		brush = brushes::ActiveBrush::fromJson(o, true);
@@ -902,7 +902,7 @@ void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 		const QJsonObject lo = QJsonDocument::fromJson(
 			cfg.value(ToolProperties::Value<QByteArray> {
 				QStringLiteral("last%1").arg(i),
-				QByteArray()
+				getDefaultBrushForSlot(i)
 				})
 			).object();
 		if(!lo.isEmpty()) {
@@ -1071,6 +1071,72 @@ void BrushSettings::resetBrushMode()
 double BrushSettings::radiusLogarithmicToPixelSize(int radiusLogarithmic)
 {
 	return std::exp(radiusLogarithmic / 100.0 - 2.0) * 2.0;
+}
+
+QByteArray BrushSettings::getDefaultBrushForSlot(int i)
+{
+	switch(i) {
+	case 0:
+		return "{\"settings\":{\"blend\":\"svg:src-over\",\"blenderase\":\"svg:"
+			   "dst-out\",\"erase\":false,\"hard\":0.800000011920929,"
+			   "\"hardcurve\":\"0,0;1,1;\",\"opacity\":1,\"opacitycurve\":\"0,"
+			   "0;1,1;\",\"opacityp\":true,\"resmudge\":1,\"shape\":\"round-"
+			   "soft\",\"size\":4,\"sizecurve\":\"0,0;0.25,0.0625;0.5,0.25;0."
+			   "75,0.5625;1,1;\",\"sizep\":true,\"smoothing\":0,"
+			   "\"smudgecurve\":\"0,0;1,1;\",\"spacing\":0.05000000074505806,"
+			   "\"stabilizationmode\":0,\"stabilizer\":0},\"type\":\"dp-"
+			   "classic\",\"version\":1}";
+	case 1:
+		return "{\"settings\":{\"blend\":\"svg:src-over\",\"blenderase\":\"svg:"
+			   "dst-out\",\"erase\":false,\"hard\":1,\"hardcurve\":\"0,0;1,1;"
+			   "\",\"hardp\":true,\"opacity\":1,\"opacitycurve\":\"0,0;1,1;\","
+			   "\"resmudge\":1,\"shape\":\"round-soft\",\"size\":3,"
+			   "\"sizecurve\":\"0,0;1,1;\",\"sizep\":true,\"smoothing\":0,"
+			   "\"smudgecurve\":\"0,0;1,1;\",\"spacing\":0.5,"
+			   "\"stabilizationmode\":0,\"stabilizer\":100},\"type\":\"dp-"
+			   "classic\",\"version\":1}";
+	case 2:
+		return "{\"settings\":{\"blend\":\"svg:src-over\",\"blenderase\":\"svg:"
+			   "dst-out\",\"erase\":false,\"hard\":0.699999988079071,"
+			   "\"hardcurve\":\"0,0;1,1;\",\"opacity\":1,\"opacitycurve\":\"0,"
+			   "0;1,1;\",\"opacityp\":true,\"resmudge\":1,\"shape\":\"round-"
+			   "soft\",\"size\":20,\"sizecurve\":\"0,0;1,1;\",\"smoothing\":0,"
+			   "\"smudgecurve\":\"0,0;1,1;\",\"spacing\":0.20000000298023224,"
+			   "\"stabilizationmode\":0,\"stabilizer\":0},\"type\":\"dp-"
+			   "classic\",\"version\":1}";
+	case 3:
+		return "{\"settings\":{\"blend\":\"svg:src-over\",\"blenderase\":\"svg:"
+			   "dst-out\",\"erase\":false,\"hard\":0.8999999761581421,"
+			   "\"hardcurve\":\"0,0;1,1;\",\"indirect\":true,\"opacity\":1,"
+			   "\"opacitycurve\":\"0,0;1,1;\",\"opacityp\":true,\"resmudge\":1,"
+			   "\"shape\":\"round-soft\",\"size\":20,\"sizecurve\":\"0,0;1,1;"
+			   "\",\"smoothing\":0,\"smudgecurve\":\"0,0;1,1;\",\"spacing\":0."
+			   "05000000074505806,\"stabilizationmode\":0,\"stabilizer\":0},"
+			   "\"type\":\"dp-classic\",\"version\":1}";
+	case 4:
+		return "{\"settings\":{\"blend\":\"svg:src-over\",\"blenderase\":\"svg:"
+			   "dst-out\",\"erase\":false,\"hard\":0.8899999856948853,"
+			   "\"hardcurve\":\"0,0;1,1;\",\"indirect\":true,\"opacity\":1,"
+			   "\"opacitycurve\":\"0,0;1,1;\",\"opacityp\":true,\"resmudge\":1,"
+			   "\"shape\":\"round-pixel\",\"size\":4,\"size2\":1,\"sizecurve\":"
+			   "\"0,0;1,1;\",\"sizep\":true,\"smoothing\":0,\"smudgecurve\":"
+			   "\"0,0;1,1;\",\"spacing\":0.05000000074505806,"
+			   "\"stabilizationmode\":0,\"stabilizer\":0},\"type\":\"dp-"
+			   "classic\",\"version\":1}";
+	case ERASER_SLOT:
+		return "{\"settings\":{\"blend\":\"svg:src-over\",\"blenderase\":\"svg:"
+			   "dst-out\",\"erase\":true,\"hard\":0.800000011920929,"
+			   "\"hardcurve\":\"0,0;1,1;\",\"opacity\":1,\"opacitycurve\":\"0,"
+			   "0;1,1;\",\"opacityp\":true,\"resmudge\":1,\"shape\":\"round-"
+			   "soft\",\"size\":20,\"sizecurve\":\"0,0;0.25,0.0625;0.5,0.25;0."
+			   "75,0.5625;1,1;\",\"sizep\":true,\"smoothing\":0,"
+			   "\"smudgecurve\":\"0,0;1,1;\",\"spacing\":0.05000000074505806,"
+			   "\"stabilizationmode\":0,\"stabilizer\":0},\"type\":\"dp-"
+			   "classic\",\"version\":1}";
+	default:
+		qWarning("Unknown slot for default brush %d", i);
+		return QByteArray();
+	};
 }
 
 }
