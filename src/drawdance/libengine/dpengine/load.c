@@ -144,6 +144,7 @@ typedef struct DP_ReadOraContext {
     bool want_layers;
     bool want_annotations;
     bool want_timeline;
+    bool intuit_background;
     int next_id;
     int garbage_depth;
     DP_ReadOraBufferState buffer_state;
@@ -343,6 +344,13 @@ static void push_layer_children(DP_ReadOraContext *c, DP_ReadOraChildren roc)
 
 static bool ora_handle_image(DP_ReadOraContext *c, DP_XmlElement *element)
 {
+    // If there's a Drawpile namespace declaration, it's probably one of our own
+    // files. That means we shouldn't guess if the bottom layer is a background.
+    if (DP_xml_element_contains_namespace_declaration(element,
+                                                      DRAWPILE_NAMESPACE)) {
+        c->intuit_background = false;
+    }
+
     int width;
     if (!ora_read_int_attribute(element, NULL, "w", 1, INT16_MAX, &width)) {
         DP_error_set("Invalid width");
@@ -469,6 +477,8 @@ static bool ora_try_load_background_tile(DP_ReadOraContext *c,
     if (!path) {
         return false;
     }
+
+    c->intuit_background = false;
 
     DP_ZipReaderFile *zrf = DP_zip_reader_read_file(c->zr, path);
     if (!zrf) {
@@ -1106,8 +1116,11 @@ static DP_CanvasState *ora_read_stack_xml(DP_ReadOraContext *c)
     DP_zip_reader_file_free(zrf);
 
     if (xml_ok && !c->want_layers) {
-        DP_transient_canvas_state_layer_routes_reindex(c->tcs, c->dc);
         DP_worker_free_join(c->worker);
+        if (c->intuit_background) {
+            DP_transient_canvas_state_intuit_background(c->tcs);
+        }
+        DP_transient_canvas_state_layer_routes_reindex(c->tcs, c->dc);
         if (!c->want_timeline) {
             ora_fill_timeline(c);
         }
@@ -1142,6 +1155,7 @@ static DP_CanvasState *load_ora(DP_DrawContext *dc, const char *path,
         NULL,
         DP_READ_ORA_EXPECT_IMAGE,
         NULL,
+        true,
         true,
         true,
         true,

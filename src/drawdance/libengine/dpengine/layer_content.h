@@ -94,6 +94,8 @@ DP_LayerList *DP_layer_content_sub_contents_noinc(DP_LayerContent *lc);
 
 DP_LayerPropsList *DP_layer_content_sub_props_noinc(DP_LayerContent *lc);
 
+bool DP_layer_content_same_pixel(DP_LayerContent *lc, DP_Pixel15 *out_pixel);
+
 bool DP_layer_content_search_change_bounds(DP_LayerContent *lc,
                                            unsigned int context_id, int *out_x,
                                            int *out_y, int *out_width,

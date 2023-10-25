@@ -453,6 +453,7 @@ extern "C" DP_CanvasState *DP_load_psd(DP_DrawContext *dc, const char *path,
     file.Close();
     if (tcs) {
         assign_load_result(out_result, DP_LOAD_RESULT_SUCCESS);
+        DP_transient_canvas_state_intuit_background(tcs);
         DP_transient_canvas_state_layer_routes_reindex(tcs, dc);
         return DP_transient_canvas_state_persist(tcs);
     }

@@ -1982,3 +1982,32 @@ DP_transient_canvas_state_transient_metadata(DP_TransientCanvasState *tcs)
     }
     return tcs->transient_metadata;
 }
+
+void DP_transient_canvas_state_intuit_background(DP_TransientCanvasState *tcs)
+{
+    DP_TransientLayerPropsList *tlpl =
+        DP_transient_canvas_state_transient_layer_props(tcs, 0);
+    int count = DP_transient_layer_props_list_count(tlpl);
+
+    DP_LayerProps *lp =
+        count == 0 ? NULL : DP_transient_layer_props_list_at_noinc(tlpl, 0);
+    bool looks_like_background =
+        lp && DP_layer_props_opacity(lp) == DP_BIT15
+        && DP_layer_props_blend_mode(lp) == DP_BLEND_MODE_NORMAL
+        && !DP_layer_props_hidden(lp) && !DP_layer_props_children_noinc(lp);
+
+    if (looks_like_background) {
+        DP_TransientLayerList *tll =
+            DP_transient_canvas_state_transient_layers(tcs, 0);
+        DP_LayerContent *lc = DP_layer_list_entry_content_noinc(
+            DP_transient_layer_list_at_noinc(tll, 0));
+
+        DP_Pixel15 pixel;
+        if (DP_layer_content_same_pixel(lc, &pixel)) {
+            DP_transient_canvas_state_background_tile_set_noinc(
+                tcs, DP_tile_new_from_pixel15(0, pixel), pixel.a == DP_BIT15);
+            DP_transient_layer_props_list_delete_at(tlpl, 0);
+            DP_transient_layer_list_delete_at(tll, 0);
+        }
+    }
+}

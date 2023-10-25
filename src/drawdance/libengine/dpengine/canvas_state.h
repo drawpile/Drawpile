@@ -283,5 +283,9 @@ void DP_transient_canvas_state_timeline_set_inc(DP_TransientCanvasState *tcs,
 DP_TransientDocumentMetadata *
 DP_transient_canvas_state_transient_metadata(DP_TransientCanvasState *tcs);
 
+// Translates a single-colored, normal, fully opaque layer at the bottom into a
+// background tile, for compatibility with software that doesn't do backgrounds.
+void DP_transient_canvas_state_intuit_background(DP_TransientCanvasState *tcs);
+
 
 #endif

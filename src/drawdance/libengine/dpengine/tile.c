@@ -373,8 +373,7 @@ bool DP_tile_same_pixel(DP_Tile *tile_or_null, DP_Pixel15 *out_pixel)
         pixel = pixels[0];
         for (int i = 1; i < DP_TILE_LENGTH; ++i) {
             DP_Pixel15 q = pixels[i];
-            if (pixel.b != q.b || pixel.g != q.g || pixel.r != q.r
-                || pixel.a != q.a) {
+            if (!DP_pixel15_equal(pixel, q)) {
                 return false;
             }
         }

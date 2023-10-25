@@ -151,6 +151,11 @@ DP_INLINE DP_UPixelFloat DP_upixel_float_from_color(uint32_t color)
     return DP_upixel8_to_float(pixel);
 }
 
+DP_INLINE bool DP_pixel15_equal(DP_Pixel15 a, DP_Pixel15 b)
+{
+    return a.b == b.b && a.g == b.g && a.r == b.r && a.a == b.a;
+}
+
 
 void DP_blend_mask(DP_Pixel15 *dst, DP_UPixel15 src, int blend_mode,
                    const uint16_t *mask, uint16_t opacity, int w, int h,

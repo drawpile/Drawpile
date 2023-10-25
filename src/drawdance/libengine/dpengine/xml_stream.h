@@ -44,5 +44,8 @@ const char *DP_xml_element_attribute(DP_XmlElement *element,
                                      const char *namespace_or_null,
                                      const char *name);
 
+bool DP_xml_element_contains_namespace_declaration(DP_XmlElement *element,
+                                                   const char *namespace_uri);
+
 
 #endif

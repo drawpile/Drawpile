@@ -73,6 +73,17 @@ struct DP_XmlElement {
         }
     }
 
+    bool contains_namespace_declaration(const QString &namespace_uri)
+    {
+        for (const QXmlStreamNamespaceDeclaration &d :
+             m_xsr->namespaceDeclarations()) {
+            if (d.namespaceUri() == namespace_uri) {
+                return true;
+            }
+        }
+        return false;
+    }
+
   private:
     QXmlStreamReader *m_xsr;
     QByteArray m_name;
@@ -194,4 +205,14 @@ extern "C" const char *DP_xml_element_attribute(DP_XmlElement *element,
     return element->attribute(
         namespace_or_null ? QString::fromUtf8(namespace_or_null) : QString{},
         QString::fromUtf8(name));
+}
+
+extern "C" bool
+DP_xml_element_contains_namespace_declaration(DP_XmlElement *element,
+                                              const char *namespace_uri)
+{
+    DP_ASSERT(element);
+    DP_ASSERT(namespace_uri);
+    return element->contains_namespace_declaration(
+        QString::fromUtf8(namespace_uri));
 }

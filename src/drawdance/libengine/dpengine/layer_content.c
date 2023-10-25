@@ -448,6 +448,51 @@ DP_LayerPropsList *DP_layer_content_sub_props_noinc(DP_LayerContent *lc)
     return lc->sub.props;
 }
 
+static bool tile_same_pixel(DP_LayerContent *lc, DP_Pixel15 pixel,
+                            DP_TileIterator *ti)
+{
+    DP_Tile *t = DP_layer_content_tile_at_noinc(lc, ti->col, ti->row);
+    if (t) {
+        DP_TileIntoDstIterator tidi = DP_tile_into_dst_iterator_make(ti);
+        while (DP_tile_into_dst_iterator_next(&tidi)) {
+            DP_Pixel15 q = DP_tile_pixel_at(t, tidi.tile_x, tidi.tile_y);
+            if (!DP_pixel15_equal(pixel, q)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    else {
+        return pixel.a == 0;
+    }
+}
+
+bool DP_layer_content_same_pixel(DP_LayerContent *lc, DP_Pixel15 *out_pixel)
+{
+    DP_ASSERT(lc);
+    DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
+    int width = lc->width;
+    int height = lc->height;
+    if (width > 0 && height > 0) {
+        DP_Pixel15 pixel = DP_layer_content_pixel_at(lc, 0, 0);
+        DP_TileIterator ti = DP_tile_iterator_make(
+            width, height, DP_rect_make(0, 0, width, height));
+        while (DP_tile_iterator_next(&ti)) {
+            if (!tile_same_pixel(lc, pixel, &ti)) {
+                return false;
+            }
+        }
+
+        if (out_pixel) {
+            *out_pixel = pixel;
+        }
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
 static bool layer_content_tile_bounds(DP_LayerContent *lc, int *out_left,
                                       int *out_top, int *out_right,
                                       int *out_bottom)
