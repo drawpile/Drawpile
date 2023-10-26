@@ -1358,17 +1358,6 @@ static void init_flattening_tile(DP_TransientTile *tt, DP_Tile *background_tile)
     }
 }
 
-static void flattening_tile_to_image(DP_TransientTile *tt, DP_Image *img,
-                                     DP_TileIterator *ti)
-{
-    DP_TileIntoDstIterator tidi = DP_tile_into_dst_iterator_make(ti);
-    while (DP_tile_into_dst_iterator_next(&tidi)) {
-        DP_image_pixel_at_set(img, tidi.dst_x, tidi.dst_y,
-                              DP_pixel15_to_8(DP_transient_tile_pixel_at(
-                                  tt, tidi.tile_x, tidi.tile_y)));
-    }
-}
-
 static DP_TransientTile *
 flatten_onion_skin(int tile_index, DP_TransientTile *tt, DP_LayerListEntry *lle,
                    DP_LayerProps *lp, uint16_t parent_opacity,
@@ -1427,13 +1416,12 @@ DP_TransientTile *DP_canvas_state_flatten_tile_to(DP_CanvasState *cs,
     return tt;
 }
 
-DP_Image *DP_canvas_state_to_flat_image(DP_CanvasState *cs, unsigned int flags,
-                                        const DP_Rect *area_or_null,
-                                        const DP_ViewModeFilter *vmf_or_null)
+static void *flatten_canvas(
+    DP_CanvasState *cs, unsigned int flags, const DP_Rect *area_or_null,
+    const DP_ViewModeFilter *vmf_or_null, void *(*get_buffer)(void *, int, int),
+    void (*to_buffer)(void *, DP_TransientTile *, DP_TileIterator *),
+    void *user)
 {
-    DP_ASSERT(cs);
-    DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
-
     DP_Rect area = area_or_null ? *area_or_null
                                 : DP_rect_make(0, 0, cs->width, cs->height);
     if (!DP_rect_valid(area)) {
@@ -1447,18 +1435,83 @@ DP_Image *DP_canvas_state_to_flat_image(DP_CanvasState *cs, unsigned int flags,
     DP_ViewModeFilter vmf =
         vmf_or_null ? *vmf_or_null : DP_view_mode_filter_make_default();
 
-    DP_Image *img = DP_image_new(DP_rect_width(area), DP_rect_height(area));
+    void *buffer = get_buffer(user, DP_rect_width(area), DP_rect_height(area));
     DP_TransientTile *tt = DP_transient_tile_new_blank(0);
     DP_TileIterator ti = DP_tile_iterator_make(cs->width, cs->height, area);
     while (DP_tile_iterator_next(&ti)) {
         init_flattening_tile(tt, background_tile);
         int i = ti.row * wt + ti.col;
         DP_canvas_state_flatten_tile_to(cs, i, tt, include_sublayers, &vmf);
-        flattening_tile_to_image(tt, img, &ti);
+        to_buffer(buffer, tt, &ti);
     }
     DP_transient_tile_decref(tt);
+    return buffer;
+}
 
-    return img;
+static void *to_flat_image_get_buffer(DP_UNUSED void *user, int width,
+                                      int height)
+{
+    return DP_image_new(width, height);
+}
+
+static void to_flat_image_to_buffer(void *buffer, DP_TransientTile *tt,
+                                    DP_TileIterator *ti)
+{
+    DP_Image *img = buffer;
+    DP_TileIntoDstIterator tidi = DP_tile_into_dst_iterator_make(ti);
+    while (DP_tile_into_dst_iterator_next(&tidi)) {
+        DP_image_pixel_at_set(img, tidi.dst_x, tidi.dst_y,
+                              DP_pixel15_to_8(DP_transient_tile_pixel_at(
+                                  tt, tidi.tile_x, tidi.tile_y)));
+    }
+}
+
+DP_Image *DP_canvas_state_to_flat_image(DP_CanvasState *cs, unsigned int flags,
+                                        const DP_Rect *area_or_null,
+                                        const DP_ViewModeFilter *vmf_or_null)
+{
+    DP_ASSERT(cs);
+    DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
+    return flatten_canvas(cs, flags, area_or_null, vmf_or_null,
+                          to_flat_image_get_buffer, to_flat_image_to_buffer,
+                          NULL);
+}
+
+static void *to_flat_separated_urgba8_get_buffer(void *user,
+                                                 DP_UNUSED int width,
+                                                 DP_UNUSED int height)
+{
+    return user;
+}
+
+static void to_flat_separated_urgba8_to_buffer(void *buffer,
+                                               DP_TransientTile *tt,
+                                               DP_TileIterator *ti)
+{
+    unsigned char *channels = buffer;
+    int width = DP_rect_width(ti->dst);
+    int size = width * DP_rect_height(ti->dst);
+    DP_TileIntoDstIterator tidi = DP_tile_into_dst_iterator_make(ti);
+    while (DP_tile_into_dst_iterator_next(&tidi)) {
+        DP_UPixel8 pixel = DP_upixel15_to_8(DP_pixel15_unpremultiply(
+            DP_transient_tile_pixel_at(tt, tidi.tile_x, tidi.tile_y)));
+        int i = tidi.dst_y * width + tidi.dst_x;
+        channels[i] = pixel.r;
+        channels[i + size] = pixel.g;
+        channels[i + size + size] = pixel.b;
+        channels[i + size + size + size] = pixel.a;
+    }
+}
+
+bool DP_canvas_state_to_flat_separated_urgba8(
+    DP_CanvasState *cs, unsigned int flags, const DP_Rect *area_or_null,
+    const DP_ViewModeFilter *vmf_or_null, unsigned char *buffer)
+{
+    DP_ASSERT(cs);
+    DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
+    return flatten_canvas(cs, flags, area_or_null, vmf_or_null,
+                          to_flat_separated_urgba8_get_buffer,
+                          to_flat_separated_urgba8_to_buffer, buffer);
 }
 
 DP_TransientTile *

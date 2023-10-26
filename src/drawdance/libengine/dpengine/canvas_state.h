@@ -163,6 +163,10 @@ DP_Image *DP_canvas_state_to_flat_image(DP_CanvasState *cs, unsigned int flags,
                                         const DP_Rect *area_or_null,
                                         const DP_ViewModeFilter *vmf_or_null);
 
+bool DP_canvas_state_to_flat_separated_urgba8(
+    DP_CanvasState *cs, unsigned int flags, const DP_Rect *area_or_null,
+    const DP_ViewModeFilter *vmf_or_null, unsigned char *buffer);
+
 DP_TransientTile *DP_canvas_state_flatten_tile_to(DP_CanvasState *cs,
                                                   int tile_index,
                                                   DP_TransientTile *tt_or_null,

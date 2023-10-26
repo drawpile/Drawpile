@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use drawdance::{
-    common::Output, dp_error_set, DP_BlendMode, DP_CanvasState, DP_DrawContext, DP_LayerContent,
-    DP_LayerList, DP_LayerProps, DP_LayerPropsList, DP_SaveResult, DP_UPixel8,
+    common::Output, dp_error, dp_error_set, DP_BlendMode, DP_CanvasState, DP_DrawContext,
+    DP_LayerContent, DP_LayerList, DP_LayerProps, DP_LayerPropsList, DP_SaveResult, DP_UPixel8,
     DP_canvas_state_background_tile_noinc, DP_canvas_state_height,
-    DP_canvas_state_layer_props_noinc, DP_canvas_state_layers_noinc, DP_canvas_state_width,
-    DP_channel15_to_8, DP_draw_context_pool_require, DP_free, DP_layer_content_to_upixels8,
+    DP_canvas_state_layer_props_noinc, DP_canvas_state_layers_noinc,
+    DP_canvas_state_to_flat_separated_urgba8, DP_canvas_state_width, DP_channel15_to_8,
+    DP_draw_context_pool_require, DP_free, DP_layer_content_to_upixels8,
     DP_layer_content_to_upixels8_cropped, DP_layer_group_children_noinc,
     DP_layer_list_content_at_noinc, DP_layer_list_group_at_noinc, DP_layer_props_blend_mode,
     DP_layer_props_children_noinc, DP_layer_props_hidden, DP_layer_props_isolated,
@@ -16,8 +17,8 @@ use drawdance::{
     DP_BLEND_MODE_LIGHTEN, DP_BLEND_MODE_LINEAR_BURN, DP_BLEND_MODE_LINEAR_LIGHT,
     DP_BLEND_MODE_LUMINOSITY, DP_BLEND_MODE_MULTIPLY, DP_BLEND_MODE_NORMAL, DP_BLEND_MODE_OVERLAY,
     DP_BLEND_MODE_SATURATION, DP_BLEND_MODE_SCREEN, DP_BLEND_MODE_SOFT_LIGHT,
-    DP_BLEND_MODE_SUBTRACT, DP_SAVE_RESULT_INTERNAL_ERROR, DP_SAVE_RESULT_OPEN_ERROR,
-    DP_SAVE_RESULT_SUCCESS, DP_SAVE_RESULT_WRITE_ERROR,
+    DP_BLEND_MODE_SUBTRACT, DP_FLAT_IMAGE_RENDER_FLAGS, DP_SAVE_RESULT_INTERNAL_ERROR,
+    DP_SAVE_RESULT_OPEN_ERROR, DP_SAVE_RESULT_SUCCESS, DP_SAVE_RESULT_WRITE_ERROR,
 };
 use std::{
     collections::HashMap,
@@ -574,6 +575,93 @@ fn write_layer_sections(
     Ok(())
 }
 
+fn to_flat_channels(cs: *mut DP_CanvasState, buffer: *mut u8) -> Result<()> {
+    let ok = unsafe {
+        DP_canvas_state_to_flat_separated_urgba8(
+            cs,
+            DP_FLAT_IMAGE_RENDER_FLAGS,
+            null(),
+            null(),
+            buffer,
+        )
+    };
+    if ok {
+        Ok(())
+    } else {
+        Err(anyhow!(dp_error()))
+    }
+}
+
+fn write_merged_channel(
+    out: &mut Output,
+    rows: usize,
+    stride: usize,
+    counts: &mut [u8],
+    src: &mut [u8],
+    dst: &mut [u8],
+) -> Result<()> {
+    for i in 0..rows {
+        let src_start = i * stride;
+        let src_end = src_start + stride;
+        let length = rle_compress(&src[src_start..src_end], dst)?;
+        out.write_bytes(&dst[0..length])?;
+
+        let count_bytes = u16::try_from(length)?.to_be_bytes();
+        counts[i * 2] = count_bytes[0];
+        counts[i * 2 + 1] = count_bytes[1];
+    }
+    Ok(())
+}
+
+fn write_merged_image(
+    cs: *mut DP_CanvasState,
+    dc: *mut DP_DrawContext,
+    mut out: Output,
+) -> Result<()> {
+    out.write_bytes(&[0, 1])?; // Compression type: run-length encoding.
+
+    let rows = usize::try_from(unsafe { DP_canvas_state_height(cs) })?;
+    let stride = usize::try_from(unsafe { DP_canvas_state_width(cs) })?;
+    let counts_stride = rows * 2;
+    let counts_length = counts_stride * 4;
+    let pool_size = counts_length + stride * 2;
+    let pool: &mut [u8] = unsafe {
+        from_raw_parts_mut(
+            DP_draw_context_pool_require(dc, pool_size).cast(),
+            pool_size,
+        )
+    };
+
+    let (counts, dst) = pool.split_at_mut(counts_length);
+    let counts_pos = out.tell()?;
+    clear_buffer(counts);
+    out.write_bytes(counts)?;
+
+    let size = rows * stride;
+    let mut buffer = vec![0u8; size * 4usize];
+    to_flat_channels(cs, buffer.as_mut_ptr())?;
+    for i in 0..4 {
+        let counts_start = i * counts_stride;
+        let counts_end = counts_start + counts_stride;
+        let buffer_start = i * size;
+        let buffer_end = buffer_start + size;
+        write_merged_channel(
+            &mut out,
+            rows,
+            stride,
+            &mut counts[counts_start..counts_end],
+            &mut buffer[buffer_start..buffer_end],
+            dst,
+        )?;
+    }
+
+    out.seek(counts_pos)?;
+    out.write_bytes(counts)?;
+
+    out.close()?;
+    Ok(())
+}
+
 fn write_psd(cs: *mut DP_CanvasState, dc: *mut DP_DrawContext, mut out: Output) -> Result<()> {
     // Magic "8BPS", 2 bytes for the version (0, 1), 6 reserved zero bytes.
     out.write_bytes(&[
@@ -593,7 +681,7 @@ fn write_psd(cs: *mut DP_CanvasState, dc: *mut DP_DrawContext, mut out: Output) 
         0, 0, 0, 0, // Image resources section length, we don't have any.
     ])?;
     write_layer_sections(cs, dc, &mut out)?;
-    out.close()?;
+    write_merged_image(cs, dc, out)?;
     Ok(())
 }
 

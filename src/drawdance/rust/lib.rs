@@ -20,7 +20,7 @@ pub fn init() {
     unsafe { DP_cpu_support_init() };
 }
 
-fn dp_error() -> String {
+pub fn dp_error() -> String {
     unsafe { CStr::from_ptr(DP_error()) }
         .to_str()
         .unwrap_or_default()

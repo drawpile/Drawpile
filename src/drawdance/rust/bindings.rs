@@ -2159,6 +2159,15 @@ extern "C" {
     ) -> *mut DP_Image;
 }
 extern "C" {
+    pub fn DP_canvas_state_to_flat_separated_urgba8(
+        cs: *mut DP_CanvasState,
+        flags: ::std::os::raw::c_uint,
+        area_or_null: *const DP_Rect,
+        vmf_or_null: *const DP_ViewModeFilter,
+        buffer: *mut ::std::os::raw::c_uchar,
+    ) -> bool;
+}
+extern "C" {
     pub fn DP_canvas_state_flatten_tile_to(
         cs: *mut DP_CanvasState,
         tile_index: ::std::os::raw::c_int,
