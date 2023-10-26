@@ -14,6 +14,7 @@ dp_target_sources(dpcommon
     dpcommon/binary.c
     dpcommon/common.c
     dpcommon/cpu.c
+    dpcommon/endianness.c
     dpcommon/event_log.c
     dpcommon/file.c
     dpcommon/input.c

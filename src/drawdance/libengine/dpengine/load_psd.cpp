@@ -8,6 +8,7 @@ extern "C" {
 #include "layer_props.h"
 #include "layer_props_list.h"
 #include "load.h"
+#include "rust.h"
 #include <dpcommon/conversions.h>
 #include <dpcommon/input.h>
 #include <dpmsg/blend_mode.h>
@@ -179,8 +180,10 @@ int extract_blend_mode(uint32_t key)
 
 static void apply_layer_props(DP_TransientLayerProps *tlp, psd::Layer *layer)
 {
-    DP_transient_layer_props_title_set(tlp, layer->name.c_str(),
-                                       layer->name.GetLength());
+    if (!DP_psd_read_utf16be_layer_title(tlp, layer->utf16Name)) {
+        DP_transient_layer_props_title_set(tlp, layer->name.c_str(),
+                                           layer->name.GetLength());
+    }
     DP_transient_layer_props_opacity_set(tlp,
                                          DP_channel8_to_15(layer->opacity));
     DP_transient_layer_props_blend_mode_set(

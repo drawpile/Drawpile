@@ -122,6 +122,54 @@ fn blend_mode_to_psd(blend_mode: DP_BlendMode) -> &'static [u8] {
     }
 }
 
+fn write_layer_title(out: &mut Output, title: &[u8]) -> Result<()> {
+    let len = title.len().min(255);
+    out.write_bytes(&[len as u8])?;
+    if title.is_ascii() {
+        out.write_bytes(&title[0..len])?;
+    } else {
+        let ascii_title: Vec<u8> = title[0..len]
+            .iter()
+            .map(|b| if b.is_ascii() { *b } else { 0x5fu8 }) // Underscore.
+            .collect();
+        out.write_bytes(&ascii_title)?;
+    }
+    match (len + 1) % 4 {
+        1 => out.write_bytes(&[0, 0, 0])?,
+        2 => out.write_bytes(&[0, 0])?,
+        3 => out.write_bytes(&[0])?,
+        _ => {}
+    }
+    Ok(())
+}
+
+fn write_layer_utf16be_title(out: &mut Output, title: &[u8]) -> Result<()> {
+    out.write_bytes(&[
+        56, 66, 73, 77, // "8BIM" magic number.
+        108, 117, 110, 105, // "luni" block key.
+    ])?;
+
+    let utf16be_title: Vec<u8> = String::from_utf8_lossy(title)
+        .encode_utf16()
+        .flat_map(u16::to_be_bytes)
+        .collect();
+
+    let block_len = 4 + utf16be_title.len() + 2;
+    let needs_pad = block_len % 2 != 0;
+    out.write_u32_be(u32::try_from(if needs_pad {
+        block_len + 1
+    } else {
+        block_len
+    })?)?;
+
+    let utf16be_len = u32::try_from(utf16be_title.len() / 2)?;
+    out.write_u32_be(utf16be_len)?; // Length in 16 bit units.
+    out.write_bytes(&utf16be_title)?; // Title itself in UTF-16BE.
+                                      // Trailing NUL and potentially a pad byte.
+    out.write_bytes(if needs_pad { &[0, 0, 0] } else { &[0, 0] })?;
+    Ok(())
+}
+
 fn write_layer_info(
     out: &mut Output,
     blend_mode: DP_BlendMode,
@@ -159,23 +207,8 @@ fn write_layer_info(
         0, 0, 0, 0, // Layer blending ranges (none).
     ])?;
 
-    let len = title.len().min(255);
-    out.write_bytes(&[len as u8])?;
-    if title.is_ascii() {
-        out.write_bytes(&title[0..len])?;
-    } else {
-        let ascii_title: Vec<u8> = title[0..len]
-            .iter()
-            .map(|b| if b.is_ascii() { *b } else { 0x5fu8 }) // Underscore.
-            .collect();
-        out.write_bytes(&ascii_title)?;
-    }
-    match (len + 1) % 4 {
-        1 => out.write_bytes(&[0, 0, 0])?,
-        2 => out.write_bytes(&[0, 0])?,
-        3 => out.write_bytes(&[0])?,
-        _ => {}
-    }
+    write_layer_title(out, title)?;
+    write_layer_utf16be_title(out, title)?;
 
     if section.needs_lsect_block() {
         let value = section.value();

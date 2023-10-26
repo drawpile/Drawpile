@@ -16,6 +16,7 @@ renaming_overrides_prefixing = true
 "DP_CanvasState" = "DP_CanvasState"
 "DP_DrawContext" = "DP_DrawContext"
 "DP_SaveResult" = "DP_SaveResult"
+"DP_TransientLayerProps" = "DP_TransientLayerProps"
 
 [enum]
 rename_variants = "QualifiedScreamingSnakeCase"

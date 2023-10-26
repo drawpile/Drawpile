@@ -12,6 +12,9 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+bool DP_psd_read_utf16be_layer_title(DP_TransientLayerProps *tlp,
+                                     const uint16_t *be);
+
 DP_SaveResult DP_save_psd(DP_CanvasState *cs, const char *path,
                           DP_DrawContext *dc);
 

@@ -53,4 +53,8 @@
 #endif
 
 
+// Returns the value of DP_BYTE_ORDER, so that it can be read from Rust.
+unsigned int DP_byte_order(void);
+
+
 #endif
