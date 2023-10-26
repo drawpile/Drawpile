@@ -570,7 +570,7 @@ fn write_layer_sections(
     let mut layer_offsets = HashMap::new();
     write_layer_info_section(cs, dc, out, &mut layer_offsets)?;
     out.write_bytes(&[0, 0, 0, 0])?; // Global layer mask info (none).
-    write_size_prefix(out, section_start, 2)?;
+    write_size_prefix(out, section_start, 0)?;
     Ok(())
 }
 
