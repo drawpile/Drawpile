@@ -40,24 +40,34 @@ The following dependencies are required:
 
 ### Windows
 
-Using Visual Studio:
+Building software on Windows is a pretty miserable experience. It usually takes at least 3 hours for the development environment to finish installing, possibly more depending on the speed of your computer and network. You should also have at least 50 GB of free disk space, otherwise the process may fail.
 
-1. Run the [Rust installer](https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe),
-   which will also automatically install Visual Studio Community Edition
-1. Open the Visual Studio x64 command line from the Start menu and
-   [install vcpkg](https://vcpkg.io/en/getting-started.html). Be sure to run
-   the `vcpkg integrate install` step for integration with Visual Studio
-1. Run
-   `vcpkg install libzip:x64-windows qtbase:x64-windows qtmultimedia:x64-windows qtsvg:x64-windows qttools:x64-windows qttranslations:x64-windows`
-   to install required dependencies, and
-   `vcpkg install libmicrohttpd:x64-windows libsodium:x64-windows qtkeychain-qt6:x64-windows`
-   to install optional dependencies
-1. Run `git clone https://github.com/drawpile/Drawpile.git` to clone Drawpile
-1. Open Visual Studio from the Start menu and open `Drawpile\CMakeLists.txt`
-   and use normally. Note that because assets are not copied into the runtime
-   directory, icons and brushes will be missing from the user interface. Copy
-   the files from the `src\desktop\assets` directory into the directory with
-   the built executable.
+1. Install Rust and Visual Studio Community Edition. Download [the Rust installer](https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe) and run it. You can leave everything on the default options to let in install everything that's needed.
+1. Run the Visual Studio x64 Command Line. You should be able to find it in your start menu by searching for "x64". You a black window with white in it.
+   1. If you haven't used the Windows command line before: it's weird and all kinds of terrible.
+   1. **Do not press `Ctrl+V`**, it won't paste, it will just write garbage that you have to delete or else it will mess things up. To paste something, you have to use `Shift+Insert` instead.
+   1. **Do not click around in the window.** Only click the title bar or the entry in the task bar. Else it will get stuck until you press enter - but it won't tell you that, so you'll just be waiting for it to do something while it's waiting for you to press a key for all eternity.
+   1. **Don't try to copy stuff out of the window.** That will almost always get it stuck and/or kill whatever is currently running. Just take a screenshot instead if you want to show someone what it says.
+1. Install vcpkg:
+   1. Run `cd /D C:\` (type it into the command line window and hit enter) to switch to the root of the C drive.
+   1. Then run `git clone https://github.com/Microsoft/vcpkg.git` to get vcpkg.
+   1. Then `.\vcpkg\bootstrap-vcpkg.bat -disableMetrics` to set up vcpkg.
+1. Install the dependencies:
+   1. This step takes really long to complete. Again, make sure you have at least 50 GB of free disk space.
+   1. Run `vcpkg --disable-metrics install --clean-after-build qt5-base:x64-windows qt5-multimedia:x64-windows qt5-svg:x64-windows qt5-tools:x64-windows qt5-translations:x64-windows kf5archive:x64-windows libmicrohttpd:x64-windows libsodium:x64-windows qtkeychain:x64-windows` to install the dependencies.
+   1. Go do something else for the next several hours while it installs everything.
+1. Build Drawpile:
+   1. Run `cd /D %HOMEDRIVE%%HOMEPATH%` to switch to your home directory. It is probably under `C:\Users\<YOUR NAME>`.
+   2. Then run `git clone https://github.com/drawpile/Drawpile.git` to get Drawpile's source code.
+   3. Then `cd Drawpile` to switch into that directory.
+   4. Configure the build: `cmake -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded$<$<CONFIG:Debug>:Debug> -DCLIENT=ON -DSERVER=ON -DSERVERGUI=ON -DTOOLS=ON -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=install -DX_VCPKG_APPLOCAL_DEPS_INSTALL=ON -B build`
+   5. Build it: `cmake --build build` - this takes a few minutes the first time around.
+   6. Install it: `cmake --install build` - this won't overwrite any existing installation of Drawpile, it will just put the stuff you built and the DLLs, icons  and such together so that you can actually run it.
+1. Run what you built. The executable should be at `C:\Users\<YOUR NAME>\Drawpile\install\drawpile.exe`
+
+This will build in debug mode, which is meant for development and runs slowly. If you want a fully-optimized release build, you have to run the configure step above with `-DCMAKE_BUILD_TYPE=Release -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON` instead of `-DCMAKE_BUILD_TYPE=Debug`.
+
+After you make changes to the code, you have to run the build and install steps again. You don't have to re-run the configure step.
 
 ### macOS
 
