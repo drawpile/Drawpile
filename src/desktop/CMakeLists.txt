@@ -351,7 +351,11 @@ target_link_libraries(drawpile PRIVATE
 )
 
 if(WIN32)
-	target_sources(drawpile PRIVATE icons/drawpile.ico)
+	target_sources(drawpile PRIVATE
+		icons/drawpile.ico
+		utils/wineventfilter.h
+		utils/wineventfilter.cpp
+	)
 	add_library(drawpile-kis_tablet OBJECT)
 	target_sources(drawpile-kis_tablet PRIVATE
 		bundled/kis_tablet/debug.h

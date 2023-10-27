@@ -68,6 +68,9 @@ private:
 	utils::Recents *m_recents = nullptr;
 	QString m_originalSystemStyle;
 	QPalette m_originalSystemPalette;
+#ifdef Q_OS_WIN
+	WinEventFilter winEventFilter;
+#endif
 
 	void updateThemeIcons();
 

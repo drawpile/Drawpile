@@ -70,6 +70,9 @@ DrawpileApp::DrawpileApp(int &argc, char **argv)
 	connect(
 		filter, &GlobalKeyEventFilter::focusCanvas, this,
 		&DrawpileApp::focusCanvas);
+#ifdef Q_OS_WIN
+	installNativeEventFilter(&winEventFilter);
+#endif
 }
 
 DrawpileApp::~DrawpileApp()

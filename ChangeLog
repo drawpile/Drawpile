@@ -43,6 +43,7 @@ Unreleased Version 2.2.0-pre
  * Feature: Fill the brush slots with nicer default values on first startup, rather than them all being the same pixel brush.
  * Fix: Don't lock tool slots when using the eraser tool, to avoid accidentally getting stuck in it.
  * Feature: Translate a single-colored bottom layer into background color when loading ORA and PSD files.
+ * Fix: Make Alt+Space canvas shortcut sorta work in Windows. Thanks Bovy and xxxx for reporting.
 
 2023-09-30 Version 2.2.0-beta.8
  * Fix: Apply color wheel direction to color dialogs too. Thanks Blozzom for reporting.
