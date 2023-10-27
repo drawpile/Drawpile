@@ -55,3 +55,20 @@ else()
 	# for application data contains this redundancy
 	set(INSTALL_APPDATADIR "${CMAKE_INSTALL_DATAROOTDIR}/drawpile/drawpile")
 endif()
+
+# Installs an executable with various quirks for the current platform.
+# * On Windows, we want to dump the DLLs into the install directory. Except in
+#   our distribution build, because CI already gathers this stuff differently.
+# * On macOS, take care of MACOSX_BUNDLE stuff, whatever that is.
+# * On Android, don't install anything, because executables are libraries.
+# * On Linux, nothing special happens.
+function(dp_install_executables)
+	cmake_parse_arguments(PARSE_ARGV 0 ARG "INCLUDE_BUNDLEDIR" "" "TARGETS")
+	if(WIN32 AND NOT DIST_BUILD)
+		install(TARGETS ${ARG_TARGETS} RUNTIME DESTINATION ".")
+	elseif(APPLE AND ARG_INCLUDE_BUNDLEDIR)
+		install(TARGETS ${ARG_TARGETS} BUNDLE DESTINATION "${INSTALL_BUNDLEDIR}")
+	elseif(NOT ANDROID)
+		install(TARGETS ${ARG_TARGETS})
+	endif()
+endfunction()

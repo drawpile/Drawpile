@@ -162,9 +162,7 @@ if(TARGET libmicrohttpd::libmicrohttpd)
 endif()
 add_feature_info("Server web-admin support" "TARGET libmicrohttpd::libmicrohttpd" "")
 
-install(
-	TARGETS ${srvname}
-)
+dp_install_executables(TARGETS "${srvname}")
 
 # No trailing slash on DIRECTORY is required or else it will strip the last path
 # of the directory

@@ -537,12 +537,7 @@ else()
 endif()
 add_feature_info("External QtColorWidgets" "TARGET QtColorWidgets::QtColorWidgets" "")
 
-# On Android the target is a non-installable library
-if(NOT ANDROID)
-	install(TARGETS drawpile
-		BUNDLE DESTINATION "${INSTALL_BUNDLEDIR}"
-	)
-endif()
+dp_install_executables(TARGETS drawpile INCLUDE_BUNDLEDIR)
 
 if(WIN32)
 	configure_file(drawpile.rc.in drawpile.rc)
