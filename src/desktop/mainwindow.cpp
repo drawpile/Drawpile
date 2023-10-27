@@ -3333,6 +3333,7 @@ void MainWindow::setupActions()
 
 	QMenu *exportMenu = filemenu->addMenu(tr("&Export"));
 	exportMenu->setIcon(QIcon::fromTheme("document-export"));
+	exportMenu->addAction(exportDocument);
 	exportMenu->addAction(exportTemplate);
 	exportMenu->addAction(exportGifAnimation);
 #ifndef Q_OS_ANDROID
