@@ -3256,13 +3256,13 @@ void MainWindow::setupActions()
 	QAction *exportDocument = makeAction("exportdocument", tr("Export Image…")).icon("document-export").noDefaultShortcut();
 	QAction *savesel = makeAction("saveselection", tr("Export Selection...")).icon("select-rectangular").noDefaultShortcut();
 	QAction *autosave = makeAction("autosave", tr("Autosave")).noDefaultShortcut().checkable().disabled();
-	QAction *importBrushes = makeAction("importbrushes", tr("&Brushes...")).noDefaultShortcut();
-	QAction *exportTemplate = makeAction("exporttemplate", tr("Session &Template...")).noDefaultShortcut();
-	QAction *exportGifAnimation = makeAction("exportanimgif", tr("Animated &GIF...")).noDefaultShortcut();
+	QAction *importBrushes = makeAction("importbrushes", tr("Import &Brushes...")).noDefaultShortcut();
+	QAction *exportTemplate = makeAction("exporttemplate", tr("Export Session &Template...")).noDefaultShortcut();
+	QAction *exportGifAnimation = makeAction("exportanimgif", tr("Export Animated &GIF...")).noDefaultShortcut();
 #ifndef Q_OS_ANDROID
-	QAction *exportAnimationFrames = makeAction("exportanimframes", tr("Animation &Frames...")).noDefaultShortcut();
+	QAction *exportAnimationFrames = makeAction("exportanimframes", tr("Export Animation &Frames...")).noDefaultShortcut();
 #endif
-	QAction *exportBrushes = makeAction("exportbrushes", tr("&Brushes…")).noDefaultShortcut();
+	QAction *exportBrushes = makeAction("exportbrushes", tr("Export &Brushes…")).noDefaultShortcut();
 
 	QAction *record = makeAction("recordsession", tr("Record...")).icon("media-record").noDefaultShortcut();
 	QAction *start = makeAction("start", tr("Start...")).noDefaultShortcut();
