@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #ifndef DRAWPILEAPP_H
 #define DRAWPILEAPP_H
-
-#include <QApplication>
-#include <QMap>
 #include "desktop/notifications.h"
 #include "desktop/settings.h"
+#include <QApplication>
+#include <QMap>
+#ifdef Q_OS_WIN
+#	include "desktop/utils/wineventfilter.h"
+#endif
 
 class MainWindow;
 class QSoundEffect;
@@ -17,7 +18,7 @@ class StateDatabase;
 }
 
 class DrawpileApp final : public QApplication {
-Q_OBJECT
+	Q_OBJECT
 public:
 	DrawpileApp(int &argc, char **argv);
 	~DrawpileApp() override;

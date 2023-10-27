@@ -1,48 +1,44 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/main.h"
-#include "desktop/mainwindow.h"
-#include "desktop/tabletinput.h"
-#include "desktop/settings.h"
-
-#include "libclient/utils/logging.h"
-#include "libclient/utils/colorscheme.h"
-#include "desktop/utils/recents.h"
-#include "libclient/utils/statedatabase.h"
-#include "desktop/utils/globalkeyeventfilter.h"
-#include "desktop/notifications.h"
-#include "desktop/dialogs/startdialog.h"
-#include "libshared/util/paths.h"
-#include "libclient/drawdance/global.h"
-#include "libshared/util/qtcompat.h"
 #include "cmake-config/config.h"
+#include "desktop/dialogs/startdialog.h"
+#include "desktop/mainwindow.h"
+#include "desktop/notifications.h"
+#include "desktop/settings.h"
+#include "desktop/tabletinput.h"
+#include "desktop/utils/globalkeyeventfilter.h"
 #include "desktop/utils/qtguicompat.h"
-
-#ifdef Q_OS_MACOS
-#include "desktop/utils/macui.h"
-#include "desktop/widgets/macmenu.h"
-#include <QTimer>
-#elif defined(Q_OS_WIN)
-#include "desktop/bundled/kis_tablet/kis_tablet_support_win8.h"
-#include "desktop/bundled/kis_tablet/kis_tablet_support_win.h"
-#endif
-
+#include "desktop/utils/recents.h"
+#include "libclient/drawdance/global.h"
+#include "libclient/utils/colorscheme.h"
+#include "libclient/utils/logging.h"
+#include "libclient/utils/statedatabase.h"
+#include "libshared/util/paths.h"
+#include "libshared/util/qtcompat.h"
 #include <QCommandLineParser>
+#include <QDateTime>
 #include <QDebug>
 #include <QDir>
 #include <QIcon>
+#include <QLibraryInfo>
 #include <QMetaEnum>
 #include <QScreen>
 #include <QStyle>
 #include <QStyleFactory>
-#include <QUrl>
 #include <QTabletEvent>
-#include <QLibraryInfo>
 #include <QTranslator>
-#include <QDateTime>
+#include <QUrl>
 #include <QWidget>
 #include <memory>
 #include <tuple>
+#ifdef Q_OS_MACOS
+#	include "desktop/utils/macui.h"
+#	include "desktop/widgets/macmenu.h"
+#	include <QTimer>
+#elif defined(Q_OS_WIN)
+#	include "desktop/bundled/kis_tablet/kis_tablet_support_win.h"
+#	include "desktop/bundled/kis_tablet/kis_tablet_support_win8.h"
+#endif
 
 DrawpileApp::DrawpileApp(int &argc, char **argv)
 	: QApplication(argc, argv)
@@ -68,9 +64,11 @@ DrawpileApp::DrawpileApp(int &argc, char **argv)
 	// This event filter allows for hiding the title bars by holding shift.
 	GlobalKeyEventFilter *filter = new GlobalKeyEventFilter{this};
 	installEventFilter(filter);
-	connect(filter, &GlobalKeyEventFilter::setDockTitleBarsHidden, this,
+	connect(
+		filter, &GlobalKeyEventFilter::setDockTitleBarsHidden, this,
 		&DrawpileApp::setDockTitleBarsHidden);
-	connect(filter, &GlobalKeyEventFilter::focusCanvas, this,
+	connect(
+		filter, &GlobalKeyEventFilter::focusCanvas, this,
 		&DrawpileApp::focusCanvas);
 }
 
@@ -95,15 +93,17 @@ void DrawpileApp::initState()
  *
  * Also, on MacOS we must also handle the Open File event.
  */
-bool DrawpileApp::event(QEvent *e) {
-	if(e->type() == QEvent::TabletEnterProximity || e->type() == QEvent::TabletLeaveProximity) {
-		QTabletEvent *te = static_cast<QTabletEvent*>(e);
-		if(te->pointerType()==compat::PointerType::Eraser)
+bool DrawpileApp::event(QEvent *e)
+{
+	if(e->type() == QEvent::TabletEnterProximity ||
+	   e->type() == QEvent::TabletLeaveProximity) {
+		QTabletEvent *te = static_cast<QTabletEvent *>(e);
+		if(te->pointerType() == compat::PointerType::Eraser)
 			emit eraserNear(e->type() == QEvent::TabletEnterProximity);
 		return true;
 
 	} else if(e->type() == QEvent::FileOpen) {
-		QFileOpenEvent *fe = static_cast<QFileOpenEvent*>(e);
+		QFileOpenEvent *fe = static_cast<QFileOpenEvent *>(e);
 
 		// Note. This is currently broken in Qt 5.3.1:
 		// https://bugreports.qt-project.org/browse/QTBUG-39972
@@ -111,14 +111,17 @@ bool DrawpileApp::event(QEvent *e) {
 
 		return true;
 
-	} else if (e->type() == QEvent::ApplicationPaletteChange) {
+	} else if(e->type() == QEvent::ApplicationPaletteChange) {
 		updateThemeIcons();
 	}
 #ifdef Q_OS_MACOS
 	else if(e->type() == QEvent::ApplicationStateChange) {
-		QApplicationStateChangeEvent *ae = static_cast<QApplicationStateChangeEvent*>(e);
-		if(ae->applicationState() == Qt::ApplicationActive && topLevelWindows().isEmpty()) {
-			// Open a new window when application is activated and there are no windows.
+		QApplicationStateChangeEvent *ae =
+			static_cast<QApplicationStateChangeEvent *>(e);
+		if(ae->applicationState() == Qt::ApplicationActive &&
+		   topLevelWindows().isEmpty()) {
+			// Open a new window when application is activated and there are no
+			// windows.
 			openStart();
 		}
 	}
@@ -131,17 +134,18 @@ void DrawpileApp::setThemeStyle(const QString &themeStyle)
 {
 	bool foundStyle = false;
 #ifdef Q_OS_MACOS
-	if (themeStyle.isEmpty() || themeStyle.startsWith(QStringLiteral("mac"))) {
+	if(themeStyle.isEmpty() || themeStyle.startsWith(QStringLiteral("mac"))) {
 		foundStyle = true;
 		setStyle(new macui::MacProxyStyle);
 	} else {
 		foundStyle = setStyle(themeStyle);
 	}
 #else
-	foundStyle = setStyle(themeStyle.isEmpty() ? m_originalSystemStyle : themeStyle);
+	foundStyle =
+		setStyle(themeStyle.isEmpty() ? m_originalSystemStyle : themeStyle);
 #endif
 
-	if (!foundStyle) {
+	if(!foundStyle) {
 		qWarning() << "Could not find style" << themeStyle;
 		return;
 	}
@@ -174,7 +178,7 @@ void DrawpileApp::setThemePalette(desktop::settings::ThemePalette themePalette)
 		return;
 	case ThemePalette::Dark:
 #ifdef Q_OS_MACOS
-		if (macui::setNativeAppearance(macui::Appearance::Dark)) {
+		if(macui::setNativeAppearance(macui::Appearance::Dark)) {
 			setPalette(QPalette());
 			return;
 		}
@@ -183,10 +187,10 @@ void DrawpileApp::setThemePalette(desktop::settings::ThemePalette themePalette)
 		break;
 	case ThemePalette::Light:
 #ifdef Q_OS_MACOS
-	if (macui::setNativeAppearance(macui::Appearance::Light)) {
-		setPalette(QPalette());
-		return;
-	}
+		if(macui::setNativeAppearance(macui::Appearance::Light)) {
+			setPalette(QPalette());
+			return;
+		}
 #endif
 		[[fallthrough]];
 	case ThemePalette::KritaBright:
@@ -205,9 +209,11 @@ void DrawpileApp::setThemePalette(desktop::settings::ThemePalette themePalette)
 		// inherit the dark mode of the previous palette
 		macui::setNativeAppearance(macui::Appearance::System);
 #endif
-		if (compat::styleName(*style()) == QStringLiteral("Fusion")) {
+		if(compat::styleName(*style()) == QStringLiteral("Fusion")) {
 			newPalette = style()->standardPalette();
-		} else if (const auto fusion = std::unique_ptr<QStyle>(QStyleFactory::create("Fusion"))) {
+		} else if(
+			const auto fusion =
+				std::unique_ptr<QStyle>(QStyleFactory::create("Fusion"))) {
 			newPalette = fusion->standardPalette();
 		}
 		break;
@@ -223,7 +229,7 @@ void DrawpileApp::setThemePalette(desktop::settings::ThemePalette themePalette)
 	// adjust the native appearance to match since some controls (e.g. combobox)
 	// continue to draw using the native appearance for background and only
 	// adopt the palette for parts of the UI.
-	if (newPalette.color(QPalette::Window).lightness() < 128) {
+	if(newPalette.color(QPalette::Window).lightness() < 128) {
 		macui::setNativeAppearance(macui::Appearance::Dark);
 	} else {
 		macui::setNativeAppearance(macui::Appearance::Light);
@@ -244,12 +250,11 @@ QPalette DrawpileApp::loadPalette(const QString &fileName)
 
 void DrawpileApp::updateThemeIcons()
 {
-	const auto *iconTheme = QPalette().color(QPalette::Window).lightness() < 128
-		? "dark"
-		: "light";
+	const auto *iconTheme =
+		QPalette().color(QPalette::Window).lightness() < 128 ? "dark" : "light";
 
 	QStringList fallbackIconPaths;
-	for (const auto &path : utils::paths::dataPaths()) {
+	for(const auto &path : utils::paths::dataPaths()) {
 		fallbackIconPaths.append(path + "/theme/" + iconTheme);
 	}
 
@@ -262,7 +267,7 @@ void DrawpileApp::initTheme()
 	static QStringList defaultThemePaths{QIcon::themeSearchPaths()};
 
 	QStringList themePaths;
-	for (const auto &path : utils::paths::dataPaths()) {
+	for(const auto &path : utils::paths::dataPaths()) {
 		themePaths.append(path + "/theme");
 	}
 	themePaths.append(defaultThemePaths);
@@ -277,10 +282,12 @@ void DrawpileApp::initTheme()
 
 void DrawpileApp::initInterface()
 {
-	if(m_settings.interfaceMode() == int(desktop::settings::InterfaceMode::Unknown)) {
+	if(m_settings.interfaceMode() ==
+	   int(desktop::settings::InterfaceMode::Unknown)) {
 		m_settings.setInterfaceMode(int(guessInterfaceMode()));
 	}
-	m_smallScreenMode = m_settings.interfaceMode() == int(desktop::settings::InterfaceMode::SmallScreen);
+	m_smallScreenMode = m_settings.interfaceMode() ==
+						int(desktop::settings::InterfaceMode::SmallScreen);
 
 	QFont font = QApplication::font();
 	int fontSize = m_settings.fontSize();
@@ -305,7 +312,7 @@ desktop::settings::InterfaceMode DrawpileApp::guessInterfaceMode()
 #ifdef Q_OS_ANDROID
 	auto [pixelSize, mmSize] = screenResolution();
 	if(pixelSize.width() < 700 || pixelSize.height() < 700 ||
-		mmSize.width() < 80.0 || mmSize.height() < 80.0) {
+	   mmSize.width() < 80.0 || mmSize.height() < 80.0) {
 		return desktop::settings::InterfaceMode::SmallScreen;
 	}
 #endif
@@ -327,7 +334,7 @@ void DrawpileApp::openUrl(QUrl url)
 	// See if there is an existing replacable window
 	MainWindow *win = nullptr;
 	for(QWidget *widget : topLevelWidgets()) {
-		MainWindow *mw = qobject_cast<MainWindow*>(widget);
+		MainWindow *mw = qobject_cast<MainWindow *>(widget);
 		if(mw && mw->canReplace()) {
 			win = mw;
 			break;
@@ -355,7 +362,8 @@ dialogs::StartDialog::Entry getStartDialogEntry(const QString &page)
 		int count = entries.keyCount();
 		for(int i = 0; i < count; ++i) {
 			int value = entries.value(i);
-			bool pageFound = value != dialogs::StartDialog::Entry::Count &&
+			bool pageFound =
+				value != dialogs::StartDialog::Entry::Count &&
 				page.compare(entries.key(i), Qt::CaseInsensitive) == 0;
 			if(pageFound) {
 				return dialogs::StartDialog::Entry(value);
@@ -370,9 +378,7 @@ void DrawpileApp::openStart(const QString &page)
 {
 	MainWindow *win = new MainWindow;
 	win->newDocument(
-		m_settings.newCanvasSize(),
-		m_settings.newCanvasBackColor()
-	);
+		m_settings.newCanvasSize(), m_settings.newCanvasBackColor());
 	if(page.compare("none", Qt::CaseInsensitive) != 0) {
 		dialogs::StartDialog *dlg = win->showStartDialog();
 		dlg->showPage(getStartDialogEntry(page));
@@ -414,7 +420,8 @@ static void initTranslations(DrawpileApp &app, const QLocale &locale)
 		QString filename = QStringLiteral("all_%1").arg(lang);
 		for(const QString &datapath : utils::paths::dataPaths()) {
 			QString directory = QStringLiteral("%1/i18n").arg(datapath);
-			if(translator->load(filename, directory) && !translator->isEmpty()) {
+			if(translator->load(filename, directory) &&
+			   !translator->isEmpty()) {
 				qApp->installTranslator(translator);
 				return;
 			}
@@ -445,16 +452,19 @@ static std::tuple<QStringList, QString> initApp(DrawpileApp &app)
 	parser.addVersionOption();
 
 	// --data-dir
-	QCommandLineOption dataDir("data-dir", "Override read-only data directory.", "path");
+	QCommandLineOption dataDir(
+		"data-dir", "Override read-only data directory.", "path");
 	parser.addOption(dataDir);
 
 	// --portable-data-dir
-	QCommandLineOption portableDataDir("portable-data-dir", "Override settings directory.", "path");
+	QCommandLineOption portableDataDir(
+		"portable-data-dir", "Override settings directory.", "path");
 	parser.addOption(portableDataDir);
 
 #ifdef Q_OS_WIN
 	// --copy-legacy-settings
-	QCommandLineOption copyLegacySettings("copy-legacy-settings",
+	QCommandLineOption copyLegacySettings(
+		"copy-legacy-settings",
 		"Copy settings from Drawpile 2.1 to the new ini format. Use 'true' to "
 		"copy the settings, 'false' to not copy them and 'if-empty' to only "
 		"copy if the new settings are empty (this is the default.)",
@@ -462,9 +472,10 @@ static std::tuple<QStringList, QString> initApp(DrawpileApp &app)
 	parser.addOption(copyLegacySettings);
 #endif
 
-	QString startPageDescription = QStringLiteral(
-		"Which page to show on the start dialog: guess (the default), %1 or none.")
-		.arg(getStartPages().join(", "));
+	QString startPageDescription =
+		QStringLiteral("Which page to show on the start dialog: guess (the "
+					   "default), %1 or none.")
+			.arg(getStartPages().join(", "));
 	QCommandLineOption startPage(
 		"start-page", startPageDescription, "page", "guess");
 	parser.addOption(startPage);
@@ -480,12 +491,8 @@ static std::tuple<QStringList, QString> initApp(DrawpileApp &app)
 
 	if(parser.isSet(portableDataDir)) {
 		utils::paths::setWritablePath(parser.value(portableDataDir));
-		app.settings().reset(
-			utils::paths::writablePath(
-				QStandardPaths::AppConfigLocation,
-				"drawpile.ini"
-			)
-		);
+		app.settings().reset(utils::paths::writablePath(
+			QStandardPaths::AppConfigLocation, "drawpile.ini"));
 	}
 #ifdef Q_OS_WIN
 	else {
@@ -495,7 +502,9 @@ static std::tuple<QStringList, QString> initApp(DrawpileApp &app)
 		} else if(mode.compare("if-empty", Qt::CaseInsensitive) == 0) {
 			app.settings().migrateFromNativeFormat(false);
 		} else if(mode.compare("false", Qt::CaseInsensitive) != 0) {
-			qCritical("Unknown --copy-legacy-settings value '%s'", qUtf8Printable(mode));
+			qCritical(
+				"Unknown --copy-legacy-settings value '%s'",
+				qUtf8Printable(mode));
 			std::exit(EXIT_FAILURE);
 		}
 	}
@@ -536,7 +545,8 @@ static std::tuple<QStringList, QString> initApp(DrawpileApp &app)
 	tabletinput::init(app);
 	parentalcontrols::init(app.settings());
 
-	// Set override locale from settings, or use system locale if no override is set
+	// Set override locale from settings, or use system locale if no override is
+	// set
 	QLocale locale = QLocale::c();
 	QString overrideLang = app.settings().language();
 	if(!overrideLang.isEmpty())
@@ -550,7 +560,8 @@ static std::tuple<QStringList, QString> initApp(DrawpileApp &app)
 	return {parser.positionalArguments(), parser.value(startPage)};
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
 #ifndef HAVE_QT_COMPAT_DEFAULT_HIGHDPI_PIXMAPS
 	// Set attributes that must be set before QApplication is constructed
 	QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
@@ -572,7 +583,7 @@ int main(int argc, char *argv[]) {
 
 	// CanvasView does not work correctly with this enabled.
 	// (Scale factor must be taken in account when zooming)
-	//QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+	// QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
 	DrawpileApp app(argc, argv);
 
@@ -585,7 +596,8 @@ int main(int argc, char *argv[]) {
 		} else {
 			QUrl url(files.at(0));
 			if(url.scheme().length() <= 1) {
-				// no scheme (or a drive letter?) means this is probably a local file
+				// no scheme (or a drive letter?) means this is probably a local
+				// file
 				url = QUrl::fromLocalFile(files.at(0));
 			}
 
