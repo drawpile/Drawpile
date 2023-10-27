@@ -3,6 +3,7 @@
 #ifndef VIDEOEXPORTER_H
 #define VIDEOEXPORTER_H
 
+#include <QMetaType>
 #include <QThread>
 #include <QString>
 #include <QSize>
@@ -19,8 +20,6 @@ public:
 		FFMPEG_WEBM,
 		FFMPEG_CUSTOM,
 	};
-
-	Q_ENUM(Format)
 
 	VideoExporter(QObject *parent);
 
@@ -134,5 +133,7 @@ namespace diagnostic_marker_private {
 		inline bool variableSizeSupported() override { return false; }
 	};
 }
+
+Q_DECLARE_METATYPE(VideoExporter::Format)
 
 #endif // VIDEOEXPORTER_H
