@@ -16,6 +16,9 @@ if(MSVC)
         # C4210: nonstandard extension used: function given file scope
         #  - MSVC does not recognize extern inside of functions as standard
         /wd4210
+		# C4324: structure was padded due to alignment specifier
+		#  - well yeah that's what an alignment specifier does
+		/wd4324
         # C4701 and 4703: potentially ininitialized (pointer) variable used
         #  - detection is so primitive that it spams innumerable false positives
         /wd4701 /wd4703
