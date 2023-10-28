@@ -391,6 +391,19 @@ void DP_transient_layer_props_list_insert_inc(DP_TransientLayerPropsList *tlpl,
                   .layer_props = DP_layer_props_incref(lp)});
 }
 
+void DP_transient_layer_props_list_set_transient_noinc(
+    DP_TransientLayerPropsList *tlpl, DP_TransientLayerProps *tlp, int index)
+{
+    DP_ASSERT(tlpl);
+    DP_ASSERT(DP_atomic_get(&tlpl->refcount) > 0);
+    DP_ASSERT(tlpl->transient);
+    DP_ASSERT(tlp);
+    DP_ASSERT(index >= 0);
+    DP_ASSERT(index < tlpl->count);
+    DP_ASSERT(!tlpl->elements[index].layer_props);
+    tlpl->elements[index].transient_layer_props = tlp;
+}
+
 void DP_transient_layer_props_list_insert_transient_noinc(
     DP_TransientLayerPropsList *tlpl, DP_TransientLayerProps *tlp, int index)
 {

@@ -51,9 +51,15 @@ typedef enum DP_LoadResult {
     DP_LOAD_RESULT_INTERNAL_ERROR,
 } DP_LoadResult;
 
+typedef void (*DP_LoadFixedLayerFn)(void *user, int layer_id);
+
 DP_CanvasState *DP_load(DP_DrawContext *dc, const char *path,
                         const char *flat_image_layer_title,
                         DP_LoadResult *out_result);
+
+DP_CanvasState *DP_load_ora(DP_DrawContext *dc, const char *path,
+                            DP_LoadFixedLayerFn on_fixed_layer, void *user,
+                            DP_LoadResult *out_result);
 
 DP_CanvasState *DP_load_psd(DP_DrawContext *dc, const char *path,
                             DP_LoadResult *out_result);

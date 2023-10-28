@@ -44,6 +44,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Don't lock tool slots when using the eraser tool, to avoid accidentally getting stuck in it.
  * Feature: Translate a single-colored bottom layer into background color when loading ORA and PSD files.
  * Fix: Make Alt+Space canvas shortcut sorta work in Windows. Thanks Bovy and xxxx for reporting.
+ * Feature: Drawpile 2.1 animation import.
 
 2023-09-30 Version 2.2.0-beta.8
  * Fix: Apply color wheel direction to color dialogs too. Thanks Blozzom for reporting.

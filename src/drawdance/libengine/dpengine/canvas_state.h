@@ -284,6 +284,9 @@ DP_transient_canvas_state_transient_timeline(DP_TransientCanvasState *tcs,
 void DP_transient_canvas_state_timeline_set_inc(DP_TransientCanvasState *tcs,
                                                 DP_Timeline *tl);
 
+void DP_transient_canvas_state_transient_timeline_set_noinc(
+    DP_TransientCanvasState *tcs, DP_TransientTimeline *ttl);
+
 DP_TransientDocumentMetadata *
 DP_transient_canvas_state_transient_metadata(DP_TransientCanvasState *tcs);
 

@@ -2022,6 +2022,16 @@ void DP_transient_canvas_state_timeline_set_inc(DP_TransientCanvasState *tcs,
     tcs->timeline = DP_timeline_incref(tl);
 }
 
+void DP_transient_canvas_state_transient_timeline_set_noinc(
+    DP_TransientCanvasState *tcs, DP_TransientTimeline *ttl)
+{
+    DP_ASSERT(tcs);
+    DP_ASSERT(DP_atomic_get(&tcs->refcount) > 0);
+    DP_ASSERT(tcs->transient);
+    DP_timeline_decref(tcs->timeline);
+    tcs->transient_timeline = ttl;
+}
+
 DP_TransientDocumentMetadata *
 DP_transient_canvas_state_transient_metadata(DP_TransientCanvasState *tcs)
 {

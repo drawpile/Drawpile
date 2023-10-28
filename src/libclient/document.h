@@ -109,6 +109,9 @@ public:
 	void initCanvas();
 
 	bool loadBlank(const QSize &size, const QColor &background);
+	void loadState(
+		const drawdance::CanvasState &canvasState, const QString &path,
+		bool dirty);
 	DP_LoadResult loadFile(const QString &path);
 	DP_LoadResult loadRecording(
 		const QString &path, bool debugDump, bool *outIsTemplate = nullptr);

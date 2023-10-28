@@ -46,6 +46,7 @@ public:
 
 	QStringList getImportCertificatePaths(const QString &title) const;
 	QString getOpenPath() const;
+	QString getOpenOraPath() const;
 	QString getOpenPasteImagePath() const;
 	QString getOpenDebugDumpsPath() const;
 	QString getOpenBrushPackPath() const;
@@ -93,6 +94,9 @@ private:
 	QString showOpenFileDialog(
 		const QString &title, LastPath type,
 		utils::FileFormatOptions formats) const;
+
+	QString showOpenFileDialogFilter(
+		const QString &title, LastPath type, const QString &filter) const;
 
 	QString showSaveFileDialog(
 		const QString &title, LastPath type, const QString &ext,

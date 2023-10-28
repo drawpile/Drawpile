@@ -190,6 +190,20 @@ bool Document::loadBlank(const QSize &size, const QColor &background)
 	return true;
 }
 
+void Document::loadState(
+	const drawdance::CanvasState &canvasState, const QString &path, bool dirty)
+{
+	setAutosave(false);
+	initCanvas();
+	if(dirty) {
+		markDirty();
+	} else {
+		unmarkDirty();
+	}
+	m_canvas->loadCanvasState(m_settings.engineUndoDepth(), canvasState);
+	setCurrentFilename(path);
+}
+
 DP_LoadResult Document::loadFile(const QString &path)
 {
 	DP_LoadResult result;
@@ -199,11 +213,7 @@ DP_LoadResult Document::loadFile(const QString &path)
 		Q_ASSERT(result != DP_LOAD_RESULT_SUCCESS);
 		return result;
 	} else {
-		setAutosave(false);
-		initCanvas();
-		unmarkDirty();
-		m_canvas->loadCanvasState(m_settings.engineUndoDepth(), canvasState);
-		setCurrentFilename(path);
+		loadState(canvasState, path, false);
 		return DP_LOAD_RESULT_SUCCESS;
 	}
 }

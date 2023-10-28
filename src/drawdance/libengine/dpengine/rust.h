@@ -12,6 +12,19 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+typedef void (*DP_LoadOldAnimationSetGroupTitleFn)(DP_TransientLayerProps *tlp,
+                                                   int i);
+
+typedef void (*DP_LoadOldAnimationSetTrackTitleFn)(DP_TransientTrack *tt,
+                                                   int i);
+
+DP_CanvasState *
+DP_load_old_animation(DP_DrawContext *dc, const char *path, int hold_time,
+                      int framerate,
+                      DP_LoadOldAnimationSetGroupTitleFn set_group_title,
+                      DP_LoadOldAnimationSetTrackTitleFn set_track_title,
+                      DP_LoadResult *out_result);
+
 bool DP_psd_read_utf16be_layer_title(DP_TransientLayerProps *tlp,
                                      const uint16_t *be);
 

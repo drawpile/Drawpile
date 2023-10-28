@@ -66,6 +66,8 @@ target_sources(drawpile PRIVATE
 	dialogs/abusereport.h
 	dialogs/addserverdialog.cpp
 	dialogs/addserverdialog.h
+	dialogs/animationimportdialog.cpp
+	dialogs/animationimportdialog.h
 	dialogs/avatarimport.cpp
 	dialogs/avatarimport.h
 	dialogs/brushexportdialog.cpp

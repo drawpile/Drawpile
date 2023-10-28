@@ -15,8 +15,10 @@ renaming_overrides_prefixing = true
 [export.rename]
 "DP_CanvasState" = "DP_CanvasState"
 "DP_DrawContext" = "DP_DrawContext"
+"DP_LoadResult" = "DP_LoadResult"
 "DP_SaveResult" = "DP_SaveResult"
 "DP_TransientLayerProps" = "DP_TransientLayerProps"
+"DP_TransientTrack" = "DP_TransientTrack"
 
 [enum]
 rename_variants = "QualifiedScreamingSnakeCase"

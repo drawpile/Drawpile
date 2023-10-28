@@ -137,6 +137,10 @@ typedef struct DP_ReadOraTrack {
 
 typedef struct DP_ReadOraContext {
     DP_DrawContext *dc;
+    struct {
+        DP_LoadFixedLayerFn fn;
+        void *user;
+    } fixed_layer;
     DP_ZipReader *zr;
     DP_Worker *worker;
     DP_ReadOraExpect expect;
@@ -210,6 +214,7 @@ static void read_ora_context_buffer_dispose(DP_ReadOraContext *c)
         DP_queue_each(&c->annotations, sizeof(DP_Annotation *),
                       dispose_annotation, NULL);
         DP_queue_dispose(&c->annotations);
+        break;
     default:
         break;
     }
@@ -549,6 +554,22 @@ static void ora_load_layer_content_in_worker(DP_ReadOraContext *c,
     DP_worker_push(c->worker, &params);
 }
 
+static void ora_handle_fixed_layer(DP_ReadOraContext *c, DP_XmlElement *element,
+                                   int layer_id)
+{
+    // Reporting fixed layers for the Drawpile 2.1 animation import. Those
+    // animations don't have an actual timeline, instead each layer is a frame
+    // and there's "fixed" layers that stick around for the entire animation.
+    DP_LoadFixedLayerFn fixed_layer_fn = c->fixed_layer.fn;
+    if (fixed_layer_fn) {
+        const char *fixed =
+            DP_xml_element_attribute(element, DRAWPILE_NAMESPACE, "fixed");
+        if (DP_str_equal_lowercase(fixed, "true")) {
+            fixed_layer_fn(c->fixed_layer.user, layer_id);
+        }
+    }
+}
+
 static bool ora_handle_layer(DP_ReadOraContext *c, DP_XmlElement *element)
 {
     if (ora_try_load_background_tile(c, element)) {
@@ -571,6 +592,7 @@ static bool ora_handle_layer(DP_ReadOraContext *c, DP_XmlElement *element)
         ora_make_layer_props(element, layer_id, false);
 
     push_layer_children(c, (DP_ReadOraChildren){.tlc = tlc, .tlp = tlp});
+    ora_handle_fixed_layer(c, element, layer_id);
     c->expect = DP_READ_ORA_EXPECT_LAYER_END;
     return true;
 }
@@ -661,7 +683,8 @@ static bool ora_handle_annotation(DP_ReadOraContext *c, DP_XmlElement *element)
         DP_transient_annotation_new_init(annotation_id, x, y, width, height);
     DP_transient_annotation_background_color_set(ta, background_color);
 
-    DP_TransientAnnotation **pp = DP_queue_push(&c->annotations, sizeof(ta));
+    DP_TransientAnnotation **pp =
+        DP_queue_push(&c->annotations, sizeof(DP_TransientAnnotation *));
     *pp = ta;
 
     c->text_len = 0;
@@ -672,7 +695,7 @@ static bool ora_handle_annotation(DP_ReadOraContext *c, DP_XmlElement *element)
 static void ora_handle_annotation_end(DP_ReadOraContext *c)
 {
     DP_TransientAnnotation *ta = *(DP_TransientAnnotation **)DP_queue_peek_last(
-        &c->annotations, sizeof(ta));
+        &c->annotations, sizeof(DP_TransientAnnotation *));
     DP_transient_annotation_text_set(ta, c->text, c->text_len);
     c->text_len = 0;
     c->text[0] = '\0';
@@ -685,8 +708,8 @@ static void ora_handle_annotations_end(DP_ReadOraContext *c)
     DP_TransientAnnotationList *tal =
         DP_transient_canvas_state_transient_annotations(c->tcs, count);
     for (int i = 0; i < count; ++i) {
-        DP_Annotation *a =
-            *(DP_Annotation **)DP_queue_peek(&c->annotations, sizeof(a));
+        DP_Annotation *a = *(DP_Annotation **)DP_queue_peek(
+            &c->annotations, sizeof(DP_Annotation *));
         DP_transient_annotation_list_insert_noinc(tal, a, i);
         DP_queue_shift(&c->annotations);
     }
@@ -1135,6 +1158,7 @@ static DP_CanvasState *ora_read_stack_xml(DP_ReadOraContext *c)
 }
 
 static DP_CanvasState *load_ora(DP_DrawContext *dc, const char *path,
+                                DP_LoadFixedLayerFn on_fixed_layer, void *user,
                                 DP_LoadResult *out_result)
 {
     DP_ZipReader *zr = DP_zip_reader_new(path);
@@ -1151,6 +1175,7 @@ static DP_CanvasState *load_ora(DP_DrawContext *dc, const char *path,
 
     DP_ReadOraContext c = {
         dc,
+        {on_fixed_layer, user},
         zr,
         NULL,
         DP_READ_ORA_EXPECT_IMAGE,
@@ -1239,7 +1264,7 @@ static DP_CanvasState *load(DP_DrawContext *dc, const char *path,
 {
     const char *dot = strrchr(path, '.');
     if (DP_str_equal_lowercase(dot, ".ora")) {
-        return load_ora(dc, path, out_result);
+        return load_ora(dc, path, NULL, NULL, out_result);
     }
 
     if (DP_str_equal_lowercase(dot, ".psd")) {
@@ -1273,6 +1298,14 @@ DP_CanvasState *DP_load(DP_DrawContext *dc, const char *path,
         assign_load_result(out_result, DP_LOAD_RESULT_BAD_ARGUMENTS);
         return NULL;
     }
+}
+
+
+DP_CanvasState *DP_load_ora(DP_DrawContext *dc, const char *path,
+                            DP_LoadFixedLayerFn on_fixed_layer, void *user,
+                            DP_LoadResult *out_result)
+{
+    return load_ora(dc, path, on_fixed_layer, user, out_result);
 }
 
 

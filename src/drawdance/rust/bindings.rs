@@ -15,12 +15,18 @@ pub const DP_USER_CURSOR_FLAG_VALID: u32 = 1;
 pub const DP_USER_CURSOR_FLAG_MYPAINT: u32 = 2;
 pub const DP_USER_CURSOR_FLAG_PEN_UP: u32 = 4;
 pub const DP_USER_CURSOR_FLAG_PEN_DOWN: u32 = 8;
+pub const DP_DOCUMENT_METADATA_DPIX_DEFAULT: u32 = 72;
+pub const DP_DOCUMENT_METADATA_DPIY_DEFAULT: u32 = 72;
+pub const DP_DOCUMENT_METADATA_FRAMERATE_DEFAULT: u32 = 24;
+pub const DP_DOCUMENT_METADATA_FRAME_COUNT_DEFAULT: u32 = 24;
 pub const DP_DRAW_CONTEXT_STAMP_MAX_DIAMETER: u32 = 260;
 pub const DP_DRAW_CONTEXT_STAMP_BUFFER_SIZE: u32 = 67600;
 pub const DP_DRAW_CONTEXT_TRANSFORM_BUFFER_SIZE: u32 = 204;
 pub const DP_DRAW_CONTEXT_RASTER_POOL_MIN_SIZE: u32 = 8192;
 pub const DP_DRAW_CONTEXT_RASTER_POOL_MAX_SIZE: u32 = 1048576;
 pub const DP_DRAW_CONTEXT_ID_COUNT: u32 = 256;
+pub const DP_KEY_FRAME_LAYER_HIDDEN: u32 = 1;
+pub const DP_KEY_FRAME_LAYER_REVEALED: u32 = 2;
 pub const DP_AFFECTED_INDIRECT_AREAS_COUNT: u32 = 256;
 pub const DP_CANVAS_HISTORY_UNDO_DEPTH_MIN: u32 = 3;
 pub const DP_CANVAS_HISTORY_UNDO_DEPTH_MAX: u32 = 255;
@@ -2379,12 +2385,126 @@ extern "C" {
     );
 }
 extern "C" {
+    pub fn DP_transient_canvas_state_transient_timeline_set_noinc(
+        tcs: *mut DP_TransientCanvasState,
+        ttl: *mut DP_TransientTimeline,
+    );
+}
+extern "C" {
     pub fn DP_transient_canvas_state_transient_metadata(
         tcs: *mut DP_TransientCanvasState,
     ) -> *mut DP_TransientDocumentMetadata;
 }
 extern "C" {
     pub fn DP_transient_canvas_state_intuit_background(tcs: *mut DP_TransientCanvasState);
+}
+extern "C" {
+    pub fn DP_document_metadata_new() -> *mut DP_DocumentMetadata;
+}
+extern "C" {
+    pub fn DP_document_metadata_incref(dm: *mut DP_DocumentMetadata) -> *mut DP_DocumentMetadata;
+}
+extern "C" {
+    pub fn DP_document_metadata_incref_nullable(
+        dm_or_null: *mut DP_DocumentMetadata,
+    ) -> *mut DP_DocumentMetadata;
+}
+extern "C" {
+    pub fn DP_document_metadata_decref(dm: *mut DP_DocumentMetadata);
+}
+extern "C" {
+    pub fn DP_document_metadata_decref_nullable(dm_or_null: *mut DP_DocumentMetadata);
+}
+extern "C" {
+    pub fn DP_document_metadata_refcount(dm: *mut DP_DocumentMetadata) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_document_metadata_transient(dm: *mut DP_DocumentMetadata) -> bool;
+}
+extern "C" {
+    pub fn DP_document_metadata_dpix(dm: *mut DP_DocumentMetadata) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_document_metadata_dpiy(dm: *mut DP_DocumentMetadata) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_document_metadata_framerate(dm: *mut DP_DocumentMetadata) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_document_metadata_frame_count(dm: *mut DP_DocumentMetadata) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_transient_document_metadata_new(
+        dm: *mut DP_DocumentMetadata,
+    ) -> *mut DP_TransientDocumentMetadata;
+}
+extern "C" {
+    pub fn DP_transient_document_metadata_incref(
+        tdm: *mut DP_TransientDocumentMetadata,
+    ) -> *mut DP_TransientDocumentMetadata;
+}
+extern "C" {
+    pub fn DP_transient_document_metadata_decref(tdm: *mut DP_TransientDocumentMetadata);
+}
+extern "C" {
+    pub fn DP_transient_document_metadata_refcount(
+        tdm: *mut DP_TransientDocumentMetadata,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_transient_document_metadata_persist(
+        tdm: *mut DP_TransientDocumentMetadata,
+    ) -> *mut DP_DocumentMetadata;
+}
+extern "C" {
+    pub fn DP_transient_document_metadata_dpix(
+        tdm: *mut DP_TransientDocumentMetadata,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_transient_document_metadata_dpiy(
+        tdm: *mut DP_TransientDocumentMetadata,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_transient_document_metadata_framerate(
+        tdm: *mut DP_TransientDocumentMetadata,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_transient_document_metadata_frame_count(
+        tdm: *mut DP_TransientDocumentMetadata,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_transient_document_metadata_dpix_set(
+        tdm: *mut DP_TransientDocumentMetadata,
+        dpix: ::std::os::raw::c_int,
+    );
+}
+extern "C" {
+    pub fn DP_transient_document_metadata_dpiy_set(
+        tdm: *mut DP_TransientDocumentMetadata,
+        dpiy: ::std::os::raw::c_int,
+    );
+}
+extern "C" {
+    pub fn DP_transient_document_metadata_framerate_set(
+        tdm: *mut DP_TransientDocumentMetadata,
+        framerate: ::std::os::raw::c_int,
+    );
+}
+extern "C" {
+    pub fn DP_transient_document_metadata_frame_count_set(
+        tdm: *mut DP_TransientDocumentMetadata,
+        frame_count: ::std::os::raw::c_int,
+    );
+}
+extern "C" {
+    pub fn DP_transient_document_metadata_use_timeline_set(
+        tdm: *mut DP_TransientDocumentMetadata,
+        use_timeline: ::std::os::raw::c_int,
+    );
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -2718,6 +2838,155 @@ extern "C" {
 }
 extern "C" {
     pub fn DP_image_write_jpeg(img: *mut DP_Image, output: *mut DP_Output) -> bool;
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct DP_KeyFrame {
+    _unused: [u8; 0],
+}
+pub type DP_TransientKeyFrame = DP_KeyFrame;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct DP_KeyFrameLayer {
+    pub layer_id: ::std::os::raw::c_int,
+    pub flags: ::std::os::raw::c_uint,
+}
+#[test]
+fn bindgen_test_layout_DP_KeyFrameLayer() {
+    const UNINIT: ::std::mem::MaybeUninit<DP_KeyFrameLayer> = ::std::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::std::mem::size_of::<DP_KeyFrameLayer>(),
+        8usize,
+        concat!("Size of: ", stringify!(DP_KeyFrameLayer))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<DP_KeyFrameLayer>(),
+        4usize,
+        concat!("Alignment of ", stringify!(DP_KeyFrameLayer))
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).layer_id) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_KeyFrameLayer),
+            "::",
+            stringify!(layer_id)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).flags) as usize - ptr as usize },
+        4usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_KeyFrameLayer),
+            "::",
+            stringify!(flags)
+        )
+    );
+}
+extern "C" {
+    pub fn DP_key_frame_layer_hidden(kfl: *const DP_KeyFrameLayer) -> bool;
+}
+extern "C" {
+    pub fn DP_key_frame_layer_revealed(kfl: *const DP_KeyFrameLayer) -> bool;
+}
+extern "C" {
+    pub fn DP_key_frame_new_init(layer_id: ::std::os::raw::c_int) -> *mut DP_KeyFrame;
+}
+extern "C" {
+    pub fn DP_key_frame_incref(kf: *mut DP_KeyFrame) -> *mut DP_KeyFrame;
+}
+extern "C" {
+    pub fn DP_key_frame_incref_nullable(kf_or_null: *mut DP_KeyFrame) -> *mut DP_KeyFrame;
+}
+extern "C" {
+    pub fn DP_key_frame_decref(kf: *mut DP_KeyFrame);
+}
+extern "C" {
+    pub fn DP_key_frame_decref_nullable(kf_or_null: *mut DP_KeyFrame);
+}
+extern "C" {
+    pub fn DP_key_frame_refcount(kf: *mut DP_KeyFrame) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_key_frame_transient(kf: *mut DP_KeyFrame) -> bool;
+}
+extern "C" {
+    pub fn DP_key_frame_title(
+        kf: *mut DP_KeyFrame,
+        out_length: *mut usize,
+    ) -> *const ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn DP_key_frame_layer_id(kf: *mut DP_KeyFrame) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_key_frame_layers(
+        kf: *mut DP_KeyFrame,
+        out_count: *mut ::std::os::raw::c_int,
+    ) -> *const DP_KeyFrameLayer;
+}
+extern "C" {
+    pub fn DP_key_frame_same_frame(kf_a: *mut DP_KeyFrame, kf_b: *mut DP_KeyFrame) -> bool;
+}
+extern "C" {
+    pub fn DP_transient_key_frame_new(kf: *mut DP_KeyFrame) -> *mut DP_TransientKeyFrame;
+}
+extern "C" {
+    pub fn DP_transient_key_frame_new_with_layers(
+        kf: *mut DP_KeyFrame,
+        layers: *const DP_KeyFrameLayer,
+        count: ::std::os::raw::c_int,
+    ) -> *mut DP_TransientKeyFrame;
+}
+extern "C" {
+    pub fn DP_transient_key_frame_new_init(
+        layer_id: ::std::os::raw::c_int,
+        reserve: ::std::os::raw::c_int,
+    ) -> *mut DP_TransientKeyFrame;
+}
+extern "C" {
+    pub fn DP_transient_key_frame_incref(
+        tkf: *mut DP_TransientKeyFrame,
+    ) -> *mut DP_TransientKeyFrame;
+}
+extern "C" {
+    pub fn DP_transient_key_frame_decref(tkf: *mut DP_TransientKeyFrame);
+}
+extern "C" {
+    pub fn DP_transient_key_frame_refcount(tkf: *mut DP_TransientKeyFrame)
+        -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_transient_key_frame_persist(tkf: *mut DP_TransientKeyFrame) -> *mut DP_KeyFrame;
+}
+extern "C" {
+    pub fn DP_transient_key_frame_title_set(
+        tkf: *mut DP_TransientKeyFrame,
+        title: *const ::std::os::raw::c_char,
+        length: usize,
+    );
+}
+extern "C" {
+    pub fn DP_transient_key_frame_layer_id_set(
+        tkf: *mut DP_TransientKeyFrame,
+        layer_id: ::std::os::raw::c_int,
+    );
+}
+extern "C" {
+    pub fn DP_transient_key_frame_layer_set(
+        tkf: *mut DP_TransientKeyFrame,
+        kfl: DP_KeyFrameLayer,
+        index: ::std::os::raw::c_int,
+    );
+}
+extern "C" {
+    pub fn DP_transient_key_frame_layer_delete_at(
+        tkf: *mut DP_TransientKeyFrame,
+        index: ::std::os::raw::c_int,
+    );
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -3488,6 +3757,13 @@ extern "C" {
     );
 }
 extern "C" {
+    pub fn DP_transient_layer_list_set_transient_group_noinc(
+        tll: *mut DP_TransientLayerList,
+        tlg: *mut DP_TransientLayerGroup,
+        index: ::std::os::raw::c_int,
+    );
+}
+extern "C" {
     pub fn DP_transient_layer_list_insert_transient_content_noinc(
         tll: *mut DP_TransientLayerList,
         tlc: *mut DP_TransientLayerContent,
@@ -3803,6 +4079,13 @@ extern "C" {
     pub fn DP_transient_layer_props_list_insert_inc(
         tlpl: *mut DP_TransientLayerPropsList,
         lp: *mut DP_LayerProps,
+        index: ::std::os::raw::c_int,
+    );
+}
+extern "C" {
+    pub fn DP_transient_layer_props_list_set_transient_noinc(
+        tlpl: *mut DP_TransientLayerPropsList,
+        tlp: *mut DP_TransientLayerProps,
         index: ::std::os::raw::c_int,
     );
 }
@@ -5518,11 +5801,23 @@ pub const DP_LOAD_RESULT_UNSUPPORTED_PSD_COLOR_MODE: DP_LoadResult = 8;
 pub const DP_LOAD_RESULT_IMAGE_TOO_LARGE: DP_LoadResult = 9;
 pub const DP_LOAD_RESULT_INTERNAL_ERROR: DP_LoadResult = 10;
 pub type DP_LoadResult = ::std::os::raw::c_uint;
+pub type DP_LoadFixedLayerFn = ::std::option::Option<
+    unsafe extern "C" fn(user: *mut ::std::os::raw::c_void, layer_id: ::std::os::raw::c_int),
+>;
 extern "C" {
     pub fn DP_load(
         dc: *mut DP_DrawContext,
         path: *const ::std::os::raw::c_char,
         flat_image_layer_title: *const ::std::os::raw::c_char,
+        out_result: *mut DP_LoadResult,
+    ) -> *mut DP_CanvasState;
+}
+extern "C" {
+    pub fn DP_load_ora(
+        dc: *mut DP_DrawContext,
+        path: *const ::std::os::raw::c_char,
+        on_fixed_layer: DP_LoadFixedLayerFn,
+        user: *mut ::std::os::raw::c_void,
         out_result: *mut DP_LoadResult,
     ) -> *mut DP_CanvasState;
 }
@@ -6432,6 +6727,846 @@ extern "C" {
         progress_fn: DP_SaveAnimationProgressFn,
         user: *mut ::std::os::raw::c_void,
     ) -> DP_SaveResult;
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct DP_MemoryPoolBucket {
+    pub elements: *mut ::std::os::raw::c_char,
+}
+#[test]
+fn bindgen_test_layout_DP_MemoryPoolBucket() {
+    const UNINIT: ::std::mem::MaybeUninit<DP_MemoryPoolBucket> = ::std::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::std::mem::size_of::<DP_MemoryPoolBucket>(),
+        8usize,
+        concat!("Size of: ", stringify!(DP_MemoryPoolBucket))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<DP_MemoryPoolBucket>(),
+        8usize,
+        concat!("Alignment of ", stringify!(DP_MemoryPoolBucket))
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).elements) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_MemoryPoolBucket),
+            "::",
+            stringify!(elements)
+        )
+    );
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct DP_MemoryPoolFreeNode {
+    pub next: *mut DP_MemoryPoolFreeNode,
+}
+#[test]
+fn bindgen_test_layout_DP_MemoryPoolFreeNode() {
+    const UNINIT: ::std::mem::MaybeUninit<DP_MemoryPoolFreeNode> =
+        ::std::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::std::mem::size_of::<DP_MemoryPoolFreeNode>(),
+        8usize,
+        concat!("Size of: ", stringify!(DP_MemoryPoolFreeNode))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<DP_MemoryPoolFreeNode>(),
+        8usize,
+        concat!("Alignment of ", stringify!(DP_MemoryPoolFreeNode))
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).next) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_MemoryPoolFreeNode),
+            "::",
+            stringify!(next)
+        )
+    );
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct DP_MemoryPool {
+    pub el_size: usize,
+    pub bucket_el_count: usize,
+    pub buckets_len: usize,
+    pub buckets: *mut DP_MemoryPoolBucket,
+    pub free_list: *mut DP_MemoryPoolFreeNode,
+}
+#[test]
+fn bindgen_test_layout_DP_MemoryPool() {
+    const UNINIT: ::std::mem::MaybeUninit<DP_MemoryPool> = ::std::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::std::mem::size_of::<DP_MemoryPool>(),
+        40usize,
+        concat!("Size of: ", stringify!(DP_MemoryPool))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<DP_MemoryPool>(),
+        8usize,
+        concat!("Alignment of ", stringify!(DP_MemoryPool))
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).el_size) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_MemoryPool),
+            "::",
+            stringify!(el_size)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).bucket_el_count) as usize - ptr as usize },
+        8usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_MemoryPool),
+            "::",
+            stringify!(bucket_el_count)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).buckets_len) as usize - ptr as usize },
+        16usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_MemoryPool),
+            "::",
+            stringify!(buckets_len)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).buckets) as usize - ptr as usize },
+        24usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_MemoryPool),
+            "::",
+            stringify!(buckets)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).free_list) as usize - ptr as usize },
+        32usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_MemoryPool),
+            "::",
+            stringify!(free_list)
+        )
+    );
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct DP_MemoryPoolStatistics {
+    pub el_size: usize,
+    pub bucket_el_count: usize,
+    pub buckets_len: usize,
+    pub el_free: usize,
+}
+#[test]
+fn bindgen_test_layout_DP_MemoryPoolStatistics() {
+    const UNINIT: ::std::mem::MaybeUninit<DP_MemoryPoolStatistics> =
+        ::std::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::std::mem::size_of::<DP_MemoryPoolStatistics>(),
+        32usize,
+        concat!("Size of: ", stringify!(DP_MemoryPoolStatistics))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<DP_MemoryPoolStatistics>(),
+        8usize,
+        concat!("Alignment of ", stringify!(DP_MemoryPoolStatistics))
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).el_size) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_MemoryPoolStatistics),
+            "::",
+            stringify!(el_size)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).bucket_el_count) as usize - ptr as usize },
+        8usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_MemoryPoolStatistics),
+            "::",
+            stringify!(bucket_el_count)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).buckets_len) as usize - ptr as usize },
+        16usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_MemoryPoolStatistics),
+            "::",
+            stringify!(buckets_len)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).el_free) as usize - ptr as usize },
+        24usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_MemoryPoolStatistics),
+            "::",
+            stringify!(el_free)
+        )
+    );
+}
+extern "C" {
+    pub fn DP_memory_pool_new(el_size: usize, bucket_el_count: usize) -> DP_MemoryPool;
+}
+extern "C" {
+    pub fn DP_memory_pool_free(pool: *mut DP_MemoryPool);
+}
+extern "C" {
+    pub fn DP_memory_pool_reset(pool: *mut DP_MemoryPool);
+}
+extern "C" {
+    pub fn DP_memory_pool_alloc_el(pool: *mut DP_MemoryPool) -> *mut ::std::os::raw::c_void;
+}
+extern "C" {
+    pub fn DP_memory_pool_free_el(pool: *mut DP_MemoryPool, el: *mut ::std::os::raw::c_void);
+}
+extern "C" {
+    pub fn DP_memory_pool_statistics(pool: *mut DP_MemoryPool) -> DP_MemoryPoolStatistics;
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct DP_TileCounts {
+    pub x: ::std::os::raw::c_int,
+    pub y: ::std::os::raw::c_int,
+}
+#[test]
+fn bindgen_test_layout_DP_TileCounts() {
+    const UNINIT: ::std::mem::MaybeUninit<DP_TileCounts> = ::std::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::std::mem::size_of::<DP_TileCounts>(),
+        8usize,
+        concat!("Size of: ", stringify!(DP_TileCounts))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<DP_TileCounts>(),
+        4usize,
+        concat!("Alignment of ", stringify!(DP_TileCounts))
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).x) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_TileCounts),
+            "::",
+            stringify!(x)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).y) as usize - ptr as usize },
+        4usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_TileCounts),
+            "::",
+            stringify!(y)
+        )
+    );
+}
+extern "C" {
+    pub fn DP_tile_opaque_mask() -> *const u16;
+}
+extern "C" {
+    pub fn DP_tile_memory_usage() -> DP_MemoryPoolStatistics;
+}
+extern "C" {
+    pub fn DP_tile_new(context_id: ::std::os::raw::c_uint) -> *mut DP_Tile;
+}
+extern "C" {
+    pub fn DP_tile_new_from_pixel15(
+        context_id: ::std::os::raw::c_uint,
+        pixel: DP_Pixel15,
+    ) -> *mut DP_Tile;
+}
+extern "C" {
+    pub fn DP_tile_new_from_upixel15(
+        context_id: ::std::os::raw::c_uint,
+        pixel: DP_UPixel15,
+    ) -> *mut DP_Tile;
+}
+extern "C" {
+    pub fn DP_tile_new_from_pixels8(
+        context_id: ::std::os::raw::c_uint,
+        pixels: *const DP_Pixel8,
+    ) -> *mut DP_Tile;
+}
+extern "C" {
+    pub fn DP_tile_new_from_bgra(context_id: ::std::os::raw::c_uint, bgra: u32) -> *mut DP_Tile;
+}
+extern "C" {
+    pub fn DP_tile_new_from_compressed(
+        dc: *mut DP_DrawContext,
+        context_id: ::std::os::raw::c_uint,
+        image: *const ::std::os::raw::c_uchar,
+        image_size: usize,
+    ) -> *mut DP_Tile;
+}
+extern "C" {
+    pub fn DP_tile_new_checker(
+        context_id: ::std::os::raw::c_uint,
+        pixel1: DP_Pixel15,
+        pixel2: DP_Pixel15,
+    ) -> *mut DP_Tile;
+}
+extern "C" {
+    pub fn DP_tile_new_zebra(
+        context_id: ::std::os::raw::c_uint,
+        pixel1: DP_Pixel15,
+        pixel2: DP_Pixel15,
+    ) -> *mut DP_Tile;
+}
+extern "C" {
+    pub fn DP_tile_censored_inc() -> *mut DP_Tile;
+}
+extern "C" {
+    pub fn DP_tile_incref(tile: *mut DP_Tile) -> *mut DP_Tile;
+}
+extern "C" {
+    pub fn DP_tile_incref_nullable(tile_or_null: *mut DP_Tile) -> *mut DP_Tile;
+}
+extern "C" {
+    pub fn DP_tile_incref_by(tile: *mut DP_Tile, refcount: ::std::os::raw::c_int) -> *mut DP_Tile;
+}
+extern "C" {
+    pub fn DP_tile_incref_by_nullable(
+        tile_or_null: *mut DP_Tile,
+        refcount: ::std::os::raw::c_int,
+    ) -> *mut DP_Tile;
+}
+extern "C" {
+    pub fn DP_tile_decref(tile: *mut DP_Tile);
+}
+extern "C" {
+    pub fn DP_tile_decref_nullable(tile_or_null: *mut DP_Tile);
+}
+extern "C" {
+    pub fn DP_tile_refcount(tile: *mut DP_Tile) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_tile_transient(tile: *mut DP_Tile) -> bool;
+}
+extern "C" {
+    pub fn DP_tile_context_id(tile: *mut DP_Tile) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn DP_tile_pixels(tile: *mut DP_Tile) -> *const DP_Pixel15;
+}
+extern "C" {
+    pub fn DP_tile_pixel_at(
+        tile: *mut DP_Tile,
+        x: ::std::os::raw::c_int,
+        y: ::std::os::raw::c_int,
+    ) -> DP_Pixel15;
+}
+extern "C" {
+    pub fn DP_tile_blank(tile: *mut DP_Tile) -> bool;
+}
+extern "C" {
+    pub fn DP_tile_opaque(tile_or_null: *mut DP_Tile) -> bool;
+}
+extern "C" {
+    pub fn DP_tile_same_pixel(tile_or_null: *mut DP_Tile, out_pixel: *mut DP_Pixel15) -> bool;
+}
+extern "C" {
+    pub fn DP_tile_compress(
+        tile: *mut DP_Tile,
+        pixel_buffer: *mut DP_Pixel8,
+        get_output_buffer: ::std::option::Option<
+            unsafe extern "C" fn(
+                arg1: usize,
+                arg2: *mut ::std::os::raw::c_void,
+            ) -> *mut ::std::os::raw::c_uchar,
+        >,
+        user: *mut ::std::os::raw::c_void,
+    ) -> usize;
+}
+extern "C" {
+    pub fn DP_tile_copy_to_image(
+        tile_or_null: *mut DP_Tile,
+        img: *mut DP_Image,
+        x: ::std::os::raw::c_int,
+        y: ::std::os::raw::c_int,
+    );
+}
+extern "C" {
+    pub fn DP_tile_copy_to_upixels8(
+        tile_or_null: *mut DP_Tile,
+        pixels: *mut DP_UPixel8,
+        x: ::std::os::raw::c_int,
+        y: ::std::os::raw::c_int,
+        pixels_width: ::std::os::raw::c_int,
+        pixels_height: ::std::os::raw::c_int,
+    );
+}
+extern "C" {
+    pub fn DP_tile_sample(
+        tile_or_null: *mut DP_Tile,
+        mask: *const u16,
+        x: ::std::os::raw::c_int,
+        y: ::std::os::raw::c_int,
+        width: ::std::os::raw::c_int,
+        height: ::std::os::raw::c_int,
+        skip: ::std::os::raw::c_int,
+        opaque: bool,
+        in_out_weight: *mut f32,
+        in_out_red: *mut f32,
+        in_out_green: *mut f32,
+        in_out_blue: *mut f32,
+        in_out_alpha: *mut f32,
+    );
+}
+extern "C" {
+    pub fn DP_transient_tile_new(
+        tile: *mut DP_Tile,
+        context_id: ::std::os::raw::c_uint,
+    ) -> *mut DP_TransientTile;
+}
+extern "C" {
+    pub fn DP_transient_tile_new_blank(context_id: ::std::os::raw::c_uint)
+        -> *mut DP_TransientTile;
+}
+extern "C" {
+    pub fn DP_transient_tile_new_nullable(
+        tile_or_null: *mut DP_Tile,
+        context_id: ::std::os::raw::c_uint,
+    ) -> *mut DP_TransientTile;
+}
+extern "C" {
+    pub fn DP_transient_tile_incref(tt: *mut DP_TransientTile) -> *mut DP_TransientTile;
+}
+extern "C" {
+    pub fn DP_transient_tile_incref_nullable(
+        tt_or_null: *mut DP_TransientTile,
+    ) -> *mut DP_TransientTile;
+}
+extern "C" {
+    pub fn DP_transient_tile_decref(tt: *mut DP_TransientTile);
+}
+extern "C" {
+    pub fn DP_transient_tile_decref_nullable(tt_or_null: *mut DP_TransientTile);
+}
+extern "C" {
+    pub fn DP_transient_tile_refcount(tt: *mut DP_TransientTile) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_transient_tile_persist(tt: *mut DP_TransientTile) -> *mut DP_Tile;
+}
+extern "C" {
+    pub fn DP_transient_tile_context_id(tt: *mut DP_Tile) -> ::std::os::raw::c_uint;
+}
+extern "C" {
+    pub fn DP_transient_tile_pixels(tt: *mut DP_TransientTile) -> *mut DP_Pixel15;
+}
+extern "C" {
+    pub fn DP_transient_tile_pixel_at(
+        tt: *mut DP_TransientTile,
+        x: ::std::os::raw::c_int,
+        y: ::std::os::raw::c_int,
+    ) -> DP_Pixel15;
+}
+extern "C" {
+    pub fn DP_transient_tile_pixel_at_set(
+        tt: *mut DP_TransientTile,
+        x: ::std::os::raw::c_int,
+        y: ::std::os::raw::c_int,
+        pixel: DP_Pixel15,
+    );
+}
+extern "C" {
+    pub fn DP_transient_tile_pixel_at_put(
+        tt: *mut DP_TransientTile,
+        blend_mode: ::std::os::raw::c_int,
+        x: ::std::os::raw::c_int,
+        y: ::std::os::raw::c_int,
+        pixel: DP_Pixel15,
+    );
+}
+extern "C" {
+    pub fn DP_transient_tile_clear(tt: *mut DP_TransientTile);
+}
+extern "C" {
+    pub fn DP_transient_tile_copy(tt: *mut DP_TransientTile, t: *mut DP_Tile);
+}
+extern "C" {
+    pub fn DP_transient_tile_blank(tt: *mut DP_TransientTile) -> bool;
+}
+extern "C" {
+    pub fn DP_transient_tile_merge(
+        tt: *mut DP_TransientTile,
+        t: *mut DP_Tile,
+        opacity: u16,
+        blend_mode: ::std::os::raw::c_int,
+    );
+}
+extern "C" {
+    pub fn DP_transient_tile_merge_nullable(
+        tt_or_null: *mut DP_TransientTile,
+        t: *mut DP_Tile,
+        opacity: u16,
+        blend_mode: ::std::os::raw::c_int,
+    ) -> *mut DP_TransientTile;
+}
+extern "C" {
+    pub fn DP_transient_tile_brush_apply(
+        tt: *mut DP_TransientTile,
+        src: DP_UPixel15,
+        blend_mode: ::std::os::raw::c_int,
+        mask: *const u16,
+        opacity: u16,
+        x: ::std::os::raw::c_int,
+        y: ::std::os::raw::c_int,
+        w: ::std::os::raw::c_int,
+        h: ::std::os::raw::c_int,
+        skip: ::std::os::raw::c_int,
+    );
+}
+extern "C" {
+    pub fn DP_transient_tile_brush_apply_posterize(
+        tt: *mut DP_TransientTile,
+        posterize_num: ::std::os::raw::c_int,
+        mask: *const u16,
+        opacity: u16,
+        x: ::std::os::raw::c_int,
+        y: ::std::os::raw::c_int,
+        w: ::std::os::raw::c_int,
+        h: ::std::os::raw::c_int,
+        skip: ::std::os::raw::c_int,
+    );
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct DP_Track {
+    _unused: [u8; 0],
+}
+pub type DP_TransientTrack = DP_Track;
+extern "C" {
+    pub fn DP_timeline_new() -> *mut DP_Timeline;
+}
+extern "C" {
+    pub fn DP_timeline_incref(tl: *mut DP_Timeline) -> *mut DP_Timeline;
+}
+extern "C" {
+    pub fn DP_timeline_incref_nullable(tl_or_null: *mut DP_Timeline) -> *mut DP_Timeline;
+}
+extern "C" {
+    pub fn DP_timeline_decref(tl: *mut DP_Timeline);
+}
+extern "C" {
+    pub fn DP_timeline_decref_nullable(tl_or_null: *mut DP_Timeline);
+}
+extern "C" {
+    pub fn DP_timeline_refcount(tl: *mut DP_Timeline) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_timeline_transient(tl: *mut DP_Timeline) -> bool;
+}
+extern "C" {
+    pub fn DP_timeline_count(tl: *mut DP_Timeline) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_timeline_at_noinc(
+        tl: *mut DP_Timeline,
+        index: ::std::os::raw::c_int,
+    ) -> *mut DP_Track;
+}
+extern "C" {
+    pub fn DP_timeline_index_by_id(
+        tl: *mut DP_Timeline,
+        track_id: ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_timeline_same_frame(
+        tl: *mut DP_Timeline,
+        frame_index_a: ::std::os::raw::c_int,
+        frame_index_b: ::std::os::raw::c_int,
+    ) -> bool;
+}
+extern "C" {
+    pub fn DP_transient_timeline_new(
+        tl: *mut DP_Timeline,
+        reserve: ::std::os::raw::c_int,
+    ) -> *mut DP_TransientTimeline;
+}
+extern "C" {
+    pub fn DP_transient_timeline_new_init(
+        reserve: ::std::os::raw::c_int,
+    ) -> *mut DP_TransientTimeline;
+}
+extern "C" {
+    pub fn DP_transient_timeline_reserve(
+        ttl: *mut DP_TransientTimeline,
+        reserve: ::std::os::raw::c_int,
+    ) -> *mut DP_TransientTimeline;
+}
+extern "C" {
+    pub fn DP_transient_timeline_incref(
+        ttl: *mut DP_TransientTimeline,
+    ) -> *mut DP_TransientTimeline;
+}
+extern "C" {
+    pub fn DP_transient_timeline_decref(ttl: *mut DP_TransientTimeline);
+}
+extern "C" {
+    pub fn DP_transient_timeline_refcount(ttl: *mut DP_TransientTimeline) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_transient_timeline_persist(ttl: *mut DP_TransientTimeline) -> *mut DP_Timeline;
+}
+extern "C" {
+    pub fn DP_transient_timeline_at_noinc(
+        ttl: *mut DP_TransientTimeline,
+        index: ::std::os::raw::c_int,
+    ) -> *mut DP_Track;
+}
+extern "C" {
+    pub fn DP_transient_timeline_transient_at_noinc(
+        ttl: *mut DP_TransientTimeline,
+        index: ::std::os::raw::c_int,
+        reserve: ::std::os::raw::c_int,
+    ) -> *mut DP_TransientTrack;
+}
+extern "C" {
+    pub fn DP_transient_timeline_index_by_id(
+        ttl: *mut DP_TransientTimeline,
+        track_id: ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_transient_timeline_set_noinc(
+        ttl: *mut DP_TransientTimeline,
+        t: *mut DP_Track,
+        index: ::std::os::raw::c_int,
+    );
+}
+extern "C" {
+    pub fn DP_transient_timeline_set_inc(
+        ttl: *mut DP_TransientTimeline,
+        t: *mut DP_Track,
+        index: ::std::os::raw::c_int,
+    );
+}
+extern "C" {
+    pub fn DP_transient_timeline_set_transient_noinc(
+        ttl: *mut DP_TransientTimeline,
+        tt: *mut DP_TransientTrack,
+        index: ::std::os::raw::c_int,
+    );
+}
+extern "C" {
+    pub fn DP_transient_timeline_insert_transient_noinc(
+        ttl: *mut DP_TransientTimeline,
+        tt: *mut DP_TransientTrack,
+        index: ::std::os::raw::c_int,
+    );
+}
+extern "C" {
+    pub fn DP_transient_timeline_delete_at(
+        ttl: *mut DP_TransientTimeline,
+        index: ::std::os::raw::c_int,
+    );
+}
+extern "C" {
+    pub fn DP_track_incref(t: *mut DP_Track) -> *mut DP_Track;
+}
+extern "C" {
+    pub fn DP_track_incref_nullable(t_or_null: *mut DP_Track) -> *mut DP_Track;
+}
+extern "C" {
+    pub fn DP_track_decref(t: *mut DP_Track);
+}
+extern "C" {
+    pub fn DP_track_decref_nullable(t_or_null: *mut DP_Track);
+}
+extern "C" {
+    pub fn DP_track_refcount(t: *mut DP_Track) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_track_transient(t: *mut DP_Track) -> bool;
+}
+extern "C" {
+    pub fn DP_track_id(t: *mut DP_Track) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_track_title(
+        t: *mut DP_Track,
+        out_length: *mut usize,
+    ) -> *const ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn DP_track_hidden(t: *mut DP_Track) -> bool;
+}
+extern "C" {
+    pub fn DP_track_onion_skin(t: *mut DP_Track) -> bool;
+}
+extern "C" {
+    pub fn DP_track_key_frame_count(t: *mut DP_Track) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_track_frame_index_at_noinc(
+        t: *mut DP_Track,
+        index: ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_track_key_frame_at_noinc(
+        t: *mut DP_Track,
+        index: ::std::os::raw::c_int,
+    ) -> *mut DP_KeyFrame;
+}
+extern "C" {
+    pub fn DP_track_key_frame_at_inc(
+        t: *mut DP_Track,
+        index: ::std::os::raw::c_int,
+    ) -> *mut DP_KeyFrame;
+}
+extern "C" {
+    pub fn DP_track_key_frame_search_at(
+        t: *mut DP_Track,
+        frame_index: ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_track_key_frame_search_at_or_before(
+        t: *mut DP_Track,
+        frame_index: ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_track_key_frame_search_at_or_after(
+        t: *mut DP_Track,
+        frame_index: ::std::os::raw::c_int,
+        out_exact: *mut bool,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_track_same_frame(
+        t: *mut DP_Track,
+        frame_index_a: ::std::os::raw::c_int,
+        frame_index_b: ::std::os::raw::c_int,
+    ) -> bool;
+}
+extern "C" {
+    pub fn DP_transient_track_new_init(reserve: ::std::os::raw::c_int) -> *mut DP_TransientTrack;
+}
+extern "C" {
+    pub fn DP_transient_track_new(
+        t: *mut DP_Track,
+        reserve: ::std::os::raw::c_int,
+    ) -> *mut DP_TransientTrack;
+}
+extern "C" {
+    pub fn DP_transient_track_reserve(
+        tt: *mut DP_TransientTrack,
+        reserve: ::std::os::raw::c_int,
+    ) -> *mut DP_TransientTrack;
+}
+extern "C" {
+    pub fn DP_transient_track_incref(tt: *mut DP_TransientTrack) -> *mut DP_TransientTrack;
+}
+extern "C" {
+    pub fn DP_transient_track_decref(tt: *mut DP_TransientTrack);
+}
+extern "C" {
+    pub fn DP_transient_track_refcount(tt: *mut DP_TransientTrack) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_transient_track_persist(tt: *mut DP_TransientTrack) -> *mut DP_Track;
+}
+extern "C" {
+    pub fn DP_transient_track_key_frame_at_noinc(
+        tt: *mut DP_TransientTrack,
+        index: ::std::os::raw::c_int,
+    ) -> *mut DP_KeyFrame;
+}
+extern "C" {
+    pub fn DP_transient_track_key_frame_search_at(
+        tt: *mut DP_TransientTrack,
+        frame_index: ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn DP_transient_track_id_set(tt: *mut DP_TransientTrack, id: ::std::os::raw::c_int);
+}
+extern "C" {
+    pub fn DP_transient_track_title_set(
+        tt: *mut DP_TransientTrack,
+        title: *const ::std::os::raw::c_char,
+        length: usize,
+    );
+}
+extern "C" {
+    pub fn DP_transient_track_hidden_set(tt: *mut DP_TransientTrack, hidden: bool);
+}
+extern "C" {
+    pub fn DP_transient_track_onion_skin_set(tt: *mut DP_TransientTrack, onion_skin: bool);
+}
+extern "C" {
+    pub fn DP_transient_track_truncate(tt: *mut DP_TransientTrack, to_count: ::std::os::raw::c_int);
+}
+extern "C" {
+    pub fn DP_transient_track_transient_at_noinc(
+        tt: *mut DP_TransientTrack,
+        index: ::std::os::raw::c_int,
+    ) -> *mut DP_TransientKeyFrame;
+}
+extern "C" {
+    pub fn DP_transient_track_set_transient_noinc(
+        tt: *mut DP_TransientTrack,
+        frame_index: ::std::os::raw::c_int,
+        tkf: *mut DP_TransientKeyFrame,
+        index: ::std::os::raw::c_int,
+    );
+}
+extern "C" {
+    pub fn DP_transient_track_replace_noinc(
+        tt: *mut DP_TransientTrack,
+        frame_index: ::std::os::raw::c_int,
+        kf: *mut DP_KeyFrame,
+        index: ::std::os::raw::c_int,
+    );
+}
+extern "C" {
+    pub fn DP_transient_track_replace_transient_noinc(
+        tt: *mut DP_TransientTrack,
+        frame_index: ::std::os::raw::c_int,
+        tkf: *mut DP_TransientKeyFrame,
+        index: ::std::os::raw::c_int,
+    );
+}
+extern "C" {
+    pub fn DP_transient_track_insert_noinc(
+        tt: *mut DP_TransientTrack,
+        frame_index: ::std::os::raw::c_int,
+        kf: *mut DP_KeyFrame,
+        index: ::std::os::raw::c_int,
+    );
+}
+extern "C" {
+    pub fn DP_transient_track_delete_at(tt: *mut DP_TransientTrack, index: ::std::os::raw::c_int);
 }
 pub const DP_ACCESS_TIER_OPERATOR: DP_AccessTier = 0;
 pub const DP_ACCESS_TIER_TRUSTED: DP_AccessTier = 1;

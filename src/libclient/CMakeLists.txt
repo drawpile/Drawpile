@@ -97,6 +97,10 @@ target_sources(dpclient PRIVATE
 	export/imageseriesexporter.h
 	export/videoexporter.cpp
 	export/videoexporter.h
+	import/animationimporter.cpp
+	import/animationimporter.h
+	import/loadresult.cpp
+	import/loadresult.h
 	net/announcementlist.cpp
 	net/announcementlist.h
 	net/authlistmodel.cpp

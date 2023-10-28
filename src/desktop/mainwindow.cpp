@@ -118,6 +118,8 @@ static constexpr auto CTRL_KEY = Qt::CTRL;
 #include "desktop/dialogs/sessionundodepthlimitdialog.h"
 #include "desktop/dialogs/userinfodialog.h"
 #include "desktop/dialogs/startdialog.h"
+#include "desktop/dialogs/animationimportdialog.h"
+#include "libclient/import/loadresult.h"
 
 #ifdef Q_OS_WIN
 #include "desktop/bundled/kis_tablet/kis_tablet_support_win.h"
@@ -1467,6 +1469,22 @@ void MainWindow::exportImage()
 	}
 }
 
+void MainWindow::importOldAnimation()
+{
+	dialogs::AnimationImportDialog *dlg =
+		new dialogs::AnimationImportDialog(this);
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
+	connect(
+		dlg, &dialogs::AnimationImportDialog::canvasStateImported, this,
+		[this, dlg](const drawdance::CanvasState &canvasState) {
+			// Don't use the path of the imported animation to avoid clobbering
+			// of the old file by mashing Ctrl+S instinctually.
+			replaceableWindow()->m_doc->loadState(canvasState, QString(), true);
+			dlg->deleteLater();
+		});
+	utils::showWindow(dlg);
+}
+
 void MainWindow::onCanvasSaveStarted()
 {
 	QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
@@ -2352,42 +2370,13 @@ void MainWindow::showErrorMessageWithDetails(const QString &message, const QStri
 
 void MainWindow::showLoadResultMessage(DP_LoadResult result)
 {
-	switch(result) {
-	case DP_LOAD_RESULT_SUCCESS:
-		break;
-    case DP_LOAD_RESULT_BAD_ARGUMENTS:
-		showErrorMessage(tr("Bad arguments, this is probably a bug in Drawpile."));
-		break;
-    case DP_LOAD_RESULT_UNKNOWN_FORMAT:
-		showErrorMessage(tr("Unsupported format."));
-		break;
-    case DP_LOAD_RESULT_OPEN_ERROR:
-		showErrorMessageWithDetails(tr("Couldn't open file for reading."), DP_error());
-		break;
-    case DP_LOAD_RESULT_READ_ERROR:
-		showErrorMessageWithDetails(tr("Error reading file."), DP_error());
-		break;
-	case DP_LOAD_RESULT_BAD_MIMETYPE:
-		showErrorMessage(tr("File content doesn't match its type."));
-		break;
-	case DP_LOAD_RESULT_RECORDING_INCOMPATIBLE:
-		showErrorMessage(tr("Incompatible recording."));
-		break;
-	case DP_LOAD_RESULT_UNSUPPORTED_PSD_BITS_PER_CHANNEL:
-		showErrorMessage(tr("Unsupported bits per channel. Only 8 bits are supported."));
-		break;
-	case DP_LOAD_RESULT_UNSUPPORTED_PSD_COLOR_MODE:
-		showErrorMessage(tr("Unsupported color mode. Only RGB/RGBA is supported."));
-		break;
-	case DP_LOAD_RESULT_IMAGE_TOO_LARGE:
-		showErrorMessage(tr("Image dimensions are too large."));
-		break;
-	case DP_LOAD_RESULT_INTERNAL_ERROR:
-		showErrorMessage(tr("Internal error, this is probably a bug."));
-		break;
-	default:
-		showErrorMessageWithDetails(tr("Unknown error."), DP_error());
-		break;
+	if(result != DP_LOAD_RESULT_SUCCESS) {
+		QString message = impex::getLoadResultMessage(result);
+		if(impex::shouldIncludeLoadResultDpError(result)) {
+			showErrorMessageWithDetails(message, DP_error());
+		} else {
+			showErrorMessage(message);
+		}
 	}
 }
 
@@ -3256,6 +3245,7 @@ void MainWindow::setupActions()
 	QAction *exportDocument = makeAction("exportdocument", tr("Export Image…")).icon("document-export").noDefaultShortcut();
 	QAction *savesel = makeAction("saveselection", tr("Export Selection...")).icon("select-rectangular").noDefaultShortcut();
 	QAction *autosave = makeAction("autosave", tr("Autosave")).noDefaultShortcut().checkable().disabled();
+	QAction *importOldAnimation = makeAction("importoldanimation", tr("Import &Drawpile 2.1 Animation…")).noDefaultShortcut();
 	QAction *importBrushes = makeAction("importbrushes", tr("Import &Brushes...")).noDefaultShortcut();
 	QAction *exportTemplate = makeAction("exporttemplate", tr("Export Session &Template...")).noDefaultShortcut();
 	QAction *exportGifAnimation = makeAction("exportanimgif", tr("Export Animated &GIF...")).noDefaultShortcut();
@@ -3288,6 +3278,7 @@ void MainWindow::setupActions()
 	connect(saveas, SIGNAL(triggered()), this, SLOT(saveas()));
 	connect(exportDocument, &QAction::triggered, this, &MainWindow::exportImage);
 	connect(exportTemplate, &QAction::triggered, this, &MainWindow::exportTemplate);
+	connect(importOldAnimation, &QAction::triggered, this, &MainWindow::importOldAnimation);
 	connect(importBrushes, &QAction::triggered, m_dockBrushPalette, &docks::BrushPalette::importBrushes);
 	connect(exportBrushes, &QAction::triggered, m_dockBrushPalette, &docks::BrushPalette::exportBrushes);
 	connect(savesel, &QAction::triggered, this, &MainWindow::saveSelection);
@@ -3329,6 +3320,7 @@ void MainWindow::setupActions()
 
 	QMenu *importMenu = filemenu->addMenu(tr("&Import"));
 	importMenu->setIcon(QIcon::fromTheme("document-import"));
+	importMenu->addAction(importOldAnimation);
 	importMenu->addAction(importBrushes);
 
 	QMenu *exportMenu = filemenu->addMenu(tr("&Export"));

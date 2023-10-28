@@ -700,6 +700,14 @@ void DP_transient_layer_list_insert_group_inc(DP_TransientLayerList *tll,
         (DP_LayerListEntry){true, {.group = DP_layer_group_incref(lg)}});
 }
 
+void DP_transient_layer_list_set_transient_group_noinc(
+    DP_TransientLayerList *tll, DP_TransientLayerGroup *tlg, int index)
+{
+    DP_ASSERT(tlg);
+    set_element_at(tll, index,
+                   (DP_LayerListEntry){true, {.transient_group = tlg}});
+}
+
 void DP_transient_layer_list_insert_transient_content_noinc(
     DP_TransientLayerList *tll, DP_TransientLayerContent *tlc, int index)
 {

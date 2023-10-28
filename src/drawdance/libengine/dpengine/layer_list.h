@@ -170,6 +170,9 @@ void DP_transient_layer_list_insert_content_inc(DP_TransientLayerList *tll,
 void DP_transient_layer_list_insert_group_inc(DP_TransientLayerList *tll,
                                               DP_LayerGroup *lg, int index);
 
+void DP_transient_layer_list_set_transient_group_noinc(
+    DP_TransientLayerList *tll, DP_TransientLayerGroup *tlg, int index);
+
 void DP_transient_layer_list_insert_transient_content_noinc(
     DP_TransientLayerList *tll, DP_TransientLayerContent *tlc, int index);
 

@@ -123,6 +123,7 @@ public slots:
 	void saveas();
 	void saveSelection();
 	void exportImage();
+	void importOldAnimation();
 	void showFlipbook();
 
 	void showBrushSettingsDialog();

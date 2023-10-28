@@ -50,6 +50,13 @@ QString FileWrangler::getOpenPath() const
 		tr("Open"), LastPath::IMAGE, utils::FileFormatOption::OpenEverything);
 }
 
+QString FileWrangler::getOpenOraPath() const
+{
+	return showOpenFileDialogFilter(
+		tr("Open ORA"), LastPath::IMAGE,
+		QStringLiteral("%1 (*.ora)").arg(tr("OpenRaster Image")));
+}
+
 QString FileWrangler::getOpenPasteImagePath() const
 {
 	return showOpenFileDialog(
@@ -414,9 +421,15 @@ QString FileWrangler::getDefaultLastPath(LastPath type, const QString &ext)
 QString FileWrangler::showOpenFileDialog(
 	const QString &title, LastPath type, utils::FileFormatOptions formats) const
 {
+	return showOpenFileDialogFilter(
+		title, type, utils::fileFormatFilter(formats));
+}
+
+QString FileWrangler::showOpenFileDialogFilter(
+	const QString &title, LastPath type, const QString &filter) const
+{
 	QString filename = QFileDialog::getOpenFileName(
-		parentWidget(), title, getLastPath(type),
-		utils::fileFormatFilter(formats));
+		parentWidget(), title, getLastPath(type), filter);
 	if(filename.isEmpty()) {
 		return QString{};
 	} else {
