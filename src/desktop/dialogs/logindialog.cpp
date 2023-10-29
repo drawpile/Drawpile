@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/dialogs/logindialog.h"
 #include "desktop/dialogs/abusereport.h"
 #include "desktop/dialogs/avatarimport.h"
@@ -9,42 +8,38 @@
 #include "libclient/net/login.h"
 #include "libclient/net/loginsessions.h"
 #include "libclient/parentalcontrols/parentalcontrols.h"
-
 #include "libclient/utils/avatarlistmodel.h"
+#include "libclient/utils/html.h"
 #include "libclient/utils/sessionfilterproxymodel.h"
 #include "libclient/utils/usernamevalidator.h"
-#include "libclient/utils/html.h"
-
 #include "ui_logindialog.h"
-
-#ifdef HAVE_QTKEYCHAIN
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-#include <qt6keychain/keychain.h>
-#else
-#include <qt5keychain/keychain.h>
-#endif
-#endif
-
-#include <QIcon>
-#include <QPushButton>
-#include <QMessageBox>
-#include <QTimer>
-#include <QStyle>
-#include <QItemSelectionModel>
 #include <QAction>
+#include <QIcon>
+#include <QItemSelectionModel>
+#include <QMessageBox>
 #include <QPointer>
+#include <QPushButton>
+#include <QStyle>
+#include <QTimer>
+#ifdef HAVE_QTKEYCHAIN
+#	if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#		include <qt6keychain/keychain.h>
+#	else
+#		include <qt5keychain/keychain.h>
+#	endif
+#endif
 
 namespace dialogs {
 
 enum class Mode {
-	loading,         // used whenever we're waiting for the server
-	identity,        // ask user for username
-	authenticate,    // ask user for password (for login)
-	sessionlist,     // select session to join
+	loading,		 // used whenever we're waiting for the server
+	identity,		 // ask user for username
+	authenticate,	 // ask user for password (for login)
+	sessionlist,	 // select session to join
 	sessionpassword, // ask user for password (for session)
-	catchup,         // logged in: catching up (dialog can be closed at this point)
-	certChanged,     // SSL certificate has changed (can be ignored)
-	confirmNsfm,	 // confirm NSFM session join
+	catchup,	 // logged in: catching up (dialog can be closed at this point)
+	certChanged, // SSL certificate has changed (can be ignored)
+	confirmNsfm, // confirm NSFM session join
 };
 
 struct LoginDialog::Private {
@@ -68,8 +63,9 @@ struct LoginDialog::Private {
 	QMetaObject::Connection loginDestructConnection;
 
 	Private(net::LoginHandler *login, LoginDialog *dlg)
-		: mode(Mode::loading), loginHandler(login),
-		  ui(new Ui_LoginDialog)
+		: mode(Mode::loading)
+		, loginHandler(login)
+		, ui(new Ui_LoginDialog)
 	{
 		Q_ASSERT(loginHandler);
 
@@ -91,23 +87,28 @@ struct LoginDialog::Private {
 		ui->usernameIcon->setPixmap(QIcon::fromTheme("im-user").pixmap(22, 22));
 
 		ui->passwordIcon->setText(QString());
-		ui->passwordIcon->setPixmap(QIcon::fromTheme("object-locked").pixmap(22, 22));
+		ui->passwordIcon->setPixmap(
+			QIcon::fromTheme("object-locked").pixmap(22, 22));
 
 		// Session list page
 		utils::initKineticScrolling(ui->sessionList);
-		QObject::connect(ui->sessionList, &QTableView::doubleClicked, [this](const QModelIndex&) {
-			if(okButton->isEnabled())
-				okButton->click();
-		});
+		QObject::connect(
+			ui->sessionList, &QTableView::doubleClicked,
+			[this](const QModelIndex &) {
+				if(okButton->isEnabled())
+					okButton->click();
+			});
 
-		ui->showNsfw->setEnabled(parentalcontrols::level() == parentalcontrols::Level::Unrestricted);
+		ui->showNsfw->setEnabled(
+			parentalcontrols::level() == parentalcontrols::Level::Unrestricted);
 		sessions = new SessionFilterProxyModel(dlg);
 		sessions->setFilterCaseSensitivity(Qt::CaseInsensitive);
 		sessions->setFilterKeyColumn(-1);
 
 		auto &settings = dpApp().settings();
 		settings.bindFilterNsfm(ui->showNsfw);
-		settings.bindFilterNsfm(sessions, &SessionFilterProxyModel::setShowNsfw);
+		settings.bindFilterNsfm(
+			sessions, &SessionFilterProxyModel::setShowNsfw);
 
 		settings.bindLastUsername(ui->username);
 		revertAvatar(settings);
@@ -118,14 +119,18 @@ struct LoginDialog::Private {
 			ui->nsfmConfirmAgainBox->hide();
 		}
 
-		connect(ui->filter, &QLineEdit::textChanged,
-						sessions, &SessionFilterProxyModel::setFilterFixedString);
+		connect(
+			ui->filter, &QLineEdit::textChanged, sessions,
+			&SessionFilterProxyModel::setFilterFixedString);
 
 		ui->sessionList->setModel(sessions);
 
 		// Cert changed page
 		ui->warningIcon->setText(QString());
-		ui->warningIcon->setPixmap(dlg->style()->standardIcon(QStyle::SP_MessageBoxWarning).pixmap(64, 64));
+		ui->warningIcon->setPixmap(
+			dlg->style()
+				->standardIcon(QStyle::SP_MessageBoxWarning)
+				.pixmap(64, 64));
 
 		// Buttons
 		okButton = ui->buttonBox->button(QDialogButtonBox::Ok);
@@ -135,15 +140,15 @@ struct LoginDialog::Private {
 		yesButton = ui->buttonBox->button(QDialogButtonBox::Yes);
 		noButton = ui->buttonBox->button(QDialogButtonBox::No);
 
-		reportButton = ui->buttonBox->addButton(LoginDialog::tr("Report..."), QDialogButtonBox::ActionRole);
-		reportButton->setEnabled(false); // needs a selected session to be enabled
+		reportButton = ui->buttonBox->addButton(
+			LoginDialog::tr("Report..."), QDialogButtonBox::ActionRole);
+		reportButton->setEnabled(
+			false); // needs a selected session to be enabled
 
 		resetMode(Mode::loading);
 	}
 
-	~Private() {
-		delete ui;
-	}
+	~Private() { delete ui; }
 
 	void revertAvatar(desktop::settings::Settings &settings)
 	{
@@ -209,7 +214,8 @@ void LoginDialog::Private::resetMode(Mode newMode)
 		break;
 	case Mode::catchup:
 		okButton->setVisible(false);
-		ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(LoginDialog::tr("Close"));
+		ui->buttonBox->button(QDialogButtonBox::Cancel)
+			->setText(LoginDialog::tr("Close"));
 		page = ui->catchupPage;
 		break;
 	case Mode::certChanged:
@@ -231,7 +237,8 @@ void LoginDialog::Private::resetMode(Mode newMode)
 #ifdef HAVE_QTKEYCHAIN
 static const QString KEYCHAIN_NAME = QStringLiteral("Drawpile");
 
-static QString keychainSecretName(const QString &username, const QUrl &extAuthUrl, const QString &server)
+static QString keychainSecretName(
+	const QString &username, const QUrl &extAuthUrl, const QString &server)
 {
 	QString prefix, host;
 	if(extAuthUrl.isValid()) {
@@ -247,45 +254,91 @@ static QString keychainSecretName(const QString &username, const QUrl &extAuthUr
 #endif
 
 
-LoginDialog::LoginDialog(net::LoginHandler *login, QWidget *parent) :
-	QDialog(parent), d(new Private(login, this))
+LoginDialog::LoginDialog(net::LoginHandler *login, QWidget *parent)
+	: QDialog(parent)
+	, d(new Private(login, this))
 {
 	setWindowModality(Qt::WindowModal);
 	setAttribute(Qt::WA_DeleteOnClose);
 	setWindowTitle(login->url().host());
 
-	connect(d->ui->username, &QLineEdit::textChanged, this, &LoginDialog::updateOkButtonEnabled);
-	connect(d->ui->password, &QLineEdit::textChanged, this, &LoginDialog::updateOkButtonEnabled);
-	connect(d->ui->sessionPassword, &QLineEdit::textChanged, this, &LoginDialog::updateOkButtonEnabled);
-	connect(d->ui->sessionList->selectionModel(), &QItemSelectionModel::selectionChanged, this, &LoginDialog::updateOkButtonEnabled);
-	connect(d->ui->replaceCert, &QAbstractButton::toggled, this, &LoginDialog::updateOkButtonEnabled);
+	connect(
+		d->ui->username, &QLineEdit::textChanged, this,
+		&LoginDialog::updateOkButtonEnabled);
+	connect(
+		d->ui->password, &QLineEdit::textChanged, this,
+		&LoginDialog::updateOkButtonEnabled);
+	connect(
+		d->ui->sessionPassword, &QLineEdit::textChanged, this,
+		&LoginDialog::updateOkButtonEnabled);
+	connect(
+		d->ui->sessionList->selectionModel(),
+		&QItemSelectionModel::selectionChanged, this,
+		&LoginDialog::updateOkButtonEnabled);
+	connect(
+		d->ui->replaceCert, &QAbstractButton::toggled, this,
+		&LoginDialog::updateOkButtonEnabled);
 
-	connect(d->okButton, &QPushButton::clicked, this, &LoginDialog::onOkClicked);
+	connect(
+		d->okButton, &QPushButton::clicked, this, &LoginDialog::onOkClicked);
 	connect(d->cancelButton, &QPushButton::clicked, this, &LoginDialog::reject);
-	connect(d->reportButton, &QPushButton::clicked, this, &LoginDialog::onReportClicked);
-	connect(d->yesButton, &QPushButton::clicked, this, &LoginDialog::onYesClicked);
-	connect(d->noButton, &QPushButton::clicked, this, &LoginDialog::onNoClicked);
+	connect(
+		d->reportButton, &QPushButton::clicked, this,
+		&LoginDialog::onReportClicked);
+	connect(
+		d->yesButton, &QPushButton::clicked, this, &LoginDialog::onYesClicked);
+	connect(
+		d->noButton, &QPushButton::clicked, this, &LoginDialog::onNoClicked);
 	connect(this, &QDialog::rejected, login, &net::LoginHandler::cancelLogin);
 
-	connect(d->ui->avatarList, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &LoginDialog::updateAvatar);
-	connect(d->avatars, &QAbstractItemModel::rowsInserted, this, &LoginDialog::pickNewAvatar);
+	connect(
+		d->ui->avatarList, QOverload<int>::of(&QComboBox::currentIndexChanged),
+		this, &LoginDialog::updateAvatar);
+	connect(
+		d->avatars, &QAbstractItemModel::rowsInserted, this,
+		&LoginDialog::pickNewAvatar);
 
-	connect(d->ui->viewOldCert, &QPushButton::clicked, this, &LoginDialog::showOldCert);
-	connect(d->ui->viewNewCert, &QPushButton::clicked, this, &LoginDialog::showNewCert);
+	connect(
+		d->ui->viewOldCert, &QPushButton::clicked, this,
+		&LoginDialog::showOldCert);
+	connect(
+		d->ui->viewNewCert, &QPushButton::clicked, this,
+		&LoginDialog::showNewCert);
 
-	d->loginDestructConnection = connect(login, &net::LoginHandler::destroyed, this, &LoginDialog::deleteLater);
+	d->loginDestructConnection = connect(
+		login, &net::LoginHandler::destroyed, this, &LoginDialog::deleteLater);
 
-	connect(login, &net::LoginHandler::usernameNeeded, this, &LoginDialog::onUsernameNeeded);
-	connect(login, &net::LoginHandler::loginNeeded, this, &LoginDialog::onLoginNeeded);
-	connect(login, &net::LoginHandler::extAuthNeeded, this, &LoginDialog::onExtAuthNeeded);
-	connect(login, &net::LoginHandler::sessionConfirmationNeeded, this, &LoginDialog::onSessionConfirmationNeeded);
-	connect(login, &net::LoginHandler::sessionPasswordNeeded, this, &LoginDialog::onSessionPasswordNeeded);
+	connect(
+		login, &net::LoginHandler::usernameNeeded, this,
+		&LoginDialog::onUsernameNeeded);
+	connect(
+		login, &net::LoginHandler::loginNeeded, this,
+		&LoginDialog::onLoginNeeded);
+	connect(
+		login, &net::LoginHandler::extAuthNeeded, this,
+		&LoginDialog::onExtAuthNeeded);
+	connect(
+		login, &net::LoginHandler::sessionConfirmationNeeded, this,
+		&LoginDialog::onSessionConfirmationNeeded);
+	connect(
+		login, &net::LoginHandler::sessionPasswordNeeded, this,
+		&LoginDialog::onSessionPasswordNeeded);
 	connect(login, &net::LoginHandler::loginOk, this, &LoginDialog::onLoginOk);
-	connect(login, &net::LoginHandler::badLoginPassword, this, &LoginDialog::onBadLoginPassword);
-	connect(login, &net::LoginHandler::extAuthComplete, this, &LoginDialog::onExtAuthComplete);
-	connect(login, &net::LoginHandler::sessionChoiceNeeded, this, &LoginDialog::onSessionChoiceNeeded);
-	connect(login, &net::LoginHandler::certificateCheckNeeded, this, &LoginDialog::onCertificateCheckNeeded);
-	connect(login, &net::LoginHandler::serverTitleChanged, this, &LoginDialog::onServerTitleChanged);
+	connect(
+		login, &net::LoginHandler::badLoginPassword, this,
+		&LoginDialog::onBadLoginPassword);
+	connect(
+		login, &net::LoginHandler::extAuthComplete, this,
+		&LoginDialog::onExtAuthComplete);
+	connect(
+		login, &net::LoginHandler::sessionChoiceNeeded, this,
+		&LoginDialog::onSessionChoiceNeeded);
+	connect(
+		login, &net::LoginHandler::certificateCheckNeeded, this,
+		&LoginDialog::onCertificateCheckNeeded);
+	connect(
+		login, &net::LoginHandler::serverTitleChanged, this,
+		&LoginDialog::onServerTitleChanged);
 
 	selectCurrentAvatar();
 }
@@ -313,14 +366,19 @@ void LoginDialog::updateOkButtonEnabled()
 		enabled = !d->ui->sessionPassword->text().isEmpty();
 		break;
 	case Mode::sessionlist: {
-		QModelIndexList sel = d->ui->sessionList->selectionModel()->selectedIndexes();
+		QModelIndexList sel =
+			d->ui->sessionList->selectionModel()->selectedIndexes();
 		if(sel.isEmpty())
 			enabled = false;
 		else
-			enabled = sel.first().data(net::LoginSessionModel::JoinableRole).toBool();
+			enabled =
+				sel.first().data(net::LoginSessionModel::JoinableRole).toBool();
 
-		d->reportButton->setEnabled(!sel.isEmpty() && d->loginHandler && d->loginHandler->supportsAbuseReports());
-		break; }
+		d->reportButton->setEnabled(
+			!sel.isEmpty() && d->loginHandler &&
+			d->loginHandler->supportsAbuseReports());
+		break;
+	}
 	case Mode::certChanged:
 		enabled = d->ui->replaceCert->isChecked();
 		break;
@@ -368,14 +426,18 @@ void LoginDialog::pickNewAvatar(const QModelIndex &parent, int first, int last)
 
 void LoginDialog::showOldCert()
 {
-	auto dlg = new CertificateView(d->loginHandler ? d->loginHandler->url().host() : QString(), d->oldCert);
+	auto dlg = new CertificateView(
+		d->loginHandler ? d->loginHandler->url().host() : QString(),
+		d->oldCert);
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 	dlg->show();
 }
 
 void LoginDialog::showNewCert()
 {
-	auto dlg = new CertificateView(d->loginHandler ? d->loginHandler->url().host() : QString(), d->newCert);
+	auto dlg = new CertificateView(
+		d->loginHandler ? d->loginHandler->url().host() : QString(),
+		d->newCert);
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 	dlg->show();
 }
@@ -391,17 +453,15 @@ void LoginDialog::Private::setLoginMode(const QString &prompt)
 {
 	ui->loginPromptLabel->setText(prompt);
 	if(extauthurl.isValid())
-		ui->loginPromptLabel->setStyleSheet(QStringLiteral(
-			"background: #3498db;"
-			"color: #fcfcfc;"
-			"padding: 16px"
-			));
+		ui->loginPromptLabel->setStyleSheet(
+			QStringLiteral("background: #3498db;"
+						   "color: #fcfcfc;"
+						   "padding: 16px"));
 	else
-		ui->loginPromptLabel->setStyleSheet(QStringLiteral(
-			"background: #fdbc4b;"
-			"color: #31363b;"
-			"padding: 16px"
-			));
+		ui->loginPromptLabel->setStyleSheet(
+			QStringLiteral("background: #fdbc4b;"
+						   "color: #31363b;"
+						   "padding: 16px"));
 
 	resetMode(Mode::authenticate);
 
@@ -413,41 +473,39 @@ void LoginDialog::Private::setLoginMode(const QString &prompt)
 
 	auto *readJob = new QKeychain::ReadPasswordJob(KEYCHAIN_NAME);
 	readJob->setInsecureFallback(dpApp().settings().insecurePasswordStorage());
-	readJob->setKey(
-		keychainSecretName(
-			loginHandler->url().userName(),
-			extauthurl,
-			loginHandler->url().host()
-		)
-	);
+	readJob->setKey(keychainSecretName(
+		loginHandler->url().userName(), extauthurl,
+		loginHandler->url().host()));
 
-	connect(readJob, &QKeychain::ReadPasswordJob::finished, okButton, [this, readJob]() {
-		if(readJob->error() != QKeychain::NoError) {
-			qWarning("Keychain error (key=%s): %s",
-				qPrintable(readJob->key()),
-				qPrintable(readJob->errorString())
-			);
-			return;
-		}
+	connect(
+		readJob, &QKeychain::ReadPasswordJob::finished, okButton,
+		[this, readJob]() {
+			if(readJob->error() != QKeychain::NoError) {
+				qWarning(
+					"Keychain error (key=%s): %s", qPrintable(readJob->key()),
+					qPrintable(readJob->errorString()));
+				return;
+			}
 
-		if(mode != Mode::authenticate) {
-			// Unlikely, but...
-			qWarning("Keychain returned too late!");
-			return;
-		}
+			if(mode != Mode::authenticate) {
+				// Unlikely, but...
+				qWarning("Keychain returned too late!");
+				return;
+			}
 
-		const QString password = readJob->textData();
-		if(!password.isEmpty()) {
-			ui->password->setText(password);
-			okButton->click();
-		}
-	});
+			const QString password = readJob->textData();
+			if(!password.isEmpty()) {
+				ui->password->setText(password);
+				okButton->click();
+			}
+		});
 
 	readJob->start();
 #endif
 }
 
-void LoginDialog::onLoginNeeded(const QString &forUsername, const QString &prompt)
+void LoginDialog::onLoginNeeded(
+	const QString &forUsername, const QString &prompt)
 {
 	if(!forUsername.isEmpty())
 		d->ui->username->setText(forUsername);
@@ -488,14 +546,11 @@ void LoginDialog::onLoginOk()
 	if(d->ui->rememberPassword->isChecked()) {
 #ifdef HAVE_QTKEYCHAIN
 		auto *writeJob = new QKeychain::WritePasswordJob(KEYCHAIN_NAME);
-		writeJob->setInsecureFallback(dpApp().settings().insecurePasswordStorage());
-		writeJob->setKey(
-			keychainSecretName(
-				d->loginHandler->url().userName(),
-				d->extauthurl,
-				d->loginHandler->url().host()
-			)
-		);
+		writeJob->setInsecureFallback(
+			dpApp().settings().insecurePasswordStorage());
+		writeJob->setKey(keychainSecretName(
+			d->loginHandler->url().userName(), d->extauthurl,
+			d->loginHandler->url().host()));
 		writeJob->setTextData(d->ui->password->text());
 		writeJob->start();
 #endif
@@ -509,14 +564,11 @@ void LoginDialog::onBadLoginPassword()
 
 #ifdef HAVE_QTKEYCHAIN
 	auto *deleteJob = new QKeychain::DeletePasswordJob(KEYCHAIN_NAME);
-	deleteJob->setInsecureFallback(dpApp().settings().insecurePasswordStorage());
-	deleteJob->setKey(
-		keychainSecretName(
-			d->loginHandler->url().userName(),
-			d->extauthurl,
-			d->loginHandler->url().host()
-		)
-	);
+	deleteJob->setInsecureFallback(
+		dpApp().settings().insecurePasswordStorage());
+	deleteJob->setKey(keychainSecretName(
+		d->loginHandler->url().userName(), d->extauthurl,
+		d->loginHandler->url().host()));
 	deleteJob->start();
 #endif
 
@@ -534,14 +586,17 @@ void LoginDialog::onSessionChoiceNeeded(net::LoginSessionModel *sessions)
 		net::LoginSessionModel::ColumnTitle, Qt::AscendingOrder);
 
 	QHeaderView *header = d->ui->sessionList->horizontalHeader();
-	header->setSectionResizeMode(net::LoginSessionModel::ColumnTitle, QHeaderView::Stretch);
-	header->setSectionResizeMode(net::LoginSessionModel::ColumnFounder, QHeaderView::ResizeToContents);
+	header->setSectionResizeMode(
+		net::LoginSessionModel::ColumnTitle, QHeaderView::Stretch);
+	header->setSectionResizeMode(
+		net::LoginSessionModel::ColumnFounder, QHeaderView::ResizeToContents);
 
 	d->resetMode(Mode::sessionlist);
 	updateOkButtonEnabled();
 }
 
-void LoginDialog::onSessionConfirmationNeeded(const QString &title, bool nsfm, bool autoJoin)
+void LoginDialog::onSessionConfirmationNeeded(
+	const QString &title, bool nsfm, bool autoJoin)
 {
 	desktop::settings::Settings &settings = dpApp().settings();
 	if(nsfm && settings.showNsfmWarningOnJoin()) {
@@ -561,7 +616,8 @@ void LoginDialog::onSessionPasswordNeeded()
 	d->resetMode(Mode::sessionpassword);
 }
 
-void LoginDialog::onCertificateCheckNeeded(const QSslCertificate &newCert, const QSslCertificate &oldCert)
+void LoginDialog::onCertificateCheckNeeded(
+	const QSslCertificate &newCert, const QSslCertificate &oldCert)
 {
 	d->oldCert = oldCert;
 	d->newCert = newCert;
@@ -582,12 +638,12 @@ void LoginDialog::onLoginDone(bool join)
 			disconnect(d->loginDestructConnection);
 		d->resetMode(Mode::catchup);
 	}
-
 }
 
 void LoginDialog::onServerTitleChanged(const QString &title)
 {
-	d->ui->serverTitle->setText(htmlutils::newlineToBr(htmlutils::linkify(title.toHtmlEscaped())));
+	d->ui->serverTitle->setText(
+		htmlutils::newlineToBr(htmlutils::linkify(title.toHtmlEscaped())));
 	d->ui->serverTitle->setHidden(title.isEmpty());
 }
 
@@ -611,12 +667,15 @@ void LoginDialog::onOkClicked()
 	case Mode::identity: {
 		selectCurrentAvatar();
 		d->loginHandler->selectIdentity(d->ui->username->text(), QString());
-		break; }
+		break;
+	}
 	case Mode::authenticate:
 		if(d->extauthurl.isValid()) {
-			d->loginHandler->requestExtAuth(d->ui->username->text(), d->ui->password->text());
+			d->loginHandler->requestExtAuth(
+				d->ui->username->text(), d->ui->password->text());
 		} else {
-			d->loginHandler->selectIdentity(d->ui->username->text(), d->ui->password->text());
+			d->loginHandler->selectIdentity(
+				d->ui->username->text(), d->ui->password->text());
 		}
 		break;
 	case Mode::sessionlist: {
@@ -625,16 +684,16 @@ void LoginDialog::onOkClicked()
 			return;
 		}
 
-		const QModelIndex i = d->ui->sessionList->selectionModel()->selectedIndexes().first();
+		const QModelIndex i =
+			d->ui->sessionList->selectionModel()->selectedIndexes().first();
 		d->loginHandler->prepareJoinSelectedSession(
 			i.data(net::LoginSessionModel::AliasOrIdRole).toString(),
 			i.data(net::LoginSessionModel::NeedPasswordRole).toBool(),
 			i.data(net::LoginSessionModel::CompatibilityModeRole).toBool(),
 			i.data(net::LoginSessionModel::TitleRole).toString(),
-			i.data(net::LoginSessionModel::NsfmRole).toBool(),
-			false);
+			i.data(net::LoginSessionModel::NsfmRole).toBool(), false);
 		break;
-		}
+	}
 	case Mode::sessionpassword:
 		d->loginHandler->sendSessionPassword(d->ui->sessionPassword->text());
 		break;
@@ -651,24 +710,31 @@ void LoginDialog::onReportClicked()
 		return;
 	}
 
-	const QModelIndex idx = d->ui->sessionList->selectionModel()->selectedIndexes().first();
+	const QModelIndex idx =
+		d->ui->sessionList->selectionModel()->selectedIndexes().first();
 
 	AbuseReportDialog *reportDlg = new AbuseReportDialog(this);
 	reportDlg->setAttribute(Qt::WA_DeleteOnClose);
 
-	const QString sessionId = idx.data(net::LoginSessionModel::IdRole).toString();
-	const QString sessionAlias = idx.data(net::LoginSessionModel::IdAliasRole).toString();
-	const QString sessionTitle = idx.data(net::LoginSessionModel::TitleRole).toString();
+	const QString sessionId =
+		idx.data(net::LoginSessionModel::IdRole).toString();
+	const QString sessionAlias =
+		idx.data(net::LoginSessionModel::IdAliasRole).toString();
+	const QString sessionTitle =
+		idx.data(net::LoginSessionModel::TitleRole).toString();
 
 	reportDlg->setSessionInfo(sessionId, sessionAlias, sessionTitle);
 
-	connect(reportDlg, &AbuseReportDialog::accepted, this, [this, sessionId, reportDlg]() {
-		if(!d->loginHandler) {
-			qWarning("LoginDialog abuse report: login process already ended!");
-			return;
-		}
-		d->loginHandler->reportSession(sessionId, reportDlg->message());
-	});
+	connect(
+		reportDlg, &AbuseReportDialog::accepted, this,
+		[this, sessionId, reportDlg]() {
+			if(!d->loginHandler) {
+				qWarning(
+					"LoginDialog abuse report: login process already ended!");
+				return;
+			}
+			d->loginHandler->reportSession(sessionId, reportDlg->message());
+		});
 
 	reportDlg->show();
 }

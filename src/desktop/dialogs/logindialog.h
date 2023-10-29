@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #ifndef LOGINDIALOG_H
 #define LOGINDIALOG_H
-
 #include <QDialog>
 
 class Ui_LoginDialog;
@@ -11,8 +9,8 @@ class QUrl;
 class QSslCertificate;
 
 namespace net {
-	class LoginHandler;
-	class LoginSessionModel;
+class LoginHandler;
+class LoginSessionModel;
 }
 
 namespace dialogs {
@@ -22,11 +20,10 @@ namespace dialogs {
  *
  * This dialog handles all the user interaction needed while logging in.
  */
-class LoginDialog final : public QDialog
-{
+class LoginDialog final : public QDialog {
 	Q_OBJECT
 public:
-	explicit LoginDialog(net::LoginHandler *login, QWidget *parent=nullptr);
+	explicit LoginDialog(net::LoginHandler *login, QWidget *parent = nullptr);
 	~LoginDialog() override;
 
 public slots:
@@ -52,11 +49,13 @@ private slots:
 	void onExtAuthNeeded(const QString &forUsername, const QUrl &url);
 	void onExtAuthComplete(bool success);
 	void onSessionChoiceNeeded(net::LoginSessionModel *sessions);
-	void onSessionConfirmationNeeded(const QString &title, bool nsfm, bool autoJoin);
+	void
+	onSessionConfirmationNeeded(const QString &title, bool nsfm, bool autoJoin);
 	void onSessionPasswordNeeded();
 	void onLoginOk();
 	void onBadLoginPassword();
-	void onCertificateCheckNeeded(const QSslCertificate &newCert, const QSslCertificate &oldCert);
+	void onCertificateCheckNeeded(
+		const QSslCertificate &newCert, const QSslCertificate &oldCert);
 	void onServerTitleChanged(const QString &title);
 
 private:
