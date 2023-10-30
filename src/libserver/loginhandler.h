@@ -82,6 +82,7 @@ private slots:
 
 private:
 	enum class State { WaitForSecure, WaitForIdent, WaitForLogin, Banned };
+	enum class IdentIntent { Invalid, Unknown, Guest, Auth, ExtAuth };
 
 	void announceServerInfo();
 	void handleIdentMessage(const net::ServerCommand &cmd);
@@ -91,17 +92,26 @@ private:
 	void handleAbuseReport(const net::ServerCommand &cmd);
 	void handleStarttls();
 	void requestExtAuth();
-	void guestLogin(const QString &username);
+	void guestLogin(
+		const QString &username, IdentIntent intent,
+		bool extAuthFallback = false);
 	void authLoginOk(
 		const QString &username, const QString &authId,
 		const QStringList &flags, const QByteArray &avatar, bool allowMod,
 		bool allowHost);
 	bool send(const net::Message &msg);
-	void sendError(const QString &code, const QString &message);
-	void extAuthGuestLogin(const QString &username);
+	void sendError(
+		const QString &code, const QString &message, bool disconnect = false);
+	void extAuthGuestLogin(const QString &username, IdentIntent intent);
+
+	static IdentIntent parseIdentIntent(const QString &s);
+	static QString identIntentToString(IdentIntent intent);
+	bool checkIdentIntent(
+		IdentIntent intent, IdentIntent actual, bool extAuthFallback = false);
 
 	bool verifySystemId(
-		const net::ServerCommand &cmd, const protocol::ProtocolVersion &protver);
+		const net::ServerCommand &cmd,
+		const protocol::ProtocolVersion &protver);
 
 	static bool isValidSid(const QString &sid);
 

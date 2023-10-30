@@ -46,6 +46,7 @@ public:
 	BanResult isSystemBanned(const QString &sid) const override;
 	BanResult isUserBanned(long long userId) const override;
 	RegisteredUser getUserAccount(const QString &username, const QString &password) const override;
+	bool hasAnyUserAccounts() const override;
 
 	ServerLog *logger() const override { return m_logger; }
 

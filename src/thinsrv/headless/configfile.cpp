@@ -302,6 +302,14 @@ RegisteredUser ConfigFile::getUserAccount(const QString &username, const QString
 	}
 }
 
+bool ConfigFile::hasAnyUserAccounts() const
+{
+	if(isModified()) {
+		reloadFile();
+	}
+	return !m_users.isEmpty();
+}
+
 void ConfigFile::setConfigValue(const ConfigKey key, const QString &value)
 {
 	Q_UNUSED(value);

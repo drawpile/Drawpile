@@ -12,6 +12,7 @@
 #include <QSslError>
 #include <QString>
 #include <QUrl>
+#include <QVector>
 
 class QImage;
 
@@ -35,6 +36,7 @@ class LoginHandler final : public QObject {
 	Q_OBJECT
 public:
 	enum class Mode { HostRemote, HostBuiltin, Join };
+	enum class LoginMethod { Unknown, Guest, Auth, ExtAuth };
 
 	LoginHandler(Mode mode, const QUrl &url, QObject *parent = nullptr);
 
@@ -227,7 +229,9 @@ public slots:
 	 * @param password
 	 * @param username
 	 */
-	void selectIdentity(const QString &username, const QString &password);
+	void selectIdentity(
+		const QString &username, const QString &password,
+		LoginMethod intendedMethod);
 
 	/**
 	 * @brief Log in using an extauth token
@@ -282,6 +286,13 @@ public slots:
 	void reportSession(const QString &id, const QString &reason);
 
 signals:
+	void loginMethodChoiceNeeded(
+		const QVector<LoginMethod> &methods, const QUrl &extAuthUrl,
+		const QString &loginInfo);
+
+	void loginMethodMismatch(
+		LoginMethod intent, LoginMethod method, bool extAuthFallback);
+
 	/**
 	 * @brief The user must enter a username to proceed
 	 *
@@ -330,7 +341,9 @@ signals:
 	 *
 	 * @param prompt prompt text
 	 */
-	void loginNeeded(const QString &currentUsername, const QString &prompt);
+	void loginNeeded(
+		const QString &currentUsername, const QString &prompt,
+		LoginMethod intent);
 
 	/**
 	 * @brief External authentication is needed
@@ -342,13 +355,14 @@ signals:
 	 *
 	 * @param url ext auth server URL
 	 */
-	void extAuthNeeded(const QString &currentUsername, const QUrl &url);
+	void extAuthNeeded(
+		const QString &currentUsername, const QUrl &url, LoginMethod intent);
 
 	/**
 	 * @brief External authentication request completed
 	 * @param success did the request complete successfully?
 	 */
-	void extAuthComplete(bool success);
+	void extAuthComplete(bool success, LoginMethod intent);
 
 	/**
 	 * @brief Username and password (unless in guest mode) OK.
@@ -358,7 +372,7 @@ signals:
 	/**
 	 * @brief Server user account password was wrong
 	 */
-	void badLoginPassword();
+	void badLoginPassword(LoginMethod intent);
 
 	/**
 	 * @brief User must select which session to join
@@ -368,6 +382,8 @@ signals:
 	 * @param sessions
 	 */
 	void sessionChoiceNeeded(LoginSessionModel *sessions);
+
+	void badSessionPassword();
 
 	/**
 	 * @brief certificateCheckNeeded
@@ -413,6 +429,7 @@ private:
 	void expectNothing();
 	void expectHello(const ServerReply &msg);
 	void expectStartTls(const ServerReply &msg);
+	void chooseLoginMethod();
 	void prepareToSendIdentity();
 	void sendIdentity();
 	void expectIdentified(const ServerReply &msg);
@@ -429,6 +446,8 @@ private:
 
 	QString takeAvatar();
 
+	static LoginMethod parseLoginMethod(const QString &method);
+	static QString loginMethodToString(LoginMethod method);
 	static QJsonObject makeClientInfoKwargs();
 	static QString getSid();
 	static QString generateTamperSid();
@@ -479,6 +498,11 @@ private:
 	bool m_supportsExtAuthAvatars;
 	bool m_compatibilityMode;
 	bool m_needSessionPassword;
+
+	QString m_loginInfo;
+	QVector<LoginMethod> m_loginMethods;
+	QUrl m_loginExtAuthUrl;
+	LoginMethod m_loginIntent = LoginHandler::LoginMethod::Unknown;
 
 	// User flags
 	QStringList m_userFlags;

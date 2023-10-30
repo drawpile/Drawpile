@@ -5,7 +5,6 @@
 #include "desktop/dialogs/certificateview.h"
 #include "desktop/main.h"
 #include "desktop/utils/widgetutils.h"
-#include "libclient/net/login.h"
 #include "libclient/net/loginsessions.h"
 #include "libclient/parentalcontrols/parentalcontrols.h"
 #include "libclient/utils/avatarlistmodel.h"
@@ -33,8 +32,12 @@ namespace dialogs {
 
 enum class Mode {
 	Loading,		 // used whenever we're waiting for the server
-	Identity,		 // ask user for username
-	Authenticate,	 // ask user for password (for login)
+	LoginMethod,	 // ask the user to pick a login method
+	GuestLogin,		 // log in with guest username
+	AuthLogin,		 // log in with internal account
+	ExtAuthLogin,	 // log in with external account
+	Identity,		 // (old login flow) ask user for username
+	Authenticate,	 // (old login flow) ask user for password
 	SessionList,	 // select session to join
 	SessionPassword, // ask user for password (for session)
 	Catchup,	 // logged in: catching up (dialog can be closed at this point)
@@ -55,7 +58,9 @@ struct LoginDialog::Private {
 	QPushButton *reportButton;
 	QPushButton *yesButton;
 	QPushButton *noButton;
+	QString originalNoButtonText;
 
+	QUrl loginExtAuthUrl;
 	QUrl extauthurl;
 	QSslCertificate oldCert, newCert;
 	bool autoJoin;
@@ -139,6 +144,7 @@ struct LoginDialog::Private {
 		cancelButton = ui->buttonBox->button(QDialogButtonBox::Cancel);
 		yesButton = ui->buttonBox->button(QDialogButtonBox::Yes);
 		noButton = ui->buttonBox->button(QDialogButtonBox::No);
+		originalNoButtonText = noButton->text();
 
 		reportButton = ui->buttonBox->addButton(
 			LoginDialog::tr("Report..."), QDialogButtonBox::ActionRole);
@@ -158,6 +164,8 @@ struct LoginDialog::Private {
 	}
 
 	void resetMode(Mode mode);
+	QWidget *setupAuthPage(bool usernameEnabled, bool passwordVisible);
+	void setLoginExplanation(const QString &explanation, bool isError);
 	void setLoginMode(const QString &prompt);
 };
 
@@ -176,33 +184,44 @@ void LoginDialog::Private::resetMode(Mode newMode)
 	cancelButton->setVisible(true);
 	reportButton->setVisible(false);
 	yesButton->setVisible(false);
-	noButton->setVisible(false);
 
 	switch(mode) {
-	case Mode::Loading:
+	case Mode::Loading: {
 		okButton->setVisible(false);
-		ui->loginPromptLabel->setText(loginHandler->url().host());
+		QString host = loginHandler->url().host();
+		ui->loginPromptLabel->setText(host);
+		ui->authModePromptLabel->setText(host);
 		page = ui->loadingPage;
 		break;
+	}
+	case Mode::LoginMethod:
+		page = ui->authModePage;
+		okButton->setVisible(false);
+		break;
+	case Mode::GuestLogin:
+		extauthurl.clear();
+		page = setupAuthPage(true, false);
+		break;
+	case Mode::AuthLogin:
+		extauthurl.clear();
+		page = setupAuthPage(true, true);
+		setLoginMode(tr("Log in with server account"));
+		break;
+	case Mode::ExtAuthLogin:
+		extauthurl = loginExtAuthUrl;
+		page = setupAuthPage(true, true);
+		setLoginMode(formatExtAuthPrompt(extauthurl));
+		break;
 	case Mode::Identity:
-		ui->avatarList->setEnabled(true);
-		ui->username->setEnabled(true);
-		ui->username->setFocus();
-		ui->password->setVisible(false);
-		ui->passwordIcon->setVisible(false);
-		ui->badPasswordLabel->setVisible(false);
-		ui->rememberPassword->setVisible(false);
-		page = ui->authPage;
+		page = setupAuthPage(true, false);
+		setLoginExplanation(QString(), false);
 		break;
 	case Mode::Authenticate:
-		ui->avatarList->setEnabled(false);
-		ui->username->setEnabled(false);
-		ui->password->setVisible(true);
-		ui->passwordIcon->setVisible(true);
-		ui->badPasswordLabel->setVisible(false);
-		ui->rememberPassword->setVisible(true);
-		ui->password->setFocus();
-		page = ui->authPage;
+		page = setupAuthPage(false, true);
+		setLoginExplanation(
+			tr("This username belongs to a registered account. If this isn't "
+			   "your account, cancel and try again with a different name."),
+			false);
 		break;
 	case Mode::SessionList:
 		reportButton->setVisible(true);
@@ -210,6 +229,7 @@ void LoginDialog::Private::resetMode(Mode newMode)
 		break;
 	case Mode::SessionPassword:
 		ui->sessionPassword->setFocus();
+		ui->badSessionPasswordLabel->hide();
 		page = ui->sessionPasswordPage;
 		break;
 	case Mode::Catchup:
@@ -225,13 +245,59 @@ void LoginDialog::Private::resetMode(Mode newMode)
 		okButton->setVisible(false);
 		cancelButton->setVisible(false);
 		yesButton->setVisible(true);
-		noButton->setVisible(true);
 		page = ui->nsfmConfirmPage;
 		break;
 	}
 
+	switch(mode) {
+	case Mode::GuestLogin:
+	case Mode::AuthLogin:
+	case Mode::ExtAuthLogin:
+		noButton->setText(tr("Back"));
+		noButton->setVisible(true);
+		break;
+	case Mode::ConfirmNsfm:
+		noButton->setText(originalNoButtonText);
+		noButton->setVisible(true);
+		break;
+	default:
+		noButton->setVisible(false);
+	}
+
 	Q_ASSERT(page);
 	ui->pages->setCurrentWidget(page);
+}
+
+QWidget *
+LoginDialog::Private::setupAuthPage(bool usernameEnabled, bool passwordVisible)
+{
+	ui->avatarList->setEnabled(true);
+	ui->username->setEnabled(usernameEnabled);
+	ui->password->setVisible(passwordVisible);
+	ui->passwordIcon->setVisible(passwordVisible);
+	ui->badPasswordLabel->setVisible(false);
+	ui->rememberPassword->setVisible(passwordVisible);
+	if(passwordVisible &&
+	   (!usernameEnabled || !ui->username->text().isEmpty())) {
+		ui->password->setFocus();
+	} else if(usernameEnabled) {
+		ui->username->setFocus();
+	}
+	return ui->authPage;
+}
+
+void LoginDialog::Private::setLoginExplanation(
+	const QString &explanation, bool isError)
+{
+	QString content;
+	if(!explanation.isEmpty()) {
+		content = explanation.toHtmlEscaped();
+		if(isError) {
+			content = QStringLiteral("<em>%1</em>").arg(content);
+		}
+	}
+	ui->authExplanationLabel->setHidden(content.isEmpty());
+	ui->authExplanationLabel->setText(content);
 }
 
 #ifdef HAVE_QTKEYCHAIN
@@ -269,8 +335,14 @@ LoginDialog::LoginDialog(net::LoginHandler *login, QWidget *parent)
 		d->ui->password, &QLineEdit::textChanged, this,
 		&LoginDialog::updateOkButtonEnabled);
 	connect(
+		d->ui->password, &QLineEdit::textChanged, d->ui->badPasswordLabel,
+		&QWidget::hide);
+	connect(
 		d->ui->sessionPassword, &QLineEdit::textChanged, this,
 		&LoginDialog::updateOkButtonEnabled);
+	connect(
+		d->ui->sessionPassword, &QLineEdit::textChanged,
+		d->ui->badSessionPasswordLabel, &QWidget::hide);
 	connect(
 		d->ui->sessionList->selectionModel(),
 		&QItemSelectionModel::selectionChanged, this,
@@ -292,6 +364,16 @@ LoginDialog::LoginDialog(net::LoginHandler *login, QWidget *parent)
 	connect(this, &QDialog::rejected, login, &net::LoginHandler::cancelLogin);
 
 	connect(
+		d->ui->methodExtAuthButton, &QAbstractButton::clicked, this,
+		&LoginDialog::onLoginMethodExtAuthClicked);
+	connect(
+		d->ui->methodAuthButton, &QAbstractButton::clicked, this,
+		&LoginDialog::onLoginMethodAuthClicked);
+	connect(
+		d->ui->methodGuestButton, &QAbstractButton::clicked, this,
+		&LoginDialog::onLoginMethodGuestClicked);
+
+	connect(
 		d->ui->avatarList, QOverload<int>::of(&QComboBox::currentIndexChanged),
 		this, &LoginDialog::updateAvatar);
 	connect(
@@ -309,6 +391,12 @@ LoginDialog::LoginDialog(net::LoginHandler *login, QWidget *parent)
 		login, &net::LoginHandler::destroyed, this, &LoginDialog::deleteLater);
 
 	connect(
+		login, &net::LoginHandler::loginMethodChoiceNeeded, this,
+		&LoginDialog::onLoginMethodChoiceNeeded);
+	connect(
+		login, &net::LoginHandler::loginMethodMismatch, this,
+		&LoginDialog::onLoginMethodMismatch);
+	connect(
 		login, &net::LoginHandler::usernameNeeded, this,
 		&LoginDialog::onUsernameNeeded);
 	connect(
@@ -323,6 +411,9 @@ LoginDialog::LoginDialog(net::LoginHandler *login, QWidget *parent)
 	connect(
 		login, &net::LoginHandler::sessionPasswordNeeded, this,
 		&LoginDialog::onSessionPasswordNeeded);
+	connect(
+		login, &net::LoginHandler::badSessionPassword, this,
+		&LoginDialog::onBadSessionPassword);
 	connect(login, &net::LoginHandler::loginOk, this, &LoginDialog::onLoginOk);
 	connect(
 		login, &net::LoginHandler::badLoginPassword, this,
@@ -353,14 +444,21 @@ void LoginDialog::updateOkButtonEnabled()
 	bool enabled = false;
 	switch(d->mode) {
 	case Mode::Loading:
+	case Mode::LoginMethod:
 	case Mode::Catchup:
 	case Mode::ConfirmNsfm:
 		break;
 	case Mode::Identity:
+	case Mode::GuestLogin:
 		enabled = UsernameValidator::isValid(d->ui->username->text());
 		break;
 	case Mode::Authenticate:
 		enabled = !d->ui->password->text().isEmpty();
+		break;
+	case Mode::AuthLogin:
+	case Mode::ExtAuthLogin:
+		enabled = UsernameValidator::isValid(d->ui->username->text()) &&
+				  !d->ui->password->text().isEmpty();
 		break;
 	case Mode::SessionPassword:
 		enabled = !d->ui->sessionPassword->text().isEmpty();
@@ -385,6 +483,31 @@ void LoginDialog::updateOkButtonEnabled()
 	}
 
 	d->okButton->setEnabled(enabled);
+}
+
+void LoginDialog::onLoginMethodExtAuthClicked()
+{
+	d->resetMode(Mode::ExtAuthLogin);
+	updateOkButtonEnabled();
+	d->setLoginExplanation(
+		tr("Enter the username and password for your %1 account.")
+			.arg(d->extauthurl.host()),
+		false);
+}
+
+void LoginDialog::onLoginMethodAuthClicked()
+{
+	d->resetMode(Mode::AuthLogin);
+	updateOkButtonEnabled();
+	d->setLoginExplanation(
+		tr("Enter the username and password for your server account."), false);
+}
+
+void LoginDialog::onLoginMethodGuestClicked()
+{
+	d->resetMode(Mode::GuestLogin);
+	updateOkButtonEnabled();
+	d->setLoginExplanation(tr("Enter the name you want to use."), false);
 }
 
 void LoginDialog::updateAvatar(int row)
@@ -442,6 +565,122 @@ void LoginDialog::showNewCert()
 	dlg->show();
 }
 
+void LoginDialog::onLoginMethodChoiceNeeded(
+	const QVector<net::LoginHandler::LoginMethod> &methods,
+	const QUrl &extAuthUrl, const QString &loginInfo)
+{
+	bool extAuth = methods.contains(net::LoginHandler::LoginMethod::ExtAuth);
+	d->ui->methodExtAuthButton->setEnabled(extAuth);
+	d->ui->methodExtAuthButton->setVisible(extAuth);
+	if(extAuth) {
+		d->loginExtAuthUrl = extAuthUrl;
+		d->ui->methodExtAuthButton->setText(
+			tr("Log in with %1 account").arg(extAuthUrl.host()));
+	} else {
+		d->loginExtAuthUrl.clear();
+	}
+
+	bool auth = methods.contains(net::LoginHandler::LoginMethod::Auth);
+	d->ui->methodAuthButton->setEnabled(auth);
+	d->ui->methodAuthButton->setVisible(auth);
+
+	bool guest = methods.contains(net::LoginHandler::LoginMethod::Guest);
+	d->ui->methodGuestButton->setEnabled(guest);
+	d->ui->methodGuestButton->setVisible(guest);
+
+	bool hasDrawpileExtAuth = extAuth && extAuthUrl.host().compare(
+											 QStringLiteral("drawpile.net"),
+											 Qt::CaseInsensitive) == 0;
+	d->ui->methodExtAuthButton->setIcon(
+		hasDrawpileExtAuth ? QIcon(":/icons/drawpile.png") : QIcon());
+
+	bool guestsOnly = !extAuth && !auth;
+	QString drawpileSignupLink = QStringLiteral(
+		"<a href=\"https://drawpile.net/accounts/signup/\">drawpile.net</a>");
+	QString explanation;
+	if(loginInfo.isEmpty()) {
+		if(guestsOnly) {
+			explanation =
+				tr("This server doesn't support logging in with an account.");
+		} else if(hasDrawpileExtAuth) {
+			if(guest) {
+				explanation =
+					tr("You can continue without an account. If you want to "
+					   "register one anyway, you can do so on %1.")
+						.arg(drawpileSignupLink);
+			} else {
+				explanation =
+					tr("An account is required. You can register one on %1.")
+						.arg(drawpileSignupLink);
+			}
+		} else if(guest) {
+			explanation =
+				tr("You can continue without an account. The server doesn't "
+				   "provide any information on how to register one either.");
+		} else {
+			explanation = tr("An account is required, but the server doesn't "
+							 "provide any information on how to register one.");
+		}
+	} else {
+		QUrl url = QUrl::fromUserInput(loginInfo);
+		QString link = url.isValid() ? QStringLiteral("<a href=\"%1\">%2</a>")
+										   .arg(
+											   url.toString().toHtmlEscaped(),
+											   loginInfo.toHtmlEscaped())
+									 : loginInfo.toHtmlEscaped();
+		if(hasDrawpileExtAuth) {
+			explanation = tr("See %1 for more information about this server. "
+							 "To register an account, visit %2.")
+							  .arg(link, drawpileSignupLink);
+		} else {
+			explanation =
+				tr("See %1 for more information about this server.").arg(link);
+		}
+	}
+	d->ui->methodExplanationLabel->setText(explanation);
+	d->resetMode(Mode::LoginMethod);
+}
+
+void LoginDialog::onLoginMethodMismatch(
+	net::LoginHandler::LoginMethod intent,
+	net::LoginHandler::LoginMethod method, bool extAuthFallback)
+{
+	QString explanation;
+	if(intent == net::LoginHandler::LoginMethod::Guest) {
+		d->resetMode(Mode::GuestLogin);
+		explanation =
+			tr("This username belongs to an account, pick a different one.");
+	} else if(intent == net::LoginHandler::LoginMethod::Auth) {
+		d->resetMode(Mode::AuthLogin);
+		explanation = tr("This username doesn't belong to a server account.");
+	} else if(intent == net::LoginHandler::LoginMethod::ExtAuth) {
+		d->resetMode(Mode::ExtAuthLogin);
+		if(extAuthFallback) {
+			explanation = tr("The %1 authentication is not working.")
+							  .arg(d->extauthurl.host());
+		} else if(method == net::LoginHandler::LoginMethod::Guest) {
+			explanation = tr("This username doesn't belong an account on %1.")
+							  .arg(d->extauthurl.host());
+		} else if(method == net::LoginHandler::LoginMethod::Auth) {
+			explanation =
+				tr("This username belongs to a server account, you "
+				   "can't use it to log in through %1 on this server.")
+					.arg(d->extauthurl.host());
+		} else {
+			explanation =
+				tr("This username belongs to some other login method, you "
+				   "can't use it to log in through %1 on this server.")
+					.arg(d->extauthurl.host());
+		}
+	} else {
+		qWarning("Unhandled intent %d", int(intent));
+		d->resetMode(Mode::LoginMethod);
+		return;
+	}
+	updateOkButtonEnabled();
+	d->setLoginExplanation(explanation, true);
+}
+
 void LoginDialog::onUsernameNeeded(bool canSelectAvatar)
 {
 	d->ui->avatarList->setVisible(canSelectAvatar);
@@ -462,8 +701,6 @@ void LoginDialog::Private::setLoginMode(const QString &prompt)
 			QStringLiteral("background: #fdbc4b;"
 						   "color: #31363b;"
 						   "padding: 16px"));
-
-	resetMode(Mode::Authenticate);
 
 #ifdef HAVE_QTKEYCHAIN
 	if(!loginHandler) {
@@ -505,39 +742,51 @@ void LoginDialog::Private::setLoginMode(const QString &prompt)
 }
 
 void LoginDialog::onLoginNeeded(
-	const QString &forUsername, const QString &prompt)
+	const QString &forUsername, const QString &prompt,
+	net::LoginHandler::LoginMethod intent)
 {
-	if(!forUsername.isEmpty())
+	if(!forUsername.isEmpty()) {
 		d->ui->username->setText(forUsername);
+	}
 
-	d->extauthurl = QUrl();
-	d->setLoginMode(prompt);
+	if(intent == net::LoginHandler::LoginMethod::Auth) {
+		d->loginHandler->selectIdentity(
+			d->ui->username->text(), d->ui->password->text(),
+			net::LoginHandler::LoginMethod::Auth);
+	} else {
+		d->extauthurl = QUrl();
+		d->resetMode(Mode::Authenticate);
+		updateOkButtonEnabled();
+		d->setLoginMode(prompt);
+	}
 }
 
-void LoginDialog::onExtAuthNeeded(const QString &forUsername, const QUrl &url)
+void LoginDialog::onExtAuthNeeded(
+	const QString &forUsername, const QUrl &url,
+	net::LoginHandler::LoginMethod intent)
 {
 	Q_ASSERT(url.isValid());
-
-	if(!forUsername.isEmpty())
+	if(!forUsername.isEmpty()) {
 		d->ui->username->setText(forUsername);
-
-	QString prompt;
-	if(url.scheme() == "https") {
-		prompt = tr("Log in with '%1' credentials");
-	} else {
-		prompt = tr("Log in with '%1' credentials (INSECURE CONNECTION!)");
 	}
 
-	d->extauthurl = url;
-	d->setLoginMode(prompt.arg(url.host()));
+	if(intent == net::LoginHandler::LoginMethod::ExtAuth) {
+		d->loginHandler->requestExtAuth(
+			d->ui->username->text(), d->ui->password->text());
+	} else {
+		d->extauthurl = url;
+		d->resetMode(Mode::Authenticate);
+		updateOkButtonEnabled();
+		d->setLoginMode(formatExtAuthPrompt(url));
+	}
 }
 
-void LoginDialog::onExtAuthComplete(bool success)
+void LoginDialog::onExtAuthComplete(
+	bool success, net::LoginHandler::LoginMethod intent)
 {
 	if(!success) {
-		onBadLoginPassword();
+		onBadLoginPassword(intent);
 	}
-
 	// If success == true, onLoginOk is called too
 }
 
@@ -557,9 +806,21 @@ void LoginDialog::onLoginOk()
 	}
 }
 
-void LoginDialog::onBadLoginPassword()
+void LoginDialog::onBadLoginPassword(net::LoginHandler::LoginMethod intent)
 {
-	d->resetMode(Mode::Authenticate);
+	Mode nextMode;
+	switch(intent) {
+	case net::LoginHandler::LoginMethod::Auth:
+		nextMode = Mode::AuthLogin;
+		break;
+	case net::LoginHandler::LoginMethod::ExtAuth:
+		nextMode = Mode::ExtAuthLogin;
+		break;
+	default:
+		nextMode = Mode::Authenticate;
+		break;
+	}
+	d->resetMode(nextMode);
 	d->ui->password->setText(QString());
 
 #ifdef HAVE_QTKEYCHAIN
@@ -573,7 +834,6 @@ void LoginDialog::onBadLoginPassword()
 #endif
 
 	d->ui->badPasswordLabel->show();
-	QTimer::singleShot(2000, d->ui->badPasswordLabel, &QLabel::hide);
 }
 
 void LoginDialog::onSessionChoiceNeeded(net::LoginSessionModel *sessions)
@@ -614,6 +874,15 @@ void LoginDialog::onSessionPasswordNeeded()
 	adjustSize(400, 150, true);
 	d->ui->sessionPassword->setText(QString());
 	d->resetMode(Mode::SessionPassword);
+	updateOkButtonEnabled();
+}
+
+void LoginDialog::onBadSessionPassword()
+{
+	d->ui->sessionPassword->setText(QString());
+	d->resetMode(Mode::SessionPassword);
+	d->ui->badSessionPasswordLabel->show();
+	updateOkButtonEnabled();
 }
 
 void LoginDialog::onCertificateCheckNeeded(
@@ -659,23 +928,44 @@ void LoginDialog::onOkClicked()
 
 	switch(mode) {
 	case Mode::Loading:
+	case Mode::LoginMethod:
 	case Mode::Catchup:
 	case Mode::ConfirmNsfm:
 		// No OK button in these modes
 		qWarning("OK button click in wrong mode!");
 		break;
-	case Mode::Identity: {
+	case Mode::GuestLogin:
 		selectCurrentAvatar();
-		d->loginHandler->selectIdentity(d->ui->username->text(), QString());
+		d->loginHandler->selectIdentity(
+			d->ui->username->text(), QString(),
+			net::LoginHandler::LoginMethod::Guest);
 		break;
-	}
+	case Mode::AuthLogin:
+		selectCurrentAvatar();
+		d->loginHandler->selectIdentity(
+			d->ui->username->text(), QString(),
+			net::LoginHandler::LoginMethod::Auth);
+		break;
+	case Mode::ExtAuthLogin:
+		selectCurrentAvatar();
+		d->loginHandler->selectIdentity(
+			d->ui->username->text(), QString(),
+			net::LoginHandler::LoginMethod::ExtAuth);
+		break;
+	case Mode::Identity:
+		selectCurrentAvatar();
+		d->loginHandler->selectIdentity(
+			d->ui->username->text(), QString(),
+			net::LoginHandler::LoginMethod::Unknown);
+		break;
 	case Mode::Authenticate:
 		if(d->extauthurl.isValid()) {
 			d->loginHandler->requestExtAuth(
 				d->ui->username->text(), d->ui->password->text());
 		} else {
 			d->loginHandler->selectIdentity(
-				d->ui->username->text(), d->ui->password->text());
+				d->ui->username->text(), d->ui->password->text(),
+				net::LoginHandler::LoginMethod::Unknown);
 		}
 		break;
 	case Mode::SessionList: {
@@ -761,13 +1051,20 @@ void LoginDialog::onNoClicked()
 		return;
 	}
 
-	if(d->mode == Mode::ConfirmNsfm) {
+	switch(d->mode) {
+	case Mode::GuestLogin:
+	case Mode::AuthLogin:
+	case Mode::ExtAuthLogin:
+		d->resetMode(Mode::LoginMethod);
+		break;
+	case Mode::ConfirmNsfm:
 		if(d->autoJoin) {
 			reject();
 		} else {
 			d->resetMode(Mode::SessionList);
 		}
-	} else {
+		break;
+	default:
 		qWarning("No button click in wrong mode!");
 	}
 }
@@ -795,6 +1092,15 @@ void LoginDialog::selectCurrentAvatar()
 	QPixmap avatar =
 		d->ui->avatarList->currentData(Qt::DecorationRole).value<QPixmap>();
 	d->loginHandler->selectAvatar(avatar);
+}
+
+QString LoginDialog::formatExtAuthPrompt(const QUrl &url)
+{
+	QString prompt =
+		url.scheme() == "https"
+			? tr("Log in with '%1' credentials")
+			: tr("Log in with '%1' credentials (INSECURE CONNECTION!)");
+	return prompt.arg(url.host());
 }
 
 }

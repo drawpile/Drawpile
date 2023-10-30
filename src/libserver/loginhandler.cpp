@@ -35,23 +35,27 @@ void LoginHandler::startLoginProcess()
 	m_state = State::WaitForIdent;
 
 	QJsonArray flags;
-
-	if(m_config->getConfigInt(config::SessionCountLimit) > 1)
+	if(m_config->getConfigInt(config::SessionCountLimit) > 1) {
 		flags << "MULTI";
-	if(m_config->getConfigBool(config::EnablePersistence))
+	}
+	if(m_config->getConfigBool(config::EnablePersistence)) {
 		flags << "PERSIST";
+	}
 	if(m_client->hasSslSupport()) {
 		flags << "TLS"
 			  << "SECURE";
 		m_state = State::WaitForSecure;
 	}
-	if(!m_config->getConfigBool(config::AllowGuests))
+	if(!m_config->getConfigBool(config::AllowGuests)) {
 		flags << "NOGUEST";
+	}
 	if(m_config->internalConfig().reportUrl.isValid() &&
-	   m_config->getConfigBool(config::AbuseReport))
+	   m_config->getConfigBool(config::AbuseReport)) {
 		flags << "REPORT";
-	if(m_config->getConfigBool(config::AllowCustomAvatars))
+	}
+	if(m_config->getConfigBool(config::AllowCustomAvatars)) {
 		flags << "AVATAR";
+	}
 #ifdef HAVE_LIBSODIUM
 	if(!m_config->internalConfig().cryptKey.isEmpty()) {
 		flags << "CBANIMPEX";
@@ -60,10 +64,44 @@ void LoginHandler::startLoginProcess()
 	// Moderators can always export bans.
 	flags << "MBANIMPEX";
 
-	// Start by telling who we are
+	QJsonObject methods;
+	if(m_config->getConfigBool(config::AllowGuests)) {
+		QJsonArray guestActions = {QStringLiteral("join")};
+		if(m_config->getConfigBool(config::AllowGuestHosts)) {
+			guestActions.append(QStringLiteral("host"));
+		}
+		methods[QStringLiteral("guest")] = QJsonObject{{
+			{QStringLiteral("actions"), guestActions},
+		}};
+	}
+
+	if(m_config->hasAnyUserAccounts()) {
+		// We could do a check here if any accounts actually exist that are
+		// allowed to host, but that's kind of annoying to implement and pretty
+		// unlikely to be useful in reality, more likely just confusing people
+		// why they can't pick the server account option when hosting.
+		methods[QStringLiteral("auth")] = QJsonObject{{
+			{QStringLiteral("actions"),
+			 QJsonArray{QStringLiteral("join"), QStringLiteral("host")}},
+		}};
+	}
+
+	const QUrl extAuthUrl = m_config->internalConfig().extAuthUrl;
+	if(extAuthUrl.isValid() && m_config->getConfigBool(config::UseExtAuth)) {
+		QJsonArray extauthActions = {QStringLiteral("join")};
+		if(m_config->getConfigBool(config::ExtAuthHost)) {
+			extauthActions.append(QStringLiteral("host"));
+		}
+		methods[QStringLiteral("extauth")] = QJsonObject{
+			{{QStringLiteral("actions"), extauthActions},
+			 {QStringLiteral("url"), extAuthUrl.toString()}}};
+	}
+
+	// Start by telling who we are and what we can do
 	send(net::ServerReply::makeLoginGreeting(
 		QStringLiteral("Drawpile server %1").arg(cmake_config::version()),
-		cmake_config::proto::server(), flags));
+		cmake_config::proto::server(), flags, methods,
+		m_config->getConfigString(config::LoginInfoUrl)));
 
 	// Client should disconnect upon receiving the above if the version number
 	// does not match
@@ -196,17 +234,28 @@ void LoginHandler::handleIdentMessage(const net::ServerCommand &cmd)
 		return;
 	}
 
+	IdentIntent intent =
+		parseIdentIntent(cmd.kwargs[QStringLiteral("intent")].toString());
+	if(intent == IdentIntent::Invalid) {
+		sendError(
+			QStringLiteral("identError"),
+			QStringLiteral("Invalid ident intent"));
+		return;
+	}
+
 	const RegisteredUser userAccount =
 		m_config->getUserAccount(username, password);
-
-	if(userAccount.status != RegisteredUser::NotFound &&
-	   cmd.kwargs.contains("extauth")) {
-		// This should never happen. If it does, it means there's a bug in the
-		// client or someone is probing for bugs in the server.
-		sendError(
-			"extAuthError",
-			"Cannot use extauth with an internal user account!");
-		return;
+	if(userAccount.status != RegisteredUser::NotFound) {
+		if(cmd.kwargs.contains("extauth")) {
+			// This should never happen. If it does, it means there's a bug in
+			// the client or someone is probing for bugs in the server.
+			sendError(
+				"extAuthError",
+				"Cannot use extauth with an internal user account!");
+			return;
+		} else if(!checkIdentIntent(intent, IdentIntent::Auth)) {
+			return;
+		}
 	}
 
 	if(cmd.kwargs.contains("avatar") &&
@@ -287,19 +336,17 @@ void LoginHandler::handleIdentMessage(const net::ServerCommand &cmd)
 					m_config->getConfigBool(config::ExtAuthMod),
 					m_config->getConfigBool(config::ExtAuthHost));
 
+			} else if(allowGuests) {
+				// No ext-auth token provided, but both guest logins and extauth
+				// are enabled. We have to query if this account exists to check
+				// which case we're dealing with.
+				extAuthGuestLogin(username, intent);
 			} else {
-				// No ext-auth token provided: request it now
-
-				// If both guest logins and ExtAuth is enabled, we must query
-				// the auth server first to determine if guest login is possible
-				// for this user. If guest logins are not enabled, we always
-				// just request ext-auth
-				if(allowGuests)
-					extAuthGuestLogin(username);
-				else
+				// No ext-auth token provided, start external authentication.
+				if(checkIdentIntent(intent, IdentIntent::ExtAuth)) {
 					requestExtAuth();
+				}
 			}
-
 #else
 			// This should never be reached
 			sendError(
@@ -308,12 +355,10 @@ void LoginHandler::handleIdentMessage(const net::ServerCommand &cmd)
 #endif
 			return;
 
-		} else {
+		} else if(allowGuests) {
 			// ExtAuth not enabled: permit guest login if enabled
-			if(allowGuests) {
-				guestLogin(username);
-				return;
-			}
+			guestLogin(username, intent);
+			return;
 		}
 		Q_FALLTHROUGH(); // fall through to badpass if guest logins are disabled
 	}
@@ -327,7 +372,7 @@ void LoginHandler::handleIdentMessage(const net::ServerCommand &cmd)
 				QStringLiteral("needPassword")));
 
 		} else {
-			sendError("badPassword", "Incorrect password");
+			sendError("badPassword", "Incorrect password", false);
 		}
 		return;
 
@@ -386,7 +431,8 @@ void LoginHandler::authLoginOk(
  * or not.
  * @param username
  */
-void LoginHandler::extAuthGuestLogin(const QString &username)
+void LoginHandler::extAuthGuestLogin(
+	const QString &username, IdentIntent intent)
 {
 	QNetworkRequest req(m_config->internalConfig().extAuthUrl);
 	req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
@@ -403,7 +449,7 @@ void LoginHandler::extAuthGuestLogin(const QString &username)
 								   .arg(username)));
 	QNetworkReply *reply =
 		networkaccess::getInstance()->post(req, QJsonDocument(o).toJson());
-	connect(reply, &QNetworkReply::finished, this, [reply, username, this]() {
+	connect(reply, &QNetworkReply::finished, this, [=]() {
 		reply->deleteLater();
 
 		if(m_state != State::WaitForIdent) {
@@ -438,7 +484,7 @@ void LoginHandler::extAuthGuestLogin(const QString &username)
 		if(fail) {
 			if(m_config->getConfigBool(config::ExtAuthFallback)) {
 				// Fall back to guest logins
-				guestLogin(username);
+				guestLogin(username, intent, true);
 			} else {
 				// If fallback mode is disabled, deny all non-internal logins
 				sendError("noExtAuth", "Authentication server is unavailable!");
@@ -449,10 +495,12 @@ void LoginHandler::extAuthGuestLogin(const QString &username)
 		const QJsonObject obj = doc.object();
 		const QString status = obj["status"].toString();
 		if(status == "auth") {
-			requestExtAuth();
+			if(checkIdentIntent(intent, IdentIntent::ExtAuth)) {
+				requestExtAuth();
+			}
 
 		} else if(status == "guest") {
-			guestLogin(username);
+			guestLogin(username, intent);
 
 		} else if(status == "outgroup") {
 			sendError(
@@ -468,7 +516,6 @@ void LoginHandler::extAuthGuestLogin(const QString &username)
 void LoginHandler::requestExtAuth()
 {
 #ifdef HAVE_LIBSODIUM
-	Q_ASSERT(m_extauth_nonce == 0);
 	m_extauth_nonce = AuthToken::generateNonce();
 	send(net::ServerReply::makeResultExtAuthNeeded(
 		QStringLiteral("External authentication needed"),
@@ -484,8 +531,13 @@ void LoginHandler::requestExtAuth()
 #endif
 }
 
-void LoginHandler::guestLogin(const QString &username)
+void LoginHandler::guestLogin(
+	const QString &username, IdentIntent intent, bool extAuthFallback)
 {
+	if(!checkIdentIntent(intent, IdentIntent::Guest, extAuthFallback)) {
+		return;
+	}
+
 	if(!m_config->getConfigBool(config::AllowGuests)) {
 		sendError("noGuest", "Guest logins not allowed");
 		return;
@@ -655,7 +707,7 @@ void LoginHandler::handleJoinMessage(const net::ServerCommand &cmd)
 
 		if(!session->history()->checkPassword(
 			   cmd.kwargs.value("password").toString())) {
-			sendError("badPassword", "Incorrect password");
+			sendError("badPassword", "Incorrect password", false);
 			return;
 		}
 	}
@@ -778,11 +830,61 @@ bool LoginHandler::send(const net::Message &msg)
 	return true;
 }
 
-void LoginHandler::sendError(const QString &code, const QString &message)
+void LoginHandler::sendError(
+	const QString &code, const QString &message, bool disconnect)
 {
 	send(net::ServerReply::makeError(message, code));
-	m_client->disconnectClient(
-		Client::DisconnectionReason::Error, "Login error");
+	if(disconnect) {
+		m_client->disconnectClient(
+			Client::DisconnectionReason::Error, "Login error");
+	}
+}
+
+LoginHandler::IdentIntent LoginHandler::parseIdentIntent(const QString &s)
+{
+	if(s.isEmpty()) {
+		return IdentIntent::Unknown;
+	} else if(s == QStringLiteral("guest")) {
+		return IdentIntent::Guest;
+	} else if(s == QStringLiteral("auth")) {
+		return IdentIntent::Auth;
+	} else if(s == QStringLiteral("extauth")) {
+		return IdentIntent::ExtAuth;
+	} else {
+		return IdentIntent::Invalid;
+	}
+}
+
+QString LoginHandler::identIntentToString(IdentIntent intent)
+{
+	switch(intent) {
+	case IdentIntent::Invalid:
+		return QStringLiteral("invalid");
+	case IdentIntent::Unknown:
+		return QStringLiteral("unknown");
+	case IdentIntent::Guest:
+		return QStringLiteral("guest");
+	case IdentIntent::Auth:
+		return QStringLiteral("auth");
+	case IdentIntent::ExtAuth:
+		return QStringLiteral("extauth");
+	}
+	qWarning("Unhandled ident intent %d", int(intent));
+	return QStringLiteral("unhandled");
+}
+
+bool LoginHandler::checkIdentIntent(
+	IdentIntent intent, IdentIntent actual, bool extAuthFallback)
+{
+	Q_ASSERT(!extAuthFallback || actual == IdentIntent::Guest);
+	if(intent == IdentIntent::Unknown || intent == actual) {
+		return true;
+	} else {
+		send(net::ServerReply::makeResultIdentIntentMismatch(
+			QStringLiteral("Intent mismatch"), identIntentToString(intent),
+			identIntentToString(actual), extAuthFallback));
+		return false;
+	}
 }
 
 bool LoginHandler::verifySystemId(

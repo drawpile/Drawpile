@@ -45,6 +45,8 @@ Unreleased Version 2.2.0-pre
  * Feature: Translate a single-colored bottom layer into background color when loading ORA and PSD files.
  * Fix: Make Alt+Space canvas shortcut sorta work in Windows. Thanks Bovy and xxxx for reporting.
  * Feature: Drawpile 2.1 animation import.
+ * Server Fix: Don't boot user when they enter an incorrect password, let them try again.
+ * Server Feature: Allow the user to pick how they want to log in, to avoid the common issue of wanting to join as a guest but picking a username that's taken.
 
 2023-09-30 Version 2.2.0-beta.8
  * Fix: Apply color wheel direction to color dialogs too. Thanks Blozzom for reporting.

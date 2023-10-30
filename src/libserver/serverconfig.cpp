@@ -206,6 +206,11 @@ RegisteredUser ServerConfig::getUserAccount(const QString &username, const QStri
 	};
 }
 
+bool ServerConfig::hasAnyUserAccounts() const
+{
+	return false;
+}
+
 int ServerConfig::parseTimeString(const QString &str)
 {
 	const QRegularExpression re("\\A(\\d+(?:\\.\\d+)?)\\s*([dhms]?)\\z");

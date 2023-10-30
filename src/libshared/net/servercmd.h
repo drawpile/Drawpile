@@ -133,7 +133,8 @@ struct ServerReply {
 	static net::Message makeLog(const QString &message, QJsonObject data);
 
 	static net::Message makeLoginGreeting(
-		const QString &message, int version, const QJsonArray &flags);
+		const QString &message, int version, const QJsonArray &flags,
+		const QJsonObject &methods, const QString &info);
 
 	static net::Message makeLoginWelcome(
 		const QString &message, const QString &title,
@@ -168,6 +169,10 @@ struct ServerReply {
 
 	static net::Message
 	makeResultStartTls(const QString &message, bool startTls);
+
+	static net::Message makeResultIdentIntentMismatch(
+		const QString &message, const QString &intent, const QString &method,
+		bool extAuthFallback);
 
 	static net::Message makeResultGarbage();
 

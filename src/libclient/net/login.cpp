@@ -22,6 +22,7 @@
 #include <QStringList>
 #include <QUrlQuery>
 #include <QUuid>
+#include <utility>
 
 #ifndef NDEBUG
 #	define DEBUG_LOGIN
@@ -195,6 +196,56 @@ void LoginHandler::expectHello(const ServerReply &msg)
 		}
 	}
 
+	// The server ideally will provide a URL to get information about how to
+	// register an account and such. This isn't necessarily present, nor is it
+	// necessarily a valid URL because a human will have put it in there.
+	m_loginInfo = msg.reply[QStringLiteral("info")].toString().trimmed();
+
+	// Extract available login methods, if the server provides this information.
+	m_loginMethods.clear();
+	m_loginExtAuthUrl.clear();
+	if(msg.reply.contains(QStringLiteral("methods"))) {
+		QString action = m_mode == Mode::Join ? QStringLiteral("join")
+											  : QStringLiteral("host");
+		QJsonObject methods = msg.reply[QStringLiteral("methods")].toObject();
+
+		std::pair<QString, LoginMethod> knownMethods[] = {
+			{QStringLiteral("guest"), LoginMethod::Guest},
+			{QStringLiteral("auth"), LoginMethod::Auth},
+			{QStringLiteral("extauth"), LoginMethod::ExtAuth},
+		};
+		for(auto [key, method] : knownMethods) {
+			QJsonValue value = methods[key];
+			if(value[QStringLiteral("actions")].toArray().contains(action)) {
+				if(method == LoginMethod::ExtAuth) {
+					QString rawUrl = value[QStringLiteral("url")].toString();
+					m_loginExtAuthUrl = rawUrl;
+					if(m_loginExtAuthUrl.isValid()) {
+						m_loginMethods.append(method);
+					} else {
+						qWarning(
+							"Invalid ext-auth URL '%s': %s",
+							qUtf8Printable(rawUrl),
+							qUtf8Printable(m_loginExtAuthUrl.errorString()));
+					}
+				} else {
+					m_loginMethods.append(method);
+				}
+			}
+		}
+
+		if(m_loginMethods.isEmpty()) {
+			if(m_mode == Mode::Join) {
+				failLogin(tr("This server doesn't provide a way to log in for "
+							 "joining a session!"));
+			} else {
+				failLogin(tr("This server doesn't provide a way to log in for "
+							 "hosting a session!"));
+			}
+			return;
+		}
+	}
+
 	// Start secure mode if possible
 	if(startTls) {
 		m_state = EXPECT_STARTTLS;
@@ -207,7 +258,7 @@ void LoginHandler::expectHello(const ServerReply &msg)
 			return;
 		}
 
-		prepareToSendIdentity();
+		chooseLoginMethod();
 	}
 }
 
@@ -234,6 +285,16 @@ void LoginHandler::sendSessionPassword(const QString &password)
 	}
 }
 
+void LoginHandler::chooseLoginMethod()
+{
+	if(m_loginMethods.isEmpty()) {
+		prepareToSendIdentity();
+	} else {
+		emit loginMethodChoiceNeeded(
+			m_loginMethods, m_loginExtAuthUrl, m_loginInfo);
+	}
+}
+
 void LoginHandler::prepareToSendIdentity()
 {
 	m_passwordState = WAIT_FOR_LOGIN_PASSWORD;
@@ -250,7 +311,7 @@ void LoginHandler::prepareToSendIdentity()
 			prompt = tr("Password needed to log in as \"%1\"")
 						 .arg(m_address.userName());
 
-		emit loginNeeded(m_address.userName(), prompt);
+		emit loginNeeded(m_address.userName(), prompt, m_loginIntent);
 
 	} else {
 		sendIdentity();
@@ -263,10 +324,12 @@ void LoginHandler::selectAvatar(const QPixmap &avatar)
 }
 
 void LoginHandler::selectIdentity(
-	const QString &username, const QString &password)
+	const QString &username, const QString &password,
+	LoginMethod intendedMethod)
 {
 	m_address.setUserName(username);
 	m_address.setPassword(password);
+	m_loginIntent = intendedMethod;
 	sendIdentity();
 }
 
@@ -277,8 +340,13 @@ void LoginHandler::sendIdentity()
 
 	args << m_address.userName();
 
-	if(!m_address.password().isEmpty())
+	if(!m_address.password().isEmpty()) {
 		args << m_address.password();
+	}
+
+	if(m_loginIntent != LoginHandler::LoginMethod::Unknown) {
+		kwargs[QStringLiteral("intent")] = loginMethodToString(m_loginIntent);
+	}
 
 	QString avatar = takeAvatar();
 	if(!avatar.isEmpty()) {
@@ -330,12 +398,12 @@ void LoginHandler::requestExtAuth(
 			m_state = EXPECT_IDENTIFIED;
 			send("ident", {m_address.userName()}, {{"extauth", obj["token"]}});
 
-			emit extAuthComplete(true);
+			emit extAuthComplete(true, m_loginIntent);
 
 		} else if(status == "badpass") {
 			qWarning("Incorrect ext-auth password");
 
-			emit extAuthComplete(false);
+			emit extAuthComplete(false, m_loginIntent);
 
 		} else if(status == "outgroup") {
 			qWarning("Ext-auth error: group membership needed");
@@ -349,14 +417,42 @@ void LoginHandler::requestExtAuth(
 
 void LoginHandler::expectIdentified(const ServerReply &msg)
 {
-	if(msg.reply["state"] == "needPassword") {
+	const QString state = msg.reply[QStringLiteral("state")].toString();
+
+	if(state == QStringLiteral("intentMismatch")) {
+		// The user wanted to log in using a way that doesn't match the server's
+		// account situation. For example, they want to log in as a guest, but
+		// the username is taken.
+		LoginMethod intent =
+			parseLoginMethod(msg.reply[QStringLiteral("intent")].toString());
+		LoginMethod method =
+			parseLoginMethod(msg.reply[QStringLiteral("method")].toString());
+		bool extAuthFallback =
+			msg.reply[QStringLiteral("extauthfallback")].toBool();
+		// The intent sent back by the server must be the same we gave it, the
+		// intents must actually be different and our own intent can't have been
+		// unset. An ext-auth fallback is only valid from an ext-auth intent. An
+		// unknown intent sent back by the server is not invalid, that could
+		// just mean we don't know the authentication method.
+		bool isValid = intent == m_loginIntent && intent != method &&
+					   intent != LoginMethod::Unknown &&
+					   (!extAuthFallback || intent == LoginMethod::ExtAuth);
+		if(isValid) {
+			emit loginMethodMismatch(intent, method, extAuthFallback);
+		} else {
+			failLogin(tr("Invalid ident intent response."));
+		}
+		return;
+	}
+
+	if(state == QStringLiteral("needPassword")) {
 		// Looks like guest logins are not possible
 		m_needUserPassword = true;
 		prepareToSendIdentity();
 		return;
 	}
 
-	if(msg.reply["state"] == "needExtAuth") {
+	if(state == QStringLiteral("needExtAuth")) {
 		// External authentication needed for this username
 		m_state = WAIT_FOR_EXTAUTH;
 		m_extAuthUrl = msg.reply["extauthurl"].toString();
@@ -368,24 +464,32 @@ void LoginHandler::expectIdentified(const ServerReply &msg)
 				qPrintable(msg.reply["extauthurl"].toString()));
 			failLogin(tr("Server misconfiguration: invalid ext-auth URL"));
 			return;
-		}
-		if(m_extAuthUrl.scheme() != "http" &&
-		   m_extAuthUrl.scheme() != "https") {
+		} else if(
+			m_extAuthUrl.scheme() != "http" &&
+			m_extAuthUrl.scheme() != "https") {
 			qWarning(
 				"Unsupported ext-auth URL: %s",
 				qPrintable(msg.reply["extauthurl"].toString()));
 			failLogin(tr("Unsupported ext-auth URL scheme"));
 			return;
+		} else if(
+			m_loginExtAuthUrl.isValid() && m_extAuthUrl != m_loginExtAuthUrl) {
+			qWarning(
+				"Ext-auth URL mismatch, got '%s' at login, but '%s' later",
+				qUtf8Printable(m_loginExtAuthUrl.toString()),
+				qUtf8Printable(m_extAuthUrl.toString()));
+			failLogin(tr("Server reported two different ext-auth URLs"));
 		}
+
 		m_extAuthGroup = msg.reply["group"].toString();
 		m_extAuthNonce = msg.reply["nonce"].toString();
 
-		emit extAuthNeeded(m_address.userName(), m_extAuthUrl);
+		emit extAuthNeeded(m_address.userName(), m_extAuthUrl, m_loginIntent);
 		return;
 	}
 
-	if(msg.reply["state"] != "identOk") {
-		qWarning() << "Expected identOk state, got" << msg.reply["state"];
+	if(state != QStringLiteral("identOk")) {
+		qWarning() << "Expected identOk state, got" << state;
 		failLogin(tr("Invalid state"));
 		return;
 	}
@@ -819,7 +923,7 @@ void LoginHandler::continueTls()
 {
 	// STARTTLS is the very first command that must be sent, if sent at all
 	// Next up is user authentication.
-	prepareToSendIdentity();
+	chooseLoginMethod();
 }
 
 void LoginHandler::cancelLogin()
@@ -837,11 +941,14 @@ void LoginHandler::handleError(const QString &code, const QString &msg)
 		error = tr("Session not found!");
 	else if(code == "badPassword") {
 		if(m_passwordState == WAIT_FOR_LOGIN_PASSWORD) {
-			error =
-				tr("Incorrect password for '%1'!").arg(m_address.userName());
-			emit badLoginPassword();
+			emit badLoginPassword(m_loginIntent);
+			return; // Not a fatal error, let the user try again.
+		} else if(m_state == EXPECT_LOGIN_OK) {
+			m_state = WAIT_FOR_JOIN_PASSWORD;
+			emit badSessionPassword();
+			return; // Not a fatal error, let the user try again.
 		} else {
-			error = tr("Incorrect session password!");
+			error = msg;
 		}
 	} else if(code == "badUsername")
 		error = tr("Invalid username!");
@@ -917,6 +1024,35 @@ QString LoginHandler::takeAvatar()
 		m_avatar = QPixmap();
 	}
 	return result;
+}
+
+LoginHandler::LoginMethod LoginHandler::parseLoginMethod(const QString &method)
+{
+	if(method == QStringLiteral("guest")) {
+		return LoginMethod::Guest;
+	} else if(method == QStringLiteral("auth")) {
+		return LoginMethod::Auth;
+	} else if(method == QStringLiteral("extauth")) {
+		return LoginMethod::ExtAuth;
+	} else {
+		return LoginMethod::Unknown;
+	}
+}
+
+QString LoginHandler::loginMethodToString(LoginMethod method)
+{
+	switch(method) {
+	case LoginMethod::Unknown:
+		return QString();
+	case LoginMethod::Guest:
+		return QStringLiteral("guest");
+	case LoginMethod::Auth:
+		return QStringLiteral("auth");
+	case LoginMethod::ExtAuth:
+		return QStringLiteral("extauth");
+	}
+	qWarning("Unhandled login method %d", int(method));
+	return QString();
 }
 
 QJsonObject LoginHandler::makeClientInfoKwargs()

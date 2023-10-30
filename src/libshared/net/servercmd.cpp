@@ -265,13 +265,19 @@ net::Message ServerReply::makeLog(const QString &message, QJsonObject data)
 }
 
 net::Message ServerReply::makeLoginGreeting(
-	const QString &message, int version, const QJsonArray &flags)
+	const QString &message, int version, const QJsonArray &flags,
+	const QJsonObject &methods, const QString &info)
 {
-	return make(
-		{{QStringLiteral("type"), QStringLiteral("login")},
-		 {QStringLiteral("message"), message},
-		 {QStringLiteral("version"), version},
-		 {QStringLiteral("flags"), flags}});
+	QJsonObject data = {
+		{QStringLiteral("type"), QStringLiteral("login")},
+		{QStringLiteral("message"), message},
+		{QStringLiteral("version"), version},
+		{QStringLiteral("flags"), flags},
+		{QStringLiteral("methods"), methods}};
+	if(!info.isEmpty()) {
+		data[QStringLiteral("info")] = info;
+	}
+	return make(data);
 }
 
 net::Message ServerReply::makeLoginWelcome(
@@ -381,6 +387,22 @@ ServerReply::makeResultStartTls(const QString &message, bool startTls)
 		{{QStringLiteral("type"), QStringLiteral("result")},
 		 {QStringLiteral("message"), message},
 		 {QStringLiteral("startTls"), startTls}});
+}
+
+net::Message ServerReply::makeResultIdentIntentMismatch(
+	const QString &message, const QString &intent, const QString &method,
+	bool extAuthFallback)
+{
+	QJsonObject data = {
+		{QStringLiteral("type"), QStringLiteral("result")},
+		{QStringLiteral("state"), QStringLiteral("intentMismatch")},
+		{QStringLiteral("message"), message},
+		{QStringLiteral("intent"), intent},
+		{QStringLiteral("method"), method}};
+	if(extAuthFallback) {
+		data[QStringLiteral("extauthfallback")] = true;
+	}
+	return make(data);
 }
 
 net::Message ServerReply::makeResultGarbage()

@@ -77,7 +77,9 @@ namespace config {
 		// Respect ext-auth user's "BANEXEMPT" flag.
 		ExtAuthBanExempt(30, "extauthbanexempt", "false", ConfigKey::BOOL),
 		// Allow mods to disable the idle timer for individual sessions.
-		AllowIdleOverride(31, "allowIdleOverride", "true", ConfigKey::BOOL);
+		AllowIdleOverride(31, "allowIdleOverride", "true", ConfigKey::BOOL),
+		// Url to show users when logging in.
+		LoginInfoUrl(32, "loginInfoUrl", "", ConfigKey::STRING);
 }
 
 //! Settings that are not adjustable after the server has started
@@ -220,6 +222,8 @@ public:
 	 * The default implementation always returns NotFound
 	 */
 	virtual RegisteredUser getUserAccount(const QString &username, const QString &password) const;
+
+	virtual bool hasAnyUserAccounts() const;
 
 	/**
 	 * @brief Get the configured logger instance

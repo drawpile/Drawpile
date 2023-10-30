@@ -587,6 +587,13 @@ RegisteredUser Database::getUserAccount(const QString &username, const QString &
 	}
 }
 
+bool Database::hasAnyUserAccounts() const
+{
+	QSqlQuery q(d->db);
+	return utils::db::exec(q, QStringLiteral("SELECT 1 FROM users LIMIT 1")) &&
+		   q.next();
+}
+
 static QJsonObject userQueryToJson(const QSqlQuery &q)
 {
 	QJsonObject o;

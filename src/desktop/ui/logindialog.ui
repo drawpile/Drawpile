@@ -19,10 +19,10 @@
      <property name="text">
       <string notr="true">&lt;i&gt;Connecting...&lt;/i&gt;</string>
      </property>
-     <property name="openExternalLinks">
+     <property name="wordWrap">
       <bool>true</bool>
      </property>
-     <property name="wordWrap">
+     <property name="openExternalLinks">
       <bool>true</bool>
      </property>
     </widget>
@@ -35,7 +35,7 @@
      <widget class="QWidget" name="loadingPage">
       <layout class="QVBoxLayout">
        <item>
-        <widget class="widgets::Spinner" name="loadingSpinner">
+        <widget class="widgets::Spinner" name="loadingSpinner" native="true">
          <property name="maximumSize">
           <size>
            <width>16777215</width>
@@ -79,7 +79,7 @@ padding: 16px;</string>
         </widget>
        </item>
        <item>
-        <layout class="QGridLayout">
+        <layout class="QGridLayout" name="authPageLayout">
          <item row="3" column="2">
           <widget class="QLabel" name="badPasswordLabel">
            <property name="styleSheet">
@@ -110,38 +110,12 @@ padding: 16px;</string>
            </property>
           </widget>
          </item>
-         <item row="2" column="0">
-          <spacer>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
          <item row="1" column="2">
           <widget class="QLineEdit" name="username">
            <property name="placeholderText">
             <string>Username</string>
            </property>
           </widget>
-         </item>
-         <item row="2" column="3">
-          <spacer>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
          </item>
          <item row="1" column="1">
           <widget class="QLabel" name="usernameIcon">
@@ -176,17 +150,72 @@ padding: 16px;</string>
            </property>
           </widget>
          </item>
+         <item row="2" column="0">
+          <spacer name="authPageLeftSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="2" column="3">
+          <spacer name="authPageRightSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
         </layout>
        </item>
        <item>
-        <spacer>
+        <spacer name="authPageFixedSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Fixed</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>0</width>
+           <height>6</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QLabel" name="authExplanationLabel">
+         <property name="text">
+          <string notr="true">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Login explanation goes here.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="textFormat">
+          <enum>Qt::RichText</enum>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="authPageBottomSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>20</width>
-           <height>59</height>
+           <width>0</width>
+           <height>0</height>
           </size>
          </property>
         </spacer>
@@ -205,7 +234,7 @@ padding: 16px;</string>
         <number>0</number>
        </property>
        <item>
-        <layout class="QHBoxLayout">
+        <layout class="QHBoxLayout" name="listingPageFilterLayout">
          <item>
           <widget class="QLineEdit" name="filter">
            <property name="placeholderText">
@@ -259,14 +288,14 @@ padding: 16px;</string>
      <widget class="QWidget" name="sessionPasswordPage">
       <layout class="QVBoxLayout">
        <item>
-        <widget class="QLabel">
+        <widget class="QLabel" name="sessionPasswordMessageLabel">
          <property name="text">
           <string>This session is password-protected.</string>
          </property>
         </widget>
        </item>
        <item>
-        <spacer>
+        <spacer name="sessionPasswordTopSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
@@ -279,9 +308,9 @@ padding: 16px;</string>
         </spacer>
        </item>
        <item>
-        <layout class="QHBoxLayout">
+        <layout class="QHBoxLayout" name="sessionPasswordLayout">
          <item>
-          <widget class="QLabel">
+          <widget class="QLabel" name="sessionPasswordLabel">
            <property name="text">
             <string>Password:</string>
            </property>
@@ -297,7 +326,17 @@ padding: 16px;</string>
         </layout>
        </item>
        <item>
-        <widget class="QLabel">
+        <widget class="QLabel" name="badSessionPasswordLabel">
+         <property name="styleSheet">
+          <string notr="true">color:red;</string>
+         </property>
+         <property name="text">
+          <string>Incorrect password.</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="sessionPasswordNoticeLabel">
          <property name="text">
           <string>Enter the &lt;b&gt;session password&lt;/b&gt;, &lt;i&gt;not&lt;/i&gt; your account password.</string>
          </property>
@@ -307,7 +346,7 @@ padding: 16px;</string>
         </widget>
        </item>
        <item>
-        <spacer>
+        <spacer name="sessionPasswordPageBottomSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
@@ -333,7 +372,7 @@ padding: 16px;</string>
         <number>0</number>
        </property>
        <item>
-        <widget class="QLabel">
+        <widget class="QLabel" name="catchupMessageLabel">
          <property name="text">
           <string>Catching up...</string>
          </property>
@@ -353,7 +392,7 @@ padding: 16px;</string>
         </widget>
        </item>
        <item>
-        <spacer>
+        <spacer name="catchupBottomSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
@@ -370,7 +409,7 @@ padding: 16px;</string>
      <widget class="QWidget" name="certChangedPage">
       <layout class="QGridLayout" columnstretch="0,0,0">
        <item row="1" column="1">
-        <spacer>
+        <spacer name="certChangedPageTopSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
@@ -411,7 +450,7 @@ padding: 16px;</string>
         </widget>
        </item>
        <item row="4" column="1">
-        <spacer>
+        <spacer name="certChangedPageBottomSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
@@ -488,6 +527,132 @@ padding: 16px;</string>
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="authModePage">
+      <layout class="QGridLayout" name="authModePageLayout">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item row="0" column="0" colspan="3">
+        <widget class="QLabel" name="authModePromptLabel">
+         <property name="styleSheet">
+          <string notr="true">background: #4d4d4d;
+color: #fcfcfc;
+padding: 16px;</string>
+         </property>
+         <property name="text">
+          <string notr="true">LOG IN</string>
+         </property>
+         <property name="textFormat">
+          <enum>Qt::PlainText</enum>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0" rowspan="4">
+        <spacer name="authModePageLeftSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="2" column="2" rowspan="4">
+        <spacer name="authModePageRightSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="4" column="1">
+        <widget class="QPushButton" name="methodGuestButton">
+         <property name="text">
+          <string>Continue without account</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0" colspan="3">
+        <widget class="QLabel" name="methodExplanationLabel">
+         <property name="text">
+          <string notr="true">Explanation text goes here.</string>
+         </property>
+         <property name="textFormat">
+          <enum>Qt::RichText</enum>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+         <property name="openExternalLinks">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0" colspan="3">
+        <spacer name="authModePageBottomSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="3" column="1">
+        <widget class="QPushButton" name="methodAuthButton">
+         <property name="text">
+          <string>Log in with server account</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QPushButton" name="methodExtAuthButton">
+         <property name="text">
+          <string notr="true">Log in with extauth account</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0" colspan="3">
+        <spacer name="authModePageFixedSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Fixed</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>0</width>
+           <height>6</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
    <item>
@@ -506,6 +671,23 @@ padding: 16px;</string>
    <header>desktop/widgets/spinner.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>avatarList</tabstop>
+  <tabstop>username</tabstop>
+  <tabstop>password</tabstop>
+  <tabstop>rememberPassword</tabstop>
+  <tabstop>filter</tabstop>
+  <tabstop>showNsfw</tabstop>
+  <tabstop>sessionList</tabstop>
+  <tabstop>sessionPassword</tabstop>
+  <tabstop>viewOldCert</tabstop>
+  <tabstop>viewNewCert</tabstop>
+  <tabstop>replaceCert</tabstop>
+  <tabstop>nsfmConfirmAgainBox</tabstop>
+  <tabstop>methodExtAuthButton</tabstop>
+  <tabstop>methodAuthButton</tabstop>
+  <tabstop>methodGuestButton</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
