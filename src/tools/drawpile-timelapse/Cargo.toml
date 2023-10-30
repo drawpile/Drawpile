@@ -9,6 +9,7 @@ crate-type = ["staticlib"]
 path = "lib.rs"
 
 [dependencies]
+anyhow = "1.0.75"
 drawdance = { path = "../../drawdance/rust" }
 regex = "1.9.4"
 xflags = "0.3.1"

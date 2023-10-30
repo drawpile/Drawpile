@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+use anyhow::Result;
 use drawdance::{
     dp_cmake_config_version,
-    engine::{ImageError, PaintEngine, PaintEngineError, Player, PlayerError},
+    engine::{PaintEngine, Player},
     DP_PLAYER_TYPE_GUESS, DP_PROTOCOL_VERSION,
 };
 use std::{
     ffi::{c_int, CStr, OsStr},
     fs::metadata,
-    io::{self},
     path::Path,
     str::FromStr,
 };
@@ -79,53 +79,6 @@ enum Every {
     None,
     UndoPoint,
     Message,
-}
-
-#[derive(Debug)]
-pub struct CmdError {
-    message: String,
-}
-
-impl From<PlayerError> for CmdError {
-    fn from(err: PlayerError) -> Self {
-        CmdError {
-            message: format!(
-                "Input error: {}",
-                match &err {
-                    PlayerError::DpError(s)
-                    | PlayerError::LoadError(_, s)
-                    | PlayerError::ResultError(_, s) => s,
-                    PlayerError::NulError(_) => "Null path",
-                }
-            ),
-        }
-    }
-}
-
-impl From<PaintEngineError> for CmdError {
-    fn from(err: PaintEngineError) -> Self {
-        CmdError {
-            message: match &err {
-                PaintEngineError::PlayerError(_, msg) => format!("Player error: {}", msg),
-            },
-        }
-    }
-}
-
-impl From<ImageError> for CmdError {
-    fn from(err: ImageError) -> Self {
-        CmdError {
-            message: format!("ImageError: {}", err.message),
-        }
-    }
-}
-
-impl From<io::Error> for CmdError {
-    fn from(err: io::Error) -> Self {
-        CmdError {
-            message: format!("I/O Error: {}", err),
-        }
-    }
 }
 
 #[no_mangle]
@@ -291,7 +244,7 @@ pub extern "C" fn drawpile_cmd_main() -> c_int {
     ) {
         Ok(_) => 0,
         Err(e) => {
-            eprintln!("{}", e.message);
+            eprintln!("{}", e);
             1
         }
     }
@@ -315,7 +268,7 @@ fn dump_recordings(
     fixed_size: bool,
     format: OutputFormat,
     out_pattern: &str,
-) -> Result<(), CmdError> {
+) -> Result<()> {
     let mut index = 1;
     for input_path in input_paths {
         dump_recording(
@@ -343,7 +296,7 @@ fn dump_recording(
     fixed_size: bool,
     format: OutputFormat,
     out_pattern: &str,
-) -> Result<(), CmdError> {
+) -> Result<()> {
     let mut player = make_player(input_path).and_then(Player::check_compatible)?;
     player.set_acl_override(acl_override);
 
@@ -375,7 +328,7 @@ fn dump_recording(
     }
 }
 
-fn make_player(input_path: &String) -> Result<Player, PlayerError> {
+fn make_player(input_path: &String) -> Result<Player> {
     if input_path == "-" {
         Player::new_from_stdin(DP_PLAYER_TYPE_GUESS)
     } else {
@@ -383,7 +336,7 @@ fn make_player(input_path: &String) -> Result<Player, PlayerError> {
     }
 }
 
-fn skip_playback_to_end(pe: &mut PaintEngine) -> Result<i64, PaintEngineError> {
+fn skip_playback_to_end(pe: &mut PaintEngine) -> Result<i64> {
     loop {
         if pe.skip_playback(99999)? == -1 {
             break;
@@ -398,7 +351,7 @@ fn write_flat_image(
     fixed_size: bool,
     format: OutputFormat,
     path: &str,
-) -> Result<(), ImageError> {
+) -> Result<()> {
     let result = if let Some(ImageSize { width, height }) = max_size {
         if fixed_size {
             pe.to_scaled_image(width, height, true)
@@ -416,7 +369,7 @@ fn write_flat_image(
             OutputFormat::Jpg | OutputFormat::Jpeg => img.write_jpeg(path)?,
             _ => panic!("Unhandled output format"),
         },
-        Err(e) => eprintln!("Warning: {}", CmdError::from(e).message),
+        Err(e) => eprintln!("Warning: {}", e),
     }
     Ok(())
 }

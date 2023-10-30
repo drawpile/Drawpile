@@ -29,7 +29,7 @@ pub use document_metadata::{
     BaseTransientDocumentMetadata,
 };
 pub use draw_context::DrawContext;
-pub use image::{Image, ImageError};
+pub use image::Image;
 pub use key_frame::{BaseKeyFrame, BaseTransientKeyFrame, TransientKeyFrame};
 pub use layer_content::{
     AttachedLayerContent, BaseLayerContent, BaseTransientLayerContent, TransientLayerContent,
@@ -47,10 +47,10 @@ pub use layer_props_list::{
     AttachedLayerPropsList, BaseLayerPropsList, BaseTransientLayerPropsList,
     TransientLayerPropsList,
 };
-pub use paint_engine::{PaintEngine, PaintEngineError};
+pub use paint_engine::PaintEngine;
 pub use pixels::UPixels8;
-pub use player::{Player, PlayerError};
-pub use recorder::{Recorder, RecorderError};
+pub use player::Player;
+pub use recorder::Recorder;
 pub use tile::{AttachedTile, BaseTile};
 pub use timeline::{BaseTimeline, BaseTransientTimeline, TransientTimeline};
 pub use track::{BaseTrack, BaseTransientTrack, TransientTrack};

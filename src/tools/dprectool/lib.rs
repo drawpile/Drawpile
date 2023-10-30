@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+use anyhow::Result;
 use drawdance::{
     dp_cmake_config_version,
-    engine::{Player, PlayerError, Recorder, RecorderError},
+    engine::{Player, Recorder},
     msg::Message,
     DP_MessageType, DP_PlayerType, DP_RecorderType, DP_PLAYER_BACKWARD_COMPATIBLE,
     DP_PLAYER_COMPATIBLE, DP_PLAYER_MINOR_INCOMPATIBILITY, DP_PLAYER_TYPE_BINARY,
@@ -116,41 +117,6 @@ impl FromStr for OutputFormat {
     }
 }
 
-#[derive(Debug)]
-pub struct ConversionError {
-    message: String,
-}
-
-impl From<PlayerError> for ConversionError {
-    fn from(err: PlayerError) -> Self {
-        ConversionError {
-            message: format!(
-                "Input error: {}",
-                match &err {
-                    PlayerError::DpError(s)
-                    | PlayerError::LoadError(_, s)
-                    | PlayerError::ResultError(_, s) => s,
-                    PlayerError::NulError(_) => "Null path",
-                }
-            ),
-        }
-    }
-}
-
-impl From<RecorderError> for ConversionError {
-    fn from(err: RecorderError) -> Self {
-        ConversionError {
-            message: format!(
-                "Output error: {}",
-                match &err {
-                    RecorderError::DpError(s) => s,
-                    RecorderError::NulError(_) => "Null path",
-                }
-            ),
-        }
-    }
-}
-
 #[no_mangle]
 pub extern "C" fn dprectool_main() -> c_int {
     drawdance::init();
@@ -202,7 +168,7 @@ pub extern "C" fn dprectool_main() -> c_int {
         return match print_version(input_format, input_path) {
             Ok(_) => 0,
             Err(e) => {
-                eprintln!("{}", e.message);
+                eprintln!("{}", e);
                 1
             }
         };
@@ -213,7 +179,7 @@ pub extern "C" fn dprectool_main() -> c_int {
         return match print_message_frequency(input_format, input_path, acl_override) {
             Ok(_) => 0,
             Err(e) => {
-                eprintln!("{}", e.message);
+                eprintln!("{}", e);
                 1
             }
         };
@@ -241,13 +207,13 @@ pub extern "C" fn dprectool_main() -> c_int {
     ) {
         Ok(_) => 0,
         Err(e) => {
-            eprintln!("{}", e.message);
+            eprintln!("{}", e);
             1
         }
     }
 }
 
-fn print_version(input_format: InputFormat, input_path: String) -> Result<(), ConversionError> {
+fn print_version(input_format: InputFormat, input_path: String) -> Result<()> {
     let player = make_player(input_format, input_path)?;
 
     let compat_flag = match player.compatibility() {
@@ -285,7 +251,7 @@ fn print_message_frequency(
     input_format: InputFormat,
     input_path: String,
     acl_override: bool,
-) -> Result<(), ConversionError> {
+) -> Result<()> {
     let mut player = make_player(input_format, input_path).and_then(Player::check_compatible)?;
     player.set_acl_override(acl_override);
 
@@ -327,7 +293,7 @@ fn convert_recording(
     output_path: String,
     output_path_is_default: bool,
     acl_override: bool,
-) -> Result<(), ConversionError> {
+) -> Result<()> {
     let mut player = make_player(input_format, input_path).and_then(Player::check_compatible)?;
 
     let rtype = output_format.to_recorder_type(&output_path, output_path_is_default, &player);
@@ -348,7 +314,7 @@ fn convert_recording(
     Ok(())
 }
 
-fn make_player(input_format: InputFormat, input_path: String) -> Result<Player, PlayerError> {
+fn make_player(input_format: InputFormat, input_path: String) -> Result<Player> {
     let ptype = input_format.to_player_type();
     if input_path == "-" {
         Player::new_from_stdin(ptype)

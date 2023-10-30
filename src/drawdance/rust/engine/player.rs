@@ -1,71 +1,35 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 use crate::{
-    dp_error, json_object_get_string, json_value_get_object, msg::Message, DP_Input, DP_LoadResult,
-    DP_Message, DP_Player, DP_PlayerCompatibility, DP_PlayerResult, DP_PlayerType,
-    DP_file_input_new_from_path, DP_file_input_new_from_stdin, DP_player_acl_override_set,
-    DP_player_compatibility, DP_player_compatible, DP_player_free, DP_player_header, DP_player_new,
-    DP_player_step, DP_player_type, JSON_Value, DP_LOAD_RESULT_RECORDING_INCOMPATIBLE,
-    DP_LOAD_RESULT_SUCCESS, DP_PLAYER_RECORDING_END, DP_PLAYER_SUCCESS,
+    dp_error_anyhow, json_object_get_string, json_value_get_object, msg::Message, DP_Input,
+    DP_Message, DP_Player, DP_PlayerCompatibility, DP_PlayerType, DP_file_input_new_from_path,
+    DP_file_input_new_from_stdin, DP_player_acl_override_set, DP_player_compatibility,
+    DP_player_compatible, DP_player_free, DP_player_header, DP_player_new, DP_player_step,
+    DP_player_type, JSON_Value, DP_PLAYER_RECORDING_END, DP_PLAYER_SUCCESS,
 };
+use anyhow::{anyhow, Result};
 use std::{
-    ffi::{c_char, CStr, CString, NulError},
-    ptr,
+    ffi::{c_char, CStr, CString},
+    ptr::{self, null_mut},
 };
 
 pub struct Player {
     player: *mut DP_Player,
 }
 
-#[derive(Debug)]
-pub enum PlayerError {
-    DpError(String),
-    LoadError(DP_LoadResult, String),
-    ResultError(DP_PlayerResult, String),
-    NulError(NulError),
-}
-
-impl PlayerError {
-    fn from_dp_error() -> Self {
-        Self::DpError(dp_error())
-    }
-
-    fn from_load_result(result: DP_LoadResult) -> Self {
-        if result == DP_LOAD_RESULT_SUCCESS {
-            Self::from_dp_error()
-        } else {
-            Self::LoadError(result, dp_error())
-        }
-    }
-
-    fn from_player_result(result: DP_PlayerResult) -> Self {
-        if result == DP_PLAYER_SUCCESS {
-            Self::from_dp_error()
-        } else {
-            Self::ResultError(result, dp_error())
-        }
-    }
-}
-
-impl From<NulError> for PlayerError {
-    fn from(err: NulError) -> Self {
-        Self::NulError(err)
-    }
-}
-
 impl Player {
-    pub fn new_from_stdin(ptype: DP_PlayerType) -> Result<Self, PlayerError> {
+    pub fn new_from_stdin(ptype: DP_PlayerType) -> Result<Self> {
         let input = unsafe { DP_file_input_new_from_stdin(true) };
         if input.is_null() {
-            return Err(PlayerError::from_dp_error());
+            return Err(dp_error_anyhow());
         }
         Self::new(ptype, ptr::null(), input)
     }
 
-    pub fn new_from_path(ptype: DP_PlayerType, path: String) -> Result<Self, PlayerError> {
+    pub fn new_from_path(ptype: DP_PlayerType, path: String) -> Result<Self> {
         let cpath = CString::new(path)?;
         let input = unsafe { DP_file_input_new_from_path(cpath.as_ptr()) };
         if input.is_null() {
-            return Err(PlayerError::from_dp_error());
+            return Err(dp_error_anyhow());
         }
         Self::new(ptype, cpath.as_ptr(), input)
     }
@@ -74,11 +38,10 @@ impl Player {
         ptype: DP_PlayerType,
         path_or_null: *const c_char,
         input: *mut DP_Input,
-    ) -> Result<Self, PlayerError> {
-        let mut result: DP_LoadResult = 0;
-        let player = unsafe { DP_player_new(ptype, path_or_null, input, &mut result) };
+    ) -> Result<Self> {
+        let player = unsafe { DP_player_new(ptype, path_or_null, input, null_mut()) };
         if player.is_null() {
-            Err(PlayerError::from_load_result(result))
+            Err(dp_error_anyhow())
         } else {
             Ok(Player { player })
         }
@@ -138,14 +101,11 @@ impl Player {
         unsafe { DP_player_compatible(self.player) }
     }
 
-    pub fn check_compatible(self) -> Result<Player, PlayerError> {
+    pub fn check_compatible(self) -> Result<Player> {
         if self.is_compatible() {
             Ok(self)
         } else {
-            Err(PlayerError::LoadError(
-                DP_LOAD_RESULT_RECORDING_INCOMPATIBLE,
-                "Incompatible recording".to_owned(),
-            ))
+            Err(anyhow!("Incompatible recording"))
         }
     }
 
@@ -153,7 +113,7 @@ impl Player {
         unsafe { DP_player_acl_override_set(self.player, acl_override) }
     }
 
-    pub fn step(&mut self) -> Result<Option<Message>, PlayerError> {
+    pub fn step(&mut self) -> Result<Option<Message>> {
         let mut msg: *mut DP_Message = ptr::null_mut();
         let result = unsafe { DP_player_step(self.player, &mut msg) };
         if result == DP_PLAYER_SUCCESS {
@@ -161,7 +121,7 @@ impl Player {
         } else if result == DP_PLAYER_RECORDING_END {
             Ok(None)
         } else {
-            Err(PlayerError::from_player_result(result))
+            Err(dp_error_anyhow())
         }
     }
 }

@@ -1,79 +1,36 @@
-use core::slice;
-use std::{
-    ffi::{c_int, CString, NulError},
-    io::{self},
-    mem::size_of,
-    num::TryFromIntError,
-    ptr::{self, copy_nonoverlapping},
-};
-
+use super::DrawContext;
 use crate::{
-    dp_error, DP_Image, DP_Output, DP_Quad, DP_UPixel8, DP_blend_color8_to,
+    dp_error_anyhow, DP_Image, DP_Output, DP_Quad, DP_UPixel8, DP_blend_color8_to,
     DP_file_output_new_from_path, DP_image_free, DP_image_height, DP_image_new,
     DP_image_new_subimage, DP_image_pixels, DP_image_transform_pixels, DP_image_width,
     DP_image_write_jpeg, DP_image_write_png, DP_output_free, DP_MSG_TRANSFORM_REGION_MODE_BILINEAR,
 };
-
-use super::DrawContext;
+use anyhow::{anyhow, Result};
+use core::slice;
+use std::{
+    ffi::{c_int, CString},
+    io::{self},
+    mem::size_of,
+    ptr::{self, copy_nonoverlapping},
+};
 
 pub struct Image {
     image: *mut DP_Image,
 }
 
-#[derive(Debug)]
-pub struct ImageError {
-    pub message: String,
-}
-
-impl ImageError {
-    pub fn from_dp_error() -> Self {
-        Self {
-            message: dp_error(),
-        }
-    }
-}
-
-impl From<&str> for ImageError {
-    fn from(value: &str) -> Self {
-        Self {
-            message: value.to_owned(),
-        }
-    }
-}
-
-impl From<TryFromIntError> for ImageError {
-    fn from(value: TryFromIntError) -> Self {
-        Self {
-            message: value.to_string(),
-        }
-    }
-}
-
-impl From<NulError> for ImageError {
-    fn from(value: NulError) -> Self {
-        Self {
-            message: value.to_string(),
-        }
-    }
-}
-
 impl Image {
-    pub fn new(width: usize, height: usize) -> Result<Self, ImageError> {
+    pub fn new(width: usize, height: usize) -> Result<Self> {
         if width > 0 && height > 0 {
             let w = c_int::try_from(width)?;
             let h = c_int::try_from(height)?;
             let image = unsafe { DP_image_new(w, h) };
             Ok(Self { image })
         } else {
-            Err(ImageError::from("Empty image"))
+            Err(anyhow!("Empty image"))
         }
     }
 
-    pub fn new_from_pixels(
-        width: usize,
-        height: usize,
-        pixels: &[u32],
-    ) -> Result<Self, ImageError> {
+    pub fn new_from_pixels(width: usize, height: usize, pixels: &[u32]) -> Result<Self> {
         let count = width * height;
         if pixels.len() >= count {
             let img = Self::new(width, height)?;
@@ -86,7 +43,7 @@ impl Image {
             }
             Ok(img)
         } else {
-            Err(ImageError::from("Not enough pixels"))
+            Err(anyhow!("Not enough pixels"))
         }
     }
 
@@ -98,18 +55,18 @@ impl Image {
         scale_height: usize,
         expand: bool,
         dc: &mut DrawContext,
-    ) -> Result<Self, ImageError> {
+    ) -> Result<Self> {
         if width == 0 || height == 0 {
-            return Err(ImageError::from("Empty source image"));
+            return Err(anyhow!("Empty source image"));
         }
 
         if scale_width == 0 || scale_height == 0 {
-            return Err(ImageError::from("Empty target image"));
+            return Err(anyhow!("Empty target image"));
         }
 
         let count = width * height;
         if pixels.len() < count {
-            return Err(ImageError::from("Not enough pixels"));
+            return Err(anyhow!("Not enough pixels"));
         }
 
         let xratio = scale_width as f64 / width as f64;
@@ -148,7 +105,7 @@ impl Image {
             )
         };
         if image.is_null() {
-            return Err(ImageError::from_dp_error());
+            return Err(dp_error_anyhow());
         }
 
         let img = Image { image };
@@ -163,7 +120,7 @@ impl Image {
                 )
             };
             if subimg.is_null() {
-                Err(ImageError::from_dp_error())
+                Err(dp_error_anyhow())
             } else {
                 Ok(Image { image: subimg })
             }
@@ -186,11 +143,11 @@ impl Image {
         writer.write_all(unsafe { slice::from_raw_parts(pixels.cast::<u8>(), size) })
     }
 
-    pub fn write_png(&self, path: &str) -> Result<(), ImageError> {
+    pub fn write_png(&self, path: &str) -> Result<()> {
         self.write(path, DP_image_write_png)
     }
 
-    pub fn write_jpeg(&self, path: &str) -> Result<(), ImageError> {
+    pub fn write_jpeg(&self, path: &str) -> Result<()> {
         self.write(path, DP_image_write_jpeg)
     }
 
@@ -198,31 +155,26 @@ impl Image {
         &self,
         path: &str,
         func: unsafe extern "C" fn(*mut DP_Image, *mut DP_Output) -> bool,
-    ) -> Result<(), ImageError> {
+    ) -> Result<()> {
         let cpath = CString::new(path)?;
         let output = unsafe { DP_file_output_new_from_path(cpath.as_ptr()) };
         if output.is_null() {
-            return Err(ImageError::from_dp_error());
+            return Err(dp_error_anyhow());
         }
         let result = if unsafe { func(self.image, output) } {
             Ok(())
         } else {
-            Err(ImageError::from_dp_error())
+            Err(dp_error_anyhow())
         };
         unsafe { DP_output_free(output) };
         result
     }
 
-    pub fn blend_with(
-        &mut self,
-        src: &Image,
-        color: DP_UPixel8,
-        opacity: u8,
-    ) -> Result<(), ImageError> {
+    pub fn blend_with(&mut self, src: &Image, color: DP_UPixel8, opacity: u8) -> Result<()> {
         let w = self.width();
         let h = self.height();
         if w != src.width() || h != src.height() {
-            return Err(ImageError::from("Mismatched dimensions"));
+            return Err(anyhow!("Mismatched dimensions"));
         }
 
         unsafe {

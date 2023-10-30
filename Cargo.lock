@@ -38,6 +38,7 @@ dependencies = [
 name = "dprectool"
 version = "2.2.0-pre"
 dependencies = [
+ "anyhow",
  "drawdance",
  "xflags",
 ]
@@ -53,6 +54,7 @@ dependencies = [
 name = "drawpilecmd"
 version = "2.2.0-pre"
 dependencies = [
+ "anyhow",
  "drawdance",
  "xflags",
 ]
@@ -61,6 +63,7 @@ dependencies = [
 name = "drawpiletimelapse"
 version = "2.2.0-pre"
 dependencies = [
+ "anyhow",
  "drawdance",
  "regex",
  "xflags",

@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+use anyhow::{anyhow, Result};
 use drawdance::{
     dp_cmake_config_version,
-    engine::{Image, ImageError, PaintEngine, PaintEngineError, Player, PlayerError},
+    engine::{Image, PaintEngine, Player},
     DP_UPixel8, DP_PLAYER_TYPE_GUESS, DP_PROTOCOL_VERSION,
 };
 use regex::Regex;
@@ -152,67 +153,6 @@ impl FromStr for LogoLocation {
                 "invalid logo location '{s}', should be one of 'bottom-left', \
                 'top-left', 'top-right', 'bottom-right' or 'none'"
             )),
-        }
-    }
-}
-
-#[derive(Debug)]
-pub struct CmdError {
-    message: String,
-}
-
-impl From<&str> for CmdError {
-    fn from(s: &str) -> Self {
-        CmdError {
-            message: s.to_owned(),
-        }
-    }
-}
-
-impl From<String> for CmdError {
-    fn from(message: String) -> Self {
-        CmdError { message }
-    }
-}
-
-impl From<PlayerError> for CmdError {
-    fn from(err: PlayerError) -> Self {
-        CmdError {
-            message: format!(
-                "Input error: {}",
-                match &err {
-                    PlayerError::DpError(s)
-                    | PlayerError::LoadError(_, s)
-                    | PlayerError::ResultError(_, s) => s,
-                    PlayerError::NulError(_) => "Null path",
-                }
-            ),
-        }
-    }
-}
-
-impl From<PaintEngineError> for CmdError {
-    fn from(err: PaintEngineError) -> Self {
-        CmdError {
-            message: match &err {
-                PaintEngineError::PlayerError(_, msg) => format!("Player error: {}", msg),
-            },
-        }
-    }
-}
-
-impl From<ImageError> for CmdError {
-    fn from(err: ImageError) -> Self {
-        CmdError {
-            message: format!("ImageError: {}", err.message),
-        }
-    }
-}
-
-impl From<io::Error> for CmdError {
-    fn from(err: io::Error) -> Self {
-        CmdError {
-            message: format!("I/O Error: {}", err),
         }
     }
 }
@@ -482,7 +422,7 @@ pub extern "C" fn drawpile_timelapse_main(default_logo_path: *const c_char) -> c
     match result {
         Ok(_) => 0,
         Err(e) => {
-            eprintln!("{}", e.message);
+            eprintln!("{}", e);
             1
         }
     }
@@ -498,20 +438,21 @@ fn make_timelapse_command(
     height: usize,
     flash: Option<u32>,
     linger_time: f64,
-) -> Result<(), CmdError> {
+) -> Result<()> {
     let mut child = match command.spawn() {
         Ok(c) => c,
         Err(e) => {
-            return Err(CmdError {
-                message: format!(
-                    "Could not start '{}': {}",
-                    command.get_program().to_string_lossy(),
-                    e
-                ),
-            })
+            return Err(anyhow!(
+                "Could not start '{}': {}",
+                command.get_program().to_string_lossy(),
+                e
+            ));
         }
     };
-    let mut pipe = child.stdin.take().ok_or("Can't open stdin")?;
+    let mut pipe = child
+        .stdin
+        .take()
+        .ok_or_else(|| anyhow!("Can't open stdin"))?;
     timelapse(
         &mut pipe,
         input_paths,
@@ -528,7 +469,7 @@ fn make_timelapse_command(
     if status.success() {
         Ok(())
     } else {
-        Err(CmdError::from(status.to_string()))
+        Err(anyhow!(status))
     }
 }
 
@@ -542,7 +483,7 @@ fn make_timelapse_raw(
     height: usize,
     flash: Option<u32>,
     linger_time: f64,
-) -> Result<(), CmdError> {
+) -> Result<()> {
     let mut f = File::create(path)?;
     timelapse(
         &mut f,
@@ -587,7 +528,7 @@ fn timelapse(
     height: usize,
     flash: Option<u32>,
     linger_time: f64,
-) -> Result<(), CmdError> {
+) -> Result<()> {
     let mut ctx = TimelapseContext {
         writer,
         images: VecDeque::new(),
@@ -621,7 +562,7 @@ fn timelapse_recording(
     interval: i64,
     width: usize,
     height: usize,
-) -> Result<(), CmdError> {
+) -> Result<()> {
     let mut player = make_player(input_path).and_then(Player::check_compatible)?;
     player.set_acl_override(acl_override);
 
@@ -642,7 +583,7 @@ fn timelapse_recording(
                 ctx.push(img)?;
                 initial = false;
             }
-            Err(e) => eprintln!("Warning: {}", CmdError::from(e).message),
+            Err(e) => eprintln!("Warning: {}", e),
         }
 
         if pos == -1 {
@@ -651,7 +592,7 @@ fn timelapse_recording(
     }
 }
 
-fn make_player(input_path: &String) -> Result<Player, PlayerError> {
+fn make_player(input_path: &String) -> Result<Player> {
     if input_path == "-" {
         Player::new_from_stdin(DP_PLAYER_TYPE_GUESS)
     } else {
@@ -665,7 +606,7 @@ fn render_flash(
     img2: &Image,
     fr: f64,
     color: u32,
-) -> Result<(), CmdError> {
+) -> Result<()> {
     let pixel = DP_UPixel8 { color };
     let mut dst = Image::new(img1.width(), img1.height())?;
     let mut opa = 0.0_f64;
@@ -685,12 +626,7 @@ fn render_flash(
     Ok(())
 }
 
-fn render_linger(
-    writer: &mut dyn io::Write,
-    img: &Image,
-    fr: f64,
-    linger_time: f64,
-) -> Result<(), CmdError> {
+fn render_linger(writer: &mut dyn io::Write, img: &Image, fr: f64, linger_time: f64) -> Result<()> {
     let mut lingered = 0.0;
     while lingered <= linger_time {
         lingered += 1.0_f64 / fr;

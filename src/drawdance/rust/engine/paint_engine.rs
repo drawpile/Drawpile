@@ -1,6 +1,6 @@
-use super::{image::ImageError, AclState, DrawContext, Image, Player};
+use super::{AclState, DrawContext, Image, Player};
 use crate::{
-    dp_error, msg::Message, DP_AnnotationList, DP_CanvasState, DP_DocumentMetadata,
+    dp_error_anyhow, msg::Message, DP_AnnotationList, DP_CanvasState, DP_DocumentMetadata,
     DP_LayerPropsList, DP_Message, DP_PaintEngine, DP_Pixel8, DP_PlayerResult, DP_Rect,
     DP_Timeline, DP_canvas_state_decref, DP_paint_engine_free_join, DP_paint_engine_handle_inc,
     DP_paint_engine_new_inc, DP_paint_engine_playback_begin, DP_paint_engine_playback_play,
@@ -9,6 +9,7 @@ use crate::{
     DP_save, DP_PLAYER_RECORDING_END, DP_PLAYER_SUCCESS, DP_SAVE_IMAGE_ORA, DP_SAVE_RESULT_SUCCESS,
     DP_TILE_SIZE,
 };
+use anyhow::Result;
 use std::{
     ffi::{c_int, c_longlong, c_uint, c_void, CString},
     ptr,
@@ -30,21 +31,6 @@ pub struct PaintEngine {
     render_height: usize,
     render_image: Vec<u32>,
     playback_channel: (SyncSender<c_longlong>, Receiver<c_longlong>),
-}
-
-#[derive(Debug)]
-pub enum PaintEngineError {
-    PlayerError(DP_PlayerResult, String),
-}
-
-impl PaintEngineError {
-    fn check_player_result(result: DP_PlayerResult) -> Result<(), Self> {
-        if result == DP_PLAYER_SUCCESS || result == DP_PLAYER_RECORDING_END {
-            Ok(())
-        } else {
-            Err(Self::PlayerError(result, dp_error()))
-        }
-    }
 }
 
 impl PaintEngine {
@@ -170,19 +156,17 @@ impl PaintEngine {
         pe.playback_channel.0.send(position).unwrap();
     }
 
-    pub fn begin_playback(&mut self) -> Result<(), PaintEngineError> {
-        PaintEngineError::check_player_result(unsafe {
-            DP_paint_engine_playback_begin(self.paint_engine)
-        })
+    pub fn begin_playback(&mut self) -> Result<()> {
+        Self::check_player_result(unsafe { DP_paint_engine_playback_begin(self.paint_engine) })
     }
 
-    pub fn step_playback(&mut self, steps: i64) -> Result<i64, PaintEngineError> {
+    pub fn step_playback(&mut self, steps: i64) -> Result<i64> {
         self.playback(|paint_engine, user| unsafe {
             DP_paint_engine_playback_step(paint_engine, steps, Some(Self::on_push_message), user)
         })
     }
 
-    pub fn skip_playback(&mut self, steps: i64) -> Result<i64, PaintEngineError> {
+    pub fn skip_playback(&mut self, steps: i64) -> Result<i64> {
         self.playback(|paint_engine, user| unsafe {
             DP_paint_engine_playback_skip_by(
                 paint_engine,
@@ -195,19 +179,19 @@ impl PaintEngine {
         })
     }
 
-    pub fn play_playback(&mut self, msecs: i64) -> Result<i64, PaintEngineError> {
+    pub fn play_playback(&mut self, msecs: i64) -> Result<i64> {
         self.playback(|paint_engine, user| unsafe {
             DP_paint_engine_playback_play(paint_engine, msecs, Some(Self::on_push_message), user)
         })
     }
 
-    fn playback<F>(&mut self, func: F) -> Result<i64, PaintEngineError>
+    fn playback<F>(&mut self, func: F) -> Result<i64>
     where
         F: FnOnce(*mut DP_PaintEngine, *mut c_void) -> DP_PlayerResult,
     {
         let mut messages: Vec<Message> = Vec::new();
         let user: *mut Vec<Message> = &mut messages;
-        PaintEngineError::check_player_result(func(self.paint_engine, user.cast()))?;
+        Self::check_player_result(func(self.paint_engine, user.cast()))?;
         self.handle(false, true, &mut messages);
         Ok(self.playback_channel.1.recv().unwrap())
     }
@@ -300,7 +284,7 @@ impl PaintEngine {
     extern "C" fn on_default_layer_set(_user: *mut c_void, _layer_id: c_int) {}
     extern "C" fn on_undo_depth_limit_set(_user: *mut c_void, _undo_depth_limit: c_int) {}
 
-    pub fn write_ora(&mut self, path: &str) -> Result<(), ImageError> {
+    pub fn write_ora(&mut self, path: &str) -> Result<()> {
         let cpath = CString::new(path)?;
         let cs = unsafe { DP_paint_engine_view_canvas_state_inc(self.paint_engine) };
         let result =
@@ -309,20 +293,15 @@ impl PaintEngine {
         if result == DP_SAVE_RESULT_SUCCESS {
             Ok(())
         } else {
-            Err(ImageError::from_dp_error())
+            Err(dp_error_anyhow())
         }
     }
 
-    pub fn to_image(&self) -> Result<Image, ImageError> {
+    pub fn to_image(&self) -> Result<Image> {
         Image::new_from_pixels(self.render_width, self.render_height, &self.render_image)
     }
 
-    pub fn to_scaled_image(
-        &mut self,
-        width: usize,
-        height: usize,
-        expand: bool,
-    ) -> Result<Image, ImageError> {
+    pub fn to_scaled_image(&mut self, width: usize, height: usize, expand: bool) -> Result<Image> {
         Image::new_from_pixels_scaled(
             self.render_width,
             self.render_height,
@@ -332,6 +311,14 @@ impl PaintEngine {
             expand,
             &mut self.main_dc,
         )
+    }
+
+    fn check_player_result(result: DP_PlayerResult) -> Result<()> {
+        if result == DP_PLAYER_SUCCESS || result == DP_PLAYER_RECORDING_END {
+            Ok(())
+        } else {
+            Err(dp_error_anyhow())
+        }
     }
 }
 
