@@ -57,7 +57,9 @@ bool DP_input_seek(DP_Input *input, size_t offset);
 bool DP_input_seek_by(DP_Input *input, size_t size);
 
 
+#ifndef RUST_BINDGEN
 DP_Input *DP_file_input_new(FILE *fp, bool close);
+#endif
 
 DP_Input *DP_file_input_new_from_stdin(bool close);
 

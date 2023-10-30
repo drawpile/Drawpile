@@ -49,8 +49,10 @@ bool DP_output_write(DP_Output *output, const void *buffer, size_t size);
 
 bool DP_output_print(DP_Output *output, const char *string);
 
+#ifndef RUST_BINDGEN
 bool DP_output_vformat(DP_Output *output, const char *fmt, va_list ap)
     DP_VFORMAT(2);
+#endif
 
 bool DP_output_format(DP_Output *output, const char *fmt, ...) DP_FORMAT(2, 3);
 
@@ -63,7 +65,9 @@ size_t DP_output_tell(DP_Output *output, bool *out_error);
 bool DP_output_seek(DP_Output *output, size_t offset);
 
 
+#ifndef RUST_BINDGEN
 DP_Output *DP_file_output_new(FILE *fp, bool close);
+#endif
 
 DP_Output *DP_file_output_new_from_stdout(bool close);
 

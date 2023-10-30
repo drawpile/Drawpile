@@ -140,6 +140,7 @@ typedef enum DP_LogLevel {
     DP_LOG_PANIC,
 } DP_LogLevel;
 
+#ifndef RUST_BINDGEN
 typedef void (*DP_LogFn)(void *user, DP_LogLevel level, const char *file,
                          int line, const char *fmt, va_list ap);
 
@@ -147,6 +148,7 @@ typedef void (*DP_LogFn)(void *user, DP_LogLevel level, const char *file,
 // Passing NULL as the function will turn off all logging.
 // The default log function prints to stderr.
 void *DP_log_fn_set(DP_LogFn fn, void *user);
+#endif
 
 #ifdef NDEBUG
 #    define DP_debug(...) // nothing
@@ -300,7 +302,9 @@ void DP_free_simd(void *ptr);
 #endif
 
 
+#ifndef RUST_BINDGEN
 char *DP_vformat(const char *fmt, va_list ap) DP_VFORMAT(1);
+#endif
 
 char *DP_format(const char *fmt, ...) DP_FORMAT(1, 2);
 
