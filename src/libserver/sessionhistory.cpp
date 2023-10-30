@@ -45,6 +45,8 @@ bool SessionHistory::importBans(
 	const QJsonObject &data, int &outTotal, int &outImported,
 	const Client *client)
 {
+	outTotal = 0;
+	outImported = 0;
 	return SessionBanList::importBans(data, [&](const SessionBan &b) {
 		++outTotal;
 		if(addBan(b.username, b.ip, b.authId, b.sid, b.bannedBy, client)) {
