@@ -134,7 +134,7 @@ pub trait BaseTransientCanvasState: BaseCanvasState {
             None => null_mut(),
         };
         unsafe {
-            DP_transient_canvas_state_background_tile_set_noinc(self.transient_ptr(), t, opaque)
+            DP_transient_canvas_state_background_tile_set_noinc(self.transient_ptr(), t, opaque);
         }
     }
 
@@ -143,7 +143,7 @@ pub trait BaseTransientCanvasState: BaseCanvasState {
             DP_transient_canvas_state_transient_layers_set_noinc(
                 self.transient_ptr(),
                 tll.leak_transient(),
-            )
+            );
         }
     }
 
@@ -152,7 +152,7 @@ pub trait BaseTransientCanvasState: BaseCanvasState {
             DP_transient_canvas_state_transient_layer_props_set_noinc(
                 self.transient_ptr(),
                 tlpl.leak_transient(),
-            )
+            );
         }
     }
 
@@ -161,7 +161,7 @@ pub trait BaseTransientCanvasState: BaseCanvasState {
             DP_transient_canvas_state_transient_timeline_set_noinc(
                 self.transient_ptr(),
                 ttl.leak_transient(),
-            )
+            );
         }
     }
 

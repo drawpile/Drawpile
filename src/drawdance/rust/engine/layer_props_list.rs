@@ -37,7 +37,7 @@ pub trait BaseLayerPropsList {
         AttachedLayerProps::new(data, self)
     }
 
-    fn iter<'a>(&'a self) -> LayerPropsListIterator<'a, Self>
+    fn iter(&self) -> LayerPropsListIterator<Self>
     where
         Self: Sized,
     {
@@ -69,7 +69,7 @@ pub trait BaseTransientLayerPropsList: BaseLayerPropsList {
                 self.transient_ptr(),
                 tlp.leak_transient(),
                 index,
-            )
+            );
         }
     }
 }

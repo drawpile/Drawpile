@@ -78,7 +78,7 @@ impl ProtocolVersion {
 
     fn is_ns_valid(&self) -> bool {
         let bytes = self.ns.to_bytes();
-        bytes.len() > 0 && bytes.iter().all(|b| b.is_ascii_lowercase())
+        !bytes.is_empty() && bytes.iter().all(u8::is_ascii_lowercase)
     }
 
     pub fn is_current(&self) -> bool {
@@ -158,11 +158,11 @@ impl ProtocolVersion {
     }
 
     pub fn as_integer(&self) -> u64 {
-        const MAX: u64 = (1u64 << 21u64) - 1u64;
-        let a = (self.server.max(0i32) as u64).min(MAX);
-        let b = (self.major.max(0i32) as u64).min(MAX);
-        let c = (self.minor.max(0i32) as u64).min(MAX);
-        (a << 42u64) | (b << 21u64) | c
+        const MAX: u64 = (1_u64 << 21_u64) - 1_u64;
+        let a = (self.server.max(0_i32) as u64).min(MAX);
+        let b = (self.major.max(0_i32) as u64).min(MAX);
+        let c = (self.minor.max(0_i32) as u64).min(MAX);
+        (a << 42_u64) | (b << 21_u64) | c
     }
 }
 

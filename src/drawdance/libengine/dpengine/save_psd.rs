@@ -95,7 +95,7 @@ fn count_layers_recursive(lpl: *mut DP_LayerPropsList) -> usize {
             total += 1 + count_layers_recursive(child_lpl);
         }
     }
-    return total;
+    total
 }
 
 fn blend_mode_to_psd(blend_mode: DP_BlendMode) -> &'static [u8] {
@@ -130,7 +130,7 @@ fn write_layer_title(out: &mut Output, title: &[u8]) -> Result<()> {
     } else {
         let ascii_title: Vec<u8> = title[0..len]
             .iter()
-            .map(|b| if b.is_ascii() { *b } else { 0x5fu8 }) // Underscore.
+            .map(|b| if b.is_ascii() { *b } else { 0x5f_u8 }) // Underscore.
             .collect();
         out.write_bytes(&ascii_title)?;
     }
@@ -246,7 +246,7 @@ fn write_layer_props_info(
             isolated,
         )?;
     } else {
-        let mut title_length = 0usize;
+        let mut title_length = 0_usize;
         let title_data = unsafe { DP_layer_props_title(lp, &mut title_length) };
         let title = unsafe { from_raw_parts(title_data.cast(), title_length) };
         write_layer_info(out, blend_mode, opacity, hidden, title, section, isolated)?;
@@ -377,7 +377,7 @@ fn write_channel(
         let offset = i * stride;
         extract_channel(&pixels[offset..offset + stride], src, extract);
 
-        let length = rle_compress(&src, dst)?;
+        let length = rle_compress(src, dst)?;
         out.write_bytes(&dst[0..length])?;
 
         let count_bytes = u16::try_from(length)?.to_be_bytes();
@@ -589,7 +589,7 @@ fn write_layer_info_section(
     write_layer_infos_recursive(lpl, out, layer_offsets)?;
 
     // Channel pixel data.
-    write_layer_pixel_data_section(cs, dc, out, &layer_offsets)?;
+    write_layer_pixel_data_section(cs, dc, out, layer_offsets)?;
 
     write_size_prefix(out, section_start, 2)?;
     Ok(())
@@ -671,7 +671,7 @@ fn write_merged_image(
     out.write_bytes(counts)?;
 
     let size = rows * stride;
-    let mut buffer = vec![0u8; size * 4usize];
+    let mut buffer = vec![0_u8; size * 4_usize];
     to_flat_channels(cs, buffer.as_mut_ptr())?;
     for i in 0..4 {
         let counts_start = i * counts_stride;
@@ -739,11 +739,10 @@ pub extern "C" fn DP_save_psd(
     path: *const c_char,
     dc: *mut DP_DrawContext,
 ) -> DP_SaveResult {
-    match catch_unwind(|| save_psd(cs, path, dc)) {
-        Ok(save_result) => save_result,
-        Err(_) => {
-            dp_error_set("Panic while saving PSD");
-            DP_SAVE_RESULT_INTERNAL_ERROR
-        }
+    if let Ok(save_result) = catch_unwind(|| save_psd(cs, path, dc)) {
+        save_result
+    } else {
+        dp_error_set("Panic while saving PSD");
+        DP_SAVE_RESULT_INTERNAL_ERROR
     }
 }

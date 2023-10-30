@@ -79,9 +79,8 @@ fn count_frame_run(
     while end_index < layer_count {
         if fixed_layer_ids.contains(&lpl.at(end_index).id()) {
             break;
-        } else {
-            end_index += 1;
         }
+        end_index += 1;
     }
     end_index - start_index
 }
@@ -136,8 +135,7 @@ fn convert_animation(
             let mut child_tlpl = TransientLayerPropsList::new_init(frame_run);
 
             let needs_blank_frame = key_frame_index + frame_run < key_frame_count;
-            let mut tt =
-                TransientTrack::new_init(frame_run + if needs_blank_frame { 1 } else { 0 });
+            let mut tt = TransientTrack::new_init(frame_run + c_int::from(needs_blank_frame));
             tt.set_id(next_track_id);
             unsafe { set_track_title(tt.transient_ptr(), group_index) };
 

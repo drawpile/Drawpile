@@ -5,13 +5,15 @@ pub struct AclState {
 }
 
 impl AclState {
-    pub fn new() -> Self {
-        let acls = unsafe { DP_acl_state_new() };
-        AclState { acls }
-    }
-
     pub fn as_ptr(&mut self) -> *mut DP_AclState {
         self.acls
+    }
+}
+
+impl Default for AclState {
+    fn default() -> Self {
+        let acls = unsafe { DP_acl_state_new() };
+        AclState { acls }
     }
 }
 

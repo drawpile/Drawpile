@@ -61,15 +61,15 @@ impl Recorder {
         header: *mut JSON_Value,
         output: *mut DP_Output,
     ) -> Result<Self, RecorderError> {
-        let header = unsafe { DP_recorder_header_clone(header) };
-        if header.is_null() {
+        let cloned_header = unsafe { DP_recorder_header_clone(header) };
+        if cloned_header.is_null() {
             return Err(RecorderError::from_dp_error());
         }
 
         let recorder = unsafe {
             DP_recorder_new_inc(
                 rtype,
-                header,
+                cloned_header,
                 ptr::null_mut(),
                 None,
                 ptr::null_mut(),

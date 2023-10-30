@@ -52,10 +52,10 @@ impl PaintEngine {
 
     pub fn new(player: Option<Player>) -> Box<Self> {
         let mut pe = Box::new(Self {
-            paint_dc: DrawContext::new(),
-            main_dc: DrawContext::new(),
-            preview_dc: DrawContext::new(),
-            acls: AclState::new(),
+            paint_dc: DrawContext::default(),
+            main_dc: DrawContext::default(),
+            preview_dc: DrawContext::default(),
+            acls: AclState::default(),
             paint_engine: ptr::null_mut(),
             render_barrier: Barrier::new(2),
             render_width: 0,
@@ -121,8 +121,8 @@ impl PaintEngine {
             let dst = (from_y + i) * pe.render_width + from_x;
             unsafe {
                 ptr::copy_nonoverlapping(
-                    pixels.cast::<u32>().offset(src as isize),
-                    pe.render_image.as_mut_ptr().offset(dst as isize),
+                    pixels.cast::<u32>().add(src),
+                    pe.render_image.as_mut_ptr().add(dst),
                     width,
                 );
             }
@@ -256,8 +256,8 @@ impl PaintEngine {
         let tile_bounds = DP_Rect {
             x1: 0,
             y1: 0,
-            x2: u16::MAX as c_int,
-            y2: u16::MAX as c_int,
+            x2: c_int::from(u16::MAX),
+            y2: c_int::from(u16::MAX),
         };
         unsafe {
             DP_paint_engine_tick(
@@ -314,11 +314,7 @@ impl PaintEngine {
     }
 
     pub fn to_image(&self) -> Result<Image, ImageError> {
-        Ok(Image::new_from_pixels(
-            self.render_width,
-            self.render_height,
-            &self.render_image,
-        )?)
+        Image::new_from_pixels(self.render_width, self.render_height, &self.render_image)
     }
 
     pub fn to_scaled_image(
@@ -327,7 +323,7 @@ impl PaintEngine {
         height: usize,
         expand: bool,
     ) -> Result<Image, ImageError> {
-        Ok(Image::new_from_pixels_scaled(
+        Image::new_from_pixels_scaled(
             self.render_width,
             self.render_height,
             &self.render_image,
@@ -335,7 +331,7 @@ impl PaintEngine {
             height,
             expand,
             &mut self.main_dc,
-        )?)
+        )
     }
 }
 

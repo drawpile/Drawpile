@@ -6,13 +6,12 @@ use drawdance::{
 use std::slice::from_raw_parts;
 
 fn strlen16(s: *const u16) -> usize {
-    let mut i = 0usize;
+    let mut i = 0_usize;
     loop {
         if unsafe { *s.add(i) } == 0 {
             return i;
-        } else {
-            i += 1;
         }
+        i += 1;
     }
 }
 

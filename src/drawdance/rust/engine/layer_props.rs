@@ -36,7 +36,7 @@ pub trait BaseLayerProps {
     }
 
     fn title(&self) -> &[c_char] {
-        let mut len = 0usize;
+        let mut len = 0_usize;
         let title = unsafe { DP_layer_props_title(self.persistent_ptr(), &mut len) };
         unsafe { from_raw_parts(title, len) }
     }

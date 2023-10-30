@@ -60,20 +60,19 @@ pub enum OutputFormat {
 impl OutputFormat {
     fn to_recorder_type(
         self,
-        output_path: &String,
+        output_path: &str,
         output_path_is_default: bool,
         player: &Player,
     ) -> DP_RecorderType {
         match self {
             Self::Binary => DP_RECORDER_TYPE_BINARY,
             Self::Text => DP_RECORDER_TYPE_TEXT,
-            _ => self.guess_recorder_format(output_path, output_path_is_default, player),
+            _ => Self::guess_recorder_format(output_path, output_path_is_default, player),
         }
     }
 
     fn guess_recorder_format(
-        self,
-        output_path: &String,
+        output_path: &str,
         output_path_is_default: bool,
         player: &Player,
     ) -> DP_RecorderType {
@@ -128,9 +127,9 @@ impl From<PlayerError> for ConversionError {
             message: format!(
                 "Input error: {}",
                 match &err {
-                    PlayerError::DpError(s) => s,
-                    PlayerError::LoadError(_, s) => s,
-                    PlayerError::ResultError(_, s) => s,
+                    PlayerError::DpError(s)
+                    | PlayerError::LoadError(_, s)
+                    | PlayerError::ResultError(_, s) => s,
                     PlayerError::NulError(_) => "Null path",
                 }
             ),
@@ -221,7 +220,7 @@ pub extern "C" fn dprectool_main() -> c_int {
     }
 
     let output_path_is_default = flags.out.is_none();
-    let output_path = flags.out.unwrap_or("-".to_owned());
+    let output_path = flags.out.unwrap_or_else(|| "-".to_owned());
     if output_path.is_empty() {
         eprintln!("No output file given");
         return 2;
@@ -257,10 +256,12 @@ fn print_version(input_format: InputFormat, input_path: String) -> Result<(), Co
         DP_PLAYER_BACKWARD_COMPATIBLE => "B",
         _ => "I",
     };
-    let format_version = player.format_version().unwrap_or("(unknown)".to_owned());
+    let format_version = player
+        .format_version()
+        .unwrap_or_else(|| "(unknown)".to_owned());
     let writer_version = player
         .writer_version()
-        .unwrap_or("(no writer version)".to_owned());
+        .unwrap_or_else(|| "(no writer version)".to_owned());
 
     println!("{} {} {}", compat_flag, format_version, writer_version);
 
@@ -290,19 +291,14 @@ fn print_message_frequency(
 
     let mut total = MessageCount::default();
     let mut types: HashMap<DP_MessageType, MessageCount> = HashMap::new();
-    loop {
-        match player.step()? {
-            Some(msg) => {
-                let length = msg.length();
-                total.add(length);
-                types.entry(msg.message_type()).or_default().add(length);
-            }
-            None => break,
-        };
+    while let Some(msg) = player.step()? {
+        let length = msg.length();
+        total.add(length);
+        types.entry(msg.message_type()).or_default().add(length);
     }
 
-    let mut keys: Vec<DP_MessageType> = types.keys().cloned().collect();
-    keys.sort();
+    let mut keys: Vec<DP_MessageType> = types.keys().copied().collect();
+    keys.sort_unstable();
     for key in keys {
         let value = types[&key];
         println!(
@@ -311,14 +307,14 @@ fn print_message_frequency(
             Message::message_type_name(key),
             value.count,
             value.length,
-            value.length as f64 / total.length as f64 * 100.0f64
-        )
+            value.length as f64 / total.length as f64 * 100.0_f64
+        );
     }
     println!("Total count: {}", total.count);
     println!(
         "Total length: {} ({:.2} MB)",
         total.length,
-        total.length as f64 / (1024.0f64 * 1024.0f64)
+        total.length as f64 / (1024.0_f64 * 1024.0_f64)
     );
 
     Ok(())
@@ -342,15 +338,10 @@ fn convert_recording(
     }?;
 
     player.set_acl_override(acl_override);
-    loop {
-        match player.step()? {
-            Some(msg) => {
-                if !recorder.push_noinc(msg) {
-                    break;
-                }
-            }
-            None => break,
-        };
+    while let Some(msg) = player.step()? {
+        if !recorder.push_noinc(msg) {
+            break;
+        }
     }
 
     recorder.dispose()?;

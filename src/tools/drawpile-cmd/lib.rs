@@ -5,7 +5,7 @@ use drawdance::{
     DP_PLAYER_TYPE_GUESS, DP_PROTOCOL_VERSION,
 };
 use std::{
-    ffi::{c_int, CStr},
+    ffi::{c_int, CStr, OsStr},
     fs::metadata,
     io::{self},
     path::Path,
@@ -22,7 +22,7 @@ impl FromStr for ImageSize {
     type Err = String;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if let Some((a, b)) = s.to_lowercase().split_once("x") {
+        if let Some((a, b)) = s.to_lowercase().split_once('x') {
             let width: usize = a.parse().unwrap_or(0);
             let height: usize = b.parse().unwrap_or(0);
             if width != 0 && height != 0 {
@@ -46,7 +46,7 @@ pub enum OutputFormat {
 }
 
 impl OutputFormat {
-    fn suffix(&self) -> &'static str {
+    fn suffix(self) -> &'static str {
         match self {
             Self::Ora => "ora",
             Self::Png => "png",
@@ -92,9 +92,9 @@ impl From<PlayerError> for CmdError {
             message: format!(
                 "Input error: {}",
                 match &err {
-                    PlayerError::DpError(s) => s,
-                    PlayerError::LoadError(_, s) => s,
-                    PlayerError::ResultError(_, s) => s,
+                    PlayerError::DpError(s)
+                    | PlayerError::LoadError(_, s)
+                    | PlayerError::ResultError(_, s) => s,
                     PlayerError::NulError(_) => "Null path",
                 }
             ),
@@ -123,7 +123,7 @@ impl From<ImageError> for CmdError {
 impl From<io::Error> for CmdError {
     fn from(err: io::Error) -> Self {
         CmdError {
-            message: format!("I/O Error: {}", err.to_string()),
+            message: format!("I/O Error: {}", err),
         }
     }
 }
@@ -207,7 +207,7 @@ pub extern "C" fn drawpile_cmd_main() -> c_int {
         }
         (Every::Message, every_msg)
     } else {
-        (Every::None, 0i64)
+        (Every::None, 0_i64)
     };
 
     let input_paths = flags.input;
@@ -244,7 +244,7 @@ pub extern "C" fn drawpile_cmd_main() -> c_int {
     if format == OutputFormat::Guess {
         format = if let Some(ext) = Path::new(&pre_out_pattern)
             .extension()
-            .map(|s| s.to_string_lossy())
+            .map(OsStr::to_string_lossy)
         {
             match ext.to_lowercase().as_str() {
                 "ora" => OutputFormat::Ora,
@@ -298,12 +298,9 @@ pub extern "C" fn drawpile_cmd_main() -> c_int {
 }
 
 fn get_dir_prefix(path: &Path) -> String {
-    let dir = path
-        .parent()
-        .map(|p| p.to_string_lossy())
-        .unwrap_or_default();
+    let dir = path.parent().map(Path::to_string_lossy).unwrap_or_default();
     if dir.is_empty() {
-        "".to_owned()
+        String::new()
     } else {
         format!("{}/", dir)
     }
@@ -367,9 +364,9 @@ fn dump_recording(
         match format {
             OutputFormat::Ora => pe.write_ora(&path)?,
             OutputFormat::Png | OutputFormat::Jpg | OutputFormat::Jpeg => {
-                write_flat_image(&mut pe, max_size, fixed_size, format, &path)?
+                write_flat_image(&mut pe, max_size, fixed_size, format, &path)?;
             }
-            _ => panic!("Unhandled output format"),
+            OutputFormat::Guess => panic!("Unhandled output format"),
         }
 
         if pos == -1 {
@@ -382,7 +379,7 @@ fn make_player(input_path: &String) -> Result<Player, PlayerError> {
     if input_path == "-" {
         Player::new_from_stdin(DP_PLAYER_TYPE_GUESS)
     } else {
-        Player::new_from_path(DP_PLAYER_TYPE_GUESS, input_path.to_owned())
+        Player::new_from_path(DP_PLAYER_TYPE_GUESS, input_path.clone())
     }
 }
 

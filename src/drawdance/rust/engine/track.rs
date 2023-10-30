@@ -62,7 +62,7 @@ pub trait BaseTransientTrack: BaseTrack {
                 frame_index,
                 tkf.leak_transient(),
                 index,
-            )
+            );
         }
     }
 }

@@ -38,7 +38,7 @@ impl FromStr for Dimensions {
     type Err = String;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if let Some((a, b)) = s.to_lowercase().split_once("x") {
+        if let Some((a, b)) = s.to_lowercase().split_once('x') {
             let width: usize = a.parse().unwrap_or(0);
             let height: usize = b.parse().unwrap_or(0);
             return Ok(Dimensions { width, height });
@@ -105,19 +105,19 @@ pub enum LogoLocation {
 }
 
 impl LogoLocation {
-    fn get_x(&self, distance_x: usize) -> String {
+    fn get_x(self, distance_x: usize) -> String {
         match self {
             Self::BottomLeft | Self::TopLeft => format!("{}", distance_x),
             Self::BottomRight | Self::TopRight => format!("W-w-{}", distance_x),
-            _ => panic!("Invalid logo location"),
+            Self::None => panic!("Invalid logo location"),
         }
     }
 
-    fn get_y(&self, distance_y: usize) -> String {
+    fn get_y(self, distance_y: usize) -> String {
         match self {
             Self::TopLeft | Self::TopRight => format!("{}", distance_y),
             Self::BottomLeft | Self::BottomRight => format!("H-h-{}", distance_y),
-            _ => panic!("Invalid logo location"),
+            Self::None => panic!("Invalid logo location"),
         }
     }
 }
@@ -181,9 +181,9 @@ impl From<PlayerError> for CmdError {
             message: format!(
                 "Input error: {}",
                 match &err {
-                    PlayerError::DpError(s) => s,
-                    PlayerError::LoadError(_, s) => s,
-                    PlayerError::ResultError(_, s) => s,
+                    PlayerError::DpError(s)
+                    | PlayerError::LoadError(_, s)
+                    | PlayerError::ResultError(_, s) => s,
                     PlayerError::NulError(_) => "Null path",
                 }
             ),
@@ -212,7 +212,7 @@ impl From<ImageError> for CmdError {
 impl From<io::Error> for CmdError {
     fn from(err: io::Error) -> Self {
         CmdError {
-            message: format!("I/O Error: {}", err.to_string()),
+            message: format!("I/O Error: {}", err),
         }
     }
 }
@@ -352,9 +352,9 @@ pub extern "C" fn drawpile_timelapse_main(default_logo_path: *const c_char) -> c
 
         if logo_enabled {
             let scale_filter = if logo_scale == 100 {
-                "".to_owned()
+                String::new()
             } else {
-                let s = logo_scale as f64 / 100.0f64;
+                let s = f64::from(logo_scale) / 100.0_f64;
                 format!(",scale=iw*{}:ih*{}", s, s)
             };
             command
@@ -363,7 +363,7 @@ pub extern "C" fn drawpile_timelapse_main(default_logo_path: *const c_char) -> c
                 .arg("-filter_complex")
                 .arg(format!(
                     "[1]lut=a=val*{}{}[a];[0][a]overlay={}:{}",
-                    logo_opacity as f64 / 100.0f64,
+                    f64::from(logo_opacity) / 100.0_f64,
                     scale_filter,
                     logo_location.get_x(logo_distance.width),
                     logo_location.get_y(logo_distance.height),
@@ -384,7 +384,7 @@ pub extern "C" fn drawpile_timelapse_main(default_logo_path: *const c_char) -> c
     let flash = if flash_str == "none" {
         None
     } else if rgb_re.is_match(&flash_str) {
-        Some(0xff000000u32 | u32::from_str_radix(&flash_str, 16).unwrap())
+        Some(0xff000000_u32 | u32::from_str_radix(&flash_str, 16).unwrap())
     } else if argb_re.is_match(&flash_str) {
         Some(u32::from_str_radix(&flash_str, 16).unwrap())
     } else {
@@ -392,7 +392,7 @@ pub extern "C" fn drawpile_timelapse_main(default_logo_path: *const c_char) -> c
         return 2;
     };
 
-    let linger_time = flags.linger_time.unwrap_or(5.0f64);
+    let linger_time = flags.linger_time.unwrap_or(5.0_f64);
     if linger_time < 0.0 {
         eprintln!("Invalid linger time {}", linger_time);
         return 2;
@@ -546,7 +546,7 @@ fn make_timelapse_raw(
     let mut f = File::create(path)?;
     timelapse(
         &mut f,
-        &input_paths,
+        input_paths,
         framerate,
         acl_override,
         interval,
@@ -598,7 +598,7 @@ fn timelapse(
     }
 
     if !ctx.images.is_empty() {
-        let fr = framerate as f64;
+        let fr = f64::from(framerate);
         let img1 = &ctx.images.front().unwrap();
         let img2 = &ctx.images.back().unwrap();
 
@@ -655,7 +655,7 @@ fn make_player(input_path: &String) -> Result<Player, PlayerError> {
     if input_path == "-" {
         Player::new_from_stdin(DP_PLAYER_TYPE_GUESS)
     } else {
-        Player::new_from_path(DP_PLAYER_TYPE_GUESS, input_path.to_owned())
+        Player::new_from_path(DP_PLAYER_TYPE_GUESS, input_path.clone())
     }
 }
 
@@ -666,19 +666,19 @@ fn render_flash(
     fr: f64,
     color: u32,
 ) -> Result<(), CmdError> {
-    let color = DP_UPixel8 { color };
+    let pixel = DP_UPixel8 { color };
     let mut dst = Image::new(img1.width(), img1.height())?;
-    let mut opa = 0.0f64;
+    let mut opa = 0.0_f64;
 
-    while opa < 255.0f64 {
-        opa = 255.0f64.min(opa + 2400.0f64 / fr);
-        dst.blend_with(&img1, color, opa as u8)?;
+    while opa < 255.0_f64 {
+        opa = 255.0_f64.min(opa + 2400.0_f64 / fr);
+        dst.blend_with(img1, pixel, opa as u8)?;
         dst.dump(writer)?;
     }
 
-    while opa > 0.0f64 {
-        opa = 0.0f64.max(opa - 360.0f64 / fr);
-        dst.blend_with(&img2, color, opa as u8)?;
+    while opa > 0.0_f64 {
+        opa = 0.0_f64.max(opa - 360.0_f64 / fr);
+        dst.blend_with(img2, pixel, opa as u8)?;
         dst.dump(writer)?;
     }
 
@@ -693,7 +693,7 @@ fn render_linger(
 ) -> Result<(), CmdError> {
     let mut lingered = 0.0;
     while lingered <= linger_time {
-        lingered += 1.0f64 / fr;
+        lingered += 1.0_f64 / fr;
         img.dump(writer)?;
     }
     Ok(())

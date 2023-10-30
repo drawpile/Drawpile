@@ -5,13 +5,15 @@ pub struct DrawContext {
 }
 
 impl DrawContext {
-    pub fn new() -> Self {
-        let dc = unsafe { DP_draw_context_new() };
-        DrawContext { dc }
-    }
-
     pub fn as_ptr(&mut self) -> *mut DP_DrawContext {
         self.dc
+    }
+}
+
+impl Default for DrawContext {
+    fn default() -> Self {
+        let dc = unsafe { DP_draw_context_new() };
+        DrawContext { dc }
     }
 }
 

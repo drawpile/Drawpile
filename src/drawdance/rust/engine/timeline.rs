@@ -49,7 +49,7 @@ pub trait BaseTransientTimeline: BaseTimeline {
                 self.transient_ptr(),
                 tt.leak_transient(),
                 index,
-            )
+            );
         }
     }
 }

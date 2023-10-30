@@ -156,8 +156,8 @@ impl Image {
             let subimg = unsafe {
                 DP_image_new_subimage(
                     img.image,
-                    -c_int::try_from((scale_width - target_width) / 2usize)?,
-                    -c_int::try_from((scale_height - target_height) / 2usize)?,
+                    -c_int::try_from((scale_width - target_width) / 2_usize)?,
+                    -c_int::try_from((scale_height - target_height) / 2_usize)?,
                     c_int::try_from(scale_width)?,
                     c_int::try_from(scale_height)?,
                 )
@@ -204,9 +204,10 @@ impl Image {
         if output.is_null() {
             return Err(ImageError::from_dp_error());
         }
-        let result = match unsafe { func(self.image, output) } {
-            true => Ok(()),
-            false => Err(ImageError::from_dp_error()),
+        let result = if unsafe { func(self.image, output) } {
+            Ok(())
+        } else {
+            Err(ImageError::from_dp_error())
         };
         unsafe { DP_output_free(output) };
         result
