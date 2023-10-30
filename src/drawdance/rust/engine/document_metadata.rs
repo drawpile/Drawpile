@@ -53,13 +53,14 @@ pub trait BaseTransientDocumentMetadata: BaseDocumentMetadata {
 
 // Attached persistent type, does not affect refcount.
 
-pub struct AttachedDocumentMetadata<'a, T> {
+pub struct AttachedDocumentMetadata<'a, T: ?Sized> {
     data: *mut DP_DocumentMetadata,
     phantom: PhantomData<&'a T>,
 }
 
-impl<'a, T> AttachedDocumentMetadata<'a, T> {
-    pub(super) fn new(data: *mut DP_DocumentMetadata, _parent: &'a T) -> Self {
+impl<'a, T: ?Sized> AttachedDocumentMetadata<'a, T> {
+    pub(super) fn new(data: *mut DP_DocumentMetadata) -> Self {
+        debug_assert!(!data.is_null());
         Self {
             data,
             phantom: PhantomData,
@@ -67,23 +68,24 @@ impl<'a, T> AttachedDocumentMetadata<'a, T> {
     }
 }
 
-impl<'a, T> BaseDocumentMetadata for AttachedDocumentMetadata<'a, T> {
+impl<'a, T: ?Sized> BaseDocumentMetadata for AttachedDocumentMetadata<'a, T> {
     fn persistent_ptr(&self) -> *mut DP_DocumentMetadata {
         self.data
     }
 }
 
-impl<'a, T> BasePersistentDocumentMetadata for AttachedDocumentMetadata<'a, T> {}
+impl<'a, T: ?Sized> BasePersistentDocumentMetadata for AttachedDocumentMetadata<'a, T> {}
 
 // Attached transient type, does not affect refcount.
 
-pub struct AttachedTransientDocumentMetadata<'a, T> {
+pub struct AttachedTransientDocumentMetadata<'a, T: ?Sized> {
     data: *mut DP_TransientDocumentMetadata,
     phantom: PhantomData<&'a T>,
 }
 
-impl<'a, T> AttachedTransientDocumentMetadata<'a, T> {
-    pub(super) fn new(data: *mut DP_TransientDocumentMetadata, _parent: &'a T) -> Self {
+impl<'a, T: ?Sized> AttachedTransientDocumentMetadata<'a, T> {
+    pub(super) fn new(data: *mut DP_TransientDocumentMetadata) -> Self {
+        debug_assert!(!data.is_null());
         Self {
             data,
             phantom: PhantomData,
@@ -91,13 +93,13 @@ impl<'a, T> AttachedTransientDocumentMetadata<'a, T> {
     }
 }
 
-impl<'a, T> BaseDocumentMetadata for AttachedTransientDocumentMetadata<'a, T> {
+impl<'a, T: ?Sized> BaseDocumentMetadata for AttachedTransientDocumentMetadata<'a, T> {
     fn persistent_ptr(&self) -> *mut DP_DocumentMetadata {
         self.data.cast()
     }
 }
 
-impl<'a, T> BaseTransientDocumentMetadata for AttachedTransientDocumentMetadata<'a, T> {
+impl<'a, T: ?Sized> BaseTransientDocumentMetadata for AttachedTransientDocumentMetadata<'a, T> {
     fn transient_ptr(&mut self) -> *mut DP_TransientDocumentMetadata {
         self.data
     }

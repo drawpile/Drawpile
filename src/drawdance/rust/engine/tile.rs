@@ -27,13 +27,14 @@ pub trait BasePersistentTile: BaseTile {}
 
 // Attached persistent type, does not affect refcount.
 
-pub struct AttachedTile<'a, T> {
+pub struct AttachedTile<'a, T: ?Sized> {
     data: *mut DP_Tile,
     phantom: PhantomData<&'a T>,
 }
 
-impl<'a, T> AttachedTile<'a, T> {
-    pub(super) fn new(data: *mut DP_Tile, _parent: &'a T) -> Self {
+impl<'a, T: ?Sized> AttachedTile<'a, T> {
+    pub(super) fn new(data: *mut DP_Tile) -> Self {
+        debug_assert!(!data.is_null());
         Self {
             data,
             phantom: PhantomData,
@@ -41,10 +42,10 @@ impl<'a, T> AttachedTile<'a, T> {
     }
 }
 
-impl<'a, T> BaseTile for AttachedTile<'a, T> {
+impl<'a, T: ?Sized> BaseTile for AttachedTile<'a, T> {
     fn persistent_ptr(&self) -> *mut DP_Tile {
         self.data
     }
 }
 
-impl<'a, T> BasePersistentTile for AttachedTile<'a, T> {}
+impl<'a, T: ?Sized> BasePersistentTile for AttachedTile<'a, T> {}

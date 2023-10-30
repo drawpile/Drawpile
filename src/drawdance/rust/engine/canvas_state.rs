@@ -6,19 +6,28 @@ use super::{
     TransientLayerPropsList, TransientTimeline,
 };
 use crate::{
-    DP_CanvasState, DP_DrawContext, DP_TransientCanvasState, DP_canvas_state_background_opaque,
-    DP_canvas_state_background_tile_noinc, DP_canvas_state_decref, DP_canvas_state_height,
-    DP_canvas_state_incref, DP_canvas_state_layer_props_noinc, DP_canvas_state_layers_noinc,
-    DP_canvas_state_metadata_noinc, DP_canvas_state_transient, DP_canvas_state_width,
-    DP_tile_incref, DP_transient_canvas_state_background_tile_set_noinc,
-    DP_transient_canvas_state_decref, DP_transient_canvas_state_height_set,
-    DP_transient_canvas_state_layer_routes_reindex, DP_transient_canvas_state_new,
-    DP_transient_canvas_state_persist, DP_transient_canvas_state_transient_layer_props_set_noinc,
+    dp_error_anyhow, DP_CanvasState, DP_DrawContext, DP_TransientCanvasState,
+    DP_canvas_state_background_opaque, DP_canvas_state_background_tile_noinc,
+    DP_canvas_state_decref, DP_canvas_state_height, DP_canvas_state_incref,
+    DP_canvas_state_layer_props_noinc, DP_canvas_state_layers_noinc,
+    DP_canvas_state_metadata_noinc, DP_canvas_state_to_flat_separated_urgba8,
+    DP_canvas_state_transient, DP_canvas_state_width, DP_tile_incref,
+    DP_transient_canvas_state_background_tile_set_noinc, DP_transient_canvas_state_decref,
+    DP_transient_canvas_state_height_set, DP_transient_canvas_state_layer_routes_reindex,
+    DP_transient_canvas_state_new, DP_transient_canvas_state_persist,
+    DP_transient_canvas_state_transient_layer_props_set_noinc,
     DP_transient_canvas_state_transient_layers_set_noinc,
     DP_transient_canvas_state_transient_metadata,
     DP_transient_canvas_state_transient_timeline_set_noinc, DP_transient_canvas_state_width_set,
+    DP_FLAT_IMAGE_RENDER_FLAGS,
 };
-use std::{ffi::c_int, mem, ptr::null_mut};
+use anyhow::Result;
+use std::{
+    ffi::c_int,
+    marker::PhantomData,
+    mem,
+    ptr::{null, null_mut},
+};
 
 // Base interface.
 
@@ -54,7 +63,7 @@ pub trait BaseCanvasState {
         if data.is_null() {
             None
         } else {
-            Some(AttachedTile::new(data, self))
+            Some(AttachedTile::new(data))
         }
     }
 
@@ -67,7 +76,7 @@ pub trait BaseCanvasState {
         Self: Sized,
     {
         let data = unsafe { DP_canvas_state_layers_noinc(self.persistent_ptr()) };
-        AttachedLayerList::new(data, self)
+        AttachedLayerList::new(data)
     }
 
     fn layer_props(&self) -> AttachedLayerPropsList<Self>
@@ -75,7 +84,7 @@ pub trait BaseCanvasState {
         Self: Sized,
     {
         let data = unsafe { DP_canvas_state_layer_props_noinc(self.persistent_ptr()) };
-        AttachedLayerPropsList::new(data, self)
+        AttachedLayerPropsList::new(data)
     }
 
     fn metadata(&self) -> AttachedDocumentMetadata<Self>
@@ -83,7 +92,25 @@ pub trait BaseCanvasState {
         Self: Sized,
     {
         let data = unsafe { DP_canvas_state_metadata_noinc(self.persistent_ptr()) };
-        AttachedDocumentMetadata::new(data, self)
+        AttachedDocumentMetadata::new(data)
+    }
+
+    fn to_flat_separated_urgba8(&self) -> Result<Vec<u8>> {
+        let mut buffer = vec![0_u8; self.width() as usize * self.height() as usize * 4];
+        let ok = unsafe {
+            DP_canvas_state_to_flat_separated_urgba8(
+                self.persistent_ptr(),
+                DP_FLAT_IMAGE_RENDER_FLAGS,
+                null(),
+                null(),
+                buffer.as_mut_ptr(),
+            )
+        };
+        if ok {
+            Ok(buffer)
+        } else {
+            Err(dp_error_anyhow())
+        }
     }
 }
 
@@ -117,7 +144,7 @@ pub trait BaseTransientCanvasState: BaseCanvasState {
         Self: Sized,
     {
         let data = unsafe { DP_transient_canvas_state_transient_metadata(self.transient_ptr()) };
-        AttachedTransientDocumentMetadata::new(data, self)
+        AttachedTransientDocumentMetadata::new(data)
     }
 
     fn set_width(&mut self, width: c_int) {
@@ -178,6 +205,7 @@ pub struct CanvasState {
 
 impl CanvasState {
     pub fn new_noinc(data: *mut DP_CanvasState) -> Self {
+        debug_assert!(!data.is_null());
         CanvasState { data }
     }
 
@@ -215,6 +243,31 @@ impl Drop for CanvasState {
         unsafe { DP_canvas_state_decref(self.data) }
     }
 }
+
+// Attached persistent type, does not affect refcount.
+
+pub struct AttachedCanvasState<'a, T: ?Sized> {
+    data: *mut DP_CanvasState,
+    phantom: PhantomData<&'a T>,
+}
+
+impl<'a, T: ?Sized> AttachedCanvasState<'a, T> {
+    pub fn new(data: *mut DP_CanvasState) -> Self {
+        debug_assert!(!data.is_null());
+        Self {
+            data,
+            phantom: PhantomData,
+        }
+    }
+}
+
+impl<'a, T: ?Sized> BaseCanvasState for AttachedCanvasState<'a, T> {
+    fn persistent_ptr(&self) -> *mut DP_CanvasState {
+        self.data
+    }
+}
+
+impl<'a, T: ?Sized> BasePersistentCanvasState for AttachedCanvasState<'a, T> {}
 
 // Free transient type, affects refcount.
 

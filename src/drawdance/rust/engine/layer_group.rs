@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 use crate::{
-    DP_LayerGroup, DP_TransientLayerGroup, DP_layer_group_transient,
+    DP_LayerGroup, DP_TransientLayerGroup, DP_layer_group_children_noinc, DP_layer_group_transient,
     DP_transient_layer_group_decref,
     DP_transient_layer_group_new_init_with_transient_children_noinc,
 };
-use std::{ffi::c_int, mem};
+use std::{ffi::c_int, marker::PhantomData, mem};
 
-use super::{BaseTransientLayerList, TransientLayerList};
+use super::{AttachedLayerList, BaseTransientLayerList, TransientLayerList};
 
 // Base interface.
 
@@ -24,6 +24,14 @@ pub trait BaseLayerGroup {
 
     fn transient(&self) -> bool {
         unsafe { DP_layer_group_transient(self.persistent_ptr()) }
+    }
+
+    fn children(&self) -> AttachedLayerList<Self>
+    where
+        Self: Sized,
+    {
+        let data = unsafe { DP_layer_group_children_noinc(self.persistent_ptr()) };
+        AttachedLayerList::new(data)
     }
 }
 
@@ -45,6 +53,31 @@ pub trait BaseTransientLayerGroup: BaseLayerGroup {
         data
     }
 }
+
+// Attached persistent type, does not affect refcount.
+
+pub struct AttachedLayerGroup<'a, T: ?Sized> {
+    data: *mut DP_LayerGroup,
+    phantom: PhantomData<&'a T>,
+}
+
+impl<'a, T: ?Sized> AttachedLayerGroup<'a, T> {
+    pub(super) fn new(data: *mut DP_LayerGroup) -> Self {
+        debug_assert!(!data.is_null());
+        Self {
+            data,
+            phantom: PhantomData,
+        }
+    }
+}
+
+impl<'a, T: ?Sized> BaseLayerGroup for AttachedLayerGroup<'a, T> {
+    fn persistent_ptr(&self) -> *mut DP_LayerGroup {
+        self.data
+    }
+}
+
+impl<'a, T: ?Sized> BasePersistentLayerGroup for AttachedLayerGroup<'a, T> {}
 
 // Free transient type, affects refcount.
 

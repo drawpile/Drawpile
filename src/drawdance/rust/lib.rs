@@ -25,6 +25,10 @@ pub fn dp_error() -> String {
         .to_owned()
 }
 
+pub fn dp_error_anyhow() -> anyhow::Error {
+    anyhow::anyhow!(dp_error())
+}
+
 pub fn dp_error_set(message: &str) {
     let cstring = CString::new(message).unwrap_or_default();
     unsafe { DP_error_set(b"%s\0".as_ptr().cast(), cstring.as_ptr()) }

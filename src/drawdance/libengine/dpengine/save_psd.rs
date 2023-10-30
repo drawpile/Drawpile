@@ -1,31 +1,27 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-use anyhow::{anyhow, Result};
+use anyhow::Result;
 use drawdance::{
-    common::Output, dp_error, dp_error_set, DP_BlendMode, DP_CanvasState, DP_DrawContext,
-    DP_LayerContent, DP_LayerList, DP_LayerProps, DP_LayerPropsList, DP_SaveResult, DP_UPixel8,
-    DP_canvas_state_background_tile_noinc, DP_canvas_state_height,
-    DP_canvas_state_layer_props_noinc, DP_canvas_state_layers_noinc,
-    DP_canvas_state_to_flat_separated_urgba8, DP_canvas_state_width, DP_channel15_to_8,
-    DP_draw_context_pool_require, DP_free, DP_layer_content_to_upixels8,
-    DP_layer_content_to_upixels8_cropped, DP_layer_group_children_noinc,
-    DP_layer_list_content_at_noinc, DP_layer_list_group_at_noinc, DP_layer_props_blend_mode,
-    DP_layer_props_children_noinc, DP_layer_props_hidden, DP_layer_props_isolated,
-    DP_layer_props_list_at_noinc, DP_layer_props_list_count, DP_layer_props_opacity,
-    DP_layer_props_title, DP_transient_layer_content_decref, DP_transient_layer_content_new_init,
-    DP_BLEND_MODE_ADD, DP_BLEND_MODE_BURN, DP_BLEND_MODE_COLOR, DP_BLEND_MODE_DARKEN,
-    DP_BLEND_MODE_DIVIDE, DP_BLEND_MODE_DODGE, DP_BLEND_MODE_HARD_LIGHT, DP_BLEND_MODE_HUE,
-    DP_BLEND_MODE_LIGHTEN, DP_BLEND_MODE_LINEAR_BURN, DP_BLEND_MODE_LINEAR_LIGHT,
-    DP_BLEND_MODE_LUMINOSITY, DP_BLEND_MODE_MULTIPLY, DP_BLEND_MODE_NORMAL, DP_BLEND_MODE_OVERLAY,
-    DP_BLEND_MODE_SATURATION, DP_BLEND_MODE_SCREEN, DP_BLEND_MODE_SOFT_LIGHT,
-    DP_BLEND_MODE_SUBTRACT, DP_FLAT_IMAGE_RENDER_FLAGS, DP_SAVE_RESULT_INTERNAL_ERROR,
+    common::Output,
+    dp_error_set,
+    engine::{
+        AttachedCanvasState, BaseCanvasState, BaseLayerContent, BaseLayerGroup, BaseLayerList,
+        BaseLayerProps, BaseLayerPropsList, TransientLayerContent,
+    },
+    DP_BlendMode, DP_CanvasState, DP_DrawContext, DP_SaveResult, DP_UPixel8,
+    DP_draw_context_pool_require, DP_BLEND_MODE_ADD, DP_BLEND_MODE_BURN, DP_BLEND_MODE_COLOR,
+    DP_BLEND_MODE_DARKEN, DP_BLEND_MODE_DIVIDE, DP_BLEND_MODE_DODGE, DP_BLEND_MODE_HARD_LIGHT,
+    DP_BLEND_MODE_HUE, DP_BLEND_MODE_LIGHTEN, DP_BLEND_MODE_LINEAR_BURN,
+    DP_BLEND_MODE_LINEAR_LIGHT, DP_BLEND_MODE_LUMINOSITY, DP_BLEND_MODE_MULTIPLY,
+    DP_BLEND_MODE_NORMAL, DP_BLEND_MODE_OVERLAY, DP_BLEND_MODE_SATURATION, DP_BLEND_MODE_SCREEN,
+    DP_BLEND_MODE_SOFT_LIGHT, DP_BLEND_MODE_SUBTRACT, DP_SAVE_RESULT_INTERNAL_ERROR,
     DP_SAVE_RESULT_OPEN_ERROR, DP_SAVE_RESULT_SUCCESS, DP_SAVE_RESULT_WRITE_ERROR,
 };
 use std::{
     collections::HashMap,
     ffi::{c_char, c_int, c_void},
     panic::catch_unwind,
-    ptr::{null, null_mut},
-    slice::{from_raw_parts, from_raw_parts_mut},
+    ptr::null_mut,
+    slice::from_raw_parts_mut,
 };
 
 #[derive(Debug, Copy, Clone, PartialEq)]
@@ -84,15 +80,14 @@ fn write_size_prefix(out: &mut Output, start: usize, alignment: usize) -> Result
     Ok(())
 }
 
-fn count_layers_recursive(lpl: *mut DP_LayerPropsList) -> usize {
-    let count = unsafe { DP_layer_props_list_count(lpl) };
+fn count_layers_recursive(lpl: &dyn BaseLayerPropsList) -> usize {
+    let count = lpl.count();
     let mut total = count as usize;
     for i in 0..count {
-        let lp = unsafe { DP_layer_props_list_at_noinc(lpl, i) };
-        let child_lpl = unsafe { DP_layer_props_children_noinc(lp) };
-        if !child_lpl.is_null() {
+        let lp = lpl.dyn_at(i);
+        if let Some(child_lpl) = lp.children() {
             // PSD needs two layers for every group.
-            total += 1 + count_layers_recursive(child_lpl);
+            total += 1 + count_layers_recursive(&child_lpl);
         }
     }
     total
@@ -226,15 +221,15 @@ fn write_layer_info(
     Ok(())
 }
 
-fn write_layer_props_info(
-    lp: *mut DP_LayerProps,
+fn write_layer_props_info<LP: BaseLayerProps>(
+    lp: &LP,
     out: &mut Output,
     section: Section,
     isolated: bool,
 ) -> Result<()> {
-    let blend_mode = unsafe { DP_layer_props_blend_mode(lp) } as DP_BlendMode;
-    let opacity = unsafe { DP_channel15_to_8(DP_layer_props_opacity(lp)) };
-    let hidden = unsafe { DP_layer_props_hidden(lp) };
+    let blend_mode = lp.blend_mode();
+    let opacity = lp.opacity_u8();
+    let hidden = lp.hidden();
     if section == Section::Divider {
         write_layer_info(
             out,
@@ -246,40 +241,37 @@ fn write_layer_props_info(
             isolated,
         )?;
     } else {
-        let mut title_length = 0_usize;
-        let title_data = unsafe { DP_layer_props_title(lp, &mut title_length) };
-        let title = unsafe { from_raw_parts(title_data.cast(), title_length) };
+        let title = lp.title_u8();
         write_layer_info(out, blend_mode, opacity, hidden, title, section, isolated)?;
     }
     Ok(())
 }
 
-fn write_layer_content_info(
-    lp: *mut DP_LayerProps,
+fn write_layer_content_info<LP: BaseLayerProps>(
+    lp: &LP,
     out: &mut Output,
     layer_offsets: &mut HashMap<*mut c_void, usize>,
 ) -> Result<()> {
-    layer_offsets.insert(lp.cast(), out.tell()?);
+    layer_offsets.insert(lp.persistent_ptr().cast(), out.tell()?);
     write_layer_props_info(lp, out, Section::Other, true)?;
     Ok(())
 }
 
 fn write_layer_infos_recursive(
-    lpl: *mut DP_LayerPropsList,
+    lpl: &dyn BaseLayerPropsList,
     out: &mut Output,
     layer_offsets: &mut HashMap<*mut c_void, usize>,
 ) -> Result<()> {
-    let count = unsafe { DP_layer_props_list_count(lpl) };
+    let count = lpl.count();
     for i in 0..count {
-        let lp = unsafe { DP_layer_props_list_at_noinc(lpl, i) };
-        let child_lpl = unsafe { DP_layer_props_children_noinc(lp) };
-        if child_lpl.is_null() {
-            write_layer_content_info(lp, out, layer_offsets)?;
+        let lp = lpl.dyn_at(i);
+        if let Some(child_lpl) = lp.children() {
+            let isolated = lp.isolated();
+            write_layer_props_info(&lp, out, Section::Divider, isolated)?;
+            write_layer_infos_recursive(&child_lpl, out, layer_offsets)?;
+            write_layer_props_info(&lp, out, Section::OpenFolder, isolated)?;
         } else {
-            let isolated = unsafe { DP_layer_props_isolated(lp) };
-            write_layer_props_info(lp, out, Section::Divider, isolated)?;
-            write_layer_infos_recursive(child_lpl, out, layer_offsets)?;
-            write_layer_props_info(lp, out, Section::OpenFolder, isolated)?;
+            write_layer_content_info(&lp, out, layer_offsets)?;
         }
     }
     Ok(())
@@ -420,13 +412,13 @@ fn write_pixel_data(
     dc: *mut DP_DrawContext,
     out: &mut Output,
     offset: usize,
-    pixels: *const DP_UPixel8,
+    pixels: &[DP_UPixel8],
     offset_x: c_int,
     offset_y: c_int,
     width: c_int,
     height: c_int,
 ) -> Result<()> {
-    if pixels.is_null() || width <= 0 || height <= 0 {
+    if pixels.is_empty() || width <= 0 || height <= 0 {
         // Empty layer or group. Just write blank pixel data.
         out.write_bytes(&[0, 0, 0, 0, 0, 0, 0, 0])?;
     } else {
@@ -434,9 +426,7 @@ fn write_pixel_data(
         // Photoshop apparently and Krita also always uses this option.
         let rows = usize::try_from(height)?;
         let stride = usize::try_from(width)?;
-        let (a, r, g, b) = write_pixel_channels(dc, out, rows, stride, unsafe {
-            from_raw_parts(pixels, rows * stride)
-        })?;
+        let (a, r, g, b) = write_pixel_channels(dc, out, rows, stride, pixels)?;
         // Go back and fill in the channel size information.
         let pos = out.tell()?;
         out.seek(offset)?;
@@ -465,103 +455,86 @@ fn write_pixel_data(
     Ok(())
 }
 
-fn write_background_pixel_data(
-    cs: *mut DP_CanvasState,
+fn write_background_pixel_data<CS: BaseCanvasState>(
+    cs: &CS,
     dc: *mut DP_DrawContext,
     out: &mut Output,
     layer_offsets: &HashMap<*mut c_void, usize>,
 ) -> Result<()> {
-    let width = unsafe { DP_canvas_state_width(cs) };
-    let height = unsafe { DP_canvas_state_height(cs) };
-    let pixels = unsafe {
-        let tlc = DP_transient_layer_content_new_init(
-            DP_canvas_state_width(cs),
-            DP_canvas_state_height(cs),
-            DP_canvas_state_background_tile_noinc(cs),
-        );
-        let px = DP_layer_content_to_upixels8(tlc.cast(), 0, 0, width, height);
-        DP_transient_layer_content_decref(tlc);
-        px
-    };
-    let result = write_pixel_data(
+    let width = cs.width();
+    let height = cs.height();
+    let pixels = TransientLayerContent::new_init(width, height, cs.background_tile().as_ref())
+        .to_upixels8(0, 0, width, height);
+    write_pixel_data(
         dc,
         out,
         *layer_offsets.get(&null_mut()).unwrap(),
-        pixels,
+        pixels.as_slice(),
         0,
         0,
         width,
         height,
-    );
-    unsafe { DP_free(pixels.cast()) }
-    result
+    )
 }
 
-fn write_layer_content_pixel_data(
-    lc: *mut DP_LayerContent,
+fn write_layer_content_pixel_data<LC: BaseLayerContent>(
+    lc: &LC,
     dc: *mut DP_DrawContext,
     out: &mut Output,
     offset: usize,
 ) -> Result<()> {
-    let mut offset_x: c_int = 0;
-    let mut offset_y: c_int = 0;
-    let mut width: c_int = 0;
-    let mut height: c_int = 0;
-    let pixels = unsafe {
-        DP_layer_content_to_upixels8_cropped(
-            lc,
-            &mut offset_x,
-            &mut offset_y,
-            &mut width,
-            &mut height,
-        )
-    };
-    let result = write_pixel_data(dc, out, offset, pixels, offset_x, offset_y, width, height);
-    unsafe { DP_free(pixels.cast()) }
-    result
+    let (pixels, offset_x, offset_y, width, height) = lc.to_upixels8_cropped();
+    write_pixel_data(
+        dc,
+        out,
+        offset,
+        pixels.as_slice(),
+        offset_x,
+        offset_y,
+        width,
+        height,
+    )
 }
 
 fn write_layer_pixel_data_recursive(
-    ll: *mut DP_LayerList,
-    lpl: *mut DP_LayerPropsList,
+    ll: &dyn BaseLayerList,
+    lpl: &dyn BaseLayerPropsList,
     dc: *mut DP_DrawContext,
     out: &mut Output,
     layer_offsets: &HashMap<*mut c_void, usize>,
 ) -> Result<()> {
-    let count = unsafe { DP_layer_props_list_count(lpl) };
+    let count = lpl.count();
     for i in 0..count {
-        let lp = unsafe { DP_layer_props_list_at_noinc(lpl, i) };
-        let child_lpl = unsafe { DP_layer_props_children_noinc(lp) };
-        if child_lpl.is_null() {
-            let lc = unsafe { DP_layer_list_content_at_noinc(ll, i) };
-            let offset = *layer_offsets.get(&lp.cast()).unwrap();
-            write_layer_content_pixel_data(lc, dc, out, offset)?;
+        let lp = lpl.dyn_at(i);
+        if let Some(child_lpl) = lp.children() {
+            write_pixel_data(dc, out, 0, &[], 0, 0, 0, 0)?;
+            let lg = ll.dyn_group_at(i);
+            write_layer_pixel_data_recursive(&lg.children(), &child_lpl, dc, out, layer_offsets)?;
+            write_pixel_data(dc, out, 0, &[], 0, 0, 0, 0)?;
         } else {
-            write_pixel_data(dc, out, 0, null(), 0, 0, 0, 0)?;
-            let lg = unsafe { DP_layer_list_group_at_noinc(ll, i) };
-            let child_ll = unsafe { DP_layer_group_children_noinc(lg) };
-            write_layer_pixel_data_recursive(child_ll, child_lpl, dc, out, layer_offsets)?;
-            write_pixel_data(dc, out, 0, null(), 0, 0, 0, 0)?;
+            let lc = ll.dyn_content_at(i);
+            let offset = *layer_offsets.get(&lp.persistent_ptr().cast()).unwrap();
+            write_layer_content_pixel_data(&lc, dc, out, offset)?;
         }
     }
     Ok(())
 }
 
-fn write_layer_pixel_data_section(
-    cs: *mut DP_CanvasState,
+fn write_layer_pixel_data_section<CS: BaseCanvasState>(
+    cs: &CS,
     dc: *mut DP_DrawContext,
     out: &mut Output,
     layer_offsets: &HashMap<*mut c_void, usize>,
 ) -> Result<()> {
     write_background_pixel_data(cs, dc, out, layer_offsets)?;
-    let ll = unsafe { DP_canvas_state_layers_noinc(cs) };
-    let lpl = unsafe { DP_canvas_state_layer_props_noinc(cs) };
-    write_layer_pixel_data_recursive(ll, lpl, dc, out, layer_offsets)?;
+    let ll = cs.layers();
+    let lpl = cs.layer_props();
+    write_layer_pixel_data_recursive(&ll, &lpl, dc, out, layer_offsets)?;
     Ok(())
 }
 
-fn write_layer_info_section(
-    cs: *mut DP_CanvasState,
+fn write_layer_info_section<CS: BaseCanvasState>(
+    cs: &CS,
     dc: *mut DP_DrawContext,
     out: &mut Output,
     layer_offsets: &mut HashMap<*mut c_void, usize>,
@@ -570,8 +543,8 @@ fn write_layer_info_section(
 
     // Number of layers, plus one for the background. As a negative number
     // because, uh, something about alpha channels. GIMP requires that anyway.
-    let lpl = unsafe { DP_canvas_state_layer_props_noinc(cs) };
-    out.write_i16_be(-i16::try_from(count_layers_recursive(lpl) + 1)?)?;
+    let lpl = cs.layer_props();
+    out.write_i16_be(-i16::try_from(count_layers_recursive(&lpl) + 1)?)?;
 
     // Background layer info.
     layer_offsets.insert(null_mut(), out.tell()?);
@@ -586,7 +559,7 @@ fn write_layer_info_section(
     )?;
 
     // Remaining layer info.
-    write_layer_infos_recursive(lpl, out, layer_offsets)?;
+    write_layer_infos_recursive(&lpl, out, layer_offsets)?;
 
     // Channel pixel data.
     write_layer_pixel_data_section(cs, dc, out, layer_offsets)?;
@@ -595,8 +568,8 @@ fn write_layer_info_section(
     Ok(())
 }
 
-fn write_layer_sections(
-    cs: *mut DP_CanvasState,
+fn write_layer_sections<CS: BaseCanvasState>(
+    cs: &CS,
     dc: *mut DP_DrawContext,
     out: &mut Output,
 ) -> Result<()> {
@@ -608,29 +581,12 @@ fn write_layer_sections(
     Ok(())
 }
 
-fn to_flat_channels(cs: *mut DP_CanvasState, buffer: *mut u8) -> Result<()> {
-    let ok = unsafe {
-        DP_canvas_state_to_flat_separated_urgba8(
-            cs,
-            DP_FLAT_IMAGE_RENDER_FLAGS,
-            null(),
-            null(),
-            buffer,
-        )
-    };
-    if ok {
-        Ok(())
-    } else {
-        Err(anyhow!(dp_error()))
-    }
-}
-
 fn write_merged_channel(
     out: &mut Output,
     rows: usize,
     stride: usize,
     counts: &mut [u8],
-    src: &mut [u8],
+    src: &[u8],
     dst: &mut [u8],
 ) -> Result<()> {
     for i in 0..rows {
@@ -646,15 +602,15 @@ fn write_merged_channel(
     Ok(())
 }
 
-fn write_merged_image(
-    cs: *mut DP_CanvasState,
+fn write_merged_image<CS: BaseCanvasState>(
+    cs: &CS,
     dc: *mut DP_DrawContext,
     mut out: Output,
 ) -> Result<()> {
     out.write_bytes(&[0, 1])?; // Compression type: run-length encoding.
 
-    let rows = usize::try_from(unsafe { DP_canvas_state_height(cs) })?;
-    let stride = usize::try_from(unsafe { DP_canvas_state_width(cs) })?;
+    let rows = usize::try_from(cs.height())?;
+    let stride = usize::try_from(cs.width())?;
     let counts_stride = rows * 2;
     let counts_length = counts_stride * 4;
     let pool_size = counts_length + stride * 2;
@@ -671,8 +627,7 @@ fn write_merged_image(
     out.write_bytes(counts)?;
 
     let size = rows * stride;
-    let mut buffer = vec![0_u8; size * 4_usize];
-    to_flat_channels(cs, buffer.as_mut_ptr())?;
+    let buffer = cs.to_flat_separated_urgba8()?;
     for i in 0..4 {
         let counts_start = i * counts_stride;
         let counts_end = counts_start + counts_stride;
@@ -683,7 +638,7 @@ fn write_merged_image(
             rows,
             stride,
             &mut counts[counts_start..counts_end],
-            &mut buffer[buffer_start..buffer_end],
+            &buffer[buffer_start..buffer_end],
             dst,
         )?;
     }
@@ -695,7 +650,7 @@ fn write_merged_image(
     Ok(())
 }
 
-fn write_psd(cs: *mut DP_CanvasState, dc: *mut DP_DrawContext, mut out: Output) -> Result<()> {
+fn write_psd<CS: BaseCanvasState>(cs: CS, dc: *mut DP_DrawContext, mut out: Output) -> Result<()> {
     // Magic "8BPS", 2 bytes for the version (0, 1), 6 reserved zero bytes.
     out.write_bytes(&[
         56, 66, 80, 83, // "8BPS" magic number.
@@ -705,16 +660,16 @@ fn write_psd(cs: *mut DP_CanvasState, dc: *mut DP_DrawContext, mut out: Output) 
     ])?;
     // Dimensions, height first for some reason. PSD supports at most 30,000
     // pixels in either direction, which is more than the u16 range we allow.
-    out.write_u32_be(u32::try_from(unsafe { DP_canvas_state_height(cs) })?)?;
-    out.write_u32_be(u32::try_from(unsafe { DP_canvas_state_width(cs) })?)?;
+    out.write_u32_be(u32::try_from(cs.height())?)?;
+    out.write_u32_be(u32::try_from(cs.width())?)?;
     out.write_bytes(&[
         0, 8, // Channel depth, we use 8 bit channels.
         0, 3, // Color mode, we always use 3 for RGB.
         0, 0, 0, 0, // Color mode section length, always zero for RGB.
         0, 0, 0, 0, // Image resources section length, we don't have any.
     ])?;
-    write_layer_sections(cs, dc, &mut out)?;
-    write_merged_image(cs, dc, out)?;
+    write_layer_sections(&cs, dc, &mut out)?;
+    write_merged_image(&cs, dc, out)?;
     Ok(())
 }
 
@@ -727,7 +682,7 @@ fn save_psd(
         Ok(o) => o,
         Err(_) => return DP_SAVE_RESULT_OPEN_ERROR,
     };
-    match write_psd(cs, dc, out) {
+    match write_psd(AttachedCanvasState::<()>::new(cs), dc, out) {
         Ok(()) => DP_SAVE_RESULT_SUCCESS,
         Err(_) => DP_SAVE_RESULT_WRITE_ERROR,
     }

@@ -6,6 +6,7 @@ mod document_metadata;
 mod draw_context;
 mod image;
 mod key_frame;
+mod layer_content;
 mod layer_group;
 mod layer_list;
 mod layer_props;
@@ -20,7 +21,8 @@ mod track;
 
 pub use acl::AclState;
 pub use canvas_state::{
-    BaseCanvasState, BaseTransientCanvasState, CanvasState, TransientCanvasState,
+    AttachedCanvasState, BaseCanvasState, BaseTransientCanvasState, CanvasState,
+    TransientCanvasState,
 };
 pub use document_metadata::{
     AttachedDocumentMetadata, AttachedTransientDocumentMetadata, BaseDocumentMetadata,
@@ -29,7 +31,12 @@ pub use document_metadata::{
 pub use draw_context::DrawContext;
 pub use image::{Image, ImageError};
 pub use key_frame::{BaseKeyFrame, BaseTransientKeyFrame, TransientKeyFrame};
-pub use layer_group::{BaseLayerGroup, BaseTransientLayerGroup, TransientLayerGroup};
+pub use layer_content::{
+    AttachedLayerContent, BaseLayerContent, BaseTransientLayerContent, TransientLayerContent,
+};
+pub use layer_group::{
+    AttachedLayerGroup, BaseLayerGroup, BaseTransientLayerGroup, TransientLayerGroup,
+};
 pub use layer_list::{
     AttachedLayerList, BaseLayerList, BaseTransientLayerList, TransientLayerList,
 };
@@ -41,6 +48,7 @@ pub use layer_props_list::{
     TransientLayerPropsList,
 };
 pub use paint_engine::{PaintEngine, PaintEngineError};
+pub use pixels::UPixels8;
 pub use player::{Player, PlayerError};
 pub use recorder::{Recorder, RecorderError};
 pub use tile::{AttachedTile, BaseTile};

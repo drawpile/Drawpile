@@ -34,7 +34,12 @@ pub trait BaseLayerPropsList {
         Self: Sized,
     {
         let data = unsafe { DP_layer_props_list_at_noinc(self.persistent_ptr(), index) };
-        AttachedLayerProps::new(data, self)
+        AttachedLayerProps::new(data)
+    }
+
+    fn dyn_at(&self, index: c_int) -> AttachedLayerProps<dyn BaseLayerPropsList> {
+        let data = unsafe { DP_layer_props_list_at_noinc(self.persistent_ptr(), index) };
+        AttachedLayerProps::new(data)
     }
 
     fn iter(&self) -> LayerPropsListIterator<Self>
@@ -76,13 +81,14 @@ pub trait BaseTransientLayerPropsList: BaseLayerPropsList {
 
 // Attached persistent type, does not affect refcount.
 
-pub struct AttachedLayerPropsList<'a, T> {
+pub struct AttachedLayerPropsList<'a, T: ?Sized> {
     data: *mut DP_LayerPropsList,
     phantom: PhantomData<&'a T>,
 }
 
-impl<'a, T> AttachedLayerPropsList<'a, T> {
-    pub(super) fn new(data: *mut DP_LayerPropsList, _parent: &'a T) -> Self {
+impl<'a, T: ?Sized> AttachedLayerPropsList<'a, T> {
+    pub(super) fn new(data: *mut DP_LayerPropsList) -> Self {
+        debug_assert!(!data.is_null());
         Self {
             data,
             phantom: PhantomData,
@@ -90,13 +96,13 @@ impl<'a, T> AttachedLayerPropsList<'a, T> {
     }
 }
 
-impl<'a, T> BaseLayerPropsList for AttachedLayerPropsList<'a, T> {
+impl<'a, T: ?Sized> BaseLayerPropsList for AttachedLayerPropsList<'a, T> {
     fn persistent_ptr(&self) -> *mut DP_LayerPropsList {
         self.data
     }
 }
 
-impl<'a, T> BasePersistentLayerPropsList for AttachedLayerPropsList<'a, T> {}
+impl<'a, T: ?Sized> BasePersistentLayerPropsList for AttachedLayerPropsList<'a, T> {}
 
 // Free transient type, affects refcount.
 

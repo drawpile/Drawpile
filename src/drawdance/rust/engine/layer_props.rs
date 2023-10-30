@@ -1,8 +1,10 @@
 use crate::{
-    DP_LayerProps, DP_TransientLayerProps, DP_layer_props_children_noinc, DP_layer_props_id,
-    DP_layer_props_title, DP_layer_props_transient, DP_transient_layer_props_decref,
-    DP_transient_layer_props_id_set, DP_transient_layer_props_isolated_set,
-    DP_transient_layer_props_new, DP_transient_layer_props_new_init_with_transient_children_noinc,
+    DP_BlendMode, DP_LayerProps, DP_TransientLayerProps, DP_channel15_to_8,
+    DP_layer_props_blend_mode, DP_layer_props_children_noinc, DP_layer_props_hidden,
+    DP_layer_props_id, DP_layer_props_isolated, DP_layer_props_opacity, DP_layer_props_title,
+    DP_layer_props_transient, DP_transient_layer_props_decref, DP_transient_layer_props_id_set,
+    DP_transient_layer_props_isolated_set, DP_transient_layer_props_new,
+    DP_transient_layer_props_new_init_with_transient_children_noinc,
 };
 use std::{
     ffi::{c_char, c_int},
@@ -11,7 +13,7 @@ use std::{
     slice::from_raw_parts,
 };
 
-use super::{BaseTransientLayerPropsList, TransientLayerPropsList};
+use super::{AttachedLayerPropsList, BaseTransientLayerPropsList, TransientLayerPropsList};
 
 // Base interface.
 
@@ -41,8 +43,46 @@ pub trait BaseLayerProps {
         unsafe { from_raw_parts(title, len) }
     }
 
+    fn title_u8(&self) -> &[u8] {
+        let mut len = 0_usize;
+        let title = unsafe { DP_layer_props_title(self.persistent_ptr(), &mut len) };
+        unsafe { from_raw_parts(title.cast(), len) }
+    }
+
+    fn opacity(&self) -> u16 {
+        unsafe { DP_layer_props_opacity(self.persistent_ptr()) }
+    }
+
+    fn opacity_u8(&self) -> u8 {
+        unsafe { DP_channel15_to_8(self.opacity()) }
+    }
+
+    fn blend_mode(&self) -> DP_BlendMode {
+        unsafe { DP_layer_props_blend_mode(self.persistent_ptr()) as DP_BlendMode }
+    }
+
+    fn hidden(&self) -> bool {
+        unsafe { DP_layer_props_hidden(self.persistent_ptr()) }
+    }
+
+    fn isolated(&self) -> bool {
+        unsafe { DP_layer_props_isolated(self.persistent_ptr()) }
+    }
+
     fn is_group(&self) -> bool {
         !unsafe { DP_layer_props_children_noinc(self.persistent_ptr()) }.is_null()
+    }
+
+    fn children(&self) -> Option<AttachedLayerPropsList<Self>>
+    where
+        Self: Sized,
+    {
+        let data = unsafe { DP_layer_props_children_noinc(self.persistent_ptr()) };
+        if data.is_null() {
+            None
+        } else {
+            Some(AttachedLayerPropsList::new(data))
+        }
     }
 }
 
@@ -75,13 +115,14 @@ pub trait BaseTransientLayerProps: BaseLayerProps {
 
 // Attached persistent type, does not affect refcount.
 
-pub struct AttachedLayerProps<'a, T> {
+pub struct AttachedLayerProps<'a, T: ?Sized> {
     data: *mut DP_LayerProps,
     phantom: PhantomData<&'a T>,
 }
 
-impl<'a, T> AttachedLayerProps<'a, T> {
-    pub(super) fn new(data: *mut DP_LayerProps, _parent: &'a T) -> Self {
+impl<'a, T: ?Sized> AttachedLayerProps<'a, T> {
+    pub(super) fn new(data: *mut DP_LayerProps) -> Self {
+        debug_assert!(!data.is_null());
         Self {
             data,
             phantom: PhantomData,
@@ -89,13 +130,13 @@ impl<'a, T> AttachedLayerProps<'a, T> {
     }
 }
 
-impl<'a, T> BaseLayerProps for AttachedLayerProps<'a, T> {
+impl<'a, T: ?Sized> BaseLayerProps for AttachedLayerProps<'a, T> {
     fn persistent_ptr(&self) -> *mut DP_LayerProps {
         self.data
     }
 }
 
-impl<'a, T> BasePersistentLayerProps for AttachedLayerProps<'a, T> {}
+impl<'a, T: ?Sized> BasePersistentLayerProps for AttachedLayerProps<'a, T> {}
 
 // Free transient type, affects refcount.
 
