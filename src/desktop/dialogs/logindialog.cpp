@@ -167,6 +167,7 @@ struct LoginDialog::Private {
 	QWidget *setupAuthPage(bool usernameEnabled, bool passwordVisible);
 	void setLoginExplanation(const QString &explanation, bool isError);
 	void setLoginMode(const QString &prompt);
+	void applyRememberedPassword();
 };
 
 void LoginDialog::Private::resetMode(Mode newMode)
@@ -691,20 +692,24 @@ void LoginDialog::onUsernameNeeded(bool canSelectAvatar)
 void LoginDialog::Private::setLoginMode(const QString &prompt)
 {
 	ui->loginPromptLabel->setText(prompt);
-	if(extauthurl.isValid())
+	if(extauthurl.isValid()) {
 		ui->loginPromptLabel->setStyleSheet(
 			QStringLiteral("background: #3498db;"
 						   "color: #fcfcfc;"
 						   "padding: 16px"));
-	else
+	} else {
 		ui->loginPromptLabel->setStyleSheet(
 			QStringLiteral("background: #fdbc4b;"
 						   "color: #31363b;"
 						   "padding: 16px"));
+	}
+}
 
+void LoginDialog::Private::applyRememberedPassword()
+{
 #ifdef HAVE_QTKEYCHAIN
 	if(!loginHandler) {
-		qWarning("LoginDialog::setLoginMode: login process already ended!");
+		qWarning("applyRememberedPassword: login process already ended!");
 		return;
 	}
 
@@ -758,6 +763,7 @@ void LoginDialog::onLoginNeeded(
 		d->resetMode(Mode::Authenticate);
 		updateOkButtonEnabled();
 		d->setLoginMode(prompt);
+		d->applyRememberedPassword();
 	}
 }
 
@@ -778,6 +784,7 @@ void LoginDialog::onExtAuthNeeded(
 		d->resetMode(Mode::Authenticate);
 		updateOkButtonEnabled();
 		d->setLoginMode(formatExtAuthPrompt(url));
+		d->applyRememberedPassword();
 	}
 }
 
