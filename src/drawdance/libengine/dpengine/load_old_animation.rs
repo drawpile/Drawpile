@@ -2,11 +2,9 @@
 use drawdance::{
     engine::{
         AttachedLayerPropsList, BaseCanvasState, BaseLayerList, BaseLayerProps, BaseLayerPropsList,
-        BaseTransientCanvasState, BaseTransientDocumentMetadata, BaseTransientLayerList,
-        BaseTransientLayerProps, BaseTransientLayerPropsList, BaseTransientTimeline,
-        BaseTransientTrack, CanvasState, TransientCanvasState, TransientKeyFrame,
-        TransientLayerGroup, TransientLayerList, TransientLayerProps, TransientLayerPropsList,
-        TransientTimeline, TransientTrack,
+        CArc, CanvasState, DetachedCanvasState, LayerPropsList, Persister, TransientCanvasState,
+        TransientKeyFrame, TransientLayerGroup, TransientLayerList, TransientLayerProps,
+        TransientLayerPropsList, TransientTimeline, TransientTrack,
     },
     DP_CanvasState, DP_DrawContext, DP_LoadResult, DP_TransientLayerProps, DP_TransientTrack,
     DP_load_ora,
@@ -32,10 +30,10 @@ fn load_ora(
     dc: *mut DP_DrawContext,
     path: *const c_char,
     out_result: *mut DP_LoadResult,
-) -> (Option<CanvasState>, HashSet<c_int>) {
+) -> (Option<DetachedCanvasState>, HashSet<c_int>) {
     let mut fixed_layer_ids = HashSet::new();
     let fixed_layer_ids_ptr: *mut HashSet<c_int> = &mut fixed_layer_ids;
-    let cs = CanvasState::new_noinc_nullable(unsafe {
+    let cs = CanvasState::new_detached_noinc_nullable(unsafe {
         DP_load_ora(
             dc,
             path,
@@ -71,7 +69,7 @@ fn count_elements(
 
 fn count_frame_run(
     fixed_layer_ids: &HashSet<c_int>,
-    lpl: &AttachedLayerPropsList<CanvasState>,
+    lpl: &LayerPropsList,
     layer_count: c_int,
     start_index: c_int,
 ) -> c_int {
@@ -86,7 +84,7 @@ fn count_frame_run(
 }
 
 fn convert_animation(
-    cs: CanvasState,
+    cs: &CanvasState,
     dc: *mut DP_DrawContext,
     hold_time: c_int,
     framerate: c_int,
@@ -103,7 +101,7 @@ fn convert_animation(
 
     let mut tll = TransientLayerList::new_init(track_count);
     let mut tlpl = TransientLayerPropsList::new_init(track_count);
-    let mut ttl = TransientTimeline::new(track_count);
+    let mut ttl = TransientTimeline::new_init(track_count);
 
     let mut layer_index = 0;
     let mut group_index = 0;
@@ -137,7 +135,7 @@ fn convert_animation(
             let needs_blank_frame = key_frame_index + frame_run < key_frame_count;
             let mut tt = TransientTrack::new_init(frame_run + c_int::from(needs_blank_frame));
             tt.set_id(next_track_id);
-            unsafe { set_track_title(tt.transient_ptr(), group_index) };
+            unsafe { set_track_title(tt.as_mut_ptr(), group_index) };
 
             for i in 0..frame_run {
                 child_tll.set_at_inc(&ll.at(layer_index), i);
@@ -186,7 +184,7 @@ fn convert_animation(
         next_layer_id += 1;
     }
 
-    let mut tcs = TransientCanvasState::new(&cs);
+    let mut tcs = TransientCanvasState::new(cs);
     let mut tdm = tcs.transient_metadata();
     tdm.set_framerate(framerate);
     tdm.set_frame_count(1.max(key_frame_count * hold_time));
@@ -194,7 +192,7 @@ fn convert_animation(
     tcs.set_transient_layer_props_noinc(tlpl);
     tcs.set_transient_timeline_noinc(ttl);
     tcs.reindex_layer_routes(dc);
-    tcs.persist().leak_persistent()
+    tcs.persist().leak()
 }
 
 #[no_mangle]
@@ -209,7 +207,7 @@ pub extern "C" fn DP_load_old_animation(
 ) -> *mut DP_CanvasState {
     match load_ora(dc, path, out_result) {
         (Some(cs), fixed_layer_ids) => convert_animation(
-            cs,
+            &cs,
             dc,
             hold_time,
             framerate,

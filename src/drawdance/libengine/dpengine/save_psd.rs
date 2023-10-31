@@ -4,8 +4,9 @@ use drawdance::{
     common::Output,
     dp_error_set,
     engine::{
-        AttachedCanvasState, BaseCanvasState, BaseLayerContent, BaseLayerGroup, BaseLayerList,
-        BaseLayerProps, BaseLayerPropsList, TransientLayerContent,
+        BaseCanvasState, BaseLayerContent, BaseLayerGroup, BaseLayerList, BaseLayerProps,
+        BaseLayerPropsList, CanvasState, LayerContent, LayerList, LayerProps, LayerPropsList,
+        TransientLayerContent,
     },
     DP_BlendMode, DP_CanvasState, DP_DrawContext, DP_SaveResult, DP_UPixel8,
     DP_draw_context_pool_require, DP_BLEND_MODE_ADD, DP_BLEND_MODE_BURN, DP_BLEND_MODE_COLOR,
@@ -13,8 +14,9 @@ use drawdance::{
     DP_BLEND_MODE_HUE, DP_BLEND_MODE_LIGHTEN, DP_BLEND_MODE_LINEAR_BURN,
     DP_BLEND_MODE_LINEAR_LIGHT, DP_BLEND_MODE_LUMINOSITY, DP_BLEND_MODE_MULTIPLY,
     DP_BLEND_MODE_NORMAL, DP_BLEND_MODE_OVERLAY, DP_BLEND_MODE_SATURATION, DP_BLEND_MODE_SCREEN,
-    DP_BLEND_MODE_SOFT_LIGHT, DP_BLEND_MODE_SUBTRACT, DP_SAVE_RESULT_INTERNAL_ERROR,
-    DP_SAVE_RESULT_OPEN_ERROR, DP_SAVE_RESULT_SUCCESS, DP_SAVE_RESULT_WRITE_ERROR,
+    DP_BLEND_MODE_SOFT_LIGHT, DP_BLEND_MODE_SUBTRACT, DP_SAVE_RESULT_BAD_ARGUMENTS,
+    DP_SAVE_RESULT_INTERNAL_ERROR, DP_SAVE_RESULT_OPEN_ERROR, DP_SAVE_RESULT_SUCCESS,
+    DP_SAVE_RESULT_WRITE_ERROR,
 };
 use std::{
     collections::HashMap,
@@ -80,11 +82,11 @@ fn write_size_prefix(out: &mut Output, start: usize, alignment: usize) -> Result
     Ok(())
 }
 
-fn count_layers_recursive(lpl: &dyn BaseLayerPropsList) -> usize {
+fn count_layers_recursive(lpl: &LayerPropsList) -> usize {
     let count = lpl.count();
     let mut total = count as usize;
     for i in 0..count {
-        let lp = lpl.dyn_at(i);
+        let lp = lpl.at(i);
         if let Some(child_lpl) = lp.children() {
             // PSD needs two layers for every group.
             total += 1 + count_layers_recursive(&child_lpl);
@@ -221,8 +223,8 @@ fn write_layer_info(
     Ok(())
 }
 
-fn write_layer_props_info<LP: BaseLayerProps>(
-    lp: &LP,
+fn write_layer_props_info(
+    lp: &LayerProps,
     out: &mut Output,
     section: Section,
     isolated: bool,
@@ -247,8 +249,8 @@ fn write_layer_props_info<LP: BaseLayerProps>(
     Ok(())
 }
 
-fn write_layer_content_info<LP: BaseLayerProps>(
-    lp: &LP,
+fn write_layer_content_info(
+    lp: &LayerProps,
     out: &mut Output,
     layer_offsets: &mut HashMap<*mut c_void, usize>,
 ) -> Result<()> {
@@ -258,13 +260,13 @@ fn write_layer_content_info<LP: BaseLayerProps>(
 }
 
 fn write_layer_infos_recursive(
-    lpl: &dyn BaseLayerPropsList,
+    lpl: &LayerPropsList,
     out: &mut Output,
     layer_offsets: &mut HashMap<*mut c_void, usize>,
 ) -> Result<()> {
     let count = lpl.count();
     for i in 0..count {
-        let lp = lpl.dyn_at(i);
+        let lp = lpl.at(i);
         if let Some(child_lpl) = lp.children() {
             let isolated = lp.isolated();
             write_layer_props_info(&lp, out, Section::Divider, isolated)?;
@@ -455,15 +457,15 @@ fn write_pixel_data(
     Ok(())
 }
 
-fn write_background_pixel_data<CS: BaseCanvasState>(
-    cs: &CS,
+fn write_background_pixel_data(
+    cs: &CanvasState,
     dc: *mut DP_DrawContext,
     out: &mut Output,
     layer_offsets: &HashMap<*mut c_void, usize>,
 ) -> Result<()> {
     let width = cs.width();
     let height = cs.height();
-    let pixels = TransientLayerContent::new_init(width, height, cs.background_tile().as_ref())
+    let pixels = TransientLayerContent::new_init(width, height, cs.background_tile().as_deref())
         .to_upixels8(0, 0, width, height);
     write_pixel_data(
         dc,
@@ -477,8 +479,8 @@ fn write_background_pixel_data<CS: BaseCanvasState>(
     )
 }
 
-fn write_layer_content_pixel_data<LC: BaseLayerContent>(
-    lc: &LC,
+fn write_layer_content_pixel_data(
+    lc: &LayerContent,
     dc: *mut DP_DrawContext,
     out: &mut Output,
     offset: usize,
@@ -497,22 +499,22 @@ fn write_layer_content_pixel_data<LC: BaseLayerContent>(
 }
 
 fn write_layer_pixel_data_recursive(
-    ll: &dyn BaseLayerList,
-    lpl: &dyn BaseLayerPropsList,
+    ll: &LayerList,
+    lpl: &LayerPropsList,
     dc: *mut DP_DrawContext,
     out: &mut Output,
     layer_offsets: &HashMap<*mut c_void, usize>,
 ) -> Result<()> {
     let count = lpl.count();
     for i in 0..count {
-        let lp = lpl.dyn_at(i);
+        let lp = lpl.at(i);
         if let Some(child_lpl) = lp.children() {
             write_pixel_data(dc, out, 0, &[], 0, 0, 0, 0)?;
-            let lg = ll.dyn_group_at(i);
+            let lg = ll.group_at(i);
             write_layer_pixel_data_recursive(&lg.children(), &child_lpl, dc, out, layer_offsets)?;
             write_pixel_data(dc, out, 0, &[], 0, 0, 0, 0)?;
         } else {
-            let lc = ll.dyn_content_at(i);
+            let lc = ll.content_at(i);
             let offset = *layer_offsets.get(&lp.persistent_ptr().cast()).unwrap();
             write_layer_content_pixel_data(&lc, dc, out, offset)?;
         }
@@ -520,8 +522,8 @@ fn write_layer_pixel_data_recursive(
     Ok(())
 }
 
-fn write_layer_pixel_data_section<CS: BaseCanvasState>(
-    cs: &CS,
+fn write_layer_pixel_data_section(
+    cs: &CanvasState,
     dc: *mut DP_DrawContext,
     out: &mut Output,
     layer_offsets: &HashMap<*mut c_void, usize>,
@@ -533,8 +535,8 @@ fn write_layer_pixel_data_section<CS: BaseCanvasState>(
     Ok(())
 }
 
-fn write_layer_info_section<CS: BaseCanvasState>(
-    cs: &CS,
+fn write_layer_info_section(
+    cs: &CanvasState,
     dc: *mut DP_DrawContext,
     out: &mut Output,
     layer_offsets: &mut HashMap<*mut c_void, usize>,
@@ -568,11 +570,7 @@ fn write_layer_info_section<CS: BaseCanvasState>(
     Ok(())
 }
 
-fn write_layer_sections<CS: BaseCanvasState>(
-    cs: &CS,
-    dc: *mut DP_DrawContext,
-    out: &mut Output,
-) -> Result<()> {
+fn write_layer_sections(cs: &CanvasState, dc: *mut DP_DrawContext, out: &mut Output) -> Result<()> {
     let section_start = write_preliminary_size_prefix(out)?;
     let mut layer_offsets = HashMap::new();
     write_layer_info_section(cs, dc, out, &mut layer_offsets)?;
@@ -602,11 +600,7 @@ fn write_merged_channel(
     Ok(())
 }
 
-fn write_merged_image<CS: BaseCanvasState>(
-    cs: &CS,
-    dc: *mut DP_DrawContext,
-    mut out: Output,
-) -> Result<()> {
+fn write_merged_image(cs: &CanvasState, dc: *mut DP_DrawContext, mut out: Output) -> Result<()> {
     out.write_bytes(&[0, 1])?; // Compression type: run-length encoding.
 
     let rows = usize::try_from(cs.height())?;
@@ -650,7 +644,7 @@ fn write_merged_image<CS: BaseCanvasState>(
     Ok(())
 }
 
-fn write_psd<CS: BaseCanvasState>(cs: CS, dc: *mut DP_DrawContext, mut out: Output) -> Result<()> {
+fn write_psd(cs: &CanvasState, dc: *mut DP_DrawContext, mut out: Output) -> Result<()> {
     // Magic "8BPS", 2 bytes for the version (0, 1), 6 reserved zero bytes.
     out.write_bytes(&[
         56, 66, 80, 83, // "8BPS" magic number.
@@ -668,8 +662,8 @@ fn write_psd<CS: BaseCanvasState>(cs: CS, dc: *mut DP_DrawContext, mut out: Outp
         0, 0, 0, 0, // Color mode section length, always zero for RGB.
         0, 0, 0, 0, // Image resources section length, we don't have any.
     ])?;
-    write_layer_sections(&cs, dc, &mut out)?;
-    write_merged_image(&cs, dc, out)?;
+    write_layer_sections(cs, dc, &mut out)?;
+    write_merged_image(cs, dc, out)?;
     Ok(())
 }
 
@@ -678,13 +672,17 @@ fn save_psd(
     path: *const c_char,
     dc: *mut DP_DrawContext,
 ) -> DP_SaveResult {
-    let out = match Output::new_from_path(path) {
-        Ok(o) => o,
-        Err(_) => return DP_SAVE_RESULT_OPEN_ERROR,
-    };
-    match write_psd(AttachedCanvasState::<()>::new(cs), dc, out) {
-        Ok(()) => DP_SAVE_RESULT_SUCCESS,
-        Err(_) => DP_SAVE_RESULT_WRITE_ERROR,
+    if let Some(acs) = unsafe { cs.as_mut() }.map(CanvasState::new_attached) {
+        let out = match Output::new_from_path(path) {
+            Ok(o) => o,
+            Err(_) => return DP_SAVE_RESULT_OPEN_ERROR,
+        };
+        match write_psd(&acs, dc, out) {
+            Ok(()) => DP_SAVE_RESULT_SUCCESS,
+            Err(_) => DP_SAVE_RESULT_WRITE_ERROR,
+        }
+    } else {
+        DP_SAVE_RESULT_BAD_ARGUMENTS
     }
 }
 

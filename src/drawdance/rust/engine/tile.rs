@@ -1,51 +1,34 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+use super::{Attached, Detached};
 use crate::{DP_Tile, DP_tile_transient};
-use std::{marker::PhantomData, mem};
-
-// Base interface.
 
 pub trait BaseTile {
     fn persistent_ptr(&self) -> *mut DP_Tile;
-
-    fn leak_persistent(self) -> *mut DP_Tile
-    where
-        Self: Sized,
-    {
-        let data = self.persistent_ptr();
-        mem::forget(self);
-        data
-    }
 
     fn transient(&self) -> bool {
         unsafe { DP_tile_transient(self.persistent_ptr()) }
     }
 }
 
-// Persistent marker.
-
-pub trait BasePersistentTile: BaseTile {}
-
-// Attached persistent type, does not affect refcount.
-
-pub struct AttachedTile<'a, T: ?Sized> {
+pub struct Tile {
     data: *mut DP_Tile,
-    phantom: PhantomData<&'a T>,
 }
 
-impl<'a, T: ?Sized> AttachedTile<'a, T> {
-    pub(super) fn new(data: *mut DP_Tile) -> Self {
-        debug_assert!(!data.is_null());
-        Self {
-            data,
-            phantom: PhantomData,
-        }
+pub type AttachedTile<'a, P> = Attached<'a, Tile, P>;
+pub type DetachedTile = Detached<DP_Tile, Tile>;
+
+impl Tile {
+    pub fn new_attached<P>(data: &mut DP_Tile) -> AttachedTile<P> {
+        Attached::new(Self { data })
+    }
+
+    pub fn new_attached_nullable<'a, P>(data: *mut DP_Tile) -> Option<AttachedTile<'a, P>> {
+        unsafe { data.as_mut() }.map(Tile::new_attached)
     }
 }
 
-impl<'a, T: ?Sized> BaseTile for AttachedTile<'a, T> {
+impl BaseTile for Tile {
     fn persistent_ptr(&self) -> *mut DP_Tile {
         self.data
     }
 }
-
-impl<'a, T: ?Sized> BasePersistentTile for AttachedTile<'a, T> {}

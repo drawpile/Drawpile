@@ -1,29 +1,42 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+use super::{
+    layer_content::LayerContent, Attached, AttachedLayerContent, AttachedLayerGroup, CArc,
+    Detached, DetachedTransientLayerGroup, LayerGroup,
+};
 use crate::{
     DP_LayerList, DP_LayerListEntry, DP_TransientLayerList, DP_layer_list_at_noinc,
-    DP_layer_list_content_at_noinc, DP_layer_list_count, DP_layer_list_group_at_noinc,
-    DP_layer_list_transient, DP_transient_layer_list_decref, DP_transient_layer_list_new_init,
-    DP_transient_layer_list_set_inc, DP_transient_layer_list_set_transient_group_noinc,
+    DP_layer_list_content_at_noinc, DP_layer_list_count, DP_layer_list_decref,
+    DP_layer_list_group_at_noinc, DP_layer_list_incref, DP_layer_list_transient,
+    DP_transient_layer_list_decref, DP_transient_layer_list_incref,
+    DP_transient_layer_list_new_init, DP_transient_layer_list_set_inc,
+    DP_transient_layer_list_set_transient_group_noinc,
 };
-use std::{ffi::c_int, marker::PhantomData, mem};
+use std::ffi::c_int;
 
-use super::{
-    AttachedLayerContent, AttachedLayerGroup, BaseTransientLayerGroup, TransientLayerGroup,
-};
+pub trait BaseLayerListEntry {
+    fn persistent_ptr(&self) -> *mut DP_LayerListEntry;
+}
 
-// Base interface.
+pub struct LayerListEntry {
+    data: *mut DP_LayerListEntry,
+}
+
+pub type AttachedLayerListEntry<'a, P> = Attached<'a, LayerListEntry, P>;
+
+impl LayerListEntry {
+    fn new_attached<P>(data: &mut DP_LayerListEntry) -> AttachedLayerListEntry<P> {
+        Attached::new(LayerListEntry { data })
+    }
+}
+
+impl<'a, T> BaseLayerListEntry for AttachedLayerListEntry<'a, T> {
+    fn persistent_ptr(&self) -> *mut DP_LayerListEntry {
+        self.data
+    }
+}
 
 pub trait BaseLayerList {
     fn persistent_ptr(&self) -> *mut DP_LayerList;
-
-    fn leak_persistent(self) -> *mut DP_LayerList
-    where
-        Self: Sized,
-    {
-        let data = self.persistent_ptr();
-        mem::forget(self);
-        data
-    }
 
     fn transient(&self) -> bool {
         unsafe { DP_layer_list_transient(self.persistent_ptr()) }
@@ -38,7 +51,7 @@ pub trait BaseLayerList {
         Self: Sized,
     {
         let data = unsafe { DP_layer_list_at_noinc(self.persistent_ptr(), index) };
-        AttachedLayerListEntry::new(data, self)
+        LayerListEntry::new_attached(unsafe { &mut *data })
     }
 
     fn content_at(&self, index: c_int) -> AttachedLayerContent<Self>
@@ -46,12 +59,7 @@ pub trait BaseLayerList {
         Self: Sized,
     {
         let data = unsafe { DP_layer_list_content_at_noinc(self.persistent_ptr(), index) };
-        AttachedLayerContent::new(data)
-    }
-
-    fn dyn_content_at(&self, index: c_int) -> AttachedLayerContent<dyn BaseLayerList> {
-        let data = unsafe { DP_layer_list_content_at_noinc(self.persistent_ptr(), index) };
-        AttachedLayerContent::new(data)
+        LayerContent::new_attached(unsafe { &mut *data })
     }
 
     fn group_at(&self, index: c_int) -> AttachedLayerGroup<Self>
@@ -59,85 +67,66 @@ pub trait BaseLayerList {
         Self: Sized,
     {
         let data = unsafe { DP_layer_list_group_at_noinc(self.persistent_ptr(), index) };
-        AttachedLayerGroup::new(data)
-    }
-
-    fn dyn_group_at(&self, index: c_int) -> AttachedLayerGroup<dyn BaseLayerList> {
-        let data = unsafe { DP_layer_list_group_at_noinc(self.persistent_ptr(), index) };
-        AttachedLayerGroup::new(data)
+        LayerGroup::new_attached(unsafe { &mut *data })
     }
 }
 
-// Persistent marker.
-
-pub trait BasePersistentLayerList: BaseLayerList {}
-
-// Transient interface.
-
-pub trait BaseTransientLayerList: BaseLayerList {
-    fn transient_ptr(&mut self) -> *mut DP_TransientLayerList;
-
-    fn leak_transient(mut self) -> *mut DP_TransientLayerList
-    where
-        Self: Sized,
-    {
-        let data = self.transient_ptr();
-        mem::forget(self);
-        data
-    }
-
-    fn set_at_inc<T>(&mut self, lle: &AttachedLayerListEntry<T>, index: c_int) {
-        unsafe {
-            DP_transient_layer_list_set_inc(self.transient_ptr(), lle.persistent_ptr(), index);
-        }
-    }
-
-    fn set_transient_group_at_noinc(&mut self, tlg: TransientLayerGroup, index: c_int) {
-        unsafe {
-            DP_transient_layer_list_set_transient_group_noinc(
-                self.transient_ptr(),
-                tlg.leak_transient(),
-                index,
-            );
-        }
-    }
-}
-
-// Attached persistent type, does not affect refcount.
-
-pub struct AttachedLayerList<'a, T: ?Sized> {
+pub struct LayerList {
     data: *mut DP_LayerList,
-    phantom: PhantomData<&'a T>,
 }
 
-impl<'a, T: ?Sized> AttachedLayerList<'a, T> {
-    pub(super) fn new(data: *mut DP_LayerList) -> Self {
-        debug_assert!(!data.is_null());
-        Self {
-            data,
-            phantom: PhantomData,
-        }
+pub type AttachedLayerList<'a, P> = Attached<'a, LayerList, P>;
+pub type DetachedLayerList = Detached<DP_LayerList, LayerList>;
+
+impl LayerList {
+    pub fn new_attached<P>(data: &mut DP_LayerList) -> AttachedLayerList<P> {
+        Attached::new(Self { data })
     }
 }
 
-impl<'a, T: ?Sized> BaseLayerList for AttachedLayerList<'a, T> {
+impl BaseLayerList for LayerList {
     fn persistent_ptr(&self) -> *mut DP_LayerList {
         self.data
     }
 }
 
-impl<'a, T: ?Sized> BasePersistentLayerList for AttachedLayerList<'a, T> {}
+impl CArc<DP_LayerList> for LayerList {
+    unsafe fn incref(&mut self) {
+        DP_layer_list_incref(self.data);
+    }
 
-// Free transient type, affects refcount.
+    unsafe fn decref(&mut self) {
+        DP_layer_list_decref(self.data);
+    }
+
+    fn as_mut_ptr(&mut self) -> *mut DP_LayerList {
+        self.data
+    }
+}
 
 pub struct TransientLayerList {
     data: *mut DP_TransientLayerList,
 }
 
+pub type AttachedTransientLayerList<'a, P> = Attached<'a, TransientLayerList, P>;
+pub type DetachedTransientLayerList = Detached<DP_TransientLayerList, TransientLayerList>;
+
 impl TransientLayerList {
-    pub fn new_init(reserve: c_int) -> Self {
+    pub fn new_init(reserve: c_int) -> DetachedTransientLayerList {
         let data = unsafe { DP_transient_layer_list_new_init(reserve) };
-        Self { data }
+        Detached::new_noinc(Self { data })
+    }
+
+    pub fn set_at_inc<T>(&mut self, lle: &AttachedLayerListEntry<T>, index: c_int) {
+        unsafe {
+            DP_transient_layer_list_set_inc(self.data, lle.persistent_ptr(), index);
+        }
+    }
+
+    pub fn set_transient_group_at_noinc(&mut self, tlg: DetachedTransientLayerGroup, index: c_int) {
+        unsafe {
+            DP_transient_layer_list_set_transient_group_noinc(self.data, tlg.leak(), index);
+        }
     }
 }
 
@@ -147,52 +136,16 @@ impl BaseLayerList for TransientLayerList {
     }
 }
 
-impl BaseTransientLayerList for TransientLayerList {
-    fn transient_ptr(&mut self) -> *mut DP_TransientLayerList {
-        self.data
+impl CArc<DP_TransientLayerList> for TransientLayerList {
+    unsafe fn incref(&mut self) {
+        DP_transient_layer_list_incref(self.data);
     }
-}
 
-impl Drop for TransientLayerList {
-    fn drop(&mut self) {
-        unsafe { DP_transient_layer_list_decref(self.data) }
+    unsafe fn decref(&mut self) {
+        DP_transient_layer_list_decref(self.data);
     }
-}
 
-// Base entry interface.
-
-pub trait BaseLayerListEntry {
-    fn persistent_ptr(&self) -> *mut DP_LayerListEntry;
-
-    fn leak_persistent(self) -> *mut DP_LayerListEntry
-    where
-        Self: Sized,
-    {
-        let data = self.persistent_ptr();
-        mem::forget(self);
-        data
-    }
-}
-
-// Attached entry type, does not affect refcount.
-
-pub struct AttachedLayerListEntry<'a, T> {
-    data: *mut DP_LayerListEntry,
-    phantom: PhantomData<&'a T>,
-}
-
-impl<'a, T> AttachedLayerListEntry<'a, T> {
-    fn new(data: *mut DP_LayerListEntry, _parent: &T) -> Self {
-        debug_assert!(!data.is_null());
-        Self {
-            data,
-            phantom: PhantomData,
-        }
-    }
-}
-
-impl<'a, T> BaseLayerListEntry for AttachedLayerListEntry<'a, T> {
-    fn persistent_ptr(&self) -> *mut DP_LayerListEntry {
+    fn as_mut_ptr(&mut self) -> *mut DP_TransientLayerList {
         self.data
     }
 }

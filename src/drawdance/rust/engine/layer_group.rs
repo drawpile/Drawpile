@@ -1,26 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+use super::{Attached, AttachedLayerList, CArc, Detached, DetachedTransientLayerList, LayerList};
 use crate::{
-    DP_LayerGroup, DP_TransientLayerGroup, DP_layer_group_children_noinc, DP_layer_group_transient,
-    DP_transient_layer_group_decref,
+    DP_LayerGroup, DP_TransientLayerGroup, DP_layer_group_children_noinc, DP_layer_group_decref,
+    DP_layer_group_incref, DP_layer_group_transient, DP_transient_layer_group_decref,
+    DP_transient_layer_group_incref,
     DP_transient_layer_group_new_init_with_transient_children_noinc,
 };
-use std::{ffi::c_int, marker::PhantomData, mem};
-
-use super::{AttachedLayerList, BaseTransientLayerList, TransientLayerList};
-
-// Base interface.
+use std::ffi::c_int;
 
 pub trait BaseLayerGroup {
     fn persistent_ptr(&self) -> *mut DP_LayerGroup;
-
-    fn leak_persistent(self) -> *mut DP_LayerGroup
-    where
-        Self: Sized,
-    {
-        let data = self.persistent_ptr();
-        mem::forget(self);
-        data
-    }
 
     fn transient(&self) -> bool {
         unsafe { DP_layer_group_transient(self.persistent_ptr()) }
@@ -31,74 +20,64 @@ pub trait BaseLayerGroup {
         Self: Sized,
     {
         let data = unsafe { DP_layer_group_children_noinc(self.persistent_ptr()) };
-        AttachedLayerList::new(data)
+        LayerList::new_attached(unsafe { &mut *data })
     }
 }
 
-// Persistent marker.
-
-pub trait BasePersistentLayerGroup: BaseLayerGroup {}
-
-// Transient interface.
-
-pub trait BaseTransientLayerGroup: BaseLayerGroup {
-    fn transient_ptr(&mut self) -> *mut DP_TransientLayerGroup;
-
-    fn leak_transient(mut self) -> *mut DP_TransientLayerGroup
-    where
-        Self: Sized,
-    {
-        let data = self.transient_ptr();
-        mem::forget(self);
-        data
-    }
-}
-
-// Attached persistent type, does not affect refcount.
-
-pub struct AttachedLayerGroup<'a, T: ?Sized> {
+pub struct LayerGroup {
     data: *mut DP_LayerGroup,
-    phantom: PhantomData<&'a T>,
 }
 
-impl<'a, T: ?Sized> AttachedLayerGroup<'a, T> {
-    pub(super) fn new(data: *mut DP_LayerGroup) -> Self {
-        debug_assert!(!data.is_null());
-        Self {
-            data,
-            phantom: PhantomData,
-        }
+pub type AttachedLayerGroup<'a, P> = Attached<'a, LayerGroup, P>;
+pub type DetachedLayerGroup = Detached<DP_LayerGroup, LayerGroup>;
+
+impl LayerGroup {
+    pub fn new_attached<P>(data: &mut DP_LayerGroup) -> AttachedLayerGroup<P> {
+        Attached::new(Self { data })
     }
 }
 
-impl<'a, T: ?Sized> BaseLayerGroup for AttachedLayerGroup<'a, T> {
+impl BaseLayerGroup for LayerGroup {
     fn persistent_ptr(&self) -> *mut DP_LayerGroup {
         self.data
     }
 }
 
-impl<'a, T: ?Sized> BasePersistentLayerGroup for AttachedLayerGroup<'a, T> {}
+impl CArc<DP_LayerGroup> for LayerGroup {
+    unsafe fn incref(&mut self) {
+        DP_layer_group_incref(self.data);
+    }
 
-// Free transient type, affects refcount.
+    unsafe fn decref(&mut self) {
+        DP_layer_group_decref(self.data);
+    }
+
+    fn as_mut_ptr(&mut self) -> *mut DP_LayerGroup {
+        self.data
+    }
+}
 
 pub struct TransientLayerGroup {
     data: *mut DP_TransientLayerGroup,
 }
 
+pub type AttachedTransientLayerGroup<'a, P> = Attached<'a, TransientLayerGroup, P>;
+pub type DetachedTransientLayerGroup = Detached<DP_TransientLayerGroup, TransientLayerGroup>;
+
 impl TransientLayerGroup {
     pub fn new_init_with_transient_children_noinc(
         width: c_int,
         height: c_int,
-        tll: TransientLayerList,
-    ) -> Self {
+        tll: DetachedTransientLayerList,
+    ) -> DetachedTransientLayerGroup {
         let data = unsafe {
             DP_transient_layer_group_new_init_with_transient_children_noinc(
                 width,
                 height,
-                tll.leak_transient(),
+                tll.leak(),
             )
         };
-        TransientLayerGroup { data }
+        Detached::new_noinc(Self { data })
     }
 }
 
@@ -108,14 +87,16 @@ impl BaseLayerGroup for TransientLayerGroup {
     }
 }
 
-impl BaseTransientLayerGroup for TransientLayerGroup {
-    fn transient_ptr(&mut self) -> *mut DP_TransientLayerGroup {
-        self.data
+impl CArc<DP_TransientLayerGroup> for TransientLayerGroup {
+    unsafe fn incref(&mut self) {
+        DP_transient_layer_group_incref(self.data);
     }
-}
 
-impl Drop for TransientLayerGroup {
-    fn drop(&mut self) {
-        unsafe { DP_transient_layer_group_decref(self.data) }
+    unsafe fn decref(&mut self) {
+        DP_transient_layer_group_decref(self.data);
+    }
+
+    fn as_mut_ptr(&mut self) -> *mut DP_LayerGroup {
+        self.data
     }
 }

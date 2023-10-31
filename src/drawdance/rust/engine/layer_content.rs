@@ -1,25 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-use super::{BaseTile, UPixels8};
+use super::{Attached, BaseTile, CArc, Detached, UPixels8};
 use crate::{
-    DP_LayerContent, DP_TransientLayerContent, DP_layer_content_to_upixels8,
-    DP_layer_content_to_upixels8_cropped, DP_layer_content_transient,
-    DP_transient_layer_content_decref, DP_transient_layer_content_new_init,
+    DP_LayerContent, DP_TransientLayerContent, DP_layer_content_decref, DP_layer_content_incref,
+    DP_layer_content_to_upixels8, DP_layer_content_to_upixels8_cropped, DP_layer_content_transient,
+    DP_transient_layer_content_decref, DP_transient_layer_content_incref,
+    DP_transient_layer_content_new_init,
 };
-use std::{ffi::c_int, marker::PhantomData, mem, ptr::null_mut};
-
-// Base interface.
+use std::{ffi::c_int, ptr::null_mut};
 
 pub trait BaseLayerContent {
     fn persistent_ptr(&self) -> *mut DP_LayerContent;
-
-    fn leak_persistent(self) -> *mut DP_LayerContent
-    where
-        Self: Sized,
-    {
-        let data = self.persistent_ptr();
-        mem::forget(self);
-        data
-    }
 
     fn transient(&self) -> bool {
         unsafe { DP_layer_content_transient(self.persistent_ptr()) }
@@ -55,61 +45,55 @@ pub trait BaseLayerContent {
     }
 }
 
-// Persistent marker.
-
-pub trait BasePersistentLayerContent: BaseLayerContent {}
-
-// Attached persistent type, does not affect refcount.
-
-pub struct AttachedLayerContent<'a, T: ?Sized> {
+pub struct LayerContent {
     data: *mut DP_LayerContent,
-    phantom: PhantomData<&'a T>,
 }
 
-impl<'a, T: ?Sized> AttachedLayerContent<'a, T> {
-    pub(super) fn new(data: *mut DP_LayerContent) -> Self {
-        debug_assert!(!data.is_null());
-        Self {
-            data,
-            phantom: PhantomData,
-        }
+pub type AttachedLayerContent<'a, P> = Attached<'a, LayerContent, P>;
+pub type DetachedLayerContent = Detached<DP_LayerContent, LayerContent>;
+
+impl LayerContent {
+    pub fn new_attached<P>(data: &mut DP_LayerContent) -> AttachedLayerContent<P> {
+        Attached::new(Self { data })
     }
 }
 
-impl<'a, T: ?Sized> BaseLayerContent for AttachedLayerContent<'a, T> {
+impl BaseLayerContent for LayerContent {
     fn persistent_ptr(&self) -> *mut DP_LayerContent {
         self.data
     }
 }
 
-impl<'a, T: ?Sized> BasePersistentLayerContent for AttachedLayerContent<'a, T> {}
+impl CArc<DP_LayerContent> for LayerContent {
+    unsafe fn incref(&mut self) {
+        DP_layer_content_incref(self.data);
+    }
 
-// Transient interface.
+    unsafe fn decref(&mut self) {
+        DP_layer_content_decref(self.data);
+    }
 
-pub trait BaseTransientLayerContent: BaseLayerContent {
-    fn transient_ptr(&mut self) -> *mut DP_TransientLayerContent;
-
-    fn leak_transient(mut self) -> *mut DP_TransientLayerContent
-    where
-        Self: Sized,
-    {
-        let data = self.transient_ptr();
-        mem::forget(self);
-        data
+    fn as_mut_ptr(&mut self) -> *mut DP_LayerContent {
+        self.data
     }
 }
-
-// Free transient type, affects refcount.
 
 pub struct TransientLayerContent {
     data: *mut DP_TransientLayerContent,
 }
 
+pub type AttachedTransientLayerContent<'a, P> = Attached<'a, TransientLayerContent, P>;
+pub type DetachedTransientLayerContent = Detached<DP_TransientLayerContent, TransientLayerContent>;
+
 impl TransientLayerContent {
-    pub fn new_init<T: BaseTile>(width: c_int, height: c_int, opt_tile: Option<&T>) -> Self {
+    pub fn new_init<T: BaseTile>(
+        width: c_int,
+        height: c_int,
+        opt_tile: Option<&T>,
+    ) -> DetachedTransientLayerContent {
         let t = opt_tile.map_or(null_mut(), BaseTile::persistent_ptr);
         let data = unsafe { DP_transient_layer_content_new_init(width, height, t) };
-        TransientLayerContent { data }
+        Detached::new_noinc(Self { data })
     }
 }
 
@@ -119,14 +103,16 @@ impl BaseLayerContent for TransientLayerContent {
     }
 }
 
-impl BaseTransientLayerContent for TransientLayerContent {
-    fn transient_ptr(&mut self) -> *mut DP_TransientLayerContent {
-        self.data
+impl CArc<DP_TransientLayerContent> for TransientLayerContent {
+    unsafe fn incref(&mut self) {
+        DP_transient_layer_content_incref(self.data);
     }
-}
 
-impl Drop for TransientLayerContent {
-    fn drop(&mut self) {
-        unsafe { DP_transient_layer_content_decref(self.data) }
+    unsafe fn decref(&mut self) {
+        DP_transient_layer_content_decref(self.data);
+    }
+
+    fn as_mut_ptr(&mut self) -> *mut DP_TransientLayerContent {
+        self.data
     }
 }

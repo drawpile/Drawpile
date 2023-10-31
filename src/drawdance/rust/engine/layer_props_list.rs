@@ -1,25 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-use super::{AttachedLayerProps, BaseTransientLayerProps, TransientLayerProps};
+use super::{
+    Attached, AttachedLayerProps, CArc, Detached, DetachedTransientLayerProps, LayerProps,
+};
 use crate::{
     DP_LayerPropsList, DP_TransientLayerPropsList, DP_layer_props_list_at_noinc,
-    DP_layer_props_list_count, DP_layer_props_list_transient, DP_transient_layer_props_list_decref,
-    DP_transient_layer_props_list_new_init, DP_transient_layer_props_list_set_transient_noinc,
+    DP_layer_props_list_count, DP_layer_props_list_decref, DP_layer_props_list_incref,
+    DP_layer_props_list_transient, DP_transient_layer_props_list_decref,
+    DP_transient_layer_props_list_incref, DP_transient_layer_props_list_new_init,
+    DP_transient_layer_props_list_set_transient_noinc,
 };
-use std::{ffi::c_int, marker::PhantomData, mem};
-
-// Base interface.
+use std::ffi::c_int;
 
 pub trait BaseLayerPropsList {
     fn persistent_ptr(&self) -> *mut DP_LayerPropsList;
-
-    fn leak_persistent(self) -> *mut DP_LayerPropsList
-    where
-        Self: Sized,
-    {
-        let data = self.persistent_ptr();
-        mem::forget(self);
-        data
-    }
 
     fn transient(&self) -> bool {
         unsafe { DP_layer_props_list_transient(self.persistent_ptr()) }
@@ -34,12 +27,7 @@ pub trait BaseLayerPropsList {
         Self: Sized,
     {
         let data = unsafe { DP_layer_props_list_at_noinc(self.persistent_ptr(), index) };
-        AttachedLayerProps::new(data)
-    }
-
-    fn dyn_at(&self, index: c_int) -> AttachedLayerProps<dyn BaseLayerPropsList> {
-        let data = unsafe { DP_layer_props_list_at_noinc(self.persistent_ptr(), index) };
-        AttachedLayerProps::new(data)
+        LayerProps::new_attached(unsafe { &mut *data })
     }
 
     fn iter(&self) -> LayerPropsListIterator<Self>
@@ -50,70 +38,57 @@ pub trait BaseLayerPropsList {
     }
 }
 
-// Persistent marker.
-
-pub trait BasePersistentLayerPropsList: BaseLayerPropsList {}
-
-// Transient interface.
-
-pub trait BaseTransientLayerPropsList: BaseLayerPropsList {
-    fn transient_ptr(&mut self) -> *mut DP_TransientLayerPropsList;
-
-    fn leak_transient(mut self) -> *mut DP_TransientLayerPropsList
-    where
-        Self: Sized,
-    {
-        let data = self.transient_ptr();
-        mem::forget(self);
-        data
-    }
-
-    fn set_transient_at_noinc(&mut self, tlp: TransientLayerProps, index: c_int) {
-        unsafe {
-            DP_transient_layer_props_list_set_transient_noinc(
-                self.transient_ptr(),
-                tlp.leak_transient(),
-                index,
-            );
-        }
-    }
-}
-
-// Attached persistent type, does not affect refcount.
-
-pub struct AttachedLayerPropsList<'a, T: ?Sized> {
+pub struct LayerPropsList {
     data: *mut DP_LayerPropsList,
-    phantom: PhantomData<&'a T>,
 }
 
-impl<'a, T: ?Sized> AttachedLayerPropsList<'a, T> {
-    pub(super) fn new(data: *mut DP_LayerPropsList) -> Self {
-        debug_assert!(!data.is_null());
-        Self {
-            data,
-            phantom: PhantomData,
-        }
+pub type AttachedLayerPropsList<'a, P> = Attached<'a, LayerPropsList, P>;
+pub type DetachedLayerPropsList = Detached<DP_LayerPropsList, LayerPropsList>;
+
+impl LayerPropsList {
+    pub fn new_attached<P>(data: &mut DP_LayerPropsList) -> AttachedLayerPropsList<P> {
+        Attached::new(Self { data })
     }
 }
 
-impl<'a, T: ?Sized> BaseLayerPropsList for AttachedLayerPropsList<'a, T> {
+impl BaseLayerPropsList for LayerPropsList {
     fn persistent_ptr(&self) -> *mut DP_LayerPropsList {
         self.data
     }
 }
 
-impl<'a, T: ?Sized> BasePersistentLayerPropsList for AttachedLayerPropsList<'a, T> {}
+impl CArc<DP_LayerPropsList> for LayerPropsList {
+    unsafe fn incref(&mut self) {
+        DP_layer_props_list_incref(self.data);
+    }
 
-// Free transient type, affects refcount.
+    unsafe fn decref(&mut self) {
+        DP_layer_props_list_decref(self.data);
+    }
+
+    fn as_mut_ptr(&mut self) -> *mut DP_LayerPropsList {
+        self.data
+    }
+}
 
 pub struct TransientLayerPropsList {
     data: *mut DP_TransientLayerPropsList,
 }
 
+pub type AttachedTransientLayerPropsList<'a, P> = Attached<'a, TransientLayerPropsList, P>;
+pub type DetachedTransientLayerPropsList =
+    Detached<DP_TransientLayerPropsList, TransientLayerPropsList>;
+
 impl TransientLayerPropsList {
-    pub fn new_init(reserve: c_int) -> Self {
+    pub fn new_init(reserve: c_int) -> DetachedTransientLayerPropsList {
         let data = unsafe { DP_transient_layer_props_list_new_init(reserve) };
-        Self { data }
+        Detached::new_noinc(Self { data })
+    }
+
+    pub fn set_transient_at_noinc(&mut self, tlp: DetachedTransientLayerProps, index: c_int) {
+        unsafe {
+            DP_transient_layer_props_list_set_transient_noinc(self.data, tlp.leak(), index);
+        }
     }
 }
 
@@ -123,19 +98,19 @@ impl BaseLayerPropsList for TransientLayerPropsList {
     }
 }
 
-impl BaseTransientLayerPropsList for TransientLayerPropsList {
-    fn transient_ptr(&mut self) -> *mut DP_TransientLayerPropsList {
+impl CArc<DP_TransientLayerPropsList> for TransientLayerPropsList {
+    unsafe fn incref(&mut self) {
+        DP_transient_layer_props_list_incref(self.data);
+    }
+
+    unsafe fn decref(&mut self) {
+        DP_transient_layer_props_list_decref(self.data);
+    }
+
+    fn as_mut_ptr(&mut self) -> *mut DP_TransientLayerPropsList {
         self.data
     }
 }
-
-impl Drop for TransientLayerPropsList {
-    fn drop(&mut self) {
-        unsafe { DP_transient_layer_props_list_decref(self.data) }
-    }
-}
-
-// Persistent iterator.
 
 pub struct LayerPropsListIterator<'a, T: BaseLayerPropsList> {
     parent: &'a T,

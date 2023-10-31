@@ -1,58 +1,31 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 use crate::{
     DP_KeyFrame, DP_TransientKeyFrame, DP_key_frame_transient, DP_transient_key_frame_decref,
-    DP_transient_key_frame_new_init,
+    DP_transient_key_frame_incref, DP_transient_key_frame_new_init,
 };
-use std::{ffi::c_int, mem};
+use std::ffi::c_int;
 
-// Base interface.
+use super::{Attached, CArc, Detached};
 
 pub trait BaseKeyFrame {
     fn persistent_ptr(&self) -> *mut DP_KeyFrame;
-
-    fn leak_persistent(self) -> *mut DP_KeyFrame
-    where
-        Self: Sized,
-    {
-        let data = self.persistent_ptr();
-        mem::forget(self);
-        data
-    }
 
     fn transient(&self) -> bool {
         unsafe { DP_key_frame_transient(self.persistent_ptr()) }
     }
 }
 
-// Persistent marker.
-
-pub trait BasePersistentKeyFrame: BaseKeyFrame {}
-
-// Transient interface.
-
-pub trait BaseTransientKeyFrame: BaseKeyFrame {
-    fn transient_ptr(&mut self) -> *mut DP_TransientKeyFrame;
-
-    fn leak_transient(mut self) -> *mut DP_TransientKeyFrame
-    where
-        Self: Sized,
-    {
-        let data = self.transient_ptr();
-        mem::forget(self);
-        data
-    }
-}
-
-// Free transient type, affects refcount.
-
 pub struct TransientKeyFrame {
     data: *mut DP_TransientKeyFrame,
 }
 
+pub type AttachedTransientKeyFrame<'a, P> = Attached<'a, TransientKeyFrame, P>;
+pub type DetachedTransientKeyFrame = Detached<DP_TransientKeyFrame, TransientKeyFrame>;
+
 impl TransientKeyFrame {
-    pub fn new_init(layer_id: c_int, reserve: c_int) -> Self {
+    pub fn new_init(layer_id: c_int, reserve: c_int) -> DetachedTransientKeyFrame {
         let data = unsafe { DP_transient_key_frame_new_init(layer_id, reserve) };
-        TransientKeyFrame { data }
+        Detached::new_noinc(TransientKeyFrame { data })
     }
 }
 
@@ -62,14 +35,16 @@ impl BaseKeyFrame for TransientKeyFrame {
     }
 }
 
-impl BaseTransientKeyFrame for TransientKeyFrame {
-    fn transient_ptr(&mut self) -> *mut DP_TransientKeyFrame {
-        self.data
+impl CArc<DP_TransientKeyFrame> for TransientKeyFrame {
+    unsafe fn incref(&mut self) {
+        DP_transient_key_frame_incref(self.data);
     }
-}
 
-impl Drop for TransientKeyFrame {
-    fn drop(&mut self) {
-        unsafe { DP_transient_key_frame_decref(self.data) }
+    unsafe fn decref(&mut self) {
+        DP_transient_key_frame_decref(self.data);
+    }
+
+    fn as_mut_ptr(&mut self) -> *mut DP_TransientKeyFrame {
+        self.data
     }
 }

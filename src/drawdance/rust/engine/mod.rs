@@ -18,39 +18,52 @@ mod recorder;
 mod tile;
 mod timeline;
 mod track;
+mod types;
 
 pub use acl::AclState;
 pub use canvas_state::{
-    AttachedCanvasState, BaseCanvasState, BaseTransientCanvasState, CanvasState,
-    TransientCanvasState,
+    AttachedCanvasState, AttachedTransientCanvasState, BaseCanvasState, CanvasState,
+    DetachedCanvasState, DetachedTransientCanvasState, TransientCanvasState,
 };
 pub use document_metadata::{
     AttachedDocumentMetadata, AttachedTransientDocumentMetadata, BaseDocumentMetadata,
-    BaseTransientDocumentMetadata,
+    DetachedDocumentMetadata, DetachedTransientDocumentMetadata, DocumentMetadata,
+    TransientDocumentMetadata,
 };
 pub use draw_context::DrawContext;
 pub use image::Image;
-pub use key_frame::{BaseKeyFrame, BaseTransientKeyFrame, TransientKeyFrame};
+pub use key_frame::{
+    AttachedTransientKeyFrame, BaseKeyFrame, DetachedTransientKeyFrame, TransientKeyFrame,
+};
 pub use layer_content::{
-    AttachedLayerContent, BaseLayerContent, BaseTransientLayerContent, TransientLayerContent,
+    AttachedLayerContent, AttachedTransientLayerContent, BaseLayerContent, DetachedLayerContent,
+    DetachedTransientLayerContent, LayerContent, TransientLayerContent,
 };
 pub use layer_group::{
-    AttachedLayerGroup, BaseLayerGroup, BaseTransientLayerGroup, TransientLayerGroup,
+    AttachedLayerGroup, AttachedTransientLayerGroup, BaseLayerGroup, DetachedLayerGroup,
+    DetachedTransientLayerGroup, LayerGroup, TransientLayerGroup,
 };
 pub use layer_list::{
-    AttachedLayerList, BaseLayerList, BaseTransientLayerList, TransientLayerList,
+    AttachedLayerList, AttachedLayerListEntry, AttachedTransientLayerList, BaseLayerList,
+    BaseLayerListEntry, DetachedLayerList, DetachedTransientLayerList, LayerList, LayerListEntry,
+    TransientLayerList,
 };
 pub use layer_props::{
-    AttachedLayerProps, BaseLayerProps, BaseTransientLayerProps, TransientLayerProps,
+    AttachedLayerProps, AttachedTransientLayerProps, BaseLayerProps, DetachedLayerProps,
+    DetachedTransientLayerProps, LayerProps, TransientLayerProps,
 };
 pub use layer_props_list::{
-    AttachedLayerPropsList, BaseLayerPropsList, BaseTransientLayerPropsList,
+    AttachedLayerPropsList, AttachedTransientLayerPropsList, BaseLayerPropsList,
+    DetachedLayerPropsList, DetachedTransientLayerPropsList, LayerPropsList,
     TransientLayerPropsList,
 };
 pub use paint_engine::PaintEngine;
 pub use pixels::UPixels8;
 pub use player::Player;
 pub use recorder::Recorder;
-pub use tile::{AttachedTile, BaseTile};
-pub use timeline::{BaseTimeline, BaseTransientTimeline, TransientTimeline};
-pub use track::{BaseTrack, BaseTransientTrack, TransientTrack};
+pub use tile::{AttachedTile, BaseTile, DetachedTile, Tile};
+pub use timeline::{
+    AttachedTransientTimeline, BaseTimeline, DetachedTransientTimeline, TransientTimeline,
+};
+pub use track::{AttachedTransientTrack, BaseTrack, DetachedTransientTrack, TransientTrack};
+pub use types::{Attached, CArc, Detached, Persister};

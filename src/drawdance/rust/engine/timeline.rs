@@ -1,69 +1,37 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-use super::{BaseTransientTrack, TransientTrack};
+use super::{Attached, CArc, Detached, DetachedTransientTrack};
 use crate::{
     DP_Timeline, DP_TransientTimeline, DP_timeline_transient, DP_transient_timeline_decref,
-    DP_transient_timeline_new_init, DP_transient_timeline_set_transient_noinc,
+    DP_transient_timeline_incref, DP_transient_timeline_new_init,
+    DP_transient_timeline_set_transient_noinc,
 };
-use std::{ffi::c_int, mem};
-
-// Base interface.
+use std::ffi::c_int;
 
 pub trait BaseTimeline {
     fn persistent_ptr(&self) -> *mut DP_Timeline;
-
-    fn leak_persistent(self) -> *mut DP_Timeline
-    where
-        Self: Sized,
-    {
-        let data = self.persistent_ptr();
-        mem::forget(self);
-        data
-    }
 
     fn transient(&self) -> bool {
         unsafe { DP_timeline_transient(self.persistent_ptr()) }
     }
 }
 
-// Persistent marker.
-
-pub trait BasePersistentTimeline: BaseTimeline {}
-
-// Transient interface.
-
-pub trait BaseTransientTimeline: BaseTimeline {
-    fn transient_ptr(&mut self) -> *mut DP_TransientTimeline;
-
-    fn leak_transient(mut self) -> *mut DP_TransientTimeline
-    where
-        Self: Sized,
-    {
-        let data = self.transient_ptr();
-        mem::forget(self);
-        data
-    }
-
-    fn set_transient_at_noinc(&mut self, tt: TransientTrack, index: c_int) {
-        unsafe {
-            DP_transient_timeline_set_transient_noinc(
-                self.transient_ptr(),
-                tt.leak_transient(),
-                index,
-            );
-        }
-    }
-}
-
-// Free transient type, affects refcount.
-
 pub struct TransientTimeline {
     data: *mut DP_TransientTimeline,
 }
 
+pub type AttachedTransientTimeline<'a, P> = Attached<'a, TransientTimeline, P>;
+pub type DetachedTransientTimeline = Detached<DP_TransientTimeline, TransientTimeline>;
+
 impl TransientTimeline {
-    pub fn new(reserve: c_int) -> Self {
+    pub fn new_init(reserve: c_int) -> DetachedTransientTimeline {
         let data = unsafe { DP_transient_timeline_new_init(reserve) };
-        TransientTimeline { data }
+        Detached::new_noinc(Self { data })
+    }
+
+    pub fn set_transient_at_noinc(&mut self, tt: DetachedTransientTrack, index: c_int) {
+        unsafe {
+            DP_transient_timeline_set_transient_noinc(self.data, tt.leak(), index);
+        }
     }
 }
 
@@ -73,14 +41,16 @@ impl BaseTimeline for TransientTimeline {
     }
 }
 
-impl BaseTransientTimeline for TransientTimeline {
-    fn transient_ptr(&mut self) -> *mut DP_TransientTimeline {
-        self.data
+impl CArc<DP_TransientTimeline> for TransientTimeline {
+    unsafe fn incref(&mut self) {
+        DP_transient_timeline_incref(self.data);
     }
-}
 
-impl Drop for TransientTimeline {
-    fn drop(&mut self) {
-        unsafe { DP_transient_timeline_decref(self.data) }
+    unsafe fn decref(&mut self) {
+        DP_transient_timeline_decref(self.data);
+    }
+
+    fn as_mut_ptr(&mut self) -> *mut DP_TransientTimeline {
+        self.data
     }
 }
