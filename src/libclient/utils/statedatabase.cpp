@@ -84,4 +84,16 @@ bool StateDatabase::putWith(
 	return utils::db::exec(qry, sql, {key, value, value});
 }
 
+bool StateDatabase::remove(const QString &key)
+{
+	QSqlQuery qry = query();
+	return removeWith(qry, key);
+}
+
+bool StateDatabase::removeWith(QSqlQuery &qry, const QString &key)
+{
+	QString sql = QStringLiteral("delete from state where key = ?");
+	return utils::db::exec(qry, sql, {key}) && qry.numRowsAffected() > 0;
+}
+
 }

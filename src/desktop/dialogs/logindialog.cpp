@@ -4,12 +4,14 @@
 #include "desktop/dialogs/avatarimport.h"
 #include "desktop/dialogs/certificateview.h"
 #include "desktop/main.h"
+#include "desktop/utils/accountlistmodel.h"
 #include "desktop/utils/widgetutils.h"
 #include "libclient/net/loginsessions.h"
 #include "libclient/parentalcontrols/parentalcontrols.h"
 #include "libclient/utils/avatarlistmodel.h"
 #include "libclient/utils/html.h"
 #include "libclient/utils/sessionfilterproxymodel.h"
+#include "libclient/utils/statedatabase.h"
 #include "libclient/utils/usernamevalidator.h"
 #include "ui_logindialog.h"
 #include <QAction>
@@ -20,18 +22,12 @@
 #include <QPushButton>
 #include <QStyle>
 #include <QTimer>
-#ifdef HAVE_QTKEYCHAIN
-#	if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-#		include <qt6keychain/keychain.h>
-#	else
-#		include <qt5keychain/keychain.h>
-#	endif
-#endif
 
 namespace dialogs {
 
 enum class Mode {
 	Loading,		 // used whenever we're waiting for the server
+	RecentAccounts,	 // ask the user to pick a recent account
 	LoginMethod,	 // ask the user to pick a login method
 	GuestLogin,		 // log in with guest username
 	AuthLogin,		 // log in with internal account
@@ -50,6 +46,7 @@ struct LoginDialog::Private {
 
 	QPointer<net::LoginHandler> loginHandler;
 	AvatarListModel *avatars;
+	AccountListModel *accounts;
 	SessionFilterProxyModel *sessions;
 	Ui_LoginDialog *ui;
 
@@ -59,12 +56,17 @@ struct LoginDialog::Private {
 	QPushButton *yesButton;
 	QPushButton *noButton;
 	QString originalNoButtonText;
+	QString avatarFilename;
 
 	bool guestsOnly = false;
 	QUrl loginExtAuthUrl;
 	QUrl extauthurl;
 	QSslCertificate oldCert, newCert;
 	bool autoJoin;
+	int readPasswordJobId = 0;
+	int nextReadPasswordJobId = 1;
+	bool wasRecentAccount = false;
+	bool logInAfterPasswordRead = true;
 
 	QMetaObject::Connection loginDestructConnection;
 
@@ -85,9 +87,8 @@ struct LoginDialog::Private {
 		avatars->loadAvatars(true, true);
 		ui->avatarList->setModel(avatars);
 
-#ifndef HAVE_QTKEYCHAIN
-		ui->rememberPassword->setEnabled(false);
-#endif
+		accounts = new AccountListModel(dpApp().state(), avatars, dlg);
+		ui->recentAccountCombo->setModel(accounts);
 
 		ui->usernameIcon->setText(QString());
 		ui->usernameIcon->setPixmap(QIcon::fromTheme("im-user").pixmap(22, 22));
@@ -115,9 +116,6 @@ struct LoginDialog::Private {
 		settings.bindFilterNsfm(ui->showNsfw);
 		settings.bindFilterNsfm(
 			sessions, &SessionFilterProxyModel::setShowNsfw);
-
-		settings.bindLastUsername(ui->username);
-		revertAvatar(settings);
 
 		if(settings.parentalControlsLocked().isEmpty()) {
 			settings.bindShowNsfmWarningOnJoin(ui->nsfmConfirmAgainBox);
@@ -157,18 +155,95 @@ struct LoginDialog::Private {
 
 	~Private() { delete ui; }
 
-	void revertAvatar(desktop::settings::Settings &settings)
-	{
-		QModelIndex lastAvatarIndex = avatars->getAvatar(settings.lastAvatar());
-		ui->avatarList->setCurrentIndex(
-			lastAvatarIndex.isValid() ? lastAvatarIndex.row() : 0);
-	}
-
 	void resetMode(Mode mode);
 	QWidget *setupAuthPage(bool usernameEnabled, bool passwordVisible);
 	void setLoginExplanation(const QString &explanation, bool isError);
 	void setLoginMode(const QString &prompt);
-	void applyRememberedPassword();
+
+	QString
+	buildOldKeychainSecretName(const QString &host, const QString &username)
+	{
+		// Not case-folded, for backward compatibility.
+		QString lowercaseUsername = username.toLower();
+		if(extauthurl.isValid()) {
+			return AccountListModel::buildKeychainSecretName(
+				AccountListModel::Type::ExtAuth, extauthurl.host(),
+				lowercaseUsername);
+		} else {
+			return AccountListModel::buildKeychainSecretName(
+				AccountListModel::Type::Auth, host, lowercaseUsername);
+		}
+	}
+
+	void loadOldPassword(const QString &host, const QString &username)
+	{
+		readPasswordJobId = nextReadPasswordJobId++;
+		logInAfterPasswordRead = true;
+		accounts->readPassword(
+			readPasswordJobId, buildOldKeychainSecretName(host, username));
+	}
+
+	void loadPassword(
+		AccountListModel::Type type, const QString &username, bool logIn)
+	{
+		readPasswordJobId = nextReadPasswordJobId++;
+		logInAfterPasswordRead = logIn;
+		accounts->readAccountPassword(readPasswordJobId, type, username);
+	}
+
+	void restoreOldLogin()
+	{
+		const desktop::settings::Settings &settings = dpApp().settings();
+		ui->username->setText(settings.lastUsername());
+		restoreAvatar(settings.lastAvatar());
+	}
+
+	void saveOldLogin(
+		const QString &host, const QString &username, const QString &password)
+	{
+		desktop::settings::Settings &settings = dpApp().settings();
+		settings.setLastUsername(ui->username->text());
+		settings.setLastAvatar(avatarFilename);
+		if(!password.isEmpty()) {
+			accounts->savePassword(
+				password, buildOldKeychainSecretName(host, username),
+				settings.insecurePasswordStorage());
+		}
+	}
+
+	void restoreGuest()
+	{
+		const utils::StateDatabase &state = dpApp().state();
+		ui->username->setText(state.get(LAST_GUEST_NAME_KEY).toString());
+		restoreAvatar(state.get(LAST_GUEST_AVATAR_KEY).toString());
+	}
+
+	void saveGuest(const QString &username)
+	{
+		utils::StateDatabase &state = dpApp().state();
+		state.put(LAST_GUEST_NAME_KEY, username);
+		if(avatarFilename.isEmpty()) {
+			state.remove(LAST_GUEST_AVATAR_KEY);
+		} else {
+			state.put(LAST_GUEST_AVATAR_KEY, avatarFilename);
+		}
+	}
+
+	void saveAccount(
+		AccountListModel::Type type, const QString &username,
+		const QString &password)
+	{
+		accounts->saveAccount(
+			type, username,
+			ui->rememberPassword->isChecked() ? password : QString(),
+			avatarFilename, dpApp().settings().insecurePasswordStorage());
+	}
+
+	void restoreAvatar(const QString &filename)
+	{
+		QModelIndex idx = avatars->getAvatar(filename);
+		ui->avatarList->setCurrentIndex(idx.isValid() ? idx.row() : 0);
+	}
 };
 
 void LoginDialog::Private::resetMode(Mode newMode)
@@ -179,6 +254,7 @@ void LoginDialog::Private::resetMode(Mode newMode)
 	}
 
 	mode = newMode;
+	readPasswordJobId = 0;
 
 	QWidget *page = nullptr;
 
@@ -193,9 +269,15 @@ void LoginDialog::Private::resetMode(Mode newMode)
 		QString host = loginHandler->url().host();
 		ui->loginPromptLabel->setText(host);
 		ui->authModePromptLabel->setText(host);
+		ui->recentPromptLabel->setText(host);
 		page = ui->loadingPage;
 		break;
 	}
+	case Mode::RecentAccounts:
+		page = ui->recentPage;
+		ui->recentLogInButton->setFocus();
+		okButton->setVisible(false);
+		break;
 	case Mode::LoginMethod:
 		page = ui->authModePage;
 		okButton->setVisible(false);
@@ -252,6 +334,14 @@ void LoginDialog::Private::resetMode(Mode newMode)
 	}
 
 	switch(mode) {
+	case Mode::LoginMethod:
+		if(accounts->isEmpty()) {
+			noButton->setVisible(false);
+		} else {
+			noButton->setText(tr("Back"));
+			noButton->setVisible(true);
+		}
+		break;
 	case Mode::GuestLogin:
 	case Mode::AuthLogin:
 	case Mode::ExtAuthLogin:
@@ -277,11 +367,13 @@ void LoginDialog::Private::resetMode(Mode newMode)
 QWidget *
 LoginDialog::Private::setupAuthPage(bool usernameEnabled, bool passwordVisible)
 {
-	ui->avatarList->setEnabled(true);
 	ui->username->setEnabled(usernameEnabled);
 	ui->password->setVisible(passwordVisible);
 	ui->passwordIcon->setVisible(passwordVisible);
 	ui->badPasswordLabel->setVisible(false);
+	ui->rememberPassword->setChecked(false);
+	ui->rememberPassword->setEnabled(AccountListModel::canSavePasswords(
+		dpApp().settings().insecurePasswordStorage()));
 	ui->rememberPassword->setVisible(passwordVisible);
 	if(passwordVisible &&
 	   (!usernameEnabled || !ui->username->text().isEmpty())) {
@@ -305,25 +397,6 @@ void LoginDialog::Private::setLoginExplanation(
 	ui->authExplanationLabel->setHidden(content.isEmpty());
 	ui->authExplanationLabel->setText(content);
 }
-
-#ifdef HAVE_QTKEYCHAIN
-static const QString KEYCHAIN_NAME = QStringLiteral("Drawpile");
-
-static QString keychainSecretName(
-	const QString &username, const QUrl &extAuthUrl, const QString &server)
-{
-	QString prefix, host;
-	if(extAuthUrl.isValid()) {
-		prefix = "ext:";
-		host = extAuthUrl.host();
-	} else {
-		prefix = "srv:";
-		host = server;
-	}
-
-	return prefix + username.toLower() + "@" + host;
-}
-#endif
 
 
 LoginDialog::LoginDialog(net::LoginHandler *login, QWidget *parent)
@@ -368,6 +441,19 @@ LoginDialog::LoginDialog(net::LoginHandler *login, QWidget *parent)
 	connect(
 		d->noButton, &QPushButton::clicked, this, &LoginDialog::onNoClicked);
 	connect(this, &QDialog::rejected, login, &net::LoginHandler::cancelLogin);
+
+	connect(
+		d->ui->recentLogInButton, &QAbstractButton::clicked, this,
+		&LoginDialog::onRecentLogInClicked);
+	connect(
+		d->ui->recentEditButton, &QAbstractButton::clicked, this,
+		&LoginDialog::onRecentEditClicked);
+	connect(
+		d->ui->recentForgetButton, &QAbstractButton::clicked, this,
+		&LoginDialog::onRecentForgetClicked);
+	connect(
+		d->ui->recentBreakButton, &QAbstractButton::clicked, this,
+		&LoginDialog::onRecentBreakClicked);
 
 	connect(
 		d->ui->methodExtAuthButton, &QAbstractButton::clicked, this,
@@ -437,6 +523,10 @@ LoginDialog::LoginDialog(net::LoginHandler *login, QWidget *parent)
 		login, &net::LoginHandler::serverTitleChanged, this,
 		&LoginDialog::onServerTitleChanged);
 
+	connect(
+		d->accounts, &AccountListModel::passwordReadFinished, this,
+		&LoginDialog::onPasswordReadFinished);
+
 	selectCurrentAvatar();
 }
 
@@ -450,6 +540,7 @@ void LoginDialog::updateOkButtonEnabled()
 	bool enabled = false;
 	switch(d->mode) {
 	case Mode::Loading:
+	case Mode::RecentAccounts:
 	case Mode::LoginMethod:
 	case Mode::Catchup:
 	case Mode::ConfirmNsfm:
@@ -491,26 +582,55 @@ void LoginDialog::updateOkButtonEnabled()
 	d->okButton->setEnabled(enabled);
 }
 
+void LoginDialog::onRecentLogInClicked()
+{
+	selectRecentAccount(true);
+}
+
+void LoginDialog::onRecentEditClicked()
+{
+	selectRecentAccount(false);
+}
+
+void LoginDialog::onRecentForgetClicked()
+{
+	QMessageBox::StandardButton result = QMessageBox::question(
+		this, tr("Remove Account"),
+		tr("Really forget this account? This will only remove it from your "
+		   "recent account list, it won't delete the account."));
+	if(result == QMessageBox::Yes) {
+		d->accounts->deleteAccountAt(d->ui->recentAccountCombo->currentIndex());
+		if(d->accounts->isEmpty()) {
+			onRecentBreakClicked();
+		}
+	}
+}
+
+void LoginDialog::onRecentBreakClicked()
+{
+	d->resetMode(Mode::LoginMethod);
+}
+
 void LoginDialog::onLoginMethodExtAuthClicked()
 {
+	d->wasRecentAccount = false;
 	d->resetMode(Mode::ExtAuthLogin);
 	updateOkButtonEnabled();
-	d->setLoginExplanation(
-		tr("Enter the username and password for your %1 account.")
-			.arg(d->extauthurl.host()),
-		false);
+	setExtAuthLoginExplanation();
 }
 
 void LoginDialog::onLoginMethodAuthClicked()
 {
+	d->wasRecentAccount = false;
 	d->resetMode(Mode::AuthLogin);
 	updateOkButtonEnabled();
-	d->setLoginExplanation(
-		tr("Enter the username and password for your server account."), false);
+	setAuthLoginExplanation();
 }
 
 void LoginDialog::onLoginMethodGuestClicked()
 {
+	d->wasRecentAccount = false;
+	d->restoreGuest();
 	d->resetMode(Mode::GuestLogin);
 	updateOkButtonEnabled();
 	d->setLoginExplanation(tr("Enter the name you want to use."), false);
@@ -518,24 +638,22 @@ void LoginDialog::onLoginMethodGuestClicked()
 
 void LoginDialog::updateAvatar(int row)
 {
-	QModelIndex index = d->avatars->index(row);
-	int type = index.data(AvatarListModel::TypeRole).toInt();
-	desktop::settings::Settings &settings = dpApp().settings();
+	QModelIndex idx = d->avatars->index(row);
+	int type = idx.data(AvatarListModel::TypeRole).toInt();
 	switch(type) {
 	case AvatarListModel::NoAvatar:
-		settings.setLastAvatar(QString{});
+		d->avatarFilename.clear();
 		break;
 	case AvatarListModel::FileAvatar:
-		settings.setLastAvatar(
-			index.data(AvatarListModel::FilenameRole).toString());
+		d->avatarFilename = idx.data(AvatarListModel::FilenameRole).toString();
 		break;
 	case AvatarListModel::AddAvatar:
-		d->revertAvatar(settings);
+		d->restoreAvatar(d->avatarFilename);
 		AvatarImport::importAvatar(d->avatars, this);
 		break;
 	default:
 		qWarning("Unknown avatar type %d", type);
-		d->revertAvatar(settings);
+		d->restoreAvatar(d->avatarFilename);
 		break;
 	}
 }
@@ -572,7 +690,7 @@ void LoginDialog::showNewCert()
 }
 
 void LoginDialog::onLoginMethodChoiceNeeded(
-	const QVector<net::LoginHandler::LoginMethod> &methods,
+	const QVector<net::LoginHandler::LoginMethod> &methods, const QUrl &url,
 	const QUrl &extAuthUrl, const QString &loginInfo)
 {
 	bool extAuth = methods.contains(net::LoginHandler::LoginMethod::ExtAuth);
@@ -604,6 +722,7 @@ void LoginDialog::onLoginMethodChoiceNeeded(
 	// accounts that could be remembered and no password to be entered.
 	d->guestsOnly = !extAuth && !auth;
 	if(d->guestsOnly) {
+		d->restoreGuest();
 		d->resetMode(Mode::GuestLogin);
 		QString explanation;
 		if(loginInfo.isEmpty()) {
@@ -654,7 +773,10 @@ void LoginDialog::onLoginMethodChoiceNeeded(
 			}
 		}
 		d->ui->methodExplanationLabel->setText(explanation);
-		d->resetMode(Mode::LoginMethod);
+		d->accounts->load(url, extAuthUrl);
+		d->resetMode(
+			d->accounts->isEmpty() ? Mode::LoginMethod : Mode::RecentAccounts);
+		updateOkButtonEnabled();
 	}
 }
 
@@ -700,6 +822,7 @@ void LoginDialog::onLoginMethodMismatch(
 
 void LoginDialog::onUsernameNeeded(bool canSelectAvatar)
 {
+	d->restoreOldLogin();
 	d->ui->avatarList->setVisible(canSelectAvatar);
 	d->resetMode(Mode::Identity);
 	updateOkButtonEnabled();
@@ -721,49 +844,8 @@ void LoginDialog::Private::setLoginMode(const QString &prompt)
 	}
 }
 
-void LoginDialog::Private::applyRememberedPassword()
-{
-#ifdef HAVE_QTKEYCHAIN
-	if(!loginHandler) {
-		qWarning("applyRememberedPassword: login process already ended!");
-		return;
-	}
-
-	auto *readJob = new QKeychain::ReadPasswordJob(KEYCHAIN_NAME);
-	readJob->setInsecureFallback(dpApp().settings().insecurePasswordStorage());
-	readJob->setKey(keychainSecretName(
-		loginHandler->url().userName(), extauthurl,
-		loginHandler->url().host()));
-
-	connect(
-		readJob, &QKeychain::ReadPasswordJob::finished, okButton,
-		[this, readJob]() {
-			if(readJob->error() != QKeychain::NoError) {
-				qWarning(
-					"Keychain error (key=%s): %s", qPrintable(readJob->key()),
-					qPrintable(readJob->errorString()));
-				return;
-			}
-
-			if(mode != Mode::Authenticate) {
-				// Unlikely, but...
-				qWarning("Keychain returned too late!");
-				return;
-			}
-
-			const QString password = readJob->textData();
-			if(!password.isEmpty()) {
-				ui->password->setText(password);
-				okButton->click();
-			}
-		});
-
-	readJob->start();
-#endif
-}
-
 void LoginDialog::onLoginNeeded(
-	const QString &forUsername, const QString &prompt,
+	const QString &forUsername, const QString &prompt, const QString &host,
 	net::LoginHandler::LoginMethod intent)
 {
 	if(!forUsername.isEmpty()) {
@@ -775,16 +857,17 @@ void LoginDialog::onLoginNeeded(
 			d->ui->username->text(), d->ui->password->text(),
 			net::LoginHandler::LoginMethod::Auth);
 	} else {
+		delayUpdate();
 		d->extauthurl = QUrl();
 		d->resetMode(Mode::Authenticate);
 		updateOkButtonEnabled();
 		d->setLoginMode(prompt);
-		d->applyRememberedPassword();
+		d->loadOldPassword(host, d->ui->username->text());
 	}
 }
 
 void LoginDialog::onExtAuthNeeded(
-	const QString &forUsername, const QUrl &url,
+	const QString &forUsername, const QUrl &url, const QString &host,
 	net::LoginHandler::LoginMethod intent)
 {
 	Q_ASSERT(url.isValid());
@@ -796,66 +879,72 @@ void LoginDialog::onExtAuthNeeded(
 		d->loginHandler->requestExtAuth(
 			d->ui->username->text(), d->ui->password->text());
 	} else {
+		delayUpdate();
 		d->extauthurl = url;
 		d->resetMode(Mode::Authenticate);
 		updateOkButtonEnabled();
 		d->setLoginMode(formatExtAuthPrompt(url));
-		d->applyRememberedPassword();
+		d->loadOldPassword(host, d->ui->username->text());
 	}
 }
 
 void LoginDialog::onExtAuthComplete(
-	bool success, net::LoginHandler::LoginMethod intent)
+	bool success, net::LoginHandler::LoginMethod intent, const QString &host,
+	const QString &username)
 {
 	if(!success) {
-		onBadLoginPassword(intent);
+		onBadLoginPassword(intent, host, username);
 	}
 	// If success == true, onLoginOk is called too
 }
 
-void LoginDialog::onLoginOk()
+void LoginDialog::onLoginOk(
+	net::LoginHandler::LoginMethod intent, const QString &host,
+	const QString &username)
 {
-	if(d->ui->rememberPassword->isChecked()) {
-#ifdef HAVE_QTKEYCHAIN
-		auto *writeJob = new QKeychain::WritePasswordJob(KEYCHAIN_NAME);
-		writeJob->setInsecureFallback(
-			dpApp().settings().insecurePasswordStorage());
-		writeJob->setKey(keychainSecretName(
-			d->loginHandler->url().userName(), d->extauthurl,
-			d->loginHandler->url().host()));
-		writeJob->setTextData(d->ui->password->text());
-		writeJob->start();
-#endif
+	QString password = d->ui->rememberPassword->isChecked()
+						   ? d->ui->password->text()
+						   : QString();
+	switch(intent) {
+	case net::LoginHandler::LoginMethod::Guest:
+		d->saveGuest(username);
+		break;
+	case net::LoginHandler::LoginMethod::Auth:
+		d->saveAccount(AccountListModel::Type::Auth, username, password);
+		break;
+	case net::LoginHandler::LoginMethod::ExtAuth:
+		d->saveAccount(AccountListModel::Type::ExtAuth, username, password);
+		break;
+	case net::LoginHandler::LoginMethod::Unknown:
+		d->saveOldLogin(host, username, password);
+		break;
 	}
 }
 
-void LoginDialog::onBadLoginPassword(net::LoginHandler::LoginMethod intent)
+void LoginDialog::onBadLoginPassword(
+	net::LoginHandler::LoginMethod intent, const QString &host,
+	const QString &username)
 {
 	Mode nextMode;
 	switch(intent) {
 	case net::LoginHandler::LoginMethod::Auth:
 		nextMode = Mode::AuthLogin;
+		d->accounts->deleteAccountPassword(
+			AccountListModel::Type::Auth, username);
 		break;
 	case net::LoginHandler::LoginMethod::ExtAuth:
 		nextMode = Mode::ExtAuthLogin;
+		d->accounts->deleteAccountPassword(
+			AccountListModel::Type::ExtAuth, username);
 		break;
 	default:
 		nextMode = Mode::Authenticate;
+		d->accounts->deletePassword(
+			d->buildOldKeychainSecretName(host, username));
 		break;
 	}
 	d->resetMode(nextMode);
 	d->ui->password->setText(QString());
-
-#ifdef HAVE_QTKEYCHAIN
-	auto *deleteJob = new QKeychain::DeletePasswordJob(KEYCHAIN_NAME);
-	deleteJob->setInsecureFallback(
-		dpApp().settings().insecurePasswordStorage());
-	deleteJob->setKey(keychainSecretName(
-		d->loginHandler->url().userName(), d->extauthurl,
-		d->loginHandler->url().host()));
-	deleteJob->start();
-#endif
-
 	d->ui->badPasswordLabel->show();
 }
 
@@ -914,7 +1003,7 @@ void LoginDialog::onCertificateCheckNeeded(
 	d->oldCert = oldCert;
 	d->newCert = newCert;
 	d->ui->replaceCert->setChecked(false);
-	d->okButton->setEnabled(false);
+	updateOkButtonEnabled();
 	d->resetMode(Mode::CertChanged);
 }
 
@@ -939,6 +1028,22 @@ void LoginDialog::onServerTitleChanged(const QString &title)
 	d->ui->serverTitle->setHidden(title.isEmpty());
 }
 
+void LoginDialog::onPasswordReadFinished(int jobId, const QString &password)
+{
+	if(d->readPasswordJobId == jobId) {
+		if(!password.isEmpty()) {
+			d->ui->password->setText(password);
+			if(d->logInAfterPasswordRead) {
+				d->okButton->click();
+			} else if(d->ui->rememberPassword->isEnabled()) {
+				d->ui->rememberPassword->setChecked(true);
+			}
+		}
+	} else {
+		qWarning("Read password job %d returned too late", jobId);
+	}
+}
+
 void LoginDialog::onOkClicked()
 {
 	if(!d->loginHandler) {
@@ -951,6 +1056,7 @@ void LoginDialog::onOkClicked()
 
 	switch(mode) {
 	case Mode::Loading:
+	case Mode::RecentAccounts:
 	case Mode::LoginMethod:
 	case Mode::Catchup:
 	case Mode::ConfirmNsfm:
@@ -1075,13 +1181,19 @@ void LoginDialog::onNoClicked()
 	}
 
 	switch(d->mode) {
+	case Mode::LoginMethod:
+		d->resetMode(Mode::RecentAccounts);
+		updateOkButtonEnabled();
+		break;
 	case Mode::GuestLogin:
 	case Mode::AuthLogin:
 	case Mode::ExtAuthLogin:
 		if(d->guestsOnly) {
 			qWarning("No button click for guests-only login!");
 		} else {
-			d->resetMode(Mode::LoginMethod);
+			d->resetMode(
+				d->wasRecentAccount ? Mode::RecentAccounts : Mode::LoginMethod);
+			updateOkButtonEnabled();
 		}
 		break;
 	case Mode::ConfirmNsfm:
@@ -1120,6 +1232,74 @@ void LoginDialog::selectCurrentAvatar()
 	QPixmap avatar =
 		d->ui->avatarList->currentData(Qt::DecorationRole).value<QPixmap>();
 	d->loginHandler->selectAvatar(avatar);
+}
+
+void LoginDialog::selectRecentAccount(bool logIn)
+{
+	AccountListModel::Type type =
+		d->ui->recentAccountCombo->currentData(AccountListModel::TypeRole)
+			.value<AccountListModel::Type>();
+	Mode mode = Mode::Authenticate;
+	switch(type) {
+	case AccountListModel::Type::Auth:
+		mode = Mode::AuthLogin;
+		setAuthLoginExplanation();
+		break;
+	case AccountListModel::Type::ExtAuth:
+		mode = Mode::ExtAuthLogin;
+		setExtAuthLoginExplanation();
+		break;
+	}
+	if(mode == Mode::Authenticate) {
+		qWarning("Unhandled recent account type %d", int(type));
+	}
+
+	QString avatarFilename =
+		d->ui->recentAccountCombo
+			->currentData(AccountListModel::AvatarFilenameRole)
+			.toString();
+	d->restoreAvatar(avatarFilename);
+
+	QString username = d->ui->recentAccountCombo
+						   ->currentData(AccountListModel::DisplayUsernameRole)
+						   .toString();
+	d->ui->username->setText(username);
+
+	delayUpdate();
+	d->wasRecentAccount = true;
+	d->resetMode(mode);
+	updateOkButtonEnabled();
+	d->loadPassword(type, username, logIn);
+}
+
+void LoginDialog::setAuthLoginExplanation()
+{
+	d->setLoginExplanation(
+		tr("Enter the username and password for your server account."), false);
+}
+
+void LoginDialog::setExtAuthLoginExplanation()
+{
+	d->setLoginExplanation(
+		tr("Enter the username and password for your %1 account.")
+			.arg(d->extauthurl.host()),
+		false);
+}
+
+void LoginDialog::delayUpdate()
+{
+	// Hack: reading passwords is asynchronous. We can't wait for it to return
+	// though, because depending on how borked the user's system is, it may take
+	// a ridiculous amount of time to do so, e.g. because it's waiting for a
+	// DBus timeout. If we don't wait for it to return though, we flash the
+	// login prompt for a split-second, which is unnerving for the user. So
+	// instead, just suspend updates for a moment, avoiding any flashing if the
+	// password is read in a reasonable amount of time, but continuing if not.
+	setUpdatesEnabled(false);
+	QTimer::singleShot(100, this, [this] {
+		setUpdatesEnabled(true);
+		repaint();
+	});
 }
 
 QString LoginDialog::formatLoginInfo(const QString &loginInfo)

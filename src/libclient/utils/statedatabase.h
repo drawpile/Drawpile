@@ -32,6 +32,9 @@ public:
 	bool put(const QString &key, const QVariant &value);
 	bool putWith(QSqlQuery &qry, const QString &key, const QVariant &value);
 
+	bool remove(const QString &key);
+	bool removeWith(QSqlQuery &qry, const QString &key);
+
 private:
 	QSqlDatabase m_db;
 };

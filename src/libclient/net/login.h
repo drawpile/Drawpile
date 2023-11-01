@@ -287,8 +287,8 @@ public slots:
 
 signals:
 	void loginMethodChoiceNeeded(
-		const QVector<LoginMethod> &methods, const QUrl &extAuthUrl,
-		const QString &loginInfo);
+		const QVector<LoginMethod> &methods, const QUrl &url,
+		const QUrl &extAuthUrl, const QString &loginInfo);
 
 	void loginMethodMismatch(
 		LoginMethod intent, LoginMethod method, bool extAuthFallback);
@@ -343,7 +343,7 @@ signals:
 	 */
 	void loginNeeded(
 		const QString &currentUsername, const QString &prompt,
-		LoginMethod intent);
+		const QString &host, LoginMethod intent);
 
 	/**
 	 * @brief External authentication is needed
@@ -356,23 +356,28 @@ signals:
 	 * @param url ext auth server URL
 	 */
 	void extAuthNeeded(
-		const QString &currentUsername, const QUrl &url, LoginMethod intent);
+		const QString &currentUsername, const QUrl &url, const QString &host,
+		LoginMethod intent);
 
 	/**
 	 * @brief External authentication request completed
 	 * @param success did the request complete successfully?
 	 */
-	void extAuthComplete(bool success, LoginMethod intent);
+	void extAuthComplete(
+		bool success, LoginMethod intent, const QString &host,
+		const QString &username);
 
 	/**
 	 * @brief Username and password (unless in guest mode) OK.
 	 */
-	void loginOk();
+	void
+	loginOk(LoginMethod intent, const QString &host, const QString &username);
 
 	/**
 	 * @brief Server user account password was wrong
 	 */
-	void badLoginPassword(LoginMethod intent);
+	void badLoginPassword(
+		LoginMethod intent, const QString &host, const QString &username);
 
 	/**
 	 * @brief User must select which session to join

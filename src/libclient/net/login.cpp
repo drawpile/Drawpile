@@ -291,7 +291,7 @@ void LoginHandler::chooseLoginMethod()
 		prepareToSendIdentity();
 	} else {
 		emit loginMethodChoiceNeeded(
-			m_loginMethods, m_loginExtAuthUrl, m_loginInfo);
+			m_loginMethods, m_address, m_loginExtAuthUrl, m_loginInfo);
 	}
 }
 
@@ -311,7 +311,8 @@ void LoginHandler::prepareToSendIdentity()
 			prompt = tr("Password needed to log in as \"%1\"")
 						 .arg(m_address.userName());
 
-		emit loginNeeded(m_address.userName(), prompt, m_loginIntent);
+		emit loginNeeded(
+			m_address.userName(), prompt, m_address.host(), m_loginIntent);
 
 	} else {
 		sendIdentity();
@@ -397,13 +398,13 @@ void LoginHandler::requestExtAuth(
 		if(status == "auth") {
 			m_state = EXPECT_IDENTIFIED;
 			send("ident", {m_address.userName()}, {{"extauth", obj["token"]}});
-
-			emit extAuthComplete(true, m_loginIntent);
+			emit extAuthComplete(
+				true, m_loginIntent, m_address.host(), m_address.userName());
 
 		} else if(status == "badpass") {
 			qWarning("Incorrect ext-auth password");
-
-			emit extAuthComplete(false, m_loginIntent);
+			emit extAuthComplete(
+				false, m_loginIntent, m_address.host(), m_address.userName());
 
 		} else if(status == "outgroup") {
 			qWarning("Ext-auth error: group membership needed");
@@ -484,7 +485,9 @@ void LoginHandler::expectIdentified(const ServerReply &msg)
 		m_extAuthGroup = msg.reply["group"].toString();
 		m_extAuthNonce = msg.reply["nonce"].toString();
 
-		emit extAuthNeeded(m_address.userName(), m_extAuthUrl, m_loginIntent);
+		emit extAuthNeeded(
+			m_address.userName(), m_extAuthUrl, m_address.host(),
+			m_loginIntent);
 		return;
 	}
 
@@ -494,7 +497,7 @@ void LoginHandler::expectIdentified(const ServerReply &msg)
 		return;
 	}
 
-	emit loginOk();
+	emit loginOk(m_loginIntent, m_address.host(), m_address.userName());
 
 	m_isGuest = msg.reply["guest"].toBool();
 	for(const QJsonValue f : msg.reply["flags"].toArray())
@@ -940,8 +943,10 @@ void LoginHandler::handleError(const QString &code, const QString &msg)
 	if(code == "notFound")
 		error = tr("Session not found!");
 	else if(code == "badPassword") {
-		if(m_passwordState == WAIT_FOR_LOGIN_PASSWORD) {
-			emit badLoginPassword(m_loginIntent);
+		if(m_passwordState == WAIT_FOR_LOGIN_PASSWORD &&
+		   m_loginIntent != LoginMethod::Guest) {
+			emit badLoginPassword(
+				m_loginIntent, m_address.host(), m_address.userName());
 			return; // Not a fatal error, let the user try again.
 		} else if(m_state == EXPECT_LOGIN_OK) {
 			m_state = WAIT_FOR_JOIN_PASSWORD;

@@ -38,6 +38,11 @@ private slots:
 
 	void updateOkButtonEnabled();
 
+	void onRecentLogInClicked();
+	void onRecentEditClicked();
+	void onRecentForgetClicked();
+	void onRecentBreakClicked();
+
 	void onLoginMethodExtAuthClicked();
 	void onLoginMethodAuthClicked();
 	void onLoginMethodGuestClicked();
@@ -49,33 +54,48 @@ private slots:
 	void showNewCert();
 
 	void onLoginMethodChoiceNeeded(
-		const QVector<net::LoginHandler::LoginMethod> &methods,
+		const QVector<net::LoginHandler::LoginMethod> &methods, const QUrl &url,
 		const QUrl &extAuthUrl, const QString &loginInfo);
 	void onLoginMethodMismatch(
 		net::LoginHandler::LoginMethod intent,
 		net::LoginHandler::LoginMethod method, bool extAuthFallback);
 	void onUsernameNeeded(bool canSelectAvatar);
 	void onLoginNeeded(
-		const QString &forUsername, const QString &prompt,
+		const QString &forUsername, const QString &prompt, const QString &host,
 		net::LoginHandler::LoginMethod intent);
 	void onExtAuthNeeded(
-		const QString &forUsername, const QUrl &url,
+		const QString &forUsername, const QUrl &url, const QString &host,
 		net::LoginHandler::LoginMethod intent);
-	void onExtAuthComplete(bool success, net::LoginHandler::LoginMethod intent);
+	void onExtAuthComplete(
+		bool success, net::LoginHandler::LoginMethod intent,
+		const QString &host, const QString &username);
 	void onSessionChoiceNeeded(net::LoginSessionModel *sessions);
 	void
 	onSessionConfirmationNeeded(const QString &title, bool nsfm, bool autoJoin);
 	void onSessionPasswordNeeded();
 	void onBadSessionPassword();
-	void onLoginOk();
-	void onBadLoginPassword(net::LoginHandler::LoginMethod intent);
+	void onLoginOk(
+		net::LoginHandler::LoginMethod intent, const QString &host,
+		const QString &username);
+	void onBadLoginPassword(
+		net::LoginHandler::LoginMethod intent, const QString &host,
+		const QString &username);
 	void onCertificateCheckNeeded(
 		const QSslCertificate &newCert, const QSslCertificate &oldCert);
 	void onServerTitleChanged(const QString &title);
 
+	void onPasswordReadFinished(int jobId, const QString &password);
+
 private:
+	static constexpr char LAST_GUEST_NAME_KEY[] = "login/lastguestname";
+	static constexpr char LAST_GUEST_AVATAR_KEY[] = "login/lastguestavatar";
+
 	void adjustSize(int width, int height, bool allowShrink);
 	void selectCurrentAvatar();
+	void selectRecentAccount(bool logIn);
+	void setAuthLoginExplanation();
+	void setExtAuthLoginExplanation();
+	void delayUpdate();
 	static QString formatLoginInfo(const QString &loginInfo);
 	static QString formatExtAuthPrompt(const QUrl &url);
 

@@ -80,6 +80,20 @@ padding: 16px;</string>
        </item>
        <item>
         <layout class="QGridLayout" name="authPageLayout">
+         <item row="1" column="2">
+          <widget class="QLineEdit" name="username">
+           <property name="placeholderText">
+            <string>Username</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLabel" name="passwordIcon">
+           <property name="text">
+            <string notr="true">P</string>
+           </property>
+          </widget>
+         </item>
          <item row="3" column="2">
           <widget class="QLabel" name="badPasswordLabel">
            <property name="styleSheet">
@@ -89,6 +103,39 @@ padding: 16px;</string>
             <string>Incorrect password.</string>
            </property>
           </widget>
+         </item>
+         <item row="4" column="2">
+          <widget class="QCheckBox" name="rememberPassword">
+           <property name="text">
+            <string>Remember my password</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="3">
+          <spacer name="authPageRightSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="2" column="0">
+          <spacer name="authPageLeftSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+          </spacer>
          </item>
          <item row="2" column="2">
           <widget class="QLineEdit" name="password">
@@ -103,31 +150,10 @@ padding: 16px;</string>
            </property>
           </widget>
          </item>
-         <item row="4" column="2">
-          <widget class="QCheckBox" name="rememberPassword">
-           <property name="text">
-            <string>Remember my password</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="2">
-          <widget class="QLineEdit" name="username">
-           <property name="placeholderText">
-            <string>Username</string>
-           </property>
-          </widget>
-         </item>
          <item row="1" column="1">
           <widget class="QLabel" name="usernameIcon">
            <property name="text">
             <string notr="true">U</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QLabel" name="passwordIcon">
-           <property name="text">
-            <string notr="true">P</string>
            </property>
           </widget>
          </item>
@@ -149,32 +175,6 @@ padding: 16px;</string>
             <bool>false</bool>
            </property>
           </widget>
-         </item>
-         <item row="2" column="0">
-          <spacer name="authPageLeftSpacer">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="2" column="3">
-          <spacer name="authPageRightSpacer">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-          </spacer>
          </item>
         </layout>
        </item>
@@ -407,7 +407,7 @@ padding: 16px;</string>
       </layout>
      </widget>
      <widget class="QWidget" name="certChangedPage">
-      <layout class="QGridLayout" columnstretch="0,0,0">
+      <layout class="QGridLayout" name="certChangedGridLayout" columnstretch="0,0,0">
        <item row="1" column="1">
         <spacer name="certChangedPageTopSpacer">
          <property name="orientation">
@@ -653,6 +653,167 @@ padding: 16px;</string>
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="recentPage">
+      <layout class="QGridLayout" name="recentGridLayout">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item row="11" column="0" colspan="3">
+        <spacer name="recentBottomSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="0" column="0" colspan="3">
+        <widget class="QLabel" name="recentPromptLabel">
+         <property name="styleSheet">
+          <string notr="true">background: #4d4d4d;
+color: #fcfcfc;
+padding: 16px;</string>
+         </property>
+         <property name="text">
+          <string notr="true">LOG IN</string>
+         </property>
+         <property name="textFormat">
+          <enum>Qt::PlainText</enum>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0" rowspan="2">
+        <spacer name="recentLeftSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="6" column="1">
+        <widget class="QPushButton" name="recentEditButton">
+         <property name="toolTip">
+          <string>Continue with this account, but change the avatar, username or password.</string>
+         </property>
+         <property name="text">
+          <string>Edit and log in</string>
+         </property>
+         <property name="icon">
+          <iconset theme="edit-rename">
+           <normaloff>theme:edit-rename.svg</normaloff>theme:edit-rename.svg</iconset>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="1">
+        <widget class="QPushButton" name="recentBreakButton">
+         <property name="toolTip">
+          <string>Don't use any of these accounts.</string>
+         </property>
+         <property name="text">
+          <string>Log in a different way</string>
+         </property>
+         <property name="icon">
+          <iconset theme="application-menu">
+           <normaloff>theme:application-menu.svg</normaloff>theme:application-menu.svg</iconset>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0" colspan="3">
+        <spacer name="recentTopSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>0</width>
+           <height>6</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="3" column="1">
+        <widget class="QComboBox" name="recentAccountCombo">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>42</height>
+          </size>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>32</width>
+           <height>32</height>
+          </size>
+         </property>
+         <property name="frame">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QPushButton" name="recentLogInButton">
+         <property name="toolTip">
+          <string>Log in with the selected account.</string>
+         </property>
+         <property name="text">
+          <string>Log in with this account</string>
+         </property>
+         <property name="icon">
+          <iconset theme="checkbox">
+           <normaloff>theme:checkbox.svg</normaloff>theme:checkbox.svg</iconset>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2" rowspan="2">
+        <spacer name="recentRightSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="7" column="1">
+        <widget class="QPushButton" name="recentForgetButton">
+         <property name="toolTip">
+          <string>Forget this account.</string>
+         </property>
+         <property name="text">
+          <string>Forget this account</string>
+         </property>
+         <property name="icon">
+          <iconset theme="trash-empty">
+           <normaloff>theme:trash-empty.svg</normaloff>theme:trash-empty.svg</iconset>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
    <item>
@@ -687,6 +848,11 @@ padding: 16px;</string>
   <tabstop>methodExtAuthButton</tabstop>
   <tabstop>methodAuthButton</tabstop>
   <tabstop>methodGuestButton</tabstop>
+  <tabstop>recentAccountCombo</tabstop>
+  <tabstop>recentLogInButton</tabstop>
+  <tabstop>recentEditButton</tabstop>
+  <tabstop>recentForgetButton</tabstop>
+  <tabstop>recentBreakButton</tabstop>
  </tabstops>
  <resources/>
  <connections/>
