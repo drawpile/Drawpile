@@ -76,6 +76,7 @@ private slots:
 private:
 	void adjustSize(int width, int height, bool allowShrink);
 	void selectCurrentAvatar();
+	static QString formatLoginInfo(const QString &loginInfo);
 	static QString formatExtAuthPrompt(const QUrl &url);
 
 	struct Private;

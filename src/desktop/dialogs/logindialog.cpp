@@ -60,6 +60,7 @@ struct LoginDialog::Private {
 	QPushButton *noButton;
 	QString originalNoButtonText;
 
+	bool guestsOnly = false;
 	QUrl loginExtAuthUrl;
 	QUrl extauthurl;
 	QSslCertificate oldCert, newCert;
@@ -254,8 +255,12 @@ void LoginDialog::Private::resetMode(Mode newMode)
 	case Mode::GuestLogin:
 	case Mode::AuthLogin:
 	case Mode::ExtAuthLogin:
-		noButton->setText(tr("Back"));
-		noButton->setVisible(true);
+		if(guestsOnly) {
+			noButton->setVisible(false);
+		} else {
+			noButton->setText(tr("Back"));
+			noButton->setVisible(true);
+		}
 		break;
 	case Mode::ConfirmNsfm:
 		noButton->setText(originalNoButtonText);
@@ -595,51 +600,62 @@ void LoginDialog::onLoginMethodChoiceNeeded(
 	d->ui->methodExtAuthButton->setIcon(
 		hasDrawpileExtAuth ? QIcon(":/icons/drawpile.png") : QIcon());
 
-	bool guestsOnly = !extAuth && !auth;
-	QString drawpileSignupLink = QStringLiteral(
-		"<a href=\"https://drawpile.net/accounts/signup/\">drawpile.net</a>");
-	QString explanation;
-	if(loginInfo.isEmpty()) {
-		if(guestsOnly) {
-			explanation =
-				tr("This server doesn't support logging in with an account.");
-		} else if(hasDrawpileExtAuth) {
-			if(guest) {
-				explanation =
-					tr("You can continue without an account. If you want to "
-					   "register one anyway, you can do so on %1.")
-						.arg(drawpileSignupLink);
+	// If only guests are an option, we can skip forward, since there's no
+	// accounts that could be remembered and no password to be entered.
+	d->guestsOnly = !extAuth && !auth;
+	if(d->guestsOnly) {
+		d->resetMode(Mode::GuestLogin);
+		QString explanation;
+		if(loginInfo.isEmpty()) {
+			explanation = tr("Enter the name you want to use.");
+		} else {
+			explanation = tr("Enter the name you want to use. See %1 for more "
+							 "information about this server.")
+							  .arg(formatLoginInfo(loginInfo));
+		}
+		d->setLoginExplanation(explanation, false);
+		updateOkButtonEnabled();
+	} else {
+		QString drawpileSignupLink =
+			QStringLiteral("<a href=\"https://drawpile.net/accounts/signup/\""
+						   ">drawpile.net</a>");
+		QString explanation;
+		if(loginInfo.isEmpty()) {
+			if(hasDrawpileExtAuth) {
+				if(guest) {
+					explanation =
+						tr("You can continue without an account. If you want "
+						   "to register one anyway, you can do so on %1.")
+							.arg(drawpileSignupLink);
+				} else {
+					explanation = tr("An account is required. You can register "
+									 "one on %1.")
+									  .arg(drawpileSignupLink);
+				}
+			} else if(guest) {
+				explanation = tr(
+					"You can continue without an account. The server doesn't "
+					"provide any information on how to register one either.");
 			} else {
 				explanation =
-					tr("An account is required. You can register one on %1.")
-						.arg(drawpileSignupLink);
+					tr("An account is required, but the server doesn't "
+					   "provide any information on how to register one.");
 			}
-		} else if(guest) {
-			explanation =
-				tr("You can continue without an account. The server doesn't "
-				   "provide any information on how to register one either.");
 		} else {
-			explanation = tr("An account is required, but the server doesn't "
-							 "provide any information on how to register one.");
+			if(hasDrawpileExtAuth) {
+				explanation =
+					tr("See %1 for more information about this server. "
+					   "To register an account, visit %2.")
+						.arg(formatLoginInfo(loginInfo), drawpileSignupLink);
+			} else {
+				explanation =
+					tr("See %1 for more information about this server.")
+						.arg(formatLoginInfo(loginInfo));
+			}
 		}
-	} else {
-		QUrl url = QUrl::fromUserInput(loginInfo);
-		QString link = url.isValid() ? QStringLiteral("<a href=\"%1\">%2</a>")
-										   .arg(
-											   url.toString().toHtmlEscaped(),
-											   loginInfo.toHtmlEscaped())
-									 : loginInfo.toHtmlEscaped();
-		if(hasDrawpileExtAuth) {
-			explanation = tr("See %1 for more information about this server. "
-							 "To register an account, visit %2.")
-							  .arg(link, drawpileSignupLink);
-		} else {
-			explanation =
-				tr("See %1 for more information about this server.").arg(link);
-		}
+		d->ui->methodExplanationLabel->setText(explanation);
+		d->resetMode(Mode::LoginMethod);
 	}
-	d->ui->methodExplanationLabel->setText(explanation);
-	d->resetMode(Mode::LoginMethod);
 }
 
 void LoginDialog::onLoginMethodMismatch(
@@ -1062,7 +1078,11 @@ void LoginDialog::onNoClicked()
 	case Mode::GuestLogin:
 	case Mode::AuthLogin:
 	case Mode::ExtAuthLogin:
-		d->resetMode(Mode::LoginMethod);
+		if(d->guestsOnly) {
+			qWarning("No button click for guests-only login!");
+		} else {
+			d->resetMode(Mode::LoginMethod);
+		}
 		break;
 	case Mode::ConfirmNsfm:
 		if(d->autoJoin) {
@@ -1073,6 +1093,7 @@ void LoginDialog::onNoClicked()
 		break;
 	default:
 		qWarning("No button click in wrong mode!");
+		break;
 	}
 }
 
@@ -1099,6 +1120,18 @@ void LoginDialog::selectCurrentAvatar()
 	QPixmap avatar =
 		d->ui->avatarList->currentData(Qt::DecorationRole).value<QPixmap>();
 	d->loginHandler->selectAvatar(avatar);
+}
+
+QString LoginDialog::formatLoginInfo(const QString &loginInfo)
+{
+	QString escaped = loginInfo.toHtmlEscaped();
+	QUrl url = QUrl::fromUserInput(loginInfo);
+	if(url.isValid()) {
+		return QStringLiteral("<a href=\"%1\">%2</a>")
+			.arg(url.toString().toHtmlEscaped(), escaped);
+	} else {
+		return escaped;
+	}
 }
 
 QString LoginDialog::formatExtAuthPrompt(const QUrl &url)
