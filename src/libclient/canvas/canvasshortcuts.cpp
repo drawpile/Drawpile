@@ -449,7 +449,7 @@ QVariantMap CanvasShortcuts::saveShortcut(const Shortcut &s)
 		[](const QVariant &a, const QVariant &b) {
 			Qt::Key ka = a.value<Qt::Key>();
 			Qt::Key kb = b.value<Qt::Key>();
-			return ka < kb ? -1 : ka > kb ? 1 : 0;
+			return ka < kb;
 		});
 	cfg.insert("type", s.type);
 	cfg.insert("modifiers", Qt::KeyboardModifiers::Int(s.mods));
