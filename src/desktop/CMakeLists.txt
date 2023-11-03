@@ -259,6 +259,8 @@ target_sources(drawpile PRIVATE
 	ui/tablettest.ui
 	ui/textsettings.ui
 	ui/userinfodialog.ui
+	utils/animationrenderer.cpp
+	utils/animationrenderer.h
 	utils/accountlistmodel.cpp
 	utils/accountlistmodel.h
 	utils/actionbuilder.h

@@ -1,22 +1,20 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef FLIPBOOK_H
-#define FLIPBOOK_H
-
+#ifndef DESKTOP_DIALOGS_FLIPBOOK_H
+#define DESKTOP_DIALOGS_FLIPBOOK_H
 #include "libclient/drawdance/canvasstate.h"
-#include "libclient/drawdance/viewmode.h"
 #include <QDialog>
-#include <QList>
-#include <QPixmap>
-
-class Ui_Flipbook;
+#include <QVector>
 
 class QAction;
 class QEvent;
-class QTimer;
+class QPixmap;
 
 namespace canvas {
 class PaintEngine;
+}
+
+namespace utils {
+class AnimationRenderer;
 }
 
 namespace dialogs {
@@ -54,6 +52,10 @@ signals:
 #endif
 
 private slots:
+	void insertRenderedFrames(
+		unsigned int batchId, const QVector<int> &frameIndexes,
+		const QPixmap &frame);
+	void nextFrame();
 	void loadFrame();
 	void playPause();
 	void rewind();
@@ -62,8 +64,6 @@ private slots:
 	void setCrop(const QRectF &rect);
 	void resetCrop();
 	void refreshCanvas();
-
-private slots:
 	void exportGif();
 #ifndef Q_OS_ANDROID
 	void exportFrames();
@@ -72,22 +72,14 @@ private slots:
 private:
 	void resetCanvas(bool refresh);
 	int getTimerInterval() const;
-	void resetFrameCache();
-	bool searchIdenticalFrame(int f, QPixmap &outFrame);
+	void renderFrames();
 	QRect getExportRect() const;
 	int getExportStart() const;
 	int getExportEnd() const;
 	int getExportFramerate() const;
 
-	State &m_state;
-	Ui_Flipbook *m_ui;
-	QAction *m_refreshAction;
-	canvas::PaintEngine *m_paintengine;
-	drawdance::CanvasState m_canvasState;
-	drawdance::ViewModeBuffer m_vmb;
-	QList<QPixmap> m_frames;
-	QTimer *m_timer;
-	QRect m_crop;
+	struct Private;
+	Private *d;
 };
 
 }

@@ -50,6 +50,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Nudge catchup if it gets stuck without any messages received for a while.
  * Feature: Remember accounts, not just passwords. Should reduce the clicks and typing needed to log in even if you use multiple accounts.
  * Feature: Allow toggling whole tile marking in the inspector, since it makes some things easier to see.
+ * Feature: Render flipbook frames in the background and indicate that fact with a loading spinner. It no longer lags the UI and gets done faster because of multithreading.
 
 2023-09-30 Version 2.2.0-beta.8
  * Fix: Apply color wheel direction to color dialogs too. Thanks Blozzom for reporting.

@@ -42,6 +42,7 @@ public:
 	~CanvasState();
 
 	DP_CanvasState *get() const;
+	DP_CanvasState *getInc() const;
 
 	bool isNull() const;
 
