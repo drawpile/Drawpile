@@ -41,6 +41,7 @@ struct Client::Private {
 	bool isHoldLocked = false;
 	bool isAwaitingReset = false;
 	bool isBanTriggered = false;
+	bool isGhost = false;
 	BanResult ban = BanResult::notBanned();
 
 	Private(QTcpSocket *socket_, ServerLog *logger_)
@@ -245,14 +246,20 @@ bool Client::isDeputy() const
 		   d->session->history()->hasFlag(SessionHistory::Deputies);
 }
 
-void Client::setModerator(bool mod)
+void Client::setModerator(bool mod, bool ghost)
 {
 	d->isModerator = mod;
+	d->isGhost = mod && ghost;
 }
 
 bool Client::isModerator() const
 {
 	return d->isModerator;
+}
+
+bool Client::isGhost() const
+{
+	return d->isGhost;
 }
 
 bool Client::isTrusted() const

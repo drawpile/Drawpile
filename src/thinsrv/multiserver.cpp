@@ -374,6 +374,7 @@ JsonApiResult MultiServer::serverJsonApi(JsonApiMethod method, const QStringList
 		config::ExtAuthHost,
 		config::ExtAuthAvatars,
 		config::ExtAuthBanExempt,
+		config::ExtAuthGhosts,
 #endif
 		config::LogPurgeDays,
 		config::AllowCustomAvatars,
@@ -384,6 +385,7 @@ JsonApiResult MultiServer::serverJsonApi(JsonApiMethod method, const QStringList
 		config::ExtBansCheckInterval,
 		config::AllowIdleOverride,
 		config::LoginInfoUrl,
+		config::EnableGhosts,
 	};
 	const int settingCount = sizeof(settings) / sizeof(settings[0]);
 

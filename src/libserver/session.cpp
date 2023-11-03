@@ -13,6 +13,7 @@ extern "C" {
 #include "libshared/util/filename.h"
 #include "libshared/util/networkaccess.h"
 #include "libshared/util/passwordhash.h"
+#include "libshared/util/qtcompat.h"
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QTimer>
@@ -78,7 +79,9 @@ net::MessageList Session::serverSideStateMessages() const
 	QVector<uint8_t> trusted;
 
 	for(const Client *c : m_clients) {
-		msgs.append(c->joinMessage());
+		if(!c->isGhost()) {
+			msgs.append(c->joinMessage());
+		}
 		if(c->isOperator()) {
 			owners.append(c->id());
 		}
@@ -206,12 +209,20 @@ void Session::joinUser(Client *user, bool host)
 
 	onClientJoin(user, host);
 
-	addToHistory(user->joinMessage());
-
-	const QString &authId = user->authId();
 	const QString &username = user->username();
-	if(!authId.isEmpty()) {
-		m_history->setAuthenticatedUsername(authId, username);
+	const QString &authId = user->authId();
+	bool isGhost = user->isGhost();
+	if(isGhost) {
+		user->sendSystemChat(
+			QStringLiteral(
+				"Ghost mode. Administrative actions will reveal your presence. "
+				"Chat messages are treated as server alerts."),
+			true);
+	} else {
+		addToHistory(user->joinMessage());
+		if(!authId.isEmpty()) {
+			m_history->setAuthenticatedUsername(authId, username);
+		}
 	}
 
 	if(user->isOperator() || m_history->isOperator(authId)) {
@@ -239,7 +250,9 @@ void Session::joinUser(Client *user, bool host)
 	m_history->joinUser(user->id(), username);
 
 	user->log(Log()
-				  .about(Log::Level::Info, Log::Topic::Join)
+				  .about(
+					  Log::Level::Info,
+					  isGhost ? Log::Topic::Ghost : Log::Topic::Join)
 				  .message("Joined session"));
 	emit sessionAttributeChanged(this);
 }
@@ -254,8 +267,11 @@ void Session::removeUser(Client *user)
 					 user->peerAddress(), user->sid(), !user->isModerator()});
 
 	Q_ASSERT(user->session() == this);
+	bool isGhost = user->isGhost();
 	user->log(Log()
-				  .about(Log::Level::Info, Log::Topic::Leave)
+				  .about(
+					  Log::Level::Info,
+					  isGhost ? Log::Topic::Ghost : Log::Topic::Leave)
 				  .message("Left session"));
 	user->setSession(nullptr);
 
@@ -268,7 +284,9 @@ void Session::removeUser(Client *user)
 		abortReset();
 	}
 
-	addToHistory(net::makeLeaveMessage(user->id()));
+	if(!isGhost) {
+		addToHistory(net::makeLeaveMessage(user->id()));
+	}
 	// Try not to reuse the ID right away
 	m_history->idQueue().reserveId(user->id());
 
@@ -522,32 +540,42 @@ QVector<uint8_t> Session::updateOwnership(
 			}
 
 			c->setOperator(op);
+			bool isGhost = c->isGhost();
 			QString msg, key;
 			if(op) {
 				msg = "Made operator by " + (changedBy.isEmpty()
 												 ? QStringLiteral("the server")
 												 : changedBy);
 				key = net::ServerReply::KEY_OP_GIVE;
-				c->log(
-					Log().about(Log::Level::Info, Log::Topic::Op).message(msg));
+				c->log(Log()
+						   .about(
+							   Log::Level::Info,
+							   isGhost ? Log::Topic::Ghost : Log::Topic::Op)
+						   .message(msg));
 			} else {
 				msg = "Operator status revoked by " +
 					  (changedBy.isEmpty() ? QStringLiteral("the server")
 										   : changedBy);
 				key = net::ServerReply::KEY_OP_TAKE;
 				c->log(Log()
-						   .about(Log::Level::Info, Log::Topic::Deop)
+						   .about(
+							   Log::Level::Info,
+							   isGhost ? Log::Topic::Ghost : Log::Topic::Deop)
 						   .message(msg));
 			}
-			keyMessageAll(
-				c->username() + " " + msg, false, key,
-				changedBy.isEmpty()
-					? QJsonObject{{QStringLiteral("target"), c->username()}}
-					: QJsonObject{
-						  {QStringLiteral("target"), c->username()},
-						  {QStringLiteral("by"), changedBy}});
-			if(c->isAuthenticated() && !c->isModerator()) {
-				m_history->setAuthenticatedOperator(c->authId(), op);
+
+			if(!isGhost) {
+				keyMessageAll(
+					c->username() + " " + msg, false, key,
+					changedBy.isEmpty()
+						? QJsonObject{{QStringLiteral("target"), c->username()}}
+						: QJsonObject{
+							  {QStringLiteral("target"), c->username()},
+							  {QStringLiteral("by"), changedBy}});
+
+				if(c->isAuthenticated() && !c->isModerator()) {
+					m_history->setAuthenticatedOperator(c->authId(), op);
+				}
 			}
 		}
 		if(c->isOperator()) {
@@ -597,6 +625,7 @@ QVector<uint8_t> Session::updateTrustedUsers(
 		if(trusted != c->isTrusted()) {
 			needsUpdate = true;
 			c->setTrusted(trusted);
+			bool isGhost = c->isGhost();
 			QString msg, key;
 			if(trusted) {
 				msg = "Trusted by " + (changedBy.isEmpty()
@@ -604,7 +633,9 @@ QVector<uint8_t> Session::updateTrustedUsers(
 										   : changedBy);
 				key = net::ServerReply::KEY_TRUST_GIVE;
 				c->log(Log()
-						   .about(Log::Level::Info, Log::Topic::Trust)
+						   .about(
+							   Log::Level::Info,
+							   isGhost ? Log::Topic::Ghost : Log::Topic::Trust)
 						   .message(msg));
 			} else {
 				msg = "Untrusted by " + (changedBy.isEmpty()
@@ -612,18 +643,24 @@ QVector<uint8_t> Session::updateTrustedUsers(
 											 : changedBy);
 				key = net::ServerReply::KEY_TRUST_TAKE;
 				c->log(Log()
-						   .about(Log::Level::Info, Log::Topic::Untrust)
+						   .about(
+							   Log::Level::Info, isGhost ? Log::Topic::Ghost
+														 : Log::Topic::Untrust)
 						   .message(msg));
 			}
-			keyMessageAll(
-				c->username() + " " + msg, false, key,
-				changedBy.isEmpty()
-					? QJsonObject{{QStringLiteral("target"), c->username()}}
-					: QJsonObject{
-						  {QStringLiteral("target"), c->username()},
-						  {QStringLiteral("by"), changedBy}});
-			if(c->isAuthenticated()) {
-				m_history->setAuthenticatedTrust(c->authId(), trusted);
+
+			if(!isGhost) {
+				keyMessageAll(
+					c->username() + " " + msg, false, key,
+					changedBy.isEmpty()
+						? QJsonObject{{QStringLiteral("target"), c->username()}}
+						: QJsonObject{
+							  {QStringLiteral("target"), c->username()},
+							  {QStringLiteral("by"), changedBy}});
+
+				if(c->isAuthenticated()) {
+					m_history->setAuthenticatedTrust(c->authId(), trusted);
+				}
 			}
 		}
 		if(c->isTrusted()) {
@@ -833,15 +870,36 @@ void Session::handleClientMessage(Client &client, const net::Message &msg)
 		if(client.isMuted()) {
 			return;
 		}
-		if(DP_msg_chat_tflags(msg.toChat()) & DP_MSG_CHAT_TFLAGS_BYPASS) {
+		DP_MsgChat *mc = msg.toChat();
+		bool bypass = DP_msg_chat_tflags(mc) & DP_MSG_CHAT_TFLAGS_BYPASS;
+		if(client.isGhost()) {
+			size_t len;
+			const char *message = DP_msg_chat_message(mc, &len);
+			QString s = QString::fromUtf8(message, compat::castSize(len));
+			net::Message ghostMsg = net::ServerReply::makeAlert(s);
+			if(bypass) {
+				directToAll(ghostMsg);
+			} else {
+				addClientMessage(client, msg);
+			}
+			return;
+		} else if(bypass) {
 			directToAll(msg);
 			return;
 		}
 		break;
 	}
 	case DP_MSG_PRIVATE_CHAT: {
-		uint8_t targetId = DP_msg_private_chat_target(msg.toPrivateChat());
-		if(targetId > 0) {
+		DP_MsgPrivateChat *mpc = msg.toPrivateChat();
+		uint8_t targetId = DP_msg_private_chat_target(mpc);
+		if(client.isGhost()) {
+			client.log(Log()
+						   .about(Log::Level::Warn, Log::Topic::Ghost)
+						   .message("Ghost tried to send private message"));
+			client.sendDirectMessage(net::makePrivateChatMessage(
+				msg.contextId(), targetId, 0,
+				QStringLiteral("Can't send private messages in ghost mode.")));
+		} else if(targetId > 0) {
 			Client *target = getClientById(targetId);
 			if(target) {
 				client.sendDirectMessage(msg);

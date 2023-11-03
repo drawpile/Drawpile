@@ -334,7 +334,9 @@ void LoginHandler::handleIdentMessage(const net::ServerCommand &cmd)
 				authLoginOk(
 					ea["username"].toString(), extAuthId, flags, avatar,
 					m_config->getConfigBool(config::ExtAuthMod),
-					m_config->getConfigBool(config::ExtAuthHost));
+					m_config->getConfigBool(config::ExtAuthHost),
+					m_config->getConfigBool(config::EnableGhosts) &&
+						m_config->getConfigBool(config::ExtAuthGhosts));
 
 			} else if(allowGuests) {
 				// No ext-auth token provided, but both guest logins and extauth
@@ -387,22 +389,39 @@ void LoginHandler::handleIdentMessage(const net::ServerCommand &cmd)
 			userAccount.flags.contains("BANEXEMPT"));
 		authLoginOk(
 			username, QStringLiteral("internal:%1").arg(userAccount.userId),
-			userAccount.flags, QByteArray(), true, true);
+			userAccount.flags, QByteArray(), true, true,
+			m_config->getConfigBool(config::EnableGhosts));
 		break;
 	}
 }
 
 void LoginHandler::authLoginOk(
 	const QString &username, const QString &authId, const QStringList &flags,
-	const QByteArray &avatar, bool allowMod, bool allowHost)
+	const QByteArray &avatar, bool allowMod, bool allowHost, bool allowGhost)
 {
 	Q_ASSERT(!authId.isEmpty());
+	bool isMod = flags.contains(QStringLiteral("MOD")) && allowMod;
+	bool wantGhost = flags.contains(QStringLiteral("GHOST"));
+	bool isGhost = wantGhost && allowGhost;
+	if(wantGhost) {
+		if(!isGhost) {
+			sendError(
+				QStringLiteral("ghostsNotAllowed"),
+				QStringLiteral("Ghost mode not allowed"));
+			return;
+		} else if(!isMod) {
+			sendError(
+				QStringLiteral("ghostWithoutMod"),
+				QStringLiteral("Ghost mode is only available for moderators"));
+			return;
+		}
+	}
 
 	m_client->setUsername(username);
 	m_client->setAuthId(authId);
 	m_client->setAuthFlags(flags);
 
-	m_client->setModerator(flags.contains("MOD") && allowMod);
+	m_client->setModerator(isMod, isGhost);
 	if(!avatar.isEmpty())
 		m_client->setAvatar(avatar);
 	m_hostPrivilege = flags.contains("HOST") && allowHost;
@@ -576,6 +595,11 @@ void LoginHandler::handleHostMessage(const net::ServerCommand &cmd)
 	// Basic validation
 	if(!m_config->getConfigBool(config::AllowGuestHosts) && !m_hostPrivilege) {
 		sendError("unauthorizedHost", "Hosting not authorized");
+		return;
+	}
+
+	if(m_client->isGhost()) {
+		sendError("ghostHost", "Hosting not available in ghost mode");
 		return;
 	}
 

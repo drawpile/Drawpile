@@ -113,7 +113,8 @@ public:
 	 * kicked by other users.
 	 */
 	bool isModerator() const;
-	void setModerator(bool mod);
+	bool isGhost() const;
+	void setModerator(bool mod, bool ghost);
 
 	/**
 	 * @brief Is this a trusted user?

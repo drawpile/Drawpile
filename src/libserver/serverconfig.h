@@ -79,7 +79,11 @@ namespace config {
 		// Allow mods to disable the idle timer for individual sessions.
 		AllowIdleOverride(31, "allowIdleOverride", "true", ConfigKey::BOOL),
 		// Url to show users when logging in.
-		LoginInfoUrl(32, "loginInfoUrl", "", ConfigKey::STRING);
+		LoginInfoUrl(32, "loginInfoUrl", "", ConfigKey::STRING),
+		// Allow mods to join as ghost users, to avoid disrupting sessions.
+		EnableGhosts(33, "enableGhosts", "false", ConfigKey::BOOL),
+		// Respect ext-auth user's "GHOST" flag.
+		ExtAuthGhosts(34, "extauthghosts", "false", ConfigKey::BOOL);
 }
 
 //! Settings that are not adjustable after the server has started
