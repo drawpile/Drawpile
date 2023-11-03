@@ -8,7 +8,7 @@
 class Ui_InspectorSettings;
 
 namespace canvas {
-	class UserListModel;
+class UserListModel;
 }
 
 namespace tools {
@@ -17,9 +17,9 @@ namespace tools {
  * @brief Canvas inspector (a moderation tool)
  */
 class InspectorSettings final : public ToolSettings {
-Q_OBJECT
+	Q_OBJECT
 public:
-	InspectorSettings(ToolController *ctrl, QObject *parent=nullptr);
+	InspectorSettings(ToolController *ctrl, QObject *parent = nullptr);
 	~InspectorSettings() override;
 
 	QString toolType() const override { return QStringLiteral("inspector"); }
@@ -31,8 +31,14 @@ public:
 
 	void setUserList(canvas::UserListModel *userlist) { m_userlist = userlist; }
 
+	bool isShowTiles() const;
+
+	ToolProperties saveToolSettings() override;
+	void restoreToolSettings(const ToolProperties &cfg) override;
+
 public slots:
 	void onCanvasInspected(int lastEditedBy);
+	void pushSettings() override;
 
 protected:
 	QWidget *createUiWidget(QWidget *parent) override;
@@ -45,4 +51,3 @@ private:
 }
 
 #endif
-

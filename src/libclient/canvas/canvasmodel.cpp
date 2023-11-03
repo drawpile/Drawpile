@@ -341,28 +341,27 @@ void CanvasModel::pickColor(int x, int y, int layer, int diameter)
 	}
 }
 
-void CanvasModel::inspectCanvas(int x, int y, bool clobber)
+void CanvasModel::inspectCanvas(int x, int y, bool clobber, bool showTiles)
 {
 	unsigned int contextId = m_paintengine->pickContextId(x, y);
 	bool haveContextId = contextId != 0;
 	if(haveContextId) {
-		inspectCanvas(contextId);
+		inspectCanvas(contextId, showTiles);
 	}
 	if(haveContextId || clobber) {
 		emit canvasInspected(contextId);
 	}
 }
 
-void CanvasModel::inspectCanvas(int contextId)
+void CanvasModel::inspectCanvas(int contextId, bool showTiles)
 {
 	Q_ASSERT(contextId > 0 && contextId < 256);
-	m_paintengine->setInspectContextId(contextId);
+	m_paintengine->setInspect(contextId, showTiles);
 }
 
 void CanvasModel::stopInspectingCanvas()
 {
-	m_paintengine->setInspectContextId(0);
-	emit canvasInspectionEnded();
+	m_paintengine->setInspect(0, false);
 }
 
 void CanvasModel::setSelection(Selection *selection)

@@ -553,7 +553,9 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 		m_viewStatusBar->showMessage(tr("🙋 %1 joined!").arg(name), 2000);
 	});
 
-	connect(m_serverLogDialog, &dialogs::ServerLogDialog::inspectModeChanged, canvas, QOverload<int>::of(&canvas::CanvasModel::inspectCanvas));
+	connect(m_serverLogDialog, &dialogs::ServerLogDialog::inspectModeChanged, canvas, [this, canvas](unsigned int contextId) {
+		canvas->inspectCanvas(contextId, m_dockToolSettings->inspectorSettings()->isShowTiles());
+	});
 	connect(m_serverLogDialog, &dialogs::ServerLogDialog::inspectModeStopped, canvas, &canvas::CanvasModel::stopInspectingCanvas);
 
 	updateLayerViewMode();

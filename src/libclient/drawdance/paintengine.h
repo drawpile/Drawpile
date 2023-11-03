@@ -75,7 +75,7 @@ public:
 
 	DP_ViewModePick pick(int x, int y);
 
-	void setInspectContextId(unsigned int contextId);
+	void setInspect(unsigned int contextId, bool showTiles);
 
 	Tile localBackgroundTile() const;
 

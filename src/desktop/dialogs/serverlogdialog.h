@@ -31,7 +31,7 @@ public slots:
 	void setOperatorMode(bool op);
 
 signals:
-	void inspectModeChanged(int contextId);
+	void inspectModeChanged(unsigned int contextId);
 	void inspectModeStopped();
 	void opCommand(const net::Message &msg);
 

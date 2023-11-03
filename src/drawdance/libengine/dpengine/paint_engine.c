@@ -111,6 +111,7 @@ struct DP_PaintEngine {
     struct {
         bool reveal_censored;
         unsigned int inspect_context_id;
+        bool inspect_show_tiles;
         struct {
             DP_LayerPropsList *prev_lpl;
             DP_Timeline *prev_tl;
@@ -667,6 +668,7 @@ DP_PaintEngine *DP_paint_engine_new_inc(
         DP_local_state_new(cs_or_null, local_view_invalidated, pe);
     pe->local_view.reveal_censored = false;
     pe->local_view.inspect_context_id = 0;
+    pe->local_view.inspect_show_tiles = false;
     pe->local_view.layers.prev_lpl = NULL;
     pe->local_view.layers.prev_tl = NULL;
     pe->local_view.layers.lpl = NULL;
@@ -862,12 +864,14 @@ DP_ViewModePick DP_paint_engine_pick(DP_PaintEngine *pe, int x, int y)
     return DP_view_mode_pick(pe->view_cs, pe->local_state, x, y);
 }
 
-void DP_paint_engine_inspect_context_id_set(DP_PaintEngine *pe,
-                                            unsigned int context_id)
+void DP_paint_engine_inspect_set(DP_PaintEngine *pe, unsigned int context_id,
+                                 bool show_tiles)
 {
     DP_ASSERT(pe);
-    if (pe->local_view.inspect_context_id != context_id) {
+    if (pe->local_view.inspect_context_id != context_id
+        || pe->local_view.inspect_show_tiles != show_tiles) {
         pe->local_view.inspect_context_id = context_id;
+        pe->local_view.inspect_show_tiles = show_tiles;
         invalidate_local_view(pe, false);
     }
 }
@@ -1866,7 +1870,8 @@ get_or_make_transient_canvas_state(DP_CanvasState *cs)
 
 
 static DP_TransientLayerContent *
-make_inspect_sublayer(DP_TransientCanvasState *tcs, DP_DrawContext *dc)
+make_inspect_sublayer(DP_TransientCanvasState *tcs, DP_DrawContext *dc,
+                      int blend_mode)
 {
     int index_count;
     int *indexes = DP_draw_context_layer_indexes(dc, &index_count);
@@ -1878,14 +1883,15 @@ make_inspect_sublayer(DP_TransientCanvasState *tcs, DP_DrawContext *dc)
     DP_transient_layer_content_transient_sublayer(tlc, INSPECT_SUBLAYER_ID,
                                                   &sub_tlc, &sub_tlp);
     DP_transient_layer_props_opacity_set(sub_tlp, DP_BIT15 - DP_BIT15 / 4);
-    DP_transient_layer_props_blend_mode_set(sub_tlp, DP_BLEND_MODE_RECOLOR);
+    DP_transient_layer_props_blend_mode_set(sub_tlp, blend_mode);
     return sub_tlc;
 }
 
 static void maybe_add_inspect_sublayer(DP_TransientCanvasState *tcs,
                                        DP_DrawContext *dc,
-                                       unsigned int context_id, int xtiles,
-                                       int ytiles, DP_LayerContent *lc)
+                                       unsigned int context_id, int blend_mode,
+                                       int xtiles, int ytiles,
+                                       DP_LayerContent *lc)
 {
     DP_TransientLayerContent *sub_tlc = NULL;
     for (int y = 0; y < ytiles; ++y) {
@@ -1893,7 +1899,7 @@ static void maybe_add_inspect_sublayer(DP_TransientCanvasState *tcs,
             DP_Tile *t = DP_layer_content_tile_at_noinc(lc, x, y);
             if (t && DP_tile_context_id(t) == context_id) {
                 if (!sub_tlc) {
-                    sub_tlc = make_inspect_sublayer(tcs, dc);
+                    sub_tlc = make_inspect_sublayer(tcs, dc, blend_mode);
                 }
                 DP_transient_layer_content_tile_set_noinc(
                     sub_tlc, DP_tile_censored_inc(), y * xtiles + x);
@@ -1904,7 +1910,8 @@ static void maybe_add_inspect_sublayer(DP_TransientCanvasState *tcs,
 
 static void apply_inspect_recursive(DP_TransientCanvasState *tcs,
                                     DP_DrawContext *dc, unsigned int context_id,
-                                    int xtiles, int ytiles, DP_LayerList *ll)
+                                    int blend_mode, int xtiles, int ytiles,
+                                    DP_LayerList *ll)
 {
     int count = DP_layer_list_count(ll);
     DP_draw_context_layer_indexes_push(dc);
@@ -1914,12 +1921,13 @@ static void apply_inspect_recursive(DP_TransientCanvasState *tcs,
         if (DP_layer_list_entry_is_group(lle)) {
             DP_LayerGroup *lg = DP_layer_list_entry_group_noinc(lle);
             DP_LayerList *child_lle = DP_layer_group_children_noinc(lg);
-            apply_inspect_recursive(tcs, dc, context_id, xtiles, ytiles,
-                                    child_lle);
+            apply_inspect_recursive(tcs, dc, context_id, blend_mode, xtiles,
+                                    ytiles, child_lle);
         }
         else {
             DP_LayerContent *lc = DP_layer_list_entry_content_noinc(lle);
-            maybe_add_inspect_sublayer(tcs, dc, context_id, xtiles, ytiles, lc);
+            maybe_add_inspect_sublayer(tcs, dc, context_id, blend_mode, xtiles,
+                                       ytiles, lc);
         }
     }
     DP_draw_context_layer_indexes_pop(dc);
@@ -1938,9 +1946,11 @@ static DP_CanvasState *apply_inspect(DP_PaintEngine *pe, DP_CanvasState *cs)
         DP_draw_context_layer_indexes_clear(dc);
         DP_TileCounts tile_counts = DP_tile_counts_round(
             DP_canvas_state_width(cs), DP_canvas_state_height(cs));
-        apply_inspect_recursive(tcs, dc, context_id, tile_counts.x,
-                                tile_counts.y,
-                                DP_canvas_state_layers_noinc(cs));
+        apply_inspect_recursive(
+            tcs, dc, context_id,
+            pe->local_view.inspect_show_tiles ? DP_BLEND_MODE_NORMAL
+                                              : DP_BLEND_MODE_RECOLOR,
+            tile_counts.x, tile_counts.y, DP_canvas_state_layers_noinc(cs));
         DP_PERF_END(inspect);
         return (DP_CanvasState *)tcs;
     }

@@ -154,7 +154,7 @@ public:
 	int pickLayer(int x, int y);
 	unsigned int pickContextId(int x, int y);
 
-	void setInspectContextId(unsigned int contextId);
+	void setInspect(unsigned int contextId, bool showTiles);
 
 	//! The current canvas state with the local view (hidden layers, local
 	//! background) applied.

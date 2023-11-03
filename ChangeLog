@@ -49,6 +49,7 @@ Unreleased Version 2.2.0-pre
  * Server Feature: Allow the user to pick how they want to log in, to avoid the common issue of wanting to join as a guest but picking a username that's taken.
  * Fix: Nudge catchup if it gets stuck without any messages received for a while.
  * Feature: Remember accounts, not just passwords. Should reduce the clicks and typing needed to log in even if you use multiple accounts.
+ * Feature: Allow toggling whole tile marking in the inspector, since it makes some things easier to see.
 
 2023-09-30 Version 2.2.0-beta.8
  * Fix: Apply color wheel direction to color dialogs too. Thanks Blozzom for reporting.

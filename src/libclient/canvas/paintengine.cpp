@@ -373,9 +373,9 @@ unsigned int PaintEngine::pickContextId(int x, int y)
 	return m_paintEngine.pick(x, y).context_id;
 }
 
-void PaintEngine::setInspectContextId(unsigned int contextId)
+void PaintEngine::setInspect(unsigned int contextId, bool showTiles)
 {
-	m_paintEngine.setInspectContextId(contextId);
+	m_paintEngine.setInspect(contextId, showTiles);
 }
 
 QColor PaintEngine::sampleColor(int x, int y, int layerId, int diameter)

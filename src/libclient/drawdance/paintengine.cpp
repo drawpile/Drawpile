@@ -123,9 +123,9 @@ DP_ViewModePick PaintEngine::pick(int x, int y)
 	return DP_paint_engine_pick(m_data, x, y);
 }
 
-void PaintEngine::setInspectContextId(unsigned int contextId)
+void PaintEngine::setInspect(unsigned int contextId, bool showTiles)
 {
-	DP_paint_engine_inspect_context_id_set(m_data, contextId);
+	DP_paint_engine_inspect_set(m_data, contextId, showTiles);
 }
 
 Tile PaintEngine::localBackgroundTile() const

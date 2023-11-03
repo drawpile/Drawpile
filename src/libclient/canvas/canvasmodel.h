@@ -124,8 +124,8 @@ public slots:
 
 	void pickLayer(int x, int y);
 	void pickColor(int x, int y, int layer, int diameter = 0);
-	void inspectCanvas(int x, int y, bool clobber);
-	void inspectCanvas(int contextId);
+	void inspectCanvas(int x, int y, bool clobber, bool showTiles);
+	void inspectCanvas(int contextId, bool showTiles);
 	void stopInspectingCanvas();
 
 signals:
@@ -142,7 +142,6 @@ signals:
 
 	void colorPicked(const QColor &color);
 	void canvasInspected(int lastEditedBy);
-	void canvasInspectionEnded();
 
 	void chatMessageReceived(
 		int sender, int recipient, uint8_t tflags, uint8_t oflags,

@@ -10,16 +10,16 @@
     <height>300</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout">
+  <layout class="QVBoxLayout" name="inspectorLayout">
    <item>
-    <widget class="QLabel">
+    <widget class="QLabel" name="lblLastEdited">
      <property name="text">
       <string>Last edited by:</string>
      </property>
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout">
+    <layout class="QHBoxLayout" name="lastEditedLayout">
      <item>
       <widget class="QLabel" name="lblAvatar">
        <property name="sizePolicy">
@@ -44,9 +44,6 @@
      </item>
      <item>
       <widget class="QLabel" name="lblUsername">
-       <property name="text">
-        <string notr="true">-</string>
-       </property>
        <property name="textFormat">
         <enum>Qt::PlainText</enum>
        </property>
@@ -55,14 +52,37 @@
     </layout>
    </item>
    <item>
-    <spacer>
+    <spacer name="inspectorSeparator">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>0</width>
+       <height>6</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="showTilesBox">
+     <property name="text">
+      <string>Mark whole tiles</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <spacer name="inspectorSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
      <property name="sizeHint" stdset="0">
       <size>
-       <width>20</width>
-       <height>222</height>
+       <width>0</width>
+       <height>0</height>
       </size>
      </property>
     </spacer>

@@ -120,8 +120,8 @@ void DP_paint_engine_reveal_censored_set(DP_PaintEngine *pe,
 
 DP_ViewModePick DP_paint_engine_pick(DP_PaintEngine *pe, int x, int y);
 
-void DP_paint_engine_inspect_context_id_set(DP_PaintEngine *pe,
-                                            unsigned int context_id);
+void DP_paint_engine_inspect_set(DP_PaintEngine *pe, unsigned int context_id,
+                                 bool show_tiles);
 
 DP_Tile *DP_paint_engine_local_background_tile_noinc(DP_PaintEngine *pe);
 
