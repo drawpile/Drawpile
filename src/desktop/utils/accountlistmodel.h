@@ -52,6 +52,8 @@ public:
 
 	bool isEmpty() const { return m_accounts.isEmpty(); }
 
+	int getMostRecentIndex() const;
+
 	void saveAccount(
 		Type type, const QString &displayUsername, const QString &password,
 		const QString &avatarFilename, bool insecureFallback);
@@ -96,7 +98,7 @@ private:
 		const QString &target);
 	QString hostForType(Type type);
 	static QString normalizeUsername(const QString &displayUsername);
-	static int compareAccounts(const Account &a, const Account &b);
+	static bool isAccountLessThan(const Account &a, const Account &b);
 
 	QString readPasswordFallback(const QString &keychainSecretName);
 	static void savePasswordFallback(

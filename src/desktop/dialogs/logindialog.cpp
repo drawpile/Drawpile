@@ -774,8 +774,13 @@ void LoginDialog::onLoginMethodChoiceNeeded(
 		}
 		d->ui->methodExplanationLabel->setText(explanation);
 		d->accounts->load(url, extAuthUrl);
-		d->resetMode(
-			d->accounts->isEmpty() ? Mode::LoginMethod : Mode::RecentAccounts);
+		if(d->accounts->isEmpty()) {
+			d->resetMode(Mode::LoginMethod);
+		} else {
+			d->resetMode(Mode::RecentAccounts);
+			d->ui->recentAccountCombo->setCurrentIndex(
+				d->accounts->getMostRecentIndex());
+		}
 		updateOkButtonEnabled();
 	}
 }

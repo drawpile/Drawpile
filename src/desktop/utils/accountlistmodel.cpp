@@ -85,13 +85,32 @@ void AccountListModel::load(const QUrl &url, const QUrl &extAuthUrl)
 		loadAccounts(accounts, usernames, Type::ExtAuth, extAuthHost);
 	}
 
-	std::sort(accounts.begin(), accounts.end(), compareAccounts);
+	std::sort(accounts.begin(), accounts.end(), isAccountLessThan);
 
 	beginResetModel();
 	m_authHost = authHost;
 	m_extAuthHost = extAuthHost;
 	m_accounts = accounts;
 	endResetModel();
+}
+
+int AccountListModel::getMostRecentIndex() const
+{
+	compat::sizetype count = m_accounts.size();
+	if(count == 0) {
+		return -1;
+	} else {
+		int bestIndex = 0;
+		QDateTime bestLastUsed = m_accounts[0].lastUsed;
+		for(compat::sizetype i = 1; i < count; ++i) {
+			QDateTime lastUsed = m_accounts[i].lastUsed;
+			if(lastUsed > bestLastUsed) {
+				bestIndex = i;
+				bestLastUsed = lastUsed;
+			}
+		}
+		return bestIndex;
+	}
 }
 
 void AccountListModel::saveAccount(
@@ -382,15 +401,9 @@ QString AccountListModel::normalizeUsername(const QString &displayUsername)
 	return displayUsername.toCaseFolded();
 }
 
-int AccountListModel::compareAccounts(const Account &a, const Account &b)
+bool AccountListModel::isAccountLessThan(const Account &a, const Account &b)
 {
-	if(a.lastUsed < b.lastUsed) {
-		return -1;
-	} else if(a.lastUsed > b.lastUsed) {
-		return 1;
-	} else {
-		return a.username.compare(b.username, Qt::CaseInsensitive);
-	}
+	return a.username.compare(b.username, Qt::CaseInsensitive) < 0;
 }
 
 QString
