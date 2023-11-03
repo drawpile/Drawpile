@@ -2,7 +2,9 @@
 #include "desktop/dialogs/settingsdialog/network.h"
 #include "desktop/dialogs/avatarimport.h"
 #include "desktop/dialogs/settingsdialog/helpers.h"
+#include "desktop/main.h"
 #include "desktop/settings.h"
+#include "desktop/utils/accountlistmodel.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/kis_slider_spin_box.h"
 #include "libclient/utils/avatarlistmodel.h"
@@ -108,7 +110,20 @@ void Network::initNetwork(
 	auto *allowInsecure =
 		new QCheckBox(tr("Allow insecure local storage"), this);
 	settings.bindInsecurePasswordStorage(allowInsecure);
+	connect(allowInsecure, &QCheckBox::clicked, this, [](bool checked) {
+		if(!checked) {
+			AccountListModel(dpApp().state(), nullptr).clearFallbackPasswords();
+		}
+	});
 	form->addRow(tr("Password security:"), allowInsecure);
+
+	auto *allowInsecureNotice = utils::formNote(
+		tr("With this enabled, Drawpile may save passwords in an unencrypted "
+		   "format. Disabling it will forget any insecurely stored passwords."),
+		QSizePolicy::Label, QIcon::fromTheme("dialog-warning"));
+	form->addRow(nullptr, allowInsecureNotice);
+	settings.bindInsecurePasswordStorage(
+		allowInsecureNotice, &QWidget::setVisible);
 
 	auto *autoReset = utils::addRadioGroup(
 		form, tr("Connection quality:"), true,

@@ -76,6 +76,8 @@ public:
 
 	static bool canSavePasswords(bool insecureFallback);
 
+	void clearFallbackPasswords();
+
 signals:
 	void passwordReadFinished(int jobId, const QString &password);
 

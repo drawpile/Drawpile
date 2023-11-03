@@ -313,6 +313,13 @@ bool AccountListModel::canSavePasswords(bool insecureFallback)
 #endif
 }
 
+void AccountListModel::clearFallbackPasswords()
+{
+	QSqlQuery qry = m_state.query();
+	QString sql = QStringLiteral("delete from insecure_storage");
+	m_state.exec(qry, sql);
+}
+
 void AccountListModel::createTables()
 {
 	QSqlQuery qry = m_state.query();
