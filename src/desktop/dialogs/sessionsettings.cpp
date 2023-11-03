@@ -332,8 +332,8 @@ void SessionSettingsDialog::bansImported(int total, int imported)
 	QString message = tr("Imported %n session ban(s).", "", imported);
 	if(imported < total) {
 		//: %1 is the "Imported %n session ban(s)." message.
-		message = tr("%1 %n were not imported because they were invalid or "
-					 "duplicates.",
+		message = tr("%1 %n was/were not imported because it was/they were "
+					 "invalid or duplicates.",
 					 "", total - imported)
 					  .arg(message);
 	}
