@@ -47,7 +47,6 @@ public:
 		ClientInfo, // Structured information about client joining or hosting
 		ExtBan,     // Externally sourced bans
 		BanImpEx,	// Session ban import and export
-		Ghost,		// Events pertaining ghost users
 	};
 	Q_ENUM(Topic)
 
@@ -74,7 +73,7 @@ public:
 	//! Get the freeform message part
 	QString message() const { return m_message; }
 
-	bool isSensitive() const { return m_topic == Topic::ClientInfo || m_topic == Topic::Ghost; }
+	bool isSensitive() const { return m_topic == Topic::ClientInfo; }
 
 	Log &about(Level l, Topic t) { m_level=l; m_topic=t; return *this; }
 	Log &user(uint8_t id, const QHostAddress &ip, const QString &name) { m_user = QStringLiteral("%1;%2;%3").arg(int(id)).arg(ip.toString()).arg(name); return *this; }

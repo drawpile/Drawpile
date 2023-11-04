@@ -42,7 +42,7 @@ QList<Log> DbLog::getLogEntries(const QString &session, const QDateTime &after, 
 	}
 
 	if(omitSensitive) {
-		sql += QStringLiteral(" AND topic NOT IN ('ClientInfo', 'Ghost')");
+		sql += QStringLiteral(" AND topic <> 'ClientInfo'");
 	}
 
 	sql += " ORDER BY timestamp DESC, rowid DESC";

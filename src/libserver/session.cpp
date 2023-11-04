@@ -215,8 +215,10 @@ void Session::joinUser(Client *user, bool host)
 	if(isGhost) {
 		user->sendSystemChat(
 			QStringLiteral(
-				"Ghost mode. Administrative actions will reveal your presence. "
-				"Chat messages are treated as server alerts."),
+				"GHOST MODE. Your presence is not overtly announced, chat "
+				"messages are treated as server alerts. You are not hidden "
+				"though, users can see your presence in the event log and "
+				"taking administrative actions will show your name in chat."),
 			true);
 	} else {
 		addToHistory(user->joinMessage());
@@ -250,10 +252,11 @@ void Session::joinUser(Client *user, bool host)
 	m_history->joinUser(user->id(), username);
 
 	user->log(Log()
-				  .about(
-					  Log::Level::Info,
-					  isGhost ? Log::Topic::Ghost : Log::Topic::Join)
-				  .message("Joined session"));
+				  .about(Log::Level::Info, Log::Topic::Join)
+				  .message(
+					  isGhost ? QStringLiteral(
+									"Moderator in ghost mode joined session")
+							  : QStringLiteral("Joined session")));
 	emit sessionAttributeChanged(this);
 }
 
@@ -268,11 +271,12 @@ void Session::removeUser(Client *user)
 
 	Q_ASSERT(user->session() == this);
 	bool isGhost = user->isGhost();
-	user->log(Log()
-				  .about(
-					  Log::Level::Info,
-					  isGhost ? Log::Topic::Ghost : Log::Topic::Leave)
-				  .message("Left session"));
+	user->log(
+		Log()
+			.about(Log::Level::Info, Log::Topic::Leave)
+			.message(
+				isGhost ? QStringLiteral("Moderator in ghost mode left session")
+						: QStringLiteral("Left session")));
 	user->setSession(nullptr);
 
 	disconnect(user, nullptr, this, nullptr);
@@ -547,20 +551,15 @@ QVector<uint8_t> Session::updateOwnership(
 												 ? QStringLiteral("the server")
 												 : changedBy);
 				key = net::ServerReply::KEY_OP_GIVE;
-				c->log(Log()
-						   .about(
-							   Log::Level::Info,
-							   isGhost ? Log::Topic::Ghost : Log::Topic::Op)
-						   .message(msg));
+				c->log(
+					Log().about(Log::Level::Info, Log::Topic::Op).message(msg));
 			} else {
 				msg = "Operator status revoked by " +
 					  (changedBy.isEmpty() ? QStringLiteral("the server")
 										   : changedBy);
 				key = net::ServerReply::KEY_OP_TAKE;
 				c->log(Log()
-						   .about(
-							   Log::Level::Info,
-							   isGhost ? Log::Topic::Ghost : Log::Topic::Deop)
+						   .about(Log::Level::Info, Log::Topic::Deop)
 						   .message(msg));
 			}
 
@@ -633,9 +632,7 @@ QVector<uint8_t> Session::updateTrustedUsers(
 										   : changedBy);
 				key = net::ServerReply::KEY_TRUST_GIVE;
 				c->log(Log()
-						   .about(
-							   Log::Level::Info,
-							   isGhost ? Log::Topic::Ghost : Log::Topic::Trust)
+						   .about(Log::Level::Info, Log::Topic::Trust)
 						   .message(msg));
 			} else {
 				msg = "Untrusted by " + (changedBy.isEmpty()
@@ -643,9 +640,7 @@ QVector<uint8_t> Session::updateTrustedUsers(
 											 : changedBy);
 				key = net::ServerReply::KEY_TRUST_TAKE;
 				c->log(Log()
-						   .about(
-							   Log::Level::Info, isGhost ? Log::Topic::Ghost
-														 : Log::Topic::Untrust)
+						   .about(Log::Level::Info, Log::Topic::Untrust)
 						   .message(msg));
 			}
 
@@ -893,9 +888,6 @@ void Session::handleClientMessage(Client &client, const net::Message &msg)
 		DP_MsgPrivateChat *mpc = msg.toPrivateChat();
 		uint8_t targetId = DP_msg_private_chat_target(mpc);
 		if(client.isGhost()) {
-			client.log(Log()
-						   .about(Log::Level::Warn, Log::Topic::Ghost)
-						   .message("Ghost tried to send private message"));
 			client.sendDirectMessage(net::makePrivateChatMessage(
 				msg.contextId(), targetId, 0,
 				QStringLiteral("Can't send private messages in ghost mode.")));
