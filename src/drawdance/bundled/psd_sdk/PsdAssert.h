@@ -11,7 +11,7 @@
 /// \ingroup Platform
 /// Enables/disables the use of PSD_ASSERT* macros. If disabled, the macros will not generate any instructions.
 /// \sa PSD_ASSERT PSD_ASSERT_NOT_NULL
-#define PSD_ENABLE_ASSERTIONS 1
+#define PSD_ENABLE_ASSERTIONS 0
 
 
 /// \def PSD_ASSERT
