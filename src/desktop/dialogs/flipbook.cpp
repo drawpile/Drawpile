@@ -150,10 +150,25 @@ void Flipbook::playPause()
 
 void Flipbook::updateSpeed()
 {
-	d->state.speedPercent = d->ui.speedSpinner->value();
+	int speedPercent = d->ui.speedSpinner->value();
+	d->state.speedPercent = speedPercent;
+	updateSpeedSuffix();
 	if(d->timer.isActive()) {
 		d->timer.setInterval(getTimerInterval());
 	}
+}
+
+void Flipbook::updateSpeedSuffix()
+{
+	QString fpsSuffix;
+	if(d->canvasState.isNull()) {
+		fpsSuffix = tr("%");
+	} else {
+		qreal fps =
+			d->canvasState.framerate() * d->ui.speedSpinner->value() / 100.0;
+		fpsSuffix = tr("% (%1 FPS)").arg(qRound(fps));
+	}
+	d->ui.speedSpinner->setSuffix(fpsSuffix);
 }
 
 void Flipbook::setPaintEngine(canvas::PaintEngine *pe, const QRect &crop)
@@ -181,12 +196,14 @@ void Flipbook::setCrop(const QRectF &rect)
 	if(rect.width() * w <= 5 || rect.height() * h <= 5) {
 		d->crop = canvasRect;
 		d->ui.zoomButton->setEnabled(false);
+		d->ui.zoomButton->setVisible(false);
 	} else {
 		d->crop = QRect(
 					  d->crop.x() + rect.x() * w, d->crop.y() + rect.y() * h,
 					  rect.width() * w, rect.height() * h)
 					  .intersected(canvasRect);
 		d->ui.zoomButton->setEnabled(true);
+		d->ui.zoomButton->setVisible(true);
 	}
 
 	d->state.crop = rect;
@@ -233,6 +250,7 @@ void Flipbook::resetCanvas(bool refresh, const QRect &crop)
 	}
 
 	d->canvasState = d->paintengine->viewCanvasState();
+	updateSpeedSuffix();
 	if(d->canvasState.isNull()) {
 		return;
 	}

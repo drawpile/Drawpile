@@ -71,6 +71,7 @@ private slots:
 
 private:
 	void resetCanvas(bool refresh, const QRect &crop);
+	void updateSpeedSuffix();
 	int getTimerInterval() const;
 	void renderFrames();
 	QRect getExportRect() const;

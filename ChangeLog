@@ -52,6 +52,7 @@ Unreleased Version 2.2.0-pre
  * Feature: Allow toggling whole tile marking in the inspector, since it makes some things easier to see.
  * Feature: Render flipbook frames in the background and indicate that fact with a loading spinner. It no longer lags the UI and gets done faster because of multithreading.
  * Feature: Crop flipbook when a selection is present upon opening it.
+ * Feature: Make the flipbook UI clearer. The buttons now look like buttons, the uncrop button has a better icon and only shows while the view is cropped and the speed slider shows how many FPS you're actually running at.
 
 2023-09-30 Version 2.2.0-beta.8
  * Fix: Apply color wheel direction to color dialogs too. Thanks Blozzom for reporting.

@@ -20,26 +20,6 @@
    <item>
     <layout class="QHBoxLayout">
      <item>
-      <widget class="QToolButton" name="zoomButton">
-       <property name="toolTip">
-        <string>Reset Zoom</string>
-       </property>
-       <property name="icon">
-        <iconset theme="zoom-original">
-         <normaloff>theme:zoom-original.svg</normaloff>theme:zoom-original.svg</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>22</width>
-         <height>22</height>
-        </size>
-       </property>
-       <property name="autoRaise">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QToolButton" name="refreshButton">
        <property name="toolTip">
         <string>Refresh</string>
@@ -54,8 +34,22 @@
          <height>22</height>
         </size>
        </property>
-       <property name="autoRaise">
-        <bool>true</bool>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="zoomButton">
+       <property name="toolTip">
+        <string>Reset Zoom</string>
+       </property>
+       <property name="icon">
+        <iconset theme="zoom-out">
+         <normaloff>theme:zoom-out.svg</normaloff>theme:zoom-out.svg</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>22</width>
+         <height>22</height>
+        </size>
        </property>
       </widget>
      </item>
@@ -93,9 +87,6 @@
          <height>22</height>
         </size>
        </property>
-       <property name="autoRaise">
-        <bool>true</bool>
-       </property>
       </widget>
      </item>
      <item>
@@ -118,9 +109,6 @@
          <width>22</width>
          <height>22</height>
         </size>
-       </property>
-       <property name="autoRaise">
-        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -187,11 +175,8 @@
      </item>
      <item>
       <widget class="KisSliderSpinBox" name="speedSpinner">
-       <property name="suffix">
-        <string>%</string>
-       </property>
        <property name="prefix">
-        <string>Playback Speed: </string>
+        <string>Speed: </string>
        </property>
        <property name="minimum">
         <number>1</number>
