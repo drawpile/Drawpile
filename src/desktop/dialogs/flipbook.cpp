@@ -156,10 +156,10 @@ void Flipbook::updateSpeed()
 	}
 }
 
-void Flipbook::setPaintEngine(canvas::PaintEngine *pe)
+void Flipbook::setPaintEngine(canvas::PaintEngine *pe, const QRect &crop)
 {
 	d->paintengine = pe;
-	resetCanvas(false);
+	resetCanvas(false, crop);
 	if(!d->timer.isActive()) {
 		playPause();
 	}
@@ -176,14 +176,16 @@ void Flipbook::setCrop(const QRectF &rect)
 	const int h = d->crop.height();
 	QSize canvasSize =
 		d->canvasState.isNull() ? QSize{} : d->canvasState.size();
+	QRect canvasRect(QPoint(), canvasSize);
 
 	if(rect.width() * w <= 5 || rect.height() * h <= 5) {
-		d->crop = QRect{QPoint(), canvasSize};
+		d->crop = canvasRect;
 		d->ui.zoomButton->setEnabled(false);
 	} else {
 		d->crop = QRect(
-			d->crop.x() + rect.x() * w, d->crop.y() + rect.y() * h,
-			rect.width() * w, rect.height() * h);
+					  d->crop.x() + rect.x() * w, d->crop.y() + rect.y() * h,
+					  rect.width() * w, rect.height() * h)
+					  .intersected(canvasRect);
 		d->ui.zoomButton->setEnabled(true);
 	}
 
@@ -202,7 +204,7 @@ void Flipbook::resetCrop()
 
 void Flipbook::refreshCanvas()
 {
-	resetCanvas(true);
+	resetCanvas(true, QRect());
 }
 
 void Flipbook::exportGif()
@@ -224,7 +226,7 @@ void Flipbook::exportFrames()
 }
 #endif
 
-void Flipbook::resetCanvas(bool refresh)
+void Flipbook::resetCanvas(bool refresh, const QRect &crop)
 {
 	if(!d->paintengine) {
 		return;
@@ -267,8 +269,15 @@ void Flipbook::resetCanvas(bool refresh)
 		QSize canvasSize = d->canvasState.size();
 		QPoint canvasOffset = d->canvasState.offset();
 		d->crop = QRect{QPoint{0, 0}, canvasSize};
-		if(d->state.crop.isValid() && canvasSize == d->state.lastCanvasSize &&
-		   canvasOffset == d->state.lastCanvasOffset) {
+		if(!crop.isEmpty()) {
+			qreal w = canvasSize.width();
+			qreal h = canvasSize.height();
+			setCrop(QRectF(
+				crop.x() / w, crop.y() / h, crop.width() / w,
+				crop.height() / h));
+		} else if(
+			d->state.crop.isValid() && canvasSize == d->state.lastCanvasSize &&
+			canvasOffset == d->state.lastCanvasOffset) {
 			setCrop(d->state.crop);
 		} else {
 			resetCrop();

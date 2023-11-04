@@ -35,7 +35,7 @@ public:
 	explicit Flipbook(State &state, QWidget *parent = nullptr);
 	~Flipbook() override;
 
-	void setPaintEngine(canvas::PaintEngine *pe);
+	void setPaintEngine(canvas::PaintEngine *pe, const QRect &crop = QRect());
 	void setRefreshShortcuts(const QList<QKeySequence> &shortcuts);
 
 	bool event(QEvent *event) override;
@@ -70,7 +70,7 @@ private slots:
 #endif
 
 private:
-	void resetCanvas(bool refresh);
+	void resetCanvas(bool refresh, const QRect &crop);
 	int getTimerInterval() const;
 	void renderFrames();
 	QRect getExportRect() const;

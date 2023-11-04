@@ -1691,7 +1691,10 @@ void MainWindow::showFlipbook()
 		fp = new dialogs::Flipbook{m_flipbookState, this};
 		fp->setObjectName("flipbook");
 		fp->setAttribute(Qt::WA_DeleteOnClose);
-		fp->setPaintEngine(m_doc->canvas()->paintEngine());
+		canvas::CanvasModel *canvas = m_doc->canvas();
+		canvas::Selection *sel = canvas->selection();
+		fp->setPaintEngine(
+			canvas->paintEngine(), sel ? sel->boundingRect() : QRect());
 		fp->setRefreshShortcuts(getAction("showflipbook")->shortcuts());
 		connect(
 			fp, &dialogs::Flipbook::exportGifRequested, this,
