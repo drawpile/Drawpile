@@ -1210,11 +1210,11 @@ static DP_CanvasState *load_ora(DP_DrawContext *dc, const char *path,
 
 DP_CanvasState *load_flat_image(DP_DrawContext *dc, DP_Input *input,
                                 const char *flat_image_layer_title,
+                                const unsigned char *buf, size_t size,
                                 DP_LoadResult *out_result)
 {
     DP_ImageFileType type;
-    DP_Image *img =
-        DP_image_new_from_file(input, DP_IMAGE_FILE_TYPE_GUESS, &type);
+    DP_Image *img = DP_image_new_from_file_guess(input, buf, size, &type);
     if (!img) {
         assign_load_result(out_result, type == DP_IMAGE_FILE_TYPE_UNKNOWN
                                            ? DP_LOAD_RESULT_UNKNOWN_FORMAT
@@ -1258,28 +1258,57 @@ DP_CanvasState *load_flat_image(DP_DrawContext *dc, DP_Input *input,
 }
 
 
+static bool guess_zip(const unsigned char *buf, size_t size)
+{
+    return size >= 4 && buf[0] == 0x50 && buf[1] == 0x4B && buf[2] == 0x03
+        && (buf[3] == 0x04 || buf[3] == 0x06 || buf[3] == 0x08);
+}
+
+static bool guess_psd(const unsigned char *buf, size_t size)
+{
+    return size >= 4 && buf[0] == 0x38 && buf[1] == 0x42 && buf[2] == 0x50
+        && buf[3] == 0x53;
+}
+
 static DP_CanvasState *load(DP_DrawContext *dc, const char *path,
                             const char *flat_image_layer_title,
                             DP_LoadResult *out_result)
 {
-    const char *dot = strrchr(path, '.');
-    if (DP_str_equal_lowercase(dot, ".ora")) {
-        return load_ora(dc, path, NULL, NULL, out_result);
-    }
-
-    if (DP_str_equal_lowercase(dot, ".psd")) {
-        return DP_load_psd(dc, path, out_result);
-    }
-
     DP_Input *input = DP_file_input_new_from_path(path);
     if (!input) {
         assign_load_result(out_result, DP_LOAD_RESULT_OPEN_ERROR);
         return NULL;
     }
 
-    DP_CanvasState *cs =
-        load_flat_image(dc, input, flat_image_layer_title, out_result);
+    unsigned char buf[8];
+    bool error;
+    size_t read = DP_input_read(input, buf, sizeof(buf), &error);
+    if (error) {
+        assign_load_result(out_result, DP_LOAD_RESULT_READ_ERROR);
+        return NULL;
+    }
 
+    // We could also check if there's an uncompressed mimetype file at the
+    // beginning of the ZIP archive like the spec says, but since we only
+    // support one ZIP-based format, that's not necessary and would preclude ORA
+    // files with the pretty unimportant defect of compressing a file wrong.
+    if (guess_zip(buf, read)) {
+        DP_input_free(input);
+        return load_ora(dc, path, NULL, NULL, out_result);
+    }
+
+    if (guess_psd(buf, read)) {
+        if (DP_input_rewind_by(input, read)) {
+            return DP_load_psd(dc, input, out_result);
+        }
+        else {
+            assign_load_result(out_result, DP_LOAD_RESULT_READ_ERROR);
+            return NULL;
+        }
+    }
+
+    DP_CanvasState *cs = load_flat_image(dc, input, flat_image_layer_title, buf,
+                                         read, out_result);
     DP_input_free(input);
     return cs;
 }

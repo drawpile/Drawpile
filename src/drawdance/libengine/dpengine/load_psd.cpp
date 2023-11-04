@@ -52,9 +52,9 @@ class DP_PsdFile final : public psd::File {
     DP_PsdFile &operator=(DP_PsdFile &&) = delete;
 
   private:
-    bool DoOpenRead(const char *filename) override
+    bool DoOpenRead(void *user) override
     {
-        m_input = DP_file_input_new_from_path(filename);
+        m_input = static_cast<DP_Input *>(user);
         return m_input != nullptr;
     }
 
@@ -401,14 +401,14 @@ static DP_TransientCanvasState *extract_layers(psd::Document *document,
     return tcs;
 }
 
-extern "C" DP_CanvasState *DP_load_psd(DP_DrawContext *dc, const char *path,
+extern "C" DP_CanvasState *DP_load_psd(DP_DrawContext *dc, DP_Input *input,
                                        DP_LoadResult *out_result)
 {
     psd::MallocAllocator allocator;
     DP_PsdFile file(&allocator);
-    bool opened = file.OpenRead(path);
+    bool opened = file.OpenRead(input);
     if (!opened) {
-        DP_error_set("Failed to open PSD file '%s'", path);
+        DP_error_set("Failed to open PSD file");
         assign_load_result(out_result, DP_LOAD_RESULT_OPEN_ERROR);
         return nullptr;
     }

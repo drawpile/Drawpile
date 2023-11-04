@@ -26,11 +26,9 @@ File::~File(void)
 
 // ---------------------------------------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------------------------------------
-bool File::OpenRead(const char* filename)
+bool File::OpenRead(void* user)
 {
-	PSD_ASSERT_NOT_NULL(filename);
-
-	return DoOpenRead(filename);
+	return DoOpenRead(user);
 }
 
 

@@ -33,7 +33,7 @@ public:
 	virtual ~File(void);
 
 	/// Tries to open a file for reading, and returns whether the operation was successful.
-	bool OpenRead(const char* filename);
+	bool OpenRead(void* user);
 
 	/// Tries to close a file, and returns whether the operation was successful.
 	bool Close(void);
@@ -53,7 +53,7 @@ protected:
 	Allocator* m_allocator;
 
 private:
-	virtual bool DoOpenRead(const char* filename) PSD_ABSTRACT;
+	virtual bool DoOpenRead(void* filename) PSD_ABSTRACT;
 	virtual bool DoClose(void) PSD_ABSTRACT;
 
 	virtual ReadOperation DoRead(void* buffer, uint32_t count, uint64_t position) PSD_ABSTRACT;

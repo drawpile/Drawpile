@@ -40,6 +40,17 @@ struct DP_Image {
 };
 
 
+DP_Image *DP_image_new(int width, int height)
+{
+    DP_ASSERT(width > 0);
+    DP_ASSERT(height > 0);
+    size_t count = DP_int_to_size(width) * DP_int_to_size(height);
+    DP_Image *img = DP_malloc_zeroed(DP_FLEX_SIZEOF(DP_Image, pixels, count));
+    img->width = width;
+    img->height = height;
+    return img;
+}
+
 static void assign_type(DP_ImageFileType *out_type, DP_ImageFileType type)
 {
     if (out_type) {
@@ -47,16 +58,43 @@ static void assign_type(DP_ImageFileType *out_type, DP_ImageFileType type)
     }
 }
 
-static bool guess_png(unsigned char *buf, size_t size)
+static bool guess_png(const unsigned char *buf, size_t size)
 {
     unsigned char sig[] = {0x89, 0x50, 0x4e, 0x47, 0xd, 0xa, 0x1a, 0xa};
     return size >= sizeof(sig) && memcmp(buf, sig, sizeof(sig)) == 0;
 }
 
-static bool guess_jpeg(unsigned char *buf, size_t size)
+static bool guess_jpeg(const unsigned char *buf, size_t size)
 {
     return size >= 4 && buf[0] == 0xff && buf[1] == 0xd8 && buf[2] == 0xff
         && ((buf[3] >= 0xe0 && buf[3] <= 0xef) || buf[3] == 0xdb);
+}
+
+DP_Image *DP_image_new_from_file_guess(DP_Input *input,
+                                       const unsigned char *buf, size_t size,
+                                       DP_ImageFileType *out_type)
+{
+    DP_Image *(*read_fn)(DP_Input *);
+    if (guess_png(buf, size)) {
+        assign_type(out_type, DP_IMAGE_FILE_TYPE_PNG);
+        read_fn = DP_image_png_read;
+    }
+    else if (guess_jpeg(buf, size)) {
+        assign_type(out_type, DP_IMAGE_FILE_TYPE_JPEG);
+        read_fn = DP_image_jpeg_read;
+    }
+    else {
+        assign_type(out_type, DP_IMAGE_FILE_TYPE_UNKNOWN);
+        DP_error_set("Could not guess image file format");
+        return NULL;
+    }
+
+    if (DP_input_rewind_by(input, size)) {
+        return read_fn(input);
+    }
+    else {
+        return NULL;
+    }
 }
 
 static DP_Image *read_image_guess(DP_Input *input, DP_ImageFileType *out_type)
@@ -67,39 +105,9 @@ static DP_Image *read_image_guess(DP_Input *input, DP_ImageFileType *out_type)
     if (error) {
         return NULL;
     }
-
-    DP_Image *(*read_fn)(DP_Input *);
-    if (guess_png(buf, read)) {
-        assign_type(out_type, DP_IMAGE_FILE_TYPE_PNG);
-        read_fn = DP_image_png_read;
-    }
-    else if (guess_jpeg(buf, read)) {
-        assign_type(out_type, DP_IMAGE_FILE_TYPE_JPEG);
-        read_fn = DP_image_jpeg_read;
-    }
     else {
-        assign_type(out_type, DP_IMAGE_FILE_TYPE_UNKNOWN);
-        DP_error_set("Could not guess image file format");
-        return NULL;
+        return DP_image_new_from_file_guess(input, buf, read, out_type);
     }
-
-    if (DP_input_rewind_by(input, read)) {
-        return read_fn(input);
-    }
-    else {
-        return NULL;
-    }
-}
-
-DP_Image *DP_image_new(int width, int height)
-{
-    DP_ASSERT(width > 0);
-    DP_ASSERT(height > 0);
-    size_t count = DP_int_to_size(width) * DP_int_to_size(height);
-    DP_Image *img = DP_malloc_zeroed(DP_FLEX_SIZEOF(DP_Image, pixels, count));
-    img->width = width;
-    img->height = height;
-    return img;
 }
 
 DP_Image *DP_image_new_from_file(DP_Input *input, DP_ImageFileType type,

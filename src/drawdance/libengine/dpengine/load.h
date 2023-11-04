@@ -25,6 +25,7 @@
 
 typedef struct DP_CanvasState DP_CanvasState;
 typedef struct DP_DrawContext DP_DrawContext;
+typedef struct DP_Input DP_Input;
 typedef struct DP_Player DP_Player;
 
 
@@ -61,7 +62,7 @@ DP_CanvasState *DP_load_ora(DP_DrawContext *dc, const char *path,
                             DP_LoadFixedLayerFn on_fixed_layer, void *user,
                             DP_LoadResult *out_result);
 
-DP_CanvasState *DP_load_psd(DP_DrawContext *dc, const char *path,
+DP_CanvasState *DP_load_psd(DP_DrawContext *dc, DP_Input *input,
                             DP_LoadResult *out_result);
 
 DP_Player *DP_load_recording(const char *path, DP_LoadResult *out_result);
