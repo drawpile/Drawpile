@@ -278,7 +278,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_doc, &Document::templateExported, this, &MainWindow::onTemplateExported);
 	connect(m_doc, &Document::dirtyCanvas, this, &MainWindow::setWindowModified);
 	connect(m_doc, &Document::sessionTitleChanged, this, &MainWindow::updateTitle);
-	connect(m_doc, &Document::currentFilenameChanged, this, &MainWindow::updateTitle);
+	connect(m_doc, &Document::currentPathChanged, this, &MainWindow::updateTitle);
 	connect(m_doc, &Document::recorderStateChanged, this, &MainWindow::setRecorderStatus);
 	connect(m_doc, &Document::sessionResetState, this, &MainWindow::showResetNoticeDialog, Qt::QueuedConnection);
 
@@ -640,11 +640,11 @@ void MainWindow::addRecentFile(const QString& file)
 void MainWindow::updateTitle()
 {
 	QString name;
-	if(m_doc->currentFilename().isEmpty()) {
+	if(m_doc->currentPath().isEmpty()) {
 		name = tr("Untitled");
 
 	} else {
-		const QFileInfo info(m_doc->currentFilename());
+		const QFileInfo info(m_doc->currentPath());
 		name = info.completeBaseName();
 	}
 
@@ -1481,7 +1481,8 @@ void MainWindow::importOldAnimation()
 		[this, dlg](const drawdance::CanvasState &canvasState) {
 			// Don't use the path of the imported animation to avoid clobbering
 			// of the old file by mashing Ctrl+S instinctually.
-			replaceableWindow()->m_doc->loadState(canvasState, QString(), true);
+			replaceableWindow()->m_doc->loadState(
+				canvasState, QString(), DP_SAVE_IMAGE_UNKNOWN, true);
 			dlg->deleteLater();
 		});
 	utils::showWindow(dlg);

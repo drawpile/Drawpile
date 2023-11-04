@@ -38,7 +38,7 @@ const DP_SaveFormat *DP_save_supported_formats(void);
 
 
 typedef enum DP_SaveImageType {
-    DP_SAVE_IMAGE_GUESS,
+    DP_SAVE_IMAGE_UNKNOWN,
     DP_SAVE_IMAGE_ORA,
     DP_SAVE_IMAGE_PNG,
     DP_SAVE_IMAGE_JPEG,
@@ -48,7 +48,6 @@ typedef enum DP_SaveImageType {
 typedef enum DP_SaveResult {
     DP_SAVE_RESULT_SUCCESS,
     DP_SAVE_RESULT_BAD_ARGUMENTS,
-    DP_SAVE_RESULT_NO_EXTENSION,
     DP_SAVE_RESULT_UNKNOWN_FORMAT,
     DP_SAVE_RESULT_FLATTEN_ERROR,
     DP_SAVE_RESULT_OPEN_ERROR,
@@ -56,6 +55,9 @@ typedef enum DP_SaveResult {
     DP_SAVE_RESULT_INTERNAL_ERROR,
     DP_SAVE_RESULT_CANCEL,
 } DP_SaveResult;
+
+
+DP_SaveImageType DP_save_image_type_guess(const char *path);
 
 DP_SaveResult DP_save(DP_CanvasState *cs, DP_DrawContext *dc,
                       DP_SaveImageType type, const char *path);

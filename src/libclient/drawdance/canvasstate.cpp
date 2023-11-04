@@ -37,7 +37,8 @@ CanvasState CanvasState::noinc(DP_CanvasState *cs)
 }
 
 
-CanvasState CanvasState::load(const QString &path, DP_LoadResult *outResult)
+CanvasState CanvasState::load(
+	const QString &path, DP_LoadResult *outResult, DP_SaveImageType *outType)
 {
 	QByteArray pathBytes = path.toUtf8();
 	QByteArray flatImageLayerTitleBytes =
@@ -45,7 +46,7 @@ CanvasState CanvasState::load(const QString &path, DP_LoadResult *outResult)
 	DrawContext dc = DrawContextPool::acquire();
 	DP_CanvasState *cs = DP_load(
 		dc.get(), pathBytes.constData(), flatImageLayerTitleBytes.constData(),
-		outResult);
+		outResult, outType);
 	return CanvasState::noinc(cs);
 }
 

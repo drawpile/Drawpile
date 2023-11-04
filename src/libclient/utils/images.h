@@ -15,15 +15,6 @@ namespace utils {
 //! Check if image dimensions are not too big. Returns true if size is OK
 bool checkImageSize(const QSize &size);
 
-/**
- * @brief Check if we support writing an image file with this format
- *
- * The the format is identified from the filename suffix.
- * Note: only formats supported by the Rustpile library are included
- * in the list.
- */
-bool isWritableFormat(const QString &filename);
-
 enum FileFormatOption {
 	Images = 0x01,
 	Recordings = 0x02,

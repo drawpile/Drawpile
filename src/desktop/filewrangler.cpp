@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/filewrangler.h"
 #include "desktop/main.h"
 #include "libclient/canvas/canvasmodel.h"
@@ -96,27 +95,31 @@ QString FileWrangler::getOpenAuthListPath() const
 
 QString FileWrangler::saveImage(Document *doc) const
 {
-	QString filename = doc->currentFilename();
-	if(filename.isEmpty() || !utils::isWritableFormat(filename)) {
+	QString path = doc->currentPath();
+	DP_SaveImageType type = doc->currentType();
+	if(path.isEmpty() || type == DP_SAVE_IMAGE_UNKNOWN) {
 		return saveImageAs(doc, false);
-	} else if(confirmFlatten(doc, filename)) {
-		doc->saveCanvasAs(filename, false);
-		return filename;
+	} else if(confirmFlatten(doc, path, type)) {
+		doc->saveCanvasAs(path, type, false);
+		return path;
 	} else {
-		return QString{};
+		return QString();
 	}
 }
 
 QString FileWrangler::saveImageAs(Document *doc, bool exported) const
 {
 	QString selectedFilter;
+	QString intendedName;
 	QString filename = showSaveFileDialog(
 		exported ? tr("Export Image") : tr("Save Image"), LastPath::IMAGE,
 		".ora", utils::FileFormatOption::SaveImages, &selectedFilter,
-		doc->currentFilename());
+		doc->currentPath(), &intendedName);
+	DP_SaveImageType type = guessType(intendedName);
 
-	if(!filename.isEmpty() && (exported || confirmFlatten(doc, filename))) {
-		doc->saveCanvasAs(filename, exported);
+	if(!filename.isEmpty() &&
+	   (exported || confirmFlatten(doc, filename, type))) {
+		doc->saveCanvasAs(filename, type, exported);
 		return filename;
 	} else {
 		return QString{};
@@ -127,14 +130,16 @@ QString FileWrangler::savePreResetImageAs(
 	Document *doc, const drawdance::CanvasState &canvasState) const
 {
 	QString selectedFilter;
-	QString filename = showSaveFileDialog(
+	QString intendedName;
+	QString path = showSaveFileDialog(
 		tr("Save Pre-Reset Image"), LastPath::IMAGE, ".ora",
 		utils::FileFormatOption::SaveImages, &selectedFilter,
-		doc->currentFilename());
+		doc->currentPath(), &intendedName);
+	DP_SaveImageType type = guessType(intendedName);
 
-	if(!filename.isEmpty() && confirmFlatten(doc, filename)) {
-		doc->saveCanvasStateAs(filename, canvasState, false, false);
-		return filename;
+	if(!path.isEmpty() && confirmFlatten(doc, path, type)) {
+		doc->saveCanvasStateAs(path, type, canvasState, false, false);
+		return path;
 	} else {
 		return QString{};
 	}
@@ -272,31 +277,28 @@ QString FileWrangler::getSaveAuthListPath() const
 }
 
 
-bool FileWrangler::confirmFlatten(Document *doc, QString &filename) const
+bool FileWrangler::confirmFlatten(
+	Document *doc, QString &path, DP_SaveImageType &type) const
 {
 #ifdef Q_OS_ANDROID
 	// We're not allowed to change the file extension on Android, all we could
 	// do at this point is continue or cancel. So we'll just keep going.
 	Q_UNUSED(doc);
-	Q_UNUSED(filename);
+	Q_UNUSED(path);
+	Q_UNUSED(type);
 	return true;
 #else
 	// If the image can be flattened without losing any information, we don't
 	// need to confirm anything.
-	bool needsOra = !filename.endsWith(".ora", Qt::CaseInsensitive) &&
+	bool needsOra = type != DP_SAVE_IMAGE_ORA &&
 					doc->canvas()->paintEngine()->needsOpenRaster();
 	if(!needsOra) {
 		return true;
 	}
 
-	static QRegularExpression extRe =
-		QRegularExpression(QStringLiteral("\\.(\\w+)\\z"));
-	QRegularExpressionMatch match = extRe.match(filename);
-	QString format = match.hasMatch() ? match.captured(1).toUpper() : QString();
-
 	QMessageBox box(
 		QMessageBox::Information, tr("Save Image"),
-		filename.endsWith(".psd", Qt::CaseInsensitive)
+		type == DP_SAVE_IMAGE_PSD
 			? tr("The PSD format lacks support for annotations, the animation "
 				 "timeline and some blend modes. If you want those to be "
 				 "retained properly, you must save an ORA file.")
@@ -305,6 +307,21 @@ bool FileWrangler::confirmFlatten(Document *doc, QString &filename) const
 				 "must save an ORA file."),
 		QMessageBox::Cancel, parentWidget());
 
+	QString format;
+	switch(type) {
+	case DP_SAVE_IMAGE_UNKNOWN:
+	case DP_SAVE_IMAGE_ORA:
+		break;
+	case DP_SAVE_IMAGE_PSD:
+		format = QStringLiteral("PSD");
+		break;
+	case DP_SAVE_IMAGE_PNG:
+		format = QStringLiteral("PNG");
+		break;
+	case DP_SAVE_IMAGE_JPEG:
+		format = QStringLiteral("JPEG");
+		break;
+	}
 	box.addButton(
 		format.isEmpty() ? tr("Save as Selected Format")
 						 : tr("Save as %1").arg(format),
@@ -318,8 +335,9 @@ bool FileWrangler::confirmFlatten(Document *doc, QString &filename) const
 		return false;
 	} else if(box.clickedButton() == saveOraButton) {
 		// Change to saving as an ORA file.
-		replaceExtension(filename, ".ora");
-		setLastPath(LastPath::IMAGE, filename);
+		replaceExtension(path, ".ora");
+		setLastPath(LastPath::IMAGE, path);
+		type = DP_SAVE_IMAGE_ORA;
 		return true;
 	} else {
 		// Save the file as-is.
@@ -349,6 +367,11 @@ void FileWrangler::replaceExtension(QString &filename, const QString &ext)
 	} else {
 		filename += ext;
 	}
+}
+
+DP_SaveImageType FileWrangler::guessType(const QString &intendedName)
+{
+	return DP_save_image_type_guess(qUtf8Printable(intendedName));
 }
 
 bool FileWrangler::needsOra(Document *doc)
@@ -451,7 +474,7 @@ QString FileWrangler::showOpenFileDialogFilter(
 QString FileWrangler::showSaveFileDialog(
 	const QString &title, LastPath type, const QString &ext,
 	utils::FileFormatOptions formats, QString *selectedFilter,
-	std::optional<QString> lastPath) const
+	std::optional<QString> lastPath, QString *outIntendedName) const
 {
 	QFileDialog fileDialog;
 	fileDialog.setAcceptMode(QFileDialog::AcceptSave);
@@ -506,48 +529,39 @@ QString FileWrangler::showSaveFileDialog(
 		lastPath.has_value() ? lastPath.value() : getLastPath(type, ext));
 #endif
 
-	QString filename;
-	do {
-		bool ok = fileDialog.exec() == QDialog::Accepted &&
-				  !fileDialog.selectedFiles().isEmpty();
-		if(!ok) {
-			return QString{};
-		}
+	bool ok = fileDialog.exec() == QDialog::Accepted &&
+			  !fileDialog.selectedFiles().isEmpty();
+	if(!ok) {
+		return QString{};
+	}
 
-		filename = fileDialog.selectedFiles().first().trimmed();
-		if(filename.isEmpty()) {
-			return QString{};
-		}
+	QString filename = fileDialog.selectedFiles().first().trimmed();
+	if(filename.isEmpty()) {
+		return QString{};
+	}
 
-		bool emptySuffix = QFileInfo{filename}.completeSuffix().isEmpty();
-		if(emptySuffix) {
-#ifdef Q_OS_ANDROID
-			// We're not allowed to change the suffix on Android, so we
-			// don't have a way to proceed here other than telling the user
-			// to please provide a proper name. To make matters worse, this
-			// creates an empty file without an extension, which apparently
-			// we can't delete either (attempted to do so through Qt,
-			// java.io.File::delete and
-			// android.content.ContentResolver::delete.)
-			QMessageBox::critical(
-				parentWidget(), tr("Missing File Extension"),
-				tr("The file name you gave does not end with '%1' and "
-				   "could "
-				   "not be saved. Please provide a name with an extension.")
-					.arg(selectedExt));
-			filename = QString{};
-#else
-			filename += guessExtension(fileDialog.selectedNameFilter(), ext);
+	// We're neither allowed to edit the chosen file name on Android, nor does
+	// the URI necessarily contain a sensible extension to begin with. So we
+	// just live with the user providing a bogus or missing extension.
+#ifndef Q_OS_ANDROID
+	bool emptySuffix = QFileInfo{filename}.completeSuffix().isEmpty();
+	if(emptySuffix) {
+		filename += guessExtension(fileDialog.selectedNameFilter(), ext);
+	}
 #endif
-		}
-	} while(filename.isEmpty());
 
 #ifdef Q_OS_ANDROID
 	setLastPath(type, initialFilename);
+	if(outIntendedName) {
+		*outIntendedName = initialFilename;
+	}
 #else
 	setLastPath(type, filename);
 	if(selectedFilter) {
 		*selectedFilter = fileDialog.selectedNameFilter();
+	}
+	if(outIntendedName) {
+		*outIntendedName = filename;
 	}
 #endif
 

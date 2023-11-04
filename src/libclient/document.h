@@ -3,6 +3,7 @@
 #define DRAWPILE_DOCUMENT_H
 extern "C" {
 #include <dpengine/load.h>
+#include <dpengine/save.h>
 #include <dpmsg/acl.h>
 #include <dpmsg/blend_mode.h>
 }
@@ -56,8 +57,7 @@ class Document final : public QObject {
 	Q_PROPERTY(bool canAutosave READ canAutosave NOTIFY canAutosaveChanged)
 	Q_PROPERTY(
 		QString sessionTitle READ sessionTitle NOTIFY sessionTitleChanged)
-	Q_PROPERTY(QString currentFilename READ currentFilename()
-				   NOTIFY currentFilenameChanged)
+	Q_PROPERTY(QString currentPath READ currentPath() NOTIFY currentPathChanged)
 	Q_PROPERTY(bool recording READ isRecording() NOTIFY recorderStateChanged)
 
 	Q_PROPERTY(bool sessionPersistent READ isSessionPersistent NOTIFY
@@ -111,24 +111,17 @@ public:
 	bool loadBlank(const QSize &size, const QColor &background);
 	void loadState(
 		const drawdance::CanvasState &canvasState, const QString &path,
-		bool dirty);
+		DP_SaveImageType type, bool dirty);
 	DP_LoadResult loadFile(const QString &path);
 	DP_LoadResult loadRecording(
 		const QString &path, bool debugDump, bool *outIsTemplate = nullptr);
 
-	/**
-	 * @brief Save the canvas content
-	 *
-	 * Saving is done in a background thread. The signal `canvasSaved`
-	 * is emitted when saving completes.
-	 *
-	 * @param filename the file to save to
-	 * @param errorMessage if not null, error message is stored here
-	 */
-	void saveCanvasAs(const QString &filename, bool exported);
+	void
+	saveCanvasAs(const QString &path, DP_SaveImageType type, bool exported);
 	void saveCanvasStateAs(
-		const QString &filename, const drawdance::CanvasState &canvasState,
-		bool isCurrentState, bool exported);
+		const QString &path, DP_SaveImageType type,
+		const drawdance::CanvasState &canvasState, bool isCurrentState,
+		bool exported);
 	void exportTemplate(const QString &path);
 	bool saveSelection(const QString &path);
 	bool isSaveInProgress() const { return m_saveInProgress; }
@@ -142,7 +135,8 @@ public:
 
 	QString sessionTitle() const;
 
-	QString currentFilename() const { return m_currentFilename; }
+	QString currentPath() const { return m_currentPath; }
+	DP_SaveImageType currentType() const { return m_currentType; }
 
 	bool isRecording() const;
 	drawdance::RecordStartResult startRecording(const QString &filename);
@@ -195,7 +189,7 @@ signals:
 	void dirtyCanvas(bool isDirty);
 	void autosaveChanged(bool autosave);
 	void canAutosaveChanged(bool canAutosave);
-	void currentFilenameChanged(const QString &filename);
+	void currentPathChanged(const QString &path);
 	void recorderStateChanged(bool recording);
 
 	void sessionTitleChanged(const QString &title);
@@ -287,8 +281,8 @@ private slots:
 private:
 	void saveCanvasState(
 		const drawdance::CanvasState &canvasState, bool isCurrentState,
-		const QString &filename);
-	void setCurrentFilename(const QString &filename);
+		const QString &path, DP_SaveImageType type);
+	void setCurrentPath(const QString &path, DP_SaveImageType type);
 	void setSessionPersistent(bool p);
 	void setSessionClosed(bool closed);
 	void setSessionAuthOnly(bool authOnly);
@@ -313,7 +307,8 @@ private:
 	void generateJustInTimeSnapshot();
 	void sendResetSnapshot();
 
-	QString m_currentFilename;
+	QString m_currentPath;
+	DP_SaveImageType m_currentType = DP_SAVE_IMAGE_UNKNOWN;
 
 	net::MessageList m_resetstate;
 	net::MessageList m_messageBuffer;

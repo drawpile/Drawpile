@@ -33,6 +33,7 @@
 #include "layer_props_list.h"
 #include "ops.h"
 #include "player.h"
+#include "save.h"
 #include "text.h"
 #include "tile.h"
 #include "timeline.h"
@@ -77,6 +78,13 @@ static void assign_load_result(DP_LoadResult *out_result, DP_LoadResult result)
 {
     if (out_result) {
         *out_result = result;
+    }
+}
+
+static void assign_type(DP_SaveImageType *out_type, DP_SaveImageType type)
+{
+    if (out_type) {
+        *out_type = type;
     }
 }
 
@@ -1211,7 +1219,8 @@ static DP_CanvasState *load_ora(DP_DrawContext *dc, const char *path,
 DP_CanvasState *load_flat_image(DP_DrawContext *dc, DP_Input *input,
                                 const char *flat_image_layer_title,
                                 const unsigned char *buf, size_t size,
-                                DP_LoadResult *out_result)
+                                DP_LoadResult *out_result,
+                                DP_SaveImageType *out_type)
 {
     DP_ImageFileType type;
     DP_Image *img = DP_image_new_from_file_guess(input, buf, size, &type);
@@ -1219,7 +1228,20 @@ DP_CanvasState *load_flat_image(DP_DrawContext *dc, DP_Input *input,
         assign_load_result(out_result, type == DP_IMAGE_FILE_TYPE_UNKNOWN
                                            ? DP_LOAD_RESULT_UNKNOWN_FORMAT
                                            : DP_LOAD_RESULT_READ_ERROR);
+        assign_type(out_type, DP_SAVE_IMAGE_UNKNOWN);
         return NULL;
+    }
+
+    switch (type) {
+    case DP_IMAGE_FILE_TYPE_PNG:
+        assign_type(out_type, DP_SAVE_IMAGE_PNG);
+        break;
+    case DP_IMAGE_FILE_TYPE_JPEG:
+        assign_type(out_type, DP_SAVE_IMAGE_JPEG);
+        break;
+    default:
+        assign_type(out_type, DP_SAVE_IMAGE_UNKNOWN);
+        break;
     }
 
     DP_TransientCanvasState *tcs = DP_transient_canvas_state_new_init();
@@ -1272,11 +1294,13 @@ static bool guess_psd(const unsigned char *buf, size_t size)
 
 static DP_CanvasState *load(DP_DrawContext *dc, const char *path,
                             const char *flat_image_layer_title,
-                            DP_LoadResult *out_result)
+                            DP_LoadResult *out_result,
+                            DP_SaveImageType *out_type)
 {
     DP_Input *input = DP_file_input_new_from_path(path);
     if (!input) {
         assign_load_result(out_result, DP_LOAD_RESULT_OPEN_ERROR);
+        assign_type(out_type, DP_SAVE_IMAGE_UNKNOWN);
         return NULL;
     }
 
@@ -1285,6 +1309,7 @@ static DP_CanvasState *load(DP_DrawContext *dc, const char *path,
     size_t read = DP_input_read(input, buf, sizeof(buf), &error);
     if (error) {
         assign_load_result(out_result, DP_LOAD_RESULT_READ_ERROR);
+        assign_type(out_type, DP_SAVE_IMAGE_UNKNOWN);
         return NULL;
     }
 
@@ -1294,10 +1319,12 @@ static DP_CanvasState *load(DP_DrawContext *dc, const char *path,
     // files with the pretty unimportant defect of compressing a file wrong.
     if (guess_zip(buf, read)) {
         DP_input_free(input);
+        assign_type(out_type, DP_SAVE_IMAGE_ORA);
         return load_ora(dc, path, NULL, NULL, out_result);
     }
 
     if (guess_psd(buf, read)) {
+        assign_type(out_type, DP_SAVE_IMAGE_PSD);
         if (DP_input_rewind_by(input, read)) {
             return DP_load_psd(dc, input, out_result);
         }
@@ -1308,23 +1335,25 @@ static DP_CanvasState *load(DP_DrawContext *dc, const char *path,
     }
 
     DP_CanvasState *cs = load_flat_image(dc, input, flat_image_layer_title, buf,
-                                         read, out_result);
+                                         read, out_result, out_type);
     DP_input_free(input);
     return cs;
 }
 
 DP_CanvasState *DP_load(DP_DrawContext *dc, const char *path,
                         const char *flat_image_layer_title,
-                        DP_LoadResult *out_result)
+                        DP_LoadResult *out_result, DP_SaveImageType *out_type)
 {
     if (path) {
         DP_PERF_BEGIN_DETAIL(fn, "image", "path=%s", path);
-        DP_CanvasState *cs = load(dc, path, flat_image_layer_title, out_result);
+        DP_CanvasState *cs =
+            load(dc, path, flat_image_layer_title, out_result, out_type);
         DP_PERF_END(fn);
         return cs;
     }
     else {
         assign_load_result(out_result, DP_LOAD_RESULT_BAD_ARGUMENTS);
+        assign_type(out_type, DP_SAVE_IMAGE_UNKNOWN);
         return NULL;
     }
 }

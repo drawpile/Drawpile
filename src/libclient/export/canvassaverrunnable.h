@@ -1,13 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef CANVASSAVERRUNNABLE_H
-#define CANVASSAVERRUNNABLE_H
-
+#ifndef LIBCLIENT_EXPORT_CANVASSAVERRUNNABLE_H
+#define LIBCLIENT_EXPORT_CANVASSAVERRUNNABLE_H
 extern "C" {
 #include <dpengine/save.h>
 }
-
 #include "libclient/drawdance/canvasstate.h"
+#include <QByteArray>
 #include <QObject>
 #include <QRunnable>
 
@@ -18,8 +16,8 @@ class CanvasSaverRunnable final : public QObject, public QRunnable {
 	Q_OBJECT
 public:
 	CanvasSaverRunnable(
-		const drawdance::CanvasState &canvasState, const QString &filename,
-		QObject *parent = nullptr);
+		const drawdance::CanvasState &canvasState, DP_SaveImageType type,
+		const QString &path, QObject *parent = nullptr);
 
 	void run() override;
 
@@ -34,7 +32,8 @@ signals:
 
 private:
 	drawdance::CanvasState m_canvasState;
-	QString m_filename;
+	DP_SaveImageType m_type;
+	QByteArray m_path;
 };
 
 #endif

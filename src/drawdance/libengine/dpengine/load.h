@@ -21,6 +21,7 @@
  */
 #ifndef DPENGINE_LOAD_H
 #define DPENGINE_LOAD_H
+#include "save.h"
 #include <dpcommon/common.h>
 
 typedef struct DP_CanvasState DP_CanvasState;
@@ -56,7 +57,7 @@ typedef void (*DP_LoadFixedLayerFn)(void *user, int layer_id);
 
 DP_CanvasState *DP_load(DP_DrawContext *dc, const char *path,
                         const char *flat_image_layer_title,
-                        DP_LoadResult *out_result);
+                        DP_LoadResult *out_result, DP_SaveImageType *out_type);
 
 DP_CanvasState *DP_load_ora(DP_DrawContext *dc, const char *path,
                             DP_LoadFixedLayerFn on_fixed_layer, void *user,

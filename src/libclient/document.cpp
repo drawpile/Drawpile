@@ -155,7 +155,7 @@ void Document::initCanvas()
 	emit canvasChanged(m_canvas);
 	m_canvas->paintEngine()->resetAcl(m_client->myId());
 
-	setCurrentFilename(QString());
+	setCurrentPath(QString(), DP_SAVE_IMAGE_UNKNOWN);
 }
 
 void Document::onSessionResetted()
@@ -186,12 +186,13 @@ bool Document::loadBlank(const QSize &size, const QColor &background)
 	unmarkDirty();
 
 	m_canvas->loadBlank(m_settings.engineUndoDepth(), size, background);
-	setCurrentFilename(QString());
+	setCurrentPath(QString(), DP_SAVE_IMAGE_UNKNOWN);
 	return true;
 }
 
 void Document::loadState(
-	const drawdance::CanvasState &canvasState, const QString &path, bool dirty)
+	const drawdance::CanvasState &canvasState, const QString &path,
+	DP_SaveImageType type, bool dirty)
 {
 	setAutosave(false);
 	initCanvas();
@@ -201,19 +202,20 @@ void Document::loadState(
 		unmarkDirty();
 	}
 	m_canvas->loadCanvasState(m_settings.engineUndoDepth(), canvasState);
-	setCurrentFilename(path);
+	setCurrentPath(path, type);
 }
 
 DP_LoadResult Document::loadFile(const QString &path)
 {
 	DP_LoadResult result;
+	DP_SaveImageType type;
 	drawdance::CanvasState canvasState =
-		drawdance::CanvasState::load(path, &result);
+		drawdance::CanvasState::load(path, &result, &type);
 	if(canvasState.isNull()) {
 		Q_ASSERT(result != DP_LOAD_RESULT_SUCCESS);
 		return result;
 	} else {
-		loadState(canvasState, path, false);
+		loadState(canvasState, path, type, false);
 		return DP_LOAD_RESULT_SUCCESS;
 	}
 }
@@ -248,7 +250,7 @@ DP_LoadResult Document::loadRecording(
 			m_canvas->paintEngine()->flushPlayback();
 			m_canvas->paintEngine()->closePlayback();
 		}
-		setCurrentFilename(path);
+		setCurrentPath(path, DP_SAVE_IMAGE_UNKNOWN);
 		break;
 	default:
 		Q_ASSERT(!player);
@@ -581,19 +583,22 @@ void Document::setAutosave(bool autosave)
 	}
 }
 
-void Document::setCurrentFilename(const QString &filename)
+void Document::setCurrentPath(const QString &path, DP_SaveImageType type)
 {
-	if(m_currentFilename != filename) {
-		m_currentFilename = filename;
-		emit currentFilenameChanged(filename);
+	if(m_currentPath != path || m_currentType != type) {
+		m_currentPath = path;
+		m_currentType = path.isEmpty() ? DP_SAVE_IMAGE_UNKNOWN : type;
+		emit currentPathChanged(path);
 
 		const bool couldAutosave = m_canAutosave;
-		m_canAutosave = utils::isWritableFormat(m_currentFilename);
-		if(couldAutosave != m_canAutosave)
+		m_canAutosave = m_currentType != DP_SAVE_IMAGE_UNKNOWN;
+		if(couldAutosave != m_canAutosave) {
 			emit canAutosaveChanged(m_canAutosave);
+		}
 
-		if(!canAutosave())
+		if(!canAutosave()) {
 			setAutosave(false);
+		}
 	}
 }
 
@@ -651,36 +656,39 @@ void Document::autosaveNow()
 	if(!isDirty() || !isAutosave() || m_saveInProgress)
 		return;
 
-	Q_ASSERT(utils::isWritableFormat(currentFilename()));
-
 	saveCanvasState(
-		m_canvas->paintEngine()->viewCanvasState(), true, currentFilename());
+		m_canvas->paintEngine()->viewCanvasState(), true, currentPath(),
+		currentType());
 }
 
-void Document::saveCanvasAs(const QString &filename, bool exported)
+void Document::saveCanvasAs(
+	const QString &filename, DP_SaveImageType type, bool exported)
 {
 	saveCanvasStateAs(
-		filename, m_canvas->paintEngine()->viewCanvasState(), true, exported);
+		filename, type, m_canvas->paintEngine()->viewCanvasState(), true,
+		exported);
 }
 
 void Document::saveCanvasStateAs(
-	const QString &filename, const drawdance::CanvasState &canvasState,
-	bool isCurrentState, bool exported)
+	const QString &path, DP_SaveImageType type,
+	const drawdance::CanvasState &canvasState, bool isCurrentState,
+	bool exported)
 {
 	if(!exported) {
-		setCurrentFilename(filename);
+		setCurrentPath(path, type);
 	}
-	saveCanvasState(canvasState, isCurrentState, filename);
+	saveCanvasState(canvasState, isCurrentState, path, type);
 }
 
 void Document::saveCanvasState(
 	const drawdance::CanvasState &canvasState, bool isCurrentState,
-	const QString &filename)
+	const QString &path, DP_SaveImageType type)
 {
 	Q_ASSERT(!m_saveInProgress);
 	m_saveInProgress = true;
 
-	CanvasSaverRunnable *saver = new CanvasSaverRunnable(canvasState, filename);
+	CanvasSaverRunnable *saver =
+		new CanvasSaverRunnable(canvasState, type, path);
 	if(isCurrentState) {
 		unmarkDirty();
 	}

@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef FILEWRANGLER_H
-#define FILEWRANGLER_H
-
+#ifndef DESKTOP_FILEWRANGLER_H
+#define DESKTOP_FILEWRANGLER_H
+extern "C" {
+#include <dpengine/save.h>
+}
 #include "libclient/utils/images.h"
 #include <QObject>
 #include <QString>
@@ -77,12 +78,15 @@ public:
 	QString getSaveAuthListPath() const;
 
 private:
-	bool confirmFlatten(Document *doc, QString &filename) const;
+	bool
+	confirmFlatten(Document *doc, QString &path, DP_SaveImageType &type) const;
 
 	static QString
 	guessExtension(const QString &selectedFilter, const QString &fallbackExt);
 
 	static void replaceExtension(QString &filename, const QString &ext);
+
+	static DP_SaveImageType guessType(const QString &intendedName);
 
 	static bool needsOra(Document *doc);
 
@@ -101,7 +105,8 @@ private:
 	QString showSaveFileDialog(
 		const QString &title, LastPath type, const QString &ext,
 		utils::FileFormatOptions formats, QString *selectedFilter = nullptr,
-		std::optional<QString> lastPath = {}) const;
+		std::optional<QString> lastPath = {},
+		QString *outIntendedName = nullptr) const;
 
 	QWidget *parentWidget() const;
 };

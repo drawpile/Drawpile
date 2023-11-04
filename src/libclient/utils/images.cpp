@@ -49,21 +49,6 @@ static const QVector<ImageFormat> &writableImageFormats()
 	return formats;
 }
 
-bool isWritableFormat(const QString &filename)
-{
-	const int dot = filename.lastIndexOf('.');
-	if(dot<0)
-		return false;
-	const QString suffix = filename.mid(dot+1).toLower();
-
-	for(const ImageFormat &pair : writableImageFormats()) {
-		if(pair.second.contains(suffix))
-			return true;
-	}
-
-	return false;
-}
-
 QStringList fileFormatFilterList(FileFormatOptions formats)
 {
 	QStringList filter;

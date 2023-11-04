@@ -65,13 +65,44 @@ const DP_SaveFormat *DP_save_supported_formats(void)
     static const char *jpeg_ext[] = {"jpg", "jpeg", NULL};
     static const char *psd_ext[] = {"psd", NULL};
     static const DP_SaveFormat formats[] = {
-        {"OpenRaster", ora_ext},
-        {"PNG", png_ext},
-        {"JPEG", jpeg_ext},
-        {"Photoshop Document", psd_ext},
-        {NULL, NULL},
+        {"OpenRaster", ora_ext},         {"PNG", png_ext}, {"JPEG", jpeg_ext},
+        {"Photoshop Document", psd_ext}, {NULL, NULL},
     };
     return formats;
+}
+
+
+DP_SaveImageType DP_save_image_type_guess(const char *path)
+{
+    if (!path) {
+        DP_error_set("Null path given");
+        return DP_SAVE_IMAGE_UNKNOWN;
+    }
+
+    const char *dot = strrchr(path, '.');
+    if (!dot) {
+        DP_error_set("No file extension to guess image type from: %s", path);
+        return DP_SAVE_IMAGE_UNKNOWN;
+    }
+
+    const char *ext = dot + 1;
+    if (DP_str_equal_lowercase(ext, "ora")) {
+        return DP_SAVE_IMAGE_ORA;
+    }
+    else if (DP_str_equal_lowercase(ext, "png")) {
+        return DP_SAVE_IMAGE_PNG;
+    }
+    else if (DP_str_equal_lowercase(ext, "jpg")
+             || DP_str_equal_lowercase(ext, "jpeg")) {
+        return DP_SAVE_IMAGE_JPEG;
+    }
+    else if (DP_str_equal_lowercase(ext, "psd")) {
+        return DP_SAVE_IMAGE_PSD;
+    }
+    else {
+        DP_error_set("Unknown image format in '%s'", path);
+        return DP_SAVE_IMAGE_UNKNOWN;
+    }
 }
 
 
@@ -711,49 +742,9 @@ save_flat_image(DP_CanvasState *cs, DP_Rect *crop, const char *path,
 }
 
 
-static DP_SaveResult guess_image_type(const char *path,
-                                      DP_SaveImageType *out_type)
-{
-    const char *dot = strrchr(path, '.');
-    if (!dot) {
-        DP_error_set("No file extension to guess image type from: %s", path);
-        return DP_SAVE_RESULT_NO_EXTENSION;
-    }
-
-    const char *ext = dot + 1;
-    if (DP_str_equal_lowercase(ext, "ora")) {
-        *out_type = DP_SAVE_IMAGE_ORA;
-        return DP_SAVE_RESULT_SUCCESS;
-    }
-    else if (DP_str_equal_lowercase(ext, "png")) {
-        *out_type = DP_SAVE_IMAGE_PNG;
-        return DP_SAVE_RESULT_SUCCESS;
-    }
-    else if (DP_str_equal_lowercase(ext, "jpg")
-             || DP_str_equal_lowercase(ext, "jpeg")) {
-        *out_type = DP_SAVE_IMAGE_JPEG;
-        return DP_SAVE_RESULT_SUCCESS;
-    }
-    else if (DP_str_equal_lowercase(ext, "psd")) {
-        *out_type = DP_SAVE_IMAGE_PSD;
-        return DP_SAVE_RESULT_SUCCESS;
-    }
-    else {
-        DP_error_set("Unknown image format in '%s'", path);
-        return DP_SAVE_RESULT_UNKNOWN_FORMAT;
-    }
-}
-
 static DP_SaveResult save(DP_CanvasState *cs, DP_DrawContext *dc,
                           DP_SaveImageType type, const char *path)
 {
-    if (type == DP_SAVE_IMAGE_GUESS) {
-        DP_SaveResult guess_result = guess_image_type(path, &type);
-        if (guess_result != DP_SAVE_RESULT_SUCCESS) {
-            return guess_result;
-        }
-    }
-
     switch (type) {
     case DP_SAVE_IMAGE_ORA:
         return save_ora(cs, path, dc);

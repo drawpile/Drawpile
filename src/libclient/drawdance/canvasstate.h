@@ -29,8 +29,9 @@ public:
 	static CanvasState inc(DP_CanvasState *cs);
 	static CanvasState noinc(DP_CanvasState *cs);
 
-	static CanvasState
-	load(const QString &path, DP_LoadResult *outResult = nullptr);
+	static CanvasState load(
+		const QString &path, DP_LoadResult *outResult = nullptr,
+		DP_SaveImageType *outType = nullptr);
 
 	CanvasState();
 	CanvasState(const CanvasState &other);
