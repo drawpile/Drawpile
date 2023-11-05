@@ -285,6 +285,11 @@ void LoginDialog::Private::resetMode(Mode newMode)
 	case Mode::GuestLogin:
 		extauthurl.clear();
 		page = setupAuthPage(true, false);
+		ui->loginPromptLabel->setText(ui->authModePromptLabel->text());
+		ui->loginPromptLabel->setStyleSheet(
+			QStringLiteral("background: #4d4d4d;"
+						   "color: #fcfcfc;"
+						   "padding: 16px"));
 		break;
 	case Mode::AuthLogin:
 		extauthurl.clear();
