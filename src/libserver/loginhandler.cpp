@@ -101,7 +101,8 @@ void LoginHandler::startLoginProcess()
 	send(net::ServerReply::makeLoginGreeting(
 		QStringLiteral("Drawpile server %1").arg(cmake_config::version()),
 		cmake_config::proto::server(), flags, methods,
-		m_config->getConfigString(config::LoginInfoUrl)));
+		m_config->getConfigString(config::LoginInfoUrl),
+		m_config->getConfigString(config::RuleText).trimmed()));
 
 	// Client should disconnect upon receiving the above if the version number
 	// does not match

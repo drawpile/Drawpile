@@ -201,6 +201,8 @@ public:
 public slots:
 	void serverDisconnected();
 
+	void acceptRules();
+
 	/**
 	 * @brief Send password
 	 *
@@ -286,6 +288,8 @@ public slots:
 	void reportSession(const QString &id, const QString &reason);
 
 signals:
+	void ruleAcceptanceNeeded(const QString &ruleText);
+
 	void loginMethodChoiceNeeded(
 		const QVector<LoginMethod> &methods, const QUrl &url,
 		const QUrl &extAuthUrl, const QString &loginInfo);
@@ -434,6 +438,7 @@ private:
 	void expectNothing();
 	void expectHello(const ServerReply &msg);
 	void expectStartTls(const ServerReply &msg);
+	void presentRules();
 	void chooseLoginMethod();
 	void prepareToSendIdentity();
 	void sendIdentity();
@@ -504,6 +509,7 @@ private:
 	bool m_compatibilityMode;
 	bool m_needSessionPassword;
 
+	QString m_ruleText;
 	QString m_loginInfo;
 	QVector<LoginMethod> m_loginMethods;
 	QUrl m_loginExtAuthUrl;

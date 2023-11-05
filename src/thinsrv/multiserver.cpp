@@ -386,6 +386,7 @@ JsonApiResult MultiServer::serverJsonApi(JsonApiMethod method, const QStringList
 		config::AllowIdleOverride,
 		config::LoginInfoUrl,
 		config::EnableGhosts,
+		config::RuleText,
 	};
 	const int settingCount = sizeof(settings) / sizeof(settings[0]);
 

@@ -196,6 +196,9 @@ void LoginHandler::expectHello(const ServerReply &msg)
 		}
 	}
 
+	// Server rules, if present.
+	m_ruleText = msg.reply[QStringLiteral("rules")].toString().trimmed();
+
 	// The server ideally will provide a URL to get information about how to
 	// register an account and such. This isn't necessarily present, nor is it
 	// necessarily a valid URL because a human will have put it in there.
@@ -258,7 +261,7 @@ void LoginHandler::expectHello(const ServerReply &msg)
 			return;
 		}
 
-		chooseLoginMethod();
+		presentRules();
 	}
 }
 
@@ -283,6 +286,20 @@ void LoginHandler::sendSessionPassword(const QString &password)
 		// shouldn't happen...
 		qWarning("sendSessionPassword() in invalid state (%d)", m_state);
 	}
+}
+
+void LoginHandler::presentRules()
+{
+	if(m_ruleText.isEmpty()) {
+		acceptRules(); // Nothing to present, skip.
+	} else {
+		emit ruleAcceptanceNeeded(m_ruleText);
+	}
+}
+
+void LoginHandler::acceptRules()
+{
+	chooseLoginMethod();
 }
 
 void LoginHandler::chooseLoginMethod()
@@ -925,8 +942,7 @@ void LoginHandler::acceptServerCertificate()
 void LoginHandler::continueTls()
 {
 	// STARTTLS is the very first command that must be sent, if sent at all
-	// Next up is user authentication.
-	chooseLoginMethod();
+	presentRules();
 }
 
 void LoginHandler::cancelLogin()

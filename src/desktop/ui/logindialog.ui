@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>350</width>
+    <width>400</width>
     <height>350</height>
    </rect>
   </property>
@@ -809,6 +809,27 @@ padding: 16px;</string>
          <property name="icon">
           <iconset theme="trash-empty">
            <normaloff>theme:trash-empty.svg</normaloff>theme:trash-empty.svg</iconset>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="rulesPage">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QTextBrowser" name="rulesTextBrowser">
+         <property name="openExternalLinks">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="rulesRememberBox">
+         <property name="text">
+          <string>Don't ask again unless the rules change</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
          </property>
         </widget>
        </item>

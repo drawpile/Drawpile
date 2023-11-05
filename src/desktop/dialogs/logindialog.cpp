@@ -15,6 +15,7 @@
 #include "libclient/utils/usernamevalidator.h"
 #include "ui_logindialog.h"
 #include <QAction>
+#include <QCryptographicHash>
 #include <QIcon>
 #include <QItemSelectionModel>
 #include <QMessageBox>
@@ -27,6 +28,7 @@ namespace dialogs {
 
 enum class Mode {
 	Loading,		 // used whenever we're waiting for the server
+	Rules,			 // show the server rules and request acceptance
 	RecentAccounts,	 // ask the user to pick a recent account
 	LoginMethod,	 // ask the user to pick a login method
 	GuestLogin,		 // log in with guest username
@@ -55,9 +57,12 @@ struct LoginDialog::Private {
 	QPushButton *reportButton;
 	QPushButton *yesButton;
 	QPushButton *noButton;
+	QString originalYesButtonText;
 	QString originalNoButtonText;
 	QString avatarFilename;
 
+	QString ruleKey;
+	QString ruleHash;
 	bool guestsOnly = false;
 	QUrl loginExtAuthUrl;
 	QUrl extauthurl;
@@ -142,6 +147,7 @@ struct LoginDialog::Private {
 
 		cancelButton = ui->buttonBox->button(QDialogButtonBox::Cancel);
 		yesButton = ui->buttonBox->button(QDialogButtonBox::Yes);
+		originalYesButtonText = yesButton->text();
 		noButton = ui->buttonBox->button(QDialogButtonBox::No);
 		originalNoButtonText = noButton->text();
 
@@ -159,6 +165,8 @@ struct LoginDialog::Private {
 	QWidget *setupAuthPage(bool usernameEnabled, bool passwordVisible);
 	void setLoginExplanation(const QString &explanation, bool isError);
 	void setLoginMode(const QString &prompt);
+
+	bool haveRuleText() const { return !ruleKey.isEmpty(); }
 
 	QString
 	buildOldKeychainSecretName(const QString &host, const QString &username)
@@ -273,6 +281,13 @@ void LoginDialog::Private::resetMode(Mode newMode)
 		page = ui->loadingPage;
 		break;
 	}
+	case Mode::Rules:
+		page = ui->rulesPage;
+		okButton->setVisible(false);
+		cancelButton->setVisible(false);
+		yesButton->setText(tr("Accept"));
+		yesButton->setVisible(true);
+		break;
 	case Mode::RecentAccounts:
 		page = ui->recentPage;
 		ui->recentLogInButton->setFocus();
@@ -334,14 +349,33 @@ void LoginDialog::Private::resetMode(Mode newMode)
 		okButton->setVisible(false);
 		cancelButton->setVisible(false);
 		yesButton->setVisible(true);
+		yesButton->setText(originalYesButtonText);
 		page = ui->nsfmConfirmPage;
 		break;
 	}
 
 	switch(mode) {
+	case Mode::Rules:
+		noButton->setVisible(true);
+		noButton->setText(tr("Decline"));
+		break;
+	case Mode::RecentAccounts:
+	case Mode::Identity:
+		if(haveRuleText()) {
+			noButton->setText(tr("Rules"));
+			noButton->setVisible(true);
+		} else {
+			noButton->setVisible(false);
+		}
+		break;
 	case Mode::LoginMethod:
 		if(accounts->isEmpty()) {
-			noButton->setVisible(false);
+			if(haveRuleText()) {
+				noButton->setText(tr("Rules"));
+				noButton->setVisible(true);
+			} else {
+				noButton->setVisible(false);
+			}
 		} else {
 			noButton->setText(tr("Back"));
 			noButton->setVisible(true);
@@ -351,7 +385,12 @@ void LoginDialog::Private::resetMode(Mode newMode)
 	case Mode::AuthLogin:
 	case Mode::ExtAuthLogin:
 		if(guestsOnly) {
-			noButton->setVisible(false);
+			if(haveRuleText()) {
+				noButton->setText(tr("Rules"));
+				noButton->setVisible(true);
+			} else {
+				noButton->setVisible(false);
+			}
 		} else {
 			noButton->setText(tr("Back"));
 			noButton->setVisible(true);
@@ -488,6 +527,9 @@ LoginDialog::LoginDialog(net::LoginHandler *login, QWidget *parent)
 		login, &net::LoginHandler::destroyed, this, &LoginDialog::deleteLater);
 
 	connect(
+		login, &net::LoginHandler::ruleAcceptanceNeeded, this,
+		&LoginDialog::onRuleAcceptanceNeeded);
+	connect(
 		login, &net::LoginHandler::loginMethodChoiceNeeded, this,
 		&LoginDialog::onLoginMethodChoiceNeeded);
 	connect(
@@ -545,6 +587,7 @@ void LoginDialog::updateOkButtonEnabled()
 	bool enabled = false;
 	switch(d->mode) {
 	case Mode::Loading:
+	case Mode::Rules:
 	case Mode::RecentAccounts:
 	case Mode::LoginMethod:
 	case Mode::Catchup:
@@ -692,6 +735,31 @@ void LoginDialog::showNewCert()
 		d->newCert);
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 	dlg->show();
+}
+
+void LoginDialog::onRuleAcceptanceNeeded(const QString &ruleText)
+{
+	QString host = d->loginHandler->url().host();
+	d->ruleKey = QStringLiteral("login/rules/%1").arg(host.toCaseFolded());
+
+	QString title =
+		tr("Server Rules for %1").arg(d->loginHandler->url().host());
+	QString ruleHtml =
+		QStringLiteral("<h2>%1</h2>").arg(title) +
+		htmlutils::newlineToBr(htmlutils::linkify(ruleText.toHtmlEscaped()));
+	d->ui->rulesTextBrowser->setHtml(ruleHtml);
+
+	// This is not actually a cryptographic context, we just want a quick
+	// way to tell if the rules text changed without saving the whole thing.
+	d->ruleHash = QString::fromUtf8(
+		QCryptographicHash::hash(ruleText.toUtf8(), QCryptographicHash::Md5)
+			.toHex());
+	QString lastAcceptedHash = dpApp().state().get(d->ruleKey).toString();
+	if(d->ruleHash == lastAcceptedHash) {
+		d->loginHandler->acceptRules();
+	} else {
+		d->resetMode(Mode::Rules);
+	}
 }
 
 void LoginDialog::onLoginMethodChoiceNeeded(
@@ -1066,6 +1134,7 @@ void LoginDialog::onOkClicked()
 
 	switch(mode) {
 	case Mode::Loading:
+	case Mode::Rules:
 	case Mode::RecentAccounts:
 	case Mode::LoginMethod:
 	case Mode::Catchup:
@@ -1175,11 +1244,22 @@ void LoginDialog::onYesClicked()
 		return;
 	}
 
-	if(d->mode == Mode::ConfirmNsfm) {
+	switch(d->mode) {
+	case Mode::Rules:
+		if(d->ui->rulesRememberBox->isChecked()) {
+			dpApp().state().put(d->ruleKey, d->ruleHash);
+		} else {
+			dpApp().state().remove(d->ruleKey);
+		}
+		d->loginHandler->acceptRules();
+		break;
+	case Mode::ConfirmNsfm:
 		d->resetMode(Mode::Loading);
 		d->loginHandler->confirmJoinSelectedSession();
-	} else {
+		break;
+	default:
 		qWarning("Yes button click in wrong mode!");
+		break;
 	}
 }
 
@@ -1191,19 +1271,43 @@ void LoginDialog::onNoClicked()
 	}
 
 	switch(d->mode) {
+	case Mode::Rules:
+		dpApp().state().remove(d->ruleKey);
+		d->cancelButton->click();
+		break;
 	case Mode::LoginMethod:
-		d->resetMode(Mode::RecentAccounts);
-		updateOkButtonEnabled();
+		if(d->accounts->isEmpty()) {
+			if(d->haveRuleText()) {
+				d->resetMode(Mode::Rules);
+			} else {
+				qWarning("No button click for login method!");
+			}
+		} else {
+			d->resetMode(Mode::RecentAccounts);
+			updateOkButtonEnabled();
+		}
 		break;
 	case Mode::GuestLogin:
 	case Mode::AuthLogin:
 	case Mode::ExtAuthLogin:
 		if(d->guestsOnly) {
-			qWarning("No button click for guests-only login!");
+			if(d->haveRuleText()) {
+				d->resetMode(Mode::Rules);
+			} else {
+				qWarning("No button click for guests-only login!");
+			}
 		} else {
 			d->resetMode(
 				d->wasRecentAccount ? Mode::RecentAccounts : Mode::LoginMethod);
 			updateOkButtonEnabled();
+		}
+		break;
+	case Mode::RecentAccounts:
+	case Mode::Identity:
+		if(d->haveRuleText()) {
+			d->resetMode(Mode::Rules);
+		} else {
+			qWarning("No button click with no rules available!");
 		}
 		break;
 	case Mode::ConfirmNsfm:

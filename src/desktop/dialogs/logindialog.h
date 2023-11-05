@@ -53,6 +53,7 @@ private slots:
 	void showOldCert();
 	void showNewCert();
 
+	void onRuleAcceptanceNeeded(const QString &ruleText);
 	void onLoginMethodChoiceNeeded(
 		const QVector<net::LoginHandler::LoginMethod> &methods, const QUrl &url,
 		const QUrl &extAuthUrl, const QString &loginInfo);

@@ -134,7 +134,7 @@ struct ServerReply {
 
 	static net::Message makeLoginGreeting(
 		const QString &message, int version, const QJsonArray &flags,
-		const QJsonObject &methods, const QString &info);
+		const QJsonObject &methods, const QString &info, const QString &rules);
 
 	static net::Message makeLoginWelcome(
 		const QString &message, const QString &title,

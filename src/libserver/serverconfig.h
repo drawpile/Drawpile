@@ -83,7 +83,9 @@ namespace config {
 		// Allow mods to join as ghost users, to avoid disrupting sessions.
 		EnableGhosts(33, "enableGhosts", "false", ConfigKey::BOOL),
 		// Respect ext-auth user's "GHOST" flag.
-		ExtAuthGhosts(34, "extauthghosts", "false", ConfigKey::BOOL);
+		ExtAuthGhosts(34, "extauthghosts", "false", ConfigKey::BOOL),
+		// Rules to show to connecting clients.
+		RuleText(35, "ruleText", "", ConfigKey::STRING);
 }
 
 //! Settings that are not adjustable after the server has started

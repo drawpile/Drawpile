@@ -266,7 +266,7 @@ net::Message ServerReply::makeLog(const QString &message, QJsonObject data)
 
 net::Message ServerReply::makeLoginGreeting(
 	const QString &message, int version, const QJsonArray &flags,
-	const QJsonObject &methods, const QString &info)
+	const QJsonObject &methods, const QString &info, const QString &rules)
 {
 	QJsonObject data = {
 		{QStringLiteral("type"), QStringLiteral("login")},
@@ -276,6 +276,9 @@ net::Message ServerReply::makeLoginGreeting(
 		{QStringLiteral("methods"), methods}};
 	if(!info.isEmpty()) {
 		data[QStringLiteral("info")] = info;
+	}
+	if(!rules.isEmpty()) {
+		data[QStringLiteral("rules")] = rules;
 	}
 	return make(data);
 }
