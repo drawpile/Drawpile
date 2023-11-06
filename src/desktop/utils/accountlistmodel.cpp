@@ -69,7 +69,7 @@ QVariant AccountListModel::data(const QModelIndex &idx, int role) const
 	return QVariant();
 }
 
-void AccountListModel::load(const QUrl &url, const QUrl &extAuthUrl)
+bool AccountListModel::load(const QUrl &url, const QUrl &extAuthUrl)
 {
 	QVector<Account> accounts;
 	QSet<QString> usernames;
@@ -87,11 +87,18 @@ void AccountListModel::load(const QUrl &url, const QUrl &extAuthUrl)
 
 	std::sort(accounts.begin(), accounts.end(), isAccountLessThan);
 
-	beginResetModel();
-	m_authHost = authHost;
-	m_extAuthHost = extAuthHost;
-	m_accounts = accounts;
-	endResetModel();
+	bool hasChanged = m_authHost != authHost || m_extAuthHost != extAuthHost ||
+					  m_accounts != accounts;
+	if(hasChanged) {
+		beginResetModel();
+		m_authHost = authHost;
+		m_extAuthHost = extAuthHost;
+		m_accounts = accounts;
+		endResetModel();
+		return true;
+	} else {
+		return false;
+	}
 }
 
 int AccountListModel::getMostRecentIndex() const
@@ -451,4 +458,12 @@ QString AccountListModel::deobfuscate(const QString &obfuscatedValue)
 			   ? QString::fromUtf8(
 					 QByteArray::fromHex(obfuscatedValue.mid(2).toUtf8()))
 			   : QString();
+}
+
+bool operator==(
+	const AccountListModel::Account &a, const AccountListModel::Account &b)
+{
+	return a.type == b.type && a.host == b.host && a.username == b.username &&
+		   a.displayUsername == b.displayUsername &&
+		   a.avatarFilename == b.avatarFilename && a.lastUsed == b.lastUsed;
 }

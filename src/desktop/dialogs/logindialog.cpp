@@ -846,13 +846,15 @@ void LoginDialog::onLoginMethodChoiceNeeded(
 			}
 		}
 		d->ui->methodExplanationLabel->setText(explanation);
-		d->accounts->load(url, extAuthUrl);
+		bool changed = d->accounts->load(url, extAuthUrl);
 		if(d->accounts->isEmpty()) {
 			d->resetMode(Mode::LoginMethod);
 		} else {
 			d->resetMode(Mode::RecentAccounts);
-			d->ui->recentAccountCombo->setCurrentIndex(
-				d->accounts->getMostRecentIndex());
+			if(changed) {
+				d->ui->recentAccountCombo->setCurrentIndex(
+					d->accounts->getMostRecentIndex());
+			}
 		}
 		updateOkButtonEnabled();
 	}

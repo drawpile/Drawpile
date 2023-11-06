@@ -48,7 +48,7 @@ public:
 	QVariant
 	data(const QModelIndex &idx, int role = Qt::DisplayRole) const override;
 
-	void load(const QUrl &url, const QUrl &extAuthUrl);
+	bool load(const QUrl &url, const QUrl &extAuthUrl);
 
 	bool isEmpty() const { return m_accounts.isEmpty(); }
 
@@ -108,6 +108,9 @@ private:
 	static QString obfuscate(const QString &value);
 	static QString deobfuscate(const QString &obfuscatedValue);
 };
+
+bool operator==(
+	const AccountListModel::Account &a, const AccountListModel::Account &b);
 
 Q_DECLARE_METATYPE(AccountListModel::Type)
 
