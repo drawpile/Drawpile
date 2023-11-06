@@ -25,7 +25,7 @@
 #include <helpers.h> // CLAMP
 
 
-static float lerp_range(const DP_ClassicBrushRange *cbr, float pressure)
+static float lerp_range(const DP_ClassicBrushRange *cbr, float input)
 {
     float max = cbr->max;
     float min = cbr->min;
@@ -34,12 +34,12 @@ static float lerp_range(const DP_ClassicBrushRange *cbr, float pressure)
         // between them. MyPaint does it like this too, rather than using some
         // kind of more complicated smooth curve algorithm.
         float fmax = DP_CLASSIC_BRUSH_CURVE_VALUE_COUNT - 1;
-        int index = DP_max_int(0, DP_float_to_int(pressure * fmax));
+        int index = DP_max_int(0, DP_float_to_int(input * fmax));
         float a = cbr->curve.values[index];
         float p;
         if (index < DP_CLASSIC_BRUSH_CURVE_VALUE_COUNT - 1) {
             float b = cbr->curve.values[index + 1];
-            float k = (pressure - DP_int_to_float(index) / fmax) * fmax;
+            float k = (input - DP_int_to_float(index) / fmax) * fmax;
             p = a * (1.0f - k) + (b * k);
         }
         else {
@@ -50,50 +50,79 @@ static float lerp_range(const DP_ClassicBrushRange *cbr, float pressure)
     return max;
 }
 
-static float lerp_range_if(const DP_ClassicBrushRange *cbr, float pressure,
-                           bool condition)
+static float lerp_range_dynamic(const DP_ClassicBrushRange *cbr, float pressure,
+                                float velocity, float distance,
+                                const DP_ClassicBrushDynamic *dynamic)
 {
-    return condition ? lerp_range(cbr, pressure) : cbr->max;
+    switch (dynamic->type) {
+    case DP_CLASSIC_BRUSH_DYNAMIC_NONE:
+        return cbr->max;
+    case DP_CLASSIC_BRUSH_DYNAMIC_PRESSURE:
+        return lerp_range(cbr, pressure);
+    case DP_CLASSIC_BRUSH_DYNAMIC_VELOCITY: {
+        DP_ASSERT(velocity >= 0.0f);
+        float max_velocity = dynamic->max_velocity;
+        float vinput = velocity < max_velocity ? velocity / max_velocity : 1.0f;
+        return lerp_range(cbr, vinput);
+    }
+    case DP_CLASSIC_BRUSH_DYNAMIC_DISTANCE: {
+        DP_ASSERT(distance >= 0.0f);
+        float max_distance = dynamic->max_distance;
+        float dinput = distance < max_distance ? distance / max_distance : 1.0f;
+        return lerp_range(cbr, dinput);
+    }
+    }
+    DP_UNREACHABLE();
 }
 
-float DP_classic_brush_spacing_at(const DP_ClassicBrush *cb, float pressure)
+float DP_classic_brush_spacing_at(const DP_ClassicBrush *cb, float pressure,
+                                  float velocity, float distance)
 {
     DP_ASSERT(cb);
     DP_ASSERT(pressure >= 0.0f);
     DP_ASSERT(pressure <= 1.0f);
-    return cb->spacing * DP_classic_brush_size_at(cb, pressure);
+    return cb->spacing
+         * DP_classic_brush_size_at(cb, pressure, velocity, distance);
 }
 
-float DP_classic_brush_size_at(const DP_ClassicBrush *cb, float pressure)
+float DP_classic_brush_size_at(const DP_ClassicBrush *cb, float pressure,
+                               float velocity, float distance)
 {
     DP_ASSERT(cb);
     DP_ASSERT(pressure >= 0.0f);
     DP_ASSERT(pressure <= 1.0f);
-    return lerp_range_if(&cb->size, pressure, cb->size_pressure);
+    return lerp_range_dynamic(&cb->size, pressure, velocity, distance,
+                              &cb->size_dynamic);
 }
 
-float DP_classic_brush_hardness_at(const DP_ClassicBrush *cb, float pressure)
+float DP_classic_brush_hardness_at(const DP_ClassicBrush *cb, float pressure,
+                                   float velocity, float distance)
 {
     DP_ASSERT(cb);
     DP_ASSERT(pressure >= 0.0f);
     DP_ASSERT(pressure <= 1.0f);
-    return lerp_range_if(&cb->hardness, pressure, cb->hardness_pressure);
+    return lerp_range_dynamic(&cb->hardness, pressure, velocity, distance,
+                              &cb->hardness_dynamic);
 }
 
-float DP_classic_brush_opacity_at(const DP_ClassicBrush *cb, float pressure)
+float DP_classic_brush_opacity_at(const DP_ClassicBrush *cb, float pressure,
+                                  float velocity, float distance)
 {
     DP_ASSERT(cb);
     DP_ASSERT(pressure >= 0.0f);
     DP_ASSERT(pressure <= 1.0f);
-    return lerp_range_if(&cb->opacity, pressure, cb->opacity_pressure);
+    return lerp_range_dynamic(&cb->opacity, pressure, velocity, distance,
+                              &cb->opacity_dynamic);
 }
 
-float DP_classic_brush_smudge_at(const DP_ClassicBrush *cb, float pressure)
+float DP_classic_brush_smudge_at(const DP_ClassicBrush *cb, float pressure,
+                                 float velocity, float distance)
 {
     DP_ASSERT(cb);
     DP_ASSERT(pressure >= 0.0f);
     DP_ASSERT(pressure <= 1.0f);
-    return lerp_range_if(&cb->smudge, pressure, cb->smudge_pressure);
+    return lerp_range_dynamic(&cb->smudge, pressure, velocity, distance,
+                              &cb->smudge_dynamic);
 }
 
 DP_BlendMode DP_classic_brush_blend_mode(const DP_ClassicBrush *cb)
@@ -104,30 +133,41 @@ DP_BlendMode DP_classic_brush_blend_mode(const DP_ClassicBrush *cb)
 
 
 uint16_t DP_classic_brush_soft_dab_size_at(const DP_ClassicBrush *cb,
-                                           float pressure)
+                                           float pressure, float velocity,
+                                           float distance)
 {
-    float value = DP_classic_brush_size_at(cb, pressure) * 256.0f + 0.5f;
+    float value =
+        DP_classic_brush_size_at(cb, pressure, velocity, distance) * 256.0f
+        + 0.5f;
     return DP_float_to_uint16(CLAMP(value, 0, UINT16_MAX));
 }
 
 uint8_t DP_classic_brush_pixel_dab_size_at(const DP_ClassicBrush *cb,
-                                           float pressure)
+                                           float pressure, float velocity,
+                                           float distance)
 {
-    float value = DP_classic_brush_size_at(cb, pressure) + 0.5f;
+    float value =
+        DP_classic_brush_size_at(cb, pressure, velocity, distance) + 0.5f;
     return DP_float_to_uint8(CLAMP(value, 0, UINT8_MAX));
 }
 
 uint8_t DP_classic_brush_dab_opacity_at(const DP_ClassicBrush *cb,
-                                        float pressure)
+                                        float pressure, float velocity,
+                                        float distance)
 {
-    float value = DP_classic_brush_opacity_at(cb, pressure) * 255.0f + 0.5f;
+    float value =
+        DP_classic_brush_opacity_at(cb, pressure, velocity, distance) * 255.0f
+        + 0.5f;
     return DP_float_to_uint8(CLAMP(value, 0, UINT8_MAX));
 }
 
 uint8_t DP_classic_brush_dab_hardness_at(const DP_ClassicBrush *cb,
-                                         float pressure)
+                                         float pressure, float velocity,
+                                         float distance)
 {
-    float value = DP_classic_brush_hardness_at(cb, pressure) * 255.0f + 0.5f;
+    float value =
+        DP_classic_brush_hardness_at(cb, pressure, velocity, distance) * 255.0f
+        + 0.5f;
     return DP_float_to_uint8(CLAMP(value, 0, UINT8_MAX));
 }
 

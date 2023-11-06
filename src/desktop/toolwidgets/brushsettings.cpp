@@ -348,7 +348,8 @@ BrushSettings::Lock BrushSettings::getLock()
 			return Lock::MyPaintCompat;
 		} else {
 			const brushes::ClassicBrush &classic = d->currentBrush().classic();
-			if(!classic.incremental && classic.opacity_pressure) {
+			if(!classic.incremental &&
+			   classic.opacity_dynamic.type != DP_CLASSIC_BRUSH_DYNAMIC_NONE) {
 				return Lock::IndirectCompat;
 			}
 		}
@@ -680,15 +681,19 @@ void BrushSettings::updateUi()
 	// This is so that when loading a brush from settings, the hidden elements
 	// don't get left in their default state.
 	d->ui.brushsizeBox->setValue(classic.size.max);
-	d->ui.pressureSize->setChecked(classic.size_pressure);
-	d->ui.pressureOpacity->setChecked(classic.opacity_pressure);
+	d->ui.pressureSize->setChecked(
+		classic.size_dynamic.type != DP_CLASSIC_BRUSH_DYNAMIC_NONE);
+	d->ui.pressureOpacity->setChecked(
+		classic.opacity_dynamic.type != DP_CLASSIC_BRUSH_DYNAMIC_NONE);
 	d->ui.smudgingBox->setValue(qRound(classic.smudge.max * 100.0));
-	d->ui.pressureSmudging->setChecked(classic.smudge_pressure);
+	d->ui.pressureSmudging->setChecked(
+		classic.smudge_dynamic.type != DP_CLASSIC_BRUSH_DYNAMIC_NONE);
 	d->ui.colorpickupBox->setValue(classic.resmudge);
 	d->ui.brushspacingBox->setValue(qRound(classic.spacing * 100.0));
 	d->ui.modeColorpick->setChecked(classic.colorpick);
 	if(softmode) {
-		d->ui.pressureHardness->setChecked(classic.hardness_pressure);
+		d->ui.pressureHardness->setChecked(
+			classic.hardness_dynamic.type != DP_CLASSIC_BRUSH_DYNAMIC_NONE);
 	}
 
 	const DP_MyPaintSettings &myPaintSettings = myPaint.constSettings();
@@ -780,10 +785,14 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 		classic.shape = DP_BRUSH_SHAPE_CLASSIC_SOFT_ROUND;
 
 	classic.size.max = d->ui.brushsizeBox->value();
-	classic.size_pressure = d->ui.pressureSize->isChecked();
+	classic.size_dynamic.type = d->ui.pressureSize->isChecked()
+									? classic.lastSizeDynamicType()
+									: DP_CLASSIC_BRUSH_DYNAMIC_NONE;
 
 	classic.smudge.max = d->ui.smudgingBox->value() / 100.0;
-	classic.smudge_pressure = d->ui.pressureSmudging->isChecked();
+	classic.smudge_dynamic.type = d->ui.pressureSmudging->isChecked()
+									  ? classic.lastSmudgeDynamicType()
+									  : DP_CLASSIC_BRUSH_DYNAMIC_NONE;
 	classic.resmudge = d->ui.colorpickupBox->value();
 
 	classic.spacing = d->ui.brushspacingBox->value() / 100.0;
@@ -823,10 +832,16 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 			d->ui.modeIncremental->setVisible(canUseIncrementalMode);
 		} else {
 			classic.opacity.max = d->ui.opacityBox->value() / 100.0;
-			classic.opacity_pressure = d->ui.pressureOpacity->isChecked();
+			classic.opacity_dynamic.type =
+				d->ui.pressureOpacity->isChecked()
+					? classic.lastOpacityDynamicType()
+					: DP_CLASSIC_BRUSH_DYNAMIC_NONE;
 			classic.hardness.max = d->ui.hardnessBox->value() / 100.0;
 			if(classic.shape == DP_BRUSH_SHAPE_CLASSIC_SOFT_ROUND) {
-				classic.hardness_pressure = d->ui.pressureHardness->isChecked();
+				classic.hardness_dynamic.type =
+					d->ui.pressureHardness->isChecked()
+						? classic.lastHardnessDynamicType()
+						: DP_CLASSIC_BRUSH_DYNAMIC_NONE;
 			}
 			classic.incremental = d->ui.modeIncremental->isChecked();
 			// Smudging only works right in incremental mode

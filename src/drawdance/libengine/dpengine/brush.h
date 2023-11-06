@@ -55,6 +55,19 @@ typedef struct DP_ClassicBrushRange {
     DP_ClassicBrushCurve curve;
 } DP_ClassicBrushRange;
 
+typedef enum DP_ClassicBrushDynamicType {
+    DP_CLASSIC_BRUSH_DYNAMIC_NONE,
+    DP_CLASSIC_BRUSH_DYNAMIC_PRESSURE,
+    DP_CLASSIC_BRUSH_DYNAMIC_VELOCITY,
+    DP_CLASSIC_BRUSH_DYNAMIC_DISTANCE,
+} DP_ClassicBrushDynamicType;
+
+typedef struct DP_ClassicBrushDynamic {
+    DP_ClassicBrushDynamicType type;
+    float max_velocity;
+    float max_distance;
+} DP_ClassicBrushDynamic;
+
 typedef struct DP_ClassicBrush {
     DP_ClassicBrushRange size;
     DP_ClassicBrushRange hardness;
@@ -69,10 +82,10 @@ typedef struct DP_ClassicBrush {
     bool erase;
     bool incremental;
     bool colorpick;
-    bool size_pressure;
-    bool hardness_pressure;
-    bool opacity_pressure;
-    bool smudge_pressure;
+    DP_ClassicBrushDynamic size_dynamic;
+    DP_ClassicBrushDynamic hardness_dynamic;
+    DP_ClassicBrushDynamic opacity_dynamic;
+    DP_ClassicBrushDynamic smudge_dynamic;
 } DP_ClassicBrush;
 
 
@@ -99,30 +112,39 @@ typedef struct DP_MyPaintBrush {
 } DP_MyPaintBrush;
 
 
-float DP_classic_brush_spacing_at(const DP_ClassicBrush *cb, float pressure);
+float DP_classic_brush_spacing_at(const DP_ClassicBrush *cb, float pressure,
+                                  float velocity, float distance);
 
-float DP_classic_brush_size_at(const DP_ClassicBrush *cb, float pressure);
+float DP_classic_brush_size_at(const DP_ClassicBrush *cb, float pressure,
+                               float velocity, float distance);
 
-float DP_classic_brush_hardness_at(const DP_ClassicBrush *cb, float pressure);
+float DP_classic_brush_hardness_at(const DP_ClassicBrush *cb, float pressure,
+                                   float velocity, float distance);
 
-float DP_classic_brush_opacity_at(const DP_ClassicBrush *cb, float pressure);
+float DP_classic_brush_opacity_at(const DP_ClassicBrush *cb, float pressure,
+                                  float velocity, float distance);
 
-float DP_classic_brush_smudge_at(const DP_ClassicBrush *cb, float pressure);
+float DP_classic_brush_smudge_at(const DP_ClassicBrush *cb, float pressure,
+                                 float velocity, float distance);
 
 DP_BlendMode DP_classic_brush_blend_mode(const DP_ClassicBrush *cb);
 
 
 uint16_t DP_classic_brush_soft_dab_size_at(const DP_ClassicBrush *cb,
-                                           float pressure);
+                                           float pressure, float velocity,
+                                           float distance);
 
 uint8_t DP_classic_brush_pixel_dab_size_at(const DP_ClassicBrush *cb,
-                                           float pressure);
+                                           float pressure, float velocity,
+                                           float distance);
 
 uint8_t DP_classic_brush_dab_opacity_at(const DP_ClassicBrush *cb,
-                                        float pressure);
+                                        float pressure, float velocity,
+                                        float distance);
 
 uint8_t DP_classic_brush_dab_hardness_at(const DP_ClassicBrush *cb,
-                                         float pressure);
+                                         float pressure, float velocity,
+                                         float distance);
 
 
 void DP_mypaint_brush_mode_extract(uint8_t mode, int *out_blend_mode,

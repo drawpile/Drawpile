@@ -37,6 +37,12 @@
 #define MIN_DABS_CAPACITY   1024
 #define MAX_XY_DELTA        127
 
+// Based on MyPaint's velocity calculations for fine speed.
+#define CLASSIC_VELOCITY_GAMMA    54.598148f
+#define CLASSIC_VELOCITY_M        1.493972f
+#define CLASSIC_VELOCITY_Q        -6.373980f
+#define CLASSIC_VELOCITY_SLOWNESS 0.04f
+
 typedef enum DP_BrushEngineActiveType {
     DP_BRUSH_ENGINE_ACTIVE_PIXEL,
     DP_BRUSH_ENGINE_ACTIVE_SOFT,
@@ -126,6 +132,8 @@ struct DP_BrushEngine {
             float last_x;
             float last_y;
             float last_pressure;
+            float last_velocity;
+            float last_distance;
             int32_t dab_x;
             int32_t dab_y;
             uint32_t dab_color;
@@ -343,10 +351,12 @@ static uint8_t get_uint8(float input)
 
 
 static void add_dab_pixel(DP_BrushEngine *be, DP_ClassicBrush *cb, int x, int y,
-                          float pressure)
+                          float pressure, float velocity, float distance)
 {
-    uint8_t dab_size = DP_classic_brush_pixel_dab_size_at(cb, pressure);
-    uint8_t dab_opacity = DP_classic_brush_dab_opacity_at(cb, pressure);
+    uint8_t dab_size =
+        DP_classic_brush_pixel_dab_size_at(cb, pressure, velocity, distance);
+    uint8_t dab_opacity =
+        DP_classic_brush_dab_opacity_at(cb, pressure, velocity, distance);
     if (dab_size > 0 && dab_opacity > 0) {
         int32_t dab_x = DP_int_to_int32(x);
         int32_t dab_y = DP_int_to_int32(y);
@@ -377,10 +387,13 @@ static void add_dab_pixel(DP_BrushEngine *be, DP_ClassicBrush *cb, int x, int y,
 
 
 static void add_dab_soft(DP_BrushEngine *be, DP_ClassicBrush *cb, float x,
-                         float y, float pressure)
+                         float y, float pressure, float velocity,
+                         float distance)
 {
-    uint16_t dab_size = DP_classic_brush_soft_dab_size_at(cb, pressure);
-    uint8_t dab_opacity = DP_classic_brush_dab_opacity_at(cb, pressure);
+    uint16_t dab_size =
+        DP_classic_brush_soft_dab_size_at(cb, pressure, velocity, distance);
+    uint8_t dab_opacity =
+        DP_classic_brush_dab_opacity_at(cb, pressure, velocity, distance);
     // Disregard infinitesimal or fully opaque dabs. 26 is a radius of 0.1.
     if (dab_size >= 26 && dab_opacity > 0) {
         int32_t dab_x = DP_float_to_int32(x * 4.0f);
@@ -406,7 +419,8 @@ static void add_dab_soft(DP_BrushEngine *be, DP_ClassicBrush *cb, float x,
 
         DP_BrushEngineClassicDab *dabs = get_dab_buffer(be, sizeof(*dabs));
         dabs[be->dabs.used++] = (DP_BrushEngineClassicDab){
-            dx, dy, dab_size, DP_classic_brush_dab_hardness_at(cb, pressure),
+            dx, dy, dab_size,
+            DP_classic_brush_dab_hardness_at(cb, pressure, velocity, distance),
             dab_opacity};
     }
 }
@@ -749,7 +763,7 @@ void DP_brush_engine_classic_brush_set(DP_BrushEngine *be,
         // of the entire stroke.
         color.a = cb->opacity.max;
         cb->opacity.max = 1.0f;
-        if (cb->opacity_pressure) {
+        if (cb->opacity_dynamic.type != DP_CLASSIC_BRUSH_DYNAMIC_NONE) {
             cb->opacity.min = cb->opacity.min / color.a;
         }
     }
@@ -968,19 +982,22 @@ void DP_brush_engine_stroke_begin(DP_BrushEngine *be, unsigned int context_id,
 
 
 static int get_classic_smudge_diameter(const DP_ClassicBrush *cb,
-                                       float pressure)
+                                       float pressure, float velocity,
+                                       float distance)
 {
-    int diameter =
-        DP_float_to_int(DP_classic_brush_size_at(cb, pressure) + 0.5f);
+    int diameter = DP_float_to_int(
+        DP_classic_brush_size_at(cb, pressure, velocity, distance) + 0.5f);
     return CLAMP(diameter, 2, 255);
 }
 
 static DP_UPixelFloat sample_classic_smudge(DP_BrushEngine *be,
                                             DP_ClassicBrush *cb,
                                             DP_LayerContent *lc, float x,
-                                            float y, float pressure)
+                                            float y, float pressure,
+                                            float velocity, float distance)
 {
-    int diameter = get_classic_smudge_diameter(cb, pressure);
+    int diameter =
+        get_classic_smudge_diameter(cb, pressure, velocity, distance);
     return DP_layer_content_sample_color_at(
         lc, be->stamp_buffer, DP_float_to_int(x), DP_float_to_int(y), diameter,
         true, &be->last_diameter);
@@ -988,13 +1005,14 @@ static DP_UPixelFloat sample_classic_smudge(DP_BrushEngine *be,
 
 static void update_classic_smudge(DP_BrushEngine *be, DP_ClassicBrush *cb,
                                   DP_LayerContent *lc, float x, float y,
-                                  float pressure)
+                                  float pressure, float velocity,
+                                  float distance)
 {
-    float smudge = DP_classic_brush_smudge_at(cb, pressure);
+    float smudge = DP_classic_brush_smudge_at(cb, pressure, velocity, distance);
     int smudge_distance = ++be->classic.smudge_distance;
     if (smudge > 0.0f && smudge_distance > cb->resmudge && lc) {
-        DP_UPixelFloat sample =
-            sample_classic_smudge(be, cb, lc, x, y, pressure);
+        DP_UPixelFloat sample = sample_classic_smudge(
+            be, cb, lc, x, y, pressure, velocity, distance);
         if (sample.a > 0.0f) {
             float a = sample.a * smudge;
             DP_UPixelFloat *sp = &be->classic.smudge_color;
@@ -1006,32 +1024,62 @@ static void update_classic_smudge(DP_BrushEngine *be, DP_ClassicBrush *cb,
     }
 }
 
+// From libmypaint. Not in a header file, but declared extern.
+float exp_decay(float T_const, float t);
+
+static float classic_velocity(float last_velocity)
+{
+    // From libmypaint's speed calculation.
+    float velocity =
+        logf(CLASSIC_VELOCITY_GAMMA + last_velocity) * CLASSIC_VELOCITY_M
+        + CLASSIC_VELOCITY_Q;
+    return DP_max_float(velocity, 0.0f);
+}
+
+static float classic_update_velocity(DP_BrushEngine *be, float norm_dist,
+                                     float dt)
+{
+    float last_velocity = be->classic.last_velocity;
+    float velocity = classic_velocity(last_velocity);
+    // From libmypaint's speed calculation.
+    be->classic.last_velocity =
+        last_velocity
+        + (norm_dist - last_velocity)
+              * (1.0f - exp_decay(CLASSIC_VELOCITY_SLOWNESS, dt));
+    return velocity;
+}
+
 static void first_dab_pixel(DP_BrushEngine *be, DP_ClassicBrush *cb, float x,
                             float y, float pressure)
 {
     be->classic.pixel_length = 0;
-    add_dab_pixel(be, cb, DP_float_to_int(x), DP_float_to_int(y), pressure);
+    add_dab_pixel(be, cb, DP_float_to_int(x), DP_float_to_int(y), pressure,
+                  0.0f, 0.0f);
 }
 
 static void stroke_pixel(DP_BrushEngine *be, DP_ClassicBrush *cb,
-                         DP_LayerContent *lc, float x, float y, float pressure)
+                         DP_LayerContent *lc, float x, float y, float pressure,
+                         float delta_sec)
 {
     float last_x = be->classic.last_x;
     float last_y = be->classic.last_y;
     float last_pressure = be->classic.last_pressure;
-    float dp = (pressure - last_pressure) / hypotf(x - last_x, y - last_y);
+    float diff_x = x - last_x;
+    float diff_y = y - last_y;
+    float dist = hypotf(diff_x, diff_y);
+    float dp = (pressure - last_pressure) / dist;
 
     int x0 = DP_float_to_int(last_x);
     int y0 = DP_float_to_int(last_y);
     int x1 = DP_float_to_int(x);
     int y1 = DP_float_to_int(y);
 
-    int diff_x = x1 - x0;
-    int diff_y = y1 - y0;
-    int step_x = diff_x < 0 ? -1 : 1;
-    int step_y = diff_y < 0 ? -1 : 1;
-    int dx = diff_x * step_x * 2;
-    int dy = diff_y * step_y * 2;
+    int pixel_diff_x = x1 - x0;
+    int pixel_diff_y = y1 - y0;
+    int step_x = pixel_diff_x < 0 ? -1 : 1;
+    int step_y = pixel_diff_y < 0 ? -1 : 1;
+    int dx = pixel_diff_x * step_x * 2;
+    int dy = pixel_diff_y * step_y * 2;
 
     int da, db, *a0, *b0, a1, step_a, step_b;
     if (dx > dy) {
@@ -1053,39 +1101,48 @@ static void stroke_pixel(DP_BrushEngine *be, DP_ClassicBrush *cb,
         step_b = step_x;
     }
 
-    int distance = be->classic.pixel_length;
-    float p = last_pressure;
+    int length = be->classic.pixel_length;
+    float dab_p = last_pressure;
+    float zoom = be->stroke.zoom;
+    float norm_dist =
+        hypotf(diff_x / delta_sec * zoom, diff_y / delta_sec * zoom);
+    float dab_v = classic_update_velocity(be, norm_dist, delta_sec);
+    float dab_d = be->classic.last_distance;
     int fraction = db - (da / 2);
     while (*a0 != a1) {
-        int spacing = DP_float_to_int(DP_classic_brush_spacing_at(cb, p));
+        float spacing = DP_classic_brush_spacing_at(cb, dab_p, dab_v, dab_d);
+        int pixel_spacing = DP_float_to_int(spacing);
         if (fraction >= 0) {
             *b0 += step_b;
             fraction -= da;
         }
         *a0 += step_a;
         fraction += db;
-        distance += 1;
-        if (distance >= spacing) {
+        length += 1;
+        dab_d += 1.0f;
+        if (length >= pixel_spacing) {
             update_classic_smudge(be, cb, lc, DP_int_to_float(x0),
-                                  DP_int_to_float(y0), p);
-            add_dab_pixel(be, cb, x0, y0, p);
-            distance = 0;
+                                  DP_int_to_float(y0), dab_p, dab_v, dab_d);
+            add_dab_pixel(be, cb, x0, y0, dab_p, dab_v, dab_d);
+            length = 0;
         }
-        p += dp;
+        dab_p = CLAMP(dab_p + dp, 0.0f, 1.0f);
     }
 
-    be->classic.pixel_length = distance;
+    be->classic.pixel_length = length;
+    be->classic.last_distance = dab_d;
 }
 
 static void first_dab_soft(DP_BrushEngine *be, DP_ClassicBrush *cb, float x,
                            float y, float pressure)
 {
     be->classic.soft_length = 0.0f;
-    add_dab_soft(be, cb, x, y, pressure);
+    add_dab_soft(be, cb, x, y, pressure, 0.0f, 0.0f);
 }
 
 static void stroke_soft(DP_BrushEngine *be, DP_ClassicBrush *cb,
-                        DP_LayerContent *lc, float x, float y, float pressure)
+                        DP_LayerContent *lc, float x, float y, float pressure,
+                        float delta_sec)
 {
     float last_x = be->classic.last_x;
     float last_y = be->classic.last_y;
@@ -1098,8 +1155,12 @@ static void stroke_soft(DP_BrushEngine *be, DP_ClassicBrush *cb,
         float last_pressure = be->classic.last_pressure;
         float dp = (pressure - last_pressure) / dist;
 
-        float spacing0 =
-            DP_max_float(DP_classic_brush_spacing_at(cb, last_pressure), 1.0f);
+        float dab_d = be->classic.last_distance;
+        float spacing0 = DP_max_float(
+            DP_classic_brush_spacing_at(
+                cb, last_pressure, classic_velocity(be->classic.last_velocity),
+                dab_d),
+            1.0f);
 
         float length = be->classic.soft_length;
         float i = length > spacing0 ? 0.0f : length == 0.0f ? spacing0 : length;
@@ -1107,13 +1168,20 @@ static void stroke_soft(DP_BrushEngine *be, DP_ClassicBrush *cb,
         float dab_x = last_x + dx * i;
         float dab_y = last_y + dy * i;
         float dab_p = CLAMP(last_pressure + dp * i, 0.0f, 1.0f);
+        float zoom = be->stroke.zoom;
+        float norm_dist =
+            hypotf(diff_x / delta_sec * zoom, diff_y / delta_sec * zoom);
+        float dab_v = classic_update_velocity(be, norm_dist, delta_sec);
 
         while (i <= dist) {
-            update_classic_smudge(be, cb, lc, dab_x, dab_y, dab_p);
-            add_dab_soft(be, cb, dab_x, dab_y, dab_p);
+            float spacing = DP_max_float(
+                DP_classic_brush_spacing_at(cb, dab_p, dab_v, dab_d), 1.0f);
+            dab_d += spacing;
 
-            float spacing =
-                DP_max_float(DP_classic_brush_spacing_at(cb, dab_p), 1.0f);
+            update_classic_smudge(be, cb, lc, dab_x, dab_y, dab_p, dab_v,
+                                  dab_d);
+            add_dab_soft(be, cb, dab_x, dab_y, dab_p, dab_v, dab_d);
+
             dab_x += dx * spacing;
             dab_y += dy * spacing;
             dab_p = CLAMP(dab_p + dp * spacing, 0.0f, 1.0f);
@@ -1121,28 +1189,34 @@ static void stroke_soft(DP_BrushEngine *be, DP_ClassicBrush *cb,
         }
 
         be->classic.soft_length = i - dist;
+        be->classic.last_distance = dab_d;
     }
 }
 
 static void stroke_to_classic(
-    DP_BrushEngine *be, float x, float y, float pressure,
+    DP_BrushEngine *be, float x, float y, float pressure, long long time_msec,
     void (*first_dab)(DP_BrushEngine *, DP_ClassicBrush *, float, float, float),
     void (*stroke)(DP_BrushEngine *, DP_ClassicBrush *, DP_LayerContent *,
-                   float, float, float))
+                   float, float, float, float))
 {
     DP_ClassicBrush *cb = &be->classic.brush;
     DP_LayerContent *lc = be->lc;
     if (be->stroke.in_progress) {
-        stroke(be, cb, lc, x, y, pressure);
+        float delta_sec = DP_max_float(
+            DP_llong_to_float(time_msec - be->stroke.last_time_msec) / 1000.0f,
+            0.0001f);
+        stroke(be, cb, lc, x, y, pressure, delta_sec);
     }
     else {
+        be->classic.last_velocity = 0.0f;
+        be->classic.last_distance = 0.0f;
         be->stroke.in_progress = true;
         bool colorpick = cb->colorpick
                       && DP_classic_brush_blend_mode(cb) != DP_BLEND_MODE_ERASE
                       && lc;
         if (colorpick) {
             be->classic.smudge_color =
-                sample_classic_smudge(be, cb, lc, x, y, pressure);
+                sample_classic_smudge(be, cb, lc, x, y, pressure, 0.0f, 0.0f);
             be->classic.smudge_color.a = be->classic.brush_color.a;
             be->classic.smudge_distance = -1;
         }
@@ -1166,8 +1240,8 @@ static void stroke_to_mypaint(DP_BrushEngine *be, DP_BrushPoint bp)
 
     double delta_sec;
     if (be->stroke.in_progress) {
-        delta_sec = DP_llong_to_float(bp.time_msec - be->stroke.last_time_msec)
-                  / 1000.0f;
+        delta_sec = DP_llong_to_double(bp.time_msec - be->stroke.last_time_msec)
+                  / 1000.0;
     }
     else {
         be->stroke.in_progress = true;
@@ -1184,7 +1258,7 @@ static void stroke_to_mypaint(DP_BrushEngine *be, DP_BrushPoint bp)
         // tablet, which is just weird.
         mypaint_brush_stroke_to_2(mb, surface, bp.x, bp.y, 0.0f, bp.xtilt,
                                   bp.ytilt, 1000.0f, zoom, 0.0f, bp.rotation);
-        delta_sec = 0.0f;
+        delta_sec = 0.0;
     }
 
     mypaint_brush_stroke_to_2(mb, surface, bp.x, bp.y, bp.pressure, bp.xtilt,
@@ -1220,16 +1294,18 @@ static void stroke_to(DP_BrushEngine *be, DP_BrushPoint bp,
 
     switch (active) {
     case DP_BRUSH_ENGINE_ACTIVE_PIXEL:
-        DP_EVENT_LOG("stroke_to active=pixel x=%f y=%f pressure=%f", bp.x, bp.y,
-                     bp.pressure);
-        stroke_to_classic(be, bp.x, bp.y, bp.pressure, first_dab_pixel,
-                          stroke_pixel);
+        DP_EVENT_LOG(
+            "stroke_to active=pixel x=%f y=%f pressure=%f time_msec=%lld", bp.x,
+            bp.y, bp.pressure, bp.time_msec);
+        stroke_to_classic(be, bp.x, bp.y, bp.pressure, bp.time_msec,
+                          first_dab_pixel, stroke_pixel);
         break;
     case DP_BRUSH_ENGINE_ACTIVE_SOFT:
-        DP_EVENT_LOG("stroke_to active=soft x=%f y=%f pressure=%f", bp.x, bp.y,
-                     bp.pressure);
-        stroke_to_classic(be, bp.x, bp.y, bp.pressure, first_dab_soft,
-                          stroke_soft);
+        DP_EVENT_LOG(
+            "stroke_to active=soft x=%f y=%f pressure=%f time_msec=%lld", bp.x,
+            bp.y, bp.pressure, bp.time_msec);
+        stroke_to_classic(be, bp.x, bp.y, bp.pressure, bp.time_msec,
+                          first_dab_soft, stroke_soft);
         break;
     case DP_BRUSH_ENGINE_ACTIVE_MYPAINT:
         DP_EVENT_LOG("stroke_to active=mypaint x=%f y=%f pressure=%f xtilt=%f "
@@ -1341,9 +1417,9 @@ static void handle_stroke_smoother(DP_BrushEngine *be, DP_BrushPoint bp,
 static void smoother_remove(DP_BrushPoint *points, int size, int fill,
                             int offset)
 {
-	// Pad the buffer with the final point, overwriting the oldest first, for
-	// symmetry with starting. For very short strokes this should really set all
-	// points between --fill and size - 1.
+    // Pad the buffer with the final point, overwriting the oldest first, for
+    // symmetry with starting. For very short strokes this should really set all
+    // points between --fill and size - 1.
     points[(offset + fill - 1) % size] = points[offset];
 }
 

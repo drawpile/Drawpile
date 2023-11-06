@@ -47,6 +47,86 @@ public:
 	const KisCubicCurve &smudgeCurve() const { return m_smudgeCurve; }
 	void setSmudgeCurve(const KisCubicCurve &smudgeCurve);
 
+	DP_ClassicBrushDynamicType lastSizeDynamicType() const
+	{
+		return m_lastSizeDynamicType;
+	}
+
+	void setSizeDynamicType(DP_ClassicBrushDynamicType type)
+	{
+		setDynamicType(type, size_dynamic.type, m_lastSizeDynamicType);
+	}
+
+	void setSizeMaxVelocity(float maxVelocity)
+	{
+		size_dynamic.max_velocity = maxVelocity;
+	}
+
+	void setSizeMaxDistance(float maxDistance)
+	{
+		size_dynamic.max_distance = maxDistance;
+	}
+
+	DP_ClassicBrushDynamicType lastOpacityDynamicType() const
+	{
+		return m_lastOpacityDynamicType;
+	}
+
+	void setOpacityDynamicType(DP_ClassicBrushDynamicType type)
+	{
+		setDynamicType(type, opacity_dynamic.type, m_lastOpacityDynamicType);
+	}
+
+	void setOpacityMaxVelocity(float maxVelocity)
+	{
+		opacity_dynamic.max_velocity = maxVelocity;
+	}
+
+	void setOpacityMaxDistance(float maxDistance)
+	{
+		opacity_dynamic.max_distance = maxDistance;
+	}
+
+	DP_ClassicBrushDynamicType lastHardnessDynamicType() const
+	{
+		return m_lastHardnessDynamicType;
+	}
+
+	void setHardnessDynamicType(DP_ClassicBrushDynamicType type)
+	{
+		setDynamicType(type, hardness_dynamic.type, m_lastHardnessDynamicType);
+	}
+
+	void setHardnessMaxVelocity(float maxVelocity)
+	{
+		hardness_dynamic.max_velocity = maxVelocity;
+	}
+
+	void setHardnessMaxDistance(float maxDistance)
+	{
+		hardness_dynamic.max_distance = maxDistance;
+	}
+
+	DP_ClassicBrushDynamicType lastSmudgeDynamicType() const
+	{
+		return m_lastSmudgeDynamicType;
+	}
+
+	void setSmudgeDynamicType(DP_ClassicBrushDynamicType type)
+	{
+		setDynamicType(type, smudge_dynamic.type, m_lastSmudgeDynamicType);
+	}
+
+	void setSmudgeMaxVelocity(float maxVelocity)
+	{
+		smudge_dynamic.max_velocity = maxVelocity;
+	}
+
+	void setSmudgeMaxDistance(float maxDistance)
+	{
+		smudge_dynamic.max_distance = maxDistance;
+	}
+
 	void setQColor(const QColor &c);
 	QColor qColor() const;
 
@@ -62,15 +142,38 @@ public:
 	int smoothing;
 
 private:
+	static constexpr float DEFAULT_VELOCITY = 5.0f;
+	static constexpr float DEFAULT_DISTANCE = 250.0f;
+
 	void updateCurve(const KisCubicCurve &src, DP_ClassicBrushCurve &dst);
+	static void setDynamicType(
+		DP_ClassicBrushDynamicType type, DP_ClassicBrushDynamicType &outType,
+		DP_ClassicBrushDynamicType &outLastType);
 
 	void loadSettingsFromJson(const QJsonObject &settings);
 	QJsonObject settingsToJson() const;
+
+	static DP_ClassicBrushDynamic
+	dynamicFromJson(const QJsonObject &o, const QString &prefix);
+	static DP_ClassicBrushDynamicType
+	lastDynamicTypeFromJson(const QJsonObject &o, const QString &prefix);
+	static void dynamicToJson(
+		const DP_ClassicBrushDynamic &dynamic,
+		DP_ClassicBrushDynamicType lastType, const QString &prefix,
+		QJsonObject &o);
 
 	KisCubicCurve m_sizeCurve;
 	KisCubicCurve m_opacityCurve;
 	KisCubicCurve m_hardnessCurve;
 	KisCubicCurve m_smudgeCurve;
+	DP_ClassicBrushDynamicType m_lastSizeDynamicType =
+		DP_CLASSIC_BRUSH_DYNAMIC_PRESSURE;
+	DP_ClassicBrushDynamicType m_lastOpacityDynamicType =
+		DP_CLASSIC_BRUSH_DYNAMIC_PRESSURE;
+	DP_ClassicBrushDynamicType m_lastHardnessDynamicType =
+		DP_CLASSIC_BRUSH_DYNAMIC_PRESSURE;
+	DP_ClassicBrushDynamicType m_lastSmudgeDynamicType =
+		DP_CLASSIC_BRUSH_DYNAMIC_PRESSURE;
 };
 
 struct MyPaintCurve final {

@@ -156,12 +156,19 @@ static DP_CanvasState *draw_foreground_dabs(DP_CanvasState *cs,
     return cs;
 }
 
-static void stroke_to(DP_BrushEngine *be, float x, float y, float pressure,
-                      DP_CanvasState *cs, long long *in_out_time_msec)
+static void stroke_to_time(DP_BrushEngine *be, float x, float y, float pressure,
+                           DP_CanvasState *cs, long long dt,
+                           long long *in_out_time_msec)
 {
     DP_BrushPoint bp = {x, y, pressure, 0.0f, 0.0f, 0.0f, *in_out_time_msec};
     DP_brush_engine_stroke_to(be, bp, cs);
-    *in_out_time_msec += DELTA_MSEC;
+    *in_out_time_msec += dt;
+}
+
+static void stroke_to(DP_BrushEngine *be, float x, float y, float pressure,
+                      DP_CanvasState *cs, long long *in_out_time_msec)
+{
+    stroke_to_time(be, x, y, pressure, cs, DELTA_MSEC, in_out_time_msec);
 }
 
 static void stroke_freehand(DP_BrushEngine *be, DP_CanvasState *cs,
@@ -182,8 +189,10 @@ static void stroke_freehand(DP_BrushEngine *be, DP_CanvasState *cs,
         float p = xf / rwf;
         float raw_pressure = (p * p - p * p * p) * 6.756f;
         float pressure = CLAMP(raw_pressure, 0.0f, 1.0f);
+        long long dt = DP_float_to_llong((1.0f - pressure) * 20.0f + 0.1f);
         float y = sinf(phase) * h;
-        stroke_to(be, rxf + xf, offy + y, pressure, cs, in_out_time_msec);
+        stroke_to_time(be, rxf + xf, offy + y, pressure, cs, dt,
+                       in_out_time_msec);
         phase += dphase;
     }
 }
@@ -341,9 +350,10 @@ static void set_preview_pixel_dab(DP_UNUSED int count, DP_PixelDab *pds,
 {
     DP_ASSERT(count == 1);
     const DP_ClassicBrush *cb = user;
-    DP_pixel_dab_init(pds, 0, 0, 0,
-                      DP_classic_brush_pixel_dab_size_at(cb, 1.0f),
-                      DP_classic_brush_dab_opacity_at(cb, 1.0f));
+    DP_pixel_dab_init(
+        pds, 0, 0, 0,
+        DP_classic_brush_pixel_dab_size_at(cb, 1.0f, HUGE_VALF, HUGE_VALF),
+        DP_classic_brush_dab_opacity_at(cb, 1.0f, HUGE_VALF, HUGE_VALF));
 }
 
 static void set_preview_classic_dab(DP_UNUSED int count, DP_ClassicDab *cds,
@@ -351,10 +361,11 @@ static void set_preview_classic_dab(DP_UNUSED int count, DP_ClassicDab *cds,
 {
     DP_ASSERT(count == 1);
     const DP_ClassicBrush *cb = user;
-    DP_classic_dab_init(cds, 0, 0, 0,
-                        DP_classic_brush_soft_dab_size_at(cb, 1.0f),
-                        DP_classic_brush_dab_hardness_at(cb, 1.0f),
-                        DP_classic_brush_dab_opacity_at(cb, 1.0f));
+    DP_classic_dab_init(
+        cds, 0, 0, 0,
+        DP_classic_brush_soft_dab_size_at(cb, 1.0f, HUGE_VALF, HUGE_VALF),
+        DP_classic_brush_dab_hardness_at(cb, 1.0f, HUGE_VALF, HUGE_VALF),
+        DP_classic_brush_dab_opacity_at(cb, 1.0f, HUGE_VALF, HUGE_VALF));
 }
 
 static DP_Message *get_preview_draw_dab_message(const DP_ClassicBrush *cb,

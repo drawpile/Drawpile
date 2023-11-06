@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/dialogs/brushsettingsdialog.h"
 #include "desktop/utils/widgetutils.h"
 #include "desktop/widgets/curvewidget.h"
@@ -50,20 +49,20 @@ struct BrushSettingsDialog::Private {
 	KisSliderSpinBox *smoothingSpinner;
 	QLabel *stabilizerExplanationLabel;
 	KisSliderSpinBox *classicSizeSpinner;
-	QCheckBox *classicSizePressureBox;
+	Dynamics classicSizeDynamics;
 	KisSliderSpinBox *classicSizeMinSpinner;
 	widgets::CurveWidget *classicSizeCurve;
 	KisSliderSpinBox *classicOpacitySpinner;
-	QCheckBox *classicOpacityPressureBox;
+	Dynamics classicOpacityDynamics;
 	KisSliderSpinBox *classicOpacityMinSpinner;
 	widgets::CurveWidget *classicOpacityCurve;
 	KisSliderSpinBox *classicHardnessSpinner;
-	QCheckBox *classicHardnessPressureBox;
+	Dynamics classicHardnessDynamics;
 	KisSliderSpinBox *classicHardnessMinSpinner;
 	widgets::CurveWidget *classicHardnessCurve;
 	KisSliderSpinBox *classicSmudgingSpinner;
 	KisSliderSpinBox *classicColorPickupSpinner;
-	QCheckBox *classicSmudgingPressureBox;
+	Dynamics classicSmudgeDynamics;
 	KisSliderSpinBox *classicSmudgingMinSpinner;
 	widgets::CurveWidget *classicSmudgingCurve;
 	MyPaintPage myPaintPages[MYPAINT_BRUSH_SETTINGS_COUNT];
@@ -422,14 +421,10 @@ QWidget *BrushSettingsDialog::buildClassicSizePageUi()
 			emitChange();
 		});
 
-	d->classicSizePressureBox =
-		new QCheckBox{tr("Pressure Sensitivity"), widget};
-	layout->addWidget(d->classicSizePressureBox);
-	connect(
-		d->classicSizePressureBox, &QCheckBox::stateChanged, [this](int state) {
-			d->brush.classic().size_pressure = state != Qt::Unchecked;
-			emitChange();
-		});
+	d->classicSizeDynamics = buildClassicDynamics(
+		layout, &brushes::ClassicBrush::setSizeDynamicType,
+		&brushes::ClassicBrush::setSizeMaxVelocity,
+		&brushes::ClassicBrush::setSizeMaxDistance);
 
 	d->classicSizeMinSpinner = new KisSliderSpinBox{widget};
 	layout->addWidget(d->classicSizeMinSpinner);
@@ -444,7 +439,7 @@ QWidget *BrushSettingsDialog::buildClassicSizePageUi()
 		});
 
 	d->classicSizeCurve =
-		new widgets::CurveWidget{tr("Pressure"), tr("Size"), false, widget};
+		new widgets::CurveWidget{tr("Input"), tr("Size"), false, widget};
 	layout->addWidget(d->classicSizeCurve);
 	buildClassicApplyToAllButton(d->classicSizeCurve);
 	connect(
@@ -483,15 +478,10 @@ QWidget *BrushSettingsDialog::buildClassicOpacityPageUi()
 			emitChange();
 		});
 
-	d->classicOpacityPressureBox =
-		new QCheckBox{tr("Pressure Sensitivity"), widget};
-	layout->addWidget(d->classicOpacityPressureBox);
-	connect(
-		d->classicOpacityPressureBox, &QCheckBox::stateChanged,
-		[this](int state) {
-			d->brush.classic().opacity_pressure = state != Qt::Unchecked;
-			emitChange();
-		});
+	d->classicOpacityDynamics = buildClassicDynamics(
+		layout, &brushes::ClassicBrush::setOpacityDynamicType,
+		&brushes::ClassicBrush::setOpacityMaxVelocity,
+		&brushes::ClassicBrush::setOpacityMaxDistance);
 
 	d->classicOpacityMinSpinner = new KisSliderSpinBox{widget};
 	layout->addWidget(d->classicOpacityMinSpinner);
@@ -506,7 +496,7 @@ QWidget *BrushSettingsDialog::buildClassicOpacityPageUi()
 		});
 
 	d->classicOpacityCurve =
-		new widgets::CurveWidget{tr("Pressure"), tr("Opacity"), false, widget};
+		new widgets::CurveWidget{tr("Input"), tr("Opacity"), false, widget};
 	layout->addWidget(d->classicOpacityCurve);
 	buildClassicApplyToAllButton(d->classicOpacityCurve);
 	connect(
@@ -545,15 +535,10 @@ QWidget *BrushSettingsDialog::buildClassicHardnessPageUi()
 			emitChange();
 		});
 
-	d->classicHardnessPressureBox =
-		new QCheckBox{tr("Pressure Sensitivity"), widget};
-	layout->addWidget(d->classicHardnessPressureBox);
-	connect(
-		d->classicHardnessPressureBox, &QCheckBox::stateChanged,
-		[this](int state) {
-			d->brush.classic().hardness_pressure = state != Qt::Unchecked;
-			emitChange();
-		});
+	d->classicHardnessDynamics = buildClassicDynamics(
+		layout, &brushes::ClassicBrush::setHardnessDynamicType,
+		&brushes::ClassicBrush::setHardnessMaxVelocity,
+		&brushes::ClassicBrush::setHardnessMaxDistance);
 
 	d->classicHardnessMinSpinner = new KisSliderSpinBox{widget};
 	layout->addWidget(d->classicHardnessMinSpinner);
@@ -568,7 +553,7 @@ QWidget *BrushSettingsDialog::buildClassicHardnessPageUi()
 		});
 
 	d->classicHardnessCurve =
-		new widgets::CurveWidget{tr("Pressure"), tr("Hardness"), false, widget};
+		new widgets::CurveWidget{tr("Input"), tr("Hardness"), false, widget};
 	layout->addWidget(d->classicHardnessCurve);
 	buildClassicApplyToAllButton(d->classicHardnessCurve);
 	connect(
@@ -618,15 +603,10 @@ QWidget *BrushSettingsDialog::buildClassicSmudgingPageUi()
 			emitChange();
 		});
 
-	d->classicSmudgingPressureBox =
-		new QCheckBox{tr("Pressure Sensitivity"), widget};
-	layout->addWidget(d->classicSmudgingPressureBox);
-	connect(
-		d->classicSmudgingPressureBox, &QCheckBox::stateChanged,
-		[this](int state) {
-			d->brush.classic().smudge_pressure = state != Qt::Unchecked;
-			emitChange();
-		});
+	d->classicSmudgeDynamics = buildClassicDynamics(
+		layout, &brushes::ClassicBrush::setSmudgeDynamicType,
+		&brushes::ClassicBrush::setSmudgeMaxVelocity,
+		&brushes::ClassicBrush::setSmudgeMaxDistance);
 
 	d->classicSmudgingMinSpinner = new KisSliderSpinBox{widget};
 	layout->addWidget(d->classicSmudgingMinSpinner);
@@ -641,7 +621,7 @@ QWidget *BrushSettingsDialog::buildClassicSmudgingPageUi()
 		});
 
 	d->classicSmudgingCurve =
-		new widgets::CurveWidget{tr("Pressure"), tr("Smudging"), false, widget};
+		new widgets::CurveWidget{tr("Input"), tr("Smudging"), false, widget};
 	layout->addWidget(d->classicSmudgingCurve);
 	buildClassicApplyToAllButton(d->classicSmudgingCurve);
 	connect(
@@ -655,6 +635,97 @@ QWidget *BrushSettingsDialog::buildClassicSmudgingPageUi()
 		new QSpacerItem{0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding});
 
 	return scroll;
+}
+
+BrushSettingsDialog::Dynamics BrushSettingsDialog ::buildClassicDynamics(
+	QVBoxLayout *layout,
+	void (brushes::ClassicBrush::*setType)(DP_ClassicBrushDynamicType),
+	void (brushes::ClassicBrush::*setVelocity)(float),
+	void (brushes::ClassicBrush::*setDistance)(float))
+{
+	QComboBox *typeCombo = new QComboBox;
+	typeCombo->addItem(tr("No dynamics"), int(DP_CLASSIC_BRUSH_DYNAMIC_NONE));
+	typeCombo->addItem(
+		tr("Pressure dynamics"), int(DP_CLASSIC_BRUSH_DYNAMIC_PRESSURE));
+	typeCombo->addItem(
+		tr("Velocity dynamics"), int(DP_CLASSIC_BRUSH_DYNAMIC_VELOCITY));
+	typeCombo->addItem(
+		tr("Distance dynamics"), int(DP_CLASSIC_BRUSH_DYNAMIC_DISTANCE));
+	connect(
+		typeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
+		[this, typeCombo, setType](int index) {
+			int type = typeCombo->itemData(index).toInt();
+			(d->brush.classic().*setType)(DP_ClassicBrushDynamicType(type));
+			emitChange();
+		});
+
+	KisSliderSpinBox *velocitySlider = new KisSliderSpinBox;
+	velocitySlider->setRange(1, 1000);
+	velocitySlider->setPrefix(tr("Maximum Velocity: "));
+	connect(
+		velocitySlider, QOverload<int>::of(&QSpinBox::valueChanged),
+		[=](int value) {
+			(d->brush.classic().*setVelocity)(float(value) / 100.0f);
+			emitChange();
+		});
+
+	KisSliderSpinBox *distanceSlider = new KisSliderSpinBox;
+	distanceSlider->setRange(1, 10000);
+	distanceSlider->setExponentRatio(3.0);
+	distanceSlider->setPrefix(tr("Maximum Distance: "));
+	connect(
+		distanceSlider, QOverload<int>::of(&QSpinBox::valueChanged),
+		[=](int value) {
+			(d->brush.classic().*setDistance)(float(value));
+			emitChange();
+		});
+
+	QPushButton *applyVelocityToAllButton =
+		new QPushButton(QIcon::fromTheme("fill-color"), tr("Apply to All"));
+	applyVelocityToAllButton->setToolTip(
+		tr("Set the maximum velocity for Size, Opacity, Hardness and Smudging "
+		   "at once."));
+	connect(applyVelocityToAllButton, &QPushButton::clicked, [=]() {
+		brushes::ClassicBrush &b = d->brush.classic();
+		float maxVelocity = float(velocitySlider->value()) / 100.0f;
+		b.setSizeMaxVelocity(maxVelocity);
+		b.setOpacityMaxVelocity(maxVelocity);
+		b.setHardnessMaxVelocity(maxVelocity);
+		b.setSmudgeMaxVelocity(maxVelocity);
+		emitChange();
+		ToolMessage::showText(
+			tr("Maximum velocity set for all settings in this brush."));
+	});
+
+	QPushButton *applyDistanceToAllButton =
+		new QPushButton(QIcon::fromTheme("fill-color"), tr("Apply to All"));
+	applyDistanceToAllButton->setToolTip(
+		tr("Set the maximum distance for Size, Opacity, Hardness and Smudging "
+		   "at once."));
+	connect(applyDistanceToAllButton, &QPushButton::clicked, [=]() {
+		brushes::ClassicBrush &b = d->brush.classic();
+		float maxDistance = float(distanceSlider->value());
+		b.setSizeMaxDistance(maxDistance);
+		b.setOpacityMaxDistance(maxDistance);
+		b.setHardnessMaxDistance(maxDistance);
+		b.setSmudgeMaxDistance(maxDistance);
+		emitChange();
+		ToolMessage::showText(
+			tr("Maximum distance set for all settings in this brush."));
+	});
+
+	QGridLayout *grid = new QGridLayout;
+	grid->setColumnStretch(0, 1);
+	grid->addWidget(typeCombo, 0, 0, 1, 2);
+	grid->addWidget(velocitySlider, 1, 0);
+	grid->addWidget(distanceSlider, 2, 0);
+	grid->addWidget(applyVelocityToAllButton, 1, 1);
+	grid->addWidget(applyDistanceToAllButton, 2, 1);
+	layout->addLayout(grid);
+
+	return {
+		typeCombo, velocitySlider, distanceSlider, applyVelocityToAllButton,
+		applyDistanceToAllButton};
 }
 
 void BrushSettingsDialog::buildClassicApplyToAllButton(
@@ -830,33 +901,60 @@ void BrushSettingsDialog::updateUiFromClassicBrush()
 	d->spacingSpinner->setVisible(true);
 
 	d->classicSizeSpinner->setValue(classic.size.max);
-	d->classicSizePressureBox->setChecked(classic.size_pressure);
+	bool haveSizeDynamics = updateClassicBrushDynamics(
+		d->classicSizeDynamics, classic.size_dynamic);
 	d->classicSizeMinSpinner->setValue(classic.size.min);
-	d->classicSizeMinSpinner->setEnabled(classic.size_pressure);
+	d->classicSizeMinSpinner->setEnabled(haveSizeDynamics);
 	d->classicSizeCurve->setCurve(classic.sizeCurve());
-	d->classicSizeCurve->setEnabled(classic.size_pressure);
+	d->classicSizeCurve->setEnabled(haveSizeDynamics);
 
 	d->classicOpacitySpinner->setValue(classic.opacity.max * 100.0 + 0.5);
-	d->classicOpacityPressureBox->setChecked(classic.opacity_pressure);
+	bool haveOpacityDynamics = updateClassicBrushDynamics(
+		d->classicOpacityDynamics, classic.opacity_dynamic);
 	d->classicOpacityMinSpinner->setValue(classic.opacity.min * 100.0 + 0.5);
-	d->classicOpacityMinSpinner->setEnabled(classic.opacity_pressure);
+	d->classicOpacityMinSpinner->setEnabled(haveOpacityDynamics);
 	d->classicOpacityCurve->setCurve(classic.opacityCurve());
-	d->classicOpacityCurve->setEnabled(classic.opacity_pressure);
+	d->classicOpacityCurve->setEnabled(haveOpacityDynamics);
 
 	d->classicHardnessSpinner->setValue(classic.hardness.max * 100.0 + 0.5);
-	d->classicHardnessPressureBox->setChecked(classic.hardness_pressure);
+	bool haveHardnessDynamics = updateClassicBrushDynamics(
+		d->classicHardnessDynamics, classic.hardness_dynamic);
 	d->classicHardnessMinSpinner->setValue(classic.hardness.min * 100.0 + 0.5);
-	d->classicHardnessMinSpinner->setEnabled(classic.hardness_pressure);
+	d->classicHardnessMinSpinner->setEnabled(haveHardnessDynamics);
 	d->classicHardnessCurve->setCurve(classic.hardnessCurve());
-	d->classicHardnessCurve->setEnabled(classic.hardness_pressure);
+	d->classicHardnessCurve->setEnabled(haveHardnessDynamics);
 
 	d->classicSmudgingSpinner->setValue(classic.smudge.max * 100.0 + 0.5);
 	d->classicColorPickupSpinner->setValue(classic.resmudge);
-	d->classicSmudgingPressureBox->setChecked(classic.smudge_pressure);
+	bool haveSmudgeDynamics = updateClassicBrushDynamics(
+		d->classicSmudgeDynamics, classic.smudge_dynamic);
 	d->classicSmudgingMinSpinner->setValue(classic.smudge.min * 100.0 + 0.5);
-	d->classicSmudgingMinSpinner->setEnabled(classic.smudge_pressure);
+	d->classicSmudgingMinSpinner->setEnabled(haveSmudgeDynamics);
 	d->classicSmudgingCurve->setCurve(classic.smudgeCurve());
-	d->classicSmudgingCurve->setEnabled(classic.smudge_pressure);
+	d->classicSmudgingCurve->setEnabled(haveSmudgeDynamics);
+}
+
+bool BrushSettingsDialog::updateClassicBrushDynamics(
+	Dynamics &dynamics, const DP_ClassicBrushDynamic &brush)
+{
+	DP_ClassicBrushDynamicType type = brush.type;
+	setComboBoxIndexByData(dynamics.typeCombo, type);
+
+	dynamics.velocitySlider->setValue(int(brush.max_velocity * 100.0f + 0.5));
+	bool isVelocity = type == DP_CLASSIC_BRUSH_DYNAMIC_VELOCITY;
+	dynamics.velocitySlider->setEnabled(isVelocity);
+	dynamics.velocitySlider->setVisible(isVelocity);
+	dynamics.applyVelocityToAllButton->setEnabled(isVelocity);
+	dynamics.applyVelocityToAllButton->setVisible(isVelocity);
+
+	dynamics.distanceSlider->setValue(int(brush.max_distance + 0.5));
+	bool isDistance = type == DP_CLASSIC_BRUSH_DYNAMIC_DISTANCE;
+	dynamics.distanceSlider->setEnabled(isDistance);
+	dynamics.distanceSlider->setVisible(isDistance);
+	dynamics.applyDistanceToAllButton->setEnabled(isDistance);
+	dynamics.applyDistanceToAllButton->setVisible(isDistance);
+
+	return type != DP_CLASSIC_BRUSH_DYNAMIC_NONE;
 }
 
 void BrushSettingsDialog::updateUiFromMyPaintBrush()

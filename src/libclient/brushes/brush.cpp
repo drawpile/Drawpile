@@ -42,10 +42,10 @@ ClassicBrush::ClassicBrush()
 		false,
 		true,
 		false,
-		false,
-		false,
-		false,
-		false,
+		{DP_CLASSIC_BRUSH_DYNAMIC_NONE, DEFAULT_VELOCITY, DEFAULT_DISTANCE},
+		{DP_CLASSIC_BRUSH_DYNAMIC_NONE, DEFAULT_VELOCITY, DEFAULT_DISTANCE},
+		{DP_CLASSIC_BRUSH_DYNAMIC_NONE, DEFAULT_VELOCITY, DEFAULT_DISTANCE},
+		{DP_CLASSIC_BRUSH_DYNAMIC_NONE, DEFAULT_VELOCITY, DEFAULT_DISTANCE},
 	}
 	, stabilizationMode(Stabilizer)
 	, stabilizerSampleCount(0)
@@ -148,10 +148,19 @@ ClassicBrush ClassicBrush::fromJson(const QJsonObject &json)
 
 	b.incremental = !o["indirect"].toBool();
 	b.colorpick = o["colorpick"].toBool();
-	b.size_pressure = o["sizep"].toBool();
-	b.hardness_pressure = o["hardp"].toBool();
-	b.opacity_pressure = o["opacityp"].toBool();
-	b.smudge_pressure = o["smudgep"].toBool();
+
+	b.size_dynamic = dynamicFromJson(o, QStringLiteral("size"));
+	b.m_lastSizeDynamicType =
+		lastDynamicTypeFromJson(o, QStringLiteral("size"));
+	b.hardness_dynamic = dynamicFromJson(o, QStringLiteral("hard"));
+	b.m_lastHardnessDynamicType =
+		lastDynamicTypeFromJson(o, QStringLiteral("hard"));
+	b.opacity_dynamic = dynamicFromJson(o, QStringLiteral("opacity"));
+	b.m_lastOpacityDynamicType =
+		lastDynamicTypeFromJson(o, QStringLiteral("opacity"));
+	b.smudge_dynamic = dynamicFromJson(o, QStringLiteral("smudge"));
+	b.m_lastSmudgeDynamicType =
+		lastDynamicTypeFromJson(o, QStringLiteral("smudge"));
 
 	b.brush_mode = canvas::blendmode::fromSvgName(o["blend"].toString());
 	b.erase_mode = canvas::blendmode::fromSvgName(
@@ -194,6 +203,23 @@ void ClassicBrush::updateCurve(
 	}
 }
 
+void ClassicBrush::setDynamicType(
+	DP_ClassicBrushDynamicType type, DP_ClassicBrushDynamicType &outType,
+	DP_ClassicBrushDynamicType &outLastType)
+{
+	switch(type) {
+	case DP_CLASSIC_BRUSH_DYNAMIC_PRESSURE:
+	case DP_CLASSIC_BRUSH_DYNAMIC_VELOCITY:
+	case DP_CLASSIC_BRUSH_DYNAMIC_DISTANCE:
+		outLastType = type;
+		[[fallthrough]];
+	case DP_CLASSIC_BRUSH_DYNAMIC_NONE:
+		outType = type;
+		return;
+	}
+	qWarning("Unhandled dynamic type %d", int(type));
+}
+
 void ClassicBrush::loadSettingsFromJson(const QJsonObject &settings)
 {
 	if(settings["shape"] == "round-pixel") {
@@ -229,10 +255,18 @@ void ClassicBrush::loadSettingsFromJson(const QJsonObject &settings)
 
 	incremental = !settings["indirect"].toBool();
 	colorpick = settings["colorpick"].toBool();
-	size_pressure = settings["sizep"].toBool();
-	hardness_pressure = settings["hardp"].toBool();
-	opacity_pressure = settings["opacityp"].toBool();
-	smudge_pressure = settings["smudgep"].toBool();
+	size_dynamic = dynamicFromJson(settings, QStringLiteral("size"));
+	m_lastSizeDynamicType =
+		lastDynamicTypeFromJson(settings, QStringLiteral("size"));
+	hardness_dynamic = dynamicFromJson(settings, QStringLiteral("hard"));
+	m_lastHardnessDynamicType =
+		lastDynamicTypeFromJson(settings, QStringLiteral("hard"));
+	opacity_dynamic = dynamicFromJson(settings, QStringLiteral("opacity"));
+	m_lastOpacityDynamicType =
+		lastDynamicTypeFromJson(settings, QStringLiteral("opacity"));
+	smudge_dynamic = dynamicFromJson(settings, QStringLiteral("smudge"));
+	m_lastSmudgeDynamicType =
+		lastDynamicTypeFromJson(settings, QStringLiteral("smudge"));
 
 	brush_mode = canvas::blendmode::fromSvgName(settings["blend"].toString());
 	erase_mode = canvas::blendmode::fromSvgName(
@@ -290,14 +324,15 @@ QJsonObject ClassicBrush::settingsToJson() const
 		o["indirect"] = true;
 	if(colorpick)
 		o["colorpick"] = true;
-	if(size_pressure)
-		o["sizep"] = true;
-	if(hardness_pressure)
-		o["hardp"] = true;
-	if(opacity_pressure)
-		o["opacityp"] = true;
-	if(smudge_pressure)
-		o["smudgep"] = true;
+	dynamicToJson(
+		size_dynamic, m_lastSizeDynamicType, QStringLiteral("size"), o);
+	dynamicToJson(
+		hardness_dynamic, m_lastHardnessDynamicType, QStringLiteral("hard"), o);
+	dynamicToJson(
+		opacity_dynamic, m_lastOpacityDynamicType, QStringLiteral("opacity"),
+		o);
+	dynamicToJson(
+		smudge_dynamic, m_lastSmudgeDynamicType, QStringLiteral("smudge"), o);
 
 	o["blend"] = canvas::blendmode::svgName(brush_mode);
 	o["blenderase"] = canvas::blendmode::svgName(erase_mode);
@@ -310,6 +345,72 @@ QJsonObject ClassicBrush::settingsToJson() const
 	// Note: color is intentionally omitted
 
 	return o;
+}
+
+DP_ClassicBrushDynamic
+ClassicBrush::dynamicFromJson(const QJsonObject &o, const QString &prefix)
+{
+	DP_ClassicBrushDynamicType type;
+	if(o[prefix + QStringLiteral("p")].toBool()) {
+		type = DP_CLASSIC_BRUSH_DYNAMIC_PRESSURE;
+	} else if(o[prefix + QStringLiteral("v")].toBool()) {
+		type = DP_CLASSIC_BRUSH_DYNAMIC_VELOCITY;
+	} else if(o[prefix + QStringLiteral("d")].toBool()) {
+		type = DP_CLASSIC_BRUSH_DYNAMIC_DISTANCE;
+	} else {
+		type = DP_CLASSIC_BRUSH_DYNAMIC_NONE;
+	}
+	float maxVelocity = qMax(
+		float(o[prefix + QStringLiteral("vmax")].toDouble(DEFAULT_VELOCITY)),
+		0.0f);
+	float maxDistance = qMax(
+		float(o[prefix + QStringLiteral("dmax")].toDouble(DEFAULT_DISTANCE)),
+		0.0f);
+	return {type, maxVelocity, maxDistance};
+}
+
+DP_ClassicBrushDynamicType ClassicBrush::lastDynamicTypeFromJson(
+	const QJsonObject &o, const QString &prefix)
+{
+	if(o[prefix + QStringLiteral("lastv")].toBool()) {
+		return DP_CLASSIC_BRUSH_DYNAMIC_VELOCITY;
+	} else if(o[prefix + QStringLiteral("lastd")].toBool()) {
+		return DP_CLASSIC_BRUSH_DYNAMIC_DISTANCE;
+	} else {
+		return DP_CLASSIC_BRUSH_DYNAMIC_PRESSURE;
+	}
+}
+
+void ClassicBrush::dynamicToJson(
+	const DP_ClassicBrushDynamic &dynamic, DP_ClassicBrushDynamicType lastType,
+	const QString &prefix, QJsonObject &o)
+{
+	switch(dynamic.type) {
+	case DP_CLASSIC_BRUSH_DYNAMIC_NONE:
+		break;
+	case DP_CLASSIC_BRUSH_DYNAMIC_PRESSURE:
+		o[prefix + QStringLiteral("p")] = true;
+		break;
+	case DP_CLASSIC_BRUSH_DYNAMIC_VELOCITY:
+		o[prefix + QStringLiteral("v")] = true;
+		break;
+	case DP_CLASSIC_BRUSH_DYNAMIC_DISTANCE:
+		o[prefix + QStringLiteral("d")] = true;
+		break;
+	}
+	switch(lastType) {
+	case DP_CLASSIC_BRUSH_DYNAMIC_NONE:
+	case DP_CLASSIC_BRUSH_DYNAMIC_PRESSURE:
+		break;
+	case DP_CLASSIC_BRUSH_DYNAMIC_VELOCITY:
+		o[prefix + QStringLiteral("lastv")] = true;
+		break;
+	case DP_CLASSIC_BRUSH_DYNAMIC_DISTANCE:
+		o[prefix + QStringLiteral("lastd")] = true;
+		break;
+	}
+	o[prefix + QStringLiteral("vmax")] = dynamic.max_velocity;
+	o[prefix + QStringLiteral("dmax")] = dynamic.max_distance;
 }
 
 

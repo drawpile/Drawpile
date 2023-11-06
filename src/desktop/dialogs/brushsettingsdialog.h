@@ -1,15 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #ifndef BRUSHEDITORDIALOG_H
 #define BRUSHEDITORDIALOG_H
-
 #include "desktop/widgets/mypaintinput.h"
 #include "libclient/brushes/brush.h"
 #include <QDialog>
 #include <mypaint-brush-settings.h>
 
+class KisSliderSpinBox;
 class QComboBox;
 class QListWidgetItem;
+class QPushButton;
+class QVBoxLayout;
 
 namespace dialogs {
 
@@ -32,6 +33,14 @@ private slots:
 	void categoryChanged(QListWidgetItem *current, QListWidgetItem *);
 
 private:
+	struct Dynamics {
+		QComboBox *typeCombo;
+		KisSliderSpinBox *velocitySlider;
+		KisSliderSpinBox *distanceSlider;
+		QPushButton *applyVelocityToAllButton;
+		QPushButton *applyDistanceToAllButton;
+	};
+
 	struct Private;
 	Private *d;
 
@@ -41,6 +50,11 @@ private:
 	QWidget *buildClassicOpacityPageUi();
 	QWidget *buildClassicHardnessPageUi();
 	QWidget *buildClassicSmudgingPageUi();
+	Dynamics buildClassicDynamics(
+		QVBoxLayout *layout,
+		void (brushes::ClassicBrush::*setType)(DP_ClassicBrushDynamicType),
+		void (brushes::ClassicBrush::*setVelocity)(float),
+		void (brushes::ClassicBrush::*setDistance)(float));
 	void buildClassicApplyToAllButton(widgets::CurveWidget *curve);
 	QWidget *buildMyPaintPageUi(int setting);
 	widgets::MyPaintInput *buildMyPaintInputUi(
@@ -54,6 +68,8 @@ private:
 	void addMyPaintCategories();
 
 	void updateUiFromClassicBrush();
+	bool updateClassicBrushDynamics(
+		Dynamics &dynamics, const DP_ClassicBrushDynamic &brush);
 	void updateUiFromMyPaintBrush();
 	void updateMyPaintSettingPage(int setting);
 	void updateStabilizerExplanationText();
