@@ -1,15 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef TOOLSETTINGS_BRUSHES_H
-#define TOOLSETTINGS_BRUSHES_H
-
+#ifndef DESKTOP_TOOLWIDGETS_BRUSHSETTINGS_H
+#define DESKTOP_TOOLWIDGETS_BRUSHSETTINGS_H
 #include "desktop/toolwidgets/toolsettings.h"
 
 class QAction;
 class QSpinBox;
 
 namespace brushes {
-	class ActiveBrush;
+class ActiveBrush;
 }
 
 namespace tools {
@@ -22,16 +20,17 @@ namespace tools {
 class BrushSettings final : public ToolSettings {
 	Q_OBJECT
 	friend class AdvancedBrushSettings;
+
 public:
 	enum BrushMode : int { NormalMode, EraseMode, AlphaLockMode, UnknownMode };
 
-	BrushSettings(ToolController *ctrl, QObject *parent=nullptr);
+	BrushSettings(ToolController *ctrl, QObject *parent = nullptr);
 	~BrushSettings() override;
 
 	QString toolType() const override { return QStringLiteral("brush"); }
 
 	void setActiveTool(tools::Tool::Type tool) override;
-	void setForeground(const QColor& color) override;
+	void setForeground(const QColor &color) override;
 	void quickAdjust1(qreal adjustment) override;
 	void stepAdjust1(bool increase) override;
 
@@ -113,4 +112,3 @@ private:
 }
 
 #endif
-
