@@ -1,16 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef DP_BRUSHES_BRUSH_H
-#define DP_BRUSHES_BRUSH_H
-
+#ifndef LIBCLIENT_BRUSHES_BRUSH_H
+#define LIBCLIENT_BRUSHES_BRUSH_H
 extern "C" {
 #include <dpengine/brush.h>
 #include <dpengine/pixels.h>
 }
-
 #include "libclient/drawdance/brushpreview.h"
 #include "libclient/utils/kis_cubic_curve.h"
-
 #include <QColor>
 #include <QHash>
 #include <QJsonObject>
@@ -23,7 +19,7 @@ struct DP_StrokeParams;
 struct MyPaintBrush;
 
 namespace drawdance {
-	class BrushEngine;
+class BrushEngine;
 }
 
 namespace brushes {
@@ -35,8 +31,7 @@ enum StabilizationMode {
 };
 
 //! A convenience wrapper for classic brush settings
-class ClassicBrush final : public DP_ClassicBrush
-{
+class ClassicBrush final : public DP_ClassicBrush {
 public:
 	ClassicBrush();
 
@@ -52,7 +47,7 @@ public:
 	const KisCubicCurve &smudgeCurve() const { return m_smudgeCurve; }
 	void setSmudgeCurve(const KisCubicCurve &smudgeCurve);
 
-	void setQColor(const QColor& c);
+	void setQColor(const QColor &c);
 	QColor qColor() const;
 
 	QJsonObject toJson() const;
@@ -78,8 +73,7 @@ private:
 	KisCubicCurve m_smudgeCurve;
 };
 
-struct MyPaintCurve final
-{
+struct MyPaintCurve final {
 	bool visible = false;
 	double xMax = std::numeric_limits<double>::lowest();
 	double xMin = std::numeric_limits<double>::max();
@@ -87,23 +81,19 @@ struct MyPaintCurve final
 	double yMin = std::numeric_limits<double>::max();
 	KisCubicCurve curve;
 
-	bool isValid() const
-	{
-		return xMin <= xMax && yMin <= yMax;
-	}
+	bool isValid() const { return xMin <= xMax && yMin <= yMax; }
 };
 
-class MyPaintBrush final
-{
+class MyPaintBrush final {
 public:
 	MyPaintBrush();
 	~MyPaintBrush();
 
-    MyPaintBrush(const MyPaintBrush &other);
+	MyPaintBrush(const MyPaintBrush &other);
 	MyPaintBrush(MyPaintBrush &&other);
 
-    MyPaintBrush &operator=(MyPaintBrush &&other);
-    MyPaintBrush &operator=(const MyPaintBrush &other);
+	MyPaintBrush &operator=(MyPaintBrush &&other);
+	MyPaintBrush &operator=(const MyPaintBrush &other);
 
 	DP_MyPaintBrush &brush() { return m_brush; }
 	const DP_MyPaintBrush &constBrush() const { return m_brush; }
@@ -124,16 +114,13 @@ public:
 	}
 
 	int smoothing() const { return m_smoothing; }
-	void setSmoothing(int smoothing)
-	{
-		m_smoothing = smoothing;
-	}
+	void setSmoothing(int smoothing) { m_smoothing = smoothing; }
 
 	MyPaintCurve getCurve(int setting, int input) const;
 	void setCurve(int setting, int input, const MyPaintCurve &curve);
 	void removeCurve(int setting, int input);
 
-	void setQColor(const QColor& c);
+	void setQColor(const QColor &c);
 	QColor qColor() const;
 
 	QJsonObject toJson() const;
@@ -156,12 +143,13 @@ private:
 	QJsonObject mappingToJson() const;
 
 	bool loadJsonSettings(const QJsonObject &o);
-	bool loadJsonMapping(const QString &mappingKey, int settingId, const QJsonObject &o);
-	bool loadJsonInputs(const QString &mappingKey, int settingId, const QJsonObject &o);
+	bool loadJsonMapping(
+		const QString &mappingKey, int settingId, const QJsonObject &o);
+	bool loadJsonInputs(
+		const QString &mappingKey, int settingId, const QJsonObject &o);
 };
 
-class ActiveBrush final
-{
+class ActiveBrush final {
 public:
 	enum ActiveType { CLASSIC, MYPAINT };
 
@@ -170,7 +158,7 @@ public:
 
 	ActiveBrush(const ActiveBrush &other) = default;
 	ActiveBrush(ActiveBrush &&other) = default;
-	ActiveBrush& operator=(const ActiveBrush &other) = default;
+	ActiveBrush &operator=(const ActiveBrush &other) = default;
 
 	ActiveType activeType() const { return m_activeType; }
 	void setActiveType(ActiveType activeType) { m_activeType = activeType; }
@@ -202,7 +190,8 @@ public:
 
 	QByteArray toJson(bool includeSlotProperties = false) const;
 	QByteArray toExportJson(const QString &description) const;
-	static ActiveBrush fromJson(const QJsonObject &json, bool includeSlotProperties = false);
+	static ActiveBrush
+	fromJson(const QJsonObject &json, bool includeSlotProperties = false);
 	bool fromExportJson(const QJsonObject &json);
 
 	QString presetType() const;
@@ -212,7 +201,8 @@ public:
 	void setInBrushEngine(
 		drawdance::BrushEngine &be, const DP_StrokeParams &stroke) const;
 
-	void renderPreview(drawdance::BrushPreview &bp, DP_BrushPreviewShape shape) const;
+	void renderPreview(
+		drawdance::BrushPreview &bp, DP_BrushPreviewShape shape) const;
 
 private:
 	ActiveType m_activeType;
@@ -228,5 +218,3 @@ Q_DECLARE_METATYPE(brushes::MyPaintBrush)
 Q_DECLARE_METATYPE(brushes::ActiveBrush)
 
 #endif
-
-
