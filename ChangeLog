@@ -57,6 +57,7 @@ Unreleased Version 2.2.0-pre
  * Server Feature: Allow servers to have a rules text that users are prompted to accept upon connecting. Clients remember that they accepted the rules and won't prompt again unless they changed since last time.
  * Feature: Add velocity and distance dynamics to classic brushes. Similar to how they worked for the input settings before, but more flexible than just a pressure mapping.
  * Feature: Allow grabbing the current brush settings of another user.
+ * Fix: Relax transform size restrictions so that transforms of layers that cover the whole canvas don't always get cancelled.
 
 2023-09-30 Version 2.2.0-beta.8
  * Fix: Apply color wheel direction to color dialogs too. Thanks Blozzom for reporting.

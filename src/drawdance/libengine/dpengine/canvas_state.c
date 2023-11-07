@@ -531,9 +531,9 @@ handle_region(DP_CanvasState *cs, DP_DrawContext *dc, unsigned int context_id,
         return DP_canvas_state_change_null();
     }
 
-    long long max_size = (canvas_width + 1LL) * (canvas_height + 1LL);
-    if (DP_rect_size(dst_bounds) > max_size) {
-        DP_error_set("%s: attempt to scale beyond image size", title);
+    if (DP_rect_width(dst_bounds) > (canvas_width * 2LL)
+        || DP_rect_height(dst_bounds) > (canvas_height * 2LL)) {
+        DP_error_set("%s: attempt to scale too far beyond image size", title);
         return DP_canvas_state_change_null();
     }
 
