@@ -101,7 +101,7 @@ private:
 		bool allowHost, bool allowGhost);
 	bool send(const net::Message &msg);
 	void sendError(
-		const QString &code, const QString &message, bool disconnect = false);
+		const QString &code, const QString &message, bool disconnect = true);
 	void extAuthGuestLogin(const QString &username, IdentIntent intent);
 
 	static IdentIntent parseIdentIntent(const QString &s);
