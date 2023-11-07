@@ -17,14 +17,9 @@
 <context>
     <name>CanvasSaverRunnable</name>
     <message>
-        <location filename="../export/canvassaverrunnable.cpp" line="+34"/>
+        <location filename="../export/canvassaverrunnable.cpp" line="+32"/>
         <source>Bad arguments, this is probably a bug in Drawpile.</source>
         <translation>Fehlerhafte Argumente, dies ist wahrscheinlich ein Bug in Drawpile.</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>No file extension given.</source>
-        <translation>Keine Dateiendung gegeben.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -294,7 +289,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+641"/>
+        <location filename="../document.cpp" line="+714"/>
         <source>Unknown format.</source>
         <translation>Unbekanntes Format.</translation>
     </message>
@@ -322,22 +317,22 @@
 <context>
     <name>FfmpegExporter</name>
     <message>
-        <location filename="../export/ffmpegexporter.cpp" line="+133"/>
+        <location filename="../export/ffmpegexporter.cpp" line="+62"/>
         <source>You can downlod a Windows version of ffmpeg from &lt;a href=&quot;https://ffmpeg.org/download.html&quot;&gt;ffmpeg.org&lt;/a&gt;. Choose ffmpeg.exe for the path to ffmpeg in Drawpile.</source>
         <translation>Sie können eine Windows-Version von ffmpeg von &lt;a href=&quot;https://ffmpeg.org/download.html&quot;&gt;ffmpeg.org&lt;/a&gt; herunterladen. Wählen Sie ffmpeg,exe als Pfad zu ffmpeg in Drawpile.</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+4"/>
         <source>You can install ffmpeg through Homebrew.</source>
         <translation>Sie können ffmpeg über Homebrew installieren.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+2"/>
         <source>You can probably install ffmpeg through your package manager.</source>
         <translation>Sie können ffmpeg wahrscheinlich über ihren Paketmanager installieren.</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+98"/>
         <source>Failed to start ffmpeg using &apos;%1&apos;. %2</source>
         <extracomment>%1 is the path to ffmpeg, %2 is the note on what to do to acquire ffmpeg, e.g. download it on Windows or install the package on Linux.</extracomment>
         <translation>Konnte ffmpeg nicht per&apos;%1&apos; starten. %2</translation>
@@ -374,7 +369,7 @@
 <context>
     <name>QGuiApplication</name>
     <message>
-        <location filename="../utils/images.cpp" line="+99"/>
+        <location filename="../utils/images.cpp" line="+84"/>
         <source>Images (%1)</source>
         <translation>Bilder (%1)</translation>
     </message>
@@ -434,6 +429,16 @@
         <translation>Pinselpaket (%1)</translation>
     </message>
     <message>
+        <location line="+4"/>
+        <source>Session Bans (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Roles (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+5"/>
         <source>All Supported Files (%1)</source>
         <translation>Alle unterstützten Dateiformate (%1)</translation>
@@ -447,7 +452,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../drawdance/canvasstate.cpp" line="+44"/>
+        <location filename="../drawdance/canvasstate.cpp" line="+45"/>
         <source>Layer %1</source>
         <translation>Ebene %1</translation>
     </message>
@@ -478,12 +483,12 @@
 <context>
     <name>SessionListingModel</name>
     <message>
-        <location filename="../net/sessionlistingmodel.cpp" line="+426"/>
+        <location filename="../net/sessionlistingmodel.cpp" line="+432"/>
         <source>(untitled)</source>
         <translation>(unbenannt)</translation>
     </message>
     <message>
-        <location line="-356"/>
+        <location line="-361"/>
         <source>%1d%2h%3m</source>
         <translation>%1d%2h%3m</translation>
     </message>
@@ -498,7 +503,7 @@
         <translation>%1m</translation>
     </message>
     <message numerus="yes">
-        <location line="+91"/>
+        <location line="+94"/>
         <source>%1/%n users</source>
         <translation>
             <numerusform>%1/%n Nutzer</numerusform>
@@ -569,7 +574,7 @@
         <translation>Alter</translation>
     </message>
     <message>
-        <location line="+162"/>
+        <location line="+171"/>
         <source>closed</source>
         <translation>geschlossen</translation>
     </message>
@@ -911,6 +916,15 @@
     </message>
 </context>
 <context>
+    <name>impex::AnimationImporter</name>
+    <message>
+        <location filename="../import/animationimporter.cpp" line="+47"/>
+        <source>Frames %1</source>
+        <extracomment>Title for imported animation tracks and layer groups.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>net::AnnouncementListModel</name>
     <message>
         <location filename="../net/announcementlist.cpp" line="+31"/>
@@ -939,19 +953,60 @@
     </message>
 </context>
 <context>
+    <name>net::AuthListModel</name>
+    <message>
+        <location filename="../net/authlistmodel.cpp" line="+37"/>
+        <source>Moderator</source>
+        <translation type="unfinished">Moderator</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Operator</source>
+        <translation type="unfinished">Operator</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Trusted</source>
+        <translation type="unfinished">Vertrauenswürdig</translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>User</source>
+        <translation type="unfinished">Benutzer</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Roles</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>net::BanlistModel</name>
     <message>
-        <location filename="../net/banlistmodel.cpp" line="+59"/>
+        <location filename="../net/banlistmodel.cpp" line="+69"/>
+        <location line="+15"/>
+        <source>ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-13"/>
+        <location line="+15"/>
         <source>User</source>
         <translation>Benutzer</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-13"/>
         <source>IP address</source>
         <translation>IP-Adresse</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
+        <source>Client info</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <location line="+11"/>
         <source>Banned by</source>
         <translation>Gebannt von</translation>
     </message>
@@ -959,17 +1014,7 @@
 <context>
     <name>net::Client</name>
     <message>
-        <location filename="../net/client.cpp" line="+79"/>
-        <source>A server error occurred!</source>
-        <translation>Ein Serverfehler ist aufgetreten!</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>The server is shutting down!</source>
-        <translation>Der Serverprozess wird heruntergefahren!</translation>
-    </message>
-    <message>
-        <location line="+268"/>
+        <location filename="../net/client.cpp" line="+440"/>
         <source>%1 banned by %2.</source>
         <translation>%1 wurde von %2 gebannt.</translation>
     </message>
@@ -994,9 +1039,95 @@
         <translation>Der Operatorstatus von %1 wurde vom Server widerrufen.</translation>
     </message>
     <message>
+        <location line="-384"/>
+        <source>You have been kicked.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>You have been kicked by %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>A server error occurred.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>A server error occurred: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>The server is shutting down.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+3"/>
-        <source>Operator status revoked form %1 by %2.</source>
-        <translation>Der Operatorstatus von %1 wurde von %2 widerrufen.</translation>
+        <source>The session has been shut down: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Disconnected.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Disconnected: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+316"/>
+        <source>Only moderators can export plain bans.</source>
+        <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Server error.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Exporting encrypted bans not configured on this server.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Exporting encrypted bans not supported by this server.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>The server couldn&apos;t read the import data. This is likely because it was exported from a different server. You can only import bans into the same server they were exported from.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Invalid import data.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Malformed import data.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Importing encrypted bans not configured on this server.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Importing encrypted bans not supported by this server.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Operator status revoked from %1 by %2.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1014,12 +1145,25 @@
         <translation>Zurücksetzen der Sitzung wird vorbereitet! Bitte warten Sie, die Sitzung sollte in Kürze wieder verfügbar sein…</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Session terminated by moderator (%1).</source>
+        <extracomment>%1 is the name of the moderator.</extracomment>
         <translation>Sitzung wurde durch Moderator (%1) terminiert.</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+4"/>
+        <source>Session terminated by administrator: %2</source>
+        <extracomment>%1 is the reason given.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Session terminated by moderator (%1): %2</source>
+        <extracomment>%1 is the name of the moderator, %2 is the reason given.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>%1 trusted by the server.</source>
         <translation>%1 wurde vom Server vertraut.</translation>
     </message>
@@ -1042,38 +1186,38 @@
 <context>
     <name>net::LoginHandler</name>
     <message>
-        <location filename="../net/login.cpp" line="+103"/>
-        <location line="+284"/>
+        <location filename="../net/login.cpp" line="+108"/>
+        <location line="+452"/>
         <source>Invalid state</source>
         <translation>Ungültiger Zustand</translation>
     </message>
     <message>
-        <location line="-245"/>
+        <location line="-410"/>
         <location line="+8"/>
-        <location line="+65"/>
-        <location line="+209"/>
-        <location line="+150"/>
+        <location line="+124"/>
+        <location line="+315"/>
+        <location line="+164"/>
         <location line="+46"/>
         <source>Incompatible server</source>
         <translation>Inkompatibler Server</translation>
     </message>
     <message>
-        <location line="-463"/>
+        <location line="-642"/>
         <source>Server is for a different Drawpile version!</source>
         <translation>Server unterstützt eine andere Drawpile Version!</translation>
     </message>
     <message>
-        <location line="+43"/>
+        <location line="+102"/>
         <source>Secure mode not enabled on a trusted host!</source>
         <translation>Sicherer Modus auf vertrauenswürdigem Host nicht aktiviert!</translation>
     </message>
     <message>
-        <location line="+647"/>
+        <location line="+771"/>
         <source>Username already taken!</source>
         <translation>Benutzername bereits vergeben!</translation>
     </message>
     <message>
-        <location line="-605"/>
+        <location line="-665"/>
         <source>This server does not allow guest logins</source>
         <translation>Dieser Server erlaubt keine Gastzugänge</translation>
     </message>
@@ -1083,13 +1227,13 @@
         <translation>Es wird ein Passwort benötigt um sich als &quot;%1&quot; anzumelden</translation>
     </message>
     <message>
-        <location line="+70"/>
+        <location line="+74"/>
         <location line="+7"/>
         <source>Auth server error: %1</source>
         <translation>Fehler von Authentifizierungsserver: %1</translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+74"/>
         <source>Server misconfiguration: invalid ext-auth URL</source>
         <translation>Serverkonfiguration fehlerhaft: ungültige URL für externe Authentifizierung</translation>
     </message>
@@ -1099,7 +1243,7 @@
         <translation>URL-Schema für externe Authentifizierung nicht unterstützt</translation>
     </message>
     <message>
-        <location line="+93"/>
+        <location line="+171"/>
         <source>New version</source>
         <translation>Neue Version</translation>
     </message>
@@ -1109,17 +1253,17 @@
         <translation>Unbekannte Version</translation>
     </message>
     <message>
-        <location line="+54"/>
+        <location line="-42"/>
         <source>Session not yet started!</source>
         <translation>Sitzung hat noch nicht begonnen!</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+10"/>
         <source>Blocked by parental controls</source>
         <translation>Blockiert durch Jugendschutzeinstellungen</translation>
     </message>
     <message>
-        <location line="+227"/>
+        <location line="+266"/>
         <location line="+21"/>
         <source>Invalid SSL certificate for host %1</source>
         <translation>Ungültiges SSL Zertifikat für Host %1</translation>
@@ -1130,17 +1274,7 @@
         <translation>Das Zertifikat eines als vertrauenswürdig eingestuften Servers hat sich geändert!</translation>
     </message>
     <message>
-        <location line="+72"/>
-        <source>Incorrect password for &apos;%1&apos;!</source>
-        <translation>Falsches Passwort für &apos;%1&apos;!</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Incorrect session password!</source>
-        <translation>Falsches Sitzungspasswort!</translation>
-    </message>
-    <message>
-        <location line="+10"/>
+        <location line="+89"/>
         <source>Server is full!</source>
         <translation>Server ist voll!</translation>
     </message>
@@ -1160,17 +1294,47 @@
         <translation>Sitzungsalias ist reserviert!</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+4"/>
+        <source>This usually means that your Drawpile version is too old. Do you need to update?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Session not found, it may have ended or its invite link has changed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>This server only allows joining sessions through a direct link.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+27"/>
         <source>Client failed to serialize command</source>
         <translation>Client kann Befehl nicht serialisieren</translation>
     </message>
     <message>
-        <location line="-58"/>
+        <location line="-74"/>
         <source>Cancelled</source>
         <translation>Abgebrochen</translation>
     </message>
     <message>
-        <location line="-484"/>
+        <location line="-761"/>
+        <source>This server doesn&apos;t provide a way to log in for joining a session!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>This server doesn&apos;t provide a way to log in for hosting a session!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+83"/>
+        <source>Session lookup failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+140"/>
         <source>Group membership needed</source>
         <translation>Gruppenzugehörigkeit benötigt</translation>
     </message>
@@ -1180,17 +1344,32 @@
         <translation>Unerwartete Antwort von externer Authentifizierung: %1</translation>
     </message>
     <message>
-        <location line="+197"/>
+        <location line="+30"/>
+        <source>Invalid ident intent response.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+38"/>
+        <source>Server reported two different ext-auth URLs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+111"/>
+        <source>Got multiple sessions when only one was expected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+35"/>
         <source>Session for a different Drawpile version (%1) in progress!</source>
         <translation>Laufende Sitzung für eine andere Drawpile-Version (%1)!</translation>
     </message>
     <message>
-        <location line="+293"/>
+        <location line="+327"/>
         <source>Session not found!</source>
         <translation>Sitzung nicht gefunden!</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+15"/>
         <source>Invalid username!</source>
         <translation>Benutzername ungültig!</translation>
     </message>
@@ -1271,7 +1450,7 @@
 <context>
     <name>net::TcpServer</name>
     <message>
-        <location filename="../net/tcpserver.cpp" line="+129"/>
+        <location filename="../net/tcpserver.cpp" line="+132"/>
         <source>Received invalid data</source>
         <translation>Ungültige Daten empfangen</translation>
     </message>
@@ -1279,7 +1458,7 @@
 <context>
     <name>utils::News</name>
     <message>
-        <location filename="../utils/news.cpp" line="+283"/>
+        <location filename="../utils/news.cpp" line="+284"/>
         <location line="+41"/>
         <source>Checking for updates…</source>
         <translation>Prüfe auf Updates…</translation>

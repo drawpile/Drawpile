@@ -17,14 +17,9 @@
 <context>
     <name>CanvasSaverRunnable</name>
     <message>
-        <location filename="../export/canvassaverrunnable.cpp" line="+34"/>
+        <location filename="../export/canvassaverrunnable.cpp" line="+32"/>
         <source>Bad arguments, this is probably a bug in Drawpile.</source>
         <translation>糟糕的争论, 这可能是Drawpile的一个bug.</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>No file extension given.</source>
-        <translation>没有给出文件扩展名.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -294,7 +289,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+641"/>
+        <location filename="../document.cpp" line="+714"/>
         <source>Unknown format.</source>
         <translation>未知格式.</translation>
     </message>
@@ -322,22 +317,22 @@
 <context>
     <name>FfmpegExporter</name>
     <message>
-        <location filename="../export/ffmpegexporter.cpp" line="+133"/>
+        <location filename="../export/ffmpegexporter.cpp" line="+62"/>
         <source>You can downlod a Windows version of ffmpeg from &lt;a href=&quot;https://ffmpeg.org/download.html&quot;&gt;ffmpeg.org&lt;/a&gt;. Choose ffmpeg.exe for the path to ffmpeg in Drawpile.</source>
         <translation>你可以从 &lt;a href=&quot;https://ffmpeg.org/download.html&quot;&gt;ffmpeg.org&lt;/a&gt;中下载Windows版本的ffmpeg. 然后在ffmpeg路径方框里选择解压出来的 ffmpeg.exe .</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+4"/>
         <source>You can install ffmpeg through Homebrew.</source>
         <translation>你可以通过 Homebrew 安装 ffmpeg.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+2"/>
         <source>You can probably install ffmpeg through your package manager.</source>
         <translation>你可以通过 package manager 安装 ffmpeg.</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+98"/>
         <source>Failed to start ffmpeg using &apos;%1&apos;. %2</source>
         <extracomment>%1 is the path to ffmpeg, %2 is the note on what to do to acquire ffmpeg, e.g. download it on Windows or install the package on Linux.</extracomment>
         <translation>使用 &apos;%1&apos; 启动ffmpeg失败. %2</translation>
@@ -374,7 +369,7 @@
 <context>
     <name>QGuiApplication</name>
     <message>
-        <location filename="../utils/images.cpp" line="+99"/>
+        <location filename="../utils/images.cpp" line="+84"/>
         <source>Images (%1)</source>
         <translation>图像 (%1)</translation>
     </message>
@@ -434,6 +429,16 @@
         <translation>笔刷包 (%1)</translation>
     </message>
     <message>
+        <location line="+4"/>
+        <source>Session Bans (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Roles (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+5"/>
         <source>All Supported Files (%1)</source>
         <translation>所有支持的文件 (%1)</translation>
@@ -447,7 +452,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../drawdance/canvasstate.cpp" line="+44"/>
+        <location filename="../drawdance/canvasstate.cpp" line="+45"/>
         <source>Layer %1</source>
         <translation>图层 %1</translation>
     </message>
@@ -478,12 +483,12 @@
 <context>
     <name>SessionListingModel</name>
     <message>
-        <location filename="../net/sessionlistingmodel.cpp" line="+426"/>
+        <location filename="../net/sessionlistingmodel.cpp" line="+432"/>
         <source>(untitled)</source>
         <translation>(未命名)</translation>
     </message>
     <message>
-        <location line="-356"/>
+        <location line="-361"/>
         <source>%1d%2h%3m</source>
         <translation>%1d%2h%3m</translation>
     </message>
@@ -498,7 +503,7 @@
         <translation>%1m</translation>
     </message>
     <message numerus="yes">
-        <location line="+91"/>
+        <location line="+94"/>
         <source>%1/%n users</source>
         <translation>
             <numerusform>%1/%n 用户</numerusform>
@@ -567,7 +572,7 @@
         <translation>存在时长</translation>
     </message>
     <message>
-        <location line="+162"/>
+        <location line="+171"/>
         <source>closed</source>
         <translation>已关闭的</translation>
     </message>
@@ -909,6 +914,15 @@
     </message>
 </context>
 <context>
+    <name>impex::AnimationImporter</name>
+    <message>
+        <location filename="../import/animationimporter.cpp" line="+47"/>
+        <source>Frames %1</source>
+        <extracomment>Title for imported animation tracks and layer groups.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>net::AnnouncementListModel</name>
     <message>
         <location filename="../net/announcementlist.cpp" line="+31"/>
@@ -937,19 +951,60 @@
     </message>
 </context>
 <context>
+    <name>net::AuthListModel</name>
+    <message>
+        <location filename="../net/authlistmodel.cpp" line="+37"/>
+        <source>Moderator</source>
+        <translation type="unfinished">服务器管理员</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Operator</source>
+        <translation type="unfinished">房间管理员</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Trusted</source>
+        <translation type="unfinished">信任用户</translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>User</source>
+        <translation type="unfinished">用户</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Roles</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>net::BanlistModel</name>
     <message>
-        <location filename="../net/banlistmodel.cpp" line="+59"/>
+        <location filename="../net/banlistmodel.cpp" line="+69"/>
+        <location line="+15"/>
+        <source>ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-13"/>
+        <location line="+15"/>
         <source>User</source>
         <translation>用户</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-13"/>
         <source>IP address</source>
         <translation>IP地址</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
+        <source>Client info</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <location line="+11"/>
         <source>Banned by</source>
         <translation>操作员</translation>
     </message>
@@ -957,17 +1012,7 @@
 <context>
     <name>net::Client</name>
     <message>
-        <location filename="../net/client.cpp" line="+79"/>
-        <source>A server error occurred!</source>
-        <translation>服务器发生错误!</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>The server is shutting down!</source>
-        <translation>服务器已关闭!</translation>
-    </message>
-    <message>
-        <location line="+268"/>
+        <location filename="../net/client.cpp" line="+440"/>
         <source>%1 banned by %2.</source>
         <translation>%1 banned by %2.</translation>
     </message>
@@ -992,9 +1037,95 @@
         <translation>Operator status revoked from %1 by the server.</translation>
     </message>
     <message>
+        <location line="-384"/>
+        <source>You have been kicked.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>You have been kicked by %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>A server error occurred.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>A server error occurred: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>The server is shutting down.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+3"/>
-        <source>Operator status revoked form %1 by %2.</source>
-        <translation>Operator status revoked form %1 by %2.</translation>
+        <source>The session has been shut down: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Disconnected.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Disconnected: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+316"/>
+        <source>Only moderators can export plain bans.</source>
+        <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Server error.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Exporting encrypted bans not configured on this server.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Exporting encrypted bans not supported by this server.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>The server couldn&apos;t read the import data. This is likely because it was exported from a different server. You can only import bans into the same server they were exported from.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Invalid import data.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Malformed import data.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Importing encrypted bans not configured on this server.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Importing encrypted bans not supported by this server.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Operator status revoked from %1 by %2.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1012,12 +1143,25 @@
         <translation>准备重置房间! 请稍等,房间应该很快可以重新使用…</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Session terminated by moderator (%1).</source>
+        <extracomment>%1 is the name of the moderator.</extracomment>
         <translation>房间已被服务器管理员 (%1) 终止.</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+4"/>
+        <source>Session terminated by administrator: %2</source>
+        <extracomment>%1 is the reason given.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Session terminated by moderator (%1): %2</source>
+        <extracomment>%1 is the name of the moderator, %2 is the reason given.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>%1 trusted by the server.</source>
         <translation>%1 trusted by the server.</translation>
     </message>
@@ -1040,38 +1184,38 @@
 <context>
     <name>net::LoginHandler</name>
     <message>
-        <location filename="../net/login.cpp" line="+103"/>
-        <location line="+284"/>
+        <location filename="../net/login.cpp" line="+108"/>
+        <location line="+452"/>
         <source>Invalid state</source>
         <translation>无效状态</translation>
     </message>
     <message>
-        <location line="-245"/>
+        <location line="-410"/>
         <location line="+8"/>
-        <location line="+65"/>
-        <location line="+209"/>
-        <location line="+150"/>
+        <location line="+124"/>
+        <location line="+315"/>
+        <location line="+164"/>
         <location line="+46"/>
         <source>Incompatible server</source>
         <translation>服务器不兼容</translation>
     </message>
     <message>
-        <location line="-463"/>
+        <location line="-642"/>
         <source>Server is for a different Drawpile version!</source>
         <translation>服务器不支持当前的Drawpile版本！</translation>
     </message>
     <message>
-        <location line="+43"/>
+        <location line="+102"/>
         <source>Secure mode not enabled on a trusted host!</source>
         <translation>安全模式没有在信任的主机上启动!</translation>
     </message>
     <message>
-        <location line="+647"/>
+        <location line="+771"/>
         <source>Username already taken!</source>
         <translation>用户名已被使用!</translation>
     </message>
     <message>
-        <location line="-605"/>
+        <location line="-665"/>
         <source>This server does not allow guest logins</source>
         <translation>此服务器不支持非注册用户登入</translation>
     </message>
@@ -1081,13 +1225,13 @@
         <translation>&quot;%1&quot; 需要登录密码</translation>
     </message>
     <message>
-        <location line="+70"/>
+        <location line="+74"/>
         <location line="+7"/>
         <source>Auth server error: %1</source>
         <translation>认证服务器错误: %1</translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+74"/>
         <source>Server misconfiguration: invalid ext-auth URL</source>
         <translation>服务器配置错误：ext-auth URL无效</translation>
     </message>
@@ -1097,7 +1241,7 @@
         <translation>不支持ext-auth的URL方案</translation>
     </message>
     <message>
-        <location line="+93"/>
+        <location line="+171"/>
         <source>New version</source>
         <translation>新版本</translation>
     </message>
@@ -1107,17 +1251,17 @@
         <translation>未知版本</translation>
     </message>
     <message>
-        <location line="+54"/>
+        <location line="-42"/>
         <source>Session not yet started!</source>
         <translation>房间还未创建!</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+10"/>
         <source>Blocked by parental controls</source>
         <translation>已被控制面板屏蔽</translation>
     </message>
     <message>
-        <location line="+227"/>
+        <location line="+266"/>
         <location line="+21"/>
         <source>Invalid SSL certificate for host %1</source>
         <translation>服务器 %1 证书无效</translation>
@@ -1128,17 +1272,7 @@
         <translation>信任的服务器证书已更改!</translation>
     </message>
     <message>
-        <location line="+72"/>
-        <source>Incorrect password for &apos;%1&apos;!</source>
-        <translation>&apos;%1&apos; 的密码不正确!</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Incorrect session password!</source>
-        <translation>房间密码不正确!</translation>
-    </message>
-    <message>
-        <location line="+10"/>
+        <location line="+89"/>
         <source>Server is full!</source>
         <translation>服务器已满!</translation>
     </message>
@@ -1158,17 +1292,47 @@
         <translation>房间别名已保留!</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+4"/>
+        <source>This usually means that your Drawpile version is too old. Do you need to update?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Session not found, it may have ended or its invite link has changed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>This server only allows joining sessions through a direct link.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+27"/>
         <source>Client failed to serialize command</source>
         <translation>客户端序列化命令失败</translation>
     </message>
     <message>
-        <location line="-58"/>
+        <location line="-74"/>
         <source>Cancelled</source>
         <translation>已取消</translation>
     </message>
     <message>
-        <location line="-484"/>
+        <location line="-761"/>
+        <source>This server doesn&apos;t provide a way to log in for joining a session!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>This server doesn&apos;t provide a way to log in for hosting a session!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+83"/>
+        <source>Session lookup failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+140"/>
         <source>Group membership needed</source>
         <translation>需要群组成员资格</translation>
     </message>
@@ -1178,17 +1342,32 @@
         <translation>意外的ext-auth响应: %1</translation>
     </message>
     <message>
-        <location line="+197"/>
+        <location line="+30"/>
+        <source>Invalid ident intent response.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+38"/>
+        <source>Server reported two different ext-auth URLs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+111"/>
+        <source>Got multiple sessions when only one was expected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+35"/>
         <source>Session for a different Drawpile version (%1) in progress!</source>
         <translation>不同Drawpile版本（%1）的房间正在进行中!</translation>
     </message>
     <message>
-        <location line="+293"/>
+        <location line="+327"/>
         <source>Session not found!</source>
         <translation>未找到房间!</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+15"/>
         <source>Invalid username!</source>
         <translation>用户名无效!</translation>
     </message>
@@ -1269,7 +1448,7 @@
 <context>
     <name>net::TcpServer</name>
     <message>
-        <location filename="../net/tcpserver.cpp" line="+129"/>
+        <location filename="../net/tcpserver.cpp" line="+132"/>
         <source>Received invalid data</source>
         <translation>接受信息无效</translation>
     </message>
@@ -1277,7 +1456,7 @@
 <context>
     <name>utils::News</name>
     <message>
-        <location filename="../utils/news.cpp" line="+283"/>
+        <location filename="../utils/news.cpp" line="+284"/>
         <location line="+41"/>
         <source>Checking for updates…</source>
         <translation>检查更新…</translation>

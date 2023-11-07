@@ -231,6 +231,11 @@ to 64x64 pixels.</source>
         <translation>64x64ピクセルに
 リサイズされます。</translation>
     </message>
+    <message>
+        <location line="+75"/>
+        <source>Label:</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>CanvasShortcutDialog</name>
@@ -520,7 +525,7 @@ to 64x64 pixels.</source>
 <context>
     <name>FileWrangler</name>
     <message>
-        <location filename="../filewrangler.cpp" line="+26"/>
+        <location filename="../filewrangler.cpp" line="+25"/>
         <source>Certificates (%1)</source>
         <translation>証明書 (%1)</translation>
     </message>
@@ -533,6 +538,16 @@ to 64x64 pixels.</source>
         <location line="+15"/>
         <source>Open</source>
         <translation>開く</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Open ORA</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>OpenRaster Image</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+6"/>
@@ -550,18 +565,33 @@ to 64x64 pixels.</source>
         <translation>ブラシパックのインポート</translation>
     </message>
     <message>
-        <location line="+22"/>
-        <location line="+165"/>
+        <location line="+7"/>
+        <source>Import Session Bans</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Import Roles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <location line="+185"/>
         <source>Save Image</source>
         <translation>画像を保存</translation>
     </message>
     <message>
-        <location line="-148"/>
+        <location line="-185"/>
+        <source>Export Image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+20"/>
         <source>Save Pre-Reset Image</source>
         <translation>リセット前の画像を保存</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+17"/>
         <source>Save Selection</source>
         <translation>選択範囲を保存</translation>
     </message>
@@ -591,12 +621,12 @@ to 64x64 pixels.</source>
         <translation>タブレットイベントのログ</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+7"/>
         <source>Log File</source>
         <translation>ログファイル</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+8"/>
         <source>Export MP4 Video</source>
         <translation>MP4動画形式へエクスポート</translation>
     </message>
@@ -626,35 +656,45 @@ to 64x64 pixels.</source>
         <translation>ブラシのエクスポート</translation>
     </message>
     <message>
-        <location line="+24"/>
-        <source>The selected format does not support layers or annotations.</source>
-        <translation>選択したファイル形式はレイヤーまたは注釈をサポートしていません。</translation>
+        <location line="+7"/>
+        <source>Export Session Bans</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
-        <source>Flatten</source>
-        <translation>画像を統合</translation>
+        <location line="+7"/>
+        <source>Export Roles</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+2"/>
-        <source>Save as OpenRaster</source>
-        <translation>OpenRaster形式ファイル として保存</translation>
+        <location line="+27"/>
+        <source>The PSD format lacks support for annotations, the animation timeline and some blend modes. If you want those to be retained properly, you must save an ORA file.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+100"/>
-        <source>Untitled%1</source>
-        <extracomment>%1 will be a file extension, like .ora or .png or something.</extracomment>
-        <translation>無題%1</translation>
+        <location line="+3"/>
+        <source>The selected format will save a merged image. If you want to retain layers, annotations and the animation timeline, you must save an ORA file.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+110"/>
-        <source>Missing File Extension</source>
-        <translation>ファイル拡張子なし</translation>
+        <location line="+21"/>
+        <source>Save as Selected Format</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
-        <source>The file name you gave does not end with &apos;%1&apos; and could not be saved. Please provide a name with an extension.</source>
-        <translation>指定したファイル名は &apos;%1&apos; で終わっていないため保存できませんでした。 拡張子を付けた名前を入力してください。</translation>
+        <source>Save as %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Save as ORA</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+107"/>
+        <source>Untitled%1</source>
+        <extracomment>%1 will be a file extension, like .ora or .png or something.</extracomment>
+        <translation>無題%1</translation>
     </message>
 </context>
 <context>
@@ -730,27 +770,27 @@ to 64x64 pixels.</source>
         <translation>フリップブック</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+28"/>
         <source>Reset Zoom</source>
         <translation>ズームのリセット</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="-17"/>
         <source>Refresh</source>
         <translation>更新</translation>
     </message>
     <message>
-        <location line="+39"/>
+        <location line="+53"/>
         <source>Rewind</source>
         <translation>巻き戻し</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+23"/>
         <source>Play</source>
         <translation>再生</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+17"/>
         <source>Frame:</source>
         <translation>フレーム:</translation>
     </message>
@@ -761,13 +801,8 @@ to 64x64 pixels.</source>
     </message>
     <message>
         <location line="+41"/>
-        <source>%</source>
-        <translation>%</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Playback Speed: </source>
-        <translation>再生速度: </translation>
+        <source>Speed: </source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+29"/>
@@ -781,6 +816,11 @@ to 64x64 pixels.</source>
         <location filename="../ui/inspectorsettings.ui" line="+17"/>
         <source>Last edited by:</source>
         <translation>最後に編集したユーザー:</translation>
+    </message>
+    <message>
+        <location line="+56"/>
+        <source>Mark whole tiles</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -993,32 +1033,33 @@ Subrange: [%3, %4]</source>
 <context>
     <name>LoginDialog</name>
     <message>
-        <location filename="../ui/logindialog.ui" line="+286"/>
+        <location filename="../ui/logindialog.ui" line="+315"/>
         <source>Password:</source>
         <translation>パスワード:</translation>
     </message>
     <message>
-        <location line="-177"/>
+        <location line="-205"/>
         <source>Remember my password</source>
         <translation>パスワードを保存</translation>
     </message>
     <message>
-        <location line="-20"/>
+        <location line="-7"/>
+        <location line="+231"/>
         <source>Incorrect password.</source>
         <translation>パスワードが違います。</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="-188"/>
         <source>Password</source>
         <translation>パスワード</translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="-60"/>
         <source>Username</source>
         <translation>ユーザー名</translation>
     </message>
     <message>
-        <location line="+83"/>
+        <location line="+155"/>
         <source>Filter</source>
         <translation>フィルタ</translation>
     </message>
@@ -1033,7 +1074,7 @@ Subrange: [%3, %4]</source>
         <translation>このセッションはパスワードで保護されています。</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+48"/>
         <source>Enter the &lt;b&gt;session password&lt;/b&gt;, &lt;i&gt;not&lt;/i&gt; your account password.</source>
         <translation>&lt;b&gt;セッションのパスワード&lt;/b&gt;を入力してください。&lt;i&gt; あなたのアカウントのパスワードではありません&lt;/i&gt;。</translation>
     </message>
@@ -1048,7 +1089,62 @@ Subrange: [%3, %4]</source>
         <translation>次回もこの警告を表示する</translation>
     </message>
     <message>
-        <location line="-97"/>
+        <location line="+67"/>
+        <source>Continue without account</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+36"/>
+        <source>Log in with server account</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+90"/>
+        <source>Continue with this account, but change the avatar, username or password.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Edit and log in</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Don&apos;t use any of these accounts.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Log in a different way</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+43"/>
+        <source>Log in with the selected account.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Log in with this account</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Forget this account.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Forget this account</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>Don&apos;t ask again unless the rules change</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-402"/>
         <source>View old</source>
         <translation>古いものを見る</translation>
     </message>
@@ -1076,7 +1172,7 @@ Subrange: [%3, %4]</source>
         <translation>最小化</translation>
     </message>
     <message numerus="yes">
-        <location line="+112"/>
+        <location line="+129"/>
         <source>You have %n images with unsaved changes. Do you want to review these changes before quitting?</source>
         <translation>
             <numerusform>%n 個の未保存の画像があります。終了する前に変更内容を確認しますか？</numerusform>
@@ -1101,13 +1197,13 @@ Subrange: [%3, %4]</source>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../mainwindow.cpp" line="+637"/>
-        <location line="+1279"/>
+        <location filename="../mainwindow.cpp" line="+647"/>
+        <location line="+1366"/>
         <source>Untitled</source>
         <translation>無題</translation>
     </message>
     <message>
-        <location line="-815"/>
+        <location line="-850"/>
         <location line="+21"/>
         <source>Exit Drawpile</source>
         <translation>Drawpile を終了</translation>
@@ -1125,12 +1221,12 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+2"/>
         <location line="+22"/>
-        <location line="+493"/>
+        <location line="+524"/>
         <source>Cancel</source>
         <translation>キャンセル</translation>
     </message>
     <message>
-        <location line="-500"/>
+        <location line="-531"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation>未保存の変更内容があります。終了する前に保存しますか？</translation>
     </message>
@@ -1145,17 +1241,22 @@ Subrange: [%3, %4]</source>
         <translation>破棄</translation>
     </message>
     <message>
-        <location line="+341"/>
+        <location line="+373"/>
         <source>Couldn&apos;t save image</source>
         <translation>画像を保存できませんでした</translation>
     </message>
     <message>
-        <location line="+153"/>
+        <location line="+27"/>
+        <source>Joined the session!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+125"/>
         <source>Saving animation...</source>
         <translation>アニメーションを保存中...</translation>
     </message>
     <message>
-        <location line="+209"/>
+        <location line="+213"/>
         <source>Invalid address</source>
         <translation>無効なアドレスです</translation>
     </message>
@@ -1180,7 +1281,12 @@ Subrange: [%3, %4]</source>
         <translation>未送信のデータがあります！転送が完了するまでお待ちください！</translation>
     </message>
     <message>
-        <location line="+196"/>
+        <location line="+94"/>
+        <source>Reason:</source>
+        <translation type="unfinished">理由:</translation>
+    </message>
+    <message>
+        <location line="+96"/>
         <source>Would you like to join the session instead?</source>
         <translation>代わりにこのセッションに参加しますか？</translation>
     </message>
@@ -1190,18 +1296,48 @@ Subrange: [%3, %4]</source>
         <translation>参加</translation>
     </message>
     <message>
-        <location line="+514"/>
+        <location line="+85"/>
+        <source>Canvas locked</source>
+        <translation type="unfinished">キャンバスのロック</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Canvas unlocked</source>
+        <translation type="unfinished">キャンバスのロック解除</translation>
+    </message>
+    <message>
+        <location line="+357"/>
+        <source>Freehand (erase mode, click to reset)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Freehand brush tool (erase mode)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Freehand (alpha lock mode, click to reset)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Freehand brush tool (alpha lock mode)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+124"/>
         <source>The image could not be loaded</source>
         <translation>画像を読み込みできませんでした</translation>
     </message>
     <message>
-        <location line="+343"/>
+        <location line="+345"/>
         <source>About Drawpile</source>
         <translation>Drawpile について</translation>
     </message>
     <message>
         <location line="+149"/>
-        <location filename="../widgets/macmenu.cpp" line="-152"/>
+        <location filename="../widgets/macmenu.cpp" line="-169"/>
         <source>&amp;New</source>
         <translation>新規(&amp;N)</translation>
     </message>
@@ -1222,28 +1358,38 @@ Subrange: [%3, %4]</source>
         <translation>名前を付けて保存(&amp;A)...</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+1"/>
+        <source>Export Image…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Export Selection...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
         <source>Autosave</source>
         <translation>自動保存</translation>
     </message>
     <message>
-        <location line="-1464"/>
-        <location line="+1473"/>
+        <location line="-1523"/>
+        <location line="+1533"/>
         <source>Record...</source>
         <translation>記録...</translation>
     </message>
     <message>
-        <location line="-1703"/>
+        <location line="-1766"/>
         <source>Saving...</source>
         <translation>保存中...</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+18"/>
         <source>Image saved</source>
         <translation>画像を保存しました</translation>
     </message>
     <message>
-        <location line="+202"/>
+        <location line="+204"/>
         <source>Pause</source>
         <translation>一時停止</translation>
     </message>
@@ -1253,55 +1399,35 @@ Subrange: [%3, %4]</source>
         <translation>再生</translation>
     </message>
     <message>
-        <location line="+352"/>
+        <location line="+354"/>
         <source>Terminate session</source>
         <translation>セッションを終了</translation>
     </message>
     <message>
-        <location line="+1"/>
-        <source>Really terminate this session?</source>
-        <translation>本当にこのセッションを終了しますか？</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <location line="+1716"/>
+        <location line="+2"/>
+        <location line="+1785"/>
         <source>Terminate</source>
         <translation>終了</translation>
     </message>
     <message>
-        <location line="-603"/>
-        <source>Save Selection...</source>
-        <translation>選択範囲を保存...</translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>Animated &amp;GIF...</source>
-        <translation>アニメとGIF...</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Animation &amp;Frames...</source>
-        <translation>アニメーションとフレーム...</translation>
-    </message>
-    <message>
-        <location line="+6"/>
+        <location line="-598"/>
         <location filename="../widgets/macmenu.cpp" line="+9"/>
         <source>&amp;Quit</source>
         <translation>終了(&amp;Q)</translation>
     </message>
     <message>
-        <location line="+42"/>
+        <location line="+45"/>
         <location filename="../widgets/macmenu.cpp" line="-12"/>
         <source>&amp;File</source>
         <translation>ファイル(&amp;F)</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+22"/>
         <source>&amp;Export</source>
         <translation>エクスポート(&amp;E)</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+42"/>
         <source>&amp;Undo</source>
         <translation>取り消し(&amp;U)</translation>
     </message>
@@ -1331,12 +1457,7 @@ Subrange: [%3, %4]</source>
         <translation>貼り付け(&amp;P)</translation>
     </message>
     <message>
-        <location line="+2"/>
-        <source>&amp;Stamp</source>
-        <translation>スタンプ(&amp;S)</translation>
-    </message>
-    <message>
-        <location line="+12"/>
+        <location line="+14"/>
         <source>&amp;Deselect</source>
         <translation>選択解除(&amp;D)</translation>
     </message>
@@ -1401,7 +1522,7 @@ Subrange: [%3, %4]</source>
         <translation>チャット</translation>
     </message>
     <message>
-        <location line="+223"/>
+        <location line="+224"/>
         <source>Flipbook</source>
         <translation>フリップブック</translation>
     </message>
@@ -1411,7 +1532,7 @@ Subrange: [%3, %4]</source>
         <translation>アニメーションのプレビューウィンドウを表示</translation>
     </message>
     <message>
-        <location line="-207"/>
+        <location line="-208"/>
         <source>Mirror</source>
         <translation>左右反転</translation>
     </message>
@@ -1421,7 +1542,7 @@ Subrange: [%3, %4]</source>
         <translation>上下反転</translation>
     </message>
     <message>
-        <location line="+156"/>
+        <location line="+157"/>
         <source>User Pointers</source>
         <translation>ユーザーポインター</translation>
     </message>
@@ -1431,12 +1552,7 @@ Subrange: [%3, %4]</source>
         <translation>新しいグループ</translation>
     </message>
     <message>
-        <location line="+3"/>
-        <source>Properties...</source>
-        <translation>プロパティ...</translation>
-    </message>
-    <message>
-        <location line="+44"/>
+        <location line="+47"/>
         <source>Next Frame</source>
         <translation>次のフレーム</translation>
     </message>
@@ -1456,7 +1572,7 @@ Subrange: [%3, %4]</source>
         <translation>すべてをロック</translation>
     </message>
     <message>
-        <location line="+301"/>
+        <location line="+342"/>
         <source>Finish action</source>
         <translation>アクションを完了</translation>
     </message>
@@ -1471,17 +1587,17 @@ Subrange: [%3, %4]</source>
         <translation>パレット</translation>
     </message>
     <message>
-        <location line="-672"/>
+        <location line="-714"/>
         <source>Show User &amp;Pointers</source>
         <translation>ユーザーポインターを表示(&amp;P)</translation>
     </message>
     <message>
-        <location line="-2891"/>
+        <location line="-3047"/>
         <source>🙋 %1 joined!</source>
         <translation>🙋 %1 が入室しました！</translation>
     </message>
     <message>
-        <location line="+437"/>
+        <location line="+446"/>
         <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
         <translation>&lt;p&gt;ショートカット &apos;%1&apos; は以下で複数設定されています:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</translation>
     </message>
@@ -1496,7 +1612,7 @@ Subrange: [%3, %4]</source>
         <translation>修正する</translation>
     </message>
     <message>
-        <location line="+533"/>
+        <location line="+611"/>
         <source>This session was hosted with an older version of Drawpile, some newer features won&apos;t be available. Other Drawpile versions will see different results, session resets may cause abrupt changes.</source>
         <translation>このセッションは古いバージョンの Drawpile でホストされているため、一部の新しい機能は使用できません。 他の Drawpile バージョンでは異なる結果が表示され、セッションのリセットにより突然の変更が発生する可能性があります。</translation>
     </message>
@@ -1516,24 +1632,22 @@ Subrange: [%3, %4]</source>
         <translation>セッションのテンプレートをエクスポートできませんでした</translation>
     </message>
     <message>
-        <location line="+155"/>
-        <location line="+628"/>
+        <location line="+158"/>
         <source>Unsupported format.</source>
         <translation>サポートしていない形式。</translation>
     </message>
     <message>
-        <location line="-625"/>
+        <location line="+3"/>
         <source>Couldn&apos;t start recording.</source>
         <translation>記録を開始できませんでした。</translation>
     </message>
     <message>
         <location line="+3"/>
-        <location line="+637"/>
         <source>Unknown error.</source>
         <translation>不明なエラー。</translation>
     </message>
     <message>
-        <location line="-627"/>
+        <location line="+10"/>
         <source>Error closing profile.</source>
         <translation>プロファイルを閉じる際にエラーが発生しました。</translation>
     </message>
@@ -1553,7 +1667,7 @@ Subrange: [%3, %4]</source>
         <translation>タブレットのイベント ログを開く際にエラーが発生しました。</translation>
     </message>
     <message>
-        <location line="+531"/>
+        <location line="+534"/>
         <source>Undo Limit... (%1)</source>
         <translation>取り消し制限回数... (%1)</translation>
     </message>
@@ -1563,32 +1677,7 @@ Subrange: [%3, %4]</source>
         <translation>セッションの取り消し可能回数を変更します。現在の回数制限は %1 回です。</translation>
     </message>
     <message>
-        <location line="+50"/>
-        <source>Bad arguments, this is probably a bug in Drawpile.</source>
-        <translation>引数が間違っています。これはおそらく Drawpile のバグです。</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>Couldn&apos;t open file for reading.</source>
-        <translation>ファイルを開いて読み取ることができませんでした。</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Error reading file.</source>
-        <translation>ファイルの読み取り中にエラーが発生しました。</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>File content doesn&apos;t match its type.</source>
-        <translation>ファイルの内容がその種類と一致しません。</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Incompatible recording.</source>
-        <translation>互換性のない記録です。</translation>
-    </message>
-    <message>
-        <location line="+531"/>
+        <location line="+651"/>
         <source>User #%1</source>
         <translation>ユーザー #%1</translation>
     </message>
@@ -1599,23 +1688,23 @@ Subrange: [%3, %4]</source>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+931"/>
+        <location line="+940"/>
         <source>Tablet Event Log...</source>
         <translation>タブレットイベントのログ...</translation>
     </message>
     <message>
-        <location line="-928"/>
+        <location line="-937"/>
         <source>Stop Profile</source>
         <translation>プロファイルの停止</translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+929"/>
+        <location line="+938"/>
         <source>Profile...</source>
         <translation>プロファイル...</translation>
     </message>
     <message>
-        <location line="-922"/>
+        <location line="-931"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation>強制遅延を設定... (現在 %1 ミリ秒)</translation>
     </message>
@@ -1641,12 +1730,12 @@ Subrange: [%3, %4]</source>
     </message>
     <message>
         <location line="+15"/>
-        <location line="+884"/>
+        <location line="+893"/>
         <source>Record Debug Dumps</source>
         <translation>デバッグダンプの記録</translation>
     </message>
     <message>
-        <location line="-883"/>
+        <location line="-892"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -1689,22 +1778,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>Shift キーを押しながら配置</translation>
     </message>
     <message>
-        <location line="+18"/>
-        <source>&amp;Brushes...</source>
-        <translation>ブラシ(&amp;B)...</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Session &amp;Template...</source>
-        <translation>セッションとテンプレート...</translation>
-    </message>
-    <message>
-        <location line="+67"/>
+        <location line="+92"/>
         <source>&amp;Import</source>
         <translation>インポート(&amp;I)</translation>
     </message>
     <message>
-        <location line="+52"/>
+        <location line="+54"/>
         <source>Paste in View Center</source>
         <translation>画面中央に貼り付け</translation>
     </message>
@@ -1749,7 +1828,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>ピクセルグリッドを表示(&amp;G)</translation>
     </message>
     <message>
-        <location line="+88"/>
+        <location line="+89"/>
         <source>&amp;View</source>
         <translation>表示(&amp;V)</translation>
     </message>
@@ -1892,7 +1971,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>描画ツール</translation>
     </message>
     <message>
-        <location line="+69"/>
+        <location line="+109"/>
         <source>Missing Log File</source>
         <translation>ログファイルがありません</translation>
     </message>
@@ -1918,7 +1997,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>対象のファイルを開けませんでした: %1</translation>
     </message>
     <message>
-        <location line="+29"/>
+        <location line="+30"/>
         <source>Brush slot #%1</source>
         <translation>ブラシスロット #%1</translation>
     </message>
@@ -1955,22 +2034,22 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>オニオンスキン</translation>
     </message>
     <message>
-        <location line="-2466"/>
+        <location line="-2574"/>
         <source>Stop Recording</source>
         <translation>セッションの記録を停止</translation>
     </message>
     <message>
-        <location line="+168"/>
+        <location line="+169"/>
         <source>Host Session</source>
         <translation>セッションをホスト</translation>
     </message>
     <message>
-        <location line="+271"/>
+        <location line="+265"/>
         <source>Could not connect to server</source>
         <translation>サーバーに接続できませんでした</translation>
     </message>
     <message>
-        <location line="+873"/>
+        <location line="+936"/>
         <source>A collaborative drawing program.</source>
         <translation>共同作業可能なドローイングアプリケーションです。</translation>
     </message>
@@ -1980,33 +2059,48 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>閉じる</translation>
     </message>
     <message>
-        <location line="+61"/>
+        <location line="+7"/>
+        <source>Import &amp;Drawpile 2.1 Animation…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Import &amp;Brushes...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Export Session &amp;Template...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Export Animated &amp;GIF...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Export Animation &amp;Frames...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Export &amp;Brushes…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+52"/>
         <location filename="../widgets/macmenu.cpp" line="-16"/>
         <source>Open &amp;Recent</source>
         <translation>最近使ったファイルを開く(&amp;R)</translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="+33"/>
         <source>File Tools</source>
         <translation>ファイルツール</translation>
     </message>
     <message>
-        <location line="+30"/>
-        <source>&amp;Copy Visible</source>
-        <translation>可視部分をコピー(&amp;C)</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Copy &amp;Layer</source>
-        <translation>レイヤーをコピー(&amp;L)</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Cu&amp;t Layer</source>
-        <translation>レイヤーを切り取り(&amp;T)</translation>
-    </message>
-    <message>
-        <location line="+5"/>
+        <location line="+38"/>
         <source>Paste &amp;From File...</source>
         <translation>ファイルから貼り付け(&amp;F)...</translation>
     </message>
@@ -2067,7 +2161,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>全画面(&amp;F)</translation>
     </message>
     <message>
-        <location line="+368"/>
+        <location line="+369"/>
         <source>Pick colors from the image</source>
         <translation>画像から色を抽出</translation>
     </message>
@@ -2082,7 +2176,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>直線(&amp;L)</translation>
     </message>
     <message>
-        <location line="-3524"/>
+        <location line="-3683"/>
         <source>Server out of space</source>
         <translation>サーバーのスペースが不足</translation>
     </message>
@@ -2094,7 +2188,7 @@ Simplify the canvas and reset manually before space runs out.</source>
 キャンバスの内容をシンプルにしてスペースがなくなる前に手動でリセットします。</translation>
     </message>
     <message>
-        <location line="+1686"/>
+        <location line="+1779"/>
         <source>Become Operator</source>
         <translation>管理者になる</translation>
     </message>
@@ -2104,22 +2198,17 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>管理者パスワードを入力</translation>
     </message>
     <message>
-        <location line="+264"/>
+        <location line="+266"/>
         <source>Session blocked by parental controls</source>
         <translation>ペアレンタルコントロールによりブロック済のセッション</translation>
     </message>
     <message>
-        <location line="+889"/>
+        <location line="+944"/>
         <source>Hide Docks</source>
         <translation>ドックを隠す</translation>
     </message>
     <message>
-        <location line="+138"/>
-        <source>Copy Merged</source>
-        <translation>統合してコピー</translation>
-    </message>
-    <message>
-        <location line="+0"/>
+        <location line="+146"/>
         <source>Copy selected area, excluding the background, to the clipboard</source>
         <translation>選択範囲のうち、背景以外をクリップボードにコピー</translation>
     </message>
@@ -2154,7 +2243,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>アバターを表示</translation>
     </message>
     <message>
-        <location line="+170"/>
+        <location line="+171"/>
         <source>New Layer</source>
         <translation>新しいレイヤー</translation>
     </message>
@@ -2174,12 +2263,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>センシティブレイヤーの表示</translation>
     </message>
     <message>
-        <location line="-1762"/>
+        <location line="-1829"/>
         <source>No canvas to host! Create one or open a file.</source>
         <translation>ホストするキャンバスがありません!！ファイルを作成するか、ファイルを開いてください。</translation>
     </message>
     <message>
-        <location line="+50"/>
+        <location line="+51"/>
         <source>Hosting on this computer is not available</source>
         <translation>このコンピューターでホストすることはできません</translation>
     </message>
@@ -2189,7 +2278,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>本当に退出してセッションを終了しますか？</translation>
     </message>
     <message>
-        <location line="+238"/>
+        <location line="+231"/>
         <source>You&apos;ve been disconnected from the session.</source>
         <translation>セッションから切断されました。</translation>
     </message>
@@ -2199,7 +2288,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>切断済み: %1</translation>
     </message>
     <message>
-        <location line="+858"/>
+        <location line="+922"/>
         <source>Primary screen:</source>
         <translation>メイン画面:</translation>
     </message>
@@ -2209,17 +2298,37 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>%1x%2px² (%3x%4mm²)</translation>
     </message>
     <message>
-        <location line="+139"/>
-        <source>&amp;Brushes…</source>
-        <translation>ブラシ(&amp;B)…</translation>
-    </message>
-    <message>
-        <location line="+3"/>
+        <location line="+144"/>
         <source>Start...</source>
         <translation>スタート...</translation>
     </message>
     <message>
-        <location line="+265"/>
+        <location line="+112"/>
+        <source>&amp;Copy Merged</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Copy Without Background</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Copy From &amp;Layer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Cu&amp;t From Layer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>&amp;Stamp Selection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+153"/>
         <source>Move Canvas Left</source>
         <translation>キャンバスを左へ移動</translation>
     </message>
@@ -2254,7 +2363,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>ページの高さに合わせる(&amp;H)</translation>
     </message>
     <message>
-        <location line="+140"/>
+        <location line="+141"/>
         <source>Normal View</source>
         <translation>通常表示</translation>
     </message>
@@ -2284,7 +2393,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>現在のフレーム内のレイヤーのみを表示</translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+44"/>
+        <source>Layer Properties…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>Set as Fill Source</source>
         <translation>塗りつぶし参照元に設定</translation>
     </message>
@@ -2634,7 +2748,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>直前の色と交換</translation>
     </message>
     <message>
-        <location line="+57"/>
+        <location line="+80"/>
         <location filename="../widgets/macmenu.cpp" line="+33"/>
         <source>&amp;Homepage</source>
         <translation>ホームページ(&amp;H)</translation>
@@ -2643,6 +2757,11 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+1"/>
         <source>Tablet Tester</source>
         <translation>タブレットテスター</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Touch Tester</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2667,7 +2786,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>更新を確認</translation>
     </message>
     <message>
-        <location line="+60"/>
+        <location line="+76"/>
         <location filename="../widgets/macmenu.cpp" line="-5"/>
         <source>&amp;Help</source>
         <translation>ヘルプ(&amp;H)</translation>
@@ -2808,12 +2927,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <name>QApplication</name>
     <message>
         <location filename="../dialogs/avatarimport.cpp" line="+59"/>
-        <location filename="../filewrangler.cpp" line="-447"/>
+        <location filename="../filewrangler.cpp" line="-412"/>
         <source>All files (*)</source>
         <translation>すべてのファイル (*)</translation>
     </message>
     <message>
-        <location filename="../docks/toolsettingsdock.cpp" line="+76"/>
+        <location filename="../docks/toolsettingsdock.cpp" line="+77"/>
         <source>Freehand</source>
         <translation>フリーハンド</translation>
     </message>
@@ -3069,7 +3188,22 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>ユーザーがいなくても保持</translation>
     </message>
     <message>
-        <location line="+43"/>
+        <location line="+17"/>
+        <source>Idle timeout:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>X seconds</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Disable idle timeout</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+33"/>
         <source>Login</source>
         <translation>ログイン</translation>
     </message>
@@ -3104,7 +3238,34 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>タイムライン:</translation>
     </message>
     <message>
-        <location line="+113"/>
+        <location line="+38"/>
+        <source>Bans</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <location line="+82"/>
+        <source>Import</source>
+        <translation type="unfinished">インポート</translation>
+    </message>
+    <message>
+        <location line="-71"/>
+        <location line="+82"/>
+        <source>Export</source>
+        <translation type="unfinished">エクスポート</translation>
+    </message>
+    <message>
+        <location line="-48"/>
+        <source>Roles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+72"/>
+        <source>Operator</source>
+        <translation type="unfinished">管理者</translation>
+    </message>
+    <message>
+        <location line="+51"/>
         <source>Private listing</source>
         <translation>非公開リスト</translation>
     </message>
@@ -3114,7 +3275,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>公開リスト</translation>
     </message>
     <message>
-        <location line="-272"/>
+        <location line="-383"/>
         <source>Block new logins</source>
         <translation>新規ログインをブロック</translation>
     </message>
@@ -3149,7 +3310,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>注釈の追加:</translation>
     </message>
     <message>
-        <location line="-145"/>
+        <location line="-166"/>
         <source>This session contains age-restricted content</source>
         <translation>このセッションには年齢制限のある内容が含まれています</translation>
     </message>
@@ -3159,7 +3320,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>未成年者には適さない (NSFM)</translation>
     </message>
     <message>
-        <location line="+159"/>
+        <location line="+180"/>
         <source>General Layer Editing:</source>
         <translation>レイヤーの操作:</translation>
     </message>
@@ -3195,11 +3356,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+5"/>
+        <location line="+188"/>
         <source>Trusted</source>
         <translation>信頼済み</translation>
     </message>
     <message>
-        <location line="-80"/>
+        <location line="-268"/>
         <source>permissions</source>
         <translation>権限</translation>
     </message>
@@ -3209,13 +3371,8 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>MyPaint ブラシ:</translation>
     </message>
     <message>
-        <location line="+11"/>
-        <source>Banned users</source>
-        <translation>BANされたユーザー</translation>
-    </message>
-    <message>
-        <location line="+31"/>
-        <location line="+66"/>
+        <location line="+64"/>
+        <location line="+155"/>
         <source>Remove selected</source>
         <translation>選択したユーザーをリストから消す</translation>
     </message>
@@ -3433,7 +3590,7 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>color_widgets::ColorPalette</name>
     <message>
-        <location filename="../bundled/QtColorWidgets/color_palette.cpp" line="+428"/>
+        <location filename="../bundled/QtColorWidgets/color_palette.cpp" line="+429"/>
         <source>Unnamed</source>
         <translation>名称未設定</translation>
     </message>
@@ -3610,6 +3767,52 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
 </context>
 <context>
+    <name>dialogs::AnimationImportDialog</name>
+    <message>
+        <location filename="../dialogs/animationimportdialog.cpp" line="+27"/>
+        <source>Import Animation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>File to Import:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Choose</source>
+        <translation type="unfinished">選択</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Key frame length:</source>
+        <extracomment>How many frames each imported key frame gets in the timeline.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Framerate:</source>
+        <translation type="unfinished">フレームレート:</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Import</source>
+        <translation type="unfinished">インポート</translation>
+    </message>
+    <message numerus="yes">
+        <location line="+28"/>
+        <source> frame(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Animation Import Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>dialogs::AvatarImport</name>
     <message>
         <location filename="../dialogs/avatarimport.cpp" line="-2"/>
@@ -3675,7 +3878,7 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>dialogs::BrushPresetProperties</name>
     <message>
-        <location filename="../dialogs/brushpresetproperties.cpp" line="+44"/>
+        <location filename="../dialogs/brushpresetproperties.cpp" line="+50"/>
         <source>Select brush thumbnail</source>
         <translation>ブラシのサムネイルを選択</translation>
     </message>
@@ -3683,7 +3886,7 @@ Simplify the canvas and reset manually before space runs out.</source>
 <context>
     <name>dialogs::BrushSettingsDialog</name>
     <message>
-        <location filename="../dialogs/brushsettingsdialog.cpp" line="+86"/>
+        <location filename="../dialogs/brushsettingsdialog.cpp" line="+85"/>
         <source>Brush Editor</source>
         <translation>ブラシエディター</translation>
     </message>
@@ -3765,17 +3968,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+131"/>
-        <location line="+22"/>
+        <location line="+127"/>
+        <location line="+17"/>
         <location line="+40"/>
-        <location line="+22"/>
+        <location line="+17"/>
         <location line="+40"/>
-        <location line="+33"/>
+        <location line="+28"/>
         <source>%</source>
         <translation>%</translation>
     </message>
     <message>
-        <location line="-279"/>
+        <location line="-260"/>
         <source>Stabilization Mode:</source>
         <translation>手ブレ補正モード:</translation>
     </message>
@@ -3806,71 +4009,63 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+21"/>
+        <location line="+17"/>
         <source>px</source>
         <translation>px</translation>
     </message>
     <message>
-        <location line="-12"/>
-        <location line="+61"/>
-        <location line="+62"/>
-        <location line="+73"/>
-        <source>Pressure Sensitivity</source>
-        <translation>筆圧感知</translation>
-    </message>
-    <message>
-        <location line="-185"/>
+        <location line="-1"/>
         <source>Minimum Size: </source>
         <translation>最小サイズ: </translation>
     </message>
     <message>
         <location line="+10"/>
-        <location line="+62"/>
-        <location line="+62"/>
-        <location line="+73"/>
-        <source>Pressure</source>
-        <translation>筆圧</translation>
-    </message>
-    <message>
-        <location line="-197"/>
-        <location line="+329"/>
+        <location line="+405"/>
         <source>Size</source>
         <translation>サイズ</translation>
     </message>
     <message>
-        <location line="-299"/>
+        <location line="-405"/>
+        <location line="+57"/>
+        <location line="+57"/>
+        <location line="+68"/>
+        <source>Input</source>
+        <translation type="unfinished">入力</translation>
+    </message>
+    <message>
+        <location line="-152"/>
         <source>Opacity: </source>
         <translation>不透明度: </translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+17"/>
         <source>Minimum Opacity: </source>
         <translation>最小不透明度: </translation>
     </message>
     <message>
         <location line="+10"/>
-        <location line="+269"/>
+        <location line="+350"/>
         <source>Opacity</source>
         <translation>不透明度</translation>
     </message>
     <message>
-        <location line="-239"/>
+        <location line="-320"/>
         <source>Hardness: </source>
         <translation>硬さ: </translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+17"/>
         <source>Minimum Hardness: </source>
         <translation>最小の硬さ: </translation>
     </message>
     <message>
         <location line="+10"/>
-        <location line="+212"/>
+        <location line="+298"/>
         <source>Hardness</source>
         <translation>硬さ</translation>
     </message>
     <message>
-        <location line="-182"/>
+        <location line="-268"/>
         <source>Smudging: </source>
         <translation>混色: </translation>
     </message>
@@ -3880,23 +4075,75 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>色抽出 : 1/</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+16"/>
         <source>Minimum Smudging: </source>
         <translation>最小の混色: </translation>
     </message>
     <message>
         <location line="+10"/>
-        <location line="+143"/>
+        <location line="+234"/>
         <source>Smudging</source>
         <translation>混色</translation>
     </message>
     <message>
-        <location line="-123"/>
+        <location line="-211"/>
+        <source>No dynamics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Pressure dynamics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Velocity dynamics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Distance dynamics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Maximum Velocity: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Maximum Distance: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <location line="+17"/>
+        <location line="+34"/>
         <source>Apply to All</source>
         <translation>すべてに適用</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="-49"/>
+        <source>Set the maximum velocity for Size, Opacity, Hardness and Smudging at once.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Maximum velocity set for all settings in this brush.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Set the maximum distance for Size, Opacity, Hardness and Smudging at once.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Maximum distance set for all settings in this brush.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+23"/>
         <source>Set this curve for Size, Opacity, Hardness and Smudging at once.</source>
         <translation>この曲線のサイズ、不透明度、硬さ、混色を一度に設定します。</translation>
     </message>
@@ -3946,7 +4193,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>描画中のレイヤー上の色との合成方法。</translation>
     </message>
     <message>
-        <location line="+145"/>
+        <location line="+172"/>
         <source>Slows down the stroke to stabilize it over time. High values give very smooth lines, but they will draw slowly. When you stop moving, the line will catch up your cursor. Tablet smoothing from the input preferences applies as well.</source>
         <translation>ストローク描画を遅くして時間の経過とともに安定させます。 値を高くすると線は非常に滑らかになりますが描画が遅くなります。 動きを止めると線がカーソルに追いつきます。 入力設定からのタブレット スムージングも同様に適用されます。</translation>
     </message>
@@ -5455,7 +5702,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::Flipbook</name>
     <message>
-        <location filename="../dialogs/flipbook.cpp" line="+41"/>
+        <location filename="../dialogs/flipbook.cpp" line="+64"/>
         <source>Export &amp;GIF…</source>
         <translation>エキスポート&amp;GIF…</translation>
     </message>
@@ -5463,6 +5710,16 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+2"/>
         <source>Export &amp;Frames…</source>
         <translation>エキスポート&amp;フレーム…</translation>
+    </message>
+    <message>
+        <location line="+99"/>
+        <source>%</source>
+        <translation type="unfinished">%</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>% (%1 FPS)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5595,22 +5852,156 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::LoginDialog</name>
     <message>
-        <location filename="../dialogs/logindialog.cpp" line="+138"/>
+        <location filename="../dialogs/logindialog.cpp" line="+155"/>
         <source>Report...</source>
         <translation>報告...</translation>
     </message>
     <message>
-        <location line="+74"/>
+        <location line="+133"/>
+        <source>Accept</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Log in with server account</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>This username belongs to a registered account. If this isn&apos;t your account, cancel and try again with a different name.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+16"/>
         <source>Close</source>
         <translation>閉じる</translation>
     </message>
     <message>
-        <location line="+254"/>
+        <location line="+18"/>
+        <source>Decline</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <location line="+9"/>
+        <location line="+15"/>
+        <source>Rules</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-9"/>
+        <location line="+15"/>
+        <source>Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+251"/>
+        <source>Remove Account</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Really forget this account? This will only remove it from your recent account list, it won&apos;t delete the account.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+37"/>
+        <location line="+118"/>
+        <source>Enter the name you want to use.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-56"/>
+        <source>Server Rules for %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+29"/>
+        <source>Log in with %1 account</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+29"/>
+        <source>Enter the name you want to use. See %1 for more information about this server.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>You can continue without an account. If you want to register one anyway, you can do so on %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>An account is required. You can register one on %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>You can continue without an account. The server doesn&apos;t provide any information on how to register one either.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>An account is required, but the server doesn&apos;t provide any information on how to register one.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>See %1 for more information about this server. To register an account, visit %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>See %1 for more information about this server.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+27"/>
+        <source>This username belongs to an account, pick a different one.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>This username doesn&apos;t belong to a server account.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>The %1 authentication is not working.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>This username doesn&apos;t belong an account on %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>This username belongs to a server account, you can&apos;t use it to log in through %1 on this server.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>This username belongs to some other login method, you can&apos;t use it to log in through %1 on this server.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+504"/>
+        <source>Enter the username and password for your server account.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Enter the username and password for your %1 account.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+37"/>
         <source>Log in with &apos;%1&apos; credentials</source>
         <translation>&apos;%1&apos; 認証情報を使用してログインします</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+1"/>
         <source>Log in with &apos;%1&apos; credentials (INSECURE CONNECTION!)</source>
         <translation>&apos;%1&apos; 認証情報を使用してログインします (安全な接続！)</translation>
     </message>
@@ -5631,7 +6022,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>再生</translation>
     </message>
     <message>
-        <location line="+130"/>
+        <location line="+140"/>
         <source>Building index...</source>
         <translation>インデックス作成中....</translation>
     </message>
@@ -5641,7 +6032,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>インデックスの作成に失敗しました。</translation>
     </message>
     <message>
-        <location line="+162"/>
+        <location line="+163"/>
         <source>Video error</source>
         <translation>動画のエラー</translation>
     </message>
@@ -5692,7 +6083,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>中心</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+46"/>
         <source>Error</source>
         <translation>エラー</translation>
     </message>
@@ -5704,28 +6095,75 @@ Values above 0.5 may not be noticeable.</source>
 </context>
 <context>
     <name>dialogs::SessionSettingsDialog</name>
+    <message numerus="yes">
+        <location filename="../dialogs/sessionsettings.cpp" line="+332"/>
+        <source>Imported %n session ban(s).</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location line="+3"/>
+        <source>%1 %n was/were not imported because it was/they were invalid or duplicates.</source>
+        <extracomment>%1 is the &quot;Imported %n session ban(s).&quot; message.</extracomment>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+        </translation>
+    </message>
     <message>
-        <location filename="../dialogs/sessionsettings.cpp" line="+277"/>
+        <location line="+5"/>
+        <location line="+461"/>
+        <location line="+9"/>
+        <source>Session Ban Import</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-449"/>
+        <source>Session Ban Export</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Error saving bans to &apos;%1&apos;: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Session Ban Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+49"/>
+        <source>This list shows only registered users.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Only operators can see this list.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+68"/>
         <source>Operators</source>
         <translation>管理者</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+0"/>
         <source>Trusted</source>
         <translation>信頼済み</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+0"/>
         <source>Registered</source>
         <translation>登録済み</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+0"/>
         <source>Everyone</source>
         <translation>全員</translation>
     </message>
     <message>
-        <location line="+78"/>
+        <location line="+77"/>
         <source>yes</source>
         <comment>password</comment>
         <translation>有効</translation>
@@ -5737,42 +6175,154 @@ Values above 0.5 may not be noticeable.</source>
         <translation>無効</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+5"/>
         <source>change</source>
         <comment>password</comment>
         <translation>変更</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="+1"/>
         <source>assign</source>
         <comment>password</comment>
         <translation>割り当て</translation>
     </message>
     <message>
-        <location line="+73"/>
-        <location line="+23"/>
+        <location line="+32"/>
+        <source>never</source>
+        <extracomment>&quot;Idle timeout: never&quot;</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>disabled by moderator</source>
+        <extracomment>&quot;Idle timeout: disabled by moderator&quot;</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location line="+6"/>
+        <source>%n hour(s)</source>
+        <extracomment>Idle timeout hours. May be joined with minutes and seconds.</extracomment>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location line="+6"/>
+        <source>%n minute(s)</source>
+        <extracomment>Idle timeout minutes. May be joined with hours and seconds.</extracomment>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location line="+6"/>
+        <source>%n second(s)</source>
+        <extracomment>Idle timeout seconds. May be joined with hours and minutes.</extracomment>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>, </source>
+        <extracomment>This string joins the hours, minutes and seconds for the idle time.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+116"/>
+        <location line="+18"/>
         <source>Set a new password or leave blank to remove.</source>
         <translation>新しいパスワードを設定します。空白にするとパスワードを消去できます。</translation>
     </message>
     <message>
-        <location line="-21"/>
+        <location line="-16"/>
         <source>Set a password for the session.</source>
         <translation>セッションのパスワードを設定します。</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+4"/>
         <source>Session Password</source>
         <translation>セッションのパスワード</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+14"/>
         <source>Set a password for gaining operator status.</source>
         <translation>セッションの管理者となるためのパスワードを設定します。</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+4"/>
         <source>Operator Password</source>
         <translation>管理者パスワード</translation>
+    </message>
+    <message>
+        <location line="+30"/>
+        <location line="+113"/>
+        <source>Error opening &apos;%1&apos;: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-86"/>
+        <source>This server does not support importing encrypted bans.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>This server does not support importing plain bans.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>File does not appear to contain any ban data.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Choose Ban Export Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Since you are a moderator, you can export bans encrypted or plain. Encrypted bans can only be imported on this server. Which format do you want to export?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Encrypted</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Plain</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+46"/>
+        <location line="+10"/>
+        <location line="+10"/>
+        <source>Role Import</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-9"/>
+        <source>File &apos;%1&apos; does not contain a valid role export.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location line="+9"/>
+        <source>%n role(s) imported.</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location line="+40"/>
+        <source>Role Export</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Error saving roles to &apos;%1&apos;: %2</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5964,7 +6514,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>更新を確認</translation>
     </message>
     <message>
-        <location line="+257"/>
+        <location line="+265"/>
         <source>Checking…</source>
         <translation>確認中…</translation>
     </message>
@@ -5999,6 +6549,37 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+6"/>
         <source>Create</source>
         <translation>作成</translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::TouchTestDialog</name>
+    <message>
+        <location filename="../dialogs/touchtestdialog.cpp" line="+95"/>
+        <source>Enable touch</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Enable gestures</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+49"/>
+        <source>Error Saving Log</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Touch test log could not be saved: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dialogs::TouchTestView</name>
+    <message>
+        <location line="-118"/>
+        <source>Touch here.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -6049,22 +6630,22 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::VideoExportDialog</name>
     <message>
-        <location filename="../dialogs/videoexportdialog.cpp" line="+30"/>
+        <location filename="../dialogs/videoexportdialog.cpp" line="+31"/>
         <source>Image Series</source>
         <translation>連続画像</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>MP4 Video</source>
         <translation>MP4動画</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>WebM Video</source>
         <translation>WebM動画</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Custom FFmpeg Command</source>
         <translation>カスタムFFmpegコマンド</translation>
     </message>
@@ -6079,7 +6660,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>カスタム:</translation>
     </message>
     <message>
-        <location line="+57"/>
+        <location line="+80"/>
         <source>Executables</source>
         <extracomment>Used for picking a kind of file, used like &quot;Executables (*.exe)&quot;.</extracomment>
         <translation>実行可能ファイル</translation>
@@ -6088,6 +6669,16 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+5"/>
         <source>Choose ffmpeg path</source>
         <translation>ffmpegのパスを選択</translation>
+    </message>
+    <message>
+        <location line="+107"/>
+        <source>Checking…</source>
+        <translation type="unfinished">確認中…</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Not found. %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -6148,7 +6739,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::General</name>
     <message>
-        <location filename="../dialogs/settingsdialog/general.cpp" line="+72"/>
+        <location filename="../dialogs/settingsdialog/general.cpp" line="+73"/>
         <source>When enabled, save every %1 minutes</source>
         <translation>有効にすると、%1 分ごとに保存されます</translation>
     </message>
@@ -6318,6 +6909,11 @@ Values above 0.5 may not be noticeable.</source>
         <translation>消しゴムデバイスを検出</translation>
     </message>
     <message>
+        <location line="+4"/>
+        <source>Compensate jagged curves</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+6"/>
         <source>Smoothing: </source>
         <translation>スムージング: </translation>
@@ -6374,8 +6970,8 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+1"/>
-        <source>Scroll</source>
-        <translation>スクロール</translation>
+        <source>Pan canvas</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+7"/>
@@ -6396,7 +6992,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Network</name>
     <message>
-        <location filename="../dialogs/settingsdialog/network.cpp" line="+82"/>
+        <location filename="../dialogs/settingsdialog/network.cpp" line="+84"/>
         <source>Hide user list in announcements</source>
         <translation>告知でユーザーリストを非表示</translation>
     </message>
@@ -6431,12 +7027,17 @@ Values above 0.5 may not be noticeable.</source>
         <translation>安全でないローカル ストレージを許可する</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+7"/>
         <source>Password security:</source>
         <translation>パスワードのセキュリティ:</translation>
     </message>
     <message>
         <location line="+3"/>
+        <source>With this enabled, Drawpile may save passwords in an unencrypted format. Disabling it will forget any insecurely stored passwords.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>Connection quality:</source>
         <translation>接続品質:</translation>
     </message>
@@ -6476,7 +7077,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>値が大きいほど、他のユーザーのストロークがより滑らかになります。</translation>
     </message>
     <message>
-        <location line="-94"/>
+        <location line="-107"/>
         <source>Chat avatars:</source>
         <translation>チャットアバター:</translation>
     </message>
@@ -6506,7 +7107,102 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Notifications</name>
     <message>
-        <location filename="../dialogs/settingsdialog/notifications.cpp" line="+35"/>
+        <location filename="../dialogs/settingsdialog/notifications.cpp" line="+40"/>
+        <source>Event</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>What triggered this notification</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Play sound</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Play a sound effect when this event occurs.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Popup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Pop up a speech bubble in the corner when this event occurs.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Flash taskbar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Flash the Drawpile window in the taskbar when this event occurs.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Bounce dock</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Bounce Drawpile&apos;s icon in the dock when this event occurs.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Demand attention</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Mark Drawpile&apos;s window as requiring attention. How exactly this looks depends on your system.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Preview</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Trigger this event so you can see what happens.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Chat message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Private message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>User left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Disconnected</source>
+        <translation type="unfinished">切断しました</translation>
+    </message>
+    <message>
+        <location line="+27"/>
+        <source>Preview event</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+20"/>
         <source>%</source>
         <translation>%</translation>
     </message>
@@ -6516,44 +7212,39 @@ Values above 0.5 may not be noticeable.</source>
         <translation>サウンドの音量:</translation>
     </message>
     <message>
-        <location line="+9"/>
-        <source>Message received</source>
-        <translation>メッセージ受信</translation>
+        <location line="+3"/>
+        <source>Use private message notification for mentions</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+3"/>
-        <source>Recording marker</source>
-        <translation>記録マーカー</translation>
+        <location line="+2"/>
+        <source>Mentions:</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+5"/>
+        <source>Additional triggers go here, one per line.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Your username always counts as a mention. You can add additional trigger words or phrases that you want to count as well, such as other nicknames. One word or phrase per line, case doesn&apos;t matter.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-81"/>
         <source>User joined</source>
         <translation>ユーザーが参加</translation>
     </message>
     <message>
-        <location line="+2"/>
-        <source>User parted</source>
-        <translation>ユーザーの切断</translation>
-    </message>
-    <message>
-        <location line="+2"/>
+        <location line="+8"/>
         <source>Canvas locked</source>
         <translation>キャンバスのロック</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+4"/>
         <source>Canvas unlocked</source>
         <translation>キャンバスのロック解除</translation>
-    </message>
-    <message>
-        <location line="+27"/>
-        <source>Notifications:</source>
-        <translation>通知:</translation>
-    </message>
-    <message>
-        <location line="-12"/>
-        <source>Preview sound</source>
-        <translation>サウンドのテスト</translation>
     </message>
 </context>
 <context>
@@ -6619,7 +7310,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>NSFM セッションに参加するときに警告する</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+11"/>
         <location line="+28"/>
         <source>Lock</source>
         <translation>ロック</translation>
@@ -6645,7 +7336,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>これらの設定は、未成年者に適さないとマークされたセッション (NSFM) およびセンシティブ設定されたレイヤーの処理を構成します。</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+13"/>
         <source>Parental controls are currently managed by the operating system.</source>
         <translation>現在、ペアレンタルコントロールはオペレーティングシステムによって管理されています。</translation>
     </message>
@@ -7102,7 +7793,7 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="-4"/>
-        <location line="+143"/>
+        <location line="+139"/>
         <source>Loading...</source>
         <translation>読み込み中...</translation>
     </message>
@@ -7835,12 +8526,17 @@ Values above 0.5 may not be noticeable.</source>
         <translation>下の色合い</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+17"/>
+        <source>Wrap</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Tint Above</source>
         <translation>上の色合い</translation>
     </message>
     <message>
-        <location line="+102"/>
+        <location line="+109"/>
         <source>-%1</source>
         <translation>-%1</translation>
     </message>
@@ -7850,7 +8546,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>+%1</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+42"/>
         <source>Opacity: %1%</source>
         <translation>不透明度: %1%</translation>
     </message>
@@ -7897,7 +8593,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>drawingboard::CanvasScene</name>
     <message>
-        <location filename="../scene/canvasscene.cpp" line="+225"/>
+        <location filename="../scene/canvasscene.cpp" line="+230"/>
         <source>Restoring canvas…</source>
         <translation>キャンバスを復元中…</translation>
     </message>
@@ -7987,12 +8683,12 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>tools::BrushSettings</name>
     <message>
-        <location filename="../toolwidgets/brushsettings.cpp" line="+127"/>
+        <location filename="../toolwidgets/brushsettings.cpp" line="+129"/>
         <source>Brush Settings</source>
         <translation>ブラシ設定</translation>
     </message>
     <message>
-        <location line="+44"/>
+        <location line="+48"/>
         <source>Time-Based Stabilizer</source>
         <translation>時間基準の手ブレ補正</translation>
     </message>
@@ -8007,12 +8703,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>ストロークを遅くし、時間の経過とともに補正させます。 非常にスムーズな結果が得られますが、動作が遅く感じる場合があります。</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Simply averages inputs to get a smoother result. Faster than the time-based stabilizer, but not as smooth.</source>
         <translation>入力を平均化するだけで、より滑らかな結果が得られます。「 時間基準の手ブレ補正」よりも高速ですが、それほどスムーズではありません。</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+7"/>
         <source>Finish Strokes</source>
         <translation>ストロークの完了</translation>
     </message>
@@ -8022,7 +8718,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>補正したストロークを途切れさせず最後まで描画します。</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Synchronize With Brush</source>
         <translation>ブラシと同期する</translation>
     </message>
@@ -8032,14 +8728,14 @@ Values above 0.5 may not be noticeable.</source>
         <translation>手ブレ補正を、Krita のような独立した設定ではなく、MyPaint のようなブラシの設定にします。</translation>
     </message>
     <message>
-        <location line="+98"/>
+        <location line="+172"/>
         <source>This session is hosted with Drawpile 2.1, MyPaint brushes are unavailable.</source>
         <translation>このセッションは Drawpile 2.1 でホストされているため、MyPaint ブラシは使用できません。</translation>
     </message>
     <message>
         <location line="+3"/>
-        <source>This session is hosted with Drawpile 2.1, Indirect/Wash Mode is unavailable. &lt;a href=&quot;#&quot;&gt;Click here to switch to Direct/Build-Up Mode.&lt;/a&gt;</source>
-        <translation>このセッションはDrawpile2.1でホストされています、水彩・間接的 モードは利用できません。&lt;a href=&quot;#&quot;&gt;ここをクリックして 蓄積・直接的 モードに切り替えます。&lt;/a&gt;</translation>
+        <source>This session is hosted with Drawpile 2.1, Indirect/Wash Mode with opacity dynamics is unavailable. &lt;a href=&quot;#inc&quot;&gt;Click here to switch to Direct/Build-Up Mode&lt;/a&gt; or &lt;a href=&quot;#opa&quot;&gt;here to disable opacity dynamics&lt;/a&gt;.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="-5"/>
@@ -8243,7 +8939,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>左右反転：OFF</translation>
     </message>
     <message>
-        <location line="+1593"/>
+        <location line="+1600"/>
         <source>Zoom: %1%</source>
         <translation>拡大率: %1%</translation>
     </message>
@@ -8279,7 +8975,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::ChatWidget</name>
     <message>
-        <location filename="../chat/chatwidget.cpp" line="+151"/>
+        <location filename="../chat/chatwidget.cpp" line="+157"/>
         <source>Public</source>
         <translation>公開</translation>
     </message>
@@ -8294,7 +8990,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>このウィンドウへの通知を切り替え</translation>
     </message>
     <message>
-        <location line="+36"/>
+        <location line="+39"/>
         <source>Chat (recorded)...</source>
         <translation>チャット (記録)...</translation>
     </message>
@@ -8304,22 +9000,17 @@ Values above 0.5 may not be noticeable.</source>
         <translation>チャット...</translation>
     </message>
     <message>
-        <location line="+290"/>
+        <location line="+300"/>
         <source>%1 joined the session</source>
         <translation>%1 が参加しました</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+19"/>
         <source>%1 left the session</source>
         <translation>%1 が退出しました</translation>
     </message>
     <message>
-        <location line="+22"/>
-        <source>You have been kicked by %1</source>
-        <translation>あなたは %1 にキックされました</translation>
-    </message>
-    <message>
-        <location line="+128"/>
+        <location line="+150"/>
         <source>/!: only operators are allowed to send shouts.</source>
         <translation>/!: 管理者のみがシャウトを送信できます。</translation>
     </message>
@@ -8406,7 +9097,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>不明なコマンド: %1</translation>
     </message>
     <message>
-        <location line="-609"/>
+        <location line="-623"/>
         <source>Clear</source>
         <translation>クリア</translation>
     </message>
@@ -8511,7 +9202,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::NetStatus</name>
     <message>
-        <location filename="../widgets/netstatus.cpp" line="+54"/>
+        <location filename="../widgets/netstatus.cpp" line="+58"/>
         <source>Copy address to clipboard</source>
         <translation>アドレスをクリップボードにコピー</translation>
     </message>
@@ -8526,12 +9217,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>外部公開用 IP アドレスを取得</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+10"/>
         <source>Hide address</source>
         <translation>アドレスを隠す</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+19"/>
         <source>Statistics</source>
         <translation>状態</translation>
     </message>
@@ -8541,12 +9232,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>証明書を表示</translation>
     </message>
     <message>
-        <location line="+62"/>
-        <source>Logged in!</source>
-        <translation>ログインしました！</translation>
-    </message>
-    <message>
-        <location line="+20"/>
+        <location line="+83"/>
         <source>A previously unvisited host</source>
         <translation>過去に接続したことのないホストです</translation>
     </message>
@@ -8561,22 +9247,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>信頼済みホストです</translation>
     </message>
     <message>
-        <location line="+40"/>
-        <source>Disconnected</source>
-        <translation>切断しました</translation>
-    </message>
-    <message>
-        <location line="+121"/>
-        <source>You have been kicked by %1</source>
-        <translation>あなたは %1 にキックされました</translation>
-    </message>
-    <message>
-        <location line="+15"/>
+        <location line="+167"/>
         <source>not connected</source>
         <translation>未接続</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Connecting...</source>
         <translation>接続中...</translation>
     </message>
@@ -8601,12 +9277,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>ルーム: %1</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+3"/>
         <source>Logging out...</source>
         <translation>ログアウト中...</translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+38"/>
         <source>Notice</source>
         <translation>注意</translation>
     </message>
@@ -8616,7 +9292,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>現在お使いの ISP がキャリアグレード NAT を使用しているため、他のユーザーはあなたのコンピュータに直接接続できません。対処法については Drawpile のヘルプページをご覧ください。</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+5"/>
         <source>Don&apos;t show this again</source>
         <translation>再び表示しない</translation>
     </message>
@@ -8819,59 +9495,72 @@ or via Animation ▸ New Track.</source>
 <context>
     <name>widgets::UserItemDelegate</name>
     <message>
-        <location filename="../chat/useritemdelegate.cpp" line="+31"/>
-        <location line="+125"/>
+        <location filename="../chat/useritemdelegate.cpp" line="+167"/>
         <source>Operator</source>
         <translation>管理者</translation>
     </message>
     <message>
-        <location line="-124"/>
-        <location line="+126"/>
+        <location line="+2"/>
         <source>Trusted</source>
         <translation>信頼済み</translation>
     </message>
     <message>
-        <location line="-123"/>
-        <source>Lock</source>
-        <translation>ロック</translation>
+        <location line="-138"/>
+        <source>&amp;Operator</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
-        <source>Mute</source>
-        <translation>ミュート</translation>
+        <source>&amp;Trusted</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
-        <source>Undo</source>
-        <translation>取り消し</translation>
+        <source>&amp;Lock</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
-        <source>Redo</source>
-        <translation>やり直し</translation>
+        <source>&amp;Mute</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+3"/>
-        <source>Kick</source>
-        <translation>キック</translation>
+        <location line="+4"/>
+        <source>&amp;Undo</source>
+        <translation type="unfinished">取り消し(&amp;U)</translation>
     </message>
     <message>
-        <location line="+1"/>
-        <source>Kick &amp;&amp; Ban</source>
-        <translation>キックと BAN</translation>
+        <location line="+2"/>
+        <source>&amp;Redo</source>
+        <translation type="unfinished">やり直し(&amp;R)</translation>
     </message>
     <message>
-        <location line="+3"/>
-        <source>Private Message</source>
-        <translation>プライベートメッセージ</translation>
+        <location line="+4"/>
+        <source>&amp;Kick</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
-        <source>Show User Information</source>
-        <translation>ユーザー情報を表示</translation>
+        <location line="+2"/>
+        <source>Kick &amp;&amp; Ba&amp;n</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+104"/>
+        <location line="+4"/>
+        <source>&amp;Private Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Show User &amp;Information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Take Current &amp;Brush</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+107"/>
         <source>Moderator</source>
         <translation>モデレーター</translation>
     </message>
