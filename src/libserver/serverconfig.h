@@ -87,7 +87,9 @@ namespace config {
 		// Rules to show to connecting clients.
 		RuleText(35, "ruleText", "", ConfigKey::STRING),
 		// Minimum required protocol version for hosting sessions.
-		MinimumProtocolVersion(36, "minimumProtocolVersion", "", ConfigKey::STRING);
+		MinimumProtocolVersion(36, "minimumProtocolVersion", "", ConfigKey::STRING),
+		// Require clients to join sessions through a direct link.
+		m_mandatoryLookup(37, "mandatoryLookup", "false", ConfigKey::BOOL);
 }
 
 //! Settings that are not adjustable after the server has started

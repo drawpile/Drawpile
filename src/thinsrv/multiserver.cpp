@@ -388,6 +388,7 @@ JsonApiResult MultiServer::serverJsonApi(JsonApiMethod method, const QStringList
 		config::EnableGhosts,
 		config::RuleText,
 		config::MinimumProtocolVersion,
+		config::m_mandatoryLookup,
 	};
 	const int settingCount = sizeof(settings) / sizeof(settings[0]);
 

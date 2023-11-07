@@ -20,6 +20,7 @@ namespace net {
 
 class TcpServer;
 class LoginSessionModel;
+struct LoginSession;
 struct ServerCommand;
 struct ServerReply;
 
@@ -421,6 +422,7 @@ private:
 	enum State {
 		EXPECT_HELLO,
 		EXPECT_STARTTLS,
+		EXPECT_LOOKUP_OK,
 		WAIT_FOR_LOGIN_PASSWORD,
 		WAIT_FOR_EXTAUTH,
 		EXPECT_IDENTIFIED,
@@ -438,6 +440,8 @@ private:
 	void expectNothing();
 	void expectHello(const ServerReply &msg);
 	void expectStartTls(const ServerReply &msg);
+	void lookUpSession();
+	void expectLookupOk(const ServerReply &msg);
 	void presentRules();
 	void chooseLoginMethod();
 	void prepareToSendIdentity();
@@ -447,6 +451,8 @@ private:
 	void expectSessionDescriptionHost(const ServerReply &msg);
 	void sendHostCommand();
 	void expectSessionDescriptionJoin(const ServerReply &msg);
+	LoginSession updateSession(const QJsonObject &js);
+	bool checkSession(const LoginSession &session, bool fail);
 	void sendJoinCommand();
 	void expectNoErrors(const ServerReply &msg);
 	bool expectLoginOk(const ServerReply &msg);
@@ -505,6 +511,7 @@ private:
 	bool m_supportsCustomAvatars;
 	bool m_supportsCryptBanImpEx;
 	bool m_supportsModBanImpEx;
+	bool m_supportsLookup;
 	bool m_supportsExtAuthAvatars;
 	bool m_compatibilityMode;
 	bool m_needSessionPassword;

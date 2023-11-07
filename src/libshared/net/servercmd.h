@@ -153,6 +153,11 @@ struct ServerReply {
 
 	static net::Message makeResetRequest(int maxSize, bool query);
 
+	static net::Message makeResultHostLookup(const QString &message);
+
+	static net::Message
+	makeResultJoinLookup(const QString &message, const QJsonObject &session);
+
 	static net::Message
 	makeResultPasswordNeeded(const QString &message, const QString &state);
 

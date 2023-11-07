@@ -60,6 +60,7 @@ LoginHandler::LoginHandler(Mode mode, const QUrl &url, QObject *parent)
 	, m_supportsCustomAvatars(false)
 	, m_supportsCryptBanImpEx(false)
 	, m_supportsModBanImpEx(false)
+	, m_supportsLookup(false)
 	, m_supportsExtAuthAvatars(false)
 	, m_compatibilityMode(false)
 	, m_isGuest(true)
@@ -87,11 +88,12 @@ bool LoginHandler::receiveMessage(const ServerReply &msg)
 	// Overall, the login process is:
 	// 1. wait for server greeting
 	// 2. Upgrade to secure connection (if available)
-	// 3. Authenticate user (or do guest login)
-	// 4. wait for session list
-	// 5. wait for user to finish typing join password if needed
-	// 6. send host/join command
-	// 7. wait for OK
+	// 3. Lookup session (if joining directly)
+	// 4. Authenticate user (or do guest login)
+	// 5. wait for session list
+	// 6. wait for user to finish typing join password if needed
+	// 7. send host/join command
+	// 8. wait for OK
 
 	if(msg.type == ServerReply::ReplyType::Error) {
 		// The server disconnects us right after sending the error message
@@ -114,6 +116,9 @@ bool LoginHandler::receiveMessage(const ServerReply &msg)
 		break;
 	case EXPECT_STARTTLS:
 		expectStartTls(msg);
+		break;
+	case EXPECT_LOOKUP_OK:
+		expectLookupOk(msg);
 		break;
 	case WAIT_FOR_LOGIN_PASSWORD:
 	case WAIT_FOR_EXTAUTH:
@@ -191,6 +196,8 @@ void LoginHandler::expectHello(const ServerReply &msg)
 			m_supportsCryptBanImpEx = true;
 		} else if(flag == "MBANIMPEX") {
 			m_supportsModBanImpEx = true;
+		} else if(flag == "LOOKUP") {
+			m_supportsLookup = true;
 		} else {
 			qWarning() << "Unknown server capability:" << flag;
 		}
@@ -261,7 +268,7 @@ void LoginHandler::expectHello(const ServerReply &msg)
 			return;
 		}
 
-		presentRules();
+		lookUpSession();
 	}
 }
 
@@ -286,6 +293,46 @@ void LoginHandler::sendSessionPassword(const QString &password)
 		// shouldn't happen...
 		qWarning("sendSessionPassword() in invalid state (%d)", m_state);
 	}
+}
+
+void LoginHandler::lookUpSession()
+{
+	if(m_supportsLookup) {
+		m_state = EXPECT_LOOKUP_OK;
+		QJsonArray args;
+		if(m_mode == Mode::Join) {
+			args.append(m_autoJoinId);
+		}
+		send("lookup", args);
+	} else {
+		presentRules();
+	}
+}
+
+void LoginHandler::expectLookupOk(const ServerReply &msg)
+{
+	if(msg.type == ServerReply::ReplyType::Result) {
+		QString lookup = msg.reply[QStringLiteral("lookup")].toString();
+		if(m_mode == Mode::Join && lookup == QStringLiteral("join")) {
+			QJsonObject js = msg.reply[QStringLiteral("session")].toObject();
+			bool haveSession = !js.isEmpty();
+			bool expectSession = !m_autoJoinId.isEmpty();
+			if(haveSession && expectSession) {
+				LoginSession session = updateSession(js);
+				if(checkSession(session, true)) {
+					presentRules();
+				}
+				return;
+			} else if(!haveSession && !expectSession) {
+				presentRules();
+				return;
+			}
+		} else if(lookup == QStringLiteral("host")) {
+			presentRules();
+			return;
+		}
+	}
+	failLogin(tr("Session lookup failed"));
 }
 
 void LoginHandler::presentRules()
@@ -579,55 +626,13 @@ void LoginHandler::expectSessionDescriptionJoin(const ServerReply &msg)
 	}
 
 	if(msg.reply.contains("sessions")) {
-		const parentalcontrols::Level pclevel = parentalcontrols::level();
-
-		for(const auto jsv : msg.reply["sessions"].toArray()) {
-			const QJsonObject js = jsv.toObject();
-
-			protocol::ProtocolVersion protoVer =
-				protocol::ProtocolVersion::fromString(
-					js["protocol"].toString());
-
-			QString incompatibleSeries;
-			if(!protoVer.isCompatible()) {
-				if(protoVer.isFuture()) {
-					incompatibleSeries = tr("New version");
-				} else {
-					incompatibleSeries = protoVer.versionName();
-				}
-
-				if(incompatibleSeries.isEmpty()) {
-					incompatibleSeries = tr("Unknown version");
-				}
-			}
-
-			const LoginSession session{
-				js["id"].toString(),
-				js["alias"].toString(),
-				js["title"].toString(),
-				js["founder"].toString(),
-				incompatibleSeries,
-				protoVer.isPastCompatible(),
-				js["userCount"].toInt(),
-				js["hasPassword"].toBool(),
-				js["persistent"].toBool(),
-				js["closed"].toBool(),
-				js["authOnly"].toBool() && m_isGuest,
-				js["nsfm"].toBool()};
-
+		for(const QJsonValue &jsv : msg.reply["sessions"].toArray()) {
+			LoginSession session = updateSession(jsv.toObject());
 			m_sessions->updateSession(session);
-
 			if(!m_autoJoinId.isEmpty() &&
 			   (session.id == m_autoJoinId || session.alias == m_autoJoinId)) {
 				// A session ID was given as part of the URL
-
-				auto canJoin = session.incompatibleSeries.isEmpty();
-				if(canJoin && pclevel >= parentalcontrols::Level::NoJoin) {
-					canJoin = !session.nsfm &&
-							  !parentalcontrols::isNsfmTitle(session.title);
-				}
-
-				if(canJoin) {
+				if(checkSession(session, false)) {
 					prepareJoinSelectedSession(
 						m_autoJoinId, session.needPassword,
 						session.compatibilityMode, session.title, session.nsfm,
@@ -645,33 +650,87 @@ void LoginHandler::expectSessionDescriptionJoin(const ServerReply &msg)
 		}
 	}
 
-	if(!m_multisession) {
+	if(!m_multisession || (!m_autoJoinId.isEmpty() && m_supportsLookup)) {
 		// Single session mode: automatically join the (only) session
-
-		LoginSession session = m_sessions->getFirstSession();
-
-		if(session.id.isEmpty()) {
-			failLogin(tr("Session not yet started!"));
-			return;
-		} else if(
-			parentalcontrols::level() >= parentalcontrols::Level::NoJoin) {
-			const auto blocked =
-				session.nsfm || parentalcontrols::isNsfmTitle(session.title);
-			if(blocked) {
-				failLogin(tr("Blocked by parental controls"));
-				return;
+		int sessionCount = m_sessions->rowCount();
+		if(sessionCount > 1) {
+			failLogin(tr("Got multiple sessions when only one was expected"));
+		} else {
+			LoginSession session = m_sessions->getFirstSession();
+			if(checkSession(session, true)) {
+				prepareJoinSelectedSession(
+					session.id, session.needPassword, session.compatibilityMode,
+					session.title, session.nsfm, true);
 			}
-		} else if(!session.incompatibleSeries.isEmpty()) {
+		}
+	}
+}
+
+bool LoginHandler::checkSession(const LoginSession &session, bool fail)
+{
+	if(session.id.isEmpty()) {
+		if(fail) {
+			failLogin(tr("Session not yet started!"));
+		}
+		return false;
+	}
+
+	if(parentalcontrols::level() >= parentalcontrols::Level::NoJoin) {
+		const auto blocked =
+			session.nsfm || parentalcontrols::isNsfmTitle(session.title);
+		if(blocked) {
+			if(fail) {
+				failLogin(tr("Blocked by parental controls"));
+			}
+			return false;
+		}
+	}
+
+	if(session.isIncompatible()) {
+		if(fail) {
 			failLogin(
 				tr("Session for a different Drawpile version (%1) in progress!")
 					.arg(session.incompatibleSeries));
-			return;
+		}
+		return false;
+	}
+
+	return true;
+}
+
+LoginSession LoginHandler::updateSession(const QJsonObject &js)
+{
+	protocol::ProtocolVersion protoVer =
+		protocol::ProtocolVersion::fromString(js["protocol"].toString());
+
+	QString incompatibleSeries;
+	if(!protoVer.isCompatible()) {
+		if(protoVer.isFuture()) {
+			incompatibleSeries = tr("New version");
+		} else {
+			incompatibleSeries = protoVer.versionName();
 		}
 
-		prepareJoinSelectedSession(
-			session.id, session.needPassword, session.compatibilityMode,
-			session.title, session.nsfm, true);
+		if(incompatibleSeries.isEmpty()) {
+			incompatibleSeries = tr("Unknown version");
+		}
 	}
+
+	LoginSession session{
+		js["id"].toString(),
+		js["alias"].toString(),
+		js["title"].toString(),
+		js["founder"].toString(),
+		incompatibleSeries,
+		protoVer.isPastCompatible(),
+		js["userCount"].toInt(),
+		js["hasPassword"].toBool(),
+		js["persistent"].toBool(),
+		js["closed"].toBool(),
+		js["authOnly"].toBool() && m_isGuest,
+		js["nsfm"].toBool()};
+	m_sessions->updateSession(session);
+	return session;
 }
 
 void LoginHandler::expectNoErrors(const ServerReply &msg)
@@ -942,7 +1001,7 @@ void LoginHandler::acceptServerCertificate()
 void LoginHandler::continueTls()
 {
 	// STARTTLS is the very first command that must be sent, if sent at all
-	presentRules();
+	lookUpSession();
 }
 
 void LoginHandler::cancelLogin()
@@ -991,6 +1050,12 @@ void LoginHandler::handleError(const QString &code, const QString &msg)
 					.arg(
 						msg, tr("This usually means that your Drawpile version "
 								"is too old. Do you need to update?"));
+	else if(code == "lookupFailed")
+		error = tr("Session not found, it may have ended or its invite link "
+				   "has changed");
+	else if(code == "lookupRequired")
+		error = tr(
+			"This server only allows joining sessions through a direct link.");
 	else
 		error = msg;
 

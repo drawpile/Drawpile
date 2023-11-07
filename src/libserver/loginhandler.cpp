@@ -32,7 +32,8 @@ LoginHandler::LoginHandler(
 
 void LoginHandler::startLoginProcess()
 {
-	m_state = State::WaitForIdent;
+	m_mandatoryLookup = m_config->getConfigBool(config::m_mandatoryLookup);
+	m_state = m_mandatoryLookup ? State::WaitForLookup : State::WaitForIdent;
 
 	QJsonArray flags;
 	if(m_config->getConfigInt(config::SessionCountLimit) > 1) {
@@ -61,8 +62,8 @@ void LoginHandler::startLoginProcess()
 		flags << "CBANIMPEX";
 	}
 #endif
-	// Moderators can always export bans.
-	flags << "MBANIMPEX";
+	flags << "MBANIMPEX" // Moderators can always export bans.
+		  << "LOOKUP";	 // This server supports lookups.
 
 	QJsonObject methods;
 	if(m_config->getConfigBool(config::AllowGuests)) {
@@ -110,7 +111,9 @@ void LoginHandler::startLoginProcess()
 
 void LoginHandler::announceServerInfo()
 {
-	const QJsonArray sessions = m_sessions->sessionDescriptions();
+	const QJsonArray sessions = m_mandatoryLookup || !m_lookup.isEmpty()
+									? QJsonArray()
+									: m_sessions->sessionDescriptions();
 
 	QString message = QStringLiteral("Welcome");
 	QString title = m_config->getConfigString(config::ServerTitle);
@@ -133,7 +136,7 @@ void LoginHandler::announceServerInfo()
 void LoginHandler::announceSession(const QJsonObject &session)
 {
 	Q_ASSERT(session.contains("id"));
-	if(m_state == State::WaitForLogin) {
+	if(m_state == State::WaitForLogin && !m_mandatoryLookup) {
 		send(net::ServerReply::makeLoginSessions(
 			QStringLiteral("New session"), {session}));
 	}
@@ -141,7 +144,7 @@ void LoginHandler::announceSession(const QJsonObject &session)
 
 void LoginHandler::announceSessionEnd(const QString &id)
 {
-	if(m_state == State::WaitForLogin) {
+	if(m_state == State::WaitForLogin && !m_mandatoryLookup) {
 		send(net::ServerReply::makeLoginRemoveSessions(
 			QStringLiteral("Session ended"), {id}));
 	}
@@ -159,8 +162,9 @@ void LoginHandler::handleLoginMessage(const net::Message &msg)
 
 	net::ServerCommand cmd = net::ServerCommand::fromMessage(msg);
 
-	if(m_state == State::Banned) {
-		// Intentionally leave the client hanging.
+	if(m_state == State::Ignore) {
+		// Either the client is supposed to get disconnected or we're
+		// intentionally leaving them hanging because they're banned.
 	} else if(m_state == State::WaitForSecure) {
 		// Secure mode: wait for STARTTLS before doing anything
 		if(cmd.cmd == "startTls") {
@@ -172,9 +176,22 @@ void LoginHandler::handleLoginMessage(const net::Message &msg)
 			sendError("tlsRequired", "TLS required");
 		}
 
+	} else if(m_state == State::WaitForLookup) {
+		// Client must either look up a session to join or want to host.
+		if(cmd.cmd == QStringLiteral("lookup")) {
+			handleLookupMessage(cmd);
+		} else {
+			sendError(
+				QStringLiteral("clientLookupUnsupported"),
+				QStringLiteral("This server requires session lookups. You must "
+							   "update Drawpile for this to work."));
+		}
+
 	} else if(m_state == State::WaitForIdent) {
 		// Wait for user identification before moving on to session listing
-		if(cmd.cmd == "ident") {
+		if(cmd.cmd == QStringLiteral("lookup")) {
+			handleLookupMessage(cmd);
+		} else if(cmd.cmd == "ident") {
 			handleIdentMessage(cmd);
 		} else {
 			m_client->log(
@@ -218,6 +235,63 @@ static QStringList jsonArrayToStringList(const QJsonArray &a)
 	return sl;
 }
 #endif
+
+void LoginHandler::handleLookupMessage(const net::ServerCommand &cmd)
+{
+	if(!m_lookup.isNull()) {
+		sendError(
+			QStringLiteral("lookupAlreadyDone"),
+			QStringLiteral("Session lookup already done"));
+	}
+
+	compat::sizetype argc = cmd.args.size();
+	QString sessionIdOrAlias;
+	net::Message msg;
+	if(argc == 0) {
+		sessionIdOrAlias = QStringLiteral("");
+		msg = net::ServerReply::makeResultHostLookup(
+			QStringLiteral("Host lookup OK!"));
+
+	} else if(argc == 1) {
+		sessionIdOrAlias = cmd.args[0].toString();
+		if(sessionIdOrAlias.isEmpty()) {
+			if(m_mandatoryLookup) {
+				sendError(
+					QStringLiteral("lookupRequired"),
+					QStringLiteral("This server only allows joining sessions "
+								   "through a direct link."));
+				return;
+			}
+			sessionIdOrAlias = QStringLiteral("");
+			msg = net::ServerReply::makeResultJoinLookup(
+				QStringLiteral("Empty join lookup OK!"), QJsonObject());
+
+		} else {
+			Session *session =
+				m_sessions->getSessionById(sessionIdOrAlias, false);
+			if(!session) {
+				sendError(
+					"lookupFailed",
+					QStringLiteral(
+						"Session not found, it may have ended or its "
+						"invite link has changed"));
+				return;
+			}
+			msg = net::ServerReply::makeResultJoinLookup(
+				QStringLiteral("Join lookup OK!"), session->getDescription());
+		}
+
+	} else {
+		sendError(
+			QStringLiteral("syntax"),
+			QStringLiteral("Expected optional session id or alias"));
+		return;
+	}
+
+	m_lookup = sessionIdOrAlias;
+	m_state = State::WaitForIdent;
+	send(msg);
+}
 
 void LoginHandler::handleIdentMessage(const net::ServerCommand &cmd)
 {
@@ -428,7 +502,7 @@ void LoginHandler::authLoginOk(
 	m_hostPrivilege = flags.contains("HOST") && allowHost;
 
 	if(m_client->triggerBan(true)) {
-		m_state = State::Banned;
+		m_state = State::Ignore;
 		return;
 	} else {
 		m_state = State::WaitForLogin;
@@ -566,7 +640,7 @@ void LoginHandler::guestLogin(
 	m_client->setUsername(username);
 
 	if(m_client->triggerBan(true)) {
-		m_state = State::Banned;
+		m_state = State::Ignore;
 		return;
 	} else {
 		m_state = State::WaitForLogin;
@@ -594,6 +668,13 @@ void LoginHandler::handleHostMessage(const net::ServerCommand &cmd)
 {
 	Q_ASSERT(!m_client->username().isEmpty());
 	// Basic validation
+	if(!m_lookup.isEmpty()) {
+		sendError(
+			QStringLiteral("lookupHostMismatch"),
+			QStringLiteral("Cannot host when a joining intent was given"));
+		return;
+	}
+
 	if(!m_config->getConfigBool(config::AllowGuestHosts) && !m_hostPrivilege) {
 		sendError("unauthorizedHost", "Hosting not authorized");
 		return;
@@ -669,7 +750,7 @@ void LoginHandler::handleHostMessage(const net::ServerCommand &cmd)
 	}
 
 	if(m_client->triggerBan(false)) {
-		m_state = State::Banned;
+		m_state = State::Ignore;
 		return;
 	}
 
@@ -723,7 +804,21 @@ void LoginHandler::handleJoinMessage(const net::ServerCommand &cmd)
 		return;
 	}
 
+	if(m_mandatoryLookup && m_lookup.isEmpty()) {
+		sendError(
+			QStringLiteral("lookupJoinMismatch"),
+			QStringLiteral("Cannot join when a hosting intent was given"));
+		return;
+	}
+
 	QString sessionId = cmd.args.at(0).toString();
+	if(!m_lookup.isEmpty() && sessionId != m_lookup) {
+		sendError(
+			QStringLiteral("lookupMismatch"),
+			QStringLiteral("Cannot look up one session and then join another"));
+		return;
+	}
+
 	Session *session = m_sessions->getSessionById(sessionId, true);
 	if(!session) {
 		sendError("notFound", "Session not found!");
@@ -789,7 +884,7 @@ void LoginHandler::handleJoinMessage(const net::ServerCommand &cmd)
 	}
 
 	if(m_client->triggerBan(false)) {
-		m_state = State::Banned;
+		m_state = State::Ignore;
 		return;
 	}
 
@@ -894,6 +989,7 @@ void LoginHandler::sendError(
 {
 	send(net::ServerReply::makeError(message, code));
 	if(disconnect) {
+		m_state = State::Ignore;
 		m_client->disconnectClient(
 			Client::DisconnectionReason::Error, "Login error");
 	}

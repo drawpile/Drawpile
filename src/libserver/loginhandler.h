@@ -81,10 +81,17 @@ private slots:
 	void handleLoginMessage(const net::Message &msg);
 
 private:
-	enum class State { WaitForSecure, WaitForIdent, WaitForLogin, Banned };
+	enum class State {
+		WaitForSecure,
+		WaitForLookup,
+		WaitForIdent,
+		WaitForLogin,
+		Ignore,
+	};
 	enum class IdentIntent { Invalid, Unknown, Guest, Auth, ExtAuth };
 
 	void announceServerInfo();
+	void handleLookupMessage(const net::ServerCommand &cmd);
 	void handleIdentMessage(const net::ServerCommand &cmd);
 	void handleHostMessage(const net::ServerCommand &cmd);
 	void handleJoinMessage(const net::ServerCommand &cmd);
@@ -126,6 +133,8 @@ private:
 	bool m_hostPrivilege = false;
 	bool m_exemptFromBans = false;
 	bool m_complete = false;
+	bool m_mandatoryLookup;
+	QString m_lookup;
 };
 
 }

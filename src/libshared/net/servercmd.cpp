@@ -337,6 +337,27 @@ net::Message ServerReply::makeResetRequest(int maxSize, bool query)
 		 {QStringLiteral("query"), query}});
 }
 
+net::Message ServerReply::makeResultHostLookup(const QString &message)
+{
+	return make(
+		{{QStringLiteral("type"), QStringLiteral("result")},
+		 {QStringLiteral("message"), message},
+		 {QStringLiteral("lookup"), QStringLiteral("host")}});
+}
+
+net::Message ServerReply::makeResultJoinLookup(
+	const QString &message, const QJsonObject &session)
+{
+	QJsonObject data = {
+		{QStringLiteral("type"), QStringLiteral("result")},
+		{QStringLiteral("message"), message},
+		{QStringLiteral("lookup"), QStringLiteral("join")}};
+	if(!session.isEmpty()) {
+		data[QStringLiteral("session")] = session;
+	}
+	return make(data);
+}
+
 net::Message ServerReply::makeResultPasswordNeeded(
 	const QString &message, const QString &state)
 {
@@ -437,5 +458,4 @@ net::Message ServerReply::makeStatusUpdate(int size)
 		{{QStringLiteral("type"), QStringLiteral("status")},
 		 {QStringLiteral("size"), size}});
 }
-
 }

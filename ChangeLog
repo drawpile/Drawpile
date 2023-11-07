@@ -59,6 +59,8 @@ Unreleased Version 2.2.0-pre
  * Feature: Allow grabbing the current brush settings of another user.
  * Fix: Relax transform size restrictions so that transforms of layers that cover the whole canvas don't always get cancelled.
  * Server Feature: Allow servers to set a minimum protocol version for sessions being hosted.
+ * Server Feature: Let clients know at the beginning of the login if the session they're trying to join is nonexistent.
+ * Server Feature: Allow server owners to make sessions only joinable through direct links. Thanks Meru for suggesting.
 
 2023-09-30 Version 2.2.0-beta.8
  * Fix: Apply color wheel direction to color dialogs too. Thanks Blozzom for reporting.
