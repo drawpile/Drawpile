@@ -1341,7 +1341,7 @@ void MainWindow::connectStartDialog(dialogs::StartDialog *dlg)
 	connections->add(connect(dlg, &dialogs::StartDialog::create, this, &MainWindow::newDocument));
 	connections->add(connect(m_doc, &Document::canvasChanged, dlg, &QDialog::close));
 	connections->add(connect(m_doc, &Document::serverLoggedIn, dlg, &QDialog::close));
-	connections->add(connect(this, &MainWindow::hostSessionEnabled, dlg, &dialogs::StartDialog::hostSessionEnabled));
+	connections->add(connect(this, &MainWindow::hostSessionEnabled, dlg, &dialogs::StartDialog::hostPageEnabled));
 	connections->add(connect(this, &MainWindow::windowReplacementFailed, dlg, [dlg](MainWindow *win){
 		dlg->setParent(win, dlg->windowFlags());
 		win->connectStartDialog(dlg);

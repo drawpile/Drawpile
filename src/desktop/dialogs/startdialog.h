@@ -70,6 +70,7 @@ signals:
 	void create(const QSize &size, const QColor &backgroundColor);
 	void joinAddressSet(const QString &address);
 	void hostSessionEnabled(bool enabled);
+	void hostPageEnabled(bool enabled);
 
 protected:
 	void resizeEvent(QResizeEvent *event) override;

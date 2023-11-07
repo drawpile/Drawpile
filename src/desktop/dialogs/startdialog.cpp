@@ -269,6 +269,14 @@ StartDialog::StartDialog(QWidget *parent)
 	connect(
 		this, &StartDialog::hostSessionEnabled, hostPage,
 		&startdialog::Host::setHostEnabled);
+	connect(
+		this, &StartDialog::hostPageEnabled, this,
+		[this, hostPage](bool enabled) {
+			hostPage->setEnabled(enabled);
+			if(m_currentPage == hostPage) {
+				hostPage->updateHostEnabled();
+			}
+		});
 
 	connect(
 		createPage, &startdialog::Create::showButtons, this,

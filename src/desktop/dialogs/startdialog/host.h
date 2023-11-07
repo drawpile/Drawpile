@@ -29,6 +29,7 @@ public:
 
 public slots:
 	void setHostEnabled(bool enabled);
+	void updateHostEnabled();
 
 signals:
 	void showButtons();
@@ -39,7 +40,6 @@ signals:
 		const QString &remoteAddress);
 
 private slots:
-	void updateHostEnabled();
 	void updateNsfmBasedOnTitle();
 	void updateListServers();
 	void updateRemoteHosts();
