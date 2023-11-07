@@ -1080,52 +1080,52 @@
         <location line="+316"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>モデレーターのみが通常のBANをエクスポートできます。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Server error.</source>
-        <translation type="unfinished"></translation>
+        <translation>サーバーエラー。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Exporting encrypted bans not configured on this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>暗号化されたBANのエクスポートはこのサーバーで設定されていません。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Exporting encrypted bans not supported by this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>暗号化されたBANのエクスポートはこのサーバーではサポートされていません。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The server couldn&apos;t read the import data. This is likely because it was exported from a different server. You can only import bans into the same server they were exported from.</source>
-        <translation type="unfinished"></translation>
+        <translation>インポートデータをサーバーが読み取れませんでした。これは異なるサーバーからエクスポートされたためです。インポートはエクスポートされたサーバーと同じサーバーにのみ可能です。</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Invalid import data.</source>
-        <translation type="unfinished"></translation>
+        <translation>インポートデータ が無効です。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Malformed import data.</source>
-        <translation type="unfinished"></translation>
+        <translation>不正な形式のインポートデータです。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Importing encrypted bans not configured on this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>このサーバーで設定されていない暗号化されたBANをインポートしています。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Importing encrypted bans not supported by this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>このサーバーでサポートされていない暗号化されたBANをインポートしています。</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Operator status revoked from %1 by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>管理者ステータスが %2 によって %1 から取り消されました。</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1152,13 +1152,13 @@
         <location line="+4"/>
         <source>Session terminated by administrator: %2</source>
         <extracomment>%1 is the reason given.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>セッションは管理者によって終了されました: %2</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session terminated by moderator (%1): %2</source>
         <extracomment>%1 is the name of the moderator, %2 is the reason given.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>セッションはモデレーターによって終了されました (%1): %2</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -1207,12 +1207,12 @@
     <message>
         <location line="+84"/>
         <source>This server doesn&apos;t provide a way to log in for joining a session!</source>
-        <translation type="unfinished"></translation>
+        <translation>このサーバーはセッションに参加するためのログイン方法が提供されていません！</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This server doesn&apos;t provide a way to log in for hosting a session!</source>
-        <translation type="unfinished"></translation>
+        <translation>このサーバーではセッションをホストするためのログイン方法が提供されていません！</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -1222,7 +1222,7 @@
     <message>
         <location line="+68"/>
         <source>Session lookup failed</source>
-        <translation type="unfinished"></translation>
+        <translation>セッションの検索に失敗</translation>
     </message>
     <message>
         <location line="+38"/>
@@ -1253,7 +1253,7 @@
     <message>
         <location line="+30"/>
         <source>Invalid ident intent response.</source>
-        <translation type="unfinished"></translation>
+        <translation>無効な識別子インテントの応答です。</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -1268,12 +1268,12 @@
     <message>
         <location line="+8"/>
         <source>Server reported two different ext-auth URLs</source>
-        <translation type="unfinished"></translation>
+        <translation>サーバーは２つの異なるext-auth URLを報告</translation>
     </message>
     <message>
         <location line="+111"/>
         <source>Got multiple sessions when only one was expected</source>
-        <translation type="unfinished"></translation>
+        <translation>１つではなく複数のセッションが発生しました</translation>
     </message>
     <message>
         <location line="+52"/>
@@ -1364,17 +1364,17 @@
     <message>
         <location line="+4"/>
         <source>This usually means that your Drawpile version is too old. Do you need to update?</source>
-        <translation type="unfinished"></translation>
+        <translation>これは通常Drawpileのバージョンが古すぎることを意味します。アップデートが必要ですか？</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Session not found, it may have ended or its invite link has changed</source>
-        <translation type="unfinished"></translation>
+        <translation>セッションが見つかりません。終了したか招待リンクが変更された可能性があります</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This server only allows joining sessions through a direct link.</source>
-        <translation type="unfinished"></translation>
+        <translation>このサーバーは直接リンクでのみセッションへの参加が許可されます。</translation>
     </message>
     <message>
         <location line="+27"/>
