@@ -21,6 +21,9 @@ public:
 	static QStringList getDefaultMp4Arguments();
 	static QStringList getDefaultWebmArguments();
 
+	static bool checkIsFfmpegAvailable(const QString &ffmpegPath);
+	static QString getFfmpegInstallNote();
+
 private slots:
 	void processError(QProcess::ProcessError error);
 	void bytesWritten(qint64 bytes);

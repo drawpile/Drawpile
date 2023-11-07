@@ -259,26 +259,65 @@
             </item>
            </layout>
           </item>
-          <item row="1" column="0" colspan="2">
+          <item row="3" column="0" colspan="2">
            <widget class="QLineEdit" name="ffmpegBasics">
             <property name="readOnly">
              <bool>true</bool>
             </property>
            </widget>
           </item>
-          <item row="2" column="0" colspan="2">
+          <item row="4" column="0" colspan="2">
            <widget class="QLabel" name="ffmpegCustomLabel">
             <property name="text">
              <string>Custom Arguments:</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="0" colspan="2">
+          <item row="5" column="0" colspan="2">
            <widget class="QPlainTextEdit" name="ffmpegCustom">
             <property name="placeholderText">
              <string/>
             </property>
            </widget>
+          </item>
+          <item row="1" column="0" colspan="2">
+           <layout class="QHBoxLayout" name="ffmpegErrorLayout">
+            <item>
+             <widget class="QLabel" name="ffmpegErrorIcon">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string notr="true">X</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="ffmpegErrorLabel">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string notr="true">ffmpeg error goes here</string>
+              </property>
+              <property name="textFormat">
+               <enum>Qt::RichText</enum>
+              </property>
+              <property name="wordWrap">
+               <bool>true</bool>
+              </property>
+              <property name="openExternalLinks">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>

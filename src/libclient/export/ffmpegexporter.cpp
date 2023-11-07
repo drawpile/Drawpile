@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include <QBuffer>
 #include <QDebug>
 #include <QImage>
-#include <QBuffer>
 
 #include "libclient/export/ffmpegexporter.h"
 #include "libshared/util/qtcompat.h"
@@ -24,7 +24,12 @@ QStringList FfmpegExporter::getCommonArguments(int fps)
 	QStringList args;
 
 	// Image input (via pipe)
-	args << "-f" << "image2pipe" << "-c:v" << "bmp" << "-i" << "-";
+	args << "-f"
+		 << "image2pipe"
+		 << "-c:v"
+		 << "bmp"
+		 << "-i"
+		 << "-";
 
 	// Framerate
 	args << "-r" << QString::number(fps);
@@ -42,6 +47,28 @@ QStringList FfmpegExporter::getDefaultWebmArguments()
 	return {"-c:v", "libvpx", "-crf", "15", "-b:v", "1M", "-an"};
 }
 
+bool FfmpegExporter::checkIsFfmpegAvailable(const QString &ffmpegPath)
+{
+	QProcess p;
+	p.start(ffmpegPath, QStringList());
+	const bool found = p.waitForStarted();
+	p.waitForFinished();
+	return found;
+}
+
+QString FfmpegExporter::getFfmpegInstallNote()
+{
+#if defined(Q_OS_WINDOWS)
+	return tr("You can downlod a Windows version of ffmpeg from "
+			  "<a href=\"https://ffmpeg.org/download.html\">ffmpeg.org</a>. "
+			  "Choose ffmpeg.exe for the path to ffmpeg in Drawpile.");
+#elif defined(Q_OS_MACOS)
+	return tr("You can install ffmpeg through Homebrew.");
+#else
+	return tr("You can probably install ffmpeg through your package manager.");
+#endif
+}
+
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
 // Copied from Qt source code (LGPL licensed):
 static QStringList splitCommand(QStringView command)
@@ -54,23 +81,23 @@ static QStringList splitCommand(QStringView command)
 	// handle quoting. tokens can be surrounded by double quotes
 	// "hello world". three consecutive double quotes represent
 	// the quote character itself.
-	for (int i = 0; i < command.size(); ++i) {
-		if (command.at(i) == QLatin1Char('"')) {
+	for(int i = 0; i < command.size(); ++i) {
+		if(command.at(i) == QLatin1Char('"')) {
 			++quoteCount;
-			if (quoteCount == 3) {
+			if(quoteCount == 3) {
 				// third consecutive quote
 				quoteCount = 0;
 				tmp += command.at(i);
 			}
 			continue;
 		}
-		if (quoteCount) {
-			if (quoteCount == 1)
+		if(quoteCount) {
+			if(quoteCount == 1)
 				inQuote = !inQuote;
 			quoteCount = 0;
 		}
-		if (!inQuote && command.at(i).isSpace()) {
-			if (!tmp.isEmpty()) {
+		if(!inQuote && command.at(i).isSpace()) {
+			if(!tmp.isEmpty()) {
 				args += tmp;
 				tmp.clear();
 			}
@@ -78,7 +105,7 @@ static QStringList splitCommand(QStringView command)
 			tmp += command.at(i);
 		}
 	}
-	if (!tmp.isEmpty())
+	if(!tmp.isEmpty())
 		args += tmp;
 
 	return args;
@@ -111,9 +138,14 @@ void FfmpegExporter::initExporter()
 	m_encoder = new QProcess(this);
 	m_encoder->setProcessChannelMode(QProcess::ForwardedChannels);
 
-	connect(m_encoder, &QProcess::errorOccurred, this, &FfmpegExporter::processError);
-	connect(m_encoder, &QProcess::bytesWritten, this, &FfmpegExporter::bytesWritten);
-	connect(m_encoder, &QProcess::started, this, &FfmpegExporter::exporterReady);
+	connect(
+		m_encoder, &QProcess::errorOccurred, this,
+		&FfmpegExporter::processError);
+	connect(
+		m_encoder, &QProcess::bytesWritten, this,
+		&FfmpegExporter::bytesWritten);
+	connect(
+		m_encoder, &QProcess::started, this, &FfmpegExporter::exporterReady);
 	connect(
 		m_encoder,
 		QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this,
@@ -129,21 +161,10 @@ void FfmpegExporter::processError(QProcess::ProcessError error)
 	qWarning() << "Ffmpeg error:" << error;
 	switch(error) {
 	case QProcess::FailedToStart: {
-#if defined(Q_OS_WINDOWS)
-		QString installNote = tr(
-			"You can downlod a Windows version of ffmpeg from "
-			"<a href=\"https://ffmpeg.org/download.html\">ffmpeg.org</a>. "
-			"Choose ffmpeg.exe for the path to ffmpeg in Drawpile.");
-#elif defined(Q_OS_MACOS)
-		QString installNote = tr("You can install ffmpeg through Homebrew.");
-#else
-		QString installNote =
-			tr("You can probably install ffmpeg through your package manager.");
-#endif
 		//: %1 is the path to ffmpeg, %2 is the note on what to do to acquire
 		//: ffmpeg, e.g. download it on Windows or install the package on Linux.
 		emit exporterError(tr("Failed to start ffmpeg using '%1'. %2")
-							   .arg(m_ffmpegPath, installNote));
+							   .arg(m_ffmpegPath, getFfmpegInstallNote()));
 		emit exporterFinished(true);
 		break;
 	}
@@ -160,7 +181,10 @@ void FfmpegExporter::writeFrame(const QImage &image, int repeat)
 {
 	qInfo("Writing frame (repeat %d)", repeat);
 	if(!m_writebuffer.isEmpty()) {
-		qWarning("FfmpegExporter: tried to write frame while not yet ready! (%lld of %lld of buffered bytes written", m_written, compat::cast<long long>(m_writebuffer.length()));
+		qWarning(
+			"FfmpegExporter: tried to write frame while not yet ready! (%lld "
+			"of %lld of buffered bytes written",
+			m_written, compat::cast<long long>(m_writebuffer.length()));
 		return;
 	}
 
@@ -196,7 +220,7 @@ void FfmpegExporter::bytesWritten(qint64 bytes)
 		--m_repeats;
 		m_written = 0;
 
-		if(m_repeats<=0) {
+		if(m_repeats <= 0) {
 			m_writebuffer.clear();
 			emit exporterReady();
 		} else {
@@ -204,11 +228,13 @@ void FfmpegExporter::bytesWritten(qint64 bytes)
 		}
 
 	} else {
-		m_written += m_encoder->write(m_writebuffer.constData() + m_written, bufsize - m_written);
+		m_written += m_encoder->write(
+			m_writebuffer.constData() + m_written, bufsize - m_written);
 	}
 }
 
-void FfmpegExporter::processFinished(int exitCode, QProcess::ExitStatus exitStatus)
+void FfmpegExporter::processFinished(
+	int exitCode, QProcess::ExitStatus exitStatus)
 {
 	Q_UNUSED(exitCode);
 	Q_UNUSED(exitStatus);
@@ -219,4 +245,3 @@ void FfmpegExporter::shutdownExporter()
 {
 	m_encoder->closeWriteChannel();
 }
-
