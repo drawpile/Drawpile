@@ -1074,7 +1074,8 @@ void MainWindow::sendUserInfo(int userId)
 #endif
 	QJsonObject info{
 		{"type", "user_info"},
-		{"app_version", cmake_config::version()},
+		{"app_version", QStringLiteral("%1 (%2)").arg(
+			cmake_config::version(), QSysInfo::buildCpuArchitecture())},
 		{"protocol_version", DP_PROTOCOL_VERSION},
 		{"qt_version", QString::number(QT_VERSION_MAJOR)},
 		{"os", os},
