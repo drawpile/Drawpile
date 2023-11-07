@@ -319,23 +319,23 @@
     <message>
         <location filename="../export/ffmpegexporter.cpp" line="+62"/>
         <source>You can downlod a Windows version of ffmpeg from &lt;a href=&quot;https://ffmpeg.org/download.html&quot;&gt;ffmpeg.org&lt;/a&gt;. Choose ffmpeg.exe for the path to ffmpeg in Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Você pode baixar uma versão do ffmpeg para Windows em &lt;a href=&quot;https://ffmpeg.org/download.html&quot;&gt;ffmpeg.org&lt;/a&gt;. Escolha &quot;ffmpeg.exe&quot; em &quot;Caminho para ffmpeg&quot; nas configurações do Drawpile.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>You can install ffmpeg through Homebrew.</source>
-        <translation type="unfinished"></translation>
+        <translation>Você pode instalar o ffmpeg através do Homebrew.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You can probably install ffmpeg through your package manager.</source>
-        <translation type="unfinished"></translation>
+        <translation>O ffmpeg pode ser instalado através do gerenciador de pacotes do seu sistema.</translation>
     </message>
     <message>
         <location line="+98"/>
         <source>Failed to start ffmpeg using &apos;%1&apos;. %2</source>
         <extracomment>%1 is the path to ffmpeg, %2 is the note on what to do to acquire ffmpeg, e.g. download it on Windows or install the package on Linux.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Ocorreu um erro ao iniciar o ffmpeg em &apos;%1&apos;. (%2)</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -436,7 +436,7 @@
     <message>
         <location line="+4"/>
         <source>Roles (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Cargos (%1)</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -506,8 +506,9 @@
         <location line="+94"/>
         <source>%1/%n users</source>
         <translation>
-            <numerusform>%1/%n Usuário</numerusform>
-            <numerusform>%1/%n Usuários</numerusform>
+            <numerusform>%1/%n usuário</numerusform>
+            <numerusform>%1/%n usuários</numerusform>
+            <numerusform>%1/%n usuários</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -515,6 +516,7 @@
         <source>%n users</source>
         <translation>
             <numerusform>%n usuário</numerusform>
+            <numerusform>%n usuários</numerusform>
             <numerusform>%n usuários</numerusform>
         </translation>
     </message>
@@ -921,7 +923,7 @@
         <location filename="../import/animationimporter.cpp" line="+47"/>
         <source>Frames %1</source>
         <extracomment>Title for imported animation tracks and layer groups.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Quadros %1</translation>
     </message>
 </context>
 <context>
@@ -977,7 +979,7 @@
     <message>
         <location line="+2"/>
         <source>Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>Cargos</translation>
     </message>
 </context>
 <context>
@@ -986,7 +988,7 @@
         <location filename="../net/banlistmodel.cpp" line="+69"/>
         <location line="+15"/>
         <source>ID</source>
-        <translation type="unfinished"></translation>
+        <translation>ID</translation>
     </message>
     <message>
         <location line="-13"/>
@@ -1002,7 +1004,7 @@
     <message>
         <location line="+2"/>
         <source>Client info</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Informações do Cliente</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1016,166 +1018,166 @@
     <message>
         <location filename="../net/client.cpp" line="+440"/>
         <source>%1 banned by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 foi banido por %2.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 kicked by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 foi expulso por %2.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>%1 made operator by the server.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 foi tornado um operador pelo servidor.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 made operator by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 foi tornado um operador pelo(a) %2.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Operator status revoked from %1 by the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Os privilégios de operador de %1 foram revogados pelo servidor.</translation>
     </message>
     <message>
         <location line="-384"/>
         <source>You have been kicked.</source>
-        <translation type="unfinished"></translation>
+        <translation>Você foi expulso.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You have been kicked by %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Você foi expulso pelo(a) %1.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>A server error occurred.</source>
-        <translation type="unfinished"></translation>
+        <translation>Um erro ocorreu no servidor.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>A server error occurred: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Um erro ocorreu no servidor: %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>The server is shutting down.</source>
-        <translation type="unfinished"></translation>
+        <translation>O servidor irá desligar.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The session has been shut down: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>A sessão foi desligada: %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Disconnected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Desconectado.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Disconnected: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Desconectado: %1</translation>
     </message>
     <message>
         <location line="+316"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Apenas moderadores podem exportar a lista completa de banimentos.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Server error.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Erro de servidor.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Exporting encrypted bans not configured on this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>A exportação de lista de banimentos criptografada não foi configurada neste servidor.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Exporting encrypted bans not supported by this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>O servidor não suporta exportação da lista criptografada de banimentos.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The server couldn&apos;t read the import data. This is likely because it was exported from a different server. You can only import bans into the same server they were exported from.</source>
-        <translation type="unfinished"></translation>
+        <translation>O servidor não conseguiu importar estes dados. Isso provavelmente aconteceu porque ela foi exportada de outro servidor. Você só pode importar uma lista de banimentos do mesmo servidor que ela foi exportada.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Invalid import data.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dados de importação inválidos.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Malformed import data.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dados de informação malformados.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Importing encrypted bans not configured on this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>A importação de listas de banimento criptografadas não foi configurada nesse servidor.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Importing encrypted bans not supported by this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>A importação de listas de banimento criptografáda não é suportada nesse servidor.</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Operator status revoked from %1 by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Os privilégios de operador de %1 foram revogados pelo(a) %2.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session reset cancelled! An operator must unlock the canvas and reset the session manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>O reinício da sessão foi cancelado! Um operador deve desbloquear a tela de pintura e reiniciar esta sessão manualmente.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Session reset failed! An operator must unlock the canvas and reset the session manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>O reinício da sessão foi falhou! Um operador deve desbloquear a tela de pintura e reiniciar esta sessão manualmente.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Preparing for session reset! Please wait, the session should be available again shortly…</source>
-        <translation type="unfinished"></translation>
+        <translation>Preparando para reiniciar a sessão! Ela deve voltar em alguns instantes…</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session terminated by moderator (%1).</source>
         <extracomment>%1 is the name of the moderator.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>A sessão foi terminada pelo(a) moderador(a): %1.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session terminated by administrator: %2</source>
         <extracomment>%1 is the reason given.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>A sessão foi terminada pelo(a) administrador(a) %2</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session terminated by moderator (%1): %2</source>
         <extracomment>%1 is the name of the moderator, %2 is the reason given.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Sessão terminada pelo(a) moderador(a) %1 (motivo: %2)</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>%1 trusted by the server.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 foi confiado pelo servidor.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 trusted by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 foi confiado por %2.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>%1 untrusted by the server.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 não é mais confiado pelo servidor.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1209,12 +1211,12 @@
     <message>
         <location line="+84"/>
         <source>This server doesn&apos;t provide a way to log in for joining a session!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">O servidor não provém de algum modo de entrar para participar de uma sessão!</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This server doesn&apos;t provide a way to log in for hosting a session!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">O servidor não provém de algum modo de entrar para abrir uma sessão!</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -1366,17 +1368,17 @@
     <message>
         <location line="+4"/>
         <source>This usually means that your Drawpile version is too old. Do you need to update?</source>
-        <translation type="unfinished"></translation>
+        <translation>Normalmente isso quer dizer que sua versão do Drawpile é muito antiga. Precisa atualizar?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Session not found, it may have ended or its invite link has changed</source>
-        <translation type="unfinished"></translation>
+        <translation>Sessão não encontrada. Ela pode ter acabado, ou seu link de convite mudou</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This server only allows joining sessions through a direct link.</source>
-        <translation type="unfinished"></translation>
+        <translation>Este servidor permite apenas que você participe de sessões através de link direto.</translation>
     </message>
     <message>
         <location line="+27"/>
