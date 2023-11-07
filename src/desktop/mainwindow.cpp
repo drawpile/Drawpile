@@ -113,6 +113,7 @@ static constexpr auto CTRL_KEY = Qt::CTRL;
 #include "desktop/dialogs/sessionsettings.h"
 #include "desktop/dialogs/serverlogdialog.h"
 #include "desktop/dialogs/tablettester.h"
+#include "desktop/dialogs/touchtestdialog.h"
 #include "desktop/dialogs/abusereport.h"
 #include "desktop/dialogs/brushsettingsdialog.h"
 #include "desktop/dialogs/sessionundodepthlimitdialog.h"
@@ -4111,6 +4112,7 @@ void MainWindow::setupActions()
 	//
 	QAction *homepage = makeAction("dphomepage", tr("&Homepage")).statusTip(cmake_config::website()).noDefaultShortcut();
 	QAction *tablettester = makeAction("tablettester", tr("Tablet Tester")).noDefaultShortcut();
+	QAction *touchtester = makeAction("touchtester", tr("Touch Tester")).noDefaultShortcut();
 	QAction *showlogfile = makeAction("showlogfile", tr("Log File")).noDefaultShortcut();
 	QAction *about = makeAction("dpabout", tr("&About Drawpile")).menuRole(QAction::AboutRole).noDefaultShortcut();
 	QAction *aboutqt = makeAction("aboutqt", tr("About &Qt")).menuRole(QAction::AboutQtRole).noDefaultShortcut();
@@ -4133,6 +4135,22 @@ void MainWindow::setupActions()
 		}
 		if(!ttd) {
 			ttd = new dialogs::TabletTestDialog;
+			ttd->setAttribute(Qt::WA_DeleteOnClose);
+		}
+		utils::showWindow(ttd);
+		ttd->raise();
+	});
+
+	connect(touchtester, &QAction::triggered, [] {
+		dialogs::TouchTestDialog *ttd = nullptr;
+		for(QWidget *toplevel : qApp->topLevelWidgets()) {
+			ttd = qobject_cast<dialogs::TouchTestDialog*>(toplevel);
+			if(ttd) {
+				break;
+			}
+		}
+		if(!ttd) {
+			ttd = new dialogs::TouchTestDialog;
 			ttd->setAttribute(Qt::WA_DeleteOnClose);
 		}
 		utils::showWindow(ttd);
@@ -4177,6 +4195,7 @@ void MainWindow::setupActions()
 	QMenu *helpmenu = menuBar()->addMenu(tr("&Help"));
 	helpmenu->addAction(homepage);
 	helpmenu->addAction(tablettester);
+	helpmenu->addAction(touchtester);
 	helpmenu->addAction(showlogfile);
 #ifndef Q_OS_MACOS
 	// Qt shunts the About menus into the Application menu on macOS, so this

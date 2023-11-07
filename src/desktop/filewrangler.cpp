@@ -199,14 +199,14 @@ QString FileWrangler::getSaveTabletEventLogPath() const
 		utils::FileFormatOption::SaveEventLog);
 }
 
-#ifdef Q_OS_ANDROID
 QString FileWrangler::getSaveLogFilePath() const
 {
 	return showSaveFileDialog(
-		tr("Log File"), LastPath::TABLET_EVENT_LOG, ".txt",
+		tr("Log File"), LastPath::LOG_FILE, ".txt",
 		utils::FileFormatOption::SaveText);
 }
-#else
+
+#ifndef Q_OS_ANDROID
 QString FileWrangler::getSaveFfmpegMp4Path() const
 {
 	return showSaveFileDialog(
@@ -420,10 +420,8 @@ QString FileWrangler::getLastPathKey(LastPath type)
 		return QStringLiteral("sessionbans");
 	case LastPath::AUTH_LIST:
 		return QStringLiteral("authlist");
-#ifdef Q_OS_ANDROID
 	case LastPath::LOG_FILE:
 		return QStringLiteral("logfile");
-#endif
 	}
 	return QStringLiteral("unknown");
 }

@@ -33,9 +33,7 @@ public:
 		BRUSH_PACK,
 		SESSION_BANS,
 		AUTH_LIST,
-#ifdef Q_OS_ANDROID
 		LOG_FILE,
-#endif
 	};
 
 	FileWrangler(QWidget *parent);
@@ -64,9 +62,8 @@ public:
 	QString getSaveGifPath() const;
 	QString getSavePerformanceProfilePath() const;
 	QString getSaveTabletEventLogPath() const;
-#ifdef Q_OS_ANDROID
 	QString getSaveLogFilePath() const;
-#else
+#ifndef Q_OS_ANDROID
 	QString getSaveFfmpegMp4Path() const;
 	QString getSaveFfmpegWebmPath() const;
 	QString getSaveFfmpegCustomPath() const;

@@ -162,6 +162,8 @@ target_sources(drawpile PRIVATE
 	dialogs/startdialog/welcome.h
 	dialogs/tablettester.cpp
 	dialogs/tablettester.h
+	dialogs/touchtestdialog.cpp
+	dialogs/touchtestdialog.h
 	dialogs/userinfodialog.cpp
 	dialogs/userinfodialog.h
 	docks/brushpalettedock.cpp
