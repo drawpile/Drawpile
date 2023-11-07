@@ -58,6 +58,7 @@ Unreleased Version 2.2.0-pre
  * Feature: Add velocity and distance dynamics to classic brushes. Similar to how they worked for the input settings before, but more flexible than just a pressure mapping.
  * Feature: Allow grabbing the current brush settings of another user.
  * Fix: Relax transform size restrictions so that transforms of layers that cover the whole canvas don't always get cancelled.
+ * Server Feature: Allow servers to set a minimum protocol version for sessions being hosted.
 
 2023-09-30 Version 2.2.0-beta.8
  * Fix: Apply color wheel direction to color dialogs too. Thanks Blozzom for reporting.

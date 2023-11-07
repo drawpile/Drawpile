@@ -613,6 +613,40 @@ void LoginHandler::handleHostMessage(const net::ServerCommand &cmd)
 		return;
 	}
 
+	// Moderators can host under any protocol version, but everyone else has to
+	// meet the minimum version, if one is configured.
+	if(!m_client->isModerator()) {
+		QString minimumProtocolVersionString =
+			m_config->getConfigString(config::MinimumProtocolVersion);
+		if(!minimumProtocolVersionString.isEmpty()) {
+			protocol::ProtocolVersion minimumProtocolVersion =
+				protocol::ProtocolVersion::fromString(
+					minimumProtocolVersionString);
+			if(minimumProtocolVersion.isValid()) {
+				if(protocolVersion.ns() != minimumProtocolVersion.ns()) {
+					sendError(
+						QStringLiteral("protoverns"),
+						QStringLiteral("Mismatched protocol namespace, minimum "
+									   "protocol version is %1")
+							.arg(minimumProtocolVersionString));
+					return;
+				} else if(!protocolVersion.isGreaterOrEqual(
+							  minimumProtocolVersion)) {
+					sendError(
+						QStringLiteral("protoverold"),
+						QStringLiteral(
+							"Outdated client, minimum protocol version is %1")
+							.arg(minimumProtocolVersionString));
+					return;
+				}
+			} else {
+				qWarning(
+					"Invalid minimum protocol version '%s' configured",
+					qUtf8Printable(minimumProtocolVersionString));
+			}
+		}
+	}
+
 	if(!verifySystemId(cmd, protocolVersion)) {
 		return;
 	}

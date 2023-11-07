@@ -2320,6 +2320,14 @@ extern "C" {
     ) -> *mut DP_Image;
 }
 extern "C" {
+    pub fn DP_image_new_from_file_guess(
+        input: *mut DP_Input,
+        buf: *const ::std::os::raw::c_uchar,
+        size: usize,
+        out_type: *mut DP_ImageFileType,
+    ) -> *mut DP_Image;
+}
+extern "C" {
     pub fn DP_image_new_from_file(
         input: *mut DP_Input,
         type_: DP_ImageFileType,
@@ -5349,6 +5357,102 @@ extern "C" {
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
+pub struct DP_SaveFormat {
+    pub title: *const ::std::os::raw::c_char,
+    pub extensions: *mut *const ::std::os::raw::c_char,
+}
+#[test]
+fn bindgen_test_layout_DP_SaveFormat() {
+    const UNINIT: ::std::mem::MaybeUninit<DP_SaveFormat> = ::std::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::std::mem::size_of::<DP_SaveFormat>(),
+        16usize,
+        concat!("Size of: ", stringify!(DP_SaveFormat))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<DP_SaveFormat>(),
+        8usize,
+        concat!("Alignment of ", stringify!(DP_SaveFormat))
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).title) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_SaveFormat),
+            "::",
+            stringify!(title)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).extensions) as usize - ptr as usize },
+        8usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_SaveFormat),
+            "::",
+            stringify!(extensions)
+        )
+    );
+}
+extern "C" {
+    pub fn DP_save_supported_formats() -> *const DP_SaveFormat;
+}
+pub const DP_SAVE_IMAGE_UNKNOWN: DP_SaveImageType = 0;
+pub const DP_SAVE_IMAGE_ORA: DP_SaveImageType = 1;
+pub const DP_SAVE_IMAGE_PNG: DP_SaveImageType = 2;
+pub const DP_SAVE_IMAGE_JPEG: DP_SaveImageType = 3;
+pub const DP_SAVE_IMAGE_PSD: DP_SaveImageType = 4;
+pub type DP_SaveImageType = ::std::os::raw::c_uint;
+pub const DP_SAVE_RESULT_SUCCESS: DP_SaveResult = 0;
+pub const DP_SAVE_RESULT_BAD_ARGUMENTS: DP_SaveResult = 1;
+pub const DP_SAVE_RESULT_UNKNOWN_FORMAT: DP_SaveResult = 2;
+pub const DP_SAVE_RESULT_FLATTEN_ERROR: DP_SaveResult = 3;
+pub const DP_SAVE_RESULT_OPEN_ERROR: DP_SaveResult = 4;
+pub const DP_SAVE_RESULT_WRITE_ERROR: DP_SaveResult = 5;
+pub const DP_SAVE_RESULT_INTERNAL_ERROR: DP_SaveResult = 6;
+pub const DP_SAVE_RESULT_CANCEL: DP_SaveResult = 7;
+pub type DP_SaveResult = ::std::os::raw::c_uint;
+extern "C" {
+    pub fn DP_save_image_type_guess(path: *const ::std::os::raw::c_char) -> DP_SaveImageType;
+}
+extern "C" {
+    pub fn DP_save(
+        cs: *mut DP_CanvasState,
+        dc: *mut DP_DrawContext,
+        type_: DP_SaveImageType,
+        path: *const ::std::os::raw::c_char,
+    ) -> DP_SaveResult;
+}
+pub type DP_SaveAnimationProgressFn = ::std::option::Option<
+    unsafe extern "C" fn(user: *mut ::std::os::raw::c_void, progress: f64) -> bool,
+>;
+extern "C" {
+    pub fn DP_save_animation_frames(
+        cs: *mut DP_CanvasState,
+        path: *const ::std::os::raw::c_char,
+        crop: *mut DP_Rect,
+        start: ::std::os::raw::c_int,
+        end_inclusive: ::std::os::raw::c_int,
+        progress_fn: DP_SaveAnimationProgressFn,
+        user: *mut ::std::os::raw::c_void,
+    ) -> DP_SaveResult;
+}
+extern "C" {
+    pub fn DP_save_animation_gif(
+        cs: *mut DP_CanvasState,
+        path: *const ::std::os::raw::c_char,
+        crop: *mut DP_Rect,
+        start: ::std::os::raw::c_int,
+        end_inclusive: ::std::os::raw::c_int,
+        framerate: ::std::os::raw::c_int,
+        progress_fn: DP_SaveAnimationProgressFn,
+        user: *mut ::std::os::raw::c_void,
+    ) -> DP_SaveResult;
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct DP_Player {
     _unused: [u8; 0],
 }
@@ -5417,6 +5521,7 @@ extern "C" {
         path: *const ::std::os::raw::c_char,
         flat_image_layer_title: *const ::std::os::raw::c_char,
         out_result: *mut DP_LoadResult,
+        out_type: *mut DP_SaveImageType,
     ) -> *mut DP_CanvasState;
 }
 extern "C" {
@@ -5431,7 +5536,7 @@ extern "C" {
 extern "C" {
     pub fn DP_load_psd(
         dc: *mut DP_DrawContext,
-        path: *const ::std::os::raw::c_char,
+        input: *mut DP_Input,
         out_result: *mut DP_LoadResult,
     ) -> *mut DP_CanvasState;
 }
@@ -6027,9 +6132,10 @@ extern "C" {
     ) -> DP_ViewModePick;
 }
 extern "C" {
-    pub fn DP_paint_engine_inspect_context_id_set(
+    pub fn DP_paint_engine_inspect_set(
         pe: *mut DP_PaintEngine,
         context_id: ::std::os::raw::c_uint,
+        show_tiles: bool,
     );
 }
 extern "C" {
@@ -6240,100 +6346,6 @@ extern "C" {
 }
 extern "C" {
     pub fn DP_paint_engine_sample_canvas_state_inc(pe: *mut DP_PaintEngine) -> *mut DP_CanvasState;
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct DP_SaveFormat {
-    pub title: *const ::std::os::raw::c_char,
-    pub extensions: *mut *const ::std::os::raw::c_char,
-}
-#[test]
-fn bindgen_test_layout_DP_SaveFormat() {
-    const UNINIT: ::std::mem::MaybeUninit<DP_SaveFormat> = ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::std::mem::size_of::<DP_SaveFormat>(),
-        16usize,
-        concat!("Size of: ", stringify!(DP_SaveFormat))
-    );
-    assert_eq!(
-        ::std::mem::align_of::<DP_SaveFormat>(),
-        8usize,
-        concat!("Alignment of ", stringify!(DP_SaveFormat))
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).title) as usize - ptr as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(DP_SaveFormat),
-            "::",
-            stringify!(title)
-        )
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).extensions) as usize - ptr as usize },
-        8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(DP_SaveFormat),
-            "::",
-            stringify!(extensions)
-        )
-    );
-}
-extern "C" {
-    pub fn DP_save_supported_formats() -> *const DP_SaveFormat;
-}
-pub const DP_SAVE_IMAGE_GUESS: DP_SaveImageType = 0;
-pub const DP_SAVE_IMAGE_ORA: DP_SaveImageType = 1;
-pub const DP_SAVE_IMAGE_PNG: DP_SaveImageType = 2;
-pub const DP_SAVE_IMAGE_JPEG: DP_SaveImageType = 3;
-pub const DP_SAVE_IMAGE_PSD: DP_SaveImageType = 4;
-pub type DP_SaveImageType = ::std::os::raw::c_uint;
-pub const DP_SAVE_RESULT_SUCCESS: DP_SaveResult = 0;
-pub const DP_SAVE_RESULT_BAD_ARGUMENTS: DP_SaveResult = 1;
-pub const DP_SAVE_RESULT_NO_EXTENSION: DP_SaveResult = 2;
-pub const DP_SAVE_RESULT_UNKNOWN_FORMAT: DP_SaveResult = 3;
-pub const DP_SAVE_RESULT_FLATTEN_ERROR: DP_SaveResult = 4;
-pub const DP_SAVE_RESULT_OPEN_ERROR: DP_SaveResult = 5;
-pub const DP_SAVE_RESULT_WRITE_ERROR: DP_SaveResult = 6;
-pub const DP_SAVE_RESULT_INTERNAL_ERROR: DP_SaveResult = 7;
-pub const DP_SAVE_RESULT_CANCEL: DP_SaveResult = 8;
-pub type DP_SaveResult = ::std::os::raw::c_uint;
-extern "C" {
-    pub fn DP_save(
-        cs: *mut DP_CanvasState,
-        dc: *mut DP_DrawContext,
-        type_: DP_SaveImageType,
-        path: *const ::std::os::raw::c_char,
-    ) -> DP_SaveResult;
-}
-pub type DP_SaveAnimationProgressFn = ::std::option::Option<
-    unsafe extern "C" fn(user: *mut ::std::os::raw::c_void, progress: f64) -> bool,
->;
-extern "C" {
-    pub fn DP_save_animation_frames(
-        cs: *mut DP_CanvasState,
-        path: *const ::std::os::raw::c_char,
-        crop: *mut DP_Rect,
-        start: ::std::os::raw::c_int,
-        end_inclusive: ::std::os::raw::c_int,
-        progress_fn: DP_SaveAnimationProgressFn,
-        user: *mut ::std::os::raw::c_void,
-    ) -> DP_SaveResult;
-}
-extern "C" {
-    pub fn DP_save_animation_gif(
-        cs: *mut DP_CanvasState,
-        path: *const ::std::os::raw::c_char,
-        crop: *mut DP_Rect,
-        start: ::std::os::raw::c_int,
-        end_inclusive: ::std::os::raw::c_int,
-        framerate: ::std::os::raw::c_int,
-        progress_fn: DP_SaveAnimationProgressFn,
-        user: *mut ::std::os::raw::c_void,
-    ) -> DP_SaveResult;
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]

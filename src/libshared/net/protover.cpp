@@ -135,6 +135,12 @@ bool ProtocolVersion::operator==(const ProtocolVersion &other) const
 		m_protocolVersion, other.m_protocolVersion);
 }
 
+bool ProtocolVersion::isGreaterOrEqual(const ProtocolVersion &other) const
+{
+	return DP_protocol_version_greater_or_equal(
+		m_protocolVersion, other.m_protocolVersion);
+}
+
 quint64 ProtocolVersion::asInteger() const
 {
 	return DP_protocol_version_as_integer(m_protocolVersion);

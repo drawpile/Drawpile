@@ -63,6 +63,9 @@ enum DP_ProtocolCompatibility DP_protocol_version_client_compatibility(
 bool DP_protocol_version_equals(const struct DP_ProtocolVersion *a,
                                 const struct DP_ProtocolVersion *b);
 
+bool DP_protocol_version_greater_or_equal(const struct DP_ProtocolVersion *a,
+                                          const struct DP_ProtocolVersion *b);
+
 uint64_t
 DP_protocol_version_as_integer(const struct DP_ProtocolVersion *protover);
 

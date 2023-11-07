@@ -157,6 +157,14 @@ impl ProtocolVersion {
             && self.minor == other.minor
     }
 
+    pub fn greater_or_equal(&self, other: &Self) -> bool {
+        self.ns == other.ns
+            && (self.server > other.server
+                || (self.server == other.server
+                    && (self.major > other.major
+                        || (self.major == other.major && self.minor >= other.minor))))
+    }
+
     pub fn as_integer(&self) -> u64 {
         const MAX: u64 = (1_u64 << 21_u64) - 1_u64;
         let a = (self.server.max(0_i32) as u64).min(MAX);
@@ -333,6 +341,20 @@ pub extern "C" fn DP_protocol_version_equals(
         false
     } else {
         unsafe { &*a }.equals(unsafe { &*b })
+    }
+}
+
+#[no_mangle]
+pub extern "C" fn DP_protocol_version_greater_or_equal(
+    a: *const ProtocolVersion,
+    b: *const ProtocolVersion,
+) -> bool {
+    if a == b {
+        true
+    } else if a.is_null() || b.is_null() {
+        false
+    } else {
+        unsafe { &*a }.greater_or_equal(unsafe { &*b })
     }
 }
 

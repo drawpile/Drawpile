@@ -986,6 +986,11 @@ void LoginHandler::handleError(const QString &code, const QString &msg)
 		error = tr("You have been banned from this session!");
 	else if(code == "idInUse")
 		error = tr("Session alias is reserved!");
+	else if(code == "protoverold")
+		error = QStringLiteral("%1\n\n%2")
+					.arg(
+						msg, tr("This usually means that your Drawpile version "
+								"is too old. Do you need to update?"));
 	else
 		error = msg;
 

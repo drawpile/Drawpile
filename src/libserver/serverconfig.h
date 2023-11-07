@@ -85,7 +85,9 @@ namespace config {
 		// Respect ext-auth user's "GHOST" flag.
 		ExtAuthGhosts(34, "extauthghosts", "false", ConfigKey::BOOL),
 		// Rules to show to connecting clients.
-		RuleText(35, "ruleText", "", ConfigKey::STRING);
+		RuleText(35, "ruleText", "", ConfigKey::STRING),
+		// Minimum required protocol version for hosting sessions.
+		MinimumProtocolVersion(36, "minimumProtocolVersion", "", ConfigKey::STRING);
 }
 
 //! Settings that are not adjustable after the server has started

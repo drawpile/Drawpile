@@ -124,6 +124,8 @@ public:
 		return !(*this == other);
 	}
 
+	bool isGreaterOrEqual(const ProtocolVersion &other) const;
+
 	/**
 	 * Return the version number (without the namespace) encoded as
 	 * a single integer, useful as a sorting key.
