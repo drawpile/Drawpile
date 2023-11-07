@@ -52,6 +52,7 @@ signals:
 
 	//! Request information dialog about this user
 	void requestUserInfo(int userId);
+	void requestCurrentBrush(int userId);
 
 	//! The chatbox was either expanded or collapsed
 	void expandedChanged(bool isExpanded);

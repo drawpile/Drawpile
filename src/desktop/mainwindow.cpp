@@ -364,6 +364,8 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_dockLayers, &docks::LayerList::layerCommands, m_doc->client(), &net::Client::sendMessages);
 
 	connect(m_doc->client(), &net::Client::userInfoRequested, this, &MainWindow::sendUserInfo);
+	connect(m_doc->client(), &net::Client::currentBrushRequested, this, &MainWindow::sendCurrentBrush);
+	connect(m_doc->client(), &net::Client::currentBrushReceived, this, &MainWindow::receiveCurrentBrush);
 
 	connect(m_doc->client(), &net::Client::bansImported, m_sessionSettings, &dialogs::SessionSettingsDialog::bansImported);
 	connect(m_doc->client(), &net::Client::bansExported, m_sessionSettings, &dialogs::SessionSettingsDialog::bansExported);
@@ -1089,6 +1091,52 @@ void MainWindow::sendUserInfo(int userId)
 	net::Client *client = m_doc->client();
 	client->sendMessage(net::makeUserInfoMessage(
 		client->myId(), userId, QJsonDocument{info}));
+}
+
+void MainWindow::requestCurrentBrush(int userId)
+{
+	m_brushRequestUserId = userId;
+	m_brushRequestCorrelator = QUuid::createUuid().toString();
+	m_brushRequestTime.start();
+	QJsonObject info{
+		{QStringLiteral("type"), QStringLiteral("request_current_brush")},
+		{QStringLiteral("correlator"), m_brushRequestCorrelator},
+	};
+	net::Client *client = m_doc->client();
+	client->sendMessage(net::makeUserInfoMessage(
+		client->myId(), userId, QJsonDocument{info}));
+}
+
+void MainWindow::sendCurrentBrush(int userId, const QString &correlator)
+{
+	tools::BrushSettings *bs = m_dockToolSettings->brushSettings();
+	QJsonObject info = {
+		{QStringLiteral("type"), QStringLiteral("current_brush")},
+		{QStringLiteral("brush"), bs->currentBrush().toShareJson()},
+		{QStringLiteral("correlator"), correlator},
+	};
+	net::Client *client = m_doc->client();
+	client->sendMessage(net::makeUserInfoMessage(
+		client->myId(), userId, QJsonDocument{info}));
+}
+
+void MainWindow::receiveCurrentBrush(int userId, const QJsonObject &info)
+{
+	bool wasRequested = m_brushRequestUserId == userId &&
+						m_brushRequestCorrelator ==
+							info[QStringLiteral("correlator")].toString() &&
+						m_brushRequestTime.isValid() &&
+						!m_brushRequestTime.hasExpired(30000);
+	if(wasRequested) {
+		m_brushRequestUserId = -1;
+		m_brushRequestCorrelator.clear();
+		m_brushRequestTime.invalidate();
+		QJsonValue v = info[QStringLiteral("brush")];
+		if(v.isObject()) {
+			tools::BrushSettings *bs = m_dockToolSettings->brushSettings();
+			bs->setCurrentBrush(brushes::ActiveBrush::fromJson(v.toObject()));
+		}
+	}
 }
 
 /**
@@ -3575,6 +3623,7 @@ void MainWindow::setupActions()
 	connect(m_statusChatButton, &QToolButton::clicked, toggleChat, &QAction::trigger);
 
 	connect(m_chatbox, &widgets::ChatBox::requestUserInfo, this, &MainWindow::showUserInfoDialog);
+	connect(m_chatbox, &widgets::ChatBox::requestCurrentBrush, this, &MainWindow::requestCurrentBrush);
 	connect(m_chatbox, &widgets::ChatBox::expandedChanged, toggleChat, &QAction::setChecked);
 	connect(m_chatbox, &widgets::ChatBox::expandedChanged, m_statusChatButton, &QToolButton::hide);
 	connect(m_chatbox, &widgets::ChatBox::expandPlease, toggleChat, &QAction::trigger);

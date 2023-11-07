@@ -115,6 +115,9 @@ ChatBox::ChatBox(Document *doc, QWidget *parent)
 	connect(
 		m_userItemDelegate, &widgets::UserItemDelegate::requestUserInfo, this,
 		&ChatBox::requestUserInfo);
+	connect(
+		m_userItemDelegate, &widgets::UserItemDelegate::requestCurrentBrush,
+		this, &ChatBox::requestCurrentBrush);
 }
 
 void ChatBox::setActions(QAction *inviteAction, QAction *sessionSettingsAction)

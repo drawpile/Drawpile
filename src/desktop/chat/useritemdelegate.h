@@ -34,6 +34,7 @@ signals:
 	void opCommand(const net::Message &msg);
 	void requestPrivateChat(int userId);
 	void requestUserInfo(int userId);
+	void requestCurrentBrush(int userId);
 
 private slots:
 	void toggleOpMode(bool op);
@@ -44,6 +45,7 @@ private slots:
 	void banUser();
 	void pmUser();
 	void showUserInfo();
+	void takeCurrentBrush();
 	void undoByUser();
 	void redoByUser();
 
@@ -68,6 +70,7 @@ private:
 	QAction *m_undoAction;
 	QAction *m_redoAction;
 	QAction *m_infoAction;
+	QAction *m_brushAction;
 
 	int m_menuId;
 };

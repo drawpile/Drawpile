@@ -293,6 +293,7 @@ public:
 
 	QByteArray toJson(bool includeSlotProperties = false) const;
 	QByteArray toExportJson(const QString &description) const;
+	QJsonObject toShareJson() const;
 	static ActiveBrush
 	fromJson(const QJsonObject &json, bool includeSlotProperties = false);
 	bool fromExportJson(const QJsonObject &json);

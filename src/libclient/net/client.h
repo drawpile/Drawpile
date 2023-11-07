@@ -230,6 +230,8 @@ signals:
 
 	void userInfoRequested(int userId);
 	void userInfoReceived(int userId, const QJsonObject &info);
+	void currentBrushRequested(int userId, const QString &correlator);
+	void currentBrushReceived(int userId, const QJsonObject &info);
 
 private slots:
 	void handleMessages(int count, net::Message *msgs);

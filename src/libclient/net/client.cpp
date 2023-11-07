@@ -556,6 +556,11 @@ void Client::Client::handleUserInfo(const net::Message &msg, DP_MsgData *md)
 			emit userInfoRequested(msg.contextId());
 		} else if(type == "user_info") {
 			emit userInfoReceived(msg.contextId(), info);
+		} else if(type == "request_current_brush") {
+			emit currentBrushRequested(
+				msg.contextId(), info["correlator"].toString());
+		} else if(type == "current_brush") {
+			emit currentBrushReceived(msg.contextId(), info);
 		} else {
 			qWarning("Unknown user info type '%s'", qUtf8Printable(type));
 		}

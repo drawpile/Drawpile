@@ -284,6 +284,9 @@ private:
 
 	void requestUserInfo(int userId);
 	void sendUserInfo(int userId);
+	void requestCurrentBrush(int userId);
+	void sendCurrentBrush(int userId, const QString &correlator);
+	void receiveCurrentBrush(int userId, const QJsonObject &info);
 
 	void createDocks();
 	void setupActions();
@@ -361,6 +364,10 @@ private:
 	bool m_exitAfterSave;
 
 	drawdance::CanvasState m_preResetCanvasState;
+
+	int m_brushRequestUserId = -1;
+	QString m_brushRequestCorrelator;
+	QElapsedTimer m_brushRequestTime;
 };
 
 #endif

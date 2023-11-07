@@ -889,6 +889,15 @@ QByteArray ActiveBrush::toExportJson(const QString &description) const
 	return QJsonDocument{json}.toJson(QJsonDocument::Indented);
 }
 
+QJsonObject ActiveBrush::toShareJson() const
+{
+	if(m_activeType == CLASSIC) {
+		return m_classic.toJson();
+	} else {
+		return m_myPaint.toJson();
+	}
+}
+
 ActiveBrush
 ActiveBrush::fromJson(const QJsonObject &json, bool includeSlotProperties)
 {

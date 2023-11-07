@@ -46,6 +46,7 @@ UserItemDelegate::UserItemDelegate(QObject *parent)
 	m_userMenu->addSeparator();
 	m_chatAction = m_userMenu->addAction(tr("Private Message"));
 	m_infoAction = m_userMenu->addAction(tr("Show User Information"));
+	m_brushAction = m_userMenu->addAction(tr("Take Current Brush"));
 
 	m_opAction->setCheckable(true);
 	m_trustAction->setCheckable(true);
@@ -68,6 +69,9 @@ UserItemDelegate::UserItemDelegate(QObject *parent)
 	connect(
 		m_infoAction, &QAction::triggered, this,
 		&UserItemDelegate::showUserInfo);
+	connect(
+		m_brushAction, &QAction::triggered, this,
+		&UserItemDelegate::takeCurrentBrush);
 	connect(
 		m_undoAction, &QAction::triggered, this, &UserItemDelegate::undoByUser);
 	connect(
@@ -267,8 +271,8 @@ void UserItemDelegate::showContextMenu(
 	m_kickAction->setEnabled(canKick);
 	m_banAction->setEnabled(canKick);
 
-	// Can't chat with self
-	m_chatAction->setEnabled(!isSelf);
+	m_chatAction->setEnabled(!isSelf);	// Can't chat with self.
+	m_brushAction->setEnabled(!isSelf); // Taking your own brush is pointless.
 
 	m_userMenu->popup(pos);
 }
@@ -314,6 +318,11 @@ void UserItemDelegate::pmUser()
 void UserItemDelegate::showUserInfo()
 {
 	emit requestUserInfo(m_menuId);
+}
+
+void UserItemDelegate::takeCurrentBrush()
+{
+	emit requestCurrentBrush(m_menuId);
 }
 
 void UserItemDelegate::undoByUser()
