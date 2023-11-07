@@ -120,7 +120,7 @@ void Input::initTouch(desktop::settings::Settings &settings, QFormLayout *form)
 		{
 			{tr("Do nothing"), 0},
 			{tr("Draw"), 1},
-			{tr("Scroll"), 2},
+			{tr("Pan canvas"), 2},
 		});
 	settings.bindOneFingerDraw(oneTouch->button(1));
 	settings.bindOneFingerScroll(oneTouch->button(2));
