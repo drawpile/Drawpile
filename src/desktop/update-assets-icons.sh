@@ -26,7 +26,9 @@ update_icons() {
 			audio-volume-high.svg | state-*.svg | dialog-*.svg | security-*.svg | update-none.svg)
 				category=status
 				;;
-			application-exit.svg | edit-delete.svg | im-kick-user.svg | irc-unvoice.svg)
+			application-exit.svg | edit-delete.svg | im-kick-user.svg | im-ban-kick-user.svg | irc-unvoice.svg)
+				# These icons are colored red and so don't exist in a separate
+				# dark mode variant. We just have two copies of them though.
 				dir=icons
 				category=actions
 				;;

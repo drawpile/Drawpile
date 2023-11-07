@@ -28,25 +28,32 @@ UserItemDelegate::UserItemDelegate(QObject *parent)
 	m_userMenu = new QMenu;
 	m_menuTitle = m_userMenu->addSection("User");
 
-	m_opAction = m_userMenu->addAction(tr("Operator"));
-	m_trustAction = m_userMenu->addAction(tr("Trusted"));
+	m_opAction = m_userMenu->addAction(tr("&Operator"));
+	m_trustAction = m_userMenu->addAction(tr("&Trusted"));
 
 	m_userMenu->addSeparator();
-	m_lockAction = m_userMenu->addAction(tr("Lock"));
-	m_muteAction = m_userMenu->addAction(tr("Mute"));
+	m_lockAction = m_userMenu->addAction(tr("&Lock"));
+	m_muteAction = m_userMenu->addAction(tr("&Mute"));
 
 	m_userMenu->addSeparator();
-	m_undoAction = m_userMenu->addAction(tr("Undo"));
-	m_redoAction = m_userMenu->addAction(tr("Redo"));
+	m_undoAction =
+		m_userMenu->addAction(QIcon::fromTheme("edit-undo"), tr("&Undo"));
+	m_redoAction =
+		m_userMenu->addAction(QIcon::fromTheme("edit-redo"), tr("&Redo"));
 
 	m_userMenu->addSeparator();
-	m_kickAction = m_userMenu->addAction(tr("Kick"));
-	m_banAction = m_userMenu->addAction(tr("Kick && Ban"));
+	m_kickAction =
+		m_userMenu->addAction(QIcon::fromTheme("im-kick-user"), tr("&Kick"));
+	m_banAction = m_userMenu->addAction(
+		QIcon::fromTheme("im-ban-kick-user"), tr("Kick && Ba&n"));
 
 	m_userMenu->addSeparator();
-	m_chatAction = m_userMenu->addAction(tr("Private Message"));
-	m_infoAction = m_userMenu->addAction(tr("Show User Information"));
-	m_brushAction = m_userMenu->addAction(tr("Take Current Brush"));
+	m_chatAction = m_userMenu->addAction(
+		QIcon::fromTheme("edit-comment"), tr("&Private Message"));
+	m_infoAction = m_userMenu->addAction(
+		QIcon::fromTheme("help-whatsthis"), tr("Show User &Information"));
+	m_brushAction = m_userMenu->addAction(
+		QIcon::fromTheme("draw-brush"), tr("Take Current &Brush"));
 
 	m_opAction->setCheckable(true);
 	m_trustAction->setCheckable(true);
