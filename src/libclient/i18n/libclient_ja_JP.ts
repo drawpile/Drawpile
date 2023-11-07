@@ -431,12 +431,12 @@
     <message>
         <location line="+4"/>
         <source>Session Bans (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>セッションBAN (%1)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Roles (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>ロール (%1)</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -919,7 +919,7 @@
         <location filename="../import/animationimporter.cpp" line="+47"/>
         <source>Frames %1</source>
         <extracomment>Title for imported animation tracks and layer groups.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>フレーム %1</translation>
     </message>
 </context>
 <context>
@@ -975,7 +975,7 @@
     <message>
         <location line="+2"/>
         <source>Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>ロール</translation>
     </message>
 </context>
 <context>
@@ -984,7 +984,7 @@
         <location filename="../net/banlistmodel.cpp" line="+69"/>
         <location line="+15"/>
         <source>ID</source>
-        <translation type="unfinished"></translation>
+        <translation>ID</translation>
     </message>
     <message>
         <location line="-13"/>
@@ -1000,7 +1000,7 @@
     <message>
         <location line="+2"/>
         <source>Client info</source>
-        <translation type="unfinished"></translation>
+        <translation>クライアント情報</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1039,42 +1039,42 @@
     <message>
         <location line="-384"/>
         <source>You have been kicked.</source>
-        <translation type="unfinished"></translation>
+        <translation>あなたはキックされました。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You have been kicked by %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>あなたは %1 によってキックされました。</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>A server error occurred.</source>
-        <translation type="unfinished"></translation>
+        <translation>サーバーエラーが発生しました。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>A server error occurred: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>サーバーエラーが発生: %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>The server is shutting down.</source>
-        <translation type="unfinished"></translation>
+        <translation>サーバーはシャットダウン中です。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The session has been shut down: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>セッションはシャットダウンされました: %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Disconnected.</source>
-        <translation type="unfinished"></translation>
+        <translation>切断されました。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Disconnected: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>切断されました: %1</translation>
     </message>
     <message>
         <location line="+316"/>
