@@ -234,7 +234,7 @@ angepasst.</translation>
     <message>
         <location line="+75"/>
         <source>Label:</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufschrift:</translation>
     </message>
 </context>
 <context>
@@ -542,12 +542,12 @@ angepasst.</translation>
     <message>
         <location line="+6"/>
         <source>Open ORA</source>
-        <translation type="unfinished"></translation>
+        <translation>ORA öffnen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>OpenRaster Image</source>
-        <translation type="unfinished"></translation>
+        <translation>OpenRaster-Bild</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -567,12 +567,12 @@ angepasst.</translation>
     <message>
         <location line="+7"/>
         <source>Import Session Bans</source>
-        <translation type="unfinished"></translation>
+        <translation>Sitzungs-Bans importieren</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Import Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>Rollen importieren</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -583,7 +583,7 @@ angepasst.</translation>
     <message>
         <location line="-185"/>
         <source>Export Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Bild exportieren</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -658,37 +658,37 @@ angepasst.</translation>
     <message>
         <location line="+7"/>
         <source>Export Session Bans</source>
-        <translation type="unfinished"></translation>
+        <translation>Sitzungs-Bans exportieren</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>Rollen exportieren</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>The PSD format lacks support for annotations, the animation timeline and some blend modes. If you want those to be retained properly, you must save an ORA file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Das PSD-Format hat keine Unterstützung für Annotationen, den Animationszeitstrahl und einige Mischmodi. Wenn Sie möchten, dass diese erhalten bleiben, müssen Sie eine ORA-Datei speichern.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The selected format will save a merged image. If you want to retain layers, annotations and the animation timeline, you must save an ORA file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Das gewählte Format wird ein zusammengeführtes Bild speichern. Wenn Sie Ebenen, Annotationen und den Animationszeitstrahl behalten wollen, müssen Sie eine ORA-Datei speichern.</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Save as Selected Format</source>
-        <translation type="unfinished"></translation>
+        <translation>Als gewähltes Format speichern</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Save as %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Als %1 speichern</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Save as ORA</source>
-        <translation type="unfinished"></translation>
+        <translation>Als ORA speichern</translation>
     </message>
     <message>
         <location line="+107"/>
@@ -803,7 +803,7 @@ angepasst.</translation>
     <message>
         <location line="+41"/>
         <source>Speed: </source>
-        <translation type="unfinished"></translation>
+        <translation>Geschwindigkeit: </translation>
     </message>
     <message>
         <location line="+29"/>
@@ -821,7 +821,7 @@ angepasst.</translation>
     <message>
         <location line="+56"/>
         <source>Mark whole tiles</source>
-        <translation type="unfinished"></translation>
+        <translation>Ganze Kacheln markieren</translation>
     </message>
 </context>
 <context>
@@ -1082,57 +1082,57 @@ Teilreichweite: [%3, %4]</translation>
     <message>
         <location line="+67"/>
         <source>Continue without account</source>
-        <translation type="unfinished"></translation>
+        <translation>Weiter ohne Account</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Log in with server account</source>
-        <translation type="unfinished"></translation>
+        <translation>Login mit Server-Account</translation>
     </message>
     <message>
         <location line="+90"/>
         <source>Continue with this account, but change the avatar, username or password.</source>
-        <translation type="unfinished"></translation>
+        <translation>Weiter mit diesem Account, aber Avatar, Nutzername oder Passwort ändern.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Edit and log in</source>
-        <translation type="unfinished"></translation>
+        <translation>Bearbeiten und einloggen</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Don&apos;t use any of these accounts.</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine dieser Accounts verwenden.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Log in a different way</source>
-        <translation type="unfinished"></translation>
+        <translation>Anders einloggen</translation>
     </message>
     <message>
         <location line="+43"/>
         <source>Log in with the selected account.</source>
-        <translation type="unfinished"></translation>
+        <translation>Mit gewähltem Account einloggen.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Log in with this account</source>
-        <translation type="unfinished"></translation>
+        <translation>Login mit diesem Account</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Forget this account.</source>
-        <translation type="unfinished"></translation>
+        <translation>Diesen Account vergessen.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Forget this account</source>
-        <translation type="unfinished"></translation>
+        <translation>Account entfernen</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Don&apos;t ask again unless the rules change</source>
-        <translation type="unfinished"></translation>
+        <translation>Nicht nochmal nachfragen, außer wenn sich die Regeln ändern</translation>
     </message>
     <message>
         <location line="-578"/>
@@ -1645,107 +1645,107 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
     <message>
         <location line="-2009"/>
         <source>Joined the session!</source>
-        <translation type="unfinished"></translation>
+        <translation>Der Sitzung beigetreten!</translation>
     </message>
     <message>
         <location line="+537"/>
         <source>Reason:</source>
-        <translation type="unfinished">Grund:</translation>
+        <translation>Grund:</translation>
     </message>
     <message>
         <location line="+183"/>
         <source>Canvas locked</source>
-        <translation type="unfinished">Leinwand gesperrt</translation>
+        <translation>Leinwand gesperrt</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Canvas unlocked</source>
-        <translation type="unfinished">Leinwand entsperrt</translation>
+        <translation>Leinwand entsperrt</translation>
     </message>
     <message>
         <location line="+357"/>
         <source>Freehand (erase mode, click to reset)</source>
-        <translation type="unfinished"></translation>
+        <translation>Freihand (Radiermodus, klicken zum zurücksetzen)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Freehand brush tool (erase mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>Freihand-Pinselwerkzeug (Radiermodus)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Freehand (alpha lock mode, click to reset)</source>
-        <translation type="unfinished"></translation>
+        <translation>Freihand (Alphasperrmodus, klicken zum Zurücksetzen)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Freehand brush tool (alpha lock mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>Freihand-Pinselwerkzeug (Alphasperrmodus)</translation>
     </message>
     <message>
         <location line="+625"/>
         <source>Export Image…</source>
-        <translation type="unfinished"></translation>
+        <translation>Bild exportieren…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Export Selection...</source>
-        <translation type="unfinished"></translation>
+        <translation>Auswahl exportieren…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Import &amp;Drawpile 2.1 Animation…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drawpile-2.1-Animation importieren…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Import &amp;Brushes...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Pinsel importieren…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Export Session &amp;Template...</source>
-        <translation type="unfinished"></translation>
+        <translation>Sitzungs-&amp;Template exportieren…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Export Animated &amp;GIF...</source>
-        <translation type="unfinished"></translation>
+        <translation>Animiertes &amp;GIF exportieren…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Export Animation &amp;Frames...</source>
-        <translation type="unfinished"></translation>
+        <translation>Animations-&amp;Frames exportieren…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Export &amp;Brushes…</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Pinsel exportieren…</translation>
     </message>
     <message>
         <location line="+115"/>
         <source>&amp;Copy Merged</source>
-        <translation type="unfinished"></translation>
+        <translation>Zusammengefügt &amp;kopieren</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy Without Background</source>
-        <translation type="unfinished"></translation>
+        <translation>Ohne Hintergrund kopieren</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy From &amp;Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Von &amp;Ebene kopieren</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Cu&amp;t From Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Von Ebene &amp;Ausschneiden</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Stamp Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Auswahl &amp;stempeln</translation>
     </message>
     <message>
         <location line="+168"/>
@@ -1790,7 +1790,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
     <message>
         <location line="+1"/>
         <source>Layer Properties…</source>
-        <translation type="unfinished"></translation>
+        <translation>Ebeneneigenschaften…</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -2660,7 +2660,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+101"/>
         <source>Touch Tester</source>
-        <translation type="unfinished"></translation>
+        <translation>Touch-Tester</translation>
     </message>
     <message>
         <location line="+50"/>
@@ -3193,17 +3193,17 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+17"/>
         <source>Idle timeout:</source>
-        <translation type="unfinished"></translation>
+        <translation>Schließung bei Inaktivität:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>X seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>X Sekunden</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Disable idle timeout</source>
-        <translation type="unfinished"></translation>
+        <translation>Schließung durch Inaktivität deaktivieren</translation>
     </message>
     <message>
         <location line="+33"/>
@@ -3238,19 +3238,19 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+79"/>
         <source>Bans</source>
-        <translation type="unfinished"></translation>
+        <translation>Bans</translation>
     </message>
     <message>
         <location line="+18"/>
         <location line="+82"/>
         <source>Import</source>
-        <translation type="unfinished">Import</translation>
+        <translation>Import</translation>
     </message>
     <message>
         <location line="-71"/>
         <location line="+82"/>
         <source>Export</source>
-        <translation type="unfinished">Exportieren</translation>
+        <translation>Exportieren</translation>
     </message>
     <message>
         <location line="-376"/>
@@ -3362,12 +3362,12 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="-145"/>
         <source>Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>Rollen</translation>
     </message>
     <message>
         <location line="+72"/>
         <source>Operator</source>
-        <translation type="unfinished">Operator</translation>
+        <translation>Operator</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -3774,46 +3774,46 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location filename="../dialogs/animationimportdialog.cpp" line="+27"/>
         <source>Import Animation</source>
-        <translation type="unfinished"></translation>
+        <translation>Animation importieren</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>File to Import:</source>
-        <translation type="unfinished"></translation>
+        <translation>Importdatei:</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Choose</source>
-        <translation type="unfinished">Wählen</translation>
+        <translation>Wählen</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Key frame length:</source>
         <extracomment>How many frames each imported key frame gets in the timeline.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Schlüsselbildlänge:</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Framerate:</source>
-        <translation type="unfinished">Bildwiederholrate:</translation>
+        <translation>Bildwiederholrate:</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Import</source>
-        <translation type="unfinished">Import</translation>
+        <translation>Import</translation>
     </message>
     <message numerus="yes">
         <location line="+28"/>
         <source> frame(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform> Bild</numerusform>
+            <numerusform> Bilder</numerusform>
         </translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Animation Import Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Animationsimportfehler</translation>
     </message>
 </context>
 <context>
@@ -4042,32 +4042,32 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+33"/>
         <source>No dynamics</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine Dynamik</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pressure dynamics</source>
-        <translation type="unfinished"></translation>
+        <translation>Druckdynamik</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Velocity dynamics</source>
-        <translation type="unfinished"></translation>
+        <translation>Geschwindigkeitsdynamik</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Distance dynamics</source>
-        <translation type="unfinished"></translation>
+        <translation>Distanzdynamik</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Maximum Velocity: </source>
-        <translation type="unfinished"></translation>
+        <translation>Maximale Geschwindigkeit: </translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Maximum Distance: </source>
-        <translation type="unfinished"></translation>
+        <translation>Maximale Distanz: </translation>
     </message>
     <message>
         <location line="+9"/>
@@ -4079,22 +4079,22 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="-49"/>
         <source>Set the maximum velocity for Size, Opacity, Hardness and Smudging at once.</source>
-        <translation type="unfinished"></translation>
+        <translation>Setzt die maximale Geschwindigkeit für Größe, Deckkraft, Härte und Schmieren auf einmal.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Maximum velocity set for all settings in this brush.</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximale Geschwindigkeit für alle Einstellungen dieses Pinsels angewendet.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Set the maximum distance for Size, Opacity, Hardness and Smudging at once.</source>
-        <translation type="unfinished"></translation>
+        <translation>Setzt die maximale Distanz für Größe, Deckkraft, Härte und Schmieren auf einmal.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Maximum distance set for all settings in this brush.</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximale Distanz für alle Einstellungen dieses Pinsels angewendet.</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -4168,7 +4168,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
         <location line="+57"/>
         <location line="+68"/>
         <source>Input</source>
-        <translation type="unfinished">Eingabe</translation>
+        <translation>Eingabe</translation>
     </message>
     <message>
         <location line="+160"/>
@@ -5720,12 +5720,12 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+99"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>% (%1 FPS)</source>
-        <translation type="unfinished"></translation>
+        <translation>% (%1 FPS)</translation>
     </message>
 </context>
 <context>
@@ -5865,17 +5865,17 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+133"/>
         <source>Accept</source>
-        <translation type="unfinished"></translation>
+        <translation>Akzeptieren</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Log in with server account</source>
-        <translation type="unfinished"></translation>
+        <translation>Login mit Server-Account</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>This username belongs to a registered account. If this isn&apos;t your account, cancel and try again with a different name.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dieser Nutzername ist auf einen Account registriert. Wenn dies nicht Ihr Account ist, brechen Sie ab und versuchen Sie es mit einem anderen Namen erneut.</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -5885,121 +5885,121 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+18"/>
         <source>Decline</source>
-        <translation type="unfinished"></translation>
+        <translation>Ablehnen</translation>
     </message>
     <message>
         <location line="+5"/>
         <location line="+9"/>
         <location line="+15"/>
         <source>Rules</source>
-        <translation type="unfinished"></translation>
+        <translation>Regeln</translation>
     </message>
     <message>
         <location line="-9"/>
         <location line="+15"/>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>Zurück</translation>
     </message>
     <message>
         <location line="+251"/>
         <source>Remove Account</source>
-        <translation type="unfinished"></translation>
+        <translation>Account entfernen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really forget this account? This will only remove it from your recent account list, it won&apos;t delete the account.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wirklich diesen Account entfernen? Er wird nur von Ihrer Liste der letzen Accounts entfernt, der Account selbst wird nicht gelöscht.</translation>
     </message>
     <message>
         <location line="+37"/>
         <location line="+118"/>
         <source>Enter the name you want to use.</source>
-        <translation type="unfinished"></translation>
+        <translation>Geben Sie den Namen ein, den Sie verwenden möchten.</translation>
     </message>
     <message>
         <location line="-56"/>
         <source>Server Rules for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Server-Regeln für %1</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Log in with %1 account</source>
-        <translation type="unfinished"></translation>
+        <translation>Login mit %1-Account</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Enter the name you want to use. See %1 for more information about this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Geben Sie den Namen ein, den Sie verwenden möchten. Siehe %1 für mehr Informationen über diesen Server.</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>You can continue without an account. If you want to register one anyway, you can do so on %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sie können ohne Account fortfahren. Wenn Sie dennoch einen registrieren möchten, können Sie dies unter %1 tun.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>An account is required. You can register one on %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ein Account ist erforderlich. Sie können ihn unter %1 registrieren.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>You can continue without an account. The server doesn&apos;t provide any information on how to register one either.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sie können ohne Account fortfahren. Der Server stellt keine Informationen darüber bereit, wie Sie einen registrieren könnten.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>An account is required, but the server doesn&apos;t provide any information on how to register one.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ein Account ist erforderlich, aber der Server stellt keine Informationen bereit, wie Sie einen registrieren können.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>See %1 for more information about this server. To register an account, visit %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Siehe %1 für mehr Informationen über diesen Server. Um einen Account zu registrieren, besuchen Sie %2.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>See %1 for more information about this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Siehe %1 für mehr Informationen über diesen Server.</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>This username belongs to an account, pick a different one.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dieser Nutzername ist auf einen Account registriert, wählen Sie einen anderen.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This username doesn&apos;t belong to a server account.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dieser Nutzername gehört nicht zu einem Server-Account.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>The %1 authentication is not working.</source>
-        <translation type="unfinished"></translation>
+        <translation>Die %1-Authentifizierung funktioniert nicht.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This username doesn&apos;t belong an account on %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dieser Nutzername gehört nicht zu einem Account auf %1.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>This username belongs to a server account, you can&apos;t use it to log in through %1 on this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dieser Nutzername gehört zu einem Server-Account, Sie können ihn auf diesem Server nicht verwenden, um sich durch %1 einzuloggen.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>This username belongs to some other login method, you can&apos;t use it to log in through %1 on this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dieser Nutzername gehört zu einer anderen Loginmethode, Sie können ihn auf diesem Server nicht verwenden, um sich durch %1 einzuloggen.</translation>
     </message>
     <message>
         <location line="+504"/>
         <source>Enter the username and password for your server account.</source>
-        <translation type="unfinished"></translation>
+        <translation>Geben Sie Nutzername und Passwort für Ihren Server-Account ein.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Enter the username and password for your %1 account.</source>
-        <translation type="unfinished"></translation>
+        <translation>Geben Sie Nutzername und Passwort für Ihren %1-Account ein.</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -6142,18 +6142,18 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message numerus="yes">
         <location line="-237"/>
         <source>Imported %n session ban(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n Sitzungs-Ban importiert.</numerusform>
+            <numerusform>%n Sitzungs-Bans importiert.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+3"/>
         <source>%1 %n was/were not imported because it was/they were invalid or duplicates.</source>
         <extracomment>%1 is the &quot;Imported %n session ban(s).&quot; message.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%1 %n wurde nicht importiert, weil er ungültig oder doppelt war.</numerusform>
+            <numerusform>%1 %n wurden nicht importiert, weil sie ungültig oder doppelt waren.</numerusform>
         </translation>
     </message>
     <message>
@@ -6161,32 +6161,32 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <location line="+461"/>
         <location line="+9"/>
         <source>Session Ban Import</source>
-        <translation type="unfinished"></translation>
+        <translation>Sitzungs-Ban-Import</translation>
     </message>
     <message>
         <location line="-449"/>
         <source>Session Ban Export</source>
-        <translation type="unfinished"></translation>
+        <translation>Sitzungs-Ban-Export</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Error saving bans to &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim speichern von Bans unter &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Session Ban Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Sitzungs-Ban-Fehler</translation>
     </message>
     <message>
         <location line="+49"/>
         <source>This list shows only registered users.</source>
-        <translation type="unfinished"></translation>
+        <translation>Diese Liste zeigt nur registrierte Nutzer an.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Only operators can see this list.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nur Operatoren können diese Liste sehen.</translation>
     </message>
     <message>
         <location line="+151"/>
@@ -6198,46 +6198,46 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <location line="+32"/>
         <source>never</source>
         <extracomment>&quot;Idle timeout: never&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>nie</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>disabled by moderator</source>
         <extracomment>&quot;Idle timeout: disabled by moderator&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>durch Moderator deaktiviert</translation>
     </message>
     <message numerus="yes">
         <location line="+6"/>
         <source>%n hour(s)</source>
         <extracomment>Idle timeout hours. May be joined with minutes and seconds.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n Stunde</numerusform>
+            <numerusform>%n Stunden</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+6"/>
         <source>%n minute(s)</source>
         <extracomment>Idle timeout minutes. May be joined with hours and seconds.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n Minute</numerusform>
+            <numerusform>%n Minuten</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+6"/>
         <source>%n second(s)</source>
         <extracomment>Idle timeout seconds. May be joined with hours and minutes.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n Sekunde</numerusform>
+            <numerusform>%n Sekunden</numerusform>
         </translation>
     </message>
     <message>
         <location line="+4"/>
         <source>, </source>
         <extracomment>This string joins the hours, minutes and seconds for the idle time.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>, </translation>
     </message>
     <message>
         <location line="+116"/>
@@ -6269,72 +6269,72 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <location line="+30"/>
         <location line="+113"/>
         <source>Error opening &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Öffnen von &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="-86"/>
         <source>This server does not support importing encrypted bans.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dieser Server hat keine Unterstützung für den Import von verschlüsselten Bans.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>This server does not support importing plain bans.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dieser Server hat keine Unterstützung für den Import von Klartext-Bans.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>File does not appear to contain any ban data.</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei scheint keine Bans zu enthalten.</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Choose Ban Export Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Ban-Exporttyp wählen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Since you are a moderator, you can export bans encrypted or plain. Encrypted bans can only be imported on this server. Which format do you want to export?</source>
-        <translation type="unfinished"></translation>
+        <translation>Da Sie ein Moderator sind, können Sie Bans verschlüsselt oder im Klartext exportieren. Verschlüsselte Bans können nur wieder auf diesem Server importiert werden. Welches Format möchten Sie exportieren?</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Encrypted</source>
-        <translation type="unfinished"></translation>
+        <translation>Verschlüsselt</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Plain</source>
-        <translation type="unfinished"></translation>
+        <translation>Klartext</translation>
     </message>
     <message>
         <location line="+46"/>
         <location line="+10"/>
         <location line="+10"/>
         <source>Role Import</source>
-        <translation type="unfinished"></translation>
+        <translation>Rollenimport</translation>
     </message>
     <message>
         <location line="-9"/>
         <source>File &apos;%1&apos; does not contain a valid role export.</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei &apos;%1&apos; enthält keinen gültigen Rollenexport.</translation>
     </message>
     <message numerus="yes">
         <location line="+9"/>
         <source>%n role(s) imported.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n Rolle importiert.</numerusform>
+            <numerusform>%n Rollen importiert.</numerusform>
         </translation>
     </message>
     <message>
         <location line="+40"/>
         <source>Role Export</source>
-        <translation type="unfinished"></translation>
+        <translation>Rollenexport</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Error saving roles to &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Speichern der Rollen unter &apos;%1&apos;: %2</translation>
     </message>
 </context>
 <context>
@@ -6569,22 +6569,22 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../dialogs/touchtestdialog.cpp" line="+95"/>
         <source>Enable touch</source>
-        <translation type="unfinished"></translation>
+        <translation>Touch aktivieren</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Enable gestures</source>
-        <translation type="unfinished"></translation>
+        <translation>Gesten aktivieren</translation>
     </message>
     <message>
         <location line="+49"/>
         <source>Error Saving Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Speichern des Logs</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Touch test log could not be saved: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Touch-Test-Log konnte nicht gespeichert werden: %1</translation>
     </message>
 </context>
 <context>
@@ -6592,7 +6592,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="-118"/>
         <source>Touch here.</source>
-        <translation type="unfinished"></translation>
+        <translation>Hier berühren.</translation>
     </message>
 </context>
 <context>
@@ -6686,12 +6686,12 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+107"/>
         <source>Checking…</source>
-        <translation type="unfinished">Prüfe…</translation>
+        <translation>Prüfe…</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Not found. %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nicht gefunden. %1</translation>
     </message>
 </context>
 <context>
@@ -6777,7 +6777,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+3"/>
         <source>Language changes apply after you restart Drawpile.</source>
-        <translation>Änderungen an der Sprache erfordern einen Neustart von Drawpile.</translation>
+        <translation>Änderungen an der Sprache erfordern einen Neustart von Drawpile. Language changes apply after you restart Drawpile.</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -6925,7 +6925,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+4"/>
         <source>Compensate jagged curves</source>
-        <translation type="unfinished"></translation>
+        <translation>Kantige Kurven kompensieren</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -6985,7 +6985,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+1"/>
         <source>Pan canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Leinwand bewegen</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -7048,7 +7048,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+3"/>
         <source>With this enabled, Drawpile may save passwords in an unencrypted format. Disabling it will forget any insecurely stored passwords.</source>
-        <translation type="unfinished"></translation>
+        <translation>Hierdurch könnte Drawpile Passwörter unverschlüsselt speichern. Deaktivierung dieser Option entfernt alle unsicher gespeicherten Passwörter.</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -7124,97 +7124,97 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/notifications.cpp" line="+40"/>
         <source>Event</source>
-        <translation type="unfinished"></translation>
+        <translation>Ereignis</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>What triggered this notification</source>
-        <translation type="unfinished"></translation>
+        <translation>Was diese Notifikation ausgelöst hat</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Play sound</source>
-        <translation type="unfinished"></translation>
+        <translation>Ton abspielen</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Play a sound effect when this event occurs.</source>
-        <translation type="unfinished"></translation>
+        <translation>Einen Ton abspielen, wenn dieses Ereignis auftritt.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Popup</source>
-        <translation type="unfinished"></translation>
+        <translation>Popup</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pop up a speech bubble in the corner when this event occurs.</source>
-        <translation type="unfinished"></translation>
+        <translation>Eine Sprechblase in der Ecke anzeigen, wenn dieses Ereignis auftritt.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Flash taskbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Taskleiste blinken</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Flash the Drawpile window in the taskbar when this event occurs.</source>
-        <translation type="unfinished"></translation>
+        <translation>Das Drawpile-Fenster in der Taskleiste aufblinken lassen, wenn dieses Ereignis auftritt.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Bounce dock</source>
-        <translation type="unfinished"></translation>
+        <translation>Dock springen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Bounce Drawpile&apos;s icon in the dock when this event occurs.</source>
-        <translation type="unfinished"></translation>
+        <translation>Das Drawpile-Symbol im Dock springen lassen, wenn dieses Ereignis auftritt.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Demand attention</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufmerksamkeit einfordern</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark Drawpile&apos;s window as requiring attention. How exactly this looks depends on your system.</source>
-        <translation type="unfinished"></translation>
+        <translation>Das Drawpile-Fenster als &quot;erfordert Aufmerksamkeit&quot; markieren. Wie genau dies aussieht hängt vom System ab.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Preview</source>
-        <translation type="unfinished"></translation>
+        <translation>Vorschau</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Trigger this event so you can see what happens.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dieses Ereignis auslösen, damit Sie sehen können was passiert.</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Chat message</source>
-        <translation type="unfinished"></translation>
+        <translation>Chatnachricht</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Private message</source>
-        <translation type="unfinished"></translation>
+        <translation>Private Nachricht</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>User left</source>
-        <translation type="unfinished"></translation>
+        <translation>Nutzer verließ</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Disconnected</source>
-        <translation type="unfinished">Nicht verbunden</translation>
+        <translation>Verbindung getrennt</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>Preview event</source>
-        <translation type="unfinished"></translation>
+        <translation>Ereignisvorschau</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -7229,22 +7229,22 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+3"/>
         <source>Use private message notification for mentions</source>
-        <translation type="unfinished"></translation>
+        <translation>Notifikation für private Nachrichten bei Nennung verwenden</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Mentions:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nennungen:</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Additional triggers go here, one per line.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zusätzliche Auslöser hier, einer pro Zeile.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Your username always counts as a mention. You can add additional trigger words or phrases that you want to count as well, such as other nicknames. One word or phrase per line, case doesn&apos;t matter.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ihr Nutzername zählt immer als eine Nennung. Sie können zusätzliche Worte oder Phrasen als zusätzliche Auslöser definieren, zum Beispiel andere Spitznamen. Ein Wort oder eine Phrase pro Zeile, Groß- und Kleinschreibung ist irrelevant.</translation>
     </message>
     <message>
         <location line="-81"/>
@@ -8548,7 +8548,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+17"/>
         <source>Wrap</source>
-        <translation type="unfinished"></translation>
+        <translation>Umwickeln</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -8755,7 +8755,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+3"/>
         <source>This session is hosted with Drawpile 2.1, Indirect/Wash Mode with opacity dynamics is unavailable. &lt;a href=&quot;#inc&quot;&gt;Click here to switch to Direct/Build-Up Mode&lt;/a&gt; or &lt;a href=&quot;#opa&quot;&gt;here to disable opacity dynamics&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Diese Sitzung wurde mit Drawpile 2.1 gehostet, indirekter Modus/waschen mit Deckkraftdynamik ist nicht verfügbar. &lt;a href=&quot;#inc&quot;&gt;Klicken Sie hier, um zum direkten Modus/aufbauen zu wechseln&lt;/a&gt; oder &lt;a href=&quot;#opa&quot;&gt;hier um Deckkraftdynamik zu deaktivieren&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="-5"/>
@@ -9527,57 +9527,57 @@ oder per Animation ▸ Neue Spur hinzufügen.</translation>
     <message>
         <location line="-138"/>
         <source>&amp;Operator</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Operator</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>Ver&amp;trauenswürdig</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Lock</source>
-        <translation type="unfinished"></translation>
+        <translation>Sp&amp;erren</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Mute</source>
-        <translation type="unfinished"></translation>
+        <translation>Stu&amp;mm</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Undo</source>
-        <translation type="unfinished">&amp;Rückgängig</translation>
+        <translation>&amp;Rückgängig</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Redo</source>
-        <translation type="unfinished">Wieder&amp;herstellen</translation>
+        <translation>Wieder&amp;herstellen</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Kick</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Kicken</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Kick &amp;&amp; Ba&amp;n</source>
-        <translation type="unfinished"></translation>
+        <translation>Kicken und Ba&amp;nnen</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Private Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Pri&amp;vate Nachricht</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show User &amp;Information</source>
-        <translation type="unfinished"></translation>
+        <translation>Nutzer&amp;informationen anzeigen</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Take Current &amp;Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuellen &amp;Pinsel nehmen</translation>
     </message>
     <message>
         <location line="+107"/>
