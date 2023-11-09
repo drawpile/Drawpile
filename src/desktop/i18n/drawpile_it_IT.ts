@@ -234,7 +234,7 @@ in 64x64 pixel.</translation>
     <message>
         <location line="+75"/>
         <source>Label:</source>
-        <translation type="unfinished"></translation>
+        <translation>Etichetta:</translation>
     </message>
 </context>
 <context>
@@ -542,12 +542,12 @@ in 64x64 pixel.</translation>
     <message>
         <location line="+6"/>
         <source>Open ORA</source>
-        <translation type="unfinished"></translation>
+        <translation>Apri ORA</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>OpenRaster Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Immagine OpenRaster</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -567,12 +567,12 @@ in 64x64 pixel.</translation>
     <message>
         <location line="+7"/>
         <source>Import Session Bans</source>
-        <translation type="unfinished"></translation>
+        <translation>Importa Ban di Sessione</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Import Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>Importa Ruoli</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -583,7 +583,7 @@ in 64x64 pixel.</translation>
     <message>
         <location line="-185"/>
         <source>Export Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Esporta Immagine</translation>
     </message>
     <message>
         <location line="+20"/>
