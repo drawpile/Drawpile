@@ -62,6 +62,7 @@ Unreleased Version 2.2.0-pre
  * Server Feature: Let clients know at the beginning of the login if the session they're trying to join is nonexistent.
  * Server Feature: Allow server owners to make sessions only joinable through direct links. Thanks Meru for suggesting.
  * Feature: Add touch tester, available under the Help menu.
+ * Fix: Actually put the link that's being joined into the address input when using a web link, rather than leaving it blank.
 
 2023-09-30 Version 2.2.0-beta.8
  * Fix: Apply color wheel direction to color dialogs too. Thanks Blozzom for reporting.

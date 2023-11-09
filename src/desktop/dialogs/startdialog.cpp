@@ -241,6 +241,9 @@ StartDialog::StartDialog(QWidget *parent)
 		&QWidget::setEnabled);
 	connect(
 		joinPage, &startdialog::Join::join, this, &StartDialog::joinRequested);
+	connect(
+		this, &StartDialog::joinAddressSet, joinPage,
+		&startdialog::Join::setAddress);
 
 	connect(
 		browsePage, &startdialog::Browse::hideLinks, this,
