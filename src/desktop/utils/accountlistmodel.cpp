@@ -148,7 +148,7 @@ void AccountListModel::saveAccount(
 	QString username = normalizeUsername(displayUsername);
 	QDateTime lastUsed = QDateTime::currentDateTimeUtc();
 
-	QSqlQuery qry = m_state.query();
+	utils::StateDatabase::Query qry = m_state.query();
 	QString sql = QStringLiteral(
 		"insert into accounts (\n"
 		"	type, host, username, display_username, avatar_filename,\n"
@@ -158,8 +158,8 @@ void AccountListModel::saveAccount(
 		"	display_username = excluded.display_username,\n"
 		"	avatar_filename = excluded.avatar_filename,\n"
 		"	last_used = excluded.last_used");
-	if(!m_state.exec(
-		   qry, sql,
+	if(!qry.exec(
+		   sql,
 		   {int(type), host, displayUsername.toCaseFolded(), displayUsername,
 			avatarFilename.isNull() ? QStringLiteral("") : avatarFilename,
 			lastUsed.toString(Qt::ISODate)})) {
@@ -265,12 +265,11 @@ void AccountListModel::deleteAccountAt(int i)
 {
 	if(i >= 0 && i < compat::cast_6<int>(m_accounts.size())) {
 		const Account &account = m_accounts[i];
-		QSqlQuery qry = m_state.query();
+		utils::StateDatabase::Query qry = m_state.query();
 		QString sql =
 			QStringLiteral("delete from accounts\n"
 						   "where type = ? and host = ? and username = ?");
-		m_state.exec(
-			qry, sql, {int(account.type), account.host, account.username});
+		qry.exec(sql, {int(account.type), account.host, account.username});
 
 		deletePassword(buildKeychainSecretName(
 			account.type, account.host, account.username));
@@ -341,16 +340,15 @@ bool AccountListModel::canSavePasswords(bool insecureFallback)
 
 void AccountListModel::clearFallbackPasswords()
 {
-	QSqlQuery qry = m_state.query();
+	utils::StateDatabase::Query qry = m_state.query();
 	QString sql = QStringLiteral("delete from insecure_storage");
-	m_state.exec(qry, sql);
+	qry.exec(sql);
 }
 
 void AccountListModel::createTables()
 {
-	QSqlQuery qry = m_state.query();
-	m_state.exec(
-		qry, QStringLiteral("create table if not exists accounts (\n"
+	utils::StateDatabase::Query qry = m_state.query();
+	qry.exec(QStringLiteral("create table if not exists accounts (\n"
 							"	type integer not null,\n"
 							"	host text not null,\n"
 							"	username text not null,\n"
@@ -358,8 +356,7 @@ void AccountListModel::createTables()
 							"	avatar_filename text not null,\n"
 							"	last_used text not null,\n"
 							"	primary key (type, host, username))"));
-	m_state.exec(
-		qry,
+	qry.exec(
 		QStringLiteral("create table if not exists insecure_storage (\n"
 					   "	keychain_secret_name text primary key not null,\n"
 					   "	obfuscated_value text not null)"));
@@ -369,11 +366,11 @@ void AccountListModel::loadAccounts(
 	QVector<Account> &accounts, QSet<QString> &usernames, Type type,
 	const QString &host)
 {
-	QSqlQuery qry = m_state.query();
+	utils::StateDatabase::Query qry = m_state.query();
 	QString sql = QStringLiteral(
 		"select username, display_username, avatar_filename, last_used\n"
 		"from accounts where type = ? and host = ?");
-	if(m_state.exec(qry, sql, {int(type), host})) {
+	if(qry.exec(sql, {int(type), host})) {
 		while(qry.next()) {
 			QString username = qry.value(0).toString();
 			if(!usernames.contains(username)) {
@@ -416,11 +413,11 @@ bool AccountListModel::isAccountLessThan(const Account &a, const Account &b)
 QString
 AccountListModel::readPasswordFallback(const QString &keychainSecretName)
 {
-	QSqlQuery qry = m_state.query();
+	utils::StateDatabase::Query qry = m_state.query();
 	QString sql =
 		QStringLiteral("select obfuscated_value from insecure_storage\n"
 					   "where keychain_secret_name = ?");
-	bool ok = m_state.exec(qry, sql, {keychainSecretName}) && qry.next();
+	bool ok = qry.exec(sql, {keychainSecretName}) && qry.next();
 	return ok ? deobfuscate(qry.value(0).toString()) : QString();
 }
 
@@ -428,22 +425,22 @@ void AccountListModel::savePasswordFallback(
 	utils::StateDatabase *state, const QString &keychainSecretName,
 	const QString &password)
 {
-	QSqlQuery qry = state->query();
+	utils::StateDatabase::Query qry = state->query();
 	QString sql =
 		QStringLiteral("insert into insecure_storage (\n"
 					   "	keychain_secret_name, obfuscated_value)\n"
 					   "values (?, ?)\n"
 					   "on conflict do update set\n"
 					   "	obfuscated_value = excluded.obfuscated_value");
-	state->exec(qry, sql, {keychainSecretName, obfuscate(password)});
+	qry.exec(sql, {keychainSecretName, obfuscate(password)});
 }
 
 void AccountListModel::deletePasswordFallback(const QString &keychainSecretName)
 {
-	QSqlQuery qry = m_state.query();
+	utils::StateDatabase::Query qry = m_state.query();
 	QString sql = QStringLiteral(
 		"delete from insecure_storage where keychain_secret_name = ?");
-	m_state.exec(qry, sql, {keychainSecretName});
+	qry.exec(sql, {keychainSecretName});
 }
 
 QString AccountListModel::obfuscate(const QString &value)

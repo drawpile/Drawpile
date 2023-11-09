@@ -32,10 +32,9 @@ Recents::Recents(StateDatabase &state)
 
 QVector<Recents::File> Recents::getFiles() const
 {
-	QSqlQuery qry = m_state.query();
+	StateDatabase::Query qry = m_state.query();
 	QVector<Recents::File> files;
-	if(m_state.exec(
-		   qry, "select recent_file_id, path\n"
+	if(qry.exec("select recent_file_id, path\n"
 				"from recent_files order by weight")) {
 		while(qry.next()) {
 			files.append({qry.value(0).toLongLong(), qry.value(1).toString()});
@@ -46,8 +45,8 @@ QVector<Recents::File> Recents::getFiles() const
 
 int Recents::fileCount() const
 {
-	QSqlQuery qry = m_state.query();
-	if(m_state.exec(qry, "select count(*) from recent_files") && qry.next()) {
+	StateDatabase::Query qry = m_state.query();
+	if(qry.exec("select count(*) from recent_files") && qry.next()) {
 		return qry.value(0).toInt();
 	} else {
 		return -1;
@@ -56,10 +55,9 @@ int Recents::fileCount() const
 
 void Recents::addFile(const QString &path)
 {
-	bool ok = m_state.tx([&](QSqlQuery &qry) {
-		if(!m_state.exec(
-			   qry, "select recent_file_id, path\n"
-					"from recent_files order by weight")) {
+	bool ok = m_state.tx([&path](StateDatabase::Query &qry) {
+		if(!qry.exec("select recent_file_id, path\n"
+					 "from recent_files order by weight")) {
 			return false;
 		}
 
@@ -77,8 +75,8 @@ void Recents::addFile(const QString &path)
 		}
 
 		if(!found) {
-			if(!m_state.exec(
-				   qry, "insert into recent_files (path, weight) values (?, ?)",
+			if(!qry.exec(
+				   "insert into recent_files (path, weight) values (?, ?)",
 				   {path, 0})) {
 				return false;
 			}
@@ -86,7 +84,7 @@ void Recents::addFile(const QString &path)
 
 		QString updateSql = QStringLiteral(
 			"update recent_files set weight = ? where recent_file_id = ?");
-		if(!m_state.prepare(qry, updateSql)) {
+		if(!qry.prepare(updateSql)) {
 			return false;
 		}
 
@@ -95,14 +93,13 @@ void Recents::addFile(const QString &path)
 		for(int i = 0; i < count; ++i) {
 			qry.bindValue(0, i + offset);
 			qry.bindValue(1, ids[i]);
-			if(!m_state.execPrepared(qry, updateSql)) {
+			if(!qry.execPrepared()) {
 				return false;
 			};
 		}
 
-		return m_state.exec(
-			qry, "delete from recent_files where weight >= ?",
-			{MAX_RECENT_FILES});
+		return qry.exec(
+			"delete from recent_files where weight >= ?", {MAX_RECENT_FILES});
 	});
 
 	if(ok) {
@@ -112,10 +109,7 @@ void Recents::addFile(const QString &path)
 
 bool Recents::removeFileById(long long id)
 {
-	QSqlQuery qry = m_state.query();
-	if(m_state.exec(
-		   qry, "delete from recent_files where recent_file_id = ?", {id}) &&
-	   qry.numRowsAffected() > 0) {
+	if(removeById("delete from recent_files where recent_file_id = ?", id)) {
 		emit recentFilesChanged();
 		return true;
 	} else {
@@ -133,10 +127,9 @@ void Recents::bindFileMenu(QMenu *menu)
 
 QVector<Recents::Host> Recents::getHosts() const
 {
-	QSqlQuery qry = m_state.query();
+	StateDatabase::Query qry = m_state.query();
 	QVector<Recents::Host> hosts;
-	if(m_state.exec(
-		   qry, "select recent_host_id, host, port, flags\n"
+	if(qry.exec("select recent_host_id, host, port, flags\n"
 				"from recent_hosts order by weight")) {
 		while(qry.next()) {
 			int flags = qry.value(3).toInt();
@@ -151,8 +144,8 @@ QVector<Recents::Host> Recents::getHosts() const
 
 int Recents::hostCount() const
 {
-	QSqlQuery qry = m_state.query();
-	if(m_state.exec(qry, "select count(*) from recent_hosts") && qry.next()) {
+	StateDatabase::Query qry = m_state.query();
+	if(qry.exec("select count(*) from recent_hosts") && qry.next()) {
 		return qry.value(0).toInt();
 	} else {
 		return -1;
@@ -167,10 +160,10 @@ void Recents::addHost(const QString &host, int port, bool joined, bool hosted)
 		int port;
 		int flags;
 	};
-	bool ok = m_state.tx([&](QSqlQuery &qry) {
-		if(!m_state.exec(
-			   qry, "select recent_host_id, host, port, flags\n"
-					"from recent_hosts order by weight")) {
+	bool ok = m_state.tx([&host, port, joined,
+						  hosted](StateDatabase::Query &qry) {
+		if(!qry.exec("select recent_host_id, host, port, flags\n"
+					 "from recent_hosts order by weight")) {
 			return false;
 		}
 
@@ -194,8 +187,7 @@ void Recents::addHost(const QString &host, int port, bool joined, bool hosted)
 		}
 
 		if(!found) {
-			if(!m_state.exec(
-				   qry,
+			if(!qry.exec(
 				   "insert into recent_hosts (host, port, flags, weight)\n"
 				   "values (?, ?, ?, ?)",
 				   {host, port, packHostFlags(joined, hosted), 0})) {
@@ -206,7 +198,7 @@ void Recents::addHost(const QString &host, int port, bool joined, bool hosted)
 		QString updateSql =
 			QStringLiteral("update recent_hosts set flags = ?, weight = ?\n"
 						   "where recent_host_id = ?");
-		if(!m_state.prepare(qry, updateSql)) {
+		if(!qry.prepare(updateSql)) {
 			return false;
 		}
 
@@ -217,14 +209,13 @@ void Recents::addHost(const QString &host, int port, bool joined, bool hosted)
 			qry.bindValue(0, ah.flags);
 			qry.bindValue(1, i + offset);
 			qry.bindValue(2, ah.id);
-			if(!m_state.execPrepared(qry, updateSql)) {
+			if(!qry.execPrepared()) {
 				return false;
 			};
 		}
 
-		return m_state.exec(
-			qry, "delete from recent_hosts where weight >= ?",
-			{MAX_RECENT_FILES});
+		return qry.exec(
+			"delete from recent_hosts where weight >= ?", {MAX_RECENT_FILES});
 	});
 
 	if(ok) {
@@ -234,10 +225,7 @@ void Recents::addHost(const QString &host, int port, bool joined, bool hosted)
 
 bool Recents::removeHostById(long long id)
 {
-	QSqlQuery qry = m_state.query();
-	if(m_state.exec(
-		   qry, "delete from recent_hosts where recent_host_id = ?", {id}) &&
-	   qry.numRowsAffected() > 0) {
+	if(removeById("delete from recent_hosts where recent_host_id = ?", id)) {
 		emit recentHostsChanged();
 		return true;
 	} else {
@@ -247,14 +235,12 @@ bool Recents::removeHostById(long long id)
 
 void Recents::createTables()
 {
-	QSqlQuery qry = m_state.query();
-	m_state.exec(
-		qry, "create table if not exists recent_files (\n"
+	StateDatabase::Query qry = m_state.query();
+	qry.exec("create table if not exists recent_files (\n"
 			 "	recent_file_id integer primary key not null,\n"
 			 "	path text not null,\n"
 			 "	weight integer not null)");
-	m_state.exec(
-		qry, "create table if not exists recent_hosts (\n"
+	qry.exec("create table if not exists recent_hosts (\n"
 			 "	recent_host_id integer primary key not null,\n"
 			 "	host text not null,\n"
 			 "	port integer not null,\n"
@@ -264,10 +250,10 @@ void Recents::createTables()
 
 void Recents::migrateFilesFromSettings()
 {
-	m_state.tx([this](QSqlQuery &qry) {
+	m_state.tx([this](StateDatabase::Query &qry) {
 		QString key = QStringLiteral("recents/filesmigratedfromsettings");
-		if(!m_state.getWith(qry, key).toBool()) {
-			m_state.putWith(qry, key, true);
+		if(!qry.get(key).toBool()) {
+			qry.put(key, true);
 			if(fileCount() != 0) {
 				return true;
 			}
@@ -275,7 +261,7 @@ void Recents::migrateFilesFromSettings()
 			QString sql =
 				QStringLiteral("insert into recent_files (path, weight)\n"
 							   "values (?, ?)");
-			if(!m_state.prepare(qry, sql)) {
+			if(!qry.prepare(sql)) {
 				return false;
 			}
 
@@ -284,7 +270,7 @@ void Recents::migrateFilesFromSettings()
 			for(int i = 0; i < count; ++i) {
 				qry.bindValue(0, settingsRecentFiles[i]);
 				qry.bindValue(1, i);
-				if(!m_state.execPrepared(qry, sql)) {
+				if(!qry.execPrepared()) {
 					return false;
 				}
 			}
@@ -295,10 +281,10 @@ void Recents::migrateFilesFromSettings()
 
 void Recents::migrateHostsFromSettings()
 {
-	m_state.tx([this](QSqlQuery &qry) {
+	m_state.tx([this](StateDatabase::Query &qry) {
 		QString key = QStringLiteral("recents/hostsmigratedfromsettings");
-		if(!m_state.getWith(qry, key).toBool()) {
-			m_state.putWith(qry, key, true);
+		if(!qry.get(key).toBool()) {
+			qry.put(key, true);
 			if(hostCount() != 0) {
 				return true;
 			}
@@ -306,7 +292,7 @@ void Recents::migrateHostsFromSettings()
 			QString sql = QStringLiteral(
 				"insert into recent_hosts (host, port, flags, weight)\n"
 				"values (?, ?, ?, ?)");
-			if(!m_state.prepare(qry, sql)) {
+			if(!qry.prepare(sql)) {
 				return false;
 			}
 
@@ -326,13 +312,19 @@ void Recents::migrateHostsFromSettings()
 				qry.bindValue(1, rh.port);
 				qry.bindValue(2, packHostFlags(rh.joined, rh.hosted));
 				qry.bindValue(3, i);
-				if(!m_state.execPrepared(qry, sql)) {
+				if(!qry.execPrepared()) {
 					return false;
 				}
 			}
 		}
 		return true;
 	});
+}
+
+bool Recents::removeById(const QString &sql, int id)
+{
+	StateDatabase::Query qry = m_state.query();
+	return qry.exec(sql, {id}) && qry.numRowsAffected() > 0;
 }
 
 void Recents::collectSettingsHost(
@@ -393,10 +385,10 @@ void Recents::updateFileMenu(QMenu *menu) const
 
 QStringList Recents::getFileMenuPaths() const
 {
-	QSqlQuery qry = m_state.query();
+	StateDatabase::Query qry = m_state.query();
 	QStringList paths;
-	if(m_state.exec(
-		   qry, "select path from recent_files order by weight limit ?",
+	if(qry.exec(
+		   "select path from recent_files order by weight limit ?",
 		   {MAX_MENU_FILES})) {
 		while(qry.next()) {
 			paths.append(qry.value(0).toString());

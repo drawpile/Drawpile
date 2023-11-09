@@ -61,6 +61,7 @@ private:
 	void createTables();
 	void migrateFilesFromSettings();
 	void migrateHostsFromSettings();
+	bool removeById(const QString &sql, int id);
 
 	static void
 	collectSettingsHost(QVector<Host> &rhs, const QString &input, bool join);

@@ -115,9 +115,8 @@ public:
 
 	QString readNewsContentFor(const QDate &date)
 	{
-		QSqlQuery qry = m_state.query();
-		bool hasRow = m_state.exec(
-						  qry,
+		StateDatabase::Query qry = m_state.query();
+		bool hasRow = qry.exec(
 						  "select content from news where date <= ?\n"
 						  "order by date desc limit 1",
 						  {dateToString(date)}) &&
@@ -141,9 +140,8 @@ public:
 
 	Update readUpdateAvailable(const Version &forVersion, bool includeBeta)
 	{
-		QSqlQuery qry = m_state.query();
-		if(utils::db::exec(
-			   qry, "select server, major, minor, beta, date, url\n"
+		StateDatabase::Query qry = m_state.query();
+		if(qry.exec("select server, major, minor, beta, date, url\n"
 					"from updates\n"
 					"order by server, major, minor, beta desc")) {
 			while(qry.next()) {
@@ -179,40 +177,40 @@ public:
 
 	bool writeNewsAt(const QVector<News::Article> articles, const QDate &today)
 	{
-		return m_state.tx([&](QSqlQuery &qry) {
-			if(!m_state.exec(qry, QStringLiteral("delete from news"))) {
+		return m_state.tx([&articles, &today](StateDatabase::Query &qry) {
+			if(!qry.exec(QStringLiteral("delete from news"))) {
 				return false;
 			}
 
 			QString sql = QStringLiteral(
 				"insert into news (content, date) values (?, ?)");
-			if(!m_state.prepare(qry, sql)) {
+			if(!qry.prepare(sql)) {
 				return false;
 			}
 
 			for(const News::Article &article : articles) {
 				qry.bindValue(0, article.content);
 				qry.bindValue(1, dateToString(article.date));
-				if(!m_state.execPrepared(qry, sql)) {
+				if(!qry.execPrepared()) {
 					return false;
 				}
 			}
 
-			return m_state.putWith(qry, LAST_CHECK_KEY, dateToString(today));
+			return qry.put(LAST_CHECK_KEY, dateToString(today));
 		});
 	}
 
 	bool writeUpdates(const QVector<News::Update> updates)
 	{
-		return m_state.tx([&](QSqlQuery &qry) {
-			if(!m_state.exec(qry, QStringLiteral("delete from updates"))) {
+		return m_state.tx([&updates](StateDatabase::Query &qry) {
+			if(!qry.exec(QStringLiteral("delete from updates"))) {
 				return false;
 			}
 
 			QString sql = QStringLiteral(
 				"insert into updates (server, major, minor, beta, date, url)\n"
 				"values (?, ?, ?, ?, ?, ?)");
-			if(!m_state.prepare(qry, sql)) {
+			if(!qry.prepare(sql)) {
 				return false;
 			}
 
@@ -223,7 +221,7 @@ public:
 				qry.bindValue(3, update.version.beta);
 				qry.bindValue(4, dateToString(update.date));
 				qry.bindValue(5, update.url.toString());
-				if(!m_state.execPrepared(qry, sql)) {
+				if(!qry.execPrepared()) {
 					return false;
 				}
 			}
@@ -242,13 +240,11 @@ private:
 
 	void createTables()
 	{
-		QSqlQuery qry = m_state.query();
-		m_state.exec(
-			qry, "create table if not exists news (\n"
+		StateDatabase::Query qry = m_state.query();
+		qry.exec("create table if not exists news (\n"
 				 "	content text not null,\n"
 				 "	date text not null)");
-		m_state.exec(
-			qry, "create table if not exists updates (\n"
+		qry.exec("create table if not exists updates (\n"
 				 "	server integer not null,\n"
 				 "	major integer not null,\n"
 				 "	minor integer not null,\n"

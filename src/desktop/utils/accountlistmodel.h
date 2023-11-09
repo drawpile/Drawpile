@@ -9,7 +9,6 @@
 #include <QVector>
 
 class AvatarListModel;
-class QSqlQuery;
 
 namespace utils {
 class StateDatabase;
