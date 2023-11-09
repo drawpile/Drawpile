@@ -131,7 +131,7 @@
     <message>
         <location line="+14"/>
         <source>Lock alpha (recolor mode)</source>
-        <translation>透明度保持(recolor mode)</translation>
+        <translation>透明度保持(色替えモード)</translation>
     </message>
     <message>
         <location line="+55"/>
@@ -164,7 +164,7 @@
     <message>
         <location line="-16"/>
         <source>Smudging: </source>
-        <translation>色混ぜ: </translation>
+        <translation>混色: </translation>
     </message>
     <message>
         <location line="+30"/>
@@ -1474,7 +1474,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+1"/>
         <source>Expand &amp;Left</source>
-        <translation>左に拡張(&amp;H)</translation>
+        <translation>左に拡張(&amp;L)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1820,7 +1820,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+32"/>
         <source>Show La&amp;ser Trails</source>
-        <translation>レーザーの軌跡を表示(&amp;S)</translation>
+        <translation>レーザーの軌跡を表示(&amp;s)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1948,7 +1948,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Toggle Recolor Mode</source>
-        <translation>色替えモード切替</translation>
+        <translation>色替モード切替</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2112,13 +2112,13 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Resi&amp;ze Canvas...</source>
-        <translation>キャンバスのサイズを変更(&amp;Z)...</translation>
+        <translation>キャンバスのサイズを変更(&amp;z)...</translation>
     </message>
     <message>
         <location line="+5"/>
         <location filename="../widgets/macmenu.cpp" line="+8"/>
         <source>Prefere&amp;nces</source>
-        <translation>設定(&amp;N)</translation>
+        <translation>設定(&amp;n)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2305,7 +2305,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+112"/>
         <source>&amp;Copy Merged</source>
-        <translation>結合部分をコピー(&amp;C)</translation>
+        <translation>結合してコピー(&amp;C)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3859,7 +3859,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+10"/>
         <source>%n brush(es) exported.</source>
         <translation>
-            <numerusform>%n ブラシがエクスポートされました。</numerusform>
+            <numerusform>%n 個のブラシがエクスポートされました。</numerusform>
         </translation>
     </message>
     <message>
@@ -4083,7 +4083,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+10"/>
         <location line="+234"/>
         <source>Smudging</source>
-        <translation>ぼかし</translation>
+        <translation>混色</translation>
     </message>
     <message>
         <location line="-211"/>
@@ -4125,7 +4125,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="-49"/>
         <source>Set the maximum velocity for Size, Opacity, Hardness and Smudging at once.</source>
-        <translation>サイズ、不透明度、硬さ、ぼかしの最大速度を一度に設定します。</translation>
+        <translation>サイズ、不透明度、硬さ、混色の最大速度を一度に設定します。</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -4135,7 +4135,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+6"/>
         <source>Set the maximum distance for Size, Opacity, Hardness and Smudging at once.</source>
-        <translation>サイズ、不透明度、硬さ、ぼかしの最大間隔を一度に設定する。</translation>
+        <translation>サイズ、不透明度、硬さ、混色の最大間隔を一度に設定する。</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -4145,7 +4145,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+23"/>
         <source>Set this curve for Size, Opacity, Hardness and Smudging at once.</source>
-        <translation>この曲線のサイズ、不透明度、硬さ、ぼかしを一度に設定します。</translation>
+        <translation>この曲線のサイズ、不透明度、硬さ、混色を一度に設定します。</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -5130,7 +5130,7 @@ For very slow speed the opposite happens.</source>
 +0.7 twice the brush radius
 +1.6 five times the brush radius (slow performance)</source>
         <comment>mypaintsetting</comment>
-        <translation>これにより、ぼかしのために色が拾われる円の半径が変更されます。
+        <translation>これにより、混色のために色が拾われる円の半径が変更されます。
  0.0 ブラシ半径を使用します
 -0.7 ブラシ半径の半分 (高速ですが、常に直感的であるとは限りません)
 +0.7 ブラシ半径の 2 倍
@@ -5704,12 +5704,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/flipbook.cpp" line="+64"/>
         <source>Export &amp;GIF…</source>
-        <translation>エキスポート&amp;GIF…</translation>
+        <translation>GIFをエクスポート(&amp;G)…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Export &amp;Frames…</source>
-        <translation>エキスポート&amp;フレーム…</translation>
+        <translation>フレームをエクスポート(&amp;F)…</translation>
     </message>
     <message>
         <location line="+99"/>
