@@ -839,12 +839,12 @@
     <message>
         <location line="+13"/>
         <source>Can&apos;t export preset &apos;%1&apos;</source>
-        <translation>プリセット &apos;%1&apos; をエクスポートできません</translation>
+        <translation>&apos;%1&apos; プリセットをエクスポートできません</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Can&apos;t export preset thumbnail &apos;%1&apos;</source>
-        <translation>プリセット &apos;%1&apos; のサムネイルをエクスポートできません</translation>
+        <translation>&apos;%1&apos; プリセットのサムネイルをエクスポートできません</translation>
     </message>
 </context>
 <context>
@@ -955,22 +955,22 @@
     <message>
         <location filename="../net/authlistmodel.cpp" line="+37"/>
         <source>Moderator</source>
-        <translation type="unfinished">モデレーター</translation>
+        <translation>モデレーター</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Operator</source>
-        <translation type="unfinished">管理者</translation>
+        <translation>管理者</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Trusted</source>
-        <translation type="unfinished">信頼済み</translation>
+        <translation>信頼済み</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>User</source>
-        <translation type="unfinished">ユーザー</translation>
+        <translation>ユーザー</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1100,7 +1100,7 @@
     <message>
         <location line="+2"/>
         <source>The server couldn&apos;t read the import data. This is likely because it was exported from a different server. You can only import bans into the same server they were exported from.</source>
-        <translation>インポートデータをサーバーが読み取れませんでした。これは異なるサーバーからエクスポートされたためです。インポートはエクスポートされたサーバーと同じサーバーにのみ可能です。</translation>
+        <translation>インポートデータをサーバーが読み取れませんでした。これは異なるサーバーからエクスポートされたためです。インポートはエクスポートされたサーバーと同じサーバーでのみ可能です。</translation>
     </message>
     <message>
         <location line="+5"/>
