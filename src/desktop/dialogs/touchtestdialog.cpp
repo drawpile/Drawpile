@@ -47,9 +47,9 @@ void TouchTestView::setGestureEventsEnabled(bool enabled)
 {
 	if(enabled && !m_gestureEventsEnabled) {
 		emit logEvent(QStringLiteral("Enable gesture events\n"));
-		viewport()->ungrabGesture(Qt::PanGesture);
-		viewport()->ungrabGesture(Qt::PinchGesture);
-		viewport()->ungrabGesture(Qt::SwipeGesture);
+		viewport()->grabGesture(Qt::PanGesture);
+		viewport()->grabGesture(Qt::PinchGesture);
+		viewport()->grabGesture(Qt::SwipeGesture);
 		m_gestureEventsEnabled = true;
 	} else if(!enabled && m_gestureEventsEnabled) {
 		emit logEvent(QStringLiteral("Disable gesture events\n"));
