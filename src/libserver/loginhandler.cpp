@@ -969,7 +969,7 @@ void LoginHandler::handleStarttls()
 		QStringLiteral("Start TLS now!"), true));
 
 	m_client->startTls();
-	m_state = State::WaitForIdent;
+	m_state = m_mandatoryLookup ? State::WaitForLookup : State::WaitForIdent;
 }
 
 bool LoginHandler::send(const net::Message &msg)
