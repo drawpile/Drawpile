@@ -959,6 +959,45 @@ static void blend_mask_pixels_normal_and_eraser_sse42(DP_Pixel15 *dst,
         store_unaligned_sse42(dstB, dstG, dstR, dstA, dst);
     }
 }
+
+static void blend_mask_pixels_recolor_sse42(DP_Pixel15 *dst, DP_UPixel15 src,
+                                            const uint16_t *mask_int,
+                                            Fix15 opacity_int, int count)
+{
+    // clang-format off
+    DP_ASSERT(count % 4 == 0);
+
+    // Do in parent function ?
+    __m128i srcB = _mm_set1_epi32(src.b);
+    __m128i srcG = _mm_set1_epi32(src.g);
+    __m128i srcR = _mm_set1_epi32(src.r);
+    __m128i srcA = _mm_set1_epi32(DP_BIT15);
+
+    __m128i opacity = _mm_set1_epi32((int)opacity_int);
+
+    for (int x = 0; x < count; x += 4, dst += 4, mask_int += 4) {
+        // load mask
+        __m128i mask = _mm_cvtepu16_epi32(_mm_loadl_epi64((void *)mask_int));
+
+        // Load dest
+        __m128i dstB, dstG, dstR, dstA;
+        load_unaligned_sse42(dst, &dstB, &dstG, &dstR, &dstA);
+
+        __m128i o = mul_sse42(mask, opacity);
+
+        // Normal blend
+        __m128i srcAO = mul_sse42(srcA, o);
+        __m128i as = mul_sse42(dstA, srcAO); // as = dstA * srcA * o
+        __m128i as1 = _mm_sub_epi32(_mm_set1_epi32(DP_BIT15), srcAO); // as1 = DP_BIT15 - srcA * o
+
+        dstB = _mm_add_epi32(mul_sse42(dstB, as1), mul_sse42(srcB, as)); // dstB = (dstB * as1) + (srcB * as)
+        dstG = _mm_add_epi32(mul_sse42(dstG, as1), mul_sse42(srcG, as)); // dstG = (dstG * as1) + (srcG * as)
+        dstR = _mm_add_epi32(mul_sse42(dstR, as1), mul_sse42(srcR, as)); // dstR = (dstR * as1) + (srcR * as)
+
+        store_unaligned_sse42(dstB, dstG, dstR, dstA, dst);
+    }
+    // clang-format on
+}
 DP_TARGET_END
 
 DP_TARGET_BEGIN("avx2")
@@ -1209,6 +1248,48 @@ static void blend_mask_pixels_normal_and_eraser_avx2(DP_Pixel15 *dst,
     }
     _mm256_zeroupper();
 }
+
+static void blend_mask_pixels_recolor_avx2(DP_Pixel15 *dst, DP_UPixel15 src,
+                                           const uint16_t *mask_int,
+                                           Fix15 opacity_int, int count)
+{
+    // clang-format off
+    DP_ASSERT(count % 8 == 0);
+
+    // Do in parent function ?
+    __m256i srcB = _mm256_set1_epi32(src.b);
+    __m256i srcG = _mm256_set1_epi32(src.g);
+    __m256i srcR = _mm256_set1_epi32(src.r);
+    __m256i srcA = _mm256_set1_epi32(DP_BIT15);
+
+    __m256i opacity = _mm256_set1_epi32((int)opacity_int);
+
+    for (int x = 0; x < count; x += 8, dst += 8, mask_int += 8) {
+        // load mask
+        __m256i mask = _mm256_cvtepu16_epi32(_mm_loadu_si128((void *)mask_int));
+        // Permute mask to fit pixel load order (15263748)
+        mask = _mm256_permutevar8x32_epi32(mask, _mm256_setr_epi32(0, 4, 1, 5, 2, 6, 3, 7));
+
+        // Load dst
+        __m256i dstB, dstG, dstR, dstA;
+        load_unaligned_avx2(dst, &dstB, &dstG, &dstR, &dstA);
+
+        __m256i o = mul_avx2(mask, opacity);
+
+        // Recolor blend
+        __m256i srcAO = mul_avx2(srcA, o);
+        __m256i as = mul_avx2(dstA, srcAO); // as = dstA * srcA * o
+        __m256i as1 = _mm256_sub_epi32(_mm256_set1_epi32(1 << 15), srcAO); // as1 = 1 - srcA * o
+
+        dstB = _mm256_add_epi32(mul_avx2(dstB, as1), mul_avx2(srcB, as)); // dstB = (dstB * as1) + (srcB * as)
+        dstG = _mm256_add_epi32(mul_avx2(dstG, as1), mul_avx2(srcG, as)); // dstG = (dstG * as1) + (srcG * as)
+        dstR = _mm256_add_epi32(mul_avx2(dstR, as1), mul_avx2(srcR, as)); // dstR = (dstR * as1) + (srcR * as)
+
+        store_unaligned_avx2(dstB, dstG, dstR, dstA, dst);
+    }
+    _mm256_zeroupper();
+    // clang-format on
+}
 DP_TARGET_END
 #endif
 
@@ -1254,6 +1335,18 @@ static BGRA15 blend_replace(DP_UNUSED BGR15 cb, DP_UNUSED BGR15 cs,
         .g = fix15_mul(cs.g, o),
         .r = fix15_mul(cs.r, o),
         .a = fix15_mul(as, o),
+    };
+}
+
+static BGRA15 blend_recolor(BGR15 cb, BGR15 cs, Fix15 ab, Fix15 as, Fix15 o)
+{
+    Fix15 abo = fix15_mul(ab, o);
+    Fix15 as1 = BIT15_FIX - fix15_mul(as, o);
+    return (BGRA15){
+        .b = fix15_sumprods(cb.b, as1, cs.b, abo),
+        .g = fix15_sumprods(cb.g, as1, cs.g, abo),
+        .r = fix15_sumprods(cb.r, as1, cs.r, abo),
+        .a = ab,
     };
 }
 
@@ -1378,11 +1471,6 @@ static Fix15 comp_subtract(Fix15 a, Fix15 b)
 static Fix15 comp_add(Fix15 a, Fix15 b)
 {
     return fix15_clamp(a + b);
-}
-
-static Fix15 comp_recolor(DP_UNUSED Fix15 a, Fix15 b)
-{
-    return b;
 }
 
 static Fix15 comp_screen(Fix15 a, Fix15 b)
@@ -1619,6 +1707,23 @@ static void blend_mask_pixels_normal_and_eraser(DP_Pixel15 *dst,
     }
 }
 
+static void blend_mask_pixels_recolor(DP_Pixel15 *dst, DP_UPixel15 src,
+                                      const uint16_t *mask, Fix15 opacity,
+                                      int count)
+{
+    for (int x = 0; x < count; ++x, ++dst, ++mask) {
+        Fix15 o = fix15_mul(*mask, opacity);
+        Fix15 as = fix15_mul(dst->a, o);
+        Fix15 as1 = BIT15_FIX - fix15_mul(BIT15_FIX, o);
+        dst->b =
+            from_fix(fix15_sumprods(to_fix(dst->b), as1, to_fix(src.b), as));
+        dst->g =
+            from_fix(fix15_sumprods(to_fix(dst->g), as1, to_fix(src.g), as));
+        dst->r =
+            from_fix(fix15_sumprods(to_fix(dst->r), as1, to_fix(src.r), as));
+    }
+}
+
 static void blend_mask_normal(DP_Pixel15 *dst, DP_UPixel15 src,
                               const uint16_t *mask, Fix15 opacity, int w, int h,
                               int mask_skip, int base_skip)
@@ -1732,6 +1837,53 @@ static void blend_mask_alpha_darken(DP_Pixel15 *dst, DP_UPixel15 src,
     });
 }
 
+static void blend_mask_recolor(DP_Pixel15 *dst, DP_UPixel15 src,
+                               const uint16_t *mask, Fix15 opacity, int w,
+                               int h, int mask_skip, int base_skip)
+{
+#ifdef DP_CPU_X64
+    for (int y = 0; y < h; ++y) {
+        int remaining = w;
+
+        if (DP_cpu_support >= DP_CPU_SUPPORT_AVX2) {
+            int remaining_after_avx_width = remaining % 8;
+            int avx_width = remaining - remaining_after_avx_width;
+
+            blend_mask_pixels_recolor_avx2(dst, src, mask, opacity, avx_width);
+
+            remaining -= avx_width;
+            dst += avx_width;
+            mask += avx_width;
+        }
+
+        if (DP_cpu_support >= DP_CPU_SUPPORT_SSE42) {
+            int remaining_after_sse_width = remaining % 4;
+            int sse_width = remaining - remaining_after_sse_width;
+
+            blend_mask_pixels_recolor_sse42(dst, src, mask, opacity, sse_width);
+
+            remaining -= sse_width;
+            dst += sse_width;
+            mask += sse_width;
+        }
+
+        blend_mask_pixels_recolor(dst, src, mask, opacity, remaining);
+        dst += remaining;
+        mask += remaining;
+
+        dst += base_skip;
+        mask += mask_skip;
+    }
+#else
+    for (int y = 0; y < h; ++y) {
+        blend_mask_pixels_recolor(dst, src, mask, opacity, w);
+
+        dst += w + base_skip;
+        mask += w + mask_skip;
+    }
+#endif
+}
+
 void DP_blend_mask(DP_Pixel15 *dst, DP_UPixel15 src, int blend_mode,
                    const uint16_t *mask, uint16_t opacity, int w, int h,
                    int mask_skip, int base_skip)
@@ -1800,8 +1952,8 @@ void DP_blend_mask(DP_Pixel15 *dst, DP_UPixel15 src, int blend_mode,
                                        base_skip, comp_add);
         break;
     case DP_BLEND_MODE_RECOLOR:
-        blend_mask_composite_separable(dst, src, mask, opacity, w, h, mask_skip,
-                                       base_skip, comp_recolor);
+        blend_mask_recolor(dst, src, mask, to_fix(opacity), w, h, mask_skip,
+                           base_skip);
         break;
     case DP_BLEND_MODE_SCREEN:
         blend_mask_composite_separable(dst, src, mask, opacity, w, h, mask_skip,
@@ -2014,8 +2166,8 @@ void DP_blend_pixels(DP_Pixel15 *DP_RESTRICT dst,
                                          comp_add);
         break;
     case DP_BLEND_MODE_RECOLOR:
-        blend_pixels_composite_separable(dst, src, pixel_count, to_fix(opacity),
-                                         comp_recolor);
+        blend_pixels_alpha_op(dst, src, pixel_count, to_fix(opacity),
+                              blend_recolor);
         break;
     case DP_BLEND_MODE_SCREEN:
         blend_pixels_composite_separable(dst, src, pixel_count, to_fix(opacity),

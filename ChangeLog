@@ -63,6 +63,7 @@ Unreleased Version 2.2.0-pre
  * Server Feature: Allow server owners to make sessions only joinable through direct links. Thanks Meru for suggesting.
  * Feature: Add touch tester, available under the Help menu.
  * Fix: Actually put the link that's being joined into the address input when using a web link, rather than leaving it blank.
+ * Fix: Make Recolor (alpha locked) mode way faster.
 
 2023-09-30 Version 2.2.0-beta.8
  * Fix: Apply color wheel direction to color dialogs too. Thanks Blozzom for reporting.
