@@ -658,37 +658,37 @@ in 64x64 pixel.</translation>
     <message>
         <location line="+7"/>
         <source>Export Session Bans</source>
-        <translation type="unfinished"></translation>
+        <translation>Esporta Ban di Sessione</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>Esporta Ruoli</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>The PSD format lacks support for annotations, the animation timeline and some blend modes. If you want those to be retained properly, you must save an ORA file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Il formato PSD manca di supporto per le annotazioni, la timeline di animazione e alcune modalità di fusione. Se si desidera che questi vengano mantenuti correttamente, è necessario salvare un file ORA.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The selected format will save a merged image. If you want to retain layers, annotations and the animation timeline, you must save an ORA file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Il formato selezionato salverà un&apos;immagine unita. Se si desidera mantenere livelli, annotazioni e la timeline di animazione, è necessario salvare un file ORA.</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Save as Selected Format</source>
-        <translation type="unfinished"></translation>
+        <translation>Salva come Formato Selezionato</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Save as %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Salva come %1</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Save as ORA</source>
-        <translation type="unfinished"></translation>
+        <translation>Salva come ORA</translation>
     </message>
     <message>
         <location line="+107"/>
@@ -802,7 +802,7 @@ in 64x64 pixel.</translation>
     <message>
         <location line="+41"/>
         <source>Speed: </source>
-        <translation type="unfinished"></translation>
+        <translation>Velocità: </translation>
     </message>
     <message>
         <location line="+29"/>
@@ -820,7 +820,7 @@ in 64x64 pixel.</translation>
     <message>
         <location line="+56"/>
         <source>Mark whole tiles</source>
-        <translation type="unfinished"></translation>
+        <translation>Marca tessere intere</translation>
     </message>
 </context>
 <context>
@@ -1081,57 +1081,57 @@ Sottogamma: [%3, %4]</translation>
     <message>
         <location line="+67"/>
         <source>Continue without account</source>
-        <translation type="unfinished"></translation>
+        <translation>Continua senza account</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Log in with server account</source>
-        <translation type="unfinished"></translation>
+        <translation>Accedi con account server</translation>
     </message>
     <message>
         <location line="+90"/>
         <source>Continue with this account, but change the avatar, username or password.</source>
-        <translation type="unfinished"></translation>
+        <translation>Continua con questo account, ma cambia l&apos;avatar, il nome utente o la password.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Edit and log in</source>
-        <translation type="unfinished"></translation>
+        <translation>Modifica e accedi</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Don&apos;t use any of these accounts.</source>
-        <translation type="unfinished"></translation>
+        <translation>Non usare nessuno di questi account.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Log in a different way</source>
-        <translation type="unfinished"></translation>
+        <translation>Accedi in modo diverso</translation>
     </message>
     <message>
         <location line="+43"/>
         <source>Log in with the selected account.</source>
-        <translation type="unfinished"></translation>
+        <translation>Accedi con l&apos;account selezionato.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Log in with this account</source>
-        <translation type="unfinished"></translation>
+        <translation>Accedi con questo account</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Forget this account.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dimentica questo account.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Forget this account</source>
-        <translation type="unfinished"></translation>
+        <translation>Dimentica questo account</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Don&apos;t ask again unless the rules change</source>
-        <translation type="unfinished"></translation>
+        <translation>Non chiedere di nuovo a meno che le regole cambino</translation>
     </message>
     <message>
         <location line="-578"/>
@@ -1276,7 +1276,7 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     <message>
         <location line="+25"/>
         <source>Joined the session!</source>
-        <translation type="unfinished"></translation>
+        <translation>Unito alla sessione!</translation>
     </message>
     <message>
         <location line="+31"/>
@@ -1664,77 +1664,77 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     <message>
         <location line="-1462"/>
         <source>Reason:</source>
-        <translation type="unfinished">Ragione:</translation>
+        <translation>Ragione:</translation>
     </message>
     <message>
         <location line="+183"/>
         <source>Canvas locked</source>
-        <translation type="unfinished">Tela bloccata</translation>
+        <translation>Tela bloccata</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Canvas unlocked</source>
-        <translation type="unfinished">Tela sbloccata</translation>
+        <translation>Tela sbloccata</translation>
     </message>
     <message>
         <location line="+357"/>
         <source>Freehand (erase mode, click to reset)</source>
-        <translation type="unfinished"></translation>
+        <translation>Mano Libera (modalità di cancellazione, fare clic per ripristinare)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Freehand brush tool (erase mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>Pennello a mano libera (modalità di cancellazione)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Freehand (alpha lock mode, click to reset)</source>
-        <translation type="unfinished"></translation>
+        <translation>Mano Libera (modalità di blocco alfa, fare clic per ripristinare)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Freehand brush tool (alpha lock mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>Pennello a mano libera (modalità di blocco alfa)</translation>
     </message>
     <message>
         <location line="+625"/>
         <source>Export Image…</source>
-        <translation type="unfinished"></translation>
+        <translation>Esporta Immagine…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Export Selection...</source>
-        <translation type="unfinished"></translation>
+        <translation>Esporta Selezione…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Import &amp;Drawpile 2.1 Animation…</source>
-        <translation type="unfinished"></translation>
+        <translation>Importa&amp; Animazione di Drawpile 2.1…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Import &amp;Brushes...</source>
-        <translation type="unfinished"></translation>
+        <translation>Importa &amp;Pennelli...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Export Session &amp;Template...</source>
-        <translation type="unfinished"></translation>
+        <translation>Esporta &amp;Template della Sessione…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Export Animated &amp;GIF...</source>
-        <translation type="unfinished"></translation>
+        <translation>Esporta &amp;GIF Animata…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Export Animation &amp;Frames...</source>
-        <translation type="unfinished"></translation>
+        <translation>Esporta &amp;Frame di Animazione…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Export &amp;Brushes…</source>
-        <translation type="unfinished"></translation>
+        <translation>Esporta &amp;Pennelli…</translation>
     </message>
     <message>
         <location line="+279"/>
@@ -2155,22 +2155,22 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+49"/>
         <source>&amp;Copy Merged</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Copia Livelli e Unisci</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy Without Background</source>
-        <translation type="unfinished"></translation>
+        <translation>Copia Senza Sfondo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy From &amp;Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Copia da &amp;Livello</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Cu&amp;t From Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Taglia da Livello</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2180,7 +2180,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+1"/>
         <source>&amp;Stamp Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Selezione Stamp</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2260,7 +2260,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+1"/>
         <source>Layer Properties…</source>
-        <translation type="unfinished"></translation>
+        <translation>Proprietà Del Livello…</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2658,7 +2658,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+110"/>
         <source>Touch Tester</source>
-        <translation type="unfinished"></translation>
+        <translation>Tester del Touch</translation>
     </message>
     <message>
         <location line="+50"/>
@@ -3191,17 +3191,17 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+17"/>
         <source>Idle timeout:</source>
-        <translation type="unfinished"></translation>
+        <translation>Timeout del tempo in assenza:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>X seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>X secondi</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Disable idle timeout</source>
-        <translation type="unfinished"></translation>
+        <translation>Disabilita timeout dell&apos;inattività</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -3261,19 +3261,19 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+18"/>
         <source>Bans</source>
-        <translation type="unfinished"></translation>
+        <translation>Ban</translation>
     </message>
     <message>
         <location line="+18"/>
         <location line="+82"/>
         <source>Import</source>
-        <translation type="unfinished">Importa</translation>
+        <translation>Importa</translation>
     </message>
     <message>
         <location line="-71"/>
         <location line="+82"/>
         <source>Export</source>
-        <translation type="unfinished">Esporta</translation>
+        <translation>Esporta</translation>
     </message>
     <message>
         <location line="-247"/>
@@ -3360,12 +3360,12 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="-145"/>
         <source>Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>Ruoli</translation>
     </message>
     <message>
         <location line="+72"/>
         <source>Operator</source>
-        <translation type="unfinished">Оperatore</translation>
+        <translation>Оperatore</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -3772,46 +3772,47 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location filename="../dialogs/animationimportdialog.cpp" line="+27"/>
         <source>Import Animation</source>
-        <translation type="unfinished"></translation>
+        <translation>Importa Animazione</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>File to Import:</source>
-        <translation type="unfinished"></translation>
+        <translation>File da Importare:</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Choose</source>
-        <translation type="unfinished">Scegli</translation>
+        <translation>Scegli</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Key frame length:</source>
         <extracomment>How many frames each imported key frame gets in the timeline.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Lunghezza del keyframe:</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Framerate:</source>
-        <translation type="unfinished">Framerate:</translation>
+        <translation>Framerate:</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Import</source>
-        <translation type="unfinished">Importa</translation>
+        <translation>Importa</translation>
     </message>
     <message numerus="yes">
         <location line="+28"/>
         <source> frame(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform> frame</numerusform>
+            <numerusform> frames</numerusform>
+            <numerusform> frames</numerusform>
         </translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Animation Import Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore di Importazione dell&apos;Animazione</translation>
     </message>
 </context>
 <context>
@@ -4034,7 +4035,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
         <location line="+57"/>
         <location line="+68"/>
         <source>Input</source>
-        <translation type="unfinished">Input</translation>
+        <translation>Input</translation>
     </message>
     <message>
         <location line="-152"/>
@@ -4092,32 +4093,32 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="-211"/>
         <source>No dynamics</source>
-        <translation type="unfinished"></translation>
+        <translation>Nessuna dinamica</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pressure dynamics</source>
-        <translation type="unfinished"></translation>
+        <translation>Dinamiche della pressione</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Velocity dynamics</source>
-        <translation type="unfinished"></translation>
+        <translation>Dinamiche della velocità</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Distance dynamics</source>
-        <translation type="unfinished"></translation>
+        <translation>Dinamiche della distanza</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Maximum Velocity: </source>
-        <translation type="unfinished"></translation>
+        <translation>Velocità Massima: </translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Maximum Distance: </source>
-        <translation type="unfinished"></translation>
+        <translation>Distanza Massima: </translation>
     </message>
     <message>
         <location line="+9"/>
@@ -4129,22 +4130,22 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="-49"/>
         <source>Set the maximum velocity for Size, Opacity, Hardness and Smudging at once.</source>
-        <translation type="unfinished"></translation>
+        <translation>Imposta la velocità massima per Dimensione, Opacità, Durezza e Sbavature contemporaneamente.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Maximum velocity set for all settings in this brush.</source>
-        <translation type="unfinished"></translation>
+        <translation>Velocità massima impostata per tutte le impostazioni in questo pennello.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Set the maximum distance for Size, Opacity, Hardness and Smudging at once.</source>
-        <translation type="unfinished"></translation>
+        <translation>Imposta la distanza massima per Dimensioni, Opacità, Durezza e Sbavature contemporaneamente.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Maximum distance set for all settings in this brush.</source>
-        <translation type="unfinished"></translation>
+        <translation>Distanza massima impostata per tutte le impostazioni in questo pennello.</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -5723,7 +5724,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+4"/>
         <source>% (%1 FPS)</source>
-        <translation type="unfinished"></translation>
+        <translation>% (%1 FPS)</translation>
     </message>
 </context>
 <context>
@@ -5863,17 +5864,17 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+133"/>
         <source>Accept</source>
-        <translation type="unfinished"></translation>
+        <translation>Accetta</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Log in with server account</source>
-        <translation type="unfinished"></translation>
+        <translation>Accedi con account server</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>This username belongs to a registered account. If this isn&apos;t your account, cancel and try again with a different name.</source>
-        <translation type="unfinished"></translation>
+        <translation>Questo nome utente appartiene ad un account registrato. Se questo non è il tuo account, cancella e riprova con un nome diverso.</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -5883,76 +5884,76 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+18"/>
         <source>Decline</source>
-        <translation type="unfinished"></translation>
+        <translation>Rifiuta</translation>
     </message>
     <message>
         <location line="+5"/>
         <location line="+9"/>
         <location line="+15"/>
         <source>Rules</source>
-        <translation type="unfinished"></translation>
+        <translation>Regolamento</translation>
     </message>
     <message>
         <location line="-9"/>
         <location line="+15"/>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>Indietro</translation>
     </message>
     <message>
         <location line="+251"/>
         <source>Remove Account</source>
-        <translation type="unfinished"></translation>
+        <translation>Rimuovi account</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really forget this account? This will only remove it from your recent account list, it won&apos;t delete the account.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dimenticare davvero questo account? Questo lo rimuoverà solo dal tuo elenco di account recenti, non cancellerà l&apos;account.</translation>
     </message>
     <message>
         <location line="+37"/>
         <location line="+118"/>
         <source>Enter the name you want to use.</source>
-        <translation type="unfinished"></translation>
+        <translation>Inserisci il nome che vuoi usare.</translation>
     </message>
     <message>
         <location line="-56"/>
         <source>Server Rules for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Regole Server per %1</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Log in with %1 account</source>
-        <translation type="unfinished"></translation>
+        <translation>Accedi con l&apos;account %1</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Enter the name you want to use. See %1 for more information about this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Inserisci il nome che vuoi usare. Vedi %1 per maggiori informazioni su questo server.</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>You can continue without an account. If you want to register one anyway, you can do so on %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Puoi continuare senza un account. Se si desidera registrare uno comunque, è possibile farlo su %1.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>An account is required. You can register one on %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>È richiesto un account. È possibile registrarne uno su %1.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>You can continue without an account. The server doesn&apos;t provide any information on how to register one either.</source>
-        <translation type="unfinished"></translation>
+        <translation>Puoi continuare senza un account. Il server non fornisce alcuna informazione su come registrarne uno.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>An account is required, but the server doesn&apos;t provide any information on how to register one.</source>
-        <translation type="unfinished"></translation>
+        <translation>È richiesto un account, ma il server non fornisce alcuna informazione su come registrarne uno.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>See %1 for more information about this server. To register an account, visit %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vedere %1 per maggiori informazioni su questo server. Per registrare un account, visitare %2.</translation>
     </message>
     <message>
         <location line="+5"/>
