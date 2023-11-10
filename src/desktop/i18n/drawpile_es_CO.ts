@@ -49,7 +49,7 @@
     <message>
         <location line="+8"/>
         <source>Offender:</source>
-        <translation type="unfinished"></translation>
+        <translation>Infractor:</translation>
     </message>
 </context>
 <context>
@@ -57,12 +57,12 @@
     <message>
         <location filename="../ui/addserverdialog.ui" line="+14"/>
         <source>Add Server</source>
-        <translation type="unfinished">Agregar servidor</translation>
+        <translation>Agregar servidor</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Enter a list server URL:</source>
-        <translation>Ingresa un URL de servidor</translation>
+        <translation>Ingresa un URL de servidor:</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -156,12 +156,12 @@
     <message>
         <location line="+58"/>
         <source>Smudging: </source>
-        <translation type="unfinished"></translation>
+        <translation>Difuminar: </translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Color Pickup: 1/</source>
-        <translation type="unfinished"></translation>
+        <translation>Selección de color: 1/</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -1173,7 +1173,7 @@ Subrange: [%3, %4]</source>
         <location line="+129"/>
         <source>You have %n images with unsaved changes. Do you want to review these changes before quitting?</source>
         <translation>
-            <numerusform>Tienes %n imagenes con cambios sin guardar. ¿Quieres revisar los cambios antes de salir?</numerusform>
+            <numerusform>Tienes %n imágenes con cambios sin guardar. ¿Quieres revisar los cambios antes de salir?</numerusform>
             <numerusform></numerusform>
         </translation>
     </message>
@@ -3682,7 +3682,8 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+1"/>
         <source>Failed to load the palette file
 %1</source>
-        <translation>Cargado de archivo de paleta fallido %1</translation>
+        <translation>Cargado de archivo de paleta fallido 
+%1</translation>
     </message>
 </context>
 <context>
