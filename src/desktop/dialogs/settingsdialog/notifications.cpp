@@ -124,7 +124,7 @@ void Notifications::initGrid(
 
 		QToolButton *preview = new QToolButton(this);
 		preview->setText(tr("Preview event"));
-		flashBox->setToolTip(std::get<1>(header[4]));
+		preview->setToolTip(std::get<1>(header[4]));
 		preview->setIcon(QIcon::fromTheme("media-playback-start"));
 		grid->addWidget(preview, row, 4, Qt::AlignHCenter);
 
