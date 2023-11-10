@@ -1216,10 +1216,10 @@ static BGRA15 blend_normal(BGR15 cb, BGR15 cs, Fix15 ab, Fix15 as, Fix15 o)
 {
     Fix15 as1 = BIT15_FIX - fix15_mul(as, o);
     return (BGRA15){
-        .b = fix15_mul(cb.b, as1) + fix15_mul(cs.b, o),
-        .g = fix15_mul(cb.g, as1) + fix15_mul(cs.g, o),
-        .r = fix15_mul(cb.r, as1) + fix15_mul(cs.r, o),
-        .a = fix15_mul(ab, as1) + fix15_mul(as, o),
+        .b = fix15_sumprods(cb.b, as1, cs.b, o),
+        .g = fix15_sumprods(cb.g, as1, cs.g, o),
+        .r = fix15_sumprods(cb.r, as1, cs.r, o),
+        .a = fix15_sumprods(ab, as1, as, o),
     };
 }
 
@@ -1587,15 +1587,14 @@ static void blend_mask_pixels_normal(DP_Pixel15 *dst, DP_UPixel15 src,
 {
     for (int x = 0; x < count; ++x, ++dst, ++mask) {
         Fix15 o = fix15_mul(*mask, opacity);
-
         Fix15 as1 = BIT15_FIX - fix15_mul(BIT15_FIX, o);
-
-        // clang-format off
-        dst->b = from_fix(fix15_mul(to_fix(dst->b), as1) + fix15_mul(to_fix(src.b), o)),
-        dst->g = from_fix(fix15_mul(to_fix(dst->g), as1) + fix15_mul(to_fix(src.g), o)),
-        dst->r = from_fix(fix15_mul(to_fix(dst->r), as1) + fix15_mul(to_fix(src.r), o)),
-        dst->a = from_fix(fix15_mul(to_fix(dst->a), as1) + fix15_mul(BIT15_FIX, o));
-        // clang-format on
+        dst->b =
+            from_fix(fix15_sumprods(to_fix(dst->b), as1, to_fix(src.b), o));
+        dst->g =
+            from_fix(fix15_sumprods(to_fix(dst->g), as1, to_fix(src.g), o));
+        dst->r =
+            from_fix(fix15_sumprods(to_fix(dst->r), as1, to_fix(src.r), o));
+        dst->a = from_fix(fix15_sumprods(to_fix(dst->a), as1, BIT15_FIX, o));
     }
 }
 
