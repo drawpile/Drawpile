@@ -319,7 +319,7 @@
     <message>
         <location filename="../export/ffmpegexporter.cpp" line="+62"/>
         <source>You can downlod a Windows version of ffmpeg from &lt;a href=&quot;https://ffmpeg.org/download.html&quot;&gt;ffmpeg.org&lt;/a&gt;. Choose ffmpeg.exe for the path to ffmpeg in Drawpile.</source>
-        <translation>你可以从 &lt;a href=&quot;https://ffmpeg.org/download.html&quot;&gt;ffmpeg.org&lt;/a&gt;中下载Windows版本的ffmpeg. 然后在ffmpeg路径方框里选择解压出来的 ffmpeg.exe .</translation>
+        <translation>你可以从 &lt;a href=&quot;https://ffmpeg.org/download.html&quot;&gt;ffmpeg.org&lt;/a&gt; 中下载Windows版本的 ffmpeg. 然后在 ffmpeg 路径方框里选择解压出来的 ffmpeg.exe .</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -431,12 +431,12 @@
     <message>
         <location line="+4"/>
         <source>Session Bans (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>被禁的用户 (%1)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Roles (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>角色 (%1)</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -919,7 +919,7 @@
         <location filename="../import/animationimporter.cpp" line="+47"/>
         <source>Frames %1</source>
         <extracomment>Title for imported animation tracks and layer groups.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>帧数 %1</translation>
     </message>
 </context>
 <context>
@@ -955,27 +955,27 @@
     <message>
         <location filename="../net/authlistmodel.cpp" line="+37"/>
         <source>Moderator</source>
-        <translation type="unfinished">服务器管理员</translation>
+        <translation>服务器管理员</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Operator</source>
-        <translation type="unfinished">房间管理员</translation>
+        <translation>房间管理员</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Trusted</source>
-        <translation type="unfinished">信任用户</translation>
+        <translation>信任用户</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>User</source>
-        <translation type="unfinished">用户</translation>
+        <translation>用户</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>角色</translation>
     </message>
 </context>
 <context>
@@ -984,7 +984,7 @@
         <location filename="../net/banlistmodel.cpp" line="+69"/>
         <location line="+15"/>
         <source>ID</source>
-        <translation type="unfinished"></translation>
+        <translation>ID</translation>
     </message>
     <message>
         <location line="-13"/>
@@ -1000,7 +1000,7 @@
     <message>
         <location line="+2"/>
         <source>Client info</source>
-        <translation type="unfinished"></translation>
+        <translation>客户端信息</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1039,93 +1039,93 @@
     <message>
         <location line="-384"/>
         <source>You have been kicked.</source>
-        <translation type="unfinished"></translation>
+        <translation>You have been kicked.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You have been kicked by %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>You have been kicked by %1.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>A server error occurred.</source>
-        <translation type="unfinished"></translation>
+        <translation>服务器发生错误.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>A server error occurred: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>服务器发生错误: %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>The server is shutting down.</source>
-        <translation type="unfinished"></translation>
+        <translation>服务器正在关闭.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The session has been shut down: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>房间已被关闭: %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Disconnected.</source>
-        <translation type="unfinished"></translation>
+        <translation>断开连接.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Disconnected: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>断开连接: %1</translation>
     </message>
     <message>
         <location line="+316"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>只有服务器管理员可以导出普通的被禁的用户.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Server error.</source>
-        <translation type="unfinished"></translation>
+        <translation>服务器错误.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Exporting encrypted bans not configured on this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>导出未在此服务器上配置的加密的被禁的用户.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Exporting encrypted bans not supported by this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>该服务器不支持导出加密的被禁的用户.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The server couldn&apos;t read the import data. This is likely because it was exported from a different server. You can only import bans into the same server they were exported from.</source>
-        <translation type="unfinished"></translation>
+        <translation>服务器无法读取导入的数据. 这可能是因为数据是从其他服务器导出的. 你只能将被禁的用户导入导出在同一个服务器里.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Invalid import data.</source>
-        <translation type="unfinished"></translation>
+        <translation>导入数据无效.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Malformed import data.</source>
-        <translation type="unfinished"></translation>
+        <translation>导入数据出错.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Importing encrypted bans not configured on this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>导入未在此服务器上配置的加密的被禁的用户.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Importing encrypted bans not supported by this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>该服务器不支持导入加密的被禁的用户.</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Operator status revoked from %1 by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Operator status revoked from %1 by %2.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1152,13 +1152,13 @@
         <location line="+4"/>
         <source>Session terminated by administrator: %2</source>
         <extracomment>%1 is the reason given.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>房间已被管理员终止: %2</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session terminated by moderator (%1): %2</source>
         <extracomment>%1 is the name of the moderator, %2 is the reason given.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>房间已被服务器管理员 (%1) 终止: %2</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -1294,17 +1294,17 @@
     <message>
         <location line="+4"/>
         <source>This usually means that your Drawpile version is too old. Do you need to update?</source>
-        <translation type="unfinished"></translation>
+        <translation>这通常说明你的Drawpile版本太旧. 你需要更新吗?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Session not found, it may have ended or its invite link has changed</source>
-        <translation type="unfinished"></translation>
+        <translation>房间未找到, 可能已关闭或者其邀请链接已更改</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This server only allows joining sessions through a direct link.</source>
-        <translation type="unfinished"></translation>
+        <translation>此服务器只允许通过直接链接加入房间.</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -1319,17 +1319,17 @@
     <message>
         <location line="-761"/>
         <source>This server doesn&apos;t provide a way to log in for joining a session!</source>
-        <translation type="unfinished"></translation>
+        <translation>此服务器不提供登录方式来加入房间!</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This server doesn&apos;t provide a way to log in for hosting a session!</source>
-        <translation type="unfinished"></translation>
+        <translation>此服务器不提供登录方式来创建房间!</translation>
     </message>
     <message>
         <location line="+83"/>
         <source>Session lookup failed</source>
-        <translation type="unfinished"></translation>
+        <translation>房间查找失败</translation>
     </message>
     <message>
         <location line="+140"/>
@@ -1344,17 +1344,17 @@
     <message>
         <location line="+30"/>
         <source>Invalid ident intent response.</source>
-        <translation type="unfinished"></translation>
+        <translation>无效标识意图响应.</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>Server reported two different ext-auth URLs</source>
-        <translation type="unfinished"></translation>
+        <translation>服务器报告了两个不同的外部认证 URLs</translation>
     </message>
     <message>
         <location line="+111"/>
         <source>Got multiple sessions when only one was expected</source>
-        <translation type="unfinished"></translation>
+        <translation>在预期只有一个房间的情况下出现了多个房间</translation>
     </message>
     <message>
         <location line="+35"/>
