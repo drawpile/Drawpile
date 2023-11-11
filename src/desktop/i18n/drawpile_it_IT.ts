@@ -5719,7 +5719,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+99"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -6113,9 +6113,10 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <location line="+3"/>
         <source>%1 %n was/were not imported because it was/they were invalid or duplicates.</source>
         <extracomment>%1 is the &quot;Imported %n session ban(s).&quot; message.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%1 %n non è stato importato perché era invalido o duplicato.</numerusform>
+            <numerusform>%1 %n non sono stati importati perché erano invalidi o duplicati.</numerusform>
+            <numerusform>%1 %n non sono stati importati perché erano invalidi o duplicati.</numerusform>
         </translation>
     </message>
     <message>
@@ -6123,32 +6124,32 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <location line="+461"/>
         <location line="+9"/>
         <source>Session Ban Import</source>
-        <translation type="unfinished"></translation>
+        <translation>Import dei Ban Sessione</translation>
     </message>
     <message>
         <location line="-449"/>
         <source>Session Ban Export</source>
-        <translation type="unfinished"></translation>
+        <translation>Esporta Ban di Sessione</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Error saving bans to &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore di salvataggio dei ban su &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Session Ban Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore di Ban di Sessione</translation>
     </message>
     <message>
         <location line="+49"/>
         <source>This list shows only registered users.</source>
-        <translation type="unfinished"></translation>
+        <translation>Questa lista mostra solo gli utenti registrati.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Only operators can see this list.</source>
-        <translation type="unfinished"></translation>
+        <translation>Solo gli operatori possono vedere questa lista.</translation>
     </message>
     <message>
         <location line="+68"/>
@@ -6198,46 +6199,49 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <location line="+32"/>
         <source>never</source>
         <extracomment>&quot;Idle timeout: never&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>mai</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>disabled by moderator</source>
         <extracomment>&quot;Idle timeout: disabled by moderator&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>disabilitato da moderatore</translation>
     </message>
     <message numerus="yes">
         <location line="+6"/>
         <source>%n hour(s)</source>
         <extracomment>Idle timeout hours. May be joined with minutes and seconds.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n ora</numerusform>
+            <numerusform>%n ore</numerusform>
+            <numerusform>%n ore</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+6"/>
         <source>%n minute(s)</source>
         <extracomment>Idle timeout minutes. May be joined with hours and seconds.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n minuto</numerusform>
+            <numerusform>%n minuti</numerusform>
+            <numerusform>%n minuti</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="+6"/>
         <source>%n second(s)</source>
         <extracomment>Idle timeout seconds. May be joined with hours and minutes.</extracomment>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n secondo</numerusform>
+            <numerusform>%n secondi</numerusform>
+            <numerusform>%n secondi</numerusform>
         </translation>
     </message>
     <message>
         <location line="+4"/>
         <source>, </source>
         <extracomment>This string joins the hours, minutes and seconds for the idle time.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>, </translation>
     </message>
     <message>
         <location line="+116"/>
@@ -6269,72 +6273,73 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <location line="+30"/>
         <location line="+113"/>
         <source>Error opening &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Error apertura di &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <location line="-86"/>
         <source>This server does not support importing encrypted bans.</source>
-        <translation type="unfinished"></translation>
+        <translation>Questo server non supporta l&apos;importazione di ban crittografati.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>This server does not support importing plain bans.</source>
-        <translation type="unfinished"></translation>
+        <translation>Questo server non supporta l&apos;importazione di ban semplici.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>File does not appear to contain any ban data.</source>
-        <translation type="unfinished"></translation>
+        <translation>File non sembra contenere dati di ban.</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Choose Ban Export Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Scegli il tipo di esportazione Ban</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Since you are a moderator, you can export bans encrypted or plain. Encrypted bans can only be imported on this server. Which format do you want to export?</source>
-        <translation type="unfinished"></translation>
+        <translation>Dal momento che sei un moderatore, è possibile esportare ban crittografati o semplici. I ban crittografati possono essere importati solo su questo server. Quale formato vuoi esportare?</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Encrypted</source>
-        <translation type="unfinished"></translation>
+        <translation>Criptato</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Plain</source>
-        <translation type="unfinished"></translation>
+        <translation>Semplice</translation>
     </message>
     <message>
         <location line="+46"/>
         <location line="+10"/>
         <location line="+10"/>
         <source>Role Import</source>
-        <translation type="unfinished"></translation>
+        <translation>Importazione dei Ruoli</translation>
     </message>
     <message>
         <location line="-9"/>
         <source>File &apos;%1&apos; does not contain a valid role export.</source>
-        <translation type="unfinished"></translation>
+        <translation>File &apos;%1&apos; non contiene un&apos;esportazione di ruolo valida.</translation>
     </message>
     <message numerus="yes">
         <location line="+9"/>
         <source>%n role(s) imported.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n ruolo importato.</numerusform>
+            <numerusform>%n ruoli importati</numerusform>
+            <numerusform>%n ruoli importati</numerusform>
         </translation>
     </message>
     <message>
         <location line="+40"/>
         <source>Role Export</source>
-        <translation type="unfinished"></translation>
+        <translation>Esportazione Ruoli</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Error saving roles to &apos;%1&apos;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore salvando ruoli in &apos;%1&apos;: %2</translation>
     </message>
 </context>
 <context>
@@ -6569,22 +6574,22 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../dialogs/touchtestdialog.cpp" line="+95"/>
         <source>Enable touch</source>
-        <translation type="unfinished"></translation>
+        <translation>Attiva il tocco</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Enable gestures</source>
-        <translation type="unfinished"></translation>
+        <translation>Attiva gesti</translation>
     </message>
     <message>
         <location line="+49"/>
         <source>Error Saving Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore nel Salvataggio del File di Registro</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Touch test log could not be saved: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Il registro di prova touch non poteva essere salvato: %1</translation>
     </message>
 </context>
 <context>
@@ -6592,7 +6597,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="-118"/>
         <source>Touch here.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tocca qui.</translation>
     </message>
 </context>
 <context>
@@ -6686,12 +6691,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+107"/>
         <source>Checking…</source>
-        <translation type="unfinished">Controllo…</translation>
+        <translation>Controllando…</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Not found. %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Non trovato. %1</translation>
     </message>
 </context>
 <context>
@@ -6925,7 +6930,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+4"/>
         <source>Compensate jagged curves</source>
-        <translation type="unfinished"></translation>
+        <translation>Compensa le curve dentellate</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -6985,7 +6990,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+1"/>
         <source>Pan canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Panoramica della Tela</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -7048,7 +7053,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+3"/>
         <source>With this enabled, Drawpile may save passwords in an unencrypted format. Disabling it will forget any insecurely stored passwords.</source>
-        <translation type="unfinished"></translation>
+        <translation>Con questo abilitato, Drawpile può salvare le password in un formato non crittografato. Disabilitarlo dimenticherà qualsiasi password memorizzate insecubilmente.</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -7124,27 +7129,27 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location filename="../dialogs/settingsdialog/notifications.cpp" line="+40"/>
         <source>Event</source>
-        <translation type="unfinished"></translation>
+        <translation>Evento</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>What triggered this notification</source>
-        <translation type="unfinished"></translation>
+        <translation>Cosa ha attivato questa notifica</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Play sound</source>
-        <translation type="unfinished"></translation>
+        <translation>Riproduci suono</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Play a sound effect when this event occurs.</source>
-        <translation type="unfinished"></translation>
+        <translation>Riproduci un effetto sonoro quando si verifca questo evento.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Popup</source>
-        <translation type="unfinished"></translation>
+        <translation>Popup</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7209,7 +7214,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+12"/>
         <source>Disconnected</source>
-        <translation type="unfinished">Disconnesso</translation>
+        <translation>Disconnesso</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -9547,12 +9552,12 @@ o via Animazione ▸ Nuova Traccia</translation>
     <message>
         <location line="+4"/>
         <source>&amp;Undo</source>
-        <translation type="unfinished">&amp;Annulla</translation>
+        <translation>&amp;Annulla</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Redo</source>
-        <translation type="unfinished">&amp;Indietro</translation>
+        <translation>&amp;Indietro</translation>
     </message>
     <message>
         <location line="+4"/>
