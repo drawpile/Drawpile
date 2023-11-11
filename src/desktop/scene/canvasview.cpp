@@ -1,18 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/scene/canvasview.h"
 #include "desktop/main.h"
 #include "desktop/scene/canvasscene.h"
-#include "libclient/canvas/canvasmodel.h"
-#include "libclient/drawdance/eventlog.h"
-#include "libshared/util/qtcompat.h"
-
 #include "desktop/tabletinput.h"
 #include "desktop/utils/qtguicompat.h"
 #include "desktop/widgets/notifbar.h"
-
+#include "libclient/canvas/canvasmodel.h"
+#include "libclient/drawdance/eventlog.h"
+#include "libshared/util/qtcompat.h"
 #include <QApplication>
 #include <QDateTime>
+#include <QGestureEvent>
 #include <QLineF>
 #include <QMimeData>
 #include <QMouseEvent>
@@ -120,6 +118,8 @@ CanvasView::CanvasView(QWidget *parent)
 	settings.bindOneFingerScroll(this, &widgets::CanvasView::setTouchScroll);
 	settings.bindTwoFingerZoom(this, &widgets::CanvasView::setTouchPinch);
 	settings.bindTwoFingerRotate(this, &widgets::CanvasView::setTouchTwist);
+	settings.bindTouchGestures(
+		this, &widgets::CanvasView::setTouchUseGestureEvents);
 	settings.bindBrushCursor(this, &widgets::CanvasView::setBrushCursorStyle);
 	settings.bindBrushOutlineWidth(
 		this, &widgets::CanvasView::setBrushOutlineWidth);
@@ -141,6 +141,21 @@ CanvasView::CanvasView(QWidget *parent)
 		setHorizontalScrollBarPolicy(policy);
 		setVerticalScrollBarPolicy(policy);
 	});
+}
+
+void CanvasView::setTouchUseGestureEvents(bool useGestureEvents)
+{
+	if(useGestureEvents && !m_useGestureEvents) {
+		DP_EVENT_LOG("grab gesture events");
+		viewport()->grabGesture(Qt::PanGesture);
+		viewport()->grabGesture(Qt::PinchGesture);
+		m_useGestureEvents = true;
+	} else if(!useGestureEvents && m_useGestureEvents) {
+		DP_EVENT_LOG("ungrab gesture events");
+		viewport()->ungrabGesture(Qt::PanGesture);
+		viewport()->ungrabGesture(Qt::PinchGesture);
+		m_useGestureEvents = false;
+	}
 }
 
 void CanvasView::showDisconnectedWarning(const QString &message)
@@ -1177,6 +1192,91 @@ void CanvasView::touchReleaseEvent(long long timeMsec, const QPointF &pos)
 	penReleaseEvent(timeMsec, pos, Qt::LeftButton, Qt::NoModifier);
 }
 
+void CanvasView::gestureEvent(QGestureEvent *event)
+{
+	const QPinchGesture *pinch =
+		static_cast<const QPinchGesture *>(event->gesture(Qt::PinchGesture));
+	bool hadPinchUpdate = false;
+	if(pinch) {
+		Qt::GestureState pinchState = pinch->state();
+		QPinchGesture::ChangeFlags cf = pinch->changeFlags();
+		DP_EVENT_LOG(
+			"pinch state=0x%x, change=0x%x scale=%f rotation=%f pendown=%d "
+			"touching=%d",
+			unsigned(pinchState), unsigned(cf), pinch->totalScaleFactor(),
+			pinch->totalRotationAngle(), m_pendown, m_touching);
+
+		switch(pinch->state()) {
+		case Qt::GestureStarted:
+			m_gestureStartZoom = m_zoom;
+			m_gestureStartAngle = m_rotate;
+			[[fallthrough]];
+		case Qt::GestureUpdated:
+		case Qt::GestureFinished:
+			if(m_enableTouchScroll || m_enableTouchDraw) {
+				QPointF d = pinch->centerPoint() - pinch->lastCenterPoint();
+				horizontalScrollBar()->setValue(
+					horizontalScrollBar()->value() - d.x());
+				verticalScrollBar()->setValue(
+					verticalScrollBar()->value() - d.y());
+			}
+
+			{
+				QScopedValueRollback<bool> guard{m_blockNotices, true};
+				if(m_enableTouchPinch) {
+					setZoom(m_gestureStartZoom * pinch->totalScaleFactor());
+				}
+				if(m_enableTouchTwist) {
+					setRotation(
+						m_gestureStartAngle + pinch->totalRotationAngle());
+				}
+			}
+
+			showTouchTransformNotice();
+			hadPinchUpdate = true;
+			event->accept();
+			break;
+		case Qt::GestureCanceled:
+			event->accept();
+			break;
+		default:
+			break;
+		}
+	}
+
+	const QPanGesture *pan =
+		static_cast<const QPanGesture *>(event->gesture(Qt::PanGesture));
+	if(pan) {
+		Qt::GestureState panState = pan->state();
+		QPointF delta = pan->delta();
+		DP_EVENT_LOG(
+			"pan state=0x%x dx=%f dy=%f pendown=%d touching=%d",
+			unsigned(panState), delta.x(), delta.y(), m_pendown, m_touching);
+
+		switch(pan->state()) {
+		case Qt::GestureStarted:
+			m_gestureStartZoom = m_zoom;
+			m_gestureStartAngle = m_rotate;
+			[[fallthrough]];
+		case Qt::GestureUpdated:
+		case Qt::GestureFinished:
+			if(!hadPinchUpdate && (m_enableTouchScroll || m_enableTouchDraw)) {
+				horizontalScrollBar()->setValue(
+					horizontalScrollBar()->value() - delta.x());
+				verticalScrollBar()->setValue(
+					verticalScrollBar()->value() - delta.y());
+			}
+			event->accept();
+			break;
+		case Qt::GestureCanceled:
+			event->accept();
+			break;
+		default:
+			break;
+		}
+	}
+}
+
 //! Handle mouse release events
 void CanvasView::mouseReleaseEvent(QMouseEvent *event)
 {
@@ -1653,16 +1753,7 @@ void CanvasView::touchEvent(QTouchEvent *event)
 					setRotation(touchRotation);
 				}
 
-				if(m_enableTouchPinch) {
-					if(m_enableTouchTwist) {
-						showTransformNotice(QStringLiteral("%1\n%2").arg(
-							getZoomNotice(), getRotationNotice()));
-					} else {
-						showTransformNotice(getZoomNotice());
-					}
-				} else if(m_enableTouchTwist) {
-					showTransformNotice(getRotationNotice());
-				}
+				showTouchTransformNotice();
 			}
 		}
 		break;
@@ -1716,8 +1807,12 @@ void CanvasView::flushTouchDrawBuffer()
 bool CanvasView::viewportEvent(QEvent *event)
 {
 	QEvent::Type type = event->type();
-	if(type == QEvent::TouchBegin || type == QEvent::TouchUpdate ||
-	   type == QEvent::TouchEnd || type == QEvent::TouchCancel) {
+	if(type == QEvent::Gesture && m_useGestureEvents) {
+		gestureEvent(static_cast<QGestureEvent *>(event));
+	} else if(
+		(type == QEvent::TouchBegin || type == QEvent::TouchUpdate ||
+		 type == QEvent::TouchEnd || type == QEvent::TouchCancel) &&
+		!m_useGestureEvents) {
 		touchEvent(static_cast<QTouchEvent *>(event));
 	} else if(type == QEvent::TabletPress && m_enableTablet) {
 		QTabletEvent *tabev = static_cast<QTabletEvent *>(event);
@@ -2133,6 +2228,20 @@ QString CanvasView::getZoomNotice() const
 QString CanvasView::getRotationNotice() const
 {
 	return tr("Rotation: %1°").arg(rotation(), 0, 'f', 2);
+}
+
+void CanvasView::showTouchTransformNotice()
+{
+	if(m_enableTouchPinch) {
+		if(m_enableTouchTwist) {
+			showTransformNotice(QStringLiteral("%1\n%2").arg(
+				getZoomNotice(), getRotationNotice()));
+		} else {
+			showTransformNotice(getZoomNotice());
+		}
+	} else if(m_enableTouchTwist) {
+		showTransformNotice(getRotationNotice());
+	}
 }
 
 void CanvasView::showTransformNotice(const QString &text)

@@ -28,8 +28,6 @@ private:
 	initPressureCurve(desktop::settings::Settings &settings, QFormLayout *form);
 
 	void initTablet(desktop::settings::Settings &settings, QVBoxLayout *layout);
-
-	void initTouch(desktop::settings::Settings &settings, QFormLayout *form);
 };
 
 } // namespace settingsdialog

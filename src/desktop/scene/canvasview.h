@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef EDITORVIEW_H
-#define EDITORVIEW_H
-
+#ifndef DESKTOP_SCENE_CANVASVIEW
+#define DESKTOP_SCENE_CANVASVIEW
 #include "desktop/scene/toggleitem.h"
 #include "desktop/utils/qtguicompat.h"
 #include "libclient/canvas/canvasshortcuts.h"
@@ -12,6 +10,7 @@
 #include <QGraphicsView>
 #include <functional>
 
+class QGestureEvent;
 class QTouchEvent;
 
 namespace drawingboard {
@@ -103,6 +102,7 @@ public:
 	void setTouchDraw(bool draw) { m_enableTouchDraw = draw; }
 	void setTouchPinch(bool pinch) { m_enableTouchPinch = pinch; }
 	void setTouchTwist(bool twist) { m_enableTouchTwist = twist; }
+	void setTouchUseGestureEvents(bool touchUseGestureEvents);
 
 	KisCubicCurve pressureCurve() const { return m_pressureCurve; }
 	void setPressureCurve(const KisCubicCurve &pressureCurve);
@@ -269,6 +269,7 @@ private:
 	void touchPressEvent(QEvent *event, long long timeMsec, const QPointF &pos);
 	void touchMoveEvent(long long timeMsec, const QPointF &pos);
 	void touchReleaseEvent(long long timeMsec, const QPointF &pos);
+	void gestureEvent(QGestureEvent *event);
 
 	enum class ViewDragMode { None, Prepared, Started };
 
@@ -317,6 +318,7 @@ private:
 
 	QString getZoomNotice() const;
 	QString getRotationNotice() const;
+	void showTouchTransformNotice();
 	void showTransformNotice(const QString &text);
 	void updateLockNotice();
 
@@ -364,6 +366,9 @@ private:
 	qreal m_pointerdistance;
 	qreal m_pointervelocity;
 
+	qreal m_gestureStartZoom;
+	qreal m_gestureStartAngle;
+
 	int m_outlineSize;
 	bool m_showoutline, m_subpixeloutline, m_squareoutline;
 	QCursor m_dotcursor, m_trianglerightcursor, m_triangleleftcursor;
@@ -389,6 +394,7 @@ private:
 
 	bool m_enableTouchScroll, m_enableTouchDraw;
 	bool m_enableTouchPinch, m_enableTouchTwist;
+	bool m_useGestureEvents;
 	bool m_touching, m_touchRotating;
 	TouchMode m_touchMode;
 	QVector<QPair<long long, QPointF>> m_touchDrawBuffer;

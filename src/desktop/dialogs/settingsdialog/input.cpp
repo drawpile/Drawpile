@@ -28,8 +28,6 @@ void Input::setUp(desktop::settings::Settings &settings, QVBoxLayout *layout)
 	initTablet(settings, layout);
 	utils::addFormSeparator(layout);
 	initPressureCurve(settings, utils::addFormSection(layout));
-	utils::addFormSeparator(layout);
-	initTouch(settings, utils::addFormSection(layout));
 }
 
 void Input::initPressureCurve(
@@ -101,20 +99,16 @@ void Input::initTablet(
 	form->addRow(tr("Driver:"), driver);
 #endif
 
-	utils::addFormSpacer(form, QSizePolicy::MinimumExpanding);
+	utils::addFormSpacer(form);
 
-	auto *testerFrame = new QFrame;
-	testerFrame->setFrameShape(QFrame::StyledPanel);
-	testerFrame->setFrameShadow(QFrame::Sunken);
-	testerFrame->setFixedSize(194, 194);
-	auto *testerLayout = new QHBoxLayout(testerFrame);
-	testerLayout->setContentsMargins(0, 0, 0, 0);
-	testerLayout->addWidget(new widgets::TabletTester);
-	section->addWidget(testerFrame);
-}
+	auto *touchMode = utils::addRadioGroup(
+		form, tr("Touch mode:"), true,
+		{
+			{tr("Touchscreen"), false},
+			{tr("Gestures"), true},
+		});
+	settings.bindTouchGestures(touchMode);
 
-void Input::initTouch(desktop::settings::Settings &settings, QFormLayout *form)
-{
 	auto *oneTouch = utils::addRadioGroup(
 		form, tr("One-finger input:"), true,
 		{
@@ -124,6 +118,7 @@ void Input::initTouch(desktop::settings::Settings &settings, QFormLayout *form)
 		});
 	settings.bindOneFingerDraw(oneTouch->button(1));
 	settings.bindOneFingerScroll(oneTouch->button(2));
+	settings.bindTouchGestures(oneTouch->button(1), &QWidget::setDisabled);
 
 	auto *twoTouch = new utils::EncapsulatedLayout;
 	twoTouch->setContentsMargins(0, 0, 0, 0);
@@ -135,6 +130,20 @@ void Input::initTouch(desktop::settings::Settings &settings, QFormLayout *form)
 	twoTouch->addWidget(rotate);
 	twoTouch->addStretch();
 	form->addRow(tr("Touch gestures:"), twoTouch);
+
+	auto *testerLayout = new QVBoxLayout;
+	auto *testerLabel = new QLabel(tr("Test your tablet here:"));
+	testerLabel->setAlignment(Qt::AlignHCenter);
+	testerLayout->addWidget(testerLabel);
+	auto *testerFrame = new QFrame;
+	testerFrame->setFrameShape(QFrame::StyledPanel);
+	testerFrame->setFrameShadow(QFrame::Sunken);
+	testerFrame->setFixedSize(194, 194);
+	auto *testerFrameLayout = new QHBoxLayout(testerFrame);
+	testerFrameLayout->setContentsMargins(0, 0, 0, 0);
+	testerFrameLayout->addWidget(new widgets::TabletTester);
+	testerLayout->addWidget(testerFrame);
+	section->addLayout(testerLayout);
 }
 
 } // namespace settingsdialog

@@ -34,6 +34,14 @@
 #	endif
 #endif
 
+#ifndef TOUCH_GESTURES_DEFAULT
+#	ifdef Q_OS_ANDROID
+#		define TOUCH_GESTURES_DEFAULT false
+#	else
+#		define TOUCH_GESTURES_DEFAULT true
+#	endif
+#endif
+
 SETTING(brushCursor               , BrushCursor               , "settings/brushcursor"                  , widgets::CanvasView::BrushCursor::TriangleRight)
 SETTING(brushOutlineWidth         , BrushOutlineWidth         , "settings/brushoutlinewidth"            , 1.0)
 SETTING(canvasViewBackgroundColor , CanvasViewBackgroundColor , "settings/canvasviewbackgroundcolor"    , CANVAS_VIEW_BACKGROUND_COLOR_DEFAULT)
@@ -126,6 +134,7 @@ SETTING(notifSoundPrivateChat     , NotifSoundPrivateChat     , "notifications/p
 SETTING(notifSoundUnlock          , NotifSoundUnlock          , "notifications/unlock"                  , true)
 SETTING(oneFingerDraw             , OneFingerDraw             , "settings/input/touchdraw"              , false)
 SETTING(oneFingerScroll           , OneFingerScroll           , "settings/input/touchscroll"            , true)
+SETTING(touchGestures             , TouchGestures             , "settings/input/touchgestures"          , TOUCH_GESTURES_DEFAULT)
 SETTING(onionSkinsFrameCount      , OnionSkinsFrameCount      , "onionskins/framecount"                 , 8)
 SETTING_GETSET_V(
 	V1, onionSkinsFrames          , OnionSkinsFrames          , "onionskins/frames"                     , (QMap<int, int>()),
