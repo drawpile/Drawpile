@@ -5958,47 +5958,47 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+5"/>
         <source>See %1 for more information about this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vedere %1 per maggiori informazioni su questo server.</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>This username belongs to an account, pick a different one.</source>
-        <translation type="unfinished"></translation>
+        <translation>Questo nome utente appartiene a un account, scegliere uno diverso.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This username doesn&apos;t belong to a server account.</source>
-        <translation type="unfinished"></translation>
+        <translation>Questo nome utente non appartiene a un account server.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>The %1 authentication is not working.</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;autenticazione %1 non funziona.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This username doesn&apos;t belong an account on %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Questo nome utente non appartiene a un account su %1.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>This username belongs to a server account, you can&apos;t use it to log in through %1 on this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Questo nome utente appartiene a un account server, non è possibile utilizzarlo per accedere a %1 su questo server.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>This username belongs to some other login method, you can&apos;t use it to log in through %1 on this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Questo nome utente appartiene ad un altro metodo di login, non è possibile utilizzarlo per accedere a %1 su questo server.</translation>
     </message>
     <message>
         <location line="+504"/>
         <source>Enter the username and password for your server account.</source>
-        <translation type="unfinished"></translation>
+        <translation>Inserisci il nome utente e la password per il tuo account server.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Enter the username and password for your %1 account.</source>
-        <translation type="unfinished"></translation>
+        <translation>Inserisci il nome utente e la password per il tuo account %1.</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -6103,9 +6103,10 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message numerus="yes">
         <location filename="../dialogs/sessionsettings.cpp" line="+332"/>
         <source>Imported %n session ban(s).</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>Importato %n ban di sessione.</numerusform>
+            <numerusform>Importati %n bans di sessione.</numerusform>
+            <numerusform>Importati %n bans di sessione.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -7148,62 +7149,62 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+1"/>
         <source>Pop up a speech bubble in the corner when this event occurs.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fai comparire una bolla di dialogo nell&apos;angolo quando questo evento si verifica.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Flash taskbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Taskbar Flash</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Flash the Drawpile window in the taskbar when this event occurs.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fai un Flash sulla finestra della taskbar di Drawpile quando si verifica questo evento.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Bounce dock</source>
-        <translation type="unfinished"></translation>
+        <translation>Rimbalza dock</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Bounce Drawpile&apos;s icon in the dock when this event occurs.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fai rimbalzare l&apos;icona di Drawpile nel dock quando si verifca questo evento.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Demand attention</source>
-        <translation type="unfinished"></translation>
+        <translation>Richiedi attenzione</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mark Drawpile&apos;s window as requiring attention. How exactly this looks depends on your system.</source>
-        <translation type="unfinished"></translation>
+        <translation>Marca la finestra di Drawpile quando richiede attenzione. Come esattamente avrà aspetto dipenderà dal vostro sistema.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Preview</source>
-        <translation type="unfinished"></translation>
+        <translation>Anteprima</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Trigger this event so you can see what happens.</source>
-        <translation type="unfinished"></translation>
+        <translation>Attiva questo evento in modo da poter vedere cosa succede.</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Chat message</source>
-        <translation type="unfinished"></translation>
+        <translation>Messaggio chat</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Private message</source>
-        <translation type="unfinished"></translation>
+        <translation>Messaggio privato</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>User left</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;Utente si è disconnesso</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -7213,7 +7214,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+27"/>
         <source>Preview event</source>
-        <translation type="unfinished"></translation>
+        <translation>Anteprima dell&apos;evento</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -7228,22 +7229,22 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+3"/>
         <source>Use private message notification for mentions</source>
-        <translation type="unfinished"></translation>
+        <translation>Utilizza la notifica del messaggio privato per le menzioni</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Mentions:</source>
-        <translation type="unfinished"></translation>
+        <translation>Menzioni:</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Additional triggers go here, one per line.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ulteriori trigger vanno qui, uno per linea.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Your username always counts as a mention. You can add additional trigger words or phrases that you want to count as well, such as other nicknames. One word or phrase per line, case doesn&apos;t matter.</source>
-        <translation type="unfinished"></translation>
+        <translation>Il tuo nome utente conta sempre come una menzione. È possibile aggiungere ulteriori parole di trigger o frasi che si desidera contare, come altri soprannomi. Una parola o una frase per linea, il caso non importa.</translation>
     </message>
     <message>
         <location line="-81"/>
@@ -8547,7 +8548,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+17"/>
         <source>Wrap</source>
-        <translation type="unfinished"></translation>
+        <translation>Avvolgi</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -8754,7 +8755,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+3"/>
         <source>This session is hosted with Drawpile 2.1, Indirect/Wash Mode with opacity dynamics is unavailable. &lt;a href=&quot;#inc&quot;&gt;Click here to switch to Direct/Build-Up Mode&lt;/a&gt; or &lt;a href=&quot;#opa&quot;&gt;here to disable opacity dynamics&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Questa sessione è ospitata con Drawpile 2.1, la modalità Indiretta/Lavaggio con dinamiche di opacità non è disponibile. &lt;a href=&quot;#inc&quot;&gt;Clicca qui per passare alla modalità Build Up/Diretta&lt;/a&gt; o &lt;a href=&quot;#opa&quot;&gt;qui per disabilitare le dinamiche di opacità&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="-5"/>
@@ -9526,22 +9527,22 @@ o via Animazione ▸ Nuova Traccia</translation>
     <message>
         <location line="-138"/>
         <source>&amp;Operator</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Operatore</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Affidabile</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Lock</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Blocca</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Mute</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Muta</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -9556,27 +9557,27 @@ o via Animazione ▸ Nuova Traccia</translation>
     <message>
         <location line="+4"/>
         <source>&amp;Kick</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Espelli</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Kick &amp;&amp; Ba&amp;n</source>
-        <translation type="unfinished"></translation>
+        <translation>Espelli &amp;&amp; e Ba&amp;nna</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Private Message</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Messaggio Privato</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show User &amp;Information</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra &amp;Info Utente</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Take Current &amp;Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleziona &amp;Pennello Corrente</translation>
     </message>
     <message>
         <location line="+107"/>
