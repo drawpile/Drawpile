@@ -4,6 +4,8 @@
 #include <QDialog>
 #include <QGraphicsView>
 
+class QGestureEvent;
+
 namespace dialogs {
 
 class TouchTestView final : public QGraphicsView {
@@ -30,6 +32,9 @@ private:
 	bool m_touchEventsEnabled = false;
 	bool m_gestureEventsEnabled = false;
 	QGraphicsScene *m_scene;
+
+	void debugLogGestureEvent(QGestureEvent *event);
+	void debugLogEvent(QEvent *event, const QString extraInfo);
 };
 
 class TouchTestDialog final : public QDialog {

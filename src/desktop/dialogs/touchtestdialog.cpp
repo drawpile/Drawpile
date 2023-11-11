@@ -67,19 +67,136 @@ bool TouchTestView::viewportEvent(QEvent *event)
 	case QEvent::TouchUpdate:
 	case QEvent::TouchEnd:
 	case QEvent::TouchCancel:
+		debugLogEvent(event, QString());
+		event->accept();
+		return true;
 	case QEvent::Gesture:
-		emit logEvent(QStringLiteral("[%1, %2] %3\n")
-						  .arg(
-							  m_touchEventsEnabled ? QStringLiteral("touch")
-												   : QStringLiteral("no touch"),
-							  m_gestureEventsEnabled
-								  ? QStringLiteral("gestures")
-								  : QStringLiteral("no gestures"),
-							  compat::debug(event)));
+		debugLogGestureEvent(static_cast<QGestureEvent *>(event));
+		event->accept();
 		return true;
 	default:
 		return QGraphicsView::viewportEvent(event);
 	}
+}
+
+void TouchTestView::debugLogGestureEvent(QGestureEvent *event)
+{
+	QStringList gestureInfos;
+	for(const QGesture *gesture : event->gestures()) {
+		Qt::GestureType type = gesture->gestureType();
+		QString typeName;
+		QString extra;
+		switch(type) {
+		case Qt::TapGesture:
+			typeName = QStringLiteral("Tap");
+			extra = QStringLiteral(", data=%1")
+						.arg(compat::debug(
+							static_cast<const QTapGesture *>(gesture)));
+			break;
+		case Qt::TapAndHoldGesture:
+			typeName = QStringLiteral("TapAndHold");
+			extra = QStringLiteral(", data=%1")
+						.arg(compat::debug(
+							static_cast<const QTapAndHoldGesture *>(gesture)));
+			break;
+		case Qt::PanGesture:
+			typeName = QStringLiteral("Pan");
+			extra = QStringLiteral(", data=%1")
+						.arg(compat::debug(
+							static_cast<const QPanGesture *>(gesture)));
+			break;
+		case Qt::PinchGesture:
+			typeName = QStringLiteral("Pinch");
+			extra = QStringLiteral(", data=%1")
+						.arg(compat::debug(
+							static_cast<const QPinchGesture *>(gesture)));
+			break;
+		case Qt::SwipeGesture:
+			typeName = QStringLiteral("Swipe");
+			extra = QStringLiteral(", data=%1")
+						.arg(compat::debug(
+							static_cast<const QSwipeGesture *>(gesture)));
+			break;
+		case Qt::CustomGesture:
+			typeName = QStringLiteral("Custom");
+			break;
+		default:
+			typeName = QStringLiteral("0x%1").arg(QString::number(type, 16));
+			break;
+		}
+
+		QGesture::GestureCancelPolicy cancelPolicy =
+			gesture->gestureCancelPolicy();
+		QString cancelPolicyName;
+		switch(cancelPolicy) {
+		case QGesture::CancelNone:
+			cancelPolicyName = QStringLiteral("None");
+			break;
+		case QGesture::CancelAllInContext:
+			cancelPolicyName = QStringLiteral("AllInContext");
+			break;
+		default:
+			cancelPolicyName =
+				QStringLiteral("0x%1").arg(QString::number(cancelPolicy, 16));
+			break;
+		}
+
+		QString hotSpotName;
+		if(gesture->hasHotSpot()) {
+			QPointF hotSpot = gesture->hotSpot();
+			hotSpotName =
+				QStringLiteral("(%1,%2)").arg(hotSpot.x(), hotSpot.y());
+		}
+
+		Qt::GestureState state = gesture->state();
+		QString stateName;
+		switch(state) {
+		case Qt::NoGesture:
+			stateName = QStringLiteral("No");
+			break;
+		case Qt::GestureStarted:
+			stateName = QStringLiteral("Started");
+			break;
+		case Qt::GestureUpdated:
+			stateName = QStringLiteral("Updated");
+			break;
+		case Qt::GestureFinished:
+			stateName = QStringLiteral("Finished");
+			break;
+		case Qt::GestureCanceled:
+			stateName = QStringLiteral("Canceled");
+			break;
+		default:
+			stateName = QStringLiteral("0x%1").arg(QString::number(state, 16));
+			break;
+		}
+
+		gestureInfos.append(
+			QStringLiteral(
+				"QGesture(type=%1, cancelPolicy=%2, hotSpot=%3, state=%4%5)")
+				.arg(
+					typeName, cancelPolicyName, hotSpotName, stateName, extra));
+	}
+	debugLogEvent(
+		event,
+		QStringLiteral("%1 gesture(s): %2")
+			.arg(QString::number(gestureInfos.size()), gestureInfos.join(' ')));
+}
+
+void TouchTestView::debugLogEvent(QEvent *event, const QString extraInfo)
+{
+	QString touchStatus = m_touchEventsEnabled ? QStringLiteral("touch")
+											   : QStringLiteral("no touch");
+	QString gestureStatus = m_gestureEventsEnabled
+								? QStringLiteral("gestures")
+								: QStringLiteral("no gestures");
+	QString message =
+		QStringLiteral("[%1, %2] %3\n")
+			.arg(touchStatus, gestureStatus, compat::debug(event));
+	if(!extraInfo.isEmpty()) {
+		message += QStringLiteral(" ") + extraInfo;
+	}
+	emit logEvent(message);
 }
 
 
