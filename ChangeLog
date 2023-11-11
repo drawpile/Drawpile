@@ -1,4 +1,6 @@
 Unreleased Version 2.2.0-pre
+
+2023-09-30 Version 2.2.0-beta.9
  * Fix: Make Android build work again. Thanks Tetriser for reporting.
  * Fix: Allow indirect mode in 2.1 sessions when opacity dynamics are disabled. Thanks to Blozzom for reporting.
  * Fix: Make LCH color wheel circle not look so bright and discontinuous.
@@ -9,25 +11,25 @@ Unreleased Version 2.2.0-pre
  * Feature: Interpolate inputs that are far away from each other to compensate against fast strokes producing jagged curves. Can be disabled in the input preferences.
  * Fix: Make build directories outside of the source directory work again. Thanks Aquargent for reporting.
  * Fix: Properly handle modifier key releases for keyboard canvas shortcuts. Thanks Daystream for reporting.
- * Server Feature: Implement a centralized bans system, so that moderators don't have to manage it on all community servers separately, which increases the chances of getting a ban wrong. Thanks Bluestrings for suggesting.
+ * Server Feature: Implement a shared bans system, letting owners of multiple servers manage a single list instead of having to keep them in sync manually. Thanks Bluestrings for suggesting.
  * Server Feature: Allow exempting users from ban ranges, to help alleviate false positives.
  * Fix: Make IPv6 addresses work in invite links.
  * Fix: Properly add drawpile:// in front of direct invite links when hosting "on this computer".
- * Feature: Support reading and writing Photoshop Document (PSD) files. Thanks pachuco, onyx, Geese and probably others for suggesting.
+ * Feature: Support reading and writing Photoshop Document (PSD) files. Thanks pachuco, onyx, Geese and probably others for suggesting. Thanks xxxx for helping getting it compatible with other software.
  * Fix: Make MyPaint brush permission not deny drawing with classic brushes. Thanks xxxx for reporting.
  * Fix: Offer to crop all avatars, not just non-square ones. Thanks Bluestrings for reporting.
  * Feature: Allow adding labels onto brush preset thumbnails. Thanks Paris Green for causing this.
  * Fix: Don't restore flipbook to previous location and size if that would put it outside of any available screen. Thanks Ausjamcian for reporting.
- * Feature: Allow exporting and importing session bans. They are encrypted with a per-server key by default. Thanks tincancrab for suggesting.
+ * Server Feature: Allow exporting and importing session bans. They are encrypted with a per-server key by default. Thanks tincancrab for suggesting.
  * Fix: Prevent banning yourself from sessions.
- * Feature: Allow moderators to exempt sessions from the idle timeout. This ability can be disabled by server owners. Thanks Bluestrings for suggesting.
- * Feature: Show proper reasons when a session is terminated, rather than always claiming the server is shutting down.
- * Feature: Allow specifying a reason when terminating a session manually.
+ * Server Feature: Allow moderators to exempt sessions from the idle timeout. This ability can be disabled by server owners. Thanks Bluestrings for suggesting.
+ * Fix: Show proper reasons when a session is terminated, rather than always claiming the server is shutting down.
+ * Server Feature: Allow specifying a reason when terminating a session manually.
  * Fix: Squash whitespace in session listings to prevent funky display. Thanks yeen for reporting.
- * Fix: Error out when invalid --extauth parameter is given to drawpile-srv. Previously it would just keep going and simply not work without any indication as to why. Thanks RAINTARD for running into this.
+ * Server Fix: Error out when invalid --extauth parameter is given to drawpile-srv. Previously it would just keep going and simply not work without any indication as to why. Thanks RAINTARD for running into this.
  * Feature: Allow exporting images, which saves them without setting the current file or warning about the image being merged together.
  * Feature: Disable selection-dependent menu items (Deselect, Fill Selection etc.) when no selection is present.
- * Feature: Add Roles tab to session settings to allow changing operator and trusted status of registered users not currently online, as well as allowing importing and exporting this list of users. Thanks tincancrab for suggesting.
+ * Server Feature: Add Roles tab to session settings to allow changing operator and trusted status of registered users not currently online, as well as allowing importing and exporting this list of users. Thanks tincancrab for suggesting.
  * Feature: In addition to sounds, allow configuring popup bubbles and task bar flashing in notification preferences. Thanks MagicaJaphet and Bluestrings for suggesting.
  * Feature: Add a notification for unexpected disconnects.
  * Fix: Play back sounds in a different way that should fix the issues with chugging or wrong output devices that some systems have. Thanks Blozzom and Snover for reporting.
@@ -38,7 +40,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Show own user marker again when using the laser pointer.
  * Fix: Use previous avatar when using the reconnect button after a disconnect.
  * Fix: Don't trigger a cacophony of notifications after joining a session, just play a single notification once catchup is done instead.
- * Feature: Store alpha preserve state of layers in ORA files for better Krita compatibility (will be in Krita 5.2.1 probably.)
+ * Feature: Store alpha preserve state of layers in ORA files for better Krita compatibility (requires Krita 5.2.1 or newer.)
  * Feature: Allow onion skins to wrap around the timeline, toggleable in the onion skins dock. Thanks Hopfel for suggesting.
  * Feature: Fill the brush slots with nicer default values on first startup, rather than them all being the same pixel brush.
  * Fix: Don't lock tool slots when using the eraser tool, to avoid accidentally getting stuck in it.
@@ -59,11 +61,12 @@ Unreleased Version 2.2.0-pre
  * Feature: Allow grabbing the current brush settings of another user.
  * Fix: Relax transform size restrictions so that transforms of layers that cover the whole canvas don't always get cancelled.
  * Server Feature: Allow servers to set a minimum protocol version for sessions being hosted.
- * Server Feature: Let clients know at the beginning of the login if the session they're trying to join is nonexistent.
+ * Server Feature: Let clients know at the beginning of the login if the session they're trying to join is nonexistent. Thanks Meru for suggesting.
  * Server Feature: Allow server owners to make sessions only joinable through direct links. Thanks Meru for suggesting.
  * Feature: Add touch tester, available under the Help menu.
  * Fix: Actually put the link that's being joined into the address input when using a web link, rather than leaving it blank.
  * Fix: Make Recolor (alpha locked) mode way faster.
+ * Fix: Allow using gestures instead of touch screen controls, hopefully making zooming on touch pads work again.
 
 2023-09-30 Version 2.2.0-beta.8
  * Fix: Apply color wheel direction to color dialogs too. Thanks Blozzom for reporting.
