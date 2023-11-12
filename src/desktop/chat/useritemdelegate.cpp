@@ -96,6 +96,7 @@ UserItemDelegate::~UserItemDelegate()
 void UserItemDelegate::setCompatibilityMode(bool compatibilityMode)
 {
 	m_infoAction->setDisabled(compatibilityMode);
+	m_brushAction->setDisabled(compatibilityMode);
 }
 
 QSize UserItemDelegate::sizeHint(

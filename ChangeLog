@@ -1,4 +1,6 @@
 Unreleased Version 2.2.0-pre
+ * Fix: Don't deadlock on first startup. Thanks to Hail, FARBOL234, Dorokinyo and hamlin for reporting.
+ * Fix: Disable brush taking in 2.1 sessions. Thanks Blozzom for reporting.
 
 2023-11-11 Version 2.2.0-beta.9
  * Fix: Make Android build work again. Thanks Tetriser for reporting.
