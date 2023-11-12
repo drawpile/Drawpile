@@ -43,14 +43,19 @@ QVector<Recents::File> Recents::getFiles() const
 	return files;
 }
 
-int Recents::fileCount() const
+static int recentsFileCountWith(StateDatabase::Query &qry)
 {
-	StateDatabase::Query qry = m_state.query();
 	if(qry.exec("select count(*) from recent_files") && qry.next()) {
 		return qry.value(0).toInt();
 	} else {
 		return -1;
 	}
+}
+
+int Recents::fileCount() const
+{
+	StateDatabase::Query qry = m_state.query();
+	return recentsFileCountWith(qry);
 }
 
 void Recents::addFile(const QString &path)
@@ -142,14 +147,19 @@ QVector<Recents::Host> Recents::getHosts() const
 	return hosts;
 }
 
-int Recents::hostCount() const
+static int recentHostCountWith(StateDatabase::Query &qry)
 {
-	StateDatabase::Query qry = m_state.query();
 	if(qry.exec("select count(*) from recent_hosts") && qry.next()) {
 		return qry.value(0).toInt();
 	} else {
 		return -1;
 	}
+}
+
+int Recents::hostCount() const
+{
+	StateDatabase::Query qry = m_state.query();
+	return recentHostCountWith(qry);
 }
 
 void Recents::addHost(const QString &host, int port, bool joined, bool hosted)
@@ -250,11 +260,11 @@ void Recents::createTables()
 
 void Recents::migrateFilesFromSettings()
 {
-	m_state.tx([this](StateDatabase::Query &qry) {
+	m_state.tx([](StateDatabase::Query &qry) {
 		QString key = QStringLiteral("recents/filesmigratedfromsettings");
 		if(!qry.get(key).toBool()) {
 			qry.put(key, true);
-			if(fileCount() != 0) {
+			if(recentsFileCountWith(qry) != 0) {
 				return true;
 			}
 
@@ -281,11 +291,11 @@ void Recents::migrateFilesFromSettings()
 
 void Recents::migrateHostsFromSettings()
 {
-	m_state.tx([this](StateDatabase::Query &qry) {
+	m_state.tx([](StateDatabase::Query &qry) {
 		QString key = QStringLiteral("recents/hostsmigratedfromsettings");
 		if(!qry.get(key).toBool()) {
 			qry.put(key, true);
-			if(hostCount() != 0) {
+			if(recentHostCountWith(qry) != 0) {
 				return true;
 			}
 
