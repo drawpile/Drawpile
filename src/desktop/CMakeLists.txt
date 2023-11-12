@@ -707,7 +707,7 @@ elseif(UNIX)
 	)
 	install_datarootdir(drawpile icons/drawpile.png icons/hicolor/256x256/apps)
 	install_datarootdir(drawpile icons/drawpile.svg icons/hicolor/scalable/apps)
-	install_datarootdir(drawpile appdata.xml metainfo
+	install_datarootdir(drawpile drawpile.appdata.xml metainfo
 		RENAME net.drawpile.drawpile.appdata.xml
 	)
 
