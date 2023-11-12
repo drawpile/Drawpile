@@ -22,11 +22,11 @@ This checklist uses pseudo-placeholders. $VERSION is version to be released, $NE
 * Update appdata XMLs:
     * Create an `artifacts` directory.
     * Download Linux AppImage, Android APK, macOS Disk Image, Windows Installer and source code in tar.gz format into this directory.
-    * Run `pkg/update-appdata-releases.py --out=drawpile.appdata.xml --legacy`
-    * Copy the release into `appdata.xml` and remove "win64" and "macos" entries.
-    * Copy the release into `net.drawpile.drawpile.appdata.xml` and remove "x86_64-windows-msvc" and "x86_64-darwin-gnu" entries.
-    * Delete `artifacts` directory and `drawpile.appdata.xml`.
-    * Commit with [ci skip] and push.
+    * Run `pkg/update-appdata-releases.py` to generate drawpile.appdata.xml
+    * Run `pkg/update-appdata-releases.py --legacy` to generate net.drawpile.drawpile.appdata.xml
+    * Delete `artifacts` directory
+    * Create a signed commit "Update appdata XMLs for $VERSION [ci skip]"
+    * Push
     * Upload `net.drawpile.drawpile.appdata.xml` to the website, chown it to webfiles:webfiles and move it to `/home/webfiles/www/metadata`
 * Update news.json:
     * News post about the update.

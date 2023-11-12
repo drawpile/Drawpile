@@ -148,9 +148,10 @@ def update_release_artifacts(appdata, include_legacy_platform_ids):
         metadata = find_artifact(filename)
         if metadata:
             metadata['filename'] = prefix + '/' + metadata['filename']
-            artifacts[platform] = metadata
             if include_legacy_platform_ids and legacy_platform:
                 artifacts[legacy_platform] = metadata
+            else:
+                artifacts[platform] = metadata
 
     # Update artifacts element
     artifacts_elem = latest_release.find('artifacts')
@@ -200,16 +201,14 @@ def update_release_artifacts(appdata, include_legacy_platform_ids):
     return artifacts.items()
 
 if __name__ == '__main__':
-    default_appdata = (Path(__file__).parent / '../src/desktop/appdata.xml').resolve()
-
     parser = argparse.ArgumentParser(
         description = 'Updates appdata.xml by parsing the latest entry in ChangeLog',
     )
     parser.add_argument('--changelog', default=(Path(__file__).parent / '../ChangeLog').resolve(),
                         help='path to ChangeLog file')
-    parser.add_argument('--in', dest='in_file', default=default_appdata,
+    parser.add_argument('--in', dest='in_file', default='',
                         help='path to input appdata.xml')
-    parser.add_argument('--out', dest='out_file', default=default_appdata,
+    parser.add_argument('--out', dest='out_file', default='',
                         help='path to output appdata.xml')
     # Needed for compatibility with Drawpile 2.1 auto-update mechanism,
     # otherwise it will find no matching updates ever since it expects platform
@@ -219,6 +218,14 @@ if __name__ == '__main__':
     parser.add_argument('--legacy', action='store_true',
                         help='emit legacy platform IDs')
     args = parser.parse_args()
+
+    default_appdata_name = 'net.drawpile.drawpile.appdata.xml' if args.legacy else 'drawpile.appdata.xml'
+    default_appdata = (Path(__file__).parent / f'../src/desktop/{default_appdata_name}').resolve()
+
+    if not args.in_file:
+        args.in_file = default_appdata
+    if not args.out_file:
+        args.out_file = args.in_file
 
     latestChanges = read_changelog(args.changelog)
     appdata = ET.parse(args.in_file)
@@ -245,5 +252,14 @@ if __name__ == '__main__':
     if changed or args.in_file != args.out_file:
         appdata.getroot().tail = '\n'
         appdata.write(args.out_file, encoding='utf-8', xml_declaration=True)
+        # The header format is hard-coded to use single quotes, so hack it.
+        if args.legacy:
+            with open(args.out_file, 'r') as f:
+                content = f.read()
+            with open(args.out_file, 'w') as f:
+                f.write(content.replace(
+                    "<?xml version='1.0' encoding='utf-8'?>",
+                    '<?xml version="1.0" encoding="UTF-8"?>',
+                    1))
         print("Validating appdata file...")
         os.system(f'appstream-util validate-relax {args.out_file}')
