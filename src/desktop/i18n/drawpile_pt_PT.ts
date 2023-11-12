@@ -6524,7 +6524,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Verificar Atualizações</translation>
     </message>
     <message>
-        <location line="+265"/>
+        <location line="+268"/>
         <source>Checking…</source>
         <translation>A verificar…</translation>
     </message>
@@ -6565,7 +6565,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
 <context>
     <name>dialogs::TouchTestDialog</name>
     <message>
-        <location filename="../dialogs/touchtestdialog.cpp" line="+95"/>
+        <location filename="../dialogs/touchtestdialog.cpp" line="+212"/>
         <source>Enable touch</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6588,7 +6588,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
 <context>
     <name>dialogs::TouchTestView</name>
     <message>
-        <location line="-118"/>
+        <location line="-235"/>
         <source>Touch here.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6891,7 +6891,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
 <context>
     <name>dialogs::settingsdialog::Input</name>
     <message>
-        <location filename="../dialogs/settingsdialog/input.cpp" line="+39"/>
+        <location filename="../dialogs/settingsdialog/input.cpp" line="+37"/>
         <source>Input</source>
         <translation>Entrada</translation>
     </message>
@@ -6966,7 +6966,22 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Driver:</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+6"/>
+        <source>Touch mode:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Touchscreen</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Gestures</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
         <source>One-finger input:</source>
         <translation>Quando um dedo tocar:</translation>
     </message>
@@ -6986,7 +7001,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+8"/>
         <source>Pinch to zoom</source>
         <translation>Fazer pinça para zoom</translation>
     </message>
@@ -6999,6 +7014,11 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <location line="+4"/>
         <source>Touch gestures:</source>
         <translation>Gestos de toque:</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Test your tablet here:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8821,7 +8841,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
 <context>
     <name>utils::Recents</name>
     <message>
-        <location filename="../utils/recents.cpp" line="+391"/>
+        <location filename="../utils/recents.cpp" line="+393"/>
         <source>More…</source>
         <translation>Mais…</translation>
     </message>
@@ -8872,7 +8892,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
 <context>
     <name>widgets::CanvasView</name>
     <message>
-        <location filename="../scene/canvasview.cpp" line="+152"/>
+        <location filename="../scene/canvasview.cpp" line="+167"/>
         <source>Reconnect</source>
         <translation>Reconectar</translation>
     </message>
@@ -8957,7 +8977,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Espelhamento horizontal: DESLIGADO</translation>
     </message>
     <message>
-        <location line="+1600"/>
+        <location line="+1680"/>
         <source>Zoom: %1%</source>
         <translation>Zoom: %1%</translation>
     </message>
@@ -9514,7 +9534,7 @@ or via Animation ▸ New Track.</source>
 <context>
     <name>widgets::UserItemDelegate</name>
     <message>
-        <location filename="../chat/useritemdelegate.cpp" line="+167"/>
+        <location filename="../chat/useritemdelegate.cpp" line="+168"/>
         <source>Operator</source>
         <translation>Operador</translation>
     </message>
@@ -9524,7 +9544,7 @@ or via Animation ▸ New Track.</source>
         <translation>Confiável</translation>
     </message>
     <message>
-        <location line="-138"/>
+        <location line="-139"/>
         <source>&amp;Operator</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9579,7 +9599,7 @@ or via Animation ▸ New Track.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+107"/>
+        <location line="+108"/>
         <source>Moderator</source>
         <translation>Moderador</translation>
     </message>

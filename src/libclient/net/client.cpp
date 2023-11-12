@@ -479,7 +479,7 @@ Client::translateMessage(const QJsonObject &reply, const QString &fallbackKey)
 				.arg(params[QStringLiteral("by")].toString());
 		} else if(key == net::ServerReply::KEY_TERMINATE_SESSION_ADMIN) {
 			//: %1 is the reason given.
-			return tr("Session terminated by administrator: %2")
+			return tr("Session terminated by administrator: %1")
 				.arg(params[QStringLiteral("reason")].toString());
 		} else if(key == net::ServerReply::KEY_TERMINATE_SESSION_REASON) {
 			//: %1 is the name of the moderator, %2 is the reason given.

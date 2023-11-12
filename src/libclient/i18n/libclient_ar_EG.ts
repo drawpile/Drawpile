@@ -1160,7 +1160,7 @@
     </message>
     <message>
         <location line="+4"/>
-        <source>Session terminated by administrator: %2</source>
+        <source>Session terminated by administrator: %1</source>
         <extracomment>%1 is the reason given.</extracomment>
         <translation type="unfinished"></translation>
     </message>
@@ -1466,7 +1466,7 @@
 <context>
     <name>utils::News</name>
     <message>
-        <location filename="../utils/news.cpp" line="+284"/>
+        <location filename="../utils/news.cpp" line="+280"/>
         <location line="+41"/>
         <source>Checking for updates…</source>
         <translation>جار التحقق من وجود تحديثات…</translation>

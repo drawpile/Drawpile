@@ -6514,7 +6514,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>更新を確認</translation>
     </message>
     <message>
-        <location line="+265"/>
+        <location line="+268"/>
         <source>Checking…</source>
         <translation>確認中…</translation>
     </message>
@@ -6554,7 +6554,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::TouchTestDialog</name>
     <message>
-        <location filename="../dialogs/touchtestdialog.cpp" line="+95"/>
+        <location filename="../dialogs/touchtestdialog.cpp" line="+212"/>
         <source>Enable touch</source>
         <translation>タッチ有効</translation>
     </message>
@@ -6577,7 +6577,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::TouchTestView</name>
     <message>
-        <location line="-118"/>
+        <location line="-235"/>
         <source>Touch here.</source>
         <translation>ここにタッチ。</translation>
     </message>
@@ -6879,7 +6879,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Input</name>
     <message>
-        <location filename="../dialogs/settingsdialog/input.cpp" line="+39"/>
+        <location filename="../dialogs/settingsdialog/input.cpp" line="+37"/>
         <source>Input</source>
         <translation>入力</translation>
     </message>
@@ -6954,7 +6954,22 @@ Values above 0.5 may not be noticeable.</source>
         <translation>ドライバー:</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+6"/>
+        <source>Touch mode:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Touchscreen</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Gestures</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
         <source>One-finger input:</source>
         <translation>１本指入力:</translation>
     </message>
@@ -6974,7 +6989,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>ペンキャンバス</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+8"/>
         <source>Pinch to zoom</source>
         <translation>ピンチ操作でズーム</translation>
     </message>
@@ -6987,6 +7002,11 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+4"/>
         <source>Touch gestures:</source>
         <translation>タッチジェスチャー:</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Test your tablet here:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8803,7 +8823,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>utils::Recents</name>
     <message>
-        <location filename="../utils/recents.cpp" line="+391"/>
+        <location filename="../utils/recents.cpp" line="+393"/>
         <source>More…</source>
         <translation>続き…</translation>
     </message>
@@ -8854,7 +8874,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::CanvasView</name>
     <message>
-        <location filename="../scene/canvasview.cpp" line="+152"/>
+        <location filename="../scene/canvasview.cpp" line="+167"/>
         <source>Reconnect</source>
         <translation>再接続</translation>
     </message>
@@ -8939,7 +8959,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>左右反転：OFF</translation>
     </message>
     <message>
-        <location line="+1600"/>
+        <location line="+1680"/>
         <source>Zoom: %1%</source>
         <translation>拡大率: %1%</translation>
     </message>
@@ -9495,7 +9515,7 @@ or via Animation ▸ New Track.</source>
 <context>
     <name>widgets::UserItemDelegate</name>
     <message>
-        <location filename="../chat/useritemdelegate.cpp" line="+167"/>
+        <location filename="../chat/useritemdelegate.cpp" line="+168"/>
         <source>Operator</source>
         <translation>管理者</translation>
     </message>
@@ -9505,7 +9525,7 @@ or via Animation ▸ New Track.</source>
         <translation>信頼済み</translation>
     </message>
     <message>
-        <location line="-138"/>
+        <location line="-139"/>
         <source>&amp;Operator</source>
         <translation>管理者(&amp;O)</translation>
     </message>
@@ -9560,7 +9580,7 @@ or via Animation ▸ New Track.</source>
         <translation>現在のブラシを取得(&amp;B)</translation>
     </message>
     <message>
-        <location line="+107"/>
+        <location line="+108"/>
         <source>Moderator</source>
         <translation>モデレーター</translation>
     </message>

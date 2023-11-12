@@ -508,7 +508,6 @@
         <translation>
             <numerusform>%1/%n usuário</numerusform>
             <numerusform>%1/%n usuários</numerusform>
-            <numerusform>%1/%n usuários</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -516,7 +515,6 @@
         <source>%n users</source>
         <translation>
             <numerusform>%n usuário</numerusform>
-            <numerusform>%n usuários</numerusform>
             <numerusform>%n usuários</numerusform>
         </translation>
     </message>
@@ -1154,9 +1152,9 @@
     </message>
     <message>
         <location line="+4"/>
-        <source>Session terminated by administrator: %2</source>
+        <source>Session terminated by administrator: %1</source>
         <extracomment>%1 is the reason given.</extracomment>
-        <translation>A sessão foi terminada pelo(a) administrador(a) %2</translation>
+        <translation type="unfinished">A sessão foi terminada pelo(a) administrador(a) %1</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1460,7 +1458,7 @@
 <context>
     <name>utils::News</name>
     <message>
-        <location filename="../utils/news.cpp" line="+284"/>
+        <location filename="../utils/news.cpp" line="+280"/>
         <location line="+41"/>
         <source>Checking for updates…</source>
         <translation>Verificando atualizações…</translation>

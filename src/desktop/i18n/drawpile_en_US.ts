@@ -6422,7 +6422,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+265"/>
+        <location line="+268"/>
         <source>Checking…</source>
         <translation></translation>
     </message>
@@ -6463,7 +6463,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::TouchTestDialog</name>
     <message>
-        <location filename="../dialogs/touchtestdialog.cpp" line="+95"/>
+        <location filename="../dialogs/touchtestdialog.cpp" line="+212"/>
         <source>Enable touch</source>
         <translation></translation>
     </message>
@@ -6486,7 +6486,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::TouchTestView</name>
     <message>
-        <location line="-118"/>
+        <location line="-235"/>
         <source>Touch here.</source>
         <translation></translation>
     </message>
@@ -6789,7 +6789,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Input</name>
     <message>
-        <location filename="../dialogs/settingsdialog/input.cpp" line="+39"/>
+        <location filename="../dialogs/settingsdialog/input.cpp" line="+37"/>
         <source>Input</source>
         <translation></translation>
     </message>
@@ -6864,7 +6864,22 @@ Values above 0.5 may not be noticeable.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+6"/>
+        <source>Touch mode:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Touchscreen</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Gestures</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
         <source>One-finger input:</source>
         <translation></translation>
     </message>
@@ -6884,7 +6899,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+8"/>
         <source>Pinch to zoom</source>
         <translation></translation>
     </message>
@@ -6897,6 +6912,11 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+4"/>
         <source>Touch gestures:</source>
         <translation></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Test your tablet here:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8719,7 +8739,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>utils::Recents</name>
     <message>
-        <location filename="../utils/recents.cpp" line="+391"/>
+        <location filename="../utils/recents.cpp" line="+393"/>
         <source>More…</source>
         <translation></translation>
     </message>
@@ -8770,7 +8790,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::CanvasView</name>
     <message>
-        <location filename="../scene/canvasview.cpp" line="+152"/>
+        <location filename="../scene/canvasview.cpp" line="+167"/>
         <source>Reconnect</source>
         <translation></translation>
     </message>
@@ -8855,7 +8875,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+1600"/>
+        <location line="+1680"/>
         <source>Zoom: %1%</source>
         <translation></translation>
     </message>
@@ -9398,7 +9418,7 @@ or via Animation ▸ New Track.</source>
 <context>
     <name>widgets::UserItemDelegate</name>
     <message>
-        <location filename="../chat/useritemdelegate.cpp" line="+167"/>
+        <location filename="../chat/useritemdelegate.cpp" line="+168"/>
         <source>Operator</source>
         <translation></translation>
     </message>
@@ -9408,7 +9428,7 @@ or via Animation ▸ New Track.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-138"/>
+        <location line="-139"/>
         <source>&amp;Operator</source>
         <translation></translation>
     </message>
@@ -9463,7 +9483,7 @@ or via Animation ▸ New Track.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+107"/>
+        <location line="+108"/>
         <source>Moderator</source>
         <translation></translation>
     </message>

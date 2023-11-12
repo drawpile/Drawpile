@@ -3810,7 +3810,6 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
         <translation>
             <numerusform> quadro</numerusform>
             <numerusform> quadros</numerusform>
-            <numerusform> quadros</numerusform>
         </translation>
     </message>
     <message>
@@ -6110,7 +6109,6 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>
             <numerusform>%n banimento importado.</numerusform>
             <numerusform>%n banimentos importados.</numerusform>
-            <numerusform>%n banimentos importados.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -6119,7 +6117,6 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <extracomment>%1 is the &quot;Imported %n session ban(s).&quot; message.</extracomment>
         <translation>
             <numerusform>%1 %n não foi importado porque estava inválido ou duplicado.</numerusform>
-            <numerusform>%1 %n não foram importados porque estavam inválidos ou duplicados.</numerusform>
             <numerusform>%1 %n não foram importados porque estavam inválidos ou duplicados.</numerusform>
         </translation>
     </message>
@@ -6218,7 +6215,6 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>
             <numerusform>%n hora</numerusform>
             <numerusform>%n horas</numerusform>
-            <numerusform>%n horas</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -6228,7 +6224,6 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>
             <numerusform>%n minuto</numerusform>
             <numerusform>%n minutos</numerusform>
-            <numerusform>%n minutos</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -6237,7 +6232,6 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <extracomment>Idle timeout seconds. May be joined with hours and minutes.</extracomment>
         <translation>
             <numerusform>e %n segundo</numerusform>
-            <numerusform>e %n segundos</numerusform>
             <numerusform>e %n segundos</numerusform>
         </translation>
     </message>
@@ -6331,7 +6325,6 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <source>%n role(s) imported.</source>
         <translation>
             <numerusform>%n cargo importado.</numerusform>
-            <numerusform>%n cargos importados.</numerusform>
             <numerusform>%n cargos importados.</numerusform>
         </translation>
     </message>
@@ -6535,7 +6528,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Verificar Atualizações</translation>
     </message>
     <message>
-        <location line="+265"/>
+        <location line="+268"/>
         <source>Checking…</source>
         <translation>Verificando…</translation>
     </message>
@@ -6576,7 +6569,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
 <context>
     <name>dialogs::TouchTestDialog</name>
     <message>
-        <location filename="../dialogs/touchtestdialog.cpp" line="+95"/>
+        <location filename="../dialogs/touchtestdialog.cpp" line="+212"/>
         <source>Enable touch</source>
         <translation>Ativar toque</translation>
     </message>
@@ -6599,7 +6592,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
 <context>
     <name>dialogs::TouchTestView</name>
     <message>
-        <location line="-118"/>
+        <location line="-235"/>
         <source>Touch here.</source>
         <translation>Toque aqui.</translation>
     </message>
@@ -6902,7 +6895,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
 <context>
     <name>dialogs::settingsdialog::Input</name>
     <message>
-        <location filename="../dialogs/settingsdialog/input.cpp" line="+39"/>
+        <location filename="../dialogs/settingsdialog/input.cpp" line="+37"/>
         <source>Input</source>
         <translation>Entrada</translation>
     </message>
@@ -6977,7 +6970,22 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Driver:</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+6"/>
+        <source>Touch mode:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Touchscreen</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Gestures</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
         <source>One-finger input:</source>
         <translation>Quando um dedo tocar:</translation>
     </message>
@@ -6997,7 +7005,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Mover tela de pintura</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+8"/>
         <source>Pinch to zoom</source>
         <translation>Fazer pinça para zoom</translation>
     </message>
@@ -7010,6 +7018,11 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <location line="+4"/>
         <source>Touch gestures:</source>
         <translation>Gestos de toque:</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Test your tablet here:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8832,7 +8845,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
 <context>
     <name>utils::Recents</name>
     <message>
-        <location filename="../utils/recents.cpp" line="+391"/>
+        <location filename="../utils/recents.cpp" line="+393"/>
         <source>More…</source>
         <translation>Mais…</translation>
     </message>
@@ -8883,7 +8896,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
 <context>
     <name>widgets::CanvasView</name>
     <message>
-        <location filename="../scene/canvasview.cpp" line="+152"/>
+        <location filename="../scene/canvasview.cpp" line="+167"/>
         <source>Reconnect</source>
         <translation>Reconectar</translation>
     </message>
@@ -8968,7 +8981,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Espelhamento horizontal: DESLIGADO</translation>
     </message>
     <message>
-        <location line="+1600"/>
+        <location line="+1680"/>
         <source>Zoom: %1%</source>
         <translation>Zoom: %1%</translation>
     </message>
@@ -9524,7 +9537,7 @@ ou em Animação ▸ Nova Trilha.</translation>
 <context>
     <name>widgets::UserItemDelegate</name>
     <message>
-        <location filename="../chat/useritemdelegate.cpp" line="+167"/>
+        <location filename="../chat/useritemdelegate.cpp" line="+168"/>
         <source>Operator</source>
         <translation>Operador</translation>
     </message>
@@ -9534,7 +9547,7 @@ ou em Animação ▸ Nova Trilha.</translation>
         <translation>Confiável</translation>
     </message>
     <message>
-        <location line="-138"/>
+        <location line="-139"/>
         <source>&amp;Operator</source>
         <translation>Operador</translation>
     </message>
@@ -9589,7 +9602,7 @@ ou em Animação ▸ Nova Trilha.</translation>
         <translation>Pegar Pincel Atual</translation>
     </message>
     <message>
-        <location line="+107"/>
+        <location line="+108"/>
         <source>Moderator</source>
         <translation>Moderador</translation>
     </message>
