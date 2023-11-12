@@ -1154,7 +1154,7 @@
         <location line="+4"/>
         <source>Session terminated by administrator: %1</source>
         <extracomment>%1 is the reason given.</extracomment>
-        <translation type="unfinished">Sitzung durch Administrator beendet: %1</translation>
+        <translation>Sitzung durch Administrator beendet: %1</translation>
     </message>
     <message>
         <location line="+4"/>
