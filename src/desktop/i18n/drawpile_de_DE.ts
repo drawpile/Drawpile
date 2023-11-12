@@ -6970,17 +6970,17 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+6"/>
         <source>Touch mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Touch-Modus:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Touchscreen</source>
-        <translation type="unfinished"></translation>
+        <translation>Touchscreen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Gestures</source>
-        <translation type="unfinished"></translation>
+        <translation>Gesten</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -7020,7 +7020,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+3"/>
         <source>Test your tablet here:</source>
-        <translation type="unfinished"></translation>
+        <translation>Testen Sie Ihr Tablet hier:</translation>
     </message>
 </context>
 <context>
