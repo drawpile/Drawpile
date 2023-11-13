@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "desktop/docks/brushpalettedock.h"
+#include "desktop/docks/brushpalettedelegate.h"
 #include "desktop/dialogs/brushexportdialog.h"
 #include "desktop/dialogs/brushpresetproperties.h"
 #include "desktop/widgets/groupedtoolbutton.h"
@@ -169,6 +170,9 @@ BrushPalette::BrushPalette(QWidget *parent)
 	d->presetListView->setWrapping(true);
 	d->presetListView->setResizeMode(QListView::Adjust);
 	d->presetListView->setContextMenuPolicy(Qt::CustomContextMenu);
+	d->presetListView->setLayoutMode(QListView::Batched);
+	BrushPaletteDelegate *delegate = new BrushPaletteDelegate(this);
+	d->presetListView->setItemDelegate(delegate);
 	utils::initKineticScrolling(d->presetListView);
 	setWidget(d->presetListView);
 
@@ -176,6 +180,24 @@ BrushPalette::BrushPalette(QWidget *parent)
 	d->presetListView->setModel(d->presetProxyModel);
 
 	connect(d->presetModel, &QAbstractItemModel::modelReset, this, &BrushPalette::presetsReset);
+	connect(
+		d->presetModel, &QAbstractItemModel::modelReset, delegate,
+		&BrushPaletteDelegate::clearCache);
+	connect(
+		d->presetModel, &QAbstractItemModel::rowsInserted, delegate,
+		&BrushPaletteDelegate::clearCache);
+	connect(
+		d->presetModel, &QAbstractItemModel::rowsRemoved, delegate,
+		&BrushPaletteDelegate::clearCache);
+	connect(
+		d->presetModel, &QAbstractItemModel::columnsInserted, delegate,
+		&BrushPaletteDelegate::clearCache);
+	connect(
+		d->presetModel, &QAbstractItemModel::columnsRemoved, delegate,
+		&BrushPaletteDelegate::clearCache);
+	connect(
+		d->presetModel, &QAbstractItemModel::dataChanged, delegate,
+		&BrushPaletteDelegate::clearCache);
 	connect(d->tagComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
 		this, &BrushPalette::tagIndexChanged);
 	connect(d->searchLineEdit, &QLineEdit::textChanged,

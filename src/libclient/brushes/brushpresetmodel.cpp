@@ -1112,7 +1112,7 @@ QVariant BrushPresetModel::data(const QModelIndex &index, int role) const
 	case FilterRole:
 	case TitleRole:
 		return d->readPresetNameById(index.internalId());
-	case Qt::DecorationRole: {
+	case ThumbnailRole: {
 		QPixmap pixmap;
 		if(pixmap.loadFromData(d->readPresetThumbnailById(index.internalId()))) {
 			return pixmap.scaled(iconSize(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
@@ -1120,14 +1120,15 @@ QVariant BrushPresetModel::data(const QModelIndex &index, int role) const
 			return QPixmap();
 		}
 	}
-	case Qt::SizeHintRole: {
-		return iconSize() + QSize(7, 7);
-	}
+	case Qt::SizeHintRole:
+		return iconSize();
 	case BrushRole: {
 		QByteArray data = d->readPresetDataById(index.internalId());
 		ActiveBrush brush = ActiveBrush::fromJson(QJsonDocument::fromJson(data).object());
 		return QVariant::fromValue(brush);
 	}
+	case IdRole:
+		return int(index.internalId());
 	default:
 		break;
 	}

@@ -146,6 +146,8 @@ public:
 		FilterRole = Qt::UserRole + 1,
 		BrushRole,
 		TitleRole,
+		IdRole,
+		ThumbnailRole,
 	};
 
 	explicit BrushPresetModel(BrushPresetTagModel *tagModel);
