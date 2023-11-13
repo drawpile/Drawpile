@@ -883,7 +883,8 @@ void ChatWidget::showChatContextMenu(const QPoint &pos)
 	menu->addSeparator();
 
 	QAction *actions[] = {
-		d->clearAction, d->compactAction, d->attachAction, d->detachAction};
+		d->clearAction, d->compactAction, d->attachAction, d->detachAction,
+		d->muteAction};
 	for(QAction *action : actions) {
 		if(action && action->isVisible()) {
 			menu->addAction(action);

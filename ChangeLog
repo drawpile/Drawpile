@@ -1,6 +1,7 @@
 Unreleased Version 2.2.0-pre
  * Server Fix: No longer show "cannot look up one session and then join another" when joining a session with an ID alias. Thanks Kink and Fabian for finding this.
  * Fix: Actually disable brush taking in 2.1 sessions, last attempt didn't stick. Thanks again Blozzom for reporting.
+ * Fix: Also show mute notifications action when right-clicking the chat. Thanks Blozzom for reporting.
 
 2023-11-12 Version 2.2.0-beta.10
  * Fix: Don't deadlock on first startup. Thanks to Hail, lowontrash, FARBOL234, Dorokinyo and hamlin for reporting.
