@@ -96,7 +96,6 @@ UserItemDelegate::~UserItemDelegate()
 void UserItemDelegate::setCompatibilityMode(bool compatibilityMode)
 {
 	m_infoAction->setDisabled(compatibilityMode);
-	m_brushAction->setDisabled(compatibilityMode);
 }
 
 QSize UserItemDelegate::sizeHint(
@@ -279,8 +278,9 @@ void UserItemDelegate::showContextMenu(
 	m_kickAction->setEnabled(canKick);
 	m_banAction->setEnabled(canKick);
 
-	m_chatAction->setEnabled(!isSelf);	// Can't chat with self.
-	m_brushAction->setEnabled(!isSelf); // Taking your own brush is pointless.
+	m_chatAction->setEnabled(!isSelf); // Can't chat with self.
+	// Taking your own brush is pointless. Can't take brushes in 2.1 sessions.
+	m_brushAction->setEnabled(!isSelf && !m_doc->isCompatibilityMode());
 
 	m_userMenu->popup(pos);
 }
