@@ -245,15 +245,14 @@ void LoginHandler::handleLookupMessage(const net::ServerCommand &cmd)
 	}
 
 	compat::sizetype argc = cmd.args.size();
-	QString sessionIdOrAlias;
 	net::Message msg;
 	if(argc == 0) {
-		sessionIdOrAlias = QStringLiteral("");
+		m_lookup = QStringLiteral("");
 		msg = net::ServerReply::makeResultHostLookup(
 			QStringLiteral("Host lookup OK!"));
 
 	} else if(argc == 1) {
-		sessionIdOrAlias = cmd.args[0].toString();
+		QString sessionIdOrAlias = cmd.args[0].toString();
 		if(sessionIdOrAlias.isEmpty()) {
 			if(m_mandatoryLookup) {
 				sendError(
@@ -262,7 +261,7 @@ void LoginHandler::handleLookupMessage(const net::ServerCommand &cmd)
 								   "through a direct link."));
 				return;
 			}
-			sessionIdOrAlias = QStringLiteral("");
+			m_lookup = QStringLiteral("");
 			msg = net::ServerReply::makeResultJoinLookup(
 				QStringLiteral("Empty join lookup OK!"), QJsonObject());
 
@@ -277,6 +276,7 @@ void LoginHandler::handleLookupMessage(const net::ServerCommand &cmd)
 						"invite link has changed"));
 				return;
 			}
+			m_lookup = session->id();
 			msg = net::ServerReply::makeResultJoinLookup(
 				QStringLiteral("Join lookup OK!"), session->getDescription());
 		}
@@ -288,7 +288,6 @@ void LoginHandler::handleLookupMessage(const net::ServerCommand &cmd)
 		return;
 	}
 
-	m_lookup = sessionIdOrAlias;
 	m_state = State::WaitForIdent;
 	send(msg);
 }
@@ -812,16 +811,16 @@ void LoginHandler::handleJoinMessage(const net::ServerCommand &cmd)
 	}
 
 	QString sessionId = cmd.args.at(0).toString();
-	if(!m_lookup.isEmpty() && sessionId != m_lookup) {
-		sendError(
-			QStringLiteral("lookupMismatch"),
-			QStringLiteral("Cannot look up one session and then join another"));
-		return;
-	}
-
 	Session *session = m_sessions->getSessionById(sessionId, true);
 	if(!session) {
 		sendError("notFound", "Session not found!");
+		return;
+	}
+
+	if(!m_lookup.isEmpty() && session->id() != m_lookup) {
+		sendError(
+			QStringLiteral("lookupMismatch"),
+			QStringLiteral("Cannot look up one session and then join another"));
 		return;
 	}
 
