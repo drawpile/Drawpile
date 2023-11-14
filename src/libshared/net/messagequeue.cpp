@@ -330,6 +330,8 @@ void MessageQueue::readData()
 {
 	int read, totalread = 0, gotmessages = 0;
 	bool smoothFlush = false;
+	int disconnectReason = -1;
+	QString disconnectMessage;
 	do {
 		// Read as much as fits in to the message buffer
 		read = m_socket->read(
@@ -369,12 +371,11 @@ void MessageQueue::readData()
 					// We expected at least a reason!
 					emit badData(messageLength, MSG_TYPE_DISCONNECT, 0);
 				} else {
-					emit gracefulDisconnect(
-						GracefulDisconnect(
-							m_recvbuffer[DP_MESSAGE_HEADER_LENGTH]),
-						QString::fromUtf8(
-							m_recvbuffer + DP_MESSAGE_HEADER_LENGTH + 1,
-							messageLength - DP_MESSAGE_HEADER_LENGTH - 1));
+					smoothFlush = true;
+					disconnectReason = m_recvbuffer[DP_MESSAGE_HEADER_LENGTH];
+					disconnectMessage = QString::fromUtf8(
+						m_recvbuffer + DP_MESSAGE_HEADER_LENGTH + 1,
+						messageLength - DP_MESSAGE_HEADER_LENGTH - 1);
 				}
 
 			} else {
@@ -442,6 +443,11 @@ void MessageQueue::readData()
 		} else {
 			emit messageAvailable();
 		}
+	}
+
+	if(disconnectReason != -1) {
+		emit gracefulDisconnect(
+			GracefulDisconnect(disconnectReason), disconnectMessage);
 	}
 }
 

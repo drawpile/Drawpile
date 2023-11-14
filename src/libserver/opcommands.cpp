@@ -237,13 +237,17 @@ kickUser(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 	}
 
 	if(ban) {
-		client->session()->addBan(target, client->username(), client);
 		client->session()->keyMessageAll(
 			target->username() + " banned by " + client->username(), false,
 			net::ServerReply::KEY_BAN,
 			{{QStringLiteral("target"), target->username()},
 			 {QStringLiteral("by"), client->username()}});
+		target->disconnectClient(
+			Client::DisconnectionReason::Kick, client->username());
+		client->session()->addBan(target, client->username(), client);
 	} else {
+		target->disconnectClient(
+			Client::DisconnectionReason::Kick, client->username());
 		client->session()->keyMessageAll(
 			target->username() + " kicked by " + client->username(), false,
 			net::ServerReply::KEY_KICK,
@@ -251,8 +255,6 @@ kickUser(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 			 {QStringLiteral("by"), client->username()}});
 	}
 
-	target->disconnectClient(
-		Client::DisconnectionReason::Kick, client->username());
 	return CmdResult::ok();
 }
 
