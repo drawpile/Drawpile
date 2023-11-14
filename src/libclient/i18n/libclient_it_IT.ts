@@ -431,12 +431,12 @@
     <message>
         <location line="+4"/>
         <source>Session Bans (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ban di Sessione (%1)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Roles (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ruoli (%1)</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -921,7 +921,7 @@
         <location filename="../import/animationimporter.cpp" line="+47"/>
         <source>Frames %1</source>
         <extracomment>Title for imported animation tracks and layer groups.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Frame %1</translation>
     </message>
 </context>
 <context>
@@ -957,27 +957,27 @@
     <message>
         <location filename="../net/authlistmodel.cpp" line="+37"/>
         <source>Moderator</source>
-        <translation type="unfinished">Moderatore</translation>
+        <translation>Moderatore</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Operator</source>
-        <translation type="unfinished">Оperatore</translation>
+        <translation>Оperatore</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Trusted</source>
-        <translation type="unfinished">Affidabile</translation>
+        <translation>Affidabile</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>User</source>
-        <translation type="unfinished">Utente</translation>
+        <translation>Utente</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>Ruoli</translation>
     </message>
 </context>
 <context>
@@ -986,7 +986,7 @@
         <location filename="../net/banlistmodel.cpp" line="+69"/>
         <location line="+15"/>
         <source>ID</source>
-        <translation type="unfinished"></translation>
+        <translation>ID</translation>
     </message>
     <message>
         <location line="-13"/>
@@ -1002,7 +1002,7 @@
     <message>
         <location line="+2"/>
         <source>Client info</source>
-        <translation type="unfinished"></translation>
+        <translation>Informazioni sul Client</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1041,93 +1041,93 @@
     <message>
         <location line="-384"/>
         <source>You have been kicked.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sei stato espulso.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You have been kicked by %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sei stato espulso da %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>A server error occurred.</source>
-        <translation type="unfinished"></translation>
+        <translation>Si è verificato un errore del server.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>A server error occurred: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Si è verificato un errore del server: %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>The server is shutting down.</source>
-        <translation type="unfinished"></translation>
+        <translation>Il server sta per chiudere.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The session has been shut down: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>La sessione è stata chiusa: %1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Disconnected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Disconnesso.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Disconnected: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Disconnesso: %1</translation>
     </message>
     <message>
         <location line="+316"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Solo i moderatori possono esportare i ban.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Server error.</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore del server.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Exporting encrypted bans not configured on this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Esportazione di ban crittografati non configurati su questo server.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Exporting encrypted bans not supported by this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Esportazione di ban crittografati non supportati da questo server.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The server couldn&apos;t read the import data. This is likely because it was exported from a different server. You can only import bans into the same server they were exported from.</source>
-        <translation type="unfinished"></translation>
+        <translation>Il server non è riuscito a leggere i dati di importazione. Questo è probabilmente perché è stato esportato da un server diverso. È possibile importare i ban nello stesso server da cui sono stati esportati.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Invalid import data.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dati di importazione non validi.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Malformed import data.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dati di importazione malformati.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Importing encrypted bans not configured on this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Importazione di ban crittografati non configurata su questo server.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Importing encrypted bans not supported by this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Importazione di ban crittografati non supportata su questo server.</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Operator status revoked from %1 by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Stato di Operatore revocato da %1 per via di %2.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1154,13 +1154,13 @@
         <location line="+4"/>
         <source>Session terminated by administrator: %1</source>
         <extracomment>%1 is the reason given.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Sessione terminata dall&apos;amministratore: %1</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session terminated by moderator (%1): %2</source>
         <extracomment>%1 is the name of the moderator, %2 is the reason given.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Sessione terminata dal moderatore (%1): %2</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -1209,12 +1209,12 @@
     <message>
         <location line="+84"/>
         <source>This server doesn&apos;t provide a way to log in for joining a session!</source>
-        <translation type="unfinished"></translation>
+        <translation>Questo server non fornisce un modo per accedere a una sessione!</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This server doesn&apos;t provide a way to log in for hosting a session!</source>
-        <translation type="unfinished"></translation>
+        <translation>Questo server non fornisce un modo per accedere per fare da host a una sessione!</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -1224,7 +1224,7 @@
     <message>
         <location line="+68"/>
         <source>Session lookup failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Ricerca sessione fallita</translation>
     </message>
     <message>
         <location line="+38"/>
@@ -1255,7 +1255,7 @@
     <message>
         <location line="+30"/>
         <source>Invalid ident intent response.</source>
-        <translation type="unfinished"></translation>
+        <translation>Risposta intenzionale non valida.</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -1270,12 +1270,12 @@
     <message>
         <location line="+8"/>
         <source>Server reported two different ext-auth URLs</source>
-        <translation type="unfinished"></translation>
+        <translation>Il Server ha segnalato due diversi URL ext-auth</translation>
     </message>
     <message>
         <location line="+111"/>
         <source>Got multiple sessions when only one was expected</source>
-        <translation type="unfinished"></translation>
+        <translation>Ho più sessioni quando solo una era prevista</translation>
     </message>
     <message>
         <location line="+52"/>
@@ -1366,17 +1366,17 @@
     <message>
         <location line="+4"/>
         <source>This usually means that your Drawpile version is too old. Do you need to update?</source>
-        <translation type="unfinished"></translation>
+        <translation>Questo di solito significa che la tua versione Drawpile è troppo vecchia. Devi aggiornare?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Session not found, it may have ended or its invite link has changed</source>
-        <translation type="unfinished"></translation>
+        <translation>Sessione non trovata, potrebbe essere terminata o il suo link di invito è cambiato</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This server only allows joining sessions through a direct link.</source>
-        <translation type="unfinished"></translation>
+        <translation>Questo server permette solo di unirsi alle sessioni attraverso un link diretto.</translation>
     </message>
     <message>
         <location line="+27"/>
