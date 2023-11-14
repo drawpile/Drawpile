@@ -293,8 +293,18 @@ void CanvasView::setCanvas(drawingboard::CanvasScene *scene)
 			} else {
 				scrollBy(xoff * m_zoom, yoff * m_zoom);
 			}
-			update();
 			viewRectChanged();
+			// Hack: on some systems, repainting doesn't work properly when the
+			// canvas size is reduced, leaving bits of the prior canvas strewn
+			// about. So we force the background to repaint by changing its
+			// color slightly, actually forcing a refresh.
+			QBrush bb = backgroundBrush();
+			QColor c = bb.color();
+			int red = c.red();
+			c.setRed(red < 127 ? red + 1 : red - 1);
+			setBackgroundBrush(c);
+			repaint();
+			setBackgroundBrush(bb);
 		});
 	connect(
 		m_notificationBar, &NotificationBar::heightChanged, m_scene,
