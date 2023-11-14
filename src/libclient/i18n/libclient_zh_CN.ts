@@ -1152,7 +1152,7 @@
         <location line="+4"/>
         <source>Session terminated by administrator: %1</source>
         <extracomment>%1 is the reason given.</extracomment>
-        <translation type="unfinished">房间已被管理员终止: %1</translation>
+        <translation>房间已被管理员终止: %1</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1437,7 +1437,7 @@
     <message>
         <location line="+1"/>
         <source>Started by</source>
-        <translation>开始于</translation>
+        <translation>所有者</translation>
     </message>
     <message>
         <location line="+1"/>
