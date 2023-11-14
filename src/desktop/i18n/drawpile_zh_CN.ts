@@ -578,12 +578,12 @@ to 64x64 pixels.</source>
         <location line="+24"/>
         <location line="+185"/>
         <source>Save Image</source>
-        <translation>保存图片</translation>
+        <translation>保存图像</translation>
     </message>
     <message>
         <location line="-185"/>
         <source>Export Image</source>
-        <translation>导出图片</translation>
+        <translation>导出图像</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -1802,32 +1802,32 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="-299"/>
         <source>Import &amp;Drawpile 2.1 Animation…</source>
-        <translation>导入 &amp;Drawpile 2.1 动画…</translation>
+        <translation>导入&amp;Drawpile 2.1 动画…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Import &amp;Brushes...</source>
-        <translation>导入 &amp;笔刷...</translation>
+        <translation>导入&amp;笔刷...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Export Session &amp;Template...</source>
-        <translation>导出 房间 &amp;模板...</translation>
+        <translation>导出房间 &amp;模板...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Export Animated &amp;GIF...</source>
-        <translation>导出 动画 &amp;GIF...</translation>
+        <translation>导出动画 &amp;GIF...</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Export Animation &amp;Frames...</source>
-        <translation>导出 动画 &amp;帧数...</translation>
+        <translation>导出动画 &amp;帧数...</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Export &amp;Brushes…</source>
-        <translation>导出 &amp;笔刷…</translation>
+        <translation>导出&amp;笔刷…</translation>
     </message>
     <message>
         <location line="+296"/>
@@ -6957,17 +6957,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Touch mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>触控模式:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Touchscreen</source>
-        <translation type="unfinished"></translation>
+        <translation>触控屏</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Gestures</source>
-        <translation type="unfinished"></translation>
+        <translation>手势</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -7002,12 +7002,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Touch gestures:</source>
-        <translation>平板手势:</translation>
+        <translation>触控手势:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Test your tablet here:</source>
-        <translation type="unfinished"></translation>
+        <translation>在此测试你的数位板:</translation>
     </message>
 </context>
 <context>
