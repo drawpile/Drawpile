@@ -16,6 +16,8 @@
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 #	include <QEventPoint>
 #	include <QInputDevice>
+#else
+#	include <QTouchDevice>
 #endif
 
 namespace compat {
@@ -182,6 +184,23 @@ inline auto keyCombination(Qt::KeyboardModifiers modifiers, Qt::Key key)
 {
 	return QKeyCombination{modifiers, key};
 }
+
+inline QString touchDeviceName(const QTouchEvent *event)
+{
+	const QInputDevice *device = event->device();
+	return device ? device->name() : QString();
+}
+
+inline int touchDeviceType(const QTouchEvent *event)
+{
+	return int(event->deviceType());
+}
+
+inline bool isTouchPad(const QTouchEvent *event)
+{
+	return event->deviceType() == QInputDevice::DeviceType::TouchPad;
+}
+
 #else
 using DeviceType = QTabletEvent::TabletDevice;
 using EnterEvent = QEvent;
@@ -266,6 +285,23 @@ inline auto dropPos(const QDropEvent &event)
 inline auto keyCombination(Qt::KeyboardModifiers modifiers, Qt::Key key)
 {
 	return int(modifiers) | int(key);
+}
+
+inline QString touchDeviceName(const QTouchEvent *event)
+{
+	QTouchDevice *device = event->device();
+	return device ? device->name() : QString();
+}
+
+inline int touchDeviceType(const QTouchEvent *event)
+{
+	QTouchDevice *device = event->device();
+	return device ? int(device->type()) : -1;
+}
+
+inline bool isTouchPad(const QTouchEvent *event)
+{
+	return touchDeviceType(event) == int(QTouchDevice::TouchPad);
 }
 #endif
 }

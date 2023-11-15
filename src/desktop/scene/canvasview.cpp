@@ -1223,7 +1223,8 @@ void CanvasView::gestureEvent(QGestureEvent *event)
 			[[fallthrough]];
 		case Qt::GestureUpdated:
 		case Qt::GestureFinished:
-			if(m_enableTouchScroll || m_enableTouchDraw) {
+			if((m_enableTouchScroll || m_enableTouchDraw) &&
+			   cf.testFlag(QPinchGesture::CenterPointChanged)) {
 				QPointF d = pinch->centerPoint() - pinch->lastCenterPoint();
 				horizontalScrollBar()->setValue(
 					horizontalScrollBar()->value() - d.x());
@@ -1233,10 +1234,12 @@ void CanvasView::gestureEvent(QGestureEvent *event)
 
 			{
 				QScopedValueRollback<bool> guard{m_blockNotices, true};
-				if(m_enableTouchPinch) {
+				if(m_enableTouchPinch &&
+				   cf.testFlag(QPinchGesture::ScaleFactorChanged)) {
 					setZoom(m_gestureStartZoom * pinch->totalScaleFactor());
 				}
-				if(m_enableTouchTwist) {
+				if(m_enableTouchTwist &&
+				   cf.testFlag(QPinchGesture::RotationAngleChanged)) {
 					setRotation(
 						m_gestureStartAngle + pinch->totalRotationAngle());
 				}
@@ -1312,9 +1315,14 @@ void CanvasView::mouseDoubleClickEvent(QMouseEvent *)
 
 void CanvasView::wheelEvent(QWheelEvent *event)
 {
+	QPoint angleDelta = event->angleDelta();
+	DP_EVENT_LOG(
+		"wheel x=%d y=%d buttons=0x%x modifiers=0x%x pendown=%d touching=%d",
+		angleDelta.x(), angleDelta.y(), unsigned(event->buttons()),
+		unsigned(event->modifiers()), m_pendown, m_touching);
+
 	CanvasShortcuts::Match match =
 		m_canvasShortcuts.matchMouseWheel(event->modifiers(), m_keysDown);
-	QPoint angleDelta = event->angleDelta();
 	int deltaX = angleDelta.x();
 	int deltaY = angleDelta.y();
 	if(match.inverted()) {
@@ -1330,6 +1338,7 @@ void CanvasView::wheelEvent(QWheelEvent *event)
 	case CanvasShortcuts::NO_ACTION:
 		break;
 	case CanvasShortcuts::CANVAS_PAN:
+		event->accept();
 		scrollBy(-deltaX, -deltaY);
 		break;
 	case CanvasShortcuts::CANVAS_ROTATE:
@@ -1352,12 +1361,14 @@ void CanvasView::wheelEvent(QWheelEvent *event)
 	}
 	// Color and layer picking by spinning the scroll wheel is weird, but okay.
 	case CanvasShortcuts::COLOR_PICK:
+		event->accept();
 		if(m_allowColorPick && m_scene->hasImage()) {
 			QPointF p = mapToCanvas(compat::wheelPosition(*event));
 			m_scene->model()->pickColor(p.x(), p.y(), 0, 0);
 		}
 		break;
 	case CanvasShortcuts::LAYER_PICK: {
+		event->accept();
 		if(m_scene->hasImage()) {
 			QPointF p = mapToCanvas(compat::wheelPosition(*event));
 			m_scene->model()->pickLayer(p.x(), p.y());
@@ -1365,8 +1376,8 @@ void CanvasView::wheelEvent(QWheelEvent *event)
 		break;
 	}
 	case CanvasShortcuts::TOOL_ADJUST:
+		event->accept();
 		if(m_allowToolAdjust) {
-			event->accept();
 			emit quickAdjust(deltaY / (30 * 4.0));
 		}
 		break;
@@ -1612,10 +1623,15 @@ void CanvasView::touchEvent(QTouchEvent *event)
 
 		m_touchDrawBuffer.clear();
 		m_touchRotating = false;
-		if(m_enableTouchDraw && pointsCount == 1) {
+		if(m_enableTouchDraw && pointsCount == 1 &&
+		   !compat::isTouchPad(event)) {
 			DP_EVENT_LOG(
-				"touch_draw_begin x=%f y=%f pendown=%d touching=%d points=%d",
-				pos.x(), pos.y(), m_pendown, m_touching, pointsCount);
+				"touch_draw_begin x=%f y=%f pendown=%d touching=%d type=%d "
+				"device=%s points=%s",
+				pos.x(), pos.y(), m_pendown, m_touching,
+				compat::touchDeviceType(event),
+				qUtf8Printable(compat::touchDeviceName(event)),
+				qUtf8Printable(compat::debug(points)));
 			if(m_enableTouchScroll || m_enableTouchPinch ||
 			   m_enableTouchTwist) {
 				// Buffer the touch first, since it might end up being the
@@ -1632,8 +1648,11 @@ void CanvasView::touchEvent(QTouchEvent *event)
 			}
 		} else {
 			DP_EVENT_LOG(
-				"touch_begin pendown=%d touching=%d points=%d", m_pendown,
-				m_touching, pointsCount);
+				"touch_begin pendown=%d touching=%d type=%d device=%s "
+				"points=%s",
+				m_pendown, m_touching, compat::touchDeviceType(event),
+				qUtf8Printable(compat::touchDeviceName(event)),
+				qUtf8Printable(compat::debug(points)));
 			m_touchMode = TouchMode::Moving;
 		}
 		break;
@@ -1642,11 +1661,16 @@ void CanvasView::touchEvent(QTouchEvent *event)
 	case QEvent::TouchUpdate:
 		if(m_enableTouchDraw &&
 		   ((pointsCount == 1 && m_touchMode == TouchMode::Unknown) ||
-			m_touchMode == TouchMode::Drawing)) {
+			m_touchMode == TouchMode::Drawing) &&
+		   !compat::isTouchPad(event)) {
 			QPointF pos = compat::touchPos(compat::touchPoints(*event).first());
 			DP_EVENT_LOG(
-				"touch_draw_update x=%f y=%f pendown=%d touching=%d points=%d",
-				pos.x(), pos.y(), m_pendown, m_touching, pointsCount);
+				"touch_draw_update x=%f y=%f pendown=%d touching=%d type=%d "
+				"device=%s points=%s",
+				pos.x(), pos.y(), m_pendown, m_touching,
+				compat::touchDeviceType(event),
+				qUtf8Printable(compat::touchDeviceName(event)),
+				qUtf8Printable(compat::debug(points)));
 			int bufferCount = m_touchDrawBuffer.size();
 			if(bufferCount == 0) {
 				if(m_touchMode == TouchMode::Drawing) {
@@ -1688,8 +1712,12 @@ void CanvasView::touchEvent(QTouchEvent *event)
 			center /= pointsCount;
 
 			DP_EVENT_LOG(
-				"touch_update x=%f y=%f pendown=%d touching=%d points=%d",
-				center.x(), center.y(), m_pendown, m_touching, pointsCount);
+				"touch_update x=%f y=%f pendown=%d touching=%d type=%d "
+				"device=%s points=%s",
+				center.x(), center.y(), m_pendown, m_touching,
+				compat::touchDeviceType(event),
+				qUtf8Printable(compat::touchDeviceName(event)),
+				qUtf8Printable(compat::debug(points)));
 
 			if(!m_touching) {
 				m_touchStartZoom = zoom();
@@ -1702,9 +1730,13 @@ void CanvasView::touchEvent(QTouchEvent *event)
 			// we got here with one finger, we've come out of a multitouch
 			// operation and aren't going to be drawing until all fingers leave
 			// the surface anyway, so panning is the only sensible option.
+			bool haveMultiTouch = pointsCount >= 2;
 			bool havePinchOrTwist =
-				pointsCount >= 2 && (m_enableTouchPinch || m_enableTouchTwist);
-			if(m_enableTouchScroll || m_enableTouchDraw || havePinchOrTwist) {
+				haveMultiTouch && (m_enableTouchPinch || m_enableTouchTwist);
+			bool havePan = havePinchOrTwist ||
+						   ((m_enableTouchScroll || m_enableTouchDraw) &&
+							(haveMultiTouch || !compat::isTouchPad(event)));
+			if(havePan) {
 				m_touching = true;
 				float dx = center.x() - lastCenter.x();
 				float dy = center.y() - lastCenter.y();
@@ -1774,18 +1806,23 @@ void CanvasView::touchEvent(QTouchEvent *event)
 								  !m_touchDrawBuffer.isEmpty()) ||
 								 m_touchMode == TouchMode::Drawing)) {
 			DP_EVENT_LOG(
-				"touch_draw_%s pendown=%d touching=%d points=%d",
+				"touch_draw_%s pendown=%d touching=%d type=%d device=%s "
+				"points=%s",
 				event->type() == QEvent::TouchEnd ? "end" : "cancel", m_pendown,
-				m_touching, pointsCount);
+				m_touching, compat::touchDeviceType(event),
+				qUtf8Printable(compat::touchDeviceName(event)),
+				qUtf8Printable(compat::debug(points)));
 			flushTouchDrawBuffer();
 			touchReleaseEvent(
 				QDateTime::currentMSecsSinceEpoch(),
 				compat::touchPos(compat::touchPoints(*event).first()));
 		} else {
 			DP_EVENT_LOG(
-				"touch_%s pendown=%d touching=%d points=%d",
+				"touch_%s pendown=%d touching=%d type=%d device=%s points=%s",
 				event->type() == QEvent::TouchEnd ? "end" : "cancel", m_pendown,
-				m_touching, pointsCount);
+				m_touching, compat::touchDeviceType(event),
+				qUtf8Printable(compat::touchDeviceName(event)),
+				qUtf8Printable(compat::debug(points)));
 		}
 		m_touching = false;
 		break;

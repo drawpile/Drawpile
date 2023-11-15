@@ -6,6 +6,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Show kick and ban messages in the correct order, without duplicates. Thanks xxxx for reporting.
  * Fix: Force the canvas to refresh on resize even harder because some systems still get artifacts. Thanks xxxx for reporting.
  * Fix: Default the mouse wheel to pan the canvas on macOS instead of zooming it, since that makes more sense for its two-dimensional scroll wheels. Thanks Charmandrigo for reporting.
+ * Fix: Make Apple Magic Trackpad and hopefully other touch pads work. Thanks Charmandrigo for reporting and helping figure this out.
 
 2023-11-12 Version 2.2.0-beta.10
  * Fix: Don't deadlock on first startup. Thanks to Hail, lowontrash, FARBOL234, Dorokinyo and hamlin for reporting.
