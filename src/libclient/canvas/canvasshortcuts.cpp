@@ -133,12 +133,18 @@ void CanvasShortcuts::loadDefaults()
 		TOOL_ADJUST,
 		SWAP_AXES,
 	});
+	// Unlike other platforms, macOS has two-dimensional scrolling by default,
+	// so it makes more sense to assign canvas panning to it.
 	addShortcut({
 		MOUSE_WHEEL,
 		{},
 		{},
 		Qt::NoButton,
+#ifdef Q_OS_MACOS
+		CANVAS_PAN,
+#else
 		CANVAS_ZOOM,
+#endif
 		NORMAL,
 	});
 	addShortcut({
