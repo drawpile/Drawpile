@@ -1014,37 +1014,37 @@
     <message>
         <location filename="../net/client.cpp" line="+440"/>
         <source>%1 banned by %2.</source>
-        <translation>%1 banned by %2.</translation>
+        <translation>%1已被%2禁止IP.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>%1 kicked by %2.</source>
-        <translation>%1 kicked by %2.</translation>
+        <translation>%1已被%2踢除.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>%1 made operator by the server.</source>
-        <translation>%1 made operator by the server.</translation>
+        <translation>%1被服务器赋予了房间管理员身份.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 made operator by %2.</source>
-        <translation>%1 made operator by %2.</translation>
+        <translation>%1被%2赋予了房间管理员身份.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Operator status revoked from %1 by the server.</source>
-        <translation>Operator status revoked from %1 by the server.</translation>
+        <translation>%1的房间管理员身份已被服务器移除.</translation>
     </message>
     <message>
         <location line="-384"/>
         <source>You have been kicked.</source>
-        <translation>You have been kicked.</translation>
+        <translation>你已被踢除.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You have been kicked by %1.</source>
-        <translation>You have been kicked by %1.</translation>
+        <translation>你已被%1踢除.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1125,7 +1125,7 @@
     <message>
         <location line="+26"/>
         <source>Operator status revoked from %1 by %2.</source>
-        <translation>Operator status revoked from %1 by %2.</translation>
+        <translation>%1的房间管理员身份已被%2移除.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1163,22 +1163,22 @@
     <message>
         <location line="+8"/>
         <source>%1 trusted by the server.</source>
-        <translation>%1 trusted by the server.</translation>
+        <translation>%1被服务器赋予了信任用户身份.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 trusted by %2.</source>
-        <translation>%1 trusted by %2.</translation>
+        <translation>%1被%2赋予了信任用户身份.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>%1 untrusted by the server.</source>
-        <translation>%1 untrusted by the server.</translation>
+        <translation>%1的信任用户身份已被服务器移除.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 untrusted by %2.</source>
-        <translation>%1 untrusted by %2.</translation>
+        <translation>%1的信任用户身份已被%2移除.</translation>
     </message>
 </context>
 <context>
