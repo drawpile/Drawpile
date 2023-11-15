@@ -2365,7 +2365,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+141"/>
         <source>Normal View</source>
-        <translation>通常表示</translation>
+        <translation>すべて表示</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2375,7 +2375,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>Layer View</source>
-        <translation>レイヤー表示</translation>
+        <translation>現在のレイヤーのみ表示</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2385,7 +2385,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>Frame View</source>
-        <translation>フレーム表示</translation>
+        <translation>フレームのみ表示</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -6956,17 +6956,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Touch mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>タッチモード:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Touchscreen</source>
-        <translation type="unfinished"></translation>
+        <translation>タッチスクリーン</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Gestures</source>
-        <translation type="unfinished"></translation>
+        <translation>ジェスチャー</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -7006,7 +7006,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Test your tablet here:</source>
-        <translation type="unfinished"></translation>
+        <translation>タブレットをここでテスト:</translation>
     </message>
 </context>
 <context>
