@@ -1,19 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/dialogs/playbackdialog.h"
 #include "desktop/dialogs/videoexportdialog.h"
-
-#include "libclient/canvas/canvasmodel.h"
-#include "libclient/canvas/paintengine.h"
-#include "libclient/canvas/indexbuilderrunnable.h"
-
-#include "libclient/export/videoexporter.h"
-
 #include "desktop/mainwindow.h"
 #include "desktop/utils/widgetutils.h"
-
+#include "libclient/canvas/canvasmodel.h"
+#include "libclient/canvas/indexbuilderrunnable.h"
+#include "libclient/canvas/paintengine.h"
+#include "libclient/export/videoexporter.h"
 #include "ui_playback.h"
-
 #include <QCloseEvent>
 #include <QIcon>
 #include <QMessageBox>

@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef PLAYBACKDIALOG_H
-#define PLAYBACKDIALOG_H
-
+#ifndef DESKTOP_DIALOGS_PLAYBACKDIALOG_H
+#define DESKTOP_DIALOGS_PLAYBACKDIALOG_H
 extern "C" {
 #include <dpengine/player.h>
 }
