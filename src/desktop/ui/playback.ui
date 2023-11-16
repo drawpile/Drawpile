@@ -13,17 +13,11 @@
   <property name="windowTitle">
    <string>Playback</string>
   </property>
-  <layout class="QVBoxLayout">
-   <property name="leftMargin">
-    <number>0</number>
-   </property>
-   <property name="rightMargin">
-    <number>0</number>
-   </property>
+  <layout class="QVBoxLayout" name="playbackDialogLayout">
    <item>
-    <layout class="QHBoxLayout">
+    <layout class="QHBoxLayout" name="buttonsLayout">
      <item>
-      <spacer>
+      <spacer name="buttonsLeftSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -124,7 +118,7 @@
       </widget>
      </item>
      <item>
-      <spacer>
+      <spacer name="buttonsRightSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -167,6 +161,18 @@
      </property>
      <widget class="QWidget" name="buildIndexPage">
       <layout class="QVBoxLayout">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item>
         <widget class="QProgressBar" name="playbackProgress">
          <property name="styleSheet">
@@ -190,7 +196,7 @@ border-right: 2px solid black;
         </widget>
        </item>
        <item>
-        <spacer>
+        <spacer name="indexSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
@@ -222,13 +228,7 @@ border-right: 2px solid black;
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout">
-         <property name="leftMargin">
-          <number>6</number>
-         </property>
-         <property name="rightMargin">
-          <number>6</number>
-         </property>
+        <layout class="QHBoxLayout" name="buildIndexLayout">
          <item>
           <widget class="QProgressBar" name="buildIndexProgress">
            <property name="textVisible">
@@ -252,6 +252,18 @@ border-right: 2px solid black;
      </widget>
      <widget class="QWidget" name="filmstripPage">
       <layout class="QVBoxLayout">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item>
         <widget class="widgets::Filmstrip" name="filmStrip">
          <property name="sizePolicy">
@@ -274,13 +286,7 @@ border-right: 2px solid black;
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout">
-     <property name="leftMargin">
-      <number>6</number>
-     </property>
-     <property name="rightMargin">
-      <number>6</number>
-     </property>
+    <layout class="QHBoxLayout" name="bottomLayout">
      <item>
       <widget class="QStackedWidget" name="exportStack">
        <property name="sizePolicy">
@@ -307,7 +313,7 @@ border-right: 2px solid black;
           <number>0</number>
          </property>
          <item>
-          <widget class="QLabel">
+          <widget class="QLabel" name="framTextLabel">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
              <horstretch>0</horstretch>
@@ -334,19 +340,6 @@ border-right: 2px solid black;
             <string notr="true">0</string>
            </property>
           </widget>
-         </item>
-         <item>
-          <spacer>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-          </spacer>
          </item>
          <item>
           <widget class="QCheckBox" name="autoSaveFrame">
@@ -387,9 +380,22 @@ border-right: 2px solid black;
            </property>
           </widget>
          </item>
+         <item>
+          <spacer name="pageSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
         </layout>
        </widget>
-       <widget class="QWidget">
+       <widget class="QWidget" name="exportButtonPage">
         <layout class="QHBoxLayout">
          <property name="leftMargin">
           <number>0</number>
@@ -404,7 +410,17 @@ border-right: 2px solid black;
           <number>0</number>
          </property>
          <item>
-          <spacer>
+          <widget class="QPushButton" name="configureExportButton">
+           <property name="text">
+            <string>Export Video...</string>
+           </property>
+           <property name="autoDefault">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="exportButtonSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -416,18 +432,15 @@ border-right: 2px solid black;
            </property>
           </spacer>
          </item>
-         <item>
-          <widget class="QPushButton" name="configureExportButton">
-           <property name="text">
-            <string>Export Video...</string>
-           </property>
-           <property name="autoDefault">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
         </layout>
        </widget>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDialogButtonBox" name="buttonBox">
+       <property name="standardButtons">
+        <set>QDialogButtonBox::Close</set>
+       </property>
       </widget>
      </item>
     </layout>

@@ -91,6 +91,8 @@ PlaybackDialog::PlaybackDialog(canvas::CanvasModel *canvas, QWidget *parent)
 	connect(
 		m_ui->filmStrip, &widgets::Filmstrip::doubleClicked, this,
 		&PlaybackDialog::jumpTo);
+	connect(
+		m_ui->buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
 	utils::setWidgetRetainSizeWhenHidden(m_ui->prevSkipButton, true);
 	m_ui->prevSkipButton->setVisible(false);
