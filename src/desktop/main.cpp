@@ -38,6 +38,8 @@
 #elif defined(Q_OS_WIN)
 #	include "desktop/bundled/kis_tablet/kis_tablet_support_win.h"
 #	include "desktop/bundled/kis_tablet/kis_tablet_support_win8.h"
+#elif defined(Q_OS_ANDROID)
+#	include "libshared/util/androidutils.h"
 #endif
 
 DrawpileApp::DrawpileApp(int &argc, char **argv)
@@ -514,12 +516,23 @@ static std::tuple<QStringList, QString> initApp(DrawpileApp &app)
 #endif
 
 	app.initState();
-	app.settings().bindWriteLogFile(&utils::enableLogFile);
+	desktop::settings::Settings &settings = app.settings();
+	settings.bindWriteLogFile(&utils::enableLogFile);
 	app.initTheme();
 	app.initInterface();
 
 #ifdef Q_OS_ANDROID
-	app.settings().bindCaptureVolumeRocker([](bool capture) {
+	if(!settings.androidStylusChecked()) {
+		// We'll flush the flag that we checked the input here in case we crash.
+		settings.setAndroidStylusChecked(true);
+		settings.trySubmit();
+		// Enable fingerpainting if this device doesn't have a stylus.
+		bool hasStylus = utils::androidHasStylusInput();
+		settings.setOneFingerScroll(hasStylus);
+		settings.setOneFingerDraw(!hasStylus);
+	}
+
+	settings.bindCaptureVolumeRocker([](bool capture) {
 		if(capture) {
 			qputenv("QT_ANDROID_VOLUME_KEYS", "1");
 		} else {
@@ -546,12 +559,12 @@ static std::tuple<QStringList, QString> initApp(DrawpileApp &app)
 #endif
 
 	tabletinput::init(app);
-	parentalcontrols::init(app.settings());
+	parentalcontrols::init(settings);
 
 	// Set override locale from settings, or use system locale if no override is
 	// set
 	QLocale locale = QLocale::c();
-	QString overrideLang = app.settings().language();
+	QString overrideLang = settings.language();
 	if(!overrideLang.isEmpty())
 		locale = QLocale(overrideLang);
 

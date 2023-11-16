@@ -44,6 +44,8 @@ private:
 	QJniObject m_wifiLock;
 };
 
+bool androidHasStylusInput();
+
 }
 
 #endif

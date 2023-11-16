@@ -34,6 +34,9 @@
 #	endif
 #endif
 
+#ifdef Q_OS_ANDROID
+SETTING(androidStylusChecked      , AndroidStylusChecked      , "settings/android/styluschecked"        , false)
+#endif
 SETTING(brushCursor               , BrushCursor               , "settings/brushcursor"                  , widgets::CanvasView::BrushCursor::TriangleRight)
 SETTING(brushOutlineWidth         , BrushOutlineWidth         , "settings/brushoutlinewidth"            , 1.0)
 SETTING(canvasViewBackgroundColor , CanvasViewBackgroundColor , "settings/canvasviewbackgroundcolor"    , CANVAS_VIEW_BACKGROUND_COLOR_DEFAULT)

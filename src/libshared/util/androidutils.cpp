@@ -137,4 +137,62 @@ AndroidWifiLock::~AndroidWifiLock()
 	releaseWifiLock(m_wifiLock);
 }
 
+
+bool androidHasStylusInput()
+{
+	QJniEnvironment env;
+	QJniObject activity = QJniObject::callStaticObjectMethod(
+		"org/qtproject/qt5/android/QtNative", "activity",
+		"()Landroid/app/Activity;");
+	if(clearException(env) || !checkValid("activity", activity)) {
+		return false;
+	}
+
+	QJniObject serviceName = QJniObject::getStaticObjectField<jstring>(
+		"android/content/Context", "INPUT_SERVICE");
+	if(clearException(env) || !checkValid("serviceName", serviceName)) {
+		return false;
+	}
+
+	QJniObject manager = activity.callObjectMethod(
+		"getSystemService", "(Ljava/lang/String;)Ljava/lang/Object;",
+		serviceName.object<jobject>());
+	if(clearException(env) || !checkValid("manager", manager)) {
+		return false;
+	}
+
+	QJniObject inputDeviceIds =
+		manager.callObjectMethod<jintArray>("getInputDeviceIds");
+	if(clearException(env) || !checkValid("inputDeviceIds", inputDeviceIds)) {
+		return false;
+	}
+
+	jsize length = env->GetArrayLength(inputDeviceIds.object<jarray>());
+	jint *ids =
+		env->GetIntArrayElements(inputDeviceIds.object<jintArray>(), nullptr);
+
+	bool stylusFound = false;
+	for(jsize i = 0; i < length; ++i) {
+		QJniObject inputDevice = manager.callObjectMethod(
+			"getInputDevice", "(I)Landroid/view/InputDevice;", ids[i]);
+		if(!clearException(env) && checkValid("inputDevice", inputDevice)) {
+			jint sources = inputDevice.callMethod<jint>("getSources");
+			if(!clearException(env)) {
+				// Constants taken from Android's InputDevice class.
+				constexpr jint SOURCE_STYLUS = 16386;
+				constexpr jint SOURCE_BLUETOOTH_STYLUS = 49154;
+				if((sources & SOURCE_STYLUS) == SOURCE_STYLUS ||
+				   (sources & SOURCE_BLUETOOTH_STYLUS) ==
+					   SOURCE_BLUETOOTH_STYLUS) {
+					stylusFound = true;
+					break;
+				}
+			}
+		}
+	}
+
+	env->ReleaseIntArrayElements(inputDeviceIds.object<jintArray>(), ids, 0);
+	return stylusFound;
+}
+
 }
