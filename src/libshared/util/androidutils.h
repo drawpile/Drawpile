@@ -1,16 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef ANDROIDUTILS_H
-#define ANDROIDUTILS_H
-
+#ifndef LIBSHARED_UTIL_ANDROIDUTILS_H
+#define LIBSHARED_UTIL_ANDROIDUTILS_H
 #include "libshared/util/qtcompat.h"
-
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-#include <QJniEnvironment>
-#include <QJniObject>
+#	include <QJniEnvironment>
+#	include <QJniObject>
 #else
-#include <QAndroidJniEnvironment>
-#include <QAndroidJniObject>
+#	include <QAndroidJniEnvironment>
+#	include <QAndroidJniObject>
 using QJniEnvironment = QAndroidJniEnvironment;
 using QJniObject = QAndroidJniObject;
 #endif

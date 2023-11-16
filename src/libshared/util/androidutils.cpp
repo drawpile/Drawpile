@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "libshared/util/androidutils.h"
 #include <QString>
 
@@ -39,9 +38,8 @@ static QJniObject acquireLock(
 		return QJniObject{};
 	}
 
-	QJniObject serviceName =
-		QJniObject::getStaticObjectField<jstring>(
-			"android/content/Context", service);
+	QJniObject serviceName = QJniObject::getStaticObjectField<jstring>(
+		"android/content/Context", service);
 	if(clearException(env) || !checkValid("serviceName", serviceName)) {
 		return QJniObject{};
 	}
@@ -138,6 +136,5 @@ AndroidWifiLock::~AndroidWifiLock()
 {
 	releaseWifiLock(m_wifiLock);
 }
-
 
 }
