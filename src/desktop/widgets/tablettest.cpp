@@ -1,15 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/widgets/tablettest.h"
 #include "desktop/utils/qtguicompat.h"
-
 #include <QPaintEvent>
 #include <QPainter>
 
 namespace widgets {
 
 TabletTester::TabletTester(QWidget *parent)
-	: QWidget(parent), m_mouseDown(false), m_tabletDown(false)
+	: QWidget(parent)
 {
 }
 
@@ -30,9 +28,9 @@ void TabletTester::paintEvent(QPaintEvent *e)
 	p.setPen(QColor(128, 128, 128));
 
 	// Draw grid
-	for(int i=w/8;i<w;i+=w/8)
+	for(int i = w / 8; i < w; i += w / 8)
 		p.drawLine(i, 0, i, h);
-	for(int i=h/8;i<h;i+=h/8)
+	for(int i = h / 8; i < h; i += h / 8)
 		p.drawLine(0, i, w, i);
 
 	p.setPen(Qt::NoPen);
@@ -53,7 +51,10 @@ void TabletTester::paintEvent(QPaintEvent *e)
 void TabletTester::mousePressEvent(QMouseEvent *e)
 {
 	const auto mousePos = compat::mousePos(*e);
-	emit eventReport(QString("Mouse press X=%1 Y=%2 B=%3").arg(mousePos.x()).arg(mousePos.y()).arg(e->button()));
+	emit eventReport(QString("Mouse press X=%1 Y=%2 B=%3")
+						 .arg(mousePos.x())
+						 .arg(mousePos.y())
+						 .arg(e->button()));
 	m_mouseDown = true;
 	m_mousePath.clear();
 	update();
@@ -62,7 +63,10 @@ void TabletTester::mousePressEvent(QMouseEvent *e)
 void TabletTester::mouseMoveEvent(QMouseEvent *e)
 {
 	const auto mousePos = compat::mousePos(*e);
-	emit eventReport(QString("Mouse move X=%1 Y=%2 B=%3").arg(mousePos.x()).arg(mousePos.y()).arg(e->buttons()));
+	emit eventReport(QString("Mouse move X=%1 Y=%2 B=%3")
+						 .arg(mousePos.x())
+						 .arg(mousePos.y())
+						 .arg(e->buttons()));
 	m_mousePath << e->pos();
 	update();
 }
@@ -83,38 +87,40 @@ void TabletTester::tabletEvent(QTabletEvent *e)
 	auto device = compat::tabDevice(*e);
 
 	switch(device) {
-		case compat::DeviceType::Stylus: msg = "Stylus"; break;
-		default: {
-			msg = QString("Device(%1)").arg(int(device));
-			break;
-		}
+	case compat::DeviceType::Stylus:
+		msg = "Stylus";
+		break;
+	default: {
+		msg = QString("Device(%1)").arg(int(device));
+		break;
+	}
 	}
 
 	switch(e->type()) {
-		case QEvent::TabletMove:
-			msg += " move";
-			break;
-		case QEvent::TabletPress:
-			msg += " press";
-			m_tabletPath.clear();
-			m_tabletDown = true;
-			break;
-		case QEvent::TabletRelease:
-			msg += " release";
-			m_tabletDown = false;
-			break;
-		default:
-			msg += QString(" event-%1").arg(e->type());
-			break;
+	case QEvent::TabletMove:
+		msg += " move";
+		break;
+	case QEvent::TabletPress:
+		msg += " press";
+		m_tabletPath.clear();
+		m_tabletDown = true;
+		break;
+	case QEvent::TabletRelease:
+		msg += " release";
+		m_tabletDown = false;
+		break;
+	default:
+		msg += QString(" event-%1").arg(e->type());
+		break;
 	}
 
 	const auto posF = compat::tabPosF(*e);
 	msg += QString(" X=%1 Y=%2 B=%3 P=%4% %5")
-		.arg(posF.x(), 0, 'f', 2)
-		.arg(posF.y(), 0, 'f', 2)
-		.arg(e->buttons())
-		.arg(e->pressure()*100, 0, 'f', 1)
-		.arg(e->spontaneous() ? "SYS" : "APP");
+			   .arg(posF.x(), 0, 'f', 2)
+			   .arg(posF.y(), 0, 'f', 2)
+			   .arg(e->buttons())
+			   .arg(e->pressure() * 100, 0, 'f', 1)
+			   .arg(e->spontaneous() ? "SYS" : "APP");
 
 	if(e->type() == QEvent::TabletMove) {
 		if(m_tabletDown) {
@@ -132,4 +138,3 @@ void TabletTester::tabletEvent(QTabletEvent *e)
 }
 
 }
-
