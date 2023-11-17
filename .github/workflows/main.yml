@@ -252,6 +252,7 @@ jobs:
           -DCMAKE_INSTALL_PREFIX=out
           -DCLANG_TIDY=${{ github.event_name != 'push' && 'on' || 'off' }}
           -DDIST_BUILD=${{ matrix.packager && 'on' }}
+          -DSOURCE_ASSETS=off
           -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=${{
             matrix.packager
             && startsWith(github.ref, 'refs/tags/')

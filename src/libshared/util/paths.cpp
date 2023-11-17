@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "libshared/util/paths.h"
-
+#include <cmake-config/config.h>
 #include <QCoreApplication>
 #include <QDir>
 #include <QDebug>
@@ -33,6 +33,9 @@ QStringList dataPaths()
 	if(DATAPATHS.isEmpty()) {
 #ifdef Q_OS_ANDROID
 		DATAPATHS << QStringLiteral("assets:");
+#endif
+#ifdef DRAWPILE_SOURCE_ASSETS_DESKTOP
+		DATAPATHS << QString::fromUtf8(cmake_config::sourceAssetsDesktop());
 #endif
 		DATAPATHS << QStandardPaths::standardLocations(QStandardPaths::AppDataLocation);
 	}

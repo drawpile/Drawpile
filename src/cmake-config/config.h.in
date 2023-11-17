@@ -5,6 +5,8 @@
 
 #include <array>
 
+#cmakedefine DRAWPILE_SOURCE_ASSETS_DESKTOP "@DRAWPILE_SOURCE_ASSETS_DESKTOP@"
+
 // The version number goes to a separate TU because it will change after every
 // commit, and so if it were in this header that would a bunch of other TUs to
 // invalidate on every new commit which would be bad for build speed. It's
@@ -16,6 +18,10 @@ namespace cmake_config {
 inline const char *version() { return DP_cmake_config_version(); }
 constexpr const char *website() { return "@PROJECT_HOMEPAGE_URL@"; }
 constexpr auto locales() { return std::array{ @DRAWPILE_LOCALES@ }; }
+
+#ifdef DRAWPILE_SOURCE_ASSETS_DESKTOP
+constexpr const char *sourceAssetsDesktop() { return DRAWPILE_SOURCE_ASSETS_DESKTOP; }
+#endif
 
 namespace file_group {
 	constexpr const char *image() { return "@DRAWPILE_FILE_GROUP_IMAGE@"; }

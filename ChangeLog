@@ -10,6 +10,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Add a close button to the tablet tester, playback and event log dialogs so that it can be closed on Android and other systems without window decorations without having to press some button or key combination.
  * Fix: Enable fingerpainting on Android by default if the device doesn't have a stylus.
  * Fix: Prefer versioned lconvert executable over unversioned one to make things work on Fedora. Thanks lowontrash for reporting.
+ * Fix: Look in source directory for assets when building, making running from the build directory possible. Can be turned off with -DSOURCE_ASSETS=OFF. Thanks Meru, lowontrash and probably others for running into issues with this.
 
 2023-11-12 Version 2.2.0-beta.10
  * Fix: Don't deadlock on first startup. Thanks to Hail, lowontrash, FARBOL234, Dorokinyo and hamlin for reporting.

@@ -62,6 +62,16 @@ endif()
 option(DIST_BUILD "Build for stand-alone distribution")
 add_feature_info("Distribution build (DIST_BUILD)" DIST_BUILD "")
 
+if(NOT CMAKE_CROSSCOMPILING)
+	if(DIST_BUILD)
+		set(source_assets_default OFF)
+	else()
+		set(source_assets_default ON)
+	endif()
+	option(SOURCE_ASSETS "Take assets from source directory so that you don't have to install them (turn off for distribution!)" "${source_assets_default}")
+	add_feature_info("Use assets from source directory (SOURCE_ASSETS)" SOURCE_ASSETS "")
+endif()
+
 # Feature info will be emitted later once it is clear whether or not these
 # features could actually be enabled
 option(CLANG_TIDY "Automatically enable Clang-Tidy" ON)
