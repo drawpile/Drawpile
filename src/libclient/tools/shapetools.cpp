@@ -201,8 +201,16 @@ canvas::PointVector Ellipse::pointVector() const
 	const qreal cy = r.y() + b;
 	PointVectorGenerator gen;
 
-	// TODO smart step size selection
-	for(qreal t=0;t<2*M_PI;t+=M_PI/20) {
+	qreal radius = (a + b) / 2.0;
+	qreal step;
+	if (radius > 2.0) {
+		qreal t = 1.0 - 0.33 / radius;
+		step = std::acos(2.0 * t * t - 1.0);
+	} else {
+		step = M_PI / 4.0;
+	}
+
+	for(qreal t = 0.0; t < 2.0 * M_PI; t += step) {
 		gen.append(QPointF{cx + a*cos(t), cy + b*sin(t)});
 	}
 	gen.append(QPointF{cx+a, cy});
