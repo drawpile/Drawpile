@@ -161,7 +161,6 @@ PointVector BezierTool::calculateBezierCurve() const
 		return pv;
 	if(m_points.size()==1) {
 		pv << Point(timeMsec, m_points.first().point, 1);
-		timeMsec += DELTA_MSEC;
 		return pv;
 	}
 
