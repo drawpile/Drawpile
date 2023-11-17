@@ -74,7 +74,7 @@ endif()
 
 # Feature info will be emitted later once it is clear whether or not these
 # features could actually be enabled
-option(CLANG_TIDY "Automatically enable Clang-Tidy" ON)
+option(CLANG_TIDY "Automatically enable Clang-Tidy" OFF)
 foreach(sanitizer IN ITEMS Address Leak Memory Thread UndefinedBehavior)
 	if(sanitizer STREQUAL "UndefinedBehavior")
 		set(san_upper UNDEFINED)
