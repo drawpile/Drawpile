@@ -30,7 +30,7 @@ public:
 			QLineF line{m_pv.last(), point};
 			int segments = qCeil(line.length() / SEGMENT_LENGTH);
 			for(int i = 1; i < segments; ++i) {
-				appendPoint(line.pointAt(1.0 / qreal(segments)));
+				appendPoint(line.pointAt(1.0 / qreal(segments) * qreal(i)));
 			}
 		}
 		appendPoint(point);

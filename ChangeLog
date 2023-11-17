@@ -12,6 +12,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Prefer versioned lconvert executable over unversioned one to make things work on Fedora. Thanks lowontrash for reporting.
  * Fix: Look in source directory for assets when building, making running from the build directory possible. Can be turned off with -DSOURCE_ASSETS=OFF. Thanks Meru, lowontrash and probably others for running into issues with this.
  * Fix: Make large circles drawn with the circle tool not look all jaggy.
+ * Fix: Make large rectangles close properly with MyPaint brushes. Thanks haxekhaex2 for reporting.
 
 2023-11-12 Version 2.2.0-beta.10
  * Fix: Don't deadlock on first startup. Thanks to Hail, lowontrash, FARBOL234, Dorokinyo and hamlin for reporting.
