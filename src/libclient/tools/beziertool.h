@@ -27,6 +27,8 @@ public:
 private:
 	void updatePreview();
 	canvas::PointVector calculateBezierCurve() const;
+	static qreal cubicBezierDistance(const QPointF points[4]);
+	static QPointF cubicBezierPoint(const QPointF points[4], float t);
 
 	struct ControlPoint {
 		QPointF point;

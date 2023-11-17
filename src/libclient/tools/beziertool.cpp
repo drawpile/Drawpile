@@ -9,6 +9,7 @@
 #include "libclient/tools/beziertool.h"
 
 #include <QPixmap>
+#include <QLineF>
 
 namespace tools {
 
@@ -134,24 +135,6 @@ void BezierTool::undoMultipart()
 	}
 }
 
-static Point _cubicBezierPoint(long long timeMsec, const QPointF p[4], float t)
-{
-	const float t1 = 1-t;
-	const float Ax = t1*p[0].x() + t*p[1].x();
-	const float Ay = t1*p[0].y() + t*p[1].y();
-	const float Bx = t1*p[1].x() + t*p[2].x();
-	const float By = t1*p[1].y() + t*p[2].y();
-	const float Cx = t1*p[2].x() + t*p[3].x();
-	const float Cy = t1*p[2].y() + t*p[3].y();
-
-	const float Dx = t1*Ax + t*Bx;
-	const float Dy = t1*Ay + t*By;
-	const float Ex = t1*Bx + t*Cx;
-	const float Ey = t1*By + t*Cy;
-
-	return Point(timeMsec, t1*Dx + t*Ex, t1*Dy + t*Ey, 1);
-}
-
 PointVector BezierTool::calculateBezierCurve() const
 {
 	long long timeMsec = 0;
@@ -172,9 +155,10 @@ PointVector BezierTool::calculateBezierCurve() const
 			m_points[i].point
 		};
 
-		// TODO smart step size selection
-		for(float t=0;t<1;t+=0.05f) {
-			pv << _cubicBezierPoint(timeMsec, points, t);
+		qreal distance = cubicBezierDistance(points);
+		float stepSize = distance > 0.0 ? float(20.0 / distance) : 1.0f;
+		for(float t = 0.0f; t < 1.0f; t += stepSize) {
+			pv.append(Point(timeMsec, cubicBezierPoint(points, t), 1));
 			timeMsec += DELTA_MSEC;
 		}
 	}
@@ -182,6 +166,39 @@ PointVector BezierTool::calculateBezierCurve() const
 	return pv;
 }
 
+qreal BezierTool::cubicBezierDistance(const QPointF points[4])
+{
+	// Guess the length of the curve by drawing it with a low resolution.
+	constexpr float STEP = 0.1f;
+	QPointF prev = cubicBezierPoint(points, 0.0f);
+	qreal distance = 0.0;
+	for(float t = STEP; t < 1.0f; t += STEP) {
+		QPointF p = cubicBezierPoint(points, t);
+		distance += QLineF(prev, p).length();
+		prev = p;
+	}
+	QPointF last = cubicBezierPoint(points, 1.0f);
+	distance += QLineF(prev, last).length();
+	return distance;
+}
+
+QPointF BezierTool::cubicBezierPoint(const QPointF points[4], float t)
+{
+	const float t1 = 1-t;
+	const float Ax = t1*points[0].x() + t*points[1].x();
+	const float Ay = t1*points[0].y() + t*points[1].y();
+	const float Bx = t1*points[1].x() + t*points[2].x();
+	const float By = t1*points[1].y() + t*points[2].y();
+	const float Cx = t1*points[2].x() + t*points[3].x();
+	const float Cy = t1*points[2].y() + t*points[3].y();
+
+	const float Dx = t1*Ax + t*Bx;
+	const float Dy = t1*Ay + t*By;
+	const float Ex = t1*Bx + t*Cx;
+	const float Ey = t1*By + t*Cy;
+
+	return QPointF(t1*Dx + t*Ex, t1*Dy + t*Ey);
+}
 
 void BezierTool::updatePreview()
 {
