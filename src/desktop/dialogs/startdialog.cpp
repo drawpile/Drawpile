@@ -15,6 +15,7 @@
 #include "desktop/filewrangler.h"
 #include "desktop/main.h"
 #include "desktop/utils/recents.h"
+#include "desktop/utils/widgetutils.h"
 #include <QButtonGroup>
 #include <QDate>
 #include <QDateTime>
@@ -25,13 +26,13 @@
 #include <QMetaEnum>
 #include <QPalette>
 #include <QPushButton>
+#include <QScrollArea>
 #include <QShortcut>
 #include <QSizePolicy>
 #include <QSpacerItem>
 #include <QStackedWidget>
 #include <QStyle>
 #include <QTimer>
-#include <QToolBar>
 #include <QToolButton>
 #include <QUrl>
 #include <QUrlQuery>
@@ -82,14 +83,26 @@ StartDialog::StartDialog(QWidget *parent)
 	mainLayout->setSpacing(0);
 	layout->addLayout(mainLayout);
 
-	QToolBar *menu = new QToolBar;
-	menu->setMovable(false);
-	menu->setFloatable(false);
+	QWidget *menu = new QWidget;
 	menu->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::MinimumExpanding);
-	menu->setOrientation(Qt::Vertical);
 	menu->setBackgroundRole(QPalette::Midlight);
 	menu->setAutoFillBackground(true);
-	mainLayout->addWidget(menu);
+
+	QVBoxLayout *menuLayout = new QVBoxLayout;
+	menu->setLayout(menuLayout);
+	int menuMargin = style()->pixelMetric(QStyle::PM_ToolBarFrameWidth) +
+					 style()->pixelMetric(QStyle::PM_ToolBarItemMargin);
+	menuLayout->setContentsMargins(
+		menuMargin, menuMargin, menuMargin, menuMargin);
+	menuLayout->setSpacing(style()->pixelMetric(QStyle::PM_ToolBarItemSpacing));
+
+	QScrollArea *menuScroll = new QScrollArea;
+	utils::initKineticScrolling(menuScroll);
+	menuScroll->setContentsMargins(0, 0, 0, 0);
+	menuScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	menuScroll->setWidgetResizable(true);
+	menuScroll->setWidget(menu);
+	mainLayout->addWidget(menuScroll);
 
 	startdialog::Welcome *welcomePage = new startdialog::Welcome{this};
 	startdialog::Join *joinPage = new startdialog::Join{this};
@@ -169,6 +182,7 @@ StartDialog::StartDialog(QWidget *parent)
 	m_closeButton = buttons->addButton(QDialogButtonBox::Close);
 
 	QButtonGroup *group = new QButtonGroup{this};
+	int iconSize = style()->pixelMetric(QStyle::PM_ToolBarIconSize);
 	for(int i = 0; i < Entry::Count; ++i) {
 		const EntryDefinition &def = defs[i];
 
@@ -178,6 +192,8 @@ StartDialog::StartDialog(QWidget *parent)
 		button->setToolTip(def.toolTip);
 		button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 		button->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+		button->setAutoRaise(true);
+		button->setIconSize(QSize(iconSize, iconSize));
 		m_buttons[i] = button;
 
 		if(def.page) {
@@ -196,13 +212,10 @@ StartDialog::StartDialog(QWidget *parent)
 		}
 
 		if(i == Entry::Layouts) {
-			QWidget *widget = new QWidget;
-			widget->setContentsMargins(0, 0, 0, 0);
-			widget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
-			menu->addWidget(widget);
+			menuLayout->addStretch();
 		}
 
-		menu->addWidget(button);
+		menuLayout->addWidget(button);
 		group->addButton(button);
 	}
 

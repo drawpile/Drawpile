@@ -12,13 +12,14 @@
 #include "desktop/dialogs/settingsdialog/userinterface.h"
 #include "desktop/main.h"
 #include "desktop/settings.h"
+#include "desktop/utils/widgetutils.h"
 #include <QAction>
 #include <QBoxLayout>
 #include <QButtonGroup>
 #include <QDialogButtonBox>
+#include <QScrollArea>
 #include <QStackedWidget>
 #include <QStyle>
-#include <QToolBar>
 #include <QToolButton>
 #include <QVBoxLayout>
 
@@ -38,17 +39,26 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	layout->setContentsMargins(0, 0, 0, 0);
 	layout->setSpacing(0);
 
-	// TODO: Needs to use NSToolbar for macOS to get the correct integration
-	// with the title bar
-	auto *menu = new QToolBar;
-	menu->setMovable(false);
-	menu->setFloatable(false);
+	QWidget *menu = new QWidget;
 	menu->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::MinimumExpanding);
-	menu->setOrientation(Qt::Vertical);
 	menu->setBackgroundRole(QPalette::Midlight);
 	menu->setAutoFillBackground(true);
 
-	layout->addWidget(menu);
+	QVBoxLayout *menuLayout = new QVBoxLayout;
+	menu->setLayout(menuLayout);
+	int menuMargin = style()->pixelMetric(QStyle::PM_ToolBarFrameWidth) +
+					 style()->pixelMetric(QStyle::PM_ToolBarItemMargin);
+	menuLayout->setContentsMargins(
+		menuMargin, menuMargin, menuMargin, menuMargin);
+	menuLayout->setSpacing(style()->pixelMetric(QStyle::PM_ToolBarItemSpacing));
+
+	QScrollArea *menuScroll = new QScrollArea;
+	utils::initKineticScrolling(menuScroll);
+	menuScroll->setContentsMargins(0, 0, 0, 0);
+	menuScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	menuScroll->setWidgetResizable(true);
+	menuScroll->setWidget(menu);
+	layout->addWidget(menuScroll);
 
 	const std::initializer_list<std::tuple<const char *, QString, QWidget *>>
 		panels = {
@@ -97,6 +107,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 
 	m_group = new QButtonGroup(this);
 	auto first = true;
+	int iconSize = style()->pixelMetric(QStyle::PM_ToolBarIconSize);
 	for(const auto &[icon, title, panel] : panels) {
 		// Gotta use a QToolButton instead of just adding action directly
 		// because there is no way to get a plain action to extend the width
@@ -108,8 +119,10 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 		button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 		button->setCheckable(true);
 		button->setChecked(first);
+		button->setAutoRaise(true);
+		button->setIconSize(QSize(iconSize, iconSize));
 
-		menu->addWidget(button);
+		menuLayout->addWidget(button);
 		m_group->addButton(button);
 
 		button->setProperty("panel", QVariant::fromValue(panel));
@@ -125,6 +138,8 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 		addPanel(panel);
 		first = false;
 	}
+
+	menuLayout->addStretch();
 }
 
 void SettingsDialog::activateShortcutsPanel()
