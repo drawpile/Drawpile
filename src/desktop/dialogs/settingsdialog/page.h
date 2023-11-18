@@ -15,9 +15,6 @@ namespace dialogs {
 namespace settingsdialog {
 
 class Page : public QScrollArea {
-public:
-	bool eventFilter(QObject *object, QEvent *event) override;
-
 protected:
 	Page(QWidget *parent);
 

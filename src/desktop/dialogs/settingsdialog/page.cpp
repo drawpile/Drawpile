@@ -8,15 +8,6 @@
 namespace dialogs {
 namespace settingsdialog {
 
-bool Page::eventFilter(QObject *object, QEvent *event)
-{
-	if(object && object == widget() && event->type() == QEvent::Resize) {
-		setMinimumWidth(
-			widget()->minimumSizeHint().width() + verticalScrollBar()->width());
-	}
-	return QScrollArea::eventFilter(object, event);
-}
-
 Page::Page(QWidget *parent)
 	: QScrollArea(parent)
 {
@@ -25,7 +16,6 @@ Page::Page(QWidget *parent)
 void Page::init(desktop::settings::Settings &settings, bool stretch)
 {
 	setFrameStyle(QFrame::NoFrame);
-	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	utils::initKineticScrolling(this);
 
 	QWidget *scroll = new QWidget;

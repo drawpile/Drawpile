@@ -13,6 +13,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Look in source directory for assets when building, making running from the build directory possible. Can be turned off with -DSOURCE_ASSETS=OFF. Thanks Meru, lowontrash and probably others for running into issues with this.
  * Fix: Make large circles and curves drawn with the circle and curve tool not look all jaggy.
  * Fix: Make large rectangles close properly with MyPaint brushes. Thanks haxekhaex2 for reporting.
+ * Fix: Allow horizontal scrolling in the preferences dialog so the close button doesn't get thrown off-screen on mobile. Thanks Xkower for reporting.
 
 2023-11-12 Version 2.2.0-beta.10
  * Fix: Don't deadlock on first startup. Thanks to Hail, lowontrash, FARBOL234, Dorokinyo and hamlin for reporting.
