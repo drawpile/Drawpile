@@ -21,7 +21,7 @@
 #include <QImageWriter>
 #include <QShortcutEvent>
 #include <QSplitter>
-#include <QClipboard>
+#include <QMimeData>
 #include <QFile>
 #include <QWindow>
 #include <QVBoxLayout>
@@ -2756,8 +2756,8 @@ void MainWindow::copyText()
 
 void MainWindow::paste()
 {
-	const QMimeData *mimeData = QApplication::clipboard()->mimeData();
-	if(mimeData->hasImage()) {
+	const QMimeData *mimeData = Document::getClipboardData();
+	if(mimeData && mimeData->hasImage()) {
 		QPoint pastepos;
 		bool pasteAtPos = false;
 
@@ -2785,8 +2785,8 @@ void MainWindow::paste()
 
 void MainWindow::pasteCentered()
 {
-	const QMimeData *mimeData = QApplication::clipboard()->mimeData();
-	if(mimeData->hasImage()) {
+	const QMimeData *mimeData = Document::getClipboardData();
+	if(mimeData && mimeData->hasImage()) {
 		pasteImage(mimeData->imageData().value<QImage>(), nullptr, true);
 	}
 }

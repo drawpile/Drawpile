@@ -15,7 +15,11 @@ extern "C" {
 #include "libshared/util/qtcompat.h"
 #include <QObject>
 #include <QStringListModel>
+#ifdef Q_OS_ANDROID
+#	include <QMimeData>
+#endif
 
+class QMimeData;
 class QString;
 class QTimer;
 
@@ -259,6 +263,8 @@ public slots:
 
 	void addServerLogEntry(const QString &log);
 
+	static const QMimeData *getClipboardData();
+
 private slots:
 	void onServerLogin(
 		bool join, bool compatibilityMode, const QString &joinPassword,
@@ -351,6 +357,11 @@ private:
 	int m_sessionResetThreshold;
 	int m_baseResetThreshold;
 	int m_sessionIdleTimeLimit;
+
+#ifdef Q_OS_ANDROID
+	// Android doesn't support images in the clipboard, so we keep those here.
+	static QMimeData clipboardData;
+#endif
 };
 
 #endif // DOCUMENT_H

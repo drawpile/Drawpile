@@ -14,7 +14,6 @@
 #include "libshared/net/servercmd.h"
 #include "libshared/util/functionrunnable.h"
 #include "libshared/util/qtcompat.h"
-#include <QClipboard>
 #include <QDir>
 #include <QGuiApplication>
 #include <QPainter>
@@ -25,6 +24,9 @@
 #include <QtEndian>
 #include <parson.h>
 #include <tuple>
+#ifndef Q_OS_ANDROID
+#	include <QClipboard>
+#endif
 
 Document::Document(libclient::settings::Settings &settings, QObject *parent)
 	: QObject(parent)
@@ -995,7 +997,13 @@ void Document::copyFromLayer(int layer)
 		return;
 	}
 
+#ifdef Q_OS_ANDROID
+	QMimeData *data = &clipboardData;
+	data->clear();
+#else
 	QMimeData *data = new QMimeData;
+#endif
+
 	const auto img = m_canvas->selectionToImage(layer);
 	data->setImageData(img);
 
@@ -1016,7 +1024,9 @@ void Document::copyFromLayer(int layer)
 						QByteArray::number(pasteId());
 	data->setData("x-drawpile/pastesrc", srcbuf);
 
+#ifndef Q_OS_ANDROID
 	QGuiApplication::clipboard()->setMimeData(data);
+#endif
 }
 
 bool Document::saveSelection(const QString &path)
@@ -1145,3 +1155,16 @@ void Document::addServerLogEntry(const QString &log)
 	m_serverLog->insertRow(i);
 	m_serverLog->setData(m_serverLog->index(i), log);
 }
+
+const QMimeData *Document::getClipboardData()
+{
+#ifdef Q_OS_ANDROID
+	return &clipboardData;
+#else
+	return QGuiApplication::clipboard()->mimeData();
+#endif
+}
+
+#ifdef Q_OS_ANDROID
+QMimeData Document::clipboardData;
+#endif
