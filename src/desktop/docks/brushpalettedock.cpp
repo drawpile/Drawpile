@@ -170,7 +170,6 @@ BrushPalette::BrushPalette(QWidget *parent)
 	d->presetListView->setWrapping(true);
 	d->presetListView->setResizeMode(QListView::Adjust);
 	d->presetListView->setContextMenuPolicy(Qt::CustomContextMenu);
-	d->presetListView->setLayoutMode(QListView::Batched);
 	BrushPaletteDelegate *delegate = new BrushPaletteDelegate(this);
 	d->presetListView->setItemDelegate(delegate);
 	utils::initKineticScrolling(d->presetListView);
