@@ -34,17 +34,26 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 
 	setWindowModality(Qt::ApplicationModal);
 
-	auto *layout = new QHBoxLayout(this);
-
-	layout->setContentsMargins(0, 0, 0, 0);
-	layout->setSpacing(0);
+#ifdef Q_OS_MACOS
+	bool vertical = false;
+	bool menuFirst = true;
+#elif defined(Q_OS_ANDROID)
+	bool vertical = false;
+	bool menuFirst = false;
+#else
+	bool vertical = true;
+	bool menuFirst = true;
+#endif
 
 	QWidget *menu = new QWidget;
-	menu->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::MinimumExpanding);
+	menu->setSizePolicy(
+		vertical ? QSizePolicy::Minimum : QSizePolicy::MinimumExpanding,
+		vertical ? QSizePolicy::MinimumExpanding : QSizePolicy::Minimum);
 	menu->setBackgroundRole(QPalette::Midlight);
 	menu->setAutoFillBackground(true);
 
-	QVBoxLayout *menuLayout = new QVBoxLayout;
+	QBoxLayout *menuLayout = new QBoxLayout(
+		vertical ? QBoxLayout::TopToBottom : QBoxLayout::LeftToRight);
 	menu->setLayout(menuLayout);
 	int menuMargin = style()->pixelMetric(QStyle::PM_ToolBarFrameWidth) +
 					 style()->pixelMetric(QStyle::PM_ToolBarItemMargin);
@@ -55,10 +64,13 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	QScrollArea *menuScroll = new QScrollArea;
 	utils::initKineticScrolling(menuScroll);
 	menuScroll->setContentsMargins(0, 0, 0, 0);
-	menuScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	if(vertical) {
+		menuScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	} else {
+		menuScroll->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	}
 	menuScroll->setWidgetResizable(true);
 	menuScroll->setWidget(menu);
-	layout->addWidget(menuScroll);
 
 	const std::initializer_list<std::tuple<const char *, QString, QWidget *>>
 		panels = {
@@ -85,7 +97,6 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	auto *buttonLayout = new QVBoxLayout;
 	buttonLayout->setContentsMargins(0, 0, 0, 0);
 	buttonLayout->setSpacing(0);
-	layout->addLayout(buttonLayout, 1);
 
 	m_stack = new QStackedWidget;
 	m_stack->setContentsMargins(0, 0, 0, 0);
@@ -115,8 +126,12 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 		auto *button = new QToolButton;
 		button->setIcon(QIcon::fromTheme(icon));
 		button->setText(title);
-		button->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-		button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+		button->setToolButtonStyle(
+			vertical ? Qt::ToolButtonTextBesideIcon
+					 : Qt::ToolButtonTextUnderIcon);
+		button->setSizePolicy(
+			vertical ? QSizePolicy::Expanding : QSizePolicy::Fixed,
+			vertical ? QSizePolicy::Fixed : QSizePolicy::Expanding);
 		button->setCheckable(true);
 		button->setChecked(first);
 		button->setAutoRaise(true);
@@ -140,6 +155,13 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	}
 
 	menuLayout->addStretch();
+
+	QBoxLayout *layout = new QBoxLayout(
+		vertical ? QBoxLayout::LeftToRight : QBoxLayout::TopToBottom, this);
+	layout->setContentsMargins(0, 0, 0, 0);
+	layout->setSpacing(0);
+	layout->addLayout(buttonLayout, 1);
+	layout->insertWidget(menuFirst ? 0 : 1, menuScroll);
 }
 
 void SettingsDialog::activateShortcutsPanel()
