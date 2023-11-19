@@ -289,7 +289,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+714"/>
+        <location filename="../document.cpp" line="+701"/>
         <source>Unknown format.</source>
         <translation>Formato desconhecido.</translation>
     </message>
@@ -918,7 +918,7 @@
 <context>
     <name>impex::AnimationImporter</name>
     <message>
-        <location filename="../import/animationimporter.cpp" line="+47"/>
+        <location filename="../import/animationimporter.cpp" line="+48"/>
         <source>Frames %1</source>
         <extracomment>Title for imported animation tracks and layer groups.</extracomment>
         <translation>Quadros %1</translation>

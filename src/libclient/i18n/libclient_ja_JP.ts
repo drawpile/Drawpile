@@ -289,7 +289,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+714"/>
+        <location filename="../document.cpp" line="+701"/>
         <source>Unknown format.</source>
         <translation>不明な形式。</translation>
     </message>
@@ -916,7 +916,7 @@
 <context>
     <name>impex::AnimationImporter</name>
     <message>
-        <location filename="../import/animationimporter.cpp" line="+47"/>
+        <location filename="../import/animationimporter.cpp" line="+48"/>
         <source>Frames %1</source>
         <extracomment>Title for imported animation tracks and layer groups.</extracomment>
         <translation>フレーム %1</translation>

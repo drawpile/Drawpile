@@ -1198,7 +1198,7 @@ Subintervalo: [%3,%4]</translation>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../mainwindow.cpp" line="+290"/>
+        <location filename="../mainwindow.cpp" line="+291"/>
         <source>Server out of space</source>
         <translation>Servidor sem memória disponível</translation>
     </message>
@@ -1216,12 +1216,12 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     </message>
     <message>
         <location line="+91"/>
-        <location line="+1366"/>
+        <location line="+1403"/>
         <source>Untitled</source>
         <translation>Sem Título</translation>
     </message>
     <message>
-        <location line="-1011"/>
+        <location line="-1043"/>
         <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
         <translation>&lt;p&gt;O atalho &apos;%1&apos; já é usado em várias ocasiões:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</translation>
     </message>
@@ -1254,12 +1254,12 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     <message>
         <location line="+2"/>
         <location line="+22"/>
-        <location line="+524"/>
+        <location line="+548"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location line="-531"/>
+        <location line="-555"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation>Existem modificações não gravadas, deseja gravá-las antes de sair?</translation>
     </message>
@@ -1274,7 +1274,12 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
         <translation>Descartar</translation>
     </message>
     <message>
-        <location line="+357"/>
+        <location line="+249"/>
+        <source>Opening file…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+132"/>
         <source>Saving...</source>
         <translation>A gravar...</translation>
     </message>
@@ -1330,12 +1335,12 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     </message>
     <message>
         <location line="+3"/>
-        <location line="+1533"/>
+        <location line="+1545"/>
         <source>Record...</source>
         <translation>Gravar...</translation>
     </message>
     <message>
-        <location line="-1508"/>
+        <location line="-1520"/>
         <source>Unsupported format.</source>
         <translation>Formato sem suporte.</translation>
     </message>
@@ -1365,7 +1370,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
         <translation>Erro ao fechar log de eventos da mesa digitalizadora.</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+19"/>
         <source>Error opening tablet event log.</source>
         <translation>Erro ao abrir log de eventos da mesa digitalizadora.</translation>
     </message>
@@ -1421,12 +1426,12 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     </message>
     <message>
         <location line="+2"/>
-        <location line="+1785"/>
+        <location line="+1789"/>
         <source>Terminate</source>
         <translation>Terminar</translation>
     </message>
     <message>
-        <location line="-1702"/>
+        <location line="-1706"/>
         <source>Could not connect to server</source>
         <translation>Não foi possível conectar ao servidor</translation>
     </message>
@@ -1456,7 +1461,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
         <translation>Muda quantas vezes é possível desfazer na sessão atual. O limite agora é de %1 ações de desfazer.</translation>
     </message>
     <message>
-        <location line="+417"/>
+        <location line="+421"/>
         <source>The image could not be loaded</source>
         <translation>Não foi possível carregar a imagem</translation>
     </message>
@@ -2267,12 +2272,12 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
         <translation>&amp;Entrar numa sessão...</translation>
     </message>
     <message>
-        <location line="-2313"/>
+        <location line="-2325"/>
         <source>Joined the session!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+370"/>
+        <location line="+378"/>
         <source>Hosting on this computer is not available</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2307,7 +2312,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
         <translation type="unfinished">Tela de pintura desbloqueada</translation>
     </message>
     <message>
-        <location line="+357"/>
+        <location line="+361"/>
         <source>Freehand (erase mode, click to reset)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2849,7 +2854,7 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
         <translation>Reprodução</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+21"/>
         <source>Rewind to Beginning</source>
         <translation>Voltar ao Início</translation>
     </message>
@@ -2884,22 +2889,22 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
         <translation>%</translation>
     </message>
     <message>
-        <location line="+67"/>
+        <location line="+79"/>
         <source>Building an index will let you quickly skip to any part of your recording.</source>
         <translation>Criar um índice o deixará pular rapidamente para qualquer parte da sua gravação.</translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+22"/>
         <source>Build Index</source>
         <translation>Indexar</translation>
     </message>
     <message>
-        <location line="+76"/>
+        <location line="+82"/>
         <source>Frame:</source>
         <translation>Quadro:</translation>
     </message>
     <message>
-        <location line="+42"/>
+        <location line="+29"/>
         <source>Automatically save a frame at each step</source>
         <translation>Automaticamente gravar um quadro a cada passo</translation>
     </message>
@@ -3389,11 +3394,6 @@ Tem certeza que quer iniciar a gravação dos Dumps de Depuração?</translation
         <location filename="../ui/tablettest.ui" line="+14"/>
         <source>Tablet Tester</source>
         <translation>Teste de toque/caneta</translation>
-    </message>
-    <message>
-        <location line="+18"/>
-        <source>Clear</source>
-        <translation>Limpar</translation>
     </message>
 </context>
 <context>
@@ -6021,12 +6021,12 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
 <context>
     <name>dialogs::PlaybackDialog</name>
     <message>
-        <location filename="../dialogs/playbackdialog.cpp" line="+38"/>
+        <location filename="../dialogs/playbackdialog.cpp" line="+32"/>
         <source>Playback</source>
         <translation>Reprodução</translation>
     </message>
     <message>
-        <location line="+140"/>
+        <location line="+142"/>
         <source>Building index...</source>
         <translation>A construir índice...</translation>
     </message>
@@ -6356,12 +6356,12 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
 <context>
     <name>dialogs::SettingsDialog</name>
     <message>
-        <location filename="../dialogs/settingsdialog.cpp" line="+31"/>
+        <location filename="../dialogs/settingsdialog.cpp" line="+32"/>
         <source>Preferences</source>
         <translation>Preferências</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+45"/>
         <source>General</source>
         <translation>Geral</translation>
     </message>
@@ -6414,12 +6414,12 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
 <context>
     <name>dialogs::StartDialog</name>
     <message>
-        <location filename="../dialogs/startdialog.cpp" line="+69"/>
+        <location filename="../dialogs/startdialog.cpp" line="+70"/>
         <source>Start</source>
         <translation>Início</translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+46"/>
         <source>Welcome</source>
         <translation>Bem-vindo</translation>
     </message>
@@ -8120,7 +8120,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
 <context>
     <name>docks::BrushPalette</name>
     <message>
-        <location filename="../docks/brushpalettedock.cpp" line="+103"/>
+        <location filename="../docks/brushpalettedock.cpp" line="+104"/>
         <source>Brushes</source>
         <translation>Pincéis</translation>
     </message>
@@ -8131,35 +8131,35 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     </message>
     <message>
         <location line="+13"/>
-        <location line="+263"/>
+        <location line="+283"/>
         <source>New Brush Preset</source>
         <translation>Nova Predefinição de Pincel</translation>
     </message>
     <message>
-        <location line="-262"/>
+        <location line="-282"/>
         <source>Duplicate Brush Preset</source>
         <translation>Duplicar Predefinição de Pincel</translation>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+282"/>
+        <location line="+302"/>
         <source>Overwrite Brush Preset</source>
         <translation>Substituir Predefinição de Pincel</translation>
     </message>
     <message>
-        <location line="-281"/>
-        <location line="+305"/>
+        <location line="-301"/>
+        <location line="+325"/>
         <source>Edit Brush Preset</source>
         <translation>Editar Predefinição de Pincel</translation>
     </message>
     <message>
-        <location line="-304"/>
-        <location line="+315"/>
+        <location line="-324"/>
+        <location line="+335"/>
         <source>Delete Brush Preset</source>
         <translation>Apagar Predefinição de Pincel</translation>
     </message>
     <message>
-        <location line="-314"/>
+        <location line="-334"/>
         <source>Brush Tags</source>
         <translation>Etiquetas do Pincel</translation>
     </message>
@@ -8170,23 +8170,23 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+204"/>
+        <location line="+224"/>
         <source>New Tag</source>
         <translation>Nova Etiqueta</translation>
     </message>
     <message>
-        <location line="-203"/>
+        <location line="-223"/>
         <source>Rename Tag</source>
         <translation>Renomear Etiqueta</translation>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+231"/>
+        <location line="+251"/>
         <source>Delete Tag</source>
         <translation>Apagar Etiqueta</translation>
     </message>
     <message>
-        <location line="-229"/>
+        <location line="-249"/>
         <source>Import Brushes...</source>
         <translation>Importar Pincéis...</translation>
     </message>
@@ -8206,7 +8206,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>%1x%1</translation>
     </message>
     <message>
-        <location line="+73"/>
+        <location line="+93"/>
         <source>Brush Import</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8957,7 +8957,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>A Ferramenta está bloqueada</translation>
     </message>
     <message>
-        <location line="+248"/>
+        <location line="+258"/>
         <source>Vertical flip: ON</source>
         <translation>Espelhamento vertical: LIGADO</translation>
     </message>
@@ -8977,7 +8977,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Espelhamento horizontal: DESLIGADO</translation>
     </message>
     <message>
-        <location line="+1680"/>
+        <location line="+1717"/>
         <source>Zoom: %1%</source>
         <translation>Zoom: %1%</translation>
     </message>
@@ -9534,7 +9534,7 @@ or via Animation ▸ New Track.</source>
 <context>
     <name>widgets::UserItemDelegate</name>
     <message>
-        <location filename="../chat/useritemdelegate.cpp" line="+168"/>
+        <location filename="../chat/useritemdelegate.cpp" line="+167"/>
         <source>Operator</source>
         <translation>Operador</translation>
     </message>
@@ -9544,7 +9544,7 @@ or via Animation ▸ New Track.</source>
         <translation>Confiável</translation>
     </message>
     <message>
-        <location line="-139"/>
+        <location line="-138"/>
         <source>&amp;Operator</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9599,7 +9599,7 @@ or via Animation ▸ New Track.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+108"/>
+        <location line="+107"/>
         <source>Moderator</source>
         <translation>Moderador</translation>
     </message>
