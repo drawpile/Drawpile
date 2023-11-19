@@ -878,6 +878,11 @@ void MainWindow::readSettings(bool windowpos)
 			w->installEventFilter(this);
 		}
 	}
+
+#ifdef Q_OS_ANDROID
+	dpApp().processEvents();
+	resize(compat::widgetScreen(*this)->availableSize());
+#endif
 }
 
 void MainWindow::restoreSettings(const desktop::settings::Settings &settings)
@@ -2629,6 +2634,10 @@ void MainWindow::handleToggleAction(drawingboard::ToggleItem::Action action)
 		int top = h / 2;
 		m_splitter->setSizes({top, h - top});
 	}
+
+#ifdef Q_OS_ANDROID
+	resize(compat::widgetScreen(*this)->availableSize());
+#endif
 }
 
 void MainWindow::setNotificationsMuted(bool muted)
