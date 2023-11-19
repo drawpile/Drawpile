@@ -17,6 +17,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Allow scrolling of preferences and start dialog sidebar.
  * Fix: Move preferences dialog sidebar to the top on macOS and to the bottom on Android, to fit better with how those systems work. Thanks Snover and Xkower.
  * Fix: Make copying and pasting work on Android. Thanks ariqhadiyan for reporting.
+ * Fix: Open files in the background to avoid "not responding" warnings. Thanks ariqhadiyan for reporting.
 
 2023-11-12 Version 2.2.0-beta.10
  * Fix: Don't deadlock on first startup. Thanks to Hail, lowontrash, FARBOL234, Dorokinyo and hamlin for reporting.

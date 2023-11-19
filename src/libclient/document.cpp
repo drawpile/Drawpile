@@ -207,21 +207,6 @@ void Document::loadState(
 	setCurrentPath(path, type);
 }
 
-DP_LoadResult Document::loadFile(const QString &path)
-{
-	DP_LoadResult result;
-	DP_SaveImageType type;
-	drawdance::CanvasState canvasState =
-		drawdance::CanvasState::load(path, &result, &type);
-	if(canvasState.isNull()) {
-		Q_ASSERT(result != DP_LOAD_RESULT_SUCCESS);
-		return result;
-	} else {
-		loadState(canvasState, path, type, false);
-		return DP_LOAD_RESULT_SUCCESS;
-	}
-}
-
 static bool isSessionTemplate(DP_Player *player)
 {
 	JSON_Value *header = DP_player_header(player);

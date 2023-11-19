@@ -84,6 +84,7 @@ static constexpr auto CTRL_KEY = Qt::CTRL;
 #include "libclient/net/client.h"
 #include "libclient/net/login.h"
 #include "libclient/canvas/layerlist.h"
+#include "libclient/import/canvasloaderrunnable.h"
 #include "libclient/parentalcontrols/parentalcontrols.h"
 
 #include "libclient/tools/toolcontroller.h"
@@ -1431,12 +1432,36 @@ void MainWindow::open(const QUrl& url)
 			}
 
 		} else {
-			utils::ScopedOverrideCursor waitCursor;
-			DP_LoadResult result = m_doc->loadFile(file);
-			showLoadResultMessage(result);
-			if(result) {
-				emit hostSessionEnabled(true);
-			}
+			QApplication::setOverrideCursor(Qt::WaitCursor);
+			QProgressDialog *progressDialog = new QProgressDialog(this);
+			progressDialog->setRange(0, 0);
+			progressDialog->setMinimumDuration(500);
+			progressDialog->setCancelButton(nullptr);
+			progressDialog->setLabelText(tr("Opening file…"));
+			setEnabled(false);
+
+			CanvasLoaderRunnable *loader = new CanvasLoaderRunnable(file, this);
+			loader->setAutoDelete(false);
+			connect(
+				loader, &CanvasLoaderRunnable::loadComplete, this,
+				[=](const QString &error, const QString &detail) {
+					setEnabled(true);
+					delete progressDialog;
+					QApplication::restoreOverrideCursor();
+
+					const drawdance::CanvasState &canvasState =
+						loader->canvasState();
+					if(canvasState.isNull()) {
+						showErrorMessageWithDetails(error, detail);
+					} else {
+						m_doc->loadState(
+							canvasState, loader->path(), loader->type(), false);
+					}
+
+					loader->deleteLater();
+				}, Qt::QueuedConnection);
+
+			QThreadPool::globalInstance()->start(loader);
 		}
 
 		addRecentFile(file);

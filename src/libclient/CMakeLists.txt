@@ -99,6 +99,8 @@ target_sources(dpclient PRIVATE
 	export/videoexporter.h
 	import/animationimporter.cpp
 	import/animationimporter.h
+	import/canvasloaderrunnable.cpp
+	import/canvasloaderrunnable.h
 	import/loadresult.cpp
 	import/loadresult.h
 	net/announcementlist.cpp

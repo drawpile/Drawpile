@@ -116,7 +116,6 @@ public:
 	void loadState(
 		const drawdance::CanvasState &canvasState, const QString &path,
 		DP_SaveImageType type, bool dirty);
-	DP_LoadResult loadFile(const QString &path);
 	DP_LoadResult loadRecording(
 		const QString &path, bool debugDump, bool *outIsTemplate = nullptr);
 
