@@ -20,7 +20,7 @@ typedef void (*DP_LoadOldAnimationSetTrackTitleFn)(DP_TransientTrack *tt,
 
 DP_CanvasState *
 DP_load_old_animation(DP_DrawContext *dc, const char *path, int hold_time,
-                      int framerate,
+                      int framerate, unsigned int flags,
                       DP_LoadOldAnimationSetGroupTitleFn set_group_title,
                       DP_LoadOldAnimationSetTrackTitleFn set_track_title,
                       DP_LoadResult *out_result);

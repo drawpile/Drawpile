@@ -29,6 +29,9 @@ typedef struct DP_DrawContext DP_DrawContext;
 typedef struct DP_Input DP_Input;
 typedef struct DP_Player DP_Player;
 
+#define DP_LOAD_FLAG_NONE          0u
+#define DP_LOAD_FLAG_SINGLE_THREAD (1u << 0u)
+
 
 typedef struct DP_LoadFormat {
     const char *title;
@@ -56,10 +59,11 @@ typedef enum DP_LoadResult {
 typedef void (*DP_LoadFixedLayerFn)(void *user, int layer_id);
 
 DP_CanvasState *DP_load(DP_DrawContext *dc, const char *path,
-                        const char *flat_image_layer_title,
+                        const char *flat_image_layer_title, unsigned int flags,
                         DP_LoadResult *out_result, DP_SaveImageType *out_type);
 
 DP_CanvasState *DP_load_ora(DP_DrawContext *dc, const char *path,
+                            unsigned int flags,
                             DP_LoadFixedLayerFn on_fixed_layer, void *user,
                             DP_LoadResult *out_result);
 

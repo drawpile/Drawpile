@@ -46,7 +46,7 @@ CanvasState CanvasState::load(
 	DrawContext dc = DrawContextPool::acquire();
 	DP_CanvasState *cs = DP_load(
 		dc.get(), pathBytes.constData(), flatImageLayerTitleBytes.constData(),
-		outResult, outType);
+		loadFlags(), outResult, outType);
 	return CanvasState::noinc(cs);
 }
 
@@ -299,6 +299,17 @@ drawdance::CanvasState CanvasState::makeBackwardCompatible() const
 	// Other stuff like the timeline or document metadata will just get dropped.
 	return drawdance::CanvasState::noinc(
 		DP_transient_canvas_state_persist(tcs));
+}
+
+unsigned int CanvasState::loadFlags()
+{
+#ifdef Q_OS_ANDROID
+	// Android just kills the application if it uses too much memory for its
+	// taste, so it's not safe to use multiple threads to load image data.
+	return DP_LOAD_FLAG_SINGLE_THREAD;
+#else
+	return DP_LOAD_FLAG_NONE;
+#endif
 }
 
 CanvasState::CanvasState(DP_CanvasState *cs)

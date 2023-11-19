@@ -23,7 +23,8 @@ void AnimationImporter::run()
 	drawdance::CanvasState canvasState =
 		drawdance::CanvasState::noinc(DP_load_old_animation(
 			drawContext.get(), qUtf8Printable(m_path), m_holdTime, m_framerate,
-			setGroupTitle, setTrackTitle, &result));
+			drawdance::CanvasState::loadFlags(), setGroupTitle, setTrackTitle,
+			&result));
 	emit finished(
 		canvasState,
 		canvasState.isNull() ? impex::getLoadResultMessage(result) : QString());

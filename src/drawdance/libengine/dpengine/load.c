@@ -559,7 +559,12 @@ static void ora_load_layer_content_in_worker(DP_ReadOraContext *c,
     struct DP_OraLoadLayerContentParams params = {tlc, zrf, 0, 0};
     ora_read_int_attribute(element, NULL, "x", INT32_MIN, INT32_MAX, &params.x);
     ora_read_int_attribute(element, NULL, "y", INT32_MIN, INT32_MAX, &params.y);
-    DP_worker_push(c->worker, &params);
+    if (c->worker) {
+        DP_worker_push(c->worker, &params);
+    }
+    else {
+        ora_load_layer_content_job(&params, 0);
+    }
 }
 
 static void ora_handle_fixed_layer(DP_ReadOraContext *c, DP_XmlElement *element,
@@ -1125,19 +1130,21 @@ static bool ora_xml_end_element(void *user)
     return true;
 }
 
-static DP_CanvasState *ora_read_stack_xml(DP_ReadOraContext *c)
+static DP_CanvasState *ora_read_stack_xml(DP_ReadOraContext *c,
+                                          unsigned int flags)
 {
     DP_ZipReaderFile *zrf = DP_zip_reader_read_file(c->zr, "stack.xml");
     if (!zrf) {
         return NULL;
     }
 
-    c->worker =
-        DP_worker_new(64, sizeof(struct DP_OraLoadLayerContentParams),
-                      DP_thread_cpu_count(), ora_load_layer_content_job);
-    if (!c->worker) {
-        DP_zip_reader_file_free(zrf);
-        return NULL;
+    if ((flags & DP_LOAD_FLAG_SINGLE_THREAD) == 0) {
+        c->worker =
+            DP_worker_new(64, sizeof(struct DP_OraLoadLayerContentParams),
+                          DP_thread_cpu_count(), ora_load_layer_content_job);
+        if (!c->worker) {
+            DP_warn("Error creating worker: %s", DP_error());
+        }
     }
 
     c->tcs = DP_transient_canvas_state_new_init();
@@ -1166,6 +1173,7 @@ static DP_CanvasState *ora_read_stack_xml(DP_ReadOraContext *c)
 }
 
 static DP_CanvasState *load_ora(DP_DrawContext *dc, const char *path,
+                                unsigned int flags,
                                 DP_LoadFixedLayerFn on_fixed_layer, void *user,
                                 DP_LoadResult *out_result)
 {
@@ -1201,7 +1209,7 @@ static DP_CanvasState *load_ora(DP_DrawContext *dc, const char *path,
         0,
         NULL,
     };
-    DP_CanvasState *cs = ora_read_stack_xml(&c);
+    DP_CanvasState *cs = ora_read_stack_xml(&c, flags);
     read_ora_context_buffer_dispose(&c);
     DP_VECTOR_CLEAR_DISPOSE_TYPE(&c.tracks, DP_ReadOraTrack, dispose_track);
     DP_free(c.text);
@@ -1294,7 +1302,7 @@ static bool guess_psd(const unsigned char *buf, size_t size)
 
 static DP_CanvasState *load(DP_DrawContext *dc, const char *path,
                             const char *flat_image_layer_title,
-                            DP_LoadResult *out_result,
+                            unsigned int flags, DP_LoadResult *out_result,
                             DP_SaveImageType *out_type)
 {
     DP_Input *input = DP_file_input_new_from_path(path);
@@ -1320,7 +1328,7 @@ static DP_CanvasState *load(DP_DrawContext *dc, const char *path,
     if (guess_zip(buf, read)) {
         DP_input_free(input);
         assign_type(out_type, DP_SAVE_IMAGE_ORA);
-        return load_ora(dc, path, NULL, NULL, out_result);
+        return load_ora(dc, path, flags, NULL, NULL, out_result);
     }
 
     if (guess_psd(buf, read)) {
@@ -1341,13 +1349,13 @@ static DP_CanvasState *load(DP_DrawContext *dc, const char *path,
 }
 
 DP_CanvasState *DP_load(DP_DrawContext *dc, const char *path,
-                        const char *flat_image_layer_title,
+                        const char *flat_image_layer_title, unsigned int flags,
                         DP_LoadResult *out_result, DP_SaveImageType *out_type)
 {
     if (path) {
-        DP_PERF_BEGIN_DETAIL(fn, "image", "path=%s", path);
+        DP_PERF_BEGIN_DETAIL(fn, "image", "path=%s,flags=%x", path, flags);
         DP_CanvasState *cs =
-            load(dc, path, flat_image_layer_title, out_result, out_type);
+            load(dc, path, flat_image_layer_title, flags, out_result, out_type);
         DP_PERF_END(fn);
         return cs;
     }
@@ -1360,10 +1368,11 @@ DP_CanvasState *DP_load(DP_DrawContext *dc, const char *path,
 
 
 DP_CanvasState *DP_load_ora(DP_DrawContext *dc, const char *path,
+                            unsigned int flags,
                             DP_LoadFixedLayerFn on_fixed_layer, void *user,
                             DP_LoadResult *out_result)
 {
-    return load_ora(dc, path, on_fixed_layer, user, out_result);
+    return load_ora(dc, path, flags, on_fixed_layer, user, out_result);
 }
 
 

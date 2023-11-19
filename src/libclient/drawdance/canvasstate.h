@@ -93,6 +93,8 @@ public:
 
 	drawdance::CanvasState makeBackwardCompatible() const;
 
+	static unsigned int loadFlags();
+
 private:
 	explicit CanvasState(DP_CanvasState *cs);
 

@@ -31,6 +31,8 @@ pub const DP_AFFECTED_INDIRECT_AREAS_COUNT: u32 = 256;
 pub const DP_CANVAS_HISTORY_UNDO_DEPTH_MIN: u32 = 3;
 pub const DP_CANVAS_HISTORY_UNDO_DEPTH_MAX: u32 = 255;
 pub const DP_USER_CURSOR_COUNT: u32 = 256;
+pub const DP_LOAD_FLAG_NONE: u32 = 0;
+pub const DP_LOAD_FLAG_SINGLE_THREAD: u32 = 1;
 pub const DP_PREVIEW_BASE_SUBLAYER_ID: i32 = -100;
 pub const DP_ACL_ALL_LOCKED_BIT: u32 = 128;
 pub const DP_ACL_STATE_FILTERED_BIT: u32 = 1;
@@ -5520,6 +5522,7 @@ extern "C" {
         dc: *mut DP_DrawContext,
         path: *const ::std::os::raw::c_char,
         flat_image_layer_title: *const ::std::os::raw::c_char,
+        flags: ::std::os::raw::c_uint,
         out_result: *mut DP_LoadResult,
         out_type: *mut DP_SaveImageType,
     ) -> *mut DP_CanvasState;
@@ -5528,6 +5531,7 @@ extern "C" {
     pub fn DP_load_ora(
         dc: *mut DP_DrawContext,
         path: *const ::std::os::raw::c_char,
+        flags: ::std::os::raw::c_uint,
         on_fixed_layer: DP_LoadFixedLayerFn,
         user: *mut ::std::os::raw::c_void,
         out_result: *mut DP_LoadResult,

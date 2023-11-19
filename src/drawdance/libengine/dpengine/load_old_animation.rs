@@ -11,7 +11,7 @@ use drawdance::{
 };
 use std::{
     collections::HashSet,
-    ffi::{c_char, c_int, c_void},
+    ffi::{c_char, c_int, c_uint, c_void},
     ptr::null_mut,
 };
 
@@ -29,6 +29,7 @@ extern "C" fn on_fixed_layer(user: *mut c_void, layer_id: c_int) {
 fn load_ora(
     dc: *mut DP_DrawContext,
     path: *const c_char,
+    flags: c_uint,
     out_result: *mut DP_LoadResult,
 ) -> (Option<DetachedCanvasState>, HashSet<c_int>) {
     let mut fixed_layer_ids = HashSet::new();
@@ -37,6 +38,7 @@ fn load_ora(
         DP_load_ora(
             dc,
             path,
+            flags,
             Some(on_fixed_layer),
             fixed_layer_ids_ptr.cast(),
             out_result,
@@ -201,11 +203,12 @@ pub extern "C" fn DP_load_old_animation(
     path: *const c_char,
     hold_time: c_int,
     framerate: c_int,
+    flags: c_uint,
     set_group_title: LoadOldAnimationSetGroupTitleFn,
     set_track_title: LoadOldAnimationSetTrackTitleFn,
     out_result: *mut DP_LoadResult,
 ) -> *mut DP_CanvasState {
-    match load_ora(dc, path, out_result) {
+    match load_ora(dc, path, flags, out_result) {
         (Some(cs), fixed_layer_ids) => convert_animation(
             &cs,
             dc,
