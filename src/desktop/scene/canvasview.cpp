@@ -1872,15 +1872,17 @@ bool CanvasView::viewportEvent(QEvent *event)
 	} else if(type == QEvent::TabletPress && m_enableTablet) {
 		QTabletEvent *tabev = static_cast<QTabletEvent *>(event);
 		const auto tabPos = compat::tabPosF(*tabev);
+		Qt::KeyboardModifiers modifiers = getTabletModifiers(tabev);
 		DP_EVENT_LOG(
 			"tablet_press spontaneous=%d x=%f y=%f pressure=%f xtilt=%d "
 			"ytilt=%d rotation=%f buttons=0x%x modifiers=0x%x pendown=%d "
-			"touching=%d",
+			"touching=%d effectivemodifiers=0x%u",
 			tabev->spontaneous(), tabPos.x(), tabPos.y(), tabev->pressure(),
 			compat::cast_6<int>(tabev->xTilt()),
 			compat::cast_6<int>(tabev->yTilt()),
 			qDegreesToRadians(tabev->rotation()), unsigned(tabev->buttons()),
-			unsigned(tabev->modifiers()), m_pendown, m_touching);
+			unsigned(tabev->modifiers()), m_pendown, m_touching,
+			unsigned(modifiers));
 
 		// Note: it is possible to get a mouse press event for a tablet event
 		// (even before the tablet event is received or even though
@@ -1896,23 +1898,22 @@ bool CanvasView::viewportEvent(QEvent *event)
 		penPressEvent(
 			event, QDateTime::currentMSecsSinceEpoch(), compat::tabPosF(*tabev),
 			tabev->pressure(), tabev->xTilt(), tabev->yTilt(),
-			qDegreesToRadians(tabev->rotation()), tabev->button(),
-			QApplication::queryKeyboardModifiers(), // TODO check if tablet
-													// event modifiers() is
-													// still broken in Qt 5.12
+			qDegreesToRadians(tabev->rotation()), tabev->button(), modifiers,
 			true);
 	} else if(type == QEvent::TabletMove && m_enableTablet) {
 		QTabletEvent *tabev = static_cast<QTabletEvent *>(event);
 		const auto tabPos = compat::tabPosF(*tabev);
+		Qt::KeyboardModifiers modifiers = getTabletModifiers(tabev);
 		DP_EVENT_LOG(
 			"tablet_move spontaneous=%d x=%f y=%f pressure=%f xtilt=%d "
 			"ytilt=%d rotation=%f buttons=0x%x modifiers=0x%x pendown=%d "
-			"touching=%d",
+			"touching=%d effectivemodifiers=0x%u",
 			tabev->spontaneous(), tabPos.x(), tabPos.y(), tabev->pressure(),
 			compat::cast_6<int>(tabev->xTilt()),
 			compat::cast_6<int>(tabev->yTilt()),
 			qDegreesToRadians(tabev->rotation()), unsigned(tabev->buttons()),
-			unsigned(tabev->modifiers()), m_pendown, m_touching);
+			unsigned(tabev->modifiers()), m_pendown, m_touching,
+			unsigned(modifiers));
 
 		if(!tabletinput::passPenEvents()) {
 			tabev->accept();
@@ -1921,26 +1922,23 @@ bool CanvasView::viewportEvent(QEvent *event)
 		penMoveEvent(
 			QDateTime::currentMSecsSinceEpoch(), compat::tabPosF(*tabev),
 			tabev->pressure(), tabev->xTilt(), tabev->yTilt(),
-			qDegreesToRadians(tabev->rotation()), tabev->buttons(),
-			QApplication::queryKeyboardModifiers() // TODO check if tablet event
-												   // modifiers() is still
-												   // broken in Qt 5.12
-		);
+			qDegreesToRadians(tabev->rotation()), tabev->buttons(), modifiers);
 	} else if(type == QEvent::TabletRelease && m_enableTablet) {
 		QTabletEvent *tabev = static_cast<QTabletEvent *>(event);
 		const auto tabPos = compat::tabPosF(*tabev);
+		Qt::KeyboardModifiers modifiers = getTabletModifiers(tabev);
 		DP_EVENT_LOG(
 			"tablet_release spontaneous=%d x=%f y=%f buttons=0x%x pendown=%d "
-			"touching=%d",
+			"touching=%d effectivemodifiers=0x%u",
 			tabev->spontaneous(), tabPos.x(), tabPos.y(),
-			unsigned(tabev->buttons()), m_pendown, m_touching);
+			unsigned(tabev->buttons()), m_pendown, m_touching,
+			unsigned(modifiers));
 		if(!tabletinput::passPenEvents()) {
 			tabev->accept();
 		}
-		// TODO check if tablet event modifiers() is still broken in Qt 5.12
 		penReleaseEvent(
 			QDateTime::currentMSecsSinceEpoch(), tabPos, tabev->button(),
-			QApplication::queryKeyboardModifiers());
+			tabev->modifiers());
 	} else {
 		return QGraphicsView::viewportEvent(event);
 	}
@@ -2315,6 +2313,23 @@ void CanvasView::updateLockNotice()
 			m_scene->hideLockNotice();
 		}
 	}
+}
+
+Qt::KeyboardModifiers
+CanvasView::getTabletModifiers(const QTabletEvent *tabev) const
+{
+#ifdef Q_OS_ANDROID
+	// Qt always reports no modifiers on Android.
+	Q_UNUSED(tabev);
+	Qt::KeyboardModifiers mods;
+	mods.setFlag(Qt::ControlModifier, m_keysDown.contains(Qt::Key_Control));
+	mods.setFlag(Qt::ShiftModifier, m_keysDown.contains(Qt::Key_Shift));
+	mods.setFlag(Qt::AltModifier, m_keysDown.contains(Qt::Key_Alt));
+	mods.setFlag(Qt::MetaModifier, m_keysDown.contains(Qt::Key_Meta));
+	return mods;
+#else
+	return tabev->modifiers();
+#endif
 }
 
 }

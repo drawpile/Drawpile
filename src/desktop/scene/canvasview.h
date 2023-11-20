@@ -322,7 +322,7 @@ private:
 	void showTransformNotice(const QString &text);
 	void updateLockNotice();
 
-	void initDragDiscreteRotation();
+	Qt::KeyboardModifiers getTabletModifiers(const QTabletEvent *tabev) const;
 
 	CanvasShortcuts m_canvasShortcuts;
 	QSet<Qt::Key> m_keysDown;
