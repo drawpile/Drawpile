@@ -18,25 +18,34 @@ bool GlobalKeyEventFilter::eventFilter(QObject *watched, QEvent *event)
 	switch(event->type()) {
 	case QEvent::Enter:
 	case QEvent::Leave: {
-		checkDockTitleBarsHidden(QApplication::queryKeyboardModifiers());
+		updateDockTitleBarsHidden(
+			QApplication::queryKeyboardModifiers().testFlag(Qt::ShiftModifier));
 		break;
 	}
-	case QEvent::KeyRelease:
-		checkCanvasFocus(static_cast<QKeyEvent *>(event));
-		Q_FALLTHROUGH();
-	case QEvent::KeyPress:
-	case QEvent::ShortcutOverride:
-		checkDockTitleBarsHidden(static_cast<QKeyEvent *>(event)->modifiers());
+	case QEvent::KeyRelease: {
+		QKeyEvent *ke = static_cast<QKeyEvent *>(event);
+		checkCanvasFocus(ke);
+		updateDockTitleBarsHidden(
+			ke->key() != Qt::Key_Shift &&
+			ke->modifiers().testFlag(Qt::ShiftModifier));
 		break;
+	}
+	case QEvent::KeyPress:
+	case QEvent::ShortcutOverride: {
+		QKeyEvent *ke = static_cast<QKeyEvent *>(event);
+		updateDockTitleBarsHidden(
+			ke->key() == Qt::Key_Shift ||
+			ke->modifiers().testFlag(Qt::ShiftModifier));
+		break;
+	}
 	default:
 		break;
 	}
 	return QObject::eventFilter(watched, event);
 }
 
-void GlobalKeyEventFilter::checkDockTitleBarsHidden(Qt::KeyboardModifiers mods)
+void GlobalKeyEventFilter::updateDockTitleBarsHidden(bool hidden)
 {
-	bool hidden = mods.testFlag(Qt::ShiftModifier);
 	if(hidden != m_wasHidden) {
 		m_wasHidden = hidden;
 		emit setDockTitleBarsHidden(hidden);

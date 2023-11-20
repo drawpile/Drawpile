@@ -19,7 +19,7 @@ protected:
 	bool eventFilter(QObject *watched, QEvent *event) override;
 
 private:
-	void checkDockTitleBarsHidden(Qt::KeyboardModifiers mods);
+	void updateDockTitleBarsHidden(bool hidden);
 	void checkCanvasFocus(QKeyEvent *event);
 
 	bool m_wasHidden;
