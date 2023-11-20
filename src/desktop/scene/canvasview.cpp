@@ -1389,6 +1389,10 @@ void CanvasView::wheelEvent(QWheelEvent *event)
 
 void CanvasView::keyPressEvent(QKeyEvent *event)
 {
+	DP_EVENT_LOG(
+		"key_press key=%d modifiers=0x%x autorepeat=%d", event->key(),
+		unsigned(event->modifiers()), event->isAutoRepeat());
+
 	QGraphicsView::keyPressEvent(event);
 	if(event->isAutoRepeat() || m_hoveringOverHud) {
 		return;
@@ -1491,6 +1495,10 @@ void CanvasView::keyPressEvent(QKeyEvent *event)
 
 void CanvasView::keyReleaseEvent(QKeyEvent *event)
 {
+	DP_EVENT_LOG(
+		"key_release key=%d modifiers=0x%x autorepeat=%d", event->key(),
+		unsigned(event->modifiers()), event->isAutoRepeat());
+
 	QGraphicsView::keyReleaseEvent(event);
 	if(event->isAutoRepeat()) {
 		return;
