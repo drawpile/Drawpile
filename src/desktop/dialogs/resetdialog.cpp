@@ -174,7 +174,8 @@ void ResetDialog::onOpenClicked()
 {
 	const QString file = QFileDialog::getOpenFileName(
 		this, tr("Open Image"), dpApp().settings().lastFileOpenPath(),
-		utils::fileFormatFilter(utils::FileFormatOption::OpenImages));
+		utils::fileFormatFilterList(utils::FileFormatOption::OpenImages)
+			.join(QStringLiteral(";;")));
 
 	if(file.isEmpty())
 		return;

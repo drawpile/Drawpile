@@ -51,9 +51,9 @@ QString FileWrangler::getOpenPath() const
 
 QString FileWrangler::getOpenOraPath() const
 {
-	return showOpenFileDialogFilter(
+	return showOpenFileDialogFilters(
 		tr("Open ORA"), LastPath::IMAGE,
-		QStringLiteral("%1 (*.ora)").arg(tr("OpenRaster Image")));
+		{QStringLiteral("%1 (*.ora)").arg(tr("OpenRaster Image"))});
 }
 
 QString FileWrangler::getOpenPasteImagePath() const
@@ -111,14 +111,29 @@ QString FileWrangler::saveImageAs(Document *doc, bool exported) const
 {
 	QString selectedFilter;
 	QString intendedName;
-	QString filename = showSaveFileDialog(
+	QString lastPath = doc->currentPath();
+	QStringList filters =
+		utils::fileFormatFilterList(utils::FileFormatOption::SaveImages);
+	if(exported) {
+		for(const QString &filter : filters) {
+			if(filter.contains(QStringLiteral("*.png"))) {
+				selectedFilter = filter;
+				break;
+			}
+		}
+		if(!lastPath.isEmpty()) {
+			replaceExtension(lastPath, QStringLiteral(".png"));
+		}
+	}
+	QString filename = showSaveFileDialogFilters(
 		exported ? tr("Export Image") : tr("Save Image"), LastPath::IMAGE,
-		".ora", utils::FileFormatOption::SaveImages, &selectedFilter,
-		doc->currentPath(), &intendedName);
-	DP_SaveImageType type = guessType(intendedName);
+		exported ? ".png" : ".ora", filters, &selectedFilter, lastPath,
+		&intendedName);
+	bool haveFilename = !filename.isEmpty();
+	DP_SaveImageType type =
+		haveFilename ? guessType(intendedName) : DP_SAVE_IMAGE_UNKNOWN;
 
-	if(!filename.isEmpty() &&
-	   (exported || confirmFlatten(doc, filename, type))) {
+	if(haveFilename && (exported || confirmFlatten(doc, filename, type))) {
 		doc->saveCanvasAs(filename, type, exported);
 		return filename;
 	} else {
@@ -442,15 +457,16 @@ QString FileWrangler::getDefaultLastPath(LastPath type, const QString &ext)
 QString FileWrangler::showOpenFileDialog(
 	const QString &title, LastPath type, utils::FileFormatOptions formats) const
 {
-	return showOpenFileDialogFilter(
-		title, type, utils::fileFormatFilter(formats));
+	return showOpenFileDialogFilters(
+		title, type, utils::fileFormatFilterList(formats));
 }
 
-QString FileWrangler::showOpenFileDialogFilter(
-	const QString &title, LastPath type, const QString &filter) const
+QString FileWrangler::showOpenFileDialogFilters(
+	const QString &title, LastPath type, const QStringList &filters) const
 {
 	QString filename = QFileDialog::getOpenFileName(
-		parentWidget(), title, getLastPath(type), filter);
+		parentWidget(), title, getLastPath(type),
+		filters.join(QStringLiteral(";;")));
 	if(filename.isEmpty()) {
 		return QString{};
 	} else {
@@ -474,6 +490,16 @@ QString FileWrangler::showSaveFileDialog(
 	utils::FileFormatOptions formats, QString *selectedFilter,
 	std::optional<QString> lastPath, QString *outIntendedName) const
 {
+	return showSaveFileDialogFilters(
+		title, type, ext, utils::fileFormatFilterList(formats), selectedFilter,
+		lastPath, outIntendedName);
+}
+
+QString FileWrangler::showSaveFileDialogFilters(
+	const QString &title, LastPath type, const QString &ext,
+	const QStringList &filters, QString *selectedFilter,
+	std::optional<QString> lastPath, QString *outIntendedName) const
+{
 	QFileDialog fileDialog;
 	fileDialog.setAcceptMode(QFileDialog::AcceptSave);
 
@@ -491,8 +517,8 @@ QString FileWrangler::showSaveFileDialog(
 	// directory to save the file in, rather than decide to break the path
 	// after the fact.
 	dialogs::AndroidFileDialog nameAndTypeDialog{
-		lastPath.has_value() ? lastPath.value() : getLastPath(type),
-		utils::fileFormatFilterList(formats), parentWidget()};
+		lastPath.has_value() ? lastPath.value() : getLastPath(type), filters,
+		parentWidget()};
 	if(nameAndTypeDialog.exec() != QDialog::Accepted) {
 		return QString{};
 	}
@@ -519,7 +545,7 @@ QString FileWrangler::showSaveFileDialog(
 	fileDialog.selectFile(initialFilename);
 #else
 	fileDialog.setWindowTitle(title);
-	fileDialog.setNameFilters(utils::fileFormatFilterList(formats));
+	fileDialog.setNameFilters(filters);
 	if(selectedFilter && !selectedFilter->isEmpty()) {
 		fileDialog.selectNameFilter(*selectedFilter);
 	}

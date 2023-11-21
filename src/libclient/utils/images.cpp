@@ -180,9 +180,4 @@ QStringList fileFormatFilterList(FileFormatOptions formats)
 	return filter;
 }
 
-QString fileFormatFilter(FileFormatOptions formats)
-{
-	return fileFormatFilterList(formats).join(";;");
-}
-
 }

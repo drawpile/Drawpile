@@ -60,9 +60,6 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(FileFormatOptions)
 
 QStringList fileFormatFilterList(FileFormatOptions formats);
 
-//! Get a filter string to use in an Open or Save dialog
-QString fileFormatFilter(FileFormatOptions formats);
-
 }
 
 #endif

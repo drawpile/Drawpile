@@ -96,12 +96,18 @@ private:
 		const QString &title, LastPath type,
 		utils::FileFormatOptions formats) const;
 
-	QString showOpenFileDialogFilter(
-		const QString &title, LastPath type, const QString &filter) const;
+	QString showOpenFileDialogFilters(
+		const QString &title, LastPath type, const QStringList &filters) const;
 
 	QString showSaveFileDialog(
 		const QString &title, LastPath type, const QString &ext,
 		utils::FileFormatOptions formats, QString *selectedFilter = nullptr,
+		std::optional<QString> lastPath = {},
+		QString *outIntendedName = nullptr) const;
+
+	QString showSaveFileDialogFilters(
+		const QString &title, LastPath type, const QString &ext,
+		const QStringList &filters, QString *selectedFilter = nullptr,
 		std::optional<QString> lastPath = {},
 		QString *outIntendedName = nullptr) const;
 
