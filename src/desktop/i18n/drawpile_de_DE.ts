@@ -2090,7 +2090,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
     <message>
         <location line="+429"/>
         <source>Opening file…</source>
-        <translation type="unfinished"></translation>
+        <translation>Öffne Datei…</translation>
     </message>
     <message>
         <location line="+300"/>
