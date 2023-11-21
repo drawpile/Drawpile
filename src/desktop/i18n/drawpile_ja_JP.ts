@@ -2265,7 +2265,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="-2335"/>
         <source>Opening file…</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルを開く…</translation>
     </message>
     <message>
         <location line="+502"/>
