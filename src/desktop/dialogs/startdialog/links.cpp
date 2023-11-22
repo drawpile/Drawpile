@@ -30,10 +30,10 @@ Links::Links(QWidget *parent)
 	LinkDefinition linkDefs[] = {
 		{"help-contents", tr("Help"),
 		 tr("Open Drawpile's help pages in your browser"),
-		 QUrl{"https://drawpile.net/help"}},
+		 QUrl{"https://drawpile.net/help/"}},
 		{"user-group-new", tr("Communities"),
 		 tr("Open Drawpile's communities page in your browser"),
-		 QUrl{"https://drawpile.net/communities"}},
+		 QUrl{"https://drawpile.net/communities/"}},
 		{"fa_discord", tr("Discord"), tr("Join the Drawpile Discord server"),
 		 QUrl{"https://drawpile.net/discord/"}},
 		{"irc-operator", tr("libera.chat"),
