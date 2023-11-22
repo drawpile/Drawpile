@@ -35,7 +35,7 @@ Links::Links(QWidget *parent)
 		 tr("Open Drawpile's communities page in your browser"),
 		 QUrl{"https://drawpile.net/communities"}},
 		{"fa_discord", tr("Discord"), tr("Join the Drawpile Discord server"),
-		 QUrl{"https://discord.gg/M3yyMpC"}},
+		 QUrl{"https://drawpile.net/discord/"}},
 		{"irc-operator", tr("libera.chat"),
 		 tr("Join the #drawpile chatroom on libera.chat"),
 		 QUrl{"https://drawpile.net/irc/"}},
