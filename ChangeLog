@@ -24,6 +24,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Default Export Image option to export as PNG instead of ORA, because that's what that option is for. Thanks SadColor for reporting.
  * Feature: Add libera.chat link to start dialog.
  * Fix: Properly restore avatar again when reconnecting to a session on a 2.1 server. Thanks xxxx for reporting.
+ * Fix: Make kinetic scrolling work in brush editor categories list.
 
 2023-11-12 Version 2.2.0-beta.10
  * Fix: Don't deadlock on first startup. Thanks to Hail, lowontrash, FARBOL234, Dorokinyo and hamlin for reporting.

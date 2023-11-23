@@ -196,6 +196,7 @@ void BrushSettingsDialog::buildDialogUi()
 	d->categoryWidget->setSelectionMode(QAbstractItemView::SingleSelection);
 	d->categoryWidget->setSizePolicy(
 		QSizePolicy::Preferred, QSizePolicy::Expanding);
+	utils::initKineticScrolling(d->categoryWidget);
 	connect(
 		d->categoryWidget, &QListWidget::currentItemChanged, this,
 		&BrushSettingsDialog::categoryChanged);
