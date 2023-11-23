@@ -574,6 +574,7 @@ LoginDialog::LoginDialog(net::LoginHandler *login, QWidget *parent)
 		d->accounts, &AccountListModel::passwordReadFinished, this,
 		&LoginDialog::onPasswordReadFinished);
 
+	d->restoreAvatar(dpApp().settings().lastAvatar());
 	selectCurrentAvatar();
 }
 
