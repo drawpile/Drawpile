@@ -406,22 +406,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>slide_saturation</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>spin_saturation</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>416</x>
-     <y>71</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>480</x>
-     <y>62</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>spin_saturation</sender>
    <signal>valueChanged(int)</signal>
    <receiver>slide_saturation</receiver>
@@ -434,22 +418,6 @@
     <hint type="destinationlabel">
      <x>416</x>
      <y>71</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>slide_value</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>spin_value</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>416</x>
-     <y>109</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>480</x>
-     <y>91</y>
     </hint>
    </hints>
   </connection>
@@ -470,22 +438,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>slide_red</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>spin_red</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>416</x>
-     <y>156</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>482</x>
-     <y>162</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>spin_red</sender>
    <signal>valueChanged(int)</signal>
    <receiver>slide_red</receiver>
@@ -498,22 +450,6 @@
     <hint type="destinationlabel">
      <x>416</x>
      <y>156</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>slide_green</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>spin_green</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>416</x>
-     <y>194</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>482</x>
-     <y>200</y>
     </hint>
    </hints>
   </connection>
@@ -534,22 +470,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>slide_alpha</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>spin_alpha</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>416</x>
-     <y>279</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>482</x>
-     <y>285</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>spin_alpha</sender>
    <signal>valueChanged(int)</signal>
    <receiver>slide_alpha</receiver>
@@ -566,22 +486,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>slide_blue</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>spin_blue</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>416</x>
-     <y>232</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>482</x>
-     <y>238</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>spin_blue</sender>
    <signal>valueChanged(int)</signal>
    <receiver>slide_blue</receiver>
@@ -594,22 +498,6 @@
     <hint type="destinationlabel">
      <x>416</x>
      <y>232</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>slide_hue</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>spin_hue</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>405</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>462</x>
-     <y>26</y>
     </hint>
    </hints>
   </connection>
