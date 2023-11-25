@@ -387,7 +387,7 @@ void CanvasModel::setSelection(Selection *selection)
 
 QImage CanvasModel::selectionToImage(int layerId) const
 {
-	if(m_selection && !m_selection->pasteImage().isNull()) {
+	if(m_selection && !m_selection->pasteImage().isNull() && layerId > 0) {
 		return m_selection->transformedPasteImage();
 	}
 
