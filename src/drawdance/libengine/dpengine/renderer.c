@@ -138,11 +138,13 @@ static void handle_tile_job(DP_Renderer *renderer, DP_RenderContext *rc,
 }
 
 
-static void handle_blocking_job(DP_Renderer *renderer, DP_RendererBlocking *job)
+static void handle_blocking_job(DP_Renderer *renderer, DP_Mutex *queue_mutex,
+                                DP_RendererBlocking *job)
 {
     // Wait for all threads to be in a safe state before proceeding.
     int wait_thread_count = renderer->thread_count - 1;
     DP_SEMAPHORE_MUST_WAIT_N(renderer->wait_ready_sem, wait_thread_count);
+    DP_MUTEX_MUST_LOCK(queue_mutex);
 
     unsigned int changes = job->changes;
     if (changes & CHANGE_RESIZE) {
@@ -163,6 +165,7 @@ static void handle_blocking_job(DP_Renderer *renderer, DP_RendererBlocking *job)
 
     // Unlock the other threads.
     DP_SEMAPHORE_MUST_POST_N(renderer->wait_done_sem, wait_thread_count);
+    DP_MUTEX_MUST_UNLOCK(queue_mutex);
 }
 
 
@@ -272,7 +275,7 @@ static void handle_jobs(DP_Renderer *renderer, int thread_index)
             handle_tile_job(renderer, rc, &job.tile);
             break;
         case DP_RENDER_JOB_BLOCKING:
-            handle_blocking_job(renderer, &job.blocking);
+            handle_blocking_job(renderer, queue_mutex, &job.blocking);
             break;
         case DP_RENDER_JOB_WAIT:
             handle_wait_job(renderer);
