@@ -94,6 +94,9 @@ public:
 	//! Is there a multipart stroke in progress at the moment?
 	virtual bool isMultipart() const { return false; }
 
+	//! Does this tool update the color swatch when used?
+	virtual bool usesBrushColor() const { return false; }
+
 	//! Add an offset to this tool's current position (if active)
 	virtual void offsetActiveTool(int x, int y) { Q_UNUSED(x) Q_UNUSED(y) /* most tools don't need to do anything here */ }
 

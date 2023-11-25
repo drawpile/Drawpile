@@ -23,6 +23,7 @@ public:
 	void cancelMultipart() override;
 	void undoMultipart() override;
 	bool isMultipart() const override { return !m_points.isEmpty(); }
+	bool usesBrushColor() const override { return true; }
 
 private:
 	void updatePreview();

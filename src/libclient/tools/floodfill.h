@@ -16,6 +16,7 @@ public:
 	motion(const canvas::Point &point, bool constrain, bool center) override;
 	void end() override;
 	void cancelMultipart() override;
+	bool usesBrushColor() const override { return true; }
 
 	void setTolerance(qreal tolerance) { m_tolerance = tolerance; }
 	void setExpansion(int expansion) { m_expansion = expansion; }

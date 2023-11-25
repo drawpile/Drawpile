@@ -20,6 +20,8 @@ public:
 
 	void end() override;
 
+	bool usesBrushColor() const override { return true; }
+
 	void offsetActiveTool(int x, int y) override;
 
 private:

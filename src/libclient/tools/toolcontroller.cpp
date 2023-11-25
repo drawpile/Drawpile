@@ -297,7 +297,7 @@ void ToolController::startDrawing(
 		m_model->paintEngine()->setLocalDrawingInProgress(true);
 	}
 
-	if(!m_activebrush.isEraser())
+	if(m_activeTool->usesBrushColor() && !m_activebrush.isEraser())
 		emit colorUsed(m_activebrush.qColor());
 }
 

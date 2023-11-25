@@ -25,6 +25,7 @@ public:
 	void motion(const canvas::Point& point, bool constrain, bool center) override;
 	void end() override;
 	void cancelMultipart() override;
+	bool usesBrushColor() const override { return true; }
 
 protected:
 	virtual canvas::PointVector pointVector() const = 0;
