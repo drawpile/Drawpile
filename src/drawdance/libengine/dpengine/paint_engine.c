@@ -841,6 +841,20 @@ DP_ViewMode DP_paint_engine_view_mode(DP_PaintEngine *pe)
     return DP_local_state_view_mode(pe->local_state);
 }
 
+DP_ViewModeFilter DP_paint_engine_view_mode_filter(DP_PaintEngine *pe,
+                                                   DP_ViewModeBuffer *vmb,
+                                                   DP_CanvasState *cs)
+{
+    DP_ASSERT(pe);
+    DP_ASSERT(vmb);
+    DP_ASSERT(cs);
+    return DP_view_mode_filter_make(
+        vmb, DP_paint_engine_view_mode(pe), cs,
+        DP_paint_engine_active_layer_id(pe),
+        DP_paint_engine_active_frame_index(pe),
+        DP_local_state_onion_skins(pe->local_state));
+}
+
 bool DP_paint_engine_reveal_censored(DP_PaintEngine *pe)
 {
     DP_ASSERT(pe);

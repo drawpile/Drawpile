@@ -646,6 +646,16 @@ int PaintEngine::frameCount() const
 	return historyCanvasState().frameCount();
 }
 
+QImage PaintEngine::getFlatImage(
+	drawdance::ViewModeBuffer &vmb, const drawdance::CanvasState &canvasState,
+	bool includeBackground, bool includeSublayers, const QRect *rect) const
+{
+	DP_ViewModeFilter vmf = DP_paint_engine_view_mode_filter(
+		m_paintEngine.get(), vmb.get(), canvasState.get());
+	return canvasState.toFlatImage(
+		includeBackground, includeSublayers, rect, &vmf);
+}
+
 QImage PaintEngine::getLayerImage(int id, const QRect &rect) const
 {
 	drawdance::CanvasState cs = viewCanvasState();

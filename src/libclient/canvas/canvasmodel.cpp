@@ -11,6 +11,7 @@ extern "C" {
 #include "libclient/canvas/selection.h"
 #include "libclient/canvas/timelinemodel.h"
 #include "libclient/canvas/userlist.h"
+#include "libclient/drawdance/viewmode.h"
 #include "libclient/settings.h"
 #include "libclient/utils/identicon.h"
 #include "libshared/util/qtcompat.h"
@@ -403,9 +404,11 @@ QImage CanvasModel::selectionToImage(int layerId) const
 
 	QImage img;
 	if(layerId == 0) {
-		img = canvasState.toFlatImage(true, true, &rect);
+		drawdance::ViewModeBuffer vmb;
+		img = m_paintengine->getFlatImage(vmb, canvasState, true, true, &rect);
 	} else if(layerId == -1) {
-		img = canvasState.toFlatImage(false, true, &rect);
+		drawdance::ViewModeBuffer vmb;
+		img = m_paintengine->getFlatImage(vmb, canvasState, false, true, &rect);
 	} else {
 		drawdance::LayerContent layerContent =
 			canvasState.searchLayerContent(layerId);

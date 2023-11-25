@@ -113,6 +113,10 @@ int DP_paint_engine_active_frame_index(DP_PaintEngine *pe);
 
 DP_ViewMode DP_paint_engine_view_mode(DP_PaintEngine *pe);
 
+DP_ViewModeFilter DP_paint_engine_view_mode_filter(DP_PaintEngine *pe,
+                                                   DP_ViewModeBuffer *vmb,
+                                                   DP_CanvasState *cs);
+
 bool DP_paint_engine_reveal_censored(DP_PaintEngine *pe);
 
 void DP_paint_engine_reveal_censored_set(DP_PaintEngine *pe,

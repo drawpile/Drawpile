@@ -44,7 +44,7 @@ public:
 	PaintEngine &operator=(const PaintEngine &) = delete;
 	PaintEngine &operator=(PaintEngine &&) = delete;
 
-	DP_PaintEngine *get();
+	DP_PaintEngine *get() const;
 
 	net::MessageList reset(
 		AclState &acls, SnapshotQueue &sq, uint8_t localUserId,

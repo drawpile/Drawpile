@@ -67,6 +67,12 @@ public:
 	//! Get the number of frames in an animated canvas
 	int frameCount() const;
 
+	//! Get a flat image of the given canvas state using the current view mode.
+	QImage getFlatImage(
+		drawdance::ViewModeBuffer &vmb,
+		const drawdance::CanvasState &canvasState, bool includeBackground,
+		bool includeSublayers, const QRect *rect = nullptr) const;
+
 	//! Get a layer as an image
 	//! An id of 0 means to flatten the whole image including the background,
 	//! -1 means flatten without the background, other ids are taken as actual

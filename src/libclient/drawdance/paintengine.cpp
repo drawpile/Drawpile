@@ -38,7 +38,7 @@ PaintEngine::~PaintEngine()
 	DP_paint_engine_free_join(m_data);
 }
 
-DP_PaintEngine *PaintEngine::get()
+DP_PaintEngine *PaintEngine::get() const
 {
 	return m_data;
 }
