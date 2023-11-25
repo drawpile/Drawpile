@@ -18,7 +18,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Move preferences dialog sidebar to the top on macOS and to the bottom on Android, to fit better with how those systems work. Thanks Snover and Xkower.
  * Fix: Make copying and pasting work on Android. Thanks ariqhadiyan for reporting.
  * Fix: Open files in the background to avoid "not responding" warnings. Thanks ariqhadiyan for reporting.
- * Fix: Force main window to fit screen whenever the docks change, to avoid spills beyond the edge of the screen. Thanks Xkower for reporting.
+ * Fix: Force main window to fit screen on Android whenever the docks change, to avoid spills beyond the edge of the screen. Thanks Xkower for reporting.
  * Fix: Don't load ORA files in parallel on Android. This is slower, but avoids the application getting terminated for using too much memory. Thanks ariqhadiyan for reporting.
  * Fix: Make keyboard modifiers work better on Android. Thanks ariqhadiyan for reporting.
  * Fix: Default Export Image option to export as PNG instead of ORA, because that's what that option is for. Thanks SadColor for reporting.
