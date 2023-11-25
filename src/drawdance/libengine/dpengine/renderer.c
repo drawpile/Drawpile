@@ -480,21 +480,19 @@ static int push_blocking(DP_Renderer *renderer, DP_RendererBlocking *blocking)
 
     // If there was a resize, update the tile priority lookup map and horizontal
     // tile stride for any upcoming tiles to be added to the queues.
+    int width = blocking->resize.width;
+    int height = blocking->resize.height;
+    size_t required_capacity = DP_int_to_size(width) * DP_int_to_size(height);
     if (blocking->changes & CHANGE_RESIZE) {
-        int width = blocking->resize.width;
-        int height = blocking->resize.height;
-
-        size_t required_capacity =
-            DP_int_to_size(width) * DP_int_to_size(height);
         if (renderer->tile.map_capacity < required_capacity) {
             renderer->tile.map =
                 DP_realloc(renderer->tile.map, required_capacity);
             renderer->tile.map_capacity = required_capacity;
         }
-        memset(renderer->tile.map, TILE_QUEUED_NONE, required_capacity);
 
         renderer->xtiles = DP_tile_count_round(width);
     }
+    memset(renderer->tile.map, TILE_QUEUED_NONE, required_capacity);
 
     return pushed;
 }
@@ -649,15 +647,15 @@ void DP_renderer_apply(DP_Renderer *renderer, DP_CanvasState *cs,
 
     if (width != prev_width || height != prev_height) {
         blocking.changes |= CHANGE_RESIZE;
-        blocking.resize = (DP_RendererResize){
-            width,
-            height,
-            prev_width,
-            prev_height,
-            DP_canvas_state_offset_x(prev_cs) - DP_canvas_state_offset_x(cs),
-            DP_canvas_state_offset_y(prev_cs) - DP_canvas_state_offset_y(cs),
-        };
     }
+    blocking.resize = (DP_RendererResize){
+        width,
+        height,
+        prev_width,
+        prev_height,
+        DP_canvas_state_offset_x(prev_cs) - DP_canvas_state_offset_x(cs),
+        DP_canvas_state_offset_y(prev_cs) - DP_canvas_state_offset_y(cs),
+    };
 
     if (local_state_differs(&renderer->local_state, ls)) {
         blocking.changes |= CHANGE_LOCAL_STATE;
