@@ -15,7 +15,8 @@ public:
 		FloodFill *tool, const QAtomicInt &cancel,
 		const drawdance::CanvasState &canvasState, const QPointF &point,
 		const QColor &fillColor, double tolerance, int sourceLayerId, int size,
-		int gap, int expansion, int featherRadius, int targetLayerId)
+		int gap, int expansion, int featherRadius, int targetLayerId,
+		DP_ViewMode viewMode, int activeLayerId, int activeFrameIndex)
 		: m_tool{tool}
 		, m_cancel{cancel}
 		, m_canvasState{canvasState}
@@ -28,6 +29,9 @@ public:
 		, m_expansion{expansion}
 		, m_featherRadius{featherRadius}
 		, m_targetLayerId{targetLayerId}
+		, m_viewMode{viewMode}
+		, m_activeLayerId{activeLayerId}
+		, m_activeFrameIndex{activeFrameIndex}
 	{
 	}
 
@@ -35,8 +39,8 @@ public:
 	{
 		m_result = m_canvasState.floodFill(
 			m_point.x(), m_point.y(), m_fillColor, m_tolerance, m_sourceLayerId,
-			m_size, m_gap, m_expansion, m_featherRadius, m_cancel, m_img, m_x,
-			m_y);
+			m_size, m_gap, m_expansion, m_featherRadius, m_viewMode,
+			m_activeLayerId, m_activeFrameIndex, m_cancel, m_img, m_x, m_y);
 	}
 
 	void finished() override { m_tool->floodFillFinished(this); }
@@ -60,6 +64,9 @@ private:
 	int m_expansion;
 	int m_featherRadius;
 	int m_targetLayerId;
+	DP_ViewMode m_viewMode;
+	int m_activeLayerId;
+	int m_activeFrameIndex;
 	DP_FloodFillResult m_result;
 	QImage m_img;
 	int m_x;
@@ -94,10 +101,12 @@ void FloodFill::begin(const canvas::Point &point, bool right, float zoom)
 							   : m_owner.activeBrush().qColor();
 		m_running = true;
 		m_cancel = false;
+		canvas::PaintEngine *paintEngine = model->paintEngine();
 		m_owner.executeAsync(new Task{
-			this, m_cancel, model->paintEngine()->viewCanvasState(), point,
-			fillColor, m_tolerance, m_layerId, m_size, m_gap, m_expansion,
-			m_featherRadius, m_owner.activeLayer()});
+			this, m_cancel, paintEngine->viewCanvasState(), point, fillColor,
+			m_tolerance, m_layerId, m_size, m_gap, m_expansion, m_featherRadius,
+			m_owner.activeLayer(), paintEngine->viewMode(),
+			paintEngine->viewLayer(), paintEngine->viewFrame()});
 	}
 }
 

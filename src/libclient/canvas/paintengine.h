@@ -143,15 +143,18 @@ public:
 
 	//! Set layerstack rendering mode (normal, solo, frame)
 	void setViewMode(DP_ViewMode vm, bool censor);
+	DP_ViewMode viewMode() const;
 
 	//! Is the "censor" view mode flag set?
 	bool revealCensored() const;
 
 	//! Set the active view layer (for solo mode)
 	void setViewLayer(int id);
+	int viewLayer() const;
 
 	//! Set the active view frame (for frame and onionskin modes)
 	void setViewFrame(int frame);
+	int viewFrame() const;
 
 	void setOnionSkins(
 		bool wrap, const QVector<QPair<float, QColor>> &skinsBelow,

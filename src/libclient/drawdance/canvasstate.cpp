@@ -251,15 +251,16 @@ LayerContent CanvasState::searchLayerContent(int layerId) const
 
 DP_FloodFillResult CanvasState::floodFill(
 	int x, int y, const QColor &fillColor, double tolerance, int layerId,
-	int sizeLimit, int gap, int expand, int featherRadius,
-	const QAtomicInt &cancel, QImage &outImg, int &outX, int &outY) const
+	int sizeLimit, int gap, int expand, int featherRadius, DP_ViewMode viewMode,
+	int activeLayerId, int activeFrameIndex, const QAtomicInt &cancel,
+	QImage &outImg, int &outX, int &outY) const
 {
 	DP_UPixelFloat fillPixel = DP_upixel_float_from_color(fillColor.rgba());
 	DP_Image *img;
 	DP_FloodFillResult result = DP_flood_fill(
 		m_data, x, y, fillPixel, tolerance, layerId, sizeLimit, gap, expand,
-		featherRadius, &img, &outX, &outY, shouldCancelFloodFill,
-		const_cast<QAtomicInt *>(&cancel));
+		featherRadius, viewMode, activeLayerId, activeFrameIndex, &img, &outX,
+		&outY, shouldCancelFloodFill, const_cast<QAtomicInt *>(&cancel));
 	if(result == DP_FLOOD_FILL_SUCCESS) {
 		outImg = wrapImage(img);
 	}

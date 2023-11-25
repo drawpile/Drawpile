@@ -318,6 +318,11 @@ void PaintEngine::setViewMode(DP_ViewMode vm, bool censor)
 	updateLayersVisibleInFrame();
 }
 
+DP_ViewMode PaintEngine::viewMode() const
+{
+	return m_paintEngine.viewMode();
+}
+
 bool PaintEngine::revealCensored() const
 {
 	return m_paintEngine.revealCensored();
@@ -356,11 +361,21 @@ void PaintEngine::setViewLayer(int id)
 	receiveMessages(false, 1, &msg);
 }
 
+int PaintEngine::viewLayer() const
+{
+	return m_paintEngine.activeLayerId();
+}
+
 void PaintEngine::setViewFrame(int frame)
 {
 	net::Message msg = net::makeLocalChangeActiveFrameMessage(frame);
 	receiveMessages(false, 1, &msg);
 	updateLayersVisibleInFrame();
+}
+
+int PaintEngine::viewFrame() const
+{
+	return m_paintEngine.activeFrameIndex();
 }
 
 int PaintEngine::pickLayer(int x, int y)

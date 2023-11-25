@@ -64,11 +64,11 @@ public:
 
 	QSet<int> getLayersVisibleInFrame();
 
-	int activeLayerId();
+	int activeLayerId() const;
 
-	int activeFrameIndex();
+	int activeFrameIndex() const;
 
-	DP_ViewMode viewMode();
+	DP_ViewMode viewMode() const;
 
 	bool revealCensored() const;
 	void setRevealCensored(bool revealCensored);

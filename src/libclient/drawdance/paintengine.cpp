@@ -93,17 +93,17 @@ QSet<int> PaintEngine::getLayersVisibleInFrame()
 	return layersVisibleInFrame;
 }
 
-int PaintEngine::activeLayerId()
+int PaintEngine::activeLayerId() const
 {
 	return DP_paint_engine_active_layer_id(m_data);
 }
 
-int PaintEngine::activeFrameIndex()
+int PaintEngine::activeFrameIndex() const
 {
 	return DP_paint_engine_active_frame_index(m_data);
 }
 
-DP_ViewMode PaintEngine::viewMode()
+DP_ViewMode PaintEngine::viewMode() const
 {
 	return DP_paint_engine_view_mode(m_data);
 }

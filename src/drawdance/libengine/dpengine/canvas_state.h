@@ -156,8 +156,9 @@ int DP_canvas_state_search_change_bounds(DP_CanvasState *cs,
                                          int *out_y, int *out_width,
                                          int *out_height);
 
-DP_TransientLayerContent *DP_canvas_state_to_flat_layer(DP_CanvasState *cs,
-                                                        unsigned int flags);
+DP_TransientLayerContent *
+DP_canvas_state_to_flat_layer(DP_CanvasState *cs, unsigned int flags,
+                              const DP_ViewModeFilter *vmf_or_null);
 
 DP_Image *DP_canvas_state_to_flat_image(DP_CanvasState *cs, unsigned int flags,
                                         const DP_Rect *area_or_null,

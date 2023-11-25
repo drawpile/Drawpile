@@ -1333,20 +1333,6 @@ static DP_Tile *get_flat_background_tile_or_null(DP_CanvasState *cs,
     return include_background ? cs->background_tile : NULL;
 }
 
-DP_TransientLayerContent *DP_canvas_state_to_flat_layer(DP_CanvasState *cs,
-                                                        unsigned int flags)
-{
-    DP_ASSERT(cs);
-    DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
-    DP_Tile *background_tile = get_flat_background_tile_or_null(cs, flags);
-    DP_TransientLayerContent *tlc = DP_transient_layer_content_new_init(
-        cs->width, cs->height, background_tile);
-    bool include_sublayers = flags & DP_FLAT_IMAGE_INCLUDE_SUBLAYERS;
-    DP_layer_list_merge_to_flat_image(cs->layers, cs->layer_props, tlc,
-                                      DP_BIT15, include_sublayers);
-    return tlc;
-}
-
 static void init_flattening_tile(DP_TransientTile *tt, DP_Tile *background_tile)
 {
     if (background_tile) {
@@ -1356,6 +1342,36 @@ static void init_flattening_tile(DP_TransientTile *tt, DP_Tile *background_tile)
     else {
         memset(DP_transient_tile_pixels(tt), 0, DP_TILE_BYTES);
     }
+}
+
+DP_TransientLayerContent *
+DP_canvas_state_to_flat_layer(DP_CanvasState *cs, unsigned int flags,
+                              const DP_ViewModeFilter *vmf_or_null)
+{
+    DP_ASSERT(cs);
+    DP_ASSERT(DP_atomic_get(&cs->refcount) > 0);
+    int width = cs->width;
+    int height = cs->height;
+    DP_TransientLayerContent *tlc =
+        DP_transient_layer_content_new_init(width, height, NULL);
+
+    DP_Tile *background_tile = get_flat_background_tile_or_null(cs, flags);
+    int wt = DP_tile_count_round(width);
+    bool include_sublayers = flags & DP_FLAT_IMAGE_INCLUDE_SUBLAYERS;
+    DP_ViewModeFilter vmf =
+        vmf_or_null ? *vmf_or_null : DP_view_mode_filter_make_default();
+
+    DP_TileIterator ti = DP_tile_iterator_make(
+        cs->width, cs->height, DP_rect_make(0, 0, width, height));
+    while (DP_tile_iterator_next(&ti)) {
+        DP_TransientTile *tt = DP_transient_tile_new_blank(0);
+        init_flattening_tile(tt, background_tile);
+        int i = ti.row * wt + ti.col;
+        DP_canvas_state_flatten_tile_to(cs, i, tt, include_sublayers, &vmf);
+        DP_transient_layer_content_transient_tile_set_noinc(tlc, tt, i);
+    }
+
+    return tlc;
 }
 
 static DP_TransientTile *

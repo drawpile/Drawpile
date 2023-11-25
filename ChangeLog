@@ -31,6 +31,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Make color palette swatch select last used color so that it doesn't get stuck when switching brush slots. Thanks Meru for reporting.
  * Fix: Make Copy Merged and Copy Without Background from a floating selection work again. Thanks Meru for reporting.
  * Fix: Make Export Selection, Copy Merged and Copy Without Background adhere to current view mode. Thanks Bovy for reporting.
+ * Fix: Make fill tool adhere to current view mode (minus onion skins) when using Merged Image as the source. Thanks Meru for reporting.
 
 2023-11-12 Version 2.2.0-beta.10
  * Fix: Don't deadlock on first startup. Thanks to Hail, lowontrash, FARBOL234, Dorokinyo and hamlin for reporting.

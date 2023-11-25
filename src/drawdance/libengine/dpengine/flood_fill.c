@@ -487,8 +487,9 @@ DP_Image *mask_to_image(DP_FillContext *c, const float *mask, int img_width,
 DP_FloodFillResult
 DP_flood_fill(DP_CanvasState *cs, int x, int y, DP_UPixelFloat fill_color,
               double tolerance, int layer_id, int size, int gap, int expand,
-              int feather_radius, DP_Image **out_img, int *out_x, int *out_y,
-              DP_FloodFillShouldCancelFn should_cancel, void *user)
+              int feather_radius, DP_ViewMode view_mode, int active_layer_id,
+              int active_frame_index, DP_Image **out_img, int *out_x,
+              int *out_y, DP_FloodFillShouldCancelFn should_cancel, void *user)
 {
     DP_ASSERT(cs);
 
@@ -527,8 +528,13 @@ DP_flood_fill(DP_CanvasState *cs, int x, int y, DP_UPixelFloat fill_color,
     }
 
     if (layer_id == 0) {
+        DP_ViewModeBuffer vmb;
+        DP_view_mode_buffer_init(&vmb);
+        DP_ViewModeFilter vmf = DP_view_mode_filter_make(
+            &vmb, view_mode, cs, active_layer_id, active_frame_index, NULL);
         c.lc = (DP_LayerContent *)DP_canvas_state_to_flat_layer(
-            cs, DP_FLAT_IMAGE_RENDER_FLAGS);
+            cs, DP_FLAT_IMAGE_RENDER_FLAGS, &vmf);
+        DP_view_mode_buffer_dispose(&vmb);
     }
     else {
         DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
