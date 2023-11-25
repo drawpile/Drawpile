@@ -26,6 +26,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Properly restore avatar again when reconnecting to a session on a 2.1 server. Thanks xxxx for reporting.
  * Fix: Make kinetic scrolling work in brush editor categories list.
  * Fix: Make canvas rendering not get stuck when switching frames really quickly. Thanks Kink and Hopfel for reporting.
+ * Fix: Update color swatch when using fill selection, recolor selection and color erase selection.
 
 2023-11-12 Version 2.2.0-beta.10
  * Fix: Don't deadlock on first startup. Thanks to Hail, lowontrash, FARBOL234, Dorokinyo and hamlin for reporting.

@@ -3546,9 +3546,21 @@ void MainWindow::setupActions()
 	connect(selectnone, &QAction::triggered, m_doc, &Document::selectNone);
 	connect(deleteAnnotations, &QAction::triggered, m_doc, &Document::removeEmptyAnnotations);
 	connect(cleararea, &QAction::triggered, this, &MainWindow::clearOrDelete);
-	connect(fillfgarea, &QAction::triggered, this, [this]() { m_doc->fillArea(m_dockToolSettings->foregroundColor(), DP_BLEND_MODE_NORMAL); });
-	connect(recolorarea, &QAction::triggered, this, [this]() { m_doc->fillArea(m_dockToolSettings->foregroundColor(), DP_BLEND_MODE_RECOLOR); });
-	connect(colorerasearea, &QAction::triggered, this, [this]() { m_doc->fillArea(m_dockToolSettings->foregroundColor(), DP_BLEND_MODE_COLOR_ERASE); });
+	connect(fillfgarea, &QAction::triggered, this, [this]() {
+		QColor color = m_dockToolSettings->foregroundColor();
+		m_dockToolSettings->addLastUsedColor(color);
+		m_doc->fillArea(color, DP_BLEND_MODE_NORMAL);
+	});
+	connect(recolorarea, &QAction::triggered, this, [this]() {
+		QColor color = m_dockToolSettings->foregroundColor();
+		m_dockToolSettings->addLastUsedColor(color);
+		m_doc->fillArea(color, DP_BLEND_MODE_RECOLOR);
+	});
+	connect(colorerasearea, &QAction::triggered, this, [this]() {
+		QColor color = m_dockToolSettings->foregroundColor();
+		m_dockToolSettings->addLastUsedColor(color);
+		m_doc->fillArea(color, DP_BLEND_MODE_COLOR_ERASE);
+	});
 	connect(resize, SIGNAL(triggered()), this, SLOT(resizeCanvas()));
 	connect(canvasBackground, &QAction::triggered, this, &MainWindow::changeCanvasBackground);
 	connect(setLocalBackground, &QAction::triggered, this, &MainWindow::changeLocalCanvasBackground);
