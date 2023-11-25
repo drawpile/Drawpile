@@ -227,6 +227,8 @@ void ColorPaletteDock::setColor(const QColor &color)
 {
 	d->color = color;
 	d->paletteWidget->setNextColor(color);
+	d->lastUsedSwatch->setSelected(
+		findPaletteColor(d->lastUsedSwatch->palette(), d->color));
 }
 
 void ColorPaletteDock::setLastUsedColors(const color_widgets::ColorPalette &pal)
