@@ -148,7 +148,6 @@ void AccountListModel::saveAccount(
 	QString username = normalizeUsername(displayUsername);
 	QDateTime lastUsed = QDateTime::currentDateTimeUtc();
 
-	utils::StateDatabase::Query qry = m_state.query();
 	QString sql = QStringLiteral(
 		"insert into accounts (\n"
 		"	type, host, username, display_username, avatar_filename,\n"
@@ -158,7 +157,7 @@ void AccountListModel::saveAccount(
 		"	display_username = excluded.display_username,\n"
 		"	avatar_filename = excluded.avatar_filename,\n"
 		"	last_used = excluded.last_used");
-	if(!qry.exec(
+	if(!m_state.query().exec(
 		   sql,
 		   {int(type), host, displayUsername.toCaseFolded(), displayUsername,
 			avatarFilename.isNull() ? QStringLiteral("") : avatarFilename,
@@ -265,11 +264,11 @@ void AccountListModel::deleteAccountAt(int i)
 {
 	if(i >= 0 && i < compat::cast_6<int>(m_accounts.size())) {
 		const Account &account = m_accounts[i];
-		utils::StateDatabase::Query qry = m_state.query();
 		QString sql =
 			QStringLiteral("delete from accounts\n"
 						   "where type = ? and host = ? and username = ?");
-		qry.exec(sql, {int(account.type), account.host, account.username});
+		m_state.query().exec(
+			sql, {int(account.type), account.host, account.username});
 
 		deletePassword(buildKeychainSecretName(
 			account.type, account.host, account.username));
