@@ -32,7 +32,7 @@ LoginHandler::LoginHandler(
 
 void LoginHandler::startLoginProcess()
 {
-	m_mandatoryLookup = m_config->getConfigBool(config::m_mandatoryLookup);
+	m_mandatoryLookup = m_config->getConfigBool(config::MandatoryLookup);
 	m_state = m_mandatoryLookup ? State::WaitForLookup : State::WaitForIdent;
 
 	QJsonArray flags;
