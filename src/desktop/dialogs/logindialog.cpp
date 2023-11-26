@@ -64,6 +64,7 @@ struct LoginDialog::Private {
 	QString ruleKey;
 	QString ruleHash;
 	bool guestsOnly = false;
+	bool guestShortcut = false;
 	QUrl loginExtAuthUrl;
 	QUrl extauthurl;
 	QSslCertificate oldCert, newCert;
@@ -681,6 +682,7 @@ void LoginDialog::onLoginMethodGuestClicked()
 	d->wasRecentAccount = false;
 	d->restoreGuest();
 	d->resetMode(Mode::GuestLogin);
+	d->guestShortcut = false;
 	updateOkButtonEnabled();
 	d->setLoginExplanation(tr("Enter the name you want to use."), false);
 }
@@ -795,7 +797,9 @@ void LoginDialog::onLoginMethodChoiceNeeded(
 	// If only guests are an option, we can skip forward, since there's no
 	// accounts that could be remembered and no password to be entered.
 	d->guestsOnly = !extAuth && !auth;
-	if(d->guestsOnly) {
+	bool accountsChanged = d->accounts->load(url, extAuthUrl);
+	d->guestShortcut = guest && auth && !extAuth && d->accounts->isEmpty();
+	if(d->guestsOnly || d->guestShortcut) {
 		d->restoreGuest();
 		d->resetMode(Mode::GuestLogin);
 		QString explanation;
@@ -847,12 +851,11 @@ void LoginDialog::onLoginMethodChoiceNeeded(
 			}
 		}
 		d->ui->methodExplanationLabel->setText(explanation);
-		bool changed = d->accounts->load(url, extAuthUrl);
 		if(d->accounts->isEmpty()) {
 			d->resetMode(Mode::LoginMethod);
 		} else {
 			d->resetMode(Mode::RecentAccounts);
-			if(changed) {
+			if(accountsChanged) {
 				d->ui->recentAccountCombo->setCurrentIndex(
 					d->accounts->getMostRecentIndex());
 			}
@@ -867,9 +870,14 @@ void LoginDialog::onLoginMethodMismatch(
 {
 	QString explanation;
 	if(intent == net::LoginHandler::LoginMethod::Guest) {
-		d->resetMode(Mode::GuestLogin);
-		explanation =
-			tr("This username belongs to an account, pick a different one.");
+		if(d->guestShortcut && method == net::LoginHandler::LoginMethod::Auth) {
+			d->resetMode(Mode::AuthLogin);
+			setAuthLoginExplanation();
+		} else {
+			d->resetMode(Mode::GuestLogin);
+			explanation = tr(
+				"This username belongs to an account, pick a different one.");
+		}
 	} else if(intent == net::LoginHandler::LoginMethod::Auth) {
 		d->resetMode(Mode::AuthLogin);
 		explanation =
@@ -900,7 +908,9 @@ void LoginDialog::onLoginMethodMismatch(
 		return;
 	}
 	updateOkButtonEnabled();
-	d->setLoginExplanation(explanation, true);
+	if(!explanation.isNull()) {
+		d->setLoginExplanation(explanation, true);
+	}
 }
 
 void LoginDialog::onUsernameNeeded(bool canSelectAvatar)
