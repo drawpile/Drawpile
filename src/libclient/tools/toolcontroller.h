@@ -175,6 +175,7 @@ private slots:
 	void onFeatureAccessChange(DP_Feature feature, bool canUse);
 	void onSelectionChange(canvas::Selection *sel);
 	void updateSelectionPreview();
+	void clearSelectionPreviews();
 	void notifyAsyncExecutionFinished(Task *task);
 
 private:

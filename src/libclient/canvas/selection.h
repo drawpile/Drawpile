@@ -197,7 +197,7 @@ public:
 	 */
 	bool fillCanvas(
 		net::MessageList &buffer, uint8_t contextId, const QColor &color,
-		DP_BlendMode mode, int layer, bool source = false) const;
+		DP_BlendMode mode, int layer, bool source = false);
 
 	/**
 	 * @brief Get the size of the adjustment handles in pixels at 1:1 zoom level
@@ -225,6 +225,7 @@ signals:
 	void pasteImageChanged(const QImage &image);
 	void closed();
 	void adjustmentModeChanged(AdjustmentMode mode);
+	void reinitialized();
 
 private:
 	void adjustGeometryScale(const QPoint &delta, bool constrain);

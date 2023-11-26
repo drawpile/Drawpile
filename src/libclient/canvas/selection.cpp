@@ -707,7 +707,7 @@ QPolygon Selection::destinationQuad() const
 
 bool Selection::fillCanvas(
 	net::MessageList &buffer, uint8_t contextId, const QColor &color,
-	DP_BlendMode mode, int layer, bool source) const
+	DP_BlendMode mode, int layer, bool source)
 {
 	QRect area;
 	QImage mask;
@@ -730,6 +730,15 @@ bool Selection::fillCanvas(
 			appendPutImage(
 				buffer, contextId, layer, maskBounds.left(), maskBounds.top(),
 				mask, mode);
+		}
+
+		if(!source) {
+			m_pasteImage = QImage();
+			m_moveRegion.clear();
+			m_preAdjustmentShape.clear();
+			setShape(m_shape);
+			saveShape();
+			emit reinitialized();
 		}
 
 		return true;

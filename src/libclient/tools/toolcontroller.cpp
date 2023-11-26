@@ -233,6 +233,9 @@ void ToolController::onSelectionChange(canvas::Selection *sel)
 		connect(
 			sel, &canvas::Selection::shapeChanged, this,
 			&ToolController::updateSelectionPreview);
+		connect(
+			sel, &canvas::Selection::reinitialized, this,
+			&ToolController::clearSelectionPreviews);
 	}
 	updateSelectionPreview();
 }
@@ -252,6 +255,15 @@ void ToolController::updateSelectionPreview()
 			sel->destinationQuad(), m_selectInterpolation);
 	} else {
 		paintEngine->clearTransformPreview();
+	}
+}
+
+void ToolController::clearSelectionPreviews()
+{
+	if(m_model) {
+		canvas::PaintEngine *paintEngine = m_model->paintEngine();
+		paintEngine->clearTransformPreview();
+		paintEngine->clearCutPreview();
 	}
 }
 
