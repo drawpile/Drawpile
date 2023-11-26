@@ -872,7 +872,9 @@ void LoginDialog::onLoginMethodMismatch(
 			tr("This username belongs to an account, pick a different one.");
 	} else if(intent == net::LoginHandler::LoginMethod::Auth) {
 		d->resetMode(Mode::AuthLogin);
-		explanation = tr("This username doesn't belong to a server account.");
+		explanation =
+			tr("This username doesn't belong to an account on this server. "
+			   "This is not your drawpile.net account!");
 	} else if(intent == net::LoginHandler::LoginMethod::ExtAuth) {
 		d->resetMode(Mode::ExtAuthLogin);
 		if(extAuthFallback) {
@@ -1392,7 +1394,9 @@ void LoginDialog::selectRecentAccount(bool logIn)
 void LoginDialog::setAuthLoginExplanation()
 {
 	d->setLoginExplanation(
-		tr("Enter the username and password for your server account."), false);
+		tr("Enter the username and password for your account on this server. "
+		   "This is not your drawpile.net account!"),
+		false);
 }
 
 void LoginDialog::setExtAuthLoginExplanation()
