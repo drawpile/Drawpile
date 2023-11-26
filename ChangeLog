@@ -35,6 +35,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Don't crash when changing saturation in color dialog when using HSL or LCH color models. Thanks Meru for reporting.
  * Fix: Don't deadlock when saving and clearing password fallback.
  * Feature: Shortcut login flow on servers that only support guest and internal account logins.
+ * Feature: Allow changing tablet driver through Edit menu on Windows.
 
 2023-11-12 Version 2.2.0-beta.10
  * Fix: Don't deadlock on first startup. Thanks to Hail, lowontrash, FARBOL234, Dorokinyo and hamlin for reporting.

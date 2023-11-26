@@ -3482,6 +3482,19 @@ void MainWindow::setupActions()
 	QAction *brushSettings = makeAction("brushsettings", tr("&Brush Settings")).icon("draw-brush").shortcut("F7");
 	QAction *preferences = makeAction("preferences", tr("Prefere&nces")).icon("configure").noDefaultShortcut().menuRole(QAction::PreferencesRole);
 
+#ifdef Q_OS_WIN32
+	QVector<QAction *> drivers;
+	drivers.append(makeAction("driverkistabletwindowsink", QCoreApplication::translate("dialogs::settingsdialog::Input", "KisTablet Windows Ink")).noDefaultShortcut().checkable().property("tabletdriver", int(tabletinput::Mode::KisTabletWinink)));
+	drivers.append(makeAction("driverkistabletwintab", QCoreApplication::translate("dialogs::settingsdialog::Input", "KisTablet Wintab")).noDefaultShortcut().checkable().property("tabletdriver", int(tabletinput::Mode::KisTabletWintab)));
+	drivers.append(makeAction("driverkistabletwintabrelative", QCoreApplication::translate("dialogs::settingsdialog::Input", "KisTablet Wintab Relative")).noDefaultShortcut().checkable().property("tabletdriver", int(tabletinput::Mode::KisTabletWintabRelativePenHack)));
+#	if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+	drivers.append(makeAction("driverqt5", QCoreApplication::translate("dialogs::settingsdialog::Input", "Qt5")).noDefaultShortcut().checkable().property("tabletdriver", int(tabletinput::Mode::Qt5)));
+#	else
+	drivers.append(makeAction("driverqt6windowsink", QCoreApplication::translate("dialogs::settingsdialog::Input", "Qt6 Windows Ink")).noDefaultShortcut().checkable().property("tabletdriver", int(tabletinput::Mode::Qt6Winink)));
+	drivers.append(makeAction("driverqt6wintab", QCoreApplication::translate("dialogs::settingsdialog::Input", "Qt6 Wintab")).noDefaultShortcut().checkable().property("tabletdriver", int(tabletinput::Mode::Qt6Wintab)));
+#	endif
+#endif
+
 	QAction *selectall = makeAction("selectall", tr("Select &All")).shortcut(QKeySequence::SelectAll);
 	QAction *selectnone = makeAction("selectnone", tr("&Deselect"))
 #if (defined(Q_OS_MACOS) || defined(Q_OS_WIN)) // Deselect is not defined on Mac and Win
@@ -3567,6 +3580,15 @@ void MainWindow::setupActions()
 	connect(clearLocalBackground, &QAction::triggered, this, &MainWindow::clearLocalCanvasBackground);
 	connect(brushSettings, &QAction::triggered, this, &MainWindow::showBrushSettingsDialog);
 	connect(preferences, SIGNAL(triggered()), this, SLOT(showSettings()));
+#ifdef Q_OS_WIN32
+	for(QAction *driver : drivers) {
+		connect(driver, &QAction::triggered, this, [this, driver](bool checked) {
+			if(checked) {
+				dpApp().settings().setTabletDriver(tabletinput::Mode(driver->property("tabletdriver").toInt()));
+			}
+		});
+	}
+#endif
 
 	// Expanding by multiples of tile size allows efficient resizing
 	connect(expandup, &QAction::triggered, this, [this] { m_doc->sendResizeCanvas(64, 0 ,0, 0);});
@@ -3613,6 +3635,19 @@ void MainWindow::setupActions()
 	editmenu->addSeparator();
 	editmenu->addAction(brushSettings);
 	editmenu->addAction(preferences);
+#ifdef Q_OS_WIN32
+	QMenu *driverMenu = editmenu->addMenu(QIcon::fromTheme("dialog-input-devices"), tr("Tablet Driver"));
+	for(QAction *driver : drivers) {
+		driverMenu->addAction(driver);
+	}
+	connect(driverMenu, &QMenu::aboutToShow, this, [this, drivers]() {
+		tabletinput::Mode mode = dpApp().settings().tabletDriver();
+		for(QAction *driver : drivers) {
+			QSignalBlocker blocker(driver);
+			driver->setChecked(driver->property("tabletdriver").toInt() == int(mode));
+		}
+	});
+#endif
 
 	QToolBar *edittools = new QToolBar(tr("Edit Tools"));
 	edittools->setObjectName("edittoolsbar");
