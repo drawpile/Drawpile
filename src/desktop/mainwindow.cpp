@@ -3324,7 +3324,7 @@ void MainWindow::setupActions()
 	toggledockmenu->addAction(hideDocks);
 	connect(hideDocks, &QAction::toggled, this, &MainWindow::setDocksHidden);
 
-	QAction *hideDockTitleBars = makeAction("hidedocktitlebars", tr("Hold Shift to Arrange")).noDefaultShortcut().checked().remembered();
+	QAction *hideDockTitleBars = makeAction("hidedocktitlebars", tr("Hold Shift to Arrange")).noDefaultShortcut().checkable().remembered();
 	toggledockmenu->addAction(hideDockTitleBars);
 	connect(hideDocks, &QAction::toggled, [this](){
 		setDockTitleBarsHidden(m_titleBarsHidden);
