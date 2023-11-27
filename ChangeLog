@@ -38,6 +38,7 @@ Unreleased Version 2.2.0-pre
  * Feature: Allow changing tablet driver through Edit menu on Windows.
  * Fix: Reset floating selection when filling it to avoid weird effects if the fill is inside the originally selected area. Thanks Meru for reporting.
  * Fix: Properly load annotations and timeline from ORA files without a background. Thanks MyaThingoss for reporting.
+ * Feature: Add a Tablet Setup link in the start dialog.
 
 2023-11-12 Version 2.2.0-beta.10
  * Fix: Don't deadlock on first startup. Thanks to Hail, lowontrash, FARBOL234, Dorokinyo and hamlin for reporting.
