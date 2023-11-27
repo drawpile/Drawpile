@@ -18,7 +18,7 @@
     <widget class="FlipbookView" name="view" native="true"/>
    </item>
    <item>
-    <layout class="QHBoxLayout">
+    <layout class="QHBoxLayout" stretch="0,0,1,0,0,0,0,0,0,0,0,1,1,1,0,0">
      <item>
       <widget class="QToolButton" name="refreshButton">
        <property name="toolTip">
@@ -216,6 +216,13 @@
          <width>22</width>
          <height>22</height>
         </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDialogButtonBox" name="buttonBox">
+       <property name="standardButtons">
+        <set>QDialogButtonBox::Close</set>
        </property>
       </widget>
      </item>

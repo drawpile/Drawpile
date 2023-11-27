@@ -95,6 +95,8 @@ Flipbook::Flipbook(State &state, QWidget *parent)
 	connect(
 		exportFramesAction, &QAction::triggered, this, &Flipbook::exportFrames);
 #endif
+	connect(
+		d->ui.buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
 	d->ui.speedSpinner->setExponentRatio(3.0);
 	d->ui.playButton->setFocus();
