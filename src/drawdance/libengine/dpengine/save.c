@@ -622,7 +622,7 @@ static char *ora_write_xml(DP_SaveOraContext *c, DP_CanvasState *cs,
                 "xmlns:mypaint=\"http://mypaint.org/ns/openraster\"");
     ORA_APPEND_ATTR(c, output, "w", "%d", DP_canvas_state_width(cs));
     ORA_APPEND_ATTR(c, output, "h", "%d", DP_canvas_state_height(cs));
-    ORA_APPEND_ATTR(c, output, "version", "0.0.3");
+    ORA_APPEND_ATTR(c, output, "version", "0.0.6");
     DP_DocumentMetadata *dm = DP_canvas_state_metadata_noinc(cs);
     ORA_APPEND_ATTR(c, output, "xres", "%d", DP_document_metadata_dpix(dm));
     ORA_APPEND_ATTR(c, output, "yres", "%d", DP_document_metadata_dpiy(dm));
