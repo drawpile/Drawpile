@@ -3634,7 +3634,6 @@ void MainWindow::setupActions()
 	editmenu->addAction(colorerasearea);
 	editmenu->addSeparator();
 	editmenu->addAction(brushSettings);
-	editmenu->addAction(preferences);
 #ifdef Q_OS_WIN32
 	QMenu *driverMenu = editmenu->addMenu(QIcon::fromTheme("dialog-input-devices"), tr("Tablet Driver"));
 	for(QAction *driver : drivers) {
@@ -3648,6 +3647,7 @@ void MainWindow::setupActions()
 		}
 	});
 #endif
+	editmenu->addAction(preferences);
 
 	QToolBar *edittools = new QToolBar(tr("Edit Tools"));
 	edittools->setObjectName("edittoolsbar");
