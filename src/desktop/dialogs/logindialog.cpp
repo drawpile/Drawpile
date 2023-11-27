@@ -321,13 +321,29 @@ void LoginDialog::Private::resetMode(Mode newMode)
 		page = setupAuthPage(true, false);
 		setLoginExplanation(QString(), false);
 		break;
-	case Mode::Authenticate:
+	case Mode::Authenticate: {
 		page = setupAuthPage(false, true);
-		setLoginExplanation(
-			tr("This username belongs to a registered account. If this isn't "
-			   "your account, cancel and try again with a different name."),
-			false);
+		QString explanation;
+		if(loginHandler->mustAuth()) {
+			if(extauthurl.isEmpty()) {
+				explanation =
+					tr("Enter account password. If you don't have an account, "
+					   "you must register one. This server provides no "
+					   "information on how to do that.");
+			} else {
+				explanation =
+					tr("Enter account password. If you don't have an account, "
+					   "you must register one on %1.")
+						.arg(extauthurl.host());
+			}
+		} else {
+			explanation = tr(
+				"This username belongs to a registered account. If this isn't "
+				"your account, cancel and try again with a different name.");
+		}
+		setLoginExplanation(explanation, false);
 		break;
+	}
 	case Mode::SessionList:
 		reportButton->setVisible(true);
 		page = ui->listingPage;

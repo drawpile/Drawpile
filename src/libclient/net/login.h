@@ -175,6 +175,8 @@ public:
 	 */
 	bool supportsAbuseReports() const { return m_canReport; }
 
+	bool mustAuth() const { return m_mustAuth; }
+
 	bool compatibilityMode() const { return m_compatibilityMode; }
 
 	/**
