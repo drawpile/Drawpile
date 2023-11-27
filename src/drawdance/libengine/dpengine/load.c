@@ -585,6 +585,7 @@ static void ora_handle_fixed_layer(DP_ReadOraContext *c, DP_XmlElement *element,
 
 static bool ora_handle_layer(DP_ReadOraContext *c, DP_XmlElement *element)
 {
+    c->expect = DP_READ_ORA_EXPECT_LAYER_END;
     if (ora_try_load_background_tile(c, element)) {
         return true;
     }
@@ -606,7 +607,6 @@ static bool ora_handle_layer(DP_ReadOraContext *c, DP_XmlElement *element)
 
     push_layer_children(c, (DP_ReadOraChildren){.tlc = tlc, .tlp = tlp});
     ora_handle_fixed_layer(c, element, layer_id);
-    c->expect = DP_READ_ORA_EXPECT_LAYER_END;
     return true;
 }
 
@@ -649,7 +649,7 @@ static void ora_handle_stack_end(DP_ReadOraContext *c)
         DP_ASSERT(!rog->tlp);
         tll = DP_transient_canvas_state_transient_layers(c->tcs, count);
         tlpl = DP_transient_canvas_state_transient_layer_props(c->tcs, count);
-        c->expect = DP_READ_ORA_EXPECT_IMAGE_END;
+        c->expect = DP_READ_ORA_EXPECT_ROOT_STACK_OR_ANNOTATIONS_OR_TIMELINE;
     }
 
     for (int i = 0; i < count; ++i) {
