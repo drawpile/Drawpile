@@ -575,18 +575,18 @@ Valitse väri</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+24"/>
-        <location line="+185"/>
+        <location line="+38"/>
+        <location line="+186"/>
         <source>Save Image</source>
         <translation type="unfinished">Tallenna kuva</translation>
     </message>
     <message>
-        <location line="-185"/>
+        <location line="-186"/>
         <source>Export Image</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+21"/>
         <source>Save Pre-Reset Image</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1441,23 +1441,23 @@ Subrange: [%3, %4]</source>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+940"/>
+        <location line="+987"/>
         <source>Tablet Event Log...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-937"/>
+        <location line="-984"/>
         <source>Stop Profile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+938"/>
+        <location line="+985"/>
         <source>Profile...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-931"/>
+        <location line="-978"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1483,12 +1483,12 @@ Subrange: [%3, %4]</source>
     </message>
     <message>
         <location line="+15"/>
-        <location line="+893"/>
+        <location line="+940"/>
         <source>Record Debug Dumps</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-892"/>
+        <location line="-939"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -1614,7 +1614,12 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+153"/>
+        <location line="+164"/>
+        <source>Tablet Driver</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+36"/>
         <source>Move Canvas Left</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1957,7 +1962,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-2583"/>
+        <location line="-2630"/>
         <location line="+1545"/>
         <source>Record...</source>
         <translation>Nauhoita...</translation>
@@ -1991,12 +1996,12 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+1789"/>
+        <location line="+1836"/>
         <source>Terminate</source>
         <translation>Lopeta</translation>
     </message>
     <message>
-        <location line="-1580"/>
+        <location line="-1627"/>
         <source>Session blocked by parental controls</source>
         <translation>Tämä istunto on estetty lapsilukon toimesta</translation>
     </message>
@@ -2058,7 +2063,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation>L&amp;iitä</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+27"/>
         <source>&amp;Deselect</source>
         <translation>&amp;Poista valinta</translation>
     </message>
@@ -2098,7 +2103,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation>Poista väri valinnasta</translation>
     </message>
     <message>
-        <location line="+63"/>
+        <location line="+84"/>
         <source>&amp;Edit</source>
         <translation>&amp;Muokkaa</translation>
     </message>
@@ -2108,7 +2113,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation>Suurenna kuvaa</translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="+48"/>
         <source>&amp;Toolbars</source>
         <translation>&amp;Työkalupalkit</translation>
     </message>
@@ -2138,7 +2143,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation>Kierrä myötäpäivään</translation>
     </message>
     <message>
-        <location line="-926"/>
+        <location line="-973"/>
         <source>Freehand (erase mode, click to reset)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2188,7 +2193,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+286"/>
+        <location line="+333"/>
         <source>Rotate Canvas Counterclockwise</source>
         <translation>Kierrä vastapäivään</translation>
     </message>
@@ -2268,7 +2273,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation>Näytä käyttäjien osoittimet</translation>
     </message>
     <message>
-        <location line="-226"/>
+        <location line="-273"/>
         <source>&amp;Import</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2298,12 +2303,12 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+107"/>
+        <location line="+141"/>
         <source>Canvas Background</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+41"/>
         <source>&amp;Layouts...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2456,7 +2461,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation>Piirtotyökalut</translation>
     </message>
     <message>
-        <location line="-2291"/>
+        <location line="-2338"/>
         <source>Stop Recording</source>
         <translation>Lopeta nauhoitus</translation>
     </message>
@@ -2508,12 +2513,12 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation>Asetukset</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+15"/>
         <source>Select &amp;All</source>
         <translation>Valitse kaikki</translation>
     </message>
     <message>
-        <location line="+120"/>
+        <location line="+154"/>
         <source>Edit Tools</source>
         <translation>Muokkaustyökalut</translation>
     </message>
@@ -2563,7 +2568,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation>Viiva</translation>
     </message>
     <message>
-        <location line="-3458"/>
+        <location line="-3505"/>
         <source>🙋 %1 joined!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2578,12 +2583,12 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1552"/>
+        <location line="+1565"/>
         <source>Delete</source>
         <translation>Poista</translation>
     </message>
     <message>
-        <location line="+321"/>
+        <location line="+355"/>
         <source>New Group</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2927,7 +2932,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
     <name>QApplication</name>
     <message>
         <location filename="../dialogs/avatarimport.cpp" line="+59"/>
-        <location filename="../filewrangler.cpp" line="-412"/>
+        <location filename="../filewrangler.cpp" line="-427"/>
         <source>All files (*)</source>
         <translation>Kaikki tiedostot (*)</translation>
     </message>
@@ -3898,7 +3903,7 @@ Resetoi istunto käsin ennen kuin tila loppuu.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+104"/>
+        <location line="+105"/>
         <source>Brush Type:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5616,7 +5621,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+99"/>
+        <location line="+101"/>
         <source>%</source>
         <translation type="unfinished">%</translation>
     </message>
@@ -5756,7 +5761,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::LoginDialog</name>
     <message>
-        <location filename="../dialogs/logindialog.cpp" line="+155"/>
+        <location filename="../dialogs/logindialog.cpp" line="+156"/>
         <source>Report...</source>
         <translation type="unfinished">Ilmianna...</translation>
     </message>
@@ -5771,12 +5776,22 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+17"/>
+        <source>Enter account password. If you don&apos;t have an account, you must register one. This server provides no information on how to do that.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Enter account password. If you don&apos;t have an account, you must register one on %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
         <source>This username belongs to a registered account. If this isn&apos;t your account, cancel and try again with a different name.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+19"/>
         <source>Close</source>
         <translation type="unfinished">Sulje</translation>
     </message>
@@ -5799,7 +5814,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+251"/>
+        <location line="+252"/>
         <source>Remove Account</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5809,13 +5824,13 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+37"/>
-        <location line="+118"/>
+        <location line="+38"/>
+        <location line="+160"/>
         <source>Enter the name you want to use.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-56"/>
+        <location line="-98"/>
         <source>Server Rules for %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5825,27 +5840,37 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+29"/>
+        <location line="+71"/>
         <source>Enter the name you want to use. See %1 for more information about this server.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+37"/>
+        <source>This username doesn&apos;t belong to an account on this server. This is not your drawpile.net account!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+523"/>
+        <source>Enter the username and password for your account on this server. This is not your drawpile.net account!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-604"/>
         <source>You can continue without an account. If you want to register one anyway, you can do so on %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+5"/>
         <source>An account is required. You can register one on %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>You can continue without an account. The server doesn&apos;t provide any information on how to register one either.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+4"/>
         <source>An account is required, but the server doesn&apos;t provide any information on how to register one.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5860,17 +5885,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+49"/>
         <source>This username belongs to an account, pick a different one.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+3"/>
-        <source>This username doesn&apos;t belong to a server account.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+4"/>
+        <location line="+11"/>
         <source>The %1 authentication is not working.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5890,12 +5910,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+504"/>
-        <source>Enter the username and password for your server account.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+6"/>
+        <location line="+514"/>
         <source>Enter the username and password for your %1 account.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5964,7 +5979,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished">Avaa kuva</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+9"/>
         <source>Reset</source>
         <translation type="unfinished">Palauta</translation>
     </message>
@@ -6832,31 +6847,37 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+9"/>
+        <location filename="../mainwindow.cpp" line="-797"/>
         <source>KisTablet Windows Ink</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
+        <location filename="../mainwindow.cpp" line="+1"/>
         <source>KisTablet Wintab</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
+        <location filename="../mainwindow.cpp" line="+1"/>
         <source>KisTablet Wintab Relative</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
+        <location filename="../mainwindow.cpp" line="+2"/>
         <source>Qt5</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
+        <location filename="../mainwindow.cpp" line="+2"/>
         <source>Qt6 Windows Ink</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+3"/>
+        <location filename="../mainwindow.cpp" line="+1"/>
         <source>Qt6 Wintab</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7922,6 +7943,16 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+2"/>
+        <source>Tablet Setup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Open Drawpile&apos;s tablet setup and troubleshooting help page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>Communities</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7938,6 +7969,16 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>Join the Drawpile Discord server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>libera.chat</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Join the #drawpile chatroom on libera.chat</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8185,12 +8226,12 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+111"/>
+        <location line="+113"/>
         <source>Delete</source>
         <translation type="unfinished">Poista</translation>
     </message>
     <message>
-        <location line="-109"/>
+        <location line="-111"/>
         <source>Rename</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8215,7 +8256,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+115"/>
+        <location line="+117"/>
         <location line="+46"/>
         <source>New Palette</source>
         <translation type="unfinished"></translation>
@@ -8792,7 +8833,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::CanvasView</name>
     <message>
-        <location filename="../scene/canvasview.cpp" line="+167"/>
+        <location filename="../scene/canvasview.cpp" line="+168"/>
         <source>Reconnect</source>
         <translation type="unfinished">Yhdistä uudelleen</translation>
     </message>
@@ -8877,7 +8918,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1717"/>
+        <location line="+1723"/>
         <source>Zoom: %1%</source>
         <translation type="unfinished"></translation>
     </message>

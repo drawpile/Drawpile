@@ -575,18 +575,18 @@ angepasst.</translation>
         <translation>Rollen importieren</translation>
     </message>
     <message>
-        <location line="+24"/>
-        <location line="+185"/>
+        <location line="+38"/>
+        <location line="+186"/>
         <source>Save Image</source>
         <translation>Bild speichern</translation>
     </message>
     <message>
-        <location line="-185"/>
+        <location line="-186"/>
         <source>Export Image</source>
         <translation>Bild exportieren</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+21"/>
         <source>Save Pre-Reset Image</source>
         <translation>Leinwand vor Zurücksetzen speichern</translation>
     </message>
@@ -1409,12 +1409,12 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
     </message>
     <message>
         <location line="+2"/>
-        <location line="+1789"/>
+        <location line="+1836"/>
         <source>Terminate</source>
         <translation>Beenden</translation>
     </message>
     <message>
-        <location line="-1580"/>
+        <location line="-1627"/>
         <source>Session blocked by parental controls</source>
         <translation>Sitzung durch Jugenschutzeinstellungen blockiert</translation>
     </message>
@@ -1440,12 +1440,12 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
     </message>
     <message>
         <location line="+0"/>
-        <location line="+940"/>
+        <location line="+987"/>
         <source>Tablet Event Log...</source>
         <translation>Tablet-Ereignislog...</translation>
     </message>
     <message>
-        <location line="-841"/>
+        <location line="-888"/>
         <source>Tablet Input:</source>
         <translation>Tablet-Eingabe:</translation>
     </message>
@@ -1522,7 +1522,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>Pinseleinstell&amp;ungen</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+17"/>
         <source>&amp;Deselect</source>
         <translation>A&amp;uswahl aufheben</translation>
     </message>
@@ -1562,7 +1562,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>Farbe in Selektion ausradieren</translation>
     </message>
     <message>
-        <location line="+63"/>
+        <location line="+84"/>
         <source>&amp;Edit</source>
         <translation>&amp;Bearbeiten</translation>
     </message>
@@ -1572,7 +1572,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>Leinwand &amp;vergrößern</translation>
     </message>
     <message>
-        <location line="+33"/>
+        <location line="+46"/>
         <source>&amp;Layouts...</source>
         <translation>&amp;Anordnungen...</translation>
     </message>
@@ -1643,7 +1643,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>Vertikal spiegeln</translation>
     </message>
     <message>
-        <location line="-2021"/>
+        <location line="-2068"/>
         <source>Joined the session!</source>
         <translation>Der Sitzung beigetreten!</translation>
     </message>
@@ -1748,7 +1748,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>Auswahl &amp;stempeln</translation>
     </message>
     <message>
-        <location line="+168"/>
+        <location line="+215"/>
         <source>Flip</source>
         <translation>Horizontal spiegeln</translation>
     </message>
@@ -1936,7 +1936,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>Alles sperren</translation>
     </message>
     <message>
-        <location line="-2151"/>
+        <location line="-2198"/>
         <source>Stop Recording</source>
         <translation>Aufzeichnung beenden</translation>
     </message>
@@ -1988,12 +1988,12 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>E&amp;instellungen</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+15"/>
         <source>Select &amp;All</source>
         <translation>&amp;Alles auswählen</translation>
     </message>
     <message>
-        <location line="+120"/>
+        <location line="+154"/>
         <source>Edit Tools</source>
         <translation>Bearbeitungswerkzeuge</translation>
     </message>
@@ -2068,7 +2068,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>&amp;Gerade</translation>
     </message>
     <message>
-        <location line="-3458"/>
+        <location line="-3505"/>
         <source>🙋 %1 joined!</source>
         <translation>🙋 %1 ist beigetreten!</translation>
     </message>
@@ -2154,12 +2154,12 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
     </message>
     <message>
         <location line="+0"/>
-        <location line="+938"/>
+        <location line="+985"/>
         <source>Profile...</source>
         <translation>Profil aufnehmen...</translation>
     </message>
     <message>
-        <location line="-931"/>
+        <location line="-978"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation>Künstliches Lag setzen... (aktuell %1 ms)</translation>
     </message>
@@ -2185,12 +2185,12 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
     </message>
     <message>
         <location line="+15"/>
-        <location line="+893"/>
+        <location line="+940"/>
         <source>Record Debug Dumps</source>
         <translation>Debug-Dumps aufnehmen</translation>
     </message>
     <message>
-        <location line="-892"/>
+        <location line="-939"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -2258,17 +2258,22 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
         <translation>Lokalen Hintergrund entfernen</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+31"/>
         <source>Delete</source>
         <translation>Löschen</translation>
     </message>
     <message>
-        <location line="+90"/>
+        <location line="+111"/>
         <source>Canvas Background</source>
         <translation>Hintergrund</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+15"/>
+        <source>Tablet Driver</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+36"/>
         <source>Move Canvas Left</source>
         <translation>Leinwand nach links bewegen</translation>
     </message>
@@ -2935,7 +2940,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <name>QApplication</name>
     <message>
         <location filename="../dialogs/avatarimport.cpp" line="+59"/>
-        <location filename="../filewrangler.cpp" line="-412"/>
+        <location filename="../filewrangler.cpp" line="-427"/>
         <source>All files (*)</source>
         <translation>Alle Dateien (*)</translation>
     </message>
@@ -3907,7 +3912,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
         <translation>Grundsätzliche Pinseleinstellungen.</translation>
     </message>
     <message>
-        <location line="+104"/>
+        <location line="+105"/>
         <source>Brush Type:</source>
         <translation>Pinseltyp:</translation>
     </message>
@@ -5718,7 +5723,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <translation>&amp;Frames exportieren…</translation>
     </message>
     <message>
-        <location line="+99"/>
+        <location line="+101"/>
         <source>%</source>
         <translation>%</translation>
     </message>
@@ -5858,7 +5863,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
 <context>
     <name>dialogs::LoginDialog</name>
     <message>
-        <location filename="../dialogs/logindialog.cpp" line="+155"/>
+        <location filename="../dialogs/logindialog.cpp" line="+156"/>
         <source>Report...</source>
         <translation>Melden...</translation>
     </message>
@@ -5873,12 +5878,22 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <translation>Login mit Server-Account</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+17"/>
+        <source>Enter account password. If you don&apos;t have an account, you must register one. This server provides no information on how to do that.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Enter account password. If you don&apos;t have an account, you must register one on %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
         <source>This username belongs to a registered account. If this isn&apos;t your account, cancel and try again with a different name.</source>
         <translation>Dieser Nutzername ist auf einen Account registriert. Wenn dies nicht Ihr Account ist, brechen Sie ab und versuchen Sie es mit einem anderen Namen erneut.</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+19"/>
         <source>Close</source>
         <translation>Schließen</translation>
     </message>
@@ -5901,7 +5916,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <translation>Zurück</translation>
     </message>
     <message>
-        <location line="+251"/>
+        <location line="+252"/>
         <source>Remove Account</source>
         <translation>Account entfernen</translation>
     </message>
@@ -5911,13 +5926,13 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <translation>Wirklich diesen Account entfernen? Er wird nur von Ihrer Liste der letzen Accounts entfernt, der Account selbst wird nicht gelöscht.</translation>
     </message>
     <message>
-        <location line="+37"/>
-        <location line="+118"/>
+        <location line="+38"/>
+        <location line="+160"/>
         <source>Enter the name you want to use.</source>
         <translation>Geben Sie den Namen ein, den Sie verwenden möchten.</translation>
     </message>
     <message>
-        <location line="-56"/>
+        <location line="-98"/>
         <source>Server Rules for %1</source>
         <translation>Server-Regeln für %1</translation>
     </message>
@@ -5927,27 +5942,37 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <translation>Login mit %1-Account</translation>
     </message>
     <message>
-        <location line="+29"/>
+        <location line="+71"/>
         <source>Enter the name you want to use. See %1 for more information about this server.</source>
         <translation>Geben Sie den Namen ein, den Sie verwenden möchten. Siehe %1 für mehr Informationen über diesen Server.</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+37"/>
+        <source>This username doesn&apos;t belong to an account on this server. This is not your drawpile.net account!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+523"/>
+        <source>Enter the username and password for your account on this server. This is not your drawpile.net account!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-604"/>
         <source>You can continue without an account. If you want to register one anyway, you can do so on %1.</source>
         <translation>Sie können ohne Account fortfahren. Wenn Sie dennoch einen registrieren möchten, können Sie dies unter %1 tun.</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+5"/>
         <source>An account is required. You can register one on %1.</source>
         <translation>Ein Account ist erforderlich. Sie können ihn unter %1 registrieren.</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>You can continue without an account. The server doesn&apos;t provide any information on how to register one either.</source>
         <translation>Sie können ohne Account fortfahren. Der Server stellt keine Informationen darüber bereit, wie Sie einen registrieren könnten.</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+4"/>
         <source>An account is required, but the server doesn&apos;t provide any information on how to register one.</source>
         <translation>Ein Account ist erforderlich, aber der Server stellt keine Informationen bereit, wie Sie einen registrieren können.</translation>
     </message>
@@ -5962,17 +5987,12 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <translation>Siehe %1 für mehr Informationen über diesen Server.</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+49"/>
         <source>This username belongs to an account, pick a different one.</source>
         <translation>Dieser Nutzername ist auf einen Account registriert, wählen Sie einen anderen.</translation>
     </message>
     <message>
-        <location line="+3"/>
-        <source>This username doesn&apos;t belong to a server account.</source>
-        <translation>Dieser Nutzername gehört nicht zu einem Server-Account.</translation>
-    </message>
-    <message>
-        <location line="+4"/>
+        <location line="+11"/>
         <source>The %1 authentication is not working.</source>
         <translation>Die %1-Authentifizierung funktioniert nicht.</translation>
     </message>
@@ -5992,12 +6012,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <translation>Dieser Nutzername gehört zu einer anderen Loginmethode, Sie können ihn auf diesem Server nicht verwenden, um sich durch %1 einzuloggen.</translation>
     </message>
     <message>
-        <location line="+504"/>
-        <source>Enter the username and password for your server account.</source>
-        <translation>Geben Sie Nutzername und Passwort für Ihren Server-Account ein.</translation>
-    </message>
-    <message>
-        <location line="+6"/>
+        <location line="+514"/>
         <source>Enter the username and password for your %1 account.</source>
         <translation>Geben Sie Nutzername und Passwort für Ihren %1-Account ein.</translation>
     </message>
@@ -6066,7 +6081,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <translation>Bild öffnen</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+9"/>
         <source>Reset</source>
         <translation>Zurücksetzen</translation>
     </message>
@@ -6934,31 +6949,37 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     </message>
     <message>
         <location line="+9"/>
+        <location filename="../mainwindow.cpp" line="-864"/>
         <source>KisTablet Windows Ink</source>
         <translation>KisTablet Windows Ink</translation>
     </message>
     <message>
         <location line="+3"/>
+        <location filename="../mainwindow.cpp" line="+1"/>
         <source>KisTablet Wintab</source>
         <translation>KisTablet Wintab</translation>
     </message>
     <message>
         <location line="+3"/>
+        <location filename="../mainwindow.cpp" line="+1"/>
         <source>KisTablet Wintab Relative</source>
         <translation>KisTablet Wintab relativ</translation>
     </message>
     <message>
         <location line="+3"/>
+        <location filename="../mainwindow.cpp" line="+2"/>
         <source>Qt5</source>
         <translation>Qt5</translation>
     </message>
     <message>
         <location line="+3"/>
+        <location filename="../mainwindow.cpp" line="+2"/>
         <source>Qt6 Windows Ink</source>
         <translation>Qt6 Windows Ink</translation>
     </message>
     <message>
         <location line="+3"/>
+        <location filename="../mainwindow.cpp" line="+1"/>
         <source>Qt6 Wintab</source>
         <translation>Qt6 Wintab</translation>
     </message>
@@ -8024,6 +8045,16 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     </message>
     <message>
         <location line="+2"/>
+        <source>Tablet Setup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Open Drawpile&apos;s tablet setup and troubleshooting help page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>Communities</source>
         <translation>Communities</translation>
     </message>
@@ -8041,6 +8072,16 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <location line="+0"/>
         <source>Join the Drawpile Discord server</source>
         <translation>Treten Sie dem Drawpile-Discord-Server bei</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>libera.chat</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Join the #drawpile chatroom on libera.chat</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8287,12 +8328,12 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+111"/>
+        <location line="+113"/>
         <source>Delete</source>
         <translation>Löschen</translation>
     </message>
     <message>
-        <location line="-109"/>
+        <location line="-111"/>
         <source>Rename</source>
         <translation>Umbenennen</translation>
     </message>
@@ -8317,7 +8358,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <translation>Spalte entfernen</translation>
     </message>
     <message>
-        <location line="+115"/>
+        <location line="+117"/>
         <location line="+46"/>
         <source>New Palette</source>
         <translation>Neue Palette</translation>
@@ -8894,7 +8935,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
 <context>
     <name>widgets::CanvasView</name>
     <message>
-        <location filename="../scene/canvasview.cpp" line="+167"/>
+        <location filename="../scene/canvasview.cpp" line="+168"/>
         <source>Reconnect</source>
         <translation>Wieder verbinden</translation>
     </message>
@@ -8979,7 +9020,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <translation>Horizontale Spiegelung: AUS</translation>
     </message>
     <message>
-        <location line="+1717"/>
+        <location line="+1723"/>
         <source>Zoom: %1%</source>
         <translation>Zoom: %1%</translation>
     </message>

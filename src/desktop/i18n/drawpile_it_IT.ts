@@ -575,18 +575,18 @@ in 64x64 pixel.</translation>
         <translation>Importa Ruoli</translation>
     </message>
     <message>
-        <location line="+24"/>
-        <location line="+185"/>
+        <location line="+38"/>
+        <location line="+186"/>
         <source>Save Image</source>
         <translation>Salva Immagine</translation>
     </message>
     <message>
-        <location line="-185"/>
+        <location line="-186"/>
         <source>Export Image</source>
         <translation>Esporta Immagine</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+21"/>
         <source>Save Pre-Reset Image</source>
         <translation>Salva L&apos;immagine Pre-Reset</translation>
     </message>
@@ -1366,12 +1366,12 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     </message>
     <message>
         <location line="+2"/>
-        <location line="+1789"/>
+        <location line="+1836"/>
         <source>Terminate</source>
         <translation>Termina</translation>
     </message>
     <message>
-        <location line="-1706"/>
+        <location line="-1753"/>
         <source>Could not connect to server</source>
         <translation>Impossibile connettersi al server</translation>
     </message>
@@ -1537,7 +1537,7 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
         <translation>Preferen&amp;ze</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+15"/>
         <source>Select &amp;All</source>
         <translation>Seleziona &amp;Tutto</translation>
     </message>
@@ -1587,7 +1587,7 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
         <translation>Cancella il Colore Selezionato</translation>
     </message>
     <message>
-        <location line="+63"/>
+        <location line="+84"/>
         <source>&amp;Edit</source>
         <translation>&amp;Modifica</translation>
     </message>
@@ -1597,7 +1597,7 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
         <translation>&amp;Espandi Tela</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+34"/>
         <source>Edit Tools</source>
         <translation>Modifica Strumenti</translation>
     </message>
@@ -1662,7 +1662,7 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
         <translation>Zoom &amp;Avanti</translation>
     </message>
     <message>
-        <location line="-1466"/>
+        <location line="-1513"/>
         <source>Reason:</source>
         <translation>Ragione:</translation>
     </message>
@@ -1737,7 +1737,7 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
         <translation>Esporta &amp;Pennelli…</translation>
     </message>
     <message>
-        <location line="+279"/>
+        <location line="+326"/>
         <source>Zoom &amp;Out</source>
         <translation>Zoom &amp;Indietro</translation>
     </message>
@@ -1952,7 +1952,7 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
         <translation>Mostra Livelli Censurati</translation>
     </message>
     <message>
-        <location line="-2772"/>
+        <location line="-2819"/>
         <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
         <translation>&lt;p&gt; La scorciatoia &apos;%1&apos; è ambigua, corrisponde a:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</translation>
     </message>
@@ -2048,23 +2048,23 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     </message>
     <message>
         <location line="+0"/>
-        <location line="+940"/>
+        <location line="+987"/>
         <source>Tablet Event Log...</source>
         <translation>Registro Eventi del Tablet...</translation>
     </message>
     <message>
-        <location line="-937"/>
+        <location line="-984"/>
         <source>Stop Profile</source>
         <translation>Arresto del Profilo</translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+938"/>
+        <location line="+985"/>
         <source>Profile...</source>
         <translation>Profilo...</translation>
     </message>
     <message>
-        <location line="-931"/>
+        <location line="-978"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation>Imposta Lag artificiale... (attualmente %1 ms)</translation>
     </message>
@@ -2090,12 +2090,12 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     </message>
     <message>
         <location line="+15"/>
-        <location line="+893"/>
+        <location line="+940"/>
         <source>Record Debug Dumps</source>
         <translation>Registra Dump di Debug</translation>
     </message>
     <message>
-        <location line="-892"/>
+        <location line="-939"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -2208,12 +2208,17 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
         <translation>Impostazioni del &amp;Pennello</translation>
     </message>
     <message>
-        <location line="+107"/>
+        <location line="+141"/>
         <source>Canvas Background</source>
         <translation>Sfondo della Tela</translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+15"/>
+        <source>Tablet Driver</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+26"/>
         <source>&amp;Layouts...</source>
         <translation>&amp;Layout...</translation>
     </message>
@@ -2933,7 +2938,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <name>QApplication</name>
     <message>
         <location filename="../dialogs/avatarimport.cpp" line="+59"/>
-        <location filename="../filewrangler.cpp" line="-412"/>
+        <location filename="../filewrangler.cpp" line="-427"/>
         <source>All files (*)</source>
         <translation>Tutti i file (*)</translation>
     </message>
@@ -3905,7 +3910,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
         <translation>Impostazioni del pennello principali.</translation>
     </message>
     <message>
-        <location line="+104"/>
+        <location line="+105"/>
         <source>Brush Type:</source>
         <translation>Tipo di Pennello:</translation>
     </message>
@@ -5716,7 +5721,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <translation>Esporta &amp;Frame…</translation>
     </message>
     <message>
-        <location line="+99"/>
+        <location line="+101"/>
         <source>%</source>
         <translation>%</translation>
     </message>
@@ -5856,7 +5861,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
 <context>
     <name>dialogs::LoginDialog</name>
     <message>
-        <location filename="../dialogs/logindialog.cpp" line="+155"/>
+        <location filename="../dialogs/logindialog.cpp" line="+156"/>
         <source>Report...</source>
         <translation>Segnala...</translation>
     </message>
@@ -5871,12 +5876,22 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <translation>Accedi con account server</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+17"/>
+        <source>Enter account password. If you don&apos;t have an account, you must register one. This server provides no information on how to do that.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Enter account password. If you don&apos;t have an account, you must register one on %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
         <source>This username belongs to a registered account. If this isn&apos;t your account, cancel and try again with a different name.</source>
         <translation>Questo nome utente appartiene ad un account registrato. Se questo non è il tuo account, cancella e riprova con un nome diverso.</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+19"/>
         <source>Close</source>
         <translation>Chiudi</translation>
     </message>
@@ -5899,7 +5914,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <translation>Indietro</translation>
     </message>
     <message>
-        <location line="+251"/>
+        <location line="+252"/>
         <source>Remove Account</source>
         <translation>Rimuovi account</translation>
     </message>
@@ -5909,13 +5924,13 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <translation>Dimenticare davvero questo account? Questo lo rimuoverà solo dal tuo elenco di account recenti, non cancellerà l&apos;account.</translation>
     </message>
     <message>
-        <location line="+37"/>
-        <location line="+118"/>
+        <location line="+38"/>
+        <location line="+160"/>
         <source>Enter the name you want to use.</source>
         <translation>Inserisci il nome che vuoi usare.</translation>
     </message>
     <message>
-        <location line="-56"/>
+        <location line="-98"/>
         <source>Server Rules for %1</source>
         <translation>Regole Server per %1</translation>
     </message>
@@ -5925,27 +5940,37 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <translation>Accedi con l&apos;account %1</translation>
     </message>
     <message>
-        <location line="+29"/>
+        <location line="+71"/>
         <source>Enter the name you want to use. See %1 for more information about this server.</source>
         <translation>Inserisci il nome che vuoi usare. Vedi %1 per maggiori informazioni su questo server.</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+37"/>
+        <source>This username doesn&apos;t belong to an account on this server. This is not your drawpile.net account!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+523"/>
+        <source>Enter the username and password for your account on this server. This is not your drawpile.net account!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-604"/>
         <source>You can continue without an account. If you want to register one anyway, you can do so on %1.</source>
         <translation>Puoi continuare senza un account. Se si desidera registrare uno comunque, è possibile farlo su %1.</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+5"/>
         <source>An account is required. You can register one on %1.</source>
         <translation>È richiesto un account. È possibile registrarne uno su %1.</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>You can continue without an account. The server doesn&apos;t provide any information on how to register one either.</source>
         <translation>Puoi continuare senza un account. Il server non fornisce alcuna informazione su come registrarne uno.</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+4"/>
         <source>An account is required, but the server doesn&apos;t provide any information on how to register one.</source>
         <translation>È richiesto un account, ma il server non fornisce alcuna informazione su come registrarne uno.</translation>
     </message>
@@ -5960,17 +5985,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <translation>Vedere %1 per maggiori informazioni su questo server.</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+49"/>
         <source>This username belongs to an account, pick a different one.</source>
         <translation>Questo nome utente appartiene a un account, scegliere uno diverso.</translation>
     </message>
     <message>
-        <location line="+3"/>
-        <source>This username doesn&apos;t belong to a server account.</source>
-        <translation>Questo nome utente non appartiene a un account server.</translation>
-    </message>
-    <message>
-        <location line="+4"/>
+        <location line="+11"/>
         <source>The %1 authentication is not working.</source>
         <translation>L&apos;autenticazione %1 non funziona.</translation>
     </message>
@@ -5990,12 +6010,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <translation>Questo nome utente appartiene ad un altro metodo di login, non è possibile utilizzarlo per accedere a %1 su questo server.</translation>
     </message>
     <message>
-        <location line="+504"/>
-        <source>Enter the username and password for your server account.</source>
-        <translation>Inserisci il nome utente e la password per il tuo account server.</translation>
-    </message>
-    <message>
-        <location line="+6"/>
+        <location line="+514"/>
         <source>Enter the username and password for your %1 account.</source>
         <translation>Inserisci il nome utente e la password per il tuo account %1.</translation>
     </message>
@@ -6064,7 +6079,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <translation>Apri immagine</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+9"/>
         <source>Reset</source>
         <translation>Ripristina</translation>
     </message>
@@ -6932,31 +6947,37 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     </message>
     <message>
         <location line="+9"/>
+        <location filename="../mainwindow.cpp" line="-864"/>
         <source>KisTablet Windows Ink</source>
         <translation>KisTablet Windows Ink</translation>
     </message>
     <message>
         <location line="+3"/>
+        <location filename="../mainwindow.cpp" line="+1"/>
         <source>KisTablet Wintab</source>
         <translation>KisTablet Wintab</translation>
     </message>
     <message>
         <location line="+3"/>
+        <location filename="../mainwindow.cpp" line="+1"/>
         <source>KisTablet Wintab Relative</source>
         <translation>KisTablet Wintab Relativo</translation>
     </message>
     <message>
         <location line="+3"/>
+        <location filename="../mainwindow.cpp" line="+2"/>
         <source>Qt5</source>
         <translation>Qt5</translation>
     </message>
     <message>
         <location line="+3"/>
+        <location filename="../mainwindow.cpp" line="+2"/>
         <source>Qt6 Windows Ink</source>
         <translation>Qt6 Windows Ink</translation>
     </message>
     <message>
         <location line="+3"/>
+        <location filename="../mainwindow.cpp" line="+1"/>
         <source>Qt6 Wintab</source>
         <translation>Qt6 Wintab</translation>
     </message>
@@ -8022,6 +8043,16 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     </message>
     <message>
         <location line="+2"/>
+        <source>Tablet Setup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Open Drawpile&apos;s tablet setup and troubleshooting help page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>Communities</source>
         <translation>Community</translation>
     </message>
@@ -8039,6 +8070,16 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <location line="+0"/>
         <source>Join the Drawpile Discord server</source>
         <translation>Unisciti al server Discord di Drawpile</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>libera.chat</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Join the #drawpile chatroom on libera.chat</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8285,12 +8326,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+111"/>
+        <location line="+113"/>
         <source>Delete</source>
         <translation>Cancella</translation>
     </message>
     <message>
-        <location line="-109"/>
+        <location line="-111"/>
         <source>Rename</source>
         <translation>Rinomina</translation>
     </message>
@@ -8315,7 +8356,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <translation>Rimuovi colonna</translation>
     </message>
     <message>
-        <location line="+115"/>
+        <location line="+117"/>
         <location line="+46"/>
         <source>New Palette</source>
         <translation>Nuova Palette</translation>
@@ -8892,7 +8933,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
 <context>
     <name>widgets::CanvasView</name>
     <message>
-        <location filename="../scene/canvasview.cpp" line="+167"/>
+        <location filename="../scene/canvasview.cpp" line="+168"/>
         <source>Reconnect</source>
         <translation>Ricollegati</translation>
     </message>
@@ -8977,7 +9018,7 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
         <translation>Specchio orizzontale: OFF</translation>
     </message>
     <message>
-        <location line="+1717"/>
+        <location line="+1723"/>
         <source>Zoom: %1%</source>
         <translation>Zoom: %1%</translation>
     </message>
