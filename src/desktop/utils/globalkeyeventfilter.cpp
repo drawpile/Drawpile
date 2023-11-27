@@ -46,10 +46,19 @@ bool GlobalKeyEventFilter::eventFilter(QObject *watched, QEvent *event)
 
 void GlobalKeyEventFilter::updateDockTitleBarsHidden(bool hidden)
 {
-	if(hidden != m_wasHidden) {
-		m_wasHidden = hidden;
-		emit setDockTitleBarsHidden(hidden);
+	bool actuallyHidden = hidden && !hasTextFocus();
+	if(actuallyHidden != m_wasHidden) {
+		m_wasHidden = actuallyHidden;
+		emit setDockTitleBarsHidden(actuallyHidden);
 	}
+}
+
+bool GlobalKeyEventFilter::hasTextFocus()
+{
+	QWidget *widget = QApplication::focusWidget();
+	return widget &&
+		   (widget->inherits("QLineEdit") || widget->inherits("QTextEdit") ||
+			widget->inherits("QPlainTextEdit"));
 }
 
 void GlobalKeyEventFilter::checkCanvasFocus(QKeyEvent *event)

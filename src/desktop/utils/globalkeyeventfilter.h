@@ -20,6 +20,7 @@ protected:
 
 private:
 	void updateDockTitleBarsHidden(bool hidden);
+	static bool hasTextFocus();
 	void checkCanvasFocus(QKeyEvent *event);
 
 	bool m_wasHidden;
