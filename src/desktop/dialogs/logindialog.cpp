@@ -810,6 +810,46 @@ void LoginDialog::onLoginMethodChoiceNeeded(
 	d->ui->methodExtAuthButton->setIcon(
 		hasDrawpileExtAuth ? QIcon(":/icons/drawpile.png") : QIcon());
 
+	QString drawpileSignupLink =
+		QStringLiteral("<a href=\"https://drawpile.net/accounts/signup/\""
+					   ">drawpile.net</a>");
+	QString methodExplanation;
+	if(loginInfo.isEmpty()) {
+		if(hasDrawpileExtAuth) {
+			if(guest) {
+				methodExplanation =
+					tr("You can continue without an account. If you want "
+					   "to register one anyway, you can do so on %1.")
+						.arg(drawpileSignupLink);
+			} else {
+				methodExplanation =
+					tr("An account is required. You can register "
+					   "one on %1.")
+						.arg(drawpileSignupLink);
+			}
+		} else if(guest) {
+			methodExplanation =
+				tr("You can continue without an account. The server doesn't "
+				   "provide any information on how to register one either.");
+		} else {
+			methodExplanation =
+				tr("An account is required, but the server doesn't "
+				   "provide any information on how to register one.");
+		}
+	} else {
+		if(hasDrawpileExtAuth) {
+			methodExplanation =
+				tr("See %1 for more information about this server. "
+				   "To register an account, visit %2.")
+					.arg(formatLoginInfo(loginInfo), drawpileSignupLink);
+		} else {
+			methodExplanation =
+				tr("See %1 for more information about this server.")
+					.arg(formatLoginInfo(loginInfo));
+		}
+	}
+	d->ui->methodExplanationLabel->setText(methodExplanation);
+
 	// If only guests are an option, we can skip forward, since there's no
 	// accounts that could be remembered and no password to be entered.
 	d->guestsOnly = !extAuth && !auth;
@@ -818,55 +858,17 @@ void LoginDialog::onLoginMethodChoiceNeeded(
 	if(d->guestsOnly || d->guestShortcut) {
 		d->restoreGuest();
 		d->resetMode(Mode::GuestLogin);
-		QString explanation;
+		QString loginExplanation;
 		if(loginInfo.isEmpty()) {
-			explanation = tr("Enter the name you want to use.");
+			loginExplanation = tr("Enter the name you want to use.");
 		} else {
-			explanation = tr("Enter the name you want to use. See %1 for more "
-							 "information about this server.")
-							  .arg(formatLoginInfo(loginInfo));
+			loginExplanation = tr("Enter the name you want to use. See %1 for "
+								  "more information about this server.")
+								   .arg(formatLoginInfo(loginInfo));
 		}
-		d->setLoginExplanation(explanation, false);
+		d->setLoginExplanation(loginExplanation, false);
 		updateOkButtonEnabled();
 	} else {
-		QString drawpileSignupLink =
-			QStringLiteral("<a href=\"https://drawpile.net/accounts/signup/\""
-						   ">drawpile.net</a>");
-		QString explanation;
-		if(loginInfo.isEmpty()) {
-			if(hasDrawpileExtAuth) {
-				if(guest) {
-					explanation =
-						tr("You can continue without an account. If you want "
-						   "to register one anyway, you can do so on %1.")
-							.arg(drawpileSignupLink);
-				} else {
-					explanation = tr("An account is required. You can register "
-									 "one on %1.")
-									  .arg(drawpileSignupLink);
-				}
-			} else if(guest) {
-				explanation = tr(
-					"You can continue without an account. The server doesn't "
-					"provide any information on how to register one either.");
-			} else {
-				explanation =
-					tr("An account is required, but the server doesn't "
-					   "provide any information on how to register one.");
-			}
-		} else {
-			if(hasDrawpileExtAuth) {
-				explanation =
-					tr("See %1 for more information about this server. "
-					   "To register an account, visit %2.")
-						.arg(formatLoginInfo(loginInfo), drawpileSignupLink);
-			} else {
-				explanation =
-					tr("See %1 for more information about this server.")
-						.arg(formatLoginInfo(loginInfo));
-			}
-		}
-		d->ui->methodExplanationLabel->setText(explanation);
 		if(d->accounts->isEmpty()) {
 			d->resetMode(Mode::LoginMethod);
 		} else {
