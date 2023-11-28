@@ -41,9 +41,17 @@ endif()
 
 # ExternalProject, except useful!
 function(build_dependency name version build_type)
-	set(oneValueArgs URL SOURCE_DIR)
+	set(oneValueArgs URL SOURCE_DIR TARGET_BITS)
 	set(multiValueArgs VERSIONS PATCHES ALL_PLATFORMS UNIX WIN32)
 	cmake_parse_arguments(PARSE_ARGV 3 ARG "" "${oneValueArgs}" "${multiValueArgs}")
+
+	if(ARG_TARGET_BITS STREQUAL "32")
+		set(BUILD_TARGET_BITS 32)
+	elseif(ARG_TARGET_BITS STREQUAL "64")
+		set(BUILD_TARGET_BITS 64)
+	else()
+		message(FATAL_ERROR "Invalid TARGET_BITS '${ARG_TARGET_BITS}'")
+	endif()
 
 	if(ARG_ALL_PLATFORMS)
 		set(BUILD_ARGS ${ARG_ALL_PLATFORMS})
@@ -113,14 +121,12 @@ function(build_dependency name version build_type)
 
 	if(generator STREQUAL "qmake")
 		_build_qmake("${build_type}" "${source_dir}" ${BUILD_ARGS})
-	elseif(generator STREQUAL "qt_module")
-		_build_qt_module("${build_type}" "${source_dir}" ${BUILD_ARGS})
 	elseif(generator STREQUAL "automake")
 		_build_automake("${build_type}" "${source_dir}" ${BUILD_ARGS})
 	elseif(generator STREQUAL "cmake")
-		_build_cmake("${build_type}" "${source_dir}" ${BUILD_ARGS})
+		_build_cmake("${build_type}" "${BUILD_TARGET_BITS}" "${source_dir}" ${BUILD_ARGS})
 	elseif(WIN32 AND generator STREQUAL "msbuild")
-		_build_msbuild("${build_type}" "${source_dir}" ${BUILD_ARGS})
+		_build_msbuild("${build_type}" "${BUILD_TARGET_BITS}" "${source_dir}" ${BUILD_ARGS})
 	else()
 		message(FATAL_ERROR "Unknown build kind '${generator}'")
 	endif()
@@ -197,10 +203,14 @@ function(_build_automake build_type source_dir)
 	)
 endfunction()
 
-function(_build_cmake build_type source_dir)
+function(_build_cmake build_type target_bits source_dir)
 	set(configure "${CMAKE_COMMAND}" -S "${source_dir}" -B .)
 	cmake_parse_arguments(PARSE_ARGV 2 "CMAKE_ARG" "NO_DEFAULT_FLAGS;NO_DEFAULT_BUILD_TYPE" "" "")
 	_parse_flags("${build_type}" "${source_dir}" configure configure_flags env ${CMAKE_ARG_UNPARSED_ARGUMENTS})
+
+	if(WIN32 AND target_bits EQUAL 32)
+		list(APPEND configure -A Win32)
+	endif()
 
 	if(build_type STREQUAL "debug")
 		set(install_flags "--config;Debug")
@@ -339,12 +349,8 @@ function(get_android_toolchain out_var ndk)
 	set(${out_var} "${ndk}/toolchains/llvm/prebuilt/${kernel}-x86_64" PARENT_SCOPE)
 endfunction()
 
-function(_build_msbuild build_type source_dir)
+function(_build_msbuild build_type target_bits source_dir)
 	cmake_parse_arguments(PARSE_ARGV 2 ARG "" "SOLUTION;SHARED;STATIC;DEBUG_SHARED;DEBUG_STATIC" "INCLUDES;RM")
-
-	if(NOT CMAKE_VS_MSBUILD_COMMAND)
-		message(FATAL_ERROR "CMake has no MSBuild.exe")
-	endif()
 
 	if(build_type STREQUAL "debug")
 		if(NOT ARG_DEBUG_SHARED)
@@ -357,17 +363,25 @@ function(_build_msbuild build_type source_dir)
 		set(ARG_STATIC "${ARG_DEBUG_STATIC}")
 	endif()
 
+	if(target_bits EQUAL 32)
+		set(platform "Win32")
+	elseif(target_bits EQUAL 64)
+		set(platform "x64")
+	else()
+		message(FATAL_ERROR "Invalid target_bits '${target_bits}' for ${ARG_SOLUTION}")
+	endif()
+
 	execute_process(
-		COMMAND "${CMAKE_VS_MSBUILD_COMMAND}" -m
-			"-p:Configuration=${ARG_SHARED};Platform=x64;OutDir=${CMAKE_INSTALL_PREFIX}/bin"
+		COMMAND msbuild -m
+			"-p:Configuration=${ARG_SHARED};Platform=${platform};OutDir=${CMAKE_INSTALL_PREFIX}/bin"
 			"${source_dir}/${ARG_SOLUTION}"
 		COMMAND_ECHO STDOUT
 		WORKING_DIRECTORY "${source_dir}"
 		COMMAND_ERROR_IS_FATAL ANY
 	)
 	execute_process(
-		COMMAND "${CMAKE_VS_MSBUILD_COMMAND}" -m
-			"-p:Configuration=${ARG_STATIC};Platform=x64;OutDir=${CMAKE_INSTALL_PREFIX}/lib"
+		COMMAND msbuild -m
+			"-p:Configuration=${ARG_STATIC};Platform=${platform};OutDir=${CMAKE_INSTALL_PREFIX}/lib"
 			"${source_dir}/${ARG_SOLUTION}"
 		COMMAND_ECHO STDOUT
 		WORKING_DIRECTORY "${source_dir}"

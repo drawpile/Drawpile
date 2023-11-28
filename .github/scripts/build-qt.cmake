@@ -8,7 +8,7 @@ list(APPEND CMAKE_MODULE_PATH
 set(ANDROID_SDK_ROOT "" CACHE STRING "Path to Android SDK")
 set(ANDROID_NDK_ROOT "" CACHE STRING "Path to Android NDK")
 set(ANDROID_HOST_PATH "" CACHE STRING "Path to Qt host installation for Android builds")
-set(ANDROID_ABI "arm64-v8a" CACHE STRING "Android ABI to build")
+set(ANDROID_ABI "" CACHE STRING "Android ABI to build")
 set(ANDROID_PLATFORM "android-23" CACHE STRING "Android API to build")
 if(ANDROID_NDK_ROOT AND ANDROID_SDK_ROOT)
 	set(ANDROID true)
@@ -28,6 +28,8 @@ option(TOOLS "Build qttools" ON)
 option(TRANSLATIONS "Build qttranslations" ON)
 option(KEEP_SOURCE_DIRS "Keep source directories instead of deleting them" OFF)
 option(KEEP_BINARY_DIRS "Keep build directories instead of deleting them" OFF)
+set(TARGET_BITS "64" CACHE STRING
+	"Platform bits (32 or 64, only relevant on Windows)")
 
 if(NOT QT_VERSION)
 	message(FATAL_ERROR "-DQT_VERSION is required")
@@ -74,7 +76,7 @@ if(ANDROID)
 	elseif(ANDROID_ABI STREQUAL "x86_64")
 		set(openssl_abi x86_64)
 	else()
-		message(FATAL_ERROR "Unknown Android ABI '${ANDROID_ABI}' for OpenSSL")
+		message(FATAL_ERROR "Unknown Android ABI '${ANDROID_ABI}'")
 	endif()
 
 	get_android_toolchain(android_toolchain_path "${ANDROID_NDK_ROOT}")
@@ -178,6 +180,7 @@ set(URL https://download.qt.io/archive/qt/@version_major@/@version@/submodules/@
 if(OPENSSL)
 	build_dependency(openssl ${OPENSSL} ${BUILD_TYPE}
 		URL "https://www.openssl.org/source/openssl-@version@.tar.gz"
+		TARGET_BITS "${TARGET_BITS}"
 		SOURCE_DIR "openssl-@version@"
 		VERSIONS
 			1.1.1t
@@ -196,6 +199,7 @@ endif()
 if(BASE)
 	build_dependency(qtbase ${QT_VERSION} ${BUILD_TYPE}
 		URL "${URL}"
+		TARGET_BITS "${TARGET_BITS}"
 		SOURCE_DIR "@name@-everywhere-src-@version@"
 		VERSIONS
 			5.15.8
@@ -241,6 +245,7 @@ endif()
 if(SVG)
 	build_dependency(qtsvg ${QT_VERSION} ${BUILD_TYPE}
 		URL "${URL}"
+		TARGET_BITS "${TARGET_BITS}"
 		SOURCE_DIR "@name@-everywhere-src-@version@"
 		VERSIONS
 			5.15.8
@@ -257,6 +262,7 @@ endif()
 if(IMAGEFORMATS)
 	build_dependency(qtimageformats ${QT_VERSION} ${BUILD_TYPE}
 		URL "${URL}"
+		TARGET_BITS "${TARGET_BITS}"
 		SOURCE_DIR "@name@-everywhere-src-@version@"
 		VERSIONS
 			5.15.8
@@ -280,6 +286,7 @@ if(MULTIMEDIA)
 	if(QT_VERSION VERSION_GREATER_EQUAL 6)
 		build_dependency(qtshadertools ${QT_VERSION} ${BUILD_TYPE}
 			URL "${URL}"
+			TARGET_BITS "${TARGET_BITS}"
 			SOURCE_DIR "@name@-everywhere-src-@version@"
 			VERSIONS
 				6.3.2
@@ -293,6 +300,7 @@ if(MULTIMEDIA)
 
 	build_dependency(qtmultimedia ${QT_VERSION} ${BUILD_TYPE}
 		URL "${URL}"
+		TARGET_BITS "${TARGET_BITS}"
 		SOURCE_DIR "@name@-everywhere-src-@version@"
 		VERSIONS
 			5.15.8
@@ -311,6 +319,7 @@ if(TOOLS)
 	# Required translations dependency
 	build_dependency(qttools ${QT_VERSION} ${BUILD_TYPE}
 		URL "${URL}"
+		TARGET_BITS "${TARGET_BITS}"
 		SOURCE_DIR "@name@-everywhere-src-@version@"
 		VERSIONS
 			5.15.8
@@ -340,6 +349,7 @@ endif()
 if(ANDROID_EXTRAS)
 	build_dependency(qtandroidextras ${QT_VERSION} ${BUILD_TYPE}
 		URL "${URL}"
+		TARGET_BITS "${TARGET_BITS}"
 		SOURCE_DIR "@name@-everywhere-src-@version@"
 		VERSIONS
 			5.15.8
@@ -352,6 +362,7 @@ endif()
 if(TRANSLATIONS)
 	build_dependency(qttranslations ${QT_VERSION} ${BUILD_TYPE}
 		URL "${URL}"
+		TARGET_BITS "${TARGET_BITS}"
 		SOURCE_DIR "@name@-everywhere-src-@version@"
 		VERSIONS
 			5.15.8

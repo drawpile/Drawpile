@@ -16,6 +16,10 @@ inputs:
       sub-tree within this path.
     default: .github/deps
     type: string
+  target_bits:
+    description: >
+      Bits of the target platform, 32 or 64.
+    type: string
 
   qt_pre_build:
     description: Command to run before building Qt
@@ -81,6 +85,7 @@ runs:
           -DBUILD_TYPE=Release
           "-DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/${{ inputs.path }}/qt"
           "-DQT_VERSION=${{ inputs.qt }}"
+          "-DTARGET_BITS=${{ inputs.target_bits }}"
           ${{ inputs.qt_args }}
           -P .github/scripts/build-qt.cmake
 
@@ -100,5 +105,6 @@ runs:
           "-DLIBZIP=${{ inputs.libzip }}"
           "-DCMAKE_PREFIX_PATH=${{ github.workspace }}/${{ inputs.path }}/qt"
           "-DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/${{ inputs.path }}/other"
+          "-DTARGET_BITS=${{ inputs.target_bits }}"
           ${{ inputs.other_args }}
           -P .github/scripts/build-other.cmake

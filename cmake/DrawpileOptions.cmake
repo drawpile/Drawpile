@@ -8,6 +8,7 @@ add_feature_info("Drawpile client (CLIENT)" CLIENT "")
 # These don't not really need to be reported as a feature
 set(BUILD_LABEL "" CACHE STRING "A custom label to add to the version")
 set(BUILD_VERSION "" CACHE STRING "Version to use, instead of asking git")
+set(BUILD_PACKAGE_SUFFIX "" CACHE STRING "Suffix to append to cpack artifacts")
 
 option(UPDATE_TRANSLATIONS "Update translation files from source")
 add_feature_info(".ts regeneration (slow!) (UPDATE_TRANSLATIONS)" UPDATE_TRANSLATIONS "")
