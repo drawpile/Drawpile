@@ -2270,7 +2270,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+15"/>
         <source>Tablet Driver</source>
-        <translation type="unfinished"></translation>
+        <translation>Tablet-Treiber</translation>
     </message>
     <message>
         <location line="+36"/>
@@ -5880,12 +5880,12 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+17"/>
         <source>Enter account password. If you don&apos;t have an account, you must register one. This server provides no information on how to do that.</source>
-        <translation type="unfinished"></translation>
+        <translation>Geben Sie das Account-Passwort ein. Wenn Sie keinen Account haben, mussen Sie einen registrieren. Dieser Server stellt keine Information darüber bereit, wie Sie dies tun können.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Enter account password. If you don&apos;t have an account, you must register one on %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Geben Sie das Account-Passwort ein. Wenn sie keinen Account haben, müssen Sie einen auf %1 registrieren.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -5949,12 +5949,12 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+37"/>
         <source>This username doesn&apos;t belong to an account on this server. This is not your drawpile.net account!</source>
-        <translation type="unfinished"></translation>
+        <translation>Dieser Nutzername gehört nicht zu einem Account of diesem Server. Dies ist nicht Ihr drawpile.net-Account!</translation>
     </message>
     <message>
         <location line="+523"/>
         <source>Enter the username and password for your account on this server. This is not your drawpile.net account!</source>
-        <translation type="unfinished"></translation>
+        <translation>Geben Sie Nutzername und Password für Ihren Account auf diesem Server ein. Dies ist nicht Ihr drawpile.net-Account!</translation>
     </message>
     <message>
         <location line="-604"/>
@@ -8046,12 +8046,12 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+2"/>
         <source>Tablet Setup</source>
-        <translation type="unfinished"></translation>
+        <translation>Tablet-Einrichtung</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Open Drawpile&apos;s tablet setup and troubleshooting help page</source>
-        <translation type="unfinished"></translation>
+        <translation>Öffnet Drawpiles Hilfeseite zu Tablet-Einrichtung und -Fehlerbehebung</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8076,12 +8076,12 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+2"/>
         <source>libera.chat</source>
-        <translation type="unfinished"></translation>
+        <translation>libera.chat</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Join the #drawpile chatroom on libera.chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Tritt dem #drawpile-Chatroom auf libera.chat bei</translation>
     </message>
     <message>
         <location line="+2"/>
