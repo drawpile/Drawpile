@@ -191,6 +191,7 @@ function(_build_automake build_type target_bits source_dir)
 	# On Windows, the only usable thing here is OpenSSL's pseudo-automake Perl
 	# script. Shebangs don't work on Windows, so we have to run it explicitly.
 	if(WIN32)
+		set(make "nmake")
 		execute_process(
 			COMMAND "${CMAKE_COMMAND}" -E env ${env}
 				perl "${configure}" ${prefix} ${configure_flags}
@@ -199,6 +200,7 @@ function(_build_automake build_type target_bits source_dir)
 			COMMAND_ERROR_IS_FATAL ANY
 		)
 	else()
+		set(make "make")
 		execute_process(
 			COMMAND "${CMAKE_COMMAND}" -E env ${env}
 				"${configure}" ${prefix} ${configure_flags}
@@ -212,7 +214,7 @@ function(_build_automake build_type target_bits source_dir)
 	if(ARG_BROKEN_INSTALL)
 		execute_process(
 			COMMAND "${CMAKE_COMMAND}" -E env ${env}
-				make ${make_flags}
+				${make} ${make_flags}
 			COMMAND_ECHO STDOUT
 			WORKING_DIRECTORY "${source_dir}"
 			COMMAND_ERROR_IS_FATAL ANY
@@ -221,7 +223,7 @@ function(_build_automake build_type target_bits source_dir)
 
 	execute_process(
 		COMMAND "${CMAKE_COMMAND}" -E env ${env}
-			make ${install} ${make_flags}
+			${make} ${install} ${make_flags}
 		COMMAND_ECHO STDOUT
 		WORKING_DIRECTORY "${source_dir}"
 		COMMAND_ERROR_IS_FATAL ANY
