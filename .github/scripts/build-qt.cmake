@@ -234,6 +234,7 @@ if(BASE)
 				patches/qandroidassetsfileenginehandler_dot_slash.diff
 				patches/qtbug-92199.diff
 				patches/qtbug-98369.diff
+				patches/checkboxoutline.diff
 			6.4.2
 				patches/qtbug-109375.diff
 				patches/qtbug-112697.diff
