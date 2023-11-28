@@ -15,7 +15,7 @@ if(ANDROID_NDK_ROOT AND ANDROID_SDK_ROOT)
 endif()
 
 set(QT_VERSION "" CACHE STRING "The version of Qt to build")
-if((QT_VERSION VERSION_EQUAL 5 AND WIN32) OR ANDROID)
+if((QT_VERSION VERSION_LESS 6 AND WIN32) OR ANDROID)
 	set(OPENSSL "1.1.1t" CACHE STRING "The version of OpenSSL to build")
 else()
 	set(OPENSSL "" CACHE STRING "The version of OpenSSL to build")
