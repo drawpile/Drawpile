@@ -244,6 +244,12 @@ jobs:
           arch: win${{ matrix.bits }}
         if: runner.os == 'Windows'
 
+      - name: Install NASM for building OpenSSL in Windows
+        uses: ilammy/setup-nasm@v1
+        with:
+          platform: win${{ matrix.bits }}
+        if: runner.os == 'Windows'
+
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v1.1
         with:
