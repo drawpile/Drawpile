@@ -452,7 +452,7 @@ void LoginDialog::Private::setLoginExplanation(
 	if(!explanation.isEmpty()) {
 		content = explanation.toHtmlEscaped();
 		if(isError) {
-			content = QStringLiteral("<em>%1</em>").arg(content);
+			content = QStringLiteral("<strong>%1</strong>").arg(content);
 		}
 	}
 	ui->authExplanationLabel->setHidden(content.isEmpty());

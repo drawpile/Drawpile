@@ -98,12 +98,12 @@ void UpdateNotice::openUpdateUrl()
 		if(QDesktopServices::openUrl(m_update->url)) {
 			message = tr(
 				"The download page for Drawpile %1 should have opened in your "
-				"browser. If not, please visit <em>drawpile.net</em> "
+				"browser. If not, please visit <strong>drawpile.net</strong> "
 				"manually.");
 		} else {
 			message =
 				tr("The download page for Drawpile %1 could not be opened, "
-				   "please visit <em>drawpile.net</em> manually.");
+				   "please visit <strong>drawpile.net</strong> manually.");
 		}
 		m_label->setText(QStringLiteral("<p>%1</p>")
 							 .arg(message.arg(m_update->version.toString())));
