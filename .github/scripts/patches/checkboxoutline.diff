@@ -8,7 +8,7 @@ Description: increase the dreadful contrast of Fusion checkbox outlines
              painter->setBrush((state & State_Sunken) ? QBrush(pressedColor) : gradient);
 -            painter->setPen(QPen(outline.lighter(110)));
 +            bool dark = option->palette.color(QPalette::Window).lightness() < 128;
-+            painter->setPen(QPen(outline(option->palette).lighter(dark ? 170 : 110)));
++            painter->setPen(QPen(outline.lighter(dark ? 170 : 110)));
 
              if (option->state & State_HasFocus && option->state & State_KeyboardFocusChange)
                  painter->setPen(QPen(highlightedOutline));
