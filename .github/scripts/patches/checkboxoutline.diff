@@ -1,7 +1,7 @@
 Description: increase the dreadful contrast of Fusion checkbox outlines
 
 --- a/src/widgets/styles/qfusionstyle.cpp	2023-11-28 07:30:18.024708539 +0100
-+++ a/src/widgets/styles/qfusionstyle.cpp	2023-11-28 07:31:16.808303355 +0100
++++ b/src/widgets/styles/qfusionstyle.cpp	2023-11-28 07:31:16.808303355 +0100
 @@ -775,7 +775,8 @@
              gradient.setColorAt(1, (state & State_Sunken) ? pressedColor : option->palette.base().color());
 
