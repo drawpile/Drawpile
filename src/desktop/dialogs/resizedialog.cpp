@@ -54,8 +54,6 @@ void ResizeDialog::setBounds(const QRect &rect)
 {
 	auto rectIn = rect.intersected({{0,0}, m_ui->resizer->originalSize()});
 
-	m_aspectratio = rectIn.width() / float(rectIn.height());
-
 	m_ui->width->setValue(rectIn.width());
 	m_ui->height->setValue(rectIn.height());
 
