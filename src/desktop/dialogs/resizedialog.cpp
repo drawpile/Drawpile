@@ -100,13 +100,7 @@ void ResizeDialog::heightChanged(int newHeight)
 void ResizeDialog::toggleAspectRatio(bool keep)
 {
 	if(keep) {
-		m_aspectratio = m_oldsize.width() / float(m_oldsize.height());
-
-		if(m_lastchanged==0)
-			widthChanged(m_ui->width->value());
-		else
-			heightChanged(m_ui->height->value());
-
+		m_aspectratio = float(m_ui->width->value()) / float(m_ui->height->value());
 	} else {
 		m_aspectratio = 0;
 	}

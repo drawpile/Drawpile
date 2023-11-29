@@ -43,6 +43,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Disable Hold Shift to Arrange by default, since it's not needed most of the time.
  * Fix: Don't claim every username is taken when connecting to a server with the old login flow doesn't allow guest logins, instead tell the user that they need an account. Thanks Meru for reporting.
  * Fix: Change italic to bold text, since the former is not readable in Chinese script.
+ * Fix: Make keep aspect ratio checkbox in resize dialog keep the current aspect ratio, not the original one.
 
 2023-11-12 Version 2.2.0-beta.10
  * Fix: Don't deadlock on first startup. Thanks to Hail, lowontrash, FARBOL234, Dorokinyo and hamlin for reporting.
