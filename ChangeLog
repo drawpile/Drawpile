@@ -42,6 +42,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Don't hide dock titlebars when pressing shift when a text field is in focus, since that might hide a field you're currently typing in. Thanks Trite for reporting.
  * Fix: Disable Hold Shift to Arrange by default, since it's not needed most of the time.
  * Fix: Don't claim every username is taken when connecting to a server with the old login flow doesn't allow guest logins, instead tell the user that they need an account. Thanks Meru for reporting.
+ * Fix: Give checkbox outlines more contrast, since they're virtually invisible in most themes. This is a patch to Qt.
  * Fix: Change italic to bold text, since the former is not readable in Chinese script.
  * Fix: Make keep aspect ratio checkbox in resize dialog keep the current aspect ratio, not the original one.
  * Fix: Don't act like keep aspect ratio is checked when resizing from a selection. Thanks Meru for reporting.
