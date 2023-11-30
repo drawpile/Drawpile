@@ -182,10 +182,6 @@ void DP_mypaint_brush_mode_extract(uint8_t mode, int *out_blend_mode,
     if (mode & DP_MYPAINT_BRUSH_MODE_FLAG) {
         posterize_num = 0;
         switch (mode & DP_MYPAINT_BRUSH_MODE_MASK) {
-        case DP_MYPAINT_BRUSH_MODE_INCREMENTAL:
-            blend_mode = DP_BLEND_MODE_NORMAL_AND_ERASER;
-            indirect = false;
-            break;
         case DP_MYPAINT_BRUSH_MODE_NORMAL:
             blend_mode = DP_BLEND_MODE_NORMAL;
             indirect = true;
@@ -199,7 +195,9 @@ void DP_mypaint_brush_mode_extract(uint8_t mode, int *out_blend_mode,
             indirect = true;
             break;
         default:
-            DP_UNREACHABLE();
+            blend_mode = DP_BLEND_MODE_NORMAL_AND_ERASER;
+            indirect = false;
+            break;
         }
     }
     else {
