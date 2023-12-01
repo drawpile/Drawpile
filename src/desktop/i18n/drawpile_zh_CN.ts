@@ -2227,7 +2227,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-2435"/>
         <source>Opening file…</source>
-        <translation type="unfinished"></translation>
+        <translation>打开文件…</translation>
     </message>
     <message>
         <location line="+502"/>
@@ -2297,7 +2297,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+164"/>
         <source>Tablet Driver</source>
-        <translation type="unfinished"></translation>
+        <translation>驱动选项</translation>
     </message>
     <message>
         <location line="+36"/>
@@ -3680,7 +3680,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>All Files (*)</source>
-        <translation>所有文件 (*)</translation>
+        <translation>所有文件(*)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5802,7 +5802,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+15"/>
         <source>Default</source>
-        <translation>默认</translation>
+        <translation>Default</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -5870,22 +5870,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+24"/>
         <source>Log in with server account</source>
-        <translation>使用服务器账号登录</translation>
+        <translation>请使用服务器账号登录</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Enter account password. If you don&apos;t have an account, you must register one. This server provides no information on how to do that.</source>
-        <translation type="unfinished"></translation>
+        <translation>请输入账号密码. 如果你没有账号, 你可以注册一个. 此服务器也没有提供任何关于如何注册账号的信息.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Enter account password. If you don&apos;t have an account, you must register one on %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>请输入账号密码. 如果你没有账号, 你必须在 %1 上注册一个.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>This username belongs to a registered account. If this isn&apos;t your account, cancel and try again with a different name.</source>
-        <translation>该用户名属于一个注册账号. 如果这不是你账号, 请返回并使用其他用户名重新登录.</translation>
+        <translation>该用户名属于一个注册账号. 如果这不是你的账号, 请取消并使用其他用户名重新登录.</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -5934,7 +5934,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+29"/>
         <source>Log in with %1 account</source>
-        <translation>使用 %1 账号登录</translation>
+        <translation>请使用 %1 的账号登录</translation>
     </message>
     <message>
         <location line="+71"/>
@@ -5944,12 +5944,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+37"/>
         <source>This username doesn&apos;t belong to an account on this server. This is not your drawpile.net account!</source>
-        <translation type="unfinished"></translation>
+        <translation>该用户名不属于此服务器上的账号. 并不是你在 drawpile.net 官网上的账号!</translation>
     </message>
     <message>
         <location line="+523"/>
         <source>Enter the username and password for your account on this server. This is not your drawpile.net account!</source>
-        <translation type="unfinished"></translation>
+        <translation>请输入在此服务器上你的账号用户名和密码. 并不是你在 drawpile.net 官网上的账号!</translation>
     </message>
     <message>
         <location line="-604"/>
@@ -5989,12 +5989,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+11"/>
         <source>The %1 authentication is not working.</source>
-        <translation>%1 身份验证无效.</translation>
+        <translation>%1 的身份验证无效.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This username doesn&apos;t belong an account on %1.</source>
-        <translation>此用户名不属于 %1 上的账号.</translation>
+        <translation>该用户名不属于 %1 上的账号.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -6014,12 +6014,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+37"/>
         <source>Log in with &apos;%1&apos; credentials</source>
-        <translation>用 &apos;%1&apos; 证书登录</translation>
+        <translation>请使用&apos;%1&apos;官网上的账号登录</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Log in with &apos;%1&apos; credentials (INSECURE CONNECTION!)</source>
-        <translation>用 &apos;%1&apos; 证书登录 (不安全的连接!)</translation>
+        <translation>请使用&apos;%1&apos;官网上的账号登录 (不安全的连接!)</translation>
     </message>
 </context>
 <context>
@@ -7810,7 +7810,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>NSFM</source>
-        <translation>18禁房</translation>
+        <translation>不适于未成年人的</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8030,12 +8030,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Tablet Setup</source>
-        <translation type="unfinished"></translation>
+        <translation>Tablet Setup</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Open Drawpile&apos;s tablet setup and troubleshooting help page</source>
-        <translation type="unfinished"></translation>
+        <translation>打开 Drawpile 的数位板故障排除帮助页面</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8060,12 +8060,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>libera.chat</source>
-        <translation type="unfinished"></translation>
+        <translation>libera.chat</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Join the #drawpile chatroom on libera.chat</source>
-        <translation type="unfinished"></translation>
+        <translation>加入 libera.chat 的 #drawpile 聊天室</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9377,7 +9377,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/palettewidget.cpp" line="+41"/>
         <source>Add</source>
-        <translation>添加</translation>
+        <translation>线性减淡</translation>
     </message>
     <message>
         <location line="+1"/>
