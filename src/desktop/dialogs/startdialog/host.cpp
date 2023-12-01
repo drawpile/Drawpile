@@ -54,7 +54,6 @@ Host::Host(QWidget *parent)
 		m_titleEdit, &QLineEdit::textChanged, this, &Host::updateHostEnabled);
 
 	m_passwordEdit = new QLineEdit;
-	m_passwordEdit->setEchoMode(QLineEdit::Password);
 	m_passwordEdit->setToolTip(
 		tr("Optional. If left blank, no password will be needed "
 		   "to join this session."));
