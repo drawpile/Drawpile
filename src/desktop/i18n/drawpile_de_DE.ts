@@ -7940,12 +7940,12 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+7"/>
         <source>Generate</source>
-        <translation type="unfinished"></translation>
+        <translation>Generieren</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Generates a random password.</source>
-        <translation type="unfinished"></translation>
+        <translation>Generiert ein zufälliges Passwort.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -7980,17 +7980,17 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="-135"/>
         <source>A session title is required.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ein Titel für die Sitzung ist erforderlich.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Without a password set, anyone can join your session! If you want to host a private session, choose a password or &lt;a href=&quot;#&quot;&gt;generate one&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ohne ein Passwort kann jeder Ihrer Sitzung beitreten! Wenn Sie eine private Sitzung hosten möchten, wählen Sie ein Passwort oder &lt;a href=&quot;#&quot;&gt;generieren Sie eines&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Hosting on your computer requires additional setup! &lt;a href=&quot;#&quot;&gt;Click here for instructions.&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Auf Ihrem Computer zu hosten erfordert zusätzliche Konfiguration! &lt;a href=&quot;#&quot;&gt;Klicken Sie hier für eine Anleitung.&lt;/a&gt;</translation>
     </message>
     <message>
         <location line="+57"/>
@@ -8149,12 +8149,12 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+13"/>
         <source>The download page for Drawpile %1 should have opened in your browser. If not, please visit &lt;strong&gt;drawpile.net&lt;/strong&gt; manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>Die Downloadseite für Drawpile %1 sollte sich in Ihrem Browser geöffnet haben. Falls nicht, bitte besuchen Sie &lt;strong&gt;drawpile.net&lt;/strong&gt; manuell.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>The download page for Drawpile %1 could not be opened, please visit &lt;strong&gt;drawpile.net&lt;/strong&gt; manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>Die Downloadseite für Drawpile %1 konnte nicht geöffnet werden, bitte besuchen Sie &lt;strong&gt;drawpile.net&lt;/strong&gt; manuell.</translation>
     </message>
 </context>
 <context>
