@@ -857,13 +857,13 @@ yeniden boyutlandırılacak.</translation>
     </message>
     <message>
         <location line="+29"/>
-        <source>You&apos;re hosting a session locally. If others can&apos;t join your session, take a look at &lt;a href=&quot;https://drawpile.net/help/hosting/&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
-        <translation>Yerel oturum sunmaktasınız. Eğer başkalarıoturumunuza katılamıyorsa, şu adrese bakın: &lt;a href=&quot;https://drawpile.net/help/hosting/&quot;&gt;the help page on hosting&lt;/a&gt;.</translation>
+        <source>You&apos;re hosting a session locally. If others can&apos;t join your session, take a look at &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
+        <translation>Yerel oturum sunmaktasınız. Eğer başkalarıoturumunuza katılamıyorsa, şu adrese bakın: &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;the help page on hosting&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+45"/>
-        <source>You&apos;re hosting a session locally, so Drawpile has to find your externally visible IP address to give you an invite link. For more information, check out &lt;a href=&quot;https://drawpile.net/help/hosting/&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
-        <translation>Yerel oturum sunmaktasınız bu yüzden bir davet linki verebilmek için Drawpile dışarıdan görünür olan IP adresinizi bulmak zorunda. Daha fazla bilgi için şu adresi kontrol edin: &lt;a href=&quot;https://drawpile.net/help/hosting/&quot;&gt;the help page on hosting&lt;/a&gt;.</translation>
+        <source>You&apos;re hosting a session locally, so Drawpile has to find your externally visible IP address to give you an invite link. For more information, check out &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
+        <translation>Yerel oturum sunmaktasınız bu yüzden bir davet linki verebilmek için Drawpile dışarıdan görünür olan IP adresinizi bulmak zorunda. Daha fazla bilgi için şu adresi kontrol edin: &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;the help page on hosting&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+32"/>
@@ -6099,7 +6099,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Orta</translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+44"/>
         <source>Error</source>
         <translation>Hata</translation>
     </message>
@@ -7907,7 +7907,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::startdialog::Host</name>
     <message>
-        <location filename="../dialogs/startdialog/host.cpp" line="+34"/>
+        <location filename="../dialogs/startdialog/host.cpp" line="+105"/>
         <source>The title is shown in the application title bar and in the session selection dialog</source>
         <translation>Başlık, uygulama başlık çubuğunda ve oturum seçim diyaloğunda gözükür</translation>
     </message>
@@ -7917,17 +7917,27 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Başlık:</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+9"/>
         <source>Optional. If left blank, no password will be needed to join this session.</source>
         <translation>Opsiyonel. Boş bırakılırsa bu oturuma katılmak için şifre gerekmeyecek.</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+7"/>
+        <source>Generate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Generates a random password.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
         <source>Password:</source>
         <translation>Şifre:</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+23"/>
         <source>The built-in server is not available on Android.</source>
         <translation>Yerleşik sunucular Android&apos;de mevcut değil.</translation>
     </message>
@@ -7937,7 +7947,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Yerleşik sunucular Drawpile&apos;ın bu sürümünde mevcut değil.</translation>
     </message>
     <message>
-        <location line="+36"/>
+        <location line="+29"/>
         <source>Enable advanced options</source>
         <translation>Gelişmiş seçenekleri aktifleştir</translation>
     </message>
@@ -7952,7 +7962,22 @@ Values above 0.5 may not be noticeable.</source>
         <translation>ID Takma Adı:</translation>
     </message>
     <message>
-        <location line="-60"/>
+        <location line="-135"/>
+        <source>A session title is required.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Without a password set, anyone can join your session! If you want to host a private session, choose a password or &lt;a href=&quot;#&quot;&gt;generate one&lt;/a&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Hosting on your computer requires additional setup! &lt;a href=&quot;#&quot;&gt;Click here for instructions.&lt;/a&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+57"/>
         <source>Not suitable for minors (NSFM)</source>
         <translation>18 yaş altı için uygunsuz (UYGUNSUZ)</translation>
     </message>
@@ -7972,7 +7997,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Bu oturumu herkese açık listede anons et</translation>
     </message>
     <message>
-        <location line="-61"/>
+        <location line="-54"/>
         <source>Host on this computer</source>
         <translation>Bu bilgisayarda host</translation>
     </message>
@@ -7982,7 +8007,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>DrawPile&apos;ın kendi sunucusunu kullan</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="-5"/>
         <source>Host at:</source>
         <translation>Şurada Host:</translation>
     </message>
@@ -8107,13 +8132,13 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+13"/>
-        <source>The download page for Drawpile %1 should have opened in your browser. If not, please visit &lt;em&gt;drawpile.net&lt;/em&gt; manually.</source>
-        <translation>Drawpile %1 indirme sayfası web tarayıcınızda açılmış olmalı. Eğer açılmadıysa, &lt;em&gt;drawpile.net&lt;/em&gt; adresini manuel olarak ziyaret ediniz.</translation>
+        <source>The download page for Drawpile %1 should have opened in your browser. If not, please visit &lt;strong&gt;drawpile.net&lt;/strong&gt; manually.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+6"/>
-        <source>The download page for Drawpile %1 could not be opened, please visit &lt;em&gt;drawpile.net&lt;/em&gt; manually.</source>
-        <translation>Drawpile %1 indirme sayfası açılamadı, lütfen &lt;em&gt;drawpile.net&lt;/em&gt; adresini manuel olarak ziyaret ediniz.</translation>
+        <source>The download page for Drawpile %1 could not be opened, please visit &lt;strong&gt;drawpile.net&lt;/strong&gt; manually.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

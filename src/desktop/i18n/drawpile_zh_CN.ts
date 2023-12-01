@@ -857,13 +857,13 @@ to 64x64 pixels.</source>
     </message>
     <message>
         <location line="+29"/>
-        <source>You&apos;re hosting a session locally. If others can&apos;t join your session, take a look at &lt;a href=&quot;https://drawpile.net/help/hosting/&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
-        <translation>你使用本机创建了房间. 如果其他人无法加入你的房间, 请查看 &lt;a href=&quot;https://drawpile.net/help/hosting/&quot;&gt;the help page on hosting&lt;/a&gt;.</translation>
+        <source>You&apos;re hosting a session locally. If others can&apos;t join your session, take a look at &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
+        <translation>你使用本机创建了房间. 如果其他人无法加入你的房间, 请查看 &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;the help page on hosting&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+45"/>
-        <source>You&apos;re hosting a session locally, so Drawpile has to find your externally visible IP address to give you an invite link. For more information, check out &lt;a href=&quot;https://drawpile.net/help/hosting/&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
-        <translation>你使用本机创建了房间, 因此Drawpile必须找到你的外部可见 IP 地址才能为你提供邀请链接. 更多信息, 请查看 &lt;a href=&quot;https://drawpile.net/help/hosting/&quot;&gt;the help page on hosting&lt;/a&gt;.</translation>
+        <source>You&apos;re hosting a session locally, so Drawpile has to find your externally visible IP address to give you an invite link. For more information, check out &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
+        <translation>你使用本机创建了房间, 因此Drawpile必须找到你的外部可见 IP 地址才能为你提供邀请链接. 更多信息, 请查看 &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;the help page on hosting&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+32"/>
@@ -6099,7 +6099,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>居中</translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+44"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>
@@ -7907,7 +7907,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::startdialog::Host</name>
     <message>
-        <location filename="../dialogs/startdialog/host.cpp" line="+34"/>
+        <location filename="../dialogs/startdialog/host.cpp" line="+105"/>
         <source>The title is shown in the application title bar and in the session selection dialog</source>
         <translation>房名会显示在程序的标题栏上和房间列表界面中</translation>
     </message>
@@ -7917,17 +7917,27 @@ Values above 0.5 may not be noticeable.</source>
         <translation>房名:</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+9"/>
         <source>Optional. If left blank, no password will be needed to join this session.</source>
         <translation>可选的.如果留空,则无需密码即可加入此房间.</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+7"/>
+        <source>Generate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Generates a random password.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
         <source>Password:</source>
         <translation>密码:</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+23"/>
         <source>The built-in server is not available on Android.</source>
         <translation>内置服务器在安卓中无法使用.</translation>
     </message>
@@ -7937,7 +7947,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>内置服务器在此安装版本的Drawpile无法使用.</translation>
     </message>
     <message>
-        <location line="+36"/>
+        <location line="+29"/>
         <source>Enable advanced options</source>
         <translation>启用高级选项</translation>
     </message>
@@ -7952,7 +7962,22 @@ Values above 0.5 may not be noticeable.</source>
         <translation>后缀:</translation>
     </message>
     <message>
-        <location line="-60"/>
+        <location line="-135"/>
+        <source>A session title is required.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Without a password set, anyone can join your session! If you want to host a private session, choose a password or &lt;a href=&quot;#&quot;&gt;generate one&lt;/a&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Hosting on your computer requires additional setup! &lt;a href=&quot;#&quot;&gt;Click here for instructions.&lt;/a&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+57"/>
         <source>Not suitable for minors (NSFM)</source>
         <translation>未成年人勿入</translation>
     </message>
@@ -7972,7 +7997,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>公开在列表上</translation>
     </message>
     <message>
-        <location line="-61"/>
+        <location line="-54"/>
         <source>Host on this computer</source>
         <translation>本机</translation>
     </message>
@@ -7982,7 +8007,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>使用 Drawpile 的内置服务器</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="-5"/>
         <source>Host at:</source>
         <translation>远程服务器:</translation>
     </message>
@@ -8107,13 +8132,13 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+13"/>
-        <source>The download page for Drawpile %1 should have opened in your browser. If not, please visit &lt;em&gt;drawpile.net&lt;/em&gt; manually.</source>
-        <translation>Drawpile %1 的下载页面应该已经在你的浏览器中打开了.如果没有,请手动访问 &lt;em&gt;drawpile.net&lt;/em&gt; .</translation>
+        <source>The download page for Drawpile %1 should have opened in your browser. If not, please visit &lt;strong&gt;drawpile.net&lt;/strong&gt; manually.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+6"/>
-        <source>The download page for Drawpile %1 could not be opened, please visit &lt;em&gt;drawpile.net&lt;/em&gt; manually.</source>
-        <translation>Drawpile %1 的下载页面无法打开,请手动访问 &lt;em&gt;drawpile.net&lt;/em&gt; .</translation>
+        <source>The download page for Drawpile %1 could not be opened, please visit &lt;strong&gt;drawpile.net&lt;/strong&gt; manually.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

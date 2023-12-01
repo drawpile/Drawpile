@@ -857,13 +857,13 @@ to 64x64 pixels.</source>
     </message>
     <message>
         <location line="+29"/>
-        <source>You&apos;re hosting a session locally. If others can&apos;t join your session, take a look at &lt;a href=&quot;https://drawpile.net/help/hosting/&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
-        <translation>ローカルでセッションをホストしています。 他の人がセッションに参加できない場合は、&lt;a href=&quot;https://drawpile.net/help/hosting/&quot;&gt;ホスティングに関するヘルプ ページ&lt;/a&gt;をご覧ください。</translation>
+        <source>You&apos;re hosting a session locally. If others can&apos;t join your session, take a look at &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
+        <translation>ローカルでセッションをホストしています。 他の人がセッションに参加できない場合は、&lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;ホスティングに関するヘルプ ページ&lt;/a&gt;をご覧ください。</translation>
     </message>
     <message>
         <location line="+45"/>
-        <source>You&apos;re hosting a session locally, so Drawpile has to find your externally visible IP address to give you an invite link. For more information, check out &lt;a href=&quot;https://drawpile.net/help/hosting/&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
-        <translation>ローカルでセッションをホストしているため、Drawpile は外部から見える IP アドレスを見つけて招待リンクを提供する必要があります。 詳細については、&lt;a href=&quot;https://drawpile.net/help/hosting/&quot;&gt;ホスティングに関するヘルプ ページ&lt;/a&gt;をご覧ください。</translation>
+        <source>You&apos;re hosting a session locally, so Drawpile has to find your externally visible IP address to give you an invite link. For more information, check out &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
+        <translation>ローカルでセッションをホストしているため、Drawpile は外部から見える IP アドレスを見つけて招待リンクを提供する必要があります。 詳細については、&lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;ホスティングに関するヘルプ ページ&lt;/a&gt;をご覧ください。</translation>
     </message>
     <message>
         <location line="+32"/>
@@ -6098,7 +6098,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>中心</translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+44"/>
         <source>Error</source>
         <translation>エラー</translation>
     </message>
@@ -7906,7 +7906,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::startdialog::Host</name>
     <message>
-        <location filename="../dialogs/startdialog/host.cpp" line="+34"/>
+        <location filename="../dialogs/startdialog/host.cpp" line="+105"/>
         <source>The title is shown in the application title bar and in the session selection dialog</source>
         <translation>タイトルはアプリケーションのタイトルバーとセッション選択ダイアログで表示されます</translation>
     </message>
@@ -7916,17 +7916,27 @@ Values above 0.5 may not be noticeable.</source>
         <translation>タイトル:</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+9"/>
         <source>Optional. If left blank, no password will be needed to join this session.</source>
         <translation>空白にすると、このセッションへの参加にパスワードが不要になります。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+7"/>
+        <source>Generate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Generates a random password.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
         <source>Password:</source>
         <translation>パスワード:</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+23"/>
         <source>The built-in server is not available on Android.</source>
         <translation>内蔵サーバーはAndroidでは利用できません。</translation>
     </message>
@@ -7936,7 +7946,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>内蔵サーバーはこのインストールされたDrawpileでは利用できません。</translation>
     </message>
     <message>
-        <location line="+36"/>
+        <location line="+29"/>
         <source>Enable advanced options</source>
         <translation>詳細オプションを有効</translation>
     </message>
@@ -7951,7 +7961,22 @@ Values above 0.5 may not be noticeable.</source>
         <translation>IDエイリアス:</translation>
     </message>
     <message>
-        <location line="-60"/>
+        <location line="-135"/>
+        <source>A session title is required.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Without a password set, anyone can join your session! If you want to host a private session, choose a password or &lt;a href=&quot;#&quot;&gt;generate one&lt;/a&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Hosting on your computer requires additional setup! &lt;a href=&quot;#&quot;&gt;Click here for instructions.&lt;/a&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+57"/>
         <source>Not suitable for minors (NSFM)</source>
         <translation>未成年者には適していません (NSFM)</translation>
     </message>
@@ -7971,7 +7996,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>セッションを公開リストで告知</translation>
     </message>
     <message>
-        <location line="-61"/>
+        <location line="-54"/>
         <source>Host on this computer</source>
         <translation>このコンピュータでホスト</translation>
     </message>
@@ -7981,7 +8006,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Drawpile 内蔵のサーバー機能を使います</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="-5"/>
         <source>Host at:</source>
         <translation>ホスト:</translation>
     </message>
@@ -8106,13 +8131,13 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+13"/>
-        <source>The download page for Drawpile %1 should have opened in your browser. If not, please visit &lt;em&gt;drawpile.net&lt;/em&gt; manually.</source>
-        <translation>Drawpile %1 のダウンロード ページがブラウザで開いているはずです。 そうでない場合は、&lt;em&gt;drawpile.net&lt;/em&gt; に手動でアクセスしてください。</translation>
+        <source>The download page for Drawpile %1 should have opened in your browser. If not, please visit &lt;strong&gt;drawpile.net&lt;/strong&gt; manually.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+6"/>
-        <source>The download page for Drawpile %1 could not be opened, please visit &lt;em&gt;drawpile.net&lt;/em&gt; manually.</source>
-        <translation>Drawpile %1 のダウンロード ページを開けませんでした。&lt;em&gt;drawpile.net&lt;/em&gt; に手動でアクセスしてください。</translation>
+        <source>The download page for Drawpile %1 could not be opened, please visit &lt;strong&gt;drawpile.net&lt;/strong&gt; manually.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

@@ -857,13 +857,13 @@ para 64x64 pixels.</translation>
     </message>
     <message>
         <location line="+29"/>
-        <source>You&apos;re hosting a session locally. If others can&apos;t join your session, take a look at &lt;a href=&quot;https://drawpile.net/help/hosting/&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
-        <translation>Está a hospedar uma sessão localmente. Se alguém não conseguir conectar à sua sessão, dê uma olhada na &lt;a href=&quot;https://drawpile.net/help/hosting/&quot;&gt;página de ajuda em hospedagem&lt;/a&gt;.</translation>
+        <source>You&apos;re hosting a session locally. If others can&apos;t join your session, take a look at &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
+        <translation>Está a hospedar uma sessão localmente. Se alguém não conseguir conectar à sua sessão, dê uma olhada na &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;página de ajuda em hospedagem&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+45"/>
-        <source>You&apos;re hosting a session locally, so Drawpile has to find your externally visible IP address to give you an invite link. For more information, check out &lt;a href=&quot;https://drawpile.net/help/hosting/&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
-        <translation>Está a hospedar uma sessão localmente, então o Drawpile precisa encontrar o seu IP externo para lhe dar uma ligação de convite. Para mais informações, veja também a &lt;a href=&quot;https://drawpile.net/help/hosting/&quot;&gt;página de ajuda em hospedagem&lt;/a&gt;.</translation>
+        <source>You&apos;re hosting a session locally, so Drawpile has to find your externally visible IP address to give you an invite link. For more information, check out &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
+        <translation>Está a hospedar uma sessão localmente, então o Drawpile precisa encontrar o seu IP externo para lhe dar uma ligação de convite. Para mais informações, veja também a &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;página de ajuda em hospedagem&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+32"/>
@@ -6102,7 +6102,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Centralizar</translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+44"/>
         <source>Error</source>
         <translation>Erro</translation>
     </message>
@@ -7921,7 +7921,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
 <context>
     <name>dialogs::startdialog::Host</name>
     <message>
-        <location filename="../dialogs/startdialog/host.cpp" line="+34"/>
+        <location filename="../dialogs/startdialog/host.cpp" line="+105"/>
         <source>The title is shown in the application title bar and in the session selection dialog</source>
         <translation>O título é mostrado na barra de título da janela e no diálogo de seleção de sessão</translation>
     </message>
@@ -7931,17 +7931,27 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Título:</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+9"/>
         <source>Optional. If left blank, no password will be needed to join this session.</source>
         <translation>A palavra-passe é opcional, e se for deixada em branco, ninguém vai precisar de palavra-passe para entrar nessa sessão.</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+7"/>
+        <source>Generate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Generates a random password.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
         <source>Password:</source>
         <translation>Palavra-passe:</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+23"/>
         <source>The built-in server is not available on Android.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7951,7 +7961,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+36"/>
+        <location line="+29"/>
         <source>Enable advanced options</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7966,7 +7976,22 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>ID Aliás:</translation>
     </message>
     <message>
-        <location line="-60"/>
+        <location line="-135"/>
+        <source>A session title is required.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Without a password set, anyone can join your session! If you want to host a private session, choose a password or &lt;a href=&quot;#&quot;&gt;generate one&lt;/a&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Hosting on your computer requires additional setup! &lt;a href=&quot;#&quot;&gt;Click here for instructions.&lt;/a&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+57"/>
         <source>Not suitable for minors (NSFM)</source>
         <translation>Inapropriado para menores de idade (+18)</translation>
     </message>
@@ -7986,7 +8011,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Anuncia a sessão numa lista pública</translation>
     </message>
     <message>
-        <location line="-61"/>
+        <location line="-54"/>
         <source>Host on this computer</source>
         <translation>Hospedar neste computador</translation>
     </message>
@@ -7996,7 +8021,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Usar servidor interno do Drawpile</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="-5"/>
         <source>Host at:</source>
         <translation>Hospedar em:</translation>
     </message>
@@ -8121,13 +8146,13 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     </message>
     <message>
         <location line="+13"/>
-        <source>The download page for Drawpile %1 should have opened in your browser. If not, please visit &lt;em&gt;drawpile.net&lt;/em&gt; manually.</source>
-        <translation>A página de descargas para o Drawpile %1 deve estar aberto no seu navegador. Se não, por favor visite &lt;em&gt;drawpile.net&lt;/em&gt; manualmente.</translation>
+        <source>The download page for Drawpile %1 should have opened in your browser. If not, please visit &lt;strong&gt;drawpile.net&lt;/strong&gt; manually.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+6"/>
-        <source>The download page for Drawpile %1 could not be opened, please visit &lt;em&gt;drawpile.net&lt;/em&gt; manually.</source>
-        <translation>A página de descargas para o Drawpile %1 não pode ser aberta. Por favor visite &lt;em&gt;drawpile.net&lt;/em&gt; manualmente.</translation>
+        <source>The download page for Drawpile %1 could not be opened, please visit &lt;strong&gt;drawpile.net&lt;/strong&gt; manually.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

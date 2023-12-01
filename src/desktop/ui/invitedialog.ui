@@ -132,7 +132,7 @@
        <item>
         <widget class="QLabel" name="localExplanationLabel">
          <property name="text">
-          <string>You're hosting a session locally. If others can't join your session, take a look at &lt;a href=&quot;https://drawpile.net/help/hosting/&quot;&gt;the help page on hosting&lt;/a&gt;.</string>
+          <string>You're hosting a session locally. If others can't join your session, take a look at &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;the help page on hosting&lt;/a&gt;.</string>
          </property>
          <property name="textFormat">
           <enum>Qt::RichText</enum>
@@ -177,7 +177,7 @@
        <item>
         <widget class="QLabel" name="ipExplanationLabel">
          <property name="text">
-          <string>You're hosting a session locally, so Drawpile has to find your externally visible IP address to give you an invite link. For more information, check out &lt;a href=&quot;https://drawpile.net/help/hosting/&quot;&gt;the help page on hosting&lt;/a&gt;.</string>
+          <string>You're hosting a session locally, so Drawpile has to find your externally visible IP address to give you an invite link. For more information, check out &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;the help page on hosting&lt;/a&gt;.</string>
          </property>
          <property name="textFormat">
           <enum>Qt::RichText</enum>
