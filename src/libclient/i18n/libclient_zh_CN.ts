@@ -1217,12 +1217,12 @@
     <message>
         <location line="-665"/>
         <source>This server does not allow guest logins</source>
-        <translation>此服务器不支持非注册用户登入</translation>
+        <translation>此服务器不支持非注册用户登录</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Password needed to log in as &quot;%1&quot;</source>
-        <translation>&quot;%1&quot; 需要登录密码</translation>
+        <translation>请使用 &quot;%1&quot; 的账号密码来登录</translation>
     </message>
     <message>
         <location line="+74"/>
@@ -1284,7 +1284,7 @@
     <message>
         <location line="+2"/>
         <source>You have been banned from this session!</source>
-        <translation>你已经被禁止访问该房间!</translation>
+        <translation>你已被禁止访问该房间!</translation>
     </message>
     <message>
         <location line="+2"/>
