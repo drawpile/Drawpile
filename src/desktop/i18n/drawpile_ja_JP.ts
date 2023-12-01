@@ -2335,7 +2335,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+164"/>
         <source>Tablet Driver</source>
-        <translation type="unfinished"></translation>
+        <translation>タブレットドライバー</translation>
     </message>
     <message>
         <location line="+36"/>
@@ -5874,12 +5874,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+17"/>
         <source>Enter account password. If you don&apos;t have an account, you must register one. This server provides no information on how to do that.</source>
-        <translation type="unfinished"></translation>
+        <translation>アカウントのパスワードを入力します。アカウントを持っていない場合は、アカウントを登録する必要があります。このサーバーは、その方法についての情報を提供しません。</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Enter account password. If you don&apos;t have an account, you must register one on %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>アカウントのパスワードを入力します。アカウントを持っていない場合は、%1 にアカウントを登録する必要があります。</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -5943,12 +5943,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+37"/>
         <source>This username doesn&apos;t belong to an account on this server. This is not your drawpile.net account!</source>
-        <translation type="unfinished"></translation>
+        <translation>このユーザー名は、このサーバー上のアカウントに属していません。これはあなたの drawpile.net アカウントではありません!</translation>
     </message>
     <message>
         <location line="+523"/>
         <source>Enter the username and password for your account on this server. This is not your drawpile.net account!</source>
-        <translation type="unfinished"></translation>
+        <translation>このサーバー上のアカウントのユーザー名とパスワードを入力します。これはあなたの drawpile.net アカウントではありません!</translation>
     </message>
     <message>
         <location line="-604"/>
@@ -7923,12 +7923,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Generate</source>
-        <translation type="unfinished"></translation>
+        <translation>生成</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Generates a random password.</source>
-        <translation type="unfinished"></translation>
+        <translation>ランダムなパスワードを生成します。</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -7963,17 +7963,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-135"/>
         <source>A session title is required.</source>
-        <translation type="unfinished"></translation>
+        <translation>セッションのタイトルは必須です。</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Without a password set, anyone can join your session! If you want to host a private session, choose a password or &lt;a href=&quot;#&quot;&gt;generate one&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>パスワードを設定しなくても誰でもセッションに参加できます。プライベート セッションをホストする場合はパスワードを選択するか、&lt;a href=&quot;#&quot;&gt;パスワードを生成&lt;/a&gt;します。</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Hosting on your computer requires additional setup! &lt;a href=&quot;#&quot;&gt;Click here for instructions.&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>あなたのコンピュータでホストするには追加のセットアップが必要です。 &lt;a href=&quot;#&quot;&gt;手順については、ここをクリックしてください。&lt;/a&gt;</translation>
     </message>
     <message>
         <location line="+57"/>
@@ -8054,12 +8054,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Tablet Setup</source>
-        <translation type="unfinished"></translation>
+        <translation>タブレットのセットアップ</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Open Drawpile&apos;s tablet setup and troubleshooting help page</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile のタブレットのセットアップとトラブルシューティングのヘルプ ページを開く</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8084,12 +8084,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>libera.chat</source>
-        <translation type="unfinished"></translation>
+        <translation>libera.chat</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Join the #drawpile chatroom on libera.chat</source>
-        <translation type="unfinished"></translation>
+        <translation>libera.chat の #drawpile チャットルームに参加する</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8132,12 +8132,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+13"/>
         <source>The download page for Drawpile %1 should have opened in your browser. If not, please visit &lt;strong&gt;drawpile.net&lt;/strong&gt; manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile %1 のダウンロード ページがブラウザで開いているはずです。そうでない場合は &lt;strong&gt;drawpile.net&lt;/strong&gt; に手動でアクセスしてください。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>The download page for Drawpile %1 could not be opened, please visit &lt;strong&gt;drawpile.net&lt;/strong&gt; manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile %1 のダウンロード ページを開けませんでした。&lt;strong&gt;drawpile.net&lt;/strong&gt; に手動でアクセスしてください。</translation>
     </message>
 </context>
 <context>
