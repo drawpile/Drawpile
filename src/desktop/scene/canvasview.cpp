@@ -72,6 +72,7 @@ CanvasView::CanvasView(QWidget *parent)
 	, m_blockNotices{false}
 	, m_hoveringOverHud{false}
 {
+	setViewportUpdateMode(FullViewportUpdate);
 	viewport()->setAcceptDrops(true);
 	viewport()->setAttribute(Qt::WA_AcceptTouchEvents);
 	viewport()->setMouseTracking(true);
