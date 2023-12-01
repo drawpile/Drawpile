@@ -84,6 +84,7 @@ SETTING(lastListingServer         , LastListingServer         , "history/listing
 SETTING(lastNsfm                  , LastNsfm                  , "history/nsfm"                          , false)
 SETTING(lastPalette               , LastPalette               , "history/lastpalette"                   , 0)
 SETTING(lastSessionTitle          , LastSessionTitle          , "history/sessiontitle"                  , QString())
+SETTING(lastSessionPassword       , LastSessionPassword       , "history/sessionpassword"               , QString())
 SETTING(lastStartDialogPage       , LastStartDialogPage       , "history/laststartdialogpage"           , -1)
 SETTING(lastStartDialogSize       , LastStartDialogSize       , "history/laststartdialogsize"           , QSize())
 SETTING(lastStartDialogDateTime   , LastStartDialogDateTime   , "history/laststartdialogdatetime"       , QString())

@@ -139,6 +139,7 @@ Host::Host(QWidget *parent)
 
 	desktop::settings::Settings &settings = dpApp().settings();
 	settings.bindLastSessionTitle(m_titleEdit);
+	settings.bindLastSessionPassword(m_passwordEdit);
 	settings.bindLastIdAlias(m_idAliasEdit);
 	settings.bindLastAnnounce(m_announceBox);
 
