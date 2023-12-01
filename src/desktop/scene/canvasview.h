@@ -290,6 +290,7 @@ private:
 	static QTransform calculateCanvasTransformFrom(
 		const QPointF &pos, qreal zoom, qreal rotate, bool mirror, bool flip);
 
+	static qreal roundZoom(qreal zoom);
 	static void mirrorFlip(QTransform &matrix, bool mirror, bool flip);
 
 	void emitViewTransformed();

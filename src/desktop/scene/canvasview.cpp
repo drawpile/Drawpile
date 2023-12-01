@@ -454,17 +454,23 @@ void CanvasView::setZoomAt(qreal zoom, const QPointF &point)
 {
 	qreal newZoom = qBound(zoomMin, zoom, zoomMax);
 	if(newZoom != m_zoom) {
-		QTransform matrix;
-		mirrorFlip(matrix, m_mirror, m_flip);
-		matrix.rotate(m_rotate);
-
-		updateCanvasTransform([&] {
-			m_pos += matrix.map(point * (newZoom - m_zoom));
+		qreal inew = roundZoom(newZoom);
+		qreal iold = roundZoom(m_zoom);
+		if(inew == iold) {
 			m_zoom = newZoom;
-		});
+		} else {
+			QTransform matrix;
+			mirrorFlip(matrix, m_mirror, m_flip);
+			matrix.rotate(m_rotate);
 
-		emitViewTransformed();
-		showTransformNotice(getZoomNotice());
+			updateCanvasTransform([&] {
+				m_pos += matrix.map(point * (inew - iold));
+				m_zoom = newZoom;
+			});
+
+			emitViewTransformed();
+			showTransformNotice(getZoomNotice());
+		}
 	}
 }
 
@@ -481,21 +487,27 @@ void CanvasView::setRotation(qreal angle)
 	}
 
 	if(angle != m_rotate) {
-		QTransform prev, cur;
-		prev.rotate(m_rotate);
-		cur.rotate(angle);
-
-		updateCanvasTransform([&] {
-			if(inverted) {
-				m_pos = cur.inverted().map(prev.map(m_pos));
-			} else {
-				m_pos = prev.inverted().map(cur.map(m_pos));
-			}
+		qreal inew = std::rint(angle);
+		qreal iold = std::rint(m_rotate);
+		if(inew == iold) {
 			m_rotate = angle;
-		});
+		} else {
+			QTransform prev, cur;
+			prev.rotate(iold);
+			cur.rotate(inew);
 
-		emitViewTransformed();
-		showTransformNotice(getRotationNotice());
+			updateCanvasTransform([&] {
+				if(inverted) {
+					m_pos = cur.inverted().map(prev.map(m_pos));
+				} else {
+					m_pos = prev.inverted().map(cur.map(m_pos));
+				}
+				m_rotate = angle;
+			});
+
+			emitViewTransformed();
+			showTransformNotice(getRotationNotice());
+		}
 	}
 }
 
@@ -2176,16 +2188,37 @@ QTransform CanvasView::calculateCanvasTransformFrom(
 	const QPointF &pos, qreal zoom, qreal rotate, bool mirror, bool flip)
 {
 	QTransform matrix;
-	matrix.translate(-pos.x(), -pos.y());
-	matrix.scale(zoom, zoom);
+	matrix.translate(std::rint(-pos.x()), std::rint(-pos.y()));
+	qreal roundedZoom = roundZoom(zoom);
+	matrix.scale(roundedZoom, roundedZoom);
 	mirrorFlip(matrix, mirror, flip);
-	matrix.rotate(rotate);
+	matrix.rotate(std::rint(rotate));
 	return matrix;
+}
+
+qreal CanvasView::roundZoom(qreal zoom)
+{
+	// Qt's rendering ends up with jittering pixels at inopportune scales. These
+	// fudged precisions at different sizes seem to prevent the issue.
+	qreal precision = zoom < 1.0	? 1000.0
+					  : zoom < 2.0	? 100.0
+					  : zoom < 4.0	? 50.0
+					  : zoom < 10.0 ? 10.0
+									: 2.0;
+	return std::rint(zoom * precision) / precision;
 }
 
 void CanvasView::mirrorFlip(QTransform &matrix, bool mirror, bool flip)
 {
-	matrix.scale(mirror ? -1.0 : 1.0, flip ? -1.0 : 1.0);
+	if(mirror) {
+		if(flip) {
+			matrix.scale(-1.0, -1.0);
+		} else {
+			matrix.scale(-1.0, 1.0);
+		}
+	} else if(flip) {
+		matrix.scale(1.0, -1.0);
+	}
 }
 
 void CanvasView::emitViewTransformed()
@@ -2281,7 +2314,7 @@ QString CanvasView::getZoomNotice() const
 
 QString CanvasView::getRotationNotice() const
 {
-	return tr("Rotation: %1°").arg(rotation(), 0, 'f', 2);
+	return tr("Rotation: %1°").arg(int(rotation()));
 }
 
 void CanvasView::showTouchTransformNotice()
