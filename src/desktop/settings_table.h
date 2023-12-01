@@ -69,7 +69,7 @@ SETTING(inputPresets              , InputPresets              , "inputpresets"  
 SETTING(insecurePasswordStorage   , InsecurePasswordStorage   , "settings/insecurepasswordstorage"      , false)
 SETTING(interfaceMode             , InterfaceMode             , "settings/interfacemode"                , int(desktop::settings::InterfaceMode::Unknown))
 SETTING(inviteLinkType            , InviteLinkType            , "invites/linktype"                      , dialogs::InviteDialog::LinkType::Web)
-SETTING(inviteIncludePassword     , InviteIncludePassword     , "invites/includepassword"               , false)
+SETTING(inviteIncludePassword     , InviteIncludePassword     , "invites/includepassword"               , true)
 SETTING(kineticScrollGesture      , KineticScrollGesture      , "settings/kineticscroll/gesture"        , int(KINETIC_SCROLL_GESTURE_DEFAULT))
 SETTING(kineticScrollThreshold    , KineticScrollThreshold    , "settings/kineticscroll/threshold"      , 10)
 SETTING(kineticScrollHideBars     , KineticScrollHideBars     , "settings/kineticscroll/hidebars"       , false)
