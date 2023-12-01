@@ -7810,7 +7810,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>NSFM</source>
-        <translation>不适于未成年人的</translation>
+        <translation>18禁房</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9402,7 +9402,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/palettewidget.cpp" line="+41"/>
         <source>Add</source>
-        <translation>线性减淡</translation>
+        <translation>添加</translation>
     </message>
     <message>
         <location line="+1"/>
