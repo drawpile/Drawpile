@@ -16,6 +16,7 @@
 #include <QLineEdit>
 #include <QPalette>
 #include <QRadioButton>
+#include <QScrollArea>
 #include <QVBoxLayout>
 
 namespace dialogs {
@@ -24,9 +25,24 @@ namespace startdialog {
 Host::Host(QWidget *parent)
 	: Page{parent}
 {
-	QVBoxLayout *layout = new QVBoxLayout{this};
+	QVBoxLayout *widgetLayout = new QVBoxLayout;
+	widgetLayout->setContentsMargins(0, 0, 0, 0);
+	setLayout(widgetLayout);
+
+	QScrollArea *scrollArea = new QScrollArea;
+	scrollArea->setFrameStyle(QFrame::NoFrame);
+	utils::initKineticScrolling(scrollArea);
+	widgetLayout->addWidget(scrollArea);
+
+	QWidget *scroll = new QWidget;
+	scroll->setContentsMargins(0, 0, 0, 0);
+	scrollArea->setWidget(scroll);
+	scrollArea->setWidgetResizable(true);
+
+	QVBoxLayout *layout = new QVBoxLayout;
 	layout->setAlignment(Qt::AlignTop);
 	layout->setContentsMargins(0, 0, 0, 0);
+	scroll->setLayout(layout);
 
 	QFormLayout *generalSection = utils::addFormSection(layout);
 	m_titleEdit = new QLineEdit;
