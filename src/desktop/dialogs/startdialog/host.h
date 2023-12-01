@@ -54,6 +54,10 @@ private:
 
 	QString getRemoteAddress() const;
 
+	QWidget *m_notes;
+	QLabel *m_titleNote;
+	QLabel *m_passwordNote;
+	QLabel *m_localHostNote;
 	QLineEdit *m_titleEdit;
 	QLineEdit *m_passwordEdit;
 	QCheckBox *m_nsfmBox;

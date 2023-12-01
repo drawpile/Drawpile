@@ -8,6 +8,7 @@
 #include <QButtonGroup>
 #include <QCheckBox>
 #include <QComboBox>
+#include <QDesktopServices>
 #include <QFormLayout>
 #include <QFrame>
 #include <QGridLayout>
@@ -31,6 +32,57 @@ Host::Host(QWidget *parent)
 	widgetLayout->setContentsMargins(0, 0, 0, 0);
 	setLayout(widgetLayout);
 
+	m_notes = new QWidget;
+	m_notes->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+	widgetLayout->addWidget(m_notes);
+
+	QVBoxLayout *notesLayout = new QVBoxLayout;
+	notesLayout->setContentsMargins(0, 0, 0, 0);
+	m_notes->setLayout(notesLayout);
+
+	QHBoxLayout *iconLayout = new QHBoxLayout;
+	iconLayout->setContentsMargins(0, 0, 0, 0);
+	notesLayout->addLayout(iconLayout);
+
+	iconLayout->addWidget(
+		utils::makeIconLabel(QIcon::fromTheme("dialog-warning"), m_notes));
+
+	QVBoxLayout *labelsLayout = new QVBoxLayout;
+	labelsLayout->setContentsMargins(0, 0, 0, 0);
+	iconLayout->addLayout(labelsLayout);
+
+	m_titleNote = new QLabel;
+	m_titleNote->setWordWrap(true);
+	m_titleNote->setTextFormat(Qt::PlainText);
+	m_titleNote->setText(tr("A session title is required."));
+	labelsLayout->addWidget(m_titleNote);
+
+	m_passwordNote = new QLabel;
+	m_passwordNote->setWordWrap(true);
+	m_passwordNote->setTextFormat(Qt::RichText);
+	m_passwordNote->setText(
+		tr("Without a password set, anyone can join your session! If you want "
+		   "to host a private session, choose a password or "
+		   "<a href=\"#\">generate one</a>."));
+	connect(
+		m_passwordNote, &QLabel::linkActivated, this, &Host::generatePassword);
+	labelsLayout->addWidget(m_passwordNote);
+
+	m_localHostNote = new QLabel;
+	m_localHostNote->setWordWrap(true);
+	m_localHostNote->setTextFormat(Qt::RichText);
+	m_localHostNote->setText(
+		tr("Hosting on your computer requires additional setup! "
+		   "<a href=\"#\">Click here for instructions.</a>"));
+	connect(m_localHostNote, &QLabel::linkActivated, this, [] {
+		QDesktopServices::openUrl(
+			QStringLiteral("https://drawpile.net/localhosthelp"));
+	});
+	labelsLayout->addWidget(m_localHostNote);
+
+	utils::addFormSpacer(notesLayout);
+	notesLayout->addWidget(utils::makeSeparator());
+
 	QScrollArea *scrollArea = new QScrollArea;
 	scrollArea->setFrameStyle(QFrame::NoFrame);
 	utils::initKineticScrolling(scrollArea);
@@ -45,6 +97,7 @@ Host::Host(QWidget *parent)
 	layout->setAlignment(Qt::AlignTop);
 	layout->setContentsMargins(0, 0, 0, 0);
 	scroll->setLayout(layout);
+	utils::addFormSpacer(layout);
 
 	QFormLayout *generalSection = utils::addFormSection(layout);
 	m_titleEdit = new QLineEdit;
@@ -62,6 +115,9 @@ Host::Host(QWidget *parent)
 	m_passwordEdit->setToolTip(
 		tr("Optional. If left blank, no password will be needed "
 		   "to join this session."));
+	connect(
+		m_passwordEdit, &QLineEdit::textChanged, this,
+		&Host::updateHostEnabled);
 	passwordLayout->addWidget(m_passwordEdit, 1);
 
 	QPushButton *generatePasswordButton = new QPushButton(tr("Generate"));
@@ -76,9 +132,16 @@ Host::Host(QWidget *parent)
 	m_nsfmBox = new QCheckBox{tr("Not suitable for minors (NSFM)")};
 	m_nsfmBox->setToolTip(
 		tr("Marks the session as having age-restricted content."));
-	layout->addWidget(m_nsfmBox);
+	generalSection->addRow(nullptr, m_nsfmBox);
 
 	utils::addFormSeparator(layout);
+
+	QHBoxLayout *remoteLayout = new QHBoxLayout;
+	layout->addLayout(remoteLayout);
+
+	QRadioButton *useRemoteRadio = new QRadioButton{tr("Host at:")};
+	useRemoteRadio->setToolTip(tr("Use an external dedicated server"));
+	remoteLayout->addWidget(useRemoteRadio);
 
 	QRadioButton *useLocalRadio = new QRadioButton{tr("Host on this computer")};
 	useLocalRadio->setToolTip(tr("Use Drawpile's built-in server"));
@@ -96,13 +159,6 @@ Host::Host(QWidget *parent)
 		utils::formNote(notAvailableMessage, QSizePolicy::RadioButton));
 	utils::addFormSpacer(layout);
 #endif
-
-	QHBoxLayout *remoteLayout = new QHBoxLayout;
-	layout->addLayout(remoteLayout);
-
-	QRadioButton *useRemoteRadio = new QRadioButton{tr("Host at:")};
-	useRemoteRadio->setToolTip(tr("Use an external dedicated server"));
-	remoteLayout->addWidget(useRemoteRadio);
 
 	m_useGroup = new QButtonGroup{this};
 	m_useGroup->addButton(useLocalRadio, USE_LOCAL);
@@ -218,6 +274,14 @@ void Host::setHostEnabled(bool enabled)
 
 void Host::updateHostEnabled()
 {
+	utils::ScopedUpdateDisabler disabler(this);
+	bool missingTitle = m_titleEdit->text().trimmed().isEmpty();
+	bool isPublic = m_passwordEdit->text().isEmpty();
+	bool isLocal = m_useGroup->checkedId() == USE_LOCAL;
+	m_titleNote->setVisible(missingTitle);
+	m_passwordNote->setVisible(isPublic);
+	m_localHostNote->setVisible(isLocal);
+	m_notes->setVisible(missingTitle || isPublic || isLocal);
 	emit enableHost(canHost());
 }
 
