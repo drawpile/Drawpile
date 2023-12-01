@@ -40,6 +40,7 @@ signals:
 		const QString &remoteAddress);
 
 private slots:
+	void generatePassword();
 	void updateNsfmBasedOnTitle();
 	void updateListServers();
 	void updateRemoteHosts();

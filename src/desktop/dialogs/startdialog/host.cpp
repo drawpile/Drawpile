@@ -15,7 +15,9 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QPalette>
+#include <QPushButton>
 #include <QRadioButton>
+#include <QRandomGenerator>
 #include <QScrollArea>
 #include <QVBoxLayout>
 
@@ -53,11 +55,23 @@ Host::Host(QWidget *parent)
 	connect(
 		m_titleEdit, &QLineEdit::textChanged, this, &Host::updateHostEnabled);
 
+	QHBoxLayout *passwordLayout = new QHBoxLayout;
+	passwordLayout->setContentsMargins(0, 0, 0, 0);
+
 	m_passwordEdit = new QLineEdit;
 	m_passwordEdit->setToolTip(
 		tr("Optional. If left blank, no password will be needed "
 		   "to join this session."));
-	generalSection->addRow(tr("Password:"), m_passwordEdit);
+	passwordLayout->addWidget(m_passwordEdit, 1);
+
+	QPushButton *generatePasswordButton = new QPushButton(tr("Generate"));
+	generatePasswordButton->setToolTip(tr("Generates a random password."));
+	connect(
+		generatePasswordButton, &QAbstractButton::clicked, this,
+		&Host::generatePassword);
+	passwordLayout->addWidget(generatePasswordButton);
+
+	generalSection->addRow(tr("Password:"), passwordLayout);
 
 	m_nsfmBox = new QCheckBox{tr("Not suitable for minors (NSFM)")};
 	m_nsfmBox->setToolTip(
@@ -205,6 +219,21 @@ void Host::setHostEnabled(bool enabled)
 void Host::updateHostEnabled()
 {
 	emit enableHost(canHost());
+}
+
+void Host::generatePassword()
+{
+	// Passwords are just a mechanism to facilitate invite-only sessions.
+	// They're not secret and are meant to be shared with anyone who wants to
+	// join the session, so we don't need cryptographic security for them.
+	QString characters = QStringLiteral("abcdefghijklmnopqrstuvwxyz0123456789");
+	QString password;
+	int length = QRandomGenerator::global()->bounded(8, 12);
+	for(int i = 0; i < length; ++i) {
+		password.append(characters[QRandomGenerator::global()->bounded(
+			0, characters.length())]);
+	}
+	dpApp().settings().setLastSessionPassword(password);
 }
 
 void Host::updateNsfmBasedOnTitle()
