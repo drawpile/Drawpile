@@ -2733,16 +2733,18 @@ void MainWindow::updateFreehandToolButton(int brushMode)
 void MainWindow::handleFreehandToolButtonClicked()
 {
 	QSignalBlocker blocker(m_freehandButton);
-	switch(m_dockToolSettings->brushSettings()->getBrushMode()) {
-	case tools::BrushSettings::EraseMode:
-	case tools::BrushSettings::AlphaLockMode:
-		m_dockToolSettings->brushSettings()->resetBrushMode();
-		m_freehandButton->setChecked(m_freehandAction->isChecked());
-		break;
-	default:
-		m_freehandAction->trigger();
-		break;
+	if(m_dockToolSettings->currentTool() == tools::Tool::FREEHAND) {
+		switch(m_dockToolSettings->brushSettings()->getBrushMode()) {
+		case tools::BrushSettings::EraseMode:
+		case tools::BrushSettings::AlphaLockMode:
+			m_dockToolSettings->brushSettings()->resetBrushMode();
+			m_freehandButton->setChecked(m_freehandAction->isChecked());
+			return;
+		default:
+			break;
+		}
 	}
+	m_freehandAction->trigger();
 }
 
 void MainWindow::activeAnnotationChanged(int annotationId)

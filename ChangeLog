@@ -49,6 +49,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Make onion skin color partially transparent by default so that they don't turn into solid blocks on colored stuff. Thanks BulletPepper for reporting.
  * Fix: Clarify the host dialog by adding additional messages that explain common sources of confusion, such as the title being required, the password being necessary to host a private session and "host on this computer" requiring port forwarding.
  * Fix: Prevent jittering pixels on the canvas at certain zooms and rotations. Thanks Bluestrings, Meru and taiyu for reporting this. Also thanks Meru for actually finding the solution and contributing this fix.
+ * Fix: Don't reset brush mode when clicking on the freehand tool button from a different tool. Thanks Big Piston for reporting.
 
 2023-11-12 Version 2.2.0-beta.10
  * Fix: Don't deadlock on first startup. Thanks to Hail, lowontrash, FARBOL234, Dorokinyo and hamlin for reporting.
