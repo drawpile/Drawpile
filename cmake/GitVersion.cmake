@@ -39,6 +39,7 @@ function(git_version_configure_file in_file out_file)
 					"-DGIT_VERSION_OUT_FILE=${out_file}"
 					"-DGIT_VERSION_BUILD_LABEL=${ARG_BUILD_LABEL}"
 					"-DGIT_VERSION_VAR=${ARG_VAR}"
+					"-DGIT_VERSION_FALLBACK=${PROJECT_VERSION}"
 					-P "${CMAKE_CURRENT_FUNCTION_LIST_FILE}"
 			)
 		else()
@@ -87,6 +88,10 @@ endfunction()
 
 if(CMAKE_SCRIPT_MODE_FILE)
 	git_version_describe(version)
+	if(NOT version)
+		message(WARNING "Couldn't determine git version; falling back to static versioning")
+		set(version "${GIT_VERSION_FALLBACK}")
+	endif()
 	_git_make_version(${GIT_VERSION_VAR} "${version}" "${GIT_VERSION_BUILD_LABEL}")
 	configure_file("${GIT_VERSION_IN_FILE}" "${GIT_VERSION_OUT_FILE}")
 endif()
