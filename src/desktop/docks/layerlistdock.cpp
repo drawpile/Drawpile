@@ -812,7 +812,7 @@ QFlags<widgets::CanvasView::Lock> LayerList::currentLayerLock() const
 		if(idx.isValid()) {
 			const canvas::LayerListItem &item =
 				idx.data().value<canvas::LayerListItem>();
-			if(item.hidden) {
+			if(idx.data(canvas::LayerListModel::IsHiddenInTreeRole).toBool()) {
 				lock.setFlag(Lock::LayerHidden);
 			}
 			if(item.group) {

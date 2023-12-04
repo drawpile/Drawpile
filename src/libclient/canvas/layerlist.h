@@ -90,6 +90,7 @@ public:
 		IsGroupRole,
 		IsEmptyRole,
 		IsHiddenInFrameRole,
+		IsHiddenInTreeRole,
 	};
 
 	LayerListModel(QObject *parent=nullptr);
