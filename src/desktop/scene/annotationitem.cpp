@@ -3,8 +3,8 @@
 #include <QApplication>
 #include <QPalette>
 #include <QPainter>
-
 #include "desktop/scene/annotationitem.h"
+#include "libclient/utils/annotations.h"
 
 namespace drawingboard {
 
@@ -144,37 +144,13 @@ void AnnotationItem::paintHiddenBorder(QPainter *painter)
 	painter->drawRect(m_rect);
 }
 
-static void paintAnnotation(QPainter *painter, const QRectF &paintrect, const QColor &background, const QString &text, int valign)
-{
-	painter->save();
-	painter->translate(paintrect.topLeft());
-
-	const QRectF rect0(QPointF(), paintrect.size());
-
-	painter->fillRect(rect0, background);
-
-	QTextDocument doc;
-	doc.setHtml(text);
-	doc.setTextWidth(rect0.width());
-
-	QPointF offset;
-	switch(valign) {
-		case 1: offset.setY((rect0.height() - doc.size().height()) / 2); break;
-		case 2: offset.setY(rect0.height() - doc.size().height()); break;
-	}
-	painter->translate(offset);
-
-	doc.drawContents(painter, QRectF(-offset, rect0.size()));
-
-	painter->restore();
-}
-
 QImage AnnotationItem::toImage() const
 {
 	QImage img(m_rect.size().toSize(), QImage::Format_ARGB32_Premultiplied);
 	img.fill(0);
 	QPainter painter(&img);
-	paintAnnotation(&painter, QRectF(0, 0, m_rect.width(), m_rect.height()), m_color, text(), m_valign);
+	utils::paintAnnotation(
+		&painter, m_rect.size().toSize(), m_color, text(), m_valign);
 	return img;
 }
 

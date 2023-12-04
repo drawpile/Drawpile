@@ -31,6 +31,9 @@ signals:
 	void saveComplete(const QString &error);
 
 private:
+	static bool
+	bakeAnnotation(void *user, DP_Annotation *a, unsigned char *out);
+
 	drawdance::CanvasState m_canvasState;
 	DP_SaveImageType m_type;
 	QByteArray m_path;

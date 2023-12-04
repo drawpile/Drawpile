@@ -85,6 +85,11 @@ int Annotation::height() const
     return DP_annotation_height(m_data);
 }
 
+QSize Annotation::size() const
+{
+    return QSize(width(), height());
+}
+
 QRect Annotation::bounds() const
 {
     return QRect{x(), y(), width(), height()};

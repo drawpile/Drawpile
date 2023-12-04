@@ -717,16 +717,64 @@ static DP_SaveResult save_jpeg(DP_Image *img, DP_Output *output)
     }
 }
 
-static DP_SaveResult
-save_flat_image(DP_CanvasState *cs, DP_Rect *crop, const char *path,
-                DP_SaveResult (*save_fn)(DP_Image *, DP_Output *),
-                DP_ViewModeFilter vmf)
+static void blend_annotation(DP_Pixel8 *restrict dst, DP_Rect dst_rect,
+                             const DP_Pixel8 *restrict src, DP_Rect src_rect)
+{
+    int dst_width = DP_rect_width(dst_rect);
+    int src_x = DP_rect_x(src_rect);
+    int src_y = DP_rect_y(src_rect);
+    int src_width = DP_rect_width(src_rect);
+    DP_Rect rect = DP_rect_intersection(dst_rect, src_rect);
+    int stride = DP_rect_width(rect);
+    for (int y = rect.y1; y <= rect.y2; ++y) {
+        DP_blend_pixels8(dst + dst_width * y + rect.x1,
+                         src + (y - src_y) * src_width + (rect.x1 - src_x),
+                         stride, 255);
+    }
+}
+
+static void bake_annotations(DP_AnnotationList *al, DP_DrawContext *dc,
+                             DP_Image *img,
+                             DP_SaveBakeAnnotationFn bake_annotation,
+                             void *user)
+{
+    int annotation_count = DP_annotation_list_count(al);
+    DP_Rect img_rect =
+        DP_rect_make(0, 0, DP_image_width(img), DP_image_height(img));
+    for (int i = 0; i < annotation_count; ++i) {
+        DP_Annotation *a = DP_annotation_list_at_noinc(al, i);
+        int width = DP_annotation_width(a);
+        int height = DP_annotation_height(a);
+        DP_Rect annotation_rect =
+            DP_rect_make(DP_annotation_x(a), DP_annotation_y(a), width, height);
+        if (DP_rect_intersects(img_rect, annotation_rect)) {
+            size_t size = DP_int_to_size(width) * DP_int_to_size(height)
+                        * sizeof(DP_Pixel8);
+            void *buffer = DP_draw_context_pool_require(dc, size);
+            if (bake_annotation(user, a, buffer)) {
+                blend_annotation(DP_image_pixels(img), img_rect, buffer,
+                                 annotation_rect);
+            }
+        }
+    }
+}
+
+static DP_SaveResult save_flat_image(
+    DP_CanvasState *cs, DP_DrawContext *dc, DP_Rect *crop, const char *path,
+    DP_SaveResult (*save_fn)(DP_Image *, DP_Output *), DP_ViewModeFilter vmf,
+    DP_SaveBakeAnnotationFn bake_annotation, void *user)
 {
     DP_Image *img = DP_canvas_state_to_flat_image(
         cs, DP_FLAT_IMAGE_RENDER_FLAGS, crop, &vmf);
     if (!img) {
         DP_warn("Save: %s", DP_error());
         return DP_SAVE_RESULT_FLATTEN_ERROR;
+    }
+
+    if (bake_annotation) {
+        DP_ASSERT(dc);
+        DP_AnnotationList *al = DP_canvas_state_annotations_noinc(cs);
+        bake_annotations(al, dc, img, bake_annotation, user);
     }
 
     DP_Output *output = DP_file_output_save_new_from_path(path);
@@ -743,17 +791,20 @@ save_flat_image(DP_CanvasState *cs, DP_Rect *crop, const char *path,
 
 
 static DP_SaveResult save(DP_CanvasState *cs, DP_DrawContext *dc,
-                          DP_SaveImageType type, const char *path)
+                          DP_SaveImageType type, const char *path,
+                          DP_SaveBakeAnnotationFn bake_annotation, void *user)
 {
     switch (type) {
     case DP_SAVE_IMAGE_ORA:
         return save_ora(cs, path, dc);
     case DP_SAVE_IMAGE_PNG:
-        return save_flat_image(cs, NULL, path, save_png,
-                               DP_view_mode_filter_make_default());
+        return save_flat_image(cs, dc, NULL, path, save_png,
+                               DP_view_mode_filter_make_default(),
+                               bake_annotation, user);
     case DP_SAVE_IMAGE_JPEG:
-        return save_flat_image(cs, NULL, path, save_jpeg,
-                               DP_view_mode_filter_make_default());
+        return save_flat_image(cs, dc, NULL, path, save_jpeg,
+                               DP_view_mode_filter_make_default(),
+                               bake_annotation, user);
     case DP_SAVE_IMAGE_PSD:
         return DP_save_psd(cs, path, dc);
     default:
@@ -763,12 +814,12 @@ static DP_SaveResult save(DP_CanvasState *cs, DP_DrawContext *dc,
 }
 
 DP_SaveResult DP_save(DP_CanvasState *cs, DP_DrawContext *dc,
-                      DP_SaveImageType type, const char *path)
-
+                      DP_SaveImageType type, const char *path,
+                      DP_SaveBakeAnnotationFn bake_annotation, void *user)
 {
     if (cs && path) {
         DP_PERF_BEGIN_DETAIL(fn, "image", "path=%s", path);
-        DP_SaveResult result = save(cs, dc, type, path);
+        DP_SaveResult result = save(cs, dc, type, path, bake_annotation, user);
         DP_PERF_END(fn);
         return result;
     }
@@ -842,8 +893,8 @@ static char *save_frame(struct DP_SaveFrameContext *c, DP_ViewModeBuffer *vmb,
     DP_CanvasState *cs = c->cs;
     char *path = format_frame_path(c, frame_index);
     DP_SaveResult result = save_flat_image(
-        cs, c->crop, path, save_png,
-        DP_view_mode_filter_make_frame(vmb, cs, frame_index, NULL));
+        cs, NULL, c->crop, path, save_png,
+        DP_view_mode_filter_make_frame(vmb, cs, frame_index, NULL), NULL, NULL);
     set_error_result(c, result);
     return path;
 }

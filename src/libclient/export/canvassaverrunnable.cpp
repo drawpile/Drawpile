@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "libclient/export/canvassaverrunnable.h"
 #include "libclient/canvas/paintengine.h"
+#include "libclient/drawdance/annotation.h"
 #include "libclient/drawdance/global.h"
+#include "libclient/utils/annotations.h"
 
 CanvasSaverRunnable::CanvasSaverRunnable(
 	const drawdance::CanvasState &canvasState, DP_SaveImageType type,
@@ -18,7 +20,8 @@ void CanvasSaverRunnable::run()
 	const char *path = m_path.constData();
 	qDebug("Saving to '%s'", path);
 	drawdance::DrawContext dc = drawdance::DrawContextPool::acquire();
-	DP_SaveResult result = DP_save(m_canvasState.get(), dc.get(), m_type, path);
+	DP_SaveResult result = DP_save(
+		m_canvasState.get(), dc.get(), m_type, path, bakeAnnotation, this);
 	emit saveComplete(saveResultToErrorString(result));
 }
 
@@ -43,4 +46,20 @@ QString CanvasSaverRunnable::saveResultToErrorString(DP_SaveResult result)
 		return tr("Internal error during saving.");
 	}
 	return tr("Unknown error.");
+}
+
+bool CanvasSaverRunnable::bakeAnnotation(
+	void *user, DP_Annotation *a, unsigned char *out)
+{
+	Q_UNUSED(user);
+	drawdance::Annotation annotation = drawdance::Annotation::inc(a);
+	QImage img(
+		out, annotation.width(), annotation.height(),
+		QImage::Format_ARGB32_Premultiplied);
+	img.fill(0);
+	QPainter painter(&img);
+	utils::paintAnnotation(
+		&painter, annotation.size(), annotation.backgroundColor(),
+		annotation.text(), annotation.valign());
+	return true;
 }

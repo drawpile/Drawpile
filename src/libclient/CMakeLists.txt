@@ -151,6 +151,8 @@ target_sources(dpclient PRIVATE
 	tools/utils.h
 	tools/zoom.cpp
 	tools/zoom.h
+	utils/annotations.cpp
+	utils/annotations.h
 	utils/avatarlistmodel.cpp
 	utils/avatarlistmodel.h
 	utils/avatarlistmodeldelegate.h

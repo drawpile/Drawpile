@@ -34,6 +34,7 @@ public:
     int y() const;
     int width() const;
     int height() const;
+    QSize size() const;
     QRect bounds() const;
 
     bool protect() const;
