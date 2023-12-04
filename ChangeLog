@@ -53,6 +53,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Render annotations when saving to PNG and JPEG. Thanks chrystalclear and Rykuta for reporting.
  * Fix: Don't reset annotation settings to weird values when there's no text. Thanks Blozzom for reporting.
  * Fix: When hiding a layer group, indicate that all containing layers are hidden too. Thanks Missile for reporting.
+ * Fix: Take scroll into account when reordering tracks. Thanks Meru for reporting.
 
 2023-11-12 Version 2.2.0-beta.10
  * Fix: Don't deadlock on first startup. Thanks to Hail, lowontrash, FARBOL234, Dorokinyo and hamlin for reporting.

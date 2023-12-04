@@ -340,7 +340,8 @@ struct TimelineWidget::Private {
 
 	int trackDropIndex(int y) const
 	{
-		return qBound(0, (y + rowHeight / 2) / rowHeight - 1, trackCount());
+		return qBound(
+			0, (y + rowHeight / 2 + yScroll) / rowHeight - 1, trackCount());
 	}
 
 	const QIcon &getVisibilityIcon(const canvas::TimelineTrack &track)
@@ -839,7 +840,8 @@ void TimelineWidget::paintEvent(QPaintEvent *)
 
 	if(d->dragHover == Drag::Track) {
 		painter.setPen(textColor);
-		int y = d->trackDropIndex(d->dragPos.y()) * rowHeight + rowHeight;
+		int y = d->trackDropIndex(d->dragPos.y()) * rowHeight + rowHeight -
+				d->yScroll;
 		painter.drawLine(0, y, headerWidth, y);
 	} else if(d->dragHover == Drag::KeyFrame) {
 		Target target = getMouseTarget(d->dragPos);
