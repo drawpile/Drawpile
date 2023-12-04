@@ -28,7 +28,7 @@
         devOnlyDepends = with pkgs; [
           rustfmt
           clippy
-
+          
           # We use rust as devOnly dependency
           # Since rustPlatform.buildRustPackage takes care of rust in compile time enviroment
           # (we use buildRustPackage so we do not have to deal with pain of deravations being offline)
@@ -45,6 +45,7 @@
         ];
 
         qt5Dependencies = with pkgs; [
+          libsForQt5.karchive
           qt5.qtbase
           qt5.qtsvg
           qt5.qttools
@@ -66,7 +67,7 @@
         ];
       in rec {
         mkDrawpile = { buildClient ? true, buildServer ? true, useQt5 ? false
-          , useMold ? true, buildType ? "Release", }:
+          , buildType ? "Release", }:
           let
             qtDependencies =
               if useQt5 then qt5Dependencies else qt6Dependencies;
@@ -86,7 +87,8 @@
             cargoLock = { lockFile = ./Cargo.lock; };
 
             configurePhase = ''
-              cmake -S ./ -B Drawpile-build -DCMAKE_BUILD_TYPE=${buildType} \
+              cmake -S ./ -B Drawpile-build \
+                -DCMAKE_BUILD_TYPE=${buildType} \
                 -DBUILD_VERSION=$(git describe --dirty) -DCLIENT=${clientBuildString} \
                 -DSERVER=${serverBuildString} \
                 -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON \
