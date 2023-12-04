@@ -89,7 +89,7 @@
             configurePhase = ''
               cmake -S ./ -B Drawpile-build \
                 -DCMAKE_BUILD_TYPE=${buildType} \
-                -DBUILD_VERSION=$(git describe --dirty) -DCLIENT=${clientBuildString} \
+                -DCLIENT=${clientBuildString} \
                 -DSERVER=${serverBuildString} \
                 -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON \
                 -DCMAKE_INSTALL_PREFIX=$out
