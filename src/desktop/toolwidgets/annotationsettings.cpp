@@ -169,11 +169,7 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 	}
 
 	// Set initial content format
-	QTextCharFormat fmt;
-	compat::setFontFamily(fmt, m_ui->font->currentText());
-	fmt.setFontPointSize(m_ui->size->value());
-	fmt.setForeground(m_ui->btnTextColor->color());
-	m_ui->content->setCurrentCharFormat(fmt);
+	resetContentFormat();
 
 	setUiEnabled(false);
 
@@ -217,42 +213,48 @@ void AnnotationSettings::setEditorBackgroundColor(const QColor &color)
 
 void AnnotationSettings::updateStyleButtons()
 {
-	QTextBlockFormat bf = m_ui->content->textCursor().blockFormat();
-	switch(bf.alignment()) {
-	case Qt::AlignLeft:
-		m_ui->halign->setIcon(QIcon::fromTheme("format-justify-left"));
-		break;
-	case Qt::AlignCenter:
-		m_ui->halign->setIcon(QIcon::fromTheme("format-justify-center"));
-		break;
-	case Qt::AlignJustify:
-		m_ui->halign->setIcon(QIcon::fromTheme("format-justify-fill"));
-		break;
-	case Qt::AlignRight:
-		m_ui->halign->setIcon(QIcon::fromTheme("format-justify-right"));
-		break;
-	default:
-		break;
+	if(m_ui->content->document()->isEmpty()) {
+		// Qt inexplicably resets the content format to some goofy default
+		// values when the user clears all text, so undo that silliness.
+		resetContentFormat();
+	} else {
+		QTextBlockFormat bf = m_ui->content->textCursor().blockFormat();
+		switch(bf.alignment()) {
+		case Qt::AlignLeft:
+			m_ui->halign->setIcon(QIcon::fromTheme("format-justify-left"));
+			break;
+		case Qt::AlignCenter:
+			m_ui->halign->setIcon(QIcon::fromTheme("format-justify-center"));
+			break;
+		case Qt::AlignJustify:
+			m_ui->halign->setIcon(QIcon::fromTheme("format-justify-fill"));
+			break;
+		case Qt::AlignRight:
+			m_ui->halign->setIcon(QIcon::fromTheme("format-justify-right"));
+			break;
+		default:
+			break;
+		}
+
+		QTextCharFormat cf = m_ui->content->textCursor().charFormat();
+		m_ui->btnTextColor->setColor(cf.foreground().color());
+
+		m_ui->size->blockSignals(true);
+		if(cf.fontPointSize() < 1)
+			m_ui->size->setValue(12);
+		else
+			m_ui->size->setValue(cf.fontPointSize());
+		m_ui->size->blockSignals(false);
+
+		m_ui->font->blockSignals(true);
+		m_ui->font->setCurrentFont(cf.font());
+		m_ui->font->blockSignals(false);
+
+		m_ui->italic->setChecked(cf.fontItalic());
+		m_ui->bold->setChecked(cf.fontWeight() > QFont::Normal);
+		m_ui->underline->setChecked(cf.fontUnderline());
+		m_ui->strikethrough->setChecked(cf.font().strikeOut());
 	}
-
-	QTextCharFormat cf = m_ui->content->textCursor().charFormat();
-	m_ui->btnTextColor->setColor(cf.foreground().color());
-
-	m_ui->size->blockSignals(true);
-	if(cf.fontPointSize() < 1)
-		m_ui->size->setValue(12);
-	else
-		m_ui->size->setValue(cf.fontPointSize());
-	m_ui->size->blockSignals(false);
-
-	m_ui->font->blockSignals(true);
-	m_ui->font->setCurrentFont(cf.font());
-	m_ui->font->blockSignals(false);
-
-	m_ui->italic->setChecked(cf.fontItalic());
-	m_ui->bold->setChecked(cf.fontWeight() > QFont::Normal);
-	m_ui->underline->setChecked(cf.fontUnderline());
-	m_ui->strikethrough->setChecked(cf.font().strikeOut());
 }
 
 void AnnotationSettings::toggleBold(bool bold)
@@ -285,38 +287,49 @@ void AnnotationSettings::changeAlignment(const QAction *action)
 
 void AnnotationSettings::updateFontIfUniform()
 {
-	bool uniformFontFamily = true;
-	bool uniformSize = true;
-	bool uniformColor = true;
-
 	QTextDocument *doc = m_ui->content->document();
+	if(doc->isEmpty()) {
+		resetContentFormat();
+	} else {
+		bool uniformFontFamily = true;
+		bool uniformSize = true;
+		bool uniformColor = true;
+		QTextBlock b = doc->firstBlock();
+		QTextCharFormat fmt1;
+		bool first = true;
 
-	QTextBlock b = doc->firstBlock();
-	QTextCharFormat fmt1;
-	bool first = true;
+		// Check all character formats in all blocks. If they are the same,
+		// we can reset the font for the wole document.
+		while(b.isValid()) {
+			const auto textFormats = b.textFormats();
+			for(const QTextLayout::FormatRange &fr : textFormats) {
 
-	// Check all character formats in all blocks. If they are the same,
-	// we can reset the font for the wole document.
-	while(b.isValid()) {
-		const auto textFormats = b.textFormats();
-		for(const QTextLayout::FormatRange &fr : textFormats) {
+				if(first) {
+					fmt1 = fr.format;
+					first = false;
 
-			if(first) {
-				fmt1 = fr.format;
-				first = false;
-
-			} else {
-				uniformFontFamily &=
-					compat::fontFamily(fr.format) == compat::fontFamily(fmt1);
-				uniformSize &= qFuzzyCompare(
-					fr.format.fontPointSize(), fmt1.fontPointSize());
-				uniformColor &= fr.format.foreground() == fmt1.foreground();
+				} else {
+					uniformFontFamily &= compat::fontFamily(fr.format) ==
+										 compat::fontFamily(fmt1);
+					uniformSize &= qFuzzyCompare(
+						fr.format.fontPointSize(), fmt1.fontPointSize());
+					uniformColor &= fr.format.foreground() == fmt1.foreground();
+				}
 			}
+			b = b.next();
 		}
-		b = b.next();
-	}
 
-	resetContentFont(uniformFontFamily, uniformSize, uniformColor);
+		resetContentFont(uniformFontFamily, uniformSize, uniformColor);
+	}
+}
+
+void AnnotationSettings::resetContentFormat()
+{
+	QTextCharFormat fmt;
+	compat::setFontFamily(fmt, m_ui->font->currentText());
+	fmt.setFontPointSize(m_ui->size->value());
+	fmt.setForeground(m_ui->btnTextColor->color());
+	m_ui->content->setCurrentCharFormat(fmt);
 }
 
 void AnnotationSettings::resetContentFont(
@@ -361,8 +374,9 @@ void AnnotationSettings::setSelectionId(uint16_t id)
 		m_ui->content->setHtml(text);
 		m_ui->btnBackground->setColor(a->color());
 		setEditorBackgroundColor(a->color());
-		if(text.isEmpty())
-			resetContentFont(true, true, true);
+		if(text.isEmpty()) {
+			resetContentFormat();
+		}
 
 		int align = 0;
 		switch(a->valign()) {

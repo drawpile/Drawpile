@@ -73,6 +73,7 @@ protected:
 	QWidget *createUiWidget(QWidget *parent) override;
 
 private:
+	void resetContentFormat();
 	void resetContentFont(bool resetFamily, bool resetSize, bool resetColor);
 	void setFontFamily(QTextCharFormat &fmt);
 	void setUiEnabled(bool enabled);

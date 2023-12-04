@@ -51,6 +51,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Prevent jittering pixels on the canvas at certain zooms and rotations. Thanks Bluestrings, Meru and taiyu for reporting this. Also thanks Meru for actually finding the solution and contributing this fix.
  * Fix: Don't reset brush mode when clicking on the freehand tool button from a different tool. Thanks Big Piston for reporting.
  * Fix: Render annotations when saving to PNG and JPEG. Thanks chrystalclear and Rykuta for reporting.
+ * Fix: Don't reset annotation settings to weird values when there's no text. Thanks Blozzom for reporting.
 
 2023-11-12 Version 2.2.0-beta.10
  * Fix: Don't deadlock on first startup. Thanks to Hail, lowontrash, FARBOL234, Dorokinyo and hamlin for reporting.
