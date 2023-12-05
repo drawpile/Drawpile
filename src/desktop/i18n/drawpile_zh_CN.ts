@@ -5934,7 +5934,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+29"/>
         <source>Log in with %1 account</source>
-        <translation>请使用 %1 的账号登录</translation>
+        <translation>使用 %1 的账号登录</translation>
     </message>
     <message>
         <location line="+71"/>
@@ -5949,7 +5949,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+523"/>
         <source>Enter the username and password for your account on this server. This is not your drawpile.net account!</source>
-        <translation>请输入在此服务器上你的账号用户名和密码. 并不是你在 drawpile.net 官网上的账号!</translation>
+        <translation>请输入你在此服务器上的账号用户名和密码. 并不是你在 drawpile.net 官网上的账号!</translation>
     </message>
     <message>
         <location line="-604"/>
@@ -6009,7 +6009,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+514"/>
         <source>Enter the username and password for your %1 account.</source>
-        <translation>请输入你 %1 账号的用户名和密码.</translation>
+        <translation>请输入你在 %1 上的账号用户名和密码.</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -7924,12 +7924,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Generate</source>
-        <translation type="unfinished"></translation>
+        <translation>生成</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Generates a random password.</source>
-        <translation type="unfinished"></translation>
+        <translation>生成一个随机密码.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -7964,17 +7964,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-135"/>
         <source>A session title is required.</source>
-        <translation type="unfinished"></translation>
+        <translation>需要填写房间名.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Without a password set, anyone can join your session! If you want to host a private session, choose a password or &lt;a href=&quot;#&quot;&gt;generate one&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>留空密码,任何人都可以加入! 如果你想创建私人的房间,请填写密码或者&lt;a href=&quot;#&quot;&gt;生成一个&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Hosting on your computer requires additional setup! &lt;a href=&quot;#&quot;&gt;Click here for instructions.&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>使用本机创建房间需要额外的设置! &lt;a href=&quot;#&quot;&gt;可以点击这里查看说明.&lt;/a&gt;</translation>
     </message>
     <message>
         <location line="+57"/>
@@ -8133,12 +8133,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+13"/>
         <source>The download page for Drawpile %1 should have opened in your browser. If not, please visit &lt;strong&gt;drawpile.net&lt;/strong&gt; manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile %1 的下载页面应该已经在你的浏览器中打开了.如果没有,请手动访问 &lt;strong&gt;drawpile.net&lt;/strong&gt; .</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>The download page for Drawpile %1 could not be opened, please visit &lt;strong&gt;drawpile.net&lt;/strong&gt; manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>Drawpile %1 的下载页面无法打开,请手动访问 &lt;strong&gt;drawpile.net&lt;/strong&gt; .</translation>
     </message>
 </context>
 <context>
