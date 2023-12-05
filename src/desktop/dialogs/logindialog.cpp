@@ -1431,7 +1431,7 @@ void LoginDialog::setExtAuthLoginExplanation()
 {
 	d->setLoginExplanation(
 		tr("Enter the username and password for your %1 account.")
-			.arg(d->extauthurl.host()),
+			.arg(d->loginExtAuthUrl.host()),
 		false);
 }
 
