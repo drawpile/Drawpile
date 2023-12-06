@@ -329,17 +329,21 @@ void LoginDialog::Private::resetMode(Mode newMode)
 				explanation =
 					tr("Enter account password. If you don't have an account, "
 					   "you must register one. This server provides no "
-					   "information on how to do that.");
+					   "information on how to do that.")
+						.toHtmlEscaped();
 			} else {
 				explanation =
 					tr("Enter account password. If you don't have an account, "
 					   "you must register one on %1.")
-						.arg(extauthurl.host());
+						.arg(extauthurl.host())
+						.toHtmlEscaped();
 			}
 		} else {
-			explanation = tr(
-				"This username belongs to a registered account. If this isn't "
-				"your account, cancel and try again with a different name.");
+			explanation =
+				tr("This username belongs to a registered account. If this "
+				   "isn't "
+				   "your account, cancel and try again with a different name.")
+					.toHtmlEscaped();
 		}
 		setLoginExplanation(explanation, false);
 		break;
@@ -448,12 +452,9 @@ LoginDialog::Private::setupAuthPage(bool usernameEnabled, bool passwordVisible)
 void LoginDialog::Private::setLoginExplanation(
 	const QString &explanation, bool isError)
 {
-	QString content;
-	if(!explanation.isEmpty()) {
-		content = explanation.toHtmlEscaped();
-		if(isError) {
-			content = QStringLiteral("<strong>%1</strong>").arg(content);
-		}
+	QString content = explanation;
+	if(!explanation.isEmpty() && isError) {
+		content = QStringLiteral("<strong>%1</strong>").arg(content);
 	}
 	ui->authExplanationLabel->setHidden(content.isEmpty());
 	ui->authExplanationLabel->setText(content);
@@ -700,7 +701,8 @@ void LoginDialog::onLoginMethodGuestClicked()
 	d->resetMode(Mode::GuestLogin);
 	d->guestShortcut = false;
 	updateOkButtonEnabled();
-	d->setLoginExplanation(tr("Enter the name you want to use."), false);
+	d->setLoginExplanation(
+		tr("Enter the name you want to use.").toHtmlEscaped(), false);
 }
 
 void LoginDialog::updateAvatar(int row)
@@ -860,10 +862,12 @@ void LoginDialog::onLoginMethodChoiceNeeded(
 		d->resetMode(Mode::GuestLogin);
 		QString loginExplanation;
 		if(loginInfo.isEmpty()) {
-			loginExplanation = tr("Enter the name you want to use.");
+			loginExplanation =
+				tr("Enter the name you want to use.").toHtmlEscaped();
 		} else {
 			loginExplanation = tr("Enter the name you want to use. See %1 for "
 								  "more information about this server.")
+								   .toHtmlEscaped()
 								   .arg(formatLoginInfo(loginInfo));
 		}
 		d->setLoginExplanation(loginExplanation, false);
@@ -893,32 +897,38 @@ void LoginDialog::onLoginMethodMismatch(
 			setAuthLoginExplanation();
 		} else {
 			d->resetMode(Mode::GuestLogin);
-			explanation = tr(
-				"This username belongs to an account, pick a different one.");
+			explanation =
+				tr("This username belongs to an account, pick a different one.")
+					.toHtmlEscaped();
 		}
 	} else if(intent == net::LoginHandler::LoginMethod::Auth) {
 		d->resetMode(Mode::AuthLogin);
 		explanation =
 			tr("This username doesn't belong to an account on this server. "
-			   "This is not your drawpile.net account!");
+			   "This is not your drawpile.net account!")
+				.toHtmlEscaped();
 	} else if(intent == net::LoginHandler::LoginMethod::ExtAuth) {
 		d->resetMode(Mode::ExtAuthLogin);
 		if(extAuthFallback) {
 			explanation = tr("The %1 authentication is not working.")
-							  .arg(d->extauthurl.host());
+							  .arg(d->extauthurl.host())
+							  .toHtmlEscaped();
 		} else if(method == net::LoginHandler::LoginMethod::Guest) {
 			explanation = tr("This username doesn't belong an account on %1.")
-							  .arg(d->extauthurl.host());
+							  .arg(d->extauthurl.host())
+							  .toHtmlEscaped();
 		} else if(method == net::LoginHandler::LoginMethod::Auth) {
 			explanation =
 				tr("This username belongs to a server account, you "
 				   "can't use it to log in through %1 on this server.")
-					.arg(d->extauthurl.host());
+					.arg(d->extauthurl.host())
+					.toHtmlEscaped();
 		} else {
 			explanation =
 				tr("This username belongs to some other login method, you "
 				   "can't use it to log in through %1 on this server.")
-					.arg(d->extauthurl.host());
+					.arg(d->extauthurl.host())
+					.toHtmlEscaped();
 		}
 	} else {
 		qWarning("Unhandled intent %d", int(intent));
@@ -1423,7 +1433,8 @@ void LoginDialog::setAuthLoginExplanation()
 {
 	d->setLoginExplanation(
 		tr("Enter the username and password for your account on this server. "
-		   "This is not your drawpile.net account!"),
+		   "This is not your drawpile.net account!")
+			.toHtmlEscaped(),
 		false);
 }
 
@@ -1431,7 +1442,8 @@ void LoginDialog::setExtAuthLoginExplanation()
 {
 	d->setLoginExplanation(
 		tr("Enter the username and password for your %1 account.")
-			.arg(d->loginExtAuthUrl.host()),
+			.arg(d->loginExtAuthUrl.host())
+			.toHtmlEscaped(),
 		false);
 }
 

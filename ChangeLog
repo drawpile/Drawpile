@@ -55,6 +55,7 @@ Unreleased Version 2.2.0-pre
  * Fix: When hiding a layer group, indicate that all containing layers are hidden too. Thanks Missile for reporting.
  * Fix: Take scroll into account when reordering tracks. Thanks Meru for reporting.
  * Fix: Show proper ext-auth URL when prompting for a login. Thanks xxxx for reporting.
+ * Fix: Properly show server info URL as a clickable link when prompting for a login.
 
 2023-11-12 Version 2.2.0-beta.10
  * Fix: Don't deadlock on first startup. Thanks to Hail, lowontrash, FARBOL234, Dorokinyo and hamlin for reporting.
