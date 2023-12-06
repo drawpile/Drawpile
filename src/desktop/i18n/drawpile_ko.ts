@@ -613,7 +613,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Performance Profile</source>
-        <translation>행동 프로필</translation>
+        <translation>퍼포먼스 분석</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -901,7 +901,9 @@ to 64x64 pixels.</source>
         <source>Toggle between full range and subrange.
 Full range: [%1, %2]
 Subrange: [%3, %4]</source>
-        <translation type="unfinished"></translation>
+        <translation>최대 간격과 보조 간격을 정하십시오.
+최대 간격: [%1, %2]
+보조 간격: [%3, %4]</translation>
     </message>
     <message>
         <location line="+175"/>
@@ -911,12 +913,12 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+10"/>
         <source>&amp;Step up</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;다음</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Step &amp;down</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;이전</translation>
     </message>
 </context>
 <context>
@@ -1099,7 +1101,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+11"/>
         <source>Don&apos;t use any of these accounts.</source>
-        <translation>이런 종류의 계정을 이용하지 마십시오.</translation>
+        <translation>이 계정을 이용하지 않습니다.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1139,27 +1141,27 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+90"/>
         <source>Enter the &lt;b&gt;session password&lt;/b&gt;, &lt;i&gt;not&lt;/i&gt; your account password.</source>
-        <translation>계정 비밀번호가 &lt;i&gt;아닌&lt;/i&gt;,&#xa0;&lt;b&gt;세션 암호&lt;/b&gt;를 입력하십시오.</translation>
+        <translation>&lt;b&gt;세션 암호&lt;/b&gt;를 입력하세요, 계정 비밀번호가 &lt;i&gt;아닙니다&lt;/i&gt; .</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Catching up...</source>
-        <translation type="unfinished"></translation>
+        <translation>따라잡는 중...</translation>
     </message>
     <message>
         <location line="+50"/>
         <source>View old</source>
-        <translation type="unfinished"></translation>
+        <translation>과거 보기</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>View new</source>
-        <translation type="unfinished"></translation>
+        <translation>새것 보기</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Replace pinned certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>고정된 인증서 대체</translation>
     </message>
 </context>
 <context>
@@ -1167,29 +1169,29 @@ Subrange: [%3, %4]</source>
     <message>
         <location filename="../widgets/macmenu.cpp" line="+66"/>
         <source>Minimize</source>
-        <translation type="unfinished"></translation>
+        <translation>최소화</translation>
     </message>
     <message numerus="yes">
         <location line="+129"/>
         <source>You have %n images with unsaved changes. Do you want to review these changes before quitting?</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n개의 이미지가 저장이 되어있지 않습니다. 나가기 전에 변경사항을 다시 보겠습니까?</numerusform>
         </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>If you don&apos;t review your documents, all changes will be lost</source>
-        <translation type="unfinished"></translation>
+        <translation>문서를 확인하지 않으면, 모든 변경사항이 소실됩니다</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Review changes...</source>
-        <translation type="unfinished"></translation>
+        <translation>변경사항 다시보기...</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Discard changes</source>
-        <translation type="unfinished"></translation>
+        <translation>변경사항 버리기</translation>
     </message>
 </context>
 <context>
@@ -1197,327 +1199,328 @@ Subrange: [%3, %4]</source>
     <message>
         <location filename="../mainwindow.cpp" line="+291"/>
         <source>Server out of space</source>
-        <translation type="unfinished"></translation>
+        <translation>서버를 위한 여유공간이 없습니다</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Server is running out of history space and session has grown too large to automatically reset! (Limit is %1 MB)
 Simplify the canvas and reset manually before space runs out.</source>
-        <translation type="unfinished"></translation>
+        <translation>서버가 기록 여분을 잃고 있으며, 자동 초기화하기엔 세션이 너무 커요! (제한 용량은 %1 MB 입니다)
+용량이 차기 전에 캔버스를 최소화 하고 수동적으로 초기화 하시기 바랍니다.</translation>
     </message>
     <message>
         <location line="+265"/>
         <source>🙋 %1 joined!</source>
-        <translation type="unfinished"></translation>
+        <translation>🙋&#xa0;안녕, %1!</translation>
     </message>
     <message>
         <location line="+91"/>
         <location line="+1403"/>
         <source>Untitled</source>
-        <translation type="unfinished"></translation>
+        <translation>무제</translation>
     </message>
     <message>
         <location line="-1043"/>
         <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;이 핫키 &apos;%1&apos; 은 애매합니다, &lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;와 일치합니다</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Ambiguous Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>불명확한 핫키</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Fix</source>
-        <translation type="unfinished"></translation>
+        <translation>수정</translation>
     </message>
     <message>
         <location line="+153"/>
         <location line="+21"/>
         <source>Exit Drawpile</source>
-        <translation type="unfinished"></translation>
+        <translation>드로파일 종료</translation>
     </message>
     <message>
         <location line="-20"/>
         <source>You are still connected to a drawing session.</source>
-        <translation type="unfinished"></translation>
+        <translation>이 세션에 아직 연결되어 있습니다.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Exit anyway</source>
-        <translation type="unfinished"></translation>
+        <translation>그래도 종료</translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+22"/>
         <location line="+548"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>취소</translation>
     </message>
     <message>
         <location line="-555"/>
         <source>There are unsaved changes. Save them before exiting?</source>
-        <translation type="unfinished"></translation>
+        <translation>변경사항이 존재합니다. 저장하겠습니까?</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>저장</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Discard</source>
-        <translation type="unfinished"></translation>
+        <translation>버리기</translation>
     </message>
     <message>
         <location line="+249"/>
         <source>Opening file…</source>
-        <translation type="unfinished"></translation>
+        <translation>파일을 열고 있습니다…</translation>
     </message>
     <message>
         <location line="+132"/>
         <source>Saving...</source>
-        <translation type="unfinished"></translation>
+        <translation>저장 중...</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Couldn&apos;t save image</source>
-        <translation type="unfinished"></translation>
+        <translation>이미지를 저장할 수 없습니다</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Image saved</source>
-        <translation type="unfinished"></translation>
+        <translation>이미지 저장 완료</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>This session was hosted with an older version of Drawpile, some newer features won&apos;t be available. Other Drawpile versions will see different results, session resets may cause abrupt changes.</source>
-        <translation type="unfinished"></translation>
+        <translation>이 세션은 이전 버전의 드로파일에서 호스팅되었습니다. 일부 신버전 기능이 지원되지 않으며, 이전 프로그램쪽에서 다른 결과물을 볼 것입니다. 세션 초기화는 변형을 불러올 수 있습니다.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Compatibility Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>호환성 모드</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Session template saved</source>
-        <translation type="unfinished"></translation>
+        <translation>세션 템플릿 저장 완료</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t export session template</source>
-        <translation type="unfinished"></translation>
+        <translation>세션 템플릿을 내보낼 수 없습니다</translation>
     </message>
     <message>
         <location line="+68"/>
         <source>Saving animation...</source>
-        <translation type="unfinished"></translation>
+        <translation>애니메이션 저장 중…</translation>
     </message>
     <message>
         <location line="+54"/>
         <source>Pause</source>
-        <translation type="unfinished"></translation>
+        <translation>일시정지</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Play</source>
-        <translation type="unfinished"></translation>
+        <translation>재생</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Stop Recording</source>
-        <translation type="unfinished"></translation>
+        <translation>녹화 중지</translation>
     </message>
     <message>
         <location line="+3"/>
         <location line="+1545"/>
         <source>Record...</source>
-        <translation type="unfinished"></translation>
+        <translation>녹화 중...</translation>
     </message>
     <message>
         <location line="-1520"/>
         <source>Unsupported format.</source>
-        <translation type="unfinished"></translation>
+        <translation>미지원된 포맷입니다.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Couldn&apos;t start recording.</source>
-        <translation type="unfinished"></translation>
+        <translation>녹화를 시작할 수 없습니다.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unknown error.</source>
-        <translation type="unfinished"></translation>
+        <translation>알 수 없는 오류.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Error closing profile.</source>
-        <translation type="unfinished"></translation>
+        <translation>프로필 종료 중 오류가 발생했습니다.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Error opening profile.</source>
-        <translation type="unfinished"></translation>
+        <translation>파일을 여는 중 오류가 발생했습니다.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Error closing tablet event log.</source>
-        <translation type="unfinished"></translation>
+        <translation>타블렛 이벤트 로그를 닫는 중 오류가 발생했습니다.</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Error opening tablet event log.</source>
-        <translation type="unfinished"></translation>
+        <translation>타블렛 이벤트 로그를 여는 중 오류가 발생했습니다.</translation>
     </message>
     <message>
         <location line="+61"/>
         <source>No canvas to host! Create one or open a file.</source>
-        <translation type="unfinished"></translation>
+        <translation>호스팅에 필요한 캔버스가 없습니다! 새로 만들거나 파일을 여십시오.</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Invalid address</source>
-        <translation type="unfinished"></translation>
+        <translation>잘못된 주소</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Host Session</source>
-        <translation type="unfinished"></translation>
+        <translation>세션을 호스팅하기</translation>
     </message>
     <message>
         <location line="+70"/>
         <source>Really leave the session?</source>
-        <translation type="unfinished"></translation>
+        <translation>정말로 세션을 나가시겠습니까?</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Leave</source>
-        <translation type="unfinished"></translation>
+        <translation>나가기</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Stay</source>
-        <translation type="unfinished"></translation>
+        <translation>머물기</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>There is still unsent data! Please wait until transmission completes!</source>
-        <translation type="unfinished"></translation>
+        <translation>데이터가 충분히 발송되지 않았습니다! 전송이 끝날 때 까지 기다려 주십시오!</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>Become Operator</source>
-        <translation type="unfinished"></translation>
+        <translation>관리자 되기</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Enter operator password</source>
-        <translation type="unfinished"></translation>
+        <translation>관리자 암호를 입력하십시오</translation>
     </message>
     <message>
         <location line="+55"/>
         <source>Terminate session</source>
-        <translation type="unfinished"></translation>
+        <translation>세션 종료</translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+1836"/>
         <source>Terminate</source>
-        <translation type="unfinished"></translation>
+        <translation>종료</translation>
     </message>
     <message>
         <location line="-1753"/>
         <source>Could not connect to server</source>
-        <translation type="unfinished"></translation>
+        <translation>서버에 연결 할 수 없습니다</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Would you like to join the session instead?</source>
-        <translation type="unfinished"></translation>
+        <translation>이 서버에 대신 접속하기를 원하십니까?</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Join</source>
-        <translation type="unfinished"></translation>
+        <translation>접속</translation>
     </message>
     <message>
         <location line="+112"/>
         <source>Session blocked by parental controls</source>
-        <translation type="unfinished"></translation>
+        <translation>세션이 자녀보호기능에 의해 차단되어 있습니다</translation>
     </message>
     <message>
         <location line="+45"/>
         <source>Undo Limit... (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>실행취소 제한.. (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Change the session&apos;s undo limit, current limit is %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>세션의 실행취소 제한을 변경합니다, 현재의 제한은 %1 입니다.</translation>
     </message>
     <message>
         <location line="+421"/>
         <source>The image could not be loaded</source>
-        <translation type="unfinished"></translation>
+        <translation>이미지를 불러올 수 없습니다</translation>
     </message>
     <message>
         <location line="+234"/>
         <source>User #%1</source>
-        <translation type="unfinished"></translation>
+        <translation>사용자 #%1</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Stop Tablet Event Log</source>
-        <translation type="unfinished"></translation>
+        <translation>타블렛 이벤트 로그 중지</translation>
     </message>
     <message>
         <location line="+0"/>
         <location line="+987"/>
         <source>Tablet Event Log...</source>
-        <translation type="unfinished"></translation>
+        <translation>타블렛 이벤트 로그...</translation>
     </message>
     <message>
         <location line="-984"/>
         <source>Stop Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>분석 중지</translation>
     </message>
     <message>
         <location line="+0"/>
         <location line="+985"/>
         <source>Profile...</source>
-        <translation type="unfinished"></translation>
+        <translation>프로필...</translation>
     </message>
     <message>
         <location line="-978"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
-        <translation type="unfinished"></translation>
+        <translation>인위 랙을 설정합니다... (현재 %1 ms)</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Set Artificial Lag</source>
-        <translation type="unfinished"></translation>
+        <translation>인위 랙 설정</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Artificial lag in milliseconds (0 to disable):</source>
-        <translation type="unfinished"></translation>
+        <translation>밀리초 단위 인위 랙(0 로 해제):</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Artificial Disconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>인위 접속 해제</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Simulate a disconnect after this many seconds:</source>
-        <translation type="unfinished"></translation>
+        <translation>접속 해제 모의를 수초 후에 실험:</translation>
     </message>
     <message>
         <location line="+15"/>
         <location line="+940"/>
         <source>Record Debug Dumps</source>
-        <translation type="unfinished"></translation>
+        <translation>디버그 덤프 녹화</translation>
     </message>
     <message>
         <location line="-939"/>
@@ -1526,533 +1529,537 @@ Simplify the canvas and reset manually before space runs out.</source>
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
 
 Are you sure youwant to start recording debug dumps?</source>
-        <translation type="unfinished"></translation>
+        <translation>디버그 덤프는 로컬 원격으로 그리기 명령을 녹화할 것입니다. 네트워크 이슈 외에는 그닥 큰 활용이 되지 않습니다. 일반적인 녹화를 원할 경우, 파일 &gt; 녹화... 기능을 이용해 주세요.
+
+디버그 덤프 녹화는 다음 캔버스 초기화 후에 시작되며, 파일은 %1에 저장됩니다
+
+정말로 디버그 덤프를 녹화하시겠습니까?</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>About Drawpile</source>
-        <translation type="unfinished"></translation>
+        <translation>드로우파일에 대해</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>A collaborative drawing program.</source>
-        <translation type="unfinished"></translation>
+        <translation>그림을 함께 그릴 수 있게 하는 프로그램.</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Settings File:</source>
-        <translation type="unfinished"></translation>
+        <translation>설정 파일:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Tablet Input:</source>
-        <translation type="unfinished"></translation>
+        <translation>타블렛 입력:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Primary screen:</source>
-        <translation type="unfinished"></translation>
+        <translation>주요 화면:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%1x%2px² (%3x%4mm²)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1x%2px² (%3x%4mm²)</translation>
     </message>
     <message>
         <location line="+89"/>
         <source>Toggle Dock %1</source>
-        <translation type="unfinished"></translation>
+        <translation>도커 붙이기 %1</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Lock Docks</source>
-        <translation type="unfinished"></translation>
+        <translation>도커 고정</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Vertical Tabs on Sides</source>
-        <translation type="unfinished"></translation>
+        <translation>측면으에서 세로방향 탭으로</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Hide Docks</source>
-        <translation type="unfinished"></translation>
+        <translation>도커 숨기기</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Hold Shift to Arrange</source>
-        <translation type="unfinished"></translation>
+        <translation>SHIFT키로 재배열</translation>
     </message>
     <message>
         <location line="+9"/>
         <location filename="../widgets/macmenu.cpp" line="-169"/>
         <source>&amp;New</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;새 파일</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../widgets/macmenu.cpp" line="+1"/>
         <source>&amp;Open...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;열기...</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Close</source>
-        <translation type="unfinished"></translation>
+        <translation>닫기</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Save</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;저장</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Save &amp;As...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp; 로 저장...</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Autosave</source>
-        <translation type="unfinished"></translation>
+        <translation>자동 저장</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Start...</source>
-        <translation type="unfinished"></translation>
+        <translation>시작...</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../widgets/macmenu.cpp" line="+9"/>
         <source>&amp;Quit</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;종료</translation>
     </message>
     <message>
         <location line="+45"/>
         <location filename="../widgets/macmenu.cpp" line="-12"/>
         <source>&amp;File</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;파일</translation>
     </message>
     <message>
         <location line="+3"/>
         <location filename="../widgets/macmenu.cpp" line="+8"/>
         <source>Open &amp;Recent</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;최근 파일 열기</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>&amp;Import</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;불러오기</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>&amp;Export</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;내보내기</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>File Tools</source>
-        <translation type="unfinished"></translation>
+        <translation>파일 편집기</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>&amp;Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;실행 취소</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;다시 실행</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy selected area to the clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>선택영역이 클립보드에 복사됨</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy selected area, excluding the background, to the clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>배경을 제외한 선택영역이 클립보드에 저장됨</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy selected area of the current layer to the clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>현재 레이어의 선택 영역이 클립보드에 복사됨</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Cut selected area of the current layer to the clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>선택영역 클립보드로 잘라냄</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;붙여넣기</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Paste in View Center</source>
-        <translation type="unfinished"></translation>
+        <translation>보이는 화면 중앙에 붙여넣기</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Paste &amp;From File...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;파일에서 붙여넣기..</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Delete Empty Annotations</source>
-        <translation type="unfinished"></translation>
+        <translation>공백 어노테이션 제거</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Resi&amp;ze Canvas...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;캔버스 크기 재설정...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Set Session Background...</source>
-        <translation type="unfinished"></translation>
+        <translation>세션 배경 설정...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Set Local Background...</source>
-        <translation type="unfinished"></translation>
+        <translation>로컬 배경 설정...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Clear Local Background</source>
-        <translation type="unfinished"></translation>
+        <translation>로컬 배경 지우기</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Brush Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;브러시 설정</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../widgets/macmenu.cpp" line="+8"/>
         <source>Prefere&amp;nces</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;설정</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Select &amp;All</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;모두 선택</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Deselect</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;선택 해제</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Expand &amp;Up</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;위로 확장</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Expand &amp;Down</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;아래로 확장</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Expand &amp;Left</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;왼쪽으로 확장</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Expand &amp;Right</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;오른쪽으로 확장</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>삭제</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Fill Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>선택영역 채우기</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Recolor Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>선택영역 채색</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Color Erase Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>선택영여에서 지정색을 지우기</translation>
     </message>
     <message>
         <location line="+84"/>
         <source>&amp;Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;편집</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>&amp;Expand Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;캔버스 확장</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Canvas Background</source>
-        <translation type="unfinished"></translation>
+        <translation>캔버스 배경</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Tablet Driver</source>
-        <translation type="unfinished"></translation>
+        <translation>타블렛 드라이버</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Edit Tools</source>
-        <translation type="unfinished"></translation>
+        <translation>도구 편집</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>&amp;Layouts...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;레이아웃...</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Toolbars</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;툴바</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Docks</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;도커</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Chat</source>
-        <translation type="unfinished"></translation>
+        <translation>채팅창</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Move Canvas Left</source>
-        <translation type="unfinished"></translation>
+        <translation>캔버스 왼쪽으로 옮기기</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Move Canvas Right</source>
-        <translation type="unfinished"></translation>
+        <translation>캔버스 오른쪽으로 옮기기</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Move Canvas Up</source>
-        <translation type="unfinished"></translation>
+        <translation>캔버스 위로 옮기기</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Move Canvas Down</source>
-        <translation type="unfinished"></translation>
+        <translation>캔버스 아래로 옮기기</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Zoom &amp;In</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;확대</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Zoom &amp;Out</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;축소</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Normal Size</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;보통 크기</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Fit Page</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;화면에 맞추기</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Fit Page &amp;Width</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;너비로 화면에 맞추기</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Fit Page &amp;Height</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;놓이로 화면에 맟추기</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Reset Rotation</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;회전 초기화</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Rotate Canvas Clockwise</source>
-        <translation type="unfinished"></translation>
+        <translation>시계방향으로 캔버스 회전</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Rotate Canvas Counterclockwise</source>
-        <translation type="unfinished"></translation>
+        <translation>시계 역방향으로 캔버스 회전</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Mirror</source>
-        <translation type="unfinished"></translation>
+        <translation>가로 반전</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Flip</source>
-        <translation type="unfinished"></translation>
+        <translation>세로 반전</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show &amp;Annotations</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;어노테이션 표시</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Show User &amp;Pointers</source>
-        <translation type="unfinished"></translation>
+        <translation>유저 &amp;포인터 표시</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Show Names</source>
-        <translation type="unfinished"></translation>
+        <translation>이름 표시</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Show Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 표시</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Show Avatars</source>
-        <translation type="unfinished"></translation>
+        <translation>아바타 표시</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Show La&amp;ser Trails</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;레이저 흔적 표시</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Show Pixel &amp;Grid</source>
-        <translation type="unfinished"></translation>
+        <translation>픽셀 &amp;그리드 표시</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Full Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;풀스크린</translation>
     </message>
     <message>
         <location line="+86"/>
         <source>&amp;View</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;표시</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>&amp;Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;확대/축소</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Rotation</source>
-        <translation type="unfinished"></translation>
+        <translation>회전</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Normal View</source>
-        <translation type="unfinished"></translation>
+        <translation>일반 표시</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Show all layers normally</source>
-        <translation type="unfinished"></translation>
+        <translation>모든 레이어 평균적으로 표시</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Layer View</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 뷰</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Show only the current layer</source>
-        <translation type="unfinished"></translation>
+        <translation>현재 레이어만 보이기</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Frame View</source>
-        <translation type="unfinished"></translation>
+        <translation>프레임 보기</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Show only layers in the current frame</source>
-        <translation type="unfinished"></translation>
+        <translation>현재 프레임에 있는 레이어만 표시</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Show Censored Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>검열된 레이어 표시</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Layer View Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 표시 모드</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>User Pointers</source>
-        <translation type="unfinished"></translation>
+        <translation>유저 포인터</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>New Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>새 레이어</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>New Group</source>
-        <translation type="unfinished"></translation>
+        <translation>새 그룹</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Duplicate Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 복제</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Merge Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 합치기</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Delete Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>레이어 삭제</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Set as Fill Source</source>
-        <translation type="unfinished"></translation>
+        <translation>채우기 원본으로 지정</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Select Above</source>
-        <translation type="unfinished"></translation>
+        <translation>위쪽으로 지정</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Select Below</source>
-        <translation type="unfinished"></translation>
+        <translation>아랬쪽으로 지정</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>&amp;Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;레이어</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Flipbook</source>
-        <translation type="unfinished"></translation>
+        <translation>플립북</translation>
     </message>
     <message>
         <location line="+0"/>
