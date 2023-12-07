@@ -55,6 +55,7 @@ void Join::activate()
 {
 	emit showButtons();
 	updateJoinButton();
+	m_addressEdit->setFocus();
 }
 
 void Join::accept()
