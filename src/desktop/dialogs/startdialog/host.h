@@ -38,6 +38,7 @@ signals:
 		const QString &title, const QString &password, const QString &alias,
 		bool nsfm, const QString &announcementUrl,
 		const QString &remoteAddress);
+	void switchToJoinPageRequested();
 
 private slots:
 	void generatePassword();
@@ -52,10 +53,14 @@ private:
 
 	bool canHost() const;
 
+	bool hasValidTitle(
+		bool *outMissingTitle = nullptr, bool *outUrlInTitle = nullptr) const;
+
 	QString getRemoteAddress() const;
 
 	QWidget *m_notes;
 	QLabel *m_titleNote;
+	QLabel *m_urlInTitleNote;
 	QLabel *m_passwordNote;
 	QLabel *m_localHostNote;
 	QLineEdit *m_titleEdit;

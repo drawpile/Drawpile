@@ -293,6 +293,10 @@ StartDialog::StartDialog(QWidget *parent)
 				hostPage->updateHostEnabled();
 			}
 		});
+	connect(
+		hostPage, &startdialog::Host::switchToJoinPageRequested, this, [this] {
+			showPage(Entry::Join);
+		});
 
 	connect(
 		createPage, &startdialog::Create::showButtons, this,

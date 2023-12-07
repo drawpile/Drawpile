@@ -57,6 +57,17 @@ Host::Host(QWidget *parent)
 	m_titleNote->setText(tr("A session title is required."));
 	labelsLayout->addWidget(m_titleNote);
 
+	m_urlInTitleNote = new QLabel;
+	m_urlInTitleNote->setWordWrap(true);
+	m_urlInTitleNote->setTextFormat(Qt::RichText);
+	m_urlInTitleNote->setText(tr(
+		"Invalid session title. If you want to join a session using an invite "
+		"link, <a href=\"#\">click here to go to the Join page</a>."));
+	connect(
+		m_urlInTitleNote, &QLabel::linkActivated, this,
+		&Host::switchToJoinPageRequested);
+	labelsLayout->addWidget(m_urlInTitleNote);
+
 	m_passwordNote = new QLabel;
 	m_passwordNote->setWordWrap(true);
 	m_passwordNote->setTextFormat(Qt::RichText);
@@ -275,13 +286,15 @@ void Host::setHostEnabled(bool enabled)
 void Host::updateHostEnabled()
 {
 	utils::ScopedUpdateDisabler disabler(this);
-	bool missingTitle = m_titleEdit->text().trimmed().isEmpty();
+	bool missingTitle, urlInTitle;
+	hasValidTitle(&missingTitle, &urlInTitle);
 	bool isPublic = m_passwordEdit->text().isEmpty();
 	bool isLocal = m_useGroup->checkedId() == USE_LOCAL;
 	m_titleNote->setVisible(missingTitle);
+	m_urlInTitleNote->setVisible(urlInTitle);
 	m_passwordNote->setVisible(isPublic);
 	m_localHostNote->setVisible(isLocal);
-	m_notes->setVisible(missingTitle || isPublic || isLocal);
+	m_notes->setVisible(missingTitle || urlInTitle || isPublic || isLocal);
 	emit enableHost(canHost());
 }
 
@@ -357,10 +370,24 @@ void Host::updateAdvancedSectionVisible(bool visible)
 
 bool Host::canHost() const
 {
-	return isEnabled() && !m_titleEdit->text().trimmed().isEmpty() &&
+	return isEnabled() && hasValidTitle() &&
 		   (m_allowNsfm || !m_nsfmBox->isChecked()) &&
 		   (m_useGroup->checkedId() == USE_LOCAL ||
 			!m_remoteHostCombo->currentText().trimmed().isEmpty());
+}
+
+bool Host::hasValidTitle(bool *outMissingTitle, bool *outUrlInTitle) const
+{
+	QString title = m_titleEdit->text().trimmed();
+	bool missingTitle = title.isEmpty();
+	bool urlInTitle = !missingTitle && title.contains(QStringLiteral("://"));
+	if(outMissingTitle) {
+		*outMissingTitle = missingTitle;
+	}
+	if(outUrlInTitle) {
+		*outUrlInTitle = urlInTitle;
+	}
+	return !missingTitle && !urlInTitle;
 }
 
 QString Host::getRemoteAddress() const
