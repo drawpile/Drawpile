@@ -674,7 +674,13 @@ void DP_renderer_apply(DP_Renderer *renderer, DP_CanvasState *cs,
 
     DP_Queue *tile_queue_high = &renderer->tile.queue_high;
     size_t tile_queue_high_used_before = tile_queue_high->used;
-    if (render_outside_view) {
+    if (mode == DP_RENDERER_EVERYTHING) {
+        struct DP_RendererPushTileInViewParams params = {renderer, 0};
+        DP_canvas_diff_each_pos_check_all_reset(diff, push_tile_in_view,
+                                                &params);
+        pushed += params.pushed;
+    }
+    else if (render_outside_view) {
         struct DP_RendererPushTileParams params = {renderer, view_tile_bounds,
                                                    0};
         DP_canvas_diff_each_pos_reset(diff, push_tile, &params);

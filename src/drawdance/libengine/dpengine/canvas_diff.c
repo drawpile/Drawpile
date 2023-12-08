@@ -182,6 +182,24 @@ void DP_canvas_diff_each_pos_reset(DP_CanvasDiff *diff,
     }
 }
 
+void DP_canvas_diff_each_pos_check_all_reset(DP_CanvasDiff *diff,
+                                             DP_CanvasDiffEachPosFn fn,
+                                             void *data)
+{
+    DP_ASSERT(diff);
+    DP_ASSERT(fn);
+    int xtiles = diff->xtiles;
+    int ytiles = diff->ytiles;
+    bool *tile_changes = diff->tile_changes;
+    for (int y = 0; y < ytiles; ++y) {
+        for (int x = 0; x < xtiles; ++x) {
+            int i = y * xtiles + x;
+            fn(data, x, y);
+            tile_changes[i] = false;
+        }
+    }
+}
+
 void DP_canvas_diff_bounds_clamp(DP_CanvasDiff *diff, int tile_left,
                                  int tile_top, int tile_right, int tile_bottom,
                                  int *out_left, int *out_top, int *out_right,

@@ -57,6 +57,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Show proper ext-auth URL when prompting for a login. Thanks xxxx for reporting.
  * Fix: Properly show server info URL as a clickable link when prompting for a login.
  * Feature: Focus the input field on the Join page when switching to it so that you can immediately paste a link without having to click it.
+ * Fix: Handle view mode changes (frame view, onion skins etc.) properly in drawpile-cmd and drawpile-timelapse tools.
 
 2023-11-12 Version 2.2.0-beta.10
  * Fix: Don't deadlock on first startup. Thanks to Hail, lowontrash, FARBOL234, Dorokinyo and hamlin for reporting.
