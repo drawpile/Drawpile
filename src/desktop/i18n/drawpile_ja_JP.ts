@@ -7968,7 +7968,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Invalid session title. If you want to join a session using an invite link, &lt;a href=&quot;#&quot;&gt;click here to go to the Join page&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>セッションタイトルが無効です。招待リンクを使用してセッションに参加する場合は&lt;a href=&quot;#&quot;&gt;ここをクリックして参加ページに移動してください&lt;/a&gt;。</translation>
     </message>
     <message>
         <location line="+12"/>
