@@ -8,9 +8,9 @@ This checklist uses pseudo-placeholders. $VERSION is version to be released, $NE
     * Merge Weblate pull request, if there is one, into main. Pull main.
 * Update ChangeLog:
     * Change heading from "Unreleased Version $VERSION-pre" to "YYYY-mm-dd Version $VERSION".
-    * Add a new heading at the top saying "Unrelease Version $NEXTVERSION-pre".
+    * Add a new heading at the top saying "Unreleased Version $NEXTVERSION-pre".
     * Create a signed commit "Update changelog for $VERSION"
-    * Consider deleting the caches for Qt and other dependencies for the Windows target, because the release will use link-time and the MSVC version must match for that to work: <https://github.com/drawpile/Drawpile/actions/caches>
+    * Consider deleting the caches for Qt and other dependencies for the Windows target, because the release will use link-time optimization and the MSVC version must match for that to work: <https://github.com/drawpile/Drawpile/actions/caches>
     * Push and let it build. This takes a while because of the above.
 * Build:
     * Create a signed version tag: `git tag -sm "Release $VERSION" "$VERSION"`
