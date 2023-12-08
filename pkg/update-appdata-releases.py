@@ -133,21 +133,21 @@ def update_release_artifacts(appdata, include_legacy_platform_ids):
 
     # List of downloadable binaries
     binaries = (
-        ('x86_64-windows-msvc', 'win64', 'win', f'Drawpile-{version}.msi'),
+        ('x86_64-windows-msvc', 'win64', f'Drawpile-{version}.msi'),
         # This is a bogus tuple (it should probably be x86_64-apple-darwin) but
         # it is what appstream validation demands
-        ('x86_64-darwin-gnu', 'macos', 'osx', f'Drawpile-{version}.dmg'),
-        ('x86_64-linux-gnu', '', 'appimage', f'Drawpile-{version}-x86_64.AppImage'),
-        ('aarch64-linux-android', '', 'apk', f'Drawpile-{version}.apk'),
-        ('source', '', 'src', f'Drawpile-{version}.tar.gz'),
+        ('x86_64-darwin-gnu', 'macos', f'Drawpile-{version}.dmg'),
+        ('x86_64-linux-gnu', '', f'Drawpile-{version}-x86_64.AppImage'),
+        ('aarch64-linux-android', '', f'Drawpile-{version}.apk'),
+        ('source', '', f'Drawpile-{version}.tar.gz'),
     )
 
     # Find metadata for binaries
     artifacts = {}
-    for platform, legacy_platform, prefix, filename in binaries:
+    for platform, legacy_platform, filename in binaries:
         metadata = find_artifact(filename)
         if metadata:
-            metadata['filename'] = prefix + '/' + metadata['filename']
+            metadata['filename'] = metadata['filename']
             if include_legacy_platform_ids and legacy_platform:
                 artifacts[legacy_platform] = metadata
             else:
@@ -163,18 +163,20 @@ def update_release_artifacts(appdata, include_legacy_platform_ids):
         if platform == 'source':
             attrs = {'type': 'source'}
             xpath = "artifact[@type='source']"
+            download = f'''https://github.com/drawpile/Drawpile/archive/refs/tags/{version}.tar.gz'''
         else:
             attrs = {
                 'type': 'binary',
                 'platform': platform,
             }
             xpath = f"artifact[@type='binary'][@platform='{platform}']"
+            download = f'''https://github.com/drawpile/Drawpile/releases/download/{version}/{artifact['filename']}'''
 
         elem = ET.Element('artifact', **attrs)
         indent(elem, 5, 4)
         location = ET.SubElement(elem, 'location')
         indent(location, after=4)
-        location.text = f'''https://github.com/drawpile/Drawpile/releases/download/{version}/{artifact['filename']}'''
+        location.text = download
         if artifact['hash'] is not None:
             indent(location, after=5)
             checksum = ET.SubElement(elem, 'checksum', type='sha256')
