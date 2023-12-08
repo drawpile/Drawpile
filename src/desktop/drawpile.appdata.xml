@@ -34,27 +34,27 @@
       </description>
       <artifacts>
         <artifact type="binary" platform="x86_64-windows-msvc">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.10/win/Drawpile-2.2.0-beta.10.msi</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.10/Drawpile-2.2.0-beta.10.msi</location>
           <checksum type="sha256">fea875737fcbf909a65b71f5aeb07b98f8642039ffd85b136b87b5410350b6d5</checksum>
           <size type="download">24215629</size>
         </artifact>
         <artifact type="binary" platform="x86_64-darwin-gnu">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.10/osx/Drawpile-2.2.0-beta.10.dmg</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.10/Drawpile-2.2.0-beta.10.dmg</location>
           <checksum type="sha256">b9b2226d7b2d6a7c9fe49b6558cc825e41e74d855145cebd54d4232779ba85a7</checksum>
           <size type="download">30381694</size>
         </artifact>
         <artifact type="binary" platform="x86_64-linux-gnu">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.10/appimage/Drawpile-2.2.0-beta.10-x86_64.AppImage</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.10/Drawpile-2.2.0-beta.10-x86_64.AppImage</location>
           <checksum type="sha256">a016d1b1844af9fbf1ab700f6693b7641002cd2bccad79b0b5393f728422e2c4</checksum>
           <size type="download">51475648</size>
         </artifact>
         <artifact type="binary" platform="aarch64-linux-android">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.10/apk/Drawpile-2.2.0-beta.10.apk</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.10/Drawpile-2.2.0-beta.10.apk</location>
           <checksum type="sha256">4a88bb7526e552b07946268b5aef7e046197f658d8744586f5d0cf2ba5d03c1f</checksum>
           <size type="download">19900783</size>
         </artifact>
         <artifact type="source">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.10/src/Drawpile-2.2.0-beta.10.tar.gz</location>
+          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.2.0-beta.10.tar.gz</location>
           <checksum type="sha256">fd50138e81e3a712b7df680b9e98c816cc1bac2310983222fd4c4372e5116343</checksum>
           <size type="download">5168404</size>
         </artifact>
@@ -135,27 +135,27 @@
       </description>
       <artifacts>
         <artifact type="binary" platform="x86_64-windows-msvc">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.9/win/Drawpile-2.2.0-beta.9.msi</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.9/Drawpile-2.2.0-beta.9.msi</location>
           <checksum type="sha256">8e25a3e19239c487d284fd8911ff69b6c6bbd5bf42e72b3dc7933fba3b21ca8d</checksum>
           <size type="download">24215629</size>
         </artifact>
         <artifact type="binary" platform="x86_64-darwin-gnu">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.9/osx/Drawpile-2.2.0-beta.9.dmg</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.9/Drawpile-2.2.0-beta.9.dmg</location>
           <checksum type="sha256">370d69460eaf04e6ce53127640d0dbed448e044c3c80172ec14859e333cedb31</checksum>
           <size type="download">30380178</size>
         </artifact>
         <artifact type="binary" platform="x86_64-linux-gnu">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.9/appimage/Drawpile-2.2.0-beta.9-x86_64.AppImage</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.9/Drawpile-2.2.0-beta.9-x86_64.AppImage</location>
           <checksum type="sha256">0ac656cc9614d873438dad57ba64d5841d18b42ff1c8f4f2ce5975c6fa79de63</checksum>
           <size type="download">51471552</size>
         </artifact>
         <artifact type="binary" platform="aarch64-linux-android">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.9/apk/Drawpile-2.2.0-beta.9.apk</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.9/Drawpile-2.2.0-beta.9.apk</location>
           <checksum type="sha256">01738c45b99133c3910563530db89686d25ff2332c2b91532ed5318c31379e8d</checksum>
           <size type="download">19896687</size>
         </artifact>
         <artifact type="source">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.9/src/Drawpile-2.2.0-beta.9.tar.gz</location>
+          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.2.0-beta.9.tar.gz</location>
           <checksum type="sha256">2321db51a8a0cbf1c57309f14edd28c745af94ad608ebddeb61e638b915f8f9f</checksum>
           <size type="download">5163107</size>
         </artifact>
@@ -217,27 +217,27 @@
       </description>
       <artifacts>
         <artifact type="binary" platform="x86_64-windows-msvc">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.8/win/Drawpile-2.2.0-beta.8.msi</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.8/Drawpile-2.2.0-beta.8.msi</location>
           <checksum type="sha256">f225c90b68cb8ebebba83511a6aaba97746fb6cadf4bdffccedbbfdaf7804e9f</checksum>
           <size type="download">23793773</size>
         </artifact>
         <artifact type="binary" platform="x86_64-darwin-gnu">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.8/osx/Drawpile-2.2.0-beta.8.dmg</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.8/Drawpile-2.2.0-beta.8.dmg</location>
           <checksum type="sha256">4b19027b946a79c37c3cb1e2ee6d7f0c368e46a01cd1afa52aaecbcc7f77154e</checksum>
           <size type="download">29491019</size>
         </artifact>
         <artifact type="binary" platform="x86_64-linux-gnu">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.8/appimage/Drawpile-2.2.0-beta.8-x86_64.AppImage</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.8/Drawpile-2.2.0-beta.8-x86_64.AppImage</location>
           <checksum type="sha256">55501d6e01f0b01783b1c2caae3620bf7161b980355a255c68d38a3864cc25ca</checksum>
           <size type="download">50574528</size>
         </artifact>
         <artifact type="binary" platform="aarch64-linux-android">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.8/apk/Drawpile-2.2.0-beta.8.apk</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.8/Drawpile-2.2.0-beta.8.apk</location>
           <checksum type="sha256">75098085f107dee632fef5baac0f3a02d3516891af599b6d5f44938e0520a804</checksum>
           <size type="download">18949388</size>
         </artifact>
         <artifact type="source">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.8/src/Drawpile-2.2.0-beta.8.tar.gz</location>
+          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.2.0-beta.8.tar.gz</location>
           <checksum type="sha256">a1c0164c240f905c78d49db4c53250b3dde32926a0ef5947a798e8522c6192c3</checksum>
           <size type="download">4723931</size>
         </artifact>
@@ -297,27 +297,27 @@
       </description>
       <artifacts>
         <artifact type="binary" platform="x86_64-windows-msvc">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.7/win/Drawpile-2.2.0-beta.7.msi</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.7/Drawpile-2.2.0-beta.7.msi</location>
           <checksum type="sha256">ad176b9821f6b3de2d7c22082f0e222169415233d3613ee3b922e11633757cd9</checksum>
           <size type="download">19901235</size>
         </artifact>
         <artifact type="binary" platform="x86_64-darwin-gnu">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.7/osx/Drawpile-2.2.0-beta.7.dmg</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.7/Drawpile-2.2.0-beta.7.dmg</location>
           <checksum type="sha256">2da739e4c7d8394d4edd01e3233fc1ba82d6d6e0c0c97b2a9b8ab007190f1286</checksum>
           <size type="download">20240996</size>
         </artifact>
         <artifact type="binary" platform="x86_64-linux-gnu">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.7/appimage/Drawpile-2.2.0-beta.7-x86_64.AppImage</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.7/Drawpile-2.2.0-beta.7-x86_64.AppImage</location>
           <checksum type="sha256">8d16934df3edbf889c04931180b7258faab81047e335dd5e613708c5504f7910</checksum>
           <size type="download">37496000</size>
         </artifact>
         <artifact type="binary" platform="aarch64-linux-android">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.7/apk/Drawpile-2.2.0-beta.7.apk</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.7/Drawpile-2.2.0-beta.7.apk</location>
           <checksum type="sha256">504b7448bf6574cf008dbbab23165ac6300cc9472d6dad74ed2fdf37abf9eadf</checksum>
           <size type="download">17843027</size>
         </artifact>
         <artifact type="source">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.7/src/Drawpile-2.2.0-beta.7.tar.gz</location>
+          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.2.0-beta.7.tar.gz</location>
           <checksum type="sha256">5c2d5fcb04f6608f254beae2b4e36868c620b646c01fb427929e116476aa3897</checksum>
           <size type="download">4633375</size>
         </artifact>
@@ -401,27 +401,27 @@
       </description>
       <artifacts>
         <artifact type="binary" platform="x86_64-windows-msvc">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.6/win/Drawpile-2.2.0-beta.6.msi</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.6/Drawpile-2.2.0-beta.6.msi</location>
           <checksum type="sha256">886be972519fd95130dad3548ec3f6014ca4ca45ca348e1e34c3d3468bd39a58</checksum>
           <size type="download">19711799</size>
         </artifact>
         <artifact type="binary" platform="x86_64-darwin-gnu">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.6/osx/Drawpile-2.2.0-beta.6.dmg</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.6/Drawpile-2.2.0-beta.6.dmg</location>
           <checksum type="sha256">33cf1abc6b25549d08843460bae7dc17868f24ad390098c4a6d77df11420554e</checksum>
           <size type="download">21752571</size>
         </artifact>
         <artifact type="binary" platform="x86_64-linux-gnu">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.6/appimage/Drawpile-2.2.0-beta.6-x86_64.AppImage</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.6/Drawpile-2.2.0-beta.6-x86_64.AppImage</location>
           <checksum type="sha256">b2602ae546fdf3548afb8657af9494cfdb751568b148ebfab89525cd5100ec2c</checksum>
           <size type="download">37266624</size>
         </artifact>
         <artifact type="binary" platform="aarch64-linux-android">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.6/apk/Drawpile-2.2.0-beta.6.apk</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.6/Drawpile-2.2.0-beta.6.apk</location>
           <checksum type="sha256">24eb571898ae6ebf49bb55bb65a54303d0a9c9f7fa617a75834724200c631ecb</checksum>
           <size type="download">17629458</size>
         </artifact>
         <artifact type="source">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.6/src/Drawpile-2.2.0-beta.6.tar.gz</location>
+          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.2.0-beta.6.tar.gz</location>
           <checksum type="sha256">e89075195aebd31600343c93f57540069e02e6ec093c155f6cadd015916b42e2</checksum>
           <size type="download">8692984</size>
         </artifact>
@@ -472,27 +472,27 @@
       </description>
       <artifacts>
         <artifact type="binary" platform="x86_64-windows-msvc">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.5/win/Drawpile-2.2.0-beta.5.msi</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.5/Drawpile-2.2.0-beta.5.msi</location>
           <checksum type="sha256">3a05c4ce02a6712edc35adb7d1e0ba66a5fb29b80121f6e829570d54b6b5f72a</checksum>
           <size type="download">19313292</size>
         </artifact>
         <artifact type="binary" platform="x86_64-darwin-gnu">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.5/osx/Drawpile-2.2.0-beta.5.dmg</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.5/Drawpile-2.2.0-beta.5.dmg</location>
           <checksum type="sha256">1ac90f87fde334f6e7a79c424767197d1e09efd10edce2df00dfcb5e806b901f</checksum>
           <size type="download">21249270</size>
         </artifact>
         <artifact type="binary" platform="x86_64-linux-gnu">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.5/appimage/Drawpile-2.2.0-beta.5-x86_64.AppImage</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.5/Drawpile-2.2.0-beta.5-x86_64.AppImage</location>
           <checksum type="sha256">9572ec0eb584bc73da60429b8f8e6b010661e57c2fc1c0899559841af6e93fe3</checksum>
           <size type="download">36725952</size>
         </artifact>
         <artifact type="binary" platform="aarch64-linux-android">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.5/apk/Drawpile-2.2.0-beta.5.apk</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.5/Drawpile-2.2.0-beta.5.apk</location>
           <checksum type="sha256">7c6525cda0406bea9ecc4a6da9eb609a911c75add2a8be10628b51d30c993c31</checksum>
           <size type="download">17183797</size>
         </artifact>
         <artifact type="source">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.5/src/Drawpile-2.2.0-beta.5.tar.gz</location>
+          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.2.0-beta.5.tar.gz</location>
           <checksum type="sha256">a7afae2d20c26ad679f8a6c657f077429d55219b5dad6a0f554d6f43ad518baa</checksum>
           <size type="download">8448714</size>
         </artifact>
@@ -554,27 +554,27 @@
       </description>
       <artifacts>
         <artifact type="binary" platform="x86_64-windows-msvc">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.4/win/Drawpile-2.2.0-beta.4.msi</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.4/Drawpile-2.2.0-beta.4.msi</location>
           <checksum type="sha256">8e8be4e8904ba8bc186ba90f1186026225d6167925a8280d2b16a760d3be183e</checksum>
           <size type="download">19255916</size>
         </artifact>
         <artifact type="binary" platform="x86_64-darwin-gnu">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.4/osx/Drawpile-2.2.0-beta.4.dmg</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.4/Drawpile-2.2.0-beta.4.dmg</location>
           <checksum type="sha256">993354298338e5be2d3c36854180634519f792f769a3e397d2901c9424feedfb</checksum>
           <size type="download">21199847</size>
         </artifact>
         <artifact type="binary" platform="x86_64-linux-gnu">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.4/appimage/Drawpile-2.2.0-beta.4-x86_64.AppImage</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.4/Drawpile-2.2.0-beta.4-x86_64.AppImage</location>
           <checksum type="sha256">f30895b9f4bfcb06332fa1768fabbc1a46795577b5461ab2eb2d2dfee476514a</checksum>
           <size type="download">36660416</size>
         </artifact>
         <artifact type="binary" platform="aarch64-linux-android">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.4/apk/Drawpile-2.2.0-beta.4.apk</location>
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.4/Drawpile-2.2.0-beta.4.apk</location>
           <checksum type="sha256">aa2293720025577ebaf705072c4f2adfd8269c2685d2f3a4468b65b19bc0248c</checksum>
           <size type="download">17130386</size>
         </artifact>
         <artifact type="source">
-          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.4/src/Drawpile-2.2.0-beta.4.tar.gz</location>
+          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.2.0-beta.4.tar.gz</location>
           <checksum type="sha256">327afc678ec70c7a61169e8103497a0d3dd900172efc2451ae0811abb4a56998</checksum>
           <size type="download">8415018</size>
         </artifact>
