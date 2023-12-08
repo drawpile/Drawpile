@@ -1,27 +1,27 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef SSLSERVER_H
-#define SSLSERVER_H
-
-#include <QTcpServer>
+#ifndef LIBSERVER_SSLSERVER_H
+#define LIBSERVER_SSLSERVER_H
 #include <QSslCertificate>
 #include <QSslKey>
+#include <QTcpServer>
 
 namespace server {
 
 /**
  * @brief A TcpServer subclass that creates QSslSockets instead of QTcpSockets
  */
-class SslServer final : public QTcpServer
-{
+class SslServer final : public QTcpServer {
 	Q_OBJECT
 public:
-	SslServer(const QString &certFile, const QString &keyFile, QObject *parent = nullptr);
+	SslServer(
+		const QString &certFile, const QString &keyFile,
+		QObject *parent = nullptr);
 
 	bool isValidCert() const;
 
 	/**
-	 * @brief Limit QSslSocket's default ciphers to those that support forward secrecy
+	 * @brief Limit QSslSocket's default ciphers to those that support forward
+	 * secrecy
 	 */
 	static void requireForwardSecrecy();
 

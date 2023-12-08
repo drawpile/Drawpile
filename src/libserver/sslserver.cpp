@@ -1,17 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "libserver/sslserver.h"
-
-#include <QSslSocket>
-#include <QSslCipher>
-#include <QSslConfiguration>
 #include <QFile>
 #include <QFileInfo>
+#include <QSslCipher>
+#include <QSslConfiguration>
+#include <QSslSocket>
 
 namespace server {
 
-SslServer::SslServer(const QString &certFile, const QString &keyFile, QObject *parent) :
-	QTcpServer(parent), m_certPath(certFile), m_keyPath(keyFile)
+SslServer::SslServer(
+	const QString &certFile, const QString &keyFile, QObject *parent)
+	: QTcpServer(parent)
+	, m_certPath(certFile)
+	, m_keyPath(keyFile)
 {
 	if(!QSslSocket::supportsSsl()) {
 		qWarning("SSL support not available!");
@@ -61,11 +62,13 @@ bool SslServer::reloadKey()
 
 	QFile keyfile(m_keyPath);
 	if(!keyfile.open(QFile::ReadOnly)) {
-		qWarning("%s: couldn't open private key: %s", qPrintable(m_keyPath), qPrintable(keyfile.errorString()));
+		qWarning(
+			"%s: couldn't open private key: %s", qPrintable(m_keyPath),
+			qPrintable(keyfile.errorString()));
 		return false;
 	}
 
-	QSslKey key {&keyfile, QSsl::Rsa}; // TODO selectable algorithm
+	QSslKey key{&keyfile, QSsl::Rsa}; // TODO selectable algorithm
 	if(key.isNull()) {
 		qWarning("%s: Invalid private key", qPrintable(m_keyPath));
 		return false;
@@ -80,7 +83,7 @@ void SslServer::requireForwardSecrecy()
 {
 	QList<QSslCipher> ciphers;
 
-	QStringList methods {"DH", "ECDH"};
+	QStringList methods{"DH", "ECDH"};
 
 	QSslConfiguration config = QSslConfiguration::defaultConfiguration();
 
