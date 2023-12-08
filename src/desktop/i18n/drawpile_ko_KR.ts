@@ -1034,12 +1034,12 @@ Subrange: [%3, %4]</source>
     <name>LoginDialog</name>
     <message>
         <location filename="../ui/logindialog.ui" line="+103"/>
-        <location line="+231"/>
+        <location line="+234"/>
         <source>Incorrect password.</source>
         <translation>암호가 틀립니다.</translation>
     </message>
     <message>
-        <location line="-188"/>
+        <location line="-191"/>
         <source>Password</source>
         <translation>암호</translation>
     </message>
@@ -1054,7 +1054,7 @@ Subrange: [%3, %4]</source>
         <translation>사용자 이름</translation>
     </message>
     <message>
-        <location line="+155"/>
+        <location line="+158"/>
         <source>Filter</source>
         <translation>필터</translation>
     </message>
@@ -1334,12 +1334,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+3"/>
-        <location line="+1545"/>
+        <location line="+1547"/>
         <source>Record...</source>
         <translation>녹화 중...</translation>
     </message>
     <message>
-        <location line="-1520"/>
+        <location line="-1522"/>
         <source>Unsupported format.</source>
         <translation>미지원된 포맷입니다.</translation>
     </message>
@@ -1425,12 +1425,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+1836"/>
+        <location line="+1838"/>
         <source>Terminate</source>
         <translation>종료</translation>
     </message>
     <message>
-        <location line="-1753"/>
+        <location line="-1755"/>
         <source>Could not connect to server</source>
         <translation>서버에 연결 할 수 없습니다</translation>
     </message>
@@ -1460,7 +1460,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>세션의 실행취소 제한을 변경합니다, 현재의 제한은 %1 입니다.</translation>
     </message>
     <message>
-        <location line="+421"/>
+        <location line="+423"/>
         <source>The image could not be loaded</source>
         <translation>이미지를 불러올 수 없습니다</translation>
     </message>
@@ -2276,7 +2276,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>&amp;참여...</translation>
     </message>
     <message>
-        <location line="-2372"/>
+        <location line="-2374"/>
         <source>Joined the session!</source>
         <translation>세션에 참여했습니다!</translation>
     </message>
@@ -2336,7 +2336,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>프리핸드 브러시 도구 (투명도 잠김 모드)</translation>
     </message>
     <message>
-        <location line="+625"/>
+        <location line="+627"/>
         <source>Export Image…</source>
         <translation>이미지 내보내기…</translation>
     </message>
@@ -5451,23 +5451,23 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">취소</translation>
     </message>
     <message>
         <location line="+3"/>
         <location line="+71"/>
         <source>Rename</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">이름 변경</translation>
     </message>
     <message>
         <location line="-68"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">삭제</translation>
     </message>
     <message>
         <location line="+68"/>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">저장</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -5478,7 +5478,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+0"/>
         <location line="+15"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">이름</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -5592,7 +5592,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+23"/>
         <location line="+6"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">타입</translation>
     </message>
     <message>
         <location line="-6"/>
@@ -5603,7 +5603,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-6"/>
         <source>Undo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">실행 취소</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -5623,7 +5623,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>No</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">아니오</translation>
     </message>
 </context>
 <context>
@@ -5641,7 +5641,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+101"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -5667,7 +5667,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Title:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">제목:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -5713,7 +5713,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">삭제</translation>
     </message>
     <message>
         <location line="+31"/>
@@ -5781,7 +5781,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/logindialog.cpp" line="+156"/>
         <source>Report...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">신고...</translation>
     </message>
     <message>
         <location line="+133"/>
@@ -5791,7 +5791,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+24"/>
         <source>Log in with server account</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">서버 계정에 로그인</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -5799,19 +5799,19 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>Enter account password. If you don&apos;t have an account, you must register one on %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+7"/>
         <source>This username belongs to a registered account. If this isn&apos;t your account, cancel and try again with a different name.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+20"/>
         <source>Close</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">닫기</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -5832,7 +5832,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+252"/>
+        <location line="+249"/>
         <source>Remove Account</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5842,13 +5842,13 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+38"/>
-        <location line="+160"/>
+        <location line="+39"/>
+        <location line="+161"/>
         <source>Enter the name you want to use.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-98"/>
+        <location line="-99"/>
         <source>Server Rules for %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5858,22 +5858,22 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+71"/>
+        <location line="+72"/>
         <source>Enter the name you want to use. See %1 for more information about this server.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+39"/>
         <source>This username doesn&apos;t belong to an account on this server. This is not your drawpile.net account!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+523"/>
+        <location line="+528"/>
         <source>Enter the username and password for your account on this server. This is not your drawpile.net account!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-604"/>
+        <location line="-612"/>
         <source>You can continue without an account. If you want to register one anyway, you can do so on %1.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5903,37 +5903,37 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="+52"/>
         <source>This username belongs to an account, pick a different one.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+12"/>
         <source>The %1 authentication is not working.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>This username doesn&apos;t belong an account on %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+5"/>
         <source>This username belongs to a server account, you can&apos;t use it to log in through %1 on this server.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>This username belongs to some other login method, you can&apos;t use it to log in through %1 on this server.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+514"/>
+        <location line="+516"/>
         <source>Enter the username and password for your %1 account.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+38"/>
         <source>Log in with &apos;%1&apos; credentials</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5956,7 +5956,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/playbackdialog.cpp" line="+32"/>
         <source>Playback</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">플레이백</translation>
     </message>
     <message>
         <location line="+142"/>
@@ -5999,7 +5999,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Reset</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">초기화</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -6082,12 +6082,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+68"/>
         <source>Operators</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">관리자</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">신뢰됨</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -6290,7 +6290,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+45"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">일반</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6300,7 +6300,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Input</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">입력</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6378,12 +6378,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Host Session</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">세션을 호스팅하기</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Share your canvas with others</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">다른 사람과 캔버스 공유</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6418,7 +6418,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Layouts</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">레이아웃</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -6443,7 +6443,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Add Server</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">서버 추가</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -6451,7 +6451,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+268"/>
+        <location line="+272"/>
         <source>Checking…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6475,7 +6475,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+24"/>
         <source>Join</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">접속</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -6524,7 +6524,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/userinfodialog.cpp" line="+31"/>
         <source>Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">새로고침</translation>
     </message>
     <message>
         <location line="+45"/>
@@ -6818,7 +6818,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/settingsdialog/input.cpp" line="+37"/>
         <source>Input</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">입력</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -7167,7 +7167,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+20"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7202,12 +7202,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Canvas locked</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">캔버스 잠김</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Canvas unlocked</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">캔버스 잠금 해제됨</translation>
     </message>
 </context>
 <context>
@@ -7321,7 +7321,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+10"/>
         <source>Incorrect password.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">암호가 틀립니다.</translation>
     </message>
 </context>
 <context>
@@ -7706,7 +7706,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+14"/>
         <source>Filter</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">필터</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -7721,7 +7721,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Password</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">암호</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7736,7 +7736,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Show sessions not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">미성년자에게 부적합한 세션 보이기 (NSFM)</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -7763,7 +7763,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-85"/>
         <source>Join</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">접속</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -7828,14 +7828,14 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::startdialog::Host</name>
     <message>
-        <location filename="../dialogs/startdialog/host.cpp" line="+105"/>
+        <location filename="../dialogs/startdialog/host.cpp" line="+116"/>
         <source>The title is shown in the application title bar and in the session selection dialog</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Title:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">제목:</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -7855,7 +7855,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Password:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">암호:</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -7883,12 +7883,17 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-135"/>
+        <location line="-146"/>
         <source>A session title is required.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+6"/>
+        <source>Invalid session title. If you want to join a session using an invite link, &lt;a href=&quot;#&quot;&gt;click here to go to the Join page&lt;/a&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
         <source>Without a password set, anyone can join your session! If you want to host a private session, choose a password or &lt;a href=&quot;#&quot;&gt;generate one&lt;/a&gt;.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7900,7 +7905,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+57"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">미성년자에겐 부적합함 (NSFM)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7951,7 +7956,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+44"/>
+        <location line="+45"/>
         <source>Searching…</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8206,7 +8211,7 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+4"/>
         <source>%n error(s) encountered.</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
+            <numerusform>%n개의 오류.</numerusform>
         </translation>
     </message>
     <message>
@@ -8257,12 +8262,12 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+2"/>
         <location line="+113"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">삭제</translation>
     </message>
     <message>
         <location line="-111"/>
         <source>Rename</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">이름 변경</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8288,13 +8293,13 @@ Values above 0.5 may not be noticeable.</source>
         <location line="+117"/>
         <location line="+46"/>
         <source>New Palette</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">새 팔레트</translation>
     </message>
     <message>
         <location line="-46"/>
         <location line="+46"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">이름</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -8309,7 +8314,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+0"/>
         <source>All files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">모든 파일 (*)</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -8441,12 +8446,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Operators</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">관리자</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">신뢰됨</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8479,7 +8484,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%</translation>
     </message>
     <message>
         <location line="+363"/>
@@ -8569,7 +8574,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+181"/>
         <source> FPS</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> FPS</translation>
     </message>
 </context>
 <context>
@@ -8587,7 +8592,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>Close</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">닫기</translation>
     </message>
 </context>
 <context>
@@ -8654,7 +8659,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">삭제</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -8698,12 +8703,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+48"/>
         <source>Time-Based Stabilizer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">시간 기준 스태빌라이저</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Average Smoothing</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">평균적 완곡화</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8761,7 +8766,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+8"/>
         <source>Size: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">크기: </translation>
     </message>
     <message>
         <location line="+11"/>
@@ -8821,7 +8826,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/canvasshortcutedit.cpp" line="+269"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">취소</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8862,7 +8867,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::CanvasView</name>
     <message>
-        <location filename="../scene/canvasview.cpp" line="+168"/>
+        <location filename="../scene/canvasview.cpp" line="+169"/>
         <source>Reconnect</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8962,17 +8967,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../chat/chatbox.cpp" line="+45"/>
         <source>Invite</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">초대</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Session</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">세션</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Chat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">채팅창</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9122,7 +9127,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../chat/chatwindow.cpp" line="+12"/>
         <source>Chat</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">채팅창</translation>
     </message>
 </context>
 <context>
@@ -9214,7 +9219,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Get externally visible IP address</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">외부 아이피 주소 받기</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -9224,7 +9229,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+19"/>
         <source>Statistics</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">현황</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -9315,7 +9320,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/palettewidget.cpp" line="+41"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">추가</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9325,7 +9330,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">삭제</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -9356,12 +9361,12 @@ Hex: %4</source>
     <message>
         <location line="+3"/>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">저장</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">삭제</translation>
     </message>
 </context>
 <context>
@@ -9379,13 +9384,13 @@ Hex: %4</source>
     <message>
         <location line="+59"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">삭제</translation>
     </message>
 </context>
 <context>
     <name>widgets::TimelineWidget</name>
     <message>
-        <location filename="../widgets/timelinewidget.cpp" line="+599"/>
+        <location filename="../widgets/timelinewidget.cpp" line="+600"/>
         <source>Blank key frame (duplicate)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9442,14 +9447,14 @@ or via Animation ▸ New Track.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+557"/>
+        <location line="+558"/>
         <source>Track</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+57"/>
         <source>Rename Track</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">트랙 이름 변경</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -9484,7 +9489,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+13"/>
         <source>Set Key Frame to Current Layer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">키프레임을 현재 레이어로 설정</translation>
     </message>
 </context>
 <context>
@@ -9492,12 +9497,12 @@ or via Animation ▸ New Track.</source>
     <message>
         <location filename="../chat/useritemdelegate.cpp" line="+167"/>
         <source>Operator</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">관리자</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">신뢰됨</translation>
     </message>
     <message>
         <location line="-138"/>
@@ -9522,12 +9527,12 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+4"/>
         <source>&amp;Undo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;실행 취소</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Redo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;다시 실행</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -9580,7 +9585,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+40"/>
         <source>Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">돋보기</translation>
     </message>
 </context>
 </TS>

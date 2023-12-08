@@ -1039,12 +1039,12 @@ Subrange: [%3, %4]</source>
     </message>
     <message>
         <location line="+17"/>
-        <location line="+231"/>
+        <location line="+234"/>
         <source>Incorrect password.</source>
         <translation>密码错误.</translation>
     </message>
     <message>
-        <location line="-188"/>
+        <location line="-191"/>
         <source>Password</source>
         <translation>密码</translation>
     </message>
@@ -1054,7 +1054,7 @@ Subrange: [%3, %4]</source>
         <translation>记住密码</translation>
     </message>
     <message>
-        <location line="+131"/>
+        <location line="+134"/>
         <source>Filter</source>
         <translation>过滤</translation>
     </message>
@@ -1341,7 +1341,7 @@ Subrange: [%3, %4]</source>
         <translation>笔刷工具 (锁定透明度模式)</translation>
     </message>
     <message>
-        <location line="+124"/>
+        <location line="+126"/>
         <source>The image could not be loaded</source>
         <translation>无法载入图片</translation>
     </message>
@@ -1393,13 +1393,13 @@ Subrange: [%3, %4]</source>
         <translation>自动保存</translation>
     </message>
     <message>
-        <location line="-1535"/>
-        <location line="+1545"/>
+        <location line="-1537"/>
+        <location line="+1547"/>
         <source>Record...</source>
         <translation>录制...</translation>
     </message>
     <message>
-        <location line="-3064"/>
+        <location line="-3066"/>
         <source>Server out of space</source>
         <translation>服务器空间不足</translation>
     </message>
@@ -1472,12 +1472,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+1836"/>
+        <location line="+1838"/>
         <source>Terminate</source>
         <translation>终止</translation>
     </message>
     <message>
-        <location line="-1627"/>
+        <location line="-1629"/>
         <source>Session blocked by parental controls</source>
         <translation>房间已被控制面板屏蔽</translation>
     </message>
@@ -1492,7 +1492,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>更改房间撤销限制, 当前限制是 %1.</translation>
     </message>
     <message>
-        <location line="+655"/>
+        <location line="+657"/>
         <source>User #%1</source>
         <translation>用户 #%1</translation>
     </message>
@@ -1948,7 +1948,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>绘画工具</translation>
     </message>
     <message>
-        <location line="-2338"/>
+        <location line="-2340"/>
         <source>Stop Recording</source>
         <translation>停止录制</translation>
     </message>
@@ -1963,7 +1963,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>无法连接至服务器</translation>
     </message>
     <message>
-        <location line="+1090"/>
+        <location line="+1092"/>
         <source>Close</source>
         <translation>关闭</translation>
     </message>
@@ -2055,7 +2055,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>&amp;直线</translation>
     </message>
     <message>
-        <location line="-3505"/>
+        <location line="-3507"/>
         <source>🙋 %1 joined!</source>
         <translation>🙋 %1 加入了!</translation>
     </message>
@@ -2090,7 +2090,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>打开简介时出错.</translation>
     </message>
     <message>
-        <location line="+1256"/>
+        <location line="+1258"/>
         <source>Stop Profile</source>
         <translation>停止概况</translation>
     </message>
@@ -2225,7 +2225,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>&amp;图层</translation>
     </message>
     <message>
-        <location line="-2435"/>
+        <location line="-2437"/>
         <source>Opening file…</source>
         <translation>打开文件…</translation>
     </message>
@@ -2255,7 +2255,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>断开连接: %1</translation>
     </message>
     <message>
-        <location line="+926"/>
+        <location line="+928"/>
         <source>Primary screen:</source>
         <translation>主屏幕:</translation>
     </message>
@@ -5878,17 +5878,17 @@ Values above 0.5 may not be noticeable.</source>
         <translation>请输入账号密码. 如果你没有账号, 你可以注册一个. 此服务器也没有提供任何关于如何注册账号的信息.</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>Enter account password. If you don&apos;t have an account, you must register one on %1.</source>
         <translation>请输入账号密码. 如果你没有账号, 你必须在 %1 上注册一个.</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+7"/>
         <source>This username belongs to a registered account. If this isn&apos;t your account, cancel and try again with a different name.</source>
         <translation>该用户名属于一个注册账号. 如果这不是你的账号, 请取消并使用其他用户名重新登录.</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+20"/>
         <source>Close</source>
         <translation>关闭</translation>
     </message>
@@ -5911,7 +5911,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>返回</translation>
     </message>
     <message>
-        <location line="+252"/>
+        <location line="+249"/>
         <source>Remove Account</source>
         <translation>移除账号</translation>
     </message>
@@ -5921,13 +5921,13 @@ Values above 0.5 may not be noticeable.</source>
         <translation>确定移除此账号吗? 这只会将其从最近账号列表中删除, 而不会删除该账号.</translation>
     </message>
     <message>
-        <location line="+38"/>
-        <location line="+160"/>
+        <location line="+39"/>
+        <location line="+161"/>
         <source>Enter the name you want to use.</source>
         <translation>输入你想使用的用户名.</translation>
     </message>
     <message>
-        <location line="-98"/>
+        <location line="-99"/>
         <source>Server Rules for %1</source>
         <translation>%1 的服务器规则</translation>
     </message>
@@ -5937,22 +5937,22 @@ Values above 0.5 may not be noticeable.</source>
         <translation>使用 %1 的账号登录</translation>
     </message>
     <message>
-        <location line="+71"/>
+        <location line="+72"/>
         <source>Enter the name you want to use. See %1 for more information about this server.</source>
         <translation>输入你想使用的用户名. 有关此服务器的更多信息请查阅 %1.</translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+39"/>
         <source>This username doesn&apos;t belong to an account on this server. This is not your drawpile.net account!</source>
         <translation>该用户名不属于此服务器上的账号. 并不是你在 drawpile.net 官网上的账号!</translation>
     </message>
     <message>
-        <location line="+523"/>
+        <location line="+528"/>
         <source>Enter the username and password for your account on this server. This is not your drawpile.net account!</source>
         <translation>请输入你在此服务器上的账号用户名和密码. 并不是你在 drawpile.net 官网上的账号!</translation>
     </message>
     <message>
-        <location line="-604"/>
+        <location line="-612"/>
         <source>You can continue without an account. If you want to register one anyway, you can do so on %1.</source>
         <translation>你可以继续以游客状态(无账号状态)登录. 如果你想注册一个账号, 可以在 %1 上注册.</translation>
     </message>
@@ -5982,37 +5982,37 @@ Values above 0.5 may not be noticeable.</source>
         <translation>有关此服务器的更多信息请查阅 %1.</translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="+52"/>
         <source>This username belongs to an account, pick a different one.</source>
         <translation>该用户名属于一个账号, 请另选一个.</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+12"/>
         <source>The %1 authentication is not working.</source>
         <translation>%1 的身份验证无效.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>This username doesn&apos;t belong an account on %1.</source>
         <translation>该用户名不属于 %1 上的账号.</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+5"/>
         <source>This username belongs to a server account, you can&apos;t use it to log in through %1 on this server.</source>
         <translation>该用户名属于一个服务器账号, 你不能用它通过 %1 登录此服务器.</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>This username belongs to some other login method, you can&apos;t use it to log in through %1 on this server.</source>
         <translation>该用户名属于其他登录方法, 你不能用它通过 %1 登录此服务器.</translation>
     </message>
     <message>
-        <location line="+514"/>
+        <location line="+516"/>
         <source>Enter the username and password for your %1 account.</source>
         <translation>请输入你在 %1 上的账号用户名和密码.</translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+38"/>
         <source>Log in with &apos;%1&apos; credentials</source>
         <translation>请使用&apos;%1&apos;官网上的账号登录</translation>
     </message>
@@ -6530,7 +6530,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>检查更新</translation>
     </message>
     <message>
-        <location line="+268"/>
+        <location line="+272"/>
         <source>Checking…</source>
         <translation>检查…</translation>
     </message>
@@ -7907,7 +7907,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::startdialog::Host</name>
     <message>
-        <location filename="../dialogs/startdialog/host.cpp" line="+105"/>
+        <location filename="../dialogs/startdialog/host.cpp" line="+116"/>
         <source>The title is shown in the application title bar and in the session selection dialog</source>
         <translation>房名会显示在程序的标题栏上和房间列表界面中</translation>
     </message>
@@ -7962,12 +7962,17 @@ Values above 0.5 may not be noticeable.</source>
         <translation>后缀:</translation>
     </message>
     <message>
-        <location line="-135"/>
+        <location line="-146"/>
         <source>A session title is required.</source>
         <translation>需要填写房间名.</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+6"/>
+        <source>Invalid session title. If you want to join a session using an invite link, &lt;a href=&quot;#&quot;&gt;click here to go to the Join page&lt;/a&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
         <source>Without a password set, anyone can join your session! If you want to host a private session, choose a password or &lt;a href=&quot;#&quot;&gt;generate one&lt;/a&gt;.</source>
         <translation>留空密码,任何人都可以加入! 如果你想创建私人的房间,请填写密码或者&lt;a href=&quot;#&quot;&gt;生成一个&lt;/a&gt;.</translation>
     </message>
@@ -8030,7 +8035,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>最近加入过的服务器:</translation>
     </message>
     <message>
-        <location line="+44"/>
+        <location line="+45"/>
         <source>Searching…</source>
         <translation>搜索…</translation>
     </message>
@@ -8941,7 +8946,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::CanvasView</name>
     <message>
-        <location filename="../scene/canvasview.cpp" line="+168"/>
+        <location filename="../scene/canvasview.cpp" line="+169"/>
         <source>Reconnect</source>
         <translation>重新连接</translation>
     </message>
@@ -9475,7 +9480,7 @@ Hex: %4</source>
 <context>
     <name>widgets::TimelineWidget</name>
     <message>
-        <location filename="../widgets/timelinewidget.cpp" line="+599"/>
+        <location filename="../widgets/timelinewidget.cpp" line="+600"/>
         <source>Blank key frame (duplicate)</source>
         <translation>空白关键帧 (复制)</translation>
     </message>
@@ -9534,7 +9539,7 @@ or via Animation ▸ New Track.</source>
 或者通过菜单 动画 ▸ 新建轨道.</translation>
     </message>
     <message>
-        <location line="+557"/>
+        <location line="+558"/>
         <source>Track</source>
         <translation>轨道</translation>
     </message>

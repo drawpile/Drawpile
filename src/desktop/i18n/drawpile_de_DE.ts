@@ -1035,12 +1035,12 @@ Teilreichweite: [%3, %4]</translation>
     <name>LoginDialog</name>
     <message>
         <location filename="../ui/logindialog.ui" line="+103"/>
-        <location line="+231"/>
+        <location line="+234"/>
         <source>Incorrect password.</source>
         <translation>Falsches Passwort.</translation>
     </message>
     <message>
-        <location line="-188"/>
+        <location line="-191"/>
         <source>Password</source>
         <translation>Passwort</translation>
     </message>
@@ -1055,7 +1055,7 @@ Teilreichweite: [%3, %4]</translation>
         <translation>Nutzername</translation>
     </message>
     <message>
-        <location line="+155"/>
+        <location line="+158"/>
         <source>Filter</source>
         <translation>Filter</translation>
     </message>
@@ -1303,7 +1303,7 @@ Teilreichweite: [%3, %4]</translation>
         <translation>Beitreten</translation>
     </message>
     <message>
-        <location line="+579"/>
+        <location line="+581"/>
         <source>The image could not be loaded</source>
         <translation>Das Bild konnte nicht geladen werden</translation>
     </message>
@@ -1345,13 +1345,13 @@ Teilreichweite: [%3, %4]</translation>
         <translation>Automatisch speichern</translation>
     </message>
     <message>
-        <location line="-1535"/>
-        <location line="+1545"/>
+        <location line="-1537"/>
+        <location line="+1547"/>
         <source>Record...</source>
         <translation>Aufzeichnen...</translation>
     </message>
     <message>
-        <location line="-3064"/>
+        <location line="-3066"/>
         <source>Server out of space</source>
         <translation>Kein Speicherplatz auf Server</translation>
     </message>
@@ -1409,12 +1409,12 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
     </message>
     <message>
         <location line="+2"/>
-        <location line="+1836"/>
+        <location line="+1838"/>
         <source>Terminate</source>
         <translation>Beenden</translation>
     </message>
     <message>
-        <location line="-1627"/>
+        <location line="-1629"/>
         <source>Session blocked by parental controls</source>
         <translation>Sitzung durch Jugenschutzeinstellungen blockiert</translation>
     </message>
@@ -1429,7 +1429,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>Ändern Sie die maximalen Rückgängigschritte für diese Sitzung, aktuelles Limit ist %1.</translation>
     </message>
     <message>
-        <location line="+655"/>
+        <location line="+657"/>
         <source>User #%1</source>
         <translation>Benutzer #%1</translation>
     </message>
@@ -1643,7 +1643,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>Vertikal spiegeln</translation>
     </message>
     <message>
-        <location line="-2068"/>
+        <location line="-2070"/>
         <source>Joined the session!</source>
         <translation>Der Sitzung beigetreten!</translation>
     </message>
@@ -1683,7 +1683,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>Freihand-Pinselwerkzeug (Alphasperrmodus)</translation>
     </message>
     <message>
-        <location line="+625"/>
+        <location line="+627"/>
         <source>Export Image…</source>
         <translation>Bild exportieren…</translation>
     </message>
@@ -1936,7 +1936,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>Alles sperren</translation>
     </message>
     <message>
-        <location line="-2198"/>
+        <location line="-2200"/>
         <source>Stop Recording</source>
         <translation>Aufzeichnung beenden</translation>
     </message>
@@ -1951,7 +1951,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>Konnte nicht mit dem Server verbinden</translation>
     </message>
     <message>
-        <location line="+1090"/>
+        <location line="+1092"/>
         <source>Close</source>
         <translation>Schließen</translation>
     </message>
@@ -2068,7 +2068,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>&amp;Gerade</translation>
     </message>
     <message>
-        <location line="-3505"/>
+        <location line="-3507"/>
         <source>🙋 %1 joined!</source>
         <translation>🙋 %1 ist beigetreten!</translation>
     </message>
@@ -2148,7 +2148,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
         <translation>Verbindung getrennt: %1</translation>
     </message>
     <message>
-        <location line="+828"/>
+        <location line="+830"/>
         <source>Stop Profile</source>
         <translation>Profil beenden</translation>
     </message>
@@ -5883,17 +5883,17 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <translation>Geben Sie das Account-Passwort ein. Wenn Sie keinen Account haben, mussen Sie einen registrieren. Dieser Server stellt keine Information darüber bereit, wie Sie dies tun können.</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>Enter account password. If you don&apos;t have an account, you must register one on %1.</source>
         <translation>Geben Sie das Account-Passwort ein. Wenn sie keinen Account haben, müssen Sie einen auf %1 registrieren.</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+7"/>
         <source>This username belongs to a registered account. If this isn&apos;t your account, cancel and try again with a different name.</source>
         <translation>Dieser Nutzername ist auf einen Account registriert. Wenn dies nicht Ihr Account ist, brechen Sie ab und versuchen Sie es mit einem anderen Namen erneut.</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+20"/>
         <source>Close</source>
         <translation>Schließen</translation>
     </message>
@@ -5916,7 +5916,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <translation>Zurück</translation>
     </message>
     <message>
-        <location line="+252"/>
+        <location line="+249"/>
         <source>Remove Account</source>
         <translation>Account entfernen</translation>
     </message>
@@ -5926,13 +5926,13 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <translation>Wirklich diesen Account entfernen? Er wird nur von Ihrer Liste der letzen Accounts entfernt, der Account selbst wird nicht gelöscht.</translation>
     </message>
     <message>
-        <location line="+38"/>
-        <location line="+160"/>
+        <location line="+39"/>
+        <location line="+161"/>
         <source>Enter the name you want to use.</source>
         <translation>Geben Sie den Namen ein, den Sie verwenden möchten.</translation>
     </message>
     <message>
-        <location line="-98"/>
+        <location line="-99"/>
         <source>Server Rules for %1</source>
         <translation>Server-Regeln für %1</translation>
     </message>
@@ -5942,22 +5942,22 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <translation>Login mit %1-Account</translation>
     </message>
     <message>
-        <location line="+71"/>
+        <location line="+72"/>
         <source>Enter the name you want to use. See %1 for more information about this server.</source>
         <translation>Geben Sie den Namen ein, den Sie verwenden möchten. Siehe %1 für mehr Informationen über diesen Server.</translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+39"/>
         <source>This username doesn&apos;t belong to an account on this server. This is not your drawpile.net account!</source>
         <translation>Dieser Nutzername gehört nicht zu einem Account of diesem Server. Dies ist nicht Ihr drawpile.net-Account!</translation>
     </message>
     <message>
-        <location line="+523"/>
+        <location line="+528"/>
         <source>Enter the username and password for your account on this server. This is not your drawpile.net account!</source>
         <translation>Geben Sie Nutzername und Password für Ihren Account auf diesem Server ein. Dies ist nicht Ihr drawpile.net-Account!</translation>
     </message>
     <message>
-        <location line="-604"/>
+        <location line="-612"/>
         <source>You can continue without an account. If you want to register one anyway, you can do so on %1.</source>
         <translation>Sie können ohne Account fortfahren. Wenn Sie dennoch einen registrieren möchten, können Sie dies unter %1 tun.</translation>
     </message>
@@ -5987,37 +5987,37 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <translation>Siehe %1 für mehr Informationen über diesen Server.</translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="+52"/>
         <source>This username belongs to an account, pick a different one.</source>
         <translation>Dieser Nutzername ist auf einen Account registriert, wählen Sie einen anderen.</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+12"/>
         <source>The %1 authentication is not working.</source>
         <translation>Die %1-Authentifizierung funktioniert nicht.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>This username doesn&apos;t belong an account on %1.</source>
         <translation>Dieser Nutzername gehört nicht zu einem Account auf %1.</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+5"/>
         <source>This username belongs to a server account, you can&apos;t use it to log in through %1 on this server.</source>
         <translation>Dieser Nutzername gehört zu einem Server-Account, Sie können ihn auf diesem Server nicht verwenden, um sich durch %1 einzuloggen.</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>This username belongs to some other login method, you can&apos;t use it to log in through %1 on this server.</source>
         <translation>Dieser Nutzername gehört zu einer anderen Loginmethode, Sie können ihn auf diesem Server nicht verwenden, um sich durch %1 einzuloggen.</translation>
     </message>
     <message>
-        <location line="+514"/>
+        <location line="+516"/>
         <source>Enter the username and password for your %1 account.</source>
         <translation>Geben Sie Nutzername und Passwort für Ihren %1-Account ein.</translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+38"/>
         <source>Log in with &apos;%1&apos; credentials</source>
         <translation>Melden Sie sich mit den Anmeldetaten von &apos;%1&apos; an</translation>
     </message>
@@ -6541,7 +6541,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <translation>Auf Updates prüfen</translation>
     </message>
     <message>
-        <location line="+268"/>
+        <location line="+272"/>
         <source>Checking…</source>
         <translation>Prüfe…</translation>
     </message>
@@ -7923,7 +7923,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
 <context>
     <name>dialogs::startdialog::Host</name>
     <message>
-        <location filename="../dialogs/startdialog/host.cpp" line="+105"/>
+        <location filename="../dialogs/startdialog/host.cpp" line="+116"/>
         <source>The title is shown in the application title bar and in the session selection dialog</source>
         <translation>Der Titel der Sitzung wird in der Titelzeile des Programms und im Sitzungsauswahldialog angezeigt</translation>
     </message>
@@ -7978,12 +7978,17 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <translation>ID-Alias:</translation>
     </message>
     <message>
-        <location line="-135"/>
+        <location line="-146"/>
         <source>A session title is required.</source>
         <translation>Ein Titel für die Sitzung ist erforderlich.</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+6"/>
+        <source>Invalid session title. If you want to join a session using an invite link, &lt;a href=&quot;#&quot;&gt;click here to go to the Join page&lt;/a&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
         <source>Without a password set, anyone can join your session! If you want to host a private session, choose a password or &lt;a href=&quot;#&quot;&gt;generate one&lt;/a&gt;.</source>
         <translation>Ohne ein Passwort kann jeder Ihrer Sitzung beitreten! Wenn Sie eine private Sitzung hosten möchten, wählen Sie ein Passwort oder &lt;a href=&quot;#&quot;&gt;generieren Sie eines&lt;/a&gt;.</translation>
     </message>
@@ -8046,7 +8051,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
         <translation>Letzte:</translation>
     </message>
     <message>
-        <location line="+44"/>
+        <location line="+45"/>
         <source>Searching…</source>
         <translation>Suche…</translation>
     </message>
@@ -8960,7 +8965,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
 <context>
     <name>widgets::CanvasView</name>
     <message>
-        <location filename="../scene/canvasview.cpp" line="+168"/>
+        <location filename="../scene/canvasview.cpp" line="+169"/>
         <source>Reconnect</source>
         <translation>Wieder verbinden</translation>
     </message>
@@ -9494,7 +9499,7 @@ Hex: %4</translation>
 <context>
     <name>widgets::TimelineWidget</name>
     <message>
-        <location filename="../widgets/timelinewidget.cpp" line="+599"/>
+        <location filename="../widgets/timelinewidget.cpp" line="+600"/>
         <source>Blank key frame (duplicate)</source>
         <translation>Leeres Schlüsselbild (Duplikat)</translation>
     </message>
@@ -9553,7 +9558,7 @@ Sie können eine Spur mit dem ＋-Knopf oben
 oder per Animation ▸ Neue Spur hinzufügen.</translation>
     </message>
     <message>
-        <location line="+557"/>
+        <location line="+558"/>
         <source>Track</source>
         <translation>Spur</translation>
     </message>

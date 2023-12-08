@@ -1033,23 +1033,23 @@ Subrange: [%3, %4]</source>
 <context>
     <name>LoginDialog</name>
     <message>
-        <location filename="../ui/logindialog.ui" line="+315"/>
+        <location filename="../ui/logindialog.ui" line="+318"/>
         <source>Password:</source>
         <translation>パスワード:</translation>
     </message>
     <message>
-        <location line="-205"/>
+        <location line="-208"/>
         <source>Remember my password</source>
         <translation>パスワードを保存</translation>
     </message>
     <message>
         <location line="-7"/>
-        <location line="+231"/>
+        <location line="+234"/>
         <source>Incorrect password.</source>
         <translation>パスワードが違います。</translation>
     </message>
     <message>
-        <location line="-188"/>
+        <location line="-191"/>
         <source>Password</source>
         <translation>パスワード</translation>
     </message>
@@ -1059,7 +1059,7 @@ Subrange: [%3, %4]</source>
         <translation>ユーザー名</translation>
     </message>
     <message>
-        <location line="+155"/>
+        <location line="+158"/>
         <source>Filter</source>
         <translation>フィルタ</translation>
     </message>
@@ -1326,7 +1326,7 @@ Subrange: [%3, %4]</source>
         <translation>フリーハンドブラシツール(透明度保護モード)</translation>
     </message>
     <message>
-        <location line="+124"/>
+        <location line="+126"/>
         <source>The image could not be loaded</source>
         <translation>画像を読み込みできませんでした</translation>
     </message>
@@ -1373,13 +1373,13 @@ Subrange: [%3, %4]</source>
         <translation>自動保存</translation>
     </message>
     <message>
-        <location line="-1535"/>
-        <location line="+1545"/>
+        <location line="-1537"/>
+        <location line="+1547"/>
         <source>Record...</source>
         <translation>記録...</translation>
     </message>
     <message>
-        <location line="-1778"/>
+        <location line="-1780"/>
         <source>Saving...</source>
         <translation>保存中...</translation>
     </message>
@@ -1405,7 +1405,7 @@ Subrange: [%3, %4]</source>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+1836"/>
+        <location line="+1838"/>
         <source>Terminate</source>
         <translation>終了</translation>
     </message>
@@ -1592,7 +1592,7 @@ Subrange: [%3, %4]</source>
         <translation>ユーザーポインターを表示(&amp;P)</translation>
     </message>
     <message>
-        <location line="-3135"/>
+        <location line="-3137"/>
         <source>🙋 %1 joined!</source>
         <translation>🙋 %1 が入室しました！</translation>
     </message>
@@ -1677,7 +1677,7 @@ Subrange: [%3, %4]</source>
         <translation>セッションの取り消し可能回数を変更します。現在の回数制限は %1 回です。</translation>
     </message>
     <message>
-        <location line="+655"/>
+        <location line="+657"/>
         <source>User #%1</source>
         <translation>ユーザー #%1</translation>
     </message>
@@ -2034,7 +2034,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>オニオンスキン</translation>
     </message>
     <message>
-        <location line="-2633"/>
+        <location line="-2635"/>
         <source>Stop Recording</source>
         <translation>セッションの記録を停止</translation>
     </message>
@@ -2049,7 +2049,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>サーバーに接続できませんでした</translation>
     </message>
     <message>
-        <location line="+940"/>
+        <location line="+942"/>
         <source>A collaborative drawing program.</source>
         <translation>共同作業可能なドローイングアプリケーションです。</translation>
     </message>
@@ -2176,7 +2176,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <translation>直線(&amp;L)</translation>
     </message>
     <message>
-        <location line="-3771"/>
+        <location line="-3773"/>
         <source>Server out of space</source>
         <translation>サーバーのスペースが不足</translation>
     </message>
@@ -2203,7 +2203,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>ペアレンタルコントロールによりブロック済のセッション</translation>
     </message>
     <message>
-        <location line="+948"/>
+        <location line="+950"/>
         <source>Hide Docks</source>
         <translation>ドックを隠す</translation>
     </message>
@@ -2263,7 +2263,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>センシティブレイヤーの表示</translation>
     </message>
     <message>
-        <location line="-2382"/>
+        <location line="-2384"/>
         <source>Opening file…</source>
         <translation>ファイルを開く…</translation>
     </message>
@@ -2293,7 +2293,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>切断済み: %1</translation>
     </message>
     <message>
-        <location line="+926"/>
+        <location line="+928"/>
         <source>Primary screen:</source>
         <translation>メイン画面:</translation>
     </message>
@@ -5877,17 +5877,17 @@ Values above 0.5 may not be noticeable.</source>
         <translation>アカウントのパスワードを入力します。アカウントを持っていない場合は、アカウントを登録する必要があります。このサーバーは、その方法についての情報を提供しません。</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>Enter account password. If you don&apos;t have an account, you must register one on %1.</source>
         <translation>アカウントのパスワードを入力します。アカウントを持っていない場合は、%1 にアカウントを登録する必要があります。</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+7"/>
         <source>This username belongs to a registered account. If this isn&apos;t your account, cancel and try again with a different name.</source>
         <translation>このユーザー名は登録済みアカウントに属しています。あなたのアカウントではない場合はキャンセルして再び別の名前を試してください。</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+20"/>
         <source>Close</source>
         <translation>閉じる</translation>
     </message>
@@ -5910,7 +5910,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>戻る</translation>
     </message>
     <message>
-        <location line="+252"/>
+        <location line="+249"/>
         <source>Remove Account</source>
         <translation>アカウントの削除</translation>
     </message>
@@ -5920,13 +5920,13 @@ Values above 0.5 may not be noticeable.</source>
         <translation>本当にこのアカウントを忘れますか？これは最近使用したアカウントのリストから削除するだけで、アカウント自体は削除されません。</translation>
     </message>
     <message>
-        <location line="+38"/>
-        <location line="+160"/>
+        <location line="+39"/>
+        <location line="+161"/>
         <source>Enter the name you want to use.</source>
         <translation>使用したい名前を入力してください。</translation>
     </message>
     <message>
-        <location line="-98"/>
+        <location line="-99"/>
         <source>Server Rules for %1</source>
         <translation>%1 のサーバールール</translation>
     </message>
@@ -5936,22 +5936,22 @@ Values above 0.5 may not be noticeable.</source>
         <translation>%1 のアカウントでログイン</translation>
     </message>
     <message>
-        <location line="+71"/>
+        <location line="+72"/>
         <source>Enter the name you want to use. See %1 for more information about this server.</source>
         <translation>使用したい名前を入力します。このサーバーの詳細については %1 を参照してください。</translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+39"/>
         <source>This username doesn&apos;t belong to an account on this server. This is not your drawpile.net account!</source>
         <translation>このユーザー名は、このサーバー上のアカウントに属していません。これはあなたの drawpile.net アカウントではありません!</translation>
     </message>
     <message>
-        <location line="+523"/>
+        <location line="+528"/>
         <source>Enter the username and password for your account on this server. This is not your drawpile.net account!</source>
         <translation>このサーバー上のアカウントのユーザー名とパスワードを入力します。これはあなたの drawpile.net アカウントではありません!</translation>
     </message>
     <message>
-        <location line="-604"/>
+        <location line="-612"/>
         <source>You can continue without an account. If you want to register one anyway, you can do so on %1.</source>
         <translation>アカウントなしで続行できます。アカウントを登録したい場合は %1 で可能です。</translation>
     </message>
@@ -5981,37 +5981,37 @@ Values above 0.5 may not be noticeable.</source>
         <translation>このサーバーについての詳細は %1 を参照してください。</translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="+52"/>
         <source>This username belongs to an account, pick a different one.</source>
         <translation>このユーザー名はアカウントに属しています。別のものを選んでください。</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+12"/>
         <source>The %1 authentication is not working.</source>
         <translation>%1 認証が機能していません。</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>This username doesn&apos;t belong an account on %1.</source>
         <translation>このユーザー名は %1 のアカウントに属していません。</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+5"/>
         <source>This username belongs to a server account, you can&apos;t use it to log in through %1 on this server.</source>
         <translation>このユーザー名はサーバーアカウントに属しているので、このサーバーで %1 を使用してログインすることはできません。</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>This username belongs to some other login method, you can&apos;t use it to log in through %1 on this server.</source>
         <translation>このユーザー名は他のログイン方法に属しています。このサーバーで %1 を使用してログインすることはできません。</translation>
     </message>
     <message>
-        <location line="+514"/>
+        <location line="+516"/>
         <source>Enter the username and password for your %1 account.</source>
         <translation>%1 アカウントのユーザー名とパスワードを入力してください。</translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+38"/>
         <source>Log in with &apos;%1&apos; credentials</source>
         <translation>&apos;%1&apos; 認証情報を使用してログインします</translation>
     </message>
@@ -6529,7 +6529,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>更新を確認</translation>
     </message>
     <message>
-        <location line="+268"/>
+        <location line="+272"/>
         <source>Checking…</source>
         <translation>確認中…</translation>
     </message>
@@ -7906,7 +7906,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::startdialog::Host</name>
     <message>
-        <location filename="../dialogs/startdialog/host.cpp" line="+105"/>
+        <location filename="../dialogs/startdialog/host.cpp" line="+116"/>
         <source>The title is shown in the application title bar and in the session selection dialog</source>
         <translation>タイトルはアプリケーションのタイトルバーとセッション選択ダイアログで表示されます</translation>
     </message>
@@ -7961,12 +7961,17 @@ Values above 0.5 may not be noticeable.</source>
         <translation>IDエイリアス:</translation>
     </message>
     <message>
-        <location line="-135"/>
+        <location line="-146"/>
         <source>A session title is required.</source>
         <translation>セッションのタイトルは必須です。</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+6"/>
+        <source>Invalid session title. If you want to join a session using an invite link, &lt;a href=&quot;#&quot;&gt;click here to go to the Join page&lt;/a&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
         <source>Without a password set, anyone can join your session! If you want to host a private session, choose a password or &lt;a href=&quot;#&quot;&gt;generate one&lt;/a&gt;.</source>
         <translation>パスワードを設定しなくても誰でもセッションに参加できます。プライベート セッションをホストする場合はパスワードを選択するか、&lt;a href=&quot;#&quot;&gt;パスワードを生成&lt;/a&gt;します。</translation>
     </message>
@@ -8029,7 +8034,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>最近:</translation>
     </message>
     <message>
-        <location line="+44"/>
+        <location line="+45"/>
         <source>Searching…</source>
         <translation>検索中…</translation>
     </message>
@@ -8940,7 +8945,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::CanvasView</name>
     <message>
-        <location filename="../scene/canvasview.cpp" line="+168"/>
+        <location filename="../scene/canvasview.cpp" line="+169"/>
         <source>Reconnect</source>
         <translation>再接続</translation>
     </message>
@@ -9474,7 +9479,7 @@ Hex: %4</source>
 <context>
     <name>widgets::TimelineWidget</name>
     <message>
-        <location filename="../widgets/timelinewidget.cpp" line="+599"/>
+        <location filename="../widgets/timelinewidget.cpp" line="+600"/>
         <source>Blank key frame (duplicate)</source>
         <translation>空のキーフレーム(複製)</translation>
     </message>
@@ -9533,7 +9538,7 @@ or via Animation ▸ New Track.</source>
 追加します。</translation>
     </message>
     <message>
-        <location line="+557"/>
+        <location line="+558"/>
         <source>Track</source>
         <translation>トラック</translation>
     </message>

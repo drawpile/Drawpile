@@ -17,7 +17,7 @@
 <context>
     <name>CanvasSaverRunnable</name>
     <message>
-        <location filename="../export/canvassaverrunnable.cpp" line="+32"/>
+        <location filename="../export/canvassaverrunnable.cpp" line="+35"/>
         <source>Bad arguments, this is probably a bug in Drawpile.</source>
         <translation>糟糕的争论, 这可能是Drawpile的一个bug.</translation>
     </message>

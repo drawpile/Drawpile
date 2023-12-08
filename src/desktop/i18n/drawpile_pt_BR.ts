@@ -1037,12 +1037,12 @@ Subintervalo: [%3,%4]</translation>
     <name>LoginDialog</name>
     <message>
         <location filename="../ui/logindialog.ui" line="+103"/>
-        <location line="+231"/>
+        <location line="+234"/>
         <source>Incorrect password.</source>
         <translation>Senha incorreta.</translation>
     </message>
     <message>
-        <location line="-188"/>
+        <location line="-191"/>
         <source>Password</source>
         <translation>Senha</translation>
     </message>
@@ -1057,7 +1057,7 @@ Subintervalo: [%3,%4]</translation>
         <translation>Nome de Usuário</translation>
     </message>
     <message>
-        <location line="+155"/>
+        <location line="+158"/>
         <source>Filter</source>
         <translation>Filtrar</translation>
     </message>
@@ -1375,7 +1375,7 @@ Subintervalo: [%3,%4]</translation>
         <translation>Entrar em uma sessão</translation>
     </message>
     <message>
-        <location line="+579"/>
+        <location line="+581"/>
         <source>The image could not be loaded</source>
         <translation>Não foi possível carregar a imagem</translation>
     </message>
@@ -1422,13 +1422,13 @@ Subintervalo: [%3,%4]</translation>
         <translation>Salvar automaticamente</translation>
     </message>
     <message>
-        <location line="-1535"/>
-        <location line="+1545"/>
+        <location line="-1537"/>
+        <location line="+1547"/>
         <source>Record...</source>
         <translation>Gravar...</translation>
     </message>
     <message>
-        <location line="-3064"/>
+        <location line="-3066"/>
         <source>Server out of space</source>
         <translation>Servidor sem memória disponível</translation>
     </message>
@@ -1456,17 +1456,17 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
     </message>
     <message>
         <location line="+2"/>
-        <location line="+1836"/>
+        <location line="+1838"/>
         <source>Terminate</source>
         <translation>Terminar</translation>
     </message>
     <message>
-        <location line="-1627"/>
+        <location line="-1629"/>
         <source>Session blocked by parental controls</source>
         <translation>Sessão bloqueada por controle parental</translation>
     </message>
     <message>
-        <location line="+948"/>
+        <location line="+950"/>
         <source>Hide Docks</source>
         <translation>Esconder painéis</translation>
     </message>
@@ -1790,7 +1790,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
         <translation>Espelhar Verticalmente</translation>
     </message>
     <message>
-        <location line="-1741"/>
+        <location line="-1743"/>
         <source>No canvas to host! Create one or open a file.</source>
         <translation>Nenhuma tela de pintura para hospedar! Crie uma ou abra um arquivo.</translation>
     </message>
@@ -1825,7 +1825,7 @@ Simplifique as telas de pintura e reinicie manualmente antes que o espaço livre
         <translation>Muda quantas vezes é possível desfazer na sessão atual. O limite agora é de %1 ações de desfazer.</translation>
     </message>
     <message>
-        <location line="+655"/>
+        <location line="+657"/>
         <source>User #%1</source>
         <translation>Usuário Nº%1</translation>
     </message>
@@ -2223,7 +2223,7 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
         <translation>Mostrar &amp;Anotações</translation>
     </message>
     <message>
-        <location line="-3134"/>
+        <location line="-3136"/>
         <source>🙋 %1 joined!</source>
         <translation>🙋 %1 entrou!</translation>
     </message>
@@ -2233,7 +2233,7 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
         <translation>Salvando animação...</translation>
     </message>
     <message>
-        <location line="+1940"/>
+        <location line="+1942"/>
         <source>Rotate Canvas Clockwise</source>
         <translation>Girar tela de pintura no sentido horário</translation>
     </message>
@@ -2298,7 +2298,7 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
         <translation>Mostrar camadas censuradas</translation>
     </message>
     <message>
-        <location line="-2819"/>
+        <location line="-2821"/>
         <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
         <translation>&lt;p&gt;O atalho &apos;%1&apos; já está sendo usado em várias ocasiões:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</translation>
     </message>
@@ -2358,7 +2358,7 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
         <translation>À mão livre (canal alfa bloqueado)</translation>
     </message>
     <message>
-        <location line="+583"/>
+        <location line="+585"/>
         <source>Toggle Dock %1</source>
         <translation>Ligar Painel de %1</translation>
     </message>
@@ -5885,17 +5885,17 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>Enter account password. If you don&apos;t have an account, you must register one on %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+7"/>
         <source>This username belongs to a registered account. If this isn&apos;t your account, cancel and try again with a different name.</source>
         <translation>Esse nome de usuário já pertence a uma conta registrada. Se não é a sua conta, cancele e tente de novo com um nome diferente.</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+20"/>
         <source>Close</source>
         <translation>Fechar</translation>
     </message>
@@ -5918,7 +5918,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Voltar</translation>
     </message>
     <message>
-        <location line="+252"/>
+        <location line="+249"/>
         <source>Remove Account</source>
         <translation>Remover Conta</translation>
     </message>
@@ -5928,13 +5928,13 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Deseja mesmo esquecer essa conta? Isso vai removê-la da sua lista de contas recentes, não irá deletar a conta.</translation>
     </message>
     <message>
-        <location line="+38"/>
-        <location line="+160"/>
+        <location line="+39"/>
+        <location line="+161"/>
         <source>Enter the name you want to use.</source>
         <translation>Digite o nome que quer usar.</translation>
     </message>
     <message>
-        <location line="-98"/>
+        <location line="-99"/>
         <source>Server Rules for %1</source>
         <translation>Regras do Servidor %1</translation>
     </message>
@@ -5944,22 +5944,22 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Fazer login com a conta %1</translation>
     </message>
     <message>
-        <location line="+71"/>
+        <location line="+72"/>
         <source>Enter the name you want to use. See %1 for more information about this server.</source>
         <translation>Digite o nome que você deseja usar. Veja %1 para mais informações sobre esse servidor.</translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+39"/>
         <source>This username doesn&apos;t belong to an account on this server. This is not your drawpile.net account!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+523"/>
+        <location line="+528"/>
         <source>Enter the username and password for your account on this server. This is not your drawpile.net account!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-604"/>
+        <location line="-612"/>
         <source>You can continue without an account. If you want to register one anyway, you can do so on %1.</source>
         <translation>Você pode continuar sem uma conta. Se quiser se registrar mesmo assim, registre-se em %1.</translation>
     </message>
@@ -5989,37 +5989,37 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Veja %1 para mais informações sobre esse servidor.</translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="+52"/>
         <source>This username belongs to an account, pick a different one.</source>
         <translation>Esse nome de usuário pertence a uma conta, pegue um nome diferente.</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+12"/>
         <source>The %1 authentication is not working.</source>
         <translation>A autenticação %1 não está funcionando.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>This username doesn&apos;t belong an account on %1.</source>
         <translation>Esse nome de usuário não pertence a nenhuma conta em %1.</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+5"/>
         <source>This username belongs to a server account, you can&apos;t use it to log in through %1 on this server.</source>
         <translation>Esse nome de usuário pertence a uma conta do servidor, você não pode usá-lo para entrar em %1 neste servidor.</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>This username belongs to some other login method, you can&apos;t use it to log in through %1 on this server.</source>
         <translation>Esse nome de usuário pertence a outro método de login. Você não pode usá-lo para fazer login em %1 neste servidor.</translation>
     </message>
     <message>
-        <location line="+514"/>
+        <location line="+516"/>
         <source>Enter the username and password for your %1 account.</source>
         <translation>Insira o nome de usuário e senha para sua conta %1.</translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+38"/>
         <source>Log in with &apos;%1&apos; credentials</source>
         <translation>Entre com as credenciais de &apos;%1&apos;</translation>
     </message>
@@ -6543,7 +6543,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Verificar Atualizações</translation>
     </message>
     <message>
-        <location line="+268"/>
+        <location line="+272"/>
         <source>Checking…</source>
         <translation>Verificando…</translation>
     </message>
@@ -7925,7 +7925,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
 <context>
     <name>dialogs::startdialog::Host</name>
     <message>
-        <location filename="../dialogs/startdialog/host.cpp" line="+105"/>
+        <location filename="../dialogs/startdialog/host.cpp" line="+116"/>
         <source>The title is shown in the application title bar and in the session selection dialog</source>
         <translation>O título é mostrado na barra de título da janela e no diálogo de seleção de sessão</translation>
     </message>
@@ -7980,12 +7980,17 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>ID Fácil:</translation>
     </message>
     <message>
-        <location line="-135"/>
+        <location line="-146"/>
         <source>A session title is required.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+6"/>
+        <source>Invalid session title. If you want to join a session using an invite link, &lt;a href=&quot;#&quot;&gt;click here to go to the Join page&lt;/a&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
         <source>Without a password set, anyone can join your session! If you want to host a private session, choose a password or &lt;a href=&quot;#&quot;&gt;generate one&lt;/a&gt;.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8048,7 +8053,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
         <translation>Recente:</translation>
     </message>
     <message>
-        <location line="+44"/>
+        <location line="+45"/>
         <source>Searching…</source>
         <translation>Procurando…</translation>
     </message>
@@ -8962,7 +8967,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
 <context>
     <name>widgets::CanvasView</name>
     <message>
-        <location filename="../scene/canvasview.cpp" line="+168"/>
+        <location filename="../scene/canvasview.cpp" line="+169"/>
         <source>Reconnect</source>
         <translation>Reconectar</translation>
     </message>
@@ -9496,7 +9501,7 @@ Hexadecimal: %4</translation>
 <context>
     <name>widgets::TimelineWidget</name>
     <message>
-        <location filename="../widgets/timelinewidget.cpp" line="+599"/>
+        <location filename="../widgets/timelinewidget.cpp" line="+600"/>
         <source>Blank key frame (duplicate)</source>
         <translation>Key Frame Vazio (duplicado)</translation>
     </message>
@@ -9555,7 +9560,7 @@ Adicione uma usando o botão ＋ acima
 ou em Animação ▸ Nova Trilha.</translation>
     </message>
     <message>
-        <location line="+557"/>
+        <location line="+558"/>
         <source>Track</source>
         <translation>Trilha</translation>
     </message>
