@@ -23,6 +23,110 @@
     <category>Graphics</category>
   </categories>
   <releases>
+    <release version="2.2.0-beta.11" type="development" date="2023-12-08">
+      <url>https://drawpile.net/news/release-2.2.0-beta.11/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>Server Fix: No longer show "cannot look up one session and then join another" when joining a session with an ID alias. Thanks Kink and Fabian for finding this.</li>
+          <li>Fix: Actually disable brush taking in 2.1 sessions, last attempt didn't stick. Thanks again Blozzom for reporting.</li>
+          <li>Fix: Also show mute notifications action when right-clicking the chat. Thanks Blozzom for reporting.</li>
+          <li>Fix: Make brush palette less immensely slow. Thanks lowontrash for reporting.</li>
+          <li>Fix: Show kick and ban messages in the correct order, without duplicates. Thanks xxxx for reporting.</li>
+          <li>Fix: Force the canvas to refresh on resize even harder because some systems still get artifacts. Thanks xxxx for reporting.</li>
+          <li>Fix: Default the mouse wheel to pan the canvas on macOS instead of zooming it, since that makes more sense for its two-dimensional scroll wheels. Thanks Charmandrigo for reporting.</li>
+          <li>Fix: Make Apple Magic Trackpad and hopefully other touch pads work. Thanks Charmandrigo for reporting and helping figure this out.</li>
+          <li>Fix: Add a close button to the tablet tester, playback, event log and flipbook dialogs so that it can be closed on Android and other systems without window decorations without having to press some button or key combination.</li>
+          <li>Fix: Enable fingerpainting on Android by default if the device doesn't have a stylus.</li>
+          <li>Fix: Prefer versioned lconvert executable over unversioned one to make things work on Fedora. Thanks lowontrash for reporting.</li>
+          <li>Fix: Look in source directory for assets when building, making running from the build directory possible. Can be turned off with -DSOURCE_ASSETS=OFF. Thanks Meru, lowontrash and probably others for running into issues with this.</li>
+          <li>Fix: Make large circles and curves drawn with the circle and curve tool not look all jaggy.</li>
+          <li>Fix: Make large rectangles close properly with MyPaint brushes. Thanks haxekhaex2 for reporting.</li>
+          <li>Fix: Allow horizontal scrolling in the preferences dialog so the close button doesn't get thrown off-screen on mobile. Thanks Xkower for reporting.</li>
+          <li>Fix: Allow scrolling of preferences and start dialog sidebar.</li>
+          <li>Fix: Move preferences dialog sidebar to the top on macOS and to the bottom on Android, to fit better with how those systems work. Thanks Snover and Xkower.</li>
+          <li>Fix: Make copying and pasting work on Android. Thanks ariqhadiyan for reporting.</li>
+          <li>Fix: Open files in the background to avoid "not responding" warnings. Thanks ariqhadiyan for reporting.</li>
+          <li>Fix: Force main window to fit screen on Android whenever the docks change, to avoid spills beyond the edge of the screen. Thanks Xkower for reporting.</li>
+          <li>Fix: Don't load ORA files in parallel on Android. This is slower, but avoids the application getting terminated for using too much memory. Thanks ariqhadiyan for reporting.</li>
+          <li>Fix: Make keyboard modifiers work better on Android. Thanks ariqhadiyan for reporting.</li>
+          <li>Fix: Default Export Image option to export as PNG instead of ORA, because that's what that option is for. Thanks SadColor for reporting.</li>
+          <li>Feature: Add libera.chat link to start dialog.</li>
+          <li>Fix: Properly restore avatar again when reconnecting to a session on a 2.1 server. Thanks xxxx for reporting.</li>
+          <li>Fix: Make kinetic scrolling work in brush editor categories list.</li>
+          <li>Fix: Make canvas rendering not get stuck when switching frames really quickly. Thanks Kink and Hopfel for reporting.</li>
+          <li>Fix: Update color swatch when using fill selection, recolor selection and color erase selection.</li>
+          <li>Fix: Only update color swatch when using tools that actually put those colors on the canvas.</li>
+          <li>Fix: Make color palette swatch select last used color so that it doesn't get stuck when switching brush slots. Thanks Meru for reporting.</li>
+          <li>Fix: Make Copy Merged and Copy Without Background from a floating selection work again. Thanks Meru for reporting.</li>
+          <li>Fix: Make Export Selection, Copy Merged and Copy Without Background adhere to current view mode. Thanks Bovy for reporting.</li>
+          <li>Fix: Make fill tool adhere to current view mode (minus onion skins) when using Merged Image as the source. Thanks Meru for reporting.</li>
+          <li>Fix: Don't crash when changing saturation in color dialog when using HSL or LCH color models. Thanks Meru for reporting.</li>
+          <li>Fix: Don't deadlock when saving and clearing password fallback.</li>
+          <li>Feature: Shortcut login flow on servers that only support guest and internal account logins.</li>
+          <li>Feature: Allow changing tablet driver through Edit menu on Windows.</li>
+          <li>Fix: Reset floating selection when filling it to avoid weird effects if the fill is inside the originally selected area. Thanks Meru for reporting.</li>
+          <li>Fix: Properly load annotations and timeline from ORA files without a background. Thanks MyaThingoss for reporting.</li>
+          <li>Feature: Add a Tablet Setup link in the start dialog.</li>
+          <li>Fix: Don't hide dock titlebars when pressing shift when a text field is in focus, since that might hide a field you're currently typing in. Thanks Trite for reporting.</li>
+          <li>Fix: Disable Hold Shift to Arrange by default, since it's not needed most of the time.</li>
+          <li>Fix: Don't claim every username is taken when connecting to a server with the old login flow doesn't allow guest logins, instead tell the user that they need an account. Thanks Meru for reporting.</li>
+          <li>Fix: Give checkbox outlines more contrast, since they're virtually invisible in most themes. This is a patch to Qt.</li>
+          <li>Fix: Change italic to bold text, since the former is not readable in Chinese script.</li>
+          <li>Fix: Make keep aspect ratio checkbox in resize dialog keep the current aspect ratio, not the original one.</li>
+          <li>Fix: Don't act like keep aspect ratio is checked when resizing from a selection. Thanks Meru for reporting.</li>
+          <li>Fix: Make onion skin color partially transparent by default so that they don't turn into solid blocks on colored stuff. Thanks BulletPepper for reporting.</li>
+          <li>Fix: Clarify the host dialog by adding additional messages that explain common sources of confusion, such as the title being required, disallowing invite links as the title, the password being necessary to host a private session and "host on this computer" requiring port forwarding.</li>
+          <li>Fix: Prevent jittering pixels on the canvas at certain zooms and rotations. Thanks Bluestrings, Meru and taiyu for reporting this. Also thanks Meru for actually finding the solution and contributing this fix.</li>
+          <li>Fix: Don't reset brush mode when clicking on the freehand tool button from a different tool. Thanks Big Piston for reporting.</li>
+          <li>Fix: Render annotations when saving to PNG and JPEG. Thanks chrystalclear and Rykuta for reporting.</li>
+          <li>Fix: Don't reset annotation settings to weird values when there's no text. Thanks Blozzom for reporting.</li>
+          <li>Fix: When hiding a layer group, indicate that all containing layers are hidden too. Thanks Missile for reporting.</li>
+          <li>Fix: Take scroll into account when reordering tracks. Thanks Meru for reporting.</li>
+          <li>Fix: Show proper ext-auth URL when prompting for a login. Thanks xxxx for reporting.</li>
+          <li>Fix: Properly show server info URL as a clickable link when prompting for a login.</li>
+          <li>Feature: Focus the input field on the Join page when switching to it so that you can immediately paste a link without having to click it.</li>
+          <li>Fix: Handle view mode changes (frame view, onion skins etc.) properly in drawpile-cmd and drawpile-timelapse tools.</li>
+        </ul>
+      </description>
+      <artifacts>
+        <artifact type="binary" platform="win64">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.11/Drawpile-2.2.0-beta.11-64bit.msi</location>
+          <checksum type="sha256">886de742337730e590f2c0e119533a14780b350314ff98b71629639cdbf34065</checksum>
+          <size type="download">24129731</size>
+        </artifact>
+        <artifact type="binary" platform="win32">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.11/Drawpile-2.2.0-beta.11-32bit.msi</location>
+          <checksum type="sha256">5682d7d4544b7c1967d316e7dcbb5874dc18bb8b34dc1e0d46969394b776cfd0</checksum>
+          <size type="download">21053609</size>
+        </artifact>
+        <artifact type="binary" platform="macos">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.11/Drawpile-2.2.0-beta.11.dmg</location>
+          <checksum type="sha256">4f3bb8467cbd82a6b12e6dd3adac7a17fa4e6284fad2dbb1d145677d4e5557dd</checksum>
+          <size type="download">30502215</size>
+        </artifact>
+        <artifact type="binary" platform="x86_64-linux-gnu">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.11/Drawpile-2.2.0-beta.11-x86_64.AppImage</location>
+          <checksum type="sha256">b86cca36018ac726cb2970075b0d0ea37d5d4894bdc7a434cb51ce3c21abcf9e</checksum>
+          <size type="download">51528896</size>
+        </artifact>
+        <artifact type="binary" platform="aarch64-linux-android">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.11/Drawpile-2.2.0-beta.11-arm64-v8a.apk</location>
+          <checksum type="sha256">2366953c17a7b3d32b138f84f040793abbed1ed746ed6293c6903284f5bdbb33</checksum>
+          <size type="download">20003253</size>
+        </artifact>
+        <artifact type="binary" platform="arm-linux-android">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0-beta.11/Drawpile-2.2.0-beta.11-armeabi-v7a.apk</location>
+          <checksum type="sha256">6dc91bbebf1a6643cc9f20c76bc37699ee65764808d9236ebb8737cbc850e7da</checksum>
+          <size type="download">16874029</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.2.0-beta.11.tar.gz</location>
+          <checksum type="sha256">5a9d59a022d7ad3f90d30621a3c8a04169983c2b137b8230a398ce1b67af91b5</checksum>
+          <size type="download">5239419</size>
+        </artifact>
+      </artifacts>
+    </release>
     <release version="2.2.0-beta.10" type="development" date="2023-11-12">
       <url>https://drawpile.net/news/release-2.2.0-beta.10/</url>
       <description>
