@@ -7985,7 +7985,7 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+6"/>
         <source>Invalid session title. If you want to join a session using an invite link, &lt;a href=&quot;#&quot;&gt;click here to go to the Join page&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ungültiger Sitzungstitel. Wenn Sie einer Sitzung per Einladungslink beitreten möchten, &lt;a href=&quot;#&quot;&gt;klicken Sie hier, um auf die Beitreten-Seite zu wechseln&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+12"/>
