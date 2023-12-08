@@ -11,7 +11,6 @@
 #include "libserver/thinserverclient.h"
 #include "libserver/serverconfig.h"
 #include "libserver/serverlog.h"
-#include "libserver/sslserver.h"
 #include "libshared/net/servercmd.h"
 #include "libshared/util/whatismyip.h"
 
@@ -94,7 +93,8 @@ void MultiServer::setTemplateDirectory(const QDir &dir)
 bool MultiServer::createServer()
 {
 	if(!m_sslCertFile.isEmpty() && !m_sslKeyFile.isEmpty()) {
-		SslServer *server = new SslServer(m_sslCertFile, m_sslKeyFile, this);
+		SslServer *server =
+			new SslServer(m_sslCertFile, m_sslKeyFile, m_sslKeyAlgorithm, this);
 		if(!server->isValidCert()) {
 			emit serverStartError("Couldn't load TLS certificate");
 			return false;

@@ -1,4 +1,5 @@
 Unreleased Version 2.2.0-pre
+ * Server Fix: Add --ssl-key-algorithm parameter to allow non-RSA SSL keys, defaulting to guessing the most common formats RSA and EC. Thanks Bluestrings for reporting.
 
 2023-12-08 Version 2.2.0-beta.11
  * Server Fix: No longer show "cannot look up one session and then join another" when joining a session with an ID alias. Thanks Kink and Fabian for finding this.

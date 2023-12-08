@@ -13,8 +13,10 @@ namespace server {
 class SslServer final : public QTcpServer {
 	Q_OBJECT
 public:
+	enum class Algorithm { Guess, Rsa, Dsa, Ec, Dh };
+
 	SslServer(
-		const QString &certFile, const QString &keyFile,
+		const QString &certFile, const QString &keyFile, Algorithm keyAlgorithm,
 		QObject *parent = nullptr);
 
 	bool isValidCert() const;
@@ -31,12 +33,15 @@ protected:
 private:
 	bool reloadCertChain();
 	bool reloadKey();
+	QSslKey loadKey(const QByteArray &encoded) const;
+	const char *getKeyAlgorithmDescription() const;
 
 	QList<QSslCertificate> m_certchain;
 	QSslKey m_key;
 
 	QString m_certPath;
 	QString m_keyPath;
+	Algorithm m_keyAlgorithm;
 	QDateTime m_certLastMod;
 	QDateTime m_keyLastMod;
 };

@@ -135,6 +135,10 @@ bool start() {
 	QCommandLineOption sslKeyOption("ssl-key", "SSL key file", "key");
 	parser.addOption(sslKeyOption);
 
+	// --ssl-key-algorithm <algorithm>
+	QCommandLineOption sslKeyAlgorithmOption("ssl-key-algorithm", "SSL key algorithm: guess (the default), rsa, ec, dsa or dh.", "algorithm", "guess");
+	parser.addOption(sslKeyAlgorithmOption);
+
 	// --record <path>
 	QCommandLineOption recordOption("record", "Record sessions", "path");
 	parser.addOption(recordOption);
@@ -313,8 +317,27 @@ bool start() {
 	{
 		QString sslCert = parser.value(sslCertOption);
 		QString sslKey = parser.value(sslKeyOption);
+		QString sslKeyAlgorithm = parser.value(sslKeyAlgorithmOption);
 		if(!sslCert.isEmpty() && !sslKey.isEmpty()) {
-			server->setSslCertFile(sslCert, sslKey);
+			server::SslServer::Algorithm algorithm;
+			if(sslKeyAlgorithm.compare("guess", Qt::CaseInsensitive) == 0) {
+				algorithm = SslServer::Algorithm::Guess;
+			} else if(sslKeyAlgorithm.compare("rsa", Qt::CaseInsensitive) == 0) {
+				algorithm = SslServer::Algorithm::Rsa;
+			} else if(sslKeyAlgorithm.compare("dsa", Qt::CaseInsensitive) == 0) {
+				algorithm = SslServer::Algorithm::Dsa;
+			} else if(sslKeyAlgorithm.compare("ec", Qt::CaseInsensitive) == 0) {
+				algorithm = SslServer::Algorithm::Ec;
+			} else if(sslKeyAlgorithm.compare("dh", Qt::CaseInsensitive) == 0) {
+				algorithm = SslServer::Algorithm::Dh;
+			} else {
+				qCritical(
+					"Invalid ssl-key-algorithm '%s', must be one of 'guess', "
+					"'rsa', 'dsa', 'ec', 'dh'",
+					qUtf8Printable(sslKeyAlgorithm));
+				return false;
+			}
+			server->setSslCertFile(sslCert, sslKey, algorithm);
 			server::SslServer::requireForwardSecrecy();
 		}
 	}

@@ -4,6 +4,7 @@
 #define DP_MULTISERVER_H
 
 #include "libserver/jsonapi.h"
+#include "libserver/sslserver.h"
 
 #include <QObject>
 #include <QHostAddress>
@@ -28,7 +29,15 @@ Q_OBJECT
 public:
 	explicit MultiServer(ServerConfig *config, QObject *parent = nullptr);
 
-	void setSslCertFile(const QString &certfile, const QString &keyfile) { m_sslCertFile = certfile; m_sslKeyFile = keyfile; }
+	void setSslCertFile(
+		const QString &certfile, const QString &keyfile,
+		SslServer::Algorithm keyAlgorithm)
+	{
+		m_sslCertFile = certfile;
+		m_sslKeyFile = keyfile;
+		m_sslKeyAlgorithm = keyAlgorithm;
+	}
+
 	void setAutoStop(bool autostop);
 	void setRecordingPath(const QString &path);
 	void setTemplateDirectory(const QDir &dir);
@@ -114,6 +123,7 @@ private:
 
 	QString m_sslCertFile;
 	QString m_sslKeyFile;
+	SslServer::Algorithm m_sslKeyAlgorithm;
 	QString m_recordingPath;
 
 	QDateTime m_started;

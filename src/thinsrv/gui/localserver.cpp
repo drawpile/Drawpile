@@ -72,9 +72,9 @@ void LocalServer::startServer()
 	cfg.beginGroup("guiserver");
 
 	if(cfg.value("use-ssl", false).toBool())
-		m_server->setSslCertFile(cfg.value("sslcert").toString(), cfg.value("sslkey").toString());
+		m_server->setSslCertFile(cfg.value("sslcert").toString(), cfg.value("sslkey").toString(), SslServer::Algorithm::Guess);
 	else
-		m_server->setSslCertFile(QString(), QString());
+		m_server->setSslCertFile(QString(), QString(), SslServer::Algorithm::Guess);
 
 	InternalConfig icfg = m_server->config()->internalConfig();
 	icfg.localHostname = cfg.value("local-address").toString();
