@@ -67,7 +67,7 @@
     <message>
         <location line="+43"/>
         <source>You can find some list servers at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Puedes encontrar varias listas de servidores en &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;</translation>
     </message>
 </context>
 <context>
@@ -202,7 +202,7 @@
     <message>
         <location filename="../ui/brushpresetproperties.ui" line="+17"/>
         <source>Brush Preset Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Propiedades de cepillo predeterminadas</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -217,7 +217,7 @@
     <message>
         <location line="+10"/>
         <source>Thumbnail:</source>
-        <translation type="unfinished"></translation>
+        <translation>Miniatura:</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -234,7 +234,7 @@ a 64x64 pixeles.</translation>
     <message>
         <location line="+75"/>
         <source>Label:</source>
-        <translation type="unfinished"></translation>
+        <translation>Etiqueta:</translation>
     </message>
 </context>
 <context>
@@ -263,7 +263,7 @@ a 64x64 pixeles.</translation>
     <message>
         <location line="-26"/>
         <source>Inverts the input directions. For example, scrolling up to zoom out instead of zooming in.</source>
-        <translation type="unfinished"></translation>
+        <translation>Invertir dirección de entrada. Por ejemplo, Desplazar hacia arriba para Disminuir el Zoom en vez de acercarlo.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -273,12 +273,12 @@ a 64x64 pixeles.</translation>
     <message>
         <location line="+7"/>
         <source>Switches horizontal and vertical directions. For example, moving the cursor up and down to change the brush size instead of moving it left and right.</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar direcciones horizontal y vertical. Por ejemplo, mover el cursor arriba y abajo para cambiar el tamaño del cepillo en vez de moverlo de izquierda a derecha.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Swap Axes</source>
-        <translation type="unfinished"></translation>
+        <translation>Intercambiar Ejes</translation>
     </message>
 </context>
 <context>
@@ -410,17 +410,17 @@ a 64x64 pixeles.</translation>
     <message>
         <location filename="../ui/dumpplayback.ui" line="+14"/>
         <source>Play Debug Dump</source>
-        <translation type="unfinished"></translation>
+        <translation>Reproducir volcado de depuración</translation>
     </message>
     <message>
         <location line="+6"/>
         <source> ms</source>
-        <translation type="unfinished"></translation>
+        <translation> ms</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Playback Delay: </source>
-        <translation type="unfinished"></translation>
+        <translation>Retraso de reproducción: </translation>
     </message>
     <message>
         <location line="+16"/>
@@ -450,7 +450,7 @@ a 64x64 pixeles.</translation>
     <message>
         <location line="+13"/>
         <source>Position: </source>
-        <translation type="unfinished"></translation>
+        <translation>Posición: </translation>
     </message>
     <message>
         <location line="+11"/>
@@ -460,7 +460,7 @@ a 64x64 pixeles.</translation>
     <message>
         <location line="+6"/>
         <source>History Size:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamaño de Historia:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -469,27 +469,27 @@ a 64x64 pixeles.</translation>
         <location line="+21"/>
         <location line="+14"/>
         <source>0</source>
-        <translation type="unfinished"></translation>
+        <translation>0</translation>
     </message>
     <message>
         <location line="-56"/>
         <source>Local Fork Present:</source>
-        <translation type="unfinished"></translation>
+        <translation>Desvió Local Presente:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>No</source>
-        <translation type="unfinished"></translation>
+        <translation>No</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Local Fork Size:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamaño de desvió local:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Local Fork Start:</source>
-        <translation type="unfinished"></translation>
+        <translation>Inicio de desvió local:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -504,22 +504,22 @@ a 64x64 pixeles.</translation>
     <message>
         <location line="+15"/>
         <source>History</source>
-        <translation type="unfinished"></translation>
+        <translation>Historial</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Hide Entries Without State</source>
-        <translation type="unfinished"></translation>
+        <translation>Esconder entradas sin estado</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Hide Gone Entries</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Esconder entradas bloqueadas</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Local Fork</source>
-        <translation type="unfinished"></translation>
+        <translation>Desvió Local</translation>
     </message>
 </context>
 <context>
@@ -532,22 +532,22 @@ a 64x64 pixeles.</translation>
     <message>
         <location line="+9"/>
         <source>Import</source>
-        <translation type="unfinished"></translation>
+        <translation>Importar</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Open</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Open ORA</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir ORA</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>OpenRaster Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Imagen OpenRaster</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -557,22 +557,22 @@ a 64x64 pixeles.</translation>
     <message>
         <location line="+8"/>
         <source>Open Debug Dump</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir volcado de depuración</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Import Brush Pack</source>
-        <translation type="unfinished"></translation>
+        <translation>Importar Paquete de Cepillos</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Import Session Bans</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Importar Baneos de Sesiones</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Import Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>Importar Roles</translation>
     </message>
     <message>
         <location line="+38"/>
@@ -583,42 +583,42 @@ a 64x64 pixeles.</translation>
     <message>
         <location line="-186"/>
         <source>Export Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar Imagen</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Save Pre-Reset Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardar Imagen Pre-reinicio</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Save Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardar Selección</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Record Session</source>
-        <translation type="unfinished">Grabar Sesion</translation>
+        <translation>Grabar Sesión</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Save Session Template</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardar plantilla de sesión</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export Animated GIF</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar GIF animado</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Performance Profile</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Perfil de Desempeño</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Tablet Event Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Registro de Eventos de Tableta</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -628,42 +628,42 @@ a 64x64 pixeles.</translation>
     <message>
         <location line="+8"/>
         <source>Export MP4 Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar vídeo MP4</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export WebM Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar video WebM</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export Custom FFmpeg Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar vídeo FFmpeg personalizado</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Save Animation Frames</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardar cuadros de animación</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Save Image Series</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardar Serie de Imagenes</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Export Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar Cepillos</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export Session Bans</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar Baneos de sesión</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar Roles</translation>
     </message>
     <message>
         <location line="+27"/>
