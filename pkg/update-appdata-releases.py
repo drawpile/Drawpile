@@ -133,12 +133,14 @@ def update_release_artifacts(appdata, include_legacy_platform_ids):
 
     # List of downloadable binaries
     binaries = (
-        ('x86_64-windows-msvc', 'win64', f'Drawpile-{version}.msi'),
+        ('x86_64-windows-msvc', 'win64', f'Drawpile-{version}-64bit.msi'),
+        ('i386-windows-msvc', 'win32', f'Drawpile-{version}-32bit.msi'),
         # This is a bogus tuple (it should probably be x86_64-apple-darwin) but
         # it is what appstream validation demands
         ('x86_64-darwin-gnu', 'macos', f'Drawpile-{version}.dmg'),
         ('x86_64-linux-gnu', '', f'Drawpile-{version}-x86_64.AppImage'),
-        ('aarch64-linux-android', '', f'Drawpile-{version}.apk'),
+        ('aarch64-linux-android', '', f'Drawpile-{version}-arm64-v8a.apk'),
+        ('arm-linux-android', '', f'Drawpile-{version}-armeabi-v7a.apk'),
         ('source', '', f'Drawpile-{version}.tar.gz'),
     )
 
