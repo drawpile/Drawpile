@@ -1969,7 +1969,7 @@ Semplificate il canvas e resettate manualmente prima che lo spazio si esaurisca.
     <message>
         <location line="+429"/>
         <source>Opening file…</source>
-        <translation type="unfinished"></translation>
+        <translation>Apertura file…</translation>
     </message>
     <message>
         <location line="+390"/>
@@ -2215,7 +2215,7 @@ Sei sicuro di volere iniziare a registrare i dump di debug?</translation>
     <message>
         <location line="+15"/>
         <source>Tablet Driver</source>
-        <translation type="unfinished"></translation>
+        <translation>Driver Tablet</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -5878,12 +5878,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+17"/>
         <source>Enter account password. If you don&apos;t have an account, you must register one. This server provides no information on how to do that.</source>
-        <translation type="unfinished"></translation>
+        <translation>Inserisci la password dell&apos;account. Se non hai un account, devi registrarne uno. Questo server non fornisce informazioni su come farlo.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Enter account password. If you don&apos;t have an account, you must register one on %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Inserisci la password dell&apos;account. Se non hai un account, devi registrarne uno su %1.</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -5947,12 +5947,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+39"/>
         <source>This username doesn&apos;t belong to an account on this server. This is not your drawpile.net account!</source>
-        <translation type="unfinished"></translation>
+        <translation>Questo nome utente non appartiene a un account su questo server. Questo non è il tuo account drawpile.net!</translation>
     </message>
     <message>
         <location line="+528"/>
         <source>Enter the username and password for your account on this server. This is not your drawpile.net account!</source>
-        <translation type="unfinished"></translation>
+        <translation>Inserisci il nome utente e la password per il tuo account su questo server. Questo non è il tuo account drawpile.net!</translation>
     </message>
     <message>
         <location line="-612"/>
@@ -7938,12 +7938,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+7"/>
         <source>Generate</source>
-        <translation type="unfinished"></translation>
+        <translation>Creare</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Generates a random password.</source>
-        <translation type="unfinished"></translation>
+        <translation>Genera una password casuale.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -7978,22 +7978,22 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="-146"/>
         <source>A session title is required.</source>
-        <translation type="unfinished"></translation>
+        <translation>È richiesto un titolo di sessione.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Invalid session title. If you want to join a session using an invite link, &lt;a href=&quot;#&quot;&gt;click here to go to the Join page&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Titolo della sessione non valido. Se desideri partecipare a una sessione utilizzando un link di invito, &lt;a href=&quot;#&quot;&gt;fai clic qui per andare alla pagina Partecipa&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Without a password set, anyone can join your session! If you want to host a private session, choose a password or &lt;a href=&quot;#&quot;&gt;generate one&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Senza una password impostata, chiunque può partecipare alla tua sessione! Se desideri ospitare una sessione privata, scegli una password o &lt;a href=&quot;#&quot;&gt;generane una&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Hosting on your computer requires additional setup! &lt;a href=&quot;#&quot;&gt;Click here for instructions.&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;hosting sul tuo computer richiede una configurazione aggiuntiva! &lt;a href=&quot;#&quot;&gt;Fai clic qui per istruzioni.&lt;/a&gt;</translation>
     </message>
     <message>
         <location line="+57"/>
@@ -8074,12 +8074,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+2"/>
         <source>Tablet Setup</source>
-        <translation type="unfinished"></translation>
+        <translation>Impostazione Tablet</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Open Drawpile&apos;s tablet setup and troubleshooting help page</source>
-        <translation type="unfinished"></translation>
+        <translation>Apri la pagina di aiuto per la configurazione del tablet e la risoluzione dei problemi di Drawpile</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8104,12 +8104,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+2"/>
         <source>libera.chat</source>
-        <translation type="unfinished"></translation>
+        <translation>libera.chat</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Join the #drawpile chatroom on libera.chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Unisciti alla chatroom #drawpile su libera.chat</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8152,12 +8152,12 @@ I valori superiori a 0.5 potrebbero non essere evidenti.</translation>
     <message>
         <location line="+13"/>
         <source>The download page for Drawpile %1 should have opened in your browser. If not, please visit &lt;strong&gt;drawpile.net&lt;/strong&gt; manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>La pagina di download di Drawpile %1 dovrebbe essersi aperta nel tuo browser. In caso contrario, visita &lt;strong&gt;drawpile.net&lt;/strong&gt; manualmente.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>The download page for Drawpile %1 could not be opened, please visit &lt;strong&gt;drawpile.net&lt;/strong&gt; manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile aprire la pagina di download per Drawpile %1, visita &lt;strong&gt;drawpile.net&lt;/strong&gt; manualmente.</translation>
     </message>
 </context>
 <context>
