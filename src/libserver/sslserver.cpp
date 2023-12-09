@@ -119,7 +119,7 @@ QSslKey SslServer::loadKey(const QByteArray &encoded) const
 		key = QSslKey(encoded, QSsl::Dh);
 		break;
 	}
-	return QSslKey();
+	return key;
 }
 
 const char *SslServer::getKeyAlgorithmDescription() const
