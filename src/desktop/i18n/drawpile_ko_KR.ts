@@ -96,17 +96,17 @@
     <message>
         <location filename="../ui/brushdock.ui" line="+74"/>
         <source>Pixel brush</source>
-        <translation>픽셀 붓</translation>
+        <translation>픽셀 브러시</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Square pixel brush</source>
-        <translation>사각 픽셀 붓</translation>
+        <translation>사각 픽셀 브러시</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Brush</source>
-        <translation>붓</translation>
+        <translation>브러시</translation>
     </message>
     <message>
         <location line="+20"/>
