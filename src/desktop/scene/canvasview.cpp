@@ -1030,7 +1030,7 @@ void CanvasView::mousePressEvent(QMouseEvent *event)
 		unsigned(event->modifiers()), isSynthetic(event), m_pendown,
 		m_touching);
 
-	if(isSynthetic(event) || m_touching) {
+	if((m_enableTablet && isSynthetic(event)) || m_touching) {
 		return;
 	}
 
@@ -1094,7 +1094,8 @@ void CanvasView::mouseMoveEvent(QMouseEvent *event)
 		unsigned(event->modifiers()), isSynthetic(event), m_pendown,
 		m_touching);
 
-	if(isSynthetic(event) || m_pendown == TABLETDOWN || m_touching) {
+	if((m_enableTablet && isSynthetic(event)) || m_pendown == TABLETDOWN ||
+	   m_touching) {
 		return;
 	}
 
@@ -1302,7 +1303,7 @@ void CanvasView::mouseReleaseEvent(QMouseEvent *event)
 		mousePos.x(), mousePos.y(), unsigned(event->buttons()),
 		unsigned(event->modifiers()), isSynthetic(event), m_pendown,
 		m_touching);
-	if(isSynthetic(event) || m_touching) {
+	if((m_enableTablet && isSynthetic(event)) || m_touching) {
 		return;
 	}
 	penReleaseEvent(
