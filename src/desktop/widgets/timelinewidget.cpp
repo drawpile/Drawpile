@@ -881,7 +881,7 @@ void TimelineWidget::mouseMoveEvent(QMouseEvent *event)
 	bool shouldDrag = d->editable &&
 					  ((dragType == Drag::Track && d->currentTrack()) ||
 					   (dragType == Drag::KeyFrame && d->currentKeyFrame())) &&
-					  (mousePos - d->dragOrigin).manhattanLength() <
+					  (mousePos - d->dragOrigin).manhattanLength() >=
 						  QApplication::startDragDistance();
 	if(shouldDrag) {
 		d->drag = Drag::None;
