@@ -330,7 +330,7 @@ void NetStatus::externalIpDiscovered(const QString &ip)
 		m_discoverIp->setEnabled(false);
 
 		int port = m_sessionUrl.port();
-		m_address = port <= 0 ? ip : QStringLiteral("%1:%2").arg(ip).arg(port);
+		m_address = ip;
 		m_haveRemoteAddress = true;
 		// QUrl doesn't seem to handle IPv6 without ports correctly.
 		if(ip.contains(':') && port <= 0) {
