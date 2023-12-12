@@ -378,7 +378,7 @@ void Client::handleServerReply(const ServerReply &msg, int handledMessageIndex)
 		emit catchupProgress(0);
 		// Shouldn't happen, but we'll handle catching up to nothing as well.
 		if(m_catchupTo <= 0) {
-			emit finishCatchup("caught up to nothing");
+			finishCatchup("caught up to nothing");
 		}
 		break;
 	case ServerReply::ReplyType::CaughtUp:
