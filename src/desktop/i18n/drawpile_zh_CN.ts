@@ -7964,12 +7964,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-146"/>
         <source>A session title is required.</source>
-        <translation>需要填写房间名.</translation>
+        <translation>需要填写房名.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Invalid session title. If you want to join a session using an invite link, &lt;a href=&quot;#&quot;&gt;click here to go to the Join page&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>无效房名. 如果你想使用邀请链接加入房间,&lt;a href=&quot;#&quot;&gt;请点击这里切换到地址加入页面&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+12"/>
