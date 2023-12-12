@@ -43,7 +43,7 @@ ScopedOverrideCursor::~ScopedOverrideCursor()
 
 ScopedUpdateDisabler::ScopedUpdateDisabler(QWidget *widget)
 	: m_widget{widget}
-	, m_wasEnabled{widget->updatesEnabled()}
+	, m_wasEnabled{widget && widget->updatesEnabled()}
 {
 	if(m_wasEnabled) {
 		widget->setUpdatesEnabled(false);
