@@ -885,6 +885,7 @@ void BrushSettings::updateStabilizationSettingVisibility()
 
 void BrushSettings::adjustSettingVisibilities(bool softmode, bool mypaintmode)
 {
+	utils::ScopedUpdateDisabler disabler(getUi());
 	Lock lock = getLock();
 	bool locked = lock != Lock::None;
 	QPair<QWidget *, bool> widgetVisibilities[] = {
@@ -911,12 +912,6 @@ void BrushSettings::adjustSettingVisibilities(bool softmode, bool mypaintmode)
 		{d->ui.stabilizationWrapper, !locked},
 		{d->ui.stabilizerButton, !locked},
 	};
-
-	// First hide them all so that the docker doesn't end up bigger temporarily
-	// and messes up the layout. Then afterwards show the applicable ones.
-	for(const QPair<QWidget *, bool> &pair : widgetVisibilities) {
-		pair.first->setVisible(false);
-	}
 
 	d->ui.preview->setDisabled(locked);
 	d->ui.noPermissionLabel->setVisible(locked);
