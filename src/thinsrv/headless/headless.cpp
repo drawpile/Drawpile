@@ -149,7 +149,7 @@ bool start() {
 	parser.addOption(webadminPortOption);
 
 	// --web-admin-auth <user:password>
-	QCommandLineOption webadminAuthOption("web-admin-auth", "Web admin username & password", "user:password");
+	QCommandLineOption webadminAuthOption("web-admin-auth", "Web admin username & password (you can also use the DRAWPILESRV_WEB_ADMIN_AUTH environment variable for this)", "user:password");
 	parser.addOption(webadminAuthOption);
 
 	// --web-admin-access <address/subnet>
@@ -377,8 +377,12 @@ bool start() {
 	int webadminPort = parser.value(webadminPortOption).toInt();
 	{
 		QString auth = parser.value(webadminAuthOption);
-		if(!auth.isEmpty())
+		if(auth.isEmpty()) {
+			auth = qEnvironmentVariable("DRAWPILESRV_WEB_ADMIN_AUTH");
+		}
+		if(!auth.isEmpty()) {
 			webadmin->setBasicAuth(auth);
+		}
 
 		QString access = parser.value(webadminAccessOption);
 		if(!access.isEmpty()) {
