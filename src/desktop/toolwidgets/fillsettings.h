@@ -32,6 +32,7 @@ public:
 	int getSize() const override;
 	bool getSubpixelMode() const override { return false; }
 	bool isSquare() const override { return true; }
+	bool requiresOutline() const override { return true; }
 
 	ToolProperties saveToolSettings() override;
 	void restoreToolSettings(const ToolProperties &cfg) override;

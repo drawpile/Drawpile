@@ -166,7 +166,7 @@ public slots:
 	void setOutlineSize(int size);
 
 	//! Set subpixel precision mode and shape for brush preview outline
-	void setOutlineMode(bool subpixel, bool square);
+	void setOutlineMode(bool subpixel, bool square, bool force);
 
 	//! Enable or disable pixel grid (shown only at high zoom levels)
 	void setPixelGrid(bool enable);
@@ -299,6 +299,7 @@ private:
 	void updateOutline(QPointF point);
 	void updateOutline();
 	QRectF getOutlineBounds(const QPointF &point, int size);
+	qreal getOutlineWidth() const;
 
 	void onPenDown(const canvas::Point &p, bool right);
 	void onPenMove(
@@ -370,7 +371,7 @@ private:
 	qreal m_gestureStartAngle;
 
 	int m_outlineSize;
-	bool m_showoutline, m_subpixeloutline, m_squareoutline;
+	bool m_showoutline, m_subpixeloutline, m_squareoutline, m_forceoutline;
 	QCursor m_dotcursor, m_trianglerightcursor, m_triangleleftcursor;
 	QCursor m_colorpickcursor, m_layerpickcursor, m_zoomcursor, m_rotatecursor;
 	QCursor m_rotatediscretecursor, m_toolcursor;

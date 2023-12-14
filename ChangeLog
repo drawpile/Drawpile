@@ -5,6 +5,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Remove duplicate port from displayed network address when hosting under a non-default port. Thanks SadColor for reporting.
  * Fix: Keep focus on brush sliders when typing into them. Thanks MachKerman for reporting.
  * Server Feature: Allow setting web admin auth through DRAWPILESRV_WEB_ADMIN_AUTH environment variable. The --web-admin-auth parameter takes precedence.
+ * Fix: Show the fill tool size limit rectangle even when the outline width is set to zero pixels. Thanks Blozzom for reporting.
 
 2023-12-08 Version 2.2.0-beta.11
  * Server Fix: No longer show "cannot look up one session and then join another" when joining a session with an ID alias. Thanks Kink and Fabian for finding this.

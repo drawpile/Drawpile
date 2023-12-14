@@ -197,7 +197,7 @@ ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
 		bs, &tools::BrushSettings::subpixelModeChanged, this,
 		[this](bool subpixel, bool square) {
 			if(hasBrushCursor(d->currentTool)) {
-				emit subpixelModeChanged(subpixel, square);
+				emit subpixelModeChanged(subpixel, square, false);
 			}
 		});
 	connect(
@@ -497,7 +497,8 @@ void ToolSettings::triggerUpdate()
 	tools::ToolSettings *ts = d->currentSettings();
 	if(ts) {
 		emit sizeChanged(ts->getSize());
-		emit subpixelModeChanged(ts->getSubpixelMode(), ts->isSquare());
+		emit subpixelModeChanged(
+			ts->getSubpixelMode(), ts->isSquare(), ts->requiresOutline());
 	}
 }
 

@@ -111,7 +111,7 @@ signals:
 	void sizeChanged(int size);
 
 	//! This signal is emitted when tool subpixel drawing mode is changed
-	void subpixelModeChanged(bool subpixel, bool square);
+	void subpixelModeChanged(bool subpixel, bool square, bool force);
 
 	//! Current foreground color selection changed
 	void foregroundColorChanged(const QColor &color);

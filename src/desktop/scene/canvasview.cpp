@@ -45,6 +45,7 @@ CanvasView::CanvasView(QWidget *parent)
 	, m_showoutline(false)
 	, m_subpixeloutline(true)
 	, m_squareoutline(false)
+	, m_forceoutline(false)
 	, m_pos{0.0, 0.0}
 	, m_zoom(1.0)
 	, m_rotate(0)
@@ -689,10 +690,11 @@ void CanvasView::setOutlineSize(int newSize)
 	m_outlineSize = newSize;
 }
 
-void CanvasView::setOutlineMode(bool subpixel, bool square)
+void CanvasView::setOutlineMode(bool subpixel, bool square, bool force)
 {
 	m_subpixeloutline = subpixel;
 	m_squareoutline = square;
+	m_forceoutline = force;
 }
 
 void CanvasView::drawForeground(QPainter *painter, const QRectF &rect)
@@ -721,11 +723,12 @@ void CanvasView::drawForeground(QPainter *painter, const QRectF &rect)
 			outline.translate(-0.5 * m_zoom, -0.5 * m_zoom);
 		}
 
-		if(rect.intersects(outline) && m_brushOutlineWidth > 0) {
+		qreal owidth = getOutlineWidth();
+		if(rect.intersects(outline) && owidth > 0) {
 			painter->save();
 			QPen pen(QColor(96, 191, 96));
 			pen.setCosmetic(true);
-			pen.setWidthF(m_brushOutlineWidth);
+			pen.setWidthF(owidth);
 			painter->setPen(pen);
 			painter->setCompositionMode(
 				QPainter::RasterOp_SourceXorDestination);
@@ -1980,10 +1983,16 @@ void CanvasView::updateOutline()
 
 QRectF CanvasView::getOutlineBounds(const QPointF &point, int size)
 {
-	qreal owidth = (size + m_brushOutlineWidth) * m_zoom;
+	qreal owidth = (size + getOutlineWidth()) * m_zoom;
 	qreal orad = owidth / 2.0;
 	QPointF mapped = mapFromCanvas(point);
 	return QRectF{mapped.x() - orad, mapped.y() - orad, owidth, owidth};
+}
+
+qreal CanvasView::getOutlineWidth() const
+{
+	return m_forceoutline ? qMax(1.0, m_brushOutlineWidth)
+						  : m_brushOutlineWidth;
 }
 
 QPoint CanvasView::viewCenterPoint() const

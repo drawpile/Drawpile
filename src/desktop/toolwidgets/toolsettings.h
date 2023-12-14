@@ -108,6 +108,9 @@ public:
 	 */
 	virtual bool isSquare() const { return false; }
 
+	//! If this tool requires an outline (fill tool does, brushes do not)
+	virtual bool requiresOutline() const { return false; }
+
 	//! Push settings to the tool controller
 	virtual void pushSettings();
 
