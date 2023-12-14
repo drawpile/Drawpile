@@ -425,12 +425,12 @@ a 64x64 pixeles.</translation>
     <message>
         <location line="+16"/>
         <source>Play/Pause</source>
-        <translation type="unfinished"></translation>
+        <translation>Reproducir/Pausar</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Jump</source>
-        <translation type="unfinished"></translation>
+        <translation>Saltar</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -455,7 +455,7 @@ a 64x64 pixeles.</translation>
     <message>
         <location line="+11"/>
         <source>Status</source>
-        <translation type="unfinished">Estado</translation>
+        <translation>Estado</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -527,7 +527,7 @@ a 64x64 pixeles.</translation>
     <message>
         <location filename="../filewrangler.cpp" line="+25"/>
         <source>Certificates (%1)</source>
-        <translation type="unfinished">Certificados (%1)</translation>
+        <translation>Certificados (%1)</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -552,7 +552,7 @@ a 64x64 pixeles.</translation>
     <message>
         <location line="+6"/>
         <source>Paste Image</source>
-        <translation type="unfinished">Pegar Imagen</translation>
+        <translation>Pegar Imagen</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -578,7 +578,7 @@ a 64x64 pixeles.</translation>
         <location line="+38"/>
         <location line="+186"/>
         <source>Save Image</source>
-        <translation type="unfinished">Guardar Imagen</translation>
+        <translation>Guardar Imagen</translation>
     </message>
     <message>
         <location line="-186"/>
@@ -623,7 +623,7 @@ a 64x64 pixeles.</translation>
     <message>
         <location line="+7"/>
         <source>Log File</source>
-        <translation type="unfinished">Archivo de Registro</translation>
+        <translation>Archivo de Registro</translation>
     </message>
     <message>
         <location line="+8"/>
