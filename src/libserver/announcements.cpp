@@ -76,17 +76,27 @@ void Announcements::announceSession(Announcable *session, const QUrl &listServer
 
 			unlistSession(listing->session, listing->listServer, false);
 
-			listing->session->sendListserverMessage(error);
+			listing->session->sendListserverMessage(
+				QStringLiteral("Listing on %1 failed: %2")
+					.arg(listServer.host(), error));
 			return;
 		}
 
-		if(!message.isEmpty()) {
+		QString successMessage;
+		if(message.isEmpty()) {
+			successMessage =
+				QStringLiteral("This session is now listed at %1")
+					.arg(listServer.host());
+		} else {
 			server::Log()
 				.about(server::Log::Level::Info, server::Log::Topic::PubList)
 				.message(message)
 				.to(m_config->logger());
-			listing->session->sendListserverMessage(message);
+			successMessage =
+				QStringLiteral("This session is now listed at %1: %2")
+					.arg(listServer.host(), message);
 		}
+		listing->session->sendListserverMessage(successMessage);
 
 		listing->announcement = result.value<sessionlisting::Announcement>();
 		Q_ASSERT(listing->announcement.apiUrl == listing->listServer);
