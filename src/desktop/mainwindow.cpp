@@ -1153,6 +1153,9 @@ void MainWindow::receiveCurrentBrush(int userId, const QJsonObject &info)
  */
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+	QApplication::restoreOverrideCursor();
+	setEnabled(true);
+
 	if(m_doc->isSaveInProgress()) {
 		// Don't quit while save is in progress
 		m_exitAfterSave = true;
@@ -1160,6 +1163,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 		return;
 	}
 
+	QElapsedTimer disconnectTimer;
 	if(canReplace() == false) {
 
 		// First confirm disconnection
@@ -1178,6 +1182,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 			box.exec();
 			if(box.clickedButton() == exitbtn) {
+				disconnectTimer.start();
 				m_doc->client()->disconnectFromServer();
 			} else {
 				event->ignore();
@@ -1214,7 +1219,19 @@ void MainWindow::closeEvent(QCloseEvent *event)
 			}
 		}
 	}
-	exit();
+	// If we just disconnected, give things another moment to settle so that
+	// e.g. the builtin server gets a chance to shut down gracefully and delete
+	// any session announcements that may have been made.
+	qint64 delay = disconnectTimer.isValid() && !m_exitAfterSave
+		? 1000 - disconnectTimer.elapsed() : 0;
+	if(delay > 0) {
+		event->ignore();
+		setEnabled(false);
+		QApplication::setOverrideCursor(Qt::WaitCursor);
+		QTimer::singleShot(delay, this, &QMainWindow::close);
+	} else {
+		exit();
+	}
 }
 
 bool MainWindow::event(QEvent *event)

@@ -115,6 +115,10 @@ bool BuiltinServer::start(
 void BuiltinServer::stop()
 {
 	if(m_server) {
+		if(m_session) {
+			m_session->unlistAnnouncement(QUrl(), false);
+		}
+
 #ifdef HAVE_DNSSD
 		delete m_zeroconfAnnouncement;
 		m_zeroconfAnnouncement = nullptr;
@@ -164,6 +168,9 @@ void BuiltinServer::removeClient(BuiltinClient *client)
 	m_clients.removeOne(client);
 	if(m_clients.isEmpty()) {
 		qDebug("Last client disconnected from builtin server, deleting it");
+		if(m_session) {
+			m_session->unlistAnnouncement(QUrl(), false);
+		}
 		deleteLater();
 	}
 }
