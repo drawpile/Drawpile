@@ -28,6 +28,9 @@ void Announcements::announceSession(Announcable *session, const QUrl &listServer
 			.about(server::Log::Level::Warn, server::Log::Topic::PubList)
 			.message("Announcement API URL not allowed: " + listServer.toString())
 			.to(m_config->logger());
+		session->sendListserverMessage(
+			QStringLiteral("Listing on %1 is not allowed on this server")
+				.arg(listServer.host()));
 		return;
 	}
 
