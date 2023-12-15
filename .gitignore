@@ -2,10 +2,12 @@
 Makefile
 Makefile.*
 CMakeLists.txt.user*
+CMakeUserPresets.json
 
 # Build directories
 /*build*/
-**/target
+**/target/
+/*install*/
 
 *.swp
 
