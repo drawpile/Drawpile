@@ -17,6 +17,9 @@ if(NOT ANDROID)
 	option(SERVER "Compile dedicated server" OFF)
 	add_feature_info("Drawpile server (SERVER)" SERVER "")
 
+	option(BUILTINSERVER "Compile builtin server for hosting from client" ON)
+	add_feature_info("Builtin server (BUILTINSERVER)" BUILTINSERVER "")
+
 	cmake_dependent_option(SERVERGUI "Enable server GUI" ON "SERVER" OFF)
 	add_feature_info("Server GUI (SERVERGUI)" SERVERGUI "")
 
@@ -29,6 +32,7 @@ else()
 	# CMake allows unexposed options to be enabled
 	set(SERVER OFF CACHE BOOL "" FORCE)
 	set(SERVERGUI OFF CACHE BOOL "" FORCE)
+	set(BUILTINSERVER OFF CACHE BOOL "" FORCE)
 	set(TOOLS OFF CACHE BOOL "" FORCE)
 	set(TESTS OFF CACHE BOOL "" FORCE)
 endif()

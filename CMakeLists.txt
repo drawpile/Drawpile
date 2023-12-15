@@ -187,10 +187,12 @@ if(CLIENT)
 	add_subdirectory(src/desktop)
 endif()
 
-if(SERVER)
+if(SERVER OR BUILTINSERVER)
 	message(STATUS "Adding libserver")
 	add_subdirectory(src/libserver)
+endif()
 
+if(SERVER)
 	message(STATUS "Adding thinsrv")
 	add_subdirectory(src/thinsrv)
 endif()

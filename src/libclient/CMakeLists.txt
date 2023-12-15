@@ -198,7 +198,7 @@ target_sources(dpclient PRIVATE
 	utils/usernamevalidator.h
 )
 
-if(SERVER)
+if(BUILTINSERVER)
 	target_compile_definitions(dpclient PUBLIC DP_HAVE_BUILTIN_SERVER=1)
 	target_link_libraries(dpclient PUBLIC dpserver)
 	target_sources(dpclient PRIVATE
