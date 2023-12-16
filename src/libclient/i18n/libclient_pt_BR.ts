@@ -431,12 +431,12 @@
     <message>
         <location line="+4"/>
         <source>Session Bans (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Banimentos da sessão (%1)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Roles (%1)</source>
-        <translation type="unfinished">Cargos (%1)</translation>
+        <translation>Cargos (%1)</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -957,22 +957,22 @@
     <message>
         <location filename="../net/authlistmodel.cpp" line="+37"/>
         <source>Moderator</source>
-        <translation type="unfinished">Moderador</translation>
+        <translation>Moderador</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Operator</source>
-        <translation type="unfinished">Operador</translation>
+        <translation>Operador</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Trusted</source>
-        <translation type="unfinished">Confiável</translation>
+        <translation>Confiável</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>User</source>
-        <translation type="unfinished">Usuário</translation>
+        <translation>Usuário</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1002,7 +1002,7 @@
     <message>
         <location line="+2"/>
         <source>Client info</source>
-        <translation type="unfinished">Informações do Cliente</translation>
+        <translation>Informações do Cliente</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1026,7 +1026,7 @@
     <message>
         <location line="+8"/>
         <source>%1 made operator by the server.</source>
-        <translation type="unfinished">%1 foi tornado um operador pelo servidor.</translation>
+        <translation>%1 foi tornado um operador pelo servidor.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1087,7 +1087,7 @@
     <message>
         <location line="+2"/>
         <source>Server error.</source>
-        <translation type="unfinished">Erro de servidor.</translation>
+        <translation>Erro de servidor.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1154,7 +1154,7 @@
         <location line="+4"/>
         <source>Session terminated by administrator: %1</source>
         <extracomment>%1 is the reason given.</extracomment>
-        <translation type="unfinished">A sessão foi terminada pelo(a) administrador(a) %1</translation>
+        <translation>A sessão foi terminada pelo(a) administrador(a) %1</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1170,17 +1170,17 @@
     <message>
         <location line="+2"/>
         <source>%1 trusted by %2.</source>
-        <translation type="unfinished">%1 foi confiado por %2.</translation>
+        <translation>%1 foi confiado por %2.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>%1 untrusted by the server.</source>
-        <translation type="unfinished">%1 não é mais confiado pelo servidor.</translation>
+        <translation>%1 não é mais confiado pelo servidor.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>%1 untrusted by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%2 retirou a confiança de %1.</translation>
     </message>
 </context>
 <context>
@@ -1209,12 +1209,12 @@
     <message>
         <location line="+84"/>
         <source>This server doesn&apos;t provide a way to log in for joining a session!</source>
-        <translation type="unfinished">O servidor não provém de algum modo de entrar para participar de uma sessão!</translation>
+        <translation>O servidor não provê algum modo de entrar em uma sessão!</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This server doesn&apos;t provide a way to log in for hosting a session!</source>
-        <translation type="unfinished">O servidor não provém de algum modo de entrar para abrir uma sessão!</translation>
+        <translation>O servidor não provê algum modo de criar uma sessão!</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -1224,7 +1224,7 @@
     <message>
         <location line="+68"/>
         <source>Session lookup failed</source>
-        <translation type="unfinished"></translation>
+        <translation>A verificação de sessão falhou</translation>
     </message>
     <message>
         <location line="+38"/>
@@ -1255,7 +1255,7 @@
     <message>
         <location line="+30"/>
         <source>Invalid ident intent response.</source>
-        <translation type="unfinished"></translation>
+        <translation>Identação de resposta de identificação inválida.</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -1270,12 +1270,12 @@
     <message>
         <location line="+8"/>
         <source>Server reported two different ext-auth URLs</source>
-        <translation type="unfinished"></translation>
+        <translation>O servidor retornou duas URLs diferentes para autenticação externa</translation>
     </message>
     <message>
         <location line="+111"/>
         <source>Got multiple sessions when only one was expected</source>
-        <translation type="unfinished"></translation>
+        <translation>Várias sessões foram obtidas quando uma só era esperada</translation>
     </message>
     <message>
         <location line="+52"/>
