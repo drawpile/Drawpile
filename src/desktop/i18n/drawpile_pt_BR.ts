@@ -2315,7 +2315,7 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
     <message>
         <location line="+429"/>
         <source>Opening file…</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrindo arquivo…</translation>
     </message>
     <message>
         <location line="+175"/>
@@ -2430,7 +2430,7 @@ Tem certeza que você quer iniciar a gravação dos Dumps de Depuração?</trans
     <message>
         <location line="+164"/>
         <source>Tablet Driver</source>
-        <translation type="unfinished"></translation>
+        <translation>Driver da Mesa Digitalizadora</translation>
     </message>
     <message>
         <location line="+232"/>
@@ -5882,12 +5882,12 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+17"/>
         <source>Enter account password. If you don&apos;t have an account, you must register one. This server provides no information on how to do that.</source>
-        <translation type="unfinished"></translation>
+        <translation>Digite a senha da conta. Se você não tem uma conta, você precisa registrar uma. Este servidor não provê informações em como fazer isso.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Enter account password. If you don&apos;t have an account, you must register one on %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Digite a senha da conta. Se você não tem uma conta, você precisa registrar uma em %1.</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -5951,12 +5951,12 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+39"/>
         <source>This username doesn&apos;t belong to an account on this server. This is not your drawpile.net account!</source>
-        <translation type="unfinished"></translation>
+        <translation>Esse nome de usuário não pertence a nenhuma conta neste servidor. Essa não é a sua conta no drawpile.net!</translation>
     </message>
     <message>
         <location line="+528"/>
         <source>Enter the username and password for your account on this server. This is not your drawpile.net account!</source>
-        <translation type="unfinished"></translation>
+        <translation>Digite usuário e senha para sua conta neste servidor. Não é sua conta do drawpile.net!</translation>
     </message>
     <message>
         <location line="-612"/>
@@ -6993,17 +6993,17 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+6"/>
         <source>Touch mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Modo de toque:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Touchscreen</source>
-        <translation type="unfinished"></translation>
+        <translation>Tela touch</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Gestures</source>
-        <translation type="unfinished"></translation>
+        <translation>Gestos</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -7043,7 +7043,7 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+3"/>
         <source>Test your tablet here:</source>
-        <translation type="unfinished"></translation>
+        <translation>Teste sua mesa digitalizadora aqui:</translation>
     </message>
 </context>
 <context>
@@ -7942,12 +7942,12 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+7"/>
         <source>Generate</source>
-        <translation type="unfinished"></translation>
+        <translation>Gerar</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Generates a random password.</source>
-        <translation type="unfinished"></translation>
+        <translation>Gera uma senha aleatória.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -7982,22 +7982,22 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="-146"/>
         <source>A session title is required.</source>
-        <translation type="unfinished"></translation>
+        <translation>Um título para a sessão é obrigatório.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Invalid session title. If you want to join a session using an invite link, &lt;a href=&quot;#&quot;&gt;click here to go to the Join page&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Título inválido para a sessão. Se quiser entrar em uma sessão usando um link de convite, &lt;a href=&quot;#&quot;&gt;clique aqui para ir à tela de Entrar em uma sessão&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Without a password set, anyone can join your session! If you want to host a private session, choose a password or &lt;a href=&quot;#&quot;&gt;generate one&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sem uma senha definida, qualquer um pode entrar na sua sessão! Se você quer hospedar uma sessão privada, escolha uma senha ou &lt;a href=&quot;#&quot;&gt; gere uma&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Hosting on your computer requires additional setup! &lt;a href=&quot;#&quot;&gt;Click here for instructions.&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Hospedar em seu computador requer configuração adicional! &lt;a href=&quot;#&quot;&gt;Clique aqui para instruções.&lt;/a&gt;</translation>
     </message>
     <message>
         <location line="+57"/>
@@ -8078,12 +8078,12 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+2"/>
         <source>Tablet Setup</source>
-        <translation type="unfinished"></translation>
+        <translation>Configuração da Mesa Digitalizadora</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Open Drawpile&apos;s tablet setup and troubleshooting help page</source>
-        <translation type="unfinished"></translation>
+        <translation>Abre a página de ajuda e configuração da mesa digitalizadora do Drawpile</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8108,12 +8108,12 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+2"/>
         <source>libera.chat</source>
-        <translation type="unfinished"></translation>
+        <translation>libera.chat</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Join the #drawpile chatroom on libera.chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Entre na sala #drawpile no libera.chat</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8156,12 +8156,12 @@ Valores acima de 0.5 podem não ser visíveis.</translation>
     <message>
         <location line="+13"/>
         <source>The download page for Drawpile %1 should have opened in your browser. If not, please visit &lt;strong&gt;drawpile.net&lt;/strong&gt; manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>A página de download do Drawpile %1 deve ter aberto em seu navegador. Caso contrário, acesse &lt;strong&gt;drawpile.net&lt;/strong&gt; manualmente.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>The download page for Drawpile %1 could not be opened, please visit &lt;strong&gt;drawpile.net&lt;/strong&gt; manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>A página de download para o Drawpile %1 não pôde ser aberta, por favor acesse &lt;strong&gt;drawpile.net&lt;/strong&gt; manualmente.</translation>
     </message>
 </context>
 <context>
