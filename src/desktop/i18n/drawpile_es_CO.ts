@@ -171,7 +171,7 @@
     <message>
         <location line="+19"/>
         <source>Gain: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ganar: </translation>
     </message>
     <message>
         <location line="+22"/>
@@ -440,7 +440,7 @@ a 64x64 pixeles.</translation>
     <message>
         <location line="+7"/>
         <source>Single Step</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Paso Único</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -567,7 +567,7 @@ a 64x64 pixeles.</translation>
     <message>
         <location line="+7"/>
         <source>Import Session Bans</source>
-        <translation type="unfinished">Importar Baneos de Sesiones</translation>
+        <translation>Importar Baneos de Sesiones</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -820,7 +820,7 @@ a 64x64 pixeles.</translation>
     <message>
         <location line="+56"/>
         <source>Mark whole tiles</source>
-        <translation type="unfinished">Marcar telas completas</translation>
+        <translation type="unfinished">Marcar tejas completas</translation>
     </message>
 </context>
 <context>
@@ -913,12 +913,12 @@ Sub-rango: [%3, %4]</translation>
     <message>
         <location line="+10"/>
         <source>&amp;Step up</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Aumentar</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Step &amp;down</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Disminuir</translation>
     </message>
 </context>
 <context>
@@ -941,7 +941,7 @@ Sub-rango: [%3, %4]</translation>
     <message>
         <location line="+10"/>
         <source>Trail: </source>
-        <translation type="unfinished"></translation>
+        <translation>Rastro: </translation>
     </message>
 </context>
 <context>
@@ -1071,77 +1071,77 @@ Sub-rango: [%3, %4]</translation>
     <message>
         <location line="+183"/>
         <source>&lt;p&gt;This session has indicated that its contents are &lt;em&gt;not suitable for minors&lt;/em&gt; (NSFM).&lt;/p&gt;&lt;p&gt;&lt;strong&gt;You must be over the age of 18 and be allowed to consume adult content to proceed.&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Are you sure you want to join this session?&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Esta sesión ha indicado que sus contenidos &lt;em&gt;no son aptos para menores&lt;/em&gt; (NSFM). .&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Debes ser mayor de 18 años y tener permitido consumir contenido para adultos para proceder.&lt;/strong&gt; &lt;/p&gt;&lt;p&gt;¿Estas seguro de que quieres unirte a esta sesión?&lt;/p&gt;</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Show this warning again next time</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar esta advertencia nuevamente la próxima vez</translation>
     </message>
     <message>
         <location line="+67"/>
         <source>Continue without account</source>
-        <translation type="unfinished"></translation>
+        <translation>Continuar sin cuenta</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Log in with server account</source>
-        <translation type="unfinished"></translation>
+        <translation>Acceder con cuenta de servidor</translation>
     </message>
     <message>
         <location line="+90"/>
         <source>Continue with this account, but change the avatar, username or password.</source>
-        <translation type="unfinished"></translation>
+        <translation>Continuar con esta cuenta, pero cambiar el avatar, nombre de usuario o contraseña.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Edit and log in</source>
-        <translation type="unfinished"></translation>
+        <translation>Editar y acceder</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Don&apos;t use any of these accounts.</source>
-        <translation type="unfinished"></translation>
+        <translation>No usar ninguna de estas cuentas.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Log in a different way</source>
-        <translation type="unfinished"></translation>
+        <translation>Acceder de una forma distinta</translation>
     </message>
     <message>
         <location line="+43"/>
         <source>Log in with the selected account.</source>
-        <translation type="unfinished"></translation>
+        <translation>Acceder con la cuenta seleccionada.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Log in with this account</source>
-        <translation type="unfinished"></translation>
+        <translation>Acceder con esta cuenta</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Forget this account.</source>
-        <translation type="unfinished"></translation>
+        <translation>Olvidar cuenta.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Forget this account</source>
-        <translation type="unfinished"></translation>
+        <translation>Olvidar cuenta</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Don&apos;t ask again unless the rules change</source>
-        <translation type="unfinished"></translation>
+        <translation>No preguntar nuevamente a menos de que cambien las reglas</translation>
     </message>
     <message>
         <location line="-578"/>
         <source>Show sessions not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar sesiones no aptas para menores (NSFM)</translation>
     </message>
     <message>
         <location line="+90"/>
         <source>Enter the &lt;b&gt;session password&lt;/b&gt;, &lt;i&gt;not&lt;/i&gt; your account password.</source>
-        <translation type="unfinished"></translation>
+        <translation>Inserte la &lt;b&gt;contraseña de sesión&lt;/b&gt;, &lt;i&gt;no&lt;/i&gt; la contraseña de tu cuenta.</translation>
     </message>
     <message>
         <location line="+36"/>
@@ -1212,7 +1212,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+265"/>
         <source>🙋 %1 joined!</source>
-        <translation type="unfinished"></translation>
+        <translation>🙋 %1 ¡Se ha unido!</translation>
     </message>
     <message>
         <location line="+91"/>
@@ -1223,17 +1223,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="-1043"/>
         <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;El atajo &apos;%1&apos; es ambiguo, coincide con:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Ambiguous Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Atajo Ambiguo</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Fix</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Arreglar</translation>
     </message>
     <message>
         <location line="+153"/>
@@ -1312,7 +1312,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="-1410"/>
         <source>No canvas to host! Create one or open a file.</source>
-        <translation type="unfinished"></translation>
+        <translation>No hay lienzo para hostear, crea uno o abre un archivo.</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -1403,7 +1403,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+112"/>
         <source>Toggle Dock %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alternar Dock %1</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -1445,7 +1445,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+11"/>
         <source>Start...</source>
-        <translation type="unfinished"></translation>
+        <translation>Comenzar...</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1614,67 +1614,67 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+2"/>
         <source>Move Canvas Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Mover Lienzo a la izquierda</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Move Canvas Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Mover Lienzo a la Derecha</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Move Canvas Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Mover Lienzo hacia Arriba</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Move Canvas Down</source>
-        <translation type="unfinished"></translation>
+        <translation>Mover Lienzo hacia Abajo</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Fit Page</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Adaptar Pagina</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Fit Page &amp;Width</source>
-        <translation type="unfinished"></translation>
+        <translation>Adaptar &amp;Ancho de Pagina</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Fit Page &amp;Height</source>
-        <translation type="unfinished"></translation>
+        <translation>Adaptar &amp;Altura de Pagina</translation>
     </message>
     <message>
         <location line="+141"/>
         <source>Normal View</source>
-        <translation type="unfinished"></translation>
+        <translation>Vista Normal</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Show all layers normally</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar todas las capas normalmente</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Layer View</source>
-        <translation type="unfinished"></translation>
+        <translation>Vista de Capas</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Show only the current layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Solo mostrar la capa actual</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Frame View</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vista de Marco</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Show only layers in the current frame</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Solo mostrar capas en el marco actual</translation>
     </message>
     <message>
         <location line="+46"/>
@@ -1824,130 +1824,130 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="-2226"/>
         <source>This session was hosted with an older version of Drawpile, some newer features won&apos;t be available. Other Drawpile versions will see different results, session resets may cause abrupt changes.</source>
-        <translation type="unfinished"></translation>
+        <translation>Esta sesión ha sido hosteada con una versión anterior de Drawpile, Algunas de las características nuevas no estarán disponibles. Otras versiones de Drawpile verán resultados distintos, Reinicios de sesión podrán causar cambios abruptos.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Compatibility Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Modo de Compatibilidad</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Session template saved</source>
-        <translation type="unfinished"></translation>
+        <translation>Plantilla de sesión guardada</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Couldn&apos;t export session template</source>
-        <translation type="unfinished"></translation>
+        <translation>No se pudo exportar plantilla de sesión</translation>
     </message>
     <message>
         <location line="+68"/>
         <source>Saving animation...</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardando animación...</translation>
     </message>
     <message>
         <location line="+90"/>
         <source>Unsupported format.</source>
-        <translation type="unfinished"></translation>
+        <translation>Formato no soportado.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Couldn&apos;t start recording.</source>
-        <translation type="unfinished"></translation>
+        <translation>No se pudo comenzar la grabación.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unknown error.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error desconocido.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Error closing profile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error cerrando perfil.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Error opening profile.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error abriendo perfil.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Error closing tablet event log.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error cerrando registro de eventos de tableta.</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Error opening tablet event log.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error abriendo registro de eventos de tableta.</translation>
     </message>
     <message>
         <location line="+534"/>
         <source>Undo Limit... (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Deshacer Limite...(%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Change the session&apos;s undo limit, current limit is %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar el limite de deshacer de sesión, el limite actual es %1.</translation>
     </message>
     <message>
         <location line="+657"/>
         <source>User #%1</source>
-        <translation type="unfinished">Usuario #%1</translation>
+        <translation>Usuario #%1</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Stop Tablet Event Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Detener el Registro de Eventos de Tableta</translation>
     </message>
     <message>
         <location line="+0"/>
         <location line="+987"/>
         <source>Tablet Event Log...</source>
-        <translation type="unfinished"></translation>
+        <translation>Registro de Eventos de Tableta...</translation>
     </message>
     <message>
         <location line="-984"/>
         <source>Stop Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Detener Perfil</translation>
     </message>
     <message>
         <location line="+0"/>
         <location line="+985"/>
         <source>Profile...</source>
-        <translation type="unfinished"></translation>
+        <translation>Perfil...</translation>
     </message>
     <message>
         <location line="-978"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
-        <translation type="unfinished"></translation>
+        <translation>Establecer Retraso Artificial... (actualmente %1 ms)</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Set Artificial Lag</source>
-        <translation type="unfinished"></translation>
+        <translation>Establecer Retraso Artificial</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Artificial lag in milliseconds (0 to disable):</source>
-        <translation type="unfinished"></translation>
+        <translation>Retraso Artificial en Milisegundos (0 para deshabilitar):</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Artificial Disconnect</source>
-        <translation type="unfinished"></translation>
+        <translation>Desconexión Artificial</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Simulate a disconnect after this many seconds:</source>
-        <translation type="unfinished"></translation>
+        <translation>Simular una desconexión después de esta cantidad de segundos:</translation>
     </message>
     <message>
         <location line="+15"/>
         <location line="+940"/>
         <source>Record Debug Dumps</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardar volcado de depuración</translation>
     </message>
     <message>
         <location line="-939"/>
@@ -1961,12 +1961,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+45"/>
         <source>Settings File:</source>
-        <translation type="unfinished"></translation>
+        <translation>Archivo de Configuración:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Tablet Input:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Entrada de Tableta:</translation>
     </message>
     <message>
         <location line="+98"/>
@@ -1976,387 +1976,387 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+4"/>
         <source>Vertical Tabs on Sides</source>
-        <translation type="unfinished"></translation>
+        <translation>Pestañas Verticales en los Lados</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Hold Shift to Arrange</source>
-        <translation type="unfinished"></translation>
+        <translation>Mantener Presionado Shift para Organizar</translation>
     </message>
     <message>
         <location line="+92"/>
         <source>&amp;Import</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Importar</translation>
     </message>
     <message>
         <location line="+54"/>
         <source>Paste in View Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Pegar en el Centro de la Vista</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Set Session Background...</source>
-        <translation type="unfinished"></translation>
+        <translation>Establecer Fondo de Sesión...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Set Local Background...</source>
-        <translation type="unfinished"></translation>
+        <translation>Establecer Fondo Local...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Clear Local Background</source>
-        <translation type="unfinished"></translation>
+        <translation>Limpiar Fondo Local</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Brush Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ajustes de</translation>
     </message>
     <message>
         <location line="+141"/>
         <source>Canvas Background</source>
-        <translation type="unfinished"></translation>
+        <translation>Fondo de Lienzo</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>&amp;Layouts...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Diseños...</translation>
     </message>
     <message>
         <location line="+172"/>
         <source>Layer View Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Modo Vista de Capas</translation>
     </message>
     <message>
         <location line="+31"/>
         <source>New Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Nuevo Grupo</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Merge Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Fusionar Capas</translation>
     </message>
     <message>
         <location line="+45"/>
         <source>Next Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Siguiente Cuadro</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Previous Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Cuadro Anterior</translation>
     </message>
     <message>
         <location line="-35"/>
         <source>&amp;Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Capa</translation>
     </message>
     <message>
         <location line="-2437"/>
         <source>Opening file…</source>
-        <translation type="unfinished"></translation>
+        <translation>Abriendo Archivo…</translation>
     </message>
     <message>
         <location line="+175"/>
         <source>Joined the session!</source>
-        <translation type="unfinished"></translation>
+        <translation>¡Te uniste a la sesión!</translation>
     </message>
     <message>
         <location line="+378"/>
         <source>Hosting on this computer is not available</source>
-        <translation type="unfinished"></translation>
+        <translation>Hostear en este computador no esta disponible</translation>
     </message>
     <message>
         <location line="+55"/>
         <source>Really leave and terminate the session?</source>
-        <translation type="unfinished"></translation>
+        <translation>¿Realmente quieres salir y terminar la sesion?</translation>
     </message>
     <message>
         <location line="+112"/>
         <source>Reason:</source>
-        <translation type="unfinished">Razón:</translation>
+        <translation>Razón:</translation>
     </message>
     <message>
         <location line="+119"/>
         <source>You&apos;ve been disconnected from the session.</source>
-        <translation type="unfinished"></translation>
+        <translation>Has sido desconectado de la sesión.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Disconnected: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Desconectado: %1</translation>
     </message>
     <message>
         <location line="+63"/>
         <source>Canvas locked</source>
-        <translation type="unfinished"></translation>
+        <translation>Lienzo bloqueado</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Canvas unlocked</source>
-        <translation type="unfinished"></translation>
+        <translation>Lienzo desbloqueado</translation>
     </message>
     <message>
         <location line="+361"/>
         <source>Freehand (erase mode, click to reset)</source>
-        <translation type="unfinished"></translation>
+        <translation>Manolibre (Modo de borrado, hacer clic para reiniciar)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Freehand brush tool (erase mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>Herramienta de pincel mano-libre (modo de borrado)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Freehand (alpha lock mode, click to reset)</source>
-        <translation type="unfinished"></translation>
+        <translation>Mano-libre (modo blockeo Alpha, hacer clic para reiniciar)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Freehand brush tool (alpha lock mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>Herramienta de pincel mano-libre (modo de bloqueo Alpha)</translation>
     </message>
     <message>
         <location line="+495"/>
         <source>Primary screen:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pantalla primaria:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%1x%2px² (%3x%4mm²)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1x%2px² (%3x%4mm²)</translation>
     </message>
     <message>
         <location line="+131"/>
         <source>Export Image…</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar Imagen…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Export Selection...</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar Selección...</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Import &amp;Drawpile 2.1 Animation…</source>
-        <translation type="unfinished"></translation>
+        <translation>Importar animación de &amp;Drawpile 2.1 …</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Import &amp;Brushes...</source>
-        <translation type="unfinished"></translation>
+        <translation>Importar &amp;Pinceles...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Export Session &amp;Template...</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar &amp;Plantilla de sesión...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Export Animated &amp;GIF...</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar &amp;GIF Animado...</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Export Animation &amp;Frames...</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar &amp;Cuadros de Animación...</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Export &amp;Brushes…</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar &amp;Pinceles…</translation>
     </message>
     <message>
         <location line="+115"/>
         <source>&amp;Copy Merged</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Copiar Fusión</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy Without Background</source>
-        <translation type="unfinished"></translation>
+        <translation>Copiar Sin Fondo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy From &amp;Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Copiar de &amp;Capa</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Cu&amp;t From Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Cor&amp;tar de Capa</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Stamp Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Estampar Selección</translation>
     </message>
     <message>
         <location line="+164"/>
         <source>Tablet Driver</source>
-        <translation type="unfinished"></translation>
+        <translation>Controlador de Tableta</translation>
     </message>
     <message>
         <location line="+232"/>
         <source>Layer Properties…</source>
-        <translation type="unfinished"></translation>
+        <translation>Propiedades de Capa…</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>Change Frame Count...</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar Conteo de Cuadros...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Change Frame Rate (FPS)...</source>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar velocidad de Cuadros (FPS)…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Set Key Frame to Current Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Establecer Capa Actual como Cuadro Clave</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Set Blank Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Establecer Cuadro Clave Vacío</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Cut Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Cortar Cuadro Clave</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Copiar Cuadro Clave</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Paste Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Pegar Cuadro Clave</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Key Frame Properties...</source>
-        <translation type="unfinished"></translation>
+        <translation>Propiedades de Cuadro Clave...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Delete Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Borrar Cuadro Clave</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Increase Key Frame Exposure</source>
-        <translation type="unfinished"></translation>
+        <translation>Incrementar Exposición de Cuadro Clave</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Decrease Key Frame Exposure</source>
-        <translation type="unfinished"></translation>
+        <translation>Disminuir Exposición de Cuadro Clave</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>New Track</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Nuevo Seguimiento</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Track Visible</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Seguir Visible</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Track Onion Skin</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Seguir Piel de Cebolla</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Duplicate Track</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Seguimiento Duplicado</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Rename Track</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Renombrar Seguimiento</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Delete Track</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Borrar Seguimiento</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Track Above</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Seguir Arriba</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Track Below</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Seguir Abajo</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Create Layer on Current Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Crear Capa en Cuadro Clave Actual</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Create Layer on Next Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Crear Capa en el Siguiente Cuadro Clave</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Create Layer on Previous Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Crear Capa en el Cuadro Clave Anterior</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Create Group on Current Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Crear Grupo en el Cuadro Clave Actual</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Create Group on Next Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Crear Grupo en el Siguiente Cuadro Clave</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Create Group on Previous Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Crear Grupo en el Cuadro Clave Anterior</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Duplicate to Next Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Duplicar al Siguiente Cuadro Clave</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Duplicate to Previous Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Duplicar a Cuadro Clave Anterior</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>&amp;Animation</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Animación</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Create Layer on Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Crear Capa en Cuadro Clave</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Create Group on Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Crear Grupo en Cuadro Clave</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Duplicate Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Duplicar Cuadro Clave</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -2418,7 +2418,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+0"/>
         <source>Prevent changes to the canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Prevenir Cambios al Lienzo</translation>
     </message>
     <message>
         <location line="+30"/>
@@ -2574,37 +2574,37 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+22"/>
         <source>Developer Tools</source>
-        <translation type="unfinished"></translation>
+        <translation>Herramientas de Desarrollador</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Set Artificial Lag...</source>
-        <translation type="unfinished"></translation>
+        <translation>Establecer Retraso Artificial...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Artifical Disconnect...</source>
-        <translation type="unfinished"></translation>
+        <translation>Desconexión Artificial...</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Open Debug Dump...</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir Volcado de Depuración...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Statistics…</source>
-        <translation type="unfinished"></translation>
+        <translation>Estadisticas…</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Toggle Eraser Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternar Modo de Borrador</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Toggle Recolor Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternar Modo de Re-colorear</translation>
     </message>
     <message>
         <location line="+83"/>
@@ -2614,54 +2614,54 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+50"/>
         <source>Missing Log File</source>
-        <translation type="unfinished"></translation>
+        <translation>Archivo de Registro Faltante</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Log file doesn&apos;t exist, do you need to enable logging in the preferences?</source>
-        <translation type="unfinished"></translation>
+        <translation>Archivo de Registro no existente, ¿Necesitas habilitar archivar en las preferencias?</translation>
     </message>
     <message>
         <location line="+9"/>
         <location line="+8"/>
         <source>Error Saving Log File</source>
-        <translation type="unfinished"></translation>
+        <translation>Error Guardando Archivo de Registro</translation>
     </message>
     <message>
         <location line="-7"/>
         <source>Could not read source file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>No se pudo leer archivo fuente: %1</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Could not open target file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>No se pudo abrir archivo de destino: %1</translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Brush slot #%1</source>
-        <translation type="unfinished"></translation>
+        <translation>Ranura de Cepillo #%1</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Swap With Brush Slot #%1</source>
-        <translation type="unfinished"></translation>
+        <translation>Intercambiar con Ranura De Cepillo #%1</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Swatch Color %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Color de Muestra %1</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Focus canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>Enfocar Lienzo</translation>
     </message>
     <message>
         <location line="+46"/>
         <source>Wheel</source>
         <extracomment>&quot;Wheel&quot; refers to the color wheel.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Rueda</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -2672,12 +2672,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-6"/>
         <source>Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Paleta</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Onion Skins</source>
-        <translation type="unfinished"></translation>
+        <translation>Piel de Cebolla</translation>
     </message>
     <message>
         <location line="-349"/>
@@ -2687,17 +2687,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-101"/>
         <source>Share your canvas with others</source>
-        <translation type="unfinished"></translation>
+        <translation>Compartir Lienzo con otros</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Invite...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Invitar...</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Invite another user to this session</source>
-        <translation type="unfinished"></translation>
+        <translation>Invitar otro usuario a esta sesión</translation>
     </message>
     <message>
         <location line="+2"/>
