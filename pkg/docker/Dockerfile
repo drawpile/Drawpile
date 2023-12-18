@@ -1,24 +1,23 @@
-## Common base
-FROM alpine:3.9 as common
-RUN apk add --no-cache qt5-qtbase qt5-qtbase-sqlite libmicrohttpd libbz2 libsodium
+FROM alpine:3.19 as common
+RUN apk add --no-cache karchive5 libbz2 libmicrohttpd libsodium qt5-qtbase qt5-qtbase-sqlite
 
 ## Build container
 FROM common as builder
-RUN apk add qt5-qtbase-dev libmicrohttpd-dev libsodium-dev cmake make g++
-WORKDIR /build/
+RUN apk add cargo cmake g++ karchive5-dev libmicrohttpd-dev libsodium-dev qt5-qtbase-dev samurai
 
-COPY build-deps.sh /build/
-RUN sh build-deps.sh
+ARG version=main
+RUN mkdir -p /build \
+    && cd /build \
+    && wget -O /build/drawpile.zip https://github.com/drawpile/Drawpile/archive/${version}.zip \
+    && unzip drawpile.zip \
+    && cd Drawpile-*/ \
+    && cmake --preset linux-release-qt5-server-ninja -DINSTALL_DOC=OFF -DSOURCE_ASSETS=OFF \
+    && cmake --build build \
+    && mv build/bin/drawpile-srv /build
 
-ARG version=master
-RUN wget https://github.com/drawpile/Drawpile/archive/${version}.zip -O /build/drawpile.zip
-COPY build.sh /build/
-RUN sh build.sh
-
-## Final deployment image
+# Final deployment image
 FROM common
 COPY --from=builder /build/drawpile-srv /bin
-COPY --from=builder /build/karchive*/build/bin/libKF5* /usr/lib/
 RUN adduser -D drawpile
 
 EXPOSE 27750
