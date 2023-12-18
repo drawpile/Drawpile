@@ -32,4 +32,7 @@ else()
         $<$<COMPILE_LANGUAGE:CXX>:-fno-exceptions>
         $<$<COMPILE_LANGUAGE:C>:-Wstrict-prototypes>
     )
+	if(UNIX AND NOT APPLE)
+		add_compile_definitions(_XOPEN_SOURCE=600)
+	endif()
 endif()
