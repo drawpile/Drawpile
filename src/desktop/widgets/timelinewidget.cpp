@@ -1492,6 +1492,8 @@ void TimelineWidget::updateTracks()
 	int effectiveTrackId = nextTrackId != 0		 ? nextTrackId
 						   : currentTrackId != 0 ? currentTrackId
 												 : anyTrackId;
+	setMinimumHeight(
+		d->rowHeight * 3 + d->horizontalScroll->sizeHint().height());
 	setCurrent(effectiveTrackId, d->currentFrame, false, false);
 	updateActions();
 	updateScrollbars();
