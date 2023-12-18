@@ -909,7 +909,7 @@ void LoginHandler::logClientInfo(const net::ServerCommand &cmd)
 	QString keys[] = {
 		QStringLiteral("app_version"), QStringLiteral("protocol_version"),
 		QStringLiteral("qt_version"),  QStringLiteral("os"),
-		QStringLiteral("s"),
+		QStringLiteral("s"),		   QStringLiteral("m"),
 	};
 	for(const QString &key : keys) {
 		if(cmd.kwargs.contains(key)) {

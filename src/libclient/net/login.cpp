@@ -1160,20 +1160,21 @@ QJsonObject LoginHandler::makeClientInfoKwargs()
 		{"qt_version", QString::number(QT_VERSION_MAJOR)},
 		{"os", os},
 		{"s", getSid()},
+		{"m", QString::fromUtf8(QSysInfo::machineUniqueId().toBase64())},
 	};
 }
 
 QString LoginHandler::getSid()
 {
-	static QString org{"4428c43c3a5c4d3fa20002c21d2b2c2e"};
-	static QString app{"56e06fe173a345dd983fe63671188093"};
 	static QString key1{"5dd7038779f243b68001dab548ae59ab"};
 	static QString key2{"56e06fe173a345dd983fe63671188093"};
 
 	QSettings cfg1{
 		QSettings::NativeFormat, QSettings::UserScope,
 		QStringLiteral("drawpile"), QStringLiteral("sid")};
-	QSettings cfg2{QSettings::NativeFormat, QSettings::UserScope, org, app};
+	QSettings cfg2{
+		QSettings::IniFormat, QSettings::UserScope,
+		QStringLiteral("drawpile"), QStringLiteral("system")};
 
 	bool haveSid1 = cfg1.contains(key1);
 	bool haveSid2 = cfg2.contains(key2);
