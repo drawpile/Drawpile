@@ -33,8 +33,9 @@ runs:
         pushd .github/linuxdeploy-bin >/dev/null &&
         curl -L --remote-name-all
         https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
-        https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage &&
-        chmod u+x linuxdeploy-x86_64.AppImage linuxdeploy-plugin-qt-x86_64.AppImage &&
+        https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
+        https://github.com/linuxdeploy/linuxdeploy-plugin-gstreamer/raw/12e0e983f9e01f4e450ef2534cfec10e8aab2539/linuxdeploy-plugin-gstreamer.sh &&
+        chmod u+x linuxdeploy-x86_64.AppImage linuxdeploy-plugin-qt-x86_64.AppImage linuxdeploy-plugin-gstreamer.sh &&
         popd >/dev/null
       shell: bash
       if: steps.cache.outputs.cache-hit != 'true'
@@ -61,6 +62,12 @@ runs:
         libpulse0 libasound2 libcups2
         libsecret-1-0 gir1.2-secret-1
         libfuse2 appstream
+        libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev
+        libgstreamer-plugins-bad1.0-dev gstreamer1.0-plugins-base
+        gstreamer1.0-plugins-good gstreamer1.0-plugins-bad
+        gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-tools
+        gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3
+        gstreamer1.0-qt5 gstreamer1.0-pulseaudio
       shell: bash
 
     - name: Store system build dependencies to cache

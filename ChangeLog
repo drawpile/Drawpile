@@ -10,6 +10,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Unlist sessions more reliably when terminating sessions hosted "on this computer".
  * Fix: Don't select a newly created layer when there's a default layer.
  * Fix: Give the timeline dock a sensible minimum height. Thanks Kink for reporting.
+ * Fix: Make notification sounds work in the AppImage release. Thanks anonymous for reporting.
 
 2023-12-08 Version 2.2.0-beta.11
  * Server Fix: No longer show "cannot look up one session and then join another" when joining a session with an ID alias. Thanks Kink and Fabian for finding this.
