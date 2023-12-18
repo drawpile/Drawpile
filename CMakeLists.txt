@@ -87,7 +87,12 @@ message(STATUS "Project version: ${PROJECT_VERSION}")
 message(STATUS "Protocol version: ${DRAWPILE_PROTO_SERVER_VERSION}.${DRAWPILE_PROTO_MAJOR_VERSION}.${DRAWPILE_PROTO_MINOR_VERSION}")
 
 # https://doc.qt.io/qt-6/cmake-qt5-and-qt6-compatibility.html
-find_package(QT ${DP_MIN_QT_VERSION} NAMES Qt6 Qt5 REQUIRED)
+
+if(QT_VERSION)
+    find_package(QT ${DP_MIN_QT_VERSION} NAMES "Qt${QT_VERSION}" REQUIRED)
+else()
+    find_package(QT ${DP_MIN_QT_VERSION} NAMES Qt6 Qt5 REQUIRED)
+endif()
 message(STATUS "Using Qt version ${QT_VERSION_MAJOR}")
 set(QT_PACKAGE_NAME Qt${QT_VERSION_MAJOR})
 # Qt5AndroidSupport.cmake clobbers this variable, so make a copy
