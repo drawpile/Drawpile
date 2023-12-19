@@ -7,10 +7,11 @@ Unreleased Version 2.2.0-pre
  * Server Feature: Allow setting web admin auth through DRAWPILESRV_WEB_ADMIN_AUTH environment variable. The --web-admin-auth parameter takes precedence.
  * Fix: Show the fill tool size limit rectangle even when the outline width is set to zero pixels. Thanks Blozzom for reporting.
  * Server Fix: Show an error message if listing on a certain server is not allowed.
- * Fix: Unlist sessions more reliably when terminating sessions hosted "on this computer".
+ * Fix: Unlist sessions more reliably when terminating sessions hosted "on this computer". Thanks to Buch for helping figure this out.
  * Fix: Don't select a newly created layer when there's a default layer.
  * Fix: Give the timeline dock a sensible minimum height. Thanks Kink for reporting.
  * Fix: Make notification sounds work in the AppImage release. Thanks anonymous for reporting.
+ * Fix: Don't exit the program in the pathological case of initiating a quit, being prompted to save, cancelling the save dialog and then saving again.
 
 2023-12-08 Version 2.2.0-beta.11
  * Server Fix: No longer show "cannot look up one session and then join another" when joining a session with an ID alias. Thanks Kink and Fabian for finding this.

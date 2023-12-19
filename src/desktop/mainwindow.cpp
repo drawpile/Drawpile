@@ -179,7 +179,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	  m_notificationsMuted(false),
 	  m_initialCatchup(false),
 	  m_doc(nullptr),
-	  m_exitAfterSave(false)
+	  m_exitAction(RUNNING)
 {
 	// Avoid flickering of intermediate states.
 	setUpdatesEnabled(false);
@@ -1158,12 +1158,11 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 	if(m_doc->isSaveInProgress()) {
 		// Don't quit while save is in progress
-		m_exitAfterSave = true;
+		m_exitAction = SAVING;
 		event->ignore();
 		return;
 	}
 
-	QElapsedTimer disconnectTimer;
 	if(canReplace() == false) {
 
 		// First confirm disconnection
@@ -1182,12 +1181,16 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 			box.exec();
 			if(box.clickedButton() == exitbtn) {
-				disconnectTimer.start();
+				// Disconnect and wait a moment for things to settle so that
+				// e.g. the builtin server gets a chance to shut down properly
+				// and any pending drawing commands get executed.
+				m_exitAction = DISCONNECTING;
 				m_doc->client()->disconnectFromServer();
-			} else {
-				event->ignore();
-				return;
+				setEnabled(false);
+				QApplication::setOverrideCursor(Qt::WaitCursor);
 			}
+			event->ignore();
+			return;
 		}
 
 		// Then confirm unsaved changes
@@ -1208,8 +1211,9 @@ void MainWindow::closeEvent(QCloseEvent *event)
 			// Save and exit, or cancel exit if couldn't save.
 			if(box.clickedButton() == savebtn) {
 				cancel = true;
-				m_exitAfterSave = true;
-				save();
+				if(save()) {
+					m_exitAction = SAVING;
+				}
 			}
 
 			// Cancel exit
@@ -1219,19 +1223,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
 			}
 		}
 	}
-	// If we just disconnected, give things another moment to settle so that
-	// e.g. the builtin server gets a chance to shut down gracefully and delete
-	// any session announcements that may have been made.
-	qint64 delay = disconnectTimer.isValid() && !m_exitAfterSave
-		? 1000 - disconnectTimer.elapsed() : 0;
-	if(delay > 0) {
-		event->ignore();
-		setEnabled(false);
-		QApplication::setOverrideCursor(Qt::WaitCursor);
-		QTimer::singleShot(delay, this, &QMainWindow::close);
-	} else {
-		exit();
-	}
+
+	exit();
 }
 
 bool MainWindow::event(QEvent *event)
@@ -1532,11 +1525,14 @@ void MainWindow::open()
 /**
  * If no file name has been selected, \a saveas is called.
  */
-void MainWindow::save()
+bool MainWindow::save()
 {
 	QString result = FileWrangler{this}.saveImage(m_doc);
-	if(!result.isEmpty()) {
+	if(result.isEmpty()) {
+		return false;
+	} else {
 		addRecentFile(result);
+		return true;
 	}
 }
 
@@ -1613,9 +1609,9 @@ void MainWindow::onCanvasSaved(const QString &errorMessage)
 
 	// Cancel exit if canvas is modified while it was being saved
 	if(m_doc->isDirty())
-		m_exitAfterSave = false;
+		m_exitAction = RUNNING;
 
-	if(m_exitAfterSave)
+	if(m_exitAction == SAVING)
 		close();
 }
 
@@ -2303,6 +2299,11 @@ void MainWindow::onServerDisconnected(const QString &message, const QString &err
 		m_view->showDisconnectedWarning(notif);
 		dpApp().notifications()->trigger(
 			this, notification::Event::Disconnect, notif);
+	}
+
+	if(m_exitAction != RUNNING) {
+		m_exitAction = RUNNING;
+		QTimer::singleShot(100, this, &QMainWindow::close);
 	}
 }
 

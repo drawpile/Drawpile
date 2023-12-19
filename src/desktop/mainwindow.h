@@ -119,7 +119,7 @@ public slots:
 	void showNew();
 	void open();
 	void open(const QUrl &url);
-	void save();
+	bool save();
 	void saveas();
 	void saveSelection();
 	void exportImage();
@@ -361,7 +361,7 @@ private:
 
 	Document *m_doc;
 	MainActions *m_ma;
-	bool m_exitAfterSave;
+	enum { RUNNING, DISCONNECTING, SAVING } m_exitAction;
 
 	drawdance::CanvasState m_preResetCanvasState;
 
