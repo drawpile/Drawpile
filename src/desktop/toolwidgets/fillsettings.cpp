@@ -246,6 +246,9 @@ ToolProperties FillSettings::saveToolSettings()
 void FillSettings::setActiveLayer(int layerId)
 {
 	m_fillSourceModel->setActiveLayer(layerId);
+	if(m_ui->source->currentIndex() == FillSourceModel::CURRENT_LAYER_ROW) {
+		pushSettings();
+	}
 }
 
 void FillSettings::setSourceLayerId(int layerId)
