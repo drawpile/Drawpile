@@ -979,7 +979,7 @@ save_animation_frames(DP_CanvasState *cs, const char *path,
     int frame_count = count_frames(start, end_inclusive);
     DP_Worker *worker = DP_worker_new(DP_int_to_size(frame_count),
                                       sizeof(struct DP_SaveFrameJobParams *),
-                                      DP_thread_cpu_count(), save_frame_job);
+                                      DP_thread_cpu_count(128), save_frame_job);
     if (!worker) {
         DP_mutex_free(progress_mutex);
         return DP_SAVE_RESULT_INTERNAL_ERROR;

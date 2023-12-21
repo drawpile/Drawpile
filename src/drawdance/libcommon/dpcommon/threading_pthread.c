@@ -237,13 +237,13 @@ DP_ThreadId DP_thread_current_id(void)
     return (DP_ThreadId)pthread_self();
 }
 
-int DP_thread_cpu_count(void)
+int DP_thread_cpu_count(int max)
 {
     static int cpus;
     if (cpus == 0) {
         cpus = DP_max_int(1, DP_long_to_int(sysconf(_SC_NPROCESSORS_ONLN)));
     }
-    return cpus;
+    return DP_min_int(cpus, max);
 }
 
 static void *run_thread(void *arg)

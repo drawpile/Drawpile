@@ -145,11 +145,11 @@ DP_ThreadId DP_thread_current_id(void)
     return GetCurrentThreadId();
 }
 
-int DP_thread_cpu_count(void)
+int DP_thread_cpu_count(int max)
 {
     SYSTEM_INFO sysinfo;
     GetSystemInfo(&sysinfo);
-    return DP_max_int(1, sysinfo.dwNumberOfProcessors);
+    return DP_min_int(DP_max_int(1, sysinfo.dwNumberOfProcessors), max);
 }
 
 // Wrapper function is needed to change return type. Casting function ptr is UB.

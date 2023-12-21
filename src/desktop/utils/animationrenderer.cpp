@@ -36,7 +36,8 @@ struct FrameRenderJob {
 AnimationRenderer::AnimationRenderer(QObject *parent)
 	: QObject(parent)
 	, m_worker(DP_worker_new(
-		  64, sizeof(FrameRenderJob), DP_thread_cpu_count(), handleWorkerJob))
+		  64, sizeof(FrameRenderJob), DP_thread_cpu_count(128),
+		  handleWorkerJob))
 	, m_vmbs(compat::cast_6<compat::sizetype>(DP_worker_thread_count(m_worker)))
 	, m_batchId(0)
 {

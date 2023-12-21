@@ -698,7 +698,7 @@ DP_PaintEngine *DP_paint_engine_new_inc(
     pe->reset_locked = false;
     pe->paint_thread = DP_thread_new(run_paint_engine, pe);
     pe->renderer =
-        DP_renderer_new(DP_thread_cpu_count(), renderer_tile_fn,
+        DP_renderer_new(DP_thread_cpu_count(128), renderer_tile_fn,
                         renderer_unlock_fn, renderer_resize_fn, renderer_user);
     pe->meta.acl_change_flags = 0;
     DP_VECTOR_INIT_TYPE(&pe->meta.cursor_changes, DP_PaintEngineCursorChange,

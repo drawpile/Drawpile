@@ -147,9 +147,9 @@ extern "C" unsigned long long DP_thread_current_id(void)
 #endif
 }
 
-extern "C" int DP_thread_cpu_count(void)
+extern "C" int DP_thread_cpu_count(int max)
 {
-    return DP_max_int(1, QThread::idealThreadCount());
+    return DP_min_int(DP_max_int(1, QThread::idealThreadCount()), max);
 }
 
 extern "C" DP_Thread *DP_thread_new(DP_ThreadFn fn, void *data)
