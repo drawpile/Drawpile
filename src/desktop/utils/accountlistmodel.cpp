@@ -165,7 +165,9 @@ void AccountListModel::saveAccount(
 		return;
 	}
 
-	if(!password.isEmpty()) {
+	if(password.isEmpty()) {
+		deletePassword(buildKeychainSecretName(type, host, username));
+	} else {
 		savePassword(
 			password, buildKeychainSecretName(type, host, username),
 			insecureFallback);
