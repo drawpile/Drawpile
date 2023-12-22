@@ -841,11 +841,22 @@ padding: 16px;</string>
     </widget>
    </item>
    <item>
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::No|QDialogButtonBox::Ok|QDialogButtonBox::Yes</set>
-     </property>
-    </widget>
+    <layout class="QHBoxLayout" name="bottomButtonLayout">
+     <item>
+      <widget class="QPushButton" name="noButton">
+       <property name="text">
+        <string notr="true">No</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDialogButtonBox" name="buttonBox">
+       <property name="standardButtons">
+        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok|QDialogButtonBox::Yes</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

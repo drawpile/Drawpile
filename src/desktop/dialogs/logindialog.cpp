@@ -149,8 +149,17 @@ struct LoginDialog::Private {
 		cancelButton = ui->buttonBox->button(QDialogButtonBox::Cancel);
 		yesButton = ui->buttonBox->button(QDialogButtonBox::Yes);
 		originalYesButtonText = yesButton->text();
-		noButton = ui->buttonBox->button(QDialogButtonBox::No);
+		noButton = ui->noButton;
 		originalNoButtonText = noButton->text();
+
+		QStyle *style = dlg->style();
+		if(style->styleHint(
+			   QStyle::SH_DialogButtonBox_ButtonsHaveIcons, nullptr,
+			   ui->buttonBox)) {
+			noButton->setIcon(style->standardIcon(
+				QStyle::StandardPixmap(QStyle::SP_DialogNoButton), nullptr,
+				ui->buttonBox));
+		}
 
 		reportButton = ui->buttonBox->addButton(
 			LoginDialog::tr("Report..."), QDialogButtonBox::ActionRole);
