@@ -984,12 +984,12 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+23"/>
         <source>Collaboration:</source>
-        <translation>使用性:</translation>
+        <translation>协作选项:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Default for new users</source>
-        <translation>新进用户</translation>
+        <translation>新用户默认图层</translation>
     </message>
     <message>
         <location line="+7"/>
