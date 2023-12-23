@@ -26,6 +26,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #define UTHASH_VERSION 2.3.0
 
+/* Drawpile patch: provide a real fallthrough attribute to appease Clang. */
+#ifdef __GNUC__
+#define UTHASH_FALLTHROUGH() __attribute__((__fallthrough__))
+#else
+#define UTHASH_FALLTHROUGH() /* nothing */
+#endif
+
 #include <string.h>   /* memcmp, memset, strlen */
 #include <stddef.h>   /* ptrdiff_t */
 #include <stdlib.h>   /* exit */
@@ -668,17 +675,18 @@ do {                                                                            
   }                                                                              \
   hashv += (unsigned)(keylen);                                                   \
   switch ( _hj_k ) {                                                             \
-    case 11: hashv += ( (unsigned)_hj_key[10] << 24 ); /* FALLTHROUGH */         \
-    case 10: hashv += ( (unsigned)_hj_key[9] << 16 );  /* FALLTHROUGH */         \
-    case 9:  hashv += ( (unsigned)_hj_key[8] << 8 );   /* FALLTHROUGH */         \
-    case 8:  _hj_j += ( (unsigned)_hj_key[7] << 24 );  /* FALLTHROUGH */         \
-    case 7:  _hj_j += ( (unsigned)_hj_key[6] << 16 );  /* FALLTHROUGH */         \
-    case 6:  _hj_j += ( (unsigned)_hj_key[5] << 8 );   /* FALLTHROUGH */         \
-    case 5:  _hj_j += _hj_key[4];                      /* FALLTHROUGH */         \
-    case 4:  _hj_i += ( (unsigned)_hj_key[3] << 24 );  /* FALLTHROUGH */         \
-    case 3:  _hj_i += ( (unsigned)_hj_key[2] << 16 );  /* FALLTHROUGH */         \
-    case 2:  _hj_i += ( (unsigned)_hj_key[1] << 8 );   /* FALLTHROUGH */         \
-    case 1:  _hj_i += _hj_key[0];                      /* FALLTHROUGH */         \
+    /* Drawpile patch: provide a real fallthrough attribute to appease Clang. */ \
+    case 11: hashv += ( (unsigned)_hj_key[10] << 24 ); UTHASH_FALLTHROUGH();     \
+    case 10: hashv += ( (unsigned)_hj_key[9] << 16 );  UTHASH_FALLTHROUGH();     \
+    case 9:  hashv += ( (unsigned)_hj_key[8] << 8 );   UTHASH_FALLTHROUGH();     \
+    case 8:  _hj_j += ( (unsigned)_hj_key[7] << 24 );  UTHASH_FALLTHROUGH();     \
+    case 7:  _hj_j += ( (unsigned)_hj_key[6] << 16 );  UTHASH_FALLTHROUGH();     \
+    case 6:  _hj_j += ( (unsigned)_hj_key[5] << 8 );   UTHASH_FALLTHROUGH();     \
+    case 5:  _hj_j += _hj_key[4];                      UTHASH_FALLTHROUGH();     \
+    case 4:  _hj_i += ( (unsigned)_hj_key[3] << 24 );  UTHASH_FALLTHROUGH();     \
+    case 3:  _hj_i += ( (unsigned)_hj_key[2] << 16 );  UTHASH_FALLTHROUGH();     \
+    case 2:  _hj_i += ( (unsigned)_hj_key[1] << 8 );   UTHASH_FALLTHROUGH();     \
+    case 1:  _hj_i += _hj_key[0];                      UTHASH_FALLTHROUGH();     \
     default: ;                                                                   \
   }                                                                              \
   HASH_JEN_MIX(_hj_i, _hj_j, hashv);                                             \
