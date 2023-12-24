@@ -88,6 +88,21 @@
               mkdir -p $out
               cmake --install ./Drawpile-build
             '';
+
+            shellHook = ''
+
+            buildFirst() {
+              $configurePhase
+              $buildPhase
+              wrapQtApp Drawpile-build/bin/drawpile
+            }
+            
+            incrimentalBuild() {
+              $buildPhase
+              wrapQtApp Drawpile-build/bin/drawpile
+            }
+
+            '';
           };
 
       in rec {
@@ -157,7 +172,7 @@
             debug = true;
           };
 
-          default = release-qt6-all-make;
+          default = debug-qt6-all-make;
         };
 
         formatter = pkgs.nixfmt;
