@@ -25,17 +25,6 @@
 
         compileTimeDeps = with pkgs; [ cmake ];
 
-        devOnlyDepends = with pkgs; [
-          rustfmt
-          clippy
-          
-          # We use rust as devOnly dependency
-          # Since rustPlatform.buildRustPackage takes care of rust in compile time enviroment
-          # (we use buildRustPackage so we do not have to deal with pain of deravations being offline)
-          rustc
-          cargo
-        ];
-
         # QT depdnencies
         qt6Dependencies = with pkgs; [
           qt6.qtbase
@@ -53,9 +42,6 @@
         ];
 
         otherDeps = with pkgs; [
-          rustc
-          cargo
-
           cmake
 
           git
@@ -65,15 +51,12 @@
           libsodium
           libmicrohttpd
         ];
-      in rec {
-        mkDrawpile = { buildClient ? true, buildServer ? true, useQt5 ? false
-          , buildType ? "Release", }:
+
+        mkDrawpile = { useQt5, preset, debug ? false }:
           let
+
             qtDependencies =
               if useQt5 then qt5Dependencies else qt6Dependencies;
-
-            clientBuildString = if buildClient then "ON" else "OFF";
-            serverBuildString = if buildServer then "ON" else "OFF";
 
           in pkgs.rustPlatform.buildRustPackage {
             name = "drawpile";
@@ -82,16 +65,16 @@
             nativeBuildInputs = with pkgs;
               [ qt6.wrapQtAppsHook wrapGAppsHook ] ++ compileTimeDeps;
 
-            buildInputs = otherDeps ++ qtDependencies;
+            buildInputs = with pkgs;
+              [ git libxkbcommon libzip libsodium libmicrohttpd ]
+              ++ qtDependencies
+              ++ (if debug then with pkgs; [ clippy rustfmt ] else [ ]);
 
             cargoLock = { lockFile = ./Cargo.lock; };
 
             configurePhase = ''
               cmake -S ./ -B Drawpile-build \
-                -DCMAKE_BUILD_TYPE=${buildType} \
-                -DCLIENT=${clientBuildString} \
-                -DSERVER=${serverBuildString} \
-                -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON \
+                --preset ${preset} \
                 -DCMAKE_INSTALL_PREFIX=$out
             '';
 
@@ -107,34 +90,74 @@
             '';
           };
 
+      in rec {
+
         packages = rec {
-          drawpile-full = mkDrawpile { };
-          drawpile-full-qt5 = mkDrawpile { useQt5 = true; };
+          debug-qt6-all-make = mkDrawpile {
+            preset = "linux-debug-qt6-all-make";
+            useQt5 = false;
+          };
+          release-qt6-all-make = mkDrawpile {
+            preset = "linux-release-qt6-all-make";
+            useQt5 = false;
+          };
+          release-qt6-server-make = mkDrawpile {
+            preset = "linux-release-qt6-server-make";
+            useQt5 = false;
+          };
 
-          drawpile-client-only = mkDrawpile { buildServer = false; };
-          drawpile-server-only = mkDrawpile { buildClient = false; };
+          debug-qt5-all-make = mkDrawpile {
+            preset = "linux-debug-qt5-all-make";
+            useQt5 = true;
+          };
+          release-qt5-all-make = mkDrawpile {
+            preset = "linux-release-qt5-all-make";
+            useQt5 = true;
+          };
+          release-qt5-server-make = mkDrawpile {
+            preset = "linux-release-qt5-server-make";
+            useQt5 = true;
+          };
 
-          default = drawpile-full;
+          default = release-qt6-all-make;
         };
 
         #Dev shells
 
         devShells = rec {
-          qt6-shell = with pkgs;
-            mkShell {
-              nativeBuildInputs = devOnlyDepends ++ compileTimeDeps;
+          debug-qt6-all-make = mkDrawpile {
+            preset = "linux-debug-qt6-all-make";
+            useQt5 = false;
+            debug = true;
+          };
+          release-qt6-all-make = mkDrawpile {
+            preset = "linux-release-qt6-all-make";
+            useQt5 = false;
+            debug = true;
+          };
+          release-qt6-server-make = mkDrawpile {
+            preset = "linux-release-qt6-server-make";
+            useQt5 = false;
+            debug = true;
+          };
 
-              buildInputs = qt6Dependencies ++ otherDeps;
-            };
+          debug-qt5-all-make = mkDrawpile {
+            preset = "linux-debug-qt5-all-make";
+            useQt5 = true;
+            debug = true;
+          };
+          release-qt5-all-make = mkDrawpile {
+            preset = "linux-release-qt5-all-make";
+            useQt5 = true;
+            debug = true;
+          };
+          release-qt5-server-make = mkDrawpile {
+            preset = "linux-release-qt5-server-make";
+            useQt5 = true;
+            debug = true;
+          };
 
-          qt5-shell = with pkgs;
-            mkShell {
-              nativeBuildInputs = devOnlyDepends ++ compileTimeDeps;
-
-              buildInputs = qt5Dependencies ++ otherDeps;
-            };
-
-          default = qt6-shell;
+          default = release-qt6-all-make;
         };
 
         formatter = pkgs.nixfmt;
