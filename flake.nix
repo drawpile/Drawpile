@@ -91,13 +91,13 @@
 
             shellHook = ''
 
-            buildFirst() {
+            firstBuild() {
               $configurePhase
               $buildPhase
               wrapQtApp Drawpile-build/bin/drawpile
             }
             
-            incrimentalBuild() {
+            incrementalBuild() {
               $buildPhase
               wrapQtApp Drawpile-build/bin/drawpile
             }
