@@ -51,6 +51,16 @@ Disconnect:
               - Other
         - message utf8
 
+KeepAlive:
+    id: 3
+    comment: |
+             The client may indicate support for this during login, in which
+             case the server will send this kind of message if it did not send
+             anything else for a while. This is to make sure the client doesn't
+             run into an idle timeout if its upload queue is too saturated to
+             actually manage sending out a ping.
+    fields: []
+
 Internal:
     id: 31
     comment: Reserved for internal use

@@ -35,6 +35,7 @@ bool DP_message_type_control(DP_MessageType type)
     case DP_MSG_SERVER_COMMAND:
     case DP_MSG_DISCONNECT:
     case DP_MSG_PING:
+    case DP_MSG_KEEP_ALIVE:
     case DP_MSG_INTERNAL:
         return true;
     default:
@@ -137,6 +138,8 @@ const char *DP_message_type_name(DP_MessageType type)
         return "disconnect";
     case DP_MSG_PING:
         return "ping";
+    case DP_MSG_KEEP_ALIVE:
+        return "keepalive";
     case DP_MSG_INTERNAL:
         return "internal";
     case DP_MSG_JOIN:
@@ -271,6 +274,8 @@ const char *DP_message_type_enum_name(DP_MessageType type)
         return "DP_MSG_DISCONNECT";
     case DP_MSG_PING:
         return "DP_MSG_PING";
+    case DP_MSG_KEEP_ALIVE:
+        return "DP_MSG_KEEP_ALIVE";
     case DP_MSG_INTERNAL:
         return "DP_MSG_INTERNAL";
     case DP_MSG_JOIN:
@@ -412,6 +417,9 @@ DP_MessageType DP_message_type_from_name(const char *type_name,
     }
     else if (DP_str_equal(type_name, "ping")) {
         return DP_MSG_PING;
+    }
+    else if (DP_str_equal(type_name, "keepalive")) {
+        return DP_MSG_KEEP_ALIVE;
     }
     else if (DP_str_equal(type_name, "join")) {
         return DP_MSG_JOIN;
@@ -612,6 +620,8 @@ DP_Message *DP_message_deserialize_body(int type, unsigned int context_id,
             return DP_msg_disconnect_deserialize(context_id, buf, length);
         case DP_MSG_PING:
             return DP_msg_ping_deserialize(context_id, buf, length);
+        case DP_MSG_KEEP_ALIVE:
+            return DP_msg_keep_alive_deserialize(context_id, buf, length);
         case DP_MSG_INTERNAL:
             DP_error_set(
                 "Can't deserialize reserved message type 31 DP_MSG_INTERNAL");
@@ -773,6 +783,8 @@ DP_Message *DP_message_parse_body(DP_MessageType type, unsigned int context_id,
         return DP_msg_disconnect_parse(context_id, reader);
     case DP_MSG_PING:
         return DP_msg_ping_parse(context_id, reader);
+    case DP_MSG_KEEP_ALIVE:
+        return DP_msg_keep_alive_parse(context_id, reader);
     case DP_MSG_INTERNAL:
         DP_error_set("Can't parse reserved message type 31 DP_MSG_INTERNAL");
         return NULL;
@@ -1340,6 +1352,34 @@ bool DP_msg_ping_is_pong(const DP_MsgPing *mp)
 {
     DP_ASSERT(mp);
     return mp->is_pong;
+}
+
+
+/* DP_MSG_KEEP_ALIVE */
+
+DP_Message *DP_msg_keep_alive_new(unsigned int context_id)
+{
+    return DP_message_new(DP_MSG_KEEP_ALIVE, context_id, &zero_length_methods,
+                          0);
+}
+
+DP_Message *DP_msg_keep_alive_deserialize(unsigned int context_id,
+                                          DP_UNUSED const unsigned char *buffer,
+                                          size_t length)
+{
+    if (length != 0) {
+        DP_error_set("Wrong length for keepalive message; "
+                     "expected 0, got %zu",
+                     length);
+        return NULL;
+    }
+    return DP_msg_keep_alive_new(context_id);
+}
+
+DP_Message *DP_msg_keep_alive_parse(unsigned int context_id,
+                                    DP_UNUSED DP_TextReader *reader)
+{
+    return DP_msg_keep_alive_new(context_id);
 }
 
 

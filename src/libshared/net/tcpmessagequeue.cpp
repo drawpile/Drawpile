@@ -128,6 +128,10 @@ void TcpMessageQueue::readData()
 						messageLength - DP_MESSAGE_HEADER_LENGTH - 1);
 				}
 
+			} else if(type == MSG_TYPE_KEEP_ALIVE) {
+				// Nothing to do, just keeps the connection alive if the client
+				// fails to send out a ping due upload queue saturation.
+
 			} else {
 				// The rest are normal messages
 				net::Message msg = net::Message::deserialize(

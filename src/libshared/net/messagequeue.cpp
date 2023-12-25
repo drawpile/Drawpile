@@ -20,6 +20,7 @@ MessageQueue::MessageQueue(bool decodeOpaque, QObject *parent)
 	, m_contextId(0)
 	, m_pingTimer(nullptr)
 	, m_idleTimeout(0)
+	, m_keepAliveTimeout(0)
 	, m_artificialLagMs(0)
 	, m_artificialLagTimer(nullptr)
 {
@@ -30,6 +31,7 @@ MessageQueue::MessageQueue(bool decodeOpaque, QObject *parent)
 	m_idleTimer->setInterval(1000);
 	m_idleTimer->setSingleShot(false);
 	resetLastRecvTimer();
+	resetKeepAliveTimer();
 }
 
 void MessageQueue::setIdleTimeout(qint64 timeout)
@@ -53,6 +55,12 @@ void MessageQueue::setPingInterval(int msecs)
 	}
 	m_pingTimer->setInterval(msecs);
 	m_pingTimer->start(msecs);
+}
+
+void MessageQueue::setKeepAliveTimeout(qint64 timeout)
+{
+	m_keepAliveTimeout = timeout;
+	resetKeepAliveTimer();
 }
 
 void MessageQueue::setSmoothEnabled(bool enabled)
@@ -126,14 +134,23 @@ void MessageQueue::sendMultiple(int count, const net::Message *msgs)
 {
 	if(m_artificialLagMs == 0) {
 		if(!m_gracefullyDisconnecting) {
+			resetKeepAliveTimer();
 			enqueueMessages(count, msgs);
 		}
 	} else {
 		long long time =
 			QDateTime::currentMSecsSinceEpoch() + m_artificialLagMs;
+		bool haveKeepAlive = false;
 		for(int i = 0; i < count; ++i) {
+			const net::Message &msg = msgs[i];
 			m_artificialLagTimes.append(time);
-			m_artificialLagMessages.append(msgs[i]);
+			m_artificialLagMessages.append(msg);
+			if(msg.type() == DP_MSG_KEEP_ALIVE) {
+				haveKeepAlive = true;
+			}
+		}
+		if(haveKeepAlive) {
+			resetKeepAliveTimer();
 		}
 		if(!m_artificialLagTimer->isActive()) {
 			m_artificialLagTimer->start(m_artificialLagMs);
@@ -183,6 +200,8 @@ void MessageQueue::checkIdleTimeout()
 	   m_lastRecvTimer.hasExpired()) {
 		emit timedOut(m_idleTimeout);
 		abortSocket();
+	} else if(m_keepAliveTimer.hasExpired()) {
+		send(makeKeepAliveMessage(0));
 	}
 }
 
@@ -201,6 +220,7 @@ void MessageQueue::sendArtificallyLaggedMessages()
 	}
 
 	if(!m_gracefullyDisconnecting) {
+		resetKeepAliveTimer();
 		enqueueMessages(i, m_artificialLagMessages.constData());
 	}
 	m_artificialLagTimes.remove(0, i);
@@ -214,6 +234,7 @@ void MessageQueue::sendArtificallyLaggedMessages()
 void MessageQueue::sendPingMsg(bool pong)
 {
 	if(m_artificialLagMs == 0) {
+		resetKeepAliveTimer();
 		enqueuePing(pong);
 	} else {
 		// Not accurate, but probably good enough for development purposes.
@@ -248,7 +269,13 @@ void MessageQueue::sendPing()
 
 void MessageQueue::resetLastRecvTimer()
 {
-	m_lastRecvTimer.setRemainingTime(m_idleTimeout > 0 ? m_idleTimeout : -1);
+	resetDeadlineTimer(m_lastRecvTimer, m_idleTimeout);
+}
+
+
+void MessageQueue::resetKeepAliveTimer()
+{
+	resetDeadlineTimer(m_keepAliveTimer, m_keepAliveTimeout);
 }
 
 void MessageQueue::handlePing(bool isPong)

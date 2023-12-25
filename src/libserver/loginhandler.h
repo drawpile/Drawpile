@@ -95,6 +95,7 @@ private:
 	void handleIdentMessage(const net::ServerCommand &cmd);
 	void handleHostMessage(const net::ServerCommand &cmd);
 	void handleJoinMessage(const net::ServerCommand &cmd);
+	void checkClientCapabilities(const net::ServerCommand &cmd);
 	void logClientInfo(const net::ServerCommand &cmd);
 	void handleAbuseReport(const net::ServerCommand &cmd);
 	void handleStarttls();

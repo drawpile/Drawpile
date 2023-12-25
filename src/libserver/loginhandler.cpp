@@ -817,6 +817,8 @@ void LoginHandler::handleHostMessage(const net::ServerCommand &cmd)
 		 {QStringLiteral("flags"), sessionFlags(session)},
 		 {QStringLiteral("authId"), m_client->authId()}}));
 
+	checkClientCapabilities(cmd);
+
 	m_complete = true;
 	session->joinUser(m_client, true);
 	logClientInfo(cmd);
@@ -925,11 +927,22 @@ void LoginHandler::handleJoinMessage(const net::ServerCommand &cmd)
 		 {QStringLiteral("flags"), sessionFlags(session)},
 		 {QStringLiteral("authId"), m_client->authId()}}));
 
+	checkClientCapabilities(cmd);
+
 	m_complete = true;
 	session->joinUser(m_client, false);
 	logClientInfo(cmd);
 
 	deleteLater();
+}
+
+void LoginHandler::checkClientCapabilities(const net::ServerCommand &cmd)
+{
+	const QString capabilities =
+		cmd.kwargs[QStringLiteral("capabilities")].toString();
+	if(capabilities.contains(QStringLiteral("KEEPALIVE"))) {
+		m_client->setKeepAliveTimeout(30 * 1000);
+	}
 }
 
 void LoginHandler::logClientInfo(const net::ServerCommand &cmd)

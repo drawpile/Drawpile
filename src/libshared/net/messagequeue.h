@@ -99,6 +99,8 @@ public:
 	 */
 	void setPingInterval(int msecs);
 
+	void setKeepAliveTimeout(qint64 timeout);
+
 	void setSmoothEnabled(bool smoothingEnabled);
 	void setSmoothDrainRate(int smoothDrainRate);
 
@@ -171,6 +173,7 @@ protected slots:
 protected:
 	static constexpr int MSG_TYPE_DISCONNECT = 1;
 	static constexpr int MSG_TYPE_PING = 2;
+	static constexpr int MSG_TYPE_KEEP_ALIVE = 2;
 
 	virtual void enqueueMessages(int count, const net::Message *msgs) = 0;
 	virtual void enqueuePing(bool pong) = 0;
@@ -208,11 +211,21 @@ private:
 
 	void updateSmoothing();
 
+	void resetKeepAliveTimer();
+
+	static void resetDeadlineTimer(QDeadlineTimer &timer, qint64 timeout)
+	{
+		timer.setRemainingTime(timeout > 0 ? timeout : -1);
+	}
+
 	QTimer *m_idleTimer;
 	QTimer *m_pingTimer;
 	qint64 m_idleTimeout;
 	QElapsedTimer m_pingSentTimer;
 	QDeadlineTimer m_lastRecvTimer;
+
+	qint64 m_keepAliveTimeout;
+	QDeadlineTimer m_keepAliveTimer;
 
 	int m_artificialLagMs;
 	QVector<long long> m_artificialLagTimes;

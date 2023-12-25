@@ -601,6 +601,11 @@ void Client::setConnectionTimeout(int timeout)
 	d->msgqueue->setIdleTimeout(timeout);
 }
 
+void Client::setKeepAliveTimeout(int timeout)
+{
+	d->msgqueue->setKeepAliveTimeout(timeout);
+}
+
 QHostAddress Client::peerAddress() const
 {
 	return d->socket->peerAddress();

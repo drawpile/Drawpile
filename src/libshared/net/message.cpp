@@ -340,6 +340,11 @@ Message makeJoinMessage(
 		const_cast<char *>(avatar.constData())));
 }
 
+Message makeKeepAliveMessage(uint8_t contextId)
+{
+	return Message::noinc(DP_msg_keep_alive_new(contextId));
+}
+
 Message makeLeaveMessage(uint8_t contextId)
 {
 	return Message::noinc(DP_msg_leave_new(contextId));

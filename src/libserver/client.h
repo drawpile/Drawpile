@@ -152,6 +152,7 @@ public:
 	 * @param timeout timeout in milliseconds
 	 */
 	void setConnectionTimeout(int timeout);
+	void setKeepAliveTimeout(int timeout);
 
 	/**
 	 * Get the timestamp of this client's last activity (i.e. non-keepalive

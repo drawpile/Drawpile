@@ -101,6 +101,8 @@ Message makeJoinMessage(
 	uint8_t contextId, uint8_t flags, const QString &name,
 	const QByteArray &avatar);
 
+Message makeKeepAliveMessage(uint8_t contextId);
+
 Message makeLeaveMessage(uint8_t contextId);
 
 Message makePingMessage(uint8_t contextId, bool isPong);

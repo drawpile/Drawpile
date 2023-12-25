@@ -1191,6 +1191,9 @@ QJsonObject LoginHandler::makeClientInfoKwargs()
 		{"os", os},
 		{"s", getSid()},
 		{"m", QString::fromUtf8(QSysInfo::machineUniqueId().toBase64())},
+		// Comma-separated list of client capabilities. KEEPALIVE indicates
+		// support for DP_MSG_KEEP_ALIVE messages from the server.
+		{"capabilities", QStringLiteral("KEEPALIVE")},
 	};
 }
 

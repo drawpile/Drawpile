@@ -45,6 +45,7 @@ typedef enum DP_MessageType {
     DP_MSG_SERVER_COMMAND = 0,
     DP_MSG_DISCONNECT = 1,
     DP_MSG_PING = 2,
+    DP_MSG_KEEP_ALIVE = 3,
     DP_MSG_INTERNAL = 31,
     DP_MSG_JOIN = 32,
     DP_MSG_LEAVE = 33,
@@ -250,6 +251,28 @@ DP_Message *DP_msg_ping_parse(unsigned int context_id, DP_TextReader *reader);
 DP_MsgPing *DP_msg_ping_cast(DP_Message *msg);
 
 bool DP_msg_ping_is_pong(const DP_MsgPing *mp);
+
+
+/*
+ * DP_MSG_KEEP_ALIVE
+ *
+ * The client may indicate support for this during login, in which
+ * case the server will send this kind of message if it did not send
+ * anything else for a while. This is to make sure the client doesn't
+ * run into an idle timeout if its upload queue is too saturated to
+ * actually manage sending out a ping.
+ */
+
+#define DP_MSG_KEEP_ALIVE_STATIC_LENGTH 0
+
+DP_Message *DP_msg_keep_alive_new(unsigned int context_id);
+
+DP_Message *DP_msg_keep_alive_deserialize(unsigned int context_id,
+                                          const unsigned char *buffer,
+                                          size_t length);
+
+DP_Message *DP_msg_keep_alive_parse(unsigned int context_id,
+                                    DP_TextReader *reader);
 
 
 /*

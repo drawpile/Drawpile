@@ -106,6 +106,10 @@ void WebSocketMessageQueue::receiveBinaryMessage(const QByteArray &bytes)
 				handlePing(bytes[DP_MESSAGE_WS_HEADER_LENGTH]);
 			}
 
+		} else if(type == MSG_TYPE_KEEP_ALIVE) {
+			// Nothing to do, just keeps the connection alive if the client
+			// fails to send out a ping due upload queue saturation.
+
 		} else if(type == MSG_TYPE_DISCONNECT) {
 			// Graceful disconnects are also handled internally
 			if(messageLength < DP_MESSAGE_WS_HEADER_LENGTH + 1) {
