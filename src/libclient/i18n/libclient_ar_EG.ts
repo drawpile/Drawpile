@@ -431,12 +431,12 @@
     <message>
         <location line="+4"/>
         <source>Session Bans (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>محظورين الجلسه(%1)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Roles (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>الأدوار (%1)</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -505,25 +505,25 @@
     <message numerus="yes">
         <location line="-255"/>
         <source>%n users</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>مستخدم%n</numerusform>
+            <numerusform>مستخدم%n</numerusform>
+            <numerusform>مستخدمين%n</numerusform>
+            <numerusform>مستخدمي%n</numerusform>
+            <numerusform>مستخدمي%n</numerusform>
+            <numerusform>مستخدمي%n</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="-2"/>
         <source>%1/%n users</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%1%nمستخدمي</numerusform>
+            <numerusform>%1%nمستخدم</numerusform>
+            <numerusform>%1%nمستخدمين</numerusform>
+            <numerusform>%1%nمستخدمي</numerusform>
+            <numerusform>%1%nمستخدمي</numerusform>
+            <numerusform>%1%nمستخدمي</numerusform>
         </translation>
     </message>
     <message>
@@ -929,7 +929,7 @@
         <location filename="../import/animationimporter.cpp" line="+48"/>
         <source>Frames %1</source>
         <extracomment>Title for imported animation tracks and layer groups.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>طبقات%1</translation>
     </message>
 </context>
 <context>
@@ -965,27 +965,27 @@
     <message>
         <location filename="../net/authlistmodel.cpp" line="+37"/>
         <source>Moderator</source>
-        <translation type="unfinished">المشرف</translation>
+        <translation>المشرف</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Operator</source>
-        <translation type="unfinished">المعامل</translation>
+        <translation>الرئيس</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Trusted</source>
-        <translation type="unfinished">موثوق</translation>
+        <translation>موثوق</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>User</source>
-        <translation type="unfinished">المستخدم</translation>
+        <translation>المستخدم</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>الادوار</translation>
     </message>
 </context>
 <context>
@@ -994,7 +994,7 @@
         <location filename="../net/banlistmodel.cpp" line="+69"/>
         <location line="+15"/>
         <source>ID</source>
-        <translation type="unfinished"></translation>
+        <translation>ID</translation>
     </message>
     <message>
         <location line="-13"/>
@@ -1010,7 +1010,7 @@
     <message>
         <location line="+2"/>
         <source>Client info</source>
-        <translation type="unfinished"></translation>
+        <translation>معلومات الجهاز</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1049,93 +1049,93 @@
     <message>
         <location line="-384"/>
         <source>You have been kicked.</source>
-        <translation type="unfinished"></translation>
+        <translation>تم طردك.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You have been kicked by %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 طردك من الجلسه.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>A server error occurred.</source>
-        <translation type="unfinished"></translation>
+        <translation>حدث خلل في السيرفر.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>A server error occurred: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>حدث خلل في السيرفر:%1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>The server is shutting down.</source>
-        <translation type="unfinished"></translation>
+        <translation>السيرفر بيقفل.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The session has been shut down: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>وقف السيرفر:%1</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Disconnected.</source>
-        <translation type="unfinished"></translation>
+        <translation>انقطع الاتصال.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Disconnected: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>انقطع الاتصال:%1</translation>
     </message>
     <message>
         <location line="+316"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>يمكن للمشرفين فقط تصدير عمليات الحظر .</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Server error.</source>
-        <translation type="unfinished"></translation>
+        <translation>سيرفر خلل .</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Exporting encrypted bans not configured on this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>تصدير عمليات الحظر المشفرة التي لم يتم تكوينها على هذا سيرفر.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Exporting encrypted bans not supported by this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>تصدير عمليات الحظر المشفرة غير المدعومة من قبل هذا سيرفر.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The server couldn&apos;t read the import data. This is likely because it was exported from a different server. You can only import bans into the same server they were exported from.</source>
-        <translation type="unfinished"></translation>
+        <translation>تعذر على سيرفر قراءة بيانات الاستيراد. من المحتمل أن يكون هذا لأنه تم تصديره من سيرفر مختلف. يمكنك فقط استيراد عمليات الحظر إلى نفس سيرفر الذي تم تصديرها منه.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Invalid import data.</source>
-        <translation type="unfinished"></translation>
+        <translation>بيانات الاستيراد غير صالحة.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Malformed import data.</source>
-        <translation type="unfinished"></translation>
+        <translation>بيانات الاستيراد غير صحيحة.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Importing encrypted bans not configured on this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>استيراد عمليات الحظر المشفرة التي لم يتم تكوينها على هذا سيرفر.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Importing encrypted bans not supported by this server.</source>
-        <translation type="unfinished"></translation>
+        <translation>استيراد عمليات الحظر المشفرة التي لم يتم تكوينها على هذا سيرفر.</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Operator status revoked from %1 by %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>%2فسخ دور الرئيس من%1.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -1162,13 +1162,13 @@
         <location line="+4"/>
         <source>Session terminated by administrator: %1</source>
         <extracomment>%1 is the reason given.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>تم إنهاء الجلسة من قبل المسؤول: %1</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Session terminated by moderator (%1): %2</source>
         <extracomment>%1 is the name of the moderator, %2 is the reason given.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>تم إنهاء الجلسة من قبل المسؤول (%1): %2</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -1217,12 +1217,12 @@
     <message>
         <location line="+84"/>
         <source>This server doesn&apos;t provide a way to log in for joining a session!</source>
-        <translation type="unfinished"></translation>
+        <translation>لا يوجد طريقه ان تسجل في هذا الجلسه!</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This server doesn&apos;t provide a way to log in for hosting a session!</source>
-        <translation type="unfinished"></translation>
+        <translation>لا يوجد طريقه ان تسجل في هذا سيرفر!</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -1232,7 +1232,7 @@
     <message>
         <location line="+68"/>
         <source>Session lookup failed</source>
-        <translation type="unfinished"></translation>
+        <translation>فشل البحث عن الجلسة</translation>
     </message>
     <message>
         <location line="+38"/>
@@ -1263,7 +1263,7 @@
     <message>
         <location line="+30"/>
         <source>Invalid ident intent response.</source>
-        <translation type="unfinished"></translation>
+        <translation>استجابة هدف التعريف غير صالحة.</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -1278,12 +1278,12 @@
     <message>
         <location line="+8"/>
         <source>Server reported two different ext-auth URLs</source>
-        <translation type="unfinished"></translation>
+        <translation>أبلغ الخادم عن عنوانيext-auth URL مختلفين</translation>
     </message>
     <message>
         <location line="+111"/>
         <source>Got multiple sessions when only one was expected</source>
-        <translation type="unfinished"></translation>
+        <translation>حصلت على جلسات متعددة عندما كان من المتوقع جلسة واحدة فقط</translation>
     </message>
     <message>
         <location line="+52"/>
@@ -1374,17 +1374,17 @@
     <message>
         <location line="+4"/>
         <source>This usually means that your Drawpile version is too old. Do you need to update?</source>
-        <translation type="unfinished"></translation>
+        <translation>هذا يعني عادةً أن إصدار Drawpile قديم جدًا. هل تحتاج إلى التحديث؟</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Session not found, it may have ended or its invite link has changed</source>
-        <translation type="unfinished"></translation>
+        <translation>لم يتم العثور على الجلسة، ربما تكون قد انتهت أو تم تغيير رابط الدعوة الخاص بها</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This server only allows joining sessions through a direct link.</source>
-        <translation type="unfinished"></translation>
+        <translation>هذا السيرفر فقط بالانضمام إلى الجلسات من خلال رابط مباشر.</translation>
     </message>
     <message>
         <location line="+27"/>
