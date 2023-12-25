@@ -291,7 +291,7 @@ private slots:
 	void socketError(QAbstractSocket::SocketError error);
 	void readError();
 	void writeError();
-	void timedOut(qint64 idleTime, qint64 idleTimeout);
+	void timedOut(qint64 idleTimeout);
 	void socketDisconnect();
 
 protected:

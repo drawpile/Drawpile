@@ -18,7 +18,6 @@ MessageQueue::MessageQueue(bool decodeOpaque, QObject *parent)
 	, m_smoothTimer(nullptr)
 	, m_smoothMessagesToDrain(INT_MAX)
 	, m_contextId(0)
-	, m_lastRecvTime(0)
 	, m_pingTimer(nullptr)
 	, m_idleTimeout(0)
 	, m_pingSent(0)
@@ -31,12 +30,13 @@ MessageQueue::MessageQueue(bool decodeOpaque, QObject *parent)
 		m_idleTimer, &QTimer::timeout, this, &MessageQueue::checkIdleTimeout);
 	m_idleTimer->setInterval(1000);
 	m_idleTimer->setSingleShot(false);
+	resetLastRecvTimer();
 }
 
 void MessageQueue::setIdleTimeout(qint64 timeout)
 {
 	m_idleTimeout = timeout;
-	m_lastRecvTime = QDateTime::currentMSecsSinceEpoch();
+	resetLastRecvTimer();
 	if(timeout > 0) {
 		m_idleTimer->start(1000);
 	} else {
@@ -180,13 +180,10 @@ void MessageQueue::receiveSmoothedMessages()
 
 void MessageQueue::checkIdleTimeout()
 {
-	if(m_idleTimeout > 0 &&
-	   getSocketState() == QAbstractSocket::ConnectedState) {
-		qint64 currentIdleTime = idleTime();
-		if(currentIdleTime > m_idleTimeout) {
-			emit timedOut(currentIdleTime, m_idleTimeout);
-			abortSocket();
-		}
+	if(getSocketState() == QAbstractSocket::ConnectedState &&
+	   m_lastRecvTimer.hasExpired()) {
+		emit timedOut(m_idleTimeout);
+		abortSocket();
 	}
 }
 
@@ -252,9 +249,9 @@ void MessageQueue::sendPing()
 	sendPingMsg(false);
 }
 
-qint64 MessageQueue::idleTime() const
+void MessageQueue::resetLastRecvTimer()
 {
-	return QDateTime::currentMSecsSinceEpoch() - m_lastRecvTime;
+	m_lastRecvTimer.setRemainingTime(m_idleTimeout > 0 ? m_idleTimeout : -1);
 }
 
 void MessageQueue::handlePing(bool isPong)

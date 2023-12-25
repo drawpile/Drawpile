@@ -148,7 +148,7 @@ void WebSocketMessageQueue::receiveBinaryMessage(const QByteArray &bytes)
 			}
 		}
 
-		m_lastRecvTime = QDateTime::currentMSecsSinceEpoch();
+		resetLastRecvTimer();
 		emit bytesReceived(compat::cast_6<int>(bytes.size()));
 
 		if(gotmessage) {

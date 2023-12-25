@@ -172,7 +172,7 @@ void TcpMessageQueue::readData()
 	} while(read > 0);
 
 	if(totalread) {
-		m_lastRecvTime = QDateTime::currentMSecsSinceEpoch();
+		resetLastRecvTimer();
 		emit bytesReceived(totalread);
 	}
 

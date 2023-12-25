@@ -3,6 +3,7 @@
 #define LIBSHARED_NET_MESSAGEQUEUE_H
 #include "libshared/net/message.h"
 #include <QAbstractSocket>
+#include <QDeadlineTimer>
 #include <QObject>
 #include <QVector>
 
@@ -74,12 +75,6 @@ public:
 	 * @brief Is there still data in the upload buffer?
 	 */
 	virtual bool isUploading() const = 0;
-
-	/**
-	 * @brief Get the number of milliseconds since the last message sent by the
-	 * remote end
-	 */
-	qint64 idleTime() const;
 
 	/**
 	 * @brief Set the maximum time the remote end can be quiet before timing out
@@ -156,7 +151,7 @@ signals:
 
 	void readError();
 	void writeError();
-	void timedOut(qint64 idleTime, qint64 idleTimeout);
+	void timedOut(qint64 idleTimeout);
 
 	/**
 	 * @brief A reply to our Ping was just received
@@ -182,6 +177,8 @@ protected:
 	virtual QAbstractSocket::SocketState getSocketState() = 0;
 	virtual void abortSocket() = 0;
 
+	void resetLastRecvTimer();
+
 	void handlePing(bool isPong);
 
 	bool m_decodeOpaque;
@@ -196,7 +193,6 @@ protected:
 	net::MessageList m_smoothBuffer;
 	int m_smoothMessagesToDrain;
 	unsigned int m_contextId;
-	qint64 m_lastRecvTime;
 
 private slots:
 	void checkIdleTimeout();
@@ -215,6 +211,7 @@ private:
 	QTimer *m_pingTimer;
 	qint64 m_idleTimeout;
 	qint64 m_pingSent;
+	QDeadlineTimer m_lastRecvTimer;
 
 	int m_artificialLagMs;
 	QVector<long long> m_artificialLagTimes;

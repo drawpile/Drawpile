@@ -124,7 +124,7 @@ protected slots:
 	void handleSocketError();
 	void handleReadError();
 	void handleWriteError();
-	void handleTimeout(qint64 idleTime, qint64 idleTimeout);
+	void handleTimeout(qint64 idleTimeout);
 
 protected:
 	// Must be called at the end of the constructor.

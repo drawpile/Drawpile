@@ -701,15 +701,12 @@ void Client::writeError()
 						 .arg(d->socket->errorString())));
 }
 
-void Client::timedOut(qint64 idleTime, qint64 idleTimeout)
+void Client::timedOut(qint64 idleTimeout)
 {
 	log(Log()
 			.about(Log::Level::Warn, Log::Topic::Status)
-			.message(
-				QStringLiteral(
-					"Message queue timed out after %1ms, threshold is %2ms")
-					.arg(idleTime)
-					.arg(idleTimeout)));
+			.message(QStringLiteral("Message queue exceeded timeout of %1ms")
+						 .arg(idleTimeout)));
 }
 
 void Client::socketDisconnect()

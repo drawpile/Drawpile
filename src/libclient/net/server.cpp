@@ -109,10 +109,9 @@ void Server::handleWriteError()
 	}
 }
 
-void Server::handleTimeout(qint64 idleTime, qint64 idleTimeout)
+void Server::handleTimeout(qint64 idleTimeout)
 {
-	qWarning() << "Message queue timed out after" << idleTime
-			   << "ms, threshold is " << idleTimeout << "ms";
+	qWarning() << "Message queue exceeded timeout of" << idleTimeout << "ms";
 	if(m_error.isEmpty()) {
 		m_error = tr("Network connection timed out");
 	}
