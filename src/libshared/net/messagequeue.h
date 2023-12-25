@@ -4,6 +4,7 @@
 #include "libshared/net/message.h"
 #include <QAbstractSocket>
 #include <QDeadlineTimer>
+#include <QElapsedTimer>
 #include <QObject>
 #include <QVector>
 
@@ -210,7 +211,7 @@ private:
 	QTimer *m_idleTimer;
 	QTimer *m_pingTimer;
 	qint64 m_idleTimeout;
-	qint64 m_pingSent;
+	QElapsedTimer m_pingSentTimer;
 	QDeadlineTimer m_lastRecvTimer;
 
 	int m_artificialLagMs;

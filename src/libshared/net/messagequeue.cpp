@@ -20,7 +20,6 @@ MessageQueue::MessageQueue(bool decodeOpaque, QObject *parent)
 	, m_contextId(0)
 	, m_pingTimer(nullptr)
 	, m_idleTimeout(0)
-	, m_pingSent(0)
 	, m_artificialLagMs(0)
 	, m_artificialLagTimer(nullptr)
 {
@@ -237,15 +236,13 @@ void MessageQueue::sendDisconnect(
 
 void MessageQueue::sendPing()
 {
-	if(m_pingSent == 0) {
-		m_pingSent = QDateTime::currentMSecsSinceEpoch();
-
-	} else {
+	if(m_pingSentTimer.isValid()) {
 		// This can happen if the other side's upload buffer is too full
 		// for the Pong to make it through in time.
 		qWarning("sendPing(): reply to previous ping not yet received!");
+	} else {
+		m_pingSentTimer.start();
 	}
-
 	sendPingMsg(false);
 }
 
@@ -258,14 +255,13 @@ void MessageQueue::handlePing(bool isPong)
 {
 	if(isPong) {
 		// We got a Pong back: measure latency
-		if(m_pingSent == 0) {
+		if(m_pingSentTimer.isValid()) {
+			qint64 roundtrip = m_pingSentTimer.elapsed();
+			m_pingSentTimer.invalidate();
+			emit pingPong(roundtrip);
+		} else {
 			// Lots of pings can have been queued up
 			qDebug("Received Pong, but no Ping was sent!");
-
-		} else {
-			qint64 roundtrip = QDateTime::currentMSecsSinceEpoch() - m_pingSent;
-			m_pingSent = 0;
-			emit pingPong(roundtrip);
 		}
 	} else {
 		// Reply to a Ping with a Pong
