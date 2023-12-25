@@ -91,15 +91,24 @@
 
             shellHook = ''
 
+            export ROOT=$PWD
+
             firstBuild() {
-              $configurePhase
-              $buildPhase
-              wrapQtApp Drawpile-build/bin/drawpile
+              cmake -S $ROOT -B $ROOT/Drawpile-build \
+                --preset ${preset} \
+                -DCMAKE_INSTALL_PREFIX=$out
+              cmake --build $ROOT/Drawpile-build
+              wrapQtApp $ROOT/Drawpile-build/bin/drawpile
             }
             
             incrementalBuild() {
-              $buildPhase
-              wrapQtApp Drawpile-build/bin/drawpile
+              cmake --build $ROOT/Drawpile-build
+              wrapQtApp $ROOT/Drawpile-build/bin/drawpile
+            }
+
+            incrementalRun() {
+              incrementalBuild
+              $ROOT/Drawpile-build/bin/drawpile
             }
 
             '';
