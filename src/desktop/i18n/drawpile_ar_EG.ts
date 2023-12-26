@@ -474,7 +474,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="-56"/>
         <source>Local Fork Present:</source>
-        <translation type="unfinished"></translation>
+        <translation>Local Fork حاضر:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -484,12 +484,12 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Local Fork Size:</source>
-        <translation type="unfinished"></translation>
+        <translation>حجم Local Fork:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Local Fork Start:</source>
-        <translation type="unfinished"></translation>
+        <translation>بدايه Local Fork:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -499,7 +499,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+14"/>
         <source>Local Fork Fallbehind:</source>
-        <translation type="unfinished"></translation>
+        <translation>تاخرLocal Fork:</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -519,7 +519,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+10"/>
         <source>Local Fork</source>
-        <translation type="unfinished"></translation>
+        <translation>Local Fork</translation>
     </message>
 </context>
 <context>
@@ -643,7 +643,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Save Animation Frames</source>
-        <translation>حفظ إطارات الرسوم المتحركة</translation>
+        <translation>حفظ Frames الرسوم المتحركة</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -1534,7 +1534,9 @@ Simplify the canvas and reset manually before space runs out.</source>
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
 
 Are you sure youwant to start recording debug dumps?</source>
-        <translation type="unfinished"></translation>
+        <translation>Debug dumps تسجيل أوامر الرسم الجهاز والبعيدة, استخدامها لإصلاح مشكلات الشبكة, مش اكثر من كده.
+يبدأ التسجيل في عملية إعادة تعيين اللوحة القماشية التالية وسيتم حفظ الملفات في%1
+هل أنت متأكد أنك تريد بدء التسجيل Debug dumps؟</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -2220,592 +2222,592 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+17"/>
         <source>Create Layer on Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>إنشاء طبقة على مفتاح Frame</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Create Group on Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>إنشاء مجموعة في مفتاح Frame</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Duplicate Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>انسخ مفتاح Frame</translation>
     </message>
     <message>
         <location line="+25"/>
         <location filename="../widgets/macmenu.cpp" line="+9"/>
         <source>&amp;Host...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;يستضيف...</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Share your canvas with others</source>
-        <translation type="unfinished"></translation>
+        <translation>شارك لوحتك مع الاخرين</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Invite...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;دعو...</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Invite another user to this session</source>
-        <translation type="unfinished"></translation>
+        <translation>قم بدعوة مستخدم آخر لهذه الجلسة</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Prevent changes to the canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>امنع تغييرات للوحه</translation>
     </message>
     <message>
         <location line="+396"/>
         <source>Wheel</source>
         <extracomment>&quot;Wheel&quot; refers to the color wheel.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>عجله</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Sliders</source>
         <extracomment>&quot;Sliders&quot; refers to the RGB and HSV sliders.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>شريط التمرير</translation>
     </message>
     <message>
         <location line="-420"/>
         <location filename="../widgets/macmenu.cpp" line="+1"/>
         <source>&amp;Join...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;ادخل...</translation>
     </message>
     <message>
         <location line="-2374"/>
         <source>Joined the session!</source>
-        <translation type="unfinished"></translation>
+        <translation>دخلت الجلسه!</translation>
     </message>
     <message>
         <location line="+378"/>
         <source>Hosting on this computer is not available</source>
-        <translation type="unfinished"></translation>
+        <translation>الاستضافة على هذا الكمبيوتر غير متوفرة</translation>
     </message>
     <message>
         <location line="+55"/>
         <source>Really leave and terminate the session?</source>
-        <translation type="unfinished"></translation>
+        <translation>حقا مغادرة وإنهاء الجلسة؟</translation>
     </message>
     <message>
         <location line="+112"/>
         <source>Reason:</source>
-        <translation type="unfinished">السبب:</translation>
+        <translation>السبب:</translation>
     </message>
     <message>
         <location line="+119"/>
         <source>You&apos;ve been disconnected from the session.</source>
-        <translation type="unfinished"></translation>
+        <translation>لقد تم قطع اتصالك بالجلسة.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Disconnected: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>غير متصل: %1</translation>
     </message>
     <message>
         <location line="+63"/>
         <source>Canvas locked</source>
-        <translation type="unfinished"></translation>
+        <translation>اللوحه مقفله</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Canvas unlocked</source>
-        <translation type="unfinished"></translation>
+        <translation>اللوحه فتحت</translation>
     </message>
     <message>
         <location line="+361"/>
         <source>Freehand (erase mode, click to reset)</source>
-        <translation type="unfinished"></translation>
+        <translation>الفرشه (وضع المسح، انقر لإعادة التعيين)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Freehand brush tool (erase mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>اداه الفرشه (وضع المسح)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Freehand (alpha lock mode, click to reset)</source>
-        <translation type="unfinished"></translation>
+        <translation>الفرشه(وضع قفل ألفا، اضغط لإعادة التعيين)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Freehand brush tool (alpha lock mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>اداه الفرشه (وضع قفل ألفا)</translation>
     </message>
     <message>
         <location line="+627"/>
         <source>Export Image…</source>
-        <translation type="unfinished"></translation>
+        <translation>تصدير الصورة…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Export Selection...</source>
-        <translation type="unfinished"></translation>
+        <translation>تصدير التحديد...</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Import &amp;Drawpile 2.1 Animation…</source>
-        <translation type="unfinished"></translation>
+        <translation>استيراد &amp;Drawpile 2.1 الرسوم المتحركة…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Import &amp;Brushes...</source>
-        <translation type="unfinished"></translation>
+        <translation>استيراد &amp;الفرش...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Export Session &amp;Template...</source>
-        <translation type="unfinished"></translation>
+        <translation>تصدير الجلسة &amp;نموذج...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Export Animated &amp;GIF...</source>
-        <translation type="unfinished"></translation>
+        <translation>تصدير الصور المتحركة &amp;GIF...</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Export Animation &amp;Frames...</source>
-        <translation type="unfinished"></translation>
+        <translation>تصدير الرسوم المتحركة Frames...</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Export &amp;Brushes…</source>
-        <translation type="unfinished"></translation>
+        <translation>تصدير &amp;فرش…</translation>
     </message>
     <message>
         <location line="+115"/>
         <source>&amp;Copy Merged</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;اندمجت نسخة</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy Without Background</source>
-        <translation type="unfinished"></translation>
+        <translation>نسخ بدون خلفية</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy From &amp;Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>نسخ من &amp;طبقة</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Cu&amp;t From Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>قطع من الطبقة</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Stamp Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp; الطوابع اختيار</translation>
     </message>
     <message>
         <location line="+396"/>
         <source>Layer Properties…</source>
-        <translation type="unfinished"></translation>
+        <translation>خصائص الطبقة…</translation>
     </message>
     <message>
         <location line="+122"/>
         <source>Join another user&apos;s drawing session</source>
-        <translation type="unfinished"></translation>
+        <translation>انضم إلى جلسة الرسم الخاصة بمستخدم آخر</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Browse...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;تصفح...</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Browse session listings</source>
-        <translation type="unfinished"></translation>
+        <translation>تصفح قوائم الجلسة</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Leave</source>
-        <translation type="unfinished"></translation>
+        <translation>اخرج</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Leave this drawing session</source>
-        <translation type="unfinished"></translation>
+        <translation>اخرج هذه الجلسه</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Event Log</source>
-        <translation type="unfinished"></translation>
+        <translation>سجل الأحداث</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Settings...</source>
-        <translation type="unfinished"></translation>
+        <translation>إعدادات...</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Change session settings, permissions, announcements and bans</source>
-        <translation type="unfinished"></translation>
+        <translation>تغيير إعدادات الجلسة والأذونات والإعلانات والحظر</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Undo Limit…</source>
-        <translation type="unfinished"></translation>
+        <translation>حد تراجع…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Become Operator...</source>
-        <translation type="unfinished"></translation>
+        <translation>اصبح رئيس…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Reset...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;إعادة ضبط...</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Report...</source>
-        <translation type="unfinished"></translation>
+        <translation>تقرير...</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Lock Everything</source>
-        <translation type="unfinished"></translation>
+        <translation>قفل كل شيء</translation>
     </message>
     <message>
         <location line="+30"/>
         <location filename="../widgets/macmenu.cpp" line="-2"/>
         <source>&amp;Session</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;جلسه</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Moderation</source>
-        <translation type="unfinished"></translation>
+        <translation>مشرفين</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Freehand</source>
-        <translation type="unfinished"></translation>
+        <translation>اداه الفرشه</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Freehand brush tool</source>
-        <translation type="unfinished"></translation>
+        <translation>نافذه اداه فرشه</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Eraser</source>
-        <translation type="unfinished"></translation>
+        <translation>ممحاة</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Freehand eraser brush</source>
-        <translation type="unfinished"></translation>
+        <translation>اداه الفرشه ممحاة</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Line</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;خط</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Draw straight lines</source>
-        <translation type="unfinished"></translation>
+        <translation>ارسم خطوطًا مستقيمة</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Rectangle</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;مستطيل</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Draw unfilled squares and rectangles</source>
-        <translation type="unfinished"></translation>
+        <translation>ارسم المربعات والمستطيلات الفارغة</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Ellipse</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;الشكل البيضاوي</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Draw unfilled circles and ellipses</source>
-        <translation type="unfinished"></translation>
+        <translation>ارسم دوائر وأشكال بيضاوية فارغة</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Bezier Curve</source>
-        <translation type="unfinished"></translation>
+        <translation>منحنى بيزيير</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Draw bezier curves</source>
-        <translation type="unfinished"></translation>
+        <translation>ارسم منحنيات بيزير</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Flood Fill</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;ملء الفيضانات</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Fill areas</source>
-        <translation type="unfinished"></translation>
+        <translation>أداة التعبئة</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Annotation</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;أداة النص</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Add text to the picture</source>
-        <translation type="unfinished"></translation>
+        <translation>إضافة نص إلى الصورة</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Color Picker</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;انتقاء اللون</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Pick colors from the image</source>
-        <translation type="unfinished"></translation>
+        <translation>اختيار الألوان من الصورة</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Laser Pointer</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;مؤشر الليزر</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Point out things on the canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>شير الى الاشياء في اللوحه</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Select (Rectangular)</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;تحديد (مستطيل)</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Select area for copying</source>
-        <translation type="unfinished"></translation>
+        <translation>حدد منطقة للنسخ</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Select (Free-Form)</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;تحديد (حر)</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Select a free-form area for copying</source>
-        <translation type="unfinished"></translation>
+        <translation>حدد منطقة ذات شكل حر للنسخ</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>تكبير</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Zoom the canvas view</source>
-        <translation type="unfinished"></translation>
+        <translation>تكبير عرض في اللوحه</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Inspector</source>
-        <translation type="unfinished"></translation>
+        <translation>اداه تفتيش</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Find out who did it</source>
-        <translation type="unfinished"></translation>
+        <translation>فتش مين رسمه</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>&amp;Tools</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;أدوات</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;الاختصارات</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Developer Tools</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;ادوات المطورين</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Set Artificial Lag...</source>
-        <translation type="unfinished"></translation>
+        <translation>تعيين التأخر الاصطناعي...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Artifical Disconnect...</source>
-        <translation type="unfinished"></translation>
+        <translation>القطع الاصطناعي…</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Open Debug Dump...</source>
-        <translation type="unfinished"></translation>
+        <translation>افتح Debug Dump...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Statistics…</source>
-        <translation type="unfinished"></translation>
+        <translation>إحصائيات…</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Toggle Eraser Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>تبديل الى وضع الممحاة</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Toggle Recolor Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>تبديل الى وضع إعادة التلوين</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Swap Last Colors</source>
-        <translation type="unfinished"></translation>
+        <translation>مبادلة الألوان الأخيرة</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Decrease Brush Size</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;تقليل حجم الفرشاة</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Increase Brush Size</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;زيادة حجم الفرشاة</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Reload Last Brush Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;إعادة تحميل آخر إعداد مسبق للفرشاة</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Drawing tools</source>
-        <translation type="unfinished"></translation>
+        <translation>ادوات الرسم</translation>
     </message>
     <message>
         <location line="+57"/>
         <location filename="../widgets/macmenu.cpp" line="+25"/>
         <source>&amp;Homepage</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;الصفحة الرئيسية</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Tablet Tester</source>
-        <translation type="unfinished"></translation>
+        <translation>اختبار الجهاز اللوحي</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Touch Tester</source>
-        <translation type="unfinished"></translation>
+        <translation>اللمس الفاحص</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Log File</source>
-        <translation type="unfinished"></translation>
+        <translation>ملف تسجيل</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../widgets/macmenu.cpp" line="+1"/>
         <source>&amp;About Drawpile</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;عنDrawpile</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../widgets/macmenu.cpp" line="+2"/>
         <source>About &amp;Qt</source>
-        <translation type="unfinished"></translation>
+        <translation>عن&amp;Qt</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Check For Updates</source>
-        <translation type="unfinished"></translation>
+        <translation>تحقق من وجود تحديثات</translation>
     </message>
     <message>
         <location line="+46"/>
         <source>Missing Log File</source>
-        <translation type="unfinished"></translation>
+        <translation>ملف السجل مفقود</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Log file doesn&apos;t exist, do you need to enable logging in the preferences?</source>
-        <translation type="unfinished"></translation>
+        <translation>ملف السجل غير موجود، هل تحتاج إلى تمكين تسجيل الدخول في التفضيلات؟</translation>
     </message>
     <message>
         <location line="+9"/>
         <location line="+8"/>
         <source>Error Saving Log File</source>
-        <translation type="unfinished"></translation>
+        <translation>خطأ في حفظ ملف السجل</translation>
     </message>
     <message>
         <location line="-7"/>
         <source>Could not read source file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>خلل في قراءه الملف:%1</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Could not open target file: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>خلل في قراءه الملف:%1</translation>
     </message>
     <message>
         <location line="+11"/>
         <location filename="../widgets/macmenu.cpp" line="-5"/>
         <source>&amp;Help</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;مساعده</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Brush slot #%1</source>
-        <translation type="unfinished"></translation>
+        <translation>فتحة الفرشاة #%1</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Swap With Brush Slot #%1</source>
-        <translation type="unfinished"></translation>
+        <translation>تبديل مع فتحة الفرشاة #%1</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Swatch Color %1</source>
-        <translation type="unfinished"></translation>
+        <translation>حامل اللون %1</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Finish action</source>
-        <translation type="unfinished"></translation>
+        <translation>إنهاء الإجراء</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Cancel action</source>
-        <translation type="unfinished"></translation>
+        <translation>إلغاء الإجراء</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Focus canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>ركز الى اللوحه</translation>
     </message>
     <message>
         <location line="+51"/>
         <source>Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>الوان</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Onion Skins</source>
-        <translation type="unfinished"></translation>
+        <translation>قشر البصل</translation>
     </message>
     <message>
         <location filename="../widgets/macmenu.cpp" line="-13"/>
         <source>Window</source>
-        <translation type="unfinished"></translation>
+        <translation>نافذة</translation>
     </message>
 </context>
 <context>
@@ -2813,42 +2815,42 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../ui/netstats.ui" line="+14"/>
         <source>Statistics</source>
-        <translation type="unfinished"></translation>
+        <translation>إحصائيات</translation>
     </message>
     <message>
         <location line="+40"/>
         <source>Latency:</source>
-        <translation type="unfinished"></translation>
+        <translation>وقت الإستجابة:</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Tiles:</source>
-        <translation type="unfinished"></translation>
+        <translation>البلاط:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Tile Memory:</source>
-        <translation type="unfinished"></translation>
+        <translation>ذاكرة البلاط:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Contexts:</source>
-        <translation type="unfinished"></translation>
+        <translation>السياقات:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Context Memory:</source>
-        <translation type="unfinished"></translation>
+        <translation>ذاكرة السياق:</translation>
     </message>
     <message>
         <location line="-86"/>
         <source>Sent:</source>
-        <translation type="unfinished"></translation>
+        <translation>مرسل:</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Received:</source>
-        <translation type="unfinished"></translation>
+        <translation>تلقى:</translation>
     </message>
 </context>
 <context>
@@ -2856,82 +2858,82 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../ui/playback.ui" line="+14"/>
         <source>Playback</source>
-        <translation type="unfinished"></translation>
+        <translation>اعاده المشاهده</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Rewind to Beginning</source>
-        <translation type="unfinished"></translation>
+        <translation>الترجيع إلى البداية</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Skip Backward</source>
-        <translation type="unfinished"></translation>
+        <translation>تخطي إلى الوراء</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Play</source>
-        <translation type="unfinished"></translation>
+        <translation>لعب</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Next Stroke</source>
-        <translation type="unfinished"></translation>
+        <translation>الفرشاه التاليه</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Skip Forward</source>
-        <translation type="unfinished"></translation>
+        <translation>القفز إلى الأمام</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Playback Speed: </source>
-        <translation type="unfinished"></translation>
+        <translation>سرعة التشغيل: </translation>
     </message>
     <message>
         <location line="+3"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+79"/>
         <source>Building an index will let you quickly skip to any part of your recording.</source>
-        <translation type="unfinished"></translation>
+        <translation>تحميل فيديو عشان تعرف تتحرك منه اسرع.</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Build Index</source>
-        <translation type="unfinished"></translation>
+        <translation>تحميل فيديو</translation>
     </message>
     <message>
         <location line="+82"/>
         <source>Frame:</source>
-        <translation type="unfinished"></translation>
+        <translation>Frame:</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Automatically save a frame at each step</source>
-        <translation type="unfinished"></translation>
+        <translation>حفظ تلقائيا في كل frame خطوة</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Autosave</source>
-        <translation type="unfinished"></translation>
+        <translation>الحفظ التلقائي</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Save frame</source>
-        <translation type="unfinished"></translation>
+        <translation>حفظ frame</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>قف</translation>
     </message>
     <message>
         <location line="+39"/>
         <source>Export Video...</source>
-        <translation type="unfinished"></translation>
+        <translation>تصدير الفيديو...</translation>
     </message>
 </context>
 <context>
@@ -2940,77 +2942,77 @@ Are you sure youwant to start recording debug dumps?</source>
         <location filename="../dialogs/avatarimport.cpp" line="+59"/>
         <location filename="../filewrangler.cpp" line="-427"/>
         <source>All files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>كل الملفات (*)</translation>
     </message>
     <message>
         <location filename="../docks/toolsettingsdock.cpp" line="+77"/>
         <source>Freehand</source>
-        <translation type="unfinished"></translation>
+        <translation>اداه الفرشه</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Eraser</source>
-        <translation type="unfinished"></translation>
+        <translation>ممحاة</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Line</source>
-        <translation type="unfinished"></translation>
+        <translation>خط</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Rectangle</source>
-        <translation type="unfinished"></translation>
+        <translation>مستطيل</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Ellipse</source>
-        <translation type="unfinished"></translation>
+        <translation>الشكل البيضاوي</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Bezier Curve</source>
-        <translation type="unfinished"></translation>
+        <translation>منحنى بيزيير</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Flood Fill</source>
-        <translation type="unfinished"></translation>
+        <translation>أداة التعبئة</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Annotation</source>
-        <translation type="unfinished"></translation>
+        <translation>أداة النص</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Color Picker</source>
-        <translation type="unfinished"></translation>
+        <translation>أداة انتقاء اللون</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Laser Pointer</source>
-        <translation type="unfinished"></translation>
+        <translation>مؤشر الليزر</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Selection (Rectangular)</source>
-        <translation type="unfinished"></translation>
+        <translation>التحديد (مستطيل)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Selection (Free-Form)</source>
-        <translation type="unfinished"></translation>
+        <translation>التحديد (نموذج حر)</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>تكبير</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Inspector</source>
-        <translation type="unfinished"></translation>
+        <translation>مفتش</translation>
     </message>
 </context>
 <context>
@@ -3018,7 +3020,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../ui/resetsession.ui" line="+14"/>
         <source>Reset session</source>
-        <translation type="unfinished"></translation>
+        <translation>اعاده ضبط الجلسه</translation>
     </message>
 </context>
 <context>
@@ -3026,12 +3028,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../ui/resizedialog.ui" line="+14"/>
         <source>Resize Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>تغيير حجم اللوحه</translation>
     </message>
     <message>
         <location line="+57"/>
         <source>Keep aspect ratio</source>
-        <translation type="unfinished"></translation>
+        <translation>إبقاء نسبة القياس</translation>
     </message>
 </context>
 <context>
@@ -3039,51 +3041,51 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../ui/selectsettings.ui" line="+29"/>
         <source>Interpolation:</source>
-        <translation type="unfinished"></translation>
+        <translation>إقحام:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>تغيير الحجم</translation>
     </message>
     <message>
         <location line="+11"/>
         <location line="+3"/>
         <source>Flip Horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>اقلب أفقيا</translation>
     </message>
     <message>
         <location line="+27"/>
         <location line="+3"/>
         <source>Flip Vertically</source>
-        <translation type="unfinished"></translation>
+        <translation>اقلب عموديا</translation>
     </message>
     <message>
         <location line="+27"/>
         <location line="+3"/>
         <source>Shrink to View</source>
-        <translation type="unfinished"></translation>
+        <translation>تقليص للعرض</translation>
     </message>
     <message>
         <location line="+27"/>
         <location line="+3"/>
         <source>Reset Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>اعاده ضبط الحجم</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Scale</source>
-        <translation type="unfinished"></translation>
+        <translation>حجم</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Rotate/Shear</source>
-        <translation type="unfinished"></translation>
+        <translation>تدوير</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Distort</source>
-        <translation type="unfinished"></translation>
+        <translation>التشوه/تنحيه</translation>
     </message>
 </context>
 <context>
@@ -3092,43 +3094,43 @@ Are you sure youwant to start recording debug dumps?</source>
         <location filename="../ui/serverlog.ui" line="+14"/>
         <location line="+10"/>
         <source>Event Log</source>
-        <translation type="unfinished"></translation>
+        <translation>سجل الأحداث</translation>
     </message>
     <message>
         <location line="+6"/>
         <location line="+26"/>
         <source>Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>تصفية</translation>
     </message>
     <message>
         <location line="-8"/>
         <source>Users</source>
-        <translation type="unfinished"></translation>
+        <translation>المستخدمين</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Inspect</source>
-        <translation type="unfinished"></translation>
+        <translation>فحص</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Kick</source>
-        <translation type="unfinished"></translation>
+        <translation>اطرد</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Ban</source>
-        <translation type="unfinished"></translation>
+        <translation>اطرد وامنعه من دخول الجلسه</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>الغاء</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>إعادة</translation>
     </message>
 </context>
 <context>
@@ -3136,261 +3138,261 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../ui/sessionsettings.ui" line="+14"/>
         <source>Session Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>إعدادات الجلسة</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>إعدادات</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Session</source>
-        <translation type="unfinished"></translation>
+        <translation>الجلسه</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Operator password:</source>
-        <translation type="unfinished"></translation>
+        <translation>كلمه المرور للرئاسه:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Autoreset threshold:</source>
-        <translation type="unfinished"></translation>
+        <translation>حد إعادة الضبط التلقائي:</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Session history size at which autoreset triggers</source>
-        <translation type="unfinished"></translation>
+        <translation>حجم سجل الجلسة الذي يتم عنده تشغيل إعادة الضبط التلقائي</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>No autoreset</source>
-        <translation type="unfinished"></translation>
+        <translation>لا اعاده ضبط التلقائيه</translation>
     </message>
     <message>
         <location line="+3"/>
         <source> MB</source>
-        <translation type="unfinished"></translation>
+        <translation> MB</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Options:</source>
-        <translation type="unfinished"></translation>
+        <translation>خيارات:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Include chat in session history so new users can see it as well</source>
-        <translation type="unfinished"></translation>
+        <translation>افتكر واظهر محادثات السابقه للمستخدمين الجداد</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Keep chat history</source>
-        <translation type="unfinished"></translation>
+        <translation>احتفظ بسجل الدردشة</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Don&apos;t terminate session when the last user leaves</source>
-        <translation type="unfinished"></translation>
+        <translation>لا تنهي الجلسة عندما يغادر آخر مستخدم</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Persist without users</source>
-        <translation type="unfinished"></translation>
+        <translation>استمر من غير مستخدمين</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>This session contains age-restricted content</source>
-        <translation type="unfinished"></translation>
+        <translation>هذه جلسه ليست للصغيرين في السن</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation>غير مناسب للصغير في السن (NSFM)</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Idle timeout:</source>
-        <translation type="unfinished"></translation>
+        <translation>الحد الزمني:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>X seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>X ثواني</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Disable idle timeout</source>
-        <translation type="unfinished"></translation>
+        <translation>اقفل الحد الزمني</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Title:</source>
-        <translation type="unfinished"></translation>
+        <translation>عنوان:</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Login</source>
-        <translation type="unfinished"></translation>
+        <translation>تسجيل الدخول</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Password:</source>
-        <translation type="unfinished"></translation>
+        <translation>كلمه المرور:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Max users:</source>
-        <translation type="unfinished"></translation>
+        <translation>حد المستخدمين:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>How many users to let in. Does not affect users already logged in</source>
-        <translation type="unfinished"></translation>
+        <translation>عدد المستخدمين المسموح لهم بالدخول. لا يؤثر على المستخدمين الذين قاموا بتسجيل الدخول بالفعل</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Block new logins</source>
-        <translation type="unfinished"></translation>
+        <translation>منع تسجيلات الدخول الجديدة</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>No guest logins</source>
-        <translation type="unfinished"></translation>
+        <translation>منع تسجيلات دخول للضيوف</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Permissions</source>
-        <translation type="unfinished"></translation>
+        <translation>الأذونات</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Cut, Paste &amp; Fill:</source>
-        <translation type="unfinished"></translation>
+        <translation>القص واللصق والتعبئة:</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>New Annotations:</source>
-        <translation type="unfinished"></translation>
+        <translation>وضع اداه نص جديده:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>permissions</source>
-        <translation type="unfinished"></translation>
+        <translation>الأذونات</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>General Layer Editing:</source>
-        <translation type="unfinished"></translation>
+        <translation>تغيير الطبقات:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Own Layer Editing:</source>
-        <translation type="unfinished"></translation>
+        <translation>تغيير الطبقات المستعمل:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Canvas Resizing:</source>
-        <translation type="unfinished"></translation>
+        <translation>تغيير حجم اللوحه:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Canvas Background:</source>
-        <translation type="unfinished"></translation>
+        <translation>خلفيه اللوحه:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Laser Pointer:</source>
-        <translation type="unfinished"></translation>
+        <translation>مؤشر الليزر:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Undo &amp; Redo:</source>
-        <translation type="unfinished"></translation>
+        <translation>التراجع والإعادة:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Kick &amp; Ban:</source>
-        <translation type="unfinished"></translation>
+        <translation>الطرد و تحظر:</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Operators</source>
-        <translation type="unfinished"></translation>
+        <translation>الرؤساء</translation>
     </message>
     <message>
         <location line="+5"/>
         <location line="+188"/>
         <source>Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>موثوق</translation>
     </message>
     <message>
         <location line="-180"/>
         <source>Timeline:</source>
-        <translation type="unfinished"></translation>
+        <translation>اداه الرسوم المتحركه:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Metadata:</source>
-        <translation type="unfinished"></translation>
+        <translation>البيانات الوصفية:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Selection Move &amp; Resize:</source>
-        <translation type="unfinished"></translation>
+        <translation>نقل التحديد وتغيير الحجم:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>MyPaint Brushes:</source>
-        <translation type="unfinished"></translation>
+        <translation>فرش Mypaint:</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Bans</source>
-        <translation type="unfinished"></translation>
+        <translation>المحظورين</translation>
     </message>
     <message>
         <location line="+18"/>
         <location line="+82"/>
         <source>Import</source>
-        <translation type="unfinished"></translation>
+        <translation>يستورد</translation>
     </message>
     <message>
         <location line="-71"/>
         <location line="+82"/>
         <source>Export</source>
-        <translation type="unfinished"></translation>
+        <translation>صدّر</translation>
     </message>
     <message>
         <location line="-58"/>
         <location line="+155"/>
         <source>Remove selected</source>
-        <translation type="unfinished"></translation>
+        <translation>ازل المحدد</translation>
     </message>
     <message>
         <location line="-145"/>
         <source>Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>الأدوار</translation>
     </message>
     <message>
         <location line="+72"/>
         <source>Operator</source>
-        <translation type="unfinished"></translation>
+        <translation>الرؤساء</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Announcements</source>
-        <translation type="unfinished"></translation>
+        <translation>الإعلانات</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Private listing</source>
-        <translation type="unfinished"></translation>
+        <translation>قائمة خاصة/سريه</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Public listing</source>
-        <translation type="unfinished"></translation>
+        <translation>القائمة العامة</translation>
     </message>
 </context>
 <context>
@@ -3398,7 +3400,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../ui/tablettest.ui" line="+14"/>
         <source>Tablet Tester</source>
-        <translation type="unfinished"></translation>
+        <translation>اختبار الجهاز اللوحي</translation>
     </message>
 </context>
 <context>
@@ -3406,47 +3408,47 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../ui/textsettings.ui" line="+75"/>
         <source>Horizontal alignment</source>
-        <translation type="unfinished"></translation>
+        <translation>انحياز الأفقية</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Vertical alignment</source>
-        <translation type="unfinished"></translation>
+        <translation>انحياز عمودي</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Background color</source>
-        <translation type="unfinished"></translation>
+        <translation>لون الخلفيه</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Text color</source>
-        <translation type="unfinished"></translation>
+        <translation>لون النص</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Bold</source>
-        <translation type="unfinished"></translation>
+        <translation>غامق</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Italic</source>
-        <translation type="unfinished"></translation>
+        <translation>مائل</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Underline</source>
-        <translation type="unfinished"></translation>
+        <translation>تسطير</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Strikethrough</source>
-        <translation type="unfinished"></translation>
+        <translation>يتوسطه خط</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Annotation content</source>
-        <translation type="unfinished"></translation>
+        <translation>اداه النص, اكتب هنا</translation>
     </message>
 </context>
 <context>
@@ -3454,67 +3456,67 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../ui/userinfodialog.ui" line="+14"/>
         <source>Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>سجل Dialog</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Qt Version:</source>
-        <translation type="unfinished"></translation>
+        <translation>صدار Qt :</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Application Version:</source>
-        <translation type="unfinished"></translation>
+        <translation>إصدار التطبيق:</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Smoothing:</source>
-        <translation type="unfinished"></translation>
+        <translation>التنعيم:</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Tablet Input:</source>
-        <translation type="unfinished"></translation>
+        <translation>إدخال الكمبيوتر اللوحي:</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Pen Pressure:</source>
-        <translation type="unfinished"></translation>
+        <translation>ضغط القلم:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Id:</source>
-        <translation type="unfinished"></translation>
+        <translation>ID:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Touch Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>وضع اللمس:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>dp:x.y.z</source>
-        <translation type="unfinished"></translation>
+        <translation>Dp:x.y.z</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Operating System:</source>
-        <translation type="unfinished"></translation>
+        <translation>نظام التشغيل:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Name:</source>
-        <translation type="unfinished">الاسم:</translation>
+        <translation>الاسم:</translation>
     </message>
     <message>
         <location line="+51"/>
         <source>Protocol Version:</source>
-        <translation type="unfinished"></translation>
+        <translation>إصدار البروتوكول:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Global Pressure Curve:</source>
-        <translation type="unfinished"></translation>
+        <translation>الضغط العالمي:</translation>
     </message>
 </context>
 <context>
@@ -3522,67 +3524,68 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../ui/videoexport.ui" line="+14"/>
         <source>Export video</source>
-        <translation type="unfinished"></translation>
+        <translation>تصدير الفيديو</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Video Options</source>
-        <translation type="unfinished"></translation>
+        <translation>خيارات الفيديو</translation>
     </message>
     <message>
         <location line="+14"/>
         <source> FPS</source>
-        <translation type="unfinished"></translation>
+        <translation> FPS</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Size:</source>
-        <translation type="unfinished"></translation>
+        <translation>مقاس/الحجم:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Framerate:</source>
-        <translation type="unfinished"></translation>
+        <translation>معدل الإطار:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Format:</source>
-        <translation type="unfinished"></translation>
+        <translation>شكل:</translation>
     </message>
     <message>
         <location line="+72"/>
         <source>Export Options</source>
-        <translation type="unfinished"></translation>
+        <translation>خيارات التصدير</translation>
     </message>
     <message>
         <location line="+31"/>
         <source>Image format:</source>
-        <translation type="unfinished"></translation>
+        <translation>شكل صورة:</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>File name pattern:</source>
-        <translation type="unfinished"></translation>
+        <translation>نمط اسم الملف:</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Supported pattern placeholders:&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{F}&lt;/span&gt; - frame number&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{E}&lt;/span&gt; - file extension&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;العناصر النائبة للنمط المدعومة
+:&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{F}&lt;/span&gt; - frame عدد&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{E}&lt;/span&gt; - امتداد الملف&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Path to ffmpeg:</source>
-        <translation type="unfinished"></translation>
+        <translation>المسار إلى ffmpeg:</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Choose</source>
-        <translation type="unfinished"></translation>
+        <translation>ختار</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Custom Arguments:</source>
-        <translation type="unfinished"></translation>
+        <translation>الحجج المخصصة:</translation>
     </message>
 </context>
 <context>
@@ -3590,7 +3593,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../bundled/QtColorWidgets/color_dialog.cpp" line="+79"/>
         <source>Pick</source>
-        <translation type="unfinished"></translation>
+        <translation>ختار</translation>
     </message>
 </context>
 <context>
@@ -3598,7 +3601,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../bundled/QtColorWidgets/color_palette.cpp" line="+429"/>
         <source>Unnamed</source>
-        <translation type="unfinished"></translation>
+        <translation>من دون اسم</translation>
     </message>
 </context>
 <context>
@@ -3606,12 +3609,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../bundled/QtColorWidgets/color_palette_model.cpp" line="+70"/>
         <source>Unnamed</source>
-        <translation type="unfinished"></translation>
+        <translation>من دون اسم</translation>
     </message>
     <message>
         <location line="+74"/>
         <source>%1 (%2 colors)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2 الوان)</translation>
     </message>
 </context>
 <context>
@@ -3619,81 +3622,82 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../bundled/QtColorWidgets/color_palette_widget.ui" line="+59"/>
         <source>Open a new palette from file</source>
-        <translation type="unfinished"></translation>
+        <translation>افتح الوان جديدة من الملف</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Create a new palette</source>
-        <translation type="unfinished"></translation>
+        <translation>اصنع ملف الوان جديد</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Duplicate the current palette</source>
-        <translation type="unfinished"></translation>
+        <translation>انسخ الالوان هذه</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>Delete the current palette</source>
-        <translation type="unfinished"></translation>
+        <translation>امسح الوان هذه</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Revert changes to the current palette</source>
-        <translation type="unfinished"></translation>
+        <translation>التراجع عن التغييرات إلى اللوحة الحالية</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Save changes to the current palette</source>
-        <translation type="unfinished"></translation>
+        <translation>حفظ التغييرات على الالوان الحالية</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Add a color to the palette</source>
-        <translation type="unfinished"></translation>
+        <translation>أضف لونًا إلى اللوحة الالوان/نافذه الالوان</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Remove the selected color from the palette</source>
-        <translation type="unfinished"></translation>
+        <translation>امسح اللون من نافذه الوان</translation>
     </message>
     <message>
         <location filename="../bundled/QtColorWidgets/color_palette_widget.cpp" line="+186"/>
         <location line="+15"/>
         <source>New Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>مجموعه الوان جديده</translation>
     </message>
     <message>
         <location line="-14"/>
         <location line="+15"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>اسم</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>GIMP Palettes (*.gpl)</source>
-        <translation type="unfinished"></translation>
+        <translation>الوان GIMP (*.gpl)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Palette Image (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>صوره مجموعه الالوان (%1)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>جميع الملفات (*)</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+13"/>
         <source>Open Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>افتح مجموعه الالوان</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Failed to load the palette file
 %1</source>
-        <translation type="unfinished"></translation>
+        <translation>فشل تحميل ملف الالوان
+%1</translation>
     </message>
 </context>
 <context>
@@ -3701,17 +3705,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../bundled/QtColorWidgets/gradient_editor.cpp" line="+336"/>
         <source>Add Color</source>
-        <translation type="unfinished"></translation>
+        <translation>زيد لونا</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Remove Color</source>
-        <translation type="unfinished"></translation>
+        <translation>امسح لونا</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Edit Color...</source>
-        <translation type="unfinished"></translation>
+        <translation>غير اللون…</translation>
     </message>
 </context>
 <context>
@@ -3719,7 +3723,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../bundled/QtColorWidgets/gradient_list_model.cpp" line="+231"/>
         <source>%1 (%2 colors)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2 الوان)</translation>
     </message>
 </context>
 <context>
@@ -3727,12 +3731,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../bundled/QtColorWidgets/swatch.cpp" line="+846"/>
         <source>Clear Color</source>
-        <translation type="unfinished"></translation>
+        <translation>امسح اللون</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>%1 (%2)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (%2)</translation>
     </message>
 </context>
 <context>
@@ -3740,7 +3744,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../dialogs/abusereport.cpp" line="+17"/>
         <source>Report</source>
-        <translation type="unfinished"></translation>
+        <translation>تخبير</translation>
     </message>
 </context>
 <context>
@@ -3748,27 +3752,27 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../dialogs/addserverdialog.cpp" line="+153"/>
         <source>&lt;strong&gt;Error:&lt;/strong&gt; %1</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;خلل&lt;/strong&gt;%1</translation>
     </message>
     <message>
         <location line="+106"/>
         <source>Retrieving %1...</source>
-        <translation type="unfinished"></translation>
+        <translation>يتم الآن استرداد %1...</translation>
     </message>
     <message>
         <location line="+74"/>
         <source>Check</source>
-        <translation type="unfinished"></translation>
+        <translation>فحص</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>يضيف</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Checking %1...</source>
-        <translation type="unfinished"></translation>
+        <translation>جارٍ التحقق من %1...</translation>
     </message>
 </context>
 <context>
@@ -3776,50 +3780,50 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../dialogs/animationimportdialog.cpp" line="+27"/>
         <source>Import Animation</source>
-        <translation type="unfinished"></translation>
+        <translation>استيراد الرسوم المتحركة</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>File to Import:</source>
-        <translation type="unfinished"></translation>
+        <translation>ملف للاستيراد:</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Choose</source>
-        <translation type="unfinished"></translation>
+        <translation>ختار</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Key frame length:</source>
         <extracomment>How many frames each imported key frame gets in the timeline.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>طولframe :</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Framerate:</source>
-        <translation type="unfinished"></translation>
+        <translation>معدلFrame:</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Import</source>
-        <translation type="unfinished"></translation>
+        <translation>يستورد</translation>
     </message>
     <message numerus="yes">
         <location line="+28"/>
         <source> frame(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform> frames</numerusform>
+            <numerusform> frame</numerusform>
+            <numerusform> frames</numerusform>
+            <numerusform> frames</numerusform>
+            <numerusform> frames</numerusform>
+            <numerusform> frames</numerusform>
         </translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Animation Import Error</source>
-        <translation type="unfinished"></translation>
+        <translation>حدث خطأ أثناء استيراد الرسوم المتحركة</translation>
     </message>
 </context>
 <context>
@@ -3829,22 +3833,22 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+10"/>
         <location line="+5"/>
         <source>Import Avatar</source>
-        <translation type="unfinished"></translation>
+        <translation>استيراد الصورة الرمزية</translation>
     </message>
     <message>
         <location line="-14"/>
         <source>Images (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>الصور (%1)</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Couldn&apos;t read image</source>
-        <translation type="unfinished"></translation>
+        <translation>عدم استطاعه قراءة الصورة</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Picture is too small</source>
-        <translation type="unfinished"></translation>
+        <translation>الصورة صغيرة جدًا</translation>
     </message>
 </context>
 <context>
@@ -3852,46 +3856,46 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../dialogs/brushexportdialog.cpp" line="+43"/>
         <source>Export Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>تصدير الفراش</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Export</source>
         <extracomment>This text on a button, so it&apos;s a verb, not a noun.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>تصدير</translation>
     </message>
     <message>
         <location line="+162"/>
         <source>Brush Export</source>
-        <translation type="unfinished"></translation>
+        <translation>تصدير الفراش</translation>
     </message>
     <message numerus="yes">
         <location line="+10"/>
         <source>%n brush(es) exported.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>تم تصدير %n فرش.</numerusform>
+            <numerusform>تم تصدير الفرشه %n.</numerusform>
+            <numerusform>تم تصدير فرشتين %n.</numerusform>
+            <numerusform>تم تصدير %n فرش.</numerusform>
+            <numerusform>تم تصدير %n فرش.</numerusform>
+            <numerusform>تم تصدير %n فرش.</numerusform>
         </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Brush export failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>فشل تصدير الفرش.</translation>
     </message>
     <message numerus="yes">
         <location line="+7"/>
         <source>%n error(s) encountered.</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n حدث خلل.</numerusform>
+            <numerusform>%n حدث خلل.</numerusform>
+            <numerusform>%n حدث عيبين.</numerusform>
+            <numerusform>%n حدث اعباء.</numerusform>
+            <numerusform>%n حدث اعباء.</numerusform>
+            <numerusform>%n حدث اعباء.</numerusform>
         </translation>
     </message>
 </context>
@@ -3900,7 +3904,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../dialogs/brushpresetproperties.cpp" line="+50"/>
         <source>Select brush thumbnail</source>
-        <translation type="unfinished"></translation>
+        <translation>حدد الصورة المصغرة للفرشاة</translation>
     </message>
 </context>
 <context>
@@ -3908,83 +3912,83 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../dialogs/brushsettingsdialog.cpp" line="+85"/>
         <source>Brush Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>مغير الفرش</translation>
     </message>
     <message>
         <location line="+48"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>عام</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Core brush settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>إعدادات الفرشاة الأساسية.</translation>
     </message>
     <message>
         <location line="+105"/>
         <source>Brush Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>نوع الفرشه:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Round Pixel Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>فرشاة بكسل مستديرة</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Square Pixel Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>فرشاة بكسل مربعة</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Soft Round Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>فرشاة مستديرة ناعمة</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>MyPaint Brush</source>
-        <translation type="unfinished">فرشاة MyPaint</translation>
+        <translation>فرشاة MyPaint</translation>
     </message>
     <message>
         <location line="+23"/>
         <location line="+14"/>
         <source>Blend Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>وضع المزج:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Paint Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>وضع الطلاء:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Build-Up/Direct</source>
-        <translation type="unfinished"></translation>
+        <translation>مباشر</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Wash/Indirect</source>
-        <translation type="unfinished"></translation>
+        <translation>غسل/غير مباشر</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Eraser Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>وضع الممحاة</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Pick Initial Color from Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>اختر اللون الأولي من الطبقة</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Lock Alpha (Recolor Mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>قفل ألفا (وضع إعادة التلوين)</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Spacing: </source>
-        <translation type="unfinished">التباعد: </translation>
+        <translation>التباعد: </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3995,54 +3999,54 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+40"/>
         <location line="+28"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="-260"/>
         <source>Stabilization Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>وضع الاستقرار:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Time-Based Stabilizer</source>
-        <translation type="unfinished"></translation>
+        <translation>مثبت الوقت</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Average Smoothing</source>
-        <translation type="unfinished"></translation>
+        <translation>التنعيم الطبيعي</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Stabilizer: </source>
-        <translation type="unfinished">استقرار الخط: </translation>
+        <translation>استقرار الخط: </translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Smoothing: </source>
-        <translation type="unfinished">تنعيم الخط: </translation>
+        <translation>تنعيم الخط: </translation>
     </message>
     <message>
         <location line="+31"/>
         <source>Size: </source>
-        <translation type="unfinished">الحجم: </translation>
+        <translation>الحجم: </translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+17"/>
         <source>px</source>
-        <translation type="unfinished">بكسل</translation>
+        <translation>بكسل</translation>
     </message>
     <message>
         <location line="-1"/>
         <source>Minimum Size: </source>
-        <translation type="unfinished"></translation>
+        <translation>الحد الأدنى لحجم: </translation>
     </message>
     <message>
         <location line="+10"/>
         <location line="+405"/>
         <source>Size</source>
-        <translation type="unfinished"></translation>
+        <translation>الحجم</translation>
     </message>
     <message>
         <location line="-405"/>
@@ -4050,366 +4054,366 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+57"/>
         <location line="+68"/>
         <source>Input</source>
-        <translation type="unfinished"></translation>
+        <translation>مدخل</translation>
     </message>
     <message>
         <location line="-152"/>
         <source>Opacity: </source>
-        <translation type="unfinished">العتامة: </translation>
+        <translation>العتامة: </translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Minimum Opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>الحد الأدنى من التعتيم: </translation>
     </message>
     <message>
         <location line="+10"/>
         <location line="+350"/>
         <source>Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>العتامة</translation>
     </message>
     <message>
         <location line="-320"/>
         <source>Hardness: </source>
-        <translation type="unfinished">الحدة: </translation>
+        <translation>صلابة: </translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Minimum Hardness: </source>
-        <translation type="unfinished"></translation>
+        <translation>الحد الأدنى من الصلابة: </translation>
     </message>
     <message>
         <location line="+10"/>
         <location line="+298"/>
         <source>Hardness</source>
-        <translation type="unfinished"></translation>
+        <translation>صلابة</translation>
     </message>
     <message>
         <location line="-268"/>
         <source>Smudging: </source>
-        <translation type="unfinished">التلطيخ: </translation>
+        <translation>مزج: </translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Color Pickup: 1/</source>
-        <translation type="unfinished">لاقط اللون: 1/</translation>
+        <translation>لاقط اللون: 1/</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Minimum Smudging: </source>
-        <translation type="unfinished"></translation>
+        <translation>الحد الأدنى من مزج: </translation>
     </message>
     <message>
         <location line="+10"/>
         <location line="+234"/>
         <source>Smudging</source>
-        <translation type="unfinished"></translation>
+        <translation>خلط/مزج</translation>
     </message>
     <message>
         <location line="-211"/>
         <source>No dynamics</source>
-        <translation type="unfinished"></translation>
+        <translation>لا dynamics</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pressure dynamics</source>
-        <translation type="unfinished"></translation>
+        <translation>ضغط dynamics</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Velocity dynamics</source>
-        <translation type="unfinished"></translation>
+        <translation>سرعة dynamics</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Distance dynamics</source>
-        <translation type="unfinished"></translation>
+        <translation>المسافة dynamics</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Maximum Velocity: </source>
-        <translation type="unfinished"></translation>
+        <translation>السرعة القصوى: </translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Maximum Distance: </source>
-        <translation type="unfinished"></translation>
+        <translation>المسافة القصوى: </translation>
     </message>
     <message>
         <location line="+9"/>
         <location line="+17"/>
         <location line="+34"/>
         <source>Apply to All</source>
-        <translation type="unfinished"></translation>
+        <translation>تنطبق على الكل</translation>
     </message>
     <message>
         <location line="-49"/>
         <source>Set the maximum velocity for Size, Opacity, Hardness and Smudging at once.</source>
-        <translation type="unfinished"></translation>
+        <translation>اضبط السرعة القصوى للحجم والتعتيم والصلابة والتلطيخ مرة واحدة.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Maximum velocity set for all settings in this brush.</source>
-        <translation type="unfinished"></translation>
+        <translation>تم ضبط السرعة القصوى لجميع الإعدادات في هذه الفرشاة.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Set the maximum distance for Size, Opacity, Hardness and Smudging at once.</source>
-        <translation type="unfinished"></translation>
+        <translation>قم بتعيين الحد الأقصى للمسافة للحجم والتعتيم والصلابة والتلطيخ مرة واحدة.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Maximum distance set for all settings in this brush.</source>
-        <translation type="unfinished"></translation>
+        <translation>أقصى مسافة ضبطها لجميع الإعدادات في هذه الفرشاة.</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Set this curve for Size, Opacity, Hardness and Smudging at once.</source>
-        <translation type="unfinished"></translation>
+        <translation>اضبط هذا المنحنى على الحجم والعتامة والصلابة والتلطيخ في وقت واحد.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Curve set for all settings in this brush.</source>
-        <translation type="unfinished"></translation>
+        <translation>تم ضبط المنحنى لجميع الإعدادات في هذه الفرشاة.</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Value: </source>
-        <translation type="unfinished"></translation>
+        <translation>قيمة: </translation>
     </message>
     <message>
         <location line="+11"/>
         <source>No brush dynamics.</source>
-        <translation type="unfinished"></translation>
+        <translation>لا اعداداتdynamics للفرشه.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Not available in Indirect/Wash mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>غير متوفر في الوضع غير المباشر/الغسيل.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Dynamics not available in Indirect/Wash mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dynamics غير متوفر في الوضع غير المباشر/الغسيل.</translation>
     </message>
     <message>
         <location line="+59"/>
         <source>The radius of the brush.</source>
-        <translation type="unfinished"></translation>
+        <translation>نصف قطر الفرشاة.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Opaqueness of the brush, 0% is transparent, 100% fully opaque.</source>
-        <translation type="unfinished"></translation>
+        <translation>عتامة الفرشاة، 0% شفافة، 100% غير شفافة تمامًا.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Edge hardness, 0% is blurry, 100% is sharp.</source>
-        <translation type="unfinished"></translation>
+        <translation>صلابة الحافة الفرشه، 0% ضبابية، 100% حادة.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Blending of colors on the layer being drawn on.</source>
-        <translation type="unfinished"></translation>
+        <translation>مزج الألوان على الطبقة المرسومة عليها.</translation>
     </message>
     <message>
         <location line="+172"/>
         <source>Slows down the stroke to stabilize it over time. High values give very smooth lines, but they will draw slowly. When you stop moving, the line will catch up your cursor. Tablet smoothing from the input preferences applies as well.</source>
-        <translation type="unfinished"></translation>
+        <translation>يبطئرسم الفرشه لتثبيتها مع مرور الوقت. تعطي القيم العالية خطوطًا ناعمة جدًا، ولكنها سترسم ببطء. عندما تتوقف عن الحركة، سيلحق الخط بالمؤشر.تنعيم كمبيوتر اللوحي  ينطبق كمان.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Simply averages a number of inputs. Feels faster than the time-based stabilizer, but not as smooth and won&apos;t catch up to your cursor when you stop moving. Overrides tablet smoothing from the input preferences.</source>
-        <translation type="unfinished"></translation>
+        <translation>متوسط عدد من المدخلات. يبدو أسرع من المثبت المعتمد على الوقت، ولكنه ليس سلسًا ولن يلحق بالمؤشر عندما تتوقف عن الحركة. يتجاهل تنعيم كمبيوتر اللوحي .</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Unknown stabilization mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>وضع التثبيت غير معروف.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Synchronizing stabilization settings with brushes is disabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>مزامنة إعدادات التثبيت مع الفرش مغلق.</translation>
     </message>
     <message>
         <location filename="../dialogs/brushsettingsdialog_gen.cpp" line="+12"/>
         <source>Pressure</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>ضغط</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Fine speed</source>
         <comment>mypaintinput</comment>
         <extracomment>&quot;fine&quot; refers to the accuracy and update frequency of the speed value, as in &quot;fine grained&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>السرعه</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Gross speed</source>
         <comment>mypaintinput</comment>
         <extracomment>changes more smoothly but is less accurate than &quot;Fine speed&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>السرعه العامه</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Random</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>الموزع بشكل عشوائي</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Stroke</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>رسمه فرشه Stroke</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Direction</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>اتجاه</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Declination/Tilt</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>الانحراف / الميل القلم</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Ascension</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>الصعود</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Custom</source>
         <comment>mypaintinput</comment>
         <extracomment>the input is the output of the &quot;Custom input&quot; setting</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>مخصص</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Direction 360</source>
         <comment>mypaintinput</comment>
         <extracomment>refers to the direction of the stroke</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>اتجاه 360 درجه</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Attack Angle</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>زاوية الهجوم</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Declination/Tilt X</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>الانحراف/الميل X</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Declination/Tilt Y</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>الانحراف/الميل Y</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>GridMap X</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>خريطة الشبكة X</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>GridMap Y</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>خريطة الشبكة Y</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Zoom Level</source>
         <comment>mypaintinput</comment>
         <extracomment>refers to canvas zoom</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>مستوى التكبير</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Barrel Rotation</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>دوران برميل</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Base Brush Radius</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>نصف قطر فرشاة القاعدة</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unknown Input</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>إدخال غير معروف</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>The pressure reported by the tablet. Usually between 0.0 and 1.0, but it may get larger when a pressure gain is used. If you use the mouse, it will be 0.5 when a button is pressed and 0.0 otherwise.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>ضغط القلم اللي بتاخذه من كمبيوتر اللوحي . عاده بيكون حوالي 0.0 و1.0, لكن ممكن يكون اكبر لو pressure gain بيستخدم. لو انت بتستخدم ماوس الضغط حيكون اعلى شيء 0.5 لو انت مش بتضغط هيكون زيرو 0.0.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>How fast you currently move. This can change very quickly. Try &apos;print input values&apos; from the &apos;help&apos; menu to get a feeling for the range; negative values are rare but possible for very low speed.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>سرعه حركتك. ممكن يتغير بسرعه شديده حاول استخدام &quot;طباعة قيم الإدخال&quot; من &quot;المساعده&quot; عشان يكون عندك احساس للتغيير; القيم السلبية نادرة ولكنها ممكنة عند السرعة المنخفضة جدًا.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Same as fine speed, but changes slower. Also look at the &apos;gross speed filter&apos; setting.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>نفس السرعه العامه، ولكنها تتغير بشكل أبطأ. انظر أيضًا إلى إعداد &quot;مرشح السرعة الإجمالية&quot;.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Fast random noise, changing at each evaluation. Evenly distributed between 0 and 1.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>عشوائية سريعة، تتغير عند كل تقييم. موزعة بالتساوي بين 0 و 1.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>This input slowly goes from zero to one while you draw a stroke. It can also be configured to jump back to zero periodically while you move. Look at the &apos;stroke duration&apos; and &apos;stroke hold time&apos; settings.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>ينتقل هذا الإدخال ببطء من صفر إلى واحد أثناء رسم الحد. ويمكن أيضًا تهيئته للرجوع إلى الصفر بشكل دوري أثناء التحرك. انظر إلى إعدادات &quot;مدةرسم الفرشه&quot; و&quot;وقت تعليقرسم الفرشه&quot;.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The angle of the stroke, in degrees. The value will stay between 0.0 and 180.0, effectively ignoring turns of 180 degrees.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>زاوية رسمه فرشه، بالدرجات. ستبقى القيمة بين 0.0 و180.0، متجاهلة بذلك المنعطفات التي تبلغ 180 درجة.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Declination of stylus tilt. 0 when stylus is parallel to tablet and 90.0 when it&apos;s perpendicular to tablet.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>انحراف إمالة القلم. 0 عندما يكون القلم موازيًا للكمبيوتر اللوحي و90.0 عندما يكون عموديًا على الكمبيوتر اللوحي.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Right ascension of stylus tilt. 0 when stylus working end points to you, +90 when rotated 90 degrees clockwise, -90 when rotated 90 degrees counterclockwise.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>الصعود الأيمن لإمالة القلم. 0 عندما تشير نهاية عمل القلم إليك، +90 عند تدويره 90 درجة في اتجاه عقارب الساعة، -90 عند تدويره 90 درجة عكس اتجاه عقارب الساعة.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>This is a user defined input. Look at the &apos;custom input&apos; setting for details.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>هذا هو إدخال يحدده المستخدم. انظر إلى إعداد &quot;الإدخال المخصص&quot; للحصول على التفاصيل.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The angle of the stroke, from 0 to 360 degrees.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>زاوية رسم الفرشه من 0 إلى 360 درجة.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4419,33 +4423,39 @@ The range is +/-180.0.
 90 means the stroke angle is perpendicular to the angle of the stylus.
 180 means the angle of the stroke is directly opposite the angle of the stylus.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>الفرق بالدرجات بين الزاوية التي يشير إليها القلم وزاوية حركة رسم الفرشه.
+النطاق هو +/-180.0.
+0.0 يعني أن زاوية الحد تتوافق مع زاوية القلم.
+90 تعني أن زاوية رسم الفرشه متعامدة مع زاوية القلم.
+180 تعني أن زاوية رسم الفرشه مقابلة مباشرة لزاوية القلم.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Declination of stylus tilt on X-Axis. 90/-90 when stylus is parallel to tablet and 0 when it&apos;s perpendicular to tablet.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>انحراف إمالة القلم على المحور السيني. 90/-90 عندما يكون القلم موازيًا للجهاز اللوحي و0 عندما يكون متعامدًا مع الجهاز اللوحي.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Declination of stylus tilt on Y-Axis. 90/-90 when stylus is parallel to tablet and 0 when it&apos;s perpendicular to tablet.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>انحراف إمالة القلم على المحور ص. 90/-90 عندما يكون القلم موازيًا للكمبيوتر اللوحي و0 عندما يكون متعامدًا مع الكمبيوتر اللوحي.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The X coordinate on a 256 pixel grid. This will wrap around 0-256 as the cursor is moved on the X axis. Similar to &quot;Stroke&quot;. Can be used to add paper texture by modifying opacity, etc.
 The brush size should be considerably smaller than the grid scale for best results.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>إحداثي X على شبكة بحجم 256 بكسل. سوف يلتف هذا حول 0-256 أثناء تحريك المؤشر على المحور X. على غرار &quot;السكتة الدماغية&quot;. يمكن استخدامه لإضافة نسيج الورق عن طريق تعديل العتامة، وما إلى ذلك.
+يجب أن يكون حجم الفرشاة أصغر بكثير من مقياس الشبكة للحصول على أفضل النتائج.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The Y coordinate on a 256 pixel grid. This will wrap around 0-256 as the cursor is moved on the Y axis. Similar to &quot;Stroke&quot;. Can be used to add paper texture by modifying opacity, etc.
 The brush size should be considerably smaller than the grid scale for best results.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>الإحداثي Y على شبكة 256 بكسل. سوف يلتف هذا حول 0-256 أثناء تحريك المؤشر على المحور Y. على غرار رسم الفرشه. يمكن استخدامه لإضافة نسيج الورق عن طريق تعديل العتامة، وما إلى ذلك.
+يجب أن يكون حجم الفرشاة أصغر بكثير من مقياس الشبكة للحصول على أفضل النتائج.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4453,7 +4463,9 @@ The brush size should be considerably smaller than the grid scale for best resul
 Logarithmic: 0.0 is 100%, 0.69 is 200%, -1.38 is 25%
 For the Radius setting, using a value of -4.15 makes the brush size roughly constant, relative to the level of zoom.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>مستوى التكبير/التصغير الحالي لعرض اللوحة القماشية.
+اللوغاريتمي: 0.0 يساوي 100%، 0.69 يساوي 200%، -1.38 يساوي 25%
+بالنسبة لإعداد نصف القطر، فإن استخدام القيمة -4.15 يجعل حجم الفرشاة ثابتًا تقريبًا، بالنسبة لمستوى التكبير/التصغير.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4462,7 +4474,10 @@ For the Radius setting, using a value of -4.15 makes the brush size roughly cons
 +90 when twisted clockwise 90 degrees
 -90 when twisted counterclockwise 90 degrees</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>دوران برميل القلم.
+0 عندما لا الملتوية
++90 عندما تكون ملتوية في اتجاه عقارب الساعة 90 درجة
+-90 عندما تكون ملتوية عكس اتجاه عقارب الساعة 90 درجة</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4470,414 +4485,418 @@ For the Radius setting, using a value of -4.15 makes the brush size roughly cons
 You can even cancel out dab size increase and adjust something else to make a brush bigger.
 Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&quot;, which behave much differently.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>تغيير التفاعل الفرشه عند تكون اكبر او اصغر.
+يمكنك تلغي الشكل زياده حجم الشكل بيضاوي, او تغير شيء اخر عشان تخلي الفرشاه اكبر.
+خلي بالك من &quot;بيضاوي لكل القطر الأساسي&quot; بيضاوي لكل القطر الفعلي&quot; التي تتصرف بشكل مختلف.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Opacity</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>العتامة</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Opacity multiply</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>تتضاعف العتامة</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Opacity linearize</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>العتامة خطية</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Radius</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>نصف القطر</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Hardness</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>صلابة</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pixel feather</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>ريشة بكسل</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Dabs per basic radius</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>بيضاوي لكل قطر أساسي</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Dabs per actual radius</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>بيضاوي لكل القطر الفعلي</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Dabs per second</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>بيضاوي لكل ثانيه</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Radius by random</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>القطر عشوائيا</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Fine speed filter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>السرعة الدقيقة</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Gross speed filter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>الصور العامه الدقيقة</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Fine speed gamma</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>السرعه غاما</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Gross speed gamma</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>السرعه العامه غاما</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Jitter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>اهتزاز</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Offset by speed</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>ازاحه بالسرعه</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Offset by speed filter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>الازاحه بالسرعه الدقيقه</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Slow position tracking</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>تتبع الموقف البطيء</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Slow tracking per dab</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>تتبع بطيء لكل بيضاوي</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Tracking noise</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>تتبع الضوضاء</translation>
     </message>
     <message>
         <location line="+2"/>
         <location line="+137"/>
         <source>Color hue</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>لون اللون</translation>
     </message>
     <message>
         <location line="-135"/>
         <location line="+137"/>
         <source>Color saturation</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>تشبع اللون</translation>
     </message>
     <message>
         <location line="-135"/>
         <source>Color value</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>قيمة اللون</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Save color</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>حفظ اللون</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change color hue</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>تغيير لون اللون</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change color lightness (HSL)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>تغيير خفة اللون (HSL)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change color satur. (HSL)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>تغيير اللون satur.(HSL)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change color value (HSV)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>تغيير قيمة اللون (HSV)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change color satur. (HSV)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>تغيير اللون satur. (HSV)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smudge</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>لطخة/مزج/خلط</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smudge length</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>طول لطخة/مزج/خلط</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smudge radius</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>لطخة نصف قطرها</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Eraser</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>ممحاة</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Stroke threshold</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>حد رسمه فرشه</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Stroke duration</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>اتجاه رسمه الفرشه</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Stroke hold time</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>تمسك بالوقت رسم الفرشه</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Custom input</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>إدخال مخصص</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Custom input filter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>مرشح الإدخال المخصص</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Elliptical dab: ratio</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>بيضاوي الشكل : نسبة</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Elliptical dab: angle</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>بيضاوي الشكل : الزاوية</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Direction filter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>الاتجاه الدقيق</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Lock alpha</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>قفل ألفا</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Colorize</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>تلوين</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Snap to pixel</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>التقط للبكسل</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pressure gain</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>&quot;كسب الضغط&quot;</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>GridMap Scale</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>مقياس خريطة الشبكة</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>GridMap Scale X</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>مقياس خريطة الشبكة X</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>GridMap Scale Y</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>مقياس خريطة الشبكة Y</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smudge length multiplier</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>مضاعف طول اللطخة</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smudge bucket</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>دلو لطخة</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smudge transparency</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>لطخة الشفافية</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Offset Y</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>إزاحة Y</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Offset X</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>الإزاحة X</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Angular Offset: Direction</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>الإزاحة الزاويّة: الاتجاه</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Angular Offset: Ascension</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>الإزاحة الزاويّة: الصعود</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Angular Offset: View</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>الإزاحة الزاويّة: عرض</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Angular Offset Mirrored: Direction</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>الإزاحة الزاويّة معكوسة: الاتجاه</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Angular Offset Mirrored: Ascension</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>الإزاحة الزاويّة معكوسة: الصعود</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Angular Offset Mirrored: View</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>الإزاحة الزاوي معكوسة: عرض</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Angular Offsets Adjustment</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>تعديل الإزاحات الزاوية</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Offsets Multiplier</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>مضاعف الإزاحة</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Posterize</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>تتالي</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Posterization levels</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>مستويات التتالي</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Pigment</source>
         <comment>mypaintsetting</comment>
         <extracomment>The name Pigment refers to the fact that this kind of color mixing is more similar to how colors mix in physical paint.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>الصباغ</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unknown Setting</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>إعداد غير معروف</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>0 means brush is transparent, 1 fully visible
 (also known as alpha or opacity)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>0 يعني أن الفرشاة شفافة، و1 مرئية بالكامل
+(المعروف أيضًا باسم ألفا أو العتامة)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>This gets multiplied with opaque. You should only change the pressure input of this setting. Use &apos;opaque&apos; instead to make opacity depend on speed.
 This setting is responsible to stop painting when there is zero pressure. This is just a convention, the behaviour is identical to &apos;opaque&apos;.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>يمكنك استخدام هذا مع &quot;opaque&quot;. مفروض انك تغير الضغط في هذا اختيار فقط. استخدم&apos;opaque&apos; لو عايز تغير العتامه بالسرعه بدل من الضغطز
+عندما الضغط زيرو سم الفرشه هيقف.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4885,7 +4904,9 @@ This setting is responsible to stop painting when there is zero pressure. This i
 0.0 the opaque value above is for the individual dabs
 1.0 the opaque value above is for the final brush stroke, assuming each pixel gets (dabs_per_radius*2) brushdabs on average during a stroke</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>قم بتصحيح اللاخطية المقدمة عن طريق مزج عدة نقاط فوق بعضها البعض. من المفترض أن يوفر لك هذا التصحيح استجابة ضغط خطية (&quot;طبيعية&quot;) عندما يتم تعيين الضغط إلى معتم_متضاعف، كما يحدث عادةً. 0.9 جيد للضربات القياسية، اضبطه ليكون أصغر إذا كانت الفرشاة متناثرة كثيرًا، أو أعلى إذا كنت تستخدم (بيضاوي لكل الثانية)
+0.0 القيمة المعتمة أعلاه مخصصة بيضاوي الفردية
+1.0 القيمة المعتمة أعلاه مخصصة رسمه فرشه النهائية، بافتراض أن كل بكسل يحصل على (بيضاوي _لكل_ القطر*2) فرشاة في المتوسط أثناء رسمه فرشه</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4893,13 +4914,15 @@ This setting is responsible to stop painting when there is zero pressure. This i
  0.7 means 2 pixels
  3.0 means 20 pixels</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>نصف قطر الفرشاة الأساسي (لوغاريتمي)
+ 0.7 يعني 2 بكسل
+ 3.0 يعني 20 بكسل</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Hard brush-circle borders (setting to zero will draw nothing). To reach the maximum hardness, you need to disable Pixel feather.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>حدود دائرة الفرشاة الصلبة (الضبط على الصفر لن يرسم شيئًا). للوصول إلى الحد الأقصى من الصلابة، تحتاج إلى تعطيل ريشة البكسل.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4908,25 +4931,28 @@ This setting is responsible to stop painting when there is zero pressure. This i
  1.0 blur one pixel (good value)
  5.0 notable blur, thin strokes will disappear</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>يعمل هذا الإعداد على تقليل الصلابة عند الضرورة لمنع تأثير درج البكسل (التعرج) يخلي شكل بيضاوي اقل وضوحا.
+ 0.0 تعطيل (للمحايات القوية جدًا وفرش البكسل)
+ 1.0 طمس بكسل واحد (قيمة جيدة)
+ 5.0 تمويه ملحوظ، رسمه فرشه الرفيع يختفي</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>How many dabs to draw while the pointer moves a distance of one brush radius (more precise: the base value of the radius)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>عدد اشكال بيضاوي في مسافه معينه نصف في قطر فرشاة واحد (أكثر دقة: القيمة الأساسية لنصف القطر)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Same as above, but the radius actually drawn is used, which can change dynamically</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>كما هو مذكور أعلاه، ولكن يتم استخدام نصف القطر المرسوم بالفعل، والذي يمكن أن يتغير ديناميكيًا</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Dabs to draw each second, no matter how far the pointer moves</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>عدد الاشكال اللي رسمها الفرشه في كل ثانيه</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4934,20 +4960,23 @@ This setting is responsible to stop painting when there is zero pressure. This i
 1) the opaque value will be corrected such that a big-radius dabs is more transparent
 2) it will not change the actual radius seen by dabs_per_actual_radius</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>غير حجم الاشكال عشوائي لكل شكل. ممكن تعمل ده كمان باستخدام عشوائي في نص القطر. إذا قمت بذلك هنا، هناك اختلافان
+1) سيتم تصحيح القيمة المعتمة بحيث تكون اللمسات ذات نصف القطر الكبير أكثر شفافية
+2) لن يغير نصف القطر الفعلي الذي يراه &quot;dabs_per_actual_radiu&quot; &quot;بيضاوي لكل نصف قطر فعلي&quot;</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>How slow the input fine speed is following the real speed
 0.0 change immediately as your speed changes (not recommended, but try it)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>مدى بطء سرعة الإدخال الدقيقة في تتبع السرعة الحقيقية
+0.0 يتغير فورًا مع تغير سرعتك (لا ينصح به، لكن جربه)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Same as &apos;fine speed filter&apos;, but note that the range is different</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>مثل &quot;مرشح السرعة الدقيقة&quot;، لكن لاحظ أن النطاق مختلف</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4956,13 +4985,16 @@ This setting is responsible to stop painting when there is zero pressure. This i
 +8.0 very fast speed increases &apos;fine speed&apos; a lot
 For very slow speed the opposite happens.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>يؤدي هذا إلى تغيير رد فعل إدخال &quot;السرعة الدقيقة&quot; إلى السرعة الجسدية القصوى. سترى الفرق بشكل أفضل إذا تم تعيين &quot;السرعة الدقيقة&quot; على نصف القطر.
+-8.0 السرعة العالية جدًا لا تزيد من &quot;السرعة الدقيقة&quot; أكثر من ذلك بكثير
++8.0 سرعة سريعة جدًا تزيد من &quot;السرعة الدقيقة&quot; كثيرًا
+أما بالنسبة للسرعة البطيئة جداً فيحدث العكس.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Same as &apos;fine speed gamma&apos; for gross speed</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>مثل &quot;جاما السرعة الدقيقة&quot; للسرعة الإجمالية</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4971,7 +5003,10 @@ For very slow speed the opposite happens.</source>
  1.0 standard deviation is one basic radius away
 &lt;0.0 negative values produce no jitter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>أضف إزاحة عشوائية إلى الموضع الذي يتم فيه رسم كل لمسة
+ 0.0 معطل
+ 1.0 الانحراف المعياري هو نصف قطر أساسي واحد
+&lt;0.0 القيم السالبة لا تنتج أي ارتعاش/هزة</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4980,37 +5015,40 @@ For very slow speed the opposite happens.</source>
 &gt; 0 draw where the pointer moves to
 &lt; 0 draw where the pointer comes from</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>تغيير الموضع حسب سرعة المؤشر
+= 0 تعطيل
+&gt; 0 ارسم المكان الذي يتحرك إليه المؤشر
+&lt;0 ارسم من أين يأتي المؤشر</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>How slow the offset goes back to zero when the cursor stops moving</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>مدى بطء عودة الإزاحة إلى الصفر عندما يتوقف المؤشر عن الحركة</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Slowdown pointer tracking speed. 0 disables it, higher values remove more jitter in cursor movements. Useful for drawing smooth, comic-like outlines.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>سرعة تتبع مؤشر التباطؤ. 0 يعطله، والقيم الأعلى تزيل المزيد من الارتعاش في حركات المؤشر. مفيد لرسم خطوط عريضة سلسة تشبه الرسوم الهزلية.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Similar as above but at brushdab level (ignoring how much time has passed if brushdabs do not depend on time)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>مشابه لما هو مذكور أعلاه ولكن على مستوى الفرشاة (مع تجاهل مقدار الوقت الذي انقضى إذا كانت الفرشاة لا تعتمد على الوقت)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Add randomness to the mouse pointer; this usually generates many small lines in random directions; maybe try this together with &apos;slow tracking&apos;</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>إضافة العشوائية إلى مؤشر الماوس. وهذا عادة ما يولد العديد من الخطوط الصغيرة في اتجاهات عشوائية؛ ربما جرب هذا مع &quot;التتبع البطيء&quot;</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Color value (brightness, intensity)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>قيمة اللون (السطوع، الكثافة)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5019,7 +5057,10 @@ For very slow speed the opposite happens.</source>
  0.5 change active color towards brush color
  1.0 set the active color to the brush color when selected</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>عند اختيار فرشاة، يمكن استعادة اللون إلى اللون الذي تم حفظ الفرشاة به.
+ 0.0 لا تقم بتعديل اللون النشط عند تحديد هذه الفرشاة
+ 0.5 تغيير اللون النشط نحو لون الفرشاة
+ 1.0 اضبط اللون النشط على لون الفرشاة عند تحديده</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5028,7 +5069,10 @@ For very slow speed the opposite happens.</source>
  0.0 disable
  0.5 counterclockwise hue shift by 180 degrees</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>تغيير لون اللون.
+-0.1 تحول لون صغير في اتجاه عقارب الساعة
+ 0.0 تعطيل
+ 0.5 تحول هوى عكس اتجاه عقارب الساعة بمقدار 180 درجة</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5037,7 +5081,10 @@ For very slow speed the opposite happens.</source>
  0.0 disable
  1.0 whiter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>قم بتغيير خفة اللون باستخدام نموذج الألوان HSL.
+-1.0 أكثر سوادًا
+ 0.0 تعطيل
+ 1.0 بياضا</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5046,7 +5093,10 @@ For very slow speed the opposite happens.</source>
  0.0 disable
  1.0 more saturated</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>قم بتغيير تشبع اللون باستخدام نموذج الألوان HSL.
+-1.0 أكثر رمادية
+ 0.0 تعطيل
+ 1.0 أكثر تشبعًا</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5055,7 +5105,10 @@ For very slow speed the opposite happens.</source>
  0.0 disable
  1.0 brigher</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>قم بتغيير قيمة اللون (السطوع والكثافة) باستخدام نموذج الألوان HSV. يتم تطبيق تغييرات HSV قبل HSL.
+-1.0 أغمق
+ 0.0 تعطيل
+ 1.0 أكثر إشراقا</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5064,7 +5117,10 @@ For very slow speed the opposite happens.</source>
  0.0 disable
  1.0 more saturated</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>قم بتغيير تشبع اللون باستخدام نموذج الألوان HSV. يتم تطبيق تغييرات HSV قبل HSL.
+-1.0 أكثر رمادية
+ 0.0 تعطيل
+ 1.0 أكثر تشبعًا</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5073,7 +5129,10 @@ For very slow speed the opposite happens.</source>
  0.5 mix the smudge color with the brush color
  1.0 use only the smudge color</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>قم بالطلاء باستخدام لون اللطخة بدلاً من لون الفرشاة. يتغير لون اللطخة ببطء إلى اللون الذي ترسم عليه.
+ 0.0 لا تستخدم لون التلطخ
+ 0.5 امزجي لون اللطخة مع لون الفرشاة
+ 1.0 استخدم لون التلطخ فقط</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5082,7 +5141,10 @@ For very slow speed the opposite happens.</source>
 0.5 change the smudge color steadily towards the canvas color
 1.0 never change the smudge color</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>يتحكم هذا في مدى سرعة تحول لون التلطخ إلى اللون الذي ترسم عليه.
+0.0 قم بتحديث لون التلطخ على الفور (يتطلب المزيد من دورات وحدة المعالجة المركزية بسبب عمليات فحص الألوان المتكررة)
+0.5 قم بتغيير لون التلطخ بشكل مطرد نحو لون القماش
+1.0 لا تغير لون التلطخ أبدًا</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5092,7 +5154,11 @@ For very slow speed the opposite happens.</source>
 +0.7 twice the brush radius
 +1.6 five times the brush radius (slow performance)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>يؤدي هذا إلى تعديل نصف قطر الدائرة حيث يتم التقاط اللون للتلطخ.
+ 0.0 استخدم نصف قطر الفرشاة
+-0.7 نصف نصف قطر الفرشاة (سريع، ولكن ليس بديهيًا دائمًا)
++0.7 ضعف نصف قطر الفرشاة
++1.6 خمسة أضعاف نصف قطر الفرشاة (أداء بطيء)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5101,19 +5167,22 @@ For very slow speed the opposite happens.</source>
  1.0 standard eraser
  0.5 pixels go towards 50% transparency</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>كم تتصرف هذه الأداة مثل الممحاة
+ 0.0 اللوحة العادية
+ 1.0 ممحاة قياسية
+ 0.5 بكسل تتجه نحو الشفافية بنسبة 50%</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>How much pressure is needed to start a stroke. This affects the stroke input only. MyPaint does not need a minimum pressure to start drawing.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>مقدار الضغط اللازم لبدء رسمه فرشه. يؤثر هذا على رسم الفرشه الحد فقط. لا يحتاج MyPaint إلى الحد الأدنى من الضغط لبدء الرسم.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>How far you have to move until the stroke input reaches 1.0. This value is logarithmic (negative values will not invert the process).</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>إلى أي مدى يجب عليك التحرك حتى يصل إدخال الحد إلى 1.0. هذه القيمة لوغاريتمية (القيم السالبة لن تعكس العملية).</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5121,27 +5190,31 @@ For very slow speed the opposite happens.</source>
 2.0 means twice as long as it takes to go from 0.0 to 1.0
 9.9 or higher stands for infinite</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>يحدد هذا المدة التي يبقى فيها إدخال الحد عند 1.0. بعد ذلك سيتم إعادة تعيينه إلى 0.0 ويبدأ في النمو مرة أخرى، حتى لو لم تنتهي رسمه فرشه بعد.
+2.0 يعني ضعف المدة اللازمة للانتقال من 0.0 إلى 1.0
+9.9 أو أعلى يعني اللانهائية</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Set the custom input to this value. If it is slowed down, move it towards this value (see below). The idea is that you make this input depend on a mixture of pressure/speed/whatever, and then make other settings depend on this &apos;custom input&apos; instead of repeating this combination everywhere you need it.
 If you make it change &apos;by random&apos; you can generate a slow (smooth) random input.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>قم بتعيين الإدخال المخصص لهذه القيمة. إذا تباطأت، حركها نحو هذه القيمة (انظر أدناه). الفكرة هي أن تجعل هذا الإدخال يعتمد على مزيج من الضغط/السرعة/أي شيء آخر، ثم تجعل الإعدادات الأخرى تعتمد على هذا &quot;الإدخال المخصص&quot; بدلاً من تكرار هذا المزيج في كل مكان تحتاج إليه.
+إذا قمت بتغييره &quot;بشكل عشوائي&quot;، فيمكنك إنشاء إدخال عشوائي بطيء (سلس).</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>How slow the custom input actually follows the desired value (the one above). This happens at brushdab level (ignoring how much time has passed, if brushdabs do not depend on time).
 0.0 no slowdown (changes apply instantly)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>مدى بطء الإدخال المخصص في اتباع القيمة المطلوبة (المذكورة أعلاه). يحدث هذا على مستوى الفرشاة (مع تجاهل مقدار الوقت المنقضي، إذا كانت الفرشاة لا تعتمد على الوقت).
+0.0 لا يوجد تباطؤ (تنطبق التغييرات على الفور)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Aspect ratio of the dabs; must be &gt;= 1.0, where 1.0 means a perfectly round dab.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>نسبة العرض إلى الارتفاع للأشكال البيضاوية؛ يجب أن يكون &gt;= 1.0، حيث 1.0 يعني أشكالًا بيضاوية مستديرة تمامًا.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5150,13 +5223,16 @@ If you make it change &apos;by random&apos; you can generate a slow (smooth) ran
  45.0 45 degrees, turned clockwise
  180.0 horizontal again</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>الزاوية التي يميل بها الشكل البيضاوي
+ 0.0 بيضاوية أفقية
+ 45.0 45 درجة، في اتجاه عقارب الساعة
+ 180.0 أفقيًا مرة أخرى</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>A low value will make the direction input adapt more quickly, a high value will make it smoother</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>القيمة المنخفضة ستجعل إدخال الاتجاه يتكيف بسرعة أكبر، والقيمة العالية ستجعله أكثر سلاسة</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5165,25 +5241,28 @@ If you make it change &apos;by random&apos; you can generate a slow (smooth) ran
  0.5 half of the paint gets applied normally
  1.0 alpha channel fully locked</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>لا تقم بتعديل قناة ألفا للطبقة (قم بالطلاء فقط حيث يوجد طلاء بالفعل)
+ 0.0 اللوحة العادية
+ يتم تطبيق 0.5 نصف الطلاء بشكل طبيعي
+ 1.0 قناة ألفا مقفلة بالكامل</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Colorize the target layer, setting its hue and saturation from the active brush color while retaining its value and alpha.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>قم بتلوين الطبقة المستهدفة، وضبط تدرجها وتشبعها من لون الفرشاة النشط مع الاحتفاظ بقيمتها وألفا.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Snap brush dab&apos;s center and its radius to pixels. Set this to 1.0 for a thin pixel brush.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>التقط مركز الفرشاة البيضاوية ونصف قطرها بالبكسل. اضبط هذا على 1.0 للحصول على فرشاة بيكسل رفيعة.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>This changes how hard you have to press. It multiplies tablet pressure by a constant factor.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>هذا يغير مدى قوة الضغط عليك. يضاعف ضغط القرص بعامل ثابت.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5191,7 +5270,9 @@ If you make it change &apos;by random&apos; you can generate a slow (smooth) ran
 Logarithmic (same scale as brush radius).
 A scale of 0 will make the grid 256x256 pixels.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>يغير المقياس العام الذي يعمل عليه إدخال فرشاة GridMap.
+لوغاريتمي (نفس مقياس نصف قطر الفرشاة).
+مقياس 0 سيجعل الشبكة 256 × 256 بكسل.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5199,7 +5280,9 @@ A scale of 0 will make the grid 256x256 pixels.</source>
 The range is 0-5x.
 This allows you to stretch or compress the GridMap pattern.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>يغير المقياس الذي يعمل عليه إدخال فرشاة GridMap - ويؤثر على المحور X فقط.
+النطاق هو 0-5x.
+يتيح لك ذلك تمديد أو ضغط نمط GridMap.</translation>
     </message>
     <message>
         <location line="+2"/>
