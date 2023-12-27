@@ -5290,7 +5290,9 @@ This allows you to stretch or compress the GridMap pattern.</source>
 The range is 0-5x.
 This allows you to stretch or compress the GridMap pattern.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>يغير المقياس الذي يعمل عليه إدخال فرشاة GridMap - ويؤثر على المحور Y فقط.
+النطاق هو 0-5x.
+يتيح لك ذلك تمديد أو ضغط نمط GridMap.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5298,7 +5300,9 @@ This allows you to stretch or compress the GridMap pattern.</source>
 Useful to correct for high-definition/large brushes with lots of dabs.
 The longer the smudge length the more a color will spread and will also boost performance dramatically, as the canvas is sampled less often</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>المضاعف اللوغاريتمي لقيمة &quot;طول التلطيخ&quot;.
+مفيد لتصحيح الفرش عالية الدقة/الكبيرة التي تحتوي على الكثير من اللمسات.
+كلما زاد طول التلطخ، زاد انتشار اللون وسيعزز أيضًا الأداء بشكل كبير، حيث يتم أخذ عينات من اللوحة القماشية بشكل أقل</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5306,7 +5310,9 @@ The longer the smudge length the more a color will spread and will also boost pe
 You can control which bucket to use to improve variability and realism of the brush.
 Especially useful with the &quot;Custom input&quot; setting to correlate buckets with other settings such as offsets.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>يوجد 256 دلوًا يمكن لكل منها أن يحمل لونًا ملتقطًا من اللوحة .
+يمكنك التحكم في الجرافة التي سيتم استخدامها لتحسين تنوع الفرشاة وواقعيتها.
+مفيد بشكل خاص مع إعداد &quot;الإدخال المخصص&quot; لربط المجموعات بالإعدادات الأخرى مثل الإزاحات.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5316,19 +5322,23 @@ Especially useful with the &quot;Custom input&quot; setting to correlate buckets
 0.0 will have no effect.
 Negative values do the reverse</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>التحكم في مقدار الشفافية التي يتم التقاطها وتلطخها، على غرار قفل ألفا.
+1.0 لن يتحرك أي شفافية.
+0.5 سينقل فقط 50% من الشفافية وما فوق.
+0.0 لن يكون له أي تأثير.
+القيم السالبة تفعل العكس</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Moves the dabs up or down based on canvas coordinates.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>يحرك اللمسات الفرشاة لأعلى أو لأسفل بناءً على إحداثيات اللوحة القماشية.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Moves the dabs left or right based on canvas coordinates.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>يحرك اللمسات الفرشاة إلى اليسار أو اليمين بناءً على إحداثيات اللوحة .</translation>
     </message>
     <message>
         <location line="+2"/>
