@@ -1357,8 +1357,8 @@ void MainWindow::connectStartDialog(dialogs::StartDialog *dlg)
 	connections->add(connect(dlg, &dialogs::StartDialog::join, this, &MainWindow::joinSession));
 	connections->add(connect(dlg, &dialogs::StartDialog::host, this, &MainWindow::hostSession));
 	connections->add(connect(dlg, &dialogs::StartDialog::create, this, &MainWindow::newDocument));
-	connections->add(connect(m_doc, &Document::canvasChanged, dlg, &QDialog::close));
-	connections->add(connect(m_doc, &Document::serverLoggedIn, dlg, &QDialog::close));
+	connections->add(connect(m_doc, &Document::canvasChanged, dlg, std::bind(&MainWindow::closeStartDialog, this, dlg)));
+	connections->add(connect(m_doc, &Document::serverLoggedIn, dlg, std::bind(&MainWindow::closeStartDialog, this, dlg)));
 	connections->add(connect(this, &MainWindow::hostSessionEnabled, dlg, &dialogs::StartDialog::hostPageEnabled));
 	connections->add(connect(this, &MainWindow::windowReplacementFailed, dlg, [dlg](MainWindow *win){
 		dlg->setParent(win, dlg->windowFlags());
@@ -1384,6 +1384,25 @@ void MainWindow::setStartDialogActions(dialogs::StartDialog *dlg)
 		actions.entries[entry] = getAction(action);
 	}
 	dlg->setActions(actions);
+}
+
+void MainWindow::closeStartDialog(dialogs::StartDialog *dlg)
+{
+	for(QDialog *child : dlg->findChildren<QDialog *>(QString(), Qt::FindDirectChildrenOnly)) {
+		child->setParent(this);
+	}
+	dlg->close();
+}
+
+QWidget *MainWindow::getStartDialogOrThis()
+{
+	dialogs::StartDialog *dlg = findChild<dialogs::StartDialog *>(
+		QStringLiteral("startdialog"), Qt::FindDirectChildrenOnly);
+	if(dlg) {
+		return dlg;
+	} else {
+		return this;
+	}
 }
 
 void MainWindow::start()
@@ -1516,7 +1535,7 @@ void MainWindow::open(const QUrl& url)
  */
 void MainWindow::open()
 {
-	QString filename = FileWrangler{this}.getOpenPath();
+	QString filename = FileWrangler{getStartDialogOrThis()}.getOpenPath();
 	QUrl url = QUrl::fromLocalFile(filename);
 	if(url.isValid()) {
 		open(url);
@@ -1941,7 +1960,8 @@ void MainWindow::showBrushSettingsDialog()
  */
 dialogs::SettingsDialog *MainWindow::showSettings()
 {
-	dialogs::SettingsDialog *dlg = new dialogs::SettingsDialog(this);
+	dialogs::SettingsDialog *dlg =
+		new dialogs::SettingsDialog(getStartDialogOrThis());
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 	utils::showWindow(dlg);
 	return dlg;
@@ -2030,7 +2050,7 @@ void MainWindow::hostSession(
 			true, DP_ACL_STATE_RESET_IMAGE_SESSION_RESET_FLAGS));
 	}
 
-	utils::showWindow(new dialogs::LoginDialog(login, this));
+	utils::showWindow(new dialogs::LoginDialog(login, getStartDialogOrThis()));
 
 	m_doc->client()->connectToServer(
 		settings.serverTimeout(), login, !useremote);
@@ -2201,7 +2221,7 @@ void MainWindow::joinSession(const QUrl& url, const QString &autoRecordFile)
 
 	net::LoginHandler *login = new net::LoginHandler(
 			net::LoginHandler::Mode::Join, url, this);
-	auto *dlg = new dialogs::LoginDialog(login, this);
+	auto *dlg = new dialogs::LoginDialog(login, getStartDialogOrThis());
 	connect(m_doc, &Document::catchupProgress, dlg, &dialogs::LoginDialog::catchupProgress);
 	connect(m_doc, &Document::serverLoggedIn, dlg, [dlg,this](bool join) {
 		dlg->onLoginDone(join);
@@ -3068,8 +3088,10 @@ void MainWindow::showLayoutsDialog()
 {
 	dialogs::LayoutsDialog *dlg = findChild<dialogs::LayoutsDialog *>(
 		"layoutsdialog", Qt::FindDirectChildrenOnly);
-	if(!dlg) {
-		dlg = new dialogs::LayoutsDialog{saveState(), this};
+	if(dlg) {
+		dlg->setParent(getStartDialogOrThis());
+	} else {
+		dlg = new dialogs::LayoutsDialog{saveState(), getStartDialogOrThis()};
 		dlg->setObjectName("layoutsdialog");
 		dlg->setAttribute(Qt::WA_DeleteOnClose);
 		connect(dlg, &dialogs::LayoutsDialog::applyState, [this](const QByteArray &state) {
