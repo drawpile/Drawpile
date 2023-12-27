@@ -128,6 +128,8 @@ public slots:
 	void inspectCanvas(int contextId, bool showTiles);
 	void stopInspectingCanvas();
 
+	void setSelectInterpolation(int selectInterpolation);
+
 signals:
 	void layerAutoselectRequest(int id);
 	void canvasModified();
@@ -175,6 +177,7 @@ private:
 
 	PaintEngine *m_paintengine;
 	Selection *m_selection;
+	int m_selectInterpolation = 0;
 
 	QString m_title;
 	QString m_pinnedMessage;

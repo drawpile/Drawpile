@@ -16,6 +16,10 @@ QColor sampleColorAt(
 	const QImage &img, uint16_t *stampBuffer, int x, int y, int diameter,
 	bool opaque, int &lastDiameter);
 
+QImage transformImage(
+	const QImage &source, const QPolygon &dstQuad, int interpolation,
+	QPoint *outOffset = nullptr);
+
 }
 
 #endif

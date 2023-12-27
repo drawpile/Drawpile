@@ -211,6 +211,7 @@ void ToolController::setModel(canvas::CanvasModel *model)
 	connect(
 		m_model, &canvas::CanvasModel::selectionChanged, this,
 		&ToolController::onSelectionChange);
+	m_model->setSelectInterpolation(m_selectInterpolation);
 	emit modelChanged(model);
 }
 
@@ -289,6 +290,9 @@ void ToolController::updateSmoothing()
 void ToolController::setSelectInterpolation(int selectInterpolation)
 {
 	m_selectInterpolation = selectInterpolation;
+	if(m_model) {
+		m_model->setSelectInterpolation(selectInterpolation);
+	}
 	updateSelectionPreview();
 }
 

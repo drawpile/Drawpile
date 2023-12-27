@@ -154,7 +154,7 @@ public:
 	bool hasPasteImage() const { return !m_pasteImage.isNull(); }
 
 	//! Get the image to be pasted with the current transformation applied
-	QImage transformedPasteImage() const;
+	QImage transformedPasteImage(int interpolation) const;
 
 	QPolygon destinationQuad() const;
 

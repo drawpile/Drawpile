@@ -683,7 +683,7 @@ bool Selection::pasteOrMoveToCanvas(
 		// A pasted image
 		QPoint offset;
 		QImage image = tools::SelectionTool::transformSelectionImage(
-			m_pasteImage, m_shape.toPolygon(), &offset);
+			m_pasteImage, m_shape.toPolygon(), interpolation, &offset);
 		buffer.append(net::makeUndoPointMessage(contextId));
 		appendPutImage(
 			buffer, contextId, layer, offset.x(), offset.y(), image,
@@ -693,10 +693,10 @@ bool Selection::pasteOrMoveToCanvas(
 	return true;
 }
 
-QImage Selection::transformedPasteImage() const
+QImage Selection::transformedPasteImage(int interpolation) const
 {
 	return tools::SelectionTool::transformSelectionImage(
-		m_pasteImage, m_shape.toPolygon(), nullptr);
+		m_pasteImage, m_shape.toPolygon(), interpolation, nullptr);
 }
 
 QPolygon Selection::destinationQuad() const

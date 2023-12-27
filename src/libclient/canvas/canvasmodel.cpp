@@ -365,6 +365,11 @@ void CanvasModel::stopInspectingCanvas()
 	m_paintengine->setInspect(0, false);
 }
 
+void CanvasModel::setSelectInterpolation(int selectInterpolation)
+{
+	m_selectInterpolation = selectInterpolation;
+}
+
 void CanvasModel::setSelection(Selection *selection)
 {
 	if(m_selection != selection) {
@@ -389,7 +394,7 @@ void CanvasModel::setSelection(Selection *selection)
 QImage CanvasModel::selectionToImage(int layerId) const
 {
 	if(m_selection && !m_selection->pasteImage().isNull() && layerId > 0) {
-		return m_selection->transformedPasteImage();
+		return m_selection->transformedPasteImage(m_selectInterpolation);
 	}
 
 	drawdance::CanvasState canvasState = m_paintengine->viewCanvasState();

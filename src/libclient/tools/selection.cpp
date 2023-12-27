@@ -2,6 +2,7 @@
 #include "libclient/tools/selection.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/paintengine.h"
+#include "libclient/drawdance/image.h"
 #include "libclient/net/client.h"
 #include "libclient/tools/toolcontroller.h"
 #include "libclient/tools/utils.h"
@@ -229,31 +230,25 @@ void PolygonSelection::newSelectionMotion(
 }
 
 QImage SelectionTool::transformSelectionImage(
-	const QImage &source, const QPolygon &target, QPoint *offset)
+	const QImage &source, const QPolygon &target, int interpolation,
+	QPoint *offset)
 {
 	Q_ASSERT(!source.isNull());
 	Q_ASSERT(target.size() == 4);
-
 	QRect bounds;
 	QPolygonF srcPolygon;
-	QPolygon xTarget = destinationQuad(source, target, &bounds, &srcPolygon);
-	QTransform transform;
-	if(!QTransform::quadToQuad(srcPolygon, xTarget, transform)) {
-		qWarning("Couldn't transform selection image!");
+	QPolygon dstQuad = destinationQuad(source, target, &bounds, &srcPolygon);
+	QImage img =
+		drawdance::transformImage(source, dstQuad, interpolation, offset);
+	if(img.isNull()) {
+		qWarning("Couldn't transform selection image: %s", DP_error());
 		return QImage();
+	} else {
+		if(offset) {
+			*offset += bounds.topLeft();
+		}
+		return img;
 	}
-
-	if(offset)
-		*offset = bounds.topLeft();
-
-	QImage out(bounds.size(), QImage::Format_ARGB32_Premultiplied);
-	out.fill(0);
-	QPainter painter(&out);
-	painter.setRenderHint(QPainter::SmoothPixmapTransform);
-	painter.setTransform(transform);
-	painter.drawImage(0, 0, source);
-
-	return out;
 }
 
 QPolygon SelectionTool::destinationQuad(

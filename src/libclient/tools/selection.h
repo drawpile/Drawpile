@@ -46,7 +46,8 @@ public:
 	void setTransformEnabled(bool enable) { m_allowTransform = enable; }
 
 	static QImage transformSelectionImage(
-		const QImage &source, const QPolygon &target, QPoint *offset);
+		const QImage &source, const QPolygon &target, int interpolation,
+		QPoint *offset);
 	static QPolygon destinationQuad(
 		const QImage &source, const QPolygon &target,
 		QRect *outBounds = nullptr, QPolygonF *outSrcPolygon = nullptr);
