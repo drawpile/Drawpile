@@ -1,5 +1,13 @@
 #include "libclient/settings_table_macros.h"
 
+#ifndef SNAPSHOT_COUNT_DEFAULT
+#   if defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)
+#       define SNAPSHOT_COUNT_DEFAULT 0
+#   else
+#       define SNAPSHOT_COUNT_DEFAULT 5
+#   endif
+#endif
+
 SETTING(autoSaveInterval            , AutoSaveInterval            , "settings/autosave"                     , 5000)
 SETTING(interpolateInputs           , InterpolateInputs           , "settings/input/interpolate"            , true)
 SETTING(messageQueueDrainRate       , MessageQueueDrainRate       , "settings/messagequeuedrainrate"        , net::MessageQueue::DEFAULT_SMOOTH_DRAIN_RATE)
@@ -9,7 +17,7 @@ SETTING(parentalControlsLevel       , ParentalControlsLevel       , "pc/level"  
 SETTING(parentalControlsLocked      , ParentalControlsLocked      , "pc/locked"                             , QByteArray())
 SETTING(parentalControlsTags        , ParentalControlsTags        , "pc/tagwords"                           , parentalcontrols::defaultWordList())
 SETTING(engineFrameRate             , EngineFrameRate             , "settings/paintengine/fps"              , 60)
-SETTING(engineSnapshotCount         , EngineSnapshotCount         , "settings/paintengine/snapshotcount"    , 5)
+SETTING(engineSnapshotCount         , EngineSnapshotCount         , "settings/paintengine/snapshotcount"    , SNAPSHOT_COUNT_DEFAULT)
 SETTING(engineSnapshotInterval      , EngineSnapshotInterval      , "settings/paintengine/snapshotinterval" , 10)
 SETTING(engineUndoDepth             , EngineUndoDepth             , "settings/paintengine/undodepthlimit"   , DP_UNDO_DEPTH_DEFAULT)
 SETTING(listServers                 , ListServers                 , "listservers"                           , QVector<QVariantMap>())
