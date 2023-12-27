@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #ifndef DRAWDANCE_IMAGE_H
 #define DRAWDANCE_IMAGE_H
 #include <QImage>
