@@ -75,7 +75,7 @@
     <message>
         <location filename="../ui/androidfiledialog.ui" line="+20"/>
         <source>Name:</source>
-        <translation>Название:</translation>
+        <translation type="unfinished">Название:</translation>
     </message>
     <message>
         <location line="+13"/>
