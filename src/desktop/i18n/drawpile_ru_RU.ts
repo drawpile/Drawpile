@@ -179,7 +179,7 @@
     <message>
         <location line="+19"/>
         <source>Gain: </source>
-        <translation type="unfinished"></translation>
+        <translation>Усиление: </translation>
     </message>
     <message>
         <location line="+22"/>
