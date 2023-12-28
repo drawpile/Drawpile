@@ -62,7 +62,7 @@
     <message>
         <location line="+28"/>
         <source>Enter a list server URL:</source>
-        <translation type="unfinished"></translation>
+        <translation>Введите URL-адрес списка серверов</translation>
     </message>
     <message>
         <location line="+43"/>
