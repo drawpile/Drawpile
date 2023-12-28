@@ -420,7 +420,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+3"/>
         <source>Playback Delay: </source>
-        <translation type="unfinished"></translation>
+        <translation>Задержка воспроизведения </translation>
     </message>
     <message>
         <location line="+16"/>
@@ -455,7 +455,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+11"/>
         <source>Status</source>
-        <translation type="unfinished">Состояние</translation>
+        <translation>Состояние</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -469,7 +469,7 @@ to 64x64 pixels.</source>
         <location line="+21"/>
         <location line="+14"/>
         <source>0</source>
-        <translation type="unfinished"></translation>
+        <translation>0</translation>
     </message>
     <message>
         <location line="-56"/>
@@ -479,7 +479,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>No</source>
-        <translation type="unfinished"></translation>
+        <translation>Нет</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -504,7 +504,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+15"/>
         <source>History</source>
-        <translation type="unfinished"></translation>
+        <translation>История</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -514,7 +514,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Hide Gone Entries</source>
-        <translation type="unfinished"></translation>
+        <translation>Спрятать Отмененные Вхождения</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -542,12 +542,12 @@ to 64x64 pixels.</source>
     <message>
         <location line="+6"/>
         <source>Open ORA</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть ORA</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>OpenRaster Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Изображение OpenRaster</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -562,17 +562,17 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Import Brush Pack</source>
-        <translation type="unfinished"></translation>
+        <translation>Импортировать Набор Кистей</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Import Session Bans</source>
-        <translation type="unfinished"></translation>
+        <translation>Импортировать Запреты Сессии</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Import Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>Импортировать Роли</translation>
     </message>
     <message>
         <location line="+38"/>
@@ -583,7 +583,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="-186"/>
         <source>Export Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспортировать Изображение</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -628,12 +628,12 @@ to 64x64 pixels.</source>
     <message>
         <location line="+8"/>
         <source>Export MP4 Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт MP4 видео</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export WebM Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт WebM видео</translation>
     </message>
     <message>
         <location line="+7"/>
