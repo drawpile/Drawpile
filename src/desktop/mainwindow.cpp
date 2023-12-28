@@ -587,6 +587,7 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 		onFeatureAccessChange(f, m_doc->canvas()->aclState()->canUseFeature(f));
 	}
 	onUndoDepthLimitSet(canvas->paintEngine()->undoDepthLimit());
+	getAction("resetsession")->setEnabled(true);
 
 	selectionChanged(canvas->selection());
 }
@@ -4018,7 +4019,7 @@ void MainWindow::setupActions()
 	QAction *sessionUndoDepthLimit = makeAction("sessionundodepthlimit", tr("Undo Limit…")).noDefaultShortcut().disabled();
 
 	QAction *gainop = makeAction("gainop", tr("Become Operator...")).noDefaultShortcut().disabled();
-	QAction *resetsession = makeAction("resetsession", tr("&Reset...")).noDefaultShortcut();
+	QAction *resetsession = makeAction("resetsession", tr("&Reset...")).noDefaultShortcut().disabled();
 	QAction *terminatesession = makeAction("terminatesession", tr("Terminate")).noDefaultShortcut();
 	QAction *reportabuse = makeAction("reportabuse", tr("Report...")).noDefaultShortcut().disabled();
 

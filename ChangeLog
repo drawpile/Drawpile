@@ -17,6 +17,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Move back button in login dialog to the left side. Thanks Blozzom for reporting.
  * Fix: Properly forget password when editing account and unchecking the "remember password" box. Thanks Meru for reporting.
  * Fix: Apply chosen interpolation to pasted images. Thanks Hipofiz for reporting.
+ * Fix: Properly disable Session > Reset option when there's no canvas present that could be reset.
 
 2023-12-08 Version 2.2.0-beta.11
  * Server Fix: No longer show "cannot look up one session and then join another" when joining a session with an ID alias. Thanks Kink and Fabian for finding this.
