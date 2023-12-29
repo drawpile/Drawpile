@@ -8,6 +8,7 @@ extern "C" {
 }
 
 #include <QMainWindow>
+#include <QDeadlineTimer>
 #include <QElapsedTimer>
 #include <QMap>
 #include <QPointer>
@@ -292,6 +293,8 @@ private:
 
 	void createDocks();
 	void setupActions();
+
+	QDeadlineTimer m_lastDisconnectNotificationTimer;
 
 	QTimer m_saveWindowDebounce;
 	QTimer m_saveSplitterDebounce;

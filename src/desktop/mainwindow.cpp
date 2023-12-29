@@ -2323,8 +2323,11 @@ void MainWindow::onServerDisconnected(const QString &message, const QString &err
 				? tr("You've been disconnected from the session.")
 				: tr("Disconnected: %1").arg(message);
 		m_view->showDisconnectedWarning(notif);
-		dpApp().notifications()->trigger(
-			this, notification::Event::Disconnect, notif);
+		if(m_lastDisconnectNotificationTimer.hasExpired()) {
+			dpApp().notifications()->trigger(
+				this, notification::Event::Disconnect, notif);
+			m_lastDisconnectNotificationTimer.setRemainingTime(2000);
+		}
 	}
 
 	if(m_exitAction != RUNNING) {
