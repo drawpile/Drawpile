@@ -464,9 +464,18 @@ QString FileWrangler::showOpenFileDialog(
 QString FileWrangler::showOpenFileDialogFilters(
 	const QString &title, LastPath type, const QStringList &filters) const
 {
+#ifdef Q_OS_ANDROID
+	// Name filters don't work properly on Android. They are supposed to end up
+	// being mapped to MIME types internally, but that doesn't seem to actually
+	// work at all, causing random types to just inexplicably get grayed out or
+	// hidden altogether. So we just don't pass any filters.
+	Q_UNUSED(filters);
+	QString effectiveFilter = QString();
+#else
+	QString effectiveFilter = filters.join(QStringLiteral(";;"));
+#endif
 	QString filename = QFileDialog::getOpenFileName(
-		parentWidget(), title, getLastPath(type),
-		filters.join(QStringLiteral(";;")));
+		parentWidget(), title, getLastPath(type), effectiveFilter);
 	if(filename.isEmpty()) {
 		return QString{};
 	} else {
