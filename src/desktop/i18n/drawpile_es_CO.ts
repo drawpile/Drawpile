@@ -729,7 +729,7 @@ a 64x64 pixeles.</translation>
     <message>
         <location line="+27"/>
         <source>Close Gaps: </source>
-        <translation type="unfinished">Cerrar Agujeros: </translation>
+        <translation>Cerrar brechas: </translation>
     </message>
     <message>
         <location line="-69"/>
@@ -792,7 +792,7 @@ a 64x64 pixeles.</translation>
     <message>
         <location line="+17"/>
         <source>Frame:</source>
-        <translation type="unfinished">Marco:</translation>
+        <translation>Marco:</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -820,7 +820,7 @@ a 64x64 pixeles.</translation>
     <message>
         <location line="+56"/>
         <source>Mark whole tiles</source>
-        <translation type="unfinished">Marcar tejas completas</translation>
+        <translation type="unfinished">Marcar mosaicos multiples</translation>
     </message>
 </context>
 <context>
@@ -913,12 +913,12 @@ Sub-rango: [%3, %4]</translation>
     <message>
         <location line="+10"/>
         <source>&amp;Step up</source>
-        <translation type="unfinished">&amp;Aumentar</translation>
+        <translation>&amp;Aumentar</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Step &amp;down</source>
-        <translation type="unfinished">&amp;Disminuir</translation>
+        <translation>&amp;Disminuir</translation>
     </message>
 </context>
 <context>
@@ -1233,7 +1233,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+3"/>
         <source>Fix</source>
-        <translation type="unfinished">Arreglar</translation>
+        <translation>Arreglar</translation>
     </message>
     <message>
         <location line="+153"/>
@@ -1403,7 +1403,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+112"/>
         <source>Toggle Dock %1</source>
-        <translation type="unfinished">Alternar Dock %1</translation>
+        <translation>Alternar Dock %1</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -2876,27 +2876,27 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="-289"/>
         <source>Rewind to Beginning</source>
-        <translation type="unfinished"></translation>
+        <translation>Rebobinar al Comienzo</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Skip Backward</source>
-        <translation type="unfinished"></translation>
+        <translation>Saltar Atrás</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>Next Stroke</source>
-        <translation type="unfinished"></translation>
+        <translation>Siguiente Trazo</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Skip Forward</source>
-        <translation type="unfinished"></translation>
+        <translation>Saltar Adelante</translation>
     </message>
     <message>
         <location line="+32"/>
         <source>Playback Speed: </source>
-        <translation type="unfinished"></translation>
+        <translation>Velocidad de Reproduccion: </translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2906,7 +2906,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+79"/>
         <source>Building an index will let you quickly skip to any part of your recording.</source>
-        <translation type="unfinished"></translation>
+        <translation>Construir un índice te permitirá saltar a cualquier parte de tu grabación rápidamente.</translation>
     </message>
     <message>
         <location line="+133"/>
@@ -3039,36 +3039,36 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location filename="../ui/selectsettings.ui" line="+29"/>
         <source>Interpolation:</source>
-        <translation type="unfinished"></translation>
+        <translation>Interpolación:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>Transformar</translation>
     </message>
     <message>
         <location line="+11"/>
         <location line="+3"/>
         <source>Flip Horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>Voltear Horizontalmente</translation>
     </message>
     <message>
         <location line="+27"/>
         <location line="+3"/>
         <source>Flip Vertically</source>
-        <translation type="unfinished"></translation>
+        <translation>Voltear Verticalmente</translation>
     </message>
     <message>
         <location line="+27"/>
         <location line="+3"/>
         <source>Shrink to View</source>
-        <translation type="unfinished"></translation>
+        <translation>Encoger a Vista</translation>
     </message>
     <message>
         <location line="+27"/>
         <location line="+3"/>
         <source>Reset Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>Reiniciar Transformación</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -3201,12 +3201,12 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+17"/>
         <source>Idle timeout:</source>
-        <translation type="unfinished"></translation>
+        <translation>Desconexión por inactividad:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>X seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>X Segundos</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -3938,7 +3938,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <location line="+23"/>
         <location line="+14"/>
         <source>Blend Mode:</source>
-        <translation type="unfinished">Modo de Mezcla:</translation>
+        <translation>Modo de Mezcla:</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -4204,22 +4204,22 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <message>
         <location line="+172"/>
         <source>Slows down the stroke to stabilize it over time. High values give very smooth lines, but they will draw slowly. When you stop moving, the line will catch up your cursor. Tablet smoothing from the input preferences applies as well.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ralentiza el trazo para estabilizarlo con el tiempo. Valores altos dan líneas suaves, pero se dibujaran lentamente. Cuando dejas de moverte, la linea alcanzara al cursor. El suavizado en tableta en las preferencias de entrada aplican tambien.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Simply averages a number of inputs. Feels faster than the time-based stabilizer, but not as smooth and won&apos;t catch up to your cursor when you stop moving. Overrides tablet smoothing from the input preferences.</source>
-        <translation type="unfinished"></translation>
+        <translation>Simplemente promedia algunas de las entradas. Se siente mas rápido que el estabilizador basado por tiempo, pero no es tan suave y no alcanzara al cursor cuando lo dejas de mover. Sobrescribe suavizado de tableta de las preferencias de entrada.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Unknown stabilization mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>Modo de Estabilización desconocido.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Synchronizing stabilization settings with brushes is disabled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sincronizar Ajustes de estabilización con pinceles esta deshabilitado.</translation>
     </message>
     <message>
         <location filename="../dialogs/brushsettingsdialog_gen.cpp" line="+12"/>
@@ -4380,13 +4380,13 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <location line="+2"/>
         <source>Declination of stylus tilt. 0 when stylus is parallel to tablet and 90.0 when it&apos;s perpendicular to tablet.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Declinación con inclinación de stylus. 0 cuando el stylus esta paralelo a la tableta y 90.0 cuando esta perpendicular a la tableta.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Right ascension of stylus tilt. 0 when stylus working end points to you, +90 when rotated 90 degrees clockwise, -90 when rotated 90 degrees counterclockwise.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Ascenso a la derecha con inclinación de stylus. 0 cuando el stylus apunta hacia ti, +90 cuando esta rotado 90 grados con las agujas del reloj, -90 cuando esta rotado 90 grados contra las agujas del reloj.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4408,33 +4408,39 @@ The range is +/-180.0.
 90 means the stroke angle is perpendicular to the angle of the stylus.
 180 means the angle of the stroke is directly opposite the angle of the stylus.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>La diferencia, en grados, entre el Angulo en el cual el stylus esta apuntando y el Angulo del movimiento del trazo.
+El rango es +/-180.0.
+0.0 significa que el Angulo del trazo corresponde al Angulo del stylus.
+90 significa que el Angulo del trazo es perpendicular al Angulo del stylus.
+180 significa que el Angulo del trazo es directamente opuesto al Angulo del stylus.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Declination of stylus tilt on X-Axis. 90/-90 when stylus is parallel to tablet and 0 when it&apos;s perpendicular to tablet.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Declinación de la inclinación del stylus en eje-X, 90/-90 cuando el stylus esta paralelo a la tableta y 0 cuando esta perpendicular a la tableta.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Declination of stylus tilt on Y-Axis. 90/-90 when stylus is parallel to tablet and 0 when it&apos;s perpendicular to tablet.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Declinación de la inclinación del stylus en eje-Y, 90/-90 cuando el stylus esta paralelo a la tableta y 0 cuando esta perpendicular a la tableta.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The X coordinate on a 256 pixel grid. This will wrap around 0-256 as the cursor is moved on the X axis. Similar to &quot;Stroke&quot;. Can be used to add paper texture by modifying opacity, etc.
 The brush size should be considerably smaller than the grid scale for best results.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>La coordinadas X en una cuadricula de pixeles de 256. Esto envolverá alrededor 0-256 mientras el cursor se mueve en el eje X. Similarmente a un &quot;Trazo&quot;. Puede ser usado para agregar textura de papel modificando la opacidad, etc.
+El tamaño del pincel deberá ser considerablemente mas pequeño que la escala de cuadricula para mejores resultados.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The Y coordinate on a 256 pixel grid. This will wrap around 0-256 as the cursor is moved on the Y axis. Similar to &quot;Stroke&quot;. Can be used to add paper texture by modifying opacity, etc.
 The brush size should be considerably smaller than the grid scale for best results.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>La coordinadas Y en una cuadricula de pixeles de 256. Esto envolverá alrededor 0-256 mientras el cursor se mueve en el eje X. Similarmente a un &quot;Trazo&quot;. Puede ser usado para agregar textura de papel modificando la opacidad, etc.
+El tamaño del pincel deberá ser considerablemente mas pequeño que la escala de cuadricula para mejores resultados.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4442,7 +4448,9 @@ The brush size should be considerably smaller than the grid scale for best resul
 Logarithmic: 0.0 is 100%, 0.69 is 200%, -1.38 is 25%
 For the Radius setting, using a value of -4.15 makes the brush size roughly constant, relative to the level of zoom.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>El nivel actual del zoom en la vista de lienzo.
+Logarítmicamente: 0.0 es 100%, 0.69 es 200%, -1.38 es 25%
+Para los ajustes de Radio, usar un valor de -4.15 hará que el tamaño del pincel sea relativamente constante, relativo al nivel del zoom.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4451,7 +4459,10 @@ For the Radius setting, using a value of -4.15 makes the brush size roughly cons
 +90 when twisted clockwise 90 degrees
 -90 when twisted counterclockwise 90 degrees</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>Rotacion de barril del stylus.
+0 es cuando no esta torcido
++90 cuando esta torcido 90 grados con las agujas del reloj
+-90 cuando esta torcido 90 grados contra las agujas del reloj</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4459,7 +4470,9 @@ For the Radius setting, using a value of -4.15 makes the brush size roughly cons
 You can even cancel out dab size increase and adjust something else to make a brush bigger.
 Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&quot;, which behave much differently.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>El radio base del pincel permite que cambies el comportamiento de un pincel mientras lo haces mas grande o pequeño.
+Incluso puedes cancelar el incremento de tamaño de toque y ajustar algo distinto para hacer el pincel mas grande.
+Toma nota de &quot;toque por radio basico&quot; y &quot;toque por radio real&quot;, que se comportan de manera muy distinta.</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -4501,19 +4514,19 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Dabs per basic radius</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Toques por radio básico</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Dabs per actual radius</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>toques por radio real</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Dabs per second</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>toques por segundo</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4549,7 +4562,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Jitter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Temblor</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4567,19 +4580,19 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Slow position tracking</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Seguimiento de posición lenta</translation>
+        <translation>Seguimiento de posición lenta</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Slow tracking per dab</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Ralentizar seguimiento por toque</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Tracking noise</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Seguimiento de ruido</translation>
+        <translation>Ruido de seguimiento</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4617,7 +4630,7 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Change color lightness (HSL)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar luminosidad de color (HSL)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4635,231 +4648,232 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <location line="+2"/>
         <source>Change color satur. (HSV)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar saturación de color. (HSV)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smudge</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Manchar</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smudge length</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Tamaño de mancha</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smudge radius</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Radio de mancha</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Eraser</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished">Borrador</translation>
+        <translation>Borrador</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Stroke threshold</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Limite de trazo</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Stroke duration</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Duracion de trazo</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Stroke hold time</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Duración de mantención de trazo</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Custom input</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Entrada personalizada</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Custom input filter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Filtro de entrada personalizado</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Elliptical dab: ratio</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Toque elíptico: proporción</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Elliptical dab: angle</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Toque elíptico: Angulo</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Direction filter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Filtro direccional</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Lock alpha</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Bloquear alfa</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Colorize</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Colorear</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Snap to pixel</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Centrar a Pixel</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Pressure gain</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Ganancia de presión</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>GridMap Scale</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Escala GridMap</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>GridMap Scale X</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Escala GridMap X</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>GridMap Scale Y</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Escala GridMap Y</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smudge length multiplier</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Multiplicador de longitud de manchado</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smudge bucket</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Cubeta de manchado</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Smudge transparency</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Transparencia de manchado</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Offset Y</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Compensar Y</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Offset X</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Compensar X</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Angular Offset: Direction</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Compensación Angular: Dirección</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Angular Offset: Ascension</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Compensación Angular: Ascenso</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Angular Offset: View</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Compensación Angular: Vista</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Angular Offset Mirrored: Direction</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Compensación Angular Invertida: Dirección</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Angular Offset Mirrored: Ascension</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Compensación Angular Invertida: Ascenso</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Angular Offset Mirrored: View</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Compensación Angular Invertida: Vista</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Angular Offsets Adjustment</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Ajuste de Compensación Angular</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Offsets Multiplier</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Multiplicador de Compensadores</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Posterize</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Posterizar</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Posterization levels</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Niveles de Posterización</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Pigment</source>
         <comment>mypaintsetting</comment>
         <extracomment>The name Pigment refers to the fact that this kind of color mixing is more similar to how colors mix in physical paint.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Pigmento</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Unknown Setting</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Ajuste Desconocido</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>0 means brush is transparent, 1 fully visible
 (also known as alpha or opacity)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>0 Significa que el pincel es transparente, 1 es completamente visible
+(También conocido como alfa o opacidad)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5017,7 +5031,10 @@ For very slow speed the opposite happens.</source>
  0.0 disable
  0.5 counterclockwise hue shift by 180 degrees</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar tono de color.
+-0.1 leve cambio de tono de color por agujas de reloj.
+ 0.0 desabilitar
+ 0.5 cambio de tono contra las agujas del reloj por 180 grados</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5026,7 +5043,10 @@ For very slow speed the opposite happens.</source>
  0.0 disable
  1.0 whiter</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar la luminosidad del color usando el modelo de color HSL.
+-1.0 mas negro
+ 0.0 deshabilitar
+ 1.0 mas blanco</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5035,7 +5055,10 @@ For very slow speed the opposite happens.</source>
  0.0 disable
  1.0 more saturated</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar saturacion de color usando el modelo de color HSL.
+-1.0 mas gris
+ 0.0 deshabilitar
+ 1.0 mas saturado</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5044,7 +5067,10 @@ For very slow speed the opposite happens.</source>
  0.0 disable
  1.0 brigher</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar el valor del color (brillo, intensidad) usando el modelo de color HSV, cambios HSV son aplicados antes de los cambios HSL.
+-1.0 mas oscuro
+ 0.0 deshabilitar
+ 1.0 mas claro</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5053,7 +5079,10 @@ For very slow speed the opposite happens.</source>
  0.0 disable
  1.0 more saturated</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Cambiar la saturacion de color usando el modelo de color HSV. Cambios HSV se aplican antes de los cambios HSL.
+ -1.0 mas gris
+ 0.0 deshabilitar
+ 1.0 mas saturado</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5062,7 +5091,10 @@ For very slow speed the opposite happens.</source>
  0.5 mix the smudge color with the brush color
  1.0 use only the smudge color</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Pintar con el color de mancha en vez de el color del pincel. El color de mancha cambiara lentamente al color con el que estas pintando.
+ 0.0 no usa el color de mancha
+ 0.5 combina el color de mancha con el color del pincel
+ 1.0 solo usa el color de mancha</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5071,7 +5103,10 @@ For very slow speed the opposite happens.</source>
 0.5 change the smudge color steadily towards the canvas color
 1.0 never change the smudge color</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Esto controla que tan rápido el color de mancha se convierte el color con el que estas pintando.
+0.0 inmediatamente actualiza el color de mancha (requiere mas ciclos de CPU por la frecuencia de chequeo de colores)
+0.5 cambia el color de mancha continuamente hacia el color del lienzo
+1.0 nunca cambia el color de mancha</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5081,7 +5116,11 @@ For very slow speed the opposite happens.</source>
 +0.7 twice the brush radius
 +1.6 five times the brush radius (slow performance)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Esto modifica el radio del circulo donde el color es elegido para manchado.
+ 0.0 usa el radio del pincel
+-0.7 la mitad del radio del pincel (rápido, pero no es intuitivo todo el tiempo)
++0.7 doble del radio del pincel
++1.6 cinco veces el radio del pincel (ralentiza el rendimiento)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5090,19 +5129,22 @@ For very slow speed the opposite happens.</source>
  1.0 standard eraser
  0.5 pixels go towards 50% transparency</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Que tanto esta herramienta se comporta como un borrador
+ 0.0 pintura normal
+ 1.0 borrador estandar
+ 0.5 pixeles van hacia 50% Transparencia</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>How much pressure is needed to start a stroke. This affects the stroke input only. MyPaint does not need a minimum pressure to start drawing.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Que tanta presión es necesaria para hacer un trazo. Esto afecta solo la entrada de trazos. MyPaint no tiene una presión mínima para comenzar a dibujar.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>How far you have to move until the stroke input reaches 1.0. This value is logarithmic (negative values will not invert the process).</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Que tanto debes moverte para que la entrada del trazo alcance 1.0. El valor es logarítmico (valores negativos no invertirán el proceso).</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5110,27 +5152,31 @@ For very slow speed the opposite happens.</source>
 2.0 means twice as long as it takes to go from 0.0 to 1.0
 9.9 or higher stands for infinite</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Esto define el tiempo la entrada del trazo se matniene en 1.0. Despues del cual se reiniciara a 0.0 y empieza a crecer nuevamente, incluso si no has terminado el trazo.
+2.0 significa el doble de tiempo que se demora ir de 0.0 a 1.0
+9.9 o mas alto significa tiempo infinito</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Set the custom input to this value. If it is slowed down, move it towards this value (see below). The idea is that you make this input depend on a mixture of pressure/speed/whatever, and then make other settings depend on this &apos;custom input&apos; instead of repeating this combination everywhere you need it.
 If you make it change &apos;by random&apos; you can generate a slow (smooth) random input.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Establece la entrada personalizada a este valor. Si se ralentiza, muévelo hacia este valor (ver abajo). La idea es que hagas que esta entrada dependa de una mezcla de presion/velocidad/lo que quieras, y luego hacer que los otros ajustes dependan de esta &apos; entrada personalizada&apos; en vez de repetir esta combinación en todos los lugares que la necesites.
+Si lo haces cambiar a &apos;al azar&apos; puedes generar una entrada lenta (suave) al azar.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>How slow the custom input actually follows the desired value (the one above). This happens at brushdab level (ignoring how much time has passed, if brushdabs do not depend on time).
 0.0 no slowdown (changes apply instantly)</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>que tan lenta la entrada personalizada sigue el valor deseado (el valor arriba). Esto sucede a nivel de toque de trazo (ignorando que tanto tiempo ha pasado, si los toques de trazo no dependen de tiempo).
+0.0 sin ralentización (cambios suceden instantáneamente)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Aspect ratio of the dabs; must be &gt;= 1.0, where 1.0 means a perfectly round dab.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Relación de aspecto de los toques; debe ser &gt;= 1.0, donde 1.0 significa un toque perfectamente circular.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5139,13 +5185,16 @@ If you make it change &apos;by random&apos; you can generate a slow (smooth) ran
  45.0 45 degrees, turned clockwise
  180.0 horizontal again</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Angulo por el cual los toques elípticos se inclinan
+ 0.0 toques horizontales
+ 45.0 45 dragos, con las agujas del reloj
+ 180.0 horizontal nuevamente</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>A low value will make the direction input adapt more quickly, a high value will make it smoother</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Un valor bajo hará que la entrada de dirección se adapte mas rápidamente, un valor alto hará que sea mas suave</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5154,13 +5203,16 @@ If you make it change &apos;by random&apos; you can generate a slow (smooth) ran
  0.5 half of the paint gets applied normally
  1.0 alpha channel fully locked</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>No modificar el canal alfa de la capa (Solo pintar donde ya hay pintura)
+ 0.0 pintura normal
+ 0.5 la mitad de la pintura se aplica normalmente
+ 1.0 canal alfa completamente bloqueado</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Colorize the target layer, setting its hue and saturation from the active brush color while retaining its value and alpha.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>Colorear la capa seleccionada, configurando el tono y saturación de el color del pincel activo y reteniendo su valor y alfa.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5313,17 +5365,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/canvasshortcutsdialog.cpp" line="+24"/>
         <source>Key Combination</source>
-        <translation type="unfinished"></translation>
+        <translation>Combinación de teclas</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mouse Button</source>
-        <translation type="unfinished"></translation>
+        <translation>Botón del ratón</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mouse Wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>Rueda del ratón</translation>
     </message>
     <message>
         <location line="+2"/>
