@@ -13,6 +13,7 @@
 #include <QFile>
 #include <QHostAddress>
 #include <QImage>
+#include <QLoggingCategory>
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QRandomGenerator>
@@ -24,9 +25,7 @@
 #include <QUuid>
 #include <utility>
 
-#ifndef NDEBUG
-#	define DEBUG_LOGIN
-#endif
+Q_LOGGING_CATEGORY(lcDpLogin, "net.drawpile.login", QtWarningMsg)
 
 namespace {
 
@@ -81,9 +80,9 @@ void LoginHandler::serverDisconnected() {}
 
 bool LoginHandler::receiveMessage(const ServerReply &msg)
 {
-#ifdef DEBUG_LOGIN
-	qInfo() << "login <--" << msg.reply;
-#endif
+	if(lcDpLogin().isDebugEnabled()) {
+		qCDebug(lcDpLogin) << "login <--" << msg.reply;
+	}
 
 	// Overall, the login process is:
 	// 1. wait for server greeting
@@ -103,8 +102,8 @@ bool LoginHandler::receiveMessage(const ServerReply &msg)
 	} else if(
 		msg.type != ServerReply::ReplyType::Login &&
 		msg.type != ServerReply::ReplyType::Result) {
-		qWarning() << "Login error: got reply type" << int(msg.type)
-				   << "when expected LOGIN, RESULT or ERROR";
+		qCWarning(lcDpLogin) << "Login error: got reply type" << int(msg.type)
+							 << "when expected LOGIN, RESULT or ERROR";
 		failLogin(tr("Invalid state"));
 
 		return true;
@@ -146,15 +145,15 @@ bool LoginHandler::receiveMessage(const ServerReply &msg)
 
 void LoginHandler::expectNothing()
 {
-	qWarning("Got login message while not expecting anything!");
+	qCWarning(lcDpLogin, "Got login message while not expecting anything!");
 	failLogin(tr("Incompatible server"));
 }
 
 void LoginHandler::expectHello(const ServerReply &msg)
 {
 	if(msg.type != ServerReply::ReplyType::Login) {
-		qWarning() << "Login error. Greeting type is not LOGIN:"
-				   << int(msg.type);
+		qCWarning(lcDpLogin)
+			<< "Login error. Greeting type is not LOGIN:" << int(msg.type);
 		failLogin(tr("Incompatible server"));
 		return;
 	}
@@ -199,7 +198,7 @@ void LoginHandler::expectHello(const ServerReply &msg)
 		} else if(flag == "LOOKUP") {
 			m_supportsLookup = true;
 		} else {
-			qWarning() << "Unknown server capability:" << flag;
+			qCWarning(lcDpLogin) << "Unknown server capability:" << flag;
 		}
 	}
 
@@ -233,8 +232,8 @@ void LoginHandler::expectHello(const ServerReply &msg)
 					if(m_loginExtAuthUrl.isValid()) {
 						m_loginMethods.append(method);
 					} else {
-						qWarning(
-							"Invalid ext-auth URL '%s': %s",
+						qCWarning(
+							lcDpLogin, "Invalid ext-auth URL '%s': %s",
 							qUtf8Printable(rawUrl),
 							qUtf8Printable(m_loginExtAuthUrl.errorString()));
 					}
@@ -278,7 +277,8 @@ void LoginHandler::expectStartTls(const ServerReply &msg)
 		startTls();
 
 	} else {
-		qWarning() << "Login error. Expected startTls, got:" << msg.reply;
+		qCWarning(lcDpLogin)
+			<< "Login error. Expected startTls, got:" << msg.reply;
 		failLogin(tr("Incompatible server"));
 	}
 }
@@ -291,7 +291,8 @@ void LoginHandler::sendSessionPassword(const QString &password)
 
 	} else {
 		// shouldn't happen...
-		qWarning("sendSessionPassword() in invalid state (%d)", m_state);
+		qCWarning(
+			lcDpLogin, "sendSessionPassword() in invalid state (%d)", m_state);
 	}
 }
 
@@ -466,12 +467,12 @@ void LoginHandler::requestExtAuth(
 				true, m_loginIntent, m_address.host(), m_address.userName());
 
 		} else if(status == "badpass") {
-			qWarning("Incorrect ext-auth password");
+			qCWarning(lcDpLogin, "Incorrect ext-auth password");
 			emit extAuthComplete(
 				false, m_loginIntent, m_address.host(), m_address.userName());
 
 		} else if(status == "outgroup") {
-			qWarning("Ext-auth error: group membership needed");
+			qCWarning(lcDpLogin, "Ext-auth error: group membership needed");
 			failLogin(tr("Group membership needed"));
 
 		} else {
@@ -524,22 +525,23 @@ void LoginHandler::expectIdentified(const ServerReply &msg)
 		m_supportsExtAuthAvatars = msg.reply["avatar"].toBool();
 
 		if(!m_extAuthUrl.isValid()) {
-			qWarning(
-				"Invalid ext-auth URL: %s",
+			qCWarning(
+				lcDpLogin, "Invalid ext-auth URL: %s",
 				qPrintable(msg.reply["extauthurl"].toString()));
 			failLogin(tr("Server misconfiguration: invalid ext-auth URL"));
 			return;
 		} else if(
 			m_extAuthUrl.scheme() != "http" &&
 			m_extAuthUrl.scheme() != "https") {
-			qWarning(
-				"Unsupported ext-auth URL: %s",
+			qCWarning(
+				lcDpLogin, "Unsupported ext-auth URL: %s",
 				qPrintable(msg.reply["extauthurl"].toString()));
 			failLogin(tr("Unsupported ext-auth URL scheme"));
 			return;
 		} else if(
 			m_loginExtAuthUrl.isValid() && m_extAuthUrl != m_loginExtAuthUrl) {
-			qWarning(
+			qCWarning(
+				lcDpLogin,
 				"Ext-auth URL mismatch, got '%s' at login, but '%s' later",
 				qUtf8Printable(m_loginExtAuthUrl.toString()),
 				qUtf8Printable(m_extAuthUrl.toString()));
@@ -556,7 +558,7 @@ void LoginHandler::expectIdentified(const ServerReply &msg)
 	}
 
 	if(state != QStringLiteral("identOk")) {
-		qWarning() << "Expected identOk state, got" << state;
+		qCWarning(lcDpLogin) << "Expected identOk state, got" << state;
 		failLogin(tr("Invalid state"));
 		return;
 	}
@@ -593,7 +595,7 @@ void LoginHandler::expectSessionDescriptionHost(const ServerReply &msg)
 		sendHostCommand();
 
 	} else {
-		qWarning() << "Expected session list, got" << msg.reply;
+		qCWarning(lcDpLogin) << "Expected session list, got" << msg.reply;
 		failLogin(tr("Incompatible server"));
 		return;
 	}
@@ -739,7 +741,7 @@ void LoginHandler::expectNoErrors(const ServerReply &msg)
 	if(msg.type == ServerReply::ReplyType::Login)
 		return;
 
-	qWarning() << "Unexpected login message:" << msg.reply;
+	qCWarning(lcDpLogin) << "Unexpected login message:" << msg.reply;
 }
 
 bool LoginHandler::expectLoginOk(const ServerReply &msg)
@@ -756,8 +758,8 @@ bool LoginHandler::expectLoginOk(const ServerReply &msg)
 		int userid = join["user"].toInt();
 
 		if(userid < 1 || userid > 254) {
-			qWarning() << "Login error. User ID" << userid
-					   << "out of supported range.";
+			qCWarning(lcDpLogin) << "Login error. User ID" << userid
+								 << "out of supported range.";
 			failLogin(tr("Incompatible server"));
 			return true;
 		}
@@ -802,8 +804,9 @@ bool LoginHandler::expectLoginOk(const ServerReply &msg)
 
 	} else {
 		// Unexpected response
-		qWarning() << "Login error. Unexpected response while waiting for OK:"
-				   << msg.reply;
+		qCWarning(lcDpLogin)
+			<< "Login error. Unexpected response while waiting for OK:"
+			<< msg.reply;
 		failLogin(tr("Incompatible server"));
 	}
 
@@ -879,21 +882,24 @@ void LoginHandler::tlsError(const QList<QSslError> &errors)
 	// Encrypt didn't exist. This should be fixed to better support actual CAs.
 	bool isIp = QHostAddress().setAddress(m_address.host());
 	bool isSelfSigned = m_server->hostCertificate().isSelfSigned();
-	qDebug() << errors.size() << "SSL error(s), self-signed" << isSelfSigned;
+	qCDebug(lcDpLogin) << errors.size() << "SSL error(s), self-signed"
+					   << isSelfSigned;
 
 	for(const QSslError &e : errors) {
 		if(e.error() == QSslError::SelfSignedCertificate) {
 			// Self signed certificates are acceptable.
-			qInfo() << "Ignoring self-signed certificate error:"
-					<< int(e.error()) << e.errorString();
+			qCInfo(lcDpLogin)
+				<< "Ignoring self-signed certificate error:" << int(e.error())
+				<< e.errorString();
 			ignore << e;
 
 		} else if(isIp && e.error() == QSslError::HostNameMismatch) {
 			// Ignore CN mismatch when using an IP address rather than a
 			// hostname
 			ignore << e;
-			qInfo() << "Ignoring error about hostname mismatch with IP address:"
-					<< int(e.error()) << e.errorString();
+			qCInfo(lcDpLogin)
+				<< "Ignoring error about hostname mismatch with IP address:"
+				<< int(e.error()) << e.errorString();
 
 		} else if(
 			e.error() == QSslError::CertificateUntrusted && isSelfSigned) {
@@ -901,13 +907,15 @@ void LoginHandler::tlsError(const QList<QSslError> &errors)
 			// error that spontaneously manifested in macOS and then way later
 			// in Windows. We ignore it on self-signed certificates.
 			ignore << e;
-			qInfo() << "Ignoring untrusted error on self-signed certificate:"
-					<< int(e.error()) << e.errorString();
+			qCInfo(lcDpLogin)
+				<< "Ignoring untrusted error on self-signed certificate:"
+				<< int(e.error()) << e.errorString();
 
 		} else {
 			fail = true;
 
-			qWarning() << "SSL error:" << int(e.error()) << e.errorString();
+			qCWarning(lcDpLogin)
+				<< "SSL error:" << int(e.error()) << e.errorString();
 			errorstr += e.errorString();
 			errorstr += "\n";
 		}
@@ -929,7 +937,7 @@ void saveCert(const QFileInfo &file, const QSslCertificate &cert)
 	if(certOut.open(QFile::WriteOnly))
 		certOut.write(cert.toPem());
 	else
-		qWarning() << "Couldn't open" << filename << "for writing!";
+		qCWarning(lcDpLogin) << "Couldn't open" << filename << "for writing!";
 }
 
 }
@@ -1012,7 +1020,7 @@ void LoginHandler::cancelLogin()
 
 void LoginHandler::handleError(const QString &code, const QString &msg)
 {
-	qWarning() << "Login error:" << code << msg;
+	qCWarning(lcDpLogin) << "Login error:" << code << msg;
 
 	QString error;
 	if(code == "notFound")
@@ -1075,7 +1083,8 @@ void LoginHandler::send(
 	ServerCommand sc{cmd, args, kwargs};
 	net::Message msg = sc.toMessage();
 	if(msg.isNull() && containsAvatar) {
-		qWarning("Removing avatar from server command and trying again");
+		qCWarning(
+			lcDpLogin, "Removing avatar from server command and trying again");
 		sc.kwargs.remove("avatar");
 		msg = sc.toMessage();
 	}
@@ -1083,9 +1092,29 @@ void LoginHandler::send(
 	if(msg.isNull()) {
 		failLogin(tr("Client failed to serialize command"));
 	} else {
-#ifdef DEBUG_LOGIN
-		qInfo() << "login -->" << cmd << args << kwargs;
-#endif
+		if(lcDpLogin().isDebugEnabled()) {
+			QJsonArray safeArgs = sc.args;
+			QJsonObject safeKwargs = sc.kwargs;
+			if(sc.cmd == QStringLiteral("ident")) {
+				if(safeArgs.size() >= 2) {
+					safeArgs[1] =
+						QStringLiteral("***account password redacted***");
+				}
+				if(safeKwargs.contains(QStringLiteral("extauth"))) {
+					safeKwargs[QStringLiteral("extauth")] =
+						QStringLiteral("***extauth token redacted***");
+				}
+			} else if(
+				sc.cmd == QStringLiteral("host") ||
+				sc.cmd == QStringLiteral("join")) {
+				if(safeKwargs.contains(QStringLiteral("password"))) {
+					safeKwargs[QStringLiteral("password")] =
+						QStringLiteral("***session password redacted***");
+				}
+			}
+			qCDebug(lcDpLogin)
+				<< "login -->" << sc.cmd << safeArgs << safeKwargs;
+		}
 		m_server->sendMessage(msg);
 	}
 }
@@ -1142,7 +1171,7 @@ QString LoginHandler::loginMethodToString(LoginMethod method)
 	case LoginMethod::ExtAuth:
 		return QStringLiteral("extauth");
 	}
-	qWarning("Unhandled login method %d", int(method));
+	qCWarning(lcDpLogin, "Unhandled login method %d", int(method));
 	return QString();
 }
 
@@ -1173,8 +1202,8 @@ QString LoginHandler::getSid()
 		QSettings::NativeFormat, QSettings::UserScope,
 		QStringLiteral("drawpile"), QStringLiteral("sid")};
 	QSettings cfg2{
-		QSettings::IniFormat, QSettings::UserScope,
-		QStringLiteral("drawpile"), QStringLiteral("system")};
+		QSettings::IniFormat, QSettings::UserScope, QStringLiteral("drawpile"),
+		QStringLiteral("system")};
 
 	bool haveSid1 = cfg1.contains(key1);
 	bool haveSid2 = cfg2.contains(key2);
