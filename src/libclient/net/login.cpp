@@ -564,6 +564,7 @@ void LoginHandler::expectIdentified(const ServerReply &msg)
 	}
 
 	emit loginOk(m_loginIntent, m_address.host(), m_address.userName());
+	m_passwordState = WAIT_FOR_JOIN_PASSWORD;
 
 	m_isGuest = msg.reply["guest"].toBool();
 	for(const QJsonValue f : msg.reply["flags"].toArray())
@@ -828,7 +829,6 @@ void LoginHandler::confirmJoinSelectedSession()
 {
 	if(m_needSessionPassword && !m_sessions->isModeratorMode()) {
 		m_state = WAIT_FOR_JOIN_PASSWORD;
-		m_passwordState = WAIT_FOR_JOIN_PASSWORD;
 		QString joinPasswordFromUrl = QUrlQuery{m_address}.queryItemValue(
 			QStringLiteral("p"), QUrl::FullyDecoded);
 		if(joinPasswordFromUrl.isEmpty()) {
@@ -1021,6 +1021,11 @@ void LoginHandler::cancelLogin()
 void LoginHandler::handleError(const QString &code, const QString &msg)
 {
 	qCWarning(lcDpLogin) << "Login error:" << code << msg;
+	if(lcDpLogin().isDebugEnabled()) {
+		qCDebug(
+			lcDpLogin, "State %d, password state %d, login intent %d",
+			int(m_state), int(m_passwordState), int(m_loginIntent));
+	}
 
 	QString error;
 	if(code == "notFound")
