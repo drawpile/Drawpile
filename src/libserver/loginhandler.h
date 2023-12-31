@@ -105,7 +105,7 @@ private:
 	void authLoginOk(
 		const QString &username, const QString &authId,
 		const QStringList &flags, const QByteArray &avatar, bool allowMod,
-		bool allowHost, bool allowGhost);
+		bool allowHost, bool allowGhost, bool allowBanExempt);
 	bool send(const net::Message &msg);
 	void sendError(
 		const QString &code, const QString &message, bool disconnect = true);

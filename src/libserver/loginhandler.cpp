@@ -407,10 +407,10 @@ void LoginHandler::handleIdentMessage(const net::ServerCommand &cmd)
 
 				authLoginOk(
 					ea["username"].toString(), extAuthId, flags, avatar,
-					m_config->getConfigBool(config::ExtAuthMod),
-					m_config->getConfigBool(config::ExtAuthHost),
+					extAuthMod, m_config->getConfigBool(config::ExtAuthHost),
 					m_config->getConfigBool(config::EnableGhosts) &&
-						m_config->getConfigBool(config::ExtAuthGhosts));
+						m_config->getConfigBool(config::ExtAuthGhosts),
+					extAuthBanExempt);
 
 			} else if(allowGuests) {
 				// No ext-auth token provided, but both guest logins and extauth
@@ -464,18 +464,46 @@ void LoginHandler::handleIdentMessage(const net::ServerCommand &cmd)
 		authLoginOk(
 			username, QStringLiteral("internal:%1").arg(userAccount.userId),
 			userAccount.flags, QByteArray(), true, true,
-			m_config->getConfigBool(config::EnableGhosts));
+			m_config->getConfigBool(config::EnableGhosts), true);
 		break;
 	}
 }
 
 void LoginHandler::authLoginOk(
 	const QString &username, const QString &authId, const QStringList &flags,
-	const QByteArray &avatar, bool allowMod, bool allowHost, bool allowGhost)
+	const QByteArray &avatar, bool allowMod, bool allowHost, bool allowGhost,
+	bool allowBanExempt)
 {
 	Q_ASSERT(!authId.isEmpty());
-	bool isMod = flags.contains(QStringLiteral("MOD")) && allowMod;
-	bool wantGhost = flags.contains(QStringLiteral("GHOST"));
+
+	bool isMod = false;
+	bool wantGhost = false;
+	bool canHost = false;
+	QStringList effectiveFlags;
+	for(const QString &flag : flags) {
+		if(!effectiveFlags.contains(flag)) {
+			bool shouldAppend;
+			if(flag == QStringLiteral("MOD")) {
+				shouldAppend = allowMod;
+				isMod = allowMod;
+			} else if(flag == QStringLiteral("GHOST")) {
+				shouldAppend = allowGhost;
+				wantGhost = true;
+			} else if(flag == QStringLiteral("HOST")) {
+				shouldAppend = allowHost;
+				canHost = allowHost;
+			} else if(flag == QStringLiteral("BANEXEMPT")) {
+				shouldAppend = allowBanExempt;
+			} else {
+				shouldAppend = true;
+			}
+
+			if(shouldAppend) {
+				effectiveFlags.append(flag);
+			}
+		}
+	}
+
 	bool isGhost = wantGhost && allowGhost;
 	if(wantGhost) {
 		if(!isGhost) {
@@ -493,12 +521,12 @@ void LoginHandler::authLoginOk(
 
 	m_client->setUsername(username);
 	m_client->setAuthId(authId);
-	m_client->setAuthFlags(flags);
+	m_client->setAuthFlags(effectiveFlags);
 
 	m_client->setModerator(isMod, isGhost);
 	if(!avatar.isEmpty())
 		m_client->setAvatar(avatar);
-	m_hostPrivilege = flags.contains("HOST") && allowHost;
+	m_hostPrivilege = canHost;
 
 	if(m_client->triggerBan(true)) {
 		m_state = State::Ignore;
@@ -509,7 +537,8 @@ void LoginHandler::authLoginOk(
 
 	send(net::ServerReply::makeResultLoginOk(
 		QStringLiteral("Authenticated login OK!"), QStringLiteral("identOk"),
-		QJsonArray::fromStringList(flags), m_client->username(), false));
+		QJsonArray::fromStringList(effectiveFlags), m_client->username(),
+		false));
 	announceServerInfo();
 }
 
