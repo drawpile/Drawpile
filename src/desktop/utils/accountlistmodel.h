@@ -53,9 +53,9 @@ public:
 
 	int getMostRecentIndex() const;
 
-	void saveAccount(
-		Type type, const QString &displayUsername, const QString &password,
-		const QString &avatarFilename, bool insecureFallback);
+	bool saveAccount(
+		Type type, const QString &displayUsername,
+		const QString &avatarFilename);
 
 	void savePassword(
 		const QString &password, const QString &keychainSecretName,
@@ -71,6 +71,9 @@ public:
 	void deleteAccountPassword(Type type, const QString &displayUsername);
 
 	void deletePassword(const QString &keychainSecretName);
+
+	QString
+	buildKeychainSecretNameFor(Type type, const QString &displayUsername);
 
 	static QString buildKeychainSecretName(
 		Type type, const QString &host, const QString &username);

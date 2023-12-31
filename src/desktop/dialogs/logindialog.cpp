@@ -73,6 +73,7 @@ struct LoginDialog::Private {
 	int nextReadPasswordJobId = 1;
 	bool wasRecentAccount = false;
 	bool logInAfterPasswordRead = true;
+	bool passwordReadFromKeychain = false;
 
 	QMetaObject::Connection loginDestructConnection;
 
@@ -219,13 +220,19 @@ struct LoginDialog::Private {
 	void saveOldLogin(
 		const QString &host, const QString &username, const QString &password)
 	{
-		desktop::settings::Settings &settings = dpApp().settings();
-		settings.setLastUsername(ui->username->text());
-		settings.setLastAvatar(avatarFilename);
-		if(!password.isEmpty()) {
-			accounts->savePassword(
-				password, buildOldKeychainSecretName(host, username),
-				settings.insecurePasswordStorage());
+		if(!passwordReadFromKeychain) {
+			desktop::settings::Settings &settings = dpApp().settings();
+			settings.setLastUsername(ui->username->text());
+			settings.setLastAvatar(avatarFilename);
+			QString keychainSecretName =
+				buildOldKeychainSecretName(host, username);
+			if(password.isEmpty()) {
+				accounts->deletePassword(keychainSecretName);
+			} else {
+				accounts->savePassword(
+					password, keychainSecretName,
+					settings.insecurePasswordStorage());
+			}
 		}
 	}
 
@@ -251,10 +258,18 @@ struct LoginDialog::Private {
 		AccountListModel::Type type, const QString &username,
 		const QString &password)
 	{
-		accounts->saveAccount(
-			type, username,
-			ui->rememberPassword->isChecked() ? password : QString(),
-			avatarFilename, dpApp().settings().insecurePasswordStorage());
+		bool saveOk = accounts->saveAccount(type, username, avatarFilename);
+		if(saveOk && !passwordReadFromKeychain) {
+			QString keychainSecretName =
+				accounts->buildKeychainSecretNameFor(type, username);
+			if(password.isEmpty()) {
+				accounts->deletePassword(keychainSecretName);
+			} else {
+				accounts->savePassword(
+					password, keychainSecretName,
+					dpApp().settings().insecurePasswordStorage());
+			}
+		}
 	}
 
 	void restoreAvatar(const QString &filename)
@@ -320,15 +335,18 @@ void LoginDialog::Private::resetMode(Mode newMode)
 		extauthurl.clear();
 		page = setupAuthPage(true, true);
 		setLoginMode(tr("Log in with server account"));
+		passwordReadFromKeychain = false;
 		break;
 	case Mode::ExtAuthLogin:
 		extauthurl = loginExtAuthUrl;
 		page = setupAuthPage(true, true);
 		setLoginMode(formatExtAuthPrompt(extauthurl));
+		passwordReadFromKeychain = false;
 		break;
 	case Mode::Identity:
 		page = setupAuthPage(true, false);
 		setLoginExplanation(QString(), false);
+		passwordReadFromKeychain = false;
 		break;
 	case Mode::Authenticate: {
 		page = setupAuthPage(false, true);
@@ -355,6 +373,7 @@ void LoginDialog::Private::resetMode(Mode newMode)
 					.toHtmlEscaped();
 		}
 		setLoginExplanation(explanation, false);
+		passwordReadFromKeychain = false;
 		break;
 	}
 	case Mode::SessionList:
@@ -1076,6 +1095,7 @@ void LoginDialog::onBadLoginPassword(
 	d->resetMode(nextMode);
 	d->ui->password->setText(QString());
 	d->ui->badPasswordLabel->show();
+	d->passwordReadFromKeychain = false;
 }
 
 void LoginDialog::onSessionChoiceNeeded(net::LoginSessionModel *sessions)
@@ -1164,6 +1184,7 @@ void LoginDialog::onPasswordReadFinished(int jobId, const QString &password)
 		if(!password.isEmpty()) {
 			d->ui->password->setText(password);
 			if(d->logInAfterPasswordRead) {
+				d->passwordReadFromKeychain = true;
 				d->okButton->click();
 			} else if(d->ui->rememberPassword->isEnabled()) {
 				d->ui->rememberPassword->setChecked(true);

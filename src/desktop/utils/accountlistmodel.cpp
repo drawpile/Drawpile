@@ -120,13 +120,12 @@ int AccountListModel::getMostRecentIndex() const
 	}
 }
 
-void AccountListModel::saveAccount(
-	Type type, const QString &displayUsername, const QString &password,
-	const QString &avatarFilename, bool insecureFallback)
+bool AccountListModel::saveAccount(
+	Type type, const QString &displayUsername, const QString &avatarFilename)
 {
 	if(displayUsername.isEmpty()) {
 		qWarning("Attempt to save account with empty username");
-		return;
+		return false;
 	}
 
 	QString host;
@@ -142,7 +141,7 @@ void AccountListModel::saveAccount(
 		qWarning(
 			"Attempt to save account for '%s' on uninitialized type %d",
 			qUtf8Printable(displayUsername), int(type));
-		return;
+		return false;
 	}
 
 	QString username = normalizeUsername(displayUsername);
@@ -162,16 +161,10 @@ void AccountListModel::saveAccount(
 		   {int(type), host, displayUsername.toCaseFolded(), displayUsername,
 			avatarFilename.isNull() ? QStringLiteral("") : avatarFilename,
 			lastUsed.toString(Qt::ISODate)})) {
-		return;
+		return false;
 	}
 
-	if(password.isEmpty()) {
-		deletePassword(buildKeychainSecretName(type, host, username));
-	} else {
-		savePassword(
-			password, buildKeychainSecretName(type, host, username),
-			insecureFallback);
-	}
+	return true;
 }
 
 void AccountListModel::savePassword(
@@ -312,6 +305,22 @@ void AccountListModel::deletePassword(const QString &keychainSecretName)
 	deleteJob->start();
 #endif
 	deletePasswordFallback(keychainSecretName);
+}
+
+QString AccountListModel::buildKeychainSecretNameFor(
+	Type type, const QString &displayUsername)
+{
+	QString host;
+	switch(type) {
+	case Type::Auth:
+		host = m_authHost;
+		break;
+	case Type::ExtAuth:
+		host = m_extAuthHost;
+		break;
+	}
+	return buildKeychainSecretName(
+		type, host, normalizeUsername(displayUsername));
 }
 
 QString AccountListModel::buildKeychainSecretName(
