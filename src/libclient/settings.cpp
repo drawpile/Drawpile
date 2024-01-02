@@ -150,10 +150,13 @@ Settings::~Settings()
 static void cacheGroups(QSettings &settings, QSet<QString> &groupKeys, const QString &prefix = QString())
 {
 	for (const auto &group : settings.childGroups()) {
-		groupKeys.insert(prefix + group);
-		settings.beginGroup(group);
-		cacheGroups(settings, groupKeys, prefix + group + '/');
-		settings.endGroup();
+		QString key = prefix + group;
+		if(!groupKeys.contains(key)) {
+			groupKeys.insert(key);
+			settings.beginGroup(group);
+			cacheGroups(settings, groupKeys, key + '/');
+			settings.endGroup();
+		}
 	}
 }
 
