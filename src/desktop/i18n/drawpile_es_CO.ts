@@ -7724,7 +7724,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+7"/>
         <source>Kinetic scrolling:</source>
-        <translation type="unfinished"></translation>
+        <translation>Desplazamiento Kinetico:</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -7739,7 +7739,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+12"/>
         <source>Changes to kinetic scrolling apply after you restart Drawpile.</source>
-        <translation type="unfinished"></translation>
+        <translation>los cambios a desplazamiento kinetico se aplicaran después de reiniciar Drawpile.</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -7772,12 +7772,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/browse.cpp" line="+62"/>
         <source>You haven&apos;t added any servers yet. You can find some at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>No has agregado ningún servidor. Puedes encontrar algunos en &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>To add the public Drawpile server, &lt;a href=&quot;#&quot;&gt;click here&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Para agregar el servidor publico de Drawpile, &lt;a href=&quot;#&quot;&gt;Haz click aquí&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -7792,7 +7792,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Show sessions that don&apos;t let new users join</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar sesiones que no permitan acceder a nuevos usuarios</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -7802,7 +7802,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Show sessions that require a password to join</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar sesiones que requieran contraseña para acceder</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8620,7 +8620,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+17"/>
         <source>Wrap</source>
-        <translation type="unfinished"></translation>
+        <translation>Envolver</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -8630,17 +8630,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+109"/>
         <source>-%1</source>
-        <translation type="unfinished"></translation>
+        <translation>-%1</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>+%1</source>
-        <translation type="unfinished"></translation>
+        <translation>+%1</translation>
     </message>
     <message>
         <location line="+42"/>
         <source>Opacity: %1%</source>
-        <translation type="unfinished"></translation>
+        <translation>Opacidad: %1%</translation>
     </message>
 </context>
 <context>
@@ -8648,12 +8648,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/timeline.cpp" line="+18"/>
         <source>Timeline</source>
-        <translation type="unfinished"></translation>
+        <translation>Linea de tiempo</translation>
     </message>
     <message>
         <location line="+181"/>
         <source> FPS</source>
-        <translation type="unfinished"></translation>
+        <translation> FPS</translation>
     </message>
 </context>
 <context>
@@ -8679,7 +8679,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/toolsettingsdock.cpp" line="+13"/>
         <source>Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Herramienta</translation>
     </message>
 </context>
 <context>
@@ -8687,7 +8687,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../scene/canvasscene.cpp" line="+230"/>
         <source>Restoring canvas…</source>
-        <translation type="unfinished"></translation>
+        <translation>Restaurando Lienzo…</translation>
     </message>
 </context>
 <context>
@@ -8695,17 +8695,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../tabletinput.cpp" line="+186"/>
         <source>Qt tablet input</source>
-        <translation type="unfinished"></translation>
+        <translation>Entrada de tableta QT</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>KisTablet Windows Ink input</source>
-        <translation type="unfinished"></translation>
+        <translation>Entrada Windows Ink de KisTablet</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>KisTablet Wintab input</source>
-        <translation type="unfinished"></translation>
+        <translation>Entrada Wintab de KisTablet</translation>
     </message>
     <message>
         <location line="+2"/>
