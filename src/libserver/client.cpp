@@ -96,18 +96,16 @@ private:
 class ClientWebSocket final : public ClientSocket {
 	COMPAT_DISABLE_COPY_MOVE(ClientWebSocket)
 public:
-	ClientWebSocket(QWebSocket *webSocket)
+	ClientWebSocket(QWebSocket *webSocket, const QHostAddress &ip)
 		: m_webSocket(webSocket)
+		, m_ip(ip)
 	{
 		Q_ASSERT(webSocket);
 	}
 
 	virtual ~ClientWebSocket() override = default;
 
-	virtual QHostAddress peerAddress() const override
-	{
-		return m_webSocket->peerAddress();
-	}
+	virtual QHostAddress peerAddress() const override { return m_ip; }
 
 	virtual QString errorString() const override
 	{
@@ -124,6 +122,7 @@ public:
 
 private:
 	QWebSocket *m_webSocket;
+	QHostAddress m_ip;
 };
 #endif
 
@@ -192,10 +191,10 @@ Client::Client(
 
 #ifdef HAVE_WEBSOCKETS
 Client::Client(
-	QWebSocket *webSocket, ServerLog *logger, bool decodeOpaque,
-	QObject *parent)
+	QWebSocket *webSocket, const QHostAddress &ip, ServerLog *logger,
+	bool decodeOpaque, QObject *parent)
 	: QObject(parent)
-	, d(new Private(new ClientWebSocket(webSocket), logger))
+	, d(new Private(new ClientWebSocket(webSocket, ip), logger))
 {
 	d->msgqueue = new net::WebSocketMessageQueue(webSocket, decodeOpaque, this);
 	webSocket->setParent(this);

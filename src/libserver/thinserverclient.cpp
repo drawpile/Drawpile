@@ -15,8 +15,9 @@ ThinServerClient::ThinServerClient(
 
 #ifdef HAVE_WEBSOCKETS
 ThinServerClient::ThinServerClient(
-	QWebSocket *socket, ServerLog *logger, QObject *parent)
-	: Client(socket, logger, false, parent)
+	QWebSocket *socket, const QHostAddress &ip, ServerLog *logger,
+	QObject *parent)
+	: Client(socket, ip, logger, false, parent)
 	, m_historyPosition(-1)
 {
 	connectSendNextHistoryBatch();

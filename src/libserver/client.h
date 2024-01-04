@@ -300,8 +300,8 @@ protected:
 		QObject *parent);
 #ifdef HAVE_WEBSOCKETS
 	Client(
-		QWebSocket *webSocket, ServerLog *logger, bool decodeOpaque,
-		QObject *parent);
+		QWebSocket *webSocket, const QHostAddress &ip, ServerLog *logger,
+		bool decodeOpaque, QObject *parent);
 #endif
 	net::MessageQueue *messageQueue();
 

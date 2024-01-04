@@ -4,6 +4,8 @@
 #include "libserver/client.h"
 #include "libserver/serverconfig.h"
 
+class QHostAddress;
+
 namespace server {
 
 class ThinServerClient final : public Client {
@@ -13,7 +15,8 @@ public:
 		QTcpSocket *tcpSocket, ServerLog *logger, QObject *parent = nullptr);
 #ifdef HAVE_WEBSOCKETS
 	ThinServerClient(
-		QWebSocket *webSocket, ServerLog *logger, QObject *parent = nullptr);
+		QWebSocket *webSocket, const QHostAddress &ip, ServerLog *logger,
+		QObject *parent = nullptr);
 #endif
 	~ThinServerClient() override;
 
