@@ -8163,12 +8163,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+5"/>
         <source>If you have trouble, take a look at the help pages linked on the right. If they don&apos;t answer your question, you can join the Discord server and ask, there&apos;s usually folks around to help!</source>
-        <translation type="unfinished"></translation>
+        <translation>Si tienes problemas, hecha un vistaso a las paginas de ayuda enlazadas a la derecha. Si ellas no responden a tus preguntas, puedes unirte al servidor de Discord y hacer tu pregunta, usualmente l</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Next time, you&apos;ll see news and updates on this page.</source>
-        <translation type="unfinished"></translation>
+        <translation>La proxima vez, veras noticias y actualizaciones en esta pagina.</translation>
     </message>
 </context>
 <context>
@@ -8578,7 +8578,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Really delete the layer &apos;%1&apos;?</source>
-        <translation type="unfinished"></translation>
+        <translation>¿Realmente borrar la capa &apos;%1&apos;?</translation>
     </message>
     <message>
         <location line="-185"/>
