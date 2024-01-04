@@ -116,6 +116,7 @@ void Input::initTablet(
 			{tr("Draw"), 1},
 			{tr("Pan canvas"), 2},
 		});
+	oneTouch->button(0)->setChecked(true);
 	settings.bindOneFingerDraw(oneTouch->button(1));
 	settings.bindOneFingerScroll(oneTouch->button(2));
 	settings.bindTouchGestures(oneTouch->button(1), &QWidget::setDisabled);
