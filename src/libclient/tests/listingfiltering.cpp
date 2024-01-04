@@ -94,6 +94,7 @@ private:
 			QDateTime(),
 			254,
 			false,
+			-1,
 		};
 	}
 
@@ -107,6 +108,7 @@ private:
 			QString(),
 			false,
 			0,
+			-1,
 			password,
 			false,
 			false,

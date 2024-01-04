@@ -728,6 +728,7 @@ LoginSession LoginHandler::updateSession(const QJsonObject &js)
 		incompatibleSeries,
 		protoVer.isPastCompatible(),
 		js["userCount"].toInt(),
+		js["activeDrawingUserCount"].toInt(-1),
 		js["hasPassword"].toBool(),
 		js["persistent"].toBool(),
 		js["closed"].toBool(),

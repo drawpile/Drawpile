@@ -61,6 +61,7 @@ SETTING(curvesPresetsConverted    , CurvesPresetsConverted    , "curves/inputpre
 SETTING(doubleTapAltToFocusCanvas , DoubleTapAltToFocusCanvas , "settings/doubletapalttofocuscanvas"    , true)
 SETTING(filterClosed              , FilterClosed              , "history/filterclosed"                  , false)
 SETTING(filterDuplicates          , FilterDuplicates          , "history/filterduplicates"              , false)
+SETTING(filterInactive            , FilterInactive            , "history/filterinactive"                , true)
 SETTING(filterLocked              , FilterLocked              , "history/filterlocked"                  , false)
 SETTING(filterNsfm                , FilterNsfm                , "history/filternsfw"                    , false)
 SETTING(flipbookWindow            , FlipbookWindow            , "flipbook/window"                       , QRect())

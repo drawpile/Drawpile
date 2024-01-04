@@ -45,6 +45,7 @@ struct Session {
 	QDateTime started;
 	int maxUsers;
 	bool closed;
+	int activeDrawingUsers;
 };
 
 struct Announcement {

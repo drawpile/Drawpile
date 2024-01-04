@@ -20,6 +20,7 @@ struct LoginSession {
 	bool compatibilityMode;
 
 	int userCount;
+	int activeDrawingUserCount;
 
 	bool needPassword;
 	bool persistent;
@@ -59,6 +60,7 @@ public:
 		JoinableRole,              // Is this session joinable
 		NsfmRole,                  // Is this session tagged as Not Suitable For Minors
 		CompatibilityModeRole,     // Is this a Drawpile 2.1.x session
+		InactiveRole,              // Does this session have zero active users
 	};
 
 	enum Column : int {
@@ -67,6 +69,7 @@ public:
 		ColumnTitle,
 		ColumnFounder,
 		ColumnUsers,
+		ColumnActive,
 		ColumnCount,
 	};
 

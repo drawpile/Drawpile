@@ -171,6 +171,9 @@ public:
 	//! Get the number of connected clients
 	int userCount() const { return m_clients.size(); }
 
+	//! Get the number of clients that were actively drawing in the given time.
+	int activeDrawingUserCount(qint64 ms) const;
+
 	//! Get the of clients currently in this session
 	const QVector<Client *> &clients() const { return m_clients; }
 
@@ -405,6 +408,9 @@ protected:
 	net::MessageList serverSideStateMessages() const;
 
 private:
+	// If someone sent a drawing command in the last 5 minutes, they are active.
+	static constexpr qint64 ACTIVE_THRESHOLD_MS = 5 * 60 * 1000;
+
 	void addClientMessage(const Client &client, const net::Message &msg);
 
 	/**

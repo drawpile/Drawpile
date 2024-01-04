@@ -141,6 +141,7 @@ struct Client::Private {
 	QStringList flags;
 
 	qint64 lastActive = 0;
+	qint64 lastActiveDrawing = 0;
 
 	uint8_t id = 0;
 	bool isOperator = false;
@@ -235,6 +236,9 @@ QJsonObject Client::description(bool includeSession) const
 	u["s"] = sid();
 	u["lastActive"] = QDateTime::fromMSecsSinceEpoch(d->lastActive, Qt::UTC)
 						  .toString(Qt::ISODate);
+	u["lastActiveDrawing"] =
+		QDateTime::fromMSecsSinceEpoch(d->lastActiveDrawing, Qt::UTC)
+			.toString(Qt::ISODate);
 	u["auth"] = isAuthenticated();
 	u["op"] = isOperator();
 	u["muted"] = isMuted();
@@ -606,6 +610,16 @@ void Client::setKeepAliveTimeout(int timeout)
 	d->msgqueue->setKeepAliveTimeout(timeout);
 }
 
+qint64 Client::lastActive() const
+{
+	return d->lastActive;
+}
+
+qint64 Client::lastActiveDrawing() const
+{
+	return d->lastActiveDrawing;
+}
+
 QHostAddress Client::peerAddress() const
 {
 	return d->socket->peerAddress();
@@ -643,6 +657,9 @@ void Client::receiveMessages()
 	while(d->msgqueue->isPending()) {
 		net::Message msg = d->msgqueue->shiftPending();
 		d->lastActive = QDateTime::currentMSecsSinceEpoch();
+		if(msg.type() >= DP_MESSAGE_TYPE_RANGE_START_COMMAND) {
+			d->lastActiveDrawing = d->lastActive;
+		}
 
 		if(d->session.isNull()) {
 			// No session? We must be in the login phase

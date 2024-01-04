@@ -56,6 +56,14 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 			return ls.founder;
 		case ColumnUsers:
 			return ls.userCount;
+		case ColumnActive: {
+			int n = ls.activeDrawingUserCount;
+			if(n < 0) {
+				return QVariant();
+			} else {
+				return n;
+			}
+		}
 		default:
 			return QVariant{};
 		}
@@ -110,6 +118,22 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 			}
 		case ColumnTitle:
 			return isNsfm(ls) ? tr("Not suitable for minors (NSFM)") : QVariant{};
+		case ColumnActive: {
+			int n = ls.activeDrawingUserCount;
+			if(role == Qt::ToolTipRole) {
+				if(n < 0) {
+					return tr("Unknown number of actively drawing users");
+				} else {
+					return tr("%n actively drawing user(s)", nullptr, n);
+				}
+			} else {
+				if(n < 0) {
+					return QVariant();
+				} else {
+					return QString::number(n);
+				}
+			}
+		}
 		default:
 			return QVariant{};
 		}
@@ -132,6 +156,7 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 		case JoinableRole: return (!ls.isClosed() || m_moderatorMode) && ls.incompatibleSeries.isEmpty();
 		case NsfmRole: return isNsfm(ls);
 		case CompatibilityModeRole: return ls.compatibilityMode;
+		case InactiveRole: return ls.activeDrawingUserCount == 0;
 		default: return QVariant{};
 		}
 	}
@@ -159,6 +184,7 @@ QVariant LoginSessionModel::headerData(int section, Qt::Orientation orientation,
 	case ColumnTitle: return tr("Title");
 	case ColumnFounder: return tr("Started by");
 	case ColumnUsers: return tr("Users");
+	case ColumnActive: return tr("Active");
 	default: return QVariant{};
 	}
 }

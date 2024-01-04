@@ -386,6 +386,18 @@ void Session::removeBan(int entryId, const QString &removedBy)
 	}
 }
 
+int Session::activeDrawingUserCount(qint64 ms) const
+{
+	qint64 now = QDateTime::currentMSecsSinceEpoch();
+	int count = 0;
+	for(const Client *c : m_clients) {
+		if(now - c->lastActiveDrawing() <= ms) {
+			++count;
+		}
+	}
+	return count;
+}
+
 bool Session::isClosed() const
 {
 	return m_closed || userCount() >= m_history->maxUsers() ||
@@ -1274,6 +1286,7 @@ sessionlisting::Session Session::getSessionAnnouncement() const
 		m_history->startTime(),
 		m_history->maxUsers(),
 		m_closed,
+		activeDrawingUserCount(ACTIVE_THRESHOLD_MS),
 	};
 }
 
@@ -1406,6 +1419,7 @@ QJsonObject Session::getDescription(bool full) const
 		{"alias", idAlias()},
 		{"protocol", m_history->protocolVersion().asString()},
 		{"userCount", userCount()},
+		{"activeDrawingUserCount", activeDrawingUserCount(ACTIVE_THRESHOLD_MS)},
 		{"maxUserCount", m_history->maxUsers()},
 		{"founder", m_history->founderName()},
 		{"title", m_history->title()},

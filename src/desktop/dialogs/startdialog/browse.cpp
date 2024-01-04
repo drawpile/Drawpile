@@ -101,6 +101,11 @@ Browse::Browse(QWidget *parent)
 		m_nsfmBox->setEnabled(false);
 	}
 
+	m_inactiveBox = new QCheckBox{tr("Inactive")};
+	m_inactiveBox->setToolTip(
+		tr("Show sessions that have zero actively drawing users"));
+	filterLayout->addWidget(m_inactiveBox);
+
 	m_duplicatesBox = new QCheckBox{tr("Duplicates")};
 	m_duplicatesBox->setToolTip(
 		tr("Show sessions that are listed on multiple servers"));
@@ -196,11 +201,13 @@ Browse::Browse(QWidget *parent)
 	settings.bindFilterClosed(m_closedBox);
 	settings.bindFilterLocked(m_passwordBox);
 	settings.bindFilterNsfm(m_nsfmBox);
+	settings.bindFilterInactive(m_inactiveBox);
 	settings.bindFilterDuplicates(m_duplicatesBox);
 
 	m_filteredSessions->setShowClosed(m_closedBox->isChecked());
 	m_filteredSessions->setShowPassworded(m_passwordBox->isChecked());
 	m_filteredSessions->setShowNsfw(m_nsfmBox->isChecked());
+	m_filteredSessions->setShowInactive(m_inactiveBox->isChecked());
 	m_filteredSessions->setShowDuplicates(m_duplicatesBox->isChecked());
 
 	connect(
@@ -215,6 +222,9 @@ Browse::Browse(QWidget *parent)
 	connect(
 		m_closedBox, &QAbstractButton::toggled, m_filteredSessions,
 		&SessionFilterProxyModel::setShowClosed);
+	connect(
+		m_inactiveBox, &QAbstractButton::toggled, m_filteredSessions,
+		&SessionFilterProxyModel::setShowInactive);
 	connect(
 		m_duplicatesBox, &QAbstractButton::toggled, m_filteredSessions,
 		&SessionFilterProxyModel::setShowDuplicates);

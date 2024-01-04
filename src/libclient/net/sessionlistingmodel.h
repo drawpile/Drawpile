@@ -22,6 +22,7 @@ public:
 		Message = Title,
 		Server,
 		UserCount,
+		ActiveCount,
 		Owner,
 		Uptime,
 		Version,
@@ -39,6 +40,7 @@ public:
 		TitleRole,
 		ServerRole,
 		OwnerRole,
+		IsInactiveRole,
 	};
 
 	SessionListingModel(QObject *parent=nullptr);

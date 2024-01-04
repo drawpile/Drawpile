@@ -28,6 +28,7 @@ public slots:
 	void setShowNsfw(bool show);
 	void setShowPassworded(bool show);
 	void setShowClosed(bool show);
+	void setShowInactive(bool show);
 	void setShowDuplicates(bool show);
 
 protected:
@@ -40,6 +41,7 @@ private:
 	bool m_showPassworded;
 	bool m_showNsfw;
 	bool m_showClosed;
+	bool m_showInactive;
 	bool m_showDuplicates;
 };
 

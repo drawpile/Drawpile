@@ -179,6 +179,22 @@ QVariant SessionListingModel::data(const QModelIndex &index, int role) const
 				} else {
 					return QString::number(session.users);
 				}
+			case ActiveCount: {
+				int n = session.activeDrawingUsers;
+				if(role == Qt::ToolTipRole) {
+					if(n < 0) {
+						return tr("Unknown number of actively drawing users");
+					} else {
+						return tr("%n actively drawing user(s)", nullptr, n);
+					}
+				} else {
+					if(n < 0) {
+						return QVariant();
+					} else {
+						return QString::number(n);
+					}
+				}
+			}
 			case Owner:
 				return role == Qt::DisplayRole ? squashWhitespace(session.owner) : session.owner;
 			case Uptime:
@@ -231,6 +247,7 @@ QVariant SessionListingModel::data(const QModelIndex &index, int role) const
 			case Title: return session.title;
 			case Server: return session.host;
 			case UserCount: return session.users;
+			case ActiveCount: return session.activeDrawingUsers;
 			case Owner: return session.owner;
 			case Uptime: return session.started;
 			case Version: return session.protocol.asInteger();
@@ -246,6 +263,7 @@ QVariant SessionListingModel::data(const QModelIndex &index, int role) const
 		case TitleRole: return session.title;
 		case ServerRole: return session.host;
 		case OwnerRole: return session.owner;
+		case IsInactiveRole: return session.activeDrawingUsers == 0;
 		default: break;
 		}
 	}
@@ -268,6 +286,7 @@ QVariant SessionListingModel::headerData(int section, Qt::Orientation orientatio
 	case Title: return tr("Title");
 	case Server: return tr("Server");
 	case UserCount: return tr("Users");
+	case ActiveCount: return tr("Active");
 	case Owner: return tr("Owner");
 	case Uptime: return tr("Age");
 	case Version:

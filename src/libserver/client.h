@@ -162,6 +162,11 @@ public:
 	 */
 	qint64 lastActive() const;
 
+	/**
+	 * Same as lastActive, but only for actual drawing commands.
+	 */
+	qint64 lastActiveDrawing() const;
+
 	enum class DisconnectionReason {
 		Kick,	  // kicked by an operator
 		Error,	  // kicked due to some server or protocol error

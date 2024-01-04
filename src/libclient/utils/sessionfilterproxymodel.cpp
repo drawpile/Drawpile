@@ -9,6 +9,7 @@ SessionFilterProxyModel::SessionFilterProxyModel(QObject *parent)
 	, m_showPassworded{true}
 	, m_showNsfw{true}
 	, m_showClosed{true}
+	, m_showInactive{true}
 	, m_showDuplicates{true}
 {
 }
@@ -44,6 +45,14 @@ void SessionFilterProxyModel::setShowClosed(bool show)
 	}
 }
 
+void SessionFilterProxyModel::setShowInactive(bool show)
+{
+	if(m_showInactive != show) {
+		m_showInactive = show;
+		invalidateFilter();
+	}
+}
+
 void SessionFilterProxyModel::setShowDuplicates(bool show)
 {
 	if(m_showDuplicates != show) {
@@ -55,7 +64,7 @@ void SessionFilterProxyModel::setShowDuplicates(bool show)
 bool SessionFilterProxyModel::filterAcceptsRow(
 	int sourceRow, const QModelIndex &sourceParent) const
 {
-	int nsfwRole, pwRole, closedRole;
+	int nsfwRole, pwRole, closedRole, inactiveRole;
 	if(sourceModel()->inherits(
 		   SessionListingModel::staticMetaObject.className())) {
 		// Always show the top level items (listing servers)
@@ -65,11 +74,13 @@ bool SessionFilterProxyModel::filterAcceptsRow(
 		nsfwRole = SessionListingModel::IsNsfwRole;
 		pwRole = SessionListingModel::IsPasswordedRole;
 		closedRole = SessionListingModel::IsClosedRole;
+		inactiveRole = SessionListingModel::IsInactiveRole;
 	} else if(sourceModel()->inherits(
 				  net::LoginSessionModel::staticMetaObject.className())) {
 		nsfwRole = net::LoginSessionModel::NsfmRole;
 		pwRole = net::LoginSessionModel::NeedPasswordRole;
 		closedRole = net::LoginSessionModel::ClosedRole;
+		inactiveRole = net::LoginSessionModel::InactiveRole;
 	} else {
 		qWarning("Unknown session filter source model");
 		return QSortFilterProxyModel::filterAcceptsRow(sourceRow, sourceParent);
@@ -86,6 +97,10 @@ bool SessionFilterProxyModel::filterAcceptsRow(
 	}
 
 	if(!m_showClosed && index.data(closedRole).toBool()) {
+		return false;
+	}
+
+	if(!m_showInactive && index.data(inactiveRole).toBool()) {
 		return false;
 	}
 

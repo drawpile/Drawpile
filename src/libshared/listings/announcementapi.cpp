@@ -273,6 +273,7 @@ AnnouncementApiResponse *getSessionList(const QUrl &apiUrl)
 				started,
 				obj["maxusers"].toInt(),
 				obj["closed"].toBool(),
+				obj["activedrawingusers"].toInt(-1),
 			};
 		}
 
@@ -297,6 +298,7 @@ AnnouncementApiResponse *announceSession(const QUrl &apiUrl, const Session &sess
 	o["protocol"] = session.protocol.asString();
 	o["title"] = session.title;
 	o["users"] = session.users;
+	o["activedrawingusers"] = session.activeDrawingUsers;
 	o["usernames"] = QJsonArray::fromStringList(session.usernames);
 	o["password"] = session.password;
 	o["owner"] = session.owner;
@@ -514,6 +516,7 @@ AnnouncementApiResponse *queryRoomcode(const QUrl &apiUrl, const QString &roomco
 			QDateTime(),
 			0,
 			false,
+			-1,
 		};
 		res->setResult(QVariant::fromValue(session));
 	});
