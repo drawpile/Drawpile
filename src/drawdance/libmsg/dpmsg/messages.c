@@ -612,7 +612,7 @@ DP_Message *DP_message_deserialize_body(int type, unsigned int context_id,
                                         const unsigned char *buf, size_t length,
                                         bool decode_opaque)
 {
-    if (type < 64 || decode_opaque) {
+    if (type < DP_MESSAGE_TYPE_RANGE_START_CLIENT || decode_opaque) {
         switch (type) {
         case DP_MSG_SERVER_COMMAND:
             return DP_msg_server_command_deserialize(context_id, buf, length);
