@@ -25,6 +25,25 @@ using libclient::settings::SettingMeta;
 using libclient::settings::findKey;
 namespace any = libclient::settings::any;
 
+namespace debounceDelayMs {
+	int bounded(const QVariant &value)
+	{
+		bool ok;
+		int i = value.toInt(&ok);
+		return ok ? qBound(20, i, 1000) : DEBOUNCE_DELAY_MS_DEFAULT;
+	}
+
+	QVariant get(const SettingMeta &meta, QSettings &settings)
+	{
+		return bounded(any::get(meta, settings));
+	}
+
+	void set(const SettingMeta &meta, QSettings &settings, QVariant value)
+	{
+		any::set(meta, settings, bounded(value));
+	}
+}
+
 namespace onionSkinsFrames {
 	QVariant get(const SettingMeta &meta, QSettings &settings)
 	{

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/docks/timeline.h"
 #include "desktop/docks/titlewidget.h"
+#include "desktop/main.h"
 #include "desktop/widgets/timelinewidget.h"
 #include "libclient/canvas/acl.h"
 #include "libclient/canvas/canvasmodel.h"
@@ -19,7 +20,7 @@ Timeline::Timeline(QWidget *parent)
 	, m_widget{new widgets::TimelineWidget{this}}
 	, m_frameSpinner{nullptr}
 	, m_framerateSpinner{nullptr}
-	, m_framerateDebounce{DEBOUNCE_DELAY_MS}
+	, m_framerateDebounce{dpApp().settings().debounceDelayMs()}
 	, m_featureAccessEnabled{true}
 	, m_locked{false}
 {

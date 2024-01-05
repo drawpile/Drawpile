@@ -22,6 +22,7 @@ Unreleased Version 2.2.0-pre
  * Server Fix: Prevent users from being assigned permission flags they're denied by the server configuration, which could lead to a weird superposition of being flagged as a moderator, but not actually having moderator permissions. Thanks Bluestrings for reporting.
  * Fix: Don't act like the user entered incorrect account credentials if a session unexpectedly requires a password. This only happened with either amazingly bad timing or in the superposition described above. Thanks Bluestrings for reporting.
  * Fix: Don't leave one-finger touch setting blank when "do nothing" is selected. Thanks BornIncompetence for reporting.
+ * Fix: Shorten and normalize debounce delay to be 250 milliseconds for the layer opacity/blend mode, onion skins and timeline controls, rather than being a bunch of different values. Thanks robotto for reporting.
 
 2023-12-08 Version 2.2.0-beta.11
  * Server Fix: No longer show "cannot look up one session and then join another" when joining a session with an ID alias. Thanks Kink and Fabian for finding this.

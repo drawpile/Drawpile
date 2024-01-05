@@ -47,7 +47,7 @@ LayerList::LayerList(QWidget *parent)
 {
 	m_debounceTimer = new QTimer{this};
 	m_debounceTimer->setSingleShot(true);
-	m_debounceTimer->setInterval(500);
+	m_debounceTimer->setInterval(dpApp().settings().debounceDelayMs());
 	connect(m_debounceTimer, &QTimer::timeout, this, &LayerList::triggerUpdate);
 
 	auto *titlebar = new TitleWidget(this);

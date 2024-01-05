@@ -28,7 +28,6 @@ namespace {
 
 constexpr int FRAME_COUNT_MIN = 1;
 constexpr int FRAME_COUNT_MAX = 30;
-constexpr int DEBOUNCE_DELAY_MS = 500;
 
 class EqualizerSlider final : public QSlider {
 public:
@@ -295,7 +294,7 @@ void OnionSkinsDock::onSliderValueChange(int frameNumber, int value)
 	if(d->debounceTimerId != 0) {
 		killTimer(d->debounceTimerId);
 	}
-	d->debounceTimerId = startTimer(DEBOUNCE_DELAY_MS);
+	d->debounceTimerId = startTimer(settings.debounceDelayMs());
 	showSliderValue(value);
 }
 

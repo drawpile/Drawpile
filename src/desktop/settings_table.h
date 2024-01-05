@@ -2,6 +2,8 @@
 
 #define CANVAS_VIEW_BACKGROUND_COLOR_DEFAULT QColor(100, 100, 100)
 
+#define DEBOUNCE_DELAY_MS_DEFAULT 250
+
 #ifndef KINETIC_SCROLL_GESTURE_DEFAULT
 #	ifdef Q_OS_ANDROID
 #		define KINETIC_SCROLL_GESTURE_DEFAULT KineticScrollGesture::LeftClick
@@ -51,6 +53,8 @@ SETTING(colorWheelShape           , ColorWheelShape           , "settings/colorw
 SETTING(colorWheelSpace           , ColorWheelSpace           , "settings/colorwheel/space"             , color_widgets::ColorWheel::ColorSpaceEnum::ColorHSV)
 SETTING(compactChat               , CompactChat               , "history/compactchat"                   , false)
 SETTING(confirmLayerDelete        , ConfirmLayerDelete        , "settings/confirmlayerdelete"           , false)
+SETTING_GETSET(debounceDelayMs    , DebounceDelayMs           , "settings/debouncedelayms"              , DEBOUNCE_DELAY_MS_DEFAULT
+	, &debounceDelayMs::get, &debounceDelayMs::set)
 SETTING(parentalControlsHideLocked, ParentalControlsHideLocked, "pc/hidelocked"                         , false)
 SETTING(curvesPresets             , CurvesPresets             , "curves/presets"                        , QVector<QVariantMap>())
 SETTING(curvesPresetsConverted    , CurvesPresetsConverted    , "curves/inputpresetsconverted"          , false)

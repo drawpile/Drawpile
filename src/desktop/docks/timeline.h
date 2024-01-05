@@ -61,8 +61,6 @@ private slots:
 	void setLocked(bool locked);
 
 private:
-	static constexpr int DEBOUNCE_DELAY_MS = 500;
-
 	void setUpTitleWidget(
 		const widgets::TimelineWidget::Actions &actions,
 		QAction *layerViewNormal, QAction *layerViewCurrentFrame,
