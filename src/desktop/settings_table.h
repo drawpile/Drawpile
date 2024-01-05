@@ -72,7 +72,7 @@ SETTING(ignoreCarrierGradeNat     , IgnoreCarrierGradeNat     , "history/cgnaler
 SETTING(inputPresets              , InputPresets              , "inputpresets"                          , QVector<QVariantMap>())
 SETTING(insecurePasswordStorage   , InsecurePasswordStorage   , "settings/insecurepasswordstorage"      , false)
 SETTING(interfaceMode             , InterfaceMode             , "settings/interfacemode"                , int(desktop::settings::InterfaceMode::Unknown))
-SETTING(inviteLinkType            , InviteLinkType            , "invites/linktype"                      , dialogs::InviteDialog::LinkType::Web)
+SETTING(inviteLinkType            , InviteLinkType            , "invites/linktype"                      , int(dialogs::InviteDialog::LinkType::Web))
 SETTING(inviteIncludePassword     , InviteIncludePassword     , "invites/includepassword"               , true)
 SETTING(kineticScrollGesture      , KineticScrollGesture      , "settings/kineticscroll/gesture"        , int(KINETIC_SCROLL_GESTURE_DEFAULT))
 SETTING(kineticScrollThreshold    , KineticScrollThreshold    , "settings/kineticscroll/threshold"      , 10)
