@@ -152,6 +152,7 @@ SETTING(showInviteDialogOnHost    , ShowInviteDialogOnHost    , "invites/showdia
 SETTING(showNsfmWarningOnJoin     , ShowNsfmWarningOnJoin     , "pc/shownsfmwarningonjoin"              , true)
 SETTING(showTrayIcon              , ShowTrayIcon              , "ui/trayicon"                           , true)
 SETTING(soundVolume               , SoundVolume               , "notifications/volume"                  , 60)
+SETTING(suppressTransformNotices  , SuppressTransformNotices  , "settings/suppresstransformnotices"     , false)
 SETTING_GETSET(tabletDriver       , TabletDriver              , "settings/input/tabletdriver"           , tabletinput::Mode::KisTabletWinink
 	, &tabletDriver::get, &tabletDriver::set)
 SETTING(tabletEraser              , TabletEraser              , "settings/input/tableteraser"           , true)

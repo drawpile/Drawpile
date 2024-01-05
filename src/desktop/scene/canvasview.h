@@ -222,6 +222,8 @@ public slots:
 	void setBrushCursorStyle(BrushCursor style) { m_brushCursorStyle = style; }
 	void setBrushOutlineWidth(qreal outlineWidth);
 
+	void setSuppressTransformNotices(bool suppressTransformNotices);
+
 protected:
 	void enterEvent(compat::EnterEvent *event) override;
 	void leaveEvent(QEvent *event) override;
@@ -409,6 +411,7 @@ private:
 
 	bool m_scrollBarsAdjusting;
 	bool m_blockNotices;
+	bool m_suppressTransformNotices;
 	bool m_hoveringOverHud;
 };
 

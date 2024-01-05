@@ -71,6 +71,7 @@ CanvasView::CanvasView(QWidget *parent)
 	, m_brushOutlineWidth(1.0)
 	, m_scrollBarsAdjusting{false}
 	, m_blockNotices{false}
+	, m_suppressTransformNotices(false)
 	, m_hoveringOverHud{false}
 {
 	setViewportUpdateMode(FullViewportUpdate);
@@ -144,6 +145,9 @@ CanvasView::CanvasView(QWidget *parent)
 		setHorizontalScrollBarPolicy(policy);
 		setVerticalScrollBarPolicy(policy);
 	});
+
+	settings.bindSuppressTransformNotices(
+		this, &CanvasView::setSuppressTransformNotices);
 }
 
 void CanvasView::setTouchUseGestureEvents(bool useGestureEvents)
@@ -576,6 +580,11 @@ void CanvasView::setBrushOutlineWidth(qreal outlineWidth)
 {
 	m_brushOutlineWidth = qIsNaN(outlineWidth) ? 1.0 : outlineWidth;
 	resetCursor();
+}
+
+void CanvasView::setSuppressTransformNotices(bool suppressTransformNotices)
+{
+	m_suppressTransformNotices = suppressTransformNotices;
 }
 
 void CanvasView::setToolCursor(const QCursor &cursor)
@@ -2311,7 +2320,7 @@ void CanvasView::showTouchTransformNotice()
 
 void CanvasView::showTransformNotice(const QString &text)
 {
-	if(m_scene && !m_blockNotices) {
+	if(m_scene && !m_blockNotices && !m_suppressTransformNotices) {
 		m_scene->showTransformNotice(text);
 	}
 }
