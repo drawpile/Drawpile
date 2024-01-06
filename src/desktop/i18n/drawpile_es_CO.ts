@@ -8024,7 +8024,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/join.cpp" line="+25"/>
         <source>Enter a &lt;strong&gt;session URL&lt;/strong&gt;, &lt;strong&gt;host name&lt;/strong&gt;, &lt;strong&gt;IP address&lt;/strong&gt; or &lt;strong&gt;room code&lt;/strong&gt;:</source>
-        <translation type="unfinished"></translation>
+        <translation>Introduzca una &lt;strong&gt;URL de sesión&lt;/strong&gt;&lt;/strong&gt;, &lt;strong&gt;nombre de host&lt;/strong&gt;, &lt;strong&gt;dirección IP&lt;/strong&gt; o &lt;strong&gt;Código de cuarto&lt;/strong&gt;:</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -8153,17 +8153,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Take a look over the &lt;a href=&quot;#preferences&quot;&gt;Preferences&lt;/a&gt; to configure things to your liking. You might also want to pick a different &lt;a href=&quot;#layouts&quot;&gt;Layout&lt;/a&gt; for the application.</source>
-        <translation type="unfinished"></translation>
+        <translation>Hecha un vistazo en &lt;a href=&quot;#preferences&quot;&gt;Preferencias&lt;/a&gt; para configurar las cosas a tu agrado. Podrás también escoger un diseño distinto para la aplicación.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>If you have an invite link to a drawing session, you can &lt;a href=&quot;#join&quot;&gt;Join&lt;/a&gt; it directly. Alternatively, you can &lt;a href=&quot;#browse&quot;&gt;Browse&lt;/a&gt; public sessions or just create a &lt;a href=&quot;#create&quot;&gt;New Canvas&lt;/a&gt; to draw on your own.</source>
-        <translation type="unfinished"></translation>
+        <translation>Si tienes un enlace de invitación para una sesión de dibujo, puedes &lt;a href=&quot;#join&quot;&gt;Unirte&lt;/a&gt; a ella directamente. Alternativamente, puedes &lt;a href=&quot;#browse&quot;&gt;Explorar&lt;/a&gt; las sesiones publicas o crear un&lt;a href=&quot;#create&quot;&gt;Nuevo Lienzo&lt;/a&gt; para dibujar por ti mismo.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>If you have trouble, take a look at the help pages linked on the right. If they don&apos;t answer your question, you can join the Discord server and ask, there&apos;s usually folks around to help!</source>
-        <translation>Si tienes problemas, hecha un vistaso a las paginas de ayuda enlazadas a la derecha. Si ellas no responden a tus preguntas, puedes unirte al servidor de Discord y hacer tu pregunta, usualmente l</translation>
+        <translation>Si tienes problemas, hecha un vistazo a las paginas de ayuda enlazadas a la derecha. Si ellas no responden a tus preguntas, puedes unirte al servidor de Discord y hacer tu pregunta, ¡usualmente hay alguien que puede ayudarte!</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8610,7 +8610,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/onionskins.cpp" line="+137"/>
         <source>Frames: </source>
-        <translation type="unfinished"></translation>
+        <translation>Cuadros: </translation>
     </message>
     <message>
         <location line="-10"/>
@@ -8710,17 +8710,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>KisTablet Wintab input with relative pen mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Entrada de KisTablet Wintab con modo de lapicero relativo</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Qt6 Windows Ink input</source>
-        <translation type="unfinished"></translation>
+        <translation>Entrada de QT6 Windows ink</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Qt6 Wintab input</source>
-        <translation type="unfinished"></translation>
+        <translation>Entrada Qt6 Wintab</translation>
     </message>
 </context>
 <context>
@@ -8728,7 +8728,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/annotationsettings.cpp" line="+50"/>
         <source>Protect</source>
-        <translation type="unfinished"></translation>
+        <translation>Proteger</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -8777,22 +8777,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/brushsettings.cpp" line="+129"/>
         <source>Brush Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajustes de Pincel</translation>
     </message>
     <message>
         <location line="+48"/>
         <source>Time-Based Stabilizer</source>
-        <translation type="unfinished"></translation>
+        <translation>Estabilizador Basado en TIempo</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Average Smoothing</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Suavizado Promedio</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Slows down the stroke and stabilizes it over time. Can produce very smooth results, but may feel sluggish.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ralentiza el trazo y lo estabiliza con el tiempo. Puede producir resultados muy finos, pero puede sentirse lento.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8915,7 +8915,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+28"/>
         <source>Press a key combination. Hit Escape to cancel.</source>
-        <translation type="unfinished"></translation>
+        <translation>Introduzca una combinación de teclas. Presione Escape para cancelar.</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8998,47 +8998,47 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>Layer is hidden</source>
-        <translation type="unfinished"></translation>
+        <translation>La capa esta escondida</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Layer is not visible in this frame</source>
-        <translation type="unfinished"></translation>
+        <translation>La capa no es visible en este cuadro</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Tool is locked</source>
-        <translation type="unfinished"></translation>
+        <translation>La herramienta esta blockeada</translation>
     </message>
     <message>
         <location line="+258"/>
         <source>Vertical flip: ON</source>
-        <translation type="unfinished"></translation>
+        <translation>Inversión vertical: Activada</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Vertical flip: OFF</source>
-        <translation type="unfinished"></translation>
+        <translation>Inversión vertical: Desactivada</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Horizontal mirror: ON</source>
-        <translation type="unfinished"></translation>
+        <translation>Inversión horizontal: Encendida</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Horizontal mirror: OFF</source>
-        <translation type="unfinished"></translation>
+        <translation>Inversión horizontal: Apagada</translation>
     </message>
     <message>
         <location line="+1723"/>
         <source>Zoom: %1%</source>
-        <translation type="unfinished"></translation>
+        <translation>Aumento:  %1%</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Rotation: %1°</source>
-        <translation type="unfinished"></translation>
+        <translation>Rotacion: %1°</translation>
     </message>
 </context>
 <context>
@@ -9046,7 +9046,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../chat/chatbox.cpp" line="+45"/>
         <source>Invite</source>
-        <translation type="unfinished"></translation>
+        <translation>Invitar</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -9061,7 +9061,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Show chat options</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar opciones de chat</translation>
     </message>
 </context>
 <context>
@@ -9074,7 +9074,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+71"/>
         <source>Mute notifications</source>
-        <translation type="unfinished"></translation>
+        <translation>Silenciar notificaciones</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9104,62 +9104,62 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+150"/>
         <source>/!: only operators are allowed to send shouts.</source>
-        <translation type="unfinished"></translation>
+        <translation>/!: Solo los operadores tienen permitido enviar gritos.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>/!: can only shout in a public chat.</source>
-        <translation type="unfinished"></translation>
+        <translation>/!: solo puedes enviar un grito en un chat publico.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>/!: no text given.</source>
-        <translation type="unfinished"></translation>
+        <translation>/!: Sin texto proporcionado.</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>/alert: only operators are allowed to send alerts.</source>
-        <translation type="unfinished"></translation>
+        <translation>/alert: solo los operadores tienen permitido enviar alertas.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>/alert: no text given.</source>
-        <translation type="unfinished"></translation>
+        <translation>/alert: Sin texto proporcionado.</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>/me: no text given.</source>
-        <translation type="unfinished"></translation>
+        <translation>/me:  Sin texto proporcionado.</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>/pin: only operators are allowed to pin.</source>
-        <translation type="unfinished"></translation>
+        <translation>/pin:  solo los operadores tienen permitido fijar mensajes.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>/pin: can only pin in a public chat.</source>
-        <translation type="unfinished"></translation>
+        <translation>/pin: solo se puede fijar un mensaje en un chat publico.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>/pin: no text given.</source>
-        <translation type="unfinished"></translation>
+        <translation>/pin: Sin texto proporcionado.</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>/unpin: only operators are allowed to unpin.</source>
-        <translation type="unfinished"></translation>
+        <translation>/unpin: solo los operadores tienen permitido desfijar un mensaje.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>/unpin: can only unpin in a public chat.</source>
-        <translation type="unfinished"></translation>
+        <translation>/unpin: solo se puede desfijar un mensaje en un chat publico</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>/roll: invalid dice roll description.</source>
-        <translation type="unfinished"></translation>
+        <translation>/roll: Descripción de rodar dado invalida.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -9178,7 +9178,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+15"/>
         <source>Unknown command: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Comando desconocido: %1</translation>
     </message>
     <message>
         <location line="-623"/>
@@ -9222,7 +9222,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../widgets/curvewidget.cpp" line="+110"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Copiar</translation>
     </message>
     <message>
         <location line="+4"/>
