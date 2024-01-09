@@ -8024,7 +8024,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/join.cpp" line="+25"/>
         <source>Enter a &lt;strong&gt;session URL&lt;/strong&gt;, &lt;strong&gt;host name&lt;/strong&gt;, &lt;strong&gt;IP address&lt;/strong&gt; or &lt;strong&gt;room code&lt;/strong&gt;:</source>
-        <translation>Introduzca una &lt;strong&gt;URL de sesión&lt;/strong&gt;&lt;/strong&gt;, &lt;strong&gt;nombre de host&lt;/strong&gt;, &lt;strong&gt;dirección IP&lt;/strong&gt; o &lt;strong&gt;Código de cuarto&lt;/strong&gt;:</translation>
+        <translation>Introduzca una &lt;strong&gt;URL de sesión&lt;/strong&gt;, &lt;strong&gt;nombre de host&lt;/strong&gt;, &lt;strong&gt;dirección IP&lt;/strong&gt; o &lt;strong&gt;Código de cuarto&lt;/strong&gt;:</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -8153,7 +8153,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Take a look over the &lt;a href=&quot;#preferences&quot;&gt;Preferences&lt;/a&gt; to configure things to your liking. You might also want to pick a different &lt;a href=&quot;#layouts&quot;&gt;Layout&lt;/a&gt; for the application.</source>
-        <translation>Hecha un vistazo en &lt;a href=&quot;#preferences&quot;&gt;Preferencias&lt;/a&gt; para configurar las cosas a tu agrado. Podrás también escoger un diseño distinto para la aplicación.</translation>
+        <translation>Hecha un vistazo en &lt;a href=&quot;#preferences&quot;&gt;Preferencias&lt;/a&gt; para configurar las cosas a tu agrado. Podrás también escoger un &lt;a href=&quot;#layouts&quot;&gt;diseño&lt;/a&gt; distinto para la aplicación.</translation>
     </message>
     <message>
         <location line="+5"/>
