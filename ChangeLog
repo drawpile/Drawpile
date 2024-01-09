@@ -10,7 +10,6 @@ Unreleased Version 2.2.0-pre
  * Fix: Unlist sessions more reliably when terminating sessions hosted "on this computer". Thanks to Buch for helping figure this out.
  * Fix: Don't select a newly created layer when there's a default layer.
  * Fix: Give the timeline dock a sensible minimum height. Thanks Kink for reporting.
- * Fix: Make notification sounds work in the AppImage release. Thanks anonymous for reporting.
  * Fix: Don't exit the program in the pathological case of initiating a quit, being prompted to save, cancelling the save dialog and then saving again.
  * Fix: Properly update current layer fill source when switching layers.
  * Fix: Cap the number of threads used for parallel processing, because 128 core CPUs exist.

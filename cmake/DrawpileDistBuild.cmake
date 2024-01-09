@@ -49,7 +49,15 @@ elseif(WIN32)
 	install(FILES ${extra_libs} DESTINATION ${CMAKE_INSTALL_BINDIR})
 else()
 	set(helper_name linuxdeploy-x86_64.AppImage)
-	set(helper_flags "--plugin;qt;--plugin;gstreamer;--output;appimage")
+	# XXX: The gstreamer stuff is required for notification sounds to work, but
+	# adding the plugin breaks everything. If it's placed in front of Qt,
+	# building the AppImage fails altogether. If placed afterwards, the custom
+	# AppRun.wrapped script doesn't get installed inexplicably, which means you
+	# can't run the server or tools and none of the assets will be found. On top
+	# of all that, it more than doubles the size of the AppImage due to all of
+	# the libraries it includes. So whatever, AppImage doesn't get sound then.
+	# set(helper_flags "--plugin;qt;--plugin;gstreamer;--output;appimage")
+	set(helper_flags "--plugin;qt;--output;appimage")
 	set(path_flags "--appdir")
 	set(extra_exe_flag "--executable=")
 	set(app_path "")
@@ -68,7 +76,7 @@ if(SERVER)
 	list(APPEND helper_flags "${extra_exe_flag}\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/$<TARGET_FILE_NAME:drawpile-srv>")
 endif()
 
-if((SERVER OR TOOLS) AND UNIX AND NOT APPLE)
+if(UNIX AND NOT APPLE)
 	configure_file(
 		pkg/custom-apprun.sh.in
 		pkg/custom-apprun.sh
