@@ -1110,6 +1110,18 @@ static bool write_gif(void *user, const void *buffer, size_t size)
     return DP_output_write(output, buffer, size);
 }
 
+static jo_gifx_t *start_gif(DP_CanvasState *cs, DP_Rect *crop,
+                            DP_Output *output, int width, int height)
+{
+    DP_Image *img = DP_canvas_state_to_flat_image(
+        cs, DP_FLAT_IMAGE_RENDER_FLAGS, crop, NULL);
+    jo_gifx_t *gif = jo_gifx_start(write_gif, output, DP_int_to_uint16(width),
+                                   DP_int_to_uint16(height), 0, 255,
+                                   (uint32_t *)DP_image_pixels(img));
+    DP_image_free(img);
+    return gif;
+}
+
 static double get_gif_centiseconds_per_frame(int framerate)
 {
     return 100.0 / DP_int_to_double(DP_min_int(DP_max_int(framerate, 1), 100));
@@ -1138,8 +1150,7 @@ static DP_SaveResult save_animation_gif(DP_CanvasState *cs, const char *path,
         return DP_SAVE_RESULT_OPEN_ERROR;
     }
 
-    jo_gifx_t *gif = jo_gifx_start(write_gif, output, DP_int_to_uint16(width),
-                                   DP_int_to_uint16(height), 0, 255);
+    jo_gifx_t *gif = start_gif(cs, crop, output, width, height);
     if (!gif) {
         DP_output_free(output);
         return DP_SAVE_RESULT_OPEN_ERROR;

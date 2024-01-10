@@ -40,7 +40,6 @@
 struct jo_gifx_t {
     unsigned char palette[0x300];
     uint16_t width, height;
-    int repeat;
     int numColors, palSize;
     int frame;
     short codetab[HASH_SIZE];
@@ -314,7 +313,8 @@ static bool jo_gifx_write_uint16(jo_gifx_write_fn write_fn, void *user,
 }
 
 jo_gifx_t *jo_gifx_start(jo_gifx_write_fn write_fn, void *user, uint16_t width,
-                         uint16_t height, int repeat, int numColors)
+                         uint16_t height, int repeat, int numColors,
+                         uint32_t *rgba)
 {
     int palSize = log2(numColors);
     unsigned char header[] = {// "GIF89a" in ASCII
@@ -331,16 +331,37 @@ jo_gifx_t *jo_gifx_start(jo_gifx_write_fn write_fn, void *user, uint16_t width,
 
     numColors = numColors > 255 ? 255 : numColors < 2 ? 2 : numColors;
     size_t size = width * height;
-    jo_gifx_t *gif = calloc(1, sizeof(*gif) + size * 5);
+    jo_gifx_t *gif = calloc(1, sizeof(*gif) + size * 6);
     if (!gif) {
         return NULL;
     }
 
     gif->width = width;
     gif->height = height;
-    gif->repeat = repeat;
     gif->numColors = numColors;
     gif->palSize = palSize;
+
+    unsigned char *palette = gif->palette;
+    jo_gifx_quantize(rgba, size * 4, 1, palette, gif->numColors);
+    if (!write_fn(user, palette, 3 * (1 << (gif->palSize + 1)))) {
+        jo_gifx_abort(gif);
+        return NULL;
+    }
+
+    if (repeat >= 0 && repeat <= UINT16_MAX) {
+        unsigned char extension_block[] = {
+            // Application extension header, block size
+            0x21, 0xff, 0x0b,
+            // "NETSCAPE2.0" in ASCII, byte count (3), block index (1)
+            0x4e, 0x45, 0x54, 0x53, 0x43, 0x41, 0x50, 0x45, 0x32, 0x2e, 0x30,
+            0x03, 0x01,
+            // Loop count in 16 bit little-endian, block terminator
+            repeat & 0xff, (repeat >> 8) & 0xff, 0x00};
+        if (!write_fn(user, extension_block, sizeof(extension_block))) {
+            jo_gifx_abort(gif);
+            return NULL;
+        }
+    }
 
     return gif;
 }
@@ -353,11 +374,19 @@ bool jo_gifx_frame(jo_gifx_write_fn write_fn, void *user, jo_gifx_t *gif,
     size_t size = (size_t)width * (size_t)height;
 
     unsigned char *palette = gif->palette;
-    jo_gifx_quantize(rgba, size * 4, 1, palette, gif->numColors);
+    unsigned char *indexedPixels, *prevIndexedPixels;
+    if (gif->frame % 2 == 0) {
+        indexedPixels = gif->pixels;
+        prevIndexedPixels = gif->pixels + size;
+    }
+    else {
+        indexedPixels = gif->pixels + size;
+        prevIndexedPixels = gif->pixels;
+    }
 
-    unsigned char *indexedPixels = gif->pixels;
+    int usableColors = gif->numColors - 1; // Last color is transparency.
     {
-        unsigned char *ditheredPixels = gif->pixels + size;
+        unsigned char *ditheredPixels = gif->pixels + size * 2;
         for (size_t i = 0; i < size; ++i) {
             uint32_t color = rgba[i];
             ditheredPixels[i * 4 + 0] = (color >> 16) & 0xff;
@@ -371,7 +400,7 @@ bool jo_gifx_frame(jo_gifx_write_fn write_fn, void *user, jo_gifx_t *gif,
                           ditheredPixels[k + 2]};
             int bestd = 0x7FFFFFFF, best = -1;
             // TODO: exhaustive search. do something better.
-            for (int i = 0; i < gif->numColors; ++i) {
+            for (int i = 0; i < usableColors; ++i) {
                 int bb = palette[i * 3 + 0] - rgb[0];
                 int gg = palette[i * 3 + 1] - rgb[1];
                 int rr = palette[i * 3 + 2] - rgb[2];
@@ -418,28 +447,27 @@ bool jo_gifx_frame(jo_gifx_write_fn write_fn, void *user, jo_gifx_t *gif,
             }
         }
     }
-    if (gif->frame == 0) {
-        // Global Color Table
-        write_fn(user, palette, 3 * (1 << (gif->palSize + 1)));
-        if (gif->repeat >= 0 && gif->repeat <= UINT16_MAX) {
-            unsigned char extension_block[] = {
-                // Application extension header, block size
-                0x21, 0xff, 0x0b,
-                // "NETSCAPE2.0" in ASCII, byte count (3), block index (1)
-                0x4e, 0x45, 0x54, 0x53, 0x43, 0x41, 0x50, 0x45, 0x32, 0x2e,
-                0x30, 0x03, 0x01,
-                // Loop count in 16 bit little-endian, block terminator
-                gif->repeat & 0xff, (gif->repeat >> 8) & 0xff, 0x00};
-            write_fn(user, extension_block, sizeof(extension_block));
+
+    unsigned char *outputPixels;
+    if (gif->frame > 0) {
+        outputPixels = gif->pixels + size * 2;
+        for (size_t i = 0; i < size; ++i) {
+            outputPixels[i] = indexedPixels[i] == prevIndexedPixels[i]
+                                ? usableColors
+                                : indexedPixels[i];
         }
     }
-    unsigned char image_header[] = {
+    else {
+        outputPixels = indexedPixels;
+    }
+
+    unsigned char imageHeader[] = {
         // Graphic Control Extension
-        0x21, 0xf9, 0x04, 0x00,
+        0x21, 0xf9, 0x04, 0x05,
         // Delay in centiseconds, 16 bit little-endian
         delayCsec & 0xff, (delayCsec >> 8) & 0xff,
-        // Transparent pixel index (0, not used), end of block
-        0x00, 0x00,
+        // Transparent pixel index (last color in palette), end of block
+        (unsigned char)usableColors, 0x00,
         // Image Descriptor header, x, y (always top-left, so zero)
         0x2c, 0x00, 0x00, 0x00, 0x00,
         // Width in 16 bit little-endian
@@ -447,18 +475,14 @@ bool jo_gifx_frame(jo_gifx_write_fn write_fn, void *user, jo_gifx_t *gif,
         // Height in 16 bit little-endian
         height & 0xff, (height >> 8) & 0xff,
         // Local palette size (zero, because we don't use local palettes)
-        gif->frame == 0 ? 0x00 : 0x80 | gif->palSize};
-    if (!write_fn(user, image_header, sizeof(image_header))) {
+        0};
+    if (!write_fn(user, imageHeader, sizeof(imageHeader))) {
         return false;
     }
-    if (gif->frame != 0) {
-        if (!write_fn(user, palette, 3 * (1 << (gif->palSize + 1)))) {
-            return false;
-        }
-    }
+
     // Start of image, compressed pixels, block terminator.
     bool ok = write_fn(user, (unsigned char[]){0x08}, 1)
-           && jo_gifx_lzw_encode(write_fn, user, gif, indexedPixels, size)
+           && jo_gifx_lzw_encode(write_fn, user, gif, outputPixels, size)
            && write_fn(user, (unsigned char[]){0x00}, 1);
     ++gif->frame;
     return ok;
