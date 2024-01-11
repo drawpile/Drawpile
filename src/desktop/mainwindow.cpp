@@ -1389,7 +1389,8 @@ void MainWindow::setStartDialogActions(dialogs::StartDialog *dlg)
 void MainWindow::closeStartDialog(dialogs::StartDialog *dlg)
 {
 	for(QDialog *child : dlg->findChildren<QDialog *>(QString(), Qt::FindDirectChildrenOnly)) {
-		child->setParent(this);
+		child->setParent(this, child->windowFlags());
+		child->show();
 	}
 	dlg->close();
 }
