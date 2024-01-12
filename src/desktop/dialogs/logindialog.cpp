@@ -220,10 +220,10 @@ struct LoginDialog::Private {
 	void saveOldLogin(
 		const QString &host, const QString &username, const QString &password)
 	{
+		desktop::settings::Settings &settings = dpApp().settings();
+		settings.setLastUsername(ui->username->text());
+		settings.setLastAvatar(avatarFilename);
 		if(!passwordReadFromKeychain) {
-			desktop::settings::Settings &settings = dpApp().settings();
-			settings.setLastUsername(ui->username->text());
-			settings.setLastAvatar(avatarFilename);
 			QString keychainSecretName =
 				buildOldKeychainSecretName(host, username);
 			if(password.isEmpty()) {

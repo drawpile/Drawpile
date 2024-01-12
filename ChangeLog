@@ -14,7 +14,7 @@ Unreleased Version 2.2.0-pre
  * Fix: Properly update current layer fill source when switching layers.
  * Fix: Cap the number of threads used for parallel processing, because 128 core CPUs exist.
  * Fix: Move back button in login dialog to the left side. Thanks Blozzom for reporting.
- * Fix: Properly forget password when editing account and unchecking the "remember password" box. Thanks Meru for reporting.
+ * Fix: Properly forget password when editing account and unchecking the "remember password" box. Thanks Meru for reporting, as well as Bluestrings and Blozzom for finding issues with the fix.
  * Fix: Apply chosen interpolation to pasted images. Thanks Hipofiz for reporting.
  * Fix: Properly disable Session > Reset option when there's no canvas present that could be reset.
  * Fix: Allow opening PSD files and importing Drawpile 2.1 animations on Android. Thanks ariqhadiyan for reporting.
