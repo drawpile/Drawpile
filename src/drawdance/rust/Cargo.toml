@@ -1,6 +1,6 @@
 [package]
 name = "drawdance"
-version = "2.2.0"
+version = "2.2.1-pre"
 rust-version = "1.66.1"
 edition = "2021"
 
