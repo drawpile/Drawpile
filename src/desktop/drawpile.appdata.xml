@@ -23,6 +23,61 @@
     <category>Graphics</category>
   </categories>
   <releases>
+    <release version="2.2.0" type="stable" date="2024-01-13">
+      <url>https://drawpile.net/news/release-2.2.0/</url>
+      <description>
+        <p>Changes in this version:</p>
+        <ul>
+          <li>Complete overhaul of the paint engine, making it much faster.</li>
+          <li>Support for MyPaint brushes, with many brushes included.</li>
+          <li>Layer groups, which can also be used for alpha preserve, clipping and masking.</li>
+          <li>A proper stabilizer and curve smoothing to avoid jaggy lines.</li>
+          <li>Nicer-looking user interface with dark mode and tablet-friendly sliders.</li>
+          <li>Better color depth that prevents artifacting when shading.</li>
+          <li>Numerous added blend modes, such as Overlay, Screen, Color and Erase.</li>
+          <li>Fixed indirect mode to work properly.</li>
+          <li>Android support.</li>
+          <li>And a lot more stuff that doesn't all fit in here. Look on drawpile.net for the full list.</li>
+        </ul>
+      </description>
+      <artifacts>
+        <artifact type="binary" platform="x86_64-windows-msvc">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0/Drawpile-2.2.0-64bit.msi</location>
+          <checksum type="sha256">d056d0cba6d4a10913b2ddefe36c0a8fe20521eb7e231c0a6145600b9695f584</checksum>
+          <size type="download">24314051</size>
+        </artifact>
+        <artifact type="binary" platform="i386-windows-msvc">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0/Drawpile-2.2.0-32bit.msi</location>
+          <checksum type="sha256">38f9133717e8949a1e4e0a965852d165fe76cbe21934256acb8249730956cad7</checksum>
+          <size type="download">21217449</size>
+        </artifact>
+        <artifact type="binary" platform="x86_64-darwin-gnu">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0/Drawpile-2.2.0.dmg</location>
+          <checksum type="sha256">b4b04e973777376746d91486eccefad60d1d9f62bb96f84faebabaa583514bff</checksum>
+          <size type="download">32296719</size>
+        </artifact>
+        <artifact type="binary" platform="x86_64-linux-gnu">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0/Drawpile-2.2.0-x86_64.AppImage</location>
+          <checksum type="sha256">5d25816427144be28d7ddac9b5cf1b8f857a26523d2aea9b49d54854a3ef9965</checksum>
+          <size type="download">52290752</size>
+        </artifact>
+        <artifact type="binary" platform="aarch64-linux-android">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0/Drawpile-2.2.0-arm64-v8a.apk</location>
+          <checksum type="sha256">e1600a65790bc96806c547b877b28ee0dd92ab6b346db46457e10c8170d30d91</checksum>
+          <size type="download">19917237</size>
+        </artifact>
+        <artifact type="binary" platform="arm-linux-android">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.0/Drawpile-2.2.0-armeabi-v7a.apk</location>
+          <checksum type="sha256">7b2f04ce18530607e1f57589f16551dc0c7973c4c268c50a35b7a1db2042ce5f</checksum>
+          <size type="download">16808493</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.2.0.tar.gz</location>
+          <checksum type="sha256">41122fef2d590f621226570aa62cc7bae8bd0b1cf758c3f001f37cc8c9199683</checksum>
+          <size type="download">5288561</size>
+        </artifact>
+      </artifacts>
+    </release>
     <release version="2.2.0-beta.11" type="development" date="2023-12-08">
       <url>https://drawpile.net/news/release-2.2.0-beta.11/</url>
       <description>
