@@ -6,10 +6,9 @@
   <project_license>GPL-3.0+</project_license>
   <developer_name>askmeaboutloom, Calle Laakkonen and contributors</developer_name>
   <name>Drawpile</name>
-  <summary>Collaborative Drawing</summary>
+  <summary>Collaborative drawing</summary>
   <description>
-    <p>Drawpile is a drawing program that lets you share a canvas with other users in real time.</p>
-    <p>You can share your drawing board with the built-in server or connect to a dedicated server.</p>
+    <p>Drawpile lets you draw, sketch, paint and animate together with other people on the same canvas.</p>
   </description>
   <url type="homepage">https://drawpile.net/</url>
   <url type="help">https://drawpile.net/help/</url>
