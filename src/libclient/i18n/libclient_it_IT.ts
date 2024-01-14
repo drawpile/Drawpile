@@ -506,8 +506,9 @@
         <location line="+94"/>
         <source>%1/%n users</source>
         <translation>
+            <numerusform>%1/%n utente</numerusform>
             <numerusform>%1/%n utenti</numerusform>
-            <numerusform>%1/%n utenti</numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -1046,7 +1047,7 @@
     <message>
         <location line="+2"/>
         <source>You have been kicked by %1.</source>
-        <translation>Sei stato espulso da %1</translation>
+        <translation>Sei stato espulso da %1.</translation>
     </message>
     <message>
         <location line="+5"/>
