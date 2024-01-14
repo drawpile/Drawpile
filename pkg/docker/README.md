@@ -5,7 +5,7 @@ This directory contains the Dockerfile defintion for creating a drawpile server.
 
 A ready to use docker image is published at Docker Hub. To get started, you can simply run:
 
-    docker run -it --rm -p 27750:27750 askmeaboutloom/drawpile-srv:2.2.0
+    docker run -it --rm -p 27750:27750 drawpile/drawpile-srv:2.2.0
 
 To build the image yourself, simply run the following command in this directory:
 
@@ -31,7 +31,7 @@ Example usage:
         -p 27750:27750 -p 127.0.0.1:27780:27780 \
         -v dpsessions:/home/drawpile \
         --restart always \
-        drawpile-srv:2.2.0 --sessions /home/drawpile/sessions \
+        drawpile/drawpile-srv:2.2.0 --sessions /home/drawpile/sessions \
         --database /home/drawpile/config.db \
         --web-admin-port 27780 --web-admin-access all
 
