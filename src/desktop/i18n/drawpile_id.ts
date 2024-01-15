@@ -21,7 +21,7 @@
     <message>
         <location line="+1"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Hapus</translation>
     </message>
 </context>
 <context>
@@ -29,7 +29,7 @@
     <message>
         <location filename="../ui/abusereport.ui" line="+14"/>
         <source>Report Abuse</source>
-        <translation type="unfinished"></translation>
+        <translation>Laporkan Penyalahgunaan</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -39,7 +39,7 @@
     <message>
         <location line="+40"/>
         <source>Reason:</source>
-        <translation type="unfinished"></translation>
+        <translation>Alasan:</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -75,7 +75,7 @@
     <message>
         <location filename="../ui/androidfiledialog.ui" line="+20"/>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nama:</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -136,7 +136,7 @@
     <message>
         <location line="+24"/>
         <source>px</source>
-        <translation type="unfinished"></translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -207,12 +207,12 @@
     <message>
         <location line="+6"/>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nama:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Description:</source>
-        <translation type="unfinished"></translation>
+        <translation>Deskripsi:</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -222,7 +222,7 @@
     <message>
         <location line="+11"/>
         <source>Choose File...</source>
-        <translation type="unfinished"></translation>
+        <translation>Pilih Berkas...</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -257,7 +257,7 @@ to 64x64 pixels.</source>
         <location line="+16"/>
         <location line="+50"/>
         <source>Action</source>
-        <translation type="unfinished"></translation>
+        <translation>Aksi</translation>
     </message>
     <message>
         <location line="-26"/>
@@ -291,7 +291,7 @@ to 64x64 pixels.</source>
         <location line="+6"/>
         <location line="+107"/>
         <source>Organization:</source>
-        <translation type="unfinished"></translation>
+        <translation>Organisasi:</translation>
     </message>
     <message>
         <location line="-100"/>
@@ -301,12 +301,12 @@ to 64x64 pixels.</source>
     <message>
         <location line="+23"/>
         <source>Issued by</source>
-        <translation type="unfinished"></translation>
+        <translation>Diterbitkan oleh</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Expires on:</source>
-        <translation type="unfinished"></translation>
+        <translation>Kedaluwarsa pada:</translation>
     </message>
     <message>
         <location line="+63"/>
@@ -322,7 +322,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="-7"/>
         <source>Issued on:</source>
-        <translation type="unfinished"></translation>
+        <translation>Diterbitkan pada:</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -361,7 +361,7 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../bundled/QtColorWidgets/color_dialog.ui" line="+14"/>
         <source>Select Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Pilih Warna</translation>
     </message>
     <message>
         <location line="+40"/>
@@ -381,17 +381,17 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Blue</source>
-        <translation type="unfinished"></translation>
+        <translation>Biru</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>Value</source>
-        <translation type="unfinished"></translation>
+        <translation>Nilai</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Green</source>
-        <translation type="unfinished"></translation>
+        <translation>Hijau</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -401,7 +401,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Red</source>
-        <translation type="unfinished"></translation>
+        <translation>Merah</translation>
     </message>
 </context>
 <context>
@@ -429,7 +429,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Jump</source>
-        <translation type="unfinished"></translation>
+        <translation>Lompat</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -454,7 +454,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+11"/>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Status</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -468,7 +468,7 @@ to 64x64 pixels.</source>
         <location line="+21"/>
         <location line="+14"/>
         <source>0</source>
-        <translation type="unfinished"></translation>
+        <translation>0</translation>
     </message>
     <message>
         <location line="-56"/>
@@ -478,7 +478,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>No</source>
-        <translation type="unfinished"></translation>
+        <translation>Tidak</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -503,7 +503,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+15"/>
         <source>History</source>
-        <translation type="unfinished"></translation>
+        <translation>Riwayat</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -526,22 +526,22 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../filewrangler.cpp" line="+25"/>
         <source>Certificates (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Sertifikat (­%1)</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Import</source>
-        <translation type="unfinished"></translation>
+        <translation>Impor</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Open</source>
-        <translation type="unfinished"></translation>
+        <translation>Buka</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Open ORA</source>
-        <translation type="unfinished"></translation>
+        <translation>Buka ORA</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -551,7 +551,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+6"/>
         <source>Paste Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Tempel Gambar</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -577,12 +577,12 @@ to 64x64 pixels.</source>
         <location line="+38"/>
         <location line="+186"/>
         <source>Save Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Simpan Gambar</translation>
     </message>
     <message>
         <location line="-186"/>
         <source>Export Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Ekspor Gambar</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -607,7 +607,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Export Animated GIF</source>
-        <translation type="unfinished"></translation>
+        <translation>Ekspor Animasi GIF</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -682,12 +682,12 @@ to 64x64 pixels.</source>
     <message>
         <location line="+1"/>
         <source>Save as %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Simpan sebagai ­%1</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Save as ORA</source>
-        <translation type="unfinished"></translation>
+        <translation>Simpan sebagai ORA</translation>
     </message>
     <message>
         <location line="+107"/>
@@ -701,7 +701,7 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../ui/fillsettings.ui" line="+45"/>
         <source>Normal</source>
-        <translation type="unfinished"></translation>
+        <translation>Normal</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -711,7 +711,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+5"/>
         <source>Erase</source>
-        <translation type="unfinished"></translation>
+        <translation>Hapus</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -733,7 +733,7 @@ to 64x64 pixels.</source>
         <location line="+23"/>
         <location line="+43"/>
         <source>px</source>
-        <translation type="unfinished"></translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="-40"/>
@@ -743,7 +743,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+16"/>
         <source>Source:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sumber:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -796,7 +796,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+20"/>
         <source>Range</source>
-        <translation type="unfinished"></translation>
+        <translation>Rentang</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -806,7 +806,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+29"/>
         <source>Export</source>
-        <translation type="unfinished"></translation>
+        <translation>Ekspor</translation>
     </message>
 </context>
 <context>
@@ -814,7 +814,7 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../ui/inspectorsettings.ui" line="+17"/>
         <source>Last edited by:</source>
-        <translation type="unfinished"></translation>
+        <translation>Terakhir diubah oleh:</translation>
     </message>
     <message>
         <location line="+56"/>
@@ -827,12 +827,12 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../ui/invitedialog.ui" line="+14"/>
         <source>Invite</source>
-        <translation type="unfinished"></translation>
+        <translation>Undang</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Copy Invite Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Salin Tautan Undangan</translation>
     </message>
     <message>
         <location line="+35"/>
@@ -842,12 +842,12 @@ to 64x64 pixels.</source>
     <message>
         <location line="+10"/>
         <source>Direct link</source>
-        <translation type="unfinished"></translation>
+        <translation>Tautan langsung</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Include password</source>
-        <translation type="unfinished"></translation>
+        <translation>Termasuk kata sandi</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -905,7 +905,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+175"/>
         <source>&amp;Select All</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Pilih Semua</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -923,7 +923,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location filename="../ui/lasersettings.ui" line="+17"/>
         <source>Color:</source>
-        <translation type="unfinished"></translation>
+        <translation>Warna:</translation>
     </message>
     <message>
         <location line="+87"/>
@@ -951,7 +951,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+6"/>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nama:</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -961,7 +961,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+7"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -986,7 +986,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+23"/>
         <source>Collaboration:</source>
-        <translation type="unfinished"></translation>
+        <translation>Kolaborasi:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -996,7 +996,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+7"/>
         <source>Created by:</source>
-        <translation type="unfinished"></translation>
+        <translation>Dibuat oleh:</translation>
     </message>
 </context>
 <context>
@@ -1004,22 +1004,22 @@ Subrange: [%3, %4]</source>
     <message>
         <location filename="../ui/layoutsdialog.ui" line="+14"/>
         <source>Layouts</source>
-        <translation type="unfinished"></translation>
+        <translation>Tata Letak</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>Simpan</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Rename</source>
-        <translation type="unfinished"></translation>
+        <translation>Ubah Nama</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Hapus</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -1033,22 +1033,22 @@ Subrange: [%3, %4]</source>
         <location filename="../ui/logindialog.ui" line="+103"/>
         <location line="+234"/>
         <source>Incorrect password.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kata sandi salah.</translation>
     </message>
     <message>
         <location line="-191"/>
         <source>Password</source>
-        <translation type="unfinished"></translation>
+        <translation>Kata sandi</translation>
     </message>
     <message>
         <location line="-36"/>
         <source>Remember my password</source>
-        <translation type="unfinished"></translation>
+        <translation>Ingat kata sandi saya</translation>
     </message>
     <message>
         <location line="-24"/>
         <source>Username</source>
-        <translation type="unfinished"></translation>
+        <translation>Nama pengguna</translation>
     </message>
     <message>
         <location line="+158"/>
@@ -1063,7 +1063,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+22"/>
         <source>Password:</source>
-        <translation type="unfinished"></translation>
+        <translation>Kata sandi:</translation>
     </message>
     <message>
         <location line="+183"/>
@@ -1093,7 +1093,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+3"/>
         <source>Edit and log in</source>
-        <translation type="unfinished"></translation>
+        <translation>Ubah dan masuk</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -1103,7 +1103,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+3"/>
         <source>Log in a different way</source>
-        <translation type="unfinished"></translation>
+        <translation>Masuk dengan cara lain</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -1113,17 +1113,17 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+3"/>
         <source>Log in with this account</source>
-        <translation type="unfinished"></translation>
+        <translation>Masuk dengan akun ini</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Forget this account.</source>
-        <translation type="unfinished"></translation>
+        <translation>Lupakan akun ini.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Forget this account</source>
-        <translation type="unfinished"></translation>
+        <translation>Lupakan akun ini</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -1207,7 +1207,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+265"/>
         <source>🙋 %1 joined!</source>
-        <translation type="unfinished"></translation>
+        <translation>🙋 %1 bergabung!</translation>
     </message>
     <message>
         <location line="+91"/>
@@ -1234,7 +1234,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+153"/>
         <location line="+21"/>
         <source>Exit Drawpile</source>
-        <translation type="unfinished"></translation>
+        <translation>Keluar Drawpile</translation>
     </message>
     <message>
         <location line="-20"/>
@@ -1251,7 +1251,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+22"/>
         <location line="+548"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Batal</translation>
     </message>
     <message>
         <location line="-555"/>
@@ -1261,7 +1261,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+3"/>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>Simpan</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1276,17 +1276,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+132"/>
         <source>Saving...</source>
-        <translation type="unfinished"></translation>
+        <translation>Menyimpan...</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Couldn&apos;t save image</source>
-        <translation type="unfinished"></translation>
+        <translation>Tidak dapat menyimpan gambar</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Image saved</source>
-        <translation type="unfinished"></translation>
+        <translation>Gambar tersimpan</translation>
     </message>
     <message>
         <location line="+56"/>
