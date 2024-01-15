@@ -23,52 +23,92 @@
 
         #Compile time libs
 
-        compileTimeDeps = with pkgs; [ cmake ];
+        mkNativeInputs = { qt5 }:
+          let
+            qtStuff = if qt5 then
+              [ pkgs.libsForQt5.qt5.wrapQtAppsHook ]
+            else
+              [ pkgs.qt6.wrapQtAppsHook ];
+          in qtStuff ++ [ pkgs.cmake ];
 
-        # QT depdnencies
-        qt6Dependencies = with pkgs; [
-          qt6.qtbase
-          qt6.qtsvg
-          qt6.qttools
-          qt6.qtmultimedia
-        ];
+        mkDepends = { qt5, shell }:
+          let
+            #decide what QT to use
+            qtDependences = if qt5 then
+              with pkgs.libsForQt5.qt5; [
+                qtbase
+                qtsvg
+                qttools
+                qtmultimedia
+              ] ++ [ pkgs.libsForQt5.karchive ]
+            else
+              with pkgs; [ qt6.qtbase qt6.qtsvg qt6.qttools qt6.qtmultimedia ];
 
-        qt5Dependencies = with pkgs; [
-          libsForQt5.karchive
-          qt5.qtbase
-          qt5.qtsvg
-          qt5.qttools
-          qt5.qtmultimedia
-        ];
+            #Other dependencies required for building
+            otherDeps = with pkgs; [
+              cmake
 
-        otherDeps = with pkgs; [
-          cmake
+              git
+              libxkbcommon
+              gcc
+              ninja
+              libzip
+              libsodium
+              libmicrohttpd
+            ];
 
-          git
-          libxkbcommon
-          gcc
-          libzip
-          libsodium
-          libmicrohttpd
-        ];
+            shellDpeneds =
+              if shell then with pkgs; [ rustc rustfmt ] else with pkgs; [ clippy ];
+
+          in qtDependences ++ shellDpeneds ++ otherDeps;
+
+        mkDpShell = { useQt5, preset, debug ? false }:
+          pkgs.mkShell {
+
+            nativeBuildInputs = mkNativeInputs { qt5 = useQt5; };
+
+            buildInputs = mkDepends {
+              qt5 = useQt5;
+              shell = true;
+            };
+
+            shellHook = ''
+
+              export ROOT=$PWD/Nixpile-build/${preset}
+              mkdir -p $ROOT
+
+              firstBuild() {
+                cmake -S $ROOT/../../ -B $ROOT \
+                  --preset ${preset} \
+                  -DCMAKE_INSTALL_PREFIX=$out
+                cmake --build $ROOT
+                wrapQtApp $ROOT/bin/drawpile
+              }
+
+              incrementalBuild() {
+                cmake --build $ROOT
+                wrapQtApp $ROOT/bin/drawpile
+              }
+
+              incrementalRun() {
+                incrementalBuild
+                $ROOT/bin/drawpile
+              }
+
+            '';
+          };
 
         mkDrawpile = { useQt5, preset, debug ? false }:
-          let
-
-            qtDependencies =
-              if useQt5 then qt5Dependencies else qt6Dependencies;
-
-          in pkgs.rustPlatform.buildRustPackage {
+          pkgs.rustPlatform.buildRustPackage {
             name = "drawpile";
             src = self;
 
-            nativeBuildInputs = with pkgs;
-              [ qt6.wrapQtAppsHook wrapGAppsHook ] ++ compileTimeDeps;
+            nativeBuildInputs = mkNativeInputs { qt5 = useQt5; };
 
-            buildInputs = with pkgs;
-              [ git libxkbcommon libzip libsodium libmicrohttpd ]
-              ++ qtDependencies
-              ++ (if debug then with pkgs; [ clippy rustfmt ] else [ ]);
+            buildInputs = mkDepends {
+              qt5 = useQt5;
+              shell = false;
+            };
 
             cargoLock = { lockFile = ./Cargo.lock; };
 
@@ -88,100 +128,78 @@
               mkdir -p $out
               cmake --install ./Drawpile-build
             '';
-
-            shellHook = ''
-
-            export ROOT=$PWD
-
-            firstBuild() {
-              cmake -S $ROOT -B $ROOT/Drawpile-build \
-                --preset ${preset} \
-                -DCMAKE_INSTALL_PREFIX=$out
-              cmake --build $ROOT/Drawpile-build
-              wrapQtApp $ROOT/Drawpile-build/bin/drawpile
-            }
-            
-            incrementalBuild() {
-              cmake --build $ROOT/Drawpile-build
-              wrapQtApp $ROOT/Drawpile-build/bin/drawpile
-            }
-
-            incrementalRun() {
-              incrementalBuild
-              $ROOT/Drawpile-build/bin/drawpile
-            }
-
-            '';
           };
 
       in rec {
 
         packages = rec {
-          debug-qt6-all-make = mkDrawpile {
-            preset = "linux-debug-qt6-all-make";
+          debug-qt6-all-ninja = mkDrawpile {
+            preset = "linux-debug-qt6-all-ninja";
             useQt5 = false;
           };
-          release-qt6-all-make = mkDrawpile {
-            preset = "linux-release-qt6-all-make";
+          release-qt6-all-ninja = mkDrawpile {
+            preset = "linux-release-qt6-all-ninja";
             useQt5 = false;
           };
-          release-qt6-server-make = mkDrawpile {
-            preset = "linux-release-qt6-server-make";
+          release-qt6-server-ninja = mkDrawpile {
+            preset = "linux-release-qt6-server-ninja";
             useQt5 = false;
           };
 
-          debug-qt5-all-make = mkDrawpile {
-            preset = "linux-debug-qt5-all-make";
-            useQt5 = true;
-          };
-          release-qt5-all-make = mkDrawpile {
-            preset = "linux-release-qt5-all-make";
-            useQt5 = true;
-          };
-          release-qt5-server-make = mkDrawpile {
-            preset = "linux-release-qt5-server-make";
+          debug-qt5-all-ninja = mkDrawpile {
+            preset = "linux-debug-qt5-all-ninja";
             useQt5 = true;
           };
 
-          default = release-qt6-all-make;
+          release-qt5-all-ninja = mkDrawpile {
+            preset = "linux-release-qt5-all-ninja";
+            useQt5 = true;
+          };
+
+          release-qt5-server-ninja = mkDrawpile {
+            preset = "linux-release-qt5-server-ninja";
+            useQt5 = true;
+          };
+
+          default = release-qt6-all-ninja;
         };
 
         #Dev shells
 
         devShells = rec {
-          debug-qt6-all-make = mkDrawpile {
-            preset = "linux-debug-qt6-all-make";
+          debug-qt6-all-ninja = mkDpShell {
+            preset = "linux-debug-qt6-all-ninja";
             useQt5 = false;
             debug = true;
           };
-          release-qt6-all-make = mkDrawpile {
-            preset = "linux-release-qt6-all-make";
+          release-qt6-all-ninja = mkDpShell {
+            preset = "linux-release-qt6-all-ninja";
             useQt5 = false;
             debug = true;
           };
-          release-qt6-server-make = mkDrawpile {
-            preset = "linux-release-qt6-server-make";
+          release-qt6-server-ninja = mkDpShell {
+            preset = "linux-release-qt6-server-ninja";
             useQt5 = false;
             debug = true;
           };
 
-          debug-qt5-all-make = mkDrawpile {
-            preset = "linux-debug-qt5-all-make";
+          debug-qt5-all-ninja = mkDpShell {
+            preset = "linux-debug-qt5-all-ninja";
             useQt5 = true;
             debug = true;
           };
-          release-qt5-all-make = mkDrawpile {
-            preset = "linux-release-qt5-all-make";
+          release-qt5-all-ninja = mkDpShell {
+            preset = "linux-release-qt5-all-ninja";
             useQt5 = true;
             debug = true;
           };
-          release-qt5-server-make = mkDrawpile {
-            preset = "linux-release-qt5-server-make";
+          release-qt5-server-ninja = mkDpShell {
+            preset = "linux-release-qt5-server-ninja";
             useQt5 = true;
             debug = true;
           };
 
-          default = debug-qt6-all-make;
+          default = debug-qt6-all-ninja;
         };
 
         formatter = pkgs.nixfmt;

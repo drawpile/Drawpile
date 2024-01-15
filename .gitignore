@@ -8,6 +8,7 @@ CMakeUserPresets.json
 /*build*/
 **/target/
 /*install*/
+/Nixpile-build
 
 *.swp
 
