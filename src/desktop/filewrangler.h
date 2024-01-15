@@ -85,6 +85,9 @@ private:
 
 	static DP_SaveImageType guessType(const QString &intendedName);
 
+	static QString
+	getCurrentPathOrUntitled(Document *doc, const QString &defaultExtension);
+
 	static bool needsOra(Document *doc);
 
 	static QString getLastPath(LastPath type, const QString &ext = QString{});

@@ -110,25 +110,30 @@ QString FileWrangler::saveImage(Document *doc) const
 QString FileWrangler::saveImageAs(Document *doc, bool exported) const
 {
 	QString selectedFilter;
-	QString intendedName;
-	QString lastPath = doc->currentPath();
 	QStringList filters =
 		utils::fileFormatFilterList(utils::FileFormatOption::SaveImages);
+	QString extension;
 	if(exported) {
+		extension = QStringLiteral(".png");
 		for(const QString &filter : filters) {
 			if(filter.contains(QStringLiteral("*.png"))) {
 				selectedFilter = filter;
 				break;
 			}
 		}
-		if(!lastPath.isEmpty()) {
-			replaceExtension(lastPath, QStringLiteral(".png"));
-		}
+	} else {
+		extension = QStringLiteral(".ora");
 	}
+
+	QString lastPath = getCurrentPathOrUntitled(doc, extension);
+	if(exported && !lastPath.isEmpty()) {
+		replaceExtension(lastPath, extension);
+	}
+
+	QString intendedName;
 	QString filename = showSaveFileDialogFilters(
 		exported ? tr("Export Image") : tr("Save Image"), LastPath::IMAGE,
-		exported ? ".png" : ".ora", filters, &selectedFilter, lastPath,
-		&intendedName);
+		extension, filters, &selectedFilter, lastPath, &intendedName);
 	bool haveFilename = !filename.isEmpty();
 	DP_SaveImageType type =
 		haveFilename ? guessType(intendedName) : DP_SAVE_IMAGE_UNKNOWN;
@@ -149,7 +154,7 @@ QString FileWrangler::savePreResetImageAs(
 	QString path = showSaveFileDialog(
 		tr("Save Pre-Reset Image"), LastPath::IMAGE, ".ora",
 		utils::FileFormatOption::SaveImages, &selectedFilter,
-		doc->currentPath(), &intendedName);
+		getCurrentPathOrUntitled(doc, QStringLiteral(".ora")), &intendedName);
 	DP_SaveImageType type = guessType(intendedName);
 
 	if(!path.isEmpty() && confirmFlatten(doc, path, type)) {
@@ -387,6 +392,24 @@ void FileWrangler::replaceExtension(QString &filename, const QString &ext)
 DP_SaveImageType FileWrangler::guessType(const QString &intendedName)
 {
 	return DP_save_image_type_guess(qUtf8Printable(intendedName));
+}
+
+QString FileWrangler::getCurrentPathOrUntitled(
+	Document *doc, const QString &defaultExtension)
+{
+	QString path = doc->currentPath();
+	if(path.isEmpty()) {
+#ifdef Q_OS_ANDROID
+		return tr("Untitled.ora");
+#else
+		path = getLastPath(LastPath::IMAGE);
+		if(!path.isEmpty()) {
+			return QFileInfo(path).absoluteDir().filePath(
+				tr("Untitled") + defaultExtension);
+		}
+#endif
+	}
+	return path;
 }
 
 bool FileWrangler::needsOra(Document *doc)
