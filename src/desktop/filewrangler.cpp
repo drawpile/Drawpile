@@ -400,7 +400,7 @@ QString FileWrangler::getCurrentPathOrUntitled(
 	QString path = doc->currentPath();
 	if(path.isEmpty()) {
 #ifdef Q_OS_ANDROID
-		return tr("Untitled" + defaultExtension);
+		return tr("Untitled") + defaultExtension;
 #else
 		path = getLastPath(LastPath::IMAGE);
 		if(!path.isEmpty()) {
