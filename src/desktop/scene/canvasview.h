@@ -103,6 +103,8 @@ public:
 	void setTouchPinch(bool pinch) { m_enableTouchPinch = pinch; }
 	void setTouchTwist(bool twist) { m_enableTouchTwist = twist; }
 	void setTouchUseGestureEvents(bool touchUseGestureEvents);
+	void setRenderSmooth(bool smooth);
+	void setRenderUpdateFull(bool updateFull);
 
 	KisCubicCurve pressureCurve() const { return m_pressureCurve; }
 	void setPressureCurve(const KisCubicCurve &pressureCurve);
@@ -286,6 +288,7 @@ private:
 	void clampPosition();
 	void updateScrollBars();
 	void updateCanvasPixelGrid();
+	void updateRenderHints();
 
 	QTransform calculateCanvasTransform() const;
 
@@ -413,6 +416,7 @@ private:
 	bool m_blockNotices;
 	bool m_suppressTransformNotices;
 	bool m_hoveringOverHud;
+	bool m_renderSmooth;
 };
 
 }

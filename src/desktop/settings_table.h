@@ -145,6 +145,8 @@ SETTING(onionSkinsWrap            , OnionSkinsWrap            , "onionskins/wrap
 SETTING(recentFiles               , RecentFiles               , "history/recentfiles"                   , QStringList())
 SETTING(recentHosts               , RecentHosts               , "history/recenthosts"                   , QStringList())
 SETTING(recentRemoteHosts         , RecentRemoteHosts         , "history/recentremotehosts"             , QStringList())
+SETTING(renderSmooth              , RenderSmooth              , "settings/render/smooth"                , true)
+SETTING(renderUpdateFull          , RenderUpdateFull          , "settings/render/updatefull"            , false)
 SETTING(serverHideIp              , ServerHideIp              , "settings/hideServerIp"                 , false)
 SETTING(shareBrushSlotColor       , ShareBrushSlotColor       , "settings/sharebrushslotcolor"          , false)
 SETTING(shortcuts                 , Shortcuts                 , "settings/shortcuts"                    , QVariantMap())

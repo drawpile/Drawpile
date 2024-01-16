@@ -73,8 +73,8 @@ CanvasView::CanvasView(QWidget *parent)
 	, m_blockNotices{false}
 	, m_suppressTransformNotices(false)
 	, m_hoveringOverHud{false}
+	, m_renderSmooth(false)
 {
-	setViewportUpdateMode(FullViewportUpdate);
 	viewport()->setAcceptDrops(true);
 	viewport()->setAttribute(Qt::WA_AcceptTouchEvents);
 	viewport()->setMouseTracking(true);
@@ -124,6 +124,9 @@ CanvasView::CanvasView(QWidget *parent)
 	settings.bindTwoFingerRotate(this, &widgets::CanvasView::setTouchTwist);
 	settings.bindTouchGestures(
 		this, &widgets::CanvasView::setTouchUseGestureEvents);
+	settings.bindRenderSmooth(this, &widgets::CanvasView::setRenderSmooth);
+	settings.bindRenderUpdateFull(
+		this, &widgets::CanvasView::setRenderUpdateFull);
 	settings.bindBrushCursor(this, &widgets::CanvasView::setBrushCursorStyle);
 	settings.bindBrushOutlineWidth(
 		this, &widgets::CanvasView::setBrushOutlineWidth);
@@ -162,6 +165,25 @@ void CanvasView::setTouchUseGestureEvents(bool useGestureEvents)
 		viewport()->ungrabGesture(Qt::PanGesture);
 		viewport()->ungrabGesture(Qt::PinchGesture);
 		m_useGestureEvents = false;
+	}
+}
+
+void CanvasView::setRenderSmooth(bool smooth)
+{
+	if(smooth != m_renderSmooth) {
+		m_renderSmooth = smooth;
+		updateRenderHints();
+		repaint();
+	}
+}
+
+void CanvasView::setRenderUpdateFull(bool updateFull)
+{
+	ViewportUpdateMode mode =
+		updateFull ? FullViewportUpdate : MinimalViewportUpdate;
+	if(mode != viewportUpdateMode()) {
+		setViewportUpdateMode(mode);
+		repaint();
 	}
 }
 
@@ -2113,14 +2135,7 @@ void CanvasView::updateCanvasTransform(const std::function<void()> &block)
 		rects.append(m_scene->canvasBounds());
 		updateScrollBars();
 		updateCanvasPixelGrid();
-		// Use nearest-neighbor interpolation at 200% zoom and above, anything
-		// below gets linear interpolation. An exception is at exactly 100% zoom
-		// with a right-angle rotation, since otherwise the canvas gets blurred
-		// even though the pixels are at a 1:1 scale.
-		bool smooth =
-			m_zoom <= 1.99 && !(qAbs(m_zoom - 1.0) < 0.01 &&
-								std::fmod(qAbs(rotation()), 90.0) < 0.01);
-		setRenderHint(QPainter::SmoothPixmapTransform, smooth);
+		updateRenderHints();
 		viewRectChanged();
 	}
 
@@ -2184,6 +2199,19 @@ void CanvasView::updateCanvasPixelGrid()
 	if(m_scene) {
 		m_scene->setCanvasPixelGrid(m_pixelgrid && m_zoom >= 8.0);
 	}
+}
+
+void CanvasView::updateRenderHints()
+{
+	// Use nearest-neighbor interpolation at 200% zoom and above, anything
+	// below gets linear interpolation. An exception is at exactly 100% zoom
+	// with a right-angle rotation, since otherwise the canvas gets blurred
+	// even though the pixels are at a 1:1 scale. On Emscripten, this causes
+	// immense slowdown, so we never enable linear interpolation there.
+	bool smooth = m_renderSmooth && m_zoom <= 1.99 &&
+				  !(qAbs(m_zoom - 1.0) < 0.01 &&
+					std::fmod(qAbs(rotation()), 90.0) < 0.01);
+	setRenderHint(QPainter::SmoothPixmapTransform, smooth);
 }
 
 QTransform CanvasView::calculateCanvasTransform() const

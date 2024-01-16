@@ -28,7 +28,21 @@ void Input::setUp(desktop::settings::Settings &settings, QVBoxLayout *layout)
 	initTablet(settings, layout);
 	utils::addFormSeparator(layout);
 	initPressureCurve(settings, utils::addFormSection(layout));
+#ifdef Q_OS_ANDROID
+	utils::addFormSeparator(layout);
+	initAndroid(settings, utils::addFormSection(layout));
+#endif
 }
+
+#ifdef Q_OS_ANDROID
+void Input::initAndroid(
+	desktop::settings::Settings &settings, QFormLayout *form)
+{
+	auto *captureVolumeRocker = new QCheckBox(tr("Capture volume rocker"));
+	settings.bindCaptureVolumeRocker(captureVolumeRocker);
+	form->addRow(tr("Android:"), captureVolumeRocker);
+}
+#endif
 
 void Input::initPressureCurve(
 	desktop::settings::Settings &settings, QFormLayout *form)

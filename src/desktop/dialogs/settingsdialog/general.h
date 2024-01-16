@@ -25,10 +25,6 @@ protected:
 	setUp(desktop::settings::Settings &settings, QVBoxLayout *layout) override;
 
 private:
-#ifdef Q_OS_ANDROID
-	void initAndroid(desktop::settings::Settings &settings, QFormLayout *form);
-#endif
-
 	void initAutosave(desktop::settings::Settings &settings, QFormLayout *form);
 
 	void initLanguage(desktop::settings::Settings &settings, QFormLayout *form);
@@ -36,6 +32,9 @@ private:
 	static QString formatLanguage(const QLocale &locale);
 
 	void initLogging(desktop::settings::Settings &settings, QFormLayout *form);
+
+	void
+	initPerformance(desktop::settings::Settings &settings, QFormLayout *form);
 
 	void
 	initSnapshots(desktop::settings::Settings &settings, QFormLayout *form);

@@ -1,5 +1,6 @@
 Unreleased Version 2.2.1-pre
  * Fix: Default to previous directory when saving a fresh file. Thanks Crow for reporting.
+ * Feature: Allow toggling performance-related canvas view settings, since some systems get slowdowns. Thanks DevonJP for reporting.
 
 2024-01-13 Version 2.2.0
  * Server Fix: Add --ssl-key-algorithm parameter to allow non-RSA SSL keys, defaulting to guessing the most common formats RSA and EC. Thanks Bluestrings for reporting.

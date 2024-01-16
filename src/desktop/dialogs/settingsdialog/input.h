@@ -24,6 +24,10 @@ protected:
 	setUp(desktop::settings::Settings &settings, QVBoxLayout *layout) override;
 
 private:
+#ifdef Q_OS_ANDROID
+	void initAndroid(desktop::settings::Settings &settings, QFormLayout *form);
+#endif
+
 	void
 	initPressureCurve(desktop::settings::Settings &settings, QFormLayout *form);
 

@@ -39,21 +39,10 @@ void General::setUp(desktop::settings::Settings &settings, QVBoxLayout *layout)
 	utils::addFormSpacer(canvasSection);
 	initSnapshots(settings, canvasSection);
 
-#ifdef Q_OS_ANDROID
 	utils::addFormSeparator(layout);
-	initAndroid(settings, utils::addFormSection(layout));
-#endif
-}
 
-#ifdef Q_OS_ANDROID
-void General::initAndroid(
-	desktop::settings::Settings &settings, QFormLayout *form)
-{
-	auto *captureVolumeRocker = new QCheckBox(tr("Capture volume rocker"));
-	settings.bindCaptureVolumeRocker(captureVolumeRocker);
-	form->addRow(tr("Android:"), captureVolumeRocker);
+	initPerformance(settings, utils::addFormSection(layout));
 }
-#endif
 
 void General::initAutosave(
 	desktop::settings::Settings &settings, QFormLayout *form)
@@ -131,6 +120,25 @@ void General::initLogging(
 	auto *enableLogging = new QCheckBox(tr("Write debugging log to file"));
 	settings.bindWriteLogFile(enableLogging);
 	form->addRow(tr("Logging:"), enableLogging);
+}
+
+void General::initPerformance(
+	desktop::settings::Settings &settings, QFormLayout *form)
+{
+	auto *renderSmooth =
+		new QCheckBox(tr("Interpolate when view is zoomed or rotated"));
+	settings.bindRenderSmooth(renderSmooth);
+	form->addRow(tr("Canvas view:"), renderSmooth);
+
+	auto *renderUpdateFull =
+		new QCheckBox(tr("Prevent jitter at certain zoom and rotation levels"));
+	settings.bindRenderUpdateFull(renderUpdateFull);
+	form->addRow(nullptr, renderUpdateFull);
+
+	form->addRow(
+		nullptr,
+		utils::formNote(tr(
+			"Enabling these options may impact performance on some systems.")));
 }
 
 void General::initSnapshots(
