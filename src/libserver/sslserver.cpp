@@ -47,6 +47,10 @@ bool SslServer::reloadCertChain()
 
 	m_certLastMod = fi.lastModified();
 	m_certchain = chain;
+	qInfo(
+		"Loaded cert chain from '%s' (last modified %s)",
+		qUtf8Printable(fi.canonicalFilePath()),
+		qUtf8Printable(m_certLastMod.toString(Qt::ISODateWithMs)));
 	return true;
 }
 
@@ -93,6 +97,11 @@ bool SslServer::reloadKey()
 
 	m_keyLastMod = fi.lastModified();
 	m_key = key;
+	qInfo(
+		"Loaded private %s key from '%s' (last modified %s)",
+		getSslKeyAlgorithmName(m_key.algorithm()),
+		qUtf8Printable(fi.canonicalFilePath()),
+		qUtf8Printable(m_keyLastMod.toString(Qt::ISODateWithMs)));
 	return true;
 }
 
@@ -137,6 +146,24 @@ const char *SslServer::getKeyAlgorithmDescription() const
 		return "dh";
 	}
 	return "unknown";
+}
+
+const char *
+SslServer::getSslKeyAlgorithmName(QSsl::KeyAlgorithm algorithm) const
+{
+	switch(algorithm) {
+	case QSsl::KeyAlgorithm::Opaque:
+		return "OPAQUE";
+	case QSsl::KeyAlgorithm::Rsa:
+		return "RSA";
+	case QSsl::KeyAlgorithm::Dsa:
+		return "DSA";
+	case QSsl::KeyAlgorithm::Ec:
+		return "EC";
+	case QSsl::KeyAlgorithm::Dh:
+		return "DH";
+	}
+	return "UNKNOWN";
 }
 
 bool SslServer::isValidCert() const

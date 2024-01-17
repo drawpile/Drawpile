@@ -29,6 +29,7 @@ private:
 	bool reloadKey();
 	QSslKey loadKey(const QByteArray &encoded) const;
 	const char *getKeyAlgorithmDescription() const;
+	const char *getSslKeyAlgorithmName(QSsl::KeyAlgorithm algorithm) const;
 
 	QList<QSslCertificate> m_certchain;
 	QSslKey m_key;
