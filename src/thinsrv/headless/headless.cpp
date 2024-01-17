@@ -414,8 +414,9 @@ bool start() {
 		QList<int> listenfds = initsys::getListenFds();
 		if(listenfds.isEmpty()) {
 			// socket activation not used
-			if(!server->start(port, address))
+			if(!server->start(port, address)) {
 				return false;
+			}
 
 #ifdef HAVE_WEBADMIN
 			if(webadminPort>0) {

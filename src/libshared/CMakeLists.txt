@@ -36,6 +36,13 @@ target_sources(dpshared PRIVATE
 	util/whatismyip.h
 )
 
+if(HAVE_TCPSOCKETS)
+	target_sources(dpshared PRIVATE
+		net/tcpmessagequeue.cpp
+		net/tcpmessagequeue.h
+	)
+endif()
+
 target_link_libraries(dpshared
 	PRIVATE
 		cmake-config

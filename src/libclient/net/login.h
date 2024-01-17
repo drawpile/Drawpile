@@ -18,8 +18,8 @@ class QImage;
 
 namespace net {
 
-class TcpServer;
 class LoginSessionModel;
+class Server;
 struct LoginSession;
 struct ServerCommand;
 struct ServerReply;
@@ -132,7 +132,7 @@ public:
 	 * @brief Set the server we're communicating with
 	 * @param server
 	 */
-	void setServer(TcpServer *server) { m_server = server; }
+	void setServer(Server *server) { m_server = server; }
 
 	/**
 	 * @brief Handle a received message
@@ -202,8 +202,6 @@ public:
 	QString joinPassword() const { return m_joinPassword; }
 
 public slots:
-	void serverDisconnected();
-
 	void acceptRules();
 
 	/**
@@ -271,6 +269,8 @@ public slots:
 	 */
 	void confirmJoinSelectedSession();
 
+	void tlsStarted();
+	void tlsError(const QList<QSslError> &errors);
 	/**
 	 * @brief Accept server certificate and proceed with login
 	 */
@@ -417,8 +417,6 @@ signals:
 private slots:
 	void
 	failLogin(const QString &message, const QString &errorcode = QString());
-	void tlsStarted();
-	void tlsError(const QList<QSslError> &errors);
 
 private:
 	enum State {
@@ -494,7 +492,7 @@ private:
 	QString m_extAuthNonce;
 
 	// Process state
-	TcpServer *m_server;
+	Server *m_server;
 	State m_state;
 	State m_passwordState;
 	LoginSessionModel *m_sessions;

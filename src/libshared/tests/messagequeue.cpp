@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-#include "libshared/net/messagequeue.h"
+#include "libshared/net/tcpmessagequeue.h"
 #include "libshared/util/qtcompat.h"
 #include <QDebug>
 #include <QMutex>
@@ -188,7 +188,7 @@ private slots:
 	void testSendDisconnect()
 	{
 		auto s = getConnection();
-		net::MessageQueue mq(s.get(), true, nullptr);
+		net::TcpMessageQueue mq(s.get(), true, nullptr);
 
 		bool disconnected = false;
 
@@ -212,11 +212,11 @@ private:
 		return s;
 	}
 
-	std::unique_ptr<net::MessageQueue> getMsgQueue()
+	std::unique_ptr<net::TcpMessageQueue> getMsgQueue()
 	{
 		auto s = getConnection();
-		std::unique_ptr<net::MessageQueue> q{
-			new net::MessageQueue(s.get(), true, nullptr)};
+		std::unique_ptr<net::TcpMessageQueue> q{
+			new net::TcpMessageQueue(s.get(), true, nullptr)};
 		s->setParent(q.get());
 		s.release();
 		return q;

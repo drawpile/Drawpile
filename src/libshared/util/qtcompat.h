@@ -16,6 +16,15 @@
 #define HAVE_QT_COMPAT_HASH_LENGTH
 #endif
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 13, 0)
+#	define COMPAT_DISABLE_COPY_MOVE(Class) \
+		Q_DISABLE_COPY(Class) \
+		Class(Class &&) = delete; \
+		Class &operator=(Class &&) = delete;
+#else
+#	define COMPAT_DISABLE_COPY_MOVE(Class) Q_DISABLE_COPY_MOVE(Class)
+#endif
+
 namespace compat {
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)

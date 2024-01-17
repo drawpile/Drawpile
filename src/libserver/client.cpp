@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "libserver/client.h"
 #include "libserver/serverconfig.h"
 #include "libserver/serverlog.h"
@@ -7,18 +6,80 @@
 #include "libserver/sessionhistory.h"
 #include "libshared/net/messagequeue.h"
 #include "libshared/net/servercmd.h"
+#include "libshared/net/tcpmessagequeue.h"
 #include "libshared/util/qtcompat.h"
 #include <QPointer>
 #include <QRandomGenerator>
 #include <QSslSocket>
 #include <QStringList>
+#include <QTcpSocket>
 #include <QTimer>
 
 namespace server {
 
+class ClientSocket {
+	COMPAT_DISABLE_COPY_MOVE(ClientSocket)
+public:
+	ClientSocket() = default;
+	virtual ~ClientSocket() = default;
+
+	virtual QHostAddress peerAddress() const = 0;
+	virtual QString errorString() const = 0;
+	virtual void abort() = 0;
+
+	virtual bool hasSslSupport() const = 0;
+	virtual bool isSecure() const = 0;
+	virtual void startTls() = 0;
+};
+
+class ClientTcpSocket final : public ClientSocket {
+	COMPAT_DISABLE_COPY_MOVE(ClientTcpSocket)
+public:
+	ClientTcpSocket(QTcpSocket *tcpSocket)
+		: m_tcpSocket(tcpSocket)
+	{
+		Q_ASSERT(tcpSocket);
+	}
+
+	virtual ~ClientTcpSocket() override = default;
+
+	virtual QHostAddress peerAddress() const override
+	{
+		return m_tcpSocket->peerAddress();
+	}
+
+	virtual QString errorString() const override
+	{
+		return m_tcpSocket->errorString();
+	}
+
+	virtual void abort() override { m_tcpSocket->abort(); }
+
+	virtual bool hasSslSupport() const override
+	{
+		return m_tcpSocket->inherits("QSslSocket");
+	}
+
+	virtual bool isSecure() const override
+	{
+		QSslSocket *sslSocket = qobject_cast<QSslSocket *>(m_tcpSocket);
+		return sslSocket && sslSocket->isEncrypted();
+	}
+
+	virtual void startTls() override
+	{
+		QSslSocket *socket = qobject_cast<QSslSocket *>(m_tcpSocket);
+		Q_ASSERT(socket);
+		socket->startServerEncryption();
+	}
+
+private:
+	QTcpSocket *m_tcpSocket;
+};
+
 struct Client::Private {
 	QPointer<Session> session;
-	QTcpSocket *socket;
+	ClientSocket *socket;
 	ServerLog *logger;
 
 	net::MessageQueue *msgqueue;
@@ -44,27 +105,29 @@ struct Client::Private {
 	bool isGhost = false;
 	BanResult ban = BanResult::notBanned();
 
-	Private(QTcpSocket *socket_, ServerLog *logger_)
+	Private(ClientSocket *socket_, ServerLog *logger_)
 		: socket(socket_)
 		, logger(logger_)
 	{
 		Q_ASSERT(socket);
 		Q_ASSERT(logger);
 	}
+
+	~Private() { delete socket; }
 };
 
 Client::Client(
-	QTcpSocket *socket, ServerLog *logger, bool decodeOpaque, QObject *parent)
+	QTcpSocket *tcpSocket, ServerLog *logger, bool decodeOpaque,
+	QObject *parent)
 	: QObject(parent)
-	, d(new Private(socket, logger))
+	, d(new Private(new ClientTcpSocket(tcpSocket), logger))
 {
-	d->msgqueue = new net::MessageQueue(socket, decodeOpaque, this);
-	d->socket->setParent(this);
-
+	d->msgqueue = new net::TcpMessageQueue(tcpSocket, decodeOpaque, this);
+	tcpSocket->setParent(this);
 	connect(
-		d->socket, &QAbstractSocket::disconnected, this,
+		tcpSocket, &QAbstractSocket::disconnected, this,
 		&Client::socketDisconnect);
-	connect(d->socket, compat::SocketError, this, &Client::socketError);
+	connect(tcpSocket, compat::SocketError, this, &Client::socketError);
 	connect(
 		d->msgqueue, &net::MessageQueue::messageAvailable, this,
 		&Client::receiveMessages);
@@ -606,20 +669,17 @@ bool Client::isAwaitingReset() const
 
 bool Client::hasSslSupport() const
 {
-	return d->socket->inherits("QSslSocket");
+	return d->socket->hasSslSupport();
 }
 
 bool Client::isSecure() const
 {
-	QSslSocket *socket = qobject_cast<QSslSocket *>(d->socket);
-	return socket && socket->isEncrypted();
+	return d->socket->isSecure();
 }
 
 void Client::startTls()
 {
-	QSslSocket *socket = qobject_cast<QSslSocket *>(d->socket);
-	Q_ASSERT(socket);
-	socket->startServerEncryption();
+	d->socket->startTls();
 }
 
 void Client::log(Log entry) const

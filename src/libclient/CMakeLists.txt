@@ -121,8 +121,6 @@ target_sources(dpclient PRIVATE
 	net/server.h
 	net/sessionlistingmodel.cpp
 	net/sessionlistingmodel.h
-	net/tcpserver.cpp
-	net/tcpserver.h
 	tools/annotation.cpp
 	tools/annotation.h
 	tools/beziertool.cpp
@@ -198,17 +196,34 @@ target_sources(dpclient PRIVATE
 	utils/usernamevalidator.h
 )
 
-if(BUILTINSERVER)
-	target_compile_definitions(dpclient PUBLIC DP_HAVE_BUILTIN_SERVER=1)
-	target_link_libraries(dpclient PUBLIC dpserver)
+if(NOT ANDROID)
 	target_sources(dpclient PRIVATE
-		server/builtinclient.cpp
-		server/builtinclient.h
-		server/builtinsession.cpp
-		server/builtinsession.h
-		server/builtinserver.cpp
-		server/builtinserver.h
+		export/ffmpegexporter.cpp
+		export/ffmpegexporter.h
+		export/imageseriesexporter.cpp
+		export/imageseriesexporter.h
+		export/videoexporter.cpp
+		export/videoexporter.h
 	)
+endif()
+
+if(HAVE_TCPSOCKETS)
+	target_sources(dpclient PRIVATE
+		net/tcpserver.cpp
+		net/tcpserver.h
+	)
+	if(BUILTINSERVER)
+		target_compile_definitions(dpclient PUBLIC DP_HAVE_BUILTIN_SERVER=1)
+		target_link_libraries(dpclient PUBLIC dpserver)
+		target_sources(dpclient PRIVATE
+			server/builtinclient.cpp
+			server/builtinclient.h
+			server/builtinsession.cpp
+			server/builtinsession.h
+			server/builtinserver.cpp
+			server/builtinserver.h
+		)
+	endif()
 endif()
 
 # https://gitlab.kitware.com/cmake/cmake/-/issues/19813

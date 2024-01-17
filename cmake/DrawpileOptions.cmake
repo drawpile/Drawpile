@@ -13,6 +13,9 @@ set(BUILD_PACKAGE_SUFFIX "" CACHE STRING "Suffix to append to cpack artifacts")
 option(UPDATE_TRANSLATIONS "Update translation files from source")
 add_feature_info(".ts regeneration (slow!) (UPDATE_TRANSLATIONS)" UPDATE_TRANSLATIONS "")
 
+set(HAVE_TCPSOCKETS ON)
+add_feature_info("TCP socket support" HAVE_TCPSOCKETS "")
+
 if(NOT ANDROID)
 	option(SERVER "Compile dedicated server" OFF)
 	add_feature_info("Drawpile server (SERVER)" SERVER "")

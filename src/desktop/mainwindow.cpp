@@ -2278,17 +2278,24 @@ void MainWindow::onServerDisconnected(const QString &message, const QString &err
 
 	// Display login error if not yet logged in
 	if(!m_doc->client()->isLoggedIn() && !localDisconnect) {
-		QMessageBox *msgbox = new QMessageBox(
-			QMessageBox::Warning,
-			QString(),
-			tr("Could not connect to server"),
-			QMessageBox::Ok,
-			this
-		);
+		QString name = QStringLiteral("disconnectederrormessagebox");
+		QMessageBox *msgbox =
+			findChild<QMessageBox *>(name, Qt::FindDirectChildrenOnly);
+		if(!msgbox) {
+			msgbox = new QMessageBox(
+				QMessageBox::Warning,
+				QString(),
+				tr("Could not connect to server"),
+				QMessageBox::Ok,
+				this
+			);
+			msgbox->setObjectName(name);
+			msgbox->setAttribute(Qt::WA_DeleteOnClose);
+		}
 
-		msgbox->setAttribute(Qt::WA_DeleteOnClose);
-		msgbox->setWindowModality(Qt::WindowModal);
-		msgbox->setInformativeText(message);
+		if(msgbox->informativeText().isEmpty() && !message.isEmpty()) {
+			msgbox->setInformativeText(message);
+		}
 
 		if(errorcode == "SESSIONIDINUSE") {
 			// We tried to host a session using with a vanity ID, but that
@@ -2308,10 +2315,7 @@ void MainWindow::onServerDisconnected(const QString &message, const QString &err
 
 		}
 
-		// Work around Qt macOS bug(?): if a window has more than two modal dialogs (sheets)
-		// open at the same time (in this case, the login dialog that hasn't closed yet)
-		// the main window will still be stuck after the dialogs close.
-		QTimer::singleShot(1, msgbox, &QMessageBox::show); // NOLINT clang-tidy thinks this leaks
+		msgbox->open();
 	}
 	// If logged in but disconnected unexpectedly, show notification bar
 	else if(m_doc->client()->isLoggedIn() && !localDisconnect) {

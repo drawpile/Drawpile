@@ -162,6 +162,10 @@ if(CLIENT OR SERVER)
 		add_compile_definitions(HAVE_LIBSODIUM)
 	endif()
 
+	if(HAVE_TCPSOCKETS)
+		add_compile_definitions(HAVE_TCPSOCKETS)
+	endif()
+
 	# LinguistTools does not generate a target so its existence must be checked
 	# using the old-style FOUND flag
 	add_feature_info("Translations" ${QT_PACKAGE_NAME}LinguistTools_FOUND "")

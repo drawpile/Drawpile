@@ -2,7 +2,7 @@
 #include "libclient/net/login.h"
 #include "cmake-config/config.h"
 #include "libclient/net/loginsessions.h"
-#include "libclient/net/tcpserver.h"
+#include "libclient/net/server.h"
 #include "libclient/parentalcontrols/parentalcontrols.h"
 #include "libshared/net/protover.h"
 #include "libshared/net/servercmd.h"
@@ -75,8 +75,6 @@ LoginHandler::LoginHandler(Mode mode, const QUrl &url, QObject *parent)
 			m_autoJoinId = m.captured(1);
 	}
 }
-
-void LoginHandler::serverDisconnected() {}
 
 bool LoginHandler::receiveMessage(const ServerReply &msg)
 {
@@ -257,9 +255,12 @@ void LoginHandler::expectHello(const ServerReply &msg)
 
 	// Start secure mode if possible
 	if(startTls) {
-		m_state = EXPECT_STARTTLS;
-		send("startTls");
-
+		if(m_server->hasSslSupport()) {
+			m_state = EXPECT_STARTTLS;
+			send("startTls");
+		} else {
+			failLogin(tr("Server expects STARTTLS on unsupported socket."));
+		}
 	} else {
 		// If this is a trusted host, it should always be in secure mode
 		if(getCertFile(TRUSTED_HOSTS, m_address.host()).exists()) {
@@ -861,15 +862,9 @@ void LoginHandler::reportSession(const QString &id, const QString &reason)
 
 void LoginHandler::startTls()
 {
-	connect(
-		m_server->m_socket, &QSslSocket::encrypted, this,
-		&LoginHandler::tlsStarted);
-	connect(
-		m_server->m_socket,
-		QOverload<const QList<QSslError> &>::of(&QSslSocket::sslErrors), this,
-		&LoginHandler::tlsError);
-
-	m_server->m_socket->startClientEncryption();
+	if(!m_server->loginStartTls(this)) {
+		failLogin(tr("TLS is not supported via this kind of socket"));
+	}
 }
 
 void LoginHandler::tlsError(const QList<QSslError> &errors)
@@ -921,10 +916,11 @@ void LoginHandler::tlsError(const QList<QSslError> &errors)
 		}
 	}
 
-	if(fail)
+	if(fail) {
 		failLogin(errorstr);
-	else
-		m_server->m_socket->ignoreSslErrors(ignore);
+	} else if(!m_server->loginIgnoreTlsErrors(ignore)) {
+		failLogin(tr("Unable to set TLS error ignore state"));
+	}
 }
 
 namespace {
@@ -939,8 +935,8 @@ void saveCert(const QFileInfo &file, const QSslCertificate &cert)
 	else
 		qCWarning(lcDpLogin) << "Couldn't open" << filename << "for writing!";
 }
-
 }
+
 void LoginHandler::tlsStarted()
 {
 	const QSslCertificate cert = m_server->hostCertificate();
@@ -982,17 +978,17 @@ void LoginHandler::tlsStarted()
 		if(knowncerts.at(0) != cert) {
 			// Certificate mismatch!
 			emit certificateCheckNeeded(cert, knowncerts.at(0));
-			m_server->m_securityLevel = TcpServer::NEW_HOST;
+			m_server->m_securityLevel = Server::NEW_HOST;
 			return;
 
 		} else {
-			m_server->m_securityLevel = TcpServer::KNOWN_HOST;
+			m_server->m_securityLevel = Server::KNOWN_HOST;
 		}
 
 	} else {
 		// Host not encountered yet: rember the certificate for next time
 		saveCert(m_certFile, cert);
-		m_server->m_securityLevel = TcpServer::NEW_HOST;
+		m_server->m_securityLevel = Server::NEW_HOST;
 	}
 
 	// Certificate is acceptable

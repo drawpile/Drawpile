@@ -3,10 +3,11 @@
 #define DP_SERVER_CLIENT_H
 #include "libserver/jsonapi.h"
 #include "libshared/net/message.h"
+#include <QAbstractSocket>
 #include <QObject>
-#include <QTcpSocket>
 
 class QHostAddress;
+class QTcpSocket;
 
 namespace net {
 class MessageQueue;
@@ -289,7 +290,7 @@ private slots:
 
 protected:
 	Client(
-		QTcpSocket *socket, ServerLog *logger, bool decodeOpaque,
+		QTcpSocket *tcpSocket, ServerLog *logger, bool decodeOpaque,
 		QObject *parent);
 	net::MessageQueue *messageQueue();
 

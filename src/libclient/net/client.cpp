@@ -2,7 +2,7 @@
 #include "libclient/net/client.h"
 #include "libclient/net/login.h"
 #include "libclient/net/message.h"
-#include "libclient/net/tcpserver.h"
+#include "libclient/net/server.h"
 #include "libshared/net/servercmd.h"
 #include "libshared/util/qtcompat.h"
 #include <QDebug>
@@ -28,15 +28,14 @@ void Client::connectToServer(
 	Q_ASSERT(!isConnected());
 	m_builtin = builtin;
 
-	TcpServer *server = new TcpServer(timeoutSecs, this);
-	m_server = server;
+	m_server = Server::make(loginhandler->url(), timeoutSecs, this);
 	m_server->setSmoothDrainRate(m_smoothDrainRate);
 
 #ifdef Q_OS_ANDROID
 	if(!m_wakeLock) {
 		QString tag{QStringLiteral("Drawpile::TcpWake%1")
 						.arg(
-							reinterpret_cast<quintptr>(server),
+							reinterpret_cast<quintptr>(m_server),
 							QT_POINTER_SIZE * 2, 16, QLatin1Char('0'))};
 		m_wakeLock = new utils::AndroidWakeLock{"PARTIAL_WAKE_LOCK", tag};
 	}
@@ -44,30 +43,23 @@ void Client::connectToServer(
 	if(!m_wifiLock) {
 		QString tag{QStringLiteral("Drawpile::TcpWifi%1")
 						.arg(
-							reinterpret_cast<quintptr>(server),
+							reinterpret_cast<quintptr>(m_server),
 							QT_POINTER_SIZE * 2, 16, QLatin1Char('0'))};
 		m_wifiLock =
 			new utils::AndroidWifiLock{"WIFI_MODE_FULL_LOW_LATENCY", tag};
 	}
 #endif
 
-	connect(server, &TcpServer::loggingOut, this, &Client::serverDisconnecting);
+	connect(m_server, &Server::loggingOut, this, &Client::serverDisconnecting);
 	connect(
-		server, &TcpServer::serverDisconnected, this,
-		&Client::handleDisconnect);
+		m_server, &Server::serverDisconnected, this, &Client::handleDisconnect);
+	connect(m_server, &Server::loggedIn, this, &Client::handleConnect);
+	connect(m_server, &Server::messagesReceived, this, &Client::handleMessages);
+	connect(m_server, &Server::bytesReceived, this, &Client::bytesReceived);
+	connect(m_server, &Server::bytesSent, this, &Client::bytesSent);
+	connect(m_server, &Server::lagMeasured, this, &Client::lagMeasured);
 	connect(
-		server, &TcpServer::serverDisconnected, loginhandler,
-		&LoginHandler::serverDisconnected);
-	connect(server, &TcpServer::loggedIn, this, &Client::handleConnect);
-	connect(
-		server, &TcpServer::messagesReceived, this, &Client::handleMessages);
-
-	connect(server, &TcpServer::bytesReceived, this, &Client::bytesReceived);
-	connect(server, &TcpServer::bytesSent, this, &Client::bytesSent);
-	connect(server, &TcpServer::lagMeasured, this, &Client::lagMeasured);
-
-	connect(
-		server, &TcpServer::gracefullyDisconnecting, this,
+		m_server, &Server::gracefullyDisconnecting, this,
 		[this](
 			MessageQueue::GracefulDisconnect reason, const QString &message) {
 			QString chat;
@@ -110,7 +102,7 @@ void Client::connectToServer(
 
 	emit serverConnected(
 		loginhandler->url().host(), loginhandler->url().port());
-	server->login(loginhandler);
+	m_server->login(loginhandler);
 
 	m_catchupTo = 0;
 	m_caughtUp = 0;
@@ -149,20 +141,21 @@ void Client::handleConnect(
 void Client::handleDisconnect(
 	const QString &message, const QString &errorcode, bool localDisconnect)
 {
-	Q_ASSERT(isConnected());
-
-	m_compatibilityMode = false;
+	// WebSockets may report multiple disconnects, some with error messages,
+	// some without. We just emit them all so the UI can report what it wants.
 	emit serverDisconnected(message, errorcode, localDisconnect);
-	m_server->deleteLater();
-	m_server = nullptr;
-	m_moderator = false;
-
+	if(isConnected()) {
+		m_compatibilityMode = false;
+		m_server->deleteLater();
+		m_server = nullptr;
+		m_moderator = false;
 #ifdef Q_OS_ANDROID
-	delete m_wakeLock;
-	delete m_wifiLock;
-	m_wakeLock = nullptr;
-	m_wifiLock = nullptr;
+		delete m_wakeLock;
+		delete m_wifiLock;
+		m_wakeLock = nullptr;
+		m_wifiLock = nullptr;
 #endif
+	}
 }
 
 void Client::nudgeCatchup()

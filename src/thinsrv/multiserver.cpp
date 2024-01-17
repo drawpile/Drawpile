@@ -1,26 +1,25 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "thinsrv/multiserver.h"
-#include "thinsrv/extbans.h"
-#include "thinsrv/initsys.h"
-#include "thinsrv/database.h"
-#include "thinsrv/templatefiles.h"
-
+#include "cmake-config/config.h"
+#include "libserver/serverconfig.h"
+#include "libserver/serverlog.h"
 #include "libserver/session.h"
 #include "libserver/sessionserver.h"
 #include "libserver/thinserverclient.h"
-#include "libserver/serverconfig.h"
-#include "libserver/serverlog.h"
 #include "libshared/net/servercmd.h"
+#include "libshared/util/qtcompat.h"
 #include "libshared/util/whatismyip.h"
-
-#include <QTcpSocket>
-#include <QFileInfo>
+#include "thinsrv/database.h"
+#include "thinsrv/extbans.h"
+#include "thinsrv/initsys.h"
+#include "thinsrv/templatefiles.h"
 #include <QDateTime>
 #include <QDir>
-#include <QJsonObject>
+#include <QFileInfo>
 #include <QJsonArray>
+#include <QJsonObject>
 #include <QRegularExpression>
+#include <QTcpSocket>
 #include <QTimer>
 
 namespace server {
@@ -28,7 +27,7 @@ namespace server {
 MultiServer::MultiServer(ServerConfig *config, QObject *parent)
 	: QObject(parent),
 	m_config(config),
-	m_server(nullptr),
+	m_tcpServer(nullptr),
 	m_extBans(new ExtBans(config, this)),
 	m_state(STOPPED),
 	m_autoStop(false),
@@ -99,15 +98,23 @@ bool MultiServer::createServer()
 			emit serverStartError("Couldn't load TLS certificate");
 			return false;
 		}
-		m_server = server;
+		m_tcpServer = server;
 
 	} else {
-		m_server = new QTcpServer(this);
+		m_tcpServer = new QTcpServer(this);
 	}
 
-	connect(m_server, &QTcpServer::newConnection, this, &MultiServer::newClient);
+	connect(m_tcpServer, &QTcpServer::newConnection, this, &MultiServer::newTcpClient);
 
 	return true;
+}
+
+bool MultiServer::abortStart()
+{
+		delete m_tcpServer;
+		m_tcpServer = nullptr;
+		m_state = STOPPED;
+		return false;
 }
 
 /**
@@ -116,34 +123,34 @@ bool MultiServer::createServer()
  * @param address listening address
  * @return true on success
  */
-bool MultiServer::start(quint16 port, const QHostAddress& address) {
+bool MultiServer::start(quint16 tcpPort, const QHostAddress &tcpAddress)
+{
 	Q_ASSERT(m_state == STOPPED);
 	m_state = RUNNING;
 	if(!createServer()) {
-		delete m_server;
-		m_server = nullptr;
-		m_state = STOPPED;
-		return false;
+		return abortStart();
 	}
 
-	if(!m_server->listen(address, port)) {
-		emit serverStartError(m_server->errorString());
-		m_sessions->config()->logger()->logMessage(Log().about(Log::Level::Error, Log::Topic::Status).message(m_server->errorString()));
-		delete m_server;
-		m_server = nullptr;
-		m_state = STOPPED;
-		return false;
+	if(!m_tcpServer->listen(tcpAddress, tcpPort)) {
+		emit serverStartError(m_tcpServer->errorString());
+		m_sessions->config()->logger()->logMessage(Log().about(Log::Level::Error, Log::Topic::Status).message(m_tcpServer->errorString()));
+		return abortStart();
 	}
 
-	m_port = m_server->serverPort();
+	m_port = m_tcpServer->serverPort();
 
 	InternalConfig icfg = m_config->internalConfig();
 	icfg.realPort = m_port;
 	m_config->setInternalConfig(icfg);
 
 	emit serverStarted();
-	m_sessions->config()->logger()->logMessage(Log().about(Log::Level::Info, Log::Topic::Status)
-		.message(QString("Started listening on port %1 at address %2").arg(port).arg(address.toString())));
+	m_sessions->config()->logger()->logMessage(
+		Log()
+			.about(Log::Level::Info, Log::Topic::Status)
+			.message(QString("Started listening for TCP connections on port %1 "
+							 "at address %2")
+						 .arg(tcpPort)
+						 .arg(tcpAddress.toString())));
 	return true;
 }
 
@@ -152,25 +159,27 @@ bool MultiServer::start(quint16 port, const QHostAddress& address) {
  * @param fd
  * @return true on success
  */
-bool MultiServer::startFd(int fd)
+bool MultiServer::startFd(int tcpFd)
 {
 	Q_ASSERT(m_state == STOPPED);
 	m_state = RUNNING;
 	if(!createServer())
 		return false;
 
-	if(!m_server->setSocketDescriptor(fd)) {
-		m_sessions->config()->logger()->logMessage(Log().about(Log::Level::Error, Log::Topic::Status).message("Couldn't set server socket descriptor!"));
-		delete m_server;
-		m_server = nullptr;
-		m_state = STOPPED;
-		return false;
+	if(!m_tcpServer->setSocketDescriptor(tcpFd)) {
+		m_sessions->config()->logger()->logMessage(
+			Log()
+				.about(Log::Level::Error, Log::Topic::Status)
+				.message("Couldn't set TCP server socket descriptor!"));
+		return abortStart();
 	}
 
-	m_port = m_server->serverPort();
+	m_port = m_tcpServer->serverPort();
 
-	m_sessions->config()->logger()->logMessage(Log().about(Log::Level::Info, Log::Topic::Status)
-		.message(QString("Started listening on passed socket")));
+	m_sessions->config()->logger()->logMessage(
+		Log()
+			.about(Log::Level::Info, Log::Topic::Status)
+			.message(QString("Started listening on passed socket(s)")));
 
 	return true;
 }
@@ -231,20 +240,23 @@ void MultiServer::assignRecording(Session *session)
 /**
  * @brief Accept or reject new client connection
  */
-void MultiServer::newClient()
+void MultiServer::newTcpClient()
 {
-	QTcpSocket *socket = m_server->nextPendingConnection();
+	QTcpSocket *tcpSocket = m_tcpServer->nextPendingConnection();
+	m_sessions->config()->logger()->logMessage(
+		Log()
+			.about(Log::Level::Info, Log::Topic::Status)
+			.user(0, tcpSocket->peerAddress(), QString())
+			.message(QStringLiteral("New TCP client connected")));
+	newClient(new ThinServerClient(tcpSocket, m_sessions->config()->logger()));
+}
 
-	m_sessions->config()->logger()->logMessage(Log().about(Log::Level::Info, Log::Topic::Status)
-		.user(0, socket->peerAddress(), QString())
-		.message(QStringLiteral("New client connected")));
-
-	auto *client = new ThinServerClient(socket, m_sessions->config()->logger());
-	client->applyBan(m_config->isAddressBanned(socket->peerAddress()));
+void MultiServer::newClient(ThinServerClient *client)
+{
+	client->applyBan(m_config->isAddressBanned(client->peerAddress()));
 	m_sessions->addClient(client);
 	printStatusUpdate();
 }
-
 
 void MultiServer::printStatusUpdate()
 {
@@ -279,7 +291,7 @@ void MultiServer::stop() {
 			));
 
 		m_state = STOPPING;
-		m_server->close();
+		m_tcpServer->close();
 		m_port = 0;
 
 		m_sessions->stopAll();
@@ -288,8 +300,8 @@ void MultiServer::stop() {
 	if(m_state == STOPPING) {
 		if(m_sessions->totalUsers() == 0) {
 			m_state = STOPPED;
-			delete m_server;
-			m_server = nullptr;
+			delete m_tcpServer;
+			m_tcpServer = nullptr;
 			m_sessions->config()->logger()->logMessage(Log()
 				.about(Log::Level::Info, Log::Topic::Status)
 				.message("Server stopped."));

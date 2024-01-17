@@ -1,12 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-#ifndef LIBSHARED_MSGQUEUE_H
-#define LIBSHARED_MSGQUEUE_H
+#ifndef LIBSHARED_NET_MESSAGEQUEUE_H
+#define LIBSHARED_NET_MESSAGEQUEUE_H
 #include "libshared/net/message.h"
+#include <QAbstractSocket>
 #include <QObject>
-#include <QQueue>
 #include <QVector>
 
-class QTcpSocket;
 class QTimer;
 
 namespace net {
@@ -14,7 +13,7 @@ namespace net {
 /**
  * A wrapper for an IO device for sending and receiving messages.
  */
-class MessageQueue final : public QObject {
+class MessageQueue : public QObject {
 	Q_OBJECT
 public:
 	static constexpr int DEFAULT_SMOOTH_DRAIN_RATE = 20;
@@ -27,14 +26,7 @@ public:
 		Other,	  // other unspecified error
 	};
 
-	/**
-	 * @brief Create a message queue that wraps a TCP socket.
-	 *
-	 * The MessageQueue does not take ownership of the device.
-	 */
-	explicit MessageQueue(
-		QTcpSocket *socket, bool decodeOpaque, QObject *parent);
-	~MessageQueue() override;
+	MessageQueue(bool decodeOpaque, QObject *parent);
 
 	/**
 	 * @brief Check if there are new messages available
@@ -76,12 +68,12 @@ public:
 	 * @brief Get the number of bytes in the upload queue
 	 * @return
 	 */
-	int uploadQueueBytes() const;
+	virtual int uploadQueueBytes() const = 0;
 
 	/**
 	 * @brief Is there still data in the upload buffer?
 	 */
-	bool isUploading() const;
+	virtual bool isUploading() const = 0;
 
 	/**
 	 * @brief Get the number of milliseconds since the last message sent by the
@@ -175,46 +167,24 @@ signals:
 	 */
 	void gracefulDisconnect(GracefulDisconnect reason, const QString &message);
 
-private slots:
-	void readData();
-	void dataWritten(qint64);
-	void sslEncrypted();
-	void checkIdleTimeout();
-
+protected slots:
 	void receiveSmoothedMessages();
 
-	void sendArtificallyLaggedMessages();
-
-private:
-	static constexpr int MAX_BUF_LEN = 0xffff + DP_MESSAGE_HEADER_LENGTH;
+protected:
 	static constexpr int MSG_TYPE_DISCONNECT = 1;
 	static constexpr int MSG_TYPE_PING = 2;
-	static constexpr int SMOOTHING_INTERVAL_MSEC = 1000 / 60;
 
-	void enqueueMessages(int count, const net::Message *msgs);
+	virtual void enqueueMessages(int count, const net::Message *msgs) = 0;
+	virtual void enqueuePing(bool pong) = 0;
 
-	int haveWholeMessageToRead();
-	void writeData();
-	bool messagesInOutbox() const;
-	net::Message dequeueFromOutbox();
+	virtual QAbstractSocket::SocketState getSocketState() = 0;
+	virtual void abortSocket() = 0;
 
 	void handlePing(bool isPong);
-	void sendPingMsg(bool pong);
 
-	void updateSmoothing();
-
-	QTcpSocket *m_socket;
 	bool m_decodeOpaque;
-
-	char *m_recvbuffer;		 // raw message reception buffer
-	QByteArray m_sendbuffer; // raw message upload buffer
-	int m_recvbytes;		 // number of bytes in reception buffer
-	int m_sentbytes;		 // number of bytes in upload buffer already sent
-
-	net::MessageList m_inbox;	   // received (complete) messages
-	QQueue<net::Message> m_outbox; // messages to be sent
-	QQueue<bool> m_pings;		   // pings and pongs to be sent
-
+	net::MessageList m_inbox; // received (complete) messages
+	bool m_gracefullyDisconnecting;
 	// Smoothing of received messages. Depending on the server and network
 	// conditions, messages will arrive in chunks, which causes other people's
 	// strokes to appear choppy. Smoothing compensates for it, if enabled.
@@ -224,14 +194,25 @@ private:
 	net::MessageList m_smoothBuffer;
 	int m_smoothMessagesToDrain;
 	unsigned int m_contextId;
+	qint64 m_lastRecvTime;
+
+private slots:
+	void checkIdleTimeout();
+	void sendArtificallyLaggedMessages();
+
+private:
+	static constexpr int SMOOTHING_INTERVAL_MSEC = 1000 / 60;
+
+	virtual void afterDisconnectSent() = 0;
+
+	void sendPingMsg(bool pong);
+
+	void updateSmoothing();
 
 	QTimer *m_idleTimer;
 	QTimer *m_pingTimer;
-	qint64 m_lastRecvTime;
 	qint64 m_idleTimeout;
 	qint64 m_pingSent;
-
-	bool m_gracefullyDisconnecting;
 
 	int m_artificialLagMs;
 	QVector<long long> m_artificialLagTimes;

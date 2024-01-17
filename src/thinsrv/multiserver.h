@@ -1,17 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #ifndef DP_MULTISERVER_H
 #define DP_MULTISERVER_H
-
 #include "libserver/jsonapi.h"
 #include "libserver/sslserver.h"
-
 #include <QObject>
 #include <QHostAddress>
 #include <QDateTime>
 
-class QTcpServer;
 class QDir;
+class QTcpServer;
 
 namespace server {
 
@@ -20,6 +17,7 @@ class ExtBans;
 class Session;
 class SessionServer;
 class ServerConfig;
+class ThinServerClient;
 
 /**
  * The drawpile server.
@@ -50,8 +48,8 @@ public:
 
 	Q_INVOKABLE bool isRunning() const { return m_state != STOPPED; }
 
-	//! Start the server with the given socket descriptor
-	bool startFd(int fd);
+	//! Start the server with the given descriptors
+	bool startFd(int tcpFd);
 
 	SessionServer *sessionServer() { return m_sessions; }
 
@@ -61,7 +59,8 @@ public slots:
 	void setSessionDirectory(const QDir &dir);
 
 	//! Start the server on the given port and listening address
-	bool start(quint16 port, const QHostAddress& address = QHostAddress::Any);
+	bool start(
+		quint16 tcpPort, const QHostAddress &tcpAddress = QHostAddress::Any);
 
 	 //! Stop the server. All clients are disconnected.
 	void stop();
@@ -84,7 +83,7 @@ public slots:
 	void callJsonApiAsync(const QString &requestId, JsonApiMethod method, const QStringList &path, const QJsonObject &request);
 
 private slots:
-	void newClient();
+	void newTcpClient();
 	void printStatusUpdate();
 	void tryAutoStop();
 	void assignRecording(Session *session);
@@ -98,6 +97,9 @@ signals:
 
 private:
 	bool createServer();
+	bool abortStart();
+
+	void newClient(ThinServerClient *client);
 
 	JsonApiResult serverJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
 	JsonApiResult statusJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request);
@@ -112,7 +114,7 @@ private:
 	enum State {RUNNING, STOPPING, STOPPED};
 
 	ServerConfig *m_config;
-	QTcpServer *m_server;
+	QTcpServer *m_tcpServer;
 	SessionServer *m_sessions;
 	ExtBans *m_extBans;
 

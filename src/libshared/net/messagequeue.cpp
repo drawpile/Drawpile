@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "libshared/net/messagequeue.h"
 #include "libshared/util/qtcompat.h"
-
 #include <QDateTime>
 #include <QTcpSocket>
 #include <QTimer>
@@ -11,36 +9,22 @@
 
 namespace net {
 
-MessageQueue::MessageQueue(
-	QTcpSocket *socket, bool decodeOpaque, QObject *parent)
+MessageQueue::MessageQueue(bool decodeOpaque, QObject *parent)
 	: QObject(parent)
-	, m_socket(socket)
 	, m_decodeOpaque(decodeOpaque)
+	, m_gracefullyDisconnecting(false)
 	, m_smoothEnabled(false)
 	, m_smoothDrainRate(DEFAULT_SMOOTH_DRAIN_RATE)
 	, m_smoothTimer(nullptr)
 	, m_smoothMessagesToDrain(INT_MAX)
 	, m_contextId(0)
-	, m_pingTimer(nullptr)
 	, m_lastRecvTime(0)
+	, m_pingTimer(nullptr)
 	, m_idleTimeout(0)
 	, m_pingSent(0)
-	, m_gracefullyDisconnecting(false)
 	, m_artificialLagMs(0)
 	, m_artificialLagTimer(nullptr)
 {
-	connect(socket, &QTcpSocket::readyRead, this, &MessageQueue::readData);
-	connect(
-		socket, &QTcpSocket::bytesWritten, this, &MessageQueue::dataWritten);
-
-	if(socket->inherits("QSslSocket")) {
-		connect(socket, SIGNAL(encrypted()), this, SLOT(sslEncrypted()));
-	}
-
-	m_recvbuffer = new char[MAX_BUF_LEN];
-	m_recvbytes = 0;
-	m_sentbytes = 0;
-
 	m_idleTimer = new QTimer(this);
 	m_idleTimer->setTimerType(Qt::CoarseTimer);
 	connect(
@@ -49,32 +33,15 @@ MessageQueue::MessageQueue(
 	m_idleTimer->setSingleShot(false);
 }
 
-void MessageQueue::sslEncrypted()
-{
-	disconnect(
-		m_socket, &QTcpSocket::bytesWritten, this, &MessageQueue::dataWritten);
-	connect(
-		m_socket, SIGNAL(encryptedBytesWritten(qint64)), this,
-		SLOT(dataWritten(qint64)));
-}
-
-void MessageQueue::checkIdleTimeout()
-{
-	if(m_idleTimeout > 0 && m_socket->state() == QTcpSocket::ConnectedState &&
-	   idleTime() > m_idleTimeout) {
-		qWarning("MessageQueue timeout");
-		m_socket->abort();
-	}
-}
-
 void MessageQueue::setIdleTimeout(qint64 timeout)
 {
 	m_idleTimeout = timeout;
 	m_lastRecvTime = QDateTime::currentMSecsSinceEpoch();
-	if(timeout > 0)
+	if(timeout > 0) {
 		m_idleTimer->start(1000);
-	else
+	} else {
 		m_idleTimer->stop();
+	}
 }
 
 void MessageQueue::setPingInterval(int msecs)
@@ -136,11 +103,6 @@ void MessageQueue::setArtificialLagMs(int msecs)
 	}
 }
 
-MessageQueue::~MessageQueue()
-{
-	delete[] m_recvbuffer;
-}
-
 bool MessageQueue::isPending() const
 {
 	return !m_inbox.isEmpty();
@@ -164,7 +126,9 @@ void MessageQueue::send(const net::Message &msg)
 void MessageQueue::sendMultiple(int count, const net::Message *msgs)
 {
 	if(m_artificialLagMs == 0) {
-		enqueueMessages(count, msgs);
+		if(!m_gracefullyDisconnecting) {
+			enqueueMessages(count, msgs);
+		}
 	} else {
 		long long time =
 			QDateTime::currentMSecsSinceEpoch() + m_artificialLagMs;
@@ -214,6 +178,16 @@ void MessageQueue::receiveSmoothedMessages()
 	}
 }
 
+void MessageQueue::checkIdleTimeout()
+{
+	if(m_idleTimeout > 0 &&
+	   getSocketState() == QAbstractSocket::ConnectedState &&
+	   idleTime() > m_idleTimeout) {
+		qWarning("MessageQueue timeout");
+		abortSocket();
+	}
+}
+
 void MessageQueue::sendArtificallyLaggedMessages()
 {
 	long long now = QDateTime::currentMSecsSinceEpoch();
@@ -228,7 +202,9 @@ void MessageQueue::sendArtificallyLaggedMessages()
 		}
 	}
 
-	enqueueMessages(i, m_artificialLagMessages.constData());
+	if(!m_gracefullyDisconnecting) {
+		enqueueMessages(i, m_artificialLagMessages.constData());
+	}
 	m_artificialLagTimes.remove(0, i);
 	m_artificialLagMessages.remove(0, i);
 
@@ -237,25 +213,10 @@ void MessageQueue::sendArtificallyLaggedMessages()
 	}
 }
 
-void MessageQueue::enqueueMessages(int count, const net::Message *msgs)
-{
-	if(!m_gracefullyDisconnecting) {
-		for(int i = 0; i < count; ++i) {
-			m_outbox.enqueue(msgs[i]);
-		}
-		if(m_sendbuffer.isEmpty()) {
-			writeData();
-		}
-	}
-}
-
 void MessageQueue::sendPingMsg(bool pong)
 {
 	if(m_artificialLagMs == 0) {
-		m_pings.enqueue(pong);
-		if(m_sendbuffer.isEmpty()) {
-			writeData();
-		}
+		enqueuePing(pong);
 	} else {
 		// Not accurate, but probably good enough for development purposes.
 		send(net::makePingMessage(0, pong));
@@ -265,18 +226,13 @@ void MessageQueue::sendPingMsg(bool pong)
 void MessageQueue::sendDisconnect(
 	GracefulDisconnect reason, const QString &message)
 {
-	if(m_gracefullyDisconnecting)
+	if(m_gracefullyDisconnecting) {
 		qWarning("sendDisconnect: already disconnecting.");
-
+	}
 	net::Message msg = net::makeDisconnectMessage(0, uint8_t(reason), message);
-
-	qInfo(
-		"Sending disconnect message (reason=%d), will disconnect after queue "
-		"(%lld messages) is empty.",
-		int(reason), compat::cast<long long>(m_outbox.size() + m_pings.size()));
 	send(msg);
 	m_gracefullyDisconnecting = true;
-	m_recvbytes = 0;
+	afterDisconnectSent();
 	setSmoothEnabled(false);
 }
 
@@ -294,161 +250,9 @@ void MessageQueue::sendPing()
 	sendPingMsg(false);
 }
 
-int MessageQueue::uploadQueueBytes() const
-{
-	int total = m_socket->bytesToWrite() + m_sendbuffer.length() - m_sentbytes;
-	for(const net::Message &msg : m_outbox)
-		total += compat::castSize(msg.length());
-	total +=
-		m_pings.size() * (DP_MESSAGE_HEADER_LENGTH + DP_MSG_PING_STATIC_LENGTH);
-	return total;
-}
-
-bool MessageQueue::isUploading() const
-{
-	return !m_sendbuffer.isEmpty() || m_socket->bytesToWrite() > 0;
-}
-
 qint64 MessageQueue::idleTime() const
 {
 	return QDateTime::currentMSecsSinceEpoch() - m_lastRecvTime;
-}
-
-int MessageQueue::haveWholeMessageToRead()
-{
-	if(m_recvbytes >= DP_MESSAGE_HEADER_LENGTH) {
-		int bodyLength = qFromBigEndian<quint16>(m_recvbuffer);
-		int messageLength = bodyLength + DP_MESSAGE_HEADER_LENGTH;
-		if(m_recvbytes >= messageLength) {
-			return messageLength;
-		}
-	}
-	return 0;
-}
-
-void MessageQueue::readData()
-{
-	int read, totalread = 0, gotmessages = 0;
-	bool smoothFlush = false;
-	int disconnectReason = -1;
-	QString disconnectMessage;
-	do {
-		// Read as much as fits in to the message buffer
-		read = m_socket->read(
-			m_recvbuffer + m_recvbytes, MAX_BUF_LEN - m_recvbytes);
-		if(read < 0) {
-			emit socketError(m_socket->errorString());
-			return;
-		}
-
-		if(m_gracefullyDisconnecting) {
-			// Ignore incoming data when we're in the process of disconnecting
-			if(read > 0)
-				continue;
-			else
-				return;
-		}
-
-		m_recvbytes += read;
-
-		// Extract all complete messages
-		int messageLength;
-		while((messageLength = haveWholeMessageToRead()) != 0) {
-			// Whole message received!
-			int type = static_cast<unsigned char>(m_recvbuffer[2]);
-			if(type == MSG_TYPE_PING) {
-				// Pings are handled internally
-				if(messageLength != DP_MESSAGE_HEADER_LENGTH + 1) {
-					// Not a valid Ping message!
-					emit badData(messageLength, MSG_TYPE_PING, 0);
-				} else {
-					handlePing(m_recvbuffer[DP_MESSAGE_HEADER_LENGTH]);
-				}
-
-			} else if(type == MSG_TYPE_DISCONNECT) {
-				// Graceful disconnects are also handled internally
-				if(messageLength < DP_MESSAGE_HEADER_LENGTH + 1) {
-					// We expected at least a reason!
-					emit badData(messageLength, MSG_TYPE_DISCONNECT, 0);
-				} else {
-					smoothFlush = true;
-					disconnectReason = m_recvbuffer[DP_MESSAGE_HEADER_LENGTH];
-					disconnectMessage = QString::fromUtf8(
-						m_recvbuffer + DP_MESSAGE_HEADER_LENGTH + 1,
-						messageLength - DP_MESSAGE_HEADER_LENGTH - 1);
-				}
-
-			} else {
-				// The rest are normal messages
-				net::Message msg = net::Message::deserialize(
-					reinterpret_cast<unsigned char *>(m_recvbuffer),
-					m_recvbytes, m_decodeOpaque);
-				if(msg.isNull()) {
-					qWarning("Error deserializing message: %s", DP_error());
-					emit badData(
-						messageLength, type,
-						static_cast<unsigned char>(m_recvbuffer[3]));
-				} else {
-					if(m_smoothTimer) {
-						// Undos already have a delay because they require a
-						// round trip, we don't want to make them even slower.
-						bool ownUndoReceived = m_contextId != 0 &&
-											   msg.type() == DP_MSG_UNDO &&
-											   msg.contextId() == m_contextId;
-						if(ownUndoReceived) {
-							smoothFlush = true;
-						}
-						m_smoothBuffer.append(msg);
-					} else {
-						m_inbox.append(msg);
-					}
-					++gotmessages;
-				}
-			}
-
-			if(messageLength < m_recvbytes) {
-				// Buffer contains more than one message
-				memmove(
-					m_recvbuffer, m_recvbuffer + messageLength,
-					m_recvbytes - messageLength);
-			}
-
-			m_recvbytes -= messageLength;
-		}
-
-		// All whole messages extracted from the work buffer.
-		// There can still be more bytes in the socket buffer.
-		totalread += read;
-	} while(read > 0);
-
-	if(totalread) {
-		m_lastRecvTime = QDateTime::currentMSecsSinceEpoch();
-		emit bytesReceived(totalread);
-	}
-
-	if(gotmessages != 0) {
-		if(m_smoothTimer) {
-			if(smoothFlush) {
-				m_inbox.append(m_smoothBuffer);
-				m_smoothBuffer.clear();
-				emit messageAvailable();
-				m_smoothTimer->stop();
-			} else {
-				m_smoothMessagesToDrain =
-					m_smoothBuffer.size() / m_smoothDrainRate;
-				if(!m_smoothTimer->isActive()) {
-					receiveSmoothedMessages();
-				}
-			}
-		} else {
-			emit messageAvailable();
-		}
-	}
-
-	if(disconnectReason != -1) {
-		emit gracefulDisconnect(
-			GracefulDisconnect(disconnectReason), disconnectMessage);
-	}
 }
 
 void MessageQueue::handlePing(bool isPong)
@@ -467,79 +271,6 @@ void MessageQueue::handlePing(bool isPong)
 	} else {
 		// Reply to a Ping with a Pong
 		sendPingMsg(true);
-	}
-}
-
-void MessageQueue::dataWritten(qint64 bytes)
-{
-	emit bytesSent(bytes);
-
-	// Write more once the buffer is empty
-	if(m_socket->bytesToWrite() == 0) {
-		if(m_sendbuffer.isEmpty() && !messagesInOutbox()) {
-			emit allSent();
-			if(m_gracefullyDisconnecting) {
-				qInfo("All sent, gracefully disconnecting.");
-				m_socket->disconnectFromHost();
-			}
-		} else {
-			writeData();
-		}
-	}
-}
-
-void MessageQueue::writeData()
-{
-	bool sendMore = true;
-	int sentBatch = 0;
-
-	while(sendMore && sentBatch < 1024 * 64) {
-		sendMore = false;
-		if(m_sendbuffer.isEmpty() && messagesInOutbox()) {
-			// Upload buffer is empty, but there are messages in the outbox
-			Q_ASSERT(m_sentbytes == 0);
-			if(!dequeueFromOutbox().serialize(m_sendbuffer)) {
-				qWarning("Error serializing message: %s", DP_error());
-				sendMore = messagesInOutbox();
-				continue;
-			}
-		}
-
-		if(m_sentbytes < m_sendbuffer.length()) {
-			const int sent = m_socket->write(
-				m_sendbuffer.constData() + m_sentbytes,
-				m_sendbuffer.length() - m_sentbytes);
-			if(sent < 0) {
-				// Error
-				emit socketError(m_socket->errorString());
-				return;
-			}
-			m_sentbytes += sent;
-			sentBatch += sent;
-
-			Q_ASSERT(m_sentbytes <= m_sendbuffer.length());
-
-			if(m_sentbytes >= m_sendbuffer.length()) {
-				// Complete envelope sent
-				m_sendbuffer.clear();
-				m_sentbytes = 0;
-				sendMore = messagesInOutbox();
-			}
-		}
-	}
-}
-
-bool MessageQueue::messagesInOutbox() const
-{
-	return !m_outbox.isEmpty() || !m_pings.isEmpty();
-}
-
-net::Message MessageQueue::dequeueFromOutbox()
-{
-	if(m_pings.isEmpty()) {
-		return m_outbox.dequeue();
-	} else {
-		return net::makePingMessage(0, m_pings.dequeue());
 	}
 }
 

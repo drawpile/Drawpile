@@ -10,8 +10,7 @@ class ThinServerClient final : public Client {
 	Q_OBJECT
 public:
 	ThinServerClient(
-		QTcpSocket *socket, ServerLog *logger, QObject *parent = nullptr);
-
+		QTcpSocket *tcpSocket, ServerLog *logger, QObject *parent = nullptr);
 	~ThinServerClient() override;
 
 	/**
@@ -30,6 +29,8 @@ public slots:
 	void sendNextHistoryBatch();
 
 private:
+	void connectSendNextHistoryBatch();
+
 	int m_historyPosition;
 };
 

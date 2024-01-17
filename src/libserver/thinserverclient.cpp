@@ -10,9 +10,7 @@ ThinServerClient::ThinServerClient(
 	: Client(socket, logger, false, parent)
 	, m_historyPosition(-1)
 {
-	connect(
-		messageQueue(), &net::MessageQueue::allSent, this,
-		&ThinServerClient::sendNextHistoryBatch);
+	connectSendNextHistoryBatch();
 }
 
 ThinServerClient::~ThinServerClient()
@@ -37,6 +35,13 @@ void ThinServerClient::sendNextHistoryBatch()
 	messageQueue()->sendMultiple(batch.size(), batch.constData());
 
 	static_cast<ThinSession *>(session())->cleanupHistoryCache();
+}
+
+void ThinServerClient::connectSendNextHistoryBatch()
+{
+	connect(
+		messageQueue(), &net::MessageQueue::allSent, this,
+		&ThinServerClient::sendNextHistoryBatch);
 }
 
 }
