@@ -213,6 +213,8 @@ target_sources(drawpile PRIVATE
 	scene/lasertrailitem.h
 	scene/noticeitem.cpp
 	scene/noticeitem.h
+	scene/outlineitem.cpp
+	scene/outlineitem.h
 	scene/selectionitem.cpp
 	scene/selectionitem.h
 	scene/toggleitem.cpp

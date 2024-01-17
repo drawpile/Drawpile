@@ -40,11 +40,9 @@ CanvasView::CanvasView(QWidget *parent)
 	, m_dragButton(Qt::NoButton)
 	, m_dragInverted(false)
 	, m_dragSwapAxes(false)
-	, m_prevoutline(false)
 	, m_outlineSize(2)
 	, m_showoutline(false)
 	, m_subpixeloutline(true)
-	, m_squareoutline(false)
 	, m_forceoutline(false)
 	, m_pos{0.0, 0.0}
 	, m_zoom(1.0)
@@ -635,32 +633,32 @@ void CanvasView::resetCursor()
 	if(m_dragmode != ViewDragMode::None) {
 		switch(m_dragAction) {
 		case CanvasShortcuts::CANVAS_PAN:
-			viewport()->setCursor(
+			setViewportCursor(
 				m_dragmode == ViewDragMode::Started ? Qt::ClosedHandCursor
 													: Qt::OpenHandCursor);
 			break;
 		case CanvasShortcuts::CANVAS_ROTATE:
-			viewport()->setCursor(m_rotatecursor);
+			setViewportCursor(m_rotatecursor);
 			break;
 		case CanvasShortcuts::CANVAS_ROTATE_DISCRETE:
-			viewport()->setCursor(m_rotatediscretecursor);
+			setViewportCursor(m_rotatediscretecursor);
 			break;
 		case CanvasShortcuts::CANVAS_ZOOM:
-			viewport()->setCursor(m_zoomcursor);
+			setViewportCursor(m_zoomcursor);
 			break;
 		case CanvasShortcuts::TOOL_ADJUST:
-			viewport()->setCursor(
+			setViewportCursor(
 				m_dragSwapAxes ? Qt::SplitVCursor : Qt::SplitHCursor);
 			break;
 		default:
-			viewport()->setCursor(Qt::ForbiddenCursor);
+			setViewportCursor(Qt::ForbiddenCursor);
 			break;
 		}
 		return;
 	}
 
 	if(m_hoveringOverHud) {
-		viewport()->setCursor(Qt::PointingHandCursor);
+		setViewportCursor(Qt::PointingHandCursor);
 		return;
 	}
 
@@ -668,45 +666,57 @@ void CanvasView::resetCursor()
 	case PenMode::Normal:
 		break;
 	case PenMode::Colorpick:
-		viewport()->setCursor(m_colorpickcursor);
+		setViewportCursor(m_colorpickcursor);
 		return;
 	case PenMode::Layerpick:
-		viewport()->setCursor(m_layerpickcursor);
+		setViewportCursor(m_layerpickcursor);
 		return;
 	}
 
 	if(m_lock) {
-		viewport()->setCursor(Qt::ForbiddenCursor);
-		updateOutline();
+		setViewportCursor(Qt::ForbiddenCursor);
 		return;
 	} else if(m_busy) {
-		viewport()->setCursor(Qt::WaitCursor);
-		updateOutline();
+		setViewportCursor(Qt::WaitCursor);
 		return;
 	}
 
 	if(m_toolcursor.shape() == Qt::CrossCursor) {
 		switch(m_brushCursorStyle) {
 		case BrushCursor::Dot:
-			viewport()->setCursor(m_dotcursor);
+			setViewportCursor(m_dotcursor);
 			break;
 		case BrushCursor::Cross:
-			viewport()->setCursor(Qt::CrossCursor);
+			setViewportCursor(Qt::CrossCursor);
 			break;
 		case BrushCursor::Arrow:
-			viewport()->setCursor(Qt::ArrowCursor);
+			setViewportCursor(Qt::ArrowCursor);
 			break;
 		case BrushCursor::TriangleLeft:
-			viewport()->setCursor(m_triangleleftcursor);
+			setViewportCursor(m_triangleleftcursor);
 			break;
 		case BrushCursor::TriangleRight:
 		default:
-			viewport()->setCursor(m_trianglerightcursor);
+			setViewportCursor(m_trianglerightcursor);
 			break;
 		}
 	} else {
-		viewport()->setCursor(m_toolcursor);
+		setViewportCursor(m_toolcursor);
 	}
+}
+
+void CanvasView::setViewportCursor(const QCursor &cursor)
+{
+#ifdef HAVE_EMULATED_BITMAP_CURSOR
+	viewport()->setCursor(
+		cursor.shape() == Qt::BitmapCursor ? Qt::BlankCursor : cursor);
+	if(m_scene) {
+		m_scene->setCursor(cursor);
+	}
+#else
+	viewport()->setCursor(cursor);
+#endif
+	updateOutline();
 }
 
 void CanvasView::setPixelGrid(bool enable)
@@ -720,62 +730,18 @@ void CanvasView::setPixelGrid(bool enable)
  */
 void CanvasView::setOutlineSize(int newSize)
 {
-	if(m_showoutline && (m_outlineSize > 0 || newSize > 0) &&
-	   !m_hoveringOverHud) {
-		updateScene({getOutlineBounds(
-			m_prevoutlinepoint, qMax(m_outlineSize, newSize))});
-	}
 	m_outlineSize = newSize;
+	updateOutline();
 }
 
 void CanvasView::setOutlineMode(bool subpixel, bool square, bool force)
 {
 	m_subpixeloutline = subpixel;
-	m_squareoutline = square;
 	m_forceoutline = force;
-}
-
-void CanvasView::drawForeground(QPainter *painter, const QRectF &rect)
-{
-	// We want to show an outline if we're currently drawing or able to, but
-	// also if we're adjusting the tool size, since seeing the outline while
-	// you change your brush size is really useful.
-	bool outlineVisibleInMode;
-	if(m_dragmode == ViewDragMode::None) {
-		outlineVisibleInMode =
-			m_penmode == PenMode::Normal && !m_lock && !m_busy;
-	} else {
-		outlineVisibleInMode = m_dragAction == CanvasShortcuts::TOOL_ADJUST;
-	}
-
-	bool shouldRenderOutline = m_showoutline && m_outlineSize > 0 &&
-							   outlineVisibleInMode && !m_hoveringOverHud;
-	m_prevoutline = shouldRenderOutline;
-	if(shouldRenderOutline) {
-		qreal size = m_outlineSize * m_zoom;
-		QRectF outline(
-			mapFromCanvas(m_prevoutlinepoint) - QPointF(size / 2.0, size / 2.0),
-			QSizeF(size, size));
-
-		if(!m_subpixeloutline && m_outlineSize % 2 == 0) {
-			outline.translate(-0.5 * m_zoom, -0.5 * m_zoom);
-		}
-
-		qreal owidth = getOutlineWidth();
-		if(rect.intersects(outline) && owidth > 0) {
-			painter->save();
-			QPen pen(QColor(96, 191, 96));
-			pen.setCosmetic(true);
-			pen.setWidthF(owidth);
-			painter->setPen(pen);
-			painter->setCompositionMode(
-				QPainter::RasterOp_SourceXorDestination);
-			if(m_squareoutline)
-				painter->drawRect(outline);
-			else
-				painter->drawEllipse(outline);
-			painter->restore();
-		}
+	if(m_scene) {
+		m_scene->setOutlinePos(getOutlinePos());
+		m_scene->setOutlineSquare(square);
+		m_scene->setOutlineWidth(getOutlineWidth());
 	}
 }
 
@@ -791,6 +757,9 @@ void CanvasView::enterEvent(compat::EnterEvent *event)
 {
 	QGraphicsView::enterEvent(event);
 	m_showoutline = true;
+	if(m_scene) {
+		m_scene->setCursorOnCanvas(true);
+	}
 
 	// Give focus to this widget on mouseover. This is so that
 	// using a key for dragging works rightaway. Avoid stealing
@@ -806,8 +775,10 @@ void CanvasView::enterEvent(compat::EnterEvent *event)
 void CanvasView::leaveEvent(QEvent *event)
 {
 	QGraphicsView::leaveEvent(event);
+	if(m_scene) {
+		m_scene->setCursorOnCanvas(false);
+	}
 	m_showoutline = false;
-	m_prevoutline = false;
 	m_hoveringOverHud = false;
 	m_scene->removeHover();
 	updateOutline();
@@ -967,7 +938,6 @@ void CanvasView::penPressEvent(
 		m_scene->checkHover(mapToScene(pos.toPoint()), &wasHovering);
 	m_hoveringOverHud = action != drawingboard::ToggleItem::Action::None;
 	if(m_hoveringOverHud != wasHovering) {
-		updateOutline();
 		resetCursor();
 	}
 	if(m_hoveringOverHud) {
@@ -1010,6 +980,7 @@ void CanvasView::penPressEvent(
 			m_dragModifiers = match.shortcut->mods;
 			m_dragInverted = match.inverted();
 			m_dragSwapAxes = match.swapAxes();
+			updateOutline();
 		}
 		break;
 	case CanvasShortcuts::COLOR_PICK:
@@ -1033,7 +1004,6 @@ void CanvasView::penPressEvent(
 		m_dragModifiers = modifiers;
 		m_dragDiscreteRotation = 0.0;
 		resetCursor();
-		updateOutline();
 	} else if(
 		(button == Qt::LeftButton || button == Qt::RightButton) &&
 		m_dragmode == ViewDragMode::None) {
@@ -1071,6 +1041,10 @@ void CanvasView::mousePressEvent(QMouseEvent *event)
 		mousePos.x(), mousePos.y(), unsigned(event->buttons()),
 		unsigned(event->modifiers()), isSynthetic(event), m_pendown,
 		m_touching);
+
+#ifdef HAVE_EMULATED_BITMAP_CURSOR
+	updateCursorPos(mousePos);
+#endif
 
 	if((m_enableTablet && isSynthetic(event)) || m_touching) {
 		return;
@@ -1121,7 +1095,8 @@ void CanvasView::penMoveEvent(
 			}
 			m_prevpoint = point;
 		}
-		updateOutline(point);
+		updateOutlinePos(point);
+		updateOutline();
 	}
 }
 
@@ -1135,6 +1110,10 @@ void CanvasView::mouseMoveEvent(QMouseEvent *event)
 		mousePos.x(), mousePos.y(), unsigned(event->buttons()),
 		unsigned(event->modifiers()), isSynthetic(event), m_pendown,
 		m_touching);
+
+#ifdef HAVE_EMULATED_BITMAP_CURSOR
+	updateCursorPos(mousePos);
+#endif
 
 	if((m_enableTablet && isSynthetic(event)) || m_pendown == TABLETDOWN ||
 	   m_touching) {
@@ -1224,8 +1203,8 @@ void CanvasView::penReleaseEvent(
 		}
 	}
 
+	updateOutlinePos(point);
 	resetCursor();
-	updateOutline(point);
 }
 
 void CanvasView::touchPressEvent(
@@ -1345,6 +1324,11 @@ void CanvasView::mouseReleaseEvent(QMouseEvent *event)
 		mousePos.x(), mousePos.y(), unsigned(event->buttons()),
 		unsigned(event->modifiers()), isSynthetic(event), m_pendown,
 		m_touching);
+
+#ifdef HAVE_EMULATED_BITMAP_CURSOR
+	updateCursorPos(mousePos);
+#endif
+
 	if((m_enableTablet && isSynthetic(event)) || m_touching) {
 		return;
 	}
@@ -1462,7 +1446,6 @@ void CanvasView::keyPressEvent(QKeyEvent *event)
 			m_dragInverted = mouseMatch.inverted();
 			m_dragSwapAxes = mouseMatch.swapAxes();
 			resetCursor();
-			updateOutline();
 			break;
 		default:
 			break;
@@ -1490,7 +1473,6 @@ void CanvasView::keyPressEvent(QKeyEvent *event)
 			m_dragCanvasPoint = mapToCanvas(m_dragLastPoint);
 			m_dragDiscreteRotation = 0.0;
 			resetCursor();
-			updateOutline();
 			break;
 		default:
 			break;
@@ -1535,7 +1517,6 @@ void CanvasView::keyPressEvent(QKeyEvent *event)
 	}
 
 	resetCursor();
-	updateOutline();
 }
 
 void CanvasView::keyReleaseEvent(QKeyEvent *event)
@@ -1565,7 +1546,6 @@ void CanvasView::keyReleaseEvent(QKeyEvent *event)
 		case CanvasShortcuts::TOOL_ADJUST:
 			m_dragmode = ViewDragMode::None;
 			resetCursor();
-			updateOutline();
 			break;
 		default:
 			break;
@@ -1591,7 +1571,6 @@ void CanvasView::keyReleaseEvent(QKeyEvent *event)
 			m_dragSwapAxes = mouseMatch.swapAxes();
 			m_dragDiscreteRotation = 0.0;
 			resetCursor();
-			updateOutline();
 			break;
 		default:
 			break;
@@ -1642,7 +1621,6 @@ void CanvasView::keyReleaseEvent(QKeyEvent *event)
 	}
 
 	resetCursor();
-	updateOutline();
 }
 
 static qreal squareDist(const QPointF &p)
@@ -1946,6 +1924,10 @@ bool CanvasView::viewportEvent(QEvent *event)
 		eraserOverride = false;
 #endif
 
+#ifdef HAVE_EMULATED_BITMAP_CURSOR
+		updateCursorPos(tabPos.toPoint());
+#endif
+
 		// Note: it is possible to get a mouse press event for a tablet event
 		// (even before the tablet event is received or even though
 		// tabev->accept() is called), but it is never possible to get a
@@ -1977,6 +1959,10 @@ bool CanvasView::viewportEvent(QEvent *event)
 			unsigned(tabev->modifiers()), m_pendown, m_touching,
 			unsigned(modifiers));
 
+#ifdef HAVE_EMULATED_BITMAP_CURSOR
+		updateCursorPos(tabPos.toPoint());
+#endif
+
 		if(!tabletinput::passPenEvents()) {
 			tabev->accept();
 		}
@@ -1995,6 +1981,9 @@ bool CanvasView::viewportEvent(QEvent *event)
 			tabev->spontaneous(), tabPos.x(), tabPos.y(),
 			unsigned(tabev->buttons()), m_pendown, m_touching,
 			unsigned(modifiers));
+#ifdef HAVE_EMULATED_BITMAP_CURSOR
+		updateCursorPos(tabPos.toPoint());
+#endif
 		if(!tabletinput::passPenEvents()) {
 			tabev->accept();
 		}
@@ -2008,33 +1997,30 @@ bool CanvasView::viewportEvent(QEvent *event)
 	return true;
 }
 
-void CanvasView::updateOutline(QPointF point)
+void CanvasView::updateOutlinePos(QPointF point)
 {
-	QList<QRectF> updates;
-	updates.reserve(2);
-	if(m_prevoutline) {
-		updates.append(getOutlineBounds(m_prevoutlinepoint, m_outlineSize));
-	}
-
 	if(m_showoutline && !m_lock && !m_busy && !m_hoveringOverHud &&
-	   (!m_prevoutline ||
-		!canvas::Point::roughlySame(point, m_prevoutlinepoint))) {
+	   (!canvas::Point::roughlySame(point, m_prevoutlinepoint))) {
 		if(!m_subpixeloutline) {
 			point.setX(qFloor(point.x()) + 0.5);
 			point.setY(qFloor(point.y()) + 0.5);
 		}
-		updates.append(getOutlineBounds(point, m_outlineSize));
 		m_prevoutlinepoint = point;
-	}
-
-	if(!updates.isEmpty()) {
-		updateScene(updates);
+		updateOutline();
 	}
 }
 
 void CanvasView::updateOutline()
 {
-	updateScene({getOutlineBounds(m_prevoutlinepoint, m_outlineSize)});
+	if(m_scene) {
+		m_scene->setOutline(m_outlineSize * m_zoom, getOutlineWidth());
+		m_scene->setOutlinePos(getOutlinePos());
+		m_scene->setOutlineVisibleInMode(
+			!m_hoveringOverHud &&
+			(m_dragmode == ViewDragMode::None
+				 ? m_penmode == PenMode::Normal && !m_lock && !m_busy
+				 : m_dragAction == CanvasShortcuts::TOOL_ADJUST));
+	}
 }
 
 QRectF CanvasView::getOutlineBounds(const QPointF &point, int size)
@@ -2045,11 +2031,30 @@ QRectF CanvasView::getOutlineBounds(const QPointF &point, int size)
 	return QRectF{mapped.x() - orad, mapped.y() - orad, owidth, owidth};
 }
 
+QPointF CanvasView::getOutlinePos() const
+{
+	QPointF pos = mapFromCanvas(m_prevoutlinepoint);
+	if(!m_subpixeloutline && m_outlineSize % 2 == 0) {
+		qreal offset = m_zoom * 0.5;
+		pos -= QPointF(offset, offset);
+	}
+	return pos;
+}
+
 qreal CanvasView::getOutlineWidth() const
 {
 	return m_forceoutline ? qMax(1.0, m_brushOutlineWidth)
 						  : m_brushOutlineWidth;
 }
+
+#ifdef HAVE_EMULATED_BITMAP_CURSOR
+void CanvasView::updateCursorPos(const QPoint &pos)
+{
+	if(m_scene) {
+		m_scene->setCursorPos(mapToScene(pos));
+	}
+}
+#endif
 
 QPoint CanvasView::viewCenterPoint() const
 {
@@ -2144,31 +2149,24 @@ void CanvasView::moveDrag(const QPoint &point)
 
 void CanvasView::updateCanvasTransform(const std::function<void()> &block)
 {
-	QList<QRectF> rects;
-	QPointF outlinePoint;
-	if(m_prevoutline) {
-		outlinePoint = fromCanvasTransform().map(m_prevoutlinepoint);
-		rects.append(getOutlineBounds(m_prevoutlinepoint, m_outlineSize));
-	}
+	QPointF outlinePoint = fromCanvasTransform().map(m_prevoutlinepoint);
 
 	block();
 
 	if(m_scene) {
 		updatePosBounds();
-		rects.append(m_scene->canvasBounds());
+		QRectF rectBefore = m_scene->canvasBounds();
 		m_scene->setCanvasTransform(calculateCanvasTransform());
-		rects.append(m_scene->canvasBounds());
+		QRectF rectAfter = m_scene->canvasBounds();
 		updateScrollBars();
 		updateCanvasPixelGrid();
 		updateRenderHints();
 		viewRectChanged();
+		updateScene({rectBefore, rectAfter});
 	}
 
-	if(m_prevoutline) {
-		m_prevoutlinepoint = toCanvasTransform().map(outlinePoint);
-		rects.append(getOutlineBounds(m_prevoutlinepoint, m_outlineSize));
-	}
-	updateScene(rects);
+	m_prevoutlinepoint = toCanvasTransform().map(outlinePoint);
+	updateOutline();
 }
 
 void CanvasView::updatePosBounds()
@@ -2333,7 +2331,8 @@ void CanvasView::resizeEvent(QResizeEvent *e)
 	QScopedValueRollback<bool> guard{m_scrollBarsAdjusting, true};
 	QGraphicsView::resizeEvent(e);
 	if(!e->size().isEmpty()) {
-		updateOutline(mapToCanvas(mapFromGlobal(QCursor::pos())));
+		updateOutlinePos(mapToCanvas(mapFromGlobal(QCursor::pos())));
+		updateOutline();
 		updateCanvasTransform([] {
 			// Nothing.
 		});

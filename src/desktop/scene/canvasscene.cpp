@@ -5,6 +5,7 @@
 #include "desktop/scene/catchupitem.h"
 #include "desktop/scene/lasertrailitem.h"
 #include "desktop/scene/noticeitem.h"
+#include "desktop/scene/outlineitem.h"
 #include "desktop/scene/selectionitem.h"
 #include "desktop/scene/usermarkeritem.h"
 #include "libclient/canvas/canvasmodel.h"
@@ -17,6 +18,9 @@
 #include <QGraphicsItemGroup>
 #include <QTimer>
 #include <utility>
+#ifdef HAVE_EMULATED_BITMAP_CURSOR
+#	include "desktop/scene/cursoritem.h"
+#endif
 
 namespace drawingboard {
 
@@ -43,6 +47,13 @@ CanvasScene::CanvasScene(QObject *parent)
 	addItem(m_group);
 
 	m_canvasItem = new CanvasItem{m_group};
+
+	m_outlineItem = new OutlineItem;
+	addItem(m_outlineItem);
+#ifdef HAVE_EMULATED_BITMAP_CURSOR
+	m_cursorItem = new CursorItem;
+	addItem(m_cursorItem);
+#endif
 
 	// Timer for on-canvas animations (user pointer fadeout, laser trail
 	// flickering and such) Our animation needs are very simple, so we use this
@@ -574,5 +585,50 @@ void CanvasScene::setCatchupPosition()
 			catchupBounds.width() + NOTICE_OFFSET,
 			catchupBounds.height() + NOTICE_OFFSET));
 }
+
+void CanvasScene::setOutline(qreal size, qreal width)
+{
+	m_outlineItem->setOutline(size, width);
+}
+
+void CanvasScene::setOutlinePos(const QPointF &pos)
+{
+	m_outlineItem->setPos(pos);
+}
+
+void CanvasScene::setOutlineSquare(bool square)
+{
+	m_outlineItem->setSquare(square);
+}
+
+void CanvasScene::setOutlineWidth(qreal width)
+{
+	m_outlineItem->setOutlineWidth(width);
+}
+
+void CanvasScene::setOutlineVisibleInMode(bool visibleInMode)
+{
+	m_outlineItem->setVisibleInMode(visibleInMode);
+}
+
+void CanvasScene::setCursorOnCanvas(bool onCanvas)
+{
+	m_outlineItem->setOnCanvas(onCanvas);
+#ifdef HAVE_EMULATED_BITMAP_CURSOR
+	m_cursorItem->setOnCanvas(onCanvas);
+#endif
+}
+
+#ifdef HAVE_EMULATED_BITMAP_CURSOR
+void CanvasScene::setCursor(const QCursor &cursor)
+{
+	m_cursorItem->setCursor(cursor);
+}
+
+void CanvasScene::setCursorPos(const QPointF &pos)
+{
+	m_cursorItem->setPos(pos);
+}
+#endif
 
 }

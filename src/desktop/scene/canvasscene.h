@@ -24,8 +24,12 @@ class CanvasItem;
 class CatchupItem;
 class LaserTrailItem;
 class NoticeItem;
+class OutlineItem;
 class SelectionItem;
 class UserMarkerItem;
+#ifdef HAVE_EMULATED_BITMAP_CURSOR
+class CursorItem;
+#endif
 
 /**
  * @brief The drawing board scene
@@ -82,6 +86,17 @@ public:
 	void setShowOwnUserMarker(bool show) { m_showOwnUserMarker = show; }
 
 	bool hasCatchup() const { return m_catchup != nullptr; }
+
+	void setOutline(qreal size, qreal width);
+	void setOutlinePos(const QPointF &pos);
+	void setOutlineSquare(bool square);
+	void setOutlineWidth(qreal width);
+	void setOutlineVisibleInMode(bool visibleInMode);
+	void setCursorOnCanvas(bool onCanvas);
+#ifdef HAVE_EMULATED_BITMAP_CURSOR
+	void setCursor(const QCursor &cursor);
+	void setCursorPos(const QPointF &pos);
+#endif
 
 public slots:
 	//! Show annotation borders
@@ -169,6 +184,11 @@ private:
 	NoticeItem *m_lockNotice;
 	CatchupItem *m_catchup;
 	QVector<ToggleItem *> m_toggleItems;
+
+	OutlineItem *m_outlineItem;
+#ifdef HAVE_EMULATED_BITMAP_CURSOR
+	CursorItem *m_cursorItem;
+#endif
 
 	bool m_showAnnotationBorders;
 	bool m_showAnnotations;

@@ -242,7 +242,6 @@ protected:
 	void keyPressEvent(QKeyEvent *event) override;
 	void keyReleaseEvent(QKeyEvent *event) override;
 	bool viewportEvent(QEvent *event) override;
-	void drawForeground(QPainter *painter, const QRectF &rect) override;
 	void dragEnterEvent(QDragEnterEvent *event) override;
 	void dragMoveEvent(QDragMoveEvent *event) override;
 	void dropEvent(QDropEvent *event) override;
@@ -304,11 +303,15 @@ private:
 	void emitViewTransformed();
 	bool isRotationInverted() const;
 
-	//! Redraw the scene around the outline cursor if necesasry
-	void updateOutline(QPointF point);
+	void updateOutlinePos(QPointF point);
 	void updateOutline();
 	QRectF getOutlineBounds(const QPointF &point, int size);
+	QPointF getOutlinePos() const;
 	qreal getOutlineWidth() const;
+
+#ifdef HAVE_EMULATED_BITMAP_CURSOR
+	void updateCursorPos(const QPoint &pos);
+#endif
 
 	void onPenDown(const canvas::Point &p, bool right, bool eraserOverride);
 	void onPenMove(
@@ -320,6 +323,7 @@ private:
 	void touchEvent(QTouchEvent *event);
 
 	void resetCursor();
+	void setViewportCursor(const QCursor &cursor);
 
 	void setZoomToFit(Qt::Orientations orientations);
 	void rotateByDiscreteSteps(int steps);
@@ -372,7 +376,6 @@ private:
 	//! Previous pointer location
 	canvas::Point m_prevpoint;
 	QPointF m_prevoutlinepoint;
-	bool m_prevoutline;
 	qreal m_pointerdistance;
 	qreal m_pointervelocity;
 
@@ -380,7 +383,7 @@ private:
 	qreal m_gestureStartAngle;
 
 	int m_outlineSize;
-	bool m_showoutline, m_subpixeloutline, m_squareoutline, m_forceoutline;
+	bool m_showoutline, m_subpixeloutline, m_forceoutline;
 	QCursor m_dotcursor, m_trianglerightcursor, m_triangleleftcursor;
 	QCursor m_colorpickcursor, m_layerpickcursor, m_zoomcursor, m_rotatecursor;
 	QCursor m_rotatediscretecursor, m_toolcursor;
