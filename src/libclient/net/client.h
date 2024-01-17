@@ -28,6 +28,13 @@ struct ServerReply;
 class Client final : public QObject {
 	Q_OBJECT
 public:
+	enum UserFlag {
+		None = 0x0,
+		Mod = 0x1,
+		WebSession = 0x2,
+	};
+	Q_DECLARE_FLAGS(UserFlags, UserFlag)
+
 	explicit Client(QObject *parent = nullptr);
 
 	/**
@@ -79,7 +86,12 @@ public:
 	 * Moderator status is a feature of the user account and cannot change
 	 * during the connection.
 	 */
-	bool isModerator() const { return m_moderator; }
+	bool isModerator() const { return m_userFlags.testFlag(UserFlag::Mod); }
+
+	bool canManageWebSession() const
+	{
+		return m_userFlags.testFlag(UserFlag::WebSession);
+	}
 
 	/**
 	 * @brief Get connection security level
@@ -236,9 +248,10 @@ signals:
 private slots:
 	void handleMessages(int count, net::Message *msgs);
 	void handleConnect(
-		const QUrl &url, uint8_t userid, bool join, bool auth, bool moderator,
-		bool supportsAutoReset, bool compatibilityMode,
-		const QString &joinPassword, const QString &authId);
+		const QUrl &url, uint8_t userid, bool join, bool auth,
+		const QStringList &userFlags, bool supportsAutoReset,
+		bool compatibilityMode, const QString &joinPassword,
+		const QString &authId);
 	void handleDisconnect(
 		const QString &message, const QString &errorcode, bool localDisconnect);
 	void nudgeCatchup();
@@ -269,7 +282,7 @@ private:
 	QUrl m_lastUrl;
 	uint8_t m_myId = 1;
 	bool m_builtin = false;
-	bool m_moderator = false;
+	UserFlags m_userFlags = UserFlag::None;
 	bool m_isAuthenticated = false;
 	bool m_supportsAutoReset = false;
 	bool m_compatibilityMode = false;

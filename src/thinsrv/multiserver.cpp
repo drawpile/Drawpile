@@ -186,6 +186,9 @@ bool MultiServer::start(
 
 	InternalConfig icfg = m_config->internalConfig();
 	icfg.realPort = m_port;
+#ifdef HAVE_WEBSOCKETS
+	icfg.webSocket = m_webSocketServer != nullptr;
+#endif
 	m_config->setInternalConfig(icfg);
 
 	emit serverStarted();
@@ -514,6 +517,12 @@ JsonApiResult MultiServer::serverJsonApi(JsonApiMethod method, const QStringList
 		config::RuleText,
 		config::MinimumProtocolVersion,
 		config::MandatoryLookup,
+#ifdef HAVE_WEBSOCKETS
+		config::AllowGuestWeb,
+		config::ExtAuthWeb,
+		config::AllowGuestWebSession,
+		config::ExtAuthWebSession,
+#endif
 	};
 	const int settingCount = sizeof(settings) / sizeof(settings[0]);
 

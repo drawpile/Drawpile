@@ -42,6 +42,7 @@ public:
 	virtual QString errorString() const = 0;
 	virtual void abort() = 0;
 
+	virtual bool isWebSocket() const = 0;
 	virtual bool hasSslSupport() const = 0;
 	virtual bool isSecure() const = 0;
 	virtual void startTls() = 0;
@@ -69,6 +70,8 @@ public:
 	}
 
 	virtual void abort() override { m_tcpSocket->abort(); }
+
+	virtual bool isWebSocket() const override { return false; }
 
 	virtual bool hasSslSupport() const override
 	{
@@ -113,6 +116,8 @@ public:
 	}
 
 	virtual void abort() override { m_webSocket->abort(); }
+
+	virtual bool isWebSocket() const override { return true; }
 
 	virtual bool hasSslSupport() const override { return false; }
 
@@ -426,6 +431,11 @@ void Client::setMuted(bool m)
 bool Client::isMuted() const
 {
 	return d->isMuted;
+}
+
+bool Client::canManageWebSession() const
+{
+	return authFlags().contains(QStringLiteral("WEBSESSION"));
 }
 
 bool Client::isBanInProgress() const
@@ -785,6 +795,11 @@ void Client::setAwaitingReset(bool awaiting)
 bool Client::isAwaitingReset() const
 {
 	return d->isAwaitingReset;
+}
+
+bool Client::isWebSocket() const
+{
+	return d->socket->isWebSocket();
 }
 
 bool Client::hasSslSupport() const

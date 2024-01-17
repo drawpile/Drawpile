@@ -1121,11 +1121,6 @@ void LoginHandler::send(
 	}
 }
 
-bool LoginHandler::hasUserFlag(const QString &flag) const
-{
-	return m_userFlags.contains(flag.toUpper());
-}
-
 QString LoginHandler::takeAvatar()
 {
 	QString result;

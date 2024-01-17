@@ -58,6 +58,9 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 		m_ui->authOnly, &QCheckBox::clicked, this,
 		&SessionSettingsDialog::authOnlyChanged);
 	connect(
+		m_ui->allowWeb, &QCheckBox::clicked, this,
+		&SessionSettingsDialog::allowWebChanged);
+	connect(
 		m_ui->autoresetThreshold, &QDoubleSpinBox::editingFinished, this,
 		&SessionSettingsDialog::autoresetThresholdChanged);
 	connect(
@@ -100,6 +103,9 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 			m_ui->authOnly->setEnabled(m_op && (authOnly || m_isAuth));
 			m_ui->authOnly->setChecked(authOnly);
 		});
+	connect(
+		m_doc, &Document::sessionAllowWebChanged, this,
+		&SessionSettingsDialog::updateAllowWebCheckbox);
 	connect(
 		m_doc, &Document::sessionPasswordChanged, this,
 		[this](bool hasPassword) {
@@ -247,6 +253,8 @@ SessionSettingsDialog::SessionSettingsDialog(Document *doc, QWidget *parent)
 	m_ui->labelMetadata->hide();
 	setCompatibilityMode(m_doc->isCompatibilityMode());
 	updateBanImportExportState();
+	m_ui->allowWeb->setEnabled(false);
+	m_ui->allowWeb->setVisible(false);
 	updateIdleSettings(0, false, false);
 }
 
@@ -414,6 +422,7 @@ void SessionSettingsDialog::onOperatorModeChanged(bool op)
 	m_ui->autoresetThreshold->setEnabled(m_canAutoreset && op);
 	m_ui->nsfm->setEnabled(!m_doc->isSessionForceNsfm() && op);
 	m_ui->authOnly->setEnabled(op && (m_isAuth || m_ui->authOnly->isChecked()));
+	m_ui->allowWeb->setEnabled(op && m_canAlterAllowWeb);
 	m_ui->permissionPresets->setWriteOnly(!op);
 	updatePasswordLabel(m_ui->sessionPassword);
 	updatePasswordLabel(m_ui->opword);
@@ -578,6 +587,15 @@ void SessionSettingsDialog::updatePasswordLabel(QLabel *label)
 	label->setText(txt);
 }
 
+void SessionSettingsDialog::updateAllowWebCheckbox(bool allowWeb, bool canAlter)
+{
+	QSignalBlocker blocker(m_ui->allowWeb);
+	m_canAlterAllowWeb = canAlter;
+	m_ui->allowWeb->setChecked(allowWeb);
+	m_ui->allowWeb->setEnabled(m_op && canAlter);
+	m_ui->allowWeb->setVisible(!m_doc->isCompatibilityMode());
+}
+
 void SessionSettingsDialog::updateNsfmCheckbox(bool)
 {
 	if(m_doc->isSessionForceNsfm()) {
@@ -658,6 +676,7 @@ void SessionSettingsDialog::updateAuthListCheckboxes()
 void SessionSettingsDialog::setCompatibilityMode(bool compatibilityMode)
 {
 	if(compatibilityMode) {
+		m_ui->allowWeb->setVisible(false);
 		m_ui->permMyPaint->setEnabled(false);
 		m_ui->permTimeline->setEnabled(false);
 		m_ui->permMetadata->setEnabled(false);
@@ -713,6 +732,11 @@ void SessionSettingsDialog::denyJoinsChanged(bool set)
 void SessionSettingsDialog::authOnlyChanged(bool set)
 {
 	changeSessionConf("authOnly", set);
+}
+
+void SessionSettingsDialog::allowWebChanged(bool allowWeb)
+{
+	changeSessionConf("allowWeb", allowWeb);
 }
 
 void SessionSettingsDialog::autoresetThresholdChanged()

@@ -274,6 +274,7 @@ AnnouncementApiResponse *getSessionList(const QUrl &apiUrl)
 				obj["maxusers"].toInt(),
 				obj["closed"].toBool(),
 				obj["activedrawingusers"].toInt(-1),
+				obj["allowweb"].toBool(false),
 			};
 		}
 
@@ -517,6 +518,7 @@ AnnouncementApiResponse *queryRoomcode(const QUrl &apiUrl, const QString &roomco
 			0,
 			false,
 			-1,
+			false,
 		};
 		res->setResult(QVariant::fromValue(session));
 	});

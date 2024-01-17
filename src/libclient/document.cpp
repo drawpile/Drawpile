@@ -42,6 +42,7 @@ Document::Document(libclient::settings::Settings &settings, QObject *parent)
 	, m_sessionPersistent(false)
 	, m_sessionClosed(false)
 	, m_sessionAuthOnly(false)
+	, m_sessionAllowWeb(false)
 	, m_sessionPreserveChat(false)
 	, m_sessionPasswordProtected(false)
 	, m_sessionOpword(false)
@@ -339,6 +340,10 @@ void Document::onSessionConfChanged(const QJsonObject &config)
 			m_sessionAllowIdleOverride && m_client->isModerator());
 	}
 
+	if(config.contains("allowWeb")) {
+		setSessionAllowWeb(config["allowWeb"].toBool());
+	}
+
 	if(config.contains("maxUserCount"))
 		setSessionMaxUserCount(config["maxUserCount"].toInt());
 
@@ -454,6 +459,15 @@ void Document::setSessionAuthOnly(bool authOnly)
 	if(m_sessionAuthOnly != authOnly) {
 		m_sessionAuthOnly = authOnly;
 		emit sessionAuthOnlyChanged(authOnly);
+	}
+}
+
+void Document::setSessionAllowWeb(bool allowWeb)
+{
+	if(m_sessionAllowWeb != allowWeb) {
+		m_sessionAllowWeb = allowWeb;
+		emit sessionAllowWebChanged(
+			m_sessionAllowWeb, m_client->canManageWebSession());
 	}
 }
 

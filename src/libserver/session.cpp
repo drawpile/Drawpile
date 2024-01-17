@@ -519,6 +519,23 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 							 : QStringLiteral("disabled idle override"));
 	}
 
+	// Toggling allowing WebSocket connections requires the client to have the
+	// WEBSESSION flag. If changedBy is null, the request came from the API.
+	bool changeAllowWeb = conf.contains(QStringLiteral("allowWeb")) &&
+						  (!changedBy || changedBy->canManageWebSession());
+	if(changeAllowWeb) {
+		bool allowWeb = conf[QStringLiteral("allowWeb")].toBool();
+		// We don't allow clients that are connected via WebSocket to prevent
+		// themselves from rejoining the session by disabling them.
+		if(allowWeb || !changedBy || !changedBy->isWebSocket()) {
+			flags.setFlag(SessionHistory::AllowWeb, allowWeb);
+			changes
+				<< (allowWeb
+						? QStringLiteral("enabled WebSocket connections")
+						: QStringLiteral("disabled WebSocket connections"));
+		}
+	}
+
 	m_history->setFlags(flags);
 
 	if(!changes.isEmpty()) {
@@ -704,7 +721,7 @@ void Session::changeTrustedStatus(
 
 void Session::sendUpdatedSessionProperties()
 {
-	addToHistory(net::ServerReply::makeSessionConf({
+	QJsonObject config = {
 		// this refers specifically to the closed flag, not the general status
 		{QStringLiteral("closed"), m_closed},
 		{QStringLiteral("authOnly"),
@@ -734,7 +751,14 @@ void Session::sendUpdatedSessionProperties()
 		 m_config->getConfigTime(config::IdleTimeLimit)},
 		{QStringLiteral("allowIdleOverride"),
 		 m_config->getConfigBool(config::AllowIdleOverride)},
-	}));
+	};
+#ifdef HAVE_WEBSOCKETS
+	if(m_config->internalConfig().webSocket) {
+		config[QStringLiteral("allowWeb")] =
+			m_history->hasFlag(SessionHistory::AllowWeb);
+	}
+#endif
+	addToHistory(net::ServerReply::makeSessionConf(config));
 	emit sessionAttributeChanged(this);
 }
 
@@ -1287,6 +1311,7 @@ sessionlisting::Session Session::getSessionAnnouncement() const
 		m_history->maxUsers(),
 		m_closed,
 		activeDrawingUserCount(ACTIVE_THRESHOLD_MS),
+		m_history->hasFlag(SessionHistory::AllowWeb),
 	};
 }
 
@@ -1298,7 +1323,8 @@ bool Session::hasUrgentAnnouncementChange(
 		   description.password != !m_history->passwordHash().isEmpty() ||
 		   (description.users >= description.maxUsers) !=
 			   (userCount() >= m_history->maxUsers()) ||
-		   description.closed != m_closed;
+		   description.closed != m_closed ||
+		   description.allowWeb != m_history->hasFlag(SessionHistory::AllowWeb);
 }
 
 
@@ -1437,6 +1463,12 @@ QJsonObject Session::getDescription(bool full) const
 	if(m_config->getConfigBool(config::AllowIdleOverride)) {
 		o["idleOverride"] = m_history->hasFlag(SessionHistory::IdleOverride);
 	}
+
+#ifdef HAVE_WEBSOCKETS
+	if(m_config->internalConfig().webSocket) {
+		o["allowWeb"] = m_history->hasFlag(SessionHistory::AllowWeb);
+	}
+#endif
 
 	if(full) {
 		// Full descriptions includes detailed info for server admins.

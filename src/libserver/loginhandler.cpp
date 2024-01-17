@@ -14,6 +14,7 @@
 #include <QNetworkRequest>
 #include <QRegularExpression>
 #include <QStringList>
+#include <utility>
 
 namespace server {
 
@@ -47,7 +48,10 @@ void LoginHandler::startLoginProcess()
 			  << "SECURE";
 		m_state = State::WaitForSecure;
 	}
-	if(!m_config->getConfigBool(config::AllowGuests)) {
+	bool allowGuests = m_config->getConfigBool(config::AllowGuests) &&
+					   (!m_client->isWebSocket() ||
+						m_config->getConfigBool(config::AllowGuestWeb));
+	if(!allowGuests) {
 		flags << "NOGUEST";
 	}
 	if(m_config->internalConfig().reportUrl.isValid() &&
@@ -66,9 +70,13 @@ void LoginHandler::startLoginProcess()
 		  << "LOOKUP";	 // This server supports lookups.
 
 	QJsonObject methods;
-	if(m_config->getConfigBool(config::AllowGuests)) {
+	if(allowGuests) {
 		QJsonArray guestActions = {QStringLiteral("join")};
-		if(m_config->getConfigBool(config::AllowGuestHosts)) {
+		bool allowGuestHosts =
+			m_config->getConfigBool(config::AllowGuestHosts) &&
+			(!m_client->isWebSocket() ||
+			 m_config->getConfigBool(config::AllowGuestWebSession));
+		if(allowGuestHosts) {
 			guestActions.append(QStringLiteral("host"));
 		}
 		methods[QStringLiteral("guest")] = QJsonObject{{
@@ -410,7 +418,9 @@ void LoginHandler::handleIdentMessage(const net::ServerCommand &cmd)
 					extAuthMod, m_config->getConfigBool(config::ExtAuthHost),
 					m_config->getConfigBool(config::EnableGhosts) &&
 						m_config->getConfigBool(config::ExtAuthGhosts),
-					extAuthBanExempt);
+					extAuthBanExempt,
+					m_config->getConfigBool(config::ExtAuthWeb),
+					m_config->getConfigBool(config::ExtAuthWebSession));
 
 			} else if(allowGuests) {
 				// No ext-auth token provided, but both guest logins and extauth
@@ -464,7 +474,7 @@ void LoginHandler::handleIdentMessage(const net::ServerCommand &cmd)
 		authLoginOk(
 			username, QStringLiteral("internal:%1").arg(userAccount.userId),
 			userAccount.flags, QByteArray(), true, true,
-			m_config->getConfigBool(config::EnableGhosts), true);
+			m_config->getConfigBool(config::EnableGhosts), true, true, true);
 		break;
 	}
 }
@@ -472,13 +482,12 @@ void LoginHandler::handleIdentMessage(const net::ServerCommand &cmd)
 void LoginHandler::authLoginOk(
 	const QString &username, const QString &authId, const QStringList &flags,
 	const QByteArray &avatar, bool allowMod, bool allowHost, bool allowGhost,
-	bool allowBanExempt)
+	bool allowBanExempt, bool allowWeb, bool allowWebSession)
 {
 	Q_ASSERT(!authId.isEmpty());
 
 	bool isMod = false;
 	bool wantGhost = false;
-	bool canHost = false;
 	QStringList effectiveFlags;
 	for(const QString &flag : flags) {
 		if(!effectiveFlags.contains(flag)) {
@@ -491,9 +500,12 @@ void LoginHandler::authLoginOk(
 				wantGhost = true;
 			} else if(flag == QStringLiteral("HOST")) {
 				shouldAppend = allowHost;
-				canHost = allowHost;
 			} else if(flag == QStringLiteral("BANEXEMPT")) {
 				shouldAppend = allowBanExempt;
+			} else if(flag == QStringLiteral("WEB")) {
+				shouldAppend = allowWeb;
+			} else if(flag == QStringLiteral("WEBSESSION")) {
+				shouldAppend = allowWebSession;
 			} else {
 				shouldAppend = true;
 			}
@@ -502,6 +514,17 @@ void LoginHandler::authLoginOk(
 				effectiveFlags.append(flag);
 			}
 		}
+	}
+
+	insertImplicitFlags(effectiveFlags);
+
+	if(m_client->isWebSocket() &&
+	   !effectiveFlags.contains(QStringLiteral("WEB"))) {
+		sendError(
+			QStringLiteral("webNotAllowed"),
+			QStringLiteral(
+				"You don't have permission to connect from the web."));
+		return;
 	}
 
 	bool isGhost = wantGhost && allowGhost;
@@ -526,7 +549,9 @@ void LoginHandler::authLoginOk(
 	m_client->setModerator(isMod, isGhost);
 	if(!avatar.isEmpty())
 		m_client->setAvatar(avatar);
-	m_hostPrivilege = canHost;
+	m_hostPrivilege =
+		effectiveFlags.contains(QStringLiteral("HOST")) &&
+		(!m_client->isWebSocket() || effectiveFlags.contains("WEBSESSION"));
 
 	if(m_client->triggerBan(true)) {
 		m_state = State::Ignore;
@@ -674,9 +699,15 @@ void LoginHandler::guestLogin(
 		m_state = State::WaitForLogin;
 	}
 
+	QStringList effectiveFlags;
+	insertImplicitFlags(effectiveFlags);
+	m_client->setAuthFlags(effectiveFlags);
+	m_hostPrivilege = effectiveFlags.contains(QStringLiteral("HOST"));
+
 	send(net::ServerReply::makeResultLoginOk(
-		QStringLiteral("Guest login OK!"), QStringLiteral("identOk"), {},
-		m_client->username(), true));
+		QStringLiteral("Guest login OK!"), QStringLiteral("identOk"),
+		QJsonArray::fromStringList(effectiveFlags), m_client->username(),
+		true));
 	announceServerInfo();
 }
 
@@ -703,7 +734,7 @@ void LoginHandler::handleHostMessage(const net::ServerCommand &cmd)
 		return;
 	}
 
-	if(!m_config->getConfigBool(config::AllowGuestHosts) && !m_hostPrivilege) {
+	if(!m_hostPrivilege) {
 		sendError("unauthorizedHost", "Hosting not authorized");
 		return;
 	}
@@ -807,6 +838,13 @@ void LoginHandler::handleHostMessage(const net::ServerCommand &cmd)
 	if(cmd.kwargs["password"].isString())
 		session->history()->setPassword(cmd.kwargs["password"].toString());
 
+	bool allowWeb = m_client->isWebSocket() ||
+					(m_client->canManageWebSession() &&
+					 cmd.kwargs[QStringLiteral("web")].toBool(true));
+	if(allowWeb) {
+		session->history()->setFlag(SessionHistory::AllowWeb);
+	}
+
 	// Mark login phase as complete.
 	// No more login messages will be sent to this user.
 	send(net::ServerReply::makeResultJoinHost(
@@ -852,6 +890,14 @@ void LoginHandler::handleJoinMessage(const net::ServerCommand &cmd)
 		sendError(
 			QStringLiteral("lookupMismatch"),
 			QStringLiteral("Cannot look up one session and then join another"));
+		return;
+	}
+
+	if(m_client->isWebSocket() &&
+	   !session->history()->hasFlag(SessionHistory::AllowWeb)) {
+		sendError(
+			QStringLiteral("noWebJoin"),
+			QStringLiteral("This session does not allow joining from the web"));
 		return;
 	}
 
@@ -1124,6 +1170,20 @@ bool LoginHandler::verifyUserId(long long userId)
 		m_client->applyBan(ban);
 	}
 	return true;
+}
+
+void LoginHandler::insertImplicitFlags(QStringList &effectiveFlags)
+{
+	std::pair<QString, server::ConfigKey> implicitFlags[] = {
+		{QStringLiteral("HOST"), config::AllowGuestHosts},
+		{QStringLiteral("WEB"), config::AllowGuestWeb},
+		{QStringLiteral("WEBSESSION"), config::AllowGuestWebSession},
+	};
+	for(const auto &[flag, cfg] : implicitFlags) {
+		if(!effectiveFlags.contains(flag) && m_config->getConfigBool(cfg)) {
+			effectiveFlags.append(flag);
+		}
+	}
 }
 
 }

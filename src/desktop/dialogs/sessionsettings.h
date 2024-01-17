@@ -62,6 +62,7 @@ private slots:
 	void maxUsersChanged();
 	void denyJoinsChanged(bool);
 	void authOnlyChanged(bool);
+	void allowWebChanged(bool allowWeb);
 
 	void permissionChanged();
 
@@ -80,6 +81,7 @@ private slots:
 	void sendSessionConf();
 
 	void updatePasswordLabel(QLabel *label);
+	void updateAllowWebCheckbox(bool allowWeb, bool canAlter);
 	void updateNsfmCheckbox(bool);
 	void updateIdleSettings(int timeLimit, bool overridden, bool canOverride);
 	void updateAuthListCheckboxes();
@@ -120,6 +122,7 @@ private:
 	bool m_op = false;
 	bool m_isAuth = false;
 	bool m_canPersist = false;
+	bool m_canAlterAllowWeb = false;
 	bool m_canCryptImpExBans = false;
 	bool m_canModImportBans = false;
 	bool m_canModExportBans = false;

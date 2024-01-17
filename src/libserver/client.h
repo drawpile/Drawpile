@@ -142,6 +142,8 @@ public:
 	bool isMuted() const;
 	void setMuted(bool m);
 
+	bool canManageWebSession() const;
+
 	bool isBanInProgress() const;
 	void applyBanExemption(bool exempt);
 	void applyBan(const BanResult &ban);
@@ -200,6 +202,8 @@ public:
 	 * @param message
 	 */
 	void sendSystemChat(const QString &message, bool alert = false);
+
+	bool isWebSocket() const;
 
 	/**
 	 * @brief Does this client socket support SSL connections?

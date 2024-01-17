@@ -101,9 +101,9 @@ public:
 
 signals:
 	void loggedIn(
-		const QUrl &url, uint8_t userid, bool join, bool auth, bool moderator,
-		bool hasAutoreset, bool compatibilityMode, const QString &joinPassword,
-		const QString &authId);
+		const QUrl &url, uint8_t userid, bool join, bool auth,
+		const QStringList &userFlags, bool hasAutoreset, bool compatibilityMode,
+		const QString &joinPassword, const QString &authId);
 
 	void loggingOut();
 

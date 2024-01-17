@@ -179,15 +179,7 @@ public:
 
 	bool compatibilityMode() const { return m_compatibilityMode; }
 
-	/**
-	 * @brief Check if the user has the given flag
-	 *
-	 * This is only valid after the user has identified succesfully
-	 *
-	 * @param flag
-	 * @return
-	 */
-	bool hasUserFlag(const QString &flag) const;
+	const QStringList &userFlags() const { return m_userFlags; }
 
 	/**
 	 * @brief Did the user authenticate succesfully?

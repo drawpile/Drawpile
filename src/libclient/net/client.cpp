@@ -124,13 +124,20 @@ QUrl Client::sessionUrl(bool includeUser) const
 }
 
 void Client::handleConnect(
-	const QUrl &url, uint8_t userid, bool join, bool auth, bool moderator,
-	bool supportsAutoReset, bool compatibilityMode, const QString &joinPassword,
-	const QString &authId)
+	const QUrl &url, uint8_t userid, bool join, bool auth,
+	const QStringList &userFlags, bool supportsAutoReset,
+	bool compatibilityMode, const QString &joinPassword, const QString &authId)
 {
 	m_lastUrl = url;
 	m_myId = userid;
-	m_moderator = moderator;
+	m_userFlags = UserFlag::None;
+	for(const QString &userFlag : userFlags) {
+		if(userFlag == QStringLiteral("MOD")) {
+			m_userFlags.setFlag(UserFlag::Mod);
+		} else if(userFlag == QStringLiteral("WEBSESSION")) {
+			m_userFlags.setFlag(UserFlag::WebSession);
+		}
+	}
 	m_isAuthenticated = auth;
 	m_supportsAutoReset = supportsAutoReset;
 	m_compatibilityMode = compatibilityMode;
@@ -148,7 +155,7 @@ void Client::handleDisconnect(
 		m_compatibilityMode = false;
 		m_server->deleteLater();
 		m_server = nullptr;
-		m_moderator = false;
+		m_userFlags = UserFlag::None;
 #ifdef Q_OS_ANDROID
 		delete m_wakeLock;
 		delete m_wifiLock;

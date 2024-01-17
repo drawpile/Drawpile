@@ -258,6 +258,8 @@ bool FiledHistory::load()
 					flags |= AuthOnly;
 				} else if(f == QStringLiteral("idleoverride")) {
 					flags |= IdleOverride;
+				} else if(f == QStringLiteral("allowweb")) {
+					flags |= AllowWeb;
 				} else {
 					qWarning()
 						<< id() << "unknown flag:" << QString::fromUtf8(f);
@@ -588,6 +590,9 @@ void FiledHistory::setFlags(Flags f)
 		}
 		if(f.testFlag(IdleOverride)) {
 			fstr.append(QStringLiteral("idleoverride"));
+		}
+		if(f.testFlag(AllowWeb)) {
+			fstr.append(QStringLiteral("allowweb"));
 		}
 		m_journal->write(
 			QStringLiteral("FLAGS %1\n").arg(fstr.join(' ')).toUtf8());

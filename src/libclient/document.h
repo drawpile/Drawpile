@@ -200,6 +200,7 @@ signals:
 	void sessionPersistentChanged(bool p);
 	void sessionClosedChanged(bool closed);
 	void sessionAuthOnlyChanged(bool closed);
+	void sessionAllowWebChanged(bool allowWeb, bool canAlter);
 	void sessionPasswordChanged(bool passwordProtected);
 	void sessionOpwordChanged(bool opword);
 	void sessionNsfmChanged(bool nsfm);
@@ -291,6 +292,7 @@ private:
 	void setSessionPersistent(bool p);
 	void setSessionClosed(bool closed);
 	void setSessionAuthOnly(bool authOnly);
+	void setSessionAllowWeb(bool allowWeb);
 	void setSessionPreserveChat(bool pc);
 	void setSessionPasswordProtected(bool pp);
 	void setSessionOpword(bool ow);
@@ -342,6 +344,7 @@ private:
 	bool m_sessionPersistent;
 	bool m_sessionClosed;
 	bool m_sessionAuthOnly;
+	bool m_sessionAllowWeb;
 	bool m_sessionPreserveChat;
 	bool m_sessionPasswordProtected;
 	bool m_sessionOpword;

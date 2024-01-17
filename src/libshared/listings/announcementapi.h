@@ -46,6 +46,7 @@ struct Session {
 	int maxUsers;
 	bool closed;
 	int activeDrawingUsers;
+	bool allowWeb;
 };
 
 struct Announcement {

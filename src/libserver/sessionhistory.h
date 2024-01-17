@@ -33,6 +33,7 @@ public:
 		Deputies = 0x08,
 		AuthOnly = 0x10,
 		IdleOverride = 0x20,
+		AllowWeb = 0x40,
 	};
 	Q_DECLARE_FLAGS(Flags, Flag)
 

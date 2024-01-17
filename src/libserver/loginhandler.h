@@ -106,7 +106,8 @@ private:
 	void authLoginOk(
 		const QString &username, const QString &authId,
 		const QStringList &flags, const QByteArray &avatar, bool allowMod,
-		bool allowHost, bool allowGhost, bool allowBanExempt);
+		bool allowHost, bool allowGhost, bool allowBanExempt, bool allowWeb,
+		bool allowWebSession);
 	bool send(const net::Message &msg);
 	void sendError(
 		const QString &code, const QString &message, bool disconnect = true);
@@ -124,6 +125,8 @@ private:
 	static bool isValidSid(const QString &sid);
 
 	bool verifyUserId(long long userId);
+
+	void insertImplicitFlags(QStringList &effectiveFlags);
 
 	Client *m_client;
 	Sessions *m_sessions;

@@ -89,7 +89,15 @@ namespace config {
 		// Minimum required protocol version for hosting sessions.
 		MinimumProtocolVersion(36, "minimumProtocolVersion", "", ConfigKey::STRING),
 		// Require clients to join sessions through a direct link.
-		MandatoryLookup(37, "mandatoryLookup", "false", ConfigKey::BOOL);
+		MandatoryLookup(37, "mandatoryLookup", "false", ConfigKey::BOOL),
+		// Allow guests to join via WebSockets.
+		AllowGuestWeb(38, "allowGuestWeb", "true", ConfigKey::BOOL),
+		// Respect ext-auth user's "WEB" flag.
+		ExtAuthWeb(39, "extauthweb", "false", ConfigKey::BOOL),
+		// Allow guests to toggle the web setting in sessions.
+		AllowGuestWebSession(40, "allowGuestWebSession", "true", ConfigKey::BOOL),
+		// Respect ext-auth user's "WEBSESSION" flag.
+		ExtAuthWebSession(41, "extauthwebsession", "false", ConfigKey::BOOL);
 }
 
 //! Settings that are not adjustable after the server has started
@@ -100,6 +108,9 @@ struct InternalConfig {
 	QUrl extAuthUrl;       // URL of the external authentication server
 	QUrl reportUrl;        // Abuse report handler backend URL
 	QByteArray cryptKey;   // Key used to encrypt session ban exports
+#ifdef HAVE_WEBSOCKETS
+	bool webSocket = false; // Are we listening for WebSocket connections?
+#endif
 
 	int getAnnouncePort() const { return announcePort > 0 ? announcePort : realPort; }
 };
