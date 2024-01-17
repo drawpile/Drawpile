@@ -139,29 +139,6 @@ const char *SslServer::getKeyAlgorithmDescription() const
 	return "unknown";
 }
 
-void SslServer::requireForwardSecrecy()
-{
-	QList<QSslCipher> ciphers;
-
-	QStringList methods{"DH", "ECDH"};
-
-	QSslConfiguration config = QSslConfiguration::defaultConfiguration();
-
-	for(const auto &cipher : config.ciphers()) {
-		if(methods.contains(cipher.keyExchangeMethod())) {
-			ciphers.append(cipher);
-		}
-	}
-
-	if(ciphers.isEmpty()) {
-		qWarning("Forward secrecy not available!");
-
-	} else {
-		config.setCiphers(ciphers);
-		QSslConfiguration::setDefaultConfiguration(config);
-	}
-}
-
 bool SslServer::isValidCert() const
 {
 	return !m_certchain.isEmpty() && !m_key.isNull();

@@ -338,7 +338,6 @@ bool start() {
 				return false;
 			}
 			server->setSslCertFile(sslCert, sslKey, algorithm);
-			server::SslServer::requireForwardSecrecy();
 		}
 	}
 
