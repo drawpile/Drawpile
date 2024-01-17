@@ -21,6 +21,10 @@
 #include <QRegularExpression>
 #include <QTcpSocket>
 #include <QTimer>
+#ifdef HAVE_WEBSOCKETS
+#	include <QWebSocket>
+#	include <QWebSocketServer>
+#endif
 
 namespace server {
 
@@ -28,6 +32,9 @@ MultiServer::MultiServer(ServerConfig *config, QObject *parent)
 	: QObject(parent),
 	m_config(config),
 	m_tcpServer(nullptr),
+#ifdef HAVE_WEBSOCKETS
+	m_webSocketServer(nullptr),
+#endif
 	m_extBans(new ExtBans(config, this)),
 	m_state(STOPPED),
 	m_autoStop(false),
@@ -91,6 +98,11 @@ void MultiServer::setTemplateDirectory(const QDir &dir)
 
 bool MultiServer::createServer()
 {
+	return createServer(false);
+}
+
+bool MultiServer::createServer(bool enableWebSockets)
+{
 	if(!m_sslCertFile.isEmpty() && !m_sslKeyFile.isEmpty()) {
 		SslServer *server =
 			new SslServer(m_sslCertFile, m_sslKeyFile, m_sslKeyAlgorithm, this);
@@ -106,6 +118,22 @@ bool MultiServer::createServer()
 
 	connect(m_tcpServer, &QTcpServer::newConnection, this, &MultiServer::newTcpClient);
 
+#ifdef HAVE_WEBSOCKETS
+	if (enableWebSockets) {
+		// TODO: Allow running a TLS-secured WebSocket server. Currently, this
+		// instead requires a reverse proxy server like nginx or something. The
+		// user almost certainly has one of those anyway though, so it's fine.
+		m_webSocketServer = new QWebSocketServer(
+			QStringLiteral("drawpile-srv_%1").arg(cmake_config::version()),
+			QWebSocketServer::NonSecureMode, this);
+		connect(
+			m_webSocketServer, &QWebSocketServer::newConnection, this,
+			&MultiServer::newWebSocketClient);
+	}
+#else
+	Q_UNUSED(enableWebSockets);
+#endif
+
 	return true;
 }
 
@@ -113,6 +141,10 @@ bool MultiServer::abortStart()
 {
 		delete m_tcpServer;
 		m_tcpServer = nullptr;
+#ifdef HAVE_WEBSOCKETS
+		delete m_webSocketServer;
+		m_webSocketServer = nullptr;
+#endif
 		m_state = STOPPED;
 		return false;
 }
@@ -123,11 +155,13 @@ bool MultiServer::abortStart()
  * @param address listening address
  * @return true on success
  */
-bool MultiServer::start(quint16 tcpPort, const QHostAddress &tcpAddress)
+bool MultiServer::start(
+	quint16 tcpPort, const QHostAddress &tcpAddress, quint16 webSocketPort,
+	const QHostAddress &webSocketAddress)
 {
 	Q_ASSERT(m_state == STOPPED);
 	m_state = RUNNING;
-	if(!createServer()) {
+	if(!createServer(webSocketPort != 0)) {
 		return abortStart();
 	}
 
@@ -136,6 +170,17 @@ bool MultiServer::start(quint16 tcpPort, const QHostAddress &tcpAddress)
 		m_sessions->config()->logger()->logMessage(Log().about(Log::Level::Error, Log::Topic::Status).message(m_tcpServer->errorString()));
 		return abortStart();
 	}
+
+#ifdef HAVE_WEBSOCKETS
+	if(m_webSocketServer && !m_webSocketServer->listen(webSocketAddress, webSocketPort)) {
+		emit serverStartError(m_webSocketServer->errorString());
+		m_sessions->config()->logger()->logMessage(Log().about(Log::Level::Error, Log::Topic::Status)
+			.message(m_webSocketServer->errorString()));
+		return abortStart();
+	}
+#else
+	Q_UNUSED(webSocketAddress);
+#endif
 
 	m_port = m_tcpServer->serverPort();
 
@@ -151,6 +196,17 @@ bool MultiServer::start(quint16 tcpPort, const QHostAddress &tcpAddress)
 							 "at address %2")
 						 .arg(tcpPort)
 						 .arg(tcpAddress.toString())));
+#ifdef HAVE_WEBSOCKETS
+	if(m_webSocketServer) {
+		m_sessions->config()->logger()->logMessage(
+			Log()
+				.about(Log::Level::Info, Log::Topic::Status)
+				.message(QString("Started listening for WebSocket connections "
+								 "on port %1 at address %2")
+							 .arg(webSocketPort)
+							 .arg(webSocketAddress.toString())));
+	}
+#endif
 	return true;
 }
 
@@ -159,11 +215,11 @@ bool MultiServer::start(quint16 tcpPort, const QHostAddress &tcpAddress)
  * @param fd
  * @return true on success
  */
-bool MultiServer::startFd(int tcpFd)
+bool MultiServer::startFd(int tcpFd, int webSocketFd)
 {
 	Q_ASSERT(m_state == STOPPED);
 	m_state = RUNNING;
-	if(!createServer())
+	if(!createServer(webSocketFd > 0))
 		return false;
 
 	if(!m_tcpServer->setSocketDescriptor(tcpFd)) {
@@ -173,6 +229,25 @@ bool MultiServer::startFd(int tcpFd)
 				.message("Couldn't set TCP server socket descriptor!"));
 		return abortStart();
 	}
+
+#ifdef HAVE_WEBSOCKETS
+	// Qt 5.12 deprecated setSocketDescriptor in favor of setNativeDescriptior,
+	// but then Qt 6 flipped those deprecations the other way round.
+#	if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0) &&                            \
+		QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+	auto setWebSocketDescriptor = &QWebSocketServer::setNativeDescriptor;
+#	else
+	auto setWebSocketDescriptor = &QWebSocketServer::setSocketDescriptor;
+#	endif
+	if(m_webSocketServer &&
+	   !(m_webSocketServer->*setWebSocketDescriptor)(webSocketFd)) {
+		m_sessions->config()->logger()->logMessage(
+			Log()
+				.about(Log::Level::Error, Log::Topic::Status)
+				.message("Couldn't set WebSocket server socket descriptor!"));
+		return abortStart();
+	}
+#endif
 
 	m_port = m_tcpServer->serverPort();
 
@@ -251,6 +326,19 @@ void MultiServer::newTcpClient()
 	newClient(new ThinServerClient(tcpSocket, m_sessions->config()->logger()));
 }
 
+#ifdef HAVE_WEBSOCKETS
+void MultiServer::newWebSocketClient()
+{
+	QWebSocket *webSocket = m_webSocketServer->nextPendingConnection();
+	m_sessions->config()->logger()->logMessage(
+		Log()
+			.about(Log::Level::Info, Log::Topic::Status)
+			.user(0, webSocket->peerAddress(), QString())
+			.message(QStringLiteral("New WebSocket client connected")));
+	newClient(new ThinServerClient(webSocket, m_sessions->config()->logger()));
+}
+#endif
+
 void MultiServer::newClient(ThinServerClient *client)
 {
 	client->applyBan(m_config->isAddressBanned(client->peerAddress()));
@@ -292,6 +380,11 @@ void MultiServer::stop() {
 
 		m_state = STOPPING;
 		m_tcpServer->close();
+#ifdef HAVE_WEBSOCKETS
+		if(m_webSocketServer) {
+			m_webSocketServer->close();
+		}
+#endif
 		m_port = 0;
 
 		m_sessions->stopAll();
@@ -302,6 +395,10 @@ void MultiServer::stop() {
 			m_state = STOPPED;
 			delete m_tcpServer;
 			m_tcpServer = nullptr;
+#ifdef HAVE_WEBSOCKETS
+			delete m_webSocketServer;
+			m_webSocketServer = nullptr;
+#endif
 			m_sessions->config()->logger()->logMessage(Log()
 				.about(Log::Level::Info, Log::Topic::Status)
 				.message("Server stopped."));

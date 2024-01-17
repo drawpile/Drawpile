@@ -13,6 +13,16 @@ ThinServerClient::ThinServerClient(
 	connectSendNextHistoryBatch();
 }
 
+#ifdef HAVE_WEBSOCKETS
+ThinServerClient::ThinServerClient(
+	QWebSocket *socket, ServerLog *logger, QObject *parent)
+	: Client(socket, logger, false, parent)
+	, m_historyPosition(-1)
+{
+	connectSendNextHistoryBatch();
+}
+#endif
+
 ThinServerClient::~ThinServerClient()
 {
 	emit thinServerClientDestroyed(this);

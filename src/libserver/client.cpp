@@ -14,6 +14,21 @@
 #include <QStringList>
 #include <QTcpSocket>
 #include <QTimer>
+#ifdef HAVE_WEBSOCKETS
+#	include <QWebSocket>
+#	include "libshared/net/websocketmessagequeue.h"
+#endif
+
+namespace {
+#ifdef HAVE_WEBSOCKETS
+#	if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+const auto WebSocketError = &QWebSocket::errorOccurred;
+#	else
+const auto WebSocketError =
+	QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error);
+#	endif
+#endif
+}
 
 namespace server {
 
@@ -77,6 +92,41 @@ private:
 	QTcpSocket *m_tcpSocket;
 };
 
+#ifdef HAVE_WEBSOCKETS
+class ClientWebSocket final : public ClientSocket {
+	COMPAT_DISABLE_COPY_MOVE(ClientWebSocket)
+public:
+	ClientWebSocket(QWebSocket *webSocket)
+		: m_webSocket(webSocket)
+	{
+		Q_ASSERT(webSocket);
+	}
+
+	virtual ~ClientWebSocket() override = default;
+
+	virtual QHostAddress peerAddress() const override
+	{
+		return m_webSocket->peerAddress();
+	}
+
+	virtual QString errorString() const override
+	{
+		return m_webSocket->errorString();
+	}
+
+	virtual void abort() override { m_webSocket->abort(); }
+
+	virtual bool hasSslSupport() const override { return false; }
+
+	virtual bool isSecure() const override { return false; }
+
+	virtual void startTls() override { Q_ASSERT(false); }
+
+private:
+	QWebSocket *m_webSocket;
+};
+#endif
+
 struct Client::Private {
 	QPointer<Session> session;
 	ClientSocket *socket;
@@ -139,6 +189,26 @@ Client::Client(
 		d->msgqueue, &net::MessageQueue::writeError, this, &Client::writeError);
 	connect(d->msgqueue, &net::MessageQueue::timedOut, this, &Client::timedOut);
 }
+
+#ifdef HAVE_WEBSOCKETS
+Client::Client(
+	QWebSocket *webSocket, ServerLog *logger, bool decodeOpaque,
+	QObject *parent)
+	: QObject(parent)
+	, d(new Private(new ClientWebSocket(webSocket), logger))
+{
+	d->msgqueue = new net::WebSocketMessageQueue(webSocket, decodeOpaque, this);
+	webSocket->setParent(this);
+	connect(
+		webSocket, &QWebSocket::disconnected, this, &Client::socketDisconnect);
+	connect(webSocket, WebSocketError, this, &Client::socketError);
+	connect(
+		d->msgqueue, &net::MessageQueue::messageAvailable, this,
+		&Client::receiveMessages);
+	connect(
+		d->msgqueue, &net::MessageQueue::badData, this, &Client::gotBadData);
+}
+#endif
 
 Client::~Client()
 {

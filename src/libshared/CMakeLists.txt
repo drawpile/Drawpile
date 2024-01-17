@@ -72,6 +72,14 @@ if(TARGET libsodium::libsodium)
 	target_link_libraries(dpshared PUBLIC libsodium::libsodium)
 endif()
 
+if(TARGET ${QT_PACKAGE_NAME}::WebSockets)
+	target_sources(dpshared PRIVATE
+		net/websocketmessagequeue.cpp
+		net/websocketmessagequeue.h
+	)
+	target_link_libraries(dpshared PUBLIC ${QT_PACKAGE_NAME}::WebSockets)
+endif()
+
 if(TARGET KF5::DNSSD)
 	target_sources(dpshared PRIVATE
 		listings/zeroconfannouncement.cpp

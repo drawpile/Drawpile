@@ -3,6 +3,7 @@ Unreleased Version 2.2.1-pre
  * Feature: Allow toggling performance-related canvas view settings, since some systems get slowdowns. Thanks DevonJP for reporting.
  * Fix: Don't force TLS socket algorithms, since ECDSA certs seem to not like them. Thanks Bluestrings for reporting.
  * Fix: Log message queue read, write and timeout errors properly. Thanks Pepper for reporting.
+ * Feature: Implement WebSocket support in the server, available with the --websocket-port and --websocket-listen options.
 
 2024-01-13 Version 2.2.0
  * Server Fix: Add --ssl-key-algorithm parameter to allow non-RSA SSL keys, defaulting to guessing the most common formats RSA and EC. Thanks Bluestrings for reporting.

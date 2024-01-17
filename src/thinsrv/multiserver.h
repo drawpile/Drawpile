@@ -9,6 +9,9 @@
 
 class QDir;
 class QTcpServer;
+#ifdef HAVE_WEBSOCKETS
+class QWebSocketServer;
+#endif
 
 namespace server {
 
@@ -48,8 +51,8 @@ public:
 
 	Q_INVOKABLE bool isRunning() const { return m_state != STOPPED; }
 
-	//! Start the server with the given descriptors
-	bool startFd(int tcpFd);
+	//! Start the server with the given descriptors, -1 to disable WebSocket
+	bool startFd(int tcpFd, int webSocketFd);
 
 	SessionServer *sessionServer() { return m_sessions; }
 
@@ -60,7 +63,9 @@ public slots:
 
 	//! Start the server on the given port and listening address
 	bool start(
-		quint16 tcpPort, const QHostAddress &tcpAddress = QHostAddress::Any);
+		quint16 tcpPort, const QHostAddress &tcpAddress = QHostAddress::Any,
+		quint16 webSocketPort = 0,
+		const QHostAddress &webSocketAddress = QHostAddress::Any);
 
 	 //! Stop the server. All clients are disconnected.
 	void stop();
@@ -84,6 +89,9 @@ public slots:
 
 private slots:
 	void newTcpClient();
+#ifdef HAVE_WEBSOCKETS
+	void newWebSocketClient();
+#endif
 	void printStatusUpdate();
 	void tryAutoStop();
 	void assignRecording(Session *session);
@@ -97,6 +105,7 @@ signals:
 
 private:
 	bool createServer();
+	bool createServer(bool enableWebSockets);
 	bool abortStart();
 
 	void newClient(ThinServerClient *client);
@@ -115,6 +124,9 @@ private:
 
 	ServerConfig *m_config;
 	QTcpServer *m_tcpServer;
+#ifdef HAVE_WEBSOCKETS
+	QWebSocketServer *m_webSocketServer;
+#endif
 	SessionServer *m_sessions;
 	ExtBans *m_extBans;
 

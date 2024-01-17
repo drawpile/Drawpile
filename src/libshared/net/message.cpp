@@ -28,6 +28,13 @@ Message Message::deserialize(
 	return Message::noinc(DP_message_deserialize(buf, bufsize, decodeOpaque));
 }
 
+Message Message::deserializeWs(
+	const unsigned char *buf, size_t bufsize, bool decodeOpaque)
+{
+	return Message::noinc(
+		DP_message_deserialize_length(buf, bufsize, bufsize - 2, decodeOpaque));
+}
+
 
 DP_Message **Message::asRawMessages(const net::Message *msgs)
 {
@@ -133,6 +140,11 @@ void Message::setIndirectCompatFlag()
 size_t Message::length() const
 {
 	return DP_message_length(m_data);
+}
+
+size_t Message::wsLength() const
+{
+	return DP_message_ws_length(m_data);
 }
 
 bool Message::equals(const Message &other) const
@@ -244,6 +256,12 @@ DP_MsgUserAcl *Message::toUserAcl() const
 bool Message::serialize(QByteArray &buffer) const
 {
 	return DP_message_serialize(m_data, true, getDeserializeBuffer, &buffer) !=
+		   0;
+}
+
+bool Message::serializeWs(QByteArray &buffer) const
+{
+	return DP_message_serialize(m_data, false, getDeserializeBuffer, &buffer) !=
 		   0;
 }
 

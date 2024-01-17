@@ -12,6 +12,9 @@ set(ANDROID_ABI "" CACHE STRING "Android ABI to build")
 set(ANDROID_PLATFORM "android-23" CACHE STRING "Android API to build")
 if(ANDROID_NDK_ROOT AND ANDROID_SDK_ROOT)
 	set(ANDROID true)
+	set(WEBSOCKETS_DEFAULT OFF)
+else()
+	set(WEBSOCKETS_DEFAULT ON)
 endif()
 
 set(QT_VERSION "" CACHE STRING "The version of Qt to build")
@@ -26,6 +29,7 @@ option(SVG "Build qtsvg" ON)
 option(IMAGEFORMATS "Build qtimageformats" ON)
 option(TOOLS "Build qttools" ON)
 option(TRANSLATIONS "Build qttranslations" ON)
+option(WEBSOCKETS "Build qtwebsockets" "${WEBSOCKETS_DEFAULT}")
 option(KEEP_SOURCE_DIRS "Keep source directories instead of deleting them" OFF)
 option(KEEP_BINARY_DIRS "Keep build directories instead of deleting them" OFF)
 set(TARGET_BITS "64" CACHE STRING
@@ -372,6 +376,21 @@ if(TRANSLATIONS)
 			SHA384=48a650886993d453399aac197de618fe634cb452e6716eac917392f5eb409feb891bd313f4d8b7dd80709468082ab7ba
 			6.4.2
 			SHA384=5e847ccbc6bde7da863d1269487525571a36e9d2193c21d1aa831c3a95d4378be9c5cbf6a9fb5f55fcbbf1dab649d823
+		ALL_PLATFORMS
+			${MODULE_GENERATOR}
+	)
+endif()
+
+if(WEBSOCKETS)
+	build_dependency(qtwebsockets ${QT_VERSION} ${BUILD_TYPE}
+		URL "${URL}"
+		TARGET_BITS "${TARGET_BITS}"
+		SOURCE_DIR "@name@-everywhere-src-@version@"
+		VERSIONS
+			5.15.8
+			SHA384=aa5c23820c0c199740c8969078b90819481300aacc1cd10e3a6f8568b9dda6967aaaf26eb0ddde89223468b07ccc69a8
+			6.6.1
+			SHA384=0f6a804706b8504f9bbf26d9d61a48b9e3ccf5437c0d71184b0198d199d85fc498ca69690b7e1b0fb3020715e8484d91
 		ALL_PLATFORMS
 			${MODULE_GENERATOR}
 	)

@@ -230,11 +230,21 @@ void *DP_message_cast(DP_Message *msg, DP_MessageType type)
     return NULL;
 }
 
-size_t DP_message_length(DP_Message *msg)
+static size_t message_length(DP_Message *msg, size_t header)
 {
     DP_ASSERT(msg);
     DP_ASSERT(DP_atomic_get(&msg->refcount) > 0);
-    return DP_MESSAGE_HEADER_LENGTH + msg->methods->payload_length(msg);
+    return header + msg->methods->payload_length(msg);
+}
+
+size_t DP_message_length(DP_Message *msg)
+{
+    return message_length(msg, DP_MESSAGE_HEADER_LENGTH);
+}
+
+size_t DP_message_ws_length(DP_Message *msg)
+{
+    return message_length(msg, DP_MESSAGE_WS_HEADER_LENGTH);
 }
 
 size_t DP_message_serialize(DP_Message *msg, bool write_body_length,

@@ -51,6 +51,10 @@ target_link_libraries(dpserver
 		${QT_PACKAGE_NAME}::Network
 )
 
+if(TARGET "${QT_PACKAGE_NAME}::WebSockets")
+	target_link_libraries(dpserver PUBLIC ${QT_PACKAGE_NAME}::WebSockets)
+endif()
+
 if(TESTS)
 	add_subdirectory(tests)
 endif()

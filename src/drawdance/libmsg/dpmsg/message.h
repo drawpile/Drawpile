@@ -29,6 +29,7 @@ typedef struct DP_TextWriter DP_TextWriter;
 
 #define DP_MESSAGE_MAX                255
 #define DP_MESSAGE_HEADER_LENGTH      4
+#define DP_MESSAGE_WS_HEADER_LENGTH   2
 #define DP_MESSAGE_MAX_PAYLOAD_LENGTH 65535
 
 typedef struct DP_Message DP_Message;
@@ -71,6 +72,7 @@ DP_Message *DP_message_from_internal(void *internal);
 void *DP_message_cast(DP_Message *msg, DP_MessageType type);
 
 size_t DP_message_length(DP_Message *msg);
+size_t DP_message_ws_length(DP_Message *msg);
 
 size_t DP_message_serialize(DP_Message *msg, bool write_body_length,
                             DP_GetMessageBufferFn get_buffer,

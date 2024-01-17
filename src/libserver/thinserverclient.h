@@ -11,6 +11,10 @@ class ThinServerClient final : public Client {
 public:
 	ThinServerClient(
 		QTcpSocket *tcpSocket, ServerLog *logger, QObject *parent = nullptr);
+#ifdef HAVE_WEBSOCKETS
+	ThinServerClient(
+		QWebSocket *webSocket, ServerLog *logger, QObject *parent = nullptr);
+#endif
 	~ThinServerClient() override;
 
 	/**

@@ -119,6 +119,16 @@ bool start() {
 	QCommandLineOption listenOption(QStringList() << "listen" << "l", "Listening address", "address");
 	parser.addOption(listenOption);
 
+#ifdef HAVE_WEBSOCKETS
+	// --websocket-port <port>
+	QCommandLineOption webSocketPortOption(QStringList() << "websocket-port", "WebSocket listening port (0 to disable)", "port", "0");
+	parser.addOption(webSocketPortOption);
+
+	// --websocket-listen <address>
+	QCommandLineOption webSocketListenOption(QStringList() << "websocket-listen", "WebSocket listening address", "address");
+	parser.addOption(webSocketListenOption);
+#endif
+
 	// --local-host
 	QCommandLineOption localAddr("local-host", "This server's hostname for session announcement", "hostname");
 	parser.addOption(localAddr);
@@ -314,6 +324,31 @@ bool start() {
 		}
 	}
 
+#ifdef HAVE_WEBSOCKETS
+	int webSocketPort;
+	{
+		bool ok;
+		webSocketPort = parser.value(webSocketPortOption).toInt(&ok);
+		if(!ok || webSocketPort<0 || webSocketPort>0xffff) {
+			qCritical("Invalid WebSocket port %s", qUtf8Printable(parser.value(webSocketPortOption)));
+			return false;
+		}
+	}
+	QHostAddress webSocketAddress = QHostAddress::Any;
+	{
+		QString av = parser.value(webSocketListenOption);
+		if(!av.isEmpty()) {
+			if(!webSocketAddress.setAddress(av)) {
+				qCritical("Invalid WebSocket listening address %s", qUtf8Printable(av));
+				return false;
+			}
+		}
+	}
+#else
+	const int webSocketPort = 0;
+	const QHostAddress webSocketAddress = QHostAddress::Any;
+#endif
+
 	{
 		QString sslCert = parser.value(sslCertOption);
 		QString sslKey = parser.value(sslKeyOption);
@@ -414,7 +449,7 @@ bool start() {
 		QList<int> listenfds = initsys::getListenFds();
 		if(listenfds.isEmpty()) {
 			// socket activation not used
-			if(!server->start(port, address)) {
+			if(!server->start(port, address, webSocketPort, webSocketAddress)) {
 				return false;
 			}
 
@@ -431,17 +466,28 @@ bool start() {
 
 		} else {
 			// listening socket passed to us by the init system
-			if(listenfds.size() > 2) {
+			int fdCount = listenfds.size();
+			if(fdCount > 3) {
 				qCritical("Too many file descriptors received");
 				return false;
 			}
 
+			int fdTcp = listenfds[0];
+			int fdWebAdmin = fdCount < 2 ? -1 : listenfds[1];
+			int fdWebSocket = fdCount < 3 ? -1 : listenfds[2];
+
 			server->setAutoStop(true);
 
-			if(!server->startFd(listenfds[0]))
+#ifndef HAVE_WEBSOCKETS
+			if(fdWebSocket > 0) {
+				qCritical("WebSocket passed, but support not built in!");
+			}
+#endif
+			if(!server->startFd(fdTcp, fdWebSocket)) {
 				return false;
+			}
 
-			if(listenfds.size()>1) {
+			if(fdWebAdmin > 0) {
 #ifdef HAVE_WEBADMIN
 				webadmin->setSessions(server);
 				webadmin->startFd(listenfds[1]);

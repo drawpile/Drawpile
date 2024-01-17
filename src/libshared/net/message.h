@@ -20,8 +20,12 @@ public:
 	static Message null();
 	static Message inc(DP_Message *cs);
 	static Message noinc(DP_Message *cs);
+
 	static Message
 	deserialize(const unsigned char *buf, size_t bufsize, bool decodeOpaque);
+
+	static Message
+	deserializeWs(const unsigned char *buf, size_t bufsize, bool decodeOpaque);
 
 	static DP_Message **asRawMessages(const Message *msgs);
 
@@ -50,6 +54,7 @@ public:
 	void setIndirectCompatFlag();
 
 	size_t length() const;
+	size_t wsLength() const;
 
 	bool equals(const Message &other) const;
 
@@ -70,6 +75,7 @@ public:
 	DP_MsgUserAcl *toUserAcl() const;
 
 	bool serialize(QByteArray &buffer) const;
+	bool serializeWs(QByteArray &buffer) const;
 
 	bool shouldSmoothe() const;
 

@@ -153,6 +153,11 @@ if(CLIENT OR SERVER)
 	# Everything needs these dependencies so just do it in one place
 	find_package(${QT_PACKAGE_NAME} QUIET COMPONENTS LinguistTools)
 	find_package(libsodium QUIET)
+	if(EMSCRIPTEN)
+		find_package(${QT_PACKAGE_NAME} REQUIRED COMPONENTS WebSockets)
+	else()
+		find_package(${QT_PACKAGE_NAME} QUIET COMPONENTS WebSockets)
+	endif()
 
 	if(ANDROID AND QT_VERSION VERSION_LESS 6)
 		find_package(${QT_PACKAGE_NAME} REQUIRED COMPONENTS AndroidExtras)
@@ -166,10 +171,15 @@ if(CLIENT OR SERVER)
 		add_compile_definitions(HAVE_TCPSOCKETS)
 	endif()
 
+	if(TARGET "${QT_PACKAGE_NAME}::WebSockets")
+		add_compile_definitions(HAVE_WEBSOCKETS)
+	endif()
+
 	# LinguistTools does not generate a target so its existence must be checked
 	# using the old-style FOUND flag
 	add_feature_info("Translations" ${QT_PACKAGE_NAME}LinguistTools_FOUND "")
 	add_feature_info("Ext-auth support" "TARGET libsodium::libsodium" "")
+	add_feature_info("WebSocket support" "TARGET ${QT_PACKAGE_NAME}::WebSockets" "")
 
 	#find_package(KF5DNSSD NO_MODULE) # disabled pending built-in server rewrite
 	if(TARGET KF5::DNSSD)
