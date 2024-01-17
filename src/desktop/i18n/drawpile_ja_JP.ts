@@ -878,7 +878,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>You can find this dialog again under &lt;i&gt;Session ▸ Invite…&lt;/i&gt;</source>
-        <translation>このダイアログは以下に再び表示されます。&lt;i&gt;セッション ▸ 招待…&lt;/i&gt;</translation>
+        <translation>このダイアログは次の項目で再び表示できます。&lt;i&gt;セッション ▸ 招待…&lt;/i&gt;</translation>
     </message>
 </context>
 <context>
@@ -4444,9 +4444,9 @@ The brush size should be considerably smaller than the grid scale for best resul
 Logarithmic: 0.0 is 100%, 0.69 is 200%, -1.38 is 25%
 For the Radius setting, using a value of -4.15 makes the brush size roughly constant, relative to the level of zoom.</source>
         <comment>mypaintinput</comment>
-        <translation>キャンバス表示の現在のズーム レベル。
+        <translation>キャンバス表示の現在のズームレベル。
 対数: 0.0 は 100%、0.69 は 200%、-1.38 は 25%
-半径設定では、-4.15 の値を使用するとズーム レベルに応じてブラシ サイズがほぼ一定になります。</translation>
+半径設定では、-4.15 の値を使用すると拡大レベルに応じてブラシ サイズがほぼ一定になります。</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -7050,7 +7050,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+10"/>
         <source>Host on port %1 if available</source>
-        <translation>ホストするポート %1 有効ならば</translation>
+        <translation>有効ならばホストするポート %1</translation>
     </message>
     <message>
         <location line="+7"/>
