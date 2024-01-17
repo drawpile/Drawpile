@@ -1,0 +1,16 @@
+Description: Clamps the device pixel ratio to a minimum of 1.0, since otherwise
+changing the browser to a zoom less than 100% breaks the UI. Capping it like
+this appears to still allow zooming out, just without breaking everything.
+
+See https://bugreports.qt.io/browse/QTBUG-116754
+
+--- a/src/plugins/platforms/wasm/qwasmscreen.cpp
++++ b/src/plugins/platforms/wasm/qwasmscreen.cpp
+@@ -200,7 +200,7 @@
+     double dpr = emscripten::val::global("window")["devicePixelRatio"].as<double>();
+     emscripten::val visualViewport = emscripten::val::global("window")["visualViewport"];
+     double scale = visualViewport.isUndefined() ? 1.0 : visualViewport["scale"].as<double>();
+-    double effectiveDevicePixelRatio = std::min(dpr * scale, dpr);
++    double effectiveDevicePixelRatio = std::max(std::min(dpr * scale, dpr), 1.0);
+     return qreal(effectiveDevicePixelRatio);
+ }

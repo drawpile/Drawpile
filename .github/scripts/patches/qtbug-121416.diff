@@ -1,0 +1,19 @@
+See https://bugreports.qt.io/browse/QTBUG-121416
+
+--- a/src/plugins/platforms/wasm/qwasmwindow.cpp
++++ b/src/plugins/platforms/wasm/qwasmwindow.cpp
+@@ -63,7 +63,13 @@
+
+     // Set contenteditable so that the canvas gets clipboard events,
+     // then hide the resulting focus frame.
+-    m_canvas.set("contentEditable", std::string("true"));
++    // Drawpile patch: no. Having contenteditable on the canvas causes Windows
++    // to go completely haywire, opening up the brain-damaged handwriting input
++    // when the pen is pressed down, making the application entirely unusable.
++    // However, removing this property means that the canvas isn't focusable,
++    // which means it doesn't get key events anymore. A tabindex fixes this.
++    // m_canvas.set("contentEditable", std::string("true"));
++    m_canvas.set("tabIndex", std::string("-1"));
+     m_canvas["style"].set("outline", std::string("none"));
+
+     QWasmClipboard::installEventHandlers(m_canvas);

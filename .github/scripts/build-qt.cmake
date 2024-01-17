@@ -17,6 +17,10 @@ else()
 	set(WEBSOCKETS_DEFAULT ON)
 endif()
 
+option(EMSCRIPTEN "Build for WebAssembly via Emscripten" OFF)
+option(EMSCRIPTEN_THREADS "Enable threads in Emscripten" ON)
+set(EMSCRIPTEN_HOST_PATH "" CACHE STRING "Path to Qt host installation for Emscripten builds")
+
 set(QT_VERSION "" CACHE STRING "The version of Qt to build")
 if((QT_VERSION VERSION_LESS 6 AND WIN32) OR ANDROID)
 	set(OPENSSL "1.1.1t" CACHE STRING "The version of OpenSSL to build")
@@ -25,6 +29,7 @@ else()
 endif()
 option(BASE "Build qtbase" ON)
 option(MULTIMEDIA "Build qtmultimedia and dependencies" ON)
+option(SHADERTOOLS "Build qtshadertools (built automatically for Qt6 multimedia)" OFF)
 option(SVG "Build qtsvg" ON)
 option(IMAGEFORMATS "Build qtimageformats" ON)
 option(TOOLS "Build qttools" ON)
@@ -95,6 +100,21 @@ if(ANDROID)
 		message(FATAL_ERROR "Invalid Android platform '${ANDROID_PLATFORM}'")
 	endif()
 	list(APPEND OPENSSL_MAKE_FLAGS SHLIB_VERSION_NUMBER= SHLIB_EXT=_1_1.so)
+elseif(EMSCRIPTEN)
+	if(QT_VERSION VERSION_GREATER_EQUAL 6)
+		list(APPEND BASE_FLAGS
+			-platform wasm-emscripten
+			-qt-host-path "${EMSCRIPTEN_HOST_PATH}"
+			-device-option QT_EMSCRIPTEN_ASYNCIFY=1
+		)
+		if(EMSCRIPTEN_THREADS)
+			list(APPEND BASE_FLAGS -feature-thread)
+		else()
+			list(APPEND BASE_FLAGS -no-feature-thread)
+		endif()
+	else()
+		message(FATAL_ERROR "Building for Emscripten is only implemented for Qt6")
+	endif()
 endif()
 
 if(WIN32)
@@ -102,20 +122,26 @@ if(WIN32)
 	list(APPEND BASE_FLAGS -mp -schannel)
 endif()
 
-if(UNIX AND NOT APPLE AND NOT ANDROID)
+if(UNIX AND NOT APPLE AND NOT ANDROID AND NOT EMSCRIPTEN)
 	list(APPEND BASE_FLAGS -system-freetype -fontconfig -openssl-linked)
 else()
 	list(APPEND BASE_FLAGS -qt-freetype)
 endif()
 
-# https://bugreports.qt.io/browse/QTBUG-72846 regressed in Qt6 due to
-# https://gitlab.kitware.com/cmake/cmake/-/issues/23864
-if(NOT APPLE OR QT_VERSION VERSION_LESS 6)
-	list(APPEND BASE_FLAGS -ltcg)
-endif()
-
 if(USE_ASAN)
 	list(APPEND BASE_FLAGS -sanitize address)
+endif()
+
+if(EMSCRIPTEN)
+	unset(BASE_DEBUG_INFO_FLAGS)
+	set(BASE_RELEASE_FLAGS -feature-optimize_full)
+else()
+	set(BASE_DEBUG_INFO_FLAGS -separate-debug-info)
+	# https://bugreports.qt.io/browse/QTBUG-72846 regressed in Qt6 due to
+	# https://gitlab.kitware.com/cmake/cmake/-/issues/23864
+	if(NOT APPLE OR QT_VERSION VERSION_LESS 6)
+		list(APPEND BASE_FLAGS -ltcg)
+	endif()
 endif()
 
 if(QT_VERSION VERSION_GREATER_EQUAL 6.4)
@@ -212,6 +238,8 @@ if(BASE)
 			SHA384=42dd8d4ba9b403f1295880ecdc8dc61aa572829599414ab59bbf106dd1dc8b347e7e8dc1baeac0dff68297604bff7d3a
 			6.4.2
 			SHA384=d4a216e77c9a724f0ed42a6abe621c6749ec1b9309193c12f70078f11ef873b3e129a0a65ff22aa1b59eb6645b50100a
+			6.6.1
+			SHA384=0b62a314c734d219b437855867b285774494a04750b7e4a6e285c731d65d55068a7d37f236e737c46f8df281efb646fc
 		ALL_PLATFORMS
 			${BASE_GENERATOR}
 				ALL
@@ -221,15 +249,15 @@ if(BASE)
 					-qt-libjpeg -qt-libpng -qt-sqlite -qt-harfbuzz
 					${BASE_FLAGS}
 				DEBUG
-					${BASE_DEBUG_FLAGS} -separate-debug-info
+					${BASE_DEBUG_FLAGS} ${BASE_DEBUG_INFO_FLAGS}
 				RELWITHDEBINFO
-					-release -force-asserts -force-debug-info -separate-debug-info
+					-release -force-asserts -force-debug-info
+					${BASE_DEBUG_INFO_FLAGS} ${BASE_RELEASE_FLAGS}
 				RELEASE
-					-release
+					-release ${BASE_RELEASE_FLAGS}
 		PATCHES
-			ALL
-				patches/qtbug-111538.diff
 			5.15.8
+				patches/qtbug-111538.diff
 				patches/androiddeployqt_needed_libs.diff
 				patches/androiddeployqt_keystore_env.diff
 				patches/cast_types_for_egl_x11_test.diff
@@ -241,10 +269,18 @@ if(BASE)
 				patches/checkboxoutline.diff
 				patches/windows_clipboard_sadness.diff
 			6.4.2
+				patches/qtbug-111538.diff
 				patches/qtbug-109375.diff
 				patches/qtbug-112697.diff
 				patches/qtbug-112899.diff
 				patches/qtbug-113394.diff
+			6.6.1
+				patches/qtbug-113394.diff
+				patches/qtbug-120327.diff
+				patches/qtloader_original_preload.diff
+				patches/qtbug-121416.diff
+				patches/qtbug-116754.diff
+				patches/touchstart_prevent_default.diff
 	)
 endif()
 
@@ -260,6 +296,8 @@ if(SVG)
 			SHA384=9bc135941af8a42c98a9815c85cc74a4003235031858ba6e60a231499ff427fd46076f2dca297c99a0a4dd2e4df16fb5
 			6.4.2
 			SHA384=ead5f7a6f1ef7ab597928d208df3139fcb6fa1f66e608a1b4406e058368715ff91e149f4553c91f07dc5ec9a33f2d40b
+			6.6.1
+			SHA384=32dcded54c614f92f271ed5876eaf5b69c7cc2489bb9c349d8bebfbcea88d8a119b54531f6e77a09c2733cce5391c561
 		ALL_PLATFORMS
 			${MODULE_GENERATOR}
 	)
@@ -277,6 +315,8 @@ if(IMAGEFORMATS)
 			SHA384=4edb67534b81e2fe7ccf646f55378f7b6d992ba8ecedab92471be035702dc748a8e97cfb4e77b6346881e9708471b3e9
 			6.4.2
 			SHA384=05d821bee1b39a39ac822d3fd3620028a6802171e777d219fb778d2c8df1e375b0282eef79b6203f2c3f32c9785cc3e4
+			6.6.1
+			SHA384=eea13833df1af407216c9b23279cbe57725a0a79b37b2cd8e94aa9de20c06a2d61a5cd0f54310607bfd12226cffd9d08
 		ALL_PLATFORMS
 			${MODULE_GENERATOR}
 				ALL ${FLAGS_SEPARATOR}
@@ -287,23 +327,25 @@ if(IMAGEFORMATS)
 	)
 endif()
 
-if(MULTIMEDIA)
-	# Required multimedia dependency
-	if(QT_VERSION VERSION_GREATER_EQUAL 6)
-		build_dependency(qtshadertools ${QT_VERSION} ${BUILD_TYPE}
-			URL "${URL}"
-			TARGET_BITS "${TARGET_BITS}"
-			SOURCE_DIR "@name@-everywhere-src-@version@"
-			VERSIONS
-				6.3.2
-				SHA384=42b85ce1cf1573d6ca514a8bed2cdbfb4215644fc0192739c3e7fe40afdfa01d8aff31460f8d8b2be8e948ecef822398
-				6.4.2
-				SHA384=024c1f39bcbc78213e189226b93ee54e5a0281ac0d78923fd04e3ceb6189424d9c404473c89719f78c466d19853cf1cf
-			ALL_PLATFORMS
-				${MODULE_GENERATOR}
-		)
-	endif()
+# Required multimedia dependency in Qt6
+if(SHADERTOOLS OR (QT_VERSION VERSION_GREATER_EQUAL 6 AND MULTIMEDIA))
+	build_dependency(qtshadertools ${QT_VERSION} ${BUILD_TYPE}
+		URL "${URL}"
+		TARGET_BITS "${TARGET_BITS}"
+		SOURCE_DIR "@name@-everywhere-src-@version@"
+		VERSIONS
+			6.3.2
+			SHA384=42b85ce1cf1573d6ca514a8bed2cdbfb4215644fc0192739c3e7fe40afdfa01d8aff31460f8d8b2be8e948ecef822398
+			6.4.2
+			SHA384=024c1f39bcbc78213e189226b93ee54e5a0281ac0d78923fd04e3ceb6189424d9c404473c89719f78c466d19853cf1cf
+			6.6.1
+			SHA384=68321c2a4dd8dc6d9d7cdea83929f0fdd3e817feec1bf2a1555957e8cc1aab1dc97ffce675f9ebb0469831423f44a4d8
+		ALL_PLATFORMS
+			${MODULE_GENERATOR}
+	)
+endif()
 
+if(MULTIMEDIA)
 	build_dependency(qtmultimedia ${QT_VERSION} ${BUILD_TYPE}
 		URL "${URL}"
 		TARGET_BITS "${TARGET_BITS}"
@@ -315,6 +357,8 @@ if(MULTIMEDIA)
 			SHA384=2e0e85c752cdd9a72aadf773a76b16604c07c0dd54ae55e966dd5ba1445349500de216e6e8ea2c4c6699863cf31f2692
 			6.4.2
 			SHA384=3a586108e8fd679026b4368579f3c7a12012b1143e8f98dc1b4f5b33abdd9aa2b3c75f05ce208122a3d6d1c6dda69ea4
+			6.6.1
+			SHA384=93e9e51eace2279dcfd2a15066dd77f16a040f54f5f5f5341efb037ea8b5a2d878712d1915e1565a86533b35012420a1
 		ALL_PLATFORMS
 			${MODULE_GENERATOR}
 				ALL ${FLAGS_SEPARATOR} ${MULTIMEDIA_FLAGS}
@@ -334,6 +378,8 @@ if(TOOLS)
 			SHA384=b2f609dcd3f5439f1a03fd174fdf3022ecbe677cadcefa0a0c26bed34034675b4ab2055e8175a792a6e27b3c3c67a8fd
 			6.4.2
 			SHA384=45f265d5569bc4df3a59e92e6adf93191965869bb1b0b151f65ae04dc3f1cc79daf41759a7d701b80e1d58f58f7d1006
+			6.6.1
+			SHA384=56d99d3b74bd7109aa4a84485870c6fcb62c2f0bd22239e269baff72d6407d9e22258a9d8447ad10df4cffefd2a961c5
 		ALL_PLATFORMS
 			${MODULE_GENERATOR}
 				# linguist is required for translation compilation, and it transitively
@@ -377,6 +423,8 @@ if(TRANSLATIONS)
 			SHA384=48a650886993d453399aac197de618fe634cb452e6716eac917392f5eb409feb891bd313f4d8b7dd80709468082ab7ba
 			6.4.2
 			SHA384=5e847ccbc6bde7da863d1269487525571a36e9d2193c21d1aa831c3a95d4378be9c5cbf6a9fb5f55fcbbf1dab649d823
+			6.6.1
+			SHA384=596db0ad763f791acca1f7d317a4924e7cca418d842d539dc308c4a15e9a1e552d22f3062593eeaa05bb2ec0a0e2a4a6
 		ALL_PLATFORMS
 			${MODULE_GENERATOR}
 	)
