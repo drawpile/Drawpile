@@ -6,6 +6,7 @@ Unreleased Version 2.2.1-pre
  * Feature: Implement WebSocket support in the server, available with the --websocket-port and --websocket-listen options.
  * Feature: Send keepalive messages from the server, if the client indicates support for it. Avoids them disconnecting when too busy uploading to send a ping.
  * Feature: Active user counts for sessions. A user counts as active if they drew in the last five minutes.
+ * Feature: Make invite links indicated web client capability and NSFM-ness of sessions so that the invite page can show a "join in the browser" button and an appropriate notice respectively. Thanks Blozzom for suggesting the latter.
 
 2024-01-13 Version 2.2.0
  * Server Fix: Add --ssl-key-algorithm parameter to allow non-RSA SSL keys, defaulting to guessing the most common formats RSA and EC. Thanks Bluestrings for reporting.

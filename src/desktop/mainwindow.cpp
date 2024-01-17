@@ -2059,8 +2059,19 @@ void MainWindow::hostSession(
 
 void MainWindow::invite()
 {
-	dialogs::InviteDialog *dlg = new dialogs::InviteDialog{m_netstatus, this};
+	dialogs::InviteDialog *dlg = new dialogs::InviteDialog(
+		m_netstatus, m_doc->isCompatibilityMode(), m_doc->isSessionAllowWeb(),
+		m_doc->isSessionNsfm(), this);
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
+	connect(
+		m_doc, &Document::compatibilityModeChanged, dlg,
+		&dialogs::InviteDialog::setSessionCompatibilityMode);
+	connect(
+		m_doc, &Document::sessionAllowWebChanged, dlg,
+		&dialogs::InviteDialog::setSessionAllowWeb);
+	connect(
+		m_doc, &Document::sessionNsfmChanged, dlg,
+		&dialogs::InviteDialog::setSessionNsfm);
 	dlg->show();
 }
 

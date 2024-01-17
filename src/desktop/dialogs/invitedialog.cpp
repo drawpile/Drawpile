@@ -15,14 +15,22 @@ struct InviteDialog::Private {
 	Ui::InviteDialog ui;
 	QButtonGroup *linkTypeGroup;
 	QString joinPassword;
+	bool compatibilityMode;
+	bool allowWeb;
+	bool nsfm;
 };
 
-InviteDialog::InviteDialog(widgets::NetStatus *netStatus, QWidget *parent)
+InviteDialog::InviteDialog(
+	widgets::NetStatus *netStatus, bool compatibilityMode, bool allowWeb,
+	bool nsfm, QWidget *parent)
 	: QDialog{parent}
 	, d{new Private}
 {
 	d->netStatus = netStatus;
 	d->joinPassword = netStatus->joinPassword();
+	d->compatibilityMode = compatibilityMode;
+	d->allowWeb = allowWeb;
+	d->nsfm = nsfm;
 	d->ui.setupUi(this);
 	d->ui.urlEdit->setWordWrapMode(QTextOption::WrapAnywhere);
 	d->ui.ipProgressBar->setVisible(false);
@@ -65,6 +73,30 @@ InviteDialog::InviteDialog(widgets::NetStatus *netStatus, QWidget *parent)
 InviteDialog::~InviteDialog()
 {
 	delete d;
+}
+
+void InviteDialog::setSessionCompatibilityMode(bool compatibilityMode)
+{
+	if(compatibilityMode != d->compatibilityMode) {
+		d->compatibilityMode = compatibilityMode;
+		updateInviteLink();
+	}
+}
+
+void InviteDialog::setSessionAllowWeb(bool allowWeb)
+{
+	if(allowWeb != d->allowWeb) {
+		d->allowWeb = allowWeb;
+		updateInviteLink();
+	}
+}
+
+void InviteDialog::setSessionNsfm(bool nsfm)
+{
+	if(nsfm != d->nsfm) {
+		d->nsfm = nsfm;
+		updateInviteLink();
+	}
 }
 
 void InviteDialog::copyInviteLink()
@@ -112,8 +144,21 @@ void InviteDialog::updateInviteLink()
 								 ? QStringLiteral(":%1").arg(port)
 								 : QString{};
 
-		url = QUrl{QStringLiteral("https://drawpile.net/invites/%1%2%3")
-					   .arg(mangledHost, portSuffix, url.path())};
+		QStringList queryParams;
+		if(d->allowWeb && !d->compatibilityMode) {
+			queryParams.append(QStringLiteral("web"));
+		}
+		if(d->nsfm) {
+			queryParams.append(QStringLiteral("nsfm"));
+		}
+
+		QString query;
+		if(!queryParams.isEmpty()) {
+			query = QStringLiteral("?%1").arg(queryParams.join('&'));
+		}
+
+		url = QUrl{QStringLiteral("https://drawpile.net/invites/%1%2%3%4")
+					   .arg(mangledHost, portSuffix, url.path(), query)};
 		if(includePassword) {
 			url.setFragment(d->joinPassword);
 		}

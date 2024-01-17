@@ -150,6 +150,7 @@ public:
 	bool isSessionPersistent() const { return m_sessionPersistent; }
 	bool isSessionClosed() const { return m_sessionClosed; }
 	bool isSessionAuthOnly() const { return m_sessionAuthOnly; }
+	bool isSessionAllowWeb() const { return m_sessionAllowWeb; }
 	bool isSessionPreserveChat() const { return m_sessionPreserveChat; }
 	bool isSessionPasswordProtected() const
 	{

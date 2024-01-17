@@ -16,8 +16,16 @@ public:
 	enum class LinkType : int { Web, Direct };
 	Q_ENUM(LinkType)
 
-	InviteDialog(widgets::NetStatus *netStatus, QWidget *parent);
+	InviteDialog(
+		widgets::NetStatus *netStatus, bool compatibilityMode, bool allowWeb,
+		bool nsfm, QWidget *parent);
+
 	~InviteDialog() override;
+
+public slots:
+	void setSessionCompatibilityMode(bool compatibilityMode);
+	void setSessionAllowWeb(bool allowWeb);
+	void setSessionNsfm(bool nsfm);
 
 private slots:
 	void copyInviteLink();
