@@ -122,6 +122,9 @@ protected slots:
 	void handleDisconnect();
 	void handleSocketStateChange(QAbstractSocket::SocketState state);
 	void handleSocketError();
+	void handleReadError();
+	void handleWriteError();
+	void handleTimeout(qint64 idleTime, qint64 idleTimeout);
 
 protected:
 	// Must be called at the end of the constructor.

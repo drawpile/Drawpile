@@ -286,6 +286,9 @@ private slots:
 	void gotBadData(int len, int type);
 	void receiveMessages();
 	void socketError(QAbstractSocket::SocketError error);
+	void readError();
+	void writeError();
+	void timedOut(qint64 idleTime, qint64 idleTimeout);
 	void socketDisconnect();
 
 protected:

@@ -181,10 +181,12 @@ void MessageQueue::receiveSmoothedMessages()
 void MessageQueue::checkIdleTimeout()
 {
 	if(m_idleTimeout > 0 &&
-	   getSocketState() == QAbstractSocket::ConnectedState &&
-	   idleTime() > m_idleTimeout) {
-		qWarning("MessageQueue timeout");
-		abortSocket();
+	   getSocketState() == QAbstractSocket::ConnectedState) {
+		qint64 currentIdleTime = idleTime();
+		if(currentIdleTime > m_idleTimeout) {
+			emit timedOut(currentIdleTime, m_idleTimeout);
+			abortSocket();
+		}
 	}
 }
 

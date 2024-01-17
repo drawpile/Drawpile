@@ -133,6 +133,11 @@ Client::Client(
 		&Client::receiveMessages);
 	connect(
 		d->msgqueue, &net::MessageQueue::badData, this, &Client::gotBadData);
+	connect(
+		d->msgqueue, &net::MessageQueue::readError, this, &Client::readError);
+	connect(
+		d->msgqueue, &net::MessageQueue::writeError, this, &Client::writeError);
+	connect(d->msgqueue, &net::MessageQueue::timedOut, this, &Client::timedOut);
 }
 
 Client::~Client()
@@ -609,6 +614,33 @@ void Client::socketError(QAbstractSocket::SocketError error)
 				.message("Socket error: " + d->socket->errorString()));
 		d->socket->abort();
 	}
+}
+
+void Client::readError()
+{
+	log(Log()
+			.about(Log::Level::Warn, Log::Topic::Status)
+			.message(QStringLiteral("Socket read error: %1")
+						 .arg(d->socket->errorString())));
+}
+
+void Client::writeError()
+{
+	log(Log()
+			.about(Log::Level::Warn, Log::Topic::Status)
+			.message(QStringLiteral("Socket write error: %1")
+						 .arg(d->socket->errorString())));
+}
+
+void Client::timedOut(qint64 idleTime, qint64 idleTimeout)
+{
+	log(Log()
+			.about(Log::Level::Warn, Log::Topic::Status)
+			.message(
+				QStringLiteral(
+					"Message queue timed out after %1ms, threshold is %2ms")
+					.arg(idleTime)
+					.arg(idleTimeout)));
 }
 
 void Client::socketDisconnect()

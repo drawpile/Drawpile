@@ -154,7 +154,9 @@ signals:
 	 */
 	void badData(int len, int type, int contextId);
 
-	void socketError(const QString &errorstring);
+	void readError();
+	void writeError();
+	void timedOut(qint64 idleTime, qint64 idleTimeout);
 
 	/**
 	 * @brief A reply to our Ping was just received

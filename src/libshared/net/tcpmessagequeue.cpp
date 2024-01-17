@@ -86,7 +86,7 @@ void TcpMessageQueue::readData()
 		read = m_socket->read(
 			m_recvbuffer + m_recvbytes, MAX_BUF_LEN - m_recvbytes);
 		if(read < 0) {
-			emit socketError(m_socket->errorString());
+			emit readError();
 			return;
 		}
 
@@ -268,8 +268,7 @@ void TcpMessageQueue::writeData()
 				m_sendbuffer.constData() + m_sentbytes,
 				m_sendbuffer.length() - m_sentbytes);
 			if(sent < 0) {
-				// Error
-				emit socketError(m_socket->errorString());
+				emit writeError();
 				return;
 			}
 			m_sentbytes += sent;

@@ -83,12 +83,50 @@ void Server::handleSocketError()
 	}
 }
 
+void Server::handleReadError()
+{
+	QString errorString = socketErrorString();
+	qWarning() << "Socket read error:" << errorString;
+	if(m_error.isEmpty()) {
+		if(errorString.isEmpty()) {
+			m_error = tr("Network read error");
+		} else {
+			m_error = tr("Network read error: %1").arg(errorString);
+		}
+	}
+}
+
+void Server::handleWriteError()
+{
+	QString errorString = socketErrorString();
+	qWarning() << "Socket write error:" << errorString;
+	if(m_error.isEmpty()) {
+		if(errorString.isEmpty()) {
+			m_error = tr("Network write error");
+		} else {
+			m_error = tr("Network write error: %1").arg(errorString);
+		}
+	}
+}
+
+void Server::handleTimeout(qint64 idleTime, qint64 idleTimeout)
+{
+	qWarning() << "Message queue timed out after" << idleTime
+			   << "ms, threshold is " << idleTimeout << "ms";
+	if(m_error.isEmpty()) {
+		m_error = tr("Network connection timed out");
+	}
+}
+
 void Server::connectMessageQueue(MessageQueue *mq)
 {
 	connect(mq, &MessageQueue::messageAvailable, this, &Server::handleMessage);
 	connect(mq, &MessageQueue::bytesReceived, this, &Server::bytesReceived);
 	connect(mq, &MessageQueue::bytesSent, this, &Server::bytesSent);
 	connect(mq, &MessageQueue::badData, this, &Server::handleBadData);
+	connect(mq, &MessageQueue::readError, this, &Server::handleReadError);
+	connect(mq, &MessageQueue::writeError, this, &Server::handleWriteError);
+	connect(mq, &MessageQueue::timedOut, this, &Server::handleTimeout);
 	connect(mq, &MessageQueue::pingPong, this, &Server::lagMeasured);
 	connect(
 		mq, &MessageQueue::gracefulDisconnect, this,
