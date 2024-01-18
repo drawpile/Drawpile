@@ -722,7 +722,7 @@ DP_PaintEngine *DP_paint_engine_new_inc(
     pe->reset_locked = false;
     pe->paint_thread = DP_thread_new(run_paint_engine, pe);
     pe->renderer =
-        DP_renderer_new(DP_thread_cpu_count(128), renderer_checker,
+        DP_renderer_new(DP_worker_cpu_count(128), renderer_checker,
                         pe->local_view.checker_color1,
                         pe->local_view.checker_color2, renderer_tile_fn,
                         renderer_unlock_fn, renderer_resize_fn, renderer_user);

@@ -42,6 +42,19 @@ struct DP_WorkerParams {
 };
 
 
+int DP_worker_cpu_count(int max)
+{
+#ifdef __EMSCRIPTEN__
+    // In the browser, "thread" overhead for web workers is very high. On mobile
+    // devices, especially iOS, we're also under memory pressure. So we'll keep
+    // it at one thread per worker.
+    return DP_min_int(1, max);
+#else
+    return DP_thread_cpu_count(max);
+#endif
+}
+
+
 static bool shift_worker_element(DP_Mutex *queue_mutex, DP_Queue *queue,
                                  size_t element_size, void *out_element)
 {

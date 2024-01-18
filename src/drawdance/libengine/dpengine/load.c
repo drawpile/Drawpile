@@ -1114,7 +1114,7 @@ static DP_CanvasState *ora_read_stack_xml(DP_ReadOraContext *c,
     if ((flags & DP_LOAD_FLAG_SINGLE_THREAD) == 0) {
         c->worker =
             DP_worker_new(64, sizeof(struct DP_OraLoadLayerContentParams),
-                          DP_thread_cpu_count(32), ora_load_layer_content_job);
+                          DP_worker_cpu_count(32), ora_load_layer_content_job);
         if (!c->worker) {
             DP_warn("Error creating worker: %s", DP_error());
         }

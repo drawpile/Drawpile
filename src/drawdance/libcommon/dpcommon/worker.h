@@ -28,6 +28,8 @@ typedef struct DP_Worker DP_Worker;
 
 typedef void (*DP_WorkerJobFn)(void *element, int thread_index);
 
+int DP_worker_cpu_count(int max);
+
 DP_Worker *DP_worker_new(size_t initial_capacity, size_t element_size,
                          int thread_count, DP_WorkerJobFn job_fn);
 
