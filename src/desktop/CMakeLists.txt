@@ -1,4 +1,4 @@
-find_package(${QT_PACKAGE_NAME} REQUIRED COMPONENTS Gui Svg Widgets Multimedia)
+find_package(${QT_PACKAGE_NAME} REQUIRED COMPONENTS Gui Sql Svg Widgets Multimedia)
 find_package(QtColorWidgets QUIET)
 find_package(${QT_PACKAGE_NAME}Keychain QUIET)
 
@@ -358,9 +358,9 @@ target_link_libraries(drawpile PRIVATE
 	drawdance
 	${QT_PACKAGE_NAME}::Core
 	${QT_PACKAGE_NAME}::Gui
-	# Svg is used only indirectly as an image loader plugin, but e.g.
-	# androiddeployqt needs to see it linked in order to include the libraries
-	# in the output
+	# Svg and Sql are needed only indirectly and are linked transitively, but
+	# Android and Emscripten need them here to load their plugins properly.
+	${QT_PACKAGE_NAME}::Sql
 	${QT_PACKAGE_NAME}::Svg
 	${QT_PACKAGE_NAME}::Widgets
 	${QT_PACKAGE_NAME}::Multimedia
