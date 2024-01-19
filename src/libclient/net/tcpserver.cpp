@@ -56,7 +56,19 @@ void TcpServer::connectToHost(const QUrl &url)
 
 void TcpServer::disconnectFromHost()
 {
-	m_socket->disconnectFromHost();
+	// When the socket is not yet connected, calling disconnectFromHost will set
+	// the socket state back to UnconnectedState, but doesn't emit stateChanged
+	// or disconnected signals. When aborting, the stateChanged gets emitted.
+	switch(m_socket->state()) {
+	case QAbstractSocket::UnconnectedState:
+	case QAbstractSocket::HostLookupState:
+	case QAbstractSocket::ConnectingState:
+		abortConnection();
+		break;
+	default:
+		m_socket->disconnectFromHost();
+		break;
+	}
 }
 
 void TcpServer::abortConnection()

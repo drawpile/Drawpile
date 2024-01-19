@@ -61,8 +61,15 @@ void Server::handleDisconnect()
 
 void Server::handleSocketStateChange(QAbstractSocket::SocketState state)
 {
-	if(state == QAbstractSocket::ClosingState) {
+	switch(state) {
+	case QAbstractSocket::ClosingState:
 		emit loggingOut();
+		break;
+	case QAbstractSocket::UnconnectedState:
+		handleDisconnect();
+		break;
+	default:
+		break;
 	}
 }
 
