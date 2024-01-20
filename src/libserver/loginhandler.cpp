@@ -70,12 +70,12 @@ void LoginHandler::startLoginProcess()
 		  << "LOOKUP";	 // This server supports lookups.
 
 	QJsonObject methods;
+	bool allowGuestHosts =
+		m_config->getConfigBool(config::AllowGuestHosts) &&
+		(!m_client->isWebSocket() ||
+		 m_config->getConfigBool(config::AllowGuestWebSession));
 	if(allowGuests) {
 		QJsonArray guestActions = {QStringLiteral("join")};
-		bool allowGuestHosts =
-			m_config->getConfigBool(config::AllowGuestHosts) &&
-			(!m_client->isWebSocket() ||
-			 m_config->getConfigBool(config::AllowGuestWebSession));
 		if(allowGuestHosts) {
 			guestActions.append(QStringLiteral("host"));
 		}
@@ -98,7 +98,7 @@ void LoginHandler::startLoginProcess()
 	const QUrl extAuthUrl = m_config->internalConfig().extAuthUrl;
 	if(extAuthUrl.isValid() && m_config->getConfigBool(config::UseExtAuth)) {
 		QJsonArray extauthActions = {QStringLiteral("join")};
-		if(m_config->getConfigBool(config::ExtAuthHost)) {
+		if(allowGuestHosts || m_config->getConfigBool(config::ExtAuthHost)) {
 			extauthActions.append(QStringLiteral("host"));
 		}
 		methods[QStringLiteral("extauth")] = QJsonObject{
