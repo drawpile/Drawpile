@@ -919,8 +919,19 @@ void BrushSettings::adjustSettingVisibilities(bool softmode, bool mypaintmode)
 		d->ui.noPermissionLabel->setText(getLockDescription(lock));
 	}
 
+	// To avoid the dock resizing itself to demand more space than it actually
+	// requires, first do the hiding, then the showing. That way we don't end up
+	// in a temporary state where we got too many widgets at once. It seems like
+	// disabling updates should prevent this, but it doesn't actually.
 	for(const QPair<QWidget *, bool> &pair : widgetVisibilities) {
-		pair.first->setVisible(pair.second);
+		if(!pair.second) {
+			pair.first->hide();
+		}
+	}
+	for(const QPair<QWidget *, bool> &pair : widgetVisibilities) {
+		if(pair.second) {
+			pair.first->show();
+		}
 	}
 }
 

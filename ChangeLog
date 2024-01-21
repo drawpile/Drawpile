@@ -9,6 +9,7 @@ Unreleased Version 2.2.1-pre
  * Feature: Make invite links indicated web client capability and NSFM-ness of sessions so that the invite page can show a "join in the browser" button and an appropriate notice respectively. Thanks Blozzom for suggesting the latter.
  * Fix: Properly handle cancelling a connection while it's being established. Thanks Fox for reporting.
  * Server Fix: When hosting without an account is enabled, also allow it for anyone *with* an account. Thanks ahaven for finding this.
+ * Fix: Don't resize brush settings unnecessarily larger when switching between brush types. Thanks Meiren for reporting.
 
 2024-01-13 Version 2.2.0
  * Server Fix: Add --ssl-key-algorithm parameter to allow non-RSA SSL keys, defaulting to guessing the most common formats RSA and EC. Thanks Bluestrings for reporting.
