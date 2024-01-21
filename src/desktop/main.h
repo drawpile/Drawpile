@@ -53,6 +53,7 @@ public:
 	static QPair<QSize, QSizeF> screenResolution();
 
 signals:
+	void tabletProximityChanged(bool enter, bool eraser);
 	void eraserNear(bool near);
 	void setDockTitleBarsHidden(bool hidden);
 	void focusCanvas();
@@ -71,12 +72,15 @@ private:
 #ifdef Q_OS_WIN
 	WinEventFilter winEventFilter;
 #endif
+	bool m_wasEraserNear = false;
 
 	void updateThemeIcons();
 
 	desktop::settings::InterfaceMode guessInterfaceMode();
 
 	QPalette loadPalette(const QString &file);
+
+	void updateEraserNear(bool near);
 };
 
 inline DrawpileApp &dpApp()

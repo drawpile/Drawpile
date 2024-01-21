@@ -23,12 +23,31 @@ TabletTestDialog::TabletTestDialog(QWidget *parent)
 		m_ui->buttons->button(QDialogButtonBox::Reset),
 		&QAbstractButton::clicked, m_ui->logView, &QPlainTextEdit::clear);
 	connect(m_ui->buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
+	connect(
+		&dpApp(), &DrawpileApp::tabletProximityChanged, this,
+		[this](bool enter, bool eraser) {
+			QString msg;
+			if(enter) {
+				if(eraser) {
+					msg = QStringLiteral("Eraser entered proximity");
+				} else {
+					msg = QStringLiteral("Pen entered proximity");
+				}
+			} else {
+				if(eraser) {
+					msg = QStringLiteral("Eraser left proximity");
+				} else {
+					msg = QStringLiteral("Pen left proximity");
+				}
+			}
+			m_ui->logView->appendPlainText(msg);
+		});
 	connect(&dpApp(), &DrawpileApp::eraserNear, this, [this](bool near) {
 		QString msg;
 		if(near) {
-			msg = QStringLiteral("Eraser brought near");
+			msg = QStringLiteral("Eraser activated");
 		} else {
-			msg = QStringLiteral("Eraser taken away");
+			msg = QStringLiteral("Eraser deactivated");
 		}
 		m_ui->logView->appendPlainText(msg);
 	});

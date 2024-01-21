@@ -100,11 +100,20 @@ void DrawpileApp::initState()
  */
 bool DrawpileApp::event(QEvent *e)
 {
-	if(e->type() == QEvent::TabletEnterProximity ||
-	   e->type() == QEvent::TabletLeaveProximity) {
+	if(e->type() == QEvent::TabletEnterProximity) {
 		QTabletEvent *te = static_cast<QTabletEvent *>(e);
-		if(te->pointerType() == compat::PointerType::Eraser)
-			emit eraserNear(e->type() == QEvent::TabletEnterProximity);
+		bool eraser = te->pointerType() == compat::PointerType::Eraser;
+		emit tabletProximityChanged(true, eraser);
+		updateEraserNear(eraser);
+		return true;
+
+	} else if (e->type() == QEvent::TabletLeaveProximity) {
+		QTabletEvent *te = static_cast<QTabletEvent *>(e);
+		bool eraser = te->pointerType() == compat::PointerType::Eraser;
+		emit tabletProximityChanged(false, eraser);
+		if(eraser) {
+			updateEraserNear(false);
+		}
 		return true;
 
 	} else if(e->type() == QEvent::FileOpen) {
@@ -133,6 +142,14 @@ bool DrawpileApp::event(QEvent *e)
 #endif
 
 	return QApplication::event(e);
+}
+
+void DrawpileApp::updateEraserNear(bool near)
+{
+	if(near != m_wasEraserNear) {
+		m_wasEraserNear = near;
+		emit eraserNear(near);
+	}
 }
 
 void DrawpileApp::setThemeStyle(const QString &themeStyle)
