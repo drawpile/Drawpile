@@ -11,7 +11,7 @@ RUN mkdir -p /build \
     && wget -O /build/drawpile.zip https://github.com/drawpile/Drawpile/archive/${version}.zip \
     && unzip drawpile.zip \
     && cd Drawpile-*/ \
-    && cmake --preset linux-release-qt5-server-ninja -DINSTALL_DOC=OFF -DSOURCE_ASSETS=OFF \
+    && cmake --preset linux-release-qt5-server-ninja -DENABLE_ARCH_NATIVE=OFF -DINSTALL_DOC=OFF -DSOURCE_ASSETS=OFF \
     && cmake --build build \
     && mv build/bin/drawpile-srv /build
 
