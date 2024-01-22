@@ -155,6 +155,53 @@ namespace tabletDriver {
 	}
 }
 
+namespace tabletEraserAction {
+QVariant get(const SettingMeta &meta, QSettings &settings)
+{
+	using tabletinput::EraserAction;
+
+	int action;
+	if(findKey(settings, meta.baseKey, meta.version)) {
+		action = any::get(meta, settings).toInt();
+	} else {
+		std::optional<libclient::settings::FoundKey> oldKey = findKey(
+			settings, "settings/input/tableteraser", SettingMeta::Version::V0);
+		if(oldKey) {
+			action = settings.value(oldKey->key).toBool()
+						 ? int(EraserAction::Default)
+						 : int(EraserAction::Ignore);
+		} else {
+			action = meta.defaultValue.toInt();
+		}
+	}
+
+	switch(action) {
+	case int(EraserAction::Ignore):
+#ifndef __EMSCRIPTEN__
+	case int(EraserAction::Switch):
+#endif
+	case int(EraserAction::Override):
+		return action;
+	default:
+		return int(EraserAction::Default);
+	}
+}
+
+void set(const SettingMeta &meta, QSettings &settings, QVariant value)
+{
+	using tabletinput::EraserAction;
+
+	any::forceSet(meta, settings, value);
+
+	std::optional<libclient::settings::FoundKey> oldKey = findKey(
+		settings, "settings/input/tableteraser", SettingMeta::Version::V0);
+	if(oldKey) {
+		settings.setValue(
+			oldKey->key, value.toInt() != int(EraserAction::Ignore));
+	}
+}
+}
+
 namespace themeStyle {
 	// Changing the theme style can cause the theme palette to change too
 	void notify(const SettingMeta &, libclient::settings::Settings &base) {

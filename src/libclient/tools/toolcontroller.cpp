@@ -298,7 +298,7 @@ void ToolController::setSelectInterpolation(int selectInterpolation)
 
 void ToolController::startDrawing(
 	long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
-	qreal ytilt, qreal rotation, bool right, float zoom)
+	qreal ytilt, qreal rotation, bool right, float zoom, bool eraserOverride)
 {
 	Q_ASSERT(m_activeTool);
 
@@ -307,14 +307,17 @@ void ToolController::startDrawing(
 		return;
 	}
 
+	m_activebrush.setEraserOverride(eraserOverride);
 	m_activeTool->begin(canvas::Point(timeMsec, point, pressure, xtilt, ytilt, rotation), right, zoom);
 
 	if(!m_activeTool->isMultipart()) {
 		m_model->paintEngine()->setLocalDrawingInProgress(true);
 	}
 
-	if(m_activeTool->usesBrushColor() && !m_activebrush.isEraser())
+	if(m_activeTool->usesBrushColor() && !m_activebrush.isEraser() &&
+	   !m_activebrush.isEraserOverride()) {
 		emit colorUsed(m_activebrush.qColor());
+	}
 }
 
 void ToolController::continueDrawing(

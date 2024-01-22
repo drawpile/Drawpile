@@ -94,20 +94,22 @@ void DrawpileApp::initState()
  * Handle tablet proximity events. When the eraser is brought near
  * the tablet surface, switch to eraser tool on all windows.
  * When the tip leaves the surface, switch back to whatever tool
- * we were using before.
+ * we were using before. The browser does not report proximity events.
  *
  * Also, on MacOS we must also handle the Open File event.
  */
 bool DrawpileApp::event(QEvent *e)
 {
-	if(e->type() == QEvent::TabletEnterProximity) {
+	switch(e->type()) {
+#ifndef __EMSCRIPTEN__
+	case QEvent::TabletEnterProximity: {
 		QTabletEvent *te = static_cast<QTabletEvent *>(e);
 		bool eraser = te->pointerType() == compat::PointerType::Eraser;
 		emit tabletProximityChanged(true, eraser);
 		updateEraserNear(eraser);
 		return true;
-
-	} else if (e->type() == QEvent::TabletLeaveProximity) {
+	}
+	case QEvent::TabletLeaveProximity: {
 		QTabletEvent *te = static_cast<QTabletEvent *>(e);
 		bool eraser = te->pointerType() == compat::PointerType::Eraser;
 		emit tabletProximityChanged(false, eraser);
@@ -115,8 +117,10 @@ bool DrawpileApp::event(QEvent *e)
 			updateEraserNear(false);
 		}
 		return true;
+	}
+#endif
 
-	} else if(e->type() == QEvent::FileOpen) {
+	case QEvent::FileOpen: {
 		QFileOpenEvent *fe = static_cast<QFileOpenEvent *>(e);
 
 		// Note. This is currently broken in Qt 5.3.1:
@@ -124,12 +128,14 @@ bool DrawpileApp::event(QEvent *e)
 		openUrl(fe->url());
 
 		return true;
-
-	} else if(e->type() == QEvent::ApplicationPaletteChange) {
-		updateThemeIcons();
 	}
+
+	case QEvent::ApplicationPaletteChange:
+		updateThemeIcons();
+		break;
+
 #ifdef Q_OS_MACOS
-	else if(e->type() == QEvent::ApplicationStateChange) {
+	case QEvent::ApplicationStateChange: {
 		QApplicationStateChangeEvent *ae =
 			static_cast<QApplicationStateChangeEvent *>(e);
 		if(ae->applicationState() == Qt::ApplicationActive &&
@@ -141,9 +147,14 @@ bool DrawpileApp::event(QEvent *e)
 	}
 #endif
 
+	default:
+		break;
+	}
+
 	return QApplication::event(e);
 }
 
+#ifndef __EMSCRIPTEN__
 void DrawpileApp::updateEraserNear(bool near)
 {
 	if(near != m_wasEraserNear) {
@@ -151,6 +162,7 @@ void DrawpileApp::updateEraserNear(bool near)
 		emit eraserNear(near);
 	}
 }
+#endif
 
 void DrawpileApp::setThemeStyle(const QString &themeStyle)
 {

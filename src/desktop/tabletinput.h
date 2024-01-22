@@ -25,6 +25,21 @@ enum class Mode : int {
 
 Q_ENUM_NS(Mode)
 
+enum class EraserAction {
+	Ignore,
+#ifndef __EMSCRIPTEN__
+	Switch,
+#endif
+	Override,
+#ifdef __EMSCRIPTEN__
+	Default = Override,
+#else
+	Default = Switch,
+#endif
+};
+
+Q_ENUM_NS(EraserAction)
+
 void init(DrawpileApp &app);
 
 const char *current();

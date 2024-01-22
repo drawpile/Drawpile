@@ -25,17 +25,19 @@ BrushEngine::~BrushEngine()
 }
 
 void BrushEngine::setClassicBrush(
-	const DP_ClassicBrush &brush, const DP_StrokeParams &stroke)
+	const DP_ClassicBrush &brush, const DP_StrokeParams &stroke,
+	bool eraserOverride)
 {
-	DP_brush_engine_classic_brush_set(m_data, &brush, &stroke, nullptr);
+	DP_brush_engine_classic_brush_set(
+		m_data, &brush, &stroke, nullptr, eraserOverride);
 }
 
 void BrushEngine::setMyPaintBrush(
 	const DP_MyPaintBrush &brush, const DP_MyPaintSettings &settings,
-	const DP_StrokeParams &stroke)
+	const DP_StrokeParams &stroke, bool eraserOverride)
 {
 	DP_brush_engine_mypaint_brush_set(
-		m_data, &brush, &settings, &stroke, nullptr);
+		m_data, &brush, &settings, &stroke, nullptr, eraserOverride);
 }
 
 void BrushEngine::flushDabs()

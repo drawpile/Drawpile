@@ -277,6 +277,11 @@ public:
 	void setMyPaint(const MyPaintBrush &myPaint) { m_myPaint = myPaint; }
 
 	bool isEraser() const;
+	bool isEraserOverride() const { return m_eraserOverride; }
+	void setEraserOverride(bool eraserOverride)
+	{
+		m_eraserOverride = eraserOverride;
+	}
 
 	DP_UPixelFloat color() const;
 	QColor qColor() const;
@@ -312,6 +317,7 @@ private:
 	ActiveType m_activeType;
 	ClassicBrush m_classic;
 	MyPaintBrush m_myPaint;
+	bool m_eraserOverride = false;
 };
 
 }

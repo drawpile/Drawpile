@@ -609,6 +609,13 @@ void CanvasView::setSuppressTransformNotices(bool suppressTransformNotices)
 	m_suppressTransformNotices = suppressTransformNotices;
 }
 
+#ifdef __EMSCRIPTEN__
+void CanvasView::setEnableEraserOverride(bool enableEraserOverride)
+{
+	m_enableEraserOverride = enableEraserOverride;
+}
+#endif
+
 void CanvasView::setToolCursor(const QCursor &cursor)
 {
 	m_toolcursor = cursor;
@@ -887,7 +894,8 @@ void CanvasView::setPointerTracking(bool tracking)
 	m_pointertracking = tracking;
 }
 
-void CanvasView::onPenDown(const canvas::Point &p, bool right)
+void CanvasView::onPenDown(
+	const canvas::Point &p, bool right, bool eraserOverride)
 {
 	if(m_scene->hasImage()) {
 		switch(m_penmode) {
@@ -895,7 +903,7 @@ void CanvasView::onPenDown(const canvas::Point &p, bool right)
 			if(!m_lock)
 				emit penDown(
 					p.timeMsec(), p, p.pressure(), p.xtilt(), p.ytilt(),
-					p.rotation(), right, m_zoom);
+					p.rotation(), right, m_zoom, eraserOverride);
 			break;
 		case PenMode::Colorpick:
 			m_scene->model()->pickColor(p.x(), p.y(), 0, 0);
@@ -948,7 +956,7 @@ void CanvasView::onPenUp()
 void CanvasView::penPressEvent(
 	QEvent *event, long long timeMsec, const QPointF &pos, qreal pressure,
 	qreal xtilt, qreal ytilt, qreal rotation, Qt::MouseButton button,
-	Qt::KeyboardModifiers modifiers, bool isStylus)
+	Qt::KeyboardModifiers modifiers, bool isStylus, bool eraserOverride)
 {
 	if(m_pendown != NOTDOWN) {
 		return;
@@ -1040,7 +1048,7 @@ void CanvasView::penPressEvent(
 		}
 		onPenDown(
 			mapToCanvas(timeMsec, pos, pressure, xtilt, ytilt, rotation),
-			button == Qt::RightButton);
+			button == Qt::RightButton, eraserOverride);
 	}
 }
 
@@ -1070,7 +1078,7 @@ void CanvasView::mousePressEvent(QMouseEvent *event)
 
 	penPressEvent(
 		event, QDateTime::currentMSecsSinceEpoch(), mousePos, 1.0, 0.0, 0.0,
-		0.0, event->button(), event->modifiers(), false);
+		0.0, event->button(), event->modifiers(), false, false);
 }
 
 void CanvasView::penMoveEvent(
@@ -1225,7 +1233,7 @@ void CanvasView::touchPressEvent(
 {
 	penPressEvent(
 		event, timeMsec, pos, 1.0, 0.0, 0.0, 0.0, Qt::LeftButton,
-		Qt::NoModifier, false);
+		Qt::NoModifier, false, false);
 }
 
 void CanvasView::touchMoveEvent(long long timeMsec, const QPointF &pos)
@@ -1921,6 +1929,23 @@ bool CanvasView::viewportEvent(QEvent *event)
 			unsigned(tabev->modifiers()), m_pendown, m_touching,
 			unsigned(modifiers));
 
+		Qt::MouseButton button;
+		bool eraserOverride;
+#ifdef __EMSCRIPTEN__
+		// In the browser, we don't get eraser proximity events, instead an
+		// eraser pressed down is reported as button flag 0x20 (Qt::TaskButton).
+		if(tabev->buttons().testFlag(Qt::TaskButton)) {
+			button = Qt::LeftButton;
+			eraserOverride = m_enableEraserOverride;
+		} else {
+			button = tabev->button();
+			eraserOverride = false;
+		}
+#else
+		button = tabev->button();
+		eraserOverride = false;
+#endif
+
 		// Note: it is possible to get a mouse press event for a tablet event
 		// (even before the tablet event is received or even though
 		// tabev->accept() is called), but it is never possible to get a
@@ -1935,8 +1960,8 @@ bool CanvasView::viewportEvent(QEvent *event)
 		penPressEvent(
 			event, QDateTime::currentMSecsSinceEpoch(), compat::tabPosF(*tabev),
 			tabev->pressure(), tabev->xTilt(), tabev->yTilt(),
-			qDegreesToRadians(tabev->rotation()), tabev->button(), modifiers,
-			true);
+			qDegreesToRadians(tabev->rotation()), button, modifiers, true,
+			eraserOverride);
 	} else if(type == QEvent::TabletMove && m_enableTablet) {
 		QTabletEvent *tabev = static_cast<QTabletEvent *>(event);
 		const auto tabPos = compat::tabPosF(*tabev);

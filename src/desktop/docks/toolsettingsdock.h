@@ -95,7 +95,10 @@ public slots:
 	void changeForegroundColor();
 
 	//! Switch tool when eraser is brought near the tablet
-	void eraserNear(bool near);
+	void switchToEraserSlot(bool near);
+
+	//! Switch brush to erase mode when eraser is brought near the tablet
+	void switchToEraserMode(bool near);
 
 	//! Swap between the active colors and color history
 	void swapLastUsedColors();

@@ -124,7 +124,8 @@ public slots:
 	//! Start a new stroke
 	void startDrawing(
 		long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
-		qreal ytilt, qreal rotation, bool right, float zoom);
+		qreal ytilt, qreal rotation, bool right, float zoom,
+		bool eraserOverride);
 
 	//! Continue a stroke
 	void continueDrawing(

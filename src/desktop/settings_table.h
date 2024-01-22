@@ -158,7 +158,8 @@ SETTING(soundVolume               , SoundVolume               , "notifications/v
 SETTING(suppressTransformNotices  , SuppressTransformNotices  , "settings/suppresstransformnotices"     , false)
 SETTING_GETSET(tabletDriver       , TabletDriver              , "settings/input/tabletdriver"           , tabletinput::Mode::KisTabletWinink
 	, &tabletDriver::get, &tabletDriver::set)
-SETTING(tabletEraser              , TabletEraser              , "settings/input/tableteraser"           , true)
+SETTING_GETSET(tabletEraserAction , TabletEraserAction        , "settings/input/tableteraseraction"     , int(tabletinput::EraserAction::Default)
+	, &tabletEraserAction::get, &tabletEraserAction::set)
 SETTING(tabletEvents              , TabletEvents              , "settings/input/tabletevents"           , true)
 SETTING_GETSET_V(V2, themePalette , ThemePalette              , "settings/theme/palette"                , THEME_PALETTE_DEFAULT
 	, &any::get	      , &any::set)

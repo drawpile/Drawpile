@@ -39,6 +39,7 @@ Unreleased Version 2.2.1-pre
  * Fix: Remember invite link type setting properly. Thanks Bluestrings for reporting.
  * Fix: Try to keep the start dialog behind other dialogs it spawns harder. Thanks Bluestrings and shablagoo for reporting and Buch for finding issues with the fix.
  * Fix: Use a single palette in GIF export to prevent flickering. The palette is generated from the merged image. Thanks Hopfel and Bluestrings for reporting.
+ * Feature: Allow configuring the eraser tip to switch the current brush to erase mode, rather than switching to the eraser tool. Thanks Seeksie for causing this.
 
 2023-12-08 Version 2.2.0-beta.11
  * Server Fix: No longer show "cannot look up one session and then join another" when joining a session with an ID alias. Thanks Kink and Fabian for finding this.

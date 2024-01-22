@@ -23,6 +23,7 @@ TabletTestDialog::TabletTestDialog(QWidget *parent)
 		m_ui->buttons->button(QDialogButtonBox::Reset),
 		&QAbstractButton::clicked, m_ui->logView, &QPlainTextEdit::clear);
 	connect(m_ui->buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
+#ifndef __EMSCRIPTEN__
 	connect(
 		&dpApp(), &DrawpileApp::tabletProximityChanged, this,
 		[this](bool enter, bool eraser) {
@@ -51,6 +52,7 @@ TabletTestDialog::TabletTestDialog(QWidget *parent)
 		}
 		m_ui->logView->appendPlainText(msg);
 	});
+#endif
 }
 
 TabletTestDialog::~TabletTestDialog()

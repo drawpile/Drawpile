@@ -729,7 +729,8 @@ static void set_common_stroke_params(DP_BrushEngine *be,
 void DP_brush_engine_classic_brush_set(DP_BrushEngine *be,
                                        const DP_ClassicBrush *brush,
                                        const DP_StrokeParams *stroke,
-                                       const DP_UPixelFloat *color_override)
+                                       const DP_UPixelFloat *color_override,
+                                       bool eraser_override)
 {
     DP_ASSERT(be);
     DP_ASSERT(brush);
@@ -768,6 +769,11 @@ void DP_brush_engine_classic_brush_set(DP_BrushEngine *be,
         }
     }
     be->classic.brush_color = color;
+
+    if (eraser_override) {
+        cb->erase = true;
+        cb->erase_mode = DP_BLEND_MODE_ERASE;
+    }
 }
 
 static void disable_mypaint_dynamics(MyPaintBrush *mb, MyPaintBrushSetting s)
@@ -787,7 +793,8 @@ void DP_brush_engine_mypaint_brush_set(DP_BrushEngine *be,
                                        const DP_MyPaintBrush *brush,
                                        const DP_MyPaintSettings *settings,
                                        const DP_StrokeParams *stroke,
-                                       const DP_UPixelFloat *color_override)
+                                       const DP_UPixelFloat *color_override,
+                                       bool eraser_override)
 {
     DP_ASSERT(be);
     DP_ASSERT(brush);
@@ -823,10 +830,11 @@ void DP_brush_engine_mypaint_brush_set(DP_BrushEngine *be,
     mypaint_brush_set_base_value(mb, MYPAINT_BRUSH_SETTING_COLOR_S, g_s);
     mypaint_brush_set_base_value(mb, MYPAINT_BRUSH_SETTING_COLOR_V, b_v);
 
+    bool erase = brush->erase || eraser_override;
     be->mypaint.lock_alpha = brush->lock_alpha;
-    be->mypaint.erase = brush->erase;
+    be->mypaint.erase = erase;
     be->mypaint.mode = brush->incremental ? DP_MYPAINT_BRUSH_MODE_INCREMENTAL
-                     : brush->erase       ? DP_MYPAINT_BRUSH_MODE_ERASE
+                     : erase              ? DP_MYPAINT_BRUSH_MODE_ERASE
                      : brush->lock_alpha  ? DP_MYPAINT_BRUSH_MODE_RECOLOR
                                           : DP_MYPAINT_BRUSH_MODE_NORMAL;
 

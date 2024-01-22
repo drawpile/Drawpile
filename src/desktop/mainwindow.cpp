@@ -808,12 +808,30 @@ void MainWindow::readSettings(bool windowpos)
 {
 	auto &settings = dpApp().settings();
 
-	settings.bindTabletEraser(m_dockToolSettings, [=](bool eraser) {
-		if(eraser) {
-			connect(&dpApp(), &DrawpileApp::eraserNear, m_dockToolSettings, &docks::ToolSettings::eraserNear, Qt::UniqueConnection);
+	settings.bindTabletEraserAction(this, [=](int action) {
+#ifdef __EMSCRIPTEN__
+		m_view->setEnableEraserOverride(
+			action == int(tabletinput::EraserAction::Override));
+#else
+		if(action == int(tabletinput::EraserAction::Switch)) {
+			connect(
+				&dpApp(), &DrawpileApp::eraserNear, m_dockToolSettings,
+				&docks::ToolSettings::switchToEraserSlot, Qt::UniqueConnection);
 		} else {
-			disconnect(&dpApp(), &DrawpileApp::eraserNear, m_dockToolSettings, &docks::ToolSettings::eraserNear);
+			disconnect(
+				&dpApp(), &DrawpileApp::eraserNear, m_dockToolSettings,
+				&docks::ToolSettings::switchToEraserSlot);
 		}
+		if(action == int(tabletinput::EraserAction::Override)) {
+			connect(
+				&dpApp(), &DrawpileApp::eraserNear, m_dockToolSettings,
+				&docks::ToolSettings::switchToEraserMode, Qt::UniqueConnection);
+		} else {
+			disconnect(
+				&dpApp(), &DrawpileApp::eraserNear, m_dockToolSettings,
+				&docks::ToolSettings::switchToEraserMode);
+		}
+#endif
 	});
 
 	settings.bindShareBrushSlotColor(m_dockToolSettings->brushSettings(), &tools::BrushSettings::setShareBrushSlotColor);
@@ -1910,7 +1928,7 @@ void MainWindow::toggleTabletEventLog()
 				DP_event_log_write_meta("Input: %s", tabletinput::current());
 				const desktop::settings::Settings &settings = dpApp().settings();
 				DP_event_log_write_meta("Tablet enabled: %d", settings.tabletEvents());
-				DP_event_log_write_meta("Tablet eraser: %d", settings.tabletEraser());
+				DP_event_log_write_meta("Tablet eraser action: %d", settings.tabletEraserAction());
 				DP_event_log_write_meta("One-finger draw: %d", settings.oneFingerDraw());
 				DP_event_log_write_meta("One-finger scroll: %d", settings.oneFingerScroll());
 				DP_event_log_write_meta("Two-finger rotate: %d", settings.twoFingerRotate());

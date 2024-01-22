@@ -67,6 +67,7 @@ public slots:
 	void setGlobalSmoothing(int smoothing);
 	void toggleEraserMode() override;
 	void toggleRecolorMode() override;
+	void setEraserMode(bool erase);
 	void reloadPreset();
 
 signals:
@@ -85,7 +86,6 @@ private slots:
 	void changeSizeSetting(int size);
 	void changeRadiusLogarithmicSetting(int radiusLogarithmic);
 	void selectBlendMode(int);
-	void setEraserMode(bool erase);
 	void updateFromUi();
 	void updateFromUiWith(bool updateShared);
 	void updateStabilizationSettingVisibility();

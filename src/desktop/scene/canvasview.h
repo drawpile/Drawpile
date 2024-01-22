@@ -144,7 +144,8 @@ signals:
 
 	void penDown(
 		long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
-		qreal ytilt, qreal rotation, bool right, float zoom);
+		qreal ytilt, qreal rotation, bool right, float zoom,
+		bool eraserOverride);
 	void penMove(
 		long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
 		qreal ytilt, qreal rotation, bool shift, bool alt);
@@ -225,6 +226,9 @@ public slots:
 	void setBrushOutlineWidth(qreal outlineWidth);
 
 	void setSuppressTransformNotices(bool suppressTransformNotices);
+#ifdef __EMSCRIPTEN__
+	void setEnableEraserOverride(bool enableEraserOverride);
+#endif
 
 protected:
 	void enterEvent(compat::EnterEvent *event) override;
@@ -261,7 +265,7 @@ private:
 	void penPressEvent(
 		QEvent *event, long long timeMsec, const QPointF &pos, qreal pressure,
 		qreal xtilt, qreal ytilt, qreal rotation, Qt::MouseButton button,
-		Qt::KeyboardModifiers modifiers, bool isStylus);
+		Qt::KeyboardModifiers modifiers, bool isStylus, bool eraserOverride);
 	void penMoveEvent(
 		long long timeMsec, const QPointF &pos, qreal pressure, qreal xtilt,
 		qreal ytilt, qreal rotation, Qt::MouseButtons buttons,
@@ -306,7 +310,7 @@ private:
 	QRectF getOutlineBounds(const QPointF &point, int size);
 	qreal getOutlineWidth() const;
 
-	void onPenDown(const canvas::Point &p, bool right);
+	void onPenDown(const canvas::Point &p, bool right, bool eraserOverride);
 	void onPenMove(
 		const canvas::Point &p, bool right, bool constrain1, bool constrain2);
 	void onPenUp();
@@ -417,6 +421,9 @@ private:
 	bool m_suppressTransformNotices;
 	bool m_hoveringOverHud;
 	bool m_renderSmooth;
+#ifdef __EMSCRIPTEN__
+	bool m_enableEraserOverride = false;
+#endif
 };
 
 }

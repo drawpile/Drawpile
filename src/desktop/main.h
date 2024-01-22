@@ -53,8 +53,10 @@ public:
 	static QPair<QSize, QSizeF> screenResolution();
 
 signals:
+#ifndef __EMSCRIPTEN__
 	void tabletProximityChanged(bool enter, bool eraser);
 	void eraserNear(bool near);
+#endif
 	void setDockTitleBarsHidden(bool hidden);
 	void focusCanvas();
 

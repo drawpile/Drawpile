@@ -965,10 +965,11 @@ void ActiveBrush::setInBrushEngine(
 	drawdance::BrushEngine &be, const DP_StrokeParams &stroke) const
 {
 	if(m_activeType == CLASSIC) {
-		be.setClassicBrush(m_classic, stroke);
+		be.setClassicBrush(m_classic, stroke, isEraserOverride());
 	} else {
 		be.setMyPaintBrush(
-			m_myPaint.constBrush(), m_myPaint.constSettings(), stroke);
+			m_myPaint.constBrush(), m_myPaint.constSettings(), stroke,
+			isEraserOverride());
 	}
 }
 

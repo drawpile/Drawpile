@@ -72,10 +72,6 @@ void Input::initTablet(
 	settings.bindTabletEvents(pressure);
 	form->addRow(tr("Tablet:"), pressure);
 
-	auto *eraser = new QCheckBox(tr("Detect eraser tip"));
-	settings.bindTabletEraser(eraser);
-	form->addRow(nullptr, eraser);
-
 	auto *interpolate = new QCheckBox(tr("Compensate jagged curves"));
 	settings.bindInterpolateInputs(interpolate);
 	form->addRow(nullptr, interpolate);
@@ -85,6 +81,20 @@ void Input::initTablet(
 	smoothing->setPrefix(tr("Smoothing: "));
 	settings.bindSmoothing(smoothing);
 	form->addRow(nullptr, smoothing);
+
+	auto *eraserAction = new QComboBox;
+	eraserAction->addItem(
+		tr("Do nothing"), int(tabletinput::EraserAction::Ignore));
+#ifndef __EMSCRIPTEN__
+	eraserAction->addItem(
+		tr("Switch to eraser slot"), int(tabletinput::EraserAction::Switch));
+#endif
+	eraserAction->addItem(
+		tr("Erase with current brush"),
+		int(tabletinput::EraserAction::Override));
+	settings.bindTabletEraserAction(eraserAction, Qt::UserRole);
+	//: Eraser refers to the eraser tip of a tablet pen.
+	form->addRow(tr("Eraser action:"), eraserAction);
 
 #ifdef Q_OS_WIN
 	utils::addFormSpacer(form);

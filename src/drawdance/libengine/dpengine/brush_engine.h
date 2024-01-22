@@ -63,13 +63,15 @@ void DP_brush_engine_free(DP_BrushEngine *be);
 void DP_brush_engine_classic_brush_set(DP_BrushEngine *be,
                                        const DP_ClassicBrush *brush,
                                        const DP_StrokeParams *stroke,
-                                       const DP_UPixelFloat *color_override);
+                                       const DP_UPixelFloat *color_override,
+                                       bool eraser_override);
 
 void DP_brush_engine_mypaint_brush_set(DP_BrushEngine *be,
                                        const DP_MyPaintBrush *brush,
                                        const DP_MyPaintSettings *settings,
                                        const DP_StrokeParams *stroke,
-                                       const DP_UPixelFloat *color_override);
+                                       const DP_UPixelFloat *color_override,
+                                       bool eraser_override);
 
 void DP_brush_engine_dabs_flush(DP_BrushEngine *be);
 

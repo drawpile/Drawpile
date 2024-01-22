@@ -383,24 +383,47 @@ void ToolSettings::toggleRecolorMode()
 	d->currentSettings()->toggleRecolorMode();
 }
 
-void ToolSettings::eraserNear(bool near)
+void ToolSettings::switchToEraserSlot(bool near)
 {
-	// Auto-switch to eraser mode only when using a brush tool, since
-	// other tools don't currently have eraser modes.
-	tools::BrushSettings *bs = qobject_cast<tools::BrushSettings*>(d->currentSettings());
-	if(!bs)
-		return;
+	// Only switch if currently using a brush, other tools don't have an eraser.
+	tools::BrushSettings *bs =
+		qobject_cast<tools::BrushSettings *>(d->currentSettings());
+	if(bs) {
+		if(near) {
+			// Eraser was just brought near: switch to erase mode if not already
+			if(!bs->isCurrentEraserSlot()) {
+				d->switchedWithStylusEraser = true;
+				bs->selectEraserSlot(true);
+			}
+		} else {
+			// Eraser taken away: switch back
+			if(d->switchedWithStylusEraser) {
+				d->switchedWithStylusEraser = false;
+				bs->selectEraserSlot(false);
+			}
+		}
+	}
+}
 
-	if(near) {
-		// Eraser was just brought near: switch to erase mode if not already
-		d->switchedWithStylusEraser = !bs->isCurrentEraserSlot();
-		if(!bs->isCurrentEraserSlot())
-			bs->selectEraserSlot(true);
-	} else {
-		// Eraser taken away: switch back
-		if(d->switchedWithStylusEraser) {
-			d->switchedWithStylusEraser = false;
-			bs->selectEraserSlot(false);
+void ToolSettings::switchToEraserMode(bool near)
+{
+	// Only switch if currently using a brush and not using the eraser slot,
+	// since those don't have an eraser mode that could be toggled.
+	tools::BrushSettings *bs =
+		qobject_cast<tools::BrushSettings *>(d->currentSettings());
+	if(bs && !bs->isCurrentEraserSlot()) {
+		if(near) {
+			// Eraser was just brought near: switch to erase mode if not already
+			if(!bs->currentBrush().isEraser()) {
+				d->switchedWithStylusEraser = true;
+				bs->setEraserMode(true);
+			}
+		} else {
+			// Eraser taken away: switch back
+			if(d->switchedWithStylusEraser) {
+				d->switchedWithStylusEraser = false;
+				bs->setEraserMode(false);
+			}
 		}
 	}
 }
