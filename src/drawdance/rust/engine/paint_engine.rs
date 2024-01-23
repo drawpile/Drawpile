@@ -287,8 +287,16 @@ impl PaintEngine {
     pub fn write_ora(&mut self, path: &str) -> Result<()> {
         let cpath = CString::new(path)?;
         let cs = unsafe { DP_paint_engine_view_canvas_state_inc(self.paint_engine) };
-        let result =
-            unsafe { DP_save(cs, self.main_dc.as_ptr(), DP_SAVE_IMAGE_ORA, cpath.as_ptr()) };
+        let result = unsafe {
+            DP_save(
+                cs,
+                self.main_dc.as_ptr(),
+                DP_SAVE_IMAGE_ORA,
+                cpath.as_ptr(),
+                None,
+                ptr::null_mut(),
+            )
+        };
         unsafe { DP_canvas_state_decref(cs) }
         if result == DP_SAVE_RESULT_SUCCESS {
             Ok(())

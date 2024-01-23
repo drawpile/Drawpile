@@ -66,6 +66,7 @@ pub const DP_MSG_DISCONNECT_NUM_REASON: u32 = 4;
 pub const DP_MSG_DISCONNECT_MESSAGE_MIN_LEN: u32 = 0;
 pub const DP_MSG_DISCONNECT_MESSAGE_MAX_LEN: u32 = 65534;
 pub const DP_MSG_PING_STATIC_LENGTH: u32 = 1;
+pub const DP_MSG_KEEP_ALIVE_STATIC_LENGTH: u32 = 0;
 pub const DP_MSG_JOIN_STATIC_LENGTH: u32 = 2;
 pub const DP_MSG_JOIN_FLAGS_AUTH: u32 = 1;
 pub const DP_MSG_JOIN_FLAGS_MOD: u32 = 2;
@@ -240,7 +241,10 @@ pub const DP_MSG_KEY_FRAME_DELETE_STATIC_LENGTH: u32 = 8;
 pub const DP_MSG_UNDO_STATIC_LENGTH: u32 = 2;
 pub const DP_MESSAGE_MAX: u32 = 255;
 pub const DP_MESSAGE_HEADER_LENGTH: u32 = 4;
+pub const DP_MESSAGE_WS_HEADER_LENGTH: u32 = 2;
 pub const DP_MESSAGE_MAX_PAYLOAD_LENGTH: u32 = 65535;
+pub const DP_MESSAGE_TYPE_RANGE_START_CLIENT: u32 = 64;
+pub const DP_MESSAGE_TYPE_RANGE_START_COMMAND: u32 = 128;
 extern "C" {
     pub fn DP_byte_order() -> ::std::os::raw::c_uint;
 }
@@ -1770,6 +1774,7 @@ extern "C" {
     pub fn DP_canvas_state_to_flat_layer(
         cs: *mut DP_CanvasState,
         flags: ::std::os::raw::c_uint,
+        vmf_or_null: *const DP_ViewModeFilter,
     ) -> *mut DP_TransientLayerContent;
 }
 extern "C" {
@@ -2710,6 +2715,7 @@ extern "C" {
 extern "C" {
     pub fn DP_layer_content_to_upixels8_cropped(
         lc: *mut DP_LayerContent,
+        censored: bool,
         out_offset_x: *mut ::std::os::raw::c_int,
         out_offset_y: *mut ::std::os::raw::c_int,
         out_width: *mut ::std::os::raw::c_int,
@@ -5401,6 +5407,13 @@ fn bindgen_test_layout_DP_SaveFormat() {
 extern "C" {
     pub fn DP_save_supported_formats() -> *const DP_SaveFormat;
 }
+pub type DP_SaveBakeAnnotationFn = ::std::option::Option<
+    unsafe extern "C" fn(
+        user: *mut ::std::os::raw::c_void,
+        a: *mut DP_Annotation,
+        out: *mut ::std::os::raw::c_uchar,
+    ) -> bool,
+>;
 pub const DP_SAVE_IMAGE_UNKNOWN: DP_SaveImageType = 0;
 pub const DP_SAVE_IMAGE_ORA: DP_SaveImageType = 1;
 pub const DP_SAVE_IMAGE_PNG: DP_SaveImageType = 2;
@@ -5425,6 +5438,8 @@ extern "C" {
         dc: *mut DP_DrawContext,
         type_: DP_SaveImageType,
         path: *const ::std::os::raw::c_char,
+        bake_annotation: DP_SaveBakeAnnotationFn,
+        user: *mut ::std::os::raw::c_void,
     ) -> DP_SaveResult;
 }
 pub type DP_SaveAnimationProgressFn = ::std::option::Option<
@@ -6121,6 +6136,13 @@ extern "C" {
 }
 extern "C" {
     pub fn DP_paint_engine_view_mode(pe: *mut DP_PaintEngine) -> DP_ViewMode;
+}
+extern "C" {
+    pub fn DP_paint_engine_view_mode_filter(
+        pe: *mut DP_PaintEngine,
+        vmb: *mut DP_ViewModeBuffer,
+        cs: *mut DP_CanvasState,
+    ) -> DP_ViewModeFilter;
 }
 extern "C" {
     pub fn DP_paint_engine_reveal_censored(pe: *mut DP_PaintEngine) -> bool;
@@ -7659,6 +7681,7 @@ fn bindgen_test_layout_DP_MessageMethods() {
 pub const DP_MSG_SERVER_COMMAND: DP_MessageType = 0;
 pub const DP_MSG_DISCONNECT: DP_MessageType = 1;
 pub const DP_MSG_PING: DP_MessageType = 2;
+pub const DP_MSG_KEEP_ALIVE: DP_MessageType = 3;
 pub const DP_MSG_INTERNAL: DP_MessageType = 31;
 pub const DP_MSG_JOIN: DP_MessageType = 32;
 pub const DP_MSG_LEAVE: DP_MessageType = 33;
@@ -7878,6 +7901,22 @@ extern "C" {
 }
 extern "C" {
     pub fn DP_msg_ping_is_pong(mp: *const DP_MsgPing) -> bool;
+}
+extern "C" {
+    pub fn DP_msg_keep_alive_new(context_id: ::std::os::raw::c_uint) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_keep_alive_deserialize(
+        context_id: ::std::os::raw::c_uint,
+        buffer: *const ::std::os::raw::c_uchar,
+        length: usize,
+    ) -> *mut DP_Message;
+}
+extern "C" {
+    pub fn DP_msg_keep_alive_parse(
+        context_id: ::std::os::raw::c_uint,
+        reader: *mut DP_TextReader,
+    ) -> *mut DP_Message;
 }
 extern "C" {
     pub fn DP_msg_join_flags_flag_name(
@@ -10663,6 +10702,9 @@ extern "C" {
 }
 extern "C" {
     pub fn DP_message_length(msg: *mut DP_Message) -> usize;
+}
+extern "C" {
+    pub fn DP_message_ws_length(msg: *mut DP_Message) -> usize;
 }
 extern "C" {
     pub fn DP_message_serialize(
