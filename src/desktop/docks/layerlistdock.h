@@ -118,6 +118,8 @@ private slots:
 	void triggerUpdate();
 
 private:
+	void updateActionLabels();
+	void setActionLabel(QAction *action, const QString &text);
 	void updateLockedControls();
 	void updateBlendModes(bool compatibilityMode);
 	bool canMergeCurrent() const;
@@ -130,6 +132,7 @@ private:
 		int sourceFrame, int targetFrame, int &sourceId, int &targetId,
 		uint8_t &flags);
 
+	bool isGroupSelected() const;
 	QModelIndex currentSelection() const;
 	void selectLayerIndex(QModelIndex index, bool scrollTo = false);
 

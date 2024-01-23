@@ -12,6 +12,7 @@ Unreleased Version 2.2.1-pre
  * Fix: Don't resize brush settings unnecessarily larger when switching between brush types. Thanks Meiren for reporting.
  * Fix: Try to handle switching between tablet pen and eraser more consistently. Thanks Daystream for reporting.
  * Feature: Add next and previous key frame actions, allowing skipping between key frames in the current track. Thanks BulletPepper for reporting.
+ * Fix: Properly refer to "layer" and "layer group" in layer actions depending on what is selected. Thanks Momo for reporting.
 
 2024-01-13 Version 2.2.0
  * Server Fix: Add --ssl-key-algorithm parameter to allow non-RSA SSL keys, defaulting to guessing the most common formats RSA and EC. Thanks Bluestrings for reporting.

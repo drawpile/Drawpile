@@ -177,6 +177,7 @@ void LayerList::setCanvas(canvas::CanvasModel *canvas)
 
 	// Init
 	m_view->setEnabled(true);
+	updateActionLabels();
 	updateLockedControls();
 }
 
@@ -277,6 +278,7 @@ void LayerList::setLayerEditActions(const Actions &actions)
 		m_actions.setFillSource, &QAction::triggered, this,
 		&LayerList::setFillSourceToSelected);
 
+	updateActionLabels();
 	updateLockedControls();
 }
 
@@ -290,6 +292,36 @@ void LayerList::onFeatureAccessChange(DP_Feature feature, bool canUse)
 		break;
 	default:
 		break;
+	}
+}
+
+void LayerList::updateActionLabels()
+{
+	if(isGroupSelected()) {
+		setActionLabel(m_actions.duplicate, tr("Duplicate Layer Group"));
+		setActionLabel(m_actions.merge, tr("Merge Layer Group"));
+		setActionLabel(m_actions.properties, tr("Layer Group Properties…"));
+		setActionLabel(m_actions.del, tr("Delete Layer Group"));
+	} else {
+		setActionLabel(
+			m_actions.duplicate,
+			QCoreApplication::translate("MainWindow", "Duplicate Layer"));
+		setActionLabel(
+			m_actions.merge,
+			QCoreApplication::translate("MainWindow", "Merge Layer"));
+		setActionLabel(
+			m_actions.properties,
+			QCoreApplication::translate("MainWindow", "Layer Properties…"));
+		setActionLabel(
+			m_actions.del,
+			QCoreApplication::translate("MainWindow", "Delete Layer"));
+	}
+}
+
+void LayerList::setActionLabel(QAction *action, const QString &text)
+{
+	if(action) {
+		action->setText(text);
 	}
 }
 
@@ -795,12 +827,23 @@ void LayerList::afterLayerReset()
 	m_view->setAnimated(wasAnimated);
 }
 
+bool LayerList::isGroupSelected() const
+{
+	QModelIndex idx = currentSelection();
+	return idx.isValid() &&
+		   idx.data(canvas::LayerListModel::IsGroupRole).toBool();
+}
+
 QModelIndex LayerList::currentSelection() const
 {
-	QModelIndexList sel = m_view->selectionModel()->selectedIndexes();
-	if(sel.isEmpty())
-		return QModelIndex();
-	return sel.first();
+	QItemSelectionModel *selectionModel = m_view->selectionModel();
+	if(selectionModel) {
+		QModelIndexList sel = selectionModel->selectedIndexes();
+		if(!sel.isEmpty()) {
+			return sel.first();
+		}
+	}
+	return QModelIndex();
 }
 
 QFlags<widgets::CanvasView::Lock> LayerList::currentLayerLock() const
@@ -847,6 +890,7 @@ void LayerList::selectionChanged(const QItemSelection &selected)
 		m_selectedId = 0;
 	}
 
+	updateActionLabels();
 	updateLockedControls();
 
 	emit layerSelected(m_selectedId);
@@ -866,6 +910,7 @@ void LayerList::updateUiFromSelection()
 	m_opacitySlider->setValue(layer.opacity * 100.0 + 0.5);
 
 	layerLockStatusChanged(layer.id);
+	updateActionLabels();
 	updateLockedControls();
 
 	// TODO use change flags to detect if this really changed
