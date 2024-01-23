@@ -84,7 +84,7 @@ public:
 		uint8_t contextId, int sourceId, int targetId, bool intoGroup,
 		bool below) const;
 
-	LayerContent searchLayerContent(int layerId) const;
+	LayerContent searchLayerContent(int layerId, bool showCensored) const;
 
 	DP_FloodFillResult floodFill(
 		int x, int y, const QColor &fillColor, double tolerance, int layerId,

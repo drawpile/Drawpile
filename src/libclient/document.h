@@ -308,7 +308,7 @@ private:
 	void setSessionAllowIdleOverride(bool allowIdleOverride);
 	void setRoomcode(const QString &roomcode);
 
-	void copyFromLayer(int layer);
+	bool copyFromLayer(int layer);
 
 	void autosave();
 

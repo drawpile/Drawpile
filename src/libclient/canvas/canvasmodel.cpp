@@ -391,9 +391,12 @@ void CanvasModel::setSelection(Selection *selection)
 	}
 }
 
-QImage CanvasModel::selectionToImage(int layerId) const
+QImage CanvasModel::selectionToImage(int layerId, bool *outFound) const
 {
 	if(m_selection && !m_selection->pasteImage().isNull() && layerId > 0) {
+		if(outFound) {
+			*outFound = true;
+		}
 		return m_selection->transformedPasteImage(m_selectInterpolation);
 	}
 
@@ -416,11 +419,14 @@ QImage CanvasModel::selectionToImage(int layerId) const
 		img = m_paintengine->getFlatImage(vmb, canvasState, false, true, &rect);
 	} else {
 		drawdance::LayerContent layerContent =
-			canvasState.searchLayerContent(layerId);
+			canvasState.searchLayerContent(layerId, false);
 		if(layerContent.isNull()) {
 			qWarning("selectionToImage: layer %d not found", layerId);
 			img = QImage(rect.size(), QImage::Format_ARGB32_Premultiplied);
 			img.fill(0);
+			if(outFound) {
+				*outFound = false;
+			}
 			return img;
 		}
 		img = layerContent.toImage(rect);
@@ -436,6 +442,10 @@ QImage CanvasModel::selectionToImage(int layerId) const
 
 		mp.drawImage(
 			qMin(0, maskBounds.left()), qMin(0, maskBounds.top()), mask);
+	}
+
+	if(outFound) {
+		*outFound = true;
 	}
 	return img;
 }

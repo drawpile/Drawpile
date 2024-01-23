@@ -427,7 +427,7 @@ QColor PaintEngine::sampleColor(int x, int y, int layerId, int diameter)
 		}
 	} else {
 		drawdance::LayerContent lc =
-			viewCanvasState().searchLayerContent(layerId);
+			viewCanvasState().searchLayerContent(layerId, false);
 		if(lc.isNull()) {
 			return Qt::transparent;
 		} else {

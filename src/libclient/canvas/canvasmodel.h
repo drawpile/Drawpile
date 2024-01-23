@@ -71,7 +71,7 @@ public:
 
 	uint8_t localUserId() const { return m_localUserId; }
 
-	QImage selectionToImage(int layerId) const;
+	QImage selectionToImage(int layerId, bool *outFound = nullptr) const;
 	void pasteFromImage(
 		const QImage &image, const QPoint &defaultPoint, bool forceDefault);
 

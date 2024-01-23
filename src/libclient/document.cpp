@@ -989,11 +989,11 @@ void Document::cancelSelection()
 		m_canvas->setSelection(nullptr);
 }
 
-void Document::copyFromLayer(int layer)
+bool Document::copyFromLayer(int layer)
 {
 	if(!m_canvas) {
 		qWarning("copyFromLayer: no canvas!");
-		return;
+		return false;
 	}
 
 #ifdef Q_OS_ANDROID
@@ -1003,7 +1003,8 @@ void Document::copyFromLayer(int layer)
 	QMimeData *data = new QMimeData;
 #endif
 
-	const auto img = m_canvas->selectionToImage(layer);
+	bool found;
+	const auto img = m_canvas->selectionToImage(layer, &found);
 	data->setImageData(img);
 
 	// Store also original coordinates
@@ -1026,6 +1027,8 @@ void Document::copyFromLayer(int layer)
 #ifndef Q_OS_ANDROID
 	QGuiApplication::clipboard()->setMimeData(data);
 #endif
+
+	return found;
 }
 
 bool Document::saveSelection(const QString &path)
@@ -1063,8 +1066,7 @@ void Document::copyLayer()
 
 void Document::cutLayer()
 {
-	if(m_canvas) {
-		copyFromLayer(m_toolctrl->activeLayer());
+	if(m_canvas && copyFromLayer(m_toolctrl->activeLayer())) {
 		clearArea();
 	}
 }

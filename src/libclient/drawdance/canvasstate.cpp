@@ -238,11 +238,14 @@ net::Message CanvasState::makeLayerTreeMove(
 		lr, m_data, contextId, sourceId, targetId, intoGroup, below));
 }
 
-LayerContent CanvasState::searchLayerContent(int layerId) const
+LayerContent
+CanvasState::searchLayerContent(int layerId, bool showCensored) const
 {
 	DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(m_data);
 	DP_LayerRoutesEntry *lre = DP_layer_routes_search(lr, layerId);
-	if(lre && !DP_layer_routes_entry_is_group(lre)) {
+	if(lre && !DP_layer_routes_entry_is_group(lre) &&
+	   (showCensored ||
+		!DP_layer_props_censored(DP_layer_routes_entry_props(lre, m_data)))) {
 		return LayerContent::inc(DP_layer_routes_entry_content(lre, m_data));
 	} else {
 		return LayerContent::null();
