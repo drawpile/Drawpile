@@ -15,6 +15,7 @@ Unreleased Version 2.2.1-pre
  * Fix: Properly refer to "layer" and "layer group" in layer actions depending on what is selected. Thanks Momo for reporting.
  * Fix: Save censored layers into PSDs properly. Thanks Blozzom for reporting.
  * Fix: Don't allow copying, cutting and color picking from censored layers.
+ * Fix: Rotate brush and fill outline along with the canvas. Thanks Bluestrings for reporting.
 
 2024-01-13 Version 2.2.0
  * Server Fix: Add --ssl-key-algorithm parameter to allow non-RSA SSL keys, defaulting to guessing the most common formats RSA and EC. Thanks Bluestrings for reporting.

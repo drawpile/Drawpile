@@ -591,9 +591,10 @@ void CanvasScene::setOutline(qreal size, qreal width)
 	m_outlineItem->setOutline(size, width);
 }
 
-void CanvasScene::setOutlinePos(const QPointF &pos)
+void CanvasScene::setOutlineTransform(const QPointF &pos, qreal angle)
 {
 	m_outlineItem->setPos(pos);
+	m_outlineItem->setRotation(angle);
 }
 
 void CanvasScene::setOutlineSquare(bool square)

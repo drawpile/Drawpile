@@ -88,7 +88,7 @@ public:
 	bool hasCatchup() const { return m_catchup != nullptr; }
 
 	void setOutline(qreal size, qreal width);
-	void setOutlinePos(const QPointF &pos);
+	void setOutlineTransform(const QPointF &pos, qreal angle);
 	void setOutlineSquare(bool square);
 	void setOutlineWidth(qreal width);
 	void setOutlineVisibleInMode(bool visibleInMode);

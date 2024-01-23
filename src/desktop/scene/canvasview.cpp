@@ -739,7 +739,7 @@ void CanvasView::setOutlineMode(bool subpixel, bool square, bool force)
 	m_subpixeloutline = subpixel;
 	m_forceoutline = force;
 	if(m_scene) {
-		m_scene->setOutlinePos(getOutlinePos());
+		m_scene->setOutlineTransform(getOutlinePos(), m_rotate);
 		m_scene->setOutlineSquare(square);
 		m_scene->setOutlineWidth(getOutlineWidth());
 	}
@@ -2014,7 +2014,7 @@ void CanvasView::updateOutline()
 {
 	if(m_scene) {
 		m_scene->setOutline(m_outlineSize * m_zoom, getOutlineWidth());
-		m_scene->setOutlinePos(getOutlinePos());
+		m_scene->setOutlineTransform(getOutlinePos(), m_rotate);
 		m_scene->setOutlineVisibleInMode(
 			!m_hoveringOverHud &&
 			(m_dragmode == ViewDragMode::None
