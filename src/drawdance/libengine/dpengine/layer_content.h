@@ -103,11 +103,10 @@ bool DP_layer_content_search_change_bounds(DP_LayerContent *lc,
 
 DP_Image *DP_layer_content_to_image(DP_LayerContent *lc);
 
-DP_UPixel8 *DP_layer_content_to_upixels8_cropped(DP_LayerContent *lc,
-                                                 int *out_offset_x,
-                                                 int *out_offset_y,
-                                                 int *out_width,
-                                                 int *out_height);
+DP_UPixel8 *
+DP_layer_content_to_upixels8_cropped(DP_LayerContent *lc, bool censored,
+                                     int *out_offset_x, int *out_offset_y,
+                                     int *out_width, int *out_height);
 
 DP_UPixel8 *DP_layer_content_to_upixels8(DP_LayerContent *lc, int x, int y,
                                          int width, int height);

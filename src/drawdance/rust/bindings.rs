@@ -6684,6 +6684,9 @@ extern "C" {
     ) -> *mut DP_Tile;
 }
 extern "C" {
+    pub fn DP_tile_censored_noinc() -> *mut DP_Tile;
+}
+extern "C" {
     pub fn DP_tile_censored_inc() -> *mut DP_Tile;
 }
 extern "C" {

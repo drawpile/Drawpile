@@ -4,10 +4,10 @@ use super::{
 };
 use crate::{
     DP_BlendMode, DP_LayerProps, DP_TransientLayerProps, DP_channel15_to_8,
-    DP_layer_props_blend_mode, DP_layer_props_children_noinc, DP_layer_props_decref,
-    DP_layer_props_hidden, DP_layer_props_id, DP_layer_props_incref, DP_layer_props_isolated,
-    DP_layer_props_opacity, DP_layer_props_title, DP_layer_props_transient,
-    DP_transient_layer_props_decref, DP_transient_layer_props_id_set,
+    DP_layer_props_blend_mode, DP_layer_props_censored, DP_layer_props_children_noinc,
+    DP_layer_props_decref, DP_layer_props_hidden, DP_layer_props_id, DP_layer_props_incref,
+    DP_layer_props_isolated, DP_layer_props_opacity, DP_layer_props_title,
+    DP_layer_props_transient, DP_transient_layer_props_decref, DP_transient_layer_props_id_set,
     DP_transient_layer_props_incref, DP_transient_layer_props_isolated_set,
     DP_transient_layer_props_new, DP_transient_layer_props_new_init_with_transient_children_noinc,
 };
@@ -53,6 +53,10 @@ pub trait BaseLayerProps {
 
     fn hidden(&self) -> bool {
         unsafe { DP_layer_props_hidden(self.persistent_ptr()) }
+    }
+
+    fn censored(&self) -> bool {
+        unsafe { DP_layer_props_censored(self.persistent_ptr()) }
     }
 
     fn isolated(&self) -> bool {

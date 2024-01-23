@@ -265,7 +265,7 @@ static bool ora_store_layer(DP_SaveOraContext *c, DP_LayerContent *lc,
 {
     int width, height;
     DP_UPixel8 *pixels = DP_layer_content_to_upixels8_cropped(
-        lc, &sol->offset_x, &sol->offset_y, &width, &height);
+        lc, false, &sol->offset_x, &sol->offset_y, &width, &height);
     const char *name =
         save_ora_context_format(c, "data/layer-%04x.png", sol->layer_id);
     bool ok = ora_store_png_upixels(c, pixels, width, height, name);

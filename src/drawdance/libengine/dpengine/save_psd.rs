@@ -481,11 +481,12 @@ fn write_background_pixel_data(
 
 fn write_layer_content_pixel_data(
     lc: &LayerContent,
+    censored: bool,
     dc: *mut DP_DrawContext,
     out: &mut Output,
     offset: usize,
 ) -> Result<()> {
-    let (pixels, offset_x, offset_y, width, height) = lc.to_upixels8_cropped();
+    let (pixels, offset_x, offset_y, width, height) = lc.to_upixels8_cropped(censored);
     write_pixel_data(
         dc,
         out,
@@ -516,7 +517,7 @@ fn write_layer_pixel_data_recursive(
         } else {
             let lc = ll.content_at(i);
             let offset = *layer_offsets.get(&lp.persistent_ptr().cast()).unwrap();
-            write_layer_content_pixel_data(&lc, dc, out, offset)?;
+            write_layer_content_pixel_data(&lc, lp.censored(), dc, out, offset)?;
         }
     }
     Ok(())

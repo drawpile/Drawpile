@@ -607,11 +607,10 @@ DP_Image *DP_layer_content_to_image(DP_LayerContent *lc)
     return img;
 }
 
-DP_UPixel8 *DP_layer_content_to_upixels8_cropped(DP_LayerContent *lc,
-                                                 int *out_offset_x,
-                                                 int *out_offset_y,
-                                                 int *out_width,
-                                                 int *out_height)
+DP_UPixel8 *
+DP_layer_content_to_upixels8_cropped(DP_LayerContent *lc, bool censored,
+                                     int *out_offset_x, int *out_offset_y,
+                                     int *out_width, int *out_height)
 {
     DP_ASSERT(lc);
     DP_ASSERT(DP_atomic_get(&lc->refcount) > 0);
@@ -625,13 +624,14 @@ DP_UPixel8 *DP_layer_content_to_upixels8_cropped(DP_LayerContent *lc,
     int height = (bottom - top + 1) * DP_TILE_SIZE;
     DP_UPixel8 *pixels = DP_malloc(sizeof(*pixels) * DP_int_to_size(width)
                                    * DP_int_to_size(height));
+    DP_Tile *censor_tile = censored ? DP_tile_censored_noinc() : NULL;
     for (int y = top; y <= bottom; ++y) {
         int target_y = (y - top) * DP_TILE_SIZE;
         for (int x = left; x <= right; ++x) {
             DP_Tile *t = DP_layer_content_tile_at_noinc(lc, x, y);
             int target_x = (x - left) * DP_TILE_SIZE;
-            DP_tile_copy_to_upixels8(t, pixels, target_x, target_y, width,
-                                     height);
+            DP_tile_copy_to_upixels8(censored && t ? censor_tile : t, pixels,
+                                     target_x, target_y, width, height);
         }
     }
 

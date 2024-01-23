@@ -241,7 +241,7 @@ DP_Tile *DP_tile_new_zebra(unsigned int context_id, DP_Pixel15 pixel1,
     return DP_transient_tile_persist(tt);
 }
 
-DP_Tile *DP_tile_censored_inc(void)
+DP_Tile *DP_tile_censored_noinc(void)
 {
     DP_ATOMIC_DECLARE_STATIC_SPIN_LOCK(censor_tile_lock);
     static DP_Tile *censor_tile;
@@ -254,7 +254,12 @@ DP_Tile *DP_tile_censored_inc(void)
         }
         DP_atomic_unlock(&censor_tile_lock);
     }
-    return DP_tile_incref(censor_tile);
+    return censor_tile;
+}
+
+DP_Tile *DP_tile_censored_inc(void)
+{
+    return DP_tile_incref(DP_tile_censored_noinc());
 }
 
 

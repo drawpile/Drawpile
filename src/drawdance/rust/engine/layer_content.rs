@@ -21,7 +21,7 @@ pub trait BaseLayerContent {
         UPixels8::new(data, width as usize * height as usize)
     }
 
-    fn to_upixels8_cropped(&self) -> (UPixels8, c_int, c_int, c_int, c_int) {
+    fn to_upixels8_cropped(&self, censored: bool) -> (UPixels8, c_int, c_int, c_int, c_int) {
         let mut offset_x: c_int = 0;
         let mut offset_y: c_int = 0;
         let mut width: c_int = 0;
@@ -29,6 +29,7 @@ pub trait BaseLayerContent {
         let data = unsafe {
             DP_layer_content_to_upixels8_cropped(
                 self.persistent_ptr(),
+                censored,
                 &mut offset_x,
                 &mut offset_y,
                 &mut width,
