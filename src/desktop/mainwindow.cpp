@@ -3993,6 +3993,8 @@ void MainWindow::setupActions()
 	QAction *trackDelete = makeAction("track-delete", tr("Delete Track")).icon("trash-empty").noDefaultShortcut();
 	QAction *frameNext = makeAction("frame-next", tr("Next Frame")).icon("keyframe-next").shortcut("Ctrl+Shift+L").autoRepeat();
 	QAction *framePrev = makeAction("frame-prev", tr("Previous Frame")).icon("keyframe-previous").shortcut("Ctrl+Shift+H").autoRepeat();
+	QAction *keyFrameNext = makeAction("key-frame-next", tr("Next Key Frame")).icon("keyframe-next").shortcut("Ctrl+Alt+Shift+L").autoRepeat();
+	QAction *keyFramePrev = makeAction("key-frame-prev", tr("Previous Key Frame")).icon("keyframe-previous").shortcut("Ctrl+Alt+Shift+H").autoRepeat();
 	QAction *trackAbove = makeAction("track-above", tr("Track Above")).icon("arrow-up").shortcut("Ctrl+Shift+K").autoRepeat();
 	QAction *trackBelow = makeAction("track-below", tr("Track Below")).icon("arrow-down").shortcut("Ctrl+Shift+J").autoRepeat();
 
@@ -4055,12 +4057,14 @@ void MainWindow::setupActions()
 	animationMenu->addSeparator();
 	animationMenu->addAction(frameNext);
 	animationMenu->addAction(framePrev);
+	animationMenu->addAction(keyFrameNext);
+	animationMenu->addAction(keyFramePrev);
 	animationMenu->addAction(trackAbove);
 	animationMenu->addAction(trackBelow);
 
 	m_currentdoctools->addAction(showFlipbook);
 	m_dockLayers->setLayerEditActions({layerAdd, groupAdd, layerDupe, layerMerge, layerProperties, layerDelete, layerSetFillSource, keyFrameSetLayer, keyFrameCreateLayer, keyFrameCreateLayerNext, keyFrameCreateLayerPrev, keyFrameCreateGroup, keyFrameCreateGroupNext, keyFrameCreateGroupPrev, keyFrameDuplicateNext, keyFrameDuplicatePrev, layerKeyFrameGroup});
-	m_dockTimeline->setActions({keyFrameSetLayer, keyFrameSetEmpty, keyFrameCreateLayer, keyFrameCreateLayerNext, keyFrameCreateLayerPrev, keyFrameCreateGroup, keyFrameCreateGroupNext, keyFrameCreateGroupPrev, keyFrameDuplicateNext, keyFrameDuplicatePrev, keyFrameCut, keyFrameCopy, keyFramePaste, keyFrameProperties, keyFrameDelete, keyFrameExposureIncrease, keyFrameExposureDecrease, trackAdd, trackVisible, trackOnionSkin, trackDuplicate, trackRetitle, trackDelete, frameCountSet, framerateSet, frameNext, framePrev, trackAbove, trackBelow, animationLayerMenu, animationGroupMenu, animationDuplicateMenu}, layerViewNormal, layerViewCurrentFrame, showFlipbook);
+	m_dockTimeline->setActions({keyFrameSetLayer, keyFrameSetEmpty, keyFrameCreateLayer, keyFrameCreateLayerNext, keyFrameCreateLayerPrev, keyFrameCreateGroup, keyFrameCreateGroupNext, keyFrameCreateGroupPrev, keyFrameDuplicateNext, keyFrameDuplicatePrev, keyFrameCut, keyFrameCopy, keyFramePaste, keyFrameProperties, keyFrameDelete, keyFrameExposureIncrease, keyFrameExposureDecrease, trackAdd, trackVisible, trackOnionSkin, trackDuplicate, trackRetitle, trackDelete, frameCountSet, framerateSet, frameNext, framePrev, keyFrameNext, keyFramePrev, trackAbove, trackBelow, animationLayerMenu, animationGroupMenu, animationDuplicateMenu}, layerViewNormal, layerViewCurrentFrame, showFlipbook);
 
 	connect(showFlipbook, &QAction::triggered, this, &MainWindow::showFlipbook);
 

@@ -434,6 +434,8 @@ void TimelineWidget::setActions(const Actions &actions)
 		menu->addSeparator();
 		menu->addAction(actions.frameNext);
 		menu->addAction(actions.framePrev);
+		menu->addAction(actions.keyFrameNext);
+		menu->addAction(actions.keyFramePrev);
 		menu->addAction(actions.trackAbove);
 		menu->addAction(actions.trackBelow);
 	}
@@ -494,6 +496,12 @@ void TimelineWidget::setActions(const Actions &actions)
 	connect(
 		actions.framePrev, &QAction::triggered, this,
 		&TimelineWidget::prevFrame);
+	connect(
+		actions.keyFrameNext, &QAction::triggered, this,
+		&TimelineWidget::nextKeyFrame);
+	connect(
+		actions.keyFramePrev, &QAction::triggered, this,
+		&TimelineWidget::prevKeyFrame);
 	connect(
 		actions.trackAbove, &QAction::triggered, this,
 		&TimelineWidget::trackAbove);
@@ -1440,6 +1448,51 @@ void TimelineWidget::prevFrame()
 	setCurrentFrame(targetFrame >= 0 ? targetFrame : d->frameCount() - 1);
 }
 
+void TimelineWidget::nextKeyFrame()
+{
+	const canvas::TimelineTrack *track = d->trackById(d->currentTrackId);
+	if(track) {
+		const QVector<canvas::TimelineKeyFrame> &keyFrames = track->keyFrames;
+		int keyFrameCount = keyFrames.size();
+		if(keyFrameCount != 0) {
+			int bestFrameIndex = -1;
+			for(int i = 0; i < keyFrameCount; ++i) {
+				const canvas::TimelineKeyFrame &keyFrame = keyFrames[i];
+				int f = keyFrame.frameIndex;
+				if(f > d->currentFrame &&
+				   (bestFrameIndex == -1 || f < bestFrameIndex)) {
+					bestFrameIndex = f;
+				}
+			}
+			setCurrentFrame(
+				bestFrameIndex == -1 ? keyFrames[0].frameIndex
+									 : bestFrameIndex);
+		}
+	}
+}
+
+void TimelineWidget::prevKeyFrame()
+{
+	const canvas::TimelineTrack *track = d->trackById(d->currentTrackId);
+	if(track) {
+		const QVector<canvas::TimelineKeyFrame> &keyFrames = track->keyFrames;
+		int keyFrameCount = keyFrames.size();
+		if(keyFrameCount != 0) {
+			int bestFrameIndex = -1;
+			for(int i = 0; i < keyFrameCount; ++i) {
+				const canvas::TimelineKeyFrame &keyFrame = keyFrames[i];
+				int f = keyFrame.frameIndex;
+				if(f < d->currentFrame && f > bestFrameIndex) {
+					bestFrameIndex = f;
+				}
+			}
+			setCurrentFrame(
+				bestFrameIndex == -1 ? keyFrames[keyFrameCount - 1].frameIndex
+									 : bestFrameIndex);
+		}
+	}
+}
+
 void TimelineWidget::trackAbove()
 {
 	int targetTrack = d->trackIndexById(d->currentTrackId) + 1;
@@ -1676,6 +1729,14 @@ void TimelineWidget::updateActions()
 	bool haveMultipleFrames = d->frameCount() > 1;
 	d->actions.frameNext->setEnabled(haveMultipleFrames);
 	d->actions.framePrev->setEnabled(haveMultipleFrames);
+	int keyFrameCount = track ? track->keyFrames.size() : 0;
+	bool trackHasAnyKeyFrames = keyFrameCount != 0;
+	bool isOnOnlyKeyFrame =
+		keyFrameCount == 1 && track->keyFrames[0].frameIndex == d->currentFrame;
+	bool nextPrevKeyFrame =
+		haveMultipleFrames && trackHasAnyKeyFrames && !isOnOnlyKeyFrame;
+	d->actions.keyFrameNext->setEnabled(nextPrevKeyFrame);
+	d->actions.keyFramePrev->setEnabled(nextPrevKeyFrame);
 
 	bool haveMultipleTracks = d->trackCount() > 1;
 	d->actions.trackAbove->setEnabled(haveMultipleTracks);

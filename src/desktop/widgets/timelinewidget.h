@@ -48,6 +48,8 @@ public:
 		QAction *framerateSet = nullptr;
 		QAction *frameNext = nullptr;
 		QAction *framePrev = nullptr;
+		QAction *keyFrameNext = nullptr;
+		QAction *keyFramePrev = nullptr;
 		QAction *trackAbove = nullptr;
 		QAction *trackBelow = nullptr;
 		QMenu *animationLayerMenu = nullptr;
@@ -124,6 +126,8 @@ private slots:
 	void setFramerate();
 	void nextFrame();
 	void prevFrame();
+	void nextKeyFrame();
+	void prevKeyFrame();
 	void trackAbove();
 	void trackBelow();
 	void updateTracks();
