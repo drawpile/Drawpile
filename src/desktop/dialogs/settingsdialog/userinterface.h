@@ -27,9 +27,6 @@ protected:
 
 private:
 	void
-	initFontSize(desktop::settings::Settings &settings, QVBoxLayout *layout);
-
-	void
 	initInterfaceMode(desktop::settings::Settings &settings, QFormLayout *form);
 
 	void initKineticScrolling(
@@ -37,6 +34,8 @@ private:
 
 	void
 	initMiscellaneous(desktop::settings::Settings &settings, QFormLayout *form);
+
+	void initScaling(desktop::settings::Settings &settings, QVBoxLayout *form);
 
 	void pickCanvasBackgroundColor(desktop::settings::Settings &settings);
 };

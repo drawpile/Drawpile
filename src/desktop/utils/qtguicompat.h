@@ -79,6 +79,7 @@ inline auto tabDevice(const QTabletEvent &event)
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 #	define HAVE_QT_COMPAT_DEFAULT_HIGHDPI_PIXMAPS
+#	define HAVE_QT_COMPAT_DEFAULT_HIGHDPI_SCALING
 #	define HAVE_QT_COMPAT_DEFAULT_DISABLE_WINDOW_CONTEXT_HELP_BUTTON
 
 using DeviceType = QInputDevice::DeviceType;

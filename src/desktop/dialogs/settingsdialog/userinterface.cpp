@@ -26,47 +26,13 @@ UserInterface::UserInterface(
 void UserInterface::setUp(
 	desktop::settings::Settings &settings, QVBoxLayout *layout)
 {
-	initFontSize(settings, layout);
+	initScaling(settings, layout);
 	utils::addFormSeparator(layout);
 	initInterfaceMode(settings, utils::addFormSection(layout));
 	utils::addFormSeparator(layout);
 	initKineticScrolling(settings, utils::addFormSection(layout));
 	utils::addFormSeparator(layout);
 	initMiscellaneous(settings, utils::addFormSection(layout));
-}
-
-void UserInterface::initFontSize(
-	desktop::settings::Settings &settings, QVBoxLayout *layout)
-{
-	QCheckBox *overrideFontSize =
-		new QCheckBox(tr("Override system font size"));
-	settings.bindOverrideFontSize(overrideFontSize);
-	layout->addWidget(overrideFontSize);
-
-	KisSliderSpinBox *fontSize = new KisSliderSpinBox;
-	fontSize->setRange(6, 16);
-	fontSize->setPrefix(tr("Font size: "));
-	fontSize->setSuffix(tr("pt"));
-	settings.bindFontSize(fontSize);
-	layout->addWidget(fontSize);
-
-	layout->addWidget(utils::formNote(
-		tr("Changes the font size apply after you restart Drawpile.")));
-
-	QPlainTextEdit *sampleText = new QPlainTextEdit;
-	sampleText->setFixedHeight(100);
-	sampleText->setPlaceholderText(
-		tr("Type text here to try out the effects of your chosen font size."));
-	settings.bindFontSize(this, [sampleText](int size) {
-		QFont font = QApplication::font();
-		font.setPointSize(size);
-		sampleText->setFont(font);
-	});
-	utils::initKineticScrolling(sampleText);
-	layout->addWidget(sampleText);
-
-	settings.bindOverrideFontSize(fontSize, &QWidget::setEnabled);
-	settings.bindOverrideFontSize(sampleText, &QWidget::setEnabled);
 }
 
 void UserInterface::initInterfaceMode(
@@ -153,6 +119,48 @@ void UserInterface::initMiscellaneous(
 	QCheckBox *confirmDelete = new QCheckBox(tr("Ask before deleting layers"));
 	settings.bindConfirmLayerDelete(confirmDelete);
 	form->addRow(nullptr, confirmDelete);
+}
+
+void UserInterface::initScaling(
+	desktop::settings::Settings &settings, QVBoxLayout *layout)
+{
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+	QCheckBox *highDpiScalingEnabled =
+		new QCheckBox(tr("Enable high-DPI scaling (experimental)"));
+	settings.bindHighDpiScalingEnabled(highDpiScalingEnabled);
+	layout->addWidget(highDpiScalingEnabled);
+#endif
+
+	QCheckBox *overrideScaleFactor =
+		new QCheckBox(tr("Override system scale factor (experimental)"));
+	settings.bindHighDpiScalingOverride(overrideScaleFactor);
+	layout->addWidget(overrideScaleFactor);
+
+	KisSliderSpinBox *scaleFactor = new KisSliderSpinBox;
+	scaleFactor->setRange(100, 400);
+	scaleFactor->setSingleStep(25);
+	scaleFactor->setPrefix(tr("Scale factor: "));
+	scaleFactor->setSuffix(tr("%"));
+	settings.bindHighDpiScalingFactor(scaleFactor);
+	layout->addWidget(scaleFactor);
+
+	QCheckBox *overrideFontSize =
+		new QCheckBox(tr("Override system font size"));
+	settings.bindOverrideFontSize(overrideFontSize);
+	layout->addWidget(overrideFontSize);
+
+	KisSliderSpinBox *fontSize = new KisSliderSpinBox;
+	fontSize->setRange(6, 16);
+	fontSize->setPrefix(tr("Font size: "));
+	fontSize->setSuffix(tr("pt"));
+	settings.bindFontSize(fontSize);
+	layout->addWidget(fontSize);
+
+	layout->addWidget(utils::formNote(tr(
+		"Changes to scaling and font size apply after you restart Drawpile.")));
+
+	settings.bindHighDpiScalingOverride(scaleFactor, &QWidget::setEnabled);
+	settings.bindOverrideFontSize(fontSize, &QWidget::setEnabled);
 }
 
 void UserInterface::pickCanvasBackgroundColor(

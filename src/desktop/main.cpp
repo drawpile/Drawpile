@@ -48,11 +48,6 @@ DrawpileApp::DrawpileApp(int &argc, char **argv)
 	, m_originalSystemStyle{compat::styleName(*style())}
 	, m_originalSystemPalette{style()->standardPalette()}
 {
-	setOrganizationName("drawpile");
-	setOrganizationDomain("drawpile.net");
-	setApplicationName("drawpile");
-	setApplicationVersion(cmake_config::version());
-	setApplicationDisplayName("Drawpile");
 	setWindowIcon(QIcon(":/icons/drawpile.png"));
 	// QSettings will use the wrong settings when it is opened before all
 	// the app and organisation names are set.
@@ -605,8 +600,56 @@ static std::tuple<QStringList, QString> initApp(DrawpileApp &app)
 	return {parser.positionalArguments(), parser.value(startPage)};
 }
 
+static void applyScalingSettingsFrom(const QSettings &cfg)
+{
+#ifndef HAVE_QT_COMPAT_DEFAULT_HIGHDPI_SCALING
+	QString enabledKey = QStringLiteral("settings/highdpiscalingenabled");
+	if(cfg.contains(enabledKey)) {
+		bool enabled = cfg.value(enabledKey).toBool();
+		QApplication::setAttribute(Qt::AA_EnableHighDpiScaling, enabled);
+	}
+#endif
+
+	if(cfg.value(QStringLiteral("settings/highdpiscalingoverride")).toBool()) {
+		QString factorKey = QStringLiteral("settings/highdpiscalingfactor");
+		qreal factor = qBound(1.0, cfg.value(factorKey).toInt() / 100.0, 4.0);
+		qputenv("QT_SCALE_FACTOR", qUtf8Printable(QString::number(factor)));
+	}
+}
+
+static void applyScalingSettings(int argc, char **argv)
+{
+	for(int i = 1; i < argc - 1; ++i) {
+		if(strcmp(argv[i], "--portable-data-dir") == 0) {
+			QString path =
+				QDir(
+					QString::fromUtf8(argv[i + 1]) +
+					QStringLiteral("/settings"))
+					.absoluteFilePath(QStringLiteral("drawpile.ini"));
+			applyScalingSettingsFrom(QSettings(path, QSettings::IniFormat));
+			return;
+		}
+	}
+#ifdef Q_OS_WIN
+	// QSettings doesn't have a constructor that takes a format, gotta fiddle
+	// with the global default and then revert it afterwards.
+	QSettings::Format oldFormat = QSettings::defaultFormat();
+	QSettings::setDefaultFormat(QSettings::IniFormat);
+#endif
+	applyScalingSettingsFrom(QSettings());
+#ifdef Q_OS_WIN
+	QSettings::setDefaultFormat(oldFormat);
+#endif
+}
+
 int main(int argc, char *argv[])
 {
+	QCoreApplication::setOrganizationName("drawpile");
+	QCoreApplication::setOrganizationDomain("drawpile.net");
+	QCoreApplication::setApplicationName("drawpile");
+	QCoreApplication::setApplicationVersion(cmake_config::version());
+	QApplication::setApplicationDisplayName("Drawpile");
+
 #ifndef HAVE_QT_COMPAT_DEFAULT_HIGHDPI_PIXMAPS
 	// Set attributes that must be set before QApplication is constructed
 	QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
@@ -626,9 +669,7 @@ int main(int argc, char *argv[])
 	QApplication::setAttribute(Qt::AA_CompressHighFrequencyEvents, false);
 	QApplication::setAttribute(Qt::AA_CompressTabletEvents, false);
 
-	// CanvasView does not work correctly with this enabled.
-	// (Scale factor must be taken in account when zooming)
-	// QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+	applyScalingSettings(argc, argv);
 
 	DrawpileApp app(argc, argv);
 
