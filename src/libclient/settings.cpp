@@ -7,6 +7,7 @@
 #include <QAssociativeIterable>
 #include <QCoreApplication>
 #include <QDebug>
+#include <QFileInfo>
 #include <QLoggingCategory>
 #include <QMetaType>
 #include <QMutexLocker>
@@ -165,6 +166,9 @@ void Settings::reset(const QString &path)
 	QMutexLocker locker{&m_mutex};
 	// QSettings disables assignment operators.
 	m_settings.~QSettings();
+	m_resetPath = path;
+	delete m_scalingSettings;
+	m_scalingSettings = nullptr;
 
 	if (!path.isEmpty()) {
 		new (&m_settings) QSettings(path, QSettings::IniFormat);
@@ -189,6 +193,29 @@ void Settings::reset(const QString &path)
 	QSet<QString> groupKeys;
 	cacheGroups(m_settings, groupKeys);
 	m_settings.setProperty("allGroupKeys", QVariant::fromValue(groupKeys));
+}
+
+QSettings *Settings::scalingSettings()
+{
+	if(!m_scalingSettings) {
+		if(m_resetPath.isEmpty()) {
+#ifdef Q_OS_WIN
+			QSettings::Format format = QSettings::IniFormat;
+#else
+			QSettings::Format format = QSettings::NativeFormat;
+#endif
+			m_scalingSettings = new QSettings(
+				format, QSettings::UserScope, QStringLiteral("drawpile"),
+				QStringLiteral("scaling"), this);
+		} else {
+			m_scalingSettings = new QSettings(
+				QFileInfo(m_resetPath)
+					.dir()
+					.absoluteFilePath(QStringLiteral("scaling.ini")),
+				QSettings::IniFormat, this);
+		}
+	}
+	return m_scalingSettings;
 }
 
 #ifdef Q_OS_WIN

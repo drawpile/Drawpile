@@ -603,16 +603,16 @@ static std::tuple<QStringList, QString> initApp(DrawpileApp &app)
 static void applyScalingSettingsFrom(const QSettings &cfg)
 {
 #ifndef HAVE_QT_COMPAT_DEFAULT_HIGHDPI_SCALING
-	QString enabledKey = QStringLiteral("settings/highdpiscalingenabled");
+	QString enabledKey = QStringLiteral("enabled");
 	if(cfg.contains(enabledKey)) {
 		bool enabled = cfg.value(enabledKey).toBool();
 		QApplication::setAttribute(Qt::AA_EnableHighDpiScaling, enabled);
 	}
 #endif
 
-	if(cfg.value(QStringLiteral("settings/highdpiscalingoverride")).toBool()) {
-		QString factorKey = QStringLiteral("settings/highdpiscalingfactor");
-		qreal factor = qBound(1.0, cfg.value(factorKey).toInt() / 100.0, 4.0);
+	if(cfg.value(QStringLiteral("override")).toBool()) {
+		qreal factor = qBound(
+			1.0, cfg.value(QStringLiteral("factor")).toInt() / 100.0, 4.0);
 		qputenv("QT_SCALE_FACTOR", qUtf8Printable(QString::number(factor)));
 	}
 }
@@ -621,25 +621,22 @@ static void applyScalingSettings(int argc, char **argv)
 {
 	for(int i = 1; i < argc - 1; ++i) {
 		if(strcmp(argv[i], "--portable-data-dir") == 0) {
-			QString path =
-				QDir(
-					QString::fromUtf8(argv[i + 1]) +
-					QStringLiteral("/settings"))
-					.absoluteFilePath(QStringLiteral("drawpile.ini"));
+			QString path = QDir(
+							   QString::fromUtf8(argv[i + 1]) +
+							   QStringLiteral("/settings"))
+							   .absoluteFilePath(QStringLiteral("scaling.ini"));
 			applyScalingSettingsFrom(QSettings(path, QSettings::IniFormat));
 			return;
 		}
 	}
 #ifdef Q_OS_WIN
-	// QSettings doesn't have a constructor that takes a format, gotta fiddle
-	// with the global default and then revert it afterwards.
-	QSettings::Format oldFormat = QSettings::defaultFormat();
-	QSettings::setDefaultFormat(QSettings::IniFormat);
+	QSettings::Format format = QSettings::IniFormat;
+#else
+	QSettings::Format format = QSettings::NativeFormat;
 #endif
-	applyScalingSettingsFrom(QSettings());
-#ifdef Q_OS_WIN
-	QSettings::setDefaultFormat(oldFormat);
-#endif
+	applyScalingSettingsFrom(QSettings(
+		format, QSettings::UserScope, QStringLiteral("drawpile"),
+		QStringLiteral("scaling")));
 }
 
 int main(int argc, char *argv[])

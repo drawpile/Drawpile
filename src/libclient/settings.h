@@ -82,6 +82,8 @@ public:
 
 	QString path() const { return m_settings.fileName(); }
 
+	QSettings *scalingSettings();
+
 #ifdef Q_OS_WIN
 	void migrateFromNativeFormat(bool force);
 #endif
@@ -228,6 +230,8 @@ protected:
 	mutable QSettings m_settings; // Annoying group interface requires mutable.
 	QHash<const SettingMeta *, QVariant> m_pending;
 	mutable QRecursiveMutex m_mutex;
+	QString m_resetPath;
+	QSettings *m_scalingSettings = nullptr;
 };
 
 QString formatSettingKey(const char *baseKey, int version);

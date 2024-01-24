@@ -124,16 +124,30 @@ void UserInterface::initMiscellaneous(
 void UserInterface::initScaling(
 	desktop::settings::Settings &settings, QVBoxLayout *layout)
 {
+	QSettings *scalingSettings = settings.scalingSettings();
+
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 	QCheckBox *highDpiScalingEnabled =
 		new QCheckBox(tr("Enable high-DPI scaling (experimental)"));
-	settings.bindHighDpiScalingEnabled(highDpiScalingEnabled);
+	highDpiScalingEnabled->setChecked(
+		scalingSettings->value(QStringLiteral("enabled")).toBool());
+	connect(
+		highDpiScalingEnabled, &QCheckBox::clicked, scalingSettings,
+		[scalingSettings](bool checked) {
+			scalingSettings->setValue(QStringLiteral("enabled"), checked);
+		});
 	layout->addWidget(highDpiScalingEnabled);
 #endif
 
 	QCheckBox *overrideScaleFactor =
 		new QCheckBox(tr("Override system scale factor (experimental)"));
-	settings.bindHighDpiScalingOverride(overrideScaleFactor);
+	overrideScaleFactor->setChecked(
+		scalingSettings->value(QStringLiteral("override")).toBool());
+	connect(
+		overrideScaleFactor, &QCheckBox::clicked, scalingSettings,
+		[scalingSettings](bool checked) {
+			scalingSettings->setValue(QStringLiteral("override"), checked);
+		});
 	layout->addWidget(overrideScaleFactor);
 
 	KisSliderSpinBox *scaleFactor = new KisSliderSpinBox;
@@ -141,8 +155,19 @@ void UserInterface::initScaling(
 	scaleFactor->setSingleStep(25);
 	scaleFactor->setPrefix(tr("Scale factor: "));
 	scaleFactor->setSuffix(tr("%"));
-	settings.bindHighDpiScalingFactor(scaleFactor);
+	scaleFactor->setValue(
+		scalingSettings->value(QStringLiteral("factor")).toInt());
+	connect(
+		scaleFactor, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		scalingSettings, [scalingSettings](int value) {
+			scalingSettings->setValue(QStringLiteral("factor"), value);
+		});
 	layout->addWidget(scaleFactor);
+
+	connect(
+		overrideScaleFactor, &QCheckBox::clicked, scaleFactor,
+		&QWidget::setEnabled);
+	scaleFactor->setEnabled(overrideScaleFactor->isChecked());
 
 	QCheckBox *overrideFontSize =
 		new QCheckBox(tr("Override system font size"));
@@ -166,7 +191,6 @@ void UserInterface::initScaling(
 			.arg(qRound(devicePixelRatioF() * 100.0))
 			.arg(currentFontSize)));
 
-	settings.bindHighDpiScalingOverride(scaleFactor, &QWidget::setEnabled);
 	settings.bindOverrideFontSize(fontSize, &QWidget::setEnabled);
 }
 

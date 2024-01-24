@@ -65,11 +65,6 @@ SETTING(filterInactive            , FilterInactive            , "history/filteri
 SETTING(filterLocked              , FilterLocked              , "history/filterlocked"                  , false)
 SETTING(filterNsfm                , FilterNsfm                , "history/filternsfw"                    , false)
 SETTING(flipbookWindow            , FlipbookWindow            , "flipbook/window"                       , QRect())
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-SETTING(highDpiScalingEnabled     , HighDpiScalingEnabled     , "settings/highdpiscalingenabled"        , false)
-#endif
-SETTING(highDpiScalingFactor      , HighDpiScalingFactor      , "settings/highdpiscalingfactor"         , 100)
-SETTING(highDpiScalingOverride    , HighDpiScalingOverride    , "settings/highdpiscalingoverride"       , false)
 SETTING(overrideFontSize          , OverrideFontSize          , "settings/overridefontsize"             , OVERRIDE_FONT_SIZE_DEFAULT)
 SETTING(fontSize                  , FontSize                  , "settings/fontSize"                     , -1)
 SETTING(globalPressureCurve       , GlobalPressureCurve       , "settings/input/globalcurve"            , QString("0,0;1,1;"))
