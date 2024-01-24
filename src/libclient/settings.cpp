@@ -199,22 +199,17 @@ void Settings::reset(const QString &path)
 QSettings *Settings::scalingSettings()
 {
 	if(!m_scalingSettings) {
-		if(m_resetPath.isEmpty()) {
-#ifdef Q_OS_WIN
-			QSettings::Format format = QSettings::IniFormat;
-#else
-			QSettings::Format format = QSettings::NativeFormat;
-#endif
-			m_scalingSettings = new QSettings(
-				format, QSettings::UserScope, QStringLiteral("drawpile"),
-				QStringLiteral("scaling"), this);
-		} else {
-			m_scalingSettings = new QSettings(
-				QFileInfo(m_resetPath)
-					.dir()
-					.absoluteFilePath(QStringLiteral("scaling.ini")),
-				QSettings::IniFormat, this);
-		}
+		// GenericConfigLocation because of QSettings issues, see main.cpp.
+		QString path =
+			m_resetPath.isEmpty()
+				? utils::paths::writablePath(
+					  QStandardPaths::GenericConfigLocation,
+					  QStringLiteral("drawpile"),
+					  QStringLiteral("scaling.ini"))
+				: QFileInfo(m_resetPath)
+					  .dir()
+					  .absoluteFilePath(QStringLiteral("scaling.ini"));
+		m_scalingSettings = new QSettings(path, QSettings::IniFormat, this);
 	}
 	return m_scalingSettings;
 }

@@ -48,6 +48,11 @@ DrawpileApp::DrawpileApp(int &argc, char **argv)
 	, m_originalSystemStyle{compat::styleName(*style())}
 	, m_originalSystemPalette{style()->standardPalette()}
 {
+	setOrganizationName("drawpile");
+	setOrganizationDomain("drawpile.net");
+	setApplicationName("drawpile");
+	setApplicationVersion(cmake_config::version());
+	setApplicationDisplayName("Drawpile");
 	setWindowIcon(QIcon(":/icons/drawpile.png"));
 	// QSettings will use the wrong settings when it is opened before all
 	// the app and organisation names are set.
@@ -600,8 +605,10 @@ static std::tuple<QStringList, QString> initApp(DrawpileApp &app)
 	return {parser.positionalArguments(), parser.value(startPage)};
 }
 
-static void applyScalingSettingsFrom(const QSettings &cfg)
+static void applyScalingSettingsFrom(const QString &path)
 {
+	QSettings cfg(path, QSettings::IniFormat);
+
 #ifndef HAVE_QT_COMPAT_DEFAULT_HIGHDPI_SCALING
 	QString enabledKey = QStringLiteral("enabled");
 	if(cfg.contains(enabledKey)) {
@@ -619,33 +626,28 @@ static void applyScalingSettingsFrom(const QSettings &cfg)
 
 static void applyScalingSettings(int argc, char **argv)
 {
+	QString fileName = QStringLiteral("scaling.ini");
 	for(int i = 1; i < argc - 1; ++i) {
 		if(strcmp(argv[i], "--portable-data-dir") == 0) {
 			QString path = QDir(
 							   QString::fromUtf8(argv[i + 1]) +
 							   QStringLiteral("/settings"))
-							   .absoluteFilePath(QStringLiteral("scaling.ini"));
-			applyScalingSettingsFrom(QSettings(path, QSettings::IniFormat));
+							   .absoluteFilePath(fileName);
+			applyScalingSettingsFrom(path);
 			return;
 		}
 	}
-#ifdef Q_OS_WIN
-	QSettings::Format format = QSettings::IniFormat;
-#else
-	QSettings::Format format = QSettings::NativeFormat;
-#endif
-	applyScalingSettingsFrom(QSettings(
-		format, QSettings::UserScope, QStringLiteral("drawpile"),
-		QStringLiteral("scaling")));
+	// Can't use AppConfigLocation because the application name is not
+	// initialized yet and doing so at this point corrupts the main settings
+	// file. QSettings is terrible and we should really do away with it.
+	applyScalingSettingsFrom(
+		QStandardPaths::writableLocation(
+			QStandardPaths::GenericConfigLocation) +
+		QStringLiteral("/drawpile/") + fileName);
 }
 
 int main(int argc, char *argv[])
 {
-	QCoreApplication::setOrganizationName("drawpile");
-	QCoreApplication::setOrganizationDomain("drawpile.net");
-	QCoreApplication::setApplicationName("drawpile");
-	QCoreApplication::setApplicationVersion(cmake_config::version());
-	QApplication::setApplicationDisplayName("Drawpile");
 
 #ifndef HAVE_QT_COMPAT_DEFAULT_HIGHDPI_PIXMAPS
 	// Set attributes that must be set before QApplication is constructed
