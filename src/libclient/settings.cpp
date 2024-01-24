@@ -7,6 +7,7 @@
 #include <QAssociativeIterable>
 #include <QCoreApplication>
 #include <QDebug>
+#include <QDir>
 #include <QFileInfo>
 #include <QLoggingCategory>
 #include <QMetaType>
