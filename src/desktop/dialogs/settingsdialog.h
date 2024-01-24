@@ -18,6 +18,7 @@ class SettingsDialog final : public QDialog {
 	Q_OBJECT
 public:
 	SettingsDialog(QWidget *parent = nullptr);
+	~SettingsDialog() override;
 
 	void activateShortcutsPanel();
 

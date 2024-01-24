@@ -164,6 +164,12 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	layout->insertWidget(menuFirst ? 0 : 1, menuScroll);
 }
 
+SettingsDialog::~SettingsDialog()
+{
+	m_settings.trySubmit();
+	m_settings.scalingSettings()->sync();
+}
+
 void SettingsDialog::activateShortcutsPanel()
 {
 	for(QAbstractButton *button : m_group->buttons()) {
