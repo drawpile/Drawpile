@@ -102,7 +102,12 @@ void BrushPreview::paintEvent(QPaintEvent *event)
 	painter.drawTiledPixmap(rect, m_background);
 #else
 	QRect rect = event->rect();
-	painter.drawPixmap(rect, m_brushPreview.pixmap(), rect);
+	qreal dpr = devicePixelRatioF();
+	painter.drawPixmap(
+		rect, m_brushPreview.pixmap(),
+		QRect(
+			rect.x() * dpr, rect.y() * dpr, rect.width() * dpr,
+			rect.height() * dpr));
 #endif
 	if(!isEnabled()) {
 		QColor color = palette().color(QPalette::Window);
@@ -126,7 +131,7 @@ void BrushPreview::updateBackground()
 void BrushPreview::updatePreview()
 {
 #ifndef DESIGNER_PLUGIN
-	const QSize size = contentsRect().size();
+	const QSize size = contentsRect().size() * devicePixelRatioF();
 	m_brushPreview.reset(size);
 	m_brush.renderPreview(m_brushPreview, m_shape);
 	m_brushPreview.paint(m_background);
