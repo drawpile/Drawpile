@@ -24,6 +24,12 @@ void BrushPaletteDelegate::paint(
 			m_lock.lockForWrite();
 			pixmap = index.data(brushes::BrushPresetModel::ThumbnailRole)
 						 .value<QPixmap>();
+			if(!pixmap.isNull()) {
+				qreal dpr = painter->device()->devicePixelRatioF();
+				pixmap = pixmap.scaled(
+					index.data(Qt::SizeHintRole).toSize() * dpr,
+					Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+			}
 			m_cache.insert(id, pixmap);
 		} else {
 			pixmap = it.value();
@@ -31,9 +37,15 @@ void BrushPaletteDelegate::paint(
 		m_lock.unlock();
 
 		QStyleOptionViewItem opt = setOptions(index, option);
-		drawDecoration(
-			painter, option, opt.rect.marginsRemoved(QMargins(4, 4, 4, 4)),
-			pixmap);
+		QRect rect = opt.rect.marginsRemoved(QMargins(4, 4, 4, 4));
+		if(!pixmap.isNull() && rect.isValid()) {
+			if(option.state & QStyle::State_Selected) {
+				pixmap = selectedPixmap(
+					pixmap, option.palette,
+					option.state & QStyle::State_Enabled);
+			}
+			painter->drawPixmap(rect, pixmap);
+		}
 	}
 }
 

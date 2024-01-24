@@ -1115,7 +1115,7 @@ QVariant BrushPresetModel::data(const QModelIndex &index, int role) const
 	case ThumbnailRole: {
 		QPixmap pixmap;
 		if(pixmap.loadFromData(d->readPresetThumbnailById(index.internalId()))) {
-			return pixmap.scaled(iconSize(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+			return pixmap;
 		} else {
 			return QPixmap();
 		}
