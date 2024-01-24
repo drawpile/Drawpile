@@ -132,7 +132,7 @@ public:
 
     void render_square()
     {
-        int width = qMin<int>(square_size(), max_size);
+        int width = qMin<int>(square_size(), max_size) * w->devicePixelRatioF();
         init_buffer(QSize(width, width));
 
         for ( int y = 0; y < width; ++y )
@@ -154,6 +154,7 @@ public:
         QSizeF size = selector_size();
         if ( size.height() > max_size )
             size *= max_size / size.height();
+        size *= w->devicePixelRatioF();
 
         qreal ycenter = size.height()/2;
 
@@ -228,7 +229,9 @@ public:
     /// Updates the outer ring that displays the hue selector
     void render_ring()
     {
-        hue_ring = QPixmap(outer_radius()*2,outer_radius()*2);
+        qreal dpr = w->devicePixelRatioF();
+        qreal outer = outer_radius() * dpr;
+        hue_ring = QPixmap(outer*2,outer*2);
         hue_ring.fill(Qt::transparent);
         QPainter painter(&hue_ring);
         painter.setRenderHint(QPainter::Antialiasing);
@@ -246,14 +249,15 @@ public:
             gradient_hue.setColorAt(1,rainbow_from_hue(0));
         }
 
-        painter.translate(outer_radius(),outer_radius());
+        painter.translate(outer,outer);
 
         painter.setPen(Qt::NoPen);
         painter.setBrush(QBrush(gradient_hue));
-        painter.drawEllipse(QPointF(0,0),outer_radius(),outer_radius());
+        painter.drawEllipse(QPointF(0,0),outer,outer);
 
         painter.setBrush(Qt::transparent);//palette().background());
-        painter.drawEllipse(QPointF(0,0),inner_radius(),inner_radius());
+        qreal inner = inner_radius() * dpr;
+        painter.drawEllipse(QPointF(0,0),inner, inner);
     }
 
     void set_color(const QColor& c)

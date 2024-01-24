@@ -103,7 +103,8 @@ void ColorWheel::paintEvent(QPaintEvent * )
     if(p->hue_ring.isNull())
         p->render_ring();
 
-    painter.drawPixmap(-p->outer_radius(), -p->outer_radius(), p->hue_ring);
+    qreal outer = p->outer_radius();
+    painter.drawPixmap(QRect(-outer, -outer, outer * 2.0, outer * 2.0), p->hue_ring);
 
     // hue selector
     p->draw_ring_editor(p->hue, painter, Qt::black);
