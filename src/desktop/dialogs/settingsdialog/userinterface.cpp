@@ -156,8 +156,15 @@ void UserInterface::initScaling(
 	settings.bindFontSize(fontSize);
 	layout->addWidget(fontSize);
 
-	layout->addWidget(utils::formNote(tr(
-		"Changes to scaling and font size apply after you restart Drawpile.")));
+	int pointSize = font().pointSize();
+	QString currentFontSize = pointSize == -1
+								  ? tr("%1px").arg(font().pixelSize())
+								  : tr("%1pt").arg(pointSize);
+	layout->addWidget(utils::formNote(
+		tr("Changes to scaling and font size apply after you restart Drawpile. "
+		   "Current scale factor is %1%, font size is %2.")
+			.arg(qRound(devicePixelRatioF() * 100.0))
+			.arg(currentFontSize)));
 
 	settings.bindHighDpiScalingOverride(scaleFactor, &QWidget::setEnabled);
 	settings.bindOverrideFontSize(fontSize, &QWidget::setEnabled);
