@@ -439,7 +439,9 @@ void CanvasView::setZoomToFit(Qt::Orientations orientations)
 {
 	if(m_scene && m_scene->hasImage()) {
 		QWidget *vp = viewport();
-		QRectF r{QPointF{}, QSizeF{m_scene->model()->size()}};
+		qreal dpr = devicePixelRatioF();
+		QRectF r =
+			QRectF(QPointF(), QSizeF(m_scene->model()->size()) / dpr);
 		qreal xScale = qreal(vp->width()) / r.width();
 		qreal yScale = qreal(vp->height()) / r.height();
 		qreal scale;
@@ -464,7 +466,7 @@ void CanvasView::setZoomToFit(Qt::Orientations orientations)
 		m_flip = false;
 
 		QScopedValueRollback<bool> guard{m_blockNotices, true};
-		setZoomAt(scale, m_pos);
+		setZoomAt(scale, m_pos * dpr);
 		setRotation(rotate);
 		setViewMirror(mirror);
 		setViewFlip(flip);
@@ -485,7 +487,8 @@ void CanvasView::setZoomAt(qreal zoom, const QPointF &point)
 		matrix.rotate(m_rotate);
 
 		updateCanvasTransform([&] {
-			m_pos += matrix.map(point * (newZoom - m_zoom));
+			m_pos +=
+				matrix.map(point * (actualZoomFor(newZoom) - actualZoom()));
 			m_zoom = newZoom;
 		});
 
@@ -2013,7 +2016,7 @@ void CanvasView::updateOutlinePos(QPointF point)
 void CanvasView::updateOutline()
 {
 	if(m_scene) {
-		m_scene->setOutline(m_outlineSize * m_zoom, getOutlineWidth());
+		m_scene->setOutline(m_outlineSize * actualZoom(), getOutlineWidth());
 		m_scene->setOutlineTransform(getOutlinePos(), m_rotate);
 		m_scene->setOutlineVisibleInMode(
 			!m_hoveringOverHud &&
@@ -2023,19 +2026,11 @@ void CanvasView::updateOutline()
 	}
 }
 
-QRectF CanvasView::getOutlineBounds(const QPointF &point, int size)
-{
-	qreal owidth = (size + getOutlineWidth()) * m_zoom;
-	qreal orad = owidth / 2.0;
-	QPointF mapped = mapFromCanvas(point);
-	return QRectF{mapped.x() - orad, mapped.y() - orad, owidth, owidth};
-}
-
 QPointF CanvasView::getOutlinePos() const
 {
 	QPointF pos = mapFromCanvas(m_prevoutlinepoint);
 	if(!m_subpixeloutline && m_outlineSize % 2 == 0) {
-		qreal offset = m_zoom * 0.5;
+		qreal offset = actualZoom() * 0.5;
 		pos -= QPointF(offset, offset);
 	}
 	return pos;
@@ -2244,11 +2239,12 @@ QTransform CanvasView::calculateCanvasTransform() const
 }
 
 QTransform CanvasView::calculateCanvasTransformFrom(
-	const QPointF &pos, qreal zoom, qreal rotate, bool mirror, bool flip)
+	const QPointF &pos, qreal zoom, qreal rotate, bool mirror, bool flip) const
 {
 	QTransform matrix;
 	matrix.translate(-pos.x(), -pos.y());
-	matrix.scale(zoom, zoom);
+	qreal scale = actualZoomFor(zoom);
+	matrix.scale(scale, scale);
 	mirrorFlip(matrix, mirror, flip);
 	matrix.rotate(rotate);
 	return matrix;

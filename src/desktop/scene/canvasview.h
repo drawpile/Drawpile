@@ -63,6 +63,8 @@ public:
 
 	//! Get the current zoom factor
 	qreal zoom() const { return m_zoom; }
+	qreal actualZoom() const { return actualZoomFor(m_zoom); }
+	qreal actualZoomFor(qreal zoom) const { return zoom / devicePixelRatioF(); }
 
 	//! Get the current rotation angle in degrees
 	qreal rotation() const
@@ -295,8 +297,9 @@ private:
 
 	QTransform calculateCanvasTransform() const;
 
-	static QTransform calculateCanvasTransformFrom(
-		const QPointF &pos, qreal zoom, qreal rotate, bool mirror, bool flip);
+	QTransform calculateCanvasTransformFrom(
+		const QPointF &pos, qreal zoom, qreal rotate, bool mirror,
+		bool flip) const;
 
 	static void mirrorFlip(QTransform &matrix, bool mirror, bool flip);
 
@@ -305,7 +308,6 @@ private:
 
 	void updateOutlinePos(QPointF point);
 	void updateOutline();
-	QRectF getOutlineBounds(const QPointF &point, int size);
 	QPointF getOutlinePos() const;
 	qreal getOutlineWidth() const;
 
