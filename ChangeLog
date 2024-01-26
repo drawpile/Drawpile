@@ -17,6 +17,7 @@ Unreleased Version 2.2.1-pre
  * Fix: Don't allow copying, cutting and color picking from censored layers.
  * Fix: Rotate brush and fill outline along with the canvas. Thanks Bluestrings for reporting.
  * Feature: Add experimental support for high-DPI interface scaling.
+ * Fix: Don't reset opacity multiply inputs to default when loading a brush that doesn't have it set. Thanks Blozzom for reporting.
 
 2024-01-13 Version 2.2.0
  * Server Fix: Add --ssl-key-algorithm parameter to allow non-RSA SSL keys, defaulting to guessing the most common formats RSA and EC. Thanks Bluestrings for reporting.

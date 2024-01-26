@@ -699,14 +699,15 @@ QJsonObject MyPaintBrush::mappingToJson() const
 bool MyPaintBrush::loadJsonSettings(const QJsonObject &o)
 {
 	bool foundSetting = false;
-	for(const QString &mappingKey : o.keys()) {
-		int settingId =
-			mypaint_brush_setting_from_cname(mappingKey.toUtf8().constData());
-		if(settingId < 0 || settingId >= MYPAINT_BRUSH_SETTINGS_COUNT) {
-			qWarning(
-				"Unknown MyPaint brush setting '%s'", qPrintable(mappingKey));
-		} else if(loadJsonMapping(
-					  mappingKey, settingId, o[mappingKey].toObject())) {
+	for(int settingId = 0; settingId < MYPAINT_BRUSH_SETTINGS_COUNT;
+		++settingId) {
+		const MyPaintBrushSettingInfo *info =
+			mypaint_brush_setting_info(MyPaintBrushSetting(settingId));
+		QString mappingKey = QString::fromUtf8(info->cname);
+		bool loaded =
+			o.contains(mappingKey) &&
+			loadJsonMapping(mappingKey, settingId, o[mappingKey].toObject());
+		if(loaded) {
 			foundSetting = true;
 		}
 	}
@@ -734,23 +735,16 @@ bool MyPaintBrush::loadJsonMapping(
 	return foundSetting;
 }
 
-bool MyPaintBrush::loadJsonInputs(
-	const QString &mappingKey, int settingId, const QJsonObject &o)
+bool MyPaintBrush::loadJsonInputs(int settingId, const QJsonObject &o)
 {
 	bool foundSetting = false;
 
-	for(const QString &inputKey : o.keys()) {
-		int inputId =
-			mypaint_brush_input_from_cname(inputKey.toUtf8().constData());
-		if(inputId < 0 || inputId >= MYPAINT_BRUSH_INPUTS_COUNT) {
-			qWarning(
-				"Unknown MyPaint brush input '%s' to %s", qPrintable(inputKey),
-				qPrintable(mappingKey));
-		} else if(!o[inputKey].isArray()) {
-			qWarning(
-				"MyPaint input '%s' in %s is not an array",
-				qPrintable(inputKey), qPrintable(mappingKey));
-		} else {
+	for(int inputId = 0; inputId < MYPAINT_BRUSH_INPUTS_COUNT; ++inputId) {
+		const MyPaintBrushInputInfo *info =
+			mypaint_brush_input_info(MyPaintBrushInput(inputId));
+		QString inputKey = QString::fromUtf8(info->cname);
+		QJsonValue value = o[inputKey];
+		if(value.isArray()) {
 			foundSetting = true;
 			DP_MyPaintControlPoints &cps =
 				settings().mappings[settingId].inputs[inputId];
@@ -765,6 +759,8 @@ bool MyPaintBrush::loadJsonInputs(
 				cps.xvalues[i] = point.at(0).toDouble();
 				cps.yvalues[i] = point.at(1).toDouble();
 			}
+		} else {
+			settings().mappings[settingId].inputs[inputId].n = 0;
 		}
 	}
 

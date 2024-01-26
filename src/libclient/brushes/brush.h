@@ -248,8 +248,7 @@ private:
 	bool loadJsonSettings(const QJsonObject &o);
 	bool loadJsonMapping(
 		const QString &mappingKey, int settingId, const QJsonObject &o);
-	bool loadJsonInputs(
-		const QString &mappingKey, int settingId, const QJsonObject &o);
+	bool loadJsonInputs(int settingId, const QJsonObject &o);
 };
 
 class ActiveBrush final {
