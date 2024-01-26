@@ -15,7 +15,7 @@ Unreleased Version 2.2.1-pre
  * Fix: Properly refer to "layer" and "layer group" in layer actions depending on what is selected. Thanks Momo for reporting.
  * Fix: Save censored layers into PSDs properly. Thanks Blozzom for reporting.
  * Fix: Don't allow copying, cutting and color picking from censored layers.
- * Fix: Rotate brush and fill outline along with the canvas. Thanks Bluestrings for reporting.
+ * Fix: Rotate brush and fill outline along with the canvas. Thanks Bluestrings for reporting and xxxx for helping solve some issues with it.
  * Feature: Add experimental support for high-DPI interface scaling.
  * Fix: Don't reset opacity multiply inputs to default when loading a brush that doesn't have it set. Thanks Blozzom for reporting.
 

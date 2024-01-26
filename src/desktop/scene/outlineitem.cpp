@@ -49,7 +49,7 @@ void OutlineItem::setOnCanvas(bool onCanvas)
 void OutlineItem::paint(
 	QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
-	if(isVisible()) {
+	if(m_actuallyVisible) {
 		painter->save();
 		QPen pen(QColor(96, 191, 96));
 		pen.setCosmetic(true);
@@ -67,8 +67,16 @@ void OutlineItem::paint(
 
 void OutlineItem::updateVisibility()
 {
-	bool visible = m_onCanvas && m_visibleInMode && m_outlineSize > 0.0 &&
-				   m_outlineWidth > 0.0 && m_bounds.isValid();
+	m_actuallyVisible = m_onCanvas && m_visibleInMode && m_outlineSize > 0.0 &&
+						m_outlineWidth > 0.0 && m_bounds.isValid();
+#ifdef Q_OS_WIN
+	// On some Windows systems and with Windows Ink enabled, having the outline
+	// not visible causes a rectangular region around the cursor to flicker.
+	// Having the outline item visible and updating the scene gets rid of it.
+	bool visible = true;
+#else
+	bool visible = m_actuallyVisible;
+#endif
 	setVisible(visible);
 	QRectF outerBounds = visible ? m_bounds.marginsAdded(QMarginsF(
 									   m_outlineWidth, m_outlineWidth,

@@ -40,6 +40,7 @@ private:
 	qreal m_outlineWidth = 1.0;
 	bool m_square = false;
 	bool m_visibleInMode = true;
+	bool m_actuallyVisible = true;
 	bool m_onCanvas = false;
 };
 
