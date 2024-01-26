@@ -728,7 +728,7 @@ bool MyPaintBrush::loadJsonMapping(
 
 	if(!o["inputs"].isObject()) {
 		qWarning("Bad MyPaint 'inputs' in %s", qPrintable(mappingKey));
-	} else if(loadJsonInputs(mappingKey, settingId, o["inputs"].toObject())) {
+	} else if(loadJsonInputs(settingId, o["inputs"].toObject())) {
 		foundSetting = true;
 	}
 
