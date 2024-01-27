@@ -69,6 +69,18 @@ impl Image {
             return Err(anyhow!("Not enough pixels"));
         }
 
+        if width == scale_width && height == scale_height {
+            let img = unsafe { DP_image_new(width as i32, height as i32) };
+            unsafe {
+                copy_nonoverlapping(
+                    pixels.as_ptr(),
+                    DP_image_pixels(img).cast(),
+                    width * height,
+                )
+            }
+            return Ok(Image { image: img });
+        }
+
         let xratio = scale_width as f64 / width as f64;
         let yratio = scale_height as f64 / height as f64;
         let (target_width, target_height) = if (xratio - yratio).abs() < 0.01 {
