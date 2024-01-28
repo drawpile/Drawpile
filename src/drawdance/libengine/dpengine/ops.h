@@ -21,10 +21,10 @@
  */
 #ifndef DPENGINE_OPS_H
 #define DPENGINE_OPS_H
-#include "canvas_state.h"
 #include "pixels.h"
 #include <dpcommon/common.h>
 
+typedef struct DP_CanvasState DP_CanvasState;
 typedef struct DP_DrawContext DP_DrawContext;
 typedef struct DP_Image DP_Image;
 typedef struct DP_KeyFrameLayer DP_KeyFrameLayer;
@@ -32,6 +32,7 @@ typedef struct DP_PaintDrawDabsParams DP_PaintDrawDabsParams;
 typedef struct DP_Quad DP_Quad;
 typedef struct DP_Rect DP_Rect;
 typedef struct DP_Tile DP_Tile;
+typedef struct DP_UserCursors DP_UserCursors;
 
 struct DP_LayerOrderPair {
     int child_count;
@@ -76,34 +77,38 @@ DP_CanvasState *DP_ops_layer_tree_delete(DP_CanvasState *cs, DP_DrawContext *dc,
 DP_CanvasState *DP_ops_layer_visibility(DP_CanvasState *cs, int layer_id,
                                         bool visible);
 
-DP_CanvasStateChange DP_ops_put_image(DP_CanvasState *cs,
-                                      unsigned int context_id, int layer_id,
-                                      int blend_mode, int x, int y, int width,
-                                      int height, const unsigned char *image,
-                                      size_t image_size);
+DP_CanvasState *DP_ops_put_image(DP_CanvasState *cs,
+                                 DP_UserCursors *ucs_or_null,
+                                 unsigned int context_id, int layer_id,
+                                 int blend_mode, int x, int y, int width,
+                                 int height, const unsigned char *image,
+                                 size_t image_size);
 
-DP_CanvasStateChange DP_ops_move_region(DP_CanvasState *cs, DP_DrawContext *dc,
-                                        unsigned int context_id,
-                                        int src_layer_id, int dst_layer_id,
-                                        const DP_Rect *src_rect,
-                                        const DP_Quad *dst_quad,
-                                        int interpolation, DP_Image *mask);
+DP_CanvasState *DP_ops_move_region(DP_CanvasState *cs, DP_DrawContext *dc,
+                                   DP_UserCursors *ucs_or_null,
+                                   unsigned int context_id, int src_layer_id,
+                                   int dst_layer_id, const DP_Rect *src_rect,
+                                   const DP_Quad *dst_quad, int interpolation,
+                                   DP_Image *mask);
 
-DP_CanvasStateChange DP_ops_move_rect(DP_CanvasState *cs,
-                                      unsigned int context_id, int src_layer_id,
-                                      int dst_layer_id, const DP_Rect *src_rect,
-                                      int dst_x, int dst_y, DP_Image *mask);
+DP_CanvasState *DP_ops_move_rect(DP_CanvasState *cs,
+                                 DP_UserCursors *ucs_or_null,
+                                 unsigned int context_id, int src_layer_id,
+                                 int dst_layer_id, const DP_Rect *src_rect,
+                                 int dst_x, int dst_y, DP_Image *mask);
 
-DP_CanvasStateChange DP_ops_fill_rect(DP_CanvasState *cs,
-                                      unsigned int context_id, int layer_id,
-                                      int blend_mode, int left, int top,
-                                      int right, int bottom, DP_UPixel15 pixel);
+DP_CanvasState *DP_ops_fill_rect(DP_CanvasState *cs,
+                                 DP_UserCursors *ucs_or_null,
+                                 unsigned int context_id, int layer_id,
+                                 int blend_mode, int left, int top, int right,
+                                 int bottom, DP_UPixel15 pixel);
 
 DP_CanvasState *DP_ops_put_tile(DP_CanvasState *cs, DP_Tile *tile, int layer_id,
                                 int sublayer_id, int x, int y, int repeat);
 
-DP_CanvasStateChange DP_ops_pen_up(DP_CanvasState *cs, DP_DrawContext *dc,
-                                   unsigned int context_id);
+DP_CanvasState *DP_ops_pen_up(DP_CanvasState *cs, DP_DrawContext *dc,
+                              DP_UserCursors *ucs_or_null,
+                              unsigned int context_id);
 
 DP_CanvasState *DP_ops_annotation_create(DP_CanvasState *cs, int annotation_id,
                                          int x, int y, int width, int height);
@@ -118,9 +123,10 @@ DP_CanvasState *DP_ops_annotation_edit(DP_CanvasState *cs, int annotation_id,
 
 DP_CanvasState *DP_ops_annotation_delete(DP_CanvasState *cs, int annotation_id);
 
-DP_CanvasStateChange
-DP_ops_draw_dabs(DP_CanvasState *cs, DP_DrawContext *dc,
-                 bool (*next)(void *, DP_PaintDrawDabsParams *), void *user);
+DP_CanvasState *DP_ops_draw_dabs(DP_CanvasState *cs, DP_DrawContext *dc,
+                                 DP_UserCursors *ucs_or_null,
+                                 bool (*next)(void *, DP_PaintDrawDabsParams *),
+                                 void *user);
 
 DP_CanvasState *DP_ops_track_create(DP_CanvasState *cs, int new_id,
                                     int insert_id, int source_id,

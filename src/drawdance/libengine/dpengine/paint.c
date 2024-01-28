@@ -35,6 +35,7 @@
 #include "draw_context.h"
 #include "layer_content.h"
 #include "pixels.h"
+#include "user_cursors.h"
 #include <dpcommon/atomic.h>
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
@@ -290,9 +291,9 @@ static void get_classic_offset_stamp(DP_BrushStamp *offset_stamp,
     offset_mask(offset_stamp, mask_stamp, xfrac, yfrac);
 }
 
-static DP_UserCursor draw_dabs_classic(DP_DrawContext *dc,
-                                       DP_PaintDrawDabsParams *params,
-                                       DP_TransientLayerContent *tlc)
+static void draw_dabs_classic(DP_DrawContext *dc, DP_UserCursors *ucs_or_null,
+                              DP_PaintDrawDabsParams *params,
+                              DP_TransientLayerContent *tlc)
 {
     unsigned int context_id = params->context_id;
     DP_UPixel15 pixel = DP_upixel15_from_color(params->color);
@@ -329,8 +330,11 @@ static DP_UserCursor draw_dabs_classic(DP_DrawContext *dc,
         last_y = y;
     }
 
-    return (DP_UserCursor){DP_USER_CURSOR_FLAG_VALID, context_id,
-                           params->layer_id, last_x / 4, last_y / 4};
+    if (ucs_or_null) {
+        DP_user_cursors_activate(ucs_or_null, context_id);
+        DP_user_cursors_move(ucs_or_null, context_id, params->layer_id,
+                             last_x / 4, last_y / 4);
+    }
 }
 
 
@@ -367,10 +371,10 @@ static void get_square_pixel_mask_stamp(DP_BrushStamp *stamp, int diameter)
     }
 }
 
-static DP_UserCursor draw_dabs_pixel(DP_DrawContext *dc,
-                                     DP_PaintDrawDabsParams *params,
-                                     DP_TransientLayerContent *tlc,
-                                     void (*get_stamp)(DP_BrushStamp *, int))
+static void draw_dabs_pixel(DP_DrawContext *dc, DP_UserCursors *ucs_or_null,
+                            DP_PaintDrawDabsParams *params,
+                            DP_TransientLayerContent *tlc,
+                            void (*get_stamp)(DP_BrushStamp *, int))
 {
     unsigned int context_id = params->context_id;
     DP_UPixel15 pixel = DP_upixel15_from_color(params->color);
@@ -410,8 +414,11 @@ static DP_UserCursor draw_dabs_pixel(DP_DrawContext *dc,
         last_y = y;
     }
 
-    return (DP_UserCursor){DP_USER_CURSOR_FLAG_VALID, context_id,
-                           params->layer_id, last_x, last_y};
+    if (ucs_or_null) {
+        DP_user_cursors_activate(ucs_or_null, context_id);
+        DP_user_cursors_move(ucs_or_null, context_id, params->layer_id, last_x,
+                             last_y);
+    }
 }
 
 
@@ -831,10 +838,10 @@ static void get_mypaint_brush_stamp_offsets(DP_BrushStamp *stamp, float x,
     stamp->left = DP_float_to_int(x - radius + 0.5f);
 }
 
-static void get_mypaint_brush_stamp(DP_BrushStamp *stamp, DP_DrawContext *dc,
-                                    int raw_x, int raw_y, uint16_t raw_diameter,
-                                    uint8_t raw_hardness,
-                                    uint8_t raw_aspect_ratio, uint8_t raw_angle)
+static float
+get_mypaint_brush_stamp(DP_BrushStamp *stamp, DP_DrawContext *dc, int raw_x,
+                        int raw_y, uint16_t raw_diameter, uint8_t raw_hardness,
+                        uint8_t raw_aspect_ratio, uint8_t raw_angle)
 {
     float x = DP_int_to_float(raw_x) / 4.0f;
     float y = DP_int_to_float(raw_y) / 4.0f;
@@ -883,6 +890,7 @@ static void get_mypaint_brush_stamp(DP_BrushStamp *stamp, DP_DrawContext *dc,
     get_mypaint_brush_stamp_offsets(stamp, x, y, radius);
     stamp->diameter = idia;
     stamp->data = mask;
+    return radius;
 }
 
 // End of libmypaint-based code.
@@ -935,9 +943,9 @@ static void apply_mypaint_dab(DP_TransientLayerContent *tlc,
     }
 }
 
-static DP_UserCursor draw_dabs_mypaint(DP_DrawContext *dc,
-                                       DP_PaintDrawDabsParams *params,
-                                       DP_TransientLayerContent *tlc)
+static void draw_dabs_mypaint(DP_DrawContext *dc, DP_UserCursors *ucs_or_null,
+                              DP_PaintDrawDabsParams *params,
+                              DP_TransientLayerContent *tlc)
 {
     unsigned int context_id = params->context_id;
     bool indirect = params->indirect;
@@ -966,11 +974,17 @@ static DP_UserCursor draw_dabs_mypaint(DP_DrawContext *dc,
     uint8_t last_angle = DP_mypaint_dab_angle(first_dab);
 
     DP_BrushStamp stamp;
-    get_mypaint_brush_stamp(&stamp, dc, last_x, last_y, last_size,
-                            last_hardness, last_aspect_ratio, last_angle);
+    float radius =
+        get_mypaint_brush_stamp(&stamp, dc, last_x, last_y, last_size,
+                                last_hardness, last_aspect_ratio, last_angle);
     apply_mypaint_dab(tlc, context_id, indirect, pixel, normal, lock_alpha,
                       colorize, posterize, posterize_num, &stamp,
                       DP_mypaint_dab_opacity(first_dab));
+    if (ucs_or_null) {
+        DP_user_cursors_activate(ucs_or_null, context_id);
+        DP_user_cursors_move_smooth(ucs_or_null, context_id, params->layer_id,
+                                    last_x / 4, last_y / 4, radius);
+    }
 
     for (int i = 1; i < dab_count; ++i) {
         const DP_MyPaintDab *dab = DP_mypaint_dab_at(dabs, i);
@@ -986,8 +1000,8 @@ static DP_UserCursor draw_dabs_mypaint(DP_DrawContext *dc,
                            || angle != last_angle;
 
         if (needs_new_mask) {
-            get_mypaint_brush_stamp(&stamp, dc, x, y, size, hardness,
-                                    aspect_ratio, angle);
+            radius = get_mypaint_brush_stamp(&stamp, dc, x, y, size, hardness,
+                                             aspect_ratio, angle);
             last_hardness = hardness;
             last_size = size;
             last_aspect_ratio = aspect_ratio;
@@ -996,7 +1010,7 @@ static DP_UserCursor draw_dabs_mypaint(DP_DrawContext *dc,
         else {
             float xf = DP_int_to_float(x) / 4.0f;
             float yf = DP_int_to_float(y) / 4.0f;
-            float radius = DP_int_to_float(size) / 256.0f / 2.0f;
+            radius = DP_int_to_float(size) / 256.0f / 2.0f;
             get_mypaint_brush_stamp_offsets(&stamp, xf, yf, radius);
         }
 
@@ -1004,19 +1018,20 @@ static DP_UserCursor draw_dabs_mypaint(DP_DrawContext *dc,
                           colorize, posterize, posterize_num, &stamp,
                           DP_mypaint_dab_opacity(dab));
 
+        if (ucs_or_null) {
+            DP_user_cursors_move_smooth(ucs_or_null, context_id,
+                                        params->layer_id, x / 4, y / 4, radius);
+        }
+
         last_x = x;
         last_y = y;
     }
-
-    return (DP_UserCursor){
-        DP_USER_CURSOR_FLAG_VALID | DP_USER_CURSOR_FLAG_MYPAINT, context_id,
-        params->layer_id, last_x / 4, last_y / 4};
 }
 
 
-DP_UserCursor DP_paint_draw_dabs(DP_DrawContext *dc,
-                                 DP_PaintDrawDabsParams *params,
-                                 DP_TransientLayerContent *tlc)
+void DP_paint_draw_dabs(DP_DrawContext *dc, DP_UserCursors *ucs_or_null,
+                        DP_PaintDrawDabsParams *params,
+                        DP_TransientLayerContent *tlc)
 {
     DP_ASSERT(dc);
     DP_ASSERT(params);
@@ -1025,13 +1040,19 @@ DP_UserCursor DP_paint_draw_dabs(DP_DrawContext *dc,
     int type = params->type;
     switch (type) {
     case DP_MSG_DRAW_DABS_CLASSIC:
-        return draw_dabs_classic(dc, params, tlc);
+        draw_dabs_classic(dc, ucs_or_null, params, tlc);
+        break;
     case DP_MSG_DRAW_DABS_PIXEL:
-        return draw_dabs_pixel(dc, params, tlc, get_round_pixel_mask_stamp);
+        draw_dabs_pixel(dc, ucs_or_null, params, tlc,
+                        get_round_pixel_mask_stamp);
+        break;
     case DP_MSG_DRAW_DABS_PIXEL_SQUARE:
-        return draw_dabs_pixel(dc, params, tlc, get_square_pixel_mask_stamp);
+        draw_dabs_pixel(dc, ucs_or_null, params, tlc,
+                        get_square_pixel_mask_stamp);
+        break;
     case DP_MSG_DRAW_DABS_MYPAINT:
-        return draw_dabs_mypaint(dc, params, tlc);
+        draw_dabs_mypaint(dc, ucs_or_null, params, tlc);
+        break;
     default:
         DP_UNREACHABLE();
     }

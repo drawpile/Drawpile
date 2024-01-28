@@ -24,6 +24,7 @@
 #include "affected_area.h"
 #include "canvas_state.h"
 #include "recorder.h"
+#include "user_cursors.h"
 #include <dpcommon/common.h>
 
 typedef struct DP_DrawContext DP_DrawContext;
@@ -56,11 +57,6 @@ typedef struct DP_ForkEntry {
     DP_Message *msg;
     DP_AffectedArea aa;
 } DP_ForkEntry;
-
-typedef struct DP_UserCursorBuffer {
-    int count;
-    DP_UserCursor cursors[DP_USER_CURSOR_COUNT];
-} DP_UserCursorBuffer;
 
 typedef void (*DP_CanvasHistorySavePointFn)(void *user, DP_CanvasState *cs,
                                             bool snapshot_requested);

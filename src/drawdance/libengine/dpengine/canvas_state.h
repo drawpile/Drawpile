@@ -37,6 +37,7 @@ typedef struct DP_Message DP_Message;
 typedef struct DP_Rect DP_Rect;
 typedef struct DP_Tile DP_Tile;
 typedef struct DP_Timeline DP_Timeline;
+typedef struct DP_UserCursors DP_UserCursors;
 typedef struct DP_ViewModeFilter DP_ViewModeFilter;
 
 
@@ -45,25 +46,7 @@ typedef struct DP_ViewModeFilter DP_ViewModeFilter;
 #define DP_FLAT_IMAGE_RENDER_FLAGS \
     (DP_FLAT_IMAGE_INCLUDE_BACKGROUND | DP_FLAT_IMAGE_INCLUDE_SUBLAYERS)
 
-#define DP_USER_CURSOR_FLAG_NONE     0x0u
-#define DP_USER_CURSOR_FLAG_VALID    0x1u
-#define DP_USER_CURSOR_FLAG_MYPAINT  0x2u
-#define DP_USER_CURSOR_FLAG_PEN_UP   0x4u
-#define DP_USER_CURSOR_FLAG_PEN_DOWN 0x8u
-
 typedef struct DP_CanvasState DP_CanvasState;
-
-typedef struct DP_UserCursor {
-    unsigned int flags;
-    unsigned int context_id;
-    int layer_id;
-    int x, y;
-} DP_UserCursor;
-
-typedef struct DP_CanvasStateChange {
-    DP_CanvasState *cs;
-    DP_UserCursor user_cursor;
-} DP_CanvasStateChange;
 
 #ifdef DP_NO_STRICT_ALIASING
 typedef struct DP_TransientCanvasState DP_TransientCanvasState;
@@ -84,18 +67,6 @@ typedef struct DP_LayerRoutes DP_TransientLayerRoutes;
 typedef struct DP_Tile DP_TransientTile;
 typedef struct DP_Timeline DP_TransientTimeline;
 #endif
-
-
-DP_INLINE DP_CanvasStateChange DP_canvas_state_change_of(DP_CanvasState *cs)
-{
-    DP_CanvasStateChange change = {cs, {DP_USER_CURSOR_FLAG_NONE, 0, 0, 0, 0}};
-    return change;
-}
-
-DP_INLINE DP_CanvasStateChange DP_canvas_state_change_null(void)
-{
-    return DP_canvas_state_change_of(DP_NULLPTR);
-}
 
 
 DP_CanvasState *DP_canvas_state_new(void);
@@ -143,13 +114,14 @@ int DP_canvas_state_framerate(DP_CanvasState *cs);
 bool DP_canvas_state_same_frame(DP_CanvasState *cs, int frame_index_a,
                                 int frame_index_b);
 
-DP_CanvasStateChange
-DP_canvas_state_handle(DP_CanvasState *cs, DP_DrawContext *dc, DP_Message *msg);
+DP_CanvasState *DP_canvas_state_handle(DP_CanvasState *cs, DP_DrawContext *dc,
+                                       DP_UserCursors *ucs_or_null,
+                                       DP_Message *msg);
 
-DP_CanvasStateChange DP_canvas_state_handle_multidab(DP_CanvasState *cs,
-                                                     DP_DrawContext *dc,
-                                                     int count,
-                                                     DP_Message **msgs);
+DP_CanvasState *DP_canvas_state_handle_multidab(DP_CanvasState *cs,
+                                                DP_DrawContext *dc,
+                                                DP_UserCursors *ucs_or_null,
+                                                int count, DP_Message **msgs);
 
 int DP_canvas_state_search_change_bounds(DP_CanvasState *cs,
                                          unsigned int context_id, int *out_x,

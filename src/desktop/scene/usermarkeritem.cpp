@@ -195,7 +195,7 @@ void UserMarkerItem::animationStep(qreal dt)
 {
 	if(isVisible()) {
 		// Smoothing to avoid crazy jerking with spread out MyPaint brushes.
-		setPos(QLineF(pos(), m_targetPos).pointAt(dt * 10.0));
+		setPos(QLineF(pos(), m_targetPos).pointAt(qMin(dt * 20.0, 1.0)));
 		if(m_fadeout>0) {
 			m_fadeout -= dt;
 			if(m_fadeout <= 0.0) {

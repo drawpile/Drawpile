@@ -39,6 +39,7 @@ dp_target_sources(dpengine
     dpengine/tile.c
     dpengine/tile_iterator.c
     dpengine/timeline.c
+    dpengine/user_cursors.c
     dpengine/view_mode.c
     dpengine/track.c
     dpengine/view_mode.c
@@ -82,6 +83,7 @@ dp_target_sources(dpengine
     dpengine/tile_iterator.h
     dpengine/timeline.h
     dpengine/track.h
+    dpengine/user_cursors.h
     dpengine/view_mode.h
 )
 

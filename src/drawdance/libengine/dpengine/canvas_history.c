@@ -54,27 +54,11 @@ typedef enum DP_ForkAction {
     DP_FORK_ACTION_ROLLBACK,
 } DP_ForkAction;
 
-typedef struct DP_Cursor {
-    unsigned int flags;
-    int layer_id;
-    int x, y;
-} DP_Cursor;
-
 struct DP_CanvasHistory {
     DP_Mutex *mutex;
     DP_CanvasState *current_state;
-    // User cursor changes are tracked in this perfect-hash-table-ish structure.
-    // The count says how many elements the user_ids array has. The other two
-    // arrays are keyed by user id, where active_by_user says if the user is
-    // present in the user_ids array and the cursors_by_user is the actual
-    // cursor locations. This structure results in very little code to deal with
-    // user cursors, since we can do pretty much everything with direct lookups.
-    struct {
-        int count;
-        uint8_t user_ids[DP_USER_CURSOR_COUNT];
-        bool active_by_user[DP_USER_CURSOR_COUNT];
-        DP_Cursor cursors_by_user[DP_USER_CURSOR_COUNT];
-    } cursors;
+    DP_UserCursors ucs;
+    DP_EffectiveUserCursors eucs;
     int undo_depth_limit;
     int offset;
     int capacity;
@@ -515,6 +499,7 @@ DP_CanvasHistory *DP_canvas_history_new_inc(
         mutex,
         cs,
         {0},
+        {0},
         DP_UNDO_DEPTH_DEFAULT,
         0,
         INITIAL_CAPACITY,
@@ -528,6 +513,8 @@ DP_CanvasHistory *DP_canvas_history_new_inc(
         DP_ATOMIC_INIT(0),
         {want_dump, DP_strdup(dump_dir), NULL, 0, NULL},
     };
+    DP_user_cursors_init(&ch->ucs);
+    DP_effective_user_cursors_init(&ch->eucs);
     DP_affected_indirect_areas_clear(&ch->aia);
 
     dump_init(ch);
@@ -620,21 +607,6 @@ DP_CanvasState *DP_canvas_history_get(DP_CanvasHistory *ch)
     return cs;
 }
 
-static void retrieve_user_cursors(DP_CanvasHistory *ch,
-                                  DP_UserCursorBuffer *out_user_cursors)
-{
-    int count = ch->cursors.count;
-    ch->cursors.count = 0;
-    for (int i = 0; i < count; ++i) {
-        unsigned int context_id = ch->cursors.user_ids[i];
-        DP_Cursor *cursor = &ch->cursors.cursors_by_user[context_id];
-        ch->cursors.active_by_user[context_id] = false;
-        out_user_cursors->cursors[i] = (DP_UserCursor){
-            cursor->flags, context_id, cursor->layer_id, cursor->x, cursor->y};
-    }
-    out_user_cursors->count = count;
-}
-
 DP_CanvasState *
 DP_canvas_history_compare_and_get(DP_CanvasHistory *ch, DP_CanvasState *prev,
                                   DP_UserCursorBuffer *out_user_cursors)
@@ -650,7 +622,7 @@ DP_canvas_history_compare_and_get(DP_CanvasHistory *ch, DP_CanvasState *prev,
     else {
         cs = DP_canvas_state_incref(next);
         if (out_user_cursors) {
-            retrieve_user_cursors(ch, out_user_cursors);
+            DP_effective_user_cursors_retrieve(&ch->eucs, out_user_cursors);
         }
     }
     DP_MUTEX_MUST_UNLOCK(mutex);
@@ -667,56 +639,16 @@ static void set_current_state_noinc(DP_CanvasHistory *ch, DP_CanvasState *next)
     DP_canvas_state_decref(current);
 }
 
-static void set_current_state_with_cursor_noinc(DP_CanvasHistory *ch,
-                                                DP_CanvasState *next,
-                                                DP_UserCursor *uc)
+static void set_current_state_with_cursors_noinc(DP_CanvasHistory *ch,
+                                                 DP_CanvasState *next)
 {
-    DP_ASSERT(uc->context_id < 256);
-    unsigned int context_id = uc->context_id;
-    if (context_id == 0) {
-        set_current_state_noinc(ch, next);
-    }
-    else {
-        DP_CanvasState *current = ch->current_state;
-        DP_Mutex *mutex = ch->mutex;
-        DP_MUTEX_MUST_LOCK(mutex);
-        ch->current_state = next;
-        if (ch->cursors.active_by_user[context_id]) {
-            DP_Cursor *cursor = &ch->cursors.cursors_by_user[context_id];
-            unsigned int flags = uc->flags;
-
-            if (flags & DP_USER_CURSOR_FLAG_VALID) {
-                cursor->flags |= DP_USER_CURSOR_FLAG_VALID;
-                cursor->layer_id = uc->layer_id;
-                cursor->x = uc->x;
-                cursor->y = uc->y;
-                if (cursor->flags & DP_USER_CURSOR_FLAG_PEN_UP) {
-                    cursor->flags |= DP_USER_CURSOR_FLAG_PEN_DOWN;
-                }
-            }
-
-            if (flags & DP_USER_CURSOR_FLAG_PEN_UP) {
-                cursor->flags |= DP_USER_CURSOR_FLAG_PEN_UP;
-            }
-            else {
-                if (flags & DP_USER_CURSOR_FLAG_MYPAINT) {
-                    cursor->flags |= DP_USER_CURSOR_FLAG_MYPAINT;
-                }
-                else {
-                    cursor->flags &= ~DP_USER_CURSOR_FLAG_MYPAINT;
-                }
-            }
-        }
-        else {
-            ch->cursors.active_by_user[context_id] = true;
-            ch->cursors.user_ids[ch->cursors.count++] =
-                DP_uint_to_uint8(context_id);
-            ch->cursors.cursors_by_user[context_id] =
-                (DP_Cursor){uc->flags, uc->layer_id, uc->x, uc->y};
-        }
-        DP_MUTEX_MUST_UNLOCK(mutex);
-        DP_canvas_state_decref(current);
-    }
+    DP_CanvasState *current = ch->current_state;
+    DP_Mutex *mutex = ch->mutex;
+    DP_MUTEX_MUST_LOCK(mutex);
+    ch->current_state = next;
+    DP_effective_user_cursors_apply(&ch->eucs, &ch->ucs);
+    DP_MUTEX_MUST_UNLOCK(mutex);
+    DP_canvas_state_decref(current);
 }
 
 
@@ -783,8 +715,7 @@ static DP_CanvasState *flush_replay_buffer(DP_CanvasHistory *ch,
                                            DP_DrawContext *dc)
 {
     DP_CanvasState *next = DP_canvas_state_handle_multidab(
-                               cs, dc, ch->replay.used, ch->replay.buffer)
-                               .cs;
+        cs, dc, NULL, ch->replay.used, ch->replay.buffer);
     ch->replay.used = 0;
     if (next) {
         DP_canvas_state_decref(cs);
@@ -817,7 +748,7 @@ static DP_CanvasState *replay_drawing_command_dec(DP_CanvasHistory *ch,
         if (ch->replay.used != 0) {
             cs = flush_replay_buffer(ch, cs, dc);
         }
-        DP_CanvasState *next = DP_canvas_state_handle(cs, dc, msg).cs;
+        DP_CanvasState *next = DP_canvas_state_handle(cs, dc, NULL, msg);
         if (next) {
             DP_canvas_state_decref(cs);
             return next;
@@ -1363,10 +1294,10 @@ static bool handle_undo(DP_CanvasHistory *ch, DP_DrawContext *dc,
 static bool handle_drawing_command(DP_CanvasHistory *ch, DP_DrawContext *dc,
                                    DP_Message *msg)
 {
-    DP_CanvasStateChange change =
-        DP_canvas_state_handle(ch->current_state, dc, msg);
-    if (change.cs) {
-        set_current_state_with_cursor_noinc(ch, change.cs, &change.user_cursor);
+    DP_CanvasState *cs =
+        DP_canvas_state_handle(ch->current_state, dc, &ch->ucs, msg);
+    if (cs) {
+        set_current_state_with_cursors_noinc(ch, cs);
         return true;
     }
     else {
@@ -1628,11 +1559,10 @@ void DP_canvas_history_handle_multidab_dec(DP_CanvasHistory *ch,
     validate_history(ch, true);
 
     if (offset != count) {
-        DP_CanvasStateChange change = DP_canvas_state_handle_multidab(
-            ch->current_state, dc, count - offset, msgs + offset);
-        if (change.cs) {
-            set_current_state_with_cursor_noinc(ch, change.cs,
-                                                &change.user_cursor);
+        DP_CanvasState *cs = DP_canvas_state_handle_multidab(
+            ch->current_state, dc, &ch->ucs, count - offset, msgs + offset);
+        if (cs) {
+            set_current_state_with_cursors_noinc(ch, cs);
         }
     }
 
@@ -1658,10 +1588,10 @@ void DP_canvas_history_handle_local_multidab_dec(DP_CanvasHistory *ch,
         push_fork_entry_noinc(ch, msgs[i]);
     }
 
-    DP_CanvasStateChange change =
-        DP_canvas_state_handle_multidab(ch->current_state, dc, count, msgs);
-    if (change.cs) {
-        set_current_state_with_cursor_noinc(ch, change.cs, &change.user_cursor);
+    DP_CanvasState *cs = DP_canvas_state_handle_multidab(ch->current_state, dc,
+                                                         &ch->ucs, count, msgs);
+    if (cs) {
+        set_current_state_with_cursors_noinc(ch, cs);
     }
 
     validate_history(ch, true);

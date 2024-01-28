@@ -466,7 +466,7 @@ void CanvasScene::userCursorMoved(
 			item->setTargetPos(
 				x, y,
 				item->clearPenUp() || (penUp && penDown) ||
-					!(flags & DP_USER_CURSOR_FLAG_MYPAINT));
+					!(flags & DP_USER_CURSOR_FLAG_INTERPOLATE));
 			item->fadein();
 		}
 

@@ -10,11 +10,6 @@ pub const DP_TILE_LENGTH: u32 = 4096;
 pub const DP_FLAT_IMAGE_INCLUDE_BACKGROUND: u32 = 1;
 pub const DP_FLAT_IMAGE_INCLUDE_SUBLAYERS: u32 = 2;
 pub const DP_FLAT_IMAGE_RENDER_FLAGS: u32 = 3;
-pub const DP_USER_CURSOR_FLAG_NONE: u32 = 0;
-pub const DP_USER_CURSOR_FLAG_VALID: u32 = 1;
-pub const DP_USER_CURSOR_FLAG_MYPAINT: u32 = 2;
-pub const DP_USER_CURSOR_FLAG_PEN_UP: u32 = 4;
-pub const DP_USER_CURSOR_FLAG_PEN_DOWN: u32 = 8;
 pub const DP_DOCUMENT_METADATA_DPIX_DEFAULT: u32 = 72;
 pub const DP_DOCUMENT_METADATA_DPIY_DEFAULT: u32 = 72;
 pub const DP_DOCUMENT_METADATA_FRAMERATE_DEFAULT: u32 = 24;
@@ -28,9 +23,14 @@ pub const DP_DRAW_CONTEXT_ID_COUNT: u32 = 256;
 pub const DP_KEY_FRAME_LAYER_HIDDEN: u32 = 1;
 pub const DP_KEY_FRAME_LAYER_REVEALED: u32 = 2;
 pub const DP_AFFECTED_INDIRECT_AREAS_COUNT: u32 = 256;
+pub const DP_USER_CURSOR_COUNT: u32 = 256;
+pub const DP_USER_CURSOR_FLAG_NONE: u32 = 0;
+pub const DP_USER_CURSOR_FLAG_VALID: u32 = 1;
+pub const DP_USER_CURSOR_FLAG_MYPAINT: u32 = 2;
+pub const DP_USER_CURSOR_FLAG_PEN_UP: u32 = 4;
+pub const DP_USER_CURSOR_FLAG_PEN_DOWN: u32 = 8;
 pub const DP_CANVAS_HISTORY_UNDO_DEPTH_MIN: u32 = 3;
 pub const DP_CANVAS_HISTORY_UNDO_DEPTH_MAX: u32 = 255;
-pub const DP_USER_CURSOR_COUNT: u32 = 256;
 pub const DP_LOAD_FLAG_NONE: u32 = 0;
 pub const DP_LOAD_FLAG_SINGLE_THREAD: u32 = 1;
 pub const DP_PREVIEW_BASE_SUBLAYER_ID: i32 = -100;
@@ -1547,121 +1547,6 @@ pub struct DP_Timeline {
 pub struct DP_CanvasState {
     _unused: [u8; 0],
 }
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct DP_UserCursor {
-    pub flags: ::std::os::raw::c_uint,
-    pub context_id: ::std::os::raw::c_uint,
-    pub layer_id: ::std::os::raw::c_int,
-    pub x: ::std::os::raw::c_int,
-    pub y: ::std::os::raw::c_int,
-}
-#[test]
-fn bindgen_test_layout_DP_UserCursor() {
-    const UNINIT: ::std::mem::MaybeUninit<DP_UserCursor> = ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::std::mem::size_of::<DP_UserCursor>(),
-        20usize,
-        concat!("Size of: ", stringify!(DP_UserCursor))
-    );
-    assert_eq!(
-        ::std::mem::align_of::<DP_UserCursor>(),
-        4usize,
-        concat!("Alignment of ", stringify!(DP_UserCursor))
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).flags) as usize - ptr as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(DP_UserCursor),
-            "::",
-            stringify!(flags)
-        )
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).context_id) as usize - ptr as usize },
-        4usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(DP_UserCursor),
-            "::",
-            stringify!(context_id)
-        )
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).layer_id) as usize - ptr as usize },
-        8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(DP_UserCursor),
-            "::",
-            stringify!(layer_id)
-        )
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).x) as usize - ptr as usize },
-        12usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(DP_UserCursor),
-            "::",
-            stringify!(x)
-        )
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).y) as usize - ptr as usize },
-        16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(DP_UserCursor),
-            "::",
-            stringify!(y)
-        )
-    );
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct DP_CanvasStateChange {
-    pub cs: *mut DP_CanvasState,
-    pub user_cursor: DP_UserCursor,
-}
-#[test]
-fn bindgen_test_layout_DP_CanvasStateChange() {
-    const UNINIT: ::std::mem::MaybeUninit<DP_CanvasStateChange> = ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::std::mem::size_of::<DP_CanvasStateChange>(),
-        32usize,
-        concat!("Size of: ", stringify!(DP_CanvasStateChange))
-    );
-    assert_eq!(
-        ::std::mem::align_of::<DP_CanvasStateChange>(),
-        8usize,
-        concat!("Alignment of ", stringify!(DP_CanvasStateChange))
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).cs) as usize - ptr as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(DP_CanvasStateChange),
-            "::",
-            stringify!(cs)
-        )
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).user_cursor) as usize - ptr as usize },
-        8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(DP_CanvasStateChange),
-            "::",
-            stringify!(user_cursor)
-        )
-    );
-}
 pub type DP_TransientCanvasState = DP_CanvasState;
 pub type DP_TransientDocumentMetadata = DP_DocumentMetadata;
 #[repr(C)]
@@ -1749,16 +1634,18 @@ extern "C" {
     pub fn DP_canvas_state_handle(
         cs: *mut DP_CanvasState,
         dc: *mut DP_DrawContext,
+        ucs_or_null: *mut DP_UserCursors,
         msg: *mut DP_Message,
-    ) -> DP_CanvasStateChange;
+    ) -> *mut DP_CanvasState;
 }
 extern "C" {
     pub fn DP_canvas_state_handle_multidab(
         cs: *mut DP_CanvasState,
         dc: *mut DP_DrawContext,
+        ucs_or_null: *mut DP_UserCursors,
         count: ::std::os::raw::c_int,
         msgs: *mut *mut DP_Message,
-    ) -> DP_CanvasStateChange;
+    ) -> *mut DP_CanvasState;
 }
 extern "C" {
     pub fn DP_canvas_state_search_change_bounds(
@@ -4211,6 +4098,417 @@ extern "C" {
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
+pub struct DP_UserCursor {
+    pub flags: ::std::os::raw::c_uint,
+    pub context_id: ::std::os::raw::c_uint,
+    pub layer_id: ::std::os::raw::c_int,
+    pub x: ::std::os::raw::c_int,
+    pub y: ::std::os::raw::c_int,
+}
+#[test]
+fn bindgen_test_layout_DP_UserCursor() {
+    const UNINIT: ::std::mem::MaybeUninit<DP_UserCursor> = ::std::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::std::mem::size_of::<DP_UserCursor>(),
+        20usize,
+        concat!("Size of: ", stringify!(DP_UserCursor))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<DP_UserCursor>(),
+        4usize,
+        concat!("Alignment of ", stringify!(DP_UserCursor))
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).flags) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_UserCursor),
+            "::",
+            stringify!(flags)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).context_id) as usize - ptr as usize },
+        4usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_UserCursor),
+            "::",
+            stringify!(context_id)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).layer_id) as usize - ptr as usize },
+        8usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_UserCursor),
+            "::",
+            stringify!(layer_id)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).x) as usize - ptr as usize },
+        12usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_UserCursor),
+            "::",
+            stringify!(x)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).y) as usize - ptr as usize },
+        16usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_UserCursor),
+            "::",
+            stringify!(y)
+        )
+    );
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct DP_UserCursorState {
+    pub flags: ::std::os::raw::c_uint,
+    pub layer_id: ::std::os::raw::c_int,
+    pub x: ::std::os::raw::c_int,
+    pub y: ::std::os::raw::c_int,
+}
+#[test]
+fn bindgen_test_layout_DP_UserCursorState() {
+    const UNINIT: ::std::mem::MaybeUninit<DP_UserCursorState> = ::std::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::std::mem::size_of::<DP_UserCursorState>(),
+        16usize,
+        concat!("Size of: ", stringify!(DP_UserCursorState))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<DP_UserCursorState>(),
+        4usize,
+        concat!("Alignment of ", stringify!(DP_UserCursorState))
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).flags) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_UserCursorState),
+            "::",
+            stringify!(flags)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).layer_id) as usize - ptr as usize },
+        4usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_UserCursorState),
+            "::",
+            stringify!(layer_id)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).x) as usize - ptr as usize },
+        8usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_UserCursorState),
+            "::",
+            stringify!(x)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).y) as usize - ptr as usize },
+        12usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_UserCursorState),
+            "::",
+            stringify!(y)
+        )
+    );
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct DP_UserCursors {
+    pub count: ::std::os::raw::c_int,
+    pub user_ids: [u8; 256usize],
+    pub active_by_user: [bool; 256usize],
+    pub states: [DP_UserCursorState; 256usize],
+}
+#[test]
+fn bindgen_test_layout_DP_UserCursors() {
+    const UNINIT: ::std::mem::MaybeUninit<DP_UserCursors> = ::std::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::std::mem::size_of::<DP_UserCursors>(),
+        4612usize,
+        concat!("Size of: ", stringify!(DP_UserCursors))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<DP_UserCursors>(),
+        4usize,
+        concat!("Alignment of ", stringify!(DP_UserCursors))
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).count) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_UserCursors),
+            "::",
+            stringify!(count)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).user_ids) as usize - ptr as usize },
+        4usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_UserCursors),
+            "::",
+            stringify!(user_ids)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).active_by_user) as usize - ptr as usize },
+        260usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_UserCursors),
+            "::",
+            stringify!(active_by_user)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).states) as usize - ptr as usize },
+        516usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_UserCursors),
+            "::",
+            stringify!(states)
+        )
+    );
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct DP_EffectiveUserCursorState {
+    pub flags: ::std::os::raw::c_uint,
+    pub layer_id: ::std::os::raw::c_int,
+    pub x: ::std::os::raw::c_int,
+    pub y: ::std::os::raw::c_int,
+}
+#[test]
+fn bindgen_test_layout_DP_EffectiveUserCursorState() {
+    const UNINIT: ::std::mem::MaybeUninit<DP_EffectiveUserCursorState> =
+        ::std::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::std::mem::size_of::<DP_EffectiveUserCursorState>(),
+        16usize,
+        concat!("Size of: ", stringify!(DP_EffectiveUserCursorState))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<DP_EffectiveUserCursorState>(),
+        4usize,
+        concat!("Alignment of ", stringify!(DP_EffectiveUserCursorState))
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).flags) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_EffectiveUserCursorState),
+            "::",
+            stringify!(flags)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).layer_id) as usize - ptr as usize },
+        4usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_EffectiveUserCursorState),
+            "::",
+            stringify!(layer_id)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).x) as usize - ptr as usize },
+        8usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_EffectiveUserCursorState),
+            "::",
+            stringify!(x)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).y) as usize - ptr as usize },
+        12usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_EffectiveUserCursorState),
+            "::",
+            stringify!(y)
+        )
+    );
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct DP_EffectiveUserCursors {
+    pub count: ::std::os::raw::c_int,
+    pub user_ids: [u8; 256usize],
+    pub active_by_user: [bool; 256usize],
+    pub states: [DP_EffectiveUserCursorState; 256usize],
+}
+#[test]
+fn bindgen_test_layout_DP_EffectiveUserCursors() {
+    const UNINIT: ::std::mem::MaybeUninit<DP_EffectiveUserCursors> =
+        ::std::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::std::mem::size_of::<DP_EffectiveUserCursors>(),
+        4612usize,
+        concat!("Size of: ", stringify!(DP_EffectiveUserCursors))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<DP_EffectiveUserCursors>(),
+        4usize,
+        concat!("Alignment of ", stringify!(DP_EffectiveUserCursors))
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).count) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_EffectiveUserCursors),
+            "::",
+            stringify!(count)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).user_ids) as usize - ptr as usize },
+        4usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_EffectiveUserCursors),
+            "::",
+            stringify!(user_ids)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).active_by_user) as usize - ptr as usize },
+        260usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_EffectiveUserCursors),
+            "::",
+            stringify!(active_by_user)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).states) as usize - ptr as usize },
+        516usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_EffectiveUserCursors),
+            "::",
+            stringify!(states)
+        )
+    );
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct DP_UserCursorBuffer {
+    pub count: ::std::os::raw::c_int,
+    pub cursors: [DP_UserCursor; 256usize],
+}
+#[test]
+fn bindgen_test_layout_DP_UserCursorBuffer() {
+    const UNINIT: ::std::mem::MaybeUninit<DP_UserCursorBuffer> = ::std::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::std::mem::size_of::<DP_UserCursorBuffer>(),
+        5124usize,
+        concat!("Size of: ", stringify!(DP_UserCursorBuffer))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<DP_UserCursorBuffer>(),
+        4usize,
+        concat!("Alignment of ", stringify!(DP_UserCursorBuffer))
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).count) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_UserCursorBuffer),
+            "::",
+            stringify!(count)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).cursors) as usize - ptr as usize },
+        4usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_UserCursorBuffer),
+            "::",
+            stringify!(cursors)
+        )
+    );
+}
+extern "C" {
+    pub fn DP_user_cursors_init(ucs: *mut DP_UserCursors);
+}
+extern "C" {
+    pub fn DP_user_cursors_activate(ucs: *mut DP_UserCursors, context_id: ::std::os::raw::c_uint);
+}
+extern "C" {
+    pub fn DP_user_cursors_move(
+        ucs: *mut DP_UserCursors,
+        context_id: ::std::os::raw::c_uint,
+        layer_id: ::std::os::raw::c_int,
+        x: ::std::os::raw::c_int,
+        y: ::std::os::raw::c_int,
+    );
+}
+extern "C" {
+    pub fn DP_user_cursors_move_smooth(
+        ucs: *mut DP_UserCursors,
+        context_id: ::std::os::raw::c_uint,
+        layer_id: ::std::os::raw::c_int,
+        x: ::std::os::raw::c_int,
+        y: ::std::os::raw::c_int,
+    );
+}
+extern "C" {
+    pub fn DP_user_cursors_pen_up(ucs: *mut DP_UserCursors, context_id: ::std::os::raw::c_uint);
+}
+extern "C" {
+    pub fn DP_effective_user_cursors_init(eucs: *mut DP_EffectiveUserCursors);
+}
+extern "C" {
+    pub fn DP_effective_user_cursors_apply(
+        eucs: *mut DP_EffectiveUserCursors,
+        ucs: *mut DP_UserCursors,
+    );
+}
+extern "C" {
+    pub fn DP_effective_user_cursors_retrieve(
+        eucs: *mut DP_EffectiveUserCursors,
+        ucb: *mut DP_UserCursorBuffer,
+    );
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct DP_CanvasHistory {
     _unused: [u8; 0],
 }
@@ -4314,47 +4612,6 @@ fn bindgen_test_layout_DP_ForkEntry() {
             stringify!(DP_ForkEntry),
             "::",
             stringify!(aa)
-        )
-    );
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct DP_UserCursorBuffer {
-    pub count: ::std::os::raw::c_int,
-    pub cursors: [DP_UserCursor; 256usize],
-}
-#[test]
-fn bindgen_test_layout_DP_UserCursorBuffer() {
-    const UNINIT: ::std::mem::MaybeUninit<DP_UserCursorBuffer> = ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::std::mem::size_of::<DP_UserCursorBuffer>(),
-        5124usize,
-        concat!("Size of: ", stringify!(DP_UserCursorBuffer))
-    );
-    assert_eq!(
-        ::std::mem::align_of::<DP_UserCursorBuffer>(),
-        4usize,
-        concat!("Alignment of ", stringify!(DP_UserCursorBuffer))
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).count) as usize - ptr as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(DP_UserCursorBuffer),
-            "::",
-            stringify!(count)
-        )
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).cursors) as usize - ptr as usize },
-        4usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(DP_UserCursorBuffer),
-            "::",
-            stringify!(cursors)
         )
     );
 }

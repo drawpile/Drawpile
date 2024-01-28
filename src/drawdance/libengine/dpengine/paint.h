@@ -21,13 +21,15 @@
  */
 #ifndef DPENGINE_PAINT_H
 #define DPENGINE_PAINT_H
-#include "canvas_state.h"
+#include "pixels.h"
 #include <dpcommon/common.h>
 
+typedef struct DP_CanvasState DP_CanvasState;
 typedef struct DP_ClassicDab DP_ClassicDab;
 typedef struct DP_DrawContext DP_DrawContext;
 typedef struct DP_MyPaintDab DP_MyPaintDab;
 typedef struct DP_PixelDab DP_PixelDab;
+typedef struct DP_UserCursors DP_UserCursors;
 
 #ifdef DP_NO_STRICT_ALIASING
 typedef struct DP_TransientLayerContent DP_TransientLayerContent;
@@ -72,9 +74,9 @@ typedef struct DP_PaintDrawDabsParams {
 } DP_PaintDrawDabsParams;
 
 
-DP_UserCursor DP_paint_draw_dabs(DP_DrawContext *dc,
-                                 DP_PaintDrawDabsParams *params,
-                                 DP_TransientLayerContent *tlc);
+void DP_paint_draw_dabs(DP_DrawContext *dc, DP_UserCursors *ucs_or_null,
+                        DP_PaintDrawDabsParams *params,
+                        DP_TransientLayerContent *tlc);
 
 DP_BrushStamp DP_paint_color_sampling_stamp_make(uint16_t *data, int diameter,
                                                  int left, int top,

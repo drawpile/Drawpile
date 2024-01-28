@@ -89,7 +89,7 @@ static DP_CanvasState *handle_preview_message_dec(DP_CanvasState *cs,
                                                   DP_DrawContext *dc,
                                                   DP_Message *msg)
 {
-    DP_CanvasState *next = DP_canvas_state_handle(cs, dc, msg).cs;
+    DP_CanvasState *next = DP_canvas_state_handle(cs, dc, NULL, msg);
     DP_message_decref(msg);
     if (next) {
         DP_canvas_state_decref(cs);
@@ -107,7 +107,7 @@ static DP_CanvasState *handle_preview_messages_multidab(DP_CanvasState *cs,
                                                         DP_Message **msgs)
 {
     DP_CanvasState *next =
-        DP_canvas_state_handle_multidab(cs, dc, count, msgs).cs;
+        DP_canvas_state_handle_multidab(cs, dc, NULL, count, msgs);
     if (next) {
         DP_canvas_state_decref(cs);
         return next;

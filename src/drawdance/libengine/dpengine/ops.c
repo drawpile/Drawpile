@@ -37,6 +37,7 @@
 #include "tile.h"
 #include "timeline.h"
 #include "track.h"
+#include "user_cursors.h"
 #include <dpcommon/common.h>
 #include <dpcommon/conversions.h>
 #include <dpcommon/geom.h>
@@ -747,27 +748,34 @@ DP_CanvasState *DP_ops_layer_visibility(DP_CanvasState *cs, int layer_id,
 }
 
 
-DP_CanvasStateChange DP_ops_put_image(DP_CanvasState *cs,
-                                      unsigned int context_id, int layer_id,
-                                      int blend_mode, int x, int y, int width,
-                                      int height, const unsigned char *image,
-                                      size_t image_size)
+DP_CanvasState *DP_ops_put_image(DP_CanvasState *cs,
+                                 DP_UserCursors *ucs_or_null,
+                                 unsigned int context_id, int layer_id,
+                                 int blend_mode, int x, int y, int width,
+                                 int height, const unsigned char *image,
+                                 size_t image_size)
 {
     DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
     DP_LayerRoutesEntry *lre = DP_layer_routes_search(lr, layer_id);
     if (!lre) {
         DP_error_set("Put image: id %d not found", layer_id);
-        return DP_canvas_state_change_null();
+        return NULL;
     }
     else if (DP_layer_routes_entry_is_group(lre)) {
         DP_error_set("Put image: id %d is a group", layer_id);
-        return DP_canvas_state_change_null();
+        return NULL;
     }
 
     DP_Image *img =
         DP_image_new_from_compressed(width, height, image, image_size);
     if (!img) {
-        return DP_canvas_state_change_null();
+        return NULL;
+    }
+
+    if (ucs_or_null) {
+        DP_user_cursors_activate(ucs_or_null, context_id);
+        DP_user_cursors_move(ucs_or_null, context_id, layer_id, x + width / 2,
+                             y + height / 2);
     }
 
     DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
@@ -776,10 +784,7 @@ DP_CanvasStateChange DP_ops_put_image(DP_CanvasState *cs,
     DP_transient_layer_content_put_image(tlc, context_id, blend_mode, x, y,
                                          img);
     DP_image_free(img);
-
-    return (DP_CanvasStateChange){DP_transient_canvas_state_persist(tcs),
-                                  {DP_USER_CURSOR_FLAG_VALID, context_id,
-                                   layer_id, x + width / 2, y + height / 2}};
+    return DP_transient_canvas_state_persist(tcs);
 }
 
 
@@ -826,22 +831,22 @@ move_image(DP_CanvasState *cs, DP_LayerRoutesEntry *src_lre,
     return DP_transient_canvas_state_persist(tcs);
 }
 
-DP_CanvasStateChange DP_ops_move_region(DP_CanvasState *cs, DP_DrawContext *dc,
-                                        unsigned int context_id,
-                                        int src_layer_id, int dst_layer_id,
-                                        const DP_Rect *src_rect,
-                                        const DP_Quad *dst_quad,
-                                        int interpolation, DP_Image *mask)
+DP_CanvasState *DP_ops_move_region(DP_CanvasState *cs, DP_DrawContext *dc,
+                                   DP_UserCursors *ucs_or_null,
+                                   unsigned int context_id, int src_layer_id,
+                                   int dst_layer_id, const DP_Rect *src_rect,
+                                   const DP_Quad *dst_quad, int interpolation,
+                                   DP_Image *mask)
 {
     DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
     DP_LayerRoutesEntry *src_lre = DP_layer_routes_search(lr, src_layer_id);
     if (!src_lre) {
         DP_error_set("Move region: source id %d not found", src_layer_id);
-        return DP_canvas_state_change_null();
+        return NULL;
     }
     else if (DP_layer_routes_entry_is_group(src_lre)) {
         DP_error_set("Move region: source id %d is a group", src_layer_id);
-        return DP_canvas_state_change_null();
+        return NULL;
     }
 
     DP_LayerRoutesEntry *dst_lre;
@@ -852,11 +857,11 @@ DP_CanvasStateChange DP_ops_move_region(DP_CanvasState *cs, DP_DrawContext *dc,
         dst_lre = DP_layer_routes_search(lr, dst_layer_id);
         if (!dst_lre) {
             DP_error_set("Move region: target id %d not found", dst_layer_id);
-            return DP_canvas_state_change_null();
+            return NULL;
         }
         else if (DP_layer_routes_entry_is_group(dst_lre)) {
             DP_error_set("Move region: target id %d is a group", dst_layer_id);
-            return DP_canvas_state_change_null();
+            return NULL;
         }
     }
 
@@ -875,33 +880,38 @@ DP_CanvasStateChange DP_ops_move_region(DP_CanvasState *cs, DP_DrawContext *dc,
                                      &offset_x, &offset_y);
         if (!dst_img) {
             DP_free(src_img);
-            return DP_canvas_state_change_null();
+            return NULL;
         }
     }
 
-    DP_Rect dst_bounds = DP_quad_bounds(*dst_quad);
-    return (DP_CanvasStateChange){
-        move_image(cs, src_lre, dst_lre, context_id, src_rect, mask, src_img,
-                   offset_x, offset_y, dst_img),
-        {DP_USER_CURSOR_FLAG_VALID, context_id, dst_layer_id,
-         DP_rect_x(dst_bounds) + DP_rect_width(dst_bounds) / 2,
-         DP_rect_y(dst_bounds) + DP_rect_height(dst_bounds) / 2}};
+    if (ucs_or_null) {
+        DP_user_cursors_activate(ucs_or_null, context_id);
+        DP_Rect dst_bounds = DP_quad_bounds(*dst_quad);
+        DP_user_cursors_move(
+            ucs_or_null, context_id, dst_layer_id,
+            DP_rect_x(dst_bounds) + DP_rect_width(dst_bounds) / 2,
+            DP_rect_y(dst_bounds) + DP_rect_height(dst_bounds) / 2);
+    }
+
+    return move_image(cs, src_lre, dst_lre, context_id, src_rect, mask, src_img,
+                      offset_x, offset_y, dst_img);
 }
 
-DP_CanvasStateChange DP_ops_move_rect(DP_CanvasState *cs,
-                                      unsigned int context_id, int src_layer_id,
-                                      int dst_layer_id, const DP_Rect *src_rect,
-                                      int dst_x, int dst_y, DP_Image *mask)
+DP_CanvasState *DP_ops_move_rect(DP_CanvasState *cs,
+                                 DP_UserCursors *ucs_or_null,
+                                 unsigned int context_id, int src_layer_id,
+                                 int dst_layer_id, const DP_Rect *src_rect,
+                                 int dst_x, int dst_y, DP_Image *mask)
 {
     DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
     DP_LayerRoutesEntry *src_lre = DP_layer_routes_search(lr, src_layer_id);
     if (!src_lre) {
         DP_error_set("Move rect: source id %d not found", src_layer_id);
-        return DP_canvas_state_change_null();
+        return NULL;
     }
     else if (DP_layer_routes_entry_is_group(src_lre)) {
         DP_error_set("Move rect: source id %d is a group", src_layer_id);
-        return DP_canvas_state_change_null();
+        return NULL;
     }
 
     DP_LayerRoutesEntry *dst_lre;
@@ -912,40 +922,49 @@ DP_CanvasStateChange DP_ops_move_rect(DP_CanvasState *cs,
         dst_lre = DP_layer_routes_search(lr, dst_layer_id);
         if (!dst_lre) {
             DP_error_set("Move rect: target id %d not found", dst_layer_id);
-            return DP_canvas_state_change_null();
+            return NULL;
         }
         else if (DP_layer_routes_entry_is_group(dst_lre)) {
             DP_error_set("Move rect: target id %d is a group", dst_layer_id);
-            return DP_canvas_state_change_null();
+            return NULL;
         }
+    }
+
+    if (ucs_or_null) {
+        DP_user_cursors_activate(ucs_or_null, context_id);
+        DP_user_cursors_move(ucs_or_null, context_id, dst_layer_id,
+                             dst_x + DP_rect_width(*src_rect) / 2,
+                             dst_y + DP_rect_height(*src_rect) / 2);
     }
 
     DP_Image *src_img = DP_layer_content_select(
         DP_layer_routes_entry_content(src_lre, cs), src_rect, mask);
-
-    return (DP_CanvasStateChange){
-        move_image(cs, src_lre, dst_lre, context_id, src_rect, mask, src_img,
-                   dst_x, dst_y, src_img),
-        {DP_USER_CURSOR_FLAG_VALID, context_id, dst_layer_id,
-         dst_x + DP_rect_width(*src_rect) / 2,
-         dst_y + DP_rect_height(*src_rect) / 2}};
+    return move_image(cs, src_lre, dst_lre, context_id, src_rect, mask, src_img,
+                      dst_x, dst_y, src_img);
 }
 
 
-DP_CanvasStateChange DP_ops_fill_rect(DP_CanvasState *cs,
-                                      unsigned int context_id, int layer_id,
-                                      int blend_mode, int left, int top,
-                                      int right, int bottom, DP_UPixel15 pixel)
+DP_CanvasState *DP_ops_fill_rect(DP_CanvasState *cs,
+                                 DP_UserCursors *ucs_or_null,
+                                 unsigned int context_id, int layer_id,
+                                 int blend_mode, int left, int top, int right,
+                                 int bottom, DP_UPixel15 pixel)
 {
     DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
     DP_LayerRoutesEntry *lre = DP_layer_routes_search(lr, layer_id);
     if (!lre) {
         DP_error_set("Fill rect: id %d not found", layer_id);
-        return DP_canvas_state_change_null();
+        return NULL;
     }
     else if (DP_layer_routes_entry_is_group(lre)) {
         DP_error_set("Fill rect: id %d is a group", layer_id);
-        return DP_canvas_state_change_null();
+        return NULL;
+    }
+
+    if (ucs_or_null) {
+        DP_user_cursors_activate(ucs_or_null, context_id);
+        DP_user_cursors_move(ucs_or_null, context_id, layer_id,
+                             (left + right) / 2, (top + bottom) / 2);
     }
 
     DP_TransientCanvasState *tcs = DP_transient_canvas_state_new(cs);
@@ -953,11 +972,7 @@ DP_CanvasStateChange DP_ops_fill_rect(DP_CanvasState *cs,
         DP_layer_routes_entry_transient_content(lre, tcs);
     DP_transient_layer_content_fill_rect(tlc, context_id, blend_mode, left, top,
                                          right, bottom, pixel);
-
-    return (DP_CanvasStateChange){DP_transient_canvas_state_persist(tcs),
-                                  {DP_USER_CURSOR_FLAG_VALID, context_id,
-                                   layer_id, (left + right) / 2,
-                                   (top + bottom)}};
+    return DP_transient_canvas_state_persist(tcs);
 }
 
 
@@ -1065,9 +1080,15 @@ static void pen_up_layers(DP_PenUpContext *puc, DP_DrawContext *dc,
     DP_draw_context_layer_indexes_pop(dc);
 }
 
-DP_CanvasStateChange DP_ops_pen_up(DP_CanvasState *cs, DP_DrawContext *dc,
-                                   unsigned int context_id)
+DP_CanvasState *DP_ops_pen_up(DP_CanvasState *cs, DP_DrawContext *dc,
+                              DP_UserCursors *ucs_or_null,
+                              unsigned int context_id)
 {
+    if (ucs_or_null) {
+        DP_user_cursors_activate(ucs_or_null, context_id);
+        DP_user_cursors_pen_up(ucs_or_null, context_id);
+    }
+
     // If the user was drawing in indirect mode, there'll be sublayers with
     // their id to merge. We walk the layer stack and merge them as we encounter
     // them, only creating a new transient canvas state if actually necessary.
@@ -1077,10 +1098,8 @@ DP_CanvasStateChange DP_ops_pen_up(DP_CanvasState *cs, DP_DrawContext *dc,
     pen_up_layers(&puc, dc, target_sublayer_id,
                   DP_canvas_state_layers_noinc(cs));
 
-    return (DP_CanvasStateChange){
-        puc.tcs ? DP_transient_canvas_state_persist(puc.tcs)
-                : DP_canvas_state_incref(cs),
-        {DP_USER_CURSOR_FLAG_PEN_UP, context_id, 0, 0, 0}};
+    return puc.tcs ? DP_transient_canvas_state_persist(puc.tcs)
+                   : DP_canvas_state_incref(cs);
 }
 
 
@@ -1223,9 +1242,10 @@ DP_CanvasStateChange DP_ops_draw_dabs(DP_CanvasState *cs, int sublayer_id,
 }
 */
 
-DP_CanvasStateChange
-DP_ops_draw_dabs(DP_CanvasState *cs, DP_DrawContext *dc,
-                 bool (*next)(void *, DP_PaintDrawDabsParams *), void *user)
+DP_CanvasState *DP_ops_draw_dabs(DP_CanvasState *cs, DP_DrawContext *dc,
+                                 DP_UserCursors *ucs_or_null,
+                                 bool (*next)(void *, DP_PaintDrawDabsParams *),
+                                 void *user)
 {
     // Drawing dabs is by far the most common operation and they come in
     // bunches, so we support batching them for the sake of speed. This makes
@@ -1236,7 +1256,6 @@ DP_ops_draw_dabs(DP_CanvasState *cs, DP_DrawContext *dc,
     DP_TransientLayerContent *sub_tlc = NULL;
     int last_layer_id = -1;
     int last_sublayer_id = -1;
-    DP_UserCursor uc;
 
     DP_PaintDrawDabsParams params;
     while (next(user, &params)) {
@@ -1302,21 +1321,10 @@ DP_ops_draw_dabs(DP_CanvasState *cs, DP_DrawContext *dc,
             target = tlc;
         }
 
-        // If multiple different users are involved in this draw dabs operation,
-        // we'll only get the last one's cursor out of this. That's probably not
-        // noticeable in practice though, since enough of their cursor movements
-        // will still come through enough for their markers to show up roughly
-        // where they should. So not worth fixing this I think.
-        uc = DP_paint_draw_dabs(dc, &params, target);
+        DP_paint_draw_dabs(dc, ucs_or_null, &params, target);
     }
 
-    if (tcs) {
-        return (DP_CanvasStateChange){DP_transient_canvas_state_persist(tcs),
-                                      uc};
-    }
-    else {
-        return DP_canvas_state_change_null();
-    }
+    return tcs ? DP_transient_canvas_state_persist(tcs) : NULL;
 }
 
 

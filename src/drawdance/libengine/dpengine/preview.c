@@ -478,7 +478,7 @@ static void preview_dabs_render(DP_Preview *pv, DP_DrawContext *dc,
         params.type = (int)type;
         params.origin_x += offset_x;
         params.origin_y += offset_y;
-        DP_paint_draw_dabs(dc, &params, params.indirect ? sub_tlc : tlc);
+        DP_paint_draw_dabs(dc, NULL, &params, params.indirect ? sub_tlc : tlc);
     }
 
     if (sub_tlc) {
