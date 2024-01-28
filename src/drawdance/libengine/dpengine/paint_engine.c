@@ -2234,6 +2234,7 @@ emit_changes(DP_PaintEngine *pe, DP_CanvasState *prev, DP_CanvasState *cs,
         cursor_moved(user, uc->flags, uc->context_id, uc->layer_id, uc->x,
                      uc->y);
     }
+    ucb->count = 0;
 }
 
 void DP_paint_engine_tick(
