@@ -723,7 +723,7 @@ bool MyPaintBrush::loadJsonMapping(
 
 	if(o["base_value"].isDouble()) {
 		settings().mappings[settingId].base_value =
-			qBound(min, o["base_value"].toDouble(), max);
+			qBound(min, float(o["base_value"].toDouble()), max);
 		foundSetting = true;
 	} else {
 		qWarning("Bad MyPaint 'base_value' in %s", qPrintable(mappingKey));
