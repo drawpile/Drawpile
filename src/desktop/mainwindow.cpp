@@ -358,6 +358,9 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(
 		m_doc->client(), &net::Client::serverStatusUpdate, m_viewStatusBar,
 		&widgets::ViewStatusBar::setSessionHistorySize);
+	connect(
+		m_doc->client(), &net::Client::lagMeasured, m_viewStatusBar,
+		&widgets::ViewStatusBar::setLatency);
 
 	connect(m_chatbox, &widgets::ChatBox::message, m_doc->client(), &net::Client::sendMessage);
 	connect(m_dockTimeline, &docks::Timeline::timelineEditCommands, m_doc->client(), &net::Client::sendMessages);
@@ -437,6 +440,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_doc, &Document::serverDisconnected, this, &MainWindow::onServerDisconnected);
 	connect(m_doc, &Document::serverDisconnected, this, [this]() {
 		m_viewStatusBar->setSessionHistorySize(-1);
+		m_viewStatusBar->setLatency(-1);
 	});
 	connect(m_doc, &Document::compatibilityModeChanged, this, &MainWindow::onCompatibilityModeChanged);
 	connect(m_doc, &Document::sessionNsfmChanged, this, &MainWindow::onNsfmChanged);

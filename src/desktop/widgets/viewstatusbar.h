@@ -14,6 +14,7 @@ public:
 	ViewStatusBar(QWidget *parent = nullptr);
 
 	void setSessionHistorySize(int sessionHistorySize);
+	void setLatency(qint64 latency);
 	void setCoordinates(const QPointF &coordinates);
 
 private slots:
@@ -25,6 +26,7 @@ private:
 	bool m_showStatusMessage = true;
 	bool m_settingStatusMessage = false;
 	int m_sessionHistorySize = -1;
+	qint64 m_latency = -1;
 	QPointF m_coordinates = {0, 0};
 };
 

@@ -16,6 +16,13 @@ ViewStatusBar::ViewStatusBar(QWidget *parent)
 void ViewStatusBar::setSessionHistorySize(int sessionHistorySize)
 {
 	m_sessionHistorySize = sessionHistorySize;
+	showCoordinatesMessage();
+}
+
+void ViewStatusBar::setLatency(qint64 latency)
+{
+	m_latency = latency;
+	showCoordinatesMessage();
 }
 
 void ViewStatusBar::setCoordinates(const QPointF &coordinates)
@@ -37,11 +44,25 @@ void ViewStatusBar::showCoordinatesMessage()
 		int x = int(m_coordinates.x());
 		int y = int(m_coordinates.y());
 		if(m_sessionHistorySize < 0) {
-			showMessage(QStringLiteral("(%1, %2)").arg(x).arg(y));
-		} else {
+			if(m_latency < 0) {
+				showMessage(QStringLiteral("(%1, %2)").arg(x).arg(y));
+			} else {
+				showMessage(QStringLiteral("%1 ms | (%2, %3)")
+								.arg(m_latency)
+								.arg(x)
+								.arg(y));
+			}
+		} else if(m_latency < 0) {
 			showMessage(
 				QStringLiteral("%1 MB | (%2, %3)")
 					.arg(m_sessionHistorySize / double(1024 * 1024), 0, 'f', 2)
+					.arg(x)
+					.arg(y));
+		} else {
+			showMessage(
+				QStringLiteral("%1 MB | %2 ms | (%3, %4)")
+					.arg(m_sessionHistorySize / double(1024 * 1024), 0, 'f', 2)
+					.arg(m_latency)
 					.arg(x)
 					.arg(y));
 		}
