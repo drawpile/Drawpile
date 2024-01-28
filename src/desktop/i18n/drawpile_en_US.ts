@@ -693,7 +693,7 @@ to 64x64 pixels.</source>
         <location line="+52"/>
         <location line="+5"/>
         <source>Untitled</source>
-        <<translation></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+68"/>
@@ -1702,7 +1702,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>Pic&amp;k From Screen</source>
-        <<translation></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2023,7 +2023,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>New Layer Group</source>
-        <<translation></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="+308"/>
@@ -2171,12 +2171,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Next Key Frame</source>
-        <<translation></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Previous Key Frame</source>
-        <<translation></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3278,7 +3278,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+7"/>
         <source>Allow joining from the web browser</source>
-        <<translation></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+11"/>
@@ -6763,22 +6763,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+61"/>
         <source>Interpolate when view is zoomed or rotated</source>
-        <<translation></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Canvas view:</source>
-        <<translation></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Prevent jitter at certain zoom and rotation levels</source>
-        <<translation></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Enabling these options may impact performance on some systems.</source>
-        <<translation></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+28"/>
@@ -6881,18 +6881,18 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Switch to eraser slot</source>
-        <<translation></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Erase with current brush</source>
-        <<translation></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Eraser action:</source>
         <extracomment>Eraser refers to the eraser tip of a tablet pen.</extracomment>
-        <<translation></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+7"/>
@@ -6964,12 +6964,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-98"/>
         <source>Capture volume rocker</source>
-        <<translation></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Android:</source>
-        <<translation></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+97"/>
@@ -7736,37 +7736,37 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+12"/>
         <source>Enable high-DPI scaling (experimental)</source>
-        <<translation></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Override system scale factor (experimental)</source>
-        <<translation></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Scale factor: </source>
-        <<translation></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%</source>
-        <<translation></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+29"/>
         <source>%1px</source>
-        <<translation></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%1pt</source>
-        <<translation></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Changes to scaling and font size apply after you restart Drawpile. Current scale factor is %1%, font size is %2.</source>
-        <<translation></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -7819,12 +7819,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Inactive</source>
-        <<translation></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show sessions that have zero actively drawing users</source>
-        <<translation></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8580,22 +8580,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+218"/>
         <source>Duplicate Layer Group</source>
-        <<translation></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Merge Layer Group</source>
-        <<translation></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Layer Group Properties…</source>
-        <<translation></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Delete Layer Group</source>
-        <<translation></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+174"/>

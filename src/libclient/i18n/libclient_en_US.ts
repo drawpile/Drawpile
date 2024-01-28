@@ -521,7 +521,7 @@
     <message>
         <location line="+11"/>
         <source>Unknown number of actively drawing users</source>
-        <<translation></translation>
+        <translation></translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
@@ -579,7 +579,7 @@
     <message>
         <location line="+1"/>
         <source>Active</source>
-        <<translation></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1237,7 +1237,7 @@
     <message>
         <location line="+13"/>
         <source>Server expects STARTTLS on unsupported socket.</source>
-        <<translation></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1328,12 +1328,12 @@
     <message>
         <location line="+171"/>
         <source>TLS is not supported via this kind of socket</source>
-        <<translation></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+56"/>
         <source>Unable to set TLS error ignore state</source>
-        <<translation></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+31"/>
@@ -1467,7 +1467,7 @@
     <message>
         <location line="+5"/>
         <source>Unknown number of actively drawing users</source>
-        <<translation></translation>
+        <translation></translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
@@ -1495,7 +1495,7 @@
     <message>
         <location line="+1"/>
         <source>Active</source>
-        <<translation></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -1503,32 +1503,32 @@
     <message>
         <location filename="../net/server.cpp" line="+99"/>
         <source>Network read error</source>
-        <<translation></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Network read error: %1</source>
-        <<translation></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Network write error</source>
-        <<translation></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Network write error: %1</source>
-        <<translation></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Network connection timed out</source>
-        <<translation></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+54"/>
         <source>Received invalid data</source>
-        <<translation></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
