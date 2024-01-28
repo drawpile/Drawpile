@@ -84,12 +84,12 @@ QWidget *ColorPickerSettings::createUiWidget(QWidget *parent)
 	headerLayout->setContentsMargins(0, 0, 4, 0);
 	m_headerWidget->setLayout(headerLayout);
 
-#ifndef Q_OS_ANDROID
-	widgets::GroupedToolButton *pickButton = new widgets::GroupedToolButton;
-	pickButton->setIcon(QIcon::fromTheme("monitor"));
-	pickButton->setToolTip(tr("Pick from screen"));
-	pickButton->setCheckable(true);
-	headerLayout->addWidget(pickButton);
+#ifndef SINGLE_MAIN_WINDOW
+	m_pickButton = new widgets::GroupedToolButton;
+	m_pickButton->setIcon(QIcon::fromTheme("monitor"));
+	m_pickButton->setToolTip(tr("Pick from screen"));
+	m_pickButton->setCheckable(true);
+	headerLayout->addWidget(m_pickButton);
 #endif
 
 	headerLayout->addSpacing(4);
@@ -127,12 +127,12 @@ QWidget *ColorPickerSettings::createUiWidget(QWidget *parent)
 	connect(
 		m_layerpick, &QCheckBox::toggled, this,
 		&ColorPickerSettings::pushSettings);
-#ifndef Q_OS_ANDROID
+#ifndef SINGLE_MAIN_WINDOW
 	connect(
 		m_headerWidget, &colorpickersettings::HeaderWidget::pickingChanged,
-		pickButton, &QAbstractButton::setChecked);
+		m_pickButton, &QAbstractButton::setChecked);
 	connect(
-		pickButton, &QAbstractButton::clicked, this,
+		m_pickButton, &QAbstractButton::clicked, this,
 		&ColorPickerSettings::pickFromScreen);
 #endif
 
@@ -151,6 +151,13 @@ void ColorPickerSettings::selectColor(const QColor &color)
 {
 	addColor(color);
 	emit colorSelected(color);
+}
+
+void ColorPickerSettings::startPickFromScreen()
+{
+	if(m_pickButton && !m_pickingFromScreen) {
+		m_pickButton->click();
+	}
 }
 
 void ColorPickerSettings::cancelPickFromScreen()

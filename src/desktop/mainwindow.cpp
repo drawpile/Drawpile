@@ -3556,6 +3556,9 @@ void MainWindow::setupActions()
 	QAction *paste = makeAction("paste", tr("&Paste")).icon("edit-paste").shortcut(QKeySequence::Paste);
 	QAction *pasteCentered = makeAction("paste-centered", tr("Paste in View Center")).icon("edit-paste").shortcut("Ctrl+Shift+V");
 	QAction *stamp = makeAction("stamp", tr("&Stamp Selection")).shortcut("Ctrl+T");
+#ifndef SINGLE_MAIN_WINDOW
+	QAction *pickFromScreen = makeAction("pickfromscreen", tr("Pic&k From Screen")).icon("monitor").shortcut("Ctrl+Shift+I");
+#endif
 
 	QAction *pastefile = makeAction("pastefile", tr("Paste &From File...")).icon("document-open").noDefaultShortcut();
 	QAction *deleteAnnotations = makeAction("deleteemptyannotations", tr("Delete Empty Annotations")).noDefaultShortcut();
@@ -3633,6 +3636,12 @@ void MainWindow::setupActions()
 	connect(paste, &QAction::triggered, this, &MainWindow::paste);
 	connect(pasteCentered, &QAction::triggered, this, &MainWindow::pasteCentered);
 	connect(stamp, &QAction::triggered, m_doc, &Document::stamp);
+#ifndef SINGLE_MAIN_WINDOW
+	connect(
+		pickFromScreen, &QAction::triggered,
+		m_dockToolSettings->colorPickerSettings(),
+		&tools::ColorPickerSettings::startPickFromScreen);
+#endif
 	connect(pastefile, SIGNAL(triggered()), this, SLOT(pasteFile()));
 	connect(selectall, &QAction::triggered, this, [this]() {
 		QAction *selectRect = getAction("toolselectrect");
@@ -3692,6 +3701,9 @@ void MainWindow::setupActions()
 	editmenu->addAction(pasteCentered);
 	editmenu->addAction(pastefile);
 	editmenu->addAction(stamp);
+#ifndef SINGLE_MAIN_WINDOW
+	editmenu->addAction(pickFromScreen);
+#endif
 	editmenu->addSeparator();
 
 	editmenu->addAction(selectall);

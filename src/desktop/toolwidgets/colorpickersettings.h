@@ -10,6 +10,7 @@ class QCheckBox;
 class QSpinBox;
 
 namespace widgets {
+class GroupedToolButton;
 class PaletteWidget;
 }
 
@@ -64,6 +65,7 @@ public slots:
 	void addColor(const QColor &color);
 	void pushSettings() override;
 	void selectColor(const QColor &color);
+	void startPickFromScreen();
 	void cancelPickFromScreen();
 
 signals:
@@ -77,6 +79,7 @@ private slots:
 
 private:
 	colorpickersettings::HeaderWidget *m_headerWidget = nullptr;
+	widgets::GroupedToolButton *m_pickButton = nullptr;
 	widgets::PaletteWidget *m_palettewidget;
 	QCheckBox *m_layerpick;
 	QSpinBox *m_size;
