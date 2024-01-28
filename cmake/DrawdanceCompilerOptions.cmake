@@ -16,6 +16,10 @@ if(MSVC)
         # C4210: nonstandard extension used: function given file scope
         #  - MSVC does not recognize extern inside of functions as standard
         /wd4210
+        # C4310: cast truncates constant value
+        #  - ridiculous warning in the totally reasonable case of a negated bit
+        #    mask being cast to the correct type
+        /wd4310
 		# C4324: structure was padded due to alignment specifier
 		#  - well yeah that's what an alignment specifier does
 		/wd4324
