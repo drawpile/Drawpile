@@ -1,8 +1,8 @@
 #[[ This module contains data and functions for internationalisation. #]]
 
-set(SUPPORTED_LANGS ar_EG cs_CZ de_DE en_US es_CO fi_FI fr_FR it_IT ja_JP ko_KR nb_NO pt_BR pt_PT ru_RU tr_TR uk_UA vi_VN zh_CN)
-# Qt doesn't have Norwegian or Vietnamese translations, but Drawpile does.
-set(LANGS_UNSUPPORTED_IN_QT nb vi)
+set(SUPPORTED_LANGS ar_EG cs_CZ de_DE en_US es_CO fi_FI fr_FR id_ID it_IT ja_JP ko_KR nb_NO pt_BR pt_PT ru_RU tr_TR uk_UA vi_VN zh_CN)
+# Qt doesn't have some translations, but Drawpile does.
+set(LANGS_UNSUPPORTED_IN_QT id nb vi)
 
 define_property(TARGET PROPERTY DP_TRANSLATION_QM_FILES
 	BRIEF_DOCS ".qm files for this target"
