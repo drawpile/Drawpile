@@ -22,7 +22,7 @@ Unreleased Version 2.2.1-pre
  * Fix: Don't blink last user cursors again when making a selection.
  * Fix: Make user cursors trail MyPaint brush strokes better, only smoothing it out when there's jitter. Thanks Blozzom for reporting.
  * Feature: Show latency in the status message, next to the session size and cursor coordinates. Thanks Meiren for suggesting.
- * Feature: Add action to pick color from screen, default shortcut is Ctrl+Shift+I. Thanks Meru for suggesting.
+ * Feature: Add action to pick color from screen, default shortcut is Shift+I. Thanks Meru for suggesting.
 
 2024-01-13 Version 2.2.0
  * Server Fix: Add --ssl-key-algorithm parameter to allow non-RSA SSL keys, defaulting to guessing the most common formats RSA and EC. Thanks Bluestrings for reporting.
