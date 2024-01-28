@@ -1188,12 +1188,50 @@ gboolean prepare_and_draw_dab (MyPaintBrush *self, MyPaintSurface * surface, gbo
     }
   }
 
+  // Drawpile patch: cap dabs counts to sane values to avoid chugging other users.
+
+  static inline float base_dabs_per_actual_radius(MyPaintBrush *self)
+  {
+      const float value = BASEVAL(self, DABS_PER_ACTUAL_RADIUS);
+      return MIN(value, 8.0f);
+  }
+
+  static inline float state_dabs_per_actual_radius(MyPaintBrush *self)
+  {
+      const float value = STATE(self, DABS_PER_ACTUAL_RADIUS);
+      return MIN(value, 8.0f);
+  }
+
+  static inline float base_dabs_per_basic_radius(MyPaintBrush *self)
+  {
+      const float value = BASEVAL(self, DABS_PER_BASIC_RADIUS);
+      return MIN(value, 8.0f);
+  }
+
+  static inline float state_dabs_per_basic_radius(MyPaintBrush *self)
+  {
+      const float value = STATE(self, DABS_PER_BASIC_RADIUS);
+      return MIN(value, 8.0f);
+  }
+
+  static inline float base_dabs_per_second(MyPaintBrush *self)
+  {
+      const float value = BASEVAL(self, DABS_PER_SECOND);
+      return MIN(value, 200.0f);
+  }
+
+  static inline float state_dabs_per_second(MyPaintBrush *self)
+  {
+      const float value = STATE(self, DABS_PER_SECOND);
+      return MIN(value, 200.0f);
+  }
+
   static inline float
   legacy_dab_count(float dist, float base_radius, float dt, MyPaintBrush* self)
   {
-      const float num_from_actual_radius = dist / STATE(self, ACTUAL_RADIUS) * BASEVAL(self, DABS_PER_ACTUAL_RADIUS);
-      const float num_from_basic_radius = dist / base_radius * BASEVAL(self, DABS_PER_BASIC_RADIUS);
-      const float num_from_seconds = dt * BASEVAL(self, DABS_PER_SECOND);
+      const float num_from_actual_radius = dist / STATE(self, ACTUAL_RADIUS) * base_dabs_per_actual_radius(self);
+      const float num_from_basic_radius = dist / base_radius * base_dabs_per_basic_radius(self);
+      const float num_from_seconds = dt * base_dabs_per_second(self);
       return num_from_actual_radius + num_from_basic_radius + num_from_seconds;
   }
 
@@ -1201,16 +1239,16 @@ gboolean prepare_and_draw_dab (MyPaintBrush *self, MyPaintSurface * surface, gbo
   state_based_dab_count(float dist, float base_radius, float dt, MyPaintBrush* self)
   {
 
-      const float dpar_state = STATE(self, DABS_PER_ACTUAL_RADIUS);
+      const float dpar_state = state_dabs_per_actual_radius(self);
       const float num_by_actual_radius = dist / STATE(self, ACTUAL_RADIUS) *
-        (dpar_state && !isnan(dpar_state) ? dpar_state : BASEVAL(self, DABS_PER_ACTUAL_RADIUS));
+        (dpar_state && !isnan(dpar_state) ? dpar_state : base_dabs_per_actual_radius(self));
 
-      const float dpbr_state = STATE(self, DABS_PER_BASIC_RADIUS);
+      const float dpbr_state = state_dabs_per_basic_radius(self);
       const float num_by_basic_radius =
-        dist / base_radius * (dpbr_state && !isnan(dpbr_state) ? dpbr_state : BASEVAL(self, DABS_PER_BASIC_RADIUS));
+        dist / base_radius * (dpbr_state && !isnan(dpbr_state) ? dpbr_state : base_dabs_per_basic_radius(self));
 
-      const float dps_state = STATE(self, DABS_PER_SECOND);
-      const float num_by_time_delta = dt * (!isnan(dps_state) ? dps_state : BASEVAL(self, DABS_PER_SECOND));
+      const float dps_state = state_dabs_per_second(self);
+      const float num_by_time_delta = dt * (!isnan(dps_state) ? dps_state : base_dabs_per_second(self));
       return num_by_actual_radius + num_by_basic_radius + num_by_time_delta;
   }
 
