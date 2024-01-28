@@ -246,7 +246,7 @@
             "default": 0.0,
             "displayed_name": "Dabs per basic radius",
             "internal_name": "dabs_per_basic_radius",
-            "maximum": 200.0,
+            "maximum": 8.0,
             "minimum": 0.0,
             "tooltip": "How many dabs to draw while the pointer moves a distance of one brush radius (more precise: the base value of the radius)"
         },
@@ -255,7 +255,7 @@
             "default": 2.0,
             "displayed_name": "Dabs per actual radius",
             "internal_name": "dabs_per_actual_radius",
-            "maximum": 200.0,
+            "maximum": 8.0,
             "minimum": 0.0,
             "tooltip": "Same as above, but the radius actually drawn is used, which can change dynamically"
         },
