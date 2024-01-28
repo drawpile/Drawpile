@@ -289,7 +289,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+701"/>
+        <location filename="../document.cpp" line="+715"/>
         <source>Unknown format.</source>
         <translation>不明な形式。</translation>
     </message>
@@ -483,12 +483,12 @@
 <context>
     <name>SessionListingModel</name>
     <message>
-        <location filename="../net/sessionlistingmodel.cpp" line="+432"/>
+        <location filename="../net/sessionlistingmodel.cpp" line="+451"/>
         <source>(untitled)</source>
         <translation>(無題)</translation>
     </message>
     <message>
-        <location line="-361"/>
+        <location line="-380"/>
         <source>%1d%2h%3m</source>
         <translation>%1日%2時間%3分</translation>
     </message>
@@ -517,7 +517,19 @@
         </translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+9"/>
+        <source>Unknown number of actively drawing users</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location line="+2"/>
+        <source>%n actively drawing user(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location line="+18"/>
         <source>Compatible</source>
         <translation>互換性あり</translation>
     </message>
@@ -542,7 +554,7 @@
         <translation>不明なバージョン</translation>
     </message>
     <message>
-        <location line="+65"/>
+        <location line="+67"/>
         <source>Compatibility</source>
         <translation>互換性</translation>
     </message>
@@ -560,6 +572,11 @@
         <location line="+1"/>
         <source>Users</source>
         <translation>ユーザー</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Active</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1037,7 +1054,7 @@
         <translation>サーバーによって %1 の管理者ステータスが破棄されました。</translation>
     </message>
     <message>
-        <location line="-384"/>
+        <location line="-392"/>
         <source>You have been kicked.</source>
         <translation>あなたはキックされました。</translation>
     </message>
@@ -1077,7 +1094,7 @@
         <translation>切断されました: %1</translation>
     </message>
     <message>
-        <location line="+316"/>
+        <location line="+324"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
         <translation>モデレーターのみが通常のBANをエクスポートできます。</translation>
@@ -1184,23 +1201,23 @@
 <context>
     <name>net::LoginHandler</name>
     <message>
-        <location filename="../net/login.cpp" line="+108"/>
-        <location line="+452"/>
+        <location filename="../net/login.cpp" line="+105"/>
+        <location line="+458"/>
         <source>Invalid state</source>
         <translation>無効な状態です</translation>
     </message>
     <message>
-        <location line="-410"/>
+        <location line="-416"/>
         <location line="+8"/>
-        <location line="+124"/>
-        <location line="+315"/>
-        <location line="+164"/>
-        <location line="+46"/>
+        <location line="+128"/>
+        <location line="+318"/>
+        <location line="+165"/>
+        <location line="+47"/>
         <source>Incompatible server</source>
         <translation>互換性のないサーバー</translation>
     </message>
     <message>
-        <location line="-642"/>
+        <location line="-651"/>
         <source>Server is for a different Drawpile version!</source>
         <translation>サーバーはあなたの Drawpile と異なるバージョンです！</translation>
     </message>
@@ -1215,12 +1232,17 @@
         <translation>このサーバーではセッションをホストするためのログイン方法が提供されていません！</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+13"/>
+        <source>Server expects STARTTLS on unsupported socket.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
         <source>Secure mode not enabled on a trusted host!</source>
         <translation>信頼できるホストでセキュア モードが有効になっていません！</translation>
     </message>
     <message>
-        <location line="+68"/>
+        <location line="+70"/>
         <source>Session lookup failed</source>
         <translation>セッションの検索に失敗</translation>
     </message>
@@ -1266,12 +1288,12 @@
         <translation>サポートされていない外部認証 URL スキーム</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+9"/>
         <source>Server reported two different ext-auth URLs</source>
         <translation>サーバーは２つの異なるext-auth URLを報告</translation>
     </message>
     <message>
-        <location line="+111"/>
+        <location line="+112"/>
         <source>Got multiple sessions when only one was expected</source>
         <translation>１つではなく複数のセッションが発生しました</translation>
     </message>
@@ -1301,7 +1323,17 @@
         <translation>別の Drawpile バージョン (%1) のセッションが進行中です！</translation>
     </message>
     <message>
-        <location line="+257"/>
+        <location line="+171"/>
+        <source>TLS is not supported via this kind of socket</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+56"/>
+        <source>Unable to set TLS error ignore state</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+31"/>
         <location line="+21"/>
         <source>Invalid SSL certificate for host %1</source>
         <translation>ホスト %1 の SSL 証明書が無効です</translation>
@@ -1317,7 +1349,7 @@
         <translation>キャンセルしました</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+14"/>
         <source>Session not found!</source>
         <translation>セッションが見つかりません！</translation>
     </message>
@@ -1377,7 +1409,7 @@
         <translation>このサーバーは直接リンクでのみセッションへの参加が許可されます。</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+28"/>
         <source>Client failed to serialize command</source>
         <translation>クライアントがコマンドのシリアル化に失敗しました</translation>
     </message>
@@ -1390,7 +1422,7 @@
         <translation>(無題)</translation>
     </message>
     <message>
-        <location line="+45"/>
+        <location line="+53"/>
         <source>%1 (incompatible)</source>
         <translation>%1 (互換性なし)</translation>
     </message>
@@ -1430,7 +1462,19 @@
         <translation>未成年者には適していません (NSFM)</translation>
     </message>
     <message>
-        <location line="+47"/>
+        <location line="+5"/>
+        <source>Unknown number of actively drawing users</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location line="+2"/>
+        <source>%n actively drawing user(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location line="+57"/>
         <source>Title</source>
         <translation>タイトル</translation>
     </message>
@@ -1444,13 +1488,43 @@
         <source>Users</source>
         <translation>ユーザー</translation>
     </message>
+    <message>
+        <location line="+1"/>
+        <source>Active</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
-    <name>net::TcpServer</name>
+    <name>net::Server</name>
     <message>
-        <location filename="../net/tcpserver.cpp" line="+132"/>
+        <location filename="../net/server.cpp" line="+99"/>
+        <source>Network read error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Network read error: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Network write error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Network write error: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Network connection timed out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+54"/>
         <source>Received invalid data</source>
-        <translation>無効なデータを受信しました</translation>
+        <translation type="unfinished">無効なデータを受信しました</translation>
     </message>
 </context>
 <context>

@@ -289,7 +289,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+701"/>
+        <location filename="../document.cpp" line="+715"/>
         <source>Unknown format.</source>
         <translation>未知格式.</translation>
     </message>
@@ -483,12 +483,12 @@
 <context>
     <name>SessionListingModel</name>
     <message>
-        <location filename="../net/sessionlistingmodel.cpp" line="+432"/>
+        <location filename="../net/sessionlistingmodel.cpp" line="+451"/>
         <source>(untitled)</source>
         <translation>(未命名)</translation>
     </message>
     <message>
-        <location line="-361"/>
+        <location line="-380"/>
         <source>%1d%2h%3m</source>
         <translation>%1d%2h%3m</translation>
     </message>
@@ -517,7 +517,19 @@
         </translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+9"/>
+        <source>Unknown number of actively drawing users</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location line="+2"/>
+        <source>%n actively drawing user(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location line="+18"/>
         <source>Compatible</source>
         <translation>兼容的</translation>
     </message>
@@ -542,7 +554,7 @@
         <translation>未知版本</translation>
     </message>
     <message>
-        <location line="+65"/>
+        <location line="+67"/>
         <source>Compatibility</source>
         <translation>兼容性</translation>
     </message>
@@ -560,6 +572,11 @@
         <location line="+1"/>
         <source>Users</source>
         <translation>用户</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Active</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1037,7 +1054,7 @@
         <translation>%1的房间管理员身份已被服务器移除.</translation>
     </message>
     <message>
-        <location line="-384"/>
+        <location line="-392"/>
         <source>You have been kicked.</source>
         <translation>你已被踢除.</translation>
     </message>
@@ -1077,7 +1094,7 @@
         <translation>断开连接: %1</translation>
     </message>
     <message>
-        <location line="+316"/>
+        <location line="+324"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
         <translation>只有服务器管理员可以导出普通的被禁的用户.</translation>
@@ -1184,38 +1201,38 @@
 <context>
     <name>net::LoginHandler</name>
     <message>
-        <location filename="../net/login.cpp" line="+108"/>
-        <location line="+452"/>
+        <location filename="../net/login.cpp" line="+105"/>
+        <location line="+458"/>
         <source>Invalid state</source>
         <translation>无效状态</translation>
     </message>
     <message>
-        <location line="-410"/>
+        <location line="-416"/>
         <location line="+8"/>
-        <location line="+124"/>
-        <location line="+315"/>
-        <location line="+164"/>
-        <location line="+46"/>
+        <location line="+128"/>
+        <location line="+318"/>
+        <location line="+165"/>
+        <location line="+47"/>
         <source>Incompatible server</source>
         <translation>服务器不兼容</translation>
     </message>
     <message>
-        <location line="-642"/>
+        <location line="-651"/>
         <source>Server is for a different Drawpile version!</source>
         <translation>服务器不支持当前的Drawpile版本！</translation>
     </message>
     <message>
-        <location line="+102"/>
+        <location line="+105"/>
         <source>Secure mode not enabled on a trusted host!</source>
         <translation>安全模式没有在信任的主机上启动!</translation>
     </message>
     <message>
-        <location line="+771"/>
+        <location line="+781"/>
         <source>Username already taken!</source>
         <translation>用户名已被使用!</translation>
     </message>
     <message>
-        <location line="-665"/>
+        <location line="-673"/>
         <source>This server does not allow guest logins</source>
         <translation>此服务器不支持非注册用户登录</translation>
     </message>
@@ -1241,7 +1258,7 @@
         <translation>不支持ext-auth的URL方案</translation>
     </message>
     <message>
-        <location line="+171"/>
+        <location line="+173"/>
         <source>New version</source>
         <translation>新版本</translation>
     </message>
@@ -1261,7 +1278,7 @@
         <translation>已被控制面板屏蔽</translation>
     </message>
     <message>
-        <location line="+266"/>
+        <location line="+267"/>
         <location line="+21"/>
         <source>Invalid SSL certificate for host %1</source>
         <translation>服务器 %1 证书无效</translation>
@@ -1272,7 +1289,7 @@
         <translation>信任的服务器证书已更改!</translation>
     </message>
     <message>
-        <location line="+89"/>
+        <location line="+94"/>
         <source>Server is full!</source>
         <translation>服务器已满!</translation>
     </message>
@@ -1307,17 +1324,17 @@
         <translation>此服务器只允许通过直接链接加入房间.</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+28"/>
         <source>Client failed to serialize command</source>
         <translation>客户端序列化命令失败</translation>
     </message>
     <message>
-        <location line="-74"/>
+        <location line="-80"/>
         <source>Cancelled</source>
         <translation>已取消</translation>
     </message>
     <message>
-        <location line="-761"/>
+        <location line="-769"/>
         <source>This server doesn&apos;t provide a way to log in for joining a session!</source>
         <translation>此服务器不提供登录方式来加入房间!</translation>
     </message>
@@ -1327,7 +1344,12 @@
         <translation>此服务器不提供登录方式来创建房间!</translation>
     </message>
     <message>
-        <location line="+83"/>
+        <location line="+13"/>
+        <source>Server expects STARTTLS on unsupported socket.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+75"/>
         <source>Session lookup failed</source>
         <translation>房间查找失败</translation>
     </message>
@@ -1347,12 +1369,12 @@
         <translation>无效标识意图响应.</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+39"/>
         <source>Server reported two different ext-auth URLs</source>
         <translation>服务器报告了两个不同的外部认证 URLs</translation>
     </message>
     <message>
-        <location line="+111"/>
+        <location line="+112"/>
         <source>Got multiple sessions when only one was expected</source>
         <translation>在预期只有一个房间的情况下出现了多个房间</translation>
     </message>
@@ -1362,7 +1384,17 @@
         <translation>不同Drawpile版本（%1）的房间正在进行中!</translation>
     </message>
     <message>
-        <location line="+327"/>
+        <location line="+171"/>
+        <source>TLS is not supported via this kind of socket</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+56"/>
+        <source>Unable to set TLS error ignore state</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+106"/>
         <source>Session not found!</source>
         <translation>未找到房间!</translation>
     </message>
@@ -1390,7 +1422,7 @@
         <translation>(未命名)</translation>
     </message>
     <message>
-        <location line="+45"/>
+        <location line="+53"/>
         <source>%1 (incompatible)</source>
         <translation>%1 (不兼容)</translation>
     </message>
@@ -1430,7 +1462,19 @@
         <translation>未成年人勿入</translation>
     </message>
     <message>
-        <location line="+47"/>
+        <location line="+5"/>
+        <source>Unknown number of actively drawing users</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location line="+2"/>
+        <source>%n actively drawing user(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location line="+57"/>
         <source>Title</source>
         <translation>标题</translation>
     </message>
@@ -1444,13 +1488,43 @@
         <source>Users</source>
         <translation>用户</translation>
     </message>
+    <message>
+        <location line="+1"/>
+        <source>Active</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
-    <name>net::TcpServer</name>
+    <name>net::Server</name>
     <message>
-        <location filename="../net/tcpserver.cpp" line="+132"/>
+        <location filename="../net/server.cpp" line="+99"/>
+        <source>Network read error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Network read error: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Network write error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Network write error: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Network connection timed out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+54"/>
         <source>Received invalid data</source>
-        <translation>接受信息无效</translation>
+        <translation type="unfinished">接受信息无效</translation>
     </message>
 </context>
 <context>

@@ -575,18 +575,18 @@ a 64x64 pixeles.</translation>
         <translation>Importar Roles</translation>
     </message>
     <message>
-        <location line="+38"/>
-        <location line="+186"/>
+        <location line="+44"/>
+        <location line="+185"/>
         <source>Save Image</source>
         <translation>Guardar Imagen</translation>
     </message>
     <message>
-        <location line="-186"/>
+        <location line="-185"/>
         <source>Export Image</source>
         <translation>Exportar Imagen</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+20"/>
         <source>Save Pre-Reset Image</source>
         <translation>Guardar Imagen Pre-reinicio</translation>
     </message>
@@ -691,7 +691,13 @@ a 64x64 pixeles.</translation>
         <translation>Guardar como ORA</translation>
     </message>
     <message>
-        <location line="+107"/>
+        <location line="+52"/>
+        <location line="+5"/>
+        <source>Untitled</source>
+        <translation type="unfinished">Sin titulo</translation>
+    </message>
+    <message>
+        <location line="+68"/>
         <source>Untitled%1</source>
         <extracomment>%1 will be a file extension, like .ora or .png or something.</extracomment>
         <translation>Sintitulo%1</translation>
@@ -1210,18 +1216,18 @@ Simplify the canvas and reset manually before space runs out.</source>
  Simplifique el canvas y resetear manualmente antes de que se acabe el espacio.</translation>
     </message>
     <message>
-        <location line="+265"/>
+        <location line="+269"/>
         <source>🙋 %1 joined!</source>
         <translation>🙋 %1 ¡Se ha unido!</translation>
     </message>
     <message>
-        <location line="+91"/>
-        <location line="+1403"/>
+        <location line="+92"/>
+        <location line="+1466"/>
         <source>Untitled</source>
         <translation>Sin titulo</translation>
     </message>
     <message>
-        <location line="-1043"/>
+        <location line="-1088"/>
         <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
         <translation>&lt;p&gt;El atajo &apos;%1&apos; es ambiguo, coincide con:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</translation>
     </message>
@@ -1236,13 +1242,13 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Arreglar</translation>
     </message>
     <message>
-        <location line="+153"/>
-        <location line="+21"/>
+        <location line="+156"/>
+        <location line="+26"/>
         <source>Exit Drawpile</source>
         <translation>Salir de Drawpile</translation>
     </message>
     <message>
-        <location line="-20"/>
+        <location line="-25"/>
         <source>You are still connected to a drawing session.</source>
         <translation>Todavia estas conectado a una sesion de dibujo.</translation>
     </message>
@@ -1253,13 +1259,13 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+22"/>
-        <location line="+548"/>
+        <location line="+27"/>
+        <location line="+573"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location line="-555"/>
+        <location line="-580"/>
         <source>There are unsaved changes. Save them before exiting?</source>
         <translation>Hay cambios sin guardar. Guardar antes de salir?</translation>
     </message>
@@ -1274,7 +1280,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Descartar</translation>
     </message>
     <message>
-        <location line="+381"/>
+        <location line="+406"/>
         <source>Saving...</source>
         <translation>Guardando...</translation>
     </message>
@@ -1305,12 +1311,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+3"/>
-        <location line="+1547"/>
+        <location line="+1573"/>
         <source>Record...</source>
         <translation>Grabar...</translation>
     </message>
     <message>
-        <location line="-1410"/>
+        <location line="-1435"/>
         <source>No canvas to host! Create one or open a file.</source>
         <translation>No hay lienzo para hostear, crea uno o abre un archivo.</translation>
     </message>
@@ -1325,7 +1331,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Hostear Sesion</translation>
     </message>
     <message>
-        <location line="+70"/>
+        <location line="+81"/>
         <source>Really leave the session?</source>
         <translation>Realmente quiere abandonar la sesion?</translation>
     </message>
@@ -1361,17 +1367,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+1838"/>
+        <location line="+1868"/>
         <source>Terminate</source>
         <translation>Terminar</translation>
     </message>
     <message>
-        <location line="-1755"/>
+        <location line="-1781"/>
         <source>Could not connect to server</source>
         <translation>No pudo conectarse al servidor</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+15"/>
         <source>Would you like to join the session instead?</source>
         <translation>Desearia en cambio unirse a la sesion?</translation>
     </message>
@@ -1381,7 +1387,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Unirse</translation>
     </message>
     <message>
-        <location line="+112"/>
+        <location line="+117"/>
         <source>Session blocked by parental controls</source>
         <translation>Sesion bloqueada por controles parentales</translation>
     </message>
@@ -1391,7 +1397,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Imagen no pudo ser cargada</translation>
     </message>
     <message>
-        <location line="+345"/>
+        <location line="+347"/>
         <source>About Drawpile</source>
         <translation>Acerca de Drawpile</translation>
     </message>
@@ -1512,6 +1518,11 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+4"/>
+        <source>Pic&amp;k From Screen</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Paste &amp;From File...</source>
         <translation>Pegar &amp;De Archivo...</translation>
     </message>
@@ -1582,12 +1593,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Borrar Color de Seleccion</translation>
     </message>
     <message>
-        <location line="+84"/>
+        <location line="+90"/>
         <source>&amp;Edit</source>
         <translation>&amp;Editar</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+22"/>
         <source>&amp;Expand Canvas</source>
         <translation>&amp;Expandir Canvas</translation>
     </message>
@@ -1677,7 +1688,12 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation type="unfinished">Solo mostrar capas en el cuadro actual</translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+41"/>
+        <source>New Layer Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
         <source>Set as Fill Source</source>
         <translation>Establecer como Llenar Fuente</translation>
     </message>
@@ -1797,17 +1813,19 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Nueva Capa</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location filename="../docks/layerlistdock.cpp" line="+308"/>
+        <location filename="../mainwindow.cpp" line="+2"/>
         <source>Duplicate Layer</source>
         <translation>Duplicar Capa</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+9"/>
+        <location filename="../mainwindow.cpp" line="+3"/>
         <source>Delete Layer</source>
         <translation>Borrar Capa</translation>
     </message>
     <message>
-        <location line="-44"/>
+        <location filename="../mainwindow.cpp" line="-44"/>
         <source>Show Censored Layers</source>
         <translation>Mostrar capas censuradas</translation>
     </message>
@@ -1822,7 +1840,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Seleccionar debajo</translation>
     </message>
     <message>
-        <location line="-2226"/>
+        <location line="-2264"/>
         <source>This session was hosted with an older version of Drawpile, some newer features won&apos;t be available. Other Drawpile versions will see different results, session resets may cause abrupt changes.</source>
         <translation>Esta sesión ha sido hosteada con una versión anterior de Drawpile, Algunas de las características nuevas no estarán disponibles. Otras versiones de Drawpile verán resultados distintos, Reinicios de sesión podrán causar cambios abruptos.</translation>
     </message>
@@ -1882,7 +1900,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Error abriendo registro de eventos de tableta.</translation>
     </message>
     <message>
-        <location line="+534"/>
+        <location line="+558"/>
         <source>Undo Limit... (%1)</source>
         <translation>Deshacer Limite...(%1)</translation>
     </message>
@@ -1892,7 +1910,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <translation>Cambiar el limite de deshacer de sesión, el limite actual es %1.</translation>
     </message>
     <message>
-        <location line="+657"/>
+        <location line="+659"/>
         <source>User #%1</source>
         <translation>Usuario #%1</translation>
     </message>
@@ -1903,23 +1921,23 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+987"/>
+        <location line="+1003"/>
         <source>Tablet Event Log...</source>
         <translation>Registro de Eventos de Tableta...</translation>
     </message>
     <message>
-        <location line="-984"/>
+        <location line="-1000"/>
         <source>Stop Profile</source>
         <translation>Detener Perfil</translation>
     </message>
     <message>
         <location line="+0"/>
-        <location line="+985"/>
+        <location line="+1001"/>
         <source>Profile...</source>
         <translation>Perfil...</translation>
     </message>
     <message>
-        <location line="-978"/>
+        <location line="-994"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
         <translation>Establecer Retraso Artificial... (actualmente %1 ms)</translation>
     </message>
@@ -1945,12 +1963,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     </message>
     <message>
         <location line="+15"/>
-        <location line="+940"/>
+        <location line="+956"/>
         <source>Record Debug Dumps</source>
         <translation>Guardar volcado de depuración</translation>
     </message>
     <message>
-        <location line="-939"/>
+        <location line="-955"/>
         <source>Debug dumps will record local and remote drawing commands. They can be used to fix network issues, but not much else. If you want to make a regular recording, use File &gt; Record... instead.
 
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
@@ -1998,7 +2016,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <translation>Pegar en el Centro de la Vista</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+9"/>
         <source>Set Session Background...</source>
         <translation>Establecer Fondo de Sesión...</translation>
     </message>
@@ -2018,7 +2036,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <translation>&amp;Ajustes de</translation>
     </message>
     <message>
-        <location line="+141"/>
+        <location line="+150"/>
         <source>Canvas Background</source>
         <translation>Fondo de Lienzo</translation>
     </message>
@@ -2033,17 +2051,13 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <translation>Modo Vista de Capas</translation>
     </message>
     <message>
-        <location line="+31"/>
-        <source>New Group</source>
-        <translation>Nuevo Grupo</translation>
-    </message>
-    <message>
-        <location line="+2"/>
+        <location filename="../docks/layerlistdock.cpp" line="-6"/>
+        <location filename="../mainwindow.cpp" line="+33"/>
         <source>Merge Layer</source>
         <translation>Fusionar Capas</translation>
     </message>
     <message>
-        <location line="+45"/>
+        <location filename="../mainwindow.cpp" line="+45"/>
         <source>Next Frame</source>
         <translation>Siguiente Cuadro</translation>
     </message>
@@ -2058,22 +2072,22 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <translation>&amp;Capa</translation>
     </message>
     <message>
-        <location line="-2437"/>
+        <location line="-2478"/>
         <source>Opening file…</source>
         <translation>Abriendo Archivo…</translation>
     </message>
     <message>
-        <location line="+175"/>
+        <location line="+178"/>
         <source>Joined the session!</source>
         <translation>¡Te uniste a la sesión!</translation>
     </message>
     <message>
-        <location line="+378"/>
+        <location line="+379"/>
         <source>Hosting on this computer is not available</source>
         <translation>Hostear en este computador no esta disponible</translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+66"/>
         <source>Really leave and terminate the session?</source>
         <translation>¿Realmente quieres salir y terminar la sesion?</translation>
     </message>
@@ -2083,7 +2097,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <translation>Razón:</translation>
     </message>
     <message>
-        <location line="+119"/>
+        <location line="+123"/>
         <source>You&apos;ve been disconnected from the session.</source>
         <translation>Has sido desconectado de la sesión.</translation>
     </message>
@@ -2093,7 +2107,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <translation>Desconectado: %1</translation>
     </message>
     <message>
-        <location line="+63"/>
+        <location line="+71"/>
         <source>Canvas locked</source>
         <translation>Lienzo bloqueado</translation>
     </message>
@@ -2123,7 +2137,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <translation>Herramienta de pincel mano-libre (modo de bloqueo Alpha)</translation>
     </message>
     <message>
-        <location line="+495"/>
+        <location line="+497"/>
         <source>Primary screen:</source>
         <translation>Pantalla primaria:</translation>
     </message>
@@ -2198,17 +2212,18 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <translation>&amp;Estampar Selección</translation>
     </message>
     <message>
-        <location line="+164"/>
+        <location line="+176"/>
         <source>Tablet Driver</source>
         <translation>Controlador de Tableta</translation>
     </message>
     <message>
-        <location line="+232"/>
+        <location filename="../docks/layerlistdock.cpp" line="+3"/>
+        <location filename="../mainwindow.cpp" line="+232"/>
         <source>Layer Properties…</source>
         <translation>Propiedades de Capa…</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location filename="../mainwindow.cpp" line="+27"/>
         <source>Change Frame Count...</source>
         <translation>Cambiar Conteo de Cuadros...</translation>
     </message>
@@ -2294,6 +2309,16 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     </message>
     <message>
         <location line="+3"/>
+        <source>Next Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Previous Key Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
         <source>Track Above</source>
         <translation>Pista Superior</translation>
     </message>
@@ -2363,7 +2388,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <translation>Duplicar Cuadro Clave</translation>
     </message>
     <message>
-        <location line="+25"/>
+        <location line="+27"/>
         <location filename="../widgets/macmenu.cpp" line="+9"/>
         <source>&amp;Host...</source>
         <translation>&amp;Hostear...</translation>
@@ -2938,7 +2963,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
     <name>QApplication</name>
     <message>
         <location filename="../dialogs/avatarimport.cpp" line="+59"/>
-        <location filename="../filewrangler.cpp" line="-427"/>
+        <location filename="../filewrangler.cpp" line="-450"/>
         <source>All files (*)</source>
         <translation>Todos los archivos (*)</translation>
     </message>
@@ -3249,7 +3274,12 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <translation>Sin login de invitados</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+7"/>
+        <source>Allow joining from the web browser</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
         <source>Permissions</source>
         <translation>Permisos</translation>
     </message>
@@ -3301,7 +3331,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <translation>Nuevas Anotaciones:</translation>
     </message>
     <message>
-        <location line="-166"/>
+        <location line="-160"/>
         <source>This session contains age-restricted content</source>
         <translation>Esta sesión contiene contenido restringido por edad</translation>
     </message>
@@ -3311,7 +3341,7 @@ La grabación del volcado de depuración comenzara en el siguiente reinicio de l
         <translation>No es apto para menores (NSFM)</translation>
     </message>
     <message>
-        <location line="+180"/>
+        <location line="+174"/>
         <source>General Layer Editing:</source>
         <translation>Editar Capa General:</translation>
     </message>
@@ -5717,7 +5747,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::InviteDialog</name>
     <message>
-        <location filename="../dialogs/invitedialog.cpp" line="+74"/>
+        <location filename="../dialogs/invitedialog.cpp" line="+106"/>
         <source>Invite link copied to clipboard.</source>
         <translation>Enlace de invitación copiado al portapapeles.</translation>
     </message>
@@ -5844,12 +5874,12 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::LoginDialog</name>
     <message>
-        <location filename="../dialogs/logindialog.cpp" line="+156"/>
+        <location filename="../dialogs/logindialog.cpp" line="+166"/>
         <source>Report...</source>
         <translation>Reportar...</translation>
     </message>
     <message>
-        <location line="+133"/>
+        <location line="+147"/>
         <source>Accept</source>
         <translation>Aceptar</translation>
     </message>
@@ -5859,7 +5889,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Acceder con cuenta de servidor</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+20"/>
         <source>Enter account password. If you don&apos;t have an account, you must register one. This server provides no information on how to do that.</source>
         <translation>Introducir contraseña de cuenta. Si no tienes una cuenta, debes registrar una. Este servidor no provee información de como hacerlo.</translation>
     </message>
@@ -5874,7 +5904,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Este nombre de usuario pertenece a una cuenta registrada. Si esta no es tu cuenta, cancela y prueba nuevamente con un nombre distinto.</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+21"/>
         <source>Close</source>
         <translation>Cerrar</translation>
     </message>
@@ -5933,12 +5963,12 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Este nombre de usuario no pertenece a una cuenta en este servidor. ¡Esta no es tu cuenta de drawpile.net!</translation>
     </message>
     <message>
-        <location line="+528"/>
+        <location line="+530"/>
         <source>Enter the username and password for your account on this server. This is not your drawpile.net account!</source>
         <translation>Introduzca el nombre de usuario y contraseña de tu cuenta en este servidor. ¡Esta no es tu cuenta de drawpile.net!</translation>
     </message>
     <message>
-        <location line="-612"/>
+        <location line="-614"/>
         <source>You can continue without an account. If you want to register one anyway, you can do so on %1.</source>
         <translation>Puedes continuar sin una cuenta. Si quieres registrar una de todas formas, puedes hacerlo en %1.</translation>
     </message>
@@ -5993,7 +6023,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Este nombre de usuario pertenece a algún otro método de inicio de sesión, no puedes usarlo para acceder como %1 en este servidor.</translation>
     </message>
     <message>
-        <location line="+516"/>
+        <location line="+518"/>
         <source>Enter the username and password for your %1 account.</source>
         <translation>Entra el nombre de usuario y contraseña para tu cuenta %1.</translation>
     </message>
@@ -6098,7 +6128,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::SessionSettingsDialog</name>
     <message>
-        <location filename="../dialogs/sessionsettings.cpp" line="+492"/>
+        <location filename="../dialogs/sessionsettings.cpp" line="+501"/>
         <source>Operators</source>
         <translation>Operadores</translation>
     </message>
@@ -6136,7 +6166,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation></translation>
     </message>
     <message numerus="yes">
-        <location line="-237"/>
+        <location line="-238"/>
         <source>Imported %n session ban(s).</source>
         <translation>
             <numerusform>%n Baneo de sesiones importado.</numerusform>
@@ -6154,13 +6184,13 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+5"/>
-        <location line="+461"/>
+        <location line="+477"/>
         <location line="+9"/>
         <source>Session Ban Import</source>
         <translation>Importar Baneo de Sesión</translation>
     </message>
     <message>
-        <location line="-449"/>
+        <location line="-465"/>
         <source>Session Ban Export</source>
         <translation>Exportar Baneo de Sesión</translation>
     </message>
@@ -6175,7 +6205,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Error de Baneo de Sesión</translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="+50"/>
         <source>This list shows only registered users.</source>
         <translation>Esta lista solo muestra usuarios registrados.</translation>
     </message>
@@ -6191,7 +6221,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Asignar</translation>
     </message>
     <message>
-        <location line="+32"/>
+        <location line="+41"/>
         <source>never</source>
         <extracomment>&quot;Idle timeout: never&quot;</extracomment>
         <translation>nunca</translation>
@@ -6236,7 +6266,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>, </translation>
     </message>
     <message>
-        <location line="+116"/>
+        <location line="+122"/>
         <location line="+18"/>
         <source>Set a new password or leave blank to remove.</source>
         <translation>Elegir nueva contraseña o dejar en blanco para remover.</translation>
@@ -6749,7 +6779,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::General</name>
     <message>
-        <location filename="../dialogs/settingsdialog/general.cpp" line="+73"/>
+        <location filename="../dialogs/settingsdialog/general.cpp" line="+62"/>
         <source>When enabled, save every %1 minutes</source>
         <translation>Cuando esta habilitado, guardar cada %1 minutos</translation>
     </message>
@@ -6760,13 +6790,13 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+12"/>
-        <location line="+80"/>
+        <location line="+99"/>
         <location line="+15"/>
         <source>System</source>
         <translation>Sistema</translation>
     </message>
     <message>
-        <location line="-84"/>
+        <location line="-103"/>
         <source>Language:</source>
         <translation>Idioma:</translation>
     </message>
@@ -6796,7 +6826,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Registrando:</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+29"/>
         <source>Keep %1 canvas snapshots</source>
         <translation>Mantener %1 instantáneas de lienzo</translation>
     </message>
@@ -6811,22 +6841,32 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Tomar una instantánea cada %1 segundos</translation>
     </message>
     <message>
-        <location line="-101"/>
-        <source>Capture volume rocker</source>
-        <translation>Capturar control de volumen</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Android:</source>
-        <translation>Android:</translation>
-    </message>
-    <message>
-        <location line="+25"/>
+        <location line="-93"/>
         <source>Autosave can be enabled for the current file under File ▸ Autosave.</source>
         <translation>Guardado automático puede ser habilitado para el archivo actual bajo Archivo ▸ guardado automático.</translation>
     </message>
     <message>
-        <location line="+81"/>
+        <location line="+61"/>
+        <source>Interpolate when view is zoomed or rotated</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Canvas view:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Prevent jitter at certain zoom and rotation levels</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Enabling these options may impact performance on some systems.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+28"/>
         <source>Snapshots can be restored from the Session ▸ Reset… menu.</source>
         <translation>Las instantáneas pueden ser restauradas desde el menú Sesion ▸ Reiniciar...</translation>
     </message>
@@ -6889,7 +6929,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::Input</name>
     <message>
-        <location filename="../dialogs/settingsdialog/input.cpp" line="+37"/>
+        <location filename="../dialogs/settingsdialog/input.cpp" line="+51"/>
         <source>Input</source>
         <translation>Entrada</translation>
     </message>
@@ -6915,11 +6955,6 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+2"/>
-        <source>Detect eraser tip</source>
-        <translation>Detectar punta de borrador</translation>
-    </message>
-    <message>
-        <location line="+4"/>
         <source>Compensate jagged curves</source>
         <translation>Compensar curvas dentadas</translation>
     </message>
@@ -6930,7 +6965,23 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+9"/>
-        <location filename="../mainwindow.cpp" line="-864"/>
+        <source>Switch to eraser slot</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Erase with current brush</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Eraser action:</source>
+        <extracomment>Eraser refers to the eraser tip of a tablet pen.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <location filename="../mainwindow.cpp" line="-877"/>
         <source>KisTablet Windows Ink</source>
         <translation>Tinta KisTablet Windows</translation>
     </message>
@@ -6990,12 +7041,23 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Entrada One-finger:</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="-50"/>
+        <location line="+52"/>
         <source>Do nothing</source>
         <translation>No hacer nada</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-98"/>
+        <source>Capture volume rocker</source>
+        <translation type="unfinished">Capturar control de volumen</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Android:</source>
+        <translation type="unfinished">Android:</translation>
+    </message>
+    <message>
+        <location line="+97"/>
         <source>Draw</source>
         <translation>Dibujar</translation>
     </message>
@@ -7005,7 +7067,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Alejar lienzo</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+9"/>
         <source>Pinch to zoom</source>
         <translation>Pellizcar para acercar</translation>
     </message>
@@ -7652,7 +7714,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>dialogs::settingsdialog::UserInterface</name>
     <message>
-        <location filename="../dialogs/settingsdialog/userinterface.cpp" line="+42"/>
+        <location filename="../dialogs/settingsdialog/userinterface.cpp" line="+173"/>
         <source>Override system font size</source>
         <translation>Anular tamaño de fuente del sistema</translation>
     </message>
@@ -7667,17 +7729,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>pt</translation>
     </message>
     <message>
-        <location line="+5"/>
-        <source>Changes the font size apply after you restart Drawpile.</source>
-        <translation>Cambios al tamaño de fuente aplicaran luego de reiniciar Drawpile.</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Type text here to try out the effects of your chosen font size.</source>
-        <translation>Teclee texto aquí para probar los efectos de tu tamaño de fuente seleccionado.</translation>
-    </message>
-    <message>
-        <location line="+17"/>
+        <location line="-138"/>
         <source>Interface mode:</source>
         <translation>Modo interface:</translation>
     </message>
@@ -7766,6 +7818,41 @@ Values above 0.5 may not be noticeable.</source>
         <source>Ask before deleting layers</source>
         <translation>Preguntar antes de borrar capas</translation>
     </message>
+    <message>
+        <location line="+12"/>
+        <source>Enable high-DPI scaling (experimental)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Override system scale factor (experimental)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Scale factor: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>%</source>
+        <translation type="unfinished">%</translation>
+    </message>
+    <message>
+        <location line="+29"/>
+        <source>%1px</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>%1pt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Changes to scaling and font size apply after you restart Drawpile. Current scale factor is %1%, font size is %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>dialogs::startdialog::Browse</name>
@@ -7816,6 +7903,16 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="+6"/>
+        <source>Inactive</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Show sessions that have zero actively drawing users</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Duplicates</source>
         <translation>Duplicados</translation>
     </message>
@@ -7832,12 +7929,12 @@ Values above 0.5 may not be noticeable.</source>
     </message>
     <message>
         <location line="-4"/>
-        <location line="+139"/>
+        <location line="+144"/>
         <source>Loading...</source>
         <translation>Cargando...</translation>
     </message>
     <message>
-        <location line="-85"/>
+        <location line="-90"/>
         <source>Join</source>
         <translation>Unirse</translation>
     </message>
@@ -7862,7 +7959,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Copiar dueño</translation>
     </message>
     <message>
-        <location line="+82"/>
+        <location line="+87"/>
         <source>Nothing here yet!</source>
         <translation>!No hay nada aquí!</translation>
     </message>
@@ -8551,7 +8648,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::LayerList</name>
     <message>
-        <location filename="../docks/layerlistdock.cpp" line="+38"/>
+        <location filename="../docks/layerlistdock.cpp" line="-276"/>
         <source>Layers</source>
         <translation>Capas</translation>
     </message>
@@ -8566,7 +8663,27 @@ Values above 0.5 may not be noticeable.</source>
         <translation>%</translation>
     </message>
     <message>
-        <location line="+405"/>
+        <location line="+218"/>
+        <source>Duplicate Layer Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Merge Layer Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Layer Group Properties…</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Delete Layer Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+216"/>
         <source>Group</source>
         <translation>Grupo</translation>
     </message>
@@ -8608,7 +8725,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::OnionSkinsDock</name>
     <message>
-        <location filename="../docks/onionskins.cpp" line="+137"/>
+        <location filename="../docks/onionskins.cpp" line="+136"/>
         <source>Frames: </source>
         <translation>Cuadros: </translation>
     </message>
@@ -8646,7 +8763,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>docks::Timeline</name>
     <message>
-        <location filename="../docks/timeline.cpp" line="+18"/>
+        <location filename="../docks/timeline.cpp" line="+19"/>
         <source>Timeline</source>
         <translation>Linea de tiempo</translation>
     </message>
@@ -8685,7 +8802,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>drawingboard::CanvasScene</name>
     <message>
-        <location filename="../scene/canvasscene.cpp" line="+230"/>
+        <location filename="../scene/canvasscene.cpp" line="+241"/>
         <source>Restoring canvas…</source>
         <translation>Restaurando Lienzo…</translation>
     </message>
@@ -8946,7 +9063,7 @@ Values above 0.5 may not be noticeable.</source>
 <context>
     <name>widgets::CanvasView</name>
     <message>
-        <location filename="../scene/canvasview.cpp" line="+169"/>
+        <location filename="../scene/canvasview.cpp" line="+194"/>
         <source>Reconnect</source>
         <translation>Reconectar</translation>
     </message>
@@ -9011,7 +9128,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>La herramienta esta blockeada</translation>
     </message>
     <message>
-        <location line="+258"/>
+        <location line="+261"/>
         <source>Vertical flip: ON</source>
         <translation>Inversión vertical: Activada</translation>
     </message>
@@ -9031,7 +9148,7 @@ Values above 0.5 may not be noticeable.</source>
         <translation>Inversión horizontal: Apagada</translation>
     </message>
     <message>
-        <location line="+1723"/>
+        <location line="+1762"/>
         <source>Zoom: %1%</source>
         <translation>Aumento: %1%</translation>
     </message>
@@ -9480,7 +9597,7 @@ Hexagonal: %4</translation>
 <context>
     <name>widgets::TimelineWidget</name>
     <message>
-        <location filename="../widgets/timelinewidget.cpp" line="+600"/>
+        <location filename="../widgets/timelinewidget.cpp" line="+608"/>
         <source>Blank key frame (duplicate)</source>
         <translation>Cuadro clave en blanco (duplicado)</translation>
     </message>
@@ -9574,7 +9691,7 @@ O por medio de Animación ▸ Nueva Pista.</translation>
         <translation>Cuadros Por Segundo (FPS)</translation>
     </message>
     <message>
-        <location line="+275"/>
+        <location line="+330"/>
         <source>Set Key Frame to %1</source>
         <translation>Establecer Cuadro Clave a %1</translation>
     </message>

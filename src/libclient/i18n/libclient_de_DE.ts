@@ -289,7 +289,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+701"/>
+        <location filename="../document.cpp" line="+715"/>
         <source>Unknown format.</source>
         <translation>Unbekanntes Format.</translation>
     </message>
@@ -483,12 +483,12 @@
 <context>
     <name>SessionListingModel</name>
     <message>
-        <location filename="../net/sessionlistingmodel.cpp" line="+432"/>
+        <location filename="../net/sessionlistingmodel.cpp" line="+451"/>
         <source>(untitled)</source>
         <translation>(unbenannt)</translation>
     </message>
     <message>
-        <location line="-361"/>
+        <location line="-380"/>
         <source>%1d%2h%3m</source>
         <translation>%1d%2h%3m</translation>
     </message>
@@ -519,7 +519,20 @@
         </translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+9"/>
+        <source>Unknown number of actively drawing users</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location line="+2"/>
+        <source>%n actively drawing user(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location line="+18"/>
         <source>Compatible</source>
         <translation>Kompatibel</translation>
     </message>
@@ -544,7 +557,7 @@
         <translation>unbekannte Version</translation>
     </message>
     <message>
-        <location line="+65"/>
+        <location line="+67"/>
         <source>Compatibility</source>
         <translation>Kompatibilität</translation>
     </message>
@@ -562,6 +575,11 @@
         <location line="+1"/>
         <source>Users</source>
         <translation>Benutzer</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Active</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1039,7 +1057,7 @@
         <translation>Der Operatorstatus von %1 wurde vom Server widerrufen.</translation>
     </message>
     <message>
-        <location line="-384"/>
+        <location line="-392"/>
         <source>You have been kicked.</source>
         <translation>Sie wurden gekickt.</translation>
     </message>
@@ -1079,7 +1097,7 @@
         <translation>Verbindung getrennt: %1</translation>
     </message>
     <message>
-        <location line="+316"/>
+        <location line="+324"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
         <translation>Nur Moderatoren können Bans im Klartext exportieren.</translation>
@@ -1186,38 +1204,38 @@
 <context>
     <name>net::LoginHandler</name>
     <message>
-        <location filename="../net/login.cpp" line="+108"/>
-        <location line="+452"/>
+        <location filename="../net/login.cpp" line="+105"/>
+        <location line="+458"/>
         <source>Invalid state</source>
         <translation>Ungültiger Zustand</translation>
     </message>
     <message>
-        <location line="-410"/>
+        <location line="-416"/>
         <location line="+8"/>
-        <location line="+124"/>
-        <location line="+315"/>
-        <location line="+164"/>
-        <location line="+46"/>
+        <location line="+128"/>
+        <location line="+318"/>
+        <location line="+165"/>
+        <location line="+47"/>
         <source>Incompatible server</source>
         <translation>Inkompatibler Server</translation>
     </message>
     <message>
-        <location line="-642"/>
+        <location line="-651"/>
         <source>Server is for a different Drawpile version!</source>
         <translation>Server unterstützt eine andere Drawpile Version!</translation>
     </message>
     <message>
-        <location line="+102"/>
+        <location line="+105"/>
         <source>Secure mode not enabled on a trusted host!</source>
         <translation>Sicherer Modus auf vertrauenswürdigem Host nicht aktiviert!</translation>
     </message>
     <message>
-        <location line="+771"/>
+        <location line="+781"/>
         <source>Username already taken!</source>
         <translation>Benutzername bereits vergeben!</translation>
     </message>
     <message>
-        <location line="-665"/>
+        <location line="-673"/>
         <source>This server does not allow guest logins</source>
         <translation>Dieser Server erlaubt keine Gastzugänge</translation>
     </message>
@@ -1243,7 +1261,7 @@
         <translation>URL-Schema für externe Authentifizierung nicht unterstützt</translation>
     </message>
     <message>
-        <location line="+171"/>
+        <location line="+173"/>
         <source>New version</source>
         <translation>Neue Version</translation>
     </message>
@@ -1263,7 +1281,7 @@
         <translation>Blockiert durch Jugendschutzeinstellungen</translation>
     </message>
     <message>
-        <location line="+266"/>
+        <location line="+267"/>
         <location line="+21"/>
         <source>Invalid SSL certificate for host %1</source>
         <translation>Ungültiges SSL Zertifikat für Host %1</translation>
@@ -1274,7 +1292,7 @@
         <translation>Das Zertifikat eines als vertrauenswürdig eingestuften Servers hat sich geändert!</translation>
     </message>
     <message>
-        <location line="+89"/>
+        <location line="+94"/>
         <source>Server is full!</source>
         <translation>Server ist voll!</translation>
     </message>
@@ -1309,17 +1327,17 @@
         <translation>Der Server erlaubt nur den Beitritt per direktem Link.</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+28"/>
         <source>Client failed to serialize command</source>
         <translation>Client kann Befehl nicht serialisieren</translation>
     </message>
     <message>
-        <location line="-74"/>
+        <location line="-80"/>
         <source>Cancelled</source>
         <translation>Abgebrochen</translation>
     </message>
     <message>
-        <location line="-761"/>
+        <location line="-769"/>
         <source>This server doesn&apos;t provide a way to log in for joining a session!</source>
         <translation>Der Server stellt keine Möglichkeit bereit für den Login zum Beitritt einer Sitzung!</translation>
     </message>
@@ -1329,7 +1347,12 @@
         <translation>Der Server stellt keine Möglichkeit bereit für den Login zum Hosten einer Sitzung!</translation>
     </message>
     <message>
-        <location line="+83"/>
+        <location line="+13"/>
+        <source>Server expects STARTTLS on unsupported socket.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+75"/>
         <source>Session lookup failed</source>
         <translation>Nachschlagen der Sitzung fehlgeschlagen</translation>
     </message>
@@ -1349,12 +1372,12 @@
         <translation>Ungültige Antwort für die Identifikationsabsicht.</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+39"/>
         <source>Server reported two different ext-auth URLs</source>
         <translation>Der Server vermeldet zwei verschiedene Ext-Auth-URLs</translation>
     </message>
     <message>
-        <location line="+111"/>
+        <location line="+112"/>
         <source>Got multiple sessions when only one was expected</source>
         <translation>Mehrere Sitzungen erhalten, aber nur eine war erwartet</translation>
     </message>
@@ -1364,7 +1387,17 @@
         <translation>Laufende Sitzung für eine andere Drawpile-Version (%1)!</translation>
     </message>
     <message>
-        <location line="+327"/>
+        <location line="+171"/>
+        <source>TLS is not supported via this kind of socket</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+56"/>
+        <source>Unable to set TLS error ignore state</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+106"/>
         <source>Session not found!</source>
         <translation>Sitzung nicht gefunden!</translation>
     </message>
@@ -1392,7 +1425,7 @@
         <translation>(unbenannt)</translation>
     </message>
     <message>
-        <location line="+45"/>
+        <location line="+53"/>
         <source>%1 (incompatible)</source>
         <translation>%1 (inkompatibel)</translation>
     </message>
@@ -1432,7 +1465,20 @@
         <translation>Nicht jugendfrei (NSFM)</translation>
     </message>
     <message>
-        <location line="+47"/>
+        <location line="+5"/>
+        <source>Unknown number of actively drawing users</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location line="+2"/>
+        <source>%n actively drawing user(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location line="+57"/>
         <source>Title</source>
         <translation>Titel</translation>
     </message>
@@ -1446,13 +1492,43 @@
         <source>Users</source>
         <translation>Benutzer</translation>
     </message>
+    <message>
+        <location line="+1"/>
+        <source>Active</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
-    <name>net::TcpServer</name>
+    <name>net::Server</name>
     <message>
-        <location filename="../net/tcpserver.cpp" line="+132"/>
+        <location filename="../net/server.cpp" line="+99"/>
+        <source>Network read error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Network read error: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Network write error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Network write error: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Network connection timed out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+54"/>
         <source>Received invalid data</source>
-        <translation>Ungültige Daten empfangen</translation>
+        <translation type="unfinished">Ungültige Daten empfangen</translation>
     </message>
 </context>
 <context>

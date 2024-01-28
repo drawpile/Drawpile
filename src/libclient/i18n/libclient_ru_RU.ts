@@ -289,7 +289,7 @@
 <context>
     <name>Document</name>
     <message>
-        <location filename="../document.cpp" line="+701"/>
+        <location filename="../document.cpp" line="+715"/>
         <source>Unknown format.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -483,12 +483,12 @@
 <context>
     <name>SessionListingModel</name>
     <message>
-        <location filename="../net/sessionlistingmodel.cpp" line="+432"/>
+        <location filename="../net/sessionlistingmodel.cpp" line="+451"/>
         <source>(untitled)</source>
         <translation>(без названия)</translation>
     </message>
     <message>
-        <location line="-361"/>
+        <location line="-380"/>
         <source>%1d%2h%3m</source>
         <translation type="unfinished"></translation>
     </message>
@@ -521,7 +521,21 @@
         </translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+9"/>
+        <source>Unknown number of actively drawing users</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location line="+2"/>
+        <source>%n actively drawing user(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location line="+18"/>
         <source>Compatible</source>
         <translation type="unfinished"></translation>
     </message>
@@ -546,7 +560,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+65"/>
+        <location line="+67"/>
         <source>Compatibility</source>
         <translation type="unfinished"></translation>
     </message>
@@ -564,6 +578,11 @@
         <location line="+1"/>
         <source>Users</source>
         <translation>Пользователи</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Active</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1041,7 +1060,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-384"/>
+        <location line="-392"/>
         <source>You have been kicked.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1081,7 +1100,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+316"/>
+        <location line="+324"/>
         <source>Only moderators can export plain bans.</source>
         <extracomment>&quot;Plain&quot; meaning &quot;not encrypted.&quot;</extracomment>
         <translation type="unfinished"></translation>
@@ -1188,23 +1207,23 @@
 <context>
     <name>net::LoginHandler</name>
     <message>
-        <location filename="../net/login.cpp" line="+108"/>
-        <location line="+452"/>
+        <location filename="../net/login.cpp" line="+105"/>
+        <location line="+458"/>
         <source>Invalid state</source>
         <translation>Недопустимое состояние</translation>
     </message>
     <message>
-        <location line="-410"/>
+        <location line="-416"/>
         <location line="+8"/>
-        <location line="+124"/>
-        <location line="+315"/>
-        <location line="+164"/>
-        <location line="+46"/>
+        <location line="+128"/>
+        <location line="+318"/>
+        <location line="+165"/>
+        <location line="+47"/>
         <source>Incompatible server</source>
         <translation>Несовместимый сервер</translation>
     </message>
     <message>
-        <location line="-642"/>
+        <location line="-651"/>
         <source>Server is for a different Drawpile version!</source>
         <translation>Сервер для другой версии Drawpile!</translation>
     </message>
@@ -1219,12 +1238,17 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+13"/>
+        <source>Server expects STARTTLS on unsupported socket.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
         <source>Secure mode not enabled on a trusted host!</source>
         <translation>Безопасный режим не включен на доверенном хосте!</translation>
     </message>
     <message>
-        <location line="+68"/>
+        <location line="+70"/>
         <source>Session lookup failed</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1260,12 +1284,12 @@
         <translation>Неподдерживаемая схема URL-адреса внешнего сервера проверки подлинности</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+9"/>
         <source>Server reported two different ext-auth URLs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+111"/>
+        <location line="+112"/>
         <source>Got multiple sessions when only one was expected</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1280,7 +1304,17 @@
         <translation>Неизвестная версия</translation>
     </message>
     <message>
-        <location line="+336"/>
+        <location line="+148"/>
+        <source>TLS is not supported via this kind of socket</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+56"/>
+        <source>Unable to set TLS error ignore state</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+138"/>
         <source>This usually means that your Drawpile version is too old. Do you need to update?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1295,7 +1329,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-384"/>
+        <location line="-390"/>
         <source>Session not yet started!</source>
         <translation>Сессия ещё не начата!</translation>
     </message>
@@ -1305,12 +1339,12 @@
         <translation>Заблокировано родительским контролем</translation>
     </message>
     <message>
-        <location line="+401"/>
+        <location line="+408"/>
         <source>Client failed to serialize command</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-43"/>
+        <location line="-44"/>
         <source>Server is full!</source>
         <translation>Сервер полон!</translation>
     </message>
@@ -1330,13 +1364,13 @@
         <translation>Псевдоним сессии зарезервирован!</translation>
     </message>
     <message>
-        <location line="-98"/>
+        <location line="-103"/>
         <location line="+21"/>
         <source>Invalid SSL certificate for host %1</source>
         <translation>Недействительный SSL сертификат для хоста %1</translation>
     </message>
     <message>
-        <location line="-495"/>
+        <location line="-498"/>
         <source>Group membership needed</source>
         <translation>Необходимо членство в группе</translation>
     </message>
@@ -1346,12 +1380,12 @@
         <translation>Неожиданный ответ внешнего сервера проверки подлинности: %1</translation>
     </message>
     <message>
-        <location line="+214"/>
+        <location line="+216"/>
         <source>Session for a different Drawpile version (%1) in progress!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+260"/>
+        <location line="+261"/>
         <source>Certificate of a trusted server has changed!</source>
         <translation>Сертификат доверенного сервера изменился!</translation>
     </message>
@@ -1361,7 +1395,7 @@
         <translation>Отменено</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+14"/>
         <source>Session not found!</source>
         <translation>Сессия не найдена!</translation>
     </message>
@@ -1394,7 +1428,7 @@
         <translation>(без названия)</translation>
     </message>
     <message>
-        <location line="+45"/>
+        <location line="+53"/>
         <source>%1 (incompatible)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1434,7 +1468,21 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+47"/>
+        <location line="+5"/>
+        <source>Unknown number of actively drawing users</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <location line="+2"/>
+        <source>%n actively drawing user(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <location line="+57"/>
         <source>Title</source>
         <translation>Название</translation>
     </message>
@@ -1448,13 +1496,43 @@
         <source>Users</source>
         <translation>Пользователи</translation>
     </message>
+    <message>
+        <location line="+1"/>
+        <source>Active</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
-    <name>net::TcpServer</name>
+    <name>net::Server</name>
     <message>
-        <location filename="../net/tcpserver.cpp" line="+132"/>
+        <location filename="../net/server.cpp" line="+99"/>
+        <source>Network read error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Network read error: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Network write error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Network write error: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Network connection timed out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+54"/>
         <source>Received invalid data</source>
-        <translation>Получены неверные данные</translation>
+        <translation type="unfinished">Получены неверные данные</translation>
     </message>
 </context>
 <context>
