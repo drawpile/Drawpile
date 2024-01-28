@@ -705,8 +705,9 @@ bool MyPaintBrush::loadJsonSettings(const QJsonObject &o)
 			mypaint_brush_setting_info(MyPaintBrushSetting(settingId));
 		QString mappingKey = QString::fromUtf8(info->cname);
 		bool loaded =
-			o.contains(mappingKey) &&
-			loadJsonMapping(mappingKey, settingId, o[mappingKey].toObject());
+			o.contains(mappingKey) && loadJsonMapping(
+										  mappingKey, settingId, info->min,
+										  info->max, o[mappingKey].toObject());
 		if(loaded) {
 			foundSetting = true;
 		}
@@ -715,12 +716,14 @@ bool MyPaintBrush::loadJsonSettings(const QJsonObject &o)
 }
 
 bool MyPaintBrush::loadJsonMapping(
-	const QString &mappingKey, int settingId, const QJsonObject &o)
+	const QString &mappingKey, int settingId, float min, float max,
+	const QJsonObject &o)
 {
 	bool foundSetting = false;
 
 	if(o["base_value"].isDouble()) {
-		settings().mappings[settingId].base_value = o["base_value"].toDouble();
+		settings().mappings[settingId].base_value =
+			qBound(min, o["base_value"].toDouble(), max);
 		foundSetting = true;
 	} else {
 		qWarning("Bad MyPaint 'base_value' in %s", qPrintable(mappingKey));

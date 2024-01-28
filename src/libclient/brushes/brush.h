@@ -247,7 +247,8 @@ private:
 
 	bool loadJsonSettings(const QJsonObject &o);
 	bool loadJsonMapping(
-		const QString &mappingKey, int settingId, const QJsonObject &o);
+		const QString &mappingKey, int settingId, float min, float max,
+		const QJsonObject &o);
 	bool loadJsonInputs(int settingId, const QJsonObject &o);
 };
 
