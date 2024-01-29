@@ -25,7 +25,8 @@ Unreleased Version 2.2.1-pre
  * Feature: Add action to pick color from screen, default shortcut is Shift+I. Thanks Meru for suggesting.
  * Feature: Allow switching the current brush to erase mode when using the tablet pen eraser instead of switching to the eraser tool slot. The setting for this is in the Input settings.
  * Feature: Make the Windows installer put a shortcut on the desktop.
- * Fix: Increase stripe width of the censor zebra pattern so that it's easier on the eyes. Thanks Ben for reporting.
+ * Fix: Widen the stripes of the censor pattern so that it's easier on the eyes. Thanks Ben for reporting.
+ * Fix: Don't remember uncensor layers across restarts, to avoid being exposed to things you didn't want to just because you forgot to toggle it back off.
 
 2024-01-13 Version 2.2.0
  * Server Fix: Add --ssl-key-algorithm parameter to allow non-RSA SSL keys, defaulting to guessing the most common formats RSA and EC. Thanks Bluestrings for reporting.

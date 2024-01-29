@@ -3921,7 +3921,7 @@ void MainWindow::setupActions()
 	QAction *layerViewNormal = makeAction("layerviewnormal", tr("Normal View")).statusTip(tr("Show all layers normally")).noDefaultShortcut().checkable().checked();
 	QAction *layerViewCurrentLayer = makeAction("layerviewcurrentlayer", tr("Layer View")).statusTip(tr("Show only the current layer")).shortcut("Home").checkable();
 	QAction *layerViewCurrentFrame = makeAction("layerviewcurrentframe", tr("Frame View")).statusTip(tr("Show only layers in the current frame")).shortcut("Shift+Home").checkable();
-	QAction *layerUncensor = makeAction("layerviewuncensor", tr("Show Censored Layers")).noDefaultShortcut().checkable().remembered();
+	QAction *layerUncensor = makeAction("layerviewuncensor", tr("Show Censored Layers")).noDefaultShortcut().checkable();
 	m_lastLayerViewMode = layerViewNormal;
 
 	QActionGroup *layerViewModeGroup = new QActionGroup(this);
