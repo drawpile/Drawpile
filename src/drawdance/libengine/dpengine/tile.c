@@ -234,7 +234,7 @@ DP_Tile *DP_tile_new_zebra(unsigned int context_id, DP_Pixel15 pixel1,
     DP_TransientTile *tt =
         alloc_tile(true, pixel1.a == 0 && pixel2.a == 0, context_id);
     for (int i = 0; i < DP_TILE_LENGTH; ++i) {
-        tt->pixels[i] = ((i / DP_TILE_SIZE + i % DP_TILE_SIZE) / 16) % 2 == 0
+        tt->pixels[i] = ((i / DP_TILE_SIZE + i % DP_TILE_SIZE) / 32) % 2 == 0
                           ? pixel1
                           : pixel2;
     }
