@@ -529,18 +529,18 @@
     <message>
         <location line="+11"/>
         <source>Unknown number of actively drawing users</source>
-        <translation type="unfinished"></translation>
+        <translation>عدد غير معروف من المستخدمين النشطين في الرسم</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
         <source>%n actively drawing user(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n المستخدمي نشطاء</numerusform>
+            <numerusform>%n مستخدم نشيط</numerusform>
+            <numerusform>%n مستخدمين نشطاء</numerusform>
+            <numerusform>%n مستخدمين نشطاء</numerusform>
+            <numerusform>%n مستخدمين نشطاء</numerusform>
+            <numerusform>%n مستخدمين نشطاء</numerusform>
         </translation>
     </message>
     <message>
@@ -591,7 +591,7 @@
     <message>
         <location line="+1"/>
         <source>Active</source>
-        <translation type="unfinished"></translation>
+        <translation>نشطاء</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1249,7 +1249,7 @@
     <message>
         <location line="+13"/>
         <source>Server expects STARTTLS on unsupported socket.</source>
-        <translation type="unfinished"></translation>
+        <translation>يتوقع الخادم STARTTLS على مأخذ توصيل غير مدعوم.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1340,12 +1340,12 @@
     <message>
         <location line="+171"/>
         <source>TLS is not supported via this kind of socket</source>
-        <translation type="unfinished"></translation>
+        <translation>TLS غير مدعوم عبر هذا النوع من المقابس</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>Unable to set TLS error ignore state</source>
-        <translation type="unfinished"></translation>
+        <translation>غير قادر على تعيين حالة تجاهل خطأ TLS</translation>
     </message>
     <message>
         <location line="+31"/>
@@ -1479,7 +1479,7 @@
     <message>
         <location line="+5"/>
         <source>Unknown number of actively drawing users</source>
-        <translation type="unfinished"></translation>
+        <translation>عدد غير معروف من المستخدمين النشطين في الرسم</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
