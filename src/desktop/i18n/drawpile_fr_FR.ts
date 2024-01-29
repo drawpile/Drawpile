@@ -6,17 +6,17 @@
     <message>
         <location filename="../bundled/QtColorWidgets/abstract_widget_list.cpp" line="+67"/>
         <source>Add New</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajouter un nouveau</translation>
     </message>
     <message>
         <location line="+51"/>
         <source>Move Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Déplacer vers le haut</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Move Down</source>
-        <translation type="unfinished"></translation>
+        <translation>Déplacer vers le bas</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -49,7 +49,7 @@
     <message>
         <location line="+8"/>
         <source>Offender:</source>
-        <translation type="unfinished"></translation>
+        <translation>Agresseur :</translation>
     </message>
 </context>
 <context>
@@ -62,12 +62,12 @@
     <message>
         <location line="+28"/>
         <source>Enter a list server URL:</source>
-        <translation type="unfinished"></translation>
+        <translation>Saisissez l&apos;URL d&apos;un serveur:</translation>
     </message>
     <message>
         <location line="+43"/>
         <source>You can find some list servers at &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Vous pouvez trouver la liste des serveurs sur &lt;a href=&quot;https://drawpile.net/communities/&quot;&gt;drawpile.net/communities&lt;/a&gt;</translation>
     </message>
 </context>
 <context>
@@ -75,7 +75,7 @@
     <message>
         <location filename="../ui/androidfiledialog.ui" line="+20"/>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom :</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -111,7 +111,7 @@
     <message>
         <location line="+20"/>
         <source>MyPaint Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Mon pinceau</translation>
     </message>
     <message>
         <location line="+39"/>
@@ -121,7 +121,7 @@
     <message>
         <location line="+14"/>
         <source>Lock alpha (recolor mode)</source>
-        <translation type="unfinished"></translation>
+        <translation>Verrouiller l&apos;Alpha (mode recolorer)</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -131,27 +131,27 @@
     <message>
         <location line="+14"/>
         <source>Direct drawing mode</source>
-        <translation>Mode dessin direct</translation>
+        <translation>Mode dessin directe</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>Size: </source>
-        <translation type="unfinished"></translation>
+        <translation>Taille : </translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Radius: </source>
-        <translation type="unfinished"></translation>
+        <translation>Rayon : </translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>Opacité : </translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Hardness: </source>
-        <translation type="unfinished"></translation>
+        <translation>Dureté : </translation>
     </message>
     <message>
         <location line="+13"/>
@@ -164,32 +164,32 @@
     <message>
         <location line="-16"/>
         <source>Smudging: </source>
-        <translation type="unfinished"></translation>
+        <translation>Étalement : </translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Color Pickup: 1/</source>
-        <translation type="unfinished"></translation>
+        <translation>Pipette à couleurs :</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Spacing: </source>
-        <translation type="unfinished"></translation>
+        <translation>Espace : </translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Gain: </source>
-        <translation type="unfinished"></translation>
+        <translation>Grain : </translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Stabilizer: </source>
-        <translation type="unfinished"></translation>
+        <translation>Stabilisateur : </translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Smoothing: </source>
-        <translation type="unfinished"></translation>
+        <translation>Lissage : </translation>
     </message>
     <message>
         <location line="-206"/>
@@ -202,38 +202,39 @@
     <message>
         <location filename="../ui/brushpresetproperties.ui" line="+17"/>
         <source>Brush Preset Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Propriétés prédéfinies du pinceau</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom :</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Description:</source>
-        <translation type="unfinished"></translation>
+        <translation>Description :</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Thumbnail:</source>
-        <translation type="unfinished"></translation>
+        <translation>Vignette :</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Choose File...</source>
-        <translation type="unfinished"></translation>
+        <translation>Choisir un fichier...</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Will be resized
 to 64x64 pixels.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sera redimensionné
+à 64x64 pixels.</translation>
     </message>
     <message>
         <location line="+75"/>
         <source>Label:</source>
-        <translation type="unfinished"></translation>
+        <translation>Étiquette :</translation>
     </message>
 </context>
 <context>
@@ -241,43 +242,43 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../ui/canvasshortcutsdialog.ui" line="+14"/>
         <source>Canvas Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Raccourci de la toile</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Type</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Shortcut</source>
-        <translation type="unfinished"></translation>
+        <translation>Raccourci</translation>
     </message>
     <message>
         <location line="+16"/>
         <location line="+50"/>
         <source>Action</source>
-        <translation type="unfinished"></translation>
+        <translation>Action</translation>
     </message>
     <message>
         <location line="-26"/>
         <source>Inverts the input directions. For example, scrolling up to zoom out instead of zooming in.</source>
-        <translation type="unfinished"></translation>
+        <translation>Inverse les directions de saisie. Par exemple, faire défiler vers le haut pour effectuer un zoom arrière au lieu d&apos;effectuer un zoom avant.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Inverted</source>
-        <translation type="unfinished"></translation>
+        <translation>Inversée</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Switches horizontal and vertical directions. For example, moving the cursor up and down to change the brush size instead of moving it left and right.</source>
-        <translation type="unfinished"></translation>
+        <translation>Change les directions horizontale et verticale. Par exemple, déplacer le curseur de haut en bas pour modifier la taille du pinceau au lieu de le déplacer vers la gauche et la droite.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Swap Axes</source>
-        <translation type="unfinished"></translation>
+        <translation>Inverser les axes</translation>
     </message>
 </context>
 <context>
@@ -409,57 +410,57 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../ui/dumpplayback.ui" line="+14"/>
         <source>Play Debug Dump</source>
-        <translation type="unfinished"></translation>
+        <translation>Rejouer le fichier de debogage</translation>
     </message>
     <message>
         <location line="+6"/>
         <source> ms</source>
-        <translation type="unfinished"></translation>
+        <translation> ms</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Playback Delay: </source>
-        <translation type="unfinished"></translation>
+        <translation>Délai de lecture : </translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Play/Pause</source>
-        <translation type="unfinished"></translation>
+        <translation>Lecture/Pause</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Jump</source>
-        <translation type="unfinished"></translation>
+        <translation>Sauter</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Previous Reset</source>
-        <translation type="unfinished"></translation>
+        <translation>Réinitialisation précédente</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Single Step</source>
-        <translation type="unfinished"></translation>
+        <translation>Une seule étape</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Next Reset</source>
-        <translation type="unfinished"></translation>
+        <translation>Réinitialisation suivante</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Position: </source>
-        <translation type="unfinished"></translation>
+        <translation>Position : </translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Statut</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>History Size:</source>
-        <translation type="unfinished"></translation>
+        <translation>Taille de l&apos;historique :</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -468,7 +469,7 @@ to 64x64 pixels.</source>
         <location line="+21"/>
         <location line="+14"/>
         <source>0</source>
-        <translation type="unfinished"></translation>
+        <translation>0</translation>
     </message>
     <message>
         <location line="-56"/>
@@ -478,7 +479,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>No</source>
-        <translation type="unfinished"></translation>
+        <translation>Non</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -493,7 +494,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>History Offset:</source>
-        <translation type="unfinished"></translation>
+        <translation>Décalage historique :</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -503,17 +504,17 @@ to 64x64 pixels.</source>
     <message>
         <location line="+15"/>
         <source>History</source>
-        <translation type="unfinished"></translation>
+        <translation>Historique</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Hide Entries Without State</source>
-        <translation type="unfinished"></translation>
+        <translation>Masquer les entrées sans état</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Hide Gone Entries</source>
-        <translation type="unfinished"></translation>
+        <translation>Masquer les entrées disparues</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -526,32 +527,32 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../filewrangler.cpp" line="+25"/>
         <source>Certificates (%1)</source>
-        <translation type="unfinished">Certificats (%1)</translation>
+        <translation>Certificats (%1)</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Import</source>
-        <translation type="unfinished"></translation>
+        <translation>Importer</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Open</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouvrir</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Open ORA</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouvrir ORA</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>OpenRaster Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Image OpenRaster</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Paste Image</source>
-        <translation type="unfinished">Coller l&apos;image</translation>
+        <translation>Coller l&apos;image</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -561,145 +562,145 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Import Brush Pack</source>
-        <translation type="unfinished"></translation>
+        <translation>Importer un pack de pinceaux</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Import Session Bans</source>
-        <translation type="unfinished"></translation>
+        <translation>Importer des interdictions de session</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Import Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>Importer des rôles</translation>
     </message>
     <message>
         <location line="+44"/>
         <location line="+185"/>
         <source>Save Image</source>
-        <translation type="unfinished">Enregistrer l&apos;image</translation>
+        <translation>Enregistrer l&apos;image</translation>
     </message>
     <message>
         <location line="-185"/>
         <source>Export Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporter l&apos;image</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Save Pre-Reset Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Enregistrer l&apos;image pré-réinitialisée</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Save Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Sauvegarder la sélection</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Record Session</source>
-        <translation type="unfinished">Enregistrer la session</translation>
+        <translation>Enregistrer la session</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Save Session Template</source>
-        <translation type="unfinished"></translation>
+        <translation>Sauvegarder le modèle de session</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export Animated GIF</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporter un GIF animé</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Performance Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Profil de performances</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Tablet Event Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Journal des événements</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Log File</source>
-        <translation type="unfinished">Journal</translation>
+        <translation>Journal</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Export MP4 Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporter une vidéo MP4</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export WebM Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporter vidéo WebM</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export Custom FFmpeg Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporter une vidéo FFmpeg personnalisée</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Save Animation Frames</source>
-        <translation type="unfinished"></translation>
+        <translation>Enregistrer les images d&apos;animation</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Save Image Series</source>
-        <translation type="unfinished"></translation>
+        <translation>Enregistrer la série d&apos;images</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Export Brushes</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporter les pinceaux</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export Session Bans</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporter les interdictions de session</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Export Roles</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporter les rôles</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>The PSD format lacks support for annotations, the animation timeline and some blend modes. If you want those to be retained properly, you must save an ORA file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Le format PSD ne prend pas en charge les annotations, la chronologie de l&apos;animation et certains modes de fusion. Si vous souhaitez que ceux-ci soient conservés correctement, vous devez enregistrer un fichier ORA.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The selected format will save a merged image. If you want to retain layers, annotations and the animation timeline, you must save an ORA file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Le format sélectionné enregistrera une image fusionnée. Si vous souhaitez conserver les calques, les annotations et la chronologie de l&apos;animation, vous devez enregistrer un fichier ORA.</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Save as Selected Format</source>
-        <translation type="unfinished"></translation>
+        <translation>Enregistrer sous le format sélectionné</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Save as %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Enregistrer sous %1</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Save as ORA</source>
-        <translation type="unfinished"></translation>
+        <translation>Enregistrer au format ORA</translation>
     </message>
     <message>
         <location line="+52"/>
         <location line="+5"/>
         <source>Untitled</source>
-        <translation type="unfinished">Sans titre</translation>
+        <translation>Sans titre</translation>
     </message>
     <message>
         <location line="+68"/>
         <source>Untitled%1</source>
         <extracomment>%1 will be a file extension, like .ora or .png or something.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Sans titre %1</translation>
     </message>
 </context>
 <context>
@@ -708,7 +709,7 @@ to 64x64 pixels.</source>
         <location filename="../ui/fillsettings.ui" line="+79"/>
         <location line="+13"/>
         <source> px</source>
-        <translation type="unfinished"></translation>
+        <translation> px</translation>
     </message>
     <message>
         <location line="-10"/>
@@ -719,47 +720,47 @@ to 64x64 pixels.</source>
         <location line="+36"/>
         <location line="+43"/>
         <source>px</source>
-        <translation type="unfinished">px</translation>
+        <translation>px</translation>
     </message>
     <message>
         <location line="-40"/>
         <source>Size: </source>
-        <translation type="unfinished"></translation>
+        <translation>Taille : </translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Source:</source>
-        <translation type="unfinished"></translation>
+        <translation>Source :</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>Close Gaps: </source>
-        <translation type="unfinished"></translation>
+        <translation>Combler les trous : </translation>
     </message>
     <message>
         <location line="-69"/>
         <source>Expand: </source>
-        <translation type="unfinished"></translation>
+        <translation>Développer : </translation>
     </message>
     <message>
         <location line="+56"/>
         <source>Tolerance: </source>
-        <translation type="unfinished"></translation>
+        <translation>Tolérance : </translation>
     </message>
     <message>
         <location line="-7"/>
         <source>Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Mode :</translation>
     </message>
     <message>
         <location line="-99"/>
         <source>Normal</source>
-        <translation type="unfinished"></translation>
+        <translation>Normal</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Behind</source>
-        <translation type="unfinished"></translation>
+        <translation>Derrière</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -777,42 +778,42 @@ to 64x64 pixels.</source>
     <message>
         <location line="+28"/>
         <source>Reset Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Réinitialiser le zoom</translation>
     </message>
     <message>
         <location line="-17"/>
         <source>Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>Rafraîchir</translation>
     </message>
     <message>
         <location line="+53"/>
         <source>Rewind</source>
-        <translation type="unfinished"></translation>
+        <translation>Rembobiner</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Play</source>
-        <translation type="unfinished">Lecture</translation>
+        <translation>Lecture</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Frame:</source>
-        <translation type="unfinished">Image :</translation>
+        <translation>Image :</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Range</source>
-        <translation type="unfinished"></translation>
+        <translation>Gamme</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>Speed: </source>
-        <translation type="unfinished"></translation>
+        <translation>Vitesse : </translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Export</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporter</translation>
     </message>
 </context>
 <context>
@@ -825,7 +826,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+56"/>
         <source>Mark whole tiles</source>
-        <translation type="unfinished"></translation>
+        <translation>Marquer des carreaux entiers</translation>
     </message>
 </context>
 <context>
@@ -833,42 +834,42 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../ui/invitedialog.ui" line="+14"/>
         <source>Invite</source>
-        <translation type="unfinished"></translation>
+        <translation>Inviter</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Copy Invite Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Copier le lien d&apos;invitation</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Web link</source>
-        <translation type="unfinished"></translation>
+        <translation>Lien Web</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Direct link</source>
-        <translation type="unfinished"></translation>
+        <translation>Lien direct</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Include password</source>
-        <translation type="unfinished"></translation>
+        <translation>Inclure un mot de passe</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>&lt;strong&gt;Note:&lt;/strong&gt; changing the session password will cause the link to stop working! If someone else changes the password, you have to reconnect for this dialog to update.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Note:&lt;/strong&gt;changer le mot de passe de la session entraînera l&apos;arrêt du lien ! Si quelqu&apos;un d&apos;autre modifie le mot de passe, vous devez vous reconnecter pour que cette boîte de dialogue soit mise à jour.</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>You&apos;re hosting a session locally. If others can&apos;t join your session, take a look at &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vous organisez une session localement. Si d&apos;autres personnes ne peuvent pas rejoindre votre session, jetez un œil à&lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;la page d&apos;aide sur l&apos;hébergement&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+45"/>
         <source>You&apos;re hosting a session locally, so Drawpile has to find your externally visible IP address to give you an invite link. For more information, check out &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;the help page on hosting&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vous hébergez une session localement, Drawpile doit donc trouver votre adresse IP visible de l&apos;extérieur pour vous donner un lien d&apos;invitation. Pour plus d&apos;informations, consultez &lt;a href=&quot;https://drawpile.net/localhosthelp&quot;&gt;la page d&apos;aide sur l&apos;hébergement&lt;/a&gt;.</translation>
     </message>
     <message>
         <location line="+32"/>
@@ -878,12 +879,12 @@ to 64x64 pixels.</source>
     <message>
         <location line="+37"/>
         <source>Show this dialog when hosting a session</source>
-        <translation type="unfinished"></translation>
+        <translation>Afficher cette boîte de dialogue lors de l&apos;hébergement d&apos;une session</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>You can find this dialog again under &lt;i&gt;Session ▸ Invite…&lt;/i&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Vous pouvez retrouver cette boîte de dialogue sous &lt;i&gt;Session ▸ Inviter…&lt;/i&gt;</translation>
     </message>
 </context>
 <context>
