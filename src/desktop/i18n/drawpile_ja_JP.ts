@@ -694,7 +694,7 @@ to 64x64 pixels.</source>
         <location line="+52"/>
         <location line="+5"/>
         <source>Untitled</source>
-        <translation type="unfinished">無題</translation>
+        <translation>無題</translation>
     </message>
     <message>
         <location line="+68"/>
@@ -1530,7 +1530,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+195"/>
         <source>New Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>新しいレイヤーグループ</translation>
     </message>
     <message>
         <location line="+29"/>
@@ -1796,7 +1796,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>Pic&amp;k From Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>画面から取得(&amp;k)</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -2510,12 +2510,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+3"/>
         <source>Next Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>次のキーフレーム</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Previous Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>前のキーフレーム</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3260,7 +3260,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+46"/>
         <source>Allow joining from the web browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Webブラウザからの参加を許可</translation>
     </message>
     <message>
         <location line="+87"/>
@@ -6853,22 +6853,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+61"/>
         <source>Interpolate when view is zoomed or rotated</source>
-        <translation type="unfinished"></translation>
+        <translation>ビューのズームまたは回転時の補間</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Canvas view:</source>
-        <translation type="unfinished"></translation>
+        <translation>キャンバスビュー:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Prevent jitter at certain zoom and rotation levels</source>
-        <translation type="unfinished"></translation>
+        <translation>一定のズーム、回転レベルでのジッターを防止</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Enabling these options may impact performance on some systems.</source>
-        <translation type="unfinished"></translation>
+        <translation>これらのオプションを有効にすると、一部のシステムのパフォーマンスに影響を与える可能性があります。</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -6971,18 +6971,18 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Switch to eraser slot</source>
-        <translation type="unfinished"></translation>
+        <translation>消しゴムスロットに切り替え</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Erase with current brush</source>
-        <translation type="unfinished"></translation>
+        <translation>現在のブラシで消去</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Eraser action:</source>
         <extracomment>Eraser refers to the eraser tip of a tablet pen.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>消しゴムの動作:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -7054,12 +7054,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-98"/>
         <source>Capture volume rocker</source>
-        <translation type="unfinished">Volume rockerでキャプチャー</translation>
+        <translation>Volume rockerでキャプチャー</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Android:</source>
-        <translation type="unfinished">Android:</translation>
+        <translation>Android:</translation>
     </message>
     <message>
         <location line="+97"/>
@@ -7823,37 +7823,37 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+12"/>
         <source>Enable high-DPI scaling (experimental)</source>
-        <translation type="unfinished"></translation>
+        <translation>高DPI スケーリングを有効にする (実験的)</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Override system scale factor (experimental)</source>
-        <translation type="unfinished"></translation>
+        <translation>システムのスケールファクターを上書きする (実験的)</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Scale factor: </source>
-        <translation type="unfinished"></translation>
+        <translation>スケールファクター: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>%1px</source>
-        <translation type="unfinished"></translation>
+        <translation>%1px</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%1pt</source>
-        <translation type="unfinished"></translation>
+        <translation>%1pt</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Changes to scaling and font size apply after you restart Drawpile. Current scale factor is %1%, font size is %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>スケーリングとフォント サイズの変更は、Drawpile を再起動した後に適用されます。現在の倍率は %1%、フォント サイズは %2 です。</translation>
     </message>
 </context>
 <context>
@@ -7906,12 +7906,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Inactive</source>
-        <translation type="unfinished"></translation>
+        <translation>非アクティブ</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show sessions that have zero actively drawing users</source>
-        <translation type="unfinished"></translation>
+        <translation>現在描画しているユーザーがゼロのセッションを表示</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8664,22 +8664,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+218"/>
         <source>Duplicate Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーグループの複製</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Merge Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーグループの結合</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Layer Group Properties…</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーグループのプロパティ…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Delete Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>レイヤーグループの削除</translation>
     </message>
     <message>
         <location line="+174"/>
