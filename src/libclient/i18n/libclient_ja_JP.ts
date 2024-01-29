@@ -519,13 +519,13 @@
     <message>
         <location line="+9"/>
         <source>Unknown number of actively drawing users</source>
-        <translation type="unfinished"></translation>
+        <translation>現在描画しているユーザーの数は不明</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
         <source>%n actively drawing user(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>現在描画しているユーザーの数 %n</numerusform>
         </translation>
     </message>
     <message>
@@ -576,7 +576,7 @@
     <message>
         <location line="+1"/>
         <source>Active</source>
-        <translation type="unfinished"></translation>
+        <translation>アクティブ</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1234,7 +1234,7 @@
     <message>
         <location line="+13"/>
         <source>Server expects STARTTLS on unsupported socket.</source>
-        <translation type="unfinished"></translation>
+        <translation>サーバーはサポートされていないソケットでの STARTTLS を要求しています。</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1325,12 +1325,12 @@
     <message>
         <location line="+171"/>
         <source>TLS is not supported via this kind of socket</source>
-        <translation type="unfinished"></translation>
+        <translation>TLS はこの種類のソケットではサポートされていません</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>Unable to set TLS error ignore state</source>
-        <translation type="unfinished"></translation>
+        <translation>TLS エラー無視状態を設定できません</translation>
     </message>
     <message>
         <location line="+31"/>
@@ -1464,13 +1464,13 @@
     <message>
         <location line="+5"/>
         <source>Unknown number of actively drawing users</source>
-        <translation type="unfinished"></translation>
+        <translation>現在描画しているユーザーの数は不明</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
         <source>%n actively drawing user(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>現在描画しているユーザーの数 %n</numerusform>
         </translation>
     </message>
     <message>
@@ -1491,7 +1491,7 @@
     <message>
         <location line="+1"/>
         <source>Active</source>
-        <translation type="unfinished"></translation>
+        <translation>アクティブ</translation>
     </message>
 </context>
 <context>
@@ -1499,32 +1499,32 @@
     <message>
         <location filename="../net/server.cpp" line="+99"/>
         <source>Network read error</source>
-        <translation type="unfinished"></translation>
+        <translation>ネットワーク読み込みエラー</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Network read error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ネットワークの読み込みエラー: %1</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Network write error</source>
-        <translation type="unfinished"></translation>
+        <translation>ネットワークの書き込みエラー</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Network write error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ネットワークの書き込みエラー: %1</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Network connection timed out</source>
-        <translation type="unfinished"></translation>
+        <translation>ネットワーク接続のタイムアウト</translation>
     </message>
     <message>
         <location line="+54"/>
         <source>Received invalid data</source>
-        <translation type="unfinished">無効なデータを受信しました</translation>
+        <translation>無効なデータを受信</translation>
     </message>
 </context>
 <context>
