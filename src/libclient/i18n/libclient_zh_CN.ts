@@ -519,13 +519,13 @@
     <message>
         <location line="+9"/>
         <source>Unknown number of actively drawing users</source>
-        <translation type="unfinished"></translation>
+        <translation>未知活跃用户数量</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
         <source>%n actively drawing user(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n 个活跃用户</numerusform>
         </translation>
     </message>
     <message>
@@ -576,7 +576,7 @@
     <message>
         <location line="+1"/>
         <source>Active</source>
-        <translation type="unfinished"></translation>
+        <translation>活跃</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1346,7 +1346,7 @@
     <message>
         <location line="+13"/>
         <source>Server expects STARTTLS on unsupported socket.</source>
-        <translation type="unfinished"></translation>
+        <translation>服务器期望在不支持的socket上使用 STARTTLS.</translation>
     </message>
     <message>
         <location line="+75"/>
@@ -1386,12 +1386,12 @@
     <message>
         <location line="+171"/>
         <source>TLS is not supported via this kind of socket</source>
-        <translation type="unfinished"></translation>
+        <translation>此类socket不支持 TLS</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>Unable to set TLS error ignore state</source>
-        <translation type="unfinished"></translation>
+        <translation>无法设置 TLS 错误忽略状态</translation>
     </message>
     <message>
         <location line="+106"/>
@@ -1464,13 +1464,13 @@
     <message>
         <location line="+5"/>
         <source>Unknown number of actively drawing users</source>
-        <translation type="unfinished"></translation>
+        <translation>未知活跃用户数量</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
         <source>%n actively drawing user(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n 个活跃用户</numerusform>
         </translation>
     </message>
     <message>
@@ -1491,7 +1491,7 @@
     <message>
         <location line="+1"/>
         <source>Active</source>
-        <translation type="unfinished"></translation>
+        <translation>活跃</translation>
     </message>
 </context>
 <context>
@@ -1499,32 +1499,32 @@
     <message>
         <location filename="../net/server.cpp" line="+99"/>
         <source>Network read error</source>
-        <translation type="unfinished"></translation>
+        <translation>网络读取错误</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Network read error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>网络读取错误: %1</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Network write error</source>
-        <translation type="unfinished"></translation>
+        <translation>网络写入错误</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Network write error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>网络写入错误: %1</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Network connection timed out</source>
-        <translation type="unfinished"></translation>
+        <translation>网络连接超时</translation>
     </message>
     <message>
         <location line="+54"/>
         <source>Received invalid data</source>
-        <translation type="unfinished">接受信息无效</translation>
+        <translation>接收数据无效</translation>
     </message>
 </context>
 <context>
