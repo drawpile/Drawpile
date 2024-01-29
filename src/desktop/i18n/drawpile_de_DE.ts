@@ -694,7 +694,7 @@ angepasst.</translation>
         <location line="+52"/>
         <location line="+5"/>
         <source>Untitled</source>
-        <translation type="unfinished">Unbenannt</translation>
+        <translation>Unbenannt</translation>
     </message>
     <message>
         <location line="+68"/>
@@ -1525,7 +1525,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
     <message>
         <location line="+4"/>
         <source>Pic&amp;k From Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>Vom &amp;Bildschirm auswählen</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -1635,7 +1635,7 @@ Bitte vereinfachen Sie die Leinwand und setzen Sie manuell zurück bevor der Pla
     <message>
         <location line="+41"/>
         <source>New Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Neue Ebenengruppe</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -2430,12 +2430,12 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+1"/>
         <source>Next Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Nächstes Schlüsselbild</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Previous Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Vorheriges Schlüsselbild</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3268,7 +3268,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+14"/>
         <source>Allow joining from the web browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Beitreten per Web-Browser erlaubt</translation>
     </message>
     <message>
         <location line="+87"/>
@@ -6867,22 +6867,22 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+61"/>
         <source>Interpolate when view is zoomed or rotated</source>
-        <translation type="unfinished"></translation>
+        <translation>Interpolation bei gezoomter oder rotierter Ansicht</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Canvas view:</source>
-        <translation type="unfinished"></translation>
+        <translation>Leinwandansicht:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Prevent jitter at certain zoom and rotation levels</source>
-        <translation type="unfinished"></translation>
+        <translation>Wabern bei gewissen Zoom- und Rotationsstufen vermeiden</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Enabling these options may impact performance on some systems.</source>
-        <translation type="unfinished"></translation>
+        <translation>Diese Optionen zu aktivieren kann auf gewissen Systemen die Performance beeinträchtigen.</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -6985,18 +6985,18 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+9"/>
         <source>Switch to eraser slot</source>
-        <translation type="unfinished"></translation>
+        <translation>Wechsel zum Radierer-Slot</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Erase with current brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Radiere mit aktuellem Pinsel</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Eraser action:</source>
         <extracomment>Eraser refers to the eraser tip of a tablet pen.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Radiereraktion:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -7068,12 +7068,12 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="-98"/>
         <source>Capture volume rocker</source>
-        <translation type="unfinished">Lautstärkeregler erfassen</translation>
+        <translation>Lautstärkeregler erfassen</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Android:</source>
-        <translation type="unfinished">Android:</translation>
+        <translation>Android:</translation>
     </message>
     <message>
         <location line="+97"/>
@@ -7840,37 +7840,37 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+12"/>
         <source>Enable high-DPI scaling (experimental)</source>
-        <translation type="unfinished"></translation>
+        <translation>Skalierung für hohe DPI (experimentell)</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Override system scale factor (experimental)</source>
-        <translation type="unfinished"></translation>
+        <translation>Systemskalierung überschreiben (experimentell)</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Scale factor: </source>
-        <translation type="unfinished"></translation>
+        <translation>Skalierungsfaktor: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>%1px</source>
-        <translation type="unfinished"></translation>
+        <translation>%1px</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%1pt</source>
-        <translation type="unfinished"></translation>
+        <translation>%1pt</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Changes to scaling and font size apply after you restart Drawpile. Current scale factor is %1%, font size is %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Änderungen an der Skalierung und Schriftgröße erfordern einen Neustart von Drawpile. Aktueller Skalierungsfaktor ist %1%, Schriftgröße ist %2.</translation>
     </message>
 </context>
 <context>
@@ -7923,12 +7923,12 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+6"/>
         <source>Inactive</source>
-        <translation type="unfinished"></translation>
+        <translation>Inaktiv</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show sessions that have zero actively drawing users</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Sitzungen mit Null aktiv zeichnenden Nutzern</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8684,22 +8684,22 @@ Werte über 0.5 sind eventuell nicht visuell erkennbar.</translation>
     <message>
         <location line="+218"/>
         <source>Duplicate Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Ebenengruppe duplizieren</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Merge Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Ebenengruppe vereinigen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Layer Group Properties…</source>
-        <translation type="unfinished"></translation>
+        <translation>Ebenengruppeneigenschaften…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Delete Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Ebenengruppe löschen</translation>
     </message>
     <message>
         <location line="+216"/>
