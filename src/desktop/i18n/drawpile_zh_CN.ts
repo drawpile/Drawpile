@@ -694,7 +694,7 @@ to 64x64 pixels.</source>
         <location line="+52"/>
         <location line="+5"/>
         <source>Untitled</source>
-        <translation type="unfinished">未命名</translation>
+        <translation>未命名</translation>
     </message>
     <message>
         <location line="+68"/>
@@ -1588,7 +1588,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+4"/>
         <source>Pic&amp;k From Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;从屏幕上拾色</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -1871,7 +1871,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+64"/>
         <source>New Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>新建图层组</translation>
     </message>
     <message>
         <location line="+127"/>
@@ -2442,12 +2442,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>Next Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>下一关键帧</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Previous Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>上一关键帧</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3265,7 +3265,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+14"/>
         <source>Allow joining from the web browser</source>
-        <translation type="unfinished"></translation>
+        <translation>允许通过浏览器加入</translation>
     </message>
     <message>
         <location line="+87"/>
@@ -6249,7 +6249,7 @@ Values above 0.5 may not be noticeable.</source>
         <source>%n hour(s)</source>
         <extracomment>Idle timeout hours. May be joined with minutes and seconds.</extracomment>
         <translation>
-            <numerusform>%n 小时(s)</numerusform>
+            <numerusform>%n 小时</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -6257,7 +6257,7 @@ Values above 0.5 may not be noticeable.</source>
         <source>%n minute(s)</source>
         <extracomment>Idle timeout minutes. May be joined with hours and seconds.</extracomment>
         <translation>
-            <numerusform>%n 分钟(s)</numerusform>
+            <numerusform>%n 分钟</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -6265,7 +6265,7 @@ Values above 0.5 may not be noticeable.</source>
         <source>%n second(s)</source>
         <extracomment>Idle timeout seconds. May be joined with hours and minutes.</extracomment>
         <translation>
-            <numerusform>%n 秒(s)</numerusform>
+            <numerusform>%n 秒</numerusform>
         </translation>
     </message>
     <message>
@@ -6854,22 +6854,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+61"/>
         <source>Interpolate when view is zoomed or rotated</source>
-        <translation type="unfinished"></translation>
+        <translation>在缩放或旋转视图时进行内插处理</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Canvas view:</source>
-        <translation type="unfinished"></translation>
+        <translation>画布视图:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Prevent jitter at certain zoom and rotation levels</source>
-        <translation type="unfinished"></translation>
+        <translation>在某些缩放和旋转级别下防止抖动</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Enabling these options may impact performance on some systems.</source>
-        <translation type="unfinished"></translation>
+        <translation>启用这些选项可能会影响某些系统的性能.</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -6972,18 +6972,18 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+9"/>
         <source>Switch to eraser slot</source>
-        <translation type="unfinished"></translation>
+        <translation>切换到数字预设橡皮</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Erase with current brush</source>
-        <translation type="unfinished"></translation>
+        <translation>以当前笔刷预设擦除</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Eraser action:</source>
         <extracomment>Eraser refers to the eraser tip of a tablet pen.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>擦除动作:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -7055,12 +7055,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="-98"/>
         <source>Capture volume rocker</source>
-        <translation type="unfinished">捕捉音量摇杆</translation>
+        <translation>捕捉音量摇杆</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Android:</source>
-        <translation type="unfinished">安卓:</translation>
+        <translation>安卓:</translation>
     </message>
     <message>
         <location line="+97"/>
@@ -7824,37 +7824,37 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+12"/>
         <source>Enable high-DPI scaling (experimental)</source>
-        <translation type="unfinished"></translation>
+        <translation>启用高分辨率缩放 (实验性)</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Override system scale factor (experimental)</source>
-        <translation type="unfinished"></translation>
+        <translation>覆盖系统缩放比例 (实验性)</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Scale factor: </source>
-        <translation type="unfinished"></translation>
+        <translation>缩放比例: </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%</source>
-        <translation type="unfinished">%</translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>%1px</source>
-        <translation type="unfinished"></translation>
+        <translation>%1px</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%1pt</source>
-        <translation type="unfinished"></translation>
+        <translation>%1pt</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Changes to scaling and font size apply after you restart Drawpile. Current scale factor is %1%, font size is %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>更改缩放比例和字体大小需重启软件.当前缩放比例是%1%,字体大小是%2.</translation>
     </message>
 </context>
 <context>
@@ -7907,12 +7907,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Inactive</source>
-        <translation type="unfinished"></translation>
+        <translation>不活跃房</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show sessions that have zero actively drawing users</source>
-        <translation type="unfinished"></translation>
+        <translation>显示不活跃房</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -8665,22 +8665,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+218"/>
         <source>Duplicate Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>复制图层组</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Merge Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>合并图层组</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Layer Group Properties…</source>
-        <translation type="unfinished"></translation>
+        <translation>图层组属性…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Delete Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>删除图层组</translation>
     </message>
     <message>
         <location line="+216"/>
