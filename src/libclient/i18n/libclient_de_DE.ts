@@ -521,14 +521,14 @@
     <message>
         <location line="+9"/>
         <source>Unknown number of actively drawing users</source>
-        <translation type="unfinished"></translation>
+        <translation>Unbekannte Anzahl aktiv zeichnender Nutzer</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
         <source>%n actively drawing user(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n aktiv zeichnender Nutzer</numerusform>
+            <numerusform>%n aktiv zeichnende Nutzer</numerusform>
         </translation>
     </message>
     <message>
@@ -579,7 +579,7 @@
     <message>
         <location line="+1"/>
         <source>Active</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktiv</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1349,7 +1349,7 @@
     <message>
         <location line="+13"/>
         <source>Server expects STARTTLS on unsupported socket.</source>
-        <translation type="unfinished"></translation>
+        <translation>Server erwartet STARTTLS auf nicht unterstütztem Socket.</translation>
     </message>
     <message>
         <location line="+75"/>
@@ -1389,12 +1389,12 @@
     <message>
         <location line="+171"/>
         <source>TLS is not supported via this kind of socket</source>
-        <translation type="unfinished"></translation>
+        <translation>TLS ist auf dieser Art von Socket nicht unterstützt</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>Unable to set TLS error ignore state</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte TLS-Fehlerzustand nicht setzen</translation>
     </message>
     <message>
         <location line="+106"/>
@@ -1467,14 +1467,14 @@
     <message>
         <location line="+5"/>
         <source>Unknown number of actively drawing users</source>
-        <translation type="unfinished"></translation>
+        <translation>Unbekannte Anzahl von aktiv zeichnenden Nutzern</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
         <source>%n actively drawing user(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n aktiv zeichnender Nutzer</numerusform>
+            <numerusform>%n aktiv zeichnende Nutzer</numerusform>
         </translation>
     </message>
     <message>
@@ -1495,7 +1495,7 @@
     <message>
         <location line="+1"/>
         <source>Active</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktiv</translation>
     </message>
 </context>
 <context>
@@ -1503,32 +1503,32 @@
     <message>
         <location filename="../net/server.cpp" line="+99"/>
         <source>Network read error</source>
-        <translation type="unfinished"></translation>
+        <translation>Netzwerk-Lesefehler</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Network read error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Netzwerk-Lesefehler: %1</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Network write error</source>
-        <translation type="unfinished"></translation>
+        <translation>Netzwerk-Schreibfehler</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Network write error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Netzwerk-Schreibfehler: %1</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Network connection timed out</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeitübeschreitung in Netzwerkverbindung</translation>
     </message>
     <message>
         <location line="+54"/>
         <source>Received invalid data</source>
-        <translation type="unfinished">Ungültige Daten empfangen</translation>
+        <translation>Ungültige Daten empfangen</translation>
     </message>
 </context>
 <context>
