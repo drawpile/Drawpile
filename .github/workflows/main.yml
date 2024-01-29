@@ -324,6 +324,17 @@ jobs:
           rustup target add armv7-linux-androideabi
         if: matrix.cross_os == 'Android' && matrix.bits == 32
 
+      - name: Prepare Windows signing
+        run: |
+          New-Item -ItemType directory -Path "$env:GITHUB_WORKSPACE/wincert"
+          Set-Content -Path "$env:GITHUB_WORKSPACE/wincert/drawpile.txt" -Value $env:WINDOWS_CERTIFICATE
+          certutil -decode "$env:GITHUB_WORKSPACE/wincert/drawpile.txt" "$env:GITHUB_WORKSPACE/wincert/drawpile.pfx"
+          Remove-Item -Path "$env:GITHUB_WORKSPACE/wincert/drawpile.txt"
+          echo "WINDOWS_PFX_PATH=$env:GITHUB_WORKSPACE/wincert/drawpile.pfx" >>$env:GITHUB_ENV
+        env:
+          WINDOWS_CERTIFICATE: ${{ secrets.WINDOWS_CERTIFICATE }}
+        if: runner.os == 'Windows'
+
       - name: Generate project
         run: >
           cmake -S . -B build --log-level=VERBOSE
@@ -375,6 +386,8 @@ jobs:
           SCCACHE_DIR: ${{ steps.sccache.outputs.path }}/cache
           QT_ANDROID_KEYSTORE_ALIAS: drawpile
           QT_ANDROID_KEYSTORE_STORE_PASS: ${{ secrets.ANDROID_KEYSTORE_PASS }}
+          WINDOWS_PFX_PASS: ${{ secrets.WINDOWS_CERTIFICATE_PASS }}
+          WINDOWS_PFX_TIMESTAMP_URL: 'http://timestamp.digicert.com'
 
       - name: Run C++ tests
         run: ctest -C Release --output-on-failure
@@ -383,6 +396,9 @@ jobs:
 
       - name: Run packaging
         run: ${{ matrix.packager }}
+        env:
+          WINDOWS_PFX_PASS: ${{ secrets.WINDOWS_CERTIFICATE_PASS }}
+          WINDOWS_PFX_TIMESTAMP_URL: 'http://timestamp.digicert.com'
         if: matrix.packager
 
       - name: Upload artifact

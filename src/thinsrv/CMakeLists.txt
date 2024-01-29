@@ -5,6 +5,7 @@ set(srvname "drawpile-srv")
 set(srvlib "${srvname}lib")
 
 add_executable(${srvname} main.cpp)
+dp_sign_executable(${srvname})
 
 add_library(${srvlib})
 

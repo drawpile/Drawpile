@@ -15,6 +15,7 @@ else()
 	add_executable(drawpile MACOSX_BUNDLE)
 endif()
 
+dp_sign_executable(drawpile)
 set_target_properties(drawpile PROPERTIES
 	AUTOUIC_SEARCH_PATHS ui
 	PROJECT_LABEL drawpile-client

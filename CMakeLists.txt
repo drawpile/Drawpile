@@ -132,6 +132,7 @@ endif()
 # can be moved down the list to where the rest of the dependencies are.
 include(GetIgnoreWarningsInDirectory)
 include(DrawpileCompilerOptions)
+include(Signing)
 
 if(TESTS)
 	enable_testing()
