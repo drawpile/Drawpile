@@ -388,6 +388,10 @@ if(WIN32)
 	)
 	target_disable_all_warnings(drawpile-kis_tablet)
 	target_link_libraries(drawpile PRIVATE drawpile-kis_tablet)
+	set_property(
+		INSTALL "$<TARGET_FILE_NAME:drawpile>"
+		PROPERTY CPACK_DESKTOP_SHORTCUTS Drawpile
+	)
 # https://gitlab.kitware.com/cmake/cmake/-/issues/19813
 elseif(APPLE)
 	target_sources(drawpile PRIVATE
