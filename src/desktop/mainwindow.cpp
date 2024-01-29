@@ -2310,7 +2310,8 @@ void MainWindow::onServerDisconnected(const QString &message, const QString &err
 	setDrawingToolsEnabled(true);
 
 	// Display login error if not yet logged in
-	if(!m_doc->client()->isLoggedIn() && !localDisconnect) {
+	if(!m_doc->client()->isLoggedIn() && !localDisconnect &&
+	   m_lastDisconnectNotificationTimer.hasExpired()) {
 		QString name = QStringLiteral("disconnectederrormessagebox");
 		QMessageBox *msgbox =
 			findChild<QMessageBox *>(name, Qt::FindDirectChildrenOnly);
