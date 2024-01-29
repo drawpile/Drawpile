@@ -3557,7 +3557,7 @@ void MainWindow::setupActions()
 	QAction *pasteCentered = makeAction("paste-centered", tr("Paste in View Center")).icon("edit-paste").shortcut("Ctrl+Shift+V");
 	QAction *stamp = makeAction("stamp", tr("&Stamp Selection")).shortcut("Ctrl+T");
 #ifndef SINGLE_MAIN_WINDOW
-	QAction *pickFromScreen = makeAction("pickfromscreen", tr("Pic&k From Screen")).icon("monitor").shortcut("Ctrl+I");
+	QAction *pickFromScreen = makeAction("pickfromscreen", tr("Pic&k From Screen")).icon("monitor").shortcut("Shift+I");
 #endif
 
 	QAction *pastefile = makeAction("pastefile", tr("Paste &From File...")).icon("document-open").noDefaultShortcut();
