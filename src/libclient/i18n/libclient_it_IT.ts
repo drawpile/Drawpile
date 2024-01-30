@@ -521,14 +521,14 @@
     <message>
         <location line="+9"/>
         <source>Unknown number of actively drawing users</source>
-        <translation type="unfinished"></translation>
+        <translation>Numero sconosciuto di utenti che stanno attivamente disegnando</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
         <source>%n actively drawing user(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n utente attivamente disegnando</numerusform>
+            <numerusform>%n utenti attivamente disegnando</numerusform>
         </translation>
     </message>
     <message>
@@ -579,7 +579,7 @@
     <message>
         <location line="+1"/>
         <source>Active</source>
-        <translation type="unfinished"></translation>
+        <translation>Attivo</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1237,7 +1237,7 @@
     <message>
         <location line="+13"/>
         <source>Server expects STARTTLS on unsupported socket.</source>
-        <translation type="unfinished"></translation>
+        <translation>Server si aspetta STARTTLS su socket non supportato.</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1328,12 +1328,12 @@
     <message>
         <location line="+171"/>
         <source>TLS is not supported via this kind of socket</source>
-        <translation type="unfinished"></translation>
+        <translation>TLS non è supportato tramite questo tipo di presa</translation>
     </message>
     <message>
         <location line="+56"/>
         <source>Unable to set TLS error ignore state</source>
-        <translation type="unfinished"></translation>
+        <translation>Non è possibile impostare lo stato di errore TLS</translation>
     </message>
     <message>
         <location line="+31"/>
@@ -1467,14 +1467,14 @@
     <message>
         <location line="+5"/>
         <source>Unknown number of actively drawing users</source>
-        <translation type="unfinished"></translation>
+        <translation>Numero sconosciuto di utenti che stanno attivamente disegnando</translation>
     </message>
     <message numerus="yes">
         <location line="+2"/>
         <source>%n actively drawing user(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n utente attivamente disegnando</numerusform>
+            <numerusform>%n utenti attivamente disegnando</numerusform>
         </translation>
     </message>
     <message>
@@ -1495,7 +1495,7 @@
     <message>
         <location line="+1"/>
         <source>Active</source>
-        <translation type="unfinished"></translation>
+        <translation>Attivo</translation>
     </message>
 </context>
 <context>
@@ -1503,32 +1503,32 @@
     <message>
         <location filename="../net/server.cpp" line="+99"/>
         <source>Network read error</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore di lettura della rete</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Network read error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore di lettura della rete: %1</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Network write error</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore di scrittura di rete</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Network write error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore di scrittura di rete: %1</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Network connection timed out</source>
-        <translation type="unfinished"></translation>
+        <translation>Time out della connessione di rete</translation>
     </message>
     <message>
         <location line="+54"/>
         <source>Received invalid data</source>
-        <translation type="unfinished">Ricevuti dati non validi</translation>
+        <translation>Ricevuti dati non validi</translation>
     </message>
 </context>
 <context>
