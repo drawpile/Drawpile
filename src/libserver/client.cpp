@@ -246,6 +246,7 @@ QJsonObject Client::description(bool includeSession) const
 			.toString(Qt::ISODate);
 	u["auth"] = isAuthenticated();
 	u["op"] = isOperator();
+	u["trusted"] = isTrusted();
 	u["muted"] = isMuted();
 	u["mod"] = isModerator();
 	u["tls"] = isSecure();
