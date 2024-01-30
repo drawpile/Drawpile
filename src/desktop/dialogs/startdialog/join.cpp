@@ -49,6 +49,8 @@ Join::Join(QWidget *parent)
 	connect(
 		m_recentScroll, &widgets::RecentScroll::doubleClicked, this,
 		&Join::acceptAddress);
+
+	dpApp().settings().bindLastJoinAddress(m_addressEdit, &QLineEdit::setText);
 }
 
 void Join::activate()
@@ -56,12 +58,14 @@ void Join::activate()
 	emit showButtons();
 	updateJoinButton();
 	m_addressEdit->setFocus();
+	m_addressEdit->selectAll();
 }
 
 void Join::accept()
 {
 	QUrl url = getUrl();
 	if(url.isValid()) {
+		dpApp().settings().setLastJoinAddress(m_addressEdit->text().trimmed());
 		emit join(url);
 	}
 }
