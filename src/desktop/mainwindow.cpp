@@ -2380,6 +2380,7 @@ void MainWindow::onServerLogin(bool join, const QString &joinPassword)
 	m_netstatus->loggedIn(client->sessionUrl(), joinPassword);
 	m_netstatus->setSecurityLevel(client->securityLevel(), client->hostCertificate());
 	m_view->setEnabled(true);
+	m_view->hideDisconnectedWarning();
 	m_sessionSettings->setPersistenceEnabled(client->serverSuppotsPersistence());
 	m_sessionSettings->setBanImpExEnabled(
 		client->isModerator(), client->serverSupportsCryptBanImpEx(),
