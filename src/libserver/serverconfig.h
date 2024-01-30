@@ -97,7 +97,9 @@ namespace config {
 		// Allow guests to toggle the web setting in sessions.
 		AllowGuestWebSession(40, "allowGuestWebSession", "true", ConfigKey::BOOL),
 		// Respect ext-auth user's "WEBSESSION" flag.
-		ExtAuthWebSession(41, "extauthwebsession", "false", ConfigKey::BOOL);
+		ExtAuthWebSession(41, "extauthwebsession", "false", ConfigKey::BOOL),
+		// Maximum number of users per session.
+		SessionUserLimit(42, "sessionUserLimit", "254", ConfigKey::INT);
 }
 
 //! Settings that are not adjustable after the server has started

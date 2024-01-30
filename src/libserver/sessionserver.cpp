@@ -112,7 +112,13 @@ std::tuple<Session*, QString> SessionServer::createSession(const QString &id, co
 		return std::tuple<Session*, QString> { nullptr, "badProtocol" };
 	}
 
-	Session *session = new ThinSession(initHistory(id, idAlias, protocolVersion, founder), m_config, m_announcements, this);
+	SessionHistory *history = initHistory(id, idAlias, protocolVersion, founder);
+	int userLimit = qBound(2, m_config->getConfigInt(config::SessionUserLimit), 254);
+	if(history->maxUsers() != userLimit) {
+		history->setMaxUsers(userLimit);
+	}
+
+	Session *session = new ThinSession(history, m_config, m_announcements, this);
 
 	initSession(session);
 

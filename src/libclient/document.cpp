@@ -473,10 +473,9 @@ void Document::setSessionAllowWeb(bool allowWeb)
 
 void Document::setSessionMaxUserCount(int count)
 {
-	if(m_sessionMaxUserCount != count) {
-		m_sessionMaxUserCount = count;
-		emit sessionMaxUserCountChanged(count);
-	}
+	// The server may cap this, so always emit this value.
+	m_sessionMaxUserCount = count;
+	emit sessionMaxUserCountChanged(count);
 }
 
 void Document::setSessionResetThreshold(int threshold)

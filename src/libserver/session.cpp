@@ -451,8 +451,19 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 		changes << "changed title";
 	}
 
+	bool changedByModeratorOrAdmin = !changedBy || changedBy->isModerator();
 	if(conf.contains("maxUserCount")) {
-		m_history->setMaxUsers(conf["maxUserCount"].toInt());
+		int maxUsers = qBound(2, conf["maxUserCount"].toInt(), 254);
+		int prevMaxUsers = m_history->maxUsers();
+		int userLimit =
+			qBound(2, m_config->getConfigInt(config::SessionUserLimit), 254);
+		bool maxUsersInBounds = changedByModeratorOrAdmin ||
+								maxUsers <= prevMaxUsers ||
+								maxUsers <= userLimit;
+		int effectiveMaxUsers =
+			maxUsersInBounds ? maxUsers
+							 : qMin(maxUsers, qMax(prevMaxUsers, userLimit));
+		m_history->setMaxUsers(effectiveMaxUsers);
 		changes << "changed max. user count";
 	}
 
@@ -510,7 +521,7 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 	bool changeIdleOverride =
 		conf.contains(QStringLiteral("idleOverride")) &&
 		m_config->getConfigBool(config::AllowIdleOverride) &&
-		(!changedBy || changedBy->isModerator());
+		changedByModeratorOrAdmin;
 	if(changeIdleOverride) {
 		bool idleOverride = conf[QStringLiteral("idleOverride")].toBool();
 		flags.setFlag(SessionHistory::IdleOverride, idleOverride);

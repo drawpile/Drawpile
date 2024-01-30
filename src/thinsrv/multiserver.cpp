@@ -523,6 +523,7 @@ JsonApiResult MultiServer::serverJsonApi(JsonApiMethod method, const QStringList
 		config::AllowGuestWebSession,
 		config::ExtAuthWebSession,
 #endif
+		config::SessionUserLimit,
 	};
 	const int settingCount = sizeof(settings) / sizeof(settings[0]);
 
