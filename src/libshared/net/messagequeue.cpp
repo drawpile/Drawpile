@@ -200,7 +200,7 @@ void MessageQueue::checkIdleTimeout()
 	   m_lastRecvTimer.hasExpired()) {
 		emit timedOut(m_idleTimeout);
 		abortSocket();
-	} else if(m_keepAliveTimer.hasExpired()) {
+	} else if(!m_gracefullyDisconnecting && m_keepAliveTimer.hasExpired()) {
 		send(makeKeepAliveMessage(0));
 	}
 }
@@ -233,12 +233,14 @@ void MessageQueue::sendArtificallyLaggedMessages()
 
 void MessageQueue::sendPingMsg(bool pong)
 {
-	if(m_artificialLagMs == 0) {
-		resetKeepAliveTimer();
-		enqueuePing(pong);
-	} else {
-		// Not accurate, but probably good enough for development purposes.
-		send(net::makePingMessage(0, pong));
+	if(!m_gracefullyDisconnecting) {
+		if(m_artificialLagMs == 0) {
+			resetKeepAliveTimer();
+			enqueuePing(pong);
+		} else {
+			// Not accurate, but probably good enough for development purposes.
+			send(net::makePingMessage(0, pong));
+		}
 	}
 }
 
@@ -269,9 +271,10 @@ void MessageQueue::sendPing()
 
 void MessageQueue::resetLastRecvTimer()
 {
-	resetDeadlineTimer(m_lastRecvTimer, m_idleTimeout);
+	if(!m_gracefullyDisconnecting) {
+		resetDeadlineTimer(m_lastRecvTimer, m_idleTimeout);
+	}
 }
-
 
 void MessageQueue::resetKeepAliveTimer()
 {
@@ -280,19 +283,21 @@ void MessageQueue::resetKeepAliveTimer()
 
 void MessageQueue::handlePing(bool isPong)
 {
-	if(isPong) {
-		// We got a Pong back: measure latency
-		if(m_pingSentTimer.isValid()) {
-			qint64 roundtrip = m_pingSentTimer.elapsed();
-			m_pingSentTimer.invalidate();
-			emit pingPong(roundtrip);
+	if(!m_gracefullyDisconnecting) {
+		if(isPong) {
+			// We got a Pong back: measure latency
+			if(m_pingSentTimer.isValid()) {
+				qint64 roundtrip = m_pingSentTimer.elapsed();
+				m_pingSentTimer.invalidate();
+				emit pingPong(roundtrip);
+			} else {
+				// Lots of pings can have been queued up
+				qDebug("Received Pong, but no Ping was sent!");
+			}
 		} else {
-			// Lots of pings can have been queued up
-			qDebug("Received Pong, but no Ping was sent!");
+			// Reply to a Ping with a Pong
+			sendPingMsg(true);
 		}
-	} else {
-		// Reply to a Ping with a Pong
-		sendPingMsg(true);
 	}
 }
 
