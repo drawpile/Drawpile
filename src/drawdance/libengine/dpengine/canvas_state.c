@@ -1376,7 +1376,8 @@ flatten_onion_skin(int tile_index, DP_TransientTile *tt, DP_LayerListEntry *lle,
 {
     DP_TransientTile *skin_tt = DP_layer_list_entry_flatten_tile_to(
         lle, lp, tile_index, DP_transient_tile_new_blank(0),
-        DP_fix15_mul(parent_opacity, os->opacity), include_sublayers, vmc);
+        DP_fix15_mul(parent_opacity, os->opacity), include_sublayers, false,
+        vmc);
 
     DP_UPixel15 tint = os->tint;
     if (tint.a != 0) {
@@ -1419,7 +1420,7 @@ DP_TransientTile *DP_canvas_state_flatten_tile_to(DP_CanvasState *cs,
             else {
                 tt = DP_layer_list_entry_flatten_tile_to(
                     lle, lp, tile_index, tt, parent_opacity, include_sublayers,
-                    &vmc);
+                    false, &vmc);
             }
         }
     }

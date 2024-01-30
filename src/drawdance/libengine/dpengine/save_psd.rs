@@ -505,6 +505,7 @@ fn write_layer_pixel_data_recursive(
     dc: *mut DP_DrawContext,
     out: &mut Output,
     layer_offsets: &HashMap<*mut c_void, usize>,
+    parent_censored: bool,
 ) -> Result<()> {
     let count = lpl.count();
     for i in 0..count {
@@ -512,12 +513,19 @@ fn write_layer_pixel_data_recursive(
         if let Some(child_lpl) = lp.children() {
             write_pixel_data(dc, out, 0, &[], 0, 0, 0, 0)?;
             let lg = ll.group_at(i);
-            write_layer_pixel_data_recursive(&lg.children(), &child_lpl, dc, out, layer_offsets)?;
+            write_layer_pixel_data_recursive(
+                &lg.children(),
+                &child_lpl,
+                dc,
+                out,
+                layer_offsets,
+                lp.censored(),
+            )?;
             write_pixel_data(dc, out, 0, &[], 0, 0, 0, 0)?;
         } else {
             let lc = ll.content_at(i);
             let offset = *layer_offsets.get(&lp.persistent_ptr().cast()).unwrap();
-            write_layer_content_pixel_data(&lc, lp.censored(), dc, out, offset)?;
+            write_layer_content_pixel_data(&lc, parent_censored || lp.censored(), dc, out, offset)?;
         }
     }
     Ok(())
@@ -532,7 +540,7 @@ fn write_layer_pixel_data_section(
     write_background_pixel_data(cs, dc, out, layer_offsets)?;
     let ll = cs.layers();
     let lpl = cs.layer_props();
-    write_layer_pixel_data_recursive(&ll, &lpl, dc, out, layer_offsets)?;
+    write_layer_pixel_data_recursive(&ll, &lpl, dc, out, layer_offsets, false)?;
     Ok(())
 }
 

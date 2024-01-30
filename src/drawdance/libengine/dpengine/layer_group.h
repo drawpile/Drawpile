@@ -88,12 +88,14 @@ DP_TransientLayerContent *DP_layer_group_merge(DP_LayerGroup *lg,
 void DP_layer_group_merge_to_flat_image(DP_LayerGroup *lg, DP_LayerProps *lp,
                                         DP_TransientLayerContent *tlc,
                                         uint16_t parent_opacity,
-                                        bool include_sublayers);
+                                        bool include_sublayers,
+                                        bool pass_through_censored);
 
 DP_TransientTile *
 DP_layer_group_flatten_tile_to(DP_LayerGroup *lg, DP_LayerProps *lp,
                                int tile_index, DP_TransientTile *tt_or_null,
                                uint16_t parent_opacity, bool include_sublayers,
+                               bool pass_through_censored,
                                const DP_ViewModeContext *vmc);
 
 

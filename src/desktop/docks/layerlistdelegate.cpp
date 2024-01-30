@@ -32,7 +32,8 @@ void LayerListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 
 	if(index.data(canvas::LayerListModel::IsLockedRole).toBool() ||
 	   index.data(canvas::LayerListModel::IsHiddenInFrameRole).toBool() ||
-	   index.data(canvas::LayerListModel::IsHiddenInTreeRole).toBool()) {
+	   index.data(canvas::LayerListModel::IsHiddenInTreeRole).toBool() ||
+	   index.data(canvas::LayerListModel::IsCensoredInTreeRole).toBool()) {
 		opt.state &= ~QStyle::State_Enabled;
 	}
 

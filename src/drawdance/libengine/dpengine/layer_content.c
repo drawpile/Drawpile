@@ -807,13 +807,13 @@ static DP_Tile *flatten_tile(DP_LayerContent *lc, int tile_index,
         DP_TransientTile *tt = DP_transient_tile_new(t, 0);
         DP_ViewModeContext vmc = DP_view_mode_context_make_default();
         DP_layer_list_flatten_tile_to(ll, lc->sub.props, tile_index, tt,
-                                      DP_BIT15, false, &vmc);
+                                      DP_BIT15, false, false, &vmc);
         return DP_transient_tile_persist(tt);
     }
     else {
         DP_ViewModeContext vmc = DP_view_mode_context_make_default();
         DP_TransientTile *tt_or_null = DP_layer_list_flatten_tile_to(
-            ll, lc->sub.props, tile_index, NULL, DP_BIT15, false, &vmc);
+            ll, lc->sub.props, tile_index, NULL, DP_BIT15, false, false, &vmc);
         return tt_or_null ? DP_transient_tile_persist(tt_or_null) : NULL;
     }
 }
@@ -1316,7 +1316,7 @@ static bool can_blend_blank(int blend_mode, uint16_t opacity)
 void DP_transient_layer_content_merge(DP_TransientLayerContent *tlc,
                                       unsigned int context_id,
                                       DP_LayerContent *lc, uint16_t opacity,
-                                      int blend_mode)
+                                      int blend_mode, bool censored)
 {
     DP_ASSERT(tlc);
     DP_ASSERT(DP_atomic_get(&tlc->refcount) > 0);
@@ -1327,19 +1327,22 @@ void DP_transient_layer_content_merge(DP_TransientLayerContent *tlc,
     DP_ASSERT(tlc->height == lc->height);
     int count = DP_tile_total_round(lc->width, lc->height);
     bool blend_blank = can_blend_blank(blend_mode, opacity);
+    DP_Tile *censor_tile = censored ? DP_tile_censored_noinc() : NULL;
     for (int i = 0; i < count; ++i) {
         DP_Tile *t = lc->elements[i].tile;
         if (t) {
             if (tlc->elements[i].tile) {
                 DP_TransientTile *tt = get_transient_tile(tlc, context_id, i);
                 DP_ASSERT((void *)tt != (void *)t);
-                DP_transient_tile_merge(tt, t, opacity, blend_mode);
+                DP_transient_tile_merge(tt, censored ? censor_tile : t, opacity,
+                                        blend_mode);
             }
             else if (blend_blank) {
                 // For blend modes like normal and behind, do regular blending.
                 DP_TransientTile *tt =
                     create_transient_tile(tlc, context_id, i);
-                DP_transient_tile_merge(tt, t, opacity, blend_mode);
+                DP_transient_tile_merge(tt, censored ? censor_tile : t, opacity,
+                                        blend_mode);
             }
             else {
                 // For most other blend modes merging with transparent pixels
@@ -1828,7 +1831,7 @@ void DP_transient_layer_content_merge_sublayer_at(DP_TransientLayerContent *tlc,
     DP_LayerProps *lp = DP_transient_layer_props_list_at_noinc(tlpl, index);
     DP_transient_layer_content_merge(tlc, context_id, lc,
                                      DP_layer_props_opacity(lp),
-                                     DP_layer_props_blend_mode(lp));
+                                     DP_layer_props_blend_mode(lp), false);
     DP_transient_layer_list_delete_at(tll, index);
     DP_transient_layer_props_list_delete_at(tlpl, index);
 }
@@ -1848,7 +1851,7 @@ void DP_transient_layer_content_merge_all_sublayers(
         DP_LayerProps *lp = DP_layer_props_list_at_noinc(lpl, i);
         DP_transient_layer_content_merge(tlc, context_id, lc,
                                          DP_layer_props_opacity(lp),
-                                         DP_layer_props_blend_mode(lp));
+                                         DP_layer_props_blend_mode(lp), false);
     }
     DP_layer_list_decref(ll);
     DP_layer_props_list_decref(lpl);

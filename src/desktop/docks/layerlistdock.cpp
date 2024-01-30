@@ -873,7 +873,8 @@ QFlags<widgets::CanvasView::Lock> LayerList::currentLayerLock() const
 			if(idx.data(canvas::LayerListModel::IsHiddenInFrameRole).toBool()) {
 				lock.setFlag(Lock::LayerHiddenInFrame);
 			}
-			if(item.censored) {
+			if(idx.data(canvas::LayerListModel::IsCensoredInTreeRole)
+				   .toBool()) {
 				lock.setFlag(Lock::LayerCensored);
 			}
 		}

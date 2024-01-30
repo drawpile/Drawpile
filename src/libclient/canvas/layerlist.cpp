@@ -40,7 +40,7 @@ QVariant LayerListModel::data(const QModelIndex &index, int role) const
 	case IsGroupRole: return item.group;
 	case IsEmptyRole: return item.children == 0;
 	case IsHiddenInFrameRole: return m_frameMode && !m_frameLayers.contains(item.id);
-	case IsHiddenInTreeRole: {
+	case IsHiddenInTreeRole:
 		if(item.hidden) {
 			return true;
 		} else {
@@ -54,7 +54,20 @@ QVariant LayerListModel::data(const QModelIndex &index, int role) const
 			}
 			return false;
 		}
-	}
+	case IsCensoredInTreeRole:
+		if(item.censored) {
+			return true;
+		} else {
+			QModelIndex current = index.parent();
+			while(current.isValid()) {
+				if(m_items.at(current.internalId()).censored) {
+					return true;
+				} else {
+					current = current.parent();
+				}
+			}
+			return false;
+		}
 	}
 
 	return QVariant();

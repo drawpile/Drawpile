@@ -173,7 +173,7 @@ DP_transient_layer_content_resize_to(DP_TransientLayerContent *tlc,
 void DP_transient_layer_content_merge(DP_TransientLayerContent *tlc,
                                       unsigned int context_id,
                                       DP_LayerContent *lc, uint16_t opacity,
-                                      int blend_mode);
+                                      int blend_mode, bool censored);
 
 void DP_transient_layer_content_pixel_at_put(DP_TransientLayerContent *tlc,
                                              unsigned int context_id,

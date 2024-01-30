@@ -97,6 +97,7 @@ public:
 		IsEmptyRole,
 		IsHiddenInFrameRole,
 		IsHiddenInTreeRole,
+		IsCensoredInTreeRole,
 	};
 
 	LayerListModel(QObject *parent=nullptr);

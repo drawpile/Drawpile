@@ -34,6 +34,7 @@ Unreleased Version 2.2.1-pre
  * Fix: Properly apply layer properties if the layer changed since opening them.
  * Feature: Show last joined address in join dialog.
  * Fix: Hide disconnection banner after establishing connection to a session.
+ * Fix: Make censoring layer groups actually have an effect.
 
 2024-01-13 Version 2.2.0
  * Server Fix: Add --ssl-key-algorithm parameter to allow non-RSA SSL keys, defaulting to guessing the most common formats RSA and EC. Thanks Bluestrings for reporting.

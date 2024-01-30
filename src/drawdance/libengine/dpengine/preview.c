@@ -483,7 +483,8 @@ static void preview_dabs_render(DP_Preview *pv, DP_DrawContext *dc,
 
     if (sub_tlc) {
         DP_transient_layer_content_merge(tlc, 0, (DP_LayerContent *)sub_tlc,
-                                         sub_opacity, DP_BLEND_MODE_NORMAL);
+                                         sub_opacity, DP_BLEND_MODE_NORMAL,
+                                         false);
         DP_transient_layer_content_decref(sub_tlc);
     }
 }

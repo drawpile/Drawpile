@@ -664,13 +664,13 @@ static void delete_layer(DP_TransientCanvasState *tcs, unsigned int context_id,
         if (DP_layer_list_entry_is_group(delete_lle)) {
             DP_layer_group_merge_to_flat_image(
                 DP_layer_list_entry_group_noinc(delete_lle), delete_lp,
-                merge_tlc, DP_BIT15, true);
+                merge_tlc, DP_BIT15, true, false);
         }
         else {
             DP_transient_layer_content_merge(
                 merge_tlc, context_id,
                 DP_layer_list_entry_content_noinc(delete_lle), opacity,
-                blend_mode);
+                blend_mode, false);
         }
     }
 

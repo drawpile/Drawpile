@@ -2748,6 +2748,7 @@ extern "C" {
         lc: *mut DP_LayerContent,
         opacity: u16,
         blend_mode: ::std::os::raw::c_int,
+        censored: bool,
     );
 }
 extern "C" {
@@ -2966,6 +2967,7 @@ extern "C" {
         tlc: *mut DP_TransientLayerContent,
         parent_opacity: u16,
         include_sublayers: bool,
+        pass_through_censored: bool,
     );
 }
 extern "C" {
@@ -2976,6 +2978,7 @@ extern "C" {
         tt_or_null: *mut DP_TransientTile,
         parent_opacity: u16,
         include_sublayers: bool,
+        pass_through_censored: bool,
         vmc: *const DP_ViewModeContext,
     ) -> *mut DP_TransientTile;
 }
@@ -3133,6 +3136,7 @@ extern "C" {
         tlc: *mut DP_TransientLayerContent,
         parent_opacity: u16,
         include_sublayers: bool,
+        pass_through_censored: bool,
     );
 }
 extern "C" {
@@ -3143,6 +3147,7 @@ extern "C" {
         tt: *mut DP_TransientTile,
         parent_opacity: u16,
         include_sublayers: bool,
+        pass_through_censored: bool,
         vmc: *const DP_ViewModeContext,
     ) -> *mut DP_TransientTile;
 }
@@ -3154,6 +3159,7 @@ extern "C" {
         tt_or_null: *mut DP_TransientTile,
         parent_opacity: u16,
         include_sublayers: bool,
+        pass_through_censored: bool,
         vmc: *const DP_ViewModeContext,
     ) -> *mut DP_TransientTile;
 }
