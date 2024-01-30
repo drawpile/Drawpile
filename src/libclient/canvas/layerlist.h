@@ -136,6 +136,8 @@ public:
 	uint16_t defaultLayer() const { return m_defaultLayer; }
 	void setDefaultLayer(uint16_t id);
 
+	AclState::Layer layerAcl(uint16_t id);
+
 	/**
 	 * @brief Find a free layer ID
 	 * @return layer ID or 0 if all are taken

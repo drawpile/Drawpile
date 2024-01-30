@@ -39,6 +39,9 @@ public:
 		return m_state == State::Collapsed || !isVisible();
 	}
 
+public slots:
+	void setCurrentLayer(int layerId);
+
 private slots:
 	void onCanvasChanged(canvas::CanvasModel *canvas);
 	void onServerLogin();

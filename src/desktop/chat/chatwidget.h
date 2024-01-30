@@ -7,6 +7,7 @@
 class QMenu;
 
 namespace canvas {
+class LayerListModel;
 class UserListModel;
 }
 
@@ -30,6 +31,7 @@ public:
 	void focusInput();
 	void setAttached(bool isAttached);
 	void setUserList(canvas::UserListModel *userlist);
+	void setLayerList(canvas::LayerListModel *layerlist);
 
 	QMenu *externalMenu();
 
@@ -42,6 +44,8 @@ public slots:
 	 *
 	 */
 	void setPreserveMode(bool preservechat);
+
+	void setCurrentLayer(int layerId);
 
 	//! Display a received message
 	void receiveMessage(
@@ -102,6 +106,13 @@ private:
 	void setMentionUsername(const QString &username);
 	bool isMention(const QString &message);
 	static QString makeMentionPattern(const QString &trigger);
+
+	QString changeLayerAclTiers(const QString &params);
+	int changeLayerAclTiersRecursive(
+		const QModelIndex &idx, int tier, bool raiseOnly,
+		bool includeExclusive);
+	bool changeLayerAclTier(
+		int layerId, int tier, bool raiseOnly, bool includeExclusive);
 
 	void notifySanitize(notification::Event event, const QString &message);
 	void notify(notification::Event event, const QString &message);

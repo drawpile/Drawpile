@@ -3,6 +3,7 @@
 #include "desktop/chat/chatwidgetpinnedarea.h"
 #include "desktop/main.h"
 #include "desktop/utils/widgetutils.h"
+#include "libclient/canvas/layerlist.h"
 #include "libclient/canvas/userlist.h"
 #include "libclient/drawdance/perf.h"
 #include "libclient/net/message.h"
@@ -95,6 +96,8 @@ struct ChatWidget::Private {
 
 	QList<int> announcedUsers;
 	canvas::UserListModel *userlist = nullptr;
+	canvas::LayerListModel *layerlist = nullptr;
+	int currentLayer = 0;
 	QHash<int, Chat> chats;
 
 	int myId = 0;
@@ -293,6 +296,11 @@ void ChatWidget::setPreserveMode(bool preservechat)
 	d->updatePreserveModeUi();
 }
 
+void ChatWidget::setCurrentLayer(int layerId)
+{
+	d->currentLayer = layerId;
+}
+
 void ChatWidget::loggedIn(int myId)
 {
 	d->myId = myId;
@@ -307,6 +315,11 @@ void ChatWidget::focusInput()
 void ChatWidget::setUserList(canvas::UserListModel *userlist)
 {
 	d->userlist = userlist;
+}
+
+void ChatWidget::setLayerList(canvas::LayerListModel *layerlist)
+{
+	d->layerlist = layerlist;
 }
 
 QMenu *ChatWidget::externalMenu()
@@ -814,6 +827,49 @@ void ChatWidget::sendMessage(QString chatMessage)
 				return;
 			}
 
+		} else if(cmd == QStringLiteral("trust-all-users")) {
+			if(d->userlist && d->userlist->isOperator(d->myId)) {
+				if(params.isEmpty()) {
+					QVector<uint8_t> users;
+					for(const canvas::User &user : d->userlist->users()) {
+						bool needsTrust = user.isOnline &&
+										  (user.isTrusted || !user.isOperator);
+						if(needsTrust) {
+							users.append(user.id);
+						}
+					}
+					emit message(net::makeTrustedUsersMessage(d->myId, users));
+				} else {
+					systemMessage(QStringLiteral(
+						"/trust-all-users: this command takes no arguments."));
+				}
+			} else {
+				systemMessage(QStringLiteral(
+					"/trust-all-users: only operators can trust other users."));
+			}
+			return;
+
+		} else if(cmd == QStringLiteral("untrust-all-users")) {
+			if(d->userlist && d->userlist->isOperator(d->myId)) {
+				emit message(net::makeTrustedUsersMessage(d->myId, {}));
+			} else {
+				systemMessage(
+					QStringLiteral("/untrust-all-users: only operators can "
+								   "untrust other users."));
+			}
+			return;
+
+		} else if(cmd == QStringLiteral("set-layer-acl-tiers")) {
+			if(d->userlist && d->userlist->isOperator(d->myId)) {
+				systemMessage(QStringLiteral("/set-layer-acl-tiers: %1")
+								  .arg(changeLayerAclTiers(params)));
+			} else {
+				systemMessage(
+					QStringLiteral("/set-layer-acl-tiers: only operators "
+								   "can change all layer tiers."));
+			}
+			return;
+
 		} else if(cmd == QStringLiteral("help")) {
 			//: Don't translate the commands, only their descriptions!
 			const QString text = tr(
@@ -982,6 +1038,125 @@ QString ChatWidget::makeMentionPattern(const QString &trigger)
 		return QStringLiteral("\\b%1\\b")
 			.arg(pieces.join(QStringLiteral("\\s+")));
 	}
+}
+
+QString ChatWidget::changeLayerAclTiers(const QString &params)
+{
+	if(!d->layerlist) {
+		return QStringLiteral("Layer list not set");
+	}
+
+	QStringList tierNames = {
+		QStringLiteral("everyone"), QStringLiteral("registered"),
+		QStringLiteral("trusted"), QStringLiteral("operators")};
+	DP_AccessTier tiers[] = {
+		DP_ACCESS_TIER_GUEST,
+		DP_ACCESS_TIER_AUTHENTICATED,
+		DP_ACCESS_TIER_TRUSTED,
+		DP_ACCESS_TIER_OPERATOR,
+	};
+
+	int tierIndex = -1;
+	bool raiseOnly = false;
+	bool includeExclusive = false;
+	enum { ScopeMissing, ScopeAll, ScopeCurrent } scope = ScopeMissing;
+	bool invalid = false;
+
+	static QRegularExpression whitespacRe("\\s+");
+	for(const QString &param :
+		params.toCaseFolded().split(whitespacRe, Qt::SkipEmptyParts)) {
+		if(param == QStringLiteral("raise")) {
+			raiseOnly = true;
+		} else if(param == QStringLiteral("exclusive")) {
+			includeExclusive = true;
+		} else if(param == QStringLiteral("all")) {
+			if(scope == ScopeMissing) {
+				scope = ScopeAll;
+			} else {
+				invalid = true;
+			}
+		} else if(param == QStringLiteral("current")) {
+			if(scope == ScopeMissing) {
+				scope = ScopeCurrent;
+			} else {
+				invalid = true;
+			}
+		} else {
+			int i = tierNames.indexOf(param);
+			if(i == -1 || tierIndex != -1) {
+				invalid = true;
+			} else {
+				tierIndex = i;
+			}
+		}
+	}
+
+	if(invalid) {
+		return QStringLiteral("invalid parameter(s), usage: [raise] "
+							  "[exclusive] all|current %1")
+			.arg(tierNames.join("|"));
+	} else if(tierIndex == -1 || scope == ScopeMissing) {
+		return QStringLiteral(
+				   "missing tier, usage: [raise] [exclusive] all|current %1")
+			.arg(tierNames.join("|"));
+	}
+
+	DP_AccessTier tier = tiers[tierIndex];
+	int changed = 0;
+	if(scope == ScopeAll) {
+		for(const canvas::LayerListItem &item : d->layerlist->layerItems()) {
+			if(changeLayerAclTier(
+				   item.id, int(tier), raiseOnly, includeExclusive)) {
+				++changed;
+			}
+		}
+	} else if(scope == ScopeCurrent && d->currentLayer != 0) {
+		changed += changeLayerAclTiersRecursive(
+			d->layerlist->layerIndex(d->currentLayer), int(tier), raiseOnly,
+			includeExclusive);
+	}
+
+	return QStringLiteral("%1 tier of %2 layer(s) to %3")
+		.arg(raiseOnly ? QStringLiteral("raised") : QStringLiteral("changed"))
+		.arg(changed)
+		.arg(tierNames[tierIndex]);
+}
+
+int ChatWidget::changeLayerAclTiersRecursive(
+	const QModelIndex &idx, int tier, bool raiseOnly, bool includeExclusive)
+{
+	int changed = 0;
+	if(idx.isValid()) {
+		if(changeLayerAclTier(
+			   idx.data(canvas::LayerListModel::IdRole).toInt(), tier,
+			   raiseOnly, includeExclusive)) {
+			++changed;
+		}
+
+		int childCount = d->layerlist->rowCount(idx);
+		for(int i = 0; i < childCount; ++i) {
+			changed += changeLayerAclTiersRecursive(
+				d->layerlist->index(i, 0, idx), tier, raiseOnly,
+				includeExclusive);
+		}
+	}
+	return changed;
+}
+
+bool ChatWidget::changeLayerAclTier(
+	int layerId, int tier, bool raiseOnly, bool includeExclusive)
+{
+	canvas::AclState::Layer layerAcl = d->layerlist->layerAcl(layerId);
+	int layerTier = int(layerAcl.tier);
+	bool shouldChange = (raiseOnly ? layerTier > tier : layerTier != tier) &&
+						(includeExclusive || layerAcl.exclusive.isEmpty());
+	if(shouldChange) {
+		emit message(net::makeLayerAclMessage(
+			d->myId, layerId,
+			(layerAcl.locked ? DP_ACL_ALL_LOCKED_BIT : 0) | uint8_t(tier),
+			layerAcl.exclusive));
+	}
+	return shouldChange;
 }
 
 void ChatWidget::notifySanitize(

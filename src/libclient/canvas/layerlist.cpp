@@ -432,6 +432,15 @@ void LayerListModel::setDefaultLayer(uint16_t id)
 	}
 }
 
+AclState::Layer LayerListModel::layerAcl(uint16_t id)
+{
+	if(m_aclstate) {
+		return m_aclstate->layerAcl(id);
+	} else {
+		return {};
+	}
+}
+
 KeyFrameLayerModel *LayerListModel::toKeyFrameLayerModel(
 	int rootLayerId, const QHash<int, bool> &layerVisibility) const
 {

@@ -420,6 +420,9 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	m_dockLayers->setFrame(m_dockTimeline->currentFrame());
 	connect(m_doc->toolCtrl(), &tools::ToolController::activeAnnotationChanged,
 			m_dockToolSettings->annotationSettings(), &tools::AnnotationSettings::setSelectionId);
+	connect(
+		m_dockLayers, &docks::LayerList::layerSelected, m_chatbox,
+		&widgets::ChatBox::setCurrentLayer);
 
 	connect(m_canvasscene, &drawingboard::CanvasScene::canvasResized, m_doc->toolCtrl(), &tools::ToolController::offsetActiveTool);
 

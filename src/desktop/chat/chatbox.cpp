@@ -148,6 +148,7 @@ void ChatBox::onCanvasChanged(canvas::CanvasModel *canvas)
 {
 	m_userList->setModel(canvas->userlist()->onlineUsers());
 	m_chatWidget->setUserList(canvas->userlist());
+	m_chatWidget->setLayerList(canvas->layerlist());
 
 	connect(
 		canvas, &canvas::CanvasModel::chatMessageReceived, m_chatWidget,
@@ -176,6 +177,11 @@ void ChatBox::onCompatibilityModeChanged(bool compatibilityMode)
 void ChatBox::focusInput()
 {
 	m_chatWidget->focusInput();
+}
+
+void ChatBox::setCurrentLayer(int layerId)
+{
+	m_chatWidget->setCurrentLayer(layerId);
 }
 
 void ChatBox::detachFromParent()
