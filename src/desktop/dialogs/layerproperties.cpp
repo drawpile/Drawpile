@@ -54,6 +54,14 @@ void LayerProperties::setLayerItem(
 		m_compatibilityMode);
 }
 
+void LayerProperties::updateLayerItem(
+	const canvas::LayerListItem &item, const QString &creator, bool isDefault)
+{
+	m_item = item;
+	m_wasDefault = isDefault;
+	m_ui->createdBy->setText(creator);
+}
+
 void LayerProperties::setControlsEnabled(bool enabled)
 {
 	m_controlsEnabled = enabled;

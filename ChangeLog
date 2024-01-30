@@ -31,6 +31,7 @@ Unreleased Version 2.2.1-pre
  * Server Fix: Allow reading users' trusted status through the API, because it's something you can write through it.
  * Server Feature: Allow limiting the maximum number of users per session. Moderators and administrators can override this.
  * Server Fix: Time out clients that take too long to disconnect gracefully. Thanks Bluestrings for reporting.
+ * Fix: Properly apply layer properties if the layer changed since opening them.
 
 2024-01-13 Version 2.2.0
  * Server Fix: Add --ssl-key-algorithm parameter to allow non-RSA SSL keys, defaulting to guessing the most common formats RSA and EC. Thanks Bluestrings for reporting.

@@ -23,6 +23,9 @@ public:
 	void setLayerItem(
 		const canvas::LayerListItem &data, const QString &creator,
 		bool isDefault);
+	void updateLayerItem(
+		const canvas::LayerListItem &data, const QString &creator,
+		bool isDefault);
 	void setControlsEnabled(bool enabled);
 	void setOpControlsEnabled(bool enabled);
 	void setCompatibilityMode(bool compatibilityMode);

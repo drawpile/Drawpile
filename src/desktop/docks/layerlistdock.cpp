@@ -750,7 +750,13 @@ void LayerList::showPropertiesOfIndex(QModelIndex index)
 			[this, dlg]() {
 				const auto newIndex =
 					m_canvas->layerlist()->layerIndex(dlg->layerId());
-				if(!newIndex.isValid()) {
+				if(newIndex.isValid()) {
+					dlg->updateLayerItem(
+						newIndex.data().value<canvas::LayerListItem>(),
+						layerCreatorName(dlg->layerId()),
+						newIndex.data(canvas::LayerListModel::IsDefaultRole)
+							.toBool());
+				} else {
 					dlg->deleteLater();
 				}
 			});
