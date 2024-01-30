@@ -24,9 +24,10 @@ pub const DP_KEY_FRAME_LAYER_HIDDEN: u32 = 1;
 pub const DP_KEY_FRAME_LAYER_REVEALED: u32 = 2;
 pub const DP_AFFECTED_INDIRECT_AREAS_COUNT: u32 = 256;
 pub const DP_USER_CURSOR_COUNT: u32 = 256;
+pub const DP_USER_CURSOR_SMOOTH_COUNT: u32 = 8;
 pub const DP_USER_CURSOR_FLAG_NONE: u32 = 0;
 pub const DP_USER_CURSOR_FLAG_VALID: u32 = 1;
-pub const DP_USER_CURSOR_FLAG_MYPAINT: u32 = 2;
+pub const DP_USER_CURSOR_FLAG_INTERPOLATE: u32 = 2;
 pub const DP_USER_CURSOR_FLAG_PEN_UP: u32 = 4;
 pub const DP_USER_CURSOR_FLAG_PEN_DOWN: u32 = 8;
 pub const DP_CANVAS_HISTORY_UNDO_DEPTH_MIN: u32 = 3;
@@ -4173,10 +4174,13 @@ fn bindgen_test_layout_DP_UserCursor() {
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct DP_UserCursorState {
-    pub flags: ::std::os::raw::c_uint,
+    pub flags: u8,
+    pub smooth_index: u8,
+    pub smooth_count: u8,
     pub layer_id: ::std::os::raw::c_int,
-    pub x: ::std::os::raw::c_int,
-    pub y: ::std::os::raw::c_int,
+    pub last_r2: f32,
+    pub xs: [::std::os::raw::c_int; 8usize],
+    pub ys: [::std::os::raw::c_int; 8usize],
 }
 #[test]
 fn bindgen_test_layout_DP_UserCursorState() {
@@ -4184,7 +4188,7 @@ fn bindgen_test_layout_DP_UserCursorState() {
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<DP_UserCursorState>(),
-        16usize,
+        76usize,
         concat!("Size of: ", stringify!(DP_UserCursorState))
     );
     assert_eq!(
@@ -4203,6 +4207,26 @@ fn bindgen_test_layout_DP_UserCursorState() {
         )
     );
     assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).smooth_index) as usize - ptr as usize },
+        1usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_UserCursorState),
+            "::",
+            stringify!(smooth_index)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).smooth_count) as usize - ptr as usize },
+        2usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_UserCursorState),
+            "::",
+            stringify!(smooth_count)
+        )
+    );
+    assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).layer_id) as usize - ptr as usize },
         4usize,
         concat!(
@@ -4213,23 +4237,33 @@ fn bindgen_test_layout_DP_UserCursorState() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).x) as usize - ptr as usize },
+        unsafe { ::std::ptr::addr_of!((*ptr).last_r2) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
             stringify!(DP_UserCursorState),
             "::",
-            stringify!(x)
+            stringify!(last_r2)
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).y) as usize - ptr as usize },
+        unsafe { ::std::ptr::addr_of!((*ptr).xs) as usize - ptr as usize },
         12usize,
         concat!(
             "Offset of field: ",
             stringify!(DP_UserCursorState),
             "::",
-            stringify!(y)
+            stringify!(xs)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).ys) as usize - ptr as usize },
+        44usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_UserCursorState),
+            "::",
+            stringify!(ys)
         )
     );
 }
@@ -4247,7 +4281,7 @@ fn bindgen_test_layout_DP_UserCursors() {
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<DP_UserCursors>(),
-        4612usize,
+        19972usize,
         concat!("Size of: ", stringify!(DP_UserCursors))
     );
     assert_eq!(
@@ -4487,6 +4521,7 @@ extern "C" {
         layer_id: ::std::os::raw::c_int,
         x: ::std::os::raw::c_int,
         y: ::std::os::raw::c_int,
+        radius: f32,
     );
 }
 extern "C" {
@@ -6288,6 +6323,9 @@ pub type DP_PaintEngineUndoDepthLimitSetFn = ::std::option::Option<
         undo_depth_limit: ::std::os::raw::c_int,
     ),
 >;
+pub type DP_PaintEngineCensoredLayerRevealedFn = ::std::option::Option<
+    unsafe extern "C" fn(user: *mut ::std::os::raw::c_void, layer_id: ::std::os::raw::c_int),
+>;
 pub type DP_PaintEngineCatchupFn = ::std::option::Option<
     unsafe extern "C" fn(user: *mut ::std::os::raw::c_void, progress: ::std::os::raw::c_int),
 >;
@@ -6570,6 +6608,7 @@ extern "C" {
         cursor_moved: DP_PaintEngineCursorMovedFn,
         default_layer_set: DP_PaintEngineDefaultLayerSetFn,
         undo_depth_limit_set: DP_PaintEngineUndoDepthLimitSetFn,
+        censored_layer_revealed: DP_PaintEngineCensoredLayerRevealedFn,
         user: *mut ::std::os::raw::c_void,
     );
 }

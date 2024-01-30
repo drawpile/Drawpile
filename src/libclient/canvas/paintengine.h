@@ -12,6 +12,7 @@ extern "C" {
 #include <QObject>
 #include <QPainter>
 #include <QPixmap>
+#include <QSet>
 #include <functional>
 
 struct DP_Mutex;
@@ -235,7 +236,8 @@ public:
 signals:
 	void areaChanged(const QRect &area);
 	void resized(int xoffset, int yoffset, const QSize &oldSize);
-	void layersChanged(const drawdance::LayerPropsList &lpl);
+	void layersChanged(
+		const drawdance::LayerPropsList &lpl, const QSet<int> &revealedLayers);
 	void annotationsChanged(const drawdance::AnnotationList &al);
 	void
 	cursorMoved(unsigned int flags, uint8_t user, uint16_t layer, int x, int y);
@@ -276,6 +278,7 @@ private:
 	static void onMovePointer(void *user, unsigned int contextId, int x, int y);
 	static void onDefaultLayer(void *user, int layerId);
 	static void onUndoDepthLimitSet(void *user, int undoDepthLimit);
+	static void onCensoredLayerRevealed(void *user, int layerId);
 	static void onCatchup(void *user, int progress);
 	static void onResetLockChanged(void *user, bool locked);
 	static void onRecorderStateChanged(void *user, bool started);
@@ -305,6 +308,7 @@ private:
 	drawdance::PaintEngine m_paintEngine;
 	int m_fps;
 	int m_timerId;
+	QSet<int> m_revealedLayers;
 	QPixmap m_cache;
 	QPainter m_painter;
 	DP_Mutex *m_cacheMutex;

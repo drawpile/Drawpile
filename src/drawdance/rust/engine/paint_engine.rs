@@ -258,6 +258,7 @@ impl PaintEngine {
                 Some(Self::on_cursor_moved),
                 Some(Self::on_default_layer_set),
                 Some(Self::on_undo_depth_limit_set),
+                Some(Self::on_censored_layer_revealed),
                 user.cast(),
             );
             DP_paint_engine_render_everything(self.paint_engine);
@@ -283,6 +284,7 @@ impl PaintEngine {
     }
     extern "C" fn on_default_layer_set(_user: *mut c_void, _layer_id: c_int) {}
     extern "C" fn on_undo_depth_limit_set(_user: *mut c_void, _undo_depth_limit: c_int) {}
+    extern "C" fn on_censored_layer_revealed(_user: *mut c_void, _layer_id: c_int) {}
 
     pub fn write_ora(&mut self, path: &str) -> Result<()> {
         let cpath = CString::new(path)?;

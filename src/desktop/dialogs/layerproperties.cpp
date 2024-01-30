@@ -46,7 +46,7 @@ void LayerProperties::setLayerItem(
 	m_ui->title->setText(item.title);
 	m_ui->opacitySlider->setValue(qRound(item.opacity * 100.0f));
 	m_ui->visible->setChecked(!item.hidden);
-	m_ui->censored->setChecked(item.censored);
+	m_ui->censored->setChecked(item.actuallyCensored());
 	m_ui->defaultLayer->setChecked(isDefault);
 	m_ui->createdBy->setText(creator);
 	updateBlendMode(
@@ -165,7 +165,7 @@ void LayerProperties::emitChanges()
 	}
 
 	if(m_ui->opacitySlider->value() != oldOpacity ||
-	   newBlendmode != m_item.blend || censored != m_item.censored ||
+	   newBlendmode != m_item.blend || censored != m_item.actuallyCensored() ||
 	   isolated != m_item.isolated) {
 		uint8_t flags = (censored ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR : 0) |
 						(isolated ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED : 0);

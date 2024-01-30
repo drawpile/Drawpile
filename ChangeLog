@@ -27,6 +27,7 @@ Unreleased Version 2.2.1-pre
  * Feature: Make the Windows installer put a shortcut on the desktop.
  * Fix: Widen the stripes of the censor pattern so that it's easier on the eyes. Thanks Ben for reporting.
  * Fix: Don't remember uncensor layers across restarts, to avoid being exposed to things you didn't want to just because you forgot to toggle it back off.
+ * Fix: Properly show censored layers in the list even when they are revealed.
 
 2024-01-13 Version 2.2.0
  * Server Fix: Add --ssl-key-algorithm parameter to allow non-RSA SSL keys, defaulting to guessing the most common formats RSA and EC. Thanks Bluestrings for reporting.

@@ -58,6 +58,7 @@ typedef void (*DP_PaintEngineMovePointerFn)(void *user, unsigned int context_id,
 typedef void (*DP_PaintEngineDefaultLayerSetFn)(void *user, int layer_id);
 typedef void (*DP_PaintEngineUndoDepthLimitSetFn)(void *user,
                                                   int undo_depth_limit);
+typedef void (*DP_PaintEngineCensoredLayerRevealedFn)(void *user, int layer_id);
 typedef void (*DP_PaintEngineCatchupFn)(void *user, int progress);
 typedef void (*DP_PaintEngineResetLockChangedFn)(void *user, bool locked);
 typedef void (*DP_PaintEngineRecorderStateChangedFn)(void *user, bool started);
@@ -211,7 +212,8 @@ void DP_paint_engine_tick(
     DP_PaintEngineTimelineChangedFn timeline_changed,
     DP_PaintEngineCursorMovedFn cursor_moved,
     DP_PaintEngineDefaultLayerSetFn default_layer_set,
-    DP_PaintEngineUndoDepthLimitSetFn undo_depth_limit_set, void *user);
+    DP_PaintEngineUndoDepthLimitSetFn undo_depth_limit_set,
+    DP_PaintEngineCensoredLayerRevealedFn censored_layer_revealed, void *user);
 
 void DP_paint_engine_change_bounds(DP_PaintEngine *pe, DP_Rect tile_bounds,
                                    bool render_outside_tile_bounds);

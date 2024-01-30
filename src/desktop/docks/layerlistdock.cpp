@@ -867,7 +867,7 @@ QFlags<widgets::CanvasView::Lock> LayerList::currentLayerLock() const
 			if(idx.data(canvas::LayerListModel::IsHiddenInFrameRole).toBool()) {
 				lock.setFlag(Lock::LayerHiddenInFrame);
 			}
-			if(item.censored && !m_canvas->paintEngine()->revealCensored()) {
+			if(item.censored) {
 				lock.setFlag(Lock::LayerCensored);
 			}
 		}
@@ -903,7 +903,7 @@ void LayerList::updateUiFromSelection()
 	m_noupdate = true;
 	m_selectedId = layer.id;
 
-	m_aclmenu->setCensored(layer.censored);
+	m_aclmenu->setCensored(layer.actuallyCensored());
 	dialogs::LayerProperties::updateBlendMode(
 		m_blendModeCombo, layer.blend, layer.group, layer.isolated,
 		m_canvas->isCompatibilityMode());
@@ -985,7 +985,7 @@ void LayerList::triggerUpdate()
 	}
 
 	uint8_t flags =
-		(layer.censored ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR : 0) |
+		(layer.actuallyCensored() ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR : 0) |
 		(isolated ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED : 0);
 
 	net::Message msg = net::makeLayerAttributesMessage(

@@ -251,20 +251,22 @@ QModelIndex LayerListModel::index(int row, int column, const QModelIndex &parent
 }
 
 static LayerListItem makeItem(
-	const drawdance::LayerProps &lp, bool isGroup,
-	const drawdance::LayerPropsList &children, int relIndex, int left,
-	int right)
+	const drawdance::LayerProps &lp, const QSet<int> &revealedLayers,
+	bool isGroup, const drawdance::LayerPropsList &children, int relIndex,
+	int left, int right)
 {
+	int id = lp.id();
 	return LayerListItem{
-		uint16_t(lp.id()), lp.title(), float(lp.opacity()) / float(DP_BIT15),
-		DP_BlendMode(lp.blendMode()), lp.hidden(), lp.censored(), lp.isolated(),
-		isGroup, uint16_t(isGroup ? children.count() : 0), uint16_t(relIndex),
+		uint16_t(id), lp.title(), float(lp.opacity()) / float(DP_BIT15),
+		DP_BlendMode(lp.blendMode()), lp.hidden(), lp.censored(),
+		revealedLayers.contains(id), lp.isolated(), isGroup,
+		uint16_t(isGroup ? children.count() : 0), uint16_t(relIndex),
 		left, right};
 }
 
 static void flattenLayerList(
 	QVector<LayerListItem> &newItems, int &index,
-	const drawdance::LayerPropsList lpl)
+	const drawdance::LayerPropsList &lpl, const QSet<int> &revealedLayers)
 {
 	int count = lpl.count();
 	for(int i = 0; i < count; ++i) {
@@ -274,13 +276,14 @@ static void flattenLayerList(
 		if(lp.isGroup(&children)) {
 			int pos = newItems.count();
 			newItems.append(makeItem(
-				lp, true, children, i, index, -1));
+				lp, revealedLayers, true, children, i, index, -1));
 			++index;
-			flattenLayerList(newItems, index, children);
+			flattenLayerList(newItems, index, children, revealedLayers);
 			newItems[pos].right = index;
 			++index;
 		} else {
-			newItems.append(makeItem(lp, false, children, i, index, index + 1));
+			newItems.append(makeItem(
+				lp, revealedLayers, false, children, i, index, index + 1));
 			index += 2;
 		}
 	}
@@ -334,11 +337,12 @@ static int getAutoselect(
 	return -1;
 }
 
-void LayerListModel::setLayers(const drawdance::LayerPropsList &lpl)
+void LayerListModel::setLayers(
+	const drawdance::LayerPropsList &lpl, const QSet<int> &revealedLayers)
 {
 	QVector<LayerListItem> newItems;
 	int index = 0;
-	flattenLayerList(newItems, index, lpl);
+	flattenLayerList(newItems, index, lpl, revealedLayers);
 
 	const uint8_t localUser = m_aclstate ? m_aclstate->localUserId() : 0;
 	int autoselect = getAutoselect(
@@ -564,7 +568,7 @@ QString LayerListModel::getAvailableLayerName(QString basename) const
 
 uint8_t LayerListItem::attributeFlags() const
 {
-	return (censored ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR : 0) |
+	return (actuallyCensored() ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR : 0) |
 			(isolated ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED : 0)
 			;
 }

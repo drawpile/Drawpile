@@ -1978,10 +1978,10 @@ static DP_Timeline *maybe_get_timeline(DP_CanvasState *cs, DP_ViewMode vm)
     return want_timeline ? DP_canvas_state_timeline_noinc(cs) : NULL;
 }
 
-static void set_local_layer_props_recursive(DP_TransientCanvasState *tcs,
-                                            DP_DrawContext *dc,
-                                            bool reveal_censored,
-                                            DP_LayerPropsList *lpl)
+static void set_local_layer_props_recursive(
+    DP_TransientCanvasState *tcs, DP_DrawContext *dc, bool reveal_censored,
+    DP_LayerPropsList *lpl,
+    DP_PaintEngineCensoredLayerRevealedFn censored_layer_revealed, void *user)
 {
     int count = DP_layer_props_list_count(lpl);
     DP_draw_context_layer_indexes_push(dc);
@@ -2005,13 +2005,14 @@ static void set_local_layer_props_recursive(DP_TransientCanvasState *tcs,
             }
             if (needs_reveal) {
                 DP_transient_layer_props_censored_set(tlp, false);
+                censored_layer_revealed(user, DP_layer_props_id(lp));
             }
         }
 
         DP_LayerPropsList *child_lpl = DP_layer_props_children_noinc(lp);
         if (child_lpl) {
-            set_local_layer_props_recursive(tcs, dc, reveal_censored,
-                                            child_lpl);
+            set_local_layer_props_recursive(tcs, dc, reveal_censored, child_lpl,
+                                            censored_layer_revealed, user);
         }
     }
     DP_draw_context_layer_indexes_pop(dc);
@@ -2035,8 +2036,9 @@ static void set_hidden_layer_props(DP_PaintEngine *pe,
     }
 }
 
-static DP_CanvasState *set_local_layer_props(DP_PaintEngine *pe,
-                                             DP_CanvasState *cs)
+static DP_CanvasState *set_local_layer_props(
+    DP_PaintEngine *pe, DP_CanvasState *cs,
+    DP_PaintEngineCensoredLayerRevealedFn censored_layer_revealed, void *user)
 {
     DP_TransientCanvasState *tcs = get_or_make_transient_canvas_state(cs);
 
@@ -2045,7 +2047,8 @@ static DP_CanvasState *set_local_layer_props(DP_PaintEngine *pe,
     DP_draw_context_layer_indexes_clear(dc);
     set_local_layer_props_recursive(
         tcs, dc, reveal_censored,
-        DP_transient_canvas_state_layer_props_noinc(tcs));
+        DP_transient_canvas_state_layer_props_noinc(tcs),
+        censored_layer_revealed, user);
 
     set_hidden_layer_props(pe, tcs);
 
@@ -2059,8 +2062,9 @@ static DP_CanvasState *set_local_layer_props(DP_PaintEngine *pe,
     return (DP_CanvasState *)tcs;
 }
 
-static DP_CanvasState *apply_local_layer_props(DP_PaintEngine *pe,
-                                               DP_CanvasState *cs)
+static DP_CanvasState *apply_local_layer_props(
+    DP_PaintEngine *pe, DP_CanvasState *cs,
+    DP_PaintEngineCensoredLayerRevealedFn censored_layer_revealed, void *user)
 {
     DP_ViewMode vm = DP_local_state_view_mode(pe->local_state);
     DP_LayerPropsList *lpl = DP_canvas_state_layer_props_noinc(cs);
@@ -2092,7 +2096,8 @@ static DP_CanvasState *apply_local_layer_props(DP_PaintEngine *pe,
         DP_timeline_decref_nullable(prev_tl);
         pe->local_view.layers.prev_lpl = DP_layer_props_list_incref(lpl);
         pe->local_view.layers.prev_tl = DP_timeline_incref_nullable(tl);
-        DP_CanvasState *next_cs = set_local_layer_props(pe, cs);
+        DP_CanvasState *next_cs =
+            set_local_layer_props(pe, cs, censored_layer_revealed, user);
         DP_PERF_END(local);
         return next_cs;
     }
@@ -2248,7 +2253,8 @@ void DP_paint_engine_tick(
     DP_PaintEngineTimelineChangedFn timeline_changed,
     DP_PaintEngineCursorMovedFn cursor_moved,
     DP_PaintEngineDefaultLayerSetFn default_layer_set,
-    DP_PaintEngineUndoDepthLimitSetFn undo_depth_limit_set, void *user)
+    DP_PaintEngineUndoDepthLimitSetFn undo_depth_limit_set,
+    DP_PaintEngineCensoredLayerRevealedFn censored_layer_revealed, void *user)
 {
     DP_ASSERT(pe);
     DP_ASSERT(catchup);
@@ -2327,7 +2333,8 @@ void DP_paint_engine_tick(
         DP_CanvasState *next_view_cs = DP_canvas_state_incref(pe->history_cs);
         next_view_cs = apply_previews(pe, next_view_cs);
         next_view_cs = apply_inspect(pe, next_view_cs);
-        next_view_cs = apply_local_layer_props(pe, next_view_cs);
+        next_view_cs = apply_local_layer_props(pe, next_view_cs,
+                                               censored_layer_revealed, user);
         next_view_cs = apply_local_track_state(pe, next_view_cs);
         next_view_cs = apply_local_background_tile(pe, next_view_cs);
         pe->view_cs = next_view_cs;

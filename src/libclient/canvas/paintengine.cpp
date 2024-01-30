@@ -120,6 +120,7 @@ void PaintEngine::timerEvent(QTimerEvent *)
 	DP_Rect tileBounds = {
 		m_canvasViewTileArea.left(), m_canvasViewTileArea.top(),
 		m_canvasViewTileArea.right(), m_canvasViewTileArea.bottom()};
+	m_revealedLayers.clear();
 	DP_paint_engine_tick(
 		m_paintEngine.get(), tileBounds, m_renderOutsideView,
 		&PaintEngine::onCatchup, &PaintEngine::onResetLockChanged,
@@ -127,7 +128,8 @@ void PaintEngine::timerEvent(QTimerEvent *)
 		&PaintEngine::onAnnotationsChanged,
 		&PaintEngine::onDocumentMetadataChanged,
 		&PaintEngine::onTimelineChanged, &PaintEngine::onCursorMoved,
-		&PaintEngine::onDefaultLayer, &PaintEngine::onUndoDepthLimitSet, this);
+		&PaintEngine::onDefaultLayer, &PaintEngine::onUndoDepthLimitSet,
+		&PaintEngine::onCensoredLayerRevealed, this);
 
 	if(m_updateLayersVisibleInFrame) {
 		updateLayersVisibleInFrame();
@@ -762,6 +764,12 @@ void PaintEngine::onUndoDepthLimitSet(void *user, int undoDepthLimit)
 	emit pe->undoDepthLimitSet(undoDepthLimit);
 }
 
+void PaintEngine::onCensoredLayerRevealed(void *user, int layerId)
+{
+	PaintEngine *pe = static_cast<PaintEngine *>(user);
+	emit pe->m_revealedLayers.insert(layerId);
+}
+
 void PaintEngine::onCatchup(void *user, int progress)
 {
 	PaintEngine *pe = static_cast<PaintEngine *>(user);
@@ -784,7 +792,8 @@ void PaintEngine::onLayerPropsChanged(void *user, DP_LayerPropsList *lpl)
 {
 	PaintEngine *pe = static_cast<PaintEngine *>(user);
 	pe->m_updateLayersVisibleInFrame = true;
-	emit pe->layersChanged(drawdance::LayerPropsList::inc(lpl));
+	emit pe->layersChanged(
+		drawdance::LayerPropsList::inc(lpl), pe->m_revealedLayers);
 }
 
 void PaintEngine::onAnnotationsChanged(void *user, DP_AnnotationList *al)

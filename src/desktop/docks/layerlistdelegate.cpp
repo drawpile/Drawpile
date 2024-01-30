@@ -42,7 +42,7 @@ void LayerListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 
 	// Draw layer opacity glyph
 	QRect stylerect(opt.rect.topLeft() + QPoint(0, opt.rect.height()/2-12), QSize(24,24));
-	drawOpacityGlyph(stylerect, painter, layer.opacity, layer.hidden, layer.censored, layer.group);
+	drawOpacityGlyph(stylerect, painter, layer.opacity, layer.hidden, layer.actuallyCensored(), layer.group);
 
 	// Draw layer name
 	textrect.setLeft(stylerect.right());

@@ -13,6 +13,7 @@ extern "C" {
 
 #include <QAbstractItemModel>
 #include <QMimeData>
+#include <QSet>
 #include <QVector>
 
 #include <functional>
@@ -42,8 +43,11 @@ struct LayerListItem {
 	//! Layer hidden flag (local only)
 	bool hidden;
 
-	//! Layer is flagged for censoring
+	//! Layer contents are censored
 	bool censored;
+
+	//! Layer is actually censored, but was revealed anyway
+	bool revealed;
 
 	//! Isolated (not pass-through) group?
 	bool isolated;
@@ -68,6 +72,8 @@ struct LayerListItem {
 
 	//! Get the ID of the user who created this layer
 	uint8_t creatorId() const { return uint8_t((id & 0xff00) >> 8); }
+
+	bool actuallyCensored() const { return censored || revealed; }
 };
 
 }
@@ -158,7 +164,8 @@ public:
 		int rootLayerId, const QHash<int, bool> &layerVisibility) const;
 
 public slots:
-	void setLayers(const drawdance::LayerPropsList &lpl);
+	void setLayers(
+		const drawdance::LayerPropsList &lpl, const QSet<int> &revealedLayers);
 	void setLayersVisibleInFrame(const QSet<int> &layers, bool frameMode);
 
 signals:
