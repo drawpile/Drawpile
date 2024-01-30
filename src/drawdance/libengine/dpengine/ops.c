@@ -1085,7 +1085,6 @@ DP_CanvasState *DP_ops_pen_up(DP_CanvasState *cs, DP_DrawContext *dc,
                               unsigned int context_id)
 {
     if (ucs_or_null) {
-        DP_user_cursors_activate(ucs_or_null, context_id);
         DP_user_cursors_pen_up(ucs_or_null, context_id);
     }
 
