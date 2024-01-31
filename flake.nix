@@ -13,9 +13,12 @@
 
     #compatibility with non flaked nix
     flake-compat.url = "https://flakehub.com/f/edolstra/flake-compat/1.tar.gz";
+
+    # source filtering
+    nix-filter.url = "github:numtide/nix-filter";
   };
 
-  outputs = { self, nixpkgs, flake-utils, ... }:
+  outputs = { self, nixpkgs, flake-utils, nix-filter, ... }:
     #Support x86_64/arm linux
     flake-utils.lib.eachDefaultSystem (system:
       let
@@ -58,7 +61,7 @@
             ];
 
             shellDpeneds =
-              if shell then with pkgs; [ rustc rustfmt ] else with pkgs; [ clippy ];
+              if shell then with pkgs; [ cargo rustc rustfmt clippy ] else with pkgs; [ clippy ];
 
           in qtDependences ++ shellDpeneds ++ otherDeps;
 
@@ -101,7 +104,28 @@
         mkDrawpile = { useQt5, preset, debug ? false }:
           pkgs.rustPlatform.buildRustPackage {
             name = "drawpile";
-            src = self;
+
+            src = nix-filter {
+              root = ./.;
+              # Filter source
+              include = [
+                # Include /src
+                "src"
+                # Include rust stuff
+                ./Cargo.toml
+                ./Cargo.lock
+                # Include CMAKE stuff
+                "cmake"
+                ./CMakePresets.json
+                ./CMakeLists.txt
+
+                #Other misalanius stuff
+                ./LICENSE.txt
+                ./ChangeLog
+                ./README.md
+                "doc"
+              ];
+            };
 
             nativeBuildInputs = mkNativeInputs { qt5 = useQt5; };
 
@@ -132,15 +156,17 @@
 
       in rec {
 
-        packages = rec {
+        packages = {
           debug-qt6-all-ninja = mkDrawpile {
             preset = "linux-debug-qt6-all-ninja";
             useQt5 = false;
           };
+
           release-qt6-all-ninja = mkDrawpile {
             preset = "linux-release-qt6-all-ninja";
             useQt5 = false;
           };
+
           release-qt6-server-ninja = mkDrawpile {
             preset = "linux-release-qt6-server-ninja";
             useQt5 = false;
@@ -161,7 +187,7 @@
             useQt5 = true;
           };
 
-          default = release-qt6-all-ninja;
+          default = self.outputs.packages.${system}.release-qt6-all-ninja;
         };
 
         #Dev shells
@@ -172,11 +198,13 @@
             useQt5 = false;
             debug = true;
           };
+
           release-qt6-all-ninja = mkDpShell {
             preset = "linux-release-qt6-all-ninja";
             useQt5 = false;
             debug = true;
           };
+
           release-qt6-server-ninja = mkDpShell {
             preset = "linux-release-qt6-server-ninja";
             useQt5 = false;
@@ -188,18 +216,20 @@
             useQt5 = true;
             debug = true;
           };
+
           release-qt5-all-ninja = mkDpShell {
             preset = "linux-release-qt5-all-ninja";
             useQt5 = true;
             debug = true;
           };
+
           release-qt5-server-ninja = mkDpShell {
             preset = "linux-release-qt5-server-ninja";
             useQt5 = true;
             debug = true;
           };
 
-          default = debug-qt6-all-ninja;
+          default = self.outputs.devShells.${system}.debug-qt6-all-ninja;
         };
 
         formatter = pkgs.nixfmt;
