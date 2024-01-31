@@ -36,6 +36,7 @@ Unreleased Version 2.2.1-pre
  * Fix: Hide disconnection banner after establishing connection to a session.
  * Fix: Make censoring layer groups actually have an effect.
  * Fix: Don't use 64 bit stuff in 32 bit Windows installer.
+ * Fix: Don't break pinned start menue shortcuts when updating on Windows. Thanks Bluestrings and anonymous for reporting.
 
 2024-01-13 Version 2.2.0
  * Server Fix: Add --ssl-key-algorithm parameter to allow non-RSA SSL keys, defaulting to guessing the most common formats RSA and EC. Thanks Bluestrings for reporting.

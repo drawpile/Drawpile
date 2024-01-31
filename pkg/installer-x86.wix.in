@@ -2,6 +2,10 @@
 	<CPackWiXFragment Id="CM_CP_drawpile.exe">${WIX_DRAWPILE_PROGIDS}</CPackWiXFragment>
 
 	<CPackWiXFragment Id="#PRODUCT">
+		<InstallExecuteSequence>
+			<RemoveShortcuts>Installed AND NOT UPGRADINGPRODUCTCODE</RemoveShortcuts>
+		</InstallExecuteSequence>
+
 		<Condition Message="${PROJECT_NAME} requires Windows 7 or later.">
 			<![CDATA[Installed OR (VersionNT >= 601)]]>
 		</Condition>
