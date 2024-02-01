@@ -56,6 +56,8 @@ bool DP_perf_open(DP_Output *output);
 bool DP_perf_close(void);
 bool DP_perf_is_open(void);
 
+unsigned long long DP_perf_time(void);
+
 DP_INLINE int DP_perf_begin(const char *realm, const char *categories,
                             const char *fmt_or_null, ...) DP_FORMAT(3, 4);
 

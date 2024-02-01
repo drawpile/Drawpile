@@ -24,6 +24,7 @@
 #include "canvas_diff.h"
 #include "canvas_history.h"
 #include "canvas_state.h"
+#include "dab_cost.h"
 #include "draw_context.h"
 #include "image.h"
 #include "layer_content.h"
@@ -356,18 +357,14 @@ static void handle_internal(DP_PaintEngine *pe, DP_DrawContext *dc,
 // Since draw dabs messages are so common and come in bunches, we have special
 // handling to deal with them in batches. That makes the code more complicated,
 // but it gives significantly better performance, so it's worth it in the end.
-
-// These limits are static and arbitrary. They could surely be improved
-// by making them dynamic or at least measuring what good limits are.
+// These limits are measured using the bench_multidab program in dpengine/bench.
 
 // Maximum number of multidab messages in a single go.
-#define MAX_MULTIDAB_MESSAGES 1024
-// Largest area that all dabs together are allowed to cover.
-#define MAX_MULTIDAB_AREA (256 * 256 * 16)
-// Threshold that the first message must not exceed to keep shifting more
-// messages. Presumably if the first message reaches half of our limit, the next
-// message is likely to push us over it, so we don't even need to try.
-#define MAX_MULTIDAB_AREA_THRESHOLD (MAX_MULTIDAB_AREA / 2)
+#define MAX_MULTIDAB_MESSAGES 8192
+
+// 2 milliseconds, according to benchmark numbers. Hopefully enough for slow
+// machines to not drop below 60 fps, fast machines don't care anyway.
+#define MAX_MULTIDAB_COST 2000000.0
 
 static bool shift_first_message(DP_PaintEngine *pe, DP_Message **msgs)
 {
@@ -383,76 +380,102 @@ static bool shift_first_message(DP_PaintEngine *pe, DP_Message **msgs)
     }
 }
 
-static int get_classic_dabs_area(DP_MsgDrawDabsClassic *mddc, int dabs_area)
+static double get_classic_dabs_cost(DP_MsgDrawDabsClassic *mddc,
+                                    double dabs_cost)
 {
     int count;
     const DP_ClassicDab *cds = DP_msg_draw_dabs_classic_dabs(mddc, &count);
-    for (int i = 0; i < count && dabs_area < MAX_MULTIDAB_AREA; ++i) {
-        int radius = DP_classic_dab_size(DP_classic_dab_at(cds, i)) / 256;
-        int diameter = radius * 2;
-        int area = DP_max_int(1, diameter * diameter);
-        dabs_area += area;
+    double base_cost =
+        DP_dab_cost_classic(DP_msg_draw_dabs_classic_indirect(mddc),
+                            DP_msg_draw_dabs_classic_mode(mddc));
+    for (int i = 0; i < count && dabs_cost < MAX_MULTIDAB_COST; ++i) {
+        double size =
+            DP_int_to_double(DP_classic_dab_size(DP_classic_dab_at(cds, i)));
+        double cost = base_cost * size * size;
+        dabs_cost += cost;
     }
-    return dabs_area;
+    return dabs_cost;
 }
 
-static int get_pixel_dabs_area(DP_MsgDrawDabsPixel *mddp, int dabs_area)
+static double get_pixel_dabs_cost(DP_MsgDrawDabsPixel *mddp, double dabs_cost)
 {
     int count;
     const DP_PixelDab *pds = DP_msg_draw_dabs_pixel_dabs(mddp, &count);
-    for (int i = 0; i < count && dabs_area < MAX_MULTIDAB_AREA; ++i) {
-        int radius = DP_pixel_dab_size(DP_pixel_dab_at(pds, i));
-        int diameter = radius * 2;
-        int area = DP_max_int(1, diameter * diameter);
-        dabs_area += area;
+    double base_cost = DP_dab_cost_pixel(DP_msg_draw_dabs_pixel_indirect(mddp),
+                                         DP_msg_draw_dabs_pixel_mode(mddp));
+    for (int i = 0; i < count && dabs_cost < MAX_MULTIDAB_COST; ++i) {
+        double size = DP_pixel_dab_size(DP_pixel_dab_at(pds, i));
+        double cost = base_cost * size * size;
+        dabs_cost += cost;
     }
-    return dabs_area;
+    return dabs_cost;
 }
 
-static int get_mypaint_dabs_area(DP_MsgDrawDabsMyPaint *mddmp, int dabs_area)
+static double get_pixel_square_dabs_cost(DP_MsgDrawDabsPixel *mddp,
+                                         double dabs_cost)
+{
+    int count;
+    const DP_PixelDab *pds = DP_msg_draw_dabs_pixel_dabs(mddp, &count);
+    double base_cost =
+        DP_dab_cost_pixel_square(DP_msg_draw_dabs_pixel_indirect(mddp),
+                                 DP_msg_draw_dabs_pixel_mode(mddp));
+    for (int i = 0; i < count && dabs_cost < MAX_MULTIDAB_COST; ++i) {
+        double size = DP_pixel_dab_size(DP_pixel_dab_at(pds, i));
+        double cost = base_cost * size * size;
+        dabs_cost += cost;
+    }
+    return dabs_cost;
+}
+
+static double get_mypaint_dabs_cost(DP_MsgDrawDabsMyPaint *mddmp,
+                                    double dabs_cost)
 {
     int count;
     const DP_MyPaintDab *mpds = DP_msg_draw_dabs_mypaint_dabs(mddmp, &count);
-    for (int i = 0; i < count && dabs_area < MAX_MULTIDAB_AREA; ++i) {
-        // FIXME: size is supposed to be the radius, not the diameter. I think.
-        // But currently, the painting code makes this mistake as well, so this
-        // is the correct way of counting the dab size.
-        int diameter = DP_mypaint_dab_size(DP_mypaint_dab_at(mpds, i)) / 256;
-        int area = DP_max_int(1, diameter * diameter);
-        dabs_area += area;
+    double base_cost = DP_dab_cost_mypaint(
+        DP_mypaint_brush_mode_indirect(DP_msg_draw_dabs_mypaint_mode(mddmp)),
+        DP_msg_draw_dabs_mypaint_lock_alpha(mddmp),
+        DP_msg_draw_dabs_mypaint_colorize(mddmp),
+        DP_msg_draw_dabs_mypaint_posterize(mddmp));
+    for (int i = 0; i < count && dabs_cost < MAX_MULTIDAB_COST; ++i) {
+        double size = DP_mypaint_dab_size(DP_mypaint_dab_at(mpds, i));
+        double cost = base_cost * size * size;
+        dabs_cost += cost;
     }
-    return dabs_area;
+    return dabs_cost;
 }
 
-static int get_dabs_area(DP_Message *msg, DP_MessageType type, int dabs_area)
+static double get_dabs_cost(DP_Message *msg, DP_MessageType type,
+                            double dabs_cost)
 {
     switch (type) {
     case DP_MSG_DRAW_DABS_CLASSIC:
-        return get_classic_dabs_area(DP_message_internal(msg), dabs_area);
+        return get_classic_dabs_cost(DP_message_internal(msg), dabs_cost);
     case DP_MSG_DRAW_DABS_PIXEL:
+        return get_pixel_dabs_cost(DP_message_internal(msg), dabs_cost);
     case DP_MSG_DRAW_DABS_PIXEL_SQUARE:
-        return get_pixel_dabs_area(DP_message_internal(msg), dabs_area);
+        return get_pixel_square_dabs_cost(DP_message_internal(msg), dabs_cost);
     case DP_MSG_DRAW_DABS_MYPAINT:
-        return get_mypaint_dabs_area(DP_message_internal(msg), dabs_area);
+        return get_mypaint_dabs_cost(DP_message_internal(msg), dabs_cost);
     default:
-        return MAX_MULTIDAB_AREA + 1;
+        return MAX_MULTIDAB_COST + 1.0;
     }
 }
 
 static int shift_more_draw_dabs_messages(DP_PaintEngine *pe, bool local,
                                          DP_Message **msgs,
-                                         int initial_dabs_area)
+                                         double initial_dabs_cost)
 {
     int count = 1;
-    int total_dabs_area = initial_dabs_area;
+    double total_dabs_cost = initial_dabs_cost;
     DP_Queue *queue = local ? &pe->local_queue : &pe->remote_queue;
 
     DP_Message *msg;
     while (count < MAX_MULTIDAB_MESSAGES
            && (msg = DP_message_queue_peek(queue)) != NULL) {
-        total_dabs_area =
-            get_dabs_area(msg, DP_message_type(msg), total_dabs_area);
-        if (total_dabs_area <= MAX_MULTIDAB_AREA) {
+        total_dabs_cost =
+            get_dabs_cost(msg, DP_message_type(msg), total_dabs_cost);
+        if (total_dabs_cost <= MAX_MULTIDAB_COST) {
             DP_queue_shift(queue);
             msgs[count++] = msg;
         }
@@ -473,9 +496,9 @@ static int shift_more_draw_dabs_messages(DP_PaintEngine *pe, bool local,
 static int maybe_shift_more_messages(DP_PaintEngine *pe, bool local,
                                      DP_MessageType type, DP_Message **msgs)
 {
-    int dabs_area = get_dabs_area(msgs[0], type, 0);
-    if (dabs_area <= MAX_MULTIDAB_AREA_THRESHOLD) {
-        return shift_more_draw_dabs_messages(pe, local, msgs, dabs_area);
+    double dabs_cost = get_dabs_cost(msgs[0], type, 0);
+    if (dabs_cost <= MAX_MULTIDAB_COST) {
+        return shift_more_draw_dabs_messages(pe, local, msgs, dabs_cost);
     }
     else {
         return 1;

@@ -12,6 +12,7 @@ dp_target_sources(dpengine
     dpengine/canvas_history.c
     dpengine/canvas_state.c
     dpengine/compress.c
+    dpengine/dab_cost.c
     dpengine/document_metadata.c
     dpengine/draw_context.c
     dpengine/dump_reader.c
@@ -53,6 +54,7 @@ dp_target_sources(dpengine
     dpengine/canvas_history.h
     dpengine/canvas_state.h
     dpengine/compress.h
+    dpengine/dab_cost.h
     dpengine/document_metadata.h
     dpengine/draw_context.h
     dpengine/dump_reader.h
@@ -161,4 +163,10 @@ if(TESTS)
         test/pixel_conversion.c
         test/resize_image.c
     )
+endif()
+
+if(BENCHMARKS)
+    dp_add_executable(bench_multidab)
+    dp_target_sources(bench_multidab bench/bench_multidab.c)
+    target_link_libraries(bench_multidab PUBLIC dpengine)
 endif()

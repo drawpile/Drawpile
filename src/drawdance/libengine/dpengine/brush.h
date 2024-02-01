@@ -151,5 +151,7 @@ void DP_mypaint_brush_mode_extract(uint8_t mode, int *out_blend_mode,
                                    bool *out_indirect,
                                    uint8_t *out_posterize_num);
 
+bool DP_mypaint_brush_mode_indirect(uint8_t mode);
+
 
 #endif

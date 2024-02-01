@@ -39,6 +39,7 @@ Unreleased Version 2.2.1-pre
  * Fix: Don't break pinned start menue shortcuts when updating on Windows. Thanks Bluestrings and anonymous for reporting.
  * Server Fix: Don't report temporary server bans as permanent. Thanks Bluestrings for reporting.
  * Server Fix: Properly convert between IPv4 and IPv6 when checking IP bans. Thanks Bluestrings for reporting.
+ * Fix: Use proper measurements to decide on how much painting to do in a single step, hopefully preventing chugging caused by certain brushes.
 
 2024-01-13 Version 2.2.0
  * Server Fix: Add --ssl-key-algorithm parameter to allow non-RSA SSL keys, defaulting to guessing the most common formats RSA and EC. Thanks Bluestrings for reporting.

@@ -161,7 +161,7 @@ static DP_PerfEntry *search_or_push_perf_entry(int *out_handle)
     }
 }
 
-static unsigned long long get_time(void)
+unsigned long long DP_perf_time(void)
 {
 #if defined(_WIN32)
     LARGE_INTEGER ticks;
@@ -204,7 +204,7 @@ int DP_perf_begin_internal(const char *realm, const char *categories,
     DP_MUTEX_MUST_LOCK(perf_mutex);
     int handle;
     DP_PerfEntry *pe = search_or_push_perf_entry(&handle);
-    pe->start = get_time();
+    pe->start = DP_perf_time();
     pe->realm = realm;
     pe->categories = categories;
     if (fmt) {
@@ -222,7 +222,7 @@ void DP_perf_end_internal(DP_Output *output, int handle)
     DP_ASSERT(output);
     DP_ASSERT(handle != DP_PERF_INVALID_HANDLE);
     DP_ASSERT(perf_mutex);
-    unsigned long long end = get_time();
+    unsigned long long end = DP_perf_time();
 
     DP_MUTEX_MUST_LOCK(perf_mutex);
     DP_PerfEntry *pe = perf_entry_at(handle);

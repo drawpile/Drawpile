@@ -21,7 +21,7 @@ add_subdirectory(libmsg)
 add_subdirectory(libengine)
 
 add_library(drawdance INTERFACE)
-set(drawdance_libraries dpengine dpengine_rust dpmsg dpmsg_rust dpcommon)
+set(drawdance_libraries dpengine dpengine_rust dpmsg dpmsg_rust dpcommon cmake-config)
 
 # Deal with circular link dependencies using link groups. That's only needed on
 # the GNU linker, which only resolves symbols linearly, MSVC and Clang don't.

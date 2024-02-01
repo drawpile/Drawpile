@@ -31,6 +31,9 @@ if(NOT ANDROID)
 
 	option(TESTS "Build unit tests" OFF)
 	add_feature_info("Unit tests (TESTS)" TESTS "")
+
+	option(BENCHMARKS "Build benchmarks" OFF)
+	add_feature_info("Benchmarks (BENCHMARKS)" BENCHMARKS "")
 else()
 	# CMake allows unexposed options to be enabled
 	set(SERVER OFF CACHE BOOL "" FORCE)
@@ -38,6 +41,7 @@ else()
 	set(BUILTINSERVER OFF CACHE BOOL "" FORCE)
 	set(TOOLS OFF CACHE BOOL "" FORCE)
 	set(TESTS OFF CACHE BOOL "" FORCE)
+	set(BENCHMARKS OFF CACHE BOOL "" FORCE)
 endif()
 
 if(UNIX AND NOT APPLE AND NOT ANDROID)

@@ -216,3 +216,18 @@ void DP_mypaint_brush_mode_extract(uint8_t mode, int *out_blend_mode,
         *out_posterize_num = posterize_num;
     }
 }
+
+bool DP_mypaint_brush_mode_indirect(uint8_t mode)
+{
+    if (mode & DP_MYPAINT_BRUSH_MODE_FLAG) {
+        switch (mode & DP_MYPAINT_BRUSH_MODE_MASK) {
+        case DP_MYPAINT_BRUSH_MODE_NORMAL:
+        case DP_MYPAINT_BRUSH_MODE_RECOLOR:
+        case DP_MYPAINT_BRUSH_MODE_ERASE:
+            return true;
+        default:
+            break;
+        }
+    }
+    return false;
+}
