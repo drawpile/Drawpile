@@ -274,7 +274,7 @@ BanResult Database::isAddressBanned(const QHostAddress &addr) const
 				return {
 					BanReaction::NormalBan,
 					QString(),
-					parseDateTime(q.value(4).toString()),
+					parseDateTime(q.value(3).toString()),
 					addr.toString(),
 					QStringLiteral("database"),
 					QStringLiteral("IP"),
