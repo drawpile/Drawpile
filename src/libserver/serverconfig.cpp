@@ -261,19 +261,19 @@ QString ServerConfig::formatDateTime(const QDateTime &expires)
 bool ServerConfig::matchesBannedAddress(
 	const QHostAddress &addr, const QHostAddress &ip, int subnet)
 {
-	if(subnet == 0) {
-		switch(ip.protocol()) {
-		case QAbstractSocket::IPv4Protocol:
-			subnet = 32;
-			break;
-		case QAbstractSocket::IPv6Protocol:
-			subnet = 128;
-			break;
-		default:
-			break;
-		}
+	switch(ip.protocol()) {
+	case QAbstractSocket::IPv4Protocol: {
+		bool ok;
+		quint32 addrIpV4 = addr.toIPv4Address(&ok);
+		return ok &&
+			   QHostAddress(addrIpV4).isInSubnet(ip, subnet == 0 ? 32 : subnet);
 	}
-	return addr.isInSubnet(ip, subnet);
+	case QAbstractSocket::IPv6Protocol:
+		return QHostAddress(addr.toIPv6Address())
+			.isInSubnet(ip, subnet == 0 ? 128 : subnet);
+	default:
+		return addr.isInSubnet(ip, subnet);
+	}
 }
 
 BanReaction ServerConfig::parseReaction(const QString &reaction)
