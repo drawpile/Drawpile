@@ -32,7 +32,10 @@
               [ pkgs.libsForQt5.qt5.wrapQtAppsHook ]
             else
               [ pkgs.qt6.wrapQtAppsHook ];
-          in qtStuff ++ [ pkgs.cmake ];
+            
+            buildSystems = with pkgs; [ cmake ninja gcc ];
+
+          in qtStuff ++ buildSystems;
 
         mkDepends = { qt5, shell }:
           let
@@ -49,12 +52,9 @@
 
             #Other dependencies required for building
             otherDeps = with pkgs; [
-              cmake
 
               git
               libxkbcommon
-              gcc
-              ninja
               libzip
               libsodium
               libmicrohttpd
@@ -62,7 +62,7 @@
             ];
 
             shellDpeneds =
-              if shell then with pkgs; [ cargo rustc rustfmt clippy ] else with pkgs; [ clippy ];
+              if shell then with pkgs; [ cargo rustc rustfmt clippy ] else with pkgs; [ ];
 
           in qtDependences ++ shellDpeneds ++ otherDeps;
 
@@ -187,6 +187,8 @@
             preset = "linux-release-qt5-server-ninja";
             useQt5 = true;
           };
+
+          osi-image = dock
 
           default = self.outputs.packages.${system}.release-qt6-all-ninja;
         };
