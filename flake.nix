@@ -91,7 +91,6 @@
 
               incrementalBuild() {
                 cmake --build "$ROOT"
-                rm "$ROOT/bin/*-wraped*"
               }
 
               incrementalRun() {
