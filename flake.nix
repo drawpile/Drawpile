@@ -58,6 +58,7 @@
               libzip
               libsodium
               libmicrohttpd
+              libpulseaudio
             ];
 
             shellDpeneds =
