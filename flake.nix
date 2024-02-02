@@ -80,23 +80,23 @@
 
               export ROOT=$PWD/Nixpile-build/${preset}
               mkdir -p $ROOT
+              export LD_LIBRARY_PATH="$CMAKE_LIBRARY_PATH"
 
               firstBuild() {
-                cmake -S $ROOT/../../ -B $ROOT \
+                cmake -S "$ROOT/../../" -B "$ROOT" \
                   --preset ${preset} \
                   -DCMAKE_INSTALL_PREFIX=$out
-                cmake --build $ROOT
-                wrapQtApp $ROOT/bin/drawpile
+                cmake --build "$ROOT"
               }
 
               incrementalBuild() {
-                cmake --build $ROOT
-                wrapQtApp $ROOT/bin/drawpile
+                cmake --build "$ROOT"
+                rm "$ROOT/bin/*-wraped*"
               }
 
               incrementalRun() {
                 incrementalBuild
-                $ROOT/bin/drawpile
+                "$ROOT/bin/drawpile"
               }
 
             '';
