@@ -188,8 +188,6 @@
             useQt5 = true;
           };
 
-          osi-image = dock
-
           default = self.outputs.packages.${system}.release-qt6-all-ninja;
         };
 
