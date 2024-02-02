@@ -32,7 +32,7 @@
               [ pkgs.libsForQt5.qt5.wrapQtAppsHook ]
             else
               [ pkgs.qt6.wrapQtAppsHook ];
-            
+
             buildSystems = with pkgs; [ cmake ninja gcc ];
 
           in qtStuff ++ buildSystems;
@@ -41,12 +41,9 @@
           let
             #decide what QT to use
             qtDependences = if qt5 then
-              with pkgs.libsForQt5.qt5; [
-                qtbase
-                qtsvg
-                qttools
-                qtmultimedia
-              ] ++ [ pkgs.libsForQt5.karchive ]
+              with pkgs.libsForQt5.qt5;
+              [ qtbase qtsvg qttools qtmultimedia ]
+              ++ [ pkgs.libsForQt5.karchive ]
             else
               with pkgs; [ qt6.qtbase qt6.qtsvg qt6.qttools qt6.qtmultimedia ];
 
@@ -61,8 +58,10 @@
               libpulseaudio
             ];
 
-            shellDpeneds =
-              if shell then with pkgs; [ cargo rustc rustfmt clippy ] else with pkgs; [ ];
+            shellDpeneds = if shell then
+              with pkgs; [ cargo rustc rustfmt clippy ]
+            else
+              with pkgs; [ ];
 
           in qtDependences ++ shellDpeneds ++ otherDeps;
 
@@ -77,27 +76,31 @@
             };
 
             shellHook = ''
-
-              export ROOT=$PWD/Nixpile-build/${preset}
-              mkdir -p $ROOT
+              export ROOT="$PWD/Nixpile-build/${preset}"
+              mkdir -p "$ROOT"
               export LD_LIBRARY_PATH="$CMAKE_LIBRARY_PATH"
 
-              firstBuild() {
+              configure() {
                 cmake -S "$ROOT/../../" -B "$ROOT" \
                   --preset ${preset} \
-                  -DCMAKE_INSTALL_PREFIX=$out
-                cmake --build "$ROOT"
+                  "-DCMAKE_INSTALL_PREFIX=$out"
               }
 
-              incrementalBuild() {
-                cmake --build "$ROOT"
+              build() {
+                if ! [ -e "$ROOT" ]; then
+                    configure || return 1
+                fi
+                if [ -e "$ROOT/bin/.drawpile-wrapped" ]; then
+                    mv "$ROOT/bin/.drawpile-wrapped" "$ROOT/bin/drawpile"
+                fi
+                cmake --build "$ROOT" || return 1
+                wrapQtApp "$ROOT/bin/drawpile"
               }
 
-              incrementalRun() {
-                incrementalBuild
+              run() {
+                build || return 1
                 "$ROOT/bin/drawpile"
               }
-
             '';
           };
 
