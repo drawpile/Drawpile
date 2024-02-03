@@ -46,7 +46,7 @@
 // We want to batch draw dabs commands when replaying messages, since they're so
 // common and really benefit from combined handling. We'll use a fixed buffer of
 // some reasonable size to store plenty of messages for that purpose.
-#define REPLAY_BUFFER_CAPACITY 1024
+#define REPLAY_BUFFER_CAPACITY 8192
 
 typedef enum DP_ForkAction {
     DP_FORK_ACTION_CONCURRENT,
