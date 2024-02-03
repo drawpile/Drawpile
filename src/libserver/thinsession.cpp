@@ -164,14 +164,10 @@ void ThinSession::onClientJoin(Client *client, bool host)
 		// Notify the client how many messages to expect (at least)
 		// The client can use this information to display a progress bar during
 		// the login phase
+		int catchupKey = history()->nextCatchupKey();
 		client->sendDirectMessage(net::ServerReply::makeCatchup(
-			history()->lastIndex() - history()->firstIndex(),
-			m_nextCatchupKey));
-		history()->addMessage(net::ServerReply::makeCaughtUp(m_nextCatchupKey));
-		// Wrap around the catchup key at an arbitrary, but plenty large value.
-		if(++m_nextCatchupKey > 999999) {
-			m_nextCatchupKey = 1;
-		}
+			history()->lastIndex() - history()->firstIndex(), catchupKey));
+		history()->addMessage(net::ServerReply::makeCaughtUp(catchupKey));
 	}
 }
 

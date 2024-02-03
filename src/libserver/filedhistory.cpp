@@ -37,6 +37,7 @@ FiledHistory::FiledHistory(
 	, m_version(version)
 	, m_maxUsers(254)
 	, m_flags()
+	, m_nextCatchupKey(INITIAL_CATCHUP_KEY)
 	, m_fileCount(0)
 	, m_archive(false)
 {
@@ -347,6 +348,10 @@ bool FiledHistory::load()
 				}
 			}
 
+		} else if(cmd == "CATCHUP") {
+			m_nextCatchupKey =
+				qBound(MIN_CATCHUP_KEY, params.toInt(), MAX_CATCHUP_KEY);
+
 		} else {
 			qWarning() << id()
 					   << "unknown journal entry:" << QString::fromUtf8(cmd);
@@ -557,6 +562,14 @@ void FiledHistory::setAutoResetThreshold(uint limit)
 		m_journal->write(QString("AUTORESET %1\n").arg(newLimit).toUtf8());
 		m_journal->flush();
 	}
+}
+
+int FiledHistory::nextCatchupKey()
+{
+	int result = incrementNextCatchupKey(m_nextCatchupKey);
+	m_journal->write(QString("CATCHUP %1\n").arg(m_nextCatchupKey).toUtf8());
+	m_journal->flush();
+	return result;
 }
 
 void FiledHistory::setTitle(const QString &title)

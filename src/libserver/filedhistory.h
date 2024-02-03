@@ -76,6 +76,7 @@ public:
 	void setTitle(const QString &title) override;
 	void setFlags(Flags f) override;
 	void setAutoResetThreshold(uint limit) override;
+	int nextCatchupKey() override;
 	void joinUser(uint8_t id, const QString &name) override;
 
 	void terminate() override;
@@ -143,6 +144,7 @@ private:
 	int m_maxUsers;
 	uint m_autoResetThreshold;
 	Flags m_flags;
+	int m_nextCatchupKey;
 	QStringList m_announcements;
 
 	mutable QVector<Block> m_blocks;

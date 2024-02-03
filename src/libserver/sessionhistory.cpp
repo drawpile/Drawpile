@@ -154,4 +154,12 @@ const QString *SessionHistory::authenticatedUsernameFor(const QString &authId)
 	return it == m_authUsernames.constEnd() ? nullptr : &it.value();
 }
 
+int SessionHistory::incrementNextCatchupKey(int &nextCatchupKey)
+{
+	int result = nextCatchupKey;
+	// Wrap around the catchup key at an arbitrary, but plenty large value.
+	nextCatchupKey = result < MAX_CATCHUP_KEY ? result + 1 : MIN_CATCHUP_KEY;
+	return result;
+}
+
 }

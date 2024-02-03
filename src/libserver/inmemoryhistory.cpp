@@ -15,7 +15,13 @@ InMemoryHistory::InMemoryHistory(
 	, m_maxUsers(254)
 	, m_autoReset(0)
 	, m_flags()
+	, m_nextCatchupKey(INITIAL_CATCHUP_KEY)
 {
+}
+
+int InMemoryHistory::nextCatchupKey()
+{
+	return incrementNextCatchupKey(m_nextCatchupKey);
 }
 
 std::tuple<net::MessageList, int> InMemoryHistory::getBatch(int after) const

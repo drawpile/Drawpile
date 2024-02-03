@@ -130,6 +130,8 @@ public:
 	//! Get the reset image base size
 	uint autoResetThresholdBase() const { return m_autoResetBaseSize; }
 
+	virtual int nextCatchupKey() = 0;
+
 	/**
 	 * @brief Add a new message to the history
 	 *
@@ -330,6 +332,10 @@ signals:
 	void newMessagesAvailable();
 
 protected:
+	static constexpr int MIN_CATCHUP_KEY = 1;
+	static constexpr int MAX_CATCHUP_KEY = 999999999;
+	static constexpr int INITIAL_CATCHUP_KEY = 1000000;
+
 	virtual void historyAdd(const net::Message &msg) = 0;
 	virtual void historyReset(const net::MessageList &newHistory) = 0;
 	virtual void historyAddBan(
@@ -338,6 +344,8 @@ protected:
 		const QString &bannedBy) = 0;
 	virtual void historyRemoveBan(int id) = 0;
 	void historyLoaded(uint size, int messageCount);
+
+	int incrementNextCatchupKey(int &nextCatchupKey);
 
 	SessionBanList m_banlist;
 

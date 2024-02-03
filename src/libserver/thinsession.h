@@ -33,7 +33,6 @@ private:
 	QElapsedTimer m_lastStatusUpdate;
 
 	AutoResetState m_autoResetRequestStatus = AutoResetState::NotSent;
-	int m_nextCatchupKey = 1;
 };
 
 }

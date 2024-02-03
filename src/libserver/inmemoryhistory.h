@@ -57,6 +57,7 @@ public:
 			m_autoReset = qMin(uint(sizeLimit() * 0.9), limit);
 	}
 	uint autoResetThreshold() const override { return m_autoReset; }
+	int nextCatchupKey() override;
 
 	void addAnnouncement(const QString &url) override
 	{
@@ -95,6 +96,7 @@ private:
 	int m_maxUsers;
 	uint m_autoReset;
 	Flags m_flags;
+	int m_nextCatchupKey;
 };
 
 }
