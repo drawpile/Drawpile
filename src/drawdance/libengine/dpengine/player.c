@@ -49,7 +49,7 @@
 #include <dpmsg/acl.h>
 #include <dpmsg/binary_reader.h>
 #include <dpmsg/blend_mode.h>
-#include <dpmsg/rust.h>
+#include <dpmsg/protover.h>
 #include <dpmsg/text_reader.h>
 #include <ctype.h>
 #include <parson.h>

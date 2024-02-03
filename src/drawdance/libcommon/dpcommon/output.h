@@ -27,6 +27,10 @@
 #define DP_OUTPUT_PRINT_LITERAL(OUTPUT, LITERAL) \
     DP_output_write((OUTPUT), "" LITERAL, strlen(LITERAL))
 
+#define DP_OUTPUT_WRITE_BYTES_LITERAL(OUTPUT, ...)            \
+    DP_output_write((OUTPUT), (unsigned char[]){__VA_ARGS__}, \
+                    sizeof((unsigned char[]){__VA_ARGS__}))
+
 
 typedef struct DP_Output DP_Output;
 
@@ -134,6 +138,12 @@ DP_Output *DP_mem_output_new(size_t initial_capacity, bool free_on_close,
     (DP_OutputBinaryEntry)            \
     {                                 \
         .type = (COUNT), .bytes = (X) \
+    }
+#define DP_OUTPUT_BYTES_LITERAL(X, ...)                         \
+    (DP_OutputBinaryEntry)                                      \
+    {                                                           \
+        .type = (int)sizeof((unsigned char[]){X, __VA_ARGS__}), \
+        .bytes = (unsigned char[]){X, __VA_ARGS__},             \
     }
 #define DP_OUTPUT_END                     \
     (DP_OutputBinaryEntry)                \

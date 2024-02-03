@@ -26,6 +26,9 @@ dp_target_sources(dpengine
     dpengine/layer_props.c
     dpengine/layer_props_list.c
     dpengine/layer_routes.c
+    dpengine/load.c
+    dpengine/load_old_animation.c
+    dpengine/load_psd.cpp
     dpengine/local_state.c
     dpengine/ops.c
     dpengine/paint.c
@@ -35,15 +38,18 @@ dp_target_sources(dpengine
     dpengine/preview.c
     dpengine/recorder.c
     dpengine/renderer.c
+    dpengine/save.c
+    dpengine/save_psd.c
     dpengine/snapshots.c
     dpengine/text.c
     dpengine/tile.c
     dpengine/tile_iterator.c
     dpengine/timeline.c
-    dpengine/user_cursors.c
-    dpengine/view_mode.c
     dpengine/track.c
+    dpengine/user_cursors.c
+    dpengine/utf16be_qt.cpp
     dpengine/view_mode.c
+    dpengine/xml_stream_qt.cpp
     dpengine/affected_area.h
     dpengine/annotation.h
     dpengine/annotation_list.h
@@ -87,45 +93,28 @@ dp_target_sources(dpengine
     dpengine/track.h
     dpengine/user_cursors.h
     dpengine/view_mode.h
+    dpengine/load.h
+    dpengine/load_old_animation.h
+    dpengine/save.h
+    dpengine/utf16be.h
+    dpengine/xml_stream.h
+    dpengine/zip_archive.h
 )
 
-target_include_directories(dpengine PUBLIC ${CMAKE_CURRENT_LIST_DIR})
-
-add_cargo_library(dpengine_rust dpengine_rust)
 target_include_directories(dpengine PUBLIC ${CMAKE_CURRENT_LIST_DIR})
 target_link_libraries(dpengine PUBLIC
-    mypaint uthash qgrayraster jo_gifx parson dpengine_rust dpmsg dpcommon
-    ZLIB::ZLIB
+    mypaint uthash qgrayraster jo_gifx parson dpmsg dpcommon ZLIB::ZLIB
+    psd_sdk "Qt${QT_VERSION_MAJOR}::Core" "Qt${QT_VERSION_MAJOR}::Xml"
 )
 
-# Qt is too heavy a dependency just for an XML parser, libzip has to be compiled
-# manually out-of-tree, both of them are not used by the web app now anyway, so
-# just exclude them from emscripten builds
-if(NOT EMSCRIPTEN)
-
-    dp_target_sources(dpengine
-        dpengine/load.c
-        dpengine/load.h
-        dpengine/load_psd.cpp
-        dpengine/save.c
-        dpengine/save.h
-        dpengine/xml_stream.h
-        dpengine/xml_stream_qt.cpp
-        dpengine/zip_archive.h
-    )
-    target_link_libraries(dpengine PUBLIC
-        psd_sdk "Qt${QT_VERSION_MAJOR}::Xml"
-    )
-
-    if(ZIP_IMPL STREQUAL "LIBZIP")
-        target_sources(dpengine PRIVATE dpengine/zip_archive_libzip.c)
-        target_link_libraries(dpengine PUBLIC libzip::zip)
-    elseif(ZIP_IMPL STREQUAL "KARCHIVE")
-        target_sources(dpengine PRIVATE dpengine/zip_archive_karchive.cpp)
-        target_link_libraries(dpengine PUBLIC KF5::Archive)
-    else()
-        message(SEND_ERROR "Unknown ZIP_IMPL value '${ZIP_IMPL}'")
-    endif()
+if(ZIP_IMPL STREQUAL "LIBZIP")
+    target_sources(dpengine PRIVATE dpengine/zip_archive_libzip.c)
+    target_link_libraries(dpengine PUBLIC libzip::zip)
+elseif(ZIP_IMPL STREQUAL "KARCHIVE")
+    target_sources(dpengine PRIVATE dpengine/zip_archive_karchive.cpp)
+    target_link_libraries(dpengine PUBLIC KF5::Archive)
+else()
+    message(SEND_ERROR "Unknown ZIP_IMPL value '${ZIP_IMPL}'")
 endif()
 
 if(IMAGE_IMPL STREQUAL "LIBS")

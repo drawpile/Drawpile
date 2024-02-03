@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 extern "C" {
-#include <dpmsg/rust.h>
+#include <dpmsg/protover.h>
 }
 #include "libshared/net/protover.h"
 

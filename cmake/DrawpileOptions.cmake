@@ -27,8 +27,9 @@ if(NOT ANDROID)
 	cmake_dependent_option(SERVERGUI "Enable server GUI" ON "SERVER" OFF)
 	add_feature_info("Server GUI (SERVERGUI)" SERVERGUI "")
 
-	option(TOOLS "Compile extra tools" OFF)
-	add_feature_info("Extra tools (TOOLS)" TOOLS "")
+	cmake_dependent_option(
+		TOOLS "Command-line tools" OFF "CARGO_COMMAND" OFF)
+	add_feature_info("Command-line tools, requires Rust (TOOLS)" TOOLS "")
 
 	option(TESTS "Build unit tests" OFF)
 	add_feature_info("Unit tests (TESTS)" TESTS "")

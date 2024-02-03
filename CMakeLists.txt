@@ -41,7 +41,8 @@ if(APPLE)
 	enable_language(OBJCXX)
 endif()
 
-# DrawpileOptions uses this so it must be included before then
+# DrawpileOptions uses these so it must be included before then
+include(Cargo)
 include(FeatureSummary)
 
 # This must come after `project` because it relies on variables like `ANDROID`
@@ -108,7 +109,6 @@ include(QtMacDeploymentTarget)
 set_mac_deployment_target(${QT_VERSION})
 
 include(AutoSourceGroup)
-include(Cargo)
 include(DrawpileInstallDirs)
 
 # This *must* be included before `find_package(Qt5 COMPONENTS Core)` because
@@ -222,55 +222,57 @@ if(TOOLS)
 	add_subdirectory(src/tools)
 endif()
 
-add_custom_target(clippy
-	COMMAND "${CARGO_COMMAND}" clippy --
-		# This lint isn't feasible in such a C-heavy codebase, since they
-		# would just end up marking every function in the universe unsafe,
-		# meaning we wouldn't get any of Rust's guarantees anywhere.
-		-A clippy::not_unsafe_ptr_arg_deref
-		# There's no useful safety docs that we could apply on a function level.
-		-A clippy::missing_safety_doc
-		# Too many positional arguments to a function isn't nice, but making a
-		# struct to emulate named arguments is even worse.
-		-A clippy::too_many_arguments
-		# Turn on some of these restrictions for more consistency.
-		-W clippy::empty_structs_with_brackets
-		-W clippy::shadow_reuse
-		-W clippy::shadow_same
-		-W clippy::string_to_string
-		-W clippy::try_err
-		-W clippy::unseparated_literal_suffix
-		-W clippy::verbose_file_reads
-		# Turn on pedantic warnings, but disable the silly ones.
-		-W clippy::pedantic
-		# False positives when the string has already been lowercased.
-		-A clippy::case_sensitive_file_extension_comparisons
-		# If you didn't want these, you wouldn't be using `as` to cast.
-		-A clippy::cast_possible_truncation
-		-A clippy::cast_possible_wrap
-		-A clippy::cast_precision_loss
-		-A clippy::cast_sign_loss
-		# We don't ever want to panic in a valid case, so nothing to document.
-		-A clippy::missing_panics_doc
-		# We do this only on extern "C" types, where it's necessary to do so.
-		-A clippy::module_name_repetitions
-		# Nothing needless about explicitly consuming a value.
-		-A clippy::needless_pass_by_value
-		# Single characters are fine, we use them for w and h or r, g, b and a.
-		-A clippy::many_single_char_names
-		# We don't have exciting error handling, so nothing to document.
-		-A clippy::missing_errors_doc
-		# False positives and not terribly useful a lint to begin with.
-		-A clippy::must_use_candidate
-		# Similar names are better than inconsistent names.
-		-A clippy::similar_names
-		# Artificially splitting up functions doesn't make them easier to read.
-		-A clippy::too_many_lines
-		# Putting the format arguments after the string often looks nicer.
-		-A clippy::uninlined_format_args
-		# False positives on argb literals that are perfectly readable.
-		-A clippy::unreadable_literal
-)
+if(CARGO_COMMAND)
+	add_custom_target(clippy
+		COMMAND "${CARGO_COMMAND}" clippy --
+			# This lint isn't feasible in such a C-heavy codebase, since they
+			# would just end up marking every function in the universe unsafe,
+			# meaning we wouldn't get any of Rust's guarantees anywhere.
+			-A clippy::not_unsafe_ptr_arg_deref
+			# There's no useful safety docs that we could apply on a function level.
+			-A clippy::missing_safety_doc
+			# Too many positional arguments to a function isn't nice, but making a
+			# struct to emulate named arguments is even worse.
+			-A clippy::too_many_arguments
+			# Turn on some of these restrictions for more consistency.
+			-W clippy::empty_structs_with_brackets
+			-W clippy::shadow_reuse
+			-W clippy::shadow_same
+			-W clippy::string_to_string
+			-W clippy::try_err
+			-W clippy::unseparated_literal_suffix
+			-W clippy::verbose_file_reads
+			# Turn on pedantic warnings, but disable the silly ones.
+			-W clippy::pedantic
+			# False positives when the string has already been lowercased.
+			-A clippy::case_sensitive_file_extension_comparisons
+			# If you didn't want these, you wouldn't be using `as` to cast.
+			-A clippy::cast_possible_truncation
+			-A clippy::cast_possible_wrap
+			-A clippy::cast_precision_loss
+			-A clippy::cast_sign_loss
+			# We don't ever want to panic in a valid case, so nothing to document.
+			-A clippy::missing_panics_doc
+			# We do this only on extern "C" types, where it's necessary to do so.
+			-A clippy::module_name_repetitions
+			# Nothing needless about explicitly consuming a value.
+			-A clippy::needless_pass_by_value
+			# Single characters are fine, we use them for w and h or r, g, b and a.
+			-A clippy::many_single_char_names
+			# We don't have exciting error handling, so nothing to document.
+			-A clippy::missing_errors_doc
+			# False positives and not terribly useful a lint to begin with.
+			-A clippy::must_use_candidate
+			# Similar names are better than inconsistent names.
+			-A clippy::similar_names
+			# Artificially splitting up functions doesn't make them easier to read.
+			-A clippy::too_many_lines
+			# Putting the format arguments after the string often looks nicer.
+			-A clippy::uninlined_format_args
+			# False positives on argb literals that are perfectly readable.
+			-A clippy::unreadable_literal
+	)
+endif()
 
 # This must run once all target creation is finished since it walks the list of
 # targets and their sources. This could be called any time and use

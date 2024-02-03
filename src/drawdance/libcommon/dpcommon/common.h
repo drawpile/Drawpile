@@ -211,6 +211,11 @@ DP_INLINE int DP_clamp_int(int x, int min, int max)
     return x < min ? min : x > max ? max : x;
 }
 
+DP_INLINE uint64_t DP_clamp_uint64(uint64_t x, uint64_t min, uint64_t max)
+{
+    return x < min ? min : x > max ? max : x;
+}
+
 DP_INLINE float DP_min_float(float x, float y)
 {
     return x < y ? x : y;

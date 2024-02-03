@@ -2,8 +2,6 @@
 resolver = "2"
 members = [
     "src/drawdance/rust",
-    "src/drawdance/libmsg",
-    "src/drawdance/libengine",
     "src/tools/dprectool",
     "src/tools/drawpile-cmd",
     "src/tools/drawpile-timelapse",

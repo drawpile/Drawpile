@@ -18,23 +18,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a4668cab20f66d8d020e1fbc0ebe47217433c1b6c8f2040faf858554e394ace6"
 
 [[package]]
-name = "dpengine_rust"
-version = "2.2.2-pre"
-dependencies = [
- "anyhow",
- "drawdance",
-]
-
-[[package]]
-name = "dpmsg_rust"
-version = "2.2.2-pre"
-dependencies = [
- "drawdance",
- "once_cell",
- "regex",
-]
-
-[[package]]
 name = "dprectool"
 version = "2.2.2-pre"
 dependencies = [
@@ -74,12 +57,6 @@ name = "memchr"
 version = "2.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f478948fd84d9f8e86967bf432640e46adfb5a4bd4f14ef7e864ab38220534ae"
-
-[[package]]
-name = "once_cell"
-version = "1.18.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dd8b5dd2ae5ed71462c540258bedcb51965123ad7e7ccf4b9a8cafaa4a63576d"
 
 [[package]]
 name = "regex"

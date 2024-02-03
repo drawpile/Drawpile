@@ -1,8 +1,13 @@
 # SPDX-License-Identifier: MIT
-find_program(CARGO_COMMAND cargo REQUIRED
+find_program(CARGO_COMMAND cargo
 	PATHS $ENV{HOME}/.cargo/bin
 	DOC "Cargo executable"
 )
+if(CARGO_COMMAND)
+	message(STATUS "Found cargo: ${CARGO_COMMAND}")
+else()
+	message(WARNING "Did not find cargo, Rust-dependent features unavailable")
+endif()
 
 # SPDX-SnippetBegin
 # SPDX-License-Identifier: MIT
@@ -84,6 +89,10 @@ endfunction()
 Adds an imported Rust static library target that is built by Cargo.
 #]]
 function(add_cargo_library target package)
+	if(NOT CARGO_COMMAND)
+		message(FATAL_ERROR "add_cargo_library called, but cargo is unavailable")
+	endif()
+
 	set(options ALL_FEATURES NO_DEFAULT_FEATURES)
 	set(singleValueArgs MANIFEST_PATH)
 	set(multiValueArgs FEATURES)

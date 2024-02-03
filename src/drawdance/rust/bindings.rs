@@ -5342,11 +5342,10 @@ extern "C" {
     pub fn DP_view_mode_filter_make_default() -> DP_ViewModeFilter;
 }
 extern "C" {
-    pub fn DP_view_mode_filter_make_frame(
+    pub fn DP_view_mode_filter_make_frame_render(
         vmb: *mut DP_ViewModeBuffer,
         cs: *mut DP_CanvasState,
         frame_index: ::std::os::raw::c_int,
-        oss: *const DP_OnionSkins,
     ) -> DP_ViewModeFilter;
 }
 extern "C" {

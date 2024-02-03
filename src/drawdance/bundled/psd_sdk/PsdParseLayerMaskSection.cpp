@@ -732,7 +732,7 @@ namespace
 
 						for (uint32_t c = 0u; c < characterCountWithoutNull; ++c)
 						{
-							layer->utf16Name[c] = fileUtil::ReadFromFileBE<uint16_t>(reader);
+							layer->utf16Name[c] = fileUtil::ReadFromFile<uint16_t>(reader);
 						}
 						layer->utf16Name[characterCountWithoutNull] = 0u;
 
