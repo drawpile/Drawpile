@@ -430,7 +430,7 @@ void CanvasScene::userCursorMoved(
 		laser->addPoint(QPointF(x, y));
 	}
 
-	if(!m_showUserMarkers) {
+	if(!m_showUserMarkers || !m_canvasItem->isVisible()) {
 		return;
 	}
 
