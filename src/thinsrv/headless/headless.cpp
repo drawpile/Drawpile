@@ -44,6 +44,7 @@ void printVersion()
 #endif
 }
 
+#ifdef HAVE_LIBSODIUM
 bool isBadDrawpileNetExtAuthUrl(const QUrl &url)
 {
 	// Don't use "www.drawpile.net" or something.
@@ -92,6 +93,7 @@ bool validateExtAuthUrl(const QString &param, const QUrl &url)
 
 	return true;
 }
+#endif
 }
 
 bool start() {
