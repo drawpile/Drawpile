@@ -886,6 +886,20 @@ void ChatWidget::sendMessage(QString chatMessage)
 			systemMessage(text);
 			return;
 
+		} else if(cmd == QStringLiteral("modhelp")) {
+			QString text = QStringLiteral(
+				"Advanced client commands:\n"
+				"/trust-all-users - trust all connected non-operator users.\n"
+				"/untrust-all-users - untrust all connected users.\n"
+				"/set-layer-acl-tiers [raise] [exclusive] all|current "
+				"everyone|registered|trusted|operators - change ACL tier of "
+				"`all` layers or the `current`ly selected tree. If `raise` is "
+				"given, will only increase tiers. Will not change layers that "
+				"are assigned to specific users unless `exclusive` is "
+				"given.\n");
+			systemMessage(text);
+			return;
+
 		} else {
 			systemMessage(tr("Unknown command: %1").arg(chatMessage));
 			return;

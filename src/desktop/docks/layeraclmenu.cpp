@@ -96,7 +96,7 @@ void LayerAclMenu::userClicked(QAction *useraction)
 	if(useraction == m_lock) {
 		// Lock out all other controls when general layer lock is on
 		const bool enable = !useraction->isChecked();
-		m_tiers->setEnabled(enable && exclusive.isEmpty());
+		m_tiers->setEnabled(enable);
 		m_users->setEnabled(enable);
 
 	} else if(useraction == m_censored) {
@@ -104,9 +104,6 @@ void LayerAclMenu::userClicked(QAction *useraction)
 		emit layerCensoredChange(m_censored->isChecked());
 		return;
 
-	} else {
-		// User exclusive access bit or tier changed.
-		m_tiers->setEnabled(exclusive.isEmpty());
 	}
 
 	// Send ACL update message
@@ -118,7 +115,7 @@ void LayerAclMenu::setAcl(bool lock, int tier, const QVector<uint8_t> exclusive)
 	m_lock->setChecked(lock);
 
 	m_users->setEnabled(!lock);
-	m_tiers->setEnabled(!lock && exclusive.isEmpty());
+	m_tiers->setEnabled(!lock);
 
 	for(QAction *t : m_tiers->actions()) {
 		if(t->property("userTier").toInt() == tier) {

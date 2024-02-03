@@ -42,7 +42,8 @@ Unreleased Version 2.2.1-pre
  * Fix: Use proper measurements to decide on how much painting to do in a single step, hopefully preventing chugging caused by certain brushes.
  * Server Fix: Save catchup keys to file-backed sessions so that the counter doesn't reset upon a server restart.
  * Fix: Don't show user cursors while catchup dialog is open.
- * Feature: Add some bulk permission commands for (un)trusting and setting layer tiers.
+ * Feature: Add some bulk permission commands for (un)trusting and setting layer tiers, explanation available through /modhelp. Thanks Bluestrings for suggesting.
+ * Fix: Don't gray out layer ACL tier settings when a layer is assigned to users exclusively, since those settings are not exclusive.
 
 2024-01-13 Version 2.2.0
  * Server Fix: Add --ssl-key-algorithm parameter to allow non-RSA SSL keys, defaulting to guessing the most common formats RSA and EC. Thanks Bluestrings for reporting.
