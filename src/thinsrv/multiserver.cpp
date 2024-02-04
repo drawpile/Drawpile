@@ -118,8 +118,8 @@ bool MultiServer::createServer(bool enableWebSockets)
 
 	connect(m_tcpServer, &QTcpServer::newConnection, this, &MultiServer::newTcpClient);
 
-#ifdef HAVE_WEBSOCKETS
 	if (enableWebSockets) {
+#ifdef HAVE_WEBSOCKETS
 		// TODO: Allow running a TLS-secured WebSocket server. Currently, this
 		// instead requires a reverse proxy server like nginx or something. The
 		// user almost certainly has one of those anyway though, so it's fine.
@@ -129,10 +129,10 @@ bool MultiServer::createServer(bool enableWebSockets)
 		connect(
 			m_webSocketServer, &QWebSocketServer::newConnection, this,
 			&MultiServer::newWebSocketClient);
-	}
 #else
-	Q_UNUSED(enableWebSockets);
+		qWarning("WebSocket server requested, but support not compiled in");
 #endif
+	}
 
 	return true;
 }
@@ -233,6 +233,7 @@ bool MultiServer::startFd(int tcpFd, int webSocketFd)
 		return abortStart();
 	}
 
+	int wsPort = -1;
 #ifdef HAVE_WEBSOCKETS
 	// Qt 5.12 deprecated setSocketDescriptor in favor of setNativeDescriptior,
 	// but then Qt 6 flipped those deprecations the other way round.
@@ -242,13 +243,16 @@ bool MultiServer::startFd(int tcpFd, int webSocketFd)
 #	else
 	auto setWebSocketDescriptor = &QWebSocketServer::setSocketDescriptor;
 #	endif
-	if(m_webSocketServer &&
-	   !(m_webSocketServer->*setWebSocketDescriptor)(webSocketFd)) {
-		m_sessions->config()->logger()->logMessage(
-			Log()
-				.about(Log::Level::Error, Log::Topic::Status)
-				.message("Couldn't set WebSocket server socket descriptor!"));
-		return abortStart();
+	if(m_webSocketServer) {
+	   if(!(m_webSocketServer->*setWebSocketDescriptor)(webSocketFd)) {
+			m_sessions->config()->logger()->logMessage(
+				Log()
+					.about(Log::Level::Error, Log::Topic::Status)
+					.message(
+						"Couldn't set WebSocket server socket descriptor!"));
+			return abortStart();
+		}
+		wsPort = m_webSocketServer->serverPort();
 	}
 #endif
 
@@ -257,7 +261,15 @@ bool MultiServer::startFd(int tcpFd, int webSocketFd)
 	m_sessions->config()->logger()->logMessage(
 		Log()
 			.about(Log::Level::Info, Log::Topic::Status)
-			.message(QString("Started listening on passed socket(s)")));
+			.message(
+				wsPort == -1
+					? QStringLiteral("Started listening on passed TCP socket "
+									 "on port %1, WebSocket not passed")
+						  .arg(m_port)
+					: QStringLiteral("Started listening on passed TCP socket "
+									 "on port %1, WebSocket port %2")
+						  .arg(m_port)
+						  .arg(wsPort)));
 
 	return true;
 }
