@@ -6,7 +6,7 @@
     <message>
         <location filename="../bundled/QtColorWidgets/abstract_widget_list.cpp" line="+67"/>
         <source>Add New</source>
-        <translation>Ajouter un nouveau</translation>
+        <translation>Ajouter nouveau</translation>
     </message>
     <message>
         <location line="+51"/>
@@ -49,7 +49,7 @@
     <message>
         <location line="+8"/>
         <source>Offender:</source>
-        <translation>Agresseur :</translation>
+        <translation>Fautif&#x202f;:</translation>
     </message>
 </context>
 <context>
@@ -62,7 +62,7 @@
     <message>
         <location line="+28"/>
         <source>Enter a list server URL:</source>
-        <translation>Saisissez l&apos;URL d&apos;un serveur:</translation>
+        <translation>Saisissez l&apos;URL d&apos;un serveur&#x202f;:</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -75,12 +75,12 @@
     <message>
         <location filename="../ui/androidfiledialog.ui" line="+20"/>
         <source>Name:</source>
-        <translation>Nom :</translation>
+        <translation>Nom&#x202f;:</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Type:</source>
-        <translation type="unfinished">Type :</translation>
+        <translation type="unfinished">Type&#x202f;:</translation>
     </message>
 </context>
 <context>
@@ -96,12 +96,12 @@
     <message>
         <location filename="../ui/brushdock.ui" line="+74"/>
         <source>Pixel brush</source>
-        <translation>Crayon</translation>
+        <translation>Brosse Pixel</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Square pixel brush</source>
-        <translation>Crayon carré</translation>
+        <translation>Brosse Pixel Carrée</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -111,17 +111,17 @@
     <message>
         <location line="+20"/>
         <source>MyPaint Brush</source>
-        <translation>Mon pinceau</translation>
+        <translation>Pinceau MyPaint</translation>
     </message>
     <message>
         <location line="+39"/>
         <source>Pick initial color from layer</source>
-        <translation>Prendre la couleur initiale du calque</translation>
+        <translation>Sélectionner la couleur de départ sur le calque</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Lock alpha (recolor mode)</source>
-        <translation>Verrouiller l&apos;Alpha (mode recolorer)</translation>
+        <translation>Verrouiller l&apos;Alpha (mode recoloriage)</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -131,27 +131,27 @@
     <message>
         <location line="+14"/>
         <source>Direct drawing mode</source>
-        <translation>Mode dessin directe</translation>
+        <translation>Mode dessin direct</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>Size: </source>
-        <translation>Taille : </translation>
+        <translation>Taille&#x202f;: </translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Radius: </source>
-        <translation>Rayon : </translation>
+        <translation>Rayon&#x202f;: </translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Opacity: </source>
-        <translation>Opacité : </translation>
+        <translation>Opacité&#x202f;: </translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Hardness: </source>
-        <translation>Dureté : </translation>
+        <translation>Dureté&#x202f;: </translation>
     </message>
     <message>
         <location line="+13"/>
@@ -164,32 +164,32 @@
     <message>
         <location line="-16"/>
         <source>Smudging: </source>
-        <translation>Étalement : </translation>
+        <translation>Étalement&#x202f;: </translation>
     </message>
     <message>
         <location line="+30"/>
         <source>Color Pickup: 1/</source>
-        <translation>Pipette à couleurs :</translation>
+        <translation>Pipette&#x202f;à couleurs&#x202f;:</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Spacing: </source>
-        <translation>Espace : </translation>
+        <translation>Espacement&#x202f;: </translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Gain: </source>
-        <translation>Grain : </translation>
+        <translation>Grain&#x202f;: </translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Stabilizer: </source>
-        <translation>Stabilisateur : </translation>
+        <translation>Stabilisateur&#x202f;: </translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Smoothing: </source>
-        <translation>Lissage : </translation>
+        <translation>Lissage&#x202f;: </translation>
     </message>
     <message>
         <location line="-206"/>
@@ -207,17 +207,17 @@
     <message>
         <location line="+6"/>
         <source>Name:</source>
-        <translation>Nom :</translation>
+        <translation>Nom&#x202f;:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Description:</source>
-        <translation>Description :</translation>
+        <translation>Description&#x202f;:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Thumbnail:</source>
-        <translation>Vignette :</translation>
+        <translation>Vignette&#x202f;:</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -234,7 +234,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+75"/>
         <source>Label:</source>
-        <translation>Étiquette :</translation>
+        <translation>Étiquette&#x202f;:</translation>
     </message>
 </context>
 <context>
@@ -263,7 +263,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="-26"/>
         <source>Inverts the input directions. For example, scrolling up to zoom out instead of zooming in.</source>
-        <translation>Inverse les directions de saisie. Par exemple, faire défiler vers le haut pour effectuer un zoom arrière au lieu d&apos;effectuer un zoom avant.</translation>
+        <translation>Inverse les directions de la saisie. Par exemple, faire défiler vers le haut pour effectuer un zoom arrière au lieu d&apos;effectuer un zoom avant.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -292,12 +292,12 @@ to 64x64 pixels.</source>
         <location line="+6"/>
         <location line="+107"/>
         <source>Organization:</source>
-        <translation>Organisation :</translation>
+        <translation>Organisation&#x202f;:</translation>
     </message>
     <message>
         <location line="-100"/>
         <source>SHA1 fingerprint:</source>
-        <translation>Empreinte SHA1 :</translation>
+        <translation>Empreinte SHA1&#x202f;:</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -307,34 +307,34 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Expires on:</source>
-        <translation>Expire le :</translation>
+        <translation>Expire le&#x202f;:</translation>
     </message>
     <message>
         <location line="+63"/>
         <source>MD5 fingerprint:</source>
-        <translation>Empreinte MD5 :</translation>
+        <translation>Empreinte MD5&#x202f;:</translation>
     </message>
     <message>
         <location line="+14"/>
         <location line="+14"/>
         <source>Organization unit:</source>
-        <translation>Service :</translation>
+        <translation>Service&#x202f;:</translation>
     </message>
     <message>
         <location line="-7"/>
         <source>Issued on:</source>
-        <translation>Délivré le :</translation>
+        <translation>Délivré le&#x202f;:</translation>
     </message>
     <message>
         <location line="+14"/>
         <location line="+50"/>
         <source>Common name:</source>
-        <translation>Nom usuel :</translation>
+        <translation>Nom usuel&#x202f;:</translation>
     </message>
     <message>
         <location line="-43"/>
         <source>Serial number:</source>
-        <translation>Numéro de série :</translation>
+        <translation>Numéro de série&#x202f;:</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -420,7 +420,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+3"/>
         <source>Playback Delay: </source>
-        <translation>Délai de lecture : </translation>
+        <translation>Délai de lecture&#x202f;: </translation>
     </message>
     <message>
         <location line="+16"/>
@@ -430,7 +430,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Jump</source>
-        <translation>Sauter</translation>
+        <translation>Aller à</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -450,7 +450,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+13"/>
         <source>Position: </source>
-        <translation>Position : </translation>
+        <translation>Position&#x202f;: </translation>
     </message>
     <message>
         <location line="+11"/>
@@ -460,7 +460,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+6"/>
         <source>History Size:</source>
-        <translation>Taille de l&apos;historique :</translation>
+        <translation>Taille de l&apos;historique&#x202f;:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -474,7 +474,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="-56"/>
         <source>Local Fork Present:</source>
-        <translation type="unfinished"></translation>
+        <translation>Fork Locale Actuelle&#x202f;:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -484,22 +484,22 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Local Fork Size:</source>
-        <translation type="unfinished"></translation>
+        <translation>Taille de la Fork Locale&#x202f;:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Local Fork Start:</source>
-        <translation type="unfinished"></translation>
+        <translation>Début de la Fork Locale&#x202f;:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>History Offset:</source>
-        <translation>Décalage historique :</translation>
+        <translation>Décalage historique&#x202f;:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Local Fork Fallbehind:</source>
-        <translation type="unfinished"></translation>
+        <translation>Retard Fork Locale&#x202f;:</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -519,7 +519,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+10"/>
         <source>Local Fork</source>
-        <translation type="unfinished"></translation>
+        <translation>Fork Locale</translation>
     </message>
 </context>
 <context>
@@ -557,22 +557,22 @@ to 64x64 pixels.</source>
     <message>
         <location line="+8"/>
         <source>Open Debug Dump</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouvrir le Cliché de Débogage</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Import Brush Pack</source>
-        <translation>Importer un pack de pinceaux</translation>
+        <translation>Importer Pack de Pinceaux</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Import Session Bans</source>
-        <translation>Importer des interdictions de session</translation>
+        <translation>Importer Exclusions de Sessions</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Import Roles</source>
-        <translation>Importer des rôles</translation>
+        <translation>Importer Rôles</translation>
     </message>
     <message>
         <location line="+44"/>
@@ -603,7 +603,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Save Session Template</source>
-        <translation>Sauvegarder le modèle de session</translation>
+        <translation>Sauvegarder modèle de session</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -618,7 +618,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Tablet Event Log</source>
-        <translation>Journal des événements</translation>
+        <translation>Journal des événements Tablette</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -658,7 +658,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Export Session Bans</source>
-        <translation>Exporter les interdictions de session</translation>
+        <translation>Exporter les Exclusions de Sessions</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -668,12 +668,12 @@ to 64x64 pixels.</source>
     <message>
         <location line="+27"/>
         <source>The PSD format lacks support for annotations, the animation timeline and some blend modes. If you want those to be retained properly, you must save an ORA file.</source>
-        <translation>Le format PSD ne prend pas en charge les annotations, la chronologie de l&apos;animation et certains modes de fusion. Si vous souhaitez que ceux-ci soient conservés correctement, vous devez enregistrer un fichier ORA.</translation>
+        <translation>Le format PSD ne prend pas en charge les annotations, la frise chronologique d&apos;animation et certains modes de fusion. Si vous souhaitez que ceux-ci soient conservés correctement, vous devez enregistrer un fichier ORA.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The selected format will save a merged image. If you want to retain layers, annotations and the animation timeline, you must save an ORA file.</source>
-        <translation>Le format sélectionné enregistrera une image fusionnée. Si vous souhaitez conserver les calques, les annotations et la chronologie de l&apos;animation, vous devez enregistrer un fichier ORA.</translation>
+        <translation>Le format sélectionné enregistrera une image fusionnée. Si vous souhaitez conserver les calques, les annotations et la frise chronologique d&apos;animation, vous devez enregistrer un fichier ORA.</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -714,7 +714,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="-10"/>
         <source>Feather: </source>
-        <translation type="unfinished"></translation>
+        <translation>Adoucissement&#x202f;: </translation>
     </message>
     <message>
         <location line="+36"/>
@@ -725,32 +725,32 @@ to 64x64 pixels.</source>
     <message>
         <location line="-40"/>
         <source>Size: </source>
-        <translation>Taille : </translation>
+        <translation>Taille&#x202f;: </translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Source:</source>
-        <translation>Source :</translation>
+        <translation>Source&#x202f;:</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>Close Gaps: </source>
-        <translation>Combler les trous : </translation>
+        <translation>Combler les trous&#x202f;: </translation>
     </message>
     <message>
         <location line="-69"/>
         <source>Expand: </source>
-        <translation>Développer : </translation>
+        <translation>Étendre&#x202f;: </translation>
     </message>
     <message>
         <location line="+56"/>
         <source>Tolerance: </source>
-        <translation>Tolérance : </translation>
+        <translation>Tolérance&#x202f;: </translation>
     </message>
     <message>
         <location line="-7"/>
         <source>Mode:</source>
-        <translation>Mode :</translation>
+        <translation>Mode&#x202f;:</translation>
     </message>
     <message>
         <location line="-99"/>
@@ -798,17 +798,17 @@ to 64x64 pixels.</source>
     <message>
         <location line="+17"/>
         <source>Frame:</source>
-        <translation>Image :</translation>
+        <translation>Image&#x202f;:</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Range</source>
-        <translation>Gamme</translation>
+        <translation>Plage</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>Speed: </source>
-        <translation>Vitesse : </translation>
+        <translation>Vitesse&#x202f;: </translation>
     </message>
     <message>
         <location line="+29"/>
@@ -859,7 +859,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+9"/>
         <source>&lt;strong&gt;Note:&lt;/strong&gt; changing the session password will cause the link to stop working! If someone else changes the password, you have to reconnect for this dialog to update.</source>
-        <translation>&lt;strong&gt;Note:&lt;/strong&gt;changer le mot de passe de la session entraînera l&apos;arrêt du lien ! Si quelqu&apos;un d&apos;autre modifie le mot de passe, vous devez vous reconnecter pour que cette boîte de dialogue soit mise à jour.</translation>
+        <translation>&lt;strong&gt;Note:&lt;/strong&gt;changer le mot de passe de la session entraînera l&apos;arrêt du lien&#x202f;! Si quelqu&apos;un d&apos;autre modifie le mot de passe, vous devez vous reconnecter pour que cette boîte de dialogue soit mise à jour.</translation>
     </message>
     <message>
         <location line="+29"/>
@@ -907,7 +907,9 @@ to 64x64 pixels.</source>
         <source>Toggle between full range and subrange.
 Full range: [%1, %2]
 Subrange: [%3, %4]</source>
-        <translation type="unfinished"></translation>
+        <translation>Bascule entre amplitude complète et partielle
+Amplitude complète&#x202f;: [%1, %2]
+Amplitude Partielle&#x202f;: [%3, %4]</translation>
     </message>
     <message>
         <location line="+175"/>
@@ -2156,7 +2158,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+4"/>
         <source>Change session settings, permissions, announcements and bans</source>
-        <translation type="unfinished"></translation>
+        <translation>Modifier les paramètres de sessions, les permissions, les annoncements et les exclusions</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3265,7 +3267,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+166"/>
         <source>Bans</source>
-        <translation type="unfinished"></translation>
+        <translation>Exclusions</translation>
     </message>
     <message>
         <location line="+18"/>
