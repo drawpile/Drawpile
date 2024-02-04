@@ -149,6 +149,16 @@ bool MultiServer::abortStart()
 		return false;
 }
 
+void MultiServer::updateInternalConfig()
+{
+	InternalConfig icfg = m_config->internalConfig();
+	icfg.realPort = m_port;
+#ifdef HAVE_WEBSOCKETS
+	icfg.webSocket = m_webSocketServer != nullptr;
+#endif
+	m_config->setInternalConfig(icfg);
+}
+
 /**
  * @brief Start listening on the specified address.
  * @param port the port to listen on
@@ -183,13 +193,7 @@ bool MultiServer::start(
 #endif
 
 	m_port = m_tcpServer->serverPort();
-
-	InternalConfig icfg = m_config->internalConfig();
-	icfg.realPort = m_port;
-#ifdef HAVE_WEBSOCKETS
-	icfg.webSocket = m_webSocketServer != nullptr;
-#endif
-	m_config->setInternalConfig(icfg);
+	updateInternalConfig();
 
 	emit serverStarted();
 	m_sessions->config()->logger()->logMessage(
@@ -257,6 +261,7 @@ bool MultiServer::startFd(int tcpFd, int webSocketFd)
 #endif
 
 	m_port = m_tcpServer->serverPort();
+	updateInternalConfig();
 
 	m_sessions->config()->logger()->logMessage(
 		Log()

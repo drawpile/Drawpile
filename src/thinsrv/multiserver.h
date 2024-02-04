@@ -107,6 +107,7 @@ private:
 	bool createServer();
 	bool createServer(bool enableWebSockets);
 	bool abortStart();
+	void updateInternalConfig();
 
 	void newClient(ThinServerClient *client);
 
