@@ -547,6 +547,15 @@ JsonApiResult MultiServer::serverJsonApi(JsonApiMethod method, const QStringList
 	if(!m_config->internalConfig().extAuthUrl.isValid())
 		result.remove(config::UseExtAuth.name);
 
+#ifdef HAVE_WEBSOCKETS
+	if(!m_config->internalConfig().webSocket) {
+		result.remove(config::AllowGuestWeb.name);
+		result.remove(config::ExtAuthWeb.name);
+		result.remove(config::AllowGuestWebSession.name);
+		result.remove(config::ExtAuthWebSession.name);
+	}
+#endif
+
 	return JsonApiResult { JsonApiResult::Ok, QJsonDocument(result) };
 }
 
