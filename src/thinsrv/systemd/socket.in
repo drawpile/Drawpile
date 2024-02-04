@@ -6,6 +6,7 @@ After=network.target
 [Socket]
 ListenStream=@DRAWPILE_PROTO_DEFAULT_PORT@
 @webadmin_stream@
+@websocket_stream@
 
 [Install]
 WantedBy=sockets.target

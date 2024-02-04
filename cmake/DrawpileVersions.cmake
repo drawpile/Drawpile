@@ -5,6 +5,7 @@ throughout the project.
 
 set(DRAWPILE_PROTO_DEFAULT_PORT 27750)
 set(DRAWPILE_WEBADMIN_DEFAULT_PORT 27780)
+set(DRAWPILE_WEBSOCKET_DEFAULT_PORT 27751)
 
 set(semver_regexp "([0-9]+\\.[0-9]+\\.[0-9]+)((-[A-Za-z0-9.-]*)?(\\+[A-Za-z0-9.-]*)?)")
 
