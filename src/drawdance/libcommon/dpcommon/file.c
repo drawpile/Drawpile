@@ -78,7 +78,7 @@ bool DP_file_exists(const char *path)
 {
     DP_ASSERT(path);
 #ifdef _WIN32
-    return _access(path, 0) == 0;
+    return _access(path, 0) != -1;
 #else
     return access(path, F_OK) == 0;
 #endif
