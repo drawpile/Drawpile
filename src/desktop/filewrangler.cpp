@@ -68,7 +68,7 @@ QString FileWrangler::getOpenDebugDumpsPath() const
 {
 	return showOpenFileDialog(
 		tr("Open Debug Dump"), LastPath::DEBUG_DUMP,
-		utils::FileFormatOption::OpenBrushPack);
+		utils::FileFormatOption::OpenDebugDumps);
 }
 
 QString FileWrangler::getOpenBrushPackPath() const
