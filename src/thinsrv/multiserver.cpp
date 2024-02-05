@@ -536,9 +536,11 @@ JsonApiResult MultiServer::serverJsonApi(JsonApiMethod method, const QStringList
 		config::MandatoryLookup,
 #ifdef HAVE_WEBSOCKETS
 		config::AllowGuestWeb,
-		config::ExtAuthWeb,
 		config::AllowGuestWebSession,
+#	ifdef HAVE_LIBSODIUM
+		config::ExtAuthWeb,
 		config::ExtAuthWebSession,
+#	endif
 #endif
 		config::SessionUserLimit,
 	};
