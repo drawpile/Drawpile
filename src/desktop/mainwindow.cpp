@@ -1479,6 +1479,15 @@ void MainWindow::open(const QUrl& url)
 				m_playbackDialog->setAttribute(Qt::WA_DeleteOnClose);
 				m_playbackDialog->show();
 				m_playbackDialog->centerOnParent();
+				connect(
+					m_playbackDialog, &dialogs::PlaybackDialog::playbackToggled,
+					this, &MainWindow::setRecorderStatus);
+				connect(
+					m_playbackDialog, &dialogs::PlaybackDialog::destroyed, this,
+					[this](QObject *) {
+						m_playbackDialog = nullptr;
+						setRecorderStatus(false);
+					});
 			}
 		} else if(QRegularExpression{"\\.drawdancedump$", opt}.match(file).hasMatch()) {
 			DP_LoadResult result = m_doc->loadRecording(file, true);

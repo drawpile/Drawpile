@@ -252,6 +252,8 @@ void PlaybackDialog::setPlaying(bool playing)
 	if(m_autoplay) {
 		playNext(PLAY_MSECS);
 	}
+
+	emit playbackToggled(m_autoplay);
 }
 
 void PlaybackDialog::skipBeginning()
