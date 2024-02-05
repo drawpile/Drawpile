@@ -26,7 +26,9 @@
 #include "output.h"
 #include <ctype.h>
 #include <string.h>
-#ifdef _WIN32
+#if defined(DP_QT_IO)
+#    include "file_qt.h"
+#elif defined(_WIN32)
 #    include <io.h>
 #else
 #    include <unistd.h>
@@ -77,7 +79,9 @@ void *DP_file_slurp(const char *path, size_t *out_length)
 bool DP_file_exists(const char *path)
 {
     DP_ASSERT(path);
-#ifdef _WIN32
+#if defined(DP_QT_IO)
+    return DP_qfile_exists(path);
+#elif defined(_WIN32)
     return _access(path, 0) != -1;
 #else
     return access(path, F_OK) == 0;

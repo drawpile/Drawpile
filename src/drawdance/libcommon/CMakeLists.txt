@@ -72,6 +72,8 @@ target_compile_definitions(dpcommon PUBLIC DP_PERF_REALM=$<TARGET_PROPERTY:NAME>
 if(FILE_IO_IMPL STREQUAL "QT")
     target_compile_definitions(dpcommon PUBLIC DP_QT_IO)
     dp_target_sources(dpcommon
+        dpcommon/file_qt.cpp
+        dpcommon/file_qt.h
         dpcommon/input_qt.cpp
         dpcommon/input_qt.h
         dpcommon/output_qt.cpp
