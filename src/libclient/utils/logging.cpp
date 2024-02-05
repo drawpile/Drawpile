@@ -1,89 +1,92 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
+extern "C" {
+#include <dpcommon/threading.h>
+}
+#include "cmake-config/config.h"
 #include "libclient/utils/logging.h"
 #include "libshared/util/paths.h"
-#include "cmake-config/config.h"
-
-#include <QMessageLogContext>
 #include <QDateTime>
-
-#include <cstdio>
+#include <QFile>
+#include <QMessageLogContext>
 
 namespace utils {
 
-static FILE *logfile;
+static DP_Mutex *const logmutex = DP_mutex_new();
+static QFile *logfile;
 static QtMessageHandler defaultLogger;
 
-void logToFile(QtMsgType type, const QMessageLogContext &ctx, const QString &msg)
+void logToFile(
+	QtMsgType type, const QMessageLogContext &ctx, const QString &msg)
 {
-	const QByteArray m = msg.toLocal8Bit();
-	const QByteArray ts = QDateTime::currentDateTime().toString("hh:mm:ss").toLocal8Bit();
+	QString label;
 	switch(type) {
-		case QtDebugMsg:
-			fprintf(logfile, "[%s DEBUG] %s:%u (%s): %s\n", ts.constData(), ctx.file, ctx.line, ctx.function, m.constData());
-			break;
-		case QtInfoMsg:
-			fprintf(logfile, "[%s INFO] %s\n", ts.constData(), m.constData());
-			break;
-		case QtWarningMsg:
-			fprintf(logfile, "[%s WARNING] %s\n", ts.constData(), m.constData());
-			break;
-		case QtCriticalMsg:
-			fprintf(logfile, "[%s CRITICAL] %s:%u %s\n", ts.constData(), ctx.file, ctx.line, m.constData());
-			break;
-		case QtFatalMsg:
-			fprintf(logfile, "[%s FATAL] %s:%u %s\n", ts.constData(), ctx.file, ctx.line, m.constData());
-			break;
+	case QtDebugMsg:
+		label = QStringLiteral("DEBUG");
+		break;
+	case QtInfoMsg:
+		label = QStringLiteral("INFO");
+		break;
+	case QtWarningMsg:
+		label = QStringLiteral("WARNING");
+		break;
+	case QtCriticalMsg:
+		label = QStringLiteral("CRITICAL");
+		break;
+	case QtFatalMsg:
+		label = QStringLiteral("FATAL");
+		break;
+	default:
+		label = QStringLiteral("UNKNOWN");
+		break;
 	}
-	fflush(logfile);
+
+	QString ts = QDateTime::currentDateTime().toString("hh:mm:ss");
+	QByteArray line =
+		QStringLiteral("[%1 %2] %3\n").arg(ts, label, msg).toUtf8();
+
+	DP_MUTEX_MUST_LOCK(logmutex);
+	if(logfile) {
+		logfile->write(line);
+		logfile->flush();
+	}
+	DP_MUTEX_MUST_UNLOCK(logmutex);
+
 	defaultLogger(type, ctx, msg);
 }
 
-QByteArray logFilePath()
+QString logFilePath()
 {
 	return utils::paths::writablePath(
-				QStandardPaths::AppLocalDataLocation,
-				"logs/",
-				QStringLiteral("drawpile-%1-%2.log")
-					.arg(cmake_config::version())
-					.arg(QDateTime::currentDateTime().toString("yyyy-MM-dd"))
-			).toLocal8Bit();
-}
-
-void logMessage(int level, const char *file, uint32_t line, const char *msg)
-{
-	QMessageLogger l(file ? file : "", line, "");
-	switch(level) {
-	case 0: l.debug("%s", msg); break;
-	case 1: l.info("%s", msg); break;
-	case 2: l.warning("%s", msg); break;
-	case 3: l.critical("%s", msg); break;
-	}
+		QStandardPaths::AppLocalDataLocation, "logs/",
+		QStringLiteral("drawpile-%1-%2.log")
+			.arg(cmake_config::version())
+			.arg(QDateTime::currentDateTime().toString("yyyy-MM-dd")));
 }
 
 void enableLogFile(bool enable)
 {
-	if (enable == bool(logfile)) {
-		return;
-	}
-
-	if (logfile) {
+	if(enable && !logfile) {
+		QString logpath = logFilePath();
+		qInfo("Opening log file: %s", qUtf8Printable(logpath));
+		QFile *f = new QFile(logpath);
+		if(f->open(QIODevice::WriteOnly | QIODevice::Append)) {
+			DP_MUTEX_MUST_LOCK(logmutex);
+			logfile = f;
+			DP_MUTEX_MUST_UNLOCK(logmutex);
+			defaultLogger = qInstallMessageHandler(logToFile);
+			qInfo("File logging started.");
+		} else {
+			qWarning("Unable to open logfile");
+			delete f;
+		}
+	} else if(!enable && logfile) {
+		qInfo("File logging stopped.");
 		qInstallMessageHandler(defaultLogger);
-		fclose(logfile);
+		QFile *f = logfile;
+		DP_MUTEX_MUST_LOCK(logmutex);
 		logfile = nullptr;
-		return;
-	}
-
-	const QByteArray logpath = logFilePath();
-
-	qInfo("Opening log file: %s", logpath.constData());
-	logfile = fopen(logpath.constData(), "a");
-	if(!logfile) {
-		qWarning("Unable to open logfile");
-
-	} else {
-		defaultLogger = qInstallMessageHandler(logToFile);
-		qInfo("File logging started.");
+		DP_MUTEX_MUST_UNLOCK(logmutex);
+		delete f;
 	}
 }
 
