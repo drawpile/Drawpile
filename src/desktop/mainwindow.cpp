@@ -2072,6 +2072,7 @@ void MainWindow::hostSession(
 	login->setAnnounceUrl(announcementUrl);
 	login->setNsfm(nsfm);
 	if(useremote) {
+		utils::ScopedOverrideCursor waitCursor;
 		login->setInitialState(m_doc->canvas()->generateSnapshot(
 			true, DP_ACL_STATE_RESET_IMAGE_SESSION_RESET_FLAGS));
 	}
