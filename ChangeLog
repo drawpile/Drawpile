@@ -44,6 +44,7 @@ Unreleased Version 2.2.1-pre
  * Fix: Don't show user cursors while catchup dialog is open.
  * Feature: Add some bulk permission commands for (un)trusting and setting layer tiers, explanation available through /modhelp. Thanks Bluestrings for suggesting.
  * Fix: Don't gray out layer ACL tier settings when a layer is assigned to users exclusively, since those settings are not exclusive.
+ * Fix: Don't include stuff from before session reset when restarting a recording because of one. Thanks Meiren for reporting.
 
 2024-01-13 Version 2.2.0
  * Server Fix: Add --ssl-key-algorithm parameter to allow non-RSA SSL keys, defaulting to guessing the most common formats RSA and EC. Thanks Bluestrings for reporting.

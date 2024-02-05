@@ -927,7 +927,7 @@ static bool record_initial_message(void *user, DP_Message *msg)
 }
 
 static bool start_recording(DP_PaintEngine *pe, DP_RecorderType type,
-                            JSON_Value *header, char *path)
+                            JSON_Value *header, char *path, bool initial)
 {
     DP_Output *output = DP_file_output_new_from_path(path);
     if (!output) {
@@ -935,29 +935,36 @@ static bool start_recording(DP_PaintEngine *pe, DP_RecorderType type,
         return false;
     }
 
-    // To get a clean initial recording, we have to first spin down all
-    // queued messages. We send ourselves a RECORDER_START internal message
-    // and then block this thread (which must be the only thread interacting
-    // with the paint engine, maybe we should verify that somehow) until the
-    // paint thread gets to it.
-    DP_MUTEX_MUST_LOCK(pe->queue_mutex);
-    DP_message_queue_push_noinc(&pe->remote_queue,
-                                DP_msg_internal_recorder_start_new(0));
-    DP_SEMAPHORE_MUST_POST(pe->queue_sem);
-    DP_MUTEX_MUST_UNLOCK(pe->queue_mutex);
-    // The paint thread will post to this semaphore when it reaches our
-    // recorder start message.
-    DP_SEMAPHORE_MUST_WAIT(pe->record.start_sem);
-    DP_ASSERT(pe->remote_queue.used == 0);
+    DP_Recorder *r;
+    if (initial) {
+        // To get a clean initial recording, we have to first spin down all
+        // queued messages. We send ourselves a RECORDER_START internal message
+        // and then block this thread (which must be the only thread interacting
+        // with the paint engine, maybe we should verify that somehow) until the
+        // paint thread gets to it.
+        DP_MUTEX_MUST_LOCK(pe->queue_mutex);
+        DP_message_queue_push_noinc(&pe->remote_queue,
+                                    DP_msg_internal_recorder_start_new(0));
+        DP_SEMAPHORE_MUST_POST(pe->queue_sem);
+        DP_MUTEX_MUST_UNLOCK(pe->queue_mutex);
+        // The paint thread will post to this semaphore when it reaches our
+        // recorder start message.
+        DP_SEMAPHORE_MUST_WAIT(pe->record.start_sem);
+        DP_ASSERT(pe->remote_queue.used == 0);
 
-    // Now all queued messages have been handled. We can't just take the
-    // current canvas state from the canvas history though, since that would
-    // lose undo history and might contain state from local messages. So
-    // instead, we grab the oldest reachable state and then record the
-    // entire history since then.
-    DP_Recorder *r = DP_canvas_history_recorder_new(
-        pe->ch, type, header, pe->record.get_time_ms_fn,
-        pe->record.get_time_ms_user, output);
+        // Now all queued messages have been handled. We can't just take the
+        // current canvas state from the canvas history though, since that would
+        // lose undo history and might contain state from local messages. So
+        // instead, we grab the oldest reachable state and then record the
+        // entire history since then.
+        r = DP_canvas_history_recorder_new(pe->ch, type, header,
+                                           pe->record.get_time_ms_fn,
+                                           pe->record.get_time_ms_user, output);
+    }
+    else {
+        r = DP_recorder_new_inc(type, header, NULL, pe->record.get_time_ms_fn,
+                                pe->record.get_time_ms_user, output);
+    }
 
     // After initializing the state, we can set up local state and permissions.
     if (r) {
@@ -999,7 +1006,7 @@ static bool start_recording(DP_PaintEngine *pe, DP_RecorderType type,
 bool DP_paint_engine_recorder_start(DP_PaintEngine *pe, DP_RecorderType type,
                                     JSON_Value *header, const char *path)
 {
-    return start_recording(pe, type, header, DP_strdup(path));
+    return start_recording(pe, type, header, DP_strdup(path), true);
 }
 
 bool DP_paint_engine_recorder_stop(DP_PaintEngine *pe)
@@ -1648,7 +1655,7 @@ static void restart_recording(DP_PaintEngine *pe)
 
     DP_RecorderType type = DP_recorder_type(pe->record.recorder);
     DP_paint_engine_recorder_stop(pe);
-    if (path && !start_recording(pe, type, header, path)) {
+    if (path && !start_recording(pe, type, header, path, false)) {
         DP_warn("Can't restart recording: %s", DP_error());
     }
 }
