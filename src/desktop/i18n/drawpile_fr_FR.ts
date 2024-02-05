@@ -914,7 +914,7 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+175"/>
         <source>&amp;Select All</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Sélectionner Tout</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -955,57 +955,57 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location filename="../ui/layerproperties.ui" line="+17"/>
         <source>Layer Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Propriétés du Calque</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom&#x202f;:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Opacity:</source>
-        <translation type="unfinished">Opacité :</translation>
+        <translation type="unfinished">Opacité&#x202f;:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation>%</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Blending Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Mode de mélange&#x202f;:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Visibility:</source>
-        <translation type="unfinished"></translation>
+        <translation>Visibilité&#x202f;:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Visible to you</source>
-        <translation type="unfinished"></translation>
+        <translation>Visible pour moi</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Censor content</source>
-        <translation type="unfinished"></translation>
+        <translation>Censurer le contenu</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Collaboration:</source>
-        <translation type="unfinished"></translation>
+        <translation>Collaboration&#x202f;:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Default for new users</source>
-        <translation type="unfinished"></translation>
+        <translation>Utilisé par défault pour les nouveaux utilisateurs</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Created by:</source>
-        <translation type="unfinished"></translation>
+        <translation>Crée par&#x202f;:</translation>
     </message>
 </context>
 <context>
@@ -1013,7 +1013,7 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location filename="../ui/layoutsdialog.ui" line="+14"/>
         <source>Layouts</source>
-        <translation type="unfinished"></translation>
+        <translation>Agencements</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -1023,7 +1023,7 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+7"/>
         <source>Rename</source>
-        <translation type="unfinished"></translation>
+        <translation>Renommer</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1033,7 +1033,7 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+24"/>
         <source>Drawpile&apos;s dockers can be freely arranged and combined by holding Shift and dragging them at the top. You can save and restore your favorite arrangements here. Make sure your arrangement fits your resolution, otherwise some controls may be pushed off-screen.</source>
-        <translation type="unfinished"></translation>
+        <translation>Les fenêtres de drawpile peuvent être librement arrangés et combinés en clique-glissant sur leur partie supérieure tout en gardant la touche shift enfoncée. Vous pouvez sauvegarder et restaurer vos agencements favoris ici. Assurez-vous qu&apos;ils correspondent à votre résolution d&apos;écrans, car toute différence peut mettre hors écran certaines commandes.</translation>
     </message>
 </context>
 <context>
@@ -1067,87 +1067,87 @@ Amplitude Partielle&#x202f;: [%3, %4]</translation>
     <message>
         <location line="+52"/>
         <source>This session is password-protected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Cette session est protégée par un mot de passe.</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Password:</source>
-        <translation>Mot de passe :</translation>
+        <translation>Mot de passe&#x202f;:</translation>
     </message>
     <message>
         <location line="+183"/>
         <source>&lt;p&gt;This session has indicated that its contents are &lt;em&gt;not suitable for minors&lt;/em&gt; (NSFM).&lt;/p&gt;&lt;p&gt;&lt;strong&gt;You must be over the age of 18 and be allowed to consume adult content to proceed.&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Are you sure you want to join this session?&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Cette session a du contenu &lt;em&gt;qui n&apos;est pas approprié à un public mineur&lt;/em&gt;(NSFM). &lt;/p&gt;&lt;p&gt;&lt;strong&gt;Vous devez avoir 18 ans ou plus, et être autorisé à consulter du contenu destiné à un public mature. &lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Êtes-vous sûr de vouloir rejoindre cette session&#x202f;?&lt;/p&gt;</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>Show this warning again next time</source>
-        <translation type="unfinished"></translation>
+        <translation>Montrer cette avertissement la prochaine fois</translation>
     </message>
     <message>
         <location line="+67"/>
         <source>Continue without account</source>
-        <translation type="unfinished"></translation>
+        <translation>Continuer sans compte</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Log in with server account</source>
-        <translation type="unfinished"></translation>
+        <translation>Se connecter avec un compte serveur</translation>
     </message>
     <message>
         <location line="+90"/>
         <source>Continue with this account, but change the avatar, username or password.</source>
-        <translation type="unfinished"></translation>
+        <translation>Continuer avec ce compte, mais en changeant l&apos;avatar, le nom d&apos;utilisateur ou le mot de passe.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Edit and log in</source>
-        <translation type="unfinished"></translation>
+        <translation>Modifier et se connecter</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Don&apos;t use any of these accounts.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ne pas utiliser ces comptes.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Log in a different way</source>
-        <translation type="unfinished"></translation>
+        <translation>Se connecter autrement</translation>
     </message>
     <message>
         <location line="+43"/>
         <source>Log in with the selected account.</source>
-        <translation type="unfinished"></translation>
+        <translation>Se connecter avec le compte selectionné.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Log in with this account</source>
-        <translation type="unfinished"></translation>
+        <translation>Se connecter avec ce compte</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Forget this account.</source>
-        <translation type="unfinished"></translation>
+        <translation>Oublier ce compte.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Forget this account</source>
-        <translation type="unfinished"></translation>
+        <translation>Oublier ce compte</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Don&apos;t ask again unless the rules change</source>
-        <translation type="unfinished"></translation>
+        <translation>Ne plus me redemander, sauf modification des règles</translation>
     </message>
     <message>
         <location line="-578"/>
         <source>Show sessions not suitable for minors (NSFM)</source>
-        <translation type="unfinished"></translation>
+        <translation>Montrer les sessions non-adaptées aux mineurs (NSFM)</translation>
     </message>
     <message>
         <location line="+90"/>
         <source>Enter the &lt;b&gt;session password&lt;/b&gt;, &lt;i&gt;not&lt;/i&gt; your account password.</source>
-        <translation type="unfinished"></translation>
+        <translation>Entrer le &lt;b&gt;mot de passe de session&lt;/b&gt;, &lt;i&gt;et non&lt;/i&gt; votre mot de passe de compte.</translation>
     </message>
     <message>
         <location line="+86"/>
@@ -2220,7 +2220,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+28"/>
         <source>Onion Skins</source>
-        <translation type="unfinished"></translation>
+        <translation>Pelures d&apos;Onion</translation>
     </message>
     <message>
         <location line="-753"/>
@@ -9559,42 +9559,44 @@ Hex: %4</source>
         <source>There&apos;s no tracks yet.
 Add one using the ＋ button above
 or via Animation ▸ New Track.</source>
-        <translation type="unfinished"></translation>
+        <translation>Pas de pistes existantes.
+Pour en ajouter, appuyez sur le bouton +
+Ou par Animation ▸ Nouvelle Piste.</translation>
     </message>
     <message>
         <location line="+558"/>
         <source>Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Piste</translation>
     </message>
     <message>
         <location line="+57"/>
         <source>Rename Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Renommer la Piste</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Track Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom de la Piste</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Change Frame Count</source>
-        <translation type="unfinished"></translation>
+        <translation>Changer le Nombre d&apos;Images</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Frame Count (key frames beyond this point will be deleted)</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombre de Frames (les images-clé au delà de ce point seront effacées)</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Change Framerate</source>
-        <translation type="unfinished"></translation>
+        <translation>Changer la Fréquence d&apos;Images</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Frames Per Second (FPS)</source>
-        <translation type="unfinished"></translation>
+        <translation>Images Par Seconde (FPS)</translation>
     </message>
     <message>
         <location line="+330"/>
@@ -9622,17 +9624,17 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="-138"/>
         <source>&amp;Operator</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Opérateur</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Trusted</source>
-        <translation type="unfinished"></translation>
+        <translation>Fiable (&amp;T)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Lock</source>
-        <translation type="unfinished"></translation>
+        <translation>Verrouiller (&amp;L)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9642,7 +9644,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+4"/>
         <source>&amp;Undo</source>
-        <translation type="unfinished">Ann&amp;uler</translation>
+        <translation>Ann&amp;uler</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9652,22 +9654,22 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+4"/>
         <source>&amp;Kick</source>
-        <translation type="unfinished"></translation>
+        <translation>Renvoyer (&amp;K)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Kick &amp;&amp; Ba&amp;n</source>
-        <translation type="unfinished"></translation>
+        <translation>Renvoyer &amp;&amp; Exclure</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Private Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Message &amp;Privé</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show User &amp;Information</source>
-        <translation type="unfinished"></translation>
+        <translation>Montrer les &amp;Infos Utilisateur</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -9687,7 +9689,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="+5"/>
         <source>Registered</source>
-        <translation type="unfinished"></translation>
+        <translation>Enregistré</translation>
     </message>
 </context>
 <context>
@@ -9695,7 +9697,7 @@ or via Animation ▸ New Track.</source>
     <message>
         <location filename="../widgets/viewstatus.cpp" line="+72"/>
         <source>Canvas Rotation</source>
-        <translation type="unfinished">Rotation du canevas</translation>
+        <translation>Rotation de la Toile</translation>
     </message>
     <message>
         <location line="+40"/>
