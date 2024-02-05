@@ -160,7 +160,6 @@ Browse::Browse(QWidget *parent)
 		SessionListingModel::Owner, QHeaderView::Interactive);
 	header->setSectionResizeMode(
 		SessionListingModel::Uptime, QHeaderView::Interactive);
-	utils::initSortingHeader(header);
 	header->resizeSections(QHeaderView::ResizeToContents);
 	header->resizeSection(SessionListingModel::Uptime, 80);
 	header->resizeSection(SessionListingModel::Server, 125);
@@ -203,6 +202,13 @@ Browse::Browse(QWidget *parent)
 	settings.bindFilterNsfm(m_nsfmBox);
 	settings.bindFilterInactive(m_inactiveBox);
 	settings.bindFilterDuplicates(m_duplicatesBox);
+
+	utils::initSortingHeader(
+		header, settings.lastBrowseSortColumn(),
+		settings.lastBrowseSortDirection() == 0 ? Qt::AscendingOrder
+												: Qt::DescendingOrder);
+	connect(
+		header, &QHeaderView::sortIndicatorChanged, this, &Browse::saveSorting);
 
 	m_filteredSessions->setShowClosed(m_closedBox->isChecked());
 	m_filteredSessions->setShowPassworded(m_passwordBox->isChecked());
@@ -372,6 +378,13 @@ void Browse::cascadeSectionResize(int logicalIndex, int oldSize, int newSize)
 				logicalIndex, availableWidth - actualWidth);
 		}
 	}
+}
+
+void Browse::saveSorting(int logicalIndex, Qt::SortOrder order)
+{
+	desktop::settings::Settings &settings = dpApp().settings();
+	settings.setLastBrowseSortColumn(logicalIndex);
+	settings.setLastBrowseSortDirection(order == Qt::AscendingOrder ? 0 : 1);
 }
 
 void Browse::refresh()

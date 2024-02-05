@@ -81,6 +81,8 @@ SETTING(kineticScrollHideBars     , KineticScrollHideBars     , "settings/kineti
 SETTING(language                  , Language                  , "settings/language"                     , QString())
 SETTING(lastAnnounce              , LastAnnounce              , "history/announce"                      , false)
 SETTING(lastAvatar                , LastAvatar                , "history/avatar"                        , QString())
+SETTING(lastBrowseSortColumn      , LastBrowseSortColumn      , "history/browsesortcolumn"              , -1)
+SETTING(lastBrowseSortDirection   , LastBrowseSortDirection   , "history/browsesortdirection"           , 0)
 SETTING(lastFileOpenPath          , LastFileOpenPath          , "window/lastpath"                       , QString())
 SETTING(lastFileOpenPaths         , LastFileOpenPaths         , "window/lastpaths"                      , QVariantMap())
 SETTING(lastHostRemote            , LastHostRemote            , "history/hostremote"                    , true)

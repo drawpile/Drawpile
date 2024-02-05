@@ -312,9 +312,9 @@ bool setGeometryIfOnScreen(QWidget *widget, const QRect &geometry)
 	return false;
 }
 
-void initSortingHeader(QHeaderView *header)
+void initSortingHeader(QHeaderView *header, int sortColumn, Qt::SortOrder order)
 {
-	header->setSortIndicator(-1, Qt::AscendingOrder);
+	header->setSortIndicator(sortColumn, order);
 #if QT_VERSION >= QT_VERSION_CHECK(6, 1, 0)
 	header->setSortIndicatorClearable(true);
 #endif

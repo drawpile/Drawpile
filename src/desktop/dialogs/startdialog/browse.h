@@ -44,14 +44,15 @@ signals:
 	void addListServerUrlRequested(const QUrl &url);
 
 protected:
-    void resizeEvent(QResizeEvent *event) override;
+	void resizeEvent(QResizeEvent *event) override;
 
 private slots:
 	void updateListServers(const QVector<QVariantMap> &settingsListServers);
 	void periodicRefresh();
 	void showListingContextMenu(const QPoint &pos);
 	void joinIndex(const QModelIndex &index);
-    void cascadeSectionResize(int logicalIndex, int oldSize, int newSize);
+	void cascadeSectionResize(int logicalIndex, int oldSize, int newSize);
+	void saveSorting(int logicalIndex, Qt::SortOrder order);
 
 private:
 	static constexpr int REFRESH_INTERVAL_SECS = 60;

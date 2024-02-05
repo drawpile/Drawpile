@@ -100,7 +100,9 @@ bool setGeometryIfOnScreen(QWidget *widget, const QRect &geometry);
 
 // Sets header to sort by no column (as opposed to the first one) and enables
 // clearing the sort indicator if the Qt version is >= 6.1.0.
-void initSortingHeader(QHeaderView *header);
+void initSortingHeader(
+	QHeaderView *header, int sortColumn = -1,
+	Qt::SortOrder order = Qt::AscendingOrder);
 
 void initKineticScrolling(QAbstractScrollArea *scrollArea);
 bool isKineticScrollingBarsHidden();
