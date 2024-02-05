@@ -49,6 +49,7 @@ public:
 	ListingSessionFilterProxyModel(QObject *parent = nullptr);
 
 protected:
+	bool lessThan(const QModelIndex &a, const QModelIndex &b) const override;
 	int nsfmRole() const override;
 	int passwordedRole() const override;
 	int closedRole() const override;

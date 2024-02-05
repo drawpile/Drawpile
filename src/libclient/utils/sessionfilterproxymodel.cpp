@@ -99,6 +99,20 @@ ListingSessionFilterProxyModel::ListingSessionFilterProxyModel(QObject *parent)
 {
 }
 
+bool ListingSessionFilterProxyModel::lessThan(
+	const QModelIndex &a, const QModelIndex &b) const
+{
+	QAbstractItemModel *model = sourceModel();
+	if(a.model() == model && b.model() == model &&
+	   !model->data(a, SessionListingModel::IsListingRole).toBool() &&
+	   !model->data(b, SessionListingModel::IsListingRole).toBool()) {
+		int ai = model->data(a, SessionListingModel::SortKeyRole).toInt();
+		int bi = model->data(b, SessionListingModel::SortKeyRole).toInt();
+		return sortOrder() == Qt::AscendingOrder ? ai < bi : ai > bi;
+	}
+	return QSortFilterProxyModel::lessThan(a, b);
+}
+
 int ListingSessionFilterProxyModel::nsfmRole() const
 {
 	return SessionListingModel::IsNsfwRole;

@@ -47,6 +47,7 @@ Unreleased Version 2.2.1-pre
  * Fix: Don't include stuff from before session reset when restarting a recording because of one. Thanks Meiren for reporting.
  * Fix: Don't overwrite recordings on Windows if the file names contain non-ASCII symbols. Thanks Meiren for reporting.
  * Fix: Make log file on Windows log non-ASCII symbols properly.
+ * Fix: Don't reorder listing servers when sorting by title in the browse tab.
 
 2024-01-13 Version 2.2.0
  * Server Fix: Add --ssl-key-algorithm parameter to allow non-RSA SSL keys, defaulting to guessing the most common formats RSA and EC. Thanks Bluestrings for reporting.
