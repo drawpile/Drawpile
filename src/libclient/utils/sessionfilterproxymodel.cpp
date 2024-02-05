@@ -1,16 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "libclient/utils/sessionfilterproxymodel.h"
 #include "libclient/net/loginsessions.h"
 #include "libclient/net/sessionlistingmodel.h"
 
 SessionFilterProxyModel::SessionFilterProxyModel(QObject *parent)
-	: QSortFilterProxyModel{parent}
-	, m_showPassworded{true}
-	, m_showNsfw{true}
-	, m_showClosed{true}
-	, m_showInactive{true}
-	, m_showDuplicates{true}
+	: QSortFilterProxyModel(parent)
 {
 }
 
@@ -29,10 +23,10 @@ void SessionFilterProxyModel::setShowPassworded(bool show)
 	}
 }
 
-void SessionFilterProxyModel::setShowNsfw(bool show)
+void SessionFilterProxyModel::setShowNsfm(bool show)
 {
-	if(m_showNsfw != show) {
-		m_showNsfw = show;
+	if(m_showNsfm != show) {
+		m_showNsfm = show;
 		invalidateFilter();
 	}
 }
@@ -64,43 +58,25 @@ void SessionFilterProxyModel::setShowDuplicates(bool show)
 bool SessionFilterProxyModel::filterAcceptsRow(
 	int sourceRow, const QModelIndex &sourceParent) const
 {
-	int nsfwRole, pwRole, closedRole, inactiveRole;
-	if(sourceModel()->inherits(
-		   SessionListingModel::staticMetaObject.className())) {
-		// Always show the top level items (listing servers)
-		if(!sourceParent.isValid()) {
-			return true;
-		}
-		nsfwRole = SessionListingModel::IsNsfwRole;
-		pwRole = SessionListingModel::IsPasswordedRole;
-		closedRole = SessionListingModel::IsClosedRole;
-		inactiveRole = SessionListingModel::IsInactiveRole;
-	} else if(sourceModel()->inherits(
-				  net::LoginSessionModel::staticMetaObject.className())) {
-		nsfwRole = net::LoginSessionModel::NsfmRole;
-		pwRole = net::LoginSessionModel::NeedPasswordRole;
-		closedRole = net::LoginSessionModel::ClosedRole;
-		inactiveRole = net::LoginSessionModel::InactiveRole;
-	} else {
-		qWarning("Unknown session filter source model");
-		return QSortFilterProxyModel::filterAcceptsRow(sourceRow, sourceParent);
+	if(alwaysShowTopLevel() && !sourceParent.isValid()) {
+		return true;
 	}
 
 	const QModelIndex index = sourceModel()->index(sourceRow, 0, sourceParent);
 
-	if(!m_showNsfw && index.data(nsfwRole).toBool()) {
+	if(!m_showNsfm && index.data(nsfmRole()).toBool()) {
 		return false;
 	}
 
-	if(!m_showPassworded && index.data(pwRole).toBool()) {
+	if(!m_showPassworded && index.data(passwordedRole()).toBool()) {
 		return false;
 	}
 
-	if(!m_showClosed && index.data(closedRole).toBool()) {
+	if(!m_showClosed && index.data(closedRole()).toBool()) {
 		return false;
 	}
 
-	if(!m_showInactive && index.data(inactiveRole).toBool()) {
+	if(!m_showInactive && index.data(inactiveRole()).toBool()) {
 		return false;
 	}
 
@@ -113,13 +89,86 @@ bool SessionFilterProxyModel::filterAcceptsRow(
 
 bool SessionFilterProxyModel::isDuplicate(const QModelIndex &index) const
 {
+	Q_UNUSED(index);
+	return false;
+}
+
+
+ListingSessionFilterProxyModel::ListingSessionFilterProxyModel(QObject *parent)
+	: SessionFilterProxyModel(parent)
+{
+}
+
+int ListingSessionFilterProxyModel::nsfmRole() const
+{
+	return SessionListingModel::IsNsfwRole;
+}
+
+int ListingSessionFilterProxyModel::passwordedRole() const
+{
+	return SessionListingModel::IsPasswordedRole;
+}
+
+int ListingSessionFilterProxyModel::closedRole() const
+{
+	return SessionListingModel::IsClosedRole;
+}
+
+int ListingSessionFilterProxyModel::inactiveRole() const
+{
+	return SessionListingModel::IsInactiveRole;
+}
+
+bool ListingSessionFilterProxyModel::isDuplicate(const QModelIndex &index) const
+{
 	SessionListingModel *sessionListingModel =
-		qobject_cast<SessionListingModel *>(sourceModel());
-	if(sessionListingModel) {
-		QModelIndex primaryIndex = sessionListingModel->primaryIndexOfUrl(
-			index.data(SessionListingModel::UrlRole).toUrl());
-		return primaryIndex.isValid() && primaryIndex != index;
-	} else {
-		return false;
-	}
+		static_cast<SessionListingModel *>(sourceModel());
+	QModelIndex primaryIndex = sessionListingModel->primaryIndexOfUrl(
+		index.data(SessionListingModel::UrlRole).toUrl());
+	return primaryIndex.isValid() && primaryIndex != index;
+}
+
+bool ListingSessionFilterProxyModel::alwaysShowTopLevel() const
+{
+	return true;
+}
+
+
+LoginSessionFilterProxyModel::LoginSessionFilterProxyModel(QObject *parent)
+	: SessionFilterProxyModel(parent)
+{
+}
+
+int LoginSessionFilterProxyModel::nsfmRole() const
+{
+	return net::LoginSessionModel::NsfmRole;
+}
+
+int LoginSessionFilterProxyModel::passwordedRole() const
+{
+	return net::LoginSessionModel::NeedPasswordRole;
+}
+
+int LoginSessionFilterProxyModel::closedRole() const
+{
+	return net::LoginSessionModel::ClosedRole;
+}
+
+int LoginSessionFilterProxyModel::inactiveRole() const
+{
+	return net::LoginSessionModel::InactiveRole;
+}
+
+bool LoginSessionFilterProxyModel::isDuplicate(const QModelIndex &index) const
+{
+	SessionListingModel *sessionListingModel =
+		static_cast<SessionListingModel *>(sourceModel());
+	QModelIndex primaryIndex = sessionListingModel->primaryIndexOfUrl(
+		index.data(SessionListingModel::UrlRole).toUrl());
+	return primaryIndex.isValid() && primaryIndex != index;
+}
+
+bool LoginSessionFilterProxyModel::alwaysShowTopLevel() const
+{
+	return false;
 }

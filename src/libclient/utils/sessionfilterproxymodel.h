@@ -1,23 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #ifndef SESSIONFILTERPROXYMODEL_H
 #define SESSIONFILTERPROXYMODEL_H
-
 #include <QSortFilterProxyModel>
 
-/**
- * A custom SortFilter proxy model that has special support for
- *  - SessionListingModel
- *  - LoginSessionModel
- *
- * Otherwise works like normal QSortFilterProxyModel
- */
-class SessionFilterProxyModel final : public QSortFilterProxyModel {
+class SessionFilterProxyModel : public QSortFilterProxyModel {
 	Q_OBJECT
 public:
 	SessionFilterProxyModel(QObject *parent = nullptr);
 
-	bool showNsfw() const { return m_showNsfw; }
+	bool showNsfw() const { return m_showNsfm; }
 	bool showPassworded() const { return m_showPassworded; }
 	bool showClosed() const { return m_showClosed; }
 	bool showDuplicates() const { return m_showDuplicates; }
@@ -25,7 +16,7 @@ public:
 	void refreshDuplicates();
 
 public slots:
-	void setShowNsfw(bool show);
+	void setShowNsfm(bool show);
 	void setShowPassworded(bool show);
 	void setShowClosed(bool show);
 	void setShowInactive(bool show);
@@ -35,14 +26,49 @@ protected:
 	bool filterAcceptsRow(
 		int sourceRow, const QModelIndex &sourceParent) const override;
 
-private:
-	bool isDuplicate(const QModelIndex &index) const;
+	virtual int nsfmRole() const = 0;
+	virtual int passwordedRole() const = 0;
+	virtual int closedRole() const = 0;
+	virtual int inactiveRole() const = 0;
 
-	bool m_showPassworded;
-	bool m_showNsfw;
-	bool m_showClosed;
-	bool m_showInactive;
-	bool m_showDuplicates;
+	virtual bool isDuplicate(const QModelIndex &index) const = 0;
+
+	virtual bool alwaysShowTopLevel() const = 0;
+
+private:
+	bool m_showPassworded = true;
+	bool m_showNsfm = true;
+	bool m_showClosed = true;
+	bool m_showInactive = true;
+	bool m_showDuplicates = true;
+};
+
+class ListingSessionFilterProxyModel final : public SessionFilterProxyModel {
+	Q_OBJECT
+public:
+	ListingSessionFilterProxyModel(QObject *parent = nullptr);
+
+protected:
+	int nsfmRole() const override;
+	int passwordedRole() const override;
+	int closedRole() const override;
+	int inactiveRole() const override;
+	bool isDuplicate(const QModelIndex &index) const override;
+	bool alwaysShowTopLevel() const override;
+};
+
+class LoginSessionFilterProxyModel final : public SessionFilterProxyModel {
+	Q_OBJECT
+public:
+	LoginSessionFilterProxyModel(QObject *parent = nullptr);
+
+protected:
+	int nsfmRole() const override;
+	int passwordedRole() const override;
+	int closedRole() const override;
+	int inactiveRole() const override;
+	bool isDuplicate(const QModelIndex &index) const override;
+	bool alwaysShowTopLevel() const override;
 };
 
 #endif

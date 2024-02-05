@@ -49,7 +49,7 @@ struct LoginDialog::Private {
 	QPointer<net::LoginHandler> loginHandler;
 	AvatarListModel *avatars;
 	AccountListModel *accounts;
-	SessionFilterProxyModel *sessions;
+	LoginSessionFilterProxyModel *sessions;
 	Ui_LoginDialog *ui;
 
 	QPushButton *okButton;
@@ -115,14 +115,14 @@ struct LoginDialog::Private {
 
 		ui->showNsfw->setEnabled(
 			parentalcontrols::level() == parentalcontrols::Level::Unrestricted);
-		sessions = new SessionFilterProxyModel(dlg);
+		sessions = new LoginSessionFilterProxyModel(dlg);
 		sessions->setFilterCaseSensitivity(Qt::CaseInsensitive);
 		sessions->setFilterKeyColumn(-1);
 
 		auto &settings = dpApp().settings();
 		settings.bindFilterNsfm(ui->showNsfw);
 		settings.bindFilterNsfm(
-			sessions, &SessionFilterProxyModel::setShowNsfw);
+			sessions, &SessionFilterProxyModel::setShowNsfm);
 
 		if(settings.parentalControlsLocked().isEmpty()) {
 			settings.bindShowNsfmWarningOnJoin(ui->nsfmConfirmAgainBox);

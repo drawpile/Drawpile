@@ -14,7 +14,7 @@ class QLineEdit;
 class QMenu;
 class QTimer;
 class QUrl;
-class SessionFilterProxyModel;
+class ListingSessionFilterProxyModel;
 class SessionListingModel;
 
 namespace sessionlisting {
@@ -75,7 +75,7 @@ private:
 	QCheckBox *m_duplicatesBox;
 	widgets::SpanAwareTreeView *m_listing;
 	SessionListingModel *m_sessions;
-	SessionFilterProxyModel *m_filteredSessions;
+	ListingSessionFilterProxyModel *m_filteredSessions;
 	QMenu *m_listingContextMenu;
 	QAction *m_joinAction;
 	QTimer *m_refreshTimer;

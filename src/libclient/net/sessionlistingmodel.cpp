@@ -99,7 +99,8 @@ QVariant SessionListingModel::data(const QModelIndex &index, int role) const
 	if (!index.isValid())
 		return QVariant();
 
-	const auto &listing = m_listings.at(listingIndex(index));
+	int i = listingIndex(index);
+	const auto &listing = m_listings.at(i);
 
 	if (isRootItem(index)) {
 		if (index.column() != Message) {
@@ -110,8 +111,9 @@ QVariant SessionListingModel::data(const QModelIndex &index, int role) const
 		case Qt::DisplayRole:
 			return squashWhitespace(listing.name);
 		case Qt::ToolTipRole:
-		case SortKeyRole:
 			return listing.name;
+		case SortKeyRole:
+			return i;
 		case Qt::DecorationRole:
 			return m_icons[listing.name];
 		case Qt::FontRole: {

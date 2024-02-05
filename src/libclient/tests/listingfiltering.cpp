@@ -24,7 +24,7 @@ private slots:
 		SessionListingModel listmodel;
 		listmodel.setList("test", "example.com", testlist);
 
-		SessionFilterProxyModel filtered;
+		ListingSessionFilterProxyModel filtered;
 		filtered.setSourceModel(&listmodel);
 		filtered.setFilterKeyColumn(-1);
 
@@ -34,7 +34,7 @@ private slots:
 		QCOMPARE(listmodel.rowCount(root), 6);
 		QCOMPARE(filtered.rowCount(filteredRoot), 6);
 
-		filtered.setShowNsfw(false);
+		filtered.setShowNsfm(false);
 		QCOMPARE(filtered.rowCount(filteredRoot), 5);
 
 		filtered.setShowPassworded(false);
@@ -42,7 +42,7 @@ private slots:
 
 		// Standard filtering can be combined with the new options too
 		filtered.setFilterFixedString("5");
-		filtered.setShowNsfw(true);
+		filtered.setShowNsfm(true);
 		QCOMPARE(filtered.rowCount(filteredRoot), 1);
 	}
 
@@ -57,14 +57,14 @@ private slots:
 		listmodel.updateSession(loginsession("test5", false, true));
 		listmodel.updateSession(loginsession("test6", false, false));
 
-		SessionFilterProxyModel filtered;
+		LoginSessionFilterProxyModel filtered;
 		filtered.setFilterKeyColumn(-1);
 		filtered.setSourceModel(&listmodel);
 
 		QCOMPARE(listmodel.rowCount(), 6);
 		QCOMPARE(filtered.rowCount(), 6);
 
-		filtered.setShowNsfw(false);
+		filtered.setShowNsfm(false);
 		QCOMPARE(filtered.rowCount(), 5);
 
 		filtered.setShowPassworded(false);
@@ -72,7 +72,7 @@ private slots:
 
 		// Standard filtering can be combined with the new options too
 		filtered.setFilterFixedString("5");
-		filtered.setShowNsfw(true);
+		filtered.setShowNsfm(true);
 		QCOMPARE(filtered.rowCount(), 1);
 	}
 

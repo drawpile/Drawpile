@@ -137,12 +137,12 @@ Browse::Browse(QWidget *parent)
 	}
 #endif
 
-	m_filteredSessions = new SessionFilterProxyModel{this};
+	m_filteredSessions = new ListingSessionFilterProxyModel(this);
 	m_filteredSessions->setSourceModel(m_sessions);
 	m_filteredSessions->setFilterCaseSensitivity(Qt::CaseInsensitive);
 	m_filteredSessions->setSortCaseSensitivity(Qt::CaseInsensitive);
 	m_filteredSessions->setFilterKeyColumn(-1);
-	m_filteredSessions->setSortRole(Qt::UserRole);
+	m_filteredSessions->setSortRole(SessionListingModel::SortKeyRole);
 
 	m_listing->setModel(m_filteredSessions);
 	m_listing->expandAll();
@@ -206,7 +206,7 @@ Browse::Browse(QWidget *parent)
 
 	m_filteredSessions->setShowClosed(m_closedBox->isChecked());
 	m_filteredSessions->setShowPassworded(m_passwordBox->isChecked());
-	m_filteredSessions->setShowNsfw(m_nsfmBox->isChecked());
+	m_filteredSessions->setShowNsfm(m_nsfmBox->isChecked());
 	m_filteredSessions->setShowInactive(m_inactiveBox->isChecked());
 	m_filteredSessions->setShowDuplicates(m_duplicatesBox->isChecked());
 
@@ -218,7 +218,7 @@ Browse::Browse(QWidget *parent)
 		&SessionFilterProxyModel::setShowPassworded);
 	connect(
 		m_nsfmBox, &QAbstractButton::toggled, m_filteredSessions,
-		&SessionFilterProxyModel::setShowNsfw);
+		&SessionFilterProxyModel::setShowNsfm);
 	connect(
 		m_closedBox, &QAbstractButton::toggled, m_filteredSessions,
 		&SessionFilterProxyModel::setShowClosed);
