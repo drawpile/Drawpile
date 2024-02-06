@@ -2400,7 +2400,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+1"/>
         <source>Track Onion Skin</source>
-        <translation>Spur-Florpost (Onion Skin)</translation>
+        <translation>Spur-Zwiebelhaut</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2763,7 +2763,7 @@ Möchten Sie wirklich die Aufnahme von Debug-Dumps starten?</translation>
     <message>
         <location line="+34"/>
         <source>Onion Skins</source>
-        <translation>Florpost/Onion Skins</translation>
+        <translation>Zwiebelhaut</translation>
     </message>
     <message>
         <location line="-349"/>
@@ -9663,7 +9663,7 @@ Hex: %4</translation>
     <message>
         <location line="+2"/>
         <source>Toggle onion skin</source>
-        <translation>Florpost (Onion Skin) umschalten</translation>
+        <translation>Zwiebelhaut umschalten</translation>
     </message>
     <message>
         <location line="+129"/>
