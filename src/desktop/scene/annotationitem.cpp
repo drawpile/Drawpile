@@ -132,12 +132,11 @@ void AnnotationItem::paintHiddenBorder(QPainter *painter)
 	if(!m_showborder && !m_doc.isEmpty())
 		return;
 
-	const qreal devicePixelRatio = qApp->devicePixelRatio();
 	QColor highlightColor = QApplication::palette().color(QPalette::Highlight);
 	highlightColor.setAlpha(255);
 
 	QPen bpen(m_highlight && m_showborder ? Qt::DashLine : Qt::DotLine);
-	bpen.setWidth(devicePixelRatio);
+	bpen.setWidth(painter->device()->devicePixelRatioF());
 	bpen.setCosmetic(true);
 	bpen.setColor(highlightColor);
 	painter->setPen(bpen);

@@ -95,6 +95,13 @@ void ColorWheel::setWheelWidth(unsigned int w)
 
 void ColorWheel::paintEvent(QPaintEvent * )
 {
+    qreal dpr = devicePixelRatioF();
+    if(p->device_pixel_ratio != dpr) {
+        p->device_pixel_ratio = dpr;
+        p->hue_ring = QPixmap();
+        p->inner_selector = QImage();
+    }
+
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
     painter.translate(geometry().width()/2,geometry().height()/2);

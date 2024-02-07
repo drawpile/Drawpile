@@ -63,7 +63,7 @@ protected:
 	void mouseDoubleClickEvent(QMouseEvent*) override;
 
 private:
-	void updatePreview();
+	void updatePreview(qreal dpr);
 	void updateBackground();
 
 	QPixmap m_background;
@@ -79,6 +79,7 @@ private:
 	int m_fillFeatherRadius = 0;
 	int m_fillMode = 0;
 	bool m_needUpdate = false;
+	int m_lastDpr = 1.0;
 };
 
 }

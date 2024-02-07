@@ -60,6 +60,7 @@ public:
     QColor (*rainbow_from_hue)(qreal);
     int max_size = 128;
     bool mirrored_selector = false;
+    qreal device_pixel_ratio = 1.0;
 
     Private(ColorWheel *widget)
         : w(widget), hue(0), sat(0), val(0),
@@ -132,7 +133,7 @@ public:
 
     void render_square()
     {
-        int width = qMin<int>(square_size(), max_size) * w->devicePixelRatioF();
+        int width = qMin<int>(square_size(), max_size) * device_pixel_ratio;
         init_buffer(QSize(width, width));
 
         for ( int y = 0; y < width; ++y )
@@ -154,7 +155,7 @@ public:
         QSizeF size = selector_size();
         if ( size.height() > max_size )
             size *= max_size / size.height();
-        size *= w->devicePixelRatioF();
+        size *= device_pixel_ratio;
 
         qreal ycenter = size.height()/2;
 
@@ -229,8 +230,7 @@ public:
     /// Updates the outer ring that displays the hue selector
     void render_ring()
     {
-        qreal dpr = w->devicePixelRatioF();
-        qreal outer = outer_radius() * dpr;
+        qreal outer = outer_radius() * device_pixel_ratio;
         hue_ring = QPixmap(outer*2,outer*2);
         hue_ring.fill(Qt::transparent);
         QPainter painter(&hue_ring);
@@ -256,7 +256,7 @@ public:
         painter.drawEllipse(QPointF(0,0),outer,outer);
 
         painter.setBrush(Qt::transparent);//palette().background());
-        qreal inner = inner_radius() * dpr;
+        qreal inner = inner_radius() * device_pixel_ratio;
         painter.drawEllipse(QPointF(0,0),inner, inner);
     }
 

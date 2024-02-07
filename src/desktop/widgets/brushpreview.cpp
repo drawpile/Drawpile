@@ -92,8 +92,10 @@ void BrushPreview::changeEvent(QEvent *event)
 
 void BrushPreview::paintEvent(QPaintEvent *event)
 {
-	if(m_needUpdate)
-		updatePreview();
+	qreal dpr = devicePixelRatioF();
+	if(m_needUpdate || m_lastDpr != dpr) {
+		updatePreview(dpr);
+	}
 
 	QPainter painter(this);
 #ifdef DESIGNER_PLUGIN
@@ -102,7 +104,6 @@ void BrushPreview::paintEvent(QPaintEvent *event)
 	painter.drawTiledPixmap(rect, m_background);
 #else
 	QRect rect = event->rect();
-	qreal dpr = devicePixelRatioF();
 	painter.drawPixmap(
 		rect, m_brushPreview.pixmap(),
 		QRect(
@@ -128,15 +129,16 @@ void BrushPreview::updateBackground()
 	p.fillRect(w, w, w, w, alt);
 }
 
-void BrushPreview::updatePreview()
+void BrushPreview::updatePreview(qreal dpr)
 {
 #ifndef DESIGNER_PLUGIN
-	const QSize size = contentsRect().size() * devicePixelRatioF();
+	const QSize size = contentsRect().size() * dpr;
 	m_brushPreview.reset(size);
 	m_brush.renderPreview(m_brushPreview, m_shape);
 	m_brushPreview.paint(m_background);
 #endif
 	m_needUpdate = false;
+	m_lastDpr = dpr;
 }
 
 void BrushPreview::mouseDoubleClickEvent(QMouseEvent*)

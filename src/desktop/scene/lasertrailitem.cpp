@@ -17,7 +17,6 @@ LaserTrailItem::LaserTrailItem(uint8_t owner, int persistenceMs, const QColor &c
 	, m_lastModified(QDateTime::currentMSecsSinceEpoch())
 	, m_persistence(persistenceMs)
 {
-	m_pen.setWidth(qApp->devicePixelRatio() * 3);
 	m_pen.setCapStyle(Qt::RoundCap);
 	m_pen.setCosmetic(true);
 	m_pen.setColor(color);
@@ -47,13 +46,10 @@ void LaserTrailItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 	painter->save();
 	painter->setRenderHint(QPainter::Antialiasing, true);
 
-	if(m_blink < ANIM_TIME / 2.0f) {
-		QPen pen = m_pen;
-		pen.setWidth(pen.width() + 1);
-		painter->setPen(pen);
-	} else {
-		painter->setPen(m_pen);
-	}
+	m_pen.setWidth(
+		painter->device()->devicePixelRatioF() *
+		(m_blink < ANIM_TIME / 2.0f ? 4.0 : 3.0));
+	painter->setPen(m_pen);
 
 	painter->drawPolyline(m_points.constData(), m_points.size());
 

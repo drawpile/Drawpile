@@ -169,7 +169,7 @@ void SelectionItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 	painter->setClipRect(boundingRect().adjusted(-1, -1, 1, 1));
 
 	QPen pen;
-	pen.setWidth(qApp->devicePixelRatio());
+	pen.setWidth(painter->device()->devicePixelRatioF());
 	pen.setCosmetic(true);
 
 	// Rectangular selections should always be *drawn* as closed

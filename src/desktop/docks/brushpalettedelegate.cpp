@@ -16,8 +16,11 @@ void BrushPaletteDelegate::paint(
 	QItemDelegate::paint(painter, option, index);
 	if(index.isValid()) {
 		int id = index.data(brushes::BrushPresetModel::IdRole).toInt();
+		qreal dpr = painter->device()->devicePixelRatioF();
+		QPair<int, qreal> key(id, dpr);
 		m_lock.lockForRead();
-		QHash<int, QPixmap>::const_iterator it = m_cache.find(id);
+		QHash<QPair<int, qreal>, QPixmap>::const_iterator it =
+			m_cache.find(key);
 		QPixmap pixmap;
 		if(it == m_cache.constEnd()) {
 			m_lock.unlock();
@@ -25,12 +28,11 @@ void BrushPaletteDelegate::paint(
 			pixmap = index.data(brushes::BrushPresetModel::ThumbnailRole)
 						 .value<QPixmap>();
 			if(!pixmap.isNull()) {
-				qreal dpr = painter->device()->devicePixelRatioF();
 				pixmap = pixmap.scaled(
 					index.data(Qt::SizeHintRole).toSize() * dpr,
 					Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 			}
-			m_cache.insert(id, pixmap);
+			m_cache.insert(key, pixmap);
 		} else {
 			pixmap = it.value();
 		}

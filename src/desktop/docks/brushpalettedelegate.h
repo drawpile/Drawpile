@@ -3,6 +3,7 @@
 #define DESKTOP_DOCKS_BRUSHPALLETEDELEGATE_H
 #include <QHash>
 #include <QItemDelegate>
+#include <QPair>
 #include <QPixmap>
 #include <QReadWriteLock>
 
@@ -21,10 +22,10 @@ public:
 		const override;
 
 public slots:
-    void clearCache();
+	void clearCache();
 
 private:
-	mutable QHash<int, QPixmap> m_cache;
+	mutable QHash<QPair<int, qreal>, QPixmap> m_cache;
 	mutable QReadWriteLock m_lock;
 };
 
