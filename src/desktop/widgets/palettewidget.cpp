@@ -281,6 +281,7 @@ void PaletteWidget::paintEvent(QPaintEvent *event)
 	painter.setBrush(palette().base());
 	QPen p(palette().text().color());
 	p.setCosmetic(true);
+	p.setWidth(painter.device()->devicePixelRatioF());
 	painter.setPen(p);
 	painter.drawRect(swatch);
 
