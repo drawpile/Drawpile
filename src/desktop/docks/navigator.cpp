@@ -190,7 +190,7 @@ void NavigatorView::refreshCache()
 
 	m_model->paintEngine()->withPixmap([this](const QPixmap &pixmap) {
 		if(!pixmap.isNull()) {
-			QSize navigatorSize = size();
+			QSize navigatorSize = size() * devicePixelRatioF();
 			if(navigatorSize != m_cachedSize) {
 				m_cachedSize = navigatorSize;
 				m_cache = QPixmap{
@@ -248,7 +248,7 @@ void NavigatorView::paintEvent(QPaintEvent *)
 
 	QPen pen(QColor(96, 191, 96));
 	pen.setCosmetic(true);
-	pen.setWidth(2);
+	pen.setWidth(2.0 * devicePixelRatioF());
 	painter.setPen(pen);
 	painter.setCompositionMode(QPainter::RasterOp_SourceXorDestination);
 
