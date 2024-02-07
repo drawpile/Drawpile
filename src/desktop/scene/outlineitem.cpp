@@ -53,7 +53,7 @@ void OutlineItem::paint(
 		painter->save();
 		QPen pen(QColor(96, 191, 96));
 		pen.setCosmetic(true);
-		pen.setWidthF(m_outlineWidth);
+		pen.setWidthF(m_outlineWidth * painter->device()->devicePixelRatioF());
 		painter->setPen(pen);
 		painter->setCompositionMode(QPainter::RasterOp_SourceXorDestination);
 		if(m_square) {
