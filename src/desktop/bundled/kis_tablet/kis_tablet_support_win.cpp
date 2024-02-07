@@ -737,7 +737,7 @@ bool KisWindowsTabletSupport::translateTabletPacketEvent()
     static qreal dpr = 1.0;
     auto activeWindow = qApp->activeWindow();
     if (activeWindow) {
-        dpr = activeWindow->devicePixelRatio();
+        dpr = activeWindow->devicePixelRatioF();
     }
 
 
