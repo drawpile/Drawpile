@@ -1003,7 +1003,10 @@ bool Document::copyFromLayer(int layer)
 #endif
 
 	bool found;
-	const auto img = m_canvas->selectionToImage(layer, &found);
+	QImage img = m_canvas->selectionToImage(layer, &found);
+	if(!img.isNull() && layer == 0) {
+		fillBackground(img);
+	}
 	data->setImageData(img);
 
 	// Store also original coordinates
@@ -1033,18 +1036,25 @@ bool Document::copyFromLayer(int layer)
 bool Document::saveSelection(const QString &path)
 {
 	QImage img = m_canvas->selectionToImage(0);
+	if(img.isNull()) {
+		return false;
+	} else {
+		fillBackground(img);
+		return img.save(path);
+	}
+}
 
+void Document::fillBackground(QImage &img)
+{
 	// Fill transparent pixels (i.e. area outside the selection)
 	// with the canvas background color.
 	// TODO background pattern support
-	const auto bg = m_canvas->paintEngine()->backgroundColor();
+	QColor bg = m_canvas->paintEngine()->backgroundColor();
 	if(bg.isValid()) {
 		QPainter p(&img);
 		p.setCompositionMode(QPainter::CompositionMode_DestinationOver);
 		p.fillRect(0, 0, img.width(), img.height(), bg);
 	}
-
-	return img.save(path);
 }
 
 void Document::copyVisible()

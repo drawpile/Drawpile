@@ -309,6 +309,7 @@ private:
 	void setRoomcode(const QString &roomcode);
 
 	bool copyFromLayer(int layer);
+	void fillBackground(QImage &img);
 
 	void autosave();
 
