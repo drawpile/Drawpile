@@ -112,6 +112,11 @@ public:
 		return m_server ? m_server->hostCertificate() : QSslCertificate();
 	}
 
+	bool isSelfSignedCertificate() const
+	{
+		return m_server && m_server->isSelfSignedCertificate();
+	}
+
 	/**
 	 * @brief Does the server support persistent sessions?
 	 *

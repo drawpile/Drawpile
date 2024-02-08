@@ -30,7 +30,8 @@ public:
 	NetStatus(QWidget *parent);
 
 	void setSecurityLevel(
-		net::Server::Security level, const QSslCertificate &certificate);
+		net::Server::Security level, const QSslCertificate &certificate,
+		bool isSelfSigned);
 
 	bool isLocalHost() const { return m_isLocalHost; }
 	bool haveRemoteAddress() const { return m_haveRemoteAddress; }

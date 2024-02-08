@@ -182,27 +182,47 @@ void NetStatus::setRoomcode(const QString &roomcode)
 }
 
 void NetStatus::setSecurityLevel(
-	net::Server::Security level, const QSslCertificate &certificate)
+	net::Server::Security level, const QSslCertificate &certificate,
+	bool isSelfSigned)
 {
 	QString iconname;
 	QString tooltip;
-	switch(level) {
-	case net::Server::NO_SECURITY:
-		break;
-	case net::Server::NEW_HOST:
-		iconname = "security-medium";
-		tooltip = tr("A previously unvisited host");
-		break;
+	if(isSelfSigned) {
+		switch(level) {
+		case net::Server::NO_SECURITY:
+			break;
 
-	case net::Server::KNOWN_HOST:
-		iconname = "security-medium";
-		tooltip = tr("Host certificate has not changed since the last visit");
-		break;
+		case net::Server::NEW_HOST:
+			iconname = "security-medium";
+			tooltip = tr("Self-signed certificate");
+			break;
 
-	case net::Server::TRUSTED_HOST:
-		iconname = "security-high";
-		tooltip = tr("This is a trusted host");
-		break;
+		case net::Server::KNOWN_HOST:
+			iconname = "security-medium";
+			tooltip = tr("Known self-signed certificate");
+			break;
+
+		case net::Server::TRUSTED_HOST:
+			iconname = "security-high";
+			tooltip = tr("Pinned self-signed certificate");
+			break;
+		}
+	} else {
+		switch(level) {
+		case net::Server::NO_SECURITY:
+			break;
+
+		case net::Server::NEW_HOST:
+		case net::Server::KNOWN_HOST:
+			iconname = "security-high";
+			tooltip = tr("Valid certificate");
+			break;
+
+		case net::Server::TRUSTED_HOST:
+			iconname = "security-high";
+			tooltip = tr("Pinned valid certificate");
+			break;
+		}
 	}
 
 	if(iconname.isEmpty()) {
@@ -240,7 +260,7 @@ void NetStatus::hostDisconnected()
 	m_copyaction->setEnabled(false);
 	m_discoverIp->setVisible(false);
 
-	setSecurityLevel(net::Server::NO_SECURITY, QSslCertificate());
+	setSecurityLevel(net::Server::NO_SECURITY, QSslCertificate(), false);
 
 	if(m_netstats)
 		m_netstats->setDisconnected();

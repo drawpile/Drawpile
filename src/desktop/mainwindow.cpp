@@ -2391,7 +2391,9 @@ void MainWindow::onServerLogin(bool join, const QString &joinPassword)
 	m_initialCatchup = join;
 	net::Client *client = m_doc->client();
 	m_netstatus->loggedIn(client->sessionUrl(), joinPassword);
-	m_netstatus->setSecurityLevel(client->securityLevel(), client->hostCertificate());
+	m_netstatus->setSecurityLevel(
+		client->securityLevel(), client->hostCertificate(),
+		client->isSelfSignedCertificate());
 	m_view->setEnabled(true);
 	m_view->hideDisconnectedWarning();
 	m_sessionSettings->setPersistenceEnabled(client->serverSuppotsPersistence());

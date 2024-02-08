@@ -70,6 +70,8 @@ public:
 	 */
 	virtual QSslCertificate hostCertificate() const = 0;
 
+	bool isSelfSignedCertificate() const { return m_selfSignedCertificate; }
+
 	/**
 	 * @brief Does the server support persistent sessions?
 	 */

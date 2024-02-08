@@ -3,6 +3,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Don't mess up strokes when hitting undo while still actively drawing them. Thanks Sinamer for reporting.
  * Fix: Properly reset angle when undoing a point with the curve tool.
  * Server Feature: Log more a more detailed reason when a client is disconnected, since something like a login error can have many causes.
+ * Feature: Indicate the difference between self-signed and "real" server certificates.
 
 2024-02-18 Version 2.2.1
  * Fix: Default to previous directory when saving a fresh file. Thanks Crow for reporting.
