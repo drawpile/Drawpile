@@ -44,8 +44,8 @@ private:
 
 	void importCertificates(CertificateStoreModel *model);
 
-	void trustCertificates(
-		CertificateStoreModel *model, const QModelIndexList &indexes);
+	void pinCertificates(
+		CertificateStoreModel *model, const QModelIndexList &indexes, bool pin);
 
 	void
 	viewCertificate(CertificateStoreModel *model, const QModelIndex &index);

@@ -264,7 +264,8 @@ void LoginHandler::expectHello(const ServerReply &msg)
 	} else {
 		// If this is a trusted host, it should always be in secure mode
 		if(getCertFile(TRUSTED_HOSTS, m_address.host()).exists()) {
-			failLogin(tr("Secure mode not enabled on a trusted host!"));
+			failLogin(tr(
+				"Secure mode not enabled on a host with pinned certificate!"));
 			return;
 		}
 
@@ -957,7 +958,7 @@ void LoginHandler::tlsStarted()
 			failLogin(tr("Invalid SSL certificate for host %1").arg(hostname));
 
 		} else if(trustedcerts.at(0) != cert) {
-			failLogin(tr("Certificate of a trusted server has changed!"));
+			failLogin(tr("Pinned certificate has changed!"));
 
 		} else {
 			// Certificate matches explicitly trusted one, proceed with login

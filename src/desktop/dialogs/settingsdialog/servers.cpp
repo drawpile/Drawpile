@@ -68,20 +68,42 @@ void Servers::initKnownHosts(QVBoxLayout *form)
 
 	actions->addStretch();
 
-	auto *trustButton = new QPushButton(tr("Trust selected hosts"));
-	trustButton->setAutoDefault(false);
-	trustButton->setEnabled(knownHosts->selectionModel()->hasSelection());
+	widgets::GroupedToolButton *pinButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupLeft);
+	//: This refers to "certificate pinning", a technical term.
+	pinButton->setText(tr("Pin"));
+	pinButton->setToolTip(tr("Pin selected certificates"));
+	pinButton->setEnabled(knownHosts->selectionModel()->hasSelection());
 	connect(
 		knownHosts->selectionModel(), &QItemSelectionModel::selectionChanged,
-		trustButton, [=] {
-			trustButton->setEnabled(
+		pinButton, [=] {
+			pinButton->setEnabled(knownHosts->selectionModel()->hasSelection());
+		});
+	connect(pinButton, &QPushButton::clicked, knownHosts, [=] {
+		pinCertificates(
+			knownHostsModel, knownHosts->selectionModel()->selectedIndexes(),
+			true);
+	});
+	actions->addWidget(pinButton);
+
+	widgets::GroupedToolButton *unpinButton =
+		new widgets::GroupedToolButton(widgets::GroupedToolButton::GroupRight);
+	//: This refers to "certificate pinning", a technical term.
+	unpinButton->setText(tr("Unpin"));
+	unpinButton->setToolTip(tr("Unpin selected certificates"));
+	unpinButton->setEnabled(knownHosts->selectionModel()->hasSelection());
+	connect(
+		knownHosts->selectionModel(), &QItemSelectionModel::selectionChanged,
+		unpinButton, [=] {
+			unpinButton->setEnabled(
 				knownHosts->selectionModel()->hasSelection());
 		});
-	connect(trustButton, &QPushButton::clicked, knownHosts, [=] {
-		trustCertificates(
-			knownHostsModel, knownHosts->selectionModel()->selectedIndexes());
+	connect(unpinButton, &QPushButton::clicked, knownHosts, [=] {
+		pinCertificates(
+			knownHostsModel, knownHosts->selectionModel()->selectedIndexes(),
+			false);
 	});
-	actions->addWidget(trustButton);
+	actions->addWidget(unpinButton);
 
 	connect(
 		knownHosts, &QListView::doubleClicked, this,
@@ -168,7 +190,7 @@ askToContinue(const QString &title, const QString &message, QWidget *parent)
 
 void Servers::importCertificates(CertificateStoreModel *model)
 {
-	const auto title = tr("Import trusted certificates");
+	const auto title = tr("Import certificates");
 
 	const auto paths = FileWrangler(this).getImportCertificatePaths(title);
 
@@ -182,15 +204,16 @@ void Servers::importCertificates(CertificateStoreModel *model)
 	model->submit();
 }
 
-void Servers::trustCertificates(
-	CertificateStoreModel *model, const QModelIndexList &indexes)
+void Servers::pinCertificates(
+	CertificateStoreModel *model, const QModelIndexList &indexes, bool pin)
 {
 	for(const auto &index : indexes) {
-		model->setData(index, true, CertificateStoreModel::TrustedRole);
+		model->setData(index, pin, CertificateStoreModel::TrustedRole);
 	}
 	if(!model->submit()) {
 		execWarning(
-			tr("Trust selected hosts"),
+			pin ? tr("Pin selected certificates")
+				: tr("Unpin selected certificates"),
 			tr("Could not save changes to known hosts: %1")
 				.arg(model->lastError()),
 			this);
