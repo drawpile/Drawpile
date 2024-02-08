@@ -694,7 +694,7 @@ to 64x64 pixels.</source>
         <location line="+52"/>
         <location line="+5"/>
         <source>Untitled</source>
-        <translation type="unfinished">بدون عنوان</translation>
+        <translation>بدون عنوان</translation>
     </message>
     <message>
         <location line="+68"/>
@@ -1712,7 +1712,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>Pic&amp;k From Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>اختار من الشاشه</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2033,7 +2033,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>New Layer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>مجموعة طبقات جديده</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="+308"/>
@@ -2181,12 +2181,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Next Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>المفتاح التالي</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Previous Key Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>المفتاح السابق</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3288,7 +3288,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+7"/>
         <source>Allow joining from the web browser</source>
-        <translation type="unfinished"></translation>
+        <translation>السماح بالانضمام من متصفح الويب</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -5374,55 +5374,55 @@ Negative values do the reverse</source>
         <location line="+2"/>
         <source>Follows the stroke direction to offset the dabs to one side.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>يتبع اتجاه رسمه فرشاه لتعويض اللمسات إلى جانب واحد.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Follows the tilt direction to offset the dabs to one side. Requires Tilt.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>يتبع اتجاه الميل لتعويض اللمسات إلى جانب واحد. يتطلب الميل.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Follows the view orientation to offset the dabs to one side.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>يتبع اتجاه العرض لتعويض اللمسات إلى جانب واحد.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Follows the stroke direction to offset the dabs, but to both sides of the stroke.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>يتبع اتجاه رسمه فرشاه, لتعويض اللمسات، ولكن على جانبي رسمه فرشاه.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Follows the tilt direction to offset the dabs, but to both sides of the stroke. Requires Tilt.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>يتبع اتجاه الميل لإزاحة اللمسات، ولكن على جانبي رسمه فرشه. يتطلب الميل.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Follows the view orientation to offset the dabs, but to both sides of the stroke.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>يتبع اتجاه العرض لإزاحة اللمسات، ولكن على جانبي الرسم.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change the Angular Offset angle from the default, which is 90 degrees.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>قم بتغيير زاوية الإزاحة الزاوية من الزاوية الافتراضية، وهي 90 درجة.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Logarithmic multiplier for X, Y, and Angular Offset settings.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>المضاعف اللوغاريتمي لإعدادات X وY وAngular Offset.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Strength of posterization, reducing number of colors based on the &quot;Posterization levels&quot; setting, while retaining alpha.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>قوة التتالي، وتقليل عدد الألوان بناءً على إعداد &quot;مستويات التتالي&quot;، مع الاحتفاظ بألفا.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5430,7 +5430,9 @@ Negative values do the reverse</source>
 0.05 = 5 levels, 0.2 = 20 levels, etc.
 Values above 0.5 may not be noticeable.</source>
         <comment>mypaintsetting</comment>
-        <translation type="unfinished"></translation>
+        <translation>عدد مستويات التتالي (مقسمة على 100).
+0.05 = 5 مستويات، 0.2 = 20 مستوى، إلخ.
+قد لا تكون القيم الأعلى من 0.5 ملحوظة.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -5439,7 +5441,9 @@ Values above 0.5 may not be noticeable.</source>
 1.0 only spectral mixing</source>
         <comment>mypaintsetting</comment>
         <extracomment>If this string is difficult to translate, feel free to change it to something more descriptive. Just try to be succinct and consistent.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>وضع خلط الألوان الطيفي الطرحي.
+0.0 لا يوجد خلط طيفي
+1.0 الخلط الطيفي فقط</translation>
     </message>
 </context>
 <context>
@@ -5447,113 +5451,113 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/canvasshortcutsdialog.cpp" line="+24"/>
         <source>Key Combination</source>
-        <translation type="unfinished"></translation>
+        <translation>تركيبة المفاتيح</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mouse Button</source>
-        <translation type="unfinished"></translation>
+        <translation>زر الفأرة</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Mouse Wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>عجلة الفأرة</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Constraint Key</source>
-        <translation type="unfinished"></translation>
+        <translation>مفتاح القيد</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Pan Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>اللوحه قلم</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Rotate Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>لف اللوحه</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Ratchet Rotate Canvas</source>
         <extracomment>This refers to rotating the canvas in 15° steps.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Ratchet لف اللوحه</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Zoom Canvas</source>
-        <translation type="unfinished"></translation>
+        <translation>تكبير اللوحه</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pick Color</source>
-        <translation type="unfinished"></translation>
+        <translation>اختار اللون</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Pick Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>اختر الطبقه</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Change Brush Size</source>
-        <translation type="unfinished"></translation>
+        <translation>غير حجم الفرشه</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Constrain Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>أداة التقييد</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Center Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>أداة المركز</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Constrain and Center Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>أداة التقييد والمركز</translation>
     </message>
     <message>
         <location line="+98"/>
         <source>A regular key combination on the canvas without further mouse or pen inputs. Example: holding Space to pan, without having to click as well.</source>
-        <translation type="unfinished"></translation>
+        <translation>مجموعة مفاتيح عادية على اللوحة بدون المزيد من المدخلات بالماوس أو القلم. على سبيل المثال: اضغط مع الاستمرار على مسافة للتحريك، دون الحاجة إلى الضغطأيضًا.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Pressing a mouse or pen button, optionally while also holding down keys. Putting the pen down is like a left click. Example: holding space and pressing left click to pan.</source>
-        <translation type="unfinished"></translation>
+        <translation>الضغط على زر الماوس أو القلم، بشكل اختياري أثناء الضغط باستمرار على المفاتيح. إن وضع القلم لأسفل يشبه النقر بزر الماوس الأيسر. على سبيل المثال: اضغط مع الاستمرار على مسافة ثم اضغط على الزر الأيسر للتحريك.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Turning the mouse wheel or some input device that acts like one, optionally while also holding down keys. Example: scrolling to zoom the canvas.</source>
-        <translation type="unfinished"></translation>
+        <translation>تدوير عجلة الماوس أو بعض أجهزة الإدخال التي تعمل زي كده، بشكل اختياري أثناء الضغط باستمرار على المفاتيح. مثال: لف عجله الماوس لتكبير اللوحة.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Keys to hold down to make rectangle, line or selection tools behave differently. Constrain means to e.g. keep the aspect ratio, center means to e.g. center shapes around the origin.</source>
-        <translation type="unfinished"></translation>
+        <translation>المفاتيح التي يتم الضغط عليها باستمرار لجعل أدوات المستطيل أو الخط أو التحديد تعمل بشكل مختلف. تقييد يعني على سبيل المثال. الحفاظ على نسبة العرض إلى الارتفاع، المركز يعني على سبيل المثال. مركز الأشكال حول الأصل.</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Unknown type %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>نوع غير معروف %1.</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>&lt;b&gt;Conflict:&lt;/b&gt; the existing shortcut for &apos;%1&apos; will be overwritten if you proceed.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;تعارض:&lt;/b&gt; سيتم استبدال الاختصار الموجود لـ &apos;%1&apos; إذا تابعت.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>You can&apos;t assign a shortcut to a Left Click without any keys since that would interfere with drawing.</source>
-        <translation type="unfinished"></translation>
+        <translation>لا يمكنك تعيين اختصار للنقر بزر الماوس الأيسر بدون أي مفاتيح لأن ذلك قد يتعارض مع الرسم.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Assign a shortcut to proceed.</source>
-        <translation type="unfinished"></translation>
+        <translation>قم بتعيين اختصار للمتابعة.</translation>
     </message>
 </context>
 <context>
@@ -5561,7 +5565,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/certificateview.cpp" line="+25"/>
         <source>SSL Certificate for %1</source>
-        <translation type="unfinished"></translation>
+        <translation>شهادة SSL لـ %1</translation>
     </message>
 </context>
 <context>
@@ -5569,79 +5573,79 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/curvepresetdialog.cpp" line="+32"/>
         <source>Use</source>
-        <translation type="unfinished"></translation>
+        <translation>استعمل</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Cancel</source>
-        <translation type="unfinished">الغي</translation>
+        <translation>الغي</translation>
     </message>
     <message>
         <location line="+3"/>
         <location line="+71"/>
         <source>Rename</source>
-        <translation type="unfinished">تسمى</translation>
+        <translation>تسمى</translation>
     </message>
     <message>
         <location line="-68"/>
         <source>Delete</source>
-        <translation type="unfinished">امسح</translation>
+        <translation>امسح</translation>
     </message>
     <message>
         <location line="+68"/>
         <source>Save</source>
-        <translation type="unfinished">احفظ</translation>
+        <translation>احفظ</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Save Curve</source>
-        <translation type="unfinished"></translation>
+        <translation>حفظ المنحنى</translation>
     </message>
     <message>
         <location line="+0"/>
         <location line="+15"/>
         <source>Name</source>
-        <translation type="unfinished">اسم</translation>
+        <translation>اسم</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Rename Curve</source>
-        <translation type="unfinished"></translation>
+        <translation>إعادة تسمية المنحنى</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Delete Curve</source>
-        <translation type="unfinished"></translation>
+        <translation>حذف المنحنى</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Really delete curve &apos;%1&apos;?</source>
-        <translation type="unfinished"></translation>
+        <translation>هل تريد حقًا حذف المنحنى &apos;%1&apos;؟</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Smooth Out</source>
-        <translation type="unfinished"></translation>
+        <translation>سلس خارج</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Smooth In</source>
-        <translation type="unfinished"></translation>
+        <translation>سلس داخلا</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Smooth</source>
-        <translation type="unfinished"></translation>
+        <translation>سلس</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Linear</source>
-        <translation type="unfinished"></translation>
+        <translation>خطي</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Current (unsaved)</source>
-        <translation type="unfinished"></translation>
+        <translation>الحالي (غير محفوظ)</translation>
     </message>
 </context>
 <context>
@@ -5649,12 +5653,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/dumpplaybackdialog.cpp" line="+24"/>
         <source>done</source>
-        <translation type="unfinished"></translation>
+        <translation>انتهيت</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>undone</source>
-        <translation type="unfinished"></translation>
+        <translation>التراجع</translation>
     </message>
     <message>
         <location line="+1"/>
