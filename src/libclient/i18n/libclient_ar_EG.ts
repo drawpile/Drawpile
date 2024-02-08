@@ -1484,13 +1484,13 @@
     <message numerus="yes">
         <location line="+2"/>
         <source>%n actively drawing user(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n المستخدمي نشطاء</numerusform>
+            <numerusform>%n مستخدم نشيط</numerusform>
+            <numerusform>%n مستخدمين نشطاء</numerusform>
+            <numerusform>%n مستخدمين نشطاء</numerusform>
+            <numerusform>%n مستخدمين نشطاء</numerusform>
+            <numerusform>%n مستخدمين نشطاء</numerusform>
         </translation>
     </message>
     <message>
@@ -1511,7 +1511,7 @@
     <message>
         <location line="+1"/>
         <source>Active</source>
-        <translation type="unfinished"></translation>
+        <translation>نشطاء</translation>
     </message>
 </context>
 <context>
@@ -1519,32 +1519,32 @@
     <message>
         <location filename="../net/server.cpp" line="+99"/>
         <source>Network read error</source>
-        <translation type="unfinished"></translation>
+        <translation>خطأ في قراءة الشبكة</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Network read error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>خطأ في قراءة الشبكة: %1</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Network write error</source>
-        <translation type="unfinished"></translation>
+        <translation>خطأ في الكتابة على الشبكة</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Network write error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>خطأ في الكتابة على الشبكة: %1</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Network connection timed out</source>
-        <translation type="unfinished"></translation>
+        <translation>انتهت مهلة اتصال الشبكة</translation>
     </message>
     <message>
         <location line="+54"/>
         <source>Received invalid data</source>
-        <translation type="unfinished">تم استلام بيانات غير صالحة</translation>
+        <translation>تم استلام بيانات غير صالحة</translation>
     </message>
 </context>
 <context>
