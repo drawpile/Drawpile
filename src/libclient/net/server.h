@@ -151,6 +151,7 @@ private:
 	LoginHandler *m_loginstate = nullptr;
 	QString m_error, m_errorcode;
 	Security m_securityLevel = NO_SECURITY;
+	bool m_selfSignedCertificate = false;
 	bool m_localDisconnect = false;
 	bool m_supportsPersistence = false;
 	bool m_supportsCryptBanImpEx = false;

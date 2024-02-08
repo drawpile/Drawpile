@@ -877,10 +877,11 @@ void LoginHandler::tlsError(const QList<QSslError> &errors)
 	// TODO this was optimized for self signed certificates back end Let's
 	// Encrypt didn't exist. This should be fixed to better support actual CAs.
 	bool isIp = QHostAddress().setAddress(m_address.host());
-	bool isSelfSigned =
-		looksLikeSelfSignedCertificate(m_server->hostCertificate(), errors);
+	if(looksLikeSelfSignedCertificate(m_server->hostCertificate(), errors)) {
+		m_server->m_selfSignedCertificate = true;
+	}
 	qCDebug(lcDpLogin) << errors.size() << "SSL error(s), self-signed"
-					   << isSelfSigned;
+					   << m_server->m_selfSignedCertificate;
 
 	for(const QSslError &e : errors) {
 		if(e.error() == QSslError::SelfSignedCertificate) {
@@ -899,7 +900,8 @@ void LoginHandler::tlsError(const QList<QSslError> &errors)
 				<< int(e.error()) << e.errorString();
 
 		} else if(
-			e.error() == QSslError::CertificateUntrusted && isSelfSigned) {
+			e.error() == QSslError::CertificateUntrusted &&
+			m_server->m_selfSignedCertificate) {
 			// "The root CA certificate is not trusted for this purpose" is an
 			// error that spontaneously manifested in macOS and then way later
 			// in Windows. We ignore it on self-signed certificates.
@@ -978,10 +980,16 @@ void LoginHandler::tlsStarted()
 		}
 
 		if(knowncerts.at(0) != cert) {
-			// Certificate mismatch!
-			emit certificateCheckNeeded(cert, knowncerts.at(0));
+			// Certificate mismatch. If this is a self-signed certificate, ask
+			// if the user wants to accept the new one, since those shouldn't
+			// change on its own. If it's a "real" one, it's just a renewal.
 			m_server->m_securityLevel = Server::NEW_HOST;
-			return;
+			if(m_server->m_selfSignedCertificate) {
+				emit certificateCheckNeeded(cert, knowncerts.at(0));
+				return;
+			} else {
+				saveCert(m_certFile, cert);
+			}
 
 		} else {
 			m_server->m_securityLevel = Server::KNOWN_HOST;
