@@ -15,6 +15,7 @@
 #include <QVector>
 
 class QImage;
+class QSslCertificate;
 
 namespace net {
 
@@ -456,6 +457,8 @@ private:
 
 	static LoginMethod parseLoginMethod(const QString &method);
 	static QString loginMethodToString(LoginMethod method);
+	static bool looksLikeSelfSignedCertificate(
+		const QSslCertificate &cert, const QList<QSslError> &errors);
 	static QJsonObject makeClientInfoKwargs();
 	static QString getSid();
 	static QString generateTamperSid();

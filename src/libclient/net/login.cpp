@@ -877,7 +877,8 @@ void LoginHandler::tlsError(const QList<QSslError> &errors)
 	// TODO this was optimized for self signed certificates back end Let's
 	// Encrypt didn't exist. This should be fixed to better support actual CAs.
 	bool isIp = QHostAddress().setAddress(m_address.host());
-	bool isSelfSigned = m_server->hostCertificate().isSelfSigned();
+	bool isSelfSigned =
+		looksLikeSelfSignedCertificate(m_server->hostCertificate(), errors);
 	qCDebug(lcDpLogin) << errors.size() << "SSL error(s), self-signed"
 					   << isSelfSigned;
 
@@ -1170,6 +1171,20 @@ QString LoginHandler::loginMethodToString(LoginMethod method)
 	}
 	qCWarning(lcDpLogin, "Unhandled login method %d", int(method));
 	return QString();
+}
+
+bool LoginHandler::looksLikeSelfSignedCertificate(
+	const QSslCertificate &cert, const QList<QSslError> &errors)
+{
+	// The isSelfSigned member function only checks if the issuer and subject
+	// are identical and logs an annoying warning to that effect in the process.
+	// So prefer checking if we got a self-signed error instead to avoid that.
+	for(const QSslError &e : errors) {
+		if(e.error() == QSslError::SelfSignedCertificate) {
+			return true;
+		}
+	}
+	return cert.isSelfSigned();
 }
 
 QJsonObject LoginHandler::makeClientInfoKwargs()
