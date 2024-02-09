@@ -187,6 +187,10 @@ static int command_run(int argc, char **argv, int offset, DP_TestRegistry *R,
     struct DP_TestRunParams params;
     if (parse_run_params(&params, argc, argv, offset)) {
         DP_TestContext context = {NULL, "«", "»", stdout, stderr, 0, 0, user};
+        unsigned int seed = (unsigned int)time(NULL);
+        DP_test_note(&context, "srand seed is %u", seed);
+        srand(seed);
+
         for (int i = 0; i < R->used; ++i) {
             DP_Test *test = &R->tests[i];
             if (should_run_test(&params, test)) {
@@ -264,7 +268,6 @@ static void free_registry(DP_TestRegistry *R)
 int DP_test_main(int argc, char **argv, DP_TestRegisterFn register_fn,
                  void *user)
 {
-    srand((unsigned int)time(NULL));
     DP_cpu_support_init();
 
     DP_TestRegistry registry = {0, 0, NULL, user};
