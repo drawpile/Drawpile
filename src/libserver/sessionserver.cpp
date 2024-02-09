@@ -319,20 +319,49 @@ JsonApiResult SessionServer::callSessionJsonApi(JsonApiMethod method, const QStr
 JsonApiResult SessionServer::callUserJsonApi(JsonApiMethod method, const QStringList &path, const QJsonObject &request)
 {
 	Q_UNUSED(request)
-
-	if(path.size()!=0)
-		return JsonApiNotFound();
-
 	if(method == JsonApiMethod::Get) {
-		QJsonArray userlist;
-		for(const ThinServerClient *c : m_clients)
-			userlist << c->description();
+		switch(path.size()) {
+		case 0: {
+			QJsonArray userlist;
+			for(const ThinServerClient *c : m_clients) {
+				userlist.append(c->description());
+			}
+			return {JsonApiResult::Ok, QJsonDocument(userlist)};
+		}
+		case 1: {
+			ThinServerClient *c = searchClientByPathUid(path[0]);
+			if(c) {
+				return {JsonApiResult::Ok, QJsonDocument(c->description())};
+			} else {
+				return JsonApiNotFound();
+			}
+		}
+		default:
+			return JsonApiNotFound();
+		}
 
-		return {JsonApiResult::Ok, QJsonDocument(userlist)};
+	} else if(method == JsonApiMethod::Delete) {
+		if(path.size() == 1) {
+			ThinServerClient *c = searchClientByPathUid(path[0]);
+			if(c) {
+				return c->jsonApiKick();
+			}
+		}
+		return JsonApiNotFound();
 
 	} else {
 		return JsonApiBadMethod();
 	}
+}
+
+ThinServerClient *SessionServer::searchClientByPathUid(const QString &uid)
+{
+	for(ThinServerClient *c : m_clients) {
+		if(uid == c->uid()) {
+			return c;
+		}
+	}
+	return nullptr;
 }
 
 }

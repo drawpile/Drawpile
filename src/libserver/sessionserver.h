@@ -172,6 +172,8 @@ private:
 	SessionHistory *initHistory(const QString &id, const QString alias, const protocol::ProtocolVersion &protocolVersion, const QString &founder);
 	void initSession(Session *session);
 
+	ThinServerClient *searchClientByPathUid(const QString &uid);
+
 	sessionlisting::Announcements *m_announcements;
 	ServerConfig *m_config;
 	TemplateLoader *m_tpls;

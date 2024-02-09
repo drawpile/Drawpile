@@ -47,6 +47,14 @@ public:
 	Session *session();
 
 	/**
+	 * @brief Get a reasonably unique id for this client
+	 *
+	 * @return A string to identify this client by, currently just uses
+	 * <code>this</code> converted to a hex string.
+	 */
+	QString uid() const;
+
+	/**
 	 * @brief Get the context ID of the client
 	 *
 	 * This is initially zero until the login process is complete.
@@ -250,6 +258,8 @@ public:
 	JsonApiResult callJsonApi(
 		JsonApiMethod method, const QStringList &path,
 		const QJsonObject &request);
+
+	JsonApiResult jsonApiKick();
 
 	/**
 	 * @brief Divert incoming messages to a holding buffer

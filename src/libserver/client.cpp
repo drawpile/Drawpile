@@ -235,6 +235,7 @@ net::Message Client::joinMessage() const
 QJsonObject Client::description(bool includeSession) const
 {
 	QJsonObject u;
+	u["uid"] = uid();
 	u["id"] = id();
 	u["name"] = username();
 	u["ip"] = peerAddress().toString();
@@ -264,10 +265,7 @@ JsonApiResult Client::callJsonApi(
 	}
 
 	if(method == JsonApiMethod::Delete) {
-		disconnectClient(Client::DisconnectionReason::Kick, "server operator");
-		QJsonObject o;
-		o["status"] = "ok";
-		return JsonApiResult{JsonApiResult::Ok, QJsonDocument(o)};
+		return jsonApiKick();
 
 	} else if(method == JsonApiMethod::Update) {
 		QString msg = request["message"].toString();
@@ -306,6 +304,14 @@ JsonApiResult Client::callJsonApi(
 	}
 }
 
+JsonApiResult Client::jsonApiKick()
+{
+	disconnectClient(
+		Client::DisconnectionReason::Kick, "the server administrator");
+	QJsonObject o{{QStringLiteral("status"), QStringLiteral("ok")}};
+	return JsonApiResult{JsonApiResult::Ok, QJsonDocument(o)};
+}
+
 void Client::setSession(Session *session)
 {
 	d->session = session;
@@ -314,6 +320,11 @@ void Client::setSession(Session *session)
 Session *Client::session()
 {
 	return d->session.data();
+}
+
+QString Client::uid() const
+{
+	return QString::number(reinterpret_cast<uintptr_t>(this), 16);
 }
 
 void Client::setId(uint8_t id)

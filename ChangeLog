@@ -52,6 +52,7 @@ Unreleased Version 2.2.1-pre
  * Fix: Only ask for confirmation when a self-signed TLS certificate changes, not when a "real" one renews. Thanks Bluestrings and Pepper for reporting.
  * Feature: Fill background for copying the merged image with a non-rectangular selection. Thanks Bluestrings for suggesting.
  * Fix: Make bezier curve tool generate smooth curves at small sizes, rather than getting jaggy. Thanks Crow for reporting.
+ * Server Feature: Allow server owners to kick users not connected to a session.
 
 2024-01-13 Version 2.2.0
  * Server Fix: Add --ssl-key-algorithm parameter to allow non-RSA SSL keys, defaulting to guessing the most common formats RSA and EC. Thanks Bluestrings for reporting.
