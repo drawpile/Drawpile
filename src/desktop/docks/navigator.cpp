@@ -359,6 +359,7 @@ Navigator::Navigator(QWidget *parent)
 	setTitleBarWidget(titlebar);
 
 	m_view = new NavigatorView(this);
+	m_view->setFocusPolicy(Qt::ClickFocus);
 	setWidget(m_view);
 
 	m_resetZoomButton = new widgets::GroupedToolButton{widgets::GroupedToolButton::NotGrouped};
@@ -373,6 +374,7 @@ Navigator::Navigator(QWidget *parent)
 	m_zoomSlider->setExponentRatio(4.0);
 	m_zoomSlider->setValue(100.0);
 	m_zoomSlider->setSuffix("%");
+	m_zoomSlider->setFocusPolicy(Qt::ClickFocus);
 	titlebar->addCustomWidget(m_zoomSlider, true);
 
 	connect(m_view, &NavigatorView::focusMoved, this, &Navigator::focusMoved);
