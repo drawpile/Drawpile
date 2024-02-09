@@ -51,6 +51,7 @@ Unreleased Version 2.2.1-pre
  * Feature: Remember last sorting on the browse page. Thanks Bluestrings and Meiren for suggesting.
  * Fix: Only ask for confirmation when a self-signed TLS certificate changes, not when a "real" one renews. Thanks Bluestrings and Pepper for reporting.
  * Feature: Fill background for copying the merged image with a non-rectangular selection. Thanks Bluestrings for suggesting.
+ * Fix: Make bezier curve tool generate smooth curves at small sizes, rather than getting jaggy. Thanks Crow for reporting.
 
 2024-01-13 Version 2.2.0
  * Server Fix: Add --ssl-key-algorithm parameter to allow non-RSA SSL keys, defaulting to guessing the most common formats RSA and EC. Thanks Bluestrings for reporting.

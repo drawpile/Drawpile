@@ -156,7 +156,7 @@ PointVector BezierTool::calculateBezierCurve() const
 		};
 
 		qreal distance = cubicBezierDistance(points);
-		float stepSize = distance > 0.0 ? float(20.0 / distance) : 1.0f;
+		float stepSize = distance > 0.0 ? float(5.0 / distance) : 1.0f;
 		for(float t = 0.0f; t < 1.0f; t += stepSize) {
 			pv.append(Point(timeMsec, cubicBezierPoint(points, t), 1));
 			timeMsec += DELTA_MSEC;
