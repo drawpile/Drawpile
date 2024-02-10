@@ -466,15 +466,23 @@ QString FileWrangler::getLastPathKey(LastPath type)
 
 QString FileWrangler::getDefaultLastPath(LastPath type, const QString &ext)
 {
+	QString path;
 	switch(type) {
 	case LastPath::ANIMATION_FRAMES:
-		return QString{};
+		path =
+			QStandardPaths::writableLocation(QStandardPaths::PicturesLocation);
+		break;
 	case LastPath::DEBUG_DUMP:
-		return utils::paths::writablePath("dumps");
+		path = utils::paths::writablePath("dumps");
+		break;
 	default:
 		//: %1 will be a file extension, like .ora or .png or something.
-		return tr("Untitled%1").arg(ext);
+		path = QDir(QStandardPaths::writableLocation(
+						QStandardPaths::PicturesLocation))
+				   .absoluteFilePath(tr("Untitled%1").arg(ext));
+		break;
 	}
+	return path;
 }
 
 QString FileWrangler::showOpenFileDialog(
