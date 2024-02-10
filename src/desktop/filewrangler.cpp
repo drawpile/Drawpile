@@ -6,13 +6,18 @@
 #include "libclient/document.h"
 #include "libshared/util/paths.h"
 #include <QCoreApplication>
+#include <QDir>
 #include <QFileDialog>
+#include <QLoggingCategory>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QRegularExpression>
+#include <QStandardPaths>
 #ifdef Q_OS_ANDROID
 #	include "desktop/dialogs/androidfiledialog.h"
 #endif
+
+Q_LOGGING_CATEGORY(lcDpFileWrangler, "net.drawpile.filewrangler", QtWarningMsg)
 
 
 FileWrangler::FileWrangler(QWidget *parent)
@@ -97,6 +102,9 @@ QString FileWrangler::saveImage(Document *doc) const
 {
 	QString path = doc->currentPath();
 	DP_SaveImageType type = doc->currentType();
+	qCDebug(
+		lcDpFileWrangler, "saveImage path='%s', type=%d", qUtf8Printable(path),
+		int(type));
 	if(path.isEmpty() || type == DP_SAVE_IMAGE_UNKNOWN) {
 		return saveImageAs(doc, false);
 	} else if(confirmFlatten(doc, path, type)) {
@@ -109,6 +117,7 @@ QString FileWrangler::saveImage(Document *doc) const
 
 QString FileWrangler::saveImageAs(Document *doc, bool exported) const
 {
+	qCDebug(lcDpFileWrangler, "saveImageAs exported=%d", int(exported));
 	QString selectedFilter;
 	QStringList filters =
 		utils::fileFormatFilterList(utils::FileFormatOption::SaveImages);
@@ -139,9 +148,13 @@ QString FileWrangler::saveImageAs(Document *doc, bool exported) const
 		haveFilename ? guessType(intendedName) : DP_SAVE_IMAGE_UNKNOWN;
 
 	if(haveFilename && (exported || confirmFlatten(doc, filename, type))) {
+		qCDebug(
+			lcDpFileWrangler, "Saving canvas as '%s'",
+			qUtf8Printable(filename));
 		doc->saveCanvasAs(filename, type, exported);
 		return filename;
 	} else {
+		qCDebug(lcDpFileWrangler, "Not saving canvas");
 		return QString{};
 	}
 }
@@ -380,25 +393,43 @@ QString FileWrangler::guessExtension(
 
 void FileWrangler::replaceExtension(QString &filename, const QString &ext)
 {
+	qCDebug(
+		lcDpFileWrangler, "replaceExtension of '%s' with '%s'",
+		qUtf8Printable(filename), qUtf8Printable(ext));
 	QRegularExpressionMatch match =
 		QRegularExpression{"\\.\\w*\\z"}.match(filename);
 	if(match.hasMatch()) {
 		filename = filename.left(match.capturedStart()) + ext;
+		qCDebug(
+			lcDpFileWrangler, "Match; replaced to result in '%s'",
+			qUtf8Printable(filename));
 	} else {
 		filename += ext;
+		qCDebug(
+			lcDpFileWrangler, "No match; appended to result in '%s'",
+			qUtf8Printable(filename));
 	}
 }
 
 DP_SaveImageType FileWrangler::guessType(const QString &intendedName)
 {
-	return DP_save_image_type_guess(qUtf8Printable(intendedName));
+	DP_SaveImageType type =
+		DP_save_image_type_guess(qUtf8Printable(intendedName));
+	qCDebug(
+		lcDpFileWrangler, "Guessed type %d for '%s'", int(type),
+		qUtf8Printable(intendedName));
+	return type;
 }
 
 QString FileWrangler::getCurrentPathOrUntitled(
 	Document *doc, const QString &defaultExtension)
 {
+	qCDebug(
+		lcDpFileWrangler, "getCurrentPathOrUntitled defaultExtension='%s'",
+		qUtf8Printable(defaultExtension));
 	QString path = doc->currentPath();
 	if(path.isEmpty()) {
+		qCDebug(lcDpFileWrangler, "Current path is empty");
 #ifdef Q_OS_ANDROID
 		return tr("Untitled") + defaultExtension;
 #else
@@ -409,6 +440,9 @@ QString FileWrangler::getCurrentPathOrUntitled(
 		}
 #endif
 	}
+	qCDebug(
+		lcDpFileWrangler, "Using document current path '%s'",
+		qUtf8Printable(path));
 	return path;
 }
 
@@ -420,7 +454,12 @@ bool FileWrangler::needsOra(Document *doc)
 QString FileWrangler::getLastPath(LastPath type, const QString &ext)
 {
 	const auto paths = dpApp().settings().lastFileOpenPaths();
-	QString filename = paths.value(getLastPathKey(type)).toString();
+	QString key = getLastPathKey(type);
+	QString filename = paths.value(key).toString();
+	qCDebug(
+		lcDpFileWrangler, "getLastPath type=%d ext='%s' key='%s': '%s'",
+		int(type), qUtf8Printable(ext), qUtf8Printable(key),
+		qUtf8Printable(filename));
 	if(filename.isEmpty()) {
 		return getDefaultLastPath(type, ext);
 	} else {
@@ -433,9 +472,13 @@ QString FileWrangler::getLastPath(LastPath type, const QString &ext)
 
 void FileWrangler::setLastPath(LastPath type, const QString &path)
 {
+	QString key = getLastPathKey(type);
+	qCDebug(
+		lcDpFileWrangler, "setLastPath type=%d path='%s' key='%s'", int(type),
+		qUtf8Printable(path), qUtf8Printable(key));
 	auto &settings = dpApp().settings();
 	auto paths = settings.lastFileOpenPaths();
-	paths[getLastPathKey(type)] = path;
+	paths[key] = path;
 	settings.setLastFileOpenPaths(paths);
 }
 
@@ -482,6 +525,9 @@ QString FileWrangler::getDefaultLastPath(LastPath type, const QString &ext)
 				   .absoluteFilePath(tr("Untitled%1").arg(ext));
 		break;
 	}
+	qCDebug(
+		lcDpFileWrangler, "getDefaultLastPath type=%d ext='%s': '%s'",
+		int(type), qUtf8Printable(ext), qUtf8Printable(path));
 	return path;
 }
 
@@ -540,6 +586,11 @@ QString FileWrangler::showSaveFileDialogFilters(
 	const QStringList &filters, QString *selectedFilter,
 	std::optional<QString> lastPath, QString *outIntendedName) const
 {
+	qCDebug(
+		lcDpFileWrangler, "showSaveFileDialog type=%d ext='%s' lastPath='%s'",
+		int(type), qUtf8Printable(ext),
+		lastPath.has_value() ? qUtf8Printable(lastPath.value()) : "<empty>");
+
 	QFileDialog fileDialog;
 	fileDialog.setAcceptMode(QFileDialog::AcceptSave);
 
