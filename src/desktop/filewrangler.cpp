@@ -640,8 +640,16 @@ QString FileWrangler::showSaveFileDialogFilters(
 	if(selectedFilter && !selectedFilter->isEmpty()) {
 		fileDialog.selectNameFilter(*selectedFilter);
 	}
-	fileDialog.selectFile(
+
+	QFileInfo lastPathInfo(
 		lastPath.has_value() ? lastPath.value() : getLastPath(type, ext));
+	QString lastDirname = lastPathInfo.absolutePath();
+	QString lastBasename = lastPathInfo.fileName();
+	qCDebug(
+		lcDpFileWrangler, "Setting dirname='%s' basename='%s'",
+		qUtf8Printable(lastDirname), qUtf8Printable(lastBasename));
+	fileDialog.setDirectory(lastBasename);
+	fileDialog.selectFile(lastBasename);
 #endif
 
 	bool ok = fileDialog.exec() == QDialog::Accepted &&
