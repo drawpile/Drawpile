@@ -191,8 +191,8 @@ void AnimationRenderer::renderFrame(
 		return;
 	}
 
-	DP_ViewModeFilter vmf = DP_view_mode_filter_make_frame(
-		&m_vmbs[threadIndex], canvasState.get(), frameIndexes[0], nullptr);
+	DP_ViewModeFilter vmf = DP_view_mode_filter_make_frame_render(
+		&m_vmbs[threadIndex], canvasState.get(), frameIndexes[0]);
 	QImage img = canvasState.toFlatImage(true, true, &crop, &vmf);
 
 	if(isCancelled(batchId)) {

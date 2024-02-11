@@ -41,6 +41,7 @@
 #define TYPE_NOTHING      1
 #define TYPE_LAYER        2
 #define TYPE_FRAME_MANUAL 3
+#define TYPE_FRAME_RENDER 4
 
 
 typedef struct DP_ViewModeTrack {
@@ -121,16 +122,10 @@ static DP_ViewModeContext make_layer_context(int layer_id)
     return (DP_ViewModeContext){TYPE_LAYER, {.layer_id = layer_id}};
 }
 
-static DP_ViewModeFilter make_manual_frame_filter(DP_ViewModeBuffer *vmb)
+static DP_ViewModeContext make_frame_context(int internal_type, int track_index,
+                                             DP_ViewModeBuffer *vmb)
 {
-    return (DP_ViewModeFilter){TYPE_FRAME_MANUAL, {.vmb = vmb}};
-}
-
-static DP_ViewModeContext make_manual_frame_context(int track_index,
-                                                    DP_ViewModeBuffer *vmb)
-{
-    return (DP_ViewModeContext){TYPE_FRAME_MANUAL,
-                                {.frame = {track_index, vmb}}};
+    return (DP_ViewModeContext){internal_type, {.frame = {track_index, vmb}}};
 }
 
 
@@ -286,10 +281,10 @@ static void build_track(DP_ViewModeBuffer *vmb, DP_CanvasState *cs, DP_Track *t,
     }
 }
 
-DP_ViewModeFilter DP_view_mode_filter_make_frame(DP_ViewModeBuffer *vmb,
-                                                 DP_CanvasState *cs,
-                                                 int frame_index,
-                                                 const DP_OnionSkins *oss)
+static DP_ViewModeFilter make_frame_filter(DP_ViewModeBuffer *vmb,
+                                           DP_CanvasState *cs, int frame_index,
+                                           const DP_OnionSkins *oss,
+                                           int internal_type)
 {
     DP_Timeline *tl = DP_canvas_state_timeline_noinc(cs);
     int track_count = DP_timeline_count(tl);
@@ -300,7 +295,14 @@ DP_ViewModeFilter DP_view_mode_filter_make_frame(DP_ViewModeBuffer *vmb,
             build_track(vmb, cs, t, frame_index, oss);
         }
     }
-    return make_manual_frame_filter(vmb);
+    return (DP_ViewModeFilter){internal_type, {.vmb = vmb}};
+}
+
+DP_ViewModeFilter DP_view_mode_filter_make_frame_render(DP_ViewModeBuffer *vmb,
+                                                        DP_CanvasState *cs,
+                                                        int frame_index)
+{
+    return make_frame_filter(vmb, cs, frame_index, NULL, TYPE_FRAME_RENDER);
 }
 
 DP_ViewModeFilter DP_view_mode_filter_make(DP_ViewModeBuffer *vmb,
@@ -314,7 +316,7 @@ DP_ViewModeFilter DP_view_mode_filter_make(DP_ViewModeBuffer *vmb,
     case DP_VIEW_MODE_LAYER:
         return make_layer_filter(layer_id);
     case DP_VIEW_MODE_FRAME:
-        return DP_view_mode_filter_make_frame(vmb, cs, frame_index, oss);
+        return make_frame_filter(vmb, cs, frame_index, oss, TYPE_FRAME_MANUAL);
     default:
         DP_UNREACHABLE();
     }
@@ -371,8 +373,8 @@ static bool is_hidden_in_frame(DP_LayerProps *lp, DP_ViewModeTrack *vmt)
     return false;
 }
 
-static DP_ViewModeResult
-apply_frame_manual(int track_index, DP_ViewModeBuffer *vmb, DP_LayerProps *lp)
+static DP_ViewModeResult apply_frame(int internal_type, int track_index,
+                                     DP_ViewModeBuffer *vmb, DP_LayerProps *lp)
 {
     DP_ASSERT(track_index >= 0);
     DP_ASSERT(track_index < vmb->count);
@@ -381,8 +383,15 @@ apply_frame_manual(int track_index, DP_ViewModeBuffer *vmb, DP_LayerProps *lp)
         return make_result(true, make_nothing_context());
     }
     else {
-        return make_result(false, make_manual_frame_context(track_index, vmb));
+        return make_result(false,
+                           make_frame_context(internal_type, track_index, vmb));
     }
+}
+
+static bool is_frame_type(int internal_type)
+{
+    return internal_type == TYPE_FRAME_MANUAL
+        || internal_type == TYPE_FRAME_RENDER;
 }
 
 DP_ViewModeContextRoot
@@ -390,10 +399,10 @@ DP_view_mode_context_root_init(const DP_ViewModeFilter *vmf, DP_CanvasState *cs)
 {
     DP_ASSERT(vmf);
     DP_ASSERT(cs);
-    return (DP_ViewModeContextRoot){
-        *vmf, vmf->internal_type == TYPE_FRAME_MANUAL
+    int count = is_frame_type(vmf->internal_type)
                   ? vmf->vmb->count
-                  : DP_layer_list_count(DP_canvas_state_layers_noinc(cs))};
+                  : DP_layer_list_count(DP_canvas_state_layers_noinc(cs));
+    return (DP_ViewModeContextRoot){*vmf, count};
 }
 
 DP_ViewModeContext DP_view_mode_context_make_default(void)
@@ -422,7 +431,7 @@ DP_ViewModeContext DP_view_mode_context_root_at(
     int internal_type = vmf->internal_type;
     DP_LayerPropsList *lpl = DP_canvas_state_layer_props_noinc(cs);
     DP_LayerList *ll = DP_canvas_state_layers_noinc(cs);
-    if (internal_type == TYPE_FRAME_MANUAL) {
+    if (is_frame_type(internal_type)) {
         DP_ASSERT(index < vmf->vmb->count);
         DP_ViewModeBuffer *vmb = vmf->vmb;
         DP_ViewModeTrack *vmt = &vmb->tracks[index];
@@ -436,7 +445,7 @@ DP_ViewModeContext DP_view_mode_context_root_at(
                 *out_os = vmt->onion_skin;
                 *out_parent_opacity =
                     DP_layer_routes_entry_parent_opacity(lre, cs);
-                return make_manual_frame_context(index, vmb);
+                return make_frame_context(internal_type, index, vmb);
             }
             else {
                 DP_warn("Track %d layer id %d not found", index, layer_id);
@@ -464,13 +473,23 @@ DP_ViewModeResult DP_view_mode_context_apply(const DP_ViewModeContext *vmc,
     DP_ASSERT(lp);
     switch (vmc->internal_type) {
     case TYPE_NORMAL:
-        return make_result(false, make_normal_context());
+        return DP_layer_props_hidden(lp)
+                 ? make_result(true, make_nothing_context())
+                 : make_result(false, make_normal_context());
     case TYPE_NOTHING:
         return make_result(true, make_nothing_context());
     case TYPE_LAYER:
-        return apply_layer(vmc->layer_id, lp);
+        return DP_layer_props_hidden(lp)
+                 ? make_result(true, make_nothing_context())
+                 : apply_layer(vmc->layer_id, lp);
     case TYPE_FRAME_MANUAL:
-        return apply_frame_manual(vmc->frame.track_index, vmc->frame.vmb, lp);
+        return DP_layer_props_hidden(lp)
+                 ? make_result(true, make_nothing_context())
+                 : apply_frame(TYPE_FRAME_MANUAL, vmc->frame.track_index,
+                               vmc->frame.vmb, lp);
+    case TYPE_FRAME_RENDER:
+        return apply_frame(TYPE_FRAME_RENDER, vmc->frame.track_index,
+                           vmc->frame.vmb, lp);
     default:
         DP_UNREACHABLE();
     }
@@ -480,7 +499,7 @@ bool DP_view_mode_context_should_flatten(const DP_ViewModeContext *vmc,
                                          DP_LayerProps *lp,
                                          uint16_t parent_opacity)
 {
-    return DP_layer_props_visible(lp) && parent_opacity != 0
+    return DP_layer_props_opacity(lp) != 0 && parent_opacity != 0
         && !DP_view_mode_context_apply(vmc, lp).hidden_by_view_mode;
 }
 

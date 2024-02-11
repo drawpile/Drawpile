@@ -97,10 +97,9 @@ void DP_view_mode_buffer_dispose(DP_ViewModeBuffer *vmb);
 
 DP_ViewModeFilter DP_view_mode_filter_make_default(void);
 
-DP_ViewModeFilter DP_view_mode_filter_make_frame(DP_ViewModeBuffer *vmb,
-                                                 DP_CanvasState *cs,
-                                                 int frame_index,
-                                                 const DP_OnionSkins *oss);
+DP_ViewModeFilter DP_view_mode_filter_make_frame_render(DP_ViewModeBuffer *vmb,
+                                                        DP_CanvasState *cs,
+                                                        int frame_index);
 
 DP_ViewModeFilter DP_view_mode_filter_make(DP_ViewModeBuffer *vmb,
                                            DP_ViewMode vm, DP_CanvasState *cs,

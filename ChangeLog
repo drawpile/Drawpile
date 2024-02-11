@@ -54,6 +54,7 @@ Unreleased Version 2.2.1-pre
  * Fix: Make bezier curve tool generate smooth curves at small sizes, rather than getting jaggy. Thanks Crow for reporting.
  * Server Feature: Allow server owners to kick users not connected to a session.
  * Fix: Make navigator slider not eat keyboard inputs when navigator is undocked. Thanks anonymousduck for reporting.
+ * Fix: Disregard hidden frames when rendering animations. Thanks Etide for reporting.
 
 2024-01-13 Version 2.2.0
  * Server Fix: Add --ssl-key-algorithm parameter to allow non-RSA SSL keys, defaulting to guessing the most common formats RSA and EC. Thanks Bluestrings for reporting.

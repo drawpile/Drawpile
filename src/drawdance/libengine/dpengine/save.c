@@ -894,7 +894,8 @@ static char *save_frame(struct DP_SaveFrameContext *c, DP_ViewModeBuffer *vmb,
     char *path = format_frame_path(c, frame_index);
     DP_SaveResult result = save_flat_image(
         cs, NULL, c->crop, path, save_png,
-        DP_view_mode_filter_make_frame(vmb, cs, frame_index, NULL), NULL, NULL);
+        DP_view_mode_filter_make_frame_render(vmb, cs, frame_index), NULL,
+        NULL);
     set_error_result(c, result);
     return path;
 }
@@ -1175,7 +1176,7 @@ static DP_SaveResult save_animation_gif(DP_CanvasState *cs, const char *path,
         }
 
         DP_ViewModeFilter vmf =
-            DP_view_mode_filter_make_frame(&vmb, cs, i, NULL);
+            DP_view_mode_filter_make_frame_render(&vmb, cs, i);
         DP_Image *img = DP_canvas_state_to_flat_image(
             cs, DP_FLAT_IMAGE_RENDER_FLAGS, crop, &vmf);
         double delay = centiseconds_per_frame * DP_int_to_double(instances);

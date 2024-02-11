@@ -81,11 +81,6 @@ public:
 	//! group or the canvas size is empty.
 	QImage getLayerImage(int id, const QRect &rect = QRect()) const;
 
-	//! Render a frame
-	QImage getFrameImage(
-		drawdance::ViewModeBuffer &vmb, int index,
-		const QRect &rect = QRect()) const;
-
 	//! Receive and handle messages, returns how many messages were actually
 	//! pushed to the paint engine.
 	int receiveMessages(

@@ -329,7 +329,7 @@ DP_layer_group_flatten_tile_to(DP_LayerGroup *lg, DP_LayerProps *lp,
     DP_ASSERT(parent_opacity <= DP_BIT15);
     DP_ASSERT(vmc);
 
-    if (parent_opacity == 0 || !DP_layer_props_visible(lp)) {
+    if (parent_opacity == 0 || DP_layer_props_opacity(lp) == 0) {
         return tt_or_null;
     }
 

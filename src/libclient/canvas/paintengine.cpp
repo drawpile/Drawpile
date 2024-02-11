@@ -689,19 +689,6 @@ QImage PaintEngine::getLayerImage(int id, const QRect &rect) const
 	}
 }
 
-QImage PaintEngine::getFrameImage(
-	drawdance::ViewModeBuffer &vmb, int index, const QRect &rect) const
-{
-	drawdance::CanvasState cs = viewCanvasState();
-	QRect area = rect.isNull() ? QRect{0, 0, cs.width(), cs.height()} : rect;
-	if(area.isEmpty()) {
-		return QImage{};
-	}
-	DP_ViewModeFilter vmf =
-		DP_view_mode_filter_make_frame(vmb.get(), cs.get(), index, nullptr);
-	return cs.toFlatImage(true, true, &area, &vmf);
-}
-
 
 #ifdef DP_HAVE_BUILTIN_SERVER
 void PaintEngine::onSoftReset(
