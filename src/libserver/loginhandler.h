@@ -81,6 +81,8 @@ private slots:
 	void handleLoginMessage(const net::Message &msg);
 
 private:
+	static constexpr int MAX_PASSWORD_ATTEMPTS = 10;
+
 	enum class State {
 		WaitForSecure,
 		WaitForLookup,
@@ -139,6 +141,8 @@ private:
 	bool m_complete = false;
 	bool m_mandatoryLookup;
 	QString m_lookup;
+	int m_authPasswordAttempts = 0;
+	int m_sessionPasswordAttempts = 0;
 };
 
 }

@@ -458,7 +458,19 @@ void LoginHandler::handleIdentMessage(const net::ServerCommand &cmd)
 				QStringLiteral("needPassword")));
 
 		} else {
-			sendError("badPassword", "Incorrect password", false);
+			++m_authPasswordAttempts;
+			m_client->log(
+				Log()
+					.about(Log::Level::Warn, Log::Topic::RuleBreak)
+					.message(
+						QStringLiteral(
+							"Incorrect password for account %1 (attempt %2/%3)")
+							.arg(userAccount.username)
+							.arg(m_authPasswordAttempts)
+							.arg(MAX_PASSWORD_ATTEMPTS)));
+			sendError(
+				"badPassword", "Incorrect password",
+				m_authPasswordAttempts >= MAX_PASSWORD_ATTEMPTS);
 		}
 		return;
 
@@ -937,7 +949,19 @@ void LoginHandler::handleJoinMessage(const net::ServerCommand &cmd)
 
 		if(!session->history()->checkPassword(
 			   cmd.kwargs.value("password").toString())) {
-			sendError("badPassword", "Incorrect password", false);
+			++m_sessionPasswordAttempts;
+			m_client->log(
+				Log()
+					.about(Log::Level::Warn, Log::Topic::RuleBreak)
+					.message(
+						QStringLiteral(
+							"Incorrect password for session %1 (attempt %2/%3)")
+							.arg(session->id())
+							.arg(m_sessionPasswordAttempts)
+							.arg(MAX_PASSWORD_ATTEMPTS)));
+			sendError(
+				"badPassword", "Incorrect password",
+				m_sessionPasswordAttempts >= MAX_PASSWORD_ATTEMPTS);
 			return;
 		}
 	}

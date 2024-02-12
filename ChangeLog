@@ -55,6 +55,7 @@ Unreleased Version 2.2.1-pre
  * Server Feature: Allow server owners to kick users not connected to a session.
  * Fix: Make navigator slider not eat keyboard inputs when navigator is undocked. Thanks anonymousduck for reporting.
  * Fix: Disregard hidden frames when rendering animations. Thanks Etide for reporting.
+ * Server Feature: Log when a wrong password is entered for server accounts and sessions, disconnect the user after too many wrong tries.
 
 2024-01-13 Version 2.2.0
  * Server Fix: Add --ssl-key-algorithm parameter to allow non-RSA SSL keys, defaulting to guessing the most common formats RSA and EC. Thanks Bluestrings for reporting.
