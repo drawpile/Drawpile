@@ -3,7 +3,8 @@
 
 	<CPackWiXFragment Id="#PRODUCT">
 		<InstallExecuteSequence>
-			<RemoveShortcuts>Installed AND NOT UPGRADINGPRODUCTCODE</RemoveShortcuts>
+			<CreateShortcuts>NOT (UPGRADINGPRODUCTCODE OR WIX_UPGRADE_DETECTED OR WIX_DOWNGRADE_DETECTED)</CreateShortcuts>
+			<RemoveShortcuts>Installed AND NOT (UPGRADINGPRODUCTCODE OR WIX_UPGRADE_DETECTED OR WIX_DOWNGRADE_DETECTED)</RemoveShortcuts>
 		</InstallExecuteSequence>
 
 		<Condition Message="${PROJECT_NAME} requires Windows 7 or later.">
