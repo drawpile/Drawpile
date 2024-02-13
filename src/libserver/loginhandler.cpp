@@ -20,6 +20,21 @@ namespace server {
 
 Sessions::~Sessions() {}
 
+class LoginHandler::ClientInfoLogGuard {
+public:
+	ClientInfoLogGuard(LoginHandler *loginHandler, const QJsonObject &info)
+		: m_loginHandler(loginHandler)
+		, m_info(info)
+	{
+	}
+
+	~ClientInfoLogGuard() { m_loginHandler->logClientInfo(m_info); }
+
+private:
+	LoginHandler *m_loginHandler;
+	QJsonObject m_info;
+};
+
 LoginHandler::LoginHandler(
 	Client *client, Sessions *sessions, ServerConfig *config)
 	: QObject(client)
@@ -738,6 +753,10 @@ static QJsonArray sessionFlags(const Session *session)
 void LoginHandler::handleHostMessage(const net::ServerCommand &cmd)
 {
 	Q_ASSERT(!m_client->username().isEmpty());
+
+	// Logs client info on destruction, to make sure we got it somewhere.
+	ClientInfoLogGuard clientInfoLogGuard(this, extractClientInfo(cmd));
+
 	// Basic validation
 	if(!m_lookup.isEmpty()) {
 		sendError(
@@ -871,7 +890,6 @@ void LoginHandler::handleHostMessage(const net::ServerCommand &cmd)
 
 	m_complete = true;
 	session->joinUser(m_client, true);
-	logClientInfo(cmd);
 
 	deleteLater();
 }
@@ -879,6 +897,10 @@ void LoginHandler::handleHostMessage(const net::ServerCommand &cmd)
 void LoginHandler::handleJoinMessage(const net::ServerCommand &cmd)
 {
 	Q_ASSERT(!m_client->username().isEmpty());
+
+	// Logs client info on destruction.
+	ClientInfoLogGuard clientInfoLogGuard(this, extractClientInfo(cmd));
+
 	if(cmd.args.size() != 1) {
 		sendError("syntax", "Expected session ID");
 		return;
@@ -1001,7 +1023,6 @@ void LoginHandler::handleJoinMessage(const net::ServerCommand &cmd)
 
 	m_complete = true;
 	session->joinUser(m_client, false);
-	logClientInfo(cmd);
 
 	deleteLater();
 }
@@ -1015,7 +1036,7 @@ void LoginHandler::checkClientCapabilities(const net::ServerCommand &cmd)
 	}
 }
 
-void LoginHandler::logClientInfo(const net::ServerCommand &cmd)
+QJsonObject LoginHandler::extractClientInfo(const net::ServerCommand &cmd)
 {
 	QJsonObject info;
 	QString keys[] = {
@@ -1036,15 +1057,33 @@ void LoginHandler::logClientInfo(const net::ServerCommand &cmd)
 		}
 	}
 
-
 	info[QStringLiteral("address")] = m_client->peerAddress().toString();
 	if(m_client->isAuthenticated()) {
 		info[QStringLiteral("auth_id")] = m_client->authId();
 	}
-	m_client->log(
-		Log()
-			.about(Log::Level::Info, Log::Topic::ClientInfo)
-			.message(QJsonDocument(info).toJson(QJsonDocument::Compact)));
+
+	return info;
+}
+
+void LoginHandler::logClientInfo(const QJsonObject &info)
+{
+	bool infoChanged = m_lastClientInfo.isEmpty() || info != m_lastClientInfo;
+	if(infoChanged) {
+		m_lastClientInfo = info;
+	}
+
+	Session *session = m_client->session();
+	bool sessionChanged = m_lastClientSession != session;
+	if(sessionChanged) {
+		m_lastClientSession = session;
+	}
+
+	if(infoChanged || sessionChanged) {
+		m_client->log(Log()
+						  .about(Log::Level::Info, Log::Topic::ClientInfo)
+						  .message(QJsonDocument(m_lastClientInfo)
+									   .toJson(QJsonDocument::Compact)));
+	}
 }
 
 void LoginHandler::handleAbuseReport(const net::ServerCommand &cmd)

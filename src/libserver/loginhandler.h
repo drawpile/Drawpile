@@ -3,6 +3,7 @@
 #define DP_SERVER_LOGINHANDLER_H
 #include "libshared/net/message.h"
 #include <QByteArray>
+#include <QJsonObject>
 #include <QObject>
 #include <QStringList>
 
@@ -92,13 +93,17 @@ private:
 	};
 	enum class IdentIntent { Invalid, Unknown, Guest, Auth, ExtAuth };
 
+	class ClientInfoLogGuard;
+	friend class ClientInfoLogGuard;
+
 	void announceServerInfo();
 	void handleLookupMessage(const net::ServerCommand &cmd);
 	void handleIdentMessage(const net::ServerCommand &cmd);
 	void handleHostMessage(const net::ServerCommand &cmd);
 	void handleJoinMessage(const net::ServerCommand &cmd);
 	void checkClientCapabilities(const net::ServerCommand &cmd);
-	void logClientInfo(const net::ServerCommand &cmd);
+	QJsonObject extractClientInfo(const net::ServerCommand &cmd);
+	void logClientInfo(const QJsonObject &info);
 	void handleAbuseReport(const net::ServerCommand &cmd);
 	void handleStarttls();
 	void requestExtAuth();
@@ -143,6 +148,9 @@ private:
 	QString m_lookup;
 	int m_authPasswordAttempts = 0;
 	int m_sessionPasswordAttempts = 0;
+
+	QJsonObject m_lastClientInfo;
+	Session *m_lastClientSession = nullptr;
 };
 
 }
