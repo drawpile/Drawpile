@@ -591,12 +591,14 @@ QString FileWrangler::showSaveFileDialogFilters(
 		int(type), qUtf8Printable(ext),
 		lastPath.has_value() ? qUtf8Printable(lastPath.value()) : "<empty>");
 
-	QFileDialog fileDialog;
-	fileDialog.setAcceptMode(QFileDialog::AcceptSave);
-
+	QString filename;
+	QString selectedNameFilter;
 #ifdef Q_OS_ANDROID
 	Q_UNUSED(title);
 	Q_UNUSED(ext);
+
+	QFileDialog fileDialog(parentWidget());
+	fileDialog.setAcceptMode(QFileDialog::AcceptSave);
 
 	// File handling on Android is all kinds of terrible. We can only use
 	// the path that the user gave us, but have no way to restrict them to
@@ -634,31 +636,24 @@ QString FileWrangler::showSaveFileDialogFilters(
 	// This doesn't seem to do anything useful, but let's set it anyway in
 	// case a later Qt version fixes the window title thing.
 	fileDialog.selectFile(initialFilename);
-#else
-	fileDialog.setWindowTitle(title);
-	fileDialog.setNameFilters(filters);
-	if(selectedFilter && !selectedFilter->isEmpty()) {
-		fileDialog.selectNameFilter(*selectedFilter);
-	}
 
-	QFileInfo lastPathInfo(
-		lastPath.has_value() ? lastPath.value() : getLastPath(type, ext));
-	QString lastDirname = lastPathInfo.absolutePath();
-	QString lastBasename = lastPathInfo.fileName();
-	qCDebug(
-		lcDpFileWrangler, "Setting dirname='%s' basename='%s'",
-		qUtf8Printable(lastDirname), qUtf8Printable(lastBasename));
-	fileDialog.setDirectory(lastBasename);
-	fileDialog.selectFile(lastBasename);
+	if(fileDialog.exec() == QDialog::Accepted &&
+	   !fileDialog.selectedFiles().isEmpty()) {
+		filename = fileDialog.selectedFiles().first().trimmed();
+		selectedNameFilter = fileDialog.selectedNameFilter();
+	}
+#else
+	if(selectedFilter) {
+		selectedNameFilter = *selectedFilter;
+	}
+	filename =
+		QFileDialog::getSaveFileName(
+			parentWidget(), title,
+			lastPath.has_value() ? lastPath.value() : getLastPath(type, ext),
+			filters.join(QStringLiteral(";;")), &selectedNameFilter)
+			.trimmed();
 #endif
 
-	bool ok = fileDialog.exec() == QDialog::Accepted &&
-			  !fileDialog.selectedFiles().isEmpty();
-	if(!ok) {
-		return QString{};
-	}
-
-	QString filename = fileDialog.selectedFiles().first().trimmed();
 	if(filename.isEmpty()) {
 		return QString{};
 	}
@@ -669,7 +664,7 @@ QString FileWrangler::showSaveFileDialogFilters(
 #ifndef Q_OS_ANDROID
 	bool emptySuffix = QFileInfo{filename}.completeSuffix().isEmpty();
 	if(emptySuffix) {
-		filename += guessExtension(fileDialog.selectedNameFilter(), ext);
+		filename += guessExtension(selectedNameFilter, ext);
 	}
 #endif
 
@@ -681,7 +676,7 @@ QString FileWrangler::showSaveFileDialogFilters(
 #else
 	setLastPath(type, filename);
 	if(selectedFilter) {
-		*selectedFilter = fileDialog.selectedNameFilter();
+		*selectedFilter = selectedNameFilter;
 	}
 	if(outIntendedName) {
 		*outIntendedName = filename;
