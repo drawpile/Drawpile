@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 (function () {
   "use strict";
+  const cachebuster = document.documentElement.dataset.cachebuster;
+  const cachebusterSuffix = cachebuster
+    ? `?cachebuster=${encodeURIComponent(cachebuster)}`
+    : "";
 
   function isString(arg) {
     return typeof arg === "string";
@@ -193,6 +197,81 @@
     document.body.classList.add("fullscreen");
   }
 
+  function registerMessageHandler(
+    drawpileHandleBrowserAuth,
+    stringToNewUTF8,
+    UTF8ToString,
+  ) {
+    window.addEventListener("message", (e) => {
+      console.log(e.data);
+      const loginModal = document.querySelector("#login-modal");
+      if (loginModal) {
+        const type = e.data?.type;
+        if (type === "auth-username-selected") {
+          drawpileHandleBrowserAuth(1, stringToNewUTF8(`${e.data.username}`));
+        } else if (type === "auth-identified") {
+          drawpileHandleBrowserAuth(2, stringToNewUTF8(e.data.token));
+          loginModal.remove();
+        }
+      }
+    });
+
+    window.drawpileShowLoginModal = function () {
+      if (!document.querySelector("#login-modal")) {
+        const modal = tag("div", { id: "login-modal", className: "modal" }, [
+          tag("div", { className: "modal-container" }, [
+            tag("div", { className: "modal-body" }, [
+              tag("div", { className: "modal-title" }, [
+                tag("img", {
+                  src: `drawpile.svg${cachebusterSuffix}`,
+                  alt: "Drawpile logo",
+                }),
+                tag("h2", { className: "modal-heading" }, "Login"),
+                tag(
+                  "button",
+                  { className: "modal-close-button", title: "Close" },
+                  "\u00d7",
+                ),
+              ]),
+              tag("iframe", {
+                title: "drawpile.net login",
+                src: "https://drawpile.net/auth/",
+              }),
+            ]),
+          ]),
+        ]);
+        modal
+          .querySelector(".modal-close-button")
+          .addEventListener("click", () => {
+            modal.remove();
+            drawpileHandleBrowserAuth(-1, stringToNewUTF8(""));
+          });
+        document.body.prepend(modal);
+      }
+    };
+
+    window.drawpileCancelLoginModal = function () {
+      const modal = document.querySelector("#login-modal");
+      if (modal) {
+        modal.remove();
+      }
+    };
+
+    window.drawpileAuthenticate = function (data, len) {
+      const iframe = document.querySelector("#login-modal iframe");
+      if (iframe) {
+        const payload = UTF8ToString(data, len);
+        iframe.contentWindow.postMessage(
+          {
+            type: "auth-authenticate",
+            args: JSON.parse(payload),
+          },
+          "*",
+        );
+      }
+    };
+  }
+
   function registerUnloadHandler(shouldPreventUnload) {
     window.addEventListener("beforeunload", (e) => {
       if (shouldPreventUnload()) {
@@ -229,14 +308,15 @@
     config.qt.onLoaded = () => {
       showScreen();
       registerUnloadHandler(config._drawpileShouldPreventUnload);
+      registerMessageHandler(
+        config._drawpileHandleBrowserAuth,
+        config.stringToNewUTF8,
+        config.UTF8ToString,
+      );
     };
 
     let assetBundlePath = "assets.bundle";
-    const cachebuster = document.documentElement.dataset.cachebuster;
     if (cachebuster) {
-      const cachebusterSuffix = `?cachebuster=${encodeURIComponent(
-        cachebuster,
-      )}`;
       assetBundlePath += cachebusterSuffix;
       config.locateFile = (path, scriptDirectory) => {
         return (scriptDirectory || "") + path + cachebusterSuffix;
@@ -393,9 +473,11 @@
     if (invalid) {
       const status = document.querySelector("#status");
       status.appendChild(tag("p", [tag("strong", ["Invalid session link."])]));
-      status.appendChild(tag("p", [
-        "However you got here was not via a valid link to a Drawpile session.",
-      ]));
+      status.appendChild(
+        tag("p", [
+          "However you got here was not via a valid link to a Drawpile session.",
+        ]),
+      );
       return false;
     } else {
       return true;

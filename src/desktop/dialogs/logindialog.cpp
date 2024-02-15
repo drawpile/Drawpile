@@ -65,6 +65,7 @@ struct LoginDialog::Private {
 	QString ruleHash;
 	bool guestsOnly = false;
 	bool guestShortcut = false;
+	bool hasDrawpileExtAuth = false;
 	QUrl loginExtAuthUrl;
 	QUrl extauthurl;
 	QSslCertificate oldCert, newCert;
@@ -178,6 +179,15 @@ struct LoginDialog::Private {
 	void setLoginMode(const QString &prompt);
 
 	bool haveRuleText() const { return !ruleKey.isEmpty(); }
+
+	bool haveRecentAccounts() const
+	{
+#ifdef __EMSCRIPTEN__
+		return false;
+#else
+		return !accounts->isEmpty();
+#endif
+	}
 
 	QString
 	buildOldKeychainSecretName(const QString &host, const QString &username)
@@ -418,16 +428,16 @@ void LoginDialog::Private::resetMode(Mode newMode)
 		}
 		break;
 	case Mode::LoginMethod:
-		if(accounts->isEmpty()) {
+		if(haveRecentAccounts()) {
+			noButton->setText(tr("Back"));
+			noButton->setVisible(true);
+		} else {
 			if(haveRuleText()) {
 				noButton->setText(tr("Rules"));
 				noButton->setVisible(true);
 			} else {
 				noButton->setVisible(false);
 			}
-		} else {
-			noButton->setText(tr("Back"));
-			noButton->setVisible(true);
 		}
 		break;
 	case Mode::GuestLogin:
@@ -615,6 +625,11 @@ LoginDialog::LoginDialog(net::LoginHandler *login, QWidget *parent)
 	connect(
 		login, &net::LoginHandler::serverTitleChanged, this,
 		&LoginDialog::onServerTitleChanged);
+#ifdef __EMSCRIPTEN__
+	connect(login, &net::LoginHandler::browserAuthCancelled, this, [this]() {
+		d->resetMode(Mode::LoginMethod);
+	});
+#endif
 
 	connect(
 		d->accounts, &AccountListModel::passwordReadFinished, this,
@@ -695,7 +710,7 @@ void LoginDialog::onRecentForgetClicked()
 		   "recent account list, it won't delete the account."));
 	if(result == QMessageBox::Yes) {
 		d->accounts->deleteAccountAt(d->ui->recentAccountCombo->currentIndex());
-		if(d->accounts->isEmpty()) {
+		if(!d->haveRecentAccounts()) {
 			onRecentBreakClicked();
 		}
 	}
@@ -709,6 +724,15 @@ void LoginDialog::onRecentBreakClicked()
 void LoginDialog::onLoginMethodExtAuthClicked()
 {
 	d->wasRecentAccount = false;
+#ifdef __EMSCRIPTEN__
+	if(d->hasDrawpileExtAuth && d->loginHandler) {
+		d->loginHandler->selectAvatar(QPixmap());
+		d->resetMode(Mode::Loading);
+		updateOkButtonEnabled();
+		d->loginHandler->requestBrowserAuth();
+		return;
+	}
+#endif
 	d->resetMode(Mode::ExtAuthLogin);
 	updateOkButtonEnabled();
 	setExtAuthLoginExplanation();
@@ -834,18 +858,18 @@ void LoginDialog::onLoginMethodChoiceNeeded(
 	d->ui->methodGuestButton->setEnabled(guest);
 	d->ui->methodGuestButton->setVisible(guest);
 
-	bool hasDrawpileExtAuth = extAuth && extAuthUrl.host().compare(
-											 QStringLiteral("drawpile.net"),
-											 Qt::CaseInsensitive) == 0;
+	d->hasDrawpileExtAuth = extAuth && extAuthUrl.host().compare(
+										   QStringLiteral("drawpile.net"),
+										   Qt::CaseInsensitive) == 0;
 	d->ui->methodExtAuthButton->setIcon(
-		hasDrawpileExtAuth ? QIcon(":/icons/drawpile.png") : QIcon());
+		d->hasDrawpileExtAuth ? QIcon(":/icons/drawpile.png") : QIcon());
 
 	QString drawpileSignupLink =
 		QStringLiteral("<a href=\"https://drawpile.net/accounts/signup/\""
 					   ">drawpile.net</a>");
 	QString methodExplanation;
 	if(loginInfo.isEmpty()) {
-		if(hasDrawpileExtAuth) {
+		if(d->hasDrawpileExtAuth) {
 			if(guest) {
 				methodExplanation =
 					tr("You can continue without an account. If you want "
@@ -867,7 +891,7 @@ void LoginDialog::onLoginMethodChoiceNeeded(
 				   "provide any information on how to register one.");
 		}
 	} else {
-		if(hasDrawpileExtAuth) {
+		if(d->hasDrawpileExtAuth) {
 			methodExplanation =
 				tr("See %1 for more information about this server. "
 				   "To register an account, visit %2.")
@@ -884,7 +908,7 @@ void LoginDialog::onLoginMethodChoiceNeeded(
 	// accounts that could be remembered and no password to be entered.
 	d->guestsOnly = !extAuth && !auth;
 	bool accountsChanged = d->accounts->load(url, extAuthUrl);
-	d->guestShortcut = guest && auth && !extAuth && d->accounts->isEmpty();
+	d->guestShortcut = guest && auth && !extAuth && !d->haveRecentAccounts();
 	if(d->guestsOnly || d->guestShortcut) {
 		d->restoreGuest();
 		d->resetMode(Mode::GuestLogin);
@@ -901,14 +925,14 @@ void LoginDialog::onLoginMethodChoiceNeeded(
 		d->setLoginExplanation(loginExplanation, false);
 		updateOkButtonEnabled();
 	} else {
-		if(d->accounts->isEmpty()) {
-			d->resetMode(Mode::LoginMethod);
-		} else {
+		if(d->haveRecentAccounts()) {
 			d->resetMode(Mode::RecentAccounts);
 			if(accountsChanged) {
 				d->ui->recentAccountCombo->setCurrentIndex(
 					d->accounts->getMostRecentIndex());
 			}
+		} else {
+			d->resetMode(Mode::LoginMethod);
 		}
 		updateOkButtonEnabled();
 	}
@@ -1351,15 +1375,15 @@ void LoginDialog::onNoClicked()
 		d->cancelButton->click();
 		break;
 	case Mode::LoginMethod:
-		if(d->accounts->isEmpty()) {
+		if(d->haveRecentAccounts()) {
+			d->resetMode(Mode::RecentAccounts);
+			updateOkButtonEnabled();
+		} else {
 			if(d->haveRuleText()) {
 				d->resetMode(Mode::Rules);
 			} else {
 				qWarning("No button click for login method!");
 			}
-		} else {
-			d->resetMode(Mode::RecentAccounts);
-			updateOkButtonEnabled();
 		}
 		break;
 	case Mode::GuestLogin:

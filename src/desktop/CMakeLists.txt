@@ -802,7 +802,7 @@ elseif(EMSCRIPTEN)
 	target_link_options(drawpile PUBLIC
 		-sASYNCIFY
 		-sMAXIMUM_MEMORY=4294967296
-		-sEXPORTED_FUNCTIONS=_main,_drawpileShouldPreventUnload
+		-sEXPORTED_FUNCTIONS=_main,_drawpileHandleBrowserAuth,_drawpileShouldPreventUnload,stringToNewUTF8,UTF8ToString
 		--js-library "${CMAKE_CURRENT_SOURCE_DIR}/wasm/lib.js"
 	)
 	if(CMAKE_BUILD_TYPE MATCHES "^[rR}[eE][lL]")

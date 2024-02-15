@@ -42,6 +42,10 @@ public:
 
 	LoginHandler(Mode mode, const QUrl &url, QObject *parent = nullptr);
 
+#ifdef __EMSCRIPTEN__
+	~LoginHandler() override;
+#endif
+
 	/**
 	 * @brief Set the desired user ID
 	 *
@@ -241,6 +245,13 @@ public slots:
 	 */
 	void requestExtAuth(const QString &username, const QString &password);
 
+#ifdef __EMSCRIPTEN__
+	void requestBrowserAuth();
+	void cancelBrowserAuth();
+	void selectBrowserAuthUsername(const QString &username);
+	void browserAuthIdentified(const QString &token);
+#endif
+
 	/**
 	 * @brief Join the session with the given ID
 	 *
@@ -367,6 +378,10 @@ signals:
 		bool success, LoginMethod intent, const QString &host,
 		const QString &username);
 
+#ifdef __EMSCRIPTEN__
+	void browserAuthCancelled();
+#endif
+
 	/**
 	 * @brief Username and password (unless in guest mode) OK.
 	 */
@@ -466,6 +481,13 @@ private:
 	static QString generateTamperSid();
 	static QString generateSid();
 
+#ifdef __EMSCRIPTEN__
+	bool inBrowserAuth() const { return m_inBrowserAuth; }
+	void authenticateBrowserAuth();
+#else
+	static constexpr bool inBrowserAuth() { return false; }
+#endif
+
 	Mode m_mode;
 	QUrl m_address;
 	QPixmap m_avatar;
@@ -522,8 +544,11 @@ private:
 	// User flags
 	QStringList m_userFlags;
 	bool m_isGuest;
-};
 
+#ifdef __EMSCRIPTEN__
+	bool m_inBrowserAuth = false;
+#endif
+};
 }
 
 #endif

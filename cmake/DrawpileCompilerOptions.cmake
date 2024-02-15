@@ -145,6 +145,11 @@ else()
 	if(CXX_HAS_GNU_ZERO_VARIADIC_MACRO_ARGUMENTS)
 		add_compile_options(-Wno-gnu-zero-variadic-macro-arguments)
 	endif()
+
+	# Emscripten uses dollar signs in identifiers for EM_ASM parameters.
+	if(EMSCRIPTEN)
+		add_compile_options(-Wno-dollar-in-identifier-extension)
+	endif()
 endif()
 
 get_ignore_warnings_in_directory(IGNORE_WARNINGS_COMPILE_OPTIONS)

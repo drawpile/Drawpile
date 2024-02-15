@@ -205,6 +205,10 @@ else()
 	)
 endif()
 
+if(EMSCRIPTEN)
+	target_sources(dpclient PRIVATE wasmsupport.cpp wasmsupport.h)
+endif()
+
 if(HAVE_TCPSOCKETS)
 	target_sources(dpclient PRIVATE
 		net/tcpserver.cpp

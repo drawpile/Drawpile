@@ -24,6 +24,9 @@
 #include <QUrlQuery>
 #include <QUuid>
 #include <utility>
+#ifdef __EMSCRIPTEN__
+#	include "libclient/wasmsupport.h"
+#endif
 
 Q_LOGGING_CATEGORY(lcDpLogin, "net.drawpile.login", QtWarningMsg)
 
@@ -84,6 +87,13 @@ LoginHandler::LoginHandler(Mode mode, const QUrl &url, QObject *parent)
 			m_autoJoinId = m.captured(1);
 	}
 }
+
+#ifdef __EMSCRIPTEN__
+LoginHandler::~LoginHandler()
+{
+	browser::cancelLoginModal(this);
+}
+#endif
 
 bool LoginHandler::receiveMessage(const ServerReply &msg)
 {
@@ -492,6 +502,61 @@ void LoginHandler::requestExtAuth(
 	});
 }
 
+#ifdef __EMSCRIPTEN__
+void LoginHandler::requestBrowserAuth()
+{
+	if(!inBrowserAuth()) {
+		m_inBrowserAuth = true;
+		browser::showLoginModal(this);
+	}
+}
+
+void LoginHandler::cancelBrowserAuth()
+{
+	if(inBrowserAuth()) {
+		browser::cancelLoginModal(this);
+		m_inBrowserAuth = false;
+		emit browserAuthCancelled();
+	}
+}
+
+void LoginHandler::selectBrowserAuthUsername(const QString &username)
+{
+	if(inBrowserAuth()) {
+		m_address.setUserName(username);
+		m_address.setPassword(QString());
+		m_loginIntent = LoginMethod::ExtAuth;
+		sendIdentity();
+	}
+}
+
+void LoginHandler::authenticateBrowserAuth()
+{
+	QJsonObject o;
+	o[QStringLiteral("nonce")] = m_extAuthNonce;
+	o[QStringLiteral("s")] = getSid();
+	if(!m_extAuthGroup.isEmpty()) {
+		o[QStringLiteral("group")] = m_extAuthGroup;
+	}
+	if(m_supportsExtAuthAvatars) {
+		o[QStringLiteral("avatar")] = true;
+	}
+	QByteArray payload = QJsonDocument(o).toJson(QJsonDocument::Compact);
+	browser::authenticate(this, payload);
+}
+
+void LoginHandler::browserAuthIdentified(const QString &token)
+{
+	if(inBrowserAuth()) {
+		m_inBrowserAuth = false;
+		m_state = EXPECT_IDENTIFIED;
+		send("ident", {m_address.userName()}, {{"extauth", token}});
+		emit extAuthComplete(
+			true, m_loginIntent, m_address.host(), m_address.userName());
+	}
+}
+#endif
+
 void LoginHandler::expectIdentified(const ServerReply &msg)
 {
 	const QString state = msg.reply[QStringLiteral("state")].toString();
@@ -513,7 +578,8 @@ void LoginHandler::expectIdentified(const ServerReply &msg)
 		// just mean we don't know the authentication method.
 		bool isValid = intent == m_loginIntent && intent != method &&
 					   intent != LoginMethod::Unknown &&
-					   (!extAuthFallback || intent == LoginMethod::ExtAuth);
+					   (!extAuthFallback || intent == LoginMethod::ExtAuth) &&
+					   !inBrowserAuth();
 		if(isValid) {
 			emit loginMethodMismatch(intent, method, extAuthFallback);
 		} else {
@@ -522,7 +588,7 @@ void LoginHandler::expectIdentified(const ServerReply &msg)
 		return;
 	}
 
-	if(state == QStringLiteral("needPassword")) {
+	if(state == QStringLiteral("needPassword") && !inBrowserAuth()) {
 		// Looks like guest logins are not possible
 		m_needUserPassword = true;
 		prepareToSendIdentity();
@@ -557,10 +623,18 @@ void LoginHandler::expectIdentified(const ServerReply &msg)
 				qUtf8Printable(m_loginExtAuthUrl.toString()),
 				qUtf8Printable(m_extAuthUrl.toString()));
 			failLogin(tr("Server reported two different ext-auth URLs"));
+			return;
 		}
 
 		m_extAuthGroup = msg.reply["group"].toString();
 		m_extAuthNonce = msg.reply["nonce"].toString();
+
+#ifdef __EMSCRIPTEN__
+		if(inBrowserAuth()) {
+			authenticateBrowserAuth();
+			return;
+		}
+#endif
 
 		emit extAuthNeeded(
 			m_address.userName(), m_extAuthUrl, m_address.host(),
@@ -1100,6 +1174,9 @@ void LoginHandler::handleError(const QString &code, const QString &msg)
 
 void LoginHandler::failLogin(const QString &message, const QString &errorcode)
 {
+#ifdef __EMSCRIPTEN__
+	cancelBrowserAuth();
+#endif
 	m_state = ABORT_LOGIN;
 	m_server->loginFailure(message, errorcode);
 }

@@ -121,8 +121,68 @@ button.danger:active {
   width: 1em;
 }
 
-@keyframes spinner{
+@keyframes spinner {
   to {
     transform: rotate(360deg);
   }
+}
+
+.modal {
+  background-color: rgba(0, 0, 0, 0.5);
+  height: 100%;
+  left: 0;
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 999999;
+}
+
+.modal-container {
+  height: calc(100vh - 2em);
+  margin-bottom: 1em;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 1em;
+  max-width: 60em;
+}
+
+.modal-body {
+  background-color: #fff;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-title {
+  background-color: #eee;
+  align-items: center;
+  display: flex;
+}
+
+.modal-title>img {
+  height: 4em;
+  margin-left: 1em;
+  margin-right: 1em;
+}
+
+.modal-heading {
+  flex-grow: 1;
+}
+
+.modal-close-button {
+  color: initial;
+  background: none;
+  width: 2em;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  border-radius: 0;
+  font-size: 300%;
+}
+
+.modal-body>iframe {
+  border: none;
+  flex-grow: 1;
 }
