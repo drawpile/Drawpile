@@ -192,9 +192,14 @@ void PaintEngine::cleanup()
 	receiveMessages(false, 1, &msg);
 }
 
-QColor PaintEngine::backgroundColor() const
+QColor PaintEngine::historyBackgroundColor() const
 {
 	return historyCanvasState().backgroundTile().singleColor(Qt::transparent);
+}
+
+QColor PaintEngine::viewBackgroundColor() const
+{
+	return viewCanvasState().backgroundTile().singleColor(Qt::transparent);
 }
 
 int PaintEngine::undoDepthLimit() const

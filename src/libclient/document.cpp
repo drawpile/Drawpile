@@ -1049,7 +1049,7 @@ void Document::fillBackground(QImage &img)
 	// Fill transparent pixels (i.e. area outside the selection)
 	// with the canvas background color.
 	// TODO background pattern support
-	QColor bg = m_canvas->paintEngine()->backgroundColor();
+	QColor bg = m_canvas->paintEngine()->viewBackgroundColor();
 	if(bg.isValid()) {
 		QPainter p(&img);
 		p.setCompositionMode(QPainter::CompositionMode_DestinationOver);

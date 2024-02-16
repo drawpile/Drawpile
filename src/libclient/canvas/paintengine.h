@@ -103,7 +103,8 @@ public:
 	void cleanup();
 
 	//! Get the color of the background tile
-	QColor backgroundColor() const;
+	QColor historyBackgroundColor() const;
+	QColor viewBackgroundColor() const;
 
 	int undoDepthLimit() const;
 

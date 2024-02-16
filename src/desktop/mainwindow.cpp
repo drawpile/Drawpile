@@ -3026,7 +3026,7 @@ void MainWindow::resizeCanvas()
 	const QSize size = m_doc->canvas()->size();
 	dialogs::ResizeDialog *dlg = new dialogs::ResizeDialog(size, this);
 	canvas::PaintEngine *paintEngine = m_doc->canvas()->paintEngine();
-	dlg->setBackgroundColor(paintEngine->backgroundColor());
+	dlg->setBackgroundColor(paintEngine->historyBackgroundColor());
 	dlg->setPreviewImage(paintEngine->renderPixmap().scaled(
 		300, 300, Qt::KeepAspectRatio));
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
@@ -3076,7 +3076,7 @@ void MainWindow::updateBackgroundActions()
 		setLocalBackground->setEnabled(true);
 
 		canvas::PaintEngine *paintEngine = canvas->paintEngine();
-		QColor sessionColor = paintEngine->backgroundColor();
+		QColor sessionColor = paintEngine->historyBackgroundColor();
 		canvasBackground->setIcon(makeBackgroundColorIcon(sessionColor));
 
 		QColor localColor;
@@ -3104,7 +3104,7 @@ void MainWindow::changeCanvasBackground()
 		return;
 	}
 	color_widgets::ColorDialog *dlg = dialogs::newDeleteOnCloseColorDialog(
-		m_doc->canvas()->paintEngine()->backgroundColor(), this);
+		m_doc->canvas()->paintEngine()->historyBackgroundColor(), this);
 	connect(dlg, &color_widgets::ColorDialog::colorSelected, m_doc, &Document::sendCanvasBackground);
 	utils::showWindow(dlg);
 }
@@ -3119,7 +3119,7 @@ void MainWindow::changeLocalCanvasBackground()
 	canvas::PaintEngine *paintEngine = m_doc->canvas()->paintEngine();
 	QColor color;
 	if(!paintEngine->localBackgroundColor(color)) {
-		color = paintEngine->backgroundColor();
+		color = paintEngine->historyBackgroundColor();
 	}
 
 	color_widgets::ColorDialog *dlg =
