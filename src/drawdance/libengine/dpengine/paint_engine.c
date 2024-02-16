@@ -362,9 +362,9 @@ static void handle_internal(DP_PaintEngine *pe, DP_DrawContext *dc,
 // Maximum number of multidab messages in a single go.
 #define MAX_MULTIDAB_MESSAGES 8192
 
-// 2 milliseconds, according to benchmark numbers. Hopefully enough for slow
+// 0.2 milliseconds, according to benchmark numbers. Hopefully enough for slow
 // machines to not drop below 60 fps, fast machines don't care anyway.
-#define MAX_MULTIDAB_COST 2000000.0
+#define MAX_MULTIDAB_COST 200000.0
 
 static bool shift_first_message(DP_PaintEngine *pe, DP_Message **msgs)
 {
