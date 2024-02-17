@@ -215,29 +215,32 @@ static void get_high_res_mask(DP_BrushStamp *stamp, double radius,
 }
 
 static void offset_mask(DP_BrushStamp *dst_stamp, DP_BrushStamp *src_stamp,
-                        float xfrac, float yfrac)
+                        uint32_t xfrac, uint32_t yfrac)
 {
     DP_ASSERT(dst_stamp->diameter == src_stamp->diameter);
     int diameter = src_stamp->diameter;
-    double k0 = xfrac * yfrac;
-    double k1 = (1.0 - xfrac) * yfrac;
-    double k2 = xfrac * (1.0 - yfrac);
-    double k3 = (1.0 - xfrac) * (1.0 - yfrac);
+    uint32_t k0 = xfrac * yfrac;
+    uint32_t k1 = (4 - xfrac) * yfrac;
+    uint32_t k2 = xfrac * (4 - yfrac);
+    uint32_t k3 = (4 - xfrac) * (4 - yfrac);
     uint16_t *src = src_stamp->data;
     uint16_t *dst = dst_stamp->data;
 
-    *(dst++) = DP_double_to_uint16(src[0] * k3);
+    *(dst++) = DP_uint32_to_uint16((src[0] * k3) / 4);
     for (int x = 0; x < diameter - 1; ++x) {
-        *(dst++) = DP_double_to_uint16(src[x] * k2 + src[x + 1] * k3);
+        *(dst++) =
+            DP_uint32_to_uint16(((src[x] * k2) + (src[x + 1] * k3)) / 8);
     }
     for (int y = 0; y < diameter - 1; ++y) {
         int yd = y * diameter;
-        *(dst++) = DP_double_to_uint16(src[yd] * k1 + src[yd + diameter] * k3);
+        *(dst++) = DP_uint32_to_uint16(
+            ((src[yd] * k1) + (src[yd + diameter] * k3)) / 8);
         for (int x = 0; x < diameter - 1; ++x) {
             *(dst++) =
-                DP_double_to_uint16(src[yd + x] * k0 + src[yd + x + 1] * k1
-                                    + src[yd + diameter + x] * k2
-                                    + src[yd + diameter + x + 1] * k3);
+                DP_uint32_to_uint16(((src[yd + x] * k0) + (src[yd + x + 1] * k1)
+                                     + (src[yd + diameter + x] * k2)
+                                     + (src[yd + diameter + x + 1] * k3))
+                                    / 16);
         }
     }
 }
@@ -255,33 +258,33 @@ static void get_classic_mask_stamp(DP_BrushStamp *stamp, double radius,
 }
 
 static void get_classic_offset_stamp(DP_BrushStamp *offset_stamp,
-                                     DP_BrushStamp *mask_stamp, double x,
-                                     double y)
+                                     DP_BrushStamp *mask_stamp, int x, int y)
 {
     offset_stamp->diameter = mask_stamp->diameter;
 
-    float fx = DP_double_to_float(floor(x));
-    float fy = DP_double_to_float(floor(y));
-    offset_stamp->left = mask_stamp->left + DP_float_to_int(fx);
-    offset_stamp->top = mask_stamp->top + DP_float_to_int(fy);
+    int fx = x >> 2;
+    int fy = y >> 2;
 
-    float xfrac = DP_double_to_float(x - fx);
-    float yfrac = DP_double_to_float(y - fy);
+    offset_stamp->left = mask_stamp->left + fx;
+    offset_stamp->top = mask_stamp->top + fy;
 
-    if (xfrac < 0.5f) {
-        xfrac += 0.5f;
+    uint32_t xfrac = x & 3;
+    uint32_t yfrac = y & 3;
+
+    if (xfrac < 2) {
+        xfrac += 2;
         --offset_stamp->left;
     }
     else {
-        xfrac -= 0.5f;
+        xfrac -= 2;
     }
 
-    if (yfrac < 0.5) {
-        yfrac += 0.5f;
+    if (yfrac < 2) {
+        yfrac += 2;
         --offset_stamp->top;
     }
     else {
-        yfrac -= 0.5f;
+        yfrac -= 2;
     }
 
     offset_mask(offset_stamp, mask_stamp, xfrac, yfrac);
@@ -314,8 +317,7 @@ static void draw_dabs_classic(DP_DrawContext *dc, DP_UserCursors *ucs_or_null,
             get_classic_mask_stamp(&mask_stamp, radius,
                                    DP_classic_dab_hardness(dab) / 255.0);
 
-            get_classic_offset_stamp(&offset_stamp, &mask_stamp, x / 4.0,
-                                     y / 4.0);
+            get_classic_offset_stamp(&offset_stamp, &mask_stamp, x, y);
 
             DP_transient_layer_content_brush_stamp_apply(
                 tlc, context_id, pixel, DP_channel8_to_15(opacity), blend_mode,
