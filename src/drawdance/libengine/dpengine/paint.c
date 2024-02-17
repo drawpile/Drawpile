@@ -55,30 +55,28 @@
 #define CLASSIC_LUT_COUNT \
     (CLASSIC_LUT_MAX_HARDNESS - CLASSIC_LUT_MIN_HARDNESS + 1)
 
-#define HIGH_RES_MASK_OPACITY (((double)DP_BIT15) / 4.0)
-
-static float *generate_classic_lut(int index)
+static uint16_t *generate_classic_lut(int index)
 {
     DP_debug("Generating classic dab lookup table for index %d", index);
-    float *cl = DP_malloc(sizeof(*cl) * CLASSIC_LUT_SIZE);
+    uint16_t *cl = DP_malloc(sizeof(*cl) * CLASSIC_LUT_SIZE);
     double h = 1.0 - (index / 100.0);
     double exponent = h < 0.0000004 ? 1000000.0 : 0.4 / h;
     double radius = CLASSIC_LUT_RADIUS;
     for (int i = 0; i < CLASSIC_LUT_SIZE; ++i) {
         double d = 1.0 - pow(pow(sqrt(i) / radius, exponent), 2.0);
-        cl[i] = DP_double_to_float(d);
+        cl[i] = DP_double_to_uint16(d * DP_BIT15);
     }
     return cl;
 }
 
-static const float *get_classic_lut(double hardness)
+static const uint16_t *get_classic_lut(double hardness)
 {
     DP_ATOMIC_DECLARE_STATIC_SPIN_LOCK(lock);
-    static float *classic_luts[CLASSIC_LUT_COUNT];
+    static uint16_t *classic_luts[CLASSIC_LUT_COUNT];
     int index = DP_double_to_int(hardness * 100.0);
     DP_ASSERT(index >= CLASSIC_LUT_MIN_HARDNESS);
     DP_ASSERT(index <= CLASSIC_LUT_MAX_HARDNESS);
-    float *cl = classic_luts[index];
+    uint16_t *cl = classic_luts[index];
     if (cl) {
         return cl;
     }
@@ -107,7 +105,7 @@ static DP_BrushStamp make_brush_stamp2(DP_DrawContext *dc)
 
 
 static void prepare_stamp(DP_BrushStamp *stamp, double hardness, double radius,
-                          int diameter, const float **out_lut,
+                          int diameter, const uint16_t **out_lut,
                           float *out_lut_scale)
 {
     DP_ASSERT(diameter <= DP_DRAW_CONTEXT_STAMP_MAX_DIAMETER);
@@ -154,7 +152,7 @@ static void get_mask(DP_BrushStamp *stamp, double radius, double hardness)
                     : raw_diameter_even && r < 8.0 ? 0.9f
                                                    : 1.0f;
 
-        const float *lut;
+        const uint16_t *lut;
         float lut_scale;
         prepare_stamp(stamp, hardness, r, diameter, &lut, &lut_scale);
         uint16_t *d = stamp->data;
@@ -165,9 +163,7 @@ static void get_mask(DP_BrushStamp *stamp, double radius, double hardness)
                 double dist =
                     (DP_square_double(x - r + offset) + yy) * fudge * lut_scale;
                 int i = DP_double_to_int(dist);
-                *d = i < CLASSIC_LUT_SIZE
-                       ? DP_float_to_uint16(lut[i] * (float)DP_BIT15)
-                       : 0;
+                *d = i < CLASSIC_LUT_SIZE ? lut[i] : 0;
                 ++d;
             }
         }
@@ -191,7 +187,7 @@ static void get_high_res_mask(DP_BrushStamp *stamp, double radius,
         offset = raw_offset - 1.5f;
     }
 
-    const float *lut;
+    const uint16_t *lut;
     float lut_scale;
     prepare_stamp(stamp, hardness, radius, diameter, &lut, &lut_scale);
     uint16_t *ptr = stamp->data;
@@ -209,11 +205,11 @@ static void get_high_res_mask(DP_BrushStamp *stamp, double radius,
             int dist10 = DP_double_to_int((xx1 + yy0) * lut_scale);
             int dist11 = DP_double_to_int((xx1 + yy1) * lut_scale);
 
-            double d = (dist00 < CLASSIC_LUT_SIZE ? lut[dist00] : 0.0)
-                     + (dist01 < CLASSIC_LUT_SIZE ? lut[dist01] : 0.0)
-                     + (dist10 < CLASSIC_LUT_SIZE ? lut[dist10] : 0.0)
-                     + (dist11 < CLASSIC_LUT_SIZE ? lut[dist11] : 0.0);
-            *(ptr++) = DP_double_to_uint16(d * HIGH_RES_MASK_OPACITY);
+            uint32_t acc = (dist00 < CLASSIC_LUT_SIZE ? (uint32_t)lut[dist00] : 0)
+                + (dist01 < CLASSIC_LUT_SIZE ? (uint32_t)lut[dist01] : 0)
+                + (dist10 < CLASSIC_LUT_SIZE ? (uint32_t)lut[dist10] : 0)
+                + (dist11 < CLASSIC_LUT_SIZE ? (uint32_t)lut[dist11] : 0);
+            *(ptr++) = DP_uint32_to_uint16(acc / 4);
         }
     }
 }
