@@ -3,7 +3,7 @@
 #	undef SETTING_FULL
 #	undef SETTING_GETSET
 #	undef SETTING
-#elif defined(DP_SETTINGS_HEADER) || defined(DP_SETTINGS_BODY) || defined(DP_SETTINGS_REBIND)
+#elif defined(DP_SETTINGS_HEADER) || defined(DP_SETTINGS_BODY) || defined(DP_SETTINGS_REBIND) || defined(DP_SETTINGS_INIT)
 
 #	define SETTING_BIND(name, upperName) \
 	template <typename... Args> \
@@ -35,10 +35,11 @@
 			Q_SIGNAL void name##Changed(upperName##Type value);
 #	elif defined(DP_SETTINGS_BODY)
 #		define SETTING_FULL(version, name, upperName, baseKey, defaultValue, getter, setter, notifier) \
+		static QVariant getDefaultValue##upperName() { return QVariant::fromValue(defaultValue); } \
 		const ::libclient::settings::SettingMeta Settings::meta##upperName = { \
 			::libclient::settings::SettingMeta::Version::version, \
 			baseKey, \
-			QVariant::fromValue(defaultValue), \
+			getDefaultValue##upperName, \
 			getter, \
 			setter, \
 			notifier \
@@ -46,6 +47,9 @@
 #	elif defined(DP_SETTINGS_REBIND)
 #		define SETTING_FULL(version, name, upperName, baseKey, defaultValue, getter, setter, notifier) \
 			SETTING_BIND(name, upperName)
+#	elif defined(DP_SETTINGS_INIT)
+#		define SETTING_FULL(version, name, upperName, baseKey, defaultValue, getter, setter, notifier) \
+		getDefaultValue##upperName();
 #	endif
 
 #	define SETTING_GETSET_V(version, name, upperName, baseKey, defaultValue, getter, setter) \

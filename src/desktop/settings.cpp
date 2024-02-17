@@ -57,7 +57,7 @@ namespace onionSkinsFrames {
 			}
 			return QVariant::fromValue(frames);
 		} else {
-			return meta.defaultValue;
+			return meta.getDefaultValue();
 		}
 	}
 
@@ -89,7 +89,7 @@ namespace newCanvasBackColor {
 	{
 		const auto color = any::get(meta, settings).value<QColor>();
 		if (!color.isValid()) {
-			return meta.defaultValue;
+			return meta.getDefaultValue();
 		}
 		return color;
 	}
@@ -100,7 +100,7 @@ namespace tabletDriver {
 	{
 		using tabletinput::Mode;
 
-		auto mode = meta.defaultValue.value<Mode>();
+		auto mode = meta.getDefaultValue().value<Mode>();
 		if (findKey(settings, meta.baseKey, meta.version)) {
 			mode = any::get(meta, settings).value<Mode>();
 		} else if (const auto inkKey = findKey(settings, "settings/input/windowsink", SettingMeta::Version::V0)) {
@@ -171,7 +171,7 @@ QVariant get(const SettingMeta &meta, QSettings &settings)
 						 ? int(EraserAction::Default)
 						 : int(EraserAction::Ignore);
 		} else {
-			action = meta.defaultValue.toInt();
+			action = meta.getDefaultValue().toInt();
 		}
 	}
 
@@ -214,6 +214,14 @@ namespace themeStyle {
 #define DP_SETTINGS_BODY
 #include "desktop/settings_table.h"
 #undef DP_SETTINGS_BODY
+
+void initializeTypes()
+{
+	libclient::settings::initializeTypes();
+#define DP_SETTINGS_INIT
+#include "desktop/settings_table.h"
+#undef DP_SETTINGS_INIT
+}
 
 } // namespace settings
 } // namespace desktop

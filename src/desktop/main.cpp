@@ -54,6 +54,10 @@ DrawpileApp::DrawpileApp(int &argc, char **argv)
 	setApplicationVersion(cmake_config::version());
 	setApplicationDisplayName("Drawpile");
 	setWindowIcon(QIcon(":/icons/drawpile.png"));
+	// QSettings has trouble loading types enums if they haven't been
+	// instantiated before, so we just instantiate every default value once to
+	// make sure they all exist before loading settings.
+	desktop::settings::initializeTypes();
 	// QSettings will use the wrong settings when it is opened before all
 	// the app and organisation names are set.
 	m_settings.reset();

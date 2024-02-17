@@ -407,7 +407,7 @@ namespace any {
 				return settings.value(key->key);
 			}
 		} else {
-			return meta.defaultValue;
+			return meta.getDefaultValue();
 		}
 	}
 
@@ -508,7 +508,7 @@ namespace any {
 	void set(const SettingMeta &meta, QSettings &settings, QVariant value)
 	{
 		const auto key = formatSettingKey(meta.baseKey, int(meta.version));
-		if (meta.version != SettingMeta::Version::V0 || value != meta.defaultValue) {
+		if (meta.version != SettingMeta::Version::V0 || value != meta.getDefaultValue()) {
 			forceSetKey(settings, key, value);
 		} else {
 			qCDebug(lcDpSettings) << "remove" << key;
@@ -520,6 +520,13 @@ namespace any {
 #define DP_SETTINGS_BODY
 #include "libclient/settings_table.h"
 #undef DP_SETTINGS_BODY
+
+void initializeTypes()
+{
+#define DP_SETTINGS_INIT
+#include "libclient/settings_table.h"
+#undef DP_SETTINGS_INIT
+}
 
 } // namespace settings
 } // namespace libclient

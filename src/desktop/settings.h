@@ -210,6 +210,8 @@ protected:
 	using libclient::settings::Settings::bind;
 };
 
+void initializeTypes();
+
 } // namespace settings
 } // namespace desktop
 

@@ -63,7 +63,7 @@ struct SettingMeta final {
 
 	Version version;
 	const char *baseKey;
-	QVariant defaultValue;
+	QVariant (*const getDefaultValue)();
 	QVariant (*const get)(const SettingMeta &, QSettings &);
 	void (*const set)(const SettingMeta &, QSettings &, QVariant);
 	void (*const notify)(const SettingMeta &, Settings &);
@@ -256,6 +256,8 @@ namespace any {
 	void setGroup(QSettings &settings, const QString &key, const QVariant &value);
 	void setList(QSettings &settings, const QString &key, const QVariant &value);
 } // namespace any
+
+void initializeTypes();
 
 } // namespace settings
 } // namespace libclient
