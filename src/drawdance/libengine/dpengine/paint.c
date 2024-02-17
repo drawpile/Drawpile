@@ -1065,7 +1065,7 @@ DP_BrushStamp DP_paint_color_sampling_stamp_make(uint16_t *data, int diameter,
     DP_ASSERT(diameter > 0);
     DP_ASSERT(diameter <= DP_DRAW_CONTEXT_STAMP_MAX_DIAMETER);
 
-    const float *lut = get_classic_lut(0.5);
+    const uint16_t *lut = get_classic_lut(0.5);
     int radius = diameter / 2;
 
     // Optimization, no need to recalculate the mask for the same diameter.
@@ -1080,7 +1080,7 @@ DP_BrushStamp DP_paint_color_sampling_stamp_make(uint16_t *data, int diameter,
                 double dist = (DP_square_double(x - radius) + yy) * lut_scale;
                 int i = DP_double_to_int(dist);
                 *d = i < CLASSIC_LUT_SIZE
-                       ? DP_float_to_uint16(DP_BIT15 * lut[i])
+                       ? lut[i]
                        : 0;
                 ++d;
             }
