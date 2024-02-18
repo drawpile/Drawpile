@@ -6,7 +6,7 @@
     <message>
         <location filename="../bundled/QtColorWidgets/abstract_widget_list.cpp" line="+67"/>
         <source>Add New</source>
-        <translation>新增</translation>
+        <translation>添加新的</translation>
     </message>
     <message>
         <location line="+51"/>
@@ -57,12 +57,12 @@
     <message>
         <location filename="../ui/addserverdialog.ui" line="+14"/>
         <source>Add Server</source>
-        <translation>Add Server</translation>
+        <translation>添加服务器</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Enter a list server URL:</source>
-        <translation>输入一个列表服务器的URL:</translation>
+        <translation>输入一个列表服务器的 URL:</translation>
     </message>
     <message>
         <location line="+43"/>
@@ -111,7 +111,7 @@
     <message>
         <location line="+20"/>
         <source>MyPaint Brush</source>
-        <translation>MyPaint笔刷</translation>
+        <translation>MyPaint 笔刷</translation>
     </message>
     <message>
         <location line="+39"/>
@@ -435,7 +435,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+10"/>
         <source>Previous Reset</source>
-        <translation>之前的复位</translation>
+        <translation>上一次重置</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -547,7 +547,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+1"/>
         <source>OpenRaster Image</source>
-        <translation>打开ORA文件</translation>
+        <translation>打开光栅图像</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -608,7 +608,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Export Animated GIF</source>
-        <translation>导出GIF动画</translation>
+        <translation>导出 GIF 动画</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -914,17 +914,17 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+175"/>
         <source>&amp;Select All</source>
-        <translation>&amp;选择全部</translation>
+        <translation>全选(&amp;S)</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>&amp;Step up</source>
-        <translation>&amp;往上</translation>
+        <translation>向上(&amp;S)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Step &amp;down</source>
-        <translation>往&amp;下</translation>
+        <translation>向下(&amp;D)</translation>
     </message>
 </context>
 <context>
@@ -1013,7 +1013,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location filename="../ui/layoutsdialog.ui" line="+14"/>
         <source>Layouts</source>
-        <translation>界面</translation>
+        <translation>布局</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -1033,7 +1033,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+24"/>
         <source>Drawpile&apos;s dockers can be freely arranged and combined by holding Shift and dragging them at the top. You can save and restore your favorite arrangements here. Make sure your arrangement fits your resolution, otherwise some controls may be pushed off-screen.</source>
-        <translation>Drawpile的面板可以通过从顶部拖动来自由排列和组合.你可以在这里保存和恢复你喜欢的排列.请确保你的排列符合你的分辨率,否则一些控件可能会被推到屏幕之外.</translation>
+        <translation>Drawpile 的泊坞窗可以通过按住 Shift 并在顶部拖动来自由排列和组合。 您可以在此处保存和恢复您最喜欢的安排。 确保您的安排适合您的分辨率，否则某些控件可能会被推到屏幕外。</translation>
     </message>
 </context>
 <context>
@@ -1047,7 +1047,7 @@ Subrange: [%3, %4]</source>
         <location line="+17"/>
         <location line="+234"/>
         <source>Incorrect password.</source>
-        <translation>密码错误.</translation>
+        <translation>密码错误。</translation>
     </message>
     <message>
         <location line="-191"/>
@@ -1067,7 +1067,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+52"/>
         <source>This session is password-protected.</source>
-        <translation>此房间有密码保护.</translation>
+        <translation>此房间有密码保护。</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -1077,7 +1077,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+183"/>
         <source>&lt;p&gt;This session has indicated that its contents are &lt;em&gt;not suitable for minors&lt;/em&gt; (NSFM).&lt;/p&gt;&lt;p&gt;&lt;strong&gt;You must be over the age of 18 and be allowed to consume adult content to proceed.&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Are you sure you want to join this session?&lt;/p&gt;</source>
-        <translation>&lt;p&gt;此房间已表明其内容不适于未成年人.&lt;/p&gt;&lt;p&gt;&lt;strong&gt;你必须年满18周岁以便继续观看成人内容.&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;你确定要加入此房间吗?&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;此房间已表明其内容不适于未成年人。&lt;/p&gt;&lt;p&gt;&lt;strong&gt;你必须年满 18 周岁以便继续观看成人内容。&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;你确定要加入此房间吗?&lt;/p&gt;</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -1107,7 +1107,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+11"/>
         <source>Don&apos;t use any of these accounts.</source>
-        <translation>不要使用这些账号.</translation>
+        <translation>不要使用这些账号。</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1117,7 +1117,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+43"/>
         <source>Log in with the selected account.</source>
-        <translation>使用所选账号登录.</translation>
+        <translation>使用所选账号登录。</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1127,7 +1127,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+24"/>
         <source>Forget this account.</source>
-        <translation>忘记此账号.</translation>
+        <translation>忘记此账号。</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1137,17 +1137,17 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+22"/>
         <source>Don&apos;t ask again unless the rules change</source>
-        <translation>不再询问, 除非规则发生更改</translation>
+        <translation>除非规则改变，否则不要再询问</translation>
     </message>
     <message>
         <location line="-578"/>
         <source>Show sessions not suitable for minors (NSFM)</source>
-        <translation>显示18禁房</translation>
+        <translation>不适合未成年人的表演场次 (NSFM)</translation>
     </message>
     <message>
         <location line="+90"/>
         <source>Enter the &lt;b&gt;session password&lt;/b&gt;, &lt;i&gt;not&lt;/i&gt; your account password.</source>
-        <translation>请输入房间密码,而不是你的账号密码.</translation>
+        <translation>输入&lt;b&gt;会话密码&lt;/b&gt;，&lt;i&gt;不是&lt;/i&gt;您的帐户密码。</translation>
     </message>
     <message>
         <location line="+86"/>
@@ -1181,7 +1181,7 @@ Subrange: [%3, %4]</source>
         <location line="+129"/>
         <source>You have %n images with unsaved changes. Do you want to review these changes before quitting?</source>
         <translation>
-            <numerusform>您有%n个图像未保存更改，您想在退出之前查看这些更改吗？</numerusform>
+            <numerusform>您有 %n 个图像未保存更改。 您想在退出之前查看这些更改吗？</numerusform>
         </translation>
     </message>
     <message>
@@ -1212,7 +1212,7 @@ Subrange: [%3, %4]</source>
         <location line="-924"/>
         <location line="+26"/>
         <source>Exit Drawpile</source>
-        <translation>退出Drawpile</translation>
+        <translation>退出 Drawpile</translation>
     </message>
     <message>
         <location line="-25"/>
@@ -1222,7 +1222,7 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+4"/>
         <source>Exit anyway</source>
-        <translation>仍然离开</translation>
+        <translation>仍然退出</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1359,29 +1359,29 @@ Subrange: [%3, %4]</source>
     <message>
         <location line="+2"/>
         <source>A collaborative drawing program.</source>
-        <translation>一款协作绘图程序.</translation>
+        <translation>一款协作绘图程序。</translation>
     </message>
     <message>
         <location line="+147"/>
         <location filename="../widgets/macmenu.cpp" line="-169"/>
         <source>&amp;New</source>
-        <translation>&amp;新建</translation>
+        <translation>新建(&amp;N)</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../widgets/macmenu.cpp" line="+1"/>
         <source>&amp;Open...</source>
-        <translation>&amp;打开...</translation>
+        <translation>打开(&amp;O)...</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Save</source>
-        <translation>&amp;保存</translation>
+        <translation>保存(&amp;S)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Save &amp;As...</source>
-        <translation>&amp;另存为...</translation>
+        <translation>另存为(&amp;A)...</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1413,13 +1413,13 @@ Subrange: [%3, %4]</source>
         <location line="+1"/>
         <source>Server is running out of history space and session has grown too large to automatically reset! (Limit is %1 MB)
 Simplify the canvas and reset manually before space runs out.</source>
-        <translation>服务器的历史空间不足, 记录变得太大而无法自动重置! (限制为 %1 MB)
-请在空间用完前清理画布并手动重置.</translation>
+        <translation>服务器的历史记录空间不足，会话已变得太大而无法自动重置！ （限制为 %1 MB）
+简化画布并在空间用完之前手动重置。</translation>
     </message>
     <message>
         <location line="+739"/>
         <source>&lt;p&gt;The shortcut &apos;%1&apos; is ambiguous, it matches:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</source>
-        <translation>&lt;p&gt;快捷键 &apos;%1&apos; 有歧义, 它匹配:&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</translation>
+        <translation>&lt;p&gt;快捷方式“%1”不明确，它匹配：&lt;/p&gt;&lt;ul&gt;%2&lt;/ul&gt;</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1434,7 +1434,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+668"/>
         <source>This session was hosted with an older version of Drawpile, some newer features won&apos;t be available. Other Drawpile versions will see different results, session resets may cause abrupt changes.</source>
-        <translation>这个房间是用Drawpile旧版本开的, 一些新功能将无法使用. 其他Drawpile版本将看到不同的结果, 房间重置可能导致突然的变化.</translation>
+        <translation>本次会议使用旧版本的 Drawpile 主持，一些新功能将不可用。 其他 Drawpile 版本会看到不同的结果，会话重置可能会导致突然的变化。</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -1454,12 +1454,12 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+190"/>
         <source>Error closing tablet event log.</source>
-        <translation>关闭数位板事件日志出错.</translation>
+        <translation>关闭数位板事件日志出错。</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>Error opening tablet event log.</source>
-        <translation>打开数位板事件日志出错.</translation>
+        <translation>打开数位板事件日志出错。</translation>
     </message>
     <message>
         <location line="+234"/>
@@ -1495,7 +1495,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>Change the session&apos;s undo limit, current limit is %1.</source>
-        <translation>更改房间撤销限制, 当前限制是 %1.</translation>
+        <translation>更改会话的撤消限制，当前限制为 %1。</translation>
     </message>
     <message>
         <location line="+659"/>
@@ -1532,93 +1532,93 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+34"/>
         <location filename="../widgets/macmenu.cpp" line="+9"/>
         <source>&amp;Quit</source>
-        <translation>&amp;退出软件</translation>
+        <translation>退出(&amp;Q)</translation>
     </message>
     <message>
         <location line="+45"/>
         <location filename="../widgets/macmenu.cpp" line="-12"/>
         <source>&amp;File</source>
-        <translation>&amp;文件</translation>
+        <translation>文件(&amp;F)</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>&amp;Import</source>
-        <translation>&amp;导入</translation>
+        <translation>导入(&amp;I)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>&amp;Export</source>
-        <translation>&amp;导出</translation>
+        <translation>导出(&amp;E)</translation>
     </message>
     <message>
         <location line="+42"/>
         <source>&amp;Undo</source>
-        <translation>&amp;撤销</translation>
+        <translation>撤销(&amp;U)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Redo</source>
-        <translation>&amp;重做</translation>
+        <translation>重做(&amp;R)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy selected area to the clipboard</source>
-        <translation>将所选区域复制到剪贴板</translation>
+        <translation>复制所选区域到剪贴板</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy selected area, excluding the background, to the clipboard</source>
-        <translation>将选定区域（不包括背景）复制到剪贴板</translation>
+        <translation>将所选区域（不包括背景）复制到剪贴板</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Copy selected area of the current layer to the clipboard</source>
-        <translation>将当前图层的选定区域复制到剪贴板</translation>
+        <translation>复制当前图层的所选区域到剪贴板</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Cut selected area of the current layer to the clipboard</source>
-        <translation>将当前图层的选定区域剪切到剪贴板</translation>
+        <translation>剪切当前图层的所选区域到剪贴板</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Paste</source>
-        <translation>&amp;粘贴</translation>
+        <translation>粘贴(&amp;P)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Pic&amp;k From Screen</source>
-        <translation>&amp;从屏幕上拾色</translation>
+        <translation>从屏幕上拾色(&amp;K)</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>&amp;Brush Settings</source>
-        <translation>&amp;笔刷设定</translation>
+        <translation>笔刷设置(&amp;B)</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>&amp;Deselect</source>
-        <translation>&amp;取消选择</translation>
+        <translation>取消选择(&amp;D)</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Expand &amp;Up</source>
-        <translation>&amp;向上扩大</translation>
+        <translation>向上扩展(&amp;U)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Expand &amp;Down</source>
-        <translation>&amp;向下扩大</translation>
+        <translation>向下扩展(&amp;D)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Expand &amp;Left</source>
-        <translation>&amp;向左扩大</translation>
+        <translation>向左扩展(&amp;L)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Expand &amp;Right</source>
-        <translation>&amp;向右扩大</translation>
+        <translation>向右扩展(&amp;R)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1638,27 +1638,27 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+90"/>
         <source>&amp;Edit</source>
-        <translation>&amp;编辑</translation>
+        <translation>编辑(&amp;E)</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>&amp;Expand Canvas</source>
-        <translation>&amp;扩大画布</translation>
+        <translation>扩展画布(&amp;E)</translation>
     </message>
     <message>
         <location line="+46"/>
         <source>&amp;Layouts...</source>
-        <translation>&amp;界面...</translation>
+        <translation>布局(&amp;L)...</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Toolbars</source>
-        <translation>&amp;工具栏</translation>
+        <translation>工具栏(&amp;T)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Docks</source>
-        <translation>&amp;面板</translation>
+        <translation>面板(&amp;D)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1683,7 +1683,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+0"/>
         <source>Show only the current layer</source>
-        <translation>只显示当前图层</translation>
+        <translation>仅显示当前图层</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1693,7 +1693,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+0"/>
         <source>Show only layers in the current frame</source>
-        <translation>只显示当前帧的图层</translation>
+        <translation>仅显示当前帧图层</translation>
     </message>
     <message>
         <location filename="../docks/layerlistdock.cpp" line="+311"/>
@@ -1811,57 +1811,57 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="-663"/>
         <source>Show User &amp;Pointers</source>
-        <translation>&amp;显示光标</translation>
+        <translation>显示用户指针(&amp;P)</translation>
     </message>
     <message>
         <location line="-358"/>
         <source>Import &amp;Drawpile 2.1 Animation…</source>
-        <translation>导入&amp;Drawpile 2.1 动画…</translation>
+        <translation>导入 Drawpile 2.1 动画(&amp;D)…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Import &amp;Brushes...</source>
-        <translation>导入&amp;笔刷...</translation>
+        <translation>导入笔刷(&amp;B)...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Export Session &amp;Template...</source>
-        <translation>导出房间 &amp;模板...</translation>
+        <translation>导出房间模板(&amp;T)...</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Export Animated &amp;GIF...</source>
-        <translation>导出动画 &amp;GIF...</translation>
+        <translation>导出动画 GIF(&amp;G)...</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Export Animation &amp;Frames...</source>
-        <translation>导出动画 &amp;帧数...</translation>
+        <translation>导出动画帧(&amp;F)...</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Export &amp;Brushes…</source>
-        <translation>导出&amp;笔刷…</translation>
+        <translation>导出笔刷(&amp;B)…</translation>
     </message>
     <message>
         <location line="+355"/>
         <source>Show La&amp;ser Trails</source>
-        <translation>&amp;显示轨迹</translation>
+        <translation>显示激光轨迹(&amp;S)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Show Pixel &amp;Grid</source>
-        <translation>&amp;显示像素网格</translation>
+        <translation>显示像素网格(&amp;G)</translation>
     </message>
     <message>
         <location line="+89"/>
         <source>&amp;View</source>
-        <translation>&amp;视图</translation>
+        <translation>视图(&amp;V)</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>&amp;Zoom</source>
-        <translation>&amp;缩放</translation>
+        <translation>缩放(&amp;Z)</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -1877,13 +1877,13 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+127"/>
         <location filename="../widgets/macmenu.cpp" line="+25"/>
         <source>&amp;Host...</source>
-        <translation>&amp;创建...</translation>
+        <translation>主机(&amp;H)...</translation>
     </message>
     <message>
         <location line="+2"/>
         <location filename="../widgets/macmenu.cpp" line="+1"/>
         <source>&amp;Join...</source>
-        <translation>&amp;地址加入...</translation>
+        <translation>加入(&amp;J)...</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -1893,7 +1893,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+2"/>
         <source>&amp;Leave</source>
-        <translation>&amp;退出</translation>
+        <translation>离开(&amp;L)</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -1909,7 +1909,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+35"/>
         <location filename="../widgets/macmenu.cpp" line="-2"/>
         <source>&amp;Session</source>
-        <translation>&amp;房间</translation>
+        <translation>会话(&amp;S)</translation>
     </message>
     <message>
         <location line="+31"/>
@@ -1949,17 +1949,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>Toggle Recolor Mode</source>
-        <translation>切换Recolor模式</translation>
+        <translation>切换重新着色模式</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Decrease Brush Size</source>
-        <translation>&amp;缩小笔刷</translation>
+        <translation>减小画笔大小(&amp;D)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Increase Brush Size</source>
-        <translation>&amp;放大笔刷</translation>
+        <translation>增加画笔大小(&amp;I)</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -1990,7 +1990,7 @@ Simplify the canvas and reset manually before space runs out.</source>
         <location line="+66"/>
         <location filename="../widgets/macmenu.cpp" line="-16"/>
         <source>Open &amp;Recent</source>
-        <translation>&amp;最近文件</translation>
+        <translation>最近文件(&amp;R)</translation>
     </message>
     <message>
         <location line="+33"/>
@@ -2000,7 +2000,7 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+41"/>
         <source>Paste &amp;From File...</source>
-        <translation>&amp;从文件粘贴...</translation>
+        <translation>从文件粘贴(&amp;F)...</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2010,18 +2010,18 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+1"/>
         <source>Resi&amp;ze Canvas...</source>
-        <translation>&amp;修改画布大小...</translation>
+        <translation>调整画布大小(&amp;Z)...</translation>
     </message>
     <message>
         <location line="+5"/>
         <location filename="../widgets/macmenu.cpp" line="+8"/>
         <source>Prefere&amp;nces</source>
-        <translation>&amp;首选项</translation>
+        <translation>首选项(&amp;N)</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Select &amp;All</source>
-        <translation>&amp;全选</translation>
+        <translation>全选(&amp;A)</translation>
     </message>
     <message>
         <location line="+163"/>
@@ -2031,32 +2031,32 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+26"/>
         <source>Zoom &amp;In</source>
-        <translation>&amp;放大</translation>
+        <translation>放大(&amp;I)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Zoom &amp;Out</source>
-        <translation>&amp;缩小</translation>
+        <translation>缩小(&amp;O)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Normal Size</source>
-        <translation>&amp;正常大小</translation>
+        <translation>正常大小(&amp;N)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Reset Rotation</source>
-        <translation>&amp;旋转角度归零</translation>
+        <translation>重置旋转(&amp;R)</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Show &amp;Annotations</source>
-        <translation>&amp;显示注释</translation>
+        <translation>显示注释(&amp;A)</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>&amp;Full Screen</source>
-        <translation>&amp;全屏</translation>
+        <translation>全屏(&amp;F)</translation>
     </message>
     <message>
         <location line="+373"/>
@@ -2066,17 +2066,17 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+0"/>
         <source>&amp;Color Picker</source>
-        <translation>&amp;拾色器</translation>
+        <translation>拾色器(&amp;C)</translation>
     </message>
     <message>
         <location line="-7"/>
         <source>&amp;Line</source>
-        <translation>&amp;直线</translation>
+        <translation>直线(&amp;L)</translation>
     </message>
     <message>
         <location line="-3601"/>
         <source>🙋 %1 joined!</source>
-        <translation>🙋 %1 加入了!</translation>
+        <translation>🙋 %1 已加入!</translation>
     </message>
     <message>
         <location line="+1240"/>
@@ -2086,48 +2086,48 @@ Simplify the canvas and reset manually before space runs out.</source>
     <message>
         <location line="+90"/>
         <source>Unsupported format.</source>
-        <translation>不支持的格式.</translation>
+        <translation>不支持的格式。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Couldn&apos;t start recording.</source>
-        <translation>无法开始录制.</translation>
+        <translation>无法开始录制。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Unknown error.</source>
-        <translation>未知错误.</translation>
+        <translation>未知错误。</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Error closing profile.</source>
-        <translation>关闭简介时出错.</translation>
+        <translation>关闭配置文件时出错。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Error opening profile.</source>
-        <translation>打开简介时出错.</translation>
+        <translation>打开配置文件时出错。</translation>
     </message>
     <message>
         <location line="+1284"/>
         <source>Stop Profile</source>
-        <translation>停止概况</translation>
+        <translation>停止配置文件</translation>
     </message>
     <message>
         <location line="+0"/>
         <location line="+1001"/>
         <source>Profile...</source>
-        <translation>概况...</translation>
+        <translation>配置文件...</translation>
     </message>
     <message>
         <location line="-994"/>
         <source>Set Artificial Lag... (currently %1 ms)</source>
-        <translation>设置人工滞后... (目前为 %1 ms)</translation>
+        <translation>设置人工延迟...（当前为 %1 毫秒）</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Set Artificial Lag</source>
-        <translation>设置人工滞后</translation>
+        <translation>设置人工延迟</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2157,11 +2157,11 @@ Simplify the canvas and reset manually before space runs out.</source>
 Debug dump recording starts on the next canvas reset and the files will be saved in %1
 
 Are you sure youwant to start recording debug dumps?</source>
-        <translation>调试数据将记录本地和远程绘图命令.它们可以用来修复网络问题,但其他方面就不多了.如果你想做一个常规的记录,请使用文件&gt;录制...来代替.
+        <translation>调试转储将记录本地和远程绘图命令。 它们可以用来解决网络问题，但除此之外就没有什么用了。 如果您想进行常规录音，请使用“文件”&gt;“录音...”。
 
-调试数据录制在下一次画布重置时开始,文件将被保存在%1中.
+调试转储记录在下一次画布重置时开始，文件将保存在 %1 中
 
-你确定你要开始录制调试数据吗?</translation>
+您确定要开始记录调试转储吗？</translation>
     </message>
     <message>
         <location line="+45"/>
@@ -2181,7 +2181,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+16"/>
         <source>Hold Shift to Arrange</source>
-        <translation>按住shift键排列</translation>
+        <translation>按住 Shift 进行排列</translation>
     </message>
     <message>
         <location line="+146"/>
@@ -2236,7 +2236,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-120"/>
         <source>&amp;Layer</source>
-        <translation>&amp;图层</translation>
+        <translation>图层(&amp;L)</translation>
     </message>
     <message>
         <location line="-2478"/>
@@ -2246,7 +2246,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+506"/>
         <source>No canvas to host! Create one or open a file.</source>
-        <translation>没有画布可供创建房间! 新建一个或者打开一个文件.</translation>
+        <translation>没有画布可以托管！ 创建一个或打开一个文件。</translation>
     </message>
     <message>
         <location line="+51"/>
@@ -2261,7 +2261,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+235"/>
         <source>You&apos;ve been disconnected from the session.</source>
-        <translation>你已从房间中断开连接.</translation>
+        <translation>你已从房间中断开连接。</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2286,7 +2286,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+112"/>
         <source>&amp;Copy Merged</source>
-        <translation>&amp;复制合并区域</translation>
+        <translation>复制合并区域(&amp;C)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2296,22 +2296,22 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Copy From &amp;Layer</source>
-        <translation>&amp;复制图层</translation>
+        <translation>从图层复制(&amp;L)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Cu&amp;t From Layer</source>
-        <translation>&amp;剪切图层</translation>
+        <translation>从图层剪切(&amp;T)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Stamp Selection</source>
-        <translation>&amp;图章</translation>
+        <translation>印章选择(&amp;S)</translation>
     </message>
     <message>
         <location line="+176"/>
         <source>Tablet Driver</source>
-        <translation>驱动选项</translation>
+        <translation>平板电脑驱动程序</translation>
     </message>
     <message>
         <location line="+36"/>
@@ -2336,7 +2336,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+4"/>
         <source>&amp;Fit Page</source>
-        <translation>&amp;适应窗口</translation>
+        <translation>适合页面(&amp;F)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2502,7 +2502,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+12"/>
         <source>&amp;Animation</source>
-        <translation>&amp;动画</translation>
+        <translation>动画(&amp;A)</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -2527,7 +2527,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>&amp;Invite...</source>
-        <translation>&amp;邀请...</translation>
+        <translation>邀请(&amp;I)...</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2562,7 +2562,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>&amp;Reset...</source>
-        <translation>&amp;重置...</translation>
+        <translation>重置(&amp;R)...</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -2602,7 +2602,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>&amp;Rectangle</source>
-        <translation>&amp;矩形</translation>
+        <translation>矩形(&amp;R)</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2612,7 +2612,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>&amp;Ellipse</source>
-        <translation>&amp;椭圆</translation>
+        <translation>椭圆(&amp;E)</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2632,12 +2632,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>&amp;Flood Fill</source>
-        <translation>&amp;油漆桶</translation>
+        <translation>油漆桶(&amp;F)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Annotation</source>
-        <translation>&amp;文字输入</translation>
+        <translation>注释(&amp;A)</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2652,17 +2652,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+0"/>
         <source>&amp;Laser Pointer</source>
-        <translation>&amp;记号笔</translation>
+        <translation>记号笔(&amp;L)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Select (Rectangular)</source>
-        <translation>&amp;选择(矩形)</translation>
+        <translation>选择(矩形)(&amp;S)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Select (Free-Form)</source>
-        <translation>&amp;选择(自由形状)</translation>
+        <translation>选择(自由形状)(&amp;F)</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2682,7 +2682,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Inspector</source>
-        <translation>检查员</translation>
+        <translation>检查器</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2775,12 +2775,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-349"/>
         <source>&amp;Tools</source>
-        <translation>&amp;工具</translation>
+        <translation>工具(&amp;T)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Shortcuts</source>
-        <translation>&amp;快捷键</translation>
+        <translation>快捷键(&amp;S)</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -2791,7 +2791,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+80"/>
         <location filename="../widgets/macmenu.cpp" line="+33"/>
         <source>&amp;Homepage</source>
-        <translation>&amp;主页</translation>
+        <translation>主页(&amp;H)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2807,13 +2807,13 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+1"/>
         <location filename="../widgets/macmenu.cpp" line="+1"/>
         <source>&amp;About Drawpile</source>
-        <translation>&amp;关于 Drawpile</translation>
+        <translation>关于 Drawpile(&amp;A)</translation>
     </message>
     <message>
         <location line="+1"/>
         <location filename="../widgets/macmenu.cpp" line="+2"/>
         <source>About &amp;Qt</source>
-        <translation>关于 &amp;Qt</translation>
+        <translation>关于 Qt(&amp;Q)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2824,7 +2824,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+76"/>
         <location filename="../widgets/macmenu.cpp" line="-5"/>
         <source>&amp;Help</source>
-        <translation>&amp;帮助</translation>
+        <translation>帮助(&amp;H)</translation>
     </message>
     <message>
         <location filename="../widgets/macmenu.cpp" line="-13"/>
@@ -3034,7 +3034,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+6"/>
         <source>Inspector</source>
-        <translation>检查员</translation>
+        <translation>检查器</translation>
     </message>
 </context>
 <context>
@@ -3142,7 +3142,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+7"/>
         <source>Ban</source>
-        <translation>禁止IP</translation>
+        <translation>禁止 IP</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -3357,7 +3357,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+10"/>
         <source>Kick &amp; Ban:</source>
-        <translation>踢除和禁IP:</translation>
+        <translation>踢除和禁 IP:</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -3596,7 +3596,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+20"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Supported pattern placeholders:&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{F}&lt;/span&gt; - frame number&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{E}&lt;/span&gt; - file extension&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;支持占位符格式:&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{F}&lt;/span&gt; - 帧数&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{E}&lt;/span&gt; - 文件拓展名&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;支持的模式占位符：&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{F}&lt;/span&gt; - 帧编号&lt;br/ &gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{E}&lt;/span&gt; - 文件扩展名&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -3906,7 +3906,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+7"/>
         <source>%n error(s) encountered.</source>
         <translation>
-            <numerusform>遇到了%n个错误.</numerusform>
+            <numerusform>遇到 %n 错误。</numerusform>
         </translation>
     </message>
 </context>
@@ -3915,7 +3915,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location filename="../dialogs/brushpresetproperties.cpp" line="+50"/>
         <source>Select brush thumbnail</source>
-        <translation>选择笔刷图标</translation>
+        <translation>选择笔刷缩略图</translation>
     </message>
 </context>
 <context>
@@ -3933,7 +3933,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+0"/>
         <source>Core brush settings.</source>
-        <translation>核心笔刷设定.</translation>
+        <translation>核心笔刷设置。</translation>
     </message>
     <message>
         <location line="+105"/>
@@ -3958,7 +3958,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>MyPaint Brush</source>
-        <translation>MyPaint笔刷</translation>
+        <translation>MyPaint 笔刷</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -4108,62 +4108,62 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-49"/>
         <source>Set the maximum velocity for Size, Opacity, Hardness and Smudging at once.</source>
-        <translation>一次性设置最大速度应用于大小, 不透明度, 硬度和混合.</translation>
+        <translation>立即设置尺寸、不透明度、硬度和涂抹的最大速度。</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Maximum velocity set for all settings in this brush.</source>
-        <translation>为此画笔的所有设置设定最大速度.</translation>
+        <translation>为该画笔中的所有设置设置的最大速度。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Set the maximum distance for Size, Opacity, Hardness and Smudging at once.</source>
-        <translation>一次性设置最大距离应用于大小, 不透明度, 硬度和混合.</translation>
+        <translation>一次设置尺寸、不透明度、硬度和涂抹的最大距离。</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Maximum distance set for all settings in this brush.</source>
-        <translation>为此画笔的所有设置设定最大距离.</translation>
+        <translation>为该画笔中的所有设置设置的最大距离。</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Set this curve for Size, Opacity, Hardness and Smudging at once.</source>
-        <translation>一次性设置此曲线应用于大小,不透明度,硬度和混合.</translation>
+        <translation>立即设置此曲线的尺寸、不透明度、硬度和涂抹。</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Curve set for all settings in this brush.</source>
-        <translation>曲线应用于这个笔刷的所有设置.</translation>
+        <translation>为该画笔中的所有设置设置曲线。</translation>
     </message>
     <message>
         <location line="+21"/>
         <source>Value: </source>
-        <translation>基准值: </translation>
+        <translation>值: </translation>
     </message>
     <message>
         <location line="+11"/>
         <source>No brush dynamics.</source>
-        <translation>没有笔刷动态.</translation>
+        <translation>没有笔刷动态。</translation>
     </message>
     <message>
         <location line="+257"/>
         <source>Slows down the stroke to stabilize it over time. High values give very smooth lines, but they will draw slowly. When you stop moving, the line will catch up your cursor. Tablet smoothing from the input preferences applies as well.</source>
-        <translation>减慢笔画的速度使其在一段时间内稳定下来. 高值可以得到非常平滑的线条,但笔画会很慢. 当你停止移动时,线条会跟上你的光标. 调节首选项中的数位板平滑度也适用.</translation>
+        <translation>随着时间的推移，减慢行程以使其稳定。 高值会产生非常平滑的线条，但绘制速度会很慢。 当您停止移动时，该线将追上您的光标。 来自输入首选项的平板电脑平滑也适用。</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Simply averages a number of inputs. Feels faster than the time-based stabilizer, but not as smooth and won&apos;t catch up to your cursor when you stop moving. Overrides tablet smoothing from the input preferences.</source>
-        <translation>简单的对输入进行平均. 会感觉比基于时间的防抖更快,但当你停止移动时,线条没有那么平滑且不会跟上你的光标. 优先于首选项中输入页面的数位板平滑度.</translation>
+        <translation>简单地对多个输入进行平均。 感觉比基于时间的稳定器更快，但不那么平滑，并且当您停止移动时不会跟上光标。 覆盖输入首选项中的平板平滑功能。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Unknown stabilization mode.</source>
-        <translation>未知的防抖模式.</translation>
+        <translation>未知的防抖模式。</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Synchronizing stabilization settings with brushes is disabled.</source>
-        <translation>与笔刷同步的防抖设置已禁用.</translation>
+        <translation>与笔刷同步的防抖设置已禁用。</translation>
     </message>
     <message>
         <location line="-605"/>
@@ -4202,17 +4202,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+160"/>
         <source>Not available in Indirect/Wash mode.</source>
-        <translation>在间接/冲刷模式下不可用.</translation>
+        <translation>在间接/冲刷模式下不可用。</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Dynamics not available in Indirect/Wash mode.</source>
-        <translation>动态在间接/冲刷模式下不可用.</translation>
+        <translation>动态在间接/冲刷模式下不可用。</translation>
     </message>
     <message>
         <location line="+59"/>
         <source>The radius of the brush.</source>
-        <translation>笔刷的半径.</translation>
+        <translation>笔刷的半径。</translation>
     </message>
     <message>
         <location line="-348"/>
@@ -4223,7 +4223,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Opaqueness of the brush, 0% is transparent, 100% fully opaque.</source>
-        <translation>笔刷的不透明度, 0% 是透明的, 100% 完全不透明的.</translation>
+        <translation>画笔的不透明度，0% 为透明，100% 完全不透明。</translation>
     </message>
     <message>
         <location line="-294"/>
@@ -4234,7 +4234,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+0"/>
         <source>Edge hardness, 0% is blurry, 100% is sharp.</source>
-        <translation>边缘的硬度, 0% 是模糊的, 100% 是锐利的.</translation>
+        <translation>边缘硬度，0% 模糊，100% 锐利。</translation>
     </message>
     <message>
         <location line="-230"/>
@@ -4245,7 +4245,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+0"/>
         <source>Blending of colors on the layer being drawn on.</source>
-        <translation>在被绘制的图层上进行颜色混合.</translation>
+        <translation>正在绘制的图层上混合颜色。</translation>
     </message>
     <message>
         <location filename="../dialogs/brushsettingsdialog_gen.cpp" line="+12"/>
@@ -4346,7 +4346,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <source>Zoom Level</source>
         <comment>mypaintinput</comment>
         <extracomment>refers to canvas zoom</extracomment>
-        <translation>缩放程度</translation>
+        <translation>缩放级别</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4370,61 +4370,61 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+8"/>
         <source>The pressure reported by the tablet. Usually between 0.0 and 1.0, but it may get larger when a pressure gain is used. If you use the mouse, it will be 0.5 when a button is pressed and 0.0 otherwise.</source>
         <comment>mypaintinput</comment>
-        <translation>数位板报告的压力. 通常在0.0和1.0之间, 但当使用压力增益时可能会变大. 如果你使用鼠标, 当按钮被按下时, 它将是 0.5, 否则是0.0.</translation>
+        <translation>平板电脑报告的压力。 通常在 0.0 和 1.0 之间，但当使用压力增益时它可能会变得更大。 如果您使用鼠标，按下按钮时该值为 0.5，否则为 0.0。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>How fast you currently move. This can change very quickly. Try &apos;print input values&apos; from the &apos;help&apos; menu to get a feeling for the range; negative values are rare but possible for very low speed.</source>
         <comment>mypaintinput</comment>
-        <translation>你当前的移动速度有多快. 这可能变化得非常快. 试着从&apos;帮助&apos;菜单中的&apos;打印输入值&apos;来感受一下这个范围; 负值很少, 但对于非常低的速度来说是可能的.</translation>
+        <translation>您当前移动的速度有多快。 这可能会很快改变。 尝试从“帮助”菜单中“打印输入值”来了解范围； 负值很少见，但在速度非常低的情况下也是可能的。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Same as fine speed, but changes slower. Also look at the &apos;gross speed filter&apos; setting.</source>
         <comment>mypaintinput</comment>
-        <translation>与精细速度相同, 但变化比较慢. 还要看一下 &quot;粗略速度筛选 &quot;的设置.</translation>
+        <translation>与精细速度相同，但变化较慢。 另请查看“总速度过滤器”设置。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Fast random noise, changing at each evaluation. Evenly distributed between 0 and 1.</source>
         <comment>mypaintinput</comment>
-        <translation>快速随机噪声, 在每次评估时都会改变. 在0和1之间均匀分布.</translation>
+        <translation>快速随机噪声，每次评估时都会发生变化。 均匀分布在 0 和 1 之间。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>This input slowly goes from zero to one while you draw a stroke. It can also be configured to jump back to zero periodically while you move. Look at the &apos;stroke duration&apos; and &apos;stroke hold time&apos; settings.</source>
         <comment>mypaintinput</comment>
-        <translation>在你画一个笔画的时候, 这个输入慢慢地从零变成了一. 它也可以被配置为在你移动时周期性地跳回零. 看一下 &apos;笔画持续时间&apos; 和 &apos;笔画保持时间&apos; 的设置.</translation>
+        <translation>当您绘制笔画时，此输入会慢慢从零变为一。 它还可以配置为在您移动时定期跳回零。 查看“行程持续时间”和“行程保持时间”设置。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The angle of the stroke, in degrees. The value will stay between 0.0 and 180.0, effectively ignoring turns of 180 degrees.</source>
         <comment>mypaintinput</comment>
-        <translation>笔画的角度, 单位是度. 该值将保持在0.0和180.0之间, 有效地忽略了180度的旋转.</translation>
+        <translation>笔画的角度，以度为单位。 该值将保持在 0.0 和 180.0 之间，有效地忽略 180 度的转弯。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Declination of stylus tilt. 0 when stylus is parallel to tablet and 90.0 when it&apos;s perpendicular to tablet.</source>
         <comment>mypaintinput</comment>
-        <translation>触控笔倾斜的偏角. 触控笔与平板电脑平行时为0，与平板电脑垂直时为90.0.</translation>
+        <translation>触针倾斜偏角。 当触笔平行于平板电脑时为 0，当触笔垂直于平板电脑时为 90.0。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Right ascension of stylus tilt. 0 when stylus working end points to you, +90 when rotated 90 degrees clockwise, -90 when rotated 90 degrees counterclockwise.</source>
         <comment>mypaintinput</comment>
-        <translation>触控笔倾斜的右升角. 触控笔工作端指向你时为0, 顺时针旋转90度时为+90, 逆时针旋转90度时为-90.</translation>
+        <translation>触针倾斜度的右升。 当触针工作端点指向您时为 0，顺时针旋转 90 度时为 +90，逆时针旋转 90 度时为 -90。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>This is a user defined input. Look at the &apos;custom input&apos; setting for details.</source>
         <comment>mypaintinput</comment>
-        <translation>这是一个用户定义的输入. 详情请看 &apos;自定义输入&apos; 的设置.</translation>
+        <translation>这是用户定义的输入。 有关详细信息，请参阅“自定义输入”设置。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The angle of the stroke, from 0 to 360 degrees.</source>
         <comment>mypaintinput</comment>
-        <translation>笔画的角度, 从0到360度.</translation>
+        <translation>笔画的角度，从 0 到 360 度。</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4434,39 +4434,39 @@ The range is +/-180.0.
 90 means the stroke angle is perpendicular to the angle of the stylus.
 180 means the angle of the stroke is directly opposite the angle of the stylus.</source>
         <comment>mypaintinput</comment>
-        <translation>触控笔指向的角度与笔画移动的角度之间的差异, 以度为单位.
-范围是 +/-180.0.
-0.0 表示笔画角度与触控笔的角度一致.
-90 表示笔画角度与触控笔的角度垂直.
-180 表示笔画角度与触控笔的角度正相反.</translation>
+        <translation>手写笔指向的角度与笔划移动的角度之间的差异（以度为单位）。
+范围为+/-180.0。
+0.0 表示行程角度对应于手写笔的角度。
+90 表示笔画角度垂直于手写笔的角度。
+180 表示笔画的角度与手写笔的角度直接相反。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Declination of stylus tilt on X-Axis. 90/-90 when stylus is parallel to tablet and 0 when it&apos;s perpendicular to tablet.</source>
         <comment>mypaintinput</comment>
-        <translation>触控笔在X轴上倾斜的偏角. 当触控笔与平板电脑平行时为90/-90. 当它与平板电脑垂直时为0.</translation>
+        <translation>X 轴上的触针倾斜偏角。 当手写笔平行于平板电脑时为 90/-90，当手写笔垂直于平板电脑时为 0。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Declination of stylus tilt on Y-Axis. 90/-90 when stylus is parallel to tablet and 0 when it&apos;s perpendicular to tablet.</source>
         <comment>mypaintinput</comment>
-        <translation>触控笔在Y轴上倾斜的偏角. 当触控笔与平板电脑平行时为90/-90. 当它与平板电脑垂直时为0.</translation>
+        <translation>Y 轴上的触针倾斜偏角。 当手写笔平行于平板电脑时为 90/-90，当手写笔垂直于平板电脑时为 0。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The X coordinate on a 256 pixel grid. This will wrap around 0-256 as the cursor is moved on the X axis. Similar to &quot;Stroke&quot;. Can be used to add paper texture by modifying opacity, etc.
 The brush size should be considerably smaller than the grid scale for best results.</source>
         <comment>mypaintinput</comment>
-        <translation>256像素网格上的X坐标. 当光标在X轴上移动时, 这将环绕0-256. 类似 &quot;笔画&quot;. 可以通过修改不透明度来添加纸张纹理, 等等.
-笔刷大小应当小于网格比例, 以获得最佳效果.</translation>
+        <translation>256 像素网格上的 X 坐标。 当光标在 X 轴上移动时，这将环绕 0-256。 与“中风”类似。 可用于通过修改不透明度等来添加纸张纹理。
+为获得最佳效果，画笔尺寸应远小于网格比例。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>The Y coordinate on a 256 pixel grid. This will wrap around 0-256 as the cursor is moved on the Y axis. Similar to &quot;Stroke&quot;. Can be used to add paper texture by modifying opacity, etc.
 The brush size should be considerably smaller than the grid scale for best results.</source>
         <comment>mypaintinput</comment>
-        <translation>256像素网格上的Y坐标. 当光标在Y轴上移动时, 这将环绕0-256. 类似 &quot;笔画&quot;. 可以通过修改不透明度来添加纸张纹理, 等等.
-笔刷大小应当小于网格比例, 以获得最佳效果.</translation>
+        <translation>256 像素网格上的 Y 坐标。 当光标在 Y 轴上移动时，该值将环绕 0-256。 与“中风”类似。 可用于通过修改不透明度等来添加纸张纹理。
+为获得最佳效果，画笔尺寸应远小于网格比例。</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4474,9 +4474,9 @@ The brush size should be considerably smaller than the grid scale for best resul
 Logarithmic: 0.0 is 100%, 0.69 is 200%, -1.38 is 25%
 For the Radius setting, using a value of -4.15 makes the brush size roughly constant, relative to the level of zoom.</source>
         <comment>mypaintinput</comment>
-        <translation>画布视图的当前缩放级别.
-对数: 0.0 是 100%, 0.69 是 200%, -1.38 是 25%
-对于半径的设置, 使用-4.15的值可以使笔刷的大小相对于缩放级别大致恒定.</translation>
+        <translation>画布视图的当前缩放级别。
+对数：0.0 为 100%，0.69 为 200%，-1.38 为 25%
+对于“半径”设置，使用值 -4.15 会使画笔大小相对于缩放级别大致恒定。</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4485,10 +4485,10 @@ For the Radius setting, using a value of -4.15 makes the brush size roughly cons
 +90 when twisted clockwise 90 degrees
 -90 when twisted counterclockwise 90 degrees</source>
         <comment>mypaintinput</comment>
-        <translation>触控笔的旋转.
-未扭转时为0
-顺时针旋转90度时为+90
-逆时针旋转90度时为-90</translation>
+        <translation>触针筒旋转。
+0 未扭曲时
+顺时针扭转 90 度时 +90
+逆时针扭转90度时-90</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4496,9 +4496,9 @@ For the Radius setting, using a value of -4.15 makes the brush size roughly cons
 You can even cancel out dab size increase and adjust something else to make a brush bigger.
 Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&quot;, which behave much differently.</source>
         <comment>mypaintinput</comment>
-        <translation>基础笔刷的半径允许你在变大或变小笔刷时更改笔刷的行为.
-你甚至可以取消点大小的增加而调整其他东西来使笔刷变大.
-注意 &quot;每个基本半径的点 &quot;和 &quot;每个实际半径的点&quot;, 它们的行为有很大不同.</translation>
+        <translation>基本画笔半径允许您在增大或缩小画笔时更改画笔的行为。
+您甚至可以取消笔尖大小的增加并调整其他内容以使画笔更大。
+请注意“每个基本半径的 Dabs”和“每个实际半径的 Dabs”，它们的行为有很大不同。</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -4898,16 +4898,16 @@ Take note of &quot;Dabs per basic radius&quot; and &quot;Dabs per actual radius&
         <source>0 means brush is transparent, 1 fully visible
 (also known as alpha or opacity)</source>
         <comment>mypaintsetting</comment>
-        <translation>0 表示笔刷是透明的, 1 表示完全可见
-(也被称为透明度或不透明度)</translation>
+        <translation>0 表示画笔透明，1 完全可见
+（也称为 Alpha 或不透明度）</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>This gets multiplied with opaque. You should only change the pressure input of this setting. Use &apos;opaque&apos; instead to make opacity depend on speed.
 This setting is responsible to stop painting when there is zero pressure. This is just a convention, the behaviour is identical to &apos;opaque&apos;.</source>
         <comment>mypaintsetting</comment>
-        <translation>这个会与不透明度相乘. 你应该只改变这个设置的压力输入. 使用 &apos;不透明度&apos; 来代替, 使不透明度取决于速度.
-这个设置负责在压力为零时停止绘画. 这只是一个惯例, 其行为与 &apos;不透明度&apos; 相同.</translation>
+        <translation>这会与不透明相乘。 您应该只更改此设置的压力输入。 使用“不透明”来使不透明度取决于速度。
+此设置负责在零压力时停止绘画。 这只是一个约定，其行为与“不透明”相同。</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4915,9 +4915,9 @@ This setting is responsible to stop painting when there is zero pressure. This i
 0.0 the opaque value above is for the individual dabs
 1.0 the opaque value above is for the final brush stroke, assuming each pixel gets (dabs_per_radius*2) brushdabs on average during a stroke</source>
         <comment>mypaintsetting</comment>
-        <translation>纠正由多个点相互混合引起的非线性. 当压力被映射到不透明度_倍增时, 这个修正应该能让你得到一个线性(&quot;自然&quot;)的压力响应, 因为它通常是这样做的. 0.9对标准笔画来说是很好的, 如果你的笔刷散布很多, 就把它设置得小一点, 如果你使用每秒印迹数, 就把它设置得高一点.
-0.0 以上的不透明度值是针对单个的点
-1.0 以上的不透明度值是针对最后的笔画, 假设每个像素在一个笔画中平均得到(每半径落下的笔触仿真点数*2)个笔刷点</translation>
+        <translation>纠正通过将多个 DAB 相互叠加而引入的非线性。 当压力映射到 opaque_multiply 时，此校正应该为您提供线性（“自然”）压力响应，就像通常所做的那样。 0.9 适用于标准笔划，如果画笔分散很多，则将其设置得较小，如果使用 dabs_per_second，则将其设置得较高。
+0.0 上面的不透明值适用于各个 DAB
+1.0 上面的不透明值适用于最终画笔描边，假设每个像素在一次描边期间平均获得 (dabs_per_radius*2) 个画笔描边</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4925,15 +4925,15 @@ This setting is responsible to stop painting when there is zero pressure. This i
  0.7 means 2 pixels
  3.0 means 20 pixels</source>
         <comment>mypaintsetting</comment>
-        <translation>基本笔刷半径 (对数)
- 0.7表示2个像素
- 3.0意味着20像素</translation>
+        <translation>基本画笔半径（对数）
+  0.7 表示 2 像素
+  3.0 表示 20 像素</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Hard brush-circle borders (setting to zero will draw nothing). To reach the maximum hardness, you need to disable Pixel feather.</source>
         <comment>mypaintsetting</comment>
-        <translation>硬笔刷-圆圈边界 (设置为0将画不出东西). 为了达到最大的硬度, 你需要禁用像素羽化.</translation>
+        <translation>硬画笔圆边框（设置为零将不绘制任何内容）。 要达到最大硬度，您需要禁用像素羽化。</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4942,28 +4942,28 @@ This setting is responsible to stop painting when there is zero pressure. This i
  1.0 blur one pixel (good value)
  5.0 notable blur, thin strokes will disappear</source>
         <comment>mypaintsetting</comment>
-        <translation>该设置在必要时降低硬度, 以防止像素阶梯效应(混叠), 使点更加模糊.
- 0.0 禁用 (适用于很强的橡皮和像素笔刷)
- 1.0 模糊一个像素 (好数值)
- 5.0 明显的模糊, 细笔画会消失</translation>
+        <translation>此设置会在必要时降低硬度，以通过使笔尖更加模糊来防止像素阶梯效应（锯齿）。
+  0.0 禁用（对于非常强的橡皮擦和像素画笔）
+  1.0 模糊一个像素（很有价值）
+  5.0 明显模糊，细笔画将消失</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>How many dabs to draw while the pointer moves a distance of one brush radius (more precise: the base value of the radius)</source>
         <comment>mypaintsetting</comment>
-        <translation>指针移动一个笔刷半径的距离时要画多少个点 (更准确地说: 半径的基础值)</translation>
+        <translation>当指针移动一个画笔半径的距离时要绘制多少个笔尖（更精确：半径的基值）</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Same as above, but the radius actually drawn is used, which can change dynamically</source>
         <comment>mypaintsetting</comment>
-        <translation>与上述相同, 但使用的是实际绘制的半径, 它可以动态地改变</translation>
+        <translation>与上面相同，但是使用的是实际绘制的半径，可以动态变化</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Dabs to draw each second, no matter how far the pointer moves</source>
         <comment>mypaintsetting</comment>
-        <translation>每秒画一个点, 无论指针移动多远</translation>
+        <translation>无论指针移动多远，每秒都会轻按一下进行绘制</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4971,23 +4971,23 @@ This setting is responsible to stop painting when there is zero pressure. This i
 1) the opaque value will be corrected such that a big-radius dabs is more transparent
 2) it will not change the actual radius seen by dabs_per_actual_radius</source>
         <comment>mypaintsetting</comment>
-        <translation>每个点随机改变半径. 你也可以用半径设置中的随机输入来做这个. 如果你在这里做, 有两个区别:
-1) 不透明的值将被修正, 这样大半径的点阵就更透明了
-2) 它不会改变每实际半径印迹数所看到的实际半径</translation>
+        <translation>每次轻轻改变半径。 您还可以使用半径设置上的 by_random 输入来执行此操作。 如果你在这里这样做，有两个区别：
+1) 不透明值将被修正，使得大半径的 DAB 更加透明
+2) 它不会改变 dabs_per_actual_radius 看到的实际半径</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>How slow the input fine speed is following the real speed
 0.0 change immediately as your speed changes (not recommended, but try it)</source>
         <comment>mypaintsetting</comment>
-        <translation>输入的精细速度在实际速度之后有多慢
-0.0 随着你的速度变化而立即改变 (不推荐, 但可以尝试)</translation>
+        <translation>输入精细速度跟随实际速度有多慢
+0.0 随着速度的变化立即变化（不推荐，但尝试一下）</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Same as &apos;fine speed filter&apos;, but note that the range is different</source>
         <comment>mypaintsetting</comment>
-        <translation>与 &apos;精细速度筛选&apos;相同, 但注意范围不同</translation>
+        <translation>与“细速筛选”相同，但注意范围不同</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4996,16 +4996,16 @@ This setting is responsible to stop painting when there is zero pressure. This i
 +8.0 very fast speed increases &apos;fine speed&apos; a lot
 For very slow speed the opposite happens.</source>
         <comment>mypaintsetting</comment>
-        <translation>这改变了&apos;精细速度&apos;输入的反应, 使其成为极限的物理速度. 如果&apos;精细速度&apos;被映射到半径上, 你会看到最好的区别.
--8.0 非常快的速度不会使 &apos;精细速度&apos; 增加很多
-+8.0 非常快的速度会使 &apos;精细速度&apos; 增加很多
-对于非常慢的速度会发生相反的情况.</translation>
+        <translation>这改变了“精细速度”输入对极限物理速度的反应。 如果将“精细速度”映射到半径，您将最清楚地看到差异。
+-8.0 非常快的速度不会增加“精细速度”更多
++8.0 非常快的速度大大增加了“精细速度”
+对于非常慢的速度，会发生相反的情况。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Same as &apos;fine speed gamma&apos; for gross speed</source>
         <comment>mypaintsetting</comment>
-        <translation>与粗略速度的&apos;精细速度伽马值&apos; 相同</translation>
+        <translation>与总速度的“精细速度伽玛”相同</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5014,9 +5014,9 @@ For very slow speed the opposite happens.</source>
  1.0 standard deviation is one basic radius away
 &lt;0.0 negative values produce no jitter</source>
         <comment>mypaintsetting</comment>
-        <translation>在每个点画的位置上增加一个随机偏移量
- 0.0 禁用
- 1.0 标准偏差是一个基本半径的距离
+        <translation>将随机偏移添加到绘制每个 DAB 的位置
+  0.0 禁用
+  1.0 标准差是一个基本半径之外
 &lt;0.0 负值不会产生抖动</translation>
     </message>
     <message>
@@ -9716,57 +9716,57 @@ or via Animation ▸ New Track.</source>
     <message>
         <location line="-138"/>
         <source>&amp;Operator</source>
-        <translation>&amp;房间管理员</translation>
+        <translation>房间管理员(&amp;O)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Trusted</source>
-        <translation>&amp;信任用户</translation>
+        <translation>信任用户(&amp;T)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Lock</source>
-        <translation>&amp;锁定</translation>
+        <translation>锁定(&amp;L)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Mute</source>
-        <translation>&amp;禁言</translation>
+        <translation>静音(&amp;M)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Undo</source>
-        <translation>&amp;撤销</translation>
+        <translation>撤销(&amp;U)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>&amp;Redo</source>
-        <translation>&amp;重做</translation>
+        <translation>重做(&amp;R)</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Kick</source>
-        <translation>&amp;踢除</translation>
+        <translation>踢除(&amp;K)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Kick &amp;&amp; Ba&amp;n</source>
-        <translation>&amp;禁止IP</translation>
+        <translation>禁止 IP</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Private Message</source>
-        <translation>&amp;私信</translation>
+        <translation>私信(&amp;P)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Show User &amp;Information</source>
-        <translation>&amp;显示用户信息</translation>
+        <translation>显示用户信息(&amp;I)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Take Current &amp;Brush</source>
-        <translation>&amp;使用当前笔刷</translation>
+        <translation>使用当前笔刷(&amp;B)</translation>
     </message>
     <message>
         <location line="+107"/>
