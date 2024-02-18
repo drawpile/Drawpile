@@ -58,6 +58,7 @@ Unreleased Version 2.2.1-pre
  * Server Feature: Log when a wrong password is entered for server accounts and sessions, disconnect the user after too many wrong tries.
  * Server Fix: Log client host and join attempts even when unsuccessful. Thanks Bluestrings for reporting.
  * Fix: Load default settings values after the program has initialized, avoiding crashes that can happen on Windows when building in debug mode. Thanks kiroma for reporting and testing.
+ * Feature: Optimize classic brush calculation, making them a good chunk faster. Thanks kiroma for contributing.
 
 2024-01-13 Version 2.2.0
  * Server Fix: Add --ssl-key-algorithm parameter to allow non-RSA SSL keys, defaulting to guessing the most common formats RSA and EC. Thanks Bluestrings for reporting.
