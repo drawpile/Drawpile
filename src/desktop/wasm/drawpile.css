@@ -127,6 +127,12 @@ button.danger:active {
   }
 }
 
+progress {
+  display: block;
+  height: 4em;
+  width: 100%;
+}
+
 .modal {
   background-color: rgba(0, 0, 0, 0.5);
   height: 100%;

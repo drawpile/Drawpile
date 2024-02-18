@@ -755,14 +755,35 @@ elseif(EMSCRIPTEN)
 		)
 	endforeach()
 
+	set(build_time_assets_dir "${CMAKE_CURRENT_BINARY_DIR}/wasm/assets")
+	add_custom_command(
+		OUTPUT "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/assets.bundle"
+		COMMAND
+			"${CMAKE_CURRENT_SOURCE_DIR}/wasm/generate-assets-bundle.py"
+			"${CMAKE_CURRENT_BINARY_DIR}/wasm/assets"
+			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/assets.bundle"
+		DEPENDS
+			drawpile
+		COMMAND_EXPAND_LISTS
+		COMMENT "Generating assets.bundle"
+		VERBATIM
+	)
+	add_custom_target(
+		drawpile_assets_bundle
+		DEPENDS "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/assets.bundle"
+	)
+
 	add_custom_command(
 		OUTPUT "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/index.html"
 		COMMAND
 			${CMAKE_COMMAND}
 			"-DINPUT_PATH=${CMAKE_CURRENT_SOURCE_DIR}/wasm/index.html"
 			"-DOUTPUT_PATH=${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/index.html"
+			"-DASSETS_PATH=${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/assets.bundle"
+			"-DWASM_PATH=${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/drawpile.wasm"
 			-P "${PROJECT_SOURCE_DIR}/cmake/GenerateIndexHtml.cmake"
 		DEPENDS
+			drawpile_assets_bundle
 			"${CMAKE_CURRENT_SOURCE_DIR}/icons/drawpile.svg"
 			"${CMAKE_CURRENT_SOURCE_DIR}/wasm/drawpile.css"
 			"${CMAKE_CURRENT_SOURCE_DIR}/wasm/index.html"
@@ -770,18 +791,9 @@ elseif(EMSCRIPTEN)
 		COMMENT "Generating index.html"
 		VERBATIM
 	)
-	add_custom_target(drawpile_index_html ALL DEPENDS "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/index.html")
-
-	set(build_time_assets_dir "${CMAKE_CURRENT_BINARY_DIR}/wasm/assets")
-	add_custom_command(
-		TARGET drawpile POST_BUILD
-		COMMAND
-			"${CMAKE_CURRENT_SOURCE_DIR}/wasm/generate-assets-bundle.py"
-			"${CMAKE_CURRENT_BINARY_DIR}/wasm/assets"
-			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/assets.bundle"
-		COMMAND_EXPAND_LISTS
-		COMMENT "Generating assets.bundle"
-		VERBATIM
+	add_custom_target(
+		drawpile_index_html
+		ALL DEPENDS "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/index.html"
 	)
 
 	install(

@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: MIT
 set(INPUT_PATH "" CACHE STRING "Input file path")
 set(OUTPUT_PATH "" CACHE STRING "Output file path")
+set(ASSETS_PATH "" CACHE STRING "Asset bundle file path")
+set(WASM_PATH "" CACHE STRING "WebAssembly file path")
 if(NOT INPUT_PATH OR NOT OUTPUT_PATH)
     message(FATAL_ERROR "INPUT_PATH and OUTPUT_PATH are required")
 endif()
@@ -21,4 +23,6 @@ if(NOT COMMIT)
 endif()
 
 string(TIMESTAMP CACHEBUSTER "%s" UTC)
+file(SIZE "${ASSETS_PATH}" ASSETSIZE)
+file(SIZE "${WASM_PATH}" WASMSIZE)
 configure_file("${INPUT_PATH}" "${OUTPUT_PATH}" @ONLY)

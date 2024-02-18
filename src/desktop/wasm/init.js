@@ -110,10 +110,9 @@
     return url;
   }
 
-  function parseAssets(buffer) {
+  function parseAssets(buffer, size) {
     const assets = [];
     const view = new DataView(buffer);
-    const size = view.byteLength;
     const decoder = new TextDecoder();
     let offset = 0;
     while (offset < size) {
@@ -178,6 +177,45 @@
     return [memory, maximum * PAGE];
   }
 
+  function removeProgressBar() {
+    document.querySelector("#progress-bar")?.remove();
+  }
+
+  function getOrAddProgressBar() {
+    let progressBar = document.querySelector("#progress-bar");
+    if (!progressBar) {
+      progressBar = tag("div", { id: "progress-bar" }, [
+        tag("progress", { "aria-labelledby": "progress-description" }),
+        tag("div", { id: "progress-description" }),
+        tag("div", { id: "progress-size" }),
+      ]);
+      document.querySelector("#init").appendChild(progressBar);
+    }
+    return progressBar;
+  }
+
+  function toMibString(size) {
+    return (size / (1024 * 1024)).toFixed(0);
+  }
+
+  function showProgressBar(title, done, total) {
+    const progressBar = getOrAddProgressBar();
+    const percent =
+      total === 0 ? 100.0 : Math.floor((done / total) * 100.0 + 0.5);
+    const percentText = `${percent.toFixed(0)}%`;
+
+    const description = progressBar.querySelector("#progress-description");
+    description.textContent = `${title} ${percentText}`;
+
+    const size = progressBar.querySelector("#progress-size");
+    size.textContent = `${toMibString(done)} / ${toMibString(total)} MiB`;
+
+    const progress = progressBar.querySelector("progress");
+    progress.value = `${done}`;
+    progress.max = `${total}`;
+    progress.textContent = percentText;
+  }
+
   function showBusyStatus(text) {
     const status = document.querySelector("#status");
     status.textContent = text;
@@ -188,6 +226,7 @@
     const status = document.querySelector("#status");
     status.textContent = text;
     status.removeAttribute("aria-busy");
+    removeProgressBar();
   }
 
   function showScreen() {
@@ -203,7 +242,6 @@
     UTF8ToString,
   ) {
     window.addEventListener("message", (e) => {
-      console.log(e.data);
       const loginModal = document.querySelector("#login-modal");
       if (loginModal) {
         const type = e.data?.type;
@@ -280,7 +318,70 @@
     });
   }
 
-  async function load() {
+  // SPDX-SnippetBegin
+  // SPDX-License-Identifier: GPL-2.0-or-later
+  // SDPX—SnippetName: WASM loading progress from wordpress-playground
+  function patchInstantiateStreaming(assetSize, wasmSize) {
+    function onProgress(done) {
+      try {
+        showProgressBar(
+          "Loading application",
+          assetSize + Math.min(done, wasmSize),
+          assetSize + wasmSize,
+        );
+      } catch (e) {
+        console.error("Error showing WASM streaming progress", e);
+      }
+    }
+
+    const originalInstantiateStreaming = WebAssembly.instantiateStreaming;
+    WebAssembly.instantiateStreaming = (response, ...args) => {
+      const reportingResponse = new Response(
+        new ReadableStream(
+          {
+            async start(controller) {
+              const reader = response.clone().body.getReader();
+              let loaded = 0;
+              for (;;) {
+                const { done, value } = await reader.read();
+                if (done) {
+                  onProgress(wasmSize);
+                  break;
+                }
+                loaded += value.byteLength;
+                onProgress(loaded);
+                controller.enqueue(value);
+              }
+              controller.close();
+            },
+          },
+          {
+            status: response.status,
+            statusText: response.statusText,
+          },
+        ),
+      );
+      for (const pair of response.headers.entries()) {
+        reportingResponse.headers.set(pair[0], pair[1]);
+      }
+
+      return originalInstantiateStreaming(reportingResponse, ...args);
+    };
+  }
+  // SPDX-SnippetEnd
+
+  function getSizeFromDocument(key) {
+    const value = document.documentElement.dataset[key];
+    if (value) {
+      const size = parseInt(value, 10);
+      if (!Number.isNaN(size) && size > 0) {
+        return size;
+      }
+    }
+    return 0;
+  }
+
+  async function load(assetSize, wasmSize) {
     screen = document.createElement("div");
     screen.id = "screen";
     screen.style.display = "none";
@@ -365,9 +466,34 @@
       ]);
     }
 
-    const assets = parseAssets(
-      await (await fetch(assetBundlePath)).arrayBuffer(),
-    );
+    const response = await fetch(assetBundlePath);
+    const reader = response.body.getReader();
+    let accumulator = new Uint8Array(assetSize);
+    let done = 0;
+    while (true) {
+      showProgressBar(
+        "Loading assets",
+        Math.min(done, assetSize),
+        assetSize + wasmSize,
+      );
+      const readResult = await reader.read();
+      if (readResult.done) {
+        break;
+      } else {
+        const value = readResult.value;
+        const requiredLength = done + value.byteLength;
+        if (requiredLength > accumulator.byteLength) {
+          let nextAccumulator = new Uint8Array(requiredLength);
+          nextAccumulator.set(accumulator, 0);
+          accumulator = nextAccumulator;
+        }
+        accumulator.set(value, done);
+        done += value.byteLength;
+      }
+    }
+    showProgressBar("Loading assets", assetSize, assetSize + wasmSize);
+
+    const assets = parseAssets(accumulator.buffer, done);
     config.preRun = (instance) => {
       while (assets.length !== 0) {
         const [name, content] = assets.shift();
@@ -396,8 +522,12 @@
 
   async function start() {
     try {
+      const assetSize = getSizeFromDocument("assetsize");
+      const wasmSize = getSizeFromDocument("wasmsize");
+      patchInstantiateStreaming(assetSize, wasmSize);
       showBusyStatus("Loading, this may take a while…");
-      const config = await load();
+      showProgressBar("Preparing", 0, assetSize + wasmSize);
+      const config = await load(assetSize, wasmSize);
       showBusyStatus("Initializing, this may take a while…");
       await initialize(config);
     } catch (e) {
@@ -505,16 +635,11 @@
         ]),
         tag("li", ["Firefox: Browser steals Ctrl+Z for itself."]),
         tag("li", [
-          "Android: Keyboard switches to capitals after every letter typed.",
+          "iOS: The Apple Pencil has extremely weak pressure compared to " +
+            "other tablets, but Drawpile doesn't adjust for it automatically " +
+            "yet. If you have to press too hard, you can adjust it under Edit" +
+            " → Preferences → Input → Global pressure curve.",
         ]),
-        tag("li", ["iOS: Page can be scrolled sometimes."]),
-        tag("li", [
-          "iOS: Page can be zoomed in by double-tapping, but not out again.",
-        ]),
-        tag("li", [
-          "iOS: A piece of nonexistent text gets selected in the top-left corner and keeps flickering annoyingly. (Possibly fixed?)",
-        ]),
-        tag("li", ["iOS: Touch breaks randomly. (Possibly fixed?)"]),
       ]),
     );
     startup.appendChild(
@@ -524,6 +649,15 @@
           "the help page on drawpile.net",
         ]),
         " for ways to do so.",
+      ]),
+    );
+    startup.appendChild(
+      tag("p", [
+        "The application for Windows, macOS, Linux and Android is available ",
+        tag("a", { href: "https://drawpile.net/download/", target: "_blank" }, [
+          "on drawpile.net",
+        ]),
+        ".",
       ]),
     );
 

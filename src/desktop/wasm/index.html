@@ -1,6 +1,6 @@
 <!doctype html>
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
-<html lang="en-us" data-cachebuster="@CACHEBUSTER@" data-commit="@COMMIT@">
+<html lang="en-us" data-cachebuster="@CACHEBUSTER@" data-commit="@COMMIT@" data-assetsize="@ASSETSIZE@" data-wasmsize="@WASMSIZE@">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -15,7 +15,10 @@
       </div>
       <h1>Drawpile</h1>
       <div id="status"></div>
-      <noscript>You need to enable JavaScript for this to work.</noscript>
+      <noscript>
+        <p>You need to enable JavaScript for this to work.</p>
+        <p>The application for Windows, macOS, Linux and Android is available <a href="https://drawpile.net/download/">on drawpile.net</a>.</p>
+      </noscript>
     </div>
     <div id="startup"></div>
     <script src="drawpile.js?cachebuster=@CACHEBUSTER@"></script>
