@@ -221,6 +221,8 @@ if __name__ == '__main__':
     # drawpile.net
     parser.add_argument('--legacy', action='store_true',
                         help='emit legacy platform IDs')
+    parser.add_argument('--artifacts', action='store_true',
+                        help='create <artifacts> element')
     args = parser.parse_args()
 
     default_appdata_name = 'net.drawpile.drawpile.appdata.xml' if args.legacy else 'drawpile.appdata.xml'
@@ -238,20 +240,22 @@ if __name__ == '__main__':
 
     if not add_release(appdata, latestChanges):
         print("Version %s already included in <releases>." % latestChanges['version'])
-
     else:
         print("Adding release", latestChanges['version'])
         changed = True
 
-    release_artifacts = update_release_artifacts(appdata, args.legacy)
-    if release_artifacts:
-        print("Updated release artifacts:")
-        for platform, ra in release_artifacts:
-            print('\t', platform, ra['filename'], ra['hash'])
-
-        changed = True
+    if args.artifacts:
+        release_artifacts = update_release_artifacts(appdata, args.legacy)
+        if release_artifacts:
+            print("Updated release artifacts:")
+            for platform, ra in release_artifacts:
+                print('\t', platform, ra['filename'], ra['hash'])
+            changed = True
+        else:
+            print("No release artifacts")
     else:
-        print("No release artifacts")
+        latest_release = appdata.find('releases')[0]
+        indent(latest_release.find('description'), after=2)
 
     if changed or args.in_file != args.out_file:
         appdata.getroot().tail = '\n'
