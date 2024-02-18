@@ -2537,7 +2537,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>&amp;Browse...</source>
-        <translation>&amp;房间大厅...</translation>
+        <translation>浏览(&amp;B)...</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2697,7 +2697,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+22"/>
         <source>&amp;Reload Last Brush Preset</source>
-        <translation>&amp;重载初始数字预设值</translation>
+        <translation>重新加载上次画笔预设(&amp;R)</translation>
     </message>
     <message>
         <location line="+79"/>
@@ -3700,7 +3700,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+26"/>
         <source>GIMP Palettes (*.gpl)</source>
-        <translation>GIMP色板 (*.gpl)</translation>
+        <translation>GIMP 色板 (*.gpl)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4010,7 +4010,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-282"/>
         <source>Lock Alpha (Recolor Mode)</source>
-        <translation>锁定透明度 (Recolor模式)</translation>
+        <translation>锁定 Alpha(重新上色模式)</translation>
     </message>
     <message>
         <location line="+38"/>
