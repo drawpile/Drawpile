@@ -7964,7 +7964,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+87"/>
         <source>Nothing here yet!</source>
-        <translation>Nothing here yet!</translation>
+        <translation>这里还什么都没有！</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -8041,7 +8041,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+2"/>
         <source>The built-in server is not available on this installation of Drawpile.</source>
-        <translation>内置服务器在此安装版本的Drawpile无法使用.</translation>
+        <translation>内置服务器在此安装的 Drawpile 上不可用。</translation>
     </message>
     <message>
         <location line="+29"/>
@@ -8066,17 +8066,17 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Invalid session title. If you want to join a session using an invite link, &lt;a href=&quot;#&quot;&gt;click here to go to the Join page&lt;/a&gt;.</source>
-        <translation>无效房名. 如果你想使用邀请链接加入房间,&lt;a href=&quot;#&quot;&gt;请点击这里切换到地址加入页面&lt;/a&gt;.</translation>
+        <translation>会话标题无效。 如果您想使用邀请链接加入会话，请&lt;a href=&quot;#&quot;&gt;单击此处转至“加入”页面&lt;/a&gt;。</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Without a password set, anyone can join your session! If you want to host a private session, choose a password or &lt;a href=&quot;#&quot;&gt;generate one&lt;/a&gt;.</source>
-        <translation>留空密码,任何人都可以加入! 如果你想创建私人的房间,请填写密码或者&lt;a href=&quot;#&quot;&gt;生成一个&lt;/a&gt;.</translation>
+        <translation>无需设置密码，任何人都可以加入您的会话！ 如果您想主持私人会话，请选择密码或&lt;a href=&quot;#&quot;&gt;生成密码&lt;/a&gt;。</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Hosting on your computer requires additional setup! &lt;a href=&quot;#&quot;&gt;Click here for instructions.&lt;/a&gt;</source>
-        <translation>使用本机创建房间需要额外的设置! &lt;a href=&quot;#&quot;&gt;可以点击这里查看说明.&lt;/a&gt;</translation>
+        <translation>在您的计算机上托管需要额外的设置！ &lt;a href=&quot;#&quot;&gt;单击此处获取说明。&lt;/a&gt;</translation>
     </message>
     <message>
         <location line="+57"/>
@@ -8124,7 +8124,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../dialogs/startdialog/join.cpp" line="+25"/>
         <source>Enter a &lt;strong&gt;session URL&lt;/strong&gt;, &lt;strong&gt;host name&lt;/strong&gt;, &lt;strong&gt;IP address&lt;/strong&gt; or &lt;strong&gt;room code&lt;/strong&gt;:</source>
-        <translation>可通过输入房间地址,服务器地址,ip地址或者房间代码来加入房间:</translation>
+        <translation>输入&lt;strong&gt;会话 URL&lt;/strong&gt;、&lt;strong&gt;主机名&lt;/strong&gt;、&lt;strong&gt;IP 地址&lt;/strong&gt;或&lt;strong&gt;房间代码&lt;/strong&gt;：</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -8235,12 +8235,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+13"/>
         <source>The download page for Drawpile %1 should have opened in your browser. If not, please visit &lt;strong&gt;drawpile.net&lt;/strong&gt; manually.</source>
-        <translation>Drawpile %1 的下载页面应该已经在你的浏览器中打开了.如果没有,请手动访问 &lt;strong&gt;drawpile.net&lt;/strong&gt; .</translation>
+        <translation>Drawpile %1 的下载页面应该已在您的浏览器中打开。 如果没有，请手动访问&lt;strong&gt;drawpile.net&lt;/strong&gt;。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>The download page for Drawpile %1 could not be opened, please visit &lt;strong&gt;drawpile.net&lt;/strong&gt; manually.</source>
-        <translation>Drawpile %1 的下载页面无法打开,请手动访问 &lt;strong&gt;drawpile.net&lt;/strong&gt; .</translation>
+        <translation>Drawpile %1 的下载页面无法打开，请手动访问&lt;strong&gt;drawpile.net&lt;/strong&gt;。</translation>
     </message>
 </context>
 <context>
@@ -8253,22 +8253,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Take a look over the &lt;a href=&quot;#preferences&quot;&gt;Preferences&lt;/a&gt; to configure things to your liking. You might also want to pick a different &lt;a href=&quot;#layouts&quot;&gt;Layout&lt;/a&gt; for the application.</source>
-        <translation>你可以查看 &lt;a href=&quot;#preferences&quot;&gt;首选项&lt;/a&gt; 来设置你的偏好. 你还可以为软件选择不同的 &lt;a href=&quot;#layouts&quot;&gt;界面&lt;/a&gt; .</translation>
+        <translation>查看&lt;a href=&quot;#preferences&quot;&gt;首选项&lt;/a&gt;以根据您的喜好进行配置。 您可能还想为应用程序选择不同的&lt;a href=&quot;#layouts&quot;&gt;布局&lt;/a&gt;。</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>If you have an invite link to a drawing session, you can &lt;a href=&quot;#join&quot;&gt;Join&lt;/a&gt; it directly. Alternatively, you can &lt;a href=&quot;#browse&quot;&gt;Browse&lt;/a&gt; public sessions or just create a &lt;a href=&quot;#create&quot;&gt;New Canvas&lt;/a&gt; to draw on your own.</source>
-        <translation>如果你有一个邀请加入房间的链接, 你可以直接通过 &lt;a href=&quot;#join&quot;&gt;地址加入&lt;/a&gt;. 另一种选择, 你可以通过 &lt;a href=&quot;#browse&quot;&gt;房间大厅&lt;/a&gt; 查看列表上的房间来加入或者 &lt;a href=&quot;#create&quot;&gt;新建画布&lt;/a&gt; 在上面画你自己的.</translation>
+        <translation>如果您有绘图会话的邀请链接，您可以直接&lt;a href=&quot;#join&quot;&gt;加入&lt;/a&gt;。 或者，您可以&lt;a href=&quot;#browse&quot;&gt;浏览&lt;/a&gt;公共会话或仅创建&lt;a href=&quot;#create&quot;&gt;新画布&lt;/a&gt;来自行绘制。</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>If you have trouble, take a look at the help pages linked on the right. If they don&apos;t answer your question, you can join the Discord server and ask, there&apos;s usually folks around to help!</source>
-        <translation>如果遇到问题, 请查看右侧的帮助链接. 如果这些页面无法解决你的问题, 你可以在discord上询问, 通常里面会有人帮助解答!</translation>
+        <translation>如果您遇到问题，请查看右侧链接的帮助页面。 如果他们没有回答你的问题，你可以加入 Discord 服务器并询问，周围通常会有人提供帮助！</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Next time, you&apos;ll see news and updates on this page.</source>
-        <translation>下次, 你将在本页面看到新闻和更新.</translation>
+        <translation>下次，您将在此页面上看到新闻和更新。</translation>
     </message>
 </context>
 <context>
@@ -8276,7 +8276,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../docks/brushpalettedock.cpp" line="+104"/>
         <source>Brushes</source>
-        <translation>预设面板</translation>
+        <translation>笔刷</translation>
     </message>
     <message>
         <location line="+34"/>
@@ -8500,7 +8500,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>GIMP palette (%1)</source>
-        <translation>GIMP色板(%1)</translation>
+        <translation>GIMP 色板(%1)</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -8894,7 +8894,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location filename="../toolwidgets/brushsettings.cpp" line="+129"/>
         <source>Brush Settings</source>
-        <translation>笔刷设定</translation>
+        <translation>笔刷设置</translation>
     </message>
     <message>
         <location line="+48"/>
@@ -8909,12 +8909,12 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Slows down the stroke and stabilizes it over time. Can produce very smooth results, but may feel sluggish.</source>
-        <translation>减慢笔画的速度使其在一段时间内稳定下来. 可以产生非常平稳的结果,但也可能感觉迟钝.</translation>
+        <translation>随着时间的推移，减慢冲程并使其稳定。 可以产生非常平滑的结果，但可能会感觉迟缓。</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Simply averages inputs to get a smoother result. Faster than the time-based stabilizer, but not as smooth.</source>
-        <translation>简单的对输入进行平均. 会感觉比基于时间的防抖更快,但没有那么平滑.</translation>
+        <translation>只需对输入进行平均即可获得更平滑的结果。 比基于时间的稳定器更快，但不如基于时间的稳定器平滑。</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -8924,7 +8924,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Draws stabilized strokes to the end, rather than cutting them off.</source>
-        <translation>将稳定的笔画绘制到最后, 而不是将其切断.</translation>
+        <translation>将稳定的笔画绘制到末尾，而不是切断它们。</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8934,22 +8934,22 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Makes the stabilizer a brush setting, like in MyPaint, rather than an independent setting, like in Krita.</source>
-        <translation>使稳定器成为笔刷设置, 就像在MyPaint中一样, 而不是像Krita中的独立设置.</translation>
+        <translation>使稳定器成为画笔设置（如 MyPaint 中），而不是独立设置（如 Krita 中）。</translation>
     </message>
     <message>
         <location line="+172"/>
         <source>This session is hosted with Drawpile 2.1, MyPaint brushes are unavailable.</source>
-        <translation>此房间是由Drawpile2.1开的, MyPaint笔刷无法使用.</translation>
+        <translation>本次会议使用 Drawpile 2.1 托管，MyPaint 画笔不可用。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>This session is hosted with Drawpile 2.1, Indirect/Wash Mode with opacity dynamics is unavailable. &lt;a href=&quot;#inc&quot;&gt;Click here to switch to Direct/Build-Up Mode&lt;/a&gt; or &lt;a href=&quot;#opa&quot;&gt;here to disable opacity dynamics&lt;/a&gt;.</source>
-        <translation>此房间是由Drawpile2.1开的,间接/冲刷模式下的不透明度动态不可用. &lt;a href=&quot;#inc&quot;&gt;请点击这里切换到直接/堆积模式&lt;/a&gt; 或者 &lt;a href=&quot;#opa&quot;&gt;点击这里禁用不透明度动态&lt;/a&gt;.</translation>
+        <translation>本次会议使用 Drawpile 2.1 托管，具有不透明度动态的间接/清洗模式不可用。 &lt;a href=&quot;#inc&quot;&gt;单击此处切换到直接/构建模式&lt;/a&gt;或&lt;a href=&quot;#opa&quot;&gt;此处禁用不透明度动态&lt;/a&gt;。</translation>
     </message>
     <message>
         <location line="-5"/>
         <source>You don&apos;t have permission to use MyPaint brushes.</source>
-        <translation>你没有权限使用MyPaint笔刷.</translation>
+        <translation>您无权使用 MyPaint 画笔。</translation>
     </message>
 </context>
 <context>
@@ -9037,7 +9037,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Click the desired mouse button into the field above, optionally while holding down keys. Hit Escape to cancel.</source>
-        <translation>在上面的字段中点击所需的鼠标按钮,可以选择在按住键的同时.按Escape键来取消.</translation>
+        <translation>在上面的字段中单击所需的鼠标按钮，也可以按住按键。 按 Esc 键取消。</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -9352,7 +9352,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+4"/>
         <source>Copies this curve to the clipboard. You can paste it into another setting or into the chat to share it with other users.</source>
-        <translation>复制此曲线到剪贴板. 你可以把它粘贴到另一个设置中或者粘贴到聊天框中来分享给其他用户.</translation>
+        <translation>将此曲线复制到剪贴板。 您可以将其粘贴到其他设置或聊天中以与其他用户共享。</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -9362,7 +9362,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+3"/>
         <source>Pastes a copied curve from the clipboard, overwriting what is there currently.</source>
-        <translation>粘贴从剪贴板复制的曲线, 覆盖当前的内容.</translation>
+        <translation>从剪贴板粘贴复制的曲线，覆盖当前的曲线。</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -9428,7 +9428,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+6"/>
         <source>Get externally visible IP address</source>
-        <translation>获取外部可见的IP地址</translation>
+        <translation>获取外部可见的 IP 地址</translation>
     </message>
     <message>
         <location line="+29"/>
@@ -9498,7 +9498,7 @@ Values above 0.5 may not be noticeable.</source>
     <message>
         <location line="+1"/>
         <source>Your Internet Service Provider is using Carrier Grade NAT. This makes it impossible for others to connect to you directly. See Drawpile&apos;s help page for workarounds.</source>
-        <translation>您的网络服务提供者正在使用运营商级NAT. 这使得其他人无法直接与您连接. 请查看Drawpile的帮助页面以获取解决方法.</translation>
+        <translation>您的互联网服务提供商正在使用运营商级 NAT。 这使得其他人无法直接连接到您。 请参阅 Drawpile 的帮助页面以获取解决方法。</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -9581,12 +9581,12 @@ Hex: %4</source>
     <message>
         <location filename="../widgets/recentscroll.cpp" line="+26"/>
         <source>No recent files.</source>
-        <translation>无最近文件.</translation>
+        <translation>无最近文件。</translation>
     </message>
     <message>
         <location line="+26"/>
         <source>No recent hosts.</source>
-        <translation>无最近服务器.</translation>
+        <translation>无最近服务器。</translation>
     </message>
     <message>
         <location line="+59"/>
