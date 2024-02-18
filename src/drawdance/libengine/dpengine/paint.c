@@ -226,15 +226,15 @@ static void offset_mask(DP_BrushStamp *dst_stamp, DP_BrushStamp *src_stamp,
     uint16_t *src = src_stamp->data;
     uint16_t *dst = dst_stamp->data;
 
-    *(dst++) = DP_uint32_to_uint16((src[0] * k3) / 4);
+    *(dst++) = DP_uint32_to_uint16((src[0] * k3) / 16);
     for (int x = 0; x < diameter - 1; ++x) {
         *(dst++) =
-            DP_uint32_to_uint16(((src[x] * k2) + (src[x + 1] * k3)) / 8);
+            DP_uint32_to_uint16(((src[x] * k2) + (src[x + 1] * k3)) / 16);
     }
     for (int y = 0; y < diameter - 1; ++y) {
         int yd = y * diameter;
         *(dst++) = DP_uint32_to_uint16(
-            ((src[yd] * k1) + (src[yd + diameter] * k3)) / 8);
+            ((src[yd] * k1) + (src[yd + diameter] * k3)) / 16);
         for (int x = 0; x < diameter - 1; ++x) {
             *(dst++) =
                 DP_uint32_to_uint16(((src[yd + x] * k0) + (src[yd + x + 1] * k1)
