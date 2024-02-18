@@ -89,6 +89,43 @@
           <li>Feature: Optimize classic brush calculation, making them a good chunk faster. Thanks kiroma for contributing.</li>
         </ul>
       </description>
+      <artifacts>
+        <artifact type="binary" platform="x86_64-windows-msvc">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.1/Drawpile-2.2.1-64bit.msi</location>
+          <checksum type="sha256">f79ebb70cca6a161466a0ef8bc56e567e4e25ca677e0545ac705205a51bc72e2</checksum>
+          <size type="download">24449024</size>
+        </artifact>
+        <artifact type="binary" platform="i386-windows-msvc">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.1/Drawpile-2.2.1-32bit.msi</location>
+          <checksum type="sha256">771923c626a958f39d7e59dca5dcbfd0df16ea61b1de9f2827b3f60a8d17d77d</checksum>
+          <size type="download">21352448</size>
+        </artifact>
+        <artifact type="binary" platform="x86_64-darwin-gnu">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.1/Drawpile-2.2.1.dmg</location>
+          <checksum type="sha256">d4b29c78da9a64eb8a5526c464f9647b48a99b60cace0ce3eaf06a4e484dec60</checksum>
+          <size type="download">30799433</size>
+        </artifact>
+        <artifact type="binary" platform="x86_64-linux-gnu">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.1/Drawpile-2.2.1-x86_64.AppImage</location>
+          <checksum type="sha256">08db4872ebc7c92a2761e47e6855e0978e3f5569500aa32d458767149217ad9d</checksum>
+          <size type="download">52151488</size>
+        </artifact>
+        <artifact type="binary" platform="aarch64-linux-android">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.1/Drawpile-2.2.1-arm64-v8a.apk</location>
+          <checksum type="sha256">0fc7fc65c6a4da88543e9d883304115f395e82d8ebd02f1b8deed26ad49b80e5</checksum>
+          <size type="download">19958267</size>
+        </artifact>
+        <artifact type="binary" platform="arm-linux-android">
+          <location>https://github.com/drawpile/Drawpile/releases/download/2.2.1/Drawpile-2.2.1-armeabi-v7a.apk</location>
+          <checksum type="sha256">a2b2df9502c5511adbce1561a954fcf7f049c6684cac01a9082b9c7d8096e806</checksum>
+          <size type="download">16857715</size>
+        </artifact>
+        <artifact type="source">
+          <location>https://github.com/drawpile/Drawpile/archive/refs/tags/2.2.1.tar.gz</location>
+          <checksum type="sha256">7b158e26f346da767e29abf3a347344a11a05ef6308236100b437518aaa2a07f</checksum>
+          <size type="download">5383320</size>
+        </artifact>
+      </artifacts>
     </release>
     <release version="2.2.0" type="stable" date="2024-01-13">
       <url>https://drawpile.net/news/release-2.2.0/</url>
