@@ -1,4 +1,6 @@
-Unreleased Version 2.2.1-pre
+Unreleased Version 2.2.2-pre
+
+2024-02-18 Version 2.2.1
  * Fix: Default to previous directory when saving a fresh file. Thanks Crow for reporting.
  * Feature: Allow toggling performance-related canvas view settings, since some systems get slowdowns. Thanks DevonJP for reporting.
  * Fix: Don't force TLS socket algorithms, since ECDSA certs seem to not like them. Thanks Bluestrings for reporting.
