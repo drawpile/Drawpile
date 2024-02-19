@@ -26,16 +26,175 @@ jobs:
       fail-fast: false
       matrix:
         os:
+          - ubuntu-20.04
+          - macos-latest
           - windows-latest
         qt:
           - 5.15.8
         bits:
           - 64
           - 32
+        cross_os:
+          - ''
+          - Android
+
+        exclude:
+          - os: windows-latest
+            cross_os: Android
+          - os: macos-latest
+            cross_os: Android
+          - os: macos-latest
+            bits: 32
+          - os: ubuntu-20.04
+            bits: 32
 
         # There's ways to deduplicate these includes, but any mistake causes
         # utterly confounding errors, so just explicitly specify each target.
         include:
+          - os: ubuntu-20.04
+            cross_os: ''
+            qt: 5.15.8
+            bits: 64
+            sccache_triplet: x86_64-unknown-linux-musl
+            build_flags: -DINITSYS=systemd
+            # This causes the AppImage to be generated, instead of just creating
+            # the portable tree, because there seems to be no way to separate
+            # these steps with linuxdeploy
+            # Even though the svg component is linked explicitly,
+            # linuxdeploy-plugin-qt does not seem to notice and so does not
+            # export the iconengine if it is not told that we really, really
+            # want svg plugins please
+            packager: >-
+              EXTRA_QT_PLUGINS="svg;"
+              VERSION="${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || '$(git describe)' }}"
+              cmake --install build --config Release
+            # The runner has multiple clang versions installed and CMake/Qt gets
+            # confused about which one to pick for some reason, so this also
+            # sets Clang_ROOT during the Qt build
+            qt_pre_build: >
+              sudo apt-get update &&
+              sudo apt-get install --no-install-recommends
+              libatspi2.0-dev libmtdev-dev libts-dev libgtk-3-dev
+              libgl1-mesa-dev libglu1-mesa-dev libxi-dev libdrm-dev
+              libgbm-dev libgl-dev libgles-dev libegl-dev libegl1-mesa-dev
+              libxext-dev libxfixes-dev libxrender-dev libx11-dev
+              libxcb1-dev libx11-xcb-dev libxcb-glx0-dev libxcb-util0-dev
+              libxkbcommon-dev libxkbcommon-x11-dev libxcb-keysyms1-dev
+              libxcb-image0-dev libxcb-shm0-dev libxcb-icccm4-dev
+              libxcb-sync-dev libxcb-xfixes0-dev libxcb-shape0-dev
+              libxcb-randr0-dev libxcb-render0-dev libxcb-render-util0-dev
+              libxcb-util-dev libinput-dev libvulkan-dev
+              libxcb-xinerama0-dev libxcb-xkb-dev libxcb-xinput-dev libclang-12-dev
+              libasound2-dev libpulse-dev libcups2-dev libssl-dev
+              libfontconfig1-dev &&
+              echo "Clang_ROOT=/usr/lib/llvm-12" >> $GITHUB_ENV
+            other_pre_build: >
+              sudo apt-get update &&
+              sudo apt-get install --no-install-recommends
+              libsecret-1-dev
+
+          - os: ubuntu-20.04
+            cross_os: Android
+            qt: 5.15.8
+            bits: 64
+            sccache_triplet: x86_64-unknown-linux-musl
+            packager: cmake --install build --config Release --prefix .
+            cross_qt_args: >-
+              "-DANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
+              "-DANDROID_NDK_ROOT=$ANDROID_NDK_ROOT"
+              "-DANDROID_HOST_PATH=$GITHUB_WORKSPACE/.github/deps/qt"
+              -DANDROID_ABI=arm64-v8a
+            cross_other_args: >-
+              "-DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_ROOT/build/cmake/android.toolchain.cmake"
+              -DANDROID_PLATFORM=android-23
+              -DANDROID_ABI=arm64-v8a
+            build_flags: >-
+              "-DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_ROOT/build/cmake/android.toolchain.cmake"
+              -DANDROID_PLATFORM=android-23
+              -DANDROID_ABI=arm64-v8a
+              -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=on
+              -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=BOTH
+              -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=BOTH
+              -DCMAKE_FIND_ROOT_PATH_MODE_PROGRAM=BOTH
+            # The runner has multiple clang versions installed and CMake/Qt gets
+            # confused about which one to pick for some reason, so this also
+            # sets Clang_ROOT during the Qt build
+            qt_pre_build: >
+              sudo apt-get update &&
+              sudo apt-get install --no-install-recommends
+              libatspi2.0-dev libmtdev-dev libts-dev libgtk-3-dev
+              libgl1-mesa-dev libglu1-mesa-dev libxi-dev libdrm-dev
+              libgbm-dev libgl-dev libgles-dev libegl-dev libegl1-mesa-dev
+              libxext-dev libxfixes-dev libxrender-dev libx11-dev
+              libxcb1-dev libx11-xcb-dev libxcb-glx0-dev libxcb-util0-dev
+              libxkbcommon-dev libxkbcommon-x11-dev libxcb-keysyms1-dev
+              libxcb-image0-dev libxcb-shm0-dev libxcb-icccm4-dev
+              libxcb-sync-dev libxcb-xfixes0-dev libxcb-shape0-dev
+              libxcb-randr0-dev libxcb-render0-dev libxcb-render-util0-dev
+              libxcb-util-dev libinput-dev libvulkan-dev
+              libxcb-xinerama0-dev libxcb-xkb-dev libxcb-xinput-dev libclang-12-dev
+              libasound2-dev libpulse-dev libcups2-dev libssl-dev
+              libfontconfig1-dev &&
+              echo "Clang_ROOT=/usr/lib/llvm-12" >> $GITHUB_ENV
+            other_pre_build: >
+              sudo apt-get update &&
+              sudo apt-get install --no-install-recommends
+              libsecret-1-dev
+
+          - os: ubuntu-20.04
+            cross_os: Android
+            qt: 5.15.8
+            bits: 32
+            sccache_triplet: x86_64-unknown-linux-musl
+            packager: cmake --install build --config Release --prefix .
+            cross_qt_args: >-
+              "-DANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
+              "-DANDROID_NDK_ROOT=$ANDROID_NDK_ROOT"
+              "-DANDROID_HOST_PATH=$GITHUB_WORKSPACE/.github/deps/qt"
+              -DANDROID_ABI=armeabi-v7a
+            cross_other_args: >-
+              "-DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_ROOT/build/cmake/android.toolchain.cmake"
+              -DANDROID_PLATFORM=android-23
+              -DANDROID_ABI=armeabi-v7a
+            build_flags: >-
+              "-DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_ROOT/build/cmake/android.toolchain.cmake"
+              -DANDROID_PLATFORM=android-23
+              -DANDROID_ABI=armeabi-v7a
+              -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=on
+              -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=BOTH
+              -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=BOTH
+              -DCMAKE_FIND_ROOT_PATH_MODE_PROGRAM=BOTH
+            # The runner has multiple clang versions installed and CMake/Qt gets
+            # confused about which one to pick for some reason, so this also
+            # sets Clang_ROOT during the Qt build
+            qt_pre_build: >
+              sudo apt-get update &&
+              sudo apt-get install --no-install-recommends
+              libatspi2.0-dev libmtdev-dev libts-dev libgtk-3-dev
+              libgl1-mesa-dev libglu1-mesa-dev libxi-dev libdrm-dev
+              libgbm-dev libgl-dev libgles-dev libegl-dev libegl1-mesa-dev
+              libxext-dev libxfixes-dev libxrender-dev libx11-dev
+              libxcb1-dev libx11-xcb-dev libxcb-glx0-dev libxcb-util0-dev
+              libxkbcommon-dev libxkbcommon-x11-dev libxcb-keysyms1-dev
+              libxcb-image0-dev libxcb-shm0-dev libxcb-icccm4-dev
+              libxcb-sync-dev libxcb-xfixes0-dev libxcb-shape0-dev
+              libxcb-randr0-dev libxcb-render0-dev libxcb-render-util0-dev
+              libxcb-util-dev libinput-dev libvulkan-dev
+              libxcb-xinerama0-dev libxcb-xkb-dev libxcb-xinput-dev libclang-12-dev
+              libasound2-dev libpulse-dev libcups2-dev libssl-dev
+              libfontconfig1-dev &&
+              echo "Clang_ROOT=/usr/lib/llvm-12" >> $GITHUB_ENV
+            other_pre_build: >
+              sudo apt-get update &&
+              sudo apt-get install --no-install-recommends
+              libsecret-1-dev
+
+          - os: macos-latest
+            qt: 5.15.8
+            bits: 64
+            sccache_triplet: x86_64-apple-darwin
+            packager: cpack --verbose --config build/CPackConfig.cmake -C Release
+
           - os: windows-latest
             qt: 5.15.8
             bits: 64
@@ -187,9 +346,9 @@ jobs:
           -DCMAKE_OBJC_COMPILER_LAUNCHER=sccache
           -DCMAKE_OBJCXX_COMPILER_LAUNCHER=sccache
           -DCLIENT=on
-          -DSERVER=off
-          -DSERVERGUI=off
-          -DTOOLS=off
+          -DSERVER=on
+          -DSERVERGUI=on
+          -DTOOLS=on
           -DTESTS=on
           -DUSE_GENERATORS=off
           "-DCMAKE_PREFIX_PATH=${{ matrix.cross_os && format('{0};', steps.cross-deps.outputs.path) }}${{ steps.deps.outputs.path }}"
@@ -197,8 +356,16 @@ jobs:
           -DCLANG_TIDY=off
           -DDIST_BUILD=${{ matrix.packager && 'on' }}
           -DSOURCE_ASSETS=off
-          -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=on
-          -DBUILD_VERSION='2.2.1'
+          -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=${{
+            matrix.packager
+            && startsWith(github.ref, 'refs/tags/')
+            && 'on'
+          }}
+          -DBUILD_VERSION='${{
+            matrix.packager
+            && startsWith(github.ref, 'refs/tags/')
+            && github.ref_name
+          }}'
           ${{ matrix.build_flags }}
 
       - name: Prepare APK signing
