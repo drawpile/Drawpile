@@ -346,9 +346,9 @@ jobs:
           -DCMAKE_OBJC_COMPILER_LAUNCHER=sccache
           -DCMAKE_OBJCXX_COMPILER_LAUNCHER=sccache
           -DCLIENT=on
-          -DSERVER=on
-          -DSERVERGUI=on
-          -DTOOLS=on
+          -DSERVER=${{ runner.os == 'Windows' && startsWith(github.ref, 'refs/tags/') && 'off' || 'on' }}
+          -DSERVERGUI=${{ runner.os == 'Windows' && startsWith(github.ref, 'refs/tags/') && 'off' || 'on' }}
+          -DTOOLS=${{ runner.os == 'Windows' && startsWith(github.ref, 'refs/tags/') && 'off' || 'on' }}
           -DTESTS=on
           -DUSE_GENERATORS=off
           "-DCMAKE_PREFIX_PATH=${{ matrix.cross_os && format('{0};', steps.cross-deps.outputs.path) }}${{ steps.deps.outputs.path }}"
