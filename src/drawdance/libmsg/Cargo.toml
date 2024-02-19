@@ -1,6 +1,6 @@
 [package]
 name = "dpmsg_rust"
-version = "2.2.2-pre"
+version = "2.2.2"
 rust-version = "1.63.0"
 edition = "2021"
 
