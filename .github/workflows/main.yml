@@ -198,7 +198,7 @@ jobs:
           -DDIST_BUILD=${{ matrix.packager && 'on' }}
           -DSOURCE_ASSETS=off
           -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=on
-          -DBUILD_VERSION=2.2.1
+          -DBUILD_VERSION='2.2.1'
           ${{ matrix.build_flags }}
 
       - name: Prepare APK signing
