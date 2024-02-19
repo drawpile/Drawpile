@@ -10,7 +10,7 @@ members = [
 ]
 
 [workspace.package]
-version = "2.2.2"
+version = "2.2.1"
 publish = false
 edition = "2021"
 license = "GPL-3.0-or-later"

@@ -19,7 +19,7 @@ checksum = "a4668cab20f66d8d020e1fbc0ebe47217433c1b6c8f2040faf858554e394ace6"
 
 [[package]]
 name = "dpengine_rust"
-version = "2.2.2"
+version = "2.2.1"
 dependencies = [
  "anyhow",
  "drawdance",
@@ -27,7 +27,7 @@ dependencies = [
 
 [[package]]
 name = "dpmsg_rust"
-version = "2.2.2"
+version = "2.2.1"
 dependencies = [
  "drawdance",
  "once_cell",
@@ -36,7 +36,7 @@ dependencies = [
 
 [[package]]
 name = "dprectool"
-version = "2.2.2"
+version = "2.2.1"
 dependencies = [
  "anyhow",
  "drawdance",
@@ -45,14 +45,14 @@ dependencies = [
 
 [[package]]
 name = "drawdance"
-version = "2.2.2"
+version = "2.2.1"
 dependencies = [
  "anyhow",
 ]
 
 [[package]]
 name = "drawpilecmd"
-version = "2.2.2"
+version = "2.2.1"
 dependencies = [
  "anyhow",
  "drawdance",
@@ -61,7 +61,7 @@ dependencies = [
 
 [[package]]
 name = "drawpiletimelapse"
-version = "2.2.2"
+version = "2.2.1"
 dependencies = [
  "anyhow",
  "drawdance",
