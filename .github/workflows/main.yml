@@ -521,7 +521,7 @@ jobs:
             'Drawpile-macOS-64bit-Qt5.15.8;Drawpile-*.dmg;macOS Disk Image' \
             'Drawpile-Windows-64bit-Qt5.15.8;Drawpile-*.msi;Windows Installer 64bit' \
             'Drawpile-Windows-64bit-Qt5.15.8;Drawpile-*.zip;Windows Portable ZIP 64bit' \
-            'Drawpile-Tools-Windows-64bit-Qt5.15.8;Drawpile-*.zip;Windows Server and Tools Portable ZIP 64bit' \
+            'Drawpile-Tools-Windows-64bit-Qt5.15.8;Drawpile-*.zip;Windows Server and Tools Portable ZIP 64bit - does not include Drawpile' \
             'Drawpile-Android-32bit-Qt5.15.8;Drawpile-*.apk;Android APK 32bit - do not use, you want 64bit' \
             'Drawpile-Windows-32bit-Qt5.15.8;Drawpile-*.msi;Windows Installer 32bit - do not use, you want 64bit' \
             'Drawpile-Windows-32bit-Qt5.15.8;Drawpile-*.zip;Windows Portable ZIP 32bit - do not use, you want 64bit'
