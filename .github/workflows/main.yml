@@ -329,7 +329,7 @@ jobs:
         id: sccache
         with:
           triplet: ${{ matrix.sccache_triplet }}
-          cache_key: ${{ runner.os }}${{ matrix.bits == 32 && '32' || '' }}${{ matrix.cross_os && format('+{0}', matrix.cross_os) }}-${{ matrix.qt }}
+          cache_key: ${{ runner.os }}${{ matrix.component }}${{ matrix.bits == 32 && '32' || '' }}${{ matrix.cross_os && format('+{0}', matrix.cross_os) }}-${{ matrix.qt }}
 
       - name: Cache gradle
         uses: actions/cache@v3
