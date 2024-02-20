@@ -265,7 +265,7 @@ JsonApiResult Client::callJsonApi(
 	}
 
 	if(method == JsonApiMethod::Delete) {
-		return jsonApiKick();
+		return jsonApiKick(request[QStringLiteral("message")].toString());
 
 	} else if(method == JsonApiMethod::Update) {
 		QString msg = request["message"].toString();
@@ -304,10 +304,19 @@ JsonApiResult Client::callJsonApi(
 	}
 }
 
-JsonApiResult Client::jsonApiKick()
+JsonApiResult Client::jsonApiKick(const QString &message)
 {
+	if(message.toUtf8().length() > 100) {
+		QJsonObject o{
+			{QStringLiteral("status"), QStringLiteral("error")},
+			{QStringLiteral("error"), QStringLiteral("message too long")}};
+		return JsonApiResult{JsonApiResult::BadRequest, QJsonDocument(o)};
+	}
 	disconnectClient(
-		Client::DisconnectionReason::Kick, "the server administrator");
+		Client::DisconnectionReason::Kick,
+		QStringLiteral("the server administrator") +
+			(message.isEmpty() ? QString()
+							   : QStringLiteral(" (%1)").arg(message)));
 	QJsonObject o{{QStringLiteral("status"), QStringLiteral("ok")}};
 	return JsonApiResult{JsonApiResult::Ok, QJsonDocument(o)};
 }

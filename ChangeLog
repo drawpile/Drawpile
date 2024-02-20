@@ -1,4 +1,5 @@
 Unreleased Version 2.2.2-pre
+ * Server Feature: Allow adding a message when kicking someone through the admin API.
 
 2024-02-18 Version 2.2.1
  * Fix: Default to previous directory when saving a fresh file. Thanks Crow for reporting.

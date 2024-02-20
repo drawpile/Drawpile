@@ -259,7 +259,7 @@ public:
 		JsonApiMethod method, const QStringList &path,
 		const QJsonObject &request);
 
-	JsonApiResult jsonApiKick();
+	JsonApiResult jsonApiKick(const QString &message);
 
 	/**
 	 * @brief Divert incoming messages to a holding buffer

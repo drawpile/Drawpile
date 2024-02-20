@@ -344,7 +344,8 @@ JsonApiResult SessionServer::callUserJsonApi(JsonApiMethod method, const QString
 		if(path.size() == 1) {
 			ThinServerClient *c = searchClientByPathUid(path[0]);
 			if(c) {
-				return c->jsonApiKick();
+				return c->jsonApiKick(
+					request[QStringLiteral("message")].toString());
 			}
 		}
 		return JsonApiNotFound();
