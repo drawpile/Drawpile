@@ -20,10 +20,27 @@ env:
 
 jobs:
   test:
-    name: ${{ matrix.cross_os || matrix.os }} ${{ matrix.bits }}bit Qt ${{ matrix.qt }}${{ matrix.cross_os && format(' on {0}', matrix.os) }}
+    name: ${{ matrix.cross_os || matrix.os }} ${{ matrix.bits }}bit${{ matrix.component && format(' {0}', matrix.component) }} Qt ${{ matrix.qt }}${{ matrix.cross_os && format(' on {0}', matrix.os) }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
+      # We want to build the following:
+      # - Android arm32 APK
+      # - Android arm64 APK
+      # - Linux x64 AppImage
+      # - macOS x64 Disk Image
+      # - Windows x64 Installer and ZIP including only the client
+      # - Windows x64 ZIP including server and command-line tools
+      # - Windows x86 Installer and ZIP including only the client
+      # Android targets are cross-compiled from Linux. We use the oldest Ubuntu
+      # version available for compatibility reasons, since glibc is not included
+      # in the AppImage. On Windows, the server and command-line tools are split
+      # off into their own package because Windows Defender randomly misdetects
+      # the executables as something bad. This can be fixed by submitting the
+      # executables to Microsoft and they seem to remove the bogus detection
+      # pretty quickly, but having them separated means we don't need to make
+      # client releases dependent on them getting around to that when it's only
+      # a secondary executable that's causing it.
       matrix:
         os:
           - ubuntu-20.04
@@ -34,6 +51,9 @@ jobs:
         bits:
           - 64
           - 32
+        component:
+          - ''
+          - 'Tools'
         cross_os:
           - ''
           - Android
@@ -45,8 +65,16 @@ jobs:
             cross_os: Android
           - os: macos-latest
             bits: 32
+          - os: macos-latest
+            component: 'Tools'
           - os: ubuntu-20.04
+            cross_os: ''
             bits: 32
+          - os: ubuntu-20.04
+            component: 'Tools'
+          - os: windows-latest
+            bits: 32
+            component: 'Tools'
 
         # There's ways to deduplicate these includes, but any mistake causes
         # utterly confounding errors, so just explicitly specify each target.
@@ -345,10 +373,10 @@ jobs:
           -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
           -DCMAKE_OBJC_COMPILER_LAUNCHER=sccache
           -DCMAKE_OBJCXX_COMPILER_LAUNCHER=sccache
-          -DCLIENT=on
-          -DSERVER=${{ runner.os == 'Windows' && startsWith(github.ref, 'refs/tags/') && 'off' || 'on' }}
-          -DSERVERGUI=${{ runner.os == 'Windows' && startsWith(github.ref, 'refs/tags/') && 'off' || 'on' }}
-          -DTOOLS=${{ runner.os == 'Windows' && startsWith(github.ref, 'refs/tags/') && 'off' || 'on' }}
+          -DCLIENT=${{ matrix.component == 'Tools' && 'off' || 'on' }}
+          -DSERVER=${{ runner.os == 'Windows' && !matrix.component && 'off' || 'on' }}
+          -DSERVERGUI=${{ runner.os == 'Windows' && !matrix.component && 'off' || 'on' }}
+          -DTOOLS=${{ runner.os == 'Windows' && !matrix.component && 'off' || 'on' }}
           -DTESTS=on
           -DUSE_GENERATORS=off
           "-DCMAKE_PREFIX_PATH=${{ matrix.cross_os && format('{0};', steps.cross-deps.outputs.path) }}${{ steps.deps.outputs.path }}"
@@ -366,6 +394,7 @@ jobs:
             && startsWith(github.ref, 'refs/tags/')
             && github.ref_name
           }}'
+          -DBUILD_PACKAGE_COMPONENT='${{ matrix.component }}'
           ${{ matrix.build_flags }}
 
       - name: Prepare APK signing
@@ -407,7 +436,7 @@ jobs:
         uses: actions/upload-artifact@v3
         if: matrix.packager
         with:
-          name: Drawpile-${{ matrix.cross_os || runner.os }}-${{ matrix.bits }}bit-Qt${{ matrix.qt }}
+          name: Drawpile${{ matrix.component && format('-{0}', matrix.component) }}-${{ matrix.cross_os || runner.os }}-${{ matrix.bits }}bit-Qt${{ matrix.qt }}
           path: |
             Drawpile-*.AppImage
             Drawpile-*.apk
@@ -492,6 +521,7 @@ jobs:
             'Drawpile-macOS-64bit-Qt5.15.8;Drawpile-*.dmg;macOS Disk Image' \
             'Drawpile-Windows-64bit-Qt5.15.8;Drawpile-*.msi;Windows Installer 64bit' \
             'Drawpile-Windows-64bit-Qt5.15.8;Drawpile-*.zip;Windows Portable ZIP 64bit' \
+            'Drawpile-Tools-Windows-64bit-Qt5.15.8;Drawpile-*.zip;Windows Server and Tools Portable ZIP 64bit' \
             'Drawpile-Android-32bit-Qt5.15.8;Drawpile-*.apk;Android APK 32bit - do not use, you want 64bit' \
             'Drawpile-Windows-32bit-Qt5.15.8;Drawpile-*.msi;Windows Installer 32bit - do not use, you want 64bit' \
             'Drawpile-Windows-32bit-Qt5.15.8;Drawpile-*.zip;Windows Portable ZIP 32bit - do not use, you want 64bit'

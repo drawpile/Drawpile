@@ -3,6 +3,19 @@ This module sets up the helpers that are required to create distributable
 builds.
 #]]
 
+unset(dist_targets)
+if(CLIENT)
+	list(APPEND dist_targets drawpile)
+endif()
+if(SERVER)
+	list(APPEND dist_targets drawpile-srv)
+endif()
+if(TOOLS)
+	list(APPEND dist_targets dprectool drawpile-cmd drawpile-timelapse)
+endif()
+set(dist_extra_targets ${dist_targets})
+list(POP_FRONT dist_extra_targets dist_primary_target)
+
 if(APPLE)
 	set(helper_name macdeployqt)
 	set(helper_flags "-no-strip")
@@ -24,12 +37,16 @@ elseif(WIN32)
 	set(helper_flags "--release;--no-translations;--pdb;--no-system-d3d-compiler;--no-compiler-runtime")
 	set(path_flags "")
 	set(extra_exe_flag "")
-	set(app_path "${CMAKE_INSTALL_BINDIR}/$<TARGET_FILE_NAME:drawpile>")
-	set(qt_conf_path "${CMAKE_INSTALL_BINDIR}")
-	file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/qt.conf"
-		"[Paths]\n"
-		"Translations = ${INSTALL_APPDATADIR}/i18n\n"
-	)
+	set(app_path "${CMAKE_INSTALL_BINDIR}/$<TARGET_FILE_NAME:${dist_primary_target}>")
+	if(CLIENT)
+		set(qt_conf_path "${CMAKE_INSTALL_BINDIR}")
+		file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/qt.conf"
+			"[Paths]\n"
+			"Translations = ${INSTALL_APPDATADIR}/i18n\n"
+		)
+	else()
+		set(qt_conf_path "")
+	endif()
 	set(lib_paths "")
 	foreach(path IN LISTS CMAKE_PREFIX_PATH)
 		list(APPEND lib_paths "${path}/bin")
@@ -41,11 +58,12 @@ elseif(WIN32)
 	string(REPLACE "\\" "/" extra_env "${extra_env}")
 
 	include(GetSharedLibs)
-	get_shared_libs(extra_libs drawpile)
-	if(SERVER)
-		get_shared_libs(server_libs drawpile-srv)
-		list(APPEND extra_libs ${server_libs})
-	endif()
+	unset(extra_libs)
+	foreach(dist_target IN LISTS dist_targets)
+		get_shared_libs(dist_target_libs ${dist_target})
+		list(APPEND extra_libs ${dist_target_libs})
+	endforeach()
+	list(REMOVE_DUPLICATES extra_libs)
 	install(FILES ${extra_libs} DESTINATION ${CMAKE_INSTALL_BINDIR})
 else()
 	set(helper_name linuxdeploy-x86_64.AppImage)
@@ -72,9 +90,9 @@ else()
 	set(extra_env "LD_LIBRARY_PATH=${lib_paths}")
 endif()
 
-if(SERVER)
-	list(APPEND helper_flags "${extra_exe_flag}\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/$<TARGET_FILE_NAME:drawpile-srv>")
-endif()
+foreach(dist_extra_target IN LISTS dist_extra_targets)
+	list(APPEND helper_flags "${extra_exe_flag}\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/$<TARGET_FILE_NAME:${dist_extra_target}>")
+endforeach()
 
 if(UNIX AND NOT APPLE)
 	configure_file(
