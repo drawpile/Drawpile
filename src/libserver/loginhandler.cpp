@@ -224,7 +224,7 @@ void LoginHandler::handleLoginMessage(const net::Message &msg)
 						"Invalid login command (while waiting for ident): " +
 						cmd.cmd));
 			m_client->disconnectClient(
-				Client::DisconnectionReason::Error, "invalid message");
+				Client::DisconnectionReason::Error, "invalid message", cmd.cmd);
 		}
 	} else {
 		if(cmd.cmd == "host") {
@@ -241,7 +241,7 @@ void LoginHandler::handleLoginMessage(const net::Message &msg)
 								  "join/host): " +
 								  cmd.cmd));
 			m_client->disconnectClient(
-				Client::DisconnectionReason::Error, "invalid message");
+				Client::DisconnectionReason::Error, "invalid message", cmd.cmd);
 		}
 	}
 }
@@ -1141,7 +1141,7 @@ void LoginHandler::sendError(
 	if(disconnect) {
 		m_state = State::Ignore;
 		m_client->disconnectClient(
-			Client::DisconnectionReason::Error, "Login error");
+			Client::DisconnectionReason::Error, "Login error", code);
 	}
 }
 
@@ -1203,7 +1203,8 @@ bool LoginHandler::verifySystemId(
 							  .about(Log::Level::Error, Log::Topic::RuleBreak)
 							  .message(QStringLiteral("Missing required sid")));
 			m_client->disconnectClient(
-				Client::DisconnectionReason::Error, "invalid message");
+				Client::DisconnectionReason::Error, "invalid message",
+				QStringLiteral("missing required sid"));
 			return false;
 		}
 	} else if(!isValidSid(sid)) {
@@ -1211,7 +1212,8 @@ bool LoginHandler::verifySystemId(
 						  .about(Log::Level::Error, Log::Topic::RuleBreak)
 						  .message(QStringLiteral("Invalid sid %1").arg(sid)));
 		m_client->disconnectClient(
-			Client::DisconnectionReason::Error, "invalid message");
+			Client::DisconnectionReason::Error, "invalid message",
+			QStringLiteral("invalid sid"));
 		return false;
 	} else if(!m_client->isBanInProgress()) {
 		BanResult ban = m_config->isSystemBanned(sid);

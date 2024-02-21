@@ -624,7 +624,9 @@ QVector<uint8_t> Session::updateOwnership(
 
 	if(kickResetter) {
 		kickResetter->disconnectClient(
-			Client::DisconnectionReason::Error, "De-opped while resetting");
+			Client::DisconnectionReason::Error, "De-opped while resetting",
+			changedBy.isEmpty() ? QStringLiteral("by the server")
+								: QStringLiteral("by %1").arg(changedBy));
 	}
 
 	if(sendUpdate && needsUpdate) {
@@ -1001,7 +1003,8 @@ void Session::addToInitStream(const net::Message &msg)
 			if(resetter)
 				resetter->disconnectClient(
 					Client::DisconnectionReason::Error,
-					"History limit exceeded");
+					"History limit exceeded",
+					QStringLiteral("%1 bytes").arg(m_resetstreamsize));
 		}
 	}
 }
@@ -1123,7 +1126,10 @@ void Session::killSession(const QString &message, bool terminate)
 	stopRecording();
 
 	for(Client *c : m_clients) {
-		c->disconnectClient(Client::DisconnectionReason::Shutdown, message);
+		c->disconnectClient(
+			Client::DisconnectionReason::Shutdown, message,
+			terminate ? QStringLiteral("terminate=true")
+					  : QStringLiteral("terminate=false"));
 		c->setSession(nullptr);
 	}
 	m_clients.clear();

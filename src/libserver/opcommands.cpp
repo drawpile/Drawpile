@@ -243,11 +243,13 @@ kickUser(Client *client, const QJsonArray &args, const QJsonObject &kwargs)
 			{{QStringLiteral("target"), target->username()},
 			 {QStringLiteral("by"), client->username()}});
 		target->disconnectClient(
-			Client::DisconnectionReason::Kick, client->username());
+			Client::DisconnectionReason::Kick, client->username(),
+			QStringLiteral("via op command"));
 		client->session()->addBan(target, client->username(), client);
 	} else {
 		target->disconnectClient(
-			Client::DisconnectionReason::Kick, client->username());
+			Client::DisconnectionReason::Kick, client->username(),
+			QStringLiteral("via op command"));
 		client->session()->keyMessageAll(
 			target->username() + " kicked by " + client->username(), false,
 			net::ServerReply::KEY_KICK,

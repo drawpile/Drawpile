@@ -191,8 +191,11 @@ public:
 	 *
 	 * @param reason
 	 * @param message
+	 * @param details emitted in the log, not sent to the client
 	 */
-	void disconnectClient(DisconnectionReason reason, const QString &message);
+	void disconnectClient(
+		DisconnectionReason reason, const QString &message,
+		const QString &details);
 
 	/**
 	 * @brief Send a message directly to this client

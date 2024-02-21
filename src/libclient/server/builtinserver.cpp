@@ -128,7 +128,7 @@ void BuiltinServer::stop()
 
 		for(Client *c : m_clients) {
 			c->disconnectClient(
-				Client::DisconnectionReason::Shutdown, QString{});
+				Client::DisconnectionReason::Shutdown, QString(), QString());
 		}
 
 		delete m_session;

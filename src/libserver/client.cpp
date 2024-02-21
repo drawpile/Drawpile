@@ -316,7 +316,8 @@ JsonApiResult Client::jsonApiKick(const QString &message)
 		Client::DisconnectionReason::Kick,
 		QStringLiteral("the server administrator") +
 			(message.isEmpty() ? QString()
-							   : QStringLiteral(" (%1)").arg(message)));
+							   : QStringLiteral(" (%1)").arg(message)),
+		QStringLiteral("kicked via web admin"));
 	QJsonObject o{{QStringLiteral("status"), QStringLiteral("ok")}};
 	return JsonApiResult{JsonApiResult::Ok, QJsonDocument(o)};
 }
@@ -558,7 +559,8 @@ void Client::triggerNormalBan()
 		message += QStringLiteral(": ") + reason;
 	}
 
-	disconnectClient(Client::DisconnectionReason::Error, message);
+	disconnectClient(
+		Client::DisconnectionReason::Error, message, QStringLiteral("banned"));
 }
 
 void Client::triggerNetError()
@@ -576,7 +578,8 @@ void Client::triggerNetError()
 
 	disconnectClient(
 		Client::DisconnectionReason::Error,
-		QStringLiteral("Network error: no route to host"));
+		QStringLiteral("Network error: no route to host"),
+		QStringLiteral("NETERROR shadow ban"));
 }
 
 void Client::triggerGarbage()
@@ -769,7 +772,7 @@ void Client::socketDisconnect()
 }
 
 void Client::disconnectClient(
-	DisconnectionReason reason, const QString &message)
+	DisconnectionReason reason, const QString &message, const QString &details)
 {
 	net::MessageQueue::GracefulDisconnect pr{
 		net::MessageQueue::GracefulDisconnect::Other};
@@ -786,7 +789,12 @@ void Client::disconnectClient(
 		pr = net::MessageQueue::GracefulDisconnect::Shutdown;
 		break;
 	}
-	log(Log().about(Log::Level::Info, topic).message(message));
+	log(Log()
+			.about(Log::Level::Info, topic)
+			.message(
+				details.isEmpty()
+					? message
+					: QStringLiteral("%1 (%2)").arg(message, details)));
 
 	emit loggedOff(this);
 	d->msgqueue->sendDisconnect(pr, message);
