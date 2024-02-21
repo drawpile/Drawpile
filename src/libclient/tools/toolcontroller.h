@@ -63,6 +63,8 @@ public:
 	void setActiveBrush(const brushes::ActiveBrush &b);
 	const brushes::ActiveBrush &activeBrush() const { return m_activebrush; }
 
+	bool isDrawing() const { return m_drawing; }
+
 	void setInterpolateInputs(bool interpolateInputs);
 
 	void setStabilizerUseBrushSampleCount(bool stabilizerUseBrushSampleCount);
@@ -192,6 +194,7 @@ private:
 	Tool *m_activeTool;
 	uint16_t m_activeLayer;
 	uint16_t m_activeAnnotation;
+	bool m_drawing;
 
 	int m_globalSmoothing;
 	bool m_interpolateInputs;

@@ -1,5 +1,6 @@
 Unreleased Version 2.2.2-pre
  * Server Feature: Allow adding a message when kicking someone through the admin API.
+ * Fix: Don't mess up strokes when hitting undo while still actively drawing them. Thanks Sinamer for reporting.
 
 2024-02-18 Version 2.2.1
  * Fix: Default to previous directory when saving a fresh file. Thanks Crow for reporting.

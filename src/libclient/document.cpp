@@ -940,8 +940,9 @@ void Document::undo()
 {
 	if(!m_canvas)
 		return;
-
-	if(!m_toolctrl->undoMultipartDrawing()) {
+	// Only allow undos if the pen or mouse button is not down. If we're in a
+	// multipart drawing, e.g. with the bezier tool, we only undo the last part.
+	if(!m_toolctrl->isDrawing() && !m_toolctrl->undoMultipartDrawing()) {
 		m_client->sendMessage(net::makeUndoMessage(m_client->myId(), 0, false));
 	}
 }
@@ -950,9 +951,9 @@ void Document::redo()
 {
 	if(!m_canvas)
 		return;
-
-	// Cannot redo while a multipart drawing action is in progress
-	if(!m_toolctrl->isMultipartDrawing()) {
+	// Only allow redos if the pen or mouse button is not down. During multipart
+	// drawing, e.g. with the bezier tool, redo is not possible altogether.
+	if(!m_toolctrl->isDrawing() && !m_toolctrl->isMultipartDrawing()) {
 		m_client->sendMessage(net::makeUndoMessage(m_client->myId(), 0, true));
 	}
 }

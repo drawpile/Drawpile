@@ -27,6 +27,7 @@ ToolController::ToolController(net::Client *client, QObject *parent)
 	, m_client(client)
 	, m_model(nullptr)
 	, m_activeTool(nullptr)
+	, m_drawing(false)
 	, m_globalSmoothing(0)
 	, m_interpolateInputs(false)
 	, m_stabilizationMode(brushes::Stabilizer)
@@ -307,6 +308,7 @@ void ToolController::startDrawing(
 		return;
 	}
 
+	m_drawing = true;
 	m_activebrush.setEraserOverride(eraserOverride);
 	m_activeTool->begin(canvas::Point(timeMsec, point, pressure, xtilt, ytilt, rotation), right, zoom);
 
@@ -353,6 +355,7 @@ void ToolController::endDrawing()
 		return;
 	}
 
+	m_drawing = false;
 	m_activeTool->end();
 	m_model->paintEngine()->setLocalDrawingInProgress(false);
 }
