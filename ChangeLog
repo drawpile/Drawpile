@@ -5,6 +5,7 @@ Unreleased Version 2.2.2-pre
  * Server Feature: Log more a more detailed reason when a client is disconnected, since something like a login error can have many causes.
  * Feature: Indicate the difference between self-signed and "real" server certificates.
  * Fix: Rename "trusted hosts" to "pinned certificates", because that's what they are.
+ * Fix: Make floating docks stay on top of the main window on macOS. Thanks 6ix for reporting and testing.
 
 2024-02-18 Version 2.2.1
  * Fix: Default to previous directory when saving a fresh file. Thanks Crow for reporting.

@@ -24,7 +24,7 @@ DockBase::DockBase(QString title, QWidget *parent)
 void DockBase::addWindowDecorations(bool topLevel)
 {
 	if(topLevel) {
-		setWindowFlags(Qt::Window);
+		setWindowFlag(Qt::FramelessWindowHint, false);
 		show();
 	}
 }
