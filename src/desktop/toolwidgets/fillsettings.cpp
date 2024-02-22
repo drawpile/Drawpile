@@ -1,26 +1,23 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/toolwidgets/fillsettings.h"
 #include "libclient/canvas/layerlist.h"
+#include "libclient/tools/floodfill.h"
 #include "libclient/tools/toolcontroller.h"
 #include "libclient/tools/toolproperties.h"
-#include "libclient/tools/floodfill.h"
-
 #include "ui_fillsettings.h"
-
 #include <QIcon>
 
 namespace tools {
 
 namespace props {
-	static const ToolProperties::RangedValue<int>
-		expand { QStringLiteral("expand"), 0, 0, 100 },
-		featherRadius { QStringLiteral("featherRadius"), 0, 0, 40 },
-		mode { QStringLiteral("mode"), 0, 0, 2},
-		size { QStringLiteral("size"), 500, 10, 9999 },
-		gap { QStringLiteral("gap"), 0, 0, 32};
-	static const ToolProperties::RangedValue<double>
-		tolerance { QStringLiteral("tolerance"), 0.0, 0.0, 1.0 };
+static const ToolProperties::RangedValue<int> expand{
+	QStringLiteral("expand"), 0, 0, 100},
+	featherRadius{QStringLiteral("featherRadius"), 0, 0, 40},
+	mode{QStringLiteral("mode"), 0, 0, 2},
+	size{QStringLiteral("size"), 500, 10, 9999},
+	gap{QStringLiteral("gap"), 0, 0, 32};
+static const ToolProperties::RangedValue<double> tolerance{
+	QStringLiteral("tolerance"), 0.0, 0.0, 1.0};
 }
 
 class FillSettings::FillSourceModel final : public QAbstractItemModel {
@@ -33,12 +30,14 @@ public:
 		: QAbstractItemModel{parent}
 		, m_activeLayer{0}
 		, m_layers{}
-	  	, m_layerIcon(QIcon::fromTheme("layer-visible-on"))
-	  	, m_groupIcon(QIcon::fromTheme("folder"))
+		, m_layerIcon(QIcon::fromTheme("layer-visible-on"))
+		, m_groupIcon(QIcon::fromTheme("folder"))
 	{
 	}
 
-    QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override
+	QModelIndex index(
+		int row, int column,
+		const QModelIndex &parent = QModelIndex()) const override
 	{
 		if(parent.isValid() || column != 0) {
 			return QModelIndex{};
@@ -46,28 +45,31 @@ public:
 			return createIndex(row, column, quintptr(0));
 		} else {
 			const Layer *layer = layerAt(row);
-			return layer ? createIndex(row, column, quintptr(layer->id)) : QModelIndex{};
+			return layer ? createIndex(row, column, quintptr(layer->id))
+						 : QModelIndex{};
 		}
 	}
 
-    QModelIndex parent(const QModelIndex &) const override
+	QModelIndex parent(const QModelIndex &) const override
 	{
 		return QModelIndex{};
 	}
 
-    int rowCount(const QModelIndex &parent = QModelIndex()) const override
+	int rowCount(const QModelIndex &parent = QModelIndex()) const override
 	{
 		return parent.isValid() ? 0 : PREFIX_ROWS + m_layers.size();
 	}
 
-    int columnCount(const QModelIndex &parent = QModelIndex()) const override
+	int columnCount(const QModelIndex &parent = QModelIndex()) const override
 	{
 		return parent.isValid() ? 0 : 1;
 	}
 
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override
+	QVariant
+	data(const QModelIndex &index, int role = Qt::DisplayRole) const override
 	{
-		if(!index.isValid() || index.parent().isValid() || index.column() != 0) {
+		if(!index.isValid() || index.parent().isValid() ||
+		   index.column() != 0) {
 			return QVariant{};
 		}
 
@@ -196,23 +198,41 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 	m_ui->source->setModel(m_fillSourceModel);
 	m_ui->size->setExponentRatio(3.0);
 
-	connect(m_ui->size, QOverload<int>::of(&QSpinBox::valueChanged), this, [this](int size) {
-		emit pixelSizeChanged(size * 2);
-	});
-	connect(m_ui->tolerance, QOverload<int>::of(&QSpinBox::valueChanged), this, &FillSettings::pushSettings);
-	connect(m_ui->size, QOverload<int>::of(&QSpinBox::valueChanged), this, &FillSettings::pushSettings);
-	connect(m_ui->expand, QOverload<int>::of(&QSpinBox::valueChanged), this, &FillSettings::pushSettings);
-	connect(m_ui->feather, QOverload<int>::of(&QSpinBox::valueChanged), this, &FillSettings::pushSettings);
-	connect(m_ui->gap, QOverload<int>::of(&QSpinBox::valueChanged), this, &FillSettings::pushSettings);
-	connect(m_ui->source, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &FillSettings::pushSettings);
-	connect(m_ui->mode, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &FillSettings::pushSettings);
+	connect(
+		m_ui->size, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		[this](int size) {
+			emit pixelSizeChanged(size * 2);
+		});
+	connect(
+		m_ui->tolerance, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		&FillSettings::pushSettings);
+	connect(
+		m_ui->size, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		&FillSettings::pushSettings);
+	connect(
+		m_ui->expand, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		&FillSettings::pushSettings);
+	connect(
+		m_ui->feather, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		&FillSettings::pushSettings);
+	connect(
+		m_ui->gap, QOverload<int>::of(&QSpinBox::valueChanged), this,
+		&FillSettings::pushSettings);
+	connect(
+		m_ui->source, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
+		&FillSettings::pushSettings);
+	connect(
+		m_ui->mode, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
+		&FillSettings::pushSettings);
 	return uiwidget;
 }
 
 void FillSettings::pushSettings()
 {
-	FloodFill *tool = static_cast<FloodFill*>(controller()->getTool(Tool::FLOODFILL));
-	tool->setTolerance(m_ui->tolerance->value() / qreal(m_ui->tolerance->maximum()));
+	FloodFill *tool =
+		static_cast<FloodFill *>(controller()->getTool(Tool::FLOODFILL));
+	tool->setTolerance(
+		m_ui->tolerance->value() / qreal(m_ui->tolerance->maximum()));
 	tool->setExpansion(m_ui->expand->value());
 	tool->setFeatherRadius(m_ui->feather->value());
 	tool->setSize(m_ui->size->value());
@@ -234,7 +254,9 @@ void FillSettings::toggleEraserMode()
 ToolProperties FillSettings::saveToolSettings()
 {
 	ToolProperties cfg(toolType());
-	cfg.setValue(props::tolerance, m_ui->tolerance->value() / qreal(m_ui->tolerance->maximum()));
+	cfg.setValue(
+		props::tolerance,
+		m_ui->tolerance->value() / qreal(m_ui->tolerance->maximum()));
 	cfg.setValue(props::expand, m_ui->expand->value());
 	cfg.setValue(props::featherRadius, m_ui->feather->value());
 	cfg.setValue(props::size, m_ui->size->value());
@@ -274,7 +296,8 @@ int FillSettings::getSize() const
 
 void FillSettings::restoreToolSettings(const ToolProperties &cfg)
 {
-	m_ui->tolerance->setValue(cfg.value(props::tolerance) * m_ui->tolerance->maximum());
+	m_ui->tolerance->setValue(
+		cfg.value(props::tolerance) * m_ui->tolerance->maximum());
 	m_ui->expand->setValue(cfg.value(props::expand));
 	m_ui->feather->setValue(cfg.value(props::featherRadius));
 	m_ui->size->setValue(cfg.value(props::size));
@@ -333,4 +356,3 @@ void FillSettings::stepAdjust1(bool increase)
 }
 
 }
-

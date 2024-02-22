@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef TOOLSETTINGS_FILL_H
-#define TOOLSETTINGS_FILL_H
-
+#ifndef DESKTOP_TOOLWIDGETS_FILL_H
+#define DESKTOP_TOOLWIDGETS_FILL_H
 #include "desktop/toolwidgets/toolsettings.h"
 
 class Ui_FillSettings;
@@ -20,7 +18,7 @@ namespace tools {
 class FillSettings final : public ToolSettings {
 	Q_OBJECT
 public:
-	FillSettings(ToolController *ctrl, QObject *parent=nullptr);
+	FillSettings(ToolController *ctrl, QObject *parent = nullptr);
 	~FillSettings() override;
 
 	QString toolType() const override { return QStringLiteral("fill"); }
@@ -71,4 +69,3 @@ private:
 }
 
 #endif
-
