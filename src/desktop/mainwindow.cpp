@@ -65,6 +65,7 @@ static constexpr auto CTRL_KEY = Qt::CTRL;
 #include "desktop/utils/actionbuilder.h"
 #include "desktop/utils/widgetutils.h"
 
+#include "desktop/widgets/dualcolorbutton.h"
 #include "desktop/widgets/viewstatus.h"
 #include "desktop/widgets/viewstatusbar.h"
 #include "desktop/widgets/netstatus.h"
@@ -255,6 +256,8 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 		m_splitter->setSizes(QList<int>() << (h * 2 / 3) << (h / 3));
 	}
 
+	m_dualColorButton = new widgets::DualColorButton(this);
+
 	// Create canvas scene
 	m_canvasscene = new drawingboard::CanvasScene(this);
 	m_canvasscene->setBackgroundBrush(
@@ -339,6 +342,26 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_dockColorPalette, &docks::ColorPaletteDock::colorSelected, m_dockToolSettings, &docks::ToolSettings::setForegroundColor);
 	connect(m_dockColorSpinner, &docks::ColorSpinnerDock::colorSelected, m_dockToolSettings, &docks::ToolSettings::setForegroundColor);
 	connect(m_dockColorSliders, &docks::ColorSliderDock::colorSelected, m_dockToolSettings, &docks::ToolSettings::setForegroundColor);
+
+	// Dual color button
+	connect(
+		m_dockToolSettings, &docks::ToolSettings::foregroundColorChanged,
+		m_dualColorButton, &widgets::DualColorButton::setForegroundColor);
+	connect(
+		m_dockToolSettings, &docks::ToolSettings::backgroundColorChanged,
+		m_dualColorButton, &widgets::DualColorButton::setBackgroundColor);
+	connect(
+		m_dualColorButton, &widgets::DualColorButton::foregroundClicked,
+		m_dockToolSettings, &docks::ToolSettings::changeForegroundColor);
+	connect(
+		m_dualColorButton, &widgets::DualColorButton::backgroundClicked,
+		m_dockToolSettings, &docks::ToolSettings::changeBackgroundColor);
+	connect(
+		m_dualColorButton, &widgets::DualColorButton::swapClicked,
+		m_dockToolSettings, &docks::ToolSettings::swapColors);
+	connect(
+		m_dualColorButton, &widgets::DualColorButton::resetClicked,
+		m_dockToolSettings, &docks::ToolSettings::resetColors);
 
 	// Canvas view -> canvas item, so that the item knows what are to re-render.
 	connect(m_view, &widgets::CanvasView::viewRectChange, m_canvasscene, &drawingboard::CanvasScene::canvasViewportChanged);
@@ -3770,6 +3793,7 @@ void MainWindow::setupActions()
 	edittools->addAction(cutlayer);
 	edittools->addAction(copylayer);
 	edittools->addAction(paste);
+	edittools->addWidget(m_dualColorButton);
 
 	//
 	// View menu
@@ -4236,7 +4260,10 @@ void MainWindow::setupActions()
 
 	QAction *currentEraseMode = makeAction("currenterasemode", tr("Toggle Eraser Mode")).shortcut("Ctrl+E");
 	QAction *currentRecolorMode = makeAction("currentrecolormode", tr("Toggle Recolor Mode")).shortcut("Shift+E");
-	QAction *swapcolors = makeAction("swapcolors", tr("Swap Last Colors")).shortcut("X");
+	QAction *changeForegroundColor = makeAction("chnageforegroundcolor", widgets::DualColorButton::foregroundText()).statusTip(tr("Choose the current foreground color")).noDefaultShortcut();
+	QAction *changeBackgroundColor = makeAction("changebackgroundcolor", widgets::DualColorButton::backgroundText()).statusTip(tr("Choose the current background color")).noDefaultShortcut();
+	QAction *swapcolors = makeAction("swapcolors", widgets::DualColorButton::swapText()).statusTip(tr("Swap current foreground and background color with each other")).shortcut("X");
+	QAction *resetcolors = makeAction("resetcolors", widgets::DualColorButton::resetText()).statusTip(tr("Set foreground color to black and background color to white")).noDefaultShortcut();
 	QAction *smallerbrush = makeAction("ensmallenbrush", tr("&Decrease Brush Size")).shortcut(Qt::Key_BracketLeft).autoRepeat();
 	QAction *biggerbrush = makeAction("embiggenbrush", tr("&Increase Brush Size")).shortcut(Qt::Key_BracketRight).autoRepeat();
 	QAction *reloadPreset = makeAction("reloadpreset", tr("&Reload Last Brush Preset")).shortcut("Shift+P");
@@ -4246,7 +4273,10 @@ void MainWindow::setupActions()
 
 	connect(currentEraseMode, &QAction::triggered, m_dockToolSettings, &docks::ToolSettings::toggleEraserMode);
 	connect(currentRecolorMode, &QAction::triggered, m_dockToolSettings, &docks::ToolSettings::toggleRecolorMode);
-	connect(swapcolors, &QAction::triggered, m_dockToolSettings, &docks::ToolSettings::swapLastUsedColors);
+	connect(changeForegroundColor, &QAction::triggered, m_dockToolSettings, &docks::ToolSettings::changeForegroundColor);
+	connect(changeBackgroundColor, &QAction::triggered, m_dockToolSettings, &docks::ToolSettings::changeBackgroundColor);
+	connect(swapcolors, &QAction::triggered, m_dockToolSettings, &docks::ToolSettings::swapColors);
+	connect(resetcolors, &QAction::triggered, m_dockToolSettings, &docks::ToolSettings::resetColors);
 
 	connect(smallerbrush, &QAction::triggered, this, [this]() { m_dockToolSettings->stepAdjustCurrent1(false); });
 	connect(biggerbrush, &QAction::triggered, this, [this]() { m_dockToolSettings->stepAdjustCurrent1(true); });
@@ -4254,7 +4284,10 @@ void MainWindow::setupActions()
 
 	toolshortcuts->addAction(currentEraseMode);
 	toolshortcuts->addAction(currentRecolorMode);
+	toolshortcuts->addAction(changeForegroundColor);
+	toolshortcuts->addAction(changeBackgroundColor);
 	toolshortcuts->addAction(swapcolors);
+	toolshortcuts->addAction(resetcolors);
 	toolshortcuts->addAction(smallerbrush);
 	toolshortcuts->addAction(biggerbrush);
 	toolshortcuts->addAction(reloadPreset);

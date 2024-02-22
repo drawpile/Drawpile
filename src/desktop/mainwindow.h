@@ -36,6 +36,7 @@ class ActionBuilder;
 
 namespace widgets {
 	class CanvasView;
+	class DualColorButton;
 	class NetStatus;
 	class ChatBox;
 	class ViewStatus;
@@ -317,6 +318,7 @@ private:
 	QToolButton *m_freehandButton;
 	QByteArray m_hiddenDockState;
 	widgets::ChatBox *m_chatbox;
+	widgets::DualColorButton *m_dualColorButton;
 
 	widgets::CanvasView *m_view;
 

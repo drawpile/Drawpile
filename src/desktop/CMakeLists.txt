@@ -290,6 +290,8 @@ target_sources(drawpile PRIVATE
 	widgets/colorbutton.h
 	widgets/curvewidget.cpp
 	widgets/curvewidget.h
+	widgets/dualcolorbutton.cpp
+	widgets/dualcolorbutton.h
 	widgets/filmstrip.cpp
 	widgets/filmstrip.h
 	widgets/flipbookview.cpp

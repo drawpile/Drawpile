@@ -37,8 +37,8 @@ public:
 	ToolSettings(tools::ToolController *ctrl, QWidget *parent = nullptr);
 	~ToolSettings() override;
 
-	//! Get the current foreground color
 	QColor foregroundColor() const;
+	QColor backgroundColor() const;
 
 	//! Get the currently selected tool
 	tools::Tool::Type currentTool() const;
@@ -84,11 +84,14 @@ public slots:
 	//! Select the tool previosly set with setTool or setToolSlot
 	void setPreviousTool();
 
-	//! Set foreground color
 	void setForegroundColor(const QColor &color);
+	void setBackgroundColor(const QColor &color);
 
 	//! Pop up a dialog for changing the foreground color
 	void changeForegroundColor();
+
+	//! Pop up a dialog for changing the background color
+	void changeBackgroundColor();
 
 	//! Switch tool when eraser is brought near the tablet
 	void switchToEraserSlot(bool near);
@@ -96,8 +99,11 @@ public slots:
 	//! Switch brush to erase mode when eraser is brought near the tablet
 	void switchToEraserMode(bool near);
 
-	//! Swap between the active colors and color history
-	void swapLastUsedColors();
+	//! Swap foreground and background color
+	void swapColors();
+
+	//! Set foreground color to black and background color to white
+	void resetColors();
 
 	//! Add a color to the active last used colors palette
 	void addLastUsedColor(const QColor &color);
@@ -114,6 +120,9 @@ signals:
 
 	//! Current foreground color selection changed
 	void foregroundColorChanged(const QColor &color);
+
+	//! Current background color selection changed
+	void backgroundColorChanged(const QColor &color);
 
 	//! Last used color palette changed
 	void lastUsedColorsChanged(const color_widgets::ColorPalette &pal);

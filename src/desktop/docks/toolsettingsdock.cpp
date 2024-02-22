@@ -38,17 +38,16 @@ struct ToolSettings::Private {
 	QStackedWidget *widgetStack = nullptr;
 	QStackedWidget *headerStack = nullptr;
 	QLabel *headerLabel = nullptr;
-	color_widgets::ColorDialog *colorDialog = nullptr;
+	color_widgets::ColorDialog *foregroundColorDialog = nullptr;
+	color_widgets::ColorDialog *backgroundColorDialog = nullptr;
 
 	tools::Tool::Type currentTool = tools::Tool::FREEHAND;
 	tools::Tool::Type previousTool = tools::Tool::FREEHAND;
 	int previousToolSlot = 0;
-	QColor color = Qt::black;
-	QColor colorAlt = Qt::black;
+	QColor foregroundColor = Qt::black;
+	QColor backgroundColor = Qt::white;
 
 	color_widgets::ColorPalette lastUsedColors{
-		QVector<QColor>{}, QString{}, LASTUSED_COLOR_COUNT};
-	color_widgets::ColorPalette lastUsedColorsAlt{
 		QVector<QColor>{}, QString{}, LASTUSED_COLOR_COUNT};
 
 	bool switchedWithStylusEraser = false;
@@ -201,11 +200,17 @@ ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
 		d->ctrl, &tools::ToolController::activeBrushChanged, this,
 		&ToolSettings::activeBrushChanged);
 
-	d->colorDialog = dialogs::newColorDialog(this);
-	d->colorDialog->setAlphaEnabled(false);
+	d->foregroundColorDialog = dialogs::newColorDialog(this);
+	d->foregroundColorDialog->setAlphaEnabled(false);
 	connect(
-		d->colorDialog, &color_widgets::ColorDialog::colorSelected, this,
-		&ToolSettings::setForegroundColor);
+		d->foregroundColorDialog, &color_widgets::ColorDialog::colorSelected,
+		this, &ToolSettings::setForegroundColor);
+
+	d->backgroundColorDialog = dialogs::newColorDialog(this);
+	d->backgroundColorDialog->setAlphaEnabled(false);
+	connect(
+		d->backgroundColorDialog, &color_widgets::ColorDialog::colorSelected,
+		this, &ToolSettings::setBackgroundColor);
 
 	// Tool settings are only saved periodically currently, see TODO below.
 	// Mixing periodic and instantaneous saving causes some desynchronization
@@ -404,14 +409,17 @@ void ToolSettings::switchToEraserMode(bool near)
 	}
 }
 
-void ToolSettings::swapLastUsedColors()
+void ToolSettings::swapColors()
 {
-	std::swap(d->lastUsedColors, d->lastUsedColorsAlt);
-	const QColor c = d->colorAlt;
-	d->colorAlt = d->color;
+	const QColor c = d->backgroundColor;
+	setBackgroundColor(d->foregroundColor);
 	setForegroundColor(c);
+}
 
-	emit lastUsedColorsChanged(d->lastUsedColors);
+void ToolSettings::resetColors()
+{
+	setBackgroundColor(Qt::white);
+	setForegroundColor(Qt::black);
 }
 
 void ToolSettings::addLastUsedColor(const QColor &color)
@@ -474,7 +482,7 @@ void ToolSettings::selectTool(tools::Tool::Type tool)
 	d->currentTool = tool;
 	ts->setActiveTool(tool);
 
-	ts->setForeground(d->color);
+	ts->setForeground(d->foregroundColor);
 	ts->pushSettings();
 
 	d->widgetStack->setCurrentWidget(ts->getUi());
@@ -495,7 +503,8 @@ void ToolSettings::selectTool(tools::Tool::Type tool)
 
 void ToolSettings::triggerUpdate()
 {
-	emit foregroundColorChanged(d->color);
+	emit foregroundColorChanged(d->foregroundColor);
+	emit backgroundColorChanged(d->backgroundColor);
 	emit toolChanged(d->currentTool);
 	tools::ToolSettings *ts = d->currentSettings();
 	if(ts) {
@@ -512,27 +521,50 @@ tools::Tool::Type ToolSettings::currentTool() const
 
 QColor ToolSettings::foregroundColor() const
 {
-	return d->color;
+	return d->foregroundColor;
+}
+
+QColor ToolSettings::backgroundColor() const
+{
+	return d->backgroundColor;
 }
 
 void ToolSettings::setForegroundColor(const QColor &color)
 {
-	if(color.isValid() && color != d->color) {
-		d->color = color;
+	if(color.isValid() && color != d->foregroundColor) {
+		d->foregroundColor = color;
 
 		d->currentSettings()->setForeground(color);
 
-		if(d->colorDialog->isVisible()) {
-			d->colorDialog->setColor(color);
+		if(d->foregroundColorDialog->isVisible()) {
+			d->foregroundColorDialog->setColor(color);
 		}
 
 		emit foregroundColorChanged(color);
 	}
 }
 
+void ToolSettings::setBackgroundColor(const QColor &color)
+{
+	if(color.isValid() && color != d->backgroundColor) {
+		d->backgroundColor = color;
+
+		if(d->backgroundColorDialog->isVisible()) {
+			d->backgroundColorDialog->setColor(color);
+		}
+
+		emit backgroundColorChanged(color);
+	}
+}
+
 void ToolSettings::changeForegroundColor()
 {
-	d->colorDialog->showColor(d->color);
+	d->foregroundColorDialog->showColor(d->foregroundColor);
+}
+
+void ToolSettings::changeBackgroundColor()
+{
+	d->backgroundColorDialog->showColor(d->backgroundColor);
 }
 
 void ToolSettings::quickAdjustCurrent1(qreal adjustment)
