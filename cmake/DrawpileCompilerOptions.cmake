@@ -31,7 +31,12 @@ add_feature_info("Interprocedural optimization (CMAKE_INTERPROCEDURAL_OPTIMIZATI
 
 if(MSVC)
 	add_compile_options(/utf-8 /W4)
-	add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
+	add_compile_definitions(
+		# The _s family of functions don't exist on all platforms.
+		_CRT_SECURE_NO_WARNINGS
+		# Qt uses some kind of deprecated extensions in their headers.
+		_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING
+	)
 
 	if($ENV{CI})
 		add_compile_options(/WX)
