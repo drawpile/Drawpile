@@ -1,29 +1,26 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef TOOLSETTINGSDOCK_H
-#define TOOLSETTINGSDOCK_H
-
+#ifndef DESKTOP_DOCKS_TOOLSETTINGSDOCK_H
+#define DESKTOP_DOCKS_TOOLSETTINGSDOCK_H
 #include "desktop/docks/dockbase.h"
 #include "libclient/tools/tool.h"
-
 
 class QStackedWidget;
 
 namespace tools {
-	class AnnotationSettings;
-	class BrushSettings;
-	class ColorPickerSettings;
-	class FillSettings;
-	class InspectorSettings;
-	class LaserPointerSettings;
-	class SelectionSettings;
-	class ToolController;
-	class ToolSettings;
-	class ZoomSettings;
+class AnnotationSettings;
+class BrushSettings;
+class ColorPickerSettings;
+class FillSettings;
+class InspectorSettings;
+class LaserPointerSettings;
+class SelectionSettings;
+class ToolController;
+class ToolSettings;
+class ZoomSettings;
 }
 
 namespace color_widgets {
-	class ColorPalette;
+class ColorPalette;
 }
 
 namespace docks {
@@ -32,13 +29,12 @@ namespace docks {
  * @brief Tool settings window
  * A dock widget that displays settings for the currently selected tool.
  */
-class ToolSettings final : public DockBase
-{
-Q_OBJECT
+class ToolSettings final : public DockBase {
+	Q_OBJECT
 public:
 	static constexpr int LASTUSED_COLOR_COUNT = 8;
 
-	ToolSettings(tools::ToolController *ctrl, QWidget *parent=nullptr);
+	ToolSettings(tools::ToolController *ctrl, QWidget *parent = nullptr);
 	~ToolSettings() override;
 
 	//! Get the current foreground color
@@ -89,7 +85,7 @@ public slots:
 	void setPreviousTool();
 
 	//! Set foreground color
-	void setForegroundColor(const QColor& color);
+	void setForegroundColor(const QColor &color);
 
 	//! Pop up a dialog for changing the foreground color
 	void changeForegroundColor();
@@ -138,4 +134,3 @@ private:
 }
 
 #endif
-

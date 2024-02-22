@@ -1,32 +1,29 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/docks/toolsettingsdock.h"
+#include "desktop/dialogs/colordialog.h"
 #include "desktop/docks/titlewidget.h"
 #include "desktop/main.h"
+#include "desktop/toolwidgets/annotationsettings.h"
 #include "desktop/toolwidgets/brushsettings.h"
 #include "desktop/toolwidgets/colorpickersettings.h"
-#include "desktop/toolwidgets/selectionsettings.h"
-#include "desktop/toolwidgets/annotationsettings.h"
 #include "desktop/toolwidgets/fillsettings.h"
-#include "desktop/toolwidgets/lasersettings.h"
-#include "desktop/toolwidgets/zoomsettings.h"
 #include "desktop/toolwidgets/inspectorsettings.h"
-#include "desktop/dialogs/colordialog.h"
+#include "desktop/toolwidgets/lasersettings.h"
+#include "desktop/toolwidgets/selectionsettings.h"
+#include "desktop/toolwidgets/zoomsettings.h"
 #include "libclient/tools/toolcontroller.h"
 #include "libclient/tools/toolproperties.h"
-
-#include <QtColorWidgets/color_palette.hpp>
-
 #include <QIcon>
-#include <QStackedWidget>
-#include <QApplication>
 #include <QLabel>
+#include <QStackedWidget>
+#include <QtColorWidgets/color_palette.hpp>
 #include <utility>
 
 namespace docks {
 
 struct ToolPage {
-	// Note: multiple different tools (e.g. Freehand and Line) can share the same settings
+	// Note: multiple different tools (e.g. Freehand and Line) can share the
+	// same settings
 	QSharedPointer<tools::ToolSettings> settings;
 	QString name;
 	QIcon icon;
@@ -56,8 +53,9 @@ struct ToolSettings::Private {
 
 	bool switchedWithStylusEraser = false;
 
-	tools::ToolSettings *currentSettings() {
-		Q_ASSERT(currentTool>=0 && currentTool <= tools::Tool::_LASTTOOL);
+	tools::ToolSettings *currentSettings()
+	{
+		Q_ASSERT(currentTool >= 0 && currentTool <= tools::Tool::_LASTTOOL);
 		return pages[currentTool].settings.data();
 	}
 
@@ -67,103 +65,74 @@ struct ToolSettings::Private {
 		Q_ASSERT(ctrl);
 
 		// Create tool pages
-		auto brush = QSharedPointer<tools::ToolSettings>(new tools::BrushSettings(ctrl));
-		auto sel = QSharedPointer<tools::ToolSettings>(new tools::SelectionSettings(ctrl));
+		auto brush =
+			QSharedPointer<tools::ToolSettings>(new tools::BrushSettings(ctrl));
+		auto sel = QSharedPointer<tools::ToolSettings>(
+			new tools::SelectionSettings(ctrl));
 
 		pages[tools::Tool::FREEHAND] = {
-				brush,
-				"freehand",
-				QIcon::fromTheme("draw-brush"),
-				QApplication::tr("Freehand")
-			};
+			brush, "freehand", QIcon::fromTheme("draw-brush"),
+			QApplication::tr("Freehand")};
 		pages[tools::Tool::ERASER] = {
-				brush,
-				"eraser",
-			QIcon::fromTheme("draw-eraser"),
-				QApplication::tr("Eraser")
-			};
+			brush, "eraser", QIcon::fromTheme("draw-eraser"),
+			QApplication::tr("Eraser")};
 		pages[tools::Tool::LINE] = {
-				brush,
-				"line",
-				QIcon::fromTheme("draw-line"),
-				QApplication::tr("Line")
-			};
+			brush, "line", QIcon::fromTheme("draw-line"),
+			QApplication::tr("Line")};
 		pages[tools::Tool::RECTANGLE] = {
-				brush,
-				"rectangle",
-				QIcon::fromTheme("draw-rectangle"),
-				QApplication::tr("Rectangle")
-			};
+			brush, "rectangle", QIcon::fromTheme("draw-rectangle"),
+			QApplication::tr("Rectangle")};
 		pages[tools::Tool::ELLIPSE] = {
-				brush,
-				"ellipse",
-				QIcon::fromTheme("draw-ellipse"),
-				QApplication::tr("Ellipse")
-			};
+			brush, "ellipse", QIcon::fromTheme("draw-ellipse"),
+			QApplication::tr("Ellipse")};
 		pages[tools::Tool::BEZIER] = {
-				brush,
-				"bezier",
-				QIcon::fromTheme("draw-bezier-curves"),
-				QApplication::tr("Bezier Curve")
-			};
+			brush, "bezier", QIcon::fromTheme("draw-bezier-curves"),
+			QApplication::tr("Bezier Curve")};
 		pages[tools::Tool::FLOODFILL] = {
-				QSharedPointer<tools::ToolSettings>(new tools::FillSettings(ctrl)),
-				"fill",
-				QIcon::fromTheme("fill-color"),
-				QApplication::tr("Flood Fill")
-			};
+			QSharedPointer<tools::ToolSettings>(new tools::FillSettings(ctrl)),
+			"fill", QIcon::fromTheme("fill-color"),
+			QApplication::tr("Flood Fill")};
 		pages[tools::Tool::ANNOTATION] = {
-				QSharedPointer<tools::ToolSettings>(new tools::AnnotationSettings(ctrl)),
-				"annotation",
-				QIcon::fromTheme("draw-text"),
-				QApplication::tr("Annotation")
-			};
+			QSharedPointer<tools::ToolSettings>(
+				new tools::AnnotationSettings(ctrl)),
+			"annotation", QIcon::fromTheme("draw-text"),
+			QApplication::tr("Annotation")};
 		pages[tools::Tool::PICKER] = {
-				QSharedPointer<tools::ToolSettings>(new tools::ColorPickerSettings(ctrl)),
-				"picker",
-				QIcon::fromTheme("color-picker"),
-				QApplication::tr("Color Picker")
-			};
+			QSharedPointer<tools::ToolSettings>(
+				new tools::ColorPickerSettings(ctrl)),
+			"picker", QIcon::fromTheme("color-picker"),
+			QApplication::tr("Color Picker")};
 		pages[tools::Tool::LASERPOINTER] = {
-				QSharedPointer<tools::ToolSettings>(new tools::LaserPointerSettings(ctrl)),
-				"laser",
-				QIcon::fromTheme("cursor-arrow"),
-				QApplication::tr("Laser Pointer")
-			};
+			QSharedPointer<tools::ToolSettings>(
+				new tools::LaserPointerSettings(ctrl)),
+			"laser", QIcon::fromTheme("cursor-arrow"),
+			QApplication::tr("Laser Pointer")};
 		pages[tools::Tool::SELECTION] = {
-				sel,
-				"selection",
-				QIcon::fromTheme("select-rectangular"),
-				QApplication::tr("Selection (Rectangular)")
-			};
+			sel, "selection", QIcon::fromTheme("select-rectangular"),
+			QApplication::tr("Selection (Rectangular)")};
 		pages[tools::Tool::POLYGONSELECTION] = {
-				sel,
-				"selection",
-				QIcon::fromTheme("edit-select-lasso"),
-				QApplication::tr("Selection (Free-Form)")
-			};
+			sel, "selection", QIcon::fromTheme("edit-select-lasso"),
+			QApplication::tr("Selection (Free-Form)")};
 		pages[tools::Tool::ZOOM] = {
-				QSharedPointer<tools::ToolSettings>(new tools::ZoomSettings(ctrl)),
-				"zoom",
-				QIcon::fromTheme("zoom-select"),
-				QApplication::tr("Zoom")
-			};
+			QSharedPointer<tools::ToolSettings>(new tools::ZoomSettings(ctrl)),
+			"zoom", QIcon::fromTheme("zoom-select"), QApplication::tr("Zoom")};
 		pages[tools::Tool::INSPECTOR] = {
-				QSharedPointer<tools::ToolSettings>(new tools::InspectorSettings(ctrl)),
-				"inspector",
-				QIcon::fromTheme("help-whatsthis"),
-				QApplication::tr("Inspector")
-			};
+			QSharedPointer<tools::ToolSettings>(
+				new tools::InspectorSettings(ctrl)),
+			"inspector", QIcon::fromTheme("help-whatsthis"),
+			QApplication::tr("Inspector")};
 
-		for(int i=0;i<tools::Tool::_LASTTOOL;++i) {
-			if(!toolSettings.contains(pages[i].settings))
+		for(int i = 0; i < tools::Tool::_LASTTOOL; ++i) {
+			if(!toolSettings.contains(pages[i].settings)) {
 				toolSettings << pages[i].settings;
+			}
 		}
 	}
 };
 
 ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
-	: DockBase(parent), d(new Private(ctrl))
+	: DockBase(parent)
+	, d(new Private(ctrl))
 {
 	setWindowTitle(tr("Tool"));
 
@@ -187,8 +156,7 @@ ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
 		bs, &tools::BrushSettings::colorChanged, this,
 		&ToolSettings::setForegroundColor);
 	connect(
-		bs, &tools::BrushSettings::pixelSizeChanged, this,
-		[this](int size) {
+		bs, &tools::BrushSettings::pixelSizeChanged, this, [this](int size) {
 			if(hasBrushCursor(d->currentTool)) {
 				emit sizeChanged(size);
 			}
@@ -210,8 +178,9 @@ ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
 		ctrl, &tools::ToolController::globalSmoothingChanged, bs,
 		&tools::BrushSettings::setGlobalSmoothing);
 
-	connect(colorPickerSettings(), &tools::ColorPickerSettings::colorSelected,
-			this, &ToolSettings::setForegroundColor);
+	connect(
+		colorPickerSettings(), &tools::ColorPickerSettings::colorSelected, this,
+		&ToolSettings::setForegroundColor);
 
 	tools::ColorPickerSettings *cps = colorPickerSettings();
 	connect(
@@ -219,23 +188,24 @@ ToolSettings::ToolSettings(tools::ToolController *ctrl, QWidget *parent)
 		&tools::ColorPickerSettings::cancelPickFromScreen);
 
 	tools::FillSettings *fs = fillSettings();
-	connect(
-		fs, &tools::FillSettings::pixelSizeChanged, this,
-		[this](int size) {
-			if(d->currentTool == tools::Tool::FLOODFILL) {
-				emit sizeChanged(size);
-			}
-		});
+	connect(fs, &tools::FillSettings::pixelSizeChanged, this, [this](int size) {
+		if(d->currentTool == tools::Tool::FLOODFILL) {
+			emit sizeChanged(size);
+		}
+	});
 	connect(
 		d->ctrl, &tools::ToolController::activeLayerChanged, fs,
 		&tools::FillSettings::setActiveLayer);
 
-	connect(d->ctrl, &tools::ToolController::activeBrushChanged, this,
-			&ToolSettings::activeBrushChanged);
+	connect(
+		d->ctrl, &tools::ToolController::activeBrushChanged, this,
+		&ToolSettings::activeBrushChanged);
 
 	d->colorDialog = dialogs::newColorDialog(this);
 	d->colorDialog->setAlphaEnabled(false);
-	connect(d->colorDialog, &color_widgets::ColorDialog::colorSelected, this, &ToolSettings::setForegroundColor);
+	connect(
+		d->colorDialog, &color_widgets::ColorDialog::colorSelected, this,
+		&ToolSettings::setForegroundColor);
 
 	// Tool settings are only saved periodically currently, see TODO below.
 	// Mixing periodic and instantaneous saving causes some desynchronization
@@ -262,7 +232,7 @@ void ToolSettings::saveSettings()
 			// save
 			const auto saveTs = ts->saveToolSettings();
 			const auto [name, props] = saveTs.save();
-			if (!name.isEmpty()) {
+			if(!name.isEmpty()) {
 				toolset[name] = props;
 			}
 		}
@@ -281,20 +251,21 @@ bool ToolSettings::isCurrentToolLocked() const
 tools::ToolSettings *ToolSettings::getToolSettingsPage(tools::Tool::Type tool)
 {
 	Q_ASSERT(tool < tools::Tool::_LASTTOOL);
-	if(tool<tools::Tool::_LASTTOOL) {
+	if(tool < tools::Tool::_LASTTOOL) {
 		auto ts = d->pages[tool].settings.data();
 		if(!ts->getUi()) {
 			d->widgetStack->addWidget(ts->createUi(this));
 			auto *headerWidget = ts->getHeaderWidget();
-			if(headerWidget)
+			if(headerWidget) {
 				d->headerStack->addWidget(headerWidget);
+			}
 
 			const auto toolset = dpApp().settings().toolset();
-			ts->restoreToolSettings(tools::ToolProperties::load(ts->toolType(), toolset[ts->toolType()]));
+			ts->restoreToolSettings(tools::ToolProperties::load(
+				ts->toolType(), toolset[ts->toolType()]));
 		}
 		return ts;
-	}
-	else
+	} else
 		return nullptr;
 }
 
@@ -350,10 +321,12 @@ tools::ZoomSettings *ToolSettings::zoomSettings()
  * Set which tool setting widget is visible
  * @param tool tool identifier
  */
-void ToolSettings::setTool(tools::Tool::Type tool) {
+void ToolSettings::setTool(tools::Tool::Type tool)
+{
 	if(tool != d->currentTool) {
 		d->previousTool = d->currentTool;
-		tools::BrushSettings *bs = qobject_cast<tools::BrushSettings*>(d->currentSettings());
+		tools::BrushSettings *bs =
+			qobject_cast<tools::BrushSettings *>(d->currentSettings());
 		d->previousToolSlot = bs ? bs->currentBrushSlot() : 0;
 		selectTool(tool);
 	}
@@ -362,14 +335,17 @@ void ToolSettings::setTool(tools::Tool::Type tool) {
 void ToolSettings::setToolSlot(int idx)
 {
 	// Currently, brush tool is the only tool with tool slots
-	tools::BrushSettings *bs = qobject_cast<tools::BrushSettings*>(d->currentSettings());
+	tools::BrushSettings *bs =
+		qobject_cast<tools::BrushSettings *>(d->currentSettings());
 	if(bs) {
 		d->previousTool = d->currentTool;
 		d->previousToolSlot = bs->currentBrushSlot();
 		bs->selectBrushSlot(idx);
 	} else {
 		setTool(tools::Tool::FREEHAND);
-		static_cast<tools::BrushSettings*>(getToolSettingsPage(tools::Tool::FREEHAND))->selectBrushSlot(idx);
+		static_cast<tools::BrushSettings *>(
+			getToolSettingsPage(tools::Tool::FREEHAND))
+			->selectBrushSlot(idx);
 	}
 }
 
@@ -442,13 +418,14 @@ void ToolSettings::addLastUsedColor(const QColor &color)
 {
 	{
 		const auto c = d->lastUsedColors.colorAt(0);
-		if(c.isValid() && c.rgb() == color.rgb())
+		if(c.isValid() && c.rgb() == color.rgb()) {
 			return;
+		}
 	}
 
 	// Move color to the front of the palette
 	d->lastUsedColors.insertColor(0, color);
-	for(int i=1;i<d->lastUsedColors.count();++i) {
+	for(int i = 1; i < d->lastUsedColors.count(); ++i) {
 		if(d->lastUsedColors.colorAt(i).rgb() == color.rgb()) {
 			d->lastUsedColors.eraseColor(i);
 			break;
@@ -456,8 +433,9 @@ void ToolSettings::addLastUsedColor(const QColor &color)
 	}
 
 	// Limit number of remembered colors
-	if(d->lastUsedColors.count() > LASTUSED_COLOR_COUNT)
+	if(d->lastUsedColors.count() > LASTUSED_COLOR_COUNT) {
 		d->lastUsedColors.eraseColor(LASTUSED_COLOR_COUNT);
+	}
 
 	emit lastUsedColorsChanged(d->lastUsedColors);
 }
@@ -473,9 +451,11 @@ void ToolSettings::setLastUsedColor(int i)
 void ToolSettings::setPreviousTool()
 {
 	selectTool(d->previousTool);
-	tools::BrushSettings *bs = qobject_cast<tools::BrushSettings*>(d->currentSettings());
-	if(bs)
+	tools::BrushSettings *bs =
+		qobject_cast<tools::BrushSettings *>(d->currentSettings());
+	if(bs) {
 		bs->selectBrushSlot(d->previousToolSlot);
+	}
 }
 
 void ToolSettings::selectTool(tools::Tool::Type tool)
@@ -535,15 +515,16 @@ QColor ToolSettings::foregroundColor() const
 	return d->color;
 }
 
-void ToolSettings::setForegroundColor(const QColor& color)
+void ToolSettings::setForegroundColor(const QColor &color)
 {
 	if(color.isValid() && color != d->color) {
 		d->color = color;
 
 		d->currentSettings()->setForeground(color);
 
-		if(d->colorDialog->isVisible())
+		if(d->colorDialog->isVisible()) {
 			d->colorDialog->setColor(color);
+		}
 
 		emit foregroundColorChanged(color);
 	}
