@@ -32,6 +32,7 @@ target_link_libraries(dpmsg PUBLIC dpcommon uthash parson)
 
 if(TESTS)
     add_dptest_targets(msg dptest
+        test/protover.c
         test/read_write_roundtrip.c
     )
 endif()
