@@ -71,7 +71,7 @@ runs:
       shell: bash
 
     - name: Store system build dependencies to cache
-      uses: actions/cache/save@v3
+      uses: actions/cache/save@v4
       with:
         path: ${{ inputs.path }}
         key: build-packages-${{ matrix.os }}

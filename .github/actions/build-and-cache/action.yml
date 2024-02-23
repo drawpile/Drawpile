@@ -58,7 +58,7 @@ runs:
       if: steps.cache.outputs.cache-hit != 'true'
 
     - name: Store ${{ inputs.name }} to cache
-      uses: actions/cache/save@v3
+      uses: actions/cache/save@v4
       with:
         path: ${{ inputs.path }}
         key: ${{ inputs.cache_key }}
