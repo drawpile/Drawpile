@@ -258,7 +258,7 @@ jobs:
 
     steps:
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0 # for git-describe
           submodules: true
@@ -276,7 +276,7 @@ jobs:
         if: runner.os == 'Windows'
 
       - name: Add msbuild to PATH
-        uses: microsoft/setup-msbuild@v1.1
+        uses: microsoft/setup-msbuild@v2
         with:
           msbuild-architecture: x${{ matrix.bits }}
         if: runner.os == 'Windows'
@@ -430,7 +430,7 @@ jobs:
         if: matrix.packager
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: matrix.packager
         with:
           name: Drawpile${{ matrix.component && format('-{0}', matrix.component) }}-${{ matrix.cross_os || runner.os }}-${{ matrix.bits }}bit-Qt${{ matrix.qt }}
@@ -442,7 +442,7 @@ jobs:
             Drawpile-*.zip
 
       - name: Upload error logs and artefacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: ${{ matrix.cross_os || runner.os }} error logs and artefacts

@@ -40,7 +40,7 @@ runs:
   using: composite
   steps:
     - name: Restore ${{ inputs.name }} from cache
-      uses: actions/cache/restore@v3
+      uses: actions/cache/restore@v4
       id: cache
       with:
         path: ${{ inputs.path }}
