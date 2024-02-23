@@ -445,7 +445,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: ${{ matrix.cross_os || runner.os }} error logs and artefacts
+          name: Logs${{ matrix.component && format('-{0}', matrix.component) }}-${{ matrix.cross_os || runner.os }}-${{ matrix.bits }}bit-Qt${{ matrix.qt }}
           path: |
             **/*.log
             **/*.wxs
