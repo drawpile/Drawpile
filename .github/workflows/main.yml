@@ -9,9 +9,6 @@ on:
       # This tag is (re)created when a build on main succeeds, it'd be
       # pointless to trigger yet another build in response to it.
       - continuous
-  schedule:
-    # Every Monday and Thursday at 11:18 AM.
-    - cron: '18 11 * * 1,4'
 
 env:
   CARGO_TERM_COLOR: always
