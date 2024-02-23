@@ -329,7 +329,7 @@ jobs:
           cache_key: ${{ runner.os }}${{ matrix.component }}${{ matrix.bits == 32 && '32' || '' }}${{ matrix.cross_os && format('+{0}', matrix.cross_os) }}-${{ matrix.qt }}
 
       - name: Cache gradle
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           # The zip file is unnecessary but the .zip.ok file is needed or it
           # will blow away the installation and redownload everything
