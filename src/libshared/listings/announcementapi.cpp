@@ -313,6 +313,9 @@ AnnouncementApiResponse *announceSession(const QUrl &apiUrl, const Session &sess
 	if(session.closed) {
 		o["closed"] = session.closed;
 	}
+	if(session.allowWeb) {
+		o["allowweb"] = true;
+	}
 
 	const QString sessionId = session.id;
 
@@ -368,6 +371,7 @@ AnnouncementApiResponse *refreshSession(const Announcement &a, const Session &se
 	}
 	o["maxusers"] = session.maxUsers;
 	o["closed"] = session.closed;
+	o["allowweb"] = session.allowWeb;
 
 	// Send request
 	QUrl url = a.apiUrl;
@@ -422,6 +426,7 @@ AnnouncementApiResponse *refreshSessions(const QVector<QPair<Announcement, Sessi
 		}
 		o["maxusers"] = listing.second.maxUsers;
 		o["closed"] = listing.second.closed;
+		o["allowweb"] = listing.second.allowWeb;
 
 		batch[QString::number(listing.first.listingId)] = o;
 	}
