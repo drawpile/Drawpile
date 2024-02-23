@@ -362,6 +362,7 @@ AnnouncementApiResponse *refreshSession(const Announcement &a, const Session &se
 
 	o["title"] = session.title;
 	o["users"] = session.users;
+	o["activedrawingusers"] = session.activeDrawingUsers;
 	o["usernames"] = QJsonArray::fromStringList(session.usernames);
 	o["password"] = session.password;
 	o["owner"] = session.owner;
@@ -417,6 +418,7 @@ AnnouncementApiResponse *refreshSessions(const QVector<QPair<Announcement, Sessi
 		o["updatekey"] = listing.first.updateKey;
 		o["title"] = listing.second.title;
 		o["users"] = listing.second.users;
+		o["activedrawingusers"] = listing.second.activeDrawingUsers;
 		o["usernames"] = QJsonArray::fromStringList(listing.second.usernames);
 		o["password"] = listing.second.password;
 		o["owner"] = listing.second.owner;
