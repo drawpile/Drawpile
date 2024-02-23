@@ -20,7 +20,8 @@ if(NOT ANDROID)
 	option(SERVER "Compile dedicated server" OFF)
 	add_feature_info("Drawpile server (SERVER)" SERVER "")
 
-	option(BUILTINSERVER "Compile builtin server for hosting from client" ON)
+	cmake_dependent_option(
+		BUILTINSERVER "Compile builtin server for hosting from client" ON "CLIENT" OFF)
 	add_feature_info("Builtin server (BUILTINSERVER)" BUILTINSERVER "")
 
 	cmake_dependent_option(SERVERGUI "Enable server GUI" ON "SERVER" OFF)
