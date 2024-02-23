@@ -24,7 +24,8 @@ class FillSettings::FillSourceModel final : public QAbstractItemModel {
 public:
 	static constexpr int CURRENT_LAYER_ROW = 0;
 	static constexpr int MERGED_IMAGE_ROW = 1;
-	static constexpr int PREFIX_ROWS = 2;
+	static constexpr int MERGED_WITHOUT_BACKGROUND_ROW = 2;
+	static constexpr int PREFIX_ROWS = 3;
 
 	FillSourceModel(QObject *parent)
 		: QAbstractItemModel{parent}
@@ -41,7 +42,9 @@ public:
 	{
 		if(parent.isValid() || column != 0) {
 			return QModelIndex{};
-		} else if(row == CURRENT_LAYER_ROW || row == MERGED_IMAGE_ROW) {
+		} else if(
+			row == CURRENT_LAYER_ROW || row == MERGED_IMAGE_ROW ||
+			row == MERGED_WITHOUT_BACKGROUND_ROW) {
 			return createIndex(row, column, quintptr(0));
 		} else {
 			const Layer *layer = layerAt(row);
@@ -125,6 +128,8 @@ private:
 			return FillSettings::tr("Current Layer");
 		} else if(row == MERGED_IMAGE_ROW) {
 			return FillSettings::tr("Merged Image");
+		} else if(row == MERGED_WITHOUT_BACKGROUND_ROW) {
+			return FillSettings::tr("Merged Without Background");
 		} else {
 			const Layer *layer = layerAt(row);
 			return layer ? layer->displayText : QString{};
@@ -138,6 +143,8 @@ private:
 			return m_activeLayer;
 		case MERGED_IMAGE_ROW:
 			return 0;
+		case MERGED_WITHOUT_BACKGROUND_ROW:
+			return -1;
 		default:
 			return int(index.internalId());
 		}
@@ -167,7 +174,7 @@ private:
 
 	const Layer *layerAt(int row) const
 	{
-		int i = row - 2;
+		int i = row - PREFIX_ROWS;
 		return i >= 0 && i < m_layers.size() ? &m_layers[i] : nullptr;
 	}
 

@@ -80,6 +80,20 @@ static bool is_cancelled(DP_FillContext *c)
     }
 }
 
+static DP_LayerContent *merge_image(DP_CanvasState *cs, DP_ViewMode view_mode,
+                                    int active_layer_id, int active_frame_index,
+                                    unsigned int flags)
+{
+    DP_ViewModeBuffer vmb;
+    DP_view_mode_buffer_init(&vmb);
+    DP_ViewModeFilter vmf = DP_view_mode_filter_make(
+        &vmb, view_mode, cs, active_layer_id, active_frame_index, NULL);
+    DP_LayerContent *lc =
+        (DP_LayerContent *)DP_canvas_state_to_flat_layer(cs, flags, &vmf);
+    DP_view_mode_buffer_dispose(&vmb);
+    return lc;
+}
+
 static unsigned char *buffer_at(unsigned char *buffer, DP_Rect area, int x,
                                 int y)
 {
@@ -528,13 +542,13 @@ DP_flood_fill(DP_CanvasState *cs, int x, int y, DP_UPixelFloat fill_color,
     }
 
     if (layer_id == 0) {
-        DP_ViewModeBuffer vmb;
-        DP_view_mode_buffer_init(&vmb);
-        DP_ViewModeFilter vmf = DP_view_mode_filter_make(
-            &vmb, view_mode, cs, active_layer_id, active_frame_index, NULL);
-        c.lc = (DP_LayerContent *)DP_canvas_state_to_flat_layer(
-            cs, DP_FLAT_IMAGE_RENDER_FLAGS, &vmf);
-        DP_view_mode_buffer_dispose(&vmb);
+        c.lc = merge_image(cs, view_mode, active_layer_id, active_frame_index,
+                           DP_FLAT_IMAGE_RENDER_FLAGS);
+    }
+    else if (layer_id == -1) {
+        c.lc = merge_image(cs, view_mode, active_layer_id, active_frame_index,
+                           DP_FLAT_IMAGE_RENDER_FLAGS
+                               & ~DP_FLAT_IMAGE_INCLUDE_BACKGROUND);
     }
     else {
         DP_LayerRoutes *lr = DP_canvas_state_layer_routes_noinc(cs);
