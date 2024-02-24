@@ -464,11 +464,10 @@ void Document::setSessionAuthOnly(bool authOnly)
 
 void Document::setSessionAllowWeb(bool allowWeb)
 {
-	if(m_sessionAllowWeb != allowWeb) {
-		m_sessionAllowWeb = allowWeb;
-		emit sessionAllowWebChanged(
-			m_sessionAllowWeb, m_client->canManageWebSession());
-	}
+	// Always emit this, since we make showing the checkbox dependent on it.
+	m_sessionAllowWeb = allowWeb;
+	emit sessionAllowWebChanged(
+		m_sessionAllowWeb, m_client->canManageWebSession());
 }
 
 void Document::setSessionMaxUserCount(int count)

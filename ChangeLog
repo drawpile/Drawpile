@@ -13,6 +13,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Make WebSockets compile under Qt < 6.5. Thanks kiroma for reporting.
  * Server Fix: Properly start extbans checks when running via systemd. Thanks Bluestrings for reporting.
  * Server Feature: Warn if a command-line argument was ignored due to systemd sockets being used instead.
+ * Fix: Show web join allowance checkbox in session settings properly, it didn't show up if disabled before.
 
 2024-02-18 Version 2.2.1
  * Fix: Default to previous directory when saving a fresh file. Thanks Crow for reporting.
