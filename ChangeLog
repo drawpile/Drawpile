@@ -10,6 +10,7 @@ Unreleased Version 2.2.2-pre
  * Feature: Add "merged without background" as a source for the flood fill tool.
  * Server Fix: Include allow web flag when listing a session.
  * Server Fix: Update active drawing users when refreshing a session listing.
+ * Fix: Make WebSockets compile under Qt < 6.5. Thanks kiroma for reporting.
 
 2024-02-18 Version 2.2.1
  * Fix: Default to previous directory when saving a fresh file. Thanks Crow for reporting.
