@@ -263,6 +263,7 @@ bool MultiServer::startFd(int tcpFd, int webSocketFd)
 	m_port = m_tcpServer->serverPort();
 	updateInternalConfig();
 
+	emit serverStarted();
 	m_sessions->config()->logger()->logMessage(
 		Log()
 			.about(Log::Level::Info, Log::Topic::Status)
