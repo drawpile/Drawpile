@@ -500,8 +500,6 @@ bool start() {
 		}
 	}
 
-	initsys::notifyReady();
-
 	return true;
 }
 
