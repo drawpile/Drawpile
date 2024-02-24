@@ -17,6 +17,11 @@
 namespace initsys {
 
 /**
+ * @brief What this init system is called
+ */
+QString name();
+
+/**
  * @brief Send the "server ready" notification
  */
 void notifyReady();

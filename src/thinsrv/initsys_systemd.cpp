@@ -8,6 +8,11 @@
 
 namespace initsys {
 
+QString name()
+{
+	return QStringLiteral("systemd");
+}
+
 void notifyReady()
 {
 	sd_notify(0, "READY=1");

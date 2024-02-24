@@ -6,6 +6,11 @@
 
 namespace initsys {
 
+QString name()
+{
+	return QStringLiteral("dummy");
+}
+
 void notifyReady()
 {
 	// dummy

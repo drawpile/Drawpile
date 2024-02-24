@@ -52,7 +52,7 @@ public:
 	Q_INVOKABLE bool isRunning() const { return m_state != STOPPED; }
 
 	//! Start the server with the given descriptors, -1 to disable WebSocket
-	bool startFd(int tcpFd, int webSocketFd);
+	bool startFd(int tcpFd, int webSocketFd, const QStringList &ignoredOptions);
 
 	SessionServer *sessionServer() { return m_sessions; }
 

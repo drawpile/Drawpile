@@ -467,6 +467,23 @@ bool start() {
 #endif
 
 		} else {
+			const QCommandLineOption *potentiallyIgnoredOptions[] = {
+				&portOption, &webadminPortOption, &webSocketPortOption,
+				&webSocketListenOption};
+			QStringList ignoredOptions;
+			for(const QCommandLineOption *option : potentiallyIgnoredOptions) {
+				if(parser.isSet(*option)) {
+					QStringList optionNames;
+					for(const QString &optionName : option->names()) {
+						QString prefix = optionName.length() == 1
+											 ? QStringLiteral("-")
+											 : QStringLiteral("--");
+						optionNames.append(prefix + optionName);
+					}
+					ignoredOptions.append(optionNames.join('/'));
+				}
+			}
+
 			// listening socket passed to us by the init system
 			int fdCount = listenfds.size();
 			if(fdCount > 3) {
@@ -485,7 +502,7 @@ bool start() {
 				qCritical("WebSocket passed, but support not built in!");
 			}
 #endif
-			if(!server->startFd(fdTcp, fdWebSocket)) {
+			if(!server->startFd(fdTcp, fdWebSocket, ignoredOptions)) {
 				return false;
 			}
 

@@ -222,12 +222,22 @@ bool MultiServer::start(
  * @param fd
  * @return true on success
  */
-bool MultiServer::startFd(int tcpFd, int webSocketFd)
+bool MultiServer::startFd(
+	int tcpFd, int webSocketFd, const QStringList &ignoredOptions)
 {
 	Q_ASSERT(m_state == STOPPED);
 	m_state = RUNNING;
 	if(!createServer(webSocketFd > 0))
 		return false;
+
+	for(const QString &ignoredOption : ignoredOptions) {
+		m_sessions->config()->logger()->logMessage(
+			Log()
+				.about(Log::Level::Warn, Log::Topic::Status)
+				.message(QStringLiteral("Command-line argument %1 ignored "
+										"because sockets are passed via %2")
+							 .arg(ignoredOption, initsys::name())));
+	}
 
 	if(!m_tcpServer->setSocketDescriptor(tcpFd)) {
 		m_sessions->config()->logger()->logMessage(
