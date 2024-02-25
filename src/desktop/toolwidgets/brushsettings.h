@@ -19,8 +19,6 @@ namespace tools {
  */
 class BrushSettings final : public ToolSettings {
 	Q_OBJECT
-	friend class AdvancedBrushSettings;
-
 public:
 	enum BrushMode : int { NormalMode, EraseMode, AlphaLockMode, UnknownMode };
 
