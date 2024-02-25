@@ -869,10 +869,7 @@ void LoginHandler::handleHostMessage(const net::ServerCommand &cmd)
 	if(cmd.kwargs["password"].isString())
 		session->history()->setPassword(cmd.kwargs["password"].toString());
 
-	bool allowWeb = m_client->isWebSocket() ||
-					(m_client->canManageWebSession() &&
-					 cmd.kwargs[QStringLiteral("web")].toBool(true));
-	if(allowWeb) {
+	if(shouldAllowWebOnHost(cmd, session)) {
 		session->history()->setFlag(SessionHistory::AllowWeb);
 	}
 
@@ -1249,6 +1246,32 @@ void LoginHandler::insertImplicitFlags(QStringList &effectiveFlags)
 			effectiveFlags.append(flag);
 		}
 	}
+}
+
+bool LoginHandler::shouldAllowWebOnHost(
+	const net::ServerCommand &cmd, const Session *session) const
+{
+	// If the client is hosting via WebSocket, the session must allow them.
+	// Otherwise they wouldn't be able to rejoin it if they leave.
+	if(m_client->isWebSocket()) {
+		return true;
+	}
+	// If the client has the WEBSESSION flag, they may explicitly specify what
+	// they want the WebSocket allowance to be.
+	QString webKey = QStringLiteral("web");
+	bool canManageWebSession = m_client->canManageWebSession();
+	if(canManageWebSession && cmd.kwargs.contains(webKey)) {
+		QJsonValue webValue = cmd.kwargs[webKey];
+		if(webValue.isBool()) {
+			return webValue.toBool();
+		}
+	}
+	// If password-dependent WebSocket allowance is enabled, follow that.
+	if(m_config->getConfigBool(config::PasswordDependentWebSession)) {
+		return !session->history()->passwordHash().isEmpty();
+	}
+	// Otherwise make it dependent on the client's abilities.
+	return canManageWebSession;
 }
 
 }

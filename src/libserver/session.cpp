@@ -30,6 +30,23 @@ static bool forceEnableNsfm(SessionHistory *history, const ServerConfig *config)
 	}
 }
 
+static bool setAllowWebDependentOnPassword(
+	SessionHistory *history, const ServerConfig *config, bool *outAllowWeb)
+{
+	if(config->getConfigBool(config::PasswordDependentWebSession)) {
+		bool hasPassword = !history->passwordHash().isEmpty();
+		bool allowWeb = history->hasFlag(SessionHistory::AllowWeb);
+		if((hasPassword && !allowWeb) || (!hasPassword && allowWeb)) {
+			history->setFlag(SessionHistory::AllowWeb, hasPassword);
+			if(outAllowWeb) {
+				*outAllowWeb = hasPassword;
+			}
+			return true;
+		}
+	}
+	return false;
+}
+
 Session::Session(
 	SessionHistory *history, ServerConfig *config,
 	sessionlisting::Announcements *announcements, QObject *parent)
@@ -534,11 +551,13 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 	// WEBSESSION flag. If changedBy is null, the request came from the API.
 	bool changeAllowWeb = conf.contains(QStringLiteral("allowWeb")) &&
 						  (!changedBy || changedBy->canManageWebSession());
+	bool allowWebChanged = false;
 	if(changeAllowWeb) {
 		bool allowWeb = conf[QStringLiteral("allowWeb")].toBool();
 		// We don't allow clients that are connected via WebSocket to prevent
 		// themselves from rejoining the session by disabling them.
 		if(allowWeb || !changedBy || !changedBy->isWebSocket()) {
+			allowWebChanged = true;
 			flags.setFlag(SessionHistory::AllowWeb, allowWeb);
 			changes
 				<< (allowWeb
@@ -548,6 +567,17 @@ void Session::setSessionConfig(const QJsonObject &conf, Client *changedBy)
 	}
 
 	m_history->setFlags(flags);
+
+	bool dependentAllowWeb;
+	if(!allowWebChanged && setAllowWebDependentOnPassword(
+							   m_history, m_config, &dependentAllowWeb)) {
+		changes
+			<< (dependentAllowWeb
+					? QStringLiteral("enabled WebSocket connections because "
+									 "password is set")
+					: QStringLiteral("disabled WebSocket connections because "
+									 "no password is set"));
+	}
 
 	if(!changes.isEmpty()) {
 		sendUpdatedSessionProperties();

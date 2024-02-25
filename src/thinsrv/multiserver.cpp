@@ -552,6 +552,7 @@ JsonApiResult MultiServer::serverJsonApi(JsonApiMethod method, const QStringList
 		config::ExtAuthWeb,
 		config::ExtAuthWebSession,
 #	endif
+		config::PasswordDependentWebSession,
 #endif
 		config::SessionUserLimit,
 	};
@@ -583,6 +584,7 @@ JsonApiResult MultiServer::serverJsonApi(JsonApiMethod method, const QStringList
 		result.remove(config::ExtAuthWeb.name);
 		result.remove(config::AllowGuestWebSession.name);
 		result.remove(config::ExtAuthWebSession.name);
+		result.remove(config::PasswordDependentWebSession.name);
 	}
 #endif
 

@@ -135,6 +135,9 @@ private:
 
 	void insertImplicitFlags(QStringList &effectiveFlags);
 
+	bool shouldAllowWebOnHost(
+		const net::ServerCommand &cmd, const Session *session) const;
+
 	Client *m_client;
 	Sessions *m_sessions;
 	ServerConfig *m_config;
