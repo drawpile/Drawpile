@@ -35,9 +35,12 @@ public:
 	int getSize() const override;
 	bool getSubpixelMode() const override;
 	bool isSquare() const override;
+	int getBlendMode() const;
 
 	BrushMode getBrushMode() const;
 	void resetBrushMode();
+
+	void triggerUpdate();
 
 	void pushSettings() override;
 	ToolProperties saveToolSettings() override;
@@ -72,6 +75,7 @@ signals:
 	void colorChanged(const QColor &color);
 	void eraseModeChanged(bool erase);
 	void subpixelModeChanged(bool subpixel, bool square);
+	void blendModeChanged(int blendMode);
 	void brushModeChanged(int brushMode); // See enum BrushMode above.
 	void pixelSizeChanged(int size);
 	void brushSettingsDialogRequested();
@@ -98,6 +102,7 @@ private:
 	static QString getLockDescription(Lock lock);
 
 	void adjustSettingVisibilities(bool softmode, bool mypaintmode);
+	void emitBlendModeChanged();
 	void emitBrushModeChanged();
 	static double radiusLogarithmicToPixelSize(int radiusLogarithmic);
 

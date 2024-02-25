@@ -51,7 +51,7 @@ void Tools::initColorWheel(
 	QFormLayout *form = utils::addFormSection(section);
 
 	auto *shape = utils::addRadioGroup(
-		form, tr("Shape:"), false,
+		form, tr("Shape:"), true,
 		{{tr("Triangle"), color_widgets::ColorWheel::ShapeEnum::ShapeTriangle},
 		 {tr("Square"), color_widgets::ColorWheel::ShapeEnum::ShapeSquare}});
 	settings.bindColorWheelShape(shape);
@@ -59,7 +59,7 @@ void Tools::initColorWheel(
 	utils::addFormSpacer(form);
 
 	auto *angle = utils::addRadioGroup(
-		form, tr("Angle:"), false,
+		form, tr("Angle:"), true,
 		{{tr("Fixed"), color_widgets::ColorWheel::AngleEnum::AngleFixed},
 		 {tr("Rotating"),
 		  color_widgets::ColorWheel::AngleEnum::AngleRotating}});
@@ -68,7 +68,7 @@ void Tools::initColorWheel(
 	utils::addFormSpacer(form);
 
 	auto *mirror = utils::addRadioGroup(
-		form, tr("Direction:"), false,
+		form, tr("Direction:"), true,
 		{{tr("Ascending"), true}, {tr("Descending"), false}});
 	settings.bindColorWheelMirror(mirror);
 
@@ -134,24 +134,38 @@ void Tools::initGeneralTools(
 	form->addRow(nullptr, outlineSizeLayout);
 
 	auto *brushCursor = new QComboBox;
-	// Always adjust in case of locale changes
-	brushCursor->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+	auto *eraseCursor = new QComboBox;
+	auto *alphaLockCursor = new QComboBox;
 
 	using BrushCursor = widgets::CanvasView::BrushCursor;
-	for(const auto &[name, value] :
-		{std::pair{tr("Dot"), BrushCursor::Dot},
-		 std::pair{tr("Crosshair"), BrushCursor::Cross},
-		 std::pair{tr("Arrow"), BrushCursor::Arrow},
-		 std::pair{tr("Right-handed triangle"), BrushCursor::TriangleRight},
-		 std::pair{tr("Left-handed triangle"), BrushCursor::TriangleLeft}}) {
-		brushCursor->addItem(name, QVariant::fromValue(value));
-	}
-	settings.bindBrushCursor(brushCursor, Qt::UserRole);
+	for(QComboBox *cursor : {brushCursor, eraseCursor, alphaLockCursor}) {
+		// Always adjust in case of locale changes
+		cursor->setSizeAdjustPolicy(QComboBox::AdjustToContents);
 
-	auto *brushCursorLayout =
-		utils::encapsulate(tr("Draw the brush as a %1"), brushCursor);
-	utils::setSpacingControlType(brushCursorLayout, QSizePolicy::ComboBox);
-	form->addRow(nullptr, brushCursorLayout);
+		if(cursor != brushCursor) {
+			cursor->addItem(
+				tr("Same as brush cursor"),
+				QVariant::fromValue(BrushCursor::SameAsBrush));
+		}
+
+		for(const auto &[name, value] :
+			{std::pair{tr("Dot"), BrushCursor::Dot},
+			 std::pair{tr("Crosshair"), BrushCursor::Cross},
+			 std::pair{tr("Arrow"), BrushCursor::Arrow},
+			 std::pair{tr("Right-handed triangle"), BrushCursor::TriangleRight},
+			 std::pair{tr("Left-handed triangle"), BrushCursor::TriangleLeft},
+			 std::pair{tr("Eraser"), BrushCursor::Eraser}}) {
+			cursor->addItem(name, QVariant::fromValue(value));
+		}
+	}
+
+	settings.bindBrushCursor(brushCursor, Qt::UserRole);
+	settings.bindEraseCursor(eraseCursor, Qt::UserRole);
+	settings.bindAlphaLockCursor(alphaLockCursor, Qt::UserRole);
+
+	form->addRow(tr("Brush cursor:"), brushCursor);
+	form->addRow(tr("Eraser cursor:"), eraseCursor);
+	form->addRow(tr("Alpha lock cursor:"), alphaLockCursor);
 }
 
 void Tools::initKeyboardShortcuts(

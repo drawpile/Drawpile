@@ -36,7 +36,9 @@ public:
 		Cross,
 		Arrow,
 		TriangleRight,
-		TriangleLeft
+		TriangleLeft,
+		Eraser,
+		SameAsBrush = -1,
 	};
 	Q_ENUM(BrushCursor)
 
@@ -224,8 +226,11 @@ public slots:
 	void setToolCapabilities(
 		bool allowColorPick, bool allowToolAdjust, bool toolHandlesRightClick);
 
-	void setBrushCursorStyle(BrushCursor style) { m_brushCursorStyle = style; }
+	void setBrushCursorStyle(BrushCursor style);
+	void setEraseCursorStyle(BrushCursor style);
+	void setAlphaLockCursorStyle(BrushCursor style);
 	void setBrushOutlineWidth(qreal outlineWidth);
+	void setBrushBlendMode(int brushBlendMode);
 
 	void setSuppressTransformNotices(bool suppressTransformNotices);
 #ifdef __EMSCRIPTEN__
@@ -310,6 +315,7 @@ private:
 	void updateOutline();
 	QPointF getOutlinePos() const;
 	qreal getOutlineWidth() const;
+	BrushCursor getCurrentCursorStyle() const;
 
 #ifdef HAVE_EMULATED_BITMAP_CURSOR
 	void updateCursorPos(const QPoint &pos);
@@ -388,7 +394,7 @@ private:
 	bool m_showoutline, m_subpixeloutline, m_forceoutline;
 	QCursor m_dotcursor, m_trianglerightcursor, m_triangleleftcursor;
 	QCursor m_colorpickcursor, m_layerpickcursor, m_zoomcursor, m_rotatecursor;
-	QCursor m_rotatediscretecursor, m_toolcursor;
+	QCursor m_rotatediscretecursor, m_erasercursor, m_toolcursor;
 
 	QPointF m_pos;		// Canvas position
 	qreal m_zoom;		// View zoom in percents
@@ -419,7 +425,10 @@ private:
 
 	qreal m_dpi;
 	BrushCursor m_brushCursorStyle;
+	BrushCursor m_eraseCursorStyle;
+	BrushCursor m_alphaLockCursorStyle;
 	qreal m_brushOutlineWidth;
+	int m_brushBlendMode;
 
 	bool m_scrollBarsAdjusting;
 	bool m_blockNotices;

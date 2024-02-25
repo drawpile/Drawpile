@@ -1,7 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-#include "desktop/scene/canvasview.h"
+extern "C" {
+#include <dpmsg/blend_mode.h>
+}
 #include "desktop/main.h"
 #include "desktop/scene/canvasscene.h"
+#include "desktop/scene/canvasview.h"
 #include "desktop/tabletinput.h"
 #include "desktop/utils/qtguicompat.h"
 #include "desktop/widgets/notifbar.h"
@@ -66,7 +69,10 @@ CanvasView::CanvasView(QWidget *parent)
 	, m_touchMode(TouchMode::Unknown)
 	, m_dpi(96)
 	, m_brushCursorStyle(BrushCursor::Dot)
+	, m_eraseCursorStyle(BrushCursor::SameAsBrush)
+	, m_alphaLockCursorStyle(BrushCursor::SameAsBrush)
 	, m_brushOutlineWidth(1.0)
+	, m_brushBlendMode(DP_BLEND_MODE_NORMAL)
 	, m_scrollBarsAdjusting{false}
 	, m_blockNotices{false}
 	, m_suppressTransformNotices(false)
@@ -104,6 +110,7 @@ CanvasView::CanvasView(QWidget *parent)
 	m_rotatecursor = QCursor(QPixmap(":/cursors/rotate.png"), 16, 16);
 	m_rotatediscretecursor =
 		QCursor(QPixmap(":/cursors/rotate-discrete.png"), 16, 16);
+	m_erasercursor = QCursor(QPixmap(":/cursors/eraser.png"), 2, 2);
 
 	// Generate the minimalistic dot cursor
 	{
@@ -126,6 +133,9 @@ CanvasView::CanvasView(QWidget *parent)
 	settings.bindRenderUpdateFull(
 		this, &widgets::CanvasView::setRenderUpdateFull);
 	settings.bindBrushCursor(this, &widgets::CanvasView::setBrushCursorStyle);
+	settings.bindEraseCursor(this, &widgets::CanvasView::setEraseCursorStyle);
+	settings.bindAlphaLockCursor(
+		this, &widgets::CanvasView::setAlphaLockCursorStyle);
 	settings.bindBrushOutlineWidth(
 		this, &widgets::CanvasView::setBrushOutlineWidth);
 
@@ -599,9 +609,33 @@ void CanvasView::setBusy(bool busy)
 	resetCursor();
 }
 
+void CanvasView::setBrushCursorStyle(BrushCursor style)
+{
+	m_brushCursorStyle = style;
+	resetCursor();
+}
+
+void CanvasView::setEraseCursorStyle(BrushCursor style)
+{
+	m_eraseCursorStyle = style;
+	resetCursor();
+}
+
+void CanvasView::setAlphaLockCursorStyle(BrushCursor style)
+{
+	m_alphaLockCursorStyle = style;
+	resetCursor();
+}
+
 void CanvasView::setBrushOutlineWidth(qreal outlineWidth)
 {
 	m_brushOutlineWidth = qIsNaN(outlineWidth) ? 1.0 : outlineWidth;
+	resetCursor();
+}
+
+void CanvasView::setBrushBlendMode(int brushBlendMode)
+{
+	m_brushBlendMode = brushBlendMode;
 	resetCursor();
 }
 
@@ -685,7 +719,7 @@ void CanvasView::resetCursor()
 	}
 
 	if(m_toolcursor.shape() == Qt::CrossCursor) {
-		switch(m_brushCursorStyle) {
+		switch(getCurrentCursorStyle()) {
 		case BrushCursor::Dot:
 			setViewportCursor(m_dotcursor);
 			break;
@@ -699,6 +733,11 @@ void CanvasView::resetCursor()
 			setViewportCursor(m_triangleleftcursor);
 			break;
 		case BrushCursor::TriangleRight:
+			setViewportCursor(m_trianglerightcursor);
+			break;
+		case BrushCursor::Eraser:
+			setViewportCursor(m_erasercursor);
+			break;
 		default:
 			setViewportCursor(m_trianglerightcursor);
 			break;
@@ -2040,6 +2079,20 @@ qreal CanvasView::getOutlineWidth() const
 {
 	return m_forceoutline ? qMax(1.0, m_brushOutlineWidth)
 						  : m_brushOutlineWidth;
+}
+
+CanvasView::BrushCursor CanvasView::getCurrentCursorStyle() const
+{
+	if(DP_blend_mode_presents_as_eraser(m_brushBlendMode)) {
+		if(m_eraseCursorStyle != BrushCursor::SameAsBrush) {
+			return m_eraseCursorStyle;
+		}
+	} else if(DP_blend_mode_preserves_alpha(m_brushBlendMode)) {
+		if(m_alphaLockCursorStyle != BrushCursor::SameAsBrush) {
+			return m_alphaLockCursorStyle;
+		}
+	}
+	return m_brushCursorStyle;
 }
 
 #ifdef HAVE_EMULATED_BITMAP_CURSOR

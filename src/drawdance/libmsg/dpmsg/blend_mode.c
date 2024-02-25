@@ -23,12 +23,13 @@
 #include <dpcommon/common.h>
 
 
-#define LAYER            (1 << 0)
-#define BRUSH            (1 << 1)
-#define DECREASE_OPACITY (1 << 2)
-#define INCREASE_OPACITY (1 << 3)
-#define BLEND_BLANK      (1 << 4)
-#define PRESERVES_ALPHA  (1 << 5)
+#define LAYER              (1 << 0)
+#define BRUSH              (1 << 1)
+#define DECREASE_OPACITY   (1 << 2)
+#define INCREASE_OPACITY   (1 << 3)
+#define BLEND_BLANK        (1 << 4)
+#define PRESERVES_ALPHA    (1 << 5)
+#define PRESENTS_AS_ERASER (1 << 6)
 
 // The Krita name for the linear light blend mode contains a space, which isn't
 // supported in draw dabs messages, since they already use the curly brace body
@@ -53,7 +54,7 @@ static const DP_BlendModeAttributes invalid_attributes = {
 static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
     [DP_BLEND_MODE_ERASE] =
         {
-            LAYER | BRUSH | DECREASE_OPACITY,
+            LAYER | BRUSH | DECREASE_OPACITY | PRESENTS_AS_ERASER,
             "DP_BLEND_MODE_ERASE",
             "svg:dst-out",
             "Erase",
@@ -137,7 +138,7 @@ static const DP_BlendModeAttributes mode_attributes[DP_BLEND_MODE_COUNT] = {
         },
     [DP_BLEND_MODE_COLOR_ERASE] =
         {
-            BRUSH | DECREASE_OPACITY,
+            BRUSH | DECREASE_OPACITY | PRESENTS_AS_ERASER,
             "DP_BLEND_MODE_COLOR_ERASE",
             "-dp-cerase",
             "Color Erase",
@@ -315,6 +316,11 @@ bool DP_blend_mode_blend_blank(int blend_mode)
 bool DP_blend_mode_preserves_alpha(int blend_mode)
 {
     return get_attributes(blend_mode)->flags & PRESERVES_ALPHA;
+}
+
+bool DP_blend_mode_presents_as_eraser(int blend_mode)
+{
+    return get_attributes(blend_mode)->flags & PRESENTS_AS_ERASER;
 }
 
 DP_BlendMode DP_blend_mode_by_svg_name(const char *svg_name,

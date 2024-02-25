@@ -303,6 +303,10 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	// Tool dock connections
 	m_tempToolSwitchShortcut = new ShortcutDetector(this);
 
+	connect(
+		m_dockToolSettings->brushSettings(),
+		&tools::BrushSettings::blendModeChanged, m_view,
+		&widgets::CanvasView::setBrushBlendMode);
 	connect(m_dockToolSettings->laserPointerSettings(), &tools::LaserPointerSettings::pointerTrackingToggled,
 		m_view, &widgets::CanvasView::setPointerTracking);
 	connect(m_dockToolSettings->zoomSettings(), &tools::ZoomSettings::resetZoom,
@@ -4300,8 +4304,6 @@ void MainWindow::setupActions()
 	m_freehandButton->setCheckable(true);
 	m_freehandButton->setChecked(m_freehandAction->isChecked());
 	updateFreehandToolButton(tools::BrushSettings::NormalMode);
-	updateFreehandToolButton(
-		int(m_dockToolSettings->brushSettings()->getBrushMode()));
 	connect(
 		m_freehandAction, &QAction::toggled, m_freehandButton,
 		&QAbstractButton::setChecked);

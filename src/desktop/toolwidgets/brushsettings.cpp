@@ -48,6 +48,7 @@ struct BrushSettings::Private {
 	int current = 0;
 	int previousNonEraser = 0;
 	BrushMode previousBrushMode = UnknownMode;
+	int previousBlendMode = -1;
 
 	qreal quickAdjust1 = 0.0;
 
@@ -746,6 +747,7 @@ void BrushSettings::updateUi()
 	changeSizeSetting(d->ui.brushsizeBox->value());
 	changeRadiusLogarithmicSetting(d->ui.radiusLogarithmicBox->value());
 	updateStabilizationSettingVisibility();
+	emitBlendModeChanged();
 	emitBrushModeChanged();
 
 	d->updateInProgress = false;
@@ -871,6 +873,7 @@ void BrushSettings::updateFromUiWith(bool updateShared)
 	adjustSettingVisibilities(
 		mypaintmode || classic.shape == DP_BRUSH_SHAPE_CLASSIC_SOFT_ROUND,
 		mypaintmode);
+	emitBlendModeChanged();
 	emitBrushModeChanged();
 }
 
@@ -932,6 +935,15 @@ void BrushSettings::adjustSettingVisibilities(bool softmode, bool mypaintmode)
 		if(pair.second) {
 			pair.first->show();
 		}
+	}
+}
+
+void BrushSettings::emitBlendModeChanged()
+{
+	int currentBlendMode = getBlendMode();
+	if(d->previousBlendMode != currentBlendMode) {
+		d->previousBlendMode = currentBlendMode;
+		emit blendModeChanged(currentBlendMode);
 	}
 }
 
@@ -1149,6 +1161,20 @@ bool BrushSettings::isSquare() const
 		   brush.classic().shape == DP_BRUSH_SHAPE_CLASSIC_PIXEL_SQUARE;
 }
 
+int BrushSettings::getBlendMode() const
+{
+	const brushes::ActiveBrush &brush = d->currentBrush();
+	if(brush.activeType() == brushes::ActiveBrush::MYPAINT) {
+		const DP_MyPaintBrush &b = brush.myPaint().constBrush();
+		return b.erase		  ? DP_BLEND_MODE_ERASE
+			   : b.lock_alpha ? DP_BLEND_MODE_RECOLOR
+							  : DP_BLEND_MODE_NORMAL_AND_ERASER;
+	} else {
+		const DP_ClassicBrush &b = brush.classic();
+		return b.erase ? b.erase_mode : b.brush_mode;
+	}
+}
+
 BrushSettings::BrushMode BrushSettings::getBrushMode() const
 {
 	if(isCurrentEraserSlot()) {
@@ -1182,6 +1208,12 @@ void BrushSettings::resetBrushMode()
 		b.brush_mode = DP_BLEND_MODE_NORMAL;
 	}
 	updateUi();
+}
+
+void BrushSettings::triggerUpdate()
+{
+	emit blendModeChanged(getBlendMode());
+	emit brushModeChanged(getBrushMode());
 }
 
 double BrushSettings::radiusLogarithmicToPixelSize(int radiusLogarithmic)

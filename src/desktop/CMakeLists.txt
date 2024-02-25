@@ -52,6 +52,7 @@ target_sources(drawpile PRIVATE
 	cursors/curve.png
 	cursors/dpcursors.qrc
 	cursors/ellipse.png
+	cursors/eraser.png
 	cursors/layerpicker.png
 	cursors/line.png
 	cursors/rectangle.png

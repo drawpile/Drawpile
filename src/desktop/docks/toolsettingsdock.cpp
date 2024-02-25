@@ -512,6 +512,7 @@ void ToolSettings::triggerUpdate()
 		emit subpixelModeChanged(
 			ts->getSubpixelMode(), ts->isSquare(), ts->requiresOutline());
 	}
+	brushSettings()->triggerUpdate();
 }
 
 tools::Tool::Type ToolSettings::currentTool() const

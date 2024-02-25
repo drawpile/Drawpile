@@ -36,6 +36,7 @@
 #	endif
 #endif
 
+SETTING(alphaLockCursor           , AlphaLockCursor           , "settings/alphalockcursor"              , widgets::CanvasView::BrushCursor::SameAsBrush)
 #ifdef Q_OS_ANDROID
 SETTING(androidStylusChecked      , AndroidStylusChecked      , "settings/android/styluschecked"        , false)
 #endif
@@ -59,6 +60,7 @@ SETTING(parentalControlsHideLocked, ParentalControlsHideLocked, "pc/hidelocked" 
 SETTING(curvesPresets             , CurvesPresets             , "curves/presets"                        , QVector<QVariantMap>())
 SETTING(curvesPresetsConverted    , CurvesPresetsConverted    , "curves/inputpresetsconverted"          , false)
 SETTING(doubleTapAltToFocusCanvas , DoubleTapAltToFocusCanvas , "settings/doubletapalttofocuscanvas"    , true)
+SETTING(eraseCursor               , EraseCursor               , "settings/erasecursor"                  , widgets::CanvasView::BrushCursor::SameAsBrush)
 SETTING(filterClosed              , FilterClosed              , "history/filterclosed"                  , false)
 SETTING(filterDuplicates          , FilterDuplicates          , "history/filterduplicates"              , false)
 SETTING(filterInactive            , FilterInactive            , "history/filterinactive"                , true)
