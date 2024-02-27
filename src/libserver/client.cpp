@@ -747,6 +747,7 @@ void Client::readError()
 			.about(Log::Level::Warn, Log::Topic::Status)
 			.message(QStringLiteral("Socket read error: %1")
 						 .arg(d->socket->errorString())));
+	d->socket->abort();
 }
 
 void Client::writeError()
@@ -755,6 +756,7 @@ void Client::writeError()
 			.about(Log::Level::Warn, Log::Topic::Status)
 			.message(QStringLiteral("Socket write error: %1")
 						 .arg(d->socket->errorString())));
+	d->socket->abort();
 }
 
 void Client::timedOut(qint64 idleTimeout)
@@ -763,6 +765,7 @@ void Client::timedOut(qint64 idleTimeout)
 			.about(Log::Level::Warn, Log::Topic::Status)
 			.message(QStringLiteral("Message queue exceeded timeout of %1ms")
 						 .arg(idleTimeout)));
+	d->socket->abort();
 }
 
 void Client::socketDisconnect()
