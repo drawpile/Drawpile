@@ -1,6 +1,7 @@
 Unreleased Version 2.2.2-pre
  * Feature: Allow choosing a different cursor for erase and alpha locked brushes. Thanks Hipofiz and Rylan for suggesting.
  * Server Fix: Properly sever connections on read, write and timeout errors.
+ * Fix: Load annotations from ORA files saved by Drawpile 2.1 properly. Thanks RyanMolyneux for reporting.
 
 2024-02-25 Version 2.2.2-beta.1
  * Server Feature: Allow adding a message when kicking someone through the admin API.

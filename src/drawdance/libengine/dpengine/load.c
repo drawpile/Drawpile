@@ -105,12 +105,6 @@ typedef enum DP_ReadOraExpect {
     DP_READ_ORA_EXPECT_END,
 } DP_ReadOraExpect;
 
-typedef enum DP_ReadOraBufferState {
-    DP_READ_ORA_BUFFER_STATE_NONE,
-    DP_READ_ORA_BUFFER_STATE_LAYERS,
-    DP_READ_ORA_BUFFER_STATE_ANNOTATIONS,
-} DP_ReadOraBufferState;
-
 typedef struct DP_ReadOraGroup {
     DP_TransientLayerGroup *tlg;
     DP_TransientLayerProps *tlp;
@@ -157,18 +151,14 @@ typedef struct DP_ReadOraContext {
     bool want_annotations;
     bool want_timeline;
     bool intuit_background;
-    int next_id;
+    bool annotations_in_stack;
+    int next_layer_id;
+    int next_annotation_id;
+    int next_track_id;
     int garbage_depth;
-    DP_ReadOraBufferState buffer_state;
-    union {
-        struct {
-            DP_Queue groups;
-            DP_Queue children;
-        };
-        struct {
-            DP_Queue annotations;
-        };
-    };
+    DP_Queue groups;
+    DP_Queue children;
+    DP_Queue annotations;
     DP_Vector tracks;
     size_t text_capacity;
     size_t text_len;
@@ -207,40 +197,6 @@ static void dispose_track(void *element)
     DP_VECTOR_CLEAR_DISPOSE_TYPE(&rot->key_frames, DP_ReadOraKeyFrame,
                                  dispose_key_frame);
     DP_text_decref_nullable(rot->title);
-}
-
-static void read_ora_context_buffer_dispose(DP_ReadOraContext *c)
-{
-    switch (c->buffer_state) {
-    case DP_READ_ORA_BUFFER_STATE_LAYERS:
-        DP_queue_each(&c->children, sizeof(DP_ReadOraChildren), dispose_child,
-                      NULL);
-        DP_queue_dispose(&c->children);
-        DP_queue_dispose(&c->groups);
-        break;
-    case DP_READ_ORA_BUFFER_STATE_ANNOTATIONS:
-        DP_queue_each(&c->annotations, sizeof(DP_Annotation *),
-                      dispose_annotation, NULL);
-        DP_queue_dispose(&c->annotations);
-        break;
-    default:
-        break;
-    }
-}
-
-static void read_ora_context_init_layers(DP_ReadOraContext *c)
-{
-    read_ora_context_buffer_dispose(c);
-    DP_queue_init(&c->groups, 8, sizeof(DP_ReadOraGroup));
-    DP_queue_init(&c->children, 8, sizeof(DP_ReadOraChildren));
-    c->buffer_state = DP_READ_ORA_BUFFER_STATE_LAYERS;
-}
-
-static void read_ora_context_init_annotations(DP_ReadOraContext *c)
-{
-    read_ora_context_buffer_dispose(c);
-    DP_queue_init(&c->annotations, 8, sizeof(DP_Annotation *));
-    c->buffer_state = DP_READ_ORA_BUFFER_STATE_ANNOTATIONS;
 }
 
 static bool ora_check_mimetype(DP_ZipReader *zr)
@@ -398,17 +354,17 @@ static bool ora_handle_image(DP_ReadOraContext *c, DP_XmlElement *element)
         DP_transient_document_metadata_framerate_set(tdm, framerate);
     }
 
-    read_ora_context_init_layers(c);
     push_group(c, NULL, NULL);
     c->expect = DP_READ_ORA_EXPECT_ROOT_STACK_OR_ANNOTATIONS_OR_TIMELINE;
     return true;
 }
 
-static int ora_get_next_id(DP_ReadOraContext *c)
+static int ora_get_next_id(int *next_id)
 {
-    int layer_id = c->next_id++;
-    if (layer_id <= UINT16_MAX) {
-        return layer_id;
+    int id = *next_id;
+    if (id <= UINT16_MAX) {
+        ++*next_id;
+        return id;
     }
     else {
         DP_error_set("Out of ids");
@@ -590,7 +546,7 @@ static bool ora_handle_layer(DP_ReadOraContext *c, DP_XmlElement *element)
         return true;
     }
 
-    int layer_id = ora_get_next_id(c);
+    int layer_id = ora_get_next_id(&c->next_layer_id);
     if (layer_id == -1) {
         return false;
     }
@@ -612,7 +568,7 @@ static bool ora_handle_layer(DP_ReadOraContext *c, DP_XmlElement *element)
 
 static bool ora_handle_stack(DP_ReadOraContext *c, DP_XmlElement *element)
 {
-    int layer_id = ora_get_next_id(c);
+    int layer_id = ora_get_next_id(&c->next_layer_id);
     if (layer_id == -1) {
         return false;
     }
@@ -671,9 +627,22 @@ static void ora_handle_stack_end(DP_ReadOraContext *c)
     DP_queue_pop(&c->groups);
 }
 
+static void ora_handle_annotations(DP_ReadOraContext *c, bool in_stack)
+{
+    if (c->want_annotations) {
+        c->want_annotations = false;
+        c->expect = DP_READ_ORA_EXPECT_ANNOTATION;
+        c->annotations_in_stack = in_stack;
+    }
+    else {
+        DP_warn("Duplicate <drawpile:annotations>");
+        ++c->garbage_depth;
+    }
+}
+
 static bool ora_handle_annotation(DP_ReadOraContext *c, DP_XmlElement *element)
 {
-    int annotation_id = ora_get_next_id(c);
+    int annotation_id = ora_get_next_id(&c->next_annotation_id);
     if (annotation_id == -1) {
         return false;
     }
@@ -726,7 +695,9 @@ static void ora_handle_annotations_end(DP_ReadOraContext *c)
         DP_transient_annotation_list_insert_noinc(tal, a, i);
         DP_queue_shift(&c->annotations);
     }
-    c->expect = DP_READ_ORA_EXPECT_ROOT_STACK_OR_ANNOTATIONS_OR_TIMELINE;
+    c->expect = c->annotations_in_stack
+                  ? DP_READ_ORA_EXPECT_STACK_OR_LAYER
+                  : DP_READ_ORA_EXPECT_ROOT_STACK_OR_ANNOTATIONS_OR_TIMELINE;
 }
 
 static void ora_handle_timeline(DP_ReadOraContext *c, DP_XmlElement *element)
@@ -747,7 +718,7 @@ static void ora_handle_timeline(DP_ReadOraContext *c, DP_XmlElement *element)
 static void ora_handle_track(DP_ReadOraContext *c, DP_XmlElement *element)
 {
     DP_ReadOraTrack rot = {
-        ora_get_next_id(c),
+        ora_get_next_id(&c->next_track_id),
         DP_text_new_nolen(DP_xml_element_attribute(element, NULL, "name")),
         DP_VECTOR_NULL,
     };
@@ -921,7 +892,6 @@ static bool ora_xml_start_element(void *user, DP_XmlElement *element)
             if (c->want_layers) {
                 c->want_layers = false;
                 c->expect = DP_READ_ORA_EXPECT_STACK_OR_LAYER;
-                c->next_id = START_ID;
             }
             else {
                 DP_warn("Duplicate root <stack>");
@@ -930,22 +900,12 @@ static bool ora_xml_start_element(void *user, DP_XmlElement *element)
         }
         else if (DP_xml_element_name_equals(element, DRAWPILE_NAMESPACE,
                                             "annotations")) {
-            if (c->want_annotations) {
-                c->want_annotations = false;
-                c->expect = DP_READ_ORA_EXPECT_ANNOTATION;
-                c->next_id = START_ID;
-                read_ora_context_init_annotations(c);
-            }
-            else {
-                DP_warn("Duplicate <drawpile:annotations>");
-                ++c->garbage_depth;
-            }
+            ora_handle_annotations(c, false);
         }
         else if (DP_xml_element_name_equals(element, DRAWPILE_NAMESPACE,
                                             "timeline")) {
             if (c->want_timeline) {
                 c->want_timeline = false;
-                c->next_id = START_ID;
                 ora_handle_timeline(c, element);
             }
             else {
@@ -967,8 +927,14 @@ static bool ora_xml_start_element(void *user, DP_XmlElement *element)
         else if (DP_xml_element_name_equals(element, NULL, "stack")) {
             return ora_handle_stack(c, element);
         }
+        else if (DP_xml_element_name_equals(element, DRAWPILE_NAMESPACE,
+                                            "annotations")) {
+            // Drawpile <2.2 saved annotations inside the layer stack.
+            ora_handle_annotations(c, true);
+        }
         else {
-            DP_debug("Expected <stack> or <layer>, got <%s:%s>",
+            DP_debug("Expected <stack>, <layer> or <drawpile:annotations>, got "
+                     "<%s:%s>",
                      DP_xml_element_namespace(element),
                      DP_xml_element_name(element));
             ++c->garbage_depth;
@@ -1167,7 +1133,6 @@ static DP_CanvasState *ora_read_stack_xml(DP_ReadOraContext *c,
     else {
         DP_worker_free_join(c->worker);
         DP_transient_canvas_state_decref_nullable(c->tcs);
-        read_ora_context_buffer_dispose(c);
         return NULL;
     }
 }
@@ -1200,17 +1165,29 @@ static DP_CanvasState *load_ora(DP_DrawContext *dc, const char *path,
         true,
         true,
         true,
+        false,
+        START_ID,
+        START_ID,
+        START_ID,
         0,
-        0,
-        DP_READ_ORA_BUFFER_STATE_NONE,
-        {{DP_QUEUE_NULL, DP_QUEUE_NULL}},
+        DP_QUEUE_NULL,
+        DP_QUEUE_NULL,
+        DP_QUEUE_NULL,
         DP_VECTOR_NULL,
         0,
         0,
         NULL,
     };
+    DP_queue_init(&c.groups, 8, sizeof(DP_ReadOraGroup));
+    DP_queue_init(&c.children, 8, sizeof(DP_ReadOraChildren));
+    DP_queue_init(&c.annotations, 8, sizeof(DP_Annotation *));
     DP_CanvasState *cs = ora_read_stack_xml(&c, flags);
-    read_ora_context_buffer_dispose(&c);
+    DP_queue_each(&c.children, sizeof(DP_ReadOraChildren), dispose_child, NULL);
+    DP_queue_dispose(&c.children);
+    DP_queue_dispose(&c.groups);
+    DP_queue_each(&c.annotations, sizeof(DP_Annotation *), dispose_annotation,
+                  NULL);
+    DP_queue_dispose(&c.annotations);
     DP_VECTOR_CLEAR_DISPOSE_TYPE(&c.tracks, DP_ReadOraTrack, dispose_track);
     DP_free(c.text);
     DP_zip_reader_free(zr);
