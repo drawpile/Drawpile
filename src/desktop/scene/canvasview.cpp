@@ -55,6 +55,7 @@ CanvasView::CanvasView(QWidget *parent)
 	, m_scene(nullptr)
 	, m_zoomWheelDelta(0)
 	, m_enableTablet(true)
+	, m_ignoreZeroPressureInputs(true)
 	, m_lock{Lock::None}
 	, m_busy(false)
 	, m_pointertracking(false)
@@ -123,6 +124,8 @@ CanvasView::CanvasView(QWidget *parent)
 	}
 
 	settings.bindTabletEvents(this, &widgets::CanvasView::setTabletEnabled);
+	settings.bindIgnoreZeroPressureInputs(
+		this, &widgets::CanvasView::setIgnoreZeroPressureInputs);
 	settings.bindOneFingerDraw(this, &widgets::CanvasView::setTouchDraw);
 	settings.bindOneFingerScroll(this, &widgets::CanvasView::setTouchScroll);
 	settings.bindTwoFingerZoom(this, &widgets::CanvasView::setTouchPinch);
@@ -2001,18 +2004,22 @@ bool CanvasView::viewportEvent(QEvent *event)
 			unsigned(tabev->modifiers()), m_pendown, m_touching,
 			unsigned(modifiers));
 
-#ifdef HAVE_EMULATED_BITMAP_CURSOR
-		updateCursorPos(tabPos.toPoint());
-#endif
-
 		if(!tabletinput::passPenEvents()) {
 			tabev->accept();
 		}
 
-		penMoveEvent(
-			QDateTime::currentMSecsSinceEpoch(), compat::tabPosF(*tabev),
-			tabev->pressure(), tabev->xTilt(), tabev->yTilt(),
-			qDegreesToRadians(tabev->rotation()), tabev->buttons(), modifiers);
+		// Under Windows Ink, some tablets report bogus zero-pressure inputs.
+		if(!m_ignoreZeroPressureInputs || !m_pendown ||
+		   tabev->pressure() != 0.0) {
+#ifdef HAVE_EMULATED_BITMAP_CURSOR
+			updateCursorPos(tabPos.toPoint());
+#endif
+			penMoveEvent(
+				QDateTime::currentMSecsSinceEpoch(), compat::tabPosF(*tabev),
+				tabev->pressure(), tabev->xTilt(), tabev->yTilt(),
+				qDegreesToRadians(tabev->rotation()), tabev->buttons(),
+				modifiers);
+		}
 	} else if(type == QEvent::TabletRelease && m_enableTablet) {
 		QTabletEvent *tabev = static_cast<QTabletEvent *>(event);
 		const auto tabPos = compat::tabPosF(*tabev);
