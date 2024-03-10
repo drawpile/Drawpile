@@ -31,6 +31,12 @@ protected:
 private:
 	enum class AutoResetState { NotSent, Queried, Requested };
 
+	void resetLastStatusUpdate()
+	{
+		m_lastStatusUpdate.setRemainingTime(10000);
+	}
+
+	QDeadlineTimer m_lastStatusUpdate;
 	QDeadlineTimer m_lastSizeWarning;
 
 	AutoResetState m_autoResetRequestStatus = AutoResetState::NotSent;

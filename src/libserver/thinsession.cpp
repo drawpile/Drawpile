@@ -16,7 +16,7 @@ ThinSession::ThinSession(
 	history->setSizeLimit(config->getConfigSize(config::SessionSizeLimit));
 	history->setAutoResetThreshold(
 		config->getConfigSize(config::AutoresetThreshold));
-	m_lastStatusUpdate.start();
+	resetLastStatusUpdate();
 }
 
 void ThinSession::addToHistory(const net::Message &msg)
@@ -102,10 +102,10 @@ void ThinSession::addToHistory(const net::Message &msg)
 	}
 
 	// Regular history size status updates
-	if(m_lastStatusUpdate.elapsed() > 10 * 1000) {
+	if(m_lastStatusUpdate.hasExpired()) {
 		directToAll(
 			net::ServerReply::makeStatusUpdate(history()->sizeInBytes()));
-		m_lastStatusUpdate.start();
+		resetLastStatusUpdate();
 	}
 }
 
