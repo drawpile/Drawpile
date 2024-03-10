@@ -89,6 +89,7 @@ struct ServerReply {
 		ResetRequest,	  // request client to perform a reset
 		CaughtUp,		  // previous catchup is complete
 		BanImpEx,		  // session ban import/export
+		OutOfSpace,		  // session is out of space, block local drawing
 	} type;
 	QString message;
 	QJsonObject reply;
@@ -185,6 +186,8 @@ struct ServerReply {
 	static net::Message makeSessionConf(const QJsonObject &config);
 
 	static net::Message makeSizeLimitWarning(int size, int maxSize);
+
+	static net::Message makeOutOfSpace();
 
 	static net::Message makeStatusUpdate(int size);
 };

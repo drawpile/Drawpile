@@ -170,6 +170,8 @@ public:
 		return m_baseResetThreshold / double(1024 * 1024);
 	}
 
+	bool isSessionOutOfSpace() const { return m_sessionOutOfSpace; }
+
 	QString roomcode() const { return m_roomcode; }
 
 	void setRecordOnConnect(const QString &filename)
@@ -213,6 +215,7 @@ signals:
 	void sessionResetThresholdChanged(double threshold);
 	void baseResetThresholdChanged(double threshold);
 	void autoResetTooLarge(int maxSize);
+	void sessionOutOfSpaceChanged(bool outOfSpace);
 	void sessionResetState(const drawdance::CanvasState &canvasState);
 
 	void catchupProgress(int percent);
@@ -272,6 +275,7 @@ private slots:
 		const QString &authId);
 	void onServerDisconnect();
 	void onSessionResetted();
+	void onSessionOutOfSpace();
 
 	void onSessionConfChanged(const QJsonObject &config);
 	void onAutoresetRequested(int maxSize, bool query);
@@ -306,6 +310,7 @@ private:
 	void setSessionIdleTimeLimit(int idleTimeLimit);
 	void setSessionIdleOverride(bool idleOverride);
 	void setSessionAllowIdleOverride(bool allowIdleOverride);
+	void setSessionOutOfSpace(bool outOfSpace);
 	void setRoomcode(const QString &roomcode);
 
 	bool copyFromLayer(int layer);
@@ -361,6 +366,8 @@ private:
 	int m_sessionResetThreshold;
 	int m_baseResetThreshold;
 	int m_sessionIdleTimeLimit;
+
+	bool m_sessionOutOfSpace;
 
 #ifdef Q_OS_ANDROID
 	// Android doesn't support images in the clipboard, so we keep those here.

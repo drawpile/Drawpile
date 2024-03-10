@@ -56,6 +56,7 @@ Document::Document(libclient::settings::Settings &settings, QObject *parent)
 	, m_sessionResetThreshold(0)
 	, m_baseResetThreshold(0)
 	, m_sessionIdleTimeLimit(0)
+	, m_sessionOutOfSpace(false)
 {
 	// Initialize
 	m_client = new net::Client(this);
@@ -103,6 +104,9 @@ Document::Document(libclient::settings::Settings &settings, QObject *parent)
 	connect(
 		m_client, &net::Client::sessionResetted, this,
 		&Document::onSessionResetted);
+	connect(
+		m_client, &net::Client::sessionOutOfSpace, this,
+		&Document::onSessionOutOfSpace);
 
 	connect(
 		this, &Document::justInTimeSnapshotGenerated, this,
@@ -164,6 +168,7 @@ void Document::initCanvas()
 void Document::onSessionResetted()
 {
 	Q_ASSERT(m_canvas);
+	setSessionOutOfSpace(false);
 	if(!m_canvas) {
 		qWarning("sessionResetted: no canvas!");
 		return;
@@ -180,6 +185,11 @@ void Document::onSessionResetted()
 	// follow
 	m_canvas->resetCanvas();
 	m_resetstate.clear();
+}
+
+void Document::onSessionOutOfSpace()
+{
+	setSessionOutOfSpace(true);
 }
 
 bool Document::loadBlank(const QSize &size, const QColor &background)
@@ -286,6 +296,7 @@ void Document::onServerDisconnect()
 	m_authList->clear();
 	m_announcementlist->clear();
 	setSessionOpword(false);
+	setSessionOutOfSpace(false);
 	emit compatibilityModeChanged(false);
 }
 
@@ -555,6 +566,13 @@ void Document::setSessionIdleOverride(bool idleOverride)
 void Document::setSessionAllowIdleOverride(bool allowIdleOverride)
 {
 	m_sessionAllowIdleOverride = allowIdleOverride;
+}
+
+void Document::setSessionOutOfSpace(bool outOfSpace) {
+	if(outOfSpace != m_sessionOutOfSpace) {
+		m_sessionOutOfSpace = outOfSpace;
+		emit sessionOutOfSpaceChanged(outOfSpace);
+	}
 }
 
 void Document::setRoomcode(const QString &roomcode)

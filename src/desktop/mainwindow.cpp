@@ -481,6 +481,9 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_doc, &Document::sessionRoomcodeChanged, m_netstatus, &widgets::NetStatus::setRoomcode);
 	connect(m_sessionSettings, &dialogs::SessionSettingsDialog::joinPasswordChanged, m_netstatus, &widgets::NetStatus::setJoinPassword);
 	connect(m_doc, &Document::sessionPasswordChanged, m_netstatus, &widgets::NetStatus::setHaveJoinPassword);
+	connect(
+		m_doc, &Document::sessionOutOfSpaceChanged, this,
+		&MainWindow::updateLockWidget);
 
 	connect(m_doc->client(), SIGNAL(bytesReceived(int)), m_netstatus, SLOT(bytesReceived(int)));
 	connect(m_doc->client(), &net::Client::bytesSent, m_netstatus, &widgets::NetStatus::bytesSent);
@@ -2455,6 +2458,10 @@ void MainWindow::updateLockWidget()
 	QFlags<Lock> lock = Lock::None;
 	canvas::CanvasModel *canvas = m_doc->canvas();
 	canvas::AclState *aclState = canvas ? canvas->aclState() : nullptr;
+
+	if(m_doc->isSessionOutOfSpace()) {
+		lock.setFlag(Lock::OutOfSpace);
+	}
 
 	if(aclState && aclState->isResetLocked()) {
 		lock.setFlag(Lock::Reset);

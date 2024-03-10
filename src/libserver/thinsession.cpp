@@ -40,6 +40,7 @@ void ThinSession::addToHistory(const net::Message &msg)
 		}
 
 		if(m_lastSizeWarning.hasExpired() || msg.type() == DP_MSG_JOIN) {
+			directToAll(net::ServerReply::makeOutOfSpace());
 			keyMessageAll(
 				QStringLiteral(
 					"Session size limit reached! To continue drawing, "

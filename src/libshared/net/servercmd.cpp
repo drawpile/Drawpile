@@ -147,6 +147,8 @@ ServerReply ServerReply::fromJson(const QJsonDocument &doc)
 		r.type = ServerReply::ReplyType::CaughtUp;
 	} else if(typestr == QStringLiteral("banimpex")) {
 		r.type = ServerReply::ReplyType::BanImpEx;
+	} else if(typestr == QStringLiteral("outofspace")) {
+		r.type = ServerReply::ReplyType::OutOfSpace;
 	} else {
 		r.type = ServerReply::ReplyType::Unknown;
 	}
@@ -450,6 +452,11 @@ net::Message ServerReply::makeSizeLimitWarning(int size, int maxSize)
 		{{QStringLiteral("type"), QStringLiteral("sizelimit")},
 		 {QStringLiteral("size"), size},
 		 {QStringLiteral("maxSize"), maxSize}});
+}
+
+net::Message ServerReply::makeOutOfSpace()
+{
+	return make({{QStringLiteral("type"), QStringLiteral("outofspace")}});
 }
 
 net::Message ServerReply::makeStatusUpdate(int size)

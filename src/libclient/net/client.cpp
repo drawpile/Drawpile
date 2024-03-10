@@ -402,6 +402,9 @@ void Client::handleServerReply(const ServerReply &msg, int handledMessageIndex)
 			qWarning() << "Unknown banimpex message:" << reply;
 		}
 		break;
+	case ServerReply::ReplyType::OutOfSpace:
+		emit sessionOutOfSpace();
+		break;
 	}
 }
 

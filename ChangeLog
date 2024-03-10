@@ -4,6 +4,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Load annotations from ORA files saved by Drawpile 2.1 properly. Thanks RyanMolyneux for reporting.
  * Feature: Ignore inputs with invalid pressure during strokes, toggleable in the preferences in case there's tablets that behave this way in a valid case somehow. Thanks Lunalatte for reporting.
  * Server Fix: Handle sessions running out of space better, they should no longer end up in an unrecoverable state. The messages in chat are also now translatable, more informative and don't get spammed for every command. Thanks Bluestrings and Charmandrigo for reporting.
+ * Feature: Lock canvas when the session is out of space, showing an appropriate message in the corner, rather than letting you continue drawing. The server needs to be updated for this to be available.
 
 2024-02-25 Version 2.2.2-beta.1
  * Server Feature: Allow adding a message when kicking someone through the admin API.

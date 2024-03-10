@@ -290,6 +290,10 @@ QString CanvasView::lockDescription() const
 {
 	QStringList reasons;
 
+	if(m_lock.testFlag(Lock::OutOfSpace)) {
+		reasons.append(tr("Out of space, use Session > Reset to fix this"));
+	}
+
 	if(m_lock.testFlag(Lock::Reset)) {
 		reasons.append(tr("Reset in progress"));
 	}
