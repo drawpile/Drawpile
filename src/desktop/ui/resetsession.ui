@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>300</height>
+    <height>380</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Reset session</string>
   </property>
-  <layout class="QVBoxLayout" stretch="1,0,0">
+  <layout class="QVBoxLayout" stretch="1,0,0,0">
    <item>
     <widget class="QLabel" name="preview">
      <property name="minimumSize">
@@ -55,6 +55,16 @@
      </property>
      <property name="tickInterval">
       <number>1</number>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="opLabel">
+     <property name="text">
+      <string>You must be an operator to reset the session.</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
      </property>
     </widget>
    </item>

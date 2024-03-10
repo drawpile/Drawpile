@@ -151,6 +151,8 @@ ResetDialog::ResetDialog(
 		&ResetDialog::onSelectionChanged);
 
 	d->updateSelection();
+
+	setCanReset(true);
 }
 
 ResetDialog::~ResetDialog()
@@ -161,6 +163,7 @@ ResetDialog::~ResetDialog()
 void ResetDialog::setCanReset(bool canReset)
 {
 	d->resetButton->setEnabled(canReset);
+	d->ui->opLabel->setVisible(!canReset);
 }
 
 void ResetDialog::onSelectionChanged(int pos)
