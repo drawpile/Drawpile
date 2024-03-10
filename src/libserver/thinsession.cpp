@@ -26,9 +26,29 @@ void ThinSession::addToHistory(const net::Message &msg)
 
 	// Add message to history (if there is space)
 	if(!history()->addMessage(msg)) {
-		messageAll(
-			"History size limit reached! Session must be reset to continue.",
-			false);
+		// We allow one extra MiB for the most important messages: joins
+		// (without avatars), leaves and session owner changes. These are
+		// required to get the session actually reset. If that runs out, the
+		// user may be screwed, depending on the situation. But you have to do
+		// something truly pathological to fill up the entire emergency space
+		// like that, so it's not worth putting immense effort into handling it.
+		net::Message em = msg.asEmergencyMessage();
+		if(!em.isNull() && history()->addEmergencyMessage(em)) {
+			addedToHistory(em);
+		} else if(msg.isServerMeta()) {
+			directToAll(msg);
+		}
+
+		if(m_lastSizeWarning.hasExpired() || msg.type() == DP_MSG_JOIN) {
+			keyMessageAll(
+				QStringLiteral(
+					"Session size limit reached! To continue drawing, "
+					"an operator must reset the session to bring it down to a "
+					"smaller size. This can be done via Session > Reset."),
+				true, net::ServerReply::KEY_OUT_OF_SPACE);
+			m_lastSizeWarning.setRemainingTime(10000);
+		}
+
 		return;
 	}
 

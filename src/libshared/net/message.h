@@ -46,7 +46,13 @@ public:
 	QString typeName() const;
 
 	bool isControl() const;
+	bool isServerMeta() const;
 	bool isInCommandRange() const;
+
+	// Returns user joins without the avatar; leaves and session owners as-is.
+	// Any other message type results in a null message, since they're not
+	// relevant in a space emergency situation.
+	Message asEmergencyMessage() const;
 
 	unsigned int contextId() const;
 	void setContextId(unsigned int contextId);
@@ -58,6 +64,7 @@ public:
 
 	bool equals(const Message &other) const;
 
+	DP_MsgJoin *toJoin() const;
 	DP_MsgChat *toChat() const;
 	DP_MsgData *toData() const;
 	DP_MsgDefaultLayer *toDefaultLayer() const;

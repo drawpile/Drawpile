@@ -2,6 +2,7 @@
 #ifndef DP_SERVER_THINSESSION_H
 #define DP_SERVER_THINSESSION_H
 #include "libserver/session.h"
+#include <QDeadlineTimer>
 
 namespace server {
 
@@ -30,7 +31,7 @@ protected:
 private:
 	enum class AutoResetState { NotSent, Queried, Requested };
 
-	QElapsedTimer m_lastStatusUpdate;
+	QDeadlineTimer m_lastSizeWarning;
 
 	AutoResetState m_autoResetRequestStatus = AutoResetState::NotSent;
 };

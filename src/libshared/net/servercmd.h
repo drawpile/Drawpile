@@ -59,6 +59,7 @@ struct ServerReply {
 	static constexpr char KEY_BANIMPORT_UNSUPPORTED[] = "banimportunsupported";
 	static constexpr char KEY_BAN[] = "ban";
 	static constexpr char KEY_KICK[] = "kick";
+	static constexpr char KEY_OUT_OF_SPACE[] = "outofspace";
 	static constexpr char KEY_OP_GIVE[] = "opgive";
 	static constexpr char KEY_OP_TAKE[] = "optake";
 	static constexpr char KEY_RESET_CANCEL[] = "resetcancel";

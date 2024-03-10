@@ -117,9 +117,33 @@ bool Message::isControl() const
 	return DP_message_type_control(type());
 }
 
+bool Message::isServerMeta() const
+{
+	return DP_message_type_server_meta(type());
+}
+
 bool Message::isInCommandRange() const
 {
 	return type() >= 128;
+}
+
+Message Message::asEmergencyMessage() const
+{
+	switch(type()) {
+	case DP_MSG_JOIN: {
+		DP_MsgJoin *mj = toJoin();
+		size_t nameLen;
+		const char *name = DP_msg_join_name(mj, &nameLen);
+		return makeJoinMessage(
+			contextId(), DP_msg_join_flags(mj),
+			QString::fromUtf8(name, compat::sizetype(nameLen)), QByteArray());
+	}
+	case DP_MSG_LEAVE:
+	case DP_MSG_SESSION_OWNER:
+		return *this;
+	default:
+		return null();
+	}
 }
 
 unsigned int Message::contextId() const
@@ -158,6 +182,12 @@ bool Message::equals(const Message &other) const
 	}
 }
 
+
+DP_MsgJoin *Message::toJoin() const
+{
+	Q_ASSERT(type() == DP_MSG_JOIN);
+	return static_cast<DP_MsgJoin *>(DP_message_internal(m_data));
+}
 
 DP_MsgChat *Message::toChat() const
 {

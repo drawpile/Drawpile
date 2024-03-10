@@ -142,6 +142,16 @@ public:
 	bool addMessage(const net::Message &msg);
 
 	/**
+	 * @brief Add new important message, using emergency space if needed
+	 *
+	 * This is like addMessage, but will use up to an extra MB of space to
+	 * store important messages like joins, leaves and session owners.
+	 *
+	 * @return false if the emergency space ran out
+	 */
+	bool addEmergencyMessage(const net::Message &msg);
+
+	/**
 	 * @brief Reset the session history
 	 *
 	 * Resetting replaces the session history and size with the new
@@ -204,12 +214,11 @@ public:
 	 */
 	uint sizeInBytes() const { return m_sizeInBytes; }
 
-	/**
-	 * @brief Has the session ran out of space
-	 */
-	bool isOutOfSpace() const
+	bool hasRegularSpaceFor(uint bytes) const { return hasSpaceFor(bytes, 0); }
+
+	bool hasEmergencySpaceFor(uint bytes) const
 	{
-		return m_sizeLimit > 0 && m_sizeInBytes >= m_sizeLimit;
+		return hasSpaceFor(bytes, 1024u * 1024u); // 1MiB of emergency space.
 	}
 
 	/**
@@ -350,6 +359,9 @@ protected:
 	SessionBanList m_banlist;
 
 private:
+	bool hasSpaceFor(uint bytes, uint extra) const;
+	void addMessageInternal(const net::Message &msg, uint bytes);
+
 	QString m_id;
 	IdQueue m_idqueue;
 	QDateTime m_startTime;

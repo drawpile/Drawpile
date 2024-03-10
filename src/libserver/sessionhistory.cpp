@@ -16,6 +16,11 @@ SessionHistory::SessionHistory(const QString &id, QObject *parent)
 {
 }
 
+bool SessionHistory::hasSpaceFor(uint bytes, uint extra) const
+{
+	return m_sizeLimit <= 0 || m_sizeInBytes + bytes <= m_sizeLimit + extra;
+}
+
 bool SessionHistory::addBan(
 	const QString &username, const QHostAddress &ip, const QString &extAuthId,
 	const QString &sid, const QString &bannedBy, const Client *client)
@@ -78,14 +83,32 @@ void SessionHistory::historyLoaded(uint size, int messageCount)
 
 bool SessionHistory::addMessage(const net::Message &msg)
 {
-	if(isOutOfSpace())
+	uint bytes = uint(msg.length());
+	if(hasRegularSpaceFor(bytes)) {
+		addMessageInternal(msg, bytes);
+		return true;
+	} else {
 		return false;
+	}
+}
 
-	m_sizeInBytes += uint(msg.length());
+bool SessionHistory::addEmergencyMessage(const net::Message &msg)
+{
+	uint bytes = uint(msg.length());
+	if(hasEmergencySpaceFor(bytes)) {
+		addMessageInternal(msg, bytes);
+		return true;
+	} else {
+		return false;
+	}
+}
+
+void SessionHistory::addMessageInternal(const net::Message &msg, uint bytes)
+{
+	m_sizeInBytes += bytes;
 	++m_lastIndex;
 	historyAdd(msg);
 	emit newMessagesAvailable();
-	return true;
 }
 
 bool SessionHistory::reset(const net::MessageList &newHistory)
