@@ -246,10 +246,13 @@ net::Message ServerReply::makeKeyAlert(
 
 net::Message ServerReply::makeCatchup(int count, int key)
 {
-	return make(
-		{{QStringLiteral("type"), QStringLiteral("catchup")},
-		 {QStringLiteral("count"), count},
-		 {QStringLiteral("key"), key}});
+	QJsonObject data{
+		{QStringLiteral("type"), QStringLiteral("catchup")},
+		{QStringLiteral("count"), count}};
+	if(key != -1) {
+		data[QStringLiteral("key")] = key;
+	}
+	return make(data);
 }
 
 net::Message ServerReply::makeCaughtUp(int key)

@@ -186,9 +186,11 @@ void ThinSession::onClientJoin(Client *client, bool host)
 		// The client can use this information to display a progress bar during
 		// the login phase
 		int catchupKey = history()->nextCatchupKey();
+		bool caughtUpAdded =
+			history()->addMessage(net::ServerReply::makeCaughtUp(catchupKey));
 		client->sendDirectMessage(net::ServerReply::makeCatchup(
-			history()->lastIndex() - history()->firstIndex(), catchupKey));
-		history()->addMessage(net::ServerReply::makeCaughtUp(catchupKey));
+			history()->lastIndex() - history()->firstIndex(),
+			caughtUpAdded ? catchupKey : -1));
 	}
 }
 

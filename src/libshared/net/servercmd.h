@@ -127,8 +127,8 @@ struct ServerReply {
 		const QJsonObject &params = {});
 
 	// They key is used for correlation in thin sessions, where caughtup
-	// messages are stored in the session history. Key 0 stands for a reset,
-	// other keys are for joining clients catching up.
+	// messages are stored in the session history. Key 0 stands for a reset, -1
+	// means no key, other keys are for joining clients catching up.
 	static net::Message makeCatchup(int count, int key);
 	static net::Message makeCaughtUp(int key);
 
