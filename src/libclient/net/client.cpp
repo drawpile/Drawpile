@@ -468,10 +468,9 @@ Client::translateMessage(const QJsonObject &reply, const QString &fallbackKey)
 					.arg(target, by);
 			}
 		} else if(key == net::ServerReply::KEY_OUT_OF_SPACE) {
-			return tr(
-				"Session size limit reached! To continue drawing, "
-				"an operator must reset the session to bring it down to a "
-				"smaller size. This can be done via Session > Reset.");
+			return tr("Session is out of space! To continue drawing, an "
+					  "operator must reset it to bring it down to a smaller "
+					  "size. This can be done via Session > Reset.");
 		} else if(key == net::ServerReply::KEY_RESET_CANCEL) {
 			return tr("Session reset cancelled! An operator must unlock the "
 					  "canvas and reset the session manually.");

@@ -43,9 +43,9 @@ void ThinSession::addToHistory(const net::Message &msg)
 			directToAll(net::ServerReply::makeOutOfSpace());
 			keyMessageAll(
 				QStringLiteral(
-					"Session size limit reached! To continue drawing, "
-					"an operator must reset the session to bring it down to a "
-					"smaller size. This can be done via Session > Reset."),
+					"Session is out of space! To continue drawing, an "
+					"operator must reset it to bring it down to a smaller "
+					"size. This can be done via Session > Reset."),
 				true, net::ServerReply::KEY_OUT_OF_SPACE);
 			m_lastSizeWarning.setRemainingTime(10000);
 		}
