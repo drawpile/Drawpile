@@ -3,6 +3,7 @@
 #define DESKTOP_TOOLWIDGETS_FILL_H
 #include "desktop/toolwidgets/toolsettings.h"
 
+class QButtonGroup;
 class Ui_FillSettings;
 
 namespace canvas {
@@ -53,15 +54,15 @@ protected:
 	QWidget *createUiWidget(QWidget *parent) override;
 
 private:
-	class FillSourceModel;
-	enum Mode {
-		Normal,
-		Behind,
-		Erase,
-	};
+	class FillLayerModel;
+	enum class Source { Merged, MergedWithoutBackground, Layer };
+	enum Mode { Normal, Behind, Erase };
 
-	Ui_FillSettings *m_ui;
-	FillSourceModel *m_fillSourceModel;
+	void updateLayerCombo(int source);
+
+	Ui_FillSettings *m_ui = nullptr;
+	QButtonGroup *m_sourceGroup = nullptr;
+	FillLayerModel *m_fillLayerModel;
 	Mode m_previousMode = Normal;
 	qreal m_quickAdjust1 = 0.0;
 };
