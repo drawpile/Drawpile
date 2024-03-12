@@ -29,17 +29,17 @@ public:
 	}
 
 	ActionBuilder &noDefaultShortcut() {
-		CustomShortcutModel::registerCustomizableAction(m_action->objectName(), m_action->text().remove('&'), QKeySequence());
+		CustomShortcutModel::registerCustomizableAction(m_action->objectName(), m_action->text().remove('&'), QKeySequence(), QKeySequence());
 		return *this;
 	}
 
 	ActionBuilder &shortcut(const QString &key) { return shortcut(QKeySequence(key)); }
 
-	ActionBuilder &shortcut(const QKeySequence &shortcut)
+	ActionBuilder &shortcut(const QKeySequence &shortcut, const QKeySequence &alternateShortcut = QKeySequence())
 	{
 		Q_ASSERT(!m_action->objectName().isEmpty());
 		m_action->setShortcut(shortcut);
-		CustomShortcutModel::registerCustomizableAction(m_action->objectName(), m_action->text().remove('&'), shortcut);
+		CustomShortcutModel::registerCustomizableAction(m_action->objectName(), m_action->text().remove('&'), shortcut, alternateShortcut);
 		return *this;
 	}
 

@@ -743,7 +743,7 @@ void MainWindow::loadShortcuts(const QVariantMap &cfg)
 				a->setShortcuts(shortcuts);
 
 			} else {
-				a->setShortcut(CustomShortcutModel::getDefaultShortcut(name));
+				a->setShortcuts(CustomShortcutModel::getDefaultShortcuts(name));
 			}
 
 			if(a->shortcut() == standardCopyShortcut) {
@@ -3434,7 +3434,7 @@ void MainWindow::setupActions()
 		CustomShortcutModel::registerCustomizableAction(
 			toggledockaction->objectName(),
 			tr("Toggle Dock %1").arg(toggledockaction->text()),
-			toggledockaction->shortcut());
+			toggledockaction->shortcut(), QKeySequence());
 		addAction(toggledockaction);
 	}
 
@@ -3594,12 +3594,24 @@ void MainWindow::setupActions()
 #ifdef Q_OS_ANDROID
 	QKeySequence undoShortcut = QKeySequence{Qt::Key_VolumeUp};
 	QKeySequence redoShortcut = QKeySequence{Qt::Key_VolumeDown};
+	QKeySequence undoAlternateShortcut = QKeySequence::Undo;
+	QKeySequence redoAlternateShortcut = QKeySequence::Redo;
 #else
 	QKeySequence undoShortcut = QKeySequence::Undo;
+	QKeySequence undoAlternateShortcut = QKeySequence();
+#if defined(Q_OS_WIN) || defined(__EMSCRIPTEN__)
+	QKeySequence redoShortcut = QKeySequence("Ctrl+Y");
+	QKeySequence redoAlternateShortcut = QKeySequence("Ctrl+Shift+Z");
+#elif defined(Q_OS_LINUX)
+	QKeySequence redoShortcut = QKeySequence("Ctrl+Shift+Z");
+	QKeySequence redoAlternateShortcut = QKeySequence("Ctrl+Y");
+#else
 	QKeySequence redoShortcut = QKeySequence::Redo;
+	QKeySequence redoAlternateShortcut = QKeySequence();
 #endif
-	QAction *undo = makeAction("undo", tr("&Undo")).icon("edit-undo").shortcut(undoShortcut).autoRepeat();
-	QAction *redo = makeAction("redo", tr("&Redo")).icon("edit-redo").shortcut(redoShortcut).autoRepeat();
+#endif
+	QAction *undo = makeAction("undo", tr("&Undo")).icon("edit-undo").shortcut(undoShortcut, undoAlternateShortcut).autoRepeat();
+	QAction *redo = makeAction("redo", tr("&Redo")).icon("edit-redo").shortcut(redoShortcut, redoAlternateShortcut).autoRepeat();
 	QAction *copy = makeAction("copyvisible", tr("&Copy Merged")).icon("edit-copy").statusTip(tr("Copy selected area to the clipboard")).shortcut("Shift+Ctrl+C");
 	QAction *copyMerged = makeAction("copymerged", tr("Copy Without Background")).icon("edit-copy").statusTip(tr("Copy selected area, excluding the background, to the clipboard")).shortcut("Ctrl+Alt+C");
 	QAction *copylayer = makeAction("copylayer", tr("Copy From &Layer")).icon("edit-copy").statusTip(tr("Copy selected area of the current layer to the clipboard")).shortcut(QKeySequence::Copy);
@@ -4464,7 +4476,7 @@ void MainWindow::setupActions()
 		q->setObjectName(QString("quicktoolslot-%1").arg(i));
 		q->setShortcut(QKeySequence(QString::number(i+1)));
 		q->setProperty("toolslotidx", i);
-		CustomShortcutModel::registerCustomizableAction(q->objectName(), q->text(), q->shortcut());
+		CustomShortcutModel::registerCustomizableAction(q->objectName(), q->text(), q->shortcut(), QKeySequence());
 		m_brushSlots->addAction(q);
 		addAction(q);
 		// Swapping with the eraser slot doesn't make sense.
@@ -4473,7 +4485,7 @@ void MainWindow::setupActions()
 			s->setAutoRepeat(false);
 			s->setObjectName(QStringLiteral("swapslot%1").arg(i));
 			CustomShortcutModel::registerCustomizableAction(
-				s->objectName(), s->text(), QKeySequence());
+				s->objectName(), s->text(), QKeySequence(), QKeySequence());
 			addAction(s);
 			connect(s, &QAction::triggered, this, [this, i] {
 				m_dockToolSettings->brushSettings()->swapWithSlot(i);

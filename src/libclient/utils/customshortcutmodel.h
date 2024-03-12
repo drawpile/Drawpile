@@ -13,6 +13,7 @@ struct CustomShortcut {
 	QString name;
 	QString title;
 	QKeySequence defaultShortcut;
+	QKeySequence defaultAlternateShortcut;
 	QKeySequence alternateShortcut;
 	QKeySequence currentShortcut;
 
@@ -45,8 +46,8 @@ public:
 	void loadShortcuts(const QVariantMap &cfg);
 	[[nodiscard]] QVariantMap saveShortcuts();
 
-	static QKeySequence getDefaultShortcut(const QString &name);
-	static void registerCustomizableAction(const QString &name, const QString &title, const QKeySequence &defaultShortcut);
+	static QList<QKeySequence> getDefaultShortcuts(const QString &name);
+	static void registerCustomizableAction(const QString &name, const QString &title, const QKeySequence &defaultShortcut, const QKeySequence &defaultAlternateShortcut);
 
 private:
 	void updateConflictRows();
