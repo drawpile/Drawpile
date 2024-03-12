@@ -9,6 +9,7 @@ Unreleased Version 2.2.2-pre
  * Feature: Add a message to the reset dialog that you need to be an operator to reset the session, since it's not too clear why the button is disabled otherwise.
  * Feature: Make fill source selection a set of buttons for merged image, merged without background and layer, using the dropdown only for the latter thereof. The checked button will be remembered. Thanks Blozzom, Bluestrings and Meru for suggesting.
  * Feature: Default redo to both Ctrl+Y and Ctrl+Shift+Z on Windows, Linux and the browser. Thanks Crow for suggesting.
+ * Fix: Brighten up transparency checkerboard to be a bit easier on the eyes. Thanks Crow for suggesting.
 
 2024-02-25 Version 2.2.2-beta.1
  * Server Feature: Allow adding a message when kicking someone through the admin API.

@@ -335,7 +335,7 @@ DP_Renderer *DP_renderer_new(int thread_count, DP_RendererTileFn tile_fn,
     renderer->tile.map_capacity = 0;
     renderer->tile.map = NULL;
     renderer->checker = DP_tile_new_checker(
-        0, (DP_Pixel15){DP_BIT15 / 2, DP_BIT15 / 2, DP_BIT15 / 2, DP_BIT15},
+        0, (DP_Pixel15){28270, 28270, 28270, DP_BIT15},
         (DP_Pixel15){DP_BIT15, DP_BIT15, DP_BIT15, DP_BIT15});
     renderer->cs = DP_canvas_state_new();
     renderer->needs_checkers = true;
