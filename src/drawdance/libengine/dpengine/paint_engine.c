@@ -105,7 +105,6 @@ struct DP_PaintEngine {
         void *user;
     } soft_reset;
     DP_CanvasDiff *diff;
-    DP_Tile *checker;
     DP_CanvasState *history_cs;
     DP_CanvasState *view_cs;
     DP_LocalState *local_state;
@@ -682,9 +681,6 @@ DP_PaintEngine *DP_paint_engine_new_inc(
     pe->soft_reset.fn = soft_reset_fn;
     pe->soft_reset.user = soft_reset_user;
     pe->diff = DP_canvas_diff_new();
-    pe->checker = DP_tile_new_checker(
-        0, (DP_Pixel15){DP_BIT15 / 2, DP_BIT15 / 2, DP_BIT15 / 2, DP_BIT15},
-        (DP_Pixel15){DP_BIT15, DP_BIT15, DP_BIT15, DP_BIT15});
     pe->history_cs = DP_canvas_state_new();
     pe->view_cs = DP_canvas_state_incref(pe->history_cs);
     pe->local_state =
@@ -794,7 +790,6 @@ void DP_paint_engine_free_join(DP_PaintEngine *pe)
         DP_local_state_free(pe->local_state);
         DP_canvas_state_decref_nullable(pe->history_cs);
         DP_canvas_state_decref_nullable(pe->view_cs);
-        DP_tile_decref(pe->checker);
         DP_canvas_diff_free(pe->diff);
         DP_canvas_history_free(pe->ch);
         DP_free(pe);
