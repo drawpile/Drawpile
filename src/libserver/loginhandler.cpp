@@ -986,20 +986,7 @@ void LoginHandler::handleJoinMessage(const net::ServerCommand &cmd)
 	}
 
 	if(session->getClientByUsername(m_client->username())) {
-#ifdef NDEBUG
 		sendError("nameInuse", "This username is already in use");
-		return;
-#else
-		// Allow identical usernames in debug builds, so I don't have to keep
-		// changing the username when testing. There is no technical requirement
-		// for unique usernames; the limitation is solely for the benefit of the
-		// human users.
-		m_client->log(
-			Log()
-				.about(Log::Level::Warn, Log::Topic::RuleBreak)
-				.message(
-					"Username clash ignored because this is a debug build."));
-#endif
 	}
 
 	if(m_client->triggerBan(false)) {
