@@ -985,8 +985,15 @@ void LoginHandler::handleJoinMessage(const net::ServerCommand &cmd)
 		}
 	}
 
-	if(session->getClientByUsername(m_client->username())) {
-		sendError("nameInuse", "This username is already in use");
+	Client *existingClient = session->getClientByUsername(m_client->username());
+	if(existingClient) {
+		bool shouldReplace = m_client->isAuthenticated() &&
+							 existingClient->isAuthenticated() &&
+							 m_client->authId() == existingClient->authId();
+		if(!shouldReplace) {
+			sendError("nameInuse", "This username is already in use");
+			return;
+		}
 	}
 
 	if(m_client->triggerBan(false)) {
@@ -994,8 +1001,12 @@ void LoginHandler::handleJoinMessage(const net::ServerCommand &cmd)
 		return;
 	}
 
-	// Ok, join the session
-	session->assignId(m_client);
+	if(existingClient) {
+		m_client->setId(existingClient->id());
+	} else {
+		session->assignId(m_client);
+	}
+
 	send(net::ServerReply::makeResultJoinHost(
 		QStringLiteral("Joining a session!"), QStringLiteral("join"),
 		{{QStringLiteral("id"), session->aliasOrId()},

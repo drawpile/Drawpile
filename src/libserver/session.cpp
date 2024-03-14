@@ -192,10 +192,18 @@ void Session::assignId(Client *user)
 
 void Session::joinUser(Client *user, bool host)
 {
+	Client *existingUser = getClientById(user->id());
 	user->setSession(this);
 	m_clients.append(user);
 
 	connect(user, &Client::loggedOff, this, &Session::removeUser);
+
+	const QString &username = user->username();
+	if(existingUser) {
+		existingUser->disconnectClient(
+			Client::DisconnectionReason::Kick, username,
+			QStringLiteral("Replaced by rejoining"));
+	}
 
 	m_pastClients.remove(user->id());
 
@@ -226,7 +234,6 @@ void Session::joinUser(Client *user, bool host)
 
 	onClientJoin(user, host);
 
-	const QString &username = user->username();
 	const QString &authId = user->authId();
 	bool isGhost = user->isGhost();
 	if(isGhost) {
