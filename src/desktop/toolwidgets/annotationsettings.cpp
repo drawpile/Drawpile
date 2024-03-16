@@ -9,20 +9,19 @@
 #include "libclient/canvas/userlist.h"
 #include "libclient/net/client.h"
 #include "libclient/tools/toolcontroller.h"
+#include "libclient/utils/annotations.h"
 #include "ui_textsettings.h"
 #include <QActionGroup>
 #include <QIcon>
 #include <QLabel>
 #include <QMenu>
+#include <QScopedValueRollback>
 #include <QStackedWidget>
 #include <QTextBlock>
 #include <QTimer>
 #include <QVBoxLayout>
 
 namespace tools {
-
-static const char *HALIGN_PROP = "HALIGN";
-static const char *VALIGN_PROP = "VALIGN";
 
 AnnotationSettings::AnnotationSettings(ToolController *ctrl, QObject *parent)
 	: ToolSettings(ctrl, parent)
@@ -115,6 +114,20 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 		valignMenu, &QMenu::triggered, this,
 		&AnnotationSettings::changeAlignment);
 	m_ui->valign->setMenu(valignMenu);
+
+	QMenu *renderMenu = new QMenu(parent);
+	renderMenu->addAction(QIcon::fromTheme("draw-bezier-curves"), tr("Vector"))
+		->setProperty(RENDER_PROP, 0);
+	renderMenu->addAction(QIcon::fromTheme("drawpile_round"), tr("Smooth"))
+		->setProperty(RENDER_PROP, DP_MSG_ANNOTATION_EDIT_FLAGS_RASTERIZE);
+	renderMenu->addAction(QIcon::fromTheme("drawpile_pixelround"), tr("Pixel"))
+		->setProperty(
+			RENDER_PROP, DP_MSG_ANNOTATION_EDIT_FLAGS_ALIAS |
+							 DP_MSG_ANNOTATION_EDIT_FLAGS_RASTERIZE);
+	m_ui->render->setIcon(renderMenu->actions().constFirst()->icon());
+	connect(
+		renderMenu, &QMenu::triggered, this, &AnnotationSettings::changeRender);
+	m_ui->render->setMenu(renderMenu);
 
 	m_ui->btnTextColor->setColor(Qt::black);
 	m_ui->btnBackground->setColor(Qt::transparent);
@@ -227,7 +240,7 @@ void AnnotationSettings::setUiEnabled(bool enabled)
 		m_ui->content, m_ui->btnBackground, m_ui->btnTextColor,
 		m_ui->halign,  m_ui->valign,		m_ui->bold,
 		m_ui->italic,  m_ui->underline,		m_ui->strikethrough,
-		m_ui->font,	   m_ui->size};
+		m_ui->font,	   m_ui->size,			m_ui->render};
 	for(QWidget *w : widgets) {
 		w->setEnabled(enabled);
 	}
@@ -237,6 +250,12 @@ void AnnotationSettings::setUiEnabled(bool enabled)
 		m_protectedAction->setChecked(false);
 		m_ui->creatorLabel->setText(QString{});
 	}
+}
+
+bool AnnotationSettings::shouldAlias() const
+{
+	return m_ui->render->property(RENDER_PROP).toInt() &
+		   DP_MSG_ANNOTATION_EDIT_FLAGS_ALIAS;
 }
 
 void AnnotationSettings::setEditorBackgroundColor(const QColor &color)
@@ -326,6 +345,13 @@ void AnnotationSettings::changeAlignment(const QAction *action)
 	}
 }
 
+void AnnotationSettings::changeRender(const QAction *action)
+{
+	m_ui->render->setIcon(action->icon());
+	m_ui->render->setProperty(RENDER_PROP, action->property(RENDER_PROP));
+	applyChanges();
+}
+
 void AnnotationSettings::updateFontIfUniform()
 {
 	QTextDocument *doc = m_ui->content->document();
@@ -370,6 +396,8 @@ void AnnotationSettings::resetContentFormat()
 	compat::setFontFamily(fmt, m_ui->font->currentText());
 	fmt.setFontPointSize(m_ui->size->value());
 	fmt.setForeground(m_ui->btnTextColor->color());
+	fmt.setFontStyleStrategy(
+		shouldAlias() ? QFont::NoAntialias : QFont::PreferDefault);
 	m_ui->content->setCurrentCharFormat(fmt);
 }
 
@@ -402,7 +430,7 @@ void AnnotationSettings::setFontFamily(QTextCharFormat &fmt)
 
 void AnnotationSettings::setSelectionId(int id)
 {
-	m_noupdate = true;
+	QScopedValueRollback<bool> rollback(m_noupdate, true);
 	setUiEnabled(id > 0);
 
 	m_selectionId = id;
@@ -420,24 +448,42 @@ void AnnotationSettings::setSelectionId(int id)
 			resetContentFormat();
 		}
 
-		int align = 0;
+		int valign;
+		QIcon valignIcon;
 		switch(a->valign()) {
-		case 0:
-			m_ui->valign->setIcon(
-				QIcon::fromTheme("format-align-vertical-top"));
-			break;
 		case 1:
-			m_ui->valign->setIcon(
-				QIcon::fromTheme("format-align-vertical-center"));
-			align = DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_CENTER;
+			valign = DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_CENTER;
+			valignIcon = QIcon::fromTheme("format-align-vertical-center");
 			break;
 		case 2:
-			m_ui->valign->setIcon(
-				QIcon::fromTheme("format-align-vertical-bottom"));
-			align = DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_BOTTOM;
+			valign = DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_BOTTOM;
+			valignIcon = QIcon::fromTheme("format-align-vertical-bottom");
+			break;
+		default:
+			valign = 0;
+			valignIcon = QIcon::fromTheme("format-align-vertical-top");
 			break;
 		}
-		m_ui->valign->setProperty(VALIGN_PROP, align);
+		m_ui->valign->setProperty(VALIGN_PROP, valign);
+		m_ui->valign->setIcon(valignIcon);
+
+		int render;
+		QIcon renderIcon;
+		if(a->rasterize()) {
+			if(a->alias()) {
+				render = DP_MSG_ANNOTATION_EDIT_FLAGS_ALIAS |
+						 DP_MSG_ANNOTATION_EDIT_FLAGS_RASTERIZE;
+				renderIcon = QIcon::fromTheme("drawpile_pixelround");
+			} else {
+				render = DP_MSG_ANNOTATION_EDIT_FLAGS_RASTERIZE;
+				renderIcon = QIcon::fromTheme("drawpile_round");
+			}
+		} else {
+			render = 0;
+			renderIcon = QIcon::fromTheme("draw-bezier-curves");
+		}
+		m_ui->render->setProperty(RENDER_PROP, render);
+		m_ui->render->setIcon(renderIcon);
 
 		m_ui->creatorLabel->setText(
 			controller()->model()->userlist()->getUsername(a->userId()));
@@ -451,7 +497,6 @@ void AnnotationSettings::setSelectionId(int id)
 		if(a->protect() && !opOrOwner)
 			setUiEnabled(false);
 	}
-	m_noupdate = false;
 
 	emit selectionIdChanged(m_selectionId);
 }
@@ -473,9 +518,12 @@ void AnnotationSettings::setFocus()
 
 void AnnotationSettings::applyChanges()
 {
-	if(m_noupdate || !selected())
-		return;
-	m_updatetimer->start();
+	if(!m_noupdate && selected()) {
+		QScopedValueRollback<bool> rollback(m_noupdate, true);
+		utils::setAliasedAnnotationFonts(
+			m_ui->content->document(), shouldAlias());
+		m_updatetimer->start();
+	}
 }
 
 void AnnotationSettings::saveChanges()
@@ -498,7 +546,8 @@ void AnnotationSettings::saveChanges()
 		uint8_t flags = (m_protectedAction->isChecked()
 							 ? DP_MSG_ANNOTATION_EDIT_FLAGS_PROTECT
 							 : 0) |
-						uint8_t(m_ui->valign->property(VALIGN_PROP).toInt());
+						uint8_t(m_ui->valign->property(VALIGN_PROP).toInt()) |
+						uint8_t(m_ui->render->property(RENDER_PROP).toInt());
 		client->sendMessage(net::makeAnnotationEditMessage(
 			contextId, selected(), m_ui->btnBackground->color().rgba(), flags,
 			0, content));

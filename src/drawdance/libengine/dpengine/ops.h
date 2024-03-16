@@ -118,8 +118,8 @@ DP_CanvasState *DP_ops_annotation_reshape(DP_CanvasState *cs, int annotation_id,
 
 DP_CanvasState *DP_ops_annotation_edit(DP_CanvasState *cs, int annotation_id,
                                        uint32_t background_color, bool protect,
-                                       int valign, const char *text,
-                                       size_t text_length);
+                                       bool alias, bool rasterize, int valign,
+                                       const char *text, size_t text_length);
 
 DP_CanvasState *DP_ops_annotation_delete(DP_CanvasState *cs, int annotation_id);
 

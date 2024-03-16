@@ -581,6 +581,10 @@ static void annotations_to_reset_image(struct DP_ResetImageContext *c,
         uint8_t edit_flags = get_annotation_valign_flags(a);
         SET_FLAG_IF(edit_flags, DP_annotation_protect(a),
                     DP_MSG_ANNOTATION_EDIT_FLAGS_PROTECT);
+        SET_FLAG_IF(edit_flags, DP_annotation_alias(a),
+                    DP_MSG_ANNOTATION_EDIT_FLAGS_ALIAS);
+        SET_FLAG_IF(edit_flags, DP_annotation_rasterize(a),
+                    DP_MSG_ANNOTATION_EDIT_FLAGS_RASTERIZE);
         reset_image_push(
             c, DP_msg_annotation_edit_new(c->context_id, annotation_id,
                                           DP_annotation_background_color(a),
