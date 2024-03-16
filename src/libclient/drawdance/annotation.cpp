@@ -100,6 +100,16 @@ bool Annotation::protect() const
     return DP_annotation_protect(m_data);
 }
 
+bool Annotation::alias() const
+{
+    return DP_annotation_alias(m_data);
+}
+
+bool Annotation::rasterize() const
+{
+    return DP_annotation_rasterize(m_data);
+}
+
 int Annotation::valign() const
 {
     return DP_annotation_valign(m_data);
