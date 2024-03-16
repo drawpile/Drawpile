@@ -661,9 +661,14 @@ static bool ora_handle_annotation(DP_ReadOraContext *c, DP_XmlElement *element)
 
     const char *valign = DP_xml_element_attribute(element, NULL, "valign");
 
+    bool alias = ora_read_bool_attribute(element, NULL, "alias");
+    bool rasterize = ora_read_bool_attribute(element, NULL, "rasterize");
+
     DP_TransientAnnotation *ta =
         DP_transient_annotation_new_init(annotation_id, x, y, width, height);
     DP_transient_annotation_background_color_set(ta, background_color);
+    DP_transient_annotation_alias_set(ta, alias);
+    DP_transient_annotation_rasterize_set(ta, rasterize);
     if (DP_str_equal_lowercase(valign, "center")) {
         DP_transient_annotation_valign_set(ta, DP_ANNOTATION_VALIGN_CENTER);
     }
