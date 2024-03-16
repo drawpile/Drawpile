@@ -473,6 +473,8 @@ void CanvasScene::annotationsChanged(const drawdance::AnnotationList &al)
 		ai->setGeometry(a.bounds());
 		ai->setColor(a.backgroundColor());
 		ai->setProtect(a.protect());
+		ai->setAlias(a.alias());
+		ai->setRasterize(a.rasterize());
 		ai->setValign(a.valign());
 	}
 

@@ -109,7 +109,7 @@ bool CanvasSaverRunnable::bakeAnnotation(
 	QPainter painter(&img);
 	utils::paintAnnotation(
 		&painter, annotation.size(), annotation.backgroundColor(),
-		annotation.text(), annotation.valign());
+		annotation.text(), annotation.alias(), annotation.valign());
 	return true;
 }
 

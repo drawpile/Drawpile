@@ -2,6 +2,7 @@
 #ifndef DESKTOP_SCENE_ANNOTATIONITEM_H
 #define DESKTOP_SCENE_ANNOTATIONITEM_H
 #include "desktop/scene/baseitem.h"
+#include <QPixmap>
 #include <QTextDocument>
 
 namespace drawingboard {
@@ -45,6 +46,12 @@ public:
 	void setProtect(bool protect) { m_protect = protect; }
 	bool protect() const { return m_protect; }
 
+	void setAlias(bool alias);
+	bool alias() const { return m_alias; }
+
+	void setRasterize(bool rasterize);
+	bool rasterize() const { return m_rasterize; }
+
 	//! Highlight this item
 	void setHighlight(bool h);
 
@@ -70,6 +77,7 @@ private:
 
 	static int calculateHandleSize(qreal zoom);
 	void paintHiddenBorder(QPainter *painter);
+	const QPixmap &renderPixmap();
 
 	int m_id;
 	int m_valign = 0;
@@ -77,7 +85,12 @@ private:
 	QRectF m_rect;
 	QColor m_color = Qt::transparent;
 	QTextDocument m_doc;
+	QPixmap m_pixmap;
 
+	bool m_alias = false;
+	bool m_aliasDirty = true;
+	bool m_rasterize = false;
+	bool m_pixmapDirty = true;
 	bool m_highlight = false;
 	bool m_showborder = false;
 	bool m_protect = false;

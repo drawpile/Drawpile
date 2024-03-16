@@ -552,6 +552,14 @@ static void ora_write_annotations_xml(DP_SaveOraContext *c, DP_Output *output,
                 ORA_APPEND_ATTR(c, output, "valign", "%s", valign);
             }
 
+            if (DP_annotation_alias(a)) {
+                DP_OUTPUT_PRINT_LITERAL(output, " alias=\"true\"");
+            }
+
+            if (DP_annotation_rasterize(a)) {
+                DP_OUTPUT_PRINT_LITERAL(output, " rasterize=\"true\"");
+            }
+
             DP_OUTPUT_PRINT_LITERAL(output, "><![CDATA[");
             ora_write_cdata_content(output, DP_annotation_text(a, NULL));
             DP_OUTPUT_PRINT_LITERAL(output, "]]></drawpile:a>");
