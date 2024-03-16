@@ -44,6 +44,8 @@ struct DP_Annotation {
     const int height;
     const uint32_t background_color;
     const bool protect;
+    const bool alias;
+    const bool rasterize;
     const int valign;
     DP_Text *const text;
 };
@@ -58,6 +60,8 @@ struct DP_TransientAnnotation {
     int height;
     uint32_t background_color;
     bool protect;
+    bool alias;
+    bool rasterize;
     int valign;
     DP_Text *text;
 };
@@ -74,6 +78,8 @@ struct DP_Annotation {
     int height;
     uint32_t background_color;
     bool protect;
+    bool alias;
+    bool rasterize;
     int valign;
     DP_Text *text;
 };
@@ -85,8 +91,19 @@ static DP_TransientAnnotation *
 allocate_annotation(bool transient, int id, int x, int y, int width, int height)
 {
     DP_TransientAnnotation *ta = DP_malloc(sizeof(*ta));
-    *ta = (DP_TransientAnnotation){
-        DP_ATOMIC_INIT(1), transient, id, x, y, width, height, 0, 0, 0, NULL};
+    *ta = (DP_TransientAnnotation){DP_ATOMIC_INIT(1),
+                                   transient,
+                                   id,
+                                   x,
+                                   y,
+                                   width,
+                                   height,
+                                   0,
+                                   false,
+                                   false,
+                                   false,
+                                   0,
+                                   NULL};
     return ta;
 }
 
@@ -188,6 +205,20 @@ bool DP_annotation_protect(DP_Annotation *a)
     return a->protect;
 }
 
+bool DP_annotation_alias(DP_Annotation *a)
+{
+    DP_ASSERT(a);
+    DP_ASSERT(DP_atomic_get(&a->refcount) > 0);
+    return a->alias;
+}
+
+bool DP_annotation_rasterize(DP_Annotation *a)
+{
+    DP_ASSERT(a);
+    DP_ASSERT(DP_atomic_get(&a->refcount) > 0);
+    return a->rasterize;
+}
+
 int DP_annotation_valign(DP_Annotation *a)
 {
     DP_ASSERT(a);
@@ -232,6 +263,8 @@ DP_TransientAnnotation *DP_transient_annotation_new(DP_Annotation *a)
                                    a->height,
                                    a->background_color,
                                    a->protect,
+                                   a->alias,
+                                   a->rasterize,
                                    a->valign,
                                    DP_text_incref_nullable(a->text)};
     return ta;
@@ -315,6 +348,16 @@ bool DP_transient_annotation_protect(DP_TransientAnnotation *ta)
     return DP_annotation_protect((DP_Annotation *)ta);
 }
 
+bool DP_transient_annotation_alias(DP_TransientAnnotation *ta)
+{
+    return DP_annotation_alias((DP_Annotation *)ta);
+}
+
+bool DP_transient_annotation_rasterize(DP_TransientAnnotation *ta)
+{
+    return DP_annotation_rasterize((DP_Annotation *)ta);
+}
+
 int DP_transient_annotation_valign(DP_TransientAnnotation *ta)
 {
     return DP_annotation_valign((DP_Annotation *)ta);
@@ -382,6 +425,23 @@ void DP_transient_annotation_protect_set(DP_TransientAnnotation *ta,
     DP_ASSERT(DP_atomic_get(&ta->refcount) > 0);
     DP_ASSERT(ta->transient);
     ta->protect = protect;
+}
+
+void DP_transient_annotation_alias_set(DP_TransientAnnotation *ta, bool alias)
+{
+    DP_ASSERT(ta);
+    DP_ASSERT(DP_atomic_get(&ta->refcount) > 0);
+    DP_ASSERT(ta->transient);
+    ta->alias = alias;
+}
+
+void DP_transient_annotation_rasterize_set(DP_TransientAnnotation *ta,
+                                           bool rasterize)
+{
+    DP_ASSERT(ta);
+    DP_ASSERT(DP_atomic_get(&ta->refcount) > 0);
+    DP_ASSERT(ta->transient);
+    ta->rasterize = rasterize;
 }
 
 void DP_transient_annotation_valign_set(DP_TransientAnnotation *ta, int valign)

@@ -38,7 +38,8 @@ public:
     QRect bounds() const;
 
     bool protect() const;
-
+    bool alias() const;
+    bool rasterize() const;
     int valign() const;
 
     QColor backgroundColor() const;
