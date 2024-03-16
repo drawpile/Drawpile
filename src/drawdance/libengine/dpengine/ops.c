@@ -1368,8 +1368,8 @@ DP_CanvasState *DP_ops_annotation_reshape(DP_CanvasState *cs, int annotation_id,
 
 DP_CanvasState *DP_ops_annotation_edit(DP_CanvasState *cs, int annotation_id,
                                        uint32_t background_color, bool protect,
-                                       int valign, const char *text,
-                                       size_t text_length)
+                                       bool alias, bool rasterize, int valign,
+                                       const char *text, size_t text_length)
 {
     DP_AnnotationList *al = DP_canvas_state_annotations_noinc(cs);
     int index = DP_annotation_list_index_by_id(al, annotation_id);
@@ -1386,6 +1386,8 @@ DP_CanvasState *DP_ops_annotation_edit(DP_CanvasState *cs, int annotation_id,
 
     DP_transient_annotation_background_color_set(ta, background_color);
     DP_transient_annotation_protect_set(ta, protect);
+    DP_transient_annotation_alias_set(ta, alias);
+    DP_transient_annotation_rasterize_set(ta, rasterize);
     DP_transient_annotation_valign_set(ta, valign);
     DP_transient_annotation_text_set(ta, text, text_length);
 

@@ -828,12 +828,14 @@ static DP_CanvasState *handle_annotation_edit(DP_CanvasState *cs,
 {
     int flags = DP_msg_annotation_edit_flags(mae);
     bool protect = flags & DP_MSG_ANNOTATION_EDIT_FLAGS_PROTECT;
+    bool alias = flags & DP_MSG_ANNOTATION_EDIT_FLAGS_ALIAS;
+    bool rasterize = flags & DP_MSG_ANNOTATION_EDIT_FLAGS_RASTERIZE;
     int valign = annotation_valign_from_flags(flags);
     size_t text_length;
     const char *text = DP_msg_annotation_edit_text(mae, &text_length);
     return DP_ops_annotation_edit(cs, DP_msg_annotation_edit_id(mae),
                                   DP_msg_annotation_edit_bg(mae), protect,
-                                  valign, text, text_length);
+                                  alias, rasterize, valign, text, text_length);
 }
 
 static DP_CanvasState *handle_annotation_delete(DP_CanvasState *cs,
