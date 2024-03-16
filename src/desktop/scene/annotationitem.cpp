@@ -1,21 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#include <QApplication>
-#include <QPalette>
-#include <QPainter>
 #include "desktop/scene/annotationitem.h"
 #include "libclient/utils/annotations.h"
+#include <QApplication>
+#include <QPainter>
+#include <QPalette>
+#include <QTextBlock>
 
 namespace drawingboard {
 
 AnnotationItem::AnnotationItem(int id, QGraphicsItem *parent)
-	: QGraphicsItem(parent),
-	  m_id(id),
-	  m_valign(0),
-	  m_color(Qt::transparent),
-	  m_highlight(false),
-	  m_showborder(false),
-	  m_protect(false)
+	: QGraphicsItem(parent)
+	, m_id(id)
 {
 }
 
@@ -39,6 +34,7 @@ void AnnotationItem::setColor(const QColor &color)
 void AnnotationItem::setText(const QString &text)
 {
 	m_doc.setHtml(text);
+	m_aliasDirty = true;
 	update();
 }
 
@@ -46,6 +42,15 @@ void AnnotationItem::setValign(int valign)
 {
 	if(m_valign != valign) {
 		m_valign = valign;
+		update();
+	}
+}
+
+void AnnotationItem::setAlias(bool alias)
+{
+	if(m_alias != alias) {
+		m_alias = alias;
+		m_aliasDirty = true;
 		update();
 	}
 }
@@ -76,10 +81,11 @@ void AnnotationItem::setShowBorder(bool show)
 
 QRectF AnnotationItem::boundingRect() const
 {
-	return m_rect.adjusted(-HANDLE/2, -HANDLE/2, HANDLE/2, HANDLE/2);
+	return m_rect.adjusted(-HANDLE / 2, -HANDLE / 2, HANDLE / 2, HANDLE / 2);
 }
 
-void AnnotationItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *widget)
+void AnnotationItem::paint(
+	QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *widget)
 {
 	Q_UNUSED(options);
 	Q_UNUSED(widget);
@@ -101,23 +107,32 @@ void AnnotationItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 		pen.setWidth(HANDLE);
 		painter->setPen(pen);
 		painter->drawPoint(m_rect.topLeft());
-		painter->drawPoint(m_rect.topLeft() + QPointF(m_rect.width()/2, 0));
+		painter->drawPoint(m_rect.topLeft() + QPointF(m_rect.width() / 2, 0));
 		painter->drawPoint(m_rect.topRight());
 
-		painter->drawPoint(m_rect.topLeft() + QPointF(0, m_rect.height()/2));
-		painter->drawPoint(m_rect.topRight() + QPointF(0, m_rect.height()/2));
+		painter->drawPoint(m_rect.topLeft() + QPointF(0, m_rect.height() / 2));
+		painter->drawPoint(m_rect.topRight() + QPointF(0, m_rect.height() / 2));
 
 		painter->drawPoint(m_rect.bottomLeft());
-		painter->drawPoint(m_rect.bottomLeft() + QPointF(m_rect.width()/2, 0));
+		painter->drawPoint(
+			m_rect.bottomLeft() + QPointF(m_rect.width() / 2, 0));
 		painter->drawPoint(m_rect.bottomRight());
 	}
 
 	m_doc.setTextWidth(m_rect.width());
+	if(m_aliasDirty) {
+		m_aliasDirty = false;
+		utils::setAliasedAnnotationFonts(&m_doc, m_alias);
+	}
 
 	QPointF offset;
 	switch(m_valign) {
-		case 1: offset.setY((m_rect.height() - m_doc.size().height()) / 2); break;
-		case 2: offset.setY(m_rect.height() - m_doc.size().height()); break;
+	case 1:
+		offset.setY((m_rect.height() - m_doc.size().height()) / 2);
+		break;
+	case 2:
+		offset.setY(m_rect.height() - m_doc.size().height());
+		break;
 	}
 
 	painter->translate(m_rect.topLeft() + offset);
@@ -149,9 +164,8 @@ QImage AnnotationItem::toImage() const
 	img.fill(0);
 	QPainter painter(&img);
 	utils::paintAnnotation(
-		&painter, m_rect.size().toSize(), m_color, text(), m_valign);
+		&painter, m_rect.size().toSize(), m_color, text(), m_alias, m_valign);
 	return img;
 }
 
 }
-

@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef ANNOTATIONITEM_H
-#define ANNOTATIONITEM_H
-
+#ifndef DESKTOP_SCENE_ANNOTATIONITEM_H
+#define DESKTOP_SCENE_ANNOTATIONITEM_H
 #include <QGraphicsItem>
 #include <QTextDocument>
 
@@ -14,9 +12,9 @@ namespace drawingboard {
 class AnnotationItem final : public QGraphicsItem {
 public:
 	enum { Type = UserType + 10 };
-	static const int HANDLE=10;
+	static const int HANDLE = 10;
 
-	explicit AnnotationItem(int id, QGraphicsItem *parent=nullptr);
+	explicit AnnotationItem(int id, QGraphicsItem *parent = nullptr);
 
 	//! Get the ID number of this annotation
 	int id() const { return m_id; }
@@ -48,6 +46,9 @@ public:
 	void setProtect(bool protect) { m_protect = protect; }
 	bool protect() const { return m_protect; }
 
+	void setAlias(bool alias);
+	bool alias() const { return m_alias; }
+
 	//! Highlight this item
 	void setHighlight(bool h);
 
@@ -62,23 +63,26 @@ public:
 	QImage toImage() const;
 
 protected:
-	void paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *) override;
+	void paint(
+		QPainter *painter, const QStyleOptionGraphicsItem *options,
+		QWidget *) override;
 
 private:
 	void paintHiddenBorder(QPainter *painter);
 
 	int m_id;
-	int m_valign;
+	int m_valign = 0;
 	QRectF m_rect;
-	QColor m_color;
+	QColor m_color = Qt::transparent;
 	QTextDocument m_doc;
 
-	bool m_highlight;
-	bool m_showborder;
-	bool m_protect;
+	bool m_alias = false;
+	bool m_aliasDirty = true;
+	bool m_highlight = false;
+	bool m_showborder = false;
+	bool m_protect = false;
 };
 
 }
 
 #endif
-
