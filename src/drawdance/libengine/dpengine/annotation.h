@@ -64,6 +64,10 @@ uint32_t DP_annotation_background_color(DP_Annotation *a);
 
 bool DP_annotation_protect(DP_Annotation *a);
 
+bool DP_annotation_alias(DP_Annotation *a);
+
+bool DP_annotation_rasterize(DP_Annotation *a);
+
 int DP_annotation_valign(DP_Annotation *a);
 
 const char *DP_annotation_text(DP_Annotation *a, size_t *out_length);
@@ -107,6 +111,10 @@ uint32_t DP_transient_annotation_background_color(DP_TransientAnnotation *ta);
 
 bool DP_transient_annotation_protect(DP_TransientAnnotation *ta);
 
+bool DP_transient_annotation_alias(DP_TransientAnnotation *ta);
+
+bool DP_transient_annotation_rasterize(DP_TransientAnnotation *ta);
+
 int DP_transient_annotation_valign(DP_TransientAnnotation *ta);
 
 const char *DP_transient_annotation_text(DP_TransientAnnotation *ta,
@@ -127,6 +135,11 @@ void DP_transient_annotation_background_color_set(DP_TransientAnnotation *ta,
 
 void DP_transient_annotation_protect_set(DP_TransientAnnotation *ta,
                                          bool protect);
+
+void DP_transient_annotation_alias_set(DP_TransientAnnotation *ta, bool alias);
+
+void DP_transient_annotation_rasterize_set(DP_TransientAnnotation *ta,
+                                           bool rasterize);
 
 void DP_transient_annotation_valign_set(DP_TransientAnnotation *ta, int valign);
 

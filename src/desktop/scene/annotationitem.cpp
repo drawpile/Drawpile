@@ -21,6 +21,7 @@ void AnnotationItem::setGeometry(const QRect &rect)
 		refreshGeometry();
 		m_rect = rect;
 		m_doc.setTextWidth(rect.width());
+		m_pixmapDirty = true;
 	}
 }
 
@@ -28,6 +29,7 @@ void AnnotationItem::setColor(const QColor &color)
 {
 	if(m_color != color) {
 		m_color = color;
+		m_pixmapDirty = true;
 		refresh();
 	}
 }
@@ -35,6 +37,8 @@ void AnnotationItem::setColor(const QColor &color)
 void AnnotationItem::setText(const QString &text)
 {
 	m_doc.setHtml(text);
+	m_aliasDirty = true;
+	m_pixmapDirty = true;
 	refresh();
 }
 
@@ -42,6 +46,27 @@ void AnnotationItem::setValign(int valign)
 {
 	if(m_valign != valign) {
 		m_valign = valign;
+		m_pixmapDirty = true;
+		refresh();
+	}
+}
+
+void AnnotationItem::setAlias(bool alias)
+{
+	if(m_alias != alias) {
+		m_alias = alias;
+		m_aliasDirty = true;
+		m_pixmapDirty = true;
+		refresh();
+	}
+}
+
+void AnnotationItem::setRasterize(bool rasterize)
+{
+	if(m_rasterize != rasterize) {
+		m_rasterize = rasterize;
+		m_pixmapDirty = true;
+		m_pixmap = QPixmap();
 		refresh();
 	}
 }
@@ -75,6 +100,7 @@ void AnnotationItem::setShowBorder(bool show)
 {
 	if(m_showborder != show) {
 		m_showborder = show;
+		m_pixmapDirty = true;
 		refresh();
 	}
 }
@@ -91,10 +117,19 @@ void AnnotationItem::paint(
 	Q_UNUSED(options);
 	Q_UNUSED(widget);
 
-	painter->save();
 	painter->setClipRect(boundingRect().adjusted(-1, -1, 1, 1));
 
-	painter->fillRect(m_rect, m_color);
+	painter->save();
+	if(m_rasterize) {
+		painter->setRenderHint(QPainter::Antialiasing, false);
+		painter->drawPixmap(m_rect.topLeft(), renderPixmap());
+	} else {
+		painter->fillRect(m_rect, m_color);
+		utils::paintAnnotationContent(
+			painter, m_doc, m_alias, m_valign, m_rect, m_aliasDirty);
+		m_aliasDirty = false;
+	}
+	painter->restore();
 
 	paintHiddenBorder(painter);
 
@@ -119,23 +154,6 @@ void AnnotationItem::paint(
 			m_rect.bottomLeft() + QPointF(m_rect.width() / 2, 0));
 		painter->drawPoint(m_rect.bottomRight());
 	}
-
-	m_doc.setTextWidth(m_rect.width());
-
-	QPointF offset;
-	switch(m_valign) {
-	case 1:
-		offset.setY((m_rect.height() - m_doc.size().height()) / 2);
-		break;
-	case 2:
-		offset.setY(m_rect.height() - m_doc.size().height());
-		break;
-	}
-
-	painter->translate(m_rect.topLeft() + offset);
-	m_doc.drawContents(painter, QRectF(-offset, m_rect.size()));
-
-	painter->restore();
 }
 
 int AnnotationItem::calculateHandleSize(qreal zoom)
@@ -160,14 +178,35 @@ void AnnotationItem::paintHiddenBorder(QPainter *painter)
 	painter->drawRect(m_rect);
 }
 
+const QPixmap &AnnotationItem::renderPixmap()
+{
+	if(m_pixmapDirty) {
+		m_pixmapDirty = false;
+		m_pixmap = QPixmap(m_rect.toRect().size());
+		m_pixmap.fill(m_color);
+		QPainter pixmapPainter(&m_pixmap);
+		utils::paintAnnotationContent(
+			&pixmapPainter, m_doc, m_alias, m_valign,
+			QRectF(QPointF(0.0, 0.0), m_rect.size()), m_aliasDirty);
+		m_aliasDirty = false;
+	}
+	return m_pixmap;
+}
+
 QImage AnnotationItem::toImage() const
 {
-	QImage img(m_rect.size().toSize(), QImage::Format_ARGB32_Premultiplied);
-	img.fill(0);
-	QPainter painter(&img);
-	utils::paintAnnotation(
-		&painter, m_rect.size().toSize(), m_color, text(), m_valign);
-	return img;
+	if(m_rasterize) {
+		return m_pixmap.toImage().convertToFormat(
+			QImage::Format_ARGB32_Premultiplied);
+	} else {
+		QImage img(m_rect.size().toSize(), QImage::Format_ARGB32_Premultiplied);
+		img.fill(0);
+		QPainter painter(&img);
+		utils::paintAnnotation(
+			&painter, m_rect.size().toSize(), m_color, text(), m_alias,
+			m_valign);
+		return img;
+	}
 }
 
 }

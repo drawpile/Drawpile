@@ -5271,6 +5271,10 @@ const char *DP_msg_annotation_edit_flags_flag_name(unsigned int value)
         return "valign_center";
     case DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_BOTTOM:
         return "valign_bottom";
+    case DP_MSG_ANNOTATION_EDIT_FLAGS_ALIAS:
+        return "alias";
+    case DP_MSG_ANNOTATION_EDIT_FLAGS_RASTERIZE:
+        return "rasterize";
     default:
         return NULL;
     }
@@ -5312,11 +5316,14 @@ static bool msg_annotation_edit_write_payload_text(DP_Message *msg,
     return DP_text_writer_write_argb_color(writer, "bg", mae->bg)
         && DP_text_writer_write_uint(writer, "border", mae->border, false)
         && DP_text_writer_write_flags(
-               writer, "flags", mae->flags, 3,
-               (const char *[]){"protect", "valign_center", "valign_bottom"},
+               writer, "flags", mae->flags, 5,
+               (const char *[]){"protect", "valign_center", "valign_bottom",
+                                "alias", "rasterize"},
                (unsigned int[]){DP_MSG_ANNOTATION_EDIT_FLAGS_PROTECT,
                                 DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_CENTER,
-                                DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_BOTTOM})
+                                DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_BOTTOM,
+                                DP_MSG_ANNOTATION_EDIT_FLAGS_ALIAS,
+                                DP_MSG_ANNOTATION_EDIT_FLAGS_RASTERIZE})
         && DP_text_writer_write_uint(writer, "id", mae->id, true)
         && DP_text_writer_write_string(writer, "text", mae->text);
 }
@@ -5385,11 +5392,14 @@ DP_Message *DP_msg_annotation_edit_parse(unsigned int context_id,
         (uint16_t)DP_text_reader_get_ulong_hex(reader, "id", UINT16_MAX);
     uint32_t bg = DP_text_reader_get_argb_color(reader, "bg");
     uint8_t flags = (uint8_t)DP_text_reader_get_flags(
-        reader, "flags", 3,
-        (const char *[]){"protect", "valign_center", "valign_bottom"},
+        reader, "flags", 5,
+        (const char *[]){"protect", "valign_center", "valign_bottom", "alias",
+                         "rasterize"},
         (unsigned int[]){DP_MSG_ANNOTATION_EDIT_FLAGS_PROTECT,
                          DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_CENTER,
-                         DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_BOTTOM});
+                         DP_MSG_ANNOTATION_EDIT_FLAGS_VALIGN_BOTTOM,
+                         DP_MSG_ANNOTATION_EDIT_FLAGS_ALIAS,
+                         DP_MSG_ANNOTATION_EDIT_FLAGS_RASTERIZE});
     uint8_t border =
         (uint8_t)DP_text_reader_get_ulong(reader, "border", UINT8_MAX);
     uint16_t text_len;
