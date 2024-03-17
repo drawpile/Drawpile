@@ -238,6 +238,15 @@ static bool ora_check_mimetype(DP_ZipReader *zr)
     }
 }
 
+static bool ora_read_bool_attribute(DP_XmlElement *element,
+                                    const char *namespace_or_null,
+                                    const char *name)
+{
+    const char *value =
+        DP_xml_element_attribute(element, namespace_or_null, name);
+    return DP_str_equal_lowercase(value, "true");
+}
+
 static bool ora_read_int_attribute(DP_XmlElement *element,
                                    const char *namespace_or_null,
                                    const char *name, long min, long max,
@@ -402,19 +411,14 @@ static DP_TransientLayerProps *ora_make_layer_props(DP_XmlElement *element,
 
     // Normal with alpha preserve is Recolor. Drawpile doesn't save it this way,
     // but it's a valid way to represent it, so we handle it.
-    if (blend_mode == DP_BLEND_MODE_NORMAL) {
-        const char *alpha_preserve =
-            DP_xml_element_attribute(element, NULL, "alpha-preserve");
-        if (DP_str_equal_lowercase(alpha_preserve, "true")) {
-            blend_mode = DP_BLEND_MODE_RECOLOR;
-        }
+    if (blend_mode == DP_BLEND_MODE_NORMAL
+        && ora_read_bool_attribute(element, NULL, "alpha-preserve")) {
+        blend_mode = DP_BLEND_MODE_RECOLOR;
     }
 
     DP_transient_layer_props_blend_mode_set(tlp, (int)blend_mode);
 
-    const char *censored =
-        DP_xml_element_attribute(element, DRAWPILE_NAMESPACE, "censored");
-    if (DP_str_equal_lowercase(censored, "true")) {
+    if (ora_read_bool_attribute(element, DRAWPILE_NAMESPACE, "censored")) {
         DP_transient_layer_props_censored_set(tlp, true);
     }
 
@@ -530,12 +534,9 @@ static void ora_handle_fixed_layer(DP_ReadOraContext *c, DP_XmlElement *element,
     // animations don't have an actual timeline, instead each layer is a frame
     // and there's "fixed" layers that stick around for the entire animation.
     DP_LoadFixedLayerFn fixed_layer_fn = c->fixed_layer.fn;
-    if (fixed_layer_fn) {
-        const char *fixed =
-            DP_xml_element_attribute(element, DRAWPILE_NAMESPACE, "fixed");
-        if (DP_str_equal_lowercase(fixed, "true")) {
-            fixed_layer_fn(c->fixed_layer.user, layer_id);
-        }
+    if (fixed_layer_fn
+        && ora_read_bool_attribute(element, DRAWPILE_NAMESPACE, "fixed")) {
+        fixed_layer_fn(c->fixed_layer.user, layer_id);
     }
 }
 
@@ -784,13 +785,11 @@ static void ora_handle_key_frame_layer(DP_ReadOraContext *c,
         return;
     }
 
-    const char *hidden = DP_xml_element_attribute(element, NULL, "hidden");
-    if (DP_str_equal_lowercase(hidden, "true")) {
+    if (ora_read_bool_attribute(element, NULL, "hidden")) {
         rokfl.flags |= DP_KEY_FRAME_LAYER_HIDDEN;
     }
 
-    const char *revealed = DP_xml_element_attribute(element, NULL, "revealed");
-    if (DP_str_equal_lowercase(revealed, "true")) {
+    if (ora_read_bool_attribute(element, NULL, "revealed")) {
         rokfl.flags |= DP_KEY_FRAME_LAYER_REVEALED;
     }
 
