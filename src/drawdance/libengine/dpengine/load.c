@@ -1237,8 +1237,6 @@ DP_CanvasState *load_flat_image(DP_DrawContext *dc, DP_Input *input,
     }
 
     DP_TransientCanvasState *tcs = DP_transient_canvas_state_new_init();
-    DP_transient_canvas_state_background_tile_set_noinc(
-        tcs, DP_tile_new_from_bgra(0, 0xffffffffu), true);
 
     int width = DP_image_width(img);
     int height = DP_image_height(img);
