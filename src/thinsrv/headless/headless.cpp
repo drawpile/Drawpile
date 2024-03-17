@@ -468,8 +468,15 @@ bool start() {
 
 		} else {
 			const QCommandLineOption *potentiallyIgnoredOptions[] = {
-				&portOption, &webadminPortOption, &webSocketPortOption,
-				&webSocketListenOption};
+				&portOption,
+#ifdef HAVE_WEBADMIN
+				&webadminPortOption,
+#endif
+#ifdef HAVE_WEBSOCKETS
+				&webSocketPortOption,
+				&webSocketListenOption,
+#endif
+			};
 			QStringList ignoredOptions;
 			for(const QCommandLineOption *option : potentiallyIgnoredOptions) {
 				if(parser.isSet(*option)) {
