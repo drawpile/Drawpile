@@ -34,7 +34,6 @@ void AnnotationItem::setColor(const QColor &color)
 void AnnotationItem::setText(const QString &text)
 {
 	m_doc.setHtml(text);
-	m_aliasDirty = true;
 	update();
 }
 
@@ -42,15 +41,6 @@ void AnnotationItem::setValign(int valign)
 {
 	if(m_valign != valign) {
 		m_valign = valign;
-		update();
-	}
-}
-
-void AnnotationItem::setAlias(bool alias)
-{
-	if(m_alias != alias) {
-		m_alias = alias;
-		m_aliasDirty = true;
 		update();
 	}
 }
@@ -120,10 +110,6 @@ void AnnotationItem::paint(
 	}
 
 	m_doc.setTextWidth(m_rect.width());
-	if(m_aliasDirty) {
-		m_aliasDirty = false;
-		utils::setAliasedAnnotationFonts(&m_doc, m_alias);
-	}
 
 	QPointF offset;
 	switch(m_valign) {
@@ -164,7 +150,7 @@ QImage AnnotationItem::toImage() const
 	img.fill(0);
 	QPainter painter(&img);
 	utils::paintAnnotation(
-		&painter, m_rect.size().toSize(), m_color, text(), m_alias, m_valign);
+		&painter, m_rect.size().toSize(), m_color, text(), m_valign);
 	return img;
 }
 

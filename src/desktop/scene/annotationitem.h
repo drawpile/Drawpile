@@ -12,7 +12,6 @@ namespace drawingboard {
 class AnnotationItem final : public QGraphicsItem {
 public:
 	enum { Type = UserType + 10 };
-	static const int HANDLE = 10;
 
 	explicit AnnotationItem(int id, QGraphicsItem *parent = nullptr);
 
@@ -46,9 +45,6 @@ public:
 	void setProtect(bool protect) { m_protect = protect; }
 	bool protect() const { return m_protect; }
 
-	void setAlias(bool alias);
-	bool alias() const { return m_alias; }
-
 	//! Highlight this item
 	void setHighlight(bool h);
 
@@ -68,6 +64,8 @@ protected:
 		QWidget *) override;
 
 private:
+	static constexpr int HANDLE = 10;
+
 	void paintHiddenBorder(QPainter *painter);
 
 	int m_id;
@@ -76,8 +74,6 @@ private:
 	QColor m_color = Qt::transparent;
 	QTextDocument m_doc;
 
-	bool m_alias = false;
-	bool m_aliasDirty = true;
 	bool m_highlight = false;
 	bool m_showborder = false;
 	bool m_protect = false;
