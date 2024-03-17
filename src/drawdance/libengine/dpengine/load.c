@@ -661,9 +661,17 @@ static bool ora_handle_annotation(DP_ReadOraContext *c, DP_XmlElement *element)
 
     uint32_t background_color = ora_read_color_attribute(element, NULL, "bg");
 
+    const char *valign = DP_xml_element_attribute(element, NULL, "valign");
+
     DP_TransientAnnotation *ta =
         DP_transient_annotation_new_init(annotation_id, x, y, width, height);
     DP_transient_annotation_background_color_set(ta, background_color);
+    if (DP_str_equal_lowercase(valign, "center")) {
+        DP_transient_annotation_valign_set(ta, DP_ANNOTATION_VALIGN_CENTER);
+    }
+    else if (DP_str_equal_lowercase(valign, "bottom")) {
+        DP_transient_annotation_valign_set(ta, DP_ANNOTATION_VALIGN_BOTTOM);
+    }
 
     DP_TransientAnnotation **pp =
         DP_queue_push(&c->annotations, sizeof(DP_TransientAnnotation *));

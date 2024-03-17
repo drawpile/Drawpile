@@ -12,6 +12,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Brighten up transparency checkerboard to be a bit easier on the eyes. Thanks Crow for suggesting.
  * Server Feature: Allow registered users to replace themselves when rejoining a session, rather than telling them that their own name is in use. Avoids having to wait for their old self to time out if their internet flakes. Thanks Crow for suggesting.
  * Fix: Don't fail server compilation when turning off webadmin or WebSockets. Thanks leegean for reporting.
+ * Fix: Save and load annotation vertical alignment to and from ORA files.
 
 2024-02-25 Version 2.2.2-beta.1
  * Server Feature: Allow adding a message when kicking someone through the admin API.

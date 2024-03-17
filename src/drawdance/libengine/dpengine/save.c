@@ -490,6 +490,21 @@ static void ora_write_background_xml(DP_Output *output, DP_Tile *t)
     }
 }
 
+static const char *ora_annotation_valign_name(int valign)
+{
+    switch (valign) {
+    case DP_ANNOTATION_VALIGN_TOP:
+        return "top";
+    case DP_ANNOTATION_VALIGN_CENTER:
+        return "center";
+    case DP_ANNOTATION_VALIGN_BOTTOM:
+        return "bottom";
+    default:
+        DP_warn("Unknown annotation valign %d", valign);
+        return NULL;
+    }
+}
+
 static void ora_write_cdata_content(DP_Output *output, const char *text)
 {
     const char *start = text;
@@ -519,6 +534,13 @@ static void ora_write_annotations_xml(DP_SaveOraContext *c, DP_Output *output,
             ORA_APPEND_ATTR(
                 c, output, "bg", "#%x",
                 DP_uint32_to_uint(DP_annotation_background_color(a)));
+
+            const char *valign =
+                ora_annotation_valign_name(DP_annotation_valign(a));
+            if (valign) {
+                ORA_APPEND_ATTR(c, output, "valign", "%s", valign);
+            }
+
             DP_OUTPUT_PRINT_LITERAL(output, "><![CDATA[");
             ora_write_cdata_content(output, DP_annotation_text(a, NULL));
             DP_OUTPUT_PRINT_LITERAL(output, "]]></drawpile:a>");
