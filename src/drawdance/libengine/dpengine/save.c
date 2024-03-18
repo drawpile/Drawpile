@@ -33,7 +33,7 @@
 #include "layer_list.h"
 #include "layer_props.h"
 #include "layer_props_list.h"
-#include "rust.h"
+#include "save_psd.h"
 #include "tile.h"
 #include "timeline.h"
 #include "track.h"
