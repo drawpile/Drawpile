@@ -9,6 +9,7 @@ extern "C" {
 #include <QtGlobal>
 #include <functional>
 
+class QColor;
 struct DP_PaintEngine;
 
 namespace drawdance {
@@ -30,7 +31,9 @@ public:
 
 	PaintEngine(
 		AclState &acls, SnapshotQueue &sq, bool wantCanvasHistoryDump,
-		DP_RendererTileFn rendererTileFn, DP_RendererUnlockFn rendererUnlockFn,
+		bool rendererChecker, const QColor &checkerColor1,
+		const QColor &checkerColor2, DP_RendererTileFn rendererTileFn,
+		DP_RendererUnlockFn rendererUnlockFn,
 		DP_RendererResizeFn rendererResizeFn, void *rendererUser,
 		DP_CanvasHistorySoftResetFn softResetFn, void *softResetUser,
 		DP_PaintEnginePlaybackFn playbackFn,
@@ -48,7 +51,8 @@ public:
 
 	net::MessageList reset(
 		AclState &acls, SnapshotQueue &sq, uint8_t localUserId,
-		DP_RendererTileFn rendererTileFn, DP_RendererUnlockFn rendererUnlockFn,
+		bool rendererChecker, DP_RendererTileFn rendererTileFn,
+		DP_RendererUnlockFn rendererUnlockFn,
 		DP_RendererResizeFn rendererResizeFn, void *rendererUser,
 		DP_CanvasHistorySoftResetFn softResetFn, void *softResetUser,
 		DP_PaintEnginePlaybackFn playbackFn,
@@ -76,6 +80,8 @@ public:
 	DP_ViewModePick pick(int x, int y);
 
 	void setInspect(unsigned int contextId, bool showTiles);
+	void setCheckerColor1(const QColor &color1);
+	void setCheckerColor2(const QColor &color2);
 
 	Tile localBackgroundTile() const;
 

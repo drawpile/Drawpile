@@ -211,23 +211,6 @@ DP_Tile *DP_tile_new_from_compressed(DP_DrawContext *dc,
     }
 }
 
-DP_Tile *DP_tile_new_checker(unsigned int context_id, DP_Pixel15 pixel1,
-                             DP_Pixel15 pixel2)
-{
-    DP_TransientTile *tt =
-        alloc_tile(true, pixel1.a == 0 && pixel2.a == 0, context_id);
-    int half = DP_TILE_SIZE / 2;
-    for (int y = 0; y < half; ++y) {
-        for (int x = 0; x < half; ++x) {
-            DP_transient_tile_pixel_at_set(tt, x, y, pixel1);
-            DP_transient_tile_pixel_at_set(tt, x + half, y, pixel2);
-            DP_transient_tile_pixel_at_set(tt, x, y + half, pixel2);
-            DP_transient_tile_pixel_at_set(tt, x + half, y + half, pixel1);
-        }
-    }
-    return DP_transient_tile_persist(tt);
-}
-
 DP_Tile *DP_tile_new_zebra(unsigned int context_id, DP_Pixel15 pixel1,
                            DP_Pixel15 pixel2)
 {
@@ -552,6 +535,15 @@ DP_TransientTile *DP_transient_tile_new_nullable(DP_Tile *tile_or_null,
                         : DP_transient_tile_new_blank(context_id);
 }
 
+DP_TransientTile *DP_transient_tile_new_checker(unsigned int context_id,
+                                                DP_Pixel15 pixel1,
+                                                DP_Pixel15 pixel2)
+{
+    DP_TransientTile *tt = alloc_tile(true, false, context_id);
+    DP_transient_tile_fill_checker(tt, pixel1, pixel2);
+    return tt;
+}
+
 DP_TransientTile *DP_transient_tile_incref(DP_TransientTile *tt)
 {
     DP_ASSERT(tt);
@@ -662,6 +654,24 @@ void DP_transient_tile_clear(DP_TransientTile *tt)
     DP_ASSERT(tt->transient);
     memset(tt->pixels, 0, DP_TILE_BYTES);
     tt->maybe_blank = true;
+}
+
+void DP_transient_tile_fill_checker(DP_TransientTile *tt, DP_Pixel15 pixel1,
+                                    DP_Pixel15 pixel2)
+{
+    DP_ASSERT(tt);
+    DP_ASSERT(DP_atomic_get(&tt->refcount) > 0);
+    DP_ASSERT(tt->transient);
+    int half = DP_TILE_SIZE / 2;
+    for (int y = 0; y < half; ++y) {
+        for (int x = 0; x < half; ++x) {
+            DP_transient_tile_pixel_at_set(tt, x, y, pixel1);
+            DP_transient_tile_pixel_at_set(tt, x + half, y, pixel2);
+            DP_transient_tile_pixel_at_set(tt, x, y + half, pixel2);
+            DP_transient_tile_pixel_at_set(tt, x + half, y + half, pixel1);
+        }
+    }
+    tt->maybe_blank = pixel1.a == 0 && pixel2.a == 0;
 }
 
 void DP_transient_tile_copy(DP_TransientTile *tt, DP_Tile *t)

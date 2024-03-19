@@ -80,6 +80,7 @@ typedef struct DP_PaintEngine DP_PaintEngine;
 DP_PaintEngine *DP_paint_engine_new_inc(
     DP_DrawContext *paint_dc, DP_DrawContext *main_dc,
     DP_DrawContext *preview_dc, DP_AclState *acls, DP_CanvasState *cs_or_null,
+    bool renderer_checker, uint32_t checker_color1, uint32_t checker_color2,
     DP_RendererTileFn renderer_tile_fn, DP_RendererUnlockFn renderer_unlock_fn,
     DP_RendererResizeFn renderer_resize_fn, void *renderer_user,
     DP_CanvasHistorySavePointFn save_point_fn, void *save_point_user,
@@ -127,6 +128,11 @@ DP_ViewModePick DP_paint_engine_pick(DP_PaintEngine *pe, int x, int y);
 
 void DP_paint_engine_inspect_set(DP_PaintEngine *pe, unsigned int context_id,
                                  bool show_tiles);
+
+uint32_t DP_paint_engine_checker_color1(DP_PaintEngine *pe);
+uint32_t DP_paint_engine_checker_color2(DP_PaintEngine *pe);
+void DP_paint_engine_checker_color1_set(DP_PaintEngine *pe, uint32_t color1);
+void DP_paint_engine_checker_color2_set(DP_PaintEngine *pe, uint32_t color2);
 
 DP_Tile *DP_paint_engine_local_background_tile_noinc(DP_PaintEngine *pe);
 

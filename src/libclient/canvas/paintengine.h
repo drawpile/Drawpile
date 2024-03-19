@@ -33,7 +33,8 @@ class PaintEngine final : public QObject {
 	Q_OBJECT
 public:
 	PaintEngine(
-		int fps, int snapshotMaxCount, long long snapshotMinDelayMs,
+		const QColor &checkerColor1, const QColor &checkerColor2, int fps,
+		int snapshotMaxCount, long long snapshotMinDelayMs,
 		bool wantCanvasHistoryDump, QObject *parent = nullptr);
 
 	~PaintEngine() override;
@@ -161,6 +162,8 @@ public:
 	unsigned int pickContextId(int x, int y);
 
 	void setInspect(unsigned int contextId, bool showTiles);
+	void setCheckerColor1(const QColor &color1);
+	void setCheckerColor2(const QColor &color2);
 
 	//! The current canvas state with the local view (hidden layers, local
 	//! background) applied.

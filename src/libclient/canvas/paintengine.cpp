@@ -31,14 +31,15 @@ extern "C" {
 namespace canvas {
 
 PaintEngine::PaintEngine(
-	int fps, int snapshotMaxCount, long long snapshotMinDelayMs,
+	const QColor &checkerColor1, const QColor &checkerColor2, int fps,
+	int snapshotMaxCount, long long snapshotMinDelayMs,
 	bool wantCanvasHistoryDump, QObject *parent)
 	: QObject(parent)
 	, m_acls{}
 	, m_snapshotQueue{snapshotMaxCount, snapshotMinDelayMs}
 	, m_paintEngine(
-		  m_acls, m_snapshotQueue, wantCanvasHistoryDump,
-		  PaintEngine::onRenderTile, PaintEngine::onRenderUnlock,
+		  m_acls, m_snapshotQueue, wantCanvasHistoryDump, true, checkerColor1,
+		  checkerColor2, PaintEngine::onRenderTile, PaintEngine::onRenderUnlock,
 		  PaintEngine::onRenderResize, this, ON_SOFT_RESET_FN, this,
 		  PaintEngine::onPlayback, PaintEngine::onDumpPlayback, this)
 	, m_fps{fps}
@@ -99,7 +100,7 @@ void PaintEngine::reset(
 	DP_Player *player)
 {
 	net::MessageList localResetImage = m_paintEngine.reset(
-		m_acls, m_snapshotQueue, localUserId, PaintEngine::onRenderTile,
+		m_acls, m_snapshotQueue, localUserId, true, PaintEngine::onRenderTile,
 		PaintEngine::onRenderUnlock, PaintEngine::onRenderResize, this,
 		ON_SOFT_RESET_FN, this, PaintEngine::onPlayback,
 		PaintEngine::onDumpPlayback, this, canvasState, player);
@@ -398,6 +399,16 @@ unsigned int PaintEngine::pickContextId(int x, int y)
 void PaintEngine::setInspect(unsigned int contextId, bool showTiles)
 {
 	m_paintEngine.setInspect(contextId, showTiles);
+}
+
+void PaintEngine::setCheckerColor1(const QColor &color1)
+{
+	m_paintEngine.setCheckerColor1(color1);
+}
+
+void PaintEngine::setCheckerColor2(const QColor &color2)
+{
+	m_paintEngine.setCheckerColor2(color2);
 }
 
 QColor PaintEngine::sampleColor(int x, int y, int layerId, int diameter)

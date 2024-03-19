@@ -1,5 +1,8 @@
 #include "libclient/settings_table_macros.h"
 
+#define CHECKER_COLOR1_DEFAULT QColor(100, 100, 100)
+#define CHECKER_COLOR2_DEFAULT QColor(135, 135, 135)
+
 #ifndef SNAPSHOT_COUNT_DEFAULT
 #   if defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)
 #       define SNAPSHOT_COUNT_DEFAULT 0
@@ -9,6 +12,8 @@
 #endif
 
 SETTING(autoSaveInterval            , AutoSaveInterval            , "settings/autosave"                     , 5000)
+SETTING(checkerColor1               , CheckerColor1               , "settings/checkercolor1"                , CHECKER_COLOR1_DEFAULT)
+SETTING(checkerColor2               , CheckerColor2               , "settings/checkercolor2"                , CHECKER_COLOR2_DEFAULT)
 SETTING(interpolateInputs           , InterpolateInputs           , "settings/input/interpolate"            , true)
 SETTING(messageQueueDrainRate       , MessageQueueDrainRate       , "settings/messagequeuedrainrate"        , net::MessageQueue::DEFAULT_SMOOTH_DRAIN_RATE)
 SETTING(parentalControlsAutoTag     , ParentalControlsAutoTag     , "pc/autotag"                            , true)

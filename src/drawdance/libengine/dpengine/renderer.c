@@ -21,8 +21,9 @@
 
 #define CHANGE_NONE        0u
 #define CHANGE_RESIZE      (1u << 0u)
-#define CHANGE_LOCAL_STATE (1u << 1u)
-#define CHANGE_UNLOCK      (1u << 2u)
+#define CHANGE_CHECKER     (1u << 1u)
+#define CHANGE_LOCAL_STATE (1u << 2u)
+#define CHANGE_UNLOCK      (1u << 3u)
 
 typedef struct DP_RenderContext {
     DP_ALIGNAS_SIMD DP_Pixel8 pixels[DP_TILE_LENGTH];
@@ -62,9 +63,15 @@ typedef struct DP_RendererResize {
     int offset_x, offset_y;
 } DP_RendererResize;
 
+typedef struct DP_RendererChecker {
+    DP_Pixel8 color1;
+    DP_Pixel8 color2;
+} DP_RendererChecker;
+
 typedef struct DP_RendererBlocking {
     unsigned int changes;
     DP_RendererResize resize;
+    DP_RendererChecker checker;
     DP_RendererLocalState local_state;
 } DP_RendererBlocking;
 
@@ -91,7 +98,9 @@ struct DP_Renderer {
         size_t map_capacity;
         char *map;
     } tile;
-    DP_Tile *checker;
+    DP_Pixel8 checker_color1;
+    DP_Pixel8 checker_color2;
+    DP_TransientTile *checker;
     DP_CanvasState *cs;
     bool needs_checkers;
     int xtiles;
@@ -125,7 +134,7 @@ static void handle_tile_job(DP_Renderer *renderer, DP_RenderContext *rc,
     DP_canvas_state_flatten_tile_to(cs, job->tile_index, tt, true, &vmf);
 
     if (job->needs_checkers) {
-        DP_transient_tile_merge(tt, renderer->checker, DP_BIT15,
+        DP_transient_tile_merge(tt, (DP_Tile *)renderer->checker, DP_BIT15,
                                 DP_BLEND_MODE_BEHIND);
     }
 
@@ -152,6 +161,12 @@ static void handle_blocking_job(DP_Renderer *renderer, DP_Mutex *queue_mutex,
                             job->resize.height, job->resize.prev_width,
                             job->resize.prev_height, job->resize.offset_x,
                             job->resize.offset_y);
+    }
+
+    if (changes & CHANGE_CHECKER) {
+        DP_transient_tile_fill_checker(renderer->checker,
+                                       DP_pixel8_to_15(job->checker.color1),
+                                       DP_pixel8_to_15(job->checker.color2));
     }
 
     if (changes & CHANGE_LOCAL_STATE) {
@@ -305,7 +320,9 @@ static void run_worker_thread(void *user)
 }
 
 
-DP_Renderer *DP_renderer_new(int thread_count, DP_RendererTileFn tile_fn,
+DP_Renderer *DP_renderer_new(int thread_count, bool checker,
+                             DP_Pixel8 checker_color1, DP_Pixel8 checker_color2,
+                             DP_RendererTileFn tile_fn,
                              DP_RendererUnlockFn unlock_fn,
                              DP_RendererResizeFn resize_fn, void *user)
 {
@@ -334,9 +351,12 @@ DP_Renderer *DP_renderer_new(int thread_count, DP_RendererTileFn tile_fn,
                   sizeof(DP_RendererTileCoords));
     renderer->tile.map_capacity = 0;
     renderer->tile.map = NULL;
-    renderer->checker = DP_tile_new_checker(
-        0, (DP_Pixel15){28270, 28270, 28270, DP_BIT15},
-        (DP_Pixel15){DP_BIT15, DP_BIT15, DP_BIT15, DP_BIT15});
+    renderer->checker_color1 = checker_color1;
+    renderer->checker_color2 = checker_color2;
+    renderer->checker =
+        checker ? DP_transient_tile_new_checker(
+            0, DP_pixel8_to_15(checker_color1), DP_pixel8_to_15(checker_color2))
+                : NULL;
     renderer->cs = DP_canvas_state_new();
     renderer->needs_checkers = true;
     renderer->xtiles = 0;
@@ -404,7 +424,7 @@ void DP_renderer_free(DP_Renderer *renderer)
         DP_mutex_free(renderer->queue_mutex);
         DP_onion_skins_free(renderer->local_state.oss);
         DP_canvas_state_decref(renderer->cs);
-        DP_tile_decref(renderer->checker);
+        DP_transient_tile_decref_nullable(renderer->checker);
         DP_free(renderer->tile.map);
         DP_queue_dispose(&renderer->tile.queue_low);
         DP_queue_dispose(&renderer->tile.queue_high);
@@ -422,6 +442,12 @@ int DP_renderer_thread_count(DP_Renderer *renderer)
 {
     DP_ASSERT(renderer);
     return renderer->thread_count;
+}
+
+bool DP_renderer_checkers(DP_Renderer *renderer)
+{
+    DP_ASSERT(renderer);
+    return renderer->checker;
 }
 
 
@@ -622,6 +648,7 @@ static void reprioritize_tiles(DP_Renderer *renderer, DP_CanvasDiff *diff,
 void DP_renderer_apply(DP_Renderer *renderer, DP_CanvasState *cs,
                        DP_LocalState *ls, DP_CanvasDiff *diff,
                        bool layers_can_decrease_opacity,
+                       DP_Pixel8 checker_color1, DP_Pixel8 checker_color2,
                        DP_Rect view_tile_bounds, bool render_outside_view,
                        DP_RendererMode mode)
 {
@@ -642,8 +669,12 @@ void DP_renderer_apply(DP_Renderer *renderer, DP_CanvasState *cs,
     // It's very rare in practice for the checkerboard background to actually be
     // visible behind the canvas. Only if the canvas background is set to a
     // non-opaque value or there's weird blend modes like Erase at top-level.
-    renderer->needs_checkers =
-        !DP_canvas_state_background_opaque(cs) || layers_can_decrease_opacity;
+    // The OpenGL canvas view does its own background instead, so if that's in
+    // use, renderer->checker will be null.
+    bool has_checker = renderer->checker;
+    renderer->needs_checkers = has_checker
+                            && (!DP_canvas_state_background_opaque(cs)
+                                || layers_can_decrease_opacity);
 
     DP_RendererBlocking blocking;
     blocking.changes = CHANGE_NONE;
@@ -659,6 +690,15 @@ void DP_renderer_apply(DP_Renderer *renderer, DP_CanvasState *cs,
         DP_canvas_state_offset_x(prev_cs) - DP_canvas_state_offset_x(cs),
         DP_canvas_state_offset_y(prev_cs) - DP_canvas_state_offset_y(cs),
     };
+
+    if (has_checker
+        && (renderer->checker_color1.color != checker_color1.color
+            || renderer->checker_color2.color != checker_color2.color)) {
+        renderer->checker_color1 = checker_color1;
+        renderer->checker_color2 = checker_color2;
+        blocking.changes |= CHANGE_CHECKER;
+        blocking.checker = (DP_RendererChecker){checker_color1, checker_color2};
+    }
 
     if (local_state_differs(&renderer->local_state, ls)) {
         blocking.changes |= CHANGE_LOCAL_STATE;

@@ -8,16 +8,18 @@ extern "C" {
 #include "libclient/drawdance/paintengine.h"
 #include "libclient/drawdance/snapshotqueue.h"
 #include "libshared/util/paths.h"
+#include <QColor>
 #include <QDateTime>
 
 namespace drawdance {
 
 PaintEngine::PaintEngine(
 	AclState &acls, SnapshotQueue &sq, bool wantCanvasHistoryDump,
-	DP_RendererTileFn rendererTileFn, DP_RendererUnlockFn rendererUnlockFn,
-	DP_RendererResizeFn rendererResizeFn, void *rendererUser,
-	DP_CanvasHistorySoftResetFn softResetFn, void *softResetUser,
-	DP_PaintEnginePlaybackFn playbackFn,
+	bool rendererChecker, const QColor &checkerColor1,
+	const QColor &checkerColor2, DP_RendererTileFn rendererTileFn,
+	DP_RendererUnlockFn rendererUnlockFn, DP_RendererResizeFn rendererResizeFn,
+	void *rendererUser, DP_CanvasHistorySoftResetFn softResetFn,
+	void *softResetUser, DP_PaintEnginePlaybackFn playbackFn,
 	DP_PaintEngineDumpPlaybackFn dumpPlaybackFn, void *playbackUser,
 	const CanvasState &canvasState)
 	: m_paintDc{DrawContextPool::acquire()}
@@ -25,9 +27,10 @@ PaintEngine::PaintEngine(
 	, m_previewDc{DrawContextPool::acquire()}
 	, m_data(DP_paint_engine_new_inc(
 		  m_paintDc.get(), m_mainDc.get(), m_previewDc.get(), acls.get(),
-		  canvasState.get(), rendererTileFn, rendererUnlockFn, rendererResizeFn,
-		  rendererUser, DP_snapshot_queue_on_save_point, sq.get(), softResetFn,
-		  softResetUser, wantCanvasHistoryDump,
+		  canvasState.get(), rendererChecker, checkerColor1.rgba(),
+		  checkerColor2.rgba(), rendererTileFn, rendererUnlockFn,
+		  rendererResizeFn, rendererUser, DP_snapshot_queue_on_save_point,
+		  sq.get(), softResetFn, softResetUser, wantCanvasHistoryDump,
 		  getDumpDir().toUtf8().constData(), &PaintEngine::getTimeMs, nullptr,
 		  nullptr, playbackFn, dumpPlaybackFn, playbackUser))
 {
@@ -45,10 +48,10 @@ DP_PaintEngine *PaintEngine::get() const
 
 net::MessageList PaintEngine::reset(
 	AclState &acls, SnapshotQueue &sq, uint8_t localUserId,
-	DP_RendererTileFn rendererTileFn, DP_RendererUnlockFn rendererUnlockFn,
-	DP_RendererResizeFn rendererResizeFn, void *rendererUser,
-	DP_CanvasHistorySoftResetFn softResetFn, void *softResetUser,
-	DP_PaintEnginePlaybackFn playbackFn,
+	bool rendererChecker, DP_RendererTileFn rendererTileFn,
+	DP_RendererUnlockFn rendererUnlockFn, DP_RendererResizeFn rendererResizeFn,
+	void *rendererUser, DP_CanvasHistorySoftResetFn softResetFn,
+	void *softResetUser, DP_PaintEnginePlaybackFn playbackFn,
 	DP_PaintEngineDumpPlaybackFn dumpPlaybackFn, void *playbackUser,
 	const CanvasState &canvasState, DP_Player *player)
 {
@@ -57,15 +60,18 @@ net::MessageList PaintEngine::reset(
 		m_data, pushResetMessage, &localResetImage);
 	bool wantCanvasHistoryDump =
 		DP_paint_engine_want_canvas_history_dump(m_data);
+	QColor checkerColor1(DP_paint_engine_checker_color1(m_data));
+	QColor checkerColor2(DP_paint_engine_checker_color2(m_data));
 	DP_paint_engine_free_join(m_data);
 	acls.reset(localUserId);
 	m_data = DP_paint_engine_new_inc(
 		m_paintDc.get(), m_mainDc.get(), m_previewDc.get(), acls.get(),
-		canvasState.get(), rendererTileFn, rendererUnlockFn, rendererResizeFn,
-		rendererUser, DP_snapshot_queue_on_save_point, sq.get(), softResetFn,
-		softResetUser, wantCanvasHistoryDump, getDumpDir().toUtf8().constData(),
-		&PaintEngine::getTimeMs, nullptr, player, playbackFn, dumpPlaybackFn,
-		playbackUser);
+		canvasState.get(), rendererChecker, checkerColor1.rgba(),
+		checkerColor2.rgba(), rendererTileFn, rendererUnlockFn,
+		rendererResizeFn, rendererUser, DP_snapshot_queue_on_save_point,
+		sq.get(), softResetFn, softResetUser, wantCanvasHistoryDump,
+		getDumpDir().toUtf8().constData(), &PaintEngine::getTimeMs, nullptr,
+		player, playbackFn, dumpPlaybackFn, playbackUser);
 	return localResetImage;
 }
 
@@ -126,6 +132,16 @@ DP_ViewModePick PaintEngine::pick(int x, int y)
 void PaintEngine::setInspect(unsigned int contextId, bool showTiles)
 {
 	DP_paint_engine_inspect_set(m_data, contextId, showTiles);
+}
+
+void PaintEngine::setCheckerColor1(const QColor &color1)
+{
+	DP_paint_engine_checker_color1_set(m_data, color1.rgba());
+}
+
+void PaintEngine::setCheckerColor2(const QColor &color2)
+{
+	DP_paint_engine_checker_color2_set(m_data, color2.rgba());
 }
 
 Tile PaintEngine::localBackgroundTile() const

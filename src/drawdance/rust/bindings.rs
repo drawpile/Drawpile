@@ -6258,6 +6258,9 @@ pub type DP_RendererMode = ::std::os::raw::c_uint;
 extern "C" {
     pub fn DP_renderer_new(
         thread_count: ::std::os::raw::c_int,
+        checkers: bool,
+        checker_color1: DP_Pixel8,
+        checker_color2: DP_Pixel8,
         tile_fn: DP_RendererTileFn,
         unlock_fn: DP_RendererUnlockFn,
         resize_fn: DP_RendererResizeFn,
@@ -6271,12 +6274,17 @@ extern "C" {
     pub fn DP_renderer_thread_count(renderer: *mut DP_Renderer) -> ::std::os::raw::c_int;
 }
 extern "C" {
+    pub fn DP_renderer_checkers(renderer: *mut DP_Renderer) -> bool;
+}
+extern "C" {
     pub fn DP_renderer_apply(
         renderer: *mut DP_Renderer,
         cs: *mut DP_CanvasState,
         ls: *mut DP_LocalState,
         diff: *mut DP_CanvasDiff,
         layers_can_decrease_opacity: bool,
+        checker_color1: DP_Pixel8,
+        checker_color2: DP_Pixel8,
         view_tile_bounds: DP_Rect,
         render_outside_view: bool,
         mode: DP_RendererMode,
@@ -6375,6 +6383,9 @@ extern "C" {
         preview_dc: *mut DP_DrawContext,
         acls: *mut DP_AclState,
         cs_or_null: *mut DP_CanvasState,
+        renderer_checker: bool,
+        checker_color1: u32,
+        checker_color2: u32,
         renderer_tile_fn: DP_RendererTileFn,
         renderer_unlock_fn: DP_RendererUnlockFn,
         renderer_resize_fn: DP_RendererResizeFn,
@@ -6463,6 +6474,18 @@ extern "C" {
         context_id: ::std::os::raw::c_uint,
         show_tiles: bool,
     );
+}
+extern "C" {
+    pub fn DP_paint_engine_checker_color1(pe: *mut DP_PaintEngine) -> u32;
+}
+extern "C" {
+    pub fn DP_paint_engine_checker_color2(pe: *mut DP_PaintEngine) -> u32;
+}
+extern "C" {
+    pub fn DP_paint_engine_checker_color1_set(pe: *mut DP_PaintEngine, color1: u32);
+}
+extern "C" {
+    pub fn DP_paint_engine_checker_color2_set(pe: *mut DP_PaintEngine, color2: u32);
 }
 extern "C" {
     pub fn DP_paint_engine_local_background_tile_noinc(pe: *mut DP_PaintEngine) -> *mut DP_Tile;
@@ -6971,13 +6994,6 @@ extern "C" {
     ) -> *mut DP_Tile;
 }
 extern "C" {
-    pub fn DP_tile_new_checker(
-        context_id: ::std::os::raw::c_uint,
-        pixel1: DP_Pixel15,
-        pixel2: DP_Pixel15,
-    ) -> *mut DP_Tile;
-}
-extern "C" {
     pub fn DP_tile_new_zebra(
         context_id: ::std::os::raw::c_uint,
         pixel1: DP_Pixel15,
@@ -7104,6 +7120,13 @@ extern "C" {
     ) -> *mut DP_TransientTile;
 }
 extern "C" {
+    pub fn DP_transient_tile_new_checker(
+        context_id: ::std::os::raw::c_uint,
+        pixel1: DP_Pixel15,
+        pixel2: DP_Pixel15,
+    ) -> *mut DP_TransientTile;
+}
+extern "C" {
     pub fn DP_transient_tile_incref(tt: *mut DP_TransientTile) -> *mut DP_TransientTile;
 }
 extern "C" {
@@ -7155,6 +7178,13 @@ extern "C" {
 }
 extern "C" {
     pub fn DP_transient_tile_clear(tt: *mut DP_TransientTile);
+}
+extern "C" {
+    pub fn DP_transient_tile_fill_checker(
+        tt: *mut DP_TransientTile,
+        pixel1: DP_Pixel15,
+        pixel2: DP_Pixel15,
+    );
 }
 extern "C" {
     pub fn DP_transient_tile_copy(tt: *mut DP_TransientTile, t: *mut DP_Tile);
@@ -7896,6 +7926,9 @@ extern "C" {
 }
 extern "C" {
     pub fn DP_blend_mode_preserves_alpha(blend_mode: ::std::os::raw::c_int) -> bool;
+}
+extern "C" {
+    pub fn DP_blend_mode_presents_as_eraser(blend_mode: ::std::os::raw::c_int) -> bool;
 }
 extern "C" {
     pub fn DP_blend_mode_by_svg_name(

@@ -97,19 +97,57 @@ void UserInterface::initMiscellaneous(
 	desktop::settings::Settings &settings, QFormLayout *form)
 {
 	using color_widgets::ColorPreview;
-	ColorPreview *colorPreview = new ColorPreview;
-	colorPreview->setDisplayMode(ColorPreview::DisplayMode::NoAlpha);
-	colorPreview->setToolTip(tr("Background color behind the canvas"));
-	colorPreview->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-	colorPreview->setCursor(Qt::PointingHandCursor);
-	form->addRow(tr("Color behind canvas:"), colorPreview);
-	settings.bindCanvasViewBackgroundColor(
-		this, [colorPreview](const QColor &color) {
-			colorPreview->setColor(color);
-		});
 
-	connect(colorPreview, &ColorPreview::clicked, this, [this, &settings] {
-		pickCanvasBackgroundColor(settings);
+	ColorPreview *backgroundPreview = new ColorPreview;
+	ColorPreview *checker1Preview = new ColorPreview;
+	ColorPreview *checker2Preview = new ColorPreview;
+	backgroundPreview->setDisplayMode(ColorPreview::DisplayMode::NoAlpha);
+	checker1Preview->setDisplayMode(ColorPreview::DisplayMode::NoAlpha);
+	checker2Preview->setDisplayMode(ColorPreview::DisplayMode::NoAlpha);
+	backgroundPreview->setToolTip(tr("Background color behind the canvas"));
+	checker1Preview->setToolTip(tr("First checker color"));
+	checker2Preview->setToolTip(tr("Second checker color"));
+	backgroundPreview->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+	checker1Preview->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+	checker2Preview->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+	backgroundPreview->setCursor(Qt::PointingHandCursor);
+	checker1Preview->setCursor(Qt::PointingHandCursor);
+	checker2Preview->setCursor(Qt::PointingHandCursor);
+	QHBoxLayout *backgroundLayout = new QHBoxLayout;
+	backgroundLayout->addWidget(backgroundPreview);
+	backgroundLayout->addWidget(checker1Preview);
+	backgroundLayout->addWidget(checker2Preview);
+	backgroundLayout->addStretch();
+	form->addRow(tr("Colors behind canvas:"), backgroundLayout);
+
+	settings.bindCanvasViewBackgroundColor(
+		this, [backgroundPreview](const QColor &color) {
+			backgroundPreview->setColor(color);
+		});
+	settings.bindCheckerColor1(this, [checker1Preview](const QColor &color) {
+		checker1Preview->setColor(color);
+	});
+	settings.bindCheckerColor2(this, [checker2Preview](const QColor &color) {
+		checker2Preview->setColor(color);
+	});
+
+	connect(backgroundPreview, &ColorPreview::clicked, this, [this, &settings] {
+		pickColor(
+			settings, &desktop::settings::Settings::canvasViewBackgroundColor,
+			&desktop::settings::Settings::setCanvasViewBackgroundColor,
+			CANVAS_VIEW_BACKGROUND_COLOR_DEFAULT);
+	});
+	connect(checker1Preview, &ColorPreview::clicked, this, [this, &settings] {
+		pickColor(
+			settings, &desktop::settings::Settings::checkerColor1,
+			&desktop::settings::Settings::setCheckerColor1,
+			CHECKER_COLOR1_DEFAULT);
+	});
+	connect(checker2Preview, &ColorPreview::clicked, this, [this, &settings] {
+		pickColor(
+			settings, &desktop::settings::Settings::checkerColor2,
+			&desktop::settings::Settings::setCheckerColor2,
+			CHECKER_COLOR2_DEFAULT);
 	});
 
 	QCheckBox *scrollBars = new QCheckBox(tr("Show scroll bars on canvas"));
@@ -194,18 +232,20 @@ void UserInterface::initScaling(
 	settings.bindOverrideFontSize(fontSize, &QWidget::setEnabled);
 }
 
-void UserInterface::pickCanvasBackgroundColor(
-	desktop::settings::Settings &settings)
+void UserInterface::pickColor(
+	desktop::settings::Settings &settings,
+	QColor (desktop::settings::Settings::*getColor)() const,
+	void (desktop::settings::Settings::*setColor)(QColor),
+	const QColor &defaultColor)
 {
 	using color_widgets::ColorDialog;
 	ColorDialog dlg;
-	dlg.setColor(settings.canvasViewBackgroundColor());
+	dlg.setColor((settings.*getColor)());
 	dlg.setAlphaEnabled(false);
 	dialogs::applyColorDialogSettings(&dlg);
-	dialogs::setColorDialogResetColor(
-		&dlg, CANVAS_VIEW_BACKGROUND_COLOR_DEFAULT);
+	dialogs::setColorDialogResetColor(&dlg, defaultColor);
 	if(dlg.exec() == QDialog::Accepted) {
-		settings.setCanvasViewBackgroundColor(dlg.color());
+		(settings.*setColor)(dlg.color());
 	}
 }
 

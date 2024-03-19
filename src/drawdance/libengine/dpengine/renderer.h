@@ -29,7 +29,9 @@ typedef enum DP_RendererMode {
     DP_RENDERER_EVERYTHING,
 } DP_RendererMode;
 
-DP_Renderer *DP_renderer_new(int thread_count, DP_RendererTileFn tile_fn,
+DP_Renderer *DP_renderer_new(int thread_count, bool checkers,
+                             DP_Pixel8 checker_color1, DP_Pixel8 checker_color2,
+                             DP_RendererTileFn tile_fn,
                              DP_RendererUnlockFn unlock_fn,
                              DP_RendererResizeFn resize_fn, void *user);
 
@@ -37,10 +39,13 @@ void DP_renderer_free(DP_Renderer *renderer);
 
 int DP_renderer_thread_count(DP_Renderer *renderer);
 
+bool DP_renderer_checkers(DP_Renderer *renderer);
+
 // Increments refcount on the given canvas state, resets the given diff.
 void DP_renderer_apply(DP_Renderer *renderer, DP_CanvasState *cs,
                        DP_LocalState *ls, DP_CanvasDiff *diff,
                        bool layers_can_decrease_opacity,
+                       DP_Pixel8 checker_color1, DP_Pixel8 checker_color2,
                        DP_Rect view_tile_bounds, bool render_outside_view,
                        DP_RendererMode mode);
 

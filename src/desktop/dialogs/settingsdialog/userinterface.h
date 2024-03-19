@@ -37,7 +37,11 @@ private:
 
 	void initScaling(desktop::settings::Settings &settings, QVBoxLayout *form);
 
-	void pickCanvasBackgroundColor(desktop::settings::Settings &settings);
+	void pickColor(
+		desktop::settings::Settings &settings,
+		QColor (desktop::settings::Settings::*getColor)() const,
+		void (desktop::settings::Settings::*setColor)(QColor),
+		const QColor &defaultColor);
 };
 
 }

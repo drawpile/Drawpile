@@ -100,9 +100,6 @@ DP_Tile *DP_tile_new_from_compressed(DP_DrawContext *dc,
                                      const unsigned char *image,
                                      size_t image_size);
 
-DP_Tile *DP_tile_new_checker(unsigned int context_id, DP_Pixel15 pixel1,
-                             DP_Pixel15 pixel2);
-
 DP_Tile *DP_tile_new_zebra(unsigned int context_id, DP_Pixel15 pixel1,
                            DP_Pixel15 pixel2);
 
@@ -165,6 +162,10 @@ DP_TransientTile *DP_transient_tile_new_blank(unsigned int context_id);
 DP_TransientTile *DP_transient_tile_new_nullable(DP_Tile *tile_or_null,
                                                  unsigned int context_id);
 
+DP_TransientTile *DP_transient_tile_new_checker(unsigned int context_id,
+                                                DP_Pixel15 pixel1,
+                                                DP_Pixel15 pixel2);
+
 DP_TransientTile *DP_transient_tile_incref(DP_TransientTile *tt);
 
 DP_TransientTile *
@@ -192,6 +193,9 @@ void DP_transient_tile_pixel_at_put(DP_TransientTile *tt, int blend_mode, int x,
                                     int y, DP_Pixel15 pixel);
 
 void DP_transient_tile_clear(DP_TransientTile *tt);
+
+void DP_transient_tile_fill_checker(DP_TransientTile *tt, DP_Pixel15 pixel1,
+                                    DP_Pixel15 pixel2);
 
 void DP_transient_tile_copy(DP_TransientTile *tt, DP_Tile *t);
 

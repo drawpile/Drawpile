@@ -110,8 +110,11 @@ struct DP_PaintEngine {
     DP_LocalState *local_state;
     struct {
         bool reveal_censored;
-        unsigned int inspect_context_id;
         bool inspect_show_tiles;
+        bool layers_can_decrease_opacity;
+        unsigned int inspect_context_id;
+        DP_Pixel8 checker_color1;
+        DP_Pixel8 checker_color2;
         struct {
             DP_LayerPropsList *prev_lpl;
             DP_Timeline *prev_tl;
@@ -121,7 +124,6 @@ struct DP_PaintEngine {
             DP_Timeline *prev_tl;
             DP_Timeline *tl;
         } tracks;
-        bool layers_can_decrease_opacity;
     } local_view;
     DP_DrawContext *paint_dc;
     DP_DrawContext *main_dc;
@@ -663,6 +665,7 @@ static void preview_clear(void *user, DP_PreviewType type)
 DP_PaintEngine *DP_paint_engine_new_inc(
     DP_DrawContext *paint_dc, DP_DrawContext *main_dc,
     DP_DrawContext *preview_dc, DP_AclState *acls, DP_CanvasState *cs_or_null,
+    bool renderer_checker, uint32_t checker_color1, uint32_t checker_color2,
     DP_RendererTileFn renderer_tile_fn, DP_RendererUnlockFn renderer_unlock_fn,
     DP_RendererResizeFn renderer_resize_fn, void *renderer_user,
     DP_CanvasHistorySavePointFn save_point_fn, void *save_point_user,
@@ -688,12 +691,14 @@ DP_PaintEngine *DP_paint_engine_new_inc(
     pe->local_view.reveal_censored = false;
     pe->local_view.inspect_context_id = 0;
     pe->local_view.inspect_show_tiles = false;
+    pe->local_view.layers_can_decrease_opacity = true;
+    pe->local_view.checker_color1 = (DP_Pixel8){checker_color1};
+    pe->local_view.checker_color2 = (DP_Pixel8){checker_color2};
     pe->local_view.layers.prev_lpl = NULL;
     pe->local_view.layers.prev_tl = NULL;
     pe->local_view.layers.lpl = NULL;
     pe->local_view.tracks.prev_tl = NULL;
     pe->local_view.tracks.tl = NULL;
-    pe->local_view.layers_can_decrease_opacity = true;
     pe->paint_dc = paint_dc;
     pe->main_dc = main_dc;
     for (int i = 0; i < DP_PREVIEW_COUNT; ++i) {
@@ -717,7 +722,9 @@ DP_PaintEngine *DP_paint_engine_new_inc(
     pe->reset_locked = false;
     pe->paint_thread = DP_thread_new(run_paint_engine, pe);
     pe->renderer =
-        DP_renderer_new(DP_thread_cpu_count(128), renderer_tile_fn,
+        DP_renderer_new(DP_thread_cpu_count(128), renderer_checker,
+                        pe->local_view.checker_color1,
+                        pe->local_view.checker_color2, renderer_tile_fn,
                         renderer_unlock_fn, renderer_resize_fn, renderer_user);
     pe->meta.acl_change_flags = 0;
     DP_VECTOR_INIT_TYPE(&pe->meta.cursor_changes, DP_PaintEngineCursorChange,
@@ -905,6 +912,40 @@ void DP_paint_engine_inspect_set(DP_PaintEngine *pe, unsigned int context_id,
         pe->local_view.inspect_context_id = context_id;
         pe->local_view.inspect_show_tiles = show_tiles;
         invalidate_local_view(pe, false);
+    }
+}
+
+uint32_t DP_paint_engine_checker_color1(DP_PaintEngine *pe)
+{
+    DP_ASSERT(pe);
+    return pe->local_view.checker_color1.color;
+}
+
+uint32_t DP_paint_engine_checker_color2(DP_PaintEngine *pe)
+{
+    DP_ASSERT(pe);
+    return pe->local_view.checker_color2.color;
+}
+
+void DP_paint_engine_checker_color1_set(DP_PaintEngine *pe, uint32_t color1)
+{
+    DP_ASSERT(pe);
+    if (pe->local_view.checker_color1.color != color1) {
+        pe->local_view.checker_color1.color = color1;
+        if (DP_renderer_checkers(pe->renderer)) {
+            invalidate_local_view(pe, true);
+        }
+    }
+}
+
+void DP_paint_engine_checker_color2_set(DP_PaintEngine *pe, uint32_t color2)
+{
+    DP_ASSERT(pe);
+    if (pe->local_view.checker_color2.color != color2) {
+        pe->local_view.checker_color2.color = color2;
+        if (DP_renderer_checkers(pe->renderer)) {
+            invalidate_local_view(pe, true);
+        }
     }
 }
 
@@ -2233,7 +2274,9 @@ emit_changes(DP_PaintEngine *pe, DP_CanvasState *prev, DP_CanvasState *cs,
     DP_CanvasDiff *diff = pe->diff;
     DP_canvas_state_diff(cs, prev, diff);
     DP_renderer_apply(pe->renderer, cs, pe->local_state, diff,
-                      pe->local_view.layers_can_decrease_opacity, tile_bounds,
+                      pe->local_view.layers_can_decrease_opacity,
+                      pe->local_view.checker_color1,
+                      pe->local_view.checker_color2, tile_bounds,
                       render_outside_tile_bounds, DP_RENDERER_CONTINUOUS);
 
     if (!catching_up) {
@@ -2409,7 +2452,9 @@ void DP_paint_engine_change_bounds(DP_PaintEngine *pe, DP_Rect tile_bounds,
                                    bool render_outside_tile_bounds)
 {
     DP_renderer_apply(pe->renderer, pe->view_cs, pe->local_state, pe->diff,
-                      pe->local_view.layers_can_decrease_opacity, tile_bounds,
+                      pe->local_view.layers_can_decrease_opacity,
+                      pe->local_view.checker_color1,
+                      pe->local_view.checker_color2, tile_bounds,
                       render_outside_tile_bounds,
                       DP_RENDERER_VIEW_BOUNDS_CHANGED);
 }
@@ -2418,6 +2463,8 @@ void DP_paint_engine_render_everything(DP_PaintEngine *pe)
 {
     DP_renderer_apply(pe->renderer, pe->view_cs, pe->local_state, pe->diff,
                       pe->local_view.layers_can_decrease_opacity,
+                      pe->local_view.checker_color1,
+                      pe->local_view.checker_color2,
                       DP_rect_make(0, 0, UINT16_MAX, UINT16_MAX), false,
                       DP_RENDERER_EVERYTHING);
 }

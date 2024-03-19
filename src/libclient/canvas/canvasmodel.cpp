@@ -30,7 +30,8 @@ CanvasModel::CanvasModel(
 	, m_compatibilityMode(false)
 {
 	m_paintengine = new PaintEngine(
-		fps, snapshotMaxCount, snapshotMinDelayMs, wantCanvasHistoryDump, this);
+		settings.checkerColor1(), settings.checkerColor2(), fps,
+		snapshotMaxCount, snapshotMinDelayMs, wantCanvasHistoryDump, this);
 
 	m_aclstate = new AclState(this);
 	m_layerlist = new LayerListModel(this);
@@ -87,6 +88,8 @@ CanvasModel::CanvasModel(
 	settings.bindEngineSnapshotInterval(this, [this](int minDelaySec) {
 		m_paintengine->setSnapshotMinDelayMs(minDelaySec * 1000LL);
 	});
+	settings.bindCheckerColor1(m_paintengine, &PaintEngine::setCheckerColor1);
+	settings.bindCheckerColor2(m_paintengine, &PaintEngine::setCheckerColor2);
 }
 
 void CanvasModel::loadBlank(
