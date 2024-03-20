@@ -102,17 +102,29 @@ class DP_OutputDevice : public QIODevice {
 };
 
 
-static bool load_qimage(DP_Input *input, const char *format, QImage &qi,
-                        int &width, int &height)
+static bool load_qimage_from_qiodevice(QIODevice *dev, const char *format,
+                                       QImage &qi, int &width, int &height)
 {
-    DP_InputDevice dev{input};
-    if (qi.load(&dev, format)) {
+    if (qi.load(dev, format)) {
         width = qi.width();
         height = qi.height();
         return width > 0 && height > 0;
     }
     else {
         return false;
+    }
+}
+
+static bool load_qimage(DP_Input *input, const char *format, QImage &qi,
+                        int &width, int &height)
+{
+    QIODevice *dev = DP_input_qiodevice(input);
+    if (dev) {
+        return load_qimage_from_qiodevice(dev, format, qi, width, height);
+    }
+    else {
+        DP_InputDevice wrapper(input);
+        return load_qimage_from_qiodevice(&wrapper, format, qi, width, height);
     }
 }
 
@@ -154,15 +166,14 @@ extern "C" DP_Image *DP_image_jpeg_read(DP_Input *input)
 }
 
 
-static bool write_image(DP_Output *output, int width, int height, uchar *pixels,
-                        const char *format, int quality,
-                        QImage::Format imageFormat)
+static bool write_image_to_qiodevice(QIODevice *dev, int width, int height,
+                                     uchar *pixels, const char *format,
+                                     int quality, QImage::Format imageFormat,
+                                     unsigned int error_count)
 {
-    unsigned int error_count = DP_error_count();
-    DP_OutputDevice dev{output};
-    QImage qi{pixels, width, height, width * 4, imageFormat};
-    if (qi.save(&dev, format, quality)) {
-        return DP_output_flush(output);
+    QImage qi(pixels, width, height, width * 4, imageFormat);
+    if (qi.save(dev, format, quality)) {
+        return true;
     }
     else {
         if (DP_error_count_since(error_count) == 0) {
@@ -170,6 +181,25 @@ static bool write_image(DP_Output *output, int width, int height, uchar *pixels,
         }
         return false;
     }
+}
+
+static bool write_image(DP_Output *output, int width, int height, uchar *pixels,
+                        const char *format, int quality,
+                        QImage::Format imageFormat)
+{
+    unsigned int error_count = DP_error_count();
+    QIODevice *dev = DP_output_qiodevice(output);
+    bool ok;
+    if (dev) {
+        ok = write_image_to_qiodevice(dev, width, height, pixels, format,
+                                      quality, imageFormat, error_count);
+    }
+    else {
+        DP_OutputDevice wrapper(output);
+        ok = write_image_to_qiodevice(&wrapper, width, height, pixels, format,
+                                      quality, imageFormat, error_count);
+    }
+    return ok ? DP_output_flush(output) : false;
 }
 
 extern "C" bool DP_image_png_write(DP_Output *output, int width, int height,

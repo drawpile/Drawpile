@@ -102,6 +102,11 @@ static bool qfile_input_seek_by(void *internal, size_t size)
     return false;
 }
 
+static QIODevice *qfile_input_qiodevice(void *internal)
+{
+    return get_file(internal);
+}
+
 static void qfile_input_dispose(void *internal)
 {
     DP_QFileInputState *state = static_cast<DP_QFileInputState *>(internal);
@@ -113,9 +118,9 @@ static void qfile_input_dispose(void *internal)
 }
 
 static const DP_InputMethods qfile_input_methods = {
-    qfile_input_read,      qfile_input_length, qfile_input_rewind,
-    qfile_input_rewind_by, qfile_input_seek,   qfile_input_seek_by,
-    qfile_input_dispose,
+    qfile_input_read,      qfile_input_length,  qfile_input_rewind,
+    qfile_input_rewind_by, qfile_input_seek,    qfile_input_seek_by,
+    qfile_input_qiodevice, qfile_input_dispose,
 };
 
 const DP_InputMethods *qfile_input_init(void *internal, void *arg)

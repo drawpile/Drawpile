@@ -161,6 +161,13 @@ bool DP_input_seek_by(DP_Input *input, size_t size)
     }
 }
 
+QIODevice *DP_input_qiodevice(DP_Input *input)
+{
+    DP_ASSERT(input);
+    QIODevice *(*qiodevice)(void *) = input->methods->qiodevice;
+    return qiodevice ? qiodevice(input->internal) : NULL;
+}
+
 
 typedef struct DP_FileInputState {
     FILE *fp;
@@ -274,8 +281,13 @@ static void file_input_dispose(void *internal)
 }
 
 static const DP_InputMethods file_input_methods = {
-    file_input_read,      file_input_length, file_input_rewind,
-    file_input_rewind_by, file_input_seek,   file_input_seek_by,
+    file_input_read,
+    file_input_length,
+    file_input_rewind,
+    file_input_rewind_by,
+    file_input_seek,
+    file_input_seek_by,
+    NULL,
     file_input_dispose,
 };
 
@@ -391,8 +403,14 @@ static void mem_input_dispose(void *internal)
 }
 
 static const DP_InputMethods mem_input_methods = {
-    mem_input_read, mem_input_length,  mem_input_rewind,  mem_input_rewind_by,
-    mem_input_seek, mem_input_seek_by, mem_input_dispose,
+    mem_input_read,
+    mem_input_length,
+    mem_input_rewind,
+    mem_input_rewind_by,
+    mem_input_seek,
+    mem_input_seek_by,
+    NULL,
+    mem_input_dispose,
 };
 
 const DP_InputMethods *mem_input_init(void *internal, void *arg)

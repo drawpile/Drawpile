@@ -92,6 +92,11 @@ static bool qfile_output_seek(void *internal, size_t offset)
     return do_seek("QFile", get_file(internal), offset);
 }
 
+static QIODevice *qfile_output_qiodevice(void *internal)
+{
+    return get_file(internal);
+}
+
 static bool qfile_output_dispose(void *internal)
 {
     DP_QFileOutputState *state = static_cast<DP_QFileOutputState *>(internal);
@@ -104,8 +109,9 @@ static bool qfile_output_dispose(void *internal)
 }
 
 static const DP_OutputMethods qfile_output_methods = {
-    qfile_output_write, nullptr,           qfile_output_flush,
-    qfile_output_tell,  qfile_output_seek, qfile_output_dispose,
+    qfile_output_write,   nullptr,           qfile_output_flush,
+    qfile_output_tell,    qfile_output_seek, qfile_output_qiodevice,
+    qfile_output_dispose,
 };
 
 static const DP_OutputMethods *qfile_output_init(void *internal, void *arg)
@@ -150,22 +156,27 @@ static QSaveFile *get_save_file(void *internal)
 static size_t qsavefile_output_write(void *internal, const void *buffer,
                                      size_t size)
 {
-    return do_write("QSaveFile", get_file(internal), buffer, size);
+    return do_write("QSaveFile", get_save_file(internal), buffer, size);
 }
 
 static bool qsavefile_output_flush(void *internal)
 {
-    return do_flush("QSaveFile", get_file(internal));
+    return do_flush("QSaveFile", get_save_file(internal));
 }
 
 static size_t qsavefile_output_tell(void *internal, bool *out_error)
 {
-    return do_tell("QSaveFile", get_file(internal), out_error);
+    return do_tell("QSaveFile", get_save_file(internal), out_error);
 }
 
 static bool qsavefile_output_seek(void *internal, size_t offset)
 {
-    return do_seek("QSaveFile", get_file(internal), offset);
+    return do_seek("QSaveFile", get_save_file(internal), offset);
+}
+
+static QIODevice *qsavefile_output_qiodevice(void *internal)
+{
+    return get_save_file(internal);
 }
 
 static bool qsavefile_output_dispose(void *internal)
@@ -177,9 +188,10 @@ static bool qsavefile_output_dispose(void *internal)
 }
 
 static const DP_OutputMethods qsavefile_output_methods = {
-    qsavefile_output_write, nullptr,
-    qsavefile_output_flush, qsavefile_output_tell,
-    qsavefile_output_seek,  qsavefile_output_dispose,
+    qsavefile_output_write,   nullptr,
+    qsavefile_output_flush,   qsavefile_output_tell,
+    qsavefile_output_seek,    qsavefile_output_qiodevice,
+    qsavefile_output_dispose,
 };
 
 static const DP_OutputMethods *qsavefile_output_init(void *internal, void *arg)
@@ -234,6 +246,11 @@ static bool kcompressiondevice_output_seek(void *internal, size_t offset)
     return do_seek("KCompressionDevice", get_dev(internal), offset);
 }
 
+static QIODevice *kcompressiondevice_output_qiodevice(void *internal)
+{
+    return get_dev(internal);
+}
+
 static bool kcompressiondevice_output_dispose(void *internal)
 {
     KCompressionDevice *dev = get_dev(internal);
@@ -253,6 +270,7 @@ static const DP_OutputMethods kcompressiondevice_output_methods = {
     nullptr,
     kcompressiondevice_output_tell,
     kcompressiondevice_output_seek,
+    kcompressiondevice_output_qiodevice,
     kcompressiondevice_output_dispose,
 };
 

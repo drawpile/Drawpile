@@ -24,6 +24,12 @@
 #include "common.h"
 #include <stdio.h>
 
+#ifdef __cplusplus
+class QIODevice;
+#else
+typedef struct QIODevice QIODevice;
+#endif
+
 #define DP_OUTPUT_PRINT_LITERAL(OUTPUT, LITERAL) \
     DP_output_write((OUTPUT), "" LITERAL, strlen(LITERAL))
 
@@ -40,6 +46,7 @@ typedef struct DP_OutputMethods {
     bool (*flush)(void *internal);
     size_t (*tell)(void *internal, bool *out_error);
     bool (*seek)(void *internal, size_t offset);
+    QIODevice *(*qiodevice)(void *internal);
     bool (*dispose)(void *internal);
 } DP_OutputMethods;
 
@@ -67,6 +74,8 @@ bool DP_output_flush(DP_Output *output);
 size_t DP_output_tell(DP_Output *output, bool *out_error);
 
 bool DP_output_seek(DP_Output *output, size_t offset);
+
+QIODevice *DP_output_qiodevice(DP_Output *output);
 
 
 #ifndef RUST_BINDGEN

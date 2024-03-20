@@ -24,6 +24,12 @@
 #include "common.h"
 #include <stdio.h>
 
+#ifdef __cplusplus
+class QIODevice;
+#else
+typedef struct QIODevice QIODevice;
+#endif
+
 
 typedef struct DP_Input DP_Input;
 
@@ -34,6 +40,7 @@ typedef struct DP_InputMethods {
     bool (*rewind_by)(void *internal, size_t size);
     bool (*seek)(void *internal, size_t offset);
     bool (*seek_by)(void *internal, size_t size);
+    QIODevice *(*qiodevice)(void *internal);
     void (*dispose)(void *internal);
 } DP_InputMethods;
 
@@ -55,6 +62,8 @@ bool DP_input_rewind_by(DP_Input *input, size_t size);
 bool DP_input_seek(DP_Input *input, size_t offset);
 
 bool DP_input_seek_by(DP_Input *input, size_t size);
+
+QIODevice *DP_input_qiodevice(DP_Input *input);
 
 
 #ifndef RUST_BINDGEN

@@ -183,6 +183,13 @@ bool DP_output_seek(DP_Output *output, size_t offset)
     }
 }
 
+QIODevice *DP_output_qiodevice(DP_Output *output)
+{
+    DP_ASSERT(output);
+    QIODevice *(*qiodevice)(void *) = output->methods->qiodevice;
+    return qiodevice ? qiodevice(output->internal) : NULL;
+}
+
 
 typedef struct DP_FileOutputState {
     FILE *fp;
@@ -251,9 +258,8 @@ static bool file_output_dispose(void *internal)
 }
 
 static const DP_OutputMethods file_output_methods = {
-    file_output_write, NULL,
-    file_output_flush, file_output_tell,
-    file_output_seek,  file_output_dispose,
+    file_output_write, NULL, file_output_flush,   file_output_tell,
+    file_output_seek,  NULL, file_output_dispose,
 };
 
 static const DP_OutputMethods *file_output_init(void *internal, void *arg)
@@ -387,9 +393,8 @@ static bool gzip_output_dispose(void *internal)
 }
 
 static const DP_OutputMethods gzip_output_methods = {
-    gzip_output_write, NULL,
-    gzip_output_flush, gzip_output_tell,
-    gzip_output_seek,  gzip_output_dispose,
+    gzip_output_write, NULL, gzip_output_flush,   gzip_output_tell,
+    gzip_output_seek,  NULL, gzip_output_dispose,
 };
 
 static const DP_OutputMethods *gzip_output_init(void *internal, void *arg)
@@ -468,7 +473,8 @@ static bool mem_output_dispose(void *internal)
 }
 
 static const DP_OutputMethods mem_output_methods = {
-    mem_output_write, mem_output_clear, NULL, NULL, NULL, mem_output_dispose,
+    mem_output_write,   mem_output_clear, NULL, NULL, NULL, NULL,
+    mem_output_dispose,
 };
 
 static const DP_OutputMethods *mem_output_init(void *internal, void *arg)
