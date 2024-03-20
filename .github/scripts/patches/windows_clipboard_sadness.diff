@@ -1,0 +1,34 @@
+Description: Clipboard handling on Windows is a mess. No matter how you do it,
+programs will handle the alpha channel incorrectly. After much back and forth,
+Qt picked a combination that works for stuff like Office, but in turn doesn't
+work for stuff like CSP and SAI. Obviously we care way more about the latter, so
+we pick a different combination.
+
+--- a/src/plugins/platforms/windows/qwindowsmime.cpp
++++ b/src/plugins/platforms/windows/qwindowsmime.cpp
+@@ -1053,11 +1053,11 @@
+ {
+     QVector<FORMATETC> formatetcs;
+     if (mimeData->hasImage() && mimeType == u"application/x-qt-image") {
+-        //add DIBV5 if image has alpha channel. Do not add CF_PNG here as it will confuse MS Office (QTBUG47656).
+         auto image = qvariant_cast<QImage>(mimeData->imageData());
+         if (!image.isNull() && image.hasAlphaChannel())
+             formatetcs += setCf(CF_DIBV5);
+         formatetcs += setCf(CF_DIB);
++        formatetcs += setCf(CF_PNG); // QTBUG-86848, Paste into GIMP queries for PNG.
+     }
+     if (!formatetcs.isEmpty())
+         qCDebug(lcQpaMime) << __FUNCTION__ << mimeType << formatetcs;
+@@ -1086,9 +1086,12 @@
+     const QImage image = qvariant_cast<QImage>(mimeData->imageData());
+     if (image.isNull())
+         return false;
++    // QTBUG-11463, deny CF_DIB support for images with alpha to prevent loss of
++    // transparency in conversion.
+     // QTBUG-64322: Use PNG only for transparent images as otherwise MS PowerPoint
+     // cannot handle it.
+-    return cf == CF_DIBV5 || cf == CF_DIB
++    return cf == CF_DIBV5
++        || (cf == CF_DIB && !image.hasAlphaChannel())
+         || (cf == int(CF_PNG) && image.hasAlphaChannel());
+ }
