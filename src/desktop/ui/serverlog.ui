@@ -32,12 +32,15 @@
         </widget>
        </item>
        <item>
-        <widget class="QListView" name="view">
+        <widget class="widgets::ServerLogView" name="view">
          <property name="editTriggers">
           <set>QAbstractItemView::NoEditTriggers</set>
          </property>
          <property name="alternatingRowColors">
           <bool>true</bool>
+         </property>
+         <property name="selectionMode">
+          <enum>QAbstractItemView::ExtendedSelection</enum>
          </property>
         </widget>
        </item>
@@ -156,6 +159,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>widgets::ServerLogView</class>
+   <extends>QListView</extends>
+   <header>desktop/widgets/serverlogview.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

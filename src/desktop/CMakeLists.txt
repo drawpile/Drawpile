@@ -333,6 +333,8 @@ target_sources(drawpile PRIVATE
 	widgets/recentscroll.h
 	widgets/resizerwidget.cpp
 	widgets/resizerwidget.h
+	widgets/serverlogview.cpp
+	widgets/serverlogview.h
 	widgets/spanawaretreeview.cpp
 	widgets/spanawaretreeview.h
 	widgets/spinner.cpp
