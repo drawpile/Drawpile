@@ -105,6 +105,7 @@ private slots:
 	void showPropertiesOfIndex(QModelIndex index);
 	void showContextMenu(const QPoint &pos);
 	void censorSelected(bool censor);
+	void disableAutoselectAny();
 	void setLayerVisibility(int layerId, bool visible);
 	void
 	changeLayerAcl(bool lock, DP_AccessTier tier, QVector<uint8_t> exclusive);

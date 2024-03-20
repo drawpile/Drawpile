@@ -16,6 +16,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Put a transparent background behind flat images, rather than using white. Thanks lungy for reporting.
  * Fix: Make pasting images from Drawpile into other applications retain transparency on Windows. This is really a bug in those other programs, they pick the wrong format by default, but whatever. Thanks lungy for reporting.
  * Feature: Allow configuring the transparency checkerboard colors in the user interface preferences. Thanks lungy for suggesting.
+ * Fix: Don't reselect and scroll back to default layer after interacting with the layer list by picking a layer or toggling visibility. Thanks MachKerman and Ben for reporting.
 
 2024-02-25 Version 2.2.2-beta.1
  * Server Feature: Allow adding a message when kicking someone through the admin API.

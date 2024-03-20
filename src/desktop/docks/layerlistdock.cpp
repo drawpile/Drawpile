@@ -125,6 +125,9 @@ LayerList::LayerList(QWidget *parent)
 	// Custom layer list item delegate
 	LayerListDelegate *del = new LayerListDelegate(this);
 	connect(
+		del, &LayerListDelegate::interacted, this,
+		&LayerList::disableAutoselectAny);
+	connect(
 		del, &LayerListDelegate::toggleVisibility, this,
 		&LayerList::setLayerVisibility);
 	connect(
@@ -380,11 +383,13 @@ void LayerList::selectLayer(int id)
 
 void LayerList::selectAbove()
 {
+	disableAutoselectAny();
 	selectLayerIndex(m_view->indexAbove(currentSelection()), true);
 }
 
 void LayerList::selectBelow()
 {
+	disableAutoselectAny();
 	selectLayerIndex(m_view->indexBelow(currentSelection()), true);
 }
 
@@ -429,6 +434,13 @@ void LayerList::censorSelected(bool censor)
 			m_canvas->localUserId(), layer.id, 0, flags, layer.opacity * 255,
 			layer.blend);
 		emit layerCommands(1, &msg);
+	}
+}
+
+void LayerList::disableAutoselectAny()
+{
+	if(m_canvas) {
+		m_canvas->layerlist()->setAutoselectAny(false);
 	}
 }
 

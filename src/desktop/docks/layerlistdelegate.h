@@ -28,6 +28,7 @@ public:
 	void setShowNumbers(bool show);
 
 signals:
+	void interacted();
 	void toggleVisibility(int layerId, bool visible);
 	void editProperties(QModelIndex index);
 

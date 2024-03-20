@@ -61,6 +61,8 @@ bool LayerListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, co
 {
 	QEvent::Type type = event->type();
 	if(type == QEvent::MouseButtonPress) {
+		emit interacted();
+
 		const canvas::LayerListItem &layer = index.data().value<canvas::LayerListItem>();
 		const QMouseEvent *me = static_cast<QMouseEvent*>(event);
 
