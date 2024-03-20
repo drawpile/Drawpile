@@ -40,6 +40,13 @@ class DP_InputDevice : public QIODevice {
         open(QIODevice::ReadOnly);
     }
 
+    qint64 size() const override
+    {
+        bool error;
+        size_t length = DP_input_length(m_input, &error);
+        return error ? 0 : qint64(length);
+    }
+
   protected:
     qint64 readData(char *data, qint64 maxSize) override
     {
