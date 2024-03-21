@@ -237,6 +237,9 @@
      <property name="prefix">
       <string>Expand: </string>
      </property>
+     <property name="minimum">
+       <number>-30</number>
+      </property>
      <property name="maximum">
       <number>30</number>
      </property>
