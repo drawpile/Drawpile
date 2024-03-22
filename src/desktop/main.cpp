@@ -25,6 +25,7 @@
 #include <QScreen>
 #include <QStyle>
 #include <QStyleFactory>
+#include <QSurfaceFormat>
 #include <QTabletEvent>
 #include <QTranslator>
 #include <QUrl>
@@ -625,6 +626,17 @@ static void applyScalingSettingsFrom(const QString &path)
 		qreal factor = qBound(
 			1.0, cfg.value(QStringLiteral("factor")).toInt() / 100.0, 4.0);
 		qputenv("QT_SCALE_FACTOR", qUtf8Printable(QString::number(factor)));
+	}
+
+	bool vsyncOk;
+	int vsync = qgetenv("DRAWPILE_VSYNC").toInt(&vsyncOk);
+	if(!vsyncOk) {
+		vsync = cfg.value(QStringLiteral("vsync")).toInt();
+	}
+	if(vsync >= 0) {
+		QSurfaceFormat format = QSurfaceFormat::defaultFormat();
+		format.setSwapInterval(vsync);
+		QSurfaceFormat::setDefaultFormat(format);
 	}
 }
 

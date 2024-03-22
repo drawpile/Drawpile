@@ -35,7 +35,7 @@ private:
 	void
 	initMiscellaneous(desktop::settings::Settings &settings, QFormLayout *form);
 
-	void initScaling(desktop::settings::Settings &settings, QVBoxLayout *form);
+	void initScaling(desktop::settings::Settings &settings, QFormLayout *form);
 
 	void pickColor(
 		desktop::settings::Settings &settings,
