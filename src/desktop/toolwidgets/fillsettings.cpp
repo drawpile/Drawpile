@@ -13,7 +13,7 @@ namespace tools {
 
 namespace props {
 static const ToolProperties::RangedValue<int> expand{
-	QStringLiteral("expand"), 0, 0, 100},
+	QStringLiteral("expand"), -30, -30, 30},
 	featherRadius{QStringLiteral("featherRadius"), 0, 0, 40},
 	mode{QStringLiteral("mode"), 0, 0, 2},
 	size{QStringLiteral("size"), 500, 10, 9999},
