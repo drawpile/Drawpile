@@ -1,22 +1,19 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #ifndef USERMARKERITEM_H
 #define USERMARKERITEM_H
-
-#include <QGraphicsItem>
-#include <QPainterPath>
-#include <QPixmap>
+#include "desktop/scene/baseitem.h"
 #include <QBrush>
+#include <QDeadlineTimer>
+#include <QPainterPath>
 #include <QPen>
+#include <QPixmap>
 
 namespace drawingboard {
 
-class UserMarkerItem final : public QGraphicsItem
-{
+class UserMarkerItem final : public BaseItem {
 public:
-	enum { Type = UserType + 12 };
-
-	UserMarkerItem(int id, QGraphicsItem *parent=nullptr);
+	enum { Type = UserMarkerType };
+	UserMarkerItem(int id, QGraphicsItem *parent = nullptr);
 
 	int id() const { return m_id; }
 	QRectF boundingRect() const override;
@@ -54,9 +51,13 @@ public:
 	void animationStep(qreal dt);
 
 protected:
-	void paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *) override;
+	void paint(
+		QPainter *painter, const QStyleOptionGraphicsItem *options,
+		QWidget *) override;
 
 private:
+	static constexpr int ARROW = 10;
+
 	void updateFullText();
 	int m_id;
 
@@ -67,19 +68,19 @@ private:
 	QPainterPath m_bubble;
 	QRectF m_textRect;
 	QRectF m_avatarRect;
-	double m_fadeout;
-	qint64 m_lastMoved;
+	double m_fadeout = 0.0;
+	QDeadlineTimer m_moveTimer;
 
 	QString m_text1, m_text2;
 	QString m_fulltext;
 	QPixmap m_avatar;
 
-	bool m_showText;
-	bool m_showSubtext;
-	bool m_showAvatar;
-	bool m_penUp;
+	bool m_showText = true;
+	bool m_showSubtext = false;
+	bool m_showAvatar = true;
+	bool m_penUp = false;
 };
 
 }
 
-#endif // USERMARKERITEM_H
+#endif

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/scene/outlineitem.h"
+#include <QPaintEngine>
 #include <QPainter>
 
 namespace drawingboard {
@@ -51,16 +52,29 @@ void OutlineItem::paint(
 {
 	if(m_actuallyVisible) {
 		painter->save();
-		QPen pen(QColor(96, 191, 96));
+
+		QPen pen;
+		const QPaintEngine *pe = painter->paintEngine();
+		if(pe->hasFeature(QPaintEngine::RasterOpModes)) {
+			pen.setColor(QColor(96, 191, 96));
+			painter->setCompositionMode(
+				QPainter::RasterOp_SourceXorDestination);
+		} else if(pe->hasFeature(QPaintEngine::BlendModes)) {
+			pen.setColor(QColor(0, 255, 0));
+			painter->setCompositionMode(QPainter::CompositionMode_Difference);
+		} else {
+			pen.setColor(QColor(191, 96, 191));
+		}
 		pen.setCosmetic(true);
 		pen.setWidthF(m_outlineWidth * painter->device()->devicePixelRatioF());
 		painter->setPen(pen);
-		painter->setCompositionMode(QPainter::RasterOp_SourceXorDestination);
+
 		if(m_square) {
 			painter->drawRect(m_bounds);
 		} else {
 			painter->drawEllipse(m_bounds);
 		}
+
 		painter->restore();
 	}
 }

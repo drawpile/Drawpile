@@ -9,7 +9,7 @@
 namespace drawingboard {
 
 AnnotationItem::AnnotationItem(int id, QGraphicsItem *parent)
-	: QGraphicsItem(parent)
+	: BaseItem(parent)
 	, m_id(id)
 {
 }
@@ -17,7 +17,7 @@ AnnotationItem::AnnotationItem(int id, QGraphicsItem *parent)
 void AnnotationItem::setGeometry(const QRect &rect)
 {
 	if(m_rect != rect) {
-		prepareGeometryChange();
+		refreshGeometry();
 		m_rect = rect;
 		m_doc.setTextWidth(rect.width());
 	}
@@ -27,21 +27,21 @@ void AnnotationItem::setColor(const QColor &color)
 {
 	if(m_color != color) {
 		m_color = color;
-		update();
+		refresh();
 	}
 }
 
 void AnnotationItem::setText(const QString &text)
 {
 	m_doc.setHtml(text);
-	update();
+	refresh();
 }
 
 void AnnotationItem::setValign(int valign)
 {
 	if(m_valign != valign) {
 		m_valign = valign;
-		update();
+		refresh();
 	}
 }
 
@@ -53,7 +53,7 @@ void AnnotationItem::setHighlight(bool hl)
 {
 	if(m_highlight != hl) {
 		m_highlight = hl;
-		update();
+		refresh();
 	}
 }
 
@@ -65,7 +65,7 @@ void AnnotationItem::setShowBorder(bool show)
 {
 	if(m_showborder != show) {
 		m_showborder = show;
-		update();
+		refresh();
 	}
 }
 

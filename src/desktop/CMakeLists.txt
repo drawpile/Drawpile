@@ -211,6 +211,8 @@ target_sources(drawpile PRIVATE
 	scene/annotationitem.cpp
 	scene/annotationitem.h
 	scene/arrows_data.h
+	scene/baseitem.cpp
+	scene/baseitem.h
 	scene/canvasitem.cpp
 	scene/canvasitem.h
 	scene/canvasscene.cpp

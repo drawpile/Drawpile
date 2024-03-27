@@ -1,15 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef DESKTOP_OUTLINEITEM_H
 #define DESKTOP_OUTLINEITEM_H
-#include <QCursor>
-#include <QGraphicsItem>
+#include "desktop/scene/baseitem.h"
 
 namespace drawingboard {
 
 class OutlineItem final : public QGraphicsItem {
 public:
-	enum { Type = UserType + 18 };
-
+	enum { Type = BaseItem::OutlineType };
 	OutlineItem(QGraphicsItem *parent = nullptr);
 
 	int type() const override { return Type; }

@@ -5,7 +5,7 @@
 namespace drawingboard {
 
 CursorItem::CursorItem(QGraphicsItem *parent)
-	: QGraphicsItem(parent)
+	: BaseItem(parent)
 {
 	setFlag(ItemIgnoresTransformations);
 	setZValue(999999);
@@ -20,7 +20,7 @@ QRectF CursorItem::boundingRect() const
 void CursorItem::setCursor(const QCursor &cursor)
 {
 	if(cursor.shape() == Qt::BitmapCursor) {
-		prepareGeometryChange();
+		refreshGeometry();
 		m_cursor = cursor;
 		m_bounds = QRectF(-m_cursor.hotSpot(), QSizeF(cursor.pixmap().size()));
 	} else {
@@ -44,6 +44,7 @@ void CursorItem::paint(
 void CursorItem::updateVisibility()
 {
 	setVisible(m_onCanvas && m_cursor.shape() == Qt::BitmapCursor);
+	refresh();
 }
 
 }

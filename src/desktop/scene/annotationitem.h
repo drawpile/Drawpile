@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef DESKTOP_SCENE_ANNOTATIONITEM_H
 #define DESKTOP_SCENE_ANNOTATIONITEM_H
-#include <QGraphicsItem>
+#include "desktop/scene/baseitem.h"
 #include <QTextDocument>
 
 namespace drawingboard {
@@ -9,7 +9,7 @@ namespace drawingboard {
 /**
  * @brief A text box that can be overlaid on the picture.
  */
-class AnnotationItem final : public QGraphicsItem {
+class AnnotationItem final : public BaseItem {
 public:
 	enum { Type = UserType + 10 };
 

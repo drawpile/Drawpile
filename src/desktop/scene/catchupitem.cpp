@@ -4,23 +4,18 @@
 #include <QColor>
 #include <QFont>
 #include <QFontMetricsF>
-#include <QGraphicsDropShadowEffect>
 #include <QPainter>
 #include <QPalette>
 
 namespace drawingboard {
 
 CatchupItem::CatchupItem(const QString &text, QGraphicsItem *parent)
-	: QGraphicsItem{parent}
+	: BaseItem(parent)
 	, m_text(text)
 	, m_percent(0)
 	, m_fade(1.0)
 {
 	setFlag(ItemIgnoresTransformations);
-	QGraphicsDropShadowEffect *shadow = new QGraphicsDropShadowEffect;
-	shadow->setOffset(0);
-	shadow->setBlurRadius(10);
-	setGraphicsEffect(shadow);
 	setZValue(9999);
 	updateBarText();
 }
@@ -37,7 +32,7 @@ void CatchupItem::setCatchupProgress(int percent)
 		m_fade = 1.0;
 	}
 	updateBarText();
-	update();
+	refresh();
 }
 
 bool CatchupItem::animationStep(qreal dt)
@@ -46,7 +41,7 @@ bool CatchupItem::animationStep(qreal dt)
 		return true;
 	} else {
 		m_fade = qMax(0.0, m_fade - dt);
-		update();
+		refresh();
 		return m_fade > 0.0;
 	}
 }
@@ -102,7 +97,7 @@ void CatchupItem::updateBarText()
 
 void CatchupItem::updateBounds()
 {
-	prepareGeometryChange();
+	refreshGeometry();
 	QFontMetricsF fontMetrics(qApp->font());
 	qreal margin = qRound(fontMetrics.height());
 	QRect fontRect(0, 0, 0xffff, 0xffff);

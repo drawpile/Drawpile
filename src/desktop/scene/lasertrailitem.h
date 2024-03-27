@@ -1,19 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef LASERTRAILITEM_H
-#define LASERTRAILITEM_H
-
-#include <QGraphicsItem>
+#ifndef DESKTOP_SCENE_LASERTRAILITEM_H
+#define DESKTOP_SCENE_LASERTRAILITEM_H
+#include "desktop/scene/baseitem.h"
 #include <QPen>
 
 namespace drawingboard {
 
-class LaserTrailItem final : public QGraphicsItem
-{
+class LaserTrailItem final : public BaseItem {
 public:
-	enum { Type = UserType + 13 };
+	enum { Type = LaserTrailType };
 
-	LaserTrailItem(uint8_t owner, int persistenceMs, const QColor &color, QGraphicsItem *parent=nullptr);
+	LaserTrailItem(
+		int owner, int persistenceMs, const QColor &color,
+		QGraphicsItem *parent = nullptr);
 
 	QRectF boundingRect() const override;
 	int type() const override { return Type; }
@@ -22,17 +21,19 @@ public:
 
 	void addPoint(const QPointF &point);
 
-	uint8_t owner() const { return m_owner; }
+	int owner() const { return m_owner; }
 
 protected:
-	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
+	void paint(
+		QPainter *painter, const QStyleOptionGraphicsItem *option,
+		QWidget *widget) override;
 
 private:
 	static constexpr float ANIM_TIME = 0.4f;
 
-	float m_blink;
-	bool m_fadeout;
-	uint8_t m_owner;
+	float m_blink = 0.0f;
+	bool m_fadeout = false;
+	int m_owner;
 	QPen m_pen;
 	QVector<QPointF> m_points;
 	QRectF m_bounds;

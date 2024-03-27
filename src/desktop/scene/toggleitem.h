@@ -1,16 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-#ifndef DESKTOP_TOGGLEITEM_H
-#define DESKTOP_TOGGLEITEM_H
-
-#include <QGraphicsItem>
+#ifndef DESKTOP_SCENE_TOGGLEITEM_H
+#define DESKTOP_SCENE_TOGGLEITEM_H
+#include "desktop/scene/baseitem.h"
 #include <QIcon>
 #include <QPainterPath>
 
 namespace drawingboard {
 
-class ToggleItem final : public QGraphicsItem {
+class ToggleItem final : public BaseItem {
 public:
-	enum { Type = UserType + 16 };
+	enum { Type = ToggleType };
 	enum class Action {
 		None,
 		Left,

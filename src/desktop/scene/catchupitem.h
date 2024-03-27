@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef DESKTOP_CATCHUPITEM_H
 #define DESKTOP_CATCHUPITEM_H
-#include <QGraphicsItem>
+#include "desktop/scene/baseitem.h"
 
 namespace drawingboard {
 
-class CatchupItem final : public QGraphicsItem {
+class CatchupItem final : public BaseItem {
 public:
-	enum { Type = UserType + 17 };
+	enum { Type = Base::CatchupType };
 
 	explicit CatchupItem(const QString &text, QGraphicsItem *parent = nullptr);
 

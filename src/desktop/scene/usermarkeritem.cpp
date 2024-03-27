@@ -1,32 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#include <QApplication>
-#include <QPainter>
-#include <QFontMetrics>
-#include <QPainterPath>
-#include <QGraphicsDropShadowEffect>
-#include <QDateTime>
-
 #include "desktop/scene/usermarkeritem.h"
+#include <QApplication>
+#include <QDateTime>
+#include <QFontMetrics>
+#include <QPainter>
 
 namespace drawingboard {
 
-
-namespace {
-static const int ARROW = 10;
-
-}
 UserMarkerItem::UserMarkerItem(int id, QGraphicsItem *parent)
-	: QGraphicsItem(parent),
-	  m_id(id), m_fadeout(0), m_lastMoved(0),
-	  m_showText(true), m_showSubtext(false), m_showAvatar(true), m_penUp(false)
+	: BaseItem(parent)
+	, m_id(id)
 {
 	setFlag(ItemIgnoresTransformations);
 	m_bgbrush.setStyle(Qt::SolidPattern);
-	QGraphicsDropShadowEffect *shadow = new QGraphicsDropShadowEffect;
-	shadow->setOffset(0);
-	shadow->setBlurRadius(10);
-	setGraphicsEffect(shadow);
 	setZValue(9999);
 	setColor(Qt::black);
 }
@@ -34,13 +20,8 @@ UserMarkerItem::UserMarkerItem(int id, QGraphicsItem *parent)
 void UserMarkerItem::setColor(const QColor &color)
 {
 	m_bgbrush.setColor(color);
-
-	if ((color.red() * 30) + (color.green() * 59) + (color.blue() * 11) > 12800)
-		m_textpen = QPen(Qt::black);
-	else
-		m_textpen = QPen(Qt::white);
-
-	update();
+	m_textpen = QPen(color.lightness() < 128 ? Qt::white : Qt::black);
+	refresh();
 }
 
 const QColor &UserMarkerItem::color() const
@@ -52,8 +33,9 @@ void UserMarkerItem::setText(const QString &text)
 {
 	if(m_text1 != text) {
 		m_text1 = text;
-		if(m_showText)
+		if(m_showText) {
 			updateFullText();
+		}
 	}
 }
 
@@ -61,16 +43,18 @@ void UserMarkerItem::setSubtext(const QString &text)
 {
 	if(m_text2 != text) {
 		m_text2 = text;
-		if(m_showSubtext)
+		if(m_showSubtext) {
 			updateFullText();
+		}
 	}
 }
 
 void UserMarkerItem::setAvatar(const QPixmap &avatar)
 {
 	m_avatar = avatar;
-	if(m_showAvatar)
+	if(m_showAvatar) {
 		updateFullText();
+	}
 }
 
 void UserMarkerItem::setShowText(bool show)
@@ -89,7 +73,8 @@ void UserMarkerItem::setShowSubtext(bool show)
 	}
 }
 
-void UserMarkerItem::setShowAvatar(bool show) {
+void UserMarkerItem::setShowAvatar(bool show)
+{
 	if(m_showAvatar != show) {
 		m_showAvatar = show;
 		updateFullText();
@@ -98,52 +83,58 @@ void UserMarkerItem::setShowAvatar(bool show) {
 
 void UserMarkerItem::updateFullText()
 {
-	prepareGeometryChange();
+	refreshGeometry();
 
 	m_fulltext = m_showText ? m_text1 : QString();
 
 	if(m_showSubtext && !m_text2.isEmpty()) {
-		if(!m_fulltext.isEmpty())
+		if(!m_fulltext.isEmpty()) {
 			m_fulltext += QStringLiteral("\n[");
+		}
 		m_fulltext += m_text2;
 		m_fulltext += ']';
 	}
 
 	// Make a new bubble for the text and avatar
-	const QRect textrect = m_fulltext.isEmpty() ? QRect() : QFontMetrics(QFont()).boundingRect(QRect(0, 0, 0xffff, 0xffff), 0, m_fulltext);
+	const QRect textrect =
+		m_fulltext.isEmpty() ? QRect()
+							 : QFontMetrics(QFont()).boundingRect(
+								   QRect(0, 0, 0xffff, 0xffff), 0, m_fulltext);
 	const bool showAvatar = m_showAvatar && !m_avatar.isNull();
 
 	const qreal round = 3;
 	const qreal padding = 5;
-	const qreal width = qMax(qMax((ARROW+round)*2, textrect.width() + 2*padding), showAvatar ? m_avatar.width() + 2*padding : 0);
+	const qreal width = qMax(
+		qMax((ARROW + round) * 2, textrect.width() + 2 * padding),
+		showAvatar ? m_avatar.width() + 2 * padding : 0);
 	const qreal rad = width / 2.0;
-	const qreal avatarHeight = showAvatar ? m_avatar.height() + (textrect.height()>0 ? padding : 0) : 0;
+	const qreal avatarHeight =
+		showAvatar ? m_avatar.height() + (textrect.height() > 0 ? padding : 0)
+				   : 0;
 	const qreal height = textrect.height() + avatarHeight + ARROW + 2 * padding;
 
 	m_bounds = QRectF(-rad, -height, width, height);
 
 	m_avatarRect = QRectF(
-		m_bounds.width()/2 + m_bounds.left() - m_avatar.width() / 2,
-		m_bounds.top() + padding,
-		m_avatar.width(),
-		m_avatar.height()
-		);
-	m_textRect = m_bounds.adjusted(padding, padding + avatarHeight, -padding, -padding);
+		m_bounds.width() / 2 + m_bounds.left() - m_avatar.width() / 2,
+		m_bounds.top() + padding, m_avatar.width(), m_avatar.height());
+	m_textRect =
+		m_bounds.adjusted(padding, padding + avatarHeight, -padding, -padding);
 
 	m_bubble = QPainterPath(QPointF(0, 0));
 
 	m_bubble.lineTo(-ARROW, -ARROW);
-	m_bubble.lineTo(-rad+round, -ARROW);
+	m_bubble.lineTo(-rad + round, -ARROW);
 
-	m_bubble.quadTo(-rad, -ARROW, -rad, -ARROW-round);
-	m_bubble.lineTo(-rad, -height+round);
-	m_bubble.quadTo(-rad, -height, -rad+round, -height);
+	m_bubble.quadTo(-rad, -ARROW, -rad, -ARROW - round);
+	m_bubble.lineTo(-rad, -height + round);
+	m_bubble.quadTo(-rad, -height, -rad + round, -height);
 
-	m_bubble.lineTo(rad-round, -height);
-	m_bubble.quadTo(rad, -height, rad, -height+round);
-	m_bubble.lineTo(rad, -ARROW-round);
+	m_bubble.lineTo(rad - round, -height);
+	m_bubble.quadTo(rad, -height, rad, -height + round);
+	m_bubble.lineTo(rad, -ARROW - round);
 
-	m_bubble.quadTo(rad, -ARROW, rad-round, -ARROW);
+	m_bubble.quadTo(rad, -ARROW, rad - round, -ARROW);
 	m_bubble.lineTo(ARROW, -ARROW);
 
 	m_bubble.closeSubpath();
@@ -154,7 +145,8 @@ QRectF UserMarkerItem::boundingRect() const
 	return m_bounds;
 }
 
-void UserMarkerItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
+void UserMarkerItem::paint(
+	QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
 	painter->setRenderHint(QPainter::Antialiasing);
 	painter->setPen(Qt::NoPen);
@@ -164,18 +156,22 @@ void UserMarkerItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, 
 
 	painter->setFont(qApp->font());
 	painter->setPen(m_textpen);
-	painter->drawText(m_textRect, Qt::AlignHCenter|Qt::AlignTop, m_fulltext);
+	painter->drawText(m_textRect, Qt::AlignHCenter | Qt::AlignTop, m_fulltext);
 
-	if(!m_avatar.isNull() && m_showAvatar)
+	if(!m_avatar.isNull() && m_showAvatar) {
 		painter->drawPixmap(m_avatarRect.topLeft(), m_avatar);
+	}
 }
 
 void UserMarkerItem::fadein()
 {
-	m_fadeout = 0;
-	setOpacity(1);
-	show();
-	m_lastMoved = QDateTime::currentMSecsSinceEpoch();
+	m_moveTimer.setRemainingTime(1000);
+	if(m_fadeout > 0.0 || !isVisible()) {
+		m_fadeout = 0.0;
+		setOpacity(1.0);
+		show();
+		refresh();
+	}
 }
 
 void UserMarkerItem::fadeout()
@@ -196,13 +192,15 @@ void UserMarkerItem::animationStep(qreal dt)
 	if(isVisible()) {
 		// Smoothing to avoid crazy jerking with spread out MyPaint brushes.
 		setPos(QLineF(pos(), m_targetPos).pointAt(qMin(dt * 20.0, 1.0)));
-		if(m_fadeout>0) {
+		if(m_fadeout > 0.0) {
 			m_fadeout -= dt;
 			if(m_fadeout <= 0.0) {
 				hide();
-			} else if(m_fadeout < 1.0)
+			} else if(m_fadeout < 1.0) {
 				setOpacity(m_fadeout);
-		} else if(m_lastMoved < QDateTime::currentMSecsSinceEpoch() - 1000) {
+			}
+			refresh();
+		} else if(m_moveTimer.hasExpired()) {
 			fadeout();
 		}
 	}

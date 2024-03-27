@@ -1,34 +1,44 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "desktop/scene/selectionitem.h"
 #include "desktop/scene/arrows_data.h"
-
-#include <QPainter>
+#include "libclient/canvas/selection.h"
 #include <QApplication>
+#include <QPainter>
 #include <QStyleOptionGraphicsItem>
 
 namespace drawingboard {
 
-SelectionItem::SelectionItem(canvas::Selection *selection, QGraphicsItem *parent)
-	: QGraphicsObject(parent), m_selection(selection), m_marchingants(0)
+SelectionItem::SelectionItem(
+	canvas::Selection *selection, QGraphicsItem *parent)
+	: BaseObject(parent)
+	, m_selection(selection)
+	, m_marchingants(0)
 {
 	Q_ASSERT(selection);
-	connect(selection, &canvas::Selection::shapeChanged, this, &SelectionItem::onShapeChanged);
-	connect(selection, &canvas::Selection::pasteImageChanged, this, &SelectionItem::onShapeChanged);
-	connect(selection, &canvas::Selection::closed, this, &SelectionItem::onShapeChanged);
-	connect(selection, &canvas::Selection::adjustmentModeChanged, this, &SelectionItem::onAdjustmentModeChanged);
+	connect(
+		selection, &canvas::Selection::shapeChanged, this,
+		&SelectionItem::onShapeChanged);
+	connect(
+		selection, &canvas::Selection::pasteImageChanged, this,
+		&SelectionItem::onShapeChanged);
+	connect(
+		selection, &canvas::Selection::closed, this,
+		&SelectionItem::onShapeChanged);
+	connect(
+		selection, &canvas::Selection::adjustmentModeChanged, this,
+		&SelectionItem::onAdjustmentModeChanged);
 	m_shape = m_selection->shape();
 }
 
 void SelectionItem::onShapeChanged()
 {
-	prepareGeometryChange();
+	refreshGeometry();
 	m_shape = m_selection->shape();
 }
 
 void SelectionItem::onAdjustmentModeChanged()
 {
-	update();
+	refresh();
 }
 
 QRectF SelectionItem::boundingRect() const
@@ -37,7 +47,8 @@ QRectF SelectionItem::boundingRect() const
 	return m_shape.boundingRect().adjusted(-h, -h, h, h);
 }
 
-static inline void drawPolygon(QPainter *painter, const QPolygonF &polygon, bool closed)
+static inline void
+drawPolygon(QPainter *painter, const QPolygonF &polygon, bool closed)
 {
 	if(closed)
 		painter->drawPolygon(polygon);
@@ -45,7 +56,8 @@ static inline void drawPolygon(QPainter *painter, const QPolygonF &polygon, bool
 		painter->drawPolyline(polygon);
 }
 
-static const QPointF *getScaleArrow(canvas::Selection::Handle handle, unsigned int &outPlen)
+static const QPointF *
+getScaleArrow(canvas::Selection::Handle handle, unsigned int &outPlen)
 {
 	switch(handle) {
 	case canvas::Selection::Handle::TopLeft:
@@ -69,7 +81,8 @@ static const QPointF *getScaleArrow(canvas::Selection::Handle handle, unsigned i
 	}
 }
 
-static const QPointF *getRotationArrow(canvas::Selection::Handle handle, unsigned int &outPlen)
+static const QPointF *
+getRotationArrow(canvas::Selection::Handle handle, unsigned int &outPlen)
 {
 	switch(handle) {
 	case canvas::Selection::Handle::TopLeft:
@@ -97,7 +110,8 @@ static const QPointF *getRotationArrow(canvas::Selection::Handle handle, unsigne
 	}
 }
 
-static const QPointF *getDistortArrow(canvas::Selection::Handle handle, unsigned int &outPlen)
+static const QPointF *
+getDistortArrow(canvas::Selection::Handle handle, unsigned int &outPlen)
 {
 	switch(handle) {
 	case canvas::Selection::Handle::TopLeft:
@@ -129,9 +143,11 @@ static const QPointF *getDistortArrow(canvas::Selection::Handle handle, unsigned
 	}
 }
 
-typedef const QPointF *(*GetArrowFunction)(canvas::Selection::Handle handle, unsigned int &outPlen);
+typedef const QPointF *(*GetArrowFunction)(
+	canvas::Selection::Handle handle, unsigned int &outPlen);
 
-static GetArrowFunction mapModeToGetArrowFunction(canvas::Selection::AdjustmentMode mode)
+static GetArrowFunction
+mapModeToGetArrowFunction(canvas::Selection::AdjustmentMode mode)
 {
 	switch(mode) {
 	case canvas::Selection::AdjustmentMode::Scale:
@@ -146,25 +162,27 @@ static GetArrowFunction mapModeToGetArrowFunction(canvas::Selection::AdjustmentM
 	}
 }
 
-static void drawHandle(QPainter *painter, const QPointF &point, qreal size,
-		canvas::Selection::Handle handle, GetArrowFunction getArrow)
+static void drawHandle(
+	QPainter *painter, const QPointF &point, qreal size,
+	canvas::Selection::Handle handle, GetArrowFunction getArrow)
 {
 	unsigned int plen;
 	const QPointF *arrow = getArrow(handle, plen);
 
 	if(arrow) {
-		const QPointF offset = point - QPointF(size/2, size/2);
+		const QPointF offset = point - QPointF(size / 2, size / 2);
 
 		QPointF polygon[12];
 		Q_ASSERT(plen <= sizeof(polygon));
-		for(unsigned int i=0;i<plen/sizeof(*polygon);++i)
+		for(unsigned int i = 0; i < plen / sizeof(*polygon); ++i)
 			polygon[i] = offset + arrow[i] / 10 * size;
 
-		painter->drawPolygon(polygon, plen/sizeof(*polygon));
+		painter->drawPolygon(polygon, plen / sizeof(*polygon));
 	}
 }
 
-void SelectionItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt, QWidget *)
+void SelectionItem::paint(
+	QPainter *painter, const QStyleOptionGraphicsItem *opt, QWidget *)
 {
 	painter->setClipRect(boundingRect().adjusted(-1, -1, 1, 1));
 
@@ -182,37 +200,55 @@ void SelectionItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 
 	// Draw dashes
 	pen.setColor(Qt::white);
-	pen.setStyle(Qt::DashLine);
+	pen.setDashPattern({4.0, 4.0});
 	pen.setDashOffset(m_marchingants);
 	painter->setPen(pen);
 	drawPolygon(painter, m_shape, drawClosed);
 
 	// Draw resizing handles when initial drawing is finished
 	GetArrowFunction getArrow;
-	if(m_selection->isClosed() && (getArrow = mapModeToGetArrowFunction(m_selection->adjustmentMode()))) {
+	if(m_selection->isClosed() &&
+	   (getArrow = mapModeToGetArrowFunction(m_selection->adjustmentMode()))) {
 		pen.setStyle(Qt::SolidLine);
 		painter->setPen(pen);
 		painter->setBrush(Qt::black);
 
 		const QRect rect = m_selection->boundingRect();
-		const qreal s = m_selection->handleSize() / opt->levelOfDetailFromTransform(painter->transform());
-		drawHandle(painter, rect.topLeft(), s, canvas::Selection::Handle::TopLeft, getArrow);
-		drawHandle(painter, rect.topLeft() + QPointF(rect.width()/2, 0), s, canvas::Selection::Handle::Top, getArrow);
-		drawHandle(painter, rect.topRight() + QPointF{1, 0.0}, s, canvas::Selection::Handle::TopRight, getArrow);
+		const qreal s = m_selection->handleSize() /
+						opt->levelOfDetailFromTransform(painter->transform());
+		drawHandle(
+			painter, rect.topLeft(), s, canvas::Selection::Handle::TopLeft,
+			getArrow);
+		drawHandle(
+			painter, rect.topLeft() + QPointF(rect.width() / 2, 0), s,
+			canvas::Selection::Handle::Top, getArrow);
+		drawHandle(
+			painter, rect.topRight() + QPointF{1, 0.0}, s,
+			canvas::Selection::Handle::TopRight, getArrow);
 
-		drawHandle(painter, rect.topLeft() + QPointF(0, rect.height()/2), s, canvas::Selection::Handle::Left, getArrow);
-		drawHandle(painter, rect.topRight() + QPointF(1, rect.height()/2), s, canvas::Selection::Handle::Right, getArrow);
+		drawHandle(
+			painter, rect.topLeft() + QPointF(0, rect.height() / 2), s,
+			canvas::Selection::Handle::Left, getArrow);
+		drawHandle(
+			painter, rect.topRight() + QPointF(1, rect.height() / 2), s,
+			canvas::Selection::Handle::Right, getArrow);
 
-		drawHandle(painter, rect.bottomLeft() + QPointF(0, 1), s, canvas::Selection::Handle::BottomLeft, getArrow);
-		drawHandle(painter, rect.bottomLeft() + QPointF(rect.width()/2, 1), s, canvas::Selection::Handle::Bottom, getArrow);
-		drawHandle(painter, rect.bottomRight() + QPointF(1, 1), s, canvas::Selection::Handle::BottomRight, getArrow);
+		drawHandle(
+			painter, rect.bottomLeft() + QPointF(0, 1), s,
+			canvas::Selection::Handle::BottomLeft, getArrow);
+		drawHandle(
+			painter, rect.bottomLeft() + QPointF(rect.width() / 2, 1), s,
+			canvas::Selection::Handle::Bottom, getArrow);
+		drawHandle(
+			painter, rect.bottomRight() + QPointF(1, 1), s,
+			canvas::Selection::Handle::BottomRight, getArrow);
 	}
 }
 
 void SelectionItem::marchingAnts(double dt)
 {
 	m_marchingants += dt / 0.2;
-	update();
+	refresh();
 }
 
 }

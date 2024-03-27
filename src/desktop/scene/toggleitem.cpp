@@ -9,7 +9,7 @@ namespace drawingboard {
 ToggleItem::ToggleItem(
 	Action action, Qt::Alignment side, double fromTop, const QIcon &icon,
 	QGraphicsItem *parent)
-	: QGraphicsItem{parent}
+	: BaseItem{parent}
 	, m_action{action}
 	, m_right{side == Qt::AlignRight}
 	, m_fromTop{fromTop}
@@ -41,7 +41,7 @@ bool ToggleItem::checkHover(const QPointF &scenePos, bool &outWasHovering)
 	bool hover = QRectF{x(), y(), s, s}.contains(scenePos);
 	if(hover != m_hover) {
 		m_hover = hover;
-		update();
+		refresh();
 	}
 	return hover;
 }
@@ -50,7 +50,7 @@ void ToggleItem::removeHover()
 {
 	if(m_hover) {
 		m_hover = false;
-		update();
+		refresh();
 	}
 }
 

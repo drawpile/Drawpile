@@ -3,16 +3,15 @@
 #include "desktop/scene/lasertrailitem.h"
 
 #include <QApplication>
-#include <QPainter>
 #include <QDateTime>
+#include <QPainter>
 #include <cmath>
 
 namespace drawingboard {
 
-LaserTrailItem::LaserTrailItem(uint8_t owner, int persistenceMs, const QColor &color, QGraphicsItem *parent)
-	: QGraphicsItem(parent)
-	, m_blink(0.0f)
-	, m_fadeout(false)
+LaserTrailItem::LaserTrailItem(
+	int owner, int persistenceMs, const QColor &color, QGraphicsItem *parent)
+	: BaseItem(parent)
 	, m_owner(owner)
 	, m_lastModified(QDateTime::currentMSecsSinceEpoch())
 	, m_persistence(persistenceMs)
@@ -29,9 +28,9 @@ QRectF LaserTrailItem::boundingRect() const
 
 void LaserTrailItem::addPoint(const QPointF &point)
 {
-	prepareGeometryChange();
+	refreshGeometry();
 	m_points.append(point);
-	if(m_points.length()==1) {
+	if(m_points.length() == 1) {
 		m_bounds = QRectF{point, QSizeF{1, 1}};
 	} else {
 		m_bounds = m_bounds.united(QRectF{point, QSizeF{1, 1}});
@@ -39,21 +38,15 @@ void LaserTrailItem::addPoint(const QPointF &point)
 	m_lastModified = QDateTime::currentMSecsSinceEpoch();
 }
 
-void LaserTrailItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void LaserTrailItem::paint(
+	QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
-	Q_UNUSED(option);
-	Q_UNUSED(widget);
-	painter->save();
 	painter->setRenderHint(QPainter::Antialiasing, true);
-
 	m_pen.setWidth(
 		painter->device()->devicePixelRatioF() *
 		(m_blink < ANIM_TIME / 2.0f ? 4.0 : 3.0));
 	painter->setPen(m_pen);
-
 	painter->drawPolyline(m_points.constData(), m_points.size());
-
-	painter->restore();
 }
 
 bool LaserTrailItem::animationStep(qreal dt)
@@ -64,11 +57,12 @@ bool LaserTrailItem::animationStep(qreal dt)
 	if(m_fadeout) {
 		setOpacity(qMax(0.0, opacity() - dt));
 		retain = opacity() > 0.0;
-	} else if(m_lastModified < QDateTime::currentMSecsSinceEpoch() - m_persistence) {
+	} else if(
+		m_lastModified < QDateTime::currentMSecsSinceEpoch() - m_persistence) {
 		m_fadeout = true;
 	}
 
-	update(boundingRect());
+	refresh();
 
 	return retain;
 }

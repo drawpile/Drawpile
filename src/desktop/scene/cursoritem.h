@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef DESKTOP_CURSORITEM_H
 #define DESKTOP_CURSORITEM_H
+#include "desktop/scene/baseitem.h"
 #include <QCursor>
-#include <QGraphicsItem>
 
 namespace drawingboard {
 
 // Emulated bitmap cursor for platforms like Emscripten that don't support them.
-class CursorItem final : public QGraphicsItem {
+class CursorItem final : public BaseItem {
 public:
-	enum { Type = UserType + 19 };
+	enum { Type = CursorType };
 
 	CursorItem(QGraphicsItem *parent = nullptr);
 

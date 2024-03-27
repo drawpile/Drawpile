@@ -1,20 +1,20 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+#ifndef DESKTOP_SCENE_SELECTIONITEM_H
+#define DESKTOP_SCENE_SELECTIONITEM_H
+#include "desktop/scene/baseitem.h"
 
-#ifndef SELECTIONITEM_H
-#define SELECTIONITEM_H
-
-#include "libclient/canvas/selection.h"
-
-#include <QGraphicsObject>
+namespace canvas {
+class Selection;
+}
 
 namespace drawingboard {
 
-class SelectionItem final : public QGraphicsObject
-{
+class SelectionItem final : public BaseObject {
 public:
-	enum { Type= UserType + 11 };
+	enum { Type = SelectionType };
 
-	SelectionItem(canvas::Selection *selection, QGraphicsItem *parent = nullptr);
+	SelectionItem(
+		canvas::Selection *selection, QGraphicsItem *parent = nullptr);
 
 	QRectF boundingRect() const override;
 	int type() const override { return Type; }
@@ -26,7 +26,9 @@ private slots:
 	void onAdjustmentModeChanged();
 
 protected:
-	void paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *) override;
+	void paint(
+		QPainter *painter, const QStyleOptionGraphicsItem *options,
+		QWidget *) override;
 
 private:
 	QPolygonF m_shape;

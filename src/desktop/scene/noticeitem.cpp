@@ -4,21 +4,18 @@
 #include <QColor>
 #include <QFont>
 #include <QFontMetricsF>
-#include <QGraphicsDropShadowEffect>
+#include <QGraphicsScene>
 #include <QPainter>
 #include <QPalette>
 
 namespace drawingboard {
 
-NoticeItem::NoticeItem(const QString &text, QGraphicsItem *parent)
-	: QGraphicsItem{parent}
-	, m_persist{-1.0}
+NoticeItem::NoticeItem(
+	const QString &text, qreal persist, QGraphicsItem *parent)
+	: BaseItem(parent)
+	, m_persist(persist)
 {
 	setFlag(ItemIgnoresTransformations);
-	QGraphicsDropShadowEffect *shadow = new QGraphicsDropShadowEffect;
-	shadow->setOffset(0);
-	shadow->setBlurRadius(10);
-	setGraphicsEffect(shadow);
 	setZValue(9999);
 	setText(text);
 }
@@ -28,16 +25,27 @@ QRectF NoticeItem::boundingRect() const
 	return m_bounds;
 }
 
-void NoticeItem::setText(const QString &text)
+bool NoticeItem::setText(const QString &text)
 {
-	m_text = text;
-	updateBounds();
+	if(text != m_text) {
+		m_text = text;
+		updateBounds();
+		return true;
+	} else {
+		return false;
+	}
 }
 
-void NoticeItem::setPersist(qreal seconds)
+bool NoticeItem::setPersist(qreal seconds)
 {
+	bool changed =
+		seconds != m_persist && (seconds < FADEOUT || m_persist < FADEOUT);
 	m_persist = seconds;
-	animationStep(0.0);
+	setOpacity(qBound(0.0, m_persist / FADEOUT, 1.0));
+	if(changed) {
+		refresh();
+	}
+	return changed;
 }
 
 bool NoticeItem::animationStep(qreal dt)
@@ -46,8 +54,9 @@ bool NoticeItem::animationStep(qreal dt)
 		return true;
 	} else {
 		m_persist = qMax(0.0, m_persist - dt);
-		if(m_persist < FADEOUT) {
-			update();
+		if(m_persist >= 0.0 && m_persist < FADEOUT) {
+			setOpacity(m_persist / FADEOUT);
+			refresh();
 		}
 		return m_persist > 0.0;
 	}
@@ -57,10 +66,6 @@ void NoticeItem::paint(
 	QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
 	painter->setRenderHint(QPainter::Antialiasing);
-
-	if(m_persist >= 0.0 && m_persist < FADEOUT) {
-		painter->setOpacity(m_persist / FADEOUT);
-	}
 
 	QPalette palette = qApp->palette();
 	painter->setPen(Qt::NoPen);
@@ -75,7 +80,7 @@ void NoticeItem::paint(
 
 void NoticeItem::updateBounds()
 {
-	prepareGeometryChange();
+	refreshGeometry();
 	m_textBounds = QFontMetricsF(qApp->font())
 					   .boundingRect(QRect(0, 0, 0xffff, 0xffff), 0, m_text)
 					   .translated(16, 16);
