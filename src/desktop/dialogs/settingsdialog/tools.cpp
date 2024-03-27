@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/settingsdialog/tools.h"
-#include "desktop/scene/canvasview.h"
 #include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
+#include "desktop/view/cursor.h"
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDoubleSpinBox>
@@ -137,25 +137,24 @@ void Tools::initGeneralTools(
 	auto *eraseCursor = new QComboBox;
 	auto *alphaLockCursor = new QComboBox;
 
-	using BrushCursor = widgets::CanvasView::BrushCursor;
 	for(QComboBox *cursor : {brushCursor, eraseCursor, alphaLockCursor}) {
 		// Always adjust in case of locale changes
 		cursor->setSizeAdjustPolicy(QComboBox::AdjustToContents);
 
 		if(cursor != brushCursor) {
 			cursor->addItem(
-				tr("Same as brush cursor"),
-				QVariant::fromValue(BrushCursor::SameAsBrush));
+				tr("Same as brush cursor"), int(view::Cursor::SameAsBrush));
 		}
 
 		for(const auto &[name, value] :
-			{std::pair{tr("Dot"), BrushCursor::Dot},
-			 std::pair{tr("Crosshair"), BrushCursor::Cross},
-			 std::pair{tr("Arrow"), BrushCursor::Arrow},
-			 std::pair{tr("Right-handed triangle"), BrushCursor::TriangleRight},
-			 std::pair{tr("Left-handed triangle"), BrushCursor::TriangleLeft},
-			 std::pair{tr("Eraser"), BrushCursor::Eraser}}) {
-			cursor->addItem(name, QVariant::fromValue(value));
+			{std::pair{tr("Dot"), view::Cursor::Dot},
+			 std::pair{tr("Crosshair"), view::Cursor::Cross},
+			 std::pair{tr("Arrow"), view::Cursor::Arrow},
+			 std::pair{
+				 tr("Right-handed triangle"), view::Cursor::TriangleRight},
+			 std::pair{tr("Left-handed triangle"), view::Cursor::TriangleLeft},
+			 std::pair{tr("Eraser"), view::Cursor::Eraser}}) {
+			cursor->addItem(name, int(value));
 		}
 	}
 

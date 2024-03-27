@@ -7,6 +7,7 @@ extern "C" {
 #include "desktop/scene/canvasview.h"
 #include "desktop/tabletinput.h"
 #include "desktop/utils/qtguicompat.h"
+#include "desktop/view/cursor.h"
 #include "desktop/widgets/notifbar.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/drawdance/eventlog.h"
@@ -70,9 +71,9 @@ CanvasView::CanvasView(QWidget *parent)
 	, m_touchRotating(false)
 	, m_touchMode(TouchMode::Unknown)
 	, m_dpi(96)
-	, m_brushCursorStyle(BrushCursor::Dot)
-	, m_eraseCursorStyle(BrushCursor::SameAsBrush)
-	, m_alphaLockCursorStyle(BrushCursor::SameAsBrush)
+	, m_brushCursorStyle(int(view::Cursor::TriangleRight))
+	, m_eraseCursorStyle(int(view::Cursor::SameAsBrush))
+	, m_alphaLockCursorStyle(int(view::Cursor::SameAsBrush))
 	, m_brushOutlineWidth(1.0)
 	, m_brushBlendMode(DP_BLEND_MODE_NORMAL)
 	, m_scrollBarsAdjusting{false}
@@ -628,19 +629,19 @@ void CanvasView::setBusy(bool busy)
 	resetCursor();
 }
 
-void CanvasView::setBrushCursorStyle(BrushCursor style)
+void CanvasView::setBrushCursorStyle(int style)
 {
 	m_brushCursorStyle = style;
 	resetCursor();
 }
 
-void CanvasView::setEraseCursorStyle(BrushCursor style)
+void CanvasView::setEraseCursorStyle(int style)
 {
 	m_eraseCursorStyle = style;
 	resetCursor();
 }
 
-void CanvasView::setAlphaLockCursorStyle(BrushCursor style)
+void CanvasView::setAlphaLockCursorStyle(int style)
 {
 	m_alphaLockCursorStyle = style;
 	resetCursor();
@@ -739,22 +740,22 @@ void CanvasView::resetCursor()
 
 	if(m_toolcursor.shape() == Qt::CrossCursor) {
 		switch(getCurrentCursorStyle()) {
-		case BrushCursor::Dot:
+		case int(view::Cursor::Dot):
 			setViewportCursor(m_dotcursor);
 			break;
-		case BrushCursor::Cross:
+		case int(view::Cursor::Cross):
 			setViewportCursor(Qt::CrossCursor);
 			break;
-		case BrushCursor::Arrow:
+		case int(view::Cursor::Arrow):
 			setViewportCursor(Qt::ArrowCursor);
 			break;
-		case BrushCursor::TriangleLeft:
+		case int(view::Cursor::TriangleLeft):
 			setViewportCursor(m_triangleleftcursor);
 			break;
-		case BrushCursor::TriangleRight:
+		case int(view::Cursor::TriangleRight):
 			setViewportCursor(m_trianglerightcursor);
 			break;
-		case BrushCursor::Eraser:
+		case int(view::Cursor::Eraser):
 			setViewportCursor(m_erasercursor);
 			break;
 		default:
@@ -2105,14 +2106,14 @@ qreal CanvasView::getOutlineWidth() const
 						  : m_brushOutlineWidth;
 }
 
-CanvasView::BrushCursor CanvasView::getCurrentCursorStyle() const
+int CanvasView::getCurrentCursorStyle() const
 {
 	if(DP_blend_mode_presents_as_eraser(m_brushBlendMode)) {
-		if(m_eraseCursorStyle != BrushCursor::SameAsBrush) {
+		if(m_eraseCursorStyle != int(view::Cursor::SameAsBrush)) {
 			return m_eraseCursorStyle;
 		}
 	} else if(DP_blend_mode_preserves_alpha(m_brushBlendMode)) {
-		if(m_alphaLockCursorStyle != BrushCursor::SameAsBrush) {
+		if(m_alphaLockCursorStyle != int(view::Cursor::SameAsBrush)) {
 			return m_alphaLockCursorStyle;
 		}
 	}

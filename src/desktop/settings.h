@@ -5,6 +5,7 @@
 #include "desktop/dialogs/invitedialog.h"
 #include "desktop/scene/canvasview.h"
 #include "desktop/tabletinput.h"
+#include "desktop/view/cursor.h"
 #include "libclient/export/videoexporter.h"
 #include "libclient/settings.h"
 #include "libclient/tools/tool.h"

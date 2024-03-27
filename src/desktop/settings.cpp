@@ -211,6 +211,29 @@ namespace themeStyle {
 	}
 }
 
+namespace viewCursor {
+	QVariant get(const SettingMeta &meta, QSettings &settings)
+	{
+		using Key = std::optional<libclient::settings::FoundKey>;
+		if (Key currentKey = findKey(settings, meta.baseKey, meta.version)) {
+			return settings.value(currentKey->key).toInt();
+		} else if (Key oldKey = findKey(settings, meta.baseKey, SettingMeta::Version::V0)) {
+			return int(settings.value(currentKey->key).value<widgets::CanvasView::BrushCursor>());
+		} else {
+			return meta.getDefaultValue().toInt();
+		}
+	}
+
+	void set(const SettingMeta &meta, QSettings &settings, QVariant value)
+	{
+		using Key = std::optional<libclient::settings::FoundKey>;
+		any::forceSet(meta, settings, value);
+		if (Key oldKey = findKey(settings, meta.baseKey, SettingMeta::Version::V0)) {
+			settings.setValue(oldKey->key, QVariant::fromValue(widgets::CanvasView::BrushCursor(value.toInt())));
+		}
+	}
+}
+
 #define DP_SETTINGS_BODY
 #include "desktop/settings_table.h"
 #undef DP_SETTINGS_BODY

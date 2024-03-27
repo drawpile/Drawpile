@@ -31,6 +31,8 @@ class NotificationBar;
 class CanvasView final : public QGraphicsView {
 	Q_OBJECT
 public:
+	// Replaced by view::Cursor in desktop/view/cursor.h. This enum is only kept
+	// for compatibility purposes, allowing the settings to load the old value.
 	enum class BrushCursor : int {
 		Dot,
 		Cross,
@@ -231,9 +233,9 @@ public slots:
 	void setToolCapabilities(
 		bool allowColorPick, bool allowToolAdjust, bool toolHandlesRightClick);
 
-	void setBrushCursorStyle(BrushCursor style);
-	void setEraseCursorStyle(BrushCursor style);
-	void setAlphaLockCursorStyle(BrushCursor style);
+	void setBrushCursorStyle(int style);
+	void setEraseCursorStyle(int style);
+	void setAlphaLockCursorStyle(int style);
 	void setBrushOutlineWidth(qreal outlineWidth);
 	void setBrushBlendMode(int brushBlendMode);
 
@@ -320,7 +322,7 @@ private:
 	void updateOutline();
 	QPointF getOutlinePos() const;
 	qreal getOutlineWidth() const;
-	BrushCursor getCurrentCursorStyle() const;
+	int getCurrentCursorStyle() const;
 
 #ifdef HAVE_EMULATED_BITMAP_CURSOR
 	void updateCursorPos(const QPoint &pos);
@@ -435,9 +437,9 @@ private:
 	KisCubicCurve m_pressureCurve;
 
 	qreal m_dpi;
-	BrushCursor m_brushCursorStyle;
-	BrushCursor m_eraseCursorStyle;
-	BrushCursor m_alphaLockCursorStyle;
+	int m_brushCursorStyle;
+	int m_eraseCursorStyle;
+	int m_alphaLockCursorStyle;
 	qreal m_brushOutlineWidth;
 	int m_brushBlendMode;
 

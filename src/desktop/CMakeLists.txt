@@ -294,6 +294,7 @@ target_sources(drawpile PRIVATE
 	utils/recents.h
 	utils/widgetutils.cpp
 	utils/widgetutils.h
+	view/cursor.h
 	widgets/brushpreview.cpp
 	widgets/brushpreview.h
 	widgets/canvasshortcutedit.cpp

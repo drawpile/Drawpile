@@ -36,11 +36,16 @@
 #	endif
 #endif
 
-SETTING(alphaLockCursor           , AlphaLockCursor           , "settings/alphalockcursor"              , widgets::CanvasView::BrushCursor::SameAsBrush)
+SETTING(_brushCursorDummy         , _BrushCursorDummy         , "_brushcursordummy"                     , widgets::CanvasView::BrushCursor::Dot)
+SETTING_GETSET_V(
+	V1, alphaLockCursor           , AlphaLockCursor           , "settings/alphalockcursor"              , int(view::Cursor::SameAsBrush),
+	&viewCursor::get, &viewCursor::set)
 #ifdef Q_OS_ANDROID
 SETTING(androidStylusChecked      , AndroidStylusChecked      , "settings/android/styluschecked"        , false)
 #endif
-SETTING(brushCursor               , BrushCursor               , "settings/brushcursor"                  , widgets::CanvasView::BrushCursor::TriangleRight)
+SETTING_GETSET_V(
+	V1, brushCursor               , BrushCursor               , "settings/brushcursor"                  , int(view::Cursor::TriangleRight),
+	&viewCursor::get, &viewCursor::set)
 SETTING(brushOutlineWidth         , BrushOutlineWidth         , "settings/brushoutlinewidth"            , 1.0)
 SETTING(canvasViewBackgroundColor , CanvasViewBackgroundColor , "settings/canvasviewbackgroundcolor"    , CANVAS_VIEW_BACKGROUND_COLOR_DEFAULT)
 SETTING(canvasScrollBars          , CanvasScrollBars          , "settings/canvasscrollbars"             , true)
@@ -60,7 +65,9 @@ SETTING(parentalControlsHideLocked, ParentalControlsHideLocked, "pc/hidelocked" 
 SETTING(curvesPresets             , CurvesPresets             , "curves/presets"                        , QVector<QVariantMap>())
 SETTING(curvesPresetsConverted    , CurvesPresetsConverted    , "curves/inputpresetsconverted"          , false)
 SETTING(doubleTapAltToFocusCanvas , DoubleTapAltToFocusCanvas , "settings/doubletapalttofocuscanvas"    , true)
-SETTING(eraseCursor               , EraseCursor               , "settings/erasecursor"                  , widgets::CanvasView::BrushCursor::SameAsBrush)
+SETTING_GETSET_V(
+	V1, eraseCursor               , EraseCursor               , "settings/erasecursor"                  , int(view::Cursor::SameAsBrush),
+	&viewCursor::get, &viewCursor::set)
 SETTING(filterClosed              , FilterClosed              , "history/filterclosed"                  , false)
 SETTING(filterDuplicates          , FilterDuplicates          , "history/filterduplicates"              , false)
 SETTING(filterInactive            , FilterInactive            , "history/filterinactive"                , true)
