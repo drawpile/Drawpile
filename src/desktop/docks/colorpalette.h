@@ -33,8 +33,12 @@ private slots:
 	void copyPalette();
 	void deletePalette();
 	void renamePalette();
+#ifndef __EMSCRIPTEN__
+	// TODO: patch QtColorWidgets to allow loading from and saving to a
+	// QByteArray to support these sensibly on Emscripten.
 	void exportPalette();
 	void importPalette();
+#endif
 	void selectColor(const QColor &color);
 
 private:

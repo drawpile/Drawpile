@@ -31,6 +31,7 @@
 #include <QKeySequence>
 #include <QJsonDocument>
 #include <QSignalBlocker>
+#include <QTemporaryFile>
 
 #ifdef Q_OS_MACOS
 static constexpr auto CTRL_KEY = Qt::META;
@@ -123,6 +124,7 @@ static constexpr auto CTRL_KEY = Qt::CTRL;
 #include "desktop/dialogs/startdialog.h"
 #include "desktop/dialogs/animationimportdialog.h"
 #include "libclient/import/loadresult.h"
+#include <functional>
 
 #ifdef Q_OS_WIN
 #include "desktop/bundled/kis_tablet/kis_tablet_support_win.h"
@@ -132,12 +134,15 @@ static constexpr auto CTRL_KEY = Qt::CTRL;
 #	include "libclient/server/builtinserver.h"
 #endif
 
+using std::placeholders::_1;
+using std::placeholders::_2;
 using desktop::settings::Settings;
 // Totally arbitrary nonsense
 constexpr auto DEBOUNCE_MS = 250;
 
-MainWindow::MainWindow(bool restoreWindowPosition)
+MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	: QMainWindow(),
+	  m_singleSession(singleSession),
 	  m_splitter(nullptr),
 	  m_dockToolSettings(nullptr),
 	  m_dockBrushPalette(nullptr),
@@ -171,7 +176,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	  m_brushSlots(nullptr),
 	  m_dockToggles(nullptr),
 	  m_lastToolBeforePaste(-1),
-#ifndef Q_OS_ANDROID
+#ifndef SINGLE_MAIN_WINDOW
 	  m_fullscreenOldMaximized(false),
 #endif
 	  m_tempToolSwitchShortcut(nullptr),
@@ -179,8 +184,10 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	  m_wasSessionLocked(false),
 	  m_notificationsMuted(false),
 	  m_initialCatchup(false),
-	  m_doc(nullptr),
-	  m_exitAction(RUNNING)
+	  m_doc(nullptr)
+#ifndef __EMSCRIPTEN__
+	  , m_exitAction(RUNNING)
+#endif
 {
 	// Avoid flickering of intermediate states.
 	setUpdatesEnabled(false);
@@ -280,6 +287,11 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(m_doc, &Document::canvasChanged, this, &MainWindow::onCanvasChanged);
 	connect(m_doc, &Document::canvasSaveStarted, this, &MainWindow::onCanvasSaveStarted);
 	connect(m_doc, &Document::canvasSaved, this, &MainWindow::onCanvasSaved);
+#ifdef __EMSCRIPTEN__
+	connect(m_doc, &Document::canvasDownloadStarted, this, &MainWindow::onCanvasDownloadStarted);
+	connect(m_doc, &Document::canvasDownloadReady, this, &MainWindow::onCanvasDownloadReady);
+	connect(m_doc, &Document::canvasDownloadError, this, &MainWindow::onCanvasDownloadError);
+#endif
 	connect(m_doc, &Document::templateExported, this, &MainWindow::onTemplateExported);
 	connect(m_doc, &Document::dirtyCanvas, this, &MainWindow::setWindowModified);
 	connect(m_doc, &Document::sessionTitleChanged, this, &MainWindow::updateTitle);
@@ -560,8 +572,13 @@ MainWindow::~MainWindow()
 
 void MainWindow::autoJoin(const QUrl &url)
 {
-	dialogs::StartDialog *dlg = showStartDialog();
-	dlg->autoJoin(url);
+	if(m_singleSession) {
+		m_doc->client()->setSessionUrl(url);
+		joinSession(url);
+	} else {
+		dialogs::StartDialog *dlg = showStartDialog();
+		dlg->autoJoin(url);
+	}
 }
 
 void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
@@ -644,6 +661,11 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
  */
 bool MainWindow::canReplace() const {
 	return !(m_doc->isDirty() || m_doc->client()->isConnected() || m_doc->isRecording() || m_playbackDialog || m_dumpPlaybackDialog);
+}
+
+bool MainWindow::shouldPreventUnload() const
+{
+	return m_singleSession ? m_doc->client()->isLoggedIn() : !canReplace();
 }
 
 /**
@@ -883,7 +905,7 @@ void MainWindow::readSettings(bool windowpos)
 	}
 
 	// Show self
-	utils::showWindow(this, settings.lastWindowMaximized());
+	utils::showWindow(this, settings.lastWindowMaximized(), true);
 
 	// The following state restoration requires the window to be resized, but Qt
 	// does that lazily on the next event loop iteration. So we forcefully flush
@@ -921,7 +943,9 @@ void MainWindow::readSettings(bool windowpos)
 	settings.bindShortcuts(this, &MainWindow::loadShortcuts);
 
 	// Restore recent files
-	dpApp().recents().bindFileMenu(m_recentMenu);
+	if(!m_singleSession) {
+		dpApp().recents().bindFileMenu(m_recentMenu);
+	}
 
 	connect(&m_saveWindowDebounce, &QTimer::timeout, this, &MainWindow::saveWindowState);
 	connect(&m_saveSplitterDebounce, &QTimer::timeout, this, &MainWindow::saveSplitterState);
@@ -935,7 +959,7 @@ void MainWindow::readSettings(bool windowpos)
 		}
 	}
 
-#ifdef Q_OS_ANDROID
+#ifdef SINGLE_MAIN_WINDOW
 	dpApp().processEvents();
 	resize(compat::widgetScreen(*this)->availableSize());
 #endif
@@ -1209,6 +1233,9 @@ void MainWindow::receiveCurrentBrush(int userId, const QJsonObject &info)
  */
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+#ifdef __EMSCRIPTEN__
+	event->ignore();
+#else
 	QApplication::restoreOverrideCursor();
 	setEnabled(true);
 
@@ -1281,6 +1308,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 	}
 
 	exit();
+#endif
 }
 
 bool MainWindow::event(QEvent *event)
@@ -1405,8 +1433,8 @@ void MainWindow::connectStartDialog(dialogs::StartDialog *dlg)
 	}
 
 	Connections *connections = new Connections{dlg};
-	connections->add(connect(dlg, &dialogs::StartDialog::openFile, this, QOverload<>::of(&MainWindow::open)));
-	connections->add(connect(dlg, &dialogs::StartDialog::openUrl, this, QOverload<const QUrl &>::of(&MainWindow::open)));
+	connections->add(connect(dlg, &dialogs::StartDialog::openFile, this, &MainWindow::open));
+	connections->add(connect(dlg, &dialogs::StartDialog::openPath, this, std::bind(&MainWindow::openPath, this, _1, nullptr)));
 	connections->add(connect(dlg, &dialogs::StartDialog::layouts, this, &MainWindow::showLayoutsDialog));
 	connections->add(connect(dlg, &dialogs::StartDialog::preferences, this, &MainWindow::showSettings));
 	connections->add(connect(dlg, &dialogs::StartDialog::join, this, &MainWindow::joinSession));
@@ -1482,116 +1510,94 @@ void MainWindow::newDocument(const QSize &size, const QColor &background)
 	w->m_doc->loadBlank(size, background);
 }
 
-/**
- * Open the selected file
- * @param file file to open
- * @pre file.isEmpty()!=false
- */
-void MainWindow::open(const QUrl& url)
+void MainWindow::openPath(const QString& path, QTemporaryFile *tempFile)
 {
 	MainWindow *w = replaceableWindow();
 	if(w != this) {
-		w->open(url);
+		w->openPath(path, tempFile);
 		return;
 	}
 
-	if(url.isLocalFile()) {
-		QString file = url.toLocalFile();
-		static constexpr auto opt = QRegularExpression::CaseInsensitiveOption;
-		if(QRegularExpression{"\\.dp(rec|txt)$", opt}.match(file).hasMatch()) {
-			bool isTemplate;
-			DP_LoadResult result = m_doc->loadRecording(file, false, &isTemplate);
-			showLoadResultMessage(result);
-			if(result == DP_LOAD_RESULT_SUCCESS && !isTemplate) {
-				QFileInfo fileinfo(file);
-				m_playbackDialog = new dialogs::PlaybackDialog(m_doc->canvas(), this);
-				m_playbackDialog->setWindowTitle(fileinfo.completeBaseName() + " - " + m_playbackDialog->windowTitle());
-				m_playbackDialog->setAttribute(Qt::WA_DeleteOnClose);
-				m_playbackDialog->show();
-				m_playbackDialog->centerOnParent();
-				connect(
-					m_playbackDialog, &dialogs::PlaybackDialog::playbackToggled,
-					this, &MainWindow::setRecorderStatus);
-				connect(
-					m_playbackDialog, &dialogs::PlaybackDialog::destroyed, this,
-					[this](QObject *) {
-						m_playbackDialog = nullptr;
-						setRecorderStatus(false);
-					});
+	QString loadPath = tempFile ? tempFile->fileName() : path;
+	static constexpr auto opt = QRegularExpression::CaseInsensitiveOption;
+	if(QRegularExpression{"\\.dp(rec|txt)$", opt}.match(path).hasMatch()) {
+		bool isTemplate;
+		DP_LoadResult result = m_doc->loadRecording(loadPath, false, &isTemplate);
+		showLoadResultMessage(result);
+		if(result == DP_LOAD_RESULT_SUCCESS && !isTemplate) {
+			QFileInfo fileinfo(path);
+			m_playbackDialog = new dialogs::PlaybackDialog(m_doc->canvas(), this);
+			m_playbackDialog->setWindowTitle(fileinfo.completeBaseName() + " - " + m_playbackDialog->windowTitle());
+			m_playbackDialog->setAttribute(Qt::WA_DeleteOnClose);
+			m_playbackDialog->show();
+			m_playbackDialog->centerOnParent();
+			if(tempFile) {
+				tempFile->setParent(m_playbackDialog);
 			}
-		} else if(QRegularExpression{"\\.drawdancedump$", opt}.match(file).hasMatch()) {
-			DP_LoadResult result = m_doc->loadRecording(file, true);
-			showLoadResultMessage(result);
-			if(result == DP_LOAD_RESULT_SUCCESS) {
-				QFileInfo fileinfo{file};
-				m_dumpPlaybackDialog = new dialogs::DumpPlaybackDialog{m_doc->canvas(), this};
-				m_dumpPlaybackDialog->setWindowTitle(QStringLiteral("%1 - %2")
-					.arg(fileinfo.completeBaseName()).arg(m_dumpPlaybackDialog->windowTitle()));
-				m_dumpPlaybackDialog->setAttribute(Qt::WA_DeleteOnClose);
-				m_dumpPlaybackDialog->show();
-			}
-
-		} else {
-			QApplication::setOverrideCursor(Qt::WaitCursor);
-			QProgressDialog *progressDialog = new QProgressDialog(this);
-			progressDialog->setRange(0, 0);
-			progressDialog->setMinimumDuration(500);
-			progressDialog->setCancelButton(nullptr);
-			progressDialog->setLabelText(tr("Opening file…"));
-			setEnabled(false);
-
-			CanvasLoaderRunnable *loader = new CanvasLoaderRunnable(file, this);
-			loader->setAutoDelete(false);
 			connect(
-				loader, &CanvasLoaderRunnable::loadComplete, this,
-				[=](const QString &error, const QString &detail) {
-					setEnabled(true);
-					delete progressDialog;
-					QApplication::restoreOverrideCursor();
-
-					const drawdance::CanvasState &canvasState =
-						loader->canvasState();
-					if(canvasState.isNull()) {
-						showErrorMessageWithDetails(error, detail);
-					} else {
-						m_doc->loadState(
-							canvasState, loader->path(), loader->type(), false);
-					}
-
-					loader->deleteLater();
-				}, Qt::QueuedConnection);
-
-			QThreadPool::globalInstance()->start(loader);
+				m_playbackDialog, &dialogs::PlaybackDialog::playbackToggled,
+				this, &MainWindow::setRecorderStatus);
+			connect(
+				m_playbackDialog, &dialogs::PlaybackDialog::destroyed, this,
+				[this](QObject *) {
+					m_playbackDialog = nullptr;
+					setRecorderStatus(false);
+				});
+		} else {
+			delete tempFile;
 		}
 
-		addRecentFile(file);
+	} else if(QRegularExpression{"\\.drawdancedump$", opt}.match(path).hasMatch()) {
+		DP_LoadResult result = m_doc->loadRecording(loadPath, true);
+		if(result == DP_LOAD_RESULT_SUCCESS) {
+			QFileInfo fileinfo{path};
+			m_dumpPlaybackDialog = new dialogs::DumpPlaybackDialog{m_doc->canvas(), this};
+			m_dumpPlaybackDialog->setWindowTitle(QStringLiteral("%1 - %2")
+				.arg(fileinfo.completeBaseName()).arg(m_dumpPlaybackDialog->windowTitle()));
+			m_dumpPlaybackDialog->setAttribute(Qt::WA_DeleteOnClose);
+			m_dumpPlaybackDialog->show();
+			if(tempFile) {
+				tempFile->setParent(m_dumpPlaybackDialog);
+			}
+		} else {
+			delete tempFile;
+		}
 
 	} else {
-		auto *filedownload = new networkaccess::FileDownload(this);
+		QApplication::setOverrideCursor(Qt::WaitCursor);
+		QProgressDialog *progressDialog = new QProgressDialog(this);
+		progressDialog->setRange(0, 0);
+		progressDialog->setMinimumDuration(500);
+		progressDialog->setCancelButton(nullptr);
+		progressDialog->setLabelText(tr("Opening file…"));
+		setEnabled(false);
 
-		filedownload->setTarget(
-			utils::paths::writablePath(
-				QStandardPaths::DownloadLocation,
-				".",
-				url.fileName().isEmpty() ? QStringLiteral("drawpile-download") : url.fileName()
-				)
-			);
+		CanvasLoaderRunnable *loader = new CanvasLoaderRunnable(loadPath, this);
+		loader->setAutoDelete(false);
+		connect(
+			loader, &CanvasLoaderRunnable::loadComplete, this,
+			[=](const QString &error, const QString &detail) {
+				delete tempFile;
+				setEnabled(true);
+				delete progressDialog;
+				QApplication::restoreOverrideCursor();
 
-		connect(filedownload, &networkaccess::FileDownload::progress, m_netstatus, &widgets::NetStatus::setDownloadProgress);
-		connect(filedownload, &networkaccess::FileDownload::finished, this, [this, filedownload](const QString &errorMessage) {
-			m_netstatus->hideDownloadProgress();
-			filedownload->deleteLater();
+				const drawdance::CanvasState &canvasState =
+					loader->canvasState();
+				if(canvasState.isNull()) {
+					showErrorMessageWithDetails(error, detail);
+				} else {
+					m_doc->loadState(
+						canvasState, loader->path(), loader->type(), false);
+				}
 
-			if(errorMessage.isEmpty()) {
-				QFile *f = static_cast<QFile*>(filedownload->file()); // this is guaranteed to be a QFile when we used setTarget()
-				open(QUrl::fromLocalFile(f->fileName()));
-			} else {
-				showErrorMessage(errorMessage);
-			}
-		});
+				loader->deleteLater();
+			}, Qt::QueuedConnection);
 
-		filedownload->start(url);
+		QThreadPool::globalInstance()->start(loader);
 	}
+
+	addRecentFile(path);
 }
 
 /**
@@ -1600,13 +1606,21 @@ void MainWindow::open(const QUrl& url)
  */
 void MainWindow::open()
 {
-	QString filename = FileWrangler{getStartDialogOrThis()}.getOpenPath();
-	QUrl url = QUrl::fromLocalFile(filename);
-	if(url.isValid()) {
-		open(url);
-	}
+	FileWrangler(getStartDialogOrThis()).openMain(
+		std::bind(&MainWindow::openPath, this, _1, _2));
 }
 
+#ifdef __EMSCRIPTEN__
+void MainWindow::download()
+{
+	FileWrangler(this).downloadImage(m_doc);
+}
+
+void MainWindow::downloadSelection()
+{
+	FileWrangler(this).downloadSelection(m_doc);
+}
+#else
 /**
  * If no file name has been selected, \a saveas is called.
  */
@@ -1648,6 +1662,7 @@ void MainWindow::exportImage()
 		addRecentFile(result);
 	}
 }
+#endif
 
 void MainWindow::importOldAnimation()
 {
@@ -1669,9 +1684,14 @@ void MainWindow::importOldAnimation()
 void MainWindow::onCanvasSaveStarted()
 {
 	QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
+#ifdef __EMSCRIPTEN__
+	getAction("downloaddocument")->setEnabled(false);
+	getAction("downloadselection")->setEnabled(false);
+#else
 	getAction("savedocument")->setEnabled(false);
 	getAction("savedocumentas")->setEnabled(false);
 	getAction("exportdocument")->setEnabled(false);
+#endif
 	m_viewStatusBar->showMessage(tr("Saving..."));
 	m_view->setSaveInProgress(true);
 }
@@ -1679,26 +1699,61 @@ void MainWindow::onCanvasSaveStarted()
 void MainWindow::onCanvasSaved(const QString &errorMessage)
 {
 	QApplication::restoreOverrideCursor();
+#ifdef __EMSCRIPTEN__
+	getAction("downloaddocument")->setEnabled(false);
+	getAction("downloadselection")->setEnabled(false);
+#else
 	getAction("savedocument")->setEnabled(true);
 	getAction("savedocumentas")->setEnabled(true);
 	getAction("exportdocument")->setEnabled(true);
+#endif
 	m_view->setSaveInProgress(false);
 
 	setWindowModified(m_doc->isDirty());
 	updateTitle();
 
-	if(!errorMessage.isEmpty())
+	if(!errorMessage.isEmpty()) {
+		m_viewStatusBar->showMessage(tr("Image saving failed"), 1000);
 		showErrorMessageWithDetails(tr("Couldn't save image"), errorMessage);
-	else
+	} else {
 		m_viewStatusBar->showMessage(tr("Image saved"), 1000);
+	}
 
+#ifndef __EMSCRIPTEN__
 	// Cancel exit if canvas is modified while it was being saved
 	if(m_doc->isDirty())
 		m_exitAction = RUNNING;
 
 	if(m_exitAction == SAVING)
 		close();
+#endif
 }
+
+#ifdef __EMSCRIPTEN__
+void MainWindow::onCanvasDownloadStarted()
+{
+	onCanvasSaveStarted();
+}
+
+void MainWindow::onCanvasDownloadReady(const QString &defaultName, const QByteArray &bytes)
+{
+	onCanvasSaved(QString());
+	QMessageBox *msgbox = utils::makeInformationWithSaveButton(
+		this, tr("Download Complete"),
+		tr("Download complete, click on \"Save\" to save your file."));
+	connect(
+		msgbox->button(QMessageBox::Save), &QAbstractButton::clicked, this,
+		[this, defaultName, bytes]() {
+			FileWrangler(this).saveFileContent(defaultName, bytes);
+		});
+	msgbox->show();
+}
+
+void MainWindow::onCanvasDownloadError(const QString &errorMessage)
+{
+	onCanvasSaved(errorMessage);
+}
+#endif
 
 void MainWindow::showResetNoticeDialog(const drawdance::CanvasState &canvasState)
 {
@@ -1727,6 +1782,11 @@ void MainWindow::savePreResetImageAs()
 	if(m_preResetCanvasState.isNull()) {
 		m_view->hideResetNotice();
 	} else {
+#ifdef __EMSCRIPTEN__
+		if(FileWrangler(this).downloadPreResetImage(m_doc, m_preResetCanvasState)) {
+			m_view->hideResetNotice();
+		}
+#else
 		QString result = FileWrangler(this).savePreResetImageAs(
 			m_doc, m_preResetCanvasState);
 		if(!result.isEmpty()) {
@@ -1734,6 +1794,7 @@ void MainWindow::savePreResetImageAs()
 			m_view->hideResetNotice();
 			addRecentFile(result);
 		}
+#endif
 	}
 }
 
@@ -1889,6 +1950,9 @@ void MainWindow::showFlipbook()
 
 void MainWindow::setRecorderStatus(bool on)
 {
+#ifdef __EMSCRIPTEN__
+	Q_UNUSED(on);
+#else
 	QAction *recordAction = getAction("recordsession");
 
 	if(m_playbackDialog) {
@@ -1909,6 +1973,7 @@ void MainWindow::setRecorderStatus(bool on)
 			recordAction->setIcon(QIcon::fromTheme("media-record"));
 		}
 	}
+#endif
 }
 
 void MainWindow::toggleRecording()
@@ -1944,12 +2009,31 @@ void MainWindow::toggleRecording()
 
 void MainWindow::toggleProfile()
 {
+#ifdef __EMSCRIPTEN__
+	QString path = QStringLiteral("/profile.dpperf");
+#endif
 	if(drawdance::Perf::isOpen()) {
-		if(!drawdance::Perf::close()) {
+		if(drawdance::Perf::close()) {
+#ifdef __EMSCRIPTEN__
+			QFile f(path);
+			if(f.open(QIODevice::ReadOnly)) {
+				FileWrangler(this).saveFileContent(
+					QStringLiteral("profile%1.dpperf")
+						.arg(QDateTime::currentSecsSinceEpoch()),
+					f.readAll());
+			} else {
+				showErrorMessageWithDetails(
+					tr("Error downloading profile."), f.errorString());
+			}
+			f.remove();
+#endif
+		} else {
 			showErrorMessageWithDetails(tr("Error closing profile."), DP_error());
 		}
 	} else {
+#ifndef __EMSCRIPTEN__
 		QString path = FileWrangler{this}.getSavePerformanceProfilePath();
+#endif
 		if(!path.isEmpty()) {
 			if(!drawdance::Perf::open(path)) {
 				showErrorMessageWithDetails(tr("Error opening profile."), DP_error());
@@ -1960,12 +2044,31 @@ void MainWindow::toggleProfile()
 
 void MainWindow::toggleTabletEventLog()
 {
+#ifdef __EMSCRIPTEN__
+	QString path = QStringLiteral("/eventlog.dplog");
+#endif
 	if(drawdance::EventLog::isOpen()) {
-		if(!drawdance::EventLog::close()) {
+		if(drawdance::EventLog::close()) {
+#ifdef __EMSCRIPTEN__
+			QFile f(path);
+			if(f.open(QIODevice::ReadOnly)) {
+				FileWrangler(this).saveFileContent(
+					QStringLiteral("eventlog%1.dplog")
+						.arg(QDateTime::currentSecsSinceEpoch()),
+					f.readAll());
+			} else {
+				showErrorMessageWithDetails(
+					tr("Error downloading tablet event log."), f.errorString());
+			}
+			f.remove();
+#endif
+		} else {
 			showErrorMessageWithDetails(tr("Error closing tablet event log."), DP_error());
 		}
 	} else {
+#ifndef __EMSCRIPTEN__
 		QString path = FileWrangler{this}.getSaveTabletEventLogPath();
+#endif
 		if(!path.isEmpty()) {
 			if(drawdance::EventLog::open(path)) {
 				DP_event_log_write_meta("Drawpile: %s", cmake_config::version());
@@ -2026,7 +2129,7 @@ void MainWindow::showBrushSettingsDialog()
 dialogs::SettingsDialog *MainWindow::showSettings()
 {
 	dialogs::SettingsDialog *dlg =
-		new dialogs::SettingsDialog(getStartDialogOrThis());
+		new dialogs::SettingsDialog(m_singleSession, getStartDialogOrThis());
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 	utils::showWindow(dlg);
 	return dlg;
@@ -2051,11 +2154,9 @@ void MainWindow::hostSession(
 	QUrl address;
 
 	if(useremote) {
-		QString scheme;
-		if(!remoteAddress.startsWith("drawpile://", Qt::CaseInsensitive))
-			scheme = "drawpile://";
-		address = QUrl(scheme + remoteAddress, QUrl::TolerantMode);
-
+		address = QUrl(
+			net::Server::addSchemeToUserSuppliedAddress(remoteAddress),
+			QUrl::TolerantMode);
 	} else {
 		address.setHost(WhatIsMyIp::guessLocalAddress());
 		address.setScheme(QStringLiteral("drawpile"));
@@ -2142,8 +2243,12 @@ void MainWindow::invite()
 
 void MainWindow::join()
 {
-	dialogs::StartDialog *dlg = showStartDialog();
-	dlg->showPage(dialogs::StartDialog::Entry::Join);
+	if(m_singleSession) {
+		joinSession(m_doc->client()->sessionUrl(true));
+	} else {
+		dialogs::StartDialog *dlg = showStartDialog();
+		dlg->showPage(dialogs::StartDialog::Entry::Join);
+	}
 }
 
 void MainWindow::browse()
@@ -2157,24 +2262,19 @@ void MainWindow::browse()
  */
 void MainWindow::leave()
 {
-	QMessageBox *leavebox = new QMessageBox(
-		QMessageBox::Question,
+	QMessageBox *leavebox = utils::makeQuestion(
+		this,
 		m_doc->sessionTitle().isEmpty() ? tr("Untitled") : m_doc->sessionTitle(),
 		m_doc->client()->isBuiltin()
 			? tr("Really leave and terminate the session?")
-			: tr("Really leave the session?"),
-		QMessageBox::NoButton,
-		this,
-		Qt::MSWindowsFixedSizeDialogHint|Qt::Sheet
-	);
-	leavebox->setAttribute(Qt::WA_DeleteOnClose);
-	leavebox->addButton(tr("Leave"), QMessageBox::YesRole);
-	leavebox->setDefaultButton(
-			leavebox->addButton(tr("Stay"), QMessageBox::NoRole)
-			);
+			: tr("Really leave the session?"));
+	leavebox->button(QMessageBox::Yes)->setText(tr("Leave"));
+	leavebox->button(QMessageBox::No)->setText(tr("Stay"));
+	leavebox->setDefaultButton(QMessageBox::No);
 	connect(leavebox, &QMessageBox::finished, this, [this](int result) {
-		if(result == 0)
+		if(result == QMessageBox::Yes) {
 			m_doc->client()->disconnectFromServer();
+		}
 	});
 
 	if(m_doc->client()->uploadQueueBytes() > 0) {
@@ -2228,7 +2328,8 @@ void MainWindow::resetSession()
 {
 	utils::ScopedOverrideCursor waitCursor;
 	dialogs::ResetDialog *dlg = new dialogs::ResetDialog(
-		m_doc->canvas()->paintEngine(), m_doc->isCompatibilityMode(), this);
+		m_doc->canvas()->paintEngine(), m_doc->isCompatibilityMode(),
+		m_singleSession, this);
 	dlg->setWindowModality(Qt::WindowModal);
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 
@@ -2288,10 +2389,14 @@ void MainWindow::terminateSession()
  */
 void MainWindow::joinSession(const QUrl& url, const QString &autoRecordFile)
 {
+	m_view->hideDisconnectedWarning();
 	if(!canReplace()) {
-		MainWindow *win = new MainWindow(false);
+		MainWindow *win = new MainWindow(false, m_singleSession);
 		emit windowReplacementFailed(win);
 		Q_ASSERT(win->canReplace());
+		if(m_singleSession) {
+			win->m_doc->client()->setSessionUrl(url);
+		}
 		win->joinSession(url, autoRecordFile);
 		return;
 	}
@@ -2321,6 +2426,9 @@ void MainWindow::onServerConnected()
 	emit hostSessionEnabled(false);
 	getAction("leavesession")->setEnabled(true);
 	getAction("sessionsettings")->setEnabled(true);
+	if(m_singleSession) {
+		getAction("joinsession")->setEnabled(false);
+	}
 
 	// Disable UI until login completes
 	m_view->setEnabled(false);
@@ -2345,6 +2453,9 @@ void MainWindow::onServerDisconnected(const QString &message, const QString &err
 	getAction("sessionsettings")->setEnabled(false);
 	getAction("reportabuse")->setEnabled(false);
 	getAction("terminatesession")->setEnabled(false);
+	if(m_singleSession) {
+		getAction("joinsession")->setEnabled(true);
+	}
 	m_admintools->setEnabled(false);
 	m_sessionSettings->close();
 
@@ -2356,18 +2467,12 @@ void MainWindow::onServerDisconnected(const QString &message, const QString &err
 	if(!m_doc->client()->isLoggedIn() && !localDisconnect &&
 	   m_lastDisconnectNotificationTimer.hasExpired()) {
 		QString name = QStringLiteral("disconnectederrormessagebox");
-		QMessageBox *msgbox =
-			findChild<QMessageBox *>(name, Qt::FindDirectChildrenOnly);
+		QMessageBox *msgbox = findChild<QMessageBox *>(name);
 		if(!msgbox) {
-			msgbox = new QMessageBox(
-				QMessageBox::Warning,
-				QString(),
-				tr("Could not connect to server"),
-				QMessageBox::Ok,
-				this
-			);
+			msgbox = utils::showWarning(
+				getStartDialogOrThis(), tr("Disconnected"),
+				tr("Could not connect to server"));
 			msgbox->setObjectName(name);
-			msgbox->setAttribute(Qt::WA_DeleteOnClose);
 		}
 
 		if(msgbox->informativeText().isEmpty() && !message.isEmpty()) {
@@ -2394,12 +2499,14 @@ void MainWindow::onServerDisconnected(const QString &message, const QString &err
 
 		msgbox->open();
 	}
-	// If logged in but disconnected unexpectedly, show notification bar
-	else if(m_doc->client()->isLoggedIn() && !localDisconnect) {
+
+	// If logged in but disconnected unexpectedly, show notification bar.
+	// Always show it in single-session mode, reconnecting is the only recourse.
+	if(m_singleSession || (m_doc->client()->isLoggedIn() && !localDisconnect)) {
 		QString notif = message.isEmpty()
 				? tr("You've been disconnected from the session.")
 				: tr("Disconnected: %1").arg(message);
-		m_view->showDisconnectedWarning(notif);
+		m_view->showDisconnectedWarning(notif, m_singleSession);
 		if(m_lastDisconnectNotificationTimer.hasExpired()) {
 			dpApp().notifications()->trigger(
 				this, notification::Event::Disconnect, notif);
@@ -2407,10 +2514,12 @@ void MainWindow::onServerDisconnected(const QString &message, const QString &err
 		}
 	}
 
+#ifndef __EMSCRIPTEN__
 	if(m_exitAction != RUNNING) {
 		m_exitAction = RUNNING;
 		QTimer::singleShot(100, this, &QMainWindow::close);
 	}
+#endif
 }
 
 /**
@@ -2495,7 +2604,7 @@ void MainWindow::updateLockWidget()
 	}
 
 	m_view->setLock(lock);
-	m_lockstatus->setToolTip(m_view->lockDescription());
+	m_lockstatus->setToolTip(m_view->lockDescription(false));
 	m_lockstatus->setPixmap(lock ? QIcon::fromTheme("object-locked").pixmap(16, 16) : QPixmap{});
 }
 
@@ -2552,6 +2661,7 @@ void MainWindow::onUndoDepthLimitSet(int undoDepthLimit)
 	action->setStatusTip(tr("Change the session's undo limit, current limit is %1.").arg(undoDepthLimit));
 }
 
+#ifndef __EMSCRIPTEN__
 /**
  * Write settings and exit. The application will not be terminated until
  * the last mainwindow is closed.
@@ -2565,6 +2675,7 @@ void MainWindow::exit()
 	saveWindowState();
 	deleteLater();
 }
+#endif
 
 void MainWindow::showErrorMessage(const QString &message)
 {
@@ -2577,20 +2688,9 @@ void MainWindow::showErrorMessage(const QString &message)
  */
 void MainWindow::showErrorMessageWithDetails(const QString &message, const QString &details)
 {
-	if(message.isEmpty())
-		return;
-
-	QMessageBox *msgbox = new QMessageBox(
-		QMessageBox::Warning,
-		QString(),
-		message, QMessageBox::Ok,
-		this,
-		Qt::Dialog|Qt::Sheet|Qt::MSWindowsFixedSizeDialogHint
-	);
-	msgbox->setAttribute(Qt::WA_DeleteOnClose);
-	msgbox->setWindowModality(Qt::WindowModal);
-	msgbox->setInformativeText(details);
-	msgbox->show();
+	if(!message.isEmpty()) {
+		utils::showWarning(this, tr("Error"), message, details);
+	}
 }
 
 void MainWindow::showLoadResultMessage(DP_LoadResult result)
@@ -2635,7 +2735,7 @@ void MainWindow::setShowLaserTrails(bool show)
  */
 void MainWindow::toggleFullscreen()
 {
-#ifndef Q_OS_ANDROID
+#ifndef SINGLE_MAIN_WINDOW
 	if(windowState().testFlag(Qt::WindowFullScreen)==false) {
 		// Save windowed mode state
 		m_fullscreenOldGeometry = geometry();
@@ -2766,7 +2866,7 @@ void MainWindow::handleToggleAction(drawingboard::ToggleItem::Action action)
 		m_splitter->setSizes({top, h - top});
 	}
 
-#ifdef Q_OS_ANDROID
+#ifdef SINGLE_MAIN_WINDOW
 	resize(compat::widgetScreen(*this)->availableSize());
 #endif
 }
@@ -2888,7 +2988,11 @@ void MainWindow::activeAnnotationChanged(int annotationId)
 void MainWindow::selectionChanged(canvas::Selection *selection)
 {
 	bool haveSelection = selection != nullptr;
+#ifdef __EMSCRIPTEN__
+	getAction("downloadselection")->setEnabled(haveSelection);
+#else
 	getAction("saveselection")->setEnabled(haveSelection);
+#endif
 	getAction("selectnone")->setEnabled(haveSelection);
 	getAction("stamp")->setEnabled(haveSelection);
 	getAction("fillfgarea")->setEnabled(haveSelection);
@@ -2902,7 +3006,11 @@ void MainWindow::selectionChanged(canvas::Selection *selection)
 
 void MainWindow::selectionRemoved()
 {
+#ifdef __EMSCRIPTEN__
+	getAction("downloadselection")->setEnabled(false);
+#else
 	getAction("saveselection")->setEnabled(false);
+#endif
 	if(m_lastToolBeforePaste>=0) {
 		// Selection was just removed and we had just pasted an image
 		// so restore the previously used tool
@@ -2960,48 +3068,23 @@ void MainWindow::pasteCentered()
 
 void MainWindow::pasteFile()
 {
-	QString filename = FileWrangler{this}.getOpenPasteImagePath();
-	QUrl url = QUrl::fromLocalFile(filename);
-	if(url.isValid()) {
-		pasteFile(url);
-	}
-}
-
-void MainWindow::pasteFile(const QUrl &url)
-{
-	if(url.isLocalFile()) {
-		QImage img(url.toLocalFile());
+	FileWrangler::ImageOpenFn imageOpenCompleted = [this](QImage &img) {
 		if(img.isNull()) {
 			showErrorMessage(tr("The image could not be loaded"));
-			return;
+		} else {
+			pasteImage(img);
 		}
+	};
+	FileWrangler(this).openPasteImage(imageOpenCompleted);
+}
 
-		pasteImage(img);
+void MainWindow::pasteFilePath(const QString &path)
+{
+	QImage img(path);
+	if(img.isNull()) {
+		showErrorMessage(tr("The image could not be loaded"));
 	} else {
-		auto *filedownload = new networkaccess::FileDownload(this);
-
-		filedownload->setExpectedType("image/");
-
-		connect(filedownload, &networkaccess::FileDownload::progress, m_netstatus, &widgets::NetStatus::setDownloadProgress);
-		connect(filedownload, &networkaccess::FileDownload::finished, this, [this, filedownload](const QString &errorMessage) {
-			m_netstatus->hideDownloadProgress();
-			filedownload->deleteLater();
-
-			if(errorMessage.isEmpty()) {
-				QImageReader reader(filedownload->file());
-				QImage image = reader.read();
-
-				if(image.isNull())
-					showErrorMessage(reader.errorString());
-				else
-					pasteImage(image);
-
-			} else {
-				showErrorMessage(errorMessage);
-			}
-		});
-
-		filedownload->start(url);
+		pasteImage(img);
 	}
 }
 
@@ -3021,10 +3104,14 @@ void MainWindow::pasteImage(const QImage &image, const QPoint *point, bool force
 
 void MainWindow::dropUrl(const QUrl &url)
 {
-	if(m_canvasscene->hasImage())
-		pasteFile(url);
-	else
-		open(url);
+	if(url.isLocalFile()) {
+		QString path = url.toLocalFile();
+		if(m_canvasscene->hasImage()) {
+			pasteFilePath(path);
+		} else {
+			openPath(path);
+		}
+	}
 }
 
 void MainWindow::clearOrDelete()
@@ -3308,11 +3395,8 @@ void MainWindow::toggleDebugDump()
 
 void MainWindow::openDebugDump()
 {
-	QString filename = FileWrangler{this}.getOpenDebugDumpsPath();
-	QUrl url = QUrl::fromLocalFile(filename);
-	if(url.isValid()) {
-		open(url);
-	}
+	FileWrangler(this).openDebugDump(
+		std::bind(&MainWindow::openPath, this, _1, _2));
 }
 
 
@@ -3473,27 +3557,40 @@ void MainWindow::setupActions()
 #ifdef Q_OS_MACOS
 	QAction *closefile = makeAction("closedocument", tr("Close")).shortcut(QKeySequence::Close);
 #endif
+#ifdef __EMSCRIPTEN__
+	QAction *download = makeAction("downloaddocument", tr("&Download Image…")).icon("document-save").shortcut(QKeySequence::Save);
+	QAction *downloadsel = makeAction("downloadselection", tr("Download Selection…")).icon("select-rectangular").noDefaultShortcut();
+#else
 	QAction *save = makeAction("savedocument", tr("&Save")).icon("document-save").shortcut(QKeySequence::Save);
 	QAction *saveas = makeAction("savedocumentas", tr("Save &As...")).icon("document-save-as").shortcut(QKeySequence::SaveAs);
 	QAction *exportDocument = makeAction("exportdocument", tr("Export Image…")).icon("document-export").noDefaultShortcut();
 	QAction *savesel = makeAction("saveselection", tr("Export Selection...")).icon("select-rectangular").noDefaultShortcut();
 	QAction *autosave = makeAction("autosave", tr("Autosave")).noDefaultShortcut().checkable().disabled();
-	QAction *importOldAnimation = makeAction("importoldanimation", tr("Import &Drawpile 2.1 Animation…")).noDefaultShortcut();
-	QAction *importBrushes = makeAction("importbrushes", tr("Import &Brushes...")).noDefaultShortcut();
 	QAction *exportTemplate = makeAction("exporttemplate", tr("Export Session &Template...")).noDefaultShortcut();
 	QAction *exportGifAnimation = makeAction("exportanimgif", tr("Export Animated &GIF...")).noDefaultShortcut();
 #ifndef Q_OS_ANDROID
 	QAction *exportAnimationFrames = makeAction("exportanimframes", tr("Export Animation &Frames...")).noDefaultShortcut();
 #endif
+#endif
+	QAction *importOldAnimation = makeAction("importoldanimation", tr("Import &Drawpile 2.1 Animation…")).noDefaultShortcut();
+	QAction *importBrushes = makeAction("importbrushes", tr("Import &Brushes...")).noDefaultShortcut();
 	QAction *exportBrushes = makeAction("exportbrushes", tr("Export &Brushes…")).noDefaultShortcut();
 
+#ifndef __EMSCRIPTEN__
 	QAction *record = makeAction("recordsession", tr("Record...")).icon("media-record").noDefaultShortcut();
+#endif
 	QAction *start = makeAction("start", tr("Start...")).noDefaultShortcut();
+#ifndef __EMSCRIPTEN__
 	QAction *quit = makeAction("exitprogram", tr("&Quit")).icon("application-exit").shortcut("Ctrl+Q").menuRole(QAction::QuitRole);
+#endif
 
 #ifdef Q_OS_MACOS
 	m_currentdoctools->addAction(closefile);
 #endif
+#ifdef __EMSCRIPTEN__
+	m_currentdoctools->addAction(download);
+	m_currentdoctools->addAction(downloadsel);
+#else
 	m_currentdoctools->addAction(save);
 	m_currentdoctools->addAction(saveas);
 	m_currentdoctools->addAction(exportTemplate);
@@ -3504,16 +3601,18 @@ void MainWindow::setupActions()
 	m_currentdoctools->addAction(exportAnimationFrames);
 #endif
 	m_currentdoctools->addAction(record);
+#endif
 
 	connect(newdocument, SIGNAL(triggered()), this, SLOT(showNew()));
 	connect(open, SIGNAL(triggered()), this, SLOT(open()));
+#ifdef __EMSCRIPTEN__
+	connect(download, &QAction::triggered, this, &MainWindow::download);
+	connect(downloadsel, &QAction::triggered, this, &MainWindow::downloadSelection);
+#else
 	connect(save, SIGNAL(triggered()), this, SLOT(save()));
 	connect(saveas, SIGNAL(triggered()), this, SLOT(saveas()));
 	connect(exportDocument, &QAction::triggered, this, &MainWindow::exportImage);
 	connect(exportTemplate, &QAction::triggered, this, &MainWindow::exportTemplate);
-	connect(importOldAnimation, &QAction::triggered, this, &MainWindow::importOldAnimation);
-	connect(importBrushes, &QAction::triggered, m_dockBrushPalette, &docks::BrushPalette::importBrushes);
-	connect(exportBrushes, &QAction::triggered, m_dockBrushPalette, &docks::BrushPalette::exportBrushes);
 	connect(savesel, &QAction::triggered, this, &MainWindow::saveSelection);
 
 	connect(autosave, &QAction::triggered, m_doc, &Document::setAutosave);
@@ -3525,30 +3624,43 @@ void MainWindow::setupActions()
 	connect(exportAnimationFrames, &QAction::triggered, this, &MainWindow::exportAnimationFrames);
 #endif
 	connect(record, &QAction::triggered, this, &MainWindow::toggleRecording);
+#endif
+	connect(importOldAnimation, &QAction::triggered, this, &MainWindow::importOldAnimation);
+	connect(importBrushes, &QAction::triggered, m_dockBrushPalette, &docks::BrushPalette::importBrushes);
+	connect(exportBrushes, &QAction::triggered, m_dockBrushPalette, &docks::BrushPalette::exportBrushes);
 	connect(start, &QAction::triggered, this, &MainWindow::start);
 
-#ifdef Q_OS_MACOS
+#ifndef __EMSCRIPTEN__
+#	ifdef Q_OS_MACOS
 	connect(closefile, SIGNAL(triggered()), this, SLOT(close()));
 	connect(quit, SIGNAL(triggered()), MacMenu::instance(), SLOT(quitAll()));
-#else
+#	else
 	connect(quit, SIGNAL(triggered()), this, SLOT(close()));
+#	endif
 #endif
 
 	QMenu *filemenu = menuBar()->addMenu(tr("&File"));
 	filemenu->addAction(newdocument);
 	filemenu->addAction(open);
-	m_recentMenu = filemenu->addMenu(tr("Open &Recent"));
-	m_recentMenu->setIcon(QIcon::fromTheme("document-open-recent"));
+	if(!m_singleSession) {
+		m_recentMenu = filemenu->addMenu(tr("Open &Recent"));
+		m_recentMenu->setIcon(QIcon::fromTheme("document-open-recent"));
+	}
 	filemenu->addSeparator();
 
-#ifdef Q_OS_MACOS
+#ifdef __EMSCRIPTEN__
+	filemenu->addAction(download);
+	filemenu->addAction(downloadsel);
+#else
+#	ifdef Q_OS_MACOS
 	filemenu->addAction(closefile);
-#endif
+#	endif
 	filemenu->addAction(save);
 	filemenu->addAction(saveas);
 	filemenu->addAction(savesel);
 	filemenu->addAction(exportDocument);
 	filemenu->addAction(autosave);
+#endif
 	filemenu->addSeparator();
 
 	QMenu *importMenu = filemenu->addMenu(tr("&Import"));
@@ -3558,35 +3670,49 @@ void MainWindow::setupActions()
 
 	QMenu *exportMenu = filemenu->addMenu(tr("&Export"));
 	exportMenu->setIcon(QIcon::fromTheme("document-export"));
+#ifndef __EMSCRIPTEN__
 	exportMenu->addAction(exportDocument);
 	exportMenu->addAction(exportTemplate);
 	exportMenu->addAction(exportGifAnimation);
-#ifndef Q_OS_ANDROID
+#	ifndef Q_OS_ANDROID
 	exportMenu->addAction(exportAnimationFrames);
+#	endif
 #endif
 	exportMenu->addAction(exportBrushes);
+#ifndef __EMSCRIPTEN__
 	filemenu->addAction(record);
+#endif
 	filemenu->addSeparator();
 	filemenu->addAction(start);
+#ifndef __EMSCRIPTEN__
 	filemenu->addAction(quit);
+#endif
 
 	QToolBar *filetools = new QToolBar(tr("File Tools"));
 	filetools->setObjectName("filetoolsbar");
 	toggletoolbarmenu->addAction(filetools->toggleViewAction());
-	filetools->addAction(newdocument);
-	filetools->addAction(open);
+	if(!m_singleSession) {
+		filetools->addAction(newdocument);
+		filetools->addAction(open);
+	}
+#ifdef __EMSCRIPTEN__
+	filetools->addAction(download);
+#else
 	filetools->addAction(save);
 	filetools->addAction(record);
+#endif
 
-	connect(m_recentMenu, &QMenu::triggered, this, [this](QAction *action) {
-		QVariant filepath = action->property("filepath");
-		if(filepath.isValid()) {
-			this->open(QUrl::fromLocalFile(filepath.toString()));
-		} else {
-			dialogs::StartDialog *dlg = showStartDialog();
-			dlg->showPage(dialogs::StartDialog::Entry::Recent);
-		}
-	});
+	if(!m_singleSession) {
+		connect(m_recentMenu, &QMenu::triggered, this, [this](QAction *action) {
+			QVariant filepath = action->property("filepath");
+			if(filepath.isValid()) {
+				this->openPath(filepath.toString());
+			} else {
+				dialogs::StartDialog *dlg = showStartDialog();
+				dlg->showPage(dialogs::StartDialog::Entry::Recent);
+			}
+		});
+	}
 
 	//
 	// Edit menu
@@ -3856,7 +3982,7 @@ void MainWindow::setupActions()
 	QAction *showlasers = makeAction("showlasers", tr("Show La&ser Trails")).noDefaultShortcut().checked().remembered();
 	QAction *showgrid = makeAction("showgrid", tr("Show Pixel &Grid")).noDefaultShortcut().checked().remembered();
 
-#ifndef Q_OS_ANDROID
+#ifndef SINGLE_MAIN_WINDOW
 	QAction *fullscreen = makeAction("fullscreen", tr("&Full Screen")).shortcut(QKeySequence::FullScreen).checkable();
 	if(windowHandle()) { // mainwindow should always be a native window, but better safe than sorry
 		connect(windowHandle(), &QWindow::windowStateChanged, fullscreen, [fullscreen](Qt::WindowState state) {
@@ -3929,7 +4055,7 @@ void MainWindow::setupActions()
 	connect(viewflip, SIGNAL(triggered(bool)), m_view, SLOT(setViewFlip(bool)));
 	connect(viewmirror, SIGNAL(triggered(bool)), m_view, SLOT(setViewMirror(bool)));
 
-#ifndef Q_OS_ANDROID
+#ifndef SINGLE_MAIN_WINDOW
 	connect(fullscreen, &QAction::triggered, this, &MainWindow::toggleFullscreen);
 #endif
 
@@ -4015,7 +4141,7 @@ void MainWindow::setupActions()
 
 	viewmenu->addAction(showgrid);
 
-#ifndef Q_OS_ANDROID
+#ifndef SINGLE_MAIN_WINDOW
 	viewmenu->addSeparator();
 	viewmenu->addAction(fullscreen);
 #endif
@@ -4421,31 +4547,29 @@ void MainWindow::setupActions()
 		QString logFilePath = utils::logFilePath();
 		QFile logFile{logFilePath};
 		if(!logFile.exists()) {
-			QMessageBox::warning(
+			utils::showWarning(
 				this, tr("Missing Log File"),
 				tr("Log file doesn't exist, do you need to enable logging in the preferences?"));
 			return;
 		}
 
-#ifdef Q_OS_ANDROID
-		QString filename = FileWrangler{this}.getSaveLogFilePath();
-		if(!filename.isEmpty()) {
-			if(!logFile.open(QIODevice::ReadOnly)) {
-				QMessageBox::warning(
+#if defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)
+		if(logFile.open(QIODevice::ReadOnly)) {
+			QString defaultName =
+				QStringLiteral("drawpile-log-%1-%2.txt")
+					.arg(cmake_config::version())
+					.arg(QDateTime::currentDateTime().toString("yyyyMMddHHMMSS"));
+			QString error;
+			if(!FileWrangler(this).saveLogFile(
+					defaultName, logFile.readAll(), &error)) {
+				utils::showWarning(
 					this, tr("Error Saving Log File"),
-					tr("Could not read source file: %1").arg(logFile.errorString()));
-				return;
+					tr("Could not write log file: %1").arg(error));
 			}
-
-			QFile targetFile{filename};
-			if(!targetFile.open(QIODevice::WriteOnly)) {
-				QMessageBox::warning(
-					this, tr("Error Saving Log File"),
-					tr("Could not open target file: %1").arg(targetFile.errorString()));
-				return;
-			}
-
-			targetFile.write(logFile.readAll());
+		} else {
+			utils::showWarning(
+				this, tr("Error Saving Log File"),
+				tr("Could not read log file: %1").arg(logFile.errorString()));
 		}
 #else
 		QDesktopServices::openUrl(QUrl::fromLocalFile(utils::logFilePath()));
@@ -4539,6 +4663,20 @@ void MainWindow::setupActions()
 		if(qobject_cast<QAction *>(child)) {
 			child->installEventFilter(this);
 		}
+	}
+
+	if(m_singleSession) {
+		QActionGroup *singleGroup = new QActionGroup(this);
+		singleGroup->setExclusive(false);
+		singleGroup->setEnabled(false);
+		singleGroup->setVisible(false);
+		singleGroup->addAction(newdocument);
+		singleGroup->addAction(open);
+		singleGroup->addAction(start);
+		singleGroup->addAction(importOldAnimation);
+		singleGroup->addAction(host);
+		singleGroup->addAction(browse);
+		singleGroup->addAction(versioncheck);
 	}
 }
 

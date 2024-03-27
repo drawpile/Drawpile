@@ -100,6 +100,8 @@ function(add_cargo_library target package)
 
 	if(CARGO_TRIPLE)
 		set(triple "${CARGO_TRIPLE}")
+	elseif(EMSCRIPTEN)
+		set(triple "wasm32-unknown-unknown")
 	elseif(CMAKE_CROSSCOMPILING)
 		if(CMAKE_SYSTEM_PROCESSOR MATCHES "ARM64|[Aa][Aa][Rr][Cc][Hh]64")
 			set(arch aarch64)
@@ -162,7 +164,9 @@ function(add_cargo_library target package)
 	add_custom_target(cargo-build_${target}
 		BYPRODUCTS "${out_dir}/${out_name}"
 		COMMAND ${CMAKE_COMMAND} -E env MACOSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}
-			${CARGO_COMMAND} build
+			${CARGO_COMMAND}
+			"$<$<BOOL:${EMSCRIPTEN}>:+nightly>"
+			build
 			"$<$<BOOL:${ARG_MANIFEST_PATH}>:--manifest-path;${ARG_MANIFEST_PATH}>"
 			"$<$<BOOL:${ARG_FEATURES}>:--features;${ARG_FEATURES}>"
 			"$<$<BOOL:${ARG_ALL_FEATURES}>:--all-features>"
@@ -170,6 +174,7 @@ function(add_cargo_library target package)
 			"$<$<BOOL:${triple}>:--target;${triple}>"
 			"$<$<BOOL:${package}>:--package;${package}>"
 			"$<$<BOOL:${VERBOSE}>:--verbose>"
+			"$<$<BOOL:${EMSCRIPTEN}>:--config;build.rustflags = [\"-C\", \"target-feature=+atomics,+bulk-memory\"];-Z;build-std=core,std,alloc,proc_macro,panic_abort>"
 			--manifest-path "${PROJECT_SOURCE_DIR}/Cargo.toml"
 			--profile "$<IF:$<CONFIG:Debug>,dev,$<LOWER_CASE:$<CONFIG>>>"
 			--target-dir ${cargo_dir}
@@ -193,7 +198,9 @@ function(add_cargo_library target package)
 
 	add_library(${target} STATIC IMPORTED GLOBAL)
 
-	_cargo_set_libs("${target}" "${triple}")
+	if(NOT EMSCRIPTEN)
+		_cargo_set_libs("${target}" "${triple}")
+	endif()
 
 	add_dependencies(${target} cargo-build_${target})
 	set_target_properties(${target} PROPERTIES

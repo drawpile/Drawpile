@@ -39,8 +39,6 @@ private slots:
 	void addressChanged(const QString &address);
 
 private:
-	static constexpr char SCHEME[] = "drawpile://";
-
 	void resetAddressPlaceholderText();
 	void updateJoinButton();
 

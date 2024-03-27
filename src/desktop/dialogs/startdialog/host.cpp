@@ -3,6 +3,7 @@
 #include "desktop/main.h"
 #include "desktop/utils/recents.h"
 #include "desktop/utils/widgetutils.h"
+#include "libclient/net/server.h"
 #include "libclient/utils/listservermodel.h"
 #include "libclient/utils/sessionidvalidator.h"
 #include <QButtonGroup>
@@ -393,10 +394,7 @@ bool Host::hasValidTitle(bool *outMissingTitle, bool *outUrlInTitle) const
 QString Host::getRemoteAddress() const
 {
 	QString remoteAddress = m_remoteHostCombo->currentText();
-	QString scheme = QStringLiteral("drawpile://");
-	return remoteAddress.startsWith(scheme, Qt::CaseInsensitive)
-			   ? remoteAddress
-			   : scheme + remoteAddress;
+	return net::Server::addSchemeToUserSuppliedAddress(remoteAddress);
 }
 
 }

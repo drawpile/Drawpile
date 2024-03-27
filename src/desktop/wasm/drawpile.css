@@ -1,0 +1,128 @@
+html,
+body {
+  background-color: #fff;
+  color: #363636;
+  font-family: sans-serif;
+}
+
+.fullscreen {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  padding: 0;
+}
+
+#init {
+  line-height: 150%;
+  margin-top: 1.5em;
+  margin: 0 auto;
+  max-width: 50em;
+  overflow: visible;
+  text-align: center;
+}
+
+#logo {
+  width: 200px;
+  height: 200px;
+}
+
+#startup {
+  margin: 0 auto;
+  max-width: 50em;
+}
+
+#screen {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+#console {
+  background-color: #eee;
+  font-family: monospace;
+  font-size: small;
+  overflow: auto;
+  white-space: pre-wrap;
+  width: 100%;
+}
+
+.update {
+  margin-bottom: 2em;
+  margin-top: 2em;
+}
+
+.update-notice {
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  padding: 1em;
+  white-space: pre-wrap;
+}
+
+button {
+  border-color: transparent;
+  border-radius: 4px;
+  box-shadow: none;
+  color: #fff;
+  cursor: pointer;
+  font-size: x-large;
+  padding-bottom: 0.5em;
+  padding-top: 0.5em;
+  width: 100%;
+}
+
+button.primary {
+  background-color: #3273dc;
+}
+
+button.primary:hover {
+  background-color: #276cda;
+}
+
+button.primary:active {
+  background-color: #2366d1;
+}
+
+button.danger {
+  background-color: #dc3232;
+}
+
+button.danger:hover {
+  background-color: #da2727;
+}
+
+button.danger:active {
+  background-color: #d12323;
+}
+
+.console-log {
+  display: block;
+}
+
+.console-warn {
+  color: #aa0000;
+  display: block;
+}
+
+.console-error {
+  color: #ff0000;
+  display: block;
+}
+
+[aria-busy="true"]::before {
+  animation: spinner .75s linear infinite;
+  border-radius: 1em;
+  border-right-color: transparent !important;
+  border: .2em solid currentColor;
+  content: "";
+  display: inline-block;
+  height: 1em;
+  margin-right: 0.5em;
+  vertical-align: -0.28em;
+  width: 1em;
+}
+
+@keyframes spinner{
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -36,6 +36,7 @@ private:
 	void buildTreeTags();
 	void buildTreePresets(QTreeWidgetItem *tagItem, int tagId);
 
+	bool exportTo(const QString &path);
 	void showExportError(const brushes::BrushExportResult &result);
 
 	brushes::BrushPresetTagModel *m_tagModel;

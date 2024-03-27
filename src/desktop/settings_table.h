@@ -13,7 +13,7 @@
 #endif
 
 #ifndef OVERRIDE_FONT_SIZE_DEFAULT
-#	ifdef Q_OS_ANDROID
+#	if defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)
 #		define OVERRIDE_FONT_SIZE_DEFAULT true
 #	else
 #		define OVERRIDE_FONT_SIZE_DEFAULT false

@@ -120,7 +120,7 @@ void MacMenu::openRecent(QAction *action)
 	QVariant filepath = action->property("filepath");
 	if(filepath.isValid()) {
 		MainWindow *mw = new MainWindow;
-		mw->open(QUrl::fromLocalFile(filepath.toString()));
+		mw->openPath(filepath.toString());
 	} else {
 		dialogs::StartDialog *dlg = showStartDialog();
 		dlg->showPage(dialogs::StartDialog::Recent);

@@ -11,6 +11,8 @@ extern "C" {
 #include <optional>
 
 class Document;
+class QImage;
+class QTemporaryFile;
 class QWidget;
 
 namespace drawdance {
@@ -24,6 +26,31 @@ class CanvasState;
 class FileWrangler final : public QObject {
 	Q_OBJECT
 public:
+#ifdef __EMSCRIPTEN__
+	using OpenFn = std::function<void(const QString &, const QByteArray &)>;
+#else
+	using OpenFn = std::function<void(const QString &)>;
+#endif
+
+	using ImageOpenFn = std::function<void(QImage &)>;
+
+	// Gives just a path or, on Emscripten, a symbolic path and a temporary
+	// file. The callee is responsible for calling delete on the latter.
+	using MainOpenFn = std::function<void(const QString &, QTemporaryFile *)>;
+
+	// Gives either a string for a file path or, on Emscripten, the bytes of the
+	// file. Check if the bytes are present first, fall back to using the path.
+	using BytesOpenFn =
+		std::function<void(const QString *, const QByteArray *)>;
+
+	using CanvasStateOpenBeginFn = std::function<void(const QString &)>;
+	using CanvasStateOpenSuccessFn =
+		std::function<void(const drawdance::CanvasState &)>;
+	using CanvasStateOpenErrorFn =
+		std::function<void(const QString &, const QString &)>;
+
+	using PathSaveFn = std::function<bool(const QString &)>;
+
 	enum class LastPath {
 		IMAGE,
 		ANIMATION_FRAMES,
@@ -43,14 +70,27 @@ public:
 	FileWrangler &operator=(const FileWrangler &) = delete;
 	FileWrangler &operator=(FileWrangler &&) = delete;
 
+	void openAvatar(const ImageOpenFn &imageOpenCompleted);
+	void openBrushThumbnail(const ImageOpenFn &imageOpenCompleted);
+	void openPasteImage(const ImageOpenFn &imageOpenCompleted);
+
+	void openMain(const MainOpenFn &onOpen) const;
+	void openAnimationImport(const MainOpenFn &onOpen) const;
+	void openDebugDump(const MainOpenFn &onOpen) const;
+	void openBrushPack(const MainOpenFn &onOpen) const;
+
+	void openSessionBans(const BytesOpenFn &onOpen) const;
+	void openAuthList(const BytesOpenFn &onOpen) const;
+
+	void openCanvasState(
+		const CanvasStateOpenBeginFn &onBegin,
+		const CanvasStateOpenSuccessFn &onSuccess,
+		const CanvasStateOpenErrorFn &onError) const;
+
+#ifndef __EMSCRIPTEN_
+	// The browser handles our certificates in Emscripten.
 	QStringList getImportCertificatePaths(const QString &title) const;
-	QString getOpenPath() const;
-	QString getOpenOraPath() const;
-	QString getOpenPasteImagePath() const;
-	QString getOpenDebugDumpsPath() const;
-	QString getOpenBrushPackPath() const;
-	QString getOpenSessionBansPath() const;
-	QString getOpenAuthListPath() const;
+#endif
 
 	QString saveImage(Document *doc) const;
 	QString saveImageAs(Document *doc, bool exported) const;
@@ -62,17 +102,31 @@ public:
 	QString getSaveGifPath() const;
 	QString getSavePerformanceProfilePath() const;
 	QString getSaveTabletEventLogPath() const;
-	QString getSaveLogFilePath() const;
-#ifndef Q_OS_ANDROID
+#ifdef HAVE_VIDEO_EXPORT
 	QString getSaveFfmpegMp4Path() const;
 	QString getSaveFfmpegWebmPath() const;
 	QString getSaveFfmpegCustomPath() const;
-	QString getSaveAnimationFramesPath() const;
 	QString getSaveImageSeriesPath() const;
 #endif
-	QString getSaveBrushPackPath() const;
-	QString getSaveSessionBansPath() const;
-	QString getSaveAuthListPath() const;
+#ifndef Q_OS_ANDROID
+	QString getSaveAnimationFramesPath() const;
+#endif
+
+#ifdef __EMSCRIPTEN__
+	void downloadImage(Document *doc);
+	bool downloadPreResetImage(
+		Document *doc, const drawdance::CanvasState &canvasState) const;
+	void downloadSelection(Document *doc);
+	void
+	saveFileContent(const QString &defaultName, const QByteArray &bytes) const;
+#endif
+
+	void saveBrushPack(const PathSaveFn &onSave) const;
+	bool saveSessionBans(const QByteArray &bytes, QString *outError) const;
+	bool saveAuthList(const QByteArray &bytes, QString *outError) const;
+	bool saveLogFile(
+		const QString &defaultName, const QByteArray &bytes,
+		QString *outError) const;
 
 private:
 	bool
@@ -95,6 +149,33 @@ private:
 	static QString getLastPathKey(LastPath type);
 	static QString getDefaultLastPath(LastPath type, const QString &ext);
 
+	void openImageFileContent(
+		const QString &title, const ImageOpenFn &imageOpenCompleted) const;
+
+	void openMainContent(
+		const QString &title, LastPath type, const QStringList &filters,
+		const MainOpenFn &onOpen) const;
+
+	void openBytesContent(
+		const QString &title, LastPath type, const QStringList &filters,
+		const BytesOpenFn &onOpen) const;
+
+	static void loadCanvasState(
+		QWidget *parent, const QString &path,
+		QTemporaryFile *temporaryFileOrNull,
+		const CanvasStateOpenSuccessFn &onSuccess,
+		const CanvasStateOpenErrorFn &onError);
+
+	void savePathContent(
+		const QString &title, LastPath type, const QString &ext,
+		const QString &defaultName, const QStringList &filters,
+		const PathSaveFn &onSave) const;
+
+	bool saveBytesContent(
+		const QString &title, LastPath type, const QString &ext,
+		const QString &defaultName, const QStringList &filters,
+		const QByteArray &bytes, QString *outError) const;
+
 	QString showOpenFileDialog(
 		const QString &title, LastPath type,
 		utils::FileFormatOptions formats) const;
@@ -114,7 +195,16 @@ private:
 		std::optional<QString> lastPath = {},
 		QString *outIntendedName = nullptr) const;
 
+	void showOpenFileContentDialog(
+		const QString &title, LastPath type, const QStringList &filters,
+		const OpenFn &fileOpenCompleted) const;
+
+	static QString getEffectiveFilter(const QStringList &filters);
+
 	QWidget *parentWidget() const;
+
+	static QTemporaryFile *
+	writeToTemporaryFile(const QByteArray &fileContent, QString &outError);
 };
 
 #endif

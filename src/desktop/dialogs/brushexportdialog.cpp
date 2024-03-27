@@ -11,6 +11,9 @@
 #include <QTimer>
 #include <QTreeWidget>
 #include <QVBoxLayout>
+#include <functional>
+
+using std::placeholders::_1;
 
 namespace dialogs {
 
@@ -135,41 +138,8 @@ void BrushExportDialog::updateExportButton()
 
 void BrushExportDialog::exportSelected()
 {
-	QString path = FileWrangler{this}.getSaveBrushPackPath();
-	if(path.isEmpty()) {
-		return;
-	}
-
-	QVector<brushes::BrushExportTag> exportTags;
-	QAbstractItemModel *model = m_tree->model();
-	int tagCount = model->rowCount();
-	for(int i = 0; i < tagCount; ++i) {
-		QModelIndex tagIndex = model->index(i, 0);
-
-		QVector<int> presetIds;
-		int presetCount = model->rowCount(tagIndex);
-		for(int j = 0; j < presetCount; ++j) {
-			QModelIndex presetIndex = model->index(j, 0, tagIndex);
-			Qt::CheckState checkState =
-				presetIndex.data(Qt::CheckStateRole).value<Qt::CheckState>();
-			if(checkState == Qt::Checked) {
-				presetIds.append(presetIndex.data(Qt::UserRole).toInt());
-			}
-		}
-
-		if(!presetIds.isEmpty()) {
-			exportTags.append(
-				{tagIndex.data(Qt::DisplayRole).toString(), presetIds});
-		}
-	}
-
-	brushes::BrushExportResult result =
-		m_tagModel->exportBrushPack(path, exportTags);
-	if(result.ok) {
-		accept();
-	} else {
-		showExportError(result);
-	}
+	FileWrangler(this).saveBrushPack(
+		std::bind(&BrushExportDialog::exportTo, this, _1));
 }
 
 void BrushExportDialog::buildTreeTags()
@@ -213,6 +183,41 @@ void BrushExportDialog::buildTreePresets(QTreeWidgetItem *tagItem, int tagId)
 			0, Qt::UserRole, m_presetModel->getIdFromIndex(index));
 		tagItem->addChild(presetItem);
 	}
+}
+
+bool BrushExportDialog::exportTo(const QString &path)
+{
+	QVector<brushes::BrushExportTag> exportTags;
+	QAbstractItemModel *model = m_tree->model();
+	int tagCount = model->rowCount();
+	for(int i = 0; i < tagCount; ++i) {
+		QModelIndex tagIndex = model->index(i, 0);
+
+		QVector<int> presetIds;
+		int presetCount = model->rowCount(tagIndex);
+		for(int j = 0; j < presetCount; ++j) {
+			QModelIndex presetIndex = model->index(j, 0, tagIndex);
+			Qt::CheckState checkState =
+				presetIndex.data(Qt::CheckStateRole).value<Qt::CheckState>();
+			if(checkState == Qt::Checked) {
+				presetIds.append(presetIndex.data(Qt::UserRole).toInt());
+			}
+		}
+
+		if(!presetIds.isEmpty()) {
+			exportTags.append(
+				{tagIndex.data(Qt::DisplayRole).toString(), presetIds});
+		}
+	}
+
+	brushes::BrushExportResult result =
+		m_tagModel->exportBrushPack(path, exportTags);
+	if(result.ok) {
+		accept();
+	} else {
+		showExportError(result);
+	}
+	return result.exportedBrushCount != 0;
 }
 
 void BrushExportDialog::showExportError(

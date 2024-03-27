@@ -127,11 +127,7 @@ bool DrawpileApp::event(QEvent *e)
 
 	case QEvent::FileOpen: {
 		QFileOpenEvent *fe = static_cast<QFileOpenEvent *>(e);
-
-		// Note. This is currently broken in Qt 5.3.1:
-		// https://bugreports.qt-project.org/browse/QTBUG-39972
-		openUrl(fe->url());
-
+		openPath(fe->file());
 		return true;
 	}
 
@@ -334,9 +330,14 @@ void DrawpileApp::initInterface()
 		// We require a point size. Android uses a pixel size, which causes the
 		// point size to be reported as -1 and breaks several UI elements. But
 		// the font size is too ginormous there to be usable anyway, so it makes
-		// sense to force it to a different value anyway.
+		// sense to force it to a different value anyway. The font in the
+		// browser tends to be too large as well, force it too.
+#ifdef __EMSCRIPTEN__
+		fontSize = 10;
+#else
 		int pointSize = font.pointSize();
 		fontSize = pointSize <= 0 ? 9 : pointSize;
+#endif
 		m_settings.setFontSize(fontSize);
 	}
 
@@ -348,7 +349,7 @@ void DrawpileApp::initInterface()
 
 desktop::settings::InterfaceMode DrawpileApp::guessInterfaceMode()
 {
-#ifdef Q_OS_ANDROID
+#if defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)
 	auto [pixelSize, mmSize] = screenResolution();
 	if(pixelSize.width() < 700 || pixelSize.height() < 700 ||
 	   mmSize.width() < 80.0 || mmSize.height() < 80.0) {
@@ -368,30 +369,29 @@ QPair<QSize, QSizeF> DrawpileApp::screenResolution()
 	}
 }
 
-void DrawpileApp::openUrl(QUrl url)
+MainWindow *DrawpileApp::acquireWindow(bool singleSession)
 {
-	// See if there is an existing replacable window
-	MainWindow *win = nullptr;
-	for(QWidget *widget : topLevelWidgets()) {
-		MainWindow *mw = qobject_cast<MainWindow *>(widget);
-		if(mw && mw->canReplace()) {
-			win = mw;
-			break;
-		}
-	}
-
-	// No? Create a new one
-	if(!win)
-		win = new MainWindow;
-
-	if(url.scheme() == "drawpile") {
-		// Our own protocol: connect to a session
-		win->autoJoin(url);
-
+	if(singleSession) {
+		return new MainWindow(true, singleSession);
 	} else {
-		// Other protocols: load image
-		win->open(url);
+		for(QWidget *widget : topLevelWidgets()) {
+			MainWindow *mw = qobject_cast<MainWindow *>(widget);
+			if(mw && mw->canReplace()) {
+				return mw;
+			}
+		}
+		return new MainWindow;
 	}
+}
+
+void DrawpileApp::openPath(const QString &path)
+{
+	acquireWindow(false)->openPath(path);
+}
+
+void DrawpileApp::joinUrl(const QUrl &url, bool singleSession)
+{
+	acquireWindow(singleSession)->autoJoin(url);
 }
 
 dialogs::StartDialog::Entry getStartDialogEntry(const QString &page)
@@ -483,7 +483,7 @@ static QStringList getStartPages()
 }
 
 // Initialize the application and return a list of files to be opened (if any)
-static std::tuple<QStringList, QString> initApp(DrawpileApp &app)
+static std::tuple<QStringList, QString, bool> initApp(DrawpileApp &app)
 {
 	// Parse command line arguments
 	QCommandLineParser parser;
@@ -518,6 +518,13 @@ static std::tuple<QStringList, QString> initApp(DrawpileApp &app)
 	QCommandLineOption startPage(
 		"start-page", startPageDescription, "page", "guess");
 	parser.addOption(startPage);
+
+	QCommandLineOption singleSession(
+		"single-session",
+		QStringLiteral("Run in single-session mode, allowing only the joining "
+					   "of the given session. Intended for the browser version "
+					   "of Drawpile."));
+	parser.addOption(singleSession);
 
 	// URL
 	parser.addPositionalArgument("url", "Filename or URL.");
@@ -607,8 +614,26 @@ static std::tuple<QStringList, QString> initApp(DrawpileApp &app)
 
 	initTranslations(app, locale);
 
-	return {parser.positionalArguments(), parser.value(startPage)};
+	return {
+		parser.positionalArguments(), parser.value(startPage),
+		parser.isSet(singleSession)};
 }
+
+#ifdef __EMSCRIPTEN__
+extern "C" int drawpileShouldPreventUnload()
+{
+	QApplication *app = qApp;
+	if(app) {
+		for(QWidget *widget : app->topLevelWidgets()) {
+			MainWindow *mw = qobject_cast<MainWindow *>(widget);
+			if(mw && mw->shouldPreventUnload()) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+#endif
 
 static void applyScalingSettingsFrom(const QString &path)
 {
@@ -686,25 +711,34 @@ int main(int argc, char *argv[])
 
 	applyScalingSettings(argc, argv);
 
-	DrawpileApp app(argc, argv);
+#ifdef __EMSCRIPTEN__
+	DrawpileApp *app = new DrawpileApp(argc, argv);
+#else
+	DrawpileApp appInstance(argc, argv);
+	DrawpileApp *app = &appInstance;
+#endif
 
 	{
-		const auto [files, page] = initApp(app);
-
+		const auto [files, page, singleSession] = initApp(*app);
 		if(files.isEmpty()) {
-			app.openStart(page);
-
+			app->openStart(page);
 		} else {
-			QUrl url(files.at(0));
-			if(url.scheme().length() <= 1) {
-				// no scheme (or a drive letter?) means this is probably a local
-				// file
-				url = QUrl::fromLocalFile(files.at(0));
+			const QString &arg = files.at(0);
+			bool looksLikeSessionUrl =
+				arg.startsWith("drawpile://", Qt::CaseInsensitive) ||
+				arg.startsWith("ws://", Qt::CaseInsensitive) ||
+				arg.startsWith("wss://", Qt::CaseInsensitive);
+			if(looksLikeSessionUrl) {
+				app->joinUrl(QUrl(arg), singleSession);
+			} else {
+				app->openPath(arg);
 			}
-
-			app.openUrl(url);
 		}
 	}
 
-	return app.exec();
+#ifdef __EMSCRIPTEN__
+	return 0;
+#else
+	return app->exec();
+#endif
 }

@@ -13,7 +13,6 @@
 #include "libshared/util/paths.h"
 #include <QApplication>
 #include <QDir>
-#include <QFileDialog>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QListView>
@@ -30,16 +29,83 @@
 namespace dialogs {
 namespace settingsdialog {
 
-Servers::Servers(desktop::settings::Settings &settings, QWidget *parent)
+Servers::Servers(
+	desktop::settings::Settings &settings, bool singleSession, QWidget *parent)
 	: QWidget(parent)
 {
 	QVBoxLayout *layout = new QVBoxLayout;
 	setLayout(layout);
-	initListingServers(settings, layout);
+	if(!singleSession) {
+		initListingServers(settings, layout);
+	}
+#ifndef __EMSCRIPTEN__
 	utils::addFormSpacer(layout);
 	initKnownHosts(layout);
+#endif
 }
 
+void Servers::initListingServers(
+	desktop::settings::Settings &settings, QVBoxLayout *form)
+{
+	auto *serversLabel = new QLabel(tr("List servers:"));
+	form->addWidget(serversLabel);
+
+	auto *servers = new QListView;
+	serversLabel->setBuddy(servers);
+	auto *serversModel =
+		new sessionlisting::ListServerModel(settings, true, this);
+	servers->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	servers->setModel(serversModel);
+	servers->setItemDelegate(new sessionlisting::ListServerDelegate(this));
+	servers->setAlternatingRowColors(true);
+	servers->setFocusPolicy(Qt::StrongFocus);
+	servers->setSelectionMode(QAbstractItemView::ExtendedSelection);
+	utils::initKineticScrolling(servers);
+	form->addWidget(servers, 1);
+	form->addLayout(listActions(
+		servers, tr("Add list servers…"),
+		[=] {
+			addListServer(serversModel);
+		},
+
+		tr("Remove selected list servers…"),
+		makeDefaultDeleter(
+			this, servers, tr("Remove list servers"),
+			QT_TR_N_NOOP("Really remove %n list server(s)?")),
+
+		tr("Move up"),
+		[=] {
+			moveListServer(serversModel, servers->selectionModel(), -1);
+		},
+
+		tr("Move down"),
+		[=] {
+			moveListServer(serversModel, servers->selectionModel(), 1);
+		}));
+}
+
+void Servers::addListServer(sessionlisting::ListServerModel *model)
+{
+	AddServerDialog *dialog = new AddServerDialog(this);
+	dialog->setAttribute(Qt::WA_DeleteOnClose);
+	dialog->setListServerModel(model);
+	dialog->show();
+}
+
+void Servers::moveListServer(
+	sessionlisting::ListServerModel *model, QItemSelectionModel *selectionModel,
+	int offset)
+{
+	const QModelIndexList selectedRows = selectionModel->selectedRows();
+	if(selectedRows.size() == 1) {
+		int sourceRow = selectedRows.first().row();
+		if(model->moveServer(sourceRow, sourceRow + offset)) {
+			model->submit();
+		}
+	}
+}
+
+#ifndef __EMSCRIPTEN__
 void Servers::initKnownHosts(QVBoxLayout *form)
 {
 	auto *knownHostsLabel = new QLabel(tr("Known hosts:"));
@@ -114,67 +180,6 @@ void Servers::initKnownHosts(QVBoxLayout *form)
 	form->addLayout(actions);
 }
 
-void Servers::initListingServers(
-	desktop::settings::Settings &settings, QVBoxLayout *form)
-{
-	auto *serversLabel = new QLabel(tr("List servers:"));
-	form->addWidget(serversLabel);
-
-	auto *servers = new QListView;
-	serversLabel->setBuddy(servers);
-	auto *serversModel =
-		new sessionlisting::ListServerModel(settings, true, this);
-	servers->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	servers->setModel(serversModel);
-	servers->setItemDelegate(new sessionlisting::ListServerDelegate(this));
-	servers->setAlternatingRowColors(true);
-	servers->setFocusPolicy(Qt::StrongFocus);
-	servers->setSelectionMode(QAbstractItemView::ExtendedSelection);
-	utils::initKineticScrolling(servers);
-	form->addWidget(servers, 1);
-	form->addLayout(listActions(
-		servers, tr("Add list servers…"),
-		[=] {
-			addListServer(serversModel);
-		},
-
-		tr("Remove selected list servers…"),
-		makeDefaultDeleter(
-			this, servers, tr("Remove list servers"),
-			QT_TR_N_NOOP("Really remove %n list server(s)?")),
-
-		tr("Move up"),
-		[=] {
-			moveListServer(serversModel, servers->selectionModel(), -1);
-		},
-
-		tr("Move down"),
-		[=] {
-			moveListServer(serversModel, servers->selectionModel(), 1);
-		}));
-}
-
-void Servers::addListServer(sessionlisting::ListServerModel *model)
-{
-	AddServerDialog *dialog = new AddServerDialog(this);
-	dialog->setAttribute(Qt::WA_DeleteOnClose);
-	dialog->setListServerModel(model);
-	dialog->show();
-}
-
-void Servers::moveListServer(
-	sessionlisting::ListServerModel *model, QItemSelectionModel *selectionModel,
-	int offset)
-{
-	const QModelIndexList selectedRows = selectionModel->selectedRows();
-	if(selectedRows.size() == 1) {
-		int sourceRow = selectedRows.first().row();
-		if(model->moveServer(sourceRow, sourceRow + offset)) {
-			model->submit();
-		}
-	}
-}
-
 static bool
 askToContinue(const QString &title, const QString &message, QWidget *parent)
 {
@@ -233,6 +238,7 @@ void Servers::viewCertificate(
 	cv->setAttribute(Qt::WA_DeleteOnClose);
 	cv->show();
 }
+#endif
 
 } // namespace settingsdialog
 } // namespace dialogs

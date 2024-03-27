@@ -73,7 +73,7 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 		case ColumnVersion:
 			if(ls.isIncompatible()) {
 				return QIcon::fromTheme("state-error");
-			} else if(ls.compatibilityMode) {
+			} else if(ls.isCompatibilityMode()) {
 				return QIcon::fromTheme("state-warning");
 			} else {
 				return QIcon::fromTheme("state-ok");
@@ -99,7 +99,7 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 		case ColumnVersion:
 			if(ls.isIncompatible()) {
 				return tr("%1 (incompatible)").arg(ls.incompatibleSeries);
-			} else if(ls.compatibilityMode) {
+			} else if(ls.isCompatibilityMode()) {
 				return tr("Drawpile 2.1 (compatibility mode)");
 			} else {
 				return tr("Drawpile 2.2 (fully compatible)");
@@ -107,6 +107,12 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 		case ColumnStatus:
 			if(ls.isIncompatible()) {
 				return tr("Incompatible version");
+			} else if (ls.webLoginBlocked) {
+#ifdef __EMSCRIPTEN__
+				return tr("Closed (not allowed to join from the web browser)");
+#else
+				return tr("Closed (not allowed to join via WebSocket)");
+#endif
 			} else if(ls.guestLoginBlocked) {
 				return tr("Closed (guest logins blocked)");
 			} else if(ls.newLoginsBlocked) {
@@ -155,7 +161,7 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 		case IncompatibleRole: return !ls.incompatibleSeries.isEmpty();
 		case JoinableRole: return (!ls.isClosed() || m_moderatorMode) && ls.incompatibleSeries.isEmpty();
 		case NsfmRole: return isNsfm(ls);
-		case CompatibilityModeRole: return ls.compatibilityMode;
+		case CompatibilityModeRole: return ls.isCompatibilityMode();
 		case InactiveRole: return ls.activeDrawingUserCount == 0;
 		default: return QVariant{};
 		}

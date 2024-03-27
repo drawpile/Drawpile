@@ -8,6 +8,10 @@ namespace canvas {
 class PaintEngine;
 }
 
+namespace drawdance {
+class CanvasState;
+}
+
 namespace dialogs {
 
 class ResetDialog final : public QDialog {
@@ -15,7 +19,7 @@ class ResetDialog final : public QDialog {
 public:
 	ResetDialog(
 		const canvas::PaintEngine *pe, bool compatibilityMode,
-		QWidget *parent = nullptr);
+		bool singleSession, QWidget *parent = nullptr);
 
 	~ResetDialog() override;
 
@@ -34,6 +38,10 @@ private slots:
 	void onOpenClicked();
 
 private:
+	void onOpenBegin(const QString &fileName);
+	void onOpenSuccess(const drawdance::CanvasState &canvasState);
+	void onOpenError(const QString &error, const QString &detail);
+
 	struct Private;
 	Private *d;
 };

@@ -114,7 +114,8 @@ private:
 			false,
 			false,
 			false,
-			nsfm
+			false,
+			nsfm,
 		};
 	}
 };

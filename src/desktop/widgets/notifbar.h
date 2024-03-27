@@ -17,7 +17,8 @@ public:
 
 	void show(
 		const QString &text, const QIcon &actionButtonIcon,
-		const QString &actionButtonLabel, RoleColor color);
+		const QString &actionButtonLabel, RoleColor color,
+		bool allowDismissal = true);
 
 	void setActionButtonEnabled(bool enabled);
 	bool isActionButtonEnabled() const;

@@ -43,6 +43,10 @@ if(HAVE_TCPSOCKETS)
 	)
 endif()
 
+if(NOT EMSCRIPTEN)
+	target_compile_definitions(dpshared PUBLIC HAVE_COMPATIBILITY_MODE=1)
+endif()
+
 target_link_libraries(dpshared
 	PRIVATE
 		cmake-config

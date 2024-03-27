@@ -32,7 +32,7 @@ enum FileFormatOption {
 	SessionBans = 0x2000,
 	AuthList = 0x4000,
 
-#ifdef Q_OS_ANDROID
+#if defined(Q_OS_ANDROID) | defined(__EMSCRIPTEN__)
 	SaveAllFiles = 0x0,
 #else
 	SaveAllFiles = AllFiles,

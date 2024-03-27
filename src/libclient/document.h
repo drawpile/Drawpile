@@ -21,6 +21,7 @@ extern "C" {
 
 class QMimeData;
 class QString;
+class QTemporaryDir;
 class QTimer;
 
 namespace canvas {
@@ -133,6 +134,15 @@ public:
 	bool isAutosave() const { return m_autosave; }
 	bool canAutosave() const { return m_canAutosave; }
 
+#ifdef __EMSCRIPTEN__
+	void downloadCanvas(
+		const QString &fileName, DP_SaveImageType type, QTemporaryDir *tempDir);
+	void downloadCanvasState(
+		const QString &fileName, DP_SaveImageType type, QTemporaryDir *tempDir,
+		const drawdance::CanvasState &canvasState);
+	void downloadSelection(const QString &fileName);
+#endif
+
 	void setWantCanvasHistoryDump(bool wantCanvasHistoryDump);
 	bool wantCanvasHistoryDump() const { return m_wantCanvasHistoryDump; }
 
@@ -140,6 +150,9 @@ public:
 
 	QString currentPath() const { return m_currentPath; }
 	DP_SaveImageType currentType() const { return m_currentType; }
+
+	QString downloadName() const;
+	void setDownloadName(const QString &downloadName);
 
 	bool isRecording() const;
 	drawdance::RecordStartResult startRecording(const QString &filename);
@@ -222,6 +235,10 @@ signals:
 
 	void canvasSaveStarted();
 	void canvasSaved(const QString &errorMessage);
+	void canvasDownloadStarted();
+	void
+	canvasDownloadReady(const QString &defaultName, const QByteArray &bytes);
+	void canvasDownloadError(const QString &error);
 	void templateExported(const QString &errorMessage);
 
 	void justInTimeSnapshotGenerated();
@@ -293,6 +310,7 @@ private:
 	void saveCanvasState(
 		const drawdance::CanvasState &canvasState, bool isCurrentState,
 		const QString &path, DP_SaveImageType type);
+	QImage selectionToImage();
 	void setCurrentPath(const QString &path, DP_SaveImageType type);
 	void setSessionPersistent(bool p);
 	void setSessionClosed(bool closed);
@@ -323,6 +341,7 @@ private:
 
 	QString m_currentPath;
 	DP_SaveImageType m_currentType = DP_SAVE_IMAGE_UNKNOWN;
+	QString m_downloadName;
 
 	net::MessageList m_resetstate;
 	net::MessageList m_messageBuffer;
@@ -369,8 +388,7 @@ private:
 
 	bool m_sessionOutOfSpace;
 
-#ifdef Q_OS_ANDROID
-	// Android doesn't support images in the clipboard, so we keep those here.
+#ifdef HAVE_CLIPBOARD_EMULATION
 	static QMimeData clipboardData;
 #endif
 };

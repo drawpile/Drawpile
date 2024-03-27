@@ -7,6 +7,8 @@
 
 #include "desktop/docks/dockbase.h"
 
+class QTemporaryFile;
+
 namespace dialogs {
    class BrushExportDialog;
 }
@@ -70,6 +72,7 @@ private:
    int presetProxyIndexToId(const QModelIndex &proxyIndex);
    int currentPresetId();
 
+   void onOpen(const QString &path, QTemporaryFile *tempFile);
    dialogs::BrushExportDialog *showExportDialog();
 
    bool question(const QString &title, const QString &text) const;

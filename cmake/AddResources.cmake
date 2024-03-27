@@ -37,9 +37,11 @@ function(add_resources target)
 			)
 		endif()
 
-		# Assets will already be installed by MACOSX_PACKAGE_LOCATION on macOS
-		# and by Gradle on Android
-		if(NOT ANDROID AND NOT APPLE)
+		if(ANDROID OR APPLE OR EMSCRIPTEN)
+			# Nothing to do, assets will already be installed by
+			# MACOSX_PACKAGE_LOCATION on macOS, by Gradle on Android and through
+			# an asset bundle in the browser.
+		else()
 			# No trailing slash is required or else it will strip the last path
 			# of the directory
 			install(DIRECTORY "assets/${dir}"
@@ -69,9 +71,11 @@ function(add_resources target)
 			)
 		endif()
 
-		# Assets will already be installed by MACOSX_PACKAGE_LOCATION on macOS
-		# and by Gradle on Android
-		if(NOT ANDROID AND NOT APPLE)
+		if(ANDROID OR APPLE OR EMSCRIPTEN)
+			# Nothing to do, assets will already be installed by
+			# MACOSX_PACKAGE_LOCATION on macOS, by Gradle on Android and through
+			# an asset bundle in the browser.
+		else()
 			install(FILES "assets/${file}"
 				DESTINATION "${INSTALL_APPDATADIR}/${file_dir}"
 			)

@@ -1,14 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CHATLINEEDITANDROID_H
-#define CHATLINEEDITANDROID_H
+#ifndef CHATLINEEDITMOBILE_H
+#define CHATLINEEDITMOBILE_H
 
 #include <QStringList>
 #include <QLineEdit>
 
 /**
- * @brief A specialized line edit widget for chatting, compatible with Android,
- * not relying on any key presses being issued.
+ * @brief A specialized line edit widget for chatting, compatible with mobile
+ * devices, not relying on any key presses being issued. Otherwise pressing
+ * return on the soft keyboard just ends up inputting a newline.
  */
 class ChatLineEdit final : public QLineEdit
 {

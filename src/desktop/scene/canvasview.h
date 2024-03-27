@@ -128,12 +128,12 @@ public:
 	void scrollBy(int x, int y);
 
 	//! Show the notification bar with the "reconnect" button visible
-	void showDisconnectedWarning(const QString &message);
+	void showDisconnectedWarning(const QString &message, bool singleSession);
 	void hideDisconnectedWarning();
 	void showResetNotice(bool compatibilityMode, bool saveInProgress);
 	void hideResetNotice();
 
-	QString lockDescription() const;
+	QString lockDescription(bool includeSaveInProgress) const;
 
 signals:
 	//! An image has been dropped on the widget
@@ -349,7 +349,11 @@ private:
 	void showTransformNotice(const QString &text);
 	void updateLockNotice();
 
+	Qt::KeyboardModifiers getKeyboardModifiers(const QKeyEvent *keyev) const;
+	Qt::KeyboardModifiers getMouseModifiers(const QMouseEvent *mouseev) const;
 	Qt::KeyboardModifiers getTabletModifiers(const QTabletEvent *tabev) const;
+	Qt::KeyboardModifiers geWheelModifiers(const QWheelEvent *wheelev) const;
+	Qt::KeyboardModifiers getFallbackModifiers() const;
 
 	CanvasShortcuts m_canvasShortcuts;
 	QSet<Qt::Key> m_keysDown;
@@ -416,6 +420,7 @@ private:
 	bool m_ignoreZeroPressureInputs;
 	QFlags<Lock> m_lock;
 	bool m_busy;
+	bool m_saveInProgress;
 	bool m_pointertracking;
 	bool m_pixelgrid;
 

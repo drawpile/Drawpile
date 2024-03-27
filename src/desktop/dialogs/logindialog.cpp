@@ -1269,7 +1269,9 @@ void LoginDialog::onOkClicked()
 		d->loginHandler->sendSessionPassword(d->ui->sessionPassword->text());
 		break;
 	case Mode::CertChanged:
+#ifndef __EMSCRIPTEN__
 		d->loginHandler->acceptServerCertificate();
+#endif
 		break;
 	}
 }

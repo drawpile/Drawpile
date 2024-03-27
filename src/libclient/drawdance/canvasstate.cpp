@@ -307,9 +307,11 @@ drawdance::CanvasState CanvasState::makeBackwardCompatible() const
 
 unsigned int CanvasState::loadFlags()
 {
-#ifdef Q_OS_ANDROID
+#if defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)
 	// Android just kills the application if it uses too much memory for its
-	// taste, so it's not safe to use multiple threads to load image data.
+	// taste, so it's not safe to use multiple threads to load image data. On
+	// Emscripten, "threads" are web workers, which have a lot of overhead. And
+	// it may also be running on a mobile device, so the above applies here too.
 	return DP_LOAD_FLAG_SINGLE_THREAD;
 #else
 	return DP_LOAD_FLAG_NONE;

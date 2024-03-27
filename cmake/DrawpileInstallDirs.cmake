@@ -7,7 +7,9 @@ target OS.
 # of having to dig around deep inside the build directory
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 
-if(DIST_BUILD AND UNIX AND NOT APPLE AND NOT ANDROID)
+if(EMSCRIPTEN)
+	set(CMAKE_INSTALL_BINDIR "drawpile-web")
+elseif(DIST_BUILD AND UNIX AND NOT APPLE AND NOT ANDROID)
 	# linuxdeploy wants everything in a usr subdirectory, so force
 	# GNUInstallDirs to generate those paths by temporarily lying about what
 	# CMAKE_INSTALL_PREFIX is set to
@@ -62,9 +64,14 @@ endif()
 # * On macOS, take care of MACOSX_BUNDLE stuff, whatever that is.
 # * On Android, don't install anything, because executables are libraries.
 # * On Linux, nothing special happens.
+# * On Emscripten, don't call this function, the "executable" is just the .js
+#   file, which is not spectacularly useful on its own. Deal with installing
+#   separately to take care to include .wasm, .worker.js, bundles, loader etc.
 function(dp_install_executables)
 	cmake_parse_arguments(PARSE_ARGV 0 ARG "INCLUDE_BUNDLEDIR" "" "TARGETS")
-	if(WIN32 AND NOT DIST_BUILD)
+	if(EMSCRIPTEN)
+		message(SEND_ERROR "dp_install_executables not supported for Emscripten")
+	elseif(WIN32 AND NOT DIST_BUILD)
 		install(TARGETS ${ARG_TARGETS} RUNTIME DESTINATION ".")
 	elseif(APPLE AND ARG_INCLUDE_BUNDLEDIR)
 		install(TARGETS ${ARG_TARGETS} BUNDLE DESTINATION "${INSTALL_BUNDLEDIR}")

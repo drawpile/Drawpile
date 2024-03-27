@@ -2,6 +2,7 @@
 #include "desktop/dialogs/startdialog/join.h"
 #include "desktop/main.h"
 #include "desktop/widgets/recentscroll.h"
+#include "libclient/net/server.h"
 #include "libclient/utils/listservermodel.h"
 #include "libshared/listings/announcementapi.h"
 #include <QLabel>
@@ -101,7 +102,17 @@ void Join::addressChanged(const QString &address)
 
 void Join::resetAddressPlaceholderText()
 {
-	m_addressEdit->setPlaceholderText(QStringLiteral("drawpile://…"));
+	m_addressEdit->setPlaceholderText(
+#if defined(HAVE_TCPSOCKETS) && defined(HAVE_WEBSOCKETS)
+		QStringLiteral("drawpile://… or wss://…")
+#elif defined(HAVE_TCPSOCKETS)
+		QStringLiteral("drawpile://…")
+#elif defined(HAVE_WEBSOCKETS)
+		QStringLiteral("wss://…")
+#else
+		QStringLiteral("???://…")
+#endif
+	);
 }
 
 void Join::updateJoinButton()
@@ -187,7 +198,9 @@ void Join::resolveRoomcode(const QString &roomcode, const QStringList &servers)
 							: QStringLiteral(":%1").arg(session.port);
 					QString address =
 						QStringLiteral("%1%2%3/%4")
-							.arg(SCHEME, session.host, portSuffix, session.id);
+							.arg(
+								QStringLiteral("drawpile://"), session.host,
+								portSuffix, session.id);
 					finishResolvingRoomcode(address);
 				} else {
 					// Not found, try the next list server.
@@ -211,10 +224,9 @@ void Join::finishResolvingRoomcode(const QString &address)
 QUrl Join::getUrl() const
 {
 	QString address = m_addressEdit->text().trimmed();
-	if(!address.startsWith(SCHEME)) {
-		address.prepend(SCHEME);
-	}
-	QUrl url = QUrl(address, QUrl::TolerantMode);
+	QUrl url = QUrl(
+		net::Server::addSchemeToUserSuppliedAddress(address),
+		QUrl::TolerantMode);
 	return url.isValid() || url.host().isEmpty() ? url : QUrl{};
 }
 

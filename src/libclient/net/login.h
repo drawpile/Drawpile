@@ -457,8 +457,10 @@ private:
 
 	static LoginMethod parseLoginMethod(const QString &method);
 	static QString loginMethodToString(LoginMethod method);
+#ifndef __EMSCRIPTEN__
 	static bool looksLikeSelfSignedCertificate(
 		const QSslCertificate &cert, const QList<QSslError> &errors);
+#endif
 	static QJsonObject makeClientInfoKwargs();
 	static QString getSid();
 	static QString generateTamperSid();

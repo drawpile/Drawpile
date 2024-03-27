@@ -34,8 +34,10 @@ void General::setUp(desktop::settings::Settings &settings, QVBoxLayout *layout)
 	initLogging(settings, canvasSection);
 	utils::addFormSpacer(canvasSection);
 	initUndo(settings, canvasSection);
+#ifndef __EMSCRIPTEN__
 	utils::addFormSpacer(canvasSection);
 	initAutosave(settings, canvasSection);
+#endif
 	utils::addFormSpacer(canvasSection);
 	initSnapshots(settings, canvasSection);
 

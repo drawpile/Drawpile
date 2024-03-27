@@ -18,7 +18,7 @@ public:
 	Recent(QWidget *parent = nullptr);
 
 signals:
-	void openUrl(const QUrl &url);
+	void openPath(const QString &path);
 
 private slots:
 	void recentFileSelected(const QString &path);

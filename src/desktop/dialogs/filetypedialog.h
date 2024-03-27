@@ -1,17 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef ANDROIDFILEDIALOG_H
-#define ANDROIDFILEDIALOG_H
-
-#include "ui_androidfiledialog.h"
+#ifndef DESKTOP_DIALOGS_FILETYPEDIALOG_H
+#define DESKTOP_DIALOGS_FILETYPEDIALOG_H
+#include "ui_filetypedialog.h"
 #include <QDialog>
 
 namespace dialogs {
 
-class AndroidFileDialog final : public QDialog {
+class FileTypeDialog final : public QDialog {
 	Q_OBJECT
 public:
-	explicit AndroidFileDialog(
+	explicit FileTypeDialog(
 		const QString &name, const QStringList &formats,
 		QWidget *parent = nullptr);
 
@@ -22,7 +20,7 @@ private slots:
 	void updateUi();
 
 private:
-	Ui::AndroidFileDialog m_ui;
+	Ui::FileTypeDialog m_ui;
 };
 
 }

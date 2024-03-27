@@ -25,7 +25,7 @@
 
 namespace dialogs {
 
-SettingsDialog::SettingsDialog(QWidget *parent)
+SettingsDialog::SettingsDialog(bool singleSession, QWidget *parent)
 	: QDialog(parent)
 	, m_settings(dpApp().settings())
 {
@@ -72,27 +72,38 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	menuScroll->setWidgetResizable(true);
 	menuScroll->setWidget(menu);
 
-	const std::initializer_list<std::tuple<const char *, QString, QWidget *>>
+	// The servers page has nothing to configure if we're in single-session mode
+	// in the browser, since the list server settings won't be available and
+	// there's no trusted hosts configuration because the browser deals with it.
+#ifdef __EMSCRIPTEN__
+	bool showServers = !singleSession;
+#else
+	bool showServers = true;
+#endif
+	const std::initializer_list<
+		std::tuple<const char *, QString, QWidget *, bool>>
 		panels = {
 			{"configure", tr("General"),
-			 new settingsdialog::General(m_settings, this)},
+			 new settingsdialog::General(m_settings, this), true},
 			{"window_", tr("User Interface"),
-			 new settingsdialog::UserInterface(m_settings, this)},
+			 new settingsdialog::UserInterface(m_settings, this), true},
 			{"dialog-input-devices", tr("Input"),
-			 new settingsdialog::Input(m_settings, this)},
-			{"tools", tr("Tools"), new settingsdialog::Tools(m_settings, this)},
+			 new settingsdialog::Input(m_settings, this), true},
+			{"tools", tr("Tools"), new settingsdialog::Tools(m_settings, this),
+			 true},
 			{"network-modem", tr("Network"),
-			 new settingsdialog::Network(m_settings, this)},
+			 new settingsdialog::Network(m_settings, this), true},
 			{"dialog-information", tr("Notifications"),
-			 new settingsdialog::Notifications(m_settings, this)},
+			 new settingsdialog::Notifications(m_settings, this), true},
 			{"network-server-database", tr("Servers"),
-			 new settingsdialog::Servers(m_settings, this)},
+			 new settingsdialog::Servers(m_settings, singleSession, this),
+			 showServers},
 			{"input-keyboard", tr("Shortcuts"),
-			 new settingsdialog::Shortcuts(m_settings, this)},
+			 new settingsdialog::Shortcuts(m_settings, this), true},
 			{"edit-rename", tr("Canvas Shortcuts"),
-			 new settingsdialog::CanvasShortcuts(m_settings, this)},
+			 new settingsdialog::CanvasShortcuts(m_settings, this), true},
 			{"flag", tr("Parental Controls"),
-			 new settingsdialog::ParentalControls(m_settings, this)}};
+			 new settingsdialog::ParentalControls(m_settings, this), true}};
 
 	auto *buttonLayout = new QVBoxLayout;
 	buttonLayout->setContentsMargins(0, 0, 0, 0);
@@ -119,7 +130,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	m_group = new QButtonGroup(this);
 	auto first = true;
 	int iconSize = style()->pixelMetric(QStyle::PM_ToolBarIconSize);
-	for(const auto &[icon, title, panel] : panels) {
+	for(const auto &[icon, title, panel, visible] : panels) {
 		// Gotta use a QToolButton instead of just adding action directly
 		// because there is no way to get a plain action to extend the width
 		// of the toolbar and it looks ridiculous
@@ -140,13 +151,17 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 		menuLayout->addWidget(button);
 		m_group->addButton(button);
 
+		if(!visible) {
+			button->hide();
+		}
+
 		button->setProperty("panel", QVariant::fromValue(panel));
 		connect(
 			button, &QToolButton::toggled, this,
-			[=, panel = panel](bool checked) {
+			[=, panelToActivate = panel](bool checked) {
 				if(checked) {
 					setUpdatesEnabled(false);
-					activatePanel(panel);
+					activatePanel(panelToActivate);
 					setUpdatesEnabled(true);
 				}
 			});

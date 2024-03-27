@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "libshared/util/paths.h"
-#include <cmake-config/config.h>
 #include <QCoreApplication>
-#include <QDir>
 #include <QDebug>
+#include <QDir>
+#include <cmake-config/config.h>
 #ifdef Q_OS_ANDROID
 #	include <QRegularExpression>
 #endif
@@ -31,13 +31,18 @@ void setWritablePath(const QString &datapath)
 QStringList dataPaths()
 {
 	if(DATAPATHS.isEmpty()) {
-#ifdef Q_OS_ANDROID
+#ifdef __EMSCRIPTEN__
+		DATAPATHS << QStringLiteral("/assets");
+#else
+#	ifdef Q_OS_ANDROID
 		DATAPATHS << QStringLiteral("assets:");
-#endif
-#ifdef DRAWPILE_SOURCE_ASSETS_DESKTOP
+#	endif
+#	ifdef DRAWPILE_SOURCE_ASSETS_DESKTOP
 		DATAPATHS << QString::fromUtf8(cmake_config::sourceAssetsDesktop());
+#	endif
+		DATAPATHS << QStandardPaths::standardLocations(
+			QStandardPaths::AppDataLocation);
 #endif
-		DATAPATHS << QStandardPaths::standardLocations(QStandardPaths::AppDataLocation);
 	}
 	return DATAPATHS;
 }
@@ -45,18 +50,24 @@ QStringList dataPaths()
 QString locateDataFile(const QString &filename)
 {
 	for(const QString &datapath : dataPaths()) {
-		const QDir d { datapath };
+		const QDir d{datapath};
 		if(d.exists(filename))
 			return d.filePath(filename);
 	}
 	return QString();
 }
 
-QString writablePath(QStandardPaths::StandardLocation location, const QString &dirOrFileName, const QString &filename)
+QString writablePath(
+	QStandardPaths::StandardLocation location, const QString &dirOrFileName,
+	const QString &filename)
 {
 	QString path;
 	if(WRITABLEPATH.isEmpty()) {
+#ifdef __EMSCRIPTEN__
+		path = "/appdata";
+#else
 		path = QStandardPaths::writableLocation(location);
+#endif
 
 	} else {
 		switch(location) {
@@ -76,16 +87,18 @@ QString writablePath(QStandardPaths::StandardLocation location, const QString &d
 	}
 
 	// Setting both dirOrFilename and filename means dirOrFilename is treated
-	// as a directory name and must be created and filename is the name of the actual file
-	// Both can be ".", in which case the writableLocation is returned as is, but the path is still created.
+	// as a directory name and must be created and filename is the name of the
+	// actual file Both can be ".", in which case the writableLocation is
+	// returned as is, but the path is still created.
 	if(filename.isEmpty()) {
 		if(!QDir().mkpath(path)) {
 			qWarning("Error creating directory %s", qUtf8Printable(path));
 		}
 	} else {
 		if(!QDir(path).mkpath(dirOrFileName)) {
-			qWarning("Error creating directory %s/%s",
-				qUtf8Printable(path), qUtf8Printable(dirOrFileName));
+			qWarning(
+				"Error creating directory %s/%s", qUtf8Printable(path),
+				qUtf8Printable(dirOrFileName));
 		}
 	}
 
@@ -106,17 +119,17 @@ QString writablePath(QStandardPaths::StandardLocation location, const QString &d
 
 QString extractBasename(QString filename)
 {
-		const QFileInfo file(filename);
-		QString title = file.fileName();
+	const QFileInfo file(filename);
+	QString title = file.fileName();
 #ifdef Q_OS_ANDROID
-		// On Android, the file "name" is a URI-encoded path thing. We find the
-		// last : (%3A) or / (%2F) and chop off anything that comes before that.
-		// That appears to consistently give just the actual file name.
-		int i = title.lastIndexOf(QRegularExpression{
-			"(?<=%3a|%2f)", QRegularExpression::CaseInsensitiveOption});
-		if(i != -1) {
-			title.remove(0, i);
-		}
+	// On Android, the file "name" is a URI-encoded path thing. We find the
+	// last : (%3A) or / (%2F) and chop off anything that comes before that.
+	// That appears to consistently give just the actual file name.
+	int i = title.lastIndexOf(QRegularExpression{
+		"(?<=%3a|%2f)", QRegularExpression::CaseInsensitiveOption});
+	if(i != -1) {
+		title.remove(0, i);
+	}
 #endif
 	return title;
 }

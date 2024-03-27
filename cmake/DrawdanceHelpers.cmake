@@ -25,11 +25,13 @@ function(dp_find_package_emscripten name)
     cmake_parse_arguments(PARSE_ARGV 1 ARG "" "" "COMPONENTS")
 
     if(name STREQUAL "Threads")
-        add_library(${name}::${name} INTERFACE IMPORTED)
-        set_target_properties(${name}::${name} PROPERTIES
-            INTERFACE_COMPILE_OPTIONS "-pthread"
-            INTERFACE_LINK_LIBRARIES "-pthread"
-        )
+        if(NOT TARGET Threads::Threads)
+            add_library(Threads::Threads INTERFACE IMPORTED)
+            set_target_properties(Threads::Threads PROPERTIES
+                INTERFACE_COMPILE_OPTIONS "-pthread"
+                INTERFACE_LINK_LIBRARIES "-pthread"
+            )
+        endif()
         return()
     elseif(name STREQUAL "SDL2")
         set(use SDL=2)
@@ -45,11 +47,13 @@ function(dp_find_package_emscripten name)
     endif()
 
     foreach(component IN LISTS ARG_COMPONENTS ITEMS ${name})
-        add_library(${name}::${component} INTERFACE IMPORTED)
-        set_target_properties(${name}::${component} PROPERTIES
-            INTERFACE_COMPILE_OPTIONS "-sUSE_${use}"
-            INTERFACE_LINK_LIBRARIES "-sUSE_${use}"
-        )
+        if(NOT TARGET "${name}::${component}")
+            add_library(${name}::${component} INTERFACE IMPORTED)
+            set_target_properties(${name}::${component} PROPERTIES
+                INTERFACE_COMPILE_OPTIONS "-sUSE_${use}"
+                INTERFACE_LINK_LIBRARIES "-sUSE_${use}"
+            )
+        endif()
     endforeach()
 endfunction()
 

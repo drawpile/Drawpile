@@ -2,6 +2,7 @@
 #include "desktop/dialogs/sessionsettings.h"
 #include "desktop/filewrangler.h"
 #include "desktop/main.h"
+#include "desktop/utils/widgetutils.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/document.h"
 #include "libclient/net/announcementlist.h"
@@ -19,6 +20,7 @@
 #include <QMessageBox>
 #include <QSortFilterProxyModel>
 #include <QStringListModel>
+#include <QTemporaryFile>
 #include <QTimer>
 
 namespace dialogs {
@@ -356,18 +358,11 @@ void SessionSettingsDialog::bansExported(const QByteArray &bans)
 	m_awaitingImportExportResponse = false;
 	updateBanImportExportState();
 
-	QString path = FileWrangler(this).getSaveSessionBansPath();
-	if(path.isEmpty()) {
-		return;
-	}
-
-	QFile file(path);
-	bool ok = file.open(QFile::WriteOnly) && file.write(bans) == bans.size() &&
-			  file.flush();
-	if(!ok) {
-		QMessageBox::critical(
+	QString error;
+	if(!FileWrangler(this).saveSessionBans(bans, &error)) {
+		utils::showCritical(
 			this, tr("Session Ban Export"),
-			tr("Error saving bans to '%1': %2").arg(path, file.errorString()));
+			tr("Error saving bans: %1").arg(error));
 	}
 }
 
@@ -814,30 +809,35 @@ void SessionSettingsDialog::importBans()
 		return;
 	}
 
-	QString path = FileWrangler(this).getOpenSessionBansPath();
-	if(path.isEmpty()) {
-		return;
-	}
+	FileWrangler(this).openSessionBans(
+		[this](const QString *path, const QByteArray *bytes) {
+			QString bans;
+			if(bytes) {
+				bans = QString::fromUtf8(*bytes);
+			} else if(path) {
+				QFile file(*path);
+				if(!file.open(QFile::ReadOnly)) {
+					utils::showCritical(
+						this, tr("Session Ban Import"),
+						tr("Error opening '%1': %2")
+							.arg(*path, file.errorString()));
+					return;
+				}
+				bans = QString::fromUtf8(file.readAll());
+				file.close();
+			}
 
-	QFile file(path);
-	if(!file.open(QFile::ReadOnly)) {
-		QMessageBox::critical(
-			this, tr("Session Ban Import"),
-			tr("Error opening '%1': %2").arg(path, file.errorString()));
-		return;
-	}
-	QString bans = QString::fromUtf8(file.readAll());
-	file.close();
+			QString errorMessage;
+			if(!checkBanImport(bans, errorMessage)) {
+				utils::showCritical(
+					this, tr("Session Ban Import"), errorMessage);
+				return;
+			}
 
-	QString errorMessage;
-	if(!checkBanImport(bans, errorMessage)) {
-		QMessageBox::critical(this, tr("Session Ban Import"), errorMessage);
-		return;
-	}
-
-	m_awaitingImportExportResponse = true;
-	updateBanImportExportState();
-	emit requestBanImport(bans);
+			m_awaitingImportExportResponse = true;
+			updateBanImportExportState();
+			emit requestBanImport(bans);
+		});
 }
 
 bool SessionSettingsDialog::checkBanImport(
@@ -927,45 +927,44 @@ void SessionSettingsDialog::importAuthList()
 		return;
 	}
 
-	QString path = FileWrangler(this).getOpenAuthListPath();
-	if(path.isEmpty()) {
-		return;
-	}
+	FileWrangler(this).openAuthList(
+		[this](const QString *path, const QByteArray *bytes) {
+			QByteArray content;
+			if(bytes) {
+				content = *bytes;
+			} else if(path) {
+				QFile file(*path);
+				if(!file.open(QFile::ReadOnly)) {
+					utils::showCritical(
+						this, tr("Role Import"),
+						tr("Error opening '%1': %2")
+							.arg(*path, file.errorString()));
+					return;
+				}
+				content = file.readAll();
+				file.close();
+			}
 
-	QFile file(path);
-	if(!file.open(QFile::ReadOnly)) {
-		QMessageBox::critical(
-			this, tr("Role Import"),
-			tr("Error opening '%1': %2").arg(path, file.errorString()));
-		return;
-	}
-	QByteArray content = file.readAll();
-	file.close();
+			QJsonArray list;
+			if(!readAuthListImport(content, list)) {
+				utils::showCritical(
+					this, tr("Role Import"),
+					tr("File does not contain a valid role export."));
+				return;
+			}
 
-	QJsonArray list;
-	if(!readAuthListImport(content, list)) {
-		QMessageBox::critical(
-			this, tr("Role Import"),
-			tr("File '%1' does not contain a valid role export.").arg(path));
-		return;
-	}
-
-	compat::sizetype count = list.size();
-	if(count != 0) {
-		emit requestUpdateAuthList(list);
-	}
-	QMessageBox::information(
-		this, tr("Role Import"), tr("%n role(s) imported.", "", count));
+			compat::sizetype count = list.size();
+			if(count != 0) {
+				emit requestUpdateAuthList(list);
+			}
+			utils::showInformation(
+				this, tr("Role Import"), tr("%n role(s) imported.", "", count));
+		});
 }
 
 void SessionSettingsDialog::exportAuthList()
 {
 	if(!m_op) {
-		return;
-	}
-
-	QString path = FileWrangler(this).getSaveAuthListPath();
-	if(path.isEmpty()) {
 		return;
 	}
 
@@ -989,14 +988,10 @@ void SessionSettingsDialog::exportAuthList()
 	QByteArray content =
 		authExportPrefix +
 		qCompress(QJsonDocument(list).toJson(QJsonDocument::Compact));
-
-	QFile file(path);
-	bool ok = file.open(QFile::WriteOnly) &&
-			  file.write(content) == content.size() && file.flush();
-	if(!ok) {
-		QMessageBox::critical(
-			this, tr("Role Export"),
-			tr("Error saving roles to '%1': %2").arg(path, file.errorString()));
+	QString error;
+	if(!FileWrangler(this).saveAuthList(content, &error)) {
+		utils::showCritical(
+			this, tr("Role Export"), tr("Error saving roles: %1").arg(error));
 	}
 }
 

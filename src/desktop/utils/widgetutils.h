@@ -17,6 +17,7 @@ class QFormLayout;
 class QFrame;
 class QHeaderView;
 class QLabel;
+class QMessageBox;
 class QWidget;
 
 namespace utils {
@@ -92,7 +93,8 @@ protected:
 };
 // SPDX-SnippetEnd
 
-void showWindow(QWidget *widget, bool maximized = false);
+void showWindow(
+	QWidget *widget, bool maximized = false, bool isMainWindow = false);
 
 void setWidgetRetainSizeWhenHidden(QWidget *widget, bool retainSize);
 
@@ -137,6 +139,42 @@ QCheckBox *addCheckable(
 	const QString &accessibleName, EncapsulatedLayout *layout, QWidget *child);
 
 QLabel *makeIconLabel(const QIcon &icon, QWidget *parent = nullptr);
+
+QMessageBox *makeQuestion(
+	QWidget *parent, const QString &title, const QString &text,
+	const QString &informativeText = QString());
+
+QMessageBox *makeInformation(
+	QWidget *parent, const QString &title, const QString &text,
+	const QString &informativeText = QString());
+
+QMessageBox *makeInformationWithSaveButton(
+	QWidget *parent, const QString &title, const QString &text,
+	const QString &informativeText = QString());
+
+QMessageBox *makeWarning(
+	QWidget *parent, const QString &title, const QString &text,
+	const QString &informativeText = QString());
+
+QMessageBox *makeCritical(
+	QWidget *parent, const QString &title, const QString &text,
+	const QString &informativeText = QString());
+
+QMessageBox *showQuestion(
+	QWidget *parent, const QString &title, const QString &text,
+	const QString &informativeText = QString());
+
+QMessageBox *showInformation(
+	QWidget *parent, const QString &title, const QString &text,
+	const QString &informativeText = QString());
+
+QMessageBox *showWarning(
+	QWidget *parent, const QString &title, const QString &text,
+	const QString &informativeText = QString());
+
+QMessageBox *showCritical(
+	QWidget *parent, const QString &title, const QString &text,
+	const QString &informativeText = QString());
 
 }
 

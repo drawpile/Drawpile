@@ -96,10 +96,14 @@ private:
 	// On Android, image resources don't work, leading to avatars not showing.
 	// We'll just force the use of compact mode, since that doesn't use avatars.
 	static constexpr bool COMPACT_ONLY = true;
+#else
+	static constexpr bool COMPACT_ONLY = false;
+#endif
+
+#ifdef SINGLE_MAIN_WINDOW
 	// Detaching the chat window in a single-window environment is a bad idea.
 	static constexpr bool ALLOW_DETACH = false;
 #else
-	static constexpr bool COMPACT_ONLY = false;
 	static constexpr bool ALLOW_DETACH = true;
 #endif
 

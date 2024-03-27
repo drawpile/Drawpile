@@ -28,11 +28,11 @@ namespace settingsdialog {
 class Servers final : public QWidget {
 	Q_OBJECT
 public:
-	Servers(desktop::settings::Settings &settings, QWidget *parent = nullptr);
+	Servers(
+		desktop::settings::Settings &settings, bool singleSession,
+		QWidget *parent = nullptr);
 
 private:
-	void initKnownHosts(QVBoxLayout *layout);
-
 	void initListingServers(
 		desktop::settings::Settings &settings, QVBoxLayout *layout);
 
@@ -42,6 +42,9 @@ private:
 		sessionlisting::ListServerModel *model,
 		QItemSelectionModel *selectionModel, int offset);
 
+#ifndef __EMSCRIPTEN__
+	void initKnownHosts(QVBoxLayout *layout);
+
 	void importCertificates(CertificateStoreModel *model);
 
 	void pinCertificates(
@@ -49,6 +52,7 @@ private:
 
 	void
 	viewCertificate(CertificateStoreModel *model, const QModelIndex &index);
+#endif
 };
 
 } // namespace settingsdialog

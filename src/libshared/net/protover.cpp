@@ -94,7 +94,11 @@ bool ProtocolVersion::isFuture() const
 
 bool ProtocolVersion::isPastCompatible() const
 {
+#ifdef HAVE_COMPATIBILITY_MODE
 	return DP_protocol_version_is_past_compatible(m_protocolVersion);
+#else
+	return false;
+#endif
 }
 
 bool ProtocolVersion::shouldHaveSystemId() const

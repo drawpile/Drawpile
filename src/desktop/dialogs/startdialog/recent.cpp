@@ -26,7 +26,7 @@ Recent::Recent(QWidget *parent)
 
 void Recent::recentFileSelected(const QString &path)
 {
-	emit openUrl(QUrl::fromLocalFile(path));
+	emit openPath(path);
 }
 
 }

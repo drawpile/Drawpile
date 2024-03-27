@@ -13,15 +13,20 @@ set(BUILD_PACKAGE_SUFFIX "" CACHE STRING "Suffix to append to cpack artifacts")
 option(UPDATE_TRANSLATIONS "Update translation files from source")
 add_feature_info(".ts regeneration (slow!) (UPDATE_TRANSLATIONS)" UPDATE_TRANSLATIONS "")
 
-set(HAVE_TCPSOCKETS ON)
+if(EMSCRIPTEN)
+	set(HAVE_TCPSOCKETS OFF)
+else()
+	set(HAVE_TCPSOCKETS ON)
+endif()
 add_feature_info("TCP socket support" HAVE_TCPSOCKETS "")
 
-if(NOT ANDROID)
-	option(SERVER "Compile dedicated server" OFF)
+if(NOT ANDROID AND NOT EMSCRIPTEN)
+	cmake_dependent_option(SERVER "Compile dedicated server" OFF "HAVE_TCPSOCKETS" OFF)
 	add_feature_info("Drawpile server (SERVER)" SERVER "")
 
 	cmake_dependent_option(
-		BUILTINSERVER "Compile builtin server for hosting from client" ON "CLIENT" OFF)
+		BUILTINSERVER "Compile builtin server for hosting from client"
+		ON "CLIENT;HAVE_TCPSOCKETS" OFF)
 	add_feature_info("Builtin server (BUILTINSERVER)" BUILTINSERVER "")
 
 	cmake_dependent_option(SERVERGUI "Enable server GUI" ON "SERVER" OFF)

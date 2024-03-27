@@ -308,7 +308,8 @@ StartDialog::StartDialog(QWidget *parent)
 		createPage, &startdialog::Create::create, this, &StartDialog::create);
 
 	connect(
-		recentPage, &startdialog::Recent::openUrl, this, &StartDialog::openUrl);
+		recentPage, &startdialog::Recent::openPath, this,
+		&StartDialog::openPath);
 
 	setMinimumSize(600, 350);
 
@@ -474,8 +475,10 @@ void StartDialog::showWelcomeButtons()
 
 void StartDialog::showJoinButtons()
 {
+#ifndef __EMSCRIPTEN__
 	m_recordButton->show();
 	m_recordButton->setEnabled(true);
+#endif
 	m_okButton->setText(tr("Join"));
 	m_okButton->show();
 }
@@ -641,6 +644,7 @@ void StartDialog::guessPage()
 
 void StartDialog::addRecentHost(const QUrl &url, bool join)
 {
+	// FIXME: wss:// and ws:// handling.
 	bool isValidHost = url.isValid() &&
 					   url.scheme().compare("drawpile://", Qt::CaseInsensitive);
 	if(isValidHost) {

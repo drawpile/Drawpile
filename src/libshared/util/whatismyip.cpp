@@ -26,6 +26,7 @@ bool isPublicAddress(const QHostAddress& address) {
 	}
 }
 
+#ifndef __EMSCRIPTEN__
 bool addressSort(const QHostAddress& a1, const QHostAddress& a2)
 {
 	// Sort an IP address list so public addresses are at the beginning of the list
@@ -42,6 +43,7 @@ bool addressSort(const QHostAddress& a1, const QHostAddress& a2)
 
 	return memcmp(adr1, adr2, 17) < 0 ;
 }
+#endif
 
 }
 
@@ -109,8 +111,12 @@ bool WhatIsMyIp::isMyPrivateAddress(const QString &address)
 	if(isPublicAddress(addr))
 		return false;
 
+#ifdef __EMSCRIPTEN__
+	return false;
+#else
 	// Check all host addresses
 	return QNetworkInterface::allAddresses().contains(addr);
+#endif
 }
 
 bool WhatIsMyIp::isCGNAddress(const QString &address)
@@ -139,6 +145,7 @@ bool WhatIsMyIp::isCGNAddress(const QString &address)
  */
 QString WhatIsMyIp::guessLocalAddress()
 {
+#ifndef __EMSCRIPTEN__
 	QList<QNetworkInterface> list = QNetworkInterface::allInterfaces();
 	QList<QHostAddress> alist;
 
@@ -165,6 +172,7 @@ QString WhatIsMyIp::guessLocalAddress()
 			return QString("[%1]").arg(a.toString());
 		return a.toString();
 	}
+#endif
 
 	return "127.0.0.1";
 }

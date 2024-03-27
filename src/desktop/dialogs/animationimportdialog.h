@@ -8,6 +8,7 @@ class QAbstractButton;
 class QDialogButtonBox;
 class QLineEdit;
 class QPushButton;
+class QTemporaryFile;
 class QSpinBox;
 
 namespace dialogs {
@@ -30,14 +31,16 @@ private slots:
 		const drawdance::CanvasState &canvasState, const QString &error);
 
 private:
+	void onOpen(const QString &path, QTemporaryFile *tempFile);
+	void runImport();
+
 	QLineEdit *m_pathEdit;
 	QPushButton *m_chooseButton;
 	QSpinBox *m_holdTime;
 	QSpinBox *m_framerate;
 	QDialogButtonBox *m_buttons;
 	QPushButton *m_importButton;
-
-	void runImport();
+	QTemporaryFile *m_tempFile = nullptr;
 };
 
 }

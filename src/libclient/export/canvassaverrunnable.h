@@ -9,6 +9,8 @@ extern "C" {
 #include <QObject>
 #include <QRunnable>
 
+class QTemporaryDir;
+
 /**
  * @brief A runnable for saving a canvas in a background thread
  */
@@ -17,7 +19,10 @@ class CanvasSaverRunnable final : public QObject, public QRunnable {
 public:
 	CanvasSaverRunnable(
 		const drawdance::CanvasState &canvasState, DP_SaveImageType type,
-		const QString &path, QObject *parent = nullptr);
+		const QString &path, QTemporaryDir *tempDir = nullptr,
+		QObject *parent = nullptr);
+
+	~CanvasSaverRunnable() override;
 
 	void run() override;
 
@@ -37,6 +42,7 @@ private:
 	drawdance::CanvasState m_canvasState;
 	DP_SaveImageType m_type;
 	QByteArray m_path;
+	QTemporaryDir *m_tempDir;
 };
 
 #endif

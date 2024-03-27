@@ -25,6 +25,11 @@
 #include <QTextBrowser>
 #include <QVBoxLayout>
 #include <QMessageBox>
+#include <QTemporaryFile>
+#include <functional>
+
+using std::placeholders::_1;
+using std::placeholders::_2;
 
 static constexpr char SELECTED_TAG_ID_KEY[] = "brushpalette:selected_tag_id";
 
@@ -239,67 +244,70 @@ void BrushPalette::connectBrushSettings(tools::ToolSettings *toolSettings)
 
 void BrushPalette::importBrushes()
 {
-	QString file = FileWrangler{this}.getOpenBrushPackPath();
+	FileWrangler(this).openBrushPack(
+		std::bind(&BrushPalette::onOpen, this, _1, _2));
+}
 
-	if(!file.isEmpty()) {
-		brushes::BrushImportResult result =
-			d->tagModel->importBrushPack(file);
-		if(!result.importedTags.isEmpty()) {
-			d->tagComboBox->setCurrentIndex(tagIdToProxyRow(result.importedTags[0].id));
-		}
-
-		QDialog *dlg = new QDialog{this};
-		dlg->setWindowTitle(tr("Brush Import"));
-		dlg->setAttribute(Qt::WA_DeleteOnClose);
-		dlg->setModal(true);
-
-		QVBoxLayout *layout = new QVBoxLayout{dlg};
-		dlg->setLayout(layout);
-
-		QString text;
-		int errorCount = result.errors.size();
-
-		QLabel *brushLabel = new QLabel{
-			tr("%n brush(es) imported.", "", result.importedBrushCount), dlg};
-		layout->addWidget(brushLabel);
-		brushLabel->setWordWrap(true);
-
-		QLabel *tagsLabel = new QLabel{dlg};
-		layout->addWidget(tagsLabel);
-		tagsLabel->setWordWrap(true);
-		int tagCount = result.importedTags.count();
-		if(tagCount > 0) {
-			QStringList tagNames;
-			for(const brushes::Tag &tag : result.importedTags) {
-				tagNames.append(tag.name);
-			}
-			tagsLabel->setText(
-				tr("%n tag(s) imported: %1", "", tagCount).arg(tagNames.join(", ")));
-		} else {
-			tagsLabel->setText(tr("0 tags imported."));
-		}
-
-		QLabel *errorsLabel = new QLabel{
-			tr("%n error(s) encountered.", "", errorCount), dlg};
-		layout->addWidget(errorsLabel);
-		errorsLabel->setWordWrap(true);
-
-		if(errorCount != 0) {
-			dlg->resize(400, 400);
-			QTextBrowser *browser = new QTextBrowser{dlg};
-			browser->setPlainText(result.errors.join("\n"));
-			utils::initKineticScrolling(browser);
-			layout->addWidget(browser);
-		}
-
-		QDialogButtonBox *buttons = new QDialogButtonBox{dlg};
-		buttons->setStandardButtons(QDialogButtonBox::StandardButton::Ok);
-		layout->addWidget(buttons);
-
-		connect(buttons, &QDialogButtonBox::accepted, dlg, &QDialog::accept);
-		connect(buttons, &QDialogButtonBox::rejected, dlg, &QDialog::reject);
-		dlg->show();
+void BrushPalette::onOpen(const QString &path, QTemporaryFile *tempFile)
+{
+	brushes::BrushImportResult result =
+		d->tagModel->importBrushPack(tempFile ? tempFile->fileName() : path);
+	delete tempFile;
+	if(!result.importedTags.isEmpty()) {
+		d->tagComboBox->setCurrentIndex(tagIdToProxyRow(result.importedTags[0].id));
 	}
+
+	QDialog *dlg = new QDialog{this};
+	dlg->setWindowTitle(tr("Brush Import"));
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
+	dlg->setModal(true);
+
+	QVBoxLayout *layout = new QVBoxLayout{dlg};
+	dlg->setLayout(layout);
+
+	QString text;
+	int errorCount = result.errors.size();
+
+	QLabel *brushLabel = new QLabel{
+		tr("%n brush(es) imported.", "", result.importedBrushCount), dlg};
+	layout->addWidget(brushLabel);
+	brushLabel->setWordWrap(true);
+
+	QLabel *tagsLabel = new QLabel{dlg};
+	layout->addWidget(tagsLabel);
+	tagsLabel->setWordWrap(true);
+	int tagCount = result.importedTags.count();
+	if(tagCount > 0) {
+		QStringList tagNames;
+		for(const brushes::Tag &tag : result.importedTags) {
+			tagNames.append(tag.name);
+		}
+		tagsLabel->setText(
+			tr("%n tag(s) imported: %1", "", tagCount).arg(tagNames.join(", ")));
+	} else {
+		tagsLabel->setText(tr("0 tags imported."));
+	}
+
+	QLabel *errorsLabel = new QLabel{
+		tr("%n error(s) encountered.", "", errorCount), dlg};
+	layout->addWidget(errorsLabel);
+	errorsLabel->setWordWrap(true);
+
+	if(errorCount != 0) {
+		dlg->resize(400, 400);
+		QTextBrowser *browser = new QTextBrowser{dlg};
+		browser->setPlainText(result.errors.join("\n"));
+		utils::initKineticScrolling(browser);
+		layout->addWidget(browser);
+	}
+
+	QDialogButtonBox *buttons = new QDialogButtonBox{dlg};
+	buttons->setStandardButtons(QDialogButtonBox::StandardButton::Ok);
+	layout->addWidget(buttons);
+
+	connect(buttons, &QDialogButtonBox::accepted, dlg, &QDialog::accept);
+	connect(buttons, &QDialogButtonBox::rejected, dlg, &QDialog::reject);
+	dlg->show();
 }
 
 void BrushPalette::exportBrushes()

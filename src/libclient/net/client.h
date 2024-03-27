@@ -59,6 +59,7 @@ public:
 	 * Return the URL of the current (or last connected) session
 	 */
 	QUrl sessionUrl(bool includeUser = false) const;
+	void setSessionUrl(const QUrl &url) { m_lastUrl = url; }
 
 	/**
 	 * @brief Is the client connected by network?
@@ -74,6 +75,8 @@ public:
 	 * has completed
 	 */
 	bool isLoggedIn() const { return m_server && m_server->isLoggedIn(); }
+
+	bool isWebSocket() const { return m_server && m_server->isWebSocket(); }
 
 	/**
 	 * @brief Is the user logged in as an authenticated user?

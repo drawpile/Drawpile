@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/brushpresetproperties.h"
+#include "desktop/filewrangler.h"
 #include "ui_brushpresetproperties.h"
-#include <QFileDialog>
 #include <QPainter>
 
 
@@ -46,14 +46,13 @@ BrushPresetProperties::~BrushPresetProperties()
 
 void BrushPresetProperties::chooseThumbnailFile()
 {
-	QString file = QFileDialog::getOpenFileName(
-		this, tr("Select brush thumbnail"), QString(),
-		"Images (*.png *.jpg *.jpeg)");
-
-	QPixmap pixmap;
-	if(!file.isEmpty() && pixmap.load(file)) {
-		showThumbnail(pixmap);
-	}
+	FileWrangler::ImageOpenFn imageOpenCompleted = [this](QImage &img) {
+		QPixmap pixmap;
+		if(!img.isNull() && pixmap.convertFromImage(img)) {
+			showThumbnail(pixmap);
+		}
+	};
+	FileWrangler(this).openBrushThumbnail(imageOpenCompleted);
 }
 
 void BrushPresetProperties::emitChanges()

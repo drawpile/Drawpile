@@ -21,8 +21,8 @@
 #include <QTextBlock>
 #include <QTextBrowser>
 #include <QVBoxLayout>
-#ifdef Q_OS_ANDROID
-#	include "desktop/chat/chatlineeditandroid.h"
+#ifdef HAVE_CHAT_LINE_EDIT_MOBILE
+#	include "desktop/chat/chatlineeditmobile.h"
 #else
 #	include "desktop/chat/chatlineedit.h"
 #endif

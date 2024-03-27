@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-#ifndef DP_NET_TCPSERVER_H
-#define DP_NET_TCPSERVER_H
+#ifndef LIBCLIENT_NET_WEBSOCKETSERVER_H
+#define LIBCLIENT_NET_WEBSOCKETSERVER_H
 #include "libclient/net/server.h"
-#include "libshared/net/tcpmessagequeue.h"
-#include <QUrl>
 
-class QSslSocket;
+class QWebSocket;
 
 namespace net {
 
-class TcpServer final : public Server {
+class WebSocketMessageQueue;
+
+class WebSocketServer final : public Server {
 	Q_OBJECT
 public:
-	explicit TcpServer(int timeoutSecs, QObject *parent = nullptr);
+	explicit WebSocketServer(int timeoutSecs, QObject *parent = nullptr);
 
 	bool isWebSocket() const override;
 
@@ -32,10 +32,10 @@ protected:
 	bool loginIgnoreTlsErrors(const QList<QSslError> &ignore) override;
 
 private:
-	QSslSocket *m_socket;
-	TcpMessageQueue *m_msgqueue;
+	QWebSocket *m_socket;
+	WebSocketMessageQueue *m_msgqueue;
 };
 
 }
 
-#endif // TCPSERVER_H
+#endif

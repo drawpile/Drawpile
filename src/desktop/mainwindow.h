@@ -28,6 +28,7 @@ class QActionGroup;
 class QLabel;
 class QShortcutEvent;
 class QSplitter;
+class QTemporaryFile;
 class QToolButton;
 
 class Document;
@@ -86,9 +87,10 @@ class ShortcutDetector;
 class MainWindow final : public QMainWindow {
 	Q_OBJECT
 public:
-	MainWindow(bool restoreWindowPosition=true);
+	MainWindow(bool restoreWindowPosition = true, bool singleSession = false);
 	~MainWindow() override;
 
+	void openPath(const QString &path, QTemporaryFile *tempFile = nullptr);
 	void autoJoin(const QUrl &url);
 
 	void hostSession(
@@ -100,9 +102,12 @@ public:
 
 	//! Check if the current board can be replaced
 	bool canReplace() const;
+	bool shouldPreventUnload() const;
 
+#ifndef __EMSCRIPTEN__
 	//! Save settings and exit
 	void exit();
+#endif
 
 	dialogs::StartDialog *showStartDialog();
 
@@ -120,11 +125,15 @@ public slots:
 	void start();
 	void showNew();
 	void open();
-	void open(const QUrl &url);
+#ifdef __EMSCRIPTEN__
+	void download();
+	void downloadSelection();
+#else
 	bool save();
 	void saveas();
 	void saveSelection();
 	void exportImage();
+#endif
 	void importOldAnimation();
 	void showFlipbook();
 
@@ -201,7 +210,7 @@ private slots:
 	void paste();
 	void pasteCentered();
 	void pasteFile();
-	void pasteFile(const QUrl &url);
+	void pasteFilePath(const QString &path);
 	void pasteImage(const QImage &image, const QPoint *point=nullptr, bool force=false);
 	void dropUrl(const QUrl &url);
 
@@ -243,6 +252,11 @@ private slots:
 	void onCanvasChanged(canvas::CanvasModel *canvas);
 	void onCanvasSaveStarted();
 	void onCanvasSaved(const QString &errorMessage);
+#ifdef __EMSCRIPTEN__
+	void onCanvasDownloadStarted();
+	void onCanvasDownloadReady(const QString &defaultName, const QByteArray &bytes);
+	void onCanvasDownloadError(const QString &errorMessage);
+#endif
 	void onTemplateExported(const QString &errorMessage);
 
 	bool eventFilter(QObject *object, QEvent *event) override;
@@ -295,6 +309,7 @@ private:
 	void createDocks();
 	void setupActions();
 
+	bool m_singleSession;
 	QDeadlineTimer m_lastDisconnectNotificationTimer;
 
 	QTimer m_saveWindowDebounce;
@@ -368,7 +383,9 @@ private:
 
 	Document *m_doc;
 	MainActions *m_ma;
+#ifndef __EMSCRIPTEN__
 	enum { RUNNING, DISCONNECTING, SAVING } m_exitAction;
+#endif
 
 	drawdance::CanvasState m_preResetCanvasState;
 

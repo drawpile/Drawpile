@@ -129,8 +129,10 @@ void Notifications::initGrid(
 		grid->addWidget(preview, row, 4, Qt::AlignHCenter);
 
 		connect(
-			preview, &QToolButton::clicked, [this, text = text, event = event] {
-				dpApp().notifications()->preview(this, event, text);
+			preview, &QToolButton::clicked,
+			[this, previewText = text, previewEvent = event] {
+				dpApp().notifications()->preview(
+					this, previewEvent, previewText);
 			});
 
 		++row;

@@ -56,7 +56,7 @@ NotificationBar::NotificationBar(QWidget *parent)
 
 void NotificationBar::show(
 	const QString &text, const QIcon &actionButtonIcon,
-	const QString &actionButtonLabel, RoleColor color)
+	const QString &actionButtonLabel, RoleColor color, bool allowDismissal)
 {
 	Q_ASSERT(parentWidget());
 	cancelAutoDismissTimer();
@@ -71,6 +71,8 @@ void NotificationBar::show(
 	m_label->setText(text);
 	m_actionButton->setIcon(actionButtonIcon);
 	m_actionButton->setText(actionButtonLabel);
+	m_closeButton->setEnabled(allowDismissal);
+	m_closeButton->setVisible(allowDismissal);
 
 	QWidget::show();
 }

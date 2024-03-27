@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#include "desktop/dialogs/androidfiledialog.h"
+#include "desktop/dialogs/filetypedialog.h"
 #include <QPushButton>
 
 namespace dialogs {
 
-AndroidFileDialog::AndroidFileDialog(
+FileTypeDialog::FileTypeDialog(
 	const QString &name, const QStringList &formats, QWidget *parent)
 	: QDialog{parent}
 {
@@ -15,21 +14,21 @@ AndroidFileDialog::AndroidFileDialog(
 	m_ui.typeList->setCurrentRow(0);
 	connect(
 		m_ui.nameEdit, &QLineEdit::textChanged, this,
-		&AndroidFileDialog::updateUi);
+		&FileTypeDialog::updateUi);
 	connect(
 		m_ui.typeList, &QListWidget::itemSelectionChanged, this,
-		&AndroidFileDialog::updateUi);
+		&FileTypeDialog::updateUi);
 	connect(m_ui.buttons, &QDialogButtonBox::accepted, this, &QDialog::accept);
 	connect(m_ui.buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
 	updateUi();
 }
 
-QString AndroidFileDialog::name() const
+QString FileTypeDialog::name() const
 {
 	return m_ui.nameEdit->text().trimmed();
 }
 
-QString AndroidFileDialog::type() const
+QString FileTypeDialog::type() const
 {
 	QList<QListWidgetItem *> selected = m_ui.typeList->selectedItems();
 	if(selected.isEmpty()) {
@@ -39,7 +38,7 @@ QString AndroidFileDialog::type() const
 	}
 }
 
-void AndroidFileDialog::updateUi()
+void FileTypeDialog::updateUi()
 {
 	QPushButton *okButton = m_ui.buttons->button(QDialogButtonBox::Ok);
 	if(okButton) {

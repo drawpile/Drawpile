@@ -14,17 +14,19 @@
 #include "libshared/net/servercmd.h"
 #include "libshared/util/functionrunnable.h"
 #include "libshared/util/qtcompat.h"
+#include <QBuffer>
 #include <QDir>
 #include <QGuiApplication>
 #include <QPainter>
 #include <QRunnable>
 #include <QSysInfo>
+#include <QTemporaryDir>
 #include <QThreadPool>
 #include <QTimer>
 #include <QtEndian>
 #include <parson.h>
 #include <tuple>
-#ifndef Q_OS_ANDROID
+#ifndef HAVE_CLIPBOARD_EMULATION
 #	include <QClipboard>
 #endif
 
@@ -477,8 +479,13 @@ void Document::setSessionAllowWeb(bool allowWeb)
 {
 	// Always emit this, since we make showing the checkbox dependent on it.
 	m_sessionAllowWeb = allowWeb;
-	emit sessionAllowWebChanged(
-		m_sessionAllowWeb, m_client->canManageWebSession());
+	// The user needs to have the WEBSESSION flag to be allowed to change
+	// this setting. If they're connected via WebSocket themselves, they
+	// can't turn it off, since it would lock themselves out of rejoining.
+	bool canAlterAllowWeb =
+		m_client->canManageWebSession() &&
+		(!m_client->isWebSocket() || !m_sessionAllowWeb);
+	emit sessionAllowWebChanged(m_sessionAllowWeb, canAlterAllowWeb);
 }
 
 void Document::setSessionMaxUserCount(int count)
@@ -653,6 +660,17 @@ QString Document::sessionTitle() const
 		return m_canvas->title();
 	else
 		return QString();
+}
+
+QString Document::downloadName() const
+{
+	return (m_downloadName.isEmpty() ? sessionTitle() : m_downloadName)
+		.trimmed();
+}
+
+void Document::setDownloadName(const QString &downloadName)
+{
+	m_downloadName = downloadName;
 }
 
 bool Document::isCompatibilityMode() const
@@ -1013,7 +1031,7 @@ bool Document::copyFromLayer(int layer)
 		return false;
 	}
 
-#ifdef Q_OS_ANDROID
+#ifdef HAVE_CLIPBOARD_EMULATION
 	QMimeData *data = &clipboardData;
 	data->clear();
 #else
@@ -1044,7 +1062,7 @@ bool Document::copyFromLayer(int layer)
 						QByteArray::number(pasteId());
 	data->setData("x-drawpile/pastesrc", srcbuf);
 
-#ifndef Q_OS_ANDROID
+#ifndef HAVE_CLIPBOARD_EMULATION
 	QGuiApplication::clipboard()->setMimeData(data);
 #endif
 
@@ -1073,6 +1091,63 @@ void Document::fillBackground(QImage &img)
 		p.setCompositionMode(QPainter::CompositionMode_DestinationOver);
 		p.fillRect(0, 0, img.width(), img.height(), bg);
 	}
+}
+
+#ifdef __EMSCRIPTEN__
+void Document::downloadCanvas(
+	const QString &fileName, DP_SaveImageType type, QTemporaryDir *tempDir)
+{
+	downloadCanvasState(
+		fileName, type, tempDir, m_canvas->paintEngine()->viewCanvasState());
+}
+
+void Document::downloadCanvasState(
+	const QString &fileName, DP_SaveImageType type, QTemporaryDir *tempDir,
+	const drawdance::CanvasState &canvasState)
+{
+	QString path = tempDir->filePath(fileName);
+	CanvasSaverRunnable *saver =
+		new CanvasSaverRunnable(canvasState, type, path, tempDir);
+	saver->setAutoDelete(false);
+	connect(
+		saver, &CanvasSaverRunnable::saveComplete, this,
+		[this, saver, fileName, path](const QString &error) {
+			if(error.isEmpty()) {
+				QFile file(path);
+				file.open(QIODevice::ReadOnly);
+				emit canvasDownloadReady(fileName, file.readAll());
+			} else {
+				emit canvasDownloadError(error);
+			}
+			saver->deleteLater();
+		});
+	emit canvasDownloadStarted();
+	QThreadPool::globalInstance()->start(saver);
+}
+
+void Document::downloadSelection(const QString &fileName)
+{
+	emit canvasDownloadStarted();
+	QFileInfo fileInfo(fileName);
+	QByteArray bytes;
+	QBuffer buffer(&bytes);
+	buffer.open(QIODevice::WriteOnly);
+	bool ok = selectionToImage().save(
+		&buffer, qUtf8Printable(fileInfo.completeSuffix()));
+	buffer.close();
+	if(ok) {
+		emit canvasDownloadReady(fileName, bytes);
+	} else {
+		emit canvasDownloadError(tr("Error saving image"));
+	}
+}
+#endif
+
+QImage Document::selectionToImage()
+{
+	QImage img = m_canvas->selectionToImage(0);
+	fillBackground(img);
+	return img;
 }
 
 void Document::copyVisible()
@@ -1186,13 +1261,13 @@ void Document::addServerLogEntry(const QString &log)
 
 const QMimeData *Document::getClipboardData()
 {
-#ifdef Q_OS_ANDROID
+#ifdef HAVE_CLIPBOARD_EMULATION
 	return &clipboardData;
 #else
 	return QGuiApplication::clipboard()->mimeData();
 #endif
 }
 
-#ifdef Q_OS_ANDROID
+#ifdef HAVE_CLIPBOARD_EMULATION
 QMimeData Document::clipboardData;
 #endif

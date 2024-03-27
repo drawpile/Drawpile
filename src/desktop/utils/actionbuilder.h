@@ -15,11 +15,14 @@ class ActionBuilder
 public:
 	explicit ActionBuilder(QAction *action) : m_action(action) { Q_ASSERT(m_action); }
 
-	operator QAction*() {
+	QAction *get() {
 		// If an action is tagged as "remembered", it should be checkable as well
 		Q_ASSERT(m_action->isCheckable() || !m_action->property("remembered").toBool());
-
 		return m_action;
+	}
+
+	operator QAction*() {
+		return get();
 	}
 
 	ActionBuilder &icon(const QString &name)

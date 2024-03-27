@@ -6,17 +6,63 @@
 #ifdef HAVE_TCPSOCKETS
 #	include "libclient/net/tcpserver.h"
 #endif
+#ifdef HAVE_WEBSOCKETS
+#	include "libclient/net/websocketserver.h"
+#endif
 
 namespace net {
 
 Server *Server::make(const QUrl &url, int timeoutSecs, QObject *parent)
 {
-#if defined(HAVE_TCPSOCKETS)
+#if defined(HAVE_WEBSOCKETS) && defined(HAVE_TCPSOCKETS)
+	if(url.scheme().startsWith(QStringLiteral("ws"), Qt::CaseInsensitive)) {
+		return new WebSocketServer(timeoutSecs, parent);
+	} else {
+		return new TcpServer(timeoutSecs, parent);
+	}
+#elif defined(HAVE_TCPSOCKETS)
 	Q_UNUSED(url);
 	return new TcpServer(timeoutSecs, parent);
+#elif defined(HAVE_WEBSOCKETS)
+	Q_UNUSED(url);
+	return new WebSocketServer(timeoutSecs, parent);
 #else
 #	error "No socket implementation compiled in."
 #endif
+}
+
+QString Server::addSchemeToUserSuppliedAddress(const QString &remoteAddress)
+{
+	bool haveValidScheme = false;
+#ifdef HAVE_TCPSOCKETS
+	haveValidScheme = haveValidScheme ||
+					  remoteAddress.startsWith(
+						  QStringLiteral("drawpile://"), Qt::CaseInsensitive);
+#endif
+#ifdef HAVE_WEBSOCKETS
+	haveValidScheme =
+		haveValidScheme ||
+		remoteAddress.startsWith(
+			QStringLiteral("ws://"), Qt::CaseInsensitive) ||
+		remoteAddress.startsWith(QStringLiteral("wss://"), Qt::CaseInsensitive);
+#endif
+
+	if(haveValidScheme) {
+		return remoteAddress;
+	} else {
+#if defined(HAVE_TCPSOCKETS)
+		QString scheme = QStringLiteral("drawpile");
+#elif defined(HAVE_WEBSOCKETS)
+		bool looksLikeLocalhost =
+			remoteAddress.startsWith(
+				QStringLiteral("localhost"), Qt::CaseInsensitive) ||
+			remoteAddress.startsWith("127.0.0.1") ||
+			remoteAddress.startsWith("::1");
+		QString scheme =
+			looksLikeLocalhost ? QStringLiteral("ws") : QStringLiteral("wss");
+#endif
+		return scheme + QStringLiteral("://") + remoteAddress;
+	}
 }
 
 Server::Server(QObject *parent)

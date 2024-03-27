@@ -11,6 +11,12 @@ if(ANDROID)
 		add_library(drawpile MODULE)
 		add_dependencies(apk drawpile)
 	endif()
+elseif(EMSCRIPTEN)
+	if(QT_VERSION VERSION_GREATER_EQUAL 6)
+		qt_add_executable(drawpile)
+	else()
+		message(FATAL_ERROR "Building Emscripten on Qt5 is not supported")
+	endif()
 else()
 	add_executable(drawpile MACOSX_BUNDLE)
 endif()
@@ -89,6 +95,8 @@ target_sources(drawpile PRIVATE
 	dialogs/curvepresetdialog.h
 	dialogs/dumpplaybackdialog.cpp
 	dialogs/dumpplaybackdialog.h
+	dialogs/filetypedialog.cpp
+	dialogs/filetypedialog.h
 	dialogs/flipbook.cpp
 	dialogs/flipbook.h
 	dialogs/invitedialog.cpp
@@ -249,6 +257,7 @@ target_sources(drawpile PRIVATE
 	ui/canvasshortcutsdialog.ui
 	ui/certificateview.ui
 	ui/dumpplayback.ui
+	ui/filetypedialog.ui
 	ui/fillsettings.ui
 	ui/flipbook.ui
 	ui/inspectorsettings.ui
@@ -431,31 +440,50 @@ endif()
 # * Linking Qt's Android Extras library, which is used to grab wake and network
 #   locks in Qt5. In Qt6, the JNI stuff is in Core instead.
 if(ANDROID)
-	target_compile_definitions(drawpile PRIVATE SINGLE_MAIN_WINDOW=1)
+	target_compile_definitions(drawpile PRIVATE
+		HAVE_CHAT_LINE_EDIT_MOBILE=1
+		SINGLE_MAIN_WINDOW=1
+	)
 	target_sources(drawpile PRIVATE
-		chat/chatlineeditandroid.cpp
-		chat/chatlineeditandroid.h
-		dialogs/androidfiledialog.cpp
-		dialogs/androidfiledialog.h
+		chat/chatlineeditmobile.cpp
+		chat/chatlineeditmobile.h
 		icons/android/drawable-anydpi-v26/ic_launcher.xml
 		icons/android/drawable-anydpi/ic_launcher.xml
 		icons/android/drawable-anydpi/ic_launcher_foreground.xml
 		icons/android/drawable-anydpi/ic_launcher_monochrome.xml
 		icons/android/values/strings.xml
 		icons/android/xml/remote_action.xml
-		ui/androidfiledialog.ui
 	)
 	if(TARGET ${QT_PACKAGE_NAME}::AndroidExtras)
 		target_link_libraries(drawpile PRIVATE ${QT_PACKAGE_NAME}::AndroidExtras)
 	endif()
+elseif(EMSCRIPTEN)
+	target_compile_definitions(drawpile PRIVATE
+		HAVE_CHAT_LINE_EDIT_MOBILE=1
+		HAVE_EMULATED_BITMAP_CURSOR=1
+		SINGLE_MAIN_WINDOW=1
+	)
+	target_sources(drawpile PRIVATE
+		chat/chatlineeditmobile.cpp
+		chat/chatlineeditmobile.h
+		scene/cursoritem.cpp
+		scene/cursoritem.h
+	)
 else()
 	target_sources(drawpile PRIVATE
 		chat/chatlineedit.cpp
 		chat/chatlineedit.h
-		dialogs/videoexportdialog.cpp
-		dialogs/videoexportdialog.h
-		ui/videoexport.ui
 	)
+	# You're not gonna do any video exporting in the browser. We can't spawn an
+	# ffmpeg process and we can't download an image series without major effort.
+	if(NOT EMSCRIPTEN)
+		target_compile_definitions(drawpile PRIVATE HAVE_VIDEO_EXPORT=1)
+		target_sources(drawpile PRIVATE
+			dialogs/videoexportdialog.cpp
+			dialogs/videoexportdialog.h
+			ui/videoexport.ui
+		)
+	endif()
 endif()
 
 if(${QT_PACKAGE_NAME}Keychain_FOUND)
@@ -557,7 +585,9 @@ else()
 endif()
 add_feature_info("External QtColorWidgets" "TARGET QtColorWidgets::QtColorWidgets" "")
 
-dp_install_executables(TARGETS drawpile INCLUDE_BUNDLEDIR)
+if(NOT EMSCRIPTEN)
+	dp_install_executables(TARGETS drawpile INCLUDE_BUNDLEDIR)
+endif()
 
 if(WIN32)
 	configure_file(drawpile.rc.in drawpile.rc)
@@ -702,6 +732,82 @@ elseif(ANDROID)
 	file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/android/assets")
 
 	install(FILES ${output_apk} DESTINATION .)
+elseif(EMSCRIPTEN)
+	set_target_properties(drawpile PROPERTIES
+		# We use PATH in init.js to extract the directory name for assets.
+		QT_WASM_EXTRA_EXPORTED_METHODS "PATH"
+		# 128MB, to avoid regrowing memory on startup. Default would be 50MB.
+		QT_WASM_INITIAL_MEMORY "134217728")
+
+	set(em_files_to_install
+		"icons/drawpile.svg"
+		"icons/favicon.ico"
+		"wasm/drawpile.css"
+		"wasm/init.js"
+	)
+	foreach(em_file IN LISTS em_files_to_install)
+		set(em_file_source "${CMAKE_CURRENT_SOURCE_DIR}/${em_file}")
+		get_filename_component(em_file_base "${em_file}" NAME)
+		configure_file(
+			"${CMAKE_CURRENT_SOURCE_DIR}/${em_file}"
+			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${em_file_base}"
+			COPYONLY
+		)
+	endforeach()
+
+	add_custom_command(
+		OUTPUT "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/index.html"
+		COMMAND
+			${CMAKE_COMMAND}
+			"-DINPUT_PATH=${CMAKE_CURRENT_SOURCE_DIR}/wasm/index.html"
+			"-DOUTPUT_PATH=${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/index.html"
+			-P "${PROJECT_SOURCE_DIR}/cmake/GenerateIndexHtml.cmake"
+		DEPENDS
+			"${CMAKE_CURRENT_SOURCE_DIR}/icons/drawpile.svg"
+			"${CMAKE_CURRENT_SOURCE_DIR}/wasm/drawpile.css"
+			"${CMAKE_CURRENT_SOURCE_DIR}/wasm/index.html"
+			"${CMAKE_CURRENT_SOURCE_DIR}/wasm/init.js"
+		COMMENT "Generating index.html"
+		VERBATIM
+	)
+	add_custom_target(drawpile_index_html ALL DEPENDS "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/index.html")
+
+	set(build_time_assets_dir "${CMAKE_CURRENT_BINARY_DIR}/wasm/assets")
+	add_custom_command(
+		TARGET drawpile POST_BUILD
+		COMMAND
+			"${CMAKE_CURRENT_SOURCE_DIR}/wasm/generate-assets-bundle.py"
+			"${CMAKE_CURRENT_BINARY_DIR}/wasm/assets"
+			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/assets.bundle"
+		COMMAND_EXPAND_LISTS
+		COMMENT "Generating assets.bundle"
+		VERBATIM
+	)
+
+	install(
+		FILES
+			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/assets.bundle"
+			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/drawpile.css"
+			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/drawpile.js"
+			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/drawpile.svg"
+			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/drawpile.wasm"
+			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/drawpile.worker.js"
+			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/favicon.ico"
+			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/index.html"
+			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/init.js"
+			"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/qtloader.js"
+		TYPE BIN
+	)
+
+	target_link_options(drawpile PUBLIC
+		-sASYNCIFY
+		-sMAXIMUM_MEMORY=4294967296
+		-sEXPORTED_FUNCTIONS=_main,_drawpileShouldPreventUnload
+		--js-library "${CMAKE_CURRENT_SOURCE_DIR}/wasm/lib.js"
+	)
+	if(CMAKE_BUILD_TYPE MATCHES "^[rR}[eE][lL]")
+		target_link_options(drawpile PUBLIC -O3)
+	endif()
 elseif(UNIX)
 	function(install_datarootdir target files destination)
 		install(
@@ -791,8 +897,8 @@ if(${QT_PACKAGE_NAME}LinguistTools_FOUND)
 			)
 		endif()
 
-		# Assets will be installed by Gradle on Android
-		if(NOT ANDROID)
+		# Assets will be installed by Gradle on Android and are bundled on WASM.
+		if(NOT ANDROID AND NOT EMSCRIPTEN)
 			install(
 				FILES ${bundle_files}
 				DESTINATION "${INSTALL_APPDATADIR}/i18n"

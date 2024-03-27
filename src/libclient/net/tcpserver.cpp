@@ -34,6 +34,11 @@ TcpServer::TcpServer(int timeoutSecs, QObject *parent)
 	connectMessageQueue(m_msgqueue);
 }
 
+bool TcpServer::isWebSocket() const
+{
+	return false;
+}
+
 bool TcpServer::hasSslSupport() const
 {
 	return true;

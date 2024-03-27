@@ -66,10 +66,19 @@ LoginHandler::LoginHandler(Mode mode, const QUrl &url, QObject *parent)
 {
 	m_sessions = new LoginSessionModel(this);
 
-	// Automatically join a session if the ID is included in the URL
-	QString path = m_address.path();
+	// Automatically join a session if the ID is included in the URL, either in
+	// the path or in the "session" query parameter. WebSocket URLs only support
+	// the latter, since they need the path to actually make a connection.
+	QString path;
+	if(!m_address.scheme().startsWith(
+		   QStringLiteral("ws"), Qt::CaseInsensitive)) {
+		path = m_address.path();
+	}
+	if(path.isEmpty()) {
+		path = QUrlQuery(url).queryItemValue(QStringLiteral("session"));
+	}
 	if(path.length() > 1) {
-		QRegularExpression idre("\\A/([a-zA-Z0-9:-]{1,64})/?\\z");
+		QRegularExpression idre("\\A/?([a-zA-Z0-9:-]{1,64})/?\\z");
 		auto m = idre.match(path);
 		if(m.hasMatch())
 			m_autoJoinId = m.captured(1);
@@ -734,7 +743,9 @@ LoginSession LoginHandler::updateSession(const QJsonObject &js)
 		js["persistent"].toBool(),
 		js["closed"].toBool(),
 		js["authOnly"].toBool() && m_isGuest,
-		js["nsfm"].toBool()};
+		!js["allowWeb"].toBool() && m_server->isWebSocket(),
+		js["nsfm"].toBool(),
+	};
 	m_sessions->updateSession(session);
 	return session;
 }
@@ -871,6 +882,10 @@ void LoginHandler::startTls()
 
 void LoginHandler::tlsError(const QList<QSslError> &errors)
 {
+#ifdef __EMSCRIPTEN__
+	Q_UNUSED(errors);
+	failLogin(tr("TLS is not supported via this kind of socket"));
+#else
 	QList<QSslError> ignore;
 	QString errorstr;
 	bool fail = false;
@@ -926,6 +941,7 @@ void LoginHandler::tlsError(const QList<QSslError> &errors)
 	} else if(!m_server->loginIgnoreTlsErrors(ignore)) {
 		failLogin(tr("Unable to set TLS error ignore state"));
 	}
+#endif
 }
 
 namespace {
@@ -1182,6 +1198,7 @@ QString LoginHandler::loginMethodToString(LoginMethod method)
 	return QString();
 }
 
+#ifndef __EMSCRIPTEN__
 bool LoginHandler::looksLikeSelfSignedCertificate(
 	const QSslCertificate &cert, const QList<QSslError> &errors)
 {
@@ -1195,6 +1212,7 @@ bool LoginHandler::looksLikeSelfSignedCertificate(
 	}
 	return cert.isSelfSigned();
 }
+#endif
 
 QJsonObject LoginHandler::makeClientInfoKwargs()
 {

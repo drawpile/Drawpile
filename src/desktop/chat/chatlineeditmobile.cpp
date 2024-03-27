@@ -2,7 +2,7 @@
 
 #include <QKeyEvent>
 
-#include "desktop/chat/chatlineeditandroid.h"
+#include "desktop/chat/chatlineeditmobile.h"
 
 ChatLineEdit::ChatLineEdit(QWidget *parent)
 	: QLineEdit{parent}

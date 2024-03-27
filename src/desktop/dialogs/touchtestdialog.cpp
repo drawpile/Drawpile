@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/touchtestdialog.h"
+#include "cmake-config/config.h"
 #include "desktop/filewrangler.h"
 #include "desktop/utils/qtguicompat.h"
+#include "desktop/utils/widgetutils.h"
 #include "libshared/util/qtcompat.h"
 #include <QCheckBox>
 #include <QDialogButtonBox>
@@ -250,20 +252,18 @@ TouchTestDialog::TouchTestDialog(QWidget *parent)
 			if(button == buttons->button(QDialogButtonBox::Reset)) {
 				edit->clear();
 			} else if(button == buttons->button(QDialogButtonBox::Save)) {
-				QString path = FileWrangler(this).getSaveLogFilePath();
-				if(!path.isEmpty()) {
-					QByteArray bytes = edit->toPlainText().toUtf8();
-					QFile file(path);
-					bool ok =
-						file.open(QIODevice::WriteOnly | QIODevice::Text) &&
-						file.write(bytes) && file.flush();
-					if(!ok) {
-						QMessageBox::critical(
-							this, tr("Error Saving Log"),
-							tr("Touch test log could not be saved: %1")
-								.arg(file.errorString()));
-					}
-					file.close();
+				QString defaultName =
+					QStringLiteral("drawpile-touch-log-%1-%2.txt")
+						.arg(cmake_config::version())
+						.arg(QDateTime::currentDateTime().toString(
+							"yyyyMMddHHMMSS"));
+				QByteArray bytes = edit->toPlainText().toUtf8();
+				QString error;
+				if(!FileWrangler(this).saveLogFile(
+					   defaultName, bytes, &error)) {
+					utils::showCritical(
+						this, tr("Error Saving Log"),
+						tr("Touch test log could not be saved: %1").arg(error));
 				}
 			} else if(button == buttons->button(QDialogButtonBox::Close)) {
 				reject();

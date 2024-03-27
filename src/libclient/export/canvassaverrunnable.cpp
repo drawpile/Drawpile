@@ -4,21 +4,27 @@
 #include "libclient/drawdance/annotation.h"
 #include "libclient/drawdance/global.h"
 #include "libclient/utils/annotations.h"
+#include <QTemporaryDir>
 
 CanvasSaverRunnable::CanvasSaverRunnable(
 	const drawdance::CanvasState &canvasState, DP_SaveImageType type,
-	const QString &path, QObject *parent)
+	const QString &path, QTemporaryDir *tempDir, QObject *parent)
 	: QObject(parent)
 	, m_canvasState(canvasState)
 	, m_type(type)
 	, m_path(path.toUtf8())
+	, m_tempDir(tempDir)
 {
+}
+
+CanvasSaverRunnable::~CanvasSaverRunnable()
+{
+	delete m_tempDir;
 }
 
 void CanvasSaverRunnable::run()
 {
 	const char *path = m_path.constData();
-	qDebug("Saving to '%s'", path);
 	drawdance::DrawContext dc = drawdance::DrawContextPool::acquire();
 	DP_SaveResult result = DP_save(
 		m_canvasState.get(), dc.get(), m_type, path, bakeAnnotation, this);

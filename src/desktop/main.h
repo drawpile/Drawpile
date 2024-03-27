@@ -30,7 +30,8 @@ public:
 	void initTheme();
 	void initInterface();
 
-	void openUrl(QUrl url);
+	void openPath(const QString &path);
+	void joinUrl(const QUrl &url, bool singleSession);
 
 	void openStart(const QString &page = QString{});
 
@@ -82,7 +83,11 @@ private:
 
 	QPalette loadPalette(const QString &file);
 
+	MainWindow *acquireWindow(bool singleSession);
+
+#ifndef __EMSCRIPTEN__
 	void updateEraserNear(bool near);
+#endif
 };
 
 inline DrawpileApp &dpApp()

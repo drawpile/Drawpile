@@ -40,23 +40,19 @@ PlaybackDialog::PlaybackDialog(canvas::CanvasModel *canvas, QWidget *parent)
 	connect(
 		m_ui->buildIndexButton, &QAbstractButton::clicked, this,
 		&PlaybackDialog::onBuildIndexClicked);
-#ifdef Q_OS_ANDROID
-	m_ui->configureExportButton->setVisible(false);
-#else
+#ifdef HAVE_VIDEO_EXPORT
 	connect(
 		m_ui->configureExportButton, &QAbstractButton::clicked, this,
 		&PlaybackDialog::onVideoExportClicked);
+#else
+	m_ui->configureExportButton->setVisible(false);
 #endif
 
 	m_playTimer = new QTimer{this};
 	m_playTimer->setTimerType(Qt::PreciseTimer);
 	m_playTimer->setSingleShot(true);
 	connect(m_playTimer, &QTimer::timeout, this, [this]() {
-		double msecs =
-			m_exporter
-				? 1000.0 / m_exporter->fps()
-				: qMin(PLAY_MSECS_MAX, double(m_lastFrameTime.elapsed()));
-		playNext(msecs);
+		playNext(getNextMsecs());
 	});
 
 	m_ui->speedSpinner->setExponentRatio(3.0);
@@ -126,9 +122,13 @@ void PlaybackDialog::onPlaybackAt(long long pos)
 
 	updateButtons();
 
+#ifdef HAVE_VIDEO_EXPORT
 	if(!atEnd && m_exporter && m_ui->autoSaveFrame->isChecked()) {
 		exportFrame(1);
-	} else if(m_autoplay) {
+		return;
+	}
+#endif
+	if(m_autoplay) {
 		double elapsed = m_lastFrameTime.elapsed();
 		if(elapsed < PLAY_MSECS) {
 			m_playTimer->start(PLAY_MSECS - elapsed);
@@ -138,6 +138,7 @@ void PlaybackDialog::onPlaybackAt(long long pos)
 	}
 }
 
+#ifdef HAVE_VIDEO_EXPORT
 void PlaybackDialog::onExporterReady()
 {
 	m_ui->saveFrame->setEnabled(true);
@@ -152,6 +153,7 @@ void PlaybackDialog::onExporterReady()
 		}
 	}
 }
+#endif
 
 void PlaybackDialog::playNext(double msecs)
 {
@@ -289,14 +291,14 @@ void PlaybackDialog::skipForward()
 void PlaybackDialog::closeEvent(QCloseEvent *event)
 {
 	m_paintengine->closePlayback();
-
+#ifdef HAVE_VIDEO_EXPORT
 	if(m_exporter) {
 		// Exporter still working? Disown it and let it finish.
 		// It will delete itself once done.
 		m_exporter->setParent(nullptr);
 		m_exporter->finish();
 	}
-
+#endif
 	QDialog::closeEvent(event);
 }
 
@@ -308,7 +310,7 @@ void PlaybackDialog::keyPressEvent(QKeyEvent *event)
 	event->ignore();
 }
 
-#ifndef Q_OS_ANDROID
+#ifdef HAVE_VIDEO_EXPORT
 void PlaybackDialog::onVideoExportClicked()
 {
 	VideoExportDialog *dlg = new VideoExportDialog(this);
@@ -371,7 +373,6 @@ void PlaybackDialog::videoExporterFinished(bool showExportDialogAgain)
 			this, "onVideoExportClicked", Qt::QueuedConnection);
 	}
 }
-#endif
 
 void PlaybackDialog::exportFrame(int count)
 {
@@ -386,6 +387,17 @@ void PlaybackDialog::exportFrame(int count)
 		m_ui->saveFrame->setEnabled(false);
 		m_exporter->saveFrame(image, count);
 	}
+}
+#endif
+
+double PlaybackDialog::getNextMsecs()
+{
+#ifdef HAVE_VIDEO_EXPORT
+	if(m_exporter) {
+		return 1000.0 / m_exporter->fps();
+	}
+#endif
+	return qMin(PLAY_MSECS_MAX, double(m_lastFrameTime.elapsed()));
 }
 
 void PlaybackDialog::playbackCommand(std::function<DP_PlayerResult()> fn)

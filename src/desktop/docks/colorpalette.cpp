@@ -190,11 +190,13 @@ ColorPaletteDock::ColorPaletteDock(const QString &title, QWidget *parent)
 		tr("Delete"), this, &ColorPaletteDock::deletePalette);
 	paletteMenu->addAction(
 		tr("Rename"), this, &ColorPaletteDock::renamePalette);
+#ifndef __EMSCRIPTEN__
 	paletteMenu->addSeparator();
 	paletteMenu->addAction(
 		tr("Import..."), this, &ColorPaletteDock::importPalette);
 	paletteMenu->addAction(
 		tr("Export..."), this, &ColorPaletteDock::exportPalette);
+#endif
 	menuButton->setMenu(paletteMenu);
 	menuButton->setPopupMode(QToolButton::InstantPopup);
 
@@ -330,6 +332,7 @@ void ColorPaletteDock::renamePalette()
 	}
 }
 
+#ifndef __EMSCRIPTEN__
 void ColorPaletteDock::importPalette()
 {
 	QString filename = QFileDialog::getOpenFileName(
@@ -362,6 +365,7 @@ void ColorPaletteDock::exportPalette()
 			QMessageBox::warning(this, tr("Error"), tr("Couldn't save file"));
 	}
 }
+#endif
 
 void ColorPaletteDock::selectColor(const QColor &color)
 {

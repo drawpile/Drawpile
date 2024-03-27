@@ -14,6 +14,7 @@
 #include <QGraphicsOpacityEffect>
 #include <QHeaderView>
 #include <QLabel>
+#include <QMessageBox>
 #include <QPaintEvent>
 #include <QPainter>
 #include <QPair>
@@ -270,8 +271,19 @@ bool KisKineticScrollerEventFilter::eventFilter(QObject *watched, QEvent *event)
 // SPDX-SnippetEnd
 
 
-void showWindow(QWidget *widget, bool maximized)
+void showWindow(QWidget *widget, bool maximized, bool isMainWindow)
 {
+	// On platforms with a single main window (Android, Emscripten), we want to
+	// show it always in full screen, since there's no point in ever moving it.
+#ifdef SINGLE_MAIN_WINDOW
+	if(isMainWindow) {
+		widget->showFullScreen();
+		return;
+	}
+#else
+	Q_UNUSED(isMainWindow);
+#endif
+
 	// On Android, we rarely want small windows unless it's like a simple
 	// message box or something. Anything more complex is probably better off
 	// being a full-screen window, which is also more akin to how Android's
@@ -737,6 +749,103 @@ QLabel *makeIconLabel(const QIcon &icon, QWidget *parent)
 	label->setPixmap(icon.pixmap(labelSize));
 	label->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	return label;
+}
+
+static QMessageBox *makeMessage(
+	QWidget *parent, const QString &title, const QString &text,
+	const QString &informativeText, QMessageBox::Icon icon,
+	QMessageBox::StandardButtons buttons)
+{
+	QMessageBox *msgbox = new QMessageBox(parent);
+	msgbox->setAttribute(Qt::WA_DeleteOnClose);
+	msgbox->setWindowModality(Qt::ApplicationModal);
+	msgbox->setIcon(icon);
+	msgbox->setWindowTitle(title);
+	msgbox->setText(text);
+	msgbox->setInformativeText(informativeText);
+	msgbox->setStandardButtons(buttons);
+	return msgbox;
+}
+
+QMessageBox *makeQuestion(
+	QWidget *parent, const QString &title, const QString &text,
+	const QString &informativeText)
+{
+	return makeMessage(
+		parent, title, text, informativeText, QMessageBox::Question,
+		QMessageBox::Yes | QMessageBox::No);
+}
+
+QMessageBox *makeInformation(
+	QWidget *parent, const QString &title, const QString &text,
+	const QString &informativeText)
+{
+	return makeMessage(
+		parent, title, text, informativeText, QMessageBox::Information,
+		QMessageBox::Ok);
+}
+
+QMessageBox *makeInformationWithSaveButton(
+	QWidget *parent, const QString &title, const QString &text,
+	const QString &informativeText)
+{
+	return makeMessage(
+		parent, title, text, informativeText, QMessageBox::Information,
+		QMessageBox::Save);
+}
+
+QMessageBox *makeWarning(
+	QWidget *parent, const QString &title, const QString &text,
+	const QString &informativeText)
+{
+	return makeMessage(
+		parent, title, text, informativeText, QMessageBox::Warning,
+		QMessageBox::Ok);
+}
+
+QMessageBox *makeCritical(
+	QWidget *parent, const QString &title, const QString &text,
+	const QString &informativeText)
+{
+	return makeMessage(
+		parent, title, text, informativeText, QMessageBox::Critical,
+		QMessageBox::Ok);
+}
+
+QMessageBox *showQuestion(
+	QWidget *parent, const QString &title, const QString &text,
+	const QString &informativeText)
+{
+	QMessageBox *msgbox = makeQuestion(parent, title, text, informativeText);
+	msgbox->show();
+	return msgbox;
+}
+
+QMessageBox *showInformation(
+	QWidget *parent, const QString &title, const QString &text,
+	const QString &informativeText)
+{
+	QMessageBox *msgbox = makeInformation(parent, title, text, informativeText);
+	msgbox->show();
+	return msgbox;
+}
+
+QMessageBox *showWarning(
+	QWidget *parent, const QString &title, const QString &text,
+	const QString &informativeText)
+{
+	QMessageBox *msgbox = makeWarning(parent, title, text, informativeText);
+	msgbox->show();
+	return msgbox;
+}
+
+QMessageBox *showCritical(
+	QWidget *parent, const QString &title, const QString &text,
+	const QString &informativeText)
+{
+	QMessageBox *msgbox = makeCritical(parent, title, text, informativeText);
+	msgbox->show();
+	return msgbox;
 }
 
 }

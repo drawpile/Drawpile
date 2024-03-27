@@ -4,17 +4,22 @@
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/document.h"
+#include "libclient/import/canvasloaderrunnable.h"
 #include "libshared/util/paths.h"
 #include <QCoreApplication>
 #include <QDir>
 #include <QFileDialog>
+#include <QImageReader>
 #include <QLoggingCategory>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QRegularExpression>
 #include <QStandardPaths>
-#ifdef Q_OS_ANDROID
-#	include "desktop/dialogs/androidfiledialog.h"
+#include <QTemporaryDir>
+#include <QTemporaryFile>
+#include <QThreadPool>
+#if defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)
+#	include "desktop/dialogs/filetypedialog.h"
 #endif
 
 Q_LOGGING_CATEGORY(lcDpFileWrangler, "net.drawpile.filewrangler", QtWarningMsg)
@@ -25,17 +30,117 @@ FileWrangler::FileWrangler(QWidget *parent)
 {
 }
 
+void FileWrangler::openAvatar(const ImageOpenFn &imageOpenCompleted)
+{
+	openImageFileContent(tr("Add Avatar"), imageOpenCompleted);
+}
+
+void FileWrangler::openMain(const MainOpenFn &onOpen) const
+{
+	openMainContent(
+		tr("Open"), LastPath::IMAGE,
+		utils::fileFormatFilterList(utils::FileFormatOption::OpenEverything),
+		onOpen);
+}
+
+void FileWrangler::openAnimationImport(const MainOpenFn &onOpen) const
+{
+	openMainContent(
+		tr("Import Animation"), LastPath::IMAGE,
+		{QStringLiteral("%1 (*.ora)").arg(tr("OpenRaster Image"))}, onOpen);
+}
+
+void FileWrangler::openDebugDump(const MainOpenFn &onOpen) const
+{
+	openMainContent(
+		tr("Open Debug Dump"), LastPath::DEBUG_DUMP,
+		utils::fileFormatFilterList(utils::FileFormatOption::OpenDebugDumps),
+		onOpen);
+}
+
+void FileWrangler::openBrushPack(const MainOpenFn &onOpen) const
+{
+	openMainContent(
+		tr("Import Brushes"), LastPath::BRUSH_PACK,
+		utils::fileFormatFilterList(utils::FileFormatOption::OpenBrushPack),
+		onOpen);
+}
+
+void FileWrangler::openSessionBans(const BytesOpenFn &onOpen) const
+{
+	openBytesContent(
+		tr("Import Session Bans"), LastPath::SESSION_BANS,
+		utils::fileFormatFilterList(utils::FileFormatOption::SessionBans),
+		onOpen);
+}
+
+void FileWrangler::openAuthList(const BytesOpenFn &onOpen) const
+{
+	openBytesContent(
+		tr("Import Roles"), LastPath::AUTH_LIST,
+		utils::fileFormatFilterList(utils::FileFormatOption::AuthList), onOpen);
+}
+
+void FileWrangler::openCanvasState(
+	const CanvasStateOpenBeginFn &onBegin,
+	const CanvasStateOpenSuccessFn &onSuccess,
+	const CanvasStateOpenErrorFn &onError) const
+{
+#ifdef __EMSCRIPTEN__
+	OpenFn fileOpenCompleted =
+		[parent = parentWidget(), onBegin, onSuccess,
+		 onError](const QString &fileName, const QByteArray &fileContent) {
+			onBegin(fileName);
+			QString tempFileError;
+			QTemporaryFile *tempFile =
+				writeToTemporaryFile(fileContent, tempFileError);
+			if(tempFile) {
+				loadCanvasState(
+					parent, tempFile->fileName(), tempFile, onSuccess, onError);
+			} else {
+				onError(
+					tr("Error opening temporary file for %1.").arg(fileName),
+					tempFileError);
+			}
+		};
+#else
+	OpenFn fileOpenCompleted = [parent = parentWidget(), onBegin, onSuccess,
+								onError](const QString &fileName) {
+		onBegin(fileName);
+		loadCanvasState(parent, fileName, nullptr, onSuccess, onError);
+	};
+#endif
+	showOpenFileContentDialog(
+		tr("Open Image"), LastPath::IMAGE,
+		utils::fileFormatFilterList(utils::FileFormatOption::OpenImages),
+		fileOpenCompleted);
+}
+
+void FileWrangler::openBrushThumbnail(const ImageOpenFn &imageOpenCompleted)
+{
+	openImageFileContent(tr("Set Brush Preset Thumbnail"), imageOpenCompleted);
+}
+
+void FileWrangler::openPasteImage(const ImageOpenFn &imageOpenCompleted)
+{
+	openImageFileContent(tr("Paste File"), imageOpenCompleted);
+}
+
+
+#ifndef __EMSCRIPTEN__
 QStringList FileWrangler::getImportCertificatePaths(const QString &title) const
 {
-	const auto filter = tr("Certificates (%1)").arg("*.pem *.crt *.cer") +
-						";;" + QApplication::tr("All files (*)");
+	QString nameFilter = getEffectiveFilter({
+		tr("Certificates (%1)").arg("*.pem *.crt *.cer"),
+		QApplication::tr("All files (*)"),
+	});
 
 	// TODO: QFileDialog static methods do not create sheet dialogs on macOS
 	// when appropriate, nor do they allow setting the accept button label, nor
 	// do they set the appropriate file mode to prevent selecting non-existing
 	// files, so this code should be abstracted out to get rid of those areas
 	// that use static methods where they do not do the right thing.
-	QFileDialog dialog(parentWidget(), title, QString(), filter);
+	QFileDialog dialog(parentWidget(), title, QString(), nameFilter);
 	dialog.setLabelText(QFileDialog::Accept, tr("Import"));
 	dialog.setFileMode(QFileDialog::ExistingFiles);
 	dialog.setOption(QFileDialog::ReadOnly);
@@ -47,56 +152,7 @@ QStringList FileWrangler::getImportCertificatePaths(const QString &title) const
 		return {};
 	}
 }
-
-QString FileWrangler::getOpenPath() const
-{
-	return showOpenFileDialog(
-		tr("Open"), LastPath::IMAGE, utils::FileFormatOption::OpenEverything);
-}
-
-QString FileWrangler::getOpenOraPath() const
-{
-	return showOpenFileDialogFilters(
-		tr("Open ORA"), LastPath::IMAGE,
-		{QStringLiteral("%1 (*.ora)").arg(tr("OpenRaster Image"))});
-}
-
-QString FileWrangler::getOpenPasteImagePath() const
-{
-	return showOpenFileDialog(
-		tr("Paste Image"), LastPath::IMAGE,
-		utils::FileFormatOption::OpenImages |
-			utils::FileFormatOption::QtImagesOnly);
-}
-
-QString FileWrangler::getOpenDebugDumpsPath() const
-{
-	return showOpenFileDialog(
-		tr("Open Debug Dump"), LastPath::DEBUG_DUMP,
-		utils::FileFormatOption::OpenDebugDumps);
-}
-
-QString FileWrangler::getOpenBrushPackPath() const
-{
-	return showOpenFileDialog(
-		tr("Import Brush Pack"), LastPath::BRUSH_PACK,
-		utils::FileFormatOption::BrushPack);
-}
-
-QString FileWrangler::getOpenSessionBansPath() const
-{
-	return showOpenFileDialog(
-		tr("Import Session Bans"), LastPath::SESSION_BANS,
-		utils::FileFormatOption::SessionBans);
-}
-
-QString FileWrangler::getOpenAuthListPath() const
-{
-	return showOpenFileDialog(
-		tr("Import Roles"), LastPath::AUTH_LIST,
-		utils::FileFormatOption::AuthList);
-}
-
+#endif
 
 QString FileWrangler::saveImage(Document *doc) const
 {
@@ -232,14 +288,7 @@ QString FileWrangler::getSaveTabletEventLogPath() const
 		utils::FileFormatOption::SaveEventLog);
 }
 
-QString FileWrangler::getSaveLogFilePath() const
-{
-	return showSaveFileDialog(
-		tr("Log File"), LastPath::LOG_FILE, ".txt",
-		utils::FileFormatOption::SaveText);
-}
-
-#ifndef Q_OS_ANDROID
+#ifdef HAVE_VIDEO_EXPORT
 QString FileWrangler::getSaveFfmpegMp4Path() const
 {
 	return showSaveFileDialog(
@@ -261,19 +310,6 @@ QString FileWrangler::getSaveFfmpegCustomPath() const
 		utils::FileFormatOption::SaveAllFiles);
 }
 
-QString FileWrangler::getSaveAnimationFramesPath() const
-{
-	QString dirname = QFileDialog::getExistingDirectory(
-		parentWidget(), tr("Save Animation Frames"),
-		getLastPath(LastPath::ANIMATION_FRAMES));
-	if(dirname.isEmpty()) {
-		return QString{};
-	} else {
-		setLastPath(LastPath::ANIMATION_FRAMES, dirname);
-		return dirname;
-	}
-}
-
 QString FileWrangler::getSaveImageSeriesPath() const
 {
 	QString dirname = QFileDialog::getExistingDirectory(
@@ -288,25 +324,144 @@ QString FileWrangler::getSaveImageSeriesPath() const
 }
 #endif
 
-QString FileWrangler::getSaveBrushPackPath() const
+#ifndef Q_OS_ANDROID
+QString FileWrangler::getSaveAnimationFramesPath() const
 {
-	return showSaveFileDialog(
-		tr("Export Brushes"), LastPath::BRUSH_PACK, ".zip",
-		utils::FileFormatOption::SaveBrushPack);
+	QString dirname = QFileDialog::getExistingDirectory(
+		parentWidget(), tr("Save Animation Frames"),
+		getLastPath(LastPath::ANIMATION_FRAMES));
+	if(dirname.isEmpty()) {
+		return QString{};
+	} else {
+		setLastPath(LastPath::ANIMATION_FRAMES, dirname);
+		return dirname;
+	}
+}
+#endif
+
+
+#ifdef __EMSCRIPTEN__
+void FileWrangler::downloadImage(Document *doc)
+{
+	dialogs::FileTypeDialog nameAndTypeDialog(
+		doc->downloadName(),
+		utils::fileFormatFilterList(utils::FileFormatOption::SaveImages),
+		parentWidget());
+	if(nameAndTypeDialog.exec() != QDialog::Accepted) {
+		return;
+	}
+
+	QString filename = nameAndTypeDialog.name();
+	if(filename.isEmpty()) {
+		return;
+	}
+
+	doc->setDownloadName(filename);
+	QString filter = nameAndTypeDialog.type();
+	QString selectedExt = guessExtension(filter, QStringLiteral(".ora"));
+	replaceExtension(filename, selectedExt);
+
+	DP_SaveImageType type = guessType(filename);
+	QTemporaryDir *tempDir = new QTemporaryDir;
+	doc->downloadCanvas(filename, type, tempDir);
 }
 
-QString FileWrangler::getSaveSessionBansPath() const
+bool FileWrangler::downloadPreResetImage(
+	Document *doc, const drawdance::CanvasState &canvasState) const
 {
-	return showSaveFileDialog(
-		tr("Export Session Bans"), LastPath::SESSION_BANS, ".dpbans",
-		utils::FileFormatOption::SaveSessionBans);
+	dialogs::FileTypeDialog nameAndTypeDialog(
+		doc->downloadName(),
+		utils::fileFormatFilterList(utils::FileFormatOption::SaveImages),
+		parentWidget());
+	if(nameAndTypeDialog.exec() != QDialog::Accepted) {
+		return false;
+	}
+
+	QString filename = nameAndTypeDialog.name();
+	if(filename.isEmpty()) {
+		return false;
+	}
+
+	doc->setDownloadName(filename);
+	QString filter = nameAndTypeDialog.type();
+	QString selectedExt = guessExtension(filter, QStringLiteral(".ora"));
+	replaceExtension(filename, selectedExt);
+
+	DP_SaveImageType type = guessType(filename);
+	QTemporaryDir *tempDir = new QTemporaryDir;
+	doc->downloadCanvasState(filename, type, tempDir, canvasState);
+	return true;
 }
 
-QString FileWrangler::getSaveAuthListPath() const
+void FileWrangler::downloadSelection(Document *doc)
 {
-	return showSaveFileDialog(
-		tr("Export Roles"), LastPath::AUTH_LIST, ".dproles",
-		utils::FileFormatOption::SaveAuthList);
+	dialogs::FileTypeDialog nameAndTypeDialog(
+		doc->downloadName(),
+		utils::fileFormatFilterList(
+			utils::FileFormatOption::SaveImages |
+			utils::FileFormatOption::QtImagesOnly),
+		parentWidget());
+	if(nameAndTypeDialog.exec() != QDialog::Accepted) {
+		return;
+	}
+
+	QString filename = nameAndTypeDialog.name();
+	if(filename.isEmpty()) {
+		return;
+	}
+
+	doc->setDownloadName(filename);
+	QString filter = nameAndTypeDialog.type();
+	QString selectedExt = guessExtension(filter, QStringLiteral(".png"));
+	replaceExtension(filename, selectedExt);
+	doc->downloadSelection(filename);
+}
+
+void FileWrangler::saveFileContent(
+	const QString &defaultName, const QByteArray &bytes) const
+{
+	QFileDialog::saveFileContent(bytes, defaultName);
+}
+#endif
+
+
+void FileWrangler::saveBrushPack(const PathSaveFn &onSave) const
+{
+	savePathContent(
+		tr("Export Brushes"), LastPath::BRUSH_PACK, QStringLiteral(".zip"),
+		QStringLiteral("dpbrushes.zip"),
+		utils::fileFormatFilterList(utils::FileFormatOption::SaveBrushPack),
+		onSave);
+}
+
+bool FileWrangler::saveSessionBans(
+	const QByteArray &bytes, QString *outError) const
+{
+	return saveBytesContent(
+		tr("Export Session Bans"), LastPath::SESSION_BANS,
+		QStringLiteral(".dpbans"), QStringLiteral("bans.dpbans"),
+		utils::fileFormatFilterList(utils::FileFormatOption::SaveSessionBans),
+		bytes, outError);
+}
+
+bool FileWrangler::saveAuthList(
+	const QByteArray &bytes, QString *outError) const
+{
+	return saveBytesContent(
+		tr("Export Roles"), LastPath::AUTH_LIST, QStringLiteral(".dproles"),
+		QStringLiteral("roles.dproles"),
+		utils::fileFormatFilterList(utils::FileFormatOption::SaveAuthList),
+		bytes, outError);
+}
+
+bool FileWrangler::saveLogFile(
+	const QString &defaultName, const QByteArray &bytes,
+	QString *outError) const
+{
+	return saveBytesContent(
+		tr("Log File"), LastPath::LOG_FILE, QStringLiteral(".txt"), defaultName,
+		utils::fileFormatFilterList(utils::FileFormatOption::SaveText), bytes,
+		outError);
 }
 
 
@@ -531,6 +686,164 @@ QString FileWrangler::getDefaultLastPath(LastPath type, const QString &ext)
 	return path;
 }
 
+void FileWrangler::openImageFileContent(
+	const QString &title, const ImageOpenFn &imageOpenCompleted) const
+{
+#ifdef __EMSCRIPTEN__
+	OpenFn fileOpenCompleted =
+		[imageOpenCompleted](const QString &, const QByteArray &fileContent) {
+			QImage img;
+			img.loadFromData(fileContent);
+			imageOpenCompleted(img);
+		};
+#else
+	OpenFn fileOpenCompleted = [imageOpenCompleted](const QString &fileName) {
+		QImage img;
+		img.load(fileName);
+		imageOpenCompleted(img);
+	};
+#endif
+	showOpenFileContentDialog(
+		title, LastPath::IMAGE, utils::fileFormatFilterList(utils::OpenImages),
+		fileOpenCompleted);
+}
+
+void FileWrangler::openMainContent(
+	const QString &title, LastPath type, const QStringList &filters,
+	const MainOpenFn &onOpen) const
+{
+#ifdef __EMSCRIPTEN__
+	OpenFn fileOpenCompleted =
+		[parent = parentWidget(),
+		 onOpen](const QString &fileName, const QByteArray &fileContent) {
+			QString tempFileError;
+			QTemporaryFile *tempFile =
+				writeToTemporaryFile(fileContent, tempFileError);
+			if(tempFile) {
+				onOpen(tempFile->fileName(), tempFile);
+			} else {
+				qWarning(
+					"Error opening temporary file for %s: %s",
+					qUtf8Printable(fileName), qUtf8Printable(tempFileError));
+			}
+		};
+#else
+	OpenFn fileOpenCompleted = [parent = parentWidget(),
+								onOpen](const QString &fileName) {
+		onOpen(fileName, nullptr);
+	};
+#endif
+	showOpenFileContentDialog(title, type, filters, fileOpenCompleted);
+}
+
+void FileWrangler::openBytesContent(
+	const QString &title, LastPath type, const QStringList &filters,
+	const BytesOpenFn &onOpen) const
+{
+#ifdef __EMSCRIPTEN__
+	OpenFn fileOpenCompleted =
+		[parent = parentWidget(),
+		 onOpen](const QString &, const QByteArray &fileContent) {
+			onOpen(nullptr, &fileContent);
+		};
+#else
+	OpenFn fileOpenCompleted = [parent = parentWidget(),
+								onOpen](const QString &fileName) {
+		onOpen(&fileName, nullptr);
+	};
+#endif
+	showOpenFileContentDialog(title, type, filters, fileOpenCompleted);
+}
+
+void FileWrangler::loadCanvasState(
+	QWidget *parent, const QString &path, QTemporaryFile *temporaryFileOrNull,
+	const CanvasStateOpenSuccessFn &onSuccess,
+	const CanvasStateOpenErrorFn &onError)
+{
+	CanvasLoaderRunnable *loader = new CanvasLoaderRunnable(path);
+	loader->setAutoDelete(false);
+	parent->connect(
+		loader, &CanvasLoaderRunnable::loadComplete, parent,
+		[=](const QString &error, const QString &detail) {
+			delete temporaryFileOrNull;
+			const drawdance::CanvasState &canvasState = loader->canvasState();
+			if(canvasState.isNull()) {
+				onError(error, detail);
+			} else {
+				onSuccess(canvasState);
+			}
+			loader->deleteLater();
+		},
+		Qt::QueuedConnection);
+	QThreadPool::globalInstance()->start(loader);
+}
+
+void FileWrangler::savePathContent(
+	const QString &title, LastPath type, const QString &ext,
+	const QString &defaultName, const QStringList &filters,
+	const PathSaveFn &onSave) const
+{
+#ifdef __EMSCRIPTEN__
+	Q_UNUSED(type);
+	Q_UNUSED(ext);
+	Q_UNUSED(filters);
+	QTemporaryDir tempDir;
+	if(tempDir.isValid()) {
+		QString path = tempDir.filePath(defaultName);
+		if(onSave(path)) {
+			QFile file(path);
+			if(file.open(QIODevice::ReadOnly)) {
+				QFileDialog::saveFileContent(file.readAll(), defaultName);
+			} else {
+				qWarning(
+					"%s: Error reading temporary file: %s",
+					qUtf8Printable(title), qUtf8Printable(file.errorString()));
+			}
+		}
+	} else {
+		qWarning(
+			"%s: Error creating temporary directory: %s", qUtf8Printable(title),
+			qUtf8Printable(tempDir.errorString()));
+	}
+#else
+	Q_UNUSED(defaultName);
+	QString path = showSaveFileDialogFilters(title, type, ext, filters);
+	if(!path.isEmpty()) {
+		onSave(path);
+	}
+#endif
+}
+
+bool FileWrangler::saveBytesContent(
+	const QString &title, LastPath type, const QString &ext,
+	const QString &defaultName, const QStringList &filters,
+	const QByteArray &bytes, QString *outError) const
+{
+#ifdef __EMSCRIPTEN__
+	Q_UNUSED(title);
+	Q_UNUSED(type);
+	Q_UNUSED(ext);
+	Q_UNUSED(filters);
+	Q_UNUSED(outError);
+	QFileDialog::saveFileContent(bytes, defaultName);
+	return true;
+#else
+	Q_UNUSED(defaultName);
+	QString path = showSaveFileDialogFilters(title, type, ext, filters);
+	if(path.isEmpty()) {
+		return true;
+	} else {
+		QFile file(path);
+		bool ok = file.open(QFile::WriteOnly) &&
+				  file.write(bytes) == bytes.size() && file.flush();
+		if(!ok && outError) {
+			*outError = file.errorString();
+		}
+		return ok;
+	}
+#endif
+}
+
 QString FileWrangler::showOpenFileDialog(
 	const QString &title, LastPath type, utils::FileFormatOptions formats) const
 {
@@ -541,18 +854,8 @@ QString FileWrangler::showOpenFileDialog(
 QString FileWrangler::showOpenFileDialogFilters(
 	const QString &title, LastPath type, const QStringList &filters) const
 {
-#ifdef Q_OS_ANDROID
-	// Name filters don't work properly on Android. They are supposed to end up
-	// being mapped to MIME types internally, but that doesn't seem to actually
-	// work at all, causing random types to just inexplicably get grayed out or
-	// hidden altogether. So we just don't pass any filters.
-	Q_UNUSED(filters);
-	QString effectiveFilter = QString();
-#else
-	QString effectiveFilter = filters.join(QStringLiteral(";;"));
-#endif
 	QString filename = QFileDialog::getOpenFileName(
-		parentWidget(), title, getLastPath(type), effectiveFilter);
+		parentWidget(), title, getLastPath(type), getEffectiveFilter(filters));
 	if(filename.isEmpty()) {
 		return QString{};
 	} else {
@@ -609,7 +912,7 @@ QString FileWrangler::showSaveFileDialogFilters(
 	// initial name and hope that most users will intuitively just pick a
 	// directory to save the file in, rather than decide to break the path
 	// after the fact.
-	dialogs::AndroidFileDialog nameAndTypeDialog{
+	dialogs::FileTypeDialog nameAndTypeDialog{
 		lastPath.has_value() ? lastPath.value() : getLastPath(type), filters,
 		parentWidget()};
 	if(nameAndTypeDialog.exec() != QDialog::Accepted) {
@@ -686,7 +989,90 @@ QString FileWrangler::showSaveFileDialogFilters(
 	return filename;
 }
 
+void FileWrangler::showOpenFileContentDialog(
+	const QString &title, LastPath type, const QStringList &filters,
+	const OpenFn &fileOpenCompleted) const
+{
+	QString nameFilter = getEffectiveFilter(filters);
+#ifdef __EMSCRIPTEN__
+	Q_UNUSED(title);
+	Q_UNUSED(type);
+	QFileDialog::getOpenFileContent(
+		nameFilter,
+		[fileOpenCompleted](
+			const QString &fileName, const QByteArray &fileContent) {
+			if(!fileName.isEmpty() || !fileContent.isEmpty()) {
+				fileOpenCompleted(fileName, fileContent);
+			}
+		});
+#else
+	QFileDialog *dialog =
+		new QFileDialog(parentWidget(), title, getLastPath(type), nameFilter);
+	dialog->setAttribute(Qt::WA_DeleteOnClose);
+	dialog->setWindowModality(Qt::WindowModal);
+	dialog->setFileMode(QFileDialog::ExistingFile);
+
+	std::function<void(const QString &)> fileSelected =
+		[=](const QString &fileName) {
+			QByteArray fileContent;
+			if(!fileName.isNull()) {
+#	ifdef Q_OS_ANDROID
+				// On Android, the last path is really just the name of the last
+				// file, since paths are weird content URIs that don't interact
+				// with the native Android file picker in any kind of sensible
+				// way.
+				QString basename = utils::paths::extractBasename(fileName);
+				if(!basename.isEmpty()) {
+					setLastPath(type, basename);
+				}
+#	else
+				setLastPath(type, fileName);
+#	endif
+				QFile selectedFile(fileName);
+				if(selectedFile.open(QIODevice::ReadOnly)) {
+					fileContent = selectedFile.readAll();
+				}
+				fileOpenCompleted(fileName);
+			}
+		};
+	connect(dialog, &QFileDialog::fileSelected, fileSelected);
+
+	dialog->show();
+#endif
+}
+
+QString FileWrangler::getEffectiveFilter(const QStringList &filters)
+{
+#ifdef Q_OS_ANDROID
+	// Name filters don't work properly on Android. They are supposed to end up
+	// being mapped to MIME types internally, but that doesn't seem to actually
+	// work at all, causing random types to just inexplicably get grayed out or
+	// hidden altogether. So we just don't pass any filters.
+	Q_UNUSED(filters);
+	return QString();
+#else
+	return filters.join(QStringLiteral(";;"));
+#endif
+}
+
 QWidget *FileWrangler::parentWidget() const
 {
 	return qobject_cast<QWidget *>(parent());
+}
+
+QTemporaryFile *FileWrangler::writeToTemporaryFile(
+	const QByteArray &fileContent, QString &outError)
+{
+	QTemporaryFile *tempFile = new QTemporaryFile;
+	bool tempFileOk = tempFile->open() &&
+					  tempFile->write(fileContent) == fileContent.size() &&
+					  tempFile->flush();
+	if(tempFileOk) {
+		tempFile->close();
+		return tempFile;
+	} else {
+		outError = tempFile->errorString();
+		delete tempFile;
+		return nullptr;
+	}
 }

@@ -15,7 +15,9 @@ class PaintEngine;
 }
 
 class Ui_PlaybackDialog;
+#ifdef HAVE_VIDEO_EXPORT
 class VideoExporter;
+#endif
 
 namespace dialogs {
 
@@ -45,33 +47,37 @@ private slots:
 	void skipForward();
 
 	void onPlaybackAt(long long pos);
+#ifdef HAVE_VIDEO_EXPORT
 	void onExporterReady();
+#endif
 	void playNext(double msecs);
 	void jumpTo(int pos);
 
 	void loadIndex();
 
 	void onBuildIndexClicked();
-#ifndef Q_OS_ANDROID
+#ifdef HAVE_VIDEO_EXPORT
 	void onVideoExportClicked();
 	void videoExporterError(const QString &msg);
 	void videoExporterFinished(bool showExportDialogAgain);
+	void exportFrame(int count = 1);
 #endif
 
-	void exportFrame(int count = 1);
-
 private:
+	double getNextMsecs();
 	void playbackCommand(std::function<DP_PlayerResult()> fn);
 	void updateButtons();
 	static bool isErrorResult(DP_PlayerResult result);
 
-#ifndef Q_OS_ANDROID
+#ifdef HAVE_VIDEO_EXPORT
 	void startVideoExport(VideoExporter *exporter);
 #endif
 
 	Ui_PlaybackDialog *m_ui;
 	canvas::PaintEngine *m_paintengine;
+#ifdef HAVE_VIDEO_EXPORT
 	QPointer<VideoExporter> m_exporter;
+#endif
 
 	QTimer *m_playTimer;
 	QElapsedTimer m_lastFrameTime;

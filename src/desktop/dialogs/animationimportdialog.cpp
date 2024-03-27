@@ -15,8 +15,13 @@ extern "C" {
 #include <QMessageBox>
 #include <QPushButton>
 #include <QSpinBox>
+#include <QTemporaryFile>
 #include <QThreadPool>
 #include <QVBoxLayout>
+#include <functional>
+
+using std::placeholders::_1;
+using std::placeholders::_2;
 
 namespace dialogs {
 
@@ -37,6 +42,7 @@ AnimationImportDialog::AnimationImportDialog(QWidget *parent)
 	form->addRow(tr("File to Import:"), pathLayout);
 
 	m_pathEdit = new QLineEdit;
+	m_pathEdit->setReadOnly(true);
 	pathLayout->addWidget(m_pathEdit);
 
 	m_chooseButton = new QPushButton(tr("Choose"));
@@ -87,10 +93,8 @@ AnimationImportDialog::~AnimationImportDialog()
 
 void AnimationImportDialog::chooseFile()
 {
-	QString path = FileWrangler(this).getOpenOraPath();
-	if(!path.isEmpty()) {
-		m_pathEdit->setText(path);
-	}
+	FileWrangler(this).openAnimationImport(
+		std::bind(&AnimationImportDialog::onOpen, this, _1, _2));
 }
 
 void AnimationImportDialog::updateHoldTimeSuffix(int value)
@@ -122,12 +126,23 @@ void AnimationImportDialog::importFinished(
 	}
 }
 
+void AnimationImportDialog::onOpen(
+	const QString &path, QTemporaryFile *tempFile)
+{
+	m_pathEdit->setText(path);
+	delete m_tempFile;
+	m_tempFile = tempFile;
+	if(tempFile) {
+		tempFile->setParent(this);
+	}
+}
+
 void AnimationImportDialog::runImport()
 {
 	if(isEnabled()) {
 		impex::AnimationImporter *importer = new impex::AnimationImporter(
-			m_pathEdit->text().trimmed(), m_holdTime->value(),
-			m_framerate->value());
+			m_tempFile ? m_tempFile->fileName() : m_pathEdit->text().trimmed(),
+			m_holdTime->value(), m_framerate->value());
 		connect(
 			importer, &impex::AnimationImporter::finished, this,
 			&AnimationImportDialog::importFinished);

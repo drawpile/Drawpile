@@ -26,6 +26,7 @@ struct LoginSession {
 	bool persistent;
 	bool newLoginsBlocked;
 	bool guestLoginBlocked; // Will only be true if we're a guest.
+	bool webLoginBlocked; // Will only be true if we're connected via WebSocket.
 
 	bool nsfm;
 
@@ -36,7 +37,19 @@ struct LoginSession {
 	}
 
 	bool isIncompatible() const { return !incompatibleSeries.isEmpty(); }
-	bool isClosed() const { return newLoginsBlocked || guestLoginBlocked; }
+	bool isClosed() const
+	{
+		return newLoginsBlocked || guestLoginBlocked || webLoginBlocked;
+	}
+
+	bool isCompatibilityMode() const
+	{
+#ifdef HAVE_COMPATIBILITY_MODE
+		return compatibilityMode;
+#else
+		return false;
+#endif
+	}
 };
 
 /**

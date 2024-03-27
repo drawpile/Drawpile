@@ -4,6 +4,7 @@
 #define TOOLSETTINGS_H
 
 #include "libclient/tools/tool.h"
+#include "libclient/tools/toolproperties.h"
 
 #include <QObject>
 
@@ -13,7 +14,6 @@ namespace widgets { class BrushPreview; }
 
 namespace tools {
 
-class ToolProperties;
 class ToolController;
 
 /**

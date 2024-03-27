@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>AndroidFileDialog</class>
- <widget class="QDialog" name="AndroidFileDialog">
+ <class>FileTypeDialog</class>
+ <widget class="QDialog" name="FileTypeDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string notr="true">Android File Dialog</string>
+   <string notr="true">File Type Dialog</string>
   </property>
   <layout class="QFormLayout">
    <item row="0" column="0">

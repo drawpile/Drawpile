@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/resetdialog.h"
+#include "desktop/filewrangler.h"
 #include "desktop/main.h"
 #include "desktop/utils/widgetutils.h"
 #include "libclient/canvas/paintengine.h"
@@ -7,13 +8,16 @@
 #include "libshared/util/qtcompat.h"
 #include "ui_resetsession.h"
 #include <QApplication>
-#include <QFileDialog>
 #include <QIcon>
 #include <QMessageBox>
 #include <QPainter>
 #include <QPushButton>
 #include <QScopedPointer>
 #include <QVector>
+#include <functional>
+
+using std::placeholders::_1;
+using std::placeholders::_2;
 
 namespace {
 
@@ -50,12 +54,6 @@ QVector<ResetPoint> makeResetPoints(const canvas::PaintEngine *pe)
 	}
 
 	return resetPoints;
-}
-
-drawdance::CanvasState loadCanvasStateFromFile(const QString &file)
-{
-	utils::ScopedOverrideCursor waitCursor;
-	return drawdance::CanvasState::load(file);
 }
 
 }
@@ -117,7 +115,8 @@ struct ResetDialog::Private {
 };
 
 ResetDialog::ResetDialog(
-	const canvas::PaintEngine *pe, bool compatibilityMode, QWidget *parent)
+	const canvas::PaintEngine *pe, bool compatibilityMode, bool singleSession,
+	QWidget *parent)
 	: QDialog(parent)
 	, d(new Private(pe, compatibilityMode))
 {
@@ -130,13 +129,19 @@ ResetDialog::ResetDialog(
 		d->resetButton, &QPushButton::clicked, this,
 		&ResetDialog::resetSelected);
 
-#ifndef SINGLE_MAIN_WINDOW
+#ifdef SINGLE_MAIN_WINDOW
+	Q_UNUSED(singleSession);
+#else
 	// If we can't open a new window, this would obliterate the current session.
 	// That's confusing and not terribly useful, so we don't offer this option.
-	QPushButton *newButton =
-		d->ui->buttonBox->addButton(tr("New"), QDialogButtonBox::ActionRole);
-	newButton->setIcon(QIcon::fromTheme("document-new"));
-	connect(newButton, &QPushButton::clicked, this, &ResetDialog::newSelected);
+	// Also, in single-session mode, we don't want to allow opening new windows.
+	if(!singleSession) {
+		QPushButton *newButton = d->ui->buttonBox->addButton(
+			tr("New"), QDialogButtonBox::ActionRole);
+		newButton->setIcon(QIcon::fromTheme("document-new"));
+		connect(
+			newButton, &QPushButton::clicked, this, &ResetDialog::newSelected);
+	}
 #endif
 
 	QPushButton *openButton = d->ui->buttonBox->addButton(
@@ -175,27 +180,42 @@ void ResetDialog::onSelectionChanged(int pos)
 
 void ResetDialog::onOpenClicked()
 {
-	const QString file = QFileDialog::getOpenFileName(
-		this, tr("Open Image"), dpApp().settings().lastFileOpenPath(),
-		utils::fileFormatFilterList(utils::FileFormatOption::OpenImages)
-			.join(QStringLiteral(";;")));
+	FileWrangler(this).openCanvasState(
+		std::bind(&ResetDialog::onOpenBegin, this, _1),
+		std::bind(&ResetDialog::onOpenSuccess, this, _1),
+		std::bind(&ResetDialog::onOpenError, this, _1, _2));
+}
 
-	if(file.isEmpty())
-		return;
+void ResetDialog::onOpenBegin(const QString &fileName)
+{
+	Q_UNUSED(fileName);
+	setEnabled(false);
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+}
 
-	drawdance::CanvasState canvasState = loadCanvasStateFromFile(file);
-	if(canvasState.isNull()) {
-		QMessageBox::warning(this, tr("Reset"), tr("Couldn't open file"));
-	} else {
-		if(d->compatibilityMode) {
-			canvasState = canvasState.makeBackwardCompatible();
-		}
-		d->resetPoints.append({canvasState, QPixmap{}});
-		d->ui->snapshotSlider->setMaximum(d->resetPoints.size());
-		d->ui->snapshotSlider->setValue(0);
-		d->selection = d->resetPoints.size() - 1;
-		d->updateSelection();
-	}
+void ResetDialog::onOpenSuccess(const drawdance::CanvasState &canvasState)
+{
+	setEnabled(true);
+	QApplication::restoreOverrideCursor();
+	d->resetPoints.append(
+		{d->compatibilityMode ? canvasState.makeBackwardCompatible()
+							  : canvasState,
+		 QPixmap()});
+	d->ui->snapshotSlider->setMaximum(d->resetPoints.size());
+	d->ui->snapshotSlider->setValue(0);
+	d->selection = d->resetPoints.size() - 1;
+	d->updateSelection();
+}
+
+void ResetDialog::onOpenError(const QString &error, const QString &detail)
+{
+	setEnabled(true);
+	QApplication::restoreOverrideCursor();
+	utils::showWarning(
+		this, tr("Reset"),
+		detail.isEmpty()
+			? tr("Error opening file: %1").arg(error)
+			: tr("Error opening file: %1 (%2)").arg(error, detail));
 }
 
 net::MessageList ResetDialog::getResetImage() const

@@ -91,12 +91,6 @@ target_sources(dpclient PRIVATE
 	export/animationsaverrunnable.h
 	export/canvassaverrunnable.cpp
 	export/canvassaverrunnable.h
-	export/ffmpegexporter.cpp
-	export/ffmpegexporter.h
-	export/imageseriesexporter.cpp
-	export/imageseriesexporter.h
-	export/videoexporter.cpp
-	export/videoexporter.h
 	import/animationimporter.cpp
 	import/animationimporter.h
 	import/canvasloaderrunnable.cpp
@@ -196,7 +190,11 @@ target_sources(dpclient PRIVATE
 	utils/usernamevalidator.h
 )
 
-if(NOT ANDROID)
+if(ANDROID OR EMSCRIPTEN)
+	# Android doesn't allow images to be placed on the system clipboard.
+	# Emscripten can't freely access it. Emulate it via an internal buffer.
+	target_compile_definitions(dpclient PUBLIC HAVE_CLIPBOARD_EMULATION=1)
+else()
 	target_sources(dpclient PRIVATE
 		export/ffmpegexporter.cpp
 		export/ffmpegexporter.h
@@ -247,6 +245,14 @@ target_link_libraries(dpclient
 		${QT_PACKAGE_NAME}::Network
 		${QT_PACKAGE_NAME}::Gui
 )
+
+if(TARGET ${QT_PACKAGE_NAME}::WebSockets)
+	target_sources(dpclient PRIVATE
+		net/websocketserver.cpp
+		net/websocketserver.h
+	)
+	target_link_libraries(dpclient PUBLIC ${QT_PACKAGE_NAME}::WebSockets)
+endif()
 
 if(${QT_PACKAGE_NAME}LinguistTools_FOUND)
 	add_subdirectory(i18n)

@@ -33,6 +33,8 @@ public:
 
 	static Server *make(const QUrl &url, int timeoutSecs, QObject *parent);
 
+	static QString addSchemeToUserSuppliedAddress(const QString &remoteAddress);
+
 	explicit Server(QObject *parent);
 
 	/**
@@ -52,6 +54,8 @@ public:
 	 * @brief Is the user in a session
 	 */
 	bool isLoggedIn() const { return m_loginstate == nullptr; }
+
+	virtual bool isWebSocket() const = 0;
 
 	/**
 	 * @brief Return the number of bytes in the upload buffer
