@@ -2,7 +2,6 @@
 #include "desktop/widgets/notifbar.h"
 #include "desktop/main.h"
 #include <QBoxLayout>
-#include <QGraphicsDropShadowEffect>
 #include <QLabel>
 #include <QPainter>
 #include <QPalette>
@@ -46,12 +45,6 @@ NotificationBar::NotificationBar(QWidget *parent)
 		&NotificationBar::cancelAutoDismissTimer);
 	updateCloseButtonText();
 
-	auto *dropshadow = new QGraphicsDropShadowEffect(this);
-	dropshadow->setOffset(0, 2);
-	dropshadow->setBlurRadius(15);
-	dropshadow->setColor(Qt::black);
-
-	setGraphicsEffect(dropshadow);
 }
 
 void NotificationBar::show(
