@@ -647,10 +647,12 @@ static void applyScalingSettingsFrom(const QString &path)
 	}
 #endif
 
-	if(cfg.value(QStringLiteral("override")).toBool()) {
-		qreal factor = qBound(
-			1.0, cfg.value(QStringLiteral("factor")).toInt() / 100.0, 4.0);
-		qputenv("QT_SCALE_FACTOR", qUtf8Printable(QString::number(factor)));
+	if(qgetenv("QT_SCALE_FACTOR").isEmpty()) {
+		if(cfg.value(QStringLiteral("override")).toBool()) {
+			qreal factor = qBound(
+				1.0, cfg.value(QStringLiteral("factor")).toInt() / 100.0, 4.0);
+			qputenv("QT_SCALE_FACTOR", qUtf8Printable(QString::number(factor)));
+		}
 	}
 
 	bool vsyncOk;
