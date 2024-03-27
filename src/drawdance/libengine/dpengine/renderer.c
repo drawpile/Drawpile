@@ -358,7 +358,7 @@ DP_Renderer *DP_renderer_new(int thread_count, bool checker,
             0, DP_pixel8_to_15(checker_color1), DP_pixel8_to_15(checker_color2))
                 : NULL;
     renderer->cs = DP_canvas_state_new();
-    renderer->needs_checkers = true;
+    renderer->needs_checkers = checker;
     renderer->xtiles = 0;
     renderer->local_state =
         (DP_RendererLocalState){DP_VIEW_MODE_NORMAL, 0, NULL};
@@ -627,7 +627,7 @@ static void push_tile_in_view(void *user, int tile_x, int tile_y)
     push_tile_high_priority(renderer, tile_x, tile_y, &params->pushed);
 }
 
-static void reprioritize_tiles(DP_Renderer *renderer, DP_CanvasDiff *diff,
+static bool reprioritize_tiles(DP_Renderer *renderer, DP_CanvasDiff *diff,
                                DP_Rect tile_bounds)
 {
     int left, top, right, bottom, xtiles;
@@ -635,14 +635,23 @@ static void reprioritize_tiles(DP_Renderer *renderer, DP_CanvasDiff *diff,
                                 tile_bounds.x2, tile_bounds.y2, &left, &top,
                                 &right, &bottom, &xtiles);
     char *tile_map = renderer->tile.map;
+    bool was_queued = false;
     for (int tile_y = top; tile_y <= bottom; ++tile_y) {
         for (int tile_x = left; tile_x <= right; ++tile_x) {
             int tile_index = tile_y * xtiles + tile_x;
-            if (tile_map[tile_index] == TILE_QUEUED_LOW) {
+            switch (tile_map[tile_index]) {
+            case TILE_QUEUED_LOW:
                 upgrade_tile_priority(renderer, tile_x, tile_y, tile_index);
+                DP_FALLTHROUGH();
+            case TILE_QUEUED_HIGH:
+                was_queued = true;
+                break;
+            default:
+                break;
             }
         }
     }
+    return was_queued;
 }
 
 void DP_renderer_apply(DP_Renderer *renderer, DP_CanvasState *cs,
@@ -735,14 +744,14 @@ void DP_renderer_apply(DP_Renderer *renderer, DP_CanvasState *cs,
     }
 
     if (mode != DP_RENDERER_CONTINUOUS) {
-        reprioritize_tiles(renderer, diff, view_tile_bounds);
+        bool was_queued = reprioritize_tiles(renderer, diff, view_tile_bounds);
         // Block the main thread if there's new high-priority tiles to render.
         // This avoids tiles flickering in when the user moves the view
         // elsewhere at the expense of possibly chugging for a moment. But since
         // the user is currently manipulating the view, they're not doing
         // anything else important, so a bit of chug feels better than tiles
         // stumbling into view, which may be miscronstrued as them "glitching".
-        if (mode != DP_RENDERER_EVERYTHING
+        if (mode != DP_RENDERER_EVERYTHING && !was_queued
             && tile_queue_high->used == tile_queue_high_used_before) {
             renderer->fn.unlock(renderer->fn.user);
         }

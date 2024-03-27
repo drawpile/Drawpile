@@ -5,6 +5,7 @@ extern "C" {
 #include "desktop/main.h"
 #include "desktop/scene/canvasscene.h"
 #include "desktop/scene/canvasview.h"
+#include "desktop/scene/toggleitem.h"
 #include "desktop/tabletinput.h"
 #include "desktop/utils/qtguicompat.h"
 #include "desktop/view/cursor.h"
@@ -57,7 +58,7 @@ CanvasView::CanvasView(QWidget *parent)
 	, m_zoomWheelDelta(0)
 	, m_enableTablet(true)
 	, m_ignoreZeroPressureInputs(true)
-	, m_lock{Lock::None}
+	, m_locked(false)
 	, m_busy(false)
 	, m_saveInProgress(false)
 	, m_pointertracking(false)
@@ -252,6 +253,7 @@ void CanvasView::activateNotificationBarAction()
 {
 	switch(m_notificationBarState) {
 	case NotificationBarState::Reconnect:
+		hideDisconnectedWarning();
 		emit reconnectRequested();
 		break;
 	case NotificationBarState::Reset:
@@ -291,53 +293,6 @@ void CanvasView::setSaveInProgress(bool saveInProgress)
 	updateLockNotice();
 }
 
-QString CanvasView::lockDescription(bool includeSaveInProgress) const
-{
-	QStringList reasons;
-
-	if(m_lock.testFlag(Lock::OutOfSpace)) {
-		reasons.append(tr("Out of space, use Session > Reset to fix this"));
-	}
-
-	if(includeSaveInProgress && m_saveInProgress) {
-#ifdef __EMSCRIPTEN__
-		reasons.append(tr("Downloading…"));
-#else
-		reasons.append(tr("Saving…"));
-#endif
-	}
-
-	if(m_lock.testFlag(Lock::Reset)) {
-		reasons.append(tr("Reset in progress"));
-	}
-
-	if(m_lock.testFlag(Lock::Canvas)) {
-		reasons.append(tr("Canvas is locked"));
-	}
-
-	if(m_lock.testFlag(Lock::User)) {
-		reasons.append(tr("User is locked"));
-	}
-
-	if(m_lock.testFlag(Lock::LayerGroup)) {
-		reasons.append(tr("Layer is a group"));
-	} else if(m_lock.testFlag(Lock::LayerLocked)) {
-		reasons.append(tr("Layer is locked"));
-	} else if(m_lock.testFlag(Lock::LayerCensored)) {
-		reasons.append(tr("Layer is censored"));
-	} else if(m_lock.testFlag(Lock::LayerHidden)) {
-		reasons.append(tr("Layer is hidden"));
-	} else if(m_lock.testFlag(Lock::LayerHiddenInFrame)) {
-		reasons.append(tr("Layer is not visible in this frame"));
-	}
-
-	if(m_lock.testFlag(Lock::Tool)) {
-		reasons.append(tr("Tool is locked"));
-	}
-
-	return reasons.join(QStringLiteral("\n"));
-}
-
 void CanvasView::setCanvas(drawingboard::CanvasScene *scene)
 {
 	m_scene = scene;
@@ -363,6 +318,9 @@ void CanvasView::setCanvas(drawingboard::CanvasScene *scene)
 			repaint();
 			setBackgroundBrush(bb);
 		});
+	connect(
+		this, &CanvasView::viewRectChange, scene,
+		&drawingboard::CanvasScene::canvasViewportChanged);
 	connect(
 		m_notificationBar, &NotificationBar::heightChanged, m_scene,
 		&drawingboard::CanvasScene::setNotificationBarHeight);
@@ -409,22 +367,25 @@ void CanvasView::zoomStepsAt(int steps, const QPointF &point)
 	}
 }
 
-void CanvasView::moveStep(Direction direction)
+
+void CanvasView::scrollStepLeft()
 {
-	switch(direction) {
-	case Direction::Left:
-		scrollBy(-horizontalScrollBar()->singleStep(), 0);
-		break;
-	case Direction::Right:
-		scrollBy(horizontalScrollBar()->singleStep(), 0);
-		break;
-	case Direction::Up:
-		scrollBy(0, -verticalScrollBar()->singleStep());
-		break;
-	case Direction::Down:
-		scrollBy(0, verticalScrollBar()->singleStep());
-		break;
-	}
+	scrollBy(-horizontalScrollBar()->singleStep(), 0);
+}
+
+void CanvasView::scrollStepRight()
+{
+	scrollBy(horizontalScrollBar()->singleStep(), 0);
+}
+
+void CanvasView::scrollStepUp()
+{
+	scrollBy(0, -verticalScrollBar()->singleStep());
+}
+
+void CanvasView::scrollStepDown()
+{
+	scrollBy(0, verticalScrollBar()->singleStep());
 }
 
 void CanvasView::zoomin()
@@ -470,8 +431,7 @@ void CanvasView::setZoomToFit(Qt::Orientations orientations)
 	if(m_scene && m_scene->hasImage()) {
 		QWidget *vp = viewport();
 		qreal dpr = devicePixelRatioF();
-		QRectF r =
-			QRectF(QPointF(), QSizeF(m_scene->model()->size()) / dpr);
+		QRectF r = QRectF(QPointF(), QSizeF(m_scene->model()->size()) / dpr);
 		qreal xScale = qreal(vp->width()) / r.width();
 		qreal yScale = qreal(vp->height()) / r.height();
 		qreal scale;
@@ -506,6 +466,11 @@ void CanvasView::setZoomToFit(Qt::Orientations orientations)
 void CanvasView::setZoom(qreal zoom)
 {
 	setZoomAt(zoom, mapToCanvas(rect().center()));
+}
+
+void CanvasView::resetZoom()
+{
+	setZoom(1.0);
 }
 
 void CanvasView::setZoomAt(qreal zoom, const QPointF &point)
@@ -556,6 +521,21 @@ void CanvasView::setRotation(qreal angle)
 		emitViewTransformed();
 		showTransformNotice(getRotationNotice());
 	}
+}
+
+void CanvasView::resetRotation()
+{
+	setRotation(0.0);
+}
+
+void CanvasView::rotateStepClockwise()
+{
+	setRotation(m_rotate + 5.0);
+}
+
+void CanvasView::rotateStepCounterClockwise()
+{
+	setRotation(m_rotate - 5.0);
 }
 
 void CanvasView::rotateByDiscreteSteps(int steps)
@@ -616,10 +596,15 @@ void CanvasView::setViewMirror(bool mirror)
 	}
 }
 
-void CanvasView::setLock(QFlags<Lock> lock)
+void CanvasView::setLockReasons(QFlags<view::Lock::Reason> reasons)
 {
-	m_lock = lock;
+	m_locked = reasons;
 	resetCursor();
+}
+
+void CanvasView::setLockDescription(const QString &lockDescription)
+{
+	m_lockDescription = lockDescription;
 	updateLockNotice();
 }
 
@@ -730,7 +715,7 @@ void CanvasView::resetCursor()
 		return;
 	}
 
-	if(m_lock) {
+	if(m_locked) {
 		setViewportCursor(Qt::ForbiddenCursor);
 		return;
 	} else if(m_busy) {
@@ -933,7 +918,7 @@ void CanvasView::onPenDown(
 	if(m_scene->hasImage()) {
 		switch(m_penmode) {
 		case PenMode::Normal:
-			if(!m_lock)
+			if(!m_locked)
 				emit penDown(
 					p.timeMsec(), p, p.pressure(), p.xtilt(), p.ytilt(),
 					p.rotation(), right, m_zoom, eraserOverride);
@@ -964,7 +949,7 @@ void CanvasView::onPenMove(
 	if(m_scene->hasImage()) {
 		switch(m_penmode) {
 		case PenMode::Normal:
-			if(!m_lock)
+			if(!m_locked)
 				emit penMove(
 					p.timeMsec(), p, p.pressure(), p.xtilt(), p.ytilt(),
 					p.rotation(), constrain1, constrain2);
@@ -981,7 +966,7 @@ void CanvasView::onPenMove(
 
 void CanvasView::onPenUp()
 {
-	if(!m_lock && m_penmode == PenMode::Normal) {
+	if(!m_locked && m_penmode == PenMode::Normal) {
 		emit penUp();
 	}
 }
@@ -1006,7 +991,7 @@ void CanvasView::penPressEvent(
 		if(event) {
 			event->accept();
 		}
-		emit toggleActionActivated(action);
+		emit toggleActionActivated(int(action));
 		m_hoveringOverHud = false;
 		m_scene->removeHover();
 		resetCursor();
@@ -1708,7 +1693,7 @@ void CanvasView::touchEvent(QTouchEvent *event)
 		drawingboard::ToggleItem::Action action =
 			m_scene->checkHover(mapToScene(pos.toPoint()));
 		if(action != drawingboard::ToggleItem::Action::None) {
-			emit toggleActionActivated(action);
+			emit toggleActionActivated(int(action));
 			m_hoveringOverHud = false;
 			m_scene->removeHover();
 			resetCursor();
@@ -2066,7 +2051,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 
 void CanvasView::updateOutlinePos(QPointF point)
 {
-	if(m_showoutline && !m_lock && !m_busy && !m_hoveringOverHud &&
+	if(m_showoutline && !m_locked && !m_busy && !m_hoveringOverHud &&
 	   (!canvas::Point::roughlySame(point, m_prevoutlinepoint))) {
 		if(!m_subpixeloutline) {
 			point.setX(qFloor(point.x()) + 0.5);
@@ -2085,7 +2070,7 @@ void CanvasView::updateOutline()
 		m_scene->setOutlineVisibleInMode(
 			!m_hoveringOverHud &&
 			(m_dragmode == ViewDragMode::None
-				 ? m_penmode == PenMode::Normal && !m_lock && !m_busy
+				 ? m_penmode == PenMode::Normal && !m_locked && !m_busy
 				 : m_dragAction == CanvasShortcuts::TOOL_ADJUST));
 	}
 }
@@ -2454,10 +2439,22 @@ void CanvasView::showTransformNotice(const QString &text)
 void CanvasView::updateLockNotice()
 {
 	if(m_scene) {
-		if(m_lock || m_saveInProgress) {
-			m_scene->showLockNotice(lockDescription(true));
-		} else {
+		QStringList description;
+		if(m_saveInProgress) {
+#ifdef __EMSCRIPTEN__
+			description.append(tr("Downloading…"));
+#else
+			description.append(tr("Saving…"));
+#endif
+		}
+		if(!m_lockDescription.isEmpty()) {
+			description.append(m_lockDescription);
+		}
+
+		if(description.isEmpty()) {
 			m_scene->hideLockNotice();
+		} else {
+			m_scene->showLockNotice(description.join(QStringLiteral("\n")));
 		}
 	}
 }

@@ -45,6 +45,7 @@ NotificationBar::NotificationBar(QWidget *parent)
 		&NotificationBar::cancelAutoDismissTimer);
 	updateCloseButtonText();
 
+	setCursor(Qt::ArrowCursor);
 }
 
 void NotificationBar::show(
@@ -55,10 +56,10 @@ void NotificationBar::show(
 	cancelAutoDismissTimer();
 
 	if(color == RoleColor::Warning) {
-		setColor(0xed1515, Qt::white);
+		setColor(0xed1515, QStringLiteral("#ffffff"));
 	} else {
 		QPalette pal = dpApp().palette();
-		setColor(pal.color(QPalette::Base), pal.color(QPalette::Text));
+		setColor(pal.color(QPalette::Base), QString());
 	}
 
 	m_label->setText(text);
@@ -123,12 +124,13 @@ void NotificationBar::updateCloseButtonText()
 			: tr("Dismiss"));
 }
 
-void NotificationBar::setColor(const QColor &color, const QColor &textColor)
+void NotificationBar::setColor(const QColor &color, const QString &textColor)
 {
 	m_color = color;
-	QPalette pal = palette();
-	pal.setColor(QPalette::Text, textColor);
-	setPalette(pal);
+	m_label->setStyleSheet(
+		textColor.isEmpty()
+			? QString()
+			: QStringLiteral("QLabel { color: %1; }").arg(textColor));
 	update();
 }
 

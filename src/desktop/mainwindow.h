@@ -18,7 +18,6 @@ extern "C" {
 #include <QVariantMap>
 
 #include "desktop/dialogs/flipbook.h"
-#include "desktop/scene/toggleitem.h"
 #include "libclient/tools/tool.h"
 #include "libclient/canvas/acl.h"
 #include "libclient/drawdance/canvasstate.h"
@@ -36,7 +35,6 @@ class MainActions;
 class ActionBuilder;
 
 namespace widgets {
-	class CanvasView;
 	class DualColorButton;
 	class NetStatus;
 	class ChatBox;
@@ -80,6 +78,10 @@ namespace settings {
 class Settings;
 }
 }
+namespace view {
+class Lock;
+class CanvasWrapper;
+}
 
 class ShortcutDetector;
 
@@ -119,6 +121,7 @@ public:
 signals:
 	void hostSessionEnabled(bool enabled);
 	void windowReplacementFailed(MainWindow *win);
+	void viewShifted(int deltaX, int deltaY);
 
 public slots:
 	// Triggerable actions
@@ -147,6 +150,7 @@ public slots:
 	void host();
 	void invite();
 	void join();
+	void reconnect();
 	void browse();
 	void leave();
 	void checkForUpdates();
@@ -162,6 +166,13 @@ public slots:
 
 	//! Create a blank new document
 	void newDocument(const QSize &size, const QColor &background);
+
+	void dropImage(const QImage &image);
+	void dropUrl(const QUrl &url);
+	void handleToggleAction(int action);
+
+	void savePreResetImageAs();
+	void discardPreResetImage();
 
 private slots:
 	void toggleRecording();
@@ -184,8 +195,6 @@ private slots:
 
 	void showResetNoticeDialog(const drawdance::CanvasState &canvasState);
 	void updateCatchupProgress(int percent);
-	void savePreResetImageAs();
-	void discardPreResetImage();
 	void showCompatibilityModeWarning();
 
 	void onOperatorModeChange(bool op);
@@ -212,7 +221,6 @@ private slots:
 	void pasteFile();
 	void pasteFilePath(const QString &path);
 	void pasteImage(const QImage &image, const QPoint *point=nullptr, bool force=false);
-	void dropUrl(const QUrl &url);
 
 	void clearOrDelete();
 
@@ -244,8 +252,8 @@ private slots:
 	void setFreezeDocks(bool freeze);
 	void setDocksHidden(bool hidden);
 	void setDockTitleBarsHidden(bool hidden);
-	void handleToggleAction(drawingboard::ToggleItem::Action action);
 	void setNotificationsMuted(bool muted);
+	void setBusy(bool busy);
 
 	void updateTitle();
 
@@ -335,7 +343,8 @@ private:
 	widgets::ChatBox *m_chatbox;
 	widgets::DualColorButton *m_dualColorButton;
 
-	widgets::CanvasView *m_view;
+	view::Lock *m_viewLock;
+	view::CanvasWrapper *m_canvasView;
 
 	widgets::ViewStatusBar *m_viewStatusBar;
 	QLabel *m_lockstatus;
@@ -348,8 +357,6 @@ private:
 	dialogs::SessionSettingsDialog *m_sessionSettings;
 	dialogs::ServerLogDialog *m_serverLogDialog;
 	dialogs::Flipbook::State m_flipbookState;
-
-	drawingboard::CanvasScene *m_canvasscene;
 
 	QMenu *m_recentMenu;
 	QAction *m_lastLayerViewMode;

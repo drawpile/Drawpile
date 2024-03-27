@@ -10,6 +10,7 @@ class QMenu;
 
 namespace canvas {
 class CanvasModel;
+class PaintEngine;
 }
 
 namespace widgets{
@@ -26,10 +27,11 @@ public:
 
 	void setCanvasModel(canvas::CanvasModel *model);
 	void setViewFocus(const QPolygonF& rect);
-
-public slots:
 	void setShowCursors(bool showCursors);
 	void setRealtimeUpdate(bool realtime);
+	void setBackgroundColor(const QColor &backgroundColor);
+	void setCheckerColor1(const QColor &checkerColor1);
+	void setCheckerColor2(const QColor &checkerColor2);
 
 signals:
 	void focusMoved(const QPointF& to);
@@ -46,11 +48,14 @@ protected:
 
 private slots:
 	void onChange(const QRect &rect = QRect{});
+	void onTileCacheDirtyCheckNeeded();
 	void onResize();
 	void refreshCache();
-	void onCursorMove(unsigned int flags, uint8_t user, uint16_t layer, int x, int y);
+	void onCursorMove(unsigned int flags, int user, int layer, int x, int y);
 
 private:
+	static constexpr int CHECKER_SIZE = 32;
+
 	struct UserCursor {
 		QPixmap avatar;
 		QPoint pos;
@@ -58,20 +63,31 @@ private:
 		int id;
 	};
 
+	bool isCacheNull() const;
+	QSize cacheSize() const;
 	QPointF getFocusPoint(const QPointF &eventPoint);
+	void refreshPixmapCache(canvas::PaintEngine *pe);
+	void refreshImageCache(canvas::PaintEngine *pe);
+	bool refreshCacheSize(const QSize &canvasSize);
+	void getRefreshArea(
+		const QSize &canvasSize, QRectF &outSourceArea, QRectF &outTargetArea);
 
 	canvas::CanvasModel *m_model;
 	QVector<UserCursor> m_cursors;
-	QPixmap m_cache;
+	QColor m_backgroundColor = QColor(100, 100, 100);
+	QPixmap m_checker = QPixmap(CHECKER_SIZE, CHECKER_SIZE);
+	QPixmap m_pixmapCache;
+	QImage m_imageCache;
 	QPixmap m_cursorBackground;
 	QSize m_cachedSize;
-
+	QSize m_canvasSize;
 	QTimer *m_refreshTimer;
 	QRect m_refreshArea;
-	bool m_refreshAll = false;
-
 	QPolygonF m_focusRect;
 	int m_zoomWheelDelta;
+	bool m_useTileCache = false;
+	bool m_refreshAll = false;
+	bool m_tileCacheDirtyCheckNeeded = false;
 	bool m_showCursors;
 };
 

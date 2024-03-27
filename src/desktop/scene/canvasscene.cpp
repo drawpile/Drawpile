@@ -292,9 +292,10 @@ void CanvasScene::showAnnotationBorders(bool showBorders)
 }
 
 void CanvasScene::handleCanvasResize(
-	int xoffset, int yoffset, const QSize &oldsize)
+	const QSize newSize, const QPoint &offset, const QSize &oldSize)
 {
-	emit canvasResized(xoffset, yoffset, oldsize);
+	Q_UNUSED(newSize);
+	emit canvasResized(offset.x(), offset.y(), oldSize);
 }
 
 AnnotationItem *CanvasScene::getAnnotationItem(int id)
@@ -336,7 +337,7 @@ void CanvasScene::annotationsChanged(const drawdance::AnnotationList &al)
 		AnnotationItem *ai;
 		if(it == annotationItems.end()) {
 			ai = new AnnotationItem(id, m_group);
-			ai->setShowBorder(showAnnotationBorders());
+			ai->setShowBorder(m_showAnnotationBorders);
 			ai->setVisible(m_showAnnotations);
 		} else {
 			ai = it.value();
@@ -360,7 +361,7 @@ void CanvasScene::previewAnnotation(int id, const QRect &shape)
 	AnnotationItem *ai = getAnnotationItem(id);
 	if(!ai) {
 		ai = new AnnotationItem(id, m_group);
-		ai->setShowBorder(showAnnotationBorders());
+		ai->setShowBorder(m_showAnnotationBorders);
 		ai->setVisible(m_showAnnotations);
 	}
 
@@ -407,8 +408,7 @@ void CanvasScene::advanceAnimations()
 	}
 }
 
-void CanvasScene::laserTrail(
-	uint8_t userId, int persistence, const QColor &color)
+void CanvasScene::laserTrail(int userId, int persistence, const QColor &color)
 {
 	if(persistence == 0) {
 		m_activeLaserTrail.remove(userId);
@@ -420,7 +420,7 @@ void CanvasScene::laserTrail(
 }
 
 void CanvasScene::userCursorMoved(
-	unsigned int flags, uint8_t userId, uint16_t layerId, int x, int y)
+	unsigned int flags, int userId, int layerId, int x, int y)
 {
 	bool valid = flags & DP_USER_CURSOR_FLAG_VALID;
 

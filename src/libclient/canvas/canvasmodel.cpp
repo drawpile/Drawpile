@@ -21,16 +21,16 @@ extern "C" {
 namespace canvas {
 
 CanvasModel::CanvasModel(
-	libclient::settings::Settings &settings, uint8_t localUserId, int fps,
-	int snapshotMaxCount, long long snapshotMinDelayMs,
-	bool wantCanvasHistoryDump, QObject *parent)
+	libclient::settings::Settings &settings, uint8_t localUserId,
+	bool useTileCache, int fps, int snapshotMaxCount,
+	long long snapshotMinDelayMs, bool wantCanvasHistoryDump, QObject *parent)
 	: QObject(parent)
 	, m_selection(nullptr)
 	, m_localUserId(1)
 	, m_compatibilityMode(false)
 {
 	m_paintengine = new PaintEngine(
-		settings.checkerColor1(), settings.checkerColor2(), fps,
+		useTileCache, settings.checkerColor1(), settings.checkerColor2(), fps,
 		snapshotMaxCount, snapshotMinDelayMs, wantCanvasHistoryDump, this);
 
 	m_aclstate = new AclState(this);
@@ -70,9 +70,6 @@ CanvasModel::CanvasModel(
 		m_layerlist, &LayerListModel::autoSelectRequest, this,
 		&CanvasModel::layerAutoselectRequest);
 	connect(
-		m_paintengine, &PaintEngine::resized, this,
-		&CanvasModel::onCanvasResize, Qt::QueuedConnection);
-	connect(
 		m_paintengine, &PaintEngine::layersChanged, m_layerlist,
 		&LayerListModel::setLayers);
 	connect(
@@ -81,6 +78,11 @@ CanvasModel::CanvasModel(
 	connect(
 		m_paintengine, &PaintEngine::frameVisibilityChanged, m_layerlist,
 		&LayerListModel::setLayersVisibleInFrame);
+	if(!useTileCache) {
+		connect(
+			m_paintengine, &PaintEngine::resized, this,
+			&CanvasModel::onCanvasResize, Qt::QueuedConnection);
+	}
 
 	settings.bindEngineFrameRate(m_paintengine, &PaintEngine::setFps);
 	settings.bindEngineSnapshotCount(
@@ -292,7 +294,7 @@ void CanvasModel::handlePrivateChat(const net::Message &msg)
 	emit chatMessageReceived(msg.contextId(), target, 0, oflags, message);
 }
 
-void CanvasModel::onLaserTrail(uint8_t userId, int persistence, uint32_t color)
+void CanvasModel::onLaserTrail(int userId, int persistence, uint32_t color)
 {
 	emit laserTrail(
 		userId, qMin(15, persistence) * 1000, QColor::fromRgb(color));
@@ -485,17 +487,20 @@ void CanvasModel::pasteFromImage(
 	setSelection(paste);
 }
 
-void CanvasModel::onCanvasResize(int xoffset, int yoffset, const QSize &oldsize)
+void CanvasModel::offsetCanvas(int offsetX, int offsetY)
 {
-	Q_UNUSED(oldsize);
-
 	// Adjust selection when new space was added to the left or top side
 	// so it remains visually in the same place
 	if(m_selection) {
-		if(xoffset || yoffset) {
-			QPoint offset(xoffset, yoffset);
-			m_selection->translate(offset);
-		}
+		m_selection->translate(QPoint(offsetX, offsetY));
+	}
+}
+
+void CanvasModel::onCanvasResize(const QSize &newSize, const QPoint &offset)
+{
+	Q_UNUSED(newSize);
+	if(!offset.isNull()) {
+		offsetCanvas(offset.x(), offset.y());
 	}
 }
 

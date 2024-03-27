@@ -28,6 +28,7 @@ public:
 	void setThemeStyle(const QString &themeStyle);
 	void setThemePalette(desktop::settings::ThemePalette themePalette);
 	void initTheme();
+	void initCanvasImplementation(const QString &arg);
 	void initInterface();
 
 	void openPath(const QString &path);
@@ -48,6 +49,10 @@ public:
 	const utils::Recents &recents() const { return *m_recents; }
 	utils::Recents &recents() { return *m_recents; }
 
+	int canvasImplementation() const { return m_canvasImplementation; }
+	bool canvasImplementationUsesTileCache();
+	static int getCanvasImplementationFor(int canvasImplementation);
+
 	bool smallScreenMode() const { return m_smallScreenMode; }
 
 	// Returns a pair of (pixel size, physical size) of the primary screen.
@@ -67,6 +72,7 @@ protected:
 private:
 	desktop::settings::Settings m_settings;
 	notification::Notifications *m_notifications;
+	int m_canvasImplementation;
 	bool m_smallScreenMode;
 	utils::StateDatabase *m_state = nullptr;
 	utils::Recents *m_recents = nullptr;

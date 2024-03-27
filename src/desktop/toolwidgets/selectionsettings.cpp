@@ -4,7 +4,7 @@
 #include "libclient/canvas/selection.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/net/client.h"
-#include "desktop/scene/canvasview.h"
+#include "desktop/view/canvaswrapper.h"
 #include "libclient/tools/toolcontroller.h"
 #include "libclient/tools/toolproperties.h"
 #include "libclient/tools/selection.h"
@@ -21,6 +21,7 @@ static const ToolProperties::RangedValue<int> interpolation{
 SelectionSettings::SelectionSettings(ToolController *ctrl, QObject *parent)
 	: ToolSettings{ctrl, parent}
 	, m_ui{nullptr}
+	, m_canvasView(nullptr)
 {
 }
 
@@ -105,7 +106,7 @@ void SelectionSettings::mirrorSelection()
 
 void SelectionSettings::fitToScreen()
 {
-	Q_ASSERT(m_view);
+	Q_ASSERT(m_canvasView);
 	canvas::CanvasModel *model = controller()->model();
 	if(!model) {
 		return;
@@ -115,8 +116,7 @@ void SelectionSettings::fitToScreen()
 	if(sel) {
 		cutSelection();
 		const QSizeF size = sel->shape().boundingRect().size();
-		const QRectF screenRect =
-			m_view->mapToCanvas(m_view->rect()).boundingRect();
+		const QRectF screenRect = m_canvasView->screenRect();
 		const QSizeF screen = screenRect.size() * 0.7;
 
 		if(size.width() > screen.width() || size.height() > screen.height()) {

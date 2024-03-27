@@ -119,6 +119,13 @@ void ToolController::setActiveAnnotation(uint16_t id)
 	}
 }
 
+void ToolController::deselectDeletedAnnotation(int annotationId)
+{
+	if(m_activeAnnotation == annotationId) {
+		setActiveAnnotation(0);
+	}
+}
+
 Tool::Type ToolController::activeTool() const
 {
 	Q_ASSERT(m_activeTool);

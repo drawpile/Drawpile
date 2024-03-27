@@ -9,8 +9,8 @@ class QTextCharFormat;
 class QTimer;
 class Ui_TextSettings;
 
-namespace drawingboard {
-class CanvasScene;
+namespace view {
+class CanvasWrapper;
 }
 
 namespace tools {
@@ -45,7 +45,7 @@ public:
 	int getSize() const override { return 0; }
 	bool getSubpixelMode() const override { return false; }
 
-	void setScene(drawingboard::CanvasScene *scene) { m_scene = scene; }
+	void setCanvasView(view::CanvasWrapper *canvasView) { m_canvasView = canvasView; }
 	QWidget *getHeaderWidget() override;
 
 public slots:
@@ -87,7 +87,7 @@ private:
 
 	bool m_noupdate;
 	QTimer *m_updatetimer;
-	drawingboard::CanvasScene *m_scene;
+	view::CanvasWrapper *m_canvasView;
 };
 
 }

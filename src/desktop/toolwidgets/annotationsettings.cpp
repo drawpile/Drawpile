@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/toolwidgets/annotationsettings.h"
 #include "desktop/scene/annotationitem.h"
-#include "desktop/scene/canvasscene.h"
 #include "desktop/utils/qtguicompat.h"
+#include "desktop/view/canvaswrapper.h"
 #include "desktop/widgets/groupedtoolbutton.h"
 #include "libclient/canvas/canvasmodel.h"
 #include "libclient/canvas/userlist.h"
@@ -26,6 +26,7 @@ AnnotationSettings::AnnotationSettings(ToolController *ctrl, QObject *parent)
 	, m_headerWidget(nullptr)
 	, m_selectionId(0)
 	, m_noupdate(false)
+	, m_canvasView(nullptr)
 {
 }
 
@@ -366,7 +367,8 @@ void AnnotationSettings::setSelectionId(uint16_t id)
 
 	m_selectionId = id;
 	if(id) {
-		const auto *a = m_scene->getAnnotationItem(id);
+		const drawingboard::AnnotationItem *a =
+			m_canvasView->getAnnotationItem(id);
 		if(!a)
 			return;
 
@@ -476,7 +478,8 @@ void AnnotationSettings::removeAnnotation()
 void AnnotationSettings::bake()
 {
 	Q_ASSERT(selected());
-	const auto *a = m_scene->getAnnotationItem(selected());
+	const drawingboard::AnnotationItem *a =
+		m_canvasView->getAnnotationItem(selected());
 	if(!a) {
 		qWarning("Selected annotation %d not found!", selected());
 		return;

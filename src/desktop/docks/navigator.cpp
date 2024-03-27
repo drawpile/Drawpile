@@ -15,6 +15,7 @@
 #include <QTimer>
 #include <QPainter>
 #include <QPainterPath>
+#include <QPaintEngine>
 #include <QAction>
 #include <QDateTime>
 #include <QBoxLayout>
@@ -60,7 +61,6 @@ NavigatorView::NavigatorView(QWidget *parent)
 	  m_showCursors(true)
 {
 	m_refreshTimer = new QTimer(this);
-	m_refreshTimer->setSingleShot(true);
 	setRealtimeUpdate(false);
 	connect(m_refreshTimer, &QTimer::timeout, this, &NavigatorView::refreshCache);
 
@@ -71,12 +71,38 @@ NavigatorView::NavigatorView(QWidget *parent)
 void NavigatorView::setCanvasModel(canvas::CanvasModel *model)
 {
 	m_model = model;
-	connect(m_model->paintEngine(), &canvas::PaintEngine::areaChanged, this, &NavigatorView::onChange, Qt::QueuedConnection);
-	connect(m_model->paintEngine(), &canvas::PaintEngine::resized, this, &NavigatorView::onResize, Qt::QueuedConnection);
-	connect(m_model->paintEngine(), &canvas::PaintEngine::cursorMoved, this, &NavigatorView::onCursorMove);
-	m_model->paintEngine()->setRenderOutsideView(isVisible());
+	m_refreshTimer->stop();
+
+	canvas::PaintEngine *pe = model->paintEngine();
+	m_useTileCache = pe->useTileCache();
+	if(m_useTileCache) {
+		m_pixmapCache = QPixmap();
+		connect(
+			pe, &canvas::PaintEngine::tileCacheNavigatorDirtyCheckNeeded, this,
+			&NavigatorView::onTileCacheDirtyCheckNeeded, Qt::DirectConnection);
+	} else {
+		m_imageCache = QImage();
+		connect(
+			pe, &canvas::PaintEngine::areaChanged, this,
+			&NavigatorView::onChange, Qt::QueuedConnection);
+		connect(
+			pe, &canvas::PaintEngine::resized, this, &NavigatorView::onResize,
+			Qt::QueuedConnection);
+	}
+
+	connect(
+		pe, &canvas::PaintEngine::cursorMoved, this,
+		&NavigatorView::onCursorMove);
+
+	pe->setRenderOutsideView(isVisible());
+	m_tileCacheDirtyCheckNeeded = m_useTileCache;
 	m_refreshAll = true;
 	refreshCache();
+
+	m_refreshTimer->setSingleShot(!m_useTileCache);
+	if(m_useTileCache && isVisible()) {
+		m_refreshTimer->start();
+	}
 }
 
 void NavigatorView::setShowCursors(bool show)
@@ -90,11 +116,43 @@ void NavigatorView::setRealtimeUpdate(bool realtime)
 	m_refreshTimer->setInterval(realtime ? (1000 / 60) : 500);
 }
 
+void NavigatorView::setBackgroundColor(const QColor &backgroundColor)
+{
+	m_backgroundColor = backgroundColor;
+	update();
+}
+
+void NavigatorView::setCheckerColor1(const QColor &checkerColor1)
+{
+	QPainter painter(&m_checker);
+	qreal hw = m_checker.width() / 2.0;
+	qreal hh = m_checker.height() / 2.0;
+	painter.fillRect(0.0, 0.0, hw, hh, checkerColor1);
+	painter.fillRect(hw, hh, hw, hh, checkerColor1);
+	update();
+}
+
+void NavigatorView::setCheckerColor2(const QColor &checkerColor2)
+{
+	QPainter painter(&m_checker);
+	qreal hw = m_checker.width() / 2.0;
+	qreal hh = m_checker.height() / 2.0;
+	painter.fillRect(hw, 0.0, hw, hh, checkerColor2);
+	painter.fillRect(0, hh, hw, hh, checkerColor2);
+	update();
+}
+
 void NavigatorView::resizeEvent(QResizeEvent *event)
 {
 	QWidget::resizeEvent(event);
 	// Resizes while hidden mean that we're about to be shown.
-	if(!m_refreshTimer->isActive()) {
+	if(m_useTileCache) {
+		m_refreshAll = true;
+		m_tileCacheDirtyCheckNeeded = true;
+		if(!isVisible()) {
+			refreshCache();
+		}
+	} else if(!m_refreshTimer->isActive()) {
 		if(isVisible()) {
 			m_refreshTimer->start();
 		} else {
@@ -108,7 +166,7 @@ void NavigatorView::resizeEvent(QResizeEvent *event)
  */
 void NavigatorView::mousePressEvent(QMouseEvent *event)
 {
-	if(event->button() != Qt::RightButton && !m_cache.isNull()) {
+	if(event->button() != Qt::RightButton && !isCacheNull()) {
 		emit focusMoved(getFocusPoint(compat::mousePosition(*event)));
 	}
 }
@@ -128,7 +186,7 @@ void NavigatorView::wheelEvent(QWheelEvent *event)
 	const int steps = m_zoomWheelDelta / 120;
 	m_zoomWheelDelta -= steps * 120;
 
-	if(steps != 0 && !m_cache.isNull()) {
+	if(steps != 0 && !isCacheNull()) {
 		emit wheelZoom(steps);
 	}
 }
@@ -140,7 +198,12 @@ void NavigatorView::showEvent(QShowEvent *event)
 		m_model->paintEngine()->setRenderOutsideView(true);
 		m_refreshTimer->stop();
 		m_refreshAll = true;
-		refreshCache();
+		m_tileCacheDirtyCheckNeeded = m_useTileCache;
+		if(m_useTileCache) {
+			m_refreshTimer->start();
+		} else {
+			refreshCache();
+		}
 	}
 }
 
@@ -176,6 +239,11 @@ void NavigatorView::onChange(const QRect &rect)
 	}
 }
 
+void NavigatorView::onTileCacheDirtyCheckNeeded()
+{
+	m_tileCacheDirtyCheckNeeded = true;
+}
+
 void NavigatorView::onResize()
 {
 	m_cachedSize = QSize();
@@ -184,73 +252,143 @@ void NavigatorView::onResize()
 
 void NavigatorView::refreshCache()
 {
-	if(!m_model) {
-		return;
-	}
-
-	m_model->paintEngine()->withPixmap([this](const QPixmap &pixmap) {
-		if(!pixmap.isNull()) {
-			QSize navigatorSize = size() * devicePixelRatioF();
-			if(navigatorSize != m_cachedSize) {
-				m_cachedSize = navigatorSize;
-				m_cache = QPixmap{
-					pixmap.size().scaled(navigatorSize, Qt::KeepAspectRatio)};
-				m_refreshAll = true;
+	if(m_model) {
+		canvas::PaintEngine *pe = m_model->paintEngine();
+		if(m_useTileCache) {
+			if(m_tileCacheDirtyCheckNeeded) {
+				refreshImageCache(pe);
 			}
+		} else {
+			refreshPixmapCache(pe);
+		}
+		update();
+	}
+}
 
-			if(m_refreshAll) {
-				QPainter painter(&m_cache);
-				painter.drawPixmap(m_cache.rect(), pixmap);
+void NavigatorView::refreshPixmapCache(canvas::PaintEngine *pe)
+{
+	pe->withPixmap([this](const QPixmap &pixmap) {
+		if(!pixmap.isNull()) {
+			QSize canvasSize = pixmap.size();
+			if(refreshCacheSize(canvasSize) || m_refreshAll) {
+				QPainter painter(&m_pixmapCache);
+				painter.drawPixmap(m_pixmapCache.rect(), pixmap);
 				m_refreshAll = false;
-				m_refreshArea = QRect{};
+				m_refreshArea = QRect();
 			} else if(m_refreshArea.isValid()) {
-				QSizeF ratioSize{m_cache.size()};
-				qreal xr = ratioSize.width() / qreal(pixmap.width());
-				qreal yr = ratioSize.height() / qreal(pixmap.height());
-				QRectF sourceArea = QRectF{m_refreshArea}.adjusted(
-					-1.0 / xr, -1.0 / yr, 1.0 / xr, 1.0 / yr);
-				QRectF targetArea{
-					QPointF{sourceArea.left() * xr, sourceArea.top() * yr},
-					QPointF{sourceArea.right() * xr, sourceArea.bottom() * yr}};
-				QPainter painter(&m_cache);
+				QRectF sourceArea, targetArea;
+				getRefreshArea(canvasSize, sourceArea, targetArea);
+				QPainter painter(&m_pixmapCache);
 				painter.drawPixmap(targetArea, pixmap, sourceArea);
-				m_refreshArea = QRect{};
+				m_refreshArea = QRect();
 			}
 		}
 	});
+}
 
-	update();
+void NavigatorView::refreshImageCache(canvas::PaintEngine *pe)
+{
+	pe->withTileCache([this](canvas::TileCache &tileCache) {
+		m_tileCacheDirtyCheckNeeded = false;
+		QSize canvasSize = tileCache.size();
+		if(!canvasSize.isEmpty()) {
+			refreshCacheSize(canvasSize);
+			QSize targetSize = m_imageCache.size();
+			qreal ratioX =
+				qreal(targetSize.width()) / qreal(canvasSize.width());
+			qreal ratioY =
+				qreal(targetSize.height()) / qreal(canvasSize.height());
+			QPainter painter(&m_imageCache);
+			painter.setCompositionMode(QPainter::CompositionMode_Source);
+			tileCache.eachDirtyNavigatorTileReset(
+				m_refreshAll, [&](const QRect &rect, const void *pixels) {
+					QRect targetRect(
+						qFloor(rect.x() * ratioX), qFloor(rect.y() * ratioY),
+						qCeil(rect.width() * ratioX),
+						qCeil(rect.height() * ratioY));
+					painter.drawImage(
+						targetRect, QImage(
+										reinterpret_cast<const uchar *>(pixels),
+										rect.width(), rect.height(),
+										QImage::Format_ARGB32_Premultiplied));
+				});
+			m_refreshAll = false;
+		}
+	});
+}
+
+bool NavigatorView::refreshCacheSize(const QSize &canvasSize)
+{
+	QSize navigatorSize = size() * devicePixelRatioF();
+	if(navigatorSize == m_cachedSize && canvasSize == m_canvasSize) {
+		return false;
+	} else {
+		m_cachedSize = navigatorSize;
+		m_canvasSize = canvasSize;
+		QSize size = canvasSize.scaled(navigatorSize, Qt::KeepAspectRatio);
+		if(m_useTileCache) {
+			m_imageCache = QImage(size, QImage::Format_ARGB32_Premultiplied);
+			m_imageCache.fill(0);
+		} else {
+			m_pixmapCache = QPixmap(size);
+		}
+		return true;
+	}
+}
+
+void NavigatorView::getRefreshArea(
+	const QSize &canvasSize, QRectF &outSourceArea, QRectF &outTargetArea)
+{
+	QSizeF ratioSize(cacheSize());
+	qreal xr = ratioSize.width() / qreal(canvasSize.width());
+	qreal yr = ratioSize.height() / qreal(canvasSize.height());
+	QRectF sourceArea = QRectF(m_refreshArea)
+							.adjusted(-1.0 / xr, -1.0 / yr, 1.0 / xr, 1.0 / yr);
+	outSourceArea = sourceArea;
+	outTargetArea = QRectF(
+		QPointF(sourceArea.left() * xr, sourceArea.top() * yr),
+		QPointF(sourceArea.right() * xr, sourceArea.bottom() * yr));
 }
 
 void NavigatorView::paintEvent(QPaintEvent *)
 {
 	QPainter painter(this);
-	painter.fillRect(rect(), QColor(100,100,100));
+	painter.fillRect(rect(), m_backgroundColor);
 
-	if(!m_model)
+	if(!m_model || isCacheNull()) {
 		return;
+	}
 
 	// Draw downscaled canvas
-	if(m_cache.isNull())
-		return;
-
-	const QSize scaledSize = m_cache.size().scaled(size(), Qt::KeepAspectRatio);
-	const QRect canvasRect {
-		width()/2 - scaledSize.width()/2,
-		height()/2 - scaledSize.height()/2,
-		scaledSize.width(),
-		scaledSize.height()
-	};
-	painter.drawPixmap(canvasRect, m_cache);
+	const QSize scaledSize = cacheSize().scaled(size(), Qt::KeepAspectRatio);
+	const QRect canvasRect{
+		width() / 2 - scaledSize.width() / 2,
+		height() / 2 - scaledSize.height() / 2, scaledSize.width(),
+		scaledSize.height()};
+	if(m_useTileCache) {
+		painter.drawTiledPixmap(canvasRect, m_checker);
+		painter.drawImage(canvasRect, m_imageCache);
+	} else {
+		painter.drawPixmap(canvasRect, m_pixmapCache);
+	}
 
 	// Draw main viewport rectangle
 	painter.save();
 
-	QPen pen(QColor(96, 191, 96));
+	QPen pen;
+	const QPaintEngine *pe = painter.paintEngine();
+	if(pe->hasFeature(QPaintEngine::RasterOpModes)) {
+		pen.setColor(QColor(96, 191, 96));
+		painter.setCompositionMode(QPainter::RasterOp_SourceXorDestination);
+	} else if(pe->hasFeature(QPaintEngine::BlendModes)) {
+		pen.setColor(QColor(0, 255, 0));
+		painter.setCompositionMode(QPainter::CompositionMode_Difference);
+	} else {
+		pen.setColor(QColor(191, 96, 191));
+	}
 	pen.setCosmetic(true);
 	pen.setWidth(2.0 * devicePixelRatioF());
 	painter.setPen(pen);
-	painter.setCompositionMode(QPainter::RasterOp_SourceXorDestination);
 
 	const auto canvasSize = m_model->size();
 	const qreal xscale = scaledSize.width() / qreal(canvasSize.width());
@@ -306,7 +444,7 @@ void NavigatorView::paintEvent(QPaintEvent *)
 	}
 }
 
-void NavigatorView::onCursorMove(unsigned int flags, uint8_t userId, uint16_t layer, int x, int y)
+void NavigatorView::onCursorMove(unsigned int flags, int userId, int layer, int x, int y)
 {
 	Q_UNUSED(layer);
 
@@ -334,9 +472,19 @@ void NavigatorView::onCursorMove(unsigned int flags, uint8_t userId, uint16_t la
 	};
 }
 
+bool NavigatorView::isCacheNull() const
+{
+	return m_useTileCache ? m_imageCache.isNull() : m_pixmapCache.isNull();
+}
+
+QSize NavigatorView::cacheSize() const
+{
+	return m_useTileCache ? m_imageCache.size() : m_pixmapCache.size();
+}
+
 QPointF NavigatorView::getFocusPoint(const QPointF &eventPoint)
 {
-	QSize s = m_cache.size().scaled(size(), Qt::KeepAspectRatio);
+	QSize s = cacheSize().scaled(size(), Qt::KeepAspectRatio);
 	QSize canvasSize = m_model->size();
 	qreal xscale = s.width() / qreal(canvasSize.width());
 	qreal yscale = s.height() / qreal(canvasSize.height());
@@ -398,6 +546,11 @@ Navigator::Navigator(QWidget *parent)
 
 	settings.bindNavigatorRealtime(realtimeUpdateAction);
 	settings.bindNavigatorRealtime(m_view, &NavigatorView::setRealtimeUpdate);
+
+	settings.bindCanvasViewBackgroundColor(
+		m_view, &NavigatorView::setBackgroundColor);
+	settings.bindCheckerColor1(m_view, &NavigatorView::setCheckerColor1);
+	settings.bindCheckerColor2(m_view, &NavigatorView::setCheckerColor2);
 }
 
 Navigator::~Navigator()

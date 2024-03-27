@@ -4,6 +4,7 @@
 extern "C" {
 #include <dpengine/draw_context.h>
 }
+#include "libclient/canvas/tilecache.h"
 #include "libclient/drawdance/aclstate.h"
 #include "libclient/drawdance/canvashistory.h"
 #include "libclient/drawdance/canvasstate.h"
@@ -33,11 +34,14 @@ class PaintEngine final : public QObject {
 	Q_OBJECT
 public:
 	PaintEngine(
-		const QColor &checkerColor1, const QColor &checkerColor2, int fps,
-		int snapshotMaxCount, long long snapshotMinDelayMs,
-		bool wantCanvasHistoryDump, QObject *parent = nullptr);
+		bool useTileCache, const QColor &checkerColor1,
+		const QColor &checkerColor2, int fps, int snapshotMaxCount,
+		long long snapshotMinDelayMs, bool wantCanvasHistoryDump,
+		QObject *parent = nullptr);
 
 	~PaintEngine() override;
+
+	bool useTileCache() const { return m_useTileCache; }
 
 	void setFps(int fps);
 	void setSnapshotMaxCount(int snapshotMaxCount);
@@ -54,17 +58,17 @@ public:
 	// Do something with the currently rendered canvas pixmap. This is what the
 	// user currently sees, but may have "unfinished" parts. If you need the
 	// full, proper canvas at the current time, use renderPixmap instead.
-	void withPixmap(std::function<void(const QPixmap &)> fn) const;
+	void withPixmap(const std::function<void(const QPixmap &)> &fn) const;
 
 	// Renders the whole canvas and returns it as an image. A slow operation!
 	QImage renderPixmap();
 
-	void setCanvasViewArea(const QRect &area);
+	void withTileCache(const std::function<void(TileCache &)> &fn);
 
-	void setRenderOutsideView(bool renderOutsideView)
-	{
-		m_renderOutsideView = renderOutsideView;
-	}
+	void setCanvasViewArea(const QRect &area);
+	void setCanvasViewTileArea(const QRect &canvasViewTileArea);
+
+	void setRenderOutsideView(bool renderOutsideView);
 
 	//! Get the number of frames in an animated canvas
 	int frameCount() const;
@@ -233,13 +237,21 @@ public:
 	void clearDabsPreview();
 
 signals:
+	// Only emitted in tile cache mode.
+	void tileCacheDirtyCheckNeeded();
+	// Only emitted in tile cache mode.
+	void tileCacheNavigatorDirtyCheckNeeded();
+
+	// Only emitted in pixmap mode.
 	void areaChanged(const QRect &area);
-	void resized(int xoffset, int yoffset, const QSize &oldSize);
+	// Only emitted in pixmap mode.
+	void
+	resized(const QSize &newSize, const QPoint &offset, const QSize &oldSize);
+
 	void layersChanged(
 		const drawdance::LayerPropsList &lpl, const QSet<int> &revealedLayers);
 	void annotationsChanged(const drawdance::AnnotationList &al);
-	void
-	cursorMoved(unsigned int flags, uint8_t user, uint16_t layer, int x, int y);
+	void cursorMoved(unsigned int flags, int userId, int layerId, int x, int y);
 	void playbackAt(long long pos);
 	void
 	dumpPlaybackAt(long long pos, const drawdance::CanvasHistorySnapshot &chs);
@@ -251,7 +263,7 @@ signals:
 	void frameVisibilityChanged(const QSet<int> layers, bool frameMode);
 	void aclsChanged(
 		const drawdance::AclState &acls, int aclChangeFlags, bool reset);
-	void laserTrail(uint8_t userId, int persistence, uint32_t color);
+	void laserTrail(int userId, int persistence, uint32_t color);
 	void defaultLayer(uint16_t layerId);
 	void undoDepthLimitSet(int undoDepthLimit);
 
@@ -290,11 +302,18 @@ private:
 		int x, int y);
 
 	static void
-	onRenderTile(void *user, int tileX, int tileY, DP_Pixel8 *pixels);
+	onRenderTileToPixmap(void *user, int tileX, int tileY, DP_Pixel8 *pixels);
+
+	static void onRenderTileToTileCache(
+		void *user, int tileX, int tileY, DP_Pixel8 *pixels);
 
 	static void onRenderUnlock(void *user);
 
-	static void onRenderResize(
+	static void onRenderResizePixmap(
+		void *user, int width, int height, int prevWidth, int prevHeight,
+		int offsetX, int offsetY);
+
+	static void onRenderResizeTileCache(
 		void *user, int width, int height, int prevWidth, int prevHeight,
 		int offsetX, int offsetY);
 
@@ -302,6 +321,7 @@ private:
 
 	void updateLayersVisibleInFrame();
 
+	const bool m_useTileCache;
 	drawdance::AclState m_acls;
 	drawdance::SnapshotQueue m_snapshotQueue;
 	drawdance::PaintEngine m_paintEngine;
@@ -310,6 +330,7 @@ private:
 	QSet<int> m_revealedLayers;
 	QPixmap m_cache;
 	QPainter m_painter;
+	TileCache m_tileCache;
 	DP_Mutex *m_cacheMutex;
 	DP_Semaphore *m_viewSem;
 	QRect m_canvasViewTileArea;

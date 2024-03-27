@@ -156,6 +156,8 @@ public slots:
 	//! Cancel the current multipart drawing (if any)
 	void cancelMultipartDrawing();
 
+	void deselectDeletedAnnotation(int annotationId);
+
 signals:
 	void toolCapabilitiesChanged(
 		bool allowColorPick, bool allowToolAdjust, bool allowRightClick);

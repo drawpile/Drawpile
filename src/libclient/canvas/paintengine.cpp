@@ -28,20 +28,34 @@ extern "C" {
 
 #define DP_PERF_CONTEXT "paint_engine"
 
+static DP_Rect toDpRect(const QRect &canvasViewTileArea)
+{
+	DP_Rect tileBounds = {
+		canvasViewTileArea.left(), canvasViewTileArea.top(),
+		canvasViewTileArea.right(), canvasViewTileArea.bottom()};
+	return tileBounds;
+}
+
 namespace canvas {
 
 PaintEngine::PaintEngine(
-	const QColor &checkerColor1, const QColor &checkerColor2, int fps,
-	int snapshotMaxCount, long long snapshotMinDelayMs,
+	bool useTileCache, const QColor &checkerColor1, const QColor &checkerColor2,
+	int fps, int snapshotMaxCount, long long snapshotMinDelayMs,
 	bool wantCanvasHistoryDump, QObject *parent)
 	: QObject(parent)
+	, m_useTileCache(useTileCache)
 	, m_acls{}
 	, m_snapshotQueue{snapshotMaxCount, snapshotMinDelayMs}
 	, m_paintEngine(
-		  m_acls, m_snapshotQueue, wantCanvasHistoryDump, true, checkerColor1,
-		  checkerColor2, PaintEngine::onRenderTile, PaintEngine::onRenderUnlock,
-		  PaintEngine::onRenderResize, this, ON_SOFT_RESET_FN, this,
-		  PaintEngine::onPlayback, PaintEngine::onDumpPlayback, this)
+		  m_acls, m_snapshotQueue, wantCanvasHistoryDump, !m_useTileCache,
+		  checkerColor1, checkerColor2,
+		  m_useTileCache ? PaintEngine::onRenderTileToTileCache
+						 : PaintEngine::onRenderTileToPixmap,
+		  PaintEngine::onRenderUnlock,
+		  m_useTileCache ? PaintEngine::onRenderResizeTileCache
+						 : PaintEngine::onRenderResizePixmap,
+		  this, ON_SOFT_RESET_FN, this, PaintEngine::onPlayback,
+		  PaintEngine::onDumpPlayback, this)
 	, m_fps{fps}
 	, m_timerId{0}
 	, m_cache{}
@@ -100,12 +114,20 @@ void PaintEngine::reset(
 	DP_Player *player)
 {
 	net::MessageList localResetImage = m_paintEngine.reset(
-		m_acls, m_snapshotQueue, localUserId, true, PaintEngine::onRenderTile,
-		PaintEngine::onRenderUnlock, PaintEngine::onRenderResize, this,
-		ON_SOFT_RESET_FN, this, PaintEngine::onPlayback,
+		m_acls, m_snapshotQueue, localUserId, !m_useTileCache,
+		m_useTileCache ? PaintEngine::onRenderTileToTileCache
+					   : PaintEngine::onRenderTileToPixmap,
+		PaintEngine::onRenderUnlock,
+		m_useTileCache ? PaintEngine::onRenderResizeTileCache
+					   : PaintEngine::onRenderResizePixmap,
+		this, ON_SOFT_RESET_FN, this, PaintEngine::onPlayback,
 		PaintEngine::onDumpPlayback, this, canvasState, player);
 	DP_mutex_lock(m_cacheMutex);
-	m_cache = QPixmap{};
+	if(m_useTileCache) {
+		m_tileCache.clear();
+	} else {
+		m_cache = QPixmap{};
+	}
 	DP_mutex_unlock(m_cacheMutex);
 	m_undoDepthLimit = DP_UNDO_DEPTH_DEFAULT;
 	start();
@@ -118,15 +140,12 @@ void PaintEngine::reset(
 void PaintEngine::timerEvent(QTimerEvent *)
 {
 	DP_PERF_SCOPE("tick");
-	DP_Rect tileBounds = {
-		m_canvasViewTileArea.left(), m_canvasViewTileArea.top(),
-		m_canvasViewTileArea.right(), m_canvasViewTileArea.bottom()};
 	m_revealedLayers.clear();
 	DP_paint_engine_tick(
-		m_paintEngine.get(), tileBounds, m_renderOutsideView,
-		&PaintEngine::onCatchup, &PaintEngine::onResetLockChanged,
-		&PaintEngine::onRecorderStateChanged, &PaintEngine::onLayerPropsChanged,
-		&PaintEngine::onAnnotationsChanged,
+		m_paintEngine.get(), toDpRect(m_canvasViewTileArea),
+		m_renderOutsideView, &PaintEngine::onCatchup,
+		&PaintEngine::onResetLockChanged, &PaintEngine::onRecorderStateChanged,
+		&PaintEngine::onLayerPropsChanged, &PaintEngine::onAnnotationsChanged,
 		&PaintEngine::onDocumentMetadataChanged,
 		&PaintEngine::onTimelineChanged, &PaintEngine::onCursorMoved,
 		&PaintEngine::onDefaultLayer, &PaintEngine::onUndoDepthLimitSet,
@@ -429,10 +448,13 @@ QColor PaintEngine::sampleColor(int x, int y, int layerId, int diameter)
 			rect = QRect{left, top, diameter, diameter};
 		}
 
+		QImage img;
 		DP_mutex_lock(m_cacheMutex);
-		QImage img = rect.intersects(m_cache.rect())
-						 ? m_cache.copy(rect).toImage()
-						 : QImage{};
+		if(m_useTileCache) {
+			img = m_tileCache.toSubImage(rect);
+		} else if(rect.intersects(m_cache.rect())) {
+			img = m_cache.copy(rect).toImage();
+		}
 		DP_mutex_unlock(m_cacheMutex);
 
 		if(img.isNull()) {
@@ -643,8 +665,10 @@ void PaintEngine::clearDabsPreview()
 	m_paintEngine.clearDabsPreview();
 }
 
-void PaintEngine::withPixmap(std::function<void(const QPixmap &)> fn) const
+void PaintEngine::withPixmap(
+	const std::function<void(const QPixmap &)> &fn) const
 {
+	Q_ASSERT(!m_useTileCache);
 	DP_mutex_lock(m_cacheMutex);
 	fn(m_cache);
 	DP_mutex_unlock(m_cacheMutex);
@@ -655,23 +679,44 @@ QImage PaintEngine::renderPixmap()
 	DP_paint_engine_render_everything(m_paintEngine.get());
 	DP_SEMAPHORE_MUST_WAIT(m_viewSem);
 	DP_mutex_lock(m_cacheMutex);
-	QImage img = m_cache.toImage();
+	QImage img = m_useTileCache ? m_tileCache.toImage() : m_cache.toImage();
 	DP_mutex_unlock(m_cacheMutex);
 	return img;
+}
+
+void PaintEngine::withTileCache(const std::function<void(TileCache &)> &fn)
+{
+	Q_ASSERT(m_useTileCache);
+	DP_mutex_lock(m_cacheMutex);
+	fn(m_tileCache);
+	DP_mutex_unlock(m_cacheMutex);
 }
 
 void PaintEngine::setCanvasViewArea(const QRect &area)
 {
 	// We can't use QPoint::operator/ because that rounds instead of truncates.
-	m_canvasViewTileArea = QRect{
-		QPoint{area.left() / DP_TILE_SIZE, area.top() / DP_TILE_SIZE},
-		QPoint{area.right() / DP_TILE_SIZE, area.bottom() / DP_TILE_SIZE}};
-	DP_Rect tileBounds = {
-		m_canvasViewTileArea.left(), m_canvasViewTileArea.top(),
-		m_canvasViewTileArea.right(), m_canvasViewTileArea.bottom()};
+	setCanvasViewTileArea(QRect(
+		QPoint(area.left() / DP_TILE_SIZE, area.top() / DP_TILE_SIZE),
+		QPoint(area.right() / DP_TILE_SIZE, area.bottom() / DP_TILE_SIZE)));
+}
+
+void PaintEngine::setCanvasViewTileArea(const QRect &canvasViewTileArea)
+{
+	m_canvasViewTileArea = canvasViewTileArea;
 	DP_paint_engine_change_bounds(
-		m_paintEngine.get(), tileBounds, m_renderOutsideView);
+		m_paintEngine.get(), toDpRect(m_canvasViewTileArea),
+		m_renderOutsideView);
 	DP_SEMAPHORE_MUST_WAIT(m_viewSem);
+}
+
+void PaintEngine::setRenderOutsideView(bool renderOutsideView)
+{
+	m_renderOutsideView = renderOutsideView;
+	if(renderOutsideView) {
+		DP_paint_engine_render_continuous(
+			m_paintEngine.get(), toDpRect(m_canvasViewTileArea),
+			m_renderOutsideView);
+	}
 }
 
 int PaintEngine::frameCount() const
@@ -827,15 +872,15 @@ void PaintEngine::onCursorMoved(
 	emit pe->cursorMoved(flags, contextId, layerId, x, y);
 }
 
-void PaintEngine::onRenderTile(
+void PaintEngine::onRenderTileToPixmap(
 	void *user, int tileX, int tileY, DP_Pixel8 *pixels)
 {
 	PaintEngine *pe = static_cast<PaintEngine *>(user);
-	QRect area{
-		tileX * DP_TILE_SIZE, tileY * DP_TILE_SIZE, DP_TILE_SIZE, DP_TILE_SIZE};
-	QImage image{
+	QRect area(
+		tileX * DP_TILE_SIZE, tileY * DP_TILE_SIZE, DP_TILE_SIZE, DP_TILE_SIZE);
+	QImage image(
 		reinterpret_cast<unsigned char *>(pixels), DP_TILE_SIZE, DP_TILE_SIZE,
-		QImage::Format_RGB32};
+		QImage::Format_RGB32);
 	DP_mutex_lock(pe->m_cacheMutex);
 	QPainter &painter = pe->m_painter;
 	painter.begin(&pe->m_cache);
@@ -845,22 +890,38 @@ void PaintEngine::onRenderTile(
 	emit pe->areaChanged(area);
 }
 
+void PaintEngine::onRenderTileToTileCache(
+	void *user, int tileX, int tileY, DP_Pixel8 *pixels)
+{
+	PaintEngine *pe = static_cast<PaintEngine *>(user);
+	DP_mutex_lock(pe->m_cacheMutex);
+	TileCache::RenderResult result =
+		pe->m_tileCache.render(tileX, tileY, pixels);
+	if(result.dirtyCheck) {
+		emit pe->tileCacheDirtyCheckNeeded();
+	}
+	if(result.navigatorDirtyCheck) {
+		emit pe->tileCacheNavigatorDirtyCheckNeeded();
+	}
+	DP_mutex_unlock(pe->m_cacheMutex);
+}
+
 void PaintEngine::onRenderUnlock(void *user)
 {
 	PaintEngine *pe = static_cast<PaintEngine *>(user);
 	DP_SEMAPHORE_MUST_POST(pe->m_viewSem);
 }
 
-void PaintEngine::onRenderResize(
+void PaintEngine::onRenderResizePixmap(
 	void *user, int width, int height, int prevWidth, int prevHeight,
 	int offsetX, int offsetY)
 {
 	PaintEngine *pe = static_cast<PaintEngine *>(user);
-	QSize size{width, height};
+	QSize size(width, height);
 	DP_mutex_lock(pe->m_cacheMutex);
 	QSize cacheSize = pe->m_cache.size();
 	if(cacheSize != size) {
-		QPixmap pixmap{size};
+		QPixmap pixmap(size);
 		pixmap.fill(QColor(100, 100, 100));
 		QPainter &painter = pe->m_painter;
 		painter.begin(&pixmap);
@@ -871,7 +932,23 @@ void PaintEngine::onRenderResize(
 		pe->m_cache = std::move(pixmap);
 	}
 	DP_mutex_unlock(pe->m_cacheMutex);
-	emit pe->resized(offsetX, offsetY, QSize{prevWidth, prevHeight});
+	emit pe->resized(
+		size, QPoint(offsetX, offsetY), QSize(prevWidth, prevHeight));
+}
+
+void PaintEngine::onRenderResizeTileCache(
+	void *user, int width, int height, int prevWidth, int prevHeight,
+	int offsetX, int offsetY)
+{
+	Q_UNUSED(prevWidth);
+	Q_UNUSED(prevHeight);
+	PaintEngine *pe = static_cast<PaintEngine *>(user);
+	QSize size(width, height);
+	DP_mutex_lock(pe->m_cacheMutex);
+	pe->m_tileCache.resize(width, height, offsetX, offsetY);
+	emit pe->tileCacheDirtyCheckNeeded();
+	emit pe->tileCacheNavigatorDirtyCheckNeeded();
+	DP_mutex_unlock(pe->m_cacheMutex);
 }
 
 }

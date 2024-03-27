@@ -30,8 +30,10 @@
 #	include <QClipboard>
 #endif
 
-Document::Document(libclient::settings::Settings &settings, QObject *parent)
+Document::Document(
+	bool useTileCache, libclient::settings::Settings &settings, QObject *parent)
 	: QObject(parent)
+	, m_useTileCache(useTileCache)
 	, m_resetstate()
 	, m_messageBuffer()
 	, m_canvas(nullptr)
@@ -122,6 +124,7 @@ void Document::initCanvas()
 	m_canvas = new canvas::CanvasModel{
 		m_settings,
 		m_client->myId(),
+		m_useTileCache,
 		m_settings.engineFrameRate(),
 		m_settings.engineSnapshotCount(),
 		m_settings.engineSnapshotInterval() * 1000LL,
@@ -482,9 +485,8 @@ void Document::setSessionAllowWeb(bool allowWeb)
 	// The user needs to have the WEBSESSION flag to be allowed to change
 	// this setting. If they're connected via WebSocket themselves, they
 	// can't turn it off, since it would lock themselves out of rejoining.
-	bool canAlterAllowWeb =
-		m_client->canManageWebSession() &&
-		(!m_client->isWebSocket() || !m_sessionAllowWeb);
+	bool canAlterAllowWeb = m_client->canManageWebSession() &&
+							(!m_client->isWebSocket() || !m_sessionAllowWeb);
 	emit sessionAllowWebChanged(m_sessionAllowWeb, canAlterAllowWeb);
 }
 

@@ -315,6 +315,27 @@ void DrawpileApp::initTheme()
 	updateThemeIcons();
 }
 
+void DrawpileApp::initCanvasImplementation(const QString &arg)
+{
+	using desktop::settings::CanvasImplementation;
+	int canvasImplementation;
+	if(QStringLiteral("system").compare(arg, Qt::CaseInsensitive) == 0) {
+		canvasImplementation = int(CanvasImplementation::Default);
+	} else if(
+		QStringLiteral("qgraphicsview").compare(arg, Qt::CaseInsensitive) ==
+		0) {
+		canvasImplementation = int(CanvasImplementation::GraphicsView);
+	} else if(QStringLiteral("opengl").compare(arg, Qt::CaseInsensitive) == 0) {
+		canvasImplementation = int(CanvasImplementation::OpenGl);
+	} else {
+		if(QStringLiteral("none").compare(arg, Qt::CaseInsensitive) != 0) {
+			qWarning("Unknown --renderer '%s'", qUtf8Printable(arg));
+		}
+		canvasImplementation = m_settings.renderCanvas();
+	}
+	m_canvasImplementation = getCanvasImplementationFor(canvasImplementation);
+}
+
 void DrawpileApp::initInterface()
 {
 	if(m_settings.interfaceMode() ==
@@ -357,6 +378,28 @@ desktop::settings::InterfaceMode DrawpileApp::guessInterfaceMode()
 	}
 #endif
 	return desktop::settings::InterfaceMode::Desktop;
+}
+
+bool DrawpileApp::canvasImplementationUsesTileCache()
+{
+	using desktop::settings::CanvasImplementation;
+	return canvasImplementation() != int(CanvasImplementation::GraphicsView);
+}
+
+int DrawpileApp::getCanvasImplementationFor(int canvasImplementation)
+{
+	using desktop::settings::CanvasImplementation;
+	switch(canvasImplementation) {
+	case int(CanvasImplementation::GraphicsView):
+	case int(CanvasImplementation::OpenGl):
+		return canvasImplementation;
+	default:
+#ifdef __EMSCRIPTEN__
+		return int(CanvasImplementation::OpenGl);
+#else
+		return int(CanvasImplementation::GraphicsView);
+#endif
+	}
 }
 
 QPair<QSize, QSizeF> DrawpileApp::screenResolution()
@@ -526,6 +569,13 @@ static std::tuple<QStringList, QString, bool> initApp(DrawpileApp &app)
 					   "of Drawpile."));
 	parser.addOption(singleSession);
 
+	QCommandLineOption renderer(
+		"renderer",
+		"Override canvas renderer, one of: none (don't override, the default), "
+		"system (override with system default), qgraphicsview or opengl.",
+		"renderer", "none");
+	parser.addOption(renderer);
+
 	// URL
 	parser.addPositionalArgument("url", "Filename or URL.");
 
@@ -560,6 +610,7 @@ static std::tuple<QStringList, QString, bool> initApp(DrawpileApp &app)
 	desktop::settings::Settings &settings = app.settings();
 	settings.bindWriteLogFile(&utils::enableLogFile);
 	app.initTheme();
+	app.initCanvasImplementation(parser.value(renderer));
 	app.initInterface();
 
 #ifdef Q_OS_ANDROID
@@ -635,7 +686,7 @@ extern "C" int drawpileShouldPreventUnload()
 }
 #endif
 
-static void applyScalingSettingsFrom(const QString &path)
+static int applyRenderSettingsFrom(const QString &path)
 {
 	QSettings cfg(path, QSettings::IniFormat);
 
@@ -660,14 +711,10 @@ static void applyScalingSettingsFrom(const QString &path)
 	if(!vsyncOk) {
 		vsync = cfg.value(QStringLiteral("vsync")).toInt();
 	}
-	if(vsync >= 0) {
-		QSurfaceFormat format = QSurfaceFormat::defaultFormat();
-		format.setSwapInterval(vsync);
-		QSurfaceFormat::setDefaultFormat(format);
-	}
+	return vsync;
 }
 
-static void applyScalingSettings(int argc, char **argv)
+static int applyRenderSettings(int argc, char **argv)
 {
 	QString fileName = QStringLiteral("scaling.ini");
 	for(int i = 1; i < argc - 1; ++i) {
@@ -676,14 +723,13 @@ static void applyScalingSettings(int argc, char **argv)
 							   QString::fromUtf8(argv[i + 1]) +
 							   QStringLiteral("/settings"))
 							   .absoluteFilePath(fileName);
-			applyScalingSettingsFrom(path);
-			return;
+			return applyRenderSettingsFrom(path);
 		}
 	}
 	// Can't use AppConfigLocation because the application name is not
 	// initialized yet and doing so at this point corrupts the main settings
 	// file. QSettings is terrible and we should really do away with it.
-	applyScalingSettingsFrom(
+	return applyRenderSettingsFrom(
 		QStandardPaths::writableLocation(
 			QStandardPaths::GenericConfigLocation) +
 		QStringLiteral("/drawpile/") + fileName);
@@ -711,7 +757,21 @@ int main(int argc, char *argv[])
 	QApplication::setAttribute(Qt::AA_CompressHighFrequencyEvents, false);
 	QApplication::setAttribute(Qt::AA_CompressTabletEvents, false);
 
-	applyScalingSettings(argc, argv);
+	int vsync = applyRenderSettings(argc, argv);
+	// OpenGL rendering format. 8 bit color, no alpha, no depth. Stencil buffer
+	// is needed for QPainter, without it, it can't manage to draw large paths
+	// and spams the warning log with "Painter path exceeds +/-32767 pixels."
+	QSurfaceFormat format = QSurfaceFormat::defaultFormat();
+	if(vsync >= 0) {
+		format.setSwapInterval(vsync);
+	}
+	format.setRedBufferSize(8);
+	format.setGreenBufferSize(8);
+	format.setBlueBufferSize(8);
+	format.setAlphaBufferSize(0);
+	format.setDepthBufferSize(0);
+	format.setStencilBufferSize(8);
+	QSurfaceFormat::setDefaultFormat(format);
 
 #ifdef __EMSCRIPTEN__
 	DrawpileApp *app = new DrawpileApp(argc, argv);

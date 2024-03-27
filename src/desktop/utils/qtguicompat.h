@@ -85,6 +85,7 @@ inline auto tabDevice(const QTabletEvent &event)
 using DeviceType = QInputDevice::DeviceType;
 using EnterEvent = QEnterEvent;
 using PointerType = QPointingDevice::PointerType;
+using TouchPoint = QEventPoint;
 const auto UnknownPointer = PointerType::Unknown;
 const auto NoDevice = DeviceType::Unknown;
 const auto FourDMouseDevice = DeviceType::Mouse;
@@ -151,7 +152,7 @@ inline auto tabPosF(const QTabletEvent &event)
 	return event.position();
 }
 
-inline auto touchPoints(const QTouchEvent &event)
+inline const QList<TouchPoint> &touchPoints(const QTouchEvent &event)
 {
 	return event.points();
 }
@@ -206,6 +207,7 @@ inline bool isTouchPad(const QTouchEvent *event)
 using DeviceType = QTabletEvent::TabletDevice;
 using EnterEvent = QEvent;
 using PointerType = QTabletEvent::PointerType;
+using TouchPoint = QTouchEvent::TouchPoint;
 const auto UnknownPointer = PointerType::UnknownPointer;
 const auto NoDevice = DeviceType::NoDevice;
 const auto FourDMouseDevice = DeviceType::FourDMouse;
@@ -253,7 +255,7 @@ inline auto styleName(const QStyle &style)
 	return style.objectName();
 }
 
-inline auto touchPoints(const QTouchEvent &event)
+inline const QList<TouchPoint> &touchPoints(const QTouchEvent &event)
 {
 	return event.touchPoints();
 }

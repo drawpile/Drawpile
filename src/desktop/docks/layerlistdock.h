@@ -6,7 +6,7 @@ extern "C" {
 #include <dpmsg/acl.h>
 }
 #include "desktop/docks/dockbase.h"
-#include "desktop/scene/canvasview.h"
+#include "desktop/view/lock.h"
 #include <QSet>
 
 class KisSliderSpinBox;
@@ -72,7 +72,7 @@ public:
 	 * This may be because it is actually locked or because it is hidden or a
 	 * non-editable (group) layer.
 	 */
-	QFlags<widgets::CanvasView::Lock> currentLayerLock() const;
+	QFlags<view::Lock::Reason> currentLayerLock() const;
 
 public slots:
 	void selectLayer(int id);

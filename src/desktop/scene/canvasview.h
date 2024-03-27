@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef DESKTOP_SCENE_CANVASVIEW
 #define DESKTOP_SCENE_CANVASVIEW
-#include "desktop/scene/toggleitem.h"
 #include "desktop/utils/qtguicompat.h"
+#include "desktop/view/lock.h"
 #include "libclient/canvas/canvasshortcuts.h"
 #include "libclient/canvas/point.h"
 #include "libclient/tools/tool.h"
@@ -43,23 +43,6 @@ public:
 		SameAsBrush = -1,
 	};
 	Q_ENUM(BrushCursor)
-
-	enum class Direction { Left, Right, Up, Down };
-
-	enum class Lock : unsigned int {
-		None = 0,
-		Reset = 1 << 0,
-		Canvas = 1 << 1,
-		User = 1 << 2,
-		LayerLocked = 1 << 3,
-		LayerGroup = 1 << 4,
-		LayerCensored = 1 << 5,
-		LayerHidden = 1 << 6,
-		LayerHiddenInFrame = 1 << 7,
-		Tool = 1 << 8,
-		OutOfSpace = 1 << 9,
-	};
-	Q_ENUM(Lock)
 
 	CanvasView(QWidget *parent = nullptr);
 
@@ -135,8 +118,6 @@ public:
 	void showResetNotice(bool compatibilityMode, bool saveInProgress);
 	void hideResetNotice();
 
-	QString lockDescription(bool includeSaveInProgress) const;
-
 signals:
 	//! An image has been dropped on the widget
 	void imageDropped(const QImage &image);
@@ -173,7 +154,7 @@ signals:
 	void savePreResetStateRequested();
 	void savePreResetStateDismissed();
 
-	void toggleActionActivated(drawingboard::ToggleItem::Action action);
+	void toggleActionActivated(int action);
 
 public slots:
 	//! Set the size of the brush preview outline
@@ -194,20 +175,29 @@ public slots:
 	//! Set the zoom factor in percents, centered on the given point
 	void setZoomAt(qreal zoom, const QPointF &point);
 
+	void resetZoom();
+
 	//! Set the rotation angle in degrees
 	void setRotation(qreal angle);
+	void resetRotation();
+	void rotateStepClockwise();
+	void rotateStepCounterClockwise();
 
 	void setViewFlip(bool flip);
 	void setViewMirror(bool mirror);
 
-	void setLock(QFlags<Lock> lock);
+	void setLockReasons(QFlags<view::Lock::Reason> reasons);
+	void setLockDescription(const QString &lockDescription);
 	void setBusy(bool busy);
 	void setSaveInProgress(bool saveInProgress);
 
 	//! Send pointer position updates even when not drawing
 	void setPointerTracking(bool tracking);
 
-	void moveStep(Direction direction);
+	void scrollStepLeft();
+	void scrollStepRight();
+	void scrollStepUp();
+	void scrollStepDown();
 
 	//! Increase/decrease zoom factor by this many steps
 	void zoomSteps(int steps);
@@ -420,7 +410,8 @@ private:
 
 	bool m_enableTablet;
 	bool m_ignoreZeroPressureInputs;
-	QFlags<Lock> m_lock;
+	bool m_locked;
+	QString m_lockDescription;
 	bool m_busy;
 	bool m_saveInProgress;
 	bool m_pointertracking;

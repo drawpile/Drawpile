@@ -379,6 +379,11 @@ extern "C" {
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
+pub struct QIODevice {
+    _unused: [u8; 0],
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct DP_Input {
     _unused: [u8; 0],
 }
@@ -407,6 +412,9 @@ pub struct DP_InputMethods {
     pub seek_by: ::std::option::Option<
         unsafe extern "C" fn(internal: *mut ::std::os::raw::c_void, size: usize) -> bool,
     >,
+    pub qiodevice: ::std::option::Option<
+        unsafe extern "C" fn(internal: *mut ::std::os::raw::c_void) -> *mut QIODevice,
+    >,
     pub dispose: ::std::option::Option<unsafe extern "C" fn(internal: *mut ::std::os::raw::c_void)>,
 }
 #[test]
@@ -415,7 +423,7 @@ fn bindgen_test_layout_DP_InputMethods() {
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<DP_InputMethods>(),
-        56usize,
+        64usize,
         concat!("Size of: ", stringify!(DP_InputMethods))
     );
     assert_eq!(
@@ -484,8 +492,18 @@ fn bindgen_test_layout_DP_InputMethods() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).dispose) as usize - ptr as usize },
+        unsafe { ::std::ptr::addr_of!((*ptr).qiodevice) as usize - ptr as usize },
         48usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_InputMethods),
+            "::",
+            stringify!(qiodevice)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).dispose) as usize - ptr as usize },
+        56usize,
         concat!(
             "Offset of field: ",
             stringify!(DP_InputMethods),
@@ -532,6 +550,9 @@ extern "C" {
 }
 extern "C" {
     pub fn DP_input_seek_by(input: *mut DP_Input, size: usize) -> bool;
+}
+extern "C" {
+    pub fn DP_input_qiodevice(input: *mut DP_Input) -> *mut QIODevice;
 }
 extern "C" {
     pub fn DP_file_input_new_from_stdin(close: bool) -> *mut DP_Input;
@@ -659,6 +680,9 @@ pub struct DP_OutputMethods {
     pub seek: ::std::option::Option<
         unsafe extern "C" fn(internal: *mut ::std::os::raw::c_void, offset: usize) -> bool,
     >,
+    pub qiodevice: ::std::option::Option<
+        unsafe extern "C" fn(internal: *mut ::std::os::raw::c_void) -> *mut QIODevice,
+    >,
     pub dispose:
         ::std::option::Option<unsafe extern "C" fn(internal: *mut ::std::os::raw::c_void) -> bool>,
 }
@@ -668,7 +692,7 @@ fn bindgen_test_layout_DP_OutputMethods() {
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<DP_OutputMethods>(),
-        48usize,
+        56usize,
         concat!("Size of: ", stringify!(DP_OutputMethods))
     );
     assert_eq!(
@@ -727,8 +751,18 @@ fn bindgen_test_layout_DP_OutputMethods() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).dispose) as usize - ptr as usize },
+        unsafe { ::std::ptr::addr_of!((*ptr).qiodevice) as usize - ptr as usize },
         40usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(DP_OutputMethods),
+            "::",
+            stringify!(qiodevice)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).dispose) as usize - ptr as usize },
+        48usize,
         concat!(
             "Offset of field: ",
             stringify!(DP_OutputMethods),
@@ -781,6 +815,9 @@ extern "C" {
 }
 extern "C" {
     pub fn DP_output_seek(output: *mut DP_Output, offset: usize) -> bool;
+}
+extern "C" {
+    pub fn DP_output_qiodevice(output: *mut DP_Output) -> *mut QIODevice;
 }
 extern "C" {
     pub fn DP_file_output_new_from_stdout(close: bool) -> *mut DP_Output;
@@ -6638,6 +6675,13 @@ extern "C" {
         undo_depth_limit_set: DP_PaintEngineUndoDepthLimitSetFn,
         censored_layer_revealed: DP_PaintEngineCensoredLayerRevealedFn,
         user: *mut ::std::os::raw::c_void,
+    );
+}
+extern "C" {
+    pub fn DP_paint_engine_render_continuous(
+        pe: *mut DP_PaintEngine,
+        tile_bounds: DP_Rect,
+        render_outside_tile_bounds: bool,
     );
 }
 extern "C" {

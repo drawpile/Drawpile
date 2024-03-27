@@ -221,6 +221,9 @@ void DP_paint_engine_tick(
     DP_PaintEngineUndoDepthLimitSetFn undo_depth_limit_set,
     DP_PaintEngineCensoredLayerRevealedFn censored_layer_revealed, void *user);
 
+void DP_paint_engine_render_continuous(DP_PaintEngine *pe, DP_Rect tile_bounds,
+                                       bool render_outside_tile_bounds);
+
 void DP_paint_engine_change_bounds(DP_PaintEngine *pe, DP_Rect tile_bounds,
                                    bool render_outside_tile_bounds);
 

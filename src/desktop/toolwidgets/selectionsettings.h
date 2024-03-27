@@ -12,8 +12,8 @@ namespace canvas {
 class CanvasModel;
 }
 
-namespace widgets {
-class CanvasView;
+namespace view {
+class CanvasWrapper;
 }
 
 namespace tools {
@@ -32,12 +32,7 @@ public:
 
 	QString toolType() const override { return QStringLiteral("selection"); }
 
-	/**
-	 * @brief Set the view widget
-	 *
-	 * This is used to get the current view rectangle needed by fitToScreen()
-	 */
-	void setView(widgets::CanvasView *view) { m_view = view; }
+	void setCanvasView(view::CanvasWrapper *canvasView) { m_canvasView = canvasView; }
 
 	void setForeground(const QColor &) override {}
 
@@ -76,7 +71,7 @@ private:
 	void cutSelection();
 
 	Ui_SelectionSettings *m_ui;
-	widgets::CanvasView *m_view;
+	view::CanvasWrapper *m_canvasView;
 };
 
 }

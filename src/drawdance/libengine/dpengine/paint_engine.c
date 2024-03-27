@@ -2448,6 +2448,16 @@ void DP_paint_engine_tick(
     DP_PERF_END(fn);
 }
 
+void DP_paint_engine_render_continuous(DP_PaintEngine *pe, DP_Rect tile_bounds,
+                                       bool render_outside_tile_bounds)
+{
+    DP_renderer_apply(pe->renderer, pe->view_cs, pe->local_state, pe->diff,
+                      pe->local_view.layers_can_decrease_opacity,
+                      pe->local_view.checker_color1,
+                      pe->local_view.checker_color2, tile_bounds,
+                      render_outside_tile_bounds, DP_RENDERER_CONTINUOUS);
+}
+
 void DP_paint_engine_change_bounds(DP_PaintEngine *pe, DP_Rect tile_bounds,
                                    bool render_outside_tile_bounds)
 {

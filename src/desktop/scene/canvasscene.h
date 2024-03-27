@@ -4,6 +4,7 @@
 #define CANVAS_SCENE_H
 
 #include "desktop/scene/toggleitem.h"
+#include "libclient/canvas/selection.h"
 #include <QGraphicsScene>
 #include <QHash>
 
@@ -70,9 +71,6 @@ public:
 	checkHover(const QPointF &scenePos, bool *outWasHovering = nullptr);
 
 	void removeHover();
-
-	//! Are annotation borders shown?
-	bool showAnnotationBorders() const { return m_showAnnotationBorders; }
 
 	//! Show/hide annotations
 	void showAnnotations(bool show);
@@ -142,13 +140,14 @@ signals:
 private slots:
 	void onSelectionChanged(canvas::Selection *sel);
 	void onUserJoined(int id, const QString &name);
-	void handleCanvasResize(int xoffset, int yoffset, const QSize &oldsize);
+	void handleCanvasResize(
+		const QSize newSize, const QPoint &offset, const QSize &oldSize);
 	void advanceAnimations();
 
-	void userCursorMoved(
-		unsigned int flags, uint8_t userId, uint16_t layerId, int x, int y);
+	void
+	userCursorMoved(unsigned int flags, int userId, int layerId, int x, int y);
 
-	void laserTrail(uint8_t userId, int persistence, const QColor &color);
+	void laserTrail(int userId, int persistence, const QColor &color);
 
 	void annotationsChanged(const drawdance::AnnotationList &al);
 	void previewAnnotation(int id, const QRect &shape);

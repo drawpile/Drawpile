@@ -31,6 +31,8 @@ target_sources(dpclient PRIVATE
 	canvas/point.h
 	canvas/selection.cpp
 	canvas/selection.h
+	canvas/tilecache.cpp
+	canvas/tilecache.h
 	canvas/timelinemodel.cpp
 	canvas/timelinemodel.h
 	canvas/userlist.cpp

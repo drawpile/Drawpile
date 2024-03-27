@@ -32,9 +32,10 @@ class CanvasModel final : public QObject {
 	Q_OBJECT
 public:
 	CanvasModel(
-		libclient::settings::Settings &settings, uint8_t localUserId, int fps,
-		int snapshotMaxCount, long long snapshotMinDelayMs,
-		bool wantCanvasHistoryDump, QObject *parent = nullptr);
+		libclient::settings::Settings &settings, uint8_t localUserId,
+		bool useTileCache, int fps, int snapshotMaxCount,
+		long long snapshotMinDelayMs, bool wantCanvasHistoryDump,
+		QObject *parent = nullptr);
 
 	PaintEngine *paintEngine() const { return m_paintengine; }
 
@@ -130,6 +131,8 @@ public slots:
 
 	void setSelectInterpolation(int selectInterpolation);
 
+	void offsetCanvas(int offsetX, int offsetY);
+
 signals:
 	void layerAutoselectRequest(int id);
 	void canvasModified();
@@ -149,7 +152,7 @@ signals:
 		int sender, int recipient, uint8_t tflags, uint8_t oflags,
 		const QString &message);
 
-	void laserTrail(uint8_t userId, int persistence, const QColor &color);
+	void laserTrail(int userId, int persistence, const QColor &color);
 
 	void userJoined(int id, const QString &name);
 	void userLeft(int id, const QString &name);
@@ -159,8 +162,8 @@ signals:
 	void compatibilityModeChanged(bool compatibilityMode);
 
 private slots:
-	void onCanvasResize(int xoffset, int yoffset, const QSize &oldsize);
-	void onLaserTrail(uint8_t userId, int persistence, uint32_t color);
+	void onCanvasResize(const QSize &newSize, const QPoint &offset);
+	void onLaserTrail(int userId, int persistence, uint32_t color);
 
 private:
 	void handleMetaMessages(int count, const net::Message *msgs);

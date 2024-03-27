@@ -46,9 +46,10 @@ static constexpr auto CTRL_KEY = Qt::CTRL;
 #include "desktop/tabletinput.h"
 
 #include "libclient/canvas/canvasmodel.h"
-#include "desktop/scene/canvasview.h"
-#include "desktop/scene/canvasscene.h"
+#include "desktop/view/canvaswrapper.h"
+#include "desktop/view/lock.h"
 #include "desktop/scene/selectionitem.h"
+#include "desktop/scene/toggleitem.h"
 #include "libclient/canvas/userlist.h"
 #include "libclient/canvas/paintengine.h"
 #include "libclient/canvas/documentmetadata.h"
@@ -153,7 +154,8 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	  m_dockOnionSkins(nullptr),
 	  m_dockTimeline(nullptr),
 	  m_chatbox(nullptr),
-	  m_view(nullptr),
+	  m_viewLock(nullptr),
+	  m_canvasView(nullptr),
 	  m_viewStatusBar(nullptr),
 	  m_lockstatus(nullptr),
 	  m_netstatus(nullptr),
@@ -163,7 +165,6 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	  m_dumpPlaybackDialog(nullptr),
 	  m_sessionSettings(nullptr),
 	  m_serverLogDialog(nullptr),
-	  m_canvasscene(nullptr),
 	  m_recentMenu(nullptr),
 	  m_lastLayerViewMode(nullptr),
 	  m_currentdoctools(nullptr),
@@ -198,7 +199,8 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	m_saveWindowDebounce.setInterval(DEBOUNCE_MS);
 
 	// The document (initially empty)
-	m_doc = new Document(dpApp().settings(), this);
+	m_doc = new Document(
+		dpApp().canvasImplementationUsesTileCache(), dpApp().settings(), this);
 
 	// Set up the main window widgets
 	// The central widget consists of a custom status bar and a splitter
@@ -242,11 +244,14 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 
 	m_viewStatusBar->addPermanentWidget(m_lockstatus);
 
+	m_viewLock = new view::Lock();
+
 	int SPLITTER_WIDGET_IDX = 0;
 
 	// Create canvas view (first splitter item)
-	m_view = new widgets::CanvasView(this);
-	m_splitter->addWidget(m_view);
+	m_canvasView =
+		view::CanvasWrapper::instantiate(dpApp().canvasImplementation(), this);
+	m_splitter->addWidget(m_canvasView->viewWidget());
 	m_splitter->setCollapsible(SPLITTER_WIDGET_IDX++, false);
 
 	// Create the chatbox
@@ -264,16 +269,6 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	}
 
 	m_dualColorButton = new widgets::DualColorButton(this);
-
-	// Create canvas scene
-	m_canvasscene = new drawingboard::CanvasScene(this);
-	m_canvasscene->setBackgroundBrush(
-			palette().brush(QPalette::Active,QPalette::Window));
-	m_canvasscene->showToggleItems(dpApp().smallScreenMode());
-	m_view->setCanvas(m_canvasscene);
-	connect(
-		m_view, &widgets::CanvasView::coordinatesChanged, m_viewStatusBar,
-		&widgets::ViewStatusBar::setCoordinates);
 
 	// Create docks
 	createDocks();
@@ -315,35 +310,19 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	// Tool dock connections
 	m_tempToolSwitchShortcut = new ShortcutDetector(this);
 
-	connect(
-		m_dockToolSettings->brushSettings(),
-		&tools::BrushSettings::blendModeChanged, m_view,
-		&widgets::CanvasView::setBrushBlendMode);
-	connect(m_dockToolSettings->laserPointerSettings(), &tools::LaserPointerSettings::pointerTrackingToggled,
-		m_view, &widgets::CanvasView::setPointerTracking);
-	connect(m_dockToolSettings->zoomSettings(), &tools::ZoomSettings::resetZoom,
-		this, [this]() { m_view->setZoom(1.0); });
-	connect(m_dockToolSettings->zoomSettings(), &tools::ZoomSettings::fitToWindow,
-		m_view, &widgets::CanvasView::zoomToFit);
+	m_canvasView->connectDocument(m_doc);
+	m_canvasView->connectMainWindow(this);
+	m_canvasView->connectNavigator(m_dockNavigator);
+	m_canvasView->connectLock(m_viewLock);
+	m_canvasView->connectViewStatus(m_viewstatus);
+	m_canvasView->connectViewStatusBar(m_viewStatusBar);
+	m_canvasView->connectToolSettings(m_dockToolSettings);
 
 	connect(m_dockToolSettings->brushSettings(), &tools::BrushSettings::brushSettingsDialogRequested,
 		this, &MainWindow::showBrushSettingsDialog);
 
 	connect(m_dockLayers, &docks::LayerList::layerSelected, this, &MainWindow::updateLockWidget);
 	connect(m_dockLayers, &docks::LayerList::activeLayerVisibilityChanged, this, &MainWindow::updateLockWidget);
-
-	connect(m_dockToolSettings, &docks::ToolSettings::sizeChanged, m_view, &widgets::CanvasView::setOutlineSize);
-	connect(m_dockToolSettings, &docks::ToolSettings::subpixelModeChanged, m_view, &widgets::CanvasView::setOutlineMode);
-	connect(m_view, &widgets::CanvasView::colorDropped, m_dockToolSettings, &docks::ToolSettings::setForegroundColor);
-	connect(m_view, SIGNAL(imageDropped(QImage)), this, SLOT(pasteImage(QImage)));
-	connect(m_view, &widgets::CanvasView::urlDropped, this, &MainWindow::dropUrl);
-	connect(m_view, &widgets::CanvasView::viewTransformed, m_viewstatus, &widgets::ViewStatus::setTransformation);
-	connect(m_view, &widgets::CanvasView::viewTransformed, m_dockNavigator, &docks::Navigator::setViewTransformation);
-	connect(m_view, &widgets::CanvasView::toggleActionActivated, this, &MainWindow::handleToggleAction);
-
-	connect(m_viewstatus, &widgets::ViewStatus::zoomChanged, m_view, &widgets::CanvasView::setZoom);
-	connect(m_viewstatus, &widgets::ViewStatus::angleChanged, m_view, &widgets::CanvasView::setRotation);
-	connect(m_dockNavigator, &docks::Navigator::zoomChanged, m_view, &widgets::CanvasView::setZoom);
 
 	connect(m_dockToolSettings, &docks::ToolSettings::toolChanged, this, &MainWindow::toolChanged);
 	connect(m_dockToolSettings, &docks::ToolSettings::activeBrushChanged, this, &MainWindow::updateLockWidget);
@@ -379,18 +358,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 		m_dualColorButton, &widgets::DualColorButton::resetClicked,
 		m_dockToolSettings, &docks::ToolSettings::resetColors);
 
-	// Canvas view -> canvas item, so that the item knows what are to re-render.
-	connect(m_view, &widgets::CanvasView::viewRectChange, m_canvasscene, &drawingboard::CanvasScene::canvasViewportChanged);
-
-	// Navigator <-> View
-	connect(m_dockNavigator, &docks::Navigator::focusMoved, m_view, &widgets::CanvasView::scrollTo);
-	connect(m_view, &widgets::CanvasView::viewRectChange, m_dockNavigator, &docks::Navigator::setViewFocus);
-	connect(m_dockNavigator, &docks::Navigator::wheelZoom, m_view, &widgets::CanvasView::zoomSteps);
-
-
 	// Network client <-> UI connections
-	connect(m_view, &widgets::CanvasView::pointerMoved, m_doc, &Document::sendPointerMove);
-
 	connect(m_doc, &Document::catchupProgress, this, &MainWindow::updateCatchupProgress);
 	connect(m_doc, &Document::catchupProgress, m_netstatus, &widgets::NetStatus::setCatchupProgress);
 
@@ -419,34 +387,12 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	connect(m_sessionSettings, &dialogs::SessionSettingsDialog::requestUpdateAuthList, m_doc->client(), &net::Client::requestUpdateAuthList);
 
 	// Tool controller <-> UI connections
-	connect(m_doc->toolCtrl(), &tools::ToolController::activeAnnotationChanged, m_canvasscene, &drawingboard::CanvasScene::setActiveAnnotation);
 	connect(m_doc->toolCtrl(), &tools::ToolController::activeAnnotationChanged, this, &MainWindow::activeAnnotationChanged);
 	connect(m_doc->toolCtrl(), &tools::ToolController::colorUsed, m_dockToolSettings, &docks::ToolSettings::addLastUsedColor);
 	connect(m_doc->toolCtrl(), &tools::ToolController::actionCancelled, m_dockToolSettings->colorPickerSettings(), &tools::ColorPickerSettings::cancelPickFromScreen);
-	connect(m_doc->toolCtrl(), &tools::ToolController::zoomRequested, m_view, &widgets::CanvasView::zoomTo);
-	connect(m_doc->toolCtrl(), &tools::ToolController::busyStateChanged, this, [this](bool busy) {
-		m_view->setBusy(busy);
-		setDrawingToolsEnabled(!busy);
-	});
-
-	connect(m_canvasscene, &drawingboard::CanvasScene::annotationDeleted, this, [this](int id) {
-		if(m_doc->toolCtrl()->activeAnnotation() == id)
-			m_doc->toolCtrl()->setActiveAnnotation(0);
-	});
-
-	connect(m_doc->toolCtrl(), &tools::ToolController::toolCursorChanged, m_view, &widgets::CanvasView::setToolCursor);
-	m_view->setToolCursor(m_doc->toolCtrl()->activeToolCursor());
-	connect(m_doc->toolCtrl(), &tools::ToolController::toolCapabilitiesChanged, m_view, &widgets::CanvasView::setToolCapabilities);
-	m_view->setToolCapabilities(
-		m_doc->toolCtrl()->activeToolAllowColorPick(),
-		m_doc->toolCtrl()->activeToolAllowToolAdjust(),
-		m_doc->toolCtrl()->activeToolHandlesRightClick());
-
-	connect(m_view, &widgets::CanvasView::penDown, m_doc->toolCtrl(), &tools::ToolController::startDrawing);
-	connect(m_view, &widgets::CanvasView::penMove, m_doc->toolCtrl(), &tools::ToolController::continueDrawing);
-	connect(m_view, &widgets::CanvasView::penHover, m_doc->toolCtrl(), &tools::ToolController::hoverDrawing);
-	connect(m_view, &widgets::CanvasView::penUp, m_doc->toolCtrl(), &tools::ToolController::endDrawing);
-	connect(m_view, &widgets::CanvasView::quickAdjust, m_dockToolSettings, &docks::ToolSettings::quickAdjustCurrent1);
+	connect(
+		m_doc->toolCtrl(), &tools::ToolController::busyStateChanged, this,
+		&MainWindow::setBusy);
 
 	connect(m_dockLayers, &docks::LayerList::layerSelected, m_doc->toolCtrl(), &tools::ToolController::setActiveLayer);
 	connect(m_dockLayers, &docks::LayerList::layerSelected, m_dockTimeline, &docks::Timeline::setCurrentLayer);
@@ -462,19 +408,6 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	connect(
 		m_dockLayers, &docks::LayerList::layerSelected, m_chatbox,
 		&widgets::ChatBox::setCurrentLayer);
-
-	connect(m_canvasscene, &drawingboard::CanvasScene::canvasResized, m_doc->toolCtrl(), &tools::ToolController::offsetActiveTool);
-
-	connect(m_view, &widgets::CanvasView::reconnectRequested, this, [this]() {
-		joinSession(m_doc->client()->sessionUrl(true));
-		m_view->hideDisconnectedWarning();
-	});
-	connect(
-		m_view, &widgets::CanvasView::savePreResetStateRequested, this,
-		&MainWindow::savePreResetImageAs);
-	connect(
-		m_view, &widgets::CanvasView::savePreResetStateDismissed, this,
-		&MainWindow::discardPreResetImage);
 
 	// Network status changes
 	connect(m_doc, &Document::serverConnected, this, &MainWindow::onServerConnected);
@@ -504,7 +437,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	connect(&dpApp(), &DrawpileApp::setDockTitleBarsHidden, this, &MainWindow::setDockTitleBarsHidden);
 	connect(&dpApp(), &DrawpileApp::focusCanvas, this, [this] {
 		if(dpApp().settings().doubleTapAltToFocusCanvas()) {
-			m_view->setFocus();
+			m_canvasView->viewWidget()->setFocus();
 		}
 	});
 
@@ -559,8 +492,7 @@ MainWindow::~MainWindow()
 
 	// Clear this out first so there will be no weird signals emitted
 	// while the document is being torn down.
-	m_view->setScene(nullptr);
-	delete m_canvasscene;
+	m_canvasView->disposeScene();
 
 	// Make sure all child dialogs are closed
 	for(auto *child : findChildren<QDialog *>(QString(), Qt::FindDirectChildrenOnly)) {
@@ -583,7 +515,7 @@ void MainWindow::autoJoin(const QUrl &url)
 
 void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 {
-	m_canvasscene->initCanvas(canvas);
+	m_canvasView->setCanvas(canvas);
 
 	connect(canvas->aclState(), &canvas::AclState::localOpChanged, this, &MainWindow::onOperatorModeChange);
 	connect(canvas->aclState(), &canvas::AclState::localLockChanged, this, &MainWindow::updateLockWidget);
@@ -630,8 +562,8 @@ void MainWindow::onCanvasChanged(canvas::CanvasModel *canvas)
 	connect(m_dockOnionSkins, &docks::OnionSkinsDock::onionSkinsChanged, canvas->paintEngine(), &canvas::PaintEngine::setOnionSkins);
 	m_dockOnionSkins->triggerUpdate();
 
-	m_dockToolSettings->fillSettings()->setLayerList(m_canvasscene->model()->layerlist());
-	m_dockToolSettings->inspectorSettings()->setUserList(m_canvasscene->model()->userlist());
+	m_dockToolSettings->fillSettings()->setLayerList(canvas->layerlist());
+	m_dockToolSettings->inspectorSettings()->setUserList(canvas->userlist());
 
 	// Make sure the UI matches the default feature access level
 	m_currentdoctools->setEnabled(true);
@@ -869,7 +801,7 @@ void MainWindow::readSettings(bool windowpos)
 
 	settings.bindTabletEraserAction(this, [=](int action) {
 #ifdef __EMSCRIPTEN__
-		m_view->setEnableEraserOverride(
+		m_canvasView->setEnableEraserOverride(
 			action == int(tabletinput::EraserAction::Override));
 #else
 		if(action == int(tabletinput::EraserAction::Switch)) {
@@ -1169,11 +1101,11 @@ void MainWindow::sendUserInfo(int userId)
 		{"qt_version", QString::number(QT_VERSION_MAJOR)},
 		{"os", os},
 		{"tablet_input", tabletinput::current()},
-		{"tablet_mode", m_view->isTabletEnabled() ? "pressure" : "none"},
-		{"touch_mode", m_view->isTouchDrawEnabled() ? "draw"
-			: m_view->isTouchScrollEnabled() ? "scroll" : "none"},
+		{"tablet_mode", m_canvasView->isTabletEnabled() ? "pressure" : "none"},
+		{"touch_mode", m_canvasView->isTouchDrawEnabled() ? "draw"
+			: m_canvasView->isTouchScrollEnabled() ? "scroll" : "none"},
 		{"smoothing", m_doc->toolCtrl()->globalSmoothing()},
-		{"pressure_curve", m_view->pressureCurve().toString()},
+		{"pressure_curve", m_canvasView->pressureCurveAsString()},
 	};
 	net::Client *client = m_doc->client();
 	client->sendMessage(net::makeUserInfoMessage(
@@ -1693,7 +1625,7 @@ void MainWindow::onCanvasSaveStarted()
 	getAction("exportdocument")->setEnabled(false);
 #endif
 	m_viewStatusBar->showMessage(tr("Saving..."));
-	m_view->setSaveInProgress(true);
+	m_canvasView->setSaveInProgress(true);
 }
 
 void MainWindow::onCanvasSaved(const QString &errorMessage)
@@ -1707,7 +1639,7 @@ void MainWindow::onCanvasSaved(const QString &errorMessage)
 	getAction("savedocumentas")->setEnabled(true);
 	getAction("exportdocument")->setEnabled(true);
 #endif
-	m_view->setSaveInProgress(false);
+	m_canvasView->setSaveInProgress(false);
 
 	setWindowModified(m_doc->isDirty());
 	updateTitle();
@@ -1757,8 +1689,8 @@ void MainWindow::onCanvasDownloadError(const QString &errorMessage)
 
 void MainWindow::showResetNoticeDialog(const drawdance::CanvasState &canvasState)
 {
-	m_canvasscene->setCatchupProgress(0);
-	m_view->showResetNotice(
+	m_canvasView->setCatchupProgress(0, true);
+	m_canvasView->showResetNotice(
 		m_doc->isCompatibilityMode(), m_doc->isSaveInProgress());
 	if(m_preResetCanvasState.isNull()) {
 		m_preResetCanvasState = canvasState;
@@ -1772,26 +1704,24 @@ void MainWindow::updateCatchupProgress(int percent)
 		dpApp().notifications()->trigger(
 			this, notification::Event::Login, tr("Joined the session!"));
 	}
-	if(m_canvasscene->hasCatchup()) {
-		m_canvasscene->setCatchupProgress(percent);
-	}
+	m_canvasView->setCatchupProgress(percent, false);
 }
 
 void MainWindow::savePreResetImageAs()
 {
 	if(m_preResetCanvasState.isNull()) {
-		m_view->hideResetNotice();
+		m_canvasView->hideResetNotice();
 	} else {
 #ifdef __EMSCRIPTEN__
 		if(FileWrangler(this).downloadPreResetImage(m_doc, m_preResetCanvasState)) {
-			m_view->hideResetNotice();
+			m_canvasView->hideResetNotice();
 		}
 #else
 		QString result = FileWrangler(this).savePreResetImageAs(
 			m_doc, m_preResetCanvasState);
 		if(!result.isEmpty()) {
 			m_preResetCanvasState = drawdance::CanvasState::null();
-			m_view->hideResetNotice();
+			m_canvasView->hideResetNotice();
 			addRecentFile(result);
 		}
 #endif
@@ -1801,7 +1731,7 @@ void MainWindow::savePreResetImageAs()
 void MainWindow::discardPreResetImage()
 {
 	m_preResetCanvasState = drawdance::CanvasState::null();
-	m_view->hideResetNotice();
+	m_canvasView->hideResetNotice();
 }
 
 void MainWindow::showCompatibilityModeWarning()
@@ -2244,11 +2174,16 @@ void MainWindow::invite()
 void MainWindow::join()
 {
 	if(m_singleSession) {
-		joinSession(m_doc->client()->sessionUrl(true));
+		reconnect();
 	} else {
 		dialogs::StartDialog *dlg = showStartDialog();
 		dlg->showPage(dialogs::StartDialog::Entry::Join);
 	}
+}
+
+void MainWindow::reconnect()
+{
+	joinSession(m_doc->client()->sessionUrl(true));
 }
 
 void MainWindow::browse()
@@ -2389,7 +2324,7 @@ void MainWindow::terminateSession()
  */
 void MainWindow::joinSession(const QUrl& url, const QString &autoRecordFile)
 {
-	m_view->hideDisconnectedWarning();
+	m_canvasView->hideDisconnectedWarning();
 	if(!canReplace()) {
 		MainWindow *win = new MainWindow(false, m_singleSession);
 		emit windowReplacementFailed(win);
@@ -2405,12 +2340,9 @@ void MainWindow::joinSession(const QUrl& url, const QString &autoRecordFile)
 			net::LoginHandler::Mode::Join, url, this);
 	auto *dlg = new dialogs::LoginDialog(login, getStartDialogOrThis());
 	connect(m_doc, &Document::catchupProgress, dlg, &dialogs::LoginDialog::catchupProgress);
-	connect(m_doc, &Document::serverLoggedIn, dlg, [dlg,this](bool join) {
-		dlg->onLoginDone(join);
-		m_canvasscene->hideCanvas();
-	});
-	connect(dlg, &dialogs::LoginDialog::destroyed, m_canvasscene, &drawingboard::CanvasScene::showCanvas);
+	connect(m_doc, &Document::serverLoggedIn, dlg, &dialogs::LoginDialog::onLoginDone);
 	connect(dlg, &dialogs::LoginDialog::destroyed, this, &MainWindow::showCompatibilityModeWarning);
+	m_canvasView->connectLoginDialog(m_doc, dlg);
 
 	dlg->show();
 	m_doc->setRecordOnConnect(autoRecordFile);
@@ -2431,7 +2363,7 @@ void MainWindow::onServerConnected()
 	}
 
 	// Disable UI until login completes
-	m_view->setEnabled(false);
+	m_canvasView->viewWidget()->setEnabled(false);
 	setDrawingToolsEnabled(false);
 }
 
@@ -2460,7 +2392,7 @@ void MainWindow::onServerDisconnected(const QString &message, const QString &err
 	m_sessionSettings->close();
 
 	// Re-enable UI
-	m_view->setEnabled(true);
+	m_canvasView->viewWidget()->setEnabled(true);
 	setDrawingToolsEnabled(true);
 
 	// Display login error if not yet logged in
@@ -2506,7 +2438,7 @@ void MainWindow::onServerDisconnected(const QString &message, const QString &err
 		QString notif = message.isEmpty()
 				? tr("You've been disconnected from the session.")
 				: tr("Disconnected: %1").arg(message);
-		m_view->showDisconnectedWarning(notif, m_singleSession);
+		m_canvasView->showDisconnectedWarning(notif, m_singleSession);
 		if(m_lastDisconnectNotificationTimer.hasExpired()) {
 			dpApp().notifications()->trigger(
 				this, notification::Event::Disconnect, notif);
@@ -2533,8 +2465,8 @@ void MainWindow::onServerLogin(bool join, const QString &joinPassword)
 	m_netstatus->setSecurityLevel(
 		client->securityLevel(), client->hostCertificate(),
 		client->isSelfSignedCertificate());
-	m_view->setEnabled(true);
-	m_view->hideDisconnectedWarning();
+	m_canvasView->viewWidget()->setEnabled(true);
+	m_canvasView->hideDisconnectedWarning();
 	m_sessionSettings->setPersistenceEnabled(client->serverSuppotsPersistence());
 	m_sessionSettings->setBanImpExEnabled(
 		client->isModerator(), client->serverSupportsCryptBanImpEx(),
@@ -2563,23 +2495,23 @@ void MainWindow::onCompatibilityModeChanged(bool compatibilityMode)
 
 void MainWindow::updateLockWidget()
 {
-	using Lock = widgets::CanvasView::Lock;
-	QFlags<Lock> lock = Lock::None;
+	using Reason = view::Lock::Reason;
+	QFlags<Reason> reasons = Reason::None;
 	canvas::CanvasModel *canvas = m_doc->canvas();
 	canvas::AclState *aclState = canvas ? canvas->aclState() : nullptr;
 
 	if(m_doc->isSessionOutOfSpace()) {
-		lock.setFlag(Lock::OutOfSpace);
+		reasons.setFlag(Reason::OutOfSpace);
 	}
 
 	if(aclState && aclState->isResetLocked()) {
-		lock.setFlag(Lock::Reset);
+		reasons.setFlag(Reason::Reset);
 	}
 
 	bool sessionLocked = aclState && aclState->isSessionLocked();
 	getAction("locksession")->setChecked(sessionLocked);
 	if(sessionLocked) {
-		lock.setFlag(Lock::Canvas);
+		reasons.setFlag(Reason::Canvas);
 	}
 
 	if(!m_notificationsMuted) {
@@ -2593,19 +2525,19 @@ void MainWindow::updateLockWidget()
 	}
 	m_wasSessionLocked = sessionLocked;
 
-	lock |= m_dockLayers->currentLayerLock();
+	reasons |= m_dockLayers->currentLayerLock();
 
 	if(aclState && aclState->isLocked(aclState->localUserId())) {
-		lock.setFlag(Lock::User);
+		reasons.setFlag(Reason::User);
 	}
 
 	if(m_dockToolSettings->isCurrentToolLocked()) {
-		lock.setFlag(Lock::Tool);
+		reasons.setFlag(Reason::Tool);
 	}
 
-	m_view->setLock(lock);
-	m_lockstatus->setToolTip(m_view->lockDescription(false));
-	m_lockstatus->setPixmap(lock ? QIcon::fromTheme("object-locked").pixmap(16, 16) : QPixmap{});
+	m_viewLock->setReasons(reasons);
+	m_lockstatus->setToolTip(m_viewLock->description());
+	m_lockstatus->setPixmap(reasons ? QIcon::fromTheme("object-locked").pixmap(16, 16) : QPixmap{});
 }
 
 void MainWindow::onNsfmChanged(bool nsfm)
@@ -2709,7 +2641,7 @@ void MainWindow::setShowAnnotations(bool show)
 {
 	QAction *annotationtool = getAction("tooltext");
 	annotationtool->setEnabled(show);
-	m_canvasscene->showAnnotations(show);
+	m_canvasView->setShowAnnotations(show);
 	if(!show) {
 		if(annotationtool->isChecked())
 			getAction("toolbrush")->trigger();
@@ -2720,7 +2652,7 @@ void MainWindow::setShowLaserTrails(bool show)
 {
 	QAction *lasertool = getAction("toollaser");
 	lasertool->setEnabled(show);
-	m_canvasscene->showLaserTrails(show);
+	m_canvasView->setShowLaserTrails(show);
 	if(!show) {
 		if(lasertool->isChecked())
 			getAction("toolbrush")->trigger();
@@ -2796,7 +2728,7 @@ void MainWindow::setDocksHidden(bool hidden)
 	m_viewStatusBar->setHidden(hidden);
 
 	QPoint centerPosDelta = centralWidget()->pos() - centerPosBefore;
-	m_view->scrollBy(centerPosDelta.x(), centerPosDelta.y());
+	emit viewShifted(centerPosDelta.x(), centerPosDelta.y());
 	m_dockToggles->setDisabled(hidden);
 }
 
@@ -2814,7 +2746,7 @@ void MainWindow::setDockTitleBarsHidden(bool hidden)
 	}
 }
 
-void MainWindow::handleToggleAction(drawingboard::ToggleItem::Action action)
+void MainWindow::handleToggleAction(int action)
 {
 	using Action = drawingboard::ToggleItem::Action;
 	utils::ScopedUpdateDisabler disabler{this};
@@ -2825,24 +2757,24 @@ void MainWindow::handleToggleAction(drawingboard::ToggleItem::Action action)
 
 	m_viewStatusBar->hide();
 
-	QPair<QWidget *, Action> dockActions[] = {
-		{m_dockToolSettings, Action::Left},
-		{m_dockBrushPalette, Action::Left},
-		{m_toolBarDraw, Action::Left},
-		{m_dockTimeline, Action::Top},
-		{m_dockOnionSkins, Action::Top},
-		{m_dockNavigator, Action::None},
-		{m_dockColorSpinner, Action::Right},
-		{m_dockColorSliders, Action::Right},
-		{m_dockColorPalette, Action::Right},
-		{m_dockLayers, Action::Right},
-		{m_chatbox, Action::Bottom},
+	QPair<QWidget *, int> dockActions[] = {
+		{m_dockToolSettings, int(Action::Left)},
+		{m_dockBrushPalette, int(Action::Left)},
+		{m_toolBarDraw, int(Action::Left)},
+		{m_dockTimeline, int(Action::Top)},
+		{m_dockOnionSkins, int(Action::Top)},
+		{m_dockNavigator, int(Action::None)},
+		{m_dockColorSpinner, int(Action::Right)},
+		{m_dockColorSliders, int(Action::Right)},
+		{m_dockColorPalette, int(Action::Right)},
+		{m_dockLayers, int(Action::Right)},
+		{m_chatbox, int(Action::Bottom)},
 	};
 	QVector<QWidget *> docksToShow;
 
-	for(const QPair<QWidget *, Action> &p : dockActions) {
+	for(const QPair<QWidget *, int> &p : dockActions) {
 		QWidget *dock = p.first;
-		bool isActivated = action != Action::None && action == p.second;
+		bool isActivated = action != int(Action::None) && action == p.second;
 		bool isVisible = dock->isVisible();
 		dock->hide();
 		bool visible = isActivated ? !isVisible : false;
@@ -2874,6 +2806,11 @@ void MainWindow::handleToggleAction(drawingboard::ToggleItem::Action action)
 void MainWindow::setNotificationsMuted(bool muted)
 {
 	m_notificationsMuted = muted;
+}
+
+void MainWindow::setBusy(bool busy)
+{
+	setDrawingToolsEnabled(!busy);
 }
 
 /**
@@ -2909,14 +2846,14 @@ void MainWindow::toolChanged(tools::Tool::Type tool)
 	toolaction->setChecked(true);
 
 	// When using the annotation tool, highlight all text boxes
-	m_canvasscene->showAnnotationBorders(tool==tools::Tool::ANNOTATION);
+	m_canvasView->setShowAnnotationBorders(tool==tools::Tool::ANNOTATION);
 
 	// Show own user marker if laser pointer is selected.
 	bool isLaserPointerSelected = tool == tools::Tool::LASERPOINTER;
-	m_canvasscene->setShowOwnUserMarker(isLaserPointerSelected);
+	m_canvasView->setShowOwnUserMarker(isLaserPointerSelected);
 
 	// Send pointer updates when using the laser pointer
-	m_view->setPointerTracking(
+	m_canvasView->setPointerTracking(
 		isLaserPointerSelected &&
 		m_dockToolSettings->laserPointerSettings()->pointerTracking());
 
@@ -3051,7 +2988,7 @@ void MainWindow::paste()
 		}
 
 		// Paste-in-place if we're the source (same process, same document)
-		if(pasteAtPos && m_view->isPointVisible(pastepos))
+		if(pasteAtPos && m_canvasView->isPointVisible(pastepos))
 			pasteImage(mimeData->imageData().value<QImage>(), &pastepos, true);
 		else
 			pasteImage(mimeData->imageData().value<QImage>());
@@ -3088,25 +3025,32 @@ void MainWindow::pasteFilePath(const QString &path)
 	}
 }
 
-void MainWindow::pasteImage(const QImage &image, const QPoint *point, bool force)
+void MainWindow::pasteImage(
+	const QImage &image, const QPoint *point, bool force)
 {
-	if(!m_canvasscene->model()->aclState()->canUseFeature(DP_FEATURE_PUT_IMAGE))
-		return;
-
-	if(m_dockToolSettings->currentTool() != tools::Tool::SELECTION && m_dockToolSettings->currentTool() != tools::Tool::POLYGONSELECTION) {
-		int currentTool = m_dockToolSettings->currentTool();
-		getAction("toolselectrect")->trigger();
-		m_lastToolBeforePaste = currentTool;
+	canvas::CanvasModel *canvas = m_canvasView->canvas();
+	if(canvas && canvas->aclState()->canUseFeature(DP_FEATURE_PUT_IMAGE)) {
+		if(m_dockToolSettings->currentTool() != tools::Tool::SELECTION &&
+		   m_dockToolSettings->currentTool() != tools::Tool::POLYGONSELECTION) {
+			int currentTool = m_dockToolSettings->currentTool();
+			getAction("toolselectrect")->trigger();
+			m_lastToolBeforePaste = currentTool;
+		}
+		m_doc->pasteImage(
+			image, point ? *point : m_canvasView->viewCenterPoint(), force);
 	}
+}
 
-	m_doc->pasteImage(image, point ? *point : m_view->viewCenterPoint(), force);
+void MainWindow::dropImage(const QImage &image)
+{
+	pasteImage(image);
 }
 
 void MainWindow::dropUrl(const QUrl &url)
 {
 	if(url.isLocalFile()) {
 		QString path = url.toLocalFile();
-		if(m_canvasscene->hasImage()) {
+		if(m_canvasView->canvas()) {
 			pasteFilePath(path);
 		} else {
 			openPath(path);
@@ -4005,7 +3949,7 @@ void MainWindow::setupActions()
 	connect(m_chatbox, &widgets::ChatBox::expandPlease, toggleChat, &QAction::trigger);
 	connect(toggleChat, &QAction::triggered, this, [this](bool show) {
 		if(dpApp().smallScreenMode()) {
-			handleToggleAction(drawingboard::ToggleItem::Action::Bottom);
+			handleToggleAction(int(drawingboard::ToggleItem::Action::Bottom));
 		} else {
 			QList<int> sizes;
 			if(show) {
@@ -4031,41 +3975,18 @@ void MainWindow::setupActions()
 	});
 	connect(m_chatbox, &widgets::ChatBox::muteChanged, this, &MainWindow::setNotificationsMuted);
 
-	connect(moveleft, &QAction::triggered, m_view, [this] {
-		m_view->moveStep(widgets::CanvasView::Direction::Left);
-	});
-	connect(moveright, &QAction::triggered, m_view, [this] {
-		m_view->moveStep(widgets::CanvasView::Direction::Right);
-	});
-	connect(moveup, &QAction::triggered, m_view, [this] {
-		m_view->moveStep(widgets::CanvasView::Direction::Up);
-	});
-	connect(movedown, &QAction::triggered, m_view, [this] {
-		m_view->moveStep(widgets::CanvasView::Direction::Down);
-	});
-	connect(zoomin, &QAction::triggered, m_view, &widgets::CanvasView::zoomin);
-	connect(zoomout, &QAction::triggered, m_view, &widgets::CanvasView::zoomout);
-	connect(zoomorig, &QAction::triggered, this, [this]() { m_view->setZoom(1.0); });
-	connect(zoomfit, &QAction::triggered, m_view, &widgets::CanvasView::zoomToFit);
-	connect(zoomfitwidth, &QAction::triggered, m_view, &widgets::CanvasView::zoomToFitWidth);
-	connect(zoomfitheight, &QAction::triggered, m_view, &widgets::CanvasView::zoomToFitHeight);
-	connect(rotateorig, &QAction::triggered, this, [this]() { m_view->setRotation(0); });
-	connect(rotatecw, &QAction::triggered, this, [this]() { m_view->setRotation(m_view->rotation() + 5); });
-	connect(rotateccw, &QAction::triggered, this, [this]() { m_view->setRotation(m_view->rotation() - 5); });
-	connect(viewflip, SIGNAL(triggered(bool)), m_view, SLOT(setViewFlip(bool)));
-	connect(viewmirror, SIGNAL(triggered(bool)), m_view, SLOT(setViewMirror(bool)));
+	m_canvasView->connectActions(
+		{moveleft, moveright, moveup, movedown, zoomin, zoomout, zoomorig,
+		 zoomfit, zoomfitwidth, zoomfitheight, rotateorig, rotatecw, rotateccw,
+		 viewflip, viewmirror, showgrid, showusermarkers, showusernames,
+		 showuserlayers, showuseravatars});
 
 #ifndef SINGLE_MAIN_WINDOW
 	connect(fullscreen, &QAction::triggered, this, &MainWindow::toggleFullscreen);
 #endif
 
 	connect(showannotations, &QAction::toggled, this, &MainWindow::setShowAnnotations);
-	connect(showusermarkers, &QAction::toggled, m_canvasscene, &drawingboard::CanvasScene::showUserMarkers);
-	connect(showusernames, &QAction::toggled, m_canvasscene, &drawingboard::CanvasScene::showUserNames);
-	connect(showuserlayers, &QAction::toggled, m_canvasscene, &drawingboard::CanvasScene::showUserLayers);
-	connect(showuseravatars, &QAction::toggled, m_canvasscene, &drawingboard::CanvasScene::showUserAvatars);
 	connect(showlasers, &QAction::toggled, this, &MainWindow::setShowLaserTrails);
-	connect(showgrid, &QAction::toggled, m_view, &widgets::CanvasView::setPixelGrid);
 
 	m_viewstatus->setActions(viewflip, viewmirror, rotateorig, {zoomorig, zoomfit, zoomfitwidth, zoomfitheight});
 
@@ -4649,7 +4570,7 @@ void MainWindow::setupActions()
 
 	QAction *focusCanvas = makeAction("focuscanvas", tr("Focus canvas")).shortcut(CTRL_KEY | Qt::Key_Tab);
 	connect(focusCanvas, &QAction::triggered, this, [this]{
-		m_view->setFocus();
+		m_canvasView->viewWidget()->setFocus();
 	});
 
 	const QList<QAction *> globalDockActions = {sideTabDocks, hideDocks, hideDockTitleBars};
@@ -4683,8 +4604,7 @@ void MainWindow::setupActions()
 void MainWindow::createDocks()
 {
 	Q_ASSERT(m_doc);
-	Q_ASSERT(m_view);
-	Q_ASSERT(m_canvasscene);
+	Q_ASSERT(m_canvasView);
 
 	setDockNestingEnabled(true);
 
@@ -4693,8 +4613,6 @@ void MainWindow::createDocks()
 	m_dockToolSettings->setObjectName("ToolSettings");
 	m_dockToolSettings->setAllowedAreas(Qt::AllDockWidgetAreas);
 	addDockWidget(Qt::LeftDockWidgetArea, m_dockToolSettings);
-	m_dockToolSettings->selectionSettings()->setView(m_view);
-	m_dockToolSettings->annotationSettings()->setScene(m_canvasscene);
 
 	// Create brush palette
 	m_dockBrushPalette = new docks::BrushPalette(this);

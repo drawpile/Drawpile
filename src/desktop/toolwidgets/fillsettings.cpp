@@ -224,7 +224,7 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 	connect(
 		m_ui->size, QOverload<int>::of(&QSpinBox::valueChanged), this,
 		[this](int size) {
-			emit pixelSizeChanged(size * 2);
+			emit pixelSizeChanged(size * 2 + 1);
 		});
 	connect(
 		m_ui->tolerance, QOverload<int>::of(&QSpinBox::valueChanged), this,
@@ -338,7 +338,7 @@ void FillSettings::setForeground(const QColor &color)
 
 int FillSettings::getSize() const
 {
-	return m_ui->size->value() * 2;
+	return m_ui->size->value() * 2 + 1;
 }
 
 void FillSettings::restoreToolSettings(const ToolProperties &cfg)

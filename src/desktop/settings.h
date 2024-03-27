@@ -31,6 +31,13 @@ Q_NAMESPACE
 namespace settings {
 Q_NAMESPACE
 
+enum class CanvasImplementation : int {
+	Default = 0,
+	GraphicsView = 1,
+	OpenGl = 2,
+};
+Q_ENUM_NS(CanvasImplementation)
+
 enum class InterfaceMode : int {
 	Unknown,
 	Desktop,

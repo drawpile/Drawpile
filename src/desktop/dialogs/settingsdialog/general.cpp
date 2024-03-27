@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "desktop/dialogs/settingsdialog/general.h"
 #include "cmake-config/config.h"
+#include "desktop/main.h"
 #include "desktop/settings.h"
 #include "desktop/utils/widgetutils.h"
 #include "libshared/util/qtcompat.h"
@@ -127,10 +128,46 @@ void General::initLogging(
 void General::initPerformance(
 	desktop::settings::Settings &settings, QFormLayout *form)
 {
+	QComboBox *canvasImplementation = new QComboBox;
+	canvasImplementation->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+
+	using desktop::settings::CanvasImplementation;
+	QString graphicsViewName = tr("Qt Graphics View");
+	QString openGlName = tr("OpenGL (experimental)");
+	QPair<QString, int> implementations[] = {
+		{tr("Default"), int(CanvasImplementation::Default)},
+		{graphicsViewName, int(CanvasImplementation::GraphicsView)},
+		{openGlName, int(CanvasImplementation::OpenGl)},
+	};
+	for(const auto &[name, value] : implementations) {
+		canvasImplementation->addItem(name, QVariant::fromValue(value));
+	}
+
+	settings.bindRenderCanvas(canvasImplementation, Qt::UserRole);
+	form->addRow(tr("Renderer:"), canvasImplementation);
+
+	QString currentName;
+	switch(dpApp().canvasImplementation()) {
+	case int(CanvasImplementation::GraphicsView):
+		currentName = graphicsViewName;
+		break;
+	case int(CanvasImplementation::OpenGl):
+		currentName = openGlName;
+		break;
+	default:
+		//: Refers to an unknown canvas renderer, should never happen.
+		currentName = tr("Unknown", "CanvasImplementation");
+		break;
+	}
+	form->addRow(
+		nullptr, utils::formNote(tr("Current renderer: %1. Changes apply after "
+									"you restart Drawpile.")
+									 .arg(currentName)));
+
 	auto *renderSmooth =
 		new QCheckBox(tr("Interpolate when view is zoomed or rotated"));
 	settings.bindRenderSmooth(renderSmooth);
-	form->addRow(tr("Canvas view:"), renderSmooth);
+	form->addRow(nullptr, renderSmooth);
 
 	auto *renderUpdateFull =
 		new QCheckBox(tr("Prevent jitter at certain zoom and rotation levels"));

@@ -46,7 +46,7 @@ private:
 	static constexpr int AUTO_DISMISS_SECONDS = 10;
 
 	void updateCloseButtonText();
-	void setColor(const QColor &color, const QColor &textColor);
+	void setColor(const QColor &color, const QString &textColor);
 	void updateSize(const QSize &parentSize);
 
 	QColor m_color;

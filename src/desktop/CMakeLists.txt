@@ -1,4 +1,7 @@
-find_package(${QT_PACKAGE_NAME} REQUIRED COMPONENTS Gui Sql Svg Widgets Multimedia)
+find_package(${QT_PACKAGE_NAME} REQUIRED COMPONENTS Gui OpenGL Sql Svg Widgets Multimedia)
+if(QT_VERSION VERSION_GREATER_EQUAL 6)
+	find_package(${QT_PACKAGE_NAME} REQUIRED COMPONENTS OpenGLWidgets)
+endif()
 find_package(QtColorWidgets QUIET)
 find_package(${QT_PACKAGE_NAME}Keychain QUIET)
 
@@ -227,6 +230,8 @@ target_sources(drawpile PRIVATE
 	scene/noticeitem.h
 	scene/outlineitem.cpp
 	scene/outlineitem.h
+	scene/scenewrapper.cpp
+	scene/scenewrapper.h
 	scene/selectionitem.cpp
 	scene/selectionitem.h
 	scene/toggleitem.cpp
@@ -294,7 +299,21 @@ target_sources(drawpile PRIVATE
 	utils/recents.h
 	utils/widgetutils.cpp
 	utils/widgetutils.h
+	view/canvascontroller.cpp
+	view/canvascontroller.h
+	view/canvasscene.cpp
+	view/canvasscene.h
+	view/canvasview.cpp
+	view/canvasview.h
+	view/canvaswrapper.cpp
+	view/canvaswrapper.h
 	view/cursor.h
+	view/glcanvas.cpp
+	view/glcanvas.h
+	view/lock.cpp
+	view/lock.h
+	view/viewwrapper.cpp
+	view/viewwrapper.h
 	widgets/brushpreview.cpp
 	widgets/brushpreview.h
 	widgets/canvasshortcutedit.cpp
@@ -370,6 +389,7 @@ target_link_libraries(drawpile PRIVATE
 	drawdance
 	${QT_PACKAGE_NAME}::Core
 	${QT_PACKAGE_NAME}::Gui
+	${QT_PACKAGE_NAME}::OpenGL
 	# Svg and Sql are needed only indirectly and are linked transitively, but
 	# Android and Emscripten need them here to load their plugins properly.
 	${QT_PACKAGE_NAME}::Sql
@@ -377,6 +397,10 @@ target_link_libraries(drawpile PRIVATE
 	${QT_PACKAGE_NAME}::Widgets
 	${QT_PACKAGE_NAME}::Multimedia
 )
+
+if(QT_VERSION VERSION_GREATER_EQUAL 6)
+	target_link_libraries(drawpile PRIVATE ${QT_PACKAGE_NAME}::OpenGLWidgets)
+endif()
 
 if(WIN32)
 	target_sources(drawpile PRIVATE
@@ -460,6 +484,7 @@ if(ANDROID)
 	if(TARGET ${QT_PACKAGE_NAME}::AndroidExtras)
 		target_link_libraries(drawpile PRIVATE ${QT_PACKAGE_NAME}::AndroidExtras)
 	endif()
+	target_link_libraries(drawpile PRIVATE GLESv2)
 elseif(EMSCRIPTEN)
 	target_compile_definitions(drawpile PRIVATE
 		HAVE_CHAT_LINE_EDIT_MOBILE=1

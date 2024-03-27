@@ -864,34 +864,34 @@ QModelIndex LayerList::currentSelection() const
 	return QModelIndex();
 }
 
-QFlags<widgets::CanvasView::Lock> LayerList::currentLayerLock() const
+QFlags<view::Lock::Reason> LayerList::currentLayerLock() const
 {
-	using Lock = widgets::CanvasView::Lock;
-	QFlags<Lock> lock = Lock::None;
+	using Reason = view::Lock::Reason;
+	QFlags<Reason> reasons = Reason::None;
 	if(m_canvas) {
 		QModelIndex idx = currentSelection();
 		if(idx.isValid()) {
 			const canvas::LayerListItem &item =
 				idx.data().value<canvas::LayerListItem>();
 			if(idx.data(canvas::LayerListModel::IsHiddenInTreeRole).toBool()) {
-				lock.setFlag(Lock::LayerHidden);
+				reasons.setFlag(Reason::LayerHidden);
 			}
 			if(item.group) {
-				lock.setFlag(Lock::LayerGroup);
+				reasons.setFlag(Reason::LayerGroup);
 			}
 			if(idx.data(canvas::LayerListModel::IsLockedRole).toBool()) {
-				lock.setFlag(Lock::LayerLocked);
+				reasons.setFlag(Reason::LayerLocked);
 			}
 			if(idx.data(canvas::LayerListModel::IsHiddenInFrameRole).toBool()) {
-				lock.setFlag(Lock::LayerHiddenInFrame);
+				reasons.setFlag(Reason::LayerHiddenInFrame);
 			}
 			if(idx.data(canvas::LayerListModel::IsCensoredInTreeRole)
 				   .toBool()) {
-				lock.setFlag(Lock::LayerCensored);
+				reasons.setFlag(Reason::LayerCensored);
 			}
 		}
 	}
-	return lock;
+	return reasons;
 }
 
 void LayerList::selectionChanged(const QItemSelection &selected)
