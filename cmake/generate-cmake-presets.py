@@ -22,7 +22,6 @@ configs = {
         "+name": "windows",
         "+displayName": "Windows",
         "CMAKE_INSTALL_PREFIX": "install",
-        "CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreaded$<$<CONFIG:Debug>:Debug>",
         "CMAKE_TOOLCHAIN_FILE": "C:/vcpkg/scripts/buildsystems/vcpkg.cmake",
         "X_VCPKG_APPLOCAL_DEPS_INSTALL": "ON",
     },
