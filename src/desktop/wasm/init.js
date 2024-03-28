@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+import { UAParser } from "ua-parser-js";
+
 (function () {
   "use strict";
   const cachebuster = document.documentElement.dataset.cachebuster;
@@ -370,6 +372,23 @@
   }
   // SPDX-SnippetEnd
 
+  // Apple pencils have ludicrously low pressure, meaning that with a normal,
+  // linear pressure curve, lines will come out almost invisibly thin unless the
+  // user presses down with enough force to pierce their pen through the screen.
+  // We can't actually determine if the user has such a pen, so we guess.
+  window.drawpileHasLowPressurePen = function () {
+    try {
+      const ua = new UAParser();
+      const device = ua.getDevice?.model || "";
+      const ios =
+        device.indexOf("iPad") !== -1 || device.indexOf("iPhone") !== -1;
+      return ios ? 1 : 0;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+  };
+
   function getSizeFromDocument(key) {
     const value = document.documentElement.dataset[key];
     if (value) {
@@ -634,12 +653,6 @@
           "Keys may get stuck in a held-down state until pressed again.",
         ]),
         tag("li", ["Firefox: Browser steals Ctrl+Z for itself."]),
-        tag("li", [
-          "iOS: The Apple Pencil has extremely weak pressure compared to " +
-            "other tablets, but Drawpile doesn't adjust for it automatically " +
-            "yet. If you have to press too hard, you can adjust it under Edit" +
-            " → Preferences → Input → Global pressure curve.",
-        ]),
       ]),
     );
     startup.appendChild(

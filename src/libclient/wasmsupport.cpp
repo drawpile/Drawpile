@@ -12,6 +12,12 @@ static net::LoginHandler *currentLoginHandler;
 
 namespace browser {
 
+bool hasLowPressurePen()
+{
+	int lowPressurePen = EM_ASM_INT(return window.drawpileHasLowPressurePen(););
+	return lowPressurePen != 0;
+}
+
 void showLoginModal(net::LoginHandler *loginHandler)
 {
 	cancelLoginModal(currentLoginHandler);

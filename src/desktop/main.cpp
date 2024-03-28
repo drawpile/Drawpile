@@ -41,6 +41,8 @@
 #	include "desktop/bundled/kis_tablet/kis_tablet_support_win8.h"
 #elif defined(Q_OS_ANDROID)
 #	include "libshared/util/androidutils.h"
+#elif defined(__EMSCRIPTEN__)
+#	include "libclient/wasmsupport.h"
 #endif
 
 DrawpileApp::DrawpileApp(int &argc, char **argv)
@@ -769,6 +771,13 @@ int main(int argc, char *argv[])
 	// Don't compress input events, that causes jaggy lines on slow devices.
 	QApplication::setAttribute(Qt::AA_CompressHighFrequencyEvents, false);
 	QApplication::setAttribute(Qt::AA_CompressTabletEvents, false);
+
+#ifdef __EMSCRIPTEN__
+	if(browser::hasLowPressurePen()) {
+		desktop::settings::globalPressureCurveDefault =
+			QStringLiteral("0,0;0.48,0.96;0.5,1;1,1;");
+	}
+#endif
 
 	int vsync = applyRenderSettings(argc, argv);
 	// OpenGL rendering format. 8 bit color, no alpha, no depth. Stencil buffer

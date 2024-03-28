@@ -6,6 +6,10 @@
 namespace desktop {
 namespace settings {
 
+#ifdef __EMSCRIPTEN__
+QString globalPressureCurveDefault = QStringLiteral("0,0;1,1;");
+#endif
+
 Settings::Settings(QObject *parent)
 	: libclient::settings::Settings::Settings(parent)
 {

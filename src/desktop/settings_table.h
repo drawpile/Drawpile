@@ -4,6 +4,14 @@
 
 #define DEBOUNCE_DELAY_MS_DEFAULT 250
 
+#ifndef GLOBAL_PRESSURE_CURVE_DEFAULT
+#	ifdef __EMSCRIPTEN__
+#		define GLOBAL_PRESSURE_CURVE_DEFAULT desktop::settings::globalPressureCurveDefault
+#	else
+#		define GLOBAL_PRESSURE_CURVE_DEFAULT QString("0,0;1,1;")
+#endif
+#endif
+
 #ifndef KINETIC_SCROLL_GESTURE_DEFAULT
 #	ifdef Q_OS_ANDROID
 #		define KINETIC_SCROLL_GESTURE_DEFAULT KineticScrollGesture::LeftClick
@@ -76,7 +84,7 @@ SETTING(filterNsfm                , FilterNsfm                , "history/filtern
 SETTING(flipbookWindow            , FlipbookWindow            , "flipbook/window"                       , QRect())
 SETTING(overrideFontSize          , OverrideFontSize          , "settings/overridefontsize"             , OVERRIDE_FONT_SIZE_DEFAULT)
 SETTING(fontSize                  , FontSize                  , "settings/fontSize"                     , -1)
-SETTING(globalPressureCurve       , GlobalPressureCurve       , "settings/input/globalcurve"            , QString("0,0;1,1;"))
+SETTING(globalPressureCurve       , GlobalPressureCurve       , "settings/input/globalcurve"            , GLOBAL_PRESSURE_CURVE_DEFAULT)
 SETTING(hostEnableAdvanced        , HostEnableAdvanced        , "history/hostenableadvanced"            , false)
 SETTING(ignoreCarrierGradeNat     , IgnoreCarrierGradeNat     , "history/cgnalert"                      , false)
 SETTING(ignoreZeroPressureInputs  , IgnoreZeroPressureInputs  , "settings/ignorezeropressureinputs"     , true)

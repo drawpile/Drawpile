@@ -31,6 +31,10 @@ Q_NAMESPACE
 namespace settings {
 Q_NAMESPACE
 
+#ifdef __EMSCRIPTEN__
+extern QString globalPressureCurveDefault;
+#endif
+
 enum class CanvasImplementation : int {
 	Default = 0,
 	GraphicsView = 1,
