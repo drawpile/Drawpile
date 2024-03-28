@@ -543,6 +543,13 @@ static std::tuple<QStringList, QString, bool> initApp(DrawpileApp &app)
 		"portable-data-dir", "Override settings directory.", "path");
 	parser.addOption(portableDataDir);
 
+	// --opengl
+	QCommandLineOption opengl(
+		"opengl",
+		"Set OpenGL implementation, overrides QT_OPENGL environment variable",
+		"impl");
+	parser.addOption(opengl);
+
 #ifdef Q_OS_WIN
 	// --copy-legacy-settings
 	QCommandLineOption copyLegacySettings(
@@ -717,27 +724,33 @@ static int applyRenderSettingsFrom(const QString &path)
 static int applyRenderSettings(int argc, char **argv)
 {
 	QString fileName = QStringLiteral("scaling.ini");
+	bool applied = false;
+	int vsync = 0;
 	for(int i = 1; i < argc - 1; ++i) {
-		if(strcmp(argv[i], "--portable-data-dir") == 0) {
-			QString path = QDir(
-							   QString::fromUtf8(argv[i + 1]) +
-							   QStringLiteral("/settings"))
-							   .absoluteFilePath(fileName);
-			return applyRenderSettingsFrom(path);
+		if(!applied && strcmp(argv[i], "--portable-data-dir") == 0) {
+			QString path =
+				QDir(QString::fromUtf8(argv[++i]) + QStringLiteral("/settings"))
+					.absoluteFilePath(fileName);
+			vsync = applyRenderSettingsFrom(path);
+			applied = true;
+		} else if(strcmp(argv[i], "--opengl") == 0) {
+			qputenv("QT_OPENGL", argv[++i]);
 		}
 	}
-	// Can't use AppConfigLocation because the application name is not
-	// initialized yet and doing so at this point corrupts the main settings
-	// file. QSettings is terrible and we should really do away with it.
-	return applyRenderSettingsFrom(
-		QStandardPaths::writableLocation(
-			QStandardPaths::GenericConfigLocation) +
-		QStringLiteral("/drawpile/") + fileName);
+	if(!applied) {
+		// Can't use AppConfigLocation because the application name is not
+		// initialized yet and doing so at this point corrupts the main settings
+		// file. QSettings is terrible and we should really do away with it.
+		vsync = applyRenderSettingsFrom(
+			QStandardPaths::writableLocation(
+				QStandardPaths::GenericConfigLocation) +
+			QStringLiteral("/drawpile/") + fileName);
+	}
+	return vsync;
 }
 
 int main(int argc, char *argv[])
 {
-
 #ifndef HAVE_QT_COMPAT_DEFAULT_HIGHDPI_PIXMAPS
 	// Set attributes that must be set before QApplication is constructed
 	QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);

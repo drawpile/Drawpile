@@ -117,6 +117,8 @@ QString SystemInfoDialog::getSystemInfo() const
 						: QStringLiteral("disabled"));
 	info += QStringLiteral("Vertical sync setting: %1\n")
 				.arg(scalingSettings->value(QStringLiteral("vsync")).toInt());
+	info += QStringLiteral("QT_OPENGL: \"%1\"\n")
+				.arg(QString::fromUtf8(qgetenv("QT_OPENGL")));
 	info += QStringLiteral("QT_SCALE_FACTOR: \"%1\"\n")
 				.arg(QString::fromUtf8(qgetenv("QT_SCALE_FACTOR")));
 	info += QStringLiteral("DRAWPILE_VSYNC: \"%1\"\n")
