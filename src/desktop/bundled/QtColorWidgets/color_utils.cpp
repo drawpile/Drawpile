@@ -92,7 +92,9 @@ QColor color_widgets::utils::get_screen_color(const QPoint &global_pos)
     int screenNum = QApplication::desktop()->screenNumber(global_pos);
     QScreen *screen = QApplication::screens().at(screenNum);
 #endif
-
+    if(!screen) {
+        return QColor();
+    }
 
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     WId wid = QApplication::desktop()->winId();
