@@ -22,6 +22,8 @@ public:
 	void handleResize(QResizeEvent *event) override;
 	void handlePaint(QPaintEvent *event) override;
 
+	static const QStringList &getSystemInfo();
+
 protected:
 	void initializeGL() override;
 	void paintGL() override;
@@ -34,6 +36,8 @@ private:
 	void onControllerCanvasSizeChanged();
 	void onControllerTransformChanged();
 	void onControllerTileCacheDirtyCheckNeeded();
+
+	static QStringList systemInfo;
 
 	struct Private;
 	Private *d;

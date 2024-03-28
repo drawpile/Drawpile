@@ -124,6 +124,7 @@ static constexpr auto CTRL_KEY = Qt::CTRL;
 #include "desktop/dialogs/userinfodialog.h"
 #include "desktop/dialogs/startdialog.h"
 #include "desktop/dialogs/animationimportdialog.h"
+#include "desktop/dialogs/systeminfodialog.h"
 #include "libclient/import/loadresult.h"
 #include <functional>
 
@@ -1904,6 +1905,22 @@ void MainWindow::setRecorderStatus(bool on)
 		}
 	}
 #endif
+}
+
+void MainWindow::showSystemInfo()
+{
+	dialogs::SystemInfoDialog *dlg = findChild<dialogs::SystemInfoDialog *>(
+		"systeminfodialog", Qt::FindDirectChildrenOnly);
+	if(dlg) {
+		dlg->setParent(getStartDialogOrThis());
+	} else {
+		dlg = new dialogs::SystemInfoDialog(this);
+		dlg->setObjectName("systeminfodialog");
+		dlg->setAttribute(Qt::WA_DeleteOnClose);
+	}
+	utils::showWindow(dlg);
+	dlg->activateWindow();
+	dlg->raise();
 }
 
 void MainWindow::toggleRecording()
@@ -4305,6 +4322,7 @@ void MainWindow::setupActions()
 	QMenu *toolshortcuts = toolsmenu->addMenu(tr("&Shortcuts"));
 
 	QMenu *devtoolsmenu = toolsmenu->addMenu(tr("Developer Tools"));
+	QAction *systeminfo = makeAction("systeminfo", tr("System Information…")).noDefaultShortcut();
 	QAction *tableteventlog = makeAction("tableteventlog", tr("Tablet Event Log...")).noDefaultShortcut();
 	QAction *profile = makeAction("profile", tr("Profile...")).noDefaultShortcut();
 	QAction *artificialLag = makeAction("artificiallag", tr("Set Artificial Lag...")).noDefaultShortcut();
@@ -4312,6 +4330,7 @@ void MainWindow::setupActions()
 	QAction *debugDump = makeAction("debugdump", tr("Record Debug Dumps")).checkable().noDefaultShortcut();
 	QAction *openDebugDump = makeAction("opendebugdump", tr("Open Debug Dump...")).noDefaultShortcut();
 	QAction *showNetStats = makeAction("shownetstats", tr("Statistics…")).noDefaultShortcut();
+	devtoolsmenu->addAction(systeminfo);
 	devtoolsmenu->addAction(tableteventlog);
 	devtoolsmenu->addAction(profile);
 	devtoolsmenu->addAction(artificialLag);
@@ -4320,6 +4339,7 @@ void MainWindow::setupActions()
 	devtoolsmenu->addAction(openDebugDump);
 	devtoolsmenu->addAction(showNetStats);
 	connect(devtoolsmenu, &QMenu::aboutToShow, this, &MainWindow::updateDevToolsActions);
+	connect(systeminfo, &QAction::triggered, this, &MainWindow::showSystemInfo);
 	connect(tableteventlog, &QAction::triggered, this, &MainWindow::toggleTabletEventLog);
 	connect(profile, &QAction::triggered, this, &MainWindow::toggleProfile);
 	connect(artificialLag, &QAction::triggered, this, &MainWindow::setArtificialLag);

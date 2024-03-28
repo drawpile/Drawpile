@@ -173,6 +173,8 @@ target_sources(drawpile PRIVATE
 	dialogs/startdialog/updatenotice.h
 	dialogs/startdialog/welcome.cpp
 	dialogs/startdialog/welcome.h
+	dialogs/systeminfodialog.cpp
+	dialogs/systeminfodialog.h
 	dialogs/tablettester.cpp
 	dialogs/tablettester.h
 	dialogs/touchtestdialog.cpp

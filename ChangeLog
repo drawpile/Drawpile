@@ -22,6 +22,7 @@ Unreleased Version 2.2.2-pre
  * Feature: Allow toggling vertical sync in the user interface preferences. Default is off, because it can cause input lag.
  * Feature: Web browser support for the client.
  * Feature: OpenGL-based canvas renderer, which is much faster than the old one, especially in the browser. This is an experimental feature and can be enabled in the General preferences under Renderer.
+ * Feature: Add system information dialog under Tools > Developer Tools > System Information.
 
 2024-02-25 Version 2.2.2-beta.1
  * Server Feature: Allow adding a message when kicking someone through the admin API.

@@ -4,6 +4,7 @@
 #include "desktop/view/canvascontroller.h"
 #include "desktop/view/canvasscene.h"
 #include "libclient/canvas/tilecache.h"
+#include <QMetaEnum>
 #include <QOpenGLFunctions>
 #include <QPaintEvent>
 #include <QPainter>
@@ -11,6 +12,8 @@
 Q_LOGGING_CATEGORY(lcDpGlCanvas, "net.drawpile.view.canvas.gl", QtWarningMsg)
 
 namespace view {
+
+QStringList GlCanvas::systemInfo;
 
 struct GlCanvas::Private {
 	static constexpr int BUFFER_COUNT = 2;
@@ -868,6 +871,11 @@ void GlCanvas::handlePaint(QPaintEvent *event)
 	paintEvent(event);
 }
 
+const QStringList &GlCanvas::getSystemInfo()
+{
+	return systemInfo;
+}
+
 void GlCanvas::initializeGL()
 {
 	if(d->initialized) {
@@ -879,30 +887,6 @@ void GlCanvas::initializeGL()
 	QOpenGLContext *context = QOpenGLContext::currentContext();
 	QOpenGLFunctions *f = context->functions();
 
-	if(lcDpGlCanvas().isDebugEnabled()) {
-		QPair<int, int> version = context->format().version();
-		bool supportsDeprecatedFunctions =
-			context->format().options() &
-			QSurfaceFormat::FormatOption::DeprecatedFunctions;
-		qCDebug(
-			lcDpGlCanvas, "initializeGL %s %d.%d (%s)",
-			context->isOpenGLES() ? "OpenGL ES" : "OpenGL", version.first,
-			version.second, supportsDeprecatedFunctions ? "full" : "core");
-		qCDebug(
-			lcDpGlCanvas, "GL_RENDERER '%s'",
-			qUtf8Printable(Private::getGlString(f, GL_RENDERER)));
-		qCDebug(
-			lcDpGlCanvas, "GL_VERSION '%s'",
-			qUtf8Printable(Private::getGlString(f, GL_VERSION)));
-		qCDebug(
-			lcDpGlCanvas, "GL_VENDOR '%s'",
-			qUtf8Printable(Private::getGlString(f, GL_VENDOR)));
-		qCDebug(
-			lcDpGlCanvas, "GL_SHADING_LANGUAGE_VERSION '%s'",
-			qUtf8Printable(
-				Private::getGlString(f, GL_SHADING_LANGUAGE_VERSION)));
-	}
-
 	GLint maxTextureSize = 0;
 	f->glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
 	if(maxTextureSize < 64) {
@@ -911,10 +895,44 @@ void GlCanvas::initializeGL()
 			int(maxTextureSize), int(Private::FALLBACK_TEXTURE_SIZE));
 		maxTextureSize = Private::FALLBACK_TEXTURE_SIZE;
 	}
-	d->maxTextureSize = maxTextureSize - maxTextureSize % 64;
-	qCDebug(
-		lcDpGlCanvas, "Max texture size %d (effectively %d)",
-		int(maxTextureSize), int(d->maxTextureSize));
+	d->maxTextureSize = maxTextureSize - maxTextureSize % DP_TILE_SIZE;
+
+	QSurfaceFormat format = context->format();
+	systemInfo = QStringList({
+		QStringLiteral("Type %1 %2.%3 %4 (%5)")
+			.arg(QMetaEnum::fromType<QSurfaceFormat::RenderableType>()
+					 .valueToKey(format.renderableType()))
+			.arg(format.majorVersion())
+			.arg(format.minorVersion())
+			.arg(QMetaEnum::fromType<QSurfaceFormat::OpenGLContextProfile>()
+					 .valueToKey(format.profile()))
+			.arg(
+				context->isOpenGLES() ? QStringLiteral("ES")
+									  : QStringLiteral("Desktop")),
+		QStringLiteral("Buffer sizes: A=%1 R=%2 G=%3 B=%4 depth=%5 stencil=%6")
+			.arg(format.alphaBufferSize())
+			.arg(format.redBufferSize())
+			.arg(format.greenBufferSize())
+			.arg(format.greenBufferSize())
+			.arg(format.depthBufferSize())
+			.arg(format.stencilBufferSize()),
+		QStringLiteral("Swap interval: %1").arg(format.swapInterval()),
+		QStringLiteral("GL_RENDERER: %1")
+			.arg(Private::getGlString(f, GL_RENDERER)),
+		QStringLiteral("GL_VERSION: %1")
+			.arg(Private::getGlString(f, GL_VERSION)),
+		QStringLiteral("GL_VENDOR: %1").arg(Private::getGlString(f, GL_VENDOR)),
+		QStringLiteral("GL_SHADING_LANGUAGE_VERSION: %1")
+			.arg(Private::getGlString(f, GL_SHADING_LANGUAGE_VERSION)),
+		QStringLiteral("GL_MAX_TEXTURE_SIZE: %1 (%2 tiles)")
+			.arg(maxTextureSize)
+			.arg(maxTextureSize / DP_TILE_SIZE),
+	});
+	if(lcDpGlCanvas().isDebugEnabled()) {
+		for(const QString &s : systemInfo) {
+			qCDebug(lcDpGlCanvas, "%s", qUtf8Printable(s));
+		}
+	}
 
 	d->canvasShader = Private::initCanvasShader(f);
 	d->outlineShader = Private::initOutlineShader(f);

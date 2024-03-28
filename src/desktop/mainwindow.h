@@ -175,6 +175,7 @@ public slots:
 	void discardPreResetImage();
 
 private slots:
+	void showSystemInfo();
 	void toggleRecording();
 	void toggleProfile();
 	void toggleTabletEventLog();
