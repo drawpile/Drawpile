@@ -780,6 +780,17 @@ int main(int argc, char *argv[])
 #endif
 
 	int vsync = applyRenderSettings(argc, argv);
+
+#ifdef Q_OS_WIN
+	// On Windows, Qt will default to using OpenGL directly if the graphics
+	// driver supports it. That's a bad idea though, because graphics drivers on
+	// Windows are broken. Default to ANGLE instead. Qt5 ships with ANGLE, but
+	// Qt6 doesn't anymore. That can be looked at whenever we switch though.
+	if(qgetenv("QT_OPENGL").isEmpty()) {
+		qputenv("QT_OPENGL", "angle");
+	}
+#endif
+
 	// OpenGL rendering format. 8 bit color, no alpha, no depth. Stencil buffer
 	// is needed for QPainter, without it, it can't manage to draw large paths
 	// and spams the warning log with "Painter path exceeds +/-32767 pixels."
