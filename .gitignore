@@ -29,3 +29,6 @@ compile_commands.json
 
 # Temporary test files
 /test/tmp/
+
+# NPM modules
+node_modules/

@@ -773,7 +773,6 @@ elseif(EMSCRIPTEN)
 		"icons/drawpile.svg"
 		"icons/favicon.ico"
 		"wasm/drawpile.css"
-		"wasm/init.js"
 	)
 	foreach(em_file IN LISTS em_files_to_install)
 		set(em_file_source "${CMAKE_CURRENT_SOURCE_DIR}/${em_file}")
@@ -784,6 +783,25 @@ elseif(EMSCRIPTEN)
 			COPYONLY
 		)
 	endforeach()
+
+	find_program(NPM_COMMAND npm REQUIRED)
+	add_custom_command(
+		OUTPUT "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/init.js"
+		COMMAND
+			"${NPM_COMMAND}" exec -- esbuild --bundle --minify
+			"--outfile=${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/init.js"
+			init.js
+		WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/wasm"
+		DEPENDS
+			drawpile
+		COMMAND_EXPAND_LISTS
+		COMMENT "Bundling init.js"
+		VERBATIM
+	)
+	add_custom_target(
+		drawpile_init_js
+		DEPENDS "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/init.js"
+	)
 
 	set(build_time_assets_dir "${CMAKE_CURRENT_BINARY_DIR}/wasm/assets")
 	add_custom_command(
@@ -814,6 +832,7 @@ elseif(EMSCRIPTEN)
 			-P "${PROJECT_SOURCE_DIR}/cmake/GenerateIndexHtml.cmake"
 		DEPENDS
 			drawpile_assets_bundle
+			drawpile_init_js
 			"${CMAKE_CURRENT_SOURCE_DIR}/icons/drawpile.svg"
 			"${CMAKE_CURRENT_SOURCE_DIR}/wasm/drawpile.css"
 			"${CMAKE_CURRENT_SOURCE_DIR}/wasm/index.html"

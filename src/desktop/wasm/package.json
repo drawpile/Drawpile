@@ -1,0 +1,7 @@
+{
+  "name": "drawpile-wasm",
+  "license": "GPL-3.0-or-later",
+  "devDependencies": {
+    "esbuild": "^0.20.2"
+  }
+}

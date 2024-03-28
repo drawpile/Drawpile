@@ -517,7 +517,7 @@
     // Clamp to 4GiB - one page (64 KiB). This is what Emscripten's library.js
     // does to avoid some edge cases that happen at the full 4 GB.
     config.DRAWPILE_HEAP_MAX = Math.min(4294901760, heapMax);
-    await qtLoad(config);
+    await window.qtLoad(config);
   }
 
   async function start() {
