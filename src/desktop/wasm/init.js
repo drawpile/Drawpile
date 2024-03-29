@@ -372,38 +372,21 @@ import { UAParser } from "ua-parser-js";
   }
   // SPDX-SnippetEnd
 
-  const userAgent = {};
-  (function () {
-    try {
-      const ua = new UAParser();
-      try {
-        const device = ua.getDevice?.model || "";
-        userAgent.ios =
-          device.indexOf("iPad") !== -1 || device.indexOf("iPhone") !== -1;
-      } catch (e) {
-        console.error(e);
-      }
-      try {
-        const os = ua.getOS()?.name || "";
-        userAgent.windows = os.indexOf("Windows") !== -1;
-      } catch (e) {
-        console.error(e);
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  })();
-
   // Apple pencils have ludicrously low pressure, meaning that with a normal,
   // linear pressure curve, lines will come out almost invisibly thin unless the
   // user presses down with enough force to pierce their pen through the screen.
   // We can't actually determine if the user has such a pen, so we guess.
   window.drawpileHasLowPressurePen = function () {
-    return userAgent.ios ? 1 : 0;
-  };
-
-  window.drawpileHasTroubleWithOpenGlCanvas = function () {
-    return userAgent.windows ? 1 : 0;
+    try {
+      const ua = new UAParser();
+      const device = ua.getDevice?.model || "";
+      const ios =
+        device.indexOf("iPad") !== -1 || device.indexOf("iPhone") !== -1;
+      return ios ? 1 : 0;
+    } catch (e) {
+      console.error(e);
+      return 0;
+    }
   };
 
   function getSizeFromDocument(key) {
@@ -672,7 +655,6 @@ import { UAParser } from "ua-parser-js";
           "Keys may get stuck in a held-down state until pressed again.",
         ]),
         tag("li", ["Firefox: Browser steals Ctrl+Z for itself."]),
-        tag("li", ["Windows: OpenGL canvas causes the UI to go black."]),
       ]),
     );
     startup.appendChild(

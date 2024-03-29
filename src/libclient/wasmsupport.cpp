@@ -18,13 +18,6 @@ bool hasLowPressurePen()
 	return lowPressurePen != 0;
 }
 
-bool hasTroubleWithOpenGlCanvas()
-{
-	int trouble =
-		EM_ASM_INT(return window.drawpileHasTroubleWithOpenGlCanvas(););
-	return trouble != 0;
-}
-
 void showLoginModal(net::LoginHandler *loginHandler)
 {
 	cancelLoginModal(currentLoginHandler);
