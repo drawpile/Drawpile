@@ -35,6 +35,7 @@ option(IMAGEFORMATS "Build qtimageformats" ON)
 option(TOOLS "Build qttools" ON)
 option(TRANSLATIONS "Build qttranslations" ON)
 option(WEBSOCKETS "Build qtwebsockets" "${WEBSOCKETS_DEFAULT}")
+option(KEEP_ARCHIVES "Keep downloaded archives instead of deleting them" OFF)
 option(KEEP_SOURCE_DIRS "Keep source directories instead of deleting them" OFF)
 option(KEEP_BINARY_DIRS "Keep build directories instead of deleting them" OFF)
 set(TARGET_BITS "64" CACHE STRING

@@ -17,6 +17,7 @@ set(LIBZIP "1.9.2" CACHE STRING
 	"The version of libzip to build")
 set(KARCHIVE "v5.105.0" CACHE STRING
 	"The version of KArchive to build")
+option(KEEP_ARCHIVES "Keep downloaded archives instead of deleting them" OFF)
 option(KEEP_SOURCE_DIRS "Keep source directories instead of deleting them" OFF)
 option(KEEP_BINARY_DIRS "Keep build directories instead of deleting them" OFF)
 set(TARGET_BITS "64" CACHE STRING

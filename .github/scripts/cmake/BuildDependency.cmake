@@ -521,7 +521,9 @@ function(_download url hash)
 
 	message(STATUS "Extracting ${filename}...")
 	file(ARCHIVE_EXTRACT INPUT "${filename}")
-	file(REMOVE "${filename}")
+	if(NOT KEEP_ARCHIVES)
+		file(REMOVE "${filename}")
+	endif()
 endfunction()
 
 function(_parse_flags build_type source_dir out_configurator out_flags out_env)
