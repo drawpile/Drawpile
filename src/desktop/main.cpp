@@ -486,6 +486,10 @@ void DrawpileApp::deleteAllMainWindowsExcept(MainWindow *win)
 static QStringList gatherPotentialLanguages(const QLocale &locale)
 {
 	QStringList langs;
+#ifdef __EMSCRIPTEN__
+	Q_UNUSED(locale);
+	langs.append(QStringLiteral("en_US"));
+#else
 	for(const QString &lang : locale.uiLanguages()) {
 		if(!langs.contains(lang)) {
 			langs.append(lang);
@@ -498,6 +502,7 @@ static QStringList gatherPotentialLanguages(const QLocale &locale)
 			langs.append(langWithUnderscores);
 		}
 	}
+#endif
 	return langs;
 }
 
