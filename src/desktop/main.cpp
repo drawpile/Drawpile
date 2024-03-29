@@ -397,7 +397,11 @@ int DrawpileApp::getCanvasImplementationFor(int canvasImplementation)
 		return canvasImplementation;
 	default:
 #ifdef __EMSCRIPTEN__
-		return int(CanvasImplementation::OpenGl);
+		if(browser::hasTroubleWithOpenGlCanvas()) {
+			return int(CanvasImplementation::GraphicsView);
+		} else {
+			return int(CanvasImplementation::OpenGl);
+		}
 #else
 		return int(CanvasImplementation::GraphicsView);
 #endif
