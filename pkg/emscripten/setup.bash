@@ -89,11 +89,6 @@ set +xe
 echo
 echo "Setup for Emscripten $build_mode dependencies complete."
 echo
-echo "If you haven't done so, you must install the required Rust stuff:"
-echo "    rustup install nightly"
-echo "    rustup +nightly target add wasm32-unknown-unknown"
-echo "    rustup component add rust-src --toolchain nightly"
-echo
 echo "To configure and build Drawpile now, run:"
 echo "    $SCRIPT_DIR/configure.bash $build_mode"
 echo "    cmake --build $buildem_dir"
