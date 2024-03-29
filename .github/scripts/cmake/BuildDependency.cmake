@@ -108,6 +108,7 @@ function(build_dependency name version build_type)
 					set(apply_patch FALSE)
 				endif()
 			elseif(apply_patch)
+				message(STATUS "Applying patch ${item}")
 				execute_process(
 					COMMAND "${patch}" -p1
 					INPUT_FILE "${CMAKE_CURRENT_LIST_DIR}/${item}"
