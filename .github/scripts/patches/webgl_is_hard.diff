@@ -1,5 +1,7 @@
 Description: GL_UNPACK_ROW_LENGTH doesn't exist in WebGL and just spews
-warnings. We just skip it instead, that seems to work fine.
+warnings. We just skip it instead, that seems to work fine. We also pull in a
+fix for QTBUG-120651, the uniform state cache thing causes the window outside
+of a QOpenGLWidget to go black in Emscripten in the browser.
 
 --- a/src/gui/rhi/qrhigles2.cpp
 +++ b/src/gui/rhi/qrhigles2.cpp
@@ -27,3 +29,14 @@ warnings. We just skip it instead, that seems to work fine.
              break;
          case QGles2CommandBuffer::Command::CompressedImage:
              f->glBindTexture(cmd.args.compressedImage.target, cmd.args.compressedImage.texture);
+@@ -3797,6 +3803,9 @@
+                                                              : QRHI_RES(QGles2ComputePipeline, maybeComputePs)->uniforms);
+     QGles2UniformState *uniformState = maybeGraphicsPs ? QRHI_RES(QGles2GraphicsPipeline, maybeGraphicsPs)->uniformState
+                                                        : QRHI_RES(QGles2ComputePipeline, maybeComputePs)->uniformState;
++#ifdef Q_OS_WASM // on WebAssembly we cannot use the uniform state cache
++    memset(uniformState, 0, (QGles2UniformState::MAX_TRACKED_LOCATION + 1) * sizeof(QGles2UniformState));
++#endif
+     struct SeparateTexture {
+         QGles2Texture *texture;
+         int binding;
+
