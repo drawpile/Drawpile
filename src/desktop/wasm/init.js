@@ -530,16 +530,18 @@ import { UAParser } from "ua-parser-js";
     showProgressBar("Loading assets", assetSize, assetSize + wasmSize);
 
     const assets = parseAssets(accumulator.buffer, done);
-    config.preRun = (instance) => {
-      while (assets.length !== 0) {
-        const [name, content] = assets.shift();
-        const dir = instance.PATH.dirname(name);
-        if (dir && dir !== "" && dir !== "/") {
-          instance.FS.mkdirTree(dir);
+    config.preRun = [
+      (instance) => {
+        while (assets.length !== 0) {
+          const [name, content] = assets.shift();
+          const dir = instance.PATH.dirname(name);
+          if (dir && dir !== "" && dir !== "/") {
+            instance.FS.mkdirTree(dir);
+          }
+          instance.FS.writeFile(name, content);
         }
-        instance.FS.writeFile(name, content);
-      }
-    };
+      },
+    ];
 
     return config;
   }

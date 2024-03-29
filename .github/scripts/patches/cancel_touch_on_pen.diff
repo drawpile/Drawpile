@@ -1,0 +1,20 @@
+Description: Clears out touch events when a pen event is received, otherwise the
+touch state gets stuck and causes very strange behavior.
+
+--- a/src/plugins/platforms/wasm/qwasmwindowclientarea.cpp
++++ b/src/plugins/platforms/wasm/qwasmwindowclientarea.cpp
+@@ -109,6 +109,14 @@
+         qreal yTilt = qBound(-60.0, event.tiltY, 60.0);
+         // Barrel rotation is reported as 0 to 359, but QTabletEvent wants a signed value.
+         qreal rotation = event.twist > 180.0 ? 360.0 - event.twist : event.twist;
++
++        if(!m_pointerIdToTouchPoints.isEmpty()) {
++            m_pointerIdToTouchPoints.clear();
++            QWindowSystemInterface::handleTouchCancelEvent(
++                m_window->window(), QWasmIntegration::getTimestamp(),
++                m_screen->touchDevice(), event.modifiers);
++        }
++
+         return QWindowSystemInterface::handleTabletEvent(
+             m_window->window(), QWasmIntegration::getTimestamp(), m_screen->tabletDevice(),
+             m_window->window()->mapFromGlobal(targetPointClippedToScreen),
