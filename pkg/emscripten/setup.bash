@@ -32,6 +32,7 @@ if [[ ! -e "$HOST_DIR/done" ]]; then
         -DSVG=OFF \
         -DIMAGEFORMATS=OFF \
         -DTRANSLATIONS=OFF \
+        -DWEBSOCKETS=OFF \
         -P "$SRC_DIR/.github/scripts/build-qt.cmake"
     touch "$HOST_DIR/done"
 fi
