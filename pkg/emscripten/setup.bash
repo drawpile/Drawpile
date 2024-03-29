@@ -20,6 +20,10 @@ EMPREFIX_DIR="$SCRIPT_DIR/$build_dir/emprefix"
 
 set -xe
 
+pushd "$SCRIPT_DIR/../../src/desktop/wasm"
+npm install --include=dev
+popd
+
 if [[ ! -e "$HOST_DIR/done" ]]; then
     mkdir -p "$HOST_DIR"
     cd "$HOST_DIR"
