@@ -385,8 +385,7 @@ import { UAParser } from "ua-parser-js";
       }
       try {
         const os = ua.getOS()?.name || "";
-        const windows = os.indexOf("Windows") !== -1;
-        return windows ? 1 : 0;
+        userAgent.windows = os.indexOf("Windows") !== -1;
       } catch (e) {
         console.error(e);
       }
