@@ -281,6 +281,7 @@ if(BASE)
 				patches/qtbug-121416.diff
 				patches/qtbug-116754.diff
 				patches/touchstart_prevent_default.diff
+				patches/webgl_is_hard.diff
 	)
 endif()
 

@@ -1,0 +1,29 @@
+Description: GL_UNPACK_ROW_LENGTH doesn't exist in WebGL and just spews
+warnings. We just skip it instead, that seems to work fine.
+
+--- a/src/gui/rhi/qrhigles2.cpp
++++ b/src/gui/rhi/qrhigles2.cpp
+@@ -3336,8 +3336,11 @@
+             f->glBindTexture(cmd.args.subImage.target, cmd.args.subImage.texture);
+             if (cmd.args.subImage.rowStartAlign != 4)
+                 f->glPixelStorei(GL_UNPACK_ALIGNMENT, cmd.args.subImage.rowStartAlign);
++#ifndef Q_OS_WASM
++            // Drawpile patch: GL_UNPACK_ROW_LENGTH doesn't exist in WebGL.
+             if (cmd.args.subImage.rowLength != 0)
+                 f->glPixelStorei(GL_UNPACK_ROW_LENGTH, cmd.args.subImage.rowLength);
++#endif
+             if (cmd.args.subImage.target == GL_TEXTURE_3D || cmd.args.subImage.target == GL_TEXTURE_2D_ARRAY) {
+                 f->glTexSubImage3D(cmd.args.subImage.target, cmd.args.subImage.level,
+                                    cmd.args.subImage.dx, cmd.args.subImage.dy, cmd.args.subImage.dz,
+@@ -3358,8 +3361,11 @@
+             }
+             if (cmd.args.subImage.rowStartAlign != 4)
+                 f->glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
++#ifndef Q_OS_WASM
++            // Drawpile patch: GL_UNPACK_ROW_LENGTH doesn't exist in WebGL.
+             if (cmd.args.subImage.rowLength != 0)
+                 f->glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
++#endif
+             break;
+         case QGles2CommandBuffer::Command::CompressedImage:
+             f->glBindTexture(cmd.args.compressedImage.target, cmd.args.compressedImage.texture);
