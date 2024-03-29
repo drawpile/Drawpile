@@ -373,7 +373,7 @@ import { UAParser } from "ua-parser-js";
   // SPDX-SnippetEnd
 
   const userAgent = {};
-  (function() {
+  (function () {
     try {
       const ua = new UAParser();
       try {
@@ -392,7 +392,7 @@ import { UAParser } from "ua-parser-js";
     } catch (e) {
       console.error(e);
     }
-  }());
+  })();
 
   // Apple pencils have ludicrously low pressure, meaning that with a normal,
   // linear pressure curve, lines will come out almost invisibly thin unless the
@@ -402,7 +402,7 @@ import { UAParser } from "ua-parser-js";
     return userAgent.ios ? 1 : 0;
   };
 
-  window.drawpileHasTroubleWithOpenGlCanvas = function ()  {
+  window.drawpileHasTroubleWithOpenGlCanvas = function () {
     return userAgent.windows ? 1 : 0;
   };
 
