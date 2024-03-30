@@ -605,6 +605,7 @@ bool MainWindow::shouldPreventUnload() const
 void MainWindow::handleMouseLeave()
 {
 	m_canvasView->clearKeys();
+	dpApp().settings().trySubmit();
 }
 #endif
 

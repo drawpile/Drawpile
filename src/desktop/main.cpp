@@ -689,6 +689,7 @@ extern "C" int drawpileShouldPreventUnload()
 {
 	QApplication *app = qApp;
 	if(app) {
+		static_cast<DrawpileApp *>(app)->settings().trySubmit();
 		for(QWidget *widget : app->topLevelWidgets()) {
 			MainWindow *mw = qobject_cast<MainWindow *>(widget);
 			if(mw && mw->shouldPreventUnload()) {
