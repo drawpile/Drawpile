@@ -99,6 +99,7 @@ public:
 	void handleEnter();
 	void handleLeave();
 	void handleFocusIn();
+	void clearKeys();
 
 	void handleMouseMove(QMouseEvent *event);
 	void handleMousePress(QMouseEvent *event);

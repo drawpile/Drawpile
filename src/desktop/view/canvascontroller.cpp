@@ -389,7 +389,16 @@ void CanvasController::handleLeave()
 
 void CanvasController::handleFocusIn()
 {
+	clearKeys();
+}
+
+void CanvasController::clearKeys()
+{
 	m_keysDown.clear();
+	m_dragMode = ViewDragMode::None;
+	m_penMode = PenMode::Normal;
+	updateOutline();
+	resetCursor();
 }
 
 void CanvasController::handleMouseMove(QMouseEvent *event)

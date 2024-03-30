@@ -312,12 +312,13 @@ import { UAParser } from "ua-parser-js";
     };
   }
 
-  function registerUnloadHandler(shouldPreventUnload) {
+  function registerEventHandlers(shouldPreventUnload, handleMouseLeave) {
     window.addEventListener("beforeunload", (e) => {
       if (shouldPreventUnload()) {
         e.preventDefault();
       }
     });
+    document.body.addEventListener("mouseleave", () => handleMouseLeave());
   }
 
   // SPDX-SnippetBegin
@@ -427,7 +428,10 @@ import { UAParser } from "ua-parser-js";
 
     config.qt.onLoaded = () => {
       showScreen();
-      registerUnloadHandler(config._drawpileShouldPreventUnload);
+      registerEventHandlers(
+        config._drawpileShouldPreventUnload,
+        config._drawpileHandleMouseLeave,
+      );
       registerMessageHandler(
         config._drawpileHandleBrowserAuth,
         config.stringToNewUTF8,
@@ -650,9 +654,6 @@ import { UAParser } from "ua-parser-js";
       tag("ul", [
         tag("li", [
           "Some settings, such as brush presets or avatars, won't be saved.",
-        ]),
-        tag("li", [
-          "Keys may get stuck in a held-down state until pressed again.",
         ]),
         tag("li", ["Firefox: Browser steals Ctrl+Z for itself."]),
       ]),

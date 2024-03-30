@@ -89,6 +89,8 @@ public:
 	virtual drawingboard::AnnotationItem *
 	getAnnotationItem(int annotationId) = 0;
 
+	virtual void clearKeys() = 0;
+
 #ifdef __EMSCRIPTEN__
 	virtual void setEnableEraserOverride(bool enableEraserOverride) = 0;
 #endif

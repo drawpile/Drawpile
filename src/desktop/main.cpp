@@ -698,6 +698,19 @@ extern "C" int drawpileShouldPreventUnload()
 	}
 	return false;
 }
+
+extern "C" void drawpileHandleMouseLeave()
+{
+	QApplication *app = qApp;
+	if(app) {
+		for(QWidget *widget : app->topLevelWidgets()) {
+			MainWindow *mw = qobject_cast<MainWindow *>(widget);
+			if(mw) {
+				mw->handleMouseLeave();
+			}
+		}
+	}
+}
 #endif
 
 static int applyRenderSettingsFrom(const QString &path)

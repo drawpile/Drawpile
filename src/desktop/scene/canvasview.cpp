@@ -835,7 +835,16 @@ void CanvasView::leaveEvent(QEvent *event)
 void CanvasView::focusInEvent(QFocusEvent *event)
 {
 	QGraphicsView::focusInEvent(event);
+	clearKeys();
+}
+
+void CanvasView::clearKeys()
+{
 	m_keysDown.clear();
+	m_dragmode = ViewDragMode::None;
+	m_penmode = PenMode::Normal;
+	updateOutline();
+	resetCursor();
 }
 
 canvas::Point CanvasView::mapToCanvas(

@@ -87,6 +87,11 @@ drawingboard::AnnotationItem *SceneWrapper::getAnnotationItem(int annotationId)
 	return m_scene ? m_scene->getAnnotationItem(annotationId) : nullptr;
 }
 
+void SceneWrapper::clearKeys()
+{
+	m_view->clearKeys();
+}
+
 #ifdef __EMSCRIPTEN__
 void SceneWrapper::setEnableEraserOverride(bool enableEraserOverride)
 {

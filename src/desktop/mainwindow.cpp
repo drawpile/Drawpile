@@ -596,10 +596,17 @@ bool MainWindow::canReplace() const {
 	return !(m_doc->isDirty() || m_doc->client()->isConnected() || m_doc->isRecording() || m_playbackDialog || m_dumpPlaybackDialog);
 }
 
+#ifdef __EMSCRIPTEN__
 bool MainWindow::shouldPreventUnload() const
 {
 	return m_singleSession ? m_doc->client()->isLoggedIn() : !canReplace();
 }
+
+void MainWindow::handleMouseLeave()
+{
+	m_canvasView->clearKeys();
+}
+#endif
 
 /**
  * Get either a new MainWindow or this one if replacable
@@ -1308,6 +1315,7 @@ bool MainWindow::event(QEvent *event)
 		if(m_saveWindowDebounce.isActive()) {
 			saveWindowState();
 		}
+		m_canvasView->clearKeys();
 		dpApp().settings().submit();
 		break;
 	default:

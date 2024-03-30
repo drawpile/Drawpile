@@ -104,7 +104,11 @@ public:
 
 	//! Check if the current board can be replaced
 	bool canReplace() const;
+
+#ifdef __EMSCRIPTEN__
 	bool shouldPreventUnload() const;
+	void handleMouseLeave();
+#endif
 
 #ifndef __EMSCRIPTEN__
 	//! Save settings and exit

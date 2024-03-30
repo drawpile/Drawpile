@@ -84,6 +84,8 @@ public:
 	//! The center point of the view in scene coordinates
 	QPoint viewCenterPoint() const;
 
+	void clearKeys();
+
 	//! Enable/disable tablet event handling
 	void setTabletEnabled(bool enable) { m_enableTablet = enable; }
 	void setIgnoreZeroPressureInputs(bool ignore)

@@ -32,6 +32,8 @@ public:
 
 	drawingboard::AnnotationItem *getAnnotationItem(int annotationId) override;
 
+	void clearKeys() override;
+
 #ifdef __EMSCRIPTEN__
 	void setEnableEraserOverride(bool enableEraserOverride) override;
 #endif
