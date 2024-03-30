@@ -1316,7 +1316,7 @@ bool MainWindow::event(QEvent *event)
 			saveWindowState();
 		}
 		m_canvasView->clearKeys();
-		dpApp().settings().submit();
+		dpApp().settings().trySubmit();
 		break;
 	default:
 		break;
