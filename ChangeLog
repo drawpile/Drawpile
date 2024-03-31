@@ -25,6 +25,7 @@ Unreleased Version 2.2.2-pre
  * Feature: Add system information dialog under Tools > Developer Tools > System Information.
  * Feature: Hide user pointers when they get close to your cursor. Can be toggled under View > User Pointers > Hide From Cursor. Thanks Crowley for suggesting.
  * Feature: Allow filling non-continuous areas. Thanks Ben for suggesting.
+ * Fix: Make rotation via View > Rotation > Rotate Canvas (Counter-)Clockwise work properly when it's mirrored or flipped. Thanks Ragged for reporting.
 
 2024-02-25 Version 2.2.2-beta.1
  * Server Feature: Allow adding a message when kicking someone through the admin API.

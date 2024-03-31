@@ -268,12 +268,12 @@ void CanvasController::resetRotation()
 
 void CanvasController::rotateStepClockwise()
 {
-	setRotation(m_rotation + ROTATION_STEP);
+	setRotation(rotation() + ROTATION_STEP);
 }
 
 void CanvasController::rotateStepCounterClockwise()
 {
-	setRotation(m_rotation - ROTATION_STEP);
+	setRotation(rotation() - ROTATION_STEP);
 }
 
 void CanvasController::setFlip(bool flip)

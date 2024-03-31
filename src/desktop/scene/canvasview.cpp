@@ -530,12 +530,12 @@ void CanvasView::resetRotation()
 
 void CanvasView::rotateStepClockwise()
 {
-	setRotation(m_rotate + 5.0);
+	setRotation(rotation() + 5.0);
 }
 
 void CanvasView::rotateStepCounterClockwise()
 {
-	setRotation(m_rotate - 5.0);
+	setRotation(rotation() - 5.0);
 }
 
 void CanvasView::rotateByDiscreteSteps(int steps)
