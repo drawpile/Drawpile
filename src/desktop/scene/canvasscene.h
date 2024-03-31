@@ -81,7 +81,7 @@ public:
 	//! Get an annotation item
 	AnnotationItem *getAnnotationItem(int id);
 
-	void setShowOwnUserMarker(bool show) { m_showOwnUserMarker = show; }
+	void setShowOwnUserMarker(bool showOwnUserMarker);
 
 	bool hasCatchup() const { return m_catchup != nullptr; }
 
@@ -91,9 +91,9 @@ public:
 	void setOutlineWidth(qreal width);
 	void setOutlineVisibleInMode(bool visibleInMode);
 	void setCursorOnCanvas(bool onCanvas);
+	void setCursorPos(const QPointF &pos);
 #ifdef HAVE_EMULATED_BITMAP_CURSOR
 	void setCursor(const QCursor &cursor);
-	void setCursorPos(const QPointF &pos);
 #endif
 
 public slots:
@@ -111,6 +111,8 @@ public slots:
 
 	//! Show avatars in cursor marker
 	void showUserAvatars(bool show);
+
+	void setEvadeUserCursors(bool evadeUserCursors);
 
 	//! Show/hide laser pointer trails
 	void showLaserTrails(bool show);
@@ -195,8 +197,11 @@ private:
 	bool m_showUserNames;
 	bool m_showUserLayers;
 	bool m_showUserAvatars;
+	bool m_evadeUserCursors;
 	bool m_showLaserTrails;
 	bool m_showOwnUserMarker;
+	bool m_cursorOnCanvas;
+	QPointF m_cursorPos;
 
 	QRectF m_sceneBounds;
 };

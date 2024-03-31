@@ -59,14 +59,16 @@ public:
 	void setShowUserNames(bool showUserNames);
 	void setShowUserLayers(bool showUserLayers);
 	void setShowUserAvatars(bool showUserAvatars);
+	void setEvadeUserCursors(bool evadeUserCursors);
 	void setShowOwnUserMarker(bool showOwnUserMarker);
 	void setShowLaserTrails(bool showLaserTrails);
 	void setShowToggleItems(bool showToggleItems);
 
-#ifdef HAVE_EMULATED_BITMAP_CURSOR
 	void setCursorOnCanvas(bool cursorOnCanvas);
+	void setCursorPos(const QPointF &cursorPos);
+
+#ifdef HAVE_EMULATED_BITMAP_CURSOR
 	void setCursor(const QCursor &cursor);
-	void setCursorPos(const QPointF &pos);
 #endif
 
 	void setActiveAnnotation(int annotationId);
@@ -124,8 +126,11 @@ private:
 	bool m_showUserNames = true;
 	bool m_showUserLayers = true;
 	bool m_showUserAvatars = true;
+	bool m_evadeUserCursors = true;
 	bool m_showOwnUserMarker = false;
 	bool m_showLaserTrails = true;
+	bool m_cursorOnCanvas = false;
+	QPointF m_cursorPos;
 	QHash<int, UserMarkerItem *> m_userMarkers;
 	QHash<int, LaserTrailItem *> m_activeLaserTrails;
 

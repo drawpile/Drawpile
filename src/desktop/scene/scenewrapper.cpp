@@ -226,6 +226,9 @@ void SceneWrapper::connectActions(const Actions &actions)
 	connect(
 		actions.showuseravatars, &QAction::toggled, m_scene,
 		&drawingboard::CanvasScene::showUserAvatars);
+	connect(
+		actions.evadeusercursors, &QAction::toggled, m_scene,
+		&drawingboard::CanvasScene::setEvadeUserCursors);
 }
 
 void SceneWrapper::connectDocument(Document *doc)

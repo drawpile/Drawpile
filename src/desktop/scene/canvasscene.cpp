@@ -37,8 +37,10 @@ CanvasScene::CanvasScene(QObject *parent)
 	, m_showUserNames(true)
 	, m_showUserLayers(true)
 	, m_showUserAvatars(true)
+	, m_evadeUserCursors(true)
 	, m_showLaserTrails(true)
 	, m_showOwnUserMarker(false)
+	, m_cursorOnCanvas(false)
 {
 	setItemIndexMethod(NoIndex);
 	setSceneRect(QRectF{0.0, 0.0, 1.0, 1.0});
@@ -451,6 +453,9 @@ void CanvasScene::userCursorMoved(
 		item->setShowSubtext(m_showUserLayers);
 		item->setAvatar(user.avatar);
 		item->setShowAvatar(m_showUserAvatars);
+		item->setEvadeCursor(m_evadeUserCursors);
+		item->setCursorPosValid(m_cursorOnCanvas && !m_showOwnUserMarker);
+		item->setCursorPos(m_cursorPos);
 		item->setTargetPos(x, y, true);
 		m_usermarkers[userId] = item;
 	}
@@ -514,6 +519,16 @@ void CanvasScene::showUserAvatars(bool show)
 		m_showUserAvatars = show;
 		for(UserMarkerItem *item : std::as_const(m_usermarkers)) {
 			item->setShowAvatar(show);
+		}
+	}
+}
+
+void CanvasScene::setEvadeUserCursors(bool evadeUserCursors)
+{
+	if(m_evadeUserCursors != evadeUserCursors) {
+		m_evadeUserCursors = evadeUserCursors;
+		for(UserMarkerItem *item : std::as_const(m_usermarkers)) {
+			item->setEvadeCursor(evadeUserCursors);
 		}
 	}
 }
@@ -586,6 +601,16 @@ void CanvasScene::setCatchupPosition()
 			catchupBounds.height() + NOTICE_OFFSET));
 }
 
+void CanvasScene::setShowOwnUserMarker(bool showOwnUserMarker)
+{
+	if(showOwnUserMarker != m_showOwnUserMarker) {
+		m_showOwnUserMarker = showOwnUserMarker;
+		for(UserMarkerItem *item : std::as_const(m_usermarkers)) {
+			item->setCursorPosValid(m_cursorOnCanvas && !showOwnUserMarker);
+		}
+	}
+}
+
 void CanvasScene::setOutline(qreal size, qreal width)
 {
 	m_outlineItem->setOutline(size, width);
@@ -614,21 +639,34 @@ void CanvasScene::setOutlineVisibleInMode(bool visibleInMode)
 
 void CanvasScene::setCursorOnCanvas(bool onCanvas)
 {
-	m_outlineItem->setOnCanvas(onCanvas);
+	if(onCanvas != m_cursorOnCanvas) {
+		m_outlineItem->setOnCanvas(onCanvas);
 #ifdef HAVE_EMULATED_BITMAP_CURSOR
-	m_cursorItem->setOnCanvas(onCanvas);
+		m_cursorItem->setOnCanvas(onCanvas);
 #endif
+		for(UserMarkerItem *item : std::as_const(m_usermarkers)) {
+			item->setCursorPosValid(onCanvas && !m_showOwnUserMarker);
+		}
+	}
+}
+
+void CanvasScene::setCursorPos(const QPointF &pos)
+{
+	if(pos != m_cursorPos) {
+		m_cursorPos = pos;
+#ifdef HAVE_EMULATED_BITMAP_CURSOR
+		m_cursorItem->setPos(pos);
+#endif
+		for(UserMarkerItem *item : std::as_const(m_usermarkers)) {
+			item->setCursorPos(pos);
+		}
+	}
 }
 
 #ifdef HAVE_EMULATED_BITMAP_CURSOR
 void CanvasScene::setCursor(const QCursor &cursor)
 {
 	m_cursorItem->setCursor(cursor);
-}
-
-void CanvasScene::setCursorPos(const QPointF &pos)
-{
-	m_cursorItem->setPos(pos);
 }
 #endif
 

@@ -1098,9 +1098,7 @@ void CanvasView::mousePressEvent(QMouseEvent *event)
 		unsigned(event->modifiers()), isSynthetic(event), m_pendown,
 		m_touching);
 
-#ifdef HAVE_EMULATED_BITMAP_CURSOR
 	updateCursorPos(mousePos);
-#endif
 
 	if((m_enableTablet && isSynthetic(event)) || m_touching) {
 		return;
@@ -1167,9 +1165,7 @@ void CanvasView::mouseMoveEvent(QMouseEvent *event)
 		unsigned(event->modifiers()), isSynthetic(event), m_pendown,
 		m_touching);
 
-#ifdef HAVE_EMULATED_BITMAP_CURSOR
 	updateCursorPos(mousePos);
-#endif
 
 	if((m_enableTablet && isSynthetic(event)) || m_pendown == TABLETDOWN ||
 	   m_touching) {
@@ -1381,9 +1377,7 @@ void CanvasView::mouseReleaseEvent(QMouseEvent *event)
 		unsigned(event->modifiers()), isSynthetic(event), m_pendown,
 		m_touching);
 
-#ifdef HAVE_EMULATED_BITMAP_CURSOR
 	updateCursorPos(mousePos);
-#endif
 
 	if((m_enableTablet && isSynthetic(event)) || m_touching) {
 		return;
@@ -1981,9 +1975,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 		eraserOverride = false;
 #endif
 
-#ifdef HAVE_EMULATED_BITMAP_CURSOR
 		updateCursorPos(tabPos.toPoint());
-#endif
 
 		// Note: it is possible to get a mouse press event for a tablet event
 		// (even before the tablet event is received or even though
@@ -2023,9 +2015,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 		// Under Windows Ink, some tablets report bogus zero-pressure inputs.
 		if(!m_ignoreZeroPressureInputs || !m_pendown ||
 		   tabev->pressure() != 0.0) {
-#ifdef HAVE_EMULATED_BITMAP_CURSOR
 			updateCursorPos(tabPos.toPoint());
-#endif
 			penMoveEvent(
 				QDateTime::currentMSecsSinceEpoch(), compat::tabPosF(*tabev),
 				tabev->pressure(), tabev->xTilt(), tabev->yTilt(),
@@ -2042,9 +2032,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 			tabev->spontaneous(), tabPos.x(), tabPos.y(),
 			unsigned(tabev->buttons()), m_pendown, m_touching,
 			unsigned(modifiers));
-#ifdef HAVE_EMULATED_BITMAP_CURSOR
 		updateCursorPos(tabPos.toPoint());
-#endif
 		if(!tabletinput::passPenEvents()) {
 			tabev->accept();
 		}
@@ -2114,14 +2102,12 @@ int CanvasView::getCurrentCursorStyle() const
 	return m_brushCursorStyle;
 }
 
-#ifdef HAVE_EMULATED_BITMAP_CURSOR
 void CanvasView::updateCursorPos(const QPoint &pos)
 {
 	if(m_scene) {
 		m_scene->setCursorPos(mapToScene(pos));
 	}
 }
-#endif
 
 QPoint CanvasView::viewCenterPoint() const
 {

@@ -81,6 +81,33 @@ void UserMarkerItem::setShowAvatar(bool show)
 	}
 }
 
+void UserMarkerItem::setEvadeCursor(bool evadeCursor)
+{
+	if(m_evadeCursor != evadeCursor) {
+		updateCursor([&]() {
+			m_evadeCursor = evadeCursor;
+		});
+	}
+}
+
+void UserMarkerItem::setCursorPosValid(bool cursorPosValid)
+{
+	if(m_cursorPosValid != cursorPosValid) {
+		updateCursor([&]() {
+			m_cursorPosValid = cursorPosValid;
+		});
+	}
+}
+
+void UserMarkerItem::setCursorPos(const QPointF &cursorPos)
+{
+	if(m_cursorPos != cursorPos) {
+		updateCursor([&]() {
+			m_cursorPos = cursorPos;
+		});
+	}
+}
+
 void UserMarkerItem::updateFullText()
 {
 	refreshGeometry();
@@ -204,6 +231,33 @@ void UserMarkerItem::animationStep(qreal dt)
 			fadeout();
 		}
 	}
+}
+
+void UserMarkerItem::updateCursor(const std::function<void()> &block)
+{
+	qreal scaleBefore = getEvadeScale();
+	block();
+	if(getEvadeScale() != scaleBefore) {
+		refresh();
+	}
+}
+
+qreal UserMarkerItem::getEvadeScale()
+{
+	if(m_evadeCursor && m_cursorPosValid) {
+		QRectF r = m_bounds.translated(scenePos());
+		qreal px = m_cursorPos.x();
+		qreal py = m_cursorPos.y();
+		qreal dx = qMax(0.0, qMax(r.left() - px, px - r.right()));
+		qreal dy = qMax(0.0, qMax(r.top() - py, py - r.bottom()));
+		qreal d = qSqrt(dx * dx + dy * dy);
+		if(d <= EVADE_HIDE) {
+			return 0;
+		} else if(d < EVADE_FADE) {
+			return (d - EVADE_HIDE) / (EVADE_FADE - EVADE_HIDE);
+		}
+	}
+	return 1.0;
 }
 
 }

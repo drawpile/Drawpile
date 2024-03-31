@@ -66,9 +66,11 @@ public:
 		QAction *showusernames;
 		QAction *showuserlayers;
 		QAction *showuseravatars;
+		QAction *evadeusercursors;
 	};
 
-	static CanvasWrapper *instantiate(int canvasImplementation, QWidget *parent);
+	static CanvasWrapper *
+	instantiate(int canvasImplementation, QWidget *parent);
 
 	virtual ~CanvasWrapper();
 

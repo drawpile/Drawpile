@@ -3949,6 +3949,7 @@ void MainWindow::setupActions()
 	QAction *showusernames = makeAction("showmarkernames", tr("Show Names")).noDefaultShortcut().checked().remembered();
 	QAction *showuserlayers = makeAction("showmarkerlayers", tr("Show Layers")).noDefaultShortcut().checked().remembered();
 	QAction *showuseravatars = makeAction("showmarkeravatars", tr("Show Avatars")).noDefaultShortcut().checked().remembered();
+	QAction *evadeusercursors = makeAction("evadeusercursors", tr("Hide From Cursor")).noDefaultShortcut().checked().remembered();
 	QAction *showlasers = makeAction("showlasers", tr("Show La&ser Trails")).noDefaultShortcut().checked().remembered();
 	QAction *showgrid = makeAction("showgrid", tr("Show Pixel &Grid")).noDefaultShortcut().checked().remembered();
 
@@ -4005,7 +4006,7 @@ void MainWindow::setupActions()
 		{moveleft, moveright, moveup, movedown, zoomin, zoomout, zoomorig,
 		 zoomfit, zoomfitwidth, zoomfitheight, rotateorig, rotatecw, rotateccw,
 		 viewflip, viewmirror, showgrid, showusermarkers, showusernames,
-		 showuserlayers, showuseravatars});
+		 showuserlayers, showuseravatars, evadeusercursors});
 
 #ifndef SINGLE_MAIN_WINDOW
 	connect(fullscreen, &QAction::triggered, this, &MainWindow::toggleFullscreen);
@@ -4083,6 +4084,7 @@ void MainWindow::setupActions()
 	userpointermenu->addAction(showusernames);
 	userpointermenu->addAction(showuserlayers);
 	userpointermenu->addAction(showuseravatars);
+	userpointermenu->addAction(evadeusercursors);
 
 	viewmenu->addAction(showannotations);
 

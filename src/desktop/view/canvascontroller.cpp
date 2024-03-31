@@ -370,17 +370,13 @@ void CanvasController::withTileCache(
 void CanvasController::handleEnter()
 {
 	m_showOutline = true;
-#ifdef HAVE_EMULATED_BITMAP_CURSOR
 	m_scene->setCursorOnCanvas(true);
-#endif
 }
 
 void CanvasController::handleLeave()
 {
 	m_showOutline = false;
-#ifdef HAVE_EMULATED_BITMAP_CURSOR
 	m_scene->setCursorOnCanvas(false);
-#endif
 	m_hoveringOverHud = false;
 	m_scene->removeHover();
 	updateOutline();
@@ -1375,9 +1371,7 @@ void CanvasController::penMoveEvent(
 		mapPenPointToCanvasF(timeMsec, posf, pressure, xtilt, ytilt, rotation);
 	emit coordinatesChanged(point);
 
-#ifdef HAVE_EMULATED_BITMAP_CURSOR
 	m_scene->setCursorPos(posf);
-#endif
 
 	if(m_dragMode == ViewDragMode::Started) {
 		moveDrag(posf.toPoint());

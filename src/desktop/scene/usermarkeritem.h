@@ -7,6 +7,7 @@
 #include <QPainterPath>
 #include <QPen>
 #include <QPixmap>
+#include <functional>
 
 namespace drawingboard {
 
@@ -30,6 +31,10 @@ public:
 
 	void setAvatar(const QPixmap &avatar);
 	void setShowAvatar(bool show);
+
+	void setEvadeCursor(bool evadeCursor);
+	void setCursorPosValid(bool cursorPosValid);
+	void setCursorPos(const QPointF &cursorPos);
 
 	bool penUp() const { return m_penUp; }
 	void setPenUp(bool penUp) { m_penUp = penUp; }
@@ -57,8 +62,14 @@ protected:
 
 private:
 	static constexpr int ARROW = 10;
+	static constexpr qreal EVADE_HIDE = 66.67;
+	static constexpr qreal EVADE_FADE = 100.0;
 
 	void updateFullText();
+
+	void updateCursor(const std::function<void()> &block);
+	qreal getEvadeScale();
+
 	int m_id;
 
 	QPointF m_targetPos;
@@ -78,7 +89,11 @@ private:
 	bool m_showText = true;
 	bool m_showSubtext = false;
 	bool m_showAvatar = true;
+	bool m_evadeCursor = true;
 	bool m_penUp = false;
+
+	bool m_cursorPosValid = false;
+	QPointF m_cursorPos;
 };
 
 }

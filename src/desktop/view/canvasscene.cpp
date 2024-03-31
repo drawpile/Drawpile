@@ -169,9 +169,24 @@ void CanvasScene::setShowUserAvatars(bool showUserAvatars)
 	}
 }
 
+void CanvasScene::setEvadeUserCursors(bool evadeUserCursors)
+{
+	if(evadeUserCursors != m_evadeUserCursors) {
+		m_evadeUserCursors = evadeUserCursors;
+		for(UserMarkerItem *item : std::as_const(m_userMarkers)) {
+			item->setEvadeCursor(evadeUserCursors);
+		}
+	}
+}
+
 void CanvasScene::setShowOwnUserMarker(bool showOwnUserMarker)
 {
-	m_showOwnUserMarker = showOwnUserMarker;
+	if(showOwnUserMarker != m_showOwnUserMarker) {
+		m_showOwnUserMarker = showOwnUserMarker;
+		for(UserMarkerItem *item : std::as_const(m_userMarkers)) {
+			item->setCursorPosValid(m_cursorOnCanvas && !showOwnUserMarker);
+		}
+	}
 }
 
 void CanvasScene::setShowLaserTrails(bool showLaserTrails)
@@ -219,20 +234,36 @@ void CanvasScene::setShowToggleItems(bool showToggleItems)
 	}
 }
 
-#ifdef HAVE_EMULATED_BITMAP_CURSOR
-void CanvasScene::setCursorOnCanvas(bool onCanvas)
+void CanvasScene::setCursorOnCanvas(bool cursorOnCanvas)
 {
-	m_cursorItem->setOnCanvas(onCanvas);
+	if(cursorOnCanvas != m_cursorOnCanvas) {
+		m_cursorOnCanvas = cursorOnCanvas;
+#ifdef HAVE_EMULATED_BITMAP_CURSOR
+		m_cursorItem->setOnCanvas(cursorOnCanvas);
+#endif
+		for(UserMarkerItem *item : std::as_const(m_userMarkers)) {
+			item->setCursorPosValid(cursorOnCanvas && !m_showOwnUserMarker);
+		}
+	}
 }
 
+void CanvasScene::setCursorPos(const QPointF &cursorPos)
+{
+	if(cursorPos != m_cursorPos) {
+		m_cursorPos = cursorPos;
+#ifdef HAVE_EMULATED_BITMAP_CURSOR
+		m_cursorItem->setPos(cursorPos);
+#endif
+		for(UserMarkerItem *item : std::as_const(m_userMarkers)) {
+			item->setCursorPos(cursorPos);
+		}
+	}
+}
+
+#ifdef HAVE_EMULATED_BITMAP_CURSOR
 void CanvasScene::setCursor(const QCursor &cursor)
 {
 	m_cursorItem->setCursor(cursor);
-}
-
-void CanvasScene::setCursorPos(const QPointF &pos)
-{
-	m_cursorItem->setPos(pos);
 }
 #endif
 
@@ -408,6 +439,9 @@ void CanvasScene::onCursorMoved(
 			item->setShowSubtext(m_showUserLayers);
 			item->setAvatar(user.avatar);
 			item->setShowAvatar(m_showUserAvatars);
+			item->setEvadeCursor(m_evadeUserCursors);
+			item->setCursorPosValid(m_cursorOnCanvas && !m_showOwnUserMarker);
+			item->setCursorPos(m_cursorPos);
 			item->setTargetPos(x, y, true);
 			m_userMarkers[userId] = item;
 		}

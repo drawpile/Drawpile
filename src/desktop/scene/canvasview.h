@@ -316,9 +316,7 @@ private:
 	qreal getOutlineWidth() const;
 	int getCurrentCursorStyle() const;
 
-#ifdef HAVE_EMULATED_BITMAP_CURSOR
 	void updateCursorPos(const QPoint &pos);
-#endif
 
 	void onPenDown(const canvas::Point &p, bool right, bool eraserOverride);
 	void onPenMove(

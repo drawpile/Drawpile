@@ -223,6 +223,9 @@ void ViewWrapper::connectActions(const Actions &actions)
 	connect(
 		actions.showuseravatars, &QAction::toggled, m_scene,
 		&CanvasScene::setShowUserAvatars);
+	connect(
+		actions.evadeusercursors, &QAction::toggled, m_scene,
+		&CanvasScene::setEvadeUserCursors);
 }
 
 void ViewWrapper::connectDocument(Document *doc)
