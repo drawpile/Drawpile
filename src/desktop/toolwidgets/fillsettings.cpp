@@ -18,7 +18,8 @@ static const ToolProperties::RangedValue<int> expand{
 	mode{QStringLiteral("mode"), 0, 0, 2},
 	size{QStringLiteral("size"), 500, 10, 9999},
 	gap{QStringLiteral("gap"), 0, 0, 32},
-	source{QStringLiteral("source"), 2, 0, 2};
+	source{QStringLiteral("source"), 2, 0, 2},
+	area{QStringLiteral("area"), 0, 0, 1};
 static const ToolProperties::RangedValue<double> tolerance{
 	QStringLiteral("tolerance"), 0.0, 0.0, 1.0};
 }
@@ -221,6 +222,11 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 		int(Source::MergedWithoutBackground));
 	m_sourceGroup->addButton(m_ui->sourceLayer, int(Source::Layer));
 
+	m_areaGroup = new QButtonGroup(this);
+	m_areaGroup->setExclusive(true);
+	m_areaGroup->addButton(m_ui->areaContinuous, int(Area::Continuous));
+	m_areaGroup->addButton(m_ui->areaSimilar, int(Area::Similar));
+
 	connect(
 		m_ui->size, QOverload<int>::of(&QSpinBox::valueChanged), this,
 		[this](int size) {
@@ -257,6 +263,10 @@ QWidget *FillSettings::createUiWidget(QWidget *parent)
 			updateLayerCombo(m_sourceGroup->checkedId());
 			pushSettings();
 		});
+	connect(
+		m_areaGroup,
+		QOverload<QAbstractButton *>::of(&QButtonGroup::buttonClicked), this,
+		&FillSettings::pushSettings);
 	return uiwidget;
 }
 
@@ -270,6 +280,7 @@ void FillSettings::pushSettings()
 	tool->setFeatherRadius(m_ui->feather->value());
 	tool->setSize(m_ui->size->value());
 	tool->setGap(m_ui->gap->value());
+	tool->setContinuous(m_areaGroup->checkedId() == int(Area::Continuous));
 
 	switch(m_sourceGroup->checkedId()) {
 	case int(Source::Merged):
@@ -308,6 +319,7 @@ ToolProperties FillSettings::saveToolSettings()
 	cfg.setValue(props::gap, m_ui->gap->value());
 	cfg.setValue(props::mode, m_ui->mode->currentIndex());
 	cfg.setValue(props::source, m_sourceGroup->checkedId());
+	cfg.setValue(props::area, m_areaGroup->checkedId());
 	return cfg;
 }
 
@@ -356,6 +368,11 @@ void FillSettings::restoreToolSettings(const ToolProperties &cfg)
 	QAbstractButton *sourceButton = m_sourceGroup->button(source);
 	if(sourceButton) {
 		sourceButton->setChecked(true);
+	}
+
+	QAbstractButton *areaButton = m_areaGroup->button(cfg.value(props::area));
+	if(areaButton) {
+		areaButton->setChecked(true);
 	}
 
 	pushSettings();

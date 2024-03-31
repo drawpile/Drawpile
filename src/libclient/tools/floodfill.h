@@ -28,6 +28,7 @@ public:
 	void setGap(int gap) { m_gap = gap; }
 	void setLayerId(int layerId) { m_layerId = layerId; }
 	void setBlendMode(int blendMode) { m_blendMode = blendMode; }
+	void setContinuous(bool continuous) { m_continuous = continuous; }
 
 private:
 	class Task;
@@ -42,6 +43,7 @@ private:
 	int m_gap;
 	int m_layerId;
 	int m_blendMode;
+	bool m_continuous;
 	bool m_running;
 	QAtomicInt m_cancel;
 };

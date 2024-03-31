@@ -24,6 +24,7 @@ Unreleased Version 2.2.2-pre
  * Feature: OpenGL-based canvas renderer, which is much faster than the old one, especially in the browser. This is an experimental feature and can be enabled in the General preferences under Renderer.
  * Feature: Add system information dialog under Tools > Developer Tools > System Information.
  * Feature: Hide user pointers when they get close to your cursor. Can be toggled under View > User Pointers > Hide From Cursor. Thanks Crowley for suggesting.
+ * Feature: Allow filling non-continuous areas. Thanks Ben for suggesting.
 
 2024-02-25 Version 2.2.2-beta.1
  * Server Feature: Allow adding a message when kicking someone through the admin API.

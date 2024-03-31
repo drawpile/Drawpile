@@ -26,76 +26,6 @@
    <property name="spacing">
     <number>3</number>
    </property>
-   <item row="2" column="0" colspan="2">
-    <widget class="KisSliderSpinBox" name="size">
-     <property name="suffix">
-      <string>px</string>
-     </property>
-     <property name="prefix">
-      <string>Size: </string>
-     </property>
-     <property name="minimum">
-      <number>20</number>
-     </property>
-     <property name="maximum">
-      <number>5000</number>
-     </property>
-     <property name="singleStep">
-      <number>1</number>
-     </property>
-    </widget>
-   </item>
-   <item row="9" column="0">
-    <widget class="QLabel" name="sourceLabel">
-     <property name="text">
-      <string>Source:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="0" colspan="2">
-    <widget class="KisSliderSpinBox" name="gap">
-     <property name="suffix">
-      <string>px</string>
-     </property>
-     <property name="prefix">
-      <string>Close Gaps: </string>
-     </property>
-     <property name="maximum">
-      <number>32</number>
-     </property>
-    </widget>
-   </item>
-   <item row="10" column="1">
-    <widget class="QComboBox" name="mode">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>24</width>
-       <height>0</height>
-      </size>
-     </property>
-     <item>
-      <property name="text">
-       <string>Normal</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Behind</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Erase</string>
-      </property>
-     </item>
-    </widget>
-   </item>
    <item row="3" column="0" colspan="2">
     <widget class="KisSliderSpinBox" name="tolerance">
      <property name="prefix">
@@ -106,18 +36,32 @@
      </property>
     </widget>
    </item>
-   <item row="11" column="0" colspan="2">
-    <spacer>
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
+   <item row="10" column="0">
+    <widget class="QLabel" name="modeLabel">
+     <property name="text">
+      <string>Mode:</string>
      </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>0</height>
-      </size>
+    </widget>
+   </item>
+   <item row="6" column="0" colspan="2">
+    <widget class="KisSliderSpinBox" name="feather">
+     <property name="suffix">
+      <string> px</string>
      </property>
-    </spacer>
+     <property name="prefix">
+      <string>Feather: </string>
+     </property>
+     <property name="maximum">
+      <number>40</number>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="0">
+    <widget class="QLabel" name="sourceLabel">
+     <property name="text">
+      <string>Source:</string>
+     </property>
+    </widget>
    </item>
    <item row="9" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout">
@@ -209,23 +153,22 @@
      </item>
     </layout>
    </item>
-   <item row="6" column="0" colspan="2">
-    <widget class="KisSliderSpinBox" name="feather">
+   <item row="2" column="0" colspan="2">
+    <widget class="KisSliderSpinBox" name="size">
      <property name="suffix">
-      <string> px</string>
+      <string>px</string>
      </property>
      <property name="prefix">
-      <string>Feather: </string>
+      <string>Size: </string>
+     </property>
+     <property name="minimum">
+      <number>20</number>
      </property>
      <property name="maximum">
-      <number>40</number>
+      <number>5000</number>
      </property>
-    </widget>
-   </item>
-   <item row="10" column="0">
-    <widget class="QLabel" name="modeLabel">
-     <property name="text">
-      <string>Mode:</string>
+     <property name="singleStep">
+      <number>1</number>
      </property>
     </widget>
    </item>
@@ -241,6 +184,120 @@
       <number>30</number>
      </property>
     </widget>
+   </item>
+   <item row="7" column="0" colspan="2">
+    <widget class="KisSliderSpinBox" name="gap">
+     <property name="suffix">
+      <string>px</string>
+     </property>
+     <property name="prefix">
+      <string>Close Gaps: </string>
+     </property>
+     <property name="maximum">
+      <number>32</number>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="0" colspan="2">
+    <spacer>
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="10" column="1">
+    <layout class="QHBoxLayout" name="modeLayout">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="widgets::GroupedToolButton" name="areaContinuous">
+       <property name="toolTip">
+        <string>Fill continuous area</string>
+       </property>
+       <property name="icon">
+        <iconset theme="fill-color">
+         <normaloff>theme:fill-color.svg</normaloff>theme:fill-color.svg</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="groupPosition">
+        <enum>widgets::GroupedToolButton::GroupLeft</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="widgets::GroupedToolButton" name="areaSimilar">
+       <property name="toolTip">
+        <string>Fill all similar colors</string>
+       </property>
+       <property name="icon">
+        <iconset theme="color-picker">
+         <normaloff>theme:color-picker.svg</normaloff>theme:color-picker.svg</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="groupPosition">
+        <enum>widgets::GroupedToolButton::GroupRight</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="modeSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Maximum</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>6</width>
+         <height>0</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QComboBox" name="mode">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>24</width>
+         <height>0</height>
+        </size>
+       </property>
+       <item>
+        <property name="text">
+         <string>Normal</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Behind</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Erase</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

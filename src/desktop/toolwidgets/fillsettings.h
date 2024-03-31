@@ -57,11 +57,13 @@ private:
 	class FillLayerModel;
 	enum class Source { Merged, MergedWithoutBackground, Layer };
 	enum Mode { Normal, Behind, Erase };
+	enum Area { Continuous, Similar };
 
 	void updateLayerCombo(int source);
 
 	Ui_FillSettings *m_ui = nullptr;
 	QButtonGroup *m_sourceGroup = nullptr;
+	QButtonGroup *m_areaGroup = nullptr;
 	FillLayerModel *m_fillLayerModel;
 	Mode m_previousMode = Normal;
 	qreal m_quickAdjust1 = 0.0;

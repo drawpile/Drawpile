@@ -15,8 +15,9 @@ public:
 		FloodFill *tool, const QAtomicInt &cancel,
 		const drawdance::CanvasState &canvasState, const QPointF &point,
 		const QColor &fillColor, double tolerance, int sourceLayerId, int size,
-		int gap, int expansion, int featherRadius, int targetLayerId,
-		DP_ViewMode viewMode, int activeLayerId, int activeFrameIndex)
+		int gap, int expansion, int featherRadius, bool continuous,
+		int targetLayerId, DP_ViewMode viewMode, int activeLayerId,
+		int activeFrameIndex)
 		: m_tool{tool}
 		, m_cancel{cancel}
 		, m_canvasState{canvasState}
@@ -28,6 +29,7 @@ public:
 		, m_gap{gap}
 		, m_expansion{expansion}
 		, m_featherRadius{featherRadius}
+		, m_continuous{continuous}
 		, m_targetLayerId{targetLayerId}
 		, m_viewMode{viewMode}
 		, m_activeLayerId{activeLayerId}
@@ -39,8 +41,9 @@ public:
 	{
 		m_result = m_canvasState.floodFill(
 			m_point.x(), m_point.y(), m_fillColor, m_tolerance, m_sourceLayerId,
-			m_size, m_gap, m_expansion, m_featherRadius, m_viewMode,
-			m_activeLayerId, m_activeFrameIndex, m_cancel, m_img, m_x, m_y);
+			m_size, m_gap, m_expansion, m_featherRadius, m_continuous,
+			m_viewMode, m_activeLayerId, m_activeFrameIndex, m_cancel, m_img,
+			m_x, m_y);
 	}
 
 	void finished() override { m_tool->floodFillFinished(this); }
@@ -63,6 +66,7 @@ private:
 	int m_gap;
 	int m_expansion;
 	int m_featherRadius;
+	bool m_continuous;
 	int m_targetLayerId;
 	DP_ViewMode m_viewMode;
 	int m_activeLayerId;
@@ -84,6 +88,7 @@ FloodFill::FloodFill(ToolController &owner)
 	, m_gap{0}
 	, m_layerId{0}
 	, m_blendMode(DP_BLEND_MODE_NORMAL)
+	, m_continuous(true)
 	, m_running{false}
 	, m_cancel{false}
 {
@@ -105,7 +110,7 @@ void FloodFill::begin(const canvas::Point &point, bool right, float zoom)
 		m_owner.executeAsync(new Task{
 			this, m_cancel, paintEngine->viewCanvasState(), point, fillColor,
 			m_tolerance, m_layerId, m_size, m_gap, m_expansion, m_featherRadius,
-			m_owner.activeLayer(), paintEngine->viewMode(),
+			m_continuous, m_owner.activeLayer(), paintEngine->viewMode(),
 			paintEngine->viewLayer(), paintEngine->viewFrame()});
 	}
 }

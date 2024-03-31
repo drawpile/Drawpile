@@ -141,12 +141,31 @@ static bool should_flood(DP_FillContext *c, int x, int y)
     }
 }
 
-static void flood(DP_FillContext *c)
+static void update_bounds(DP_FillContext *c, int x, int y)
+{
+    if (x < c->min_x) {
+        c->min_x = x;
+    }
+    if (x > c->max_x) {
+        c->max_x = x;
+    }
+    if (y < c->min_y) {
+        c->min_y = y;
+    }
+    if (y > c->max_y) {
+        c->max_y = y;
+    }
+}
+
+static void flood(DP_FillContext *c, bool should_update_bounds)
 {
     DP_Rect area = c->area;
     for (int y = area.y1; y <= area.y2; ++y) {
         for (int x = area.x1; x <= area.x2; ++x) {
             buffer_set(c->input, area, x, y, should_flood(c, x, y) ? 1 : 0);
+            if (should_update_bounds) {
+                update_bounds(c, x, y);
+            }
         }
     }
 }
@@ -233,18 +252,7 @@ static bool inside(DP_FillContext *c, int x, int y)
 static void set_pixel(DP_FillContext *c, int x, int y)
 {
     buffer_set(c->output, c->area, x, y, 1);
-    if (x < c->min_x) {
-        c->min_x = x;
-    }
-    if (x > c->max_x) {
-        c->max_x = x;
-    }
-    if (y < c->min_y) {
-        c->min_y = y;
-    }
-    if (y > c->max_y) {
-        c->max_y = y;
-    }
+    update_bounds(c, x, y);
 }
 
 static void scan(DP_FillContext *c, DP_Queue *s, int lx, int rx, int y)
@@ -279,6 +287,18 @@ static void fill(DP_FillContext *c, int x0, int y0)
         }
         scan(c, s, lx, x - 1, y + 1);
         scan(c, s, lx, x - 1, y - 1);
+    }
+}
+
+static void tighten_bounds(DP_FillContext *c)
+{
+    DP_Rect area = c->area;
+    for (int y = area.y1; y <= area.y2; ++y) {
+        for (int x = area.x1; x <= area.x2; ++x) {
+            if (buffer_get(c->input, area, x, y)) {
+                update_bounds(c, x, y);
+            }
+        }
     }
 }
 
@@ -501,9 +521,10 @@ DP_Image *mask_to_image(DP_FillContext *c, const float *mask, int img_width,
 DP_FloodFillResult
 DP_flood_fill(DP_CanvasState *cs, int x, int y, DP_UPixelFloat fill_color,
               double tolerance, int layer_id, int size, int gap, int expand,
-              int feather_radius, DP_ViewMode view_mode, int active_layer_id,
-              int active_frame_index, DP_Image **out_img, int *out_x,
-              int *out_y, DP_FloodFillShouldCancelFn should_cancel, void *user)
+              int feather_radius, bool continuous, DP_ViewMode view_mode,
+              int active_layer_id, int active_frame_index, DP_Image **out_img,
+              int *out_x, int *out_y, DP_FloodFillShouldCancelFn should_cancel,
+              void *user)
 {
     DP_ASSERT(cs);
 
@@ -578,27 +599,38 @@ DP_flood_fill(DP_CanvasState *cs, int x, int y, DP_UPixelFloat fill_color,
                        * DP_int_to_size(DP_rect_height(c.area));
     c.input = DP_malloc(buffer_size);
     c.reference_color = get_color_at(c.lc, x, y);
-    flood(&c);
+    flood(&c, !continuous && gap <= 0);
     DP_layer_content_decref(c.lc);
     if (is_cancelled(&c)) {
         DP_free(c.input);
         return DP_FLOOD_FILL_CANCELLED;
     }
 
-    c.output = DP_malloc_zeroed(buffer_size);
-    if (gap > 0) {
-        gap_fill(&c, gap, buffer_size);
-        if (is_cancelled(&c)) {
-            DP_free(c.input);
-            DP_free(c.output);
-            return DP_FLOOD_FILL_CANCELLED;
+    if (continuous) {
+        c.output = DP_malloc_zeroed(buffer_size);
+        if (gap > 0) {
+            gap_fill(&c, gap, buffer_size);
+            if (is_cancelled(&c)) {
+                DP_free(c.input);
+                DP_free(c.output);
+                return DP_FLOOD_FILL_CANCELLED;
+            }
         }
-    }
 
-    DP_queue_init(&c.queue, 1024, sizeof(DP_FillSeed));
-    fill(&c, x, y);
-    DP_queue_dispose(&c.queue);
-    DP_free(c.input);
+        DP_queue_init(&c.queue, 1024, sizeof(DP_FillSeed));
+        fill(&c, x, y);
+        DP_queue_dispose(&c.queue);
+        DP_free(c.input);
+    }
+    else {
+        if (gap > 0) {
+            c.output = DP_malloc_zeroed(buffer_size);
+            gap_fill(&c, gap, buffer_size);
+            tighten_bounds(&c);
+            DP_free(c.output);
+        }
+        c.output = c.input;
+    }
 
     if (is_cancelled(&c)) {
         DP_free(c.output);
