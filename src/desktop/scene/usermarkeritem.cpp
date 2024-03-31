@@ -4,6 +4,7 @@
 #include <QDateTime>
 #include <QFontMetrics>
 #include <QPainter>
+#include <cmath>
 
 namespace drawingboard {
 
@@ -250,7 +251,7 @@ qreal UserMarkerItem::getEvadeScale()
 		qreal py = m_cursorPos.y();
 		qreal dx = qMax(0.0, qMax(r.left() - px, px - r.right()));
 		qreal dy = qMax(0.0, qMax(r.top() - py, py - r.bottom()));
-		qreal d = qSqrt(dx * dx + dy * dy);
+		qreal d = std::sqrt(dx * dx + dy * dy);
 		if(d <= EVADE_HIDE) {
 			return 0;
 		} else if(d < EVADE_FADE) {
