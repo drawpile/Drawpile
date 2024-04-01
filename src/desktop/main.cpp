@@ -821,8 +821,9 @@ int main(int argc, char *argv[])
 	}
 #endif
 
-	int vsync;
-	QSurfaceFormat::SwapBehavior swapBehavior;
+	int vsync = 0;
+	QSurfaceFormat::SwapBehavior swapBehavior =
+		QSurfaceFormat::DefaultSwapBehavior;
 	applyRenderSettings(argc, argv, vsync, swapBehavior);
 
 #ifdef Q_OS_WIN
