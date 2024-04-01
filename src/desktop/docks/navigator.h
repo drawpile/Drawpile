@@ -63,11 +63,9 @@ private:
 		int id;
 	};
 
-	bool isCacheNull() const;
-	QSize cacheSize() const;
 	QPointF getFocusPoint(const QPointF &eventPoint);
-	void refreshPixmapCache(canvas::PaintEngine *pe);
-	void refreshImageCache(canvas::PaintEngine *pe);
+	void refreshFromPixmap(canvas::PaintEngine *pe);
+	void refreshFromTileCache(canvas::PaintEngine *pe);
 	bool refreshCacheSize(const QSize &canvasSize);
 	void getRefreshArea(
 		const QSize &canvasSize, QRectF &outSourceArea, QRectF &outTargetArea);
@@ -76,8 +74,7 @@ private:
 	QVector<UserCursor> m_cursors;
 	QColor m_backgroundColor = QColor(100, 100, 100);
 	QPixmap m_checker = QPixmap(CHECKER_SIZE, CHECKER_SIZE);
-	QPixmap m_pixmapCache;
-	QImage m_imageCache;
+	QPixmap m_cache;
 	QPixmap m_cursorBackground;
 	QSize m_cachedSize;
 	QSize m_canvasSize;
