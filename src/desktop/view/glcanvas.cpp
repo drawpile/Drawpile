@@ -36,8 +36,10 @@ struct GlCanvas::Private {
 		GLint viewLocation = 0;
 		GLint translationLocation = 0;
 		GLint transformLocation = 0;
+		GLint frectLocation = 0;
 		GLint canvasLocation = 0;
 		GLint checkerLocation = 0;
+		GLint smoothLocation = 0;
 		GLint gridScaleLocation = 0;
 	};
 
@@ -165,7 +167,6 @@ uniform vec2 u_translation;
 uniform mat3 u_transform;
 attribute mediump vec2 v_uv;
 varying vec2 f_pos;
-varying vec2 f_uv;
 varying vec2 f_uvChecker;
 
 void main()
@@ -176,7 +177,6 @@ void main()
 	float y = -2.0 * pos.y / u_view.y;
 	gl_Position = vec4(x, y, 0.0, 1.0);
 	f_pos = vp;
-	f_uv = v_uv;
 	f_uvChecker = pos / 64.0;
 }
 	)""";
@@ -185,18 +185,21 @@ void main()
 #version 100
 precision mediump float;
 
+uniform vec4 u_frect;
 uniform sampler2D u_canvas;
 uniform sampler2D u_checker;
+uniform float u_smooth;
 uniform float u_gridScale;
 varying vec2 f_pos;
-varying vec2 f_uv;
 varying vec2 f_uvChecker;
 
 void main()
 {
+	vec2 p = u_smooth < 0.5 ? floor(f_pos) + vec2(0.5, 0.5) : f_pos;
+	vec2 uv =
+		vec2((p.x - u_frect.x) / u_frect.z, (p.y - u_frect.y) / u_frect.w);
+	vec4 canvasColor = texture2D(u_canvas, uv);
 	vec3 c;
-
-	vec4 canvasColor = texture2D(u_canvas, f_uv);
 	if(canvasColor.a >= 1.0) {
 		c = canvasColor.bgr;
 	} else {
@@ -254,12 +257,20 @@ void main()
 			qCDebug(lcDpGlCanvas, "Get canvas transform uniform location");
 			canvasShader.transformLocation =
 				f->glGetUniformLocation(canvasShader.program, "u_transform");
+			qCDebug(lcDpGlCanvas, "Get canvas frect uniform location");
+			canvasShader.frectLocation =
+				f->glGetUniformLocation(canvasShader.program, "u_frect");
 			qCDebug(lcDpGlCanvas, "Get canvas sampler uniform location");
 			canvasShader.canvasLocation =
 				f->glGetUniformLocation(canvasShader.program, "u_canvas");
-			qCDebug(lcDpGlCanvas, "Get checker sampler uniform location");
+			qCDebug(
+				lcDpGlCanvas, "Get canvas checker sampler uniform location");
 			canvasShader.checkerLocation =
 				f->glGetUniformLocation(canvasShader.program, "u_checker");
+			qCDebug(lcDpGlCanvas, "Get canvas smooth uniform location");
+			canvasShader.smoothLocation =
+				f->glGetUniformLocation(canvasShader.program, "u_smooth");
+			qCDebug(lcDpGlCanvas, "Get canvas grid scale uniform location");
 			canvasShader.gridScaleLocation =
 				f->glGetUniformLocation(canvasShader.program, "u_gridScale");
 		} else {
@@ -534,7 +545,7 @@ void main()
 		f->glActiveTexture(GL_TEXTURE0);
 	}
 
-	void updateCanvasTextureFilter()
+	void updateCanvasTextureFilter(QOpenGLFunctions *f)
 	{
 		if(dirty.textureFilter) {
 			dirty.textureFilter = false;
@@ -547,6 +558,8 @@ void main()
 				textureFilterLinear = false;
 			}
 		}
+		f->glUniform1f(
+			canvasShader.smoothLocation, textureFilterLinear ? 1.0 : 0.0);
 	}
 
 	void
@@ -560,6 +573,9 @@ void main()
 		}
 		f->glUniform4f(
 			canvasShader.rectLocation, rect.x(), rect.y(), rect.width(),
+			rect.height());
+		f->glUniform4f(
+			canvasShader.frectLocation, rect.x(), rect.y(), rect.width(),
 			rect.height());
 		f->glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	}
@@ -668,7 +684,7 @@ void main()
 	{
 		qCDebug(lcDpGlCanvas, "renderCanvasDirtyTexture");
 		setUpCanvasShader(f);
-		updateCanvasTextureFilter();
+		updateCanvasTextureFilter(f);
 
 		QSize size = tileCache.size();
 		bool textureSizeChanged = totalTextureSize != size;
@@ -711,7 +727,7 @@ void main()
 	void renderCanvasClean(QOpenGLFunctions *f)
 	{
 		setUpCanvasShader(f);
-		updateCanvasTextureFilter();
+		updateCanvasTextureFilter(f);
 		int textureCount = canvasTextures.size();
 		for(int i = 0; i < textureCount; ++i) {
 			f->glBindTexture(GL_TEXTURE_2D, canvasTextures[i]);
