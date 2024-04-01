@@ -309,10 +309,10 @@ void CanvasController::setMirror(bool mirror)
 		});
 
 		showTransformNotice(
-			m_flip ? QCoreApplication::translate(
-						 "widgets::CanvasView", "Horizontal mirror: ON")
-				   : QCoreApplication::translate(
-						 "widgets::CanvasView", "Horizontal mirror: OFF"));
+			m_mirror ? QCoreApplication::translate(
+						   "widgets::CanvasView", "Horizontal mirror: ON")
+					 : QCoreApplication::translate(
+						   "widgets::CanvasView", "Horizontal mirror: OFF"));
 	}
 }
 
