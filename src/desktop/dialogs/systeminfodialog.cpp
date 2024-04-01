@@ -144,6 +144,10 @@ QString SystemInfoDialog::getSystemInfo() const
 	info += QStringLiteral("Default format swap interval: %1\n")
 				.arg(format.swapInterval());
 	info +=
+		QStringLiteral("Default format swap behavior: %1\n")
+			.arg(QMetaEnum::fromType<QSurfaceFormat::SwapBehavior>().valueToKey(
+				format.swapBehavior()));
+	info +=
 		QStringLiteral("Canvas renderer: %1\n")
 			.arg(QMetaEnum::fromType<desktop::settings::CanvasImplementation>()
 					 .valueToKey(dpApp().canvasImplementation()));

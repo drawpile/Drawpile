@@ -917,6 +917,9 @@ void GlCanvas::initializeGL()
 			.arg(format.depthBufferSize())
 			.arg(format.stencilBufferSize()),
 		QStringLiteral("Swap interval: %1").arg(format.swapInterval()),
+		QStringLiteral("Swap behavior: %1\n")
+			.arg(QMetaEnum::fromType<QSurfaceFormat::SwapBehavior>().valueToKey(
+				format.swapBehavior())),
 		QStringLiteral("GL_RENDERER: %1")
 			.arg(Private::getGlString(f, GL_RENDERER)),
 		QStringLiteral("GL_VERSION: %1")

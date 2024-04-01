@@ -557,6 +557,14 @@ static std::tuple<QStringList, QString, bool> initApp(DrawpileApp &app)
 		"impl");
 	parser.addOption(opengl);
 
+	// --buffer
+	QCommandLineOption buffer(
+		"buffer",
+		"Set swap bufferring, 1 for single-, 2 for double-, 3 for "
+		"triple-buffering. Any other value uses the system default.",
+		"count");
+	parser.addOption(buffer);
+
 #ifdef Q_OS_WIN
 	// --copy-legacy-settings
 	QCommandLineOption copyLegacySettings(
@@ -742,32 +750,47 @@ static int applyRenderSettingsFrom(const QString &path)
 	return vsync;
 }
 
-static int applyRenderSettings(int argc, char **argv)
+static void applyRenderSettings(
+	int argc, char **argv, int &outVsync,
+	QSurfaceFormat::SwapBehavior &outSwapBehavior)
 {
 	QString fileName = QStringLiteral("scaling.ini");
 	bool applied = false;
-	int vsync = 0;
 	for(int i = 1; i < argc - 1; ++i) {
 		if(!applied && strcmp(argv[i], "--portable-data-dir") == 0) {
 			QString path =
 				QDir(QString::fromUtf8(argv[++i]) + QStringLiteral("/settings"))
 					.absoluteFilePath(fileName);
-			vsync = applyRenderSettingsFrom(path);
+			outVsync = applyRenderSettingsFrom(path);
 			applied = true;
-		} else if(strcmp(argv[i], "--opengl") == 0) {
+		} else if(strcmp(argv[i], "--opengl") == 0 && i + 1 < argc) {
 			qputenv("QT_OPENGL", argv[++i]);
+		} else if(strcmp(argv[i], "--buffer") == 0 && i + 1 < argc) {
+			switch(QString::fromUtf8(argv[i + 1]).toInt()) {
+			case 1:
+				outSwapBehavior = QSurfaceFormat::SingleBuffer;
+				break;
+			case 2:
+				outSwapBehavior = QSurfaceFormat::DoubleBuffer;
+				break;
+			case 3:
+				outSwapBehavior = QSurfaceFormat::TripleBuffer;
+				break;
+			default:
+				outSwapBehavior = QSurfaceFormat::DefaultSwapBehavior;
+				break;
+			}
 		}
 	}
 	if(!applied) {
 		// Can't use AppConfigLocation because the application name is not
 		// initialized yet and doing so at this point corrupts the main settings
 		// file. QSettings is terrible and we should really do away with it.
-		vsync = applyRenderSettingsFrom(
+		outVsync = applyRenderSettingsFrom(
 			QStandardPaths::writableLocation(
 				QStandardPaths::GenericConfigLocation) +
 			QStringLiteral("/drawpile/") + fileName);
 	}
-	return vsync;
 }
 
 int main(int argc, char *argv[])
@@ -798,7 +821,9 @@ int main(int argc, char *argv[])
 	}
 #endif
 
-	int vsync = applyRenderSettings(argc, argv);
+	int vsync;
+	QSurfaceFormat::SwapBehavior swapBehavior;
+	applyRenderSettings(argc, argv, vsync, swapBehavior);
 
 #ifdef Q_OS_WIN
 	// On Windows, Qt will default to using OpenGL directly if the graphics
@@ -817,6 +842,7 @@ int main(int argc, char *argv[])
 	if(vsync >= 0) {
 		format.setSwapInterval(vsync);
 	}
+	format.setSwapBehavior(swapBehavior);
 	format.setRedBufferSize(8);
 	format.setGreenBufferSize(8);
 	format.setBlueBufferSize(8);
