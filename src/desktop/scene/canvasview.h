@@ -231,7 +231,7 @@ public slots:
 	void setBrushOutlineWidth(qreal outlineWidth);
 	void setBrushBlendMode(int brushBlendMode);
 
-	void setSuppressTransformNotices(bool suppressTransformNotices);
+	void setShowTransformNotices(bool showTransformNotices);
 #ifdef __EMSCRIPTEN__
 	void setEnableEraserOverride(bool enableEraserOverride);
 #endif
@@ -436,7 +436,7 @@ private:
 
 	bool m_scrollBarsAdjusting;
 	bool m_blockNotices;
-	bool m_suppressTransformNotices;
+	bool m_showTransformNotices;
 	bool m_hoveringOverHud;
 	bool m_renderSmooth;
 #ifdef __EMSCRIPTEN__

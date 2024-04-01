@@ -79,7 +79,7 @@ CanvasView::CanvasView(QWidget *parent)
 	, m_brushBlendMode(DP_BLEND_MODE_NORMAL)
 	, m_scrollBarsAdjusting{false}
 	, m_blockNotices{false}
-	, m_suppressTransformNotices(false)
+	, m_showTransformNotices(true)
 	, m_hoveringOverHud{false}
 	, m_renderSmooth(false)
 {
@@ -163,8 +163,8 @@ CanvasView::CanvasView(QWidget *parent)
 		setVerticalScrollBarPolicy(policy);
 	});
 
-	settings.bindSuppressTransformNotices(
-		this, &CanvasView::setSuppressTransformNotices);
+	settings.bindShowTransformNotices(
+		this, &CanvasView::setShowTransformNotices);
 }
 
 void CanvasView::setTouchUseGestureEvents(bool useGestureEvents)
@@ -644,9 +644,9 @@ void CanvasView::setBrushBlendMode(int brushBlendMode)
 	resetCursor();
 }
 
-void CanvasView::setSuppressTransformNotices(bool suppressTransformNotices)
+void CanvasView::setShowTransformNotices(bool showTransformNotices)
 {
-	m_suppressTransformNotices = suppressTransformNotices;
+	m_showTransformNotices = showTransformNotices;
 }
 
 #ifdef __EMSCRIPTEN__
@@ -2426,7 +2426,7 @@ void CanvasView::showTouchTransformNotice()
 
 void CanvasView::showTransformNotice(const QString &text)
 {
-	if(m_scene && !m_blockNotices && !m_suppressTransformNotices) {
+	if(m_scene && !m_blockNotices && m_showTransformNotices) {
 		m_scene->showTransformNotice(text);
 	}
 }

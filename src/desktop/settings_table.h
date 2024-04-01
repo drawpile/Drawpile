@@ -175,9 +175,9 @@ SETTING(shareBrushSlotColor       , ShareBrushSlotColor       , "settings/shareb
 SETTING(shortcuts                 , Shortcuts                 , "settings/shortcuts"                    , QVariantMap())
 SETTING(showInviteDialogOnHost    , ShowInviteDialogOnHost    , "invites/showdialogonhost"              , true)
 SETTING(showNsfmWarningOnJoin     , ShowNsfmWarningOnJoin     , "pc/shownsfmwarningonjoin"              , true)
+SETTING(showTransformNotices      , ShowTransformNotices      , "settings/showtransformnotices"         , true)
 SETTING(showTrayIcon              , ShowTrayIcon              , "ui/trayicon"                           , true)
 SETTING(soundVolume               , SoundVolume               , "notifications/volume"                  , 60)
-SETTING(suppressTransformNotices  , SuppressTransformNotices  , "settings/suppresstransformnotices"     , false)
 SETTING_GETSET(tabletDriver       , TabletDriver              , "settings/input/tabletdriver"           , tabletinput::Mode::KisTabletWinink
 	, &tabletDriver::get, &tabletDriver::set)
 SETTING_GETSET(tabletEraserAction , TabletEraserAction        , "settings/input/tableteraseraction"     , int(tabletinput::EraserAction::Default)

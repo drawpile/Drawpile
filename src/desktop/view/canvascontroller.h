@@ -201,7 +201,7 @@ private:
 	void setSerializedPressureCurve(const QString &serializedPressureCurve);
 	void setOutlineWidth(qreal outlineWidth);
 	void setCanvasShortcuts(QVariantMap canvasShortcuts);
-	void setSuppressTransformNotices(bool suppressTransformNotices);
+	void setShowTransformNotices(bool showTransformNotices);
 
 	void penMoveEvent(
 		long long timeMsec, const QPointF &posf, qreal pressure, qreal xtilt,
@@ -403,7 +403,7 @@ private:
 
 	bool m_canvasSizeChanging = false;
 	bool m_blockNotices = false;
-	bool m_suppressTransformNotices = false;
+	bool m_showTransformNotices = false;
 	bool m_busy = false;
 	bool m_locked = false;
 	QString m_lockDescription;

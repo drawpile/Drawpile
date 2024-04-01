@@ -64,8 +64,8 @@ CanvasController::CanvasController(CanvasScene *scene, QWidget *parent)
 	settings.bindGlobalPressureCurve(
 		this, &CanvasController::setSerializedPressureCurve);
 	settings.bindCanvasShortcuts(this, &CanvasController::setCanvasShortcuts);
-	settings.bindSuppressTransformNotices(
-		this, &CanvasController::setSuppressTransformNotices);
+	settings.bindShowTransformNotices(
+		this, &CanvasController::setShowTransformNotices);
 	settings.bindBrushCursor(this, &CanvasController::setBrushCursorStyle);
 	settings.bindEraseCursor(this, &CanvasController::setEraseCursorStyle);
 	settings.bindAlphaLockCursor(
@@ -1357,10 +1357,9 @@ QPointF CanvasController::outlinePos() const
 	}
 }
 
-void CanvasController::setSuppressTransformNotices(
-	bool suppressTransformNotices)
+void CanvasController::setShowTransformNotices(bool showTransformNotices)
 {
-	m_suppressTransformNotices = suppressTransformNotices;
+	m_showTransformNotices = showTransformNotices;
 }
 
 void CanvasController::penMoveEvent(
@@ -2271,7 +2270,7 @@ void CanvasController::showTouchTransformNotice()
 
 void CanvasController::showTransformNotice(const QString &text)
 {
-	bool changed = !m_blockNotices && !m_suppressTransformNotices &&
+	bool changed = !m_blockNotices && m_showTransformNotices &&
 				   m_scene->showTransformNotice(text);
 	if(changed) {
 		emit transformNoticeChanged();
