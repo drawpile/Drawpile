@@ -36,7 +36,6 @@ struct GlCanvas::Private {
 		GLint viewLocation = 0;
 		GLint translationLocation = 0;
 		GLint transformLocation = 0;
-		GLint frectLocation = 0;
 		GLint canvasLocation = 0;
 		GLint checkerLocation = 0;
 		GLint smoothLocation = 0;
@@ -89,11 +88,40 @@ struct GlCanvas::Private {
 					 : QString();
 	}
 
-	static GLuint
-	parseShader(QOpenGLFunctions *f, GLenum type, const char *code)
+	static bool supportsFragmentHighp(QOpenGLFunctions *f)
+	{
+		GLint range[2] = {0, 0};
+		GLint precision = 0;
+		f->glGetShaderPrecisionFormat(
+			GL_FRAGMENT_SHADER, GL_HIGH_FLOAT, range, &precision);
+		return precision != 0;
+	}
+
+	static QString getGlShaderPrecision(
+		QOpenGLContext *context, QOpenGLFunctions *f, GLenum shadertype,
+		GLenum precisiontype)
+	{
+		if(context->isOpenGLES() || context->format().majorVersion() >= 4) {
+			GLint range[2] = {0, 0};
+			GLint precision = 0;
+			f->glGetShaderPrecisionFormat(
+				shadertype, precisiontype, range, &precision);
+			return QStringLiteral("range (%1, %2) precision %3")
+				.arg(range[0])
+				.arg(range[1])
+				.arg(precision);
+		} else {
+			return QStringLiteral("range unknown precision unknown");
+		}
+	}
+
+	static GLuint parseShader(
+		QOpenGLFunctions *f, GLenum type, const QVector<const char *> &code)
 	{
 		GLuint shader = f->glCreateShader(type);
-		f->glShaderSource(shader, 1, &code, nullptr);
+		f->glShaderSource(
+			shader, GLsizei(code.size()),
+			const_cast<const char **>(code.constData()), nullptr);
 		f->glCompileShader(shader);
 		return shader;
 	}
@@ -120,9 +148,17 @@ struct GlCanvas::Private {
 		return compileStatus;
 	}
 
-	static GLuint
-	compileShader(QOpenGLFunctions *f, GLenum type, const char *code)
+	static GLuint compileShader(
+		QOpenGLFunctions *f, GLenum type, const QVector<const char *> &code)
 	{
+		if(lcDpGlCanvas().isDebugEnabled()) {
+			QString joined;
+			for(const char *c : code) {
+				joined.append(QString::fromUtf8(c));
+			}
+			qCDebug(
+				lcDpGlCanvas, "Compile shader:\n%s", qUtf8Printable(joined));
+		}
 		GLuint shader = parseShader(f, type, code);
 		dumpShaderInfoLog(f, shader);
 		if(!getShaderCompileStatus(f, shader)) {
@@ -156,17 +192,18 @@ struct GlCanvas::Private {
 		return linkStatus;
 	}
 
-	static CanvasShader initCanvasShader(QOpenGLFunctions *f)
+	static CanvasShader initCanvasShader(QOpenGLFunctions *f, bool highp)
 	{
 		static constexpr char canvasVertexCode[] = R"""(
-#version 100
-
 uniform vec4 u_rect;
 uniform vec2 u_view;
 uniform vec2 u_translation;
 uniform mat3 u_transform;
 attribute mediump vec2 v_uv;
-varying vec2 f_pos;
+#ifdef DP_HAVE_HIGHP
+varying highp vec2 f_pos;
+#endif
+varying vec2 f_uv;
 varying vec2 f_uvChecker;
 
 void main()
@@ -176,29 +213,44 @@ void main()
 	float x = 2.0 * pos.x / u_view.x;
 	float y = -2.0 * pos.y / u_view.y;
 	gl_Position = vec4(x, y, 0.0, 1.0);
+#ifdef DP_HAVE_HIGHP
 	f_pos = vp;
+#endif
+	f_uv = v_uv;
 	f_uvChecker = pos / 64.0;
 }
 	)""";
 
 		static constexpr char canvasFragmentCode[] = R"""(
-#version 100
 precision mediump float;
 
-uniform vec4 u_frect;
 uniform sampler2D u_canvas;
 uniform sampler2D u_checker;
+#ifdef DP_HAVE_HIGHP
+uniform highp vec4 u_rect;
 uniform float u_smooth;
-uniform float u_gridScale;
-varying vec2 f_pos;
+uniform highp float u_gridScale;
+varying highp vec2 f_pos;
+#endif
+varying vec2 f_uv;
 varying vec2 f_uvChecker;
 
 void main()
 {
-	vec2 p = u_smooth < 0.5 ? floor(f_pos) + vec2(0.5, 0.5) : f_pos;
-	vec2 uv =
-		vec2((p.x - u_frect.x) / u_frect.z, (p.y - u_frect.y) / u_frect.w);
-	vec4 canvasColor = texture2D(u_canvas, uv);
+	vec4 canvasColor;
+#ifdef DP_HAVE_HIGHP
+	if(u_smooth < 0.5) {
+		highp vec2 p = floor(f_pos) + vec2(0.5, 0.5);
+		canvasColor = texture2D(
+			u_canvas,
+			vec2((p.x - u_rect.x) / u_rect.z, (p.y - u_rect.y) / u_rect.w));
+	} else {
+#endif
+		canvasColor = texture2D(u_canvas, f_uv);
+#ifdef DP_HAVE_HIGHP
+	}
+#endif
+
 	vec3 c;
 	if(canvasColor.a >= 1.0) {
 		c = canvasColor.bgr;
@@ -207,32 +259,34 @@ void main()
 			+ canvasColor.bgr;
 	}
 
+#ifdef DP_HAVE_HIGHP
 	if(u_gridScale > 0.0) {
 		vec2 gridPos = mod(abs(f_pos), 1.0);
 		if(min(gridPos.x, gridPos.y) < u_gridScale) {
-			float lum = 0.3 * c.r + 0.59 * c.g + 0.11 * c.b;
+			lowp float lum = 0.3 * c.r + 0.59 * c.g + 0.11 * c.b;
 			c = mix(c, vec3(lum < 0.2 ? 0.3 - lum : 0.0), 0.3);
 		}
 	}
+#endif
 
 	gl_FragColor = vec4(c, 1.0);
 }
 	)""";
 
+		const char *prefix = highp ? "#version 100\n#define DP_HAVE_HIGHP 1\n"
+								   : "#version 100\n";
+
 		qCDebug(lcDpGlCanvas, "Create canvas shader program");
 		CanvasShader canvasShader;
 		canvasShader.program = f->glCreateProgram();
 
-		qCDebug(
-			lcDpGlCanvas, "Compile canvas vertex shader: %s", canvasVertexCode);
-		GLuint canvasVertexShader =
-			Private::compileShader(f, GL_VERTEX_SHADER, canvasVertexCode);
+		qCDebug(lcDpGlCanvas, "Compile canvas vertex shader");
+		GLuint canvasVertexShader = Private::compileShader(
+			f, GL_VERTEX_SHADER, {prefix, canvasVertexCode});
 
-		qCDebug(
-			lcDpGlCanvas, "Compile canvas fragment shader: %s",
-			canvasFragmentCode);
-		GLuint canvasFragmentShader =
-			Private::compileShader(f, GL_FRAGMENT_SHADER, canvasFragmentCode);
+		qCDebug(lcDpGlCanvas, "Compile canvas fragment shader");
+		GLuint canvasFragmentShader = Private::compileShader(
+			f, GL_FRAGMENT_SHADER, {prefix, canvasFragmentCode});
 
 		qCDebug(lcDpGlCanvas, "Attach canvas vertex shader");
 		f->glAttachShader(canvasShader.program, canvasVertexShader);
@@ -257,9 +311,6 @@ void main()
 			qCDebug(lcDpGlCanvas, "Get canvas transform uniform location");
 			canvasShader.transformLocation =
 				f->glGetUniformLocation(canvasShader.program, "u_transform");
-			qCDebug(lcDpGlCanvas, "Get canvas frect uniform location");
-			canvasShader.frectLocation =
-				f->glGetUniformLocation(canvasShader.program, "u_frect");
 			qCDebug(lcDpGlCanvas, "Get canvas sampler uniform location");
 			canvasShader.canvasLocation =
 				f->glGetUniformLocation(canvasShader.program, "u_canvas");
@@ -269,10 +320,14 @@ void main()
 				f->glGetUniformLocation(canvasShader.program, "u_checker");
 			qCDebug(lcDpGlCanvas, "Get canvas smooth uniform location");
 			canvasShader.smoothLocation =
-				f->glGetUniformLocation(canvasShader.program, "u_smooth");
+				highp
+					? f->glGetUniformLocation(canvasShader.program, "u_smooth")
+					: 0;
 			qCDebug(lcDpGlCanvas, "Get canvas grid scale uniform location");
 			canvasShader.gridScaleLocation =
-				f->glGetUniformLocation(canvasShader.program, "u_gridScale");
+				highp ? f->glGetUniformLocation(
+							canvasShader.program, "u_gridScale")
+					  : 0;
 		} else {
 			qCCritical(lcDpGlCanvas, "Can't link canvas shader program");
 		}
@@ -289,18 +344,19 @@ void main()
 		return canvasShader;
 	}
 
-	static OutlineShader initOutlineShader(QOpenGLFunctions *f)
+	static OutlineShader initOutlineShader(QOpenGLFunctions *f, bool highp)
 	{
 		static constexpr char outlineVertexCode[] = R"""(
-#version 100
-
 uniform vec2 u_view;
 uniform vec2 u_pos;
 uniform vec2 u_translation;
 uniform mat3 u_transform;
 attribute mediump vec2 v_pos;
-varying vec2 f_uv;
+#ifdef DP_HAVE_HIGHP
+varying highp vec2 f_pos;
+#else
 varying vec2 f_pos;
+#endif
 
 void main()
 {
@@ -314,18 +370,28 @@ void main()
 	)""";
 
 		static constexpr char outlineFragmentCode[] = R"""(
-#version 100
 precision mediump float;
 
+#ifdef DP_HAVE_HIGHP
+uniform highp float u_size;
+uniform highp float u_width;
+uniform highp float u_shape;
+varying highp vec2 f_pos;
+#else
 uniform float u_size;
 uniform float u_width;
 uniform float u_shape;
-
 varying vec2 f_pos;
+#endif
 
 void main()
 {
-	float distance = u_shape < 0.5
+#ifdef DP_HAVE_HIGHP
+	highp float distance;
+#else
+	float distance;
+#endif
+	distance = u_shape < 0.5
 		? abs(length(f_pos) - u_size + u_width) // Circle
 		: abs(max(abs(f_pos.x), abs(f_pos.y)) - u_size + u_width); // Square
 	if(distance <= u_width * 0.5) {
@@ -336,6 +402,9 @@ void main()
 }
 	)""";
 
+		const char *prefix = highp ? "#version 100\n#define DP_HAVE_HIGHP 1\n"
+								   : "#version 100\n";
+
 		qCDebug(lcDpGlCanvas, "Create outline shader program");
 		OutlineShader outlineShader;
 		outlineShader.program = f->glCreateProgram();
@@ -343,14 +412,14 @@ void main()
 		qCDebug(
 			lcDpGlCanvas, "Compile outline vertex shader: %s",
 			outlineVertexCode);
-		GLuint outlineVertexShader =
-			Private::compileShader(f, GL_VERTEX_SHADER, outlineVertexCode);
+		GLuint outlineVertexShader = Private::compileShader(
+			f, GL_VERTEX_SHADER, {prefix, outlineVertexCode});
 
 		qCDebug(
 			lcDpGlCanvas, "Compile outline fragment shader: %s",
 			outlineFragmentCode);
-		GLuint outlineFragmentShader =
-			Private::compileShader(f, GL_FRAGMENT_SHADER, outlineFragmentCode);
+		GLuint outlineFragmentShader = Private::compileShader(
+			f, GL_FRAGMENT_SHADER, {prefix, outlineFragmentCode});
 
 		qCDebug(lcDpGlCanvas, "Attach outline vertex shader");
 		f->glAttachShader(outlineShader.program, outlineVertexShader);
@@ -532,10 +601,12 @@ void main()
 		f->glUniform1i(canvasShader.canvasLocation, 0);
 		f->glUniform1i(canvasShader.checkerLocation, 1);
 
-		qreal pixelGridScale = controller->pixelGridScale();
-		f->glUniform1f(
-			canvasShader.gridScaleLocation,
-			pixelGridScale > 0.0 ? 1.0 / pixelGridScale : 0.0);
+		if(haveFragmentHighp) {
+			qreal pixelGridScale = controller->pixelGridScale();
+			f->glUniform1f(
+				canvasShader.gridScaleLocation,
+				pixelGridScale > 0.0 ? 1.0 / pixelGridScale : 0.0);
+		}
 
 		f->glEnableVertexAttribArray(0);
 		f->glBindBuffer(
@@ -558,8 +629,10 @@ void main()
 				textureFilterLinear = false;
 			}
 		}
-		f->glUniform1f(
-			canvasShader.smoothLocation, textureFilterLinear ? 1.0 : 0.0);
+		if(haveFragmentHighp) {
+			f->glUniform1f(
+				canvasShader.smoothLocation, textureFilterLinear ? 1.0 : 0.0);
+		}
 	}
 
 	void
@@ -573,9 +646,6 @@ void main()
 		}
 		f->glUniform4f(
 			canvasShader.rectLocation, rect.x(), rect.y(), rect.width(),
-			rect.height());
-		f->glUniform4f(
-			canvasShader.frectLocation, rect.x(), rect.y(), rect.width(),
 			rect.height());
 		f->glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	}
@@ -798,6 +868,7 @@ void main()
 	QColor checkerColor2;
 	Dirty dirty;
 	bool initialized = false;
+	bool haveFragmentHighp;
 	GLint maxTextureSize;
 	CanvasShader canvasShader;
 	OutlineShader outlineShader;
@@ -903,6 +974,10 @@ void GlCanvas::initializeGL()
 	QOpenGLContext *context = QOpenGLContext::currentContext();
 	QOpenGLFunctions *f = context->functions();
 
+	d->haveFragmentHighp = !context->isOpenGLES() ||
+						   context->format().majorVersion() > 2 ||
+						   Private::supportsFragmentHighp(f);
+
 	GLint maxTextureSize = 0;
 	f->glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
 	if(maxTextureSize < 64) {
@@ -943,9 +1018,29 @@ void GlCanvas::initializeGL()
 		QStringLiteral("GL_VENDOR: %1").arg(Private::getGlString(f, GL_VENDOR)),
 		QStringLiteral("GL_SHADING_LANGUAGE_VERSION: %1")
 			.arg(Private::getGlString(f, GL_SHADING_LANGUAGE_VERSION)),
+		QStringLiteral("GL_FRAGMENT_PRECISION_HIGH: %1")
+			.arg(d->haveFragmentHighp ? 1 : 0),
 		QStringLiteral("GL_MAX_TEXTURE_SIZE: %1 (%2 tiles)")
 			.arg(maxTextureSize)
 			.arg(maxTextureSize / DP_TILE_SIZE),
+		QStringLiteral("Vertex float lowp %1")
+			.arg(Private::getGlShaderPrecision(
+				context, f, GL_VERTEX_SHADER, GL_LOW_FLOAT)),
+		QStringLiteral("Vertex float mediump %1")
+			.arg(Private::getGlShaderPrecision(
+				context, f, GL_VERTEX_SHADER, GL_MEDIUM_FLOAT)),
+		QStringLiteral("Vertex float highp %1")
+			.arg(Private::getGlShaderPrecision(
+				context, f, GL_VERTEX_SHADER, GL_HIGH_FLOAT)),
+		QStringLiteral("Fragment float lowp %1")
+			.arg(Private::getGlShaderPrecision(
+				context, f, GL_FRAGMENT_SHADER, GL_LOW_FLOAT)),
+		QStringLiteral("Fragment float mediump %1")
+			.arg(Private::getGlShaderPrecision(
+				context, f, GL_FRAGMENT_SHADER, GL_MEDIUM_FLOAT)),
+		QStringLiteral("Fragment float highp %1")
+			.arg(Private::getGlShaderPrecision(
+				context, f, GL_FRAGMENT_SHADER, GL_HIGH_FLOAT)),
 	});
 	if(lcDpGlCanvas().isDebugEnabled()) {
 		for(const QString &s : systemInfo) {
@@ -953,8 +1048,8 @@ void GlCanvas::initializeGL()
 		}
 	}
 
-	d->canvasShader = Private::initCanvasShader(f);
-	d->outlineShader = Private::initOutlineShader(f);
+	d->canvasShader = Private::initCanvasShader(f, d->haveFragmentHighp);
+	d->outlineShader = Private::initOutlineShader(f, d->haveFragmentHighp);
 
 	qCDebug(lcDpGlCanvas, "Generate buffers");
 	f->glGenBuffers(Private::BUFFER_COUNT, d->buffers);
