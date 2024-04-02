@@ -176,18 +176,27 @@ QRectF UserMarkerItem::boundingRect() const
 void UserMarkerItem::paint(
 	QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
-	painter->setRenderHint(QPainter::Antialiasing);
-	painter->setPen(Qt::NoPen);
+	qreal evadeScale = getEvadeScale();
+	if(evadeScale > 0.0) {
+		if(evadeScale < 1.0) {
+			QTransform tf = painter->transform();
+			tf.scale(evadeScale, evadeScale);
+			painter->setTransform(tf);
+		}
 
-	painter->setBrush(m_bgbrush);
-	painter->drawPath(m_bubble);
+		painter->setRenderHint(QPainter::Antialiasing);
+		painter->setPen(Qt::NoPen);
 
-	painter->setFont(qApp->font());
-	painter->setPen(m_textpen);
-	painter->drawText(m_textRect, Qt::AlignHCenter | Qt::AlignTop, m_fulltext);
+		painter->setBrush(m_bgbrush);
+		painter->drawPath(m_bubble);
 
-	if(!m_avatar.isNull() && m_showAvatar) {
-		painter->drawPixmap(m_avatarRect.topLeft(), m_avatar);
+		painter->setFont(qApp->font());
+		painter->setPen(m_textpen);
+		painter->drawText(m_textRect, Qt::AlignHCenter | Qt::AlignTop, m_fulltext);
+
+		if(!m_avatar.isNull() && m_showAvatar) {
+			painter->drawPixmap(m_avatarRect.topLeft(), m_avatar);
+		}
 	}
 }
 
