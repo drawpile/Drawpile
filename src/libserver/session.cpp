@@ -1208,19 +1208,25 @@ void Session::ensureOperatorExists()
 	// If there is a way to gain OP status without being explicitly granted,
 	// it's OK for the session to not have any operators for a while.
 	if(!m_history->opwordHash().isEmpty() ||
-	   m_history->isAuthenticatedOperators())
+	   m_history->isAuthenticatedOperators()) {
 		return;
+	}
 
-	bool hasOp = false;
+	const Client *firstClient = nullptr;
 	for(const Client *c : m_clients) {
-		if(c->isOperator()) {
-			hasOp = true;
-			break;
+		if(!c->isGhost()) {
+			if(c->isOperator()) {
+				return;
+			} else if(!firstClient) {
+				firstClient = c;
+			}
 		}
 	}
 
-	if(!hasOp && !m_clients.isEmpty()) {
-		changeOpStatus(m_clients.first()->id(), true, QString());
+	// If we got here, there's no op and no way to gain the status via password
+	// or by a registered user rejoining. Make the first client within reach op.
+	if(firstClient) {
+		changeOpStatus(firstClient->id(), true, QString());
 	}
 }
 
