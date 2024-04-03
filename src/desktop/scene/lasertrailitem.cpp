@@ -30,10 +30,11 @@ void LaserTrailItem::addPoint(const QPointF &point)
 {
 	refreshGeometry();
 	m_points.append(point);
+	QRectF bounds = QRectF(point - QPointF(4.0, 4.0), QSizeF(8.0, 8.0));
 	if(m_points.length() == 1) {
-		m_bounds = QRectF{point, QSizeF{1, 1}};
+		m_bounds = bounds;
 	} else {
-		m_bounds = m_bounds.united(QRectF{point, QSizeF{1, 1}});
+		m_bounds = m_bounds.united(bounds);
 	}
 	m_lastModified = QDateTime::currentMSecsSinceEpoch();
 }
