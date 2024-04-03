@@ -510,6 +510,7 @@ void CanvasScene::onAnnotationsChanged(const drawdance::AnnotationList &al)
 		AnnotationItem *ai;
 		if(it == annotationItems.end()) {
 			ai = new AnnotationItem(id, m_canvasGroup);
+			ai->setUpdateSceneOnRefresh(true);
 			ai->setShowBorder(m_showAnnotationBorders);
 			ai->setVisible(m_showAnnotations);
 		} else {
@@ -534,6 +535,7 @@ void CanvasScene::onPreviewAnnotation(int annotationId, const QRect &shape)
 	AnnotationItem *ai = getAnnotationItem(annotationId);
 	if(!ai) {
 		ai = new AnnotationItem(annotationId, m_canvasGroup);
+		ai->setUpdateSceneOnRefresh(true);
 		ai->setShowBorder(m_showAnnotationBorders);
 		ai->setVisible(m_showAnnotations);
 	}
