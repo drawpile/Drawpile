@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #ifndef DESKTOP_VIEW_CANVASINTERFACE_H
 #define DESKTOP_VIEW_CANVASINTERFACE_H
+#include <QPointF>
 #include <QSize>
 
 class QPaintEvent;
@@ -18,6 +19,8 @@ public:
 	virtual QWidget *asWidget() = 0;
 
 	virtual QSize viewSize() const = 0;
+	virtual QPointF viewToCanvasOffset() const = 0;
+	virtual QPointF viewTransformOffset() const = 0;
 
 	virtual void handleResize(QResizeEvent *event) = 0;
 	virtual void handlePaint(QPaintEvent *event) = 0;

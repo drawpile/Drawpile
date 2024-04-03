@@ -15,6 +15,7 @@ extern "C" {
 #include "libclient/drawdance/perf.h"
 #include "libclient/drawdance/viewmode.h"
 #include "libclient/net/message.h"
+#include "libclient/settings.h"
 #include <QPainter>
 #include <QSet>
 #include <QTimer>
@@ -39,11 +40,16 @@ static DP_Rect toDpRect(const QRect &canvasViewTileArea)
 namespace canvas {
 
 PaintEngine::PaintEngine(
-	bool useTileCache, const QColor &checkerColor1, const QColor &checkerColor2,
-	int fps, int snapshotMaxCount, long long snapshotMinDelayMs,
-	bool wantCanvasHistoryDump, QObject *parent)
+	int canvasImplementation, const QColor &checkerColor1,
+	const QColor &checkerColor2, int fps, int snapshotMaxCount,
+	long long snapshotMinDelayMs, bool wantCanvasHistoryDump, QObject *parent)
 	: QObject(parent)
-	, m_useTileCache(useTileCache)
+	, m_useTileCache(
+		  canvasImplementation !=
+		  int(libclient::settings::CanvasImplementation::GraphicsView))
+	, m_tileCacheDirtyCheckOnTick(
+		  canvasImplementation ==
+		  int(libclient::settings::CanvasImplementation::Software))
 	, m_acls{}
 	, m_snapshotQueue{snapshotMaxCount, snapshotMinDelayMs}
 	, m_paintEngine(
@@ -60,6 +66,7 @@ PaintEngine::PaintEngine(
 	, m_timerId{0}
 	, m_cache{}
 	, m_painter{}
+	, m_tileCache(canvasImplementation)
 	, m_cacheMutex{nullptr}
 	, m_viewSem{nullptr}
 	, m_sampleColorLastDiameter(-1)
@@ -150,7 +157,9 @@ void PaintEngine::timerEvent(QTimerEvent *)
 		&PaintEngine::onTimelineChanged, &PaintEngine::onCursorMoved,
 		&PaintEngine::onDefaultLayer, &PaintEngine::onUndoDepthLimitSet,
 		&PaintEngine::onCensoredLayerRevealed, this);
-
+	if(m_tileCacheDirtyCheckOnTick && m_tileCache.needsDirtyCheck()) {
+		emit tileCacheDirtyCheckNeeded();
+	}
 	if(m_updateLayersVisibleInFrame) {
 		updateLayersVisibleInFrame();
 	}
@@ -712,6 +721,9 @@ void PaintEngine::setCanvasViewTileArea(const QRect &canvasViewTileArea)
 		m_paintEngine.get(), toDpRect(m_canvasViewTileArea),
 		m_renderOutsideView);
 	DP_SEMAPHORE_MUST_WAIT(m_viewSem);
+	if(m_tileCacheDirtyCheckOnTick) {
+		emit tileCacheDirtyCheckNeeded();
+	}
 }
 
 void PaintEngine::setRenderOutsideView(bool renderOutsideView)
@@ -902,7 +914,7 @@ void PaintEngine::onRenderTileToTileCache(
 	DP_mutex_lock(pe->m_cacheMutex);
 	TileCache::RenderResult result =
 		pe->m_tileCache.render(tileX, tileY, pixels);
-	if(result.dirtyCheck) {
+	if(result.dirtyCheck && !pe->m_tileCacheDirtyCheckOnTick) {
 		emit pe->tileCacheDirtyCheckNeeded();
 	}
 	if(result.navigatorDirtyCheck) {
@@ -951,7 +963,9 @@ void PaintEngine::onRenderResizeTileCache(
 	QSize size(width, height);
 	DP_mutex_lock(pe->m_cacheMutex);
 	pe->m_tileCache.resize(width, height, offsetX, offsetY);
-	emit pe->tileCacheDirtyCheckNeeded();
+	if(!pe->m_tileCacheDirtyCheckOnTick) {
+		emit pe->tileCacheDirtyCheckNeeded();
+	}
 	emit pe->tileCacheNavigatorDirtyCheckNeeded();
 	DP_mutex_unlock(pe->m_cacheMutex);
 }

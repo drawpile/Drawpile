@@ -93,7 +93,7 @@ class Document final : public QObject {
 	Q_OBJECT
 public:
 	explicit Document(
-		bool useTileCache, libclient::settings::Settings &settings,
+		int canvasImplementation, libclient::settings::Settings &settings,
 		QObject *parent = nullptr);
 
 	canvas::CanvasModel *canvas() const { return m_canvas; }
@@ -344,7 +344,7 @@ private:
 	DP_SaveImageType m_currentType = DP_SAVE_IMAGE_UNKNOWN;
 	QString m_downloadName;
 
-	const bool m_useTileCache;
+	const int m_canvasImplementation;
 	net::MessageList m_resetstate;
 	net::MessageList m_messageBuffer;
 

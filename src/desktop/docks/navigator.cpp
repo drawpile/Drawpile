@@ -292,25 +292,7 @@ void NavigatorView::refreshFromTileCache(canvas::PaintEngine *pe)
 		QSize canvasSize = tileCache.size();
 		if(!canvasSize.isEmpty()) {
 			refreshCacheSize(canvasSize);
-			QSize targetSize = m_cache.size();
-			qreal ratioX =
-				qreal(targetSize.width()) / qreal(canvasSize.width());
-			qreal ratioY =
-				qreal(targetSize.height()) / qreal(canvasSize.height());
-			QPainter painter(&m_cache);
-			painter.setCompositionMode(QPainter::CompositionMode_Source);
-			tileCache.eachDirtyNavigatorTileReset(
-				m_refreshAll, [&](const QRect &rect, const void *pixels) {
-					QRect targetRect(
-						qFloor(rect.x() * ratioX), qFloor(rect.y() * ratioY),
-						qCeil(rect.width() * ratioX),
-						qCeil(rect.height() * ratioY));
-					painter.drawImage(
-						targetRect, QImage(
-										reinterpret_cast<const uchar *>(pixels),
-										rect.width(), rect.height(),
-										QImage::Format_ARGB32_Premultiplied));
-				});
+			tileCache.paintDirtyNavigatorTilesReset(m_refreshAll, m_cache);
 			m_refreshAll = false;
 		}
 	});

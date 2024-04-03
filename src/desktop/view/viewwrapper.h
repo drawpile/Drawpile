@@ -14,7 +14,7 @@ class CanvasView;
 class ViewWrapper final : public QObject, public CanvasWrapper {
 	Q_OBJECT
 public:
-	ViewWrapper(QWidget *parent = nullptr);
+	explicit ViewWrapper(bool useOpenGl, QWidget *parent = nullptr);
 
 	QWidget *viewWidget() const override;
 
@@ -74,6 +74,9 @@ public:
 	void connectViewStatusBar(widgets::ViewStatusBar *viewStatusBar) override;
 
 private:
+	static CanvasInterface *instantiateView(
+		bool useOpenGl, CanvasController *controller, QWidget *parent);
+
 	CanvasScene *m_scene;
 	CanvasController *m_controller;
 	CanvasInterface *m_canvasWidget;

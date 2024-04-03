@@ -948,6 +948,16 @@ QSize GlCanvas::viewSize() const
 	return d->viewSize;
 }
 
+QPointF GlCanvas::viewToCanvasOffset() const
+{
+	return QPointF(d->viewSize.width() / -2.0, d->viewSize.height() / -2.0);
+}
+
+QPointF GlCanvas::viewTransformOffset() const
+{
+	return QPointF(0.0, 0.0);
+}
+
 void GlCanvas::handleResize(QResizeEvent *event)
 {
 	resizeEvent(event);
@@ -1108,7 +1118,7 @@ void GlCanvas::resizeGL(int w, int h)
 	qCDebug(lcDpGlCanvas, "resizeGL(%d, %d)", w, h);
 	d->viewSize.setWidth(w);
 	d->viewSize.setHeight(h);
-	d->controller->scene()->setSceneRect(0.0, 0.0, qreal(w), qreal(h));
+	d->controller->updateViewSize();
 }
 
 void GlCanvas::setCheckerColor1(const QColor &color)

@@ -33,7 +33,7 @@ class CanvasModel final : public QObject {
 public:
 	CanvasModel(
 		libclient::settings::Settings &settings, uint8_t localUserId,
-		bool useTileCache, int fps, int snapshotMaxCount,
+		int canvasImplementation, int fps, int snapshotMaxCount,
 		long long snapshotMinDelayMs, bool wantCanvasHistoryDump,
 		QObject *parent = nullptr);
 

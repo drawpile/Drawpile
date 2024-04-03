@@ -51,6 +51,7 @@ public:
 	const QSize &canvasSize() const { return m_canvasSize; }
 	const QRect &canvasViewTileArea() const { return m_canvasViewTileArea; }
 	const QTransform &transform() const { return m_transform; }
+	const QTransform &invertedTransform() const { return m_invertedTransform; }
 
 	bool shouldRenderSmooth() const;
 	bool isTabletEnabled() const { return m_tabletEnabled; }
@@ -93,6 +94,7 @@ public:
 	bool isPointVisible(const QPointF &point) const;
 	QRectF screenRect() const;
 
+	void updateViewSize();
 	void updateCanvasSize(int width, int height, int offsetX, int offsetY);
 	void withTileCache(const std::function<void(canvas::TileCache &)> &fn);
 
@@ -136,6 +138,7 @@ public:
 #endif
 
 	bool isOutlineVisible() const;
+	bool isOutlineVisibleInMode() const { return m_outlineVisibleInMode; }
 	int outlineSize() const { return m_outlineSize; }
 	qreal outlineWidth() const { return m_outlineWidth; }
 	QPointF outlinePos() const;
@@ -300,6 +303,9 @@ private:
 	QSize viewSize() const;
 	QSizeF viewSizeF() const;
 	qreal devicePixelRatioF() const;
+	QPointF viewToCanvasOffset() const;
+	QPointF viewTransformOffset() const;
+	void translateByViewTransformOffset(QTransform &prev, QTransform &cur);
 
 	QString getZoomNoticeText() const;
 	QString getRotationNoticeText() const;

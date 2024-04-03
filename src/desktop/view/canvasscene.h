@@ -25,6 +25,7 @@ class CursorItem;
 #endif
 class LaserTrailItem;
 class NoticeItem;
+class OutlineItem;
 class SelectionItem;
 class ToggleItem;
 class UserMarkerItem;
@@ -43,11 +44,12 @@ class CanvasScene final : public QGraphicsScene {
 	using LaserTrailItem = drawingboard::LaserTrailItem;
 	using SelectionItem = drawingboard::SelectionItem;
 	using NoticeItem = drawingboard::NoticeItem;
+	using OutlineItem = drawingboard::OutlineItem;
 	using ToggleItem = drawingboard::ToggleItem;
 	using UserMarkerItem = drawingboard::UserMarkerItem;
 
 public:
-	explicit CanvasScene(QObject *parent = nullptr);
+	explicit CanvasScene(bool outline, QObject *parent = nullptr);
 
 	void setCanvasModel(canvas::CanvasModel *canvasModel);
 	void setCanvasTransform(const QTransform &canvasTransform);
@@ -66,6 +68,9 @@ public:
 
 	void setCursorOnCanvas(bool cursorOnCanvas);
 	void setCursorPos(const QPointF &cursorPos);
+	void setOutline(
+		bool visibleInMode, const QPointF &pos, qreal rotation,
+		qreal outlineSize, qreal outlineWidth, bool square);
 
 #ifdef HAVE_EMULATED_BITMAP_CURSOR
 	void setCursor(const QCursor &cursor);
@@ -135,6 +140,7 @@ private:
 	QHash<int, LaserTrailItem *> m_activeLaserTrails;
 
 	SelectionItem *m_selection = nullptr;
+	OutlineItem *m_outline = nullptr;
 
 #ifdef HAVE_EMULATED_BITMAP_CURSOR
 	CursorItem *m_cursorItem;

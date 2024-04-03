@@ -87,7 +87,9 @@ void CanvasController::setCanvasModel(canvas::CanvasModel *canvasModel)
 		canvas::PaintEngine *pe = canvasModel->paintEngine();
 		connect(
 			pe, &canvas::PaintEngine::tileCacheDirtyCheckNeeded, this,
-			&CanvasController::tileCacheDirtyCheckNeeded, Qt::QueuedConnection);
+			&CanvasController::tileCacheDirtyCheckNeeded,
+			pe->isTileCacheDirtyCheckOnTick() ? Qt::DirectConnection
+											  : Qt::QueuedConnection);
 	}
 }
 
@@ -247,6 +249,7 @@ void CanvasController::setRotation(qreal degrees)
 		QTransform prev, cur;
 		prev.rotate(m_rotation);
 		cur.rotate(degrees);
+		translateByViewTransformOffset(prev, cur);
 
 		updateCanvasTransform([&] {
 			if(inverted) {
@@ -282,6 +285,7 @@ void CanvasController::setFlip(bool flip)
 		QTransform prev, cur;
 		mirrorFlip(prev, m_mirror, m_flip);
 		mirrorFlip(cur, m_mirror, flip);
+		translateByViewTransformOffset(prev, cur);
 
 		updateCanvasTransform([&] {
 			m_pos = cur.inverted().map(prev.map(m_pos));
@@ -302,6 +306,7 @@ void CanvasController::setMirror(bool mirror)
 		QTransform prev, cur;
 		mirrorFlip(prev, m_mirror, m_flip);
 		mirrorFlip(cur, mirror, m_flip);
+		translateByViewTransformOffset(prev, cur);
 
 		updateCanvasTransform([&] {
 			m_pos = cur.inverted().map(prev.map(m_pos));
@@ -329,6 +334,15 @@ bool CanvasController::isPointVisible(const QPointF &point) const
 QRectF CanvasController::screenRect() const
 {
 	return mapRectToCanvasF(viewRectF()).boundingRect();
+}
+
+void CanvasController::updateViewSize()
+{
+	resetCanvasTransform();
+	QSizeF view = viewSizeF();
+	m_scene->setSceneRect(0.0, 0.0, view.width(), view.height());
+	emitScrollAreaChanged();
+	emitViewRectChanged();
 }
 
 void CanvasController::updateCanvasSize(
@@ -371,6 +385,7 @@ void CanvasController::handleEnter()
 {
 	m_showOutline = true;
 	m_scene->setCursorOnCanvas(true);
+	updateOutline();
 }
 
 void CanvasController::handleLeave()
@@ -2015,12 +2030,12 @@ QPointF CanvasController::mapPointToCanvas(const QPoint &point) const
 
 QPointF CanvasController::mapPointToCanvasF(const QPointF &point) const
 {
-	return m_invertedTransform.map(point - viewCenterF());
+	return m_invertedTransform.map(point + viewToCanvasOffset());
 }
 
 QPolygonF CanvasController::mapRectToCanvasF(const QRectF &rect) const
 {
-	return m_invertedTransform.map(rect.translated(-viewCenterF()));
+	return m_invertedTransform.map(rect.translated(viewToCanvasOffset()));
 }
 
 QPoint CanvasController::mapPointFromGlobal(const QPoint &point) const
@@ -2049,19 +2064,17 @@ void CanvasController::resetCanvasTransform()
 
 void CanvasController::updateSceneTransform()
 {
-	QSizeF vs = viewSizeF();
 	m_scene->setCanvasTransform(calculateCanvasTransformFrom(
-		m_pos - QPointF(vs.width() * 0.5, vs.height() * 0.5), m_zoom,
-		m_rotation, m_mirror, m_flip));
+		m_pos + viewToCanvasOffset(), m_zoom, m_rotation, m_mirror, m_flip));
 }
 
 void CanvasController::updatePosBounds()
 {
+	QPointF vc = viewCenterF();
 	QTransform matrix = calculateCanvasTransformFrom(
-		QPointF(0.0, 0.0), m_zoom, m_rotation, m_mirror, m_flip);
-	QSizeF vs = viewSizeF();
-	qreal hmargin = vs.width() / 2.0 - 64.0;
-	qreal vmargin = vs.height() / 2.0 - 64.0;
+		vc + viewToCanvasOffset(), m_zoom, m_rotation, m_mirror, m_flip);
+	qreal hmargin = vc.x() - 64.0;
+	qreal vmargin = vc.y() - 64.0;
 	m_posBounds =
 		matrix.map(canvasRectF())
 			.boundingRect()
@@ -2114,11 +2127,12 @@ void CanvasController::setZoomToFit(Qt::Orientations orientations)
 			scale = yScale;
 		}
 
+		QPointF center = r.center();
 		qreal rotation = m_rotation;
 		bool mirror = m_mirror;
 		bool flip = m_flip;
 
-		m_pos = r.center();
+		m_pos = center - viewTransformOffset();
 		m_zoom = 1.0;
 		m_rotation = 0.0;
 		m_mirror = false;
@@ -2127,7 +2141,7 @@ void CanvasController::setZoomToFit(Qt::Orientations orientations)
 		{
 			QSignalBlocker blocker(this);
 			QScopedValueRollback<bool> rollback(m_blockNotices, true);
-			setZoomAt(scale, m_pos * dpr);
+			setZoomAt(scale, center);
 			setRotation(rotation);
 			setMirror(mirror);
 			setFlip(flip);
@@ -2240,6 +2254,30 @@ qreal CanvasController::devicePixelRatioF() const
 {
 	return m_canvasWidget ? m_canvasWidget->asWidget()->devicePixelRatioF()
 						  : dpApp().devicePixelRatio();
+}
+
+QPointF CanvasController::viewToCanvasOffset() const
+{
+	return m_canvasWidget ? m_canvasWidget->viewToCanvasOffset()
+						  : QPointF(0.0, 0.0);
+}
+
+QPointF CanvasController::viewTransformOffset() const
+{
+	return m_canvasWidget ? m_canvasWidget->viewTransformOffset()
+						  : QPointF(0.0, 0.0);
+}
+
+void CanvasController::translateByViewTransformOffset(
+	QTransform &prev, QTransform &cur)
+{
+	QPointF t = viewTransformOffset();
+	qreal tx = t.x();
+	qreal ty = t.y();
+	if(tx != 0.0 && ty != 0.0) {
+		prev.translate(tx, ty);
+		cur.translate(tx, ty);
+	}
 }
 
 QString CanvasController::getZoomNoticeText() const

@@ -12,15 +12,25 @@ extern "C" {
 
 class QPixmap;
 
+namespace view {
+class SoftwareCanvas;
+}
+
 namespace canvas {
 
-// Holds rendered tiles in a format suitable for glTexSubImage2D and records
-// changed tiles since the last render, both for the canvas itself and for the
-// navigator. The pixels array contains each tile in sequence. Tiles at the
-// right and bottom edge may have smaller dimensions, but they still allocate a
-// full tile of space to avoid complicating the indexing.
+// Holds rendered tiles in a format suitable for the canvas implementation and
+// records changed tiles since the last render, both for the canvas itself and
+// for the navigator. For the OpenGL canvas, the pixels are held in an array
+// containing each tile in sequence, which is a format suitable for passing to
+// glTexSubImage2D. Tiles at the right and bottom edge may have smaller
+// dimensions, but they still allocate a full tile of space to avoid
+// complicating the indexing. For the software canvas, it's a QPixmap.
 class TileCache final {
+	// In the OpenGL canvas, pixels is a pointer to an array of DP_Pixel8 to be
+	// placed into the texture. In the software canvas, it's a null pointer and
+	// softwareCanvasPixmap() is instead used to retrieve the rendered image.
 	using OnTileFn = std::function<void(const QRect &rect, const void *pixels)>;
+	friend class view::SoftwareCanvas;
 
 public:
 	struct RenderResult {
@@ -35,7 +45,7 @@ public:
 		int offsetY;
 	};
 
-	TileCache() {}
+	TileCache(int canvasImplementation);
 	~TileCache();
 
 	TileCache(const TileCache &) = delete;
@@ -43,7 +53,7 @@ public:
 	TileCache &operator=(const TileCache &) = delete;
 	TileCache &operator=(TileCache &&) = delete;
 
-	QSize size() const { return QSize(m_width, m_height); }
+	QSize size() const;
 
 	void clear();
 	void resize(int width, int height, int offsetX, int offsetY);
@@ -54,36 +64,19 @@ public:
 	QImage toSubImage(const QRect &rect);
 
 	bool getResizeReset(Resize &outResize);
+	bool needsDirtyCheck() const;
 	void eachDirtyTileReset(const QRect &tileArea, const OnTileFn &fn);
-	void eachDirtyNavigatorTileReset(bool all, const OnTileFn &fn);
+	void paintDirtyNavigatorTilesReset(bool all, QPixmap &cache);
 
 private:
-	DP_Pixel8 *pixelsAt(int i) const { return m_pixels + i * DP_TILE_LENGTH; }
+	class BaseImpl;
+	class GlCanvasImpl;
+	class SoftwareCanvasImpl;
 
-	QRect rectAt(int tileX, int tileY) const;
+	static BaseImpl *instantiateImpl(int canvasImplementation);
+	const QPixmap *softwareCanvasPixmap() const;
 
-	int tileIndex(int tileX, int tileY) const
-	{
-		return tileY * m_xtiles + tileX;
-	}
-
-	DP_Pixel8 *m_pixels = nullptr;
-	size_t m_capacity = 0;
-	QVector<bool> m_dirtyTiles;
-	QVector<bool> m_dirtyNavigatorTiles;
-	bool m_needsDirtyCheck = false;
-	bool m_needsNavigatorDirtyCheck = false;
-	bool m_resized = false;
-	int m_width = 0;
-	int m_height = 0;
-	int m_lastWidth = 0;
-	int m_lastHeight = 0;
-	int m_lastTileX = -1;
-	int m_lastTileY = -1;
-	int m_xtiles = 0;
-	int m_ytiles = 0;
-	int m_offsetX = 0;
-	int m_offsetY = 0;
+	BaseImpl *d;
 };
 
 }

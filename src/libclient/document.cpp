@@ -31,9 +31,10 @@
 #endif
 
 Document::Document(
-	bool useTileCache, libclient::settings::Settings &settings, QObject *parent)
+	int canvasImplementation, libclient::settings::Settings &settings,
+	QObject *parent)
 	: QObject(parent)
-	, m_useTileCache(useTileCache)
+	, m_canvasImplementation(canvasImplementation)
 	, m_resetstate()
 	, m_messageBuffer()
 	, m_canvas(nullptr)
@@ -124,7 +125,7 @@ void Document::initCanvas()
 	m_canvas = new canvas::CanvasModel{
 		m_settings,
 		m_client->myId(),
-		m_useTileCache,
+		m_canvasImplementation,
 		m_settings.engineFrameRate(),
 		m_settings.engineSnapshotCount(),
 		m_settings.engineSnapshotInterval() * 1000LL,

@@ -131,13 +131,19 @@ void General::initPerformance(
 	QComboBox *canvasImplementation = new QComboBox;
 	canvasImplementation->setSizeAdjustPolicy(QComboBox::AdjustToContents);
 
-	using desktop::settings::CanvasImplementation;
+	using libclient::settings::CanvasImplementation;
+	//: One of the canvas renderer options. "Qt" is a software framework.
 	QString graphicsViewName = tr("Qt Graphics View");
-	QString openGlName = tr("OpenGL (experimental)");
+	//: One of the canvas renderer options. Hardware meaning it uses the GPU.
+	QString openGlName = tr("Hardware (experimental)");
+	//: One of the canvas renderer options. Software meaning it uses the CPU.
+	QString softwareName = tr("Software (experimental)");
 	QPair<QString, int> implementations[] = {
+		//: One of the canvas renderer options.
 		{tr("Default"), int(CanvasImplementation::Default)},
 		{graphicsViewName, int(CanvasImplementation::GraphicsView)},
 		{openGlName, int(CanvasImplementation::OpenGl)},
+		{softwareName, int(CanvasImplementation::Software)},
 	};
 	for(const auto &[name, value] : implementations) {
 		canvasImplementation->addItem(name, QVariant::fromValue(value));
@@ -153,6 +159,9 @@ void General::initPerformance(
 		break;
 	case int(CanvasImplementation::OpenGl):
 		currentName = openGlName;
+		break;
+	case int(CanvasImplementation::Software):
+		currentName = softwareName;
 		break;
 	default:
 		//: Refers to an unknown canvas renderer, should never happen.

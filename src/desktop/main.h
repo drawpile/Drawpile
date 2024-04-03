@@ -50,7 +50,6 @@ public:
 	utils::Recents &recents() { return *m_recents; }
 
 	int canvasImplementation() const { return m_canvasImplementation; }
-	bool canvasImplementationUsesTileCache();
 	static int getCanvasImplementationFor(int canvasImplementation);
 
 	bool smallScreenMode() const { return m_smallScreenMode; }

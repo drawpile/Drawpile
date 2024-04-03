@@ -20,7 +20,9 @@
 Q_DECLARE_LOGGING_CATEGORY(lcDpSettings)
 
 namespace libclient {
+Q_NAMESPACE
 namespace settings {
+Q_NAMESPACE
 
 // For avoiding `-Wuseless-cast` in disgusting macro-generated default code
 template <typename To, typename From>
@@ -32,6 +34,14 @@ To maybe_static_cast(From &from)
 		return static_cast<To>(from);
 	}
 }
+
+enum class CanvasImplementation : int {
+	Default = 0,
+	GraphicsView = 1,
+	OpenGl = 2,
+	Software = 3,
+};
+Q_ENUM_NS(CanvasImplementation)
 
 // On most platforms, tablet input comes at a very high precision and frequency,
 // so some smoothing is sensible by default. On Android (at least on a Samsung

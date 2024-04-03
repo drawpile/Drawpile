@@ -21,7 +21,7 @@ Unreleased Version 2.2.2-pre
  * Feature: Allow copying multiple entries from the event log. Thanks Bluestrings for reporting.
  * Feature: Allow toggling vertical sync in the user interface preferences. Default is off, because it can cause input lag.
  * Feature: Web browser support for the client.
- * Feature: OpenGL-based canvas renderer, which is much faster than the old one, especially in the browser. This is an experimental feature and can be enabled in the General preferences under Renderer.
+ * Feature: New hardware and software canvas renderers. The hardware renderer is much faster than the old one, especially in the browser. Uses Direct3D on Windows, WebGL in the browser and OpenGL on all other platforms. The software renderer is slightly faster than the old one, useful for cursed hardware or drivers that cause input lag or visual glitches. This is an experimental feature and can be enabled in the General preferences under Renderer.
  * Feature: Add system information dialog under Tools > Developer Tools > System Information.
  * Feature: Hide user pointers when they get close to your cursor. Can be toggled under View > User Pointers > Hide From Cursor. Thanks Crowley for suggesting.
  * Feature: Allow filling non-continuous areas. Thanks Ben for suggesting.

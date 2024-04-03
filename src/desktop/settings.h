@@ -35,13 +35,6 @@ Q_NAMESPACE
 extern QString globalPressureCurveDefault;
 #endif
 
-enum class CanvasImplementation : int {
-	Default = 0,
-	GraphicsView = 1,
-	OpenGl = 2,
-};
-Q_ENUM_NS(CanvasImplementation)
-
 enum class InterfaceMode : int {
 	Unknown,
 	Desktop,

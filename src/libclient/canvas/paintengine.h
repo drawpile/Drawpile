@@ -34,7 +34,7 @@ class PaintEngine final : public QObject {
 	Q_OBJECT
 public:
 	PaintEngine(
-		bool useTileCache, const QColor &checkerColor1,
+		int canvasImplementation, const QColor &checkerColor1,
 		const QColor &checkerColor2, int fps, int snapshotMaxCount,
 		long long snapshotMinDelayMs, bool wantCanvasHistoryDump,
 		QObject *parent = nullptr);
@@ -42,6 +42,11 @@ public:
 	~PaintEngine() override;
 
 	bool useTileCache() const { return m_useTileCache; }
+
+	bool isTileCacheDirtyCheckOnTick() const
+	{
+		return m_tileCacheDirtyCheckOnTick;
+	}
 
 	void setFps(int fps);
 	void setSnapshotMaxCount(int snapshotMaxCount);
@@ -323,6 +328,7 @@ private:
 	void updateLayersVisibleInFrame();
 
 	const bool m_useTileCache;
+	const bool m_tileCacheDirtyCheckOnTick;
 	drawdance::AclState m_acls;
 	drawdance::SnapshotQueue m_snapshotQueue;
 	drawdance::PaintEngine m_paintEngine;

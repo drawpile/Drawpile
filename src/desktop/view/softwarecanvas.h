@@ -1,19 +1,21 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-#ifndef DESKTOP_VIEW_GLCANVAS_H
-#define DESKTOP_VIEW_GLCANVAS_H
+#ifndef DESKTOP_VIEW_SOFTWARECANVAS_H
+#define DESKTOP_VIEW_SOFTWARECANVAS_H
 #include "desktop/view/canvasinterface.h"
+#include <QList>
 #include <QLoggingCategory>
-#include <QOpenGLWidget>
+#include <QRectF>
+#include <QWidget>
 
 namespace view {
 
 class CanvasController;
 
-class GlCanvas final : public QOpenGLWidget, public CanvasInterface {
+class SoftwareCanvas final : public QWidget, public CanvasInterface {
 	Q_OBJECT
 public:
-	GlCanvas(CanvasController *controller, QWidget *parent = nullptr);
-	~GlCanvas() override;
+	SoftwareCanvas(CanvasController *controller, QWidget *parent = nullptr);
+	~SoftwareCanvas() override;
 
 	QWidget *asWidget() override;
 
@@ -24,22 +26,17 @@ public:
 	void handleResize(QResizeEvent *event) override;
 	void handlePaint(QPaintEvent *event) override;
 
-	static const QStringList &getSystemInfo();
-
 protected:
-	void initializeGL() override;
-	void paintGL() override;
-	void resizeGL(int w, int h) override;
+	void paintEvent(QPaintEvent *event) override;
 
 private:
 	void setCheckerColor1(const QColor &checkerColor1);
 	void setCheckerColor2(const QColor &checkerColor2);
-	void onControllerRenderSmoothChanged();
-	void onControllerCanvasSizeChanged();
+	void setRenderUpdateFull(bool renderUpdateFull);
 	void onControllerTransformChanged();
+	void onControllerOutlineChanged();
 	void onControllerTileCacheDirtyCheckNeeded();
-
-	static QStringList systemInfo;
+	void onSceneChanged(const QList<QRectF> &region);
 
 	struct Private;
 	Private *d;

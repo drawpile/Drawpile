@@ -319,7 +319,7 @@ void DrawpileApp::initTheme()
 
 void DrawpileApp::initCanvasImplementation(const QString &arg)
 {
-	using desktop::settings::CanvasImplementation;
+	using libclient::settings::CanvasImplementation;
 	int canvasImplementation;
 	if(QStringLiteral("system").compare(arg, Qt::CaseInsensitive) == 0) {
 		canvasImplementation = int(CanvasImplementation::Default);
@@ -329,6 +329,9 @@ void DrawpileApp::initCanvasImplementation(const QString &arg)
 		canvasImplementation = int(CanvasImplementation::GraphicsView);
 	} else if(QStringLiteral("opengl").compare(arg, Qt::CaseInsensitive) == 0) {
 		canvasImplementation = int(CanvasImplementation::OpenGl);
+	} else if(
+		QStringLiteral("software").compare(arg, Qt::CaseInsensitive) == 0) {
+		canvasImplementation = int(CanvasImplementation::Software);
 	} else {
 		if(QStringLiteral("none").compare(arg, Qt::CaseInsensitive) != 0) {
 			qWarning("Unknown --renderer '%s'", qUtf8Printable(arg));
@@ -382,18 +385,13 @@ desktop::settings::InterfaceMode DrawpileApp::guessInterfaceMode()
 	return desktop::settings::InterfaceMode::Desktop;
 }
 
-bool DrawpileApp::canvasImplementationUsesTileCache()
-{
-	using desktop::settings::CanvasImplementation;
-	return canvasImplementation() != int(CanvasImplementation::GraphicsView);
-}
-
 int DrawpileApp::getCanvasImplementationFor(int canvasImplementation)
 {
-	using desktop::settings::CanvasImplementation;
+	using libclient::settings::CanvasImplementation;
 	switch(canvasImplementation) {
 	case int(CanvasImplementation::GraphicsView):
 	case int(CanvasImplementation::OpenGl):
+	case int(CanvasImplementation::Software):
 		return canvasImplementation;
 	default:
 #ifdef __EMSCRIPTEN__

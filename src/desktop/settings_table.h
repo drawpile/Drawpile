@@ -167,7 +167,7 @@ SETTING(onionSkinsWrap            , OnionSkinsWrap            , "onionskins/wrap
 SETTING(recentFiles               , RecentFiles               , "history/recentfiles"                   , QStringList())
 SETTING(recentHosts               , RecentHosts               , "history/recenthosts"                   , QStringList())
 SETTING(recentRemoteHosts         , RecentRemoteHosts         , "history/recentremotehosts"             , QStringList())
-SETTING(renderCanvas              , RenderCanvas              , "settings/render/canvas"                , int(CanvasImplementation::Default))
+SETTING(renderCanvas              , RenderCanvas              , "settings/render/canvas"                , int(libclient::settings::CanvasImplementation::Default))
 SETTING(renderSmooth              , RenderSmooth              , "settings/render/smooth"                , true)
 SETTING(renderUpdateFull          , RenderUpdateFull          , "settings/render/updatefull"            , false)
 SETTING(serverHideIp              , ServerHideIp              , "settings/hideServerIp"                 , false)

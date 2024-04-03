@@ -22,7 +22,7 @@ namespace canvas {
 
 CanvasModel::CanvasModel(
 	libclient::settings::Settings &settings, uint8_t localUserId,
-	bool useTileCache, int fps, int snapshotMaxCount,
+	int canvasImplementation, int fps, int snapshotMaxCount,
 	long long snapshotMinDelayMs, bool wantCanvasHistoryDump, QObject *parent)
 	: QObject(parent)
 	, m_selection(nullptr)
@@ -30,8 +30,9 @@ CanvasModel::CanvasModel(
 	, m_compatibilityMode(false)
 {
 	m_paintengine = new PaintEngine(
-		useTileCache, settings.checkerColor1(), settings.checkerColor2(), fps,
-		snapshotMaxCount, snapshotMinDelayMs, wantCanvasHistoryDump, this);
+		canvasImplementation, settings.checkerColor1(),
+		settings.checkerColor2(), fps, snapshotMaxCount, snapshotMinDelayMs,
+		wantCanvasHistoryDump, this);
 
 	m_aclstate = new AclState(this);
 	m_layerlist = new LayerListModel(this);
@@ -78,7 +79,7 @@ CanvasModel::CanvasModel(
 	connect(
 		m_paintengine, &PaintEngine::frameVisibilityChanged, m_layerlist,
 		&LayerListModel::setLayersVisibleInFrame);
-	if(!useTileCache) {
+	if(!m_paintengine->useTileCache()) {
 		connect(
 			m_paintengine, &PaintEngine::resized, this,
 			&CanvasModel::onCanvasResize, Qt::QueuedConnection);

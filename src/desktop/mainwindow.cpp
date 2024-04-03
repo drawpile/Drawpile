@@ -201,7 +201,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 
 	// The document (initially empty)
 	m_doc = new Document(
-		dpApp().canvasImplementationUsesTileCache(), dpApp().settings(), this);
+		dpApp().canvasImplementation(), dpApp().settings(), this);
 
 	// Set up the main window widgets
 	// The central widget consists of a custom status bar and a splitter

@@ -14,6 +14,7 @@
 #include "desktop/view/canvasscene.h"
 #include "desktop/view/canvasview.h"
 #include "desktop/view/glcanvas.h"
+#include "desktop/view/softwarecanvas.h"
 #include "desktop/widgets/viewstatus.h"
 #include "desktop/widgets/viewstatusbar.h"
 #include "libclient/document.h"
@@ -21,11 +22,11 @@
 
 namespace view {
 
-ViewWrapper::ViewWrapper(QWidget *parent)
+ViewWrapper::ViewWrapper(bool useOpenGl, QWidget *parent)
 	: QObject(parent)
-	, m_scene(new CanvasScene(parent))
+	, m_scene(new CanvasScene(!useOpenGl, parent))
 	, m_controller(new CanvasController(m_scene, parent))
-	, m_canvasWidget(new GlCanvas(m_controller, parent))
+	, m_canvasWidget(instantiateView(useOpenGl, m_controller, parent))
 	, m_view(new CanvasView(m_controller, m_canvasWidget, parent))
 {
 	m_scene->setShowToggleItems(dpApp().smallScreenMode());
@@ -399,6 +400,16 @@ void ViewWrapper::connectViewStatusBar(widgets::ViewStatusBar *viewStatusBar)
 	connect(
 		m_controller, &CanvasController::coordinatesChanged, viewStatusBar,
 		&widgets::ViewStatusBar::setCoordinates);
+}
+
+CanvasInterface *ViewWrapper::instantiateView(
+	bool useOpenGl, CanvasController *controller, QWidget *parent)
+{
+	if(useOpenGl) {
+		return new GlCanvas(controller, parent);
+	} else {
+		return new SoftwareCanvas(controller, parent);
+	}
 }
 
 }

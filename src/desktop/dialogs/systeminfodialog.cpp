@@ -149,8 +149,9 @@ QString SystemInfoDialog::getSystemInfo() const
 				format.swapBehavior()));
 	info +=
 		QStringLiteral("Canvas renderer: %1\n")
-			.arg(QMetaEnum::fromType<desktop::settings::CanvasImplementation>()
-					 .valueToKey(dpApp().canvasImplementation()));
+			.arg(
+				QMetaEnum::fromType<libclient::settings::CanvasImplementation>()
+					.valueToKey(dpApp().canvasImplementation()));
 	info += QStringLiteral("Render smoothing: %1\n")
 				.arg(boolToString(settings.renderSmooth()));
 	info += QStringLiteral("Pixel jitter prevention: %1\n")

@@ -6,6 +6,7 @@ extern "C" {
 #include "desktop/scene/catchupitem.h"
 #include "desktop/scene/lasertrailitem.h"
 #include "desktop/scene/noticeitem.h"
+#include "desktop/scene/outlineitem.h"
 #include "desktop/scene/selectionitem.h"
 #include "desktop/scene/toggleitem.h"
 #include "desktop/scene/usermarkeritem.h"
@@ -24,11 +25,16 @@ extern "C" {
 
 namespace view {
 
-CanvasScene::CanvasScene(QObject *parent)
+CanvasScene::CanvasScene(bool outline, QObject *parent)
 	: QGraphicsScene(parent)
 {
 	m_canvasGroup = new QGraphicsItemGroup;
 	addItem(m_canvasGroup);
+
+	if(outline) {
+		m_outline = new OutlineItem(m_canvasGroup);
+		m_outline->setUpdateSceneOnRefresh(true);
+	}
 
 #ifdef HAVE_EMULATED_BITMAP_CURSOR
 	m_cursorItem = new CursorItem;
@@ -238,6 +244,9 @@ void CanvasScene::setCursorOnCanvas(bool cursorOnCanvas)
 {
 	if(cursorOnCanvas != m_cursorOnCanvas) {
 		m_cursorOnCanvas = cursorOnCanvas;
+		if(m_outline) {
+			m_outline->setOnCanvas(cursorOnCanvas);
+		}
 #ifdef HAVE_EMULATED_BITMAP_CURSOR
 		m_cursorItem->setOnCanvas(cursorOnCanvas);
 #endif
@@ -257,6 +266,19 @@ void CanvasScene::setCursorPos(const QPointF &cursorPos)
 		for(UserMarkerItem *item : std::as_const(m_userMarkers)) {
 			item->setCursorPos(cursorPos);
 		}
+	}
+}
+
+void CanvasScene::setOutline(
+	bool visibleInMode, const QPointF &outlinePos, qreal rotation,
+	qreal outlineSize, qreal outlineWidth, bool square)
+{
+	if(m_outline) {
+		m_outline->setVisibleInMode(visibleInMode);
+		m_outline->updatePosition(outlinePos);
+		m_outline->updateRotation(rotation);
+		m_outline->setOutline(outlineSize, outlineWidth);
+		m_outline->setSquare(square);
 	}
 }
 

@@ -314,6 +314,8 @@ target_sources(drawpile PRIVATE
 	view/glcanvas.h
 	view/lock.cpp
 	view/lock.h
+	view/softwarecanvas.cpp
+	view/softwarecanvas.h
 	view/viewwrapper.cpp
 	view/viewwrapper.h
 	widgets/brushpreview.cpp
