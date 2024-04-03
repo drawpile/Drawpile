@@ -28,7 +28,7 @@ public:
 
 	QRectF boundingRect() const override;
 
-	void updatePosition(const QRectF &sceneBounds);
+	void updateSceneBounds(const QRectF &sceneBounds);
 
 	bool checkHover(const QPointF &scenePos, bool &outWasHovering);
 	void removeHover();

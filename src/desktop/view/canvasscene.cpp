@@ -252,7 +252,7 @@ void CanvasScene::setCursorPos(const QPointF &cursorPos)
 	if(cursorPos != m_cursorPos) {
 		m_cursorPos = cursorPos;
 #ifdef HAVE_EMULATED_BITMAP_CURSOR
-		m_cursorItem->setPos(cursorPos);
+		m_cursorItem->updatePosition(cursorPos);
 #endif
 		for(UserMarkerItem *item : std::as_const(m_userMarkers)) {
 			item->setCursorPos(cursorPos);
@@ -544,14 +544,14 @@ void CanvasScene::onPreviewAnnotation(int annotationId, const QRect &shape)
 
 void CanvasScene::setTransformNoticePosition()
 {
-	m_transformNotice->setPos(
+	m_transformNotice->updatePosition(
 		sceneRect().topLeft() +
 		QPointF(NOTICE_OFFSET, NOTICE_OFFSET + m_topOffset));
 }
 
 void CanvasScene::setLockNoticePosition()
 {
-	m_lockNotice->setPos(
+	m_lockNotice->updatePosition(
 		sceneRect().topRight() +
 		QPointF(
 			-m_lockNotice->boundingRect().width() - NOTICE_OFFSET,
@@ -561,7 +561,7 @@ void CanvasScene::setLockNoticePosition()
 void CanvasScene::setCatchupPosition()
 {
 	QRectF catchupBounds = m_catchup->boundingRect();
-	m_catchup->setPos(
+	m_catchup->updatePosition(
 		sceneRect().bottomRight() -
 		QPointF(
 			catchupBounds.width() + NOTICE_OFFSET,
@@ -571,7 +571,7 @@ void CanvasScene::setCatchupPosition()
 void CanvasScene::setTogglePositions()
 {
 	for(ToggleItem *ti : m_toggleItems) {
-		ti->updatePosition(sceneRect());
+		ti->updateSceneBounds(sceneRect());
 	}
 }
 

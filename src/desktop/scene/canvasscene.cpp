@@ -152,7 +152,7 @@ void CanvasScene::setSceneBounds(const QRectF &sceneBounds)
 		setCatchupPosition();
 	}
 	for(ToggleItem *ti : m_toggleItems) {
-		ti->updatePosition(sceneBounds);
+		ti->updateSceneBounds(sceneBounds);
 	}
 }
 
@@ -565,7 +565,7 @@ void CanvasScene::showToggleItems(bool show)
 		};
 		for(ToggleItem *ti : m_toggleItems) {
 			addItem(ti);
-			ti->updatePosition(m_sceneBounds);
+			ti->updateSceneBounds(m_sceneBounds);
 		}
 	} else if(!show && !m_toggleItems.isEmpty()) {
 		for(ToggleItem *ti : m_toggleItems) {

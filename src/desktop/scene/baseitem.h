@@ -4,6 +4,7 @@
 #include <QGraphicsItem>
 #include <QGraphicsObject>
 #include <QGraphicsScene>
+#include <QTransform>
 
 namespace drawingboard {
 
@@ -30,11 +31,51 @@ public:
 	void setUpdateSceneOnRefresh(bool updateSceneOnRefresh);
 
 private:
+	void doUpdatePosition(QGraphicsItem *item, const QPointF &pos)
+	{
+		if(m_updateSceneOnRefresh) {
+			item->scene()->update(actualSceneBoundingRect(item));
+		}
+		item->setPos(pos);
+		if(m_updateSceneOnRefresh) {
+			item->scene()->update(actualSceneBoundingRect(item));
+		}
+	}
+
+	void doUpdateRotation(QGraphicsItem *item, qreal rotation)
+	{
+		if(m_updateSceneOnRefresh) {
+			item->scene()->update(actualSceneBoundingRect(item));
+		}
+		item->setRotation(rotation);
+		if(m_updateSceneOnRefresh) {
+			item->scene()->update(actualSceneBoundingRect(item));
+		}
+	}
+
 	void doRefresh(QGraphicsItem *item)
 	{
 		item->update();
 		if(m_updateSceneOnRefresh) {
-			item->scene()->update(item->sceneBoundingRect());
+			item->scene()->update(actualSceneBoundingRect(item));
+		}
+	}
+
+	static QRectF actualSceneBoundingRect(QGraphicsItem *item)
+	{
+		if(item->flags().testFlag(QGraphicsItem::ItemIgnoresTransformations)) {
+			qreal rotation = item->rotation();
+			if(rotation == 0.0) {
+				return item->boundingRect().translated(item->scenePos());
+			} else {
+				QTransform tf;
+				tf.rotate(rotation);
+				QPointF t = item->scenePos();
+				tf.translate(t.x(), t.y());
+				return tf.map(item->boundingRect()).boundingRect();
+			}
+		} else {
+			return item->sceneBoundingRect();
 		}
 	}
 
@@ -42,6 +83,10 @@ private:
 };
 
 class BaseItem : public QGraphicsItem, public Base {
+public:
+	void updatePosition(const QPointF &pos) { doUpdatePosition(this, pos); }
+	void updateRotation(qreal rotation) { doUpdateRotation(this, rotation); }
+
 protected:
 	BaseItem(QGraphicsItem *parent);
 	void refresh() { doRefresh(this); }
@@ -49,6 +94,10 @@ protected:
 };
 
 class BaseObject : public QGraphicsObject, public Base {
+public:
+	void updatePosition(const QPointF &pos) { doUpdatePosition(this, pos); }
+	void updateRotation(qreal rotation) { doUpdateRotation(this, rotation); }
+
 protected:
 	BaseObject(QGraphicsItem *parent);
 	void refresh() { doRefresh(this); }

@@ -25,11 +25,12 @@ QRectF ToggleItem::boundingRect() const
 	return QRectF{0.0, 0.0, s, s};
 }
 
-void ToggleItem::updatePosition(const QRectF &sceneBounds)
+void ToggleItem::updateSceneBounds(const QRectF &sceneBounds)
 {
 	qreal s = qreal(totalSize());
-	setX(m_right ? sceneBounds.right() - s : sceneBounds.left());
-	setY(sceneBounds.top() + sceneBounds.height() * m_fromTop - s / 2.0);
+	updatePosition(QPointF(
+		m_right ? sceneBounds.right() - s : sceneBounds.left(),
+		sceneBounds.top() + sceneBounds.height() * m_fromTop - s / 2.0));
 }
 
 bool ToggleItem::checkHover(const QPointF &scenePos, bool &outWasHovering)
