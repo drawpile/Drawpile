@@ -168,6 +168,7 @@ public:
 	void setInspect(unsigned int contextId, bool showTiles);
 	void setCheckerColor1(const QColor &color1);
 	void setCheckerColor2(const QColor &color2);
+	bool checkersVisible() const;
 
 	//! The current canvas state with the local view (hidden layers, local
 	//! background) applied.

@@ -430,6 +430,11 @@ void PaintEngine::setCheckerColor2(const QColor &color2)
 	m_paintEngine.setCheckerColor2(color2);
 }
 
+bool PaintEngine::checkersVisible() const
+{
+	return m_paintEngine.checkersVisible();
+}
+
 QColor PaintEngine::sampleColor(int x, int y, int layerId, int diameter)
 {
 	if(layerId == 0) {

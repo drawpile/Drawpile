@@ -915,6 +915,12 @@ void DP_paint_engine_inspect_set(DP_PaintEngine *pe, unsigned int context_id,
     }
 }
 
+bool DP_paint_engine_checkers_visible(DP_PaintEngine *pe)
+{
+    DP_ASSERT(pe);
+    return DP_renderer_checkers_visible(pe->renderer);
+}
+
 uint32_t DP_paint_engine_checker_color1(DP_PaintEngine *pe)
 {
     DP_ASSERT(pe);

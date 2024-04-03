@@ -40,6 +40,7 @@ void DP_renderer_free(DP_Renderer *renderer);
 int DP_renderer_thread_count(DP_Renderer *renderer);
 
 bool DP_renderer_checkers(DP_Renderer *renderer);
+bool DP_renderer_checkers_visible(DP_Renderer *renderer);
 
 // Increments refcount on the given canvas state, resets the given diff.
 void DP_renderer_apply(DP_Renderer *renderer, DP_CanvasState *cs,

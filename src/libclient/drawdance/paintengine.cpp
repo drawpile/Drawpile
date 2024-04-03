@@ -144,6 +144,11 @@ void PaintEngine::setCheckerColor2(const QColor &color2)
 	DP_paint_engine_checker_color2_set(m_data, color2.rgba());
 }
 
+bool PaintEngine::checkersVisible() const
+{
+	return DP_paint_engine_checkers_visible(m_data);
+}
+
 Tile PaintEngine::localBackgroundTile() const
 {
 	return Tile::inc(DP_paint_engine_local_background_tile_noinc(m_data));

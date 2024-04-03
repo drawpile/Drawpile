@@ -82,6 +82,7 @@ public:
 	void setInspect(unsigned int contextId, bool showTiles);
 	void setCheckerColor1(const QColor &color1);
 	void setCheckerColor2(const QColor &color2);
+	bool checkersVisible() const;
 
 	Tile localBackgroundTile() const;
 

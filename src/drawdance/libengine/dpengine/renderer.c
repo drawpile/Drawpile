@@ -102,7 +102,7 @@ struct DP_Renderer {
     DP_Pixel8 checker_color2;
     DP_TransientTile *checker;
     DP_CanvasState *cs;
-    bool needs_checkers;
+    bool checkers_visible;
     int xtiles;
     DP_RendererLocalState local_state;
     DP_Mutex *queue_mutex;
@@ -243,7 +243,8 @@ static bool dequeue_job_tile(DP_Renderer *renderer, DP_Queue *queue,
             out_job->type = DP_RENDER_JOB_TILE;
             out_job->tile = (DP_RendererTileJob){
                 tile_x, tile_y, tile_index,
-                DP_canvas_state_incref(renderer->cs), renderer->needs_checkers};
+                DP_canvas_state_incref(renderer->cs),
+                renderer->checker && renderer->checkers_visible};
         }
         else {
             if (tile_y == DP_RENDER_JOB_UNLOCK) {
@@ -358,7 +359,7 @@ DP_Renderer *DP_renderer_new(int thread_count, bool checker,
             0, DP_pixel8_to_15(checker_color1), DP_pixel8_to_15(checker_color2))
                 : NULL;
     renderer->cs = DP_canvas_state_new();
-    renderer->needs_checkers = checker;
+    renderer->checkers_visible = false;
     renderer->xtiles = 0;
     renderer->local_state =
         (DP_RendererLocalState){DP_VIEW_MODE_NORMAL, 0, NULL};
@@ -448,6 +449,12 @@ bool DP_renderer_checkers(DP_Renderer *renderer)
 {
     DP_ASSERT(renderer);
     return renderer->checker;
+}
+
+bool DP_renderer_checkers_visible(DP_Renderer *renderer)
+{
+    DP_ASSERT(renderer);
+    return renderer->checkers_visible;
 }
 
 
@@ -681,9 +688,8 @@ void DP_renderer_apply(DP_Renderer *renderer, DP_CanvasState *cs,
     // The OpenGL canvas view does its own background instead, so if that's in
     // use, renderer->checker will be null.
     bool has_checker = renderer->checker;
-    renderer->needs_checkers = has_checker
-                            && (!DP_canvas_state_background_opaque(cs)
-                                || layers_can_decrease_opacity);
+    renderer->checkers_visible =
+        !DP_canvas_state_background_opaque(cs) || layers_can_decrease_opacity;
 
     DP_RendererBlocking blocking;
     blocking.changes = CHANGE_NONE;
