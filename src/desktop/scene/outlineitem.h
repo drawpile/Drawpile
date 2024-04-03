@@ -5,7 +5,7 @@
 
 namespace drawingboard {
 
-class OutlineItem final : public QGraphicsItem {
+class OutlineItem final : public BaseItem {
 public:
 	enum { Type = BaseItem::OutlineType };
 	OutlineItem(QGraphicsItem *parent = nullptr);

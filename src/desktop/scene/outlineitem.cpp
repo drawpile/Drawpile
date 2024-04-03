@@ -6,7 +6,7 @@
 namespace drawingboard {
 
 OutlineItem::OutlineItem(QGraphicsItem *parent)
-	: QGraphicsItem(parent)
+	: BaseItem(parent)
 {
 	setFlag(ItemIgnoresTransformations);
 }
@@ -31,7 +31,7 @@ void OutlineItem::setSquare(bool square)
 {
 	if(square != m_square) {
 		m_square = square;
-		update();
+		refresh();
 	}
 }
 
@@ -97,7 +97,7 @@ void OutlineItem::updateVisibility()
 									   m_outlineWidth, m_outlineWidth))
 								 : QRectF();
 	if(outerBounds != m_outerBounds) {
-		prepareGeometryChange();
+		refreshGeometry();
 		m_outerBounds = outerBounds;
 	}
 }
