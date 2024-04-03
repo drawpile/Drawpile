@@ -31,6 +31,8 @@ protected:
 private:
 	static constexpr float ANIM_TIME = 0.4f;
 
+	bool blink() const { return m_blink < ANIM_TIME / 2.0f; }
+
 	float m_blink = 0.0f;
 	bool m_fadeout = false;
 	int m_owner;

@@ -44,15 +44,16 @@ void LaserTrailItem::paint(
 {
 	painter->setRenderHint(QPainter::Antialiasing, true);
 	m_pen.setWidth(
-		painter->device()->devicePixelRatioF() *
-		(m_blink < ANIM_TIME / 2.0f ? 4.0 : 3.0));
+		painter->device()->devicePixelRatioF() * (blink() ? 4.0 : 3.0));
 	painter->setPen(m_pen);
 	painter->drawPolyline(m_points.constData(), m_points.size());
 }
 
 bool LaserTrailItem::animationStep(qreal dt)
 {
+	bool blinkBefore = blink();
 	m_blink = std::fmod(m_blink + dt, ANIM_TIME);
+	bool blinkAfter = blink();
 
 	bool retain = true;
 	if(m_fadeout) {
@@ -63,7 +64,9 @@ bool LaserTrailItem::animationStep(qreal dt)
 		m_fadeout = true;
 	}
 
-	refresh();
+	if(blinkBefore != blinkAfter || m_fadeout) {
+		refresh();
+	}
 
 	return retain;
 }
