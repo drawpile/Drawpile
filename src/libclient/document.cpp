@@ -577,7 +577,8 @@ void Document::setSessionAllowIdleOverride(bool allowIdleOverride)
 	m_sessionAllowIdleOverride = allowIdleOverride;
 }
 
-void Document::setSessionOutOfSpace(bool outOfSpace) {
+void Document::setSessionOutOfSpace(bool outOfSpace)
+{
 	if(outOfSpace != m_sessionOutOfSpace) {
 		m_sessionOutOfSpace = outOfSpace;
 		emit sessionOutOfSpaceChanged(outOfSpace);
