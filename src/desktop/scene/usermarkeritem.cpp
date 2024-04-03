@@ -8,14 +8,39 @@
 
 namespace drawingboard {
 
-UserMarkerItem::UserMarkerItem(int id, QGraphicsItem *parent)
+UserMarkerItem::UserMarkerItem(int id, int persistence, QGraphicsItem *parent)
 	: BaseItem(parent)
 	, m_id(id)
+	, m_persistence(qMax(-1, persistence))
 {
 	setFlag(ItemIgnoresTransformations);
 	m_bgbrush.setStyle(Qt::SolidPattern);
 	setZValue(9999);
 	setColor(Qt::black);
+}
+
+void UserMarkerItem::setPersistence(int persistence)
+{
+	int p = qMax(-1, persistence);
+	if(p != m_persistence) {
+		if(p < 0) {
+			m_moveTimer.setRemainingTime(-1);
+			// Resurrect faded markers, since the user wants no fading at all.
+			m_fadeout = 0.0;
+			setOpacity(1.0);
+			show();
+			refresh();
+		} else if(m_persistence < 0) {
+			m_moveTimer.setRemainingTime(0);
+		} else {
+			int remainingTime = m_moveTimer.remainingTime();
+			if(remainingTime > 0) {
+				int delta = p - m_persistence;
+				m_moveTimer.setRemainingTime(qMax(0, remainingTime + delta));
+			}
+		}
+		m_persistence = p;
+	}
 }
 
 void UserMarkerItem::setColor(const QColor &color)
@@ -192,7 +217,8 @@ void UserMarkerItem::paint(
 
 		painter->setFont(qApp->font());
 		painter->setPen(m_textpen);
-		painter->drawText(m_textRect, Qt::AlignHCenter | Qt::AlignTop, m_fulltext);
+		painter->drawText(
+			m_textRect, Qt::AlignHCenter | Qt::AlignTop, m_fulltext);
 
 		if(!m_avatar.isNull() && m_showAvatar) {
 			painter->drawPixmap(m_avatarRect.topLeft(), m_avatar);
@@ -202,7 +228,7 @@ void UserMarkerItem::paint(
 
 void UserMarkerItem::fadein()
 {
-	m_moveTimer.setRemainingTime(1000);
+	m_moveTimer.setRemainingTime(m_persistence);
 	if(m_fadeout > 0.0 || !isVisible()) {
 		m_fadeout = 0.0;
 		setOpacity(1.0);

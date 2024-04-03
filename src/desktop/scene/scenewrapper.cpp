@@ -28,6 +28,8 @@ SceneWrapper::SceneWrapper(QWidget *parent)
 		parent->palette().brush(QPalette::Active, QPalette::Window));
 	m_scene->showToggleItems(dpApp().smallScreenMode());
 	m_view->setCanvas(m_scene);
+	dpApp().settings().bindUserMarkerPersistence(
+		m_scene, &CanvasScene::setUserMarkerPersistence);
 }
 
 QWidget *SceneWrapper::viewWidget() const

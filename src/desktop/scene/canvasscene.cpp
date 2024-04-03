@@ -41,6 +41,7 @@ CanvasScene::CanvasScene(QObject *parent)
 	, m_showLaserTrails(true)
 	, m_showOwnUserMarker(false)
 	, m_cursorOnCanvas(false)
+	, m_userMarkerPersistence(1000)
 {
 	setItemIndexMethod(NoIndex);
 	setSceneRect(QRectF{0.0, 0.0, 1.0, 1.0});
@@ -445,7 +446,7 @@ void CanvasScene::userCursorMoved(
 	bool penDown = flags & DP_USER_CURSOR_FLAG_PEN_DOWN;
 	if(!item && valid) {
 		const auto user = m_model->userlist()->getUserById(userId);
-		item = new UserMarkerItem(userId, m_group);
+		item = new UserMarkerItem(userId, m_userMarkerPersistence, m_group);
 		item->setText(
 			user.name.isEmpty() ? QStringLiteral("#%1").arg(int(userId))
 								: user.name);
@@ -607,6 +608,16 @@ void CanvasScene::setShowOwnUserMarker(bool showOwnUserMarker)
 		m_showOwnUserMarker = showOwnUserMarker;
 		for(UserMarkerItem *item : std::as_const(m_usermarkers)) {
 			item->setCursorPosValid(m_cursorOnCanvas && !showOwnUserMarker);
+		}
+	}
+}
+
+void CanvasScene::setUserMarkerPersistence(int userMarkerPersistence)
+{
+	if(userMarkerPersistence != m_userMarkerPersistence) {
+		m_userMarkerPersistence = userMarkerPersistence;
+		for(UserMarkerItem *item : std::as_const(m_usermarkers)) {
+			item->setPersistence(userMarkerPersistence);
 		}
 	}
 }

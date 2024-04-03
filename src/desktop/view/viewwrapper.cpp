@@ -30,6 +30,8 @@ ViewWrapper::ViewWrapper(bool useOpenGl, QWidget *parent)
 	, m_view(new CanvasView(m_controller, m_canvasWidget, parent))
 {
 	m_scene->setShowToggleItems(dpApp().smallScreenMode());
+	dpApp().settings().bindUserMarkerPersistence(
+		m_scene, &CanvasScene::setUserMarkerPersistence);
 }
 
 QWidget *ViewWrapper::viewWidget() const

@@ -82,6 +82,7 @@ public:
 	AnnotationItem *getAnnotationItem(int id);
 
 	void setShowOwnUserMarker(bool showOwnUserMarker);
+	void setUserMarkerPersistence(int userMarkerPersistence);
 
 	bool hasCatchup() const { return m_catchup != nullptr; }
 
@@ -201,6 +202,7 @@ private:
 	bool m_showLaserTrails;
 	bool m_showOwnUserMarker;
 	bool m_cursorOnCanvas;
+	int m_userMarkerPersistence;
 	QPointF m_cursorPos;
 
 	QRectF m_sceneBounds;

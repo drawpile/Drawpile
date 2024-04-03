@@ -65,6 +65,7 @@ public:
 	void setShowOwnUserMarker(bool showOwnUserMarker);
 	void setShowLaserTrails(bool showLaserTrails);
 	void setShowToggleItems(bool showToggleItems);
+	void setUserMarkerPersistence(int userMarkerPersistence);
 
 	void setCursorOnCanvas(bool cursorOnCanvas);
 	void setCursorPos(const QPointF &cursorPos);
@@ -135,6 +136,7 @@ private:
 	bool m_showOwnUserMarker = false;
 	bool m_showLaserTrails = true;
 	bool m_cursorOnCanvas = false;
+	int m_userMarkerPersistence = 1000;
 	QPointF m_cursorPos;
 	QHash<int, UserMarkerItem *> m_userMarkers;
 	QHash<int, LaserTrailItem *> m_activeLaserTrails;

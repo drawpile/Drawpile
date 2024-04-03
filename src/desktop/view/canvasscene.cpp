@@ -240,6 +240,16 @@ void CanvasScene::setShowToggleItems(bool showToggleItems)
 	}
 }
 
+void CanvasScene::setUserMarkerPersistence(int userMarkerPersistence)
+{
+	if(userMarkerPersistence != m_userMarkerPersistence) {
+		m_userMarkerPersistence = userMarkerPersistence;
+		for(UserMarkerItem *item : std::as_const(m_userMarkers)) {
+			item->setPersistence(userMarkerPersistence);
+		}
+	}
+}
+
 void CanvasScene::setCursorOnCanvas(bool cursorOnCanvas)
 {
 	if(cursorOnCanvas != m_cursorOnCanvas) {
@@ -452,7 +462,8 @@ void CanvasScene::onCursorMoved(
 		bool penDown = flags & DP_USER_CURSOR_FLAG_PEN_DOWN;
 		if(!item && valid) {
 			const auto user = m_canvasModel->userlist()->getUserById(userId);
-			item = new UserMarkerItem(userId, m_canvasGroup);
+			item = new UserMarkerItem(
+				userId, m_userMarkerPersistence, m_canvasGroup);
 			item->setUpdateSceneOnRefresh(true);
 			item->setText(
 				user.name.isEmpty() ? QStringLiteral("#%1").arg(int(userId))

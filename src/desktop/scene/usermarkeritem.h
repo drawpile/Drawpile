@@ -14,11 +14,13 @@ namespace drawingboard {
 class UserMarkerItem final : public BaseItem {
 public:
 	enum { Type = UserMarkerType };
-	UserMarkerItem(int id, QGraphicsItem *parent = nullptr);
+	UserMarkerItem(int id, int persistence, QGraphicsItem *parent = nullptr);
 
 	int id() const { return m_id; }
 	QRectF boundingRect() const override;
 	int type() const override { return Type; }
+
+	void setPersistence(int persistence);
 
 	void setColor(const QColor &color);
 	const QColor &color() const;
@@ -71,6 +73,7 @@ private:
 	qreal getEvadeScale();
 
 	int m_id;
+	int m_persistence = 1000;
 
 	QPointF m_targetPos;
 	QRectF m_bounds;

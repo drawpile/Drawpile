@@ -4086,6 +4086,31 @@ void MainWindow::setupActions()
 	userpointermenu->addAction(showuseravatars);
 	userpointermenu->addAction(evadeusercursors);
 
+	QMenu *stayTimeMenu = userpointermenu->addMenu(tr("Stay Time"));
+	QActionGroup *stayTimeGroup = new QActionGroup(this);
+	stayTimeGroup->setExclusive(true);
+	QPair<QString, int> stayTimeActions[] = {
+		{tr("1 Second", "user pointer stay time"), 1000},
+		{tr("10 Seconds", "user pointer stay time"), 10000},
+		{tr("1 Minute", "user pointer stay time"), 60000},
+		{tr("1 Hour", "user pointer stay time"), 3600000},
+		{tr("Forever", "user pointer stay time"), -1},
+	};
+	int userMarkerPersistence = dpApp().settings().userMarkerPersistence();
+	for(const QPair<QString, int> &p : stayTimeActions) {
+		QAction *action = stayTimeMenu->addAction(p.first);
+		action->setCheckable(true);
+		int persistence = p.second;
+		action->setChecked(userMarkerPersistence == persistence);
+		stayTimeGroup->addAction(action);
+		connect(
+			action, &QAction::toggled, this, [persistence](bool checked) {
+				if(checked) {
+					dpApp().settings().setUserMarkerPersistence(persistence);
+				}
+			});
+	}
+
 	viewmenu->addAction(showannotations);
 
 	viewmenu->addAction(showgrid);
