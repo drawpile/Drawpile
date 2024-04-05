@@ -28,6 +28,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Make rotation via View > Rotation > Rotate Canvas (Counter-)Clockwise work properly when it's mirrored or flipped. Thanks Ragged for reporting.
  * Feature: Allow disabling the zoom, rotation, mirror and flip on-canvas notices in the User Interface preferences. Thanks Partack for suggesting.
  * Feature: Allow configuring user pointer stay time through View → User Pointers → Stay Time. Thanks johannesCmayer for suggesting.
+ * Feature: Allow prompting for layer properties when creating a layer. Can be turned on in the User Interface preferences. Thanks Ben for suggesting.
 
 2024-02-25 Version 2.2.2-beta.1
  * Server Feature: Allow adding a message when kicking someone through the admin API.

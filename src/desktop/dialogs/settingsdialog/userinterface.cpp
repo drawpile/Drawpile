@@ -237,6 +237,10 @@ void UserInterface::initMiscellaneous(
 	settings.bindCanvasScrollBars(scrollBars);
 	form->addRow(tr("Miscellaneous:"), scrollBars);
 
+	QCheckBox *promptCreate = new QCheckBox(tr("Prompt when creating layers"));
+	settings.bindPromptLayerCreate(promptCreate);
+	form->addRow(nullptr, promptCreate);
+
 	QCheckBox *confirmDelete = new QCheckBox(tr("Ask before deleting layers"));
 	settings.bindConfirmLayerDelete(confirmDelete);
 	form->addRow(nullptr, confirmDelete);

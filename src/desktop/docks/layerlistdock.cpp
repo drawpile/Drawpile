@@ -239,10 +239,10 @@ void LayerList::setLayerEditActions(const Actions &actions)
 	// Action functionality
 	connect(
 		m_actions.addLayer, &QAction::triggered, this,
-		std::bind(&LayerList::addLayerOrGroup, this, false, false, false, 0));
+		std::bind(&LayerList::addOrPromptLayerOrGroup, this, false));
 	connect(
 		m_actions.addGroup, &QAction::triggered, this,
-		std::bind(&LayerList::addLayerOrGroup, this, true, false, false, 0));
+		std::bind(&LayerList::addOrPromptLayerOrGroup, this, true));
 	connect(
 		m_actions.keyFrameCreateLayer, &QAction::triggered, this,
 		std::bind(&LayerList::addLayerOrGroup, this, false, false, true, 0));
@@ -462,32 +462,87 @@ void LayerList::changeLayerAcl(
 	}
 }
 
+void LayerList::addOrPromptLayerOrGroup(bool group)
+{
+	if(dpApp().settings().promptLayerCreate()) {
+		showPropertiesForNew(group);
+	} else {
+		addLayerOrGroup(group, false, false, 0);
+	}
+}
+
+void LayerList::addLayerOrGroupFromPrompt(
+	int selectedId, bool group, const QString &title, int opacityPercent,
+	int blendMode, bool isolated, bool censored, bool defaultLayer,
+	bool visible)
+{
+	QVector<net::Message> msgs;
+	msgs.reserve(2);
+	bool selectedExists =
+		m_canvas->layerlist()->layerIndex(selectedId).isValid();
+	int layerId = makeAddLayerOrGroupCommands(
+		msgs, selectedExists ? selectedId : m_selectedId, group, false, false,
+		0, title);
+	if(layerId > 0 && !msgs.isEmpty()) {
+		uint8_t contextId = m_canvas->localUserId();
+		if(opacityPercent != 100 || blendMode != DP_BLEND_MODE_NORMAL ||
+		   (group && !isolated) || censored) {
+			uint8_t flags =
+				(group && isolated ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_ISOLATED
+								   : 0) |
+				(censored ? DP_MSG_LAYER_ATTRIBUTES_FLAGS_CENSOR : 0);
+			msgs.append(net::makeLayerAttributesMessage(
+				contextId, layerId, 0, flags,
+				qRound(opacityPercent / 100.0 * 255), blendMode));
+		}
+		if(defaultLayer) {
+			msgs.append(net::makeDefaultLayerMessage(contextId, layerId));
+		}
+		emit layerCommands(int(msgs.size()), msgs.constData());
+		if(!visible) {
+			setLayerVisibility(layerId, false);
+		}
+	}
+}
+
 void LayerList::addLayerOrGroup(
 	bool group, bool duplicateKeyFrame, bool keyFrame, int keyFrameOffset)
 {
-	canvas::LayerListModel *layers = m_canvas->layerlist();
-	Q_ASSERT(layers);
+	QVector<net::Message> msgs;
+	msgs.reserve(4);
+	makeAddLayerOrGroupCommands(
+		msgs, m_selectedId, group, duplicateKeyFrame, keyFrame, keyFrameOffset,
+		QString());
+	if(!msgs.isEmpty()) {
+		emit layerCommands(int(msgs.size()), msgs.constData());
+	}
+}
 
+int LayerList::makeAddLayerOrGroupCommands(
+	QVector<net::Message> &msgs, int selectedId, bool group,
+	bool duplicateKeyFrame, bool keyFrame, int keyFrameOffset,
+	const QString &title)
+{
+	canvas::LayerListModel *layers = m_canvas->layerlist();
 	const int id = layers->getAvailableLayerId();
 	if(id == 0) {
 		qWarning(
 			"Couldn't find a free ID for a new %s!", group ? "group" : "layer");
-		return;
+		return 0;
 	}
 
 	uint8_t contextId = m_canvas->localUserId();
-	QModelIndex index = layers->layerIndex(m_selectedId);
+	msgs.append(net::makeUndoPointMessage(contextId));
 
-	net::Message layerMsg;
-	net::Message keyFrameMsg;
-	net::Message moveMsg;
+	QModelIndex index = layers->layerIndex(selectedId);
 	bool compatibilityMode = m_canvas->isCompatibilityMode();
 	if(compatibilityMode) {
-		uint16_t targetId = index.isValid() ? m_selectedId : 0;
+		uint16_t targetId = index.isValid() ? selectedId : 0;
 		uint8_t flags = targetId == 0 ? 0 : DP_MSG_LAYER_CREATE_FLAGS_INSERT;
-		layerMsg = net::makeLayerCreateMessage(
+		msgs.append(net::makeLayerCreateMessage(
 			contextId, id, targetId, 0, flags,
-			layers->getAvailableLayerName(tr("Layer")));
+			title.isEmpty() ? layers->getAvailableLayerName(getBaseName(false))
+							: title));
 	} else {
 		int targetId = -1;
 		int sourceId = 0;
@@ -500,17 +555,17 @@ void LayerList::addLayerOrGroup(
 			int moveId = intuitKeyFrameTarget(
 				duplicateKeyFrame ? m_frame : -1, targetFrame, sourceId,
 				targetId, flags);
-			keyFrameMsg = net::makeKeyFrameSetMessage(
+			msgs.append(net::makeKeyFrameSetMessage(
 				contextId, m_trackId, targetFrame, id, 0,
-				DP_MSG_KEY_FRAME_SET_SOURCE_LAYER);
+				DP_MSG_KEY_FRAME_SET_SOURCE_LAYER));
 			if(moveId != -1) {
-				moveMsg = net::makeLayerTreeMoveMessage(
-					contextId, id, targetId, moveId);
+				msgs.append(net::makeLayerTreeMoveMessage(
+					contextId, id, targetId, moveId));
 			}
 		}
 
 		if(targetId == -1 && index.isValid()) {
-			targetId = m_selectedId;
+			targetId = selectedId;
 			bool into =
 				index.data(canvas::LayerListModel::IsGroupRole).toBool() &&
 				(m_view->isExpanded(index) ||
@@ -520,29 +575,30 @@ void LayerList::addLayerOrGroup(
 			}
 		}
 
-		QString baseName;
-		if(sourceId != 0) {
-			QModelIndex sourceIndex = layers->layerIndex(sourceId);
-			if(sourceIndex.isValid()) {
-				baseName = sourceIndex.data(canvas::LayerListModel::TitleRole)
-							   .toString();
+		QString effectiveTitle;
+		if(title.isEmpty()) {
+			QString baseName;
+			if(sourceId != 0) {
+				QModelIndex sourceIndex = layers->layerIndex(sourceId);
+				if(sourceIndex.isValid()) {
+					baseName =
+						sourceIndex.data(canvas::LayerListModel::TitleRole)
+							.toString();
+				}
 			}
-		}
-		if(baseName.isEmpty()) {
-			baseName = group ? tr("Group") : tr("Layer");
+			effectiveTitle = layers->getAvailableLayerName(
+				baseName.isEmpty() ? getBaseName(group) : baseName);
+		} else {
+			effectiveTitle = title;
 		}
 
-		layerMsg = net::makeLayerTreeCreateMessage(
+		msgs.append(net::makeLayerTreeCreateMessage(
 			contextId, id, sourceId, qMax(0, targetId), 0, flags,
-			layers->getAvailableLayerName(baseName));
+			effectiveTitle));
 	}
 
 	layers->setLayerIdToSelect(id);
-	net::Message messages[] = {
-		net::makeUndoPointMessage(contextId), layerMsg, keyFrameMsg, moveMsg};
-	emit layerCommands(
-		2 + (keyFrameMsg.isNull() ? 0 : 1) + (moveMsg.isNull() ? 0 : 1),
-		messages);
+	return id;
 }
 
 int LayerList::intuitKeyFrameTarget(
@@ -736,6 +792,15 @@ void LayerList::setFillSourceToSelected()
 	}
 }
 
+void LayerList::showPropertiesForNew(bool group)
+{
+	dialogs::LayerProperties *dlg = makeLayerPropertiesDialog(QModelIndex());
+	dlg->setNewLayerItem(
+		m_selectedId, group,
+		m_canvas->layerlist()->getAvailableLayerName(getBaseName(group)));
+	dlg->show();
+}
+
 void LayerList::showPropertiesOfSelected()
 {
 	showPropertiesOfIndex(currentSelection());
@@ -744,23 +809,42 @@ void LayerList::showPropertiesOfSelected()
 void LayerList::showPropertiesOfIndex(QModelIndex index)
 {
 	if(index.isValid()) {
-		auto *dlg = new dialogs::LayerProperties(m_canvas->localUserId(), this);
-		dlg->setAttribute(Qt::WA_DeleteOnClose);
-		dlg->setModal(false);
+		dialogs::LayerProperties *dlg = makeLayerPropertiesDialog(index);
+		int layerId = index.data(canvas::LayerListModel::IdRole).toInt();
+		dlg->setLayerItem(
+			index.data().value<canvas::LayerListItem>(),
+			layerCreatorName(layerId),
+			index.data(canvas::LayerListModel::IsDefaultRole).toBool());
+		dlg->show();
+	}
+}
 
-		connect(
-			m_canvas, &canvas::CanvasModel::compatibilityModeChanged, dlg,
-			&dialogs::LayerProperties::setCompatibilityMode);
-		connect(
-			dlg, &dialogs::LayerProperties::layerCommands, this,
-			&LayerList::layerCommands);
+dialogs::LayerProperties *
+LayerList::makeLayerPropertiesDialog(const QModelIndex &index)
+{
+	dialogs::LayerProperties *dlg =
+		new dialogs::LayerProperties(m_canvas->localUserId(), this);
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
+	dlg->setModal(false);
+
+	connect(
+		m_canvas, &canvas::CanvasModel::compatibilityModeChanged, dlg,
+		&dialogs::LayerProperties::setCompatibilityMode);
+	connect(
+		dlg, &dialogs::LayerProperties::layerCommands, this,
+		&LayerList::layerCommands);
+
+	bool isOwnLayer;
+	if(index.isValid()) {
+		int layerId = index.data(canvas::LayerListModel::IdRole).toInt();
+		isOwnLayer = (layerId & 0xff00) >> 8 == m_canvas->localUserId();
 		connect(
 			dlg, &dialogs::LayerProperties::visibilityChanged, this,
 			&LayerList::setLayerVisibility);
 		connect(
 			m_canvas->layerlist(), &canvas::LayerListModel::modelReset, dlg,
 			[this, dlg]() {
-				const auto newIndex =
+				QModelIndex newIndex =
 					m_canvas->layerlist()->layerIndex(dlg->layerId());
 				if(newIndex.isValid()) {
 					dlg->updateLayerItem(
@@ -772,25 +856,24 @@ void LayerList::showPropertiesOfIndex(QModelIndex index)
 					dlg->deleteLater();
 				}
 			});
-
-		const int layerId = index.data(canvas::LayerListModel::IdRole).toInt();
-		dlg->setLayerItem(
-			index.data().value<canvas::LayerListItem>(),
-			layerCreatorName(layerId),
-			index.data(canvas::LayerListModel::IsDefaultRole).toBool());
-
-		const bool canEditAll =
-			m_canvas->aclState()->canUseFeature(DP_FEATURE_EDIT_LAYERS);
-		const bool canEdit =
-			canEditAll ||
-			(m_canvas->aclState()->canUseFeature(DP_FEATURE_OWN_LAYERS) &&
-			 (layerId & 0xff00) >> 8 == m_canvas->localUserId());
-		dlg->setControlsEnabled(canEdit);
-		dlg->setOpControlsEnabled(canEditAll);
-		dlg->setCompatibilityMode(m_canvas->isCompatibilityMode());
-
-		dlg->show();
+	} else {
+		isOwnLayer = true;
+		connect(
+			dlg, &dialogs::LayerProperties::addLayerOrGroupRequested, this,
+			&LayerList::addLayerOrGroupFromPrompt);
 	}
+
+	bool canEditAll =
+		m_canvas->aclState()->canUseFeature(DP_FEATURE_EDIT_LAYERS);
+	bool canEdit =
+		canEditAll ||
+		(m_canvas->aclState()->canUseFeature(DP_FEATURE_OWN_LAYERS) &&
+		 isOwnLayer);
+	dlg->setControlsEnabled(canEdit);
+	dlg->setOpControlsEnabled(canEditAll);
+	dlg->setCompatibilityMode(m_canvas->isCompatibilityMode());
+
+	return dlg;
 }
 
 void LayerList::showContextMenu(const QPoint &pos)
@@ -1012,6 +1095,11 @@ void LayerList::triggerUpdate()
 		mode);
 
 	emit layerCommands(1, &msg);
+}
+
+QString LayerList::getBaseName(bool group)
+{
+	return group ? tr("Group") : tr("Layer");
 }
 
 }

@@ -164,6 +164,7 @@ SETTING_GETSET_V(
 SETTING(onionSkinsTintAbove       , OnionSkinsTintAbove       , "onionskins/tintabove"                  , (QColor::fromRgb(0x33, 0x33, 0xff, 0x80)))
 SETTING(onionSkinsTintBelow       , OnionSkinsTintBelow       , "onionskins/tintbelow"                  , (QColor::fromRgb(0xff, 0x33, 0x33, 0x80)))
 SETTING(onionSkinsWrap            , OnionSkinsWrap            , "onionskins/wrap"                       , true)
+SETTING(promptLayerCreate         , PromptLayerCreate         , "settings/promptlayercreate"            , false)
 SETTING(recentFiles               , RecentFiles               , "history/recentfiles"                   , QStringList())
 SETTING(recentHosts               , RecentHosts               , "history/recenthosts"                   , QStringList())
 SETTING(recentRemoteHosts         , RecentRemoteHosts         , "history/recentremotehosts"             , QStringList())

@@ -4,6 +4,7 @@
 #include "libclient/canvas/blendmodes.h"
 #include "libclient/net/message.h"
 #include "ui_layerproperties.h"
+#include <QPushButton>
 #include <QStandardItemModel>
 
 namespace dialogs {
@@ -11,8 +12,6 @@ namespace dialogs {
 LayerProperties::LayerProperties(uint8_t localUser, QWidget *parent)
 	: QDialog(parent)
 	, m_user(localUser)
-	, m_compatibilityMode{false}
-	, m_controlsEnabled{true}
 {
 	m_ui = new Ui_LayerProperties;
 	m_ui->setupUi(this);
@@ -26,15 +25,47 @@ LayerProperties::LayerProperties(uint8_t localUser, QWidget *parent)
 	connect(
 		m_ui->buttonBox, &QDialogButtonBox::clicked, this,
 		[this](QAbstractButton *b) {
-			if(m_ui->buttonBox->buttonRole(b) == QDialogButtonBox::ApplyRole)
-				emitChanges();
+			if(m_item.id != 0 &&
+			   m_ui->buttonBox->buttonRole(b) == QDialogButtonBox::ApplyRole) {
+				apply();
+			}
 		});
-	connect(this, &QDialog::accepted, this, &LayerProperties::emitChanges);
+	connect(this, &QDialog::accepted, this, &LayerProperties::apply);
 }
 
 LayerProperties::~LayerProperties()
 {
 	delete m_ui;
+}
+
+void LayerProperties::setNewLayerItem(
+	int selectedId, bool group, const QString &title)
+{
+	m_item = {
+		0,	   QString(), 1.0f,	 DP_BLEND_MODE_NORMAL,
+		false, false,	  false, group,
+		group, 0,		  0,	 0,
+		0,
+	};
+	m_selectedId = selectedId;
+	m_wasDefault = false;
+	setWindowTitle(group ? tr("New Layer Group") : tr("New Layer"));
+	m_ui->title->setText(title);
+	m_ui->opacitySlider->setValue(100);
+	m_ui->visible->setChecked(true);
+	m_ui->censored->setChecked(false);
+	m_ui->defaultLayer->setChecked(false);
+	m_ui->createdByLabel->hide();
+	m_ui->createdBy->hide();
+	updateBlendMode(
+		m_ui->blendMode, m_item.blend, m_item.group, m_item.isolated,
+		m_compatibilityMode);
+	// Can't apply settings to a layer that doesn't exist yet.
+	QPushButton *applyButton = m_ui->buttonBox->button(QDialogButtonBox::Apply);
+	if(applyButton) {
+		applyButton->setEnabled(false);
+		applyButton->hide();
+	}
 }
 
 void LayerProperties::setLayerItem(
@@ -143,6 +174,21 @@ void LayerProperties::showEvent(QShowEvent *event)
 	QDialog::showEvent(event);
 	m_ui->title->setFocus(Qt::PopupFocusReason);
 	m_ui->title->selectAll();
+}
+
+void LayerProperties::apply()
+{
+	if(m_item.id == 0) {
+		int blendModeData = m_ui->blendMode->currentData().toInt();
+		emit addLayerOrGroupRequested(
+			m_selectedId, m_item.group, m_item.title,
+			m_ui->opacitySlider->value(),
+			blendModeData == -1 ? DP_BLEND_MODE_NORMAL : blendModeData,
+			m_item.group && blendModeData != -1, m_ui->censored->isChecked(),
+			m_ui->defaultLayer->isChecked(), m_ui->visible->isChecked());
+	} else {
+		emitChanges();
+	}
 }
 
 void LayerProperties::emitChanges()

@@ -106,7 +106,7 @@
     </widget>
    </item>
    <item row="11" column="0">
-    <widget class="QLabel">
+    <widget class="QLabel" name="createdByLabel">
      <property name="text">
       <string>Created by:</string>
      </property>

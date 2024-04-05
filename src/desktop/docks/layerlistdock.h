@@ -7,7 +7,9 @@ extern "C" {
 }
 #include "desktop/docks/dockbase.h"
 #include "desktop/view/lock.h"
+#include "libclient/net/message.h"
 #include <QSet>
+#include <QVector>
 
 class KisSliderSpinBox;
 class QAction;
@@ -24,8 +26,8 @@ namespace canvas {
 class CanvasModel;
 }
 
-namespace net {
-class Message;
+namespace dialogs {
+class LayerProperties;
 }
 
 namespace widgets {
@@ -101,8 +103,6 @@ private slots:
 	void mergeSelected();
 	void setFillSourceToSelected();
 
-	void showPropertiesOfSelected();
-	void showPropertiesOfIndex(QModelIndex index);
 	void showContextMenu(const QPoint &pos);
 	void censorSelected(bool censor);
 	void disableAutoselectAny();
@@ -127,17 +127,34 @@ private:
 
 	void updateUiFromSelection();
 
+	void addOrPromptLayerOrGroup(bool group);
+	void addLayerOrGroupFromPrompt(
+		int selectedId, bool group, const QString &title, int opacityPercent,
+		int blendMode, bool isolated, bool censored, bool defaultLayer,
+		bool visible);
 	void addLayerOrGroup(
 		bool group, bool duplicateKeyFrame, bool keyFrame, int keyFrameOffset);
+	int makeAddLayerOrGroupCommands(
+		QVector<net::Message> &msgs, int selectedId, bool group,
+		bool duplicateKeyFrame, bool keyFrame, int keyFrameOffset,
+		const QString &title);
 	int intuitKeyFrameTarget(
 		int sourceFrame, int targetFrame, int &sourceId, int &targetId,
 		uint8_t &flags);
+
+	void showPropertiesForNew(bool group);
+	void showPropertiesOfSelected();
+	void showPropertiesOfIndex(QModelIndex index);
+	dialogs::LayerProperties *
+	makeLayerPropertiesDialog(const QModelIndex &index);
 
 	bool isGroupSelected() const;
 	QModelIndex currentSelection() const;
 	void selectLayerIndex(QModelIndex index, bool scrollTo = false);
 
 	QString layerCreatorName(uint16_t layerId) const;
+
+	static QString getBaseName(bool group);
 
 	canvas::CanvasModel *m_canvas;
 
