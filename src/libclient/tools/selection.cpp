@@ -236,10 +236,11 @@ QImage SelectionTool::transformSelectionImage(
 	Q_ASSERT(!source.isNull());
 	Q_ASSERT(target.size() == 4);
 	QRect bounds;
-	QPolygonF srcPolygon;
-	QPolygon dstQuad = destinationQuad(source, target, &bounds, &srcPolygon);
-	QImage img =
-		drawdance::transformImage(source, dstQuad, interpolation, offset);
+	QPolygon dstQuad = destinationQuad(source, target, &bounds);
+	QImage img = drawdance::transformImage(
+		source, dstQuad,
+		getEffectiveInterpolation(source.rect(), dstQuad, interpolation),
+		offset);
 	if(img.isNull()) {
 		qWarning("Couldn't transform selection image: %s", DP_error());
 		return QImage();
@@ -252,23 +253,15 @@ QImage SelectionTool::transformSelectionImage(
 }
 
 QPolygon SelectionTool::destinationQuad(
-	const QImage &source, const QPolygon &target, QRect *outBounds,
-	QPolygonF *outSrcPolygon)
+	const QImage &source, const QPolygon &target, QRect *outBounds)
 {
 	Q_ASSERT(!source.isNull());
 	Q_ASSERT(target.size() == 4);
 
 	const QRect bounds = target.boundingRect();
-	const QPolygonF srcPolygon(
-		{QPointF(0, 0), QPointF(source.width(), 0),
-		 QPointF(source.width(), source.height()),
-		 QPointF(0, source.height())});
 
 	if(outBounds) {
 		*outBounds = bounds;
-	}
-	if(outSrcPolygon) {
-		*outSrcPolygon = srcPolygon;
 	}
 	return target.translated(-bounds.topLeft());
 }
@@ -295,6 +288,49 @@ QImage SelectionTool::shapeMask(
 		*maskBounds = b;
 
 	return mask;
+}
+
+int SelectionTool::getEffectiveInterpolation(
+	const QRect &srcRect, const QPolygon &dstQuad, int requestedInterpolation)
+{
+	if(requestedInterpolation != DP_MSG_TRANSFORM_REGION_MODE_NEAREST &&
+	   dstQuad.size() == 4) {
+		QPolygon srcQuad(
+			{QPoint(0, 0), QPoint(srcRect.width(), 0),
+			 QPoint(srcRect.width(), srcRect.height()),
+			 QPoint(0, srcRect.height())});
+		QTransform tf;
+		if(QTransform::quadToQuad(srcQuad, dstQuad, tf)) {
+			tf.setMatrix( // Remove translation.
+				tf.m11(), tf.m12(), tf.m13(), tf.m21(), tf.m22(), tf.m23(), 0.0,
+				0.0, tf.m33());
+			if(isRightAngleRotationOrReflection(tf)) {
+				return DP_MSG_TRANSFORM_REGION_MODE_NEAREST;
+			}
+		}
+	}
+	return requestedInterpolation;
+}
+
+bool SelectionTool::isRightAngleRotationOrReflection(const QTransform &t1)
+{
+	QPoint scales[] = {
+		QPoint(1, 1), QPoint(-1, 1), QPoint(1, -1), QPoint(-1, -1)};
+	for(int angle = 0; angle <= 270; angle += 90) {
+		for(const QPointF scale : scales) {
+			QTransform t2;
+			if(angle != 0) {
+				t2.rotate(angle);
+			}
+			if(scale.x() != 1 || scale.y() != 1) {
+				t2.scale(scale.x(), scale.y());
+			}
+			if(qFuzzyCompare(t1, t2)) {
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 }

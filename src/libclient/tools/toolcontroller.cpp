@@ -259,9 +259,15 @@ void ToolController::updateSelectionPreview()
 	canvas::Selection *sel = m_model->selection();
 	if(sel && sel->hasPasteImage()) {
 		QPoint point = sel->shape().boundingRect().topLeft().toPoint();
+		QRect srcRect = sel->isMovedFromCanvas()
+							? sel->moveSourceRegion().boundingRect().toRect()
+							: sel->pasteImage().rect();
+		QPolygon dstQuad = sel->destinationQuad();
 		paintEngine->previewTransform(
 			m_activeLayer, point.x(), point.y(), sel->pasteImage(),
-			sel->destinationQuad(), m_selectInterpolation);
+			sel->destinationQuad(),
+			tools::SelectionTool::getEffectiveInterpolation(
+				srcRect, dstQuad, m_selectInterpolation));
 	} else {
 		paintEngine->clearTransformPreview();
 	}

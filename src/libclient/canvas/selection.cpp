@@ -669,7 +669,10 @@ bool Selection::pasteOrMoveToCanvas(
 				contextId, layer, m_sourceLayerId, moveBounds.x(),
 				moveBounds.y(), moveBounds.width(), moveBounds.height(),
 				s[0].x(), s[0].y(), s[1].x(), s[1].y(), s[2].x(), s[2].y(),
-				s[3].x(), s[3].y(), interpolation, mask);
+				s[3].x(), s[3].y(),
+				tools::SelectionTool::getEffectiveInterpolation(
+					moveBounds, s, interpolation),
+				mask);
 			if(msg.isNull()) {
 				qWarning("Transform: mask too large");
 				return false;

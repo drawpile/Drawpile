@@ -50,10 +50,17 @@ public:
 		QPoint *offset);
 	static QPolygon destinationQuad(
 		const QImage &source, const QPolygon &target,
-		QRect *outBounds = nullptr, QPolygonF *outSrcPolygon = nullptr);
+		QRect *outBounds = nullptr);
 	static QImage shapeMask(
 		const QColor &color, const QPolygonF &selection, QRect *maskBounds,
 		bool mono);
+
+	// Figure out the appropriate interpolation for a transformation. If the
+	// image is only translated or rotated by a 90° step, we want to use
+	// nearest-neighbor interpolation to avoid blurring the image.
+	static int getEffectiveInterpolation(
+		const QRect &srcRect, const QPolygon &dstQuad,
+		int requestedInterpolation);
 
 protected:
 	virtual void initSelection(canvas::Selection *selection) = 0;
@@ -64,6 +71,8 @@ protected:
 	canvas::Selection::Handle m_handle;
 
 private:
+	static bool isRightAngleRotationOrReflection(const QTransform &t1);
+
 	bool m_allowTransform;
 	net::MessageList m_messages;
 };
