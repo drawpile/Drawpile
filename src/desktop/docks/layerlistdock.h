@@ -154,7 +154,7 @@ private:
 
 	QString layerCreatorName(uint16_t layerId) const;
 
-	static QString getBaseName(bool group);
+	QString getBaseName(bool group);
 
 	canvas::CanvasModel *m_canvas;
 

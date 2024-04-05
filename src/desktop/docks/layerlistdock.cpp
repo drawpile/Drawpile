@@ -1115,6 +1115,14 @@ void LayerList::triggerUpdate()
 
 QString LayerList::getBaseName(bool group)
 {
+	if(m_canvas) {
+		QString username = m_canvas->userlist()
+							   ->getUserById(m_canvas->localUserId())
+							   .name.trimmed();
+		if(!username.isEmpty()) {
+			return username;
+		}
+	}
 	return group ? tr("Group") : tr("Layer");
 }
 

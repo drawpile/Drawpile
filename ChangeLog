@@ -30,6 +30,7 @@ Unreleased Version 2.2.2-pre
  * Feature: Allow configuring user pointer stay time through View → User Pointers → Stay Time. Thanks johannesCmayer for suggesting.
  * Feature: Allow prompting for layer properties when creating a layer. Can be turned on in the User Interface preferences. Thanks Ben for suggesting.
  * Fix: Focus existing layer properties dialog if one exists for the layer that properties are requested for.
+ * Feature: Name layers after the username of the creator by default.
 
 2024-02-25 Version 2.2.2-beta.1
  * Server Feature: Allow adding a message when kicking someone through the admin API.
