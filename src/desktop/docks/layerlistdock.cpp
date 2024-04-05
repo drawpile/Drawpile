@@ -794,11 +794,18 @@ void LayerList::setFillSourceToSelected()
 
 void LayerList::showPropertiesForNew(bool group)
 {
-	dialogs::LayerProperties *dlg = makeLayerPropertiesDialog(QModelIndex());
-	dlg->setNewLayerItem(
-		m_selectedId, group,
-		m_canvas->layerlist()->getAvailableLayerName(getBaseName(group)));
+	QString dialogObjectName = QStringLiteral("layerpropertiesnewlayer");
+	dialogs::LayerProperties *dlg = findChild<dialogs::LayerProperties *>(
+		dialogObjectName, Qt::FindDirectChildrenOnly);
+	if(!dlg) {
+		dlg = makeLayerPropertiesDialog(dialogObjectName, QModelIndex());
+		dlg->setNewLayerItem(
+			m_selectedId, group,
+			m_canvas->layerlist()->getAvailableLayerName(getBaseName(group)));
+	}
 	dlg->show();
+	dlg->activateWindow();
+	dlg->raise();
 }
 
 void LayerList::showPropertiesOfSelected()
@@ -809,21 +816,30 @@ void LayerList::showPropertiesOfSelected()
 void LayerList::showPropertiesOfIndex(QModelIndex index)
 {
 	if(index.isValid()) {
-		dialogs::LayerProperties *dlg = makeLayerPropertiesDialog(index);
 		int layerId = index.data(canvas::LayerListModel::IdRole).toInt();
-		dlg->setLayerItem(
-			index.data().value<canvas::LayerListItem>(),
-			layerCreatorName(layerId),
-			index.data(canvas::LayerListModel::IsDefaultRole).toBool());
+		QString dialogObjectName =
+			QStringLiteral("layerproperties%1").arg(layerId);
+		dialogs::LayerProperties *dlg = findChild<dialogs::LayerProperties *>(
+			dialogObjectName, Qt::FindDirectChildrenOnly);
+		if(!dlg) {
+			dlg = makeLayerPropertiesDialog(dialogObjectName, index);
+			dlg->setLayerItem(
+				index.data().value<canvas::LayerListItem>(),
+				layerCreatorName(layerId),
+				index.data(canvas::LayerListModel::IsDefaultRole).toBool());
+		}
 		dlg->show();
+		dlg->activateWindow();
+		dlg->raise();
 	}
 }
 
-dialogs::LayerProperties *
-LayerList::makeLayerPropertiesDialog(const QModelIndex &index)
+dialogs::LayerProperties *LayerList::makeLayerPropertiesDialog(
+	const QString &dialogObjectName, const QModelIndex &index)
 {
 	dialogs::LayerProperties *dlg =
 		new dialogs::LayerProperties(m_canvas->localUserId(), this);
+	dlg->setObjectName(dialogObjectName);
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 	dlg->setModal(false);
 

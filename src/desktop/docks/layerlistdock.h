@@ -145,8 +145,8 @@ private:
 	void showPropertiesForNew(bool group);
 	void showPropertiesOfSelected();
 	void showPropertiesOfIndex(QModelIndex index);
-	dialogs::LayerProperties *
-	makeLayerPropertiesDialog(const QModelIndex &index);
+	dialogs::LayerProperties *makeLayerPropertiesDialog(
+		const QString &dialogObjectName, const QModelIndex &index);
 
 	bool isGroupSelected() const;
 	QModelIndex currentSelection() const;
