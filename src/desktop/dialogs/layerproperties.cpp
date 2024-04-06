@@ -181,7 +181,7 @@ void LayerProperties::apply()
 	if(m_item.id == 0) {
 		int blendModeData = m_ui->blendMode->currentData().toInt();
 		emit addLayerOrGroupRequested(
-			m_selectedId, m_item.group, m_item.title,
+			m_selectedId, m_item.group, m_ui->title->text(),
 			m_ui->opacitySlider->value(),
 			blendModeData == -1 ? DP_BLEND_MODE_NORMAL : blendModeData,
 			m_item.group && blendModeData != -1, m_ui->censored->isChecked(),
