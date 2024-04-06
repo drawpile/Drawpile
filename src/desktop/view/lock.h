@@ -19,7 +19,7 @@ public:
 		LayerHidden = 1 << 6,
 		LayerHiddenInFrame = 1 << 7,
 		Tool = 1 << 8,
-		OutOfSpace = 1 << 8,
+		OutOfSpace = 1 << 9,
 	};
 	Q_ENUM(Reason)
 
