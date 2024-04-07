@@ -41,6 +41,7 @@ function(git_version_configure_file in_file out_file)
 					"-DGIT_VERSION_VAR=${ARG_VAR}"
 					"-DGIT_VERSION_FALLBACK=${PROJECT_VERSION}"
 					-P "${CMAKE_CURRENT_FUNCTION_LIST_FILE}"
+				WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
 			)
 		else()
 			message(STATUS "Generating ${out_filename} with static version")
