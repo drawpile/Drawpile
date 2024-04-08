@@ -116,9 +116,8 @@ Browse::Browse(QWidget *parent)
 	m_listing->setRootIsDecorated(false);
 	m_listing->setSortingEnabled(true);
 	m_listing->header()->setStretchLastSection(false);
-	m_listing->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	m_listing->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-	utils::initKineticScrolling(m_listing);
+	utils::bindKineticScrollingWith(
+		m_listing, Qt::ScrollBarAlwaysOff, Qt::ScrollBarAsNeeded);
 	layout->addWidget(m_listing);
 
 	m_sessions = new SessionListingModel{this};

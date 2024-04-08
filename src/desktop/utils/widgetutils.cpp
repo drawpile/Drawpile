@@ -243,32 +243,246 @@ void EncapsulatedLayout::recoverEffectiveMargins() const
 #endif
 
 
-// SPDX-SnippetBegin
-// SPDX-License-Identifier: GPL-3.0-or-later
-// SDPX—SnippetName: Kinetic scroll event filter from Krita
-KisKineticScrollerEventFilter::KisKineticScrollerEventFilter(
-	QScroller::ScrollerGestureType gestureType, QAbstractScrollArea *parent)
+KineticScroller::KineticScroller(
+	QAbstractScrollArea *parent, Qt::ScrollBarPolicy horizontalScrollBarPolicy,
+	Qt::ScrollBarPolicy verticalScrollBarPolicy, int kineticScrollGesture,
+	int kineticScrollThreshold, int kineticScrollHideBars)
 	: QObject(parent)
 	, m_scrollArea(parent)
-	, m_gestureType(gestureType)
+	, m_horizontalScrollBarPolicy(horizontalScrollBarPolicy)
+	, m_verticalScrollBarPolicy(verticalScrollBarPolicy)
+	, m_kineticScrollGesture(int(desktop::settings::KineticScrollGesture::None))
+	, m_kineticScrollSensitivity(-1)
+	, m_kineticScrollHideBars(false)
 {
+	reset(
+		kineticScrollGesture, toSensitivity(kineticScrollThreshold),
+		kineticScrollHideBars);
 }
 
-bool KisKineticScrollerEventFilter::eventFilter(QObject *watched, QEvent *event)
+void KineticScroller::setKineticScrollGesture(int kineticScrollGesture)
+{
+	if(kineticScrollGesture != m_kineticScrollGesture) {
+		reset(
+			kineticScrollGesture, m_kineticScrollSensitivity,
+			m_kineticScrollHideBars);
+	}
+}
+
+void KineticScroller::setKineticScrollThreshold(int kineticScrollThreshold)
+{
+	int kineticScrollSensitivity = toSensitivity(kineticScrollThreshold);
+	if(kineticScrollSensitivity != m_kineticScrollSensitivity) {
+		reset(
+			m_kineticScrollGesture, kineticScrollSensitivity,
+			m_kineticScrollHideBars);
+	}
+}
+
+void KineticScroller::setKineticScrollHideBars(bool kineticScrollHideBars)
+{
+	if(kineticScrollHideBars != m_kineticScrollHideBars) {
+		reset(
+			m_kineticScrollGesture, m_kineticScrollSensitivity,
+			kineticScrollHideBars);
+	}
+}
+
+// SPDX-SnippetBegin
+// SPDX-License-Identifier: GPL-3.0-or-later
+// SDPX—SnippetName: Based on the kinetic scroll event filter from Krita
+bool KineticScroller::eventFilter(QObject *watched, QEvent *event)
 {
 	switch(event->type()) {
 	case QEvent::Enter:
 		QScroller::ungrabGesture(m_scrollArea);
 		break;
-	case QEvent::Leave:
-		QScroller::grabGesture(m_scrollArea, m_gestureType);
+	case QEvent::Leave: {
+		QScroller::ScrollerGestureType gestureType;
+		if(isKineticScrollingEnabled(m_kineticScrollGesture, &gestureType)) {
+			QScroller::grabGesture(
+				m_scrollArea, QScroller::ScrollerGestureType(gestureType));
+		}
 		break;
+	}
 	default:
 		break;
 	}
 	return QObject::eventFilter(watched, event);
 }
+
+void KineticScroller::reset(
+	int kineticScrollGesture, int kineticScrollSensitivity,
+	bool kineticScrollHideBars)
+{
+	ScopedUpdateDisabler disabler(m_scrollArea);
+	QScroller::ScrollerGestureType gestureType;
+	bool isEnabled =
+		isKineticScrollingEnabled(kineticScrollGesture, &gestureType);
+	bool wasEnabled = isKineticScrollingEnabled(m_kineticScrollGesture);
+	if(isEnabled) {
+		if(wasEnabled) {
+			disableKineticScrolling();
+		}
+		enableKineticScrolling(
+			gestureType, kineticScrollSensitivity, kineticScrollHideBars);
+	} else if(wasEnabled) {
+		disableKineticScrolling();
+	}
+	m_kineticScrollGesture = kineticScrollGesture;
+	m_kineticScrollSensitivity = kineticScrollSensitivity;
+	m_kineticScrollHideBars = kineticScrollHideBars;
+}
+
+void KineticScroller::enableKineticScrolling(
+	QScroller::ScrollerGestureType gestureType, int kineticScrollSensitivity,
+	bool kineticScrollHideBars)
+{
+	if(kineticScrollHideBars) {
+		m_scrollArea->setHorizontalScrollBarPolicy(
+			Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
+		m_scrollArea->setVerticalScrollBarPolicy(
+			Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
+	} else if(gestureType != QScroller::TouchGesture) {
+		m_scrollArea->setHorizontalScrollBarPolicy(m_horizontalScrollBarPolicy);
+		m_scrollArea->setVerticalScrollBarPolicy(m_verticalScrollBarPolicy);
+		setEventFilter(m_scrollArea->horizontalScrollBar(), true);
+		setEventFilter(m_scrollArea->verticalScrollBar(), true);
+	}
+
+	setScrollPerPixel(true);
+
+	QScroller *scroller = QScroller::scroller(m_scrollArea);
+	// XXX: this leaks memory, see QTBUG-82355.
+	QScroller::grabGesture(m_scrollArea, gestureType);
+	scroller->setScrollerProperties(
+		getScrollerPropertiesForSensitivity(kineticScrollSensitivity));
+}
+
+void KineticScroller::disableKineticScrolling()
+{
+	m_scrollArea->setHorizontalScrollBarPolicy(m_horizontalScrollBarPolicy);
+	m_scrollArea->setVerticalScrollBarPolicy(m_verticalScrollBarPolicy);
+	setEventFilter(m_scrollArea->horizontalScrollBar(), false);
+	setEventFilter(m_scrollArea->verticalScrollBar(), false);
+	QScroller::ungrabGesture(m_scrollArea);
+}
+
+void KineticScroller::setScrollPerPixel(bool scrollPerPixel)
+{
+	QAbstractItemView *itemView =
+		qobject_cast<QAbstractItemView *>(m_scrollArea);
+	if(itemView) {
+		itemView->setVerticalScrollMode(
+			scrollPerPixel ? QAbstractItemView::ScrollPerPixel
+						   : QAbstractItemView::ScrollPerItem);
+	}
+}
+
+void KineticScroller::setEventFilter(QObject *target, bool install)
+{
+	if(target) {
+		if(install) {
+			target->installEventFilter(this);
+		} else {
+			target->removeEventFilter(this);
+		}
+	}
+}
+
+QScrollerProperties KineticScroller::getScrollerPropertiesForSensitivity(
+	int kineticScrollSensitivity)
+{
+	QScrollerProperties properties;
+
+	// DragStartDistance seems to be based on meter per second; though
+	// it's not explicitly documented, other QScroller values are in
+	// that metric. To start kinetic scrolling, with minimal
+	// sensitivity, we expect a drag of 10 mm, with minimum sensitivity
+	// any > 0 mm.
+	float mm = 0.001f;
+	float resistance = 1.0f - (kineticScrollSensitivity / 100.0f);
+	float mousePressEventDelay = 1.0f - 0.75f * resistance;
+	float resistanceCoefficient = 10.0f;
+	float dragVelocitySmoothFactor = 1.0f;
+	float minimumVelocity = 0.0f;
+	float axisLockThresh = 1.0f;
+	float maximumClickThroughVelocity = 0.0f;
+	float flickAccelerationFactor = 1.5f;
+	float overshootDragResistanceFactor = 0.1f;
+	float overshootDragDistanceFactor = 0.3f;
+	float overshootScrollDistanceFactor = 0.1f;
+	float overshootScrollTime = 0.4f;
+
+	properties.setScrollMetric(
+		QScrollerProperties::DragStartDistance,
+		resistance * resistanceCoefficient * mm);
+	properties.setScrollMetric(
+		QScrollerProperties::DragVelocitySmoothingFactor,
+		dragVelocitySmoothFactor);
+	properties.setScrollMetric(
+		QScrollerProperties::MinimumVelocity, minimumVelocity);
+	properties.setScrollMetric(
+		QScrollerProperties::AxisLockThreshold, axisLockThresh);
+	properties.setScrollMetric(
+		QScrollerProperties::MaximumClickThroughVelocity,
+		maximumClickThroughVelocity);
+	properties.setScrollMetric(
+		QScrollerProperties::MousePressEventDelay, mousePressEventDelay);
+	properties.setScrollMetric(
+		QScrollerProperties::AcceleratingFlickSpeedupFactor,
+		flickAccelerationFactor);
+
+	properties.setScrollMetric(
+		QScrollerProperties::VerticalOvershootPolicy,
+		QScrollerProperties::OvershootAlwaysOn);
+	properties.setScrollMetric(
+		QScrollerProperties::OvershootDragResistanceFactor,
+		overshootDragResistanceFactor);
+	properties.setScrollMetric(
+		QScrollerProperties::OvershootDragDistanceFactor,
+		overshootDragDistanceFactor);
+	properties.setScrollMetric(
+		QScrollerProperties::OvershootScrollDistanceFactor,
+		overshootScrollDistanceFactor);
+	properties.setScrollMetric(
+		QScrollerProperties::OvershootScrollTime, overshootScrollTime);
+
+	return properties;
+}
+
+int KineticScroller::toSensitivity(int kineticScrollThreshold)
+{
+	return 100 - qBound(0, kineticScrollThreshold, 100);
+}
+
 // SPDX-SnippetEnd
+
+bool KineticScroller::isKineticScrollingEnabled(
+	int kineticScrollGesture, QScroller::ScrollerGestureType *outGestureType)
+{
+	QScroller::ScrollerGestureType gestureType;
+	switch(kineticScrollGesture) {
+	case int(desktop::settings::KineticScrollGesture::LeftClick):
+		gestureType = QScroller::LeftMouseButtonGesture;
+		break;
+	case int(desktop::settings::KineticScrollGesture::MiddleClick):
+		gestureType = QScroller::MiddleMouseButtonGesture;
+		break;
+	case int(desktop::settings::KineticScrollGesture::RightClick):
+		gestureType = QScroller::RightMouseButtonGesture;
+		break;
+	case int(desktop::settings::KineticScrollGesture::Touch):
+		gestureType = QScroller::TouchGesture;
+		break;
+	default:
+		return false;
+	}
+	if(outGestureType) {
+		*outGestureType = gestureType;
+	}
+	return true;
+}
 
 
 void showWindow(QWidget *widget, bool maximized, bool isMainWindow)
@@ -332,123 +546,30 @@ void initSortingHeader(QHeaderView *header, int sortColumn, Qt::SortOrder order)
 #endif
 }
 
-static QPair<bool, QScroller::ScrollerGestureType>
-getKineticScrollEnabledGesture(const desktop::settings::Settings &settings)
+void bindKineticScrolling(QAbstractScrollArea *scrollArea)
 {
-	switch(settings.kineticScrollGesture()) {
-	case int(desktop::settings::KineticScrollGesture::LeftClick):
-		return {true, QScroller::LeftMouseButtonGesture};
-	case int(desktop::settings::KineticScrollGesture::MiddleClick):
-		return {true, QScroller::MiddleMouseButtonGesture};
-	case int(desktop::settings::KineticScrollGesture::RightClick):
-		return {true, QScroller::RightMouseButtonGesture};
-	case int(desktop::settings::KineticScrollGesture::Touch):
-		return {true, QScroller::TouchGesture};
-	default:
-		return {false, QScroller::ScrollerGestureType(0)};
-	}
+	bindKineticScrollingWith(
+		scrollArea, Qt::ScrollBarAsNeeded, Qt::ScrollBarAsNeeded);
 }
 
-void initKineticScrolling(QAbstractScrollArea *scrollArea)
+void bindKineticScrollingWith(
+	QAbstractScrollArea *scrollArea,
+	Qt::ScrollBarPolicy horizontalScrollBarPolicy,
+	Qt::ScrollBarPolicy verticalScrollBarPolicy)
 {
-	const desktop::settings::Settings &settings = dpApp().settings();
-	auto [enabled, gestureType] = getKineticScrollEnabledGesture(settings);
-
-	// SPDX-SnippetBegin
-	// SPDX-License-Identifier: GPL-3.0-or-later
-	// SDPX—SnippetName: Kinetic scroll setup from Krita
-	if(scrollArea && enabled) {
-		int sensitivity =
-			100 - qBound(0, settings.kineticScrollThreshold(), 100);
-		bool hideScrollBars = settings.kineticScrollHideBars();
-		float resistanceCoefficient = 10.0f;
-		float dragVelocitySmoothFactor = 1.0f;
-		float minimumVelocity = 0.0f;
-		float axisLockThresh = 1.0f;
-		float maximumClickThroughVelocity = 0.0f;
-		float flickAccelerationFactor = 1.5f;
-		float overshootDragResistanceFactor = 0.1f;
-		float overshootDragDistanceFactor = 0.3f;
-		float overshootScrollDistanceFactor = 0.1f;
-		float overshootScrollTime = 0.4f;
-
-		if(hideScrollBars) {
-			scrollArea->setVerticalScrollBarPolicy(
-				Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
-			scrollArea->setHorizontalScrollBarPolicy(
-				Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
-		} else if(gestureType != QScroller::TouchGesture) {
-			auto *filter =
-				new KisKineticScrollerEventFilter(gestureType, scrollArea);
-			scrollArea->horizontalScrollBar()->installEventFilter(filter);
-			scrollArea->verticalScrollBar()->installEventFilter(filter);
-		}
-
-		QAbstractItemView *itemView =
-			qobject_cast<QAbstractItemView *>(scrollArea);
-		if(itemView) {
-			itemView->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
-		}
-
-		QScroller *scroller = QScroller::scroller(scrollArea);
-		// TODO: this leaks memory, see QTBUG-82355.
-		QScroller::grabGesture(scrollArea, gestureType);
-
-		QScrollerProperties properties;
-
-		// DragStartDistance seems to be based on meter per second; though
-		// it's not explicitly documented, other QScroller values are in
-		// that metric. To start kinetic scrolling, with minimal
-		// sensitivity, we expect a drag of 10 mm, with minimum sensitivity
-		// any > 0 mm.
-		const float mm = 0.001f;
-		const float resistance = 1.0f - (sensitivity / 100.0f);
-		const float mousePressEventDelay = 1.0f - 0.75f * resistance;
-
-		properties.setScrollMetric(
-			QScrollerProperties::DragStartDistance,
-			resistance * resistanceCoefficient * mm);
-		properties.setScrollMetric(
-			QScrollerProperties::DragVelocitySmoothingFactor,
-			dragVelocitySmoothFactor);
-		properties.setScrollMetric(
-			QScrollerProperties::MinimumVelocity, minimumVelocity);
-		properties.setScrollMetric(
-			QScrollerProperties::AxisLockThreshold, axisLockThresh);
-		properties.setScrollMetric(
-			QScrollerProperties::MaximumClickThroughVelocity,
-			maximumClickThroughVelocity);
-		properties.setScrollMetric(
-			QScrollerProperties::MousePressEventDelay, mousePressEventDelay);
-		properties.setScrollMetric(
-			QScrollerProperties::AcceleratingFlickSpeedupFactor,
-			flickAccelerationFactor);
-
-		properties.setScrollMetric(
-			QScrollerProperties::VerticalOvershootPolicy,
-			QScrollerProperties::OvershootAlwaysOn);
-		properties.setScrollMetric(
-			QScrollerProperties::OvershootDragResistanceFactor,
-			overshootDragResistanceFactor);
-		properties.setScrollMetric(
-			QScrollerProperties::OvershootDragDistanceFactor,
-			overshootDragDistanceFactor);
-		properties.setScrollMetric(
-			QScrollerProperties::OvershootScrollDistanceFactor,
-			overshootScrollDistanceFactor);
-		properties.setScrollMetric(
-			QScrollerProperties::OvershootScrollTime, overshootScrollTime);
-
-		scroller->setScrollerProperties(properties);
+	if(scrollArea) {
+		desktop::settings::Settings &settings = dpApp().settings();
+		KineticScroller *scroller = new KineticScroller(
+			scrollArea, horizontalScrollBarPolicy, verticalScrollBarPolicy,
+			settings.kineticScrollGesture(), settings.kineticScrollThreshold(),
+			settings.kineticScrollHideBars());
+		settings.bindKineticScrollGesture(
+			scroller, &KineticScroller::setKineticScrollGesture);
+		settings.bindKineticScrollThreshold(
+			scroller, &KineticScroller::setKineticScrollThreshold);
+		settings.bindKineticScrollHideBars(
+			scroller, &KineticScroller::setKineticScrollHideBars);
 	}
-	// SPDX-SnippetEnd
-}
-
-bool isKineticScrollingBarsHidden()
-{
-	const desktop::settings::Settings &settings = dpApp().settings();
-	return getKineticScrollEnabledGesture(settings).first &&
-		   settings.kineticScrollHideBars();
 }
 
 QFormLayout *addFormSection(QBoxLayout *layout)

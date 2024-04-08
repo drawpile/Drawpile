@@ -77,19 +77,51 @@ private:
 
 // SPDX-SnippetBegin
 // SPDX-License-Identifier: GPL-3.0-or-later
-// SDPX—SnippetName: Kinetic scroll event filter from Krita
-class KisKineticScrollerEventFilter : public QObject {
+// SDPX—SnippetName: Based on the kinetic scroll event filter from Krita
+class KineticScroller : public QObject {
 	Q_OBJECT
 public:
-	KisKineticScrollerEventFilter(
-		QScroller::ScrollerGestureType gestureType,
-		QAbstractScrollArea *parent);
+	KineticScroller(
+		QAbstractScrollArea *parent,
+		Qt::ScrollBarPolicy horizontalScrollBarPolicy,
+		Qt::ScrollBarPolicy verticalScrollBarPolicy, int kineticScrollGesture,
+		int kineticScrollThreshold, int kineticScrollHideBars);
+
+	void setKineticScrollGesture(int kineticScrollGesture);
+	void setKineticScrollThreshold(int kineticScrollThreshold);
+	void setKineticScrollHideBars(bool kineticScrollHideBars);
 
 protected:
 	bool eventFilter(QObject *watched, QEvent *event) override;
 
-	QAbstractScrollArea *m_scrollArea;
-	QScroller::ScrollerGestureType m_gestureType;
+private:
+	void reset(
+		int kineticScrollGesture, int kineticScrollSensitivity,
+		bool kineticScrollHideBars);
+
+	void enableKineticScrolling(
+		QScroller::ScrollerGestureType gestureType,
+		int kineticScrollSensitivity, bool kineticScrollHideBars);
+
+	void disableKineticScrolling();
+
+	void setScrollPerPixel(bool scrollPerPixel);
+	void setEventFilter(QObject *target, bool install);
+
+	static QScrollerProperties
+	getScrollerPropertiesForSensitivity(int kineticScrollSensitivity);
+
+	static int toSensitivity(int kineticScrollThreshold);
+	static bool isKineticScrollingEnabled(
+		int kineticScrollGesture,
+		QScroller::ScrollerGestureType *outGestureType = nullptr);
+
+	QAbstractScrollArea *const m_scrollArea;
+	const Qt::ScrollBarPolicy m_horizontalScrollBarPolicy;
+	const Qt::ScrollBarPolicy m_verticalScrollBarPolicy;
+	int m_kineticScrollGesture;
+	int m_kineticScrollSensitivity;
+	bool m_kineticScrollHideBars;
 };
 // SPDX-SnippetEnd
 
@@ -106,8 +138,11 @@ void initSortingHeader(
 	QHeaderView *header, int sortColumn = -1,
 	Qt::SortOrder order = Qt::AscendingOrder);
 
-void initKineticScrolling(QAbstractScrollArea *scrollArea);
-bool isKineticScrollingBarsHidden();
+void bindKineticScrolling(QAbstractScrollArea *scrollArea);
+void bindKineticScrollingWith(
+	QAbstractScrollArea *scrollArea,
+	Qt::ScrollBarPolicy horizontalScrollBarPolicy,
+	Qt::ScrollBarPolicy verticalScrollBarPolicy);
 
 QFormLayout *addFormSection(QBoxLayout *layout);
 

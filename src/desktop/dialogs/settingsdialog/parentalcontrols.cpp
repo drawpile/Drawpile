@@ -58,7 +58,7 @@ void ParentalControls::initBuiltIn(
 	form->addRow(tr("Keywords:"), autoTag);
 	settings.bindParentalControlsAutoTag(autoTag);
 	auto *tagWords = new QPlainTextEdit(this);
-	utils::initKineticScrolling(tagWords);
+	utils::bindKineticScrolling(tagWords);
 	tagWords->setPlaceholderText(parentalcontrols::defaultWordList());
 	form->addRow(nullptr, tagWords);
 	settings.bindParentalControlsTags(tagWords);

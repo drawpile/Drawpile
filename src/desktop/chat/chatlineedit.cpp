@@ -4,15 +4,17 @@
 #include <QScrollBar>
 #include <QScopedValueRollback>
 
+#include "desktop/main.h"
 #include "desktop/chat/chatlineedit.h"
 #include "desktop/utils/widgetutils.h"
 
 ChatLineEdit::ChatLineEdit(QWidget *parent) :
-	QPlainTextEdit(parent), _historypos(0), _fixingScroll(false),
-	_kineticScrollBarsHidden(utils::isKineticScrollingBarsHidden())
+	QPlainTextEdit(parent), _historypos(0), _fixingScroll(false)
 {
-	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	utils::initKineticScrolling(this);
+	dpApp().settings().bindKineticScrollHideBars(
+		this, &ChatLineEdit::setKineticScrollBarsHidden);
+	utils::bindKineticScrollingWith(
+		this, Qt::ScrollBarAlwaysOff, Qt::ScrollBarAsNeeded);
 	connect(
 		verticalScrollBar(), &QAbstractSlider::valueChanged, this,
 		&ChatLineEdit::fixScroll);
@@ -116,4 +118,9 @@ void ChatLineEdit::fixScrollAt(int value, int lineCount)
 		QScrollBar *vbar = verticalScrollBar();
 		vbar->setValue(0);
 	}
+}
+
+void ChatLineEdit::setKineticScrollBarsHidden(bool kineticScrollBarsHidden)
+{
+	_kineticScrollBarsHidden = kineticScrollBarsHidden;
 }

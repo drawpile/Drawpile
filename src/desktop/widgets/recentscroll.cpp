@@ -143,9 +143,9 @@ RecentScroll::RecentScroll(Mode mode, QWidget *parent)
 	: QScrollArea{parent}
 	, m_mode{mode}
 {
-	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	setWidgetResizable(true);
-	utils::initKineticScrolling(this);
+	utils::bindKineticScrollingWith(
+		this, Qt::ScrollBarAlwaysOff, Qt::ScrollBarAsNeeded);
 
 	m_content = new QWidget;
 	setWidget(m_content);

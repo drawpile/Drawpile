@@ -20,7 +20,7 @@ Welcome::Welcome(QWidget *parent)
 
 	m_browser = new QTextBrowser;
 	m_browser->setOpenLinks(false);
-	utils::initKineticScrolling(m_browser);
+	utils::bindKineticScrolling(m_browser);
 	layout->addWidget(m_browser);
 
 	connect(

@@ -62,13 +62,10 @@ SettingsDialog::SettingsDialog(bool singleSession, QWidget *parent)
 	menuLayout->setSpacing(style()->pixelMetric(QStyle::PM_ToolBarItemSpacing));
 
 	QScrollArea *menuScroll = new QScrollArea;
-	utils::initKineticScrolling(menuScroll);
+	utils::bindKineticScrollingWith(
+		menuScroll, vertical ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAsNeeded,
+		vertical ? Qt::ScrollBarAsNeeded : Qt::ScrollBarAlwaysOff);
 	menuScroll->setContentsMargins(0, 0, 0, 0);
-	if(vertical) {
-		menuScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	} else {
-		menuScroll->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	}
 	menuScroll->setWidgetResizable(true);
 	menuScroll->setWidget(menu);
 

@@ -106,7 +106,7 @@ struct LoginDialog::Private {
 			QIcon::fromTheme("object-locked").pixmap(22, 22));
 
 		// Session list page
-		utils::initKineticScrolling(ui->sessionList);
+		utils::bindKineticScrolling(ui->sessionList);
 		QObject::connect(
 			ui->sessionList, &QTableView::doubleClicked,
 			[this](const QModelIndex &) {

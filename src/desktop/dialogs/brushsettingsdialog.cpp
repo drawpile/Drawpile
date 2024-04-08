@@ -196,7 +196,7 @@ void BrushSettingsDialog::buildDialogUi()
 	d->categoryWidget->setSelectionMode(QAbstractItemView::SingleSelection);
 	d->categoryWidget->setSizePolicy(
 		QSizePolicy::Preferred, QSizePolicy::Expanding);
-	utils::initKineticScrolling(d->categoryWidget);
+	utils::bindKineticScrolling(d->categoryWidget);
 	connect(
 		d->categoryWidget, &QListWidget::currentItemChanged, this,
 		&BrushSettingsDialog::categoryChanged);
@@ -229,7 +229,7 @@ QWidget *BrushSettingsDialog::buildGeneralPageUi()
 	QWidget *widget = new QWidget{scroll};
 	scroll->setWidget(widget);
 	scroll->setWidgetResizable(true);
-	utils::initKineticScrolling(scroll);
+	utils::bindKineticScrolling(scroll);
 
 	QFormLayout *layout = new QFormLayout;
 	widget->setLayout(layout);
@@ -405,7 +405,7 @@ QWidget *BrushSettingsDialog::buildClassicSizePageUi()
 	QWidget *widget = new QWidget{scroll};
 	scroll->setWidget(widget);
 	scroll->setWidgetResizable(true);
-	utils::initKineticScrolling(scroll);
+	utils::bindKineticScrolling(scroll);
 
 	QVBoxLayout *layout = new QVBoxLayout;
 	widget->setLayout(layout);
@@ -462,7 +462,7 @@ QWidget *BrushSettingsDialog::buildClassicOpacityPageUi()
 	QWidget *widget = new QWidget{scroll};
 	scroll->setWidget(widget);
 	scroll->setWidgetResizable(true);
-	utils::initKineticScrolling(scroll);
+	utils::bindKineticScrolling(scroll);
 
 	QVBoxLayout *layout = new QVBoxLayout;
 	widget->setLayout(layout);
@@ -519,7 +519,7 @@ QWidget *BrushSettingsDialog::buildClassicHardnessPageUi()
 	QWidget *widget = new QWidget{scroll};
 	scroll->setWidget(widget);
 	scroll->setWidgetResizable(true);
-	utils::initKineticScrolling(scroll);
+	utils::bindKineticScrolling(scroll);
 
 	QVBoxLayout *layout = new QVBoxLayout;
 	widget->setLayout(layout);
@@ -576,7 +576,7 @@ QWidget *BrushSettingsDialog::buildClassicSmudgingPageUi()
 	QWidget *widget = new QWidget{scroll};
 	scroll->setWidget(widget);
 	scroll->setWidgetResizable(true);
-	utils::initKineticScrolling(scroll);
+	utils::bindKineticScrolling(scroll);
 
 	QVBoxLayout *layout = new QVBoxLayout;
 	widget->setLayout(layout);
@@ -749,7 +749,7 @@ QWidget *BrushSettingsDialog::buildMyPaintPageUi(int setting)
 	QWidget *widget = new QWidget{scroll};
 	scroll->setWidget(widget);
 	scroll->setWidgetResizable(true);
-	utils::initKineticScrolling(scroll);
+	utils::bindKineticScrolling(scroll);
 
 	QVBoxLayout *layout = new QVBoxLayout;
 	widget->setLayout(layout);

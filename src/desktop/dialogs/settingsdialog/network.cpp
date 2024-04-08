@@ -51,14 +51,14 @@ void Network::initAvatars(QVBoxLayout *layout)
 	avatars->setViewMode(QListView::IconMode);
 	avatars->setResizeMode(QListView::Adjust);
 	avatars->setMovement(QListView::Static);
-	avatars->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	avatars->setUniformItemSizes(true);
 	avatars->setWrapping(true);
 	avatars->setMinimumHeight(40);
 	avatars->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
 	avatars->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
 	avatars->setSelectionMode(QAbstractItemView::ExtendedSelection);
-	utils::initKineticScrolling(avatars);
+	utils::bindKineticScrollingWith(
+		avatars, Qt::ScrollBarAlwaysOff, Qt::ScrollBarAsNeeded);
 
 	auto *avatarsModel = new AvatarListModel(true, this);
 	avatarsModel->loadAvatars();

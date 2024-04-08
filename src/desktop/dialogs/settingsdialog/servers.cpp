@@ -60,7 +60,8 @@ void Servers::initListingServers(
 	servers->setAlternatingRowColors(true);
 	servers->setFocusPolicy(Qt::StrongFocus);
 	servers->setSelectionMode(QAbstractItemView::ExtendedSelection);
-	utils::initKineticScrolling(servers);
+	utils::bindKineticScrollingWith(
+		servers, Qt::ScrollBarAlwaysOff, Qt ::ScrollBarAsNeeded);
 	form->addWidget(servers, 1);
 	form->addLayout(listActions(
 		servers, tr("Add list servers…"),
@@ -114,10 +115,11 @@ void Servers::initKnownHosts(QVBoxLayout *form)
 	auto *knownHosts = new QListView;
 	form->addWidget(knownHosts, 1);
 	knownHostsLabel->setBuddy(knownHosts);
-	knownHosts->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	knownHosts->setAlternatingRowColors(true);
 	knownHosts->setFocusPolicy(Qt::StrongFocus);
 	knownHosts->setSelectionMode(QAbstractItemView::ExtendedSelection);
+	utils::bindKineticScrollingWith(
+		knownHosts, Qt::ScrollBarAlwaysOff, Qt ::ScrollBarAsNeeded);
 	auto *knownHostsModel = new CertificateStoreModel(this);
 	knownHosts->setModel(knownHostsModel);
 

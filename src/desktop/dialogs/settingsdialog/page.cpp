@@ -16,7 +16,7 @@ Page::Page(QWidget *parent)
 void Page::init(desktop::settings::Settings &settings, bool stretch)
 {
 	setFrameStyle(QFrame::NoFrame);
-	utils::initKineticScrolling(this);
+	utils::bindKineticScrolling(this);
 
 	QWidget *scroll = new QWidget;
 	scroll->setContentsMargins(0, 0, 0, 0);

@@ -157,6 +157,7 @@ void UserInterface::initKineticScrolling(
 	KisSliderSpinBox *threshold = new KisSliderSpinBox;
 	threshold->setRange(0, 100);
 	threshold->setPrefix(tr("Threshold: "));
+	threshold->setBlockUpdateSignalOnDrag(true);
 	settings.bindKineticScrollThreshold(threshold);
 	form->addRow(nullptr, threshold);
 
@@ -169,11 +170,6 @@ void UserInterface::initKineticScrolling(
 		threshold->setEnabled(enabled);
 		hideBars->setEnabled(enabled);
 	});
-
-	form->addRow(
-		nullptr,
-		utils::formNote(tr(
-			"Changes to kinetic scrolling apply after you restart Drawpile.")));
 }
 
 void UserInterface::initMiscellaneous(

@@ -61,7 +61,7 @@ AddServerDialog::AddServerDialog(QWidget *parent)
 {
 	d->ui.setupUi(this);
 	d->browser = new FaviconTextBrowser{d->favicon};
-	utils::initKineticScrolling(d->browser);
+	utils::bindKineticScrolling(d->browser);
 	d->ui.resultLayout->addWidget(d->browser);
 	d->okButton = d->ui.buttons->button(QDialogButtonBox::Ok);
 	d->cancelButton = d->ui.buttons->button(QDialogButtonBox::Cancel);

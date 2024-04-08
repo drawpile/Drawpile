@@ -38,6 +38,7 @@ private:
    void resizeBasedOnLines();
    int lineCountToWidgetHeight(int lineCount) const;
    void fixScrollAt(int value, int lineCount);
+   void setKineticScrollBarsHidden(bool kineticScrollBarsHidden);
 };
 
 #endif

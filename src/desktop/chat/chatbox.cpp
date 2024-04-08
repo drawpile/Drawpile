@@ -68,7 +68,7 @@ ChatBox::ChatBox(Document *doc, QWidget *parent)
 	m_userItemDelegate = new UserItemDelegate(this);
 	m_userItemDelegate->setDocument(doc);
 	m_userList->setItemDelegate(m_userItemDelegate);
-	utils::initKineticScrolling(m_userList);
+	utils::bindKineticScrolling(m_userList);
 	sidebarLayout->addWidget(m_userList);
 
 	chatsplitter->addWidget(sidebar);

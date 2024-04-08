@@ -185,7 +185,7 @@ ChatWidget::ChatWidget(QWidget *parent)
 
 	d->view = new QTextBrowser(this);
 	d->view->setOpenExternalLinks(true);
-	utils::initKineticScrolling(d->view);
+	utils::bindKineticScrolling(d->view);
 	connect(
 		d->view->verticalScrollBar(), &QScrollBar::valueChanged, this,
 		&ChatWidget::scrollBarMoved);

@@ -250,7 +250,7 @@ void BrushExportDialog::showExportError(
 
 	QTextBrowser *browser = new QTextBrowser;
 	browser->setPlainText(result.errors.join("\n"));
-	utils::initKineticScrolling(browser);
+	utils::bindKineticScrolling(browser);
 	layout->addWidget(browser);
 
 	QDialogButtonBox *buttons = new QDialogButtonBox;

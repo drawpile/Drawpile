@@ -32,6 +32,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Focus existing layer properties dialog if one exists for the layer that properties are requested for.
  * Feature: Name layers after the username of the creator by default.
  * Fix: Don't use bilinear interpolation when selection is only moved, rotated by a multiple of 90 degrees, flipped or mirrored, to avoid unnecessary blurring. Thanks lungy for reporting.
+ * Feature: Don't require restarting the application when changing kinetic scrolling settings.
 
 2024-02-25 Version 2.2.2-beta.1
  * Server Feature: Allow adding a message when kicking someone through the admin API.

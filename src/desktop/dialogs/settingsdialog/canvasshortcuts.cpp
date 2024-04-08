@@ -100,7 +100,7 @@ void CanvasShortcuts::initCanvasShortcuts(
 
 	auto *shortcuts = ProportionalTableView::make(filter, shortcutsModel);
 	shortcuts->setColumnStretches({6, 3, 3, 0});
-	utils::initKineticScrolling(shortcuts);
+	utils::bindKineticScrolling(shortcuts);
 	connect(
 		shortcuts, &QAbstractItemView::activated, this,
 		[=](const QModelIndex &index) {

@@ -97,7 +97,7 @@ Host::Host(QWidget *parent)
 
 	QScrollArea *scrollArea = new QScrollArea;
 	scrollArea->setFrameStyle(QFrame::NoFrame);
-	utils::initKineticScrolling(scrollArea);
+	utils::bindKineticScrolling(scrollArea);
 	widgetLayout->addWidget(scrollArea);
 
 	QWidget *scroll = new QWidget;

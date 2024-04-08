@@ -33,7 +33,7 @@ SystemInfoDialog::SystemInfoDialog(QWidget *parent)
 	m_textEdit->setFont(font);
 	m_textEdit->setReadOnly(true);
 	m_textEdit->setPlainText(getSystemInfo());
-	utils::initKineticScrolling(m_textEdit);
+	utils::bindKineticScrolling(m_textEdit);
 	layout->addWidget(m_textEdit, 1);
 
 	QDialogButtonBox *buttons = new QDialogButtonBox(QDialogButtonBox::Close);

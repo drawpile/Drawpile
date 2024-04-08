@@ -177,7 +177,7 @@ BrushPalette::BrushPalette(QWidget *parent)
 	d->presetListView->setContextMenuPolicy(Qt::CustomContextMenu);
 	BrushPaletteDelegate *delegate = new BrushPaletteDelegate(this);
 	d->presetListView->setItemDelegate(delegate);
-	utils::initKineticScrolling(d->presetListView);
+	utils::bindKineticScrolling(d->presetListView);
 	setWidget(d->presetListView);
 
 	d->tagComboBox->setModel(d->tagModel);
@@ -297,7 +297,7 @@ void BrushPalette::onOpen(const QString &path, QTemporaryFile *tempFile)
 		dlg->resize(400, 400);
 		QTextBrowser *browser = new QTextBrowser{dlg};
 		browser->setPlainText(result.errors.join("\n"));
-		utils::initKineticScrolling(browser);
+		utils::bindKineticScrolling(browser);
 		layout->addWidget(browser);
 	}
 

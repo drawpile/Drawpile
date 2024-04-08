@@ -83,7 +83,7 @@ void Shortcuts::initGlobalShortcuts(
 		});
 	m_shortcutsTable = ProportionalTableView::make(filter, shortcutsModel);
 	m_shortcutsTable->setColumnStretches({6, 2, 2, 2});
-	utils::initKineticScrolling(m_shortcutsTable);
+	utils::bindKineticScrolling(m_shortcutsTable);
 
 	QStyledItemDelegate *keySequenceDelegate = new QStyledItemDelegate(this);
 	m_itemEditorFactory.registerEditor(
