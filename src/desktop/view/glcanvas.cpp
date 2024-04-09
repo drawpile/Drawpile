@@ -776,7 +776,7 @@ void main()
 		// The loop is necessary because the canvas size may change
 		// again while we're refreshing the tile cache visible area.
 		while(true) {
-			bool wasResized;
+			bool wasResized = false;
 			canvas::TileCache::Resize resize;
 			controller->withTileCache([&](canvas::TileCache &tileCache) {
 				wasResized = tileCache.getResizeReset(resize);
