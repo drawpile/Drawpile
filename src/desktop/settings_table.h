@@ -131,7 +131,7 @@ SETTING(navigatorRealtime         , NavigatorRealtime         , "navigator/realt
 SETTING(navigatorShowCursors      , NavigatorShowCursors      , "navigator/showcursors"                 , true)
 SETTING_GETSET(newCanvasBackColor , NewCanvasBackColor        , "history/newcolor"                      , (QColor(Qt::white)),
 	&newCanvasBackColor::get, &any::set)
-SETTING_GETSET(newCanvasSize      , NewCanvasSize             , "history/newsize"                       , (QSize(800, 600)),
+SETTING_GETSET(newCanvasSize      , NewCanvasSize             , "history/newsize"                       , (QSize(2000, 2000)),
 	&newCanvasSize::get, &any::set)
 SETTING(notifFlashChat            , NotifFlashChat            , "notifflashes/chat"                     , true)
 SETTING(notifFlashDisconnect      , NotifFlashDisconnect      , "notifflashes/disconnect"               , true)
