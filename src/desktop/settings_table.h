@@ -32,7 +32,7 @@
 #	ifdef Q_OS_MACOS
 #		define THEME_PALETTE_DEFAULT ThemePalette::System
 #	else
-#		define THEME_PALETTE_DEFAULT ThemePalette::KritaDark
+#		define THEME_PALETTE_DEFAULT ThemePalette::KritaDarker
 #	endif
 #endif
 
