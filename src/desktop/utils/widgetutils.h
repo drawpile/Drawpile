@@ -87,6 +87,9 @@ public:
 		Qt::ScrollBarPolicy verticalScrollBarPolicy, int kineticScrollGesture,
 		int kineticScrollThreshold, int kineticScrollHideBars);
 
+	void
+	setVerticalScrollBarPolicy(Qt::ScrollBarPolicy verticalScrollBarPolicy);
+
 	void setKineticScrollGesture(int kineticScrollGesture);
 	void setKineticScrollThreshold(int kineticScrollThreshold);
 	void setKineticScrollHideBars(bool kineticScrollHideBars);
@@ -117,8 +120,8 @@ private:
 		QScroller::ScrollerGestureType *outGestureType = nullptr);
 
 	QAbstractScrollArea *const m_scrollArea;
-	const Qt::ScrollBarPolicy m_horizontalScrollBarPolicy;
-	const Qt::ScrollBarPolicy m_verticalScrollBarPolicy;
+	Qt::ScrollBarPolicy m_horizontalScrollBarPolicy;
+	Qt::ScrollBarPolicy m_verticalScrollBarPolicy;
 	int m_kineticScrollGesture;
 	int m_kineticScrollSensitivity;
 	bool m_kineticScrollHideBars;
@@ -138,8 +141,8 @@ void initSortingHeader(
 	QHeaderView *header, int sortColumn = -1,
 	Qt::SortOrder order = Qt::AscendingOrder);
 
-void bindKineticScrolling(QAbstractScrollArea *scrollArea);
-void bindKineticScrollingWith(
+KineticScroller *bindKineticScrolling(QAbstractScrollArea *scrollArea);
+KineticScroller *bindKineticScrollingWith(
 	QAbstractScrollArea *scrollArea,
 	Qt::ScrollBarPolicy horizontalScrollBarPolicy,
 	Qt::ScrollBarPolicy verticalScrollBarPolicy);

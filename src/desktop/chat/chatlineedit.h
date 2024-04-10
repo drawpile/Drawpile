@@ -6,6 +6,10 @@
 #include <QStringList>
 #include <QPlainTextEdit>
 
+namespace utils {
+class KineticScroller;
+}
+
 /**
  * @brief A specialized line edit widget for chatting, with history
   */
@@ -33,12 +37,11 @@ private:
 	QString _current;
 	int _historypos;
 	bool _fixingScroll;
-	bool _kineticScrollBarsHidden;
+	utils::KineticScroller *_kineticScroller;
 
    void resizeBasedOnLines();
    int lineCountToWidgetHeight(int lineCount) const;
    void fixScrollAt(int value, int lineCount);
-   void setKineticScrollBarsHidden(bool kineticScrollBarsHidden);
 };
 
 #endif

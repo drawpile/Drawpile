@@ -260,6 +260,18 @@ KineticScroller::KineticScroller(
 		kineticScrollHideBars);
 }
 
+void KineticScroller::setVerticalScrollBarPolicy(
+	Qt::ScrollBarPolicy verticalScrollBarPolicy)
+{
+	if(verticalScrollBarPolicy != m_verticalScrollBarPolicy) {
+		m_verticalScrollBarPolicy = verticalScrollBarPolicy;
+		if(!isKineticScrollingEnabled(m_kineticScrollGesture) ||
+		   !m_kineticScrollHideBars) {
+			m_scrollArea->setVerticalScrollBarPolicy(verticalScrollBarPolicy);
+		}
+	}
+}
+
 void KineticScroller::setKineticScrollGesture(int kineticScrollGesture)
 {
 	if(kineticScrollGesture != m_kineticScrollGesture) {
@@ -326,7 +338,7 @@ void KineticScroller::reset(
 		}
 		enableKineticScrolling(
 			gestureType, kineticScrollSensitivity, kineticScrollHideBars);
-	} else if(wasEnabled) {
+	} else {
 		disableKineticScrolling();
 	}
 	m_kineticScrollGesture = kineticScrollGesture;
@@ -365,7 +377,9 @@ void KineticScroller::disableKineticScrolling()
 	m_scrollArea->setVerticalScrollBarPolicy(m_verticalScrollBarPolicy);
 	setEventFilter(m_scrollArea->horizontalScrollBar(), false);
 	setEventFilter(m_scrollArea->verticalScrollBar(), false);
-	QScroller::ungrabGesture(m_scrollArea);
+	if(QScroller::hasScroller(m_scrollArea)) {
+		QScroller::ungrabGesture(m_scrollArea);
+	}
 }
 
 void KineticScroller::setScrollPerPixel(bool scrollPerPixel)
@@ -546,13 +560,13 @@ void initSortingHeader(QHeaderView *header, int sortColumn, Qt::SortOrder order)
 #endif
 }
 
-void bindKineticScrolling(QAbstractScrollArea *scrollArea)
+KineticScroller *bindKineticScrolling(QAbstractScrollArea *scrollArea)
 {
-	bindKineticScrollingWith(
+	return bindKineticScrollingWith(
 		scrollArea, Qt::ScrollBarAsNeeded, Qt::ScrollBarAsNeeded);
 }
 
-void bindKineticScrollingWith(
+KineticScroller *bindKineticScrollingWith(
 	QAbstractScrollArea *scrollArea,
 	Qt::ScrollBarPolicy horizontalScrollBarPolicy,
 	Qt::ScrollBarPolicy verticalScrollBarPolicy)
@@ -569,6 +583,9 @@ void bindKineticScrollingWith(
 			scroller, &KineticScroller::setKineticScrollThreshold);
 		settings.bindKineticScrollHideBars(
 			scroller, &KineticScroller::setKineticScrollHideBars);
+		return scroller;
+	} else {
+		return nullptr;
 	}
 }
 
