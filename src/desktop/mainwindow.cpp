@@ -98,7 +98,6 @@ static constexpr auto CTRL_KEY = Qt::CTRL;
 #include "desktop/toolwidgets/selectionsettings.h"
 #include "desktop/toolwidgets/annotationsettings.h"
 #include "desktop/toolwidgets/lasersettings.h"
-#include "desktop/toolwidgets/zoomsettings.h"
 #include "desktop/toolwidgets/inspectorsettings.h"
 
 #include "desktop/filewrangler.h"
