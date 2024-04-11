@@ -4370,6 +4370,7 @@ void MainWindow::setupActions()
 	QAction *lasertool = makeAction("toollaser", tr("&Laser Pointer")).icon("cursor-arrow").statusTip(tr("Point out things on the canvas")).shortcut("L").checkable();
 	QAction *selectiontool = makeAction("toolselectrect", tr("&Select (Rectangular)")).icon("select-rectangular").statusTip(tr("Select area for copying")).shortcut("S").checkable();
 	QAction *lassotool = makeAction("toolselectpolygon", tr("&Select (Free-Form)")).icon("edit-select-lasso").statusTip(tr("Select a free-form area for copying")).shortcut("D").checkable();
+	QAction *pantool = makeAction("toolpan", tr("Pan")).icon("hand").statusTip(tr("Pan canvas view")).shortcut("P").checkable();
 	QAction *zoomtool = makeAction("toolzoom", tr("Zoom")).icon("edit-find").statusTip(tr("Zoom the canvas view")).shortcut("Z").checkable();
 	QAction *inspectortool = makeAction("toolinspector", tr("Inspector")).icon("help-whatsthis").statusTip(tr("Find out who did it")).shortcut("Ctrl+I").checkable();
 
@@ -4385,6 +4386,7 @@ void MainWindow::setupActions()
 	m_drawingtools->addAction(lasertool);
 	m_drawingtools->addAction(selectiontool);
 	m_drawingtools->addAction(lassotool);
+	m_drawingtools->addAction(pantool);
 	m_drawingtools->addAction(zoomtool);
 	m_drawingtools->addAction(inspectortool);
 

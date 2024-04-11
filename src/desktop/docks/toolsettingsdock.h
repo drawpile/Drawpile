@@ -13,6 +13,7 @@ class ColorPickerSettings;
 class FillSettings;
 class InspectorSettings;
 class LaserPointerSettings;
+class PanSettings;
 class SelectionSettings;
 class ToolController;
 class ToolSettings;
@@ -52,6 +53,7 @@ public:
 	tools::FillSettings *fillSettings();
 	tools::InspectorSettings *inspectorSettings();
 	tools::LaserPointerSettings *laserPointerSettings();
+	tools::PanSettings *panSettings();
 	tools::SelectionSettings *selectionSettings();
 	tools::ZoomSettings *zoomSettings();
 

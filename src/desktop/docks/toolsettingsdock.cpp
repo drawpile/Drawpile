@@ -9,6 +9,7 @@
 #include "desktop/toolwidgets/fillsettings.h"
 #include "desktop/toolwidgets/inspectorsettings.h"
 #include "desktop/toolwidgets/lasersettings.h"
+#include "desktop/toolwidgets/pansettings.h"
 #include "desktop/toolwidgets/selectionsettings.h"
 #include "desktop/toolwidgets/zoomsettings.h"
 #include "libclient/tools/toolcontroller.h"
@@ -112,6 +113,9 @@ struct ToolSettings::Private {
 		pages[tools::Tool::POLYGONSELECTION] = {
 			sel, "selection", QIcon::fromTheme("edit-select-lasso"),
 			QApplication::tr("Selection (Free-Form)")};
+		pages[tools::Tool::PAN] = {
+			QSharedPointer<tools::ToolSettings>(new tools::PanSettings(ctrl)),
+			"pan", QIcon::fromTheme("hand"), QApplication::tr("Pan")};
 		pages[tools::Tool::ZOOM] = {
 			QSharedPointer<tools::ToolSettings>(new tools::ZoomSettings(ctrl)),
 			"zoom", QIcon::fromTheme("edit-find"), QApplication::tr("Zoom")};
@@ -308,6 +312,12 @@ tools::LaserPointerSettings *ToolSettings::laserPointerSettings()
 {
 	return static_cast<tools::LaserPointerSettings *>(
 		getToolSettingsPage(tools::Tool::LASERPOINTER));
+}
+
+tools::PanSettings *ToolSettings::panSettings()
+{
+	return static_cast<tools::PanSettings *>(
+		getToolSettingsPage(tools::Tool::PAN));
 }
 
 tools::SelectionSettings *ToolSettings::selectionSettings()

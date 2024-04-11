@@ -11,6 +11,7 @@
 #include "libclient/tools/freehand.h"
 #include "libclient/tools/inspector.h"
 #include "libclient/tools/laser.h"
+#include "libclient/tools/pan.h"
 #include "libclient/tools/selection.h"
 #include "libclient/tools/shapetools.h"
 #include "libclient/tools/zoom.h"
@@ -52,6 +53,7 @@ ToolController::ToolController(net::Client *client, QObject *parent)
 	registerTool(new LaserPointer(*this));
 	registerTool(new RectangleSelection(*this));
 	registerTool(new PolygonSelection(*this));
+	registerTool(new PanTool(*this));
 	registerTool(new ZoomTool(*this));
 	registerTool(new Inspector(*this));
 

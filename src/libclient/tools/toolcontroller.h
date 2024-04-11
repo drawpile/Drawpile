@@ -182,6 +182,7 @@ signals:
 	void actionCancelled();
 
 	void colorUsed(const QColor &color);
+	void panRequested(int x, int y);
 	void zoomRequested(const QRect &rect, int steps);
 
 	void busyStateChanged(bool busy);

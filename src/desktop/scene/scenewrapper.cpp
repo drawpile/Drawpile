@@ -251,6 +251,9 @@ void SceneWrapper::connectDocument(Document *doc)
 		toolCtrl, &tools::ToolController::busyStateChanged, m_view,
 		&CanvasView::setBusy);
 	connect(
+		toolCtrl, &tools::ToolController::panRequested, m_view,
+		&CanvasView::scrollBy);
+	connect(
 		toolCtrl, &tools::ToolController::zoomRequested, m_view,
 		&CanvasView::zoomTo);
 

@@ -8,6 +8,7 @@
 #include "desktop/toolwidgets/annotationsettings.h"
 #include "desktop/toolwidgets/brushsettings.h"
 #include "desktop/toolwidgets/lasersettings.h"
+#include "desktop/toolwidgets/pansettings.h"
 #include "desktop/toolwidgets/selectionsettings.h"
 #include "desktop/toolwidgets/zoomsettings.h"
 #include "desktop/view/canvascontroller.h"
@@ -248,6 +249,9 @@ void ViewWrapper::connectDocument(Document *doc)
 	connect(
 		toolCtrl, &tools::ToolController::busyStateChanged, m_controller,
 		&CanvasController::setBusy);
+	connect(
+		toolCtrl, &tools::ToolController::panRequested, m_controller,
+		&CanvasController::scrollBy);
 	connect(
 		toolCtrl, &tools::ToolController::zoomRequested, m_controller,
 		&CanvasController::zoomTo);

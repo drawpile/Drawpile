@@ -252,6 +252,8 @@ target_sources(drawpile PRIVATE
 	toolwidgets/inspectorsettings.h
 	toolwidgets/lasersettings.cpp
 	toolwidgets/lasersettings.h
+	toolwidgets/pansettings.cpp
+	toolwidgets/pansettings.h
 	toolwidgets/selectionsettings.cpp
 	toolwidgets/selectionsettings.h
 	toolwidgets/toolsettings.cpp
