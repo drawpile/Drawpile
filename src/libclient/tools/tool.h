@@ -1,10 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef TOOLS_TOOL_H
-#define TOOLS_TOOL_H
-
+#ifndef LIBCLIENT_TOOLS_TOOL_H
+#define LIBCLIENT_TOOLS_TOOL_H
 #include "libclient/canvas/point.h"
-
 #include <QCursor>
 #include <QMetaType>
 
@@ -23,16 +20,25 @@ class ToolController;
  * @brief Base class for all tools
  * Tool classes interpret mouse/pen commands into editing actions.
  */
-class Tool
-{
+class Tool {
 public:
 	enum Type {
-		FREEHAND, ERASER, LINE, RECTANGLE, ELLIPSE, BEZIER,
-		FLOODFILL, ANNOTATION,
-		PICKER, LASERPOINTER,
-		SELECTION, POLYGONSELECTION,
-		ZOOM, INSPECTOR,
-		_LASTTOOL};
+		FREEHAND,
+		ERASER,
+		LINE,
+		RECTANGLE,
+		ELLIPSE,
+		BEZIER,
+		FLOODFILL,
+		ANNOTATION,
+		PICKER,
+		LASERPOINTER,
+		SELECTION,
+		POLYGONSELECTION,
+		ZOOM,
+		INSPECTOR,
+		_LASTTOOL,
+	};
 
 	Tool(
 		ToolController &owner, Type type, const QCursor &cursor,
@@ -43,13 +49,15 @@ public:
 		, m_allowColorPick{allowColorPick}
 		, m_allowToolAdjust{allowToolAdjust}
 		, m_handlesRightClick{allowRightClick}
-	{}
+	{
+	}
+
 	virtual ~Tool() {}
 
-    Tool(const Tool &) = delete;
-    Tool(Tool &&) = delete;
-    Tool &operator=(const Tool &) = delete;
-    Tool &operator=(Tool &&) = delete;
+	Tool(const Tool &) = delete;
+	Tool(Tool &&) = delete;
+	Tool &operator=(const Tool &) = delete;
+	Tool &operator=(Tool &&) = delete;
 
 	Type type() const { return m_type; }
 	const QCursor &cursor() const { return m_cursor; }
@@ -60,10 +68,11 @@ public:
 	/**
 	 * @brief Start a new stroke
 	 * @param point starting point
-	 * @param right is the right mouse/pen button pressed instead of the left one
+	 * @param right is the right mouse/pen button pressed instead of the left
+	 * one
 	 * @param zoom the current view zoom factor
 	 */
-	virtual void begin(const canvas::Point& point, bool right, float zoom) = 0;
+	virtual void begin(const canvas::Point &point, bool right, float zoom) = 0;
 
 	/**
 	 * @brief Continue a stroke
@@ -71,7 +80,8 @@ public:
 	 * @param constrain is the "constrain motion" button pressed
 	 * @param cener is the "center on start point" button pressed
 	 */
-	virtual void motion(const canvas::Point& point, bool constrain, bool center) = 0;
+	virtual void
+	motion(const canvas::Point &point, bool constrain, bool center) = 0;
 
 	/**
 	 * @brief Tool hovering over the canvas
@@ -83,13 +93,14 @@ public:
 	virtual void end() = 0;
 
 	//! Finish and commit a multipart stroke
-	virtual void finishMultipart() { }
+	virtual void finishMultipart() {}
 
 	//! Cancel the current multipart stroke (if any)
-	virtual void cancelMultipart() { }
+	virtual void cancelMultipart() {}
 
-	//! Undo the latest step of a multipart stroke. Undoing the first part should cancel the stroke
-	virtual void undoMultipart() { }
+	//! Undo the latest step of a multipart stroke. Undoing the first part
+	//! should cancel the stroke
+	virtual void undoMultipart() {}
 
 	//! Is there a multipart stroke in progress at the moment?
 	virtual bool isMultipart() const { return false; }
@@ -98,7 +109,11 @@ public:
 	virtual bool usesBrushColor() const { return false; }
 
 	//! Add an offset to this tool's current position (if active)
-	virtual void offsetActiveTool(int x, int y) { Q_UNUSED(x) Q_UNUSED(y) /* most tools don't need to do anything here */ }
+	virtual void offsetActiveTool(int x, int y)
+	{
+		Q_UNUSED(x)
+		Q_UNUSED(y) /* most tools don't need to do anything here */
+	}
 
 protected:
 	void setHandlesRightClick(bool handlesRightClickk);
@@ -118,4 +133,3 @@ private:
 Q_DECLARE_METATYPE(tools::Tool::Type)
 
 #endif
-
