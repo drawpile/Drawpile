@@ -13,8 +13,10 @@
 #endif
 
 #ifndef KINETIC_SCROLL_GESTURE_DEFAULT
-#	ifdef Q_OS_ANDROID
+#	if defined(Q_OS_ANDROID)
 #		define KINETIC_SCROLL_GESTURE_DEFAULT KineticScrollGesture::LeftClick
+# 	elif defined(__EMSCRIPTEN__)
+#		define KINETIC_SCROLL_GESTURE_DEFAULT KineticScrollGesture::Touch
 #	else
 #		define KINETIC_SCROLL_GESTURE_DEFAULT KineticScrollGesture::None
 #	endif
