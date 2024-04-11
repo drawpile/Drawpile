@@ -2742,7 +2742,11 @@ void MainWindow::setFreezeDocks(bool freeze)
 
 void MainWindow::setDocksHidden(bool hidden)
 {
-	QPoint centerPosBefore = centralWidget()->pos();
+	QWidget *canvasWidget = m_canvasView->viewWidget();
+	QPoint centralPosBefore = centralWidget()->pos();
+	QSize canvasSizeBefore = canvasWidget->size();
+
+	m_viewStatusBar->setHidden(hidden);
 	if(hidden) {
 		m_hiddenDockState = saveState();
 		for(auto *w : findChildren<QWidget *>(QString(), Qt::FindDirectChildrenOnly)) {
@@ -2762,10 +2766,11 @@ void MainWindow::setDocksHidden(bool hidden)
 		m_hiddenDockState.clear();
 	}
 
-	m_viewStatusBar->setHidden(hidden);
-
-	QPoint centerPosDelta = centralWidget()->pos() - centerPosBefore;
-	emit viewShifted(centerPosDelta.x(), centerPosDelta.y());
+	QPoint centralPosDelta = centralWidget()->pos() - centralPosBefore;
+	QSize canvasSizeDelta = canvasWidget->size() - canvasSizeBefore;
+	emit viewShifted(
+		centralPosDelta.x() + canvasSizeDelta.width() / 2.0,
+		centralPosDelta.y() + canvasSizeDelta.height() / 2.0);
 	m_dockToggles->setDisabled(hidden);
 }
 

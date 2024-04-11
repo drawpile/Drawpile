@@ -126,7 +126,7 @@ public:
 signals:
 	void hostSessionEnabled(bool enabled);
 	void windowReplacementFailed(MainWindow *win);
-	void viewShifted(int deltaX, int deltaY);
+	void viewShifted(qreal deltaX, qreal deltaY);
 
 public slots:
 	// Triggerable actions

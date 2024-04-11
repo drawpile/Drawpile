@@ -332,7 +332,7 @@ void SceneWrapper::connectMainWindow(MainWindow *mainWindow)
 		m_view, &CanvasView::savePreResetStateDismissed, mainWindow,
 		&MainWindow::discardPreResetImage);
 	connect(
-		mainWindow, &MainWindow::viewShifted, m_view, &CanvasView::scrollBy);
+		mainWindow, &MainWindow::viewShifted, m_view, &CanvasView::scrollByF);
 }
 
 void SceneWrapper::connectNavigator(docks::Navigator *navigator)

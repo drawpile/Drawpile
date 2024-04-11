@@ -331,6 +331,11 @@ void CanvasView::setCanvas(drawingboard::CanvasScene *scene)
 
 void CanvasView::scrollBy(int x, int y)
 {
+	scrollByF(x, y);
+}
+
+void CanvasView::scrollByF(qreal x, qreal y)
+{
 	updateCanvasTransform([&] {
 		m_pos.setX(m_pos.x() + x);
 		m_pos.setY(m_pos.y() + y);

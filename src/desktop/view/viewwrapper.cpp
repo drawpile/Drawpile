@@ -331,7 +331,7 @@ void ViewWrapper::connectMainWindow(MainWindow *mainWindow)
 		&MainWindow::discardPreResetImage);
 	connect(
 		mainWindow, &MainWindow::viewShifted, m_controller,
-		&CanvasController::scrollBy);
+		&CanvasController::scrollByF);
 }
 
 void ViewWrapper::connectNavigator(docks::Navigator *navigator)

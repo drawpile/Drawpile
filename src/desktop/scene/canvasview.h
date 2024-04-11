@@ -113,6 +113,7 @@ public:
 
 	//! Scroll view by the given number of pixels
 	void scrollBy(int x, int y);
+	void scrollByF(qreal x, qreal y);
 
 	//! Show the notification bar with the "reconnect" button visible
 	void showDisconnectedWarning(const QString &message, bool singleSession);
