@@ -122,12 +122,13 @@ public:
 
 protected:
 	void setHandlesRightClick(bool handlesRightClick);
+	void setCursor(const QCursor &cursor);
 
 	ToolController &m_owner;
 
 private:
 	const Type m_type;
-	const QCursor m_cursor;
+	QCursor m_cursor; // May change during tool operation.
 	const bool m_allowColorPick;
 	const bool m_allowToolAdjust;
 	bool m_handlesRightClick; // May change during tool operation.

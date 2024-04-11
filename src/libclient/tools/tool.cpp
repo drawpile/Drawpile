@@ -14,4 +14,12 @@ void Tool::setHandlesRightClick(bool handlesRightClick)
 	}
 }
 
+void Tool::setCursor(const QCursor &cursor)
+{
+	if(m_cursor != cursor) {
+		m_cursor = cursor;
+		emit m_owner.toolCursorChanged(cursor);
+	}
+}
+
 }
