@@ -114,7 +114,7 @@ struct ToolSettings::Private {
 			QApplication::tr("Selection (Free-Form)")};
 		pages[tools::Tool::ZOOM] = {
 			QSharedPointer<tools::ToolSettings>(new tools::ZoomSettings(ctrl)),
-			"zoom", QIcon::fromTheme("zoom-select"), QApplication::tr("Zoom")};
+			"zoom", QIcon::fromTheme("edit-find"), QApplication::tr("Zoom")};
 		pages[tools::Tool::INSPECTOR] = {
 			QSharedPointer<tools::ToolSettings>(
 				new tools::InspectorSettings(ctrl)),
