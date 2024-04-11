@@ -2742,35 +2742,30 @@ void MainWindow::setFreezeDocks(bool freeze)
 
 void MainWindow::setDocksHidden(bool hidden)
 {
-	QWidget *canvasWidget = m_canvasView->viewWidget();
-	QPoint centralPosBefore = centralWidget()->pos();
-	QSize canvasSizeBefore = canvasWidget->size();
-
-	m_viewStatusBar->setHidden(hidden);
-	if(hidden) {
-		m_hiddenDockState = saveState();
-		for(auto *w : findChildren<QWidget *>(QString(), Qt::FindDirectChildrenOnly)) {
-			const auto shouldHide = w->isVisible()
-				&& (w->inherits("QDockWidget") || w->inherits("QToolBar"));
-			if (shouldHide) {
-				w->hide();
+	keepCanvasPosition([this, hidden] {
+		m_viewStatusBar->setHidden(hidden);
+		if(hidden) {
+			m_hiddenDockState = saveState();
+			for(QWidget *w : findChildren<QWidget *>(
+					QString(), Qt::FindDirectChildrenOnly)) {
+				bool shouldHide =
+					w->isVisible() &&
+					(w->inherits("QDockWidget") || w->inherits("QToolBar"));
+				if(shouldHide) {
+					w->hide();
+				}
 			}
+			// Force recalculation of the central widget's position. Otherwise
+			// this will happen lazily on the next repaint and we can't scroll
+			// properly. Doing it this way is clearly a hack, but I can't figure
+			// out another way to do it that doesn't introduce flicker or the
+			// window resizing.
+			restoreState(saveState());
+		} else {
+			restoreState(m_hiddenDockState);
+			m_hiddenDockState.clear();
 		}
-		// Force recalculation of the central widget's position. Otherwise this
-		// will happen lazily on the next repaint and we can't scroll properly.
-		// Doing it this way is clearly a hack, but I can't figure out another
-		// way to do it that doesn't introduce flicker or the window resizing.
-		restoreState(saveState());
-	} else {
-		restoreState(m_hiddenDockState);
-		m_hiddenDockState.clear();
-	}
-
-	QPoint centralPosDelta = centralWidget()->pos() - centralPosBefore;
-	QSize canvasSizeDelta = canvasWidget->size() - canvasSizeBefore;
-	emit viewShifted(
-		centralPosDelta.x() + canvasSizeDelta.width() / 2.0,
-		centralPosDelta.y() + canvasSizeDelta.height() / 2.0);
+	});
 	m_dockToggles->setDisabled(hidden);
 }
 
@@ -2802,64 +2797,66 @@ void MainWindow::handleToggleAction(int action)
 	using Action = drawingboard::ToggleItem::Action;
 	utils::ScopedUpdateDisabler disabler{this};
 	QScopedValueRollback<bool> rollback(m_updatingInterfaceMode, true);
-
-	if(!m_dockToggles->isEnabled()) {
-		getAction("hidedocks")->toggle();
-	}
-
-	m_viewStatusBar->hide();
-
-	QPair<QWidget *, int> dockActions[] = {
-		{m_dockToolSettings, int(Action::Left)},
-		{m_dockBrushPalette, int(Action::Left)},
-		{m_toolBarDraw, int(Action::Left)},
-		{m_dockTimeline, int(Action::Top)},
-		{m_dockOnionSkins, int(Action::Top)},
-		{m_dockNavigator, int(Action::None)},
-		{m_dockColorSpinner, int(Action::Right)},
-		{m_dockColorSliders, int(Action::Right)},
-		{m_dockColorPalette, int(Action::Right)},
-		{m_dockLayers, int(Action::Right)},
-		{m_chatbox, int(Action::Bottom)},
-	};
-	QVector<QWidget *> docksToShow;
-
-	for(const QPair<QWidget *, int> &p : dockActions) {
-		QWidget *dock = p.first;
-		bool isActivated = action != int(Action::None) && action == p.second;
-		bool isVisible = dock->isVisible();
-		dock->hide();
-		bool visible = isActivated ? !isVisible : false;
-		if(visible) {
-			docksToShow.append(dock);
+	keepCanvasPosition([this, action] {
+		if(!m_dockToggles->isEnabled()) {
+			getAction("hidedocks")->toggle();
 		}
-	}
 
-	for(QWidget *dock : docksToShow) {
-		dock->show();
-	}
-	m_viewStatusBar->setVisible(docksToShow.isEmpty());
+		m_viewStatusBar->hide();
 
-	bool chatVisible = m_chatbox->isVisible();
-	QAction *togglechat = getAction("togglechat");
-	QSignalBlocker blocker{togglechat};
-	togglechat->setChecked(chatVisible);
-	if(chatVisible) {
-		int h = height();
-		int top = h / 2;
-		m_splitter->setSizes({top, h - top});
-	}
+		QPair<QWidget *, int> dockActions[] = {
+			{m_dockToolSettings, int(Action::Left)},
+			{m_dockBrushPalette, int(Action::Left)},
+			{m_toolBarDraw, int(Action::Left)},
+			{m_dockTimeline, int(Action::Top)},
+			{m_dockOnionSkins, int(Action::Top)},
+			{m_dockNavigator, int(Action::None)},
+			{m_dockColorSpinner, int(Action::Right)},
+			{m_dockColorSliders, int(Action::Right)},
+			{m_dockColorPalette, int(Action::Right)},
+			{m_dockLayers, int(Action::Right)},
+			{m_chatbox, int(Action::Bottom)},
+		};
+		QVector<QWidget *> docksToShow;
 
-	// It's ridiculous how hard resizeDocks() resists resizing the docks to the
-	// size it's told to. Doing it a bunch of times seems to do the trick.
-	for(int i = 0; i < 5; ++i) {
-		QCoreApplication::processEvents();
-		setDefaultDockSizes();
-	}
+		for(const QPair<QWidget *, int> &p : dockActions) {
+			QWidget *dock = p.first;
+			bool isActivated =
+				action != int(Action::None) && action == p.second;
+			bool isVisible = dock->isVisible();
+			dock->hide();
+			bool visible = isActivated ? !isVisible : false;
+			if(visible) {
+				docksToShow.append(dock);
+			}
+		}
+
+		for(QWidget *dock : docksToShow) {
+			dock->show();
+		}
+		m_viewStatusBar->setVisible(docksToShow.isEmpty());
+
+		bool chatVisible = m_chatbox->isVisible();
+		QAction *togglechat = getAction("togglechat");
+		QSignalBlocker blocker{togglechat};
+		togglechat->setChecked(chatVisible);
+		if(chatVisible) {
+			int h = height();
+			int top = h / 2;
+			m_splitter->setSizes({top, h - top});
+		}
+
+		// It's ridiculous how hard resizeDocks() resists resizing the docks to
+		// the size it's told to. Doing it several times seems to do the trick.
+		for(int i = 0; i < 5; ++i) {
+			QCoreApplication::processEvents();
+			setDefaultDockSizes();
+		}
 
 #ifdef SINGLE_MAIN_WINDOW
-	resize(compat::widgetScreen(*this)->availableSize());
+		resize(compat::widgetScreen(*this)->availableSize());
 #endif
+	});
 }
 
 void MainWindow::setNotificationsMuted(bool muted)
@@ -4712,6 +4709,19 @@ void MainWindow::reenableUpdates()
 			widget->setUpdatesEnabled(true);
 		}
 	}
+}
+
+void MainWindow::keepCanvasPosition(const std::function<void()> &block)
+{
+	QWidget *canvasWidget = m_canvasView->viewWidget();
+	QPoint centralPosBefore = centralWidget()->pos();
+	QSize canvasSizeBefore = canvasWidget->size();
+	block();
+	QPoint centralPosDelta = centralWidget()->pos() - centralPosBefore;
+	QSize canvasSizeDelta = canvasWidget->size() - canvasSizeBefore;
+	emit viewShifted(
+		centralPosDelta.x() + canvasSizeDelta.width() / 2.0,
+		centralPosDelta.y() + canvasSizeDelta.height() / 2.0);
 }
 
 void MainWindow::createDocks()

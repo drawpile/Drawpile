@@ -331,6 +331,7 @@ private:
 	void setupActions();
 	void updateInterfaceModeActions();
 	void reenableUpdates();
+	void keepCanvasPosition(const std::function<void()> &block);
 
 	static bool isInitialSmallScreenMode();
 	void updateInterfaceMode();
