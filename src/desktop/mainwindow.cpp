@@ -30,6 +30,7 @@
 #include <QThreadPool>
 #include <QKeySequence>
 #include <QJsonDocument>
+#include <QScopedValueRollback>
 #include <QSignalBlocker>
 #include <QTemporaryFile>
 
@@ -145,6 +146,8 @@ constexpr auto DEBOUNCE_MS = 250;
 MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	: QMainWindow(),
 	  m_singleSession(singleSession),
+	  m_smallScreenMode(isInitialSmallScreenMode()),
+	  m_updatingInterfaceMode(true),
 	  m_splitter(nullptr),
 	  m_dockToolSettings(nullptr),
 	  m_dockBrushPalette(nullptr),
@@ -200,8 +203,8 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	m_saveWindowDebounce.setInterval(DEBOUNCE_MS);
 
 	// The document (initially empty)
-	m_doc = new Document(
-		dpApp().canvasImplementation(), dpApp().settings(), this);
+	desktop::settings::Settings &settings = dpApp().settings();
+	m_doc = new Document(dpApp().canvasImplementation(), settings, this);
 
 	// Set up the main window widgets
 	// The central widget consists of a custom status bar and a splitter
@@ -215,6 +218,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 
 	// Work area is split between the canvas view and the chatbox
 	m_splitter = new QSplitter(Qt::Vertical, centralwidget);
+	m_splitterOriginalHandleWidth = m_splitter->handleWidth();
 
 	mainwinlayout->addWidget(m_splitter);
 
@@ -225,7 +229,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 
 	// Create status indicator widgets
 	m_viewstatus = new widgets::ViewStatus(this);
-	m_viewstatus->setHidden(dpApp().smallScreenMode());
+	m_viewstatus->setHidden(m_smallScreenMode);
 
 	m_netstatus = new widgets::NetStatus(this);
 	m_lockstatus = new QLabel(this);
@@ -252,11 +256,12 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	// Create canvas view (first splitter item)
 	m_canvasView =
 		view::CanvasWrapper::instantiate(dpApp().canvasImplementation(), this);
+	m_canvasView->setShowToggleItems(m_smallScreenMode);
 	m_splitter->addWidget(m_canvasView->viewWidget());
 	m_splitter->setCollapsible(SPLITTER_WIDGET_IDX++, false);
 
 	// Create the chatbox
-	m_chatbox = new widgets::ChatBox(m_doc, this);
+	m_chatbox = new widgets::ChatBox(m_doc, m_smallScreenMode, this);
 	m_splitter->addWidget(m_chatbox);
 
 	connect(m_chatbox, &widgets::ChatBox::reattachNowPlease, this, [this]() {
@@ -273,6 +278,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 
 	// Create docks
 	createDocks();
+	resetDefaultDocks();
 
 	// Crete persistent dialogs
 	m_sessionSettings = new dialogs::SessionSettingsDialog(m_doc, this);
@@ -456,14 +462,7 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	setRecorderStatus(false);
 
 	// Actually paint the window
-	setUpdatesEnabled(true);
-	// Qt will inherit the update enabled state when restoring floating widgets,
-	// but won't when re-enabling them on the parent. Gotta do it ourselves.
-	for(QWidget *widget : findChildren<QWidget *>(QString(), Qt::FindDirectChildrenOnly)) {
-		if(!widget->updatesEnabled()) {
-			widget->setUpdatesEnabled(true);
-		}
-	}
+	reenableUpdates();
 
 #ifdef Q_OS_MACOS
 	MacMenu::instance()->addWindow(this);
@@ -478,7 +477,13 @@ MainWindow::MainWindow(bool restoreWindowPosition, bool singleSession)
 	dpApp().deleteAllMainWindowsExcept(this);
 #endif
 
-	dpApp().settings().trySubmit();
+	settings.bindInterfaceMode(this, [this](bool) {
+		updateInterfaceMode();
+	});
+	settings.trySubmit();
+
+	m_updatingInterfaceMode = false;
+	updateInterfaceMode();
 }
 
 MainWindow::~MainWindow()
@@ -853,7 +858,7 @@ void MainWindow::readSettings(bool windowpos)
 	// the event loop here to actually get the window resized before continuing.
 	dpApp().processEvents();
 
-	if(dpApp().smallScreenMode()) {
+	if(m_smallScreenMode) {
 		initSmallScreenState();
 	} else {
 		restoreSettings(settings);
@@ -875,7 +880,7 @@ void MainWindow::readSettings(bool windowpos)
 		}
 	}
 
-	if(dpApp().smallScreenMode()) {
+	if(m_smallScreenMode) {
 		setFreezeDocks(true);
 		setDockOptions(dockOptions() | QMainWindow::VerticalTabs);
 	}
@@ -917,6 +922,7 @@ void MainWindow::restoreSettings(const desktop::settings::Settings &settings)
 
 	if(const auto lastWindowViewState = settings.lastWindowViewState(); !lastWindowViewState.isEmpty()) {
 		m_splitter->restoreState(settings.lastWindowViewState());
+		m_splitter->setHandleWidth(m_splitterOriginalHandleWidth);
 	}
 
 	const auto docksConfig = settings.lastWindowDocks();
@@ -1049,7 +1055,7 @@ void MainWindow::saveSplitterState()
 		return;
 	}
 	m_saveSplitterDebounce.stop();
-	if(!dpApp().smallScreenMode()) {
+	if(!m_smallScreenMode) {
 		auto &settings = dpApp().settings();
 		settings.setLastWindowViewState(m_splitter->saveState());
 	}
@@ -1063,10 +1069,10 @@ void MainWindow::saveWindowState()
 	}
 	m_saveWindowDebounce.stop();
 
-	if(!dpApp().smallScreenMode()) {
-		auto &settings = dpApp().settings();
-		settings.setLastWindowPosition(normalGeometry().topLeft());
-		settings.setLastWindowSize(normalGeometry().size());
+	auto &settings = dpApp().settings();
+	settings.setLastWindowPosition(normalGeometry().topLeft());
+	settings.setLastWindowSize(normalGeometry().size());
+	if(!m_smallScreenMode) {
 		settings.setLastWindowMaximized(isMaximized());
 		settings.setLastWindowState(m_hiddenDockState.isEmpty() ? saveState() : m_hiddenDockState);
 
@@ -1165,6 +1171,12 @@ void MainWindow::receiveCurrentBrush(int userId, const QJsonObject &info)
 			bs->setCurrentBrush(brushes::ActiveBrush::fromJson(v.toObject()));
 		}
 	}
+}
+
+void MainWindow::resizeEvent(QResizeEvent *event)
+{
+	QMainWindow::resizeEvent(event);
+	updateInterfaceMode();
 }
 
 /**
@@ -2763,7 +2775,7 @@ void MainWindow::setDockTitleBarsHidden(bool hidden)
 	QAction *freezeDocks = getAction("freezedocks");
 	QAction *hideDockTitleBars = getAction("hidedocktitlebars");
 	bool actuallyHidden = hidden && !freezeDocks->isChecked()
-		&& hideDockTitleBars->isChecked();
+		&& hideDockTitleBars->isChecked() && !m_smallScreenMode;
 	if(actuallyHidden != m_titleBarsHidden) {
 		m_titleBarsHidden = hidden;
 		for(auto *dw : findChildren<QDockWidget*>(QString(), Qt::FindDirectChildrenOnly)) {
@@ -2772,10 +2784,20 @@ void MainWindow::setDockTitleBarsHidden(bool hidden)
 	}
 }
 
+void MainWindow::updateSideTabDocks()
+{
+	if(m_smallScreenMode || getAction("sidetabdocks")->isChecked()) {
+		setDockOptions(dockOptions() | QMainWindow::VerticalTabs);
+	} else {
+		setDockOptions(dockOptions() & ~QMainWindow::VerticalTabs);
+	}
+}
+
 void MainWindow::handleToggleAction(int action)
 {
 	using Action = drawingboard::ToggleItem::Action;
 	utils::ScopedUpdateDisabler disabler{this};
+	QScopedValueRollback<bool> rollback(m_updatingInterfaceMode, true);
 
 	if(!m_dockToggles->isEnabled()) {
 		getAction("hidedocks")->toggle();
@@ -2822,6 +2844,13 @@ void MainWindow::handleToggleAction(int action)
 		int h = height();
 		int top = h / 2;
 		m_splitter->setSizes({top, h - top});
+	}
+
+	// It's ridiculous how hard resizeDocks() resists resizing the docks to the
+	// size it's told to. Doing it a bunch of times seems to do the trick.
+	for(int i = 0; i < 5; ++i) {
+		QCoreApplication::processEvents();
+		setDefaultDockSizes();
 	}
 
 #ifdef SINGLE_MAIN_WINDOW
@@ -3476,6 +3505,11 @@ void MainWindow::setupActions()
 	m_dockToggles = new QActionGroup{this};
 	m_dockToggles->setExclusive(false);
 
+	m_desktopModeActions = new QActionGroup(this);
+	m_desktopModeActions->setExclusive(false);
+	m_smallScreenModeActions = new QActionGroup(this);
+	m_smallScreenModeActions->setExclusive(false);
+
 	// Collect list of docks for dock menu
 	for(const auto *dw : findChildren<const QDockWidget *>(QString(), Qt::FindDirectChildrenOnly)) {
 		QAction *toggledockaction = dw->toggleViewAction();
@@ -3490,31 +3524,30 @@ void MainWindow::setupActions()
 			tr("Toggle Dock %1").arg(toggledockaction->text()),
 			toggledockaction->shortcut(), QKeySequence());
 		addAction(toggledockaction);
+		m_desktopModeActions->addAction(toggledockaction);
 	}
 
 	toggledockmenu->addSeparator();
 	QAction *freezeDocks = makeAction("freezedocks", tr("Lock Docks")).noDefaultShortcut().checkable().remembered();
 	toggledockmenu->addAction(freezeDocks);
+	m_desktopModeActions->addAction(freezeDocks);
 	connect(freezeDocks, &QAction::toggled, this, &MainWindow::setFreezeDocks);
 
 	QAction *sideTabDocks = makeAction("sidetabdocks", tr("Vertical Tabs on Sides")).noDefaultShortcut().checkable().remembered();
 	toggledockmenu->addAction(sideTabDocks);
-	auto updateSideTabDocks = [=](){
-		if(sideTabDocks->isChecked()) {
-			setDockOptions(dockOptions() | QMainWindow::VerticalTabs);
-		} else {
-			setDockOptions(dockOptions() & ~QMainWindow::VerticalTabs);
-		}
-	};
-	connect(sideTabDocks, &QAction::toggled, updateSideTabDocks);
+	m_desktopModeActions->addAction(sideTabDocks);
+	connect(
+		sideTabDocks, &QAction::toggled, this, &MainWindow::updateSideTabDocks);
 	updateSideTabDocks();
 
 	QAction *hideDocks = makeAction("hidedocks", tr("Hide Docks")).checkable().shortcut("tab");
 	toggledockmenu->addAction(hideDocks);
+	m_desktopModeActions->addAction(hideDocks);
 	connect(hideDocks, &QAction::toggled, this, &MainWindow::setDocksHidden);
 
 	QAction *hideDockTitleBars = makeAction("hidedocktitlebars", tr("Hold Shift to Arrange")).noDefaultShortcut().checkable().remembered();
 	toggledockmenu->addAction(hideDockTitleBars);
+	m_desktopModeActions->addAction(hideDockTitleBars);
 	connect(hideDocks, &QAction::toggled, [this](){
 		setDockTitleBarsHidden(m_titleBarsHidden);
 	});
@@ -3658,18 +3691,18 @@ void MainWindow::setupActions()
 	filemenu->addAction(quit);
 #endif
 
-	QToolBar *filetools = new QToolBar(tr("File Tools"));
-	filetools->setObjectName("filetoolsbar");
-	toggletoolbarmenu->addAction(filetools->toggleViewAction());
+	m_toolBarFile = new QToolBar(tr("File Tools"));
+	m_toolBarFile->setObjectName("filetoolsbar");
+	toggletoolbarmenu->addAction(m_toolBarFile->toggleViewAction());
 	if(!m_singleSession) {
-		filetools->addAction(newdocument);
-		filetools->addAction(open);
+		m_toolBarFile->addAction(newdocument);
+		m_toolBarFile->addAction(open);
 	}
 #ifdef __EMSCRIPTEN__
-	filetools->addAction(download);
+	m_toolBarFile->addAction(download);
 #else
-	filetools->addAction(save);
-	filetools->addAction(record);
+	m_toolBarFile->addAction(save);
+	m_toolBarFile->addAction(record);
 #endif
 
 	if(!m_singleSession) {
@@ -3904,15 +3937,15 @@ void MainWindow::setupActions()
 #endif
 	editmenu->addAction(preferences);
 
-	QToolBar *edittools = new QToolBar(tr("Edit Tools"));
-	edittools->setObjectName("edittoolsbar");
-	toggletoolbarmenu->addAction(edittools->toggleViewAction());
-	edittools->addAction(undo);
-	edittools->addAction(redo);
-	edittools->addAction(cutlayer);
-	edittools->addAction(copylayer);
-	edittools->addAction(paste);
-	edittools->addWidget(m_dualColorButton);
+	m_toolBarEdit = new QToolBar(tr("Edit Tools"));
+	m_toolBarEdit->setObjectName("edittoolsbar");
+	toggletoolbarmenu->addAction(m_toolBarEdit->toggleViewAction());
+	m_toolBarEdit->addAction(undo);
+	m_toolBarEdit->addAction(redo);
+	m_toolBarEdit->addAction(cutlayer);
+	m_toolBarEdit->addAction(copylayer);
+	m_toolBarEdit->addAction(paste);
+	m_toolBarEdit->addWidget(m_dualColorButton);
 
 	//
 	// View menu
@@ -3975,7 +4008,7 @@ void MainWindow::setupActions()
 	connect(m_chatbox, &widgets::ChatBox::expandedChanged, m_statusChatButton, &QToolButton::hide);
 	connect(m_chatbox, &widgets::ChatBox::expandPlease, toggleChat, &QAction::trigger);
 	connect(toggleChat, &QAction::triggered, this, [this](bool show) {
-		if(dpApp().smallScreenMode()) {
+		if(m_smallScreenMode) {
 			handleToggleAction(int(drawingboard::ToggleItem::Action::Bottom));
 		} else {
 			QList<int> sizes;
@@ -4018,13 +4051,15 @@ void MainWindow::setupActions()
 	m_viewstatus->setActions(viewflip, viewmirror, rotateorig, {zoomorig, zoomfit, zoomfitwidth, zoomfitheight});
 
 	QMenu *viewmenu = menuBar()->addMenu(tr("&View"));
-	if(!dpApp().smallScreenMode()) {
-		viewmenu->addAction(layoutsAction);
-		viewmenu->addAction(toolbartoggles);
-		viewmenu->addAction(docktoggles);
-		viewmenu->addAction(toggleChat);
-		viewmenu->addSeparator();
-	}
+	viewmenu->addAction(layoutsAction);
+	m_desktopModeActions->addAction(layoutsAction);
+	viewmenu->addAction(toolbartoggles);
+	m_desktopModeActions->addAction(toolbartoggles);
+	viewmenu->addAction(docktoggles);
+	m_desktopModeActions->addAction(docktoggles);
+	viewmenu->addAction(toggleChat);
+	m_desktopModeActions->addAction(toggleChat);
+	m_desktopModeActions->addAction(viewmenu->addSeparator());
 
 	QMenu *zoommenu = viewmenu->addMenu(tr("&Zoom"));
 	zoommenu->addAction(zoomin);
@@ -4046,14 +4081,16 @@ void MainWindow::setupActions()
 
 	// Small screen mode doesn't have these controls in its view status bar
 	// because they end up too puny and unusable, so they go here instead.
-	if(dpApp().smallScreenMode()) {
-		edittools->addSeparator();
-		edittools->addAction(viewflip);
-		edittools->addAction(viewmirror);
-		edittools->addSeparator();
-		edittools->addAction(zoomorig);
-		edittools->addAction(rotateorig);
-	}
+	m_smallScreenModeActions->addAction(m_toolBarEdit->addSeparator());
+	m_toolBarEdit->addAction(viewflip);
+	m_smallScreenModeActions->addAction(viewflip);
+	m_toolBarEdit->addAction(viewmirror);
+	m_smallScreenModeActions->addAction(viewmirror);
+	m_smallScreenModeActions->addAction(m_toolBarEdit->addSeparator());
+	m_toolBarEdit->addAction(zoomorig);
+	m_smallScreenModeActions->addAction(zoomorig);
+	m_toolBarEdit->addAction(rotateorig);
+	m_smallScreenModeActions->addAction(rotateorig);
 
 	QAction *layerViewNormal = makeAction("layerviewnormal", tr("Normal View")).statusTip(tr("Show all layers normally")).noDefaultShortcut().checkable().checked();
 	QAction *layerViewCurrentLayer = makeAction("layerviewcurrentlayer", tr("Layer View")).statusTip(tr("Show only the current layer")).shortcut("Home").checkable();
@@ -4450,18 +4487,10 @@ void MainWindow::setupActions()
 		}
 	}
 
-	if(dpApp().smallScreenMode()) {
-		QWidget* spacer = new QWidget;
-		spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-		filetools->insertWidget(filetools->actions()[0], spacer);
-		addToolBar(Qt::BottomToolBarArea, edittools);
-		addToolBar(Qt::BottomToolBarArea, filetools);
-		addToolBar(Qt::LeftToolBarArea, m_toolBarDraw);
-	} else {
-		addToolBar(Qt::TopToolBarArea, filetools);
-		addToolBar(Qt::TopToolBarArea, edittools);
-		addToolBar(Qt::TopToolBarArea, m_toolBarDraw);
-	}
+	m_smallScreenSpacer = new QWidget;
+	m_smallScreenSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+	m_toolBarFile->insertWidget(m_toolBarFile->actions()[0], m_smallScreenSpacer);
+	resetDefaultToolbars();
 
 	//
 	// Window menu (Mac only)
@@ -4655,6 +4684,28 @@ void MainWindow::setupActions()
 		singleGroup->addAction(browse);
 		singleGroup->addAction(versioncheck);
 	}
+
+	updateInterfaceModeActions();
+}
+
+void MainWindow::updateInterfaceModeActions()
+{
+	m_desktopModeActions->setEnabled(!m_smallScreenMode);
+	m_desktopModeActions->setVisible(!m_smallScreenMode);
+	m_smallScreenModeActions->setEnabled(m_smallScreenMode);
+	m_smallScreenModeActions->setVisible(m_smallScreenMode);
+}
+
+void MainWindow::reenableUpdates()
+{
+	setUpdatesEnabled(true);
+	// Qt will inherit the update enabled state when restoring floating widgets,
+	// but won't when re-enabling them on the parent. Gotta do it ourselves.
+	for(QWidget *widget : findChildren<QWidget *>(QString(), Qt::FindDirectChildrenOnly)) {
+		if(!widget->updatesEnabled()) {
+			widget->setUpdatesEnabled(true);
+		}
+	}
 }
 
 void MainWindow::createDocks()
@@ -4668,13 +4719,11 @@ void MainWindow::createDocks()
 	m_dockToolSettings = new docks::ToolSettings(m_doc->toolCtrl(), this);
 	m_dockToolSettings->setObjectName("ToolSettings");
 	m_dockToolSettings->setAllowedAreas(Qt::AllDockWidgetAreas);
-	addDockWidget(Qt::LeftDockWidgetArea, m_dockToolSettings);
 
 	// Create brush palette
 	m_dockBrushPalette = new docks::BrushPalette(this);
 	m_dockBrushPalette->setObjectName("BrushPalette");
 	m_dockBrushPalette->setAllowedAreas(Qt::AllDockWidgetAreas);
-	addDockWidget(Qt::LeftDockWidgetArea, m_dockBrushPalette);
 
 	m_dockBrushPalette->connectBrushSettings(
 		m_dockToolSettings->brushSettings());
@@ -4684,48 +4733,222 @@ void MainWindow::createDocks()
 	m_dockColorSpinner = new docks::ColorSpinnerDock(tr("Wheel"), this);
 	m_dockColorSpinner->setObjectName("colorspinnerdock");
 	m_dockColorSpinner->setAllowedAreas(Qt::AllDockWidgetAreas);
-	addDockWidget(Qt::RightDockWidgetArea, m_dockColorSpinner);
 
 	m_dockColorPalette = new docks::ColorPaletteDock(tr("Palette"), this);
 	m_dockColorPalette->setObjectName("colorpalettedock");
 	m_dockColorPalette->setAllowedAreas(Qt::AllDockWidgetAreas);
-	addDockWidget(Qt::RightDockWidgetArea, m_dockColorPalette);
 
 	//: "Sliders" refers to the RGB and HSV sliders.
 	m_dockColorSliders = new docks::ColorSliderDock(tr("Sliders"), this);
 	m_dockColorSliders->setObjectName("colorsliderdock");
 	m_dockColorSliders->setAllowedAreas(Qt::AllDockWidgetAreas);
-	addDockWidget(Qt::RightDockWidgetArea, m_dockColorSliders);
-
-	tabifyDockWidget(m_dockColorPalette, m_dockColorSliders);
-	tabifyDockWidget(m_dockColorSliders, m_dockColorSpinner);
 
 	// Create layer list
 	m_dockLayers = new docks::LayerList(this);
 	m_dockLayers->setObjectName("LayerList");
 	m_dockLayers->setAllowedAreas(Qt::AllDockWidgetAreas);
-	addDockWidget(Qt::RightDockWidgetArea, m_dockLayers);
 
 	// Create navigator
 	m_dockNavigator = new docks::Navigator(this);
 	m_dockNavigator->setObjectName("navigatordock");
 	m_dockNavigator->setAllowedAreas(Qt::AllDockWidgetAreas);
-	addDockWidget(Qt::RightDockWidgetArea, m_dockNavigator);
-	m_dockNavigator->hide(); // hidden by default
 
 	// Create timeline
 	m_dockTimeline = new docks::Timeline(this);
 	m_dockTimeline->setObjectName("Timeline");
 	m_dockTimeline->setAllowedAreas(Qt::AllDockWidgetAreas);
-	addDockWidget(Qt::TopDockWidgetArea, m_dockTimeline);
 
 	// Create onion skin settings
 	m_dockOnionSkins = new docks::OnionSkinsDock(tr("Onion Skins"), this);
 	m_dockOnionSkins->setObjectName("onionskins");
 	m_dockOnionSkins->setAllowedAreas(Qt::AllDockWidgetAreas);
-	addDockWidget(Qt::TopDockWidgetArea, m_dockOnionSkins);
+}
 
-	if(dpApp().smallScreenMode()) {
+void MainWindow::resetDefaultDocks()
+{
+	addDockWidget(Qt::LeftDockWidgetArea, m_dockToolSettings);
+	m_dockToolSettings->show();
+	addDockWidget(Qt::LeftDockWidgetArea, m_dockBrushPalette);
+	m_dockBrushPalette->show();
+	addDockWidget(Qt::RightDockWidgetArea, m_dockColorSpinner);
+	m_dockColorSpinner->show();
+	addDockWidget(Qt::RightDockWidgetArea, m_dockColorPalette);
+	m_dockColorPalette->show();
+	addDockWidget(Qt::RightDockWidgetArea, m_dockColorSliders);
+	m_dockColorSliders->show();
+	tabifyDockWidget(m_dockColorPalette, m_dockColorSliders);
+	tabifyDockWidget(m_dockColorSliders, m_dockColorSpinner);
+	addDockWidget(Qt::RightDockWidgetArea, m_dockLayers);
+	m_dockLayers->show();
+	addDockWidget(Qt::RightDockWidgetArea, m_dockNavigator);
+	m_dockNavigator->hide(); // hidden by default
+	addDockWidget(Qt::TopDockWidgetArea, m_dockTimeline);
+	m_dockTimeline->show();
+	addDockWidget(Qt::TopDockWidgetArea, m_dockOnionSkins);
+	m_dockOnionSkins->show();
+	if(m_smallScreenMode) {
 		tabifyDockWidget(m_dockTimeline, m_dockOnionSkins);
 	}
+}
+
+void MainWindow::resetDefaultToolbars()
+{
+	m_smallScreenSpacer->setVisible(m_smallScreenMode);
+	if(m_smallScreenMode) {
+		addToolBar(Qt::BottomToolBarArea, m_toolBarEdit);
+		addToolBar(Qt::BottomToolBarArea, m_toolBarFile);
+		addToolBar(Qt::LeftToolBarArea, m_toolBarDraw);
+	} else {
+		addToolBar(Qt::TopToolBarArea, m_toolBarFile);
+		addToolBar(Qt::TopToolBarArea, m_toolBarEdit);
+		addToolBar(Qt::TopToolBarArea, m_toolBarDraw);
+	}
+	m_toolBarFile->show();
+	m_toolBarEdit->show();
+	m_toolBarDraw->show();
+}
+
+bool MainWindow::isInitialSmallScreenMode()
+{
+	const desktop::settings::Settings &settings = dpApp().settings();
+	switch(settings.interfaceMode()) {
+	case int(desktop::settings::InterfaceMode::Desktop):
+		return false;
+	case int(desktop::settings::InterfaceMode::SmallScreen):
+		return true;
+	default:
+		break;
+	}
+
+	bool useScreenSize;
+#ifdef SINGLE_MAIN_WINDOW
+	useScreenSize = true;
+#else
+	useScreenSize = settings.lastWindowMaximized();
+#endif
+
+	QSize s;
+	if(useScreenSize) {
+		QScreen *screen = QGuiApplication::primaryScreen();
+		if(screen) {
+			s = screen->availableSize();
+		}
+	} else {
+		s = settings.lastWindowSize();
+	}
+	return isSmallScreenModeSize(s);
+}
+
+void MainWindow::updateInterfaceMode()
+{
+	if(!m_updatingInterfaceMode &&
+	   !findChild<dialogs::LayoutsDialog *>(
+		   "layoutsdialog", Qt::FindDirectChildrenOnly)) {
+		QScopedValueRollback<bool> rollback(m_updatingInterfaceMode, true);
+		const desktop::settings::Settings &settings = dpApp().settings();
+		bool smallScreenMode = shouldUseSmallScreenMode(settings);
+		if(smallScreenMode && !m_smallScreenMode) {
+			switchInterfaceMode(true);
+		} else if(!smallScreenMode && m_smallScreenMode) {
+			switchInterfaceMode(false);
+		}
+	}
+}
+
+bool MainWindow::shouldUseSmallScreenMode(
+	const desktop::settings::Settings &settings)
+{
+	switch(settings.interfaceMode()) {
+	case int(desktop::settings::InterfaceMode::Desktop):
+		return false;
+	case int(desktop::settings::InterfaceMode::SmallScreen):
+		return true;
+	default:
+		return isSmallScreenModeSize(size());
+	}
+}
+
+bool MainWindow::isSmallScreenModeSize(const QSize &s)
+{
+	return s.isEmpty() || s.width() < DESKTOP_MODE_MIN_WIDTH ||
+		   s.height() < DESKTOP_MODE_MIN_HEIGHT;
+}
+
+void MainWindow::switchInterfaceMode(bool smallScreenMode)
+{
+	setUpdatesEnabled(false);
+	saveSplitterState();
+	saveWindowState();
+	m_smallScreenMode = smallScreenMode;
+
+	QList<QDockWidget *> dockWidgets =
+		findChildren<QDockWidget *>(QString(), Qt::FindDirectChildrenOnly);
+	if(smallScreenMode) {
+		if(m_hiddenDockState.isEmpty()) {
+			m_desktopModeState = saveState();
+		} else {
+			m_desktopModeState.clear();
+			m_desktopModeState.swap(m_hiddenDockState);
+		}
+
+		setFreezeDocks(false);
+		for(QDockWidget *dw : dockWidgets) {
+			dw->setFloating(false);
+			dw->show();
+			removeDockWidget(dw);
+		}
+		removeToolBar(m_toolBarFile);
+		removeToolBar(m_toolBarEdit);
+		removeToolBar(m_toolBarDraw);
+		m_splitter->setHandleWidth(0);
+		m_chatbox->setSmallScreenMode(true);
+		m_chatbox->hide();
+		m_toolBarDraw->hide();
+		m_viewStatusBar->show();
+		m_viewstatus->setHidden(true);
+		setFreezeDocks(true);
+		updateSideTabDocks();
+
+		resetDefaultDocks();
+		resetDefaultToolbars();
+		initDefaultDocks();
+		for(QDockWidget *dw : dockWidgets) {
+			dw->hide();
+		}
+	} else {
+		m_splitter->setHandleWidth(m_splitterOriginalHandleWidth);
+		m_chatbox->show();
+		m_chatbox->setSmallScreenMode(false);
+		m_viewstatus->setHidden(false);
+		m_viewStatusBar->show();
+		updateSideTabDocks();
+
+		QByteArray stateToRestore;
+		stateToRestore.swap(m_desktopModeState);
+		if(stateToRestore.isEmpty()) {
+			stateToRestore = dpApp().settings().lastWindowState();
+		}
+		if(stateToRestore.isEmpty()) {
+			setFreezeDocks(false);
+			for(QDockWidget *dw : dockWidgets) {
+				dw->setFloating(false);
+				dw->show();
+				removeDockWidget(dw);
+			}
+			removeToolBar(m_toolBarFile);
+			removeToolBar(m_toolBarEdit);
+			removeToolBar(m_toolBarDraw);
+			resetDefaultDocks();
+			resetDefaultToolbars();
+			initDefaultDocks();
+		} else {
+			restoreState(stateToRestore);
+		}
+
+		setFreezeDocks(getAction("freezedocks")->isChecked());
+	}
+
+	m_canvasView->setShowToggleItems(smallScreenMode);
+	updateInterfaceModeActions();
+	reenableUpdates();
 }

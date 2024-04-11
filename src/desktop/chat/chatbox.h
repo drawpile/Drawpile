@@ -27,9 +27,10 @@ class UserItemDelegate;
 class ChatBox final : public QWidget {
 	Q_OBJECT
 public:
-	explicit ChatBox(Document *doc, QWidget *parent = nullptr);
+	ChatBox(Document *doc, bool smallScreenMode, QWidget *parent = nullptr);
 
 	void setActions(QAction *inviteAction, QAction *sessionSettingsAction);
+	void setSmallScreenMode(bool smallScreenMode);
 
 	//! Focus the text input widget
 	void focusInput();

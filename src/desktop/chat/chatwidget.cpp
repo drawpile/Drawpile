@@ -106,6 +106,7 @@ struct ChatWidget::Private {
 	bool preserveChat = true;
 	bool compactMode = COMPACT_ONLY;
 	bool isAttached = true;
+	bool smallScreenMode = false;
 	bool wasAtEnd = true;
 	bool mentionEnabled = false;
 	bool haveMentionUsernameRe = false;
@@ -146,10 +147,12 @@ struct ChatWidget::Private {
 	void updatePreserveModeUi();
 };
 
-ChatWidget::ChatWidget(QWidget *parent)
+ChatWidget::ChatWidget(bool smallScreenMode, QWidget *parent)
 	: QWidget(parent)
 	, d(new Private(this))
 {
+	d->smallScreenMode = smallScreenMode;
+
 	QVBoxLayout *layout = new QVBoxLayout(this);
 
 	layout->setSpacing(0);
@@ -220,7 +223,7 @@ ChatWidget::ChatWidget(QWidget *parent)
 		d->compactAction->setChecked(d->compactMode);
 	}
 
-	if(ALLOW_DETACH && !dpApp().smallScreenMode()) {
+	if(ALLOW_DETACH) {
 		d->attachAction =
 			d->externalMenu->addAction(tr("Attach"), this, &ChatWidget::attach);
 		d->detachAction = d->externalMenu->addAction(
@@ -260,6 +263,11 @@ ChatWidget::~ChatWidget()
 void ChatWidget::setAttached(bool isAttached)
 {
 	d->isAttached = isAttached;
+}
+
+void ChatWidget::setSmallScreenMode(bool smallScreenMode)
+{
+	d->smallScreenMode = smallScreenMode;
 }
 
 void ChatWidget::Private::updatePreserveModeUi()
@@ -967,9 +975,9 @@ void ChatWidget::showChatContextMenu(const QPoint &pos)
 
 void ChatWidget::contextMenuAboutToShow()
 {
-	if(ALLOW_DETACH && !dpApp().smallScreenMode()) {
-		d->attachAction->setVisible(!d->isAttached);
-		d->detachAction->setVisible(d->isAttached);
+	if(ALLOW_DETACH) {
+		d->attachAction->setVisible(!d->smallScreenMode && !d->isAttached);
+		d->detachAction->setVisible(!d->smallScreenMode && d->isAttached);
 	}
 }
 

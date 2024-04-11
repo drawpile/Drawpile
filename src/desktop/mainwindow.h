@@ -8,6 +8,7 @@ extern "C" {
 }
 
 #include <QMainWindow>
+#include <QByteArray>
 #include <QDeadlineTimer>
 #include <QElapsedTimer>
 #include <QMap>
@@ -257,6 +258,7 @@ private slots:
 	void setFreezeDocks(bool freeze);
 	void setDocksHidden(bool hidden);
 	void setDockTitleBarsHidden(bool hidden);
+	void updateSideTabDocks();
 	void setNotificationsMuted(bool muted);
 	void setBusy(bool busy);
 
@@ -275,10 +277,14 @@ private slots:
 	bool eventFilter(QObject *object, QEvent *event) override;
 
 protected:
+	void resizeEvent(QResizeEvent *event) override;
 	void closeEvent(QCloseEvent *event) override;
 	bool event(QEvent *event) override;
 
 private:
+	static constexpr int DESKTOP_MODE_MIN_WIDTH = 1000;
+	static constexpr int DESKTOP_MODE_MIN_HEIGHT = 600;
+
 	MainWindow *replaceableWindow();
 
 	void connectStartDialog(dialogs::StartDialog *dlg);
@@ -320,9 +326,22 @@ private:
 	void receiveCurrentBrush(int userId, const QJsonObject &info);
 
 	void createDocks();
+	void resetDefaultDocks();
+	void resetDefaultToolbars();
 	void setupActions();
+	void updateInterfaceModeActions();
+	void reenableUpdates();
+
+	static bool isInitialSmallScreenMode();
+	void updateInterfaceMode();
+	bool shouldUseSmallScreenMode(const desktop::settings::Settings &settings);
+	static bool isSmallScreenModeSize(const QSize &s);
+	void switchInterfaceMode(bool smallScreenMode);
 
 	bool m_singleSession;
+	bool m_smallScreenMode;
+	bool m_updatingInterfaceMode;
+	QByteArray m_desktopModeState;
 	QDeadlineTimer m_lastDisconnectNotificationTimer;
 
 	QTimer m_saveWindowDebounce;
@@ -330,6 +349,7 @@ private:
 	QMap<QString, bool> m_actionsConfig;
 
 	QSplitter *m_splitter;
+	int m_splitterOriginalHandleWidth;
 
 	docks::ToolSettings *m_dockToolSettings;
 	docks::BrushPalette *m_dockBrushPalette;
@@ -341,7 +361,10 @@ private:
 	docks::Navigator *m_dockNavigator;
 	docks::OnionSkinsDock *m_dockOnionSkins;
 	docks::Timeline *m_dockTimeline;
+	QToolBar *m_toolBarFile;
+	QToolBar *m_toolBarEdit;
 	QToolBar *m_toolBarDraw;
+	QWidget *m_smallScreenSpacer;
 	QAction *m_freehandAction;
 	QToolButton *m_freehandButton;
 	QByteArray m_hiddenDockState;
@@ -375,6 +398,8 @@ private:
 	QActionGroup *m_drawingtools;    // drawing tool selection
 	QActionGroup *m_brushSlots;      // tool slot shortcuts
 	QActionGroup *m_dockToggles;     // dock visibility toggles
+	QActionGroup *m_desktopModeActions;
+	QActionGroup *m_smallScreenModeActions;
 
 	int m_lastToolBeforePaste; // Last selected tool before Paste was used
 

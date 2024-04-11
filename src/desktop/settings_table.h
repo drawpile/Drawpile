@@ -12,6 +12,14 @@
 #endif
 #endif
 
+#ifndef INTERFACE_MODE_DEFAULT
+#	if defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)
+#		define INTERFACE_MODE_DEFAULT InterfaceMode::Dynamic
+#	else
+#		define INTERFACE_MODE_DEFAULT InterfaceMode::Desktop
+#	endif
+#endif
+
 #ifndef KINETIC_SCROLL_GESTURE_DEFAULT
 #	if defined(Q_OS_ANDROID)
 #		define KINETIC_SCROLL_GESTURE_DEFAULT KineticScrollGesture::LeftClick
@@ -92,7 +100,9 @@ SETTING(ignoreCarrierGradeNat     , IgnoreCarrierGradeNat     , "history/cgnaler
 SETTING(ignoreZeroPressureInputs  , IgnoreZeroPressureInputs  , "settings/ignorezeropressureinputs"     , true)
 SETTING(inputPresets              , InputPresets              , "inputpresets"                          , QVector<QVariantMap>())
 SETTING(insecurePasswordStorage   , InsecurePasswordStorage   , "settings/insecurepasswordstorage"      , false)
-SETTING(interfaceMode             , InterfaceMode             , "settings/interfacemode"                , int(desktop::settings::InterfaceMode::Unknown))
+SETTING_GETSET_V(
+	V1, interfaceMode             , InterfaceMode             , "settings/interfacemode"                , int(INTERFACE_MODE_DEFAULT),
+	&any::getExactVersion, &any::set)
 SETTING(inviteLinkType            , InviteLinkType            , "invites/linktype"                      , int(dialogs::InviteDialog::LinkType::Web))
 SETTING(inviteIncludePassword     , InviteIncludePassword     , "invites/includepassword"               , true)
 SETTING(kineticScrollGesture      , KineticScrollGesture      , "settings/kineticscroll/gesture"        , int(KINETIC_SCROLL_GESTURE_DEFAULT))

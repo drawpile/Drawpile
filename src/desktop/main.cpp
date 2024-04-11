@@ -343,13 +343,6 @@ void DrawpileApp::initCanvasImplementation(const QString &arg)
 
 void DrawpileApp::initInterface()
 {
-	if(m_settings.interfaceMode() ==
-	   int(desktop::settings::InterfaceMode::Unknown)) {
-		m_settings.setInterfaceMode(int(guessInterfaceMode()));
-	}
-	m_smallScreenMode = m_settings.interfaceMode() ==
-						int(desktop::settings::InterfaceMode::SmallScreen);
-
 	QFont font = QApplication::font();
 	int fontSize = m_settings.fontSize();
 	if(fontSize <= 0) {
@@ -371,18 +364,6 @@ void DrawpileApp::initInterface()
 		font.setPointSize(fontSize);
 		QApplication::setFont(font);
 	}
-}
-
-desktop::settings::InterfaceMode DrawpileApp::guessInterfaceMode()
-{
-#if defined(Q_OS_ANDROID) || defined(__EMSCRIPTEN__)
-	auto [pixelSize, mmSize] = screenResolution();
-	if(pixelSize.width() < 700 || pixelSize.height() < 700 ||
-	   mmSize.width() < 80.0 || mmSize.height() < 80.0) {
-		return desktop::settings::InterfaceMode::SmallScreen;
-	}
-#endif
-	return desktop::settings::InterfaceMode::Desktop;
 }
 
 int DrawpileApp::getCanvasImplementationFor(int canvasImplementation)

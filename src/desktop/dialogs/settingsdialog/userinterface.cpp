@@ -27,110 +27,25 @@ UserInterface::UserInterface(
 void UserInterface::setUp(
 	desktop::settings::Settings &settings, QVBoxLayout *layout)
 {
-	initInterface(settings, utils::addFormSection(layout));
+	initRequiringRestart(settings, utils::addFormSection(layout));
 	utils::addFormSeparator(layout);
+	QFormLayout *form = utils::addFormSection(layout);
+	initInterfaceMode(settings, form);
 	initKineticScrolling(settings, utils::addFormSection(layout));
 	utils::addFormSeparator(layout);
 	initMiscellaneous(settings, utils::addFormSection(layout));
 }
 
-void UserInterface::initInterface(
-	desktop::settings::Settings &settings, QFormLayout *layout)
+void UserInterface::initInterfaceMode(
+	desktop::settings::Settings &settings, QFormLayout *form)
 {
-	QSettings *scalingSettings = settings.scalingSettings();
-	QString scalingLabel = tr("Scaling:");
-
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-	QCheckBox *highDpiScalingEnabled =
-		new QCheckBox(tr("Enable high-DPI scaling (experimental)"));
-	highDpiScalingEnabled->setChecked(
-		scalingSettings->value(QStringLiteral("enabled")).toBool());
-	connect(
-		highDpiScalingEnabled, &QCheckBox::clicked, scalingSettings,
-		[scalingSettings](bool checked) {
-			scalingSettings->setValue(QStringLiteral("enabled"), checked);
-		});
-	layout->addRow(scalingLabel, highDpiScalingEnabled);
-	scalingLabel = nullptr;
-#endif
-
-	QCheckBox *overrideScaleFactor =
-		new QCheckBox(tr("Override system scale factor (experimental)"));
-	overrideScaleFactor->setChecked(
-		scalingSettings->value(QStringLiteral("override")).toBool());
-	connect(
-		overrideScaleFactor, &QCheckBox::clicked, scalingSettings,
-		[scalingSettings](bool checked) {
-			scalingSettings->setValue(QStringLiteral("override"), checked);
-		});
-	layout->addRow(scalingLabel, overrideScaleFactor);
-
-	KisSliderSpinBox *scaleFactor = new KisSliderSpinBox;
-	scaleFactor->setRange(100, 400);
-	scaleFactor->setSingleStep(25);
-	scaleFactor->setPrefix(tr("Scale factor: "));
-	scaleFactor->setSuffix(tr("%"));
-	scaleFactor->setValue(
-		scalingSettings->value(QStringLiteral("factor")).toInt());
-	connect(
-		scaleFactor, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
-		scalingSettings, [scalingSettings](int value) {
-			scalingSettings->setValue(QStringLiteral("factor"), value);
-		});
-	layout->addRow(nullptr, scaleFactor);
-
-	connect(
-		overrideScaleFactor, &QCheckBox::clicked, scaleFactor,
-		&QWidget::setEnabled);
-	scaleFactor->setEnabled(overrideScaleFactor->isChecked());
-
-	QCheckBox *overrideFontSize =
-		new QCheckBox(tr("Override system font size"));
-	settings.bindOverrideFontSize(overrideFontSize);
-	layout->addRow(tr("Font size:"), overrideFontSize);
-
-	KisSliderSpinBox *fontSize = new KisSliderSpinBox;
-	fontSize->setRange(6, 16);
-	fontSize->setPrefix(tr("Font size: "));
-	fontSize->setSuffix(tr("pt"));
-	settings.bindFontSize(fontSize);
-	layout->addRow(nullptr, fontSize);
-
-	QButtonGroup *vsyncButtons = utils::addRadioGroup(
-		layout, tr("Vertical sync:"), true,
-		{{tr("Disabled"), 0}, {tr("Enabled"), 1}, {tr("System"), -1}});
-
-	int vsync = scalingSettings->value(QStringLiteral("vsync")).toInt();
-	QAbstractButton *vsyncButton = vsyncButtons->button(vsync);
-	if(vsyncButton) {
-		vsyncButton->click();
-	}
-
-	connect(
-		vsyncButtons, &QButtonGroup::idClicked, scalingSettings,
-		[scalingSettings](int id) {
-			scalingSettings->setValue(QStringLiteral("vsync"), id);
-		});
-
 	QButtonGroup *interfaceMode = utils::addRadioGroup(
-		layout, tr("Interface mode:"), true,
-		{{tr("Desktop"), int(desktop::settings::InterfaceMode::Desktop)},
-		 {tr("Small screen (experimental)"),
+		form, tr("Interface mode:"), true,
+		{{tr("Dynamic"), int(desktop::settings::InterfaceMode::Dynamic)},
+		 {tr("Desktop"), int(desktop::settings::InterfaceMode::Desktop)},
+		 {tr("Small screen"),
 		  int(desktop::settings::InterfaceMode::SmallScreen)}});
 	settings.bindInterfaceMode(interfaceMode);
-
-	int pointSize = font().pointSize();
-	QString currentFontSize = pointSize == -1
-								  ? tr("%1px").arg(font().pixelSize())
-								  : tr("%1pt").arg(pointSize);
-	layout->addRow(
-		nullptr,
-		utils::formNote(tr("Changes apply after you restart Drawpile. Current "
-						   "scale factor is %1%, font size is %2.")
-							.arg(qRound(devicePixelRatioF() * 100.0))
-							.arg(currentFontSize)));
-
-	settings.bindOverrideFontSize(fontSize, &QWidget::setEnabled);
 }
 
 void UserInterface::initKineticScrolling(
@@ -245,6 +160,97 @@ void UserInterface::initMiscellaneous(
 		new QCheckBox(tr("Show zoom, rotate, mirror and flip notices"));
 	settings.bindShowTransformNotices(showTransformNotices);
 	form->addRow(nullptr, showTransformNotices);
+}
+
+void UserInterface::initRequiringRestart(
+	desktop::settings::Settings &settings, QFormLayout *form)
+{
+	QSettings *scalingSettings = settings.scalingSettings();
+	QString scalingLabel = tr("Scaling:");
+
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+	QCheckBox *highDpiScalingEnabled =
+		new QCheckBox(tr("Enable high-DPI scaling (experimental)"));
+	highDpiScalingEnabled->setChecked(
+		scalingSettings->value(QStringLiteral("enabled")).toBool());
+	connect(
+		highDpiScalingEnabled, &QCheckBox::clicked, scalingSettings,
+		[scalingSettings](bool checked) {
+			scalingSettings->setValue(QStringLiteral("enabled"), checked);
+		});
+	form->addRow(scalingLabel, highDpiScalingEnabled);
+	scalingLabel = nullptr;
+#endif
+
+	QCheckBox *overrideScaleFactor =
+		new QCheckBox(tr("Override system scale factor (experimental)"));
+	overrideScaleFactor->setChecked(
+		scalingSettings->value(QStringLiteral("override")).toBool());
+	connect(
+		overrideScaleFactor, &QCheckBox::clicked, scalingSettings,
+		[scalingSettings](bool checked) {
+			scalingSettings->setValue(QStringLiteral("override"), checked);
+		});
+	form->addRow(scalingLabel, overrideScaleFactor);
+
+	KisSliderSpinBox *scaleFactor = new KisSliderSpinBox;
+	scaleFactor->setRange(100, 400);
+	scaleFactor->setSingleStep(25);
+	scaleFactor->setPrefix(tr("Scale factor: "));
+	scaleFactor->setSuffix(tr("%"));
+	scaleFactor->setValue(
+		scalingSettings->value(QStringLiteral("factor")).toInt());
+	connect(
+		scaleFactor, QOverload<int>::of(&KisSliderSpinBox::valueChanged),
+		scalingSettings, [scalingSettings](int value) {
+			scalingSettings->setValue(QStringLiteral("factor"), value);
+		});
+	form->addRow(nullptr, scaleFactor);
+
+	connect(
+		overrideScaleFactor, &QCheckBox::clicked, scaleFactor,
+		&QWidget::setEnabled);
+	scaleFactor->setEnabled(overrideScaleFactor->isChecked());
+
+	QCheckBox *overrideFontSize =
+		new QCheckBox(tr("Override system font size"));
+	settings.bindOverrideFontSize(overrideFontSize);
+	form->addRow(tr("Font size:"), overrideFontSize);
+
+	KisSliderSpinBox *fontSize = new KisSliderSpinBox;
+	fontSize->setRange(6, 16);
+	fontSize->setPrefix(tr("Font size: "));
+	fontSize->setSuffix(tr("pt"));
+	settings.bindFontSize(fontSize);
+	settings.bindOverrideFontSize(fontSize, &QWidget::setEnabled);
+	form->addRow(nullptr, fontSize);
+
+	QButtonGroup *vsyncButtons = utils::addRadioGroup(
+		form, tr("Vertical sync:"), true,
+		{{tr("Disabled"), 0}, {tr("Enabled"), 1}, {tr("System"), -1}});
+
+	int vsync = scalingSettings->value(QStringLiteral("vsync")).toInt();
+	QAbstractButton *vsyncButton = vsyncButtons->button(vsync);
+	if(vsyncButton) {
+		vsyncButton->click();
+	}
+
+	connect(
+		vsyncButtons, &QButtonGroup::idClicked, scalingSettings,
+		[scalingSettings](int id) {
+			scalingSettings->setValue(QStringLiteral("vsync"), id);
+		});
+
+	int pointSize = font().pointSize();
+	QString currentFontSize = pointSize == -1
+								  ? tr("%1px").arg(font().pixelSize())
+								  : tr("%1pt").arg(pointSize);
+	form->addRow(
+		nullptr,
+		utils::formNote(tr("Changes apply after you restart Drawpile. Current "
+						   "scale factor is %1%, font size is %2.")
+							.arg(qRound(devicePixelRatioF() * 100.0))
+							.arg(currentFontSize)));
 }
 
 void UserInterface::pickColor(

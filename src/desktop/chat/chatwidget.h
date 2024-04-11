@@ -25,11 +25,12 @@ namespace widgets {
 class ChatWidget final : public QWidget {
 	Q_OBJECT
 public:
-	explicit ChatWidget(QWidget *parent = nullptr);
+	explicit ChatWidget(bool smallScreenMode, QWidget *parent = nullptr);
 	~ChatWidget() override;
 
 	void focusInput();
 	void setAttached(bool isAttached);
+	void setSmallScreenMode(bool smallScreenMode);
 	void setUserList(canvas::UserListModel *userlist);
 	void setLayerList(canvas::LayerListModel *layerlist);
 

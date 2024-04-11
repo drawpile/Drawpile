@@ -89,12 +89,11 @@ QString SystemInfoDialog::getSystemInfo() const
 	info += QStringLiteral("Word size: %1\n").arg(int(QSysInfo::WordSize));
 	info += QStringLiteral("\n");
 
-	info += QStringLiteral("Interface mode: %1\n")
-				.arg(
-					dpApp().smallScreenMode() ? QStringLiteral("small-screen")
-											  : QStringLiteral("desktop"));
-	info += QStringLiteral("Device pixel ratio: %1\n").arg(devicePixelRatioF());
 	desktop::settings::Settings &settings = dpApp().settings();
+	info += QStringLiteral("Interface mode: %1\n")
+				.arg(QMetaEnum::fromType<desktop::settings::InterfaceMode>()
+						 .valueToKey(settings.interfaceMode()));
+	info += QStringLiteral("Device pixel ratio: %1\n").arg(devicePixelRatioF());
 	QSettings *scalingSettings = settings.scalingSettings();
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 	QString highDpiScaling = QStringLiteral("%1").arg(boolToString(

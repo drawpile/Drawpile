@@ -29,7 +29,6 @@ ViewWrapper::ViewWrapper(bool useOpenGl, QWidget *parent)
 	, m_canvasWidget(instantiateView(useOpenGl, m_controller, parent))
 	, m_view(new CanvasView(m_controller, m_canvasWidget, parent))
 {
-	m_scene->setShowToggleItems(dpApp().smallScreenMode());
 	dpApp().settings().bindUserMarkerPersistence(
 		m_scene, &CanvasScene::setUserMarkerPersistence);
 }
@@ -125,6 +124,11 @@ void ViewWrapper::setShowOwnUserMarker(bool showOwnUserMarker)
 void ViewWrapper::setPointerTracking(bool pointerTracking)
 {
 	m_controller->setPointerTracking(pointerTracking);
+}
+
+void ViewWrapper::setShowToggleItems(bool showToggleItems)
+{
+	m_scene->setShowToggleItems(showToggleItems);
 }
 
 void ViewWrapper::setCatchupProgress(int percent, bool force)

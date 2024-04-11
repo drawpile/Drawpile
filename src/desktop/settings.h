@@ -36,7 +36,7 @@ extern QString globalPressureCurveDefault;
 #endif
 
 enum class InterfaceMode : int {
-	Unknown,
+	Dynamic,
 	Desktop,
 	SmallScreen,
 };

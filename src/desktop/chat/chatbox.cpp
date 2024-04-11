@@ -19,12 +19,12 @@
 
 namespace widgets {
 
-ChatBox::ChatBox(Document *doc, QWidget *parent)
+ChatBox::ChatBox(Document *doc, bool smallScreenMode, QWidget *parent)
 	: QWidget(parent)
 {
 	QSplitter *chatsplitter = new QSplitter(Qt::Horizontal, this);
 	chatsplitter->setChildrenCollapsible(false);
-	m_chatWidget = new ChatWidget(this);
+	m_chatWidget = new ChatWidget(smallScreenMode, this);
 	chatsplitter->addWidget(m_chatWidget);
 
 	QWidget *sidebar = new QWidget{this};
@@ -144,6 +144,17 @@ void ChatBox::setActions(QAction *inviteAction, QAction *sessionSettingsAction)
 	}
 }
 
+void ChatBox::setSmallScreenMode(bool smallScreenMode)
+{
+	m_chatWidget->setSmallScreenMode(smallScreenMode);
+	if(smallScreenMode && m_state == State::Detached) {
+		ChatWindow *window = qobject_cast<ChatWindow *>(parent());
+		if(window) {
+			window->close();
+		}
+	}
+}
+
 void ChatBox::onCanvasChanged(canvas::CanvasModel *canvas)
 {
 	m_userList->setModel(canvas->userlist()->onlineUsers());
@@ -198,7 +209,6 @@ void ChatBox::detachFromParent()
 	m_chatWidget->setAttached(false);
 
 	auto *window = new ChatWindow(this);
-	connect(window, &ChatWindow::closing, this, &ChatBox::reattachNowPlease);
 	connect(window, &ChatWindow::closing, this, &ChatBox::reattachToParent);
 	connect(oldParent, &QObject::destroyed, window, &QObject::deleteLater);
 
@@ -208,6 +218,7 @@ void ChatBox::detachFromParent()
 
 void ChatBox::reattachToParent()
 {
+	emit reattachNowPlease();
 	m_state = State::Expanded;
 	m_chatWidget->setAttached(true);
 }

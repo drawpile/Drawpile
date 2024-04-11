@@ -26,7 +26,6 @@ SceneWrapper::SceneWrapper(QWidget *parent)
 {
 	m_scene->setBackgroundBrush(
 		parent->palette().brush(QPalette::Active, QPalette::Window));
-	m_scene->showToggleItems(dpApp().smallScreenMode());
 	m_view->setCanvas(m_scene);
 	dpApp().settings().bindUserMarkerPersistence(
 		m_scene, &CanvasScene::setUserMarkerPersistence);
@@ -132,6 +131,13 @@ void SceneWrapper::setShowOwnUserMarker(bool showOwnUserMarker)
 void SceneWrapper::setPointerTracking(bool pointerTracking)
 {
 	m_view->setPointerTracking(pointerTracking);
+}
+
+void SceneWrapper::setShowToggleItems(bool showToggleItems)
+{
+	if(m_scene) {
+		m_scene->showToggleItems(showToggleItems);
+	}
 }
 
 void SceneWrapper::setCatchupProgress(int percent, bool force)

@@ -253,11 +253,13 @@ struct FoundKey {
 };
 
 std::optional<FoundKey> findKey(QSettings &settings, const char *baseKey, SettingMeta::Version version);
+std::optional<FoundKey> findtKeyExactVersion(QSettings &settings, const char *baseKey, SettingMeta::Version version);
 
 // These are exposed in the header only because libclient/desktop are split
 // so desktop-only settings need access to these too.
 namespace any {
 	QVariant get(const SettingMeta &meta, QSettings &settings);
+	QVariant getExactVersion(const SettingMeta &meta, QSettings &settings);
 	QVariant getGroup(QSettings &settings, const QString &key);
 	QVariant getList(QSettings &settings, const QString &key);
 	void forceSetKey(QSettings &settings, const QString &key, QVariant value);
