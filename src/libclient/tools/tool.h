@@ -116,7 +116,7 @@ public:
 	}
 
 protected:
-	void setHandlesRightClick(bool handlesRightClickk);
+	void setHandlesRightClick(bool handlesRightClick);
 
 	ToolController &m_owner;
 
