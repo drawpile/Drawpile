@@ -1419,7 +1419,7 @@ void CanvasController::penMoveEvent(
 								point.timeMsec(), point, point.pressure(),
 								point.xtilt(), point.ytilt(), point.rotation(),
 								match.toolConstraint1(),
-								match.toolConstraint2());
+								match.toolConstraint2(), posf);
 						}
 						break;
 					case PenMode::Colorpick:
@@ -1539,7 +1539,8 @@ void CanvasController::penPressEvent(
 						emit penDown(
 							point.timeMsec(), point, point.pressure(),
 							point.xtilt(), point.ytilt(), point.rotation(),
-							button == Qt::RightButton, m_zoom, eraserOverride);
+							button == Qt::RightButton, m_zoom, posf,
+							eraserOverride);
 					break;
 				case PenMode::Colorpick:
 					m_canvasModel->pickColor(point.x(), point.y(), 0, 0);

@@ -94,9 +94,11 @@ FloodFill::FloodFill(ToolController &owner)
 {
 }
 
-void FloodFill::begin(const canvas::Point &point, bool right, float zoom)
+void FloodFill::begin(
+	const canvas::Point &point, bool right, float zoom, const QPointF &viewPos)
 {
 	Q_UNUSED(zoom);
+	Q_UNUSED(viewPos);
 	if(right) {
 		cancelMultipart();
 	} else if(!m_running) {
@@ -115,11 +117,14 @@ void FloodFill::begin(const canvas::Point &point, bool right, float zoom)
 	}
 }
 
-void FloodFill::motion(const canvas::Point &point, bool constrain, bool center)
+void FloodFill::motion(
+	const canvas::Point &point, bool constrain, bool center,
+	const QPointF &viewPos)
 {
 	Q_UNUSED(point);
 	Q_UNUSED(constrain);
 	Q_UNUSED(center);
+	Q_UNUSED(viewPos);
 }
 
 void FloodFill::end() {}

@@ -312,7 +312,8 @@ void ToolController::setSelectInterpolation(int selectInterpolation)
 
 void ToolController::startDrawing(
 	long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
-	qreal ytilt, qreal rotation, bool right, float zoom, bool eraserOverride)
+	qreal ytilt, qreal rotation, bool right, float zoom, const QPointF &viewPos,
+	bool eraserOverride)
 {
 	Q_ASSERT(m_activeTool);
 
@@ -325,7 +326,7 @@ void ToolController::startDrawing(
 	m_activebrush.setEraserOverride(eraserOverride);
 	m_activeTool->begin(
 		canvas::Point(timeMsec, point, pressure, xtilt, ytilt, rotation), right,
-		zoom);
+		zoom, viewPos);
 
 	if(!m_activeTool->isMultipart()) {
 		m_model->paintEngine()->setLocalDrawingInProgress(true);
@@ -339,7 +340,7 @@ void ToolController::startDrawing(
 
 void ToolController::continueDrawing(
 	long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
-	qreal ytilt, qreal rotation, bool shift, bool alt)
+	qreal ytilt, qreal rotation, bool shift, bool alt, const QPointF &viewPos)
 {
 	Q_ASSERT(m_activeTool);
 
@@ -350,7 +351,7 @@ void ToolController::continueDrawing(
 
 	canvas::Point cp =
 		canvas::Point(timeMsec, point, pressure, xtilt, ytilt, rotation);
-	m_activeTool->motion(cp, shift, alt);
+	m_activeTool->motion(cp, shift, alt, viewPos);
 }
 
 void ToolController::hoverDrawing(const QPointF &point)

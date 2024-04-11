@@ -58,8 +58,10 @@ private:
 	canvas::PointVector m_pv;
 };
 
-void ShapeTool::begin(const canvas::Point& point, bool right, float zoom)
+void ShapeTool::begin(
+	const canvas::Point &point, bool right, float zoom, const QPointF &viewPos)
 {
+	Q_UNUSED(viewPos);
 	Q_ASSERT(!m_drawing);
 	if(right) {
 		return;
@@ -74,8 +76,11 @@ void ShapeTool::begin(const canvas::Point& point, bool right, float zoom)
 	updatePreview();
 }
 
-void ShapeTool::motion(const canvas::Point& point, bool constrain, bool center)
+void ShapeTool::motion(
+	const canvas::Point &point, bool constrain, bool center,
+	const QPointF &viewPos)
 {
+	Q_UNUSED(viewPos);
 	if(!m_drawing)
 		return;
 
@@ -145,8 +150,11 @@ Line::Line(ToolController &owner)
 {
 }
 
-void Line::motion(const canvas::Point& point, bool constrain, bool center)
+void Line::motion(
+	const canvas::Point &point, bool constrain, bool center,
+	const QPointF &viewPos)
 {
+	Q_UNUSED(viewPos);
 	if(!m_drawing)
 		return;
 
@@ -219,4 +227,3 @@ canvas::PointVector Ellipse::pointVector() const
 }
 
 }
-

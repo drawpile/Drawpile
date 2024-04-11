@@ -24,11 +24,13 @@ public:
 	{
 	}
 
-	void
-	begin(const canvas::Point &point, bool right, float zoom) override final;
+	void begin(
+		const canvas::Point &point, bool right, float zoom,
+		const QPointF &viewPos) override final;
 
 	void motion(
-		const canvas::Point &point, bool constrain, bool center) override final;
+		const canvas::Point &point, bool constrain, bool center,
+		const QPointF &viewPos) override final;
 
 	void end() override final;
 

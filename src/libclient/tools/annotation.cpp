@@ -21,8 +21,10 @@ Annotation::Annotation(ToolController &owner)
  * The annotation tool has fairly complex needs. Clicking on an existing
  * annotation selects it, otherwise a new annotation is started.
  */
-void Annotation::begin(const canvas::Point &point, bool right, float zoom)
+void Annotation::begin(
+	const canvas::Point &point, bool right, float zoom, const QPointF &viewPos)
 {
+	Q_UNUSED(viewPos);
 	if(right) {
 		m_selectedId = 0;
 		m_owner.setActiveAnnotation(m_selectedId);
@@ -104,10 +106,13 @@ Annotation::handleAt(const QRect &rect, const QPoint &point, int handleSize)
 /**
  * Change the shape of the selected annotation.
  */
-void Annotation::motion(const canvas::Point &point, bool constrain, bool center)
+void Annotation::motion(
+	const canvas::Point &point, bool constrain, bool center,
+	const QPointF &viewPos)
 {
 	Q_UNUSED(constrain);
 	Q_UNUSED(center);
+	Q_UNUSED(viewPos);
 	if(m_selectedId == 0)
 		return;
 

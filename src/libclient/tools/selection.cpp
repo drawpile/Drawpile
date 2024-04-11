@@ -14,8 +14,10 @@
 
 namespace tools {
 
-void SelectionTool::begin(const canvas::Point &point, bool right, float zoom)
+void SelectionTool::begin(
+	const canvas::Point &point, bool right, float zoom, const QPointF &viewPos)
 {
+	Q_UNUSED(viewPos);
 	if(right) {
 		return;
 	}
@@ -50,8 +52,10 @@ void SelectionTool::begin(const canvas::Point &point, bool right, float zoom)
 }
 
 void SelectionTool::motion(
-	const canvas::Point &point, bool constrain, bool center)
+	const canvas::Point &point, bool constrain, bool center,
+	const QPointF &viewPos)
 {
+	Q_UNUSED(viewPos);
 	canvas::Selection *sel = m_owner.model()->selection();
 	if(!sel)
 		return;

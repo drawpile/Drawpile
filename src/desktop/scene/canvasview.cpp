@@ -922,7 +922,8 @@ void CanvasView::setPointerTracking(bool tracking)
 }
 
 void CanvasView::onPenDown(
-	const canvas::Point &p, bool right, bool eraserOverride)
+	const canvas::Point &p, bool right, const QPointF &viewPos,
+	bool eraserOverride)
 {
 	if(m_scene->hasImage()) {
 		switch(m_penmode) {
@@ -930,7 +931,7 @@ void CanvasView::onPenDown(
 			if(!m_locked)
 				emit penDown(
 					p.timeMsec(), p, p.pressure(), p.xtilt(), p.ytilt(),
-					p.rotation(), right, m_zoom, eraserOverride);
+					p.rotation(), right, m_zoom, viewPos, eraserOverride);
 			break;
 		case PenMode::Colorpick:
 			m_scene->model()->pickColor(p.x(), p.y(), 0, 0);
@@ -951,7 +952,8 @@ void CanvasView::onPenDown(
 }
 
 void CanvasView::onPenMove(
-	const canvas::Point &p, bool right, bool constrain1, bool constrain2)
+	const canvas::Point &p, bool right, bool constrain1, bool constrain2,
+	const QPointF &viewPos)
 {
 	Q_UNUSED(right)
 
@@ -961,7 +963,7 @@ void CanvasView::onPenMove(
 			if(!m_locked)
 				emit penMove(
 					p.timeMsec(), p, p.pressure(), p.xtilt(), p.ytilt(),
-					p.rotation(), constrain1, constrain2);
+					p.rotation(), constrain1, constrain2, viewPos);
 			break;
 		case PenMode::Colorpick:
 			m_scene->model()->pickColor(p.x(), p.y(), 0, 0);
@@ -1074,7 +1076,7 @@ void CanvasView::penPressEvent(
 		}
 		onPenDown(
 			mapToCanvas(timeMsec, pos, pressure, xtilt, ytilt, rotation),
-			button == Qt::RightButton, eraserOverride);
+			button == Qt::RightButton, pos, eraserOverride);
 	}
 }
 
@@ -1130,7 +1132,7 @@ void CanvasView::penMoveEvent(
 					m_canvasShortcuts.matchConstraints(modifiers, m_keysDown);
 				onPenMove(
 					point, buttons.testFlag(Qt::RightButton),
-					match.toolConstraint1(), match.toolConstraint2());
+					match.toolConstraint1(), match.toolConstraint2(), pos);
 
 			} else {
 				emit penHover(point);

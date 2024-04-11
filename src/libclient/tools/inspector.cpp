@@ -10,19 +10,24 @@ Inspector::Inspector(ToolController &owner)
 {
 }
 
-void Inspector::begin(const canvas::Point &point, bool right, float zoom)
+void Inspector::begin(
+	const canvas::Point &point, bool right, float zoom, const QPointF &viewPos)
 {
 	Q_UNUSED(zoom);
+	Q_UNUSED(viewPos);
 	if(!right) {
 		m_inspecting = true;
 		m_owner.model()->inspectCanvas(point.x(), point.y(), true, m_showTiles);
 	}
 }
 
-void Inspector::motion(const canvas::Point &point, bool constrain, bool center)
+void Inspector::motion(
+	const canvas::Point &point, bool constrain, bool center,
+	const QPointF &viewPos)
 {
 	Q_UNUSED(constrain);
 	Q_UNUSED(center);
+	Q_UNUSED(viewPos);
 	if(m_inspecting) {
 		m_owner.model()->inspectCanvas(
 			point.x(), point.y(), false, m_showTiles);

@@ -71,17 +71,22 @@ public:
 	 * @param right is the right mouse/pen button pressed instead of the left
 	 * one
 	 * @param zoom the current view zoom factor
+	 * @param viewPos the starting point in view coordinates
 	 */
-	virtual void begin(const canvas::Point &point, bool right, float zoom) = 0;
+	virtual void begin(
+		const canvas::Point &point, bool right, float zoom,
+		const QPointF &viewPos) = 0;
 
 	/**
 	 * @brief Continue a stroke
 	 * @param point new point
 	 * @param constrain is the "constrain motion" button pressed
-	 * @param cener is the "center on start point" button pressed
+	 * @param center is the "center on start point" button pressed
+	 * @param viewPos new point in view coordinates
 	 */
-	virtual void
-	motion(const canvas::Point &point, bool constrain, bool center) = 0;
+	virtual void motion(
+		const canvas::Point &point, bool constrain, bool center,
+		const QPointF &viewPos) = 0;
 
 	/**
 	 * @brief Tool hovering over the canvas

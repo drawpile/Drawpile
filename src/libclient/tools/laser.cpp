@@ -16,9 +16,11 @@ LaserPointer::LaserPointer(ToolController &owner)
 {
 }
 
-void LaserPointer::begin(const canvas::Point &point, bool right, float zoom)
+void LaserPointer::begin(
+	const canvas::Point &point, bool right, float zoom, const QPointF &viewPos)
 {
 	Q_UNUSED(zoom);
+	Q_UNUSED(viewPos);
 	Q_ASSERT(!m_drawing);
 	if(right) {
 		return;
@@ -37,10 +39,12 @@ void LaserPointer::begin(const canvas::Point &point, bool right, float zoom)
 }
 
 void LaserPointer::motion(
-	const canvas::Point &point, bool constrain, bool center)
+	const canvas::Point &point, bool constrain, bool center,
+	const QPointF &viewPos)
 {
 	Q_UNUSED(constrain);
 	Q_UNUSED(center);
+	Q_UNUSED(viewPos);
 	if(m_drawing) {
 		m_owner.client()->sendMessage(net::makeMovePointerMessage(
 			m_owner.client()->myId(), point.x() * 4, point.y() * 4));

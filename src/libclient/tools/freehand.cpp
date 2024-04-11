@@ -28,8 +28,10 @@ Freehand::Freehand(ToolController &owner, bool isEraser)
 
 Freehand::~Freehand() {}
 
-void Freehand::begin(const canvas::Point &point, bool right, float zoom)
+void Freehand::begin(
+	const canvas::Point &point, bool right, float zoom, const QPointF &viewPos)
 {
+	Q_UNUSED(viewPos);
 	Q_ASSERT(!m_drawing);
 	if(right) {
 		return;
@@ -47,10 +49,13 @@ void Freehand::begin(const canvas::Point &point, bool right, float zoom)
 	m_zoom = zoom;
 }
 
-void Freehand::motion(const canvas::Point &point, bool constrain, bool center)
+void Freehand::motion(
+	const canvas::Point &point, bool constrain, bool center,
+	const QPointF &viewPos)
 {
 	Q_UNUSED(constrain);
 	Q_UNUSED(center);
+	Q_UNUSED(viewPos);
 	if(!m_drawing)
 		return;
 

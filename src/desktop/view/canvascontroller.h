@@ -168,10 +168,11 @@ signals:
 	void penDown(
 		long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
 		qreal ytilt, qreal rotation, bool right, float zoom,
-		bool eraserOverride);
+		const QPointF &viewPos, bool eraserOverride);
 	void penMove(
 		long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
-		qreal ytilt, qreal rotation, bool shift, bool alt);
+		qreal ytilt, qreal rotation, bool shift, bool alt,
+		const QPointF &viewPos);
 	void penHover(const QPointF &point);
 	void penUp();
 	void coordinatesChanged(const QPointF &coordinates);

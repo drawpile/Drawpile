@@ -19,10 +19,15 @@ public:
 		: Tool{owner, type, cursor, true, true, false}
 		, m_drawing{false}
 		, m_brushEngine{}
-	{}
+	{
+	}
 
-	void begin(const canvas::Point& point, bool right, float zoom) override;
-	void motion(const canvas::Point& point, bool constrain, bool center) override;
+	void begin(
+		const canvas::Point &point, bool right, float zoom,
+		const QPointF &viewPos) override;
+	void motion(
+		const canvas::Point &point, bool constrain, bool center,
+		const QPointF &viewPos) override;
 	void end() override;
 	void cancelMultipart() override;
 	bool usesBrushColor() const override { return true; }
@@ -49,7 +54,9 @@ class Line final : public ShapeTool {
 public:
 	Line(ToolController &owner);
 
-	void motion(const canvas::Point& point, bool constrain, bool center) override;
+	void motion(
+		const canvas::Point &point, bool constrain, bool center,
+		const QPointF &viewPos) override;
 
 protected:
 	canvas::PointVector pointVector() const override;
@@ -84,4 +91,3 @@ protected:
 }
 
 #endif
-

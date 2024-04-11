@@ -24,8 +24,9 @@ BezierTool::BezierTool(ToolController &owner)
 {
 }
 
-void BezierTool::begin(const Point& point, bool right, float zoom)
+void BezierTool::begin(const Point& point, bool right, float zoom, const QPointF &viewPos)
 {
+	Q_UNUSED(viewPos);
 	m_rightButton = right;
 	m_zoom = zoom;
 
@@ -54,10 +55,12 @@ void BezierTool::begin(const Point& point, bool right, float zoom)
 	}
 }
 
-void BezierTool::motion(const Point& point, bool constrain, bool center)
+void BezierTool::motion(
+	const Point& point, bool constrain, bool center, const QPointF &viewPos)
 {
 	Q_UNUSED(constrain);
 	Q_UNUSED(center);
+	Q_UNUSED(viewPos);
 	if(m_rightButton)
 		return;
 

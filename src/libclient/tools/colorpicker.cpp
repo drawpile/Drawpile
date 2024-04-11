@@ -16,20 +16,25 @@ ColorPicker::ColorPicker(ToolController &owner)
 {
 }
 
-void ColorPicker::begin(const canvas::Point& point, bool right, float zoom)
+void ColorPicker::begin(
+	const canvas::Point& point, bool right, float zoom, const QPointF &viewPos)
 {
 	Q_UNUSED(zoom);
+	Q_UNUSED(viewPos);
 	if(right) {
 		return;
 	}
 
-	motion(point, false, false);
+	motion(point, false, false, QPointF());
 }
 
-void ColorPicker::motion(const canvas::Point& point, bool constrain, bool center)
+void ColorPicker::motion(
+	const canvas::Point& point, bool constrain, bool center,
+	const QPointF &viewPos)
 {
 	Q_UNUSED(constrain);
 	Q_UNUSED(center);
+	Q_UNUSED(viewPos);
 
 	int layer=0;
 	if(m_pickFromCurrentLayer)

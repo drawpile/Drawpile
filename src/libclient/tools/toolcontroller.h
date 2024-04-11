@@ -137,12 +137,13 @@ public slots:
 	void startDrawing(
 		long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
 		qreal ytilt, qreal rotation, bool right, float zoom,
-		bool eraserOverride);
+		const QPointF &viewPos, bool eraserOverride);
 
 	//! Continue a stroke
 	void continueDrawing(
 		long long timeMsec, const QPointF &point, qreal pressure, qreal xtilt,
-		qreal ytilt, qreal rotation, bool shift, bool alt);
+		qreal ytilt, qreal rotation, bool shift, bool alt,
+		const QPointF &viewPos);
 
 	//! Stylus hover (not yet drawing)
 	void hoverDrawing(const QPointF &point);

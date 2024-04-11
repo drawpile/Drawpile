@@ -15,9 +15,11 @@ ZoomTool::ZoomTool(ToolController &owner)
 	: Tool(owner, ZOOM, QCursor(QPixmap(":cursors/zoom.png"), 8, 8), true, false, true)
 { }
 
-void ZoomTool::begin(const canvas::Point &point, bool right, float zoom)
+void ZoomTool::begin(
+	const canvas::Point &point, bool right, float zoom, const QPointF &viewPos)
 {
 	Q_UNUSED(zoom);
+	Q_UNUSED(viewPos);
 	m_start = point.toPoint();
 	m_end = m_start;
 	m_reverse = right;
@@ -30,10 +32,13 @@ void ZoomTool::begin(const canvas::Point &point, bool right, float zoom)
 	m_owner.model()->setSelection(sel);
 }
 
-void ZoomTool::motion(const canvas::Point &point, bool constrain, bool center)
+void ZoomTool::motion(
+	const canvas::Point &point, bool constrain, bool center,
+	const QPointF &viewPos)
 {
 	Q_UNUSED(constrain);
 	Q_UNUSED(center);
+	Q_UNUSED(viewPos);
 
 	auto sel = m_owner.model()->selection();
 	if(!sel) {
@@ -59,4 +64,3 @@ void ZoomTool::end()
 }
 
 }
-
