@@ -34,6 +34,7 @@ Unreleased Version 2.2.2-pre
  * Fix: Don't use bilinear interpolation when selection is only moved, rotated by a multiple of 90 degrees, flipped or mirrored, to avoid unnecessary blurring. Thanks lungy for reporting.
  * Feature: Don't require restarting the application when changing kinetic scrolling settings.
  * Fix: Change default canvas size to 2000x2000, because 800x600 is a bit outdated. Thanks MorrowShore for for contributing.
+ * Feature: Don't require restarting the application to switch between desktop and small screen mode. There's also a "dynamic" option now, which will change the mode based on the size of the window, enabled by default on Android and in the browser.
 
 2024-02-25 Version 2.2.2-beta.1
  * Server Feature: Allow adding a message when kicking someone through the admin API.
