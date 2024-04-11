@@ -6,17 +6,17 @@
     <message>
         <location filename="../bundled/QtColorWidgets/abstract_widget_list.cpp" line="+67"/>
         <source>Add New</source>
-        <translation type="unfinished"></translation>
+        <translation>Tambah baru</translation>
     </message>
     <message>
         <location line="+51"/>
         <source>Move Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Pindah ke atas</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Move Down</source>
-        <translation type="unfinished"></translation>
+        <translation>Pindah ke bawah</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -34,7 +34,7 @@
     <message>
         <location line="+6"/>
         <source>Session:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sesi:</translation>
     </message>
     <message>
         <location line="+40"/>
