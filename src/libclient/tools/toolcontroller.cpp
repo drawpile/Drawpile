@@ -1,22 +1,19 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "libclient/tools/toolcontroller.h"
-
+#include "libclient/canvas/canvasmodel.h"
+#include "libclient/canvas/paintengine.h"
+#include "libclient/canvas/point.h"
 #include "libclient/settings.h"
 #include "libclient/tools/annotation.h"
-#include "libclient/tools/freehand.h"
+#include "libclient/tools/beziertool.h"
 #include "libclient/tools/colorpicker.h"
+#include "libclient/tools/floodfill.h"
+#include "libclient/tools/freehand.h"
+#include "libclient/tools/inspector.h"
 #include "libclient/tools/laser.h"
 #include "libclient/tools/selection.h"
 #include "libclient/tools/shapetools.h"
-#include "libclient/tools/beziertool.h"
-#include "libclient/tools/floodfill.h"
 #include "libclient/tools/zoom.h"
-#include "libclient/tools/inspector.h"
-
-#include "libclient/canvas/point.h"
-#include "libclient/canvas/canvasmodel.h"
-#include "libclient/canvas/paintengine.h"
 #include "libshared/util/functionrunnable.h"
 
 namespace tools {
@@ -180,7 +177,8 @@ void ToolController::setInterpolateInputs(bool interpolateInputs)
 	m_interpolateInputs = interpolateInputs;
 }
 
-void ToolController::setStabilizationMode(brushes::StabilizationMode stabilizationMode)
+void ToolController::setStabilizationMode(
+	brushes::StabilizationMode stabilizationMode)
 {
 	m_stabilizationMode = stabilizationMode;
 	updateSmoothing();
@@ -202,11 +200,13 @@ void ToolController::setFinishStrokes(bool finishStrokes)
 	m_finishStrokes = finishStrokes;
 }
 
-void ToolController::setStabilizerUseBrushSampleCount(bool stabilizerUseBrushSampleCount)
+void ToolController::setStabilizerUseBrushSampleCount(
+	bool stabilizerUseBrushSampleCount)
 {
 	if(m_stabilizerUseBrushSampleCount != stabilizerUseBrushSampleCount) {
 		m_stabilizerUseBrushSampleCount = stabilizerUseBrushSampleCount;
-		emit stabilizerUseBrushSampleCountChanged(m_stabilizerUseBrushSampleCount);
+		emit stabilizerUseBrushSampleCountChanged(
+			m_stabilizerUseBrushSampleCount);
 	}
 }
 
@@ -323,7 +323,9 @@ void ToolController::startDrawing(
 
 	m_drawing = true;
 	m_activebrush.setEraserOverride(eraserOverride);
-	m_activeTool->begin(canvas::Point(timeMsec, point, pressure, xtilt, ytilt, rotation), right, zoom);
+	m_activeTool->begin(
+		canvas::Point(timeMsec, point, pressure, xtilt, ytilt, rotation), right,
+		zoom);
 
 	if(!m_activeTool->isMultipart()) {
 		m_model->paintEngine()->setLocalDrawingInProgress(true);
@@ -346,7 +348,8 @@ void ToolController::continueDrawing(
 		return;
 	}
 
-	canvas::Point cp = canvas::Point(timeMsec, point, pressure, xtilt, ytilt, rotation);
+	canvas::Point cp =
+		canvas::Point(timeMsec, point, pressure, xtilt, ytilt, rotation);
 	m_activeTool->motion(cp, shift, alt);
 }
 
@@ -466,7 +469,7 @@ void ToolController::executeAsync(Task *task)
 	if(m_taskCount++ == 0) {
 		emit busyStateChanged(true);
 	}
-	m_threadPool.start(utils::FunctionRunnable::create([=](){
+	m_threadPool.start(utils::FunctionRunnable::create([=]() {
 		task->run();
 		emit asyncExecutionFinished(task);
 		if(--m_taskCount == 0) {

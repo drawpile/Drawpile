@@ -1,23 +1,26 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-
-#ifndef TOOLCONTROLLER_H
-#define TOOLCONTROLLER_H
-
-#include "libclient/tools/tool.h"
+#ifndef LIBCLIENT_TOOLS_TOOLCONTROLLER_H
+#define LIBCLIENT_TOOLS_TOOLCONTROLLER_H
 #include "libclient/brushes/brush.h"
 #include "libclient/canvas/acl.h"
-
+#include "libclient/tools/tool.h"
 #include <QObject>
 #include <QThreadPool>
 
 class QCursor;
 
 namespace canvas {
-	class CanvasModel;
-	class Selection;
+class CanvasModel;
+class Selection;
 }
-namespace drawdance { class BrushEngine; }
-namespace net { class Client; }
+
+namespace drawdance {
+class BrushEngine;
+}
+
+namespace net {
+class Client;
+}
 
 namespace tools {
 
@@ -26,13 +29,17 @@ class Tool;
 /**
  * @brief The ToolController dispatches user input to the currently active tool
  */
-class ToolController final : public QObject
-{
-	Q_PROPERTY(QCursor activeToolCursor READ activeToolCursor() NOTIFY toolCursorChanged)
-	Q_PROPERTY(uint16_t activeLayer READ activeLayer WRITE setActiveLayer NOTIFY activeLayerChanged)
-	Q_PROPERTY(uint16_t activeAnnotation READ activeAnnotation WRITE setActiveAnnotation NOTIFY activeAnnotationChanged)
-	Q_PROPERTY(brushes::ActiveBrush activeBrush READ activeBrush WRITE setActiveBrush NOTIFY activeBrushChanged)
-	Q_PROPERTY(canvas::CanvasModel* model READ model WRITE setModel NOTIFY modelChanged)
+class ToolController final : public QObject {
+	Q_PROPERTY(QCursor activeToolCursor READ activeToolCursor()
+				   NOTIFY toolCursorChanged)
+	Q_PROPERTY(uint16_t activeLayer READ activeLayer WRITE setActiveLayer NOTIFY
+				   activeLayerChanged)
+	Q_PROPERTY(uint16_t activeAnnotation READ activeAnnotation WRITE
+				   setActiveAnnotation NOTIFY activeAnnotationChanged)
+	Q_PROPERTY(brushes::ActiveBrush activeBrush READ activeBrush WRITE
+				   setActiveBrush NOTIFY activeBrushChanged)
+	Q_PROPERTY(canvas::CanvasModel *model READ model WRITE setModel NOTIFY
+				   modelChanged)
 
 	Q_OBJECT
 public:
@@ -43,7 +50,7 @@ public:
 		virtual void finished() = 0;
 	};
 
-	explicit ToolController(net::Client *client, QObject *parent=nullptr);
+	explicit ToolController(net::Client *client, QObject *parent = nullptr);
 	~ToolController() override;
 
 	void setActiveTool(Tool::Type tool);
@@ -68,7 +75,10 @@ public:
 	void setInterpolateInputs(bool interpolateInputs);
 
 	void setStabilizerUseBrushSampleCount(bool stabilizerUseBrushSampleCount);
-	bool stabilizerUseBrushSampleCount() { return m_stabilizerUseBrushSampleCount; }
+	bool stabilizerUseBrushSampleCount()
+	{
+		return m_stabilizerUseBrushSampleCount;
+	}
 
 	void setStabilizationMode(brushes::StabilizationMode stabilizationMode);
 	int stabilizationMode() { return m_stabilizationMode; }
@@ -164,7 +174,7 @@ signals:
 	void toolCursorChanged(const QCursor &cursor);
 	void activeLayerChanged(int layerId);
 	void activeAnnotationChanged(uint16_t annotationId);
-	void activeBrushChanged(const brushes::ActiveBrush&);
+	void activeBrushChanged(const brushes::ActiveBrush &);
 	void modelChanged(canvas::CanvasModel *model);
 	void globalSmoothingChanged(int smoothing);
 	void stabilizerUseBrushSampleCountChanged(bool useBrushSampleCount);
@@ -215,4 +225,4 @@ private:
 
 }
 
-#endif // TOOLCONTROLLER_H
+#endif
