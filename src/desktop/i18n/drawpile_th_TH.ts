@@ -1747,7 +1747,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+15"/>
         <source>Select &amp;All</source>
-        <translation type="unfinished"></translation>
+        <translation>เลือกทั้งหมด</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1777,7 +1777,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>ลบ</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1837,7 +1837,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>Chat</source>
-        <translation type="unfinished"></translation>
+        <translation>แชท</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1862,12 +1862,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Zoom &amp;In</source>
-        <translation type="unfinished"></translation>
+        <translation>ขยายเข้า</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Zoom &amp;Out</source>
-        <translation type="unfinished"></translation>
+        <translation>ย่อออก</translation>
     </message>
     <message>
         <location line="+1"/>
