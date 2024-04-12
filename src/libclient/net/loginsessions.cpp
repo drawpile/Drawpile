@@ -98,7 +98,7 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 		switch(index.column()) {
 		case ColumnVersion:
 			if(ls.isIncompatible()) {
-				return tr("%1 (incompatible)").arg(ls.incompatibleSeries);
+				return tr("%1 (incompatible)").arg(ls.version.description);
 			} else if(ls.isCompatibilityMode()) {
 				return tr("Drawpile 2.1 (compatibility mode)");
 			} else {
@@ -169,34 +169,61 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 		case ClosedRole:
 			return ls.isClosed();
 		case IncompatibleRole:
-			return !ls.incompatibleSeries.isEmpty();
+			return !ls.version.compatible;
 		case JoinableRole:
-			return (!ls.isClosed() || m_moderatorMode) &&
-				   ls.incompatibleSeries.isEmpty();
+			return ls.isJoinable(m_moderatorMode);
 		case NsfmRole:
 			return isNsfm(ls);
 		case CompatibilityModeRole:
 			return ls.isCompatibilityMode();
 		case InactiveRole:
 			return ls.activeDrawingUserCount == 0;
+		case JoinDenyReasonsRole: {
+			QStringList reasons;
+			if(ls.newLoginsBlocked) {
+				//: "It" refers to a session that can't be joined.
+				reasons.append(tr("It is full or closed."));
+			}
+			if(ls.guestLoginBlocked) {
+				//: "It" refers to a session that can't be joined.
+				reasons.append(tr("It requires an account."));
+			}
+			if(ls.webLoginBlocked) {
+#ifdef __EMSCRIPTEN__
+				//: "It" refers to a session that can't be joined.
+				reasons.append(
+					tr("It does not allow joining via web browser."));
+#else
+				//: "It" refers to a session that can't be joined.
+				reasons.append(tr("It does not allow joining via WebSockets."));
+#endif
+			}
+			if(ls.isIncompatible()) {
+				if(ls.version.future) {
+					reasons.append(
+						//: "It" refers to a session that can't be joined.
+						tr("It is hosted with a newer version of Drawpile, you "
+						   "have to update. If there is no update available, "
+						   "it may be hosted with a development version of "
+						   "Drawpile."));
+				} else if(ls.version.past) {
+					//: "It" refers to a session that can't be joined.
+					reasons.append(tr("It is hosted with an old, incompatible "
+									  "version of Drawpile."));
+				} else {
+					//: "It" refers to a session that can't be joined.
+					reasons.append(
+						tr("It is hosted with an incompatible protocol."));
+				}
+			}
+			return reasons;
+		}
+		case JoinDenyIcon:
+			return QIcon::fromTheme(
+				ls.isIncompatible() ? "dontknow" : "cards-block");
 		default:
 			return QVariant{};
 		}
-	}
-}
-
-Qt::ItemFlags LoginSessionModel::flags(const QModelIndex &index) const
-{
-	if(index.row() < 0 || index.row() >= m_sessions.size()) {
-		return Qt::NoItemFlags;
-	}
-
-	const LoginSession &ls = m_sessions.at(index.row());
-	if(!ls.incompatibleSeries.isEmpty() ||
-	   (ls.isClosed() && !m_moderatorMode)) {
-		return Qt::NoItemFlags;
-	} else {
-		return QAbstractTableModel::flags(index);
 	}
 }
 

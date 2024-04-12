@@ -8,6 +8,14 @@
 
 namespace net {
 
+struct LoginSessionVersion {
+	QString description;
+	bool compatible;
+	bool future;
+	bool past;
+	bool compatibilityMode;
+};
+
 /**
  * @brief Available session description
  */
@@ -16,9 +24,7 @@ struct LoginSession {
 	QString alias;
 	QString title;
 	QString founder;
-	QString incompatibleSeries; // if not empty, this session is for a different
-								// version series
-	bool compatibilityMode;
+	LoginSessionVersion version;
 
 	int userCount;
 	int activeDrawingUserCount;
@@ -38,7 +44,7 @@ struct LoginSession {
 		return id == idOrAlias || alias == idOrAlias;
 	}
 
-	bool isIncompatible() const { return !incompatibleSeries.isEmpty(); }
+	bool isIncompatible() const { return !version.compatible; }
 	bool isClosed() const
 	{
 		return newLoginsBlocked || guestLoginBlocked || webLoginBlocked;
@@ -47,10 +53,15 @@ struct LoginSession {
 	bool isCompatibilityMode() const
 	{
 #ifdef HAVE_COMPATIBILITY_MODE
-		return compatibilityMode;
+		return version.compatibilityMode;
 #else
 		return false;
 #endif
+	}
+
+	bool isJoinable(bool mod) const
+	{
+		return (mod || !isClosed()) && version.compatible;
 	}
 };
 
@@ -75,6 +86,8 @@ public:
 		NsfmRole,		  // Is this session tagged as Not Suitable For Minors
 		CompatibilityModeRole, // Is this a Drawpile 2.1.x session
 		InactiveRole,		   // Does this session have zero active users
+		JoinDenyReasonsRole, // Human-readable explanations why they can't join.
+		JoinDenyIcon,		 // Icon for the can't join message box.
 	};
 
 	enum Column : int {
@@ -99,7 +112,6 @@ public:
 	QVariant headerData(
 		int section, Qt::Orientation orientation,
 		int role = Qt::DisplayRole) const override;
-	Qt::ItemFlags flags(const QModelIndex &index) const override;
 
 	void updateSession(const LoginSession &session);
 	void removeSession(const QString &id);

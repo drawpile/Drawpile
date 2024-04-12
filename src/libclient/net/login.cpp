@@ -723,8 +723,8 @@ void LoginHandler::expectSessionDescriptionJoin(const ServerReply &msg)
 				if(checkSession(session, false)) {
 					prepareJoinSelectedSession(
 						m_autoJoinId, session.needPassword,
-						session.compatibilityMode, session.title, session.nsfm,
-						true);
+						session.version.compatibilityMode, session.title,
+						session.nsfm, true);
 				} else {
 					m_autoJoinId = QString();
 				}
@@ -747,8 +747,9 @@ void LoginHandler::expectSessionDescriptionJoin(const ServerReply &msg)
 			LoginSession session = m_sessions->getFirstSession();
 			if(checkSession(session, true)) {
 				prepareJoinSelectedSession(
-					session.id, session.needPassword, session.compatibilityMode,
-					session.title, session.nsfm, true);
+					session.id, session.needPassword,
+					session.version.compatibilityMode, session.title,
+					session.nsfm, true);
 			}
 		}
 	}
@@ -778,7 +779,7 @@ bool LoginHandler::checkSession(const LoginSession &session, bool fail)
 		if(fail) {
 			failLogin(
 				tr("Session for a different Drawpile version (%1) in progress!")
-					.arg(session.incompatibleSeries));
+					.arg(session.version.description));
 		}
 		return false;
 	}
@@ -788,19 +789,28 @@ bool LoginHandler::checkSession(const LoginSession &session, bool fail)
 
 LoginSession LoginHandler::updateSession(const QJsonObject &js)
 {
+	QString protocol = js["protocol"].toString();
 	protocol::ProtocolVersion protoVer =
-		protocol::ProtocolVersion::fromString(js["protocol"].toString());
+		protocol::ProtocolVersion::fromString(protocol);
 
-	QString incompatibleSeries;
-	if(!protoVer.isCompatible()) {
-		if(protoVer.isFuture()) {
-			incompatibleSeries = tr("New version");
+	LoginSessionVersion version;
+	version.future = protoVer.isFuture();
+	version.past = protoVer.isPast();
+	version.compatibilityMode = protoVer.isPastCompatible();
+#ifdef HAVE_COMPATIBILITY_MODE
+	version.compatible = protoVer.isCompatible();
+#else
+	version.compatible = !version.compatibilityMode && protoVer.isCompatible();
+#endif
+	if(!version.compatible) {
+		if(version.future) {
+			version.description = tr("New version");
 		} else {
-			incompatibleSeries = protoVer.versionName();
+			version.description = protoVer.versionName();
 		}
 
-		if(incompatibleSeries.isEmpty()) {
-			incompatibleSeries = tr("Unknown version");
+		if(version.description.isEmpty()) {
+			version.description = tr("Unknown version %1").arg(protocol);
 		}
 	}
 
@@ -809,8 +819,7 @@ LoginSession LoginHandler::updateSession(const QJsonObject &js)
 		js["alias"].toString(),
 		js["title"].toString(),
 		js["founder"].toString(),
-		incompatibleSeries,
-		protoVer.isPastCompatible(),
+		version,
 		js["userCount"].toInt(),
 		js["activeDrawingUserCount"].toInt(-1),
 		js["hasPassword"].toBool(),

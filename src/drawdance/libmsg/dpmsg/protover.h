@@ -35,6 +35,8 @@ bool DP_protocol_version_is_current(const DP_ProtocolVersion *protover);
 
 bool DP_protocol_version_is_future(const DP_ProtocolVersion *protover);
 
+bool DP_protocol_version_is_past(const DP_ProtocolVersion *protover);
+
 bool DP_protocol_version_is_past_compatible(const DP_ProtocolVersion *protover);
 
 bool DP_protocol_version_should_have_system_id(

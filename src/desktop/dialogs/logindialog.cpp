@@ -673,12 +673,7 @@ void LoginDialog::updateOkButtonEnabled()
 	case Mode::SessionList: {
 		QModelIndexList sel =
 			d->ui->sessionList->selectionModel()->selectedIndexes();
-		if(sel.isEmpty())
-			enabled = false;
-		else
-			enabled =
-				sel.first().data(net::LoginSessionModel::JoinableRole).toBool();
-
+		enabled = !sel.isEmpty();
 		d->reportButton->setEnabled(
 			!sel.isEmpty() && d->loginHandler &&
 			d->loginHandler->supportsAbuseReports());
@@ -1226,10 +1221,7 @@ void LoginDialog::onOkClicked()
 		return;
 	}
 
-	const Mode mode = d->mode;
-	d->resetMode(Mode::Loading);
-
-	switch(mode) {
+	switch(d->mode) {
 	case Mode::Loading:
 	case Mode::Rules:
 	case Mode::RecentAccounts:
@@ -1240,30 +1232,35 @@ void LoginDialog::onOkClicked()
 		qWarning("OK button click in wrong mode!");
 		break;
 	case Mode::GuestLogin:
+		d->resetMode(Mode::Loading);
 		selectCurrentAvatar();
 		d->loginHandler->selectIdentity(
 			d->ui->username->text(), QString(),
 			net::LoginHandler::LoginMethod::Guest);
 		break;
 	case Mode::AuthLogin:
+		d->resetMode(Mode::Loading);
 		selectCurrentAvatar();
 		d->loginHandler->selectIdentity(
 			d->ui->username->text(), QString(),
 			net::LoginHandler::LoginMethod::Auth);
 		break;
 	case Mode::ExtAuthLogin:
+		d->resetMode(Mode::Loading);
 		selectCurrentAvatar();
 		d->loginHandler->selectIdentity(
 			d->ui->username->text(), QString(),
 			net::LoginHandler::LoginMethod::ExtAuth);
 		break;
 	case Mode::Identity:
+		d->resetMode(Mode::Loading);
 		selectCurrentAvatar();
 		d->loginHandler->selectIdentity(
 			d->ui->username->text(), QString(),
 			net::LoginHandler::LoginMethod::Unknown);
 		break;
 	case Mode::Authenticate:
+		d->resetMode(Mode::Loading);
 		if(d->extauthurl.isValid()) {
 			d->loginHandler->requestExtAuth(
 				d->ui->username->text(), d->ui->password->text());
@@ -1281,19 +1278,47 @@ void LoginDialog::onOkClicked()
 
 		const QModelIndex i =
 			d->ui->sessionList->selectionModel()->selectedIndexes().first();
-		d->loginHandler->prepareJoinSelectedSession(
-			i.data(net::LoginSessionModel::AliasOrIdRole).toString(),
-			i.data(net::LoginSessionModel::NeedPasswordRole).toBool(),
-			i.data(net::LoginSessionModel::CompatibilityModeRole).toBool(),
-			i.data(net::LoginSessionModel::TitleRole).toString(),
-			i.data(net::LoginSessionModel::NsfmRole).toBool(), false);
+		if(i.data(net::LoginSessionModel::JoinableRole).toBool()) {
+			d->resetMode(Mode::Loading);
+			d->loginHandler->prepareJoinSelectedSession(
+				i.data(net::LoginSessionModel::AliasOrIdRole).toString(),
+				i.data(net::LoginSessionModel::NeedPasswordRole).toBool(),
+				i.data(net::LoginSessionModel::CompatibilityModeRole).toBool(),
+				i.data(net::LoginSessionModel::TitleRole).toString(),
+				i.data(net::LoginSessionModel::NsfmRole).toBool(), false);
+		} else {
+			QString text = QStringLiteral("<p>%1</p><ul>")
+							   .arg(tr("You can't join this session because:")
+										.toHtmlEscaped());
+			QStringList reasons =
+				i.data(net::LoginSessionModel::JoinDenyReasonsRole)
+					.toStringList();
+			if(reasons.isEmpty()) {
+				reasons.append(tr("Unknown reason."));
+			}
+			for(QString &reason : reasons) {
+				text.append(
+					QStringLiteral("<li>%1</li>").arg(reason.toHtmlEscaped()));
+			}
+			text.append(QStringLiteral("</ul>"));
+			QMessageBox *msgbox =
+				utils::makeWarning(this, tr("Can't join session"), text);
+			msgbox->setTextFormat(Qt::RichText);
+			msgbox->setIconPixmap(
+				i.data(net ::LoginSessionModel::JoinDenyIcon)
+					.value<QIcon>()
+					.pixmap(style()->pixelMetric(QStyle::PM_LargeIconSize)));
+			msgbox->show();
+		}
 		break;
 	}
 	case Mode::SessionPassword:
+		d->resetMode(Mode::Loading);
 		d->loginHandler->sendSessionPassword(d->ui->sessionPassword->text());
 		break;
 	case Mode::CertChanged:
 #ifndef __EMSCRIPTEN__
+		d->resetMode(Mode::Loading);
 		d->loginHandler->acceptServerCertificate();
 #endif
 		break;

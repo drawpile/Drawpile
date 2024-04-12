@@ -37,6 +37,7 @@ Unreleased Version 2.2.2-pre
  * Feature: Don't require restarting the application to switch between desktop and small screen mode. There's also a "dynamic" option now, which will change the mode based on the size of the window, enabled by default on Android and in the browser.
  * Feature: Pan or "hand" tool. Lets you move the canvas around by clicking. Thanks DeeJii for suggesting.
  * Fix: Don't move view position when pressing side buttons in small screen mode.
+ * Feature: Show a proper explanation when you can't join a session.
 
 2024-02-25 Version 2.2.2-beta.1
  * Server Feature: Allow adding a message when kicking someone through the admin API.

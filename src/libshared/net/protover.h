@@ -64,6 +64,13 @@ public:
 	bool isFuture() const;
 
 	/**
+	 * Is this an older version than the current one?
+	 *
+	 * Note: returns false if the namespace is different
+	 */
+	bool isPast() const;
+
+	/**
 	 * Is this an older, but compatible version?
 	 */
 	bool isPastCompatible() const;
