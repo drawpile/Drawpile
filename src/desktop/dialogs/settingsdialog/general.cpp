@@ -52,14 +52,7 @@ void General::initAutosave(
 {
 	auto *autosaveInterval = new QSpinBox;
 	autosaveInterval->setRange(1, 999);
-	settings.bindAutoSaveInterval(this, [=](int intervalMsec) {
-		autosaveInterval->setValue(intervalMsec / 1000);
-	});
-	connect(
-		autosaveInterval, QOverload<int>::of(&QSpinBox::valueChanged), this,
-		[&](int intervalSec) {
-			settings.setAutoSaveInterval(intervalSec * 1000);
-		});
+	settings.bindAutoSaveIntervalMinutes(autosaveInterval);
 
 	auto *snapshotCountLayout = utils::encapsulate(
 		tr("When enabled, save every %1 minutes"), autosaveInterval);

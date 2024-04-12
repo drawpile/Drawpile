@@ -11,7 +11,7 @@
 #   endif
 #endif
 
-SETTING(autoSaveInterval            , AutoSaveInterval            , "settings/autosave"                     , 5000)
+SETTING(autoSaveIntervalMinutes     , AutoSaveIntervalMinutes     , "settings/autosaveminutes"              , 5)
 SETTING(checkerColor1               , CheckerColor1               , "settings/checkercolor1"                , CHECKER_COLOR1_DEFAULT)
 SETTING(checkerColor2               , CheckerColor2               , "settings/checkercolor2"                , CHECKER_COLOR2_DEFAULT)
 SETTING(interpolateInputs           , InterpolateInputs           , "settings/input/interpolate"            , true)

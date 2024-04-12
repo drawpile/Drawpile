@@ -685,7 +685,8 @@ bool Document::isCompatibilityMode() const
 void Document::autosave()
 {
 	if(!m_autosaveTimer->isActive()) {
-		const int autosaveInterval = qMax(0, m_settings.autoSaveInterval());
+		int autosaveInterval =
+			qMax(0, m_settings.autoSaveIntervalMinutes() * 60000);
 		m_autosaveTimer->start(autosaveInterval);
 	}
 }
