@@ -4072,7 +4072,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+10"/>
         <location line="+350"/>
         <source>Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>ความทึบ</translation>
     </message>
     <message>
         <location line="-320"/>
@@ -4181,7 +4181,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+21"/>
         <source>Value: </source>
-        <translation type="unfinished"></translation>
+        <translation>ค่าสี: </translation>
     </message>
     <message>
         <location line="+11"/>
@@ -4256,25 +4256,25 @@ Are you sure youwant to start recording debug dumps?</source>
         <source>Gross speed</source>
         <comment>mypaintinput</comment>
         <extracomment>changes more smoothly but is less accurate than &quot;Fine speed&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>ความเร็วขั้นต้น</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Random</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>สุ่ม</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Stroke</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>การลาก</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Direction</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>ทิศทาง</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -4293,7 +4293,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <source>Custom</source>
         <comment>mypaintinput</comment>
         <extracomment>the input is the output of the &quot;Custom input&quot; setting</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>กำหนดเอง</translation>
     </message>
     <message>
         <location line="+3"/>
