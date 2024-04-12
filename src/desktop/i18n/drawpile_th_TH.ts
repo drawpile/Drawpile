@@ -2511,7 +2511,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Eraser</source>
-        <translation type="unfinished"></translation>
+        <translation>ยางลบ</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2531,7 +2531,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>&amp;Rectangle</source>
-        <translation type="unfinished"></translation>
+        <translation>สี่เหลี่ยม</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2541,7 +2541,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>&amp;Ellipse</source>
-        <translation type="unfinished"></translation>
+        <translation>วงรี</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2551,7 +2551,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Bezier Curve</source>
-        <translation type="unfinished"></translation>
+        <translation>เส้นโค้งเบซิเย่ร์</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2571,7 +2571,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>&amp;Annotation</source>
-        <translation type="unfinished"></translation>
+        <translation>หมายเหตุ</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2581,7 +2581,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>&amp;Color Picker</source>
-        <translation type="unfinished"></translation>
+        <translation>ตัวเลือกสี</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2646,12 +2646,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>&amp;Shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>ทางลัด</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Developer Tools</source>
-        <translation type="unfinished"></translation>
+        <translation>เครื่องมือสำหรับผู้พัฒนา</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2671,7 +2671,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Statistics…</source>
-        <translation type="unfinished"></translation>
+        <translation>สถิติ</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -2712,7 +2712,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+57"/>
         <location filename="../widgets/macmenu.cpp" line="+25"/>
         <source>&amp;Homepage</source>
-        <translation type="unfinished"></translation>
+        <translation>หน้าแรก</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4061,7 +4061,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-152"/>
         <source>Opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>ความทึบแสง: </translation>
     </message>
     <message>
         <location line="+17"/>
