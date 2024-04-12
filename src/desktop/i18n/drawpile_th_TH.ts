@@ -4077,7 +4077,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="-320"/>
         <source>Hardness: </source>
-        <translation type="unfinished"></translation>
+        <translation>ความหนัก </translation>
     </message>
     <message>
         <location line="+17"/>
@@ -4088,7 +4088,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+10"/>
         <location line="+298"/>
         <source>Hardness</source>
-        <translation type="unfinished"></translation>
+        <translation>ความหนัก</translation>
     </message>
     <message>
         <location line="-268"/>
@@ -4146,7 +4146,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+17"/>
         <location line="+34"/>
         <source>Apply to All</source>
-        <translation type="unfinished"></translation>
+        <translation>ใช้กับทั้งหมด</translation>
     </message>
     <message>
         <location line="-49"/>
@@ -4242,14 +4242,14 @@ Are you sure youwant to start recording debug dumps?</source>
         <location filename="../dialogs/brushsettingsdialog_gen.cpp" line="+12"/>
         <source>Pressure</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>น้ำหนักการกด</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Fine speed</source>
         <comment>mypaintinput</comment>
         <extracomment>&quot;fine&quot; refers to the accuracy and update frequency of the speed value, as in &quot;fine grained&quot;</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>ความเร็วละเอียด</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -4367,19 +4367,19 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+2"/>
         <source>How fast you currently move. This can change very quickly. Try &apos;print input values&apos; from the &apos;help&apos; menu to get a feeling for the range; negative values are rare but possible for very low speed.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>ความเร็วที่คุณกำลังเคลื่อนอยู่ ซึ่งสามารถเปลี่ยงแปลงได้อย่างมาก ลอง &quot;พิมพ์ค่าอินพุต&quot; ในเมนู &quot;ช่วยเหลือ&quot; เพื่อทดสอบหาระยะค่าความเร็ว ค่าติดลบไม่ค่อยพบเห็นได้บ่อย แต่ก็เป็นไปได้เมื่อความเร็วต่ำมาก</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Same as fine speed, but changes slower. Also look at the &apos;gross speed filter&apos; setting.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>เช่นเดียวกับความเร็วละเอียด แต่เปลี่ยนแปลงได้ช้ากว่า นอกจากนี้แนะนำให้ตรวจดูการตั้งค่าของ &quot;ตัวกรองความเร็วขั้นต้น&quot;</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Fast random noise, changing at each evaluation. Evenly distributed between 0 and 1.</source>
         <comment>mypaintinput</comment>
-        <translation type="unfinished"></translation>
+        <translation>สุ่ม noise อย่างรวดเร็ว มีการเปลี่ยนแปลงในการประมวลผลแต่ละครั้ง กระจายอย่างสม่ำเสมอระหว่าง 0 และ 1</translation>
     </message>
     <message>
         <location line="+2"/>
