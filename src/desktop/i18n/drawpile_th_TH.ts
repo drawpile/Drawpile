@@ -1862,17 +1862,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Zoom &amp;In</source>
-        <translation>ขยายเข้า</translation>
+        <translation>ซูมเข้า</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Zoom &amp;Out</source>
-        <translation>ย่อออก</translation>
+        <translation>ซ้ำออก</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Normal Size</source>
-        <translation type="unfinished"></translation>
+        <translation>ซูมขนาดปกติ</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1907,12 +1907,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+2"/>
         <source>Mirror</source>
-        <translation type="unfinished"></translation>
+        <translation>สะท้อนภาพ</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Flip</source>
-        <translation type="unfinished"></translation>
+        <translation>กลับภาพ</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1957,17 +1957,17 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+86"/>
         <source>&amp;View</source>
-        <translation type="unfinished"></translation>
+        <translation>มุมมอง</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>&amp;Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>ซูม</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Rotation</source>
-        <translation type="unfinished"></translation>
+        <translation>การหมุน</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -2028,7 +2028,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location filename="../docks/layerlistdock.cpp" line="+308"/>
         <location filename="../mainwindow.cpp" line="+1"/>
         <source>Duplicate Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>สร้างสำเนาของเลเยอร์</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2040,7 +2040,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+6"/>
         <location filename="../mainwindow.cpp" line="+2"/>
         <source>Delete Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>ลบเลเยอร์</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="+1"/>
@@ -2060,7 +2060,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+5"/>
         <source>&amp;Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>เลเยอร์</translation>
     </message>
     <message>
         <location line="+16"/>
@@ -2130,7 +2130,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>New Track</source>
-        <translation type="unfinished"></translation>
+        <translation>แทรคใหม่</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2155,7 +2155,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Delete Track</source>
-        <translation type="unfinished"></translation>
+        <translation>ลบแทรค</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2277,7 +2277,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+396"/>
         <source>Wheel</source>
         <extracomment>&quot;Wheel&quot; refers to the color wheel.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>วงล้อสี</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -2420,7 +2420,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location filename="../docks/layerlistdock.cpp" line="-3"/>
         <location filename="../mainwindow.cpp" line="+408"/>
         <source>Layer Properties…</source>
-        <translation type="unfinished"></translation>
+        <translation>คุณสมบัติเลเยอร์</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="+126"/>
@@ -2430,7 +2430,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>&amp;Browse...</source>
-        <translation type="unfinished"></translation>
+        <translation>เรียกดู</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2440,7 +2440,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>&amp;Leave</source>
-        <translation type="unfinished"></translation>
+        <translation>ออก</translation>
     </message>
     <message>
         <location line="+0"/>
