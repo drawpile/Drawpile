@@ -401,6 +401,7 @@ private:
 	QActionGroup *m_dockToggles;     // dock visibility toggles
 	QActionGroup *m_desktopModeActions;
 	QActionGroup *m_smallScreenModeActions;
+	QVector<QAction *> m_smallScreenEditActions;
 
 	int m_lastToolBeforePaste; // Last selected tool before Paste was used
 

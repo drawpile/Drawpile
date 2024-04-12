@@ -4080,19 +4080,6 @@ void MainWindow::setupActions()
 
 	viewmenu->addSeparator();
 
-	// Small screen mode doesn't have these controls in its view status bar
-	// because they end up too puny and unusable, so they go here instead.
-	m_smallScreenModeActions->addAction(m_toolBarEdit->addSeparator());
-	m_toolBarEdit->addAction(viewflip);
-	m_smallScreenModeActions->addAction(viewflip);
-	m_toolBarEdit->addAction(viewmirror);
-	m_smallScreenModeActions->addAction(viewmirror);
-	m_smallScreenModeActions->addAction(m_toolBarEdit->addSeparator());
-	m_toolBarEdit->addAction(zoomorig);
-	m_smallScreenModeActions->addAction(zoomorig);
-	m_toolBarEdit->addAction(rotateorig);
-	m_smallScreenModeActions->addAction(rotateorig);
-
 	QAction *layerViewNormal = makeAction("layerviewnormal", tr("Normal View")).statusTip(tr("Show all layers normally")).noDefaultShortcut().checkable().checked();
 	QAction *layerViewCurrentLayer = makeAction("layerviewcurrentlayer", tr("Layer View")).statusTip(tr("Show only the current layer")).shortcut("Home").checkable();
 	QAction *layerViewCurrentFrame = makeAction("layerviewcurrentframe", tr("Frame View")).statusTip(tr("Show only layers in the current frame")).shortcut("Shift+Home").checkable();
@@ -4697,6 +4684,31 @@ void MainWindow::updateInterfaceModeActions()
 	m_desktopModeActions->setVisible(!m_smallScreenMode);
 	m_smallScreenModeActions->setEnabled(m_smallScreenMode);
 	m_smallScreenModeActions->setVisible(m_smallScreenMode);
+	bool haveSmallScreenEditActions = !m_smallScreenEditActions.isEmpty();
+	if(m_smallScreenMode && !haveSmallScreenEditActions) {
+		m_smallScreenEditActions.append(m_toolBarEdit->addSeparator());
+		QAction *viewflip = getAction("viewflip");
+		m_toolBarEdit->addAction(viewflip);
+		m_smallScreenEditActions.append(viewflip);
+		QAction *viewmirror = getAction("viewmirror");
+		m_toolBarEdit->addAction(viewmirror);
+		m_smallScreenEditActions.append(viewmirror);
+		m_smallScreenEditActions.append(m_toolBarEdit->addSeparator());
+		QAction *zoomorig = getAction("zoomone");
+		m_toolBarEdit->addAction(zoomorig);
+		m_smallScreenEditActions.append(zoomorig);
+		QAction *rotateorig = getAction("rotatezero");
+		m_toolBarEdit->addAction(rotateorig);
+		m_smallScreenEditActions.append(rotateorig);
+	} else if(!m_smallScreenMode && haveSmallScreenEditActions) {
+		for(QAction *action : m_smallScreenEditActions) {
+			m_toolBarEdit->removeAction(action);
+			if(action->isSeparator()) {
+				delete action;
+			}
+		}
+		m_smallScreenEditActions.clear();
+	}
 }
 
 void MainWindow::reenableUpdates()
