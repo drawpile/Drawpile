@@ -1661,12 +1661,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+28"/>
         <source>&amp;Undo</source>
-        <translation>&amp;เลิกทำ</translation>
+        <translation>เลิกทำ</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>&amp;Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>ทำซ้ำ</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1691,7 +1691,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>&amp;Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>วาง</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1752,7 +1752,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>&amp;Deselect</source>
-        <translation type="unfinished"></translation>
+        <translation>ยกเลิกการเลือก</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -1782,7 +1782,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Fill Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>เติมเต็มการเลือก</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1797,7 +1797,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+90"/>
         <source>&amp;Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>แก้ไข</translation>
     </message>
     <message>
         <location line="+22"/>
