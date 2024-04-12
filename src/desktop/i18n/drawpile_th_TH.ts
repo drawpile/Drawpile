@@ -34,12 +34,12 @@
     <message>
         <location line="+6"/>
         <source>Session:</source>
-        <translation type="unfinished"></translation>
+        <translation>เซสชั่น</translation>
     </message>
     <message>
         <location line="+40"/>
         <source>Reason:</source>
-        <translation type="unfinished"></translation>
+        <translation>เหตุผล</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -57,7 +57,7 @@
     <message>
         <location filename="../ui/addserverdialog.ui" line="+14"/>
         <source>Add Server</source>
-        <translation type="unfinished"></translation>
+        <translation>เพิ่มเซิฟเวอร์</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -75,12 +75,12 @@
     <message>
         <location filename="../ui/androidfiledialog.ui" line="+20"/>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>ชื่อ:</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>ชนิด:</translation>
     </message>
 </context>
 <context>
@@ -106,7 +106,7 @@
     <message>
         <location line="+20"/>
         <source>Brush</source>
-        <translation type="unfinished"></translation>
+        <translation>พู่กัน</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -136,22 +136,22 @@
     <message>
         <location line="+24"/>
         <source>px</source>
-        <translation type="unfinished"></translation>
+        <translation>พิกเซล</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Size: </source>
-        <translation type="unfinished"></translation>
+        <translation>ขนาด: </translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Radius: </source>
-        <translation type="unfinished"></translation>
+        <translation>รัศมี: </translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Opacity: </source>
-        <translation type="unfinished"></translation>
+        <translation>ความทึบแสง: </translation>
     </message>
     <message>
         <location line="+16"/>
@@ -179,7 +179,7 @@
     <message>
         <location line="+16"/>
         <source>Spacing: </source>
-        <translation type="unfinished"></translation>
+        <translation>ระยะห่าง: </translation>
     </message>
     <message>
         <location line="+19"/>
@@ -285,13 +285,13 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../ui/certificateview.ui" line="+24"/>
         <source>Info</source>
-        <translation type="unfinished"></translation>
+        <translation>ข้อมูล</translation>
     </message>
     <message>
         <location line="+6"/>
         <location line="+107"/>
         <source>Organization:</source>
-        <translation type="unfinished"></translation>
+        <translation>องค์กร</translation>
     </message>
     <message>
         <location line="-100"/>
@@ -317,7 +317,7 @@ to 64x64 pixels.</source>
         <location line="+14"/>
         <location line="+14"/>
         <source>Organization unit:</source>
-        <translation type="unfinished"></translation>
+        <translation>หน่วยขององค์กร</translation>
     </message>
     <message>
         <location line="-7"/>
@@ -333,7 +333,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="-43"/>
         <source>Serial number:</source>
-        <translation type="unfinished"></translation>
+        <translation>หมายเลขซีเรียล</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -353,7 +353,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+41"/>
         <source>Details</source>
-        <translation type="unfinished"></translation>
+        <translation>รายละเอียด</translation>
     </message>
 </context>
 <context>
@@ -361,7 +361,7 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../bundled/QtColorWidgets/color_dialog.ui" line="+14"/>
         <source>Select Color</source>
-        <translation type="unfinished"></translation>
+        <translation>เลือกสี</translation>
     </message>
     <message>
         <location line="+40"/>
@@ -381,7 +381,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Blue</source>
-        <translation type="unfinished"></translation>
+        <translation>น้ำเงิน</translation>
     </message>
     <message>
         <location line="+37"/>
@@ -401,7 +401,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Red</source>
-        <translation type="unfinished"></translation>
+        <translation>แดง</translation>
     </message>
 </context>
 <context>
@@ -424,7 +424,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+16"/>
         <source>Play/Pause</source>
-        <translation type="unfinished"></translation>
+        <translation>เล่น/พัก</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -449,12 +449,12 @@ to 64x64 pixels.</source>
     <message>
         <location line="+13"/>
         <source>Position: </source>
-        <translation type="unfinished"></translation>
+        <translation>ตำแหน่ง: </translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation>สถานะ</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -468,7 +468,7 @@ to 64x64 pixels.</source>
         <location line="+21"/>
         <location line="+14"/>
         <source>0</source>
-        <translation type="unfinished"></translation>
+        <translation>0</translation>
     </message>
     <message>
         <location line="-56"/>
@@ -478,7 +478,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>No</source>
-        <translation type="unfinished"></translation>
+        <translation>ไม่</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -503,7 +503,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+15"/>
         <source>History</source>
-        <translation type="unfinished"></translation>
+        <translation>ประวัติ</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -531,12 +531,12 @@ to 64x64 pixels.</source>
     <message>
         <location line="+9"/>
         <source>Import</source>
-        <translation type="unfinished"></translation>
+        <translation>นำเข้า</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Open</source>
-        <translation type="unfinished"></translation>
+        <translation>เปิด</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -577,7 +577,7 @@ to 64x64 pixels.</source>
         <location line="+44"/>
         <location line="+185"/>
         <source>Save Image</source>
-        <translation type="unfinished"></translation>
+        <translation>บันทึกรูปภาพ</translation>
     </message>
     <message>
         <location line="-185"/>
@@ -693,7 +693,7 @@ to 64x64 pixels.</source>
         <location line="+52"/>
         <location line="+5"/>
         <source>Untitled</source>
-        <translation type="unfinished"></translation>
+        <translation>ไม่มีชื่อ</translation>
     </message>
     <message>
         <location line="+68"/>
@@ -707,7 +707,7 @@ to 64x64 pixels.</source>
     <message>
         <location filename="../ui/fillsettings.ui" line="+45"/>
         <source>Normal</source>
-        <translation type="unfinished"></translation>
+        <translation>ปกติ</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -717,7 +717,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+5"/>
         <source>Erase</source>
-        <translation type="unfinished"></translation>
+        <translation>ลบ</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -739,12 +739,12 @@ to 64x64 pixels.</source>
         <location line="+23"/>
         <location line="+43"/>
         <source>px</source>
-        <translation type="unfinished"></translation>
+        <translation>พิกเซล</translation>
     </message>
     <message>
         <location line="-40"/>
         <source>Size: </source>
-        <translation type="unfinished"></translation>
+        <translation>ขนาด: </translation>
     </message>
     <message>
         <location line="+16"/>
@@ -754,7 +754,7 @@ to 64x64 pixels.</source>
     <message>
         <location line="+7"/>
         <source>Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>โหมด</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -777,22 +777,22 @@ to 64x64 pixels.</source>
     <message>
         <location line="+28"/>
         <source>Reset Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>รีเซ็ตซูม</translation>
     </message>
     <message>
         <location line="-17"/>
         <source>Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>โหลดซ้ำ</translation>
     </message>
     <message>
         <location line="+53"/>
         <source>Rewind</source>
-        <translation type="unfinished"></translation>
+        <translation>กรอกลับ</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Play</source>
-        <translation type="unfinished"></translation>
+        <translation>เล่น</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -802,17 +802,17 @@ to 64x64 pixels.</source>
     <message>
         <location line="+20"/>
         <source>Range</source>
-        <translation type="unfinished"></translation>
+        <translation>ระยะ:</translation>
     </message>
     <message>
         <location line="+41"/>
         <source>Speed: </source>
-        <translation type="unfinished"></translation>
+        <translation>ความเร็ว: </translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Export</source>
-        <translation type="unfinished"></translation>
+        <translation>นำออก</translation>
     </message>
 </context>
 <context>
