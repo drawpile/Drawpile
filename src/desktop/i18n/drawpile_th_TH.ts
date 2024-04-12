@@ -1952,7 +1952,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+3"/>
         <source>&amp;Full Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>เต็มจอ</translation>
     </message>
     <message>
         <location line="+86"/>
@@ -2160,12 +2160,12 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Next Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>เฟรมถัดไป</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Previous Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>เฟรมก่อนหน้า</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2230,7 +2230,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+12"/>
         <source>&amp;Animation</source>
-        <translation type="unfinished"></translation>
+        <translation>แอนิเมชัน</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -2283,7 +2283,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+11"/>
         <source>Sliders</source>
         <extracomment>&quot;Sliders&quot; refers to the RGB and HSV sliders.</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>สไลเดอร์</translation>
     </message>
     <message>
         <location line="-420"/>
@@ -2309,7 +2309,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+112"/>
         <source>Reason:</source>
-        <translation type="unfinished"></translation>
+        <translation>เหตุผล</translation>
     </message>
     <message>
         <location line="+123"/>
@@ -2359,7 +2359,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Export Selection...</source>
-        <translation type="unfinished"></translation>
+        <translation>ส่งออกสิ่งที่เลือก</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2394,7 +2394,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+115"/>
         <source>&amp;Copy Merged</source>
-        <translation type="unfinished"></translation>
+        <translation>คัดลอกรวมกัน</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2455,7 +2455,7 @@ Are you sure youwant to start recording debug dumps?</source>
     <message>
         <location line="+1"/>
         <source>Settings...</source>
-        <translation type="unfinished"></translation>
+        <translation>ตั้งค่า...</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2491,7 +2491,7 @@ Are you sure youwant to start recording debug dumps?</source>
         <location line="+30"/>
         <location filename="../widgets/macmenu.cpp" line="-2"/>
         <source>&amp;Session</source>
-        <translation type="unfinished"></translation>
+        <translation>เซสชั่น</translation>
     </message>
     <message>
         <location line="+8"/>
